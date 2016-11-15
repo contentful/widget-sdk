@@ -8,7 +8,6 @@ angular.module('contentful')
 .controller('ContentTypeFieldController', ['$scope', 'require', function ($scope, require) {
   var controller = this;
   var fieldFactory = require('fieldFactory');
-  var trackField = require('analyticsEvents').trackField;
   var Field = require('fieldDecorator');
   var dialogs = require('ContentTypeFieldController/dialogs');
 
@@ -30,13 +29,13 @@ angular.module('contentful')
    * @name ContentTypeFieldController#toggle
    */
   controller.toggle = function toggle (property) {
-    var toggled = !$scope.field[property];
+    var field = $scope.field;
+    var toggled = !field[property];
 
     if ($scope.fieldIsTitle && toggled) {
-      dialogs.openDisallowDialog($scope.field, 'disable');
+      dialogs.openDisallowDialog(field, 'disable');
     } else {
-      $scope.field[property] = toggled;
-      trackFieldAction(property, $scope.field);
+      field[property] = toggled;
     }
   };
 
@@ -96,18 +95,6 @@ angular.module('contentful')
     var omitted = $scope.field.omitted;
     $scope.fieldCanBeTitle = isTitleType && !isTitle && !disabled && !omitted;
   });
-
-  /**
-   * @ngdoc analytics-event
-   * @name Clicked Field Actions Button
-   * @param property
-   * @param field
-   */
-  function trackFieldAction (property, field) {
-    trackField('Clicked Field Actions Button', field, {
-      action: [field[property] ? 'on' : 'off', property].join('-')
-    });
-  }
 }])
 
 .factory('ContentTypeFieldController/dialogs', ['require', function (require) {

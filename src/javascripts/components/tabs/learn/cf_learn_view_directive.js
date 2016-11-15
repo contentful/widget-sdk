@@ -136,7 +136,7 @@ angular.module('contentful')
       controller.selectedLanguage = undefined;
     } else {
       controller.selectedLanguage = language;
-      analytics.track('Selected Language at the Dashboard', {
+      analytics.track('learn:language_selected', {
         language: controller.selectedLanguage.name
       });
     }
@@ -145,12 +145,11 @@ angular.module('contentful')
   var documentationList = ['documentation', 'apidemo', 'deliveryApi'];
   controller.languageData = sdkInfoSupplier.get(documentationList);
   controller.trackClickedButton = function (name) {
-    var eventName = 'Clicked the \'' + name + '\' button from Learn';
-    analytics.track(eventName);
+    analytics.track('learn:step_clicked', {linkName: name});
   };
 
   controller.trackResourceLink = function (linkName, language) {
-    analytics.track('Selected Content at the Dashboard', {
+    analytics.track('learn:resource_selected', {
       resource: linkName,
       language: language
     });

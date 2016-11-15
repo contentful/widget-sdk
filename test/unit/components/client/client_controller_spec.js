@@ -45,24 +45,13 @@ describe('Client Controller', function () {
   });
 
   describe('aux panel preferences', function () {
-    it('aux panel is off', function () {
+    it('aux panel is off by default', function () {
       expect(scope.preferences.showAuxPanel).toBeFalsy();
     });
 
-    describe('toggles aux panel', function () {
-      beforeEach(function () {
-        this.analyticsEvents = this.$inject('analyticsEvents');
-        this.analyticsEvents.trackToggleAuxPanel = sinon.stub();
-        scope.preferences.toggleAuxPanel();
-      });
-
-      it('aux panel is on', function () {
-        expect(scope.preferences.showAuxPanel).toBeTruthy();
-      });
-
-      it('analytics is triggered', function () {
-        sinon.assert.calledWith(this.analyticsEvents.trackToggleAuxPanel, true, '');
-      });
+    it('toggles aux panel', function () {
+      scope.preferences.toggleAuxPanel();
+      expect(scope.preferences.showAuxPanel).toBeTruthy();
     });
   });
 

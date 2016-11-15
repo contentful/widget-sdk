@@ -28,7 +28,7 @@ angular.module('contentful')
   var eiHelpers = require('editingInterfaces/helpers');
   var spaceContext = require('spaceContext');
   var editingInterfaces = spaceContext.editingInterfaces;
-  var trackContentTypeChange = require('analyticsEvents').trackContentTypeChange;
+  var analytics = require('analytics');
 
   $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
 
@@ -175,7 +175,20 @@ angular.module('contentful')
     data.fields.push(newField);
     $scope.$broadcast('fieldAdded');
     syncEditingInterface();
-    trackContentTypeChange('Modified ContentType', $scope.contentType, newField, 'add');
+    trackAddedField($scope.contentType, newField);
+  }
+
+  function trackAddedField (contentType, field) {
+    analytics.track('modelling:field_added', {
+      contentTypeId: contentType.getId(),
+      contentTypeName: contentType.getName(),
+      fieldId: field.id,
+      fieldName: field.name,
+      fieldType: field.type,
+      fieldItemType: dotty.get(field, 'items.type') || null,
+      fieldLocalized: field.localized,
+      fieldRequired: field.required
+    });
   }
 
   /**

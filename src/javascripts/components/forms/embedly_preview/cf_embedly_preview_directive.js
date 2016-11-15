@@ -35,12 +35,12 @@ angular.module('contentful').directive('cfEmbedlyPreview', ['$injector', functio
           element.append(previewElement);
           embedly('card', previewElement.get(0));
 
-          $timeout.cancel(loadCheck);
+          cancelCheck();
           loadCheck = $timeout(function () { changeStatus('broken'); }, TIMEOUT);
         }
 
         function markAsLoaded () {
-          $timeout.cancel(loadCheck);
+          cancelCheck();
           scope.$apply(function () {
             changeStatus('ok');
           });
@@ -49,6 +49,7 @@ angular.module('contentful').directive('cfEmbedlyPreview', ['$injector', functio
         function handleValueChange (value) {
           element.empty();
           if (!value) {
+            cancelCheck();
             changeStatus('ok');
           } else if (urlUtils.isValid(value)) {
             changeStatus('loading');
@@ -61,6 +62,13 @@ angular.module('contentful').directive('cfEmbedlyPreview', ['$injector', functio
         function changeStatus (status) {
           scope.urlStatus = status;
           scope.$emit('centerOn:reposition');
+        }
+
+        function cancelCheck () {
+          if (loadCheck) {
+            $timeout.cancel(loadCheck);
+            loadCheck = null;
+          }
         }
       }
 

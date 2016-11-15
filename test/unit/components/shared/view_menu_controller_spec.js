@@ -10,7 +10,7 @@ describe('ViewMenuController', function () {
     controller = $controller('ViewMenuController', {
       $scope: scope,
       $attrs: {},
-      analytics: {trackTotango: sinon.stub()},
+      analytics: {track: sinon.stub()},
       modalDialog: {open: sinon.stub()}
     });
     scope.$apply();

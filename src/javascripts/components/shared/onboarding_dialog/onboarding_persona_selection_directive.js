@@ -10,7 +10,7 @@ angular.module('contentful')
   };
 })
 .controller('OnboardingPersonaController', ['$scope', '$attrs', 'require', function ($scope, $attrs, require) {
-  var analytics = require('analyticsEvents');
+  var analytics = require('analytics');
   var controller = this;
 
   // Should the space creation step be shown?
@@ -27,12 +27,12 @@ angular.module('contentful')
   };
 
   controller.skipSelection = function () {
-    analytics.persona.trackSkipped();
+    analytics.trackPersonaSelection(null);
     $scope.$emit('skipPersonaSelection');
   };
 
   controller.submitPersonaSelection = function (personaSelected) {
-    analytics.persona.trackSelected(personaSelected);
+    analytics.trackPersonaSelection(personaSelected);
     $scope.$emit('submitPersonaSelection');
   };
 

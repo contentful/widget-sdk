@@ -30,17 +30,14 @@ angular.module('contentful')
  * - simplify relation with TokenStore
 */
 .controller('LocaleEditorController', ['$scope', 'require', function ($scope, require) {
-
   var controller = this;
   var TheLocaleStore = require('TheLocaleStore');
   var $q = require('$q');
   var modalDialog = require('modalDialog');
   var tokenStore = require('tokenStore');
-  var analytics = require('analytics');
   var Command = require('command');
   var leaveConfirmator = require('navigation/confirmLeaveEditor');
   var $state = require('$state');
-  var spaceContext = require('spaceContext');
   var closeState = require('navigation/closeState');
   var localeList = require('data/localeList').fromClientResponse($scope.spaceLocales);
   var notify = require('LocaleEditor/notifications');
@@ -179,7 +176,6 @@ angular.module('contentful')
   }
 
   function deleteLocale () {
-    trackDelete();
     return $scope.locale.delete()
     .then(function deletedSuccesfully () {
       return tokenStore.refresh()
@@ -250,7 +246,6 @@ angular.module('contentful')
       // TODO Should probably be handled by the token store
       TheLocaleStore.refresh();
       notify.saveSuccess();
-      trackSave('Saved Successful Locale');
       if ($scope.context.isNew) {
         return $state.go('spaces.detail.settings.locales.detail', { localeId: response.getId() });
       }
@@ -260,7 +255,6 @@ angular.module('contentful')
   function saveErrorHandler (err) {
     notify.saveError(err);
     resetFormStatusOnFailure();
-    trackSave('Saved Errored Locale');
   }
 
   function confirmCodeChange () {
@@ -292,33 +286,6 @@ angular.module('contentful')
     if (formWasDirty) {
       $scope.localeForm.$setDirty();
     }
-  }
-
-  function trackSave (message) {
-    var locale = $scope.locale;
-    analytics.track(message, {
-      subscriptionPlan: getSubscriptionPlanName(),
-      locale: locale.getName(),
-      saveFrequency: locale.getVersion() ? 'return save' : 'first time save',
-      editing: getEnabledState(locale.data.contentManagementApi),
-      publishing: getEnabledState(locale.data.contentDeliveryApi),
-      defaultLocale: getEnabledState(locale.isDefault())
-    });
-  }
-
-  function getEnabledState (state) {
-    return state ? 'return save' : 'first time save';
-  }
-
-  function trackDelete () {
-    analytics.track('Clicked Delete Locale Button', {
-      subscriptionPlan: getSubscriptionPlanName(),
-      locale: $scope.locale.getName()
-    });
-  }
-
-  function getSubscriptionPlanName () {
-    return spaceContext.getData('organization.subscriptionPlan.name');
   }
 }])
 

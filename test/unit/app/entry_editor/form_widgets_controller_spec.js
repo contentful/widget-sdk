@@ -9,6 +9,8 @@ describe('FormWidgetsController#widgets', function () {
     scope = this.$inject('$rootScope').$new();
 
     scope.validator = {hasError: sinon.stub().returns(false)};
+    scope.contentType = {getId: _.constant('ctid')};
+    scope.entry = {getId: _.constant('eid')};
 
     field = {
       id: 'foo',
@@ -25,7 +27,6 @@ describe('FormWidgetsController#widgets', function () {
       const $controller = this.$inject('$controller');
       $controller('FormWidgetsController', {
         $scope: scope,
-        contentTypeId: '',
         controls: controls
       });
       this.$apply();

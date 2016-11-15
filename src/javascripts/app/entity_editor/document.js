@@ -6,15 +6,6 @@ angular.module('cf.app')
  * @ngdoc type
  * @module cf.app
  * @name Document
- * @property {boolean} disabled
- * @property {boolean} editable
- * @property {boolean} error
-*/
-
-/**
- * @ngdoc type
- * @module cf.app
- * @name Document
  * @description
  * Used to edit an entry or asset through ShareJS
  *

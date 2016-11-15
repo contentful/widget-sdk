@@ -14,6 +14,7 @@ describe('Space Selector Controller', function () {
     var $controller = this.$inject('$controller');
     var spaceContext = this.$inject('spaceContext');
     analytics = this.$inject('analytics');
+    sinon.stub(analytics, 'track');
     $stateParams = this.$inject('$stateParams');
 
     scope = $rootScope.$new();
@@ -47,7 +48,6 @@ describe('Space Selector Controller', function () {
   });
 
   it('space switcher analytics tracking', function () {
-    sinon.stub(analytics, 'track');
     scope.clickedSpaceSwitcher();
     sinon.assert.called(analytics.track);
   });

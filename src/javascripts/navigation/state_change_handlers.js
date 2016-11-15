@@ -21,6 +21,7 @@ angular.module('cf.app')
   var contextHistory = $injector.get('contextHistory');
   var logger = $injector.get('logger');
   var modalDialog = $injector.get('modalDialog');
+  var analytics = $injector.get('analytics');
 
   // Result of confirmation dialog
   var navigationConfirmed = false;
@@ -47,10 +48,12 @@ angular.module('cf.app')
     $rootScope.$on('$stateNotFound', stateChangeErrorHandler);
   }
 
-  function stateChangeSuccessHandler (_event, toState, toStateParams) {
+  function stateChangeSuccessHandler (_event, toState, toStateParams, fromState, fromStateParams) {
     logger.leaveBreadcrumb('Enter state', _.extend({
       state: toState
     }, toStateParams));
+
+    analytics.trackStateChange(toState, toStateParams, fromState, fromStateParams);
   }
 
   function stateChangeStartHandler (event, toState, toStateParams, fromState, fromStateParams) {

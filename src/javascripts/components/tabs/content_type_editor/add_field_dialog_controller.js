@@ -13,34 +13,32 @@
  * @scope.provides {bool}            fieldIsList
 */
 angular.module('contentful')
-.controller('AddFieldDialogController',
-            ['$scope', '$injector', function AddFieldDialogController($scope, $injector) {
+.controller('AddFieldDialogController', ['$scope', 'require', function AddFieldDialogController ($scope, require) {
 
-  var $controller    = $injector.get('$controller');
-  var fieldFactory   = $injector.get('fieldFactory');
-  var fieldDecorator = $injector.get('fieldDecorator');
-  var random         = $injector.get('random');
-  var stringUtils    = $injector.get('stringUtils');
-  var buildMessage   = $injector.get('fieldErrorMessageBuilder');
-  var trackField     = $injector.get('analyticsEvents').trackField;
-  var $q             = $injector.get('$q');
+  var $controller = require('$controller');
+  var fieldFactory = require('fieldFactory');
+  var fieldDecorator = require('fieldDecorator');
+  var random = require('random');
+  var stringUtils = require('stringUtils');
+  var buildMessage = require('fieldErrorMessageBuilder');
+  var $q = require('$q');
 
   $scope.viewState = $controller('ViewStateController', {
     $scope: $scope,
     defaultState: 'fieldSelection'
   });
 
-  $scope.fieldGroupRows     = chunk(fieldFactory.groups, 4);
-  $scope.selectFieldGroup   = selectFieldGroup;
+  $scope.fieldGroupRows = chunk(fieldFactory.groups, 4);
+  $scope.selectFieldGroup = selectFieldGroup;
   $scope.showFieldSelection = showFieldSelection;
-  $scope.create     = create;
+  $scope.create = create;
   $scope.createAndConfigure = createAndConfigure;
 
   $scope.schema = {
     errors: function (field) {
       return fieldDecorator.validateInContentType(field, $scope.contentType);
     },
-    buildMessage: buildMessage,
+    buildMessage: buildMessage
   };
 
   // Initial dialog state
@@ -54,7 +52,7 @@ angular.module('contentful')
    * Resets the information regarding the selected type of field
    * in case the user wants to change their selection
   */
-  function showFieldSelection() {
+  function showFieldSelection () {
     $scope.field = {
       data: {
         name: '',
@@ -107,7 +105,6 @@ angular.module('contentful')
       return $q.reject(new Error('Invalid user data'));
     }
 
-    trackCreateField(field);
     return $scope.dialog.confirm(field)
     .promise.then(function () {
       return field;
@@ -130,17 +127,6 @@ angular.module('contentful')
       $scope.ctEditorController.openFieldDialog(field);
     }, _.noop);
   }
-
-  /**
-   * @ngdoc analytics-event
-   * @name Clicked Create Field Button
-   * @param fieldId
-   * @param originatingFieldType
-   */
-  function trackCreateField (field) {
-    trackField('Clicked Create Field Button', field);
-  }
-
 
   function chunk (array, size) {
     var index = 0;

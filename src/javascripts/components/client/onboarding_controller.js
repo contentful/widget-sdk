@@ -67,7 +67,9 @@ angular.module('contentful')
   // TODO: This is duplicate code from `ClientController`. Find out where to move it.
   function handleSpaceCreationSuccess (template) {
     if (template) {
-      analytics.track('Created Space Template', {template: template.name});
+      analytics.track('space:created_from_template', {
+        templateName: template.name
+      });
       return spaceContext.refreshContentTypesUntilChanged().then(function () {
         $rootScope.$broadcast('reloadEntries');
       });

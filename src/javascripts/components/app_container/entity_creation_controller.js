@@ -1,16 +1,15 @@
 'use strict';
 
-angular.module('contentful').controller('EntityCreationController', ['$injector', '$scope', function EntityCreationController($injector, $scope) {
+angular.module('contentful')
+.controller('EntityCreationController', ['require', function EntityCreationController (require) {
+  var analytics = require('analytics');
+  var notification = require('notification');
+  var logger = require('logger');
+  var enforcements = require('enforcements');
+  var $state = require('$state');
+  var spaceContext = require('spaceContext');
 
-  var analytics    = $injector.get('analytics');
-  var notification = $injector.get('notification');
-  var logger       = $injector.get('logger');
-  var enforcements = $injector.get('enforcements');
-  var $state       = $injector.get('$state');
-
-  var EVENT_NAME = 'Selected Add-Button in the Frame';
-
-  this.newEntry = function(contentType) {
+  this.newEntry = function (contentType) {
     var handler = makeEntityResponseHandler({
       entityType: 'entry',
       entitySubType: contentType.getId(),
@@ -19,11 +18,11 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
       errorMessage: 'Could not create Entry'
     });
 
-    $scope.spaceContext.space.createEntry(contentType.getId(), {})
+    spaceContext.space.createEntry(contentType.getId(), {})
     .then(_.partial(handler, null), handler);
   };
 
-  this.newAsset = function() {
+  this.newAsset = function () {
     var handler = makeEntityResponseHandler({
       entityType: 'asset',
       entitySubType: function (entity) {
@@ -35,29 +34,21 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
     });
     var data = { sys: { type: 'Asset' }, fields: {} };
 
-    $scope.spaceContext.space.createAsset(data)
+    spaceContext.space.createAsset(data)
     .then(_.partial(handler, null), handler);
   };
 
-  this.newContentType = function() {
+  this.newContentType = function () {
     $state.go('spaces.detail.content_types.new.home');
-    /**
-     * @ngdoc analytics-event
-     * @name Clicked Add Content Type Button
-     */
-    analytics.track('Clicked Add Content Type Button');
   };
 
-  this.newApiKey = function() {
+  this.newApiKey = function () {
     var usage = enforcements.computeUsage('apiKey');
-    if(usage){
+    if (usage) {
       return notification.error(usage);
     }
     $state.go('spaces.detail.api.keys.new');
-    analytics.track(EVENT_NAME, {
-      currentState: $state.current.name,
-      entityType: 'apiKey'
-    });
+    analytics.track('api_keys:create_screen_opened');
   };
 
   this.newLocale = function () {
@@ -66,36 +57,25 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
       return notification.error(usage);
     }
     $state.go('spaces.detail.settings.locales.new');
-    analytics.track(EVENT_NAME, {
-      currentState: $state.current.name,
-      entityType: 'locale'
-    });
   };
 
-  function makeEntityResponseHandler(params) {
-    return function entityResponseHandler(err, entity) {
+  function makeEntityResponseHandler (params) {
+    return function entityResponseHandler (err, entity) {
       var stateParams = {};
       if (!err) {
         stateParams[params.stateParam] = entity.getId();
         $state.go(params.stateName, stateParams);
       } else {
-        if(dotty.get(err, 'body.details.reasons')){
+        if (dotty.get(err, 'body.details.reasons')) {
           var enforcement = enforcements.determineEnforcement(
             err.body.details.reasons, params.entityType);
-          if(enforcement){
+          if (enforcement) {
             params.errorMessage = enforcement.tooltip || enforcement.message;
           }
         }
-        logger.logServerWarn(params.errorMessage, {error: err });
+        logger.logServerWarn(params.errorMessage, {error: err});
         notification.error(params.errorMessage);
       }
-      analytics.track(EVENT_NAME, {
-        currentState: $state.current.name,
-        entityType: params.entityType,
-        entitySubType: (typeof params.entitySubType == 'function') ?
-          params.entitySubType(entity) : params.entitySubType
-      });
     };
   }
-
 }]);

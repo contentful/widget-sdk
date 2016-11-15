@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('cf.app')
+angular.module('contentful')
 
-.factory('track/versioning', ['require', function (require) {
+.factory('analyticsEvents/versioning', ['require', function (require) {
   var analytics = require('analytics');
   var leaveConfirmator = require('navigation/confirmLeaveEditor');
 
@@ -20,9 +20,8 @@ angular.module('cf.app')
     trackableConfirmator: trackableConfirmator
   };
 
-  function setData (user, entry, snapshot) {
+  function setData (entry, snapshot) {
     data = {
-      user: user,
       entry: entry,
       snapshot: snapshot
     };
@@ -81,19 +80,18 @@ angular.module('cf.app')
   }
 
   function basicInfo () {
-    var userId = data.user.sys.id;
-    var ssys = data.snapshot.sys;
+    var userId = analytics.getSessionData('user.sys.id');
+    var snapshotSys = data.snapshot.sys;
 
     return {
-      userId: userId,
       entryId: data.entry.sys.id,
-      snapshotId: ssys.id,
-      snapshotType: ssys.snapshotType,
-      authorIsUser: userId === ssys.createdBy.sys.id
+      snapshotId: snapshotSys.id,
+      snapshotType: snapshotSys.snapshotType,
+      authorIsUser: userId === snapshotSys.createdBy.sys.id
     };
   }
 
   function track (event, data) {
-    analytics.pushGtm(_.extend({event: 'versioning:' + event}, data));
+    analytics.track('versioning:' + event, data);
   }
 }]);

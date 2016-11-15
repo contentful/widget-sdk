@@ -1,9 +1,7 @@
 'use strict';
 
-describe('Versioning tracking', function () {
-
+describe('Tracking versioning', function () {
   const data = {
-    user: {sys: {id: 'uid'}},
     entry: {sys: {id: 'eid'}},
     snapshot: {sys: {
       id: 'sid',
@@ -14,20 +12,21 @@ describe('Versioning tracking', function () {
 
   beforeEach(function () {
     module('contentful/test');
-    this.track = this.$inject('track/versioning');
-    this.track.setData(data.user, data.entry, data.snapshot);
-    this.pushGtm = this.$inject('analytics').pushGtm = sinon.stub();
+    this.analytics = this.$inject('analytics');
+    sinon.stub(this.analytics, 'track');
+    this.analytics.enable({sys: {id: 'uid'}});
+
+    this.track = this.$inject('analyticsEvents/versioning');
+    this.track.setData(data.entry, data.snapshot);
 
     this.getTrackingData = () => {
-      return _.first(this.pushGtm.firstCall.args);
+      return this.analytics.track.firstCall.args[1];
     };
 
     this.assertAnalyticsCall = (event, expected) => {
-      sinon.assert.calledOnce(this.pushGtm);
-
+      sinon.assert.calledOnce(this.analytics.track);
+      expect(this.analytics.track.firstCall.args[0]).toBe(`versioning:${event}`);
       const data = this.getTrackingData();
-      expect(data.event).toBe('versioning:' + event);
-
       Object.keys(expected).forEach((key) => {
         expect(data[key]).toEqual(expected[key]);
       });
@@ -35,7 +34,6 @@ describe('Versioning tracking', function () {
 
     this.assertBasicAnalyticsCall = (event) => {
       this.assertAnalyticsCall(event, {
-        userId: 'uid',
         entryId: 'eid',
         snapshotId: 'sid',
         snapshotType: 'publication',
@@ -51,8 +49,10 @@ describe('Versioning tracking', function () {
     });
 
     it('sends false if snapshot was taken by some other user', function () {
-      const user = {sys: {id: 'other-user'}};
-      this.track.setData(user, data.entry, data.snapshot);
+      const snapshot = _.cloneDeep(data.snapshot);
+      snapshot.sys.createdBy.sys.id = 'other-user';
+      this.track.setData(data.entry, snapshot);
+
       this.track.opened();
       this.assertAnalyticsCall('snapshot_opened', {authorIsUser: false});
     });
@@ -160,7 +160,7 @@ describe('Versioning tracking', function () {
 
       this.track.trackableConfirmator(_.noop)();
       this.$apply();
-      sinon.assert.notCalled(this.pushGtm);
+      sinon.assert.notCalled(this.analytics.track);
     });
   });
 
@@ -174,12 +174,12 @@ describe('Versioning tracking', function () {
     it('does nothing if actions were performed between restoring and publishing', function () {
       this.track.registerRestoredVersion({sys: {version: 1, id: 'xyz'}});
       this.track.publishedRestored({sys: {version: 9, id: 'xyz'}});
-      sinon.assert.notCalled(this.pushGtm);
+      sinon.assert.notCalled(this.analytics.track);
     });
 
     it('does nothing if entry was not restored', function () {
       this.track.publishedRestored({sys: {version: 1, id: 'xyz'}});
-      sinon.assert.notCalled(this.pushGtm);
+      sinon.assert.notCalled(this.analytics.track);
     });
   });
 });

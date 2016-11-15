@@ -1,6 +1,6 @@
 // This directive is used for `new_space_dialog` as well as `onboarding_dialog`
 // If `isOnboarding = true` is passed into the scope then it will display the
-// onboarding version of the directive with a different headline, subheadline 
+// onboarding version of the directive with a different headline, subheadline
 // and nav.
 
 
@@ -146,8 +146,9 @@ angular.module('contentful')
       return showFormError('You can\'t create a Space in this Organization');
     }
 
-    // Send analytics event
-    sendTemplateSelectedAnalyticsEvent(template.name);
+    analytics.track('space:template_selected', {
+      templateName: template.name
+    });
 
     // Create space
     client.createSpace(data, orgId)
@@ -183,15 +184,7 @@ angular.module('contentful')
   function createTemplate(template, retried) {
     return controller.templateCreator.create(template)
     .catch(function (data) {
-      if (retried) {
-        _.each(data.errors, function (error) {
-          analytics.track('Created Errored Space Template', {
-            entityType: error.entityType,
-            entityId: error.entityId,
-            action: error.action
-          });
-        });
-      } else {
+      if (!retried) {
         createTemplate(data.template, true);
       }
     });
@@ -215,13 +208,6 @@ angular.module('contentful')
       description: 'We’ve created an example API key for you to help you get started.'
     };
     return spaceContext.space.createDeliveryApiKey(key);
-  }
-
-  function sendTemplateSelectedAnalyticsEvent(templateName) {
-    analytics.track('Selected Space Template', {
-      template: templateName
-    });
-    analytics.trackTotango('Selected Space Template: '+ templateName);
   }
 
   function handleSpaceCreationFailure(err) {
