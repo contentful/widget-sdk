@@ -3,6 +3,7 @@
 angular.module('contentful')
 
 .controller('EntryListSearchController', ['$scope', 'require', function ($scope, require) {
+  var $q = require('$q');
   var ListQuery = require('ListQuery');
   var ReloadNotification = require('ReloadNotification');
   var createRequestQueue = require('overridingRequestQueue');
@@ -22,7 +23,11 @@ angular.module('contentful')
   var isResettingTerm = false;
   var isAppendingPage = false;
 
-  var debouncedUpdateWithTerm = debounce(updateWithTerm, 500);
+  var setIsSearching = makeIsSearchingSetter(true);
+  var unsetIsSearching = makeIsSearchingSetter(false);
+
+
+  var debouncedUpdateWithTerm = debounce(updateWithTerm, 200);
   var updateEntries = createRequestQueue(requestEntries, setupEntriesHandler);
 
   /**
@@ -56,7 +61,6 @@ angular.module('contentful')
     var value = next.value;
     var viewChanged = next.view !== prev.view;
     var hasTerm = _.isString(value) && value.length > 0;
-
 
     if (value === prev.value || isResettingTerm) {
       // for initial run or resetting term just set search term w/o list update
@@ -112,30 +116,49 @@ angular.module('contentful')
     updateEntries();
   }
 
+  function makeIsSearchingSetter (flag) {
+    return function (res) {
+      $scope.context.isSearching = flag;
+      return res;
+    };
+  }
+
   function requestEntries (mode) {
     mode = mode || MODE_RESET;
     $scope.context.loading = true;
-
     if (mode === MODE_RESET && $scope.paginator.getPage() !== 0) {
       $scope.paginator.setPage(0);
       isResettingPage = true;
     }
 
     return prepareQuery()
-    .then(function (query) {
-      return spaceContext.space.getEntries(query);
-    })
-    .then(function (entries) {
-      return {
-        shouldReset: mode !== MODE_APPEND,
-        entries: entries
-      };
-    });
+      .then(setIsSearching)
+      .then(function (query) {
+        return spaceContext.space.getEntries(query);
+      })
+      .then(function (entries) {
+        return {
+          shouldReset: mode !== MODE_APPEND,
+          entries: entries
+        };
+      })
+      .catch(function (error) {
+        return $q.reject(error);
+      });
   }
 
   function setupEntriesHandler (promise) {
-    promise.then(handleEntriesResponse, accessChecker.wasForbidden($scope.context))
-    .catch(ReloadNotification.apiErrorHandler);
+    return promise
+      .then(unsetIsSearching)
+      .then(handleEntriesResponse, accessChecker.wasForbidden($scope.context))
+      .catch(function (err) {
+        if (_.isObject(err) && 'statusCode' in err && err.statusCode === -1) {
+          // entries update failed due to some network issue
+          setIsSearching();
+        }
+        return $q.reject(err);
+      })
+      .catch(ReloadNotification.apiErrorHandler);
   }
 
   function handleEntriesResponse (res) {
@@ -187,7 +210,7 @@ angular.module('contentful')
   function prepareQuery () {
     return ListQuery.getForEntries({
       contentTypeId: getViewItem('contentTypeId'),
-      searchTerm: searchTerm || getViewItem('searchTerm'),
+      searchTerm: getViewItem('searchTerm'),
       order: getViewItem('order'),
       paginator: $scope.paginator
     });

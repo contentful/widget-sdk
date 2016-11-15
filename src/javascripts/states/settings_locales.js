@@ -21,7 +21,7 @@ angular.module('contentful')
     name: 'list',
     url: '',
     label: 'Locales',
-    loadingText: 'Loading Locales...',
+    loadingText: 'Loading locales...',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
       contextHistory.addEntity(listEntity);

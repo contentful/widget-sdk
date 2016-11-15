@@ -22,7 +22,7 @@ angular.module('contentful')
     name: 'list',
     url: '',
     label: 'Webhooks',
-    loadingText: 'Loading Webhooks...',
+    loadingText: 'Loading webhooks...',
     template: '<cf-webhook-list class="workbench webhook-list" />',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
@@ -36,7 +36,7 @@ angular.module('contentful')
     data: {
       isNew: true
     },
-    label: 'New webhook',
+    label: 'New Webhook',
     params: { addToContext: true },
     template: '<cf-webhook-editor cf-ui-tab class="workbench webhook-editor" />',
     controller: ['$scope', 'require', function ($scope, require) {
@@ -62,7 +62,7 @@ angular.module('contentful')
     name: 'call',
     url: '/call/:callId',
     params: { addToContext: true },
-    label: 'Call details',
+    label: 'Call Details',
     resolve: {
       call: ['WebhookRepository', 'space', 'webhook', '$stateParams', function (WebhookRepository, space, webhook, $stateParams) {
         return WebhookRepository.getInstance(space).logs.getCall(webhook.sys.id, $stateParams.callId);
@@ -93,7 +93,7 @@ angular.module('contentful')
     data: {
       isNew: false
     },
-    label: 'Webhook details',
+    label: 'Webhook Details',
     params: { addToContext: true },
     resolve: {
       webhook: ['WebhookRepository', 'space', '$stateParams', function (WebhookRepository, space, $stateParams) {

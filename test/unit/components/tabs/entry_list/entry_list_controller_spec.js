@@ -40,6 +40,7 @@ describe('Entry List Controller', function () {
     spaceContext.space.getContentTypes.resolves([ct]);
 
     const $controller = this.$inject('$controller');
+
     $controller('EntryListController', {$scope: scope});
     scope.selection.updateList = sinon.stub();
   });
@@ -82,8 +83,8 @@ describe('Entry List Controller', function () {
 
   describe('on search term change', function () {
     it('page is set to the first one', function () {
-      scope.$apply();
       scope.paginator.setPage(1);
+      scope.$apply();
       scope.context.view.searchTerm = 'thing';
       scope.$apply();
       expect(scope.paginator.getPage()).toBe(0);
@@ -92,13 +93,12 @@ describe('Entry List Controller', function () {
 
   describe('page parameters change trigger entries reset', function () {
     beforeEach(function () {
-      scope.$digest();
       this.$inject('ListQuery').getForEntries = this.getQuery = sinon.stub().resolves({});
     });
 
     it('search term', function () {
       scope.context.view.searchTerm = 'thing';
-      scope.$digest();
+      scope.$apply();
       sinon.assert.calledOnce(this.getQuery);
     });
 

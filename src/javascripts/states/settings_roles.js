@@ -21,7 +21,7 @@ angular.module('contentful')
     name: 'list',
     url: '',
     label: 'Roles',
-    loadingText: 'Loading Roles...',
+    loadingText: 'Loading roles...',
     template: '<cf-role-list class="workbench role-list" />',
     controller: ['$scope', function ($scope) {
       $scope.context = {};

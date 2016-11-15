@@ -40,7 +40,7 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
   };
 
   this.newContentType = function() {
-    $state.go('spaces.detail.content_types.new');
+    $state.go('spaces.detail.content_types.new.home');
     /**
      * @ngdoc analytics-event
      * @name Clicked Add Content Type Button

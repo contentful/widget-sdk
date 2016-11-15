@@ -23,7 +23,7 @@
             .step__actions(ng-show="!learn.contentTypes.length")
               button.btn-action(
                 ng-click="learn.trackClickedButton('Create a content type')"
-                ui-sref="spaces.detail.content_types.new({ spaceId: learn.spaceId })")
+                ui-sref="spaces.detail.content_types.new.home({ spaceId: learn.spaceId })")
                 | Create a content type
             .step__actions(ng-show="learn.contentTypes.length")
               .step__actions__completed(role="status" data-status-code="learn.onboarding.completed")
