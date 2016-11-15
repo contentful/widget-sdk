@@ -20,20 +20,48 @@ angular.module('contentful')
   var LazyLoader = require('LazyLoader');
   var logger = require('logger');
 
-  var INTEGRATIONS = {
+  /**
+   * 'All' set to false means that all Segment
+   * integrations are disabled. We do whitelist
+   * required integrations afterwards.
+   */
+  var TRACK_INTEGRATIONS = {
     All: false,
-    Mixpanel: false,
+    'Google Analytics': true
+  };
+
+  /**
+   * Intercom integration cares only about user
+   * data and page transitions. We don't need to
+   * send tracking information.
+   */
+  var USER_PAGE_INTEGRATIONS = {
+    All: false,
+    Intercom: true,
     'Google Analytics': true
   };
 
   var buffer = CallBuffer.create();
   var bufferedTrack = bufferedCall('track');
+  var bufferedPage = bufferedCall('page');
+  var bufferedIdentify = bufferedCall('identify');
   var isDisabled = false;
 
   return {
     enable: _.once(enable),
     disable: disable,
-    track: track,
+    /**
+     * @ngdoc method
+     * @name analytics/segment#track
+     * @param {string} event
+     * @param {object} data
+     * @description
+     * Sends a single event with data to
+     * the selected integrations.
+     */
+    track: function track (event, data) {
+      bufferedTrack(event, data, {integrations: TRACK_INTEGRATIONS});
+    },
     /**
      * @ngdoc method
      * @name analytics/segment#page
@@ -42,15 +70,20 @@ angular.module('contentful')
      * @description
      * Sets current page.
      */
-    page: bufferedCall('page'),
+    page: function page (pageName, pageData) {
+      bufferedPage(pageName, pageData, {integrations: USER_PAGE_INTEGRATIONS});
+    },
     /**
      * @ngdoc method
      * @name analytics/segment#identify
+     * @param {string} userId
      * @param {object} userTraits
      * @description
      * Sets current user traits.
      */
-    identify: bufferedCall('identify')
+    identify: function identify (userId, userTraits) {
+      bufferedIdentify(userId, userTraits, {integrations: USER_PAGE_INTEGRATIONS});
+    }
   };
 
   /**
@@ -76,19 +109,6 @@ angular.module('contentful')
   function disable () {
     buffer.disable();
     isDisabled = true;
-  }
-
-  /**
-   * @ngdoc method
-   * @name analytics/segment#track
-   * @param {string} event
-   * @param {object} data
-   * @description
-   * Sends a single event with data to
-   * the selected integrations.
-   */
-  function track (event, data) {
-    bufferedTrack(event, data, INTEGRATIONS);
   }
 
   function bufferedCall (fnName) {
