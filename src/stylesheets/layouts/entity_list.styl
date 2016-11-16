@@ -60,27 +60,21 @@ some stuff here should go into components, other into layout
 
   .main-results-wrapper
     $stretch(30px, 0, 0, 0)
-    margin-top: $rhythm(1)
+    margin-top: 30px
     overflow-y: auto
     .main-results
       border-left: none
+    .entity-status
+      text-transform: uppercase
+      letter-spacing: 2px
+      font-size: 90%
 
   .result-list
     tbody tr
       $tr-clickable()
-
-  .view-customizer
-    position: absolute
-    right: 3px
-    top: 0
-    height: 27px
-    .dropdown-toggle
-      line-height: 28px
-      margin-right: 5px
 
   &__heading
     margin: 8px 0
   &__description
     display: block
     margin: 8px 0
-

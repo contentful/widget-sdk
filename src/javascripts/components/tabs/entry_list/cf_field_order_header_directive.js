@@ -6,7 +6,7 @@ angular.module('contentful').directive('cfFieldOrderHeader', function(){
     restrict: 'A',
     scope: true,
     link: function (scope, elem, attrs) {
-      scope.isDisplayField = attrs.cfFieldOrderHeader == 'displayField';
+      scope.isDisplayField = attrs.cfFieldOrderHeader === 'displayField';
     }
   };
 });

@@ -30,7 +30,7 @@ angular.module('contentful')
       };
 
       scope.isFieldCollapsed = function (field) {
-        return collapsedStates[field.id];
+        return false; // collapsedStates[field.id];
       };
 
       scope.expandColumn = function (field) {
@@ -70,7 +70,6 @@ angular.module('contentful')
       };
 
       // Must be deferred because it depends on the rendered content
-      scope.$watch('displayedFields', _.partial($timeout, collapseColumns), true);
 
       function collapseColumns () {
         elem.find('th.collapsed').removeClass('collapsed');

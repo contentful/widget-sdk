@@ -14,8 +14,12 @@ Markup:
             input(type="checkbox")
             | Title
           th Content type
-          th.x--sortable Updated at
-          th.x--sortable Created at
+          th.x--sortable
+            | Updated at
+            span
+              i.fa.fa-caret-up(ng-show="<some condition>")
+              i.fa.fa-caret-down(ng-show="<some condition>")
+          th Created at
 
   .table__bulk-actions
     span Some entries selected:
@@ -72,9 +76,13 @@ Styleguide 7
     width: 100%
     table-layout: fixed
     background-color: white
+    border-collapse: collapse
 
   th:first-child, td:first-child
-    width: 40%
+    padding-left: 20px
+
+  th:last-child, td:last-child
+    padding-right: 20px
 
   th, td
     padding-left: 10px
@@ -97,6 +105,9 @@ Styleguide 7
         padding-top: 10px
         padding-bottom: 10px
         color: $colors.text-light
+        font-weight: normal
+        span
+          margin-left: 5px
   tbody
     tr
       color: $colors.text-mid
@@ -124,6 +135,18 @@ Styleguide 7
       text-decoration: underline
 
   /* Modifiers */
+  .x--checkbox-cell
+    width: 3%
+
+  .x--large-cell
+    width: 22%
+
+  .x--medium-cell
+    width: 15%
+
+  .x--small-cell
+    width: 12%
+
   .x--align-items
     display: flex
     flex-direction: row
@@ -134,7 +157,6 @@ Styleguide 7
 
   .x--multiline
     > td
-      width: 100%
       white-space: normal
       vertical-align: top
     > .x--align-items

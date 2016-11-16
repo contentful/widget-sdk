@@ -94,9 +94,9 @@ angular.module('contentful')
     if (show) {
       $scope.hasArchivedEntries = false;
       return hasArchivedEntries(spaceContext.space)
-      .then(function (hasArchived) {
-        $scope.hasArchivedEntries = hasArchived;
-      });
+        .then(function (hasArchived) {
+          $scope.hasArchivedEntries = hasArchived;
+        });
     }
   });
 
@@ -128,12 +128,19 @@ angular.module('contentful')
   $scope.getFieldClass = function (field) {
     var type = field.type.toLowerCase();
     var sizeClass = ' ';
-    if (_.includes(narrowFieldTypes, type)) sizeClass += 'narrow';
-    else if (_.includes(mediumFieldTypes, type)) sizeClass += 'medium';
+    if (_.includes(narrowFieldTypes, type)) {
+      sizeClass += 'narrow';
+    } else if (_.includes(mediumFieldTypes, type)) {
+      sizeClass += 'medium';
+    }
     return 'cell-' + type + sizeClass;
   };
 
   $scope.$on('reloadEntries', function () {
     $scope.updateEntries();
   });
+
+  $scope.isSelected = function (entry) {
+    return _.includes($scope.selection.getSelected(), entry);
+  };
 }]);
