@@ -174,7 +174,8 @@ angular.module('cf.es6')
   }
 
   function resolve (to, from) {
-    if (to.startsWith('./') || to.startsWith('../')) {
+    // IE does not support string.startsWith()
+    if (to.substr(0, 2) === './' || to.substr(0, 3) === '../') {
       var froms = from.split('/');
       froms.pop();
       var tos = to.split('/');
