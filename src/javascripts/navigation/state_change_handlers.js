@@ -146,16 +146,19 @@ angular.module('cf.app')
       // rethrow the exception. As a temporary measure we log the error
       // to figure out what errors are actually thrown.
       logRoutingError(
-        error,
+        event, error,
         { state: toState, params: toParams },
         { state: fromState, params: fromParams }
       );
     }
   }
 
-  function logRoutingError (error, from, to) {
+  function logRoutingError (event, error, from, to) {
     var metaData = {
       error: error,
+      event: {
+        name: event.name
+      },
       data: {
         toState: {
           name: dotty.get(to, 'state.name'),
@@ -168,14 +171,17 @@ angular.module('cf.app')
       }
     };
 
-    // $http requests may return rejections that are *not* instances of
-    // 'Error'. We record them separately
-    // property.
-    if (error.statusCode) {
+    if (error && error.statusCode) {
+      // $http requests may return rejections that are *not* instances of
+      // 'Error'. We record them separately
+      // property.
       logger.logServerError('error during routing', metaData);
-    } else {
-      metaData.groupingHash = 'routing-error';
+    } else if (error) {
+      metaData.groupingHash = 'routing-event';
       logger.logException(error, metaData);
+    } else {
+      // Error might not be defined for $stateNotFound events
+      logger.logError('State change error', metaData);
     }
   }
 
