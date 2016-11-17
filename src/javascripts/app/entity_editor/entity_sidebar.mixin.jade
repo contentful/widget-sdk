@@ -131,7 +131,7 @@ mixin entity-sidebar
         img(ng-src="{{presenceUser.data.avatarUrl}}")
 
     .entity-sidebar__widget(
-      ng-repeat="widget in sidebarControls"
+      ng-repeat="widget in sidebarControls track by widget.field.id"
       ng-controller="SidebarWidgetRenderController")
       //- FIX(mudit): This shows the field name currently but should show widget name
       h2.entity-sidebar__heading
