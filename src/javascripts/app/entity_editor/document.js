@@ -208,10 +208,6 @@ angular.module('cf.app')
 
   var presence = PresenceHub.create($scope.user.sys.id, docEventsBus.stream, shout);
 
-  K.onValueScope($scope, presence.collaborators, function (collaborators) {
-    $scope.docCollaborators = collaborators;
-  });
-
   $scope.$on('$destroy', function () {
     presence.destroy();
   });
@@ -259,7 +255,9 @@ angular.module('cf.app')
     valuePropertyAt: memoizedValuePropertyAt,
     sysProperty: sysProperty,
 
+    // TODO only expose presence
     collaboratorsFor: presence.collaboratorsFor,
+    collaborators: presence.collaborators,
     notifyFocus: presence.focus,
 
     /**

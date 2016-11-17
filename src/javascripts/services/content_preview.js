@@ -130,15 +130,14 @@ angular.module('contentful')
   /**
    * @ngdoc method
    * @name contentPreview#getForContentType
-   * @param {object} contentType
+   * @param {string} contentTypeId
    * @returns {Promise<environments>}
    *
    * @description
    * Loads the list of preview environments for a specific content type.
    * Uses #getAll method to load environment list from server or cache.
   */
-  function getForContentType (contentType) {
-    var ctId = contentType.getId();
+  function getForContentType (ctId) {
     return getAll().then(_.partialRight(getEnvsForContentType, ctId));
   }
 
@@ -335,8 +334,8 @@ angular.module('contentful')
    * @ngdoc method
    * @name contentPreview#replaceVariablesInUrl
    * @param {string} urlTemplate
-   * @param {Entry} entry
-   * @param {ContentType} contentType
+   * @param {API.Entry} entry
+   * @param {API.ContentType} contentType
    * @returns {string} url
    *
    * @description
@@ -347,15 +346,15 @@ angular.module('contentful')
   function replaceVariablesInUrl (urlTemplate, entry, contentType) {
     var defaultLocale = TheLocaleStore.getDefaultLocale().internal_code;
     return urlTemplate
-    .replace(ENTRY_ID_PATTERN, entry.getId())
+    .replace(ENTRY_ID_PATTERN, entry.sys.id)
     .replace(ENTRY_FIELD_PATTERN, function (match, fieldId) {
       var internalId = _.get(
         _.find(
-          contentType.data.fields,
+          contentType.fields,
           _.matches({'apiName': fieldId})
         ), 'id'
       );
-      var fieldValue = _.get(entry, ['data', 'fields', internalId, defaultLocale]);
+      var fieldValue = _.get(entry, ['fields', internalId, defaultLocale]);
       return _.toString(fieldValue) || match;
     });
   }

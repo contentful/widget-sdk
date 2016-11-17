@@ -25,6 +25,7 @@ describe('Asset editor controller', function () {
     const space = cfStub.space('testSpace');
     const asset = cfStub.asset(space, 'testAsset', 'testType');
     scope.asset = asset;
+    scope.entity = asset;
     scope.context = {};
 
     const $controller = this.$inject('$controller');

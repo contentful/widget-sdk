@@ -35,6 +35,7 @@ describe('Entry Editor Controller', function () {
         sys: { publishedVersion: 1 }
       });
       scope.entry = entry;
+      scope.entity = entry;
 
       const $controller = this.$inject('$controller');
       $controller('EntryEditorController', {$scope: scope});
