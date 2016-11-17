@@ -48,6 +48,11 @@ angular.module('cf.app')
     };
   }
 
+  /**
+   * Accepts entity payload with public field ids and returns an object
+   * that mocks the @contentful/client library interface of the entity.
+   * In particular it uses private ids.
+   */
   function dataToEntity (data) {
     var prepareFields = $q.resolve(data.fields);
     var ctId = dotty.get(data, 'sys.contentType.sys.id');
@@ -56,12 +61,16 @@ angular.module('cf.app')
       prepareFields = spaceContext
       .publishedCTs.fetch(ctId)
       .then(function (ct) {
-        return _.transform(ct.data.fields, function (acc, ctField) {
-          var field = dotty.get(data, ['fields', ctField.apiName]);
-          if (field) {
-            acc[ctField.id] = field;
-          }
-        }, {});
+        if (ct) {
+          return _.transform(ct.data.fields, function (acc, ctField) {
+            var field = dotty.get(data, ['fields', ctField.apiName]);
+            if (field) {
+              acc[ctField.id] = field;
+            }
+          }, {});
+        } else {
+          return data.fields;
+        }
       });
     }
 
