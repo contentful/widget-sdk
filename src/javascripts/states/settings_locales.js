@@ -9,13 +9,7 @@ angular.module('contentful')
 .factory('states/settings/locales', ['require', function (require) {
   var base = require('states/base');
   var contextHistory = require('contextHistory');
-
-  var listEntity = {
-    getTitle: _.constant('Locales'),
-    link: { state: 'spaces.detail.settings.locales.list' },
-    getType: _.constant('Locales'),
-    getId: _.constant('LOCALES')
-  };
+  var crumbFactory = require('navigation/crumb_factory');
 
   var list = base({
     name: 'list',
@@ -23,53 +17,29 @@ angular.module('contentful')
     loadingText: 'Loading Locales...',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
-      contextHistory.addEntity(listEntity);
+      contextHistory.addEntity(crumbFactory.LocaleList());
     }],
     template: '<div cf-locale-list class="workbench locale-list entity-list"></div>'
   });
 
-  function makeLocaleEditorState (isNew) {
-    return {
-      template: '<cf-locale-editor class="workbench" />',
-      params: { addToContext: true },
-      controller: [
-        '$scope', 'require', 'locale', 'spaceLocales',
-        function ($scope, require, locale, spaceLocales) {
-          var $state = require('$state');
-          var $stateParams = require('$stateParams');
+  var localeEditorState = {
+    template: '<cf-locale-editor class="workbench" />',
+    params: { addToContext: true },
+    controller: [
+      '$scope', 'require', 'locale', 'spaceLocales',
+      function ($scope, require, locale, spaceLocales) {
+        var $state = require('$state');
+        var $stateParams = require('$stateParams');
 
-          $scope.context = $state.current.data;
-          $scope.locale = locale;
-          $scope.spaceLocales = spaceLocales;
+        $scope.context = $state.current.data;
+        $scope.locale = locale;
+        $scope.spaceLocales = spaceLocales;
 
-          // add list state as parent
-          contextHistory.addEntity(listEntity);
-
-          // add current state
-          var crumb = createLocaleCrumb($scope.context, $stateParams.localeId, isNew);
-          contextHistory.addEntity(crumb);
-        }
-      ]
-    };
-  }
-
-  function createLocaleCrumb (context, localeId, isNew) {
-    var id = isNew ? 'LOCALENEW' : localeId;
-    var stateFragment = isNew ? 'new' : 'detail';
-    var params = isNew ? undefined : { localeId: localeId };
-
-    return {
-      getTitle: function () {
-        return context.title + (context.dirty ? '*' : '');
-      },
-      link: {
-        state: 'spaces.detail.settings.locales.' + stateFragment,
-        params: params
-      },
-      getType: _.constant('Locale'),
-      getId: _.constant(id)
-    };
-  }
+        contextHistory.addEntity(crumbFactory.LocaleList());
+        contextHistory.addEntity(crumbFactory.Locale($stateParams.localeId, $scope.context));
+      }
+    ]
+  };
 
   var resolveSpaceLocales = ['space', function (space) {
     return space.getLocales();
@@ -92,7 +62,7 @@ angular.module('contentful')
       }],
       spaceLocales: resolveSpaceLocales
     }
-  }, makeLocaleEditorState(true));
+  }, localeEditorState);
 
   var detail = _.extend({
     name: 'detail',
@@ -106,7 +76,7 @@ angular.module('contentful')
       }],
       spaceLocales: resolveSpaceLocales
     }
-  }, makeLocaleEditorState(false));
+  }, localeEditorState);
 
   return {
     name: 'locales',

@@ -14,8 +14,7 @@ angular.module('contentful').factory('contextHistory', ['$injector', function ($
     purge: function () { contextHistory = []; },
 
     getAll: function () { return contextHistory; },
-    getLast: function () { return _.last(contextHistory); },
-    getAllButLast: function () { return contextHistory.slice(0, contextHistory.length - 1); }
+    getLast: function () { return _.last(contextHistory); }
   };
 
   function addEntity (entity) {
@@ -30,7 +29,7 @@ angular.module('contentful').factory('contextHistory', ['$injector', function ($
 
   function findIndex (entity) {
     return _.findIndex(contextHistory, function (historyEntry) {
-      return historyEntry.getId() === entity.getId();
+      return historyEntry.id === entity.id;
     });
   }
 

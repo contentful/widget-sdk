@@ -2,8 +2,8 @@
 
 describe('contextHistory service', function () {
 
-  var ch, $stateParams;
-  function e(id) { return {getId: _.constant(id)}; }
+  let ch, $stateParams;
+  function e (id) { return {id: id}; }
 
   afterEach(function () {
     ch = $stateParams = null;
@@ -35,7 +35,7 @@ describe('contextHistory service', function () {
 
     it('does not add when not empty and w/o addToContext flag', function () {
       ch.addEntity(e(1)); ch.addEntity(e(1));
-      expect(ch.getLast().getId()).toBe(1);
+      expect(ch.getLast().id).toBe(1);
     });
 
     it('adds when not empty but with addToContext flag', function () {
@@ -50,8 +50,7 @@ describe('contextHistory service', function () {
       expect(ch.getAll().length).toBe(4);
       ch.addEntity(e(3));
       expect(ch.getAll().length).toBe(3);
-      expect(ch.getLast().getId()).toBe(3);
-      expect(ch.getAllButLast()[1].getId()).toBe(2);
+      expect(ch.getLast().id).toBe(3);
     });
   });
 
@@ -62,19 +61,13 @@ describe('contextHistory service', function () {
     });
 
     it('#getAll', function () {
-      var all = ch.getAll();
+      const all = ch.getAll();
       expect(all.length).toBe(3);
-      expect(all[1].getId()).toBe(2);
+      expect(all[1].id).toBe(2);
     });
 
     it('#getLast', function () {
-      expect(ch.getLast().getId()).toBe(3);
-    });
-
-    it('#getAllButLast', function () {
-      var allButLast = ch.getAllButLast();
-      expect(allButLast.length).toBe(2);
-      expect(allButLast[1].getId()).toBe(2);
+      expect(ch.getLast().id).toBe(3);
     });
   });
 
@@ -86,10 +79,9 @@ describe('contextHistory service', function () {
 
     it('#pop', function () {
       expect(ch.getAll().length).toBe(3);
-      var popped = ch.pop();
-      expect(popped.getId()).toBe(3);
+      ch.pop();
       expect(ch.getAll().length).toBe(2);
-      expect(ch.getLast().getId()).toBe(2);
+      expect(ch.getLast().id).toBe(2);
     });
 
     it('#purge', function () {

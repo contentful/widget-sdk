@@ -7,8 +7,7 @@ describe('cfBreadcrumbsDirective spec', function () {
     pop: sinon.spy(),
     purge: sinon.spy(),
     getAll: sinon.stub(),
-    getLast: sinon.spy(),
-    getAllButLast: sinon.spy()
+    getLast: sinon.spy()
   };
   const $stateMock = {
     go: sinon.spy(),
@@ -182,8 +181,8 @@ describe('cfBreadcrumbsDirective spec', function () {
         state: state,
         params: params
       },
-      getType: _.constant(type),
-      getId: _.constant(id)
+      type: type,
+      id: id
     };
   }
 });

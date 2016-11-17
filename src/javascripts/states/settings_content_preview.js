@@ -9,13 +9,7 @@ angular.module('contentful')
 .factory('states/settings/content_preview', ['require', function (require) {
   var base = require('states/base');
   var contextHistory = require('contextHistory');
-
-  var listEntity = {
-    getTitle: _.constant('Content Preview'),
-    link: { state: 'spaces.detail.settings.content_preview.list' },
-    getType: _.constant('PreviewEnvironments'),
-    getId: _.constant('PREVIEWENVIRONMENTS')
-  };
+  var crumbFactory = require('navigation/crumb_factory');
 
   var list = base({
     name: 'list',
@@ -31,7 +25,7 @@ angular.module('contentful')
       }
 
       // add list view as top state
-      contextHistory.addEntity(listEntity);
+      contextHistory.addEntity(crumbFactory.PreviewEnvList());
     }]
   });
 
@@ -44,32 +38,14 @@ angular.module('contentful')
         var $state = require('$state');
         var $stateParams = require('$stateParams');
 
-        var isNew = options.data.isNew;
-        var contentPreviewId = $stateParams.contentPreviewId;
-        var state = 'spaces.detail.settings.content_preview.';
-        var params = isNew ? {} : { contentPreviewId: contentPreviewId };
-        var id = isNew ? 'PREVIEWENVIRONMENTNEW' : contentPreviewId;
-
-        state += isNew ? 'new' : 'detail';
-
         $scope.context = $state.current.data;
         $scope.contentPreview = contentPreview;
 
         // add list view as parent
-        contextHistory.addEntity(listEntity);
+        contextHistory.addEntity(crumbFactory.PreviewEnvList());
 
         // add current view as child
-        contextHistory.addEntity({
-          getTitle: function () {
-            return $scope.context.title + ($scope.context.dirty ? '*' : '');
-          },
-          link: {
-            state: state,
-            params: params
-          },
-          getType: _.constant('PreviewEnvironment'),
-          getId: _.constant(id)
-        });
+        contextHistory.addEntity(crumbFactory.PreviewEnv($stateParams.contentPreviewId, $scope.context));
       }]
     });
 

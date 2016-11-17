@@ -151,12 +151,10 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
       });
       $scope.$watchCollection(contextHistory.getAll, function (items) {
         $scope.crumbs = items.map(function (item) {
-          var type = item.getType();
-
           return {
             getTitle: item.getTitle,
             link: item.link,
-            type: type
+            type: item.type
           };
         });
 
