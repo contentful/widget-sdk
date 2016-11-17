@@ -64,39 +64,36 @@ header.workbench-header
                   i.fa.fa-caret-down(ng-show="context.view.order.direction == 'descending' && isOrderField(field)")
               th.x--small-cell Status
 
-      .table__bulk-actions
-        .workbench-actions(
-          ng-hide="selection.isEmpty()"
-          ng-controller="EntryListActionsController")
+      .table__bulk-actions(ng-hide="selection.isEmpty()")
+        .workbench-actions(ng-controller="EntryListActionsController")
           .workbench-actions__label
-            | {{selection.size()}} Entries selected
+            | {{selection.size() === 1 ? '1 entry' : selection.size() + ' entries'}} selected:
 
-          button.btn-secondary-action.duplicate(type="button"
+          span.text-link--neutral-emphasis-mid(type="button"
             ng-click="duplicateSelected()"
             ng-show="showDuplicate()")
             | Duplicate
-          button.btn-secondary-action.delete(type="button"
+          span.text-link--destructive.delete(type="button"
             ng-show="showDelete()"
             cf-context-menu-trigger
             data-test-id="delete-entry")
             | Delete
-          .delete-confirm(cf-context-menu="top")
-            p You are about to delete {{selection.size()}} Entries
+          .delete-confirm(cf-context-menu="bottom")
+            p You are about to delete {{selection.size() === 1? '1 entry' : selection.size() + ' entries'}}
             button.btn-caution(type="button" ng-click="deleteSelected()")
               | Delete
             button.btn-secondary-action(type="button")
               | Don't Delete
-          button.btn-secondary-action.archive(  type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
-          button.btn-secondary-action.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
-          button.btn-secondary-action.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
-          button.btn-primary-action.publish(    type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}
+          span.text-link--neutral-emphasis-mid.archive(  type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
+          span.text-link--neutral-emphasis-mid.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
+          span.text-link--neutral-emphasis-mid.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
+          span.text-link--constructive.publish(type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}
 
-      .table__body.main-results-wrapper.endless-container(cf-endless-container at-bottom="loadNextPage()" num-elements="paginator.getPage()")
+      .table__body.endless-container(cf-endless-container at-bottom="loadNextPage()" num-elements="paginator.getPage()")
         table
           tbody
             tr.x--multiline(ng-repeat="entry in entries track by entry.getId()"
-              ng-init="entityNavState='spaces.detail.entries.detail({ entryId: entry.getId() })'"
-              ui-sref="{{entityNavState}}"
+              ui-sref="spaces.detail.entries.detail({ entryId: entry.getId() })"
               ng-class="{'x--highlight': isSelected(entry)}")
               td.x--checkbox-cell(ng-click="selection.toggle(entry);$event.stopPropagation()")
                 input(type="checkbox" cf-selection="entry" tabindex="-1")

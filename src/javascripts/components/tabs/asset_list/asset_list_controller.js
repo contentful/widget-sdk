@@ -20,6 +20,10 @@ angular.module('contentful')
     preserveState: true
   });
 
+  $scope.isSelected = function (asset) {
+    return _.includes($scope.selection.getSelected(), asset);
+  };
+
   $scope.entityStatus = entityStatus;
 
   $scope.shouldHide = accessChecker.shouldHide;

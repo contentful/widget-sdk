@@ -62,35 +62,33 @@ header.workbench-header
 
   .workbench-main__right-content
     +no-search-results("!hasQueryResults()", "searchTerm", "context.list")
-    table.result-list.main-results.main-header(ng-show="hasQueryResults()")
-      thead
-        tr
-          th.cell-display-name Name
-          th.cell-description Description
-          th.cell-integer Fields
-          th.cell-date Updated
-          th.cell-symbol By
-          th.cell-status Status
-
-    .main-results-wrapper
-      table.result-list.main-results.animated.entity-table
-        tbody
-          tr.entity-list__item(
-            ng-repeat="contentType in visibleContentTypes track by contentType.getId()"
-            ui-sref="spaces.detail.content_types.detail.home({ contentTypeId: contentType.getId() })")
-            td.cell-display-name
-              a.entity-list-link {{contentType.getName()}}
-            td.cell-description
-              a.entity-list-link {{contentType.data.description}}
-            td.cell-integer
-              a.entity-list-link {{numFields(contentType)}}
-            td.cell-date
-              a.entity-list-link(ng-if="contentType.getUpdatedAt()")
-                date(datetime="{{contentType.getUpdatedAt()}}" cf-relative-datetime)
-            td.cell-symbol
-              a.entity-list-link(cf-user link="contentType.getUpdatedBy()" as="updater")
-                | {{updater | userNameDisplay:user}}
-            td.cell-status(ng-class="statusClass(contentType)")
-              a.entity-list-link
-                .status-label {{statusLabel(contentType)}}
-                .status-bar
+    .table(ng-show="hasQueryResults()")
+      .table__head
+        table
+          thead
+            tr
+              th.x--medium-cell Name
+              th.x--large-cell Description
+              th.x--small-cell Fields
+              th.x--small-cell Updated
+              th.x--small-cell By
+              th.x--small-cell Status
+      .table__body
+        table
+          tbody
+            tr.entity-list__item(
+              ng-repeat="contentType in visibleContentTypes track by contentType.getId()"
+              ui-sref="spaces.detail.content_types.detail.fields({ contentTypeId: contentType.getId() })")
+              td.x--medium-cell
+                | {{contentType.getName()}}
+              td.x--large-cell
+                | {{contentType.data.description}}
+              td.x--small-cell
+                | {{numFields(contentType)}}
+              td.x--small-cell
+                date(ng-if="contentType.getUpdatedAt()" datetime="{{contentType.getUpdatedAt()}}" cf-relative-datetime)
+              td.x--small-cell
+                span(cf-user link="contentType.getUpdatedBy()" as="updater")
+                  | {{updater | userNameDisplay:user}}
+              td.entity-status.x--small-cell(ng-class="statusClass(contentType)")
+                | {{statusLabel(contentType)}}

@@ -1,10 +1,9 @@
 /**
-Tables
+Table Pattern
 
-The `.table` class should be applied to tables that will use the table pattern.
+The `.table` class should be applied to tables that will use the generic table pattern.
 
 Markup:
-
 .table
   .table__head
     table
@@ -64,11 +63,13 @@ Markup:
           td 3 years ago
           td 4 years ago
 
-Styleguide 7
-**/
 
-/* Block */
+Styleguide table-pattern
+**/
 .table
+  height: 100%
+  display: flex
+  flex-direction: column
   line-height: 1.5em
 
   /* Elements */

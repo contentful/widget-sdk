@@ -42,70 +42,66 @@ header.workbench-header
     cf-view-menu="uiConfig.assetListViews")
 
   .workbench-main__right-content
-    table.result-list.main-results.main-header
-      thead
-        tr
-          th.cell-select
-            input(type="checkbox" cf-selection="assets" ng-show="assets.length > 0" tabindex="-1")
-          th.cell-preview Preview
-          th.cell-name Name
-          th.cell-dimensions Dimensions
-          th.cell-type Type
-          th.cell-updated Updated
-          th.cell-author By
-          th.cell-status Status
+    .table
+      .table__head
+        table
+          thead
+            tr
+              th.x--checkbox-cell
+                input(type="checkbox" cf-selection="assets" ng-show="assets.length > 0" tabindex="-1")
+              th.x--small-cell Preview
+              th.x--large-cell Name
+              th.x--medium-cell Dimensions
+              th Type
+              th Updated
+              th By
+              th.x--small-cell Status
 
-    .main-results-wrapper.endless-container(cf-endless-container at-bottom="searchController.loadMore()" num-elements="searchController.paginator.getPage()")
-      table.result-list.main-results
-        tbody
-          tr(ng-repeat="asset in assets track by asset.getId()"
-              ng-init="entityNavState='spaces.detail.assets.detail({ assetId: asset.getId() })'; file=spaceContext.localizedField(asset, 'data.fields.file')"
-              ui-sref="{{entityNavState}}")
-            td.cell-select(ng-click="selection.toggle(asset);$event.stopPropagation()")
-              input(type="checkbox" cf-selection="asset" tabindex="-1")
-            td.cell-preview(ng-class="{'no-padding': (!!file)}")
-              cf-thumbnail(file="file" size="30" ng-if="file")
-            td.cell-name
-              a.entity-list-link(ui-sref="{{entityNavState}}") {{spaceContext.assetTitle(asset)}}
-            td.cell-dimensions
-              span(ng-bind-html="getAssetDimensions(asset)")
-            td.cell-type
-              a.entity-list-link(ui-sref="{{entityNavState}}")
+      .table__bulk-actions(ng-hide="selection.isEmpty()")
+        .workbench-actions(ng-controller="AssetListActionsController")
+          .workbench-actions__label
+            | {{selection.size() === 1 ? '1 asset' : selection.size() + ' assets'}} selected:
+          span.text-link--destructive.delete(type="button"
+            ng-show="showDelete()"
+            cf-context-menu-trigger
+            data-test-id="delete-asset")
+            | Delete
+          .delete-confirm(cf-context-menu="bottom")
+            p You are about to delete {{selection.size() === 1? '1 asset' : selection.size() + ' assets'}}
+            span.btn-caution(type="button" ng-click="deleteSelected()") Delete
+            span.text-link--neutral-emphasis-mid(type="button") Don't Delete
+          span.text-link--neutral-emphasis-mid.archive(type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
+          span.text-link--neutral-emphasis-mid.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
+          span.text-link--neutral-emphasis-mid.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
+          span.text-link--constructive.publish(  type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}
+
+      .table__body.endless-container(cf-endless-container at-bottom="searchController.loadMore()" num-elements="searchController.paginator.getPage()")
+        table
+          tbody
+            tr(ng-repeat="asset in assets track by asset.getId()"
+                ng-init="file=spaceContext.localizedField(asset, 'data.fields.file')"
+                ui-sref="spaces.detail.assets.detail({ assetId: asset.getId() })"
+                ng-class="{'x--highlight': isSelected(asset)}")
+              td.x--checkbox-cell(ng-click="selection.toggle(asset);$event.stopPropagation()")
+                input(type="checkbox" cf-selection="asset" tabindex="-1")
+              td.x--small-cell(ng-class="{'no-padding': (!!file)}")
+                cf-thumbnail(file="file" size="30" ng-if="file")
+              td.x--large-cell {{ spaceContext.assetTitle(asset) }}
+              td.x--medium-cell
+                span(ng-bind-html="getAssetDimensions(asset)")
+              td
                 span {{file|fileType}}
                 span.extension {{file|fileExtension}}
-            td.cell-updated
-              a.entity-list-link(ui-sref="{{entityNavState}}")
+              td
                 date(ng-if="asset.getUpdatedAt()" datetime="{{asset.getUpdatedAt()}}" cf-relative-datetime)
-            td.cell-author
-              a.entity-list-link(cf-user link="asset.getUpdatedBy()" as="updater" ui-sref="{{entityNavState}}")
-                | {{updater | userNameDisplay:user}}
-            td.cell-status(ng-class="entityStatus.getClassname(asset)")
-              a.draft-wrapper.entity-list-link(ui-sref="{{entityNavState}}")
-                .status-label {{entityStatus.getLabel(asset)}}
-                .status-bar
-      .loading(ng-hide="searchController.paginator.isAtLast()")
+              td
+                span(cf-user link="asset.getUpdatedBy()" as="updater")
+                  | {{updater | userNameDisplay:user}}
+              td.entity-status.x--small-cell(ng-class="entityStatus.getClassname(asset)")
+                | {{entityStatus.getLabel(asset)}}
+        .loading(ng-hide="searchController.paginator.isAtLast()")
 
     +no-search-results("!assets.length || isEmpty", "context.view.searchTerm")
 
 .workbench-main.x--content(ng-show="showNoAssetsAdvice()")
   include ./no_assets_advice
-
-
-.workbench-actions(
-  ng-hide="selection.isEmpty()"
-  ng-controller="AssetListActionsController")
-  .workbench-actions__label
-    | {{selection.size()}} Assets selected
-  button.btn-secondary-action.delete(type="button"
-    ng-show="showDelete()"
-    cf-context-menu-trigger
-    data-test-id="delete-asset")
-    | Delete
-  .delete-confirm(cf-context-menu="top")
-    p You are about to delete {{selection.size()}} Assets
-    button.btn-caution(type="button" ng-click="deleteSelected()") Delete
-    button.btn-secondary-action(type="button") Don't Delete
-  button.btn-secondary-action.archive(type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
-  button.btn-secondary-action.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
-  button.btn-secondary-action.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
-  button.btn-primary-action.publish(  type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}
