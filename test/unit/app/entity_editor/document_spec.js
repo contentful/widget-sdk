@@ -497,6 +497,33 @@ describe('entityEditor/Document', function () {
     });
   });
 
+  describe('#reverter', function () {
+    it('has changes if changes are made', function* () {
+      this.connectAndOpen();
+      expect(this.doc.reverter.hasChanges()).toBe(false);
+      yield this.doc.setValueAt(['fields'], {});
+      expect(this.doc.reverter.hasChanges()).toBe(true);
+    });
+
+    it('reverts field changes', function* () {
+      const path = ['fields', 'a', 'en'];
+      this.connectAndOpen();
+      yield this.doc.setValueAt(path, 'NEW');
+      expect(this.doc.getValueAt(path)).toBe('NEW');
+      yield this.doc.reverter.revert();
+      expect(this.doc.getValueAt(path)).toBe('INITIAL');
+    });
+
+    it('does not have changes after reverting', function* () {
+      this.connectAndOpen();
+      expect(this.doc.reverter.hasChanges()).toBe(false);
+      yield this.doc.setValueAt(['fields'], {});
+      expect(this.doc.reverter.hasChanges()).toBe(true);
+      yield this.doc.reverter.revert();
+      expect(this.doc.reverter.hasChanges()).toBe(false);
+    });
+  });
+
   describe('#sysProperty', function () {
     it('holds entity.data.sys as initial value', function () {
       K.assertCurrentValue(
@@ -528,24 +555,76 @@ describe('entityEditor/Document', function () {
     });
   });
 
-  describe('#state.saving', function () {
+  describe('#state.isSaving$', function () {
     it('is false if there is no document initially', function () {
-      expect(this.doc.state.saving).toBe(false);
+      K.assertCurrentValue(this.doc.state.isSaving$, false);
     });
 
     it('changes to if document has inflight operation', function () {
       this.otDoc = this.connectAndOpen();
-      expect(this.doc.state.saving).toBe(false);
+      K.assertCurrentValue(this.doc.state.isSaving$, false);
 
       this.otDoc.inflightOp = true;
       this.otDoc.emit('change', []);
       this.$apply();
-      expect(this.doc.state.saving).toBe(true);
+      K.assertCurrentValue(this.doc.state.isSaving$, true);
 
       this.otDoc.inflightOp = false;
       this.otDoc.emit('acknowledge');
       this.$apply();
-      expect(this.doc.state.saving).toBe(false);
+      K.assertCurrentValue(this.doc.state.isSaving$, false);
+    });
+  });
+
+  describe('#state.isDirty$', function () {
+    beforeEach(function () {
+      this.otDoc = this.connectAndOpen();
+      this.docUpdate = function (path, value) {
+        this.otDoc.setAt(path, value);
+        this.$apply();
+      };
+    });
+
+    it('changes to false if document is at published version', function () {
+      K.assertCurrentValue(this.doc.state.isDirty$, true);
+
+      this.otDoc.version = 12;
+      this.docUpdate(['sys', 'publishedVersion'], 12);
+      K.assertCurrentValue(this.doc.state.isDirty$, false);
+    });
+
+    xit('changes to true if a published document is changed', function () {
+      this.otDoc.version = 12;
+      this.docUpdate(['sys', 'publishedVersion'], 12);
+      K.assertCurrentValue(this.doc.state.isDirty$, false);
+
+      this.docUpdate(['fields'], {});
+      expect(this.isDirtyValues[0]).toBe(true);
+      K.assertCurrentValue(this.doc.state.isDirty$, true);
+    });
+
+    it('changes to true if a document is unpublishd', function () {
+      this.otDoc.version = 12;
+      this.docUpdate(['sys', 'publishedVersion'], 12);
+      K.assertCurrentValue(this.doc.state.isDirty$, false);
+
+      this.docUpdate(['sys', 'publishedVersion'], undefined);
+      K.assertCurrentValue(this.doc.state.isDirty$, true);
+    });
+  });
+
+  describe('#state.isConnected$', function () {
+    it('changes to true when connecting', function () {
+      K.assertCurrentValue(this.doc.state.isConnected$, false);
+      this.connectAndOpen();
+      K.assertCurrentValue(this.doc.state.isConnected$, true);
+    });
+
+    it('changes to false when there is a connection error', function () {
+      this.connectAndOpen();
+      K.assertCurrentValue(this.doc.state.isConnected$, true);
+      this.docLoader.doc.set(DocLoad.Error());
+      K.assertCurrentValue(this.doc.state.isConnected$, false);
     });
   });
 
@@ -560,67 +639,4 @@ describe('entityEditor/Document', function () {
     });
   }
 
-  describe('#state.isDirty', function () {
-    beforeEach(function () {
-      this.otDoc = this.connectAndOpen();
-      this.docUpdate = function (path, value) {
-        this.otDoc.setAt(path, value);
-        this.$apply();
-      };
-      this.isDirtyValues = K.extractValues(this.doc.state.isDirty);
-    });
-
-    it('changes to false if document is at published version', function () {
-      expect(this.isDirtyValues[0]).toBe(true);
-
-      this.otDoc.version = 12;
-      this.docUpdate(['sys', 'publishedVersion'], 12);
-      expect(this.isDirtyValues[0]).toBe(false);
-    });
-
-    it('changes to true if a published document is changed', function () {
-      this.otDoc.version = 12;
-      this.docUpdate(['sys', 'publishedVersion'], 12);
-      expect(this.isDirtyValues[0]).toBe(false);
-
-      this.docUpdate(['fields'], {});
-      expect(this.isDirtyValues[0]).toBe(true);
-    });
-
-    it('changes to true if a document is unpublishd', function () {
-      this.otDoc.version = 12;
-      this.docUpdate(['sys', 'publishedVersion'], 12);
-      expect(this.isDirtyValues[0]).toBe(false);
-
-      this.docUpdate(['sys', 'publishedVersion'], undefined);
-      expect(this.isDirtyValues[0]).toBe(true);
-    });
-  });
-
-  describe('#reverter', function () {
-    it('has changes if changes are made', function* () {
-      this.connectAndOpen();
-      expect(this.doc.reverter.hasChanges()).toBe(false);
-      yield this.doc.setValueAt(['fields'], {});
-      expect(this.doc.reverter.hasChanges()).toBe(true);
-    });
-
-    it('reverts field changes', function* () {
-      const path = ['fields', 'a', 'en'];
-      this.connectAndOpen();
-      yield this.doc.setValueAt(path, 'NEW');
-      expect(this.doc.getValueAt(path)).toBe('NEW');
-      yield this.doc.reverter.revert();
-      expect(this.doc.getValueAt(path)).toBe('INITIAL');
-    });
-
-    it('does not have changes after reverting', function* () {
-      this.connectAndOpen();
-      expect(this.doc.reverter.hasChanges()).toBe(false);
-      yield this.doc.setValueAt(['fields'], {});
-      expect(this.doc.reverter.hasChanges()).toBe(true);
-      yield this.doc.reverter.revert();
-      expect(this.doc.reverter.hasChanges()).toBe(false);
-    });
-  });
 });

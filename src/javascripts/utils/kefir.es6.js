@@ -267,3 +267,33 @@ export function promiseProperty (promise, pendingValue) {
   });
   return bus.property;
 }
+
+
+/**
+ * @ngdoc method
+ * @name utils/kefir#combineProperties
+ * @description
+ * Similar to [Kefir.combine](kefir-combine) but returns a property
+ * instead of a stream.
+ *
+ * Throws an error if one of the arguments is not a Kefir property.
+ *
+ * [kefir-combine]: https://rpominov.github.io/kefir/#combine
+ *
+ * @param {Kefir.Property[]} props
+ * @param {function(): T} combinator
+ * @returns {Property<T>}
+ */
+export function combineProperties (props, combinator) {
+  props.forEach(function (prop) {
+    if (
+      !prop ||
+      typeof prop.getType !== 'function' ||
+      prop.getType() !== 'property'
+    ) {
+      throw new TypeError('Value is not a Kefir property');
+    }
+  });
+
+  return Kefir.combine(props, combinator).toProperty(function () {});
+}

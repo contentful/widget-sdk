@@ -50,11 +50,11 @@ mixin entity-sidebar
 
     .entity-sidebar__status-more
       .entity-sidebar__save-status
-        i.entity-sidebar__saving-spinner(ng-class="otDoc.state.saving && 'x--active'")
-        span.entity-sidebar__last-saved(ng-hide="otDoc.state.saving")
+        i.entity-sidebar__saving-spinner(ng-class="documentIsSaving && 'x--active'")
+        span.entity-sidebar__last-saved(ng-hide="documentIsSaving")
           | Last saved&nbsp;
           time(datetime="{{entity.getUpdatedAt()}}" cf-relative-datetime)
-        span.entity-sidebar__saving(ng-show="otDoc.state.saving")
+        span.entity-sidebar__saving(ng-show="documentIsSaving")
           | Saving
       if attributes.revert
         button.entity-sidebar__revert.btn-link(

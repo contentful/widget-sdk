@@ -66,11 +66,11 @@ describe('Entry Editor Controller', function () {
 
   describe('scope.context.dirty', function () {
     it('changes according to doc state', function () {
-      scope.otDoc.state.isDirty.set(true);
+      scope.otDoc.state.isDirty$.set(true);
       this.$apply();
       expect(scope.context.dirty).toBe(true);
 
-      scope.otDoc.state.isDirty.set(false);
+      scope.otDoc.state.isDirty$.set(false);
       this.$apply();
       expect(scope.context.dirty).toBe(false);
     });

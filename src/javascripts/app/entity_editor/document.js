@@ -9,7 +9,9 @@ angular.module('cf.app')
  * @description
  * Used to edit an entry or asset through ShareJS
  *
- * @property {Document.State} state
+ * The 'SnapshotComparatorController/snapshotDoc' module also provides
+ * an implementation for the interface defined here. Any changes must
+ * be synced across these implementations
  */
 .controller('entityEditor/Document', ['$scope', 'require', 'entity', 'contentType', function ($scope, require, entity, contentType) {
   var $q = require('$q');
@@ -32,10 +34,6 @@ angular.module('cf.app')
 
   var readOnlyBus = K.createPropertyBus(false, $scope);
 
-  controller.state = {
-    editable: false,
-    saving: false
-  };
 
   // The stream for this bus contains all the events that come from the
   // raw ShareJS doc. The data in this stream has the shape
@@ -50,21 +48,17 @@ angular.module('cf.app')
     updateEntitySys(event.doc);
   });
 
-  // A boolean property that holds true if the document has
-  // changes unacknowledged by the server.
-  var hasPendingOps = docEventsBus.stream
-    .map(function (event) {
-      return event.doc;
-    })
-    .toProperty(function () {
-      return controller.doc;
-    })
-    .map(function (doc) {
-      return !!(doc && (doc.inflightOp || doc.pendingOp));
-    });
 
-  K.onValueScope($scope, hasPendingOps, function (hasPendingOps) {
-    controller.state.saving = hasPendingOps;
+  /**
+   * @ngdoc property
+   * @module cf.app
+   * @name Document#state.isSaving$
+   * A boolean property that holds true if the document has
+   * changes unacknowledged by the server.
+   */
+  var isSaving$ = K.sampleBy(docEventsBus.stream, function () {
+    var doc = controller.doc;
+    return !!(doc && (doc.inflightOp || doc.pendingOp));
   });
 
 
@@ -115,7 +109,7 @@ angular.module('cf.app')
   /**
    * @ngdoc property
    * @module cf.app
-   * @name Document#state.isDirty
+   * @name Document#state.isDirty$
    * @description
    * Property that is `false` if and only if the document is published
    * and does not contain changes relative to the published version.
@@ -125,7 +119,7 @@ angular.module('cf.app')
    *
    * @type {Property<boolean>}
    */
-  controller.state.isDirty = sysProperty.map(function (sys) {
+  var isDirty$ = sysProperty.map(function (sys) {
     return sys.publishedVersion
       ? sys.version > sys.publishedVersion + 1
       : true;
@@ -228,9 +222,29 @@ angular.module('cf.app')
   var reverter = Reverter.create(getValueAt([]), version$, setFields);
 
 
+  /**
+   * @ngdoc property
+   * @name Document#state.isConnected$
+   * @type Property<boolean>
+   * @description
+   * Is true if the document is connected
+   */
+  var isConnected$ = doc$.map(function (doc) {
+    return !!doc;
+  }).skipDuplicates();
+
   _.extend(controller, {
     // TODO do not expose internal reference
     doc: undefined,
+
+    state: {
+      // Used by Entry/Asset editor controller
+      isSaving$: isSaving$,
+      // Used by 'cfFocusOtInput' directive and 'FieldLocaleController'
+      isConnected$: isConnected$,
+      // Used by Entry/Asset editor controller
+      isDirty$: isDirty$
+    },
 
     status$: status$,
 
@@ -343,13 +357,11 @@ angular.module('cf.app')
       unplugDocEvents(controller.doc);
       closeDoc(controller.doc);
       delete controller.doc;
-      controller.state.editable = false;
     }
 
     if (doc) {
       normalize(doc);
       controller.doc = doc;
-      controller.state.editable = true;
       plugDocEvents(doc);
     }
   }
