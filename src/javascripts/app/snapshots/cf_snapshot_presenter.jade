@@ -27,7 +27,7 @@
 
     div(ng-switch-when="Array<Symbol>")
       ul.symbol-array-preview
-        li(ng-repeat="item in value") {{ item }}
+        li(ng-repeat="item in value track by $index") {{ item }}
 
     div(ng-switch-when="Location")
       p <strong>Longitude:</strong> {{ value.lon }}
