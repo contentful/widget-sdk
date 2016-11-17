@@ -72,33 +72,34 @@ cf-loader(watch-state-change="true")
 
 .workbench-main(ui-tabpanel="activity")
   .workbench-main__content
-    table.result-list.main-results.main-header
-      thead
-        tr
-          th.cell-time Webhook called at
-          th.cell-result Call result
-          th.cell-actions Actions
-    .main-results-wrapper
-      table.result-list.main-results
-        tbody
-          tr(
-            ng-show="activity.visible && !activity.loading"
-            ng-repeat="log in activity.visible track by log.sys.id"
-            ng-init="entityNavState = 'spaces.detail.settings.webhooks.detail.call({ callId: log.sys.id })'"
-            ui-sref="{{ entityNavState }}")
-            td.cell-time
-              a.entity-list-link(ui-sref="{{entityNavState}}") {{ log.requestAt }}
-            td.cell-result
-              a.entity-list-link(ui-sref="{{ entityNavState }}")
+    .table
+      .table__head
+        table
+          thead
+            tr
+              th.cell-time Webhook called at
+              th.cell-result Call result
+              th.cell-actions Actions
+      .table__body
+        table.result-list.main-results
+          tbody
+            tr(
+              ng-show="activity.visible && !activity.loading"
+              ng-repeat="log in activity.visible track by log.sys.id"
+              ng-init="entityNavState = 'spaces.detail.settings.webhooks.detail.call({ callId: log.sys.id })'"
+              ui-sref="{{ entityNavState }}")
+              td.cell-time
+                | {{ log.requestAt }}
+              td.cell-result
                 cf-webhook-call-status(call="log")
-            td.cell-actions
-              a(ui-sref="{{ entityNavState }}") View details
-          tr(ng-show="activity.visible.length < 1")
-            td(colspan="3")
-              a.entity-list-link No webhook calls yet!
-          tr(ng-show="activity.loading")
-            td(colspan="3")
-              a.entity-list-link Loading logs...
+              td.cell-actions
+                a(ui-sref="{{ entityNavState }}") View details
+            tr(ng-show="activity.visible.length < 1")
+              td(colspan="3")
+                | No webhook calls yet!
+            tr(ng-show="activity.loading")
+              td(colspan="3")
+                | Loading logs...
 
     .webhook-calls__paginator(ng-show="!activity.loading && activity.pages.length > 1")
       a.webhook-calls__paginator-item(

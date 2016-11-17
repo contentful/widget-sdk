@@ -17,35 +17,33 @@ header.workbench-header
       | Your plan does not include multiple locales. <a ui-sref="{{ accountUpgradeState }}">Upgrade for more</a>.
 
 .workbench-main.x--content
-  table.result-list.main-results.main-header
-    thead
-      tr
-        th.cell-name Locale
-        th Fallback
-        th Incl. in response
-        th Editing
-        th Required fields
-  .main-results-wrapper
-    table.result-list.main-results
-      tbody
-        tr(ng-repeat="locale in locales track by locale.getId()"
-            ng-init="entityNavState='spaces.detail.settings.locales.detail({ localeId: locale.getId() })'"
-            ui-sref="{{ entityNavState }}")
-          td.cell-name
-            a.entity-list-link(ui-sref="{{ entityNavState }}")
+  .table
+    .table__head
+      table
+        thead
+          tr
+            th.x--large-cell Locale
+            th.x--small-cell Fallback
+            th.x--small-cell Incl. in response
+            th.x--small-cell Editing
+            th.x--small-cell Required fields
+
+    .table__body
+      table
+        tbody
+          tr(ng-repeat="locale in locales track by locale.getId()"
+              ng-init="entityNavState='spaces.detail.settings.locales.detail({ localeId: locale.getId() })'"
+              ui-sref="{{ entityNavState }}")
+            td.x--large-cell
               | {{ locale.getName() }} ({{ locale.getCode() }})
               span.entity-list-badge(ng-if="locale.isDefault()") Default
-          td(data-test-id="locale-list-fallback-column")
-            a.entity-list-link(ui-sref="{{ entityNavState }}")
+            td.x--small-cell(data-test-id="locale-list-fallback-column")
               | {{ locale.data.fallbackCode ? localeNamesByCode[locale.data.fallbackCode] : 'None' }}
-          td(data-test-id="locale-list-cda-column")
-            a.entity-list-link(ui-sref="{{ entityNavState }}")
+            td.x--small-cell(data-test-id="locale-list-cda-column")
               | {{ locale.data.contentDeliveryApi ? 'Enabled' : 'Disabled' }}
-          td(data-test-id="locale-list-cma-column")
-            a.entity-list-link(ui-sref="{{ entityNavState} }")
+            td.x--small-cell(data-test-id="locale-list-cma-column")
               | {{ locale.data.contentManagementApi ? 'Enabled' : 'Disabled' }}
-          td(data-test-id="locale-list-optional-column")
-            a.entity-list-link(ui-sref="{{ entityNavState }}")
+            td.x--small-cell(data-test-id="locale-list-optional-column")
               | {{ locale.data.optional ? 'Can be published empty' : 'Content is required' }}
 
     .advice.locale-list__advice
