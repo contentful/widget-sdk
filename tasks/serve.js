@@ -78,7 +78,11 @@ function createServer (getBuilds) {
       res
       .status(500)
       .type('text')
-      .send(err.message + '\n' + err.err.message)
+      .send([
+        err.message,
+        err.err.message,
+        err.err.stack
+      ].join('\n'))
       .end();
     });
   });
