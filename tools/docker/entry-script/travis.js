@@ -41,6 +41,7 @@ export default function* runTravis ({branch, pr, version}) {
   yield* createFileDist('preview', version, travis.distBranch, true)
   yield* createFileDist('staging', version, travis.distBranch)
   yield* createFileDist('production', version, travis.distBranch)
+  yield* createFileDist('development', version, travis.distBranch)
   if (travis.isMainBranch) {
     yield* configureIndex(version, travis.targetEnv, 'build/index.html')
     yield* createPackageDist(version)
@@ -97,7 +98,7 @@ function getTravisTargetEnv (branch, isMerge) {
  * Copies the following files.
  * ~~~
  * build/app -> output/files/${env}/app
- * build/index.html -> ouptut/files/${env}/archive/${version}/index-compiled.html
+ * build/index.html -> output/files/${env}/archive/${version}/index-compiled.html
  * ~~~
  *
  * and if `branch` is defined

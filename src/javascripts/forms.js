@@ -7,7 +7,7 @@
  * @description
  * Low-level directives for dealing with user input and data bindings
  */
-angular.module('cf.forms', [])
+angular.module('cf.forms')
 
 /**
  * @ngdoc directive
