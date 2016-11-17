@@ -15,6 +15,7 @@ angular.module('contentful')
   var createAssetSchema = require('validation').schemas.Asset;
   var errorMessageBuilder = require('errorMessageBuilder');
   var deepFreeze = require('utils/DeepFreeze').deepFreeze;
+  var Document = require('entityEditor/Document');
 
   var notify = notifier(function () {
     return '“' + $scope.title + '”';
@@ -31,11 +32,8 @@ angular.module('contentful')
   $scope.locales = $controller('entityEditor/LocalesController');
 
   // TODO rename the scope property
-  $scope.otDoc = $controller('entityEditor/Document', {
-    $scope: $scope,
-    entity: $scope.entity,
-    contentType: null
-  });
+  $scope.otDoc = Document.create($scope.entity, null, $scope.user);
+  $scope.$on('$destroy', $scope.otDoc.destroy);
 
   $scope.state = $controller('entityEditor/StateController', {
     $scope: $scope,
@@ -84,7 +82,7 @@ angular.module('contentful')
   // File uploads
   $scope.$on('fileUploaded', function (_event, file, locale) {
     setTitleOnDoc(file, locale.internal_code);
-    $scope.asset.process($scope.otDoc.doc.version, locale.internal_code)
+    $scope.asset.process($scope.otDoc.getVersion(), locale.internal_code)
     .catch(function (err) {
       $scope.$emit('fileProcessingFailed');
       notification.error('There has been a problem processing the Asset.');

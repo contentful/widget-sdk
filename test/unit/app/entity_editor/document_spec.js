@@ -1,8 +1,6 @@
 'use strict';
 
 describe('entityEditor/Document', function () {
-  let scope, K, DocLoad;
-
   beforeEach(function () {
     module('contentful/test', ($provide, $controllerProvider) => {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
@@ -14,12 +12,12 @@ describe('entityEditor/Document', function () {
     });
 
 
-    K = this.$inject('mocks/kefir');
-    DocLoad = this.$inject('data/ShareJS/Connection').DocLoad;
+    this.K = this.$inject('mocks/kefir');
+    this.DocLoad = this.$inject('data/ShareJS/Connection').DocLoad;
     const OtDoc = this.$inject('mocks/OtDoc');
 
     this.docLoader = {
-      doc: K.createMockProperty(DocLoad.None()),
+      doc: this.K.createMockProperty(this.DocLoad.None()),
       destroy: sinon.spy()
     };
 
@@ -35,7 +33,7 @@ describe('entityEditor/Document', function () {
 
     this.connectAndOpen = function (data) {
       const doc = new OtDoc(_.cloneDeep(data || this.entity.data));
-      this.docLoader.doc.set(DocLoad.Doc(doc));
+      this.docLoader.doc.set(this.DocLoad.Doc(doc));
       this.$apply();
       return doc;
     };
@@ -68,25 +66,12 @@ describe('entityEditor/Document', function () {
       }
     };
 
-    this.contentType = {data: {}};
+    this.contentType = {data: {fields: []}};
+    this.user = {sys: {id: 'USER'}};
 
-    const $controller = this.$inject('$controller');
-    const $rootScope = this.$inject('$rootScope');
-
-    scope = $rootScope.$new();
-    scope.contentType = {data: {fields: []}};
-    scope.user = {sys: {id: 'USER'}};
-    this.doc = $controller('entityEditor/Document', {
-      $scope: scope,
-      entity: this.entity,
-      contentType: this.contentType
-    });
-
+    this.createDoc = this.$inject('entityEditor/Document').create;
+    this.doc = this.createDoc(this.entity, this.contentType, this.user);
     this.doc.setReadOnly(false);
-  });
-
-  afterEach(function () {
-    scope = K = DocLoad = null;
   });
 
   describe('when doc is loaded', function () {
@@ -111,10 +96,14 @@ describe('entityEditor/Document', function () {
       this.otDoc = this.connectAndOpen();
     });
 
+    afterEach(function () {
+      this.normalize.restore();
+    });
+
     it('calls the document normalizer', function () {
       sinon.assert.calledWith(
         this.normalize,
-        this.doc, this.doc.doc.snapshot, this.contentType, this.localeStore.getPrivateLocales()
+        this.doc, this.otDoc.snapshot, this.contentType, this.localeStore.getPrivateLocales()
       );
     });
 
@@ -152,13 +141,13 @@ describe('entityEditor/Document', function () {
       this.fireChange();
       sinon.assert.calledOnce(this.entity.update);
       const data = this.entity.data;
-      expect(data).not.toBe(this.doc.doc.snapshot);
-      expect(_.omit(data, ['sys'])).toLookEqual(_.omit(this.doc.doc.snapshot, ['sys']));
+      expect(data).not.toBe(this.otDoc.snapshot);
+      expect(_.omit(data, ['sys'])).toLookEqual(_.omit(this.otDoc.snapshot, ['sys']));
     });
 
     it('it updates the entity version', function () {
       this.entity.data.sys.version = '';
-      this.doc.doc.version = 'NEW VERSION';
+      this.otDoc.version = 'NEW VERSION';
       this.fireChange();
       expect(this.entity.data.sys.version).toBe('NEW VERSION');
     });
@@ -166,7 +155,7 @@ describe('entityEditor/Document', function () {
     it('it updates the entity timestamp for new versions', function () {
       this.entity.data.sys.updatedAt = 'UPDATED AT';
       this.entity.data.sys.version = 0;
-      this.doc.doc.version = 1;
+      this.otDoc.version = 1;
       this.fireChange();
       expect(this.entity.data.sys.updatedAt).toBe(this.now.toISOString());
     });
@@ -174,16 +163,16 @@ describe('entityEditor/Document', function () {
     it('it does not update the entity timestamp for new versions', function () {
       this.entity.data.sys.updatedAt = 'UPDATED AT';
       this.entity.data.sys.version = 1;
-      this.doc.doc.version = 1;
+      this.otDoc.version = 1;
       this.fireChange();
       expect(this.entity.data.sys.updatedAt).toBe('UPDATED AT');
     });
   });
 
-  describe('on scope destruction', function () {
+  describe('on instance destruction', function () {
     beforeEach(function () {
       this.otDoc = this.connectAndOpen();
-      scope.$destroy();
+      this.doc.destroy();
     });
 
     it('closes the doc', function () {
@@ -193,29 +182,29 @@ describe('entityEditor/Document', function () {
 
   describe('#status$', function () {
     it('is "ok" initially', function () {
-      K.assertCurrentValue(this.doc.status$, 'ok');
+      this.K.assertCurrentValue(this.doc.status$, 'ok');
     });
 
     it('is "ok" when the document connects', function () {
       this.connectAndOpen();
       this.$apply();
-      K.assertCurrentValue(this.doc.status$, 'ok');
+      this.K.assertCurrentValue(this.doc.status$, 'ok');
     });
 
     it('is "ot-connection-error" when there is a document error', function () {
       this.connectAndOpen();
       this.$apply();
-      K.assertCurrentValue(this.doc.status$, 'ok');
-      this.docLoader.doc.set(DocLoad.Error());
-      K.assertCurrentValue(this.doc.status$, 'ot-connection-error');
+      this.K.assertCurrentValue(this.doc.status$, 'ok');
+      this.docLoader.doc.set(this.DocLoad.Error());
+      this.K.assertCurrentValue(this.doc.status$, 'ot-connection-error');
     });
 
     it('is "archived" when the entity is archived', function () {
       const doc = this.connectAndOpen();
       this.$apply();
-      K.assertCurrentValue(this.doc.status$, 'ok');
+      this.K.assertCurrentValue(this.doc.status$, 'ok');
       doc.setAt(['sys', 'archivedVersion'], 1);
-      K.assertCurrentValue(this.doc.status$, 'archived');
+      this.K.assertCurrentValue(this.doc.status$, 'archived');
     });
   });
 
@@ -505,7 +494,7 @@ describe('entityEditor/Document', function () {
     it('has changes if changes are made', function* () {
       this.connectAndOpen();
       expect(this.doc.reverter.hasChanges()).toBe(false);
-      yield this.doc.setValueAt(['fields'], {});
+      yield this.doc.setValueAt(['fields', 'foo'], 'bar');
       expect(this.doc.reverter.hasChanges()).toBe(true);
     });
 
@@ -521,7 +510,7 @@ describe('entityEditor/Document', function () {
     it('does not have changes after reverting', function* () {
       this.connectAndOpen();
       expect(this.doc.reverter.hasChanges()).toBe(false);
-      yield this.doc.setValueAt(['fields'], {});
+      yield this.doc.setValueAt(['fields', 'foo'], 'bar');
       expect(this.doc.reverter.hasChanges()).toBe(true);
       yield this.doc.reverter.revert();
       expect(this.doc.reverter.hasChanges()).toBe(false);
@@ -530,7 +519,7 @@ describe('entityEditor/Document', function () {
 
   describe('#sysProperty', function () {
     it('holds entity.data.sys as initial value', function () {
-      K.assertCurrentValue(
+      this.K.assertCurrentValue(
         this.doc.sysProperty,
         this.entity.data.sys
       );
@@ -561,22 +550,22 @@ describe('entityEditor/Document', function () {
 
   describe('#state.isSaving$', function () {
     it('is false if there is no document initially', function () {
-      K.assertCurrentValue(this.doc.state.isSaving$, false);
+      this.K.assertCurrentValue(this.doc.state.isSaving$, false);
     });
 
     it('changes to if document has inflight operation', function () {
       this.otDoc = this.connectAndOpen();
-      K.assertCurrentValue(this.doc.state.isSaving$, false);
+      this.K.assertCurrentValue(this.doc.state.isSaving$, false);
 
       this.otDoc.inflightOp = true;
       this.otDoc.emit('change', []);
       this.$apply();
-      K.assertCurrentValue(this.doc.state.isSaving$, true);
+      this.K.assertCurrentValue(this.doc.state.isSaving$, true);
 
       this.otDoc.inflightOp = false;
       this.otDoc.emit('acknowledge');
       this.$apply();
-      K.assertCurrentValue(this.doc.state.isSaving$, false);
+      this.K.assertCurrentValue(this.doc.state.isSaving$, false);
     });
   });
 
@@ -590,53 +579,51 @@ describe('entityEditor/Document', function () {
     });
 
     it('changes to false if document is at published version', function () {
-      K.assertCurrentValue(this.doc.state.isDirty$, true);
+      this.K.assertCurrentValue(this.doc.state.isDirty$, true);
 
       this.otDoc.version = 12;
       this.docUpdate(['sys', 'publishedVersion'], 12);
-      K.assertCurrentValue(this.doc.state.isDirty$, false);
+      this.K.assertCurrentValue(this.doc.state.isDirty$, false);
     });
 
     xit('changes to true if a published document is changed', function () {
       this.otDoc.version = 12;
       this.docUpdate(['sys', 'publishedVersion'], 12);
-      K.assertCurrentValue(this.doc.state.isDirty$, false);
+      this.K.assertCurrentValue(this.doc.state.isDirty$, false);
 
       this.docUpdate(['fields'], {});
       expect(this.isDirtyValues[0]).toBe(true);
-      K.assertCurrentValue(this.doc.state.isDirty$, true);
+      this.K.assertCurrentValue(this.doc.state.isDirty$, true);
     });
 
     it('changes to true if a document is unpublishd', function () {
       this.otDoc.version = 12;
       this.docUpdate(['sys', 'publishedVersion'], 12);
-      K.assertCurrentValue(this.doc.state.isDirty$, false);
+      this.K.assertCurrentValue(this.doc.state.isDirty$, false);
 
       this.docUpdate(['sys', 'publishedVersion'], undefined);
-      K.assertCurrentValue(this.doc.state.isDirty$, true);
+      this.K.assertCurrentValue(this.doc.state.isDirty$, true);
     });
   });
 
   describe('#state.isConnected$', function () {
     it('changes to true when connecting', function () {
-      K.assertCurrentValue(this.doc.state.isConnected$, false);
+      this.K.assertCurrentValue(this.doc.state.isConnected$, false);
       this.connectAndOpen();
-      K.assertCurrentValue(this.doc.state.isConnected$, true);
+      this.K.assertCurrentValue(this.doc.state.isConnected$, true);
     });
 
     it('changes to false when there is a connection error', function () {
       this.connectAndOpen();
-      K.assertCurrentValue(this.doc.state.isConnected$, true);
-      this.docLoader.doc.set(DocLoad.Error());
-      K.assertCurrentValue(this.doc.state.isConnected$, false);
+      this.K.assertCurrentValue(this.doc.state.isConnected$, true);
+      this.docLoader.doc.set(this.DocLoad.Error());
+      this.K.assertCurrentValue(this.doc.state.isConnected$, false);
     });
   });
 
   describe('#permissions', function () {
     beforeEach(function () {
-      const $controller = this.$inject('$controller');
-      const $rootScope = this.$inject('$rootScope');
-
+      const originalCreateDoc = this.createDoc;
       const baseSys = {
         id: 'ENTITY ID',
         contentType: {
@@ -646,14 +633,12 @@ describe('entityEditor/Document', function () {
         }
       };
 
-      this.createDoc = function (sys) {
-        const scope = $rootScope.$new();
-        scope.user = {sys: {id: 'USER'}};
-        return $controller('entityEditor/Document', {
-          $scope: scope,
-          entity: {data: {sys: _.merge(baseSys, sys)}},
-          contentType: null
-        });
+      this.createDoc = (sys) => {
+        return originalCreateDoc(
+          {data: {sys: _.merge(baseSys, sys)}},
+          null,
+          {sys: {id: 'USER'}}
+        );
       };
     });
 
@@ -734,7 +719,7 @@ describe('entityEditor/Document', function () {
 
   function itRejectsWithoutDocument (method) {
     it('rejects when document is not opened', function () {
-      this.docLoader.doc.set(DocLoad.None());
+      this.docLoader.doc.set(this.DocLoad.None());
       this.$apply();
       const errored = sinon.stub();
       this.doc[method]().catch(errored);

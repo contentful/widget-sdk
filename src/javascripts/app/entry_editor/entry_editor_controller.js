@@ -39,6 +39,7 @@ angular.module('contentful')
   var localeStore = require('TheLocaleStore');
   var errorMessageBuilder = require('errorMessageBuilder');
   var deepFreeze = require('utils/DeepFreeze').deepFreeze;
+  var pool = require('data/sharejs/connection_pool');
 
   var notify = notifier(function () {
     return '“' + $scope.title + '”';
@@ -59,11 +60,8 @@ angular.module('contentful')
   });
 
   // TODO rename the scope property
-  $scope.otDoc = $controller('entityEditor/Document', {
-    $scope: $scope,
-    entity: $scope.entity,
-    contentType: $scope.contentType
-  });
+  $scope.otDoc = pool.getDoc($scope.entity, $scope.contentType, $scope.user);
+  $scope.$on('$destroy', _.partial(pool.dispose, $scope.otDoc));
 
   $scope.state = $controller('entityEditor/StateController', {
     $scope: $scope,

@@ -9,15 +9,15 @@ describe('Entry Editor Controller', function () {
   });
 
   beforeEach(function () {
-    const document = sinon.stub();
-    module('contentful/test', ($provide, $controllerProvider) => {
+    const createDoc = sinon.stub();
+    module('contentful/test', ($provide) => {
       $provide.removeControllers(
         'FormWidgetsController',
         'entityEditor/LocalesController',
         'entityEditor/StatusNotificationsController'
       );
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
-      $controllerProvider.register('entityEditor/Document', document);
+      $provide.value('entityEditor/Document', {create: createDoc});
     });
 
     this.createController = function () {
@@ -45,7 +45,7 @@ describe('Entry Editor Controller', function () {
       return scope;
     };
 
-    document.returns(this.$inject('mocks/entityEditor/Document').create());
+    createDoc.returns(this.$inject('mocks/entityEditor/Document').create());
     scope = this.createController();
     this.$apply();
   });
