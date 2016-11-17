@@ -14,6 +14,7 @@ angular.module('contentful')
   var TheLocaleStore = $injector.get('TheLocaleStore');
   var createIDMap = $injector.get('widgets/IDMap');
   var $q = $injector.get('$q');
+  var entitySelector = $injector.get('entitySelector');
 
   /**
    * @ngdoc method
@@ -211,6 +212,14 @@ angular.module('contentful')
 
       setHeight: function (height) {
         iframe.setAttribute('height', height);
+      },
+
+      openDialog: function (type, options) {
+        if (type === 'entitySelector') {
+          return entitySelector.openFromExtension(options);
+        } else {
+          return $q.reject(new Error('Unknown dialog type.'));
+        }
       }
     };
   }

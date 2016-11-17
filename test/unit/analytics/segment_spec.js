@@ -45,11 +45,13 @@ describe('Segment service', function () {
     });
   });
 
-  describeCall('track', {All: false, Mixpanel: false, 'Google Analytics': true});
-  describeCall('page');
-  describeCall('identify');
+  describeCall('track', {All: false, 'Google Analytics': true});
+  describeCall('page', {All: false, Intercom: true, 'Google Analytics': true});
+  describeCall('identify', {All: false, Intercom: true, 'Google Analytics': true});
 
-  function describeCall (fnName, extraArg) {
+  function describeCall (fnName, integrations) {
+    const expectedArgs = ['key', {data: 1}, {integrations}];
+
     describe(`${fnName} method`, function () {
       beforeEach(function () {
         this.enable = () => {
@@ -57,13 +59,9 @@ describe('Segment service', function () {
           this.$apply(); // resolve lazy loader
         };
 
-        this.getExpectedArgs = () => {
-          return extraArg ? ['key', {data: 1}, extraArg] : ['key', {data: 1}];
-        };
-
         this.assertMethodCalled = () => {
           sinon.assert.calledOnce(this.analytics[fnName]);
-          expect(this.analytics[fnName].firstCall.args).toEqual(this.getExpectedArgs());
+          expect(this.analytics[fnName].firstCall.args).toEqual(expectedArgs);
         };
       });
 
@@ -99,7 +97,7 @@ describe('Segment service', function () {
           err: err,
           msg: err.message,
           analyticsFn: fnName,
-          analyticsFnArgs: this.getExpectedArgs()
+          analyticsFnArgs: expectedArgs
         }]);
       });
     });
