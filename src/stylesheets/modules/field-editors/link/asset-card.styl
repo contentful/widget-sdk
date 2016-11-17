@@ -55,11 +55,10 @@
     text-align: center
     overflow: hidden
     color: $colors.text-mid
-    cursor: pointer
     // Text shadow for drag n drop visibility:
     text-shadow: 2px 2px 15px white, -2px -2px 15px white, 0 0 10px white, 0 0 1px white
-    &--missing
-      font-style: italic
+    &[role=button]
+      cursor: pointer
 
   &__tooltip
     padding: $tooltip-padding

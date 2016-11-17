@@ -37,7 +37,7 @@ angular.module('contentful')
   var K = require('utils/kefir');
   var spaceContext = require('spaceContext');
   var EntityHelpers = require('EntityHelpers');
-  var goToEntityEditor = require('goToEntityEditor');
+  var Navigator = require('states/Navigator');
 
   var fieldLocale = $scope.fieldLocale;
   var ctField = $scope.widget.field;
@@ -70,7 +70,24 @@ angular.module('contentful')
 
   this.space = spaceContext.cma;
   this.entityHelpers = EntityHelpers.newForLocale($scope.locale.code);
-  this.state = {goToEditor: goToEntityEditor};
+  this.state = {
+    goToEditor: function (entity) {
+      var ref = Navigator.makeEntityRef(entity);
+      return Navigator.go(ref);
+    }
+  };
+
+  // This interace is not exposed on the Extensions SDK. It serves for
+  // internal convenience. Everything that uses these values can be
+  // written (albeit akwardly) with the Extensions SDK.
+  this.fieldProperties = {
+    // Property<boolean>
+    isDisabled$: isEditingDisabled,
+    // Property<Error[]?>
+    schemaErrors$: fieldLocale.errors$,
+    // Property<any>
+    value$: fieldLocale.doc.value$
+  };
 
   this.field = {
     onIsDisabledChanged: function (cb) {
