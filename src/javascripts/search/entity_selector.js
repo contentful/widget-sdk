@@ -1,5 +1,11 @@
 'use strict';
 
+/**
+ * @ngdoc service
+ * @name entitySelector
+ * @description
+ * Opens a modal window for entity selection.
+ */
 angular.module('contentful')
 .factory('entitySelector', ['require', function (require) {
 
@@ -8,6 +14,7 @@ angular.module('contentful')
   var $q = require('$q');
   var assetContentType = require('assetContentType');
   var mimetype = require('mimetype');
+  var TheLocaleStore = require('TheLocaleStore');
 
   var LABELS = {
     entry_single: {
@@ -36,13 +43,56 @@ angular.module('contentful')
     }
   };
 
-  return {open: open};
+  return {
+    open: openFromField,
+    openFromExtension: openFromExtension
+  };
 
-  function open (field, links) {
-    var config = prepareConfig(field, links);
+  /**
+   * @ngdoc method
+   * @name entitySelector#open
+   * @param {API.Field} field
+   * @param {API.Link[]?} links
+   * @returns {Promise<API.Entity[]>}
+   * @description
+   * Opens a modal for the provided reference
+   * field and optional list of existing links.
+   */
+  function openFromField (field, links) {
+    return open(prepareFieldConfig(field, links));
+  }
 
+  /**
+   * @ngdoc method
+   * @name entitySelector#openFromExtension
+   * @param {string}   options.locale        Locale code to show entity description
+   * @param {string}   options.entityType    "Entry" or "Asset"
+   * @param {boolean}  options.multiple      Flag for turning on/off multiselection
+   * @param {number}   options.min           Minimal number of selected entities
+   * @param {number}   options.max           Maximal number of selected entities
+   * @param {string[]} options.contentTypes  List of CT IDs to filter entries with
+   * @returns {Promise<API.Entity[]>}
+   * @description
+   * Opens a modal for a configuration object
+   * coming from the extension SDK "dialogs"
+   * namespace.
+   */
+  function openFromExtension (options) {
+    return open(prepareExtensionConfig(options))
+    .then(function (selected) {
+      // resolve with a single object if selecting only
+      // one entity, resolve with an array otherwise
+      return options.multiple ? selected : selected[0];
+    }, function (err) {
+      // resolve with `null` if a user skipped selection,
+      // reject with an error otherwise
+      return err ? $q.reject(err) : null;
+    });
+  }
+
+  function open (config) {
     if (!config.linksEntry && !config.linksAsset) {
-      return $q.reject(new Error('Provide a valid field object.'));
+      return $q.reject(new Error('Provide a valid configuration object.'));
     }
 
     return getSingleContentType(config)
@@ -74,7 +124,7 @@ angular.module('contentful')
     }
   }
 
-  function prepareConfig (field, links) {
+  function prepareFieldConfig (field, links) {
     field = field || {};
     links = _.map(links || [], function (link) {
       return link.sys.id;
@@ -92,12 +142,28 @@ angular.module('contentful')
       min: min,
       linksEntry: field.linkType === 'Entry' || field.itemLinkType === 'Entry',
       linksAsset: field.linkType === 'Asset' || field.itemLinkType === 'Asset',
-      linkedEntityIds: links,
       linkedContentTypeIds: findLinkValidation(field, 'linkContentType'),
-      linkedMimetypeGroups: findLinkValidation(field, 'linkMimetypeGroup'),
-      linkedFileSize: findValidation(field, 'assetFileSize', {}),
-      linkedImageDimensions: findValidation(field, 'assetImageDimensions', {})
+      linkedMimetypeGroups: findLinkValidation(field, 'linkMimetypeGroup')
+
+      // @todo see comments in "prepareQueryExtension"
+      // linkedFileSize: findValidation(field, 'assetFileSize', {}),
+      // linkedImageDimensions: findValidation(field, 'assetImageDimensions', {})
     };
+
+    return _.extend(config, {queryExtension: prepareQueryExtension(config)});
+  }
+
+  function prepareExtensionConfig (options) {
+    options = options || {};
+    var config = _.pick(options, ['locale', 'multiple', 'min', 'max']);
+
+    config = _.extend(config, {
+      locale: config.locale || TheLocaleStore.getDefaultLocale().code,
+      linksEntry: options.entityType === 'Entry',
+      linksAsset: options.entityType === 'Asset',
+      linkedContentTypeIds: options.contentTypes || [],
+      linkedMimetypeGroups: []
+    });
 
     return _.extend(config, {queryExtension: prepareQueryExtension(config)});
   }
@@ -133,13 +199,16 @@ angular.module('contentful')
   function prepareQueryExtension (config) {
     var extension = {};
 
-    if (config.linksEntry && config.linkedContentTypeIds.length > 1) {
-      extension['sys.contentType.sys.id[in]'] = config.linkedContentTypeIds.join(',');
+    if (config.linksEntry) {
+      var ids = config.linkedContentTypeIds;
+      if (Array.isArray(ids) && ids.length > 1) {
+        extension['sys.contentType.sys.id[in]'] = ids.join(',');
+      }
     }
 
     if (config.linksAsset) {
       var groups = config.linkedMimetypeGroups;
-      if (groups.length > 0) {
+      if (Array.isArray(groups) && groups.length > 0) {
         extension['fields.file.contentType[in]'] = _.reduce(groups, function (cts, group) {
           return cts.concat(mimetype.getTypesForGroup(group));
         }, []).join(',');

@@ -434,6 +434,53 @@ describe('Extension SDK', function () {
     });
   });
 
+  describe('#dialogs methods', function () {
+    const methods = [
+      ['selectSingleEntry', 'Entry', false],
+      ['selectSingleAsset', 'Asset', false],
+      ['selectMultipleEntries', 'Entry', true],
+      ['selectMultipleAssets', 'Asset', true]
+    ];
+
+    beforeEach(function () {
+      this.selector = this.$inject('entitySelector');
+      this.openStub = sinon.stub().resolves(null);
+      this.selector.openFromExtension = this.openStub;
+    });
+
+    it('delegates to entity selector call', function* (api) {
+      for (let [method, entityType, multiple] of methods) {
+        const result = yield api.dialogs[method]({test: true});
+        expect(result).toBe(null);
+        sinon.assert.calledWithMatch(this.openStub, {
+          test: true, entityType, multiple
+        });
+      }
+    });
+
+    it('resolves with result of single selection', function* (api) {
+      this.openStub.resolves({result: true});
+      for (let [method] of methods.slice(0, 2)) {
+        expect(yield api.dialogs[method]()).toEqual({result: true});
+      }
+    });
+
+    it('resolves with result of multi selection', function* (api) {
+      this.openStub.resolves([{i: 1}, {i: 2}]);
+      for (let [method] of methods.slice(2)) {
+        expect(yield api.dialogs[method]()).toEqual([{i: 1}, {i: 2}]);
+      }
+    });
+
+    it('rejects if an error occurred', function* (api) {
+      this.openStub.rejects(new Error('boom!'));
+      for (let [method] of methods) {
+        const err = yield api.dialogs[method]().catch(_.identity);
+        expect(err.message).toBe('boom!');
+      }
+    });
+  });
+
   function when (desc1, setup) {
     return {it: whenIt, fit: whenFit};
 

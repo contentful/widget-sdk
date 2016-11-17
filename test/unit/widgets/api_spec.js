@@ -151,4 +151,28 @@ describe('widgets/API', function () {
     });
   });
 
+  describe('default handlers', function () {
+    describe('#openDialog', function () {
+      beforeEach(function () {
+        const api = this.createAPI();
+        this.handler = api.channel.handlers.openDialog;
+      });
+
+      pit('rejects if dialog type is unknown', function () {
+        return this.handler('xxx', {}).catch((err) => {
+          expect(err instanceof Error).toBe(true);
+          expect(err.message).toBe('Unknown dialog type.');
+        });
+      });
+
+      it('calls entity selector', function () {
+        const spy = sinon.spy();
+        const opts = {test: true};
+        this.$inject('entitySelector').openFromExtension = spy;
+
+        this.handler('entitySelector', opts);
+        sinon.assert.calledOnce(spy.withArgs(opts));
+      });
+    });
+  });
 });
