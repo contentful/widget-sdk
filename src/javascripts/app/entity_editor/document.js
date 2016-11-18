@@ -300,7 +300,7 @@ angular.module('cf.app')
 
   function setValueAt (path, value) {
     return withRawDoc(function (doc) {
-      if (StringField.is(path[1], contentType)) {
+      if (path.length === 3 && StringField.is(path[1], contentType)) {
         return StringField.setAt(doc, path, value);
       } else {
         return ShareJS.setDeep(doc, path, value);
@@ -360,8 +360,8 @@ angular.module('cf.app')
     }
 
     if (doc) {
-      normalize(doc);
       controller.doc = doc;
+      normalize(doc);
       plugDocEvents(doc);
     }
   }
