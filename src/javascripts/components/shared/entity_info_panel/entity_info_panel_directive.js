@@ -1,24 +1,29 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfEntityInfoPanel', [function () {
+.directive('cfEntityInfoPanel', ['require', function (require) {
+  var K = require('utils/kefir');
+
   return {
     scope: {
-      entity: '=',
-      contentType: '=',
-      user: '='
+      // Property<API.Sys>
+      entitySysProperty: '<',
+      // API.ConentType
+      contentType: '<?',
+      // API.User
+      user: '<'
     },
     restrict: 'E',
     template: JST.entity_info_panel(),
     controller: ['$scope', function ($scope) {
       if ($scope.contentType) {
-        $scope.contentTypeName = $scope.contentType.getName();
-        $scope.contentTypeDescription = $scope.contentType.data.description;
+        $scope.contentTypeName = $scope.contentType.name || 'Untitled';
+        $scope.contentTypeDescription = $scope.contentType.description;
       }
 
-      $scope.$watch('entity.data.sys', function (sys) {
+      K.onValueScope($scope, $scope.entitySysProperty, function (sys) {
         $scope.sys = sys;
-      }, true);
+      });
     }]
   };
 }]);

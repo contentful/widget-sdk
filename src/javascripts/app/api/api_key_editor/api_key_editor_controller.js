@@ -13,10 +13,14 @@ angular.module('contentful')
   var closeState = $injector.get('navigation/closeState');
   var sdkInfoSupplier = $injector.get('sdkInfoSupplier');
   var analytics = $injector.get('analytics');
+  var K = $injector.get('utils/kefir');
 
   var notify = notifier(function getTitle () {
     return truncate($scope.apiKey.getName(), 50);
   });
+
+  // Required by cfEntityInfoPanel directive
+  $scope.apiKeySys$ = K.constant($scope.apiKey.data.sys);
 
   $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
 

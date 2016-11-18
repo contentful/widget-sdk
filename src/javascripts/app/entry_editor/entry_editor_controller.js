@@ -39,12 +39,25 @@ angular.module('contentful')
   var createEntrySchema = require('validation').fromContentType;
   var localeStore = require('TheLocaleStore');
   var errorMessageBuilder = require('errorMessageBuilder');
+  var deepFreeze = require('utils/DeepFreeze').deepFreeze;
 
   var notify = notifier(function () {
     return '“' + $scope.title + '”';
   });
 
   $scope.locales = $controller('entityEditor/LocalesController');
+
+  // Static meta data related to an entity
+  $scope.entityInfo = deepFreeze({
+    id: $scope.entity.data.sys.id,
+    type: $scope.entity.data.sys.type,
+    contentTypeId: $scope.contentType.data.sys.id,
+    // TODO Normalize CT data if this property is used by more advanced
+    // services like the 'Document' controller and the 'cfEntityField'
+    // directive. Normalizing means that we set external field IDs from
+    // internal ones, etc. See for example 'data/editingInterfaces/transformer'
+    contentType: _.cloneDeep($scope.contentType.data)
+  });
 
   // TODO rename the scope property
   $scope.otDoc = $controller('entityEditor/Document', {
@@ -85,11 +98,6 @@ angular.module('contentful')
 
   K.onValueScope($scope, $scope.otDoc.state.isDirty$, function (isDirty) {
     $scope.context.dirty = isDirty;
-  });
-
-  // TODO move this into sidebar controller
-  K.onValueScope($scope, $scope.otDoc.state.isSaving$, function (isSaving) {
-    $scope.documentIsSaving = isSaving;
   });
 
   // OT Stuff
