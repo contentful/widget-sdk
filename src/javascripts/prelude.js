@@ -133,7 +133,7 @@ angular.module('cf.es6')
     if (exports.__esModule) {
       return exports;
     } else {
-      return Object.assign({default: exports}, exports);
+      return _.assign({default: exports}, exports);
     }
   }
 
