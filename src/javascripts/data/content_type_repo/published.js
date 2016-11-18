@@ -100,8 +100,10 @@ angular.module('cf.data')
      * Get a content type instance by ID if it is already loaded or fetch the CT
      * from the API.
      *
+     * Returns null if the content type does not exist.
+     *
      * @param {string} id
-     * @returns {Promise<Client.ContentType>}
+     * @returns {Promise<Client.ContentType?>}
      */
     function fetch (id) {
       var ct = store.get(id);
