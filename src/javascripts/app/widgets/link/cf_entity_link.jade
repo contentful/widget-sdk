@@ -19,4 +19,4 @@ include ./entity_link_mixins
         span(ng-if="!missing && description") {{ description | truncate:150 }}
         span(ng-if="missing || !description") No description available
 
-  +entity-link-actions
+  +entity-link-actions(item-class="entity-link__action")

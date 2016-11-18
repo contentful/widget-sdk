@@ -65,10 +65,16 @@
     color: $colors.text-light
     background-color: $element-background
 
-    .entity-link__actions > *
+  &__action
+    flex-shrink: 0
+    padding-left: 0.3em
+    padding-right: 0.3em
+    cursor: pointer
+    &, &:link
       color: $colors.blue-light
-      &:hover
-        color: $colors.blue-dark
+    &:hover
+      color: $colors.blue-dark
+
 
   &__details
     min-width: 180px

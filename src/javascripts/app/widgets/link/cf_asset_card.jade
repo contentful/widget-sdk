@@ -31,4 +31,5 @@ include ./entity_link_mixins
       li.asset-card__image-resolution(ng-if="file.details.image")
         | {{ file.details.image.width }}&times;{{ file.details.image.height }}
 
-    +entity-link-actions
+    div(style="display: flex")
+      +entity-link-actions(item-class="asset-card__action")
