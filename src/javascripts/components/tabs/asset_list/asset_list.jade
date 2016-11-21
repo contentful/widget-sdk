@@ -88,9 +88,7 @@ header.workbench-header
                 aria-label="cell-select"
                 ng-click="selection.toggle(asset);$event.stopPropagation()")
                 input(type="checkbox" cf-selection="asset" tabindex="-1")
-              td.x--image-cell(
-                aria-label="cell-preview"
-                ng-class="{'no-padding': (!!file)}")
+              td(aria-label="cell-preview").x--image-cell
                 cf-thumbnail(file="file" size="30" ng-if="file")
               td(aria-label="cell-name").x--large-cell {{ spaceContext.assetTitle(asset) }}
               td(aria-label="cell-dimensions").x--medium-cell
