@@ -10,7 +10,6 @@ rules:
   no-restricted-syntax:
   - error
   - AssignmentPattern
-  - ArrayPattern
   - BreakStatement
   - ClassBody
   - ClassDeclaration
@@ -26,7 +25,6 @@ rules:
   - LabeledStatement
   - MetaProperty
   - MethodDefinition
-  - ObjectPattern
   - RestElement
   - SequenceExpression
   - SpreadElement
