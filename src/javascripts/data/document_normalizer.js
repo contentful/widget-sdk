@@ -40,17 +40,15 @@ angular.module('cf.data')
     var localeMap = makeLocaleMap(locales);
     removeUnknownLocales(snapshot, localeMap);
     removeDeletedFields(snapshot, ctFields);
-    forceFieldObject(otDoc, ctFields);
+    forceFieldObject(otDoc);
   }
 
 
-  function forceFieldObject (otDoc, ctFields) {
-    _.forEach(ctFields, function (field) {
-      var docField = otDoc.getValueAt(['fields', field.id]);
-      if (!_.isObject(docField)) {
-        otDoc.setValueAt(['fields', field.id], {});
-      }
-    });
+  function forceFieldObject (otDoc) {
+    var fields = otDoc.getValueAt(['fields']);
+    if (!_.isObject(fields)) {
+      otDoc.setValueAt(['fields'], {});
+    }
   }
 
 
