@@ -19,7 +19,6 @@ angular.module('contentful')
 .controller('FieldLocaleController', ['require', '$scope', '$attrs', function (require, $scope, $attrs) {
   var spaceContext = require('spaceContext');
   var K = require('utils/kefir');
-  var policyAccessChecker = require('accessChecker/policy');
   var FieldLocaleDoc = require('entityEditor/FieldLocaleDocument');
 
   var controller = this;
@@ -185,19 +184,14 @@ angular.module('contentful')
    * - `editable` Is true if 'disabled' is false
    */
 
-  var hasEditingPermission$ =
-    $scope.docImpl.sysProperty
-    // The content type id never changes
-    .take(1)
-    .map(function (sys) {
-      // Assets have an implicit content type id of 'null'
-      var ctId = sys.contentType && sys.contentType.sys.id;
-      return policyAccessChecker.canEditFieldLocale(ctId, field, locale);
-    }).skipDuplicates();
+  var editingAllowed =
+    $scope.docImpl
+    .permissions.canEditFieldLocale(field.apiName, locale.code);
 
-  controller.access$ = K.combineProperties(
-    [hasEditingPermission$, $scope.docImpl.state.isConnected$],
-    function (editingAllowed, connected) {
+  // TODO move this to FieldLocaleDocument
+  controller.access$ =
+    $scope.docImpl.state.isConnected$
+    .map(function (connected) {
       if (field.disabled) {
         return EDITING_DISABLED;
       } else if (!editingAllowed) {

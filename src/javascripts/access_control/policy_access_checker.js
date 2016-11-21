@@ -55,6 +55,8 @@ angular.module('contentful').factory('accessChecker/policy', ['require', functio
     });
   }
 
+  // TODO only pass field id and locale code
+  // Separate method for assets
   function canEditFieldLocale (contentTypeId, field, locale) {
     var fieldId = field.apiName || field.id;
     var localeCode = locale.code;

@@ -25,6 +25,7 @@
     "babel-plugin-transform-es2015-arrow-functions": "^6.8.0",
     "babel-plugin-transform-es2015-block-scoping": "^6.18.0",
     "babel-plugin-transform-es2015-modules-systemjs": "^6.18.0",
+    "babel-plugin-transform-es2015-template-literals": "^6.8.0",
     "bootstrap": "^3.1.1",
     "browserify": "^13.1.0",
     "browserify-pegjs": "~0.8.0-2",

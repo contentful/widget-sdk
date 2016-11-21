@@ -9,7 +9,6 @@ angular.module('contentful')
   var notifier = require('entryEditor/notifications');
   var spaceContext = require('spaceContext');
   var truncate = require('stringUtils').truncate;
-  var accessChecker = require('accessChecker');
   var K = require('utils/kefir');
   var Validator = require('entityEditor/Validator');
   var localeStore = require('TheLocaleStore');
@@ -72,8 +71,8 @@ angular.module('contentful')
   });
 
   // OT Stuff
-  $scope.$watch(function assetEditorDisabledWatcher (scope) {
-    return scope.asset.isArchived() || isReadOnly();
+  $scope.$watch(function assetEditorDisabledWatcher () {
+    return $scope.asset.isArchived();
   }, $scope.otDoc.setReadOnly);
 
   // Building the form
@@ -112,9 +111,5 @@ angular.module('contentful')
     } else {
       notify.publishServerFail(error);
     }
-  }
-
-  function isReadOnly () {
-    return !accessChecker.canUpdateAsset($scope.asset);
   }
 }]);

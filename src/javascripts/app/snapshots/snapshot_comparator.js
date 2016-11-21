@@ -141,13 +141,13 @@ angular.module('cf.app')
   this.setInvalid = _.noop;
 }])
 
-.controller('SnapshotComparisonController', ['$scope', 'require', function ($scope, require) {
-  var policyAccessChecker = require('accessChecker/policy');
+.controller('SnapshotComparisonController', ['$scope', function ($scope) {
+  var field = $scope.field;
+  var locale = $scope.locale;
+  var fieldPath = ['fields', field.id, locale.internal_code];
 
-  var fieldPath = ['fields', $scope.field.id, $scope.locale.internal_code];
-
-  var ctId = $scope.contentType.getId();
-  var canEdit = policyAccessChecker.canEditFieldLocale(ctId, $scope.field, $scope.locale);
+  var canEdit =
+    $scope.otDoc.permissions.canEditFieldLocale(field.apiName, locale.code);
 
   var currentVersion = $scope.otDoc.getValueAt(fieldPath);
   var snapshotVersion = $scope.snapshotDoc.getValueAt(fieldPath);

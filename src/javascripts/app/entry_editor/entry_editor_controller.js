@@ -31,7 +31,6 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var notifier = require('entryEditor/notifications');
   var truncate = require('stringUtils').truncate;
-  var accessChecker = require('accessChecker');
   var DataFields = require('EntityEditor/DataFields');
   var ContentTypes = require('data/ContentTypes');
   var K = require('utils/kefir');
@@ -100,9 +99,9 @@ angular.module('contentful')
     $scope.context.dirty = isDirty;
   });
 
-  // OT Stuff
+  // TODO internalize this
   $scope.$watch(function entryEditorDisabledWatcher () {
-    return $scope.entry.isArchived() || isReadOnly();
+    return $scope.entry.isArchived();
   }, $scope.otDoc.setReadOnly);
 
 
@@ -178,9 +177,5 @@ angular.module('contentful')
     } else {
       return 'This reference requires an entry of an unexistent content type';
     }
-  }
-
-  function isReadOnly () {
-    return !accessChecker.canUpdateEntry($scope.entry);
   }
 }]);

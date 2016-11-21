@@ -28,6 +28,11 @@ angular.module('contentful/mocks')
         isConnected$: K.createMockProperty(true)
       },
 
+      permissions: {
+        can: sinon.stub().returns(true),
+        canEditFieldLocale: sinon.stub().returns(true)
+      },
+
       open: sinon.stub(),
       close: sinon.stub(),
 

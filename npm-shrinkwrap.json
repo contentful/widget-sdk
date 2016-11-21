@@ -109,6 +109,9 @@
     "babel-plugin-transform-es2015-modules-systemjs": {
       "version": "6.18.0"
     },
+    "babel-plugin-transform-es2015-template-literals": {
+      "version": "6.8.0"
+    },
     "babel-runtime": {
       "version": "6.18.0"
     },
