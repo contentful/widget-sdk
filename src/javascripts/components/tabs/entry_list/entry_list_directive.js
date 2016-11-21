@@ -25,14 +25,6 @@ angular.module('contentful')
       var collapsedStates = {};
       var expandedField;
 
-      scope.getFieldCollapsedClass = function (field) {
-        return collapsedStates[field.id] ? 'collapsed' : '';
-      };
-
-      scope.isFieldCollapsed = function (field) {
-        return false; // collapsedStates[field.id];
-      };
-
       scope.expandColumn = function (field) {
         expandedField = field.id;
         $timeout(collapseColumns);

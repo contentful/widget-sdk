@@ -18,26 +18,26 @@ header.workbench-header
       table
         thead
           tr
-            th.x--large-cell.cell-wh-name Webhook name
-            th.x--large-cell.cell-url URL
-            th.x--small-cell.cell-health % of successful calls
-            th.x--small-cell.cell-http-basic Using HTTP Basic Auth?
-            th.x--medium-cell Actions
+            th(aria-label="cell-wh-name").x--large-cell Webhook name
+            th(aria-label="cell-url").x--large-cell URL
+            th(aria-label="cell-health").x--small-cell % of successful calls
+            th(aria-label="cell-http-basic").x--small-cell Using HTTP Basic Auth?
+            th(aria-label="cell-actions").x--medium-cell Actions
     .table__body
       table
         tbody
           tr(ng-repeat="webhook in webhooks track by webhook.sys.id"
             ng-init="entityNavState = 'spaces.detail.settings.webhooks.detail({ webhookId: webhook.sys.id })'"
             ui-sref="{{ entityNavState }}")
-            td.x--large-cell.cell-wh-name
+            td(aria-label="cell-wh-name").x--large-cell
               | {{ webhook.name }}
-            td.x--large-cell.cell-url
+            td(aria-label="cell-url").x--large-cell
               | {{ webhook.url }}
-            td.x--small-cell.cell-health
+            td(aria-label="cell-health").x--small-cell
               cf-webhook-health(webhook-id="webhook.sys.id")
-            td.x--small-cell.cell-http-basic
+            td(aria-label="cell-http-basic").x--small-cell
               | {{ webhook.httpBasicUsername ? 'yes' : 'no' }}
-            td.x--medium-cell.cell-actions
+            td(aria-label="cell-actions").x--medium-cell
               a(ui-sref="{{ entityNavState }}") View details
           tr(ng-show="webhooks.length < 1")
             td(colspan="5")

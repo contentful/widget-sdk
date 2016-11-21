@@ -37,6 +37,6 @@ describe('The ContentType list directive', function () {
 
     scope.searchTerm = 'B';
     scope.$apply();
-    expect(element.find('.main-results tbody tr').length).toBe(2);
+    expect(element.find('.table tbody tr').length).toBe(2);
   });
 });

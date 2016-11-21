@@ -47,33 +47,35 @@ header.workbench-header
         table
           thead
             tr
-              th.x--checkbox-cell
+              th(aria-label="cell-select").x--checkbox-cell
                 input(type="checkbox" cf-selection="assets" ng-show="assets.length > 0" tabindex="-1")
-              th.x--small-cell Preview
-              th.x--large-cell Name
-              th.x--medium-cell Dimensions
-              th Type
-              th Updated
-              th By
-              th.x--small-cell Status
+              th(aria-label="cell-preview").x--image-cell Preview
+              th(aria-label="cell-name").x--large-cell Name
+              th(aria-label="cell-dimensions").x--medium-cell Dimensions
+              th(aria-label="cell-type") Type
+              th(aria-label="cell-updated") Updated
+              th(aria-label="cell-author").x--small-cell By
+              th(aria-label="cell-status").x--small-cell Status
 
       .table__bulk-actions(ng-hide="selection.isEmpty()")
         .workbench-actions(ng-controller="AssetListActionsController")
           .workbench-actions__label
             | {{selection.size() === 1 ? '1 asset' : selection.size() + ' assets'}} selected:
-          span.text-link--destructive.delete(type="button"
+          span.text-link--destructive(
+            type="button"
             ng-show="showDelete()"
             cf-context-menu-trigger
-            data-test-id="delete-asset")
+            data-test-id="delete-asset"
+            aria-label="delete")
             | Delete
           .delete-confirm(cf-context-menu="bottom")
             p You are about to delete {{selection.size() === 1? '1 asset' : selection.size() + ' assets'}}
             span.btn-caution(type="button" ng-click="deleteSelected()") Delete
-            span.text-link--neutral-emphasis-mid(type="button") Don't Delete
-          span.text-link--neutral-emphasis-mid.archive(type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
-          span.text-link--neutral-emphasis-mid.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
-          span.text-link--neutral-emphasis-mid.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
-          span.text-link--constructive.publish(  type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}
+            span.btn-secondary-action(type="button") Don't Delete
+          span.text-link--neutral-emphasis-mid(type="button" ng-click="archiveSelected()"  ng-show="showArchive()" aria-label="archive") Archive
+          span.text-link--neutral-emphasis-mid(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()" aria-label="unarchive") Unarchive
+          span.text-link--neutral-emphasis-mid(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()" aria-label="unpublish") Unpublish
+          span.text-link--constructive(type="submit" ng-click="publishSelected()"  ng-show="showPublish()" aria-label="publish") {{publishButtonName()}}
 
       .table__body.endless-container(cf-endless-container at-bottom="searchController.loadMore()" num-elements="searchController.paginator.getPage()")
         table
@@ -82,22 +84,28 @@ header.workbench-header
                 ng-init="file=spaceContext.localizedField(asset, 'data.fields.file')"
                 ui-sref="spaces.detail.assets.detail({ assetId: asset.getId() })"
                 ng-class="{'x--highlight': isSelected(asset)}")
-              td.x--checkbox-cell(ng-click="selection.toggle(asset);$event.stopPropagation()")
+              td.x--checkbox-cell(
+                aria-label="cell-select"
+                ng-click="selection.toggle(asset);$event.stopPropagation()")
                 input(type="checkbox" cf-selection="asset" tabindex="-1")
-              td.x--small-cell(ng-class="{'no-padding': (!!file)}")
+              td.x--image-cell(
+                aria-label="cell-preview"
+                ng-class="{'no-padding': (!!file)}")
                 cf-thumbnail(file="file" size="30" ng-if="file")
-              td.x--large-cell {{ spaceContext.assetTitle(asset) }}
-              td.x--medium-cell
+              td(aria-label="cell-name").x--large-cell {{ spaceContext.assetTitle(asset) }}
+              td(aria-label="cell-dimensions").x--medium-cell
                 span(ng-bind-html="getAssetDimensions(asset)")
-              td
+              td(aria-label="cell-type")
                 span {{file|fileType}}
                 span.extension {{file|fileExtension}}
-              td
+              td(aria-label="cell-updated")
                 date(ng-if="asset.getUpdatedAt()" datetime="{{asset.getUpdatedAt()}}" cf-relative-datetime)
-              td
+              td.x--small-cell(aria-label="cell-author")
                 span(cf-user link="asset.getUpdatedBy()" as="updater")
                   | {{updater | userNameDisplay:user}}
-              td.entity-status.x--small-cell(ng-class="entityStatus.getClassname(asset)")
+              td.entity-status.x--small-cell(
+                aria-label="cell-status"
+                ng-class="entityStatus.getClassname(asset)")
                 | {{entityStatus.getLabel(asset)}}
         .loading(ng-hide="searchController.paginator.isAtLast()")
 

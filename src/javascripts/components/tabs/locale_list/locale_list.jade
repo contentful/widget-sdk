@@ -22,7 +22,7 @@ header.workbench-header
       table
         thead
           tr
-            th.x--large-cell Locale
+            th(aria-label="cell-name").x--large-cell Locale
             th.x--small-cell Fallback
             th.x--small-cell Incl. in response
             th.x--small-cell Editing
@@ -32,9 +32,8 @@ header.workbench-header
       table
         tbody
           tr(ng-repeat="locale in locales track by locale.getId()"
-              ng-init="entityNavState='spaces.detail.settings.locales.detail({ localeId: locale.getId() })'"
-              ui-sref="{{ entityNavState }}")
-            td.x--large-cell
+              ui-sref="spaces.detail.settings.locales.detail({ localeId: locale.getId() })")
+            td(aria-label="cell-name").x--large-cell
               | {{ locale.getName() }} ({{ locale.getCode() }})
               span.entity-list-badge(ng-if="locale.isDefault()") Default
             td.x--small-cell(data-test-id="locale-list-fallback-column")

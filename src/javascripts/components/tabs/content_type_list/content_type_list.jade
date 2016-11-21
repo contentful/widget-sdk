@@ -67,28 +67,28 @@ header.workbench-header
         table
           thead
             tr
-              th.x--medium-cell Name
-              th.x--large-cell Description
-              th.x--small-cell Fields
-              th.x--small-cell Updated
-              th.x--small-cell By
-              th.x--small-cell Status
+              th(aria-label="cell-display-name").x--medium-cell Name
+              th(aria-label="cell-description").x--large-cell Description
+              th(aria-label="cell-integer").x--small-cell Fields
+              th(aria-label="cell-date").x--small-cell Updated
+              th(aria-label="cell-symbol").x--small-cell By
+              th(aria-label="cell-status").x--small-cell Status
       .table__body
         table
           tbody
             tr.entity-list__item(
               ng-repeat="contentType in visibleContentTypes track by contentType.getId()"
               ui-sref="spaces.detail.content_types.detail.fields({ contentTypeId: contentType.getId() })")
-              td.x--medium-cell
+              td(aria-label="cell-display-name").x--medium-cell
                 | {{contentType.getName()}}
-              td.x--large-cell
+              td(aria-label="cell-description").x--large-cell
                 | {{contentType.data.description}}
-              td.x--small-cell
+              td(aria-label="cell-integer").x--small-cell
                 | {{numFields(contentType)}}
-              td.x--small-cell
+              td(aria-label="cell-date").x--small-cell
                 date(ng-if="contentType.getUpdatedAt()" datetime="{{contentType.getUpdatedAt()}}" cf-relative-datetime)
-              td.x--small-cell
+              td(aria-label="cell-symbol").x--small-cell
                 span(cf-user link="contentType.getUpdatedBy()" as="updater")
                   | {{updater | userNameDisplay:user}}
-              td.entity-status.x--small-cell(ng-class="statusClass(contentType)")
+              td.entity-status.x--small-cell(aria-label="cell-status" ng-class="statusClass(contentType)")
                 | {{statusLabel(contentType)}}

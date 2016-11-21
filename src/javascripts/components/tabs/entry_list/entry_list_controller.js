@@ -110,32 +110,6 @@ angular.module('contentful')
     });
   }
 
-  var narrowFieldTypes = [
-    'integer',
-    'number',
-    'boolean'
-  ];
-
-  var mediumFieldTypes = [
-    'text',
-    'symbol',
-    'location',
-    'date',
-    'array',
-    'link'
-  ];
-
-  $scope.getFieldClass = function (field) {
-    var type = field.type.toLowerCase();
-    var sizeClass = ' ';
-    if (_.includes(narrowFieldTypes, type)) {
-      sizeClass += 'narrow';
-    } else if (_.includes(mediumFieldTypes, type)) {
-      sizeClass += 'medium';
-    }
-    return 'cell-' + type + sizeClass;
-  };
-
   $scope.$on('reloadEntries', function () {
     $scope.updateEntries();
   });
