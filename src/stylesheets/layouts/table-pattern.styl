@@ -13,7 +13,7 @@ Markup:
             input(type="checkbox")
             | Title
           th Content type
-          th.x--sortable
+          th.x--sortable(ng-class="{'x--active-sort': <some condition>}")
             | Updated at
             span
               i.fa.fa-caret-up(ng-show="<some condition>")
@@ -22,8 +22,8 @@ Markup:
 
   .table__bulk-actions
     span Some entries selected:
-    a action 1
-    a action 2
+    a.text-link--neutral-emphasis-mid action 1
+    a.text-link--destructive action 2
 
   .table__body
     table
@@ -66,6 +66,8 @@ Markup:
 
 Styleguide 6.1
 **/
+
+/* Block */
 .table
   height: 100%
   display: flex
