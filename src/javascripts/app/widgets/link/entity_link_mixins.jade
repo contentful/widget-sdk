@@ -15,20 +15,23 @@ mixin entity-link-title
     span.entity-link__title--missing(ng-if="missing") Entity missing or inaccessible
 
 mixin entity-link-actions
-  button.entity-link__action(
+  button(
+    class=attributes['item-class']
     data-test-id="entity-edit"
     ng-if="actions.edit"
     ng-click="actions.edit()")
     cf-icon(name="edit")
 
-  a.entity-link__action(
+  a(
+    class=attributes['item-class']
     data-test-id="asset-download"
     ng-if="!missing && downloadUrl"
     ng-href="{{ downloadUrl }}"
     target="_blank")
     cf-icon(name="download")
 
-  button.entity-link__action(
+  button(
+    class=attributes['item-class']
     data-test-id="entity-remove"
     ng-if="actions.remove"
     ng-click="actions.remove()")

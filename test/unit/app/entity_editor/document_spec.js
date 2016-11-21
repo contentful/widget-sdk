@@ -276,7 +276,7 @@ describe('entityEditor/Document', function () {
         this.contentType.data.fields = [{id: 'id', type: fieldType}];
         const otDoc = this.connectAndOpen();
 
-        const path = ['a', 'id'];
+        const path = ['fields', 'id', 'locale'];
         const calledWith = (ops) => {
           sinon.assert.calledWith(otDoc.submitOp, ops);
           otDoc.submitOp.reset();
