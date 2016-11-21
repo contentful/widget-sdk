@@ -9,6 +9,7 @@ angular.module('contentful')
   var analytics = require('analytics');
   var accessChecker = require('accessChecker');
   var K = require('utils/kefir');
+  var Notification = require('app/entity_editor/Notifications').Notification;
 
   var currentFields;
   K.onValueScope($scope, fields$, function (fields) {
@@ -26,7 +27,9 @@ angular.module('contentful')
         notALinkedEntity: true
       });
     })
-    .catch(notify.duplicateFail);
+    .catch(function () {
+      notify(Notification.Error('duplicate'));
+    });
   }, {
     disabled: function () { return !canCreateEntry(); }
   });

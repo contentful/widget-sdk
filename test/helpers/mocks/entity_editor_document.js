@@ -14,12 +14,13 @@ angular.module('contentful/mocks')
 .factory('mocks/entityEditor/Document', ['require', function (require) {
   const K = require('mocks/kefir');
   const $q = require('$q');
+  const ResourceStateManager = require('data/document/ResourceStateManager');
 
   return {
     create: create
   };
 
-  function create (initialData) {
+  function create (initialData, spaceEndpoint) {
     let currentData;
     const data$ = K.createMockProperty(initialData || {
       sys: {
@@ -41,6 +42,15 @@ angular.module('contentful/mocks')
       canEditFieldLocale: sinon.stub().returns(true)
     };
 
+    const sysProperty = valuePropertyAt(['sys']);
+
+    const resourceState = ResourceStateManager.create(
+      sysProperty,
+      setSys,
+      getData,
+      spaceEndpoint
+    );
+
     return {
       destroy: _.noop,
       getVersion: sinon.stub(),
@@ -50,6 +60,8 @@ angular.module('contentful/mocks')
         isSaving$: K.createMockProperty(false),
         isConnected$: K.createMockProperty(true)
       },
+
+      getData: sinon.spy(getData),
 
       getValueAt: sinon.spy(getValueAt),
 
@@ -64,14 +76,24 @@ angular.module('contentful/mocks')
       // TODO should emit when calling setters
       changes: K.createMockStream(),
       valuePropertyAt: sinon.spy(valuePropertyAt),
-      sysProperty: valuePropertyAt(['sys']),
+      sysProperty: sysProperty,
 
       collaboratorsFor: sinon.stub().returns(K.createMockProperty([])),
       notifyFocus: sinon.spy(),
 
       reverter: reverter,
-      permissions: permissions
+      permissions: permissions,
+      resourceState: resourceState
     };
+
+
+    function setSys (sys) {
+      setValueAt(['sys'], sys);
+    }
+
+    function getData () {
+      return getValueAt([]);
+    }
 
     function getValueAt (path) {
       return _.cloneDeep(dotty.get(currentData, path));

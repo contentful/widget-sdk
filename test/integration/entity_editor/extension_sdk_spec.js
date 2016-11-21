@@ -31,7 +31,9 @@ describe('Extension SDK', function () {
 
     const entry = {
       data: {
-        sys: {},
+        sys: {
+          type: 'Entry'
+        },
         fields: {}
       }
     };
@@ -268,8 +270,8 @@ describe('Extension SDK', function () {
   });
 
   describe('#entry', function () {
-    const SYS_0 = 'initial sys value';
-    const SYS_1 = 'new sys value';
+    const SYS_0 = {type: 'Entry', version: 0};
+    const SYS_1 = {type: 'Entry', version: 1};
 
     beforeEach(function () {
       this.doc.setValueAt(['sys'], SYS_0);

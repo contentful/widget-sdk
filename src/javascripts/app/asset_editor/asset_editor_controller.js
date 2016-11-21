@@ -6,7 +6,7 @@ angular.module('contentful')
   var logger = require('logger');
   var notification = require('notification');
   var stringUtils = require('stringUtils');
-  var notifier = require('entryEditor/notifications');
+  var makeNotify = require('app/entity_editor/Notifications').makeNotify;
   var spaceContext = require('spaceContext');
   var truncate = require('stringUtils').truncate;
   var K = require('utils/kefir');
@@ -16,7 +16,7 @@ angular.module('contentful')
   var errorMessageBuilder = require('errorMessageBuilder');
   var deepFreeze = require('utils/DeepFreeze').deepFreeze;
 
-  var notify = notifier(function () {
+  var notify = makeNotify('Asset', function () {
     return '“' + $scope.title + '”';
   });
 
@@ -39,14 +39,6 @@ angular.module('contentful')
     {autoDispose: {scope: $scope}}
   );
 
-  $scope.state = $controller('entityEditor/StateController', {
-    $scope: $scope,
-    entity: $scope.asset,
-    notify: notify,
-    handlePublishError: handlePublishError,
-    otDoc: $scope.otDoc
-  });
-
   var schema = createAssetSchema(localeStore.getPrivateLocales());
   var buildMessage = errorMessageBuilder.forAsset;
   var validator = Validator.create(buildMessage, schema, function () {
@@ -56,9 +48,20 @@ angular.module('contentful')
   this.validator = validator;
 
 
-  $scope.$watch(function () {
-    return spaceContext.assetTitle($scope.asset);
-  }, function (title) {
+  $scope.state = $controller('entityEditor/StateController', {
+    $scope: $scope,
+    entity: $scope.asset,
+    notify: notify,
+    validator: validator,
+    otDoc: $scope.otDoc
+  });
+
+
+  K.onValueScope($scope, $scope.otDoc.valuePropertyAt([]), function (data) {
+    var title = spaceContext.assetTitle({
+      getContentTypeId: _.constant(),
+      data: data
+    });
     $scope.context.title = title;
     $scope.title = truncate(title, 50);
   });
@@ -66,11 +69,6 @@ angular.module('contentful')
   K.onValueScope($scope, $scope.otDoc.state.isDirty$, function (isDirty) {
     $scope.context.dirty = isDirty;
   });
-
-  // OT Stuff
-  $scope.$watch(function assetEditorDisabledWatcher () {
-    return $scope.asset.isArchived();
-  }, $scope.otDoc.setReadOnly);
 
   // Building the form
   $controller('FormWidgetsController', {
@@ -94,19 +92,6 @@ angular.module('contentful')
     var fileName = stringUtils.fileNameToTitle(file.fileName);
     if (!$scope.otDoc.getValueAt(path)) {
       $scope.otDoc.setValueAt(path, fileName);
-    }
-  }
-
-  function handlePublishError (error) {
-    validator.setApiResponseErrors(error);
-
-    var errorId = dotty.get(error, 'body.sys.id');
-    if (errorId === 'ValidationFailed') {
-      notify.publishValidationFail();
-    } else if (errorId === 'VersionMismatch') {
-      notify.publishFail('Can only publish most recent version');
-    } else {
-      notify.publishServerFail(error);
     }
   }
 }]);

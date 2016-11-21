@@ -12,7 +12,7 @@ import {find, includes, isString, get as getAtPath} from 'lodash';
  * is destroyed.
  */
 
-export function create (docConnection) {
+export function create (docConnection, spaceEndpoint) {
   const instances = {};
 
   return {get, dispose, destroy};
@@ -37,7 +37,7 @@ export function create (docConnection) {
       doc = instance.doc;
       instance.count += 1;
     } else {
-      doc = createDoc(docConnection, entity, contentType, user);
+      doc = createDoc(docConnection, entity, contentType, user, spaceEndpoint);
       instances[key] = {key, doc, count: 1};
     }
 

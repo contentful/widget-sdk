@@ -29,7 +29,7 @@ angular.module('contentful')
 .controller('EntryEditorController', ['$scope', 'require', function EntryEditorController ($scope, require) {
   var $controller = require('$controller');
   var spaceContext = require('spaceContext');
-  var notifier = require('entryEditor/notifications');
+  var makeNotify = require('app/entity_editor/Notifications').makeNotify;
   var truncate = require('stringUtils').truncate;
   var DataFields = require('EntityEditor/DataFields');
   var ContentTypes = require('data/ContentTypes');
@@ -40,7 +40,7 @@ angular.module('contentful')
   var errorMessageBuilder = require('errorMessageBuilder');
   var deepFreeze = require('utils/DeepFreeze').deepFreeze;
 
-  var notify = notifier(function () {
+  var notify = makeNotify('Entry', function () {
     return '“' + $scope.title + '”';
   });
 
@@ -67,11 +67,19 @@ angular.module('contentful')
     {autoDispose: {scope: $scope}}
   );
 
+  var schema = createEntrySchema($scope.contentType.data, localeStore.getPrivateLocales());
+  var buildMessage = errorMessageBuilder(spaceContext.publishedCTs);
+  var validator = Validator.create(buildMessage, schema, function () {
+    return $scope.otDoc.getValueAt([]);
+  });
+  validator.run();
+  this.validator = validator;
+
   $scope.state = $controller('entityEditor/StateController', {
     $scope: $scope,
     entity: $scope.entry,
     notify: notify,
-    handlePublishError: handlePublishError,
+    validator: validator,
     otDoc: $scope.otDoc
   });
 
@@ -83,19 +91,12 @@ angular.module('contentful')
     preferences: $scope.preferences
   });
 
-
-  var schema = createEntrySchema($scope.contentType.data, localeStore.getPrivateLocales());
-  var buildMessage = errorMessageBuilder(spaceContext.publishedCTs);
-  var validator = Validator.create(buildMessage, schema, function () {
-    return $scope.otDoc.getValueAt([]);
-  });
-  validator.run();
-  this.validator = validator;
-
-
-  $scope.$watch(function () {
-    return spaceContext.entryTitle($scope.entry);
-  }, function (title) {
+  // TODO we should use the path to the title field!
+  K.onValueScope($scope, $scope.otDoc.valuePropertyAt([]), function (data) {
+    var title = spaceContext.entryTitle({
+      getContentTypeId: _.constant($scope.entityInfo.contentTypeId),
+      data: data
+    });
     $scope.context.title = title;
     $scope.title = truncate(title, 50);
   });
@@ -104,23 +105,11 @@ angular.module('contentful')
     $scope.context.dirty = isDirty;
   });
 
-  // TODO internalize this
-  $scope.$watch(function entryEditorDisabledWatcher () {
-    return $scope.entry.isArchived();
-  }, $scope.otDoc.setReadOnly);
-
 
   // Building the form
   $controller('FormWidgetsController', {
     $scope: $scope,
     controls: $scope.formControls
-  });
-
-
-  $scope.$watch('entry.data.fields', function (fields) {
-    if (!fields) {
-      $scope.entry.data.fields = {};
-    }
   });
 
   /**
@@ -133,54 +122,4 @@ angular.module('contentful')
   var fields = contentTypeData.fields;
   $scope.fields = DataFields.create(fields, $scope.otDoc);
   $scope.transformedContentTypeData = ContentTypes.internalToPublic(contentTypeData);
-
-
-  /**
-   * TODO This is way to complicated: We should only care about the
-   * errors in `body.details.errors` and expose them to the scope so
-   * that they can be displayed at the proper location and show a
-   * simple notification.
-   *
-   * For this to happen the CMA needs to be refactored.
-   */
-  function handlePublishError (err) {
-    validator.setApiResponseErrors(err);
-
-    var errorId = dotty.get(err, 'body.sys.id');
-    if (errorId === 'ValidationFailed') {
-      notify.publishValidationFail();
-    } else if (errorId === 'VersionMismatch') {
-      notify.publishFail('Can only publish most recent version');
-    } else if (errorId === 'UnresolvedLinks') {
-      notify.publishFail('Some linked entries are missing.');
-    } else if (errorId === 'InvalidEntry') {
-      if (isLinkValidationError(err)) {
-        notify.publishFail(getLinkValidationErrorMessage(err));
-      } else if (err.body.message === 'Validation error') {
-        notify.publishValidationFail();
-      } else {
-        notify.publishServerFail(err);
-      }
-    } else {
-      notify.publishServerFail(err);
-    }
-  }
-
-  function isLinkValidationError (err) {
-    var errors = dotty.get(err, 'body.details.errors');
-    return err.body.message === 'Validation error' &&
-             errors.length > 0 &&
-             errors[0].name === 'linkContentType';
-  }
-
-  function getLinkValidationErrorMessage (err) {
-    var error = _.first(dotty.get(err, 'body.details.errors'));
-    var contentTypeId = _.first(error.contentTypeId);
-    var contentType = spaceContext.publishedCTs.get(contentTypeId);
-    if (contentType) {
-      return error.details.replace(contentTypeId, contentType.data.name);
-    } else {
-      return 'This reference requires an entry of an unexistent content type';
-    }
-  }
 }]);

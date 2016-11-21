@@ -8,7 +8,7 @@ describe('Entry Actions Controller', function () {
     const K = this.$inject('mocks/kefir');
     this.scope = $rootScope.$new();
     this.$state = this.$inject('$state');
-    this.notify = {};
+    this.notify = sinon.stub();
     this.fields$ = K.createMockProperty({});
 
     const $controller = this.$inject('$controller');
@@ -29,10 +29,6 @@ describe('Entry Actions Controller', function () {
   });
 
   describe('#duplicate command', function () {
-    beforeEach(function () {
-      this.notify.duplicateFail = sinon.stub();
-    });
-
     describe('fails with an error', function () {
       beforeEach(function () {
         this.createEntry.rejects();
@@ -45,7 +41,10 @@ describe('Entry Actions Controller', function () {
       });
 
       it('sends notification', function () {
-        sinon.assert.called(this.notify.duplicateFail);
+        sinon.assert.calledWith(
+          this.notify,
+          sinon.match({action: 'duplicate'})
+        );
       });
     });
 
