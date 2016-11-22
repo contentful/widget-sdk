@@ -6,6 +6,9 @@
  * configuration.
  */
 
+// This enforces strict mode for _all_ files in the application code
+// since we just concatenate them.
+'use strict';
 
 /**
  * @ngdoc module
@@ -133,7 +136,7 @@ angular.module('cf.es6')
     if (exports.__esModule) {
       return exports;
     } else {
-      return Object.assign({default: exports}, exports);
+      return _.assign({default: exports}, exports);
     }
   }
 
