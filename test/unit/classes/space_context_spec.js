@@ -629,29 +629,34 @@ describe('spaceContext', function () {
     });
   });
 
-  describe('#docConnection', function () {
+  describe('#docConnection and #connectionPool', function () {
     beforeEach(function () {
       const ShareJSConnection = this.$inject('data/ShareJS/Connection');
-      this.createConnection = ShareJSConnection.create = sinon.stub();
+      const connectionPool = this.$inject('data/sharejs/connection_pool');
+      this.createConnection = ShareJSConnection.create = sinon.stub().returns({});
+      this.createPool = connectionPool.create = sinon.stub();
     });
 
-    it('is created on resetSpace', function () {
+    it('creates on resetSpace', function () {
       this.spaceContext.resetWithSpace(makeSpaceMock());
       sinon.assert.calledOnce(this.createConnection);
+      sinon.assert.calledOnce(this.createPool.withArgs(this.spaceContext.docConnection));
     });
 
-    it('is closed on resetSpace', function () {
-      const close = sinon.stub();
-      this.spaceContext.docConnection = {close};
+    it('cleans up on resetSpace', function () {
+      const stubs = [sinon.stub(), sinon.stub()];
+      this.spaceContext.docConnection = {close: stubs[0]};
+      this.spaceContext.connectionPool = {destroy: stubs[1]};
       this.spaceContext.resetWithSpace(makeSpaceMock());
-      sinon.assert.calledOnce(close);
+      stubs.forEach(sinon.assert.calledOnce);
     });
 
-    it('is closed on purge', function () {
-      const close = sinon.stub();
-      this.spaceContext.docConnection = {close};
+    it('cleans up on purge', function () {
+      const stubs = [sinon.stub(), sinon.stub()];
+      this.spaceContext.docConnection = {close: stubs[0]};
+      this.spaceContext.connectionPool = {destroy: stubs[1]};
       this.spaceContext.purge();
-      sinon.assert.calledOnce(close);
+      stubs.forEach(sinon.assert.calledOnce);
     });
   });
 

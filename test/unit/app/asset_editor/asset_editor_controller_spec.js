@@ -17,6 +17,10 @@ describe('Asset editor controller', function () {
     });
 
     createDoc.returns(this.$inject('mocks/entityEditor/Document').create());
+    _.extend(this.$inject('spaceContext'), {
+      connectionPool: {getDoc: createDoc, dispose: _.noop}
+    });
+
     scope = this.$inject('$rootScope').$new();
     const accessChecker = this.$inject('accessChecker');
     accessChecker.canUpdateAsset = sinon.stub().returns(true);

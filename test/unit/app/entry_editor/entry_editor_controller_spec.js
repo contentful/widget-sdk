@@ -17,7 +17,6 @@ describe('Entry Editor Controller', function () {
         'entityEditor/StatusNotificationsController'
       );
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
-      $provide.value('entityEditor/Document', {create: createDoc});
     });
 
     this.createController = function () {
@@ -45,6 +44,11 @@ describe('Entry Editor Controller', function () {
       return scope;
     };
 
+    this.spaceContext = _.extend(this.$inject('spaceContext'), {
+      connectionPool: {getDoc: createDoc, dispose: _.noop},
+      entryTitle: sinon.stub()
+    });
+
     createDoc.returns(this.$inject('mocks/entityEditor/Document').create());
     scope = this.createController();
     this.$apply();
@@ -52,14 +56,10 @@ describe('Entry Editor Controller', function () {
 
   describe('when the entry title changes', function () {
     it('should update the tab title', function () {
-      const spaceContext = this.$inject('spaceContext');
-      spaceContext.entryTitle = sinon.stub();
-
-      spaceContext.entryTitle.returns('foo');
+      this.spaceContext.entryTitle.returns('foo');
       this.$apply();
       expect(scope.context.title).toEqual('foo');
-
-      spaceContext.entryTitle.returns('bar');
+      this.spaceContext.entryTitle.returns('bar');
       this.$apply();
       expect(scope.context.title).toEqual('bar');
     });

@@ -124,7 +124,14 @@ angular.module('cf.es6')
         ctx.setters[i](depExports);
       });
       ctx.execute();
-      return Object.freeze(mod.exports);
+
+      // do not freeze exports while running unit
+      // test so methods can be freely stubbed
+      if (require('environment').env === 'unittest') {
+        return mod.exports;
+      } else {
+        return Object.freeze(mod.exports);
+      }
     }]);
   }
 

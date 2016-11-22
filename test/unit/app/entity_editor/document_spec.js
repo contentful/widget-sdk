@@ -21,13 +21,6 @@ describe('entityEditor/Document', function () {
       destroy: sinon.spy()
     };
 
-    this.docConnection = {
-      getDocLoader: sinon.stub().returns(this.docLoader)
-    };
-
-    const spaceContext = this.mockService('spaceContext');
-    spaceContext.docConnection = this.docConnection;
-
     this.accessChecker = this.mockService('accessChecker');
     this.accessChecker.canUpdateEntity.returns(true);
 
@@ -43,6 +36,13 @@ describe('entityEditor/Document', function () {
       {internal_code: 'en'}
     ]);
 
+    this.contentType = {
+      data: {
+        sys: {id: 'CT_ID'},
+        fields: []
+      }
+    };
+
     this.entity = {
       getType: _.constant('Entry'),
       update: sinon.spy(function (data) {
@@ -51,11 +51,10 @@ describe('entityEditor/Document', function () {
       setVersion: sinon.stub(),
       data: {
         sys: {
-          id: 'id',
+          id: 'ENTITY_ID',
           version: 8,
-          type: 'Entry',
           contentType: {
-            sys: {}
+            sys: this.contentType.data.sys
           }
         },
         fields: {
@@ -66,12 +65,26 @@ describe('entityEditor/Document', function () {
       }
     };
 
-    this.contentType = {data: {fields: []}};
-    this.user = {sys: {id: 'USER'}};
+    this.createDoc = (type = 'Entry') => {
+      const Doc = this.$inject('entityEditor/Document');
+      const docConnection = {
+        getDocLoader: sinon.stub().returns(this.docLoader)
+      };
 
-    this.createDoc = this.$inject('entityEditor/Document').create;
-    this.doc = this.createDoc(this.entity, this.contentType, this.user);
-    this.doc.setReadOnly(false);
+      this.entity.data.sys.type = type;
+
+      const doc = Doc.create(
+        docConnection,
+        this.entity,
+        this.contentType,
+        {sys: {id: 'USER'}}
+      );
+      doc.setReadOnly(false);
+
+      return doc;
+    };
+
+    this.doc = this.createDoc();
   });
 
   describe('when doc is loaded', function () {
@@ -622,55 +635,31 @@ describe('entityEditor/Document', function () {
   });
 
   describe('#permissions', function () {
-    beforeEach(function () {
-      const originalCreateDoc = this.createDoc;
-      const baseSys = {
-        id: 'ENTITY ID',
-        contentType: {
-          sys: {
-            id: 'CT ID'
-          }
-        }
-      };
-
-      this.createDoc = (sys) => {
-        return originalCreateDoc(
-          {data: {sys: _.merge(baseSys, sys)}},
-          null,
-          {sys: {id: 'USER'}}
-        );
-      };
-    });
-
     describe('#can()', function () {
       it('delegates to "accessChecker.canPerformActionOnEntity()"', function () {
-        const doc = this.createDoc();
-
         this.accessChecker.canPerformActionOnEntity.returns(true);
-        expect(doc.permissions.can('publish')).toBe(true);
+        expect(this.doc.permissions.can('publish')).toBe(true);
 
         this.accessChecker.canPerformActionOnEntity.returns(false);
-        expect(doc.permissions.can('publish')).toBe(false);
+        expect(this.doc.permissions.can('publish')).toBe(false);
 
         const entity = this.accessChecker.canPerformActionOnEntity.args[0][1];
-        expect(entity.data.sys.id).toEqual('ENTITY ID');
+        expect(entity.data.sys.id).toEqual('ENTITY_ID');
       });
 
       it('delegates "update" calls to "accessChecker.canUpdateEntry()"', function () {
-        const doc = this.createDoc({type: 'Entry'});
-
         this.accessChecker.canUpdateEntry.returns(true);
-        expect(doc.permissions.can('update')).toBe(true);
+        expect(this.doc.permissions.can('update')).toBe(true);
 
         this.accessChecker.canUpdateEntry.returns(false);
-        expect(doc.permissions.can('update')).toBe(false);
+        expect(this.doc.permissions.can('update')).toBe(false);
 
         const entity = this.accessChecker.canUpdateEntry.args[0][0];
-        expect(entity.data.sys.id).toEqual('ENTITY ID');
+        expect(entity.data.sys.id).toEqual('ENTITY_ID');
       });
 
       it('delegates "update" calls to "accessChecker.canUpdateAsset()"', function () {
-        const doc = this.createDoc({type: 'Asset'});
+        const doc = this.createDoc('Asset');
 
         this.accessChecker.canUpdateAsset.returns(true);
         expect(doc.permissions.can('update')).toBe(true);
@@ -679,11 +668,11 @@ describe('entityEditor/Document', function () {
         expect(doc.permissions.can('update')).toBe(false);
 
         const entity = this.accessChecker.canUpdateAsset.args[0][0];
-        expect(entity.data.sys.id).toEqual('ENTITY ID');
+        expect(entity.data.sys.id).toEqual('ENTITY_ID');
       });
 
       it('throws when entity type is unknown', function () {
-        const doc = this.createDoc({type: 'X'});
+        const doc = this.createDoc('X');
         expect(
           _.partial(doc.permissions.can, 'update')
         ).toThrowError('Unknown entity type "X"');
@@ -700,17 +689,16 @@ describe('entityEditor/Document', function () {
     describe('#canEditFieldLocale()', function () {
       it('delegates to "policyAccessChecker"', function () {
         const pac = this.mockService('accessChecker/policy');
-        const doc = this.createDoc({type: 'Entry'});
 
         pac.canEditFieldLocale.returns(true);
-        expect(doc.permissions.canEditFieldLocale('FIELD', 'LOCALE')).toBe(true);
+        expect(this.doc.permissions.canEditFieldLocale('FIELD', 'LOCALE')).toBe(true);
 
         pac.canEditFieldLocale.returns(false);
-        expect(doc.permissions.canEditFieldLocale('FIELD', 'LOCALE')).toBe(false);
+        expect(this.doc.permissions.canEditFieldLocale('FIELD', 'LOCALE')).toBe(false);
 
         const args = pac.canEditFieldLocale.args[0];
         const [ctId, {apiName}, {code}] = args;
-        expect(ctId).toBe('CT ID');
+        expect(ctId).toBe('CT_ID');
         expect(apiName).toBe('FIELD');
         expect(code).toBe('LOCALE');
       });

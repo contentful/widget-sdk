@@ -15,7 +15,6 @@ angular.module('contentful')
   var createAssetSchema = require('validation').schemas.Asset;
   var errorMessageBuilder = require('errorMessageBuilder');
   var deepFreeze = require('utils/DeepFreeze').deepFreeze;
-  var Document = require('entityEditor/Document');
 
   var notify = notifier(function () {
     return '“' + $scope.title + '”';
@@ -32,8 +31,15 @@ angular.module('contentful')
   $scope.locales = $controller('entityEditor/LocalesController');
 
   // TODO rename the scope property
-  $scope.otDoc = Document.create($scope.entity, null, $scope.user);
-  $scope.$on('$destroy', $scope.otDoc.destroy);
+  $scope.otDoc = spaceContext.connectionPool.getDoc(
+    $scope.entity,
+    null,
+    $scope.user
+  );
+
+  $scope.$on('$destroy', function () {
+    spaceContext.connectionPool.dispose($scope.otDoc);
+  });
 
   $scope.state = $controller('entityEditor/StateController', {
     $scope: $scope,

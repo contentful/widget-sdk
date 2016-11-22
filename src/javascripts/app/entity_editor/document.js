@@ -19,8 +19,6 @@ angular.module('contentful')
   var TheLocaleStore = require('TheLocaleStore');
   var K = require('utils/kefir');
   var Normalizer = require('data/documentNormalizer');
-  var spaceContext = require('spaceContext');
-  var docConnection = spaceContext.docConnection;
   var PresenceHub = require('entityEditor/Document/PresenceHub');
   var StringField = require('entityEditor/Document/StringField');
   var PathUtils = require('utils/Path');
@@ -33,7 +31,7 @@ angular.module('contentful')
 
   return {create: create};
 
-  function create (entity, contentType, user) {
+  function create (docConnection, entity, contentType, user) {
     var currentDoc;
     var cleanupTasks = [];
 
