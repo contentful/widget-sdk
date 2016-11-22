@@ -18,7 +18,7 @@ describe('Asset editor controller', function () {
 
     createDoc.returns(this.$inject('mocks/entityEditor/Document').create());
     _.extend(this.$inject('spaceContext'), {
-      docPool: {get: createDoc, dispose: _.noop}
+      docPool: {get: createDoc}
     });
 
     scope = this.$inject('$rootScope').$new();

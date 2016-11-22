@@ -22,22 +22,30 @@ export function create (docConnection) {
    * @param {API.Entity} entity
    * @param {API.ContentType} contentType
    * @param {API.User} user
+   * @param {object} opts
    * @returns Document
    * @description
    * Gets a doc for an entity.
    */
-  function get (entity, contentType, user) {
+  function get (entity, contentType, user, opts) {
+    opts = opts || {};
     const key = prepareKey(getAtPath(entity, 'data.sys', {}));
     const instance = instances[key];
+    let doc;
 
     if (instance) {
+      doc = instance.doc;
       instance.count += 1;
-      return instance.doc;
     } else {
-      const doc = createDoc(docConnection, entity, contentType, user);
+      doc = createDoc(docConnection, entity, contentType, user);
       instances[key] = {key, doc, count: 1};
-      return doc;
     }
+
+    if (opts.autoDispose && opts.autoDispose.scope) {
+      opts.autoDispose.scope.$on('$destroy', dispose.bind(null, doc));
+    }
+
+    return doc;
   }
 
   function prepareKey (sys) {

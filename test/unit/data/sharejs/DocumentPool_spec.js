@@ -65,6 +65,17 @@ describe('DocumentPool', function () {
       expect(ref1).not.toBe(ref2);
       sinon.assert.calledTwice(this.createDoc);
     });
+
+    it('disposes automatically with a scope provided', function () {
+      const scope = this.$inject('$rootScope').$new(true);
+      this.pool.get(entity, ct, user, {
+        autoDispose: {scope: scope}
+      });
+
+      sinon.assert.notCalled(this.doc.destroy);
+      scope.$destroy();
+      sinon.assert.calledOnce(this.doc.destroy);
+    });
   });
 
   describe('#dispose', function () {

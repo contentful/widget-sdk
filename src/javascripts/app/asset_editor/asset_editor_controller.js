@@ -34,12 +34,10 @@ angular.module('contentful')
   $scope.otDoc = spaceContext.docPool.get(
     $scope.entity,
     null,
-    $scope.user
+    $scope.user,
+    // TODO: pass a lifecycle observable
+    {autoDispose: {scope: $scope}}
   );
-
-  $scope.$on('$destroy', function () {
-    spaceContext.docPool.dispose($scope.otDoc);
-  });
 
   $scope.state = $controller('entityEditor/StateController', {
     $scope: $scope,

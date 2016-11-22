@@ -45,7 +45,7 @@ describe('Entry Editor Controller', function () {
     };
 
     this.spaceContext = _.extend(this.$inject('spaceContext'), {
-      docPool: {get: createDoc, dispose: _.noop},
+      docPool: {get: createDoc},
       entryTitle: sinon.stub()
     });
 
