@@ -629,12 +629,12 @@ describe('spaceContext', function () {
     });
   });
 
-  describe('#docConnection and #connectionPool', function () {
+  describe('#docConnection and #docPool', function () {
     beforeEach(function () {
       const ShareJSConnection = this.$inject('data/ShareJS/Connection');
-      const connectionPool = this.$inject('data/sharejs/connection_pool');
+      const DocumentPool = this.$inject('data/sharejs/DocumentPool');
       this.createConnection = ShareJSConnection.create = sinon.stub().returns({});
-      this.createPool = connectionPool.create = sinon.stub();
+      this.createPool = DocumentPool.create = sinon.stub();
     });
 
     it('creates on resetSpace', function () {
@@ -646,7 +646,7 @@ describe('spaceContext', function () {
     it('cleans up on resetSpace', function () {
       const stubs = [sinon.stub(), sinon.stub()];
       this.spaceContext.docConnection = {close: stubs[0]};
-      this.spaceContext.connectionPool = {destroy: stubs[1]};
+      this.spaceContext.docPool = {destroy: stubs[1]};
       this.spaceContext.resetWithSpace(makeSpaceMock());
       stubs.forEach(sinon.assert.calledOnce);
     });
@@ -654,7 +654,7 @@ describe('spaceContext', function () {
     it('cleans up on purge', function () {
       const stubs = [sinon.stub(), sinon.stub()];
       this.spaceContext.docConnection = {close: stubs[0]};
-      this.spaceContext.connectionPool = {destroy: stubs[1]};
+      this.spaceContext.docPool = {destroy: stubs[1]};
       this.spaceContext.purge();
       stubs.forEach(sinon.assert.calledOnce);
     });

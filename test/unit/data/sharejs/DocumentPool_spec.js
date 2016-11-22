@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Connection pool', function () {
+describe('DocumentPool', function () {
   beforeEach(function () {
     module('contentful/test');
 
@@ -12,7 +12,7 @@ describe('Connection pool', function () {
       return (s.id === 'id' && s.type === 'Entry') ? this.doc : this.doc2;
     });
 
-    const createPool = this.$inject('data/sharejs/connection_pool').create;
+    const createPool = this.$inject('data/sharejs/DocumentPool').create;
     this.conn = {};
     this.pool = createPool(this.conn);
   });
@@ -22,7 +22,7 @@ describe('Connection pool', function () {
       expect(
         Object.keys(this.pool).sort()
       ).toEqual(
-        ['getDoc', 'dispose', 'destroy'].sort()
+        ['get', 'dispose', 'destroy'].sort()
       );
     });
   });
@@ -32,9 +32,9 @@ describe('Connection pool', function () {
   const ct = {ct: true};
   const user = {user: true};
 
-  describe('#getDoc', function () {
+  describe('#get', function () {
     it('creates doc instance if never requested before', function () {
-      const ref = this.pool.getDoc(entity, ct, user);
+      const ref = this.pool.get(entity, ct, user);
       expect(ref).toBe(this.doc);
       sinon.assert.calledOnce(
         this.createDoc.withArgs(this.conn, entity, ct, user)
@@ -42,16 +42,16 @@ describe('Connection pool', function () {
     });
 
     it('uses previously requested doc instance', function () {
-      const ref1 = this.pool.getDoc(entity, ct, user);
-      const ref2 = this.pool.getDoc(entity, ct, user);
+      const ref1 = this.pool.get(entity, ct, user);
+      const ref2 = this.pool.get(entity, ct, user);
       expect(ref1).toBe(ref2);
       expect(ref1).toBe(this.doc);
       sinon.assert.calledOnce(this.createDoc);
     });
 
     it('does not mix docs for different entities', function () {
-      const ref1 = this.pool.getDoc(entity, ct, user);
-      const ref2 = this.pool.getDoc(entity2, ct, user);
+      const ref1 = this.pool.get(entity, ct, user);
+      const ref2 = this.pool.get(entity2, ct, user);
       expect(ref1).not.toBe(ref2);
       sinon.assert.calledTwice(this.createDoc);
     });
@@ -60,8 +60,8 @@ describe('Connection pool', function () {
       const asset = _.cloneDeep(entity);
       asset.data.sys.type = 'Asset';
 
-      const ref1 = this.pool.getDoc(entity, ct, user);
-      const ref2 = this.pool.getDoc(asset, ct, user);
+      const ref1 = this.pool.get(entity, ct, user);
+      const ref2 = this.pool.get(asset, ct, user);
       expect(ref1).not.toBe(ref2);
       sinon.assert.calledTwice(this.createDoc);
     });
@@ -69,8 +69,8 @@ describe('Connection pool', function () {
 
   describe('#dispose', function () {
     beforeEach(function () {
-      this.ref1 = this.pool.getDoc(entity, ct, user);
-      this.ref2 = this.pool.getDoc(entity, ct, user);
+      this.ref1 = this.pool.get(entity, ct, user);
+      this.ref2 = this.pool.get(entity, ct, user);
     });
 
     it('does not destroy a doc if there are references being used', function () {
@@ -87,9 +87,9 @@ describe('Connection pool', function () {
 
   describe('#destroy', function () {
     it('destroys all document instances', function () {
-      this.pool.getDoc(entity, ct, user);
-      this.ref1 = this.pool.getDoc(entity, ct, user);
-      this.ref2 = this.pool.getDoc(entity2, ct, user);
+      this.pool.get(entity, ct, user);
+      this.ref1 = this.pool.get(entity, ct, user);
+      this.ref2 = this.pool.get(entity2, ct, user);
       this.pool.destroy();
       sinon.assert.calledOnce(this.doc.destroy);
       sinon.assert.calledOnce(this.doc2.destroy);

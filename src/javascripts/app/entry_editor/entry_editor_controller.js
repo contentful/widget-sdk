@@ -59,14 +59,14 @@ angular.module('contentful')
   });
 
   // TODO rename the scope property
-  $scope.otDoc = spaceContext.connectionPool.getDoc(
+  $scope.otDoc = spaceContext.docPool.get(
     $scope.entity,
     $scope.contentType,
     $scope.user
   );
 
   $scope.$on('$destroy', function () {
-    spaceContext.connectionPool.dispose($scope.otDoc);
+    spaceContext.docPool.dispose($scope.otDoc);
   });
 
   $scope.state = $controller('entityEditor/StateController', {

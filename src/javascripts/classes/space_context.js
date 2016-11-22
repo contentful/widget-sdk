@@ -36,7 +36,7 @@ angular.module('contentful')
   var apiKeysCache = $injector.get('data/apiKeysCache');
   var PublishedCTRepo = $injector.get('data/ContentTypeRepo/Published');
   var logger = $injector.get('logger');
-  var connectionPool = $injector.get('data/sharejs/connection_pool');
+  var DocumentPool = $injector.get('data/sharejs/DocumentPool');
 
   var requestContentTypes = createQueue(function (extraHandler) {
     return spaceContext.space.getContentTypes({order: 'name', limit: 1000})
@@ -115,7 +115,7 @@ angular.module('contentful')
         space.getId()
       );
 
-      self.connectionPool = connectionPool.create(self.docConnection);
+      self.docPool = DocumentPool.create(self.docConnection);
 
       self.publishedCTs = PublishedCTRepo.create(space);
       self.publishedCTs.wrappedItems$.onValue(function (cts) {
@@ -475,9 +475,9 @@ angular.module('contentful')
     spaceContext.publishedContentTypes = [];
     spaceContext.users = null;
     spaceContext.widgets = null;
-    if (spaceContext.connectionPool) {
-      spaceContext.connectionPool.destroy();
-      spaceContext.connectionPool = null;
+    if (spaceContext.docPool) {
+      spaceContext.docPool.destroy();
+      spaceContext.docPool = null;
     }
     if (spaceContext.docConnection) {
       spaceContext.docConnection.close();

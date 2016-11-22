@@ -3,7 +3,7 @@ import {find, includes, isString, get as getAtPath} from 'lodash';
 
 /**
  * @ngdoc service
- * @name data/sharejs/connection_pool
+ * @name data/sharejs/DocumentPool
  * @description
  * A singleton store for Document instances.
  * Given an entity it always returns the same
@@ -15,10 +15,10 @@ import {find, includes, isString, get as getAtPath} from 'lodash';
 export function create (docConnection) {
   const instances = {};
 
-  return {getDoc, dispose, destroy};
+  return {get, dispose, destroy};
 
   /**
-   * @method connection_pool#getDoc
+   * @method DocumentPool#get
    * @param {API.Entity} entity
    * @param {API.ContentType} contentType
    * @param {API.User} user
@@ -26,7 +26,7 @@ export function create (docConnection) {
    * @description
    * Gets a doc for an entity.
    */
-  function getDoc (entity, contentType, user) {
+  function get (entity, contentType, user) {
     const key = prepareKey(getAtPath(entity, 'data.sys', {}));
     const instance = instances[key];
 
@@ -49,7 +49,7 @@ export function create (docConnection) {
   }
 
   /**
-   * @method connection_pool#dispose
+   * @method DocumentPool#dispose
    * @param {Document} doc
    * @description
    * Marks reference to a doc as not used any
@@ -71,7 +71,7 @@ export function create (docConnection) {
   }
 
   /**
-   * @method connection_pool#destroy
+   * @method DocumentPool#destroy
    * @description
    * Destroys all the instances in the pool.
    */
