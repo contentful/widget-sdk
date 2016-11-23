@@ -21,15 +21,15 @@ cf-icon.dropdown-toggle(
       li.non-customizable
         p Status
 
-    hr(ng-hide="hiddenFields.length == 0")
+    hr(ng-show="hasHiddenFields()")
 
-    h3(ng-hide="hiddenFields.length == 0") Available columns
-    ul.u-list.hidden-fields(ng-hide="hiddenFields.length == 0")
+    h3(ng-show="hasHiddenFields()") Available columns
+    ul.u-list.hidden-fields(ng-show="hasHiddenFields()")
       li(ng-show="!context.view.contentTypeId && context.view.contentTypeHidden")
         a(ng-click="toggleContentType($event)")
           | Content type
       li(ng-repeat="field in hiddenFields")
-        a(ng-if="field.type != 'Object' && !field.disabled" ng-click="displayField($event, field)")
+        a(ng-if="isActiveDisplayField" ng-click="setDisplayField($event, field)")
           | {{field.name}}
-        span(ng-if="field.type == 'Object' || field.disabled")
+        span(ng-if="!isActiveDisplayField")
           | {{field.name}}

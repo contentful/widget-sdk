@@ -114,7 +114,4 @@ angular.module('contentful')
     $scope.updateEntries();
   });
 
-  $scope.isSelected = function (entry) {
-    return _.includes($scope.selection.getSelected(), entry);
-  };
 }]);
