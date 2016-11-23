@@ -5,18 +5,22 @@ describe('Asset editor controller', function () {
   let scope;
 
   beforeEach(function () {
-    const document = sinon.stub();
-    module('contentful/test', ($provide, $controllerProvider) => {
+    const createDoc = sinon.stub();
+    module('contentful/test', ($provide) => {
       $provide.removeControllers(
         'FormWidgetsController',
         'entityEditor/LocalesController',
         'entityEditor/StatusNotificationsController'
       );
-      $controllerProvider.register('entityEditor/Document', document);
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
+      $provide.value('entityEditor/Document', {create: createDoc});
     });
 
-    document.returns(this.$inject('mocks/entityEditor/Document').create());
+    createDoc.returns(this.$inject('mocks/entityEditor/Document').create());
+    _.extend(this.$inject('spaceContext'), {
+      docPool: {get: createDoc}
+    });
+
     scope = this.$inject('$rootScope').$new();
     const accessChecker = this.$inject('accessChecker');
     accessChecker.canUpdateAsset = sinon.stub().returns(true);
@@ -62,7 +66,7 @@ describe('Asset editor controller', function () {
 
     it('processes the asset', function () {
       scope.asset.process = sinon.stub().resolves();
-      scope.otDoc.doc.version = 123;
+      scope.otDoc.getVersion.returns(123);
       scope.$emit('fileUploaded', {fileName: ''}, {internal_code: 'en-US'});
       sinon.assert.calledWith(scope.asset.process, 123, 'en-US');
     });

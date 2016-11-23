@@ -10,7 +10,6 @@ angular.module('contentful/mocks')
  */
 .factory('mocks/entityEditor/Document', ['require', function (require) {
   const K = require('mocks/kefir');
-  const OtDoc = require('mocks/OtDoc');
   const $q = require('$q');
 
   return {
@@ -21,7 +20,9 @@ angular.module('contentful/mocks')
     data = data || {sys: {}};
 
     return {
-      doc: new OtDoc(data),
+      destroy: _.noop,
+      getVersion: sinon.stub(),
+
       state: {
         isDirty$: K.createMockProperty(),
         isSaving$: K.createMockProperty(false),

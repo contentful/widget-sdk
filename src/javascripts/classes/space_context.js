@@ -36,6 +36,7 @@ angular.module('contentful')
   var apiKeysCache = $injector.get('data/apiKeysCache');
   var PublishedCTRepo = $injector.get('data/ContentTypeRepo/Published');
   var logger = $injector.get('logger');
+  var DocumentPool = $injector.get('data/sharejs/DocumentPool');
 
   var requestContentTypes = createQueue(function (extraHandler) {
     return spaceContext.space.getContentTypes({order: 'name', limit: 1000})
@@ -104,11 +105,17 @@ angular.module('contentful')
       self.subscription =
         organization && Subscription.newFromOrganization(organization);
 
+      // TODO: publicly accessible docConnection is
+      // used only in a process of creating space out
+      // of a template. We shouldn't use it in newly
+      // created code.
       self.docConnection = ShareJSConnection.create(
         authentication.token,
         environment.settings.ot_host,
         space.getId()
       );
+
+      self.docPool = DocumentPool.create(self.docConnection);
 
       self.publishedCTs = PublishedCTRepo.create(space);
       self.publishedCTs.wrappedItems$.onValue(function (cts) {
@@ -468,6 +475,10 @@ angular.module('contentful')
     spaceContext.publishedContentTypes = [];
     spaceContext.users = null;
     spaceContext.widgets = null;
+    if (spaceContext.docPool) {
+      spaceContext.docPool.destroy();
+      spaceContext.docPool = null;
+    }
     if (spaceContext.docConnection) {
       spaceContext.docConnection.close();
       spaceContext.docConnection = null;

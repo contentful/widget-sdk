@@ -9,15 +9,14 @@ describe('Entry Editor Controller', function () {
   });
 
   beforeEach(function () {
-    const document = sinon.stub();
-    module('contentful/test', ($provide, $controllerProvider) => {
+    const createDoc = sinon.stub();
+    module('contentful/test', ($provide) => {
       $provide.removeControllers(
         'FormWidgetsController',
         'entityEditor/LocalesController',
         'entityEditor/StatusNotificationsController'
       );
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
-      $controllerProvider.register('entityEditor/Document', document);
     });
 
     this.createController = function () {
@@ -45,21 +44,22 @@ describe('Entry Editor Controller', function () {
       return scope;
     };
 
-    document.returns(this.$inject('mocks/entityEditor/Document').create());
+    this.spaceContext = _.extend(this.$inject('spaceContext'), {
+      docPool: {get: createDoc},
+      entryTitle: sinon.stub()
+    });
+
+    createDoc.returns(this.$inject('mocks/entityEditor/Document').create());
     scope = this.createController();
     this.$apply();
   });
 
   describe('when the entry title changes', function () {
     it('should update the tab title', function () {
-      const spaceContext = this.$inject('spaceContext');
-      spaceContext.entryTitle = sinon.stub();
-
-      spaceContext.entryTitle.returns('foo');
+      this.spaceContext.entryTitle.returns('foo');
       this.$apply();
       expect(scope.context.title).toEqual('foo');
-
-      spaceContext.entryTitle.returns('bar');
+      this.spaceContext.entryTitle.returns('bar');
       this.$apply();
       expect(scope.context.title).toEqual('bar');
     });

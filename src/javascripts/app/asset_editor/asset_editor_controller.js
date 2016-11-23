@@ -31,11 +31,13 @@ angular.module('contentful')
   $scope.locales = $controller('entityEditor/LocalesController');
 
   // TODO rename the scope property
-  $scope.otDoc = $controller('entityEditor/Document', {
-    $scope: $scope,
-    entity: $scope.entity,
-    contentType: null
-  });
+  $scope.otDoc = spaceContext.docPool.get(
+    $scope.entity,
+    null,
+    $scope.user,
+    // TODO: pass a lifecycle observable
+    {autoDispose: {scope: $scope}}
+  );
 
   $scope.state = $controller('entityEditor/StateController', {
     $scope: $scope,
@@ -84,7 +86,7 @@ angular.module('contentful')
   // File uploads
   $scope.$on('fileUploaded', function (_event, file, locale) {
     setTitleOnDoc(file, locale.internal_code);
-    $scope.asset.process($scope.otDoc.doc.version, locale.internal_code)
+    $scope.asset.process($scope.otDoc.getVersion(), locale.internal_code)
     .catch(function (err) {
       $scope.$emit('fileProcessingFailed');
       notification.error('There has been a problem processing the Asset.');

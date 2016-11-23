@@ -59,11 +59,13 @@ angular.module('contentful')
   });
 
   // TODO rename the scope property
-  $scope.otDoc = $controller('entityEditor/Document', {
-    $scope: $scope,
-    entity: $scope.entity,
-    contentType: $scope.contentType
-  });
+  $scope.otDoc = spaceContext.docPool.get(
+    $scope.entity,
+    $scope.contentType,
+    $scope.user,
+    // TODO: pass a lifecycle observable
+    {autoDispose: {scope: $scope}}
+  );
 
   $scope.state = $controller('entityEditor/StateController', {
     $scope: $scope,
