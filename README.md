@@ -6,24 +6,6 @@ Make sure you are using Node version specified in the [`.nvmrc`]('./.nvmrc')
 file and the default NPM version that comes with that Node version.
 Then run `./Installfile` to install all npm dependencies
 
-## Dependencies
-
-We use NPM with the shrinkwrap file to manage our dependencies.
-
-Production dependencies in NPM are all those packages used on Travis to build
-and test. Dev dependencies on the other hand are used to run tests locally,
-build the documentation, etc.
-
-To update a dependency, run
-~~~js
-npm install --save{-dev} my-dep@~1.2.3
-npm shrinkwrap
-./bin/clean-shrinkwrap
-~~~
-Make sure that `git diff npm-shrinkwrap.json` yield the correct result.
-
-You can check for outdated dependencies with `npm outdated`.
-
 
 ## Running the dev server
 
