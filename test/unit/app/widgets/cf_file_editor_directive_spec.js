@@ -15,7 +15,10 @@ describe('cfFileEditor Directive', function () {
     const widgetApi = this.$inject('mocks/widgetApi').create();
     fieldApi = widgetApi.field;
 
+    const editorContext = this.$inject('mocks/entityEditor/Context').create();
+
     scope = this.$compile('<cf-file-editor />', {
+      editorContext: editorContext,
       fieldLocale: {access: {editable: true}},
       fieldData: {
         fileName: 'file.jpg',
@@ -73,11 +76,10 @@ describe('cfFileEditor Directive', function () {
     it('runs validations on file picker 101 error', function () {
       const FP = this.$inject('filepicker');
       FP.pick.rejects({code: 101});
-      scope.validate = sinon.stub();
 
       scope.uploadFile();
       this.$apply();
-      sinon.assert.calledOnce(scope.validate);
+      sinon.assert.calledOnce(scope.editorContext.validator.run);
     });
   });
 
@@ -136,11 +138,10 @@ describe('cfFileEditor Directive', function () {
     it('runs validations on file picker 101 error', function () {
       const FP = this.$inject('filepicker');
       FP.pick.rejects({code: 101});
-      scope.validate = sinon.stub();
 
       scope.uploadFile();
       this.$apply();
-      sinon.assert.calledOnce(scope.validate);
+      sinon.assert.calledOnce(scope.editorContext.validator.run);
     });
   });
 });
