@@ -1,8 +1,8 @@
 .advice
   .cfnext-advice
     i.fa.fa-folder.advice__icon.advice__icon--giant
-    header.advice__title Nothing to see yet.
-    p.advice__description(ng-show="!canCreateSpace()") You need to be part of an Organization to create a space.
+    header.advice__title Welcome to Contentful!
+    p.advice__description(ng-show="!canCreateSpace()") It seems like you're not part of a space yet! No problem, contact your account's owner or admin so they can add you to one.
     p.advice__description(ng-show="canCreateSpace()") Why don't you create a space?
     button.advice__action(type="button" ng-show="canCreateSpace()" ng-click="showCreateSpaceDialog()")
       | Create Space
