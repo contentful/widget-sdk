@@ -1,25 +1,25 @@
 'use strict';
 
 angular.module('contentful')
-.controller('EntryActionsController', ['$scope', 'require', 'notify', function ($scope, require, notify) {
-
+.controller('EntryActionsController', ['$scope', 'require', 'notify', 'fields$', 'entityInfo', 'preferences', function ($scope, require, notify, fields$, entityInfo, preferences) {
   var controller = this;
   var Command = require('command');
   var spaceContext = require('spaceContext');
   var $state = require('$state');
   var analytics = require('analytics');
   var accessChecker = require('accessChecker');
+  var K = require('utils/kefir');
 
-  function canCreateEntry () {
-    var ctId = dotty.get($scope, 'entry.data.sys.contentType.sys.id');
-    return accessChecker.canPerformActionOnEntryOfType('create', ctId);
-  }
+  var currentFields;
+  K.onValueScope($scope, fields$, function (fields) {
+    currentFields = fields;
+  });
 
   controller.duplicate = Command.create(function () {
-    var contentType = $scope.entry.getSys().contentType.sys.id;
-    var data = _.omit($scope.entry.data, ['sys']);
-
-    return $scope.spaceContext.space.createEntry(contentType, data)
+    return spaceContext.space.createEntry(
+      entityInfo.contentTypeId,
+      {fields: currentFields}
+    )
     .then(function (entry) {
       $state.go('spaces.detail.entries.detail', {
         entryId: entry.getId(),
@@ -32,25 +32,25 @@ angular.module('contentful')
   });
 
   controller.toggleDisabledFields = Command.create(function () {
-    var show = !$scope.preferences.showDisabledFields;
-    $scope.preferences.showDisabledFields = show;
+    var show = !preferences.showDisabledFields;
+    preferences.showDisabledFields = show;
     analytics.track('entry_editor:disabled_fields_visibility_toggled', {
-      entryId: $scope.entry.getId(),
+      entryId: entityInfo.id,
       show: show
     });
   }, {}, {
     label: function () {
-      return $scope.preferences.showDisabledFields
+      return preferences.showDisabledFields
         ? 'Hide disabled fields'
         : 'Show disabled fields';
     }
   });
 
   controller.add = Command.create(function () {
-    var contentTypeId = $scope.entry.getSys().contentType.sys.id;
+    var contentTypeId = entityInfo.contentTypeId;
     analytics.track('entry_editor:created_with_same_ct', {
       contentTypeId: contentTypeId,
-      entryId: $scope.entry.getId()
+      entryId: entityInfo.id
     });
 
     return spaceContext.space.createEntry(contentTypeId, {})
@@ -66,6 +66,11 @@ angular.module('contentful')
   }, {
     disabled: function () { return !canCreateEntry(); }
   }, {
-    name: function () { return $scope.contentTypeName; }
+    name: function () { return entityInfo.contentType.name; }
   });
+
+
+  function canCreateEntry () {
+    return accessChecker.canPerformActionOnEntryOfType('create', entityInfo.contentTypeId);
+  }
 }]);
