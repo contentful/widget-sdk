@@ -166,7 +166,7 @@ angular.module('cf.data')
      * @returns {Promise<Client.ContentType[]>}
      */
     function refresh () {
-      return space.getPublishedContentTypes()
+      return space.getPublishedContentTypes({limit: 1000})
         .then(function (contentTypes) {
           contentTypes = removeDeleted(contentTypes);
           store.reset(contentTypes);
