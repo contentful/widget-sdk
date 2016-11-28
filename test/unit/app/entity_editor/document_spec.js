@@ -18,7 +18,8 @@ describe('entityEditor/Document', function () {
 
     this.docLoader = {
       doc: this.K.createMockProperty(this.DocLoad.None()),
-      destroy: sinon.spy()
+      destroy: sinon.spy(),
+      close: sinon.spy()
     };
 
     this.accessChecker = this.mockService('accessChecker');
@@ -183,13 +184,10 @@ describe('entityEditor/Document', function () {
   });
 
   describe('on instance destruction', function () {
-    beforeEach(function () {
+    it('closes the doc', function () {
       this.otDoc = this.connectAndOpen();
       this.doc.destroy();
-    });
-
-    it('closes the doc', function () {
-      sinon.assert.called(this.otDoc.close);
+      sinon.assert.called(this.docLoader.close);
     });
   });
 

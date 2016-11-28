@@ -37,6 +37,8 @@ angular.module('cf.data')
 
     var events = getEventStream(connection);
 
+    var docWrappers = {};
+
 
     /**
      * @type {Property<string>}
@@ -86,8 +88,8 @@ angular.module('cf.data')
      * @returns {Document.Loader}
      */
     function getDocLoader (entity, readOnly) {
-      var key = entityMetadataToKey(entity.data.sys);
-      return DocLoader.create(connection, key, state$, readOnly);
+      var docWrapper = getDocWrapperForEntity(entity);
+      return DocLoader.create(docWrapper, state$, readOnly);
     }
 
 
@@ -126,6 +128,18 @@ angular.module('cf.data')
     function close () {
       connection.disconnect();
     }
+
+
+    function getDocWrapperForEntity (entity) {
+      var key = entityMetadataToKey(entity.data.sys);
+      var docWrapper = docWrappers[key];
+
+      if (!docWrapper) {
+        docWrappers[key] = docWrapper = createDocWrapper(connection, key);
+      }
+
+      return docWrapper;
+    }
   }
 
 
@@ -160,6 +174,58 @@ angular.module('cf.data')
     };
 
     return connection;
+  }
+
+  /**
+   * @ngdoc type
+   * @name data/ShareJS/Connection/DocWrapper
+   * @param {ShareJS.Connection} connection
+   * @param {string} key
+   * @returns {DocWrapper}
+   */
+  function createDocWrapper (connection, key) {
+    var rawDoc = null;
+    var closePromise = $q.resolve();
+
+    return {
+      open: waitAndOpen,
+      close: maybeClose
+    };
+
+    function waitAndOpen () {
+      return closePromise.then(function () {
+        closePromise = $q.resolve();
+        return open();
+      }, function () {
+        closePromise = $q.resolve();
+      });
+    }
+
+    function open () {
+      return $q.denodeify(function (cb) {
+        connection.open(key, 'json', cb);
+      }).then(function (openedDoc) {
+        rawDoc = openedDoc;
+        return rawDoc;
+      });
+    }
+
+    function maybeClose () {
+      if (rawDoc) {
+        closePromise = close(rawDoc);
+        rawDoc = null;
+      }
+    }
+
+    function close (doc) {
+      return $q.denodeify(function (cb) {
+        try {
+          doc.close(cb);
+        } catch (e) {
+          cb(e.message === 'Cannot send to a closed connection' ? null : e);
+        }
+      });
+    }
   }
 
   function entityMetadataToKey (sys) {
