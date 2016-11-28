@@ -3,13 +3,12 @@
 angular.module('contentful')
 .factory('onboardingController', ['$injector', function ($injector) {
 
-  var $rootScope     = $injector.get('$rootScope');
-  var spaceContext   = $injector.get('spaceContext');
-  var modalDialog    = $injector.get('modalDialog');
-  var TheStore       = $injector.get('TheStore');
+  var $rootScope = $injector.get('$rootScope');
+  var spaceContext = $injector.get('spaceContext');
+  var modalDialog = $injector.get('modalDialog');
+  var TheStore = $injector.get('TheStore');
   var authentication = $injector.get('authentication');
-  var analytics      = $injector.get('analytics');
-  var $timeout       = $injector.get('$timeout');
+  var analytics = $injector.get('analytics');
 
   var SEEN_ONBOARDING_STORE_KEY = 'seenOnboarding';
 

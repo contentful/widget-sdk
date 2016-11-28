@@ -1,11 +1,11 @@
 'use strict';
 
 describe('onboardingController', function () {
-  var $rootScope, $q;
-  var openDialogStub, dialogConfirmSpy;
-  var userMock, storeMock;
+  let $rootScope, $q;
+  let openDialogStub, dialogConfirmSpy;
+  let userMock, storeMock;
 
-  var SEEN_ONBOARDING_STORE_KEY;
+  let SEEN_ONBOARDING_STORE_KEY;
 
   afterEach(function () {
     $rootScope = $q = openDialogStub =
@@ -43,7 +43,7 @@ describe('onboardingController', function () {
 
     $rootScope = this.$inject('$rootScope');
 
-    var controller = this.$inject('onboardingController');
+    const controller = this.$inject('onboardingController');
     SEEN_ONBOARDING_STORE_KEY = controller.SEEN_ONBOARDING_STORE_KEY;
     controller.init();
   });
