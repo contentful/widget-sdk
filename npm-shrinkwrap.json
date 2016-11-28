@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "dependencies": {
     "@contentful/client": {
-      "version": "14.0.1"
+      "version": "14.1.0"
     },
     "@contentful/hostname-transformer": {
       "version": "1.2.6"
