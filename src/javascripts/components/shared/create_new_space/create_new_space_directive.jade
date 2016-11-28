@@ -1,7 +1,5 @@
-include ./../onboarding_dialog/onboarding_nav.mixin.jade
-
-//- Create space form
-.create-new-space-dialog.modal-dialog
+.create-new-space-dialog.modal-dialog(
+  ng-class="{'x--no-close':createSpace.isOnboarding}")
   .modal-dialog__header.create-new-space-dialog__header
     button.create-new-space-dialog__close.modal-dialog__close(
       ng-if="createSpace.viewState === 'createSpaceForm' && !createSpace.isOnboarding"
@@ -12,7 +10,6 @@ include ./../onboarding_dialog/onboarding_nav.mixin.jade
     name="newSpaceForm")
     .create-new-space-dialog__content.modal-dialog__content
       div(ng-show="createSpace.isOnboarding")
-        +onboarding-dialog-nav(step="2")
         h2.create-new-space-dialog__heading
           | Let's create your first space now
       div(ng-show="!createSpace.isOnboarding")

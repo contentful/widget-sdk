@@ -54,27 +54,11 @@ describe('onboardingController', function () {
         storeMock.get.withArgs(SEEN_ONBOARDING_STORE_KEY).returns(undefined);
         $rootScope.$apply();
       });
-
       itShowsTheOnboardingDialog();
-
-      describe('$rootScope emitting `skipPersonaSelection`', function () {
-        beforeEach(function () {
-          $rootScope.$emit('skipPersonaSelection');
-        });
-
-        itStoresOnboardingSeenInfo();
-      });
-
-      describe('$rootScope emitting `submitPersonaSelection`', function () {
-        beforeEach(function () {
-          $rootScope.$emit('submitPersonaSelection');
-        });
-
-        itStoresOnboardingSeenInfo();
-      });
+      itStoresOnboardingSeenInfo();
     });
 
-    describe('`seenOnboarding` is already set in the store (e.g. from another user\'s session)', function () {
+    describe('`seenOnboarding` is already set in the store', function () {
       beforeEach(function () {
         storeMock.get.withArgs(SEEN_ONBOARDING_STORE_KEY).returns(true);
         $rootScope.$apply();
