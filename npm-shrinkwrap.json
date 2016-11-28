@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "dependencies": {
     "@contentful/client": {
-      "version": "14.0.1"
+      "version": "14.1.0"
     },
     "@contentful/hostname-transformer": {
       "version": "1.2.6"
@@ -158,9 +158,6 @@
                 },
                 "lodash.memoize": {
                   "version": "3.0.4"
-                },
-                "source-map": {
-                  "version": "0.5.6"
                 }
               }
             },
@@ -447,9 +444,6 @@
                 },
                 "lodash.memoize": {
                   "version": "3.0.4"
-                },
-                "source-map": {
-                  "version": "0.5.6"
                 }
               }
             },
@@ -756,14 +750,6 @@
         "cookie-signature": {
           "version": "1.0.6"
         },
-        "debug": {
-          "version": "2.2.0",
-          "dependencies": {
-            "ms": {
-              "version": "0.7.1"
-            }
-          }
-        },
         "depd": {
           "version": "1.1.0"
         },
@@ -827,9 +813,6 @@
             "http-errors": {
               "version": "1.3.1"
             },
-            "ms": {
-              "version": "0.7.1"
-            },
             "statuses": {
               "version": "1.2.1"
             }
@@ -884,9 +867,6 @@
               "dependencies": {
                 "balanced-match": {
                   "version": "0.2.1"
-                },
-                "concat-map": {
-                  "version": "0.0.1"
                 }
               }
             }
@@ -1059,9 +1039,6 @@
                       "dependencies": {
                         "balanced-match": {
                           "version": "0.2.1"
-                        },
-                        "concat-map": {
-                          "version": "0.0.1"
                         }
                       }
                     }
@@ -1873,9 +1850,6 @@
                           "dependencies": {
                             "balanced-match": {
                               "version": "0.2.1"
-                            },
-                            "concat-map": {
-                              "version": "0.0.1"
                             }
                           }
                         }
@@ -2234,28 +2208,6 @@
         "fancy-log": {
           "version": "1.2.0",
           "dependencies": {
-            "chalk": {
-              "version": "1.1.3",
-              "dependencies": {
-                "ansi-styles": {
-                  "version": "2.2.1"
-                },
-                "escape-string-regexp": {
-                  "version": "1.0.5"
-                },
-                "has-ansi": {
-                  "version": "2.0.0",
-                  "dependencies": {
-                    "ansi-regex": {
-                      "version": "2.0.0"
-                    }
-                  }
-                },
-                "supports-color": {
-                  "version": "2.0.0"
-                }
-              }
-            },
             "time-stamp": {
               "version": "1.0.1"
             }
@@ -2299,9 +2251,6 @@
           "dependencies": {
             "async": {
               "version": "0.2.10"
-            },
-            "source-map": {
-              "version": "0.5.6"
             },
             "uglify-to-browserify": {
               "version": "1.0.2"
@@ -2385,12 +2334,7 @@
           "version": "0.4.1"
         },
         "vinyl-sourcemaps-apply": {
-          "version": "0.2.1",
-          "dependencies": {
-            "source-map": {
-              "version": "0.5.6"
-            }
-          }
+          "version": "0.2.1"
         }
       }
     },
@@ -2414,17 +2358,6 @@
             },
             "escape-string-regexp": {
               "version": "1.0.3"
-            },
-            "has-ansi": {
-              "version": "2.0.0",
-              "dependencies": {
-                "ansi-regex": {
-                  "version": "2.0.0"
-                }
-              }
-            },
-            "supports-color": {
-              "version": "2.0.0"
             }
           }
         },
@@ -3056,14 +2989,6 @@
             "content-type": {
               "version": "1.0.1"
             },
-            "debug": {
-              "version": "2.2.0",
-              "dependencies": {
-                "ms": {
-                  "version": "0.7.1"
-                }
-              }
-            },
             "depd": {
               "version": "1.1.0"
             },
@@ -3154,9 +3079,6 @@
                       "dependencies": {
                         "balanced-match": {
                           "version": "0.3.0"
-                        },
-                        "concat-map": {
-                          "version": "0.0.1"
                         }
                       }
                     }
@@ -3186,14 +3108,6 @@
         "connect": {
           "version": "3.4.1",
           "dependencies": {
-            "debug": {
-              "version": "2.2.0",
-              "dependencies": {
-                "ms": {
-                  "version": "0.7.1"
-                }
-              }
-            },
             "finalhandler": {
               "version": "0.4.1",
               "dependencies": {
@@ -3331,9 +3245,6 @@
               "dependencies": {
                 "balanced-match": {
                   "version": "0.3.0"
-                },
-                "concat-map": {
-                  "version": "0.0.1"
                 }
               }
             }
@@ -3342,14 +3253,6 @@
         "socket.io": {
           "version": "1.4.5",
           "dependencies": {
-            "debug": {
-              "version": "2.2.0",
-              "dependencies": {
-                "ms": {
-                  "version": "0.7.1"
-                }
-              }
-            },
             "engine.io": {
               "version": "1.6.8",
               "dependencies": {
@@ -3641,9 +3544,6 @@
                   "dependencies": {
                     "balanced-match": {
                       "version": "0.3.0"
-                    },
-                    "concat-map": {
-                      "version": "0.0.1"
                     }
                   }
                 }
@@ -3683,12 +3583,7 @@
               }
             },
             "decamelize": {
-              "version": "1.1.2",
-              "dependencies": {
-                "escape-string-regexp": {
-                  "version": "1.0.5"
-                }
-              }
+              "version": "1.1.2"
             },
             "os-locale": {
               "version": "1.4.0",
@@ -3774,14 +3669,6 @@
           "dependencies": {
             "css-parse": {
               "version": "1.7.0"
-            },
-            "debug": {
-              "version": "2.2.0",
-              "dependencies": {
-                "ms": {
-                  "version": "0.7.1"
-                }
-              }
             },
             "glob": {
               "version": "3.2.11",
@@ -3932,9 +3819,6 @@
                   "dependencies": {
                     "balanced-match": {
                       "version": "0.3.0"
-                    },
-                    "concat-map": {
-                      "version": "0.0.1"
                     }
                   }
                 }
@@ -3958,17 +3842,6 @@
             },
             "escape-string-regexp": {
               "version": "1.0.3"
-            },
-            "has-ansi": {
-              "version": "2.0.0",
-              "dependencies": {
-                "ansi-regex": {
-                  "version": "2.0.0"
-                }
-              }
-            },
-            "supports-color": {
-              "version": "2.0.0"
             }
           }
         }
@@ -4012,26 +3885,13 @@
       "version": "0.10.31"
     },
     "strip-ansi": {
-      "version": "3.0.0",
-      "dependencies": {
-        "ansi-regex": {
-          "version": "2.0.0"
-        }
-      }
+      "version": "3.0.0"
     },
     "stylus": {
       "version": "0.52.4",
       "dependencies": {
         "css-parse": {
           "version": "1.7.0"
-        },
-        "debug": {
-          "version": "2.2.0",
-          "dependencies": {
-            "ms": {
-              "version": "0.7.1"
-            }
-          }
         },
         "glob": {
           "version": "3.2.11",
@@ -4091,34 +3951,7 @@
           "version": "2.0.0",
           "dependencies": {
             "clap": {
-              "version": "1.1.1",
-              "dependencies": {
-                "chalk": {
-                  "version": "1.1.3",
-                  "dependencies": {
-                    "ansi-styles": {
-                      "version": "2.2.1"
-                    },
-                    "escape-string-regexp": {
-                      "version": "1.0.5"
-                    },
-                    "has-ansi": {
-                      "version": "2.0.0",
-                      "dependencies": {
-                        "ansi-regex": {
-                          "version": "2.0.0"
-                        }
-                      }
-                    },
-                    "supports-color": {
-                      "version": "2.0.0"
-                    }
-                  }
-                }
-              }
-            },
-            "source-map": {
-              "version": "0.5.6"
+              "version": "1.1.1"
             }
           }
         },
