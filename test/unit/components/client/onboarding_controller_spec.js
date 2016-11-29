@@ -1,11 +1,11 @@
 'use strict';
 
 describe('onboardingController', function () {
-  var $rootScope, $q;
-  var openDialogStub, dialogConfirmSpy;
-  var userMock, storeMock;
+  let $rootScope, $q;
+  let openDialogStub, dialogConfirmSpy;
+  let userMock, storeMock;
 
-  var SEEN_ONBOARDING_STORE_KEY;
+  let SEEN_ONBOARDING_STORE_KEY;
 
   afterEach(function () {
     $rootScope = $q = openDialogStub =
@@ -43,7 +43,7 @@ describe('onboardingController', function () {
 
     $rootScope = this.$inject('$rootScope');
 
-    var controller = this.$inject('onboardingController');
+    const controller = this.$inject('onboardingController');
     SEEN_ONBOARDING_STORE_KEY = controller.SEEN_ONBOARDING_STORE_KEY;
     controller.init();
   });
@@ -54,27 +54,11 @@ describe('onboardingController', function () {
         storeMock.get.withArgs(SEEN_ONBOARDING_STORE_KEY).returns(undefined);
         $rootScope.$apply();
       });
-
       itShowsTheOnboardingDialog();
-
-      describe('$rootScope emitting `skipPersonaSelection`', function () {
-        beforeEach(function () {
-          $rootScope.$emit('skipPersonaSelection');
-        });
-
-        itStoresOnboardingSeenInfo();
-      });
-
-      describe('$rootScope emitting `submitPersonaSelection`', function () {
-        beforeEach(function () {
-          $rootScope.$emit('submitPersonaSelection');
-        });
-
-        itStoresOnboardingSeenInfo();
-      });
+      itStoresOnboardingSeenInfo();
     });
 
-    describe('`seenOnboarding` is already set in the store (e.g. from another user\'s session)', function () {
+    describe('`seenOnboarding` is already set in the store', function () {
       beforeEach(function () {
         storeMock.get.withArgs(SEEN_ONBOARDING_STORE_KEY).returns(true);
         $rootScope.$apply();

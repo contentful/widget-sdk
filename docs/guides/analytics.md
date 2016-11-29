@@ -85,7 +85,6 @@ yet).
 | global              | logout_clicked                        | -
 | global              | top_banner_dismissed                  | -
 | global              | navigated                             | -
-| onboarding          | persona_selected                      | <code>personaName: string<br>skipped: bool</code>
 | learn               | step_clicked                          | <code>linkName: string</code>
 | learn               | language_selected                     | <code>language: string (js, ruby...)</code>
 | learn               | resource_selected                     | <code>language: string<br>resource: string (documentation, example....)</code>
