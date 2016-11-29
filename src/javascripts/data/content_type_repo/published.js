@@ -163,12 +163,13 @@ angular.module('cf.data')
      *
      * @returns {Promise<Client.ContentType[]>}
      */
+    // TODO we should throttle this function so that multiple
+    // subsequent calls to `fetch()` do not trigger multiple requests.
     function refresh () {
       return space.getPublishedContentTypes({limit: 1000})
         .then(function (contentTypes) {
           contentTypes = removeDeleted(contentTypes);
           store.reset(contentTypes);
-          requesting = {};
           return contentTypes;
         }, handleReloadError);
     }
