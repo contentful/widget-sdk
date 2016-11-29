@@ -1,4 +1,4 @@
-import {isObject} from 'lodash';
+import {isObjectLike} from 'lodash';
 
 /**
  * @ngdoc service
@@ -33,13 +33,11 @@ export function deepFreeze (o) {
     // ES5 throws TypeError if not an object. ES6 is ok.
   }
 
-  if (isObject(o)) {
+  if (Array.isArray(o)) {
+    o.forEach(deepFreeze);
+  } else if (isObjectLike(o)) {
     Object.getOwnPropertyNames(o).forEach(function (prop) {
       deepFreeze(o[prop]);
-    });
-  } else if (Array.isArray(o)) {
-    o.forEach(function (value) {
-      deepFreeze(value);
     });
   }
 
