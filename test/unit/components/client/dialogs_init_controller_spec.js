@@ -49,17 +49,7 @@ describe('dialogsInitController', function () {
       });
 
       it('initializes `activationEmailResendController` but skips dialog', function () {
-        sinon.assert.calledWith(this.initEmailSpy, { skipOnce: true });
-      });
-    });
-
-    describe('onboarding didn\'t get shown', function () {
-      beforeEach(function () {
-        this.$rootScope.$broadcast('cfOmitOnboarding');
-      });
-
-      it('initializes `activationEmailResendController`', function () {
-        sinon.assert.calledWithExactly(this.initEmailSpy);
+        sinon.assert.called(this.initEmailSpy);
       });
     });
 

@@ -26,11 +26,7 @@ angular.module('contentful')
   function init () {
     // Make sure activation email resend dialog is not shown together with onboarding.
     // After onboarding wait 24h before reminding the user about the activation email.
-    $rootScope.$on('cfOmitOnboarding', function () {
-      activationEmailResendController.init();
-    });
-    $rootScope.$on('cfAfterOnboarding',
-      activationEmailResendController.init.bind(null, { skipOnce: true }));
+    $rootScope.$on('cfAfterOnboarding', activationEmailResendController.init);
 
     onboardingController.init();
 
