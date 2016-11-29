@@ -77,7 +77,10 @@ angular.module('contentful')
 
   $scope.actions = $controller('EntryActionsController', {
     $scope: $scope,
-    notify: notify
+    notify: notify,
+    fields$: $scope.otDoc.valuePropertyAt(['fields']),
+    entityInfo: $scope.entityInfo,
+    preferences: $scope.preferences
   });
 
 

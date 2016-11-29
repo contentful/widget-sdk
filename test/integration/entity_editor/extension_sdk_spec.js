@@ -272,7 +272,7 @@ describe('Extension SDK', function () {
     const SYS_1 = 'new sys value';
 
     beforeEach(function () {
-      this.doc.sysProperty.set(SYS_0);
+      this.doc.setValueAt(['sys'], SYS_0);
     });
 
     describe('#getSys()', function () {
@@ -283,7 +283,7 @@ describe('Extension SDK', function () {
 
       it('returns updated value when document property changes', function* (api) {
         expect(api.entry.getSys()).toEqual(SYS_0);
-        this.doc.sysProperty.set(SYS_1);
+        this.doc.setValueAt(['sys'], SYS_1);
         yield api.nextTick();
         expect(api.entry.getSys()).toEqual(SYS_1);
       });
@@ -300,7 +300,7 @@ describe('Extension SDK', function () {
         const listener = sinon.stub();
         api.entry.onSysChanged(listener);
         listener.reset();
-        this.doc.sysProperty.set(SYS_1);
+        this.doc.setValueAt(['sys'], SYS_1);
         yield api.nextTick();
         sinon.assert.calledWith(listener, SYS_1);
       });

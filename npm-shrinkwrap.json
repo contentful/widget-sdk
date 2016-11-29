@@ -106,6 +106,9 @@
     "babel-plugin-transform-es2015-block-scoping": {
       "version": "6.18.0"
     },
+    "babel-plugin-transform-es2015-destructuring": {
+      "version": "6.19.0"
+    },
     "babel-plugin-transform-es2015-modules-systemjs": {
       "version": "6.18.0"
     },
