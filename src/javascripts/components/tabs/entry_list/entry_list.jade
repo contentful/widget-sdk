@@ -24,8 +24,6 @@ header.workbench-header
       cf-on-blur-component="leftSearch($event)"
       cf-on-blur-component-when="showAutocompletions")
 
-    .search-results-position(cf-search-results-position paginator="paginator" ng-hide="!paginator.getTotal()")
-
   .workbench-header__actions(ng-if="!showNoEntriesAdvice()")
     +create-entry-button
 
@@ -34,7 +32,8 @@ header.workbench-header
     ng-show="uiConfig"
     cf-view-menu="uiConfig.entryListViews")
 
-  .workbench-main__right-content
+  .workbench-main__right-content.x--flex-column
+    .search-results__count {{ paginator.getTotal() === 1 ? '1 entry found' : paginator.getTotal() + ' entries found' }}
     .view-customizer(
       ng-show="entries.length && !isEmpty"
       cf-view-customizer)
@@ -117,7 +116,7 @@ header.workbench-header
             aria-label="publish")
             | {{publishButtonName()}}
 
-      .table__body.endless-container(cf-endless-container at-bottom="loadNextPage()" num-elements="paginator.getPage()")
+      .table__body
         table
           tbody
             tr.x--multiline(ng-repeat="entry in entries track by entry.getId()"
@@ -140,7 +139,9 @@ header.workbench-header
                 aria-label="cell-status"
                 ng-class="entityStatus.getClassname(entry)")
                 | {{entityStatus.getLabel(entry)}}
-        .loading(ng-hide="paginator.isAtLast()")
+
+    cf-search-results-paginator(paginator="paginator")
+
     +no-search-results("!entries.length || isEmpty", "(context.view.contentTypeId ? 'Content type \"' + context.view.contentTypeId + '\", term: ' : '') + context.view.searchTerm")
 
 .workbench-main.x--content(ng-show="showNoEntriesAdvice()")
