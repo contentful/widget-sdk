@@ -45,12 +45,15 @@ describe('Segment service', function () {
     });
   });
 
-  describeCall('track', {All: false, 'Google Analytics': true});
-  describeCall('page', {All: false, Intercom: true, 'Google Analytics': true});
-  describeCall('identify', {All: false, Intercom: true, 'Google Analytics': true});
+  describeCall('track', {Intercom: false});
+  describeCall('page');
+  describeCall('identify');
 
   function describeCall (fnName, integrations) {
-    const expectedArgs = ['key', {data: 1}, {integrations}];
+    const expectedArgs = ['key', {data: 1}];
+    if (integrations) {
+      expectedArgs.push({integrations});
+    }
 
     describe(`${fnName} method`, function () {
       beforeEach(function () {
