@@ -14,7 +14,7 @@ You can run the tests with
 ~~~bash
 $ npm install -g karma-cli gulp-cli
 $ gulp prepare-tests
-$ xvfb-run karma --browsers SlimerJS
+$ xvfb-run karma start --browsers SlimerJS
 ~~~
 
 
