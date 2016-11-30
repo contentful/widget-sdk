@@ -67,11 +67,6 @@ angular.module('contentful')
     $scope.context.dirty = isDirty;
   });
 
-  // TODO move this into sidebar controller
-  K.onValueScope($scope, $scope.otDoc.state.isSaving$, function (isSaving) {
-    $scope.documentIsSaving = isSaving;
-  });
-
   // OT Stuff
   $scope.$watch(function assetEditorDisabledWatcher () {
     return $scope.asset.isArchived();
