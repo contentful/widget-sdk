@@ -68,18 +68,9 @@ angular.module('cf.app')
     };
 
     $scope.addExisting = function (event) {
-      // TODO entity selector should accept only ids
-      var currentLinks = $scope.entityModels.map(function (item) {
-        return {
-          sys: {
-            id: item.id,
-            linkType: $scope.type,
-            type: 'Link'
-          }
-        };
-      });
+      var currentSize = $scope.entityModels.length;
       event.preventDefault();
-      entitySelector.open(field, currentLinks)
+      entitySelector.open(field, currentSize)
       .then(state.addEntities);
     };
 

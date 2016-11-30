@@ -52,14 +52,17 @@ angular.module('contentful')
    * @ngdoc method
    * @name entitySelector#open
    * @param {API.Field} field
-   * @param {API.Link[]?} links
+   * @param {number?} currentSize
+   *   Current number of entities on the field. Used to calculate the
+   *   number of entities that can be selected if there are size
+   *   validations. Defaults to zero.
    * @returns {Promise<API.Entity[]>}
    * @description
    * Opens a modal for the provided reference
    * field and optional list of existing links.
    */
-  function openFromField (field, links) {
-    return open(prepareFieldConfig(field, links));
+  function openFromField (field, currentSize) {
+    return open(prepareFieldConfig(field, currentSize || 0));
   }
 
   /**
@@ -124,15 +127,12 @@ angular.module('contentful')
     }
   }
 
-  function prepareFieldConfig (field, links) {
+  function prepareFieldConfig (field, currentSize) {
     field = field || {};
-    links = _.map(links || [], function (link) {
-      return link.sys.id;
-    });
 
     var size = findValidation(field, 'size', {});
-    var max = (size.max || +Infinity) - links.length;
-    var min = (size.min || 1) - links.length;
+    var max = (size.max || +Infinity) - currentSize;
+    var min = (size.min || 1) - currentSize;
     min = min < 1 ? 1 : min;
 
     var config = {
