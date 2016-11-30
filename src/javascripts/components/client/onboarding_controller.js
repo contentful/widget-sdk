@@ -39,7 +39,7 @@ angular.module('contentful')
       showOnboarding();
       storeSeenOnboarding();
     } else {
-      $rootScope.$broadcast('cfOmitOnboarding');
+      $rootScope.$broadcast('cfAfterOnboarding');
     }
   }
 
