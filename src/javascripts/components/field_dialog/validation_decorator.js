@@ -57,7 +57,7 @@ angular.module('contentful')
     range: 'Specify a minimum and/or maximum allowed number for this field',
     dateRange: 'Specify an early and/or latest allowed date for this field',
     regexp: 'Make this field match a pattern: e-mail address, URI, or a custom regular expression',
-    unique: 'You won\'t be able to publish an entry if there is an existing entry with with identical content',
+    unique: 'You won\'t be able to publish an entry if there is an existing entry with identical content',
     in: 'You won\'t be able to publish an entry if the field value is not in the list of specified values',
     linkContentType: 'Make this field only accept entries from specified content type(s)',
     linkMimetypeGroup: 'Make this field only accept specified file types',
