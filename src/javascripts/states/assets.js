@@ -9,9 +9,10 @@ angular.module('contentful')
 .factory('states/assets', ['require', function (require) {
   var contextHistory = require('contextHistory');
   var spaceContext = require('spaceContext');
+  var $state = require('$state');
 
   var base = require('states/base');
-  var filterDeletedLocales = require('states/entityLocaleFilter');
+  var loadEditorData = require('app/entity_editor/DataLoader').loadAsset;
 
   var listEntity = {
     getTitle: function () { return list.label; },
@@ -37,32 +38,13 @@ angular.module('contentful')
     params: { addToContext: true },
     label: 'Asset details',
     resolve: {
-      asset: ['$stateParams', 'space', function ($stateParams, space) {
-        return space.getAsset($stateParams.assetId).then(function (asset) {
-          filterDeletedLocales(asset.data, space.getPrivateLocales());
-          return asset;
-        });
-      }],
-      formControls: ['spaceContext', function (spaceContext) {
-        var ei = require('data/editingInterfaces/asset');
-        return spaceContext.widgets.buildRenderable(ei.widgets).form;
+      editorData: ['$stateParams', 'spaceContext', function ($stateParams, spaceContext) {
+        return loadEditorData(spaceContext, $stateParams.assetId);
       }]
     },
-    controller: ['$scope', 'require', 'asset', 'formControls', function ($scope, require, asset, formControls) {
-      var $state = require('$state');
-
+    controller: ['$scope', 'editorData', function ($scope, editorData) {
       $state.current.data = $scope.context = {};
-      $scope.asset = $scope.entity = asset;
-      $scope.formControls = formControls;
-
-      // TODO(mudit): Pluck this out into a service that accepts an entity
-      // and returns the title and use it everywhere.
-      // An entity can be Entry, Content Type, Asset, Webhook, Locale, Role, etc
-      asset.getTitle = function () {
-        var title = 'hasUnpublishedChanges' in asset && asset.hasUnpublishedChanges() ? '*' : '';
-
-        return spaceContext.assetTitle(asset) + title;
-      };
+      $scope.editorData = editorData;
 
       // add list view as parent if it's a deep link to the media/asset
       if (contextHistory.isEmpty()) {
@@ -70,7 +52,7 @@ angular.module('contentful')
       }
 
       // add current state
-      contextHistory.addEntity(asset);
+      contextHistory.addEntity(buildAssetCrumb(editorData.entity));
     }],
     template: '<cf-asset-editor class="asset-editor workbench">'
   };
@@ -81,4 +63,20 @@ angular.module('contentful')
     abstract: true,
     children: [list, detail]
   };
+
+  // TODO Will be removed in #1581. Duplicates code in states/entries
+  function buildAssetCrumb (asset) {
+    return {
+      getTitle: function () {
+        var asterisk = 'hasUnpublishedChanges' in asset && asset.hasUnpublishedChanges() ? '*' : '';
+        return spaceContext.assetTitle(asset) + asterisk;
+      },
+      link: {
+        state: 'spaces.detail.assets.detail',
+        params: { assetId: asset.getId() }
+      },
+      getType: asset.getType.bind(asset),
+      getId: _.constant(asset.getId())
+    };
+  }
 }]);

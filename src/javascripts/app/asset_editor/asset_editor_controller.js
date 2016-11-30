@@ -16,13 +16,15 @@ angular.module('contentful')
   var errorMessageBuilder = require('errorMessageBuilder');
   var deepFreeze = require('utils/DeepFreeze').deepFreeze;
 
+  var editorData = $scope.editorData;
+
   var notify = makeNotify('Asset', function () {
     return '“' + $scope.title + '”';
   });
 
   $scope.entityInfo = deepFreeze({
-    id: $scope.entity.data.sys.id,
-    type: $scope.entity.data.sys.type,
+    id: editorData.entity.data.sys.id,
+    type: editorData.entity.data.sys.type,
     // If necessary, we can set this to the value exported by the
     // 'assetContentType' module.
     contentType: null
@@ -32,7 +34,7 @@ angular.module('contentful')
 
   // TODO rename the scope property
   $scope.otDoc = spaceContext.docPool.get(
-    $scope.entity,
+    editorData.entity,
     null,
     $scope.user,
     // TODO: pass a lifecycle observable
@@ -50,7 +52,7 @@ angular.module('contentful')
 
   $scope.state = $controller('entityEditor/StateController', {
     $scope: $scope,
-    entity: $scope.asset,
+    entity: editorData.entity,
     notify: notify,
     validator: validator,
     otDoc: $scope.otDoc
@@ -73,13 +75,13 @@ angular.module('contentful')
   // Building the form
   $controller('FormWidgetsController', {
     $scope: $scope,
-    controls: $scope.formControls
+    controls: editorData.fieldControls.form
   });
 
   // File uploads
   $scope.$on('fileUploaded', function (_event, file, locale) {
     setTitleOnDoc(file, locale.internal_code);
-    $scope.asset.process($scope.otDoc.getVersion(), locale.internal_code)
+    editorData.entity.process($scope.otDoc.getVersion(), locale.internal_code)
     .catch(function (err) {
       $scope.$emit('fileProcessingFailed');
       notification.error('There has been a problem processing the Asset.');

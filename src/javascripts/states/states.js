@@ -69,18 +69,6 @@ angular.module('contentful')
   $urlMatcherFactoryProvider.strictMode(false);
 }])
 
-.factory('states/entityLocaleFilter', [function () {
-  return function filterDeletedLocales (data, availableLocales) {
-    _.keys(data.fields).forEach(function (fieldId) {
-      _.keys(data.fields[fieldId]).forEach(function (internalCode) {
-        if (!_.find(availableLocales, { internal_code: internalCode })) {
-          delete data.fields[fieldId][internalCode];
-        }
-      });
-    });
-  };
-}])
-
 .factory('states/resolvers', [function () {
   editingInterfaceResolver.$inject = ['spaceContext', 'contentType'];
   function editingInterfaceResolver (spaceContext, contentType) {
