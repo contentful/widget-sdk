@@ -202,4 +202,25 @@ describe('utils/kefir', function () {
       KMock.assertCurrentValue(x, {a: 'A2', b: 'B2'});
     });
   });
+
+  describe('#getValue', function () {
+    it('returns current value', function () {
+      const prop = KMock.createMockProperty('A');
+      expect(K.getValue(prop)).toBe('A');
+      prop.set('B');
+      expect(K.getValue(prop)).toBe('B');
+    });
+
+    it('returns last value when property has ended', function () {
+      const prop = KMock.createMockProperty('A');
+      prop.set('B');
+      prop.end();
+      expect(K.getValue(prop)).toBe('B');
+    });
+
+    it('throws if there is no current value', function () {
+      const prop = KMock.createMockStream();
+      expect(() => K.getValue(prop)).toThrowError('Property does not have current value');
+    });
+  });
 });
