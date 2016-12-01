@@ -1,32 +1,30 @@
-'use strict';
-angular.module('contentful').factory('random', function(){
-  var CHARS = '0123456789abcdefghijklmnopqvwxyzABCDEFGHIJKLMNOPQVWXYZ';
-  var max   = CHARS.length-1;
+angular.module('contentful')
+.factory('random', function () {
+  var LETTERS = 'abcdefghijklmnopqvwxyzABCDEFGHIJKLMNOPQVWXYZ';
+  var NUMS = '0123456789';
+  var ALNUM = NUMS + LETTERS;
+
   return {
     id: function () {
-      return [
-        r(true),
-        r(),
-        r(),
-        r(),
-        r(),
-        r(),
-        r(),
-        r(),
-        r(),
-        r(),
-        r(),
-        r(),
-        r(),
-        r(),
-        r(),
-        r(),
-      ].join('');
+      return letter(1) + alnum(15);
     },
+    letter: letter,
+    alnum: alnum
   };
 
-  function r(alpha) {
-    var min = alpha ? 10 : 0;
-    return CHARS[_.random(min,max)];
+  function fromArray (a) {
+    return a[_.random(0, a.length - 1)];
+  }
+
+  function letter (count) {
+    return _.times(count, function () {
+      return fromArray(LETTERS);
+    }).join('');
+  }
+
+  function alnum (count) {
+    return _.times(count, function () {
+      return fromArray(ALNUM);
+    }).join('');
   }
 });

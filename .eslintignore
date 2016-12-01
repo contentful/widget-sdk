@@ -203,7 +203,6 @@ src/javascripts/services/merge_sort.js
 src/javascripts/services/ooyala_client.js
 src/javascripts/services/ooyala_player_loader.js
 src/javascripts/services/q_decorator.js
-src/javascripts/services/random.js
 src/javascripts/services/revision.js
 src/javascripts/services/validation_dialog_error_messages.js
 src/javascripts/services/validation_views.js
