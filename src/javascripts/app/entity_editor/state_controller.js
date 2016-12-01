@@ -100,6 +100,10 @@ angular.module('contentful')
         controller.current = 'changes';
         controller.primary = publishChanges;
         controller.secondary = [archive, unpublish];
+      }],
+      [State.Deleted(), function () {
+        // This state is only present briefly before closing the entry
+        // editor.
       }]
     ]);
 
