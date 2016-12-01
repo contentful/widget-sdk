@@ -10,9 +10,16 @@ describe('data/ShareJS/Connection', function () {
       open: sinon.stub()
     };
 
-    this.setState = function (state) {
+    this.setState = (state) => {
       this.baseConnection.state = state;
       this.baseConnection.emit();
+      this.$apply();
+    };
+
+    this.yieldOpen = (err, doc) => {
+      this.baseConnection.open.yield(err, doc);
+      this.baseConnection.open.reset();
+      this.$apply();
     };
 
     this.sharejs = {
@@ -59,6 +66,12 @@ describe('data/ShareJS/Connection', function () {
 
       this.docLoader = connection.getDocLoader(this.entity, this.readOnly);
       this.docValues = Kefir.extractValues(this.docLoader.doc);
+      this.$apply();
+
+      this.makeReadOnly = () => {
+        this.readOnly.set(true);
+        this.$apply();
+      };
     });
 
     afterEach(function () {
@@ -75,54 +88,47 @@ describe('data/ShareJS/Connection', function () {
     });
 
     it('emits document when opening succeeds', function () {
-      this.baseConnection.open.yield(null, 'DOC');
-      this.$apply();
+      this.yieldOpen(null, 'DOC');
       expect(this.docValues[0].doc).toBe('DOC');
     });
 
     it('emits error when opening fails', function () {
-      this.baseConnection.open.yield('ERROR');
-      this.$apply();
+      this.yieldOpen('ERROR');
       expect(this.docValues[0].error).toBe('ERROR');
     });
 
     it('emits error when disconnected fails', function () {
       const doc = new OtDoc();
-      this.baseConnection.open.yield(null, doc);
-      this.$apply();
+      this.yieldOpen(null, doc);
       expect(this.docValues[0].doc).toBe(doc);
 
       this.setState('disconnected');
-      this.$apply();
       expect(this.docValues[0].error).toBe('disconnected');
     });
 
     it('opens a document again after being disconnected', function () {
-      this.baseConnection.open.yield(null, new OtDoc());
-      this.$apply();
+      const doc = new OtDoc();
+      this.yieldOpen(null, doc);
 
       this.setState(null);
-      this.$apply();
+      doc.close.yield();
       expect(this.docValues[0]).toBeInstanceOf(DocLoad.None);
 
       this.setState('ok');
-      this.baseConnection.open.yield(null, 'DOC 2');
-      this.$apply();
+      this.yieldOpen(null, 'DOC 2');
       expect(this.docValues[0].doc).toBe('DOC 2');
     });
 
     it('does not emit document when set to read-only mode', function () {
-      this.baseConnection.open.yield(null, new OtDoc());
-      this.readOnly.set(true);
-      this.$apply();
+      this.yieldOpen(null, new OtDoc());
+      this.makeReadOnly();
       expect(this.docValues[0]).toBeInstanceOf(DocLoad.None);
     });
 
     it('closes document when set to read-only mode', function () {
       const doc = new OtDoc();
-      this.baseConnection.open.yield(null, doc);
-      this.readOnly.set(true);
-      this.$apply();
+      this.yieldOpen(null, doc);
+      this.makeReadOnly();
       sinon.assert.calledOnce(doc.close);
     });
 
@@ -135,11 +141,39 @@ describe('data/ShareJS/Connection', function () {
 
     it('closes document when loader is destroyed', function () {
       const doc = new OtDoc();
-      this.baseConnection.open.yield(null, doc);
-      this.$apply();
+      this.yieldOpen(null, doc);
       expect(this.docValues[0].doc).toBe(doc);
       this.docLoader.destroy();
       this.$apply();
+      sinon.assert.calledOnce(doc.close);
+    });
+
+    it('waits for closing to be acked before opening again', function () {
+      const doc = new OtDoc();
+      this.yieldOpen(null, doc);
+
+      this.docLoader.close();
+      sinon.assert.calledOnce(doc.close);
+
+      this.setState('ok');
+      // waiting for `close()` call to finish:
+      sinon.assert.notCalled(this.baseConnection.open);
+
+      // open again when it's done:
+      doc.close.yield();
+      this.$apply();
+      sinon.assert.calledOnce(this.baseConnection.open);
+    });
+
+    it('closes the doc once, even if called many times', function () {
+      const doc = new OtDoc();
+      this.yieldOpen(null, doc);
+
+      // let's close the doc in various ways
+      this.docLoader.close();
+      this.setState(null);
+      this.makeReadOnly();
+
       sinon.assert.calledOnce(doc.close);
     });
   });
@@ -169,8 +203,7 @@ describe('data/ShareJS/Connection', function () {
       this.open().then(success);
 
       this.setState('handshaking');
-      this.baseConnection.open.yield(null, doc);
-      this.$apply();
+      this.yieldOpen(null, doc);
 
       sinon.assert.calledWith(success, sinon.match({doc: doc}));
     });
@@ -180,8 +213,7 @@ describe('data/ShareJS/Connection', function () {
       this.open().then(({destroy}) => destroy());
 
       this.setState('handshaking');
-      this.baseConnection.open.yield(null, doc);
-      this.$apply();
+      this.yieldOpen(null, doc);
 
       sinon.assert.called(doc.close);
     });

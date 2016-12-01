@@ -234,7 +234,7 @@ angular.module('contentful')
     }).skipDuplicates();
 
     cleanupTasks.push(function () {
-      setDoc(undefined);
+      forgetCurrentDoc();
       docLoader.destroy();
     });
 
@@ -376,24 +376,8 @@ angular.module('contentful')
       });
     }
 
-
-    function closeDoc (doc) {
-      presence.leave();
-      try {
-        doc.close();
-      } catch (e) {
-        if (e.message !== 'Cannot send to a closed connection') {
-          throw e;
-        }
-      }
-    }
-
     function setDoc (doc) {
-      if (currentDoc) {
-        unplugDocEvents(currentDoc);
-        closeDoc(currentDoc);
-        currentDoc = undefined;
-      }
+      forgetCurrentDoc();
 
       if (doc) {
         currentDoc = doc;
@@ -429,6 +413,15 @@ angular.module('contentful')
       }
     }
 
+    function forgetCurrentDoc () {
+      if (currentDoc) {
+        currentDoc.emit = currentDoc._originalEmit;
+        currentDoc = undefined;
+        presence.leave();
+        docLoader.close();
+      }
+    }
+
     function plugDocEvents (doc) {
       doc._originalEmit = doc.emit;
       doc.emit = function (name, data) {
@@ -436,10 +429,6 @@ angular.module('contentful')
         docEventsBus.emit({doc: doc, name: name, data: data});
       };
       docEventsBus.emit({doc: doc, name: 'open'});
-    }
-
-    function unplugDocEvents (doc) {
-      doc.emit = doc._originalEmit;
     }
 
     function withRawDoc (cb) {

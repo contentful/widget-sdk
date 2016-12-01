@@ -9,7 +9,6 @@ angular.module('cf.data')
  * document.
  */
 .factory('data/ShareJS/Connection/DocLoader', ['require', function (require) {
-  var $q = require('$q');
   var K = require('utils/kefir');
   var SumTypes = require('libs/sum-types');
   var caseof = SumTypes.caseof;
@@ -49,13 +48,12 @@ angular.module('cf.data')
   /**
    * @ngdoc method
    * @name data/ShareJS/Connection/DocLoader#create
-   * @param {ShareJS.Connection} connection
-   * @param {string} key
+   * @param {DocWrapper} docWrapper
    * @param {Property<string>} connectionState$
    * @param {Property<boolean>} readOnly$
    */
-  function create (connection, key, state$, readOnly) {
-    var opener = createLoader(connection, key);
+  function create (docWrapper, state$, readOnly) {
+    var docStream = null;
 
     // Property<boolean>
     // True when we want the doc to be opened
@@ -72,12 +70,13 @@ angular.module('cf.data')
       var shouldOpen = vals.shouldOpen;
 
       if (state === 'disconnected') {
-        opener.close();
+        close();
         return K.constant(DocLoad.Error('disconnected'));
       }
 
       if (shouldOpen && (state === 'ok' || state === 'handshaking')) {
-        return opener.request().map(function (p) {
+        docStream = docStream || K.promiseProperty(docWrapper.open());
+        return docStream.map(function (p) {
           return caseof(p, [
             [K.PromiseStatus.Pending, function () {
               return DocLoad.None();
@@ -91,7 +90,7 @@ angular.module('cf.data')
           ]);
         });
       } else {
-        opener.close();
+        close();
         return K.constant(DocLoad.None());
       }
     }).toProperty(_.constant(DocLoad.None()));
@@ -102,54 +101,19 @@ angular.module('cf.data')
 
     return {
       doc: docLoad,
-      destroy: function () {
-        opener.close();
-        dead.emit();
-        dead.end();
-      }
-    };
-  }
-
-
-  function createLoader (connection, key) {
-    var docPromise = null;
-    var docStream = null;
-
-    return {
       close: close,
-      request: request
+      destroy: destroy
     };
-
-    function request () {
-      if (!docStream) {
-        docPromise = openDoc(connection, key);
-        docStream = K.promiseProperty(docPromise);
-      }
-      return docStream;
-    }
 
     function close () {
-      if (docPromise) {
-        docPromise.then(closeDoc);
-      }
-      docPromise = null;
+      docWrapper.close();
       docStream = null;
     }
-  }
 
-  function closeDoc (doc) {
-    try {
-      doc.close();
-    } catch (e) {
-      if (e.message !== 'Cannot send to a closed connection') {
-        throw e;
-      }
+    function destroy () {
+      close();
+      dead.emit();
+      dead.end();
     }
-  }
-
-  function openDoc (connection, key) {
-    return $q.denodeify(function (cb) {
-      connection.open(key, 'json', cb);
-    });
   }
 }]);
