@@ -258,6 +258,24 @@ angular.module('contentful')
       spaceEndpoint
     );
 
+    // We cannot simply use `valuePropertiesAt([])` because the SJS
+    // document does not track the 'updatedAt' property.
+    var data$ = K.combinePropertiesObject({
+      sys: sysProperty,
+      fields: valuePropertyAt(['fields'])
+    });
+
+    // The entity instance is unique for the ID. Other views will share
+    // the same instance and not necessarily load the data. This is why
+    // we need to make sure that we keep it up date.
+    data$.onValue(function (data) {
+      entity.data = data;
+      if (data.sys.deletedVersion) {
+        entity.setDeleted();
+        delete entity.data;
+      }
+    });
+
     var instance = {
       destroy: destroy,
       getVersion: getVersion,

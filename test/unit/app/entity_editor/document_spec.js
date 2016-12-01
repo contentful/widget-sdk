@@ -594,6 +594,24 @@ describe('entityEditor/Document', function () {
     });
   });
 
+  describe('client entity instance', function () {
+    it('updates data when OtDoc emits changes', function () {
+      const otDoc = this.connectAndOpen();
+      this.$apply();
+      otDoc.setAt(['fields'], 'FIELDS');
+      expect(this.entity.data.fields).toBe('FIELDS');
+    });
+
+    it('marks entity as deleted when sys has deletedVersion', function () {
+      const otDoc = this.connectAndOpen();
+      this.entity.setDeleted = sinon.spy();
+      this.$apply();
+      otDoc.setAt(['sys', 'deletedVersion'], 1);
+      expect(this.entity.data).toBe(undefined);
+      sinon.assert.called(this.entity.setDeleted);
+    });
+  });
+
   function itRejectsWithoutDocument (method) {
     it('rejects when document is not opened', function () {
       this.docLoader.doc.set(this.DocLoad.None());

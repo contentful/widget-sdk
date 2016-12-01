@@ -24,6 +24,11 @@ describe('data/document/ResourceStateManager', function () {
       fields: {}
     };
 
+    const entity = {
+      data: entityData,
+      setDeleted: sinon.stub()
+    };
+
     const OtDoc = this.$inject('mocks/OtDoc');
     this.sjsDoc = new OtDoc(entityData);
 
@@ -38,7 +43,7 @@ describe('data/document/ResourceStateManager', function () {
 
     this.doc = Doc.create(
       docConnection,
-      {data: entityData},
+      entity,
       {},
       {sys: {id: 'USER'}},
       this.spaceEndpoint
