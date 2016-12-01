@@ -3,13 +3,12 @@
 angular.module('contentful')
 .factory('onboardingController', ['$injector', function ($injector) {
 
-  var $rootScope     = $injector.get('$rootScope');
-  var spaceContext   = $injector.get('spaceContext');
-  var modalDialog    = $injector.get('modalDialog');
-  var TheStore       = $injector.get('TheStore');
+  var $rootScope = $injector.get('$rootScope');
+  var spaceContext = $injector.get('spaceContext');
+  var modalDialog = $injector.get('modalDialog');
+  var TheStore = $injector.get('TheStore');
   var authentication = $injector.get('authentication');
-  var analytics      = $injector.get('analytics');
-  var $timeout       = $injector.get('$timeout');
+  var analytics = $injector.get('analytics');
 
   var SEEN_ONBOARDING_STORE_KEY = 'seenOnboarding';
 
@@ -25,9 +24,6 @@ angular.module('contentful')
     unwatch = $rootScope.$watch(function () {
       return dotty.get(authentication, 'tokenLookup.sys.createdBy');
     }, watcher);
-
-    $rootScope.$on('skipPersonaSelection', storeSeenOnboarding);
-    $rootScope.$on('submitPersonaSelection', storeSeenOnboarding);
   }
 
   function watcher (user) {
@@ -41,15 +37,16 @@ angular.module('contentful')
     var userSeenOnboarding = fetchSeenOnboarding();
     if (user.signInCount === 1 && !userSeenOnboarding) {
       showOnboarding();
+      storeSeenOnboarding();
     } else {
-      $rootScope.$broadcast('cfOmitOnboarding');
+      $rootScope.$broadcast('cfAfterOnboarding');
     }
   }
 
   function showOnboarding () {
     modalDialog.open({
       title: 'Onboarding', // Not displayed, just for analytics.
-      template: 'onboarding_dialog',
+      template: 'create_new_space_dialog',
       persistOnNavigation: true,
       backgroundClose: false,
       ignoreEsc: true,

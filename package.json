@@ -6,7 +6,7 @@
   "bin": {},
   "directories": {},
   "dependencies": {
-    "@contentful/client": "^14.0.1",
+    "@contentful/client": "^14.1.0",
     "@contentful/hostname-transformer": "^1.2.6",
     "@contentful/mimetype": "^1.0.1",
     "@contentful/validation": "^6.1.0",

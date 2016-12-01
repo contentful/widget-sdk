@@ -1,7 +1,6 @@
-// This directive is used for `new_space_dialog` as well as `onboarding_dialog`
 // If `isOnboarding = true` is passed into the scope then it will display the
 // onboarding version of the directive with a different headline, subheadline
-// and nav.
+// and close button.
 
 
 'use strict';

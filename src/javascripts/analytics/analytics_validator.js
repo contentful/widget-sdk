@@ -17,9 +17,6 @@ angular.module('contentful')
     'top_banner_dismissed',
     'navigated'
   ],
-  onboarding: [
-    'persona_selected'
-  ],
   learn: [
     'step_clicked',
     'language_selected',
