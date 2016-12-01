@@ -17,6 +17,10 @@ angular.module('contentful')
     restrict: 'A',
     controller: 'EntryListController',
     link: function (scope, elem) {
+      // We obtain a reference to the publishedCTs directly so that if
+      // we are changing the space we do not refer to the new CT
+      // repository.
+      var publishedCTs = spaceContext.publishedCTs;
 
       var collapsedStates = {};
       var expandedField;
@@ -34,7 +38,7 @@ angular.module('contentful')
         $timeout(collapseColumns);
       };
 
-      K.onValueScope(scope, spaceContext.publishedCTs.items$, function (cts) {
+      K.onValueScope(scope, publishedCTs.items$, function (cts) {
         scope.contentTypeSelectOptions = cts.map(function (ct) {
           return {
             id: ct.sys.id,
@@ -45,7 +49,7 @@ angular.module('contentful')
 
       scope.contentTypeName = function (entry) {
         var ctId = entry.getContentTypeId();
-        var ct = spaceContext.publishedCTs.get(ctId);
+        var ct = publishedCTs.get(ctId);
         if (ct) {
           return ct.getName();
         } else {
@@ -53,6 +57,14 @@ angular.module('contentful')
         }
       };
 
+      // TODO This function is called repeatedly from the template.
+      // Unfortunately, 'publishedCTs.get' has the side effect of
+      // fetching the CT if it was not found. This results in problems
+      // when we switch the space but this directive is still active. We
+      // request a content type from the _new_ space which does not
+      // exist.
+      // The solution is to separate `entryTitle()` and similar
+      // functions from the space context.
       scope.entryTitle = function (entry) {
         return spaceContext.entryTitle(entry);
       };

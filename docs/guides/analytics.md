@@ -6,9 +6,18 @@ we send to analytical services.
 
 ## Analytical services
 
-We've migrated away from using Totango and GTM. Mixpanel integration for
-Segment was disabled as well. The only service to which we send data is
-Segment with Google Analytics integration enabled.
+We've migrated away from using Totango and GTM in the direct way. Mixpanel
+integration for Segment was disabled as well. The only service to which we
+send data is Segment.
+
+UI enables all integrations for Segment (by not providing "integrations"
+configuration option). Thanks to that integration management can be done
+solely in the admin panel (of Segment).
+
+The only exception is Intercom integration for `track` method. We forcefully
+disable this integration in the app. Our intercom setup doesn't care about
+these events and at the same time it has a limit of 120 unique event names.
+It caused some unhandled exceptions in the past.
 
 Network communication is performed only in production, staging and preview.
 Separate API keys are used for each environment. Majority of tracking code
@@ -85,7 +94,6 @@ yet).
 | global              | logout_clicked                        | -
 | global              | top_banner_dismissed                  | -
 | global              | navigated                             | -
-| onboarding          | persona_selected                      | <code>personaName: string<br>skipped: bool</code>
 | learn               | step_clicked                          | <code>linkName: string</code>
 | learn               | language_selected                     | <code>language: string (js, ruby...)</code>
 | learn               | resource_selected                     | <code>language: string<br>resource: string (documentation, example....)</code>

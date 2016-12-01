@@ -21,30 +21,20 @@ angular.module('contentful')
   var logger = require('logger');
 
   /**
-   * 'All' set to false means that all Segment
-   * integrations are disabled. We do whitelist
-   * required integrations afterwards.
+   * Our intercom setup doesn't care about
+   * `track()` events sent from UI and it has
+   * a limit of 120 unique event names.
+   *
+   * We forcefully disable this integration
+   * here so we won't get exceptions in the
+   * dev tools.
    */
   var TRACK_INTEGRATIONS = {
-    All: false,
-    'Google Analytics': true
-  };
-
-  /**
-   * Intercom integration cares only about user
-   * data and page transitions. We don't need to
-   * send tracking information.
-   */
-  var USER_PAGE_INTEGRATIONS = {
-    All: false,
-    Intercom: true,
-    'Google Analytics': true
+    Intercom: false
   };
 
   var buffer = CallBuffer.create();
   var bufferedTrack = bufferedCall('track');
-  var bufferedPage = bufferedCall('page');
-  var bufferedIdentify = bufferedCall('identify');
   var isDisabled = false;
 
   return {
@@ -70,9 +60,7 @@ angular.module('contentful')
      * @description
      * Sets current page.
      */
-    page: function page (pageName, pageData) {
-      bufferedPage(pageName, pageData, {integrations: USER_PAGE_INTEGRATIONS});
-    },
+    page: bufferedCall('page'),
     /**
      * @ngdoc method
      * @name analytics/segment#identify
@@ -81,9 +69,7 @@ angular.module('contentful')
      * @description
      * Sets current user traits.
      */
-    identify: function identify (userId, userTraits) {
-      bufferedIdentify(userId, userTraits, {integrations: USER_PAGE_INTEGRATIONS});
-    }
+    identify: bufferedCall('identify')
   };
 
   /**

@@ -100,8 +100,10 @@ angular.module('cf.data')
      * Get a content type instance by ID if it is already loaded or fetch the CT
      * from the API.
      *
+     * Returns null if the content type does not exist.
+     *
      * @param {string} id
-     * @returns {Promise<Client.ContentType>}
+     * @returns {Promise<Client.ContentType?>}
      */
     function fetch (id) {
       var ct = store.get(id);
@@ -163,12 +165,13 @@ angular.module('cf.data')
      *
      * @returns {Promise<Client.ContentType[]>}
      */
+    // TODO we should throttle this function so that multiple
+    // subsequent calls to `fetch()` do not trigger multiple requests.
     function refresh () {
       return space.getPublishedContentTypes({limit: 1000})
         .then(function (contentTypes) {
           contentTypes = removeDeleted(contentTypes);
           store.reset(contentTypes);
-          requesting = {};
           return contentTypes;
         }, handleReloadError);
     }

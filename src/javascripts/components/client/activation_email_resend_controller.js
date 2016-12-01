@@ -21,11 +21,8 @@ angular.module('contentful')
     LAST_REMINDER_STORE_KEY: LAST_REMINDER_STORE_KEY
   };
 
-  function init (options) {
-    options = options || {};
-    if (options.skipOnce) { // Wait 24h before showing the dialog.
-      storeDialogLastShownTimestamp();
-    }
+  function init () {
+    storeDialogLastShownTimestamp(); // Wait 24h before showing the dialog.
     $rootScope.$watch(function () {
       return dotty.get(authentication, 'tokenLookup.sys.createdBy');
     }, watcher);

@@ -11,9 +11,8 @@ angular.module('contentful')
  * Call to `enable` enables tracking and initializes
  * session data with user's details. There are three
  * tracking methods that are also used to collect
- * session data (`trackSpaceChange`, `trackStateChange`,
- * `trackPersonaSelection`). Session data can be
- * obtained with `getSessionData`.
+ * session data (`trackSpaceChange`, `trackStateChange`)
+ * . Session data can be obtained with `getSessionData`.
  *
  * The rest of tracking is realised with calls to
  * `send` method. The legacy `track` method is still
@@ -49,8 +48,7 @@ angular.module('contentful')
     getSessionData: getSessionData,
     track: track,
     trackSpaceChange: trackSpaceChange,
-    trackStateChange: trackStateChange,
-    trackPersonaSelection: trackPersonaSelection
+    trackStateChange: trackStateChange
   };
 
   /**
@@ -180,31 +178,6 @@ angular.module('contentful')
     sendSessionDataToConsole();
     track('global:state_changed', data);
     segment.page(state.name, params);
-  }
-
-  /**
-   * @ngdoc method
-   * @name analytics#trackPersonaSelection
-   * @param {string} personaCode
-   * @description
-   * Extends session user data with selected
-   * persona's name.
-   */
-  function trackPersonaSelection (personaCode) {
-    var trait = {skipped: true};
-    var personaName = {
-      code: 'Coder',
-      content: 'Content Manager',
-      project: 'Project Manager',
-      other: 'Other'
-    }[personaCode];
-
-    if (personaName) {
-      trait = {skipped: false, personaName: personaName};
-      identify(trait);
-    }
-
-    track('onboarding:persona_selected', trait);
   }
 
   function getBasicPayload () {
