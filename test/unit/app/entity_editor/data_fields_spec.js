@@ -28,6 +28,9 @@ describe('EntityEditor/DataFields', function () {
       ]);
 
       this.otDoc = this.$inject('mocks/entityEditor/Document').create({
+        sys: {
+          type: 'Entry'
+        },
         fields: {
           FIELD_A: {
             'en-internal': 'A-EN',

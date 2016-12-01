@@ -1,15 +1,7 @@
 'use strict';
 
 describe('Entry Editor Controller', function () {
-  let scope;
-
-  afterEach(function () {
-    scope.$destroy();
-    scope = null;
-  });
-
   beforeEach(function () {
-    const createDoc = sinon.stub();
     module('contentful/test', ($provide) => {
       $provide.removeControllers(
         'FormWidgetsController',
@@ -19,11 +11,12 @@ describe('Entry Editor Controller', function () {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
 
-    this.createController = function () {
+
+    this.createController = () => {
       const cfStub = this.$inject('cfStub');
 
       const $rootScope = this.$inject('$rootScope');
-      scope = $rootScope.$new();
+      const scope = $rootScope.$new();
 
       const ctData = cfStub.contentTypeData();
       scope.contentType = {data: ctData, getId: _.constant(ctData.sys.id)};
@@ -39,41 +32,43 @@ describe('Entry Editor Controller', function () {
       const $controller = this.$inject('$controller');
       $controller('EntryEditorController', {$scope: scope});
 
-      scope.validate = sinon.stub();
-
       return scope;
     };
 
+    const createDoc = sinon.stub();
+    createDoc.returns(this.$inject('mocks/entityEditor/Document').create());
+
     this.spaceContext = _.extend(this.$inject('spaceContext'), {
       docPool: {get: createDoc},
-      entryTitle: sinon.stub()
+      entryTitle: function (entry) {
+        return dotty.get(entry, 'data.fields.title');
+      }
     });
 
-    createDoc.returns(this.$inject('mocks/entityEditor/Document').create());
-    scope = this.createController();
+    this.scope = this.createController();
     this.$apply();
   });
 
   describe('when the entry title changes', function () {
     it('should update the tab title', function () {
-      this.spaceContext.entryTitle.returns('foo');
+      this.scope.otDoc.setValueAt(['fields', 'title'], 'foo');
       this.$apply();
-      expect(scope.context.title).toEqual('foo');
-      this.spaceContext.entryTitle.returns('bar');
+      expect(this.scope.context.title).toEqual('foo');
+      this.scope.otDoc.setValueAt(['fields', 'title'], 'bar');
       this.$apply();
-      expect(scope.context.title).toEqual('bar');
+      expect(this.scope.context.title).toEqual('bar');
     });
   });
 
   describe('scope.context.dirty', function () {
     it('changes according to doc state', function () {
-      scope.otDoc.state.isDirty$.set(true);
+      this.scope.otDoc.state.isDirty$.set(true);
       this.$apply();
-      expect(scope.context.dirty).toBe(true);
+      expect(this.scope.context.dirty).toBe(true);
 
-      scope.otDoc.state.isDirty$.set(false);
+      this.scope.otDoc.state.isDirty$.set(false);
       this.$apply();
-      expect(scope.context.dirty).toBe(false);
+      expect(this.scope.context.dirty).toBe(false);
     });
   });
 });

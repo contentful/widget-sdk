@@ -44,13 +44,6 @@ describe('Asset editor controller', function () {
     scope = null;
   });
 
-  it('gets a title set', function () {
-    const spaceContext = this.$inject('spaceContext');
-    spaceContext.assetTitle = sinon.stub().returns('title');
-    scope.$apply();
-    expect(scope.context.title).toBe('title');
-  });
-
   describe('"fileUpload" event', function () {
     it('sets the document title if it is not yet present', function () {
       scope.$emit('fileUploaded', {fileName: 'file.jpg'}, {internal_code: 'en-US'});

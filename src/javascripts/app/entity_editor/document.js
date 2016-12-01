@@ -15,7 +15,6 @@ angular.module('contentful')
 .factory('entityEditor/Document', ['require', function (require) {
   var $q = require('$q');
   var ShareJS = require('data/ShareJS/Utils');
-  var moment = require('moment');
   var TheLocaleStore = require('TheLocaleStore');
   var K = require('utils/kefir');
   var Normalizer = require('data/documentNormalizer');
@@ -28,10 +27,14 @@ angular.module('contentful')
   var accessChecker = require('accessChecker');
   var Status = require('data/Document/Status');
   var Permissions = require('access_control/EntityPermissions');
+  var deepFreeze = require('utils/DeepFreeze').deepFreeze;
+  var ResourceStateManager = require('data/document/ResourceStateManager');
 
   return {create: create};
 
-  function create (docConnection, entity, contentType, user) {
+  // TODO Instead of passing an entity instance provided by the client
+  // library we should only pass the entity data.
+  function create (docConnection, entity, contentType, user, spaceEndpoint) {
     var currentDoc;
     var cleanupTasks = [];
 
@@ -39,30 +42,11 @@ angular.module('contentful')
     // like the ID the content type ID and the creator.
     var permissions = Permissions.create(entity.data.sys);
 
-    // Used to determine if we should open the document
-    // Can be set from the outside through `setReadOnly()`.
-    // TODO internalize this
-    var readOnlyBus = K.createPropertyBus(false);
-    cleanupTasks.push(readOnlyBus.end);
-
-    var readOnly$ = readOnlyBus.property.map(function (readOnly) {
-      return readOnly || !permissions.can('update');
-    }).skipDuplicates();
-    var docLoader = docConnection.getDocLoader(entity, readOnly$);
-
-
     // The stream for this bus contains all the events that come from the
     // raw ShareJS doc. The data in this stream has the shape
     // `{doc: doc, name: name, data: data}`.
     var docEventsBus = K.createBus();
     cleanupTasks.push(docEventsBus.end);
-
-    var acknowledgeEvent = docEventsBus.stream.filter(function (event) {
-      return event.name === 'acknowledge';
-    });
-
-    var offAckEvent = K.onValue(acknowledgeEvent, updateEntitySys);
-    cleanupTasks.push(offAckEvent);
 
 
     /**
@@ -101,17 +85,46 @@ angular.module('contentful')
       }
     });
 
-    // We sync the changes on the OT document snapshot to
-    // `entity.data`.
-    var offChanges = K.onValue(changes, otUpdateEntityData);
-    cleanupTasks.push(offChanges);
 
+    /**
+     * @ngdoc property
+     * @module cf.app
+     * @name Document#sysProperty
+     * @description
+     * A property that keeps the value of the entity’s `sys` property.
+     *
+     * TODO rename this to sys$
+     *
+     * @type {Property<Data.Sys>}
+     */
 
-    var sysChangeBus = K.createBus();
-    cleanupTasks.push(sysChangeBus.end);
-    var sysProperty = K.sampleBy(sysChangeBus.stream, function () {
-      return entity.data.sys;
+    var sysBus = K.createPropertyBus(entity.data.sys);
+    cleanupTasks.push(sysBus.end);
+    var sysProperty = sysBus.property;
+
+    var currentSys;
+    K.onValue(sysProperty, function (sys) {
+      currentSys = sys;
     });
+
+    docEventsBus.stream.onValue(function (event) {
+      var previousVersion = currentSys.version;
+      var version = event.doc.version;
+      var nextSys = _.cloneDeep(event.doc.snapshot.sys);
+      if (version > previousVersion) {
+        nextSys.updatedAt = (new Date()).toISOString();
+      } else {
+        nextSys.updatedAt = currentSys.updatedAt;
+      }
+      nextSys.version = version;
+      sysBus.set(deepFreeze(nextSys));
+    });
+
+
+    var readOnly$ = sysProperty.map(function (sys) {
+      return sys.archivedVersion || sys.deletedVersion || !permissions.can('update');
+    }).skipDuplicates();
+    var docLoader = docConnection.getDocLoader(entity, readOnly$);
 
 
     /**
@@ -238,6 +251,13 @@ angular.module('contentful')
       docLoader.destroy();
     });
 
+    var resourceState = ResourceStateManager.create(
+      sysProperty,
+      sysBus.set,
+      getData,
+      spaceEndpoint
+    );
+
     var instance = {
       destroy: destroy,
       getVersion: getVersion,
@@ -308,10 +328,21 @@ angular.module('contentful')
        */
       permissions: permissions,
 
-      setReadOnly: readOnlyBus.set
+      resourceState: resourceState
     };
 
     return instance;
+
+    /**
+     * Used by resource state manager
+     */
+    function getData () {
+      var data = {
+        fields: getValueAt(['fields']),
+        sys: _.cloneDeep(currentSys)
+      };
+      return deepFreeze(data);
+    }
 
     function destroy () {
       cleanupTasks.forEach(function (task) {
@@ -324,7 +355,6 @@ angular.module('contentful')
         currentDoc.shout(args);
       }
     }
-
 
     function getValueAt (path) {
       if (currentDoc) {
@@ -383,33 +413,6 @@ angular.module('contentful')
         currentDoc = doc;
         normalize(doc);
         plugDocEvents(doc);
-      }
-    }
-
-    function updateEntitySys () {
-      entity.setVersion(getVersion());
-      entity.data.sys.updatedAt = moment().toISOString();
-      sysChangeBus.emit();
-    }
-
-    function otUpdateEntityData () {
-      if (currentDoc) {
-        var data = _.cloneDeep(currentDoc.snapshot);
-        if (!data) {
-          throw new Error('Failed to update entity: data not available');
-        }
-        if (!data.sys) {
-          throw new Error('Failed to update entity: sys not available');
-        }
-
-        if (getVersion() > entity.data.sys.version) {
-          data.sys.updatedAt = moment().toISOString();
-        } else {
-          data.sys.updatedAt = entity.data.sys.updatedAt;
-        }
-        data.sys.version = getVersion();
-        entity.update(data);
-        sysChangeBus.emit();
       }
     }
 

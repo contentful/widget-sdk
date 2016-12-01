@@ -2,15 +2,9 @@
 
 describe('entityEditor/Document', function () {
   beforeEach(function () {
-    module('contentful/test', ($provide, $controllerProvider) => {
+    module('contentful/test', ($provide) => {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
-      $controllerProvider.register('otDocPresenceController', function () {
-        return {
-          leave: sinon.stub()
-        };
-      });
     });
-
 
     this.K = this.$inject('mocks/kefir');
     this.DocLoad = this.$inject('data/ShareJS/Connection').DocLoad;
@@ -26,7 +20,11 @@ describe('entityEditor/Document', function () {
     this.accessChecker.canUpdateEntity.returns(true);
 
     this.connectAndOpen = function (data) {
-      const doc = new OtDoc(_.cloneDeep(data || this.entity.data));
+      data = _.cloneDeep(data || this.entity.data);
+      if (!dotty.get(data, ['sys', 'type'])) {
+        dotty.put(data, ['sys', 'type'], 'Entry');
+      }
+      const doc = new OtDoc(data);
       this.docLoader.doc.set(this.DocLoad.Doc(doc));
       this.$apply();
       return doc;
@@ -45,11 +43,6 @@ describe('entityEditor/Document', function () {
     };
 
     this.entity = {
-      getType: _.constant('Entry'),
-      update: sinon.spy(function (data) {
-        this.data = data;
-      }),
-      setVersion: sinon.stub(),
       data: {
         sys: {
           id: 'ENTITY_ID',
@@ -74,15 +67,12 @@ describe('entityEditor/Document', function () {
 
       this.entity.data.sys.type = type;
 
-      const doc = Doc.create(
+      return Doc.create(
         docConnection,
         this.entity,
         this.contentType,
         {sys: {id: 'USER'}}
       );
-      doc.setReadOnly(false);
-
-      return doc;
     };
 
     this.doc = this.createDoc();
@@ -120,67 +110,6 @@ describe('entityEditor/Document', function () {
         this.doc, this.otDoc.snapshot, this.contentType, this.localeStore.getPrivateLocales()
       );
     });
-
-    it('updates the entity data', function () {
-      sinon.assert.called(this.entity.update);
-    });
-  });
-
-  describe('update entity data on "change" event', function () {
-
-    beforeEach(function () {
-      const moment = this.$inject('moment');
-      this.clock = sinon.useFakeTimers(1234, 'Date');
-      this.now = moment();
-
-      this.otDoc = this.connectAndOpen({
-        sys: {version: 100, updatedAt: 'foo'},
-        foo: 'bar', baz: {}
-      });
-      this.entity.update.reset();
-
-      this.fireChange = function () {
-        this.otDoc.emit('change', [[]]);
-        this.$apply();
-        this.$apply();
-      };
-    });
-
-    afterEach(function () {
-      this.clock.restore();
-    });
-
-    it('updates the entity data with a copy of the snapshot', function () {
-      sinon.assert.notCalled(this.entity.update);
-      this.fireChange();
-      sinon.assert.calledOnce(this.entity.update);
-      const data = this.entity.data;
-      expect(data).not.toBe(this.otDoc.snapshot);
-      expect(_.omit(data, ['sys'])).toLookEqual(_.omit(this.otDoc.snapshot, ['sys']));
-    });
-
-    it('it updates the entity version', function () {
-      this.entity.data.sys.version = '';
-      this.otDoc.version = 'NEW VERSION';
-      this.fireChange();
-      expect(this.entity.data.sys.version).toBe('NEW VERSION');
-    });
-
-    it('it updates the entity timestamp for new versions', function () {
-      this.entity.data.sys.updatedAt = 'UPDATED AT';
-      this.entity.data.sys.version = 0;
-      this.otDoc.version = 1;
-      this.fireChange();
-      expect(this.entity.data.sys.updatedAt).toBe(this.now.toISOString());
-    });
-
-    it('it does not update the entity timestamp for new versions', function () {
-      this.entity.data.sys.updatedAt = 'UPDATED AT';
-      this.entity.data.sys.version = 1;
-      this.otDoc.version = 1;
-      this.fireChange();
-      expect(this.entity.data.sys.updatedAt).toBe('UPDATED AT');
-    });
   });
 
   describe('on instance destruction', function () {
@@ -216,32 +145,6 @@ describe('entityEditor/Document', function () {
       this.K.assertCurrentValue(this.doc.status$, 'ok');
       doc.setAt(['sys', 'archivedVersion'], 1);
       this.K.assertCurrentValue(this.doc.status$, 'archived');
-    });
-  });
-
-  describe('acknowledged operation', function () {
-    beforeEach(function () {
-      this.clock = sinon.useFakeTimers(1000, 'Date');
-      this.now = this.$inject('moment')();
-      this.otDoc = this.connectAndOpen();
-    });
-
-    afterEach(function () {
-      this.clock.restore();
-    });
-
-    it('updates entity timestamp if operation was acknowleged', function () {
-      this.entity.data.sys.updatedAt = null;
-      this.otDoc.emit('acknowledge');
-      this.$apply();
-      expect(this.entity.data.sys.updatedAt).toEqual(this.now.toISOString());
-    });
-
-    it('updates version if operation was acknowleged', function () {
-      this.otDoc.version = 'VERSION';
-      this.otDoc.emit('acknowledge');
-      this.$apply();
-      sinon.assert.calledWith(this.entity.setVersion, 'VERSION');
     });
   });
 
@@ -536,26 +439,21 @@ describe('entityEditor/Document', function () {
       );
     });
 
-    it('updates value when "acknowledge" event is emitted on doc', function () {
+    it('updates value from OtDoc data on any event', function () {
       const doc = this.connectAndOpen();
-      const cb = sinon.spy();
-      this.doc.sysProperty.onValue(cb);
-      cb.reset();
 
-      this.entity.data.sys.id = 'NEW ID';
-      doc.emit('acknowledge');
+      doc.version = 20;
+      doc.snapshot.sys.updatedBy = 'me';
+      doc.emit('some event');
       this.$apply();
 
-      sinon.assert.calledWith(cb, sinon.match({id: 'NEW ID'}));
-    });
-
-    it('updates value when document is opened', function () {
-      const cb = sinon.spy();
-      this.doc.sysProperty.onValue(cb);
-      cb.reset();
-
-      this.connectAndOpen({sys: {id: 'NEW ID'}});
-      sinon.assert.calledWith(cb, sinon.match({id: 'NEW ID'}));
+      this.K.assertMatchCurrentValue(
+        this.doc.sysProperty,
+        sinon.match({
+          version: 20,
+          updatedBy: 'me'
+        })
+      );
     });
   });
 
@@ -667,13 +565,6 @@ describe('entityEditor/Document', function () {
 
         const entity = this.accessChecker.canUpdateAsset.args[0][0];
         expect(entity.data.sys.id).toEqual('ENTITY_ID');
-      });
-
-      it('throws when entity type is unknown', function () {
-        const doc = this.createDoc('X');
-        expect(
-          _.partial(doc.permissions.can, 'update')
-        ).toThrowError('Unknown entity type "X"');
       });
 
       it('throws when action is unknown', function () {

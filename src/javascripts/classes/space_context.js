@@ -115,7 +115,7 @@ angular.module('contentful')
         space.getId()
       );
 
-      self.docPool = DocumentPool.create(self.docConnection);
+      self.docPool = DocumentPool.create(self.docConnection, endpoint);
 
       self.publishedCTs = PublishedCTRepo.create(space);
       self.publishedCTs.wrappedItems$.onValue(function (cts) {
