@@ -155,6 +155,8 @@ angular.module('contentful')
   }
 
   function getPeriodUsage () {
+    if (!isOwner()) return;
+
     var enforcement;
     _.forEach(periodUsageMetrics, function (metric) {
       if (computeUsage(metric)) {
