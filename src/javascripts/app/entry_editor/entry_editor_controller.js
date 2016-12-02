@@ -40,6 +40,8 @@ angular.module('contentful')
   var errorMessageBuilder = require('errorMessageBuilder');
   var deepFreeze = require('utils/DeepFreeze').deepFreeze;
 
+  var editorData = $scope.editorData;
+
   var notify = makeNotify('Entry', function () {
     return '“' + $scope.title + '”';
   });
@@ -48,26 +50,28 @@ angular.module('contentful')
 
   // Static meta data related to an entity
   $scope.entityInfo = deepFreeze({
-    id: $scope.entity.data.sys.id,
-    type: $scope.entity.data.sys.type,
-    contentTypeId: $scope.contentType.data.sys.id,
+    id: editorData.entity.data.sys.id,
+    type: editorData.entity.data.sys.type,
+    contentTypeId: editorData.contentType.data.sys.id,
     // TODO Normalize CT data if this property is used by more advanced
     // services like the 'Document' controller and the 'cfEntityField'
     // directive. Normalizing means that we set external field IDs from
     // internal ones, etc. See for example 'data/editingInterfaces/transformer'
-    contentType: _.cloneDeep($scope.contentType.data)
+    contentType: _.cloneDeep(editorData.contentType.data)
   });
 
   // TODO rename the scope property
   $scope.otDoc = spaceContext.docPool.get(
-    $scope.entity,
-    $scope.contentType,
+    // TODO put $scope.user on editorData and pass it as the only
+    // argument
+    editorData.entity,
+    editorData.contentType,
     $scope.user,
     // TODO: pass a lifecycle observable
     {autoDispose: {scope: $scope}}
   );
 
-  var schema = createEntrySchema($scope.contentType.data, localeStore.getPrivateLocales());
+  var schema = createEntrySchema($scope.entityInfo.contentType, localeStore.getPrivateLocales());
   var buildMessage = errorMessageBuilder(spaceContext.publishedCTs);
   var validator = Validator.create(buildMessage, schema, function () {
     return $scope.otDoc.getValueAt([]);
@@ -77,7 +81,7 @@ angular.module('contentful')
 
   $scope.state = $controller('entityEditor/StateController', {
     $scope: $scope,
-    entity: $scope.entry,
+    entity: editorData.entity,
     notify: notify,
     validator: validator,
     otDoc: $scope.otDoc
@@ -109,8 +113,10 @@ angular.module('contentful')
   // Building the form
   $controller('FormWidgetsController', {
     $scope: $scope,
-    controls: $scope.formControls
+    controls: editorData.fieldControls.form
   });
+
+  $scope.sidebarControler = editorData.fieldControls.sidebar;
 
   /**
    * Build the `entry.fields` api of the widget-sdk at one
@@ -118,7 +124,7 @@ angular.module('contentful')
    * for every widget. Instead, we share this version in every
    * cfWidgetApi instance.
    */
-  var contentTypeData = $scope.contentType.data;
+  var contentTypeData = editorData.contentType;
   var fields = contentTypeData.fields;
   $scope.fields = DataFields.create(fields, $scope.otDoc);
   $scope.transformedContentTypeData = ContentTypes.internalToPublic(contentTypeData);

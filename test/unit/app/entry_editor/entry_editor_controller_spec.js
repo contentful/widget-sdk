@@ -17,17 +17,21 @@ describe('Entry Editor Controller', function () {
 
       const $rootScope = this.$inject('$rootScope');
       const scope = $rootScope.$new();
-
-      const ctData = cfStub.contentTypeData();
-      scope.contentType = {data: ctData, getId: _.constant(ctData.sys.id)};
       scope.context = {};
 
+      const ctData = cfStub.contentTypeData();
       const space = cfStub.space('testSpace');
       const entry = cfStub.entry(space, 'testEntry', 'testType', {}, {
         sys: { publishedVersion: 1 }
       });
-      scope.entry = entry;
-      scope.entity = entry;
+      scope.editorData = {
+        entity: entry,
+        contentType: {
+          getId: _.constant(ctData.sys.id),
+          data: ctData
+        },
+        fieldControls: {}
+      };
 
       const $controller = this.$inject('$controller');
       $controller('EntryEditorController', {$scope: scope});
