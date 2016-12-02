@@ -1,5 +1,5 @@
 import * as Kefir from 'libs/kefir';
-import {noop} from 'lodash';
+import {noop, zipObject} from 'lodash';
 import {makeSum} from 'libs/sum-types';
 
 
@@ -285,15 +285,49 @@ export function promiseProperty (promise, pendingValue) {
  * @returns {Property<T>}
  */
 export function combineProperties (props, combinator) {
-  props.forEach(function (prop) {
-    if (
-      !prop ||
-      typeof prop.getType !== 'function' ||
-      prop.getType() !== 'property'
-    ) {
-      throw new TypeError('Value is not a Kefir property');
-    }
-  });
-
+  props.forEach(assertIsProperty);
   return Kefir.combine(props, combinator).toProperty(function () {});
+}
+
+
+/**
+ * @ngdoc method
+ * @name utils/kefir#combinePropertiesObject
+ * @description
+ * Combines an object with properties as values into a property with
+ * objects as values.
+ * ~~~js
+ * combinePropertiesObject({
+ *   a: K.constant('A'),
+ *   b: K.constant('B'),
+ * }).onValue((val) => {
+ *   // val => {a: 'A', b: 'B'}
+ * })
+ * ~~~
+ * The combined property is updated when any of the input properties
+ * changes. The values from other properties are retained.
+ *
+ * @param {object} props
+ * @returns {Property<object>}
+ */
+export function combinePropertiesObject (props) {
+  const keys = Object.keys(props);
+  const values$ = keys.map((k) => {
+    const prop = props[k];
+    assertIsProperty(prop);
+    return prop;
+  });
+  return combineProperties(values$)
+    .map((values) => zipObject(keys, values));
+}
+
+
+function assertIsProperty (prop) {
+  if (
+    !prop ||
+    typeof prop.getType !== 'function' ||
+    prop.getType() !== 'property'
+  ) {
+    throw new TypeError('Object values must be properties');
+  }
 }

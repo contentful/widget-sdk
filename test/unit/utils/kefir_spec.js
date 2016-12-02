@@ -187,4 +187,19 @@ describe('utils/kefir', function () {
       };
     }
   });
+
+  describe('#combinePropertiesObject()', function () {
+    it('combines the state as an object', function () {
+      const a = KMock.createMockProperty('A1');
+      const b = KMock.createMockProperty('B1');
+      const x = K.combinePropertiesObject({a, b});
+      KMock.assertCurrentValue(x, {a: 'A1', b: 'B1'});
+
+      b.set('B2');
+      KMock.assertCurrentValue(x, {a: 'A1', b: 'B2'});
+
+      a.set('A2');
+      KMock.assertCurrentValue(x, {a: 'A2', b: 'B2'});
+    });
+  });
 });
