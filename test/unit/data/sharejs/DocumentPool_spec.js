@@ -4,8 +4,14 @@ describe('DocumentPool', function () {
   beforeEach(function () {
     module('contentful/test');
 
+    const K = this.$inject('mocks/kefir');
     const Document = this.$inject('entityEditor/Document');
-    this.doc = {destroy: sinon.stub()};
+    this.doc = {
+      destroy: sinon.stub(),
+      state: {
+        loaded$: K.createMockProperty(false)
+      }
+    };
     this.doc2 = {destroy: sinon.stub()};
     this.createDoc = Document.create = sinon.spy((_conn, entity) => {
       const s = entity.data.sys;
@@ -22,7 +28,7 @@ describe('DocumentPool', function () {
       expect(
         Object.keys(this.pool).sort()
       ).toEqual(
-        ['get', 'dispose', 'destroy'].sort()
+        ['get', 'dispose', 'destroy', 'load'].sort()
       );
     });
   });
@@ -75,6 +81,21 @@ describe('DocumentPool', function () {
       sinon.assert.notCalled(this.doc.destroy);
       scope.$destroy();
       sinon.assert.calledOnce(this.doc.destroy);
+    });
+  });
+
+  describe('#load', function () {
+    it('resolves when document emits loaded', function () {
+      const load = this.pool.load(entity, ct, user);
+      const loaded = sinon.spy();
+      load.then(loaded);
+      this.$apply();
+      sinon.assert.notCalled(loaded);
+
+      this.doc.state.loaded$.set(true);
+      this.doc.state.loaded$.end();
+      this.$apply();
+      sinon.assert.calledWith(loaded, this.doc);
     });
   });
 

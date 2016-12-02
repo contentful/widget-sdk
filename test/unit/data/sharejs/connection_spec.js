@@ -1,7 +1,11 @@
 'use strict';
 
 describe('data/ShareJS/Connection', function () {
-  let Kefir;
+  let K;
+
+  afterEach(function () {
+    K = null;
+  });
 
   beforeEach(function () {
     this.baseConnection = {
@@ -30,7 +34,25 @@ describe('data/ShareJS/Connection', function () {
       $provide.constant('libs/sharejs', this.sharejs);
     });
 
-    Kefir = this.$inject('mocks/kefir');
+    K = this.$inject('mocks/kefir');
+
+    const OtDoc = this.$inject('mocks/OtDoc');
+    this.resolveOpen = function () {
+      const doc = new OtDoc();
+      doc.close.yields();
+      this.baseConnection.open.yield(null, doc);
+      this.baseConnection.open.reset();
+      this.$apply();
+      return doc;
+    };
+
+    this.rejectOpen = function (err) {
+      this.baseConnection.open.yield(err);
+      this.baseConnection.open.reset();
+      this.$apply();
+    };
+
+
     this.create = this.$inject('data/ShareJS/Connection').create;
   });
 
@@ -46,11 +68,10 @@ describe('data/ShareJS/Connection', function () {
   });
 
   describe('#getDocLoader()', function () {
-    let DocLoad, OtDoc;
+    let DocLoad;
 
     beforeEach(function () {
       DocLoad = this.$inject('data/ShareJS/Connection').DocLoad;
-      OtDoc = this.$inject('mocks/OtDoc');
 
       this.entity = {
         data: {sys: {
@@ -61,78 +82,140 @@ describe('data/ShareJS/Connection', function () {
       };
 
       const connection = this.create('TOKEN', 'HOST', 'SPACE');
-      this.readOnly = Kefir.createMockProperty(false);
-      this.setState('handshaking');
+      const readOnly = K.createMockProperty(false);
 
-      this.docLoader = connection.getDocLoader(this.entity, this.readOnly);
-      this.docValues = Kefir.extractValues(this.docLoader.doc);
+      this.docLoader = connection.getDocLoader(this.entity, readOnly);
+      this.docValues = K.extractValues(this.docLoader.doc);
       this.$apply();
 
-      this.makeReadOnly = () => {
-        this.readOnly.set(true);
-        this.$apply();
+      this.setReadOnly = (val) => {
+        readOnly.set(val);
       };
     });
 
     afterEach(function () {
-      DocLoad = OtDoc = null;
+      DocLoad = null;
     });
 
-    it('is "None" initially', function () {
-      expect(this.docValues[0]).toBeInstanceOf(DocLoad.None);
+    it('emits pending when connecting', function () {
+      this.setState('connecting');
+      K.assertMatchCurrentValue(
+        this.docLoader.doc,
+        sinon.match.instanceOf(DocLoad.Pending)
+      );
     });
 
-    it('opens a documented when connection is handshaking', function () {
+    it('opens a documented when is handshaking', function () {
+      this.setState('handshaking');
+      K.assertMatchCurrentValue(
+        this.docLoader.doc,
+        sinon.match.instanceOf(DocLoad.Pending)
+      );
       sinon.assert.calledOnce(this.baseConnection.open);
       sinon.assert.calledWith(this.baseConnection.open, 'SPACE!entry!ENTITY');
     });
 
+    it('opens a documented when is ok', function () {
+      this.setState('ok');
+      K.assertMatchCurrentValue(
+        this.docLoader.doc,
+        sinon.match.instanceOf(DocLoad.Pending)
+      );
+      sinon.assert.calledOnce(this.baseConnection.open);
+      sinon.assert.calledWith(this.baseConnection.open, 'SPACE!entry!ENTITY');
+    });
+
+    it('does not reopen when moving from hanshaking to ok', function () {
+      this.setState('ok');
+      K.assertMatchCurrentValue(
+        this.docLoader.doc,
+        sinon.match.instanceOf(DocLoad.Pending)
+      );
+      this.setState('handshaking');
+      sinon.assert.calledOnce(this.baseConnection.open);
+    });
+
     it('emits document when opening succeeds', function () {
-      this.yieldOpen(null, 'DOC');
-      expect(this.docValues[0].doc).toBe('DOC');
+      this.setState('ok');
+      K.assertMatchCurrentValue(
+        this.docLoader.doc,
+        sinon.match.instanceOf(DocLoad.Pending)
+      );
+      const doc = this.resolveOpen();
+      K.assertMatchCurrentValue(
+        this.docLoader.doc,
+        matchDocLoadDoc(doc)
+      );
     });
 
     it('emits error when opening fails', function () {
-      this.yieldOpen('ERROR');
-      expect(this.docValues[0].error).toBe('ERROR');
+      this.setState('ok');
+      K.assertMatchCurrentValue(
+        this.docLoader.doc,
+        sinon.match.instanceOf(DocLoad.Pending)
+      );
+      this.rejectOpen('ERROR');
+      K.assertMatchCurrentValue(
+        this.docLoader.doc,
+        matchDocLoadError('ERROR')
+      );
     });
 
-    it('emits error when disconnected fails', function () {
-      const doc = new OtDoc();
-      this.yieldOpen(null, doc);
-      expect(this.docValues[0].doc).toBe(doc);
+    it('emits error when disconnected', function () {
+      this.setState('ok');
+      this.resolveOpen();
+      K.assertMatchCurrentValue(
+        this.docLoader.doc,
+        matchDocLoadDoc()
+      );
 
       this.setState('disconnected');
-      expect(this.docValues[0].error).toBe('disconnected');
+      K.assertMatchCurrentValue(
+        this.docLoader.doc,
+        matchDocLoadError('disconnected')
+      );
     });
 
     it('opens a document again after being disconnected', function () {
-      const doc = new OtDoc();
-      this.yieldOpen(null, doc);
-
-      this.setState(null);
-      doc.close.yield();
-      expect(this.docValues[0]).toBeInstanceOf(DocLoad.None);
+      this.setState('ok');
+      this.resolveOpen();
+      this.setState('disconnected');
+      K.assertMatchCurrentValue(
+        this.docLoader.doc,
+        sinon.match.instanceOf(DocLoad.Error)
+      );
 
       this.setState('ok');
-      this.yieldOpen(null, 'DOC 2');
-      expect(this.docValues[0].doc).toBe('DOC 2');
+      const doc = this.resolveOpen();
+      K.assertMatchCurrentValue(
+        this.docLoader.doc,
+        matchDocLoadDoc(doc)
+      );
     });
 
-    it('does not emit document when set to read-only mode', function () {
-      this.yieldOpen(null, new OtDoc());
-      this.makeReadOnly();
-      expect(this.docValues[0]).toBeInstanceOf(DocLoad.None);
+    it('emits none if set to read-only mode', function () {
+      this.setState('ok');
+      this.resolveOpen();
+      K.assertMatchCurrentValue(
+        this.docLoader.doc,
+        sinon.match.instanceOf(DocLoad.Doc)
+      );
+      this.setReadOnly(true);
+      K.assertMatchCurrentValue(
+        this.docLoader.doc,
+        sinon.match.instanceOf(DocLoad.None)
+      );
     });
 
     it('closes document when set to read-only mode', function () {
-      const doc = new OtDoc();
-      this.yieldOpen(null, doc);
-      this.makeReadOnly();
+      this.setState('ok');
+      const doc = this.resolveOpen();
+      this.setReadOnly(true);
       sinon.assert.calledOnce(doc.close);
     });
 
     it('ends stream when loader is destroyed', function () {
+      this.setState('ok');
       const ended = sinon.spy();
       this.docLoader.doc.onEnd(ended);
       this.docLoader.destroy();
@@ -140,22 +223,26 @@ describe('data/ShareJS/Connection', function () {
     });
 
     it('closes document when loader is destroyed', function () {
-      const doc = new OtDoc();
-      this.yieldOpen(null, doc);
-      expect(this.docValues[0].doc).toBe(doc);
+      this.setState('ok');
+      const doc = this.resolveOpen();
+      K.assertMatchCurrentValue(
+        this.docLoader.doc,
+        matchDocLoadDoc(doc)
+      );
       this.docLoader.destroy();
       this.$apply();
       sinon.assert.calledOnce(doc.close);
     });
 
     it('waits for closing to be acked before opening again', function () {
-      const doc = new OtDoc();
-      this.yieldOpen(null, doc);
+      this.setState('ok');
+      const doc = this.resolveOpen();
+      doc.close = sinon.stub();
 
-      this.docLoader.close();
+      this.setReadOnly(true);
       sinon.assert.calledOnce(doc.close);
 
-      this.setState('ok');
+      this.setReadOnly(false);
       // waiting for `close()` call to finish:
       sinon.assert.notCalled(this.baseConnection.open);
 
@@ -166,22 +253,31 @@ describe('data/ShareJS/Connection', function () {
     });
 
     it('closes the doc once, even if called many times', function () {
-      const doc = new OtDoc();
-      this.yieldOpen(null, doc);
+      this.setState('ok');
+      const doc = this.resolveOpen();
 
       // let's close the doc in various ways
       this.docLoader.close();
       this.setState(null);
-      this.makeReadOnly();
+      this.setReadOnly(true);
 
       sinon.assert.calledOnce(doc.close);
     });
+
+    function matchDocLoadDoc (doc) {
+      const matchDoc = doc ? sinon.match({doc}) : sinon.match.any;
+      return sinon.match.instanceOf(DocLoad.Doc)
+        .and(matchDoc);
+    }
+
+    function matchDocLoadError (error) {
+      return sinon.match.instanceOf(DocLoad.Error)
+        .and(sinon.match({error: error}));
+    }
   });
 
   describe('#open()', function () {
     beforeEach(function () {
-      this.OtDoc = this.$inject('mocks/OtDoc');
-
       const entity = {
         data: {sys: {
           type: 'Entry',
@@ -197,23 +293,21 @@ describe('data/ShareJS/Connection', function () {
       };
     });
 
-    it('resolves to opened document', function () {
-      const doc = new this.OtDoc();
-      const success = sinon.spy();
-      this.open().then(success);
+    it('resolves to opened document', function* () {
+      const open = this.open();
 
-      this.setState('handshaking');
-      this.yieldOpen(null, doc);
+      this.setState('ok');
+      const doc = this.resolveOpen();
 
-      sinon.assert.calledWith(success, sinon.match({doc: doc}));
+      const opened = yield open;
+      expect(opened.doc).toBe(doc);
     });
 
     it('it closes document when destroyed', function () {
-      const doc = new this.OtDoc();
       this.open().then(({destroy}) => destroy());
 
-      this.setState('handshaking');
-      this.yieldOpen(null, doc);
+      this.setState('ok');
+      const doc = this.resolveOpen();
 
       sinon.assert.called(doc.close);
     });

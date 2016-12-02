@@ -177,11 +177,38 @@ angular.module('contentful')
         [DocLoad.Doc, function (d) {
           return d.doc;
         }],
-        [null, function () {
-          return null;
-        }]
+        [null, _.constant(null)]
       ]);
     });
+
+
+    /**
+     * @ngdoc property
+     * @name Document#state.loaded$
+     * @type Property<boolean>
+     * @description
+     * Property holds true when the document has been loaded at least
+     * once.
+     *
+     * In particular
+     * - If loading fails this is true
+     * - If the document is in read-only mode this is true
+     * - If the document is unloaded later this is true
+     */
+    var pending$ = docLoader.doc.map(function (d) {
+      return caseof(d, [
+        [DocLoad.Pending, _.constant(true)],
+        [null, _.constant(false)]
+      ]);
+    }).skipDuplicates();
+
+    var loaded$ = K.holdWhen(
+      pending$.map(function (x) {
+        return !x;
+      }),
+      _.identity
+    );
+
 
     var offDoc = K.onValue(doc$, setDoc);
     cleanupTasks.push(offDoc);
@@ -191,15 +218,8 @@ angular.module('contentful')
     // disconnected from the server.
     var docLoadError$ = docLoader.doc.map(function (doc) {
       return caseof(doc, [
-        [DocLoad.Doc, function () {
-          return false;
-        }],
-        [DocLoad.None, function () {
-          return false;
-        }],
-        [DocLoad.Error, function () {
-          return true;
-        }]
+        [DocLoad.Error, _.constant(true)],
+        [null, _.constant(false)]
       ]);
     });
 
@@ -276,6 +296,7 @@ angular.module('contentful')
       }
     });
 
+
     var instance = {
       destroy: destroy,
       getVersion: getVersion,
@@ -286,7 +307,9 @@ angular.module('contentful')
         // Used by 'cfFocusOtInput' directive and 'FieldLocaleController'
         isConnected$: isConnected$,
         // Used by Entry/Asset editor controller
-        isDirty$: isDirty$
+        isDirty$: isDirty$,
+
+        loaded$: loaded$
       },
 
       status$: status$,
