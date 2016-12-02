@@ -66,7 +66,7 @@ angular.module('cf.app')
     restrict: 'E',
     template: '<cf-entity-link ' + [
       'ng-repeat="model in models"',
-      'model="model"',
+      'entity="model.entity"',
       'entity-helpers="helper"',
       'config="config"'
     ].join(' ') + ' />',
