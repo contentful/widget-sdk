@@ -84,8 +84,8 @@ header.workbench-header
             | Delete
           .delete-confirm(cf-context-menu="bottom")
             p You are about to delete #[+pluralize-entity("asset", "selection.size()")]
-            span.btn-caution(type="button" ng-click="deleteSelected()") Delete
-            span.btn-secondary-action(type="button") Don't Delete
+            button.btn-caution(type="button" ng-click="deleteSelected()") Delete
+            button.btn-secondary-action(type="button") Don't Delete
           span.text-link--constructive(type="submit"
             ng-click="publishSelected()"
             ng-show="showPublish()"
