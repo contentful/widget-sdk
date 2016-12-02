@@ -1,5 +1,6 @@
 include ./create_entry_button.mixin.jade
 include ../advice.mixin.jade
+include ../pluralize_entity.mixin.jade
 
 header.workbench-header
   cf-breadcrumbs
@@ -74,7 +75,7 @@ header.workbench-header
       .table__bulk-actions(ng-hide="selection.isEmpty()")
         .workbench-actions(ng-controller="EntryListActionsController")
           .workbench-actions__label
-            | {{selection.size() === 1 ? '1 entry' : selection.size() + ' entries'}} selected:
+            +pluralize-entity("entry", "selection.size()", "selected: ")
 
           span.text-link--neutral-emphasis-mid(type="button"
             ng-click="duplicateSelected()"
@@ -88,7 +89,7 @@ header.workbench-header
             aria-label="delete")
             | Delete
           .delete-confirm(cf-context-menu="bottom")
-            p You are about to delete {{selection.size() === 1? '1 entry' : selection.size() + ' entries'}}
+            p You are about to delete #[+pluralize-entity("entry", "selection.size()")]
             button.btn-caution(type="button" ng-click="deleteSelected()")
               | Delete
             button.btn-secondary-action(type="button")

@@ -1,4 +1,5 @@
 include ../advice.mixin.jade
+include ../pluralize_entity.mixin.jade
 
 header.workbench-header
   cf-breadcrumbs
@@ -60,18 +61,10 @@ header.workbench-header
       .table__bulk-actions(ng-hide="selection.isEmpty()")
         .workbench-actions(ng-controller="AssetListActionsController")
           .workbench-actions__label
-            | {{selection.size() === 1 ? '1 asset' : selection.size() + ' assets'}} selected:
-          span.text-link--destructive(
-            type="button"
-            ng-show="showDelete()"
-            cf-context-menu-trigger
-            data-test-id="delete-asset"
-            aria-label="delete")
-            | Delete
-          .delete-confirm(cf-context-menu="bottom")
-            p You are about to delete {{selection.size() === 1? '1 asset' : selection.size() + ' assets'}}
-            span.btn-caution(type="button" ng-click="deleteSelected()") Delete
-            span.btn-secondary-action(type="button") Don't Delete
+            +pluralize-entity("asset", "selection.size()", "selected: ")
+
+          span(ng-show="!showArchive() && !showUnarchive() && !showDelete() && !showPublish() && !showUnpublish()")
+            | No actions possible for the combination of assets selected
           span.text-link--neutral-emphasis-mid(type="button"
             ng-click="archiveSelected()"
             ng-show="showArchive()"
@@ -82,16 +75,27 @@ header.workbench-header
             ng-show="showUnarchive()"
             aria-label="unarchive")
             | Unarchive
-          span.text-link--neutral-emphasis-mid(type="button"
-            ng-click="unpublishSelected()"
-            ng-show="showUnpublish()"
-            aria-label="unpublish")
-            | Unpublish
+          span.text-link--destructive(
+            type="button"
+            ng-show="showDelete()"
+            cf-context-menu-trigger
+            data-test-id="delete-asset"
+            aria-label="delete")
+            | Delete
+          .delete-confirm(cf-context-menu="bottom")
+            p You are about to delete #[+pluralize-entity("asset", "selection.size()")]
+            span.btn-caution(type="button" ng-click="deleteSelected()") Delete
+            span.btn-secondary-action(type="button") Don't Delete
           span.text-link--constructive(type="submit"
             ng-click="publishSelected()"
             ng-show="showPublish()"
             aria-label="publish")
             | {{publishButtonName()}}
+          span.text-link--neutral-emphasis-mid(type="button"
+            ng-click="unpublishSelected()"
+            ng-show="showUnpublish()"
+            aria-label="unpublish")
+            | Unpublish
 
       .table__body.endless-container(cf-endless-container at-bottom="searchController.loadMore()" num-elements="searchController.paginator.getPage()")
         table
