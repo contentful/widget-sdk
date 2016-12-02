@@ -1,3 +1,4 @@
+const CAMEL_CASE_RE = /([a-z])([A-Z])/g;
 const TAG_RE = /^[^#.]+/;
 const ID_OR_CLASS_RE = /([#.][^#.]+)/g;
 
@@ -17,11 +18,10 @@ const VOID_ELEMENTS = [
   'source'
 ];
 
-export function h (elementSpec, attrs, children) {
+export function h (elSpec, attrs, children) {
   // arity 1: array of children -> join, string -> empty tag
-  if (arguments.length === 1 && Array.isArray(elementSpec)) {
-    children = elementSpec;
-    return children.join('');
+  if (arguments.length === 1 && Array.isArray(elSpec)) {
+    return elSpec.join('');
   }
 
   // arity 2: no attributes
@@ -30,25 +30,36 @@ export function h (elementSpec, attrs, children) {
     attrs = {};
   }
 
-  attrs = attrs || {};
-
-  const parsed = parseElementSpec(elementSpec);
-  attrs.id = parsed.id || attrs.id;
-  if (parsed.classes.length > 0) {
-    attrs.class = parsed.classes.join(' ');
+  const {tag, id, classes} = parseElSpec(elSpec);
+  attrs = rewriteCamelCaseAttrs(attrs);
+  attrs.id = id || attrs.id;
+  if (classes.length > 0) {
+    attrs.class = classes.join(' ');
   }
 
-  return createHTMLString(parsed.tag, attrs, children);
+  return createHTMLString(tag, attrs, children);
 }
 
 function isChildren (x) {
-  return typeof x === 'string' || typeof x === 'number' || Array.isArray(x);
+  return typeof x === 'string' ||
+    typeof x === 'number' ||
+    Array.isArray(x);
 }
 
-function parseElementSpec (elementSpec) {
-  elementSpec = elementSpec.trim();
-  const tagMatch = elementSpec.match(TAG_RE);
-  const idOrClassMatches = elementSpec.match(ID_OR_CLASS_RE) || [];
+function rewriteCamelCaseAttrs (attrs) {
+  return Object.keys(attrs || {}).reduce((acc, attr) => {
+    const dashedAttr = attr.replace(CAMEL_CASE_RE, ([low, up]) => {
+      return `${low}-${up.toLowerCase()}`;
+    });
+    acc[dashedAttr] = attrs[attr];
+    return acc;
+  }, {});
+}
+
+function parseElSpec (elSpec) {
+  elSpec = elSpec.trim();
+  const tagMatch = elSpec.match(TAG_RE);
+  const idOrClassMatches = elSpec.match(ID_OR_CLASS_RE) || [];
   const result = {tag: 'div', classes: []};
 
   if (Array.isArray(tagMatch) && tagMatch[0]) {

@@ -10,11 +10,11 @@ angular.module('contentful')
       h('h1.workbench-header__title', 'Space settings'),
       h('.workbench-header__actions', [
         h('button.btn-caution',
-          {'ui-command': 'openRemovalDialog'},
+          {uiCommand: 'openRemovalDialog'},
           'Remove space and all its contents'
         ),
         h('button.btn-primary-action',
-          {'ui-command': 'save'}, 'Save'
+          {uiCommand: 'save'}, 'Save'
         )
       ])
     ]),
@@ -27,13 +27,12 @@ angular.module('contentful')
               type: 'text',
               value: '{{spaceId}}',
               readonly: 'readonly',
-              'cf-select-all-input': true
-            })
+              cfSelectAllInput: true})
         ]),
         h('.cfnext-form__field', [
           h('label', {for: 'space-name'}, 'Space name:'),
           h('input#space-name.cfnext-form__input--full-size',
-            {type: 'text', 'ng-model': 'model.name'})
+            {type: 'text', ngModel: 'model.name'})
         ])
       ])
     )
