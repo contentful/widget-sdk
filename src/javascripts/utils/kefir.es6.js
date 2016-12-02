@@ -331,3 +331,32 @@ function assertIsProperty (prop) {
     throw new TypeError('Object values must be properties');
   }
 }
+
+
+/**
+ * @ngdoc method
+ * @name utils/kefir#getValue
+ * @description
+ * Gets the current value of a property and throws an error if the
+ * property does not have a value.
+ *
+ * WARNING: Use this sparsely. Using this leads to un-idomatic code
+ *
+ * @param {Kefir.Property<T>} props
+ * @returns {T}
+ */
+export function getValue (prop) {
+  let called = false;
+  let value;
+  const off = onValue(prop, (x) => {
+    value = x;
+    called = true;
+  });
+
+  off();
+  if (!called) {
+    throw new Error('Property does not have current value');
+  }
+
+  return value;
+}

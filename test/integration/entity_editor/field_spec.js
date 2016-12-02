@@ -4,7 +4,6 @@
  * Tests the integration of the 'cfEntityField' directive with
  *
  * - 'FieldLocaleController'
- * - 'FieldControls/Focus'
  *
  * Mocks the 'EntryEditorController' which serves as the context for
  * 'cfEntityField'.
@@ -18,8 +17,6 @@ describe('entity editor field integration', function () {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
       $provide.removeDirectives('cfWidgetApi', 'cfWidgetRenderer');
     });
-
-    const Focus = this.$inject('FieldControls/Focus');
 
     const TheLocaleStore = this.$inject('TheLocaleStore');
     this.setLocales = TheLocaleStore.setLocales;
@@ -38,17 +35,16 @@ describe('entity editor field integration', function () {
     };
 
     const editorContext = this.$inject('mocks/entityEditor/Context').create();
+    this.focus = editorContext.focus;
 
     this.validator = editorContext.validator;
 
     this.compile = function () {
       this.otDoc = this.otDoc || this.$inject('mocks/entityEditor/Document').create();
-      this.focus = Focus.create();
       const el = this.$compile('<cf-entity-field>', {
         widget: this.widget,
         editorContext: editorContext,
         otDoc: this.otDoc,
-        focus: this.focus,
         entry: {}
       });
       el.fieldController = el.scope().fieldController;

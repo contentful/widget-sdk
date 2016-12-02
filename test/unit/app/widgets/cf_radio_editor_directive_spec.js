@@ -76,7 +76,7 @@ describe('cfRadioEditor Directive', function () {
     fieldApi.validations = [{in: ['a', 'b', 'c']}];
     const input = this.compile().find('input');
     input.each(function () {
-      expect(this.getAttribute('name')).toEqual('entity.FID.en');
+      expect(this.getAttribute('name')).toMatch(/^entity\.FID\.en/);
     });
   });
 

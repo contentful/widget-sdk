@@ -6,18 +6,19 @@ angular.module('cf.app')
  * @module cf.app
  * @name cfRadioEditor
  */
-.directive('cfRadioEditor', ['$injector', function ($injector) {
+.directive('cfRadioEditor', ['require', function (require) {
+  var random = require('random');
+  var selectionController = require('widgets/selectionController');
   return {
     restrict: 'E',
     scope: {},
     template: JST['cf_radio_editor'](),
     require: '^cfWidgetApi',
     link: function (scope, _elem, _attrs, widgetApi) {
-      var selectionController = $injector.get('widgets/selectionController');
       selectionController.createFromValidations(widgetApi, scope);
 
       var field = widgetApi.field;
-      scope.radioGroupName = ['entity', field.id, field.locale].join('.');
+      scope.radioGroupName = ['entity', field.id, field.locale, random.letter(5)].join('.');
     }
   };
 }]);

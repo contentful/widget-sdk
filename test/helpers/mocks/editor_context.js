@@ -12,12 +12,14 @@ angular.module('contentful/mocks')
  */
 .factory('mocks/entityEditor/Context', ['require', function (require) {
   const K = require('mocks/kefir');
+  const Focus = require('app/entity_editor/Focus');
 
   return {create: create};
 
   function create () {
     return {
-      validator: createValidator()
+      validator: createValidator(),
+      focus: Focus.create()
     };
   }
 

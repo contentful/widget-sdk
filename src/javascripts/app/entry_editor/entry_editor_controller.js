@@ -39,6 +39,7 @@ angular.module('contentful')
   var localeStore = require('TheLocaleStore');
   var errorMessageBuilder = require('errorMessageBuilder');
   var deepFreeze = require('utils/DeepFreeze').deepFreeze;
+  var Focus = require('app/entity_editor/Focus');
 
   var editorData = $scope.editorData;
 
@@ -94,6 +95,8 @@ angular.module('contentful')
     entityInfo: $scope.entityInfo,
     preferences: $scope.preferences
   });
+
+  this.focus = Focus.create();
 
   // TODO we should use the path to the title field!
   K.onValueScope($scope, $scope.otDoc.valuePropertyAt([]), function (data) {
