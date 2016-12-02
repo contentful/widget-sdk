@@ -9,7 +9,7 @@ describe('app/entity_editor/DataLoader', function () {
           return $q.resolve({data: makeEntity(id, 'CTID')});
         }),
         getAsset: sinon.spy(function (id) {
-          return $q.resolve({data: makeEntity(id, 'CTID')});
+          return $q.resolve({data: makeEntity(id)});
         }),
         getPrivateLocales: sinon.stub().returns([])
       },
@@ -67,6 +67,24 @@ describe('app/entity_editor/DataLoader', function () {
       const editorData = yield this.loadEntry('EID');
       expect(editorData.fieldControls).toBe(controls);
     });
+
+    it('adds entityInfo to the context', function* () {
+      const {entityInfo} = yield this.loadEntry('EID');
+      expect(entityInfo.id).toBe('EID');
+      expect(entityInfo.type).toBe('Entry');
+      expect(entityInfo.contentTypeId).toBe('CTID');
+      expect(entityInfo.contentType.sys.id).toBe('CTID');
+    });
+
+    it('only adds specified properties', function* () {
+      const data = yield this.loadEntry('EID');
+      expect(Object.keys(data)).toEqual([
+        'entity',
+        'contentType',
+        'fieldControls',
+        'entityInfo'
+      ]);
+    });
   });
 
   describe('#loadAsset()', function () {
@@ -84,15 +102,28 @@ describe('app/entity_editor/DataLoader', function () {
         assetEditorInterface.widgets
       );
     });
+
+    it('only adds specified properties', function* () {
+      const data = yield this.loadEntry('EID');
+      expect(Object.keys(data)).toEqual([
+        'entity',
+        'contentType',
+        'fieldControls',
+        'entityInfo'
+      ]);
+    });
   });
 
   function makeEntity (id, ctid) {
+    const type = ctid ? 'Entry' : 'Asset';
+    const ct = ctid && {
+      sys: { id: ctid }
+    };
     return {
       sys: {
         id: id,
-        contentType: {
-          sys: { id: ctid }
-        }
+        type: type,
+        contentType: ct
       }
     };
   }

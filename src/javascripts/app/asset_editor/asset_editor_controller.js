@@ -14,22 +14,16 @@ angular.module('contentful')
   var localeStore = require('TheLocaleStore');
   var createAssetSchema = require('validation').schemas.Asset;
   var errorMessageBuilder = require('errorMessageBuilder');
-  var deepFreeze = require('utils/DeepFreeze').deepFreeze;
   var Focus = require('app/entity_editor/Focus');
 
   var editorData = $scope.editorData;
+  var entityInfo = editorData.entityInfo;
 
   var notify = makeNotify('Asset', function () {
     return '“' + $scope.title + '”';
   });
 
-  $scope.entityInfo = deepFreeze({
-    id: editorData.entity.data.sys.id,
-    type: editorData.entity.data.sys.type,
-    // If necessary, we can set this to the value exported by the
-    // 'assetContentType' module.
-    contentType: null
-  });
+  $scope.entityInfo = entityInfo;
 
   $scope.locales = $controller('entityEditor/LocalesController');
 
