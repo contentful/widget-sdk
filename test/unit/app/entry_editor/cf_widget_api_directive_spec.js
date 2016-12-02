@@ -36,7 +36,6 @@ describe('cfWidgetApi directive', function () {
           },
           errors$: K.createMockProperty()
         },
-        entity: this.entry,
         fields: {},
         transformedContentTypeData: {},
         state: {registerPublicationWarning: _.noop}
@@ -76,7 +75,7 @@ describe('cfWidgetApi directive', function () {
   describe('#entry', function () {
     describe('#getSys()', function () {
       it('returns sys data from entry object', function () {
-        this.entry.data.sys = 'wat';
+        this.scope.fieldLocale.doc.sys.set('wat');
         expect(this.widgetApi.entry.getSys()).toEqual('wat');
       });
     });
