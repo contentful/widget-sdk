@@ -1,18 +1,15 @@
-'use strict';
-
 angular.module('contentful')
-.controller('SpaceSettingsController', ['$injector', '$scope', function ($injector, $scope) {
-
-  var $q                 = $injector.get('$q');
-  var $rootScope         = $injector.get('$rootScope');
-  var spaceContext       = $injector.get('spaceContext');
-  var Command            = $injector.get('command');
-  var tokenStore         = $injector.get('tokenStore');
-  var spaceTools         = $injector.get('spaceTools');
-  var modalDialog        = $injector.get('modalDialog');
-  var notification       = $injector.get('notification');
-  var ReloadNotification = $injector.get('ReloadNotification');
-  var repo               = $injector.get('SpaceSettingsController/createRepo').call();
+.controller('SpaceSettingsController', ['require', '$scope', function (require, $scope) {
+  var $q = require('$q');
+  var $rootScope = require('$rootScope');
+  var spaceContext = require('spaceContext');
+  var Command = require('command');
+  var tokenStore = require('tokenStore');
+  var spaceTools = require('spaceTools');
+  var modalDialog = require('modalDialog');
+  var notification = require('notification');
+  var ReloadNotification = require('ReloadNotification');
+  var h = require('utils/hyperscript').h;
 
   $scope.context.ready = true;
   $scope.spaceId = spaceContext.space.getId();
@@ -20,8 +17,11 @@ angular.module('contentful')
   $scope.save = Command.create(save, {disabled: isSaveDisabled});
   $scope.openRemovalDialog = Command.create(openRemovalDialog);
 
-  function save() {
-    return repo.rename($scope.model.name)
+  function save () {
+    return spaceContext.cma.renameSpace(
+      $scope.model.name,
+      spaceContext.space.getVersion()
+    )
     .then(tokenStore.refresh)
     .then(function () {
       notification.info('Space renamed to ' + $scope.model.name + ' successfully.');
@@ -29,7 +29,7 @@ angular.module('contentful')
     .catch(handleSaveError);
   }
 
-  function handleSaveError(err) {
+  function handleSaveError (err) {
     if (dotty.get(err, 'data.details.errors', []).length > 0) {
       notification.error('Please provide a valid space name.');
     } else {
@@ -37,8 +37,8 @@ angular.module('contentful')
     }
   }
 
-  function remove() {
-    return repo.remove()
+  function remove () {
+    return spaceContext.cma.deleteSpace()
     .then(tokenStore.refresh)
     .then(spaceTools.leaveCurrent)
     .then(function () {
@@ -47,64 +47,60 @@ angular.module('contentful')
     .catch(ReloadNotification.basicErrorHandler);
   }
 
-  function isSaveDisabled() {
+  function isSaveDisabled () {
     var input = dotty.get($scope, 'model.name');
     var currentName = dotty.get(spaceContext, 'space.data.name');
 
     return !input || input === currentName;
   }
 
-  function openRemovalDialog() {
-    var space = spaceContext.space;
+  function openRemovalDialog () {
+    var spaceName = spaceContext.space.data.name;
     var scope = _.extend($rootScope.$new(), {
-      space: space,
       input: {spaceName: ''},
       remove: Command.create(remove, {
         disabled: function () {
-          return scope.input.spaceName !== space.data.name;
+          return scope.input.spaceName !== spaceName;
         }
       })
     });
 
     modalDialog.open({
-      template: 'space_removal_dialog',
+      template: confirmationTemplate(spaceName),
       noNewScope: true,
       scope: scope
     });
 
-    return $q.when();
+    return $q.resolve();
   }
-}])
 
-.factory('SpaceSettingsController/createRepo', ['$injector', function ($injector) {
-
-  var spaceContext   = $injector.get('spaceContext');
-  var spaceEndpoint  = $injector.get('data/spaceEndpoint');
-  var authentication = $injector.get('authentication');
-  var environment    = $injector.get('environment');
-
-  return function createSpaceRepo() {
-    var makeRequest = spaceEndpoint.create(
-      authentication.token,
-      '//' + environment.settings.api_host,
-      spaceContext.space.getId()
+  function confirmationTemplate (spaceName) {
+    return h('.modal-background',
+      h('.modal-dialog', [
+        h('header.modal-dialog__header',
+          h('h1', 'Remove space')),
+        h('.modal-dialog__content', [
+          h('.modal-dialog__richtext', [
+            h('p', [
+              'You are about to remove space ',
+              h('span.modal-dialog__highlight', spaceName), '.'
+            ]),
+            h('p',
+              h('strong', [
+                'All space contents and the space itself will removed. ',
+                'This operation cannot be undone.'
+              ])),
+            h('p', 'To confirm, type the name of the space in the field below:'),
+            h('input.cfnext-form__input--full-size', {ngModel: 'input.spaceName'})
+          ])
+        ]),
+        h('.modal-dialog__controls', [
+          h('button.btn-caution',
+            {uiCommand: 'remove'}, 'Remove'),
+          h('button.btn-secondary-action',
+            {ngClick: 'dialog.cancel()'}, 'Don’t remove')
+        ])
+      ])
     );
-
-    return {
-      rename: rename,
-      remove: remove
-    };
-
-    function rename(newName) {
-      return makeRequest({
-        method: 'PUT',
-        version: spaceContext.space.getVersion(),
-        data: {name: newName}
-      });
-    }
-
-    function remove() {
-      return makeRequest({method: 'DELETE'});
-    }
-  };
+  }
 }]);

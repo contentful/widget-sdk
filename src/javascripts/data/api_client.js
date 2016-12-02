@@ -246,6 +246,19 @@ angular.module('cf.data')
   };
 
 
+  Client.prototype.deleteSpace = function () {
+    return this._request({method: 'DELETE'}).then(_.noop);
+  };
+
+  Client.prototype.renameSpace = function (newName, version) {
+    return this._request({
+      method: 'PUT',
+      version: version,
+      data: {name: newName}
+    });
+  };
+
+
   Client.prototype._request = function (req, headers) {
     return this._endpoint(req, headers);
   };

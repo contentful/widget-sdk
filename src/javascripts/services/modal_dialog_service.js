@@ -81,10 +81,10 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
       var scope = this.scope;
 
       if (this.params.messageTemplate) {
-        this.params.message = JST[this.params.messageTemplate]();
+        this.params.message = getTemplate(this.params.messageTemplate);
       }
 
-      this.domElement = $(JST[this.params.template]());
+      this.domElement = $(getTemplate(this.params.template));
 
       scope.dialog = _.extend(this, this.params);
 
@@ -215,6 +215,11 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
         dialog.cancel();
       }
     });
+  }
+
+  function getTemplate (nameOrTemplate) {
+    var jstTemplate = JST[nameOrTemplate];
+    return jstTemplate ? jstTemplate() : nameOrTemplate;
   }
 
   /**
