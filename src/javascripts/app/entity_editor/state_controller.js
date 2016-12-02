@@ -20,6 +20,10 @@ angular.module('contentful')
   var reverter = otDoc.reverter;
   var docStateManager = otDoc.resourceState;
 
+  K.onValueScope($scope, docStateManager.inProgress$, function (inProgress) {
+    controller.inProgress = inProgress;
+  });
+
   var noop = Command.create(function () {});
 
   var archive = Command.create(function () {
@@ -74,27 +78,33 @@ angular.module('contentful')
         controller.current = 'archived';
         controller.primary = unarchive;
         controller.secondary = [publish];
+        controller.allActions = [unarchive, publish];
       }],
       [State.Draft(), function () {
         controller.current = 'draft';
         controller.primary = publish;
         controller.secondary = [archive];
+        controller.allActions = [publish, archive];
       }],
       [State.Published(), function () {
         controller.current = 'published';
         controller.primary = noop;
         controller.secondary = [archive, unpublish];
+        controller.allActions = [archive, unpublish];
       }],
       [State.Changed(), function () {
         controller.current = 'changes';
         controller.primary = publishChanges;
         controller.secondary = [archive, unpublish];
+        controller.allActions = [publishChanges, archive, unpublish];
       }],
       [State.Deleted(), function () {
         // This state is only present briefly before closing the entry
         // editor.
       }]
     ]);
+
+    controller.currentLabel = getStateLabel(state);
 
     if (state === State.Published()) {
       controller.hidePrimary = true;
@@ -164,6 +174,18 @@ angular.module('contentful')
              reverter.hasChanges();
     }
   });
+
+
+  function getStateLabel (state) {
+    return caseof(state, [
+      [State.Archived(), _.constant('archived')],
+      [State.Draft(), _.constant('draft')],
+      [State.Published(), _.constant('published')],
+      [State.Changed(), _.constant('pending changes')],
+      [State.Deleted(), _.constant('deleted')]
+    ]);
+  }
+
 
   function applyAction (action) {
     return docStateManager.apply(action)

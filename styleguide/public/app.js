@@ -1,7 +1,8 @@
 angular.module('styleguide', [
   'cf.ui',
   'cf.libs',
-  'ui.sortable'
+  'ui.sortable',
+  'ngAnimate'
 ])
 
 .directive('cfExampleDatepicker', ['$injector', function ($injector) {

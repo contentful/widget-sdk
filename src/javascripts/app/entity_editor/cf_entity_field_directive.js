@@ -20,6 +20,8 @@ angular.module('cf.app')
  * Has field data and specifications to render the control. Provided by
  * `FromWidgetsController`.
  * @scope.requires {FieldControls/Focus} focus
+ *
+ * @scope.requires {entityEditor/Context} editorContext
  */
 .directive('cfEntityField', ['require', function (require) {
   var TheLocaleStore = require('TheLocaleStore');
@@ -41,7 +43,9 @@ angular.module('cf.app')
       var templateData = {
         field: field,
         helpText: widget.settings.helpText || widget.defaultHelpText,
-        hasInitialFocus: $scope.$index === 0 && widget.isFocusable,
+        hasInitialFocus: $scope.editorContext.hasInitialFocus &&
+          $scope.$index === 0 &&
+          widget.isFocusable,
         showHelpText: !widget.rendersHelpText
       };
       $scope.data = templateData;

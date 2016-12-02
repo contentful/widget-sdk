@@ -27,10 +27,14 @@ export function create (sys$, setSys, getData, spaceEndpoint) {
   const stateChange$ = stateChangeBus.stream;
   sys$.onEnd(stateChangeBus.end);
 
-  return { apply, stateChange$, state$ };
+  const inProgressBus = K.createPropertyBus(false);
+  const inProgress$ = inProgressBus.property;
+
+  return { apply, stateChange$, state$, inProgress$ };
 
   function apply (action) {
     const previousState = currentState;
+    inProgressBus.set(true);
     return applyAction(action, getData())
     .then(function (data) {
       // Deleting does not return any data.
@@ -42,6 +46,9 @@ export function create (sys$, setSys, getData, spaceEndpoint) {
         });
       }
       return data;
+    })
+    .finally(function () {
+      inProgressBus.set(false);
     });
   }
 }

@@ -38,7 +38,7 @@ export function forType (type, space) {
 }
 
 function create (fetch) {
-  const entitiesById = {};
+  let entitiesById = {};
 
   /**
    * @ngdoc type
@@ -48,7 +48,8 @@ function create (fetch) {
    */
   return {
     load: load,
-    addEntity: addEntity
+    addEntity: addEntity,
+    reset: reset
   };
 
   /**
@@ -95,6 +96,10 @@ function create (fetch) {
    */
   function addEntity (entity) {
     entitiesById[entity.sys.id] = entity;
+  }
+
+  function reset () {
+    entitiesById = {};
   }
 }
 

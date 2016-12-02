@@ -1,5 +1,12 @@
 include ../entity_editor/entity_editor.mixins.jade
 
+div.workbench-stack.animate(
+  ng-if="referenceContext")
+  .workbench-stack__padding(
+    ng-click="referenceContext.close()")
+  .workbench-stack__content
+    cf-bulk-editor(
+      reference-context="referenceContext")
 header.workbench-header
   cf-breadcrumbs
   cf-icon.workbench-header__icon(name="page-entries")

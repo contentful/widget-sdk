@@ -37,9 +37,13 @@ export function create (field, fieldValue$, space, type, single) {
   const store = EntityResolver.forType(type, space);
   const idsState = createIdsState(field, fieldValue$, single, type);
 
-  const entities$ = idsState.ids$.flatMapLatest(function (ids) {
-    return K.fromPromise(store.load(ids));
-  });
+  const refreshBus = K.createPropertyBus();
+
+  const entities$ =
+    K.combine([idsState.ids$, refreshBus.property], (ids, _refreshed) => ids)
+    .flatMapLatest(function (ids) {
+      return K.fromPromise(store.load(ids));
+    }).toProperty(() => null);
 
   return {
     /**
@@ -58,6 +62,11 @@ export function create (field, fieldValue$, space, type, single) {
     addEntities: addEntities,
     /**
      * @description
+     * Reload the entitiy data and reemit it to entities$
+     */
+    refreshEntities: refreshEntities,
+    /**
+     * @description
      * Remove the link at the given index.
      * @param {number} index
      */
@@ -71,6 +80,11 @@ export function create (field, fieldValue$, space, type, single) {
   function addEntities (entities) {
     entities.forEach(store.addEntity);
     idsState.add(entities.map((entity) => entity.sys.id));
+  }
+
+  function refreshEntities () {
+    store.reset();
+    refreshBus.set();
   }
 }
 

@@ -56,6 +56,14 @@ angular.module('contentful')
 
   this.contentType = $scope.transformedContentTypeData;
 
+  // Collection of APIs that are not exposed by the extensions API.
+  this._internal = {};
+  if ($scope.editorContext.editReferences) {
+    this._internal.editReferences = function (index, cb) {
+      $scope.editorContext.editReferences(ctField.id, $scope.locale.internal_code, index, cb);
+    };
+  }
+
   this.entry = {
     // TODO only used by slug and reference editor; we should
     // remove it and only offer a property interface

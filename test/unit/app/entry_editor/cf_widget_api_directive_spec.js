@@ -36,6 +36,7 @@ describe('cfWidgetApi directive', function () {
           },
           errors$: K.createMockProperty()
         },
+        editorContext: {},
         fields: {},
         transformedContentTypeData: {},
         state: {registerPublicationWarning: _.noop}

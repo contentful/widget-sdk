@@ -297,6 +297,18 @@ angular.module('contentful')
     });
 
 
+    /**
+     * @ngdoc property
+     * @name Document#localFieldChanges
+     * @type Stream<[string, string]>
+     * @description
+     * Emits a field ID and locale code whenever the document is
+     * changed on our side through one of the setter methods.
+     */
+    var localFieldChangesBus = K.createBus();
+    cleanupTasks.push(localFieldChangesBus.end);
+
+
     var instance = {
       destroy: destroy,
       getVersion: getVersion,
@@ -322,6 +334,8 @@ angular.module('contentful')
       moveValueAt: moveValueAt,
 
       changes: changes,
+      localFieldChanges$: localFieldChangesBus.stream,
+
       valuePropertyAt: memoizedValuePropertyAt,
       sysProperty: sysProperty,
 
@@ -407,6 +421,7 @@ angular.module('contentful')
 
     function setValueAt (path, value) {
       return withRawDoc(function (doc) {
+        maybeEmitLocalChange(path);
         if (path.length === 3 && StringField.is(path[1], contentType)) {
           return StringField.setAt(doc, path, value);
         } else {
@@ -417,6 +432,7 @@ angular.module('contentful')
 
     function removeValueAt (path) {
       return withRawDoc(function (doc) {
+        maybeEmitLocalChange(path);
         return ShareJS.remove(doc, path);
       });
     }
@@ -424,10 +440,12 @@ angular.module('contentful')
     function insertValueAt (path, i, x) {
       return withRawDoc(function (doc) {
         if (getValueAt(path)) {
+          maybeEmitLocalChange(path);
           return $q.denodeify(function (cb) {
             doc.insertAt(path, i, x, cb);
           });
         } else if (i === 0) {
+          maybeEmitLocalChange(path);
           return setValueAt(path, [x]);
         } else {
           return $q.reject(new Error('Cannot insert index ' + i + 'into empty container'));
@@ -438,11 +456,13 @@ angular.module('contentful')
     function pushValueAt (path, value) {
       var current = getValueAt(path);
       var pos = current ? current.length : 0;
+      maybeEmitLocalChange(path);
       return insertValueAt(path, pos, value);
     }
 
     function moveValueAt (path, from, to) {
       return $q.denodeify(function (cb) {
+        maybeEmitLocalChange(path);
         currentDoc.moveAt(path, from, to, cb);
       });
     }
@@ -497,6 +517,12 @@ angular.module('contentful')
 
     function getVersion () {
       return currentDoc && currentDoc.version;
+    }
+
+    function maybeEmitLocalChange (path) {
+      if (path.length >= 3 && path[0] === 'fields') {
+        localFieldChangesBus.emit([path[1], path[2]]);
+      }
     }
   }
 }]);

@@ -1,0 +1,46 @@
+.workbench
+  header.workbench-header
+    .breadcrumbs-widget
+      .breadcrumbs-container
+        cf-icon.btn.btn__back(
+          ng-click="referenceContext.close()"
+          name="breadcrumbs-icon-back"
+          role="button"
+          data-test-id="breadcrumbs-back-btn")
+    h1.workbench-header__title
+      | Entries linked in <em>{{ referenceContext.field.name }}</em> ({{ data.linkCount }})
+    .workbench-header__actions
+       button.btn-secondary-action(
+         ng-click="referenceContext.close()")
+         | Close
+
+  .workbench-main
+
+    .workbench-main__content(ng-show="!data.loaded" style="padding-top: 0")
+      .loading-box--full-screen(style="height: 100%")
+        .loading-box__spinner
+        .loading-box__message
+          | Loading entries
+
+    .workbench-main__content(ng-show="data.loaded" style="padding-top: 0")
+      div(ng-repeat="ctx in entityContexts track by ctx.key" data-entity-id="{{ctx.id}}")
+        cf-bulk-entity-editor(entity-context="ctx" bulk-editor-context="editorContext")
+
+    .workbench-main__sidebar
+      .entity-sidebar
+        button.btn-action.x--block(cf-context-menu-trigger)
+          cf-icon.btn-icon.inverted(name="plus")
+          cf-icon.btn-dropdown-icon(name="dd-arrow-down")
+          | Add entry
+        .context-menu(
+          role="menu" cf-context-menu
+          aria-label="Add Entry" data-test-id="add-entry-menu")
+          div(role="menuitem"
+            ng-repeat="ct in actions.accessibleCTs track by ct.id"
+            ng-click="actions.addNewEntry(ct.id)")
+            | Create new <em>{{ct.name}}</em>
+          hr(ng-if="actions.accessibleCTs.length")
+          div(role="menuitem"
+            data-test-id="add-existing-entry"
+            ng-click="actions.addExistingEntries()")
+            | Link existing entry

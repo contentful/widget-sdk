@@ -32,6 +32,9 @@ angular.module('cf.app')
     var field = widgetApi.field;
     var isDisabled$ = widgetApi.fieldProperties.isDisabled$;
     var state = State.create(field, widgetApi.fieldProperties.value$, widgetApi.space, $scope.type, $scope.single);
+    var useBulkEditor =
+      widgetApi.settings.bulkEditing &&
+      widgetApi._internal.editReferences;
 
     $scope.typePlural = {Entry: 'entries', Asset: 'assets'}[$scope.type];
     $scope.isAssetCard = is('Asset', 'card');
@@ -63,7 +66,7 @@ angular.module('cf.app')
       createEntity($scope.type, field, widgetApi.space)
       .then(function (entity) {
         state.addEntities([entity]);
-        widgetApi.state.goToEditor(entity);
+        editEntityAction(entity, -1);
       });
     };
 
@@ -112,7 +115,6 @@ angular.module('cf.app')
     function is (type, style) {
       return type === $scope.type && style === $scope.style;
     }
-
 
     function hasUnpublishedReferences () {
       return getUnpublishedReferences().length > 0;
@@ -167,22 +169,30 @@ angular.module('cf.app')
         entity: entity,
         hash: hash,
         actions: {
-          edit: prepareEditAction(entity, isDisabled),
+          edit: prepareEditAction(entity, index, isDisabled),
           remove: prepareRemoveAction(index, isDisabled)
         }
       };
     }
 
-    function prepareEditAction (entity, isDisabled) {
+    function prepareEditAction (entity, index, isDisabled) {
       var entryId = widgetApi.entry.getSys().id;
       var linksParentEntry = entity &&
         entity.sys.type === 'Entry' &&
         entity.sys.id === entryId;
 
       if (entity && !isDisabled && !linksParentEntry) {
-        return _.partial(widgetApi.state.goToEditor, entity);
+        return _.partial(editEntityAction, entity, index);
       } else {
         return null;
+      }
+    }
+
+    function editEntityAction (entity, index) {
+      if (useBulkEditor) {
+        return widgetApi._internal.editReferences(index, state.refreshEntities);
+      } else {
+        return widgetApi.state.goToEditor(entity);
       }
     }
 
