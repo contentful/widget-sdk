@@ -106,12 +106,15 @@ angular.module('cf.app')
      *
      * @param {string} url
      * @param {string?} text
+     * @param {string?} title
      */
-    function link (url, text) {
+    function link (url, text, title) {
       editor.usePrimarySelection();
 
+      var linkTitle = title ? ' "' + title + '"' : '';
+
       var link = text
-        ? '[' + text + '](' + url + ')'
+        ? '[' + text + '](' + url + linkTitle + ')'
         : '<' + url + '>';
 
       editor.replaceSelectedText(link, 'around');

@@ -31,12 +31,12 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['require', funct
         scopeData: {
           model: {
             url: 'https://',
-            title: editor.getSelectedText()
+            text: editor.getSelectedText()
           }
         },
         template: 'markdown_link_dialog'
       }).promise.then(function (data) {
-        editor.actions.link(data.url, data.title);
+        editor.actions.link(data.url, data.text, data.title);
       });
     }
 

@@ -262,5 +262,12 @@ describe('MarkdownEditor/Commands', function () {
       commands.link('https://example.com', 'title');
       expect(cm.getValue()).toBe('A[title](https://example.com)B');
     });
+
+    it('inserts link with url, text and title at current cursor', function () {
+      cm.setValue('AB');
+      cm.setCursor({line: 0, ch: 1});
+      commands.link('https://example.com', 'link text', 'title');
+      expect(cm.getValue()).toBe('A[link text](https://example.com "title")B');
+    });
   });
 });
