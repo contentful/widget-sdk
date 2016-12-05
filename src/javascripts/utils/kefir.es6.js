@@ -388,6 +388,31 @@ export function getValue (prop) {
 }
 
 
+/**
+ * @ngdoc method
+ * @name utils/kefir#scopeLifeline
+ * @description
+ * Returns a stream that ends when the scope is destroyed.
+ * @params {Scope} scope
+ * @returns {Kefir.Stream<void>}
+ */
+export function scopeLifeline (scope) {
+  return Kefir.stream((emitter) => {
+    if (!scope || scope.$$destroyed) {
+      return end();
+    } else {
+      return scope.$on('$destroy', end);
+    }
+
+    function end () {
+      scope = null;
+      emitter.end();
+      return noop;
+    }
+  });
+}
+
+
 function assertIsProperty (prop) {
   if (
     !prop ||

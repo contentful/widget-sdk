@@ -251,4 +251,25 @@ describe('utils/kefir', function () {
       sinon.assert.calledOnce(ended);
     });
   });
+
+  describe('#scopeLifeline', function () {
+    beforeEach(function () {
+      this.scope = this.$inject('$rootScope').$new();
+    });
+
+    it('ends when subscribing before being destroyed', function () {
+      const ended = sinon.spy();
+      K.scopeLifeline(this.scope).onEnd(ended);
+      sinon.assert.notCalled(ended);
+      this.scope.$destroy();
+      sinon.assert.called(ended);
+    });
+
+    it('ends when subscribing after being destroyed', function () {
+      const ended = sinon.spy();
+      this.scope.$destroy();
+      K.scopeLifeline(this.scope).onEnd(ended);
+      sinon.assert.called(ended);
+    });
+  });
 });

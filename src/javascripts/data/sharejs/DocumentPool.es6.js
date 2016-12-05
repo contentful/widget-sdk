@@ -16,20 +16,20 @@ import $q from '$q';
 export function create (docConnection, spaceEndpoint) {
   const instances = {};
 
-  return {get, dispose, destroy, load};
+  return {get, destroy, load};
 
   /**
    * @method DocumentPool#get
    * @param {API.Entity} entity
    * @param {API.ContentType} contentType
    * @param {API.User} user
-   * @param {object} opts
+   * @param {K.Poperty<void>} lifeline$
+   *   Unreference the document when this property ends
    * @returns Document
    * @description
    * Gets a doc for an entity.
    */
-  function get (entity, contentType, user, opts) {
-    opts = opts || {};
+  function get (entity, contentType, user, lifeline$) {
     const key = prepareKey(getAtPath(entity, 'data.sys', {}));
     const instance = instances[key];
     let doc;
@@ -42,9 +42,7 @@ export function create (docConnection, spaceEndpoint) {
       instances[key] = {key, doc, count: 1};
     }
 
-    if (opts.autoDispose && opts.autoDispose.scope) {
-      opts.autoDispose.scope.$on('$destroy', dispose.bind(null, doc));
-    }
+    lifeline$.onEnd(() => unref(doc));
 
     return doc;
   }
@@ -61,10 +59,12 @@ export function create (docConnection, spaceEndpoint) {
    * @param {API.Entity} entity
    * @param {API.ContentType} contentType
    * @param {API.User} user
+   * @param {K.Poperty<void>} lifeline$
+   *   Unreference the document when this property ends
    * @returns {Promise<Document>}
    */
-  function load (entity, contentType, user) {
-    const doc = get(entity, contentType, user);
+  function load (entity, contentType, user, lifeline$) {
+    const doc = get(entity, contentType, user, lifeline$);
     return doc.state.loaded$.toPromise($q).then(() => doc);
   }
 
@@ -77,14 +77,11 @@ export function create (docConnection, spaceEndpoint) {
   }
 
   /**
-   * @method DocumentPool#dispose
-   * @param {Document} doc
-   * @description
    * Marks reference to a doc as not used any
    * longer. Destroys an instance if it was the
    * last reference in use.
    */
-  function dispose (doc) {
+  function unref (doc) {
     const result = find(instances, (item) => {
       return item.doc === doc;
     });
