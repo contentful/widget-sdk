@@ -33,7 +33,8 @@ header.workbench-header
     cf-view-menu="uiConfig.entryListViews")
 
   .workbench-main__right-content.x--flex-column
-    .search-results__count {{ paginator.getTotal() === 1 ? '1 entry found' : paginator.getTotal() + ' entries found' }}
+    .search-results__count
+      +pluralize-entity("entry", "paginator.getTotal()", "found")
     .view-customizer(
       ng-show="entries.length && !isEmpty"
       cf-view-customizer)
@@ -140,7 +141,7 @@ header.workbench-header
                 ng-class="entityStatus.getClassname(entry)")
                 | {{entityStatus.getLabel(entry)}}
 
-    cf-search-results-paginator(paginator="paginator")
+    cf-search-results-paginator(paginator="paginator" pages="7")
 
     +no-search-results("!entries.length || isEmpty", "(context.view.contentTypeId ? 'Content type \"' + context.view.contentTypeId + '\", term: ' : '') + context.view.searchTerm")
 

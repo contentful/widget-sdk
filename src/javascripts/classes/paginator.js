@@ -140,17 +140,32 @@ angular.module('cf.app')
        */
       isAtLast: function () {
         return page >= this.getPageCount() - 1;
+      },
+      /**
+       * @ngdoc method
+       * @name Paginator#isAtFirst
+       * @returns {boolean}
+       * @description
+       * Returns true if the current page
+       * is the first one.
+       */
+      isAtFirst: function () {
+        return page === 0;
       }
     };
   }
 
   function updateValue (next, current) {
+    var nextVal;
+
     if (_.isNumber(next)) {
-      return next;
+      nextVal = next;
     } else if (_.isFunction(next)) {
-      return next(current);
+      nextVal = next(current);
     } else {
-      return current;
+      nextVal = current;
     }
+
+    return nextVal >= 0 ? nextVal : current;
   }
 }]);

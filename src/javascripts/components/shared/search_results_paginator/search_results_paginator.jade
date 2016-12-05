@@ -1,7 +1,13 @@
-.search-results-paginator(ng-hide="pageCount < 2")
-  span.search-results-paginator__prev(ng-class="{'x--disabled': onFirstPage}" ng-click="setPage(page - 1)") Previous
+.search-results-paginator(ng-hide="paginator.getPageCount() < 2")
+  span.search-results-paginator__prev(
+    ng-class="{'x--disabled': paginator.isAtFirst()}"
+    ng-click="!paginator.isAtFirst() && paginator.setPage(paginator.getPage() - 1)")
+    | Previous
   span.search-results-paginator__page(
     ng-repeat="label in labels track by $index"
-    ng-click="setPage(label.value)"
-    ng-class="{'x--active-page': label.value === page, 'x--dots': label.value === null}") {{label.text}}
-  span.search-results-paginator__next(ng-class="{'x--disabled': onLastPage}" ng-click="setPage(page + 1)") Next
+    ng-click="paginator.setPage(label.value)"
+    ng-class="{'x--active-page': label.value === paginator.getPage(), 'x--dots': label.value === null}") {{label.text}}
+  span.search-results-paginator__next(
+    ng-class="{'x--disabled': paginator.isAtLast()}"
+    ng-click="!paginator.isAtLast() && paginator.setPage(paginator.getPage() + 1)")
+    | Next
