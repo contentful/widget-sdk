@@ -106,6 +106,9 @@ function create (fetch) {
  * The order of the returned entities does not correspond to the
  * order of the IDs.
  *
+ * If we get a 404 we return an empty array since this indicates that
+ * we do not have access to the entities.
+ *
  * @param {function(query)} fetch
  *   Queries the apropriate resource collection endpoint
  * @param {string[]} ids
@@ -117,12 +120,16 @@ function getEntities (fetch, ids) {
   .map(function (ids) {
     return fetch({
       'sys.id[in]': ids.join(',')
+    }).then((response) => {
+      return response.items;
+    }, (errorResponse) => {
+      if (errorResponse.status === 404) {
+        return [];
+      } else {
+        return $q.reject(errorResponse);
+      }
     });
   });
 
-  return $q.all(queries)
-  .then(function (responses) {
-    const items = responses.map((r) => r.items);
-    return flatten(items);
-  });
+  return $q.all(queries).then(flatten);
 }
