@@ -47,14 +47,22 @@ describe('utils/kefir', function () {
   });
 
   describe('#onValue()', function () {
-    it('removes callback when detach is called', function () {
-      const bus = K.createBus();
+    it('calls callback on value', function () {
+      const stream = KMock.createMockStream();
       const cb = sinon.spy();
-      const detach = K.onValue(bus.stream, cb);
-      bus.emit('VAL');
+      K.onValue(stream, cb);
+      stream.emit('VAL');
+      sinon.assert.calledOnce(cb.withArgs('VAL'));
+    });
+
+    it('removes callback when detach is called', function () {
+      const stream = KMock.createMockStream();
+      const cb = sinon.spy();
+      const detach = K.onValue(stream, cb);
+      stream.emit('VAL');
       sinon.assert.calledOnce(cb);
       detach();
-      bus.emit('VAL');
+      stream.emit('VAL');
       sinon.assert.calledOnce(cb);
     });
   });
@@ -81,6 +89,22 @@ describe('utils/kefir', function () {
       bus.emit('VAL');
       this.$apply();
       sinon.assert.calledOnce(cb);
+    });
+  });
+
+  describe('#onValueWhile()', function () {
+    it('does not call callback when lifeline has ended', function () {
+      const stream = KMock.createMockStream();
+      const lifeline = KMock.createMockStream();
+      const cb = sinon.spy();
+      K.onValueWhile(lifeline, stream, cb);
+      stream.emit('VAL');
+      sinon.assert.calledOnce(cb);
+
+      cb.reset();
+      lifeline.end();
+      stream.emit('VAL2');
+      sinon.assert.notCalled(cb);
     });
   });
 
