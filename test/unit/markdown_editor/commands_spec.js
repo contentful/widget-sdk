@@ -1,12 +1,12 @@
 'use strict';
 
-describe('MarkdownEditor/Commands', function () {
+describe('markdown_editor/commands', function () {
   let textarea, editor, commands, cm;
   const CodeMirror = window.cfLibs.markdown.CodeMirror;
 
   beforeEach(function () {
     module('contentful/test');
-    const Commands = this.$inject('MarkdownEditor/Commands');
+    const Commands = this.$inject('markdown_editor/commands');
     const createEditor = this.$inject('MarkdownEditor/wrapper');
     textarea = document.createElement('textarea');
     document.body.appendChild(textarea);

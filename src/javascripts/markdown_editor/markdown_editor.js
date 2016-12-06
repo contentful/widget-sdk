@@ -5,7 +5,7 @@ angular.module('contentful')
   var $timeout = require('$timeout');
   var wrapEditor = require('MarkdownEditor/wrapper');
   var LazyLoader = require('LazyLoader');
-  var Commands = require('MarkdownEditor/Commands');
+  var Commands = require('markdown_editor/commands');
 
   return {
     create: loadAndCreate,
