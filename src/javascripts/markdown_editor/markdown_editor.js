@@ -3,8 +3,8 @@
 angular.module('contentful')
 .factory('MarkdownEditor', ['require', function (require) {
   var $timeout = require('$timeout');
-  var wrapEditor = require('MarkdownEditor/wrapper');
   var LazyLoader = require('LazyLoader');
+  var Wrapper = require('markdown_editor/codemirror_wrapper');
   var Commands = require('markdown_editor/commands');
 
   return {
@@ -19,7 +19,7 @@ angular.module('contentful')
   }
 
   function create (textarea, options, CodeMirror) {
-    var editor = wrapEditor(textarea, options, CodeMirror);
+    var editor = Wrapper.create(textarea, options, CodeMirror);
 
     var api = {
       actions: Commands.create(editor),

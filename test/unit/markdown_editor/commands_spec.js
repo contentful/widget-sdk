@@ -7,13 +7,13 @@ describe('markdown_editor/commands', function () {
   beforeEach(function () {
     module('contentful/test');
     const Commands = this.$inject('markdown_editor/commands');
-    const createEditor = this.$inject('MarkdownEditor/wrapper');
+    const Wrapper = this.$inject('markdown_editor/codemirror_wrapper');
     textarea = document.createElement('textarea');
     document.body.appendChild(textarea);
 
     const cmFactory = sinon.spy(CodeMirror, 'fromTextArea');
     // editor = MarkdownEditor.createManually(textarea, {}, libs.CodeMirror, libs.marked);
-    editor = createEditor(textarea, {}, CodeMirror);
+    editor = Wrapper.create(textarea, {}, CodeMirror);
     cm = cmFactory.returnValues[0];
     cmFactory.restore();
 
