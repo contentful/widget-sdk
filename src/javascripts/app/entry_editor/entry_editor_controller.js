@@ -39,6 +39,7 @@ angular.module('contentful')
   var localeStore = require('TheLocaleStore');
   var errorMessageBuilder = require('errorMessageBuilder');
   var Focus = require('app/entity_editor/Focus');
+  var installTracking = require('app/entity_editor/Tracking').default;
 
   var editorData = $scope.editorData;
   var entityInfo = editorData.entityInfo;
@@ -62,7 +63,9 @@ angular.module('contentful')
   // TODO rename the scope property
   $scope.otDoc = doc;
 
-  var schema = createEntrySchema($scope.entityInfo.contentType, localeStore.getPrivateLocales());
+  installTracking(entityInfo, doc, K.scopeLifeline($scope));
+
+  var schema = createEntrySchema(entityInfo.contentType, localeStore.getPrivateLocales());
   var buildMessage = errorMessageBuilder(spaceContext.publishedCTs);
   var validator = Validator.create(buildMessage, schema, function () {
     return $scope.otDoc.getValueAt([]);

@@ -15,6 +15,7 @@ angular.module('contentful')
   var createAssetSchema = require('validation').schemas.Asset;
   var errorMessageBuilder = require('errorMessageBuilder');
   var Focus = require('app/entity_editor/Focus');
+  var installTracking = require('app/entity_editor/Tracking').default;
 
   var editorData = $scope.editorData;
   var entityInfo = editorData.entityInfo;
@@ -34,6 +35,8 @@ angular.module('contentful')
     $scope.user,
     K.scopeLifeline($scope)
   );
+
+  installTracking(entityInfo, $scope.otDoc, K.scopeLifeline($scope));
 
   var schema = createAssetSchema(localeStore.getPrivateLocales());
   var buildMessage = errorMessageBuilder.forAsset;

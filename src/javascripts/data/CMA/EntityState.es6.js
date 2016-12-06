@@ -47,6 +47,24 @@ export const State = {
   Published: constant('__PUBLISHED__')
 };
 
+
+/**
+ * @ngdoc method
+ * @name data/CMA/EntityState#stateName
+ * @param {data/CMA/EntityState.State} state
+ * @returns {string}
+ */
+export function stateName (state) {
+  return caseof(state, [
+    [State.Deleted(), constant('deleted')],
+    [State.Archived(), constant('archived')],
+    [State.Draft(), constant('draft')],
+    [State.Changed(), constant('changed')],
+    [State.Published(), constant('published')]
+  ]);
+}
+
+
 export {Action};
 
 

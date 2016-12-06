@@ -5,7 +5,6 @@ angular.module('contentful')
   var controller = this;
   var $q = require('$q');
   var Command = require('command');
-  var analytics = require('analytics');
   var closeState = require('navigation/closeState');
   var publicationWarnings = require('entityEditor/publicationWarnings').create();
   var trackVersioning = require('analyticsEvents/versioning');
@@ -20,16 +19,6 @@ angular.module('contentful')
   var permissions = otDoc.permissions;
   var reverter = otDoc.reverter;
   var docStateManager = otDoc.resourceState;
-
-  K.onValueScope($scope, docStateManager.stateChange$, function (data) {
-    analytics.track('entry_editor:state_changed', {
-      fromState: data.from,
-      toState: data.to,
-      // TODO not use scope
-      entityType: $scope.entityInfo.type,
-      entityId: $scope.entityInfo.id
-    });
-  });
 
   var noop = Command.create(function () {});
 
