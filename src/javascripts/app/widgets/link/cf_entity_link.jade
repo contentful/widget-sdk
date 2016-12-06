@@ -12,7 +12,7 @@ include ./entity_link_mixins
     +entity-link-status
 
     .entity-link__text
-      +entity-link-title
+      +entity-link-title(class="entity-link__title")
       .entity-link__description(
         ng-if="config.showDetails"
         ng-class="{'entity-link__description--missing': !description || missing}")

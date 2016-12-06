@@ -14,8 +14,10 @@ include ./entity_link_mixins
   +entity-link-drag-handle
   +entity-link-status
 
-  .asset-card__title(ng-click="actions.edit()" role="{{actions.edit && 'button'}}")
-    +entity-link-title
+  +entity-link-title(
+    class="asset-card__title"
+    ng-click="actions.edit()"
+    role="{{actions.edit && 'button'}}")
 
   .asset-card__tooltip.context-menu(
     ng-if="!config.disableTooltip"
