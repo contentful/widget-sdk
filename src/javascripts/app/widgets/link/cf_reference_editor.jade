@@ -25,7 +25,7 @@ div(ng-show="!isReady")
         actions="model.value.actions"
         config="config")
 
-  .link-editor__actions(ng-if="!isDisabled && (!single || !links.length)")
+  .link-editor__actions(ng-if="!isDisabled && (!single || !entityModels.length)")
     button.btn-action.btn-link.link-editor__link-btn(
       ng-click="addNew($event)"
       type="button")
