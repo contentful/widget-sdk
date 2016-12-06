@@ -159,11 +159,6 @@ angular.module('cf.app')
 
     // Build an object that is passed to the 'cfEntityLink' directive
     function buildEntityModel (id, entity, index, isDisabled) {
-      var edit = entity && !isDisabled
-        ? _.partial(widgetApi.state.goToEditor, entity)
-        : null;
-      var remove = !isDisabled && _.partial(state.removeAt, index);
-
       var version = entity ? entity.sys.version : '';
       var hash = [id, version, isDisabled].join('!');
 
@@ -172,10 +167,27 @@ angular.module('cf.app')
         entity: entity,
         hash: hash,
         actions: {
-          edit: edit,
-          remove: remove
+          edit: prepareEditAction(entity, isDisabled),
+          remove: prepareRemoveAction(index, isDisabled)
         }
       };
+    }
+
+    function prepareEditAction (entity, isDisabled) {
+      var entryId = widgetApi.entry.getSys().id;
+      var linksParentEntry = entity &&
+        entity.sys.type === 'Entry' &&
+        entity.sys.id === entryId;
+
+      if (entity && !isDisabled && !linksParentEntry) {
+        return _.partial(widgetApi.state.goToEditor, entity);
+      } else {
+        return null;
+      }
+    }
+
+    function prepareRemoveAction (index, isDisabled) {
+      return isDisabled ? null : _.partial(state.removeAt, index);
     }
   }
 }])

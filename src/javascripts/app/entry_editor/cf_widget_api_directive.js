@@ -57,8 +57,8 @@ angular.module('contentful')
   this.contentType = $scope.transformedContentTypeData;
 
   this.entry = {
-    // TODO only used by slug editor we should remove it and only offer a
-    // property interface
+    // TODO only used by slug and reference editor; we should
+    // remove it and only offer a property interface
     getSys: function () {
       return K.getValue(fieldLocale.doc.sys);
     },
