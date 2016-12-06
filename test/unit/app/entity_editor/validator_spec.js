@@ -19,7 +19,7 @@ describe('entityEditor/Validator', function () {
 
       const setError = (id, message) => {
         this.validator.setApiResponseErrors({
-          body: {
+          data: {
             sys: {id: id},
             message: message,
             details: {

@@ -132,17 +132,17 @@ angular.module('contentful')
      * @param {Error[]} errors
      */
     function setApiResponseErrors (response) {
-      var body = response.body || {};
-      var errorId = dotty.get(body, ['sys', 'id']);
+      var data = response.data || {};
+      var errorId = dotty.get(data, ['sys', 'id']);
       var isValidationError =
         errorId === 'ValidationFailed' ||
         // Entity link points to non-existent entity
         errorId === 'UnresolvedLinks' ||
         // Linked entry does not have the correct content type
-        (errorId === 'InvalidEntry' && body.message === 'Validation error');
+        (errorId === 'InvalidEntry' && data.message === 'Validation error');
 
       if (isValidationError) {
-        var errors = dotty.get(body, ['details', 'errors'], []);
+        var errors = dotty.get(data, ['details', 'errors'], []);
         setErrors(errors);
       }
     }
