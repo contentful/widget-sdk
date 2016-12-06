@@ -76,7 +76,7 @@ angular.module('cf.app')
   }
 
   function load () {
-    var entryId = $scope.entity.getId();
+    var entryId = $scope.entityInfo.id;
     var query = {
       skip: $scope.paginator.getSkipParam(),
       limit: PER_PAGE + 1

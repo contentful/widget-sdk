@@ -29,9 +29,8 @@ describe('cfIframeWidget directive', function () {
 
     this.element = this.$compile('<cf-iframe-widget>', {
       widget: {},
-      entry: {},
-      contentType: {
-        data: {
+      entityInfo: {
+        contentType: {
           fields: [{id: 'FIELD'}]
         }
       },

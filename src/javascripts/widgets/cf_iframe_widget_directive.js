@@ -13,12 +13,12 @@ angular.module('contentful')
  *   Provided by FormWidgetsController
  * @scope.requires {otDoc} otDoc
  *   Provided by EntryEditorController
- * @scope.requires {Client.Entry} entry
- *   Provided by entry state
+ * @scope.requires {object} entityInfo
+ *   Provided by EntryEditorController
  * @scope.requires {API.Locale} locale
- *   Provided by entry state
+ *   Provided by FieldLocaleController
  */
-.directive('cfIframeWidget', ['$injector', function ($injector) {
+.directive('cfIframeWidget', ['require', function (require) {
   var ERRORS = {
     codes: {
       EBADUPDATE: 'ENTRY UPDATE FAILED'
@@ -33,19 +33,21 @@ angular.module('contentful')
     restrict: 'E',
     template: '<iframe style="width:100%" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"></iframe>',
     link: function (scope, element) {
-      var fieldFactory = $injector.get('fieldFactory');
-      var spaceContext = $injector.get('spaceContext');
-      var $q = $injector.get('$q');
+      var fieldFactory = require('fieldFactory');
+      var spaceContext = require('spaceContext');
+      var $q = require('$q');
 
       var $iframe = element.find('iframe');
       var iframe = $iframe.get(0);
-      var WidgetAPI = $injector.get('widgets/API');
-      var Widgets = $injector.get('widgets');
-      var K = $injector.get('utils/kefir');
+      var WidgetAPI = require('widgets/API');
+      var Widgets = require('widgets');
+      var K = require('utils/kefir');
 
       var doc = scope.docImpl || scope.otDoc;
       var descriptor = Widgets.get(scope.widget.widgetId);
-      var fields = scope.contentType.data.fields;
+      var entityInfo = scope.entityInfo;
+
+      var fields = entityInfo.contentType.fields;
       var fieldsById = _.transform(fields, function (fieldsById, field) {
         fieldsById[field.id] = field;
       }, {});

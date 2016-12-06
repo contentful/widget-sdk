@@ -60,7 +60,7 @@ angular.module('contentful')
     // TODO only used by slug editor we should remove it and only offer a
     // property interface
     getSys: function () {
-      return $scope.entity.data.sys;
+      return K.getValue(fieldLocale.doc.sys);
     },
     onSysChanged: function (cb) {
       return K.onValueScope($scope, fieldLocale.doc.sys, cb);

@@ -69,7 +69,9 @@ angular.module('contentful')
         $scope.widgets = _.filter(editorData.fieldControls.form, function (widget) {
           return !dotty.get(widget, 'field.disabled') || $scope.preferences.showDisabledFields;
         });
+        // TODO remove this and use entityInfo instead
         $scope.entry = $scope.entity = entry;
+        $scope.entityInfo = editorData.entityInfo;
         $scope.contentType = contentType;
         $scope.snapshot = snapshot;
 

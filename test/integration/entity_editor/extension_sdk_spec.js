@@ -44,12 +44,11 @@ describe('Extension SDK', function () {
       widget: {
         field: field
       },
-      contentType: {
-        data: {
+      entityInfo: {
+        contentType: {
           fields: [field]
         }
       },
-      entry: entry,
       locale: {
         code: 'de',
         internal_code: 'de-internal'
@@ -122,7 +121,6 @@ describe('Extension SDK', function () {
         this.doc.setValueAt(['fields'], {
           'FID-internal': {'de-internal': 'INITIAL'}
         });
-        dotty.put(this.scope.entry.data, ['fields', 'FID-internal', 'de-internal'], 'INITIAL');
       });
 
       it('gets initial value', function* (api) {
@@ -311,18 +309,18 @@ describe('Extension SDK', function () {
 
   describe('#fields', function () {
     beforeEach(function () {
-      this.scope.contentType.data.fields = [
+      this.scope.entityInfo.contentType.fields = [
         this.scope.widget.field,
         {id: 'f2-internal', apiName: 'f2', localized: true},
         {id: 'f3-internal', apiName: 'f3', localized: false}
       ];
 
-      this.scope.entry.data.fields = {
+      this.doc.setValueAt(['fields'], {
         'f2-internal': {
           'en-internal': 'INITIAL en',
           'de-internal': 'INITIAL de'
         }
-      };
+      });
     });
 
     it('has #id property', function* (api) {
