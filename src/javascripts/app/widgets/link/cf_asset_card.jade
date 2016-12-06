@@ -3,11 +3,13 @@ include ./entity_link_mixins
 .asset-card
   cf-thumbnail(
     ng-if="config.asThumb"
+    ng-class="{'entity-link__image--missing': !file}"
     file="file" size="123" fit="thumb"
     cf-context-menu-trigger)
 
   cf-thumbnail(
     ng-if="!config.asThumb"
+    ng-class="{'entity-link__image--missing': !file}"
     file="file" size="270" fit="thumb"
     cf-context-menu-trigger)
 
