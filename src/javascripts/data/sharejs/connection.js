@@ -15,7 +15,7 @@ angular.module('cf.data')
   var caseof = require('libs/sum-types').caseof;
   var K = require('utils/kefir');
   var $q = require('$q');
-  var DocLoader = require('data/ShareJS/Connection/DocLoader');
+  var DocLoader = require('data/sharejs/DocLoader');
   var DocLoad = DocLoader.DocLoad;
 
   return {
@@ -109,7 +109,8 @@ angular.module('cf.data')
           return caseof(docLoad, [
             [DocLoad.Doc, function (d) { return [d.doc]; }],
             [DocLoad.Error, function (e) { throw e.error; }],
-            [DocLoad.None, _.constant([])]
+            [DocLoad.None, _.constant([])],
+            [DocLoad.Pending, _.constant([])]
           ]);
         })
         .take(1)

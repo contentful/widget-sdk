@@ -223,4 +223,53 @@ describe('utils/kefir', function () {
       expect(() => K.getValue(prop)).toThrowError('Property does not have current value');
     });
   });
+
+  describe('#holdWhen', function () {
+    it('emits values until predicate is true', function () {
+      const prop = KMock.createMockProperty('A');
+
+      const hold = K.holdWhen(prop, (x) => x === 'X');
+      KMock.assertCurrentValue(hold, 'A');
+
+      prop.set('B');
+      KMock.assertCurrentValue(hold, 'B');
+
+      prop.set('X');
+      KMock.assertCurrentValue(hold, 'X');
+
+      prop.set('Y');
+      KMock.assertCurrentValue(hold, 'X');
+    });
+
+    it('ends after predicate is true', function () {
+      const prop = KMock.createMockProperty('A');
+      const hold = K.holdWhen(prop, (x) => x === 'X');
+
+      const ended = sinon.spy();
+      hold.onEnd(ended);
+      prop.set('X');
+      sinon.assert.calledOnce(ended);
+    });
+  });
+
+  describe('#scopeLifeline', function () {
+    beforeEach(function () {
+      this.scope = this.$inject('$rootScope').$new();
+    });
+
+    it('ends when subscribing before being destroyed', function () {
+      const ended = sinon.spy();
+      K.scopeLifeline(this.scope).onEnd(ended);
+      sinon.assert.notCalled(ended);
+      this.scope.$destroy();
+      sinon.assert.called(ended);
+    });
+
+    it('ends when subscribing after being destroyed', function () {
+      const ended = sinon.spy();
+      this.scope.$destroy();
+      K.scopeLifeline(this.scope).onEnd(ended);
+      sinon.assert.called(ended);
+    });
+  });
 });

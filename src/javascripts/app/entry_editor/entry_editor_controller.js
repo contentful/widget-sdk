@@ -68,8 +68,7 @@ angular.module('contentful')
     editorData.entity,
     editorData.contentType,
     $scope.user,
-    // TODO: pass a lifecycle observable
-    {autoDispose: {scope: $scope}}
+    K.scopeLifeline($scope)
   );
 
   var schema = createEntrySchema($scope.entityInfo.contentType, localeStore.getPrivateLocales());

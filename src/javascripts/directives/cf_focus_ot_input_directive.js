@@ -25,18 +25,11 @@ angular.module('contentful')
     restrict: 'A',
     link: function (scope, elem, attrs) {
       if (scope.$eval(attrs.cfFocusOtInput) || _.isEmpty(attrs.cfFocusOtInput)) {
-
-        // Stream<void>
-        // Emits exactly one event when the document is connected for
-        // the first time.
-        var loaded$ =
-          scope.otDoc.state.isConnected$
-          .filter(_.identity)
-          .take(1);
-
-        K.onValueScope(scope, loaded$, function () {
-          var input = elem.find('input').eq(0);
-          defer(function () { input.focus(); });
+        K.onValueScope(scope, scope.otDoc.state.loaded$, function (loaded) {
+          if (loaded) {
+            var input = elem.find('input').eq(0);
+            defer(function () { input.focus(); });
+          }
         });
       }
     }

@@ -322,14 +322,40 @@ export function combinePropertiesObject (props) {
 }
 
 
-function assertIsProperty (prop) {
-  if (
-    !prop ||
-    typeof prop.getType !== 'function' ||
-    prop.getType() !== 'property'
-  ) {
-    throw new TypeError('Object values must be properties');
-  }
+/**
+ * @ngdoc method
+ * @name utils/kefir#holdWhen
+ * @description
+ * Takes a property and a predicate and returns a property that has the
+ * same values as the initial property until the current value
+ * satisfies the predicate. After that the property is constant with
+ * that value.
+ *
+ * @param {Kefir.Property<T>} props
+ * @param {function(T): boolean} predicate
+ * @returns {Kefir.Property<T>}
+ */
+export function holdWhen (prop, predicate) {
+  assertIsProperty(prop);
+  let hold = false;
+  return prop.withHandler((emitter, event) => {
+    if (hold) {
+      return;
+    }
+
+    if (event.type === 'error') {
+      throw new Error(event.value);
+    } else if (event.type === 'end') {
+      emitter.end();
+    } else if (event.type === 'value') {
+      emitter.value(event.value);
+      if (predicate(event.value)) {
+        hold = true;
+        prop = null;
+        emitter.end();
+      }
+    }
+  });
 }
 
 
@@ -359,4 +385,40 @@ export function getValue (prop) {
   }
 
   return value;
+}
+
+
+/**
+ * @ngdoc method
+ * @name utils/kefir#scopeLifeline
+ * @description
+ * Returns a stream that ends when the scope is destroyed.
+ * @params {Scope} scope
+ * @returns {Kefir.Stream<void>}
+ */
+export function scopeLifeline (scope) {
+  return Kefir.stream((emitter) => {
+    if (!scope || scope.$$destroyed) {
+      return end();
+    } else {
+      return scope.$on('$destroy', end);
+    }
+
+    function end () {
+      scope = null;
+      emitter.end();
+      return noop;
+    }
+  });
+}
+
+
+function assertIsProperty (prop) {
+  if (
+    !prop ||
+    typeof prop.getType !== 'function' ||
+    prop.getType() !== 'property'
+  ) {
+    throw new TypeError('Object values must be properties');
+  }
 }

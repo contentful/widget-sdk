@@ -38,8 +38,7 @@ angular.module('contentful')
     editorData.entity,
     null,
     $scope.user,
-    // TODO: pass a lifecycle observable
-    {autoDispose: {scope: $scope}}
+    K.scopeLifeline($scope)
   );
 
   var schema = createAssetSchema(localeStore.getPrivateLocales());
