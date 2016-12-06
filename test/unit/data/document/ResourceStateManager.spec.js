@@ -34,7 +34,8 @@ describe('data/document/ResourceStateManager', function () {
 
     const docLoader = {
       doc: this.K.createMockProperty(DocLoad.None()),
-      destroy: sinon.spy()
+      destroy: sinon.spy(),
+      close: sinon.spy()
     };
 
     const docConnection = {
@@ -156,5 +157,18 @@ describe('data/document/ResourceStateManager', function () {
       this.doc.resourceState.state$,
       this.State.Deleted()
     );
+  });
+
+  it('ends streams when document is destroyed', function () {
+    const endState = sinon.spy();
+    const endStateChange = sinon.spy();
+
+    this.doc.resourceState.state$.onEnd(endState);
+    this.doc.resourceState.stateChange$.onEnd(endStateChange);
+
+    this.doc.destroy();
+
+    sinon.assert.calledOnce(endState);
+    sinon.assert.calledOnce(endStateChange);
   });
 });
