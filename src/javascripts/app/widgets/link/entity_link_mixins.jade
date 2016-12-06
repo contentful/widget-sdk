@@ -10,7 +10,7 @@ mixin entity-link-status
 
 mixin entity-link-title
   .entity-link__title
-    span(ng-if="!missing && title") {{ title | truncate:256 }}
+    span(ng-if="!missing && title") {{ title }}
     span.entity-link__title--missing(ng-if="!missing && !title") Untitled
     span.entity-link__title--missing(ng-if="missing") Entity missing or inaccessible
 
