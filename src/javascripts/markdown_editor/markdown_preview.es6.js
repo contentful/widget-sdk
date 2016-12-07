@@ -1,6 +1,6 @@
 import $timeout from '$timeout';
 import LazyLoader from 'LazyLoader';
-import * as treeBuilder from 'markdown_editor/markdown_tree';
+import * as treeBuilder from './markdown_tree';
 
 const NOTIFY_INTERVAL = 250;
 const UNIQUE_SOMETHING = {};

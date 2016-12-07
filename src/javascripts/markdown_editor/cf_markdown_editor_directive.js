@@ -5,7 +5,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
   var $timeout = $injector.get('$timeout');
   var LazyLoader = $injector.get('LazyLoader');
   var MarkdownEditor = $injector.get('MarkdownEditor');
-  var actions = $injector.get('MarkdownEditor/actions');
+  var actions = $injector.get('markdown_editor/markdown_actions');
   var livePreview = $injector.get('markdown_editor/markdown_preview');
   var notification = $injector.get('notification');
   var throttle = $injector.get('throttle');
@@ -55,7 +55,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
 
       function initEditor (editorInstance) {
         editor = editorInstance;
-        scope.actions = actions.for(editor, field.locale);
+        scope.actions = actions.create(editor, field.locale);
         scope.history = editor.history;
 
         var stopPreview = livePreview.start(field.getValue, updatePreview);
