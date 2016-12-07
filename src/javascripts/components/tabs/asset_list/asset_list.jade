@@ -42,7 +42,9 @@ header.workbench-header
     ng-show="uiConfig"
     cf-view-menu="uiConfig.assetListViews")
 
-  .workbench-main__right-content
+  .workbench-main__right-content.x--flex-column
+    .search-results__count
+      +pluralize-entity("asset", "searchController.paginator.getTotal()", "found")
     .table(ng-show="assets.length && !isEmpty")
       .table__head
         table
@@ -97,7 +99,7 @@ header.workbench-header
             aria-label="unpublish")
             | Unpublish
 
-      .table__body.endless-container(cf-endless-container at-bottom="searchController.loadMore()" num-elements="searchController.paginator.getPage()")
+      .table__body
         table
           tbody
             tr(ng-repeat="asset in assets track by asset.getId()"
@@ -125,7 +127,8 @@ header.workbench-header
                 aria-label="cell-status"
                 ng-class="entityStatus.getClassname(asset)")
                 | {{entityStatus.getLabel(asset)}}
-        .loading(ng-hide="searchController.paginator.isAtLast()")
+
+    cf-search-results-paginator(paginator="searchController.paginator" pages="7")
 
     +no-search-results("!assets.length || isEmpty", "context.view.searchTerm")
 
