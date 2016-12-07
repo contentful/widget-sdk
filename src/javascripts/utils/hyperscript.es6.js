@@ -1,6 +1,8 @@
-const CAMEL_CASE_RE = /([a-z])([A-Z])/g;
+import {flatten, filter, kebabCase} from 'lodash';
+
 const TAG_RE = /^[^#.]+/;
 const ID_OR_CLASS_RE = /([#.][^#.]+)/g;
+const DOUBLE_QUOTE_RE = /"/g;
 
 const VOID_ELEMENTS = [
   'area',
@@ -19,39 +21,25 @@ const VOID_ELEMENTS = [
 ];
 
 export function h (elSpec, attrs, children) {
-  // arity 1: array of children -> join, string -> empty tag
-  if (arguments.length === 1 && Array.isArray(elSpec)) {
-    return elSpec.join('');
-  }
-
-  // arity 2: no attributes
-  if (!children && isChildren(attrs)) {
+  if (!children && Array.isArray(attrs)) {
     children = attrs;
     attrs = {};
   }
 
-  const {tag, id, classes} = parseElSpec(elSpec);
-  attrs = rewriteCamelCaseAttrs(attrs);
-  attrs.id = id || attrs.id;
-  if (classes.length > 0) {
-    attrs.class = classes.join(' ');
+  if (children && !Array.isArray(children)) {
+    throw new Error('Element children have to an array or undefined.');
   }
+
+  const {tag, id, classes} = parseElSpec(elSpec);
+  attrs = mergeSpecWithAttrs(id, classes, attrs);
+  attrs = rewriteCamelCaseAttrs(attrs);
 
   return createHTMLString(tag, attrs, children);
 }
 
-function isChildren (x) {
-  return typeof x === 'string' ||
-    typeof x === 'number' ||
-    Array.isArray(x);
-}
-
 function rewriteCamelCaseAttrs (attrs) {
   return Object.keys(attrs || {}).reduce((acc, attr) => {
-    const dashedAttr = attr.replace(CAMEL_CASE_RE, ([low, up]) => {
-      return `${low}-${up.toLowerCase()}`;
-    });
-    acc[dashedAttr] = attrs[attr];
+    acc[kebabCase(attr)] = attrs[attr];
     return acc;
   }, {});
 }
@@ -76,13 +64,26 @@ function parseElSpec (elSpec) {
   }, result);
 }
 
+function mergeSpecWithAttrs (id, classes, attrs) {
+  if (id) {
+    attrs.id = id;
+  }
+
+  if (classes.length > 0) {
+    classes = flatten([attrs.class, classes]);
+    attrs.class = filter(classes).join(' ');
+  }
+
+  return attrs;
+}
+
 function createHTMLString (tag, attrs, children) {
   const isVoid = VOID_ELEMENTS.indexOf(tag) > -1;
   const closeTag = isVoid ? '' : `</${tag}>`;
 
-  if (!isChildren(children) || isVoid) {
+  if (isVoid || !Array.isArray(children)) {
     children = '';
-  } else if (Array.isArray(children)) {
+  } else {
     children = children.join('');
   }
 
@@ -91,11 +92,15 @@ function createHTMLString (tag, attrs, children) {
     if (value === true) {
       return attr;
     } else {
-      return `${attr}="${value}"`;
+      return `${attr}="${escape(value)}"`;
     }
   }).join(' ');
 
   attrs = attrs.length > 0 ? ` ${attrs}` : '';
 
   return `<${tag}${attrs}>${children}${closeTag}`;
+}
+
+function escape (value) {
+  return value.replace(DOUBLE_QUOTE_RE, '&quot;');
 }

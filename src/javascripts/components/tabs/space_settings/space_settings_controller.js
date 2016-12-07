@@ -75,32 +75,34 @@ angular.module('contentful')
   }
 
   function confirmationTemplate (spaceName) {
-    return h('.modal-background',
+    return h('.modal-background', [
       h('.modal-dialog', [
-        h('header.modal-dialog__header',
-          h('h1', 'Remove space')),
+        h('header.modal-dialog__header', [
+          h('h1', ['Remove space'])
+        ]),
         h('.modal-dialog__content', [
           h('.modal-dialog__richtext', [
             h('p', [
               'You are about to remove space ',
-              h('span.modal-dialog__highlight', spaceName), '.'
+              h('span.modal-dialog__highlight', [spaceName]), '.'
             ]),
-            h('p',
+            h('p', [
               h('strong', [
                 'All space contents and the space itself will removed. ',
                 'This operation cannot be undone.'
-              ])),
-            h('p', 'To confirm, type the name of the space in the field below:'),
+              ])
+            ]),
+            h('p', ['To confirm, type the name of the space in the field below:']),
             h('input.cfnext-form__input--full-size', {ngModel: 'input.spaceName'})
           ])
         ]),
         h('.modal-dialog__controls', [
           h('button.btn-caution',
-            {uiCommand: 'remove'}, 'Remove'),
+            {uiCommand: 'remove'}, ['Remove']),
           h('button.btn-secondary-action',
-            {ngClick: 'dialog.cancel()'}, 'Don’t remove')
+            {ngClick: 'dialog.cancel()'}, ['Don’t remove'])
         ])
       ])
-    );
+    ]);
   }
 }]);
