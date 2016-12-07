@@ -9,7 +9,7 @@ angular.module('contentful')
 .factory('states/assets', ['require', function (require) {
   var contextHistory = require('contextHistory');
   var $state = require('$state');
-  var crumbFactory = require('navigation/crumb_factory');
+  var crumbFactory = require('navigation/CrumbFactory');
 
   var base = require('states/base');
   var loadEditorData = require('app/entity_editor/DataLoader').loadAsset;
@@ -43,7 +43,7 @@ angular.module('contentful')
       }
 
       // add current state
-      contextHistory.addEntity(crumbFactory.Asset(editorData.entity, $scope.context));
+      contextHistory.addEntity(crumbFactory.Asset(editorData.entity.getSys(), $scope.context));
     }],
     template: '<cf-asset-editor class="asset-editor workbench">'
   };

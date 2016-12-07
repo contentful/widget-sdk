@@ -2,56 +2,67 @@ import {constant as constantly, extend} from 'lodash';
 
 /**
  * @ngdoc service
- * @name navigation/crumb_factory
+ * @name navigation/CrumbFactory
  * @description
  * Exports breadcrumb object factories.
+ *
+ * `context` parameter is a reference to an object
+ * {dirty: bool, title: string} that is manipulated
+ * by a view controller. It's used to compute a title
+ * of a breadcrumb.
  */
 
 export const Entry = EntryOrAsset;
 export const Asset = EntryOrAsset;
 
-function EntryOrAsset (entity, context) {
-  const segment = entity.getType() === 'Asset' ? 'assets' : 'entries';
-  const idParamName = entity.getType() === 'Asset' ? 'assetId' : 'entryId';
+function EntryOrAsset (sys, context) {
+  const segment = sys.type === 'Asset' ? 'assets' : 'entries';
+  const idParamName = sys.type === 'Asset' ? 'assetId' : 'entryId';
 
-  return base(entity.getType(), entity.getId(), {
+  return base(sys.type, sys.id, {
     getTitle: titleFromContext(context),
-    link: entityLink(segment, idParamName, entity.getId())
+    link: entityLink(segment, idParamName, sys.id),
+    icon: sys.type === 'Asset' ? 'asset' : 'entry'
   });
 }
 
 export function ContentTypeList () {
   return base('ContentTypeList', {
     getTitle: constantly('Content model'),
-    link: link('content_types.list')
+    link: link('content_types.list'),
+    icon: 'model'
   });
 }
 
 export function ContentType (id, context) {
   return base('ContentType', id, {
     getTitle: titleFromContext(context),
-    link: entityLink('content_types', 'contentTypeId', id)
+    link: entityLink('content_types', 'contentTypeId', id),
+    icon: 'model'
   });
 }
 
 export function EntryList () {
   return base('EntryList', {
     getTitle: constantly('Content'),
-    link: link('entries.list')
+    link: link('entries.list'),
+    icon: 'entries'
   });
 }
 
 export function EntrySnapshot (id, context) {
   return base('EntrySnapshotComparison', {
     getTitle: titleFromContext(context),
-    link: link('entries.compare.withCurrent', {snapshotId: id})
+    link: link('entries.compare.withCurrent', {snapshotId: id}),
+    icon: 'entry'
   });
 }
 
 export function AssetList () {
   return base('AssetList', {
     getTitle: constantly('Media'),
-    link: link('assets.list')
+    link: link('assets.list'),
+    icon: 'assets'
   });
 }
 
@@ -140,9 +151,23 @@ export function PreviewEnv (id, context) {
 }
 
 /**
- * Helpers
+ * @ngdoc type
+ * @name Breadcrumb
+ * @method {function} getTitle
+ *   should return the current title
+ * @property {object} link
+ *   link object: {state: string, params: object}
+ * @property {string} type
+ *   breadcrumb type (each view has a unique type)
+ * @property {string} id
+ *   unique ID of a view instance (may contain entity)
+ * @property {string} icon
+ *   icon name to be used (w/o "breadcrumbs-icon-" prefix)
  */
 
+/**
+ * @returns {Breadcrumb}
+ */
 function base (type, id, crumb) {
   if (arguments.length === 2) {
     crumb = id;
@@ -150,6 +175,7 @@ function base (type, id, crumb) {
   }
 
   id = id || ('__internal,no-id' + type);
+  crumb.icon = crumb.icon || 'settings';
 
   return extend({type, id}, crumb);
 }

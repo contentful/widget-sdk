@@ -28,30 +28,8 @@
             ng-repeat="crumb in crumbs.slice(0, -1).reverse()"
             role="menuitem"
             data-test-id="breadcrumbs-ancestor-menuitem")
-            a(
-              ui-sref="{{crumb.link.state}}({{crumb.link.params}})"
-              ng-switch="crumb.type"
+            a(ui-sref="{{crumb.link.state}}({{crumb.link.params}})"
               role="link"
               title="{{crumb.getTitle().length > 20 ? crumb.getTitle() : ''}}")
-              cf-icon(
-                name="breadcrumbs-icon-entry"
-                ng-switch-when="Entry")
-              cf-icon(
-                name="breadcrumbs-icon-entries"
-                ng-switch-when="Entries")
-              cf-icon(
-                name="breadcrumbs-icon-asset"
-                ng-switch-when="Asset")
-              cf-icon(
-                name="breadcrumbs-icon-assets"
-                ng-switch-when="Assets")
-              cf-icon(
-                name="breadcrumbs-icon-model"
-                ng-switch-when="ContentType")
-              cf-icon(
-                name="breadcrumbs-icon-model"
-                ng-switch-when="ContentTypes")
-              cf-icon(
-                name="breadcrumbs-icon-settings"
-                ng-switch-default)
+              cf-icon(name="breadcrumbs-icon-{{crumb.icon}}")
               | {{crumb.getTitle()}}

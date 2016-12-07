@@ -141,13 +141,7 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
       }, documentTitle.maybeOverride);
 
       $scope.$watchCollection(contextHistory.getAll, function (items) {
-        $scope.crumbs = items.map(function (item) {
-          return {
-            getTitle: item.getTitle,
-            link: item.link,
-            type: item.type
-          };
-        });
+        $scope.crumbs = items;
 
         $scope.crumbs.hide = $scope.crumbs.length <= 1;
         $scope.crumbs.isExactlyOneLevelDeep = $scope.crumbs.length === 2;

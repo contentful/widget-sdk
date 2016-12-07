@@ -9,7 +9,7 @@ angular.module('contentful')
 .factory('states/settings/roles', ['require', function (require) {
   var base = require('states/base');
   var contextHistory = require('contextHistory');
-  var crumbFactory = require('navigation/crumb_factory');
+  var crumbFactory = require('navigation/CrumbFactory');
 
   var list = base({
     name: 'list',

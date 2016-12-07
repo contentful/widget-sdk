@@ -10,7 +10,7 @@ angular.module('contentful')
   var contextHistory = require('contextHistory');
   var $state = require('$state');
   var trackVersioning = require('analyticsEvents/versioning');
-  var crumbFactory = require('navigation/crumb_factory');
+  var crumbFactory = require('navigation/CrumbFactory');
 
   var base = require('states/base');
   var loadEditorData = require('app/entity_editor/DataLoader').loadEntry;
@@ -72,7 +72,7 @@ angular.module('contentful')
         trackVersioning.opened($stateParams.source);
 
         contextHistory.addEntity(crumbFactory.EntryList());
-        contextHistory.addEntity(crumbFactory.Entry(entry, $scope.context));
+        contextHistory.addEntity(crumbFactory.Entry(entry.data.sys, $scope.context));
         contextHistory.addEntity(crumbFactory.EntrySnapshot(snapshot.sys.id, $scope.context));
       }
     ]
@@ -146,7 +146,7 @@ angular.module('contentful')
       }
 
       // add current state
-      contextHistory.addEntity(crumbFactory.Entry(editorData.entity, $scope.context));
+      contextHistory.addEntity(crumbFactory.Entry(editorData.entity.getSys(), $scope.context));
     }],
     template: '<cf-entry-editor class="entry-editor workbench">'
   });
