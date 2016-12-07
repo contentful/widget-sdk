@@ -1,6 +1,6 @@
 'use strict';
 
-describe('navigation/document_title', function () {
+describe('navigation/DocumentTitle', function () {
   beforeEach(function () {
     this.currentState = {};
     this.document = {title: 'initial'};
@@ -10,7 +10,7 @@ describe('navigation/document_title', function () {
       $provide.value('$document', [this.document]);
     });
 
-    this.dt = this.$inject('navigation/document_title');
+    this.dt = this.$inject('navigation/DocumentTitle');
   });
 
   describe('#init', function () {

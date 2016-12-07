@@ -12,7 +12,7 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
   var $state = require('$state');
   var analytics = require('analytics');
   var contextHistory = require('contextHistory');
-  var documentTitle = require('navigation/document_title');
+  var documentTitle = require('navigation/DocumentTitle');
 
   var backBtnSelector = '[aria-label="breadcrumbs-back-btn"]';
   var ancestorBtnSelector = '[aria-label="breadcrumbs-ancestor-btn"]';

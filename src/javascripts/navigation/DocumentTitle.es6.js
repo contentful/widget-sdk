@@ -5,7 +5,7 @@ import {isString} from 'lodash';
 
 /**
  * @ngdoc service
- * @name navigation/document_title
+ * @name navigation/DocumentTitle
  * @description
  * Exports functions for manipulating
  * browser window's title.
@@ -14,7 +14,7 @@ import {isString} from 'lodash';
 
 /**
  * @ngdoc method
- * @name navigation/document_title#init
+ * @name navigation/DocumentTitle#init
  * @description
  * Starts watching for a fallback state
  * label set in a state definition.
@@ -27,7 +27,7 @@ export function init () {
 
 /**
  * @ngdoc method
- * @name navigation/document_title#setTtile
+ * @name navigation/DocumentTitle#setTtile
  * @param {string} title
  * @description
  * Sets a title.
@@ -38,7 +38,7 @@ export function setTitle (title) {
 
 /**
  * @ngdoc method
- * @name navigation/document_title#setTtile
+ * @name navigation/DocumentTitle#setTtile
  * @param {string} title
  * @description
  * If a provided arg is a valid title,
