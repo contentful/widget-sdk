@@ -1,4 +1,4 @@
-import {range, min, max, forEach, times, repeat} from 'lodash';
+import {range, min, max, times, repeat} from 'lodash';
 
 const HEADER_CHAR = '#';
 const quoteToggleFn = createPrefixToggleFn('> ');
@@ -185,7 +185,7 @@ function forLineIn (selection, cb) {
   const lines = [selection.anchor.line, selection.head.line];
   const lineRange = range(min(lines), max(lines) + 1);
 
-  forEach(lineRange, function (lineNumber, i) {
+  lineRange.forEach(function (lineNumber, i) {
     cb(lineNumber, i + 1);
   });
 }

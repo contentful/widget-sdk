@@ -5,7 +5,7 @@ angular.module('contentful')
 
   var $timeout = require('$timeout');
   var LazyLoader = require('LazyLoader');
-  var createTreeBuilder = require('MarkdownEditor/tree');
+  var treeBuilder = require('markdown_editor/markdown_tree');
 
   var NOTIFY_INTERVAL = 250;
   var UNIQUE_SOMETHING = {};
@@ -16,7 +16,7 @@ angular.module('contentful')
     var buildTree;
 
     LazyLoader.get('markdown').then(function (libs) {
-      buildTree = createTreeBuilder(libs);
+      buildTree = treeBuilder.create(libs);
       scheduleSubscriberNotification();
     });
 
