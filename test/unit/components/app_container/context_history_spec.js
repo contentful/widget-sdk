@@ -1,7 +1,7 @@
 'use strict';
 
 describe('contextHistory service', function () {
-  const e = (id) => { return {id: id}; };
+  const e = id => { return {id: id}; };
 
   beforeEach(function () {
     module('contentful/test');
@@ -9,6 +9,16 @@ describe('contextHistory service', function () {
     this.ctx.purge();
     this.params = this.$inject('$stateParams');
     this.params.addToContext = false;
+
+    this.withLastCrumbs = fn => {
+      this.ctx.crumbs$.onValue(_.once(fn));
+    };
+
+    this.assertCrumbCount = count => {
+      this.withLastCrumbs(crumbs => {
+        expect(crumbs.length).toBe(count);
+      });
+    };
   });
 
   describe('after init (empty state)', function () {
@@ -24,7 +34,7 @@ describe('contextHistory service', function () {
   describe('adding entities', function () {
     it('adds when empty and w/o addToContext flag', function () {
       this.ctx.add(e(1));
-      expect(this.ctx.getAll().length).toBe(1);
+      this.assertCrumbCount(1);
     });
 
     it('does not add when not empty and w/o addToContext flag', function () {
@@ -37,15 +47,15 @@ describe('contextHistory service', function () {
       this.params.addToContext = true;
       this.ctx.add(e(1));
       this.ctx.add(e(2));
-      expect(this.ctx.getAll().length).toBe(2);
+      this.assertCrumbCount(2);
     });
 
     it('if adding already added entity, it is used as a new head', function () {
       this.params.addToContext = true;
       [e(1), e(2), e(3), e(4)].forEach(this.ctx.add);
-      expect(this.ctx.getAll().length).toBe(4);
+      this.assertCrumbCount(4);
       this.ctx.add(e(3));
-      expect(this.ctx.getAll().length).toBe(3);
+      this.assertCrumbCount(3);
       expect(this.ctx.getLast().id).toBe(3);
     });
   });
@@ -56,10 +66,12 @@ describe('contextHistory service', function () {
       [e(1), e(2), e(3)].forEach(this.ctx.add);
     });
 
-    it('#getAll', function () {
-      const all = this.ctx.getAll();
-      expect(all.length).toBe(3);
-      expect(all[1].id).toBe(2);
+    it('crumbs$ property', function () {
+      this.assertCrumbCount(3);
+      this.withLastCrumbs(([first, second]) => {
+        expect(first.id).toBe(1);
+        expect(second.id).toBe(2);
+      });
     });
 
     it('#getLast', function () {
@@ -74,16 +86,15 @@ describe('contextHistory service', function () {
     });
 
     it('#pop', function () {
-      expect(this.ctx.getAll().length).toBe(3);
+      this.assertCrumbCount(3);
       this.ctx.pop();
-      expect(this.ctx.getAll().length).toBe(2);
-      expect(this.ctx.getLast().id).toBe(2);
+      this.assertCrumbCount(2);
     });
 
     it('#purge', function () {
-      expect(this.ctx.getAll().length).toBe(3);
+      this.assertCrumbCount(3);
       this.ctx.purge();
-      expect(this.ctx.getAll().length).toBe(0);
+      this.assertCrumbCount(0);
       expect(this.ctx.isEmpty()).toBe(true);
     });
   });

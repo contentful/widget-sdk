@@ -1,4 +1,5 @@
 import {constant as constantly, extend} from 'lodash';
+import {deepFreeze} from 'utils/DeepFreeze';
 
 /**
  * @ngdoc service
@@ -182,7 +183,7 @@ function base (type, id, crumb) {
 
   crumb.icon = crumb.icon || 'settings';
 
-  return extend({type, id}, crumb);
+  return deepFreeze(extend({type, id}, crumb));
 }
 
 function titleFromContext (context) {

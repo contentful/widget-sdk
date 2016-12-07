@@ -2,12 +2,12 @@
 
 describe('cfBreadcrumbsDirective spec', function () {
   const contextHistoryMock = {
-    addEntity: sinon.spy(),
+    add: sinon.spy(),
     isEmpty: sinon.spy(),
     pop: sinon.spy(),
     purge: sinon.spy(),
-    getAll: sinon.stub(),
-    getLast: sinon.spy()
+    getLast: sinon.spy(),
+    crumbs$: null
   };
   const $stateMock = {
     go: sinon.spy(),
@@ -26,6 +26,9 @@ describe('cfBreadcrumbsDirective spec', function () {
       });
     });
 
+    const KefirMock = this.$inject('mocks/kefir');
+    contextHistoryMock.crumbs$ = KefirMock.createMockProperty([]);
+
     this.compileElement = function (backHint, ancestorHint) {
       return this.$compile('<cf-breadcrumbs />', {
         backHint: backHint,
@@ -34,27 +37,27 @@ describe('cfBreadcrumbsDirective spec', function () {
     };
 
     this.assertPropAfterStubAndCompile = function (entityCount, prop, val) {
-      contextHistoryMock.getAll.returns(makeEntities(entityCount));
+      contextHistoryMock.crumbs$.set(makeEntities(entityCount));
       const $el = this.compileElement();
       const scope = $el.find(':first-child').scope();
       expect(dotty.get(scope, prop)).toEqual(val);
     };
 
     this.makeEntitesAndCompileEl = function (count) {
-      contextHistoryMock.getAll.returns(makeEntities(count));
+      contextHistoryMock.crumbs$.set(makeEntities(count));
       return this.compileElement();
     };
   });
 
   describe('Controller', function () {
     describe('crumbs property', function () {
-      it('should contain as many elements as returned by contextHistory.getAll', function () {
+      it('should contain as many elements as in contextHistory.crumbs$', function () {
         this.assertPropAfterStubAndCompile(0, 'crumbs.length', 0);
         this.assertPropAfterStubAndCompile(4, 'crumbs.length', 4);
       });
 
       it('each crumb should have a getTitle fn, link object and type property', function () {
-        contextHistoryMock.getAll.returns([makeEntity('title1', 'type1', 1, 'state1', { a: 10 })]);
+        contextHistoryMock.crumbs$.set([makeEntity('title1', 'type1', 1, 'state1', { a: 10 })]);
         const crumb = this.compileElement().find(':first-child').scope().crumbs[0];
 
         expect(_.isFunction(crumb.getTitle)).toEqual(true);
@@ -64,32 +67,25 @@ describe('cfBreadcrumbsDirective spec', function () {
       });
     });
 
-    it('should have hide prop which is true iff there are less than 2 crumbs', function () {
-      this.assertPropAfterStubAndCompile(0, 'crumbs.hide', true);
-      this.assertPropAfterStubAndCompile(1, 'crumbs.hide', true);
-      this.assertPropAfterStubAndCompile(2, 'crumbs.hide', false);
-      this.assertPropAfterStubAndCompile(3, 'crumbs.hide', false);
+    it('should be hidden if there are less than 2 crumbs', function () {
+      this.assertPropAfterStubAndCompile(0, 'shouldHide', true);
+      this.assertPropAfterStubAndCompile(1, 'shouldHide', true);
+      this.assertPropAfterStubAndCompile(2, 'shouldHide', false);
+      this.assertPropAfterStubAndCompile(3, 'shouldHide', false);
     });
 
-    it('should have isExactlyOneLevelDeep prop which is true iff there are 2 crumbs', function () {
-      this.assertPropAfterStubAndCompile(0, 'crumbs.isExactlyOneLevelDeep', false);
-      this.assertPropAfterStubAndCompile(1, 'crumbs.isExactlyOneLevelDeep', false);
-      this.assertPropAfterStubAndCompile(2, 'crumbs.isExactlyOneLevelDeep', true);
-      this.assertPropAfterStubAndCompile(3, 'crumbs.isExactlyOneLevelDeep', false);
+    it('should show back button if there are 2 or more crumbs', function () {
+      this.assertPropAfterStubAndCompile(0, 'shouldShowBack', false);
+      this.assertPropAfterStubAndCompile(1, 'shouldShowBack', false);
+      this.assertPropAfterStubAndCompile(2, 'shouldShowBack', true);
+      this.assertPropAfterStubAndCompile(3, 'shouldShowBack', true);
     });
 
-    it('should have isMoreThanALevelDeep prop which is true iff there are more than 2 crumbs', function () {
-      this.assertPropAfterStubAndCompile(0, 'crumbs.isMoreThanALevelDeep', false);
-      this.assertPropAfterStubAndCompile(1, 'crumbs.isMoreThanALevelDeep', false);
-      this.assertPropAfterStubAndCompile(2, 'crumbs.isMoreThanALevelDeep', false);
-      this.assertPropAfterStubAndCompile(3, 'crumbs.isMoreThanALevelDeep', true);
-    });
-
-    it('should have isAtLeastOneLevelDeep prop which is true iff there are atleast 2 crumbs', function () {
-      this.assertPropAfterStubAndCompile(0, 'crumbs.isAtLeastOneLevelDeep', false);
-      this.assertPropAfterStubAndCompile(1, 'crumbs.isAtLeastOneLevelDeep', false);
-      this.assertPropAfterStubAndCompile(2, 'crumbs.isAtLeastOneLevelDeep', true);
-      this.assertPropAfterStubAndCompile(3, 'crumbs.isAtLeastOneLevelDeep', true);
+    it('should show hierarchy if there are at least 3 crumbs', function () {
+      this.assertPropAfterStubAndCompile(0, 'shouldShowHierarchy', false);
+      this.assertPropAfterStubAndCompile(1, 'shouldShowHierarchy', false);
+      this.assertPropAfterStubAndCompile(2, 'shouldShowHierarchy', false);
+      this.assertPropAfterStubAndCompile(3, 'shouldShowHierarchy', true);
     });
 
     it('should update the document title when the title of the latest crumb changes', function () {

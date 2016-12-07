@@ -76,10 +76,10 @@ export function createBus (scope) {
  * @name utils/kefir#createPropertyBus
  * @usage[js]
  * var bus = K.createPropertyBus('INITIAL', scope)
- * bus.stream.onValue(cb1)
+ * bus.property.onValue(cb1)
  * // 'cb1' is called with 'INITIAL'
  * bus.set('VAL')
- * bus.stream.onValue(cb2)
+ * bus.property.onValue(cb2)
  * // 'cb2' is called with 'VAL'
  * bus.end()
  * // or
