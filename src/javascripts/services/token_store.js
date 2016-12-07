@@ -29,7 +29,8 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
     refresh:           refresh,
     refreshWithLookup: refreshWithLookup,
     getSpaces:         getSpaces,
-    getSpace:          getSpace
+    getSpace:          getSpace,
+    getUser:           getUser
   };
 
   function getTokenLookup() {
@@ -79,6 +80,23 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
     refreshPromise = request();
     return refreshPromise;
   }
+
+
+  /**
+   * @ngdoc method
+   * @name tokenStore#getUser
+   * @returns {Promise<API.Space[]>}
+   * @description
+   * This method returns a promise of the current user
+   * If some calls are in progress, we're waiting until these are done.
+   */
+  function getUser() {
+    return refreshPromise.then(function (token) {
+      return _.get(token, 'sys.createdBy');
+    });
+  }
+
+
 
   /**
    * @ngdoc method

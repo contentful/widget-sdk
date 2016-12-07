@@ -4,7 +4,6 @@ angular.module('contentful')
 .controller('SpaceController', ['$scope', 'require', function SpaceController ($scope, require) {
   var $controller = require('$controller');
   var $rootScope = require('$rootScope');
-  var analytics = require('analytics');
   var authentication = require('authentication');
   var authorization = require('authorization');
   var enforcements = require('enforcements');
@@ -29,5 +28,4 @@ angular.module('contentful')
     }
   });
 
-  $scope.logoClicked = _.partial(analytics.track, 'global:logo_clicked');
 }]);

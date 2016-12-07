@@ -1,0 +1,84 @@
+include ./cf_home_mixins
+
+.workbench.home
+  .workbench-main.x--content.x--home
+    .home__header
+      .workbench-main__middle-content.x--home
+        section.home-section
+          h2.home-section__heading {{home.greeting}}
+          .home-section__description(ng-if="user.signInCount === 1")
+            | Looks like you're new here.&#32;
+            a Want to get a tour?
+          .home-section__description(ng-if="user.signInCount > 1")
+            | Today's going to be a great day.
+          cf-icon.home__spaceman(name="home-welcome")
+    .workbench-main__middle-content.x--home
+      section.home-section(ng-if="canCreateSpace() && !spaces.length")
+        h3.home-section__heading Create a new space
+        p.home-section__description
+          | A space is a place to keep all the content related to one project.
+        button.btn-action(ng-click="showCreateSpaceDialog()") Create new space
+      section.home-section.x--spaces(ng-if="spaces.length")
+        h3.home-section__heading Spaces
+        .spaces(ng-repeat="(orgId, org) in spacesByOrganization track by orgId")
+          .spaces__org-name {{getOrganizationName(orgId)}}
+            span.spaces__org-desc organization
+          .spaces__space(ng-repeat="space in org track by space.data.sys.id")
+            a(ui-sref="spaces.detail({spaceId: space.getId()})")
+              | {{space.data.name}}
+            a(ui-sref="spaces.detail.learn({spaceId: space.getId()})")
+              | Set up the basics
+      section
+        ul.tab-list.x--home(cf-ui-sticky)
+          li(
+            role="tab"
+            aria-selected="{{home.selectedLanguage === name}}"
+            ng-click="home.selectLanguage(name)"
+            ng-repeat="(name, language) in home.resources track by name")
+            | {{name}}
+
+        section.home-section(ng-switch="home.selectedLanguage")
+          div(ng-switch-when="PHP")
+            +sdk-section-php
+          div(ng-switch-when=".NET")
+            +sdk-section-dotnet
+          div(ng-switch-when="Ruby")
+            +sdk-section-ruby
+          div(ng-switch-when="iOS")
+            +sdk-section-ios
+          div(ng-switch-when="Android")
+            +sdk-section-android
+          div(ng-switch-when="Python")
+            +sdk-section-python
+          div(ng-switch-default)
+            +sdk-section-javascript
+
+        section.home-section
+          h3.home-section__heading Build with Contentful
+          p.home-section__description
+            | Here are a few examples of what people build with Contentful.
+          .home__examples
+            .example(
+              ng-repeat="example in home.resources[home.selectedLanguage].examples track by example.name")
+              .example__dot
+              .example__box
+                h4.example__header {{example.name}}
+                p.example__description {{example.description}}
+                a.example__link(ng-href="{{example.url}}" target="_blank") View
+
+        section.home-section
+          h3.home-section__heading Learning &amp; Documentation
+          p.home-section__description
+            | The stuff you need to help you get started.
+          .links
+            .links__col
+              a(
+                ng-repeat="link in home.resources[home.selectedLanguage].links track by link.name"
+                ng-href="{{link.url}}"
+                target="_blank")
+                | {{link.name}}
+            .links__col
+              a(ng-repeat="link in home.docsUrls track by link.name"
+                ng-href="{{link.url}}"
+                target="_blank")
+                | {{link.name}}

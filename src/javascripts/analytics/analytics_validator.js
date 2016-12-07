@@ -12,7 +12,6 @@ angular.module('contentful')
     'space_changed',
     'space_left',
     'state_changed',
-    'logo_clicked',
     'logout_clicked',
     'top_banner_dismissed',
     'navigated'

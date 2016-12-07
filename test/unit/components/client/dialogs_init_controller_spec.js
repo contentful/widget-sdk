@@ -35,24 +35,6 @@ describe('dialogsInitController', function () {
   });
 
   describe('init()', function () {
-    it('initializes `onboardingController`', function () {
-      sinon.assert.calledOnce(this.initOnboardingSpy);
-    });
-
-    it('does not immediately initialize `activationEmailResendController`', function () {
-      sinon.assert.notCalled(this.initEmailSpy);
-    });
-
-    describe('onboarding got shown', function () {
-      beforeEach(function () {
-        this.$rootScope.$broadcast('cfAfterOnboarding');
-      });
-
-      it('initializes `activationEmailResendController` but skips dialog', function () {
-        sinon.assert.called(this.initEmailSpy);
-      });
-    });
-
     describe('notifier services communication', function () {
       const ORGANIZATION = {};
 

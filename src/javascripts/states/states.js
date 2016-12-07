@@ -31,6 +31,7 @@ angular.module('contentful')
     };
 
     load([
+      $injector.get('states/home'),
       $injector.get('states/account'),
       $injector.get('states/spaces'),
       otherwise
