@@ -34,6 +34,15 @@ angular.module('cf.app')
   }
 
   function initMap (scope, GMaps, mapSlotElement) {
+    // We need to redraw the map when the slot is showed in the DOM. Otherwise
+    // we end up with a gray map.
+    var redrawInterval = setInterval(function () {
+      if (mapSlotElement.clientHeight > 0) {
+        clearInterval(redrawInterval);
+        GMaps.event.trigger(map, 'resize');
+      }
+    }, 50);
+
     var map = new GMaps.Map(mapSlotElement, {
       scrollwheel: false,
       zoom: 6,
@@ -84,6 +93,7 @@ angular.module('cf.app')
     scope.$on('$destroy', function () {
       GMaps.event.clearInstanceListeners(map);
       GMaps.event.clearInstanceListeners(marker);
+      clearInterval(redrawInterval);
       map = null;
       marker = null;
     });
