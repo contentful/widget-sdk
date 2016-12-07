@@ -6,7 +6,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
   var LazyLoader = $injector.get('LazyLoader');
   var MarkdownEditor = $injector.get('MarkdownEditor');
   var actions = $injector.get('MarkdownEditor/actions');
-  var startLivePreview = $injector.get('MarkdownEditor/preview');
+  var livePreview = $injector.get('markdown_editor/markdown_preview');
   var notification = $injector.get('notification');
   var throttle = $injector.get('throttle');
 
@@ -58,7 +58,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         scope.actions = actions.for(editor, field.locale);
         scope.history = editor.history;
 
-        var stopPreview = startLivePreview(field.getValue, updatePreview);
+        var stopPreview = livePreview.start(field.getValue, updatePreview);
         editor.events.onChange(throttle(handleEditorChange, 200, {leading: false}));
 
         var detachValueHandler = field.onValueChanged(handleFieldChange);
