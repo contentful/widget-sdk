@@ -3,19 +3,23 @@ include ./entity_link_mixins
 .asset-card
   cf-thumbnail(
     ng-if="config.asThumb"
+    ng-class="{'entity-link__image--missing': !file}"
     file="file" size="123" fit="thumb"
     cf-context-menu-trigger)
 
   cf-thumbnail(
     ng-if="!config.asThumb"
+    ng-class="{'entity-link__image--missing': !file}"
     file="file" size="270" fit="thumb"
     cf-context-menu-trigger)
 
   +entity-link-drag-handle
   +entity-link-status
 
-  .asset-card__title(ng-click="actions.edit()" role="{{actions.edit && 'button'}}")
-    +entity-link-title
+  +entity-link-title(
+    class="asset-card__title"
+    ng-click="actions.edit()"
+    role="{{actions.edit && 'button'}}")
 
   .asset-card__tooltip.context-menu(
     ng-if="!config.disableTooltip"

@@ -6,13 +6,13 @@ include ./entity_link_mixins
   .entity-link__content(ng-click="actions.edit()" role="{{actions.edit && 'button'}}")
     .entity-link__image(
       ng-if="config.showDetails"
-      ng-class="{'entity-link__image--missing': !image || missing}")
+      ng-class="{'entity-link__image--missing': !image}")
       cf-thumbnail(file="image" size="56" fit="thumb")
 
     +entity-link-status
 
     .entity-link__text
-      +entity-link-title
+      +entity-link-title(class="entity-link__title")
       .entity-link__description(
         ng-if="config.showDetails"
         ng-class="{'entity-link__description--missing': !description || missing}")
