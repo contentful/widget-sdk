@@ -25,7 +25,7 @@ angular.module('contentful')
       }
 
       // add list view as top state
-      contextHistory.addEntity(crumbFactory.PreviewEnvList());
+      contextHistory.add(crumbFactory.PreviewEnvList());
     }]
   });
 
@@ -42,10 +42,10 @@ angular.module('contentful')
         $scope.contentPreview = contentPreview;
 
         // add list view as parent
-        contextHistory.addEntity(crumbFactory.PreviewEnvList());
+        contextHistory.add(crumbFactory.PreviewEnvList());
 
         // add current view as child
-        contextHistory.addEntity(crumbFactory.PreviewEnv($stateParams.contentPreviewId, $scope.context));
+        contextHistory.add(crumbFactory.PreviewEnv($stateParams.contentPreviewId, $scope.context));
       }]
     });
 

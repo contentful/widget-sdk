@@ -18,7 +18,7 @@ angular.module('contentful')
     template: '<cf-role-list class="workbench role-list" />',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
-      contextHistory.addEntity(crumbFactory.RoleList());
+      contextHistory.add(crumbFactory.RoleList());
     }]
   });
 
@@ -47,8 +47,8 @@ angular.module('contentful')
       $scope.baseRole = baseRole;
       $scope.role = emptyRole;
 
-      contextHistory.addEntity(crumbFactory.RoleList());
-      contextHistory.addEntity(crumbFactory.Role(null, $scope.context));
+      contextHistory.add(crumbFactory.RoleList());
+      contextHistory.add(crumbFactory.Role(null, $scope.context));
     }]
   };
 
@@ -75,8 +75,8 @@ angular.module('contentful')
       $scope.context = $state.current.data;
       $scope.role = role;
 
-      contextHistory.addEntity(crumbFactory.RoleList());
-      contextHistory.addEntity(crumbFactory.Role($stateParams.roleId, $scope.context));
+      contextHistory.add(crumbFactory.RoleList());
+      contextHistory.add(crumbFactory.Role($stateParams.roleId, $scope.context));
     }]
   };
 

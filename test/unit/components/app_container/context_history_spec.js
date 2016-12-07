@@ -1,94 +1,90 @@
 'use strict';
 
 describe('contextHistory service', function () {
-
-  let ch, $stateParams;
-  function e (id) { return {id: id}; }
-
-  afterEach(function () {
-    ch = $stateParams = null;
-  });
+  const e = (id) => { return {id: id}; };
 
   beforeEach(function () {
     module('contentful/test');
-    ch = this.$inject('contextHistory');
-    ch.purge();
-    $stateParams = this.$inject('$stateParams');
-    $stateParams.addToContext = false;
+    this.ctx = this.$inject('contextHistory');
+    this.ctx.purge();
+    this.params = this.$inject('$stateParams');
+    this.params.addToContext = false;
   });
 
   describe('after init (empty state)', function () {
     it('is empty', function () {
-      expect(ch.isEmpty()).toBe(true);
+      expect(this.ctx.isEmpty()).toBe(true);
     });
 
     it('pop returns undefined', function () {
-      expect(ch.pop()).toBeUndefined();
+      expect(this.ctx.pop()).toBeUndefined();
     });
   });
 
   describe('adding entities', function () {
     it('adds when empty and w/o addToContext flag', function () {
-      ch.addEntity(e(1));
-      expect(ch.getAll().length).toBe(1);
+      this.ctx.add(e(1));
+      expect(this.ctx.getAll().length).toBe(1);
     });
 
     it('does not add when not empty and w/o addToContext flag', function () {
-      ch.addEntity(e(1)); ch.addEntity(e(1));
-      expect(ch.getLast().id).toBe(1);
+      this.ctx.add(e(1));
+      this.ctx.add(e(1));
+      expect(this.ctx.getLast().id).toBe(1);
     });
 
     it('adds when not empty but with addToContext flag', function () {
-      $stateParams.addToContext = true;
-      ch.addEntity(e(1)); ch.addEntity(e(2));
-      expect(ch.getAll().length).toBe(2);
+      this.params.addToContext = true;
+      this.ctx.add(e(1));
+      this.ctx.add(e(2));
+      expect(this.ctx.getAll().length).toBe(2);
     });
 
     it('if adding already added entity, it is used as a new head', function () {
-      $stateParams.addToContext = true;
-      [e(1), e(2), e(3), e(4)].forEach(ch.addEntity);
-      expect(ch.getAll().length).toBe(4);
-      ch.addEntity(e(3));
-      expect(ch.getAll().length).toBe(3);
-      expect(ch.getLast().id).toBe(3);
+      this.params.addToContext = true;
+      [e(1), e(2), e(3), e(4)].forEach(this.ctx.add);
+      expect(this.ctx.getAll().length).toBe(4);
+      this.ctx.add(e(3));
+      expect(this.ctx.getAll().length).toBe(3);
+      expect(this.ctx.getLast().id).toBe(3);
     });
   });
 
   describe('getters', function () {
     beforeEach(function () {
-      $stateParams.addToContext = true;
-      [e(1), e(2), e(3)].forEach(ch.addEntity);
+      this.params.addToContext = true;
+      [e(1), e(2), e(3)].forEach(this.ctx.add);
     });
 
     it('#getAll', function () {
-      const all = ch.getAll();
+      const all = this.ctx.getAll();
       expect(all.length).toBe(3);
       expect(all[1].id).toBe(2);
     });
 
     it('#getLast', function () {
-      expect(ch.getLast().id).toBe(3);
+      expect(this.ctx.getLast().id).toBe(3);
     });
   });
 
   describe('destructive operations', function () {
     beforeEach(function () {
-      $stateParams.addToContext = true;
-      [e(1), e(2), e(3)].forEach(ch.addEntity);
+      this.params.addToContext = true;
+      [e(1), e(2), e(3)].forEach(this.ctx.add);
     });
 
     it('#pop', function () {
-      expect(ch.getAll().length).toBe(3);
-      ch.pop();
-      expect(ch.getAll().length).toBe(2);
-      expect(ch.getLast().id).toBe(2);
+      expect(this.ctx.getAll().length).toBe(3);
+      this.ctx.pop();
+      expect(this.ctx.getAll().length).toBe(2);
+      expect(this.ctx.getLast().id).toBe(2);
     });
 
     it('#purge', function () {
-      expect(ch.getAll().length).toBe(3);
-      ch.purge();
-      expect(ch.getAll().length).toBe(0);
-      expect(ch.isEmpty()).toBe(true);
+      expect(this.ctx.getAll().length).toBe(3);
+      this.ctx.purge();
+      expect(this.ctx.getAll().length).toBe(0);
+      expect(this.ctx.isEmpty()).toBe(true);
     });
   });
 });

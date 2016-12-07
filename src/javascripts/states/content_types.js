@@ -19,7 +19,7 @@ angular.module('contentful')
     loadingText: 'Loading content model...',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
-      contextHistory.addEntity(crumbFactory.ContentTypeList());
+      contextHistory.add(crumbFactory.ContentTypeList());
     }],
     template: '<div cf-content-type-list class="workbench"></div>'
   });
@@ -119,8 +119,8 @@ angular.module('contentful')
           $scope.editingInterface = editingInterface;
           $scope.publishedContentType = publishedContentType;
 
-          contextHistory.addEntity(crumbFactory.ContentTypeList());
-          contextHistory.addEntity(crumbFactory.ContentType($stateParams.contentTypeId, $scope.context));
+          contextHistory.add(crumbFactory.ContentTypeList());
+          contextHistory.add(crumbFactory.ContentType($stateParams.contentTypeId, $scope.context));
         }
       ],
       template:

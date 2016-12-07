@@ -1,13 +1,13 @@
 'use strict';
 
-angular.module('contentful').factory('contextHistory', ['$injector', function ($injector) {
-
-  var $stateParams = $injector.get('$stateParams');
+angular.module('contentful')
+.factory('contextHistory', ['require', function (require) {
+  var $stateParams = require('$stateParams');
 
   var contextHistory = [];
 
   return {
-    addEntity: addEntity,
+    add: add,
     isEmpty: isEmpty,
 
     pop: function () { return contextHistory.pop(); },
@@ -17,19 +17,19 @@ angular.module('contentful').factory('contextHistory', ['$injector', function ($
     getLast: function () { return _.last(contextHistory); }
   };
 
-  function addEntity (entity) {
+  function add (crumb) {
     if (isEmpty() || $stateParams.addToContext) {
-      var index = findIndex(entity);
+      var index = findIndex(crumb);
       if (index > -1) {
         contextHistory = contextHistory.slice(0, index);
       }
-      contextHistory.push(entity);
+      contextHistory.push(crumb);
     }
   }
 
-  function findIndex (entity) {
-    return _.findIndex(contextHistory, function (historyEntry) {
-      return historyEntry.id === entity.id;
+  function findIndex (crumb) {
+    return _.findIndex(contextHistory, function (historyCrumb) {
+      return historyCrumb.id === crumb.id;
     });
   }
 

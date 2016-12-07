@@ -19,7 +19,7 @@ angular.module('contentful')
     url: '',
     loadingText: 'Loading media...',
     controller: [function () {
-      contextHistory.addEntity(crumbFactory.AssetList());
+      contextHistory.add(crumbFactory.AssetList());
     }],
     template: '<div cf-asset-list class="workbench asset-list entity-list"></div>'
   });
@@ -39,11 +39,11 @@ angular.module('contentful')
 
       // add list view as parent if it's a deep link to the media/asset
       if (contextHistory.isEmpty()) {
-        contextHistory.addEntity(crumbFactory.AssetList());
+        contextHistory.add(crumbFactory.AssetList());
       }
 
       // add current state
-      contextHistory.addEntity(crumbFactory.Asset(editorData.entity.getSys(), $scope.context));
+      contextHistory.add(crumbFactory.Asset(editorData.entity.getSys(), $scope.context));
     }],
     template: '<cf-asset-editor class="asset-editor workbench">'
   };

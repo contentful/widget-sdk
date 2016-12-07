@@ -19,7 +19,7 @@ angular.module('contentful')
     template: '<cf-webhook-list class="workbench webhook-list" />',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
-      contextHistory.addEntity(crumbFactory.WebhookList());
+      contextHistory.add(crumbFactory.WebhookList());
     }]
   });
 
@@ -37,8 +37,8 @@ angular.module('contentful')
       $scope.context = $state.current.data;
       $scope.webhook = { headers: [], topics: ['*.*'] };
 
-      contextHistory.addEntity(crumbFactory.WebhookList());
-      contextHistory.addEntity(crumbFactory.Webhook(null, $scope.context));
+      contextHistory.add(crumbFactory.WebhookList());
+      contextHistory.add(crumbFactory.Webhook(null, $scope.context));
     }]
   };
 
@@ -63,9 +63,9 @@ angular.module('contentful')
         /* eslint no-empty: off */
       }
 
-      contextHistory.addEntity(crumbFactory.WebhookList());
-      contextHistory.addEntity(crumbFactory.Webhook($stateParams.webhookId, {title: webhook.name}));
-      contextHistory.addEntity(crumbFactory.WebhookCall(call));
+      contextHistory.add(crumbFactory.WebhookList());
+      contextHistory.add(crumbFactory.Webhook($stateParams.webhookId, {title: webhook.name}));
+      contextHistory.add(crumbFactory.WebhookCall(call));
     }]
   };
 
@@ -86,8 +86,8 @@ angular.module('contentful')
       $scope.context = $state.current.data;
       $scope.webhook = webhook;
 
-      contextHistory.addEntity(crumbFactory.WebhookList());
-      contextHistory.addEntity(crumbFactory.Webhook($stateParams.webhookId, $scope.context));
+      contextHistory.add(crumbFactory.WebhookList());
+      contextHistory.add(crumbFactory.Webhook($stateParams.webhookId, $scope.context));
     }],
     children: [callState]
   };

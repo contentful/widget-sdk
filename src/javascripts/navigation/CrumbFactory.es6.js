@@ -174,7 +174,12 @@ function base (type, id, crumb) {
     id = undefined;
   }
 
-  id = id || ('__internal,no-id' + type);
+  if (id) {
+    id = ['__entity_view', type, id].join(',');
+  } else {
+    id = ['__view', type].join(',');
+  }
+
   crumb.icon = crumb.icon || 'settings';
 
   return extend({type, id}, crumb);

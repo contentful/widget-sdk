@@ -20,7 +20,7 @@ angular.module('contentful')
     url: '',
     loadingText: 'Loading content...',
     controller: [function () {
-      contextHistory.addEntity(crumbFactory.EntryList());
+      contextHistory.add(crumbFactory.EntryList());
     }],
     template: '<div cf-entry-list class="workbench entry-list entity-list"></div>'
   });
@@ -71,9 +71,9 @@ angular.module('contentful')
         trackVersioning.setData(entry.data, snapshot);
         trackVersioning.opened($stateParams.source);
 
-        contextHistory.addEntity(crumbFactory.EntryList());
-        contextHistory.addEntity(crumbFactory.Entry(entry.data.sys, $scope.context));
-        contextHistory.addEntity(crumbFactory.EntrySnapshot(snapshot.sys.id, $scope.context));
+        contextHistory.add(crumbFactory.EntryList());
+        contextHistory.add(crumbFactory.Entry(entry.data.sys, $scope.context));
+        contextHistory.add(crumbFactory.EntrySnapshot(snapshot.sys.id, $scope.context));
       }
     ]
   });
@@ -146,7 +146,7 @@ angular.module('contentful')
       }
 
       // add current state
-      contextHistory.addEntity(crumbFactory.Entry(editorData.entity.getSys(), $scope.context));
+      contextHistory.add(crumbFactory.Entry(editorData.entity.getSys(), $scope.context));
     }],
     template: '<cf-entry-editor class="entry-editor workbench">'
   });

@@ -29,7 +29,7 @@ angular.module('contentful')
     name: 'cma_keys',
     url: '/cma_keys',
     controller: [function () {
-      contextHistory.addEntity(crumbFactory.CMAKeyList());
+      contextHistory.add(crumbFactory.CMAKeyList());
     }],
     template: JST.api_cma_keys()
   };
@@ -39,7 +39,7 @@ angular.module('contentful')
     url: '/',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
-      contextHistory.addEntity(crumbFactory.CDAKeyList());
+      contextHistory.add(crumbFactory.CDAKeyList());
     }],
     template: '<cf-api-key-list class="workbench" />'
   });
@@ -53,8 +53,8 @@ angular.module('contentful')
       $state.current.data = $scope.context = {};
       $scope.apiKey = apiKey;
 
-      contextHistory.addEntity(crumbFactory.CDAKeyList());
-      contextHistory.addEntity(crumbFactory.CDAKey($stateParams.apiKeyId, $scope.context));
+      contextHistory.add(crumbFactory.CDAKeyList());
+      contextHistory.add(crumbFactory.CDAKey($stateParams.apiKeyId, $scope.context));
     }],
     template: '<cf-api-key-editor class="workbench" />'
   };
