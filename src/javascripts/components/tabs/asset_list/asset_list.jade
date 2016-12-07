@@ -43,7 +43,7 @@ header.workbench-header
     cf-view-menu="uiConfig.assetListViews")
 
   .workbench-main__right-content
-    .table
+    .table(ng-show="assets.length && !isEmpty")
       .table__head
         table
           thead

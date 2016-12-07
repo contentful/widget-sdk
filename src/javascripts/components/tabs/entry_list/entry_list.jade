@@ -35,8 +35,10 @@ header.workbench-header
     cf-view-menu="uiConfig.entryListViews")
 
   .workbench-main__right-content
-    .view-customizer(cf-view-customizer)
-    .table
+    .view-customizer(
+      ng-show="entries.length && !isEmpty"
+      cf-view-customizer)
+    .table(ng-show="entries.length && !isEmpty")
       .table__head
         table
           thead
