@@ -68,5 +68,9 @@
       &[aria-busy="true"]
         $spinner-active($colors.blue-light)
 
+  &__actions, &__status
+    // Safari needs more space to render icon:
+    padding-right: 4px
+
   &__fields
     padding: $new-rhythm(1) 3rem 0
