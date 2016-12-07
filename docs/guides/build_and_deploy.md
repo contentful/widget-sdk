@@ -65,7 +65,8 @@ request with the changes. After the PR has been approved build the image with
 ~~~
 docker push contentful/user-interface-base:V
 ~~~
-Here `V` is the next integer version.
+Here `V` is the next integer version. Now increase the version encoded in
+`tools/docker/base/Makefile`.
 
 
 Deployment
