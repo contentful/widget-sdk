@@ -3,7 +3,7 @@
 angular.module('contentful').directive('cfZenmode', ['require', function (require) {
 
   var $window = require('$window');
-  var MarkdownEditor = require('MarkdownEditor');
+  var MarkdownEditor = require('markdown_editor/markdown_editor');
   var actions = require('markdown_editor/markdown_actions');
   var keycodes = require('keycodes');
   var modalDialog = require('modalDialog');

@@ -4,7 +4,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
 
   var $timeout = $injector.get('$timeout');
   var LazyLoader = $injector.get('LazyLoader');
-  var MarkdownEditor = $injector.get('MarkdownEditor');
+  var MarkdownEditor = $injector.get('markdown_editor/markdown_editor');
   var actions = $injector.get('markdown_editor/markdown_actions');
   var livePreview = $injector.get('markdown_editor/markdown_preview');
   var notification = $injector.get('notification');
