@@ -1,6 +1,7 @@
-import {find, isPlainObject} from 'lodash';
+import {find, isPlainObject, cloneDeep} from 'lodash';
 import assetEditorInterface from 'data/editingInterfaces/asset';
 import {caseof as caseofEq} from 'libs/sum-types/caseof-eq';
+import {deepFreeze} from 'utils/DeepFreeze';
 
 /**
  * @ngdoc service
@@ -46,6 +47,7 @@ export function loadEntry (spaceContext, id) {
     return spaceContext.editingInterfaces.get(ct.data);
   }).then((ei) => {
     context.fieldControls = spaceContext.widgets.buildRenderable(ei.controls);
+    context.entityInfo = makeEntityInfo(context.entity, context.contentType);
     return context;
   });
 }
@@ -65,6 +67,7 @@ export function loadAsset (spaceContext, id) {
     context.entity = entity;
     context.fieldControls =
       spaceContext.widgets.buildRenderable(assetEditorInterface.widgets);
+    context.entityInfo = makeEntityInfo(entity);
     return context;
   });
 }
@@ -80,6 +83,20 @@ function fetchEntity (spaceContext, type, id) {
   ]).then((entity) => {
     sanitizeEntityData(entity.data, space.getPrivateLocales());
     return entity;
+  });
+}
+
+
+function makeEntityInfo (entity, contentType) {
+  return deepFreeze({
+    id: entity.data.sys.id,
+    type: entity.data.sys.type,
+    contentTypeId: contentType ? contentType.data.sys.id : null,
+    // TODO Normalize CT data if this property is used by more advanced
+    // services like the 'Document' controller and the 'cfEntityField'
+    // directive. Normalizing means that we set external field IDs from
+    // internal ones, etc. See for example 'data/editingInterfaces/transformer'
+    contentType: contentType ? cloneDeep(contentType.data) : null
   });
 }
 

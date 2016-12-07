@@ -134,13 +134,10 @@ export function createPropertyBus (initialValue, scope) {
  *   Call this function to detach the callback
  */
 export function onValueScope (scope, stream, cb) {
-  const off = onValue(stream, function (value) {
+  const lifeline = scopeLifeline(scope);
+  const off = onValueWhile(lifeline, stream, function (value) {
     cb(value);
     scope.$applyAsync();
-  });
-  scope.$on('$destroy', function () {
-    off();
-    stream = cb = null;
   });
   return off;
 }
@@ -168,6 +165,26 @@ export function onValue (stream, cb) {
       stream = cb = null;
     }
   };
+}
+
+/**
+ * @ngdoc method
+ * @name utils/kefir#onValueWhile
+ * @description
+ * Similar to `K.onValue(observable, cb)` but detaches the callback
+ * when the lifeline stream argument ends.
+ *
+ * @param {Observable} lifeline
+ * @param {Observable} observable
+ * @param {function} cb
+ *
+ * @returns {function}
+ *   Call this function to detach the callback
+ */
+export function onValueWhile (lifeline, stream, cb) {
+  const off = onValue(stream, cb);
+  lifeline.onEnd(off);
+  return off;
 }
 
 

@@ -14,22 +14,17 @@ angular.module('contentful')
   var localeStore = require('TheLocaleStore');
   var createAssetSchema = require('validation').schemas.Asset;
   var errorMessageBuilder = require('errorMessageBuilder');
-  var deepFreeze = require('utils/DeepFreeze').deepFreeze;
   var Focus = require('app/entity_editor/Focus');
+  var installTracking = require('app/entity_editor/Tracking').default;
 
   var editorData = $scope.editorData;
+  var entityInfo = editorData.entityInfo;
 
   var notify = makeNotify('Asset', function () {
     return '“' + $scope.title + '”';
   });
 
-  $scope.entityInfo = deepFreeze({
-    id: editorData.entity.data.sys.id,
-    type: editorData.entity.data.sys.type,
-    // If necessary, we can set this to the value exported by the
-    // 'assetContentType' module.
-    contentType: null
-  });
+  $scope.entityInfo = entityInfo;
 
   $scope.locales = $controller('entityEditor/LocalesController');
 
@@ -40,6 +35,8 @@ angular.module('contentful')
     $scope.user,
     K.scopeLifeline($scope)
   );
+
+  installTracking(entityInfo, $scope.otDoc, K.scopeLifeline($scope));
 
   var schema = createAssetSchema(localeStore.getPrivateLocales());
   var buildMessage = errorMessageBuilder.forAsset;

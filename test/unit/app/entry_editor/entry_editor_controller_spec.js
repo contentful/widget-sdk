@@ -30,7 +30,13 @@ describe('Entry Editor Controller', function () {
           getId: _.constant(ctData.sys.id),
           data: ctData
         },
-        fieldControls: {}
+        fieldControls: {},
+        entityInfo: {
+          id: entry.data.sys.id,
+          type: 'Entry',
+          contentTypeId: ctData.sys.id,
+          contentType: ctData
+        }
       };
 
       const $controller = this.$inject('$controller');
