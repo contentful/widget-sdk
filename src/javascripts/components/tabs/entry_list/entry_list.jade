@@ -125,7 +125,7 @@ header.workbench-header
               ng-class="{'x--highlight': selection.isSelected(entry)}")
               td.x--checkbox-cell(
                 aria-label="cell-select"
-                ng-click="selection.toggle(entry)")
+                ng-click="selection.toggle(entry, $event)")
                 input(type="checkbox" cf-selection="entry" tabindex="-1")
               td(aria-label="cell-display-name").x--large-cell
                 p {{entryTitle(entry)}}

@@ -32,11 +32,14 @@ angular.module('contentful')
       return entity.getId() in selectedById;
     }
 
-    function toggle (entity) {
+    function toggle (entity, $event) {
       if (isSelected(entity)) {
         remove(entity);
       } else {
         add(entity);
+      }
+      if ($event) {
+        $event.stopPropagation();
       }
     }
 

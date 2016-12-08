@@ -106,7 +106,7 @@ header.workbench-header
                 ng-class="{'x--highlight': selection.isSelected(asset)}")
               td.x--checkbox-cell(
                 aria-label="cell-select"
-                ng-click="selection.toggle(asset)")
+                ng-click="selection.toggle(asset, $event)")
                 input(type="checkbox" cf-selection="asset" tabindex="-1")
               td(aria-label="cell-preview").x--image-cell
                 cf-thumbnail(file="file" size="30" ng-if="file")
