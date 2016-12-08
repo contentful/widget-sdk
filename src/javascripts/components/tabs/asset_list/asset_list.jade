@@ -43,16 +43,17 @@ header.workbench-header
     cf-view-menu="uiConfig.assetListViews")
 
   .workbench-main__right-content.x--flex-column
-    .search-results__count
+    .search-results__count(ng-show="searchController.paginator.getTotal() > 0")
       +pluralize-entity("asset", "searchController.paginator.getTotal()", "found")
     .table(ng-show="assets.length && !isEmpty")
       .table__head
         table
           thead
             tr
-              th(aria-label="cell-select").x--checkbox-cell
-                input(type="checkbox" cf-selection="assets" ng-show="assets.length > 0" tabindex="-1")
-              th(aria-label="cell-preview").x--image-cell Preview
+              th(aria-label="cell-preview").x--image-cell
+                label(ng-click="$event.stopPropagation()")
+                  input(type="checkbox" cf-selection="assets" ng-show="assets.length > 0" tabindex="-1")
+                | Preview
               th(aria-label="cell-name").x--large-cell Name
               th(aria-label="cell-dimensions").x--medium-cell Dimensions
               th(aria-label="cell-type") Type
@@ -106,12 +107,11 @@ header.workbench-header
                 ng-init="file=spaceContext.localizedField(asset, 'data.fields.file')"
                 ui-sref="spaces.detail.assets.detail({ assetId: asset.getId() })"
                 ng-class="{'x--highlight': selection.isSelected(asset)}")
-              td.x--checkbox-cell(
-                aria-label="cell-select"
-                ng-click="selection.toggle(asset, $event)")
-                input(type="checkbox" cf-selection="asset" tabindex="-1")
               td(aria-label="cell-preview").x--image-cell
-                cf-thumbnail(file="file" size="30" ng-if="file")
+                div
+                  label(ng-click="$event.stopPropagation()")
+                    input(type="checkbox" cf-selection="asset" tabindex="-1" ng-click="selection.toggle(asset, $event)")
+                  cf-thumbnail(file="file" size="30" ng-if="file")
               td(aria-label="cell-name").x--large-cell {{ spaceContext.assetTitle(asset) }}
               td(aria-label="cell-dimensions").x--medium-cell
                 span(ng-bind-html="getAssetDimensions(asset)")

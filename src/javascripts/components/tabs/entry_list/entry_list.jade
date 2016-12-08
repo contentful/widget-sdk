@@ -33,7 +33,7 @@ header.workbench-header
     cf-view-menu="uiConfig.entryListViews")
 
   .workbench-main__right-content.x--flex-column
-    .search-results__count
+    .search-results__count(ng-show="paginator.getTotal() > 0")
       +pluralize-entity("entry", "paginator.getTotal()", "found")
     .view-customizer(
       ng-show="entries.length && !isEmpty"
@@ -43,15 +43,15 @@ header.workbench-header
         table
           thead
             tr
-              th.x--checkbox-cell(aria-label="cell-select")
-                input(type="checkbox" cf-selection="entries" ng-show="entries.length > 0" tabindex="-1")
               th.x--large-cell(
                 aria-label="cell-display-name"
                 ng-if="!context.view.contentTypeId || !displayFieldForFilteredContentType()")
+                label(ng-click="$event.stopPropagation()")
+                  input(type="checkbox" cf-selection="entries" ng-show="entries.length > 0" tabindex="-1")
                 | Name
               th.x--medium-cell(
                 aria-label="cell-content-type"
-                ng-show="!context.view.contentTypeId && !context.view.contentTypeHidden")
+                ng-if="!context.view.contentTypeId && !context.view.contentTypeHidden")
                 | Content type
               th.x--large-cell(
                 aria-label="cell-display-name"
@@ -59,6 +59,8 @@ header.workbench-header
                 ng-init="getField=displayFieldForFilteredContentType"
                 ng-class="{'x--sortable': fieldIsSortable(getField()), 'x--active-sort': isOrderField(getField())}"
                 ng-click="fieldIsSortable(getField()) && orderColumnBy(getField())")
+                  label(ng-click="$event.stopPropagation()")
+                    input(type="checkbox" cf-selection="entries" ng-show="entries.length > 0" tabindex="-1")
                   | Name
                   span(ng-show="fieldIsSortable(getField())")
                     i.fa.fa-caret-up(ng-show="context.view.order.direction === 'ascending' && isOrderField(getField())")
@@ -123,12 +125,11 @@ header.workbench-header
             tr.x--multiline(ng-repeat="entry in entries track by entry.getId()"
               ui-sref="spaces.detail.entries.detail({ entryId: entry.getId() })"
               ng-class="{'x--highlight': selection.isSelected(entry)}")
-              td.x--checkbox-cell(
-                aria-label="cell-select"
-                ng-click="selection.toggle(entry, $event)")
-                input(type="checkbox" cf-selection="entry" tabindex="-1")
               td(aria-label="cell-display-name").x--large-cell
-                p {{entryTitle(entry)}}
+                div
+                  label(ng-click="$event.stopPropagation()")
+                    input(type="checkbox" cf-selection="entry" tabindex="-1" aria-label="cell-select" ng-click="selection.toggle(entry, $event)")
+                  p {{entryTitle(entry)}}
               td.x--medium-cell(
                 aria-label="cell-content-type"
                 ng-show="!context.view.contentTypeId && !context.view.contentTypeHidden")

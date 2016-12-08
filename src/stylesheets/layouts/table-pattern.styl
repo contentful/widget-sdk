@@ -41,9 +41,10 @@ Markup:
           td Yesterday
           td Two months ago
         tr.x--multiline
-          td.x--align-items
-            input(type="checkbox")
-            p This is a large entry title which will wrap and not cause the ellipsis to kick in
+          td
+            div
+              input(type="checkbox")
+              p This is a large entry title which will wrap and not cause the ellipsis to kick in
           td Title
           td Yesterday
           td Two months ago
@@ -54,9 +55,10 @@ Markup:
           td Yesterday
           td Two months ago
         tr
-          td.x--align-items
-            img(src="http://placehold.it/50x50")
-            span Claus Hollensteiner
+          td
+            div
+              img(src="http://placehold.it/50x50")
+              span Claus Hollensteiner
           td Title
           td 3 years ago
           td 4 years ago
@@ -88,14 +90,23 @@ Styleguide table-pattern
     padding-left: 10px
     vertical-align: middle
     text-align: left
-    > input, img
+    img
       margin-right: 10px
-    > input[type="checkbox"]
-      height: 13px
-    > img
+    input[type="checkbox"]
+      width: 15px
+      height: 15px
+    img
       height: 25px
     p
       width: 100%
+    label
+      padding: 10px
+      margin: -10px
+      margin-right: 0
+
+  th
+    input[type="checkbox"]
+      margin-top: 0
 
   thead
     border-bottom: 1px solid $colors.element-mid
@@ -121,6 +132,13 @@ Styleguide table-pattern
         text-overflow: ellipsis
         padding-top: 16px
         padding-bottom: 16px
+        div
+          display: flex
+          flex-direction: row
+          align-items: center
+          > span
+            text-overflow: ellipsis
+            overflow: hidden
 
   .table__body
     overflow-x: hidden
@@ -135,9 +153,6 @@ Styleguide table-pattern
       text-decoration: underline
 
   /* Modifiers */
-  .x--checkbox-cell
-    width: 35px
-
   .x--image-cell
     width: 6%
 
@@ -150,20 +165,12 @@ Styleguide table-pattern
   .x--small-cell
     width: 12%
 
-  .x--align-items
-    display: flex
-    flex-direction: row
-    align-items: center
-    > span
-      text-overflow: ellipsis
-      overflow: hidden
-
   .x--multiline
     > td
       white-space: normal
       vertical-align: top
-    > .x--align-items
-      align-items: flex-start
+      > div
+        align-items: flex-start
     p
       margin-bottom: 0
 
