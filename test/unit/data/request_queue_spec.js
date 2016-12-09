@@ -1,10 +1,11 @@
 'use strict';
 
-describe('data/requestQueue', function () {
+describe('data/request-queue', function () {
   beforeEach(function () {
-    module('cf.data', 'ngMock');
+    module('contentful/test');
 
-    const wrap = this.$inject('data/requestQueue').create;
+    const rq = this.$inject('data/RequestQueue');
+    const wrap = rq.create;
     this.$timeout = this.$inject('$timeout');
     this.$q = this.$inject('$q');
 
@@ -96,5 +97,48 @@ describe('data/requestQueue', function () {
     return promise.then(function (requestRes) {
       expect(requestRes).toBe(res);
     });
+  });
+
+  it('retries 5 times for 502', function () {
+    this.requestStub.rejects({statusCode: 502});
+    this.push();
+
+    this.flush(10);
+    this.expectCallCount(1);
+
+    this.flush(1000);
+    this.expectCallCount(2);
+
+    this.flush(9000);
+    this.expectCallCount(6);
+  });
+
+  pit('resolves when the request is eventually successful', function () {
+    this.requestStub.rejects({statusCode: 502});
+    const promise = this.push();
+    const res = {};
+
+    this.flush(10);
+    this.requestStub.resolves(res);
+    this.flush(1000);
+
+    return promise.then(function (requestRes) {
+      expect(requestRes).toBe(res);
+    });
+  });
+  pit('rejects when all retries fail', function () {
+    const onSuccess = sinon.stub();
+    const onError = sinon.stub();
+
+    this.requestStub.rejects({statusCode: 502});
+    const promise = this.push();
+
+    this.flush(9000);
+
+    return promise.then(onSuccess, onError).then(function () {
+      sinon.assert.notCalled(onSuccess);
+      sinon.assert.calledOnce(onError);
+    });
+
   });
 });

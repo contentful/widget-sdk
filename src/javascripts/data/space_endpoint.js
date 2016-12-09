@@ -23,7 +23,7 @@ angular.module('cf.data')
 .factory('data/spaceEndpoint', ['require', function (require) {
   var $http = require('$http');
   var $q = require('$q');
-  var RequestQueue = require('data/requestQueue');
+  var RequestQueue = require('data/RequestQueue');
 
   return {create: create};
 
