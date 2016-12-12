@@ -135,5 +135,22 @@ describe('hyperscript', function () {
 
       expect(generated).toBe(expected);
     });
+
+    it('uses inline styles provided as a string', function () {
+      expect(this.h('div', {style: 'color: red'})).toBe('<div style="color: red"></div>');
+    });
+
+    it('rewrites styles provided as an object', function () {
+      const styles = {
+        color: 'red',
+        fontSize: '12px',
+        fontFamily: 'Comic Sans',
+        'z-index': 100
+      };
+
+      const inline = 'color: red; font-size: 12px; font-family: Comic Sans; z-index: 100';
+
+      expect(this.h('div', {style: styles})).toBe(`<div style="${inline}"></div>`);
+    });
   });
 });

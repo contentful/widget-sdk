@@ -42,15 +42,9 @@ export function h (elSpec, attrs, children) {
   attrs = attrs || {};
   attrs = mergeSpecWithAttrs(id, classes, attrs);
   attrs = rewriteCamelCaseAttrs(attrs);
+  attrs = rewriteStyles(attrs);
 
   return createHTMLString(tag, attrs, children);
-}
-
-function rewriteCamelCaseAttrs (attrs) {
-  return Object.keys(attrs || {}).reduce((acc, attr) => {
-    acc[kebabCase(attr)] = attrs[attr];
-    return acc;
-  }, {});
 }
 
 function parseElSpec (elSpec) {
@@ -83,6 +77,22 @@ function mergeSpecWithAttrs (id, classes, attrs) {
     attrs.class = filter(classes).join(' ');
   }
 
+  return attrs;
+}
+
+function rewriteCamelCaseAttrs (attrs) {
+  return Object.keys(attrs || {}).reduce((acc, attr) => {
+    acc[kebabCase(attr)] = attrs[attr];
+    return acc;
+  }, {});
+}
+
+function rewriteStyles (attrs) {
+  if (isPlainObject(attrs.style)) {
+    attrs.style = Object.keys(attrs.style).map((prop) => {
+      return `${kebabCase(prop)}: ${escape(attrs.style[prop])}`;
+    }).join('; ');
+  }
   return attrs;
 }
 
