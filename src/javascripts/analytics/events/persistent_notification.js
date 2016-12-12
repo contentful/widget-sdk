@@ -10,7 +10,7 @@ angular.module('contentful')
   function action (name) {
     var currentPlan = analytics.getSessionData('organization.subscriptionPlan.name');
 
-    analytics.track('Clicked Top Banner CTA Button', {
+    analytics.track('notification:action_performed', {
       action: name,
       currentPlan: currentPlan !== undefined ? currentPlan : null
     });
