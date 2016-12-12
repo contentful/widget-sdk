@@ -23,7 +23,10 @@
           | Loading entries
 
     .workbench-main__content(ng-show="data.loaded" style="padding-top: 0")
-      div(ng-repeat="ctx in entityContexts track by ctx.key" data-entity-id="{{ctx.id}}")
+      // Safari and Edge need a relative container for dropdowns to work:
+      div(style="position: relative"
+        ng-repeat="ctx in entityContexts track by ctx.key"
+        data-entity-id="{{ctx.id}}")
         cf-bulk-entity-editor(entity-context="ctx" bulk-editor-context="editorContext")
 
     .workbench-main__sidebar
