@@ -8,7 +8,7 @@ include ./cf_home_mixins
           h2.home-section__heading {{home.greeting}}
           .home-section__description(ng-if="user.signInCount === 1")
             | Looks like you're new here.&#32;
-            a Want to get a tour?
+            a Want a tour?
           .home-section__description(ng-if="user.signInCount > 1")
             | Today's going to be a great day.
           cf-icon.home__spaceman(name="home-welcome")
@@ -16,7 +16,7 @@ include ./cf_home_mixins
       section.home-section(ng-if="canCreateSpace() && !spaces.length")
         h3.home-section__heading Create a new space
         p.home-section__description
-          | A space is a place to keep all the content related to one project.
+          | A space is where you keep all the content related to one project.
         button.btn-action(ng-click="showCreateSpaceDialog()") Create new space
       section.home-section.x--spaces(ng-if="spaces.length")
         h3.home-section__heading Spaces
@@ -56,7 +56,7 @@ include ./cf_home_mixins
         section.home-section
           h3.home-section__heading Build with Contentful
           p.home-section__description
-            | Here are a few examples of what people build with Contentful.
+            | Here are examples of what you can build with Contentful.
           .home__examples
             .example(
               ng-repeat="example in home.resources[home.selectedLanguage].examples track by example.name")
@@ -67,9 +67,9 @@ include ./cf_home_mixins
                 a.example__link(ng-href="{{example.url}}" target="_blank") View
 
         section.home-section
-          h3.home-section__heading Learning &amp; Documentation
+          h3.home-section__heading Learning &amp; documentation
           p.home-section__description
-            | The stuff you need to help you get started.
+            | What you need to help you get started.
           .links
             .links__col
               a(
