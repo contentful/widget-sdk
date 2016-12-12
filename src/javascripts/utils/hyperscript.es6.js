@@ -26,6 +26,8 @@ const VOID_ELEMENTS = [
   'source'
 ];
 
+export const doctype = '<!doctype html>';
+
 export function h (elSpec, attrs, children) {
   if (!children && !isPlainObject(attrs)) {
     children = attrs;
