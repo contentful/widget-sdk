@@ -28,6 +28,12 @@ describe('data/ApiClient', function () {
   });
 
   describe('single resource', function () {
+    const headers = (extraHeaders) => {
+      return _.extend({}, {
+        'Content-Type': 'application/vnd.contentful.management.v1+json',
+        Authorization: 'Bearer TOKEN'
+      }, extraHeaders);
+    };
 
     beforeEach(function () {
       $http.resolves({data: 'DATA'});
@@ -72,11 +78,25 @@ describe('data/ApiClient', function () {
         method: 'POST',
         url: '//api.test.local/spaces/SPACE/entries',
         data: entry,
-        headers: {
-          'X-Contentful-Content-Type': 'CTID',
-          'Content-Type': 'application/vnd.contentful.management.v1+json',
-          'Authorization': 'Bearer TOKEN'
-        }
+        headers: headers({'X-Contentful-Content-Type': 'CTID'})
+      }));
+    });
+
+    pit('#deleteSpace()', function () {
+      return this.client.deleteSpace()
+      .then(assertRequestResponse(undefined, {
+        method: 'DELETE',
+        url: '//api.test.local/spaces/SPACE'
+      }));
+    });
+
+    pit('#renameSpace(newName, version)', function () {
+      return this.client.renameSpace('NEW NAME!!!', 2)
+      .then(assertRequestResponse('DATA', {
+        method: 'PUT',
+        url: '//api.test.local/spaces/SPACE',
+        data: {name: 'NEW NAME!!!'},
+        headers: headers({'X-Contentful-Version': 2})
       }));
     });
   });

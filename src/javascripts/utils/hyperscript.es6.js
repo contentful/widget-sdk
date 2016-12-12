@@ -1,4 +1,10 @@
-import {flatten, filter, kebabCase} from 'lodash';
+import {
+  isPlainObject,
+  flatten,
+  filter,
+  kebabCase,
+  isString
+} from 'lodash';
 
 const TAG_RE = /^[^#.]+/;
 const ID_OR_CLASS_RE = /([#.][^#.]+)/g;
@@ -21,9 +27,9 @@ const VOID_ELEMENTS = [
 ];
 
 export function h (elSpec, attrs, children) {
-  if (!children && Array.isArray(attrs)) {
+  if (!children && !isPlainObject(attrs)) {
     children = attrs;
-    attrs = {};
+    attrs = undefined;
   }
 
   if (children && !Array.isArray(children)) {
@@ -31,6 +37,7 @@ export function h (elSpec, attrs, children) {
   }
 
   const {tag, id, classes} = parseElSpec(elSpec);
+  attrs = attrs || {};
   attrs = mergeSpecWithAttrs(id, classes, attrs);
   attrs = rewriteCamelCaseAttrs(attrs);
 
@@ -102,5 +109,9 @@ function createHTMLString (tag, attrs, children) {
 }
 
 function escape (value) {
-  return value.replace(DOUBLE_QUOTE_RE, '&quot;');
+  if (isString(value)) {
+    return value.replace(DOUBLE_QUOTE_RE, '&quot;');
+  } else {
+    return value;
+  }
 }
