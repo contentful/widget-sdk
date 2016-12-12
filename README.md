@@ -1,32 +1,49 @@
 # HTML Client App
 
-## Preparations
+## Running and developing
 
-Make sure you are using Node version specified in the [`.nvmrc`]('./.nvmrc')
-file and the default NPM version that comes with that Node version.
-Then run `./Installfile` to install all npm dependencies
+The application can be run from the [Lab][] or against the staging and
+production APIs.
+
+If you are using the Lab follow its readme to provision the VM using vagrant.
+Then start the UI environment with
+~~~
+vagrant ssh
+tmuxinator user_interface
+~~~
+
+[Lab]: https://github.com/contentful/lab/
+
+### Using Staging and Production APIs
+
+The Web App can be served locally as a stand-alone app by using the staging and
+production APIs.
+
+* You must be a member of the [“Frontend” team][gh-fe-team] on Github
+* You must be a member of the [“Frontend” team][npm-fe-team] on NPM
+* You must have [NVM][] installed
+
+Now you can install the dependencies and start the server
+
+~~~js
+nvm use
+npm login
+bin/install-dependencies
+UI_CONFIG=dev-on-staging ./node_modules/.bin/gulp all serve
+~~~
+
+The usual login flow does not work with this setup. You need to manually open
+`localhost:3001/#access_token=<your access token>`.
+The easiest way to obtain an access token is to use the [Contentful
+authentication documentation][cf-auth-doc]. Alternatively you can inspect
+`localStorage.token` in the browser console on `app.flinkly.com` when you are
+logged in.
 
 
-## Running the dev server
-
-To start developing, run `gulp clean` (optional), then `gulp all`.
-That compiles all the files into the `public` directory.
-
-Afterwards, run `gulp serve` to start the webserver on `localhost:3001`.
-It'll serve the files from `public` every missing file will return
-index.html.
-
-The serve task also watches all javascript files, templates and
-stylesheets and recompiles everything back into public as soon as
-anything changes. If you want to disable watching, set `NO_WATCHING=1` in
-your environment.
-
-Not watched are the `user_interface` module and all the vendor stuff
-(stylesheets and scripts). If you update one of those, run `gulp all`
-again.
-
-To show `stdout` of the commands `gulp` will run, use the `--verbose`
-flag. For example `gulp icons -v`.
+[NVM]: https://github.com/creationix/nvm
+[npm-fe-team]: https://www.npmjs.com/org/contentful/team/frontend
+[gh-fe-team]: https://github.com/orgs/contentful/teams/frontend
+[cf-auth-doc]: http://www.flinkly.com/developers/docs/references/authentication/#the-content-management-api
 
 
 ## Documentation
@@ -93,21 +110,3 @@ The reason this is a separate task and not part of `serve` is that the
 way browserify/watchify operate is pretty complicated, leads to
 potential problems and modifying the client library is not something
 that happens often anyway.
-
-## Misc. npm tasks
-
-### npm test
-
-Used to run Tests on Travis in SlimerJS.
-
-### npm run hint
-
-Used to run eslint in the relevant directories.
-
-### npm run cloc
-
-Count Lines of Code. (Run `brew install cloc` to install cloc).
-
-### npm run clean
-
-Removes installed node modules.
