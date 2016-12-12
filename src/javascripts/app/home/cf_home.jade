@@ -24,9 +24,13 @@ include ./cf_home_mixins
           .spaces__org-name {{getOrganizationName(orgId)}}
             span.spaces__org-desc organization
           .spaces__space(ng-repeat="space in org track by space.data.sys.id")
-            a(ui-sref="spaces.detail({spaceId: space.getId()})")
+            a(
+              ui-sref="spaces.detail({spaceId: space.getId()})"
+              ng-click="home.analytics.spaceNavigation(space)")
               | {{space.data.name}}
-            a(ui-sref="spaces.detail.learn({spaceId: space.getId()})")
+            a(
+              ui-sref="spaces.detail.learn({spaceId: space.getId()})"
+              ng-click="home.analytics.spaceLearnNavigation(space)")
               | Set up the basics
       section
         ul.tab-list.x--home(cf-ui-sticky)
@@ -37,7 +41,7 @@ include ./cf_home_mixins
             ng-repeat="(name, language) in home.resources track by name")
             | {{name}}
 
-        section.home-section(ng-switch="home.selectedLanguage")
+        section.home-section(ng-switch="home.selectedLanguage" cf-track-copy-event)
           div(ng-switch-when="PHP")
             +sdk-section-php
           div(ng-switch-when=".NET")
@@ -64,7 +68,11 @@ include ./cf_home_mixins
               .example__box
                 h4.example__header {{example.name}}
                 p.example__description {{example.description}}
-                a.example__link(ng-href="{{example.url}}" target="_blank") View
+                a.example__link(
+                  ng-href="{{example.url}}"
+                  target="_blank"
+                  ng-click="home.analytics.linkOpened(home.selectedLanguage, example.url)")
+                  | View
 
         section.home-section
           h3.home-section__heading Learning &amp; documentation
@@ -75,10 +83,12 @@ include ./cf_home_mixins
               a(
                 ng-repeat="link in home.resources[home.selectedLanguage].links track by link.name"
                 ng-href="{{link.url}}"
-                target="_blank")
+                target="_blank"
+                ng-click="home.analytics.linkOpened(home.selectedLanguage, link.url)")
                 | {{link.name}}
             .links__col
               a(ng-repeat="link in home.docsUrls track by link.name"
                 ng-href="{{link.url}}"
-                target="_blank")
+                target="_blank"
+                ng-click="home.analytics.linkOpened(home.selectedLanguage, link.url)")
                 | {{link.name}}

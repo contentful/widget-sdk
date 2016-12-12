@@ -16,6 +16,13 @@ angular.module('contentful')
     'top_banner_dismissed',
     'navigated'
   ],
+  home: [
+    'space_selected',
+    'space_learn_selected',
+    'language_selected',
+    'link_opened',
+    'command_copied'
+  ],
   learn: [
     'step_clicked',
     'language_selected',

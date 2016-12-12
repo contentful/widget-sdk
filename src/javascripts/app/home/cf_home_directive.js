@@ -14,8 +14,9 @@ angular.module('contentful')
 
 .controller('HomeController', ['$scope', 'require', function ($scope, require) {
 
-  var environment = require('environment');
   var moment = require('moment');
+  var analytics = require('analytics');
+  var environment = require('environment');
   var tokenStore = require('tokenStore');
   var resources = require('app/home/language_resources').get();
 
@@ -31,13 +32,15 @@ angular.module('contentful')
     controller.greeting = isNew ? getInitialGreeting(name) : getSubsequentGreeting(name);
     controller.resources = resources;
     controller.selectLanguage = selectLanguage;
+    controller.selectedLanguage = 'JavaScript';
     controller.docsUrls = getDocsUrls();
-    selectLanguage('JavaScript');
+    controller.analytics = getAnalytics();
     $scope.context.ready = true;
   }
 
   function selectLanguage (language) {
     controller.selectedLanguage = language;
+    controller.analytics.selectedLanguage(language);
   }
 
   function getInitialGreeting (name) {
@@ -72,4 +75,35 @@ angular.module('contentful')
       return MARKETING_BASE_URL + '/developers/docs/references/' + path;
     }
   }
+
+  function getAnalytics () {
+    return {
+      spaceSelected: function (space) {
+        analytics.track('home:space_selected', {
+          targetSpaceId: space.getId(),
+          targetSpaceName: space.getName()
+        });
+
+      },
+      spaceLearnSelected: function (space) {
+        analytics.track('home:space_learn_selected', {
+          targetSpaceId: space.getId(),
+          targetSpaceName: space.getName()
+        });
+      },
+      selectedLanguage: function (language) {
+        analytics.track('home:language_selected', {
+          language: language
+        });
+      },
+      linkOpened: function (language, url) {
+        analytics.track('home:link_opened', {
+          language: language,
+          url: url
+        });
+
+      }
+    };
+  }
+
 }]);
