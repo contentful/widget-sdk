@@ -3,8 +3,12 @@
 # This script triggers a build of the UI Integration Test Suite on Jenkins.
 #
 # The script is run after the deployment and triggers a test run
-# against the built commit on `app.quirely.com`. Jenkins then sets the
+# against the built commit on `app.flinkly.com`. Jenkins then sets the
 # CI status on Github.
+#
+# For builds of the master branch we trigger the full test suite on the 'Staging
+# Custom UI Version' job. We skip the preview and production branches. For all
+# other branches we run the smoke tests on the 'User Interface Pull Request' job.
 #
 # The jenkins credentials are provided in encrypted form in
 # `.travis.yml`. They are defined in the Jenkins Job configuration.
@@ -21,14 +25,19 @@ if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then
 fi
 
 # abort if not a feature branch
-if [[ "$TRAVIS_BRANCH" =~ (preview|master|production) ]]; then
+if [[ "$TRAVIS_BRANCH" =~ "^(preview|production)$" ]]; then
   echo "Skipping integration tests for $TRAVIS_BRANCH branch builds"
   exit 0;
 fi
 
+if [[ "$TRAVIS_BRANCH" = "master" ]]; then
+  JOB="Staging%20Custom%20UI%20Version"
+else
+  JOB="User%20Interface%20Pull%20Request"
+fi
+
 AUTH="cf-ci:$JENKINS_PASSWORD"
 QUERY="token=$JENKINS_TOKEN&Git_Commit_Hash=$TRAVIS_COMMIT"
-JOB="User%20Interface%20Pull%20Request"
 URL="https://jenkins.quirely.com/job/$JOB/buildWithParameters?$QUERY"
 
 echo "POST $URL"
