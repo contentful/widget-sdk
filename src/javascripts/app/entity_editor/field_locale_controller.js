@@ -38,6 +38,9 @@ angular.module('contentful')
   $scope.docImpl = $scope[$attrs.documentProperty || 'otDoc'];
   controller.doc = FieldLocaleDoc.create($scope.docImpl, field.id, locale.internal_code);
 
+  // Provided by the entry and asset controllers
+  var editorContext = $scope.editorContext;
+
   /**
    * @ngdoc property
    * @name FieldLocaleController#errors$
@@ -48,7 +51,7 @@ angular.module('contentful')
    * @type {Property<Error[]?>}
    */
   controller.errors$ =
-    $scope.editorContext.validator.errors$
+    editorContext.validator.errors$
     .map(function (errors) {
       errors = filterLocaleErrors(errors);
 
@@ -142,7 +145,10 @@ angular.module('contentful')
    * https://github.com/contentful/contentful-validation/blob/master/lib/schemas/asset.js
    */
   controller.isRequired = field.required;
-  if (($scope.entry && locale.optional) || ($scope.asset && !locale.default)) {
+  if (
+    (editorContext.entityInfo.type === 'Entry' && locale.optional) ||
+    (editorContext.entityInfo.type === 'Asset' && !locale.default)
+  ) {
     controller.isRequired = false;
   }
 
@@ -160,9 +166,9 @@ angular.module('contentful')
   controller.setActive = function (isActive) {
     if (isActive) {
       controller.doc.notifyFocus();
-      $scope.editorContext.focus.set(field.id);
+      editorContext.focus.set(field.id);
     } else {
-      $scope.editorContext.focus.unset(field.id);
+      editorContext.focus.unset(field.id);
     }
   };
 

@@ -44,7 +44,8 @@ angular.module('cf.app')
   });
 
   $scope.editorContext = {
-    validator: Validator.createNoop()
+    validator: Validator.createNoop(),
+    entityInfo: $scope.entityInfo
   };
 
   $scope.$watch(function () {

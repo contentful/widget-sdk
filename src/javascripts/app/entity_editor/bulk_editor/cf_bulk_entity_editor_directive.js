@@ -155,7 +155,7 @@ angular.module('contentful')
   var K = require('utils/kefir');
 
   var editorData = $scope.editorData;
-  var entityInfo = editorData.entityInfo;
+  var entityInfo = this.entityInfo = editorData.entityInfo;
 
   var notify = makeNotify('Entry', function () {
     return '“' + $scope.title + '”';

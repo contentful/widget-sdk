@@ -44,7 +44,7 @@ angular.module('contentful')
   var deepFreeze = require('utils/DeepFreeze').deepFreeze;
 
   var editorData = $scope.editorData;
-  var entityInfo = editorData.entityInfo;
+  var entityInfo = this.entityInfo = editorData.entityInfo;
 
   var notify = makeNotify('Entry', function () {
     return '“' + $scope.title + '”';
@@ -149,7 +149,7 @@ angular.module('contentful')
    * for every widget. Instead, we share this version in every
    * cfWidgetApi instance.
    */
-  var contentTypeData = editorData.contentType;
+  var contentTypeData = entityInfo.contentType;
   var fields = contentTypeData.fields;
   $scope.fields = DataFields.create(fields, $scope.otDoc);
   $scope.transformedContentTypeData = ContentTypes.internalToPublic(contentTypeData);
