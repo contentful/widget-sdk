@@ -20,18 +20,7 @@ angular.module('contentful')
 
   var controller = this;
 
-  controller.getGreeting = function (user) {
-    if (user) {
-      var isNew = user.signInCount === 1;
-      var name = user.firstName;
-
-      if (isNew) {
-        return 'Welcome, ' + name + '.';
-      } else {
-        return 'Good ' + getTimeOfDay() + ', ' + name + '.';
-      }
-    }
-  };
+  controller.getGreeting = _.memoize(getGreeting);
 
   // Returns the distance from the top of the page
   // i.e. height of the nav bar + persistent notification if it is being shown
@@ -45,6 +34,19 @@ angular.module('contentful')
   controller.selectedLanguage = 'JavaScript';
   controller.analytics = homeAnalytics;
   $scope.context.ready = true;
+
+  function getGreeting (user) {
+    if (user) {
+      var isNew = user.signInCount === 1;
+      var name = user.firstName;
+
+      if (isNew) {
+        return 'Welcome, ' + name + '.';
+      } else {
+        return 'Good ' + getTimeOfDay() + ', ' + name + '.';
+      }
+    }
+  }
 
   function selectLanguage (language) {
     controller.selectedLanguage = language;
