@@ -19,7 +19,8 @@ angular.module('cf.ui')
 .directive('cfUiSticky', function () {
   return {
     restrict: 'A',
-    link: function (_scope, element) {
+    scope: {},
+    link: function (_scope, element, attrs) {
       var $element = $(element);
       var $parent = $element.parent();
       var $container = $element.closest('.workbench-main');
@@ -30,20 +31,23 @@ angular.module('cf.ui')
       function updatePosition () {
         var shouldFix = shouldElementBeFixed($parent);
         if (isFixed !== shouldFix) {
-          _.once(insertPlaceholderElement)();
+          insertPlaceholderElementOnce();
           isFixed = shouldFix;
+          var distance = isFixed ? attrs.top + 'px' : '';
+          $element.css('top', distance);
           $element.toggleClass('fixed');
         }
       }
 
       // Ensures the height of the parent element stays the same
-      function insertPlaceholderElement () {
+      var insertPlaceholderElementOnce = _.once(function () {
         $element.wrap('<div style="height:' + $element.outerHeight(true) + 'px"></div>');
-      }
+      });
 
       function shouldElementBeFixed ($el) {
         var rect = $el[0].getBoundingClientRect();
-        return rect.top <= 63; // height of top nav bar
+        var top = attrs.top || 0;
+        return rect.top <= top;
       }
     }
   };

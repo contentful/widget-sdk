@@ -32,6 +32,13 @@ angular.module('contentful')
       }
     }
   };
+
+  // Returns the distance from the top of the page
+  // i.e. height of the nav bar + persistent notification if it is being shown
+  controller.getDistanceFromTop = function () {
+    return $scope.persistentNotification ? 108 : 63;
+  };
+
   controller.resources = resources.languageResources;
   controller.docsUrls = resources.apiDocsUrls;
   controller.selectLanguage = selectLanguage;
