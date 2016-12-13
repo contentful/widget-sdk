@@ -6,9 +6,9 @@ include ./cf_home_mixins
       .workbench-main__middle-content.x--home
         section.home-section
           h2.home-section__heading {{home.getGreeting(user)}}
-          .home-section__description(ng-if="user.signInCount === 1")
+          p(ng-if="user.signInCount === 1")
             | Looks like you're new here. Learn more about Contentful from the resources below.
-          .home-section__description(ng-if="user.signInCount > 1")
+          p(ng-if="user.signInCount > 1")
             | What will you build today?
           cf-icon.home__spaceman(name="home-welcome")
     .workbench-main__middle-content.x--home
