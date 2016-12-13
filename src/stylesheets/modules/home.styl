@@ -34,6 +34,9 @@
     display: flex
 
   .example
+    display: flex
+    flex-direction: column
+    justify-content: space-between
     width: 22%
     margin-right: 2%
     border: 1px solid $colors.element-mid
@@ -49,6 +52,9 @@
       height: 12px
       width: 12px
       margin-bottom: 10px
+    &__link
+      align-self: flex-end
+      width: 100%
     &:nth-child(4n+1)
       .example__dot
         background-color: $colors.green-light

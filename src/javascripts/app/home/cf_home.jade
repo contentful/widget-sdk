@@ -20,18 +20,19 @@ include ./cf_home_mixins
         button.btn-action(ng-click="showCreateSpaceDialog()") Create new space
       section.home-section.x--spaces(ng-if="spaces.length")
         h3.home-section__heading Spaces
-        .spaces(ng-repeat="(orgId, org) in spacesByOrganization track by orgId")
-          .spaces__org-name {{getOrganizationName(orgId)}}
-            span.spaces__org-desc organization
-          .spaces__space(ng-repeat="space in org track by space.data.sys.id")
-            a(
-              ui-sref="spaces.detail({spaceId: space.getId()})"
-              ng-click="home.analytics.spaceNavigation(space)")
-              | {{space.data.name}}
-            a(
-              ui-sref="spaces.detail.learn({spaceId: space.getId()})"
-              ng-click="home.analytics.spaceLearnNavigation(space)")
-              | Set up the basics
+        .spaces
+          div(ng-repeat="(orgId, org) in spacesByOrganization track by orgId")
+            .spaces__org-name {{getOrganizationName(orgId)}}
+              span.spaces__org-desc organization
+            .spaces__space(ng-repeat="space in org track by space.data.sys.id")
+              a(
+                ui-sref="spaces.detail({spaceId: space.getId()})"
+                ng-click="home.analytics.spaceNavigation(space)")
+                | {{space.data.name}}
+              a(
+                ui-sref="spaces.detail.learn({spaceId: space.getId()})"
+                ng-click="home.analytics.spaceLearnNavigation(space)")
+                | Set up the basics
       section
         ul.tab-list.x--home(cf-ui-sticky)
           li(
@@ -58,29 +59,29 @@ include ./cf_home_mixins
           div(ng-switch-default)
             +sdk-section-javascript
 
-        section.home-section
+        section.home-section(ng-if="home.resources[home.selectedLanguage].examples.length")
           h3.home-section__heading Build with Contentful
           p.home-section__description
             | Here are examples of what you can build with Contentful.
           .home__examples
             .example(
               ng-repeat="example in home.resources[home.selectedLanguage].examples track by example.name")
-              .example__dot
-              .example__box
+              div
+                .example__dot
                 h4.example__header {{example.name}}
                 p.example__description {{example.description}}
-                a.example__link(
-                  ng-href="{{example.url}}"
-                  target="_blank"
-                  ng-click="home.analytics.linkOpened(home.selectedLanguage, example.url)")
-                  | View
+              a.example__link(
+                ng-href="{{example.url}}"
+                target="_blank"
+                ng-click="home.analytics.linkOpened(home.selectedLanguage, example.url)")
+                | View
 
         section.home-section
           h3.home-section__heading Learning &amp; documentation
           p.home-section__description
             | What you need to help you get started.
           .links
-            .links__col
+            .links__col(ng-if="home.resources[home.selectedLanguage].links.length")
               a(
                 ng-repeat="link in home.resources[home.selectedLanguage].links track by link.name"
                 ng-href="{{link.url}}"
