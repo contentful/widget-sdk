@@ -42,6 +42,7 @@ include ./cf_home_mixins
             | {{name}}
 
         section.home-section(ng-switch="home.selectedLanguage" cf-track-copy-event)
+          h3.home-section__heading Get the SDK
           div(ng-switch-when="PHP")
             +sdk-section-php
           div(ng-switch-when=".NET")
