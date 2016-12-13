@@ -1,6 +1,6 @@
 /**
  * @ngdoc service
- * @name state/Navigator
+ * @name states/Navigator
  * @description
  * A service to create state references from domain objects and go to these references.
  *

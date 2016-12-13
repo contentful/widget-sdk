@@ -69,6 +69,14 @@ angular.module('contentful')
     'viewed',
     'closed',
     'upgrade_clicked'
+  ],
+  // https://contentful.atlassian.net/wiki/display/PROD/Bulk+references+editor+-+Tracking+specs
+  bulk_editor: [
+    'add',
+    'open',
+    'close',
+    'status',
+    'action'
   ]
 })
 

@@ -18,7 +18,7 @@ angular.module('contentful')
   var installTracking = require('app/entity_editor/Tracking').default;
 
   var editorData = $scope.editorData;
-  var entityInfo = editorData.entityInfo;
+  var entityInfo = this.entityInfo = editorData.entityInfo;
 
   var notify = makeNotify('Asset', function () {
     return '“' + $scope.title + '”';

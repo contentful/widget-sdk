@@ -55,6 +55,35 @@ export function loadEntry (spaceContext, id) {
 
 /**
  * @ngdoc method
+ * @name app/entity_editor/DataLoader#loadEntryWithDoc
+ * @description
+ * Same as `loadEntry()` but also loads the entry document from the connection
+ * pool (see the 'data/sharejs/DocumentPool' module). The promise is resolved
+ * then the document connection has been established.
+ * @param {SpaceContext} spaceContext
+ * @param {string} id
+ * @param {API.User} user
+ * @param {Property<void>} lifeline
+ * @returns {Promise<object>}
+ */
+export function loadEntryWithDoc (spaceContext, id, user, lifeline) {
+  return loadEntry(spaceContext, id)
+  .then((context) => {
+    return spaceContext.docPool.load(
+      context.entity,
+      context.contentType,
+      user,
+      lifeline
+    ).then((doc) => {
+      context.doc = doc;
+      return context;
+    });
+  });
+}
+
+
+/**
+ * @ngdoc method
  * @name app/entity_editor/DataLoader#loadAsset
  * @param {SpaceContext} spaceContext
  * @param {string} id

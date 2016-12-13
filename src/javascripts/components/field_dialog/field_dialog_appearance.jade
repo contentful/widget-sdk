@@ -47,8 +47,10 @@ div(
             name="{{option.param}}"
             id="{{option.param}}"
             ng-model="widgetParams[option.param]")
-          label(for="{{option.param}}")
-            | {{option.name}}
+          .cfnext-form-option__desc
+            label(for="{{option.param}}")
+              | {{option.label}}
+            p(ng-if="option.description") {{option.description}}
         div.cfnext-form__field(ng-switch-when="Predefined")
           label {{option.name}}
           select.cfnext-select-box(

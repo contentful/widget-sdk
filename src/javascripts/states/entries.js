@@ -134,7 +134,7 @@ angular.module('contentful')
     }]
   });
 
-  var detail = {
+  var detail = base({
     name: 'detail',
     url: '/:entryId',
     children: [compare],
@@ -145,7 +145,9 @@ angular.module('contentful')
       }]
     },
     controller: ['$scope', '$stateParams', 'editorData', function ($scope, $stateParams, editorData) {
-      $state.current.data = $scope.context = {};
+      $state.current.data = $scope.context = {
+        ready: true
+      };
       $scope.editorData = editorData;
 
       // purge context history
@@ -162,7 +164,7 @@ angular.module('contentful')
       contextHistory.addEntity(buildEntryCrumb(editorData.entity));
     }],
     template: '<cf-entry-editor class="entry-editor workbench">'
-  };
+  });
 
 
   return {

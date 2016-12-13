@@ -94,6 +94,11 @@ yet).
 | global              | logout_clicked                        | -
 | global              | top_banner_dismissed                  | -
 | global              | navigated                             | -
+| bulk_editor         | open                                  | <code>parentEntryId: string<br>refCount: number</code>
+| bulk_editor         | close                                 | <code>parentEntryId: string<br>refCount: number<br>numEditedEntries: number<br>numPublishedEntries: number</code>
+| bulk_editor         | action                                | <code>parentEntryId: string<br>refCount: number<br>entryId: string<br>action: enum</code>
+| bulk_editor         | status                                | <code>parentEntryId: string<br>refCount: number<br>entryId: string<br>status: enum</code>
+| bulk_editor         | add                                   | <code>parentEntryId: string<br>refCount: number<br>exiting: bool/code>
 | learn               | step_clicked                          | <code>linkName: string</code>
 | learn               | language_selected                     | <code>language: string (js, ruby...)</code>
 | learn               | resource_selected                     | <code>language: string<br>resource: string (documentation, example....)</code>

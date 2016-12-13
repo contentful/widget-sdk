@@ -19,7 +19,11 @@ angular.module('contentful/mocks')
   function create () {
     return {
       validator: createValidator(),
-      focus: Focus.create()
+      focus: Focus.create(),
+      entityInfo: {
+        id: 'ENTITY ID',
+        type: 'Entry'
+      }
     };
   }
 

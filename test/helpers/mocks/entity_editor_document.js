@@ -75,6 +75,8 @@ angular.module('contentful/mocks')
 
       // TODO should emit when calling setters
       changes: K.createMockStream(),
+      localFieldChanges$: K.createMockStream(),
+
       valuePropertyAt: sinon.spy(valuePropertyAt),
       sysProperty: sysProperty,
 

@@ -8,7 +8,7 @@ describe('FieldLocaleController', function () {
     const $controller = this.$inject('$controller');
     K = this.$inject('mocks/kefir');
     this.extractValues = K.extractValues;
-    this.init = function (scopeProps) {
+    this.init = function (patchScope) {
       this.otDoc = this.otDoc || this.$inject('mocks/entityEditor/Document').create();
       const scope = Object.assign($rootScope.$new(), {
         widget: {
@@ -17,7 +17,10 @@ describe('FieldLocaleController', function () {
         locale: {internal_code: 'LID'},
         otDoc: this.otDoc,
         editorContext: this.$inject('mocks/entityEditor/Context').create()
-      }, scopeProps);
+      });
+      if (patchScope) {
+        patchScope(scope);
+      }
 
       scope.fieldLocale = $controller('FieldLocaleController', {$scope: scope, $attrs: {}});
       this.$apply();
@@ -81,10 +84,9 @@ describe('FieldLocaleController', function () {
     describe('for entries', function () {
       beforeEach(function () {
         this.isRequired = function (required, optional) {
-          return this.init({
-            entry: {},
-            widget: {field: {required: required}},
-            locale: {optional: optional}
+          return this.init((scope) => {
+            scope.widget.field.required = required;
+            scope.locale.optional = optional;
           }).fieldLocale.isRequired;
         };
       });
@@ -105,10 +107,10 @@ describe('FieldLocaleController', function () {
     describe('for assets', function () {
       beforeEach(function () {
         this.isRequired = function (required, def) {
-          return this.init({
-            asset: {},
-            widget: {field: {required: required}},
-            locale: {default: def}
+          return this.init((scope) => {
+            scope.editorContext.entityInfo.type = 'Asset';
+            scope.widget.field.required = required;
+            scope.locale.default = def;
           }).fieldLocale.isRequired;
         };
       });
@@ -181,9 +183,8 @@ describe('FieldLocaleController', function () {
 
     it('is "disabled" and "editing_disabled" if a field is disabled', function () {
       this.hasEditingPermission.returns(true);
-      const widget = {field: {disabled: true}};
-      const scope = this.init({
-        widget: widget
+      const scope = this.init((scope) => {
+        scope.widget.field.disabled = true;
       });
       this.$apply();
       expect(scope.fieldLocale.access).toEqual({

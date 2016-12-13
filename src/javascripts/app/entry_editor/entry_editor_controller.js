@@ -29,6 +29,7 @@ angular.module('contentful')
 .controller('EntryEditorController', ['$scope', 'require', function EntryEditorController ($scope, require) {
   var $controller = require('$controller');
   var spaceContext = require('spaceContext');
+  var notifications = require('notification');
   var makeNotify = require('app/entity_editor/Notifications').makeNotify;
   var truncate = require('stringUtils').truncate;
   var DataFields = require('EntityEditor/DataFields');
@@ -40,9 +41,10 @@ angular.module('contentful')
   var errorMessageBuilder = require('errorMessageBuilder');
   var Focus = require('app/entity_editor/Focus');
   var installTracking = require('app/entity_editor/Tracking').default;
+  var deepFreeze = require('utils/DeepFreeze').deepFreeze;
 
   var editorData = $scope.editorData;
-  var entityInfo = editorData.entityInfo;
+  var entityInfo = this.entityInfo = editorData.entityInfo;
 
   var notify = makeNotify('Entry', function () {
     return '“' + $scope.title + '”';
@@ -84,22 +86,49 @@ angular.module('contentful')
   $scope.actions = $controller('EntryActionsController', {
     $scope: $scope,
     notify: notify,
-    fields$: $scope.otDoc.valuePropertyAt(['fields']),
-    entityInfo: $scope.entityInfo,
+    fields$: doc.valuePropertyAt(['fields']),
+    entityInfo: entityInfo,
     preferences: $scope.preferences
   });
 
   this.focus = Focus.create();
 
-  // TODO we should use the path to the title field!
-  K.onValueScope($scope, $scope.otDoc.valuePropertyAt([]), function (data) {
+  // TODO Move this into a separate function
+  K.onValueScope($scope, doc.valuePropertyAt([]), function (data) {
     var title = spaceContext.entryTitle({
-      getContentTypeId: _.constant($scope.entityInfo.contentTypeId),
+      getContentTypeId: _.constant(entityInfo.contentTypeId),
       data: data
     });
     $scope.context.title = title;
     $scope.title = truncate(title, 50);
   });
+
+  this.editReferences = function (field, locale, index, cb) {
+    notifications.clearSeen();
+    $scope.referenceContext = {
+      links$: doc.valuePropertyAt(['fields', field, locale]),
+      focusIndex: index,
+      editorSettings: deepFreeze(_.cloneDeep($scope.preferences)),
+      user: $scope.user,
+      parentId: entityInfo.id,
+      field: _.find(entityInfo.contentType.fields, {id: field}),
+      add: function (link) {
+        return doc.pushValueAt(['fields', field, locale], link);
+      },
+      remove: function (index) {
+        return doc.removeValueAt(['fields', field, locale, index]);
+      },
+      close: function () {
+        $scope.referenceContext = null;
+        notifications.clearSeen();
+        if (cb) {
+          cb();
+        }
+      }
+    };
+  };
+
+  this.hasInitialFocus = true;
 
   K.onValueScope($scope, $scope.otDoc.state.isDirty$, function (isDirty) {
     $scope.context.dirty = isDirty;
@@ -120,7 +149,7 @@ angular.module('contentful')
    * for every widget. Instead, we share this version in every
    * cfWidgetApi instance.
    */
-  var contentTypeData = editorData.contentType;
+  var contentTypeData = entityInfo.contentType;
   var fields = contentTypeData.fields;
   $scope.fields = DataFields.create(fields, $scope.otDoc);
   $scope.transformedContentTypeData = ContentTypes.internalToPublic(contentTypeData);

@@ -49,3 +49,24 @@ Styleguide 17.2
 .loading-box--full-screen
   $loading-box()
   width: 100%
+
+/*
+Full screen loading box for relative containers.
+
+Markup:
+div(style="display: flex; height: 140px; position: relative")
+  .loading-box--stretched
+    .loading-box__spinner
+    .loading-box__message
+      | Your content is being loaded
+
+Styleguide 17.3
+*/
+
+.loading-box--stretched
+  $loading-box()
+  position: absolute
+  left: 0
+  top: 0
+  right: 0
+  bottom: 0

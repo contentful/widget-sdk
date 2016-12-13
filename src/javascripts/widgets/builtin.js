@@ -210,11 +210,21 @@ angular.module('contentful')
     template: '<cf-reference-editor type="Asset" variant="card" single="true" />'
   });
 
+
+  var bulkEditorOption = {
+    param: 'bulkEditing',
+    type: 'Boolean',
+    default: false,
+    label: 'Use bulk editing',
+    description: 'Ideal for entries with only a few fields'
+  };
+
   registerWidget('entryLinksEditor', {
     fieldTypes: ['Entries'],
     name: 'Entry links list',
     icon: 'references',
-    template: '<cf-reference-editor type="Entry" variant="link" />'
+    template: '<cf-reference-editor type="Entry" variant="link" />',
+    options: [bulkEditorOption]
   });
 
   registerWidget('entryCardEditor', {
@@ -228,7 +238,8 @@ angular.module('contentful')
     fieldTypes: ['Entries'],
     name: 'Entry cards',
     icon: 'references-card',
-    template: '<cf-reference-editor type="Entry" variant="card" />'
+    template: '<cf-reference-editor type="Entry" variant="card" />',
+    options: [bulkEditorOption]
   });
 
   registerWidget('assetLinksEditor', {
