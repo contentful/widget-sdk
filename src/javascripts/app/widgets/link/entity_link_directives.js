@@ -33,7 +33,7 @@ angular.module('cf.app')
       //   function.
       actions: '<?',
       // object of visual configuration options
-      // valid options are: draggable, asThumb, showDetails
+      // valid options are: draggable, asThumb, showDetails, disableTooltip
       config: '<'
     },
     controller: 'EntityLinkController',
@@ -52,6 +52,19 @@ angular.module('cf.app')
 .controller('EntityLinkController', ['$scope', function ($scope) {
   var data = $scope.entity;
   $scope.config = $scope.config || {};
+  $scope.actions = $scope.actions || {};
+
+  // $scope.hasTooltip is true if the tooltip has not been disabled and if there
+  // is content in the tooltip.
+  $scope.$watch(function () {
+    return !$scope.config.disableTooltip && (
+      $scope.file ||
+      $scope.actions.remove ||
+      $scope.downloadUrl
+    );
+  }, function (hasTooltip) {
+    $scope.hasTooltip = hasTooltip;
+  });
 
   if (data) {
     getBasicEntityInfo();

@@ -5,12 +5,14 @@ include ./entity_link_mixins
     ng-if="config.asThumb"
     ng-class="{'entity-link__image--missing': !file}"
     file="file" size="123" fit="thumb"
+    role="{{hasTooltip && 'button'}}"
     cf-context-menu-trigger)
 
   cf-thumbnail(
     ng-if="!config.asThumb"
     ng-class="{'entity-link__image--missing': !file}"
     file="file" size="270" fit="thumb"
+    role="{{hasTooltip && 'button'}}"
     cf-context-menu-trigger)
 
   +entity-link-drag-handle
@@ -22,7 +24,7 @@ include ./entity_link_mixins
     role="{{actions.edit && 'button'}}")
 
   .asset-card__tooltip.context-menu(
-    ng-if="!config.disableTooltip"
+    ng-if="hasTooltip"
     cf-context-menu role="menu")
 
     ul.asset-card__details(ng-if="file")
