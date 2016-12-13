@@ -8,7 +8,7 @@ export const languageResources = {
       {
         name: 'Discovery app',
         url: 'https://github.com/contentful/discovery-app-react',
-        description: 'This GitHub project is a React based application for you to explore your spaces and their contents'
+        description: 'This GitHub project is a React based application for you to explore your spaces and their content.'
       },
       {
         name: 'Product catalogue',
