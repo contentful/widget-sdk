@@ -3,11 +3,11 @@
 describe('cfUiSticky directive', function () {
   beforeEach(function () {
     module('cf.ui');
-    const markup = '<div class="workbench-main">' +
-                    '<div id="container">' +
-                    '<nav cf-ui-sticky>Nav</nav>' +
-                    '<p>Some long content</p>' +
-                    '</div></div>';
+    const markup = `<div class="workbench-main">
+                    <div id="container">
+                    <nav cf-ui-sticky>Nav</nav>
+                    <p>Some long content</p>
+                    </div></div>`;
     this.$workbench = this.$compile(markup);
     this.$nav = this.$workbench.find('nav');
     this.$container = this.$workbench.find('#container');

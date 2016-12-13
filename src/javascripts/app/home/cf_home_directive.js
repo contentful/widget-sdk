@@ -15,40 +15,33 @@ angular.module('contentful')
 .controller('HomeController', ['$scope', 'require', function ($scope, require) {
 
   var moment = require('moment');
-  var analytics = require('analytics');
-  var environment = require('environment');
-  var tokenStore = require('tokenStore');
-  var resources = require('app/home/language_resources').get();
+  var resources = require('app/home/language_resources');
+  var homeAnalytics = require('analyticsEvents/home');
 
   var controller = this;
 
-  var MARKETING_BASE_URL = environment.settings.marketing_url;
+  controller.getGreeting = function (user) {
+    if (user) {
+      var isNew = user.signInCount === 1;
+      var name = user.firstName;
 
-  tokenStore.getUser().then(init);
-
-  function init (user) {
-    var name = user.firstName;
-    var isNew = user.signInCount === 1;
-    controller.greeting = isNew ? getInitialGreeting(name) : getSubsequentGreeting(name);
-    controller.resources = resources;
-    controller.selectLanguage = selectLanguage;
-    controller.selectedLanguage = 'JavaScript';
-    controller.docsUrls = getDocsUrls();
-    controller.analytics = getAnalytics();
-    $scope.context.ready = true;
-  }
+      if (isNew) {
+        return 'Welcome, ' + name + '.';
+      } else {
+        return 'Good ' + getTimeOfDay() + ', ' + name + '.';
+      }
+    }
+  };
+  controller.resources = resources.languageResources;
+  controller.docsUrls = resources.apiDocsUrls;
+  controller.selectLanguage = selectLanguage;
+  controller.selectedLanguage = 'JavaScript';
+  controller.analytics = homeAnalytics;
+  $scope.context.ready = true;
 
   function selectLanguage (language) {
     controller.selectedLanguage = language;
     controller.analytics.selectedLanguage(language);
-  }
-
-  function getInitialGreeting (name) {
-    return 'Welcome, ' + name + '.';
-  }
-
-  function getSubsequentGreeting (name) {
-    return 'Good ' + getTimeOfDay() + ', ' + name + '.';
   }
 
   function getTimeOfDay () {
@@ -60,50 +53,6 @@ angular.module('contentful')
     } else {
       return 'evening';
     }
-  }
-
-  function getDocsUrls () {
-    return [
-      {name: 'Content Delivery API', url: makeDocsUrl('content-delivery-api')},
-      {name: 'Images API', url: makeDocsUrl('images-api')},
-      {name: 'Content Mangagement API', url: makeDocsUrl('content-management-api')},
-      {name: 'Content Preview API', url: makeDocsUrl('content-preview-api')},
-      {name: 'Sync API', url: makeDocsUrl('content-delivery-api/#/reference/synchronization')}
-    ];
-
-    function makeDocsUrl (path) {
-      return MARKETING_BASE_URL + '/developers/docs/references/' + path;
-    }
-  }
-
-  function getAnalytics () {
-    return {
-      spaceSelected: function (space) {
-        analytics.track('home:space_selected', {
-          targetSpaceId: space.getId(),
-          targetSpaceName: space.getName()
-        });
-
-      },
-      spaceLearnSelected: function (space) {
-        analytics.track('home:space_learn_selected', {
-          targetSpaceId: space.getId(),
-          targetSpaceName: space.getName()
-        });
-      },
-      selectedLanguage: function (language) {
-        analytics.track('home:language_selected', {
-          language: language
-        });
-      },
-      linkOpened: function (language, url) {
-        analytics.track('home:link_opened', {
-          language: language,
-          url: url
-        });
-
-      }
-    };
   }
 
 }]);

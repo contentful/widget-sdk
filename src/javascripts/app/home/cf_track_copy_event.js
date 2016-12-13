@@ -1,6 +1,14 @@
-/* Tracks copy commands made via cmd+C / ctrl+C events on the code block
- * on the app homepage.
-*/
+/**
+ * @ngdoc directive
+ * @module contentful
+ * @name cfTrackCopyEvent
+ *
+ * @description
+ * This directive tracks copy commands made via cmd+C / ctrl+C events on the
+ * element it is attached to.
+ * It is used exclusively for the app homepage.
+ *
+ */
 
 'use strict';
 

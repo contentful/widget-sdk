@@ -90,7 +90,6 @@ yet).
 | global              | space_changed                         | -
 | global              | space_left                            | -
 | global              | state_changed                         | <code>state: string<br>params: obj<br>fromState: string<br>fromParams: obj</code>
-| global              | logo_clicked                          | -
 | global              | logout_clicked                        | -
 | global              | top_banner_dismissed                  | -
 | global              | navigated                             | -

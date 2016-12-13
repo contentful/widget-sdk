@@ -5,7 +5,7 @@ include ./cf_home_mixins
     .home__header
       .workbench-main__middle-content.x--home
         section.home-section
-          h2.home-section__heading {{home.greeting}}
+          h2.home-section__heading {{home.getGreeting(user)}}
           .home-section__description(ng-if="user.signInCount === 1")
             | Looks like you're new here.&#32;
             a Want a tour?
@@ -21,10 +21,10 @@ include ./cf_home_mixins
       section.home-section.x--spaces(ng-if="spaces.length")
         h3.home-section__heading Spaces
         .spaces
-          div(ng-repeat="(orgId, org) in spacesByOrganization track by orgId")
+          div(ng-repeat="(orgId, orgSpaces) in spacesByOrganization track by orgId")
             .spaces__org-name {{getOrganizationName(orgId)}}
               span.spaces__org-desc organization
-            .spaces__space(ng-repeat="space in org track by space.data.sys.id")
+            .spaces__space(ng-repeat="space in orgSpaces track by space.data.sys.id")
               a(
                 ui-sref="spaces.detail({spaceId: space.getId()})"
                 ng-click="home.analytics.spaceNavigation(space)")
