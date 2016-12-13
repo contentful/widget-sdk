@@ -30,12 +30,6 @@ angular.module('contentful/environment')
   var gitRevision = window.CF_UI_VERSION;
 
   _.extend(settings, {
-    // for sceDelegateProvider
-    resourceUrlWhiteListRegexp: makeResourceUrlList([
-      settings.asset_host,
-      settings.main_domain
-    ]),
-
     /**
      * @ngdoc property
      * @name environment#settings.disableUpdateCheck.
@@ -58,19 +52,4 @@ angular.module('contentful/environment')
     gitRevision: gitRevision,
     manifest: window.CF_MANIFEST || {}
   };
-
-  function makeResourceUrlList (hosts) {
-    var domains = _(hosts)
-      .compact()
-      .map(function (domain) {
-        return domain.replace('.', '\\.').replace(/:\d+$/, '');
-      })
-      .uniq()
-      .value()
-      .join('|');
-    return [
-      new RegExp('^(https?:)?//([^:/.?&;]*\\.)?(' + domains + ')(:\\d+)?(/.*|$)'),
-      'self'
-    ];
-  }
 }()));
