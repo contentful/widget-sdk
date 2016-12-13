@@ -6,6 +6,11 @@ export const languageResources = {
   'JavaScript': {
     examples: [
       {
+        name: 'Discovery app',
+        url: 'https://github.com/contentful/discovery-app-react',
+        description: 'This GitHub project is a React based application for you to explore your spaces and their contents'
+      },
+      {
         name: 'Product catalogue',
         url: 'https://www.contentful.com/developers/docs/javascript/tutorials/create-expressjs-app-using-contentful/',
         description: 'Learn how to create a web app with Contentful and Express.js.'
@@ -103,6 +108,11 @@ export const languageResources = {
   'Android': {
     examples: [
       {
+        name: 'Discovery app',
+        url: 'https://github.com/contentful/discovery-app-android',
+        description: 'Explore this GitHub repository to learn how to make an app that helps you explore spaces and their content'
+      },
+      {
         name: 'A blog app',
         url: 'https://github.com/contentful/blog-app-android',
         description: 'Explore this GitHub repository to learn how to make a blog style app.'
@@ -120,9 +130,15 @@ export const languageResources = {
     ],
     links: [
       {name: 'Overview', url: 'https://www.contentful.com/developers/docs/android/'},
-      {name: 'Getting started', url: 'https://www.contentful.com/developers/api-demo/android/'},
+      {name: 'Getting started', url: 'https://www.contentful.com/developers/api-demo/java/'},
       {name: 'Tutorials', url: 'https://www.contentful.com/developers/docs/android/#tutorials'},
       {name: 'Example apps', url: 'https://www.contentful.com/developers/docs/android/#example-apps'}
+    ]
+  },
+  'Java': {
+    examples: [],
+    links: [
+      {name: 'Getting started', url: 'https://www.contentful.com/developers/api-demo/java/'}
     ]
   },
   'Python': {
