@@ -10,7 +10,7 @@ angular.module('contentful')
 
   return base({
     name: 'home',
-    url: '',
+    url: '*path',
     template: '<cf-home />',
     loadingText: 'Loading...',
     controller: ['$scope', function ($scope) {
