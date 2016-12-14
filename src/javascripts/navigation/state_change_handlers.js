@@ -17,7 +17,6 @@ angular.module('cf.app')
   var $rootScope = $injector.get('$rootScope');
   var $document = $injector.get('$document');
   var $state = $injector.get('$state');
-  var spaceTools = $injector.get('spaceTools');
   var contextHistory = $injector.get('contextHistory');
   var logger = $injector.get('logger');
   var modalDialog = $injector.get('modalDialog');
@@ -63,12 +62,6 @@ angular.module('cf.app')
   }
 
   function stateChangeStartHandler (event, toState, toStateParams, fromState, fromStateParams) {
-    var hasRedirected = redirect(event, toState, toStateParams);
-
-    if (hasRedirected) {
-      return;
-    }
-
     if (onlyAddToContextParamChanged(toState, toStateParams, fromState, fromStateParams)) {
       event.preventDefault();
       return;
@@ -119,24 +112,10 @@ angular.module('cf.app')
     }
   }
 
-  function redirect (event, toState, toStateParams) {
-    if (
-      _.includes(['otherwise', 'spaces'], toState.name) ||
-      (toState.name === 'spaces.detail' && _.isEmpty(toStateParams.spaceId))
-    ) {
-      event.preventDefault();
-      spaceTools.goToInitialSpace();
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   /**
    * Switches to the first space's entry list if there is a navigation error
    */
   function stateChangeErrorHandler (event, toState, toParams, fromState, fromParams, error) {
-
     event.preventDefault();
 
     var matchedSection = /spaces.detail.(entries|assets|content_types|api\.keys).detail/.exec(toState.name);
@@ -146,11 +125,11 @@ angular.module('cf.app')
       // TODO we should provide some feedback to the user
       $state.go('spaces.detail.' + matchedSection[1] + '.list', { spaceId: toParams.spaceId });
     } else {
-      spaceTools.goToInitialSpace();
-      // Otherwise we redirect the user to the inital space
+      // Otherwise we redirect the user to the homepage
       // TODO We should notify the user of what happened and maybe
       // rethrow the exception. As a temporary measure we log the error
       // to figure out what errors are actually thrown.
+      $state.go('home');
       logRoutingError(
         event, error,
         { state: toState, params: toParams },

@@ -11,12 +11,8 @@ angular.module('contentful')
   var analytics = require('analytics');
   var $state = require('$state');
   var spaceContext = require('spaceContext');
-  var tokenStore = require('tokenStore');
 
-  return {
-    goTo: goTo,
-    goToInitialSpace: goToInitialSpace
-  };
+  return {goTo: goTo};
 
   /**
    * @ngdoc method
@@ -40,21 +36,5 @@ angular.module('contentful')
     }
 
     return $state.go('spaces.detail', {spaceId: space.getId()});
-  }
-
-  /**
-   * @ngdoc method
-   * @name spaceTools#goToInitialSpace
-   * @description
-   * Goes to the first space.
-   */
-  function goToInitialSpace () {
-    tokenStore.getSpaces().then(function (spaceList) {
-      if (spaceList[0]) {
-        goTo(spaceList[0], true);
-      } else {
-        $state.go('spaces.new');
-      }
-    });
   }
 }]);

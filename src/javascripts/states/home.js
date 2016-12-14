@@ -7,14 +7,23 @@ angular.module('contentful')
  */
 .factory('states/home', ['require', function (require) {
   var base = require('states/base');
+  var $location = require('$location');
 
   return base({
     name: 'home',
-    url: '*path',
+    url: '/*path',
     template: '<cf-home />',
     loadingText: 'Loading...',
     controller: ['$scope', function ($scope) {
-      $scope.context = {ready: true};
+      $scope.context = {ready: false};
+
+      // if this state was loaded, but we don't
+      // recognize the URL, redirect to /
+      if (_.includes(['', '/'], $location.url())) {
+        $scope.context.ready = true;
+      } else {
+        $location.url('/');
+      }
     }]
   });
 }]);

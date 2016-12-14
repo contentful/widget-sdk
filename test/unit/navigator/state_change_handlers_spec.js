@@ -3,17 +3,14 @@
 describe('navigation/stateChangeHandlers', function () {
   let logger;
   let $rootScope;
-  let spaceTools;
   let modalCloseStub;
 
   beforeEach(function () {
-    spaceTools = {goToInitialSpace: sinon.stub()};
-
+    this.state = {go: sinon.stub()};
     modalCloseStub = sinon.stub();
 
-    module('contentful/test', function ($provide) {
-      $provide.value('$state', {});
-      $provide.value('spaceTools', spaceTools);
+    module('contentful/test', ($provide) => {
+      $provide.value('$state', this.state);
       $provide.value('contextHistory');
       $provide.value('logger', {});
       $provide.value('modalDialog', { closeAll: modalCloseStub });
@@ -55,60 +52,16 @@ describe('navigation/stateChangeHandlers', function () {
   });
 
   describe('redirections', function () {
-    let $state;
-
-    beforeEach(function () {
-      $state = this.$inject('$state');
-      $state.go = sinon.stub();
-    });
-
-    it('redirects "spaces" to initial space', function () {
-      const to = {name: 'spaces'};
-      const change = $rootScope.$emit('$stateChangeStart', to, {}, {}, {});
-      expect(change.defaultPrevented).toBe(true);
-      sinon.assert.calledOnce(spaceTools.goToInitialSpace);
-    });
-
-    it('redirects "otherwise" to initial space', function () {
-      const to = {name: 'otherwise'};
-      const change = $rootScope.$emit('$stateChangeStart', to, {}, {}, {});
-      expect(change.defaultPrevented).toBe(true);
-      sinon.assert.calledOnce(spaceTools.goToInitialSpace);
-    });
-
-    it('redirects "spaces.detail" with missing id to initial space', function () {
-      const to = {name: 'spaces.detail'};
-      const toParams = {spaceId: null};
-      const change = $rootScope.$emit('$stateChangeStart', to, toParams, {}, {});
-      expect(change.defaultPrevented).toBe(true);
-      sinon.assert.calledOnce(spaceTools.goToInitialSpace);
-    });
-
-    it('it does not request leave confirmation when redirecting', function () {
-      const requestLeaveConfirmation = sinon.stub().rejects();
-      const to = {name: 'otherwise'};
-      const from = {
-        data: {
-          dirty: true,
-          requestLeaveConfirmation: requestLeaveConfirmation
-        }
-      };
-      const change = $rootScope.$emit('$stateChangeStart', to, {}, from, {});
-      expect(change.defaultPrevented).toBe(true);
-      sinon.assert.notCalled(requestLeaveConfirmation);
-    });
-
     it('does not close modals', function () {
       sinon.assert.notCalled(modalCloseStub);
     });
 
     it('redirects if `redirectTo` property is provided', function () {
-      $state.go.returns();
+      this.state.go.returns();
       const to = {name: 'spaces.detail.entries', redirectTo: 'spaces.detail.content_types'};
       $rootScope.$emit('$stateChangeStart', to, {}, {}, {});
-      sinon.assert.calledWith($state.go, to.redirectTo, {});
+      sinon.assert.calledWith(this.state.go, to.redirectTo, {});
     });
-
   });
 
   describe('leave confirmation', function () {
