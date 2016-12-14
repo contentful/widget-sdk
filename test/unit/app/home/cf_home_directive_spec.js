@@ -2,30 +2,28 @@
 
 describe('cfHome directive', function () {
   beforeEach(function () {
-    this.momentStub = sinon.stub();
+    this.hourStub = sinon.stub();
+
     module('contentful/test', ($provide) => {
       $provide.value('moment', () => {
-        return {
-          format: this.momentStub
-        };
+        return {hour: this.hourStub};
       });
     });
 
-    this.compileElement = function (isNewUser) {
-      const signInCount = isNewUser ? 1 : 2;
-      this.user = {firstName: 'Foo', signInCount: signInCount};
-      this.element = this.$compile('<cf-home />', {context: {}});
-      this.controller = this.element.scope().home;
+    this.compileElement = () => {
+      const el = this.$compile('<cf-home />');
+      return el.scope().home;
     };
-
-    this.moment = this.$inject('moment');
-
   });
+
+  const getUser = (isNew) => {
+    return {firstName: 'Foo', signInCount: isNew ? 1 : 2};
+  };
 
   describe('greeting', function () {
     it('says welcome on initial login', function () {
-      this.compileElement(true);
-      expect(this.controller.getGreeting(this.user)).toBe('Welcome, Foo.');
+      const ctrl = this.compileElement();
+      expect(ctrl.getGreeting(getUser(true))).toBe('Welcome, Foo.');
     });
 
     it('greets user on subsequent login', function () {
@@ -35,9 +33,9 @@ describe('cfHome directive', function () {
     });
 
     function greetsUserBasedOnTimeOfDay (hour, timeOfDay) {
-      this.momentStub.returns(hour);
-      this.compileElement(false);
-      expect(this.controller.getGreeting(this.user)).toBe(`Good ${timeOfDay}, Foo.`);
+      this.hourStub.returns(hour);
+      const ctrl = this.compileElement();
+      expect(ctrl.getGreeting(getUser())).toBe(`Good ${timeOfDay}, Foo.`);
     }
   });
 });

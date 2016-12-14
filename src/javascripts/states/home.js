@@ -14,7 +14,7 @@ angular.module('contentful')
     template: '<cf-home />',
     loadingText: 'Loading...',
     controller: ['$scope', function ($scope) {
-      $scope.context = {};
+      $scope.context = {ready: true};
     }]
   });
 }]);

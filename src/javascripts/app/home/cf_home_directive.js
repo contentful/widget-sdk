@@ -13,15 +13,14 @@ angular.module('contentful')
 })
 
 .controller('HomeController', ['$scope', 'require', function ($scope, require) {
-
+  var controller = this;
   var moment = require('moment');
   var resources = require('app/home/language_resources');
   var homeAnalytics = require('analyticsEvents/home');
 
-  var controller = this;
-
   controller.getGreeting = _.memoize(getGreeting);
 
+  // TODO not a good solution
   // Returns the distance from the top of the page
   // i.e. height of the nav bar + persistent notification if it is being shown
   controller.getDistanceFromTop = function () {
@@ -33,7 +32,6 @@ angular.module('contentful')
   controller.selectLanguage = selectLanguage;
   controller.selectedLanguage = 'JavaScript';
   controller.analytics = homeAnalytics;
-  $scope.context.ready = true;
 
   function getGreeting (user) {
     if (user) {
@@ -54,7 +52,7 @@ angular.module('contentful')
   }
 
   function getTimeOfDay () {
-    var hour = moment().format('HH');
+    var hour = moment().hour();
     if (hour < 12) {
       return 'morning';
     } else if (hour < 17) {
@@ -63,5 +61,4 @@ angular.module('contentful')
       return 'evening';
     }
   }
-
 }]);
