@@ -42,11 +42,11 @@ describe('apiKeyEditor Directive', function () {
       accessChecker.shouldDisable = sinon.stub();
 
       compileElement = function () {
-        element = $compile('<cf-api-key-editor />')(scope);
         scope.apiKey = {
           data: {},
           getId: stubs.apiKeyGetId
         };
+        element = $compile('<cf-api-key-editor />')(scope);
         scope.$digest();
       };
     });

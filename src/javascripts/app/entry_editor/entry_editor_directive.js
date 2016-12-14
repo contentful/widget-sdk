@@ -1,9 +1,10 @@
 'use strict';
 
-angular.module('contentful').directive('cfEntryEditor', [function(){
+angular.module('contentful').directive('cfEntryEditor', [function () {
   return {
     template: JST.entry_editor(),
-    restrict: 'A',
-    controller: 'EntryEditorController'
+    restrict: 'E',
+    controller: 'EntryEditorController',
+    controllerAs: 'editorContext'
   };
 }]);

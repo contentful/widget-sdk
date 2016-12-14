@@ -4,7 +4,6 @@
 # We choose different configurations depending on the location of the file.
 
 set -e
-shopt -s globstar
 export PATH="./node_modules/.bin/:${PATH}"
 
 eslint \

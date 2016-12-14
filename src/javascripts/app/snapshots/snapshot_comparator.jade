@@ -52,7 +52,7 @@ cf-ui-hint.snapshot-comparator__hint(
 
 .workbench-main.x--content-full-size
   .snapshot-comparator__field(
-    ng-repeat="widget in widgets"
+    ng-repeat="widget in widgets track by widget.fieldId"
     ng-controller="SnapshotFieldController as fieldController"
     data-field-api-name="{{widget.field.apiName}}")
     .snapshot-comparator__field-locale(

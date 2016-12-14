@@ -47,8 +47,8 @@ describe('cfSnapshotSelector', function () {
 
     function compile (scope) {
       const $scope = _.extend({
-        entity: {
-          getId: _.constant(1)
+        entityInfo: {
+          id: 1
         },
         showSnapshotList: false,
         snapshot: makeFakeSnapshot(1)

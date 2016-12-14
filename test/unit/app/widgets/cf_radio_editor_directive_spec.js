@@ -6,12 +6,12 @@ describe('cfRadioEditor Directive', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    const widgetApi = this.$inject('mocks/widgetApi').create();
-    fieldApi = widgetApi.field;
+    this.widgetApi = this.$inject('mocks/widgetApi').create();
+    fieldApi = this.widgetApi.field;
 
     this.compile = function () {
       return this.$compile('<cf-radio-editor />', {}, {
-        cfWidgetApi: widgetApi
+        cfWidgetApi: this.widgetApi
       });
     };
   });
@@ -65,7 +65,7 @@ describe('cfRadioEditor Directive', function () {
     fieldApi.validations = [{in: ['value']}];
     const input = this.compile().find('input');
     expect(input.prop('disabled')).toBe(false);
-    fieldApi.onIsDisabledChanged.yield(true);
+    this.widgetApi.fieldProperties.isDisabled$.set(true);
     this.$apply();
     expect(input.prop('disabled')).toBe(true);
   });
@@ -76,7 +76,7 @@ describe('cfRadioEditor Directive', function () {
     fieldApi.validations = [{in: ['a', 'b', 'c']}];
     const input = this.compile().find('input');
     input.each(function () {
-      expect(this.getAttribute('name')).toEqual('entity.FID.en');
+      expect(this.getAttribute('name')).toMatch(/^entity\.FID\.en/);
     });
   });
 

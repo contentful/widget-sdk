@@ -3,11 +3,12 @@
 angular.module('cf.app')
 .directive('cfReferenceEditor', ['require', function (require) {
 
-  var $timeout = require('$timeout');
   var entitySelector = require('entitySelector');
-  var createEntityStore = require('EntityStore').create;
+  var State = require('app/widgets/link/State');
+  var K = require('utils/kefir');
   var createEntity = require('cfReferenceEditor/createEntity');
   var modalDialog = require('modalDialog');
+  var List = require('utils/List');
 
   return {
     restrict: 'E',
@@ -18,6 +19,9 @@ angular.module('cf.app')
     },
     template: JST.cf_reference_editor(),
     controller: ['$scope', function ($scope) {
+      // We need to define the uiSortable property in the pre-link
+      // stage. The ui-sortable directive will obtain a reference to
+      // the object that we can later modify.
       $scope.uiSortable = {update: _.noop};
     }],
     require: '^cfWidgetApi',
@@ -26,62 +30,75 @@ angular.module('cf.app')
 
   function link ($scope, _$elem, _$attrs, widgetApi) {
     var field = widgetApi.field;
-    var fetchMethod = {Entry: 'getEntries', Asset: 'getAssets'}[$scope.type];
-    var store = createEntityStore(widgetApi.space, fetchMethod);
+    var isDisabled$ = widgetApi.fieldProperties.isDisabled$;
+    var state = State.create(field, widgetApi.fieldProperties.value$, widgetApi.space, $scope.type, $scope.single);
+    var useBulkEditor =
+      widgetApi.settings.bulkEditing &&
+      widgetApi._internal.editReferences;
 
     $scope.typePlural = {Entry: 'entries', Asset: 'assets'}[$scope.type];
     $scope.isAssetCard = is('Asset', 'card');
 
+    // Passed to cfEntityLink and cfAssetCard directive
     $scope.config = {
-      draggable: !$scope.single,
       showDetails: is('Entry', 'card'),
       asThumb: $scope.isAssetCard && !$scope.single
     };
 
+    K.onValueScope($scope, isDisabled$, function (isDisabled) {
+      $scope.config.draggable = !$scope.single && !isDisabled;
+    });
+
+
     $scope.uiSortable.update = function () {
       // let uiSortable update the model, then sync
-      $timeout(syncValue);
+      $scope.$applyAsync(function () {
+        state.setIds($scope.entityModels.map(function (model) {
+          return model.value.id;
+        }));
+      });
     };
 
-    $scope.store = store;
     $scope.helpers = widgetApi.entityHelpers;
-    $scope.actions = {
-      removeFromList: removeFromList,
-      goToEditor: widgetApi.state.goToEditor
-    };
 
     $scope.addNew = function (event) {
       event.preventDefault();
       createEntity($scope.type, field, widgetApi.space)
       .then(function (entity) {
-        linkEntity(entity);
-        syncValue();
-        widgetApi.state.goToEditor(entity);
+        state.addEntities([entity]);
+        editEntityAction(entity, -1);
       });
     };
 
     $scope.addExisting = function (event) {
+      var currentSize = $scope.entityModels.length;
       event.preventDefault();
-      entitySelector.open(field, unwrapLinks())
-      .then(function (entities) {
-        _.forEach(entities, linkEntity);
-        syncValue();
-      });
+      entitySelector.open(field, currentSize)
+      .then(state.addEntities);
     };
 
-    var offValueChange = field.onValueChanged(function (links) {
-      if (!Array.isArray(links)) {
-        links = links ? [links] : [];
+    // Property that holds the items that are rendered with the
+    // 'cfEntityLink' directive.
+    var entityModels$ = K.combine([state.entities$, isDisabled$], function (entities, isDisabled) {
+      // entities is a list of [id, entityData] pairs
+      if (entities) {
+        return entities.map(function (value, index) {
+          var id = value[0];
+          var entity = value[1];
+          return buildEntityModel(id, entity, index, isDisabled);
+        });
       }
-
-      store.prefetch(links).then(function () {
-        $scope.links = _.map(links, wrapLink);
-        $scope.isReady = true;
-      });
     });
 
-    var offDisabledChange = field.onIsDisabledChanged(function (isDisabled) {
-      $scope.isDisabled = isDisabled;
+    K.onValueScope($scope, entityModels$, function (models) {
+      if (models) {
+        // We could just use models but for performance reasons we use
+        // a keyed list.
+        $scope.entityModels = List.makeKeyed(models, function (model) {
+          return model.hash;
+        });
+        $scope.isReady = true;
+      }
     });
 
     var unregisterPublicationWarning = field.registerPublicationWarning({
@@ -92,8 +109,6 @@ angular.module('cf.app')
     });
 
     $scope.$on('$destroy', function () {
-      offValueChange();
-      offDisabledChange();
       unregisterPublicationWarning();
     });
 
@@ -101,43 +116,18 @@ angular.module('cf.app')
       return type === $scope.type && style === $scope.style;
     }
 
-    function linkEntity (entity) {
-      store.add(entity);
-      $scope.links.push(wrapLink(createLink(entity)));
-    }
-
-    function removeFromList (link) {
-      var index = _.findIndex($scope.links, function (item) {
-        return item.link === link;
-      });
-
-      if (index > -1) {
-        $scope.links.splice(index, 1);
-        syncValue();
-      }
-    }
-
-    function syncValue () {
-      var links = unwrapLinks();
-      if (links.length < 1) {
-        field.removeValue();
-      } else {
-        links = $scope.single ? links[0] : links;
-        field.setValue(links);
-      }
-    }
-
-    function unwrapLinks () {
-      return _.map($scope.links, 'link');
-    }
-
     function hasUnpublishedReferences () {
       return getUnpublishedReferences().length > 0;
     }
 
     function getUnpublishedReferences () {
-      return _.filter(_.map(unwrapLinks(), store.get), function (data) {
-        return !dotty.get(data, 'sys.publishedVersion', false);
+      var models = $scope.entityModels || [];
+      return models.filter(function (item) {
+        if (item.value.entity) {
+          return !item.value.entity.sys.publishedVersion;
+        } else {
+          return true;
+        }
       });
     }
 
@@ -168,45 +158,61 @@ angular.module('cf.app')
         }
       }).promise;
     }
-  }
 
-  /**
-   * We cannot use linked entity's ID to track list items
-   * because link to the same entity may occur on the list
-   * more than once.
-   *
-   * When not tracking, Angular adds $$hashKey property that
-   * may break putting values to ShareJS. As a workaround
-   * we use list of wrapped links that we unwrap before sync.
-   */
-  function wrapLink (link) {
-    return {link: link};
-  }
+    // Build an object that is passed to the 'cfEntityLink' directive
+    function buildEntityModel (id, entity, index, isDisabled) {
+      var version = entity ? entity.sys.version : '';
+      var hash = [id, version, isDisabled].join('!');
 
-  function createLink (entity) {
-    return {
-      sys: {
-        id: entity.sys.id,
-        linkType: entity.sys.type,
-        type: 'Link'
+      return {
+        id: id,
+        entity: entity,
+        hash: hash,
+        actions: {
+          edit: prepareEditAction(entity, index, isDisabled),
+          remove: prepareRemoveAction(index, isDisabled)
+        }
+      };
+    }
+
+    function prepareEditAction (entity, index, isDisabled) {
+      var entryId = widgetApi.entry.getSys().id;
+      var linksParentEntry = entity &&
+        entity.sys.type === 'Entry' &&
+        entity.sys.id === entryId;
+
+      if (entity && !isDisabled && !linksParentEntry) {
+        return _.partial(editEntityAction, entity, index);
+      } else {
+        return null;
       }
-    };
+    }
+
+    function editEntityAction (entity, index) {
+      if (useBulkEditor) {
+        return widgetApi._internal.editReferences(index, state.refreshEntities);
+      } else {
+        return widgetApi.state.goToEditor(entity);
+      }
+    }
+
+    function prepareRemoveAction (index, isDisabled) {
+      return isDisabled ? null : _.partial(state.removeAt, index);
+    }
   }
 }])
 
 .factory('cfReferenceEditor/createEntity', ['require', function (require) {
-
   var modalDialog = require('modalDialog');
-  var $q = require('$q');
 
   return function createEntity (entityType, field, space) {
     if (entityType === 'Entry') {
       return maybeAskAndCreateEntry();
     } else if (entityType === 'Asset') {
       return space.createAsset({});
+    } else {
+      throw new TypeError('Unknown entity type ' + entityType);
     }
-
-    return $q.reject();
 
     function maybeAskAndCreateEntry () {
       return getAvailableContentTypes()

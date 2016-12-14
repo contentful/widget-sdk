@@ -16,17 +16,19 @@
  * @usage[html]
  * <div cf-focus-ot-input="optionalExpression"></div>
  */
-angular.module('contentful').directive('cfFocusOtInput', ['defer', function(defer){
+angular.module('contentful')
+.directive('cfFocusOtInput', ['require', function (require) {
+  var K = require('utils/kefir');
+  var defer = require('defer');
 
   return {
     restrict: 'A',
-    link: function(scope, elem, attrs){
-      if(scope.$eval(attrs.cfFocusOtInput) || _.isEmpty(attrs.cfFocusOtInput)){
-        var unwatchEditable = scope.$watch('otDoc.state.editable', function focus() {
-          if (scope.otDoc.state.editable) {
+    link: function (scope, elem, attrs) {
+      if (scope.$eval(attrs.cfFocusOtInput) || _.isEmpty(attrs.cfFocusOtInput)) {
+        K.onValueScope(scope, scope.otDoc.state.loaded$, function (loaded) {
+          if (loaded) {
             var input = elem.find('input').eq(0);
             defer(function () { input.focus(); });
-            unwatchEditable();
           }
         });
       }

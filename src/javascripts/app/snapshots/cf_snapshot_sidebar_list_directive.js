@@ -23,7 +23,7 @@ angular.module('cf.app')
     restrict: 'E',
     template: '<span />',
     controller: ['$scope', 'spaceContext', function ($scope, spaceContext) {
-      var entryId = $scope.entity.getId();
+      var entryId = $scope.entityInfo.id;
       var query = {limit: PREVIEW_COUNT};
 
       $scope.isLoading = true;

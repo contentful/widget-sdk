@@ -24,10 +24,6 @@ describe('entitySelector', function () {
     };
   });
 
-  function link (id) {
-    return {sys: {id: id, type: 'Link'}};
-  }
-
   function size (min, max, key) {
     const t = {};
     t[key || 'size'] = {min: min, max: max};
@@ -64,15 +60,13 @@ describe('entitySelector', function () {
       });
 
       it('substracts current link count from limits', function () {
-        const links = [link('a'), link('b')];
-        this.open({linkType: 'Entry', itemValidations: [size(3, 6)]}, links);
+        this.open({linkType: 'Entry', itemValidations: [size(3, 6)]}, 2);
         expect(this.getConfig().min).toBe(1);
         expect(this.getConfig().max).toBe(4);
       });
 
       it('uses 1 as minimal lower bound', function () {
-        const links = [link('a'), link('b')];
-        this.open({linkType: 'Entry', itemValidations: [size(2, 6)]}, links);
+        this.open({linkType: 'Entry', itemValidations: [size(2, 6)]}, 2);
         expect(this.getConfig().min).toBe(1);
         expect(this.getConfig().max).toBe(4);
       });

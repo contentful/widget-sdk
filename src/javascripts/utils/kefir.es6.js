@@ -1,5 +1,6 @@
 import * as Kefir from 'libs/kefir';
-import {noop} from 'lodash';
+import {noop, zipObject} from 'lodash';
+import {makeSum} from 'libs/sum-types';
 
 
 /**
@@ -10,6 +11,14 @@ import {noop} from 'lodash';
  * helpers.
  */
 export * from 'libs/kefir';
+
+
+export const PromiseStatus = makeSum({
+  Pending: ['value'],
+  Resolved: ['value'],
+  Rejected: ['error']
+});
+
 
 /**
  * @ngdoc method
@@ -125,13 +134,10 @@ export function createPropertyBus (initialValue, scope) {
  *   Call this function to detach the callback
  */
 export function onValueScope (scope, stream, cb) {
-  const off = onValue(stream, function (value) {
+  const lifeline = scopeLifeline(scope);
+  const off = onValueWhile(lifeline, stream, function (value) {
     cb(value);
     scope.$applyAsync();
-  });
-  scope.$on('$destroy', function () {
-    off();
-    stream = cb = null;
   });
   return off;
 }
@@ -159,6 +165,26 @@ export function onValue (stream, cb) {
       stream = cb = null;
     }
   };
+}
+
+/**
+ * @ngdoc method
+ * @name utils/kefir#onValueWhile
+ * @description
+ * Similar to `K.onValue(observable, cb)` but detaches the callback
+ * when the lifeline stream argument ends.
+ *
+ * @param {Observable} lifeline
+ * @param {Observable} observable
+ * @param {function} cb
+ *
+ * @returns {function}
+ *   Call this function to detach the callback
+ */
+export function onValueWhile (lifeline, stream, cb) {
+  const off = onValue(stream, cb);
+  lifeline.onEnd(off);
+  return off;
 }
 
 
@@ -219,4 +245,197 @@ export function fromScopeEvent (scope, event, uncurry) {
 export function sampleBy (obs, sampler) {
   // We need to pass `noop` to get an initial, undefined value.
   return obs.toProperty(noop).map(sampler);
+}
+
+
+/**
+ * @ngdoc method
+ * @name utils/kefir#promiseProperty
+ * @usage[js]
+ * const prop = K.promiseProperty(promise, 'PENDING')
+ * prop.onValue((p) => {
+ *   caseof(p, [
+ *     [K.PromiseStatus.Pending, ({value}) => console.log('pending', value)]
+ *     [K.PromiseStatus.Resolved, ({value}) => console.log('sucess', value)]
+ *     [K.PromiseStatus.Rejected, ({error}) => console.log('error', error)]
+ *   ])
+ * })
+ *
+ * @description
+ * Create a property from a promise.
+ *
+ * The property value is of 'PromiseStatus' which is either
+ * 'Pending', 'Resolved', or 'Rejected'.
+ *
+ * You can pass an optional value parameter that is assigned to the
+ * 'Pending' constructor.
+ *
+ *
+ * @param {Promise<T>} promise
+ * @param {T?} pendingValue
+ * @returns {Property<PromiseStatus<T>>}
+ */
+export function promiseProperty (promise, pendingValue) {
+  const bus = createPropertyBus(PromiseStatus.Pending(pendingValue));
+  promise.then(function (value) {
+    bus.set(PromiseStatus.Resolved(value));
+  }, function (error) {
+    bus.set(PromiseStatus.Rejected(error));
+  });
+  return bus.property;
+}
+
+
+/**
+ * @ngdoc method
+ * @name utils/kefir#combineProperties
+ * @description
+ * Similar to [Kefir.combine](kefir-combine) but returns a property
+ * instead of a stream.
+ *
+ * Throws an error if one of the arguments is not a Kefir property.
+ *
+ * [kefir-combine]: https://rpominov.github.io/kefir/#combine
+ *
+ * @param {Kefir.Property[]} props
+ * @param {function(): T} combinator
+ * @returns {Property<T>}
+ */
+export function combineProperties (props, combinator) {
+  props.forEach(assertIsProperty);
+  return Kefir.combine(props, combinator).toProperty(function () {});
+}
+
+
+/**
+ * @ngdoc method
+ * @name utils/kefir#combinePropertiesObject
+ * @description
+ * Combines an object with properties as values into a property with
+ * objects as values.
+ * ~~~js
+ * combinePropertiesObject({
+ *   a: K.constant('A'),
+ *   b: K.constant('B'),
+ * }).onValue((val) => {
+ *   // val => {a: 'A', b: 'B'}
+ * })
+ * ~~~
+ * The combined property is updated when any of the input properties
+ * changes. The values from other properties are retained.
+ *
+ * @param {object} props
+ * @returns {Property<object>}
+ */
+export function combinePropertiesObject (props) {
+  const keys = Object.keys(props);
+  const values$ = keys.map((k) => {
+    const prop = props[k];
+    assertIsProperty(prop);
+    return prop;
+  });
+  return combineProperties(values$)
+    .map((values) => zipObject(keys, values));
+}
+
+
+/**
+ * @ngdoc method
+ * @name utils/kefir#holdWhen
+ * @description
+ * Takes a property and a predicate and returns a property that has the
+ * same values as the initial property until the current value
+ * satisfies the predicate. After that the property is constant with
+ * that value.
+ *
+ * @param {Kefir.Property<T>} props
+ * @param {function(T): boolean} predicate
+ * @returns {Kefir.Property<T>}
+ */
+export function holdWhen (prop, predicate) {
+  assertIsProperty(prop);
+  let hold = false;
+  return prop.withHandler((emitter, event) => {
+    if (hold) {
+      return;
+    }
+
+    if (event.type === 'error') {
+      throw new Error(event.value);
+    } else if (event.type === 'end') {
+      emitter.end();
+    } else if (event.type === 'value') {
+      emitter.value(event.value);
+      if (predicate(event.value)) {
+        hold = true;
+        prop = null;
+        emitter.end();
+      }
+    }
+  });
+}
+
+
+/**
+ * @ngdoc method
+ * @name utils/kefir#getValue
+ * @description
+ * Gets the current value of a property and throws an error if the
+ * property does not have a value.
+ *
+ * WARNING: Use this sparsely. Using this leads to un-idomatic code
+ *
+ * @param {Kefir.Property<T>} props
+ * @returns {T}
+ */
+export function getValue (prop) {
+  let called = false;
+  let value;
+  const off = onValue(prop, (x) => {
+    value = x;
+    called = true;
+  });
+
+  off();
+  if (!called) {
+    throw new Error('Property does not have current value');
+  }
+
+  return value;
+}
+
+
+/**
+ * @ngdoc method
+ * @name utils/kefir#scopeLifeline
+ * @description
+ * Returns a stream that ends when the scope is destroyed.
+ * @params {Scope} scope
+ * @returns {Kefir.Stream<void>}
+ */
+export function scopeLifeline (scope) {
+  return Kefir.stream((emitter) => {
+    if (!scope || scope.$$destroyed) {
+      return end();
+    } else {
+      return scope.$on('$destroy', end);
+    }
+
+    function end () {
+      scope = null;
+      emitter.end();
+      return noop;
+    }
+  });
+}
+
+
+function assertIsProperty (prop) {
+  if (
+    !prop ||
+    typeof prop.getType !== 'function' ||
+    prop.getType() !== 'property'
+  ) {
+    throw new TypeError('Object values must be properties');
+  }
 }

@@ -7,33 +7,64 @@ angular.module('contentful/mocks')
  * @name mocks/entityEditor/Document
  * @description
  * Create a mock implementation of `entityEditor/Document`.
+ *
+ * TODO at some point we should mock this by using the correct
+ * implementation with just the ShareJS Doc mock
  */
 .factory('mocks/entityEditor/Document', ['require', function (require) {
   const K = require('mocks/kefir');
-  const OtDoc = require('mocks/OtDoc');
   const $q = require('$q');
+  const ResourceStateManager = require('data/document/ResourceStateManager');
 
   return {
     create: create
   };
 
-  function create (data) {
-    data = data || {};
+  function create (initialData, spaceEndpoint) {
+    let currentData;
+    const data$ = K.createMockProperty(initialData || {
+      sys: {
+        type: 'Entry',
+        id: 'EID'
+      }
+    });
+    data$.onValue(function (data) {
+      currentData = data;
+    });
+
+    const reverter = {
+      hasChanges: sinon.stub(),
+      revert: sinon.stub().resolves()
+    };
+
+    const permissions = {
+      can: sinon.stub().returns(true),
+      canEditFieldLocale: sinon.stub().returns(true)
+    };
+
+    const sysProperty = valuePropertyAt(['sys']);
+
+    const resourceState = ResourceStateManager.create(
+      sysProperty,
+      setSys,
+      getData,
+      spaceEndpoint
+    );
 
     return {
-      doc: new OtDoc(data),
+      destroy: _.noop,
+      getVersion: sinon.stub(),
+
       state: {
-        isDirty: K.createMockProperty()
+        isDirty$: K.createMockProperty(),
+        isSaving$: K.createMockProperty(false),
+        isConnected$: K.createMockProperty(true)
       },
 
-      open: sinon.stub(),
-      close: sinon.stub(),
+      getData: sinon.spy(getData),
 
-      getValueAt: sinon.spy(function (path) {
-        return dotty.get(data, path);
-      }),
+      getValueAt: sinon.spy(getValueAt),
 
-      // TODO this should trigger an event on valuePropertyAt
       setValueAt: sinon.spy(setValueAt),
       removeValueAt: sinon.spy(function (path) {
         return setValueAt(path, undefined);
@@ -42,42 +73,66 @@ angular.module('contentful/mocks')
       pushValueAt: sinon.spy(pushValueAt),
       moveValueAt: sinon.spy(moveValueAt),
 
+      // TODO should emit when calling setters
       changes: K.createMockStream(),
-      valuePropertyAt: sinon.spy(_.memoize(function (path) {
-        return K.createMockProperty(dotty.get(data, path));
-      }, function hashPath (path) {
-        return path.join('!');
-      })),
-      sysProperty: K.createMockProperty(data.sys),
+      localFieldChanges$: K.createMockStream(),
+
+      valuePropertyAt: sinon.spy(valuePropertyAt),
+      sysProperty: sysProperty,
 
       collaboratorsFor: sinon.stub().returns(K.createMockProperty([])),
-      notifyFocus: sinon.spy()
+      notifyFocus: sinon.spy(),
+
+      reverter: reverter,
+      permissions: permissions,
+      resourceState: resourceState
     };
 
+
+    function setSys (sys) {
+      setValueAt(['sys'], sys);
+    }
+
+    function getData () {
+      return getValueAt([]);
+    }
+
+    function getValueAt (path) {
+      return _.cloneDeep(dotty.get(currentData, path));
+    }
+
+    function valuePropertyAt (path) {
+      return data$.map(function (data) {
+        return _.cloneDeep(dotty.get(data, path));
+      });
+    }
+
     function insertValueAt (path, pos, val) {
-      const list = dotty.get(data, path, []);
+      const list = getValueAt(path);
       list.splice(pos, 0, val);
-      dotty.put(data, path, list);
+      setValueAt(path, list);
       return $q.resolve(val);
     }
 
     function pushValueAt (path, val) {
-      const list = dotty.get(data, path, []);
+      const list = getValueAt(path);
       list.push(val);
-      dotty.put(data, path, list);
+      setValueAt(path, list);
       return $q.resolve(val);
     }
 
     function moveValueAt (path, from, to) {
-      const list = dotty.get(data, path, []);
+      const list = getValueAt(path);
       const [val] = list.splice(from, 1);
       list.splice(to, 0, val);
-      dotty.put(data, path, list);
+      setValueAt(path, list);
       return $q.resolve();
     }
 
     function setValueAt (path, value) {
+      const data = _.cloneDeep(currentData);
       dotty.put(data, path, value);
+      data$.set(data);
       return $q.resolve(value);
     }
   }

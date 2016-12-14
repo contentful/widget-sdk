@@ -1,83 +1,78 @@
 'use strict';
 
-angular.module('cf.app')
-
+angular.module('contentful')
 /**
- * @ngdoc type
- * @module cf.app
+ * @ngdoc service
+ * @module contentful
  * @name Document
  * @description
  * Used to edit an entry or asset through ShareJS
  *
- * @property {Document.State} state
+ * The 'SnapshotComparatorController/snapshotDoc' module also provides
+ * an implementation for the interface defined here. Any changes must
+ * be synced across these implementations
  */
-.controller('entityEditor/Document', ['$scope', 'require', 'entity', 'contentType', function ($scope, require, entity, contentType) {
+.factory('entityEditor/Document', ['require', function (require) {
   var $q = require('$q');
   var ShareJS = require('data/ShareJS/Utils');
-  var moment = require('moment');
   var TheLocaleStore = require('TheLocaleStore');
   var K = require('utils/kefir');
-  var controller = this;
   var Normalizer = require('data/documentNormalizer');
-  var spaceContext = require('spaceContext');
-  var docConnection = spaceContext.docConnection;
   var PresenceHub = require('entityEditor/Document/PresenceHub');
   var StringField = require('entityEditor/Document/StringField');
-  var PathUtils = require('entityEditor/Document/PathUtils');
+  var PathUtils = require('utils/Path');
   var DocLoad = require('data/ShareJS/Connection').DocLoad;
   var caseof = require('libs/sum-types').caseof;
+  var Reverter = require('entityEditor/Document/Reverter');
+  var accessChecker = require('accessChecker');
+  var Status = require('data/Document/Status');
+  var Permissions = require('access_control/EntityPermissions');
+  var deepFreeze = require('utils/DeepFreeze').deepFreeze;
+  var ResourceStateManager = require('data/document/ResourceStateManager');
 
-  var readOnlyBus = K.createPropertyBus(false, $scope);
+  return {create: create};
 
-  controller.state = {
-    editable: false,
-    error: false,
-    saving: false
-  };
+  // TODO Instead of passing an entity instance provided by the client
+  // library we should only pass the entity data.
+  function create (docConnection, entity, contentType, user, spaceEndpoint) {
+    var currentDoc;
+    var cleanupTasks = [];
 
-  // The stream for this bus contains all the events that come from the
-  // raw ShareJS doc. The data in this stream has the shape
-  // `{doc: doc, name: name, data: data}`.
-  var docEventsBus = K.createBus($scope);
+    // We assume that the permissions only depend on the immutable data
+    // like the ID the content type ID and the creator.
+    var permissions = Permissions.create(entity.data.sys);
 
-  var acknowledgeEvent = docEventsBus.stream.filter(function (event) {
-    return event.name === 'acknowledge';
-  });
+    // The stream for this bus contains all the events that come from the
+    // raw ShareJS doc. The data in this stream has the shape
+    // `{doc: doc, name: name, data: data}`.
+    var docEventsBus = K.createBus();
+    cleanupTasks.push(docEventsBus.end);
 
-  K.onValueScope($scope, acknowledgeEvent, function (event) {
-    updateEntitySys(event.doc);
-  });
 
-  // A boolean property that holds true if the document has
-  // changes unacknowledged by the server.
-  var hasPendingOps = docEventsBus.stream
-    .map(function (event) {
-      return event.doc;
-    })
-    .toProperty(function () {
-      return controller.doc;
-    })
-    .map(function (doc) {
-      return !!(doc && (doc.inflightOp || doc.pendingOp));
+    /**
+     * @ngdoc property
+     * @module contentful
+     * @name Document#state.isSaving$
+     * A boolean property that holds true if the document has
+     * changes unacknowledged by the server.
+     */
+    var isSaving$ = K.sampleBy(docEventsBus.stream, function () {
+      return !!(currentDoc && (currentDoc.inflightOp || currentDoc.pendingOp));
     });
 
-  K.onValueScope($scope, hasPendingOps, function (hasPendingOps) {
-    controller.state.saving = hasPendingOps;
-  });
 
-
-  /**
-   * @ngdoc property
-   * @module cf.app
-   * @name Document#valueChangesAt
-   * @description
-   * A stream of changes on the document. Whenever a value at a given
-   * path is changed (either remotely or locally) we emit the path on
-   * the stream.
-   *
-   * @type {Property<string[]>}
-   */
-  var changes = docEventsBus.stream
+    /**
+     * @ngdoc property
+     * @module contentful
+     * @name Document#valueChangesAt
+     * @description
+     * A stream of changes on the document. Whenever a value at a given
+     * path is changed (either remotely or locally) we emit the path on
+     * the stream.
+     *
+     * @type {Property<string[]>}
+     */
+    var changes = docEventsBus.stream
     .flatten(function (event) {
       if (event.name === 'change') {
         var paths = _.map(event.data, _.property('p'));
@@ -90,265 +85,444 @@ angular.module('cf.app')
       }
     });
 
-  // We sync the changes on the OT document snapshot to
-  // `$scope.entity.data`.
-  K.onValueScope($scope, changes, otUpdateEntityData);
 
+    /**
+     * @ngdoc property
+     * @module cf.app
+     * @name Document#sysProperty
+     * @description
+     * A property that keeps the value of the entity’s `sys` property.
+     *
+     * TODO rename this to sys$
+     *
+     * @type {Property<Data.Sys>}
+     */
 
-  /**
-   * @ngdoc property
-   * @module cf.app
-   * @name Document#sysProperty
-   * @description
-   * A property that keeps the value of the entity’s `sys` property.
-   *
-   * @type {Property<Data.Sys>}
-   */
-  var sysChangeBus = K.createBus($scope);
-  var sysProperty = K.sampleBy(sysChangeBus.stream, function () {
-    return entity.data.sys;
-  });
+    var sysBus = K.createPropertyBus(entity.data.sys);
+    cleanupTasks.push(sysBus.end);
+    var sysProperty = sysBus.property;
 
-
-  /**
-   * @ngdoc property
-   * @module cf.app
-   * @name Document#state.isDirty
-   * @description
-   * Property that is `false` if and only if the document is published
-   * and does not contain changes relative to the published version.
-   *
-   * Note that an entry is in the same state as its published version
-   * if and only if its version is on more than the published version.
-   *
-   * @type {Property<boolean>}
-   */
-  controller.state.isDirty = sysProperty.map(function (sys) {
-    return sys.publishedVersion
-      ? sys.version > sys.publishedVersion + 1
-      : true;
-  });
-
-  /**
-   * @ngdoc method
-   * @module cf.app
-   * @name Document#valuePropertyAt
-   * @description
-   * Returns a property that always has the current value at the given
-   * path of the document.
-   *
-   * @param {string[]} path
-   * @returns {Property<any>}
-   */
-  var memoizedValuePropertyAt = _.memoize(valuePropertyAt, function (path) {
-    return path.join('!');
-  });
-
-  function valuePropertyAt (valuePath) {
-    return changes.filter(function (changePath) {
-      return PathUtils.isAffecting(changePath, valuePath);
-    })
-    .toProperty(_.constant(undefined))
-    .map(function () {
-      return getValueAt(valuePath);
+    var currentSys;
+    K.onValue(sysProperty, function (sys) {
+      currentSys = sys;
     });
-  }
 
-
-  var presence = PresenceHub.create($scope.user.sys.id, docEventsBus.stream, shout);
-
-  K.onValueScope($scope, presence.collaborators, function (collaborators) {
-    $scope.docCollaborators = collaborators;
-  });
-
-  $scope.$on('$destroy', function () {
-    presence.destroy();
-  });
-
-
-  _.extend(controller, {
-    doc: undefined,
-
-    getValueAt: getValueAt,
-    setValueAt: setValueAt,
-    removeValueAt: removeValueAt,
-    insertValueAt: insertValueAt,
-    pushValueAt: pushValueAt,
-    moveValueAt: moveValueAt,
-
-    changes: changes,
-    valuePropertyAt: memoizedValuePropertyAt,
-    sysProperty: sysProperty,
-
-    collaboratorsFor: presence.collaboratorsFor,
-    notifyFocus: presence.focus,
-
-    setReadOnly: readOnlyBus.set
-  });
-
-
-  var docLoader = spaceContext.docConnection.getDocLoader(entity, readOnlyBus.property);
-  K.onValueScope($scope, docLoader.doc, function (doc) {
-    caseof(doc, [
-      [DocLoad.Doc, function (d) {
-        setDoc(d.doc);
-      }],
-      [DocLoad.None, function () {
-        setDoc(undefined);
-      }],
-      [DocLoad.Error, function () {
-        controller.state.error = true;
-        setDoc(undefined);
-      }]
-    ]);
-  });
-
-  K.onValueScope($scope, docConnection.errors, function () {
-    controller.state.error = true;
-  });
-
-  $scope.$on('$destroy', function () {
-    setDoc(undefined);
-    docLoader.destroy();
-  });
-
-  function shout (args) {
-    var doc = controller.doc;
-    if (doc && doc.state !== 'closed') {
-      doc.shout(args);
-    }
-  }
-
-
-  function getValueAt (path) {
-    if (controller.doc) {
-      return _.cloneDeep(ShareJS.peek(controller.doc, path));
-    } else {
-      return _.cloneDeep(dotty.get(entity.data, path));
-    }
-  }
-
-  function setValueAt (path, value) {
-    return withRawDoc(function (doc) {
-      if (StringField.is(path[1], contentType)) {
-        return StringField.setAt(doc, path, value);
+    docEventsBus.stream.onValue(function (event) {
+      var previousVersion = currentSys.version;
+      var version = event.doc.version;
+      var nextSys = _.cloneDeep(event.doc.snapshot.sys);
+      if (version > previousVersion) {
+        nextSys.updatedAt = (new Date()).toISOString();
       } else {
-        return ShareJS.setDeep(doc, path, value);
+        nextSys.updatedAt = currentSys.updatedAt;
+      }
+      nextSys.version = version;
+      sysBus.set(deepFreeze(nextSys));
+    });
+
+
+    var readOnly$ = sysProperty.map(function (sys) {
+      return sys.archivedVersion || sys.deletedVersion || !permissions.can('update');
+    }).skipDuplicates();
+    var docLoader = docConnection.getDocLoader(entity, readOnly$);
+
+
+    /**
+     * @ngdoc property
+     * @module contentful
+     * @name Document#state.isDirty$
+     * @description
+     * Property that is `false` if and only if the document is published
+     * and does not contain changes relative to the published version.
+     *
+     * Note that an entry is in the same state as its published version
+     * if and only if its version is on more than the published version.
+     *
+     * @type {Property<boolean>}
+     */
+    var isDirty$ = sysProperty.map(function (sys) {
+      return sys.publishedVersion
+        ? sys.version > sys.publishedVersion + 1
+        : true;
+    });
+
+    /**
+     * @ngdoc method
+     * @module contentful
+     * @name Document#valuePropertyAt
+     * @description
+     * Returns a property that always has the current value at the given
+     * path of the document.
+     *
+     * @param {string[]} path
+     * @returns {Property<any>}
+     */
+    var memoizedValuePropertyAt = _.memoize(valuePropertyAt, function (path) {
+      return path.join('!');
+    });
+
+    function valuePropertyAt (valuePath) {
+      return changes.filter(function (changePath) {
+        return PathUtils.isAffecting(changePath, valuePath);
+      })
+      .toProperty(_.constant(undefined))
+      .map(function () {
+        return getValueAt(valuePath);
+      });
+    }
+
+    // Property<ShareJS.Document?>
+    var doc$ = docLoader.doc.map(function (doc) {
+      return caseof(doc, [
+        [DocLoad.Doc, function (d) {
+          return d.doc;
+        }],
+        [null, _.constant(null)]
+      ]);
+    });
+
+
+    /**
+     * @ngdoc property
+     * @name Document#state.loaded$
+     * @type Property<boolean>
+     * @description
+     * Property holds true when the document has been loaded at least
+     * once.
+     *
+     * In particular
+     * - If loading fails this is true
+     * - If the document is in read-only mode this is true
+     * - If the document is unloaded later this is true
+     */
+    var pending$ = docLoader.doc.map(function (d) {
+      return caseof(d, [
+        [DocLoad.Pending, _.constant(true)],
+        [null, _.constant(false)]
+      ]);
+    }).skipDuplicates();
+
+    var loaded$ = K.holdWhen(
+      pending$.map(function (x) {
+        return !x;
+      }),
+      _.identity
+    );
+
+
+    var offDoc = K.onValue(doc$, setDoc);
+    cleanupTasks.push(offDoc);
+
+    // Property<boolean>
+    // Is true if there was an error opening the document. E.g. when
+    // disconnected from the server.
+    var docLoadError$ = docLoader.doc.map(function (doc) {
+      return caseof(doc, [
+        [DocLoad.Error, _.constant(true)],
+        [null, _.constant(false)]
+      ]);
+    });
+
+
+    /**
+     * @ngdoc property
+     * @name Document#status$
+     * @type string
+     * @description
+     * Current status of the document
+     *
+     * Is one of
+     * - 'editing-not-allowed'
+     * - 'ot-connection-error'
+     * - 'archived'
+     * - 'ok'
+     *
+     * This property is used by 'cfEditorStatusNotifcation' directive.
+     */
+    var status$ = Status.create(
+      sysProperty,
+      docLoadError$,
+      accessChecker.canUpdateEntity(entity)
+    );
+
+
+    var presence = PresenceHub.create(user.sys.id, docEventsBus.stream, shout);
+    cleanupTasks.push(presence.destroy);
+
+    var version$ = sysProperty.map(function (sys) {
+      return sys.version;
+    });
+    var reverter = Reverter.create(getValueAt([]), version$, setFields);
+
+
+    /**
+     * @ngdoc property
+     * @name Document#state.isConnected$
+     * @type Property<boolean>
+     * @description
+     * Is true if the document is connected
+     */
+    var isConnected$ = doc$.map(function (doc) {
+      return !!doc;
+    }).skipDuplicates();
+
+    cleanupTasks.push(function () {
+      forgetCurrentDoc();
+      docLoader.destroy();
+    });
+
+    var resourceState = ResourceStateManager.create(
+      sysProperty,
+      sysBus.set,
+      getData,
+      spaceEndpoint
+    );
+
+    // We cannot simply use `valuePropertiesAt([])` because the SJS
+    // document does not track the 'updatedAt' property.
+    var data$ = K.combinePropertiesObject({
+      sys: sysProperty,
+      fields: valuePropertyAt(['fields'])
+    });
+
+    // The entity instance is unique for the ID. Other views will share
+    // the same instance and not necessarily load the data. This is why
+    // we need to make sure that we keep it up date.
+    data$.onValue(function (data) {
+      entity.data = data;
+      if (data.sys.deletedVersion) {
+        entity.setDeleted();
+        delete entity.data;
       }
     });
-  }
-
-  function removeValueAt (path) {
-    return withRawDoc(function (doc) {
-      return ShareJS.remove(doc, path);
-    });
-  }
-
-  function insertValueAt (path, i, x) {
-    return withRawDoc(function (doc) {
-      if (getValueAt(path)) {
-        return $q.denodeify(function (cb) {
-          doc.insertAt(path, i, x, cb);
-        });
-      } else if (i === 0) {
-        return setValueAt(path, [x]);
-      } else {
-        return $q.reject(new Error('Cannot insert index ' + i + 'into empty container'));
-      }
-    });
-  }
-
-  function pushValueAt (path, value) {
-    var current = getValueAt(path);
-    var pos = current ? current.length : 0;
-    return insertValueAt(path, pos, value);
-  }
-
-  function moveValueAt (path, from, to) {
-    return $q.denodeify(function (cb) {
-      controller.doc.moveAt(path, from, to, cb);
-    });
-  }
 
 
-  function closeDoc (doc) {
-    presence.leave();
-    try {
-      doc.close();
-    } catch (e) {
-      if (e.message !== 'Cannot send to a closed connection') {
-        throw e;
-      }
-    }
-  }
+    /**
+     * @ngdoc property
+     * @name Document#localFieldChanges
+     * @type Stream<[string, string]>
+     * @description
+     * Emits a field ID and locale code whenever the document is
+     * changed on our side through one of the setter methods.
+     */
+    var localFieldChangesBus = K.createBus();
+    cleanupTasks.push(localFieldChangesBus.end);
 
-  function setDoc (doc) {
-    if (controller.doc) {
-      unplugDocEvents(controller.doc);
-      closeDoc(controller.doc);
-      delete controller.doc;
-      controller.state.editable = false;
-    }
 
-    if (doc) {
-      controller.state.error = false;
-      normalize(doc);
-      controller.doc = doc;
-      controller.state.editable = true;
-      plugDocEvents(doc);
-    }
-  }
+    var instance = {
+      destroy: destroy,
+      getVersion: getVersion,
 
-  function updateEntitySys (doc) {
-    entity.setVersion(doc.version);
-    entity.data.sys.updatedAt = moment().toISOString();
-    sysChangeBus.emit();
-  }
+      state: {
+        // Used by Entry/Asset editor controller
+        isSaving$: isSaving$,
+        // Used by 'cfFocusOtInput' directive and 'FieldLocaleController'
+        isConnected$: isConnected$,
+        // Used by Entry/Asset editor controller
+        isDirty$: isDirty$,
 
-  function otUpdateEntityData () {
-    if (controller.doc) {
-      var data = _.cloneDeep(controller.doc.snapshot);
-      if (!data) {
-        throw new Error('Failed to update entity: data not available');
-      }
-      if (!data.sys) {
-        throw new Error('Failed to update entity: sys not available');
-      }
+        loaded$: loaded$
+      },
 
-      if (controller.doc.version > entity.data.sys.version) {
-        data.sys.updatedAt = moment().toISOString();
-      } else {
-        data.sys.updatedAt = entity.data.sys.updatedAt;
-      }
-      data.sys.version = controller.doc.version;
-      entity.update(data);
-      sysChangeBus.emit();
-    }
-  }
+      status$: status$,
 
-  function plugDocEvents (doc) {
-    doc._originalEmit = doc.emit;
-    doc.emit = function (name, data) {
-      this._originalEmit.apply(this, arguments);
-      docEventsBus.emit({doc: doc, name: name, data: data});
+      getValueAt: getValueAt,
+      setValueAt: setValueAt,
+      removeValueAt: removeValueAt,
+      insertValueAt: insertValueAt,
+      pushValueAt: pushValueAt,
+      moveValueAt: moveValueAt,
+
+      changes: changes,
+      localFieldChanges$: localFieldChangesBus.stream,
+
+      valuePropertyAt: memoizedValuePropertyAt,
+      sysProperty: sysProperty,
+
+      // TODO only expose presence
+      collaboratorsFor: presence.collaboratorsFor,
+      collaborators: presence.collaborators,
+      notifyFocus: presence.focus,
+
+      /**
+       * @ngdoc property
+       * @name Document#reverter
+       * @type {Document/Reverter}
+       * @description
+       * Exposes the methods `reverter.hasChanges()` and
+       * `reverter.revert()` to revert to the initial data of the
+       * document.
+       */
+      reverter: reverter,
+
+      /**
+       * @ngdoc method
+       * @name Document#permissions.can
+       * @description
+       * Returns true if the given action can be taken on the document.
+       *
+       * Supported actions are 'update', 'delete', 'publish',
+       * 'unpublish', 'archive', 'unarchive'.
+       *
+       * @param {string} action
+       * @returns {boolean}
+       */
+      /**
+       * @ngdoc method
+       * @name Document#permissions.canEditFieldLocale
+       * @description
+       * Returns true if the field locale can be edited.
+       *
+       * Accpets public IDs as parameters.
+       *
+       * This method is used by the 'FieldLocaleController'.
+       *
+       * @param {string} fieldId
+       * @param {string} localeCode
+       * @returns {boolean}
+       */
+      permissions: permissions,
+
+      resourceState: resourceState
     };
-    docEventsBus.emit({doc: doc, name: 'open'});
-  }
 
-  function unplugDocEvents (doc) {
-    doc.emit = doc._originalEmit;
-  }
+    return instance;
 
-  function withRawDoc (cb) {
-    if (controller.doc) {
-      return cb(controller.doc);
-    } else {
-      return $q.reject(new Error('ShareJS document is not connected'));
+    /**
+     * Used by resource state manager
+     */
+    function getData () {
+      var data = {
+        fields: getValueAt(['fields']),
+        sys: _.cloneDeep(currentSys)
+      };
+      return deepFreeze(data);
     }
-  }
 
-  function normalize (doc) {
-    var locales = TheLocaleStore.getPrivateLocales();
-    Normalizer.normalize(controller, doc.snapshot, contentType, locales);
+    function destroy () {
+      cleanupTasks.forEach(function (task) {
+        task();
+      });
+    }
+
+    function shout (args) {
+      if (currentDoc && currentDoc.state !== 'closed') {
+        currentDoc.shout(args);
+      }
+    }
+
+    function getValueAt (path) {
+      if (currentDoc) {
+        return _.cloneDeep(ShareJS.peek(currentDoc, path));
+      } else {
+        return _.cloneDeep(dotty.get(entity.data, path));
+      }
+    }
+
+    function setValueAt (path, value) {
+      return withRawDoc(function (doc) {
+        maybeEmitLocalChange(path);
+        if (path.length === 3 && StringField.is(path[1], contentType)) {
+          return StringField.setAt(doc, path, value);
+        } else {
+          return ShareJS.setDeep(doc, path, value);
+        }
+      });
+    }
+
+    function removeValueAt (path) {
+      return withRawDoc(function (doc) {
+        maybeEmitLocalChange(path);
+        return ShareJS.remove(doc, path);
+      });
+    }
+
+    function insertValueAt (path, i, x) {
+      return withRawDoc(function (doc) {
+        if (getValueAt(path)) {
+          maybeEmitLocalChange(path);
+          return $q.denodeify(function (cb) {
+            doc.insertAt(path, i, x, cb);
+          });
+        } else if (i === 0) {
+          maybeEmitLocalChange(path);
+          return setValueAt(path, [x]);
+        } else {
+          return $q.reject(new Error('Cannot insert index ' + i + 'into empty container'));
+        }
+      });
+    }
+
+    function pushValueAt (path, value) {
+      var current = getValueAt(path);
+      var pos = current ? current.length : 0;
+      maybeEmitLocalChange(path);
+      return insertValueAt(path, pos, value);
+    }
+
+    function moveValueAt (path, from, to) {
+      return $q.denodeify(function (cb) {
+        maybeEmitLocalChange(path);
+        currentDoc.moveAt(path, from, to, cb);
+      });
+    }
+
+    function setDoc (doc) {
+      forgetCurrentDoc();
+
+      if (doc) {
+        currentDoc = doc;
+        normalize(doc);
+        plugDocEvents(doc);
+      }
+    }
+
+    function forgetCurrentDoc () {
+      if (currentDoc) {
+        currentDoc.emit = currentDoc._originalEmit;
+        currentDoc = undefined;
+        presence.leave();
+        docLoader.close();
+      }
+    }
+
+    function plugDocEvents (doc) {
+      doc._originalEmit = doc.emit;
+      doc.emit = function (name, data) {
+        this._originalEmit.apply(this, arguments);
+        docEventsBus.emit({doc: doc, name: name, data: data});
+      };
+      docEventsBus.emit({doc: doc, name: 'open'});
+    }
+
+    function withRawDoc (cb) {
+      if (currentDoc) {
+        return cb(currentDoc);
+      } else {
+        return $q.reject(new Error('ShareJS document is not connected'));
+      }
+    }
+
+    function normalize (doc) {
+      var locales = TheLocaleStore.getPrivateLocales();
+      Normalizer.normalize(instance, doc.snapshot, contentType, locales);
+    }
+
+
+    // Passed to document reverter
+    function setFields (fields) {
+      return setValueAt(['fields'], fields)
+      .then(getVersion);
+    }
+
+    function getVersion () {
+      return currentDoc && currentDoc.version;
+    }
+
+    function maybeEmitLocalChange (path) {
+      if (path.length >= 3 && path[0] === 'fields') {
+        localFieldChangesBus.emit([path[1], path[2]]);
+      }
+    }
   }
 }]);

@@ -1,0 +1,372 @@
+@require "./stack"
+
+$workbench-header-height = $tab-header-height
+$workbench-header-horizontal-padding = 2em
+$workbench-nav-height = 70px
+
+/**
+Workbench
+
+The `.workbench` is positioned absolutely and stretched to completely
+cover its offset parent.  The `.workbench-main` section will scroll if
+its content is too large to fit into the workbench.
+
+Markup:
+.styleguide-stretch-container--short
+  .workbench
+    .workbench-header
+      a(href="#kssref-9-4") Header
+    .workbench-nav
+      a(href="#kssref-9-5") Navigation
+    .workbench-main
+      | Main
+    .workbench-actions
+      | Actions
+
+Styleguide 9.0
+*/
+
+.workbench
+  display: flex
+  flex-direction: column
+  $stretch(0, 0, 0, 0)
+  $layer('bottom')
+  > *
+    flex: 0 0 auto;
+
+
+.workbench-actions
+  margin-top: auto
+  display: flex
+  justify-content: flex-end
+  align-items: center
+  > *
+    margin-left: 0.7rem
+  padding: 0.6rem 1rem
+  border-top: 1px solid $gray-light
+  background-color: $gray-lightest
+
+/**
+Main content and sidebars
+
+Click the middle content with info sidebar to toggle it
+
+Markup:
+.workbench-header
+  | Header
+.workbench-main
+  .workbench-main__content
+    code __content
+  .workbench-main__info-sidebar.x--show
+    | <code>__info-sidebar</code> Click to slide
+.workbench-main
+  .workbench-main__content
+    code __content
+  .workbench-main__sidebar
+    code __sidebar
+.workbench-main
+  .workbench-main__left-sidebar.styleguide-filled-box1
+    code __left-sidebar
+  .workbench-main__right-content.styleguide-filled-box2
+    code __right-content
+.workbench-main
+  .workbench-main__right-content.styleguide-filled-box2
+    code __right-content
+.workbench-actions
+  | Actions
+script
+  | $('.workbench-main').click(function () {
+  |   $(this).find('.workbench-main__info-sidebar').toggleClass('x--show')
+  | })
+
+Styleguide 9.1
+*/
+
+$workbench-content()
+  overflow-y: auto
+  overflow-x: hidden
+  position: relative
+  padding-top: $rhythm(1)
+
+$workbench-sidebar-width = 20%
+$workbench-max-sidebar-width = 20rem
+$workbench-content-width = 100% - $workbench-sidebar-width
+$workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
+
+.workbench-main
+  display: flex
+  overflow-y: auto
+  flex: 1 1 auto
+  position: relative
+  height: 100%;
+
+  // Apply this modifier if `.workbench-main` does not contain a
+  // sidebar or a `.workbench__xxx-content` element.
+  &.x--content
+    display: block
+    $workbench-content()
+
+  &.x--content-full-size
+    display: block
+    overflow-y: auto
+    position: relative
+
+  &__content
+    $workbench-content()
+    flex-grow: 1
+    border-right: 1px solid $colors.element-darkest
+
+  &__left-sidebar
+    $workbench-content()
+    width: $workbench-sidebar-width
+    max-width: $workbench-max-sidebar-width
+    padding-left: 1.5rem
+    padding-right: 1.5rem
+    margin-right: auto
+
+  &__right-content
+    $workbench-content()
+    width: $workbench-content-width
+    margin-left: auto
+
+
+  // Animated slide-in. Only used in API key editor
+  &__info-sidebar
+    $workbench-content()
+    flex-shrink: 0
+    background: $colors.element-lightest
+    transition: all .3s cubic-bezier(.38,.54,.5,.99)
+    &
+      width: 0
+      padding-left: 0
+      padding-right: 0
+      border: 0
+    &.x--show
+      padding: $rhythm(1) 1.6rem
+      width: 30vw
+      max-width: 30rem
+
+
+  &__sidebar
+    $workbench-content()
+    z-index: 0
+    flex: 0 0 22.5rem
+    background: $colors.element-lightest
+    overflow: hidden
+
+    // Shadow, as if it were casted by &__content:
+    &:after
+      box-shadow: 1px 0 2px 0 rgba(black, 0.09)
+      content: ''
+      position: absolute
+      top: -100px // Prevents round shadow corners.
+      bottom: -100px
+      left: -2px // 2px wide, otherwise shadow is cut off.
+      width: 2px
+      z-index: 1
+
+  &__middle-content
+    $workbench-content()
+    width: $workbench-middle-width
+    flex-grow: 1
+    margin-left: auto
+    margin-right: auto
+
+
+.workbench-header
+  border-bottom: 1px solid $colors.element-darkest
+  border-top: 1px solid $colors.element-darkest
+  display: flex
+  flex-direction: row
+  align-items: center
+  background-color: $colors.element-lightest
+  box-shadow: 0 1px 2px 0 rgba(black ,.09)
+  padding-left: $workbench-header-horizontal-padding
+  padding-right: $workbench-header-horizontal-padding
+  position relative
+  min-height: $workbench-header-height
+  > *
+    flex-shrink: 0
+  &.x--with-nav
+    display: block
+    > *
+      display: flex
+    .page-header
+      margin-top: 20px
+
+  &__icon
+    margin-right: 1em
+    align-self: center
+
+  &__title
+    flex-shrink: 1
+    text-overflow: ellipsis
+    overflow: hidden
+    font-size: $tab-header-font-size
+    margin: 0 0.6em 0 0.1ex
+    white-space: nowrap
+    line-height: 30px
+
+  &__left
+    display: flex
+    align-self: stretch
+    min-width: $workbench-sidebar-width
+    max-width: $workbench-max-sidebar-width
+    flex: 0 0 auto
+    align-items: center
+
+  &__kb-link
+    line-height: normal
+    margin-left: 0.8ex
+
+  &__description
+    $text-truncate()
+    color: $gray
+    flex-shrink: 1
+    margin-right: 1ex
+    margin-top: 3px
+
+    & + .btn-inline
+      position: relative
+      top: 2px
+
+  &__actions
+    display: flex
+    align-self: center
+    margin-left: auto
+    &-text
+      align-self: center
+    > *
+      margin-left: 1em
+
+  &__search
+    align-self: center
+    position: relative
+    flex-basis: 60%
+    flex-shrink: 1
+    max-width: 1100px
+    padding-right: 20px
+
+
+/*
+Header
+
+Markup:
+.workbench-header
+  img.workbench-header__icon(src="/app/svg/page-ct.svg")
+  h1.workbench-header__title Title
+  .workbench-header__description This is a description
+  button.btn-inline Edit
+  .workbench-header__actions
+    button.btn-secondary-action Actions
+    button.btn-action Save
+
+Styleguide 9.4
+*/
+
+
+/*
+Workbench Nav with tabs
+
+The `.workbench-nav__left-content` section fills exactly the same space
+as the main sidebar.
+
+Markup:
+.workbench-nav
+  .workbench-nav__left-content
+    button.btn-action Add some
+  ul.workbench-nav__tabs
+    li(role="tab") First Tab
+    li(role="tab" aria-selected="true") Active Tab
+    li(role="tab") Last Tab
+.workbench-main.with-header-nav
+  .workbench-main__left-sidebar.styleguide-filled-box1
+    | sidebar
+  .workbench-main__right-content.styleguide-filled-box2
+    | content
+
+Styleguide 9.5
+*/
+.workbench-nav
+  display: flex
+  align-items: center
+  justify-content: space-between
+  height: 4rem
+  border-bottom: 1px solid $colors.light-gray
+
+
+.workbench-nav__left-content
+  padding-left: $workbench-header-horizontal-padding
+  flex-shrink: 0
+  padding-right: 2em
+
+
+.workbench-nav__tabs
+  align-self: flex-end
+  flex-grow: 0
+  flex-basis: $workbench-content-width
+  $tab-list()
+
+
+/*
+Workbench header with nav
+
+The `.x--with-nav` modifier allows subnavigation with tabs to be included
+underneath the page header section
+
+Markup:
+.workbench-header.x--with-nav
+  .page-header
+    cf-icon.workbench-header__icon(name="page-api")
+    h1.workbench-header__title Title
+  .workbench-nav
+    ul.workbench-nav__tabs
+      li(role="tab") First Tab
+      li(role="tab" aria-selected="true") Active Tab
+      li(role="tab") Last Tab
+
+Styleguide 9.6
+*/
+
+
+
+
+/**
+Loading Message
+
+Markup:
+.styleguide-stretch-container--short
+  div Breadcrumbs
+  .workbench.x--loading
+    .workbench-loading__spinner
+    .workbench-loading__message
+      | Loading entries...
+
+Styleguide 9.7
+*/
+
+@require "../mixins/spinner"
+
+.workbench.x--center
+  align-items: center
+  justify-content: center
+
+.workbench-loading
+  &__spinner
+    margin-bottom: $rhythm(1)
+    $spinner-base()
+    +$spinner-active()
+      display: block
+      width: 2em
+      height: 2em
+  &__message
+    font-size: 2em
+
+.workbench-forbidden
+  &__headline
+    font-size: 2em
+    margin-bottom: $rhythm(1)
+  &__message
+    font-size: 1.2em
+    text-align: center
+    line-height: 1.4em

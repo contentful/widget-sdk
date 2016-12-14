@@ -31,7 +31,9 @@ describe('Extension SDK', function () {
 
     const entry = {
       data: {
-        sys: {},
+        sys: {
+          type: 'Entry'
+        },
         fields: {}
       }
     };
@@ -39,14 +41,14 @@ describe('Extension SDK', function () {
     this.doc = this.$inject('mocks/entityEditor/Document').create(entry.data);
 
     this.scope = {
-      widget: {},
-      contentType: {
-        data: {
+      widget: {
+        field: field
+      },
+      entityInfo: {
+        contentType: {
           fields: [field]
         }
       },
-      entry: entry,
-      field: field,
       locale: {
         code: 'de',
         internal_code: 'de-internal'
@@ -107,7 +109,7 @@ describe('Extension SDK', function () {
 
   describe('#field', function () {
     beforeEach(function () {
-      this.scope.field.validations = ['VALIDATION'];
+      this.scope.widget.field.validations = ['VALIDATION'];
     });
 
     it('receives #validations property', function* (api) {
@@ -119,7 +121,6 @@ describe('Extension SDK', function () {
         this.doc.setValueAt(['fields'], {
           'FID-internal': {'de-internal': 'INITIAL'}
         });
-        dotty.put(this.scope.entry.data, ['fields', 'FID-internal', 'de-internal'], 'INITIAL');
       });
 
       it('gets initial value', function* (api) {
@@ -267,11 +268,11 @@ describe('Extension SDK', function () {
   });
 
   describe('#entry', function () {
-    const SYS_0 = 'initial sys value';
-    const SYS_1 = 'new sys value';
+    const SYS_0 = {type: 'Entry', version: 0};
+    const SYS_1 = {type: 'Entry', version: 1};
 
     beforeEach(function () {
-      this.doc.sysProperty.set(SYS_0);
+      this.doc.setValueAt(['sys'], SYS_0);
     });
 
     describe('#getSys()', function () {
@@ -282,7 +283,7 @@ describe('Extension SDK', function () {
 
       it('returns updated value when document property changes', function* (api) {
         expect(api.entry.getSys()).toEqual(SYS_0);
-        this.doc.sysProperty.set(SYS_1);
+        this.doc.setValueAt(['sys'], SYS_1);
         yield api.nextTick();
         expect(api.entry.getSys()).toEqual(SYS_1);
       });
@@ -299,7 +300,7 @@ describe('Extension SDK', function () {
         const listener = sinon.stub();
         api.entry.onSysChanged(listener);
         listener.reset();
-        this.doc.sysProperty.set(SYS_1);
+        this.doc.setValueAt(['sys'], SYS_1);
         yield api.nextTick();
         sinon.assert.calledWith(listener, SYS_1);
       });
@@ -308,18 +309,18 @@ describe('Extension SDK', function () {
 
   describe('#fields', function () {
     beforeEach(function () {
-      this.scope.contentType.data.fields = [
-        this.scope.field,
+      this.scope.entityInfo.contentType.fields = [
+        this.scope.widget.field,
         {id: 'f2-internal', apiName: 'f2', localized: true},
         {id: 'f3-internal', apiName: 'f3', localized: false}
       ];
 
-      this.scope.entry.data.fields = {
+      this.doc.setValueAt(['fields'], {
         'f2-internal': {
           'en-internal': 'INITIAL en',
           'de-internal': 'INITIAL de'
         }
-      };
+      });
     });
 
     it('has #id property', function* (api) {

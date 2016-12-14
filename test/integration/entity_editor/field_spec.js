@@ -1,10 +1,12 @@
 'use strict';
 
 /**
- * Tests the integration of
- * - cfEntityField directive
- * - FieldLocale controller
- * - FieldControls/Focus
+ * Tests the integration of the 'cfEntityField' directive with
+ *
+ * - 'FieldLocaleController'
+ *
+ * Mocks the 'EntryEditorController' which serves as the context for
+ * 'cfEntityField'.
  *
  * Does not render the widget.
  */
@@ -15,9 +17,6 @@ describe('entity editor field integration', function () {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
       $provide.removeDirectives('cfWidgetApi', 'cfWidgetRenderer');
     });
-
-    const K = this.$inject('mocks/kefir');
-    const Focus = this.$inject('FieldControls/Focus');
 
     const TheLocaleStore = this.$inject('TheLocaleStore');
     this.setLocales = TheLocaleStore.setLocales;
@@ -35,18 +34,17 @@ describe('entity editor field integration', function () {
       settings: {}
     };
 
-    this.validator = {
-      hasError: sinon.stub().returns(false),
-      errors$: K.createMockProperty([])
-    };
+    const editorContext = this.$inject('mocks/entityEditor/Context').create();
+    this.focus = editorContext.focus;
+
+    this.validator = editorContext.validator;
 
     this.compile = function () {
-      this.focus = Focus.create();
+      this.otDoc = this.otDoc || this.$inject('mocks/entityEditor/Document').create();
       const el = this.$compile('<cf-entity-field>', {
         widget: this.widget,
-        validator: this.validator,
-        otDoc: this.$inject('mocks/entityEditor/Document').create(),
-        focus: this.focus,
+        editorContext: editorContext,
+        otDoc: this.otDoc,
         entry: {}
       });
       el.fieldController = el.scope().fieldController;
@@ -100,9 +98,9 @@ describe('entity editor field integration', function () {
 
   describe('editing permissions', function () {
     it('shows message if user does not have editing permissions', function () {
-      const policyAccessChecker = this.$inject('accessChecker/policy');
-      policyAccessChecker.canEditFieldLocale = function (_ctId, _field, locale) {
-        return locale.code === 'EN';
+      this.otDoc = this.$inject('mocks/entityEditor/Document').create();
+      this.otDoc.permissions.canEditFieldLocale = function (_field, locale) {
+        return locale === 'EN';
       };
 
       const el = this.compile();
@@ -179,11 +177,11 @@ describe('entity editor field integration', function () {
       const el = this.compile();
       expect(getDataLocaleAttr(el)).toEqual(['en']);
 
-      this.validator.hasError
-        .withArgs(sinon.match(['fields', 'FID', 'de-internal']))
+      this.validator.hasFieldLocaleError
+        .withArgs('FID', 'de-internal')
         .returns(true);
-      // we need to fire a watcher.
-      this.validator.errors = {};
+      // we need to force an update unfortunately
+      this.validator.errors$.set([]);
       this.$apply();
 
       expect(getDataLocaleAttr(el)).toEqual(['en', 'de']);
@@ -220,15 +218,16 @@ describe('entity editor field integration', function () {
       const el = this.compile();
       assertInvalidState(el.field, false);
 
-      this.validator.hasError
-        .withArgs(sinon.match(['fields', 'FID']))
+      this.validator.hasFieldError
+        .withArgs('FID')
         .returns(true);
-      this.validator.errors = {};
+      // we need to force an update unfortunately
+      this.validator.errors$.set([]);
       this.$apply();
       assertInvalidState(el.field, true);
 
-      this.validator.hasError = sinon.stub().returns(false);
-      this.validator.errors = {};
+      this.validator.hasFieldError = sinon.stub().returns(false);
+      this.validator.errors$.set([]);
       this.$apply();
       assertInvalidState(el.field, false);
     });

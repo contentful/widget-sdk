@@ -5,12 +5,12 @@ describe('cfMultiLineEditor directive', function () {
     this.clock = sinon.useFakeTimers();
     module('contentful/test');
 
-    const widgetApi = this.$inject('mocks/widgetApi').create();
-    this.fieldApi = widgetApi.field;
+    this.widgetApi = this.$inject('mocks/widgetApi').create();
+    this.fieldApi = this.widgetApi.field;
 
     this.compile = function () {
       return this.$compile('<cf-multi-line-editor>', {}, {
-        cfWidgetApi: widgetApi
+        cfWidgetApi: this.widgetApi
       });
     };
   });
@@ -42,11 +42,11 @@ describe('cfMultiLineEditor directive', function () {
     const $el = this.compile();
     const textarea = $el.find('textarea');
 
-    this.fieldApi.onIsDisabledChanged.yield(true);
+    this.widgetApi.fieldProperties.isDisabled$.set(true);
     this.$apply();
     expect(textarea.prop('disabled')).toBe(true);
 
-    this.fieldApi.onIsDisabledChanged.yield(false);
+    this.widgetApi.fieldProperties.isDisabled$.set(false);
     this.$apply();
     expect(textarea.prop('disabled')).toBe(false);
   });
@@ -55,10 +55,10 @@ describe('cfMultiLineEditor directive', function () {
     const $el = this.compile();
     const textarea = $el.find('textarea');
 
-    this.fieldApi.onSchemaErrorsChanged.yield(null);
+    this.widgetApi.fieldProperties.schemaErrors$.set(null);
     this.$apply();
     expect(textarea.attr('aria-invalid')).toBe(undefined);
-    this.fieldApi.onSchemaErrorsChanged.yield([{}]);
+    this.widgetApi.fieldProperties.schemaErrors$.set([{}]);
     this.$apply();
     expect(textarea.attr('aria-invalid')).toBe('true');
   });

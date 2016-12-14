@@ -14,18 +14,15 @@ angular.module('contentful')
  * `$scope.fieldLocale`.
  *
  * @scope.requires {API.Locale} locale
- * @scope.requires {API.Field} field
- * @scope.requires validationResult
- * @scope.requires docPresence
+ * @scope.requires {Widget.Renderable} widget
  */
 .controller('FieldLocaleController', ['require', '$scope', '$attrs', function (require, $scope, $attrs) {
   var spaceContext = require('spaceContext');
   var K = require('utils/kefir');
-  var policyAccessChecker = require('accessChecker/policy');
   var FieldLocaleDoc = require('entityEditor/FieldLocaleDocument');
 
   var controller = this;
-  var field = $scope.field;
+  var field = $scope.widget.field;
   var locale = $scope.locale;
   var fieldPath = ['fields', field.id];
   var localePath = fieldPath.concat([locale.internal_code]);
@@ -41,6 +38,9 @@ angular.module('contentful')
   $scope.docImpl = $scope[$attrs.documentProperty || 'otDoc'];
   controller.doc = FieldLocaleDoc.create($scope.docImpl, field.id, locale.internal_code);
 
+  // Provided by the entry and asset controllers
+  var editorContext = $scope.editorContext;
+
   /**
    * @ngdoc property
    * @name FieldLocaleController#errors$
@@ -51,7 +51,7 @@ angular.module('contentful')
    * @type {Property<Error[]?>}
    */
   controller.errors$ =
-    $scope.validator.errors$
+    editorContext.validator.errors$
     .map(function (errors) {
       errors = filterLocaleErrors(errors);
 
@@ -76,6 +76,7 @@ angular.module('contentful')
   });
 
   // Only retuns errors that apply to this field locale
+  // TODO move this to entry validator
   function filterLocaleErrors (errors) {
     return errors.filter(function (error) {
       var path = error.path;
@@ -97,6 +98,7 @@ angular.module('contentful')
     });
   }
 
+  // TODO there are no tests for this
   function decorateUniquenessErrors (error) {
     if (error.name === 'unique') {
       var conflicts = error.conflicting;
@@ -117,7 +119,7 @@ angular.module('contentful')
       });
 
       // poor man's string interpolation
-      error.message = error.message.replace('${fieldName}', $scope.field.name);
+      error.message = error.message.replace('${fieldName}', field.name);
     }
   }
 
@@ -143,7 +145,10 @@ angular.module('contentful')
    * https://github.com/contentful/contentful-validation/blob/master/lib/schemas/asset.js
    */
   controller.isRequired = field.required;
-  if (($scope.entry && locale.optional) || ($scope.asset && !locale.default)) {
+  if (
+    (editorContext.entityInfo.type === 'Entry' && locale.optional) ||
+    (editorContext.entityInfo.type === 'Asset' && !locale.default)
+  ) {
     controller.isRequired = false;
   }
 
@@ -161,88 +166,50 @@ angular.module('contentful')
   controller.setActive = function (isActive) {
     if (isActive) {
       controller.doc.notifyFocus();
-      $scope.focus.set(field.id);
+      editorContext.focus.set(field.id);
     } else {
-      $scope.focus.unset(field.id);
+      editorContext.focus.unset(field.id);
     }
   };
-
-  /**
-   * @ngdoc property
-   * @name FieldLocaleController#access
-   * @type {object}
-   * @description
-   * Information about the access to the current field locale.
-   *
-   * The object has a number of boolean properties that are set
-   * according to the connection state and editing permissions. See
-   * below for a description of the properties.
-   */
-  /**
-   * @ngdoc property
-   * @name FieldLocaleController#access.disabled
-   * @type {boolean}
-   * @description
-   * True if there is no connction to ShareJS or if the user does not
-   * have permissions to the edit the field locale.
-   */
-  /**
-   * @ngdoc property
-   * @name FieldLocaleController#access.editing_disabled
-   * @type {boolean}
-   * @description
-   * True if the field is disabled on a content type level.
-   *
-   * Implies `access.disabled === true`.
-   */
-  /**
-   * @ngdoc property
-   * @name FieldLocaleController#access.denied
-   * @type {boolean}
-   * @description
-   * True if the user does not have permissions to the edit the field
-   * locale.
-   *
-   * Implies `access.disabled === true`.
-   */
-  /**
-   * @ngdoc property
-   * @name FieldLocaleController#access.disconnected
-   * @type {boolean}
-   * @description
-   * True if there is no connction to ShareJS.
-   *
-   * Implies `access.disabled === true`.
-   */
-  var accessBus = K.createPropertyBus(DISCONNECTED, $scope);
-  $scope.$watchGroup(['otDoc.state.editable', hasEditingPermission], function (access) {
-    var docOpen = access[0];
-    var editingAllowed = access[1];
-    if (field.disabled) {
-      accessBus.set(EDITING_DISABLED);
-    } else if (!editingAllowed) {
-      accessBus.set(DENIED);
-    } else if (docOpen) {
-      accessBus.set(EDITABLE);
-    } else {
-      accessBus.set(DISCONNECTED);
-    }
-  });
 
   /**
    * @ngdoc property
    * @name FieldLocaleController#access$
    * @type {Property<Access>}
    * @description
-   * A property the holds the same value as FieldLocaleController#access
+   * Holds information about the access to the current field locale.
+   *
+   * The object has a number of boolean properties that are set
+   * according to the connection state and editing permissions.
+   *
+   * - `disconnected`  No ShareJS connection
+   * - `denied`  The user does not have permission to edit the field
+   * - `editing_disabled`  The field is disabled at the content type
+   *   level
+   * - `disabled` Is true if one of the above is true
+   * - `editable` Is true if 'disabled' is false
    */
-  controller.access$ = accessBus.property;
+
+  var editingAllowed =
+    $scope.docImpl
+    .permissions.canEditFieldLocale(field.apiName, locale.code);
+
+  // TODO move this to FieldLocaleDocument
+  controller.access$ =
+    $scope.docImpl.state.isConnected$
+    .map(function (connected) {
+      if (field.disabled) {
+        return EDITING_DISABLED;
+      } else if (!editingAllowed) {
+        return DENIED;
+      } else if (connected) {
+        return EDITABLE;
+      } else {
+        return DISCONNECTED;
+      }
+    });
+
   K.onValueScope($scope, controller.access$, function (access) {
     controller.access = access;
   });
-
-  function hasEditingPermission () {
-    var ctId = dotty.get($scope, 'entity.data.sys.contentType.sys.id');
-    return policyAccessChecker.canEditFieldLocale(ctId, field, locale);
-  }
 }]);

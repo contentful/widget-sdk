@@ -47,14 +47,22 @@ describe('utils/kefir', function () {
   });
 
   describe('#onValue()', function () {
-    it('removes callback when detach is called', function () {
-      const bus = K.createBus();
+    it('calls callback on value', function () {
+      const stream = KMock.createMockStream();
       const cb = sinon.spy();
-      const detach = K.onValue(bus.stream, cb);
-      bus.emit('VAL');
+      K.onValue(stream, cb);
+      stream.emit('VAL');
+      sinon.assert.calledOnce(cb.withArgs('VAL'));
+    });
+
+    it('removes callback when detach is called', function () {
+      const stream = KMock.createMockStream();
+      const cb = sinon.spy();
+      const detach = K.onValue(stream, cb);
+      stream.emit('VAL');
       sinon.assert.calledOnce(cb);
       detach();
-      bus.emit('VAL');
+      stream.emit('VAL');
       sinon.assert.calledOnce(cb);
     });
   });
@@ -81,6 +89,22 @@ describe('utils/kefir', function () {
       bus.emit('VAL');
       this.$apply();
       sinon.assert.calledOnce(cb);
+    });
+  });
+
+  describe('#onValueWhile()', function () {
+    it('does not call callback when lifeline has ended', function () {
+      const stream = KMock.createMockStream();
+      const lifeline = KMock.createMockStream();
+      const cb = sinon.spy();
+      K.onValueWhile(lifeline, stream, cb);
+      stream.emit('VAL');
+      sinon.assert.calledOnce(cb);
+
+      cb.reset();
+      lifeline.end();
+      stream.emit('VAL2');
+      sinon.assert.notCalled(cb);
     });
   });
 
@@ -140,6 +164,136 @@ describe('utils/kefir', function () {
       sampler.returns('VAL');
       obs.emit();
       expect(values).toEqual(['VAL', 'INITIAL']);
+    });
+  });
+
+  describe('#promiseProperty', function () {
+    it('is set to "Pending" initially', function* () {
+      const deferred = makeDeferred();
+      const prop = K.promiseProperty(deferred.promise, 'PENDING');
+      const values = KMock.extractValues(prop);
+      expect(values[0]).toBeInstanceOf(K.PromiseStatus.Pending);
+      expect(values[0].value).toBe('PENDING');
+    });
+
+    it('is set to "Resolved" when promise resolves', function* () {
+      const deferred = makeDeferred();
+      const prop = K.promiseProperty(deferred.promise, 'PENDING');
+      const values = KMock.extractValues(prop);
+
+      deferred.resolve('SUCCESS');
+      yield deferred.promise;
+      expect(values[0]).toBeInstanceOf(K.PromiseStatus.Resolved);
+      expect(values[0].value).toBe('SUCCESS');
+    });
+
+    it('is set to "Resolved" when promise resolves', function* () {
+      const deferred = makeDeferred();
+      const prop = K.promiseProperty(deferred.promise, 'PENDING');
+      const values = KMock.extractValues(prop);
+
+      deferred.reject('ERROR');
+      yield deferred.promise.catch(() => null);
+      expect(values[0]).toBeInstanceOf(K.PromiseStatus.Rejected);
+      expect(values[0].error).toBe('ERROR');
+    });
+
+    function makeDeferred () {
+      let _resolve, _reject;
+      const promise = new Promise((resolve, reject) => {
+        _resolve = resolve;
+        _reject = reject;
+      });
+      return {
+        promise: promise,
+        resolve: _resolve,
+        reject: _reject
+      };
+    }
+  });
+
+  describe('#combinePropertiesObject()', function () {
+    it('combines the state as an object', function () {
+      const a = KMock.createMockProperty('A1');
+      const b = KMock.createMockProperty('B1');
+      const x = K.combinePropertiesObject({a, b});
+      KMock.assertCurrentValue(x, {a: 'A1', b: 'B1'});
+
+      b.set('B2');
+      KMock.assertCurrentValue(x, {a: 'A1', b: 'B2'});
+
+      a.set('A2');
+      KMock.assertCurrentValue(x, {a: 'A2', b: 'B2'});
+    });
+  });
+
+  describe('#getValue', function () {
+    it('returns current value', function () {
+      const prop = KMock.createMockProperty('A');
+      expect(K.getValue(prop)).toBe('A');
+      prop.set('B');
+      expect(K.getValue(prop)).toBe('B');
+    });
+
+    it('returns last value when property has ended', function () {
+      const prop = KMock.createMockProperty('A');
+      prop.set('B');
+      prop.end();
+      expect(K.getValue(prop)).toBe('B');
+    });
+
+    it('throws if there is no current value', function () {
+      const prop = KMock.createMockStream();
+      expect(() => K.getValue(prop)).toThrowError('Property does not have current value');
+    });
+  });
+
+  describe('#holdWhen', function () {
+    it('emits values until predicate is true', function () {
+      const prop = KMock.createMockProperty('A');
+
+      const hold = K.holdWhen(prop, (x) => x === 'X');
+      KMock.assertCurrentValue(hold, 'A');
+
+      prop.set('B');
+      KMock.assertCurrentValue(hold, 'B');
+
+      prop.set('X');
+      KMock.assertCurrentValue(hold, 'X');
+
+      prop.set('Y');
+      KMock.assertCurrentValue(hold, 'X');
+    });
+
+    it('ends after predicate is true', function () {
+      const prop = KMock.createMockProperty('A');
+      const hold = K.holdWhen(prop, (x) => x === 'X');
+
+      const ended = sinon.spy();
+      hold.onEnd(ended);
+      prop.set('X');
+      sinon.assert.calledOnce(ended);
+    });
+  });
+
+  describe('#scopeLifeline', function () {
+    beforeEach(function () {
+      this.scope = this.$inject('$rootScope').$new();
+    });
+
+    it('ends when subscribing before being destroyed', function () {
+      const ended = sinon.spy();
+      K.scopeLifeline(this.scope).onEnd(ended);
+      sinon.assert.notCalled(ended);
+      this.scope.$destroy();
+      sinon.assert.called(ended);
+    });
+
+    it('ends when subscribing after being destroyed', function () {
+      const ended = sinon.spy();
+      this.scope.$destroy();
+      K.scopeLifeline(this.scope).onEnd(ended);
+      sinon.assert.called(ended);
     });
   });
 });

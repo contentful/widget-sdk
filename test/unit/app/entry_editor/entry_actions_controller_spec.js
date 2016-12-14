@@ -3,64 +3,68 @@
 describe('Entry Actions Controller', function () {
   beforeEach(function () {
     module('contentful/test');
-    const cfStub = this.$inject('cfStub');
-
-    const space = cfStub.space('spaceid');
-    // TODO this should be possible without the space
-    const entry = cfStub.entry(space, 'entryid', 'typeid');
 
     const $rootScope = this.$inject('$rootScope');
+    const K = this.$inject('mocks/kefir');
     this.scope = $rootScope.$new();
     this.$state = this.$inject('$state');
-    this.scope.spaceContext = {space: {}};
-    this.scope.entry = entry;
-    this.notify = {};
+    this.notify = sinon.stub();
+    this.fields$ = K.createMockProperty({});
 
     const $controller = this.$inject('$controller');
+    const spaceContext = this.$inject('mocks/spaceContext').init();
+    this.createEntry = sinon.stub();
+    spaceContext.space.createEntry = this.createEntry;
+
     this.controller = $controller('EntryActionsController', {
       $scope: this.scope,
-      notify: this.notify
+      notify: this.notify,
+      fields$: this.fields$,
+      entityInfo: {
+        id: 'EID',
+        contentTypeId: 'CID'
+      },
+      preferences: {}
     });
   });
 
   describe('#duplicate command', function () {
-    beforeEach(function () {
-      this.createEntry = sinon.stub();
-      this.scope.spaceContext.space.createEntry = this.createEntry;
-    });
-
     describe('fails with an error', function () {
       beforeEach(function () {
-        this.notify.duplicateFail = sinon.stub();
-        this.createEntry.rejects({error: true});
+        this.createEntry.rejects();
         this.controller.duplicate.execute();
         this.$apply();
       });
 
       it('calls action', function () {
-        sinon.assert.calledWith(this.createEntry, 'typeid');
+        sinon.assert.calledWith(this.createEntry, 'CID');
       });
 
       it('sends notification', function () {
-        sinon.assert.called(this.notify.duplicateFail);
+        sinon.assert.calledWith(
+          this.notify,
+          sinon.match({action: 'duplicate'})
+        );
       });
     });
 
     describe('succeeds', function () {
       beforeEach(function () {
-        this.createEntry.resolves(this.scope.entry);
+        this.createEntry.resolves({
+          getId: _.constant('NEW ID')
+        });
         this.$state.go = sinon.stub();
         this.controller.duplicate.execute();
         this.$apply();
       });
 
       it('calls action', function () {
-        sinon.assert.calledWith(this.createEntry, 'typeid');
+        sinon.assert.calledWith(this.createEntry, 'CID');
       });
 
       it('opens the editor', function () {
         sinon.assert.calledWith(this.$state.go, 'spaces.detail.entries.detail', {
-          entryId: this.scope.entry.getId(),
+          entryId: 'NEW ID',
           notALinkedEntity: true
         });
       });

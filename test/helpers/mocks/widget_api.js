@@ -8,7 +8,10 @@ angular.module('contentful/mocks')
  *
  * Use `mockWidgetApi._state` to inspect internal state modified by methods.
  */
-.factory('mocks/widgetApi', [function () {
+.factory('mocks/widgetApi', ['require', function (require) {
+  const K = require('mocks/kefir');
+  const $q = require('$q');
+
   return {
     create: create,
     createField: createField
@@ -22,6 +25,12 @@ angular.module('contentful/mocks')
 
     const entrySys = {
       contentType: {sys: {id: 'CTID'}}
+    };
+
+    const fieldProperties = {
+      isDisabled$: K.createMockProperty(false),
+      schemaErrors$: K.createMockProperty(null),
+      value$: K.createMockProperty()
     };
 
     const api = {
@@ -40,15 +49,24 @@ angular.module('contentful/mocks')
         getSys: sinon.stub().returns(entrySys),
         fields: {}
       },
+      fieldProperties: fieldProperties,
       field: {
         onValueChanged: sinon.stub().returns(_.noop).yields(undefined),
-        onIsDisabledChanged: sinon.stub().returns(_.noop).yields(false),
-        onSchemaErrorsChanged: sinon.stub().returns(_.noop).yields(null),
+        onIsDisabledChanged: function (cb) {
+          return K.onValue(fieldProperties.isDisabled$, cb);
+        },
+        onSchemaErrorsChanged: function (cb) {
+          return K.onValue(fieldProperties.schemaErrors$, cb);
+        },
         setInvalid: sinon.spy(function (isInvalid) {
           state.isInvalid = isInvalid;
         }),
         getValue: sinon.stub(),
-        setValue: sinon.stub(),
+        setValue: sinon.spy(function (value) {
+          fieldProperties.value$.set(value);
+          this.getValue.returns(value);
+          return $q.resolve();
+        }),
         removeValue: sinon.stub(),
         removeValueAt: sinon.stub(),
         insertValue: sinon.stub(),

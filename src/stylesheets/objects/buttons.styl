@@ -14,6 +14,8 @@ script
 
 Styleguide 4.0
 */
+
+// Legacy classes for disabled buttons
 .transparent-button-layer
   background-color: transparent
   position: absolute
@@ -46,6 +48,8 @@ $button-reset()
     border: 0
     padding: 0
 
+button
+  $button-reset()
 
 $button($color, $text)
   $button-layout()
@@ -495,10 +499,6 @@ Styleguide 4.9
   svg
     display: inline-block
 
-.btn-secondary-action cf-icon path
-  fill: $colors.text-mid
-
-
 /*
 Action Selector
 
@@ -581,4 +581,3 @@ Styleguide 4.10
 
   .btn-action-select__selector-label
     display: inline
-

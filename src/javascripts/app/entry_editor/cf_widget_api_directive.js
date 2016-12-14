@@ -37,7 +37,7 @@ angular.module('contentful')
   var K = require('utils/kefir');
   var spaceContext = require('spaceContext');
   var EntityHelpers = require('EntityHelpers');
-  var goToEntityEditor = require('goToEntityEditor');
+  var Navigator = require('states/Navigator');
 
   var fieldLocale = $scope.fieldLocale;
   var ctField = $scope.widget.field;
@@ -46,7 +46,7 @@ angular.module('contentful')
     return !!access.disabled;
   });
 
-  this.settings = $scope.widget.settings;
+  this.settings = _.clone($scope.widget.settings);
   this.settings.helpText = this.settings.helpText || $scope.widget.defaultHelpText;
 
   this.locales = {
@@ -56,11 +56,19 @@ angular.module('contentful')
 
   this.contentType = $scope.transformedContentTypeData;
 
+  // Collection of APIs that are not exposed by the extensions API.
+  this._internal = {};
+  if ($scope.editorContext.editReferences) {
+    this._internal.editReferences = function (index, cb) {
+      $scope.editorContext.editReferences(ctField.id, $scope.locale.internal_code, index, cb);
+    };
+  }
+
   this.entry = {
-    // TODO only used by slug editor we should remove it and only offer a
-    // property interface
+    // TODO only used by slug and reference editor; we should
+    // remove it and only offer a property interface
     getSys: function () {
-      return $scope.entity.data.sys;
+      return K.getValue(fieldLocale.doc.sys);
     },
     onSysChanged: function (cb) {
       return K.onValueScope($scope, fieldLocale.doc.sys, cb);
@@ -70,7 +78,24 @@ angular.module('contentful')
 
   this.space = spaceContext.cma;
   this.entityHelpers = EntityHelpers.newForLocale($scope.locale.code);
-  this.state = {goToEditor: goToEntityEditor};
+  this.state = {
+    goToEditor: function (entity) {
+      var ref = Navigator.makeEntityRef(entity);
+      return Navigator.go(ref);
+    }
+  };
+
+  // This interace is not exposed on the Extensions SDK. It serves for
+  // internal convenience. Everything that uses these values can be
+  // written (albeit akwardly) with the Extensions SDK.
+  this.fieldProperties = {
+    // Property<boolean>
+    isDisabled$: isEditingDisabled,
+    // Property<Error[]?>
+    schemaErrors$: fieldLocale.errors$,
+    // Property<any>
+    value$: fieldLocale.doc.value$
+  };
 
   this.field = {
     onIsDisabledChanged: function (cb) {

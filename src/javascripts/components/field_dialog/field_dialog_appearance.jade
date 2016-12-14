@@ -33,35 +33,34 @@ div(
       | Please use the &ldquo;{{ widget.deprecation.alternative }}&rdquo;
       | widget instead.
 
-    .cfnext-form__field(ng-repeat="option in widgetOptions track by option.name")
-      label {{option.name}}
+    .div(ng-repeat="option in widgetOptions track by option.param")
       div(ng-switch="option.type")
-        input.cfnext-form__input(
-          ng-switch-when="short-text"
-          type="text" name="{{option.param}}"
-          placeholder="{{option.description}}" size="50"
-          ng-model="widgetParams[option.param]")
-        input.cfnext-form__input--full-size(
-          ng-switch-when="Text"
-          type="text" name="{{option.param}}"
-          placeholder="{{option.description}}"
-          ng-model="widgetParams[option.param]")
-        input.cfnext-form__input(
-          ng-switch-when="Number"
-          type="text"
-          placeholder="{{option.description}}"
-          ng-model="widgetParams[option.param]")
-        input.cfnext-form__input(
-          ng-switch-when="Boolean"
-          type="checkbox"
-          ng-model="widgetParams[option.param]")
-        div(ng-switch-when="Predefined")
+        div.cfnext-form__field(ng-switch-when="Text")
+          label {{option.name}}
+          input.cfnext-form__input--full-size(
+            type="text" name="{{option.param}}"
+            placeholder="{{option.description}}"
+            ng-model="widgetParams[option.param]")
+        div.cfnext-form-option(ng-switch-when="Boolean")
+          input(
+            type="checkbox"
+            name="{{option.param}}"
+            id="{{option.param}}"
+            ng-model="widgetParams[option.param]")
+          .cfnext-form-option__desc
+            label(for="{{option.param}}")
+              | {{option.label}}
+            p(ng-if="option.description") {{option.description}}
+        div.cfnext-form__field(ng-switch-when="Predefined")
+          label {{option.name}}
           select.cfnext-select-box(
             ng-if="option.values | isArray"
+            name="{{option.param}}"
             ng-options="value for value in option.values"
             ng-model="widgetParams[option.param]")
           select.cfnext-select-box(
             ng-if="!(option.values | isArray)"
+            name="{{option.param}}"
             ng-options="desc as value for (desc, value) in option.values"
             ng-model="widgetParams[option.param]")
       ul.cfnext-form__field-errors(cf-field-errors-for="{{option.param}}")

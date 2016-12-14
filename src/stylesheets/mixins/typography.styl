@@ -5,49 +5,61 @@ Styleguide 2.0
 */
 
 /*
-Typography
+Typefaces and weights
 
 Markup:
-h1 Title
-h2 Title
-h3 Title
-h4 Title
-h5 Title
-h6 Title
-p Title
-p.styleguide-bold Title
-p.styleguide-italic Title
+p
+  | Avenir Regular, default weight 500
+p(style="font-style: italic")
+  | Avenir Regular, 500 italic
+p(style="font-weight:600")
+  | Avenir Medium, 600 (unused)
+p(style="font-weight:700")
+  | Avenir Demi-Bold, 700
+p(style="font-weight:700; font-style: italic")
+  | Avenir Demi-Bold, 700, italic
 
 Styleguide 2.1
 */
-.styleguide-bold
-  font-weight: bold
-
-.styleguide-italic
-  font-style: italic
 
 @font-face{
   font-family: "Avenir Next W01";
-  src: url("/app/2cd55546-ec00-4af9-aeca-4a3cd186da53.woff2") format("woff2"),
-       url("/app/1e9892c0-6927-4412-9874-1b82801ba47a.woff") format("woff");
-  font-weight:  500;
+  src: url("/app/avenir-regular-normal.woff2") format("woff2"),
+       url("/app/avenir-regular-normal.woff") format("woff");
+  font-weight: 500;
   font-style: normal;
 }
 
 @font-face{
   font-family: "Avenir Next W01";
-  src: url("/app/7377dbe6-f11a-4a05-b33c-bc8ce1f60f84.woff2") format("woff2"),
-       url("/app/92b66dbd-4201-4ac2-a605-4d4ffc8705cc.woff") format("woff");
+  src: url("/app/avenir-regular-italic.woff2") format("woff2"),
+       url("/app/avenir-regular-italic.woff") format("woff");
   font-weight: 500;
   font-style: italic;
 }
 
 @font-face{
   font-family:"Avenir Next W01";
-  src: url("/app/aad99a1f-7917-4dd6-bbb5-b07cedbff64f.woff2") format("woff2"),
-       url("/app/91b50bbb-9aa1-4d54-9159-ec6f19d14a7c.woff") format("woff");
+  src: url("/app/avenir-medium-normal.woff2") format("woff2"),
+       url("/app/avenir-medium-normal.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face{
+  font-family:"Avenir Next W01";
+  src: url("/app/avenir-demibold-normal.woff2") format("woff2"),
+       url("/app/avenir-demibold-normal.woff") format("woff");
   font-weight: 700;
   font-style: normal;
+}
+
+@font-face{
+  font-family:"Avenir Next W01";
+  src: url("/app/avenir-demibold-italic.woff2") format("woff2"),
+       url("/app/avenir-demibold-italic.woff") format("woff");
+  font-weight: 700;
+  font-style: italic;
 }
 
 $sans-font()

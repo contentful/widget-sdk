@@ -6,17 +6,13 @@ describe('cfMarkdownEditor', function () {
 
     this.$inject('LazyLoader').get = sinon.stub().resolves(window.cfLibs.markdown);
 
-    const widgetApi = this.$inject('mocks/widgetApi').create();
-    widgetApi.field.getValue.returns('test');
-    this.fieldStubs = widgetApi.field;
+    this.widgetApi = this.$inject('mocks/widgetApi').create();
+    this.widgetApi.field.getValue.returns('test');
+    this.fieldStubs = this.widgetApi.field;
 
     this.notifyChange = function () {
       const notifyFn = this.fieldStubs.onValueChanged.firstCall.args[0];
       notifyFn(this.fieldStubs.getValue());
-    }.bind(this);
-
-    this.setDisabled = function () {
-      this.fieldStubs.onIsDisabledChanged.firstCall.args[0](true);
     }.bind(this);
 
     const elem = this.$compile('<cf-markdown-editor />', {}, {
@@ -78,24 +74,24 @@ describe('cfMarkdownEditor', function () {
   describe('Handling OT problems', function () {
     it('Goes to preview in case of connection problems', function () {
       expect(this.scope.inMode('md')).toBe(true);
-      this.setDisabled();
+      this.widgetApi.fieldProperties.isDisabled$.set(true);
       expect(this.scope.inMode('preview')).toBe(true);
     });
 
     it('Closes zen mode', function () {
       this.scope.zen = true;
-      this.setDisabled();
+      this.widgetApi.fieldProperties.isDisabled$.set(true);
       expect(this.scope.zen).toBe(false);
     });
 
     it('Marks as non-editable', function () {
       expect(this.scope.canEdit()).toBe(true);
-      this.setDisabled();
+      this.widgetApi.fieldProperties.isDisabled$.set(true);
       expect(this.scope.canEdit()).toBe(false);
     });
 
     it('Disallows to go to MD mode', function () {
-      this.setDisabled();
+      this.widgetApi.fieldProperties.isDisabled$.set(true);
       expect(this.scope.inMode('preview')).toBe(true);
       this.scope.setMode('md');
       expect(this.scope.inMode('preview')).toBe(true);

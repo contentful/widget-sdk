@@ -1,27 +1,22 @@
 include ./entity_link_mixins
 
 .entity-link
-  .entity-link__image(
-    ng-if="config.showDetails"
-    ng-class="{'entity-link__image--missing': !image || missing}")
-    cf-thumbnail(file="image" size="56" fit="thumb")
-
   +entity-link-drag-handle
-  +entity-link-status
 
-  .entity-link__text
-    a.entity-link__title(
-      ng-if="!missing && actions.goToEditor"
-      ui-sref="{{ actions.goToEditor.getStateRef(entity || link) }}")
-      +entity-link-title
-
-    .entity-link__title(ng-if="missing || !actions.goToEditor")
-      +entity-link-title
-
-    .entity-link__description(
+  .entity-link__content(ng-click="actions.edit()" role="{{actions.edit && 'button'}}")
+    .entity-link__image(
       ng-if="config.showDetails"
-      ng-class="{'entity-link__description--missing': !description || missing}")
-      span(ng-if="!missing && description") {{ description | truncate:150 }}
-      span(ng-if="missing || !description") No description available
+      ng-class="{'entity-link__image--missing': !image}")
+      cf-thumbnail(file="image" size="56" fit="thumb")
 
-  +entity-link-actions
+    +entity-link-status
+
+    .entity-link__text
+      +entity-link-title(class="entity-link__title")
+      .entity-link__description(
+        ng-if="config.showDetails"
+        ng-class="{'entity-link__description--missing': !description || missing}")
+        span(ng-if="!missing && description") {{ description | truncate:150 }}
+        span(ng-if="missing || !description") No description available
+
+  +entity-link-actions(item-class="entity-link__action")

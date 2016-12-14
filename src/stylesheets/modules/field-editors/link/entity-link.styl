@@ -2,16 +2,16 @@
   $element-color = $colors.element-mid
   $element-background = alpha(white, 0.95)
 
-  $cf-links-editor-shadow()
+  > *
+    padding-top: 0.85em
+    padding-bottom: 0.85em
 
   display: flex
   position: relative
-  padding: .85em
-  padding-left: 30px
   border: 1px solid $element-color
   border-radius: 1px
-  font-size: 14px
   background-color: $element-background
+  box-shadow: 0 1.5px 1.5px $colors.element-light
 
   .entity-status
     margin-top: 2px
@@ -19,17 +19,37 @@
     .status-bar
       width: 13px
       height: @width
-      margin-top: 0.5 * (@font-size - @height)
+      margin-top: 1px
       border-radius: 50%
 
   [data-drag-handle]
     position: absolute
-    left: 6px
-    padding: 0 5px // larger drag-handle surface
+    padding-left: 11px
+    padding-right: 9px
     margin-top: -1px
 
-  .entity-link__actions
-    margin-left: 0.8em
+  &__action
+    flex-shrink: 0
+    align-self: flex-start
+    padding-top: 1em
+    padding-left: 0.3em
+    padding-right: 0.3em
+    cursor: pointer
+    color: $colors.text-light
+    &:last-child
+      margin-right: 0.4em
+    &:link
+      color: $colors.text-light
+    &:hover
+      color: $colors.text-mid
+
+  &__content
+    flex-grow: 1
+    display: flex
+    // Filled by drag handle
+    margin-left: 30px
+    &[role="button"]
+      cursor: pointer
 
   &__image
     width: 4em
@@ -50,23 +70,15 @@
         height: 200%
         width: 1px
         background-color: @border-color
-        z-index: 999
         transform: rotate(45deg)
       &:after
         transform: rotate(-45deg)
 
   &__text
     flex-grow: 1
-    display: flex
-    flex-direction: column
-    align-items: flex-start
 
   &__title
     font-size: 16px
-    color: inherit!important
-    cursor: pointer
-    &--missing
-      font-style: italic
 
   &__description
     margin-top: $rhythm(0.5)

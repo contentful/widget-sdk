@@ -45,6 +45,20 @@ angular.module('cf.app')
       .toProperty(getValue);
 
 
+    /**
+     * @ngdoc property
+     * @name FieldLocaleDocument#value$
+     * @description
+     * A property that contains the most recent value at the given
+     * document path.
+     *
+     * Unlike `valueProperty` this property emits the new value when
+     * calling the `set()` method.
+     *
+     * @type {Property<any>}
+     */
+    var value$ = doc.valuePropertyAt(path);
+
     return {
       sys: doc.sysProperty,
       set: set,
@@ -54,6 +68,7 @@ angular.module('cf.app')
       push: bindToPath('pushValueAt'),
       insert: bindToPath('insertValueAt'),
       move: bindToPath('moveValueAt'),
+      value$: value$,
       valueProperty: valueProperty,
       collaborators: doc.collaboratorsFor(fieldId, localeCode),
       notifyFocus: notifyFocus

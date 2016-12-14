@@ -1,6 +1,6 @@
 mixin entity-link-drag-handle
   cf-icon(
-    ng-if="config.draggable && !disabled"
+    ng-if="config.draggable"
     data-drag-handle
     name="drag-handle-2")
 
@@ -9,24 +9,33 @@ mixin entity-link-status
     .status-bar
 
 mixin entity-link-title
-  span(ng-if="!missing && title") {{ title | truncate:256 }}
-  span.entity-link__title--missing(ng-if="!missing && !title") Untitled
-  span.entity-link__title--missing(ng-if="missing") Entity missing or inaccessible
+  div&attributes(attributes)
+    span(ng-if="!missing && title")
+      | {{ title }}
+    span(style="font-style: italic;" ng-if="!missing && !title")
+      | Untitled
+    span(style="font-style: italic;" ng-if="missing")
+      | Entity missing or inaccessible
 
 mixin entity-link-actions
-  .entity-link__actions
-    cf-icon(
-      ng-if="!missing && actions.goToEditor"
-      name="edit"
-      ng-click="actions.goToEditor(entity || link)")
+  button(
+    class=attributes['item-class']
+    data-test-id="entity-edit"
+    ng-if="actions.edit"
+    ng-click="actions.edit()")
+    cf-icon(name="edit")
 
-    a(
-      ng-if="!missing && downloadUrl"
-      ng-href="{{ downloadUrl }}"
-      target="_blank")
-      cf-icon(name="download")
+  a(
+    class=attributes['item-class']
+    data-test-id="asset-download"
+    ng-if="!missing && downloadUrl"
+    ng-href="{{ downloadUrl }}"
+    target="_blank")
+    cf-icon(name="download")
 
-    cf-icon(
-      ng-if="!disabled && actions.removeFromList"
-      name="delete"
-      ng-click="actions.removeFromList(entity || link)")
+  button(
+    class=attributes['item-class']
+    data-test-id="entity-remove"
+    ng-if="actions.remove"
+    ng-click="actions.remove()")
+    cf-icon(name="delete")
