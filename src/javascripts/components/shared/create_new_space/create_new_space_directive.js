@@ -160,7 +160,7 @@ angular.module('contentful')
   function handleSpaceCreation (newSpace, template) {
     tokenStore.getSpace(newSpace.getId())
     .then(function (space) {
-      $state.go('spaces.detail', {spaceId: space.getId()});
+      return $state.go('spaces.detail', {spaceId: space.getId()});
     })
     .then(function () {
       if (template.name === 'Blank') {
