@@ -1,12 +1,8 @@
-// If `isOnboarding = true` is passed into the scope then it will display the
-// onboarding version of the directive with a different headline, subheadline
-// and close button.
-
-
 'use strict';
 
 angular.module('contentful')
-.directive('cfCreateNewSpace', function() {
+
+.directive('cfCreateNewSpace', function () {
   return {
     restrict: 'E',
     template: JST['create_new_space_directive'](),
@@ -16,25 +12,28 @@ angular.module('contentful')
 });
 
 angular.module('contentful')
-.controller('createSpaceController', ['$scope', '$injector', '$element', function($scope, $injector, $element) {
-  var controller           = this;
-  var $rootScope           = $injector.get('$rootScope');
-  var client               = $injector.get('client');
-  var localesList          = $injector.get('localesList');
-  var spaceTemplateLoader  = $injector.get('spaceTemplateLoader');
-  var spaceTemplateCreator = $injector.get('spaceTemplateCreator');
-  var accessChecker        = $injector.get('accessChecker');
-  var tokenStore           = $injector.get('tokenStore');
-  var enforcements         = $injector.get('enforcements');
-  var spaceTools           = $injector.get('spaceTools');
-  var logger               = $injector.get('logger');
-  var analytics            = $injector.get('analytics');
-  var OrganizationList     = $injector.get('OrganizationList');
-  var spaceContext         = $injector.get('spaceContext');
+.controller('createSpaceController', ['$scope', 'require', '$element', function ($scope, require, $element) {
+  var controller = this;
+  var $rootScope = require('$rootScope');
+  var client = require('client');
+  var localesList = require('localesList');
+  var spaceTemplateLoader = require('spaceTemplateLoader');
+  var spaceTemplateCreator = require('spaceTemplateCreator');
+  var accessChecker = require('accessChecker');
+  var tokenStore = require('tokenStore');
+  var enforcements = require('enforcements');
+  var $state = require('$state');
+  var logger = require('logger');
+  var analytics = require('analytics');
+  var OrganizationList = require('OrganizationList');
+  var spaceContext = require('spaceContext');
 
-  // `true` if the directive is being used as part of the onboarding flow
-  controller.isOnboarding         = $scope.isOnboarding;
-  controller.organizations        = OrganizationList.getAll();
+  // If `isOnboarding = true` is passed into the scope then it will display the
+  // onboarding version of the directive with a different headline, subheadline
+  // and close button.
+  controller.isOnboarding = $scope.isOnboarding;
+
+  controller.organizations = OrganizationList.getAll();
   // Keep track of the view state
   controller.viewState = 'createSpaceForm';
 
@@ -52,19 +51,19 @@ angular.module('contentful')
     return org && org.sys ? accessChecker.canCreateSpaceInOrganization(org.sys.id) : false;
   });
 
-  if(controller.writableOrganizations.length > 0){
+  if (controller.writableOrganizations.length > 0) {
     controller.newSpace.organization = controller.writableOrganizations[0];
   }
 
   // Load the list of space templates
   controller.templates = [];
   spaceTemplateLoader.getTemplatesList().then(setupTemplates)
-  .catch(function() {
+  .catch(function () {
     controller.templates = undefined;
   });
 
   // Populate locales
-  controller.localesList = _.map(localesList, function(locale) {
+  controller.localesList = _.map(localesList, function (locale) {
     return {
       displayName: locale.name + ' (' + locale.code + ')',
       code: locale.code
@@ -72,23 +71,23 @@ angular.module('contentful')
   });
 
   // Scroll to bottom if example templates are opened and templates loaded
-  $scope.$watch(function() {
+  $scope.$watch(function () {
     return controller.newSpace.useTemplate;
-  }, function(usingTemplate) {
+  }, function (usingTemplate) {
     if (usingTemplate && controller.templates) {
       $element.animate({scrollTop: $element.scrollTop() + 260}, 'linear');
     }
   });
 
   // Switch space template
-  controller.selectTemplate = function(template) {
+  controller.selectTemplate = function (template) {
     if (!controller.createSpaceInProgress) {
       controller.newSpace.selectedTemplate = template;
     }
   };
 
   // Request space creation
-  controller.requestSpaceCreation = function() {
+  controller.requestSpaceCreation = function () {
     if (!validate(controller.newSpace.data)) {
       return;
     }
@@ -102,16 +101,16 @@ angular.module('contentful')
   };
 
   // Finish creating space
-  controller.finishedSpaceCreation = function() {
-    var template = controller.newSpace.useTemplate ?
-      controller.newSpace.selectedTemplate :
-      { name: 'Blank' };
+  controller.finishedSpaceCreation = function () {
+    var template = controller.newSpace.useTemplate
+      ? controller.newSpace.selectedTemplate
+      : { name: 'Blank' };
     $scope.dialog.confirm(template);
   };
 
-  function setupTemplates(templates) {
+  function setupTemplates (templates) {
     // Don't need this once the `Blank` template gets removed from Contentful
-    controller.templates = _.reduce(templates, function(acc, template) {
+    controller.templates = _.reduce(templates, function (acc, template) {
       if (!template.fields.blank) {
         var fields = template.fields;
         acc.push(fields);
@@ -123,7 +122,7 @@ angular.module('contentful')
     controller.newSpace.selectedTemplate = _.first(controller.templates);
   }
 
-  function validate(data) {
+  function validate (data) {
     var hasSpaceName = data.name && data.name.length;
     if (!hasSpaceName) {
       showFormError('Please provide space name');
@@ -131,7 +130,7 @@ angular.module('contentful')
     return hasSpaceName;
   }
 
-  function createNewSpace(template) {
+  function createNewSpace (template) {
     if (!template) {
       template = {name: 'Blank'};
     }
@@ -151,19 +150,19 @@ angular.module('contentful')
 
     // Create space
     client.createSpace(data, orgId)
-    .then(function(newSpace){
+    .then(function (newSpace) {
       tokenStore.refresh()
       .then(_.partial(handleSpaceCreation, newSpace, template));
     })
     .catch(handleSpaceCreationFailure);
   }
 
-  function handleSpaceCreation(newSpace, template) {
+  function handleSpaceCreation (newSpace, template) {
     tokenStore.getSpace(newSpace.getId())
     .then(function (space) {
-      return spaceTools.goTo(space, true);
+      $state.go('spaces.detail', {spaceId: space.getId()});
     })
-    .then(function() {
+    .then(function () {
       if (template.name === 'Blank') {
         createApiKey();
         controller.finishedSpaceCreation();
@@ -173,14 +172,14 @@ angular.module('contentful')
         return loadSelectedTemplate();
       }
     })
-    .finally(function() {
+    .finally(function () {
       // Just show the success message whatever happens
       controller.createTemplateInProgress = false;
       controller.createSpaceInProgress = false;
     });
   }
 
-  function createTemplate(template, retried) {
+  function createTemplate (template, retried) {
     return controller.templateCreator.create(template)
     .catch(function (data) {
       if (!retried) {
@@ -189,11 +188,11 @@ angular.module('contentful')
     });
   }
 
-  function loadSelectedTemplate() {
+  function loadSelectedTemplate () {
     controller.templateCreator = spaceTemplateCreator.getCreator(spaceContext, {
       // no need to show status of individual items
-      onItemSuccess: function() {},
-      onItemError: function() {}
+      onItemSuccess: _.noop,
+      onItemError: _.noop
     });
 
     return spaceTemplateLoader.getTemplate(controller.newSpace.selectedTemplate)
@@ -201,7 +200,7 @@ angular.module('contentful')
   }
 
   // Create an API key for blank templates
-  function createApiKey() {
+  function createApiKey () {
     var key = {
       name: 'Example Key',
       description: 'We’ve created an example API key for you to help you get started.'
@@ -209,7 +208,7 @@ angular.module('contentful')
     return spaceContext.space.createDeliveryApiKey(key);
   }
 
-  function handleSpaceCreationFailure(err) {
+  function handleSpaceCreationFailure (err) {
     controller.createSpaceInProgress = false;
 
     var errors = dotty.get(err, 'body.details.errors');
@@ -224,7 +223,7 @@ angular.module('contentful')
       return;
     }
 
-    _.forEach(fieldErrors, function(e) {
+    _.forEach(fieldErrors, function (e) {
       if (hasErrorOnField(errors, e.path, e.name)) {
         showFieldError(e.path, e.message);
       }
@@ -237,26 +236,26 @@ angular.module('contentful')
   }
 
   // Form validations
-  function hasErrorOnField(errors, fieldPath, errorName) {
-    return _.some(errors, function(e) {
-       return e.path === fieldPath && e.name === errorName;
+  function hasErrorOnField (errors, fieldPath, errorName) {
+    return _.some(errors, function (e) {
+      return e.path === fieldPath && e.name === errorName;
     });
   }
 
-  function resetErrors() {
+  function resetErrors () {
     controller.newSpace.errors = { fields: {} };
   }
 
-  function showFieldError(field, error) {
+  function showFieldError (field, error) {
     controller.newSpace.errors.fields[field] = error;
   }
 
-  function showFormError(error) {
+  function showFormError (error) {
     resetErrors();
     controller.newSpace.errors.form = error;
   }
 
-  function handleUsageWarning(usage) {
+  function handleUsageWarning (usage) {
     var enforcement = enforcements.determineEnforcement('usageExceeded');
     $rootScope.$broadcast('persistentNotification', {
       message: enforcement.message,
