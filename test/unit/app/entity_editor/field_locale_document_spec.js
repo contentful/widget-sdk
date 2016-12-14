@@ -39,7 +39,7 @@ describe('entityEditor/FieldLocaleDocument', function () {
 
   describe('#valueProperty()', function () {
     it('has initial value', function () {
-      this.rootDoc.valuePropertyAt(path).set('VAL');
+      this.rootDoc.setValueAt(path, 'VAL');
       const changed = sinon.stub();
 
       this.doc.valueProperty.onValue(changed);
@@ -51,7 +51,7 @@ describe('entityEditor/FieldLocaleDocument', function () {
       this.doc.valueProperty.onValue(changed);
       changed.reset();
 
-      this.rootDoc.valuePropertyAt(path).set('VAL');
+      this.rootDoc.setValueAt(path, 'VAL');
       sinon.assert.calledWith(changed, 'VAL');
     });
 
@@ -61,7 +61,7 @@ describe('entityEditor/FieldLocaleDocument', function () {
       changed.reset();
 
       this.doc.set('VAL');
-      this.rootDoc.valuePropertyAt(path).set('VAL');
+      this.rootDoc.setValueAt(path, 'VAL');
       sinon.assert.notCalled(changed);
     });
   });

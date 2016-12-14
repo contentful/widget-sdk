@@ -1,97 +1,84 @@
 'use strict';
 
 describe('Entry Editor Controller', function () {
-  let scope;
-
-  afterEach(function () {
-    scope.$destroy();
-    scope = null;
-  });
-
   beforeEach(function () {
-    const document = sinon.stub();
-    module('contentful/test', ($provide, $controllerProvider) => {
+    module('contentful/test', ($provide) => {
       $provide.removeControllers(
         'FormWidgetsController',
         'entityEditor/LocalesController',
         'entityEditor/StatusNotificationsController'
       );
-      $provide.value('TheLocaleStore', {
-        getLocalesState: sinon.stub().returns({}),
-        getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'}),
-        getPrivateLocales: sinon.stub().returns([{internal_code: 'en-US'}, {internal_code: 'de-DE'}])
-      });
-      $controllerProvider.register('entityEditor/Document', document);
+      $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
 
-    this.createController = function () {
+
+    this.createController = () => {
       const cfStub = this.$inject('cfStub');
 
       const $rootScope = this.$inject('$rootScope');
-      scope = $rootScope.$new();
-
-      const ctData = cfStub.contentTypeData();
-      scope.contentType = {data: ctData, getId: _.constant(ctData.sys.id)};
+      const scope = $rootScope.$new();
       scope.context = {};
 
+      const ctData = cfStub.contentTypeData();
       const space = cfStub.space('testSpace');
       const entry = cfStub.entry(space, 'testEntry', 'testType', {}, {
         sys: { publishedVersion: 1 }
       });
-      scope.entry = entry;
+      scope.editorData = {
+        entity: entry,
+        contentType: {
+          getId: _.constant(ctData.sys.id),
+          data: ctData
+        },
+        fieldControls: {},
+        entityInfo: {
+          id: entry.data.sys.id,
+          type: 'Entry',
+          contentTypeId: ctData.sys.id,
+          contentType: ctData
+        }
+      };
 
       const $controller = this.$inject('$controller');
       $controller('EntryEditorController', {$scope: scope});
 
-      scope.validate = sinon.stub();
-
       return scope;
     };
 
-    document.returns(this.$inject('mocks/entityEditor/Document').create());
-    scope = this.createController();
-    this.$apply();
-  });
+    const createDoc = sinon.stub();
+    createDoc.returns(this.$inject('mocks/entityEditor/Document').create());
 
-  it('should validate if the published version has changed', function () {
-    scope.entry.data.sys.publishedVersion = 2;
-    scope.$digest();
-    sinon.assert.called(scope.validate);
+    this.spaceContext = _.extend(this.$inject('spaceContext'), {
+      docPool: {get: createDoc},
+      entryTitle: function (entry) {
+        return dotty.get(entry, 'data.fields.title');
+      }
+    });
+
+    this.scope = this.createController();
+    this.$apply();
   });
 
   describe('when the entry title changes', function () {
     it('should update the tab title', function () {
-      const spaceContext = this.$inject('spaceContext');
-      spaceContext.entryTitle = sinon.stub();
-
-      spaceContext.entryTitle.returns('foo');
+      this.scope.otDoc.setValueAt(['fields', 'title'], 'foo');
       this.$apply();
-      expect(scope.context.title).toEqual('foo');
-
-      spaceContext.entryTitle.returns('bar');
+      expect(this.scope.context.title).toEqual('foo');
+      this.scope.otDoc.setValueAt(['fields', 'title'], 'bar');
       this.$apply();
-      expect(scope.context.title).toEqual('bar');
-    });
-  });
-
-
-  describe('when the published version changes', function () {
-    it('should validate', function () {
-      scope.entry.data.sys.publishedVersion++;
-      scope.$digest();
-      sinon.assert.called(scope.validate);
+      expect(this.scope.context.title).toEqual('bar');
     });
   });
 
   describe('scope.context.dirty', function () {
     it('changes according to doc state', function () {
-      scope.otDoc.state.isDirty.set(true);
+      this.scope.otDoc.state.isDirty$.set(true);
       this.$apply();
-      expect(scope.context.dirty).toBe(true);
+      expect(this.scope.context.dirty).toBe(true);
 
-      scope.otDoc.state.isDirty.set(false);
+      this.scope.otDoc.state.isDirty$.set(false);
       this.$apply();
-      expect(scope.context.dirty).toBe(false);
+      expect(this.scope.context.dirty).toBe(false);
     });
   });
 });

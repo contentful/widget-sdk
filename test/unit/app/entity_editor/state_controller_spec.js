@@ -1,8 +1,6 @@
 'use strict';
 
 describe('entityEditor/StateController', function () {
-  let $q;
-
   beforeEach(function () {
     const closeStateSpy = this.closeStateSpy = sinon.spy();
 
@@ -10,16 +8,11 @@ describe('entityEditor/StateController', function () {
       $provide.value('navigation/closeState', closeStateSpy);
     });
 
-    $q = this.$inject('$q');
-
-    const cfStub = this.$inject('cfStub');
-    const space = cfStub.space('spaceid');
-    const entry = cfStub.entry(space, 'entryid', 'typeid');
-
 
     this.rootScope = this.$inject('$rootScope');
     this.scope = this.rootScope.$new();
-    this.scope.entry = entry;
+    this.scope.editorContext = this.$inject('mocks/entityEditor/Context').create();
+    this.scope.entityInfo = {};
 
     this.$inject('accessChecker').canPerformActionOnEntity = sinon.stub().returns(true);
 
@@ -29,64 +22,89 @@ describe('entityEditor/StateController', function () {
       show: this.showWarningsStub = sinon.stub().resolves()
     });
 
-    this.entity = entry;
-    this.notify = {};
+    const N = this.$inject('app/entity_editor/Notifications');
+    this.Notification = N.Notification;
+    this.notify = sinon.stub();
+
+    this.assertErrorNotification = function (action, error) {
+      sinon.assert.calledOnce(this.notify);
+      const arg = this.notify.args[0][0];
+      expect(arg).toBeInstanceOf(N.Notification.Error);
+      expect(arg.action).toBe(action);
+      expect(arg.response).toBe(error);
+    };
+
+    this.assertSuccessNotification = function (action) {
+      sinon.assert.calledOnce(this.notify);
+      const arg = this.notify.args[0][0];
+      expect(arg).toBeInstanceOf(N.Notification.Success);
+      expect(arg.action).toBe(action);
+    };
+
+    this.spaceEndpoint = sinon.stub();
+    const Document = this.$inject('mocks/entityEditor/Document');
+    this.doc = Document.create({
+      sys: {
+        id: 'EID',
+        type: 'Entry',
+        version: 42
+      }
+    }, this.spaceEndpoint);
+    this.spaceEndpoint.resolves(this.doc.getData());
+
+    this.validator = this.scope.editorContext.validator;
 
     const $controller = this.$inject('$controller');
     this.controller = $controller('entityEditor/StateController', {
       $scope: this.scope,
       notify: this.notify,
-      entity: entry,
-      handlePublishError: null
+      validator: this.validator,
+      otDoc: this.doc
     });
-  });
-
-  afterEach(function () {
-    $q = null;
   });
 
   describe('#delete command execution', function () {
-    beforeEach(function () {
-      this.notify.deleteFail = sinon.stub();
-      this.notify.deleteSuccess = sinon.stub();
-      this.scope.closeState = sinon.stub();
-    });
-
-    it('calls entity.delete()', function () {
-      this.entity.delete = sinon.stub().resolves();
+    it('makes delete request', function () {
       this.controller.delete.execute();
       this.$apply();
-      sinon.assert.calledOnce(this.entity.delete);
+      sinon.assert.calledWith(
+        this.spaceEndpoint,
+        sinon.match({
+          method: 'DELETE',
+          path: 'entries/EID',
+          version: 42
+        })
+      );
     });
 
     it('send success notification', function () {
-      this.entity.delete = sinon.stub().resolves();
       this.controller.delete.execute();
       this.$apply();
-      sinon.assert.calledOnce(this.notify.deleteSuccess);
+      this.assertSuccessNotification('delete');
     });
 
     it('closes the current state', function () {
-      this.entity.delete = sinon.stub().resolves();
       this.controller.delete.execute();
       this.$apply();
       sinon.assert.calledOnce(this.closeStateSpy);
     });
 
     it('sends failure notification with API error', function () {
-      this.entity.delete = sinon.stub().rejects();
+      this.spaceEndpoint.rejects('ERROR');
       this.controller.delete.execute();
       this.$apply();
-      sinon.assert.calledOnce(this.notify.deleteFail);
+      this.assertErrorNotification('delete', 'ERROR');
     });
-
   });
 
   describe('in published state without changes', function () {
     beforeEach(function () {
-      this.entity.data.sys.publishedVersion = 42;
-      this.entity.data.sys.version = 43;
-      this.entity.data.sys.archivedVersion = null;
+      this.doc.setValueAt(['sys'], {
+        id: 'EID',
+        type: 'Entry',
+        version: 42,
+        publishedVersion: 43
+      });
       this.$apply();
     });
 
@@ -108,13 +126,23 @@ describe('entityEditor/StateController', function () {
       });
 
       it('unpublishes and archives the entity', function () {
-        this.entity.unpublish = sinon.stub().resolves();
-        this.entity.archive = sinon.stub().resolves();
         this.action.execute();
         this.$apply();
-        sinon.assert.callOrder(
-          this.entity.unpublish,
-          this.entity.archive
+        sinon.assert.calledWith(
+          this.spaceEndpoint,
+          sinon.match({
+            method: 'DELETE',
+            path: 'entries/EID/published',
+            version: 42
+          })
+        );
+        sinon.assert.calledWith(
+          this.spaceEndpoint,
+          sinon.match({
+            method: 'PUT',
+            path: 'entries/EID/archived',
+            version: 42
+          })
         );
       });
     });
@@ -125,65 +153,78 @@ describe('entityEditor/StateController', function () {
       });
 
       it('unpublishes the entity', function () {
-        this.entity.unpublish = sinon.stub().resolves();
         this.action.execute();
         this.$apply();
-        sinon.assert.calledOnce(this.entity.unpublish);
+        sinon.assert.calledWith(
+          this.spaceEndpoint,
+          sinon.match({
+            method: 'DELETE',
+            path: 'entries/EID/published',
+            version: 42
+          })
+        );
       });
     });
   });
 
   describe('in draft state', function () {
-    beforeEach(function () {
-      this.entity.data.sys.version = 1;
-      this.entity.data.sys.publishedVersion = null;
-      this.entity.data.sys.archivedVersion = null;
-      this.scope.validate = sinon.stub().returns(true);
-      this.$apply();
-    });
-
     it('sets current state to "draft"', function () {
       expect(this.controller.current).toEqual('draft');
     });
 
-    describe('primary action', function () {
-
+    describe('primary action publish', function () {
       it('publishes entity', function () {
-        this.entity.publish = sinon.stub().resolves();
         this.controller.primary.execute();
         this.$apply();
-        sinon.assert.calledOnce(this.entity.publish);
+        sinon.assert.calledWith(
+          this.spaceEndpoint,
+          sinon.match({
+            method: 'PUT',
+            path: 'entries/EID/published',
+            version: 42
+          })
+        );
       });
 
-      it('calls scope.validate()', function () {
-        this.entity.publish = sinon.stub().resolves();
+      it('notifies on success', function () {
         this.controller.primary.execute();
         this.$apply();
-        sinon.assert.calledOnce(this.scope.validate);
+        this.assertSuccessNotification('publish');
+      });
+
+      it('calls runs validator', function () {
+        this.controller.primary.execute();
+        this.$apply();
+        sinon.assert.calledOnce(this.validator.run);
       });
 
       it('sends notification if validation failed', function () {
-        this.scope.validate = sinon.stub().returns(false);
-        this.notify.publishValidationFail = sinon.stub();
-
+        this.validator.run.returns(false);
         this.controller.primary.execute();
         this.$apply();
-        sinon.assert.calledOnce(this.notify.publishValidationFail);
+        sinon.assert.calledWith(
+          this.notify,
+          sinon.match.instanceOf(this.Notification.ValidationError)
+        );
       });
 
       it('does not publish if validation failed', function () {
-        this.entity.publish = sinon.stub().resolves();
-        this.scope.validate = sinon.stub().returns(false);
-        this.notify.publishValidationFail = sinon.stub();
+        this.validator.run.returns(false);
 
         this.controller.primary.execute();
         this.$apply();
-        sinon.assert.notCalled(this.entity.publish);
+        sinon.assert.notCalled(this.spaceEndpoint);
       });
 
+      it('sends notification on server error', function () {
+        this.spaceEndpoint.rejects('ERROR');
+        this.controller.primary.execute();
+        this.$apply();
+        this.assertErrorNotification('publish', 'ERROR');
+      });
     });
 
-    describe('secondary actions', function () {
+    describe('secondary action archive', function () {
       beforeEach(function () {
         this.action = this.controller.secondary[0];
       });
@@ -192,146 +233,63 @@ describe('entityEditor/StateController', function () {
         expect(this.controller.secondary.length).toEqual(1);
       });
 
-
       it('archives entity', function () {
-        this.entity.archive = sinon.stub().resolves();
         this.action.execute();
         this.$apply();
-        sinon.assert.calledOnce(this.entity.archive);
+        sinon.assert.calledWith(
+          this.spaceEndpoint,
+          sinon.match({
+            method: 'PUT',
+            path: 'entries/EID/archived',
+            version: 42
+          })
+        );
       });
 
-    });
+      it('notifies on success', function () {
+        this.action.execute();
+        this.$apply();
+        this.assertSuccessNotification('archive');
+      });
 
+      it('notifies on failure', function () {
+        this.spaceEndpoint.rejects('ERROR');
+        this.action.execute();
+        this.$apply();
+        this.assertErrorNotification('archive', 'ERROR');
+      });
+    });
   });
 
-  describe('reverting', function () {
-    function canBeReverted (states) {
-      if (states.toPublished) {
-        it('entry can be reverted to published', function () {
-          expect(this.controller.revertToPublished.isAvailable()).toBeTruthy();
-        });
-      } else {
-        it('entry cannot be reverted to published', function () {
-          expect(this.controller.revertToPublished.isAvailable()).toBeFalsy();
-        });
-      }
+  describe('#revertToPrevious command', function () {
+    it('is available iff document has changes', function () {
+      this.doc.reverter.hasChanges.returns(true);
+      expect(this.controller.revertToPrevious.isAvailable()).toBe(true);
+      this.doc.reverter.hasChanges.returns(false);
+      expect(this.controller.revertToPrevious.isAvailable()).toBe(false);
+    });
 
-      if (states.toPrevious) {
-        it('entry can be reverted to previous state', function () {
-          expect(this.controller.revertToPrevious.isAvailable()).toBeTruthy();
-        });
-      } else {
-        it('entry cannot be reverted to previous state', function () {
-          expect(this.controller.revertToPrevious.isAvailable()).toBeFalsy();
-        });
-      }
-    }
+    it('calls notification for successful execution', function () {
+      this.doc.reverter.revert.resolves();
 
-    /**
-     * Mock object providing the interface from the `ot-doc-for`
-     * directive.
-     */
-    function OtDoc (data) {
-      const snapshot = _.cloneDeep(data);
-      return {
-        getValueAt: function (path) {
-          return dotty.get(snapshot, path);
-        },
-        setValueAt: function (path, value) {
-          dotty.put(snapshot, path, value);
-          return $q.resolve(value);
-        },
-        state: {
-          editable: true
-        }
-      };
-    }
-
-    beforeEach(function () {
-      this.entity.publish = function () {
-        this.data.sys.publishedVersion = this.data.sys.version;
-        this.data.sys.version += 1;
-        return $q.resolve();
-      };
-
-      this.entity.data.fields = {field1: 'one'};
-
-      this.otDoc = new OtDoc(this.entity.data);
-      this.scope.otDoc = this.otDoc;
-      this.scope.validate = sinon.stub().returns(true);
+      sinon.assert.notCalled(this.doc.reverter.revert);
+      this.controller.revertToPrevious.execute();
       this.$apply();
+
+      sinon.assert.calledOnce(this.doc.reverter.revert);
+      this.assertSuccessNotification('revert');
     });
 
-    describe('in initial, unpublished state', function () {
-      canBeReverted({toPublished: false, toPrevious: false});
+    it('calls notification for failed execution', function () {
+      this.doc.reverter.revert.rejects('ERROR');
+
+      sinon.assert.notCalled(this.doc.reverter.revert);
+      this.controller.revertToPrevious.execute();
+      this.$apply();
+
+      sinon.assert.calledOnce(this.doc.reverter.revert);
+      this.assertErrorNotification('revert', 'ERROR');
     });
-
-    describe('published entry with changes', function () {
-      beforeEach(function () {
-        // publish
-        this.controller.primary.execute();
-        this.$apply();
-
-        // add changes
-        this.entity.data.sys.version++;
-        this.otDoc.setValueAt(['fields', 'field1'], 'changed');
-        this.$apply();
-      });
-
-      canBeReverted({toPublished: true, toPrevious: true});
-
-      describe('#revertToPublished command', function () {
-        beforeEach(function () {
-          this.entity.getPublishedState = sinon.stub().resolves({fields: {'some-field': {'de-DE': 'published'}}});
-          this.controller.revertToPublished.execute();
-          this.$apply();
-        });
-
-        it('reverts the field data', function () {
-          expect(this.otDoc.getValueAt(['fields', 'some-field', 'de-DE'])).toBe('published');
-        });
-
-        describe('afterwards', function () {
-          beforeEach(function () {
-            this.controller.revertToPublished.execute();
-            this.$apply();
-          });
-
-          canBeReverted({toPublished: false, toPrevious: false});
-        });
-      });
-    });
-
-
-    describe('unpublished entry with changes', function () {
-      beforeEach(function () {
-        this.entity.data.sys.version++;
-        this.otDoc.setValueAt(['fields', 'field1'], 'changed');
-        this.$apply();
-      });
-
-      canBeReverted({toPublished: false, toPrevious: true});
-
-      describe('#revertToPrevious command', function () {
-
-        it('reverts the field data', function () {
-          expect(this.otDoc.getValueAt(['fields', 'field1'])).toBe('changed');
-          this.controller.revertToPrevious.execute();
-          this.$apply();
-          expect(this.otDoc.getValueAt(['fields', 'field1'])).toBe('one');
-        });
-
-        describe('afterwards', function () {
-          beforeEach(function () {
-            this.controller.revertToPrevious.execute();
-            this.$apply();
-          });
-
-          canBeReverted({toPublished: false, toPrevious: false});
-        });
-      });
-    });
-
   });
 
   describe('publication warnings', function () {
@@ -342,7 +300,6 @@ describe('entityEditor/StateController', function () {
     });
 
     it('shows publication warnings before actual action', function () {
-      this.entity.data.sys.publishedVersion = null;
       this.$apply();
       this.controller.primary.execute();
       sinon.assert.calledOnce(this.showWarningsStub);

@@ -1,27 +1,35 @@
 'use strict';
 
 describe('FieldLocaleController', function () {
+  let K;
   beforeEach(function () {
     module('contentful/test');
     const $rootScope = this.$inject('$rootScope');
     const $controller = this.$inject('$controller');
-    const K = this.$inject('mocks/kefir');
+    K = this.$inject('mocks/kefir');
     this.extractValues = K.extractValues;
-    this.init = function (scopeProps) {
-      this.otDoc = this.$inject('mocks/entityEditor/Document').create();
-      const defaultScopeProps = {
-        field: {id: 'FID'},
+    this.init = function (patchScope) {
+      this.otDoc = this.otDoc || this.$inject('mocks/entityEditor/Document').create();
+      const scope = Object.assign($rootScope.$new(), {
+        widget: {
+          field: {id: 'FID'}
+        },
         locale: {internal_code: 'LID'},
-        otDoc: this.otDoc
-      };
-      const scope = _.merge($rootScope.$new(), defaultScopeProps, scopeProps);
-      scope.validator = {
-        errors$: K.createMockProperty([])
-      };
+        otDoc: this.otDoc,
+        editorContext: this.$inject('mocks/entityEditor/Context').create()
+      });
+      if (patchScope) {
+        patchScope(scope);
+      }
+
       scope.fieldLocale = $controller('FieldLocaleController', {$scope: scope, $attrs: {}});
       this.$apply();
       return scope;
     };
+  });
+
+  afterEach(function () {
+    K = null;
   });
 
   describe('#errors$ and #errors', function () {
@@ -42,7 +50,7 @@ describe('FieldLocaleController', function () {
       ];
 
       const errorsStream = this.extractValues(scope.fieldLocale.errors$);
-      scope.validator.errors$.set(fieldLocaleErrors.concat(otherErrors));
+      scope.editorContext.validator.errors$.set(fieldLocaleErrors.concat(otherErrors));
       this.$apply();
       expect(scope.fieldLocale.errors).toEqual(fieldLocaleErrors);
       expect(errorsStream[0]).toEqual(fieldLocaleErrors);
@@ -50,7 +58,7 @@ describe('FieldLocaleController', function () {
 
     it('is set to "null" if no errors match', function () {
       const scope = this.init();
-      scope.validator.errors$.set([{path: 'does not match'}]);
+      scope.editorContext.validator.errors$.set([{path: 'does not match'}]);
       this.$apply();
       const errorsStream = this.extractValues(scope.fieldLocale.errors$);
       expect(scope.fieldLocale.errors).toEqual(null);
@@ -65,7 +73,7 @@ describe('FieldLocaleController', function () {
       const scope = this.init();
       scope.locale.optional = true;
       const errorsStream = this.extractValues(scope.fieldLocale.errors$);
-      scope.validator.errors$.set(errors);
+      scope.editorContext.validator.errors$.set(errors);
       this.$apply();
       expect(scope.fieldLocale.errors).toEqual([errors[1]]);
       expect(errorsStream[0]).toEqual([errors[1]]);
@@ -76,10 +84,9 @@ describe('FieldLocaleController', function () {
     describe('for entries', function () {
       beforeEach(function () {
         this.isRequired = function (required, optional) {
-          return this.init({
-            entry: {},
-            field: {required: required},
-            locale: {optional: optional}
+          return this.init((scope) => {
+            scope.widget.field.required = required;
+            scope.locale.optional = optional;
           }).fieldLocale.isRequired;
         };
       });
@@ -100,10 +107,10 @@ describe('FieldLocaleController', function () {
     describe('for assets', function () {
       beforeEach(function () {
         this.isRequired = function (required, def) {
-          return this.init({
-            asset: {},
-            field: {required: required},
-            locale: {default: def}
+          return this.init((scope) => {
+            scope.editorContext.entityInfo.type = 'Asset';
+            scope.widget.field.required = required;
+            scope.locale.default = def;
           }).fieldLocale.isRequired;
         };
       });
@@ -134,12 +141,7 @@ describe('FieldLocaleController', function () {
   describe('#setActive()', function () {
 
     beforeEach(function () {
-      this.scope = this.init({
-        focus: {
-          set: sinon.stub(),
-          unset: sinon.stub()
-        }
-      });
+      this.scope = this.init();
     });
 
     it('calls "otDoc.notifyFocus()" if set to true', function () {
@@ -148,33 +150,31 @@ describe('FieldLocaleController', function () {
       sinon.assert.calledWithExactly(focus, 'FID', 'LID');
     });
 
-    it('calls "scope.focus.set()" if set to true', function () {
+    it('sets the editor context field focus', function () {
+      K.assertCurrentValue(this.scope.editorContext.focus.field$, null);
       this.scope.fieldLocale.setActive(true);
-      const setFocus = this.scope.focus.set;
-      sinon.assert.calledWithExactly(setFocus, 'FID');
+      K.assertCurrentValue(this.scope.editorContext.focus.field$, 'FID');
     });
 
-    it('calls "scope.focus.unset()" if set to false', function () {
+    it('unsets the editor context field focus', function () {
+      this.scope.fieldLocale.setActive(true);
+      K.assertCurrentValue(this.scope.editorContext.focus.field$, 'FID');
       this.scope.fieldLocale.setActive(false);
-      const unsetFocus = this.scope.focus.unset;
-      sinon.assert.calledWithExactly(unsetFocus, 'FID');
+      K.assertCurrentValue(this.scope.editorContext.focus.field$, null);
     });
   });
 
   describe('#access', function () {
-    const withEditableDoc = {};
-    dotty.put(withEditableDoc, 'otDoc.state.editable', true);
-    const withNonEditableDoc = {};
-    dotty.put(withNonEditableDoc, 'otDoc.state.editable', false);
-
     beforeEach(function () {
-      const policyAccessChecker = this.$inject('accessChecker/policy');
-      policyAccessChecker.canEditFieldLocale = this.hasEditingPermission = sinon.stub();
+      this.otDoc = this.$inject('mocks/entityEditor/Document').create();
+      this.hasEditingPermission = this.otDoc.permissions.canEditFieldLocale;
     });
 
     it('is "disabled" and "disconnected" without connection and with permission', function () {
       this.hasEditingPermission.returns(true);
-      const scope = this.init(withNonEditableDoc);
+      const scope = this.init();
+      this.otDoc.state.isConnected$.set(false);
+      this.$apply();
       expect(scope.fieldLocale.access).toEqual({
         disconnected: true,
         disabled: true
@@ -183,8 +183,10 @@ describe('FieldLocaleController', function () {
 
     it('is "disabled" and "editing_disabled" if a field is disabled', function () {
       this.hasEditingPermission.returns(true);
-      const field = {field: {disabled: true}};
-      const scope = this.init(_.extend(field, withEditableDoc));
+      const scope = this.init((scope) => {
+        scope.widget.field.disabled = true;
+      });
+      this.$apply();
       expect(scope.fieldLocale.access).toEqual({
         editing_disabled: true,
         disabled: true
@@ -193,7 +195,8 @@ describe('FieldLocaleController', function () {
 
     it('is "disabled" and "denied" without permissions and with connection', function () {
       this.hasEditingPermission.returns(false);
-      const scope = this.init(withEditableDoc);
+      const scope = this.init();
+      this.$apply();
       expect(scope.fieldLocale.access).toEqual({
         denied: true,
         disabled: true
@@ -202,7 +205,9 @@ describe('FieldLocaleController', function () {
 
     it('is "disabled" and "denied" without permissions and connection', function () {
       this.hasEditingPermission.returns(false);
-      const scope = this.init(withNonEditableDoc);
+      const scope = this.init();
+      this.otDoc.state.isConnected$.set(false);
+      this.$apply();
       expect(scope.fieldLocale.access).toEqual({
         denied: true,
         disabled: true
@@ -211,7 +216,8 @@ describe('FieldLocaleController', function () {
 
     it('is "editable" with permissions and connection', function () {
       this.hasEditingPermission.returns(true);
-      const scope = this.init(withEditableDoc);
+      const scope = this.init();
+      this.$apply();
       expect(scope.fieldLocale.access).toEqual({
         editable: true
       });

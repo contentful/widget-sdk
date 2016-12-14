@@ -2,14 +2,6 @@
 
 angular.module('cf.ui')
 
-.directive('cfContextMenu', [function () {
-  return {
-    link: function (scope, element) {
-      element.hide();
-    }
-  };
-}])
-
 /**
  * @ngdoc service
  * @name contextMenu

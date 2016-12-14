@@ -59,31 +59,32 @@ angular.module('cf.app')
 
 .directive('cfSnapshotPresenterLink', ['require', function (require) {
   var spaceContext = require('spaceContext');
-  var EntityStore = require('EntityStore');
+  var EntityResolver = require('data/CMA/EntityResolver');
   var EntityHelpers = require('EntityHelpers');
-
-  var FETCH_METHODS = {
-    Asset: 'getAssets',
-    Entry: 'getEntries'
-  };
 
   return {
     restrict: 'E',
-    template: '<cf-entity-link ng-repeat="item in value" ng-if="ready" is-disabled="true" link="item.link" entity-store="store" entity-helpers="helper" config="config" />',
+    template: '<cf-entity-link ' + [
+      'ng-repeat="model in models"',
+      'entity="model.entity"',
+      'entity-helpers="helper"',
+      'config="config"'
+    ].join(' ') + ' />',
     controller: ['$scope', function ($scope) {
-      if (!Array.isArray($scope.value)) {
-        $scope.value = [$scope.value];
-      }
-
-      $scope.value = $scope.value.map(function (value) {
-        return {link: value};
+      var links = Array.isArray($scope.value) ? $scope.value : [$scope.value];
+      var ids = links.map(function (link) {
+        return link.sys.id;
       });
 
-      $scope.store = EntityStore.create(spaceContext.cma, FETCH_METHODS[$scope.linkType]);
+      var store = EntityResolver.forType($scope.linkType, spaceContext.cma);
 
-      $scope.store.prefetch(_.map($scope.value, 'link'))
-      .then(function () {
-        $scope.ready = true;
+      store.load(ids)
+      .then(function (results) {
+        $scope.models = results.map(function (result) {
+          return {
+            entity: result[1]
+          };
+        });
       });
 
       $scope.helper = EntityHelpers.newForLocale($scope.locale.code);

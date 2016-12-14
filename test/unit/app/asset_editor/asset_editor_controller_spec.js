@@ -5,25 +5,33 @@ describe('Asset editor controller', function () {
   let scope;
 
   beforeEach(function () {
-    const document = sinon.stub();
-    module('contentful/test', ($provide, $controllerProvider) => {
+    const createDoc = sinon.stub();
+    module('contentful/test', ($provide) => {
       $provide.removeControllers(
         'FormWidgetsController',
         'entityEditor/LocalesController',
         'entityEditor/StatusNotificationsController'
       );
-      $controllerProvider.register('entityEditor/Document', document);
+      $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
+      $provide.value('entityEditor/Document', {create: createDoc});
     });
 
-    document.returns(this.$inject('mocks/entityEditor/Document').create());
+    createDoc.returns(this.$inject('mocks/entityEditor/Document').create());
+    _.extend(this.$inject('spaceContext'), {
+      docPool: {get: createDoc}
+    });
+
     scope = this.$inject('$rootScope').$new();
     const accessChecker = this.$inject('accessChecker');
     accessChecker.canUpdateAsset = sinon.stub().returns(true);
 
     const cfStub = this.$inject('cfStub');
     const space = cfStub.space('testSpace');
-    const asset = cfStub.asset(space, 'testAsset', 'testType');
-    scope.asset = asset;
+    this.asset = cfStub.asset(space, 'testAsset', 'testType');
+    scope.editorData = {
+      entity: this.asset,
+      fieldControls: {}
+    };
     scope.context = {};
 
     const $controller = this.$inject('$controller');
@@ -36,23 +44,6 @@ describe('Asset editor controller', function () {
 
   afterEach(function () {
     scope = null;
-  });
-
-  it('gets a title set', function () {
-    const spaceContext = this.$inject('spaceContext');
-    spaceContext.assetTitle = sinon.stub().returns('title');
-    scope.$apply();
-    expect(scope.context.title).toBe('title');
-  });
-
-  it('validates if the published version has changed', function () {
-    scope.asset.data.sys.publishedVersion = 1;
-    scope.asset.isArchived = sinon.stub().returns(false);
-    scope.$digest();
-
-    scope.asset.data.sys.publishedVersion = 2;
-    scope.$digest();
-    sinon.assert.called(scope.validate);
   });
 
   describe('"fileUpload" event', function () {
@@ -69,16 +60,16 @@ describe('Asset editor controller', function () {
     });
 
     it('processes the asset', function () {
-      scope.asset.process = sinon.stub().resolves();
-      scope.otDoc.doc.version = 123;
+      this.asset.process = sinon.stub().resolves();
+      scope.otDoc.getVersion.returns(123);
       scope.$emit('fileUploaded', {fileName: ''}, {internal_code: 'en-US'});
-      sinon.assert.calledWith(scope.asset.process, 123, 'en-US');
+      sinon.assert.calledWith(this.asset.process, 123, 'en-US');
     });
 
     it('shows error when asset processing fails', function () {
       const notification = this.$inject('notification');
 
-      scope.asset.process = sinon.stub().rejects();
+      this.asset.process = sinon.stub().rejects();
       const processingFailed = sinon.stub();
       scope.$on('fileProcessingFailed', processingFailed);
       scope.$emit('fileUploaded', {fileName: ''}, {internal_code: 'en-US'});

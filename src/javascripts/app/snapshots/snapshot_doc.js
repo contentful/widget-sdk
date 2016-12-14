@@ -16,11 +16,18 @@ angular.module('cf.app')
 .factory('SnapshotComparatorController/snapshotDoc', ['require', function (require) {
   var K = require('utils/kefir');
   var $q = require('$q');
+  var Permissions = require('access_control/EntityPermissions');
 
   return {create: create};
 
   function create (data) {
+    var permissions = Permissions.create(data.sys);
+
     return {
+      state: {
+        isConnected$: K.constant(false)
+      },
+      permissions: permissions,
       getValueAt: valueAt,
       valuePropertyAt: valuePropertyAt,
       setValueAt: $q.resolve,

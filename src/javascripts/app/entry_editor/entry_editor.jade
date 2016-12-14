@@ -1,5 +1,12 @@
 include ../entity_editor/entity_editor.mixins.jade
 
+div.workbench-stack.animate(
+  ng-if="referenceContext")
+  .workbench-stack__padding(
+    ng-click="referenceContext.close()")
+  .workbench-stack__content
+    cf-bulk-editor(
+      reference-context="referenceContext")
 header.workbench-header
   cf-breadcrumbs
   cf-icon.workbench-header__icon(name="page-entries")
@@ -26,11 +33,11 @@ header.workbench-header
 
 .workbench-main
   .workbench-main__content
-    +editor-notification
+    cf-editor-status-notification(status="otDoc.status$" entity-label="entry")
 
     form.entity-editor-form(name="entryForm")
       cf-error-list.form-box-error(cf-error-path="['fields']")
-      cf-entity-field(ng-repeat="widget in widgets")
+      cf-entity-field(ng-repeat="widget in widgets track by widget.fieldId")
 
-  .workbench-main__entity-sidebar
-    +entity-sidebar(revert=true)
+  .workbench-main__sidebar
+    cf-entity-sidebar

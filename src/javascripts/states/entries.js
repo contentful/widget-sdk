@@ -9,10 +9,11 @@ angular.module('contentful')
 .factory('states/entries', ['require', function (require) {
   var contextHistory = require('contextHistory');
   var spaceContext = require('spaceContext');
+  var $state = require('$state');
+  var trackVersioning = require('analyticsEvents/versioning');
 
   var base = require('states/base');
-  var resolvers = require('states/resolvers');
-  var filterDeletedLocales = require('states/entityLocaleFilter');
+  var loadEditorData = require('app/entity_editor/DataLoader').loadEntry;
 
   var listEntity = {
     getTitle: function () { return 'Content'; },
@@ -41,8 +42,10 @@ angular.module('contentful')
     },
     resolve: {
       snapshot: [
-        'require', '$stateParams', 'entry', 'contentType',
-        function (require, $stateParams, entry, contentType) {
+        'require', '$stateParams', 'editorData',
+        function (require, $stateParams, editorData) {
+          var entry = editorData.entity;
+          var contentType = editorData.contentType;
           var spaceContext = require('spaceContext');
           var Entries = require('data/Entries');
 
@@ -57,17 +60,18 @@ angular.module('contentful')
     },
     template: '<cf-snapshot-comparator class="workbench" />',
     controller: [
-      'require', '$scope', 'fieldControls', 'entry', 'contentType', 'snapshot',
-      function (require, $scope, fieldControls, entry, contentType, snapshot) {
-        var $state = require('$state');
-        var $stateParams = require('$stateParams');
-        var trackVersioning = require('analyticsEvents/versioning');
+      '$stateParams', '$scope', 'editorData', 'snapshot',
+      function ($stateParams, $scope, editorData, snapshot) {
+        var entry = editorData.entity;
+        var contentType = editorData.contentType;
 
         $state.current.data = $scope.context = {};
-        $scope.widgets = _.filter(fieldControls.form, function (widget) {
+        $scope.widgets = _.filter(editorData.fieldControls.form, function (widget) {
           return !dotty.get(widget, 'field.disabled') || $scope.preferences.showDisabledFields;
         });
+        // TODO remove this and use entityInfo instead
         $scope.entry = $scope.entity = entry;
+        $scope.entityInfo = editorData.entityInfo;
         $scope.contentType = contentType;
         $scope.snapshot = snapshot;
 
@@ -94,13 +98,14 @@ angular.module('contentful')
     url: '/compare',
     children: [compareWithCurrent],
     loadingText: 'Loading versions...',
-    controller: ['require', 'entry', function (require, entry) {
+    controller: ['require', 'editorData', function (require, editorData) {
       var spaceContext = require('spaceContext');
-      var $state = require('$state');
       var modalDialog = require('modalDialog');
       var trackVersioning = require('analyticsEvents/versioning');
 
-      spaceContext.cma.getEntrySnapshots(entry.getId(), {limit: 2})
+      var entityId = editorData.entity.getId();
+
+      spaceContext.cma.getEntrySnapshots(entityId, {limit: 2})
       .then(function (res) {
         var count = dotty.get(res, 'items.length', 0);
         return count > 0 ? compare(_.first(res.items), count) : back();
@@ -115,7 +120,7 @@ angular.module('contentful')
       }
 
       function back () {
-        trackVersioning.noSnapshots(entry.getId());
+        trackVersioning.noSnapshots(entityId);
 
         return modalDialog.open({
           title: 'This entry has no versions',
@@ -129,57 +134,37 @@ angular.module('contentful')
     }]
   });
 
-  var detail = {
+  var detail = base({
     name: 'detail',
     url: '/:entryId',
     children: [compare],
     params: { addToContext: true, notALinkedEntity: false },
     resolve: {
-      entry: ['$stateParams', 'space', function ($stateParams, space) {
-        return space.getEntry($stateParams.entryId).then(function (entry) {
-          filterDeletedLocales(entry.data, space.getPrivateLocales());
-          return entry;
-        });
-      }],
-      editingInterface: resolvers.editingInterface,
-      contentType: ['spaceContext', 'entry', function (spaceContext, entry) {
-        var ctId = entry.data.sys.contentType.sys.id;
-        return spaceContext.publishedCTs.fetch(ctId);
-      }],
-      fieldControls: ['editingInterface', function (ei) {
-        return spaceContext.widgets.buildRenderable(ei.controls);
+      editorData: ['$stateParams', 'spaceContext', function ($stateParams, spaceContext) {
+        return loadEditorData(spaceContext, $stateParams.entryId);
       }]
     },
-    controller: [
-      '$scope', 'require', 'entry', 'contentType', 'fieldControls',
-      function ($scope, require, entry, contentType, fieldControls) {
-        require('$state').current.data = $scope.context = {};
-        $scope.entry = entry;
-        $scope.entity = entry;
-        $scope.contentType = contentType;
-        $scope.formControls = fieldControls.form;
-        $scope.sidebarControls = fieldControls.sidebar;
+    controller: ['$scope', '$stateParams', 'editorData', function ($scope, $stateParams, editorData) {
+      $state.current.data = $scope.context = {
+        ready: true
+      };
+      $scope.editorData = editorData;
 
-        // purge context history
-        if (require('$stateParams').notALinkedEntity) {
-          contextHistory.purge();
-        }
+      // purge context history
+      if ($stateParams.notALinkedEntity) {
+        contextHistory.purge();
+      }
 
-        // add list as parent state only if it's a deep link
-        if (contextHistory.isEmpty()) {
-          contextHistory.addEntity(listEntity);
-        }
+      // add list as parent state only if it's a deep link
+      if (contextHistory.isEmpty()) {
+        contextHistory.addEntity(listEntity);
+      }
 
-        // add current state
-        contextHistory.addEntity(buildEntryCrumb(entry));
-      }],
-    template:
-    '<div ' + [
-      'cf-entry-editor',
-      'class="workbench entry-editor"',
-      'cf-validate="entry.data"', 'cf-entry-schema'
-    ].join(' ') + '></div>'
-  };
+      // add current state
+      contextHistory.addEntity(buildEntryCrumb(editorData.entity));
+    }],
+    template: '<cf-entry-editor class="entry-editor workbench">'
+  });
 
 
   return {

@@ -16,11 +16,9 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
   var $rootScope = require('$rootScope');
   var $q = require('$q');
   var stringUtils = require('stringUtils');
-  var enforcements = require('enforcements');
   var authorization = require('authorization');
   var logger = require('logger');
   var OrganizationList = require('OrganizationList');
-  var spaceContext = require('spaceContext');
   var policyChecker = require('accessChecker/policy');
   var cache = require('accessChecker/responseCache');
   var capitalize = require('stringUtils').capitalize;
@@ -43,8 +41,8 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
   $rootScope.$watchCollection(function () {
     return {
       authContext: authorization.spaceContext,
-      organization: spaceContext.getData('organization'),
-      spaceMembership: spaceContext.getData('spaceMembership')
+      organization: getSpaceData('organization'),
+      spaceMembership: getSpaceData('spaceMembership')
     };
   }, reset);
 
@@ -110,6 +108,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
     canPerformActionOnEntryOfType: canPerformActionOnEntryOfType,
     canUpdateEntry: canUpdateEntry,
     canUpdateAsset: canUpdateAsset,
+    canUpdateEntity: canUpdateEntity,
     canUploadMultipleAssets: canUploadMultipleAssets,
     canModifyApiKeys: canModifyApiKeys,
     canModifyRoles: canModifyRoles,
@@ -128,7 +127,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
    */
   function reset () {
     cache.reset(authorization.spaceContext);
-    policyChecker.setMembership(spaceContext.getData('spaceMembership'));
+    policyChecker.setMembership(getSpaceData('spaceMembership'));
     collectResponses();
     collectFeatures();
     collectSectionVisibility();
@@ -154,14 +153,14 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
       asset: !shouldHide('readAsset') || policyChecker.canAccessAssets(),
       apiKey: !shouldHide('readApiKey'),
       settings: !shouldHide('updateSettings'),
-      learn: spaceContext.getData('spaceMembership.admin', false)
+      learn: getSpaceData('spaceMembership.admin', false)
     };
   }
 
   function collectFeatures () {
-    features = spaceContext.getData('organization.subscriptionPlan.limits.features', {});
-    userQuota.limit = spaceContext.getData('organization.subscriptionPlan.limits.permanent.organizationMembership', -1);
-    userQuota.used = spaceContext.getData('organization.usage.permanent.organizationMembership', 1);
+    features = getSpaceData('organization.subscriptionPlan.limits.features', {});
+    userQuota.limit = getSpaceData('organization.subscriptionPlan.limits.permanent.organizationMembership', -1);
+    userQuota.used = getSpaceData('organization.usage.permanent.organizationMembership', 1);
   }
 
   function createResponseAttributeGetter (attrName) {
@@ -224,7 +223,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
   /**
    * @ngdoc method
    * @name accessChecker#canUpdateEntry
-   * @param {API.Entry} entry
+   * @param {Client.Entry} entry
    * @returns {boolean}
    * @description
    * Returns true if an entry can be updated.
@@ -241,7 +240,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
   /**
    * @ngdoc method
    * @name accessChecker#canUpdateAsset
-   * @param {API.Asset} asset
+   * @param {Client.Asset} asset
    * @returns {boolean}
    * @description
    * Returns true if an asset can be updated.
@@ -254,9 +253,32 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
     return canUpdate || canUpdateWithPolicy || (canUpdateOwn && isAuthor(asset));
   }
 
+
+  /**
+   * @ngdoc method
+   * @name accessChecker#canUpdateEntity
+   * @param {Client.Entity} entity
+   * @returns {boolean}
+   * @description
+   * Returns true if the entity can be updated.
+   *
+   * Dispatches to the entry or asset method based on
+   * `entity.data.sys.type`.
+   */
+  function canUpdateEntity (entity) {
+    var type = entity.data.sys.type;
+    if (type === 'Entry') {
+      return canUpdateEntry(entity);
+    } else if (type === 'Asset') {
+      return canUpdateAsset(entity);
+    } else {
+      throw new TypeError('Unknown entity type: ' + type);
+    }
+  }
+
   function isAuthor (entity) {
     var author = getAuthorIdFor(entity);
-    var currentUser = spaceContext.getData('spaceMembership.user.sys.id');
+    var currentUser = getSpaceData('spaceMembership.user.sys.id');
 
     return author === currentUser;
   }
@@ -310,8 +332,8 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
   }
 
   function isSuperUser () {
-    var isSpaceAdmin = spaceContext.getData('spaceMembership.admin', false);
-    var organization = spaceContext.getData('organization');
+    var isSpaceAdmin = getSpaceData('spaceMembership.admin', false);
+    var organization = getSpaceData('organization');
     var isOrganizationAdmin = OrganizationList.isAdmin(organization);
     var isOrganizationOwner = OrganizationList.isOwner(organization);
 
@@ -407,7 +429,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
     var reasonsDenied = getReasonsDenied(action, entity);
     var entityType = toType(entity);
 
-    return enforcements.determineEnforcement(reasonsDenied, entityType);
+    return determineEnforcement(reasonsDenied, entityType);
   }
 
   function toType (entity) {
@@ -428,5 +450,15 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
 
   function getAuthorIdFor (entry) {
     return dotty.get(entry, 'data.sys.createdBy.sys.id');
+  }
+
+  function determineEnforcement (reasonsDenied, entityType) {
+    // Prevent circular deps
+    return require('enforcements').determineEnforcement(reasonsDenied, entityType);
+  }
+
+  function getSpaceData (path, defaultValue) {
+    // Prevent circular deps
+    return require('spaceContext').getData(path, defaultValue);
   }
 }]);

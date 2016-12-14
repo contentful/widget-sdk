@@ -7,7 +7,9 @@ angular.module('contentful/mocks')
   return Object.assign({
     createMockProperty: createMockProperty,
     createMockStream: createMockStream,
-    extractValues: extractValues
+    extractValues: extractValues,
+    assertCurrentValue: assertCurrentValue,
+    assertMatchCurrentValue: assertMatchCurrentValue
   }, Kefir);
 
   /**
@@ -40,5 +42,35 @@ angular.module('contentful/mocks')
     bus.stream.end = bus.end;
     bus.stream.emit = bus.emit;
     return bus.stream;
+  }
+
+  function assertCurrentValue (prop, expected) {
+    let called = false;
+    let actual;
+    const off = Kefir.onValue(prop, function (value) {
+      actual = value;
+      called = true;
+    });
+    off();
+    expect(called).toBe(true, 'Observable does not have current value');
+    expect(actual).toEqual(expected);
+  }
+
+  function assertMatchCurrentValue (prop, matcher) {
+    let called = false;
+    let actual;
+    const off = Kefir.onValue(prop, function (value) {
+      actual = value;
+      called = true;
+    });
+    off();
+    expect(called).toBe(true, 'Observable does not have current value');
+    if (!matcher.test(actual)) {
+      throw new Error(
+        'Observable value did not match\n' +
+        `  expected ${jasmine.pp(actual)}\n` +
+        `  to match ${matcher.message}\n`
+      );
+    }
   }
 }]);

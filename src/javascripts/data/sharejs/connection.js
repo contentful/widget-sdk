@@ -15,11 +15,8 @@ angular.module('cf.data')
   var caseof = require('libs/sum-types').caseof;
   var K = require('utils/kefir');
   var $q = require('$q');
-  var DocLoader = require('data/ShareJS/Connection/DocLoader');
+  var DocLoader = require('data/sharejs/DocLoader');
   var DocLoad = DocLoader.DocLoad;
-
-  // A list of connection states that allow us to open documents.
-  var CAN_OPEN_STATES = ['handshaking', 'ok'];
 
   return {
     create: create,
@@ -40,35 +37,44 @@ angular.module('cf.data')
 
     var events = getEventStream(connection);
 
-    /**
-     * @ngdoc property
-     * @module cf.data
-     * @name data/ShareJS/Connection#errors
-     * @description
-     * Stream that fires an event whenever the connection has an error.
-     *
-     * This is the case if the connection with the ShareJS server
-     * fails.
-     *
-     * @type {Stream<string>}
-     */
-    var errors = events.filter(function (event) {
-      return event.name === 'error';
-    }).map(function (event) {
-      return event.data;
-    });
+    var docWrappers = {};
 
-    // Property that is `true` if and only if we can open a document
-    var canOpen = K.sampleBy(events, function () {
-      return _.includes(CAN_OPEN_STATES, connection.state);
+
+    /**
+     * @type {Property<string>}
+     * Stream that hold the current connection state
+     *
+     * We skip the 'connecting' value when reconnecting and go straight
+     * to 'hanshaking'
+     *
+     *    connecting
+     * -> handshaking
+     * -> ok
+     * -> disconnected
+     * -> handshaking
+     * -> ...
+     */
+    // Set to false after we connected once
+    var initialConnect = true;
+    var state$ = K.sampleBy(events, function () {
+      if (connection.state === 'connecting') {
+        if (initialConnect) {
+          initialConnect = false;
+          return 'connecting';
+        } else {
+          return 'disconnected';
+        }
+      } else {
+        return connection.state;
+      }
+
     }).skipDuplicates();
 
 
     return {
       getDocLoader: getDocLoader,
       open: open,
-      close: close,
-      errors: errors
+      close: close
     };
 
 
@@ -82,7 +88,8 @@ angular.module('cf.data')
      * @returns {Document.Loader}
      */
     function getDocLoader (entity, readOnly) {
-      return DocLoader.create(connection, canOpen, entity, readOnly);
+      var docWrapper = getDocWrapperForEntity(entity);
+      return DocLoader.create(docWrapper, state$, readOnly);
     }
 
 
@@ -102,7 +109,8 @@ angular.module('cf.data')
           return caseof(docLoad, [
             [DocLoad.Doc, function (d) { return [d.doc]; }],
             [DocLoad.Error, function (e) { throw e.error; }],
-            [DocLoad.None, _.constant([])]
+            [DocLoad.None, _.constant([])],
+            [DocLoad.Pending, _.constant([])]
           ]);
         })
         .take(1)
@@ -120,6 +128,18 @@ angular.module('cf.data')
      */
     function close () {
       connection.disconnect();
+    }
+
+
+    function getDocWrapperForEntity (entity) {
+      var key = entityMetadataToKey(entity.data.sys);
+      var docWrapper = docWrappers[key];
+
+      if (!docWrapper) {
+        docWrappers[key] = docWrapper = createDocWrapper(connection, key);
+      }
+
+      return docWrapper;
     }
   }
 
@@ -155,5 +175,68 @@ angular.module('cf.data')
     };
 
     return connection;
+  }
+
+  /**
+   * @ngdoc type
+   * @name data/ShareJS/Connection/DocWrapper
+   * @param {ShareJS.Connection} connection
+   * @param {string} key
+   * @returns {DocWrapper}
+   */
+  function createDocWrapper (connection, key) {
+    var rawDoc = null;
+    var closePromise = $q.resolve();
+
+    return {
+      open: waitAndOpen,
+      close: maybeClose
+    };
+
+    function waitAndOpen () {
+      return closePromise.then(function () {
+        closePromise = $q.resolve();
+        return open();
+      }, function () {
+        closePromise = $q.resolve();
+      });
+    }
+
+    function open () {
+      return $q.denodeify(function (cb) {
+        connection.open(key, 'json', cb);
+      }).then(function (openedDoc) {
+        rawDoc = openedDoc;
+        return rawDoc;
+      });
+    }
+
+    function maybeClose () {
+      if (rawDoc) {
+        closePromise = close(rawDoc);
+        rawDoc = null;
+      }
+    }
+
+    function close (doc) {
+      return $q.denodeify(function (cb) {
+        try {
+          doc.close(cb);
+        } catch (e) {
+          cb(e.message === 'Cannot send to a closed connection' ? null : e);
+        }
+      });
+    }
+  }
+
+  function entityMetadataToKey (sys) {
+    switch (sys.type) {
+      case 'Entry':
+        return [sys.space.sys.id, 'entry', sys.id].join('!');
+      case 'Asset':
+        return [sys.space.sys.id, 'asset', sys.id].join('!');
+      default:
+        throw new Error('Unable to encode key for type ' + sys.type);
+    }
   }
 }]);

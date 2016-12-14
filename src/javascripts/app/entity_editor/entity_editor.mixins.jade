@@ -1,5 +1,3 @@
-include ./entity_sidebar.mixin.jade
-
 mixin editor-info-toggle
   button.btn-secondary-action(type="button"
     ng-click="preferences.toggleAuxPanel()"
@@ -22,7 +20,3 @@ mixin entity-delete-confirm-menu
     p Do you really want to delete the entry <em>{{ title }}</em>
     button.btn-caution(ui-command="state.delete") Delete
     button.btn-secondary-action(type="button") Cancel
-
-mixin editor-notification
-  .entity-editor__notification(ng-if="notifications.message" role="alert")
-    p {{notifications.message}}

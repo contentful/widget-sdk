@@ -1,66 +1,112 @@
 'use strict';
 
 angular.module('contentful')
-.controller('entityEditor/StateController', ['$scope', '$injector', 'entity', 'notify', 'handlePublishError', function ($scope, $injector, entity, notify, handlePublishError) {
+.controller('entityEditor/StateController', ['$scope', 'require', 'notify', 'validator', 'otDoc', function ($scope, require, notify, validator, otDoc) {
   var controller = this;
-  var $q = $injector.get('$q');
-  var Command = $injector.get('command');
-  var createEntryReverter = $injector.get('entryReverter');
-  var StateManager = $injector.get('EntityStateManager');
-  var analytics = $injector.get('analytics');
-  var accessChecker = $injector.get('accessChecker');
-  var closeState = $injector.get('navigation/closeState');
-  var publicationWarnings = $injector.get('entityEditor/publicationWarnings').create();
-  var trackVersioning = $injector.get('analyticsEvents/versioning');
+  var $q = require('$q');
+  var Command = require('command');
+  var closeState = require('navigation/closeState');
+  var publicationWarnings = require('entityEditor/publicationWarnings').create();
+  var trackVersioning = require('analyticsEvents/versioning');
+  var K = require('utils/kefir');
+  var N = require('app/entity_editor/Notifications');
+  var Notification = N.Notification;
+  var caseof = require('libs/sum-types/caseof-eq').caseof;
+  var EntityState = require('data/CMA/EntityState');
+  var State = EntityState.State;
+  var Action = EntityState.Action;
 
-  var stateManager = new StateManager(entity);
+  var permissions = otDoc.permissions;
+  var reverter = otDoc.reverter;
+  var docStateManager = otDoc.resourceState;
 
-  stateManager.changedEditingState.attach(function (from, to) {
-    analytics.track('entry_editor:state_changed', {
-      fromState: from,
-      toState: to,
-      entityType: entity.getType(),
-      entityId: entity.getId()
-    });
+  K.onValueScope($scope, docStateManager.inProgress$, function (inProgress) {
+    controller.inProgress = inProgress;
   });
 
-  var entryReverter = createEntryReverter(entity);
+  var noop = Command.create(function () {});
 
-  function hasPermission (action) {
-    return accessChecker.canPerformActionOnEntity(action, entity);
-  }
+  var archive = Command.create(function () {
+    return applyAction(Action.Archive());
+  }, {
+    disabled: checkDisallowed(Action.Archive())
+  }, {
+    label: 'Archive',
+    status: 'Archived',
+    targetStateId: 'archived'
+  });
 
-  function disabledChecker (action) {
-    return function () {
-      return !hasPermission(action);
-    };
-  }
+  var unarchive = Command.create(function () {
+    return applyAction(Action.Unarchive());
+  }, {
+    disabled: checkDisallowed(Action.Unarchive())
+  }, {
+    label: 'Unarchive',
+    status: 'Draft',
+    targetStateId: 'draft'
+  });
 
 
-  $scope.$watch(function () {
-    return stateManager.getEditingState();
-  }, function (state) {
-    controller.current = state;
-    switch (state) {
-      case 'archived':
+  var unpublish = Command.create(function () {
+    return applyAction(Action.Unpublish());
+  }, {
+    disabled: checkDisallowed(Action.Unpublish())
+  }, {
+    label: 'Unpublish',
+    status: 'Draft',
+    targetStateId: 'draft'
+  });
+
+  var publishChanges = Command.create(publishEntity, {
+    disabled: checkDisallowed(Action.Publish())
+  }, {
+    label: 'Publish changes',
+    targetStateId: 'published'
+  });
+
+  var publish = Command.create(publishEntity, {
+    disabled: checkDisallowed(Action.Publish())
+  }, {
+    label: 'Publish',
+    status: 'Published',
+    targetStateId: 'published'
+  });
+
+  K.onValueScope($scope, docStateManager.state$, function (state) {
+    caseof(state, [
+      [State.Archived(), function () {
+        controller.current = 'archived';
         controller.primary = unarchive;
         controller.secondary = [publish];
-        break;
-      case 'draft':
+        controller.allActions = [unarchive, publish];
+      }],
+      [State.Draft(), function () {
+        controller.current = 'draft';
         controller.primary = publish;
         controller.secondary = [archive];
-        break;
-      case 'published':
+        controller.allActions = [publish, archive];
+      }],
+      [State.Published(), function () {
+        controller.current = 'published';
         controller.primary = noop;
         controller.secondary = [archive, unpublish];
-        break;
-      case 'changes':
+        controller.allActions = [archive, unpublish];
+      }],
+      [State.Changed(), function () {
+        controller.current = 'changes';
         controller.primary = publishChanges;
         controller.secondary = [archive, unpublish];
-        break;
-    }
+        controller.allActions = [publishChanges, archive, unpublish];
+      }],
+      [State.Deleted(), function () {
+        // This state is only present briefly before closing the entry
+        // editor.
+      }]
+    ]);
 
-    if (state === 'published') {
+    controller.currentLabel = getStateLabel(state);
+
+    if (state === State.Published()) {
       controller.hidePrimary = true;
     } else {
       controller.hidePrimary = false;
@@ -76,131 +122,87 @@ angular.module('contentful')
     controller.secondaryActionsDisabled = secondaryActionsDisabled;
   });
 
-  var noop = Command.create(function () {});
-
-  var archive = Command.create(function () {
-    return stateManager.archive()
-    .then(notify.archiveSuccess, notify.archiveFail);
-  }, {
-    disabled: disabledChecker('archive')
-  }, {
-    label: 'Archive',
-    status: 'Archived',
-    targetStateId: 'archived'
-  });
-
-  var unarchive = Command.create(function () {
-    return stateManager.toDraft()
-    .then(notify.unarchiveSuccess, notify.unarchiveFail);
-  }, {
-    disabled: disabledChecker('unarchive')
-  }, {
-    label: 'Unarchive',
-    status: 'Draft',
-    targetStateId: 'draft'
-  });
-
-
-  var unpublish = Command.create(function () {
-    return stateManager.toDraft()
-    .then(notify.unpublishSuccess, notify.unpublishFail);
-  }, {
-    disabled: disabledChecker('unpublish')
-  }, {
-    label: 'Unpublish',
-    status: 'Draft',
-    targetStateId: 'draft'
-  });
-
-  var publishChanges = Command.create(publishEntity, {
-    disabled: disabledChecker('publish')
-  }, {
-    label: 'Publish changes',
-    targetStateId: 'published'
-  });
-
-  var publish = Command.create(publishEntity, {
-    disabled: disabledChecker('publish')
-  }, {
-    label: 'Publish',
-    status: 'Published',
-    targetStateId: 'published'
-  });
 
   controller.registerPublicationWarning = publicationWarnings.register;
 
   function publishEntity () {
-    publicationWarnings.show()
+    return publicationWarnings.show()
     .then(function () {
-      if (!$scope.validate()) {
-        notify.publishValidationFail();
+      if (validator.run()) {
+        return applyAction(Action.Publish())
+        .then(function (data) {
+          trackVersioning.publishedRestored(data);
+        }, function (error) {
+          validator.setApiResponseErrors(error);
+        });
+      } else {
+        notify(Notification.ValidationError());
         return $q.reject();
       }
-
-      return stateManager.publish()
-      .then(function trackRestoredPublication () {
-        trackVersioning.publishedRestored(entity.data);
-      })
-      .then(entryReverter.publishedNewVersion)
-      .then(notify.publishSuccess, handlePublishError);
     });
   }
 
   controller.delete = Command.create(function () {
-    return stateManager.delete()
+    return applyAction(Action.Delete())
     .then(function () {
-      notify.deleteSuccess();
       return closeState();
-    }, notify.deleteFail);
+    });
   }, {
     disabled: function () {
-      switch (stateManager.getState()) {
-        case 'draft': return !hasPermission('delete');
-        case 'archive': return !hasPermission('delete');
-        case 'published': return !hasPermission('unpublish') || !hasPermission('delete');
-        default: return true;
-      }
-    }
-  });
+      var canDelete = permissions.can('delete');
+      var canMoveToDraft = caseof(controller.current, [
+        ['archived', _.constant(permissions.can('unarchive'))],
+        ['changes', 'published', _.constant(permissions.can('unpublish'))],
+        ['draft', _.constant(true)]
+      ]);
 
-
-  var unwatchRevertSetup = $scope.$watch('otDoc.state.editable', function (editable) {
-    if (!editable) { return; }
-    entryReverter.init();
-    unwatchRevertSetup();
-  });
-
-  controller.revertToPublished = Command.create(function () {
-    $scope.entry.getPublishedState().then(function (data) {
-      return setDocFields(data.fields);
-    }).then(function () {
-      entryReverter.revertedToPublished();
-    })
-    .then(notify.revertToPublishedSuccess, notify.revertToPublishedFail);
-  }, {
-    available: function () {
-      return hasPermission('update') &&
-             !entity.isArchived() &&
-             entryReverter.canRevertToPublished();
+      return !canDelete || !canMoveToDraft;
     }
   });
 
   controller.revertToPrevious = Command.create(function () {
-    var fields = entryReverter.getPreviousData().fields;
-    return setDocFields(fields)
+    reverter.revert()
     .then(function () {
-      entryReverter.revertedToPrevious();
-    })
-    .then(notify.revertToPreviousSuccess, notify.revertToPreviousFail);
+      notify(Notification.Success('revert'));
+    }, function (err) {
+      notify(Notification.Error('revert', err));
+    });
   }, {
     available: function () {
-      return hasPermission('update') &&
-             !entity.isArchived() &&
-             entryReverter.canRevertToPrevious();
+      return permissions.can('update') &&
+             controller.current !== 'archived' &&
+             reverter.hasChanges();
     }
   });
 
-  function setDocFields (fields) {
-    return $scope.otDoc.setValueAt(['fields'], fields);
+
+  function getStateLabel (state) {
+    return caseof(state, [
+      [State.Archived(), _.constant('archived')],
+      [State.Draft(), _.constant('draft')],
+      [State.Published(), _.constant('published')],
+      [State.Changed(), _.constant('pending changes')],
+      [State.Deleted(), _.constant('deleted')]
+    ]);
   }
+
+
+  function applyAction (action) {
+    return docStateManager.apply(action)
+    .then(function (data) {
+      notify(Notification.Success(action));
+      return data;
+    }, function (err) {
+      notify(Notification.Error(action, err));
+      return $q.reject(err);
+    });
+  }
+
+  // TODO Move these checks into the document resource manager
+  function checkDisallowed (action) {
+    return function () {
+      return !permissions.can(action);
+    };
+  }
+
 }]);

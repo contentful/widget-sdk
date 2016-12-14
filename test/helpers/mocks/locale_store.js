@@ -53,6 +53,7 @@ angular.module('contentful/mocks')
         internal_code: locale.code + '-internal'
       }, locale);
     });
+    locales[0].default = true;
     localeStoreMock.resetWithSpace(createSpaceMock(locales));
     localeStoreMock.setActiveLocales(_.reject(locales, function (locale) {
       return 'active' in locale && !locale.active;

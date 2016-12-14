@@ -3,24 +3,28 @@ include ./entity_link_mixins
 .asset-card
   cf-thumbnail(
     ng-if="config.asThumb"
+    ng-class="{'entity-link__image--missing': !file}"
     file="file" size="123" fit="thumb"
+    role="{{hasTooltip && 'button'}}"
     cf-context-menu-trigger)
 
   cf-thumbnail(
     ng-if="!config.asThumb"
+    ng-class="{'entity-link__image--missing': !file}"
     file="file" size="270" fit="thumb"
+    role="{{hasTooltip && 'button'}}"
     cf-context-menu-trigger)
 
   +entity-link-drag-handle
   +entity-link-status
 
-  .asset-card__title(
-    ng-click="!missing && actions.goToEditor && actions.goToEditor(entity || link)"
-    ng-class="{'asset-card__title--missing': !title || missing}")
-    +entity-link-title
+  +entity-link-title(
+    class="asset-card__title"
+    ng-click="actions.edit()"
+    role="{{actions.edit && 'button'}}")
 
   .asset-card__tooltip.context-menu(
-    ng-if="!config.disableTooltip"
+    ng-if="hasTooltip"
     cf-context-menu role="menu")
 
     ul.asset-card__details(ng-if="file")
@@ -33,4 +37,5 @@ include ./entity_link_mixins
       li.asset-card__image-resolution(ng-if="file.details.image")
         | {{ file.details.image.width }}&times;{{ file.details.image.height }}
 
-    +entity-link-actions
+    div(style="display: flex")
+      +entity-link-actions(item-class="asset-card__action")

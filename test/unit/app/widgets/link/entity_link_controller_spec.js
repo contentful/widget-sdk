@@ -39,14 +39,6 @@ describe('EntityLinkController', function () {
       this.init({link: {sys: {id: id}}});
       expect(this.scope.missing).toBe(true);
     });
-
-    it('is not missing if both link and entity store are provided', function () {
-      this.init({
-        link: {sys: {id: id}},
-        entityStore: {get: _.constant(entity)}
-      });
-      expect(this.scope.missing).toBeUndefined();
-    });
   });
 
   describe('getting entity info', function () {

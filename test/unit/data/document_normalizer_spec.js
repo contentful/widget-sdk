@@ -50,19 +50,10 @@ describe('data/documentNormalizer#normalize', function () {
   });
 
   it('forces field value to be an object', function () {
-    this.contentType = {
-      data: {
-        fields: [
-          {id: 'A'},
-          {id: 'B'}
-        ]
-      }
-    };
     this.otDoc.getValueAt.returns(undefined);
-    this.otDoc.getValueAt.withArgs(['fields', 'A']).returns('not an object');
+    this.otDoc.getValueAt.withArgs(['fields']).returns('not an object');
     this.normalize();
-    sinon.assert.calledWithExactly(this.otDoc.setValueAt, ['fields', 'A'], {});
-    sinon.assert.calledWithExactly(this.otDoc.setValueAt, ['fields', 'B'], {});
+    sinon.assert.calledWithExactly(this.otDoc.setValueAt, ['fields'], {});
   });
 
 });

@@ -21,7 +21,11 @@ export const options = {
     // Transforms 'const' and 'let' to 'var' with block scope
     ['transform-es2015-block-scoping'],
     // Make sure 'const' variables are not reassigned
-    ['check-es2015-constants']
+    ['check-es2015-constants'],
+    ['transform-es2015-template-literals'],
+    // Loose option: All iterable destructuring are assumed to be arrays.
+    ['transform-es2015-destructuring', {options: 'loose'}],
+    ['transform-es2015-arrow-functions']
   ],
 
   // Get the SystemJS module ID from the source path

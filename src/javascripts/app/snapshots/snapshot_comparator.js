@@ -32,6 +32,7 @@ angular.module('cf.app')
   var $stateParams = require('$stateParams');
   var notification = require('notification');
   var trackVersioning = require('analyticsEvents/versioning');
+  var Validator = require('entityEditor/Validator');
 
   $scope.versionPicker = require('SnapshotComparatorController/versionPicker').create();
   $scope.snapshotCount = $stateParams.snapshotCount;
@@ -41,6 +42,11 @@ angular.module('cf.app')
     title: spaceContext.entryTitle($scope.entry),
     requestLeaveConfirmation: trackVersioning.trackableConfirmator(save)
   });
+
+  $scope.editorContext = {
+    validator: Validator.createNoop(),
+    entityInfo: $scope.entityInfo
+  };
 
   $scope.$watch(function () {
     return $scope.versionPicker.getPathsToRestore().length > 0;
@@ -124,7 +130,6 @@ angular.module('cf.app')
 
 .controller('SnapshotFieldController', ['require', '$scope', function (require, $scope) {
   var store = require('TheLocaleStore');
-  var K = require('utils/kefir');
 
   var field = $scope.widget.field;
   var locales = field.localized ? store.getPrivateLocales() : [store.getDefaultLocale()];
@@ -132,19 +137,18 @@ angular.module('cf.app')
   $scope.field = field;
   $scope.locales = _.filter(locales, store.isLocaleActive);
 
-  $scope.validator = {errors$: K.constant([])};
   $scope.state = {registerPublicationWarning: _.constant(_.noop)};
 
   this.setInvalid = _.noop;
 }])
 
-.controller('SnapshotComparisonController', ['$scope', 'require', function ($scope, require) {
-  var policyAccessChecker = require('accessChecker/policy');
+.controller('SnapshotComparisonController', ['$scope', function ($scope) {
+  var field = $scope.field;
+  var locale = $scope.locale;
+  var fieldPath = ['fields', field.id, locale.internal_code];
 
-  var fieldPath = ['fields', $scope.field.id, $scope.locale.internal_code];
-
-  var ctId = $scope.contentType.getId();
-  var canEdit = policyAccessChecker.canEditFieldLocale(ctId, $scope.field, $scope.locale);
+  var canEdit =
+    $scope.otDoc.permissions.canEditFieldLocale(field.apiName, locale.code);
 
   var currentVersion = $scope.otDoc.getValueAt(fieldPath);
   var snapshotVersion = $scope.snapshotDoc.getValueAt(fieldPath);

@@ -28,6 +28,9 @@ describe('EntityEditor/DataFields', function () {
       ]);
 
       this.otDoc = this.$inject('mocks/entityEditor/Document').create({
+        sys: {
+          type: 'Entry'
+        },
         fields: {
           FIELD_A: {
             'en-internal': 'A-EN',
@@ -73,7 +76,7 @@ describe('EntityEditor/DataFields', function () {
         const cb = sinon.spy();
         this.fieldsApi.A.onValueChanged('hi', cb);
         cb.reset();
-        this.otDoc.valuePropertyAt(['fields', 'FIELD_A', 'hi-internal']).set('omg');
+        this.otDoc.setValueAt(['fields', 'FIELD_A', 'hi-internal'], 'omg');
         this.$apply();
         sinon.assert.calledOnce(cb);
         sinon.assert.calledWithExactly(cb, 'omg');
@@ -83,7 +86,7 @@ describe('EntityEditor/DataFields', function () {
         const cb = sinon.spy();
         this.fieldsApi.A.onValueChanged(cb);
         cb.reset();
-        this.otDoc.valuePropertyAt(['fields', 'FIELD_A', 'en-internal']).set('omg');
+        this.otDoc.setValueAt(['fields', 'FIELD_A', 'en-internal'], 'omg');
         this.$apply();
         sinon.assert.calledOnce(cb);
         sinon.assert.calledWithExactly(cb, 'omg');

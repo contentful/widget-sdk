@@ -218,6 +218,10 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
         deferred.reject({error: 'timeout processing'});
       }, ASSET_PROCESSING_TIMEOUT);
 
+      // TODO: this is the only place where we use
+      // docConnection outside of spaceContext. We
+      // need to wait for assets to process in order
+      // to publish them in the next step.
       this.spaceContext.docConnection.open(asset)
       .then(function (info) {
         destroyDoc = info.destroy;

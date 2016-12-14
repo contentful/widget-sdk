@@ -11,7 +11,11 @@
  * The mock space context has all methods stubbed and the following objects
  * replaced with stubs:
  * - `space`
- * - `publishedCTs`
+ * - `publishedCTs` Stubs all methods.
+ *   TODO provide a mock implementation with space endpoint
+ * - `editingInterfaces` Always returns default interface.
+ * - `widgets` without custom extensions.
+ * - `docPool.load` Creates mock document
  *
  * @usage[js]
  * const spaceContext = this.$inject('mocks/spaceContext').init();
@@ -21,6 +25,9 @@
 angular.module('contentful/mocks')
 .factory('mocks/spaceContext', ['require', function (require) {
   const cfStub = require('cfStub');
+  const createEIRepo = require('data/editingInterfaces');
+  const Widgets = require('widgets');
+  const MockDocument = require('mocks/entityEditor/Document');
 
   return {
     init: init
@@ -34,6 +41,22 @@ angular.module('contentful/mocks')
 
     const space = cfStub.space('test');
     spaceContext.space = sinon.stubAll(space);
+
+    // We create a mock space endpoint that always returns a 404. This
+    // makes the EI repo create an editing interface from scratch.
+    const eiSpaceEndpoint = sinon.stub().rejects({status: 404});
+    spaceContext.editingInterfaces = createEIRepo(eiSpaceEndpoint);
+
+    Widgets.setSpace({
+      endpoint: sinon.stub().returns({
+        get: sinon.stub().resolves({items: []})
+      })
+    });
+    spaceContext.widgets = Widgets;
+
+    spaceContext.docPool = {
+      load: sinon.stub().resolves(MockDocument.create())
+    };
 
     return spaceContext;
   }

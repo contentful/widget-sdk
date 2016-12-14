@@ -16,9 +16,7 @@ describe('cfIframeWidget directive', function () {
 
     const K = this.$inject('mocks/kefir');
 
-    this.otDoc = this.$inject('mocks/entityEditor/Document').create({
-      fields: {}
-    });
+    this.otDoc = this.$inject('mocks/entityEditor/Document').create();
 
     const Widgets = this.$inject('widgets');
     Widgets.get = sinon.stub().returns({});
@@ -31,9 +29,8 @@ describe('cfIframeWidget directive', function () {
 
     this.element = this.$compile('<cf-iframe-widget>', {
       widget: {},
-      entry: {},
-      contentType: {
-        data: {
+      entityInfo: {
+        contentType: {
           fields: [{id: 'FIELD'}]
         }
       },

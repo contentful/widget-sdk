@@ -63,6 +63,7 @@ describe('contentPreview', function () {
     return {
       getId: _.constant(id),
       data: {
+        sys: { id },
         fields: {
           'internal-title-id': {en: 'Title'},
           'internal-slug-id': {en: 'my-slug'}
@@ -123,13 +124,9 @@ describe('contentPreview', function () {
   });
 
   describe('#getForContentType', function () {
-    it('returns all of the preview environments for the provided content type', function () {
-      let environments;
-      this.contentPreview.getForContentType(makeCt('ct-1')).then(function (resp) {
-        environments = resp;
-      });
-      this.$apply();
-      expect(environments.length).toBe(2);
+    it('returns all of the preview environments for the provided content type', function* () {
+      const envs = yield this.contentPreview.getForContentType('ct-1');
+      expect(envs.length).toBe(2);
     });
   });
 
@@ -261,8 +258,8 @@ describe('contentPreview', function () {
     it('replaces variables in URL', function () {
       this.compiledUrl = this.contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[0].url,
-        makeEntry('entry-1'),
-        makeCt('ct-1')
+        makeEntry('entry-1').data,
+        makeCt('ct-1').data
       );
       expect(this.compiledUrl).toBe('https://www.test.com/entry-1/Title/my-slug');
     });
@@ -270,8 +267,8 @@ describe('contentPreview', function () {
     it('does not replace invalid field tokens', function () {
       this.compiledUrl = this.contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[1].url,
-        makeEntry('entry-1'),
-        makeCt('ct-1')
+        makeEntry('entry-1').data,
+        makeCt('ct-1').data
       );
       expect(this.compiledUrl).toBe('https://www.test.com/{entry_field.invalid}');
     });

@@ -53,7 +53,7 @@ angular.module('contentful')
           if (FPError.code !== 101) {
             throw new Error(FPError);
           }
-          scope.validate();
+          scope.editorContext.validator.run();
         });
       }
 
@@ -65,7 +65,7 @@ angular.module('contentful')
       }
 
       function deleteFile () {
-        setFPFile(null).then(scope.validate);
+        setFPFile(null).then(scope.editorContext.validator.run);
       }
 
       function fileEventHandler (_event, file) {

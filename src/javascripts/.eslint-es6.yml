@@ -10,8 +10,6 @@ rules:
   no-restricted-syntax:
   - error
   - AssignmentPattern
-  - ArrayPattern
-  - ArrowFunctionExpression
   - BreakStatement
   - ClassBody
   - ClassDeclaration
@@ -27,7 +25,6 @@ rules:
   - LabeledStatement
   - MetaProperty
   - MethodDefinition
-  - ObjectPattern
   - RestElement
   - SequenceExpression
   - SpreadElement
@@ -35,8 +32,6 @@ rules:
   - SwitchCase
   - SwitchStatement
   - TaggedTemplateExpression
-  - TemplateElement
-  - TemplateLiteral
   - UpdateExpression
   - WithStatement
   - YieldExpression
@@ -51,4 +46,3 @@ rules:
   - JSXAttribute
   - JSXSpreadAttribute
   - JSXText
-  - ExportSpecifier
