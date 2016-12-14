@@ -85,6 +85,43 @@ describe('app/entity_editor/DataLoader', function () {
         'entityInfo'
       ]);
     });
+
+    describe('sanitization', function () {
+      beforeEach(function () {
+        this.entry = makeEntity('EID', 'CTID');
+        this.spaceContext.space.getEntry = sinon.stub().resolves({data: this.entry});
+      });
+
+      it('enforces field object', function* () {
+        this.entry.fields = null;
+        const editorData = yield this.loadEntry('EID');
+        expect(_.isPlainObject(editorData.entity.data.fields)).toBe(true);
+      });
+
+      it('removes non object fields', function* () {
+        this.entry.fields = null;
+        this.entry.fields = {a: null, b: {}};
+        const editorData = yield this.loadEntry('EID');
+        expect(Object.keys(editorData.entity.data.fields)).toEqual['b'];
+      });
+
+      it('removes unknown locale codes', function* () {
+        this.spaceContext.space.getPrivateLocales.returns([
+          {internal_code: 'l1'},
+          {internal_code: 'l2'}
+        ]);
+        this.entry.fields = {
+          a: {
+            l1: true,
+            l2: true,
+            l3: true
+          }
+        };
+        const editorData = yield this.loadEntry('EID');
+        expect(editorData.entity.data.fields.a)
+          .toEqual({l1: true, l2: true});
+      });
+    });
   });
 
   describe('#loadAsset()', function () {
