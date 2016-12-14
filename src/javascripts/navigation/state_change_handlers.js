@@ -22,6 +22,7 @@ angular.module('cf.app')
   var logger = $injector.get('logger');
   var modalDialog = $injector.get('modalDialog');
   var analytics = $injector.get('analytics');
+  var spaceContext = $injector.get('spaceContext');
 
   // Result of confirmation dialog
   var navigationConfirmed = false;
@@ -52,6 +53,11 @@ angular.module('cf.app')
     logger.leaveBreadcrumb('Enter state', _.extend({
       state: toState
     }, toStateParams));
+
+    if (toState.name.slice(0, 7) !== 'spaces.') {
+      analytics.trackSpaceChange(null);
+      spaceContext.purge();
+    }
 
     analytics.trackStateChange(toState, toStateParams, fromState, fromStateParams);
   }

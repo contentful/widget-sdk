@@ -22,23 +22,6 @@ describe('TheAccountView service', function () {
     this.go = $state.go = sinon.spy();
   });
 
-  describe('(in)active state', function () {
-    it('is inactive by default', function () {
-      expect(this.view.isActive()).toBe(false);
-    });
-
-    it('marks as active on enter', function () {
-      this.view.enter();
-      expect(this.view.isActive()).toBe(true);
-    });
-
-    it('marks as inactive on exit', function () {
-      this.view.enter();
-      this.view.exit();
-      expect(this.view.isActive()).toBe(false);
-    });
-  });
-
   describe('.goToUserProfile()', function () {
     once(function () {
       this.view.goToUserProfile();

@@ -61,9 +61,10 @@ angular.module('contentful').factory('spaceTools', ['$injector', function($injec
    * space actually differs from the previous one; stores ID (for "getLastUsed")
    */
   function goTo(space, doNotTrack) {
-    if (!TheAccountView.isActive() && spaceContext.getId() === space.getId()) {
+    if (spaceContext.getId() === space.getId()) {
       return;
     }
+
     if (!doNotTrack) {
       analytics.track('space_switcher:space_switched', {
         targetSpaceId: space.getId(),
