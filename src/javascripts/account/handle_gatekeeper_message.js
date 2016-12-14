@@ -8,7 +8,6 @@ angular.module('contentful')
   var authentication = require('authentication');
   var notification = require('notification');
   var TheAccountView = require('TheAccountView');
-  var spaceTools = require('spaceTools');
   var tokenStore = require('tokenStore');
   var ReloadNotification = require('ReloadNotification');
   var logger = require('logger');
@@ -24,7 +23,8 @@ angular.module('contentful')
       $rootScope.$broadcast('showCreateSpaceDialog');
 
     } else if (match('delete', 'space')) {
-      spaceTools.leaveCurrent();
+      tokenStore.refresh();
+      $location.url('/');
 
     } else if (data.type === 'flash') {
       showNotification(data);

@@ -10,18 +10,17 @@ angular.module('contentful')
   };
 }])
 
-.controller('SpaceSettingsController', ['$injector', '$scope', function ($injector, $scope) {
-
-  var $q                 = $injector.get('$q');
-  var $rootScope         = $injector.get('$rootScope');
-  var spaceContext       = $injector.get('spaceContext');
-  var Command            = $injector.get('command');
-  var tokenStore         = $injector.get('tokenStore');
-  var spaceTools         = $injector.get('spaceTools');
-  var modalDialog        = $injector.get('modalDialog');
-  var notification       = $injector.get('notification');
-  var ReloadNotification = $injector.get('ReloadNotification');
-  var repo               = $injector.get('SpaceSettingsController/createRepo').call();
+.controller('SpaceSettingsController', ['$scope', 'require', function ($scope, require) {
+  var $q = require('$q');
+  var $rootScope = require('$rootScope');
+  var $location = require('$location');
+  var spaceContext = require('spaceContext');
+  var Command = require('command');
+  var tokenStore = require('tokenStore');
+  var modalDialog = require('modalDialog');
+  var notification = require('notification');
+  var ReloadNotification = require('ReloadNotification');
+  var repo = require('SpaceSettingsController/createRepo').call();
 
   $scope.context.ready = true;
   $scope.spaceId = spaceContext.space.getId();
@@ -29,7 +28,7 @@ angular.module('contentful')
   $scope.save = Command.create(save, {disabled: isSaveDisabled});
   $scope.openRemovalDialog = Command.create(openRemovalDialog);
 
-  function save() {
+  function save () {
     return repo.rename($scope.model.name)
     .then(tokenStore.refresh)
     .then(function () {
@@ -38,7 +37,7 @@ angular.module('contentful')
     .catch(handleSaveError);
   }
 
-  function handleSaveError(err) {
+  function handleSaveError (err) {
     if (dotty.get(err, 'data.details.errors', []).length > 0) {
       notification.error('Please provide a valid space name.');
     } else {
@@ -46,24 +45,25 @@ angular.module('contentful')
     }
   }
 
-  function remove() {
+  function remove () {
     return repo.remove()
     .then(tokenStore.refresh)
-    .then(spaceTools.leaveCurrent)
     .then(function () {
+      tokenStore.refresh();
+      $location.url('/');
       notification.info('Space ' + $scope.model.name + ' deleted successfully.');
     })
     .catch(ReloadNotification.basicErrorHandler);
   }
 
-  function isSaveDisabled() {
+  function isSaveDisabled () {
     var input = dotty.get($scope, 'model.name');
     var currentName = dotty.get(spaceContext, 'space.data.name');
 
     return !input || input === currentName;
   }
 
-  function openRemovalDialog() {
+  function openRemovalDialog () {
     var space = spaceContext.space;
     var scope = _.extend($rootScope.$new(), {
       space: space,
@@ -85,14 +85,13 @@ angular.module('contentful')
   }
 }])
 
-.factory('SpaceSettingsController/createRepo', ['$injector', function ($injector) {
+.factory('SpaceSettingsController/createRepo', ['require', function (require) {
+  var spaceContext = require('spaceContext');
+  var spaceEndpoint = require('data/spaceEndpoint');
+  var authentication = require('authentication');
+  var environment = require('environment');
 
-  var spaceContext   = $injector.get('spaceContext');
-  var spaceEndpoint  = $injector.get('data/spaceEndpoint');
-  var authentication = $injector.get('authentication');
-  var environment    = $injector.get('environment');
-
-  return function createSpaceRepo() {
+  return function createSpaceRepo () {
     var makeRequest = spaceEndpoint.create(
       authentication.token,
       '//' + environment.settings.api_host,
@@ -104,7 +103,7 @@ angular.module('contentful')
       remove: remove
     };
 
-    function rename(newName) {
+    function rename (newName) {
       return makeRequest({
         method: 'PUT',
         version: spaceContext.space.getVersion(),
@@ -112,7 +111,7 @@ angular.module('contentful')
       });
     }
 
-    function remove() {
+    function remove () {
       return makeRequest({method: 'DELETE'});
     }
   };
