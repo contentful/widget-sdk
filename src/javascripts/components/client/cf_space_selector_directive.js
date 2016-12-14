@@ -13,7 +13,6 @@ angular.module('contentful')
 
 .controller('cfSpaceSelectorController', ['$scope', 'require', function cfSpaceSelectorController ($scope, require) {
   var $rootScope = require('$rootScope');
-  var $state = require('$state');
   var analytics = require('analytics');
   var spaceContext = require('spaceContext');
   var OrganizationList = require('OrganizationList');
@@ -34,7 +33,7 @@ angular.module('contentful')
   $scope.clickedSpaceSwitcher = _.partial(analytics.track, 'space_switcher:opened');
   $scope.getOrganizationName = OrganizationList.getName;
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
-  $scope.selectSpace = selectSpace;
+  $scope.trackSpaceChange = trackSpaceChange;
 
   function storeSpaces (tokenOrSpaces) {
     $scope.spaces = _.isArray(tokenOrSpaces) ? tokenOrSpaces : tokenOrSpaces.spaces;
@@ -51,14 +50,12 @@ angular.module('contentful')
     $rootScope.$broadcast('showCreateSpaceDialog');
   }
 
-  function selectSpace (space) {
+  function trackSpaceChange (space) {
     if (spaceContext.getId() !== space.getId()) {
       analytics.track('space_switcher:space_switched', {
         targetSpaceId: space.getId(),
         targetSpaceName: space.data.name
       });
-
-      $state.go('spaces.detail', {spaceId: space.getId()});
     }
   }
 }]);
