@@ -9,7 +9,6 @@ test/unit/components/app_container/context_history_spec.js
 test/unit/components/app_container/space_controller_spec.js
 test/unit/components/client/activation_email_resend_controller_spec.js
 test/unit/components/client/cf_main_nav_bar_directive_spec.js
-test/unit/components/client/cf_space_selector_controller_spec.js
 test/unit/components/shared/thumbnail/thumbnail_controller_spec.js
 test/unit/components/shared/thumbnail/cf_thumbnail_directive_spec.js
 test/unit/components/shared/data_size_scale_controller_spec.js
@@ -89,7 +88,6 @@ test/helpers/deep_diff.js
 test/integration/field_validation_dialog_spec.js
 src/javascripts/components/client/activation_email_resend_controller.js
 src/javascripts/components/client/cf_main_nav_bar_directive.js
-src/javascripts/components/client/cf_space_selector_directive.js
 src/javascripts/components/client/dialogsInitController.js
 src/javascripts/components/shared/developers/cf_cda_links_directive.js
 src/javascripts/components/shared/developers/cf_cma_links_directive.js
