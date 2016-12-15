@@ -142,7 +142,7 @@ angular.module('contentful')
 
       // add list as parent state only if it's a deep link
       if (contextHistory.isEmpty()) {
-        contextHistory.addEntity(crumbFactory.EntryList());
+        contextHistory.add(crumbFactory.EntryList());
       }
 
       // add current state
