@@ -141,3 +141,30 @@ function escape (value) {
     return value;
   }
 }
+
+export const layouts = {
+  simpleWorkbench: (title, icon, actions, content) => {
+    return [
+      h('header.workbench-header', [
+        h('cf-icon.workbench-header__icon', {name: icon}),
+        h('h1.workbench-header__title', [title]),
+        actions && h('.workbench-header__actions', actions)
+      ]),
+      h('.workbench-main.x--content', [
+        h('.workbench-main__middle-content', content)
+      ])
+    ].join('');
+  },
+
+  richtextDialog: (title, richtextContent, controls) => {
+    return h('.modal-background', [
+      h('.modal-dialog', [
+        h('header.modal-dialog__header', [h('h1', [title])]),
+        richtextContent && h('.modal-dialog__content', [
+          h('.modal-dialog__richtext', richtextContent)
+        ]),
+        controls && h('.modal-dialog__controls', controls)
+      ])
+    ]);
+  }
+};
