@@ -16,13 +16,13 @@ echo "$(curl -sSL https://contentful-lab-assets.s3.amazonaws.com/estivador.sum)"
 
 # Upload infrastructure assets
 # Packages are only produced for main environments
-if [[ "$TRAVIS_BRANCH" =~ "^(preview|master|production)$" ]]; then
+if [[ "$TRAVIS_BRANCH" =~ ^(preview|master|production)$ ]]; then
   ./estivador put-package --package $(ls output/package/archive/user_interface/pool/*.deb)
 fi
 ./estivador put-image
 ./estivador notify-slack
 # Promote infrastructure assets
-if [[ "$TRAVIS_BRANCH" =~ "^(preview|master|production)$" ]]; then
+if [[ "$TRAVIS_BRANCH" =~ ^(preview|master|production)$ ]]; then
   ./estivador promote-package
 fi
 ./estivador promote-image
