@@ -84,6 +84,10 @@ describe('hyperscript', function () {
       expect(this.h('div', ['test'])).toBe('<div>test</div>');
     });
 
+    it('ignores children that are no string or numbers', function () {
+      expect(this.h('p', ['test', false, 100, undefined])).toBe('<p>test100</p>');
+    });
+
     it('creates for multiple child elements', function () {
       const h = this.h;
 
@@ -148,7 +152,7 @@ describe('hyperscript', function () {
         'z-index': 100
       };
 
-      const inline = 'color: red; font-size: 12px; font-family: Comic Sans; z-index: 100';
+      const inline = 'color: red;font-size: 12px;font-family: Comic Sans;z-index: 100';
 
       expect(this.h('div', {style: styles})).toBe(`<div style="${inline}"></div>`);
     });

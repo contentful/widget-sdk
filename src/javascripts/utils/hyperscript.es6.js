@@ -3,7 +3,8 @@ import {
   flatten,
   filter,
   kebabCase,
-  isString
+  isString,
+  isNumber
 } from 'lodash';
 
 const TAG_RE = /^[^#.]+/;
@@ -28,6 +29,17 @@ const VOID_ELEMENTS = [
 
 export const doctype = '<!doctype html>';
 
+/**
+ * @ngdoc service
+ * @name utils/hyperscript
+ * @description
+ * This service exposes a function that takes
+ * a hyperscript tag specification with attributes
+ * and children to generate an HTML string.
+ *
+ * Usage is described in the guide:
+ * docs/guides/hyperscript.md
+ */
 export function h (elSpec, attrs, children) {
   if (!children && !isPlainObject(attrs)) {
     children = attrs;
@@ -91,7 +103,7 @@ function rewriteStyles (attrs) {
   if (isPlainObject(attrs.style)) {
     attrs.style = Object.keys(attrs.style).map((prop) => {
       return `${kebabCase(prop)}: ${escape(attrs.style[prop])}`;
-    }).join('; ');
+    }).join(';');
   }
   return attrs;
 }
@@ -100,10 +112,12 @@ function createHTMLString (tag, attrs, children) {
   const isVoid = VOID_ELEMENTS.indexOf(tag) > -1;
   const closeTag = isVoid ? '' : `</${tag}>`;
 
-  if (isVoid || !Array.isArray(children)) {
+  if (isVoid || !children) {
     children = '';
   } else {
-    children = children.join('');
+    children = filter(children, (child) => {
+      return isString(child) || isNumber(child);
+    }).join('');
   }
 
   attrs = Object.keys(attrs).map((attr) => {

@@ -53,8 +53,10 @@ const workbenchContent = h('.workbench-main__middle-content', [
   `h('div', {fooBar: 'baz'}) // '<div foo-bar="baz"></div>'`
 - definition classes are merged with `class` attribute:
   `h('.clazz', {class: 'klass'}) // '<div class="clazz klass"></div>'`
-- children should always be provided as an array:
+- children must always be provided as an array:
   `h('div', ['foo', h('span', ['bar'])]) // '<div>foo<span>bar</span></div>'`
+- children that are no strings or numbers are ignored:
+  `h('p', ['foo', 100, false && 'boom']) // '<p>foo100</p>'`
 - `true` indicates an attribute w/o a value:
   `h('div', {someAttr: true}) // '<div some-attr></div>'`
 
@@ -73,8 +75,9 @@ h('div', {
     fontFamily: 'sans-serif',
     fontSize: '100px',
     color: 'red',
+    // you can still mix camelCased and dashed-properties:
     'z-index': 100
   }
-}, 'yolo');
-// '<div style="font-family: sans-serif; font-size: 100px; color: red; z-index: 100">yolo</div>'
+}, ['yolo']);
+// '<div style="font-family: sans-serif;font-size: 100px;color: red;z-index: 100">yolo</div>'
 ```
