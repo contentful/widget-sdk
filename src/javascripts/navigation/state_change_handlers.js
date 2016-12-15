@@ -53,6 +53,9 @@ angular.module('cf.app')
       state: toState
     }, toStateParams));
 
+    // we do it here instead of "onExit" hook in "spaces" state
+    // using the latter caused problems when redirecting with
+    // ui-router's option {reload: true}
     if (toState.name.slice(0, 7) !== 'spaces.') {
       analytics.trackSpaceChange(null);
       spaceContext.purge();

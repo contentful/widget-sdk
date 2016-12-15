@@ -23,11 +23,11 @@ describe('Gatekeeper Message Handler', function () {
 
     it('leaves a deleted space', function () {
       const refresh = this.$inject('tokenStore').refresh = sinon.spy();
-      const url = this.$inject('$location').url = sinon.spy();
+      const go = this.$inject('$state').go = sinon.spy();
 
       this.handle({action: 'delete', type: 'space'});
       sinon.assert.calledOnce(refresh);
-      sinon.assert.calledOnce(url.withArgs('/'));
+      sinon.assert.calledOnce(go.withArgs('home'));
     });
 
     it('shows notification', function () {
