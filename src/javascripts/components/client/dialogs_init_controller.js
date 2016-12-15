@@ -15,7 +15,6 @@ angular.module('contentful')
   var $rootScope = require('$rootScope');
   var spaceContext = require('spaceContext');
   var activationEmailResendController = require('activationEmailResendController');
-  var onboardingController = require('onboardingController');
   var subscriptionNotifier = require('subscriptionNotifier');
   var billingNotifier = require('billingNotifier');
 
@@ -24,12 +23,7 @@ angular.module('contentful')
   };
 
   function init () {
-    // Make sure activation email resend dialog is not shown together with onboarding.
-    // After onboarding wait 24h before reminding the user about the activation email.
-    $rootScope.$on('cfAfterOnboarding', activationEmailResendController.init);
-
-    onboardingController.init();
-
+    activationEmailResendController.init();
     initSpaceWatcher();
   }
 

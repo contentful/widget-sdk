@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 
-.directive('cfSpaceSelector', function() {
+.directive('cfSpaceSelector', function () {
   return {
     template: JST.cf_space_selector(),
     restrict: 'E',
@@ -11,15 +11,13 @@ angular.module('contentful')
   };
 })
 
-.controller('cfSpaceSelectorController', ['$scope', '$injector', function cfSpaceSelectorController($scope, $injector) {
-
-  var $rootScope       = $injector.get('$rootScope');
-  var analytics        = $injector.get('analytics');
-  var spaceContext     = $injector.get('spaceContext');
-  var spaceTools       = $injector.get('spaceTools');
-  var OrganizationList = $injector.get('OrganizationList');
-  var accessChecker    = $injector.get('accessChecker');
-  var tokenStore       = $injector.get('tokenStore');
+.controller('cfSpaceSelectorController', ['$scope', 'require', function cfSpaceSelectorController ($scope, require) {
+  var $rootScope = require('$rootScope');
+  var analytics = require('analytics');
+  var spaceContext = require('spaceContext');
+  var OrganizationList = require('OrganizationList');
+  var accessChecker = require('accessChecker');
+  var tokenStore = require('tokenStore');
 
   // load initial spaces:
   tokenStore.getSpaces().then(storeSpaces);
@@ -35,20 +33,29 @@ angular.module('contentful')
   $scope.clickedSpaceSwitcher = _.partial(analytics.track, 'space_switcher:opened');
   $scope.getOrganizationName = OrganizationList.getName;
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
-  $scope.selectSpace = spaceTools.goTo;
+  $scope.trackSpaceChange = trackSpaceChange;
 
-  function storeSpaces(tokenOrSpaces) {
+  function storeSpaces (tokenOrSpaces) {
     $scope.spaces = _.isArray(tokenOrSpaces) ? tokenOrSpaces : tokenOrSpaces.spaces;
   }
 
-  function groupSpacesByOrganization() {
-    $scope.spacesByOrganization = _.groupBy($scope.spaces || [], function(space) {
+  function groupSpacesByOrganization () {
+    $scope.spacesByOrganization = _.groupBy($scope.spaces || [], function (space) {
       return space.data.organization.sys.id;
     });
   }
 
-  function showCreateSpaceDialog() {
+  function showCreateSpaceDialog () {
     // @todo move it to service - broadcast is a workaround to isolate scope
     $rootScope.$broadcast('showCreateSpaceDialog');
+  }
+
+  function trackSpaceChange (space) {
+    if (spaceContext.getId() !== space.getId()) {
+      analytics.track('space_switcher:space_switched', {
+        targetSpaceId: space.getId(),
+        targetSpaceName: space.data.name
+      });
+    }
   }
 }]);

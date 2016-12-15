@@ -1,0 +1,56 @@
+/*
+Code block
+
+Displays code block with line numbers
+
+Markup:
+.code-block
+  span.code-block__language bash
+  span.code-block__line npm install contentful
+
+Styleguide 13.0
+*/
+.code-block
+  line-height: 0
+  counter-reset: line
+  color: $colors.text-mid
+  position: relative
+  border: 1px solid $colors.element-mid
+  margin-top: 1.5rem
+  background-color: $colors.element-lightest
+  padding: 8px 0
+
+  &__language
+    position: absolute
+    font-size: 10px
+    text-transform: uppercase
+    border: 1px solid $colors.element-mid
+    right: -1px
+    top: -1.5rem
+    height: 1.5rem
+    line-height: 1.5rem
+    padding: 0 4px
+    letter-spacing: 1px
+    background-color: inherit
+
+  &__line
+    font-family: monospace
+    display: block
+    line-height: 0.6rem
+
+  &__line:before
+    user-select: none
+    counter-increment: line
+    content: counter(line)
+    display: inline-block
+    border-right: 1px solid $colors.element-mid
+    padding: .5em 1em
+    margin-right: .7em
+    font-weight: bold
+    color: $colors.text-lightest
+
+  // code highlighting
+  .s1
+    color: $colors.red-mid
+  .s2
+    color: $colors.green-dark
