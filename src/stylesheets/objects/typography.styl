@@ -65,3 +65,22 @@ Styleguide 2.1.4
 $text-dimmed = hsl(0, 0%, 50%)
 .text-dimmed
   color: $text-dimmed
+
+/*
+Separated links
+
+Markup:
+.separated-links
+  a
+    First link
+  a.pseudo-class-last-child
+    Second link
+
+Styleguide 2.1.5
+*/
+.separated-links
+  > *:not(:last-child):after
+    content: "|"
+    color: $colors.element-mid
+    margin: 0 8px
+

@@ -13,10 +13,11 @@
       .space-selector__group(ng-repeat="(orgId, org) in spacesByOrganization")
         .space-selector__group-label
           | {{getOrganizationName(orgId)}}
-        .context-menu__item(
+        a.context-menu__item(
           role="menuitem"
+          ui-sref="spaces.detail({spaceId: space.getId()})"
           ng-repeat="space in org track by space.getId()"
-          ng-click="selectSpace(space)"
+          ng-click="trackSpaceChange(space)"
           ng-class="{selected: space.getId() === spaceContext.getId()}")
           | {{space.data.name}}
     .space-selector__group(

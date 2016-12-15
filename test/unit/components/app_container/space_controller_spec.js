@@ -60,10 +60,4 @@ describe('Space Controller', function () {
       sinon.assert.called(this.broadcastStub);
     });
   });
-
-  it('analytics event fired on logo clicked', function () {
-    this.scope.logoClicked();
-    sinon.assert.called(this.analyticsMock.track);
-  });
-
 });

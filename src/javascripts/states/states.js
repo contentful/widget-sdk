@@ -23,17 +23,10 @@ angular.module('contentful')
    * Needs to be called in a 'run' hook to make the application work
    */
   function loadAll () {
-    // TODO remove this state and handle unknown urls properly
-    var otherwise = {
-      name: 'otherwise',
-      url: '*path',
-      template: ''
-    };
-
     load([
       $injector.get('states/account'),
       $injector.get('states/spaces'),
-      otherwise
+      $injector.get('states/home')
     ]);
   }
 

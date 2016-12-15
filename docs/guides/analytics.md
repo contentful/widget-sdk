@@ -90,15 +90,14 @@ yet).
 | global              | space_changed                         | -
 | global              | space_left                            | -
 | global              | state_changed                         | <code>state: string<br>params: obj<br>fromState: string<br>fromParams: obj</code>
-| global              | logo_clicked                          | -
 | global              | logout_clicked                        | -
 | global              | top_banner_dismissed                  | -
 | global              | navigated                             | -
-| bulk_editor         | open                                  | <code>parentEntryId: string<br>refCount: number</code>
-| bulk_editor         | close                                 | <code>parentEntryId: string<br>refCount: number<br>numEditedEntries: number<br>numPublishedEntries: number</code>
-| bulk_editor         | action                                | <code>parentEntryId: string<br>refCount: number<br>entryId: string<br>action: enum</code>
-| bulk_editor         | status                                | <code>parentEntryId: string<br>refCount: number<br>entryId: string<br>status: enum</code>
-| bulk_editor         | add                                   | <code>parentEntryId: string<br>refCount: number<br>exiting: bool/code>
+| home                | space_selected                        | -
+| home                | space_learn_selected                  | -
+| home                | language_selected                     | -
+| home                | link_opened                           | -
+| home                | command_copied                        | -
 | learn               | step_clicked                          | <code>linkName: string</code>
 | learn               | language_selected                     | <code>language: string (js, ruby...)</code>
 | learn               | resource_selected                     | <code>language: string<br>resource: string (documentation, example....)</code>
@@ -125,6 +124,11 @@ yet).
 | versioning          | snapshot_closed                       | <code>entryId: id-string<br>snapshotId: id-string<br>snapshotType: string<br>authorIsUser: bool<br>changesDiscarded: bool</code>
 | versioning          | snapshot_restored                     | <code>entryId: id-string<br>snapshotId: id-string<br>snapshotType: string<br>authorIsUser: bool<br>fullRestore: bool<br>restoredFieldsCount: number<br>showDiffsOnly: bool</code>
 | versioning          | published_restored                    | <code>entryId: id-string<br>snapshotId: id-string<br>snapshotType: string<br>authorIsUser: bool</code>
+| bulk_editor         | open                                  | <code>parentEntryId: string<br>refCount: number</code>
+| bulk_editor         | close                                 | <code>parentEntryId: string<br>refCount: number<br>numEditedEntries: number<br>numPublishedEntries: number</code>
+| bulk_editor         | action                                | <code>parentEntryId: string<br>refCount: number<br>entryId: string<br>action: enum</code>
+| bulk_editor         | status                                | <code>parentEntryId: string<br>refCount: number<br>entryId: string<br>status: enum</code>
+| bulk_editor         | add                                   | <code>parentEntryId: string<br>refCount: number<br>exiting: bool/code>
 | content_preview     | created                               | <code>envName: string<br>envId: id-string<br>isDiscoveryApp: bool</code>
 | content_preview     | updated                               | <code>envName: string<br>envId: id-string</code>
 | content_preview     | deleted                               | <code>envName: string<br>envId: id-string</code>

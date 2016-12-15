@@ -7,17 +7,14 @@ angular.module('contentful')
  * @module contentful
  * @name TheAccountView
  * @description
- * This service holds the current state of the GK "account" section
- * and exposes some helper methods for URL manipulation.
+ * This service exposes some helper methods for
+ * account section URL manipulation.
  */
 .factory('TheAccountView', ['require', function (require) {
-
   var $q = require('$q');
   var $state = require('$state');
   var spaceContext = require('spaceContext');
   var OrganizationList = require('OrganizationList');
-
-  var isActive = false;
 
   return {
     goToUserProfile: goToUserProfile,
@@ -26,29 +23,7 @@ angular.module('contentful')
     goToSubscription: goToSubscription,
     goToBilling: goToBilling,
     silentlyChangeState: silentlyChangeState,
-    canGoToOrganizations: canGoToOrganizations,
-
-    /**
-     * @ngdoc method
-     * @name TheAccountView#enter
-     * @description
-     * Marks the "account" section as active.
-     */
-    enter: function () { isActive = true; },
-    /**
-     * @ngdoc method
-     * @name TheAccountView#exit
-     * @description
-     * Marks the "account" section as inactive.
-     */
-    exit: function () { isActive = false; },
-    /**
-     * @ngdoc method
-     * @name TheAccountView#isActive
-     * @description
-     * Checks if the "account" section is active.
-     */
-    isActive: function () { return isActive; }
+    canGoToOrganizations: canGoToOrganizations
   };
 
   function goTo (pathSuffix, options) {

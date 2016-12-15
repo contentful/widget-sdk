@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Space Selector Controller', function () {
-  var scope, analytics, $stateParams;
+  let scope, analytics, $stateParams;
 
   afterEach(function () {
     scope = analytics = $stateParams = null;
@@ -10,9 +10,9 @@ describe('Space Selector Controller', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    var $rootScope = this.$inject('$rootScope');
-    var $controller = this.$inject('$controller');
-    var spaceContext = this.$inject('spaceContext');
+    const $rootScope = this.$inject('$rootScope');
+    const $controller = this.$inject('$controller');
+    const spaceContext = this.$inject('spaceContext');
     analytics = this.$inject('analytics');
     sinon.stub(analytics, 'track');
     $stateParams = this.$inject('$stateParams');
@@ -31,13 +31,13 @@ describe('Space Selector Controller', function () {
       scope.spaces = null;
       scope.$digest();
       scope.spaces = [
-        {getId: function() { return 123; }, data: {organization: {sys: {id: 132}}}},
-        {getId: function() { return 456; }, data: {organization: {sys: {id: 132}}}},
+        {getId: function () { return 123; }, data: {organization: {sys: {id: 132}}}},
+        {getId: function () { return 456; }, data: {organization: {sys: {id: 132}}}},
         scope.spaceContext.space
       ];
     });
 
-    it('spaces are grouped by organization', function() {
+    it('spaces are grouped by organization', function () {
       $stateParams.spaceId = 123;
       scope.$digest();
       expect(scope.spacesByOrganization).toEqual({

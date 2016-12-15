@@ -26,7 +26,7 @@ angular.module('contentful')
     var uiVersion = $location.search().ui_version;
     if (uiVersion) {
       Cookies.set('ui_version', uiVersion, {
-        expires: moment().add(1, 'h').toDate()
+        expires: moment().add(24, 'h').toDate()
       });
       if (window.CF_UI_VERSION !== uiVersion) {
         // This reloads the page without the query string

@@ -130,15 +130,35 @@ function makeEntityInfo (entity, contentType) {
 }
 
 
+/**
+ * Given an entry payload we make sure that the following holds.
+ *
+ * - 'data.fields' is always an object
+ * - 'data.fields[fieldId]' is always an object
+ * - The keys of 'data.fields[fieldId]' are all valid locales
+ */
 function sanitizeEntityData (data, locales) {
   if (!isPlainObject(data.fields)) {
     data.fields = {};
   }
   Object.keys(data.fields).forEach((fieldId) => {
-    Object.keys(data.fields[fieldId]).forEach((internalCode) => {
-      if (!find(locales, { internal_code: internalCode })) {
-        delete data.fields[fieldId][internalCode];
-      }
-    });
+    const fieldValues = data.fields[fieldId];
+    if (isPlainObject(fieldValues)) {
+      deleteUnusedLocales(fieldValues, locales);
+    } else {
+      delete data.fields[fieldId];
+    }
+  });
+}
+
+/**
+ * Given an object of {locale: value} mappings and a list of locales we
+ * remove those properties from the object that are not valid locales.
+ */
+function deleteUnusedLocales (fieldValues, locales) {
+  Object.keys(fieldValues).forEach((internalCode) => {
+    if (!find(locales, { internal_code: internalCode })) {
+      delete fieldValues[internalCode];
+    }
   });
 }

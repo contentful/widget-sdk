@@ -39,6 +39,10 @@ angular.module('contentful')
   var DocumentPool = $injector.get('data/sharejs/DocumentPool');
 
   var requestContentTypes = createQueue(function (extraHandler) {
+    if (!spaceContext.space) {
+      return $q.resolve();
+    }
+
     return spaceContext.space.getContentTypes({order: 'name', limit: 1000})
     .then(refreshContentTypes, ReloadNotification.apiErrorHandler)
     .then(extraHandler || _.identity);

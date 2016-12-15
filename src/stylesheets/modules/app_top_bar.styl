@@ -3,17 +3,17 @@ $app-top-bar__action-color()
   &:hover
     color: $colors.blue-mid
 
-
 .app-top-bar
   height: $nav-bar-height
   display: flex
   background-color: $colors.dark-blue
 
   &__logo
+    cursor: pointer
     display: flex
     justify-content: center
     align-items: center
-    padding: 0 10px
+    padding: 0 1em
 
   &__logo-element
     position: relative
@@ -21,6 +21,10 @@ $app-top-bar__action-color()
     height: 29px
     background-image: url('/app/images/logo-label.png')
     background-size: 29px 29px
+
+  &__logo-text
+    $app-top-bar__action-color()
+    padding-left: 1em
 
   &__child,
   &__child-action,
