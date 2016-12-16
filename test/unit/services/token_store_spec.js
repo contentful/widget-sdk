@@ -2,7 +2,7 @@
 
 describe('Token store service', function () {
 
-  beforeEach(function(){
+  beforeEach(function () {
     module('contentful/test');
 
     this.K = this.$inject('mocks/kefir');
@@ -70,7 +70,7 @@ describe('Token store service', function () {
       sinon.assert.calledTwice(this.client.newSpace);
       sinon.assert.calledTwice(this.listener);
 
-      var spaces = this.listener.secondCall.args[0].spaces;
+      const spaces = this.listener.secondCall.args[0].spaces;
       expect(spaces[0]).toBe(this.spaces[0]);
       expect(spaces[1]).toBe(this.spaces[1]);
     });
@@ -79,7 +79,7 @@ describe('Token store service', function () {
       this.client.newSpace.returns(this.spaces[2]);
       this.refresh(this.rawSpaces[2], this.rawSpaces[0]);
 
-      var spaceIds = _.map(this.listener.secondCall.args[0].spaces, function (space) {
+      const spaceIds = _.map(this.listener.secondCall.args[0].spaces, function (space) {
         return space.getId();
       });
 
@@ -97,7 +97,7 @@ describe('Token store service', function () {
       this.refresh(this.rawSpaces[0]);
 
       sinon.assert.calledThrice(this.listener);
-      var spaces = this.listener.thirdCall.args[0].spaces;
+      const spaces = this.listener.thirdCall.args[0].spaces;
       expect(spaces.length).toBe(1);
       expect(spaces[0]).toBe(this.spaces[0]);
     });
@@ -118,8 +118,8 @@ describe('Token store service', function () {
   });
 
   it('reuses promise if some requests are in progress', function () {
-    var d = this.auth.getTokenLookup.defers();
-    var promise = this.tokenStore.refresh();
+    const d = this.auth.getTokenLookup.defers();
+    const promise = this.tokenStore.refresh();
     expect(this.tokenStore.refresh()).toBe(promise);
 
     d.resolve({sys: {createdBy: this.user}, spaces: []});
@@ -128,8 +128,8 @@ describe('Token store service', function () {
   });
 
   it('resolves to the latest token refresh call result', function () {
-    var $q = this.$inject('$q');
-    var subscriberSpy = sinon.spy();
+    const $q = this.$inject('$q');
+    const subscriberSpy = sinon.spy();
 
     this.auth.getTokenLookup
       .onFirstCall().returns($q.resolve({sys: {createdBy: this.user}, spaces: []}))
@@ -145,7 +145,7 @@ describe('Token store service', function () {
   });
 
   it('shows dialog and clears auth data on 401', function () {
-    var dialog = this.$inject('modalDialog');
+    const dialog = this.$inject('modalDialog');
     dialog.open = sinon.stub().returns({promise: this.$inject('$q').resolve()});
     this.auth.clearAndLogin = sinon.spy();
     this.auth.getTokenLookup.rejects({statusCode: 401});
@@ -157,7 +157,7 @@ describe('Token store service', function () {
   });
 
   it('reloads app on =/= 401', function () {
-    var notification = this.$inject('ReloadNotification');
+    const notification = this.$inject('ReloadNotification');
     notification.trigger = sinon.spy();
     this.auth.getTokenLookup.rejects({statusCode: 404});
 
@@ -178,10 +178,10 @@ describe('Token store service', function () {
     });
 
     it('waits for a request in progress', function () {
-      var d = this.auth.getTokenLookup.defers();
+      const d = this.auth.getTokenLookup.defers();
       this.tokenStore.refresh();
 
-      var spaceHandler = sinon.spy();
+      const spaceHandler = sinon.spy();
       this.tokenStore.getSpace('a-space-id').then(spaceHandler);
       sinon.assert.notCalled(spaceHandler);
 

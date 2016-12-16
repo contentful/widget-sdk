@@ -22,18 +22,18 @@ angular.module('contentful')
   var createQueue = require('overridingRequestQueue');
 
   var currentToken = null;
-  var changed  = createSignal();
+  var changed = createSignal();
   var request = createQueue(getTokenLookup, setupLookupHandler);
   var refreshPromise = $q.resolve();
 
   var userBus = K.createPropertyBus(null);
 
   return {
-    changed:           changed,
-    refresh:           refresh,
+    changed: changed,
+    refresh: refresh,
     refreshWithLookup: refreshWithLookup,
-    getSpaces:         getSpaces,
-    getSpace:          getSpace,
+    getSpaces: getSpaces,
+    getSpace: getSpace,
     /**
      * @ngdoc property
      * @name tokenStore#user$
@@ -44,11 +44,11 @@ angular.module('contentful')
     user$: userBus.property
   };
 
-  function getTokenLookup() {
+  function getTokenLookup () {
     return authentication.getTokenLookup();
   }
 
-  function setupLookupHandler(promise) {
+  function setupLookupHandler (promise) {
     promise.then(function (lookup) {
       refreshWithLookup(lookup);
     }, communicateError);
@@ -64,7 +64,7 @@ angular.module('contentful')
    * - stores updated spaces (existing space objects are updated, not recreated)
    * - notifies all subscribers of "changed" signal
    */
-  function refreshWithLookup(tokenLookup) {
+  function refreshWithLookup (tokenLookup) {
     currentToken = {
       user: tokenLookup.sys.createdBy,
       spaces: updateSpaces(tokenLookup.spaces)
@@ -88,7 +88,7 @@ angular.module('contentful')
    * On failure we call "communicateError", what basically forces an user
    * to reload the app. On success we call "refreshWithLookup" (see docs above).
    */
-  function refresh() {
+  function refresh () {
     refreshPromise = request();
     return refreshPromise;
   }
@@ -103,10 +103,10 @@ angular.module('contentful')
    * If some calls are in progress, we're waiting until these are done.
    * Promise is rejected if space with a provided ID couldn't be found.
    */
-  function getSpace(id) {
+  function getSpace (id) {
     return refreshPromise.then(function () {
       var space = findSpace(id);
-      return space ? space : $q.reject(new Error('No space with given ID could be found.'));
+      return space || $q.reject(new Error('No space with given ID could be found.'));
     });
   }
 
@@ -118,17 +118,17 @@ angular.module('contentful')
    * This method returns a promise of all stored spaces.
    * If some calls are in progress, we're waiting until these are done.
    */
-  function getSpaces() {
+  function getSpaces () {
     return refreshPromise.then(getCurrentSpaces);
   }
 
-  function updateSpaces(rawSpaces) {
+  function updateSpaces (rawSpaces) {
     var updated = _.map(rawSpaces, updateSpace);
     updated.sort(getSorter(updated));
     return updated;
   }
 
-  function updateSpace(rawSpace) {
+  function updateSpace (rawSpace) {
     var existing = findSpace(rawSpace.sys.id);
     if (existing) {
       existing.update(rawSpace);
@@ -138,18 +138,18 @@ angular.module('contentful')
     }
   }
 
-  function findSpace(id) {
+  function findSpace (id) {
     return _.find(getCurrentSpaces(), function (space) {
       return space.getId() === id;
     });
   }
 
-  function getCurrentSpaces() {
+  function getCurrentSpaces () {
     return currentToken ? currentToken.spaces : [];
   }
 
-  function getSorter(spaces) {
-    return function sortByName(a, b) {
+  function getSorter (spaces) {
+    return function sortByName (a, b) {
       try {
         return a.data.name.localeCompare(b.data.name);
       } catch (e) {
@@ -166,7 +166,7 @@ angular.module('contentful')
     };
   }
 
-  function communicateError(err) {
+  function communicateError (err) {
     if (err && err.statusCode === 401) {
       modalDialog.open({
         title: 'Your login token is invalid',
