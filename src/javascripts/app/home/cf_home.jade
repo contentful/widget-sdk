@@ -19,11 +19,11 @@ include ./cf_home_mixins
         button.btn-action(ng-click="showCreateSpaceDialog()") Create new space
       section.home-section.x--spaces(ng-if="spaces.length")
         h3.home-section__heading Spaces
-        .spaces
+        .home-spaces
           div(ng-repeat="(orgId, orgSpaces) in spacesByOrganization track by orgId")
-            .spaces__org-name {{getOrganizationName(orgId)}}
-              span.spaces__org-desc organization
-            .spaces__space(ng-repeat="space in orgSpaces track by space.data.sys.id")
+            .home-spaces__org-name {{getOrganizationName(orgId)}}
+              span.home-spaces__org-desc organization
+            .home-spaces__space(ng-repeat="space in orgSpaces track by space.data.sys.id")
               a(
                 data-test-id="homepage-space-link"
                 ui-sref="spaces.detail({spaceId: space.getId()})"
@@ -66,13 +66,13 @@ include ./cf_home_mixins
           p.home-section__description
             | Here are examples of what you can build with Contentful.
           .home__examples
-            .example(
+            .home-example(
               ng-repeat="example in home.resources[home.selectedLanguage].examples track by example.name")
               div
-                .example__dot
-                h4.example__header {{example.name}}
-                p.example__description {{example.description}}
-              a.example__link(
+                .home-example__dot
+                h4.home-example__header {{example.name}}
+                p.home-example__description {{example.description}}
+              a.home-example__link(
                 ng-href="{{example.url}}"
                 target="_blank"
                 ng-click="home.analytics.linkOpened(home.selectedLanguage, example.url)")
@@ -82,15 +82,15 @@ include ./cf_home_mixins
           h3.home-section__heading Learning &amp; documentation
           p.home-section__description
             | What you need to help you get started.
-          .links
-            .links__col(ng-if="home.resources[home.selectedLanguage].links.length")
+          .home-links
+            .home-links__col(ng-if="home.resources[home.selectedLanguage].links.length")
               a(
                 ng-repeat="link in home.resources[home.selectedLanguage].links track by link.name"
                 ng-href="{{link.url}}"
                 target="_blank"
                 ng-click="home.analytics.linkOpened(home.selectedLanguage, link.url)")
                 | {{link.name}}
-            .links__col
+            .home-links__col
               a(ng-repeat="link in home.docsUrls track by link.name"
                 ng-href="{{link.url}}"
                 target="_blank"
