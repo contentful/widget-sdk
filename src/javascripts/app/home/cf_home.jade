@@ -3,15 +3,15 @@ include ./cf_home_mixins
 .workbench.home
   .workbench-main.x--content.x--home(cf-ui-sticky-container)
     .home__header
-      .workbench-main__middle-content.x--home
+      .home__content
         section.home-section
           h2.home-section__heading {{home.getGreeting(user)}}
           p(ng-if="user.signInCount === 1")
             | Looks like you're new here. Learn more about Contentful from the resources below.
           p(ng-if="user.signInCount > 1")
             | What will you build today?
-          cf-icon.home__spaceman(name="home-welcome")
-    .workbench-main__middle-content.x--home
+          cf-icon.home__welcome-image(name="home-welcome")
+    .home__content
       section.home-section(ng-if="canCreateSpace() && !spaces.length")
         h3.home-section__heading Create a new space
         p.home-section__description
