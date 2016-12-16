@@ -247,7 +247,9 @@ angular.module('cf.data')
 
 
   Client.prototype.deleteSpace = function () {
-    return this._request({method: 'DELETE'}).then(_.noop);
+    return this._request({method: 'DELETE'})
+    // discard the response data
+    .then(_.noop);
   };
 
   Client.prototype.renameSpace = function (newName, version) {

@@ -1,4 +1,6 @@
-import {h, layouts} from 'utils/hyperscript';
+import {h} from 'utils/hyperscript';
+import {simple as simpleWorkbench} from 'app/Workbench';
+import {richtextLayout} from 'modalDialog';
 
 export function form () {
   const actions = [
@@ -25,7 +27,7 @@ export function form () {
     ])
   ];
 
-  return layouts.simpleWorkbench('Space settings', 'page-settings', actions, content);
+  return simpleWorkbench('Space settings', 'page-settings', actions, content);
 }
 
 export function removalConfirmation (spaceName) {
@@ -49,5 +51,5 @@ export function removalConfirmation (spaceName) {
     h('button.btn-secondary-action', {ngClick: 'dialog.cancel()'}, ['Don’t remove'])
   ];
 
-  return layouts.richtextDialog('Remove space', content, controls);
+  return richtextLayout('Remove space', content, controls);
 }
