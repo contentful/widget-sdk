@@ -13,10 +13,10 @@ angular.module('contentful')
 .controller('SpaceSettingsController', ['require', '$scope', function (require, $scope) {
   var $q = require('$q');
   var $rootScope = require('$rootScope');
+  var $state = require('$state');
   var spaceContext = require('spaceContext');
   var Command = require('command');
   var tokenStore = require('tokenStore');
-  var spaceTools = require('spaceTools');
   var modalDialog = require('modalDialog');
   var notification = require('notification');
   var ReloadNotification = require('ReloadNotification');
@@ -51,8 +51,8 @@ angular.module('contentful')
   function remove () {
     return spaceContext.cma.deleteSpace()
     .then(tokenStore.refresh)
-    .then(spaceTools.leaveCurrent)
     .then(function () {
+      $state.go('home');
       notification.info('Space ' + $scope.model.name + ' deleted successfully.');
     })
     .catch(ReloadNotification.basicErrorHandler);
