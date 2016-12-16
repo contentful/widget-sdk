@@ -12,21 +12,13 @@ angular.module('contentful')
   };
 })
 
-.controller('HomeController', ['$scope', 'require', function ($scope, require) {
+.controller('HomeController', ['require', function (require) {
   var controller = this;
   var moment = require('moment');
   var resources = require('app/home/language_resources');
   var homeAnalytics = require('analyticsEvents/home');
 
   controller.getGreeting = _.memoize(getGreeting);
-
-  // TODO not a good solution
-  // Returns the distance from the top of the page
-  // i.e. height of the nav bar + persistent notification if it is being shown
-  controller.getDistanceFromTop = function () {
-    return $scope.persistentNotification ? 108 : 63;
-  };
-
   controller.resources = resources.languageResources;
   controller.docsUrls = resources.apiDocsUrls;
   controller.selectLanguage = selectLanguage;
