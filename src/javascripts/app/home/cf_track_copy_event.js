@@ -18,7 +18,7 @@ angular.module('contentful')
 
   var $document = require('$document');
   var $window = require('$window');
-  var analytics = require('analytics');
+  var analyticsEvents = require('analytics/events/home');
 
   return {
     restrict: 'A',
@@ -37,10 +37,8 @@ angular.module('contentful')
           var selectedNode = _.get(selection, 'anchorNode.parentNode');
           // Only track event if selected text is contained in this section
           if ($.contains(element[0], selectedNode)) {
-            analytics.track('home:command_copied', {
-              language: scope.home.selectedLanguage,
-              selectedText: selection.toString()
-            });
+            var language = scope.home.selectedLanguage;
+            analyticsEvents.commandCopied(language, selection.toString());
           }
         }
       }

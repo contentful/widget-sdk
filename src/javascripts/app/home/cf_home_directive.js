@@ -16,14 +16,14 @@ angular.module('contentful')
   var controller = this;
   var moment = require('moment');
   var resources = require('app/home/language_resources');
-  var homeAnalytics = require('analyticsEvents/home');
+  var analyticsEvents = require('analytics/events/home');
 
   controller.getGreeting = _.memoize(getGreeting);
   controller.resources = resources.languageResources;
   controller.docsUrls = resources.apiDocsUrls;
   controller.selectLanguage = selectLanguage;
   controller.selectedLanguage = 'JavaScript';
-  controller.analytics = homeAnalytics;
+  controller.analytics = analyticsEvents;
 
   function getGreeting (user) {
     if (user) {
