@@ -14,11 +14,18 @@ angular.module('contentful')
 
 .controller('HomeController', ['require', function (require) {
   var controller = this;
+  var K = require('utils/kefir');
   var moment = require('moment');
   var resources = require('app/home/language_resources');
   var analyticsEvents = require('analytics/events/home');
+  var tokenStore = require('tokenStore');
 
-  controller.getGreeting = _.memoize(getGreeting);
+  // Fetch user and set greeting
+  K.onValue(tokenStore.user$, function (user) {
+    controller.user = user;
+    controller.greeting = getGreeting(user);
+  });
+
   controller.resources = resources.languageResources;
   controller.docsUrls = resources.apiDocsUrls;
   controller.selectLanguage = selectLanguage;

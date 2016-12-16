@@ -5,6 +5,8 @@ describe('Token store service', function () {
   beforeEach(function(){
     module('contentful/test');
 
+    this.K = this.$inject('mocks/kefir');
+
     this.tokenStore = this.$inject('tokenStore');
 
     this.auth = this.$inject('authentication');
@@ -205,6 +207,17 @@ describe('Token store service', function () {
         expect(err instanceof Error).toBe(true);
         expect(err.message).toBe('No space with given ID could be found.');
       });
+    });
+  });
+
+  describe('#user$', function () {
+    it('is initially null', function () {
+      this.K.assertCurrentValue(this.tokenStore.user$, null);
+    });
+
+    it('updates user when tokenStore is refreshed', function () {
+      this.refresh();
+      this.K.assertCurrentValue(this.tokenStore.user$, this.user);
     });
   });
 });

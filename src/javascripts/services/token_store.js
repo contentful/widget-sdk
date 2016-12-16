@@ -8,28 +8,40 @@
  * This service is responsible for fetching, storing and exposing
  * data included in an access token.
  */
-angular.module('contentful').factory('tokenStore', ['$injector', function ($injector) {
+angular.module('contentful')
+.factory('tokenStore', ['require', function (require) {
 
-  var $q                 = $injector.get('$q');
-  var client             = $injector.get('client');
-  var authentication     = $injector.get('authentication');
-  var modalDialog        = $injector.get('modalDialog');
-  var ReloadNotification = $injector.get('ReloadNotification');
-  var logger             = $injector.get('logger');
-  var createSignal       = $injector.get('signal').create;
-  var createQueue        = $injector.get('overridingRequestQueue');
+  var $q = require('$q');
+  var K = require('utils/kefir');
+  var client = require('client');
+  var authentication = require('authentication');
+  var modalDialog = require('modalDialog');
+  var ReloadNotification = require('ReloadNotification');
+  var logger = require('logger');
+  var createSignal = require('signal').create;
+  var createQueue = require('overridingRequestQueue');
 
   var currentToken = null;
   var changed  = createSignal();
   var request = createQueue(getTokenLookup, setupLookupHandler);
   var refreshPromise = $q.resolve();
 
+  var userBus = K.createPropertyBus(null);
+
   return {
     changed:           changed,
     refresh:           refresh,
     refreshWithLookup: refreshWithLookup,
     getSpaces:         getSpaces,
-    getSpace:          getSpace
+    getSpace:          getSpace,
+    /**
+     * @ngdoc property
+     * @name tokenStore#user$
+     * @type {Property<Api.User>}
+     * @description
+     * The current user object from the token
+     */
+    user$: userBus.property
   };
 
   function getTokenLookup() {
@@ -57,6 +69,7 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
       user: tokenLookup.sys.createdBy,
       spaces: updateSpaces(tokenLookup.spaces)
     };
+    userBus.set(currentToken.user);
     changed.dispatch(currentToken);
   }
 

@@ -3,10 +3,10 @@ include ./cf_home_mixins
 .home(cf-ui-sticky-container)
   .home__header
     section.home-section
-      h2.home-section__heading {{home.getGreeting(user)}}
-      p(ng-if="user.signInCount === 1")
+      h2.home-section__heading {{home.greeting}}
+      p(ng-if="home.user.signInCount === 1")
         | Looks like you're new here. Learn more about Contentful from the resources below.
-      p(ng-if="user.signInCount > 1")
+      p(ng-if="home.user.signInCount > 1")
         | What will you build today?
       cf-icon.home__welcome-image(name="home-welcome")
   .home__content
@@ -39,7 +39,6 @@ include ./cf_home_mixins
           ng-click="home.selectLanguage(name)"
           ng-repeat="(name, language) in home.resources track by name")
           | {{name}}
-
       section.home-section(ng-switch="home.selectedLanguage" cf-track-copy-event)
         h3.home-section__heading Get the SDK
         div(ng-switch-when="PHP")
