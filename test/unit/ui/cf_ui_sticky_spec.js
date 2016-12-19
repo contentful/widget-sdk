@@ -2,7 +2,7 @@
 
 describe('cfUiSticky directive', function () {
   beforeEach(function () {
-    module('cf.ui');
+    module('contentful/test');
     const markup = `<div class="workbench-main" cf-ui-sticky-container>
                     <div>Block of content</div>
                     <nav cf-ui-sticky>Nav</nav>

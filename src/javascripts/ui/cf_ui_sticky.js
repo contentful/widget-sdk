@@ -19,7 +19,9 @@
  *     div Some long content....
  */
 angular.module('cf.ui')
-.directive('cfUiSticky', function () {
+.directive('cfUiSticky', ['require', function (require) {
+  var h = require('utils/hyperscript').h;
+
   return {
     restrict: 'A',
     scope: {},
@@ -59,7 +61,8 @@ angular.module('cf.ui')
 
       // Ensures the height of the parent element stays the same
       function insertPlaceholderElement () {
-        $element.wrap('<div style="height:' + $element.outerHeight(true) + 'px"></div>');
+        var newEl = h('div', {style: 'height:' + $element.outerHeight(true) + 'px'});
+        $element.wrap(newEl);
         return $element.parent();
       }
 
@@ -69,4 +72,4 @@ angular.module('cf.ui')
       }
     }
   };
-});
+}]);
