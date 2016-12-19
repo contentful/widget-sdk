@@ -141,7 +141,7 @@ angular.module('contentful')
     controls: editorData.fieldControls.form
   });
 
-  $scope.sidebarControler = editorData.fieldControls.sidebar;
+  $scope.sidebarControls = editorData.fieldControls.sidebar;
 
   /**
    * Build the `entry.fields` api of the widget-sdk at one

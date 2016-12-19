@@ -20,7 +20,7 @@ header.workbench-header
   .workbench-main__content
     cf-editor-status-notification(status="otDoc.status$" entity-label="asset")
 
-    form.entity-editor-form(name="assetForm")
+    .entity-editor-form
       cf-error-list.form-box-error(cf-error-path="['fields']")
       cf-entity-field(ng-repeat="widget in widgets track by widget.fieldId")
 
