@@ -1,5 +1,5 @@
 import modalDialog from 'modalDialog';
-import { assetUrl } from '$filter';
+import { default as assetUrl } from 'assetUrlFilter';
 import specialCharacters from './markdown_special_characters';
 import LinkOrganizer from 'LinkOrganizer';
 import notification from 'notification';
