@@ -3,6 +3,8 @@
 angular.module('cf.app')
 .factory('widgets/location/Map', ['$injector', function ($injector) {
   var LazyLoader = $injector.get('LazyLoader');
+  var observeResize = $injector.get('ui/ResizeDetector').observeResize;
+  var K = $injector.get('utils/kefir');
 
   return {
     init: init
@@ -18,36 +20,25 @@ angular.module('cf.app')
     LazyLoader.get('googleMaps')
     .then(function (GMaps) {
       if (!destroyed) {
-        // We first set 'isLoading' to false so that the map slot is
-        // displayed in the dom after the apply cycle. This prevents
-        // rendering issues with Google Maps.
         scope.isLoading = false;
-        scope.$applyAsync(function () {
-          initMap(scope, GMaps, mapSlotElement);
-        });
+        initMap(scope, GMaps, mapSlotElement);
       }
     }, function () {
-      scope.loadError = true;
-    }).finally(function () {
       scope.isLoading = false;
+      scope.loadError = true;
     });
   }
 
   function initMap (scope, GMaps, mapSlotElement) {
-    // We need to redraw the map when the slot is showed in the DOM. Otherwise
-    // we end up with a gray map.
-    var redrawInterval = setInterval(function () {
-      if (mapSlotElement.clientHeight > 0) {
-        clearInterval(redrawInterval);
-        GMaps.event.trigger(map, 'resize');
-      }
-    }, 50);
-
     var map = new GMaps.Map(mapSlotElement, {
       scrollwheel: false,
       zoom: 6,
       center: {lat: 52.5018, lng: 13.41115439},
       mapTypeId: GMaps.MapTypeId.ROADMAP
+    });
+
+    K.onValueScope(scope, observeResize(mapSlotElement), function () {
+      GMaps.event.trigger(map, 'resize');
     });
 
     var marker = new GMaps.Marker({
@@ -93,7 +84,6 @@ angular.module('cf.app')
     scope.$on('$destroy', function () {
       GMaps.event.clearInstanceListeners(map);
       GMaps.event.clearInstanceListeners(marker);
-      clearInterval(redrawInterval);
       map = null;
       marker = null;
     });

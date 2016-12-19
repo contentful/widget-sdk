@@ -35,7 +35,6 @@ export function createManually (textarea, options, CodeMirror) {
     setContent: editor.setValue,
     getSelectedText: editor.getSelectedText,
     usePrimarySelection: editor.usePrimarySelection,
-    repaint: editor.repaint,
     // TODO Remove this. We want to hide the low-level interface
     getWrapper: function () { return editor; }
   };
