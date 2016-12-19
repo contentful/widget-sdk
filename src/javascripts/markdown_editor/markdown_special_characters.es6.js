@@ -1,6 +1,4 @@
-'use strict';
-
-angular.module('contentful').constant('MarkdownEditor/specialCharacters', [
+const specialCharacters = [
   { id: 'acute', desc: 'acute accent' },
   { id: 'amp', desc: 'ampersand' },
   { id: 'brvbar', desc: 'broken vertical bar' },
@@ -54,5 +52,7 @@ angular.module('contentful').constant('MarkdownEditor/specialCharacters', [
   { id: 'rdquo', desc: 'right double quotation mark' },
   { id: 'tilde', desc: 'small tilde' },
   { id: 'hearts', desc: 'black heart' },
-  { id: 'diams', desc: 'diamond'}
-]);
+  { id: 'diams', desc: 'diamond' }
+];
+
+export default specialCharacters;

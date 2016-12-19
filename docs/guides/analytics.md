@@ -98,6 +98,7 @@ yet).
 | home                | language_selected                     | -
 | home                | link_opened                           | -
 | home                | command_copied                        | -
+| notification        | action_performed                      | <code>action: string<br>currentPlan: string</code>
 | learn               | step_clicked                          | <code>linkName: string</code>
 | learn               | language_selected                     | <code>language: string (js, ruby...)</code>
 | learn               | resource_selected                     | <code>language: string<br>resource: string (documentation, example....)</code>

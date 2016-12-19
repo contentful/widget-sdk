@@ -9,23 +9,16 @@ angular.module('contentful')
 .factory('states/settings/roles', ['require', function (require) {
   var base = require('states/base');
   var contextHistory = require('contextHistory');
-
-  var listEntity = {
-    getTitle: function () { return list.label; },
-    link: { state: 'spaces.detail.settings.roles.list' },
-    getType: _.constant('Roles'),
-    getId: _.constant('ROLES')
-  };
+  var crumbFactory = require('navigation/CrumbFactory');
 
   var list = base({
     name: 'list',
     url: '',
-    label: 'Roles',
     loadingText: 'Loading roles...',
     template: '<cf-role-list class="workbench role-list" />',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
-      contextHistory.addEntity(listEntity);
+      contextHistory.add(crumbFactory.RoleList());
     }]
   });
 
@@ -39,7 +32,6 @@ angular.module('contentful')
     data: {
       isNew: true
     },
-    label: 'context.title + (context.dirty ? "*" : "")',
     resolve: {
       baseRole: ['RoleRepository', 'space', '$stateParams', '$q', function (RoleRepository, space, $stateParams, $q) {
         if (!$stateParams.baseRoleId) { return $q.when(null); }
@@ -55,18 +47,8 @@ angular.module('contentful')
       $scope.baseRole = baseRole;
       $scope.role = emptyRole;
 
-      // parent is list view
-      contextHistory.addEntity(listEntity);
-
-      // add current view
-      contextHistory.addEntity({
-        getTitle: function () { return $scope.context.title + ($scope.context.dirty ? '*' : ''); },
-        link: {
-          state: 'spaces.detail.settings.roles.new'
-        },
-        getType: _.constant('Role'),
-        getId: _.constant('ROLENEW')
-      });
+      contextHistory.add(crumbFactory.RoleList());
+      contextHistory.add(crumbFactory.Role(null, $scope.context));
     }]
   };
 
@@ -77,7 +59,6 @@ angular.module('contentful')
     data: {
       isNew: false
     },
-    label: 'context.title + (context.dirty ? "*" : "")',
     resolve: {
       role: ['RoleRepository', 'space', '$stateParams', function (RoleRepository, space, $stateParams) {
         return RoleRepository.getInstance(space).get($stateParams.roleId);
@@ -91,24 +72,11 @@ angular.module('contentful')
       var $state = require('$state');
       var $stateParams = require('$stateParams');
 
-      var roleId = $stateParams.roleId;
-
       $scope.context = $state.current.data;
       $scope.role = role;
 
-      // parent is list view
-      contextHistory.addEntity(listEntity);
-
-      // add current view
-      contextHistory.addEntity({
-        getTitle: function () { return $scope.context.title + ($scope.context.dirty ? '*' : ''); },
-        link: {
-          state: 'spaces.detail.settings.roles.detail',
-          params: { roleId: roleId }
-        },
-        getType: _.constant('Role'),
-        getId: _.constant(roleId)
-      });
+      contextHistory.add(crumbFactory.RoleList());
+      contextHistory.add(crumbFactory.Role($stateParams.roleId, $scope.context));
     }]
   };
 

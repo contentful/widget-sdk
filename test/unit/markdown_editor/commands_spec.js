@@ -1,19 +1,19 @@
 'use strict';
 
-describe('MarkdownEditor/Commands', function () {
+describe('markdown_editor/commands', function () {
   let textarea, editor, commands, cm;
   const CodeMirror = window.cfLibs.markdown.CodeMirror;
 
   beforeEach(function () {
     module('contentful/test');
-    const Commands = this.$inject('MarkdownEditor/Commands');
-    const createEditor = this.$inject('MarkdownEditor/wrapper');
+    const Commands = this.$inject('markdown_editor/commands');
+    const Wrapper = this.$inject('markdown_editor/codemirror_wrapper');
     textarea = document.createElement('textarea');
     document.body.appendChild(textarea);
 
     const cmFactory = sinon.spy(CodeMirror, 'fromTextArea');
     // editor = MarkdownEditor.createManually(textarea, {}, libs.CodeMirror, libs.marked);
-    editor = createEditor(textarea, {}, CodeMirror);
+    editor = Wrapper.create(textarea, {}, CodeMirror);
     cm = cmFactory.returnValues[0];
     cmFactory.restore();
 
@@ -261,6 +261,13 @@ describe('MarkdownEditor/Commands', function () {
       cm.setSelection({line: 0, ch: 1}, {line: 0, ch: 3});
       commands.link('https://example.com', 'title');
       expect(cm.getValue()).toBe('A[title](https://example.com)B');
+    });
+
+    it('inserts link with url, text and title at current cursor', function () {
+      cm.setValue('AB');
+      cm.setCursor({line: 0, ch: 1});
+      commands.link('https://example.com', 'link text', 'title');
+      expect(cm.getValue()).toBe('A[link text](https://example.com "title")B');
     });
   });
 });

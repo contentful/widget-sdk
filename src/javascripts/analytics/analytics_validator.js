@@ -23,6 +23,9 @@ angular.module('contentful')
     'link_opened',
     'command_copied'
   ],
+  notification: [
+    'action_performed'
+  ],
   learn: [
     'step_clicked',
     'language_selected',

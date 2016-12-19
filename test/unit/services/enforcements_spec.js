@@ -5,6 +5,7 @@ describe('Enforcements service', function () {
   var enforcements;
   var organizationMock;
   var spaceContext;
+  var OrganizationList;
 
   beforeEach(function () {
     module('contentful/test');
@@ -12,9 +13,10 @@ describe('Enforcements service', function () {
     var cfStub = this.$inject('cfStub');
     enforcements = this.$inject('enforcements');
     spaceContext = this.$inject('spaceContext');
+    OrganizationList = this.$inject('OrganizationList');
+    OrganizationList.resetWithUser({ sys: {id: 123} });
 
     _.extend(spaceContext, cfStub.mockSpaceContext());
-    this.$inject('OrganizationList').resetWithUser({ sys: {id: 123} });
 
     organizationMock = {
       usage: {
@@ -129,11 +131,16 @@ describe('Enforcements service', function () {
       beforeEach(function () {
         organizationMock.usage.period.assetBandwidth = 5;
         spaceContext.space.data.organization = organizationMock;
-        enforcement = enforcements.getPeriodUsage();
       });
 
-      it('has an error', function () {
-        expect(enforcement.message).toBeDefined();
+      it('has an error when user is an owner', function () {
+        sinon.stub(OrganizationList, 'isOwner').returns(true);
+        expect(enforcements.getPeriodUsage().message).toBeDefined();
+      });
+
+      it('has no error when user is not an owner', function () {
+        sinon.stub(OrganizationList, 'isOwner').returns(false);
+        expect(enforcements.getPeriodUsage()).toBeUndefined();
       });
 
     });

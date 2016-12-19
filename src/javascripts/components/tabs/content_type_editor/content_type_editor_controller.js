@@ -47,6 +47,12 @@ angular.module('contentful')
   $scope.$watch('contentTypeForm.$dirty', setDirtyState);
   $scope.$watch('context.isNew', setDirtyState);
 
+  $scope.$watch(function () {
+    return $scope.contentType.getName();
+  }, function (title) {
+    $scope.context.title = title;
+  });
+
   $scope.$watch('contentType.data.fields', function (newVal, oldVal) {
     checkForDirtyForm(newVal, oldVal);
     hints.updateFields(newVal);

@@ -1,0 +1,58 @@
+'use strict';
+
+angular.module('contentful')
+
+.directive('cfMarkdownPreview', ['require', function (require) {
+
+  var LazyLoader = require('LazyLoader');
+
+  return {
+    restrict: 'E',
+    scope: {
+      preview: '=',
+      isDisabled: '='
+    },
+    template: [
+      '<div ng-show="!preview.hasCrashed" class="markdown-preview-mounting-point"></div>',
+      '<div ng-show="preview.hasCrashed || mountHasCrashed" class="markdown-preview-crashed">',
+      '<i class="fa fa-warning"></i> ',
+      'We cannot render the preview. ',
+      'If you use HTML tags, check if these are valid.',
+      '</div>'
+    ].join(''),
+    link: function (scope, el) {
+      var mountingPoint = el.find('.markdown-preview-mounting-point').get(0);
+      scope.mountHasCrashed = false;
+      LazyLoader.get('markdown').then(initPreview);
+
+      function initPreview (libs) {
+        var React = libs.React;
+
+        scope.$watch('preview.tree', update);
+        scope.$watch('isDisabled', update);
+
+        scope.$on('$destroy', unmount);
+
+        function update () {
+          var newTree = scope.preview && scope.preview.tree;
+          if (!newTree || scope.isDisabled) { return; }
+
+          try {
+            mount();
+            scope.mountHasCrashed = false;
+          } catch (e) {
+            scope.mountHasCrashed = true;
+          }
+        }
+
+        function mount () {
+          React.render(scope.preview.tree, mountingPoint);
+        }
+
+        function unmount () {
+          React.unmountComponentAtNode(mountingPoint);
+        }
+      }
+    }
+  };
+}]);

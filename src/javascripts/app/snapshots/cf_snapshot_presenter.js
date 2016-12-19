@@ -44,13 +44,13 @@ angular.module('cf.app')
 }])
 
 .directive('cfSnapshotPresenterMarkdown', ['require', function (require) {
-  var startPreview = require('MarkdownEditor/preview');
+  var preview = require('markdown_editor/markdown_preview');
 
   return {
     restrict: 'E',
     template: '<cf-markdown-preview class="markdown-preview" preview="preview" />',
     controller: ['$scope', function ($scope) {
-      startPreview(_.constant($scope.value), function (_err, preview) {
+      preview.start(_.constant($scope.value), function (_err, preview) {
         $scope.preview = preview;
       });
     }]

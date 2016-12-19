@@ -8,26 +8,19 @@ angular.module('contentful')
  */
 .factory('states/entries', ['require', function (require) {
   var contextHistory = require('contextHistory');
-  var spaceContext = require('spaceContext');
   var $state = require('$state');
   var trackVersioning = require('analyticsEvents/versioning');
+  var crumbFactory = require('navigation/CrumbFactory');
 
   var base = require('states/base');
   var loadEditorData = require('app/entity_editor/DataLoader').loadEntry;
-
-  var listEntity = {
-    getTitle: function () { return 'Content'; },
-    link: { state: 'spaces.detail.entries.list' },
-    getType: _.constant('Entries'),
-    getId: _.constant('ENTRIES')
-  };
 
   var list = base({
     name: 'list',
     url: '',
     loadingText: 'Loading content...',
     controller: [function () {
-      contextHistory.addEntity(listEntity);
+      contextHistory.add(crumbFactory.EntryList());
     }],
     template: '<div cf-entry-list class="workbench entry-list entity-list"></div>'
   });
@@ -78,17 +71,9 @@ angular.module('contentful')
         trackVersioning.setData(entry.data, snapshot);
         trackVersioning.opened($stateParams.source);
 
-        contextHistory.addEntity(listEntity);
-        contextHistory.addEntity(buildEntryCrumb(entry));
-        contextHistory.addEntity({
-          getTitle: _.constant(spaceContext.entryTitle(entry)),
-          link: {
-            state: 'spaces.detail.entries.compare.withCurrent',
-            params: {snapshotId: snapshot.id}
-          },
-          getType: _.constant('SnapshotComparison'),
-          getId: _.constant(snapshot.sys.id)
-        });
+        contextHistory.add(crumbFactory.EntryList());
+        contextHistory.add(crumbFactory.Entry(entry.data.sys, $scope.context));
+        contextHistory.add(crumbFactory.EntrySnapshot(snapshot.sys.id, $scope.context));
       }
     ]
   });
@@ -157,11 +142,11 @@ angular.module('contentful')
 
       // add list as parent state only if it's a deep link
       if (contextHistory.isEmpty()) {
-        contextHistory.addEntity(listEntity);
+        contextHistory.add(crumbFactory.EntryList());
       }
 
       // add current state
-      contextHistory.addEntity(buildEntryCrumb(editorData.entity));
+      contextHistory.add(crumbFactory.Entry(editorData.entity.getSys(), $scope.context));
     }],
     template: '<cf-entry-editor class="entry-editor workbench">'
   });
@@ -173,19 +158,4 @@ angular.module('contentful')
     abstract: true,
     children: [list, detail]
   };
-
-  function buildEntryCrumb (entry) {
-    return {
-      getTitle: function () {
-        var asterisk = 'hasUnpublishedChanges' in entry && entry.hasUnpublishedChanges() ? '*' : '';
-        return spaceContext.entryTitle(entry) + asterisk;
-      },
-      link: {
-        state: 'spaces.detail.entries.detail',
-        params: { entryId: entry.getId() }
-      },
-      getType: entry.getType.bind(entry),
-      getId: _.constant(entry.getId())
-    };
-  }
 }]);
