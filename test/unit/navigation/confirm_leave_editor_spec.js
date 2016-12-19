@@ -4,7 +4,7 @@ describe('navigation/confirmLeaveEditor', function () {
 
   beforeEach(function () {
     module('contentful/test');
-    var createConfirm = this.$inject('navigation/confirmLeaveEditor');
+    const createConfirm = this.$inject('navigation/confirmLeaveEditor');
     this.save = sinon.stub().resolves();
     this.confirm = createConfirm(this.save);
 
@@ -12,7 +12,7 @@ describe('navigation/confirmLeaveEditor', function () {
     this.dialog.appendTo('body');
 
     // TODO this should be a global stub for contentful/test
-    var icons = this.$inject('icons');
+    const icons = this.$inject('icons');
     icons['close'] = '<img>';
   });
 
@@ -21,7 +21,7 @@ describe('navigation/confirmLeaveEditor', function () {
   });
 
   pit('confirms leave when "Save" is clicked', function () {
-    var confirmation = this.confirm();
+    const confirmation = this.confirm();
     this.$apply();
     this.dialog.find('button[ui-command="actions.save"]').click();
     this.$apply();
@@ -40,7 +40,7 @@ describe('navigation/confirmLeaveEditor', function () {
   });
 
   pit('saves and confirms leave when "Enter" is pressed', function () {
-    var confirmation = this.confirm();
+    const confirmation = this.confirm();
     this.$apply();
     this.dialog.trigger(_.extend($.Event('keyup'), {
       keyCode: this.$inject('keycodes').ENTER
@@ -54,7 +54,7 @@ describe('navigation/confirmLeaveEditor', function () {
   });
 
   pit('cancels leave when save action is rejected', function () {
-    var confirmation = this.confirm();
+    const confirmation = this.confirm();
     this.save.rejects('ERROR');
     this.$apply();
     this.dialog.find('button[ui-command="actions.save"]').click();
@@ -68,7 +68,7 @@ describe('navigation/confirmLeaveEditor', function () {
   });
 
   pit('confirms leave when "Discard" is clicked', function () {
-    var confirmation = this.confirm();
+    const confirmation = this.confirm();
     this.$apply();
     this.dialog.find('button[ui-command="actions.discard"]').click();
     this.$apply();
@@ -79,7 +79,7 @@ describe('navigation/confirmLeaveEditor', function () {
   });
 
   pit('cancels leave when "Cancel" icon is clicked', function () {
-    var confirmation = this.confirm();
+    const confirmation = this.confirm();
     this.$apply();
     this.dialog.find('button[ui-command="actions.cancel"]').click();
     this.$apply();

@@ -1,5 +1,4 @@
-import {h} from 'virtual-dom'
-import stringify from 'vdom-to-html'
+import {h, doctype} from '../../src/javascripts/utils/hyperscript.es6.js'
 import {create as createResolver} from './manifest-resolver'
 
 const DEV_ENTRY_SCRIPTS = [
@@ -62,14 +61,14 @@ export function renderDev (config) {
 }
 
 function renderPage (...args) {
-  return '<!doctype html>' + stringify(indexPage(...args))
+  return doctype + indexPage(...args)
 }
 
 function indexPage (uiVersion, config, resolve, entryScripts) {
   return h('html', [
     h('head', [
       h('meta', {charset: 'UTF-8'}),
-      h('meta', attrs({'http-equiv': 'x-ua-compatible', 'content': 'ID=edge'})),
+      h('meta', {httpEquiv: 'x-ua-compatible', content: 'ID=edge'}),
       h('title', ['Contentful']),
       stylesheet(resolve('vendor.css')),
       stylesheet(resolve('main.css')),
@@ -79,14 +78,14 @@ function indexPage (uiVersion, config, resolve, entryScripts) {
       iconLink('apple-touch-icon', resolve('images/favicons/apple_icon114x114.png')),
       configScript(uiVersion, config, resolve)
     ]),
-    h('body', attrs({
-      'ng-app': 'contentful/app',
-      'ng-controller': 'ClientController',
-      'ng-init': 'initClient()'
-    }), [
+    h('body', {
+      ngApp: 'contentful/app',
+      ngController: 'ClientController',
+      ngInit: 'initClient()'
+    }, [
       h('.client', [
-        h('cf-app-container.app-container.ng-hide', attrs({'ng-show': 'user'})),
-        h('.client-loading', attrs({'ng-if': '!user'}), [
+        h('cf-app-container.app-container.ng-hide', {ngShow: 'user'}),
+        h('.client-loading', {ngIf: '!user'}, [
           h('.client-loading__container', [
             h('.client-loading__icon.fa.fa-cog.fa-spin'),
             h('.client-loading__text', ['Loading Contentful...'])
@@ -133,8 +132,4 @@ function iconLink (rel, href) {
 
 function scriptTag (src) {
   return h('script', {src, type: 'text/javascript'})
-}
-
-function attrs (attributes) {
-  return {attributes}
 }

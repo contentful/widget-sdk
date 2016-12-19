@@ -19,10 +19,10 @@ describe('navigator', function () {
 
 
     beforeEach(function () {
-      var stateChangeHandlers = this.$inject('navigation/stateChangeHandlers');
+      const stateChangeHandlers = this.$inject('navigation/stateChangeHandlers');
       stateChangeHandlers.setup();
 
-      var $state = this.$inject('$state');
+      const $state = this.$inject('$state');
       this.$state = $state;
       this.dirtyState = $state.get('dirty');
 
@@ -32,17 +32,17 @@ describe('navigator', function () {
     });
 
     it('request leave confirmation', function () {
-      var confirm = sinon.stub().resolves();
+      const confirm = sinon.stub().resolves();
       this.dirtyState.data.requestLeaveConfirmation = confirm;
       this.$state.go('leave');
       sinon.assert.calledOnce(confirm);
     });
 
     it('transitions away when leave is confimed', function () {
-      var confirm = sinon.stub().resolves(true);
+      const confirm = sinon.stub().resolves(true);
       this.dirtyState.data.requestLeaveConfirmation = confirm;
 
-      var exit = sinon.stub();
+      const exit = sinon.stub();
       this.dirtyState.onExit = exit;
 
       this.$state.go('leave');
@@ -51,10 +51,10 @@ describe('navigator', function () {
     });
 
     it('does not transitions away when leave is cancelled', function () {
-      var confirm = sinon.stub().resolves(false);
+      const confirm = sinon.stub().resolves(false);
       this.dirtyState.data.requestLeaveConfirmation = confirm;
 
-      var exit = sinon.stub();
+      const exit = sinon.stub();
       this.dirtyState.onExit = exit;
 
       this.$state.go('leave');

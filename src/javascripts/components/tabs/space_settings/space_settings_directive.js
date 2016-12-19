@@ -1,26 +1,26 @@
-'use strict';
-
 angular.module('contentful')
 
-.directive('cfSpaceSettings', [function () {
+.directive('cfSpaceSettings', ['require', function (require) {
+  var templates = require('components/tabs/space_settings/space_settings_templates');
+
   return {
-    template: JST['space_settings'](),
+    template: templates.form(),
     restrict: 'E',
     controller: 'SpaceSettingsController'
   };
 }])
 
-.controller('SpaceSettingsController', ['$scope', 'require', function ($scope, require) {
+.controller('SpaceSettingsController', ['require', '$scope', function (require, $scope) {
   var $q = require('$q');
   var $rootScope = require('$rootScope');
-  var $location = require('$location');
+  var $state = require('$state');
   var spaceContext = require('spaceContext');
   var Command = require('command');
   var tokenStore = require('tokenStore');
   var modalDialog = require('modalDialog');
   var notification = require('notification');
   var ReloadNotification = require('ReloadNotification');
-  var repo = require('SpaceSettingsController/createRepo').call();
+  var templates = require('components/tabs/space_settings/space_settings_templates');
 
   $scope.context.ready = true;
   $scope.spaceId = spaceContext.space.getId();
@@ -29,7 +29,10 @@ angular.module('contentful')
   $scope.openRemovalDialog = Command.create(openRemovalDialog);
 
   function save () {
-    return repo.rename($scope.model.name)
+    return spaceContext.cma.renameSpace(
+      $scope.model.name,
+      spaceContext.space.getVersion()
+    )
     .then(tokenStore.refresh)
     .then(function () {
       notification.info('Space renamed to ' + $scope.model.name + ' successfully.');
@@ -46,11 +49,10 @@ angular.module('contentful')
   }
 
   function remove () {
-    return repo.remove()
+    return spaceContext.cma.deleteSpace()
     .then(tokenStore.refresh)
     .then(function () {
-      tokenStore.refresh();
-      $location.url('/');
+      $state.go('home');
       notification.info('Space ' + $scope.model.name + ' deleted successfully.');
     })
     .catch(ReloadNotification.basicErrorHandler);
@@ -64,55 +66,22 @@ angular.module('contentful')
   }
 
   function openRemovalDialog () {
-    var space = spaceContext.space;
+    var spaceName = spaceContext.space.data.name;
     var scope = _.extend($rootScope.$new(), {
-      space: space,
       input: {spaceName: ''},
       remove: Command.create(remove, {
         disabled: function () {
-          return scope.input.spaceName !== space.data.name;
+          return scope.input.spaceName !== spaceName;
         }
       })
     });
 
     modalDialog.open({
-      template: 'space_removal_dialog',
+      template: templates.removalConfirmation(spaceName),
       noNewScope: true,
       scope: scope
     });
 
-    return $q.when();
+    return $q.resolve();
   }
-}])
-
-.factory('SpaceSettingsController/createRepo', ['require', function (require) {
-  var spaceContext = require('spaceContext');
-  var spaceEndpoint = require('data/spaceEndpoint');
-  var authentication = require('authentication');
-  var environment = require('environment');
-
-  return function createSpaceRepo () {
-    var makeRequest = spaceEndpoint.create(
-      authentication.token,
-      '//' + environment.settings.api_host,
-      spaceContext.space.getId()
-    );
-
-    return {
-      rename: rename,
-      remove: remove
-    };
-
-    function rename (newName) {
-      return makeRequest({
-        method: 'PUT',
-        version: spaceContext.space.getVersion(),
-        data: {name: newName}
-      });
-    }
-
-    function remove () {
-      return makeRequest({method: 'DELETE'});
-    }
-  };
 }]);

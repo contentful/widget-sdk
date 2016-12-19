@@ -9,65 +9,37 @@ angular.module('contentful')
 .factory('states/settings/locales', ['require', function (require) {
   var base = require('states/base');
   var contextHistory = require('contextHistory');
-
-  var listEntity = {
-    getTitle: function () { return list.label; },
-    link: { state: 'spaces.detail.settings.locales.list' },
-    getType: _.constant('Locales'),
-    getId: _.constant('LOCALES')
-  };
+  var crumbFactory = require('navigation/CrumbFactory');
 
   var list = base({
     name: 'list',
     url: '',
-    label: 'Locales',
-    loadingText: 'Loading locales...',
+    loadingText: 'Loading Locales...',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
-      contextHistory.addEntity(listEntity);
+      contextHistory.add(crumbFactory.LocaleList());
     }],
     template: '<div cf-locale-list class="workbench locale-list entity-list"></div>'
   });
 
-  function makeLocaleEditorState (isNew) {
-    var localeEditorState = {
-      template: '<cf-locale-editor class="workbench">',
-      label: 'context.title + (context.dirty ? "*" : "")',
-      params: { addToContext: true },
-      controller: [
-        '$scope', 'require', '$stateParams', 'locale', 'spaceLocales',
-        function ($scope, require, $stateParams, locale, spaceLocales) {
-          var $state = require('$state');
+  var localeEditorState = {
+    template: '<cf-locale-editor class="workbench" />',
+    params: { addToContext: true },
+    controller: [
+      '$scope', 'require', 'locale', 'spaceLocales',
+      function ($scope, require, locale, spaceLocales) {
+        var $state = require('$state');
+        var $stateParams = require('$stateParams');
 
-          var localeId = $stateParams.localeId;
+        $scope.context = $state.current.data;
+        $scope.locale = locale;
+        $scope.spaceLocales = spaceLocales;
 
-          var id = isNew ? 'LOCALENEW' : localeId;
-          var stateFragment = isNew ? 'new' : 'detail';
-          var params = isNew ? undefined : { localeId: localeId };
-
-          $scope.context = $state.current.data;
-          $scope.locale = locale;
-          $scope.spaceLocales = spaceLocales;
-
-          // add list state as parent
-          contextHistory.addEntity(listEntity);
-
-          // add current state
-          contextHistory.addEntity({
-            getTitle: function () { return $scope.context.title + ($scope.context.dirty ? '*' : ''); },
-            link: {
-              state: 'spaces.detail.settings.locales.' + stateFragment,
-              params: params
-            },
-            getType: _.constant('Locale'),
-            getId: _.constant(id)
-          });
-        }
-      ]
-    };
-
-    return localeEditorState;
-  }
+        contextHistory.add(crumbFactory.LocaleList());
+        contextHistory.add(crumbFactory.Locale($stateParams.localeId, $scope.context));
+      }
+    ]
+  };
 
   var resolveSpaceLocales = ['space', function (space) {
     return space.getLocales();
@@ -90,7 +62,7 @@ angular.module('contentful')
       }],
       spaceLocales: resolveSpaceLocales
     }
-  }, makeLocaleEditorState(true));
+  }, localeEditorState);
 
   var detail = _.extend({
     name: 'detail',
@@ -104,7 +76,7 @@ angular.module('contentful')
       }],
       spaceLocales: resolveSpaceLocales
     }
-  }, makeLocaleEditorState(false));
+  }, localeEditorState);
 
   return {
     name: 'locales',

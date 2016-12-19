@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Markdown tree', function () {
-  let createTreeBuilder, buildTree;
+  let treeBuilder, buildTree;
   const libs = window.cfLibs.markdown;
 
   function getRoot (source, fn) {
@@ -17,13 +17,13 @@ describe('Markdown tree', function () {
   }
 
   function hash (str) {
-    return createTreeBuilder._hash(str);
+    return treeBuilder.getHashCode(str);
   }
 
   beforeEach(function () {
     module('contentful/test');
-    createTreeBuilder = this.$inject('MarkdownEditor/tree');
-    buildTree = createTreeBuilder(libs);
+    treeBuilder = this.$inject('markdown_editor/markdown_tree');
+    buildTree = treeBuilder.create(libs);
   });
 
   it('Creates root div node with incremental key for builders', function () {
@@ -32,7 +32,7 @@ describe('Markdown tree', function () {
     expect(root.type).toBe('div');
     expect(_.isObject(getChildren(root))).toBe(true);
 
-    root = getRoot('__test2__', createTreeBuilder(libs));
+    root = getRoot('__test2__', treeBuilder.create(libs));
     expect(root.key).toBe('root/2');
     expect(root.type).toBe('div');
   });

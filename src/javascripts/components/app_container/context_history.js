@@ -1,40 +1,54 @@
 'use strict';
 
-angular.module('contentful').factory('contextHistory', ['$injector', function ($injector) {
+angular.module('contentful')
+.factory('contextHistory', ['require', function (require) {
+  var K = require('utils/kefir');
+  var $stateParams = require('$stateParams');
 
-  var $stateParams = $injector.get('$stateParams');
-
-  var contextHistory = [];
+  var history = [];
+  var crumbBus = K.createPropertyBus(history);
 
   return {
-    addEntity: addEntity,
+    add: add,
     isEmpty: isEmpty,
-
-    pop: function () { return contextHistory.pop(); },
-    purge: function () { contextHistory = []; },
-
-    getAll: function () { return contextHistory; },
-    getLast: function () { return _.last(contextHistory); },
-    getAllButLast: function () { return contextHistory.slice(0, contextHistory.length - 1); }
+    pop: pop,
+    purge: purge,
+    getLast: function () { return _.last(history); },
+    crumbs$: crumbBus.property
   };
 
-  function addEntity (entity) {
-    if (isEmpty() || $stateParams.addToContext) {
-      var index = findIndex(entity);
+  function add (crumb) {
+    // TODO: make it an argument
+    var shouldAdd = $stateParams.addToContext;
+
+    if (isEmpty() || shouldAdd) {
+      var index = findIndex(crumb);
       if (index > -1) {
-        contextHistory = contextHistory.slice(0, index);
+        history = history.slice(0, index);
       }
-      contextHistory.push(entity);
+      history.push(crumb);
+      crumbBus.set(history);
     }
   }
 
-  function findIndex (entity) {
-    return _.findIndex(contextHistory, function (historyEntry) {
-      return historyEntry.getId() === entity.getId();
+  function findIndex (crumb) {
+    return _.findIndex(history, function (historyCrumb) {
+      return historyCrumb.id === crumb.id;
     });
   }
 
   function isEmpty () {
-    return contextHistory.length === 0;
+    return history.length === 0;
+  }
+
+  function pop () {
+    var popped = history.pop();
+    crumbBus.set(history);
+    return popped;
+  }
+
+  function purge () {
+    history = [];
+    crumbBus.set(history);
   }
 }]);

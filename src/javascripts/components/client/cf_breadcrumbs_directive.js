@@ -11,8 +11,9 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
   var $parse = require('$parse');
   var $state = require('$state');
   var analytics = require('analytics');
-  var $document = require('$document');
   var contextHistory = require('contextHistory');
+  var documentTitle = require('navigation/DocumentTitle');
+  var K = require('utils/kefir');
 
   var backBtnSelector = '[aria-label="breadcrumbs-back-btn"]';
   var ancestorBtnSelector = '[aria-label="breadcrumbs-ancestor-btn"]';
@@ -44,10 +45,7 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
     template: JST.cf_breadcrumbs(),
     restrict: 'E',
     replace: true,
-    scope: {
-      backHint: '@',
-      ancestorHint: '@'
-    },
+    scope: {},
     link: function ($scope, $el) {
       $el.on('click', backBtnSelector, goBackToPreviousPage);
 
@@ -124,49 +122,16 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
       }
     },
     controller: ['$scope', function ($scope) {
-      /*
-       * TODO(mudit): When building the hierarchical navigation,
-       * this will turn into an object that will hold the tree
-       * rooted at the entry you started from.
-       * The nodes in the tree will be linked entries/assets/whatever
-       * This will be resolved only once which will be when the user
-       * navigates to an entry from the Content page (entry list).
-       * It's an array right now as "breadcrumbs" are linear in shape.
-       */
-      $scope.crumbs = [];
-
       $scope.$watch(function () {
-        var last = $scope.crumbs[$scope.crumbs.length - 1];
-        return last ? last.getTitle() : undefined;
-      }, function (title) {
-        // set document title as the title of the page the user is on
-        // TODO(mudit): Browser is mapping the wrong title to the wrong page
-        // when you see the list of things you can go back to on long pressing
-        // the browser back button. Fix it.
-        // TODO(mudit): This doesn't belong here. Move this out into a service
-        // or something.
-        if (title) {
-          $document[0].title = title;
-        }
-      });
-      $scope.$watchCollection(contextHistory.getAll, function (items) {
-        $scope.crumbs = items.map(function (item) {
-          var type = item.getType();
+        var last = _.last($scope.crumbs);
+        return last && last.getTitle();
+      }, documentTitle.maybeOverride);
 
-          return {
-            getTitle: item.getTitle,
-            link: item.link,
-            type: type
-          };
-        });
-
-        $scope.crumbs.hide = $scope.crumbs.length <= 1;
-        $scope.crumbs.isExactlyOneLevelDeep = $scope.crumbs.length === 2;
-        $scope.crumbs.isMoreThanALevelDeep = $scope.crumbs.length > 2;
-        $scope.crumbs.isAtLeastOneLevelDeep = $scope.crumbs.length >= 2;
-
-        $scope.crumbs.backHint = $scope.backHint || 'You can go back to the previous page';
-        $scope.crumbs.ancestorHint = $scope.ancestorHint || 'You can view the list of previous pages';
+      K.onValueScope($scope, contextHistory.crumbs$, function (crumbs) {
+        $scope.crumbs = crumbs;
+        $scope.shouldHide = crumbs.length <= 1;
+        $scope.shouldShowBack = crumbs.length >= 2;
+        $scope.shouldShowHierarchy = crumbs.length > 2;
       });
     }]
   };

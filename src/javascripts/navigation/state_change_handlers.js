@@ -15,7 +15,6 @@ angular.module('cf.app')
  */
 .factory('navigation/stateChangeHandlers', ['$injector', function ($injector) {
   var $rootScope = $injector.get('$rootScope');
-  var $document = $injector.get('$document');
   var $state = $injector.get('$state');
   var contextHistory = $injector.get('contextHistory');
   var logger = $injector.get('logger');
@@ -36,12 +35,6 @@ angular.module('cf.app')
   };
 
   function setupHandlers () {
-    $rootScope.$watch(function () {
-      return $state.current.label;
-    }, function (label) {
-      $document[0].title = label || 'Contentful';
-    });
-
     $rootScope.$on('$stateChangeSuccess', stateChangeSuccessHandler);
     $rootScope.$on('$stateChangeStart', stateChangeStartHandler);
     $rootScope.$on('$stateChangeError', stateChangeErrorHandler);

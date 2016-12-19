@@ -3,8 +3,8 @@
 angular.module('contentful').directive('cfZenmode', ['require', function (require) {
 
   var $window = require('$window');
-  var MarkdownEditor = require('MarkdownEditor');
-  var actions = require('MarkdownEditor/actions');
+  var MarkdownEditor = require('markdown_editor/markdown_editor');
+  var actions = require('markdown_editor/markdown_actions');
   var keycodes = require('keycodes');
   var modalDialog = require('modalDialog');
   var win = $($window);
@@ -50,7 +50,7 @@ angular.module('contentful').directive('cfZenmode', ['require', function (requir
 
       function initEditor (editorInstance) {
         editor = editorInstance;
-        scope.actions = actions.for(editor, scope.zenApi.getLocale());
+        scope.actions = actions.create(editor, scope.zenApi.getLocale());
         scope.history = editor.history;
 
         scope.zenApi.registerChild(editorInstance);

@@ -10,23 +10,16 @@ angular.module('contentful')
 .factory('states/settings/webhooks', ['require', function (require) {
   var base = require('states/base');
   var contextHistory = require('contextHistory');
-
-  var listEntity = {
-    getTitle: function () { return list.label; },
-    link: { state: 'spaces.detail.settings.webhooks.list' },
-    getType: _.constant('Webhooks'),
-    getId: _.constant('WEBHOOKS')
-  };
+  var crumbFactory = require('navigation/CrumbFactory');
 
   var list = base({
     name: 'list',
     url: '',
-    label: 'Webhooks',
-    loadingText: 'Loading webhooks...',
+    loadingText: 'Loading Webhooks...',
     template: '<cf-webhook-list class="workbench webhook-list" />',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
-      contextHistory.addEntity(listEntity);
+      contextHistory.add(crumbFactory.WebhookList());
     }]
   });
 
@@ -36,7 +29,6 @@ angular.module('contentful')
     data: {
       isNew: true
     },
-    label: 'New Webhook',
     params: { addToContext: true },
     template: '<cf-webhook-editor cf-ui-tab class="workbench webhook-editor" />',
     controller: ['$scope', 'require', function ($scope, require) {
@@ -45,16 +37,8 @@ angular.module('contentful')
       $scope.context = $state.current.data;
       $scope.webhook = { headers: [], topics: ['*.*'] };
 
-      // add list as parent state
-      contextHistory.addEntity(listEntity);
-
-      // add current state
-      contextHistory.addEntity({
-        getTitle: function () { return $scope.context.title + ($scope.context.dirty ? '*' : ''); },
-        link: { state: 'spaces.detail.settings.webhooks.new' },
-        getType: _.constant('Webhook'),
-        getId: _.constant('WEBHOOKNEW')
-      });
+      contextHistory.add(crumbFactory.WebhookList());
+      contextHistory.add(crumbFactory.Webhook(null, $scope.context));
     }]
   };
 
@@ -62,7 +46,6 @@ angular.module('contentful')
     name: 'call',
     url: '/call/:callId',
     params: { addToContext: true },
-    label: 'Call Details',
     resolve: {
       call: ['WebhookRepository', 'space', 'webhook', '$stateParams', function (WebhookRepository, space, webhook, $stateParams) {
         return WebhookRepository.getInstance(space).logs.getCall(webhook.sys.id, $stateParams.callId);
@@ -80,10 +63,9 @@ angular.module('contentful')
         /* eslint no-empty: off */
       }
 
-      // add list as grand parent and webhook as parent
-      contextHistory.addEntity(listEntity);
-      contextHistory.addEntity(createWebhookCrumb({title: webhook.name}, $stateParams.webhookId));
-      contextHistory.addEntity(createWebhookCallCrumb(call));
+      contextHistory.add(crumbFactory.WebhookList());
+      contextHistory.add(crumbFactory.Webhook($stateParams.webhookId, {title: webhook.name}));
+      contextHistory.add(crumbFactory.WebhookCall(call));
     }]
   };
 
@@ -93,7 +75,6 @@ angular.module('contentful')
     data: {
       isNew: false
     },
-    label: 'Webhook Details',
     params: { addToContext: true },
     resolve: {
       webhook: ['WebhookRepository', 'space', '$stateParams', function (WebhookRepository, space, $stateParams) {
@@ -105,8 +86,8 @@ angular.module('contentful')
       $scope.context = $state.current.data;
       $scope.webhook = webhook;
 
-      contextHistory.addEntity(listEntity);
-      contextHistory.addEntity(createWebhookCrumb($scope.context, $stateParams.webhookId));
+      contextHistory.add(crumbFactory.WebhookList());
+      contextHistory.add(crumbFactory.Webhook($stateParams.webhookId, $scope.context));
     }],
     children: [callState]
   };
@@ -117,30 +98,4 @@ angular.module('contentful')
     abstract: true,
     children: [list, newWebhook, detail]
   };
-
-  function createWebhookCrumb (context, webhookId) {
-    return {
-      getTitle: function () {
-        return context.title + (context.dirty ? '*' : '');
-      },
-      link: {
-        state: 'spaces.detail.settings.webhooks.detail',
-        params: { webhookId: webhookId }
-      },
-      getType: _.constant('Webhook'),
-      getId: _.constant(webhookId)
-    };
-  }
-
-  function createWebhookCallCrumb (call) {
-    return {
-      getTitle: _.constant('Call details (' + call.requestAt + ')'),
-      link: {
-        state: 'spaces.details.settings.webhooks.detail.call',
-        params: { callId: call.sys.id }
-      },
-      getType: _.constant('WebhookCall'),
-      getId: _.constant(call.sys.id)
-    };
-  }
 }]);

@@ -9,12 +9,12 @@ describe('CodeMirror wrapper', function () {
 
   beforeEach(function () {
     module('contentful/test');
-    const createWrapper = this.$inject('MarkdownEditor/wrapper');
+    const Wrapper = this.$inject('markdown_editor/codemirror_wrapper');
     textarea = document.createElement('textarea');
     document.body.appendChild(textarea);
 
     const cmFactory = sinon.spy(CodeMirror, 'fromTextArea');
-    wrapper = createWrapper(textarea, {}, CodeMirror);
+    wrapper = Wrapper.create(textarea, {}, CodeMirror);
     cm = cmFactory.returnValues[0];
     cmFactory.restore();
 

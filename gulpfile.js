@@ -70,7 +70,6 @@ var src = {
       'node_modules/angular-sanitize/angular-sanitize.js',
       'node_modules/angular-ui-sortable/dist/sortable.js',
       'node_modules/angular-ui-router/release/angular-ui-router.js',
-      'node_modules/angular-breadcrumb/dist/angular-breadcrumb.js',
       'node_modules/bootstrap/js/tooltip.js',
       'node_modules/browserchannel/dist/bcsocket-uncompressed.js',
       'vendor/sharejs/webclient/share.uncompressed.js',

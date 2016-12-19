@@ -50,8 +50,7 @@ angular.module('contentful', [
   'ngAnimate',
   'ngSanitize',
   'ui.sortable',
-  'ui.router',
-  'ncy-angular-breadcrumb'
+  'ui.router'
 ]);
 
 /**
@@ -76,6 +75,7 @@ angular.module('contentful/app', ['contentful'])
   require('notification').setupClearMessageHooks();
   require('states').loadAll();
   require('dialogsInitController').init();
+  require('navigation/DocumentTitle').init();
 }]);
 
 angular.module('contentful')

@@ -14,6 +14,10 @@
         .cfnext-form__hint Please include protocol (e.g. <code>https://</code>).
       .cfnext-form__field
         label Link label
+        input.cfnext-form__input--full-size(ng-model="model.text" name="text" type="text")
+        .cfnext-form__hint Optional.
+      .cfnext-form__field
+        label Link title
         input.cfnext-form__input--full-size(ng-model="model.title" name="title" type="text")
         .cfnext-form__hint Optional.
     .modal-dialog__controls

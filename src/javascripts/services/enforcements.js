@@ -67,8 +67,8 @@ angular.module('contentful')
     },
     {
       label: 'periodUsageExceeded',
-      message: '<strong>Over usage limits.</strong> You have exceeded the monthly usage quota for your pricing plan. Please upgrade to ensure an uninterrupted delivery of your content.',
-      actionMessage: upgradeActionMessage,
+      message: '<strong>You have reached one of your limits.</strong> To check your current limits, go to your subscription page. If you have overages enabled, don’t worry - we’ll charge you as you go.',
+      actionMessage: 'Go to subscription',
       action: upgradeAction
     },
     {
@@ -155,6 +155,8 @@ angular.module('contentful')
   }
 
   function getPeriodUsage () {
+    if (!isOwner()) return;
+
     var enforcement;
     _.forEach(periodUsageMetrics, function (metric) {
       if (computeUsage(metric)) {

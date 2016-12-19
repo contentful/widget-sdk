@@ -116,7 +116,7 @@ angular.module('contentful')
       message: [
         'The field <span class="modal-dialog__highlight">', htmlEncode(field.name),
         '</span> acts as a title for this content type. Before ', action[1],
-        ' it you need too choose another field as title.'
+        ' it you need to choose another field as title.'
       ].join(''),
       confirmLabel: 'Okay, got it',
       cancelLabel: null

@@ -2,7 +2,7 @@
 
 describe('Markdown preview', function () {
   let $timeout, scope;
-  let startLivePreview;
+  let preview;
   const libs = window.cfLibs.markdown;
 
   let content;
@@ -13,7 +13,7 @@ describe('Markdown preview', function () {
 
     $timeout = this.$inject('$timeout');
     scope = this.$inject('$rootScope');
-    startLivePreview = this.$inject('MarkdownEditor/preview');
+    preview = this.$inject('markdown_editor/markdown_preview');
 
     const $q = this.$inject('$q');
     const LazyLoader = this.$inject('LazyLoader');
@@ -23,7 +23,7 @@ describe('Markdown preview', function () {
   afterEach(function () { content = null; });
 
   it('notifies with Markdown preview and stats', function () {
-    startLivePreview(getContentFn, function (err, preview) {
+    preview.start(getContentFn, function (err, preview) {
       expect(err).toBe(null);
       expect(_.isObject(preview)).toBe(true);
       expect(preview.tree.type).toBe('div');
@@ -36,8 +36,8 @@ describe('Markdown preview', function () {
   it('notifies even when content is null or undefined', function () {
     const s1 = sinon.spy();
     const s2 = sinon.spy();
-    startLivePreview(function () { return null; }, s1);
-    startLivePreview(function () { return undefined; }, s2);
+    preview.start(function () { return null; }, s1);
+    preview.start(function () { return undefined; }, s2);
     scope.$apply();
     $timeout.flush();
     sinon.assert.called(s1);
@@ -46,7 +46,7 @@ describe('Markdown preview', function () {
 
   it('notifies after the change to content only', function () {
     const previewSpy = sinon.spy();
-    startLivePreview(getContentFn, previewSpy);
+    preview.start(getContentFn, previewSpy);
     scope.$apply();
     sinon.assert.notCalled(previewSpy);
     $timeout.flush();
@@ -60,12 +60,12 @@ describe('Markdown preview', function () {
 
   it('stops notifications when killed', function () {
     const previewSpy = sinon.spy();
-    const off = startLivePreview(getContentFn, previewSpy);
+    const stop = preview.start(getContentFn, previewSpy);
     scope.$apply();
     $timeout.flush();
     sinon.assert.calledOnce(previewSpy);
     content = '__test2__';
-    off();
+    stop();
     $timeout.flush();
     sinon.assert.calledOnce(previewSpy);
   });

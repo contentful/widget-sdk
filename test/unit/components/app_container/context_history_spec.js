@@ -1,102 +1,101 @@
 'use strict';
 
 describe('contextHistory service', function () {
-
-  var ch, $stateParams;
-  function e(id) { return {getId: _.constant(id)}; }
-
-  afterEach(function () {
-    ch = $stateParams = null;
-  });
+  const e = id => { return {id: id}; };
 
   beforeEach(function () {
     module('contentful/test');
-    ch = this.$inject('contextHistory');
-    ch.purge();
-    $stateParams = this.$inject('$stateParams');
-    $stateParams.addToContext = false;
+    this.ctx = this.$inject('contextHistory');
+    this.ctx.purge();
+    this.params = this.$inject('$stateParams');
+    this.params.addToContext = false;
+
+    this.withLastCrumbs = fn => {
+      this.ctx.crumbs$.onValue(_.once(fn));
+    };
+
+    this.assertCrumbCount = count => {
+      this.withLastCrumbs(crumbs => {
+        expect(crumbs.length).toBe(count);
+      });
+    };
   });
 
   describe('after init (empty state)', function () {
     it('is empty', function () {
-      expect(ch.isEmpty()).toBe(true);
+      expect(this.ctx.isEmpty()).toBe(true);
     });
 
     it('pop returns undefined', function () {
-      expect(ch.pop()).toBeUndefined();
+      expect(this.ctx.pop()).toBeUndefined();
     });
   });
 
   describe('adding entities', function () {
     it('adds when empty and w/o addToContext flag', function () {
-      ch.addEntity(e(1));
-      expect(ch.getAll().length).toBe(1);
+      this.ctx.add(e(1));
+      this.assertCrumbCount(1);
     });
 
     it('does not add when not empty and w/o addToContext flag', function () {
-      ch.addEntity(e(1)); ch.addEntity(e(1));
-      expect(ch.getLast().getId()).toBe(1);
+      this.ctx.add(e(1));
+      this.ctx.add(e(1));
+      expect(this.ctx.getLast().id).toBe(1);
     });
 
     it('adds when not empty but with addToContext flag', function () {
-      $stateParams.addToContext = true;
-      ch.addEntity(e(1)); ch.addEntity(e(2));
-      expect(ch.getAll().length).toBe(2);
+      this.params.addToContext = true;
+      this.ctx.add(e(1));
+      this.ctx.add(e(2));
+      this.assertCrumbCount(2);
     });
 
     it('if adding already added entity, it is used as a new head', function () {
-      $stateParams.addToContext = true;
-      [e(1), e(2), e(3), e(4)].forEach(ch.addEntity);
-      expect(ch.getAll().length).toBe(4);
-      ch.addEntity(e(3));
-      expect(ch.getAll().length).toBe(3);
-      expect(ch.getLast().getId()).toBe(3);
-      expect(ch.getAllButLast()[1].getId()).toBe(2);
+      this.params.addToContext = true;
+      [e(1), e(2), e(3), e(4)].forEach(this.ctx.add);
+      this.assertCrumbCount(4);
+      this.ctx.add(e(3));
+      this.assertCrumbCount(3);
+      expect(this.ctx.getLast().id).toBe(3);
     });
   });
 
   describe('getters', function () {
     beforeEach(function () {
-      $stateParams.addToContext = true;
-      [e(1), e(2), e(3)].forEach(ch.addEntity);
+      this.params.addToContext = true;
+      [e(1), e(2), e(3)].forEach(this.ctx.add);
     });
 
-    it('#getAll', function () {
-      var all = ch.getAll();
-      expect(all.length).toBe(3);
-      expect(all[1].getId()).toBe(2);
+    it('crumbs$ property', function () {
+      this.assertCrumbCount(3);
+      this.withLastCrumbs(([first, second]) => {
+        expect(first.id).toBe(1);
+        expect(second.id).toBe(2);
+      });
     });
 
     it('#getLast', function () {
-      expect(ch.getLast().getId()).toBe(3);
-    });
-
-    it('#getAllButLast', function () {
-      var allButLast = ch.getAllButLast();
-      expect(allButLast.length).toBe(2);
-      expect(allButLast[1].getId()).toBe(2);
+      expect(this.ctx.getLast().id).toBe(3);
     });
   });
 
   describe('destructive operations', function () {
     beforeEach(function () {
-      $stateParams.addToContext = true;
-      [e(1), e(2), e(3)].forEach(ch.addEntity);
+      this.params.addToContext = true;
+      [e(1), e(2), e(3)].forEach(this.ctx.add);
     });
 
     it('#pop', function () {
-      expect(ch.getAll().length).toBe(3);
-      var popped = ch.pop();
-      expect(popped.getId()).toBe(3);
-      expect(ch.getAll().length).toBe(2);
-      expect(ch.getLast().getId()).toBe(2);
+      this.assertCrumbCount(3);
+      this.ctx.pop();
+      this.assertCrumbCount(2);
     });
 
     it('#purge', function () {
-      expect(ch.getAll().length).toBe(3);
-      ch.purge();
-      expect(ch.getAll().length).toBe(0);
-      expect(ch.isEmpty()).toBe(true);
+      this.assertCrumbCount(3);
+      this.ctx.purge();
+      this.assertCrumbCount(0);
+      expect(this.ctx.isEmpty()).toBe(true);
     });
   });
 });
