@@ -78,9 +78,10 @@ describe('cfCreateNewSpace directive', function () {
 
     $rootScope = this.$inject('$rootScope');
 
-    this.setupDirective = function () {
+    this.setupDirective = function (organizationId) {
       element = this.$compile('<cf-create-new-space>', {
-        dialog: stubs.dialog
+        dialog: stubs.dialog,
+        organizationId: organizationId
       });
       $scope = element.scope();
       controller = $scope.createSpace;
@@ -114,18 +115,25 @@ describe('cfCreateNewSpace directive', function () {
   describe('on the default state', function () {
     beforeEach(function () {
       this.org = {sys: {id: 'orgid'}};
-      this.orgs = [this.org];
+      this.org2 = {sys: {id: 'orgid2'}};
+      this.orgs = [this.org, this.org2];
       stubs.OrganizationList.getAll.returns(this.orgs);
       stubs.accessChecker.canCreateSpaceInOrganization.returns(true);
-      this.setupDirective();
     });
 
     it('new space data has default locale', function () {
+      this.setupDirective();
       expect(controller.newSpace.data.defaultLocale).toBe('en-US');
     });
 
-    it('preselects an organization', function () {
+    it('preselects the first organization', function () {
+      this.setupDirective();
       expect(controller.newSpace.organization).toBe(this.org);
+    });
+
+    it('preselects the organization with matching id', function () {
+      this.setupDirective('orgid2');
+      expect(controller.newSpace.organization).toBe(this.org2);
     });
   });
 

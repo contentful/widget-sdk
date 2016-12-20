@@ -43,7 +43,9 @@ angular.module('contentful')
   $scope.$on('$destroy', off);
 
   // @todo remove it - temporary proxy event handler (2 usages)
-  $scope.$on('showCreateSpaceDialog', showCreateSpaceDialog);
+  $scope.$on('showCreateSpaceDialog', function (_event, organizationId) {
+    showCreateSpaceDialog(organizationId);
+  });
 
   $scope.initClient = initClient;
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
@@ -105,13 +107,16 @@ angular.module('contentful')
     });
   }
 
-  function showCreateSpaceDialog () {
+  function showCreateSpaceDialog (organizationId) {
     analytics.track('space_switcher:create_clicked');
     modalDialog.open({
       title: 'Space templates',
       template: 'create_new_space_dialog',
       backgroundClose: false,
-      persistOnNavigation: true
+      persistOnNavigation: true,
+      scopeData: {
+        organizationId: organizationId
+      }
     })
     .promise
     .then(handleSpaceCreationSuccess);

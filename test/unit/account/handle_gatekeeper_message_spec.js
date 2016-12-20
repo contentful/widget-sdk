@@ -16,8 +16,8 @@ describe('Gatekeeper Message Handler', function () {
     it('opens the space creation dialog', function () {
       const root = this.$inject('$rootScope');
       sinon.spy(root, '$broadcast');
-      this.handle({action: 'new', type: 'space'});
-      sinon.assert.calledOnce(root.$broadcast.withArgs('showCreateSpaceDialog'));
+      this.handle({action: 'new', type: 'space', organizationId: 'orgId'});
+      sinon.assert.calledOnce(root.$broadcast.withArgs('showCreateSpaceDialog', 'orgId'));
       root.$broadcast.restore();
     });
 

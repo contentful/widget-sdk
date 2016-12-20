@@ -21,7 +21,7 @@ angular.module('contentful')
 
     } else if (match('new', 'space')) {
       // @todo move it to service
-      $rootScope.$broadcast('showCreateSpaceDialog');
+      $rootScope.$broadcast('showCreateSpaceDialog', data.organizationId);
 
     } else if (match('delete', 'space')) {
       tokenStore.refresh();
