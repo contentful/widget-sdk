@@ -18,8 +18,17 @@ describe('Account View directive', function () {
 
   it('marks as ready on the first iframe message', function () {
     this.compile();
-    this.channel.onMessage.secondCall.args[0]();
+    this.channel.onMessage.secondCall.args[0]({});
     expect(this.element.scope().context.ready).toBe(true);
+  });
+
+  it('closes open modals on `update location` message', function () {
+    const message = {action: 'update', type: 'location'};
+    const modalDialog = this.$inject('modalDialog');
+    modalDialog.closeAll = sinon.stub();
+    this.compile();
+    this.channel.onMessage.secondCall.args[0](message);
+    sinon.assert.calledOnce(modalDialog.closeAll);
   });
 
   it('sets a source of the GK iframe using state params', function () {
