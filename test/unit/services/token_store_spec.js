@@ -6,7 +6,6 @@ describe('Token store service', function () {
     module('contentful/test');
 
     this.K = this.$inject('mocks/kefir');
-
     this.tokenStore = this.$inject('tokenStore');
 
     this.auth = this.$inject('authentication');
@@ -39,67 +38,41 @@ describe('Token store service', function () {
 
   describe('#refreshWithLookup', function () {
     beforeEach(function () {
-      this.listener = sinon.stub();
-      this.tokenStore.changed.attach(this.listener);
       this.client.newSpace.returns(this.spaces[0]);
       this.refresh(this.rawSpaces[0]);
     });
 
-    it('notifies listeners attached to "changed" signal', function () {
-      sinon.assert.calledOnce(this.listener);
+    it('updates user$ property', function () {
+      this.K.assertCurrentValue(this.tokenStore.user$, this.user);
     });
 
-    it('stores user object', function () {
-      expect(this.listener.firstCall.args[0].user).toBe(this.user);
-    });
-
-    it('stores space object', function () {
-      expect(this.listener.firstCall.args[0].spaces[0]).toBe(this.spaces[0]);
+    it('updates spaces$ property', function () {
+      this.K.assertCurrentValue(this.tokenStore.spaces$, [this.spaces[0]]);
     });
 
     it('modifies space object if already stored', function () {
       this.refresh(this.rawSpaces[0]);
-      sinon.assert.calledTwice(this.listener);
       sinon.assert.calledOnce(this.spaces[0].update.withArgs(this.rawSpaces[0]));
     });
 
     it('stores added, new space', function () {
       this.client.newSpace.returns(this.spaces[1]);
       this.refresh(this.rawSpaces[0], this.rawSpaces[1]);
-
       sinon.assert.calledTwice(this.client.newSpace);
-      sinon.assert.calledTwice(this.listener);
-
-      const spaces = this.listener.secondCall.args[0].spaces;
-      expect(spaces[0]).toBe(this.spaces[0]);
-      expect(spaces[1]).toBe(this.spaces[1]);
+      this.K.assertCurrentValue(this.tokenStore.spaces$, [this.spaces[0], this.spaces[1]]);
     });
 
     it('sorts spaces by name', function () {
       this.client.newSpace.returns(this.spaces[2]);
       this.refresh(this.rawSpaces[2], this.rawSpaces[0]);
-
-      const spaceIds = _.map(this.listener.secondCall.args[0].spaces, function (space) {
-        return space.getId();
-      });
-
-      expect(spaceIds[0]).toBe('a-space-id');
-      expect(spaceIds[1]).toBe('c-space-id');
+      this.K.assertCurrentValue(this.tokenStore.spaces$, [this.spaces[0], this.spaces[2]]);
     });
 
     it('removes stored space if not present in a new token', function () {
       this.client.newSpace.returns(this.spaces[1]);
       this.refresh(this.rawSpaces[0], this.rawSpaces[1]);
-
-      sinon.assert.calledTwice(this.listener);
-      expect(this.listener.secondCall.args[0].spaces[1]).toBe(this.spaces[1]);
-
       this.refresh(this.rawSpaces[0]);
-
-      sinon.assert.calledThrice(this.listener);
-      const spaces = this.listener.thirdCall.args[0].spaces;
-      expect(spaces.length).toBe(1);
-      expect(spaces[0]).toBe(this.spaces[0]);
+      this.K.assertCurrentValue(this.tokenStore.spaces$, [this.spaces[0]]);
     });
   });
 
@@ -125,23 +98,6 @@ describe('Token store service', function () {
     d.resolve({sys: {createdBy: this.user}, spaces: []});
     this.$apply();
     expect(this.tokenStore.refresh()).not.toBe(promise);
-  });
-
-  it('resolves to the latest token refresh call result', function () {
-    const $q = this.$inject('$q');
-    const subscriberSpy = sinon.spy();
-
-    this.auth.getTokenLookup
-      .onFirstCall().returns($q.resolve({sys: {createdBy: this.user}, spaces: []}))
-      .onSecondCall().returns($q.resolve({sys: {createdBy: {firstName: 'Jakub'}}, spaces: []}));
-
-    this.tokenStore.changed.attach(subscriberSpy);
-    this.tokenStore.refresh();
-    this.tokenStore.refresh();
-    this.$apply();
-
-    sinon.assert.calledOnce(subscriberSpy);
-    expect(subscriberSpy.firstCall.args[0].user.firstName).toBe('Jakub');
   });
 
   it('shows dialog and clears auth data on 401', function () {
@@ -218,6 +174,18 @@ describe('Token store service', function () {
     it('updates user when tokenStore is refreshed', function () {
       this.refresh();
       this.K.assertCurrentValue(this.tokenStore.user$, this.user);
+    });
+  });
+
+  describe('#spaces$', function () {
+    it('is initially empty', function () {
+      this.K.assertCurrentValue(this.tokenStore.spaces$, []);
+    });
+
+    it('updates spaces when tokenStore is refreshed', function () {
+      this.client.newSpace.returns(this.spaces[0]);
+      this.refresh(this.rawSpaces[0]);
+      this.K.assertCurrentValue(this.tokenStore.spaces$, [this.spaces[0]]);
     });
   });
 });

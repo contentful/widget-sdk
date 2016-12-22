@@ -1,6 +1,5 @@
 'use strict';
 
-/* eslint-disable no-unused-vars */
 describe('Client Controller', function () {
   let scope;
 
@@ -9,35 +8,26 @@ describe('Client Controller', function () {
   });
 
   beforeEach(function () {
-    const self = this;
-    module('contentful/test', function ($provide) {
+    module('contentful/test', ($provide) => {
       $provide.value('analytics', {
         enable: sinon.stub(),
         disable: sinon.stub(),
         track: sinon.stub()
       });
 
-      self.authorizationStubs = {
+      this.authorizationStubs = {
         setTokenLookup: sinon.stub(),
         setSpace: sinon.stub(),
         authContext: {
           hasSpace: sinon.stub()
         }
       };
-      $provide.value('authorization', self.authorizationStubs);
-
-      $provide.factory('tokenStore', function () {
-        return {
-          changed: {attach: sinon.stub()},
-          refresh: sinon.stub().resolves()
-        };
-      });
+      $provide.value('authorization', this.authorizationStubs);
     });
-
-    const tokenStore = this.$inject('tokenStore');
-    this.dispatchTokenUpdate = function (token) {
-      tokenStore.changed.attach.yield(token);
-    };
+    this.K = this.$inject('mocks/kefir');
+    this.tokenStore = this.$inject('tokenStore');
+    this.tokenStore.refresh = sinon.stub().resolves();
+    this.tokenStore.user$ = this.K.createMockProperty();
 
     const $rootScope = this.$inject('$rootScope');
     scope = $rootScope.$new();
@@ -123,11 +113,7 @@ describe('Client Controller', function () {
       this.hasNewVersion = Revision.hasNewVersion = sinon.stub().resolves(true);
       this.clock = sinon.useFakeTimers();
       scope.initClient();
-
-      this.dispatchTokenUpdate({
-        spaces: [],
-        user: this.user
-      });
+      this.tokenStore.user$.set(this.user);
 
       scope.$digest();
     });
@@ -251,7 +237,7 @@ describe('Client Controller', function () {
         };
 
         this.prepare = function () {
-          this.dispatchTokenUpdate({user: user});
+          this.tokenStore.user$.set(user);
         };
 
         this.analytics = this.$inject('analytics');

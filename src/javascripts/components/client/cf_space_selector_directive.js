@@ -13,17 +13,16 @@ angular.module('contentful')
 
 .controller('cfSpaceSelectorController', ['$scope', 'require', function cfSpaceSelectorController ($scope, require) {
   var $rootScope = require('$rootScope');
+  var K = require('utils/kefir');
   var analytics = require('analytics');
   var spaceContext = require('spaceContext');
   var OrganizationList = require('OrganizationList');
   var accessChecker = require('accessChecker');
   var tokenStore = require('tokenStore');
 
-  // load initial spaces:
-  tokenStore.getSpaces().then(storeSpaces);
   // subscribe to changes of spaces in token:
-  var off = tokenStore.changed.attach(storeSpaces);
-  $scope.$on('$destroy', off);
+  K.onValueScope($scope, tokenStore.spaces$, storeSpaces);
+
   // group spaces when changed:
   $scope.$watch('spaces', groupSpacesByOrganization);
 
@@ -35,8 +34,8 @@ angular.module('contentful')
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
   $scope.trackSpaceChange = trackSpaceChange;
 
-  function storeSpaces (tokenOrSpaces) {
-    $scope.spaces = _.isArray(tokenOrSpaces) ? tokenOrSpaces : tokenOrSpaces.spaces;
+  function storeSpaces (spaces) {
+    $scope.spaces = spaces;
   }
 
   function groupSpacesByOrganization () {

@@ -18,18 +18,16 @@ angular.module('contentful')
   var modalDialog = require('modalDialog');
   var ReloadNotification = require('ReloadNotification');
   var logger = require('logger');
-  var createSignal = require('signal').create;
   var createQueue = require('overridingRequestQueue');
 
   var currentToken = null;
-  var changed = createSignal();
   var request = createQueue(getTokenLookup, setupLookupHandler);
   var refreshPromise = $q.resolve();
 
   var userBus = K.createPropertyBus(null);
+  var spacesBus = K.createPropertyBus([]);
 
   return {
-    changed: changed,
     refresh: refresh,
     refreshWithLookup: refreshWithLookup,
     getSpaces: getSpaces,
@@ -41,7 +39,15 @@ angular.module('contentful')
      * @description
      * The current user object from the token
      */
-    user$: userBus.property
+    user$: userBus.property,
+    /**
+     * @ngdoc property
+     * @name tokenStore#spaces$
+     * @type {Property<Api.Spaces>}
+     * @description
+     * The list of spaces from the token
+     */
+    spaces$: spacesBus.property
   };
 
   function getTokenLookup () {
@@ -70,7 +76,7 @@ angular.module('contentful')
       spaces: updateSpaces(tokenLookup.spaces)
     };
     userBus.set(currentToken.user);
-    changed.dispatch(currentToken);
+    spacesBus.set(currentToken.spaces);
   }
 
   /**
