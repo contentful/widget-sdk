@@ -35,8 +35,9 @@ angular.module('cf.app')
 .controller('SnapshotSelectorController', ['$scope', 'require', function ($scope, require) {
   var spaceContext = require('spaceContext');
   var moment = require('moment');
-  var $q = require('$q');
   var Paginator = require('Paginator');
+  var snapshotStatus = require('app/snapshots/helpers/SnapshotStatus');
+  var snapshotDecorator = require('app/snapshots/helpers/SnapshotDecorator');
 
   var PER_PAGE = 20;
 
@@ -50,6 +51,7 @@ angular.module('cf.app')
   $scope.sortByLastEdited = sortByLastEdited;
   $scope.sortByEditor = sortByEditor;
   $scope.sortByStatus = sortByStatus;
+  $scope.snapshotStatus = snapshotStatus;
 
   $scope.snapshots = [];
   $scope.paginator.setTotal(0);
@@ -87,25 +89,12 @@ angular.module('cf.app')
     return spaceContext.cma.getEntrySnapshots(entryId, query)
     .then(function (res) { return res.items; })
     .then(addUnique)
-    .then(decorateWithAuthorName)
+    .then(snapshotDecorator.withCurrent)
+    .then(snapshotDecorator.withAuthorName)
     .then(function (snapshots) {
       $scope.snapshots = $scope.snapshots.concat(snapshots);
       $scope.isLoading = false;
     });
-  }
-
-  function decorateWithAuthorName (snapshots) {
-    var promises = snapshots.map(function (snapshot) {
-      return spaceContext.users.get(snapshot.sys.createdBy.sys.id)
-        .then(function (user) {
-          var authorName = user ? user.getName() : '';
-
-          snapshot.sys.createdBy.authorName = authorName;
-          return snapshot;
-        });
-    });
-
-    return $q.all(promises);
   }
 
   function addUnique (snapshots) {

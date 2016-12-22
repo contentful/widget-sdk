@@ -17,7 +17,8 @@ describe('cfSnapshotSelector', function () {
     spaceContext.cma = {
       getEntrySnapshots: sinon.stub().resolves({
         items: Array.apply(null, {length: 50}).map(makeFakeSnapshots(50))
-      })
+      }),
+      getEntry: sinon.stub().resolves({ sys: { publishedVersion: 1 } })
     };
 
     spaceContext.users = {

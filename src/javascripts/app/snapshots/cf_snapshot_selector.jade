@@ -22,12 +22,9 @@ include ./snapshot.mixin.jade
             +snapshot-dt
           td
             | {{ snapshot.sys.createdBy.authorName }}
-          td(
-            ng-class="{" +
-              "'snapshot-selector__item-status': true," +
-              "'snapshot-selector__item-status-published': snapshot.sys.snapshotType === 'publish'" +
-            "}")
-            | {{ snapshot.sys.snapshotType === 'publish' ? 'published' :  'other' }}
+          td.snapshot-selector__item-status(
+            class="{{ snapshotStatus.getClassname(snapshot) }}")
+            | {{ snapshotStatus.getLabel(snapshot) }}
 
     .snapshot-selector__item-list-placeholder(
       ng-if="!isLoading && snapshots.length < 1")
