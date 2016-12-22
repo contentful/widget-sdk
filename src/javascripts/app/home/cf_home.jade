@@ -14,7 +14,7 @@ include ./cf_home_mixins
       h3.home-section__heading Create a new space
       p.home-section__description
         | A space is where you keep all the content related to one project.
-      button.btn-action(ng-click="showCreateSpaceDialog()") Create new space
+      button.btn-action(ng-click="home.showCreateSpaceDialog()") Create new space
     section.home-section.x--spaces(ng-if="spaces.length")
       h3.home-section__heading Spaces
       .home-spaces

@@ -11,13 +11,13 @@ angular.module('contentful')
   var tokenStore = require('tokenStore');
   var analytics = require('analytics');
   var authorization = require('authorization');
-  var modalDialog = require('modalDialog');
   var presence = require('presence');
   var revision = require('revision');
   var ReloadNotification = require('ReloadNotification');
   var OrganizationList = require('OrganizationList');
   var environment = require('environment');
   var fontsDotCom = require('fontsDotCom');
+  var CreateSpace = require('services/CreateSpace');
 
   // TODO remove this eventually. All components should access it as a service
   $scope.spaceContext = spaceContext;
@@ -42,13 +42,8 @@ angular.module('contentful')
 
   K.onValueScope($scope, tokenStore.user$, handleUser);
 
-  // @todo remove it - temporary proxy event handler (2 usages)
-  $scope.$on('showCreateSpaceDialog', function (_event, organizationId) {
-    showCreateSpaceDialog(organizationId);
-  });
-
   $scope.initClient = initClient;
-  $scope.showCreateSpaceDialog = showCreateSpaceDialog;
+  $scope.showCreateSpaceDialog = CreateSpace.showDialog;
 
   function initClient () {
     tokenStore.refresh();
@@ -104,33 +99,5 @@ angular.module('contentful')
         });
       }
     });
-  }
-
-  function showCreateSpaceDialog (organizationId) {
-    analytics.track('space_switcher:create_clicked');
-    modalDialog.open({
-      title: 'Space templates',
-      template: 'create_new_space_dialog',
-      backgroundClose: false,
-      persistOnNavigation: true,
-      scopeData: {
-        organizationId: organizationId
-      }
-    })
-    .promise
-    .then(handleSpaceCreationSuccess);
-  }
-
-  function handleSpaceCreationSuccess (template) {
-    if (template) {
-      analytics.track('space:created_from_template', {
-        templateName: template.name
-      });
-      spaceContext.refreshContentTypesUntilChanged().then(function () {
-        $rootScope.$broadcast('reloadEntries');
-      });
-    } else {
-      spaceContext.refreshContentTypes();
-    }
   }
 }]);
