@@ -1,8 +1,7 @@
-.create-new-space-dialog.modal-dialog(
-  ng-class="{'x--no-close':createSpace.isOnboarding}")
+.create-new-space-dialog.modal-dialog
   .modal-dialog__header.create-new-space-dialog__header
     button.create-new-space-dialog__close.modal-dialog__close(
-      ng-if="createSpace.viewState === 'createSpaceForm' && !createSpace.isOnboarding"
+      ng-if="createSpace.viewState === 'createSpaceForm'"
       ng-click="dialog.cancel()")
   form(
     ng-show="createSpace.viewState === 'createSpaceForm'"
