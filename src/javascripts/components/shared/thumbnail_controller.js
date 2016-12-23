@@ -5,6 +5,22 @@ angular.module('contentful')
   var mimetype = $injector.get('mimetype');
   var assetUrlFilter = $injector.get('assetUrlFilter');
 
+  /**
+   * List of asset MIME types we want to show an image preview for.
+   */
+  var imageMimeTypes = [
+    'image/bmp',
+    'image/x-windows-bmp',
+    'image/gif',
+    'image/jpeg',
+    'image/pjpeg',
+    'image/x-jps',
+    'image/png',
+    'image/tiff',
+    'image/x-tiff',
+    'image/svg+xml'
+  ];
+
   $scope.$watch('file', function (file) {
     if (!file) $scope.imageHasLoaded = false;
   });
@@ -28,10 +44,7 @@ angular.module('contentful')
     return !!(
       $scope.file &&
       hasImagesDomain() &&
-      mimetype.hasPreview({
-        type: $scope.file.contentType,
-        fallbackFileName: $scope.file.fileName
-      })
+      imageMimeTypes.indexOf($scope.file.contentType) > -1
     );
   }
 

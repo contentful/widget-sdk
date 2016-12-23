@@ -36,6 +36,11 @@ angular.module('contentful').directive('cfThumbnail', function () {
         height = attrs.height || undefined;
       }
 
+      scope.imageStyle = {
+        width: width ? width + 'px' : '',
+        height: height ? height + 'px' : ''
+      };
+
       scope.isImage = function () {
         return scope.hasPreview();
       };

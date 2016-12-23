@@ -4,7 +4,6 @@ describe('Thumbnail Controller', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.constant('mimetype', {
-        hasPreview: sinon.stub(),
         getGroupLabel: sinon.stub()
       });
     });
@@ -45,7 +44,6 @@ describe('Thumbnail Controller', function () {
     });
 
     it('image has no preview', function () {
-      this.mimetype.hasPreview.returns(true);
       expect(this.scope.hasPreview()).toBe(false);
     });
 
@@ -75,9 +73,9 @@ describe('Thumbnail Controller', function () {
       expect(this.scope.imageHasLoaded).toBe(false);
     });
 
-    describe('with a preview', function () {
+    describe('with a image MIME type', function () {
       beforeEach(function () {
-        this.mimetype.hasPreview.returns(true);
+        this.scope.file.contentType = 'image/png';
       });
 
       it('image has preview', function () {
@@ -92,25 +90,16 @@ describe('Thumbnail Controller', function () {
         this.scope.imageHasLoaded = true;
         expect(this.scope.isFileLoading()).toBe(false);
       });
-    });
 
-    describe('previewable, but not coming from the images server', function () {
-      beforeEach(function () {
-        this.mimetype.hasPreview.returns(true);
-        this.scope.file = {
-          url: '//downloads.domain.com/file.jpg'
-        };
-      });
-
-      it('image has no preview', function () {
+      it('has not preview if not from images domain', function () {
+        this.scope.file.url = '//downloads.domain.com/file.jpg';
         expect(this.scope.hasPreview()).toBe(false);
       });
     });
 
-
-    describe('with no preview', function () {
+    describe('with non-image MIME type', function () {
       beforeEach(function () {
-        this.mimetype.hasPreview.returns(false);
+        this.scope.file.contentType = 'application/json';
       });
 
       it('image has no preview', function () {
