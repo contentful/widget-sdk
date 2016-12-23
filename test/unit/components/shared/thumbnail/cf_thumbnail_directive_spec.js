@@ -1,112 +1,69 @@
 'use strict';
 
 describe('cfThumbnailDirective', function () {
-  let scope, asset, element, src, $compile, hasPreviewStub;
-
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
-      hasPreviewStub = sinon.stub();
-      $provide.removeController('ThumbnailController', function ($scope) {
-        $scope.hasPreview = hasPreviewStub;
-      });
-    });
-    inject(function ($injector, $rootScope) {
-      asset = {url: 'url'};
-      $compile = $injector.get('$compile');
+    module('contentful/test');
 
-      scope = $rootScope.$new();
-      scope.asset = asset;
-    });
+    const $compile = this.$inject('$compile');
+    const $rootScope = this.$inject('$rootScope');
+    this.compile = function (file, attrs = {}) {
+      const element = $('<div cf-thumbnail></div>');
+      const scope = $rootScope.$new();
+      scope.file = file;
+      attrs.file = 'file';
+      element.attr(attrs);
+      $compile(element)(scope);
+      scope.$apply();
+      return element;
+    };
   });
 
-  afterEach(function () {
-    element.remove();
-    scope = asset = element = src =
-      $compile = hasPreviewStub = null;
-  });
-
-  function createElement (attrs) {
-    const defaults = { file: 'asset' };
-    attrs = _.defaults(attrs || {}, defaults);
-
-    element = $('<div cf-thumbnail></div>');
-    element.attr(attrs);
-
-    $compile(element)(scope);
-    scope.$apply();
-
-    src = element.find('img').attr('src');
-  }
-
-  describe('icons', function () {
+  describe('file without preview', function () {
     beforeEach(function () {
-      hasPreviewStub.returns(false);
-      createElement();
+      this.el = this.compile({url: 'url'});
     });
 
     it('does not render image', function () {
-      expect(element.find('img').get(0)).toBeUndefined();
+      expect(this.el.find('img').get(0)).toBeUndefined();
     });
 
     it('renders icon', function () {
-      expect(element.find('i').get(0)).toBeDefined();
+      expect(this.el.find('i').get(0)).toBeDefined();
     });
   });
 
-  describe('contentful assets', function () {
+  describe('file with image preview', function () {
+    const imageUrl = 'https://images.contentful.com/path';
+
     beforeEach(function () {
-      hasPreviewStub.returns(true);
+      const compile = this.compile;
+      this.compile = function (attrs) {
+        const file = {
+          url: imageUrl,
+          contentType: 'image/png'
+        };
+        return compile(file, attrs);
+      };
     });
 
     it('does not render icon', function () {
-      createElement();
-      expect(element.find('i').get(0)).toBeUndefined();
+      const el = this.compile();
+      expect(el.find('i').get(0)).toBe(undefined);
     });
 
     it('fails with no size params', function () {
-      createElement();
-      expect(src).toBeUndefined();
+      const el = this.compile();
+      expect(el.find('img').attr('src')).toBe(undefined);
     });
 
     it('with size', function () {
-      createElement({ size: 300 });
-      expect(src).toBe('url?w=300&h=300&');
+      const el = this.compile({size: '300'});
+      expect(el.find('img').attr('src')).toBe(`${imageUrl}?w=300&h=300&`);
     });
 
     it('with width and height', function () {
-      createElement({ width: 300, height: 300 });
-      expect(src).toBe('url?w=300&h=300&');
-    });
-
-    it('with width', function () {
-      createElement({ width: 300 });
-      expect(src).toBe('url?w=300&');
-    });
-
-    it('with height', function () {
-      createElement({ height: 300 });
-      expect(src).toBe('url?h=300&');
-    });
-
-    it('with fit', function () {
-      createElement({size: 300, fit: 'scale'});
-      expect(src).toBe('url?w=300&h=300&fit=scale&');
-    });
-
-    it('fails silently with fit and one dimension', function () {
-      createElement({width: 300, fit: 'scale'});
-      expect(src).toBe('url?w=300&');
-    });
-
-    it('with focus', function () {
-      createElement({size: 300, focus: 'bottom'});
-      expect(src).toBe('url?w=300&h=300&f=bottom&');
-    });
-
-    it('fails silently with focus and one dimension', function () {
-      createElement({width: 300, focus: 'bottom'});
-      expect(src).toBe('url?w=300&');
+      const el = this.compile({width: '300', height: '300'});
+      expect(el.find('img').attr('src')).toBe(`${imageUrl}?w=300&h=300&`);
     });
   });
-
 });
