@@ -1,17 +1,16 @@
 'use strict';
 
-angular.module('contentful').controller('ThumbnailController',
-                                        ['$scope', '$injector', function ($scope, $injector) {
-
+angular.module('contentful')
+.controller('ThumbnailController', ['$scope', '$injector', function ($scope, $injector) {
   var mimetype = $injector.get('mimetype');
   var assetUrlFilter = $injector.get('assetUrlFilter');
 
   $scope.$watch('file', function (file) {
-    if(!file) $scope.imageHasLoaded = false;
+    if (!file) $scope.imageHasLoaded = false;
   });
 
   $scope.$on('imageLoaded', function () {
-    if($scope.file) $scope.imageHasLoaded = true;
+    if ($scope.file) $scope.imageHasLoaded = true;
   });
   $scope.$on('imageUnloaded', function () {
     $scope.imageHasLoaded = false;
@@ -21,11 +20,11 @@ angular.module('contentful').controller('ThumbnailController',
   $scope.hasPreview = hasPreview;
   $scope.getIconName = getIconName;
 
-  function isFileLoading() {
+  function isFileLoading () {
     return $scope.hasPreview() && !$scope.imageHasLoaded;
   }
 
-  function hasPreview() {
+  function hasPreview () {
     return !!(
       $scope.file &&
       hasImagesDomain() &&
@@ -36,11 +35,11 @@ angular.module('contentful').controller('ThumbnailController',
     );
   }
 
-  function hasImagesDomain() {
+  function hasImagesDomain () {
     return /\/\/images/g.test(assetUrlFilter($scope.file.url));
   }
 
-  function getIconName() {
+  function getIconName () {
     var groupName = mimetype.getGroupLabel({
       type: $scope.file.contentType,
       fallbackFileName: $scope.file.fileName
@@ -62,10 +61,8 @@ angular.module('contentful').controller('ThumbnailController',
     markup: 'code'
   };
 
-  function groupToIcon(name) {
-    if(name in groupToIconMap) return 'fa fa-file-'+groupToIconMap[name]+'-o';
+  function groupToIcon (name) {
+    if (name in groupToIconMap) return 'fa fa-file-' + groupToIconMap[name] + '-o';
     return 'fa fa-paperclip';
   }
-
-
 }]);

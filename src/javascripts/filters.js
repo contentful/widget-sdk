@@ -2,8 +2,8 @@
 
 var filters = angular.module('contentful');
 
-filters.filter('dateTime', function() {
-  return function(unixTime) {
+filters.filter('dateTime', function () {
+  return function (unixTime) {
     if (unixTime) {
       return new Date(unixTime).toLocaleString('de-DE');
     } else {
@@ -12,11 +12,11 @@ filters.filter('dateTime', function() {
   };
 });
 
-filters.filter('isEmpty', function() {
+filters.filter('isEmpty', function () {
   return _.isEmpty;
 });
 
-filters.filter('isArray', function(){
+filters.filter('isArray', function () {
   return _.isArray;
 });
 
@@ -37,10 +37,12 @@ filters.filter('fileSize', function () {
 
 filters.filter('mimeGroup', ['mimetype', function (mimetype) {
   return function (file) {
-    if (file) return mimetype.getGroupName({
-      type: file.contentType,
-      fallbackFileName: file.fileName
-    });
+    if (file) {
+      return mimetype.getGroupName({
+        type: file.contentType,
+        fallbackFileName: file.fileName
+      });
+    }
   };
 }]);
 
@@ -64,16 +66,17 @@ filters.filter('isFileReady', function () {
 
 filters.filter('fileType', ['mimetype', function (mimetype) {
   return function (file) {
-    if(file)
+    if (file) {
       return mimetype.getGroupName({
         type: file.contentType,
         fallbackFileName: file.fileName
       });
+    }
     return '';
   };
 }]);
 
-filters.filter('assetUrl', ['hostnameTransformer', 'authentication', function(hostnameTransformer, authentication){
+filters.filter('assetUrl', ['hostnameTransformer', 'authentication', function (hostnameTransformer, authentication) {
   return function (assetOrUrl) {
     var domains = dotty.get(authentication, 'tokenLookup.domains');
     if (domains) {
@@ -83,7 +86,7 @@ filters.filter('assetUrl', ['hostnameTransformer', 'authentication', function(ho
     }
   };
 
-  function preprocessDomains(domains) {
+  function preprocessDomains (domains) {
     var result = {};
     domains.forEach(function (domain) {
       result[domain.name] = domain.domain;
@@ -94,7 +97,7 @@ filters.filter('assetUrl', ['hostnameTransformer', 'authentication', function(ho
 
 filters.filter('fileExtension', ['mimetype', function (mimetype) {
   return function (file) {
-    if(file){
+    if (file) {
       var ext = mimetype.getExtension(file.fileName);
       return ext ? ext.slice(1) : '';
     }
@@ -104,27 +107,27 @@ filters.filter('fileExtension', ['mimetype', function (mimetype) {
 
 filters.filter('userNameDisplay', function () {
   return function (currentUser, user) {
-    if(!currentUser || !user) return '';
+    if (!currentUser || !user) return '';
     return (currentUser.getId() === user.sys.id) ? 'Me' : currentUser.getName();
   };
 });
 
 filters.filter('decimalMarks', function () {
   return function (str) {
-    str = str ? str+'' : '';
-    var markedStr = '', bound;
-    for(var i=str.length; bound=i-3, i>0; i=bound){
-      markedStr = str.slice(bound, i) + (i < str.length ? ',' : '') + markedStr;
+    str = str ? str + '' : '';
+    var markedStr = '';
+    for (var i = str.length; i > 0; i -= 3) {
+      markedStr = str.slice(i - 3, i) + (i < str.length ? ',' : '') + markedStr;
     }
-    return str.slice(0, i<0 ? 3+i : i) + (str.length>3 ? markedStr : '');
+    return str.slice(0, i < 0 ? 3 + i : i) + (str.length > 3 ? markedStr : '');
   };
 });
 
 filters.filter('displayedFieldName', function () {
   return function (field) {
-    return _.isEmpty(field.name) ?
-             _.isEmpty(field.id) ?  'Untitled field' : 'ID: '+field.id
-           : field.name;
+    return _.isEmpty(field.name)
+      ? _.isEmpty(field.id) ? 'Untitled field' : 'ID: ' + field.id
+      : field.name;
   };
 });
 

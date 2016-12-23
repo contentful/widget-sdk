@@ -8,8 +8,6 @@ test/unit/components/forms/cf_multi_video_editor_controller_spec.js
 test/unit/components/app_container/space_controller_spec.js
 test/unit/components/client/activation_email_resend_controller_spec.js
 test/unit/components/client/cf_main_nav_bar_directive_spec.js
-test/unit/components/shared/thumbnail/thumbnail_controller_spec.js
-test/unit/components/shared/thumbnail/cf_thumbnail_directive_spec.js
 test/unit/components/shared/data_size_scale_controller_spec.js
 test/unit/components/shared/accordion_controller_spec.js
 test/unit/components/shared/cf_form_widget_directive_spec.js
@@ -92,20 +90,17 @@ src/javascripts/components/shared/getty_dialog/getty_dialog_controller.js
 src/javascripts/components/shared/search_field/cf_autocomplete_date_directive.js
 src/javascripts/components/shared/search_field/cf_autocomplete_list_directive.js
 src/javascripts/components/shared/search_field/cf_search_directive.js
-src/javascripts/components/shared/thumbnail/cf_thumbnail_directive.js
 src/javascripts/components/shared/validation_error_display/cf_error_list_directive.js
 src/javascripts/components/shared/validation_error_display/cf_error_messages_directive.js
 src/javascripts/components/shared/validation_error_display/cf_error_path_directive.js
 src/javascripts/components/shared/validation_error_display/error_path_controller.js
 src/javascripts/components/shared/accordion_controller.js
 src/javascripts/components/shared/cf_dropdown_toggle_directive.js
-src/javascripts/components/shared/cf_img_load_event.js
 src/javascripts/components/shared/cf_inline_editor_directive.js
 src/javascripts/components/shared/cf_marketing_directive.js
 src/javascripts/components/shared/cf_progress_bar_directive.js
 src/javascripts/components/shared/data_size_scale_controller.js
 src/javascripts/components/shared/endless_container_directive.js
-src/javascripts/components/shared/thumbnail_controller.js
 src/javascripts/components/shared/view_state_controller.js
 src/javascripts/components/shared/cf_form_widget_directive.js
 src/javascripts/components/shared/cf_selection_directive.js
@@ -236,7 +231,6 @@ src/javascripts/access_control/response_cache.js
 src/javascripts/access_control/role_remover.js
 src/javascripts/access_control/role_repository.js
 src/javascripts/access_control/space_membership_repository.js
-src/javascripts/filters.js
 src/javascripts/webhooks/webhook_call_status_directive.js
 src/javascripts/webhooks/webhook_editor_directive.js
 src/javascripts/webhooks/webhook_headers_directive.js

@@ -23,7 +23,7 @@ angular.module('contentful').directive('cfThumbnail', function () {
       file: '='
     },
     controller: 'ThumbnailController',
-    link: function (scope, el, attrs) {
+    link: function (scope, _el, attrs) {
       var width, height;
 
       scope.fit = attrs.fit;
@@ -36,24 +36,24 @@ angular.module('contentful').directive('cfThumbnail', function () {
         height = attrs.height || undefined;
       }
 
-      scope.isImage = function(){
+      scope.isImage = function () {
         return scope.hasPreview();
       };
 
       scope.thumbnailUrl = function () {
         var sizeQueryString = '?';
         if (scope.file.url && (width || height)) {
-          if(width)  addQSParam('w', width);
-          if(height) addQSParam('h', height);
-          if(width && height){
-            if(scope.fit)   addQSParam('fit', scope.fit);
-            if(scope.focus) addQSParam('f', scope.focus);
+          if (width) addQSParam('w', width);
+          if (height) addQSParam('h', height);
+          if (width && height) {
+            if (scope.fit) addQSParam('fit', scope.fit);
+            if (scope.focus) addQSParam('f', scope.focus);
           }
           return '' + scope.file.url + sizeQueryString;
         }
 
-        function addQSParam(label, value) {
-          sizeQueryString += label+'=' + value +'&';
+        function addQSParam (label, value) {
+          sizeQueryString += label + '=' + value + '&';
         }
       };
 
