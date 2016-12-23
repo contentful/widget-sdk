@@ -3,9 +3,14 @@
 
   .file-preview(ng-show="file|isFileReady")
     .loading(ng-show="loadingEditor")
-    .vcenter.cf-thumbnail(cf-thumbnail file="file" height="250" ng-if="file && !loadingEditor")
+    cf-thumbnail.vcenter(file="file" height="250" ng-if="file && !loadingEditor")
 
-  .file-progress.progress.center(ng-show="(file|isFileReady) && isFileLoading()")
+  .file-progress.progress.center(
+    data-test-id="image-loading"
+    ng-show="imageIsLoading"
+    role="progressbar"
+    aria-live="polite"
+    aria-busy="{{imageIsLoading}}")
     p Loading…
     .cf-progress-bar.gold(cf-progress-bar percentage=100)
 

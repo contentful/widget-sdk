@@ -1,8 +1,0 @@
-img.thumbnail(
-  ng-style="imageStyle"
-  ng-if="(file|isFileReady) && isImage()"
-  ng-src="{{thumbnailUrl()|assetUrl}}"
-  cf-img-load-event)
-i.icon(
-  ng-if="(file|isFileReady) && !isImage()"
-  ng-class="getIconName()")
