@@ -3,6 +3,7 @@
 angular.module('contentful')
 .controller('ClientController', ['$scope', 'require', function ClientController ($scope, require) {
   var $rootScope = require('$rootScope');
+  var K = require('utils/kefir');
   var features = require('features');
   var logger = require('logger');
   var spaceContext = require('spaceContext');
@@ -39,8 +40,7 @@ angular.module('contentful')
     };
   }, spaceAndTokenWatchHandler);
 
-  var off = tokenStore.changed.attach(handleTokenData);
-  $scope.$on('$destroy', off);
+  K.onValueScope($scope, tokenStore.user$, handleUser);
 
   // @todo remove it - temporary proxy event handler (2 usages)
   $scope.$on('showCreateSpaceDialog', showCreateSpaceDialog);
@@ -73,8 +73,7 @@ angular.module('contentful')
     }
   }
 
-  function handleTokenData (token) {
-    var user = dotty.get(token, 'user');
+  function handleUser (user) {
     if (!_.isObject(user)) { return; }
 
     $scope.user = user;

@@ -51,7 +51,6 @@ test/unit/services/promised_loader_spec.js
 test/unit/services/reload_notification_spec.js
 test/unit/services/sdk_info_supplier_spec.js
 test/unit/services/the_store_spec.js
-test/unit/services/token_store_spec.js
 test/unit/services/subscription_plan_recommender_spec.js
 test/unit/widgets/checks_spec.js
 test/unit/widgets/builtin_spec.js
@@ -204,7 +203,6 @@ src/javascripts/services/filepicker.js
 src/javascripts/services/hints.js
 src/javascripts/services/promised_loader.js
 src/javascripts/services/sdk_info_supplier.js
-src/javascripts/services/token_store.js
 src/javascripts/services/user_agent.js
 src/javascripts/services/zone_offsets.js
 src/javascripts/services/subscription_plan_recommender.js
