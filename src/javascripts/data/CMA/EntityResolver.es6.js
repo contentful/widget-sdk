@@ -124,7 +124,8 @@ function getEntities (fetch, ids) {
   const queries = chunk(uniq(ids), MAX_IN_IDS)
   .map(function (ids) {
     return fetch({
-      'sys.id[in]': ids.join(',')
+      'sys.id[in]': ids.join(','),
+      limit: MAX_IN_IDS
     }).then((response) => {
       return response.items;
     }, (errorResponse) => {

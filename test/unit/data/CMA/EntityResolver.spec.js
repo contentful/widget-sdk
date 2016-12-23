@@ -33,7 +33,7 @@ describe('data/CMA/EntityResolver', function () {
     const results = yield this.store.load(['a', 'b', 'c']);
     const ids = results.map(([id, _]) => id);
     expect(ids).toEqual(['a', 'b', 'c']);
-    sinon.assert.calledWith(this.getEntries, {'sys.id[in]': 'a,b'});
+    sinon.assert.calledWith(this.getEntries, sinon.match.has('sys.id[in]', 'a,b'));
   });
 
   it('does not query API when all entities are loaded', function* () {
@@ -51,6 +51,11 @@ describe('data/CMA/EntityResolver', function () {
     sinon.assert.calledTwice(this.getEntries);
   });
 
+  it('passes limit of 200 to query', function* () {
+    yield this.store.load(['a', 'b', 'c']);
+    sinon.assert.calledWith(this.getEntries, sinon.match.has('limit', 200));
+  });
+
   it('does not fetch manually added entities', function* () {
     this.store.addEntity({
       sys: {id: 'manual-1'},
@@ -58,7 +63,7 @@ describe('data/CMA/EntityResolver', function () {
     });
     const results = yield this.store.load(['manual-1', 'a']);
     expect(results[0][1].data).toEqual('manual');
-    sinon.assert.calledWith(this.getEntries, {'sys.id[in]': 'a'});
+    sinon.assert.calledWith(this.getEntries, sinon.match.has('sys.id[in]', 'a'));
   });
 
   it('returns empty list if response is 404', function* () {
