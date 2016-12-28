@@ -47,7 +47,10 @@ angular.module('contentful')
   });
 
   if (controller.writableOrganizations.length > 0) {
-    controller.newSpace.organization = controller.writableOrganizations[0];
+    controller.newSpace.organization = (
+      _.find(controller.writableOrganizations, ['sys.id', $scope.organizationId]) ||
+      _.first(controller.writableOrganizations)
+    );
   }
 
   // Load the list of space templates
