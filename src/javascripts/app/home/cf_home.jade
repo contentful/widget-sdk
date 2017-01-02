@@ -28,6 +28,7 @@ include ./cf_home_mixins
               ng-click="home.analytics.spaceNavigation(space)")
               | {{space.data.name}}
             a(
+              ng-if="space.data.spaceMembership.admin"
               ui-sref="spaces.detail.learn({spaceId: space.getId()})"
               ng-click="home.analytics.spaceLearnNavigation(space)")
               | Set up the basics
