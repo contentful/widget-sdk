@@ -38,7 +38,7 @@ header.workbench-header
             td(aria-label="cell-http-basic").x--small-cell
               | {{ webhook.httpBasicUsername ? 'yes' : 'no' }}
             td(aria-label="cell-actions").x--medium-cell
-              a(ui-sref="{{ entityNavState }}") View details
+              a.text-link--standard(ui-sref="{{ entityNavState }}") View details
           tr(ng-show="webhooks.length < 1")
             td(colspan="5")
               a No webhooks yet!

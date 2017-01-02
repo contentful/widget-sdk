@@ -14,6 +14,13 @@ span.text-link--constructive(aria-label="publish") Publish
 Styleguide text-links-pattern
 */
 
+/*
+ * All the `a` prefixed classes are to counteract the fact that we set
+ * a:link in base.styl to not have any text-decoration and that has
+ * higher specificity than just a plain class.
+ * Todo: Revisit why text-decoration is none for all links in base.styl
+ */
+
 .text-link--standard
 .text-link--neutral
 .text-link--constructive
@@ -24,15 +31,23 @@ Styleguide text-links-pattern
   cursor: pointer
   &:hover
     color: $colors.text-dark
+  a&
+    text-decoration: underline
 
 .text-link--standard
 .text-link--neutral
+a.text-link--standard
+a.text-link--neutral
   color: $colors.blue-darkest
 .text-link--constructive
+a.text-link--constructive
   color: $colors.green-darkest
 .text-link--destructive
+a.text-link--destructive
   color: $colors.red-darkest
 .text-link--neutral-emphasis-mid
+a.text-link--neutral-emphasis-mid
   color: $colors.text-mid
 .text-link--neutral-emphasis-low
+a.text-link--neutral-emphasis-low
   color: $colors.text-light
