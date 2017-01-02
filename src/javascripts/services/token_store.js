@@ -47,7 +47,19 @@ angular.module('contentful')
      * @description
      * The list of spaces from the token
      */
-    spaces$: spacesBus.property
+    spaces$: spacesBus.property,
+    /**
+     * @ngdoc property
+     * @name tokenStore#spacesByOrganization$
+     * @type {Property<object>}
+     * @description
+     * The list of spaces from the token grouped by organization
+     */
+    spacesByOrganization$: spacesBus.property.map(function (spaces) {
+      return _.groupBy(spaces || [], function (space) {
+        return space.data.organization.sys.id;
+      });
+    })
   };
 
   function getTokenLookup () {

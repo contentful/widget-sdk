@@ -22,9 +22,7 @@ angular.module('contentful')
 
   // subscribe to changes of spaces in token:
   K.onValueScope($scope, tokenStore.spaces$, storeSpaces);
-
-  // group spaces when changed:
-  $scope.$watch('spaces', groupSpacesByOrganization);
+  K.onValueScope($scope, tokenStore.spacesByOrganization$, storeSpacesByOrganization);
 
   $scope.spaceContext = spaceContext;
   $scope.canCreateSpace = accessChecker.canCreateSpace;
@@ -38,10 +36,8 @@ angular.module('contentful')
     $scope.spaces = spaces;
   }
 
-  function groupSpacesByOrganization () {
-    $scope.spacesByOrganization = _.groupBy($scope.spaces || [], function (space) {
-      return space.data.organization.sys.id;
-    });
+  function storeSpacesByOrganization (spacesByOrg) {
+    $scope.spacesByOrganization = spacesByOrg;
   }
 
   function trackSpaceChange (space) {

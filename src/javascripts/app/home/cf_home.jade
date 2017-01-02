@@ -10,16 +10,16 @@ include ./cf_home_mixins
         | What will you build today?
       cf-icon.home__welcome-image(name="home-welcome")
   .home__content
-    section.home-section(ng-if="canCreateSpace() && !spaces.length")
+    section.home-section(ng-if="home.canCreateSpace() && !home.spaces.length")
       h3.home-section__heading Create a new space
       p.home-section__description
         | A space is where you keep all the content related to one project.
       button.btn-action(ng-click="home.showCreateSpaceDialog()") Create new space
-    section.home-section.x--spaces(ng-if="spaces.length")
+    section.home-section.x--spaces(ng-if="home.spaces.length")
       h3.home-section__heading Spaces
       .home-spaces
-        div(ng-repeat="(orgId, orgSpaces) in spacesByOrganization track by orgId")
-          .home-spaces__org-name {{getOrganizationName(orgId)}}
+        div(ng-repeat="(orgId, orgSpaces) in home.spacesByOrganization track by orgId")
+          .home-spaces__org-name {{home.getOrganizationName(orgId)}}
             span.home-spaces__org-desc organization
           .home-spaces__space(ng-repeat="space in orgSpaces track by space.data.sys.id")
             a(
