@@ -38,8 +38,7 @@ angular.module('contentful')
   });
 
   $scope.getSearchContentType = function () {
-    var id = dotty.get($scope, 'context.view.contentTypeId');
-    return spaceContext.publishedCTs.get(id);
+    return spaceContext.publishedCTs.get(dotty.get($scope, 'context.view.contentTypeId'));
   };
 
   $scope.$watchCollection(function () {
@@ -62,6 +61,10 @@ angular.module('contentful')
     return spaceContext.displayFieldForType($scope.context.view.contentTypeId);
   };
 
+  $scope.hasPage = function () {
+    return !!($scope.entries && $scope.entries.length && !$scope.isEmpty);
+  };
+
   /**
    * @ngdoc method
    * @name EntryListController#$scope.showNoEntriesAdvice
@@ -75,9 +78,12 @@ angular.module('contentful')
    */
   $scope.showNoEntriesAdvice = function () {
     var hasQuery = searchController.hasQuery();
-    var hasEntries = $scope.entries && $scope.entries.length > 0;
+    var hasEntries = $scope.paginator.getTotal() > 0;
+
     return !hasEntries && !hasQuery && !$scope.context.loading;
   };
+
+  $scope.hasQuery = searchController.hasQuery;
 
   /**
    * @ngdoc property

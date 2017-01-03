@@ -33,12 +33,12 @@ header.workbench-header
     cf-view-menu="uiConfig.entryListViews")
 
   .workbench-main__right-content.x--flex-column
-    .search-results__count(ng-show="paginator.getTotal() > 0")
+    .search-results__count(ng-show="hasPage()")
       +pluralize-entity("entry", "paginator.getTotal()", "found")
     .view-customizer(
-      ng-show="entries.length && !isEmpty"
+      ng-show="hasPage()"
       cf-view-customizer)
-    .table(ng-show="entries.length && !isEmpty")
+    .table(ng-show="hasPage()")
       .table__head
         table
           thead
@@ -142,9 +142,9 @@ header.workbench-header
                 ng-class="entityStatus.getClassname(entry)")
                 | {{entityStatus.getLabel(entry)}}
 
-    cf-search-results-paginator(paginator="paginator" pages="7")
+    cf-search-results-paginator(paginator="paginator" pages="7" ng-show="hasPage()")
 
-    +no-search-results("!entries.length || isEmpty", "(context.view.contentTypeId ? 'Content type \"' + context.view.contentTypeId + '\", term: ' : '') + context.view.searchTerm")
+    +no-search-results("hasQuery() && !paginator.getTotal() && !context.loading || isEmpty", "(context.view.contentTypeId ? 'Content type \"' + context.view.contentTypeId + '\", term: ' : '') + context.view.searchTerm")
 
 .workbench-main.x--content(ng-show="showNoEntriesAdvice()")
   include ./no_entries_advice
