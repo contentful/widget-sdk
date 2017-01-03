@@ -13,6 +13,7 @@ angular.module('contentful')
   var logger = $injector.get('logger');
   var TheStore = $injector.get('TheStore');
   var client = $injector.get('client');
+  var deepFreeze = $injector.get('utils/DeepFreeze').deepFreeze;
 
   var QueryLinkResolver = contentfulClient.QueryLinkResolver;
 
@@ -100,6 +101,7 @@ angular.module('contentful')
       this._unresolvedTokenLookup = tokenLookup;
       tokenLookup = angular.copy(tokenLookup);
       this.tokenLookup = QueryLinkResolver.resolveQueryLinks(tokenLookup)[0];
+      this.tokenInfo = makeTokenInfo(this.tokenLookup);
     },
 
     updateTokenLookup: function (unresolvedUpdate) {
@@ -159,5 +161,17 @@ angular.module('contentful')
     }
 
     return null;
+  }
+
+  // TODO move this into the OrganizationContext once this is
+  // implemented in #1531
+  function makeTokenInfo (token) {
+    var domains = token && token.domains;
+    var domainMap = _.transform(domains, function (domainMap, domain) {
+      domainMap[domain.name] = domain.domain;
+    }, {});
+    return deepFreeze({
+      domains: domainMap
+    });
   }
 }]);

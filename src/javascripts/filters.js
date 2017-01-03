@@ -78,21 +78,13 @@ filters.filter('fileType', ['mimetype', function (mimetype) {
 
 filters.filter('assetUrl', ['hostnameTransformer', 'authentication', function (hostnameTransformer, authentication) {
   return function (assetOrUrl) {
-    var domains = dotty.get(authentication, 'tokenLookup.domains');
+    var domains = dotty.get(authentication, 'tokenInfo.domains');
     if (domains) {
-      return hostnameTransformer.toExternal(assetOrUrl, preprocessDomains(domains));
+      return hostnameTransformer.toExternal(assetOrUrl, domains);
     } else {
       return assetOrUrl;
     }
   };
-
-  function preprocessDomains (domains) {
-    var result = {};
-    domains.forEach(function (domain) {
-      result[domain.name] = domain.domain;
-    });
-    return result;
-  }
 }]);
 
 filters.filter('fileExtension', ['mimetype', function (mimetype) {
