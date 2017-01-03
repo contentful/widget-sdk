@@ -10,25 +10,24 @@ angular.module('contentful')
   var authentication = $injector.get('authentication');
   var Config = $injector.get('Config');
   var modalDialog = $injector.get('modalDialog');
-  var createChannel = $injector.get('iframeChannel').create;
+  var createChannel = $injector.get('account/IframeChannel').default;
   var handleGK = $injector.get('handleGatekeeperMessage');
+  var K = $injector.get('utils/kefir');
 
   return {
     template: '<div class="account-container"><iframe width="100%" height="100%" id="accountViewFrame" /></div>',
     restrict: 'E',
     link: function (scope, elem) {
       var iframe = elem.find('iframe');
-      var channel = createChannel(iframe);
+      var messages$ = createChannel(iframe.get(0));
       var timeout = null;
 
-      channel.onMessage(handleGK);
-      channel.onMessage(function () { scope.context.ready = true; });
+      K.onValueScope(scope, messages$, handleGK);
+      K.onValueScope(scope, messages$, function () { scope.context.ready = true; });
+
       iframe.ready(waitAndForceLogin);
       iframe.prop('src', Config.accountUrl($stateParams.pathSuffix));
-      scope.$on('$destroy', function () {
-        channel.off();
-        cancelTimeout();
-      });
+      scope.$on('$destroy', cancelTimeout);
 
       function waitAndForceLogin () {
         timeout = $timeout(function () {
