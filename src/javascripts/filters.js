@@ -76,6 +76,12 @@ filters.filter('fileType', ['mimetype', function (mimetype) {
   };
 }]);
 
+/**
+ * Asset URLs are always hardcoded to the host `TYPE.contentful.com`.
+ * This filter transforms URL hosts by using information from the
+ * `/token` endpoint. The token has a domain map mapping `TYPE` to the
+ * actual domain. This is used to replace the hosts.
+ */
 filters.filter('assetUrl', ['hostnameTransformer', 'authentication', function (hostnameTransformer, authentication) {
   return function (assetOrUrl) {
     var domains = dotty.get(authentication, 'tokenInfo.domains');

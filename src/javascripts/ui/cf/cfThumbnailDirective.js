@@ -24,8 +24,9 @@
 angular.module('contentful')
 .directive('cfThumbnail', ['require', function (require) {
   var mimetype = require('mimetype');
-  var assetUrlFilter = require('assetUrlFilter');
   var h = require('utils/hyperscript').h;
+  var Authentication = require('authentication');
+  var HostnameTransformer = require('hostnameTransformer');
 
   var groupToIconMap = {
     image: 'image',
@@ -138,20 +139,36 @@ angular.module('contentful')
     }
   }
 
+  /**
+   * Get the external image URL if the file has an image MIME type and
+   * is served from the contentful image proxy service.
+   *
+   * Otherwise return `null`.
+   */
   function getImageUrl (file) {
     if (!file) {
       return null;
     }
 
     var isImage = imageMimeTypes.indexOf(file.contentType) > -1;
-    var externalUrl = assetUrlFilter(file.url);
-    var fromImagesDomain = /\/\/images/g.test(externalUrl);
 
-    if (isImage && fromImagesDomain) {
-      return externalUrl;
+    if (isImage) {
+      return externalImageUrl(file.url);
     } else {
       return null;
     }
+  }
+
+  /**
+   * Given a URL on the 'assets.contentful.com' or
+   * 'images.contentful.com' domain we replace the host with the images
+   * host configured for the organization.
+   */
+  function externalImageUrl (url) {
+    var domains = _.clone(Authentication.tokenInfo.domains);
+    var internalUrl = HostnameTransformer.toInternal(url, domains);
+    domains.assets = domains.images;
+    return HostnameTransformer.toExternal(internalUrl, domains);
   }
 
   function getIconName (file) {

@@ -14,17 +14,13 @@ describe('cfThumbnailDirective', function () {
       scope.$apply();
       return element;
     };
+
+    // This is needed to transform the image domain
+    const authentication = this.$inject('authentication');
+    authentication.tokenInfo = { domains: {} };
   });
 
   describe('file without preview', function () {
-    it('does not render preview for non-images URL', function () {
-      const el = this.compile({
-        url: '//assets.contentful.com/image.png',
-        contentType: 'image/png'
-      });
-      expect(el.find('img').get(0)).toBeUndefined();
-    });
-
     it('does not render preview for non-images MIME types', function () {
       const el = this.compile({
         url: '//images.contentful.com/image.png',

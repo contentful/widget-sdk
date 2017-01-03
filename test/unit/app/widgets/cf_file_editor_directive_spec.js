@@ -149,6 +149,10 @@ describe('cfFileEditor Directive', function () {
   });
 
   it('shows progress bar when image is loading', function () {
+    // This is needed to transform the image domain
+    const authentication = this.$inject('authentication');
+    authentication.tokenInfo = { domains: {} };
+
     fieldApi.onValueChanged.yield({
       url: '//images.contentful.com',
       contentType: 'image/png'
