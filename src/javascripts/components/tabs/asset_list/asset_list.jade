@@ -52,7 +52,7 @@ header.workbench-header
             tr
               th(aria-label="cell-preview").x--image-cell
                 label(ng-click="$event.stopPropagation()")
-                  input(type="checkbox" cf-selection="assets" ng-show="assets.length > 0" tabindex="-1")
+                  input(type="checkbox" cf-selection="assets" ng-click="selection.toggleList(assets, $event)" ng-show="assets.length > 0" tabindex="-1")
                 | Preview
               th(aria-label="cell-name").x--large-cell Name
               th(aria-label="cell-dimensions").x--medium-cell Dimensions

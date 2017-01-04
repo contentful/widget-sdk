@@ -10,21 +10,7 @@ angular.module('contentful').directive('cfSelection', [function () {
         el.prop('checked', isSelected);
       });
 
-      el.on('click', function (e) {
-        // clicking on both cell and checkbox toggles the value
-        // in some browsers checkbox events propagate through a checkbox
-        // toggling the value twice (resulting in no visible change)
-        e.stopPropagation();
-      });
-
-      el.on('change', function () {
-        scope.$apply(function () {
-          var method = el.prop('checked') ? 'add' : 'remove';
-          _.forEach(getEntities(), scope.selection[method]);
-        });
-      });
-
-      function getEntities() {
+      function getEntities () {
         var entities = scope.$eval(attrs.cfSelection);
 
         if (_.isArray(entities)) {

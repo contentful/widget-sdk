@@ -47,7 +47,7 @@ header.workbench-header
                 aria-label="cell-display-name"
                 ng-if="!context.view.contentTypeId || !displayFieldForFilteredContentType()")
                 label(ng-click="$event.stopPropagation()")
-                  input(type="checkbox" cf-selection="entries" ng-show="entries.length > 0" tabindex="-1")
+                  input(type="checkbox" cf-selection="entries" ng-click="selection.toggleList(entries, $event)" ng-show="entries.length > 0" tabindex="-1")
                 | Name
               th.x--medium-cell(
                 aria-label="cell-content-type"
@@ -60,7 +60,7 @@ header.workbench-header
                 ng-class="{'x--sortable': fieldIsSortable(getField()), 'x--active-sort': isOrderField(getField())}"
                 ng-click="fieldIsSortable(getField()) && orderColumnBy(getField())")
                   label(ng-click="$event.stopPropagation()")
-                    input(type="checkbox" cf-selection="entries" ng-show="entries.length > 0" tabindex="-1")
+                    input(type="checkbox" cf-selection="entries" ng-click="selection.toggleList(entries, $event)" ng-show="entries.length > 0" tabindex="-1")
                   | Name
                   span(ng-show="fieldIsSortable(getField())")
                     i.fa.fa-caret-up(ng-show="context.view.order.direction === 'ascending' && isOrderField(getField())")
