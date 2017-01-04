@@ -31,9 +31,6 @@ Styleguide 9.0
   flex-direction: column
   $stretch(0, 0, 0, 0)
   $layer('bottom')
-  > *
-    flex: 0 0 auto;
-
 
 .workbench-actions
   margin-top: auto
@@ -93,9 +90,12 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
 .workbench-main
   display: flex
   overflow-y: auto
-  flex: 1 1 auto
   position: relative
-  height: 100%;
+  // 66px is the height of the header. This is admittedly ugly but needed for Safari
+  // to calculate height correct. Setting it to 100% percolates a height value of its
+  // parent without accounting for the adjacent header div that workbench-main has
+  // in Safari. God bless our Lord and Savior, Apple.
+  height: calc(100% - 66px)
 
   // Apply this modifier if `.workbench-main` does not contain a
   // sidebar or a `.workbench__xxx-content` element.
@@ -126,9 +126,11 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
     width: $workbench-content-width
     margin-left: auto
     height: 100%
+    padding-right: 20px
     .table
+      height: calc(100% - 86px) // results + paginator height
       table
-        width: 80vw
+        width: 79.5vw
     .search-results__count
       padding: 10px 20px
       padding-top: 0

@@ -32,7 +32,7 @@ header.workbench-header
     ng-show="uiConfig"
     cf-view-menu="uiConfig.entryListViews")
 
-  .workbench-main__right-content.x--flex-column
+  .workbench-main__right-content
     .search-results__count(ng-show="hasPage()")
       +pluralize-entity("entry", "paginator.getTotal()", "found")
     .view-customizer(
