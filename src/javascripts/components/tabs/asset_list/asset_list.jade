@@ -42,7 +42,7 @@ header.workbench-header
     ng-show="uiConfig"
     cf-view-menu="uiConfig.assetListViews")
 
-  .workbench-main__right-content.x--flex-column
+  .workbench-main__right-content
     .search-results__count(ng-show="searchController.paginator.getTotal() > 0")
       +pluralize-entity("asset", "searchController.paginator.getTotal()", "found")
     .table(ng-show="assets.length && !isEmpty")
