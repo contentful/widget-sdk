@@ -6,7 +6,7 @@ angular.module('contentful')
   return {
     template: JST.cf_home(),
     restrict: 'E',
-    scope: true,
+    scope: {},
     controller: 'HomeController',
     controllerAs: 'home'
   };
@@ -20,6 +20,8 @@ angular.module('contentful')
   var analyticsEvents = require('analytics/events/home');
   var tokenStore = require('tokenStore');
   var CreateSpace = require('services/CreateSpace');
+  var accessChecker = require('accessChecker');
+  var OrganizationList = require('OrganizationList');
 
   // Fetch user and set greeting
   K.onValue(tokenStore.user$, function (user) {
@@ -27,12 +29,22 @@ angular.module('contentful')
     controller.greeting = getGreeting(user);
   });
 
+  K.onValue(tokenStore.spaces$, function (spaces) {
+    controller.spaces = spaces;
+  });
+
+  K.onValue(tokenStore.spacesByOrganization$, function (spacesByOrg) {
+    controller.spacesByOrganization = spacesByOrg;
+  });
+
+  controller.canCreateSpace = accessChecker.canCreateSpace;
   controller.resources = resources.languageResources;
   controller.docsUrls = resources.apiDocsUrls;
   controller.selectLanguage = selectLanguage;
   controller.selectedLanguage = 'JavaScript';
   controller.analytics = analyticsEvents;
   controller.showCreateSpaceDialog = CreateSpace.showDialog;
+  controller.getOrganizationName = OrganizationList.getName;
 
   function getGreeting (user) {
     if (user) {

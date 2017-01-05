@@ -20,7 +20,7 @@ describe('cfHome directive', function () {
       });
       const el = this.$compile('<cf-home />');
 
-      return el.scope().home;
+      return el.isolateScope().home;
     };
   });
 

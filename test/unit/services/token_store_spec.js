@@ -17,7 +17,11 @@ describe('Token store service', function () {
     this.user = {firstName: 'hello'};
 
     this.rawSpaces = _.map(['a-space', 'b-space', 'c-space'], function (name) {
-      return {sys: {id: name + '-id'}, name: name};
+      return {
+        name: name,
+        sys: {id: name + '-id'},
+        organization: {sys: {id: 'testorg'}}
+      };
     });
 
     this.spaces = _.map(this.rawSpaces, function (raw) {
@@ -48,6 +52,13 @@ describe('Token store service', function () {
 
     it('updates spaces$ property', function () {
       this.K.assertCurrentValue(this.tokenStore.spaces$, [this.spaces[0]]);
+    });
+
+    it('updates spacesByOrganization$ property', function () {
+      this.K.assertMatchCurrentValue(
+        this.tokenStore.spacesByOrganization$,
+        sinon.match({testorg: [this.spaces[0]]})
+      );
     });
 
     it('modifies space object if already stored', function () {
@@ -186,6 +197,21 @@ describe('Token store service', function () {
       this.client.newSpace.returns(this.spaces[0]);
       this.refresh(this.rawSpaces[0]);
       this.K.assertCurrentValue(this.tokenStore.spaces$, [this.spaces[0]]);
+    });
+  });
+
+  describe('#spacesByOrganization$', function () {
+    it('is initially empty', function () {
+      this.K.assertCurrentValue(this.tokenStore.spacesByOrganization$, {});
+    });
+
+    it('updates property when tokenStore is refreshed', function () {
+      this.client.newSpace.returns(this.spaces[0]);
+      this.refresh(this.rawSpaces[0]);
+      this.K.assertMatchCurrentValue(
+        this.tokenStore.spacesByOrganization$,
+        sinon.match({testorg: [this.spaces[0]]})
+      );
     });
   });
 });
