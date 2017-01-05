@@ -12,13 +12,13 @@ angular.module('contentful')
 })
 
 .controller('cfSpaceSelectorController', ['$scope', 'require', function cfSpaceSelectorController ($scope, require) {
-  var $rootScope = require('$rootScope');
   var K = require('utils/kefir');
   var analytics = require('analytics');
   var spaceContext = require('spaceContext');
   var OrganizationList = require('OrganizationList');
   var accessChecker = require('accessChecker');
   var tokenStore = require('tokenStore');
+  var CreateSpace = require('services/CreateSpace');
 
   // subscribe to changes of spaces in token:
   K.onValueScope($scope, tokenStore.spaces$, storeSpaces);
@@ -31,7 +31,7 @@ angular.module('contentful')
   $scope.canCreateSpaceInAnyOrganization = accessChecker.canCreateSpaceInAnyOrganization;
   $scope.clickedSpaceSwitcher = _.partial(analytics.track, 'space_switcher:opened');
   $scope.getOrganizationName = OrganizationList.getName;
-  $scope.showCreateSpaceDialog = showCreateSpaceDialog;
+  $scope.showCreateSpaceDialog = CreateSpace.showDialog;
   $scope.trackSpaceChange = trackSpaceChange;
 
   function storeSpaces (spaces) {
@@ -42,11 +42,6 @@ angular.module('contentful')
     $scope.spacesByOrganization = _.groupBy($scope.spaces || [], function (space) {
       return space.data.organization.sys.id;
     });
-  }
-
-  function showCreateSpaceDialog () {
-    // @todo move it to service - broadcast is a workaround to isolate scope
-    $rootScope.$broadcast('showCreateSpaceDialog');
   }
 
   function trackSpaceChange (space) {

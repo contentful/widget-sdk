@@ -19,6 +19,7 @@ angular.module('contentful')
   var resources = require('app/home/language_resources');
   var analyticsEvents = require('analytics/events/home');
   var tokenStore = require('tokenStore');
+  var CreateSpace = require('services/CreateSpace');
 
   // Fetch user and set greeting
   K.onValue(tokenStore.user$, function (user) {
@@ -31,6 +32,7 @@ angular.module('contentful')
   controller.selectLanguage = selectLanguage;
   controller.selectedLanguage = 'JavaScript';
   controller.analytics = analyticsEvents;
+  controller.showCreateSpaceDialog = CreateSpace.showDialog;
 
   function getGreeting (user) {
     if (user) {
