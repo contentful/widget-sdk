@@ -67,7 +67,7 @@ header.workbench-header
             +pluralize-entity("asset", "selection.size()", "selected: ")
 
           span(ng-show="!showArchive() && !showUnarchive() && !showDelete() && !showPublish() && !showUnpublish()")
-            | No actions possible for the combination of assets selected
+            | No actions possible
           span.text-link--neutral-emphasis-mid(type="button"
             ng-click="archiveSelected()"
             ng-show="showArchive()"
