@@ -21,7 +21,7 @@ angular.module('contentful')
       var timeout = null;
 
       channel.onMessage(handleGK);
-      channel.onMessage(function () { scope.context.ready = true; });
+      channel.onMessage(closeModalsIfLocationUpdated);
       iframe.ready(waitAndForceLogin);
       iframe.prop('src', authentication.accountUrl() + '/' + $stateParams.pathSuffix);
       scope.$on('$destroy', function () {
@@ -42,6 +42,16 @@ angular.module('contentful')
           timeout = null;
         }
       }
+
+      // the force login dialog gets shown if the GK view loads too slowly
+      // we should close it if the page is later loaded successfully
+      function closeModalsIfLocationUpdated (message) {
+        scope.context.ready = true;
+        if (message.action === 'update' && message.type === 'location') {
+          modalDialog.closeAll();
+        }
+        cancelTimeout();
+      }
     }
   };
 
@@ -57,8 +67,6 @@ angular.module('contentful')
       attachTo: 'body'
     }).promise.then(function () {
       authentication.clearAndLogin();
-    }, function () {
-      $location.url('/');
     });
   }
 }]);
