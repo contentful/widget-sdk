@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 
-.directive('cfAccountDropdown', function() {
+.directive('cfAccountDropdown', function () {
   return {
     template: JST.cf_account_dropdown(),
     restrict: 'E',
@@ -14,11 +14,12 @@ angular.module('contentful')
 
 .controller('cfAccountDropdownController', ['$scope', '$injector', function cfAccountDropdownController ($scope, $injector) {
 
-  var $window          = $injector.get('$window');
-  var TheAccountView   = $injector.get('TheAccountView');
-  var authentication   = $injector.get('authentication');
-  var analytics        = $injector.get('analytics');
-  var intercom         = $injector.get('intercom');
+  var $window = $injector.get('$window');
+  var TheAccountView = $injector.get('TheAccountView');
+  var authentication = $injector.get('authentication');
+  var Config = $injector.get('Config');
+  var analytics = $injector.get('analytics');
+  var intercom = $injector.get('intercom');
 
   $scope.$watch(TheAccountView.canGoToOrganizations, function (canGo) {
     $scope.canGoToOrganizations = canGo;
@@ -32,7 +33,7 @@ angular.module('contentful')
   $scope.logout = logout;
 
   function openSupport () {
-    $window.open(authentication.supportUrl());
+    $window.open(Config.supportUrl);
   }
 
   function logout () {

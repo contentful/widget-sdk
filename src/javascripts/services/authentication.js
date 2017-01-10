@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 .factory('authentication', ['$injector', function ($injector) {
-  var environment = $injector.get('environment');
+  var Config = $injector.get('Config');
   var contentfulClient = $injector.get('libs/@contentful/client');
   var $location = $injector.get('$location');
   var $q = $injector.get('$q');
@@ -14,8 +14,6 @@ angular.module('contentful')
   var TheStore = $injector.get('TheStore');
   var client = $injector.get('client');
 
-  var authApp = '//' + environment.settings.base_host + '/';
-  var marketingApp = environment.settings.marketing_url + '/';
   var QueryLinkResolver = contentfulClient.QueryLinkResolver;
 
   return {
@@ -48,42 +46,29 @@ angular.module('contentful')
     logout: function () {
       TheStore.remove('token');
       var payload = $.param({token: this.token});
-      return $http.post(authApp + 'oauth/revoke', payload, {
+      return $http.post(Config.authUrl('oauth/revoke'), payload, {
         headers: {
           'Authorization': 'Bearer ' + this.token,
           'Content-Type': 'application/x-www-form-urlencoded'
         }
       }).finally(function () {
-        $window.location = authApp + 'logout';
+        $window.location = Config.authUrl('logout');
       });
     },
 
     goodbye: function () {
       TheStore.remove('token');
-      $window.location = marketingApp + 'goodbye';
-    },
-
-    accountUrl: function () {
-      return authApp + 'account';
-    },
-
-    supportUrl: function () {
-      return authApp + 'integrations/zendesk/login';
-    },
-
-    spaceSettingsUrl: function (spaceId) {
-      return authApp + 'settings/spaces/' + spaceId;
+      $window.location = Config.websiteUrl('goodbye');
     },
 
     redirectToLogin: function () {
-      var params = $.param({
+      this.redirectingToLogin = true;
+      $window.location = Config.authUrl('oauth/authorize', {
         response_type: 'token',
         client_id: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
         redirect_uri: $window.location.protocol + '//' + $window.location.host + '/',
         scope: 'content_management_manage'
       });
-      this.redirectingToLogin = true;
-      $window.location = authApp + 'oauth/authorize?' + params;
     },
 
     getTokenLookup: function () {

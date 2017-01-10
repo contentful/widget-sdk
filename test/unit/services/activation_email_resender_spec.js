@@ -2,12 +2,12 @@
 
 describe('activationEmailResender', function () {
 
-  var $httpBackend;
-  var resend;
+  let $httpBackend;
+  let resend;
 
   beforeEach(function () {
     module('contentful/test', function (environment) {
-      environment.settings.base_host = 'be.contentful.com:443'
+      environment.settings.authUrl = '//be.contentful.com:443';
     });
 
     resend = this.$inject('activationEmailResender').resend;
@@ -56,7 +56,7 @@ describe('activationEmailResender', function () {
     });
 
     describe('returned promise', function () {
-      var rejected, resolved;
+      let rejected, resolved;
       beforeEach(function () {
         rejected = sinon.spy();
         resolved = sinon.spy();
@@ -86,9 +86,9 @@ describe('activationEmailResender', function () {
     });
 
     describe('error logging on rejection via `logger.logError()`', function () {
-      var logErrorSpy;
+      let logErrorSpy;
       beforeEach(function () {
-        this.respond(function(method, url, data, headers) {
+        this.respond(function (method, url, data, headers) {
           this.request = {
             method: method, url: url, data: data, headers: headers
           };

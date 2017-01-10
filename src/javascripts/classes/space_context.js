@@ -95,7 +95,7 @@ angular.module('contentful')
       var self = this;
       var endpoint = spaceEndpoint.create(
         authentication.token,
-        '//' + environment.settings.api_host,
+        environment.settings.apiUrl,
         space.getId()
       );
 
@@ -115,7 +115,7 @@ angular.module('contentful')
       // created code.
       self.docConnection = ShareJSConnection.create(
         authentication.token,
-        environment.settings.ot_host,
+        environment.settings.otUrl,
         space.getId()
       );
 

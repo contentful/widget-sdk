@@ -109,6 +109,7 @@ angular.module('contentful')
 .factory('LazyLoader/resources', ['$injector', function ($injector) {
   var AssetResolver = $injector.get('AssetResolver');
   var environment = $injector.get('environment');
+  var Config = $injector.get('Config');
 
   /**
    * Options:
@@ -120,7 +121,7 @@ angular.module('contentful')
   return {
     // CSS:
     gkPlanCardStyles: {
-      url: '//' + environment.settings.base_host + '/gatekeeper/plan_cards.css'
+      url: Config.authUrl('/gatekeeper/plan_cards.css')
     },
     fontsDotCom: {
       url: '//fast.fonts.net/t/1.css?apiType=css&projectid=' +

@@ -9,15 +9,14 @@
  * provides a rendered plan card.
  */
 angular.module('contentful')
-.factory('subscriptionPlanRecommender', ['$injector', function ($injector) {
+.factory('subscriptionPlanRecommender', ['require', function (require) {
 
-  var environment    = $injector.get('environment');
-  var authentication = $injector.get('authentication');
-  var $http          = $injector.get('$http');
-  var $q             = $injector.get('$q');
+  var Config = require('Config');
+  var authentication = require('authentication');
+  var $http = require('$http');
+  var $q = require('$q');
 
-  var GK_URL = '//' + environment.settings.base_host;
-  var ENDPOINT = GK_URL + '/account/organizations/:organization/z_subscription_plans/recommended';
+  var ENDPOINT = Config.authUrl('/account/organizations/:organization/z_subscription_plans/recommended');
 
   return {
     /**
@@ -51,7 +50,7 @@ angular.module('contentful')
     return $http(request).then(extractPlanHtml, reject);
   }
 
-  function extractPlanHtml(response) {
+  function extractPlanHtml (response) {
     var html = $('<div>').append($(response.data));
     var plan = html.find('.z-subscription-plan');
 
@@ -65,7 +64,7 @@ angular.module('contentful')
     }
   }
 
-  function reject() {
+  function reject () {
     return $q.reject(new Error('Failed to make a plan recommendation'));
   }
 
