@@ -35,7 +35,6 @@ export function snapshotSidebarlist () {
     errorMessage(),
     h('div', {ngShow: 'hasSnapshots'}, [
       snapshotsList(),
-      loadMoreBtn(),
       compareBtn(),
       note(compareHelpText)
     ]),
@@ -76,20 +75,11 @@ function snapshotsList () {
   ]);
 }
 
-function loadMoreBtn () {
-  return h('button.snapshot-sidebar__load-more-btn.btn-plain.x--block', {
-    style: styles.moreButton,
-    role: 'button',
-    ngShow: 'hasMore',
-    ngClick: 'loadMore()',
-    ngDisabled: 'isLoading',
-    ngClass: '{"is-loading": isLoading}'
-  }, ['Load more…']);
-}
 
 function compareBtn () {
   return h('button.snapshot-sidebar__compare-btn.btn-secondary-action.x--block', {
     role: 'button',
+    ariaDisabled: '{{!selectedId}}',
     uiSref: '.compare.withCurrent({snapshotId: selectedId})',
     ngDisabled: '!selectedId'
   }, ['Compare with current version']);

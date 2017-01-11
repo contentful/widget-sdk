@@ -1,4 +1,4 @@
-import * as $q from '$q';
+import $q from '$q';
 import dotty from 'dotty';
 import * as spaceContext from 'spaceContext';
 
@@ -14,7 +14,7 @@ import * as spaceContext from 'spaceContext';
  */
 export function withCurrent (snapshots) {
   if (!snapshots.length) {
-    return snapshots;
+    return $q(function (resolve) { resolve(snapshots); });
   }
 
   const entryId = dotty.get(snapshots[0], 'snapshot.sys.id');

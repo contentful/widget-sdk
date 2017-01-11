@@ -123,8 +123,12 @@ describe('cfSnapshotSidebarList', function () {
       expect(scope.snapshots[1].sys.isCurrent).toBeFalsy();
     });
 
-    it('should hide list and button if there are no previous versions', function () {
+    it('should hide snapshots list and compare button if there are no previous versions', function () {
       let scope;
+      spaceContext.cma.getEntrySnapshots = sinon.stub().resolves(this.getSnapshots(0));
+      scope = this.compile().scope();
+      expect(scope.hasSnapshots).toBeFalsy();
+
       spaceContext.cma.getEntrySnapshots = sinon.stub().resolves(this.getSnapshots(1, true));
       scope = this.compile().scope();
       expect(scope.hasSnapshots).toBeFalsy();
@@ -136,30 +140,6 @@ describe('cfSnapshotSidebarList', function () {
       spaceContext.cma.getEntrySnapshots = sinon.stub().resolves(this.getSnapshots(2, true));
       scope = this.compile().scope();
       expect(scope.hasSnapshots).toBeTruthy();
-    });
-  });
-
-  describe('pagination', function () {
-    it('should guess if pagination is possible and show/hide \'load more\' button', function () {
-      let scope;
-
-      spaceContext.cma.getEntrySnapshots = sinon.stub().resolves(this.getSnapshots(PER_PAGE + 1));
-      scope = this.compile().scope();
-      expect(scope.hasMore).toEqual(true);
-
-      spaceContext.cma.getEntrySnapshots = sinon.stub().resolves(this.getSnapshots(1));
-      scope = this.compile().scope();
-      expect(scope.hasMore).toEqual(false);
-    });
-
-    it('should load more snapshots, and hide \'load more\' button when nothing is left to load', function () {
-      const scope = this.compile().scope();
-
-      spaceContext.cma.getEntrySnapshots = sinon.stub().resolves(this.getSnapshots(1));
-      scope.loadMore();
-      this.$apply();
-      expect(scope.snapshots.length).toEqual(PER_PAGE + 1);
-      expect(scope.hasMore).toEqual(false);
     });
   });
 
