@@ -141,15 +141,20 @@ Styleguide table-pattern
             text-overflow: ellipsis
             overflow: hidden
 
+  .table__head
+    flex-shrink: 0
+    flex-basis: auto
+
   .table__body
     overflow-x: hidden
     overflow-y: auto
-    flex: 1
 
   .table__bulk-actions
     padding: 10px
     background-color: $colors.element-light
     border-bottom: 1px solid $colors.element-mid
+    flex-shrink: 0
+    flex-basis: auto
     a
       margin-left: 10px
       text-decoration: underline
