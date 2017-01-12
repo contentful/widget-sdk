@@ -6,7 +6,7 @@ We describe how the User Interface is built and deployed on Travis using Docker.
 The following is an overview of the different steps defined in `.travis.yml`.
 
 ~~~bash
-# Build the 'contentful/user-interface' image from 'Dockerfile'.
+# Build the 'contentful/user-interface-test' image from 'Dockerfile-test'.
 bin/docker-build
 
 # Runs karma tests and eslint and validates configuration in a container
@@ -33,7 +33,7 @@ The Docker Image
 ----------------
 
 Testing and creating a deployable distribution happens in a docker container
-based on the `contentful/user-interface` image.
+based on the `contentful/user-interface-test` image.
 
 The image is built by running `bin/docker-build`. It installs all source code
 dependencies (NPM and git submodules) and builds the app using `gulp build`.

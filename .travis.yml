@@ -6,10 +6,6 @@ services:
 # Uses node version from .nvmrc
 language: node_js
 
-cache:
-  directories:
-    - ./cache
-
 env:
   global:
     # Use by estivador
@@ -28,12 +24,9 @@ before_install:
 - sudo apt-get update
 - sudo apt-get -qqy -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install docker-engine
 install:
-- bin/docker-load
 - bin/docker-build
 script:
 - bin/docker-run test
-before_cache:
-- bin/docker-save
 after_success:
 # Build the package and static files
 - bin/docker-run travis --branch "${TRAVIS_BRANCH}" --version "${TRAVIS_COMMIT}" --pr "${TRAVIS_PULL_REQUEST}"
