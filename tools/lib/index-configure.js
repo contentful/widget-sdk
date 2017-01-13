@@ -43,7 +43,7 @@ export default function* configure (revision, configPath, outPath) {
 
   validateConfig(config)
 
-  manifest = mapValues(manifest, (path) => URL.resolve(`//${config.asset_host}`, path))
+  manifest = mapValues(manifest, (path) => URL.resolve(config.assetUrl, path))
   let indexPage = renderIndexPage(revision, config, manifest)
   yield U.mkdirp(P.dirname(outPath))
   yield FS.writeFileAsync(outPath, indexPage, 'utf8')

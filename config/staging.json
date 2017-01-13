@@ -1,10 +1,10 @@
 {
   "environment": "staging",
-  "base_host" : "be.flinkly.com",
-  "api_host" : "api.flinkly.com",
-  "asset_host" : "staticflinkly-thriventures.netdna-ssl.com",
-  "ot_host" : "ot.flinkly.com",
-  "marketing_url" : "//www.flinkly.com",
+  "authUrl": "//be.flinkly.com",
+  "apiUrl": "//api.flinkly.com",
+  "otUrl": "//ot.flinkly.com",
+  "assetUrl" : "//staticflinkly-thriventures.netdna-ssl.com",
+  "marketingUrl": "//www.flinkly.com",
   "main_domain" : "flinkly.com",
   "contentful" : {
     "apiUrl" : "api.contentful.com",

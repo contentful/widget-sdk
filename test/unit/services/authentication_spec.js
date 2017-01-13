@@ -3,8 +3,8 @@
 describe('Authentication service', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide, environment) {
-      environment.settings.base_host = 'basehost';
-      environment.settings.marketing_url = 'marketinghost';
+      environment.settings.authUrl = '//basehost';
+      environment.settings.marketingUrl = '//marketinghost';
 
       $provide.value('$window', { addEventListener: sinon.stub() });
       $provide.value('$document', [{ label: '' }]);
@@ -237,21 +237,8 @@ describe('Authentication service', function () {
     });
 
     it('sets the window location', inject(function ($window) {
-      expect($window.location).toEqual('marketinghost/goodbye');
+      expect($window.location).toEqual('//marketinghost/goodbye');
     }));
-  });
-
-  it('account url', function () {
-    expect(this.authentication.accountUrl()).toEqual('//basehost/account');
-  });
-
-
-  it('support url', function () {
-    expect(this.authentication.supportUrl()).toEqual('//basehost/integrations/zendesk/login');
-  });
-
-  it('space settings url', function () {
-    expect(this.authentication.spaceSettingsUrl('123')).toEqual('//basehost/settings/spaces/123');
   });
 
   describe('redirect to login', function () {

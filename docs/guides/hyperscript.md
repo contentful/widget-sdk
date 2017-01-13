@@ -3,7 +3,11 @@ Hyperscript
 
 You can use hyperscript to generate HTML strings that can be used as templates.
 
+Note: Jade templates are deprecated, Hyperscript should be used instead for new components!
+
 ## Usage example
+
+Directive and template in one file (preferable for smaller templates):
 
 ```js
 // this is an excerpt from space_settings_directive.js
@@ -17,8 +21,7 @@ const workbenchContent = h('.workbench-main__middle-content', [
       {type: 'text',
         value: '{{spaceId}}',
         readonly: 'readonly',
-        cfSelectAllInput: true})
-    ]),
+        cfSelectAllInput: true}),
     h('.cfnext-form__field', [
       h('label', {for: 'space-name'}, ['Space name:']),
       h('input#space-name.cfnext-form__input--full-size',
@@ -26,6 +29,44 @@ const workbenchContent = h('.workbench-main__middle-content', [
     ])
   ])
 ]);
+```
+
+Template in a separate file:
+
+```js
+// spaceSettingsTemplates.es6.js
+import {h} from 'utils/hyperscript';
+
+export function form () {
+  const actions = [
+    h('button.btn-caution',
+      {uiCommand: 'openRemovalDialog'},
+      ['Remove space and all its contents']
+    ),
+    h('button.btn-primary-action', {uiCommand: 'save'}, ['Save'])
+  ];
+
+  const content = [
+    h('.cfnext-form__field', [...])
+  ];
+
+  return simpleWorkbench('Space settings', 'page-settings', actions, content);
+}
+```
+
+```js
+// spaceSettingsDirective.js
+angular.module('contentful')
+
+.directive('cfSpaceSettings', ['require', function (require) {
+  var templates = require('components/tabs/space_settings/space_settings_templates');
+
+  return {
+    template: templates.form(),
+    restrict: 'E',
+    controller: 'SpaceSettingsController'
+  };
+}]);
 ```
 
 

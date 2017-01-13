@@ -21,15 +21,13 @@ const urlSchema = {
   format: 'url'
 }
 
-// For each item 'x' we require a property 'x_host' with a domain and
-// optional port format.
-const HOST_KEYS = [
-  'base', 'api', 'asset', 'ot'
+// For each item 'x' we require a property 'xUrl' that has a URL format.
+const URL_KEYS = [
+  'auth', 'api', 'ot', 'asset', 'marketing'
 ]
 
 export default strictObject(Object.assign({
   environment: {type: 'string'},
-  marketing_url: urlSchema,
   main_domain: hostSchema,
   contentful: strictObject({
     spaceTemplatesUserReadOnlyToken: hex(64),
@@ -41,13 +39,15 @@ export default strictObject(Object.assign({
     space: alnum(12),
     previewAccessToken: hex(64)
   })
-}, hosts(), integrations()))
+}, hosts(), integrations()), {
+  clientId: hex(64)
+})
 
 
 function hosts () {
   let props = {}
-  for (let key of HOST_KEYS) {
-    props[key + '_host'] = subdomainHostSchema
+  for (let key of URL_KEYS) {
+    props[key + 'Url'] = urlSchema
   }
   return props
 }
@@ -76,12 +76,12 @@ function integrations () {
   }
 }
 
-function strictObject (props) {
+function strictObject (props, optional) {
   return {
     type: 'object',
     additionalProperties: false,
     required: Object.keys(props),
-    properties: props
+    properties: Object.assign(props, optional)
   }
 }
 

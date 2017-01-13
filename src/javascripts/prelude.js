@@ -80,10 +80,8 @@ angular.module('contentful/app', ['contentful'])
 
 angular.module('contentful')
 .config([
-  '$locationProvider', 'environment', '$sceDelegateProvider', '$compileProvider', '$animateProvider',
-  function ($locationProvider, environment, $sceDelegateProvider, $compileProvider, $animateProvider) {
-    var env = environment.settings;
-
+  '$locationProvider', '$compileProvider', '$animateProvider',
+  function ($locationProvider, $compileProvider, $animateProvider) {
     $locationProvider.html5Mode({
       enabled: true,
       requireBase: false
@@ -94,7 +92,6 @@ angular.module('contentful')
     $locationProvider.hashPrefix('!!!');
 
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|contentful):/);
-    $sceDelegateProvider.resourceUrlWhitelist(env.resourceUrlWhiteListRegexp);
     $animateProvider.classNameFilter(/animate/);
   }
 ]);

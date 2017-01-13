@@ -32,7 +32,7 @@ var babel = require('gulp-babel');
 var S = require('./tools/lib/stream-utils');
 var U = require('./tools/lib/utils');
 var jstConcat = require('./tasks/build-template');
-var serve = require('./tasks/serve');
+var serve = require('./tools/lib/server').serveWatch;
 var createManifestResolver = require('./tools/lib/manifest-resolver').create;
 var babelOptions = require('./tools/app-babel-options').options;
 
@@ -309,16 +309,18 @@ gulp.task('styleguide/stylesheets', function () {
 });
 
 gulp.task('serve', function () {
+  var configName = process.env.UI_CONFIG || 'development';
+  var watchFiles = !process.env.NO_WATCHING;
+
   var svgPattern = path.join(src.svg.sourceDirectory, '**/*.svg');
   var appSrc = [svgPattern].concat(src.components);
-
   var patternTaskMap = [
     [appSrc, ['js/app']],
     [src.templates, ['templates']],
     [src.stylesheets, ['stylesheets/app']]
   ];
 
-  return serve(patternTaskMap);
+  return serve(configName, watchFiles, patternTaskMap);
 });
 
 gulp.task('watchify', function () {

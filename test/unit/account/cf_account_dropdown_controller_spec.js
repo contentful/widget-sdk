@@ -2,24 +2,24 @@
 
 describe('Account Dropdown Controller', function () {
   beforeEach(function () {
-    var stubs = this.stubs = {};
+    const stubs = this.stubs = {};
 
-    module('contentful/test', function($provide) {
+    module('contentful/test', function ($provide) {
       $provide.value('analytics', stubs.analytics);
       $provide.value('authentication', stubs.authentication);
       $provide.value('$window', stubs.window);
     });
 
     this.stubs.analytics = {track: sinon.stub()};
-    this.stubs.authentication = {logout: sinon.stub(), supportUrl: sinon.stub()};
+    this.stubs.authentication = {logout: sinon.stub()};
     this.stubs.window = {
       open: sinon.stub(),
       addEventListener: sinon.stub(),
       document: window.document
     };
 
-    var $rootScope = this.$inject('$rootScope');
-    var $controller = this.$inject('$controller');
+    const $rootScope = this.$inject('$rootScope');
+    const $controller = this.$inject('$controller');
     this.scope = $rootScope.$new();
     $controller('cfAccountDropdownController', { $scope: this.scope });
   });
@@ -38,23 +38,19 @@ describe('Account Dropdown Controller', function () {
     });
   });
 
-  describe('open support', function () {
-    beforeEach(function () {
+  describe('#openSupport', function () {
+    it('opens new window with support URL', function () {
+      this.mockService('Config', {
+        supportUrl: 'support url'
+      });
       this.scope.openSupport();
-    });
-
-    it('opens new window', function () {
-      sinon.assert.called(this.stubs.window.open);
-    });
-
-    it('gets support url', function () {
-      sinon.assert.called(this.stubs.authentication.supportUrl);
+      sinon.assert.calledWith(this.stubs.window.open, 'support url');
     });
   });
 
   describe('navigation to organization settings', function () {
     beforeEach(function () {
-      var OrganizationList = this.$inject('OrganizationList');
+      const OrganizationList = this.$inject('OrganizationList');
       this.isOwnerStub = OrganizationList.isOwnerOrAdmin = sinon.stub().returns(false);
       this.$apply();
     });

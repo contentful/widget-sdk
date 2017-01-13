@@ -6,5 +6,5 @@ docker run \
   -t \
   --rm \
   -v $(pwd)/output:/app/output \
-  contentful/user-interface \
+  contentful/user-interface-test \
   "$@"

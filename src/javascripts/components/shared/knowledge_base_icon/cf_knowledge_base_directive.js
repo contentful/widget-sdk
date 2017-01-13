@@ -23,9 +23,7 @@ angular.module('contentful').directive('cfKnowledgeBase', ['$injector', function
 }]);
 
 angular.module('contentful').factory('KnowledgeBase/getUrl', ['$injector', function ($injector) {
-
-  var environment = $injector.get('environment');
-  var BASE = environment.settings.marketing_url.replace(/\/*$/, '/');
+  var Config = $injector.get('Config');
 
   var items = {
     space: 'faq/terminology/#what-is-a-space',
@@ -50,7 +48,7 @@ angular.module('contentful').factory('KnowledgeBase/getUrl', ['$injector', funct
 
   return function getKnowledgeBaseUrl (name) {
     if (items[name]) {
-      return BASE + items[name];
+      return Config.websiteUrl(items[name]);
     }
 
     throw new Error('Incorrect Knowledge Base item "' + name + '".');

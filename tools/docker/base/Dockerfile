@@ -1,5 +1,5 @@
 #
-# Base image for the contentful/user_interface image
+# Base image for the contentful/user-interface-test image
 #
 # - Installs firefox, xvfb, unzip, and fpm as packages
 # - Installs SlimerJS into /app/vendor
