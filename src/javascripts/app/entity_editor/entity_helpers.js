@@ -6,10 +6,8 @@ angular.module('cf.app')
   var $q = require('$q');
   var spaceContext = require('spaceContext');
   var assetUrlFilter = require('$filter')('assetUrl');
-  var getStatusClassname = require('entityStatus').getClassname;
 
   var api = {
-    entityStatus: entityStatus,
     entityTitle: wrapAsEntity('entityTitle'),
     entityDescription: wrapAsEntity('entityDescription'),
     entryImage: wrapAsEntity('entryImage'),
@@ -29,15 +27,6 @@ angular.module('cf.app')
       entryImage: _.partialRight(api.entryImage, locale),
       assetFile: _.partialRight(api.assetFile, locale)
     });
-  }
-
-  function entityStatus (data) {
-    var isPublished = !!data.sys.publishedVersion;
-    return $q.resolve(getStatusClassname({
-      isPublished: _.constant(isPublished),
-      hasUnpublishedChanges: _.constant(!isPublished || data.sys.version > data.sys.publishedVersion + 1),
-      isArchived: _.constant(!!data.sys.archivedVersion)
-    }));
   }
 
   function wrapAsEntity (methodName) {

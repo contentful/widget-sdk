@@ -1,0 +1,110 @@
+import {h} from 'utils/hyperscript';
+import {
+  dragHandle,
+  status,
+  titleText,
+  actions
+} from './TemplateCommons';
+
+/**
+ * Creates the template for entity links used by the `cfEntityLink`
+ * directives.
+ *
+ * Consists of
+ * - drag handler (configurable)
+ * - thumbnail (configurable)
+ * - status
+ * - title
+ * - description (configurable)
+ * - actions
+ *   - edit
+ *   - download
+ *   - remove
+ */
+export default function () {
+  return h('div.entity-link', [
+    dragHandle({
+      position: 'absolute',
+      paddingLeft: '11px',
+      paddingRight: '9px',
+      marginTop: '-1px'
+    }),
+
+    h('a.entity-link__content', {
+      dataTestId: 'entity-link-content',
+      ngIf: 'stateRef',
+      cfSref: 'stateRef'
+    }, [content()]),
+    h('.entity-link__content', {
+      dataTestId: 'entity-link-content',
+      ngIf: 'actions.edit',
+      ngClick: 'actions.edit()',
+      role: 'button',
+      style: {cursor: 'pointer'}
+    }, [content()]),
+    h('.entity-link__content', {
+      dataTestId: 'entity-link-content',
+      ngIf: '!stateRef && !actions.edit'
+    }, [content()]),
+
+    actions('entity-link__action')
+  ]);
+}
+
+function content () {
+  return [
+    image(),
+    status({
+      marginTop: '2px',
+      marginRight: '0.5em'
+    }),
+    h('div', {
+      style: {flexGrow: 1}
+    }, text())
+  ].join('');
+}
+
+/**
+ * A thumbnail image for the entity when it is available
+ */
+function image () {
+  return h('.entity-link__image', {
+    ngIf: 'config.showDetails',
+    ngClass: '{"entity-link__image--missing": !image}'
+  }, [
+    h('cf-thumbnail', {file: 'image', size: '56', fit: 'thumb'})
+  ]);
+}
+
+
+/**
+ * Display the entity title and description.
+ *
+ * There are special styles and placeholders when the title or
+ * description cannot be determined or the entity is missing.
+ */
+function text () {
+  return [
+    h('div', {
+      dataTestId: 'entity-link-title',
+      style: {fontSize: '16px'}
+    }, [titleText()]),
+    h('div', {
+      ngIf: 'config.showDetails',
+      style: {
+        // TODO should be imported from styles
+        color: '#8091A5',
+        // TODO should be imported from style helper
+        marginTop: '0.64em'
+      }
+    }, [
+      h('span', {
+        ngIf: '!missing && description'
+      }, ['{{ description | truncate:150 }}']),
+      h('span', {
+        ngIf: 'missing || !description',
+        style: {fontStyle: 'italic'}
+      }, ['No description available'])
+    ])
+  ];
+}

@@ -47,11 +47,6 @@ describe('cfReferenceEditorDirective', function () {
       expect(scope.config.showDetails).toBe(false);
     });
 
-    it('shows images as thumbs for multiple asset cards', function () {
-      const scope = this.init({type: 'Asset', variant: 'card', single: false});
-      expect(scope.config.asThumb).toBe(true);
-    });
-
     it('checks if uses the asset card variant', function () {
       const scope = this.init({type: 'Asset', variant: 'card'});
       expect(scope.isAssetCard).toBe(true);

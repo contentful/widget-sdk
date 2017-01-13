@@ -23,7 +23,7 @@ describe('EntityLinkController', function () {
 
   describe('entity missing state', function () {
     const id = 'testid';
-    const entity = {sys: {id: id}};
+    const entity = {sys: {id: id, type: 'Entry'}};
 
     it('is missing if neither entity nor link is provided', function () {
       this.init();
@@ -52,12 +52,10 @@ describe('EntityLinkController', function () {
       this.helpers.entityStatus.resolves('published');
       this.init({entity: entry});
       expect(this.scope.title).toBe('boo!');
-      expect(this.scope.status).toBe('published');
 
       this.helpers.entityTitle.resolves('pow!');
       this.init({entity: asset});
       expect(this.scope.title).toBe('pow!');
-      expect(this.scope.status).toBe('published');
     });
 
     it('does not get asset details if an entry is provided', function () {
