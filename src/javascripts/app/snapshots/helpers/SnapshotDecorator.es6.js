@@ -1,33 +1,32 @@
 import $q from '$q';
 import dotty from 'dotty';
-import * as spaceContext from 'spaceContext';
 
 /**
  * @ngdoc method
  * @name snapshotDecorator#withCurrent
+ * @param {object} entrySys
  * @param {Array<object>} snapshots
  * @returns {Promise<Array<object>>}
  * @description
  * Decorates snapshots setting snapshot.sys.isCurrent value
- * (true is it's identical to current entry version)
- * Note: it assumes that all snapshots in the array belong to the same entry.
+ * (true if snapshot is identical to current entry version)
+ * Note: it assumes that all snapshots in the array belong to the same entry,
+ * that is passed as first parameter.
  */
-export function withCurrent (snapshots) {
+export function withCurrent (entrySys, snapshots) {
   if (!snapshots.length) {
-    return $q(function (resolve) { resolve(snapshots); });
-  }
-
-  const entryId = dotty.get(snapshots[0], 'snapshot.sys.id');
-  return spaceContext.cma.getEntry(entryId).then(function (entry) {
-    const publishedVersion = dotty.get(entry, 'sys.publishedVersion');
-
-    snapshots.forEach(function (snapshot) {
-      const isCurrent = dotty.get(snapshot, 'snapshot.sys.publishedVersion') === publishedVersion;
-      snapshot.sys.isCurrent = isCurrent;
-    });
+    return snapshots;
+  } else {
+    const version = entrySys.version;
+    if (version) {
+      snapshots.forEach(function (snapshot) {
+        const isCurrent = dotty.get(snapshot, 'snapshot.sys.version') === version;
+        snapshot.sys.isCurrent = isCurrent;
+      });
+    }
 
     return snapshots;
-  });
+  }
 }
 
 /**
@@ -38,7 +37,7 @@ export function withCurrent (snapshots) {
  * @description
  * Decorates snapshots setting snapshot.sys.createdBy.authorName value
  */
-export function withAuthorName (snapshots) {
+export function withAuthorName (spaceContext, snapshots) {
   const promises = snapshots.map(function (snapshot) {
     const userId = dotty.get(snapshot, 'sys.createdBy.sys.id');
 

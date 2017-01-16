@@ -1,24 +1,30 @@
 'use strict';
 
 describe('cfSnapshotSelector', function () {
-  let spaceContext;
   const PER_PAGE = 20; // page size
 
   beforeEach(function () {
-    spaceContext = {};
+    module('contentful/test');
 
-    module('contentful/test', $provide => {
-      $provide.value('spaceContext', spaceContext);
-    });
+    const mockEntry = {
+      sys: {
+        id: 1,
+        type: 'Entry',
+        version: 1
+      }
+    };
 
+    const K = this.$inject('mocks/kefir');
     const moment = this.$inject('moment');
+    const spaceContext = this.$inject('mocks/spaceContext').init();
+    const doc = this.$inject('mocks/entityEditor/Document').create(mockEntry);
+
     const $compile = this.$compile.bind(this);
 
     spaceContext.cma = {
       getEntrySnapshots: sinon.stub().resolves({
         items: Array.apply(null, {length: 50}).map(makeFakeSnapshots(50))
-      }),
-      getEntry: sinon.stub().resolves({ sys: { publishedVersion: 1 } })
+      })
     };
 
     spaceContext.users = {
@@ -28,11 +34,12 @@ describe('cfSnapshotSelector', function () {
     };
 
     this.scope = compile().scope();
+    this.spaceContext = spaceContext;
     this.makeFakeSnapshot = makeFakeSnapshot;
     this.makeFakeSnapshots = makeFakeSnapshots;
 
     this.toggleList = function (flag) {
-      this.scope.showSnapshotList = flag;
+      this.scope.showSnapshotSelector$.set(flag);
       this.$apply();
     };
 
@@ -48,11 +55,10 @@ describe('cfSnapshotSelector', function () {
 
     function compile (scope) {
       const $scope = _.extend({
-        entityInfo: {
-          id: 1
-        },
-        showSnapshotList: false,
-        snapshot: makeFakeSnapshot(1)
+        showSnapshotSelector$: K.createMockProperty(false),
+        entityInfo: { id: 1 },
+        snapshot: makeFakeSnapshot(1),
+        otDoc: doc
       }, scope);
 
       return $compile('<cf-snapshot-selector />', $scope);
@@ -100,7 +106,6 @@ describe('cfSnapshotSelector', function () {
 
   describe('lazy init', function () {
     it('should load initial list of snapshots lazily', function () {
-      expect(this.scope.showSnapshotList).toEqual(false);
       this.assertSnapshotsLength(0);
 
       this.toggleList(true);
@@ -112,7 +117,7 @@ describe('cfSnapshotSelector', function () {
       // hide and show snapshots list
       this.toggleList(false);
       this.toggleList(true);
-      sinon.assert.notCalled(spaceContext.cma.getEntrySnapshots);
+      sinon.assert.notCalled(this.spaceContext.cma.getEntrySnapshots);
     });
   });
 
@@ -203,11 +208,9 @@ describe('cfSnapshotSelector', function () {
     it('should only add unique snapshots to the list', function () {
       const snapshotsArr = Array.apply(null, {length: PER_PAGE}).map(this.makeFakeSnapshots(PER_PAGE));
 
-      spaceContext.cma = {
-        getEntrySnapshots: sinon.stub().resolves({
-          items: snapshotsArr
-        })
-      };
+      this.spaceContext.cma.getEntrySnapshots = sinon.stub().resolves({
+        items: snapshotsArr
+      });
 
       this.toggleList(true);
       this.assertSnapshotsLength(20);
