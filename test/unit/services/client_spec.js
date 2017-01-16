@@ -13,7 +13,7 @@ describe('Client', function () {
 
     module('contentful/test', function ($provide) {
       $provide.value('$http', self.httpStub);
-      $provide.value('data/requestQueue', {create: passThrough});
+      $provide.value('data/RequestQueue', {create: passThrough});
     });
 
     const env = this.$inject('environment');

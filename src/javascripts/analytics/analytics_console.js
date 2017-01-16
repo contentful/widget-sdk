@@ -2,19 +2,6 @@
 
 angular.module('contentful')
 
-.run(['require', function (require) {
-  var env = require('environment').env;
-
-  var CONSOLE_ENVS = ['development', 'preview', 'staging'];
-  var FN_NAME = '__ANALYTICS_CONSOLE';
-
-  if (_.includes(CONSOLE_ENVS, env)) {
-    var c = require('analytics/console');
-    c.enable();
-    window[FN_NAME] = c.show;
-  }
-}])
-
 /**
  * @ngdoc service
  * @name analytics/console
