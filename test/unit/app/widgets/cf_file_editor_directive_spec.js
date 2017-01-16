@@ -17,7 +17,7 @@ describe('cfFileEditor Directive', function () {
 
     const editorContext = this.$inject('mocks/entityEditor/Context').create();
 
-    scope = this.$compile('<cf-file-editor />', {
+    this.el = this.$compile('<cf-file-editor />', {
       editorContext: editorContext,
       fieldLocale: {access: {editable: true}},
       fieldData: {
@@ -26,12 +26,15 @@ describe('cfFileEditor Directive', function () {
       }
     }, {
       cfWidgetApi: widgetApi
-    }).scope();
+    });
+    this.el.appendTo('body');
+    scope = this.el.scope();
 
     scope.$apply();
   });
 
   afterEach(function () {
+    this.el.remove();
     scope.$destroy();
     scope = fieldApi = null;
   });
@@ -143,5 +146,26 @@ describe('cfFileEditor Directive', function () {
       this.$apply();
       sinon.assert.calledOnce(scope.editorContext.validator.run);
     });
+  });
+
+  it('shows progress bar when image is loading', function () {
+    // This is needed to transform the image domain
+    const authentication = this.$inject('authentication');
+    authentication.tokenInfo = { domains: {} };
+
+    fieldApi.onValueChanged.yield({
+      url: '//images.contentful.com',
+      contentType: 'image/png'
+    });
+
+    this.$apply();
+    const loader = this.el.find('[data-test-id="image-loading"]');
+    expect(loader.attr('aria-busy')).toBe('true');
+    expect(loader.is(':visible')).toBe(true);
+
+    this.el.find('img').trigger('load');
+    this.$apply();
+    expect(loader.attr('aria-busy')).toBe('false');
+    expect(loader.is(':visible')).toBe(false);
   });
 });
