@@ -1,6 +1,8 @@
 import throttle from 'throttle';
 import userAgent from 'userAgent';
 import {transform} from 'lodash';
+import {observeResize} from 'ui/ResizeDetector';
+import * as K from 'utils/kefir';
 
 export function create (textarea, options, CodeMirror) {
 
@@ -18,6 +20,8 @@ export function create (textarea, options, CodeMirror) {
     shift: 50
   };
 
+  // TODO We should call `new CodeMirror()` instead of using the
+  // textarea.
   const cm = CodeMirror.fromTextArea(textarea, {
     mode: 'markdown',
     lineNumbers: false,
@@ -46,6 +50,11 @@ export function create (textarea, options, CodeMirror) {
   });
 
 
+  // Whenever the markdown editor container is resized we must refresh
+  // CodeMirror to display the content properly.
+  const resize$ = observeResize(cm.getWrapperElement());
+  const unwatchResize = K.onValue(resize$, () => cm.refresh());
+
   /**
    * @ngdoc type
    * @name CodeMirrorWrapper
@@ -56,7 +65,7 @@ export function create (textarea, options, CodeMirror) {
    * on top of CodeMirror.
    */
   return {
-    destroy: function () { cm.toTextArea(); },
+    destroy: destroy,
     attachEvent: attachEvent,
     addKeyShortcuts: addKeyShortcuts,
     setValue: setValue,
@@ -89,11 +98,15 @@ export function create (textarea, options, CodeMirror) {
     getNl: getNl,
     getValue: getValue,
     getHistorySize: getHistorySize,
-    repaint: function () { cm.refresh(); },
 
     scrollToFraction: scrollToFraction,
     getScrollFraction: getScrollFraction
   };
+
+  function destroy () {
+    cm.toTextArea();
+    unwatchResize();
+  }
 
   function assureHeight () {
     const current = cm.heightAtLine(cm.lastLine(), 'local') + EDITOR_SIZE.shift;
