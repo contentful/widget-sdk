@@ -17,7 +17,6 @@ angular.module('contentful')
     restrict: 'E',
     require: '^cfWidgetApi',
     template: JST.cf_file_display(),
-    controller: 'ThumbnailController',
     link: function (scope, elem, _attrs, widgetApi) {
       var field = widgetApi.field;
 
@@ -40,6 +39,10 @@ angular.module('contentful')
       scope.uploadFromGetty = uploadFromGetty;
       scope.editFile = editFile;
       scope.deleteFile = deleteFile;
+
+      scope.$on('imageLoadState', function (_ev, state) {
+        scope.imageIsLoading = state === 'loading';
+      });
 
       function toggleMeta () {
         scope.showMeta = !scope.showMeta;
@@ -87,7 +90,6 @@ angular.module('contentful')
 
       function editFile () {
         scope.loadingEditor = true;
-        scope.imageHasLoaded = false;
         var img = elem.find('.thumbnail').get(0);
         if (!img) {
           notification.warn('The image editor has failed to load.');

@@ -8,8 +8,6 @@ test/unit/components/forms/cf_multi_video_editor_controller_spec.js
 test/unit/components/app_container/space_controller_spec.js
 test/unit/components/client/activation_email_resend_controller_spec.js
 test/unit/components/client/cf_main_nav_bar_directive_spec.js
-test/unit/components/shared/thumbnail/thumbnail_controller_spec.js
-test/unit/components/shared/thumbnail/cf_thumbnail_directive_spec.js
 test/unit/components/shared/data_size_scale_controller_spec.js
 test/unit/components/shared/accordion_controller_spec.js
 test/unit/components/shared/cf_form_widget_directive_spec.js
@@ -41,7 +39,6 @@ test/unit/services/kaltura_search_spec.js
 test/unit/services/revision_spec.js
 test/unit/services/search_parser_spec.js
 test/unit/services/validation_views_spec.js
-test/unit/services/activation_email_resender_spec.js
 test/unit/services/authorization_spec.js
 test/unit/services/editing_interfaces_helpers_spec.js
 test/unit/services/enforcements_spec.js
@@ -52,7 +49,6 @@ test/unit/services/reload_notification_spec.js
 test/unit/services/sdk_info_supplier_spec.js
 test/unit/services/the_store_spec.js
 test/unit/services/token_store_spec.js
-test/unit/services/subscription_plan_recommender_spec.js
 test/unit/widgets/checks_spec.js
 test/unit/widgets/builtin_spec.js
 test/unit/widgets/default_spec.js
@@ -74,8 +70,6 @@ test/unit/access_control/policy_builder_external_spec.js
 test/unit/access_control/policy_builder_internal_spec.js
 test/unit/access_control/remove_outdated_rules_spec.js
 test/unit/access_control/response_cache_spec.js
-test/unit/account/cf_account_dropdown_controller_spec.js
-test/unit/account/iframe_channel_spec.js
 test/unit/webhooks/webhook_call_status_directive_spec.js
 test/unit/webhooks/webhook_editor_directive_spec.js
 test/unit/webhooks/webhook_health_directive_spec.js
@@ -90,26 +84,22 @@ src/javascripts/components/shared/developers/cf_cda_links_directive.js
 src/javascripts/components/shared/developers/cf_cma_links_directive.js
 src/javascripts/components/shared/file_drop/cf_file_drop_directive.js
 src/javascripts/components/shared/file_info/cf_file_display_metadata_directive.js
-src/javascripts/components/shared/file_info/cf_file_metadata_directive.js
 src/javascripts/components/shared/file_info/cf_file_display_directive.js
 src/javascripts/components/shared/getty_dialog/getty_dialog_controller.js
 src/javascripts/components/shared/search_field/cf_autocomplete_date_directive.js
 src/javascripts/components/shared/search_field/cf_autocomplete_list_directive.js
 src/javascripts/components/shared/search_field/cf_search_directive.js
-src/javascripts/components/shared/thumbnail/cf_thumbnail_directive.js
 src/javascripts/components/shared/validation_error_display/cf_error_list_directive.js
 src/javascripts/components/shared/validation_error_display/cf_error_messages_directive.js
 src/javascripts/components/shared/validation_error_display/cf_error_path_directive.js
 src/javascripts/components/shared/validation_error_display/error_path_controller.js
 src/javascripts/components/shared/accordion_controller.js
 src/javascripts/components/shared/cf_dropdown_toggle_directive.js
-src/javascripts/components/shared/cf_img_load_event.js
 src/javascripts/components/shared/cf_inline_editor_directive.js
 src/javascripts/components/shared/cf_marketing_directive.js
 src/javascripts/components/shared/cf_progress_bar_directive.js
 src/javascripts/components/shared/data_size_scale_controller.js
 src/javascripts/components/shared/endless_container_directive.js
-src/javascripts/components/shared/thumbnail_controller.js
 src/javascripts/components/shared/view_state_controller.js
 src/javascripts/components/shared/cf_form_widget_directive.js
 src/javascripts/components/shared/cf_selection_directive.js
@@ -196,7 +186,6 @@ src/javascripts/services/revision.js
 src/javascripts/services/validation_dialog_error_messages.js
 src/javascripts/services/validation_views.js
 src/javascripts/services/moment.js
-src/javascripts/services/activation_email_resender.js
 src/javascripts/services/authorization.js
 src/javascripts/services/editing_interfaces_helpers.js
 src/javascripts/services/features.js
@@ -207,7 +196,6 @@ src/javascripts/services/sdk_info_supplier.js
 src/javascripts/services/token_store.js
 src/javascripts/services/user_agent.js
 src/javascripts/services/zone_offsets.js
-src/javascripts/services/subscription_plan_recommender.js
 src/javascripts/forms/errors.js
 src/javascripts/forms/validation.js
 src/javascripts/navigation/confirm_leave_editor.js
@@ -242,10 +230,6 @@ src/javascripts/access_control/response_cache.js
 src/javascripts/access_control/role_remover.js
 src/javascripts/access_control/role_repository.js
 src/javascripts/access_control/space_membership_repository.js
-src/javascripts/account/cf_account_dropdown_directive.js
-src/javascripts/account/cf_account_view_directive.js
-src/javascripts/account/iframe_channel.js
-src/javascripts/filters.js
 src/javascripts/webhooks/webhook_call_status_directive.js
 src/javascripts/webhooks/webhook_editor_directive.js
 src/javascripts/webhooks/webhook_headers_directive.js

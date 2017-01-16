@@ -1,10 +1,10 @@
 {
   "environment": "staging",
-  "base_host" : "be.quirely.com",
-  "api_host" : "api.quirely.com",
-  "asset_host" : "static.quirely.com",
-  "ot_host" : "ot.quirely.com",
-  "marketing_url" : "//www.quirely.com",
+  "authUrl" : "//be.quirely.com",
+  "apiUrl" : "//api.quirely.com",
+  "otUrl" : "//ot.quirely.com",
+  "assetUrl" : "//static.quirely.com",
+  "marketingUrl" : "//www.quirely.com",
   "main_domain" : "quirely.com",
   "contentful" : {
     "previewApiUrl" : "preview.contentful.com",

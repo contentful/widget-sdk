@@ -8,7 +8,7 @@ angular.module('contentful')
   var createRequestQueue = $injector.get('data/requestQueue').create;
   var Client = $injector.get('libs/@contentful/client').Client;
 
-  var baseUrl = null;
+  var baseUrl = environment.settings.apiUrl;
   var defaultHeaders = null;
   var queuedRequestFn = createRequestQueue(request);
 
@@ -18,7 +18,6 @@ angular.module('contentful')
   });
 
   function init (token) {
-    baseUrl = '//' + environment.settings.api_host;
     defaultHeaders = {
       'X-Contentful-Skip-Transformation': true,
       // @todo content_api's preflight middleware has to accept this header first
@@ -29,7 +28,7 @@ angular.module('contentful')
   }
 
   function request (req) {
-    if (!baseUrl || !defaultHeaders) {
+    if (!defaultHeaders) {
       throw new Error('Call #init(token) first!');
     }
 

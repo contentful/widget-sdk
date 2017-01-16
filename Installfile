@@ -1,22 +1,7 @@
 #!/bin/bash
+# This file is run by the lab when it provisions the VM
 
 set -ev
 
 ./bin/provision
-
-SLIMERJS_BIN=bin/slimerjs
-
-./bin/install-firefox
-./bin/install_slimerjs
-npm install --no-optional
-
-git submodule update --init
-
-pushd vendor/extensions/core-field-editors
-  npm install --no-optional
-popd
-
-pushd vendor/ui-extensions-sdk
-  npm install --production --no-optional
-  make
-popd
+./bin/install-dependencies

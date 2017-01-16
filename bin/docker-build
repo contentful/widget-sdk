@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Build the contentful/user-interface image
+# Build the contentful/user-interface-test image
 #
 # Uses the NPM_TOKEN environment variable or reads it from ~/.npmrc
 #
@@ -19,6 +19,7 @@ fi
 
 echo "Building docker image"
 docker build \
-  --tag contentful/user-interface \
+  --file Dockerfile-test \
+  --tag contentful/user-interface-test \
   --build-arg "NPM_TOKEN=${NPM_TOKEN}" \
   .

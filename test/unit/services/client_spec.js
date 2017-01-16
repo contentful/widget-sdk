@@ -17,7 +17,7 @@ describe('Client', function () {
     });
 
     const env = this.$inject('environment');
-    env.settings.api_host = 'api.contentful.com';
+    env.settings.apiUrl = '//api.contentful.com';
 
     this.client = this.$inject('client');
     this.init = function () {

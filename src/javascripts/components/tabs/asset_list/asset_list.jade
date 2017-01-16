@@ -64,7 +64,7 @@ header.workbench-header
             td.cell-select(ng-click="selection.toggle(asset);$event.stopPropagation()")
               input(type="checkbox" cf-selection="asset" tabindex="-1")
             td.cell-preview(ng-class="{'no-padding': (!!file)}")
-              .cf-thumbnail(cf-thumbnail file="file" size="30" ng-if="file")
+              cf-thumbnail(file="file" size="30" ng-if="file")
             td.cell-name
               a.entity-list-link(ui-sref="{{entityNavState}}") {{spaceContext.assetTitle(asset)}}
             td.cell-dimensions

@@ -2,36 +2,37 @@
 
 describe('Account View directive', function () {
   beforeEach(function () {
-    module('contentful/test');
-    this.channel = {onMessage: sinon.spy(), off: sinon.spy()};
-    this.$inject('iframeChannel').create = sinon.stub().returns(this.channel);
+    this.handleGatekeeperMessage = sinon.spy();
+    module('contentful/test', ($provide) => {
+      $provide.value('handleGatekeeperMessage', this.handleGatekeeperMessage);
+    });
+
+    const K = this.$inject('mocks/kefir');
+    this.messages$ = K.createMockStream();
+
+    const IframeChannel = this.mockService('account/IframeChannel');
+    IframeChannel.default.returns(this.messages$);
 
     this.compile = function () {
       this.element = this.$compile('<cf-account-view />', {context: {}});
     }.bind(this);
   });
 
-  it('mounts GK handlers', function () {
+  it('calls "handleGatekeeperMessage" on message', function () {
     this.compile();
-    sinon.assert.calledOnce(this.channel.onMessage.withArgs(this.$inject('handleGatekeeperMessage')));
+    this.messages$.emit('DATA');
+    sinon.assert.calledOnce(this.handleGatekeeperMessage.withArgs('DATA'));
   });
 
   it('marks as ready on the first iframe message', function () {
     this.compile();
-    this.channel.onMessage.secondCall.args[0]();
+    this.messages$.emit({});
     expect(this.element.scope().context.ready).toBe(true);
   });
 
   it('sets a source of the GK iframe using state params', function () {
-    this.$inject('authentication').accountUrl = _.constant('http://test.com/account');
     this.$inject('$stateParams').pathSuffix = 'x/y/z';
     this.compile();
-    expect(this.element.find('iframe').first().prop('src')).toBe('http://test.com/account/x/y/z');
-  });
-
-  it('turns channel off when destroyed', function () {
-    this.compile();
-    this.element.scope().$broadcast('$destroy');
-    sinon.assert.calledOnce(this.channel.off);
+    expect(this.element.find('iframe').first().prop('src')).toBe('http://be.test.com/account/x/y/z');
   });
 });
