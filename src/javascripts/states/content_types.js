@@ -21,7 +21,7 @@ angular.module('contentful')
       $scope.context = {};
       contextHistory.add(crumbFactory.ContentTypeList());
     }],
-    template: '<div cf-content-type-list class="workbench"></div>'
+    template: '<div cf-content-type-list class="workbench entity-list"></div>'
   });
 
   var fields = {

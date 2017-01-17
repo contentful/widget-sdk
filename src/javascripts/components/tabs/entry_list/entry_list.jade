@@ -1,5 +1,6 @@
 include ./create_entry_button.mixin.jade
 include ../advice.mixin.jade
+include ../pluralize_entity.mixin.jade
 
 header.workbench-header
   cf-breadcrumbs
@@ -9,8 +10,7 @@ header.workbench-header
       | Content
       cf-knowledge-base.workbench-header__kb-link(target="entry")
 
-  .workbench-header__search.search-area--with-filter(
-    ng-show="!showNoEntriesAdvice()")
+  .workbench-header__search.search-area--with-filter(ng-show="!showNoEntriesAdvice()")
     select.search-area__select-box.cfnext-select-box(
       ng-model="context.view.contentTypeId"
       ng-change="selectedContentType()"
@@ -24,8 +24,6 @@ header.workbench-header
       cf-on-blur-component="leftSearch($event)"
       cf-on-blur-component-when="showAutocompletions")
 
-    .search-results-position(cf-search-results-position paginator="paginator" ng-hide="!paginator.getTotal()")
-
   .workbench-header__actions(ng-if="!showNoEntriesAdvice()")
     +create-entry-button
 
@@ -35,67 +33,118 @@ header.workbench-header
     cf-view-menu="uiConfig.entryListViews")
 
   .workbench-main__right-content
-    table.result-list.main-results.main-header
-      thead
-        tr
-          th.cell-select
-            input(type="checkbox" cf-selection="entries" ng-show="entries.length > 0" tabindex="-1")
-          th.cell-content-type(ng-show="!context.view.contentTypeId && !context.view.contentTypeHidden") Content type
-          th.cell-display-name(ng-if="!context.view.contentTypeId || !displayFieldForFilteredContentType()") Name
-          th.cell-display-name(ng-if="context.view.contentTypeId && displayFieldForFilteredContentType()" ng-init="field=displayFieldForFilteredContentType()" cf-field-order-header="displayField")
-          th(ng-repeat="field in displayedFields track by field.id" cf-field-order-header data-field-id="{{field.id}}" ng-class="[getFieldClass(field)]")
-          th.cell-status Status
-    .view-customizer(cf-view-customizer)
+    .search-results__count(ng-show="hasPage()")
+      +pluralize-entity("entry", "paginator.getTotal()", "found")
+    .view-customizer(
+      ng-show="hasPage()"
+      cf-view-customizer)
+    .table(ng-show="hasPage()")
+      .table__head
+        table
+          thead
+            tr
+              th.x--large-cell(
+                aria-label="cell-display-name"
+                ng-if="!context.view.contentTypeId || !displayFieldForFilteredContentType()")
+                label(ng-click="$event.stopPropagation()")
+                  input(type="checkbox" cf-selection="entries" ng-click="selection.toggleList(entries, $event)" ng-show="entries.length > 0" tabindex="-1")
+                | Name
+              th.x--medium-cell(
+                aria-label="cell-content-type"
+                ng-if="!context.view.contentTypeId && !context.view.contentTypeHidden")
+                | Content type
+              th.x--large-cell(
+                aria-label="cell-display-name"
+                ng-if="context.view.contentTypeId && displayFieldForFilteredContentType()"
+                ng-init="getField=displayFieldForFilteredContentType"
+                ng-class="{'x--sortable': fieldIsSortable(getField()), 'x--active-sort': isOrderField(getField())}"
+                ng-click="fieldIsSortable(getField()) && orderColumnBy(getField())")
+                  label(ng-click="$event.stopPropagation()")
+                    input(type="checkbox" cf-selection="entries" ng-click="selection.toggleList(entries, $event)" ng-show="entries.length > 0" tabindex="-1")
+                  | Name
+                  span(ng-show="fieldIsSortable(getField())")
+                    i.fa.fa-caret-up(ng-show="context.view.order.direction === 'ascending' && isOrderField(getField())")
+                    i.fa.fa-caret-down(ng-show="context.view.order.direction === 'descending' && isOrderField(getField())")
+              th.x--small-cell(
+                ng-repeat="field in displayedFields track by field.id"
+                ng-class="{'x--sortable': fieldIsSortable(field), 'x--active-sort': isOrderField(field)}"
+                data-field-id="{{field.id}}"
+                ng-click="fieldIsSortable(field) && orderColumnBy(field)")
+                | {{field.name}}
+                span(ng-show="fieldIsSortable(field)")
+                  i.fa.fa-caret-up(ng-show="context.view.order.direction === 'ascending' && isOrderField(field)")
+                  i.fa.fa-caret-down(ng-show="context.view.order.direction === 'descending' && isOrderField(field)")
+              th.x--small-cell(aria-label="cell-status") Status
 
-    .main-results-wrapper.endless-container(cf-endless-container at-bottom="loadNextPage()" num-elements="paginator.getPage()")
-      table.result-list.main-results.animated
-        tbody
-          tr(ng-repeat="entry in entries track by entry.getId()"
-              ng-init="entityNavState='spaces.detail.entries.detail({ entryId: entry.getId() })'"
-              ui-sref="{{entityNavState}}")
-            td.cell-select(ng-click="selection.toggle(entry);$event.stopPropagation()")
-              input(type="checkbox" cf-selection="entry" tabindex="-1")
-            td.cell-content-type(ng-show="!context.view.contentTypeId && !context.view.contentTypeHidden")
-              a.entity-list-link(ui-sref="{{entityNavState}}") {{contentTypeName(entry)}}
-            td.cell-display-name
-              a.entity-list-link(ui-sref="{{entityNavState}}") {{entryTitle(entry)}}
-            td(ng-repeat="field in displayedFields track by field.id" ng-class="[getFieldClass(field), getFieldCollapsedClass(field)]")
-              cf-field-display(ng-hide="isFieldCollapsed(field)")
-              button.transparent-button(cf-click-local="expandColumn(field)" ng-show="isFieldCollapsed(field)")
-                | &hellip;
-            td.cell-status(ng-class="entityStatus.getClassname(entry)")
-              a.entity-list-link(ui-sref="{{entityNavState}}")
-                .status-label {{entityStatus.getLabel(entry)}}
-                .status-bar
-      .loading(ng-hide="paginator.isAtLast()")
+      .table__bulk-actions(ng-hide="selection.isEmpty()")
+        .workbench-actions(ng-controller="EntryListActionsController")
+          .workbench-actions__label
+            +pluralize-entity("entry", "selection.size()", "selected: ")
 
-    +no-search-results("!entries.length || isEmpty", "context.view.searchTerm")
+          span.text-link--neutral-emphasis-mid(type="button"
+            ng-click="duplicateSelected()"
+            ng-show="showDuplicate()"
+            aria-label="duplicate")
+            | Duplicate
+          span.text-link--destructive(type="button"
+            ng-show="showDelete()"
+            cf-context-menu-trigger
+            data-test-id="delete-entry"
+            aria-label="delete")
+            | Delete
+          .delete-confirm(cf-context-menu="bottom")
+            p You are about to delete #[+pluralize-entity("entry", "selection.size()")]
+            button.btn-caution(type="button" ng-click="deleteSelected()")
+              | Delete
+            button.btn-secondary-action(type="button")
+              | Don't Delete
+          span.text-link--neutral-emphasis-mid(type="button"
+            ng-click="archiveSelected()"
+            ng-show="showArchive()"
+            aria-label="archive")
+            | Archive
+          span.text-link--neutral-emphasis-mid(type="button"
+            ng-click="unarchiveSelected()"
+            ng-show="showUnarchive()"
+            aria-label="unarchive")
+            | Unarchive
+          span.text-link--neutral-emphasis-mid(type="button"
+            ng-click="unpublishSelected()"
+            ng-show="showUnpublish()"
+            aria-label="unpublish")
+            | Unpublish
+          span.text-link--constructive(type="submit"
+            ng-click="publishSelected()"
+            ng-show="showPublish()"
+            aria-label="publish")
+            | {{publishButtonName()}}
+
+      .table__body
+        table
+          tbody
+            tr.x--multiline(ng-repeat="entry in entries track by entry.getId()"
+              ui-sref="spaces.detail.entries.detail({ entryId: entry.getId() })"
+              ng-class="{'x--highlight': selection.isSelected(entry)}")
+              td(aria-label="cell-display-name").x--large-cell
+                div
+                  label(ng-click="$event.stopPropagation()")
+                    input(type="checkbox" cf-selection="entry" tabindex="-1" aria-label="cell-select" ng-click="selection.toggle(entry, $event)")
+                  p {{entryTitle(entry)}}
+              td.x--medium-cell(
+                aria-label="cell-content-type"
+                ng-show="!context.view.contentTypeId && !context.view.contentTypeHidden")
+                | {{contentTypeName(entry)}}
+              td.x--small-cell(
+                ng-repeat="field in displayedFields track by field.id")
+                cf-field-display
+              td.entity-status.x--small-cell(
+                aria-label="cell-status"
+                ng-class="entityStatus.getClassname(entry)")
+                | {{entityStatus.getLabel(entry)}}
+
+    cf-search-results-paginator(paginator="paginator" pages="7" ng-show="hasPage()")
+
+    +no-search-results("hasQuery() && !paginator.getTotal() && !context.loading || isEmpty", "(context.view.contentTypeId ? 'Content type \"' + context.view.contentTypeId + '\", term: ' : '') + context.view.searchTerm")
 
 .workbench-main.x--content(ng-show="showNoEntriesAdvice()")
   include ./no_entries_advice
-
-.workbench-actions(
-  ng-hide="selection.isEmpty()"
-  ng-controller="EntryListActionsController")
-  .workbench-actions__label
-    | {{selection.size()}} Entries selected
-
-  button.btn-secondary-action.duplicate(type="button"
-    ng-click="duplicateSelected()"
-    ng-show="showDuplicate()")
-    | Duplicate
-  button.btn-secondary-action.delete(type="button"
-    ng-show="showDelete()"
-    cf-context-menu-trigger
-    data-test-id="delete-entry")
-    | Delete
-  .delete-confirm(cf-context-menu="top")
-    p You are about to delete {{selection.size()}} Entries
-    button.btn-caution(type="button" ng-click="deleteSelected()")
-      | Delete
-    button.btn-secondary-action(type="button")
-      | Don't Delete
-  button.btn-secondary-action.archive(  type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
-  button.btn-secondary-action.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
-  button.btn-secondary-action.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
-  button.btn-primary-action.publish(    type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}

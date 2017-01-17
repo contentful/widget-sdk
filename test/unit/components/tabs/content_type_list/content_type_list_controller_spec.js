@@ -133,7 +133,7 @@ describe('Content Type List Controller', function () {
       const contentType = makeCT();
       stubs.publishedAt.returns(true);
       stubs.hasUnpublishedChanges.returns(false);
-      expect(scope.statusClass(contentType)).toBe('published');
+      expect(scope.statusClass(contentType)).toBe('entity-status--published');
     });
 
     it('is draft', function () {

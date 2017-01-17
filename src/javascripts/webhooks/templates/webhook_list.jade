@@ -13,32 +13,32 @@ header.workbench-header
       | You can't create more than {{ limit }} webhooks.
 
 .workbench-main.x--content
-  table.result-list.main-results.main-header
-    thead
-      tr
-        th.cell-wh-name Webhook name
-        th.cell-url URL
-        th.cell-health % of successful calls
-        th.cell-http-basic Using HTTP Basic Auth?
-        th.cell-actions Actions
-  .main-results-wrapper
-    table.result-list.main-results
-      tbody
-        tr(ng-repeat="webhook in webhooks track by webhook.sys.id"
-          ng-init="entityNavState = 'spaces.detail.settings.webhooks.detail({ webhookId: webhook.sys.id })'"
-          ui-sref="{{ entityNavState }}")
-          td.cell-wh-name
-            a.entity-list-link(ui-sref="{{ entityNavState }}") {{ webhook.name }}
-          td.cell-url
-            a.entity-list-link(ui-sref="{{ entityNavState }}") {{ webhook.url }}
-          td.cell-health
-            a.entity-list-link(ui-sref="{{ entityNavState }}")
+  .table
+    .table__head
+      table
+        thead
+          tr
+            th(aria-label="cell-wh-name").x--large-cell Webhook name
+            th(aria-label="cell-url").x--large-cell URL
+            th(aria-label="cell-health").x--small-cell % of successful calls
+            th(aria-label="cell-http-basic").x--small-cell Using HTTP Basic Auth?
+            th(aria-label="cell-actions").x--medium-cell Actions
+    .table__body
+      table
+        tbody
+          tr(ng-repeat="webhook in webhooks track by webhook.sys.id"
+            ng-init="entityNavState = 'spaces.detail.settings.webhooks.detail({ webhookId: webhook.sys.id })'"
+            ui-sref="{{ entityNavState }}")
+            td(aria-label="cell-wh-name").x--large-cell
+              | {{ webhook.name }}
+            td(aria-label="cell-url").x--large-cell
+              | {{ webhook.url }}
+            td(aria-label="cell-health").x--small-cell
               cf-webhook-health(webhook-id="webhook.sys.id")
-          td.cell-http-basic
-            a.entity-list-link(ui-sref="{{ entityNavState }}")
+            td(aria-label="cell-http-basic").x--small-cell
               | {{ webhook.httpBasicUsername ? 'yes' : 'no' }}
-          td.cell-actions
-            a(ui-sref="{{ entityNavState }}") View details
-        tr(ng-show="webhooks.length < 1")
-          td(colspan="5")
-            a.entity-list-link No webhooks yet!
+            td(aria-label="cell-actions").x--medium-cell
+              a.text-link--standard(ui-sref="{{ entityNavState }}") View details
+          tr(ng-show="webhooks.length < 1")
+            td(colspan="5")
+              a No webhooks yet!
