@@ -20,7 +20,7 @@ angular.module('contentful')
  * from it.
  *
  * Calling `enable` doesn't mean that the events
- * will be sent to Segment automatically. We perform
+ * will be sent to Segment and Snowplow automatically. We perform
  * an environment check to determine if we should do
  * networking. Events are always sent to an instance
  * of `analytics/console`.
@@ -34,11 +34,12 @@ angular.module('contentful')
   var userData = require('analytics/userData');
   var analyticsConsole = require('analytics/console');
   var stringifySafe = require('stringifySafe');
+  var Snowplow = require('analytics/Snowplow').default;
 
-  var SEGMENT_ENVS = ['production', 'staging', 'preview'];
+  var ANALYTICS_ENVS = ['production', 'staging', 'preview'];
   var VALUE_UNKNOWN = {};
 
-  var shouldSend = _.includes(SEGMENT_ENVS, env);
+  var shouldSend = _.includes(ANALYTICS_ENVS, env);
   var session = {};
   var isDisabled = false;
 
@@ -64,6 +65,7 @@ angular.module('contentful')
 
     if (shouldSend) {
       segment.enable();
+      Snowplow.enable();
     }
 
     identify(userData.prepare(removeCircularRefs(user)));
@@ -79,6 +81,7 @@ angular.module('contentful')
    */
   function disable () {
     segment.disable();
+    Snowplow.disable();
     isDisabled = true;
     session = {};
     sendSessionDataToConsole();
@@ -111,6 +114,7 @@ angular.module('contentful')
     data = _.isObject(data) ? _.cloneDeep(data) : {};
     data = _.extend(data, getBasicPayload());
     segment.track(event, data);
+    Snowplow.track(event, data);
     analyticsConsole.add(event, data);
   }
 
@@ -129,6 +133,7 @@ angular.module('contentful')
 
     if (userId && user) {
       segment.identify(userId, user);
+      Snowplow.identify(userId);
     }
 
     sendSessionDataToConsole();

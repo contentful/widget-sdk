@@ -5,7 +5,7 @@ describe('analytics', function () {
     module('contentful/test');
 
     // we want to simulate production environment
-    // this way data hits the "segment" service
+    // this way data hits the Segment and Snowplow services
     const environment = this.$inject('environment');
     const originalEnv = environment.env;
     environment.env = 'production';
@@ -17,6 +17,12 @@ describe('analytics', function () {
     ['enable', 'disable', 'identify', 'track', 'page'].forEach((m) => {
       sinon.stub(this.segment, m);
     });
+
+    this.Snowplow = this.$inject('analytics/Snowplow').default;
+    ['enable', 'disable', 'identify', 'track'].forEach((m) => {
+      sinon.stub(this.Snowplow, m);
+    });
+
 
     this.userData = {
       firstName: 'Hans',
@@ -30,9 +36,10 @@ describe('analytics', function () {
   });
 
   describe('#enable()', function () {
-    it('enables segment', function () {
+    it('enables Segment and Snowplow', function () {
       this.analytics.enable(this.userData);
       sinon.assert.called(this.segment.enable);
+      sinon.assert.called(this.Snowplow.enable);
     });
 
     it('is executed only once', function () {
@@ -43,15 +50,17 @@ describe('analytics', function () {
   });
 
   describe('#disable()', function () {
-    it('disables segment', function () {
+    it('disables Segment and Snowplow', function () {
       this.analytics.disable();
       sinon.assert.called(this.segment.disable);
+      sinon.assert.called(this.Snowplow.disable);
     });
 
     it('blocks next calls to #enable', function () {
       this.analytics.disable();
       this.analytics.enable({userData: true});
       sinon.assert.notCalled(this.segment.enable);
+      sinon.assert.notCalled(this.Snowplow.enable);
       expect(this.analytics.getSessionData('user')).toBeUndefined();
     });
 
@@ -66,14 +75,17 @@ describe('analytics', function () {
   describe('identifying data', function () {
     it('should identify when enabling the service', function () {
       sinon.assert.notCalled(this.segment.identify);
+      sinon.assert.notCalled(this.Snowplow.identify);
       this.analytics.enable(this.userData);
       sinon.assert.calledWith(this.segment.identify, 'userid', this.userData);
+      sinon.assert.calledWith(this.Snowplow.identify, 'userid');
     });
   });
 
   it('should track', function () {
     this.analytics.track('Event', {data: 'foobar'});
     sinon.assert.calledWith(this.segment.track, 'Event', {data: 'foobar'});
+    sinon.assert.calledWith(this.Snowplow.track, 'Event', {data: 'foobar'})
   });
 
   describe('stateActivated', function () {

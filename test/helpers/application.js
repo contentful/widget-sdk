@@ -28,6 +28,7 @@ angular.module('contentful/test', ['contentful', 'contentful/mocks'])
       aviary: {},
       google: {},
       contentful: {},
+      snowplow: {},
       authUrl: '//be.test.com',
       apiUrl: '//api.test.com',
       otUrl: '//ot.test.com',

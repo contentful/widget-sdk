@@ -6,9 +6,10 @@ we send to analytical services.
 
 ## Analytical services
 
+We send analytics data directly to Snowplow and Segment.
+
 We've migrated away from using Totango and GTM in the direct way. Mixpanel
-integration for Segment was disabled as well. The only service to which we
-send data is Segment.
+integration for Segment was disabled as well.
 
 UI enables all integrations for Segment (by not providing "integrations"
 configuration option). Thanks to that integration management can be done
@@ -27,6 +28,14 @@ an analytics console (see below).
 We call Segment's `page` method when state is changed and `identify` method
 each time we obtain some more information about a user.
 
+We call Snowplow's `identify` method when we obtain user information.
+
+When we call `analytics.track` we also check if the event name has been mapped
+to a registered Snowplow schema. If so, we transform the data into Snowplow's
+structure and track the the event.
+
+Since we have enabled activity tracking, link click tracking and page views,
+this information is automatically collected and tracked in Snowplow.
 
 ## Analytics console
 

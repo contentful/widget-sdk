@@ -72,7 +72,12 @@ function integrations () {
     fonts_dot_com: strictObject({
       project_id: {type: 'string', format: 'uuid'}
     }),
-    segment_io: alnum(10)
+    segment_io: alnum(10),
+    snowplow: strictObject({
+      collector_endpoint: {type: 'string'},
+      app_id: {type: 'string'},
+      buffer_size: {type: 'number'}
+    })
   }
 }
 
