@@ -10,6 +10,7 @@ angular.module('contentful')
       add: add,
       remove: remove,
       toggle: toggle,
+      toggleList: toggleList,
       isSelected: isSelected,
       updateList: updateList,
       clear: clear,
@@ -32,12 +33,28 @@ angular.module('contentful')
       return entity.getId() in selectedById;
     }
 
-    function toggle (entity) {
+    function toggle (entity, $event) {
       if (isSelected(entity)) {
         remove(entity);
       } else {
         add(entity);
       }
+      if ($event) {
+        $event.stopPropagation();
+      }
+    }
+
+    // entities should always be an Array
+    function toggleList (entities, $event) {
+      // currentTarget.checked will have the current value before the
+      // browser can toggle it.
+      // Hence when checked is true, it means the user is going from
+      // checked -> unchecked.
+      // Therefore, the counterintuitive add and remove assignments
+      var action = $event.currentTarget.checked ? add : remove;
+
+      entities.forEach(action);
+      $event.stopPropagation();
     }
 
     function updateList (entities) {

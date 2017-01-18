@@ -250,69 +250,6 @@ describe('Entry List Controller', function () {
     });
   });
 
-  describe('loadNextPage', function () {
-    beforeEach(function () {
-      scope.paginator.isAtLast = sinon.stub().returns(false);
-      spaceContext.space.getEntries.resolves(createEntries(30));
-      scope.$apply();
-      spaceContext.space.getEntries.reset();
-    });
-
-    it('doesnt load if on last page', function () {
-      scope.paginator.isAtLast.returns(true);
-      scope.loadNextPage();
-      sinon.assert.notCalled(spaceContext.space.getEntries);
-    });
-
-    it('paginator count is increased', function () {
-      scope.paginator.setPage(0);
-      scope.loadNextPage();
-      expect(scope.paginator.getPage()).toBe(1);
-    });
-
-    it('gets query params', function () {
-      scope.loadNextPage();
-      scope.$apply();
-      expect(spaceContext.space.getEntries.args[0][0]).toBeDefined();
-    });
-
-    it('should work on the page before the last', function () {
-      // Regression test for https://www.pivotaltracker.com/story/show/57743532
-      scope.paginator.setTotal(47);
-      scope.paginator.setPage(0);
-      scope.loadNextPage();
-      scope.$apply();
-      sinon.assert.called(spaceContext.space.getEntries);
-    });
-
-    describe('on successful load response', function () {
-      beforeEach(function () {
-        this.entries = createEntries(30);
-        spaceContext.space.getEntries.resolves(this.entries);
-        scope.loadNextPage();
-      });
-
-      it('sets num entries', function () {
-        scope.$apply();
-        expect(scope.paginator.getTotal()).toEqual(30);
-      });
-
-      it('appends entries to scope', function () {
-        scope.$apply();
-        expect(scope.entries.slice(30)).toEqual(this.entries);
-      });
-    });
-
-    it('discards entries already in the list', function () {
-      scope.entries = createEntries(1);
-      const nextResponse = scope.entries.concat(createEntries(2));
-      spaceContext.space.getEntries.resolves(nextResponse);
-      scope.loadNextPage();
-      scope.$apply();
-      expect(scope.entries).toEqual(nextResponse);
-    });
-  });
-
   describe('Api Errors', function () {
     beforeEach(function () {
       this.handler = this.$inject('ReloadNotification').apiErrorHandler;
@@ -321,15 +258,6 @@ describe('Entry List Controller', function () {
 
     it('should cause updateEntries to show an error message', function () {
       scope.updateEntries();
-      scope.$apply();
-      sinon.assert.called(this.handler);
-    });
-
-    it('should cause loadNextPage to show an error message', function () {
-      // Load more only executes when we are not at the last page
-      scope.paginator.isAtLast = sinon.stub().returns(false);
-
-      scope.loadNextPage();
       scope.$apply();
       sinon.assert.called(this.handler);
     });

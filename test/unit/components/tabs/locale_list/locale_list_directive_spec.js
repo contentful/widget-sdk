@@ -99,7 +99,7 @@ describe('The Locale list directive', function () {
   describe('list of locales', function () {
     beforeEach(function () {
       this.compileElement();
-      this.list = this.container.find('.main-results-wrapper tbody');
+      this.list = this.container.find('.table tbody');
     });
 
     it('show locales fetched with spaceContext', function () {
