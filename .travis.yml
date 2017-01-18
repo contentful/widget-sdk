@@ -33,12 +33,6 @@ after_success:
 before_deploy:
 - docker build -t $DOCKER_IMAGE -f Dockerfile-prod --build-arg CF_VERSION="${TRAVIS_COMMIT}" .
 deploy:
-  # Deploys package and image
-  - provider: script
-    script: ./tools/push-and-promote.sh
-    skip_cleanup: true
-    on:
-      all_branches: true
   - provider: s3
     access_key_id: AKIAI35UEY5UVV5IT6BQ
     secret_access_key:
@@ -62,7 +56,19 @@ deploy:
     skip_cleanup: true
     on:
       all_branches: true
-  ## Deploy production preview
+  ## Deploy production assets
+  - provider: s3
+    access_key_id: AKIAITC7MCJO3VAWCEOA
+    secret_access_key:
+      secure: "G2e17qRtyDKnRhFxvucKt0AP3jPsydabJ4s0LJHTfaWd+D8YPompFU8SussNrOaUQmPi5OlBKA4fTp2XQOI4l/bLy/5Q6Z11Ihze8BVeFICgHg0pYvLrJG+id2HAn8aG0W0HbQi0x/V/7m7i+j2MeIg6taO6PodJ4j+8vNoWwwg="
+    bucket: static.cdnorigin.contentful.com
+    region: us-east-1
+    local-dir: output/files/production
+    acl: public_read
+    skip_cleanup: true
+    on: 'production'
+  # Deploy production preview assets.
+  # This is the same as the one above but with a different branch name
   - provider: s3
     access_key_id: AKIAITC7MCJO3VAWCEOA
     secret_access_key:
@@ -73,6 +79,13 @@ deploy:
     acl: public_read
     skip_cleanup: true
     on: 'production-preview/*'
+  # Deploys package and image. This requires the assets to be available
+  # already
+  - provider: script
+    script: ./tools/push-and-promote.sh
+    skip_cleanup: true
+    on:
+      all_branches: true
 after_script:
   - bin/travis-run-jenkins
 
