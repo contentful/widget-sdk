@@ -99,9 +99,10 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
 
   function getStatus (contentType, statusType) {
     var status = {
-      'class': 'published',
+      'class': 'entity-status--published',
       label: 'active'
     };
+
     if (contentType.getPublishedAt()) {
       if (contentType.hasUnpublishedChanges()) {
         return 'updated';

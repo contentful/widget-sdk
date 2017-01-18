@@ -13,7 +13,6 @@ angular.module('contentful')
 
   var AUTOTRIGGER_MIN_LEN = 4;
 
-  var MODE_APPEND = 'append';
   var MODE_REPLACE = 'replace';
   var MODE_RESET = 'reset';
 
@@ -21,7 +20,6 @@ angular.module('contentful')
 
   var isResettingPage = false;
   var isResettingTerm = false;
-  var isAppendingPage = false;
 
   var setIsSearching = makeIsSearchingSetter(true);
   var unsetIsSearching = makeIsSearchingSetter(false);
@@ -29,13 +27,13 @@ angular.module('contentful')
 
   var debouncedUpdateWithTerm = debounce(updateWithTerm, 200);
   var updateEntries = createRequestQueue(requestEntries, setupEntriesHandler);
+  var debouncedUpdateEntries = debounce(updateEntries.bind(null, MODE_REPLACE), 1000);
 
   /**
    * Public API
    */
 
   $scope.updateEntries = updateEntries;
-  $scope.loadNextPage = loadNextPage;
 
   this.resetSearchTerm = resetSearchTerm;
   this.hasQuery = hasQuery;
@@ -48,7 +46,13 @@ angular.module('contentful')
     if (isResettingPage) {
       isResettingPage = false;
     } else {
-      updateEntries(isAppendingPage ? MODE_APPEND : MODE_REPLACE);
+      updateEntries(MODE_REPLACE);
+    }
+  });
+
+  $scope.$watch('paginator.getTotal()', function (total) {
+    if (!$scope.context.loading && !$scope.entries.length && total > 0) {
+      debouncedUpdateEntries();
     }
   });
 
@@ -126,22 +130,21 @@ angular.module('contentful')
   function requestEntries (mode) {
     mode = mode || MODE_RESET;
     $scope.context.loading = true;
+
+    // MODE_RESET is to reset page to 0 from whatever page the user is on
+    // The page is set to 0 before the call to prepareQuery as that uses
+    // paginator.getPage() to build the query to request entries
     if (mode === MODE_RESET && $scope.paginator.getPage() !== 0) {
       $scope.paginator.setPage(0);
       isResettingPage = true;
     }
 
+    setIsSearching();
     return prepareQuery()
-      .then(setIsSearching)
       .then(function (query) {
         return spaceContext.space.getEntries(query);
       })
-      .then(function (entries) {
-        return {
-          shouldReset: mode !== MODE_APPEND,
-          entries: entries
-        };
-      })
+      .then(unsetIsSearching)
       .catch(function (error) {
         return $q.reject(error);
       });
@@ -149,7 +152,6 @@ angular.module('contentful')
 
   function setupEntriesHandler (promise) {
     return promise
-      .then(unsetIsSearching)
       .then(handleEntriesResponse, accessChecker.wasForbidden($scope.context))
       .catch(function (err) {
         if (_.isObject(err) && 'statusCode' in err && err.statusCode === -1) {
@@ -161,30 +163,21 @@ angular.module('contentful')
       .catch(ReloadNotification.apiErrorHandler);
   }
 
-  function handleEntriesResponse (res) {
-    // 1. if list should be reset or entries list is not initialized:
-    if (res.shouldReset || !$scope.entries) {
-      // @todo DOM hack: scroll endless container to top
-      var container = $('[cf-endless-container]').first().get(0);
-      if (container) {
-        container.scrollTop = 0;
-      }
-      // initialize with an empty array
-      $scope.entries = [];
-    }
-    // 2. if response doesn't contain any entries:
-    if (!res.entries) {
+  function handleEntriesResponse (entries) {
+    // 1. Reset list
+    // initialize with an empty array
+    $scope.entries = [];
+
+    // 2. if response doesn't contain any entries
+    if (!entries) {
       // reset paginator
       $scope.paginator.setTotal(0);
-    } else if (Array.isArray(res.entries)) { // 3. if response contain some entries:
+      // 3. if response contain some entries
+    } else if (Array.isArray(entries)) {
       // set paginator's total count
-      $scope.paginator.setTotal(res.entries.total);
+      $scope.paginator.setTotal(entries.total);
       // add new entries to the list
-      var entriesToAdd = _(res.entries)
-      .difference($scope.entries)
-      .filter(function (entry) { return !entry.isDeleted(); })
-      .value();
-      $scope.entries.push.apply($scope.entries, entriesToAdd);
+      $scope.entries = entries.filter(function (entry) { return !entry.isDeleted(); });
     }
     // 4. always refresh caches
     refreshEntityCaches();
@@ -193,18 +186,6 @@ angular.module('contentful')
     // 6. mark view as ready (initialized) and not loading
     $scope.context.ready = true;
     $scope.context.loading = false;
-    isAppendingPage = false;
-  }
-
-  function loadNextPage () {
-    if ($scope.paginator.isAtLast() || isAppendingPage || $scope.context.loading) {
-      return;
-    }
-
-    $scope.$apply(function () {
-      isAppendingPage = true;
-      $scope.paginator.next();
-    });
   }
 
   function prepareQuery () {

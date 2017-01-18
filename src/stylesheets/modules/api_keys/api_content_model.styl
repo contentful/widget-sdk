@@ -19,9 +19,16 @@
           path
             fill: $blue-dark-link
     &.x--open
-      background-color: $colors.element-lightest
+      background-color: white
       cf-icon[name="dd-arrow-down"]
         transform: rotate(-180deg)
+  .table
+    .tooltip
+      white-space: normal
+    i.fa-question-circle
+      margin-left: 8px
+      color: $colors.text-mid
+
 
 .content-model
   &__summary
@@ -45,25 +52,3 @@
     margin: 8px 0
   &__description
     color: $colors.text-light
-  &__fields
-    padding: 0 25px 30px
-    width: 100%
-    th, td
-      padding: 10px
-      text-align: left
-    th
-      background-color: $colors.element-light
-      color: $colors.text-light
-      font-weight: lighter
-    td
-      border-bottom: 1px solid $colors.element-mid
-    .cell-name
-      width: 200px
-    .cell-identifier
-      width: 200px
-    .cell-type
-      i.fa-question-circle
-        margin-left: 8px
-        color: $colors.text-mid
-    td.cell-type
-      color: $colors.text-mid

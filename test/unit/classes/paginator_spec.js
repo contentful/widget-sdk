@@ -72,6 +72,22 @@ describe('Paginator', function () {
     });
   });
 
+  describe('#isAtFirst', function () {
+    it('returns true when no of page is 0', function () {
+      expect(this.p.isAtLast()).toBe(true);
+    });
+
+    it('returns true iff on the first page', function () {
+      this.p.setPage(0);
+      this.p.setTotal(10);
+
+      expect(this.p.isAtFirst()).toBe(true);
+
+      this.p.setPage(5);
+      expect(this.p.isAtFirst()).toBe(false);
+    });
+  });
+
   describe('#isAtLast', function () {
     it('returns true by default', function () {
       expect(this.p.isAtLast()).toBe(true);
@@ -111,18 +127,28 @@ describe('Paginator', function () {
         expect(this.p[getter]()).toBe(0);
       });
 
-      it('sets numeric value', function () {
+      it('sets positive numeric value', function () {
         this.p[setter](123);
+        expect(this.p[getter]()).toBe(123);
+
+        this.p[setter](-1);
         expect(this.p[getter]()).toBe(123);
       });
 
-      it('sets value with function', function () {
-        this.p[setter](123);
-        this.p[setter]((val) => {
-          expect(val).toBe(123);
-          return -val;
+      it('sets positive value with function', function () {
+        const val = 123;
+
+        this.p[setter](val);
+
+        // this should not cause page/total to updated
+        this.p[setter](currVal => {
+          expect(currVal).toBe(val);
+          return -currVal;
         });
-        expect(this.p[getter]()).toBe(-123);
+        expect(this.p[getter]()).toBe(val);
+
+        this.p[setter](_ => 0);
+        expect(this.p[getter]()).toBe(0);
       });
     });
   }

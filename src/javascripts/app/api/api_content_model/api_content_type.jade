@@ -13,19 +13,23 @@
       span(ng-show="isExpanded") Hide fields
       cf-icon(name="dd-arrow-down")
 
-  table.content-model__fields(ng-show="isExpanded")
-    thead
-      tr
-        th.cell-name Field
-        th.cell-identifier Identifier
-        th.cell-type Type
-    tbody
-      tr(ng-repeat="field in contentType.data.fields track by field.id")
-        td.cell-name {{field.name}}
-        td.cell-identifier
-          cf-inline-copy.copy-to-clipboard(
-            text="{{field.apiName || field.id}}")
-        td.cell-type
-          span {{field.type}}
-          a(tooltip="{{getHelpText(field.type)}}" tooltip-html="true")
-            i.fa.fa-question-circle
+  .table(ng-show="isExpanded")
+    .table__head
+      table
+        thead
+          tr
+            th(aria-label="cell-name") Field
+            th(aria-label="cell-identifier") Identifier
+            th(aria-label="cell-type") Type
+    .table__body
+      table
+        tbody
+          tr(ng-repeat="field in contentType.data.fields track by field.id")
+            td(aria-label="cell-name") {{field.name}}
+            td(aria-label="cell-identifier")
+              cf-inline-copy.copy-to-clipboard(
+                text="{{field.apiName || field.id}}")
+            td(aria-label="cell-type")
+              span {{field.type}}
+              a(tooltip="{{getHelpText(field.type)}}" tooltip-html="true")
+                i.fa.fa-question-circle
