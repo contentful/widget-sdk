@@ -3,6 +3,7 @@
 angular.module('contentful')
 .controller('ClientController', ['$scope', 'require', function ClientController ($scope, require) {
   var $rootScope = require('$rootScope');
+  var K = require('utils/kefir');
   var features = require('features');
   var logger = require('logger');
   var spaceContext = require('spaceContext');
@@ -10,13 +11,13 @@ angular.module('contentful')
   var tokenStore = require('tokenStore');
   var analytics = require('analytics');
   var authorization = require('authorization');
-  var modalDialog = require('modalDialog');
   var presence = require('presence');
   var revision = require('revision');
   var ReloadNotification = require('ReloadNotification');
   var OrganizationList = require('OrganizationList');
   var environment = require('environment');
   var fontsDotCom = require('fontsDotCom');
+  var CreateSpace = require('services/CreateSpace');
 
   // TODO remove this eventually. All components should access it as a service
   $scope.spaceContext = spaceContext;
@@ -39,14 +40,10 @@ angular.module('contentful')
     };
   }, spaceAndTokenWatchHandler);
 
-  var off = tokenStore.changed.attach(handleTokenData);
-  $scope.$on('$destroy', off);
-
-  // @todo remove it - temporary proxy event handler (2 usages)
-  $scope.$on('showCreateSpaceDialog', showCreateSpaceDialog);
+  K.onValueScope($scope, tokenStore.user$, handleUser);
 
   $scope.initClient = initClient;
-  $scope.showCreateSpaceDialog = showCreateSpaceDialog;
+  $scope.showCreateSpaceDialog = CreateSpace.showDialog;
 
   function initClient () {
     tokenStore.refresh();
@@ -73,8 +70,7 @@ angular.module('contentful')
     }
   }
 
-  function handleTokenData (token) {
-    var user = dotty.get(token, 'user');
+  function handleUser (user) {
     if (!_.isObject(user)) { return; }
 
     $scope.user = user;
@@ -103,30 +99,5 @@ angular.module('contentful')
         });
       }
     });
-  }
-
-  function showCreateSpaceDialog () {
-    analytics.track('space_switcher:create_clicked');
-    modalDialog.open({
-      title: 'Space templates',
-      template: 'create_new_space_dialog',
-      backgroundClose: false,
-      persistOnNavigation: true
-    })
-    .promise
-    .then(handleSpaceCreationSuccess);
-  }
-
-  function handleSpaceCreationSuccess (template) {
-    if (template) {
-      analytics.track('space:created_from_template', {
-        templateName: template.name
-      });
-      spaceContext.refreshContentTypesUntilChanged().then(function () {
-        $rootScope.$broadcast('reloadEntries');
-      });
-    } else {
-      spaceContext.refreshContentTypes();
-    }
   }
 }]);

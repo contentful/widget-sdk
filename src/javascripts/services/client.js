@@ -5,7 +5,7 @@ angular.module('contentful')
   var $http = $injector.get('$http');
   var $q = $injector.get('$q');
   var environment = $injector.get('environment');
-  var createRequestQueue = $injector.get('data/requestQueue').create;
+  var createRequestQueue = $injector.get('data/RequestQueue').create;
   var Client = $injector.get('libs/@contentful/client').Client;
 
   var baseUrl = environment.settings.apiUrl;

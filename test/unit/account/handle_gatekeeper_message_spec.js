@@ -14,11 +14,10 @@ describe('Gatekeeper Message Handler', function () {
     });
 
     it('opens the space creation dialog', function () {
-      const root = this.$inject('$rootScope');
-      sinon.spy(root, '$broadcast');
-      this.handle({action: 'new', type: 'space'});
-      sinon.assert.calledOnce(root.$broadcast.withArgs('showCreateSpaceDialog'));
-      root.$broadcast.restore();
+      const CreateSpace = this.$inject('services/CreateSpace');
+      CreateSpace.showDialog = sinon.stub();
+      this.handle({action: 'new', type: 'space', organizationId: 'orgId'});
+      sinon.assert.calledOnce(CreateSpace.showDialog.withArgs('orgId'));
     });
 
     it('leaves a deleted space', function () {

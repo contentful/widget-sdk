@@ -2,7 +2,7 @@
 
 describe('LocationEditor integration', function () {
   beforeEach(function () {
-    module('cf.app', function ($provide) {
+    module('contentful/test', function ($provide) {
       $provide.value('LazyLoader', {
         get: sinon.stub()
       });
