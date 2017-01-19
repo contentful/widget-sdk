@@ -2,7 +2,7 @@
 
 describe('data/spaceEndpoint', function () {
   beforeEach(function () {
-    module('cf.data', 'ngMock');
+    module('contentful/test');
 
     const spaceEndpoint = this.$inject('data/spaceEndpoint');
     const request = spaceEndpoint.create('TOKEN', '//test.io', 'SPACE');

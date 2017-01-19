@@ -35,7 +35,6 @@ export function createManually (textarea, options, CodeMirror) {
     setContent: editor.setValue,
     getSelectedText: editor.getSelectedText,
     usePrimarySelection: editor.usePrimarySelection,
-    repaint: editor.repaint,
     // TODO Remove this. We want to hide the low-level interface
     getWrapper: function () { return editor; }
   };
@@ -70,8 +69,16 @@ export function createManually (textarea, options, CodeMirror) {
     other.restoreCursor(editor.getCurrentCharacter(), editor.getCurrentLineNumber());
   }
 
-  function tieEditorToPreview (el) {
-    const position = el.scrollTop() / el.get(0).scrollHeight;
+  /**
+   * Scroll the editor so that its scroll position matches that of the
+   * given preview element.
+   */
+  function tieEditorToPreview (previewElement) {
+    // We use the scroll fraction because the scroll height of the editor
+    // might differ from the scroll height of the preview element.
+    const height = previewElement.get(0).scrollHeight;
+    const top = previewElement.scrollTop();
+    const position = height === 0 ? 0 : top / height;
 
     $timeout(function () {
       editor.scrollToFraction(position);

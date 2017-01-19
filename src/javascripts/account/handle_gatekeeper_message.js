@@ -3,7 +3,6 @@
 angular.module('contentful')
 
 .factory('handleGatekeeperMessage', ['require', function (require) {
-  var $rootScope = require('$rootScope');
   var $location = require('$location');
   var $state = require('$state');
   var authentication = require('authentication');
@@ -12,6 +11,7 @@ angular.module('contentful')
   var tokenStore = require('tokenStore');
   var ReloadNotification = require('ReloadNotification');
   var logger = require('logger');
+  var CreateSpace = require('services/CreateSpace');
 
   return function handleGatekeeperMessage (data) {
     var match = makeMessageMatcher(data);
@@ -20,8 +20,7 @@ angular.module('contentful')
       authentication.goodbye();
 
     } else if (match('new', 'space')) {
-      // @todo move it to service
-      $rootScope.$broadcast('showCreateSpaceDialog');
+      CreateSpace.showDialog(data.organizationId);
 
     } else if (match('delete', 'space')) {
       tokenStore.refresh();

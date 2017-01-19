@@ -6,32 +6,45 @@ angular.module('contentful')
   return {
     template: JST.cf_home(),
     restrict: 'E',
-    scope: true,
+    scope: {},
     controller: 'HomeController',
     controllerAs: 'home'
   };
 })
 
-.controller('HomeController', ['$scope', 'require', function ($scope, require) {
+.controller('HomeController', ['require', function (require) {
   var controller = this;
+  var K = require('utils/kefir');
   var moment = require('moment');
   var resources = require('app/home/language_resources');
-  var homeAnalytics = require('analyticsEvents/home');
+  var analyticsEvents = require('analytics/events/home');
+  var tokenStore = require('tokenStore');
+  var CreateSpace = require('services/CreateSpace');
+  var accessChecker = require('accessChecker');
+  var OrganizationList = require('OrganizationList');
 
-  controller.getGreeting = _.memoize(getGreeting);
+  // Fetch user and set greeting
+  K.onValue(tokenStore.user$, function (user) {
+    controller.user = user;
+    controller.greeting = getGreeting(user);
+  });
 
-  // TODO not a good solution
-  // Returns the distance from the top of the page
-  // i.e. height of the nav bar + persistent notification if it is being shown
-  controller.getDistanceFromTop = function () {
-    return $scope.persistentNotification ? 108 : 63;
-  };
+  K.onValue(tokenStore.spaces$, function (spaces) {
+    controller.spaces = spaces;
+  });
 
+  K.onValue(tokenStore.spacesByOrganization$, function (spacesByOrg) {
+    controller.spacesByOrganization = spacesByOrg;
+  });
+
+  controller.canCreateSpace = accessChecker.canCreateSpace;
   controller.resources = resources.languageResources;
   controller.docsUrls = resources.apiDocsUrls;
   controller.selectLanguage = selectLanguage;
   controller.selectedLanguage = 'JavaScript';
-  controller.analytics = homeAnalytics;
+  controller.analytics = analyticsEvents;
+  controller.showCreateSpaceDialog = CreateSpace.showDialog;
+  controller.getOrganizationName = OrganizationList.getName;
 
   function getGreeting (user) {
     if (user) {

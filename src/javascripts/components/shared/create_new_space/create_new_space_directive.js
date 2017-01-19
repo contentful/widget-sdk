@@ -28,11 +28,6 @@ angular.module('contentful')
   var OrganizationList = require('OrganizationList');
   var spaceContext = require('spaceContext');
 
-  // If `isOnboarding = true` is passed into the scope then it will display the
-  // onboarding version of the directive with a different headline, subheadline
-  // and close button.
-  controller.isOnboarding = $scope.isOnboarding;
-
   controller.organizations = OrganizationList.getAll();
   // Keep track of the view state
   controller.viewState = 'createSpaceForm';
@@ -52,7 +47,10 @@ angular.module('contentful')
   });
 
   if (controller.writableOrganizations.length > 0) {
-    controller.newSpace.organization = controller.writableOrganizations[0];
+    controller.newSpace.organization = (
+      _.find(controller.writableOrganizations, ['sys.id', $scope.organizationId]) ||
+      _.first(controller.writableOrganizations)
+    );
   }
 
   // Load the list of space templates

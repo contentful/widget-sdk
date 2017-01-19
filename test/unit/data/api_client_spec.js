@@ -5,7 +5,7 @@ describe('data/ApiClient', function () {
 
   beforeEach(function () {
     $http = sinon.stub();
-    module('cf.data', function ($provide) {
+    module('contentful/test', function ($provide) {
       $provide.value('$http', $http);
     });
 

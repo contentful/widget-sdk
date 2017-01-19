@@ -3,7 +3,7 @@
 angular.module('cf.app')
 .directive('cfLocationEditor', ['$injector', function ($injector) {
   var $controller = $injector.get('$controller');
-  var LocationMap = $injector.get('widgets/location/Map');
+  var LocationMap = $injector.get('app/widgets/location/Map');
 
   return {
     restrict: 'E',

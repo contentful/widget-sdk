@@ -1,23 +1,36 @@
+$home-width = 820px
+
 .home
+  $stretch(0, 0, 0, 0)
   background-color: $colors.bg-light
+  overflow-y: auto
+  overflow-x: hidden
 
   &__header
     background-image: url('/app/svg/home-bg.svg')
     background-size: cover
-    padding: 10px
+    padding: 26px 0 10px 0
 
-  &__spaceman
+  &__content
+    position: relative
+    padding-top: $rhythm(1)
+    width: $home-width
+    margin: 0 auto
+
+  &__welcome-image
     position: absolute
     bottom: 0
     right: 30px
 
   &-section
+    width: $home-width
+    position: relative
     background-color: white
     border: 1px solid $colors.element-mid
     box-shadow: 0px 1px 2px 0px hsla(black, 0.1)
     display: block
+    margin: 0 auto 16px auto
     padding: 24px
-    margin-bottom: 16px
     &__heading
       margin-top: 0
       line-height: 1.5em
@@ -33,7 +46,7 @@
   &__examples
     display: flex
 
-  .example
+  &-example
     display: flex
     flex-direction: column
     justify-content: space-between
@@ -56,20 +69,19 @@
       align-self: flex-end
       width: 100%
     &:nth-child(4n+1)
-      .example__dot
+      .home-example__dot
         background-color: $colors.green-light
     &:nth-child(4n+2)
-      .example__dot
+      .home-example__dot
         background-color: $colors.orange-light
     &:nth-child(4n+3)
-      .example__dot
+      .home-example__dot
         background-color: $colors.blue-light
     &:nth-child(4n)
-      .example__dot
+      .home-example__dot
         background-color: $colors.red-light
 
-
-  .spaces
+  &-spaces
     max-height: 160px
     overflow-y: auto
     border-top: 1px solid $colors.element-light
@@ -89,7 +101,7 @@
       justify-content: space-between
 
 
-  .links
+  &-links
     display: flex
     &__col
       width: 50%
@@ -97,21 +109,12 @@
         display: block
         line-height: 2em
 
-.workbench-main__middle-content.x--home
-  width: 820px
-  overflow: visible
-
-.workbench-main.x--home
-  // TODO do not abuse workbench
-  padding: 0 !important
-
 .tab-list.x--home
   border: 1px solid transparent
   border-bottom: 1px solid $colors.element-mid
   margin: 0 1px 16px 1px
-  width: 818px
+  width: $home-width - 2px
   transition: background-color 0.2s ease-in-out
   z-index: 1
   &.fixed
-    position: fixed
     background-color: white

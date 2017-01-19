@@ -64,13 +64,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         var detachValueHandler = field.onValueChanged(handleFieldChange);
         var detachStateHandler = field.onIsDisabledChanged(handleStateChange);
 
-        // Setting this changes the CodeMirror container from `display:
-        // hidden` to `display: block` in the next digest cycle. We
-        // need to repaint CodeMirror for it to display properly.
         scope.isReady = true;
-        scope.$applyAsync(function () {
-          editor.repaint();
-        });
 
         scope.$on('$destroy', stopPreview);
         scope.$on('$destroy', editor.destroy);

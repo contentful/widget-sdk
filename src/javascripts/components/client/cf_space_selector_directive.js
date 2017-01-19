@@ -12,42 +12,32 @@ angular.module('contentful')
 })
 
 .controller('cfSpaceSelectorController', ['$scope', 'require', function cfSpaceSelectorController ($scope, require) {
-  var $rootScope = require('$rootScope');
+  var K = require('utils/kefir');
   var analytics = require('analytics');
   var spaceContext = require('spaceContext');
   var OrganizationList = require('OrganizationList');
   var accessChecker = require('accessChecker');
   var tokenStore = require('tokenStore');
+  var CreateSpace = require('services/CreateSpace');
 
-  // load initial spaces:
-  tokenStore.getSpaces().then(storeSpaces);
   // subscribe to changes of spaces in token:
-  var off = tokenStore.changed.attach(storeSpaces);
-  $scope.$on('$destroy', off);
-  // group spaces when changed:
-  $scope.$watch('spaces', groupSpacesByOrganization);
+  K.onValueScope($scope, tokenStore.spaces$, storeSpaces);
+  K.onValueScope($scope, tokenStore.spacesByOrganization$, storeSpacesByOrganization);
 
   $scope.spaceContext = spaceContext;
   $scope.canCreateSpace = accessChecker.canCreateSpace;
   $scope.canCreateSpaceInAnyOrganization = accessChecker.canCreateSpaceInAnyOrganization;
   $scope.clickedSpaceSwitcher = _.partial(analytics.track, 'space_switcher:opened');
   $scope.getOrganizationName = OrganizationList.getName;
-  $scope.showCreateSpaceDialog = showCreateSpaceDialog;
+  $scope.showCreateSpaceDialog = CreateSpace.showDialog;
   $scope.trackSpaceChange = trackSpaceChange;
 
-  function storeSpaces (tokenOrSpaces) {
-    $scope.spaces = _.isArray(tokenOrSpaces) ? tokenOrSpaces : tokenOrSpaces.spaces;
+  function storeSpaces (spaces) {
+    $scope.spaces = spaces;
   }
 
-  function groupSpacesByOrganization () {
-    $scope.spacesByOrganization = _.groupBy($scope.spaces || [], function (space) {
-      return space.data.organization.sys.id;
-    });
-  }
-
-  function showCreateSpaceDialog () {
-    // @todo move it to service - broadcast is a workaround to isolate scope
-    $rootScope.$broadcast('showCreateSpaceDialog');
+  function storeSpacesByOrganization (spacesByOrg) {
+    $scope.spacesByOrganization = spacesByOrg;
   }
 
   function trackSpaceChange (space) {
