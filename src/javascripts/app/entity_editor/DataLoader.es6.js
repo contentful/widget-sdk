@@ -1,8 +1,10 @@
-import {find, isPlainObject, cloneDeep} from 'lodash';
+import {find, isPlainObject, cloneDeep, memoize} from 'lodash';
 import assetEditorInterface from 'data/editingInterfaces/asset';
 import {caseof as caseofEq} from 'libs/sum-types/caseof-eq';
 import {deepFreeze} from 'utils/DeepFreeze';
 import $q from '$q';
+import createPrefetchCache from 'data/CMA/EntityPrefetchCache';
+
 
 /**
  * @ngdoc service
@@ -53,6 +55,49 @@ export function loadEntry (spaceContext, id) {
 export function loadAsset (spaceContext, id) {
   const loader = makeAssetLoader(spaceContext);
   return loadEditorData(loader, id);
+}
+
+
+/**
+ * @ngdoc method
+ * @name app/entity_editor/DataLoader#makePrefetchEntryLoader
+ * @description
+ * Given a space context and a property of an array of IDs we return a
+ * function that loads and caches editor data. The returned function
+ * accepts an ID and returns the editor data for that ID.
+ *
+ * The entry data is prefetched in bulk when the value of `ids$` changes.
+ * Content type and editor interface data is cached.
+ *
+ * NOTE This function currently is specialized to entries. It should be
+ * easy to generlize this if needed.
+ *
+ * @param {SpaceContext} spaceContext
+ * @param {K.Property<string[]>} ids$
+ */
+export function makePrefetchEntryLoader (spaceContext, ids$) {
+  const cache = createPrefetchCache((query) => {
+    return spaceContext.space.getEntries(query);
+  });
+
+  const loader = makeEntryLoader(spaceContext);
+  loader.getEntity = function getEntity (id) {
+    return cache.get(id)
+      .then((entity) => {
+        if (entity) {
+          return entity;
+        } else {
+          return $q.reject(new Error('Entity not found'));
+        }
+      });
+  };
+  loader.getFieldControls = memoize(loader.getFieldControls);
+
+  ids$.onValue(cache.set);
+
+  return function load (id) {
+    return loadEditorData(loader, id);
+  };
 }
 
 

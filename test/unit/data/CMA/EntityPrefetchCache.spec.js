@@ -53,7 +53,7 @@ describe('data/CMA/EntityPrefetchCache', function () {
   });
 
   it('chunks up IDs', function () {
-    const ids = _.range(401).map((i) => `id${i}`);
+    const ids = _.range(101).map((i) => `id${i}`);
     this.cache.set(ids);
     sinon.assert.callCount(this.queryEntities, 3);
   });

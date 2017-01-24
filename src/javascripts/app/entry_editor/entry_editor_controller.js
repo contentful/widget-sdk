@@ -97,9 +97,16 @@ angular.module('contentful')
   });
 
   this.editReferences = function (field, locale, index, cb) {
+    // The links$ property should end when the editor is closed
+    var lifeline = K.createBus();
+    var links$ = K.endWith(
+      doc.valuePropertyAt(['fields', field, locale]),
+      lifeline.stream
+    );
+
     notifications.clearSeen();
     $scope.referenceContext = {
-      links$: doc.valuePropertyAt(['fields', field, locale]),
+      links$: links$,
       focusIndex: index,
       editorSettings: deepFreeze(_.cloneDeep($scope.preferences)),
       parentId: entityInfo.id,
@@ -111,6 +118,7 @@ angular.module('contentful')
         return doc.removeValueAt(['fields', field, locale, index]);
       },
       close: function () {
+        lifeline.end();
         $scope.referenceContext = null;
         notifications.clearSeen();
         if (cb) {

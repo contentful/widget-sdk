@@ -8,7 +8,7 @@ angular.module('contentful')
   var deepFreeze = require('utils/DeepFreeze').deepFreeze;
   var List = require('utils/List');
   var Tracking = require('app/entity_editor/bulk_editor/Tracking');
-  var loadEditorData = require('app/entity_editor/DataLoader').loadEntry;
+  var DataLoader = require('app/entity_editor/DataLoader');
 
   return {
     scope: {
@@ -39,23 +39,6 @@ angular.module('contentful')
     track.open();
     $scope.$on('$destroy', track.close);
 
-    // Passed to cfBulkEntityEditor directive
-    $scope.editorContext = {
-      editorSettings: referenceContext.editorSettings,
-      scrollTarget$: scrollTargetBus.stream,
-      initializedEditor: function () {
-        initialLoadCount--;
-        if (initialLoadCount < 1) {
-          templateData.loaded = true;
-          $scope.$applyAsync(forceFocus);
-        }
-      },
-      track: track,
-      loadEditorData: function (id) {
-        return loadEditorData(spaceContext, id);
-      }
-    };
-
     // Property<string>
     // List of IDs for the linked entries
     var ids$ = referenceContext.links$.map(function (links) {
@@ -85,6 +68,22 @@ angular.module('contentful')
     K.onValueScope($scope, entityContexts$.take(1), function (ctxs) {
       initialLoadCount = ctxs.length;
     });
+
+    var loadEditorData = DataLoader.makePrefetchEntryLoader(spaceContext, ids$);
+    // Passed to cfBulkEntityEditor directive
+    $scope.editorContext = {
+      editorSettings: referenceContext.editorSettings,
+      scrollTarget$: scrollTargetBus.stream,
+      initializedEditor: function () {
+        initialLoadCount--;
+        if (initialLoadCount < 1) {
+          templateData.loaded = true;
+          $scope.$applyAsync(forceFocus);
+        }
+      },
+      track: track,
+      loadEditorData: loadEditorData
+    };
 
 
     $scope.actions = makeActions(referenceContext.field, function (links) {
