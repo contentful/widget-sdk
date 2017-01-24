@@ -109,7 +109,6 @@ angular.module('contentful')
       links$: doc.valuePropertyAt(['fields', field, locale]),
       focusIndex: index,
       editorSettings: deepFreeze(_.cloneDeep($scope.preferences)),
-      user: $scope.user,
       parentId: entityInfo.id,
       field: _.find(entityInfo.contentType.fields, {id: field}),
       add: function (link) {

@@ -15,28 +15,30 @@ angular.module('contentful')
  * @property {Client.Space} space
  * @property {Data.APIClient} cma
  */
-.factory('spaceContext', ['$injector', function ($injector) {
-  var $parse = $injector.get('$parse');
-  var $q = $injector.get('$q');
-  var $timeout = $injector.get('$timeout');
-  var ReloadNotification = $injector.get('ReloadNotification');
-  var TheLocaleStore = $injector.get('TheLocaleStore');
-  var createUserCache = $injector.get('data/userCache');
-  var ctHelpers = $injector.get('data/ContentTypes');
-  var Widgets = $injector.get('widgets');
-  var spaceEndpoint = $injector.get('data/spaceEndpoint');
-  var authentication = $injector.get('authentication');
-  var environment = $injector.get('environment');
-  var createEIRepo = $injector.get('data/editingInterfaces');
-  var createQueue = $injector.get('overridingRequestQueue');
-  var ApiClient = $injector.get('data/ApiClient');
-  var ShareJSConnection = $injector.get('data/ShareJS/Connection');
-  var Subscription = $injector.get('Subscription');
-  var previewEnvironmentsCache = $injector.get('data/previewEnvironmentsCache');
-  var PublishedCTRepo = $injector.get('data/ContentTypeRepo/Published');
-  var logger = $injector.get('logger');
-  var DocumentPool = $injector.get('data/sharejs/DocumentPool');
-  var createApiKeyRepo = $injector.get('data/CMA/ApiKeyRepo').default;
+.factory('spaceContext', ['require', function (require) {
+  var $parse = require('$parse');
+  var $q = require('$q');
+  var $timeout = require('$timeout');
+  var ReloadNotification = require('ReloadNotification');
+  var TheLocaleStore = require('TheLocaleStore');
+  var createUserCache = require('data/userCache');
+  var ctHelpers = require('data/ContentTypes');
+  var Widgets = require('widgets');
+  var spaceEndpoint = require('data/spaceEndpoint');
+  var authentication = require('authentication');
+  var environment = require('environment');
+  var createEIRepo = require('data/editingInterfaces');
+  var createQueue = require('overridingRequestQueue');
+  var ApiClient = require('data/ApiClient');
+  var ShareJSConnection = require('data/ShareJS/Connection');
+  var Subscription = require('Subscription');
+  var previewEnvironmentsCache = require('data/previewEnvironmentsCache');
+  var PublishedCTRepo = require('data/ContentTypeRepo/Published');
+  var logger = require('logger');
+  var DocumentPool = require('data/sharejs/DocumentPool');
+  var tokenStore = require('tokenStore');
+  var createApiKeyRepo = require('data/CMA/ApiKeyRepo').default;
+  var K = require('utils/kefir');
 
   var requestContentTypes = createQueue(function (extraHandler) {
     if (!spaceContext.space) {
@@ -125,6 +127,7 @@ angular.module('contentful')
       self.publishedCTs.wrappedItems$.onValue(function (cts) {
         self.publishedContentTypes = cts.toArray();
       });
+      self.user = K.getValue(tokenStore.user$);
 
       previewEnvironmentsCache.clearAll();
       TheLocaleStore.resetWithSpace(space);

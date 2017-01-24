@@ -66,13 +66,13 @@ export function loadEntry (spaceContext, id) {
  * @param {Property<void>} lifeline
  * @returns {Promise<object>}
  */
-export function loadEntryWithDoc (spaceContext, id, user, lifeline) {
+export function loadEntryWithDoc (spaceContext, id, lifeline) {
   return loadEntry(spaceContext, id)
   .then((context) => {
     return spaceContext.docPool.load(
       context.entity,
       context.contentType,
-      user,
+      spaceContext.user,
       lifeline
     ).then((doc) => {
       context.doc = doc;

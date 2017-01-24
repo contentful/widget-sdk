@@ -71,7 +71,7 @@ angular.module('contentful')
       });
 
       var editorDataPromise$ = K.promiseProperty(
-        loadEditorData(spaceContext, entityContext.id, $scope.user, K.scopeLifeline($scope))
+        loadEditorData(spaceContext, entityContext.id, K.scopeLifeline($scope))
       );
 
       // Property<boolean>

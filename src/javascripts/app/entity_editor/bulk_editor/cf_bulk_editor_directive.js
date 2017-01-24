@@ -40,7 +40,6 @@ angular.module('contentful')
 
     // Passed to cfBulkEntityEditor directive
     $scope.editorContext = {
-      user: referenceContext.user,
       editorSettings: referenceContext.editorSettings,
       scrollTarget$: scrollTargetBus.stream,
       initializedEditor: function () {
