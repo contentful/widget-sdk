@@ -197,8 +197,8 @@ angular.module('contentful/mocks')
         version: 1
       },
       fields: _.merge({
-        title: '',
-        description: '',
+        title: {},
+        description: {},
         file: {}
       }, fields || {})
     }, extraData || {}));

@@ -54,14 +54,7 @@ angular.module('contentful')
 
   $scope.locales = $controller('entityEditor/LocalesController');
 
-  var doc = spaceContext.docPool.get(
-    // TODO put $scope.user on editorData and pass it as the only
-    // argument
-    editorData.entity,
-    editorData.contentType,
-    $scope.user,
-    K.scopeLifeline($scope)
-  );
+  var doc = editorData.openDoc(K.scopeLifeline($scope));
   // TODO rename the scope property
   $scope.otDoc = doc;
 

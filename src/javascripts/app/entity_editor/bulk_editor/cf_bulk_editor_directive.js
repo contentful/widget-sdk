@@ -8,6 +8,7 @@ angular.module('contentful')
   var deepFreeze = require('utils/DeepFreeze').deepFreeze;
   var List = require('utils/List');
   var Tracking = require('app/entity_editor/bulk_editor/Tracking');
+  var loadEditorData = require('app/entity_editor/DataLoader').loadEntry;
 
   return {
     scope: {
@@ -49,7 +50,10 @@ angular.module('contentful')
           $scope.$applyAsync(forceFocus);
         }
       },
-      track: track
+      track: track,
+      loadEditorData: function (id) {
+        return loadEditorData(spaceContext, id);
+      }
     };
 
     // Property<string>

@@ -28,7 +28,7 @@ describe('DocumentPool', function () {
       expect(
         Object.keys(this.pool).sort()
       ).toEqual(
-        ['get', 'destroy', 'load'].sort()
+        ['get', 'destroy'].sort()
       );
     });
   });
@@ -78,21 +78,6 @@ describe('DocumentPool', function () {
       const ref2 = this.get('id', 'Asset');
       expect(ref1).not.toBe(ref2);
       sinon.assert.calledTwice(this.createDoc);
-    });
-  });
-
-  describe('#load', function () {
-    it('resolves when document emits loaded', function () {
-      const load = this.pool.load(entity, ct, user, this.K.createMockProperty());
-      const loaded = sinon.spy();
-      load.then(loaded);
-      this.$apply();
-      sinon.assert.notCalled(loaded);
-
-      this.doc.state.loaded$.set(true);
-      this.doc.state.loaded$.end();
-      this.$apply();
-      sinon.assert.calledWith(loaded, this.doc);
     });
   });
 

@@ -29,11 +29,10 @@ angular.module('contentful')
  *   Contains methods that can be called to track actions.
  */
 .directive('cfBulkEntityEditor', ['require', function (require) {
+  var $q = require('$q');
   var $controller = require('$controller');
-  var spaceContext = require('spaceContext');
   var K = require('utils/kefir');
   var Navigator = require('states/Navigator');
-  var loadEditorData = require('app/entity_editor/DataLoader').loadEntryWithDoc;
   var caseof = require('libs/sum-types').caseof;
 
   return {
@@ -71,7 +70,16 @@ angular.module('contentful')
       });
 
       var editorDataPromise$ = K.promiseProperty(
-        loadEditorData(spaceContext, entityContext.id, K.scopeLifeline($scope))
+        bulkEditorContext.loadEditorData(entityContext.id)
+        .then(function (editorData) {
+          var doc = editorData.openDoc(K.scopeLifeline($scope));
+          // We wait for the document to be opened until we setup the
+          // editor
+          return doc.state.loaded$.toPromise($q)
+            .then(function () {
+              return _.assign({doc: doc}, editorData);
+            });
+        })
       );
 
       // Property<boolean>

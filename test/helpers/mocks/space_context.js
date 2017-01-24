@@ -15,7 +15,7 @@
  *   TODO provide a mock implementation with space endpoint
  * - `editingInterfaces` Always returns default interface.
  * - `widgets` without custom extensions.
- * - `docPool.load` Creates mock document
+ * - `docPool.get` Creates mock document
  *
  * @usage[js]
  * const spaceContext = this.$inject('mocks/spaceContext').init();
@@ -57,7 +57,9 @@ angular.module('contentful/mocks')
     spaceContext.widgets = Widgets;
 
     spaceContext.docPool = {
-      load: sinon.stub().resolves(MockDocument.create())
+      get: function (entity, _contentType) {
+        return MockDocument.create(entity.data);
+      }
     };
 
     spaceContext.endpoint = createMockEndpoint();

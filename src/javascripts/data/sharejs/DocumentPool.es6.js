@@ -1,6 +1,5 @@
 import {create as createDoc} from 'entityEditor/Document';
 import {find, includes, isString, get as getAtPath} from 'lodash';
-import $q from '$q';
 
 /**
  * @ngdoc service
@@ -16,7 +15,7 @@ import $q from '$q';
 export function create (docConnection, spaceEndpoint) {
   const instances = {};
 
-  return {get, destroy, load};
+  return {get, destroy};
 
   /**
    * @method DocumentPool#get
@@ -47,26 +46,6 @@ export function create (docConnection, spaceEndpoint) {
     return doc;
   }
 
-
-  /**
-   * @method DocumentPool#load
-   * @description
-   * Similar to `get()` but returns a promise that is resolved when the
-   * document is loaded.
-   *
-   * Note that the promise is not rejected when the document fails to
-   * load. Instead the document itself will have the error information.
-   * @param {API.Entity} entity
-   * @param {API.ContentType} contentType
-   * @param {API.User} user
-   * @param {K.Poperty<void>} lifeline$
-   *   Unreference the document when this property ends
-   * @returns {Promise<Document>}
-   */
-  function load (entity, contentType, user, lifeline$) {
-    const doc = get(entity, contentType, user, lifeline$);
-    return doc.state.loaded$.toPromise($q).then(() => doc);
-  }
 
   function prepareKey (sys) {
     if (includes(['Entry', 'Asset'], sys.type) && isString(sys.id)) {

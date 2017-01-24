@@ -29,12 +29,7 @@ angular.module('contentful')
   $scope.locales = $controller('entityEditor/LocalesController');
 
   // TODO rename the scope property
-  $scope.otDoc = spaceContext.docPool.get(
-    editorData.entity,
-    null,
-    $scope.user,
-    K.scopeLifeline($scope)
-  );
+  $scope.otDoc = editorData.openDoc(K.scopeLifeline($scope));
 
   installTracking(entityInfo, $scope.otDoc, K.scopeLifeline($scope));
 
