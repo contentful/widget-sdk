@@ -227,7 +227,7 @@ angular.module('cf.app')
     }
 
     function getAvailableContentTypes () {
-      return space.getContentTypes()
+      return space.getContentTypes({order: 'name', limit: 1000})
       .then(function (res) {
         return _.filter(res.items, canCreate(field));
       });
