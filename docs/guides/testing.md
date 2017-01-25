@@ -248,6 +248,76 @@ for certain parts of the app. Use of `cfStub` service is *deprecated* and needs
 some major cleanup.
 
 
+Mock dependencies
+-----------------
+
+If you want to mock only some methods in a dependency of the tested unit, but
+leave other properties intact, you can simply inject it in the test and replace
+these method with stubs:
+
+~~~js
+// foo.js
+angular.module('contentful')
+
+.service('foo', function (require) {
+  var bar = require('bar');
+
+  return function () {
+    return bar.buzz();
+  }
+});
+
+// unit test for 'foo'
+before(function () {
+  this.foo = this.$inject('foo');
+  this.bar = this.$inject('bar');
+  this.bar.buzz = sinon.stub().returns('herp');
+});
+
+it('should herp', function () {
+  expect(this.foo()).toBe('herp');
+});
+~~~
+
+However, this won't work if `foo` is an ES6 module:
+
+~~~js
+// Foo.es6.js
+import * as bar from 'bar';
+
+export function () {
+  return bar.buzz();
+}
+~~~
+
+All dependencies of ES6 modules are shallow-copied, so the changes that are
+made to `bar` after it was imported in `foo` will not be applied to the
+imported instance. However, if we change the order of imports in the test:
+
+~~~js
+before(function () {
+  module('contentful/test');
+
+  this.bar = this.$inject('bar');
+  this.bar.buzz = sinon.stub().returns('herp');
+  this.foo = this.$inject('foo');
+});
+~~~
+
+Then import statement inside `Foo.es6.js` will be executed after we inject and
+modify `bar`, and receive the modified version.
+
+This also means that we currently cannot modify ES6 dependencies on the fly:
+
+~~~js
+// works with a es5 foo, but not with es6 :(
+it('should derp', function () {
+  this.bar.buzz = sinon.stub().returns('derp');
+  expect(this.foo()).toBe('derp');
+});
+~~~
+
+
 Reporters
 ---------
 
@@ -270,3 +340,4 @@ the test run. You can choose a reporter by passing the
 [tape]: https://github.com/substack/tape
 [service:helpers]: api/contentful/test/service/helpers
 [require]: https://docs.angularjs.org/api/ng/service/$compile#-require-
+
