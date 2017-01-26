@@ -42,7 +42,8 @@ angular.module('cf.app')
     // Passed to cfEntityLink and cfAssetCard directive
     $scope.config = {
       showDetails: is('Entry', 'card'),
-      asThumb: $scope.isAssetCard && !$scope.single
+      largeImage: $scope.isAssetCard && $scope.single,
+      link: true
     };
 
     K.onValueScope($scope, isDisabled$, function (isDisabled) {
@@ -181,8 +182,10 @@ angular.module('cf.app')
         entity.sys.type === 'Entry' &&
         entity.sys.id === entryId;
 
-      if (entity && !isDisabled && !linksParentEntry) {
-        return _.partial(editEntityAction, entity, index);
+      if (entity && !isDisabled && !linksParentEntry && useBulkEditor) {
+        return function () {
+          widgetApi._internal.editReferences(index, state.refreshEntities);
+        };
       } else {
         return null;
       }

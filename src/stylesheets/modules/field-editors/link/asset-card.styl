@@ -3,11 +3,6 @@
   $element-background = alpha(white, 0.95)
   $tooltip-padding = 1em
 
-  display: flex
-  flex-direction: column
-  position: relative
-  align-items: center
-
   cf-thumbnail
     display: flex
     align-items: center
@@ -23,28 +18,6 @@
       cursor: pointer
     > img
       border-radius: 1px
-
-  .entity-status
-    position: absolute
-    width: 13px
-    top: 8px
-    right: 8px
-    &--published
-      display: none
-    .status-bar
-      width: 13px
-      height: @width
-      border-radius: 50%
-      box-shadow: 0 0 1px $colors.contrast-light
-
-  [data-drag-handle]
-    position: absolute
-    top: 0
-    left: 0
-    padding: 1px
-    margin: 4px
-    border-radius: 3px
-    background-color: alpha(white, .8)
 
   &__title
     margin-top: 0.4em
