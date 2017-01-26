@@ -104,8 +104,8 @@ export const domain = settings.main_domain;
  */
 export const snowplow = settings.snowplow;
 
-function ensureLeadingSlash (x) {
-  x = x || '';
+
+function ensureLeadingSlash (x = '') {
   if (x.charAt(0) === '/') {
     return x;
   } else {

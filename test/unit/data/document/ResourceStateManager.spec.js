@@ -10,7 +10,8 @@ describe('data/document/ResourceStateManager', function () {
     const DocLoad = this.$inject('data/ShareJS/Connection').DocLoad;
     const Doc = this.$inject('entityEditor/Document');
 
-    this.spaceEndpoint = sinon.spy(this.$inject('mocks/spaceEndpoint').create());
+    const endpoint = this.$inject('mocks/spaceEndpoint').create();
+    this.spaceEndpoint = sinon.spy(endpoint.request);
 
     const entityData = {
       sys: {
@@ -59,7 +60,7 @@ describe('data/document/ResourceStateManager', function () {
     yield this.doc.resourceState.apply(this.Action.Publish());
     sinon.assert.calledWith(this.spaceEndpoint, {
       method: 'PUT',
-      path: 'entries/ENTITY_ID/published',
+      path: ['entries', 'ENTITY_ID', 'published'],
       version: 8
     });
     this.K.assertMatchCurrentValue(this.doc.sysProperty, sinon.match({
@@ -75,12 +76,12 @@ describe('data/document/ResourceStateManager', function () {
     yield this.doc.resourceState.apply(this.Action.Archive());
     sinon.assert.calledWith(this.spaceEndpoint, {
       method: 'DELETE',
-      path: 'entries/ENTITY_ID/published',
+      path: ['entries', 'ENTITY_ID', 'published'],
       version: 9
     });
     sinon.assert.calledWith(this.spaceEndpoint, {
       method: 'PUT',
-      path: 'entries/ENTITY_ID/archived',
+      path: ['entries', 'ENTITY_ID', 'archived'],
       version: 10
     });
     this.K.assertMatchCurrentValue(this.doc.sysProperty, sinon.match({
@@ -96,7 +97,7 @@ describe('data/document/ResourceStateManager', function () {
     yield this.doc.resourceState.apply(this.Action.Unarchive());
     sinon.assert.calledWith(this.spaceEndpoint, {
       method: 'DELETE',
-      path: 'entries/ENTITY_ID/archived',
+      path: ['entries', 'ENTITY_ID', 'archived'],
       version: 11
     });
     this.K.assertMatchCurrentValue(this.doc.sysProperty, sinon.match({
@@ -112,7 +113,7 @@ describe('data/document/ResourceStateManager', function () {
     yield this.doc.resourceState.apply(this.Action.Delete());
     sinon.assert.calledWith(this.spaceEndpoint, {
       method: 'DELETE',
-      path: 'entries/ENTITY_ID',
+      path: ['entries', 'ENTITY_ID'],
       version: 12
     });
     this.K.assertMatchCurrentValue(this.doc.sysProperty, sinon.match({

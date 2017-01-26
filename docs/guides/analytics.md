@@ -127,8 +127,6 @@ yet).
 | entry_editor        | created_with_same_ct                  | <code>contentTypeId: id-string<br>entryId: id-string</code>
 | entry_editor        | preview_opened                        | <code>envName: string<br>envId: id-string<br>previewUrl: string<br>entryId: id-string</code>
 | entry_editor        | custom_extension_rendered             | <code>extensionId: id-string<br>extensionName: string<br>fieldType: string<br>contentTypeId: id-string<br>entryId: id-string</code>
-| api_keys            | create_screen_opened                  | -
-| api_keys            | language_selected                     | <code>language: string</code>
 | versioning          | no_snapshots                          | <code>entryId: id-string</code>
 | versioning          | snapshot_opened                       | <code>entryId: id-string<br>snapshotId: id-string<br>snapshotType: string<br>authorIsUser: bool<br>source: string</code>
 | versioning          | snapshot_closed                       | <code>entryId: id-string<br>snapshotId: id-string<br>snapshotType: string<br>authorIsUser: bool<br>changesDiscarded: bool</code>
@@ -149,3 +147,5 @@ yet).
 | entry               | create                                | <code>actionData: obj<br>response: obj</code>
 | asset               | create                                | <code>actionData: obj<br>response: obj</code>
 | api_key             | create                                | <code>actionData: obj<br>response: obj</code>
+| api                 | boilerplate                           | <code>platform: string<br>action: select|download|github</code>
+| api                 | clipboard_copy                        | <code>source: space|cda|cpa</code>

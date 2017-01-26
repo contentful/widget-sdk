@@ -71,7 +71,7 @@ describe('entityEditor/StateController', function () {
         this.spaceEndpoint,
         sinon.match({
           method: 'DELETE',
-          path: 'entries/EID',
+          path: ['entries', 'EID'],
           version: 42
         })
       );
@@ -132,7 +132,7 @@ describe('entityEditor/StateController', function () {
           this.spaceEndpoint,
           sinon.match({
             method: 'DELETE',
-            path: 'entries/EID/published',
+            path: ['entries', 'EID', 'published'],
             version: 42
           })
         );
@@ -140,7 +140,7 @@ describe('entityEditor/StateController', function () {
           this.spaceEndpoint,
           sinon.match({
             method: 'PUT',
-            path: 'entries/EID/archived',
+            path: ['entries', 'EID', 'archived'],
             version: 42
           })
         );
@@ -159,7 +159,7 @@ describe('entityEditor/StateController', function () {
           this.spaceEndpoint,
           sinon.match({
             method: 'DELETE',
-            path: 'entries/EID/published',
+            path: ['entries', 'EID', 'published'],
             version: 42
           })
         );
@@ -180,7 +180,7 @@ describe('entityEditor/StateController', function () {
           this.spaceEndpoint,
           sinon.match({
             method: 'PUT',
-            path: 'entries/EID/published',
+            path: ['entries', 'EID', 'published'],
             version: 42
           })
         );
@@ -240,7 +240,7 @@ describe('entityEditor/StateController', function () {
           this.spaceEndpoint,
           sinon.match({
             method: 'PUT',
-            path: 'entries/EID/archived',
+            path: ['entries', 'EID', 'archived'],
             version: 42
           })
         );

@@ -6,14 +6,14 @@ export {h, doctype};
 
 /**
  * @ngdoc method
- * @name utils/hyperscript#styled
+ * @name utils/hyperscript#styledDiv
  * Creates a 'div' container with the given styles
  *
  * @param {object} style  Map of CSS properties
  * @param {string[]} children  List of children for the container
  * @returns {string}
  */
-export function styled (style, children) {
+export function styledDiv (style, children) {
   return h('div', {style}, children);
 }
 

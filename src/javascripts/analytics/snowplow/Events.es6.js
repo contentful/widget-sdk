@@ -21,6 +21,32 @@ registerGenericEvent('learn:language_selected');
 registerGenericEvent('learn:resource_selected');
 registerGenericEvent('learn:step_clicked');
 
+// TODO extract common event details
+registerEvent('api_key:clipboard_copy', 'api_key', function (_ev, data) {
+  return {
+    data: {
+      'action': `clipboard_copy_${data.source}`,
+
+      'organization_id': data.organizationId,
+      'space_id': data.spaceId,
+      'executing_user_id': data.userId
+    }
+  };
+});
+
+registerEvent('api_key:boilerplate', 'boilerplate', function (_ev, data) {
+  return {
+    data: {
+      'action': `boilerplate_${data.action}`,
+      'platform': data.platform,
+
+      'organization_id': data.organizationId,
+      'space_id': data.spaceId,
+      'executing_user_id': data.userId
+    }
+  };
+});
+
 registerEntityActionEvent('content_type:create');
 registerEntityActionEvent('entry:create');
 registerEntityActionEvent('api_key:create');
