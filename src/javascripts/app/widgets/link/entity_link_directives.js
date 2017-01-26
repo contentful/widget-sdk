@@ -33,26 +33,42 @@ angular.module('cf.app')
       //   function.
       actions: '<?',
       // object of visual configuration options
-      // valid options are: draggable, asThumb, showDetails, disableTooltip
+      // valid options are
+      // - draggable
+      // - largeImage: If true, show a 270px preview of an image asset
+      // - showDetails:  Show description and thumbnail for entries
+      // - disableTooltip
+      // - link: Provide a link to entity editor. This has no effect if
+      //   the 'edit' action is specified.
       config: '<'
     },
     controller: 'EntityLinkController',
-    template: JST[template]()
+    template: template
   };
 })
 
-.directive('cfAssetCard', ['createEntityLinkDirective', function (create) {
-  return create('cf_asset_card');
+.directive('cfAssetCard', ['require', 'createEntityLinkDirective', function (require, create) {
+  return create(require('app/widgets/link/AssetCardTemplate').default());
 }])
 
-.directive('cfEntityLink', ['createEntityLinkDirective', function (create) {
-  return create('cf_entity_link');
+.directive('cfEntityLink', ['require', 'createEntityLinkDirective', function (require, create) {
+  return create(require('app/widgets/link/EntityLinkTemplate').default());
 }])
 
-.controller('EntityLinkController', ['$scope', function ($scope) {
+.controller('EntityLinkController', ['require', '$scope', function (require, $scope) {
+  var makeEntityRef = require('states/Navigator').makeEntityRef;
+  var EntityState = require('data/CMA/EntityState');
+  var entityStateColor = require('Styles/Colors').entityStateColor;
+
   var data = $scope.entity;
-  $scope.config = $scope.config || {};
+  $scope.config = _.assign({}, $scope.config || {});
   $scope.actions = $scope.actions || {};
+
+  if ($scope.config.largeImage) {
+    $scope.config.imageSize = 270;
+  } else {
+    $scope.config.imageSize = 123;
+  }
 
   // $scope.hasTooltip is true if the tooltip has not been disabled and if there
   // is content in the tooltip.
@@ -67,16 +83,28 @@ angular.module('cf.app')
   });
 
   if (data) {
+    if ($scope.config.link && !$scope.actions.edit) {
+      $scope.stateRef = makeEntityRef(data);
+    }
+    var state = EntityState.getState(data.sys);
+
+    // We do not show the state indicator for published assets
+    if (!(data.sys.type === 'Asset' && state === EntityState.State.Published())) {
+      $scope.entityState = EntityState.stateName(state);
+    }
+
+    $scope.statusDotStyle = {
+      backgroundColor: entityStateColor(state)
+    };
+
     getBasicEntityInfo();
     maybeGetEntryDetails();
     maybeGetAssetDetails();
   } else {
-    $scope.stateRef = null;
     $scope.missing = true;
   }
 
   function getBasicEntityInfo () {
-    get('entityStatus', 'status');
     get('entityTitle', 'title');
   }
 

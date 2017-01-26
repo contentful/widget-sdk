@@ -10,26 +10,7 @@ describe('EntityHelpers', function () {
     });
 
     this.spaceContext = this.$inject('mocks/spaceContext').init();
-    this.entityStatus = this.mockService('entityStatus');
     this.helpers = this.$inject('EntityHelpers').api;
-  });
-
-  describe('#entityStatus', function () {
-    itGetsEntityStatus('published', {publishedVersion: 123}, [true, false, false]);
-    itGetsEntityStatus('changed', {publishedVersion: 100, version: 200}, [true, true, false]);
-    itGetsEntityStatus('archived', {archivedVersion: 123}, [false, true, true]);
-
-    function itGetsEntityStatus (status, sys, expectations) {
-      pit(`gets status for ${status} entity`, function () {
-        return this.helpers.entityStatus({sys: sys}).then(() => {
-          sinon.assert.calledOnce(this.entityStatus.getClassname);
-          const [entity] = this.entityStatus.getClassname.firstCall.args;
-          expect(entity.isPublished()).toBe(expectations[0]);
-          expect(entity.hasUnpublishedChanges()).toBe(expectations[1]);
-          expect(entity.isArchived()).toBe(expectations[2]);
-        });
-      });
-    }
   });
 
   describe('#assetUrl', function () {
