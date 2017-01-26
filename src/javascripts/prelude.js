@@ -67,6 +67,7 @@ angular.module('contentful/app', ['contentful'])
   var authentication = require('authentication');
   authentication.login();
 
+  require('utils/LaunchDarkly').init(Date.now());
   require('presence').startTracking();
   require('client').init(authentication.token);
   require('uiVersionSwitcher').checkIfVersionShouldBeSwitched();

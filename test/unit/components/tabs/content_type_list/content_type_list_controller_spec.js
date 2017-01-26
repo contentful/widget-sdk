@@ -16,11 +16,13 @@ describe('Content Type List Controller', function () {
   }
 
   beforeEach(function () {
-    module('contentful/test');
+    module('cf.utils', 'contentful/test');
 
     const $controller = this.$inject('$controller');
     const $rootScope = this.$inject('$rootScope');
     const TheStore = this.$inject('TheStore');
+
+    this.$inject('utils/LaunchDarkly').init();
 
     cfStub = this.$inject('cfStub');
     $q = this.$inject('$q');

@@ -6,6 +6,8 @@ describe('The ContentType list directive', function () {
   beforeEach(function () {
     module('contentful/test');
     spaceContext = this.$inject('spaceContext');
+
+    this.$inject('utils/LaunchDarkly').init();
   });
 
   afterEach(function () {

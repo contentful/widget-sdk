@@ -24,6 +24,7 @@ angular.module('contentful/test', ['contentful', 'contentful/mocks'])
   // changes to it would leak between tests.
   $provide.constant('environment', {
     settings: {
+      launchDarkly: { envId: 'launch-darkly-test-id' },
       filepicker: {},
       aviary: {},
       google: {},
