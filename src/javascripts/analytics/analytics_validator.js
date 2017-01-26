@@ -86,6 +86,18 @@ angular.module('contentful')
     'close',
     'status',
     'action'
+  ],
+  content_type: [
+    'create'
+  ],
+  entry: [
+    'create'
+  ],
+  asset: [
+    'create'
+  ],
+  api_key: [
+    'create'
   ]
 })
 

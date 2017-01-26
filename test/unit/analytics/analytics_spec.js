@@ -18,11 +18,12 @@ describe('analytics', function () {
       sinon.stub(this.segment, m);
     });
 
-    this.Snowplow = this.$inject('analytics/Snowplow').default;
-    ['enable', 'disable', 'identify', 'track'].forEach((m) => {
+    this.Snowplow = this.$inject('analytics/snowplow/Snowplow').default;
+    ['enable', 'disable', 'identify', 'trackGenericEvent', 'trackEntityAction'].forEach((m) => {
       sinon.stub(this.Snowplow, m);
     });
 
+    this.Schemas = this.$inject('analytics/snowplow/Schemas').default;
 
     this.userData = {
       firstName: 'Hans',
@@ -85,7 +86,7 @@ describe('analytics', function () {
   it('should track', function () {
     this.analytics.track('Event', {data: 'foobar'});
     sinon.assert.calledWith(this.segment.track, 'Event', {data: 'foobar'});
-    sinon.assert.calledWith(this.Snowplow.track, 'Event', {data: 'foobar'})
+    sinon.assert.calledWith(this.Snowplow.trackGenericEvent, 'Event', {data: 'foobar'});
   });
 
   describe('stateActivated', function () {
@@ -103,6 +104,20 @@ describe('analytics', function () {
 
     it('should track segment', function () {
       sinon.assert.called(this.segment.track);
+    });
+  });
+
+  describe('trackEntityAction', function () {
+    it('calls Snowplow method if schema is found', function () {
+      this.Schemas.getByEventName = sinon.stub().returns({});
+      this.analytics.trackEntityAction('action');
+      sinon.assert.calledWith(this.Snowplow.trackEntityAction, 'action', {});
+    });
+
+    it('does not call Snowplow method if no schema is found', function () {
+      this.Schemas.getByEventName = sinon.stub().returns();
+      this.analytics.trackEntityAction('event');
+      sinon.assert.notCalled(this.Snowplow.trackEntityAction);
     });
   });
 });
