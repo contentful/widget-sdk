@@ -1,5 +1,4 @@
 import {get as getAtPath} from 'lodash';
-import {getSchema} from 'analytics/snowplow/Events';
 
 /**
  * @ngdoc service
@@ -66,29 +65,12 @@ function buildPath (schema) {
 
 /**
  * @ngdoc method
- * @name analytics/snowplow/Schemas#get
+ * @name analytics/snowplow/Schemas#getSchema
  * @param {string} schemaName
+ * @returns {object} schema
  * @description
  * Returns schema for the provided schema name
  */
-function get (schemaName) {
+export function getSchema (schemaName) {
   return getAtPath(_schemas, schemaName);
 }
-
-/**
- * @ngdoc method
- * @name analytics/snowplow/Schemas#getByEventName
- * @param {string} eventName
- * @description
- * Returns schema if available for the provided event name
- */
-function getByEventName (eventName) {
-  return get(getSchema(eventName));
-}
-
-const Schemas = {
-  get: get,
-  getByEventName: getByEventName
-};
-
-export default Schemas;

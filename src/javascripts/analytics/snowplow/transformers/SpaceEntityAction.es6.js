@@ -1,5 +1,5 @@
 import {extend, get, snakeCase} from 'lodash';
-import Schemas from 'analytics/snowplow/Schemas';
+import {getSchema} from 'analytics/snowplow/Schemas';
 
 /**
  * @ngdoc service
@@ -16,7 +16,7 @@ export default function (_eventName, entityData) {
 }
 
 function getEntityContext (entityData) {
-  const schema = Schemas.get(snakeCase(entityData.actionData.entity));
+  const schema = getSchema(snakeCase(entityData.actionData.entity));
   return {
     'schema': schema.path,
     'data': extend(

@@ -35,7 +35,6 @@ angular.module('contentful')
   var analyticsConsole = require('analytics/console');
   var stringifySafe = require('stringifySafe');
   var Snowplow = require('analytics/snowplow/Snowplow').default;
-  var SnowplowSchemas = require('analytics/snowplow/Schemas').default;
   var validateEvent = require('analytics/validateEvent');
 
   var ANALYTICS_ENVS = ['production', 'staging', 'preview'];
@@ -51,8 +50,7 @@ angular.module('contentful')
     getSessionData: getSessionData,
     track: track,
     trackSpaceChange: trackSpaceChange,
-    trackStateChange: trackStateChange,
-    trackEntityAction: trackEntityAction
+    trackStateChange: trackStateChange
   };
 
   /**
@@ -119,23 +117,6 @@ angular.module('contentful')
       data = _.extend(data, getBasicPayload());
       segment.track(event, data);
       Snowplow.track(event, data);
-      analyticsConsole.add(event, data);
-    }
-  }
-
-  /**
-   * @ngdoc method
-   * @name analytics#trackEntityAction
-   * @param {string} event
-   * @param {object?} data
-   * @description
-   * Only tracked in Snowplow
-   */
-  function trackEntityAction (event, data) {
-    if (SnowplowSchemas.getByEventName(event)) {
-      data = _.isObject(data) ? _.cloneDeep(data) : {};
-      data = _.extend(data, getBasicPayload());
-      Snowplow.trackEntityAction(event, data);
       analyticsConsole.add(event, data);
     }
   }

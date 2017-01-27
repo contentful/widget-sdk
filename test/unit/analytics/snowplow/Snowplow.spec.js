@@ -1,17 +1,13 @@
 describe('Snowplow service', function () {
   beforeEach(function () {
-    this.transformData = sinon.stub();
-    module('contentful/test', ($provide) => {
-      $provide.value('analytics/snowplow/Transformers', {
-        transformData: this.transformData
-      });
-    });
+    module('contentful/test');
     this.$window = this.$inject('$window');
     this.LazyLoader = this.$inject('LazyLoader');
     this.LazyLoader.get = sinon.stub();
+    this.Events = this.$inject('analytics/snowplow/Events');
+    this.Events.getSchema = sinon.stub();
+    this.Events.getTransformer = sinon.stub();
     this.Snowplow = this.$inject('analytics/snowplow/Snowplow').default;
-    this.Schemas = this.$inject('analytics/snowplow/Schemas').default;
-    this.Schemas.getByEventName = sinon.stub();
     this.getLastEvent = function () {
       return _.last(this.$window.snowplow.q);
     };
@@ -63,13 +59,12 @@ describe('Snowplow service', function () {
         data: {something: 'someValue'},
         contexts: ['ctx']
       };
-      this.transformData.returns(transformedData);
-      this.Snowplow.enable();
-      this.Schemas.getByEventName.withArgs('some_entity:update').returns({
+      this.Events.getTransformer.returns({transform: () => transformedData});
+      this.Events.getSchema.returns({
         name: 'some_entity_update',
-        context: 'some_entity',
         path: 'main/schema/path'
       });
+      this.Snowplow.enable();
       this.Snowplow.track('some_entity:update', {
         actionData: {action: 'update'},
         response: {data: {sys: {id: 'entity-id-1'}}},

@@ -1,4 +1,3 @@
-import {getTransformer} from 'analytics/snowplow/Events';
 import EntityAction from 'analytics/snowplow/transformers/SpaceEntityAction';
 import Generic from 'analytics/snowplow/transformers/Generic';
 
@@ -17,18 +16,12 @@ const _transformers = {
 
 /**
  * @ngdoc method
- * @name analytics/snowplow/Transformers#get
- * @param {string} eventName
+ * @name analytics/snowplow/Transformers#getTransformer
+ * @param {string} name
  * @description
- * Returns transformer object with a .run() method. Transformers should be invoked
- * by calling run with the data to be transformed as an argument.
- *
- * @usage[js]
- * const rawData = {foo: '!!!!'}
- * const transformer = Transformer.get('content_type:create');
- * const dataForSnowplow = transformer.run(rawData);
+ * Returns transformer function. Transformers should be invoked by passing event
+ * name and data as arguments.
  */
-export function transformData (eventName, data) {
-  const transformerName = getTransformer(eventName);
-  return _transformers[transformerName](eventName, data);
+export function getTransformer (name) {
+  return _transformers[name];
 }

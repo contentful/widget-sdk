@@ -2,8 +2,7 @@ import $window from '$window';
 import {once, noop} from 'lodash';
 import {settings} from 'environment';
 import LazyLoader from 'LazyLoader';
-import Schemas from 'analytics/snowplow/Schemas';
-import {transformData} from 'analytics/snowplow/Transformers';
+import {getSchema, getTransformer} from 'analytics/snowplow/Events';
 
 /**
  * @ngdoc service
@@ -60,9 +59,9 @@ function identify (userId) {
  * Tracks an event in Snowplow if it is registered in the snowplow events service
  */
 function track (eventName, data) {
-  const schema = Schemas.getByEventName(eventName);
+  const schema = getSchema(eventName);
   if (schema) {
-    const transformedData = transformData(eventName, data);
+    const transformedData = getTransformer(eventName).transform(data);
     _snowplow('trackUnstructEvent', {
       'schema': schema.path,
       'data': transformedData.data

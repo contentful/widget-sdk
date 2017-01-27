@@ -26,8 +26,6 @@ describe('analytics', function () {
       sinon.stub(this.Snowplow, m);
     });
 
-    this.Schemas = this.$inject('analytics/snowplow/Schemas').default;
-
     this.userData = {
       firstName: 'Hans',
       lastName: 'Wurst',
