@@ -2,7 +2,10 @@
 
 describe('analytics', function () {
   beforeEach(function () {
-    module('contentful/test');
+    this.validateEvent = sinon.stub();
+    module('contentful/test', ($provide) => {
+      $provide.value('analytics/validateEvent', this.validateEvent);
+    });
 
     // we want to simulate production environment
     // this way data hits the Segment and Snowplow services
@@ -19,7 +22,7 @@ describe('analytics', function () {
     });
 
     this.Snowplow = this.$inject('analytics/snowplow/Snowplow').default;
-    ['enable', 'disable', 'identify', 'trackGenericEvent', 'trackEntityAction'].forEach((m) => {
+    ['enable', 'disable', 'identify', 'track'].forEach((m) => {
       sinon.stub(this.Snowplow, m);
     });
 
@@ -83,10 +86,19 @@ describe('analytics', function () {
     });
   });
 
-  it('should track', function () {
-    this.analytics.track('Event', {data: 'foobar'});
-    sinon.assert.calledWith(this.segment.track, 'Event', {data: 'foobar'});
-    sinon.assert.calledWith(this.Snowplow.trackGenericEvent, 'Event', {data: 'foobar'});
+  describe('tracking events', function () {
+    it('calls analytics services if event is valid', function () {
+      this.validateEvent.returns(true);
+      this.analytics.track('Event', {data: 'foobar'});
+      sinon.assert.calledWith(this.segment.track, 'Event', {data: 'foobar'});
+      sinon.assert.calledWith(this.Snowplow.track, 'Event', {data: 'foobar'});
+    });
+
+    it('does not call analytics services if event is invalid', function () {
+      this.validateEvent.returns(false);
+      sinon.assert.notCalled(this.segment.track);
+      sinon.assert.notCalled(this.Snowplow.track);
+    });
   });
 
   describe('stateActivated', function () {
@@ -100,24 +112,6 @@ describe('analytics', function () {
 
     it('should set the page in segment', function () {
       sinon.assert.calledWith(this.segment.page, state.name, stateParams);
-    });
-
-    it('should track segment', function () {
-      sinon.assert.called(this.segment.track);
-    });
-  });
-
-  describe('trackEntityAction', function () {
-    it('calls Snowplow method if schema is found', function () {
-      this.Schemas.getByEventName = sinon.stub().returns({});
-      this.analytics.trackEntityAction('action');
-      sinon.assert.calledWith(this.Snowplow.trackEntityAction, 'action', {});
-    });
-
-    it('does not call Snowplow method if no schema is found', function () {
-      this.Schemas.getByEventName = sinon.stub().returns();
-      this.analytics.trackEntityAction('event');
-      sinon.assert.notCalled(this.Snowplow.trackEntityAction);
     });
   });
 });

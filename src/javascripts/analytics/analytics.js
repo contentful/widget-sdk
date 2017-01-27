@@ -36,6 +36,7 @@ angular.module('contentful')
   var stringifySafe = require('stringifySafe');
   var Snowplow = require('analytics/snowplow/Snowplow').default;
   var SnowplowSchemas = require('analytics/snowplow/Schemas').default;
+  var validateEvent = require('analytics/validateEvent');
 
   var ANALYTICS_ENVS = ['production', 'staging', 'preview'];
   var VALUE_UNKNOWN = {};
@@ -109,15 +110,17 @@ angular.module('contentful')
    * @param {string} event
    * @param {object?} data
    * @description
-   * Sends tracking event (with optionally provided
-   * data) to Segment.
+   * Sends tracking event (with optionally provided data) to Segment and Snowplow
+   * if it is on the valid events list.
    */
   function track (event, data) {
-    data = _.isObject(data) ? _.cloneDeep(data) : {};
-    data = _.extend(data, getBasicPayload());
-    segment.track(event, data);
-    Snowplow.trackGenericEvent(event, data);
-    analyticsConsole.add(event, data);
+    if (validateEvent(event)) {
+      data = _.isObject(data) ? _.cloneDeep(data) : {};
+      data = _.extend(data, getBasicPayload());
+      segment.track(event, data);
+      Snowplow.track(event, data);
+      analyticsConsole.add(event, data);
+    }
   }
 
   /**

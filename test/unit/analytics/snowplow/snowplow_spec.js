@@ -1,14 +1,17 @@
 describe('Snowplow service', function () {
   beforeEach(function () {
-    module('contentful/test');
+    this.transformData = sinon.stub();
+    module('contentful/test', ($provide) => {
+      $provide.value('analytics/snowplow/Transformers', {
+        transformData: this.transformData
+      });
+    });
     this.$window = this.$inject('$window');
     this.LazyLoader = this.$inject('LazyLoader');
     this.LazyLoader.get = sinon.stub();
     this.Snowplow = this.$inject('analytics/snowplow/Snowplow').default;
     this.Schemas = this.$inject('analytics/snowplow/Schemas').default;
-    this.Schemas.get = sinon.stub();
     this.Schemas.getByEventName = sinon.stub();
-
     this.getLastEvent = function () {
       return _.last(this.$window.snowplow.q);
     };
@@ -39,8 +42,8 @@ describe('Snowplow service', function () {
       this.Snowplow.disable();
     });
 
-    it('calling #trackGenericEvent does not add event to queue', function () {
-      this.Snowplow.trackGenericEvent('learn:language_selected');
+    it('calling #track does not add event to queue', function () {
+      this.Snowplow.track('learn:language_selected');
       expect(this.$window.snowplow.q.length).toBe(1);
     });
   });
@@ -49,80 +52,35 @@ describe('Snowplow service', function () {
     it('adds request to queue', function () {
       this.Snowplow.enable();
       this.Snowplow.identify('user-1');
-      // TODO: use _.isEqual
-      expect(this.getLastEvent()).toEqual(jasmine.objectContaining({
-        0: 'setUserId', 1: 'user-1'
-      }));
+      expect(this.getLastEvent()[0]).toBe('setUserId');
+      expect(this.getLastEvent()[1]).toBe('user-1');
     });
   });
 
-  describe('#trackGenericEvent', function () {
-    beforeEach(function () {
-      this.Schemas.getByEventName.withArgs('valid:action').returns({path: 'schema/path'});
-      this.Schemas.getByEventName.withArgs('invalid:action').returns(undefined);
-      this.Snowplow.enable();
-    });
-
-    it('tracks event if schema is found', function () {
-      this.Snowplow.trackGenericEvent('valid:action');
-      expect(this.getLastEvent()[0]).toBe('trackUnstructEvent');
-      expect(this.getLastEvent()[1].schema).toEqual('schema/path');
-      expect(this.getLastEvent()[1].data.action).toBe('action');
-    });
-
-
-    it('does nothing if no schema is found', function () {
-      this.Snowplow.trackGenericEvent('invalid:action');
-      expect(this.getLastEvent()[0]).not.toBe('trackUnstructEvent');
-    });
-
-    it('transforms data for generic event', function () {
-      this.Snowplow.trackGenericEvent('valid:action', {
-        userId: 'user-1',
-        spaceId: 's1',
-        organizationId: 'org',
-        foo: 'bar'
-      });
-      expect(this.getLastEvent()[1].data).toEqual({
-        scope: 'valid',
-        action: 'action',
-        executing_user_id: 'user-1',
-        space_id: 's1',
-        organization_id: 'org',
-        payload: {foo: 'bar'}
-      });
-    });
-  });
-
-  describe('#trackEntityAction', function () {
-    it('transforms data for entity action', function () {
+  describe('#track', function () {
+    it('sends transformed data to snowplow queue', function () {
+      const transformedData = {
+        data: {something: 'someValue'},
+        contexts: ['ctx']
+      };
+      this.transformData.returns(transformedData);
       this.Snowplow.enable();
       this.Schemas.getByEventName.withArgs('some_entity:update').returns({
         name: 'some_entity_update',
         context: 'some_entity',
         path: 'main/schema/path'
       });
-      this.Schemas.get.withArgs('some_entity').returns({path: 'context/schema/path'});
-      this.Snowplow.trackEntityAction('some_entity:update', {
+      this.Snowplow.track('some_entity:update', {
         actionData: {action: 'update'},
         response: {data: {sys: {id: 'entity-id-1'}}},
         userId: 'user-1',
         spaceId: 's1',
         organizationId: 'org'
       });
-
+      expect(this.getLastEvent()[0]).toBe('trackUnstructEvent');
       expect(this.getLastEvent()[1].schema).toBe('main/schema/path');
-
-      expect(_.isEqual(this.getLastEvent()[2][0], {
-        schema: 'context/schema/path',
-        data: {
-          action: 'update',
-          executing_user_id: 'user-1',
-          space_id: 's1',
-          organization_id: 'org',
-          some_entity_id: 'entity-id-1'
-        }
-      })).toBe(true);
+      expect(this.getLastEvent()[1].data).toEqual({something: 'someValue'});
+      expect(this.getLastEvent()[2]).toEqual(['ctx']);
     });
   });
 });

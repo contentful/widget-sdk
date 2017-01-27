@@ -1,4 +1,5 @@
-import {pick, get as getAtPath} from 'lodash';
+import {get as getAtPath} from 'lodash';
+import {getSchema} from 'analytics/snowplow/Events';
 
 /**
  * @ngdoc service
@@ -8,18 +9,6 @@ import {pick, get as getAtPath} from 'lodash';
  */
 
 const _schemas = {};
-
-/*
- * Maps analytics events to Snowplow schema names
- */
-const EVENTS_TO_SCHEMAS = {
-  'content_type:create': 'content_type_create',
-  'entry:create': 'entry_create',
-  'api_key:create': 'api_key_create',
-  'learn:language_selected': 'generic',
-  'learn:resource_selected': 'generic',
-  'learn:step_clicked': 'generic'
-};
 
 registerSchema({
   name: 'generic',
@@ -33,8 +22,7 @@ registerSchema({
 
 registerSchema({
   name: 'asset',
-  version: '1-0-0',
-  context: 'asset'
+  version: '1-0-0'
 });
 
 registerSchema({
@@ -49,30 +37,26 @@ registerSchema({
 
 registerSchema({
   name: 'entry_create',
-  version: '1-0-0',
-  context: 'entry'
+  version: '1-0-0'
 });
 
 registerSchema({
   name: 'asset_create',
-  version: '1-0-0',
-  context: 'asset'
+  version: '1-0-0'
 });
 
 registerSchema({
   name: 'content_type_create',
-  version: '1-0-0',
-  context: 'content_type'
+  version: '1-0-0'
 });
 
 registerSchema({
   name: 'api_key_create',
-  version: '1-0-0',
-  context: 'api_key'
+  version: '1-0-0'
 });
 
 function registerSchema (schema) {
-  _schemas[schema.name] = pick(schema, ['name', 'version', 'context']);
+  _schemas[schema.name] = schema;
   _schemas[schema.name].path = buildPath(schema);
 }
 
@@ -82,7 +66,7 @@ function buildPath (schema) {
 
 /**
  * @ngdoc method
- * @name analytics/SnowplowSchemas#get
+ * @name analytics/snowplow/Schemas#get
  * @param {string} schemaName
  * @description
  * Returns schema for the provided schema name
@@ -93,13 +77,13 @@ function get (schemaName) {
 
 /**
  * @ngdoc method
- * @name analytics/SnowplowSchemas#getByEventName
+ * @name analytics/snowplow/Schemas#getByEventName
  * @param {string} eventName
  * @description
  * Returns schema if available for the provided event name
  */
 function getByEventName (eventName) {
-  return get(getAtPath(EVENTS_TO_SCHEMAS, eventName));
+  return get(getSchema(eventName));
 }
 
 const Schemas = {

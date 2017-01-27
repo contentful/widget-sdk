@@ -1,8 +1,9 @@
 import $window from '$window';
-import _ from 'lodash';
+import {once, noop} from 'lodash';
 import {settings} from 'environment';
 import LazyLoader from 'LazyLoader';
 import Schemas from 'analytics/snowplow/Schemas';
+import {transformData} from 'analytics/snowplow/Transformers';
 
 /**
  * @ngdoc service
@@ -35,7 +36,7 @@ function enable () {
  * Prevent further calls to `track` from being added to the queue
  */
 function disable () {
-  _snowplow = _.noop;
+  _snowplow = noop;
 }
 
 /**
@@ -52,42 +53,21 @@ function identify (userId) {
 
 /**
  * @ngdoc method
- * @name analytics/snowplow/Snowplow#trackGenericEvent
+ * @name analytics/snowplow/Snowplow#track
  * @param {string} eventName
- * @param {object} [data={}]
+ *
  * @description
- * Sends a tracking event to Snowplow if a `generic` schema has been registered for
- * the provided event. Transforms data from our analytics format to snowplow's
- * `generic` schema.
+ * Tracks an event in Snowplow if it is registered in the snowplow events service
  */
-function trackGenericEvent (eventName, data) {
-  data = data || {};
+function track (eventName, data) {
   const schema = Schemas.getByEventName(eventName);
-  if (schema && schema.name !== 'generic') {
+  if (schema) {
+    const transformedData = transformData(eventName, data);
     _snowplow('trackUnstructEvent', {
       'schema': schema.path,
-      'data': transformGenericData(eventName, data)
-    });
+      'data': transformedData.data
+    }, transformedData.contexts);
   }
-}
-
-/**
- * @ngdoc method
- * @name analytics/snowplow/Snowplow#trackEntityAction
- * @param {string} eventName
- * @param {object} entityData
- * @description
- * Sends an event to Snowplow with the entity as a linked context.
- */
-function trackEntityAction (eventName, entityData) {
-  const schema = Schemas.getByEventName(eventName);
-  if (!schema) { return; }
-
-  const context = getEntityContext(schema, entityData);
-  _snowplow('trackUnstructEvent', {
-    'schema': schema.path,
-    'data': {}
-  }, [context]);
 }
 
 function initSnowplow () {
@@ -113,51 +93,11 @@ function initSnowplow () {
   // _snowplow('trackPageView');
 }
 
-function transformGenericData (eventName, data) {
-  return {
-    'scope': extractScope(eventName),
-    'action': extractAction(eventName),
-    'organization_id': data.organizationId,
-    'space_id': data.spaceId,
-    'executing_user_id': data.userId,
-    'payload': _.transform(
-      _.omit(data, ['organizationId', 'spaceId', 'userId', 'currentState']), function (acc, val, key) {
-        acc[_.snakeCase(key)] = val;
-      }
-    )
-  };
-}
-
-function getEntityContext (schema, data) {
-  const entitySchema = schema.context;
-  const context = {
-    'schema': Schemas.get(entitySchema).path,
-    'data': {
-      'action': data.actionData.action,
-      'executing_user_id': data.userId,
-      'organization_id': data.organizationId,
-      'space_id': data.spaceId
-    }
-  };
-  context.data[`${entitySchema}_id`] = _.get(data, 'response.data.sys.id');
-
-  return context;
-}
-
-function extractScope (eventName) {
-  return _.first(eventName.split(':'));
-}
-
-function extractAction (eventName) {
-  return _.last(eventName.split(':'));
-}
-
 const Snowplow = {
-  enable: _.once(enable),
+  enable: once(enable),
   disable: disable,
   identify: identify,
-  trackGenericEvent: trackGenericEvent,
-  trackEntityAction: trackEntityAction
+  track: track
 };
 
 export default Snowplow;

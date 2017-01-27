@@ -12,11 +12,10 @@ describe('Snowplow schemas service', function () {
 
     it('gets `content_type_create` schema', function () {
       const schema = this.Schemas.get('content_type_create');
-      expect(schema.context).toBe('content_type');
       expect(schema.path).toBe('iglu:com.contentful/content_type_create/jsonschema/1-0-0');
     });
 
-    it('gets linked context schema', function () {
+    it('gets `content_type` schema', function () {
       const schema = this.Schemas.get('content_type');
       expect(schema.path).toBe('iglu:com.contentful/content_type/jsonschema/1-0-0');
     });

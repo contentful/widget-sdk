@@ -3,7 +3,7 @@ import analytics from 'analytics';
 
 export function entityActionSuccess (_entityId, entityData) {
   const eventName = getEventName(entityData.actionData);
-  analytics.trackEntityAction(eventName, entityData);
+  analytics.track(eventName, entityData);
 }
 
 function getEventName (actionData) {
