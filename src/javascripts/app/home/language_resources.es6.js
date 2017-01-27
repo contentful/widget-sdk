@@ -1,6 +1,6 @@
 import environment from 'environment';
 
-const MARKETING_BASE_URL = environment.settings.marketing_url;
+const MARKETING_BASE_URL = environment.settings.marketingUrl;
 
 export const languageResources = {
   'JavaScript': {
@@ -150,7 +150,7 @@ export const languageResources = {
 export const apiDocsUrls = [
   {name: 'Content Delivery API', url: makeDocsUrl('content-delivery-api')},
   {name: 'Images API', url: makeDocsUrl('images-api')},
-  {name: 'Content Mangagement API', url: makeDocsUrl('content-management-api')},
+  {name: 'Content Management API', url: makeDocsUrl('content-management-api')},
   {name: 'Content Preview API', url: makeDocsUrl('content-preview-api')},
   {name: 'Sync API', url: makeDocsUrl('content-delivery-api/#/reference/synchronization')}
 ];
