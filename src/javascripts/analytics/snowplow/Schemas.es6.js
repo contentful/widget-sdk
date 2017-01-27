@@ -32,7 +32,7 @@ registerSchema({
 
 registerSchema({
   name: 'api_key',
-  version: '1-0-0'
+  version: '2-0-0'
 });
 
 registerSchema({
