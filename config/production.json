@@ -29,7 +29,7 @@
   },
   "segment_io" : "9hgd0ujgqy",
   "snowplow": {
-    "collector_endpoint": "com-contentful.mini.snplow.net:8080",
+    "collector_endpoint": "col.contentful.com",
     "app_id": "userInterfaceTracker",
     "buffer_size": 1
   },
