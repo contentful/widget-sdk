@@ -162,7 +162,7 @@ angular.module('contentful')
       globalObject: 'analytics'
     },
     snowplow: {
-      url: 'http://d1fc8wv8zag5ca.cloudfront.net/2.6.2/sp.js',
+      url: AssetResolver.resolve('app/snowplow.js'),
       globalObject: 'Snowplow'
     }
   };

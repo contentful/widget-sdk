@@ -84,6 +84,9 @@ var src = {
       'vendor/kaltura-16-01-2014/KalturaVO.js',
       'vendor/kaltura-16-01-2014/KalturaServices.js',
       'vendor/kaltura-16-01-2014/KalturaClient.js'
+    ]),
+    snowplow: assertFilesExist([
+      'vendor/snowplow/sp.js'
     ])
   },
   images: [
@@ -175,7 +178,8 @@ gulp.task('js', [
 gulp.task('js/vendor', [
   'js/vendor/main',
   'js/vendor/markdown',
-  'js/vendor/kaltura'
+  'js/vendor/kaltura',
+  'js/vendor/snowplow'
 ]);
 
 gulp.task('js/vendor/main', function () {
@@ -197,6 +201,12 @@ gulp.task('js/vendor/markdown', function () {
     .pipe(buffer())
     .pipe(uglify())
     .pipe(dest);
+});
+
+gulp.task('js/vendor/snowplow', function () {
+  return gulp.src(src.vendorScripts.snowplow)
+    .pipe(concat('snowplow.js'))
+    .pipe(gulp.dest('./public/app'));
 });
 
 gulp.task('js/vendor/kaltura', function () {
@@ -435,6 +445,7 @@ gulp.task('build/static', [
   var files = glob.sync('public/app/**/*.!(js|css)');
   files.push('public/app/kaltura.js');
   files.push('public/app/markdown_vendors.js');
+  files.push('public/app/snowplow.js');
 
   return gulp.src(files, {base: 'public'})
     .pipe(changeBase('build'))
