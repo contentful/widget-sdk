@@ -7,7 +7,7 @@ angular.module('contentful')
   var modalDialog = require('modalDialog');
   var random = require('random');
   var $timeout = require('$timeout');
-  var analytics = require('analytics');
+  var analytics = require('analytics/Analytics');
   var TheStore = require('TheStore');
   var getCurrentView = $parse('context.view');
   var htmlEncode = require('encoder').htmlEncode;

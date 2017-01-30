@@ -1,6 +1,6 @@
 'use strict';
 
-describe('analytics', function () {
+describe('Analytics', function () {
   beforeEach(function () {
     this.validateEvent = sinon.stub();
     module('contentful/test', ($provide) => {
@@ -14,7 +14,7 @@ describe('analytics', function () {
     Config.env = 'production';
     this.restoreEnv = () => { Config.env = originalEnv; };
 
-    this.analytics = this.$inject('analytics');
+    this.analytics = this.$inject('analytics/Analytics');
 
     this.segment = this.$inject('analytics/segment');
     ['enable', 'disable', 'identify', 'track', 'page'].forEach((m) => {
@@ -70,7 +70,7 @@ describe('analytics', function () {
       this.analytics.enable({test: true});
       expect(this.analytics.getSessionData('user.test')).toBe(true);
       this.analytics.disable();
-      expect(this.analytics.getSessionData()).toEqual({});
+      expect(this.analytics.getSessionData('user')).toBeUndefined();
     });
   });
 

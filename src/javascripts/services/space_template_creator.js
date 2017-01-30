@@ -6,7 +6,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
   var $rootScope = $injector.get('$rootScope');
   var $timeout = $injector.get('$timeout');
   var contentPreview = $injector.get('contentPreview');
-  var analytics = $injector.get('analytics');
+  var analytics = $injector.get('analytics/Analytics');
 
   var ASSET_PROCESSING_TIMEOUT = 60000;
   var PUBLISHING_WAIT = 5000;

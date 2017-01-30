@@ -1,14 +1,14 @@
 describe('CreateSpace', function () {
   beforeEach(function () {
     module('contentful/test');
-    this.CreateSpace = this.$inject('services/CreateSpace');
     this.spaceContext = this.$inject('spaceContext');
     this.spaceContext.refreshContentTypes = sinon.stub();
     this.spaceContext.refreshContentTypesUntilChanged = sinon.stub().resolves();
     this.modalDialog = this.$inject('modalDialog');
     this.modalDialog.open = sinon.stub().returns({promise: this.resolve()});
-    this.analytics = this.$inject('analytics');
+    this.analytics = this.$inject('analytics/Analytics');
     this.analytics.track = sinon.stub();
+    this.CreateSpace = this.$inject('services/CreateSpace');
   });
 
   describe('#showDialog', function () {

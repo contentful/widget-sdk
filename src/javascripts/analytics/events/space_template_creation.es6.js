@@ -1,9 +1,9 @@
 import {snakeCase} from 'lodash';
-import analytics from 'analytics';
+import {track} from 'analytics/Analytics';
 
 export function entityActionSuccess (_entityId, entityData) {
   const eventName = getEventName(entityData.actionData);
-  analytics.track(eventName, entityData);
+  track(eventName, entityData);
 }
 
 function getEventName (actionData) {

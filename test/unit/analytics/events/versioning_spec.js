@@ -12,7 +12,7 @@ describe('Tracking versioning', function () {
 
   beforeEach(function () {
     module('contentful/test');
-    this.analytics = this.$inject('analytics');
+    this.analytics = this.$inject('analytics/Analytics');
     sinon.stub(this.analytics, 'track');
     this.analytics.enable({sys: {id: 'uid'}});
 

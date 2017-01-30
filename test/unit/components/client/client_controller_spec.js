@@ -9,7 +9,7 @@ describe('Client Controller', function () {
 
   beforeEach(function () {
     module('contentful/test', ($provide) => {
-      $provide.value('analytics', {
+      $provide.value('analytics/Analytics', {
         enable: sinon.stub(),
         disable: sinon.stub(),
         track: sinon.stub()
@@ -99,7 +99,7 @@ describe('Client Controller', function () {
     });
 
     it('tracks analytics event', function () {
-      const analytics = this.$inject('analytics');
+      const analytics = this.$inject('analytics/Analytics');
       scope.showCreateSpaceDialog();
       sinon.assert.called(analytics.track);
     });
@@ -240,7 +240,7 @@ describe('Client Controller', function () {
           this.tokenStore.user$.set(user);
         };
 
-        this.analytics = this.$inject('analytics');
+        this.analytics = this.$inject('analytics/Analytics');
       });
 
       it('are set', function () {

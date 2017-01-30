@@ -24,7 +24,7 @@ angular.module('contentful')
   var enforcements = require('enforcements');
   var $state = require('$state');
   var logger = require('logger');
-  var analytics = require('analytics');
+  var analytics = require('analytics/Analytics');
   var OrganizationList = require('OrganizationList');
   var spaceContext = require('spaceContext');
   var spaceTemplateEvents = require('analytics/events/space_template_creation');

@@ -20,7 +20,7 @@ describe('apiKeyEditor Directive', function () {
 
       $provide.removeDirectives('cfIcon');
 
-      $provide.value('analytics', {});
+      $provide.value('analytics/Analytics', {});
     });
 
     inject(function ($compile, $rootScope, spaceContext, _accessChecker_) {

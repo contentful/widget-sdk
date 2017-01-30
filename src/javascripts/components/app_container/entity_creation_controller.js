@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 .controller('EntityCreationController', ['require', function EntityCreationController (require) {
-  var analytics = require('analytics');
+  var analytics = require('analytics/Analytics');
   var notification = require('notification');
   var logger = require('logger');
   var enforcements = require('enforcements');

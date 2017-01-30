@@ -63,7 +63,7 @@ describe('cfCreateNewSpace directive', function () {
       $provide.value('spaceTemplateLoader', stubs.spaceTemplateLoader);
       $provide.value('spaceTemplateCreator', stubs.spaceTemplateCreator);
       $provide.value('accessChecker', stubs.accessChecker);
-      $provide.value('analytics', stubs.analytics);
+      $provide.value('analytics/Analytics', stubs.analytics);
       $provide.value('logger', stubs.logger);
       $provide.value('client', stubs.client);
       $provide.value('enforcements', stubs.enforcements);

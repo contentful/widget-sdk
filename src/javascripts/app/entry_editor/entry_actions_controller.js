@@ -6,7 +6,7 @@ angular.module('contentful')
   var Command = require('command');
   var spaceContext = require('spaceContext');
   var $state = require('$state');
-  var analytics = require('analytics');
+  var analytics = require('analytics/Analytics');
   var accessChecker = require('accessChecker');
   var K = require('utils/kefir');
   var Notification = require('app/entity_editor/Notifications').Notification;

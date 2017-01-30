@@ -32,7 +32,7 @@ angular.module('contentful')
 }])
 
 .factory('states/spaces/detail', ['require', function (require) {
-  var analytics = require('analytics');
+  var analytics = require('analytics/Analytics');
   var sectionAccess = require('sectionAccess');
 
   return {

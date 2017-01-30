@@ -26,7 +26,7 @@ describe('Entry List Actions Controller', function () {
         'timeout',
         'broadcast'
       ]);
-      $provide.value('analytics', {
+      $provide.value('analytics/Analytics', {
         track: stubs.track
       });
 

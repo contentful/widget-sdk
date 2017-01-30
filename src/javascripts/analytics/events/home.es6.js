@@ -1,4 +1,4 @@
-import analytics from 'analytics';
+import analytics from 'analytics/Analytics';
 
 export function spaceSelected (space) {
   analytics.track('home:space_selected', {
