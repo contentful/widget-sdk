@@ -21,7 +21,6 @@ test/unit/components/tabs/content_type_editor/cf_list_type_for_spec.js
 test/unit/components/tabs/content_type_editor/cf_content_type_preview_spec.js
 test/unit/components/field_dialog/appearance_controller_spec.js
 test/unit/components/search.js
-test/unit/directives/cf_copy_to_clipboard_directive_spec.js
 test/unit/forms/cf_null_empty_input_spec.js
 test/unit/forms/cf_validate_form_spec.js
 test/unit/forms/cf_validate_model_spec.js
@@ -165,7 +164,6 @@ src/javascripts/directives/cf_relative_datetime.js
 src/javascripts/directives/cf_select_all_input.js
 src/javascripts/directives/tooltip_directive.js
 src/javascripts/directives/cf_custom_logo_directive.js
-src/javascripts/directives/cf_copy_to_clipboard_directive.js
 src/javascripts/directives/cf_when_disabled.js
 src/javascripts/services/assert.js
 src/javascripts/services/contentful_client.js

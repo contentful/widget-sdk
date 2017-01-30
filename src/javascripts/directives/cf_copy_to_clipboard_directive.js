@@ -12,28 +12,38 @@
  * <cf-copy-to-clipboard text="text to be copied" />
  */
 angular.module('contentful')
-.directive('cfCopyToClipboard', ['$injector', function ($injector) {
+.directive('cfCopyToClipboard', ['require', function (require) {
+  var h = require('utils/hyperscript').h;
+  var $document = require('$document');
+  var $timeout = require('$timeout');
+  var userAgent = require('userAgent');
 
-  var $document   = $injector.get('$document');
-  var $timeout    = $injector.get('$timeout');
-  var userAgent   = $injector.get('userAgent');
+  var template = h('button', {
+    class: [
+      'cfnext-form__icon-suffix',
+      'copy-to-clipboard', 'x--input-suffix',
+      'fa', '{{icon}}'
+    ].join(' '),
+    tooltip: 'Copy to clipboard'
+  });
 
   return {
     restrict: 'E',
     scope: true,
-    template: '<button class="cfnext-form__icon-suffix fa {{icon}} ' +
-              'copy-to-clipboard" tooltip="Copy to clipboard"></button>',
+    template: template,
     link: function (scope, elem, attrs) {
 
-      scope.showCopy = !userAgent.isSafari();
+      var canCopy = !userAgent.isSafari();
 
       scope.icon = 'fa-copy';
 
-      if (scope.showCopy) {
+      if (canCopy) {
         elem.on('click', copyToClipboard);
+      } else {
+        elem.css({display: 'none'});
       }
 
-      function copyToClipboard() {
+      function copyToClipboard () {
         // create element, copy content and remove it
         var tmp = $('<input>').attr({
           type: 'text',
@@ -45,8 +55,10 @@ angular.module('contentful')
         tmp.remove();
 
         // show tick for 1.5 seconds
-        scope.icon = 'fa-check';
-        $timeout(function() {
+        scope.$apply(function () {
+          scope.icon = 'fa-check';
+        });
+        $timeout(function () {
           scope.icon = 'fa-copy';
         }, 1500);
 

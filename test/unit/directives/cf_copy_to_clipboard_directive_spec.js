@@ -1,7 +1,7 @@
 'use strict';
 
 describe('cfCopyToClipboard Directive', function () {
-  var stubs;
+  let stubs;
 
   beforeEach(function () {
 
@@ -16,34 +16,33 @@ describe('cfCopyToClipboard Directive', function () {
       ]
     };
 
-    module('contentful/test', function($provide) {
+    module('contentful/test', function ($provide) {
       $provide.value('userAgent', stubs.userAgent);
       $provide.value('$document', stubs.$document);
     });
 
-    this.$rootScope = this.$inject('$rootScope');
-
-    this.compileDirective = function() {
-      this.$compile = this.$inject('$compile');
-      this.element = this.$compile('<cf-copy-to-clipboard text="my text" />')
-                                  (this.$rootScope.$new());
-      this.scope = this.element.scope();
+    this.compileDirective = function () {
+      this.element = this.$compile('<cf-copy-to-clipboard text="my text" />');
+      this.element.appendTo('body');
     };
-
   });
 
-  it('shows copy button', function() {
+  afterEach(function () {
+    this.element.remove();
+  });
+
+  it('shows copy button', function () {
     this.compileDirective();
-    expect(this.scope.showCopy).toBe(true);
+    expect(this.element.is(':visible')).toBe(true);
   });
 
-  it('hides copy button if User Agent is Safari', function() {
+  it('hides copy button if User Agent is Safari', function () {
     stubs.userAgent.isSafari.returns(true);
     this.compileDirective();
-    expect(this.scope.showCopy).toBe(false);
+    expect(this.element.is(':visible')).toBe(false);
   });
 
-  it('copies text to clipboard', function() {
+  it('copies text to clipboard', function () {
     this.compileDirective();
     this.element.find('button').click();
     sinon.assert.calledWith(stubs.$document[0].execCommand, 'copy', false, null);
