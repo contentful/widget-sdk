@@ -231,6 +231,29 @@ export function fromScopeEvent (scope, event, uncurry) {
   });
 }
 
+
+/**
+ * @ngdoc method
+ * @name utils/kefir#fromScopeValue
+ * @description
+ * Create a property that is updated whenever the scope value changes.
+ *
+ * This installs a watcher on the scope that calls the `get` function to obtain
+ * the value.
+ *
+ * @param {Scope} scope
+ * @param {function(scope): T} get
+ *   Function that takes the scope and returns the value
+ * @returns {Property<T>}
+ */
+export function fromScopeValue (scope, get) {
+  const bus = createPropertyBus(get(scope));
+  scope.$watch(get, bus.set);
+  scope.$on('$destroy', bus.end);
+  return bus.property;
+}
+
+
 /**
  * @ngdoc method
  * @name utils/kefir#sampleBy
