@@ -23,10 +23,10 @@ _snowplow.q = [];
  * @description
  * Initialize tracker and load Snowplow script asynchonously
  */
-function enable () {
+export const enable = once(function () {
   initSnowplow();
   LazyLoader.get('snowplow');
-}
+});
 
 /**
  * @ngdoc method
@@ -34,7 +34,7 @@ function enable () {
  * @description
  * Prevent further calls to `track` from being added to the queue
  */
-function disable () {
+export function disable () {
   _snowplow = noop;
 }
 
@@ -46,7 +46,7 @@ function disable () {
  * @description
  * Sets current user id in Snowplow
  */
-function identify (userId) {
+export function identify (userId) {
   _snowplow('setUserId', userId);
 }
 
@@ -58,7 +58,7 @@ function identify (userId) {
  * @description
  * Tracks an event in Snowplow if it is registered in the snowplow events service
  */
-function track (eventName, data) {
+export function track (eventName, data) {
   const schema = getSchema(eventName);
   if (schema) {
     const transformedData = getTransformer(eventName).transform(data);
@@ -91,12 +91,3 @@ function initSnowplow () {
   // _snowplow('enableLinkClickTracking');
   // _snowplow('trackPageView');
 }
-
-const Snowplow = {
-  enable: once(enable),
-  disable: disable,
-  identify: identify,
-  track: track
-};
-
-export default Snowplow;

@@ -7,7 +7,7 @@ describe('Snowplow service', function () {
     this.Events = this.$inject('analytics/snowplow/Events');
     this.Events.getSchema = sinon.stub();
     this.Events.getTransformer = sinon.stub();
-    this.Snowplow = this.$inject('analytics/snowplow/Snowplow').default;
+    this.Snowplow = this.$inject('analytics/snowplow/Snowplow');
     this.getLastEvent = function () {
       return _.last(this.$window.snowplow.q);
     };

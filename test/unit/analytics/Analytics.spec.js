@@ -14,17 +14,18 @@ describe('Analytics', function () {
     Config.env = 'production';
     this.restoreEnv = () => { Config.env = originalEnv; };
 
-    this.analytics = this.$inject('analytics/Analytics');
 
     this.segment = this.$inject('analytics/segment');
     ['enable', 'disable', 'identify', 'track', 'page'].forEach((m) => {
       sinon.stub(this.segment, m);
     });
 
-    this.Snowplow = this.$inject('analytics/snowplow/Snowplow').default;
+    this.Snowplow = this.$inject('analytics/snowplow/Snowplow');
     ['enable', 'disable', 'identify', 'track'].forEach((m) => {
       sinon.stub(this.Snowplow, m);
     });
+
+    this.analytics = this.$inject('analytics/Analytics');
 
     this.userData = {
       firstName: 'Hans',

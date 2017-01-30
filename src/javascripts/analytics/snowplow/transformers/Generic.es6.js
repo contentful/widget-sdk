@@ -8,7 +8,6 @@ import {transform, omit, snakeCase, first, last} from 'lodash';
  * format to fit Snowplow's `generic` schema.
  */
 export default function (eventName, data) {
-  data = data || {};
   return {
     data: transformGenericData(eventName, data)
   };

@@ -1,6 +1,11 @@
 import {env} from 'Config';
 import segment from 'analytics/segment';
-import Snowplow from 'analytics/snowplow/Snowplow';
+import {
+  enable as enableSnowplow,
+  disable as disableSnowplow,
+  track as trackSnowplow,
+  identify as identifySnowplow
+} from 'analytics/snowplow/Snowplow';
 import {prepareUserData} from 'analytics/UserData';
 import analyticsConsole from 'analytics/console';
 import stringifySafe from 'stringifySafe';
@@ -53,7 +58,7 @@ export const enable = _.once(function (user) {
 
   if (shouldSend) {
     segment.enable();
-    Snowplow.enable();
+    enableSnowplow();
   }
 
   identify(prepareUserData(removeCircularRefs(user)));
@@ -69,7 +74,7 @@ export const enable = _.once(function (user) {
  */
 export function disable () {
   segment.disable();
-  Snowplow.disable();
+  disableSnowplow();
   isDisabled = true;
   session = {};
   sendSessionDataToConsole();
@@ -103,7 +108,7 @@ export function track (event, data) {
     data = _.isObject(data) ? _.cloneDeep(data) : {};
     data = _.extend(data, getBasicPayload());
     segment.track(event, data);
-    Snowplow.track(event, data);
+    trackSnowplow(event, data);
     analyticsConsole.add(event, data);
   }
 }
@@ -123,7 +128,7 @@ export function identify (extension) {
 
   if (userId && user) {
     segment.identify(userId, user);
-    Snowplow.identify(userId);
+    identifySnowplow(userId);
   }
 
   sendSessionDataToConsole();
