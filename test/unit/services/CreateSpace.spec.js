@@ -49,7 +49,7 @@ describe('CreateSpace', function () {
     it('tracks analytics event', function () {
       sinon.assert.calledWith(
         this.analytics.track,
-        'space:created_from_template',
+        'space:create',
         {templateName: 'template-1'}
       );
     });

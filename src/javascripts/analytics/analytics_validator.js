@@ -38,7 +38,7 @@ angular.module('contentful')
   ],
   space: [
     'template_selected',
-    'created_from_template'
+    'create'
   ],
   search: [
     'view_folder_added',

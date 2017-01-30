@@ -2,6 +2,7 @@ import {track} from 'analytics/Analytics';
 import modalDialog from 'modalDialog';
 import spaceContext from 'spaceContext';
 import $rootScope from '$rootScope';
+import {get} from 'lodash';
 
 /**
  * Displays the space creation dialog. Refreshes content types on successful
@@ -26,10 +27,12 @@ export function showDialog (organizationId) {
 }
 
 function handleSpaceCreationSuccess (template) {
+
+  track('space:create', {
+    templateName: get(template, 'name')
+  });
+
   if (template) {
-    track('space:created_from_template', {
-      templateName: template.name
-    });
     spaceContext.refreshContentTypesUntilChanged().then(function () {
       $rootScope.$broadcast('reloadEntries');
     });

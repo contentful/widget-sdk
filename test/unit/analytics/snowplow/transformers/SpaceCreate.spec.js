@@ -4,7 +4,7 @@ describe('Space create transformer', function () {
     this.transformer = this.$inject('analytics/snowplow/transformers/SpaceCreate').default;
   });
 
-  describe('transforms data for `space:created_from_template` event', function () {
+  describe('space created from template', function () {
     beforeEach(function () {
       const eventData = {
         userId: 'user-1',
@@ -12,7 +12,7 @@ describe('Space create transformer', function () {
         spaceId: 's1',
         templateName: 'my_template'
       };
-      this.transformed = this.transformer('space:created_from_template', eventData);
+      this.transformed = this.transformer('space:create', eventData);
     });
 
     it('data is an empty object', function () {
@@ -39,6 +39,22 @@ describe('Space create transformer', function () {
         'organization_id': 'org',
         'space_id': 's1'
       });
+    });
+  });
+
+  describe('space created without template', function () {
+    beforeEach(function () {
+      const eventData = {
+        userId: 'user-1',
+        organizationId: 'org',
+        spaceId: 's1',
+        templateName: undefined
+      };
+      this.transformed = this.transformer('space:create', eventData);
+    });
+
+    it('does not include space as a context', function () {
+      expect(this.transformed.contexts.length).toBe(1);
     });
   });
 });

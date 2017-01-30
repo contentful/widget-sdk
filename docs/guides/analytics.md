@@ -115,7 +115,7 @@ yet).
 | space_switcher      | create_clicked                        | -
 | space_switcher      | space_switched                        | <code>targetSpaceId: id-string<br>targetSpaceName: string</code>
 | space               | template_selected                     | <code>templateName: string</code>
-| space               | created_from_template                 | <code>templateName: string</code>
+| space               | create                                | <code>templateName: string</code>
 | search              | view_folder_added                     | <code>source: string (content, media)</code>
 | search              | view_folder_deleted                   | <code>source: string</code>
 | search              | view_added                            | <code>source: string</code>

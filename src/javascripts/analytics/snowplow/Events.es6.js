@@ -22,7 +22,7 @@ registerEntityActionEvent('entry:create');
 registerEntityActionEvent('api_key:create');
 registerEntityActionEvent('asset:create');
 
-registerEvent('space:created_from_template', 'space_create', 'spaceCreate');
+registerEvent('space:create', 'space_create', 'spaceCreate');
 
 function registerGenericEvent (event) {
   registerEvent(event, 'generic', 'generic');
