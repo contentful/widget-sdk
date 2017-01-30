@@ -1,5 +1,6 @@
 import EntityAction from 'analytics/snowplow/transformers/SpaceEntityAction';
 import Generic from 'analytics/snowplow/transformers/Generic';
+import SpaceCreate from 'analytics/snowplow/transformers/SpaceCreate';
 
 /**
  * @ngdoc service
@@ -11,7 +12,8 @@ import Generic from 'analytics/snowplow/transformers/Generic';
 
 const _transformers = {
   'entityAction': EntityAction,
-  'generic': Generic
+  'generic': Generic,
+  'spaceCreate': SpaceCreate
 };
 
 /**

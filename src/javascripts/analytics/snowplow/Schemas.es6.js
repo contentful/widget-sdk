@@ -54,6 +54,21 @@ registerSchema({
   version: '1-0-0'
 });
 
+registerSchema({
+  name: 'space_create',
+  version: '1-0-0'
+});
+
+registerSchema({
+  name: 'space',
+  version: '1-0-0'
+});
+
+registerSchema({
+  name: 'space_template',
+  version: '1-0-0'
+});
+
 function registerSchema (schema) {
   _schemas[schema.name] = schema;
   _schemas[schema.name].path = buildPath(schema);
