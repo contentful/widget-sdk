@@ -74,6 +74,36 @@ export function accountUrl (path) {
  */
 export const supportUrl = authUrl('integrations/zendesk/login');
 
+/**
+ * @ngdoc property
+ * @name Config#env
+ * @description
+ * Environment - e.g. production, staging, development
+ *
+ * @returns {string}
+ */
+export const env = settings.environment;
+
+/**
+ * @ngdoc property
+ * @name Config#domain
+ * @description
+ * Domain name without subdomain, e.g. contentful.com
+ *
+ * @returns {string}
+ */
+export const domain = settings.main_domain;
+
+/**
+ * @ngdoc property
+ * @name Config#snowplow
+ * @description
+ * Snowplow config object
+ *
+ * @returns {object}
+ */
+export const snowplow = settings.snowplow;
+
 function ensureLeadingSlash (x) {
   x = x || '';
   if (x.charAt(0) === '/') {

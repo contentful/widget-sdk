@@ -1,6 +1,6 @@
 import $window from '$window';
 import {once, noop} from 'lodash';
-import {settings} from 'environment';
+import {snowplow as snowplowConfig, domain} from 'Config';
 import LazyLoader from 'LazyLoader';
 import {getSchema, getTransformer} from 'analytics/snowplow/Events';
 
@@ -75,11 +75,11 @@ function initSnowplow () {
   $window.GlobalSnowplowNamespace = ['snowplow'];
   $window.snowplow = _snowplow;
 
-  _snowplow('newTracker', 'co', settings.snowplow.collector_endpoint, {
-    appId: settings.snowplow.app_id,
+  _snowplow('newTracker', 'co', snowplowConfig.collector_endpoint, {
+    appId: snowplowConfig.app_id,
     platform: 'web',
-    bufferSize: settings.snowplow.buffer_size,
-    cookieDomain: settings.main_domain,
+    bufferSize: snowplowConfig.buffer_size,
+    cookieDomain: domain,
     contexts: {
       gaCookies: true
     }

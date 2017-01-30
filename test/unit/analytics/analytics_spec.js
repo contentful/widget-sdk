@@ -9,10 +9,10 @@ describe('analytics', function () {
 
     // we want to simulate production environment
     // this way data hits the Segment and Snowplow services
-    const environment = this.$inject('environment');
-    const originalEnv = environment.env;
-    environment.env = 'production';
-    this.restoreEnv = () => { environment.env = originalEnv; };
+    const Config = this.$inject('Config');
+    const originalEnv = Config.env;
+    Config.env = 'production';
+    this.restoreEnv = () => { Config.env = originalEnv; };
 
     this.analytics = this.$inject('analytics');
 

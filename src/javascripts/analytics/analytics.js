@@ -29,7 +29,7 @@ angular.module('contentful')
  * again.
  */
 .factory('analytics', ['require', function (require) {
-  var env = require('environment').env;
+  var env = require('Config').env;
   var segment = require('analytics/segment');
   var userData = require('analytics/userData');
   var analyticsConsole = require('analytics/console');
