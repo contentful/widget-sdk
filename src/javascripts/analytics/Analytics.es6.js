@@ -106,7 +106,7 @@ export function getSessionData (path, defaultValue) {
 export function track (event, data) {
   if (validateEvent(event)) {
     data = _.isObject(data) ? _.cloneDeep(data) : {};
-    data = _.extend(data, getBasicPayload());
+    data = removeCircularRefs(_.extend(data, getBasicPayload()));
     segment.track(event, data);
     trackSnowplow(event, data);
     analyticsConsole.add(event, data);
