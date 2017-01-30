@@ -145,3 +145,7 @@ yet).
 | paywall             | viewed                                | <code>userCanUpgradePlan: bool</code>
 | paywall             | closed                                | <code>userCanUpgradePlan: bool</code>
 | paywall             | upgrade_clicked                       | <code>userCanUpgradePlan: bool</code>
+| content_type        | create                                | <code>actionData: obj<br>response: obj</code>
+| entry               | create                                | <code>actionData: obj<br>response: obj</code>
+| asset               | create                                | <code>actionData: obj<br>response: obj</code>
+| api_key             | create                                | <code>actionData: obj<br>response: obj</code>
