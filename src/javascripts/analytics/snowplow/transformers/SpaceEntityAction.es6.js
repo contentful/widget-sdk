@@ -9,9 +9,14 @@ import {getSchema} from 'analytics/snowplow/Schemas';
  * content type create) to Snowplow format, including the entity as a linked context.
  */
 export default function (_eventName, entityData) {
+  const contexts = [getEntityContext(entityData)];
+  if (entityData.templateName) {
+    contexts.push(getSpaceTemplateContext(entityData));
+  }
+
   return {
     data: {},
-    contexts: [getEntityContext(entityData)]
+    contexts: contexts
   };
 }
 
@@ -20,23 +25,28 @@ function getEntityContext (entityData) {
   return {
     'schema': schema.path,
     'data': extend(
-      getBaseData(entityData),
-      getEntitySpecifcData(schema.name, entityData)
+      getBaseEntityData(entityData),
+      getEntitySpecificData(schema.name, entityData)
     )
   };
 }
 
 function getBaseData (entityData) {
   return {
-    'action': entityData.actionData.action,
     'executing_user_id': entityData.userId,
     'organization_id': entityData.organizationId,
-    'space_id': entityData.spaceId,
-    'version': entityData.response.data.sys.version
+    'space_id': entityData.spaceId
   };
 }
 
-function getEntitySpecifcData (schemaName, entityData) {
+function getBaseEntityData (entityData) {
+  return extend({
+    'action': entityData.actionData.action,
+    'version': entityData.response.data.sys.version
+  }, getBaseData(entityData));
+}
+
+function getEntitySpecificData (schemaName, entityData) {
   const data = {};
   data[`${schemaName}_id`] = get(entityData, 'response.data.sys.id');
   // We track 2 additional fields on entries compared to all other entities
@@ -45,4 +55,11 @@ function getEntitySpecifcData (schemaName, entityData) {
     data['revision'] = get(entityData, 'response.data.sys.revision');
   }
   return data;
+}
+
+function getSpaceTemplateContext (entityData) {
+  return {
+    'schema': getSchema('space_template').path,
+    'data': extend({'name': entityData.templateName}, getBaseData(entityData))
+  };
 }

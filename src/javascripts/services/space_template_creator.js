@@ -107,7 +107,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
           item: item,
           actionData: actionData,
           response: response
-        });
+        }, self.templateName);
         return response;
       };
     },
@@ -380,9 +380,10 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
   }
 
   return {
-    getCreator: function (spaceContext, itemHandlers) {
+    getCreator: function (spaceContext, itemHandlers, templateName) {
       var templateCreator = new TemplateCreator(spaceContext);
       templateCreator.itemHandlers = itemHandlers;
+      templateCreator.templateName = templateName;
       return templateCreator;
     }
   };

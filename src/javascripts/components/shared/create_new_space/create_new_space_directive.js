@@ -27,7 +27,7 @@ angular.module('contentful')
   var analytics = require('analytics/Analytics');
   var OrganizationList = require('OrganizationList');
   var spaceContext = require('spaceContext');
-  var spaceTemplateEvents = require('analytics/events/space_template_creation');
+  var spaceTemplateEvents = require('analytics/events/SpaceCreation');
 
   controller.organizations = OrganizationList.getAll();
   // Keep track of the view state
@@ -188,14 +188,21 @@ angular.module('contentful')
   }
 
   function loadSelectedTemplate () {
-    controller.templateCreator = spaceTemplateCreator.getCreator(spaceContext, {
+    var itemHandlers = {
       // no need to show status of individual items
       onItemSuccess: spaceTemplateEvents.entityActionSuccess,
       onItemError: _.noop
+    };
 
-    });
+    var selectedTemplate = controller.newSpace.selectedTemplate;
 
-    return spaceTemplateLoader.getTemplate(controller.newSpace.selectedTemplate)
+    controller.templateCreator = spaceTemplateCreator.getCreator(
+      spaceContext,
+      itemHandlers,
+      selectedTemplate.name
+    );
+
+    return spaceTemplateLoader.getTemplate(selectedTemplate)
     .then(createTemplate);
   }
 
