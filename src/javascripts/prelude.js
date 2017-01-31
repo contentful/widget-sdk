@@ -102,11 +102,14 @@ angular.module('cf.es6')
 
 
 (function () {
-  window.System = {
-    register: register
+  var registry = [];
+  window.AngularSystem = {
+    register: register,
+    registry: registry
   };
 
   function register (id, deps, run) {
+    registry.push([id, deps, run]);
     registerDirectoryAlias(id);
     angular.module('cf.es6')
     .factory(id, ['require', function (require) {
