@@ -51,6 +51,9 @@ angular.module('contentful')
     'field_added',
     'custom_extension_selected'
   ],
+  experiment: [
+    'start'
+  ],
   entry_editor: [
     'state_changed',
     'disabled_fields_visibility_toggled',

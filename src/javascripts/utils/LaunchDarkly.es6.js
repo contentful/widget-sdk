@@ -1,13 +1,17 @@
 import LD from 'libs/launch-darkly-client';
 
 import {user$} from 'tokenStore';
-import {createPropertyBus} from 'utils/kefir';
+import {includes, noop} from 'lodash';
 import {launchDarkly as config} from 'Config';
-import {curry, forEach, includes, remove, noop} from 'lodash';
+import {
+  fromEvents,
+  getValue,
+  merge as mergeValues,
+  sampleBy
+} from 'utils/kefir';
 
 
 let client;
-const testToBusesMap = {};
 const DEFAULT_VAL = null;
 
 /**
@@ -19,48 +23,21 @@ const DEFAULT_VAL = null;
  * @description
  * Initialize a LaunchDarkly client.
  *
- * @param {string} userId - unique user ID
  */
-export function init (userId = 'anonymous-user') {
+export function init () {
   // singleton
   if (client) {
     return;
   }
 
   const defaultAnonUser = {
-    key: userId,
+    key: 'anonymous-user',
     anonymous: true
   };
 
   client = LD.initialize(config.envId, defaultAnonUser, {
     bootstrap: 'localStorage'
   });
-
-  // since get($scope, testName) always returns immediately, it might
-  // return a stale value. This makes sure that all requested
-  // variations/test flags get their actual values once
-  // LaunchDarkly has completed initialization.
-  client.on('ready', () => {
-    forEach(testToBusesMap, (propBuses, testName) => {
-      forEach(propBuses, propBus => {
-        propBus.set(client.variation(testName, DEFAULT_VAL));
-      });
-    });
-  });
-
-  const validUser = user => user && user.email;
-
-  // a qualified user doesn't belong to a paying/converted org
-  const isQualifiedUser = ({organizationMemberships}) => {
-    const convertedStatuses = ['paid', 'free_paid'];
-
-    return !organizationMemberships.reduce((acc, {organization}) => {
-      const {subscription: {status: orgStatus}} = organization;
-      const isOrgConverted = includes(convertedStatuses, orgStatus);
-
-      return acc || isOrgConverted;
-    }, false);
-  };
 
   const changeUserContext = ({email, firstName, lastName, organizationMemberships}) => {
     // custom properties can only be strings, bools, numbers or lists of those
@@ -94,66 +71,58 @@ export function init (userId = 'anonymous-user') {
     .onValue(changeUserContext);
 }
 
+function validUser (user) {
+  return user && user.email;
+}
+
+// a qualified user doesn't belong to a paying/converted org
+function isQualifiedUser ({organizationMemberships}) {
+  const convertedStatuses = ['paid', 'free_paid'];
+
+  return !organizationMemberships.reduce((acc, {organization}) => {
+    const {subscription: {status: orgStatus}} = organization;
+    const isOrgConverted = includes(convertedStatuses, orgStatus);
+
+    return acc || isOrgConverted;
+  }, false);
+}
+
+
 /**
  * @ngdoc method
  * @name utils/LaunchDarkly#get
  * @usage[js]
  * const ld = require('utils/LaunchDarkly')
- * ld.get($scope, 'my-awesome-test')
+ * ld.get('my-awesome-test')
+ * K.onValueScope($scope, awesomeTest$, callback) // to bind to lifetime of scope
  * // or
- * const getFlagVal = ld.get($scope)
- * const awesomeTest$ = getFlagVal('my-awesome-test')
- * awesomeTest$.onValue(console.log.bind(console, 'val for my-awesome-test:'))
+ * awesomeTest$.onValue(callback)
  *
  * @description
- * Fetches the value for the requested test. It accepts angular scope
- * object and the name of the test that you want. It returns a kefir
- * property bus. This bus is a kefir property and will give you the latest
- * value for the test if it is changed in Launch Darkly.
- * The scope should usually be provided so that when the directive being A/B
- * tested is destroyed, the test property bus(es) that it was utilizing
- * is/are marked for garbage collection.
- * The method is curried so you can provide scope just once and use the method
- * returned to request as many tests as you want and the all will be
- * be marked for gc when the initial scope is destroyed.
+ * Fetches the value for the requested test.
+ * It returns a kefir property that will always give you the
+ * value for the test as it is on Launch Darkly servers.
  *
- * @param {Scope} $scope
- * @param {String} featureFlag
+ * @param {String} testName
  * @returns {utils/kefir.PropertyBus}
  */
-export const get = curry(_get);
+export function get (testName) {
+  const testVal$ = mergeValues([
+    fromEvents(client, 'ready'),
+    fromEvents(client, `change:${testName}`)
+  ]);
 
-function _get ($scope, testName) {
-  const initVal = client.variation(testName, DEFAULT_VAL);
-  // each invocation of get($s, test) receives its own
-  // property bus so that they can all end independently
-  const testBus = createPropertyBus(initVal, $scope);
+  return sampleBy(testVal$, () => {
+    // Launch Darkly has no way of preventing anonymous users from
+    // receiving test flags so this makes sure that if the user
+    // isn't qualified the test value for any test name is always
+    // `null`
+    const currentUser = getValue(user$);
 
-  client.on(`change:${testName}`, testBus.set);
-
-  // un-memoize propertyBus for test
-  testBus.property.onEnd(() => {
-    removeFromMap(testName, testBus);
-  });
-
-  addToMap(testName, testBus);
-  return testBus.property;
-}
-
-function removeFromMap (testName, testBus) {
-  remove(testToBusesMap[testName], bus => bus === testBus);
-
-  if (!testToBusesMap[testName].length) {
-    delete testToBusesMap[testName];
-  }
-}
-
-function addToMap (testName, testBus) {
-  const testBuses = testToBusesMap[testName];
-
-  if (Array.isArray(testBuses)) {
-    testToBusesMap[testName].push(testBus);
-  } else {
-    testToBusesMap[testName] = [testBus];
-  }
+    if (isQualifiedUser(currentUser)) {
+      return client.variation(testName, DEFAULT_VAL);
+    } else {
+      return DEFAULT_VAL;
+    }
+  }).skipDuplicates();
 }

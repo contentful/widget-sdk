@@ -166,3 +166,4 @@ yet).
 | api_key             | create                                | <code>actionData: obj<br>response: obj</code>
 | api                 | boilerplate                           | <code>platform: string<br>action: select|download|github</code>
 | api                 | clipboard_copy                        | <code>source: space|cda|cpa</code>
+| experiment          | start                                 | <code>id: string<br />variation: bool</code>
