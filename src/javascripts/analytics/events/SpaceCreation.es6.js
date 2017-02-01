@@ -1,9 +1,18 @@
-import {snakeCase, extend, omitBy, isUndefined} from 'lodash';
+import {snakeCase, extend, omitBy, isUndefined, includes} from 'lodash';
 import {track} from 'analytics/Analytics';
 
 export function entityActionSuccess (_entityId, entityData, templateName) {
   const eventName = getEventName(entityData.actionData);
-  track(eventName, omitBy(extend({template: templateName}, entityData), isUndefined));
+  const eventsToSend = [
+    'content_type:create',
+    'entry:create',
+    'asset:create',
+    'api_key:create'
+  ];
+
+  if (includes(eventsToSend, eventName)) {
+    track(eventName, omitBy(extend({template: templateName}, entityData), isUndefined));
+  }
 }
 
 function getEventName (actionData) {

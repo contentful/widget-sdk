@@ -9,7 +9,6 @@ import {
 import {prepareUserData} from 'analytics/UserData';
 import analyticsConsole from 'analytics/console';
 import stringifySafe from 'stringifySafe';
-import validateEvent from 'analytics/validateEvent';
 import _ from 'lodash';
 
 /**
@@ -104,13 +103,11 @@ export function getSessionData (path, defaultValue) {
  * if it is on the valid events list.
  */
 export function track (event, data) {
-  if (validateEvent(event)) {
-    data = _.isObject(data) ? _.cloneDeep(data) : {};
-    data = removeCircularRefs(_.extend(data, getBasicPayload()));
-    segment.track(event, data);
-    trackSnowplow(event, data);
-    analyticsConsole.add(event, data);
-  }
+  data = _.isObject(data) ? _.cloneDeep(data) : {};
+  data = removeCircularRefs(_.extend(data, getBasicPayload()));
+  segment.track(event, data);
+  trackSnowplow(event, data);
+  analyticsConsole.add(event, data);
 }
 
 /**
