@@ -54,7 +54,6 @@ export function init (anonUserId) {
 
   user$
     .filter(isValidUser)
-    .take(1)
     .onValue(changeUserContext);
 }
 

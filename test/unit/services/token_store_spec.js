@@ -186,6 +186,13 @@ describe('Token store service', function () {
       this.refresh();
       this.K.assertCurrentValue(this.tokenStore.user$, this.user);
     });
+
+    it('skips duplicates', function () {
+      const usersArr = this.K.extractValues(this.tokenStore.user$);
+      this.refresh();
+      this.refresh();
+      expect(usersArr.filter(_.identity).length).toBe(1);
+    });
   });
 
   describe('#spaces$', function () {
