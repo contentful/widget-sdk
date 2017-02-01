@@ -29,8 +29,8 @@
   },
   "segment_io" : "9hgd0ujgqy",
   "snowplow": {
-    "collector_endpoint": "com-contentful.mini.snplow.net:443",
-    "app_id": "userInterfaceTracker",
+    "collector_endpoint": "com-contentful.mini.snplow.net:8080",
+    "app_id": "userInterfaceDev",
     "buffer_size": 1
   },
   "google" : {
