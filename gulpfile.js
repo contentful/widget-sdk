@@ -86,7 +86,7 @@ var src = {
       'vendor/kaltura-16-01-2014/KalturaClient.js'
     ]),
     snowplow: assertFilesExist([
-      'vendor/snowplow/sp.js'
+      'vendor/snowplow/sp-2.6.2.js'
     ])
   },
   images: [
