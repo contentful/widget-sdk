@@ -1,6 +1,10 @@
-import {get as getAtPath, snakeCase, partial} from 'lodash';
-import {getTransformer as fetchTransformer} from 'analytics/snowplow/Transformers';
+import {get as getAtPath, snakeCase} from 'lodash';
 import {getSchema as fetchSchema} from 'analytics/snowplow/Schemas';
+
+import EntityAction from 'analytics/snowplow/transformers/SpaceEntityAction';
+import Generic from 'analytics/snowplow/transformers/Generic';
+import SpaceCreate from 'analytics/snowplow/transformers/SpaceCreate';
+
 
 /**
  * @ngdoc service
@@ -22,14 +26,14 @@ registerEntityActionEvent('entry:create');
 registerEntityActionEvent('api_key:create');
 registerEntityActionEvent('asset:create');
 
-registerEvent('space:create', 'space_create', 'spaceCreate');
+registerEvent('space:create', 'space_create', SpaceCreate);
 
 function registerGenericEvent (event) {
-  registerEvent(event, 'generic', 'generic');
+  registerEvent(event, 'generic', Generic);
 }
 
 function registerEntityActionEvent (event) {
-  registerEvent(event, snakeCase(event), 'entityAction');
+  registerEvent(event, snakeCase(event), EntityAction);
 }
 
 function registerEvent (event, schema, transformer) {
@@ -41,28 +45,22 @@ function registerEvent (event, schema, transformer) {
 
 /**
  * @ngdoc method
- * @name analytics/snowplow/Events#getTransformer
+ * @name analytics/snowplow/Events#transform
  * @param {string} eventName
- * @returns {object} transformer
+ * @param {object} data
+ * @returns {object} transformedData
  * @description
- * Returns object with transform method. Transform method has `eventName`
- * partially applied and just needs to be called with the `data`.
- *
- * @usage[js]
- * const rawData = {foo: '!!!!'}
- * const transformer = Events.getTransformer('content_type:create');
- * const dataForSnowplow = transformer.transform(rawData);
+ * Returns data transformed for Snowplow
  */
-export function getTransformer (eventName) {
-  const name = getAtPath(_events, [eventName, 'transformer']);
-  return {
-    transform: partial(fetchTransformer(name), eventName)
-  };
+export function transform (event, data) {
+  const transformer = getAtPath(_events, [event, 'transformer']);
+  return transformer(event, data);
 }
+
 
 /**
  * @ngdoc method
- * @name analytics/snowplow/Events#getTransformer
+ * @name analytics/snowplow/Events#getSchema
  * @param {string} eventName
  * @returns {object} schema
  * @description

@@ -1,4 +1,4 @@
-import {transform, omit, snakeCase, first, last} from 'lodash';
+import {mapKeys, omit, snakeCase, first, last} from 'lodash';
 
 /**
  * @ngdoc service
@@ -20,9 +20,9 @@ function transformGenericData (eventName, data) {
     'organization_id': data.organizationId,
     'space_id': data.spaceId,
     'executing_user_id': data.userId,
-    'payload': transform(
-      omit(data, ['organizationId', 'spaceId', 'userId', 'currentState']), function (acc, val, key) {
-        acc[snakeCase(key)] = val;
+    'payload': mapKeys(
+      omit(data, ['organizationId', 'spaceId', 'userId', 'currentState']), function (_val, key) {
+        return snakeCase(key);
       }
     )
   };

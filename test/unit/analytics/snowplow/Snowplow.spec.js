@@ -6,7 +6,7 @@ describe('Snowplow service', function () {
     this.LazyLoader.get = sinon.stub();
     this.Events = this.$inject('analytics/snowplow/Events');
     this.Events.getSchema = sinon.stub();
-    this.Events.getTransformer = sinon.stub();
+    this.Events.transform = sinon.stub();
     this.Snowplow = this.$inject('analytics/snowplow/Snowplow');
     this.getLastEvent = function () {
       return _.last(this.$window.snowplow.q);
@@ -55,11 +55,10 @@ describe('Snowplow service', function () {
 
   describe('#track', function () {
     it('sends transformed data to snowplow queue', function () {
-      const transformedData = {
+      this.Events.transform.returns({
         data: {something: 'someValue'},
         contexts: ['ctx']
-      };
-      this.Events.getTransformer.returns({transform: () => transformedData});
+      });
       this.Events.getSchema.returns({
         name: 'some_entity_update',
         path: 'main/schema/path'
