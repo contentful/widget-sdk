@@ -19,7 +19,7 @@ describe('Snowplow service', function () {
     });
 
     it('creates global `snowplow` object', function () {
-      expect(typeof this.$window.snowplow).toBe('function');
+      expect(typeof this.$window.snowplow).toBe('object');
     });
 
     it('loads external script', function () {
