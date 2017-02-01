@@ -33,39 +33,44 @@ angular.module('cf.app')
 }])
 
 .controller('SnapshotSelectorController', ['$scope', 'require', function ($scope, require) {
+  var K = require('utils/kefir');
   var spaceContext = require('spaceContext');
   var moment = require('moment');
-  var $q = require('$q');
   var Paginator = require('Paginator');
+  var snapshotStatus = require('app/snapshots/helpers/SnapshotStatus');
+  var snapshotDecorator = require('app/snapshots/helpers/SnapshotDecorator');
 
   var PER_PAGE = 20;
 
+  var otDoc = $scope.otDoc;
+  var entryId = $scope.entityInfo.id;
   var snapshotsById = {};
 
   $scope.isAscending = true;
   $scope.isLoading = false;
   $scope.paginator = Paginator.create(PER_PAGE);
   $scope.loadMore = loadMore;
-  $scope.isCurrent = isCurrent;
+  $scope.isActive = isActive;
   $scope.sortByLastEdited = sortByLastEdited;
   $scope.sortByEditor = sortByEditor;
   $scope.sortByStatus = sortByStatus;
+  $scope.snapshotStatus = snapshotStatus;
 
   $scope.snapshots = [];
   $scope.paginator.setTotal(0);
   $scope.paginator.setPage(0);
 
-  var removeInitLoadHandler = $scope.$watch('showSnapshotList', lazyLoad);
 
-  function isCurrent (snapshot) {
+  var snapshotsFirstShown$ = $scope.showSnapshotSelector$
+      .filter(function (val) { return val; })
+      .take(1);
+
+  K.onValueScope($scope, snapshotsFirstShown$, load);
+
+  var entrySys = K.getValue(otDoc.sysProperty);
+
+  function isActive (snapshot) {
     return $scope.snapshot.sys.id === snapshot.sys.id;
-  }
-
-  function lazyLoad (listVisible) {
-    if (listVisible) {
-      load();
-      removeInitLoadHandler();
-    }
   }
 
   function loadMore () {
@@ -76,7 +81,6 @@ angular.module('cf.app')
   }
 
   function load () {
-    var entryId = $scope.entityInfo.id;
     var query = {
       skip: $scope.paginator.getSkipParam(),
       limit: PER_PAGE + 1
@@ -87,25 +91,12 @@ angular.module('cf.app')
     return spaceContext.cma.getEntrySnapshots(entryId, query)
     .then(function (res) { return res.items; })
     .then(addUnique)
-    .then(decorateWithAuthorName)
+    .then(function (snapshots) { return snapshotDecorator.withCurrent(entrySys, snapshots); })
+    .then(function (snapshots) { return snapshotDecorator.withAuthorName(spaceContext, snapshots); })
     .then(function (snapshots) {
       $scope.snapshots = $scope.snapshots.concat(snapshots);
       $scope.isLoading = false;
     });
-  }
-
-  function decorateWithAuthorName (snapshots) {
-    var promises = snapshots.map(function (snapshot) {
-      return spaceContext.users.get(snapshot.sys.createdBy.sys.id)
-        .then(function (user) {
-          var authorName = user ? user.getName() : '';
-
-          snapshot.sys.createdBy.authorName = authorName;
-          return snapshot;
-        });
-    });
-
-    return $q.all(promises);
   }
 
   function addUnique (snapshots) {
