@@ -49,6 +49,8 @@ angular.module('contentful')
     'image/bmp',
     'image/x-windows-bmp',
     'image/gif',
+    // This is not a valid MIME type but we supported it in the past.
+    'image/jpg',
     'image/jpeg',
     'image/pjpeg',
     'image/x-jps',
