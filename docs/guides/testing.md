@@ -218,38 +218,7 @@ this.$apply()
 // `cb` is called with 'val'
 ~~~
 
-### Services
-
-The `this.mockService()` helper mocks all methods in an Angular service.
-
-Assume the `myService` service is an object that exports the `foo` and `bar`
-methods.
-
-~~~js
-it('mocks a service', function () {
-  const mock = this.mockService('myService', {
-    bar: true
-  })
-
-  mock.foo.returns('foo')
-
-  const service = this.$inject('myService')
-  expect(service.foo()).toBe('foo')
-  expect(service.bar).toBe(true)
-})
-~~~
-
-The object passed to `this.mockService()` contains custom extensions to the
-service. It only allows you to change properties that already exist on the
-service.
-
-There is a `mocks` module and a `cfStub` service that provide elaborate mocks
-for certain parts of the app. Use of `cfStub` service is *deprecated* and needs
-some major cleanup.
-
-
-Mock dependencies
------------------
+### Individual methods
 
 If you want to mock only some methods in a dependency of the tested unit, but
 leave other properties intact, you can simply inject it in the test and replace
@@ -316,6 +285,39 @@ it('should derp', function () {
   expect(this.foo()).toBe('derp');
 });
 ~~~
+
+
+### Services
+
+Use `this.mockService()` helper to mock *all* methods in an Angular service.
+
+Assume the `myService` service is an object that exports the `foo` and `bar`
+methods.
+
+~~~js
+it('mocks a service', function () {
+  const mock = this.mockService('myService', {
+    bar: true
+  })
+
+  mock.foo.returns('foo')
+
+  const service = this.$inject('myService')
+  expect(service.foo()).toBe('foo')
+  expect(service.bar).toBe(true)
+})
+~~~
+
+The object passed to `this.mockService()` contains custom extensions to the
+service. It only allows you to change properties that already exist on the
+service.
+
+Note that for testing ES6 modules with mock services, imports order matters in
+the same way as for [mock individual methods](#individual-methods).
+
+There is a `mocks` module and a `cfStub` service that provide elaborate mocks
+for certain parts of the app. Use of `cfStub` service is *deprecated* and needs
+some major cleanup.
 
 
 Reporters
