@@ -1,4 +1,4 @@
-'use strict';
+import * as K from 'helpers/mocks/kefir';
 
 describe('Account View directive', function () {
   beforeEach(function () {
@@ -7,7 +7,6 @@ describe('Account View directive', function () {
       $provide.value('handleGatekeeperMessage', this.handleGatekeeperMessage);
     });
 
-    const K = this.$inject('mocks/kefir');
     this.messages$ = K.createMockStream();
 
     const IframeChannel = this.mockService('account/IframeChannel');

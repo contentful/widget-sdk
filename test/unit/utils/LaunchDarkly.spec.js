@@ -1,4 +1,4 @@
-'use strict';
+import * as K from 'helpers/mocks/kefir';
 
 describe('utils/LaunchDarkly', function () {
   // mocks
@@ -17,8 +17,6 @@ describe('utils/LaunchDarkly', function () {
     module('contentful/test', $provide => {
       $provide.constant('libs/launch-darkly-client', LD);
     });
-
-    const K = this.$inject('mocks/kefir');
 
     this.qualifiedUser = {
       email: 'user@example.com',

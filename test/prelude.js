@@ -25,7 +25,7 @@
   const Karma = window.__karma__;
   const start = Karma.start.bind(Karma);
   Karma.start = function (...args) {
-    SystemJS.import('test/helpers/boot')
+    SystemJS.import('helpers/boot')
     .then(() => {
       return Promise.all(testModules.map((name) => SystemJS.import(name)));
     }).then(() => {

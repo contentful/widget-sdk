@@ -1,7 +1,8 @@
+import * as K from 'helpers/mocks/kefir';
+
 describe('data/StreamHashSet', function () {
   beforeEach(function () {
     module('contentful/test');
-    const K = this.$inject('mocks/kefir');
     this.store = this.$inject('data/StreamHashSet').create();
 
     const itemArrayProp = this.store.items$.map((i) => i.toArray());

@@ -1,11 +1,10 @@
-'use strict';
+import * as K from 'helpers/mocks/kefir';
 
 describe('Entry Actions Controller', function () {
   beforeEach(function () {
     module('contentful/test');
 
     const $rootScope = this.$inject('$rootScope');
-    const K = this.$inject('mocks/kefir');
     this.scope = $rootScope.$new();
     this.$state = this.$inject('$state');
     this.notify = sinon.stub();

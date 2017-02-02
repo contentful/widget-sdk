@@ -1,4 +1,4 @@
-'use strict';
+import * as K from 'helpers/mocks/kefir';
 
 describe('Authentication', function () {
   beforeEach(function () {
@@ -12,7 +12,6 @@ describe('Authentication', function () {
 
     this.$http.resolves({data: {access_token: 'NEW TOKEN'}});
     this.Auth = this.$inject('Authentication');
-    this.K = this.$inject('mocks/kefir');
     this.$q = this.$inject('$q');
 
     const TheStore = this.$inject('TheStore');
@@ -43,7 +42,7 @@ describe('Authentication', function () {
     });
 
     it('emits token on token$', function* () {
-      const tokenRef = this.K.getRef(this.Auth.token$);
+      const tokenRef = K.getRef(this.Auth.token$);
       expect(tokenRef.value).toBe('STORED_TOKEN');
       yield this.Auth.refreshToken();
       expect(tokenRef.value).toBe('NEW TOKEN');
@@ -86,7 +85,7 @@ describe('Authentication', function () {
     it('obtains token from local storage', function* () {
       this.store.set('STORED_TOKEN');
       this.Auth.init();
-      expect(this.K.getValue(this.Auth.token$)).toBe('STORED_TOKEN');
+      expect(K.getValue(this.Auth.token$)).toBe('STORED_TOKEN');
       expect(yield this.Auth.getToken()).toBe('STORED_TOKEN');
     });
 
@@ -95,7 +94,7 @@ describe('Authentication', function () {
       this.$http.resolves({data: {access_token: 'NEW TOKEN'}});
       this.Auth.init();
       expect(yield this.Auth.getToken()).toBe('NEW TOKEN');
-      expect(this.K.getValue(this.Auth.token$)).toBe('NEW TOKEN');
+      expect(K.getValue(this.Auth.token$)).toBe('NEW TOKEN');
     });
   });
 

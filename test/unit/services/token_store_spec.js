@@ -1,11 +1,9 @@
-'use strict';
+import * as K from 'helpers/mocks/kefir';
 
 describe('Token store service', function () {
 
   beforeEach(function () {
     module('contentful/test');
-
-    this.K = this.$inject('mocks/kefir');
 
     this.fetchWithAuth = sinon.stub().resolves({
       sys: {createdBy: this.user},
@@ -90,16 +88,16 @@ describe('Token store service', function () {
 
   describe('#user$', function () {
     it('is initially null', function () {
-      this.K.assertCurrentValue(this.tokenStore.user$, null);
+      K.assertCurrentValue(this.tokenStore.user$, null);
     });
 
     it('updates user when tokenStore is refreshed', function* () {
       yield this.refresh();
-      this.K.assertCurrentValue(this.tokenStore.user$, this.user);
+      K.assertCurrentValue(this.tokenStore.user$, this.user);
     });
 
     it('skips duplicates', function* () {
-      const usersArr = this.K.extractValues(this.tokenStore.user$);
+      const usersArr = K.extractValues(this.tokenStore.user$);
       yield this.refresh();
       yield this.refresh();
       expect(usersArr.filter(_.identity).length).toBe(1);
@@ -108,25 +106,25 @@ describe('Token store service', function () {
 
   describe('#spaces$', function () {
     it('is initially empty', function () {
-      this.K.assertCurrentValue(this.tokenStore.spaces$, []);
+      K.assertCurrentValue(this.tokenStore.spaces$, []);
     });
 
     it('updates spaces when tokenStore is refreshed', function* () {
       this.client.newSpace.returns(this.spaces[0]);
       yield this.refresh(this.rawSpaces[0]);
-      this.K.assertCurrentValue(this.tokenStore.spaces$, [this.spaces[0]]);
+      K.assertCurrentValue(this.tokenStore.spaces$, [this.spaces[0]]);
     });
   });
 
   describe('#spacesByOrganization$', function () {
     it('is initially empty', function () {
-      this.K.assertCurrentValue(this.tokenStore.spacesByOrganization$, {});
+      K.assertCurrentValue(this.tokenStore.spacesByOrganization$, {});
     });
 
     it('updates property when tokenStore is refreshed', function* () {
       this.client.newSpace.returns(this.spaces[0]);
       yield this.refresh(this.rawSpaces[0]);
-      this.K.assertMatchCurrentValue(
+      K.assertMatchCurrentValue(
         this.tokenStore.spacesByOrganization$,
         sinon.match({testorg: [this.spaces[0]]})
       );

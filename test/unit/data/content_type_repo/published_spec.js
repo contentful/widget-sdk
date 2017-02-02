@@ -1,13 +1,14 @@
+import * as K from 'helpers/mocks/kefir';
+
 describe('data/ContentTypeRepo/Published', function () {
-  let K, $q;
+  let $q;
 
   afterEach(function () {
-    K = $q = null;
+    $q = null;
   });
 
   beforeEach(function () {
     module('contentful/test');
-    K = this.$inject('mocks/kefir');
     $q = this.$inject('$q');
 
     const CTRepo = this.$inject('data/ContentTypeRepo/Published');

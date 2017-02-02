@@ -1,3 +1,5 @@
+import * as K from 'helpers/mocks/kefir';
+
 describe('bulk editor', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -12,7 +14,6 @@ describe('bulk editor', function () {
       {code: 'EN', name: 'English'}
     ]);
 
-    const K = this.$inject('mocks/kefir');
     const $q = this.$inject('$q');
 
     this.spaceContext = this.$inject('mocks/spaceContext').init();
