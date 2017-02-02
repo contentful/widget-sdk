@@ -24,7 +24,7 @@ describe('API key editor controller', function () {
         logServerWarn: stubs.logServerWarn
       });
       $provide.value('navigation/closeState', stubs.closeState);
-      $provide.value('analytics', {});
+      $provide.value('analytics/Analytics', {});
     });
 
     const $controller = this.$inject('$controller');

@@ -15,7 +15,7 @@ describe('Entry List Controller', function () {
     module('contentful/test', function ($provide) {
       $provide.removeControllers('DisplayedFieldsController');
 
-      $provide.value('analytics', {
+      $provide.value('analytics/Analytics', {
         track: sinon.stub()
       });
 

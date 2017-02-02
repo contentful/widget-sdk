@@ -18,7 +18,7 @@ describe('Space Controller', function () {
       self.analyticsMock = {
         track: sinon.stub()
       };
-      $provide.value('analytics', self.analyticsMock);
+      $provide.value('analytics/Analytics', self.analyticsMock);
 
       self.TheLocaleStoreMock = {
         resetWithSpace: sinon.stub(),

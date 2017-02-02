@@ -3,7 +3,7 @@
 angular.module('contentful')
 
 .factory('analyticsEvents/versioning', ['require', function (require) {
-  var analytics = require('analytics');
+  var analytics = require('analytics/Analytics');
   var leaveConfirmator = require('navigation/confirmLeaveEditor');
 
   var data = {};

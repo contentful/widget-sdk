@@ -4,7 +4,7 @@ angular.module('contentful').factory('batchPerformer', ['$injector', function ($
 
   var $q = $injector.get('$q');
   var spaceContext = $injector.get('spaceContext');
-  var analytics = $injector.get('analytics');
+  var analytics = $injector.get('analytics/Analytics');
   var notification = $injector.get('notification');
 
   var ACTION_NAMES = {

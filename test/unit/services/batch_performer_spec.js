@@ -11,7 +11,7 @@ describe('Batch performer service', function () {
     this.notification = this.$inject('notification');
     this.notification.info = sinon.spy();
     this.notification.warn = sinon.spy();
-    this.analytics = this.$inject('analytics');
+    this.analytics = this.$inject('analytics/Analytics');
     this.analytics.track = sinon.spy();
   });
 

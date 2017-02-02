@@ -1,5 +1,5 @@
 import {partial, size, assign} from 'lodash';
-import * as Analytics from 'analytics';
+import * as Analytics from 'analytics/Analytics';
 import * as K from 'utils/kefir';
 import {stateName, State} from 'data/CMA/EntityState';
 

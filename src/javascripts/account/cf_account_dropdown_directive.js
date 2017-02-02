@@ -18,7 +18,7 @@ angular.module('contentful')
   var TheAccountView = $injector.get('TheAccountView');
   var authentication = $injector.get('authentication');
   var Config = $injector.get('Config');
-  var analytics = $injector.get('analytics');
+  var analytics = $injector.get('analytics/Analytics');
   var intercom = $injector.get('intercom');
 
   $scope.$watch(TheAccountView.canGoToOrganizations, function (canGo) {

@@ -28,6 +28,11 @@
     "api_key": "5aba1269adbf42919bd1dd3308b84652"
   },
   "segment_io": "uwr64jkg06",
+  "snowplow": {
+    "collector_endpoint": "com-contentful.mini.snplow.net:8080",
+    "app_id": "userInterfaceDev",
+    "buffer_size": 1
+  },
   "google" : {
     "maps_api_key": "AIzaSyDskFlzw1ujRovNWNG3K64EUsncYTbRPfM"
   },

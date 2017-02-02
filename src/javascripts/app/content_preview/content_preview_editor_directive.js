@@ -21,7 +21,7 @@ angular.module('contentful')
   var notification = require('notification');
   var logger = require('logger');
   var slugUtils = require('slug');
-  var analytics = require('analytics');
+  var analytics = require('analytics/Analytics');
 
   // Fetch content types and preview environment
   var getPreviewEnvironment = contentPreview.get($stateParams.contentPreviewId);

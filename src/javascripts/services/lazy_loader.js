@@ -160,6 +160,10 @@ angular.module('contentful')
       url: 'https://cdn.segment.com/analytics.js/v1/' +
         environment.settings.segment_io + '/analytics.min.js',
       globalObject: 'analytics'
+    },
+    snowplow: {
+      url: AssetResolver.resolve('app/snowplow.js'),
+      globalObject: 'Snowplow'
     }
   };
 

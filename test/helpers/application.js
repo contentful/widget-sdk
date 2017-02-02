@@ -28,6 +28,7 @@ angular.module('contentful/test', ['contentful', 'contentful/mocks'])
       aviary: {},
       google: {},
       contentful: {},
+      snowplow: {},
       authUrl: '//be.test.com',
       apiUrl: '//api.test.com',
       otUrl: '//ot.test.com',
@@ -37,7 +38,8 @@ angular.module('contentful/test', ['contentful', 'contentful/mocks'])
     },
     manifest: {
       'app/markdown_vendors.js': 'x',
-      'app/kaltura.js': 'x'
+      'app/kaltura.js': 'x',
+      'app/snowplow.js': 'x'
     },
     env: 'unittest'
   });

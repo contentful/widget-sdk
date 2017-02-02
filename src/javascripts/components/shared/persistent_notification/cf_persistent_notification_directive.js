@@ -5,7 +5,7 @@ angular.module('contentful')
 
   var $sce = require('$sce');
   var $timeout = require('$timeout');
-  var analytics = require('analytics');
+  var analytics = require('analytics/Analytics');
   var logger = require('logger');
 
   return {

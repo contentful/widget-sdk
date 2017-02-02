@@ -9,7 +9,7 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var authentication = require('authentication');
   var tokenStore = require('tokenStore');
-  var analytics = require('analytics');
+  var analytics = require('analytics/Analytics');
   var authorization = require('authorization');
   var presence = require('presence');
   var revision = require('revision');

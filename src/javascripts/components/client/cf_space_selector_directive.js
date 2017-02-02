@@ -13,7 +13,7 @@ angular.module('contentful')
 
 .controller('cfSpaceSelectorController', ['$scope', 'require', function cfSpaceSelectorController ($scope, require) {
   var K = require('utils/kefir');
-  var analytics = require('analytics');
+  var analytics = require('analytics/Analytics');
   var spaceContext = require('spaceContext');
   var OrganizationList = require('OrganizationList');
   var accessChecker = require('accessChecker');

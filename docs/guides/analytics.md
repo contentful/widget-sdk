@@ -6,9 +6,10 @@ we send to analytical services.
 
 ## Analytical services
 
+We send analytics data directly to Snowplow and Segment.
+
 We've migrated away from using Totango and GTM in the direct way. Mixpanel
-integration for Segment was disabled as well. The only service to which we
-send data is Segment.
+integration for Segment was disabled as well.
 
 UI enables all integrations for Segment (by not providing "integrations"
 configuration option). Thanks to that integration management can be done
@@ -27,6 +28,14 @@ an analytics console (see below).
 We call Segment's `page` method when state is changed and `identify` method
 each time we obtain some more information about a user.
 
+We call Snowplow's `identify` method when we obtain user information.
+
+When we call `analytics.track` we also check if the event name has been mapped
+to a registered Snowplow schema. If so, we transform the data into Snowplow's
+structure and track the the event.
+
+Since we have enabled activity tracking, link click tracking and page views,
+this information is automatically collected and tracked in Snowplow.
 
 ## Analytics console
 
@@ -106,7 +115,7 @@ yet).
 | space_switcher      | create_clicked                        | -
 | space_switcher      | space_switched                        | <code>targetSpaceId: id-string<br>targetSpaceName: string</code>
 | space               | template_selected                     | <code>templateName: string</code>
-| space               | created_from_template                 | <code>templateName: string</code>
+| space               | create                                | <code>templateName: string</code>
 | search              | view_folder_added                     | <code>source: string (content, media)</code>
 | search              | view_folder_deleted                   | <code>source: string</code>
 | search              | view_added                            | <code>source: string</code>
@@ -136,3 +145,7 @@ yet).
 | paywall             | viewed                                | <code>userCanUpgradePlan: bool</code>
 | paywall             | closed                                | <code>userCanUpgradePlan: bool</code>
 | paywall             | upgrade_clicked                       | <code>userCanUpgradePlan: bool</code>
+| content_type        | create                                | <code>actionData: obj<br>response: obj</code>
+| entry               | create                                | <code>actionData: obj<br>response: obj</code>
+| asset               | create                                | <code>actionData: obj<br>response: obj</code>
+| api_key             | create                                | <code>actionData: obj<br>response: obj</code>

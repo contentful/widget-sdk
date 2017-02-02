@@ -3,7 +3,7 @@
 angular.module('contentful')
 
 .factory('analyticsEvents/customWidgets', ['require', function (require) {
-  var analytics = require('analytics');
+  var analytics = require('analytics/Analytics');
   var Widgets = require('widgets');
   var getFieldLabel = require('fieldFactory').getLabel;
 
