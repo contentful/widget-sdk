@@ -13,7 +13,7 @@ describe('Space Selector Controller', function () {
     const $rootScope = this.$inject('$rootScope');
     const $controller = this.$inject('$controller');
     const spaceContext = this.$inject('spaceContext');
-    analytics = this.$inject('analytics');
+    analytics = this.$inject('analytics/Analytics');
     sinon.stub(analytics, 'track');
 
     scope = $rootScope.$new();

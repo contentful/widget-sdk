@@ -15,7 +15,7 @@ angular.module('contentful')
   var modalDialog = $injector.get('modalDialog');
   var recommendPlan = $injector.get('subscriptionPlanRecommender').recommend;
   var intercom = $injector.get('intercom');
-  var analytics = $injector.get('analytics');
+  var analytics = $injector.get('analytics/Analytics');
   var TheAccountView = $injector.get('TheAccountView');
 
   var paywallIsOpen = false;

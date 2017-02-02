@@ -19,7 +19,7 @@ angular.module('cf.app')
   var contextHistory = $injector.get('contextHistory');
   var logger = $injector.get('logger');
   var modalDialog = $injector.get('modalDialog');
-  var analytics = $injector.get('analytics');
+  var analytics = $injector.get('analytics/Analytics');
   var spaceContext = $injector.get('spaceContext');
 
   // Result of confirmation dialog

@@ -22,7 +22,7 @@ describe('Locale editor controller', function () {
     module('contentful/test', function ($provide) {
       $provide.value('logger', self.logger);
       $provide.value('notification', self.notification);
-      $provide.value('analytics', self.analytics);
+      $provide.value('analytics/Analytics', self.analytics);
       $provide.value('modalDialog', self.modalDialog);
       $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
       $provide.value('navigation/closeState', self.closeStateSpy);

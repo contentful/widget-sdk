@@ -2,7 +2,7 @@ angular.module('contentful')
 .directive('cfSidebarContentPreview', ['require', function (require) {
   var K = require('utils/kefir');
   var contentPreview = require('contentPreview');
-  var analytics = require('analytics');
+  var analytics = require('analytics/Analytics');
   var spaceContext = require('spaceContext');
   return {
     restrict: 'E',

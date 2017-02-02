@@ -12,7 +12,7 @@ angular.module('contentful')
   var accessChecker = $injector.get('accessChecker');
   var closeState = $injector.get('navigation/closeState');
   var sdkInfoSupplier = $injector.get('sdkInfoSupplier');
-  var analytics = $injector.get('analytics');
+  var analytics = $injector.get('analytics/Analytics');
   var K = $injector.get('utils/kefir');
 
   var notify = notifier(function getTitle () {

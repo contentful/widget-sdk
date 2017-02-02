@@ -101,7 +101,8 @@ function indexPage (uiVersion, config, resolve, entryScripts) {
 function configScript (uiVersion, config, resolve) {
   let appManifest = {
     'app/kaltura.js': resolve('kaltura.js'),
-    'app/markdown_vendors.js': resolve('markdown_vendors.js')
+    'app/markdown_vendors.js': resolve('markdown_vendors.js'),
+    'app/snowplow.js': resolve('snowplow.js')
   }
 
   return h('script', [

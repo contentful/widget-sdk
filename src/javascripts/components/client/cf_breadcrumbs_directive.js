@@ -10,7 +10,7 @@
 angular.module('contentful').directive('cfBreadcrumbs', ['require', function (require) {
   var $parse = require('$parse');
   var $state = require('$state');
-  var analytics = require('analytics');
+  var analytics = require('analytics/Analytics');
   var contextHistory = require('contextHistory');
   var documentTitle = require('navigation/DocumentTitle');
   var K = require('utils/kefir');

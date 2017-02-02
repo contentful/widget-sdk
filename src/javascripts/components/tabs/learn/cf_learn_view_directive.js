@@ -20,7 +20,7 @@ angular.module('contentful')
   var moment = require('moment');
   var spaceContext = require('spaceContext');
   var stateParams = require('$stateParams');
-  var analytics = require('analytics');
+  var analytics = require('analytics/Analytics');
   var sdkInfoSupplier = require('sdkInfoSupplier');
   var WebhookRepository = require('WebhookRepository');
 

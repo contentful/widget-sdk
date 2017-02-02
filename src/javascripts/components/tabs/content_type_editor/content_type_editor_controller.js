@@ -28,7 +28,7 @@ angular.module('contentful')
   var eiHelpers = require('editingInterfaces/helpers');
   var spaceContext = require('spaceContext');
   var editingInterfaces = spaceContext.editingInterfaces;
-  var analytics = require('analytics');
+  var analytics = require('analytics/Analytics');
 
   $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
 

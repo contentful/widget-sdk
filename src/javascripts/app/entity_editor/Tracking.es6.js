@@ -1,4 +1,4 @@
-import {track} from 'analytics';
+import {track} from 'analytics/Analytics';
 import {stateName} from 'data/CMA/EntityState';
 import * as K from 'utils/kefir';
 
