@@ -80,14 +80,6 @@
   div(ng-if="data.isEntry")
     h2.entity-sidebar__heading Versions
     cf-snapshot-sidebar-list
-    a.btn-secondary-action.x--block(
-      role="button"
-      ui-sref=".compare"
-      ui-sref-opts="{location: false}")
-      | Compare versions
-    .entity-sidebar__help-text(role="note")
-      | Versions are previous states of this entry. You will be able to review
-      | and compare different versions, and restore some or all fields.
 
   h2.entity-sidebar__heading
     | Users

@@ -22,6 +22,7 @@ angular.module('cf.app')
 
 .controller('SnapshotComparatorController', ['require', '$scope', function (require, $scope) {
   var $q = require('$q');
+  var K = require('utils/kefir');
   var spaceContext = require('spaceContext');
   var SnapshotDoc = require('SnapshotComparatorController/snapshotDoc');
   var DataFields = require('EntityEditor/DataFields');
@@ -57,7 +58,18 @@ angular.module('cf.app')
   var ctData = $scope.contentType.data;
   var snapshotData = $scope.snapshot.snapshot || {};
 
-  $scope.showSnapshotList = false;
+  var isShowingSnapshotSelector = false;
+  var showSnapshotSelectorBus = K.createPropertyBus(isShowingSnapshotSelector, $scope);
+
+  $scope.toggleSnapshotSelector = function () {
+    isShowingSnapshotSelector = !isShowingSnapshotSelector;
+    showSnapshotSelectorBus.set(isShowingSnapshotSelector);
+  };
+  $scope.isShowingSnapshotSelector = function () {
+    return isShowingSnapshotSelector;
+  };
+  $scope.showSnapshotSelector$ = showSnapshotSelectorBus.property;
+
   $scope.showOnlyDifferences = false;
   $scope.otDoc = SnapshotDoc.create(dotty.get($scope, 'entry.data', {}));
   $scope.snapshotDoc = SnapshotDoc.create(snapshotData);
