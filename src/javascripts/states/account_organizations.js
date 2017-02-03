@@ -64,8 +64,6 @@ angular.module('contentful')
     name: 'organizations',
     url: '/organizations',
     abstract: true,
-    onEnter: ['TheAccountView', function (view) { view.enter(); }],
-    onExit: ['TheAccountView', function (view) { view.exit(); }],
     children: [
       newOrg,
       edit,

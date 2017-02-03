@@ -16,37 +16,13 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var OrganizationList = require('OrganizationList');
 
-  var isActive = false;
-
   return {
     getSubscriptionState: getSubscriptionState,
     goToOrganizations: goToOrganizations,
     goToSubscription: goToSubscription,
     goToBilling: goToBilling,
     canGoToOrganizations: canGoToOrganizations,
-    getGoToOrganizationsOrganization: getGoToOrganizationsOrganization,
-
-    /**
-     * @ngdoc method
-     * @name TheAccountView#enter
-     * @description
-     * Marks the "account" section as active.
-     */
-    enter: function () { isActive = true; },
-    /**
-     * @ngdoc method
-     * @name TheAccountView#exit
-     * @description
-     * Marks the "account" section as inactive.
-     */
-    exit: function () { isActive = false; },
-    /**
-     * @ngdoc method
-     * @name TheAccountView#isActive
-     * @description
-     * Checks if the "account" section is active.
-     */
-    isActive: function () { return isActive; }
+    getGoToOrganizationsOrganization: getGoToOrganizationsOrganization
   };
 
   /**

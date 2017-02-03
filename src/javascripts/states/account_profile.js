@@ -55,8 +55,6 @@ angular.module('contentful')
     name: 'profile',
     url: '/profile',
     abstract: true,
-    onEnter: ['TheAccountView', function (view) { view.enter(); }],
-    onExit: ['TheAccountView', function (view) { view.exit(); }],
     children: [
       user,
       spaceMemberships,

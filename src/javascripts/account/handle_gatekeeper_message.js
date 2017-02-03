@@ -31,7 +31,7 @@ angular.module('contentful')
       $location.url(data.path);
 
     } else if (match('update', 'location') && data.path) {
-      updateUrl(data);
+      updateUrl(data.path);
 
     } else if (data.token) {
       updateToken(data.token);
@@ -67,9 +67,8 @@ angular.module('contentful')
 
   // If the state is the same as the current one (except for path suffix), silently
   // update the URL. Otherwise, update the location triggering a state change.
-  function updateUrl (data) {
+  function updateUrl (target) {
     var base = $state.href($state.current.name);
-    var target = _.get(data, 'path');
     var isCurrentState = _.startsWith(target, base) && target !== base;
 
     if (isCurrentState) {
