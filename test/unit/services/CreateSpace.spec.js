@@ -46,14 +46,6 @@ describe('CreateSpace', function () {
       this.$apply();
     });
 
-    it('tracks analytics event', function () {
-      sinon.assert.calledWith(
-        this.analytics.track,
-        'space:create',
-        {templateName: 'template-1'}
-      );
-    });
-
     it('broadcasts `reloadEntries`', function () {
       sinon.assert.calledWith(this.$rootScope.$broadcast, 'reloadEntries');
     });
