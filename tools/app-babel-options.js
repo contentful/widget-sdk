@@ -25,6 +25,8 @@ export const options = {
     ['transform-es2015-template-literals'],
     // Loose option: All iterable destructuring are assumed to be arrays.
     ['transform-es2015-destructuring', {options: 'loose'}],
+    // For function parameters enables destructuring, defaults, rest
+    ['transform-es2015-parameters'],
     ['transform-es2015-arrow-functions']
   ],
 

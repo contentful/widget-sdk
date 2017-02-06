@@ -9,7 +9,6 @@ rules:
   # We disallow everything we do not transpile with babel
   no-restricted-syntax:
   - error
-  - AssignmentPattern
   - BreakStatement
   - ClassBody
   - ClassDeclaration
