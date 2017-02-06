@@ -325,4 +325,32 @@ describe('utils/kefir', function () {
       sinon.assert.called(ended);
     });
   });
+
+  describe('#endWith', function () {
+    beforeEach(function () {
+      this.prop = KMock.createMockProperty('A');
+      this.lifeline = KMock.createMockStream();
+      this.result = K.endWith(this.prop, this.lifeline);
+    });
+
+    it('holds original property values', function () {
+      KMock.assertCurrentValue(this.result, 'A');
+      this.prop.set('B');
+      KMock.assertCurrentValue(this.result, 'B');
+    });
+
+    it('ends when property ends', function () {
+      const ended = sinon.spy();
+      this.result.onEnd(ended);
+      this.prop.end();
+      sinon.assert.called(ended);
+    });
+
+    it('ends when lifeline ends', function () {
+      const ended = sinon.spy();
+      this.result.onEnd(ended);
+      this.lifeline.end();
+      sinon.assert.called(ended);
+    });
+  });
 });

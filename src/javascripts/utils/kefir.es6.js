@@ -453,6 +453,38 @@ export function scopeLifeline (scope) {
 }
 
 
+/**
+ * @ngdoc method
+ * @name utils/kefir#endWith
+ * @description
+ * Returns a property that ends when
+ *
+ * This starts listening on both the `prop` and `lifeline` observables.
+ *
+ * @params {Kefir.Property<T>} prop
+ * @params {Kefir.Stream<any>} lifeline
+ * @returns {Kefir.Property<T>}
+ */
+export function endWith (prop, lifeline) {
+  const bus = createPropertyBus();
+
+  const propSub = prop.observe({
+    value: bus.set,
+    end: end
+  });
+
+  const lifelineSub = lifeline.observe({end});
+
+  return bus.property;
+
+  function end () {
+    bus.end();
+    propSub.unsubscribe();
+    lifelineSub.unsubscribe();
+  }
+}
+
+
 function assertIsProperty (prop) {
   if (
     !prop ||
