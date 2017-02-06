@@ -54,6 +54,14 @@ angular.module('contentful')
         // Redirect to home since the organization is invalid
         $state.go('home');
       });
+    } else {
+      controller.tabs = [{
+        name: 'New Organization',
+        state: 'account.organizations.new',
+        params: '',
+        selected: true,
+        isActive: true
+      }];
     }
   }
 

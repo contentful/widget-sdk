@@ -10,7 +10,7 @@ header.workbench-header.x--with-nav
         ng-model="nav.selectedOrganizationId"
         ng-change="nav.goToOrganization(nav.selectedOrganizationId)")
 
-  nav.workbench-nav__tabs(ng-if="!nav.isNewOrgState")
+  nav.workbench-nav__tabs
     a(
       role="tab"
       ui-sref="{{tab.state + tab.params}}"
@@ -18,11 +18,3 @@ header.workbench-header.x--with-nav
       aria-selected='{{tab.selected}}'
       ng-if="tab.isActive")
       | {{tab.name}}
-
-
-  nav.workbench-nav__tabs(ng-if="nav.isNewOrgState")
-    a(
-      role="tab"
-      ui-sref="account.organizations.new"
-      aria-selected='true')
-      | New Organization
