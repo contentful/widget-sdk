@@ -10,7 +10,7 @@ import {getSchema} from 'analytics/snowplow/Schemas';
  */
 export default function (_eventName, entityData) {
   const contexts = [getEntityContext(entityData)];
-  if (entityData.templateName) {
+  if (entityData.template) {
     contexts.push(getSpaceTemplateContext(entityData));
   }
 
@@ -60,6 +60,6 @@ function getEntitySpecificData (schemaName, entityData) {
 function getSpaceTemplateContext (entityData) {
   return {
     'schema': getSchema('space_template').path,
-    'data': extend({'name': entityData.templateName}, getBaseData(entityData))
+    'data': extend({'name': entityData.template}, getBaseData(entityData))
   };
 }
