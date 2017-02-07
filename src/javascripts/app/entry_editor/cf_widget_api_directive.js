@@ -125,7 +125,11 @@ angular.module('contentful')
     validations: ctField.validations || [],
     itemValidations: dotty.get(ctField, ['items', 'validations'], []),
 
-    registerPublicationWarning: $scope.state.registerPublicationWarning
+    registerPublicationWarning: $scope.state.registerPublicationWarning,
+
+    // Convenience properties not provided by the extensions API but
+    // easily emulated.
+    value$: fieldLocale.doc.value$
   };
 
   /**

@@ -75,7 +75,9 @@ angular.module('contentful/mocks')
         name: '',
         locale: 'en-US',
         type: '',
-        registerPublicationWarning: sinon.stub().returns(_.noop)
+        registerPublicationWarning: sinon.stub().returns(_.noop),
+
+        value$: K.createMockProperty()
       },
       space: {
         getEntries: sinon.stub().resolves({ total: 0, items: [] }),
