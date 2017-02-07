@@ -157,6 +157,10 @@ angular.module('contentful')
   }
 
   function handleSpaceCreation (newSpace, template) {
+    analytics.track('space:create', {
+      templateName: _.get(template, 'name')
+    });
+
     tokenStore.getSpace(newSpace.getId())
     .then(function (space) {
       return $state.go('spaces.detail', {spaceId: space.getId()});
