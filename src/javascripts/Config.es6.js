@@ -104,6 +104,15 @@ export const domain = settings.main_domain;
  */
 export const snowplow = settings.snowplow;
 
+/**
+ * @ngdoc property
+ * @name Config#launchDarkly
+ * @description
+ * Launch Darkly config object
+ *
+ * @returns {object}
+ */
+export const launchDarkly = settings.launchDarkly;
 
 function ensureLeadingSlash (x = '') {
   if (x.charAt(0) === '/') {

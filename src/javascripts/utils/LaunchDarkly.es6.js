@@ -1,59 +1,96 @@
-import { createPropertyBus } from 'utils/kefir';
 import LD from 'libs/launch-darkly-client';
-import { curry, forEach, remove, noop } from 'lodash';
-import { settings } from 'environment';
-import { user$ } from 'tokenStore';
+
+import {user$} from 'tokenStore';
+import {createPropertyBus} from 'utils/kefir';
+import {launchDarkly as config} from 'Config';
+import {curry, forEach, includes, remove, noop} from 'lodash';
+
 
 let client;
-const featureFlagToPropBusesMap = {};
+const testToBusesMap = {};
 const DEFAULT_VAL = null;
 
 /**
  * @ngdoc method
  * @name utils/LaunchDarkly#init
  * @usage[js]
- * require('utils/LaunchDarkly').init({ key: <unique id> })
+ * require('utils/LaunchDarkly').init(<unique id>)
  *
  * @description
  * Initialize a LaunchDarkly client.
  *
- * @param {Id} anonUserId - A unique user id
+ * @param {string} userId - unique user ID
  */
-export function init (anonUserId) {
+export function init (userId = 'anonymous-user') {
   // singleton
   if (client) {
     return;
   }
 
   const defaultAnonUser = {
-    key: anonUserId,
+    key: userId,
     anonymous: true
   };
 
-  client = LD.initialize(settings.launchDarkly.envId, defaultAnonUser, {
+  client = LD.initialize(config.envId, defaultAnonUser, {
     bootstrap: 'localStorage'
   });
 
-  // since get(featureFlagName) always returns immediately, it might
+  // since get($scope, testName) always returns immediately, it might
   // return a stale value. This makes sure that all requested
-  // variations/feature flags get their actual values once
+  // variations/test flags get their actual values once
   // LaunchDarkly has completed initialization.
   client.on('ready', () => {
-    forEach(featureFlagToPropBusesMap, (propBuses, featureFlag) => {
+    forEach(testToBusesMap, (propBuses, testName) => {
       forEach(propBuses, propBus => {
-        propBus.set(client.variation(featureFlag, DEFAULT_VAL));
+        propBus.set(client.variation(testName, DEFAULT_VAL));
       });
     });
   });
 
-  const changeUserContext = user => {
-    client.identify({ key: user.email }, null, noop);
+  const validUser = user => user && user.email;
+
+  // a qualified user doesn't belong to a paying/converted org
+  const isQualifiedUser = ({organizationMemberships}) => {
+    const convertedStatuses = ['paid', 'free_paid'];
+
+    return !organizationMemberships.reduce((acc, {organization}) => {
+      const {subscription: {status: orgStatus}} = organization;
+      const isOrgConverted = includes(convertedStatuses, orgStatus);
+
+      return acc || isOrgConverted;
+    }, false);
   };
 
-  const isValidUser = user => user && user.email;
+  const changeUserContext = ({email, firstName, lastName, organizationMemberships}) => {
+    // custom properties can only be strings, bools, numbers or lists of those
+    const baseLdUser = {
+      key: email,
+      firstName,
+      lastName,
+      email,
+      custom: {
+        organizationNames: [],
+        organizationSubscriptions: []
+      }
+    };
+
+    const ldUser = organizationMemberships.reduce((ldUser, membership) => {
+      const {custom: {organizationNames, organizationSubscriptions}} = ldUser;
+      const {organization: {name, subscription: {status}}} = membership;
+
+      organizationNames.push(name);
+      organizationSubscriptions.push(status);
+
+      return ldUser;
+    }, baseLdUser);
+
+    client.identify(ldUser, null, noop);
+  };
 
   user$
-    .filter(isValidUser)
+    .filter(validUser)
+    .filter(isQualifiedUser)
     .onValue(changeUserContext);
 }
 
@@ -62,22 +99,22 @@ export function init (anonUserId) {
  * @name utils/LaunchDarkly#get
  * @usage[js]
  * const ld = require('utils/LaunchDarkly')
- * ld.get($scope, 'my-awesome-feature')
+ * ld.get($scope, 'my-awesome-test')
  * // or
  * const getFlagVal = ld.get($scope)
- * const awesomeFeature$ = getFlagVal('my-awesome-feature')
- * awesomeFeature$.onValue(console.log.bind(console, 'val for my-awesome-feature:'))
+ * const awesomeTest$ = getFlagVal('my-awesome-test')
+ * awesomeTest$.onValue(console.log.bind(console, 'val for my-awesome-test:'))
  *
  * @description
- * Fetches the value for the requested feature flag. It accepts angular scope
- * object and the name of the feature flag that you want. It returns a kefir
+ * Fetches the value for the requested test. It accepts angular scope
+ * object and the name of the test that you want. It returns a kefir
  * property bus. This bus is a kefir property and will give you the latest
- * value for the feature flag if it is changed in Launch Darkly.
+ * value for the test if it is changed in Launch Darkly.
  * The scope should usually be provided so that when the directive being A/B
- * tested is destroyed, the feature flag property bus(es) that it was utilizing
+ * tested is destroyed, the test property bus(es) that it was utilizing
  * is/are marked for garbage collection.
  * The method is curried so you can provide scope just once and use the method
- * returned to request as many feature flags as you want and the all will be
+ * returned to request as many tests as you want and the all will be
  * be marked for gc when the initial scope is destroyed.
  *
  * @param {Scope} $scope
@@ -86,38 +123,37 @@ export function init (anonUserId) {
  */
 export const get = curry(_get);
 
-function _get ($scope, featureFlag) {
-  // TODO: track calls to get variations/feature flags here
-  const initVal = client.variation(featureFlag, DEFAULT_VAL);
-  // each invocation of get($s, varName) receives its own
+function _get ($scope, testName) {
+  const initVal = client.variation(testName, DEFAULT_VAL);
+  // each invocation of get($s, test) receives its own
   // property bus so that they can all end independently
-  const propBus = createPropertyBus(initVal, $scope);
+  const testBus = createPropertyBus(initVal, $scope);
 
-  client.on(`change:${featureFlag}`, propBus.set);
+  client.on(`change:${testName}`, testBus.set);
 
-  // un-memoize propertyBus for feature flag
-  propBus.property.onEnd(() => {
-    removeFromMap(featureFlag, propBus);
+  // un-memoize propertyBus for test
+  testBus.property.onEnd(() => {
+    removeFromMap(testName, testBus);
   });
 
-  addToMap(featureFlag, propBus);
-  return propBus.property;
+  addToMap(testName, testBus);
+  return testBus.property;
 }
 
-function removeFromMap (featureFlag, propBusToRemove) {
-  remove(featureFlagToPropBusesMap[featureFlag], propBus => propBus === propBusToRemove);
+function removeFromMap (testName, testBus) {
+  remove(testToBusesMap[testName], bus => bus === testBus);
 
-  if (!featureFlagToPropBusesMap[featureFlag].length) {
-    delete featureFlagToPropBusesMap[featureFlag];
+  if (!testToBusesMap[testName].length) {
+    delete testToBusesMap[testName];
   }
 }
 
-function addToMap (featureFlag, propBus) {
-  const propBuses = featureFlagToPropBusesMap[featureFlag];
+function addToMap (testName, testBus) {
+  const testBuses = testToBusesMap[testName];
 
-  if (Array.isArray(propBuses)) {
-    featureFlagToPropBusesMap[featureFlag].push(propBus);
+  if (Array.isArray(testBuses)) {
+    testToBusesMap[testName].push(testBus);
   } else {
-    featureFlagToPropBusesMap[featureFlag] = [propBus];
+    testToBusesMap[testName] = [testBus];
   }
 }

@@ -37,6 +37,7 @@ describe('utils/LaunchDarkly', function () {
 
     const launchDarkly = this.$inject('utils/LaunchDarkly');
     launchDarkly.init('anon'); // init LD before every spec
+
     this.get = launchDarkly.get($scope);
 
     this.assertPropVal = function (prop, val) {
@@ -46,9 +47,41 @@ describe('utils/LaunchDarkly', function () {
 
   afterEach(() => {
     client.on.reset();
+    client.identify.reset();
   });
 
   describe('#init()', function () {
+    beforeEach(function () {
+      this.user = {
+        email: 'user@example.com',
+        firstName: 'First',
+        lastName: 'Last',
+        organizationMemberships: [
+          {
+            organization: {
+              name: 'test-org',
+              subscription: {
+                status: 'free'
+              }
+            }
+          }
+        ]
+      };
+
+      this.assertContextChange = function (assertion, status) {
+        if (status) {
+          this.user.organizationMemberships[0].organization.subscription = {
+            status
+          };
+        }
+
+        this.userPropBus$.set(this.user);
+        this.$apply();
+
+        assertion();
+      };
+    });
+
     it('should call launch darkly client initialize with anon user and bootstrap it', function () {
       sinon.assert.calledWithExactly(
         LD.initialize,
@@ -58,19 +91,36 @@ describe('utils/LaunchDarkly', function () {
       );
     });
 
-    it('should change user context when a logged in user is available', function () {
-      const user = {
-        email: 'user@example.com'
+    it('should change user context when a logged in and qualified user is available', function () {
+      const ldUser = {
+        key: this.user.email,
+        firstName: this.user.firstName,
+        lastName: this.user.lastName,
+        email: this.user.email,
+        custom: {
+          organizationNames: ['test-org'],
+          organizationSubscriptions: ['free']
+        }
       };
+      const assertSwitchedToUser = () => sinon.assert.calledWith(client.identify, ldUser);
+      const assertSwitchedOnlyOnce = () => sinon.assert.calledOnce(client.identify);
 
       sinon.assert.notCalled(client.identify);
+      this.assertContextChange(assertSwitchedToUser);
+      // paid users don't qualify for tests
+      this.assertContextChange(assertSwitchedOnlyOnce, 'paid');
+    });
 
-      this.userPropBus$.set(user);
-      this.$apply();
+    it('should not change from anon user if user is not valid or qualified', function () {
+      const assertNoSwitchOccured = () => sinon.assert.notCalled(client.identify);
 
-      sinon.assert.calledWith(client.identify, {
-        key: user.email
+      client.identify.reset();
+      sinon.assert.calledWith(LD.initialize, this.envId, {
+        key: 'anon',
+        anonymous: true
       });
+      this.assertContextChange(assertNoSwitchOccured, 'free_paid');
+      this.assertContextChange(assertNoSwitchOccured, 'paid');
     });
 
     it('should set prop buses for all previously requested feature flags with their latest value', function () {
