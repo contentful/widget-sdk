@@ -323,6 +323,14 @@ describe('cfCreateNewSpace directive', function () {
             sinon.assert.calledOnce(stubs.tokenStore.refresh);
             sinon.assert.calledOnce(stubs.tokenStore.getSpace);
           });
+
+          it('tracks analytics event', function () {
+            sinon.assert.calledWith(
+              stubs.analytics.track,
+              'space:create',
+              {templateName: 'Blog'}
+            );
+          });
         });
       });
     });
