@@ -12,22 +12,15 @@ describe('The ApiKey list directive', function () {
     accessChecker = this.$inject('accessChecker');
     accessChecker.shouldDisable = sinon.stub().returns(false);
 
-    const entityCreationController = {
-      newApiKey: _.noop
-    };
-    const apiKeys = [
-      {getId: _.constant(1), getName: function () { return 'key1'; }},
-      {getId: _.constant(2), getName: function () { return 'key2'; }}
-    ];
-
-    this.$inject('spaceContext').apiKeys = {
-      getDeliveryKeys: sinon.stub().resolves(apiKeys)
-    };
+    const spaceContext = this.$inject('mocks/spaceContext').init();
+    spaceContext.apiKeyRepo.getAll = sinon.stub().resolves([
+      {sys: {id: 1}, name: 'key1'},
+      {sys: {id: 2}, name: 'key2'}
+    ]);
 
     this.setup = function () {
       container = this.$compile('<cf-api-key-list />', {
-        context: {},
-        entityCreationController: entityCreationController
+        context: {}
       });
       sidebar = container.find('.entity-sidebar');
     };

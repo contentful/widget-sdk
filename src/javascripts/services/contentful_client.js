@@ -37,7 +37,7 @@ angular.module('contentful').factory('contentfulClient', ['$injector', function 
     if (!options.params) options.params = {};
     options.headers['Content-Type'] = 'application/vnd.contentful.delivery.v1+json';
     options.headers['X-Contentful-Skip-Transformation'] = true;
-    options.params.access_token = this.options.accessToken;
+    options.headers['Authorization'] = 'Bearer ' + this.options.accessToken
 
     options.url = [
       this.options.secure ? 'https' : 'http',

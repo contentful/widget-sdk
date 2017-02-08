@@ -11,7 +11,8 @@ import {h} from 'utils/hyperscript';
  * @ngdoc method
  * @name app/Workbench#simple
  * @description
- * Simple layout for Workbench.
+ * Create a workbench template with just a title header and one main
+ * content section
  *
  * @param {string}  title
  * @param {string}  icon     name of an icon to use
@@ -31,4 +32,28 @@ export function simple (title, icon, actions, content) {
       h('.workbench-main__middle-content', content)
     ])
   ].join('');
+}
+
+
+/**
+ * @ngdoc method
+ * @name app/Workbench#header
+ * @description
+ * Create the template for a workbench header.
+ *
+ * Renders the breadcrumbs, an optional icon, the title, and optional
+ * actions.
+ *
+ * @param {string}  title     HTML of title
+ * @param {string?}  icon     name of an icon to use
+ * @param {string?}  actions  HTML of actions area
+ * @returns {string}
+ */
+export function header (title, icon, actions) {
+  return h('header.workbench-header', [
+    h('cf-breadcrumbs'),
+    icon && h('cf-icon.workbench-header__icon', {name: icon}),
+    h('h1.workbench-header__title', [title]),
+    actions && h('.workbench-header__actions', actions)
+  ]);
 }
