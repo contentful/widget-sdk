@@ -3861,6 +3861,9 @@
         }
       }
     },
+    "qs": {
+      "version": "6.3.0"
+    },
     "querystring": {
       "version": "0.2.0"
     },
