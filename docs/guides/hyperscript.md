@@ -5,6 +5,28 @@ You can use hyperscript to generate HTML strings that can be used as templates.
 
 Note: Jade templates are deprecated, Hyperscript should be used instead for new components!
 
+## Warning!
+
+`h` calls do not sanitize input strings. You should do it on your own:
+
+```js
+const userInput = `<img onclick="alert('xss')" />`;
+
+// sanitize or encode directly
+import $sanitize from '$sanitize';
+import {htmlEncode} from 'encoder';
+
+h('p', [$sanitize(userInput)]);
+h('p', [htmlEncode(userInput)]);
+
+// ng-bind uses $sanitize internally
+import $rootScope from '$rootScope';
+import $compile from '$compile';
+
+const scope = _.extend($rootScope.$new(), {userInput});
+$compile(h('p', {ngBind: 'userInput'}))(scope);
+```
+
 ## Usage example
 
 Directive and template in one file (preferable for smaller templates):

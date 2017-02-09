@@ -68,6 +68,7 @@ angular.module('contentful')
   function openRemovalDialog () {
     var spaceName = spaceContext.space.data.name;
     var scope = _.extend($rootScope.$new(), {
+      spaceName: spaceName,
       input: {spaceName: ''},
       remove: Command.create(remove, {
         disabled: function () {
@@ -77,7 +78,7 @@ angular.module('contentful')
     });
 
     modalDialog.open({
-      template: templates.removalConfirmation(spaceName),
+      template: templates.removalConfirmation(),
       noNewScope: true,
       scope: scope
     });
