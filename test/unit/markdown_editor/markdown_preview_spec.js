@@ -1,72 +1,51 @@
 'use strict';
 
 describe('Markdown preview', function () {
-  let $timeout, scope;
-  let preview;
-  const libs = window.cfLibs.markdown;
-
-  let content;
-  const getContentFn = function () { return content || '__test__'; };
-
   beforeEach(function () {
     module('contentful/test');
+    this.K = this.$inject('mocks/kefir');
+    this.markdown = this.K.createMockProperty('__test__');
 
-    $timeout = this.$inject('$timeout');
-    scope = this.$inject('$rootScope');
-    preview = this.$inject('markdown_editor/markdown_preview');
+    const PreviewGenerator = this.$inject('markdown_editor/PreviewGenerator');
+    this.makePreview = () => PreviewGenerator.default(this.markdown);
 
-    const $q = this.$inject('$q');
     const LazyLoader = this.$inject('LazyLoader');
-    sinon.stub(LazyLoader, 'get', function () { return $q.resolve(libs); });
+    sinon.stub(LazyLoader, 'get').resolves(window.cfLibs.markdown);
   });
 
-  afterEach(function () { content = null; });
-
-  it('notifies with Markdown preview and stats', function () {
-    preview.start(getContentFn, function (err, preview) {
-      expect(err).toBe(null);
-      expect(_.isObject(preview)).toBe(true);
-      expect(preview.tree.type).toBe('div');
-      expect(preview.info.words).toBe(1);
-    });
-    scope.$apply(); // resolve lazy loader
-    $timeout.flush(); // notify
+  it('has null preview before libs are loaded', function () {
+    const LazyLoader = this.$inject('LazyLoader');
+    LazyLoader.get.withArgs('markdown').defers();
+    const preview$ = this.makePreview();
+    this.$apply();
+    this.K.assertMatchCurrentValue(preview$, sinon.match({preview: null}));
   });
 
-  it('notifies even when content is null or undefined', function () {
-    const s1 = sinon.spy();
-    const s2 = sinon.spy();
-    preview.start(function () { return null; }, s1);
-    preview.start(function () { return undefined; }, s2);
-    scope.$apply();
-    $timeout.flush();
-    sinon.assert.called(s1);
-    sinon.assert.called(s2);
+  it('emits error when loading library fails', function () {
+    const LazyLoader = this.$inject('LazyLoader');
+    LazyLoader.get.withArgs('markdown').rejects();
+    const preview$ = this.makePreview();
+    this.$apply();
+    this.K.assertMatchCurrentValue(preview$, sinon.match({error: true}));
   });
 
-  it('notifies after the change to content only', function () {
-    const previewSpy = sinon.spy();
-    preview.start(getContentFn, previewSpy);
-    scope.$apply();
-    sinon.assert.notCalled(previewSpy);
-    $timeout.flush();
-    sinon.assert.calledOnce(previewSpy);
-    $timeout.flush();
-    sinon.assert.calledOnce(previewSpy);
-    content = '__test2__';
-    $timeout.flush();
-    sinon.assert.calledTwice(previewSpy);
-  });
+  it('emits preview when markdown changes', function () {
+    const preview$ = this.makePreview();
+    this.$apply();
+    let preview;
 
-  it('stops notifications when killed', function () {
-    const previewSpy = sinon.spy();
-    const stop = preview.start(getContentFn, previewSpy);
-    scope.$apply();
-    $timeout.flush();
-    sinon.assert.calledOnce(previewSpy);
-    content = '__test2__';
-    stop();
-    $timeout.flush();
-    sinon.assert.calledOnce(previewSpy);
+    preview = this.K.getValue(preview$);
+    expect(preview.preview.tree.type).toBe('div');
+    expect(preview.preview.info.words).toBe(1);
+
+    this.markdown.set(null);
+    preview = this.K.getValue(preview$);
+    expect(preview.preview.tree.type).toBe('div');
+    expect(preview.preview.info.words).toBe(0);
+
+    this.markdown.set(undefined);
+    preview = this.K.getValue(preview$);
+    expect(preview.preview.tree.type).toBe('div');
+    expect(preview.preview.info.words).toBe(0);
   });
 });

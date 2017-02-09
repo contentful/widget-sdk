@@ -11,7 +11,19 @@ const NEWLINE_ENTITY_RE = new RegExp('&#10;', 'g');
 const EMBEDLY_CLASS_RE = new RegExp('class="embedly-card"', 'g');
 const EMBEDLY_CLASS_REPLACEMENT = 'class="embedly-card markdown-block" data-card-controls="0"';
 
-export function create (libs) {
+/**
+ * Given an object of vendor packages it returns a
+ * function that takes a markdown string and produces preview
+ * information.
+ *
+ * The object returned by the preview generator has two properties:
+ * - `root` React element containing the root node of the preview.
+ * - `words` an integer giving the number of words in the MD source
+ *
+ * The 'libs' object is the one exported by the
+ * `libs/markdown_vendor.js`.
+ */
+export default function create (libs) {
   const MarkedAst = libs.MarkedAst;
   const AstBuilder = libs.MarkedAst.AstBuilder;
   const React = libs.React;

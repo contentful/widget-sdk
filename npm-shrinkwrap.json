@@ -3590,12 +3590,7 @@
       }
     },
     "kefir": {
-      "version": "3.2.3",
-      "dependencies": {
-        "symbol-observable": {
-          "version": "0.2.4"
-        }
-      }
+      "version": "3.7.1"
     },
     "kss": {
       "version": "2.4.0",
@@ -4068,6 +4063,9 @@
           "version": "0.9.9"
         }
       }
+    },
+    "symbol-observable": {
+      "version": "1.0.4"
     },
     "through": {
       "version": "2.3.8"

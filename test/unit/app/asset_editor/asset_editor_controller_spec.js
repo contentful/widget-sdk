@@ -5,7 +5,6 @@ describe('Asset editor controller', function () {
   let scope;
 
   beforeEach(function () {
-    const createDoc = sinon.stub();
     module('contentful/test', ($provide) => {
       $provide.removeControllers(
         'FormWidgetsController',
@@ -13,12 +12,6 @@ describe('Asset editor controller', function () {
         'entityEditor/StatusNotificationsController'
       );
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
-      $provide.value('entityEditor/Document', {create: createDoc});
-    });
-
-    createDoc.returns(this.$inject('mocks/entityEditor/Document').create());
-    _.extend(this.$inject('spaceContext'), {
-      docPool: {get: createDoc}
     });
 
     scope = this.$inject('$rootScope').$new();
@@ -27,11 +20,11 @@ describe('Asset editor controller', function () {
 
     const cfStub = this.$inject('cfStub');
     const space = cfStub.space('testSpace');
-    this.asset = cfStub.asset(space, 'testAsset', 'testType');
-    scope.editorData = {
-      entity: this.asset,
-      fieldControls: {}
-    };
+    this.asset = cfStub.asset(space, 'testAsset');
+
+    const {makeEditorData} = this.$inject('mocks/app/entity_editor/DataLoader');
+    scope.editorData = makeEditorData(this.asset.data);
+    scope.editorData.entity.process = sinon.stub().resolves();
     scope.context = {};
 
     const $controller = this.$inject('$controller');
@@ -60,16 +53,15 @@ describe('Asset editor controller', function () {
     });
 
     it('processes the asset', function () {
-      this.asset.process = sinon.stub().resolves();
       scope.otDoc.getVersion.returns(123);
       scope.$emit('fileUploaded', {fileName: ''}, {internal_code: 'en-US'});
-      sinon.assert.calledWith(this.asset.process, 123, 'en-US');
+      sinon.assert.calledWith(scope.editorData.entity.process, 123, 'en-US');
     });
 
     it('shows error when asset processing fails', function () {
       const notification = this.$inject('notification');
 
-      this.asset.process = sinon.stub().rejects();
+      scope.editorData.entity.process = sinon.stub().rejects();
       const processingFailed = sinon.stub();
       scope.$on('fileProcessingFailed', processingFailed);
       scope.$emit('fileUploaded', {fileName: ''}, {internal_code: 'en-US'});

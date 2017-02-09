@@ -3,6 +3,7 @@ describe('app/entity_editor/DataLoader', function () {
     module('contentful/test');
     const $q = this.$inject('$q');
 
+    // TODO use space context mock
     this.spaceContext = {
       space: {
         getEntry: sinon.spy(function (id) {
@@ -23,6 +24,9 @@ describe('app/entity_editor/DataLoader', function () {
       },
       widgets: {
         buildRenderable: sinon.stub()
+      },
+      docPool: {
+        get: sinon.stub()
       }
     };
 
@@ -82,7 +86,8 @@ describe('app/entity_editor/DataLoader', function () {
         'entity',
         'contentType',
         'fieldControls',
-        'entityInfo'
+        'entityInfo',
+        'openDoc'
       ]);
     });
 
@@ -122,6 +127,18 @@ describe('app/entity_editor/DataLoader', function () {
           .toEqual({l1: true, l2: true});
       });
     });
+
+    it('provides #openDoc() delegate', function* () {
+      this.spaceContext.docPool.get.returns('DOC');
+      const editorData = yield this.loadEntry('EID');
+      const doc = editorData.openDoc();
+      expect(doc).toBe('DOC');
+      sinon.assert.calledWith(
+        this.spaceContext.docPool.get,
+        editorData.entity,
+        editorData.contentType
+      );
+    });
   });
 
   describe('#loadAsset()', function () {
@@ -146,7 +163,8 @@ describe('app/entity_editor/DataLoader', function () {
         'entity',
         'contentType',
         'fieldControls',
-        'entityInfo'
+        'entityInfo',
+        'openDoc'
       ]);
     });
   });
