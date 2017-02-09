@@ -5,11 +5,11 @@ cf-api-key-nav
   .workbench-main__content(ng-if="!empty")
     .api-key-list.entity-list
       a.entity-list__item.x--with-icon(
-        ng-repeat="apiKey in apiKeys track by apiKey.getId()"
-        ui-sref="spaces.detail.api.keys.detail({ apiKeyId: apiKey.getId() })")
+        ng-repeat="apiKey in apiKeys track by apiKey.sys.id"
+        ui-sref="spaces.detail.api.keys.detail({ apiKeyId: apiKey.sys.id })")
         span
-          h3.entity-list__heading {{apiKey.getName()}}
-          span.entity-list__description {{apiKey.data.description}}
+          h3.entity-list__heading {{apiKey.name}}
+          span.entity-list__description {{apiKey.description}}
         cf-icon(name="dd-arrow-down")
 
   //- Empty state

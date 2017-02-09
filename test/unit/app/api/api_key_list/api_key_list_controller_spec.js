@@ -1,5 +1,6 @@
 'use strict';
 
+// TODO merge this with directive tests
 describe('API Key List Controller', function () {
   beforeEach(function () {
     module('contentful/test');
@@ -7,17 +8,16 @@ describe('API Key List Controller', function () {
     this.scope = this.$inject('$rootScope').$new();
     this.scope.context = {};
 
+    this.getApiKeys = sinon.stub();
     this.spaceContext = _.extend(this.$inject('spaceContext'), {
       getData: _.constant(2),
       space: {getOrganizationId: _.constant(1)},
-      apiKeys: {getDeliveryKeys: sinon.stub()}
+      apiKeyRepo: {getAll: this.getApiKeys}
     });
 
     this.create = () => {
       this.$inject('$controller')('ApiKeyListController', {
-        $scope: _.extend(this.scope, {
-          entityCreationController: {newApiKey: _.noop}
-        })
+        $scope: this.scope
       });
       this.scope.$digest();
     };
@@ -25,13 +25,13 @@ describe('API Key List Controller', function () {
 
   describe('empty marker', function () {
     it('is true', function () {
-      this.spaceContext.apiKeys.getDeliveryKeys.resolves([]);
+      this.getApiKeys.resolves([]);
       this.create();
       expect(this.scope.empty).toBeTruthy();
     });
 
     it('is false', function () {
-      this.spaceContext.apiKeys.getDeliveryKeys.resolves([{}]);
+      this.getApiKeys.resolves([{}]);
       this.create();
       expect(this.scope.empty).toBeFalsy();
     });
@@ -39,13 +39,13 @@ describe('API Key List Controller', function () {
 
   describe('has reached the API keys limit', function () {
     it('under keys limit', function () {
-      this.spaceContext.apiKeys.getDeliveryKeys.resolves([{}]);
+      this.getApiKeys.resolves([{}]);
       this.create();
       expect(this.scope.reachedLimit).toBeFalsy();
     });
 
     it('reached the limit', function () {
-      this.spaceContext.apiKeys.getDeliveryKeys.resolves([{}, {}]);
+      this.getApiKeys.resolves([{}, {}]);
       this.create();
       expect(this.scope.reachedLimit).toBeTruthy();
     });
@@ -53,7 +53,7 @@ describe('API Key List Controller', function () {
 
   describe('refreshing api keys', function () {
     it('saves api keys on scope', function () {
-      this.spaceContext.apiKeys.getDeliveryKeys.resolves({});
+      this.getApiKeys.resolves({});
       this.create();
       expect(this.scope.apiKeys).toEqual({});
     });
@@ -61,7 +61,7 @@ describe('API Key List Controller', function () {
 
   describe('refreshing api keys fails', function () {
     it('results in an error message', function () {
-      this.spaceContext.apiKeys.getDeliveryKeys.rejects();
+      this.getApiKeys.rejects();
       this.create();
       sinon.assert.called(this.$inject('ReloadNotification').apiErrorHandler);
     });

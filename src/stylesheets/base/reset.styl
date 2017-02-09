@@ -1,3 +1,4 @@
+@require 'variables/colors'
 // Do not show a red shadow around invalid inputs in Firefox.
 //
 // We use the `required` attribute on inputs to add validations. This
@@ -16,3 +17,10 @@ $link-reset()
   &, &:link, &:hover, &:visited
     color: inherit
     text-decoration: none
+
+h1, h2, h3, h4, h5, h6
+  &.h-reset
+    color: $colors.text-dark
+    line-height: 1.5
+    font-weight: bold
+    margin: 0

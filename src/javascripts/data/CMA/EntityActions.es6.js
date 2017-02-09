@@ -86,7 +86,7 @@ export function makePerform (spaceEndpoint) {
     const collection = getCollectionName(data.sys.type);
     return spaceEndpoint({
       method: method,
-      path: compact([collection, id, path]).join('/'),
+      path: compact([collection, id, path]),
       version: version
     }, {
       'X-Contentful-Skip-Transformation': 'true'

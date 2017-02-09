@@ -85,6 +85,52 @@
     "babel-generator": {
       "version": "6.18.0"
     },
+    "babel-helper-call-delegate": {
+      "version": "6.22.0",
+      "dependencies": {
+        "babel-code-frame": {
+          "version": "6.22.0"
+        },
+        "babel-helper-hoist-variables": {
+          "version": "6.22.0"
+        },
+        "babel-messages": {
+          "version": "6.22.0"
+        },
+        "babel-runtime": {
+          "version": "6.22.0"
+        },
+        "babel-traverse": {
+          "version": "6.22.1"
+        },
+        "babel-types": {
+          "version": "6.22.0"
+        },
+        "babylon": {
+          "version": "6.15.0"
+        },
+        "js-tokens": {
+          "version": "3.0.1"
+        },
+        "regenerator-runtime": {
+          "version": "0.10.1"
+        }
+      }
+    },
+    "babel-helper-get-function-arity": {
+      "version": "6.22.0",
+      "dependencies": {
+        "babel-runtime": {
+          "version": "6.22.0"
+        },
+        "babel-types": {
+          "version": "6.22.0"
+        },
+        "regenerator-runtime": {
+          "version": "0.10.1"
+        }
+      }
+    },
     "babel-helper-hoist-variables": {
       "version": "6.18.0"
     },
@@ -108,6 +154,40 @@
     },
     "babel-plugin-transform-es2015-modules-systemjs": {
       "version": "6.18.0"
+    },
+    "babel-plugin-transform-es2015-parameters": {
+      "version": "6.22.0",
+      "dependencies": {
+        "babel-code-frame": {
+          "version": "6.22.0"
+        },
+        "babel-messages": {
+          "version": "6.22.0"
+        },
+        "babel-runtime": {
+          "version": "6.22.0"
+        },
+        "babel-template": {
+          "version": "6.22.0"
+        },
+        "babel-traverse": {
+          "version": "6.22.1",
+          "dependencies": {
+            "babylon": {
+              "version": "6.15.0"
+            }
+          }
+        },
+        "babel-types": {
+          "version": "6.22.0"
+        },
+        "js-tokens": {
+          "version": "3.0.1"
+        },
+        "regenerator-runtime": {
+          "version": "0.10.1"
+        }
+      }
     },
     "babel-plugin-transform-es2015-template-literals": {
       "version": "6.8.0"
@@ -3938,7 +4018,7 @@
       }
     },
     "sum-types": {
-      "version": "0.9.3"
+      "version": "0.9.4"
     },
     "supports-color": {
       "version": "2.0.0"

@@ -156,21 +156,6 @@ describe('EntityCreationController', function () {
     });
   });
 
-  describe('opens editor for new api key', function () {
-    beforeEach(function () {
-      stubs.computeUsage.returns(null);
-      this.entityCreationController.newApiKey();
-    });
-
-    it('computes the api key usage', function () {
-      sinon.assert.calledWith(stubs.computeUsage, 'apiKey');
-    });
-
-    it('navigates to editor', function () {
-      sinon.assert.calledWith(this.$state.go, 'spaces.detail.api.keys.new');
-    });
-  });
-
   describe('opens editor for new locale', function () {
     beforeEach(function () {
       stubs.computeUsage.returns(null);

@@ -58,10 +58,6 @@ angular.module('contentful')
     'preview_opened',
     'custom_extension_rendered'
   ],
-  api_keys: [
-    'create_screen_opened',
-    'language_selected'
-  ],
   versioning: [
     'no_snapshots',
     'snapshot_opened',
@@ -97,7 +93,9 @@ angular.module('contentful')
     'create'
   ],
   api_key: [
-    'create'
+    'create',
+    'clipboard_copy',
+    'boilerplate'
   ]
 })
 

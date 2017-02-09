@@ -33,10 +33,10 @@ angular.module('contentful')
   var ShareJSConnection = $injector.get('data/ShareJS/Connection');
   var Subscription = $injector.get('Subscription');
   var previewEnvironmentsCache = $injector.get('data/previewEnvironmentsCache');
-  var apiKeysCache = $injector.get('data/apiKeysCache');
   var PublishedCTRepo = $injector.get('data/ContentTypeRepo/Published');
   var logger = $injector.get('logger');
   var DocumentPool = $injector.get('data/sharejs/DocumentPool');
+  var createApiKeyRepo = $injector.get('data/CMA/ApiKeyRepo').default;
 
   var requestContentTypes = createQueue(function (extraHandler) {
     if (!spaceContext.space) {
@@ -103,7 +103,7 @@ angular.module('contentful')
       self.space = space;
       self.cma = new ApiClient(endpoint);
       self.users = createUserCache(space);
-      self.apiKeys = apiKeysCache.create(space);
+      self.apiKeyRepo = createApiKeyRepo(endpoint);
       self.editingInterfaces = createEIRepo(endpoint);
       var organization = self.getData('organization') || null;
       self.subscription =

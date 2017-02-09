@@ -75,7 +75,7 @@ angular.module('contentful')
       require('states/contentTypes'),
       require('states/entries'),
       require('states/assets'),
-      require('states/api'),
+      require('app/api/State').default,
       require('states/settings'),
       require('states/learn')
     ]

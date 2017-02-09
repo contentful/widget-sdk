@@ -10,12 +10,14 @@ angular.module('contentful')
   };
 })
 
-.controller('ApiKeyListController', ['$scope', '$injector', function ($scope, $injector) {
-  var ReloadNotification = $injector.get('ReloadNotification');
-  var spaceContext = $injector.get('spaceContext');
-  var accessChecker = $injector.get('accessChecker');
-  var Command = $injector.get('command');
-  var TheAccountView = $injector.get('TheAccountView');
+.controller('ApiKeyListController', ['$scope', 'require', function ($scope, require) {
+  var ReloadNotification = require('ReloadNotification');
+  var spaceContext = require('spaceContext');
+  var accessChecker = require('accessChecker');
+  var Command = require('command');
+  var TheAccountView = require('TheAccountView');
+  var $state = require('$state');
+  var notification = require('notification');
 
   var disableCreateApiKey = accessChecker.shouldDisable('createApiKey');
 
@@ -43,7 +45,7 @@ angular.module('contentful')
   $scope.subscriptionState = TheAccountView.getSubscriptionState();
 
   $scope.createApiKey = Command.create(
-    $scope.entityCreationController.newApiKey,
+    create,
     {
       disabled: function () {
         return disableCreateApiKey || $scope.reachedLimit;
@@ -51,12 +53,19 @@ angular.module('contentful')
     }
   );
 
-  spaceContext.apiKeys.getDeliveryKeys()
+  function create () {
+    var spaceName = spaceContext.getData(['name']);
+    return spaceContext.apiKeyRepo.create(spaceName)
+    .then(function (apiKey) {
+      return $state.go('spaces.detail.api.keys.detail', {apiKeyId: apiKey.sys.id});
+    }, function () {
+      notification.error('Unable to create API key');
+    });
+  }
+
+  spaceContext.apiKeyRepo.getAll()
   .then(function (apiKeys) {
     $scope.context.ready = true;
-    return apiKeys;
-  })
-  .then(function (apiKeys) {
     $scope.apiKeys = apiKeys;
     $scope.empty = _.isEmpty(apiKeys);
     $scope.reachedLimit = $scope.apiKeys.length >= $scope.limit;

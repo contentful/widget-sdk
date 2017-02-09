@@ -46,6 +46,35 @@ describe('utils/kefir', function () {
     });
   });
 
+  describe('#fromScopeValue()', function () {
+    beforeEach(function () {
+      this.$scope = this.$inject('$rootScope').$new();
+    });
+
+    it('obtains initial value', function () {
+      this.$scope.value = {a: true};
+      const prop = K.fromScopeValue(this.$scope, (s) => s.value);
+      expect(K.getValue(prop)).toEqual({a: true});
+    });
+
+    it('updates value', function () {
+      this.$scope.value = {a: true};
+      const prop = K.fromScopeValue(this.$scope, (s) => s.value);
+      this.$scope.value.a = false;
+      this.$scope.$apply();
+      expect(K.getValue(prop)).toEqual({a: false});
+    });
+
+    it('ends property when scope is destroyed', function () {
+      this.$scope.value = {a: true};
+      const ended = sinon.spy();
+      K.fromScopeValue(this.$scope, (s) => s.value).onEnd(ended);
+      sinon.assert.notCalled(ended);
+      this.$scope.$destroy();
+      sinon.assert.calledOnce(ended);
+    });
+  });
+
   describe('#onValue()', function () {
     it('calls callback on value', function () {
       const stream = KMock.createMockStream();

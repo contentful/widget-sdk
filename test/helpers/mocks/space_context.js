@@ -28,6 +28,8 @@ angular.module('contentful/mocks')
   const createEIRepo = require('data/editingInterfaces');
   const Widgets = require('widgets');
   const MockDocument = require('mocks/entityEditor/Document');
+  const createApiKeyRepo = require('data/CMA/ApiKeyRepo').default;
+  const createMockEndpoint = require('mocks/spaceEndpoint').create;
 
   return {
     init: init
@@ -57,6 +59,9 @@ angular.module('contentful/mocks')
     spaceContext.docPool = {
       load: sinon.stub().resolves(MockDocument.create())
     };
+
+    spaceContext.endpoint = createMockEndpoint();
+    spaceContext.apiKeyRepo = createApiKeyRepo(spaceContext.endpoint);
 
     return spaceContext;
   }

@@ -29,7 +29,7 @@ describe('Contentful Client', function () {
   }));
 
   function getUrl(path) {
-    return 'https://api.contentful.com:443/spaces/spaceid'+path+'?access_token=access_token';
+    return 'https://api.contentful.com:443/spaces/spaceid'+path;
   }
 
   it('gets a space', function() {
