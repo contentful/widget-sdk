@@ -4,12 +4,12 @@ describe('data/spaceEndpoint', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    const authToken = this.$inject('authentication/token');
-    authToken.get = sinon.stub().returns('TOKEN');
-
+    const auth = {
+      getToken: sinon.stub().resolves('TOKEN')
+    };
     const spaceEndpoint = this.$inject('data/spaceEndpoint');
-    const request = spaceEndpoint.create('//test.io', 'SPACE');
-    this.makeRequest = function (...args) {
+    const request = spaceEndpoint.create('//test.io', 'SPACE', auth);
+    this.makeEndpointRequest = function (...args) {
       const response = request(...args);
       this.$inject('$timeout').flush();
       return response;
@@ -30,7 +30,7 @@ describe('data/spaceEndpoint', function () {
       'Accept': 'application/json, text/plain, */*'
     };
     this.$http.expectGET(url, headers).respond();
-    this.makeRequest({
+    this.makeEndpointRequest({
       method: 'GET',
       path: ['foo', 'bar']
     });
@@ -41,7 +41,7 @@ describe('data/spaceEndpoint', function () {
     const responseHandler = sinon.stub();
     this.$http.expectGET('//test.io/spaces/SPACE/foo/bar')
     .respond('DATA');
-    this.makeRequest({
+    this.makeEndpointRequest({
       method: 'GET',
       path: ['foo', 'bar']
     }).then(responseHandler);
@@ -58,7 +58,7 @@ describe('data/spaceEndpoint', function () {
     };
     const data = {foo: 42};
     this.$http.expectPOST(url, JSON.stringify(data), headers).respond();
-    this.makeRequest({
+    this.makeEndpointRequest({
       method: 'POST',
       path: ['foo', 'bar'],
       data: data
@@ -76,7 +76,7 @@ describe('data/spaceEndpoint', function () {
     };
     const data = {foo: 42};
     this.$http.expectPOST(url, JSON.stringify(data), headers).respond();
-    this.makeRequest({
+    this.makeEndpointRequest({
       method: 'POST',
       path: ['foo', 'bar'],
       data: data,
@@ -89,7 +89,7 @@ describe('data/spaceEndpoint', function () {
 
     it('is an error object', function* () {
       this.$http.whenGET(/./).respond(500);
-      const req = this.makeRequest({
+      const req = this.makeEndpointRequest({
         method: 'GET',
         path: ['foo']
       });
@@ -101,7 +101,7 @@ describe('data/spaceEndpoint', function () {
 
     it('has "request" object', function* () {
       this.$http.whenGET(/./).respond(500);
-      const req = this.makeRequest({
+      const req = this.makeEndpointRequest({
         method: 'GET',
         path: ['foo']
       });
@@ -111,20 +111,9 @@ describe('data/spaceEndpoint', function () {
       expect(error.request.url).toBe('//test.io/spaces/SPACE/foo');
     });
 
-    it('shadows Authorization header in request', function* () {
-      this.$http.whenGET(/./).respond(500);
-      const req = this.makeRequest({
-        method: 'GET',
-        path: ['foo']
-      });
-      this.$http.flush();
-      const error = yield this.catchPromise(req);
-      expect(error.request.headers['Authorization']).toBe('[REDACTED]');
-    });
-
     it('has "response" properties', function* () {
       this.$http.whenGET(/./).respond(455, 'ERRORS');
-      const req = this.makeRequest({
+      const req = this.makeEndpointRequest({
         method: 'GET',
         path: ['foo']
       });

@@ -631,7 +631,7 @@ describe('spaceContext', function () {
 
   describe('#docConnection and #docPool', function () {
     beforeEach(function () {
-      const ShareJSConnection = this.$inject('data/ShareJS/Connection');
+      const ShareJSConnection = this.$inject('data/sharejs/Connection');
       const DocumentPool = this.$inject('data/sharejs/DocumentPool');
       this.createConnection = ShareJSConnection.create = sinon.stub().returns({});
       this.createPool = DocumentPool.create = sinon.stub();

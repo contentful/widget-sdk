@@ -5,12 +5,13 @@ angular.module('contentful')
  * @name data/Document/Status
  * @description
  * Internal factory for the 'status$' property of
- * 'entityEditor/Document'
+ * 'entityEditor/Document'. See the documentation there.
  *
  * Tested in the 'entityEditor/Document' tests.
  */
 .factory('data/Document/Status', ['require', function (require) {
   var K = require('utils/kefir');
+  var Logger = require('logger');
 
   var Status = {
     NOT_ALLOWED: 'editing-not-allowed',
@@ -24,12 +25,31 @@ angular.module('contentful')
     Status: Status
   };
 
-  function create (sys$, hasDocError$, canUpdate) {
+  /**
+   * @description
+   * Returns a property that holds one of the values from the 'Status'
+   * map.
+   *
+   * @param {K.Property<API.Entity.Sys>} sys$
+   * @param {K.Property<string?>} docError$
+   * @param {boolean} canUpdate
+   * @returns {K.Property<string>}
+   */
+  function create (sys$, docError$, canUpdate) {
     if (canUpdate) {
-      return K.combine(
-        [sys$, hasDocError$],
-        function (sys, hasDocError) {
-          if (hasDocError) {
+      return K.combineProperties(
+        [sys$, docError$],
+        function (sys, docError) {
+          if (docError === 'forbidden') {
+            return Status.NOT_ALLOWED;
+          } else if (docError === 'disconnected') {
+            return Status.CONNECTION_ERROR;
+          } else if (docError) {
+            Logger.logError('Unknown ShareJS document error', {
+              error: {
+                error: docError
+              }
+            });
             return Status.CONNECTION_ERROR;
           } else if (isArchived(sys)) {
             return Status.ARCHIVED;

@@ -16,6 +16,7 @@ angular.module('contentful')
   var errorMessageBuilder = require('errorMessageBuilder');
   var Focus = require('app/entity_editor/Focus');
   var installTracking = require('app/entity_editor/Tracking').default;
+  var initDocErrorHandler = require('app/entity_editor/DocumentErrorHandler').default;
 
   var editorData = $scope.editorData;
   var entityInfo = this.entityInfo = editorData.entityInfo;
@@ -30,6 +31,7 @@ angular.module('contentful')
 
   // TODO rename the scope property
   $scope.otDoc = editorData.openDoc(K.scopeLifeline($scope));
+  initDocErrorHandler($scope, $scope.otDoc.state.error$);
 
   installTracking(entityInfo, $scope.otDoc, K.scopeLifeline($scope));
 

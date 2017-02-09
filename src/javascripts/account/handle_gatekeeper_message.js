@@ -5,7 +5,7 @@ angular.module('contentful')
 .factory('handleGatekeeperMessage', ['require', function (require) {
   var $location = require('$location');
   var $state = require('$state');
-  var authentication = require('authentication');
+  var authentication = require('Authentication');
   var notification = require('notification');
   var TheAccountView = require('TheAccountView');
   var tokenStore = require('tokenStore');
@@ -16,7 +16,7 @@ angular.module('contentful')
     var match = makeMessageMatcher(data);
 
     if (match('create', 'UserCancellation')) {
-      authentication.logoutCancelledUser();
+      authentication.cancelUser();
 
     } else if (match('new', 'space')) {
       CreateSpace.showDialog(data.organizationId);

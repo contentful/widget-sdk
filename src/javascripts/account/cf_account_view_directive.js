@@ -6,7 +6,7 @@ angular.module('contentful')
 
   var $timeout = $injector.get('$timeout');
   var $stateParams = $injector.get('$stateParams');
-  var authentication = $injector.get('authentication');
+  var authentication = $injector.get('Authentication');
   var Config = $injector.get('Config');
   var modalDialog = $injector.get('modalDialog');
   var createChannel = $injector.get('account/IframeChannel').default;
@@ -65,7 +65,7 @@ angular.module('contentful')
       ignoreEsc: true,
       attachTo: 'body'
     }).promise.then(function () {
-      authentication.loginAfresh();
+      authentication.redirectToLogin();
     });
   }
 }]);

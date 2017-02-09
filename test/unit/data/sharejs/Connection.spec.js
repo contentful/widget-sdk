@@ -1,6 +1,6 @@
 'use strict';
 
-describe('data/ShareJS/Connection', function () {
+describe('data/sharejs/Connection', function () {
   let K;
 
   afterEach(function () {
@@ -11,7 +11,9 @@ describe('data/ShareJS/Connection', function () {
     this.baseConnection = {
       socket: {},
       emit: _.noop,
-      open: sinon.stub()
+      open: sinon.stub(),
+      send: sinon.stub(),
+      setState: sinon.stub()
     };
 
     this.setState = (state) => {
@@ -53,16 +55,24 @@ describe('data/ShareJS/Connection', function () {
     };
 
 
-    this.create = this.$inject('data/ShareJS/Connection').create;
+    this.getToken = sinon.stub().resolves('TOKEN');
+    this.create = this.$inject('data/sharejs/Connection').create;
   });
 
   describe('#create', function () {
     it('passes URL to base connection', function () {
-      this.create('//HOST', 'SPACE');
+      this.create(this.getToken, '//HOST', 'SPACE');
       sinon.assert.calledWith(
         this.sharejs.Connection,
         '//HOST/spaces/SPACE/channel'
       );
+    });
+
+    it('sends auth data when socket is opened', function () {
+      this.create(this.getToken, '//HOST', 'SPACE');
+      this.baseConnection.socket.onopen();
+      this.$apply();
+      sinon.assert.calledWith(this.baseConnection.send, {auth: 'TOKEN'});
     });
   });
 
@@ -70,7 +80,7 @@ describe('data/ShareJS/Connection', function () {
     let DocLoad;
 
     beforeEach(function () {
-      DocLoad = this.$inject('data/ShareJS/Connection').DocLoad;
+      DocLoad = this.$inject('data/sharejs/Connection').DocLoad;
 
       this.entity = {
         data: {sys: {

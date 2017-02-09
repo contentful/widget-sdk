@@ -21,7 +21,6 @@ angular.module('cf.app')
   var modalDialog = $injector.get('modalDialog');
   var analytics = $injector.get('analytics/Analytics');
   var spaceContext = $injector.get('spaceContext');
-  var transition = $injector.get('navigation/transition');
 
   // Result of confirmation dialog
   var navigationConfirmed = false;
@@ -43,7 +42,6 @@ angular.module('cf.app')
   }
 
   function stateChangeSuccessHandler (_event, toState, toStateParams, fromState, fromStateParams) {
-    transition.clear();
     logger.leaveBreadcrumb('Enter state', _.extend({
       state: toState
     }, toStateParams));
@@ -73,13 +71,6 @@ angular.module('cf.app')
         }
       });
     }
-
-    // Set next state
-    transition.set({
-      toState: toState,
-      toParams: toStateParams
-    });
-
 
     // Decide if it is OK to do the transition (unsaved changes etc)
     var stateData = fromState.data || {};
@@ -121,7 +112,6 @@ angular.module('cf.app')
    * Switches to the first space's entry list if there is a navigation error
    */
   function stateChangeErrorHandler (event, toState, toParams, fromState, fromParams, error) {
-    transition.clear();
     event.preventDefault();
 
     var matchedSection = /spaces.detail.(entries|assets|content_types|api\.keys).detail/.exec(toState.name);
@@ -188,18 +178,4 @@ angular.module('cf.app')
              _.omit(fromParams, ['addToContext'])
            );
   }
-}])
-
-/**
- * Exposes state information whilst a transition is underway
- * TODO: Upgrade ui-router to 1.x, this will not be required
- */
-.factory('navigation/transition', function () {
-  var cache = null;
-
-  return {
-    get: function () { return cache; },
-    set: function (value) { cache = value; },
-    clear: function () { cache = null; }
-  };
-});
+}]);

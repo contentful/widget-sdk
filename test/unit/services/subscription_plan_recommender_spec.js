@@ -15,12 +15,16 @@ describe('subscriptionPlanRecommender', function () {
   const REASON_CLASS = {'class': 'z-subscription-plan-recommendation-reason'};
 
   beforeEach(function () {
-    module('contentful/test', function ($provide, environment) {
-      environment.settings.authUrl = HOST;
-      $provide.value('authentication/token', {
-        get: _.constant(TEST_TOKEN)
-      });
+    module('contentful/test');
+
+    this.mockService('environment', {
+      settings: {authUrl: HOST}
     });
+
+    this.mockService('Authentication', {
+      getToken: sinon.stub().resolves(TEST_TOKEN)
+    });
+
 
     recommend = this.$inject('subscriptionPlanRecommender').recommend;
     $httpBackend = this.$inject('$httpBackend');

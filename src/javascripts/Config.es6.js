@@ -12,9 +12,23 @@ import {settings} from 'environment';
  * `CF_CONFIG` global variable. It is set in the `index.html` file and
  * read by the `environment` service.
  *
- * TODO We shhould remove the 'environment' service and expose
+ * TODO We should remove the 'environment' service and expose
  * everything here.
  */
+
+
+/**
+ * @ngdoc method
+ * @name Config#apiUrl
+ * Given a path return the URL for the CMA.
+ *
+ * In production returns something like `//api.contentful.com/path`.
+ * @param {string} path
+ * @returns {string}
+ */
+export function apiUrl (path) {
+  return settings.apiUrl + ensureLeadingSlash(path);
+}
 
 
 /**

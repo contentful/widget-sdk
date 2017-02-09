@@ -5,8 +5,6 @@ test/unit/app/widgets/cf_video_player_directive_spec.js
 test/unit/components/forms/cf_autocomplete_results_controller_spec.js
 test/unit/components/forms/cf_field_alert_directive_spec.js
 test/unit/components/forms/cf_multi_video_editor_controller_spec.js
-test/unit/components/app_container/space_controller_spec.js
-test/unit/components/client/activation_email_resend_controller_spec.js
 test/unit/components/client/cf_main_nav_bar_directive_spec.js
 test/unit/components/shared/data_size_scale_controller_spec.js
 test/unit/components/shared/accordion_controller_spec.js
@@ -75,7 +73,6 @@ test/unit/webhooks/webhook_repository_spec.js
 test/unit/webhooks/webhook_segmentation_spec.js
 test/helpers/deep_diff.js
 test/integration/field_validation_dialog_spec.js
-src/javascripts/components/client/activation_email_resend_controller.js
 src/javascripts/components/client/cf_main_nav_bar_directive.js
 src/javascripts/components/client/dialogsInitController.js
 src/javascripts/components/shared/developers/cf_cda_links_directive.js
@@ -204,7 +201,6 @@ src/javascripts/widgets/deprecations.js
 src/javascripts/widgets/migrations.js
 src/javascripts/data/content_types.js
 src/javascripts/data/editing_interfaces/transformer.js
-src/javascripts/data/space_endpoint.js
 src/javascripts/data/user_cache.js
 src/javascripts/markdown_editor/cf_markdown_action_directive.js
 src/javascripts/markdown_editor/link_organizer.js

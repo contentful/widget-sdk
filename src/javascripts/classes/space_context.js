@@ -29,7 +29,7 @@ angular.module('contentful')
   var createEIRepo = require('data/editingInterfaces');
   var createQueue = require('overridingRequestQueue');
   var ApiClient = require('data/ApiClient');
-  var ShareJSConnection = require('data/ShareJS/Connection');
+  var ShareJSConnection = require('data/sharejs/Connection');
   var Subscription = require('Subscription');
   var previewEnvironmentsCache = require('data/previewEnvironmentsCache');
   var PublishedCTRepo = require('data/ContentTypeRepo/Published');
@@ -38,6 +38,7 @@ angular.module('contentful')
   var tokenStore = require('tokenStore');
   var createApiKeyRepo = require('data/CMA/ApiKeyRepo').default;
   var K = require('utils/kefir');
+  var Auth = require('Authentication');
 
   var requestContentTypes = createQueue(function (extraHandler) {
     if (!spaceContext.space) {
@@ -96,7 +97,8 @@ angular.module('contentful')
       var self = this;
       var endpoint = spaceEndpoint.create(
         environment.settings.apiUrl,
-        space.getId()
+        space.getId(),
+        Auth
       );
 
       resetMembers(self);
@@ -114,8 +116,8 @@ angular.module('contentful')
       // of a template. We shouldn't use it in newly
       // created code.
 
-      // TODO handle auth token expiration!
       self.docConnection = ShareJSConnection.create(
+        Auth.getToken,
         environment.settings.otUrl,
         space.getId()
       );

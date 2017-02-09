@@ -10,7 +10,6 @@ angular.module('contentful')
   var tokenStore = require('tokenStore');
   var analytics = require('analytics/Analytics');
   var authorization = require('authorization');
-  var authentication = require('authentication');
   var presence = require('presence');
   var revision = require('revision');
   var ReloadNotification = require('ReloadNotification');
@@ -46,19 +45,10 @@ angular.module('contentful')
   $scope.showCreateSpaceDialog = CreateSpace.showDialog;
 
   function initClient () {
-    K.onValueScope($scope, authentication.token$, function () {
-      tokenStore.refresh()
-    });
-
     setTimeout(newVersionCheck, 5000);
-
     setInterval(function () {
       if (presence.isActive()) {
         newVersionCheck();
-        tokenStore.refresh()
-        .catch(function () {
-          ReloadNotification.trigger('Your authentication data needs to be refreshed. Please try logging in again.');
-        });
       }
     }, 5 * 60 * 1000);
   }

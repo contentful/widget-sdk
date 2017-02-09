@@ -21,11 +21,6 @@ angular.module('contentful')
     name: 'spaces',
     url: '/spaces',
     abstract: true,
-    resolve: {
-      spaces: ['tokenStore', function (tokenStore) {
-        return tokenStore.getSpaces();
-      }]
-    },
     views: {'nav-bar': { template: '<cf-main-nav-bar />' }},
     children: [newSpace, require('states/spaces/detail')]
   };
