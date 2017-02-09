@@ -25,7 +25,6 @@ angular.module('contentful')
   var ctHelpers = require('data/ContentTypes');
   var Widgets = require('widgets');
   var spaceEndpoint = require('data/spaceEndpoint');
-  var authentication = require('authentication');
   var environment = require('environment');
   var createEIRepo = require('data/editingInterfaces');
   var createQueue = require('overridingRequestQueue');
@@ -96,7 +95,6 @@ angular.module('contentful')
     resetWithSpace: function (space) {
       var self = this;
       var endpoint = spaceEndpoint.create(
-        authentication.token,
         environment.settings.apiUrl,
         space.getId()
       );
@@ -115,8 +113,9 @@ angular.module('contentful')
       // used only in a process of creating space out
       // of a template. We shouldn't use it in newly
       // created code.
+
+      // TODO handle auth token expiration!
       self.docConnection = ShareJSConnection.create(
-        authentication.token,
         environment.settings.otUrl,
         space.getId()
       );

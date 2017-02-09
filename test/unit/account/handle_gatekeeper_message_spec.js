@@ -8,9 +8,9 @@ describe('Gatekeeper Message Handler', function () {
 
   describe('actions on message', function () {
     it('says "goodbye" to a cancelled user', function () {
-      const goodbye = this.$inject('authentication').goodbye = sinon.spy();
+      const logoutCancelledUser = this.$inject('authentication').logoutCancelledUser = sinon.spy();
       this.handle({action: 'create', type: 'UserCancellation'});
-      sinon.assert.calledOnce(goodbye);
+      sinon.assert.calledOnce(logoutCancelledUser);
     });
 
     it('opens the space creation dialog', function () {
@@ -53,9 +53,9 @@ describe('Gatekeeper Message Handler', function () {
 
     it('updates token if present', function () {
       const token = {super: 'token'};
-      const update = this.$inject('authentication').updateTokenLookup = sinon.spy();
+      const updateToken = this.$inject('tokenStore').updateToken = sinon.spy();
       this.handle({token: token});
-      sinon.assert.calledOnce(update.withArgs(token));
+      sinon.assert.calledOnce(updateToken.withArgs(token));
     });
 
     it('refreshes token for any other message', function () {

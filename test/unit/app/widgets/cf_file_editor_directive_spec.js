@@ -12,6 +12,10 @@ describe('cfFileEditor Directive', function () {
       });
     });
 
+    // This is needed to transform the image domain
+    const tokenStore = this.$inject('tokenStore');
+    tokenStore.getDomains = sinon.stub().returns({});
+
     const widgetApi = this.$inject('mocks/widgetApi').create();
     fieldApi = widgetApi.field;
 
@@ -149,9 +153,6 @@ describe('cfFileEditor Directive', function () {
   });
 
   it('shows progress bar when image is loading', function () {
-    // This is needed to transform the image domain
-    const authentication = this.$inject('authentication');
-    authentication.tokenInfo = { domains: {} };
 
     fieldApi.onValueChanged.yield({
       url: '//images.contentful.com',

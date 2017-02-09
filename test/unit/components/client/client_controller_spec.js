@@ -45,10 +45,10 @@ describe('Client Controller', function () {
     });
   });
 
-  describe('on authentication.tokenLookup update', function () {
+  describe('on tokenLookup update', function () {
     it('it calls authorization.setTokenLookup', function () {
-      const TOKEN = {};
-      this.$inject('authentication').tokenLookup = TOKEN;
+      const TOKEN = {sys: {}};
+      this.$inject('tokenStore/lookup').set({items: [TOKEN]});
       this.$apply();
       sinon.assert.calledWith(this.authorizationStubs.setTokenLookup, TOKEN);
     });
@@ -59,7 +59,7 @@ describe('Client Controller', function () {
       this.spaceContext = this.$inject('spaceContext');
       this.hasSpace = sinon.stub().returns(false);
       this.authorizationStubs.authContext = {hasSpace: this.hasSpace};
-      this.$inject('authentication').tokenLookup = {};
+      this.$inject('tokenStore/lookup').set({items: [{sys: {}}]});
     });
 
     it('sets authorization space if authContext has space', function () {

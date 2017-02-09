@@ -69,7 +69,6 @@ angular.module('contentful/app', ['contentful'])
 
   require('utils/LaunchDarkly').init();
   require('presence').startTracking();
-  require('client').init(authentication.token);
   require('uiVersionSwitcher').checkIfVersionShouldBeSwitched();
   require('navigation/stateChangeHandlers').setup();
   require('contextMenu').init();

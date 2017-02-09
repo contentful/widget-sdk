@@ -25,7 +25,7 @@ angular.module('contentful')
 .directive('cfThumbnail', ['require', function (require) {
   var mimetype = require('mimetype');
   var h = require('utils/hyperscript').h;
-  var Authentication = require('authentication');
+  var tokenStore = require('tokenStore');
   var HostnameTransformer = require('hostnameTransformer');
 
   var groupToIconMap = {
@@ -167,7 +167,7 @@ angular.module('contentful')
    * host configured for the organization.
    */
   function externalImageUrl (url) {
-    var domains = _.clone(Authentication.tokenInfo.domains);
+    var domains = tokenStore.getDomains();
     var internalUrl = HostnameTransformer.toInternal(url, domains);
     domains.assets = domains.images;
     return HostnameTransformer.toExternal(internalUrl, domains);

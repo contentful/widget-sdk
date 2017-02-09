@@ -1,14 +1,13 @@
 'use strict';
 
 describe('subscriptionPlanRecommender', function () {
-
   let $httpBackend;
   let recommend;
 
   const HOST = 'be.contentful.com:443';
   const TEST_ORG_ID = 'TEST_ORG_ID';
   const TEST_TOKEN = 'TEST_TOKEN';
-  const ENDPOINT = '//' + HOST + '/account/organizations/' + TEST_ORG_ID +
+  const ENDPOINT = HOST + '/account/organizations/' + TEST_ORG_ID +
     '/z_subscription_plans/recommended';
   const REQUEST = ENDPOINT + '?access_token=' + TEST_TOKEN;
 
@@ -17,9 +16,9 @@ describe('subscriptionPlanRecommender', function () {
 
   beforeEach(function () {
     module('contentful/test', function ($provide, environment) {
-      environment.settings.authUrl = '//' + HOST;
-      $provide.value('authentication', {
-        token: TEST_TOKEN
+      environment.settings.authUrl = HOST;
+      $provide.value('authentication/token', {
+        get: _.constant(TEST_TOKEN)
       });
     });
 

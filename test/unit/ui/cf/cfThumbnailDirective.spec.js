@@ -16,8 +16,8 @@ describe('cfThumbnailDirective', function () {
     };
 
     // This is needed to transform the image domain
-    const authentication = this.$inject('authentication');
-    authentication.tokenInfo = { domains: {} };
+    const tokenStore = this.$inject('tokenStore');
+    tokenStore.getDomains = sinon.stub().returns({});
   });
 
   describe('file without preview', function () {

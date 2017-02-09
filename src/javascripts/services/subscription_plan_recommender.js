@@ -12,7 +12,7 @@ angular.module('contentful')
 .factory('subscriptionPlanRecommender', ['require', function (require) {
 
   var Config = require('Config');
-  var authentication = require('authentication');
+  var authToken = require('authentication/token');
   var $http = require('$http');
   var $q = require('$q');
 
@@ -38,12 +38,11 @@ angular.module('contentful')
   };
 
   function recommendSubscriptionPlan (organizationId) {
-    var accessToken = authentication.token;
     var request = {
       method: 'GET',
       url: organizationEndpoint(organizationId),
       params: {
-        access_token: accessToken
+        access_token: authToken.get()
       }
     };
 

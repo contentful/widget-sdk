@@ -65,7 +65,7 @@ angular.module('contentful')
       ignoreEsc: true,
       attachTo: 'body'
     }).promise.then(function () {
-      authentication.clearAndLogin();
+      authentication.loginAfresh();
     });
   }
 }]);

@@ -4,6 +4,10 @@ describe('data/request-queue', function () {
   beforeEach(function () {
     module('contentful/test');
 
+    this.authentication = this.$inject('authentication');
+    this.authentication.loginAfresh = sinon.stub().defers();
+    this.authentication.showAuthError = sinon.stub().defers();
+    this.authentication.isAuthenticating = sinon.stub().returns(false);
     const rq = this.$inject('data/RequestQueue');
     const wrap = rq.create;
     this.$timeout = this.$inject('$timeout');
@@ -99,46 +103,96 @@ describe('data/request-queue', function () {
     });
   });
 
-  it('retries 5 times for 502', function () {
-    this.requestStub.rejects({statusCode: 502});
-    this.push();
-
-    this.flush(10);
-    this.expectCallCount(1);
-
-    this.flush(1000);
-    this.expectCallCount(2);
-
-    this.flush(9000);
-    this.expectCallCount(6);
-  });
-
-  pit('resolves when the request is eventually successful', function () {
-    this.requestStub.rejects({statusCode: 502});
-    const promise = this.push();
-    const res = {};
-
-    this.flush(10);
-    this.requestStub.resolves(res);
-    this.flush(1000);
-
-    return promise.then(function (requestRes) {
-      expect(requestRes).toBe(res);
+  describe('received 401 response', function () {
+    beforeEach(function () {
+      this.clock = sinon.useFakeTimers();
+      this.requestStub.rejects({statusCode: 401});
+      this.push();
+      this.flush();
     });
-  });
-  pit('rejects when all retries fail', function () {
-    const onSuccess = sinon.stub();
-    const onError = sinon.stub();
 
-    this.requestStub.rejects({statusCode: 502});
-    const promise = this.push();
+    afterEach(function () {
+      this.clock.restore();
+    });
 
-    this.flush(9000);
+    it('attempts login', function () {
+      sinon.assert.calledOnce(this.authentication.loginAfresh);
+    });
 
-    return promise.then(onSuccess, onError).then(function () {
+    it('does not attempt login when app is authenticating', function () {
+      this.authentication.isAuthenticating.returns(true);
+      this.push();
+      this.flush();
+
+      sinon.assert.calledOnce(this.authentication.loginAfresh);
+    });
+
+    it('retries when auth token is obtained', function () {
+      this.authentication.loginAfresh.resolves({ token: 'TOKEN' });
+      const onSuccess = sinon.stub();
+
+      this.push().then(onSuccess);
+      this.flush(10);
+      this.requestStub.resolves();
+      this.flush(1000);
+      sinon.assert.calledOnce(onSuccess);
+    });
+
+    it('doesn\'t retry or reject when redirect has started', function () {
+      this.authentication.loginAfresh.resolves({ redirect: 'URL' });
+
+      const onSuccess = sinon.stub();
+      const onError = sinon.stub();
+      this.push().then(onSuccess, onError);
+      this.flush(1000);
+
       sinon.assert.notCalled(onSuccess);
-      sinon.assert.calledOnce(onError);
+      sinon.assert.notCalled(onError);
+    });
+  });
+
+  describe('retries on 50x', function () {
+    it('retries 5 times for 502', function () {
+      this.requestStub.rejects({statusCode: 502});
+      this.push();
+
+      this.flush(10);
+      this.expectCallCount(1);
+
+      this.flush(1000);
+      this.expectCallCount(2);
+
+      this.flush(9000);
+      this.expectCallCount(6);
     });
 
+
+    pit('resolves when the request is eventually successful', function () {
+      this.requestStub.rejects({statusCode: 502});
+      const promise = this.push();
+      const res = {};
+
+      this.flush(10);
+      this.requestStub.resolves(res);
+      this.flush(1000);
+
+      return promise.then(function (requestRes) {
+        expect(requestRes).toBe(res);
+      });
+    });
+    pit('rejects when all retries fail', function () {
+      const onSuccess = sinon.stub();
+      const onError = sinon.stub();
+
+      this.requestStub.rejects({statusCode: 502});
+      const promise = this.push();
+
+      this.flush(9000);
+
+      return promise.then(onSuccess, onError).then(function () {
+        sinon.assert.notCalled(onSuccess);
+        sinon.assert.calledOnce(onError);
+      });
+    });
   });
 });

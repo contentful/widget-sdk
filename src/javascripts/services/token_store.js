@@ -5,8 +5,7 @@
  * @name tokenStore
  *
  * @description
- * This service is responsible for fetching, storing and exposing
- * data included in an access token.
+ * This service is responsible for exposing data included in the user's token
  */
 angular.module('contentful')
 .factory('tokenStore', ['require', function (require) {
@@ -15,13 +14,24 @@ angular.module('contentful')
   var K = require('utils/kefir');
   var client = require('client');
   var authentication = require('authentication');
-  var modalDialog = require('modalDialog');
+  var tokenLookup = require('tokenStore/lookup');
   var ReloadNotification = require('ReloadNotification');
   var logger = require('logger');
   var createQueue = require('overridingRequestQueue');
 
   var currentToken = null;
-  var request = createQueue(getTokenLookup, setupLookupHandler);
+
+  var fetchLookupToken = createQueue(function (accessToken) {
+    return tokenLookup.fetch(accessToken);
+  }, function (promise) {
+    promise.then(function (lookup) {
+      refreshWithLookup(lookup);
+      return lookup;
+    }, function () {
+      ReloadNotification.trigger('The browser was unable to obtain the login token.');
+    });
+  });
+
   var refreshPromise = $q.resolve();
 
   var userBus = K.createPropertyBus(null);
@@ -29,9 +39,10 @@ angular.module('contentful')
 
   return {
     refresh: refresh,
-    refreshWithLookup: refreshWithLookup,
     getSpaces: getSpaces,
     getSpace: getSpace,
+    getDomains: getDomains,
+    getTokenLookup: function () { return tokenLookup.get() },
     /**
      * @ngdoc property
      * @name tokenStore#user$
@@ -62,16 +73,6 @@ angular.module('contentful')
     })
   };
 
-  function getTokenLookup () {
-    return authentication.getTokenLookup();
-  }
-
-  function setupLookupHandler (promise) {
-    promise.then(function (lookup) {
-      refreshWithLookup(lookup);
-    }, communicateError);
-  }
-
   /**
    * @ngdoc method
    * @name tokenStore#refreshWithLookup
@@ -80,12 +81,12 @@ angular.module('contentful')
    * This (synchronous) method takes a token lookup object and:
    * - stores user
    * - stores updated spaces (existing space objects are updated, not recreated)
-   * - notifies all subscribers of "changed" signal
+   * - notifies all subscribers of "user$" and "spaces$" properties
    */
-  function refreshWithLookup (tokenLookup) {
+  function refreshWithLookup (lookup) {
     currentToken = {
-      user: tokenLookup.sys.createdBy,
-      spaces: updateSpaces(tokenLookup.spaces)
+      user: lookup.sys.createdBy,
+      spaces: updateSpaces(lookup.spaces)
     };
     userBus.set(currentToken.user);
     spacesBus.set(currentToken.spaces);
@@ -93,7 +94,7 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
-   * @name tokenStore#refreshWithLookup
+   * @name tokenStore#refresh
    * @returns {Promise<void>}
    * @description
    * This method should be called when token data needs to be refreshed.
@@ -103,11 +104,12 @@ angular.module('contentful')
    * - returned promise is resolved with a value of the last call!
    *
    * As defined in "setupLookupHandler":
-   * On failure we call "communicateError", what basically forces an user
+   * On failure we call "ReloadNotification", what basically forces an user
    * to reload the app. On success we call "refreshWithLookup" (see docs above).
    */
   function refresh () {
-    refreshPromise = request();
+    var accessToken = authentication.getToken();
+    refreshPromise = fetchLookupToken(accessToken);
     return refreshPromise;
   }
 
@@ -138,6 +140,17 @@ angular.module('contentful')
    */
   function getSpaces () {
     return refreshPromise.then(getCurrentSpaces);
+  }
+
+  /**
+   * TODO docs
+   */
+  function getDomains () {
+    var domains = tokenLookup.get().domains || [];
+    return domains.reduce(function (map, value) {
+      map[value.name] = value.domain;
+      return map;
+    }, {});
   }
 
   function updateSpaces (rawSpaces) {
@@ -183,24 +196,4 @@ angular.module('contentful')
       }
     };
   }
-
-  function communicateError (err) {
-    if (err && err.statusCode === 401) {
-      modalDialog.open({
-        title: 'Your login token is invalid',
-        message: 'You need to login again to refresh your login token.',
-        cancelLabel: null,
-        confirmLabel: 'Login',
-        backgroundClose: false,
-        disableTopCloseButton: true,
-        ignoreEsc: true,
-        attachTo: 'body'
-      }).promise.then(function () {
-        authentication.clearAndLogin();
-      });
-    } else {
-      ReloadNotification.trigger('The browser was unable to obtain the login token.');
-    }
-  }
-
 }]);

@@ -4,8 +4,11 @@ describe('data/spaceEndpoint', function () {
   beforeEach(function () {
     module('contentful/test');
 
+    const authToken = this.$inject('authentication/token');
+    authToken.get = sinon.stub().returns('TOKEN');
+
     const spaceEndpoint = this.$inject('data/spaceEndpoint');
-    const request = spaceEndpoint.create('TOKEN', '//test.io', 'SPACE');
+    const request = spaceEndpoint.create('//test.io', 'SPACE');
     this.makeRequest = function (...args) {
       const response = request(...args);
       this.$inject('$timeout').flush();

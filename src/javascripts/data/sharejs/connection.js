@@ -12,6 +12,7 @@ angular.module('cf.data')
  */
 .factory('data/ShareJS/Connection', ['require', function (require) {
   var ShareJS = require('libs/sharejs');
+  var authToken = require('authentication/token');
   var caseof = require('libs/sum-types').caseof;
   var K = require('utils/kefir');
   var $q = require('$q');
@@ -23,7 +24,7 @@ angular.module('cf.data')
     DocLoad: DocLoad
   };
 
-  function create (token, baseUrl, spaceId) {
+  function create (baseUrl, spaceId) {
     /**
      * `connection.state` may be
      * - 'connecting': The connection is being established
@@ -33,7 +34,7 @@ angular.module('cf.data')
      * - 'stopped': The connection is closed, and will not reconnect.
      * (From ShareJS client docs)
      */
-    var connection = createBaseConnection(token, baseUrl, spaceId);
+    var connection = createBaseConnection(baseUrl, spaceId);
 
     var events = getEventStream(connection);
 
@@ -56,6 +57,7 @@ angular.module('cf.data')
      */
     // Set to false after we connected once
     var initialConnect = true;
+
     var state$ = K.sampleBy(events, function () {
       if (connection.state === 'connecting') {
         if (initialConnect) {
@@ -161,9 +163,9 @@ angular.module('cf.data')
   }
 
 
-  function createBaseConnection (token, baseUrl, spaceId) {
+  function createBaseConnection (baseUrl, spaceId) {
     var url = baseUrl + '/spaces/' + spaceId + '/channel';
-    var connection = new ShareJS.Connection(url, token);
+    var connection = new ShareJS.Connection(url, null);
 
     // I’m not sure why we do this
     connection.socket.send = function (message) {
@@ -172,6 +174,17 @@ angular.module('cf.data')
       } catch (error) {
         // Silently ignore the error as this is handled on ot_doc_for
       }
+    };
+
+    // TODO add possibility to change auth token in ShareJS client and remove
+    // this dirty patch
+    connection.socket.onopen = function () {
+      connection.send({
+        'auth': authToken.get()
+      });
+
+      connection.lastError = connection.lastReceivedDoc = connection.lastSentDoc = null;
+      connection.setState('handshaking');
     };
 
     return connection;

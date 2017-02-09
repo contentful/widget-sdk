@@ -23,6 +23,7 @@ angular.module('cf.data')
 .factory('data/spaceEndpoint', ['require', function (require) {
   var $http = require('$http');
   var $q = require('$q');
+  var authToken = require('authentication/token');
   var RequestQueue = require('data/RequestQueue');
 
   return {create: create};
@@ -60,12 +61,11 @@ angular.module('cf.data')
    * - `request` The original request configuration
    * - `headers` The HTTP response headers
    *
-   * @param {string} token
    * @param {string} baseUrl
    * @param {string} spaceId
    * @returns {function}
    */
-  function create (token, baseUrl, spaceId) {
+  function create (baseUrl, spaceId) {
     return RequestQueue.create(makeRequest);
 
     function makeRequest (config, headers) {
@@ -99,7 +99,7 @@ angular.module('cf.data')
     function makeHeaders (version, additional) {
       var headers = _.extend({
         'Content-Type': 'application/vnd.contentful.management.v1+json',
-        'Authorization': 'Bearer ' + token
+        'Authorization': 'Bearer ' + authToken.get()
       }, additional);
       if (version) {
         headers['X-Contentful-Version'] = version;

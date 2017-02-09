@@ -40,8 +40,8 @@ describe('Space Controller', function () {
 
   describe('watches for updated tokenLookup', function () {
     beforeEach(function () {
-      var authentication = this.$inject('authentication');
-      authentication.tokenLookup = {};
+      var tokenLookup = this.$inject('tokenStore/lookup');
+      tokenLookup.set({items: [{sys: {}}]});
       this.authorizationMock.isUpdated.returns(true);
       this.enforcementsMock.getPeriodUsage.returns(true);
       this.broadcastStub = sinon.stub(this.$rootScope, '$broadcast');

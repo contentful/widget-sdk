@@ -57,12 +57,11 @@ describe('data/ShareJS/Connection', function () {
   });
 
   describe('#create', function () {
-    it('passes URL and token to base connection', function () {
-      this.create('TOKEN', '//HOST', 'SPACE');
-      sinon.assert.calledWithExactly(
+    it('passes URL to base connection', function () {
+      this.create('//HOST', 'SPACE');
+      sinon.assert.calledWith(
         this.sharejs.Connection,
-        '//HOST/spaces/SPACE/channel',
-        'TOKEN'
+        '//HOST/spaces/SPACE/channel'
       );
     });
   });
@@ -81,7 +80,7 @@ describe('data/ShareJS/Connection', function () {
         }}
       };
 
-      const connection = this.create('TOKEN', 'HOST', 'SPACE');
+      const connection = this.create('HOST', 'SPACE');
       const readOnly = K.createMockProperty(false);
 
       this.docLoader = connection.getDocLoader(this.entity, readOnly);
@@ -286,7 +285,7 @@ describe('data/ShareJS/Connection', function () {
         }}
       };
 
-      const connection = this.create('TOKEN', 'HOST', 'SPACE');
+      const connection = this.create('HOST', 'SPACE');
 
       this.open = function () {
         return connection.open(entity);
@@ -315,7 +314,7 @@ describe('data/ShareJS/Connection', function () {
 
   describe('#close', function () {
     it('delegates to baseConnection.disconnect', function () {
-      const connection = this.create('URL', 'TOKEN');
+      const connection = this.create('HOST');
       this.baseConnection.disconnect = sinon.spy();
       connection.close();
       sinon.assert.calledOnce(this.baseConnection.disconnect);

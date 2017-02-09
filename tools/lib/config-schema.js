@@ -37,7 +37,8 @@ export default strictObject(Object.assign({
     previewApiUrl: subdomainHostSchema,
     accessToken: hex(64),
     space: alnum(12),
-    previewAccessToken: hex(64)
+    previewAccessToken: hex(64),
+    webappClientId: alnum(64)
   })
 }, hosts(), integrations()), {
   clientId: hex(64)
