@@ -77,4 +77,29 @@ describe('Snowplow service', function () {
       expect(this.getLastEvent()[2]).toEqual(['ctx']);
     });
   });
+
+  describe('#page', function () {
+    it('tracks page event', function () {
+      const pageData = {
+        userId: 'user1',
+        spaceId: null,
+        organizationId: null,
+        state: 'home',
+        params: {},
+        fromState: 'spaces.detail.entries',
+        fromStateParams: {spaceId: 'abc'}
+      };
+      this.Snowplow.enable();
+      this.Snowplow.page(pageData);
+
+      expect(this.getLastEvent()[1].schema).toBe('iglu:com.contentful/page_view/jsonschema/1-0-0');
+      expect(this.getLastEvent()[1].data).toEqual({
+        executing_user_id: 'user1',
+        to_state: 'home',
+        to_state_params: {},
+        from_state: 'spaces.detail.entries',
+        from_state_params: {spaceId: 'abc'}
+      });
+    });
+  });
 });

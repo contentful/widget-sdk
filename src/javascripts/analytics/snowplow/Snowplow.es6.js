@@ -1,8 +1,9 @@
 import $window from '$window';
-import {once} from 'lodash';
+import {once, pickBy, identity} from 'lodash';
 import {snowplow as snowplowConfig, domain} from 'Config';
 import LazyLoader from 'LazyLoader';
-import {getSchema, transform} from 'analytics/snowplow/Events';
+import {getSchema as getSchemaForEvent, transform} from 'analytics/snowplow/Events';
+import {getSchema} from 'analytics/snowplow/Schemas';
 
 /**
  * @ngdoc service
@@ -37,12 +38,6 @@ function initSnowplow () {
       gaCookies: true
     }
   });
-
-  // Commented out for now as something here is causing the Snowplow library to send
-  // too long URLs
-  // _snowplow('enableActivityTracking', 30, 30); // Ping every 30 seconds after 30 seconds
-  // _snowplow('enableLinkClickTracking');
-  // _snowplow('trackPageView');
 }
 
 /**
@@ -84,7 +79,7 @@ export function identify (userId) {
  * Tracks an event in Snowplow if it is registered in the snowplow events service
  */
 export function track (eventName, data) {
-  const schema = getSchema(eventName);
+  const schema = getSchemaForEvent(eventName);
   if (schema) {
     const transformedData = transform(eventName, data);
 
@@ -93,6 +88,31 @@ export function track (eventName, data) {
       data: transformedData.data
     }, transformedData.contexts);
   }
+}
+
+/**
+ * @ngdoc method
+ * @name analytics/snowplow/Snowplow#page
+ * @param {string} data
+ *
+ * @description
+ * Tracks a page view event in Snowplow
+ */
+export function page (data) {
+  const snowplowData = pickBy({
+    to_state: data.state,
+    to_state_params: data.params,
+    from_state: data.fromState,
+    from_state_params: data.fromStateParams,
+    executing_user_id: data.userId,
+    space_id: data.space_id,
+    organization_id: data.organizationId
+  }, identity);
+
+  snowplowSend('trackUnstructEvent', {
+    schema: getSchema('page_view').path,
+    data: snowplowData
+  });
 }
 
 function snowplowSend () {

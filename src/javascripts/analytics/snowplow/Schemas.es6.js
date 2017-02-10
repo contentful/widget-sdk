@@ -89,6 +89,10 @@ registerSchema({
   version: '1-0-0'
 });
 
+registerSchema({
+  name: 'page_view',
+  version: '1-0-0'
+});
 
 function registerSchema (schema) {
   _schemas[schema.name] = schema;
