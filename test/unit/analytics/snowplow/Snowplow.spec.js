@@ -39,8 +39,9 @@ describe('Snowplow service', function () {
     });
 
     it('calling #track does not add event to queue', function () {
+      const queueSize = this.$window.snowplow.q.length;
       this.Snowplow.track('learn:language_selected');
-      expect(this.$window.snowplow.q.length).toBe(1);
+      expect(this.$window.snowplow.q.length).toBe(queueSize);
     });
   });
 

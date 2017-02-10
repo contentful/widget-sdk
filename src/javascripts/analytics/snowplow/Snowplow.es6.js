@@ -38,6 +38,9 @@ function initSnowplow () {
       gaCookies: true
     }
   });
+
+  // Ping every 30 seconds
+  snowplowSend('enableActivityTracking', 30, 30);
 }
 
 /**
