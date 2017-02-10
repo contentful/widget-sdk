@@ -9,7 +9,7 @@ import {
   ClipboardCopyTransform,
   BoilerplateTransform
 } from 'analytics/snowplow/transformers/ApiKey';
-
+import AppOpen from 'analytics/snowplow/transformers/AppOpen';
 
 /**
  * @ngdoc service
@@ -38,6 +38,8 @@ registerEntityActionEvent('api_key:create');
 registerEntityActionEvent('asset:create');
 
 registerEvent('space:create', 'space_create', SpaceCreate);
+registerEvent('global:app_loaded', 'app_open', AppOpen);
+
 
 function registerGenericEvent (event) {
   registerEvent(event, 'generic', Generic);

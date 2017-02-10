@@ -79,6 +79,17 @@ registerSchema({
   version: '1-0-0'
 });
 
+registerSchema({
+  name: 'app',
+  version: '1-0-0'
+});
+
+registerSchema({
+  name: 'app_open',
+  version: '1-0-0'
+});
+
+
 function registerSchema (schema) {
   _schemas[schema.name] = schema;
   _schemas[schema.name].path = buildPath(schema);
