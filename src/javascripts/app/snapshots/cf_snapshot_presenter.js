@@ -44,14 +44,19 @@ angular.module('cf.app')
 }])
 
 .directive('cfSnapshotPresenterMarkdown', ['require', function (require) {
-  var preview = require('markdown_editor/markdown_preview');
+  var generatePreview = require('markdown_editor/PreviewGenerator').default;
+  var K = require('utils/kefir');
 
   return {
     restrict: 'E',
     template: '<cf-markdown-preview class="markdown-preview" preview="preview" />',
     controller: ['$scope', function ($scope) {
-      preview.start(_.constant($scope.value), function (_err, preview) {
-        $scope.preview = preview;
+      var markdown$ = K.fromScopeValue($scope, function (scope) {
+        return scope.value;
+      });
+      var preview$ = generatePreview(markdown$);
+      K.onValueScope($scope, preview$, function (preview) {
+        $scope.preview = preview.preview;
       });
     }]
   };
