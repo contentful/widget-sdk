@@ -26,7 +26,7 @@ angular.module('contentful')
       K.onValueScope(scope, messages$, closeModalsIfLocationUpdated);
 
       iframe.ready(waitAndForceLogin);
-      iframe.prop('src', Config.accountUrl(gkPathSuffix));
+      iframe.prop('src', Config.accountUrl(gkPathSuffix) + '?withoutNavigation=true');
       scope.$on('$destroy', cancelTimeout);
 
       // remove leading /account and add trailing slash
