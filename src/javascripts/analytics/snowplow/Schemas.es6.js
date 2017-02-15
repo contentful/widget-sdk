@@ -94,6 +94,16 @@ registerSchema({
   version: '1-0-0'
 });
 
+registerSchema({
+  name: 'feature_bulk_editor',
+  version: '1-0-0'
+});
+
+registerSchema({
+  name: 'feature_snapshot',
+  version: '1-0-0'
+});
+
 function registerSchema (schema) {
   _schemas[schema.name] = schema;
   _schemas[schema.name].path = buildPath(schema);
