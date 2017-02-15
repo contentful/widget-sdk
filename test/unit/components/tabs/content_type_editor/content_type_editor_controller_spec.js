@@ -34,7 +34,10 @@ describe('ContentTypeEditor Controller', function () {
         $setDirty: sinon.stub()
       },
       context: {},
-      editingInterface: {}
+      editingInterface: {},
+      spaceContext: {
+        contentTypes: []
+      }
     });
 
 

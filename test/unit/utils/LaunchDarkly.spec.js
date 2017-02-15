@@ -22,8 +22,6 @@ describe('utils/LaunchDarkly', function () {
 
     this.qualifiedUser = {
       email: 'user@example.com',
-      firstName: 'First',
-      lastName: 'Last',
       organizationMemberships: [
         {
           organization: {
@@ -33,7 +31,10 @@ describe('utils/LaunchDarkly', function () {
             }
           }
         }
-      ]
+      ],
+      sys: {
+        id: 1
+      }
     };
 
     this.user$ = K.createMockProperty();
@@ -50,9 +51,7 @@ describe('utils/LaunchDarkly', function () {
 
     this.get = launchDarkly.get;
 
-    this.assertPropVal = function (prop, val) {
-      expect(this.getValue(prop)).toBe(val);
-    };
+    this.assertPropVal = K.assertCurrentValue;
   });
 
   afterEach(() => {
@@ -87,14 +86,7 @@ describe('utils/LaunchDarkly', function () {
 
     it('should change user context when a logged in and qualified user is available', function () {
       const ldUser = {
-        key: this.qualifiedUser.email,
-        firstName: this.qualifiedUser.firstName,
-        lastName: this.qualifiedUser.lastName,
-        email: this.qualifiedUser.email,
-        custom: {
-          organizationNames: ['test-org'],
-          organizationSubscriptions: ['free']
-        }
+        key: this.qualifiedUser.sys.id
       };
       const assertSwitchedToUser = () => sinon.assert.calledWith(client.identify, ldUser);
       const assertSwitchedOnlyOnce = () => sinon.assert.calledOnce(client.identify);
@@ -122,8 +114,6 @@ describe('utils/LaunchDarkly', function () {
     beforeEach(function () {
       this.unqualifiedUser = {
         email: 'mehh@example.com',
-        firstName: 'Unqualified',
-        lastName: 'User',
         organizationMemberships: [
           {
             organization: {
@@ -133,7 +123,10 @@ describe('utils/LaunchDarkly', function () {
               }
             }
           }
-        ]
+        ],
+        sys: {
+          id: 2
+        }
       };
     });
 

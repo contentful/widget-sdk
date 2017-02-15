@@ -39,30 +39,10 @@ export function init () {
     bootstrap: 'localStorage'
   });
 
-  const changeUserContext = ({email, firstName, lastName, organizationMemberships}) => {
-    // custom properties can only be strings, bools, numbers or lists of those
-    const baseLdUser = {
-      key: email,
-      firstName,
-      lastName,
-      email,
-      custom: {
-        organizationNames: [],
-        organizationSubscriptions: []
-      }
-    };
-
-    const ldUser = organizationMemberships.reduce((ldUser, membership) => {
-      const {custom: {organizationNames, organizationSubscriptions}} = ldUser;
-      const {organization: {name, subscription: {status}}} = membership;
-
-      organizationNames.push(name);
-      organizationSubscriptions.push(status);
-
-      return ldUser;
-    }, baseLdUser);
-
-    client.identify(ldUser, null, noop);
+  const changeUserContext = ({sys: {id: userId}}) => {
+    client.identify({
+      key: userId
+    }, null, noop);
   };
 
   user$
@@ -93,7 +73,7 @@ function isQualifiedUser ({organizationMemberships}) {
  * @name utils/LaunchDarkly#get
  * @usage[js]
  * const ld = require('utils/LaunchDarkly')
- * ld.get('my-awesome-test')
+ * const awesomeTest$ = ld.get('my-awesome-test')
  * K.onValueScope($scope, awesomeTest$, callback) // to bind to lifetime of scope
  * // or
  * awesomeTest$.onValue(callback)
@@ -104,7 +84,7 @@ function isQualifiedUser ({organizationMemberships}) {
  * value for the test as it is on Launch Darkly servers.
  *
  * @param {String} testName
- * @returns {utils/kefir.PropertyBus}
+ * @returns {utils/kefir.Property<boolean>}
  */
 export function get (testName) {
   const testVal$ = mergeValues([
@@ -119,7 +99,7 @@ export function get (testName) {
     // `null`
     const currentUser = getValue(user$);
 
-    if (isQualifiedUser(currentUser)) {
+    if (currentUser && isQualifiedUser(currentUser)) {
       return client.variation(testName, DEFAULT_VAL);
     } else {
       return DEFAULT_VAL;
