@@ -83,7 +83,7 @@ describe('TheAccountView service', function () {
 
   describeGoToMethod('goToBilling', 'z_billing');
 
-  describeGoToMethod('goToSubscription', 'subscription');
+  describeGoToMethod('goToSubscription', 'z_subscription');
 
   function describeGoToMethod (name, subpage) {
     describe(`.${name}()`, function () {
@@ -161,7 +161,7 @@ describe('TheAccountView service', function () {
       });
 
       function test (subpageParam) {
-        const expectedPathSuffix = subpageParam || 'subscription';
+        const expectedPathSuffix = subpageParam || 'z_subscription';
         once(function () {
           setup.call(this);
           this.view.goToOrganizations(subpageParam);
