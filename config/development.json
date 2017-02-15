@@ -33,7 +33,7 @@
   "segment_io": "uwr64jkg06",
   "snowplow": {
     "collector_endpoint": "com-contentful.mini.snplow.net:8080",
-    "app_id": "userInterfaceTracker",
+    "app_id": "userInterfaceDev",
     "buffer_size": 1
   },
   "google" : {
