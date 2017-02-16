@@ -33,6 +33,9 @@
         }
       }
     },
+    "Base64": {
+      "version": "1.0.0"
+    },
     "ajv": {
       "version": "4.1.3",
       "dependencies": {
@@ -3697,6 +3700,9 @@
           }
         }
       }
+    },
+    "ldclient-js": {
+      "version": "1.1.8"
     },
     "lodash": {
       "version": "4.14.2"

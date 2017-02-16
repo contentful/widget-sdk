@@ -1,3 +1,5 @@
+TAGS
+.ctags
 .DS_Store
 chromedriver.log
 libpeerconnection.log

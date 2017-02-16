@@ -87,9 +87,10 @@ export function track (eventName, data) {
   const schema = getSchema(eventName);
   if (schema) {
     const transformedData = transform(eventName, data);
+
     snowplowSend('trackUnstructEvent', {
-      'schema': schema.path,
-      'data': transformedData.data
+      schema: schema.path,
+      data: transformedData.data
     }, transformedData.contexts);
   }
 }

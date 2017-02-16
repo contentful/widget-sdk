@@ -39,7 +39,7 @@ angular.module('contentful')
      * @description
      * The current user object from the token
      */
-    user$: userBus.property,
+    user$: userBus.property.skipDuplicates(_.isEqual),
     /**
      * @ngdoc property
      * @name tokenStore#spaces$
