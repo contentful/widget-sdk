@@ -22,6 +22,8 @@ describe('ContentTypeEditor Controller', function () {
       });
     });
 
+    this.$inject('utils/LaunchDarkly').init();
+
     const cfStub = this.$inject('cfStub');
     const $rootScope = this.$inject('$rootScope');
 
@@ -32,7 +34,10 @@ describe('ContentTypeEditor Controller', function () {
         $setDirty: sinon.stub()
       },
       context: {},
-      editingInterface: {}
+      editingInterface: {},
+      spaceContext: {
+        contentTypes: []
+      }
     });
 
 

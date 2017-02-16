@@ -16,6 +16,9 @@
     "spaceTemplatesUserReadOnlyToken": "8adea107285afc11819019618341f5b98e5808c84b957cba9ede1e57c6026475",
     "spaceTemplateEntryContentTypeId": "17WjnjeALEOeSyuiMI4QOW"
   },
+  "launchDarkly": {
+    "envId": "588a047044b03e0b3211298d"
+  },
   "filepicker": {
     "api_key": "AQGV4TMRPGovR9AIjMi6Az",
     "policy": "eyJleHBpcnkiOjE1MzQ3NTM0NjIsImNhbGwiOlsicGljayIsInN0b3JlIl19",

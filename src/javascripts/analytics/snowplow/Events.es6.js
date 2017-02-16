@@ -4,6 +4,11 @@ import {getSchema as fetchSchema} from 'analytics/snowplow/Schemas';
 import EntityAction from 'analytics/snowplow/transformers/SpaceEntityAction';
 import Generic from 'analytics/snowplow/transformers/Generic';
 import SpaceCreate from 'analytics/snowplow/transformers/SpaceCreate';
+import ExperimentTransform from 'analytics/snowplow/transformers/Experiment';
+import {
+  ClipboardCopyTransform,
+  BoilerplateTransform
+} from 'analytics/snowplow/transformers/ApiKey';
 
 
 /**
@@ -21,31 +26,11 @@ registerGenericEvent('learn:language_selected');
 registerGenericEvent('learn:resource_selected');
 registerGenericEvent('learn:step_clicked');
 
-// TODO extract common event details
-registerEvent('api_key:clipboard_copy', 'api_key', function (_ev, data) {
-  return {
-    data: {
-      'action': `clipboard_copy_${data.source}`,
+registerEvent('experiment:start', 'experiment', ExperimentTransform);
 
-      'organization_id': data.organizationId,
-      'space_id': data.spaceId,
-      'executing_user_id': data.userId
-    }
-  };
-});
+registerEvent('api_key:clipboard_copy', 'api_key', ClipboardCopyTransform);
 
-registerEvent('api_key:boilerplate', 'boilerplate', function (_ev, data) {
-  return {
-    data: {
-      'action': `boilerplate_${data.action}`,
-      'platform': data.platform,
-
-      'organization_id': data.organizationId,
-      'space_id': data.spaceId,
-      'executing_user_id': data.userId
-    }
-  };
-});
+registerEvent('api_key:boilerplate', 'boilerplate', BoilerplateTransform);
 
 registerEntityActionEvent('content_type:create');
 registerEntityActionEvent('entry:create');

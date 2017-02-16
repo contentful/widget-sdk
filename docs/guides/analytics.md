@@ -34,8 +34,25 @@ When we call `analytics.track` we also check if the event name has been mapped
 to a registered Snowplow schema. If so, we transform the data into Snowplow's
 structure and track the the event.
 
-Since we have enabled activity tracking, link click tracking and page views,
-this information is automatically collected and tracked in Snowplow.
+## Tracking in Snowplow
+Snowplow requires much more structured data than Segment. Whilst every tracking
+event is simply emitted to Segment as-is when you call `analytics.track`, we only
+send the event to Snowplow if it's on the list `analytics/snowplow/Events.es6.js`.
+Events in Snowplow should be registered here with their corresponding schema and
+transformer (a function that takes the event name and data and transforms it to
+a format required by Snowplow).
+
+To view or update available schemas, go to the
+[schema respository](https://github.com/contentful/com.contentful-schema-registry)
+and follow the instructions provided there. If you are creating or updating a
+schema you will also need to add the schema or bump the version in the file
+`analytics/snowplow/Schemas.es6.js`.
+
+To debug sent events, you can use [http://com-contentful.mini.snplow.net:5601]
+(non production environments) and [https://search-com-contentful-es-1-bida4oyd7qk6gfsuhokpw3ioge.eu-central-1.es.amazonaws.com/_plugin/kibana/https://search-com-contentful-es-1-bida4oyd7qk6gfsuhokpw3ioge.eu-central-1.es.amazonaws.com/_plugin/kibana/]
+(production environment).
+In production, data is processed into Redshift every 12 hours where it can be later
+checked, e.g. via Looker or Periscope.
 
 ## Analytics console
 
@@ -149,3 +166,4 @@ yet).
 | api_key             | create                                | <code>actionData: obj<br>response: obj</code>
 | api                 | boilerplate                           | <code>platform: string<br>action: select|download|github</code>
 | api                 | clipboard_copy                        | <code>source: space|cda|cpa</code>
+| experiment          | start                                 | <code>id: string<br />variation: bool</code>

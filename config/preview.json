@@ -16,6 +16,9 @@
     "previewAccessToken" : "2fcfe1abd171477eabd73e64088fe1c1eb2578ac0158332902a1d8e5279356e4",
     "apiUrl" : "api.contentful.com"
   },
+  "launchDarkly":{
+    "envId": "588f3ff594c776096403da58"
+  },
   "filepicker" : {
     "api_key" : "AdYFIH3yuSSu5KnlJCSI6z",
     "policy" : "eyJleHBpcnkiOjE1MzQ3NTcwMjgsImNhbGwiOlsicGljayIsInN0b3JlIl19",

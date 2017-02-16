@@ -55,6 +55,9 @@ function hosts () {
 
 function integrations () {
   return {
+    launchDarkly: strictObject({
+      envId: alnum(24)
+    }),
     filepicker: strictObject({
       api_key: alnum(22),
       policy: alnum(60),
