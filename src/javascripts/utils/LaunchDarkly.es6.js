@@ -59,6 +59,11 @@ function validUser (user) {
 function isQualifiedUser ({organizationMemberships}) {
   const convertedStatuses = ['paid', 'free_paid'];
 
+  // disqualify all users that don't belong to any org
+  if (!organizationMemberships) {
+    return false;
+  }
+
   return !organizationMemberships.reduce((acc, {organization}) => {
     const {subscription: {status: orgStatus}} = organization;
     const isOrgConverted = includes(convertedStatuses, orgStatus);
