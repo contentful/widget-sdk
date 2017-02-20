@@ -126,40 +126,41 @@
       "version": "6.16.0"
     },
     "babel-core": {
-      "version": "6.18.2"
-    },
-    "babel-generator": {
-      "version": "6.18.0"
-    },
-    "babel-helper-call-delegate": {
-      "version": "6.22.0",
+      "version": "6.23.1",
       "dependencies": {
         "babel-code-frame": {
           "version": "6.22.0"
         },
-        "babel-helper-hoist-variables": {
-          "version": "6.22.0"
-        },
-        "babel-messages": {
-          "version": "6.22.0"
-        },
         "babel-runtime": {
-          "version": "6.22.0"
-        },
-        "babel-traverse": {
-          "version": "6.22.1"
-        },
-        "babel-types": {
-          "version": "6.22.0"
-        },
-        "babylon": {
-          "version": "6.15.0"
+          "version": "6.23.0"
         },
         "js-tokens": {
           "version": "3.0.1"
         },
         "regenerator-runtime": {
-          "version": "0.10.1"
+          "version": "0.10.3"
+        }
+      }
+    },
+    "babel-generator": {
+      "version": "6.23.0",
+      "dependencies": {
+        "babel-runtime": {
+          "version": "6.23.0"
+        },
+        "regenerator-runtime": {
+          "version": "0.10.3"
+        }
+      }
+    },
+    "babel-helper-call-delegate": {
+      "version": "6.22.0",
+      "dependencies": {
+        "babel-runtime": {
+          "version": "6.23.0"
+        },
+        "regenerator-runtime": {
+          "version": "0.10.3"
         }
       }
     },
@@ -178,77 +179,159 @@
       }
     },
     "babel-helper-hoist-variables": {
-      "version": "6.18.0"
-    },
-    "babel-helpers": {
-      "version": "6.16.0"
-    },
-    "babel-messages": {
-      "version": "6.8.0"
-    },
-    "babel-plugin-check-es2015-constants": {
-      "version": "6.8.0"
-    },
-    "babel-plugin-transform-es2015-arrow-functions": {
-      "version": "6.8.0"
-    },
-    "babel-plugin-transform-es2015-block-scoping": {
-      "version": "6.18.0"
-    },
-    "babel-plugin-transform-es2015-destructuring": {
-      "version": "6.19.0"
-    },
-    "babel-plugin-transform-es2015-modules-systemjs": {
-      "version": "6.18.0"
-    },
-    "babel-plugin-transform-es2015-parameters": {
       "version": "6.22.0",
       "dependencies": {
-        "babel-code-frame": {
-          "version": "6.22.0"
-        },
-        "babel-messages": {
-          "version": "6.22.0"
-        },
         "babel-runtime": {
-          "version": "6.22.0"
-        },
-        "babel-template": {
-          "version": "6.22.0"
-        },
-        "babel-traverse": {
-          "version": "6.22.1",
-          "dependencies": {
-            "babylon": {
-              "version": "6.15.0"
-            }
-          }
-        },
-        "babel-types": {
-          "version": "6.22.0"
-        },
-        "js-tokens": {
-          "version": "3.0.1"
+          "version": "6.23.0"
         },
         "regenerator-runtime": {
-          "version": "0.10.1"
+          "version": "0.10.3"
+        }
+      }
+    },
+    "babel-helpers": {
+      "version": "6.23.0",
+      "dependencies": {
+        "babel-runtime": {
+          "version": "6.23.0"
+        },
+        "regenerator-runtime": {
+          "version": "0.10.3"
+        }
+      }
+    },
+    "babel-messages": {
+      "version": "6.23.0",
+      "dependencies": {
+        "babel-runtime": {
+          "version": "6.23.0"
+        },
+        "regenerator-runtime": {
+          "version": "0.10.3"
+        }
+      }
+    },
+    "babel-plugin-check-es2015-constants": {
+      "version": "6.22.0",
+      "dependencies": {
+        "babel-runtime": {
+          "version": "6.23.0"
+        },
+        "regenerator-runtime": {
+          "version": "0.10.3"
+        }
+      }
+    },
+    "babel-plugin-transform-es2015-arrow-functions": {
+      "version": "6.22.0",
+      "dependencies": {
+        "babel-runtime": {
+          "version": "6.23.0"
+        },
+        "regenerator-runtime": {
+          "version": "0.10.3"
+        }
+      }
+    },
+    "babel-plugin-transform-es2015-block-scoping": {
+      "version": "6.23.0",
+      "dependencies": {
+        "babel-runtime": {
+          "version": "6.23.0"
+        },
+        "regenerator-runtime": {
+          "version": "0.10.3"
+        }
+      }
+    },
+    "babel-plugin-transform-es2015-destructuring": {
+      "version": "6.23.0",
+      "dependencies": {
+        "babel-runtime": {
+          "version": "6.23.0"
+        },
+        "regenerator-runtime": {
+          "version": "0.10.3"
+        }
+      }
+    },
+    "babel-plugin-transform-es2015-modules-systemjs": {
+      "version": "6.23.0",
+      "dependencies": {
+        "babel-runtime": {
+          "version": "6.23.0"
+        },
+        "regenerator-runtime": {
+          "version": "0.10.3"
+        }
+      }
+    },
+    "babel-plugin-transform-es2015-parameters": {
+      "version": "6.23.0",
+      "dependencies": {
+        "babel-runtime": {
+          "version": "6.23.0"
+        },
+        "regenerator-runtime": {
+          "version": "0.10.3"
         }
       }
     },
     "babel-plugin-transform-es2015-template-literals": {
-      "version": "6.8.0"
+      "version": "6.22.0",
+      "dependencies": {
+        "babel-runtime": {
+          "version": "6.23.0"
+        },
+        "regenerator-runtime": {
+          "version": "0.10.3"
+        }
+      }
     },
     "babel-runtime": {
       "version": "6.18.0"
     },
     "babel-template": {
-      "version": "6.16.0"
+      "version": "6.23.0",
+      "dependencies": {
+        "babel-runtime": {
+          "version": "6.23.0"
+        },
+        "regenerator-runtime": {
+          "version": "0.10.3"
+        }
+      }
     },
     "babel-traverse": {
-      "version": "6.18.0"
+      "version": "6.23.1",
+      "dependencies": {
+        "babel-code-frame": {
+          "version": "6.22.0"
+        },
+        "babel-runtime": {
+          "version": "6.23.0"
+        },
+        "babylon": {
+          "version": "6.15.0"
+        },
+        "js-tokens": {
+          "version": "3.0.1"
+        },
+        "regenerator-runtime": {
+          "version": "0.10.3"
+        }
+      }
     },
     "babel-types": {
-      "version": "6.18.0"
+      "version": "6.23.0",
+      "dependencies": {
+        "babel-runtime": {
+          "version": "6.23.0"
+        },
+        "regenerator-runtime": {
+          "version": "0.10.3"
+        }
+      }
     },
     "babylon": {
       "version": "6.13.1"
@@ -2579,6 +2662,9 @@
     },
     "to-fast-properties": {
       "version": "1.0.2"
+    },
+    "trim-right": {
+      "version": "1.0.1"
     },
     "uglify-js": {
       "version": "2.7.5",
