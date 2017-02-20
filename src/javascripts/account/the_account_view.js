@@ -63,7 +63,7 @@ angular.module('contentful')
    * organizatin's subscription page.
    */
   function goToSubscription () {
-    return this.goToOrganizations('subscription');
+    return this.goToOrganizations('z_subscription');
   }
 
   /**
@@ -88,8 +88,8 @@ angular.module('contentful')
   function goToOrganizations (subpage) {
     var org = getGoToOrganizationsOrganization();
     if (org) {
-      // TODO: Support route in GK without `/subscription` part and remove it here.
-      var subpageSuffix = subpage ? ('/' + subpage) : '/subscription';
+      // TODO: Support route in GK without `/z_subscription` part and remove it here.
+      var subpageSuffix = subpage ? ('/' + subpage) : '/z_subscription';
       var pathSuffix = 'organizations/' + org.sys.id + subpageSuffix;
       return goTo(pathSuffix, {reload: true});
     } else {

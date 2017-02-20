@@ -1,11 +1,6 @@
 import {env} from 'Config';
 import segment from 'analytics/segment';
-import {
-  enable as enableSnowplow,
-  disable as disableSnowplow,
-  track as trackSnowplow,
-  identify as identifySnowplow
-} from 'analytics/snowplow/Snowplow';
+import * as Snowplow from 'analytics/snowplow/Snowplow';
 import {prepareUserData} from 'analytics/UserData';
 import analyticsConsole from 'analytics/console';
 import stringifySafe from 'stringifySafe';
@@ -57,7 +52,7 @@ export const enable = _.once(function (user) {
 
   if (shouldSend) {
     segment.enable();
-    enableSnowplow();
+    Snowplow.enable();
   }
 
   identify(prepareUserData(removeCircularRefs(user)));
@@ -73,7 +68,7 @@ export const enable = _.once(function (user) {
  */
 export function disable () {
   segment.disable();
-  disableSnowplow();
+  Snowplow.disable();
   isDisabled = true;
   session = {};
   sendSessionDataToConsole();
@@ -106,7 +101,7 @@ export function track (event, data) {
   data = _.isObject(data) ? _.cloneDeep(data) : {};
   data = removeCircularRefs(_.extend(data, getBasicPayload()));
   segment.track(event, data);
-  trackSnowplow(event, data);
+  Snowplow.track(event, data);
   analyticsConsole.add(event, data);
 }
 
@@ -125,7 +120,7 @@ export function identify (extension) {
 
   if (userId && user) {
     segment.identify(userId, user);
-    identifySnowplow(userId);
+    Snowplow.identify(userId);
   }
 
   sendSessionDataToConsole();
@@ -175,6 +170,7 @@ export function trackStateChange (state, params, from, fromParams) {
   sendSessionDataToConsole();
   track('global:state_changed', data);
   segment.page(state.name, params);
+  Snowplow.page(_.extend(data, getBasicPayload()));
 }
 
 function getBasicPayload () {
