@@ -7,7 +7,7 @@
   "directories": {},
   "dependencies": {
     "@contentful/client": "^14.1.0",
-    "@contentful/hostname-transformer": "^1.2.6",
+    "@contentful/hostname-transformer": "^1.2.7",
     "@contentful/mimetype": "^1.0.1",
     "@contentful/validation": "^6.3.1",
     "@contentful/widget-map": "^1.0.1",
