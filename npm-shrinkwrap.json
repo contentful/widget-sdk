@@ -982,6 +982,9 @@
     "filename-regex": {
       "version": "2.0.0"
     },
+    "fill-keys": {
+      "version": "1.0.2"
+    },
     "fill-range": {
       "version": "2.2.3"
     },
@@ -1759,6 +1762,9 @@
     "is-number": {
       "version": "2.1.0"
     },
+    "is-object": {
+      "version": "1.0.1"
+    },
     "is-plain-obj": {
       "version": "1.1.0"
     },
@@ -2181,7 +2187,7 @@
       "version": "0.2.2"
     },
     "merge-descriptors": {
-      "version": "1.0.0"
+      "version": "1.0.1"
     },
     "merge-stream": {
       "version": "0.1.8",
@@ -2219,6 +2225,9 @@
     },
     "modify-filename": {
       "version": "1.1.0"
+    },
+    "module-not-found-error": {
+      "version": "1.0.1"
     },
     "moment": {
       "version": "2.11.2"
@@ -2351,18 +2360,10 @@
       }
     },
     "proxyquire": {
-      "version": "1.7.4",
+      "version": "1.7.11",
       "dependencies": {
-        "fill-keys": {
-          "version": "1.0.2",
-          "dependencies": {
-            "is-object": {
-              "version": "1.0.1"
-            }
-          }
-        },
-        "module-not-found-error": {
-          "version": "1.0.1"
+        "resolve": {
+          "version": "1.1.7"
         }
       }
     },
