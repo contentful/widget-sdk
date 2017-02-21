@@ -28,6 +28,79 @@ angular.module('contentful')
 
   controller.spaceId = stateParams.spaceId;
 
+  // A/B experiment - onboarding-invite-users
+  var K = require('utils/kefir');
+  var LD = require('utils/LaunchDarkly');
+  var onboardingInviteUsersTest$ = LD.get('onboarding-invite-users');
+  var keycodes = require('keycodes');
+  var userListHandler = require('UserListHandler').create();
+  var spaceMembershipRepo =
+    require('SpaceMembershipRepository').getInstance(spaceContext.space);
+
+  K.onValueScope($scope, onboardingInviteUsersTest$, function (shouldShow) {
+    controller.showInviteUserTest = !!shouldShow;
+
+    analytics.track('experiment:start', {
+      experiment: {
+        id: 'onboarding-invite-users',
+        variation: shouldShow
+      }
+    });
+
+    if (shouldShow) {
+      initExperiment();
+    }
+  });
+
+  function initExperiment () {
+    userListHandler.reset().then(function () {
+      controller.roleOptions = userListHandler.getRoleOptions();
+      controller.role = _.first(controller.roleOptions);
+    });
+
+    controller.userLimit = _.get(
+      spaceContext.getData('organization'),
+      'subscriptionPlan.limits.permanent.organizationMembership'
+    );
+
+    controller.handleInviteUserKeyPress = function (event) {
+      if (event.keyCode === keycodes.ENTER) {
+        controller.inviteUser();
+      }
+    };
+
+    controller.inviteUser = function () {
+      var email = controller.email;
+
+      if ($scope.inviteUserForm.$invalid || !email) {
+        return;
+      }
+
+      controller.email = '';
+      var isAdmin = userListHandler.isAdminRole(controller.role.id);
+      var method = isAdmin ? 'inviteAdmin' : 'invite';
+      return spaceMembershipRepo[method](email, controller.role.id)
+      .then(function () {
+        controller.message = {
+          invalid: false,
+          text: 'We’ve sent an email invite to \'' + email + '\'. They will be thrilled!'
+        };
+      })
+      .catch(function (err) {
+        var message = _.get(err, 'body.details.errors.0].name') === 'taken'
+          ? 'There is already a user with the email address \'' + email + '\' in this space'
+          : _.get(err, 'body.message');
+
+        controller.message = {
+          invalid: true,
+          text: message
+        };
+      });
+    };
+  }
+
+  // end A/B experiment
+
   function initLearnPage () {
     controller.contentTypes = spaceContext.publishedContentTypes;
     controller.activated = !!activatedAt;

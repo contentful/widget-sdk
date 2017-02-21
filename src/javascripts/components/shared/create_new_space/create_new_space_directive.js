@@ -29,6 +29,66 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var spaceTemplateEvents = require('analytics/events/SpaceCreation');
 
+
+  // A/B experiment - onboarding-invite-users
+  var K = require('utils/kefir');
+  var $q = require('$q');
+  var LD = require('utils/LaunchDarkly');
+  var onboardingInviteUsersTest$ = LD.get('onboarding-invite-users');
+  var keycodes = require('keycodes');
+  var spaceMembershipRepository = require('SpaceMembershipRepository');
+
+  K.onValueScope($scope, onboardingInviteUsersTest$, function (shouldShow) {
+    controller.showInviteUserTest = !!shouldShow;
+
+    if (shouldShow) {
+      controller.userLimit = _.get(
+        spaceContext.getData('organization'),
+        'subscriptionPlan.limits.permanent.organizationMembership'
+      );
+
+      controller.handleInviteUserKeyPress = function (event) {
+        var value = controller.email;
+        if (event.keyCode === keycodes.ENTER) {
+          event.preventDefault();
+          if (value) {
+            controller.email = '';
+            controller.usersToInvite.push(value);
+          }
+        }
+      };
+
+      controller.removeUser = function (index) {
+        controller.usersToInvite.splice(index, 1);
+      };
+
+    }
+
+    analytics.track('experiment:start', {
+      experiment: {
+        id: 'onboarding-invite-users',
+        variation: shouldShow
+      }
+    });
+  });
+
+  controller.usersToInvite = [];
+
+  function inviteUsers (space) {
+    var inviteAdmin = spaceMembershipRepository.getInstance(space).inviteAdmin;
+    if (controller.email) {
+      controller.usersToInvite.push(controller.email);
+    }
+    return $q.all(_.uniq(controller.usersToInvite).map(inviteAdmin))
+    // Don't care if any fail
+    .catch(_.noop)
+    .then(function () {
+      return space;
+    });
+  }
+  // End of A/B experiment code
+
+
   controller.organizations = OrganizationList.getAll();
   // Keep track of the view state
   controller.viewState = 'createSpaceForm';
@@ -162,6 +222,7 @@ angular.module('contentful')
     });
 
     tokenStore.getSpace(newSpace.getId())
+    .then(inviteUsers)
     .then(function (space) {
       return $state.go('spaces.detail', {spaceId: space.getId()});
     })
