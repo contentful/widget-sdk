@@ -108,7 +108,7 @@ export function page (data) {
     from_state: data.fromState,
     from_state_params: data.fromStateParams,
     executing_user_id: data.userId,
-    space_id: data.space_id,
+    space_id: data.spaceId,
     organization_id: data.organizationId
   }, identity);
 
