@@ -17,7 +17,7 @@
     "apiUrl" : "api.contentful.com"
   },
   "launchDarkly":{
-    "envId": "588f3ff594c776096403da58"
+    "envId": "58ad6cfe5d8af80964c3e7db"
   },
   "filepicker" : {
     "api_key" : "AdYFIH3yuSSu5KnlJCSI6z",
