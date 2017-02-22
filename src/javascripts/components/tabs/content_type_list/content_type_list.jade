@@ -6,16 +6,16 @@ header.workbench-header
     cf-icon.workbench-header__icon(name="page-ct")
     h1.workbench-header__title
       | Content model
-      cf-knowledge-base.workbench-header__kb-link(target="content_type")
+      cf-knowledge-base.workbench-header__kb-link(target="content_model")
 
-  .workbench-header__search.search-area
+  .workbench-header__search.search-area(ng-hide="!hasContentTypes()")
     .search-field(
       cf-search="searchTerm"
       is-searching="context.isSearching"
       search-type-ahead="true"
       placeholder="Type to search")
 
-  .workbench-header__actions
+  .workbench-header__actions(ng-hide="!hasContentTypes()")
     button.btn-action(
       ng-click="entityCreationController.newContentType()"
       ng-hide="shouldHide('createContentType')"
@@ -25,27 +25,23 @@ header.workbench-header
       | Add content type
 
 .workbench-main.x--content(ng-show="!hasContentTypes()")
-  .cfnext-advice
-    header.advice__title
-      | <em>{{spaceContext.space.data.name}}</em> has no content types yet
-    button.btn-action--large-popout-icon.ct-empty-list__action(
-      type="button"
-      ng-click="entityCreationController.newContentType()"
-      ng-hide="shouldHide('createContentType')"
-      ng-disabled="shouldDisable('createContentType')"
-      cf-when-disabled="createContentType")
-      cf-icon(name="new-ct")
-      | Create content type
-
-    p.ct-empty-list__description
-      | This is the first step in organizing your content <br>
-      | The content type will define the structure of <em>entries</em>
-      | where your content is actually stored
-
-    p.ct-empty-list__additional
-      | If you are not sure what content types and entries are, <br>
-      | consider reading the&nbsp;
-      cf-knowledge-base(target="content_type" text="introduction to the Contentful content model")
+  .empty-state
+    cf-icon(name="empty-content-model" class="empty-state__icon")
+    .empty-state__title
+      | Alright, let’s create your content model!
+    .empty-state__description
+      | The content model is comprised of content types. They work like a stencil which defines the structure of your content. Get started by creating your first content type.
+    .empty-state__action
+      button.btn-action--large(
+        type="button"
+        ng-click="entityCreationController.newContentType()"
+        ng-hide="shouldHide('createContentType')"
+        ng-disabled="shouldDisable('createContentType')"
+        cf-when-disabled="createContentType")
+        cf-icon.btn-icon.inverted(name="plus")
+        | Add content type
+    .empty-state__additional
+      | No clue what purpose the content model serves? Read our documentation on <cf-knowledge-base target="content_model" text="content modeling" inline-text="true" class="text-link--standard"></cf-knowledge-base>.
 
 .workbench-main(ng-show="hasContentTypes()")
   .workbench-main__left-sidebar

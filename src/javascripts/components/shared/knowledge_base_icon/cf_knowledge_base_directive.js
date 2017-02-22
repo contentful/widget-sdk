@@ -27,6 +27,7 @@ angular.module('contentful').factory('KnowledgeBase/getUrl', ['$injector', funct
 
   var items = {
     space: 'faq/terminology/#what-is-a-space',
+    content_model: 'developers/docs/concepts/data-model/',
     content_type: 'faq/terminology/#what-is-a-content-type',
     space_creation: 'faq/terminology/#what-is-the-difference-between-a-content-type-and-a-space',
     hibernation: 'developers/docs/', // @todo needs proper article
