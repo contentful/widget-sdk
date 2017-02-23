@@ -108,12 +108,12 @@ header.workbench-header
                 ng-init="file=spaceContext.localizedField(asset, 'data.fields.file');linkToAsset='spaces.detail.assets.detail({ assetId: asset.getId() })'"
                 ui-sref="{{linkToAsset}}"
                 ng-class="{'x--highlight': selection.isSelected(asset)}")
-              +td.x--image-cell(aria-label="cell-preview"
-                ui-sref="{{linkToAsset}}")
+              td.x--image-cell(aria-label="cell-preview")
                 div
                   label(ng-click="$event.stopPropagation()")
                     input(type="checkbox" cf-selection="asset" tabindex="-1" ng-click="selection.toggle(asset, $event)")
-                  cf-thumbnail(file="file" size="30" ng-if="file")
+                  a(ui-sref="{{linkToAsset}}")
+                    cf-thumbnail(file="file" size="30" ng-if="file")
               +td.x--large-cell(aria-label="cell-name"
                 ui-sref="{{linkToAsset}}")
                 | {{ spaceContext.assetTitle(asset) || '&nbsp;' }}
