@@ -1,4 +1,5 @@
 include ../advice.mixin.jade
+include ../../shared/table_pattern.mixin.jade
 
 header.workbench-header
   cf-breadcrumbs
@@ -74,17 +75,25 @@ header.workbench-header
           tbody
             tr.entity-list__item(
               ng-repeat="contentType in visibleContentTypes track by contentType.getId()"
-              ui-sref="spaces.detail.content_types.detail.fields({ contentTypeId: contentType.getId() })")
-              td(aria-label="cell-display-name").x--medium-cell
-                | {{contentType.getName()}}
-              td(aria-label="cell-description").x--large-cell
-                | {{contentType.data.description}}
-              td(aria-label="cell-integer").x--small-cell
+              ng-init="linkToCt='spaces.detail.content_types.detail.fields({ contentTypeId: contentType.getId() })'"
+              ui-sref="{{linkToCt}}")
+              +td.x--medium-cell(aria-label="cell-display-name"
+                ui-sref="{{linkToCt}}")
+                | {{contentType.getName() || '&nbsp;'}}
+              +td.x--large-cell(aria-label="cell-description"
+                ui-sref="{{linkToCt}}")
+                | {{contentType.data.description || '&nbsp;'}}
+              +td.x--small-cell(aria-label="cell-integer"
+                ui-sref="{{linkToCt}}")
                 | {{numFields(contentType)}}
-              td(aria-label="cell-date").x--small-cell
+              +td.x--small-cell(aria-label="cell-date"
+                ui-sref="{{linkToCt}}")
                 date(ng-if="contentType.getUpdatedAt()" datetime="{{contentType.getUpdatedAt()}}" cf-relative-datetime)
-              td(aria-label="cell-symbol").x--small-cell
+              +td.x--small-cell(aria-label="cell-symbol"
+                ui-sref="{{linkToCt}}")
                 span(cf-user link="contentType.getUpdatedBy()" as="updater")
                   | {{updater | userNameDisplay:user}}
-              td.entity-status.x--small-cell(aria-label="cell-status" ng-class="statusClass(contentType)")
-                | {{statusLabel(contentType)}}
+              +td.entity-status.x--small-cell(aria-label="cell-status"
+                ui-sref="{{linkToCt}}")
+                span(ng-class="statusClass(contentType)")
+                  | {{statusLabel(contentType) || '&nbsp;'}}

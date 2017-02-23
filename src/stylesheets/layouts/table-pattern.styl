@@ -2,6 +2,8 @@
 Table Pattern
 
 The `.table` class should be applied to tables that will use the generic table pattern.
+Also, if you redirect the user to a different URL when a `tr` is clicked using `ui-sref`,
+please include `table_pattern.mixin.jade` and use the `+td` mixin instead of vanilla `td`
 
 Markup:
 .table
@@ -102,7 +104,7 @@ Styleguide table-pattern
       width: 100%
     label
       padding: 10px
-      margin: -10px
+      margin: -12px
       margin-right: 0
 
   th
@@ -128,9 +130,6 @@ Styleguide table-pattern
         background-color: $colors.element-lightest
       td
         border-bottom: 1px solid $colors.element-light
-        overflow: hidden
-        white-space: nowrap
-        text-overflow: ellipsis
         padding-top: 16px
         padding-bottom: 16px
         div
@@ -148,6 +147,15 @@ Styleguide table-pattern
   .table__body
     overflow-x: hidden
     overflow-y: auto
+    td
+      a
+        overflow: hidden
+        white-space: nowrap
+        text-overflow: ellipsis
+        display: block
+        width: 100%
+        color: $colors.text-mid
+
 
   .table__bulk-actions
     padding: 10px
@@ -174,10 +182,12 @@ Styleguide table-pattern
 
   .x--multiline
     > td
-      white-space: normal
       vertical-align: top
-      > div
+      div
         align-items: flex-start
+        > a
+          white-space: normal
+          text-overflow: clip
     p
       margin-bottom: 0
 

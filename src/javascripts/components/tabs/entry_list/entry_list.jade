@@ -1,6 +1,7 @@
 include ./create_entry_button.mixin.jade
 include ../advice.mixin.jade
 include ../pluralize_entity.mixin.jade
+include ../../shared/table_pattern.mixin.jade
 
 header.workbench-header
   cf-breadcrumbs
@@ -123,24 +124,28 @@ header.workbench-header
         table
           tbody
             tr.x--multiline(ng-repeat="entry in entries track by entry.getId()"
-              ui-sref="spaces.detail.entries.detail({ entryId: entry.getId() })"
-              ng-class="{'x--highlight': selection.isSelected(entry)}")
-              td(aria-label="cell-display-name").x--large-cell
+              ng-init="linkToEntry = 'spaces.detail.entries.detail({ entryId: entry.getId() })'"
+              ng-class="{'x--highlight': selection.isSelected(entry)}"
+              ui-sref="{{linkToEntry}}")
+              td.x--large-cell(aria-label="cell-display-name")
                 div
-                  label(ng-click="$event.stopPropagation()")
-                    input(type="checkbox" cf-selection="entry" tabindex="-1" aria-label="cell-select" ng-click="selection.toggle(entry, $event)")
-                  p {{entryTitle(entry)}}
-              td.x--medium-cell(
+                  label(ng-click="$event.stopPropagation();")
+                    input(type="checkbox" cf-selection="entry" tabindex="-1" aria-label="cell-select" ng-click="selection.toggle(entry, $event);")
+                  a(ui-sref="{{linkToEntry}}") {{entryTitle(entry)}}
+              +td.x--medium-cell(
                 aria-label="cell-content-type"
+                ui-sref="{{linkToEntry}}"
                 ng-show="!context.view.contentTypeId && !context.view.contentTypeHidden")
-                | {{contentTypeName(entry)}}
-              td.x--small-cell(
+                | {{contentTypeName(entry) || '&nbsp;'}}
+              +td.x--small-cell(
+                ui-sref="{{linkToEntry}}"
                 ng-repeat="field in displayedFields track by field.id")
                 cf-field-display
-              td.entity-status.x--small-cell(
-                aria-label="cell-status"
-                ng-class="entityStatus.getClassname(entry)")
-                | {{entityStatus.getLabel(entry)}}
+              +td.entity-status.x--small-cell(
+                ui-sref="{{linkToEntry}}"
+                aria-label="cell-status")
+                span(ng-class="entityStatus.getClassname(entry)")
+                  | {{entityStatus.getLabel(entry) || '&nbsp;'}}
 
     cf-search-results-paginator(paginator="paginator" pages="7" ng-show="hasPage()")
 
