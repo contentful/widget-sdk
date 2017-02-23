@@ -1,33 +1,28 @@
-.cfnext-advice
-  header.advice__title
-    | You have no assets yet
-  button.btn-action--large.ct-empty-list__action(
-    cf-context-menu-trigger
-    ng-hide="shouldHide('createAsset')"
-    ng-disabled="shouldDisable('createAsset')"
-    cf-when-disabled="createAsset"
-    data-test-id="create-asset-menu-trigger")
-    cf-icon.btn-icon.inverted(name="plus")
-    cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-    | Create an asset
-  .context-menu(
-    role="menu" cf-context-menu
-    aria-label="Create Asset" data-test-id="create-asset-menu")
-    ul.context-menu__items
-      li(role="menuitem" ng-click="entityCreationController.newAsset()")
-        | Single asset
-      li(role="menuitem" ng-click="createMultipleAssets()" ng-show="canUploadMultipleAssets()")
-        | Multiple assets
+.empty-state
+  cf-icon(name="empty-media" class="empty-state__icon")
+  .empty-state__title
+    | OK, it’s time to add media!
+  .empty-state__description
+    | Your media consists of assets, external files, that can be anything, from images or videos to documents. Get started by uploading your first asset.
+  .empty-state__action
+    button.btn-action--large(
+      cf-context-menu-trigger
+      ng-hide="shouldHide('createAsset')"
+      ng-disabled="shouldDisable('createAsset')"
+      cf-when-disabled="createAsset"
+      data-test-id="create-asset-menu-trigger")
+      cf-icon.btn-icon.inverted(name="plus")
+      cf-icon.btn-dropdown-icon(name="dd-arrow-down")
+      | Add asset(s)
+    .context-menu(
+      role="menu" cf-context-menu
+      aria-label="Create Asset" data-test-id="create-asset-menu")
+      ul.context-menu__items
+        li(role="menuitem" ng-click="entityCreationController.newAsset()")
+          | Single asset
+        li(role="menuitem" ng-click="createMultipleAssets()" ng-show="canUploadMultipleAssets()")
+          | Multiple assets
 
-  p.ct-empty-list__description
-    | Assets are external documents that you can link to your
-    | entries.
-    br
-    | They can be any file you wish, from sounds to images or
-    | videos to text documents.
-
-  .advice__note(ng-if="hasArchivedAssets")
-    | You can lookup old assets in the
-    | <a ng-click="loadView({searchTerm: 'status:archived'})">archive</a>
-
-  cf-knowledge-base(target="asset" text="Visit the knowledge base pages")
+  .empty-state__note-box(ng-if="hasArchivedAssets")
+    | You can look up old assets in the
+    | <a ng-click="loadView({searchTerm: 'status:archived'})">archive</a>.

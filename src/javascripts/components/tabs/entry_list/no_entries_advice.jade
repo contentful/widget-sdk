@@ -1,27 +1,31 @@
 include ./create_entry_button.mixin.jade
 
-.cfnext-advice
-  header.advice__title
-    | You have no entries yet
-  button.btn-action--large-popout-icon.ct-empty-list__action(
-    type="button"
-    ng-click="entityCreationController.newContentType()"
-    ng-hide="spaceContext.publishedContentTypes.length > 0 || shouldHide('createContentType')"
-    ng-disabled="shouldDisable('createContentType')"
-    cf-when-disabled="createContentType")
-    cf-icon(name="new-ct")
-    | Create content type
-  +create-entry-button(large=true)
+.empty-state(ng-hide="hasContentType")
+  cf-icon(name="empty-content" class="empty-state__icon")
+  .empty-state__title
+    | A content model is needed before adding content. Let’s fix that!
+  .empty-state__description
+    | Before you can add content you need to define the content model. It’s comprised of content types. They work like a stencil which defines the structure of your content. Get started by creating your first content type.
+  .empty-state__action
+    button.btn-action--large(
+      type="button"
+      ng-click="entityCreationController.newContentType()"
+      ng-hide="shouldHide('createContentType')"
+      ng-disabled="shouldDisable('createContentType')"
+      cf-when-disabled="createContentType")
+      cf-icon.btn-icon.inverted(name="plus")
+      | Add content type
+  .empty-state__additional
+    | No clue what purpose the content model serves? Read our documentation on <cf-knowledge-base target="content_model" text="content modeling" inline-text="true" class="text-link--standard"></cf-knowledge-base>.
 
-  p.ct-empty-list__description
-    | Entries are your content itself. These depend on the field
-    | types you created in the content type builder.
-
-  .advice__note(ng-if="hasArchivedEntries")
-    | You can lookup old entries in the
-    | <a ng-click="loadView({searchTerm: 'status:archived'})">archive</a>
-
-  p.ct-empty-list__additional
-    | If you are not sure what content types and entries are,<br>
-    | consider reading the&nbsp;
-    cf-knowledge-base(target="entry" text="introduction to the Contentful content model")
+.empty-state(ng-show="hasContentType")
+  cf-icon(name="empty-content" class="empty-state__icon")
+  .empty-state__title
+    | Huzza, let’s add some content!
+  .empty-state__description
+    | Your content is made up of entries.  Get started by creating your first entry.
+  .empty-state__action
+    +create-entry-button(large=true)
+  .empty-state__note-box(ng-if="hasArchivedEntries")
+    | You can look up old entries in the
+    | <a ng-click="loadView({searchTerm: 'status:archived'})">archive</a>.
