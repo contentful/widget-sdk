@@ -1,3 +1,5 @@
+include ../../shared/table_pattern.mixin.jade
+
 header.workbench-header
   cf-breadcrumbs
   cf-icon.workbench-header__icon(name="page-ct")
@@ -32,17 +34,23 @@ header.workbench-header
       table
         tbody
           tr(ng-repeat="locale in locales track by locale.getId()"
-              ui-sref="spaces.detail.settings.locales.detail({ localeId: locale.getId() })")
-            td(aria-label="cell-name").x--large-cell
+             ng-init="linkToLocale='spaces.detail.settings.locales.detail({ localeId: locale.getId() })'"
+             ui-sref="{{linkToLocale}}")
+            +td.x--large-cell(aria-label="cell-name"
+              ui-sref="{{linkToLocale}}")
               | {{ locale.getName() }} ({{ locale.getCode() }})
               span.entity-list-badge(ng-if="locale.isDefault()") Default
-            td.x--small-cell(data-test-id="locale-list-fallback-column")
+            +td.x--small-cell(data-test-id="locale-list-fallback-column"
+              ui-sref="{{linkToLocale}}")
               | {{ locale.data.fallbackCode ? localeNamesByCode[locale.data.fallbackCode] : 'None' }}
-            td.x--small-cell(data-test-id="locale-list-cda-column")
+            +td.x--small-cell(data-test-id="locale-list-cda-column"
+              ui-sref="{{linkToLocale}}")
               | {{ locale.data.contentDeliveryApi ? 'Enabled' : 'Disabled' }}
-            td.x--small-cell(data-test-id="locale-list-cma-column")
+            +td.x--small-cell(data-test-id="locale-list-cma-column"
+              ui-sref="{{linkToLocale}}")
               | {{ locale.data.contentManagementApi ? 'Enabled' : 'Disabled' }}
-            td.x--small-cell(data-test-id="locale-list-optional-column")
+            +td.x--small-cell(data-test-id="locale-list-optional-column"
+              ui-sref="{{linkToLocale}}")
               | {{ locale.data.optional ? 'Can be published empty' : 'Content is required' }}
 
   .advice.locale-list__advice

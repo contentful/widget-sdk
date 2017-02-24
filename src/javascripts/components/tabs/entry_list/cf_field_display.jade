@@ -46,6 +46,6 @@ ng-switch(on="displayType(field)")
 
       //- If it's another kind of array, just display the data
       li(ng-if="!isEntryArray(entry, field) && !isAssetArray(entry, field)")
-        | {{dataForField(entry, field)}}
+        | {{dataForField(entry, field) || '&nbsp;'}}
 
-  span(ng-switch-default) {{dataForField(entry, field)}}
+  span(ng-switch-default) {{dataForField(entry, field) || '&nbsp;'}}
