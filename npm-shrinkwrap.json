@@ -20,7 +20,12 @@
       }
     },
     "@contentful/validation": {
-      "version": "6.1.0"
+      "version": "6.3.1",
+      "dependencies": {
+        "lodash": {
+          "version": "4.17.4"
+        }
+      }
     },
     "@contentful/widget-map": {
       "version": "1.0.1"
