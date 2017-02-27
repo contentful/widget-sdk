@@ -157,8 +157,8 @@ describe('cfCreateNewSpace directive', function () {
       });
 
       it('shows error', function () {
-        expect(controller.newSpace.errors.form).toEqual('You can\'t create a Space in this Organization');
-        sinon.assert.calledOnce(stubs.logger.logError);
+        expect(controller.newSpace.errors.form).toEqual('You don’t have permission to create a space');
+        sinon.assert.called(stubs.logger.logError);
       });
     });
 
