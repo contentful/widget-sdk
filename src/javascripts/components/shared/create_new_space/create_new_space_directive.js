@@ -52,6 +52,14 @@ angular.module('contentful')
       _.find(controller.writableOrganizations, ['sys.id', $scope.organizationId]) ||
       _.first(controller.writableOrganizations)
     );
+  } else {
+    // TODO This should never happen, but unfortunately it does
+    // We need to figure out why and fix it
+    logger.logError('No writable organizations for space creation', {
+      data: {
+        writableOrganizations: controller.writableOrganizations
+      }
+    });
   }
 
   // Load the list of space templates
@@ -137,7 +145,15 @@ angular.module('contentful')
     var data = controller.newSpace.data;
     var orgId = dotty.get(controller, 'newSpace.organization.sys.id');
 
-    // Check user permissions
+    // TODO We should never be in this state
+    if (!orgId) {
+      logger.logError('No organization id set', {
+        data: {
+          currentOrg: controller.newSpace.organization
+        }
+      });
+      return showFormError('You don’t have permission to create a space');
+    }
     if (!accessChecker.canCreateSpaceInOrganization(orgId)) {
       logger.logError('You can\'t create a Space in this Organization');
       return showFormError('You can\'t create a Space in this Organization');
