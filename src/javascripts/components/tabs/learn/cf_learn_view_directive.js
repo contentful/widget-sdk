@@ -36,8 +36,14 @@ angular.module('contentful')
   var userListHandler = require('UserListHandler').create();
   var spaceMembershipRepo =
     require('SpaceMembershipRepository').getInstance(spaceContext.space);
+  var accessChecker = require('accessChecker');
 
   K.onValueScope($scope, onboardingInviteUsersTest$, function (shouldShow) {
+
+    if (!accessChecker.canModifyUsers()) {
+      return;
+    }
+
     controller.showInviteUserTest = !!shouldShow;
 
     analytics.track('experiment:start', {

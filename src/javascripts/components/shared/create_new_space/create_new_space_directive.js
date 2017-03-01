@@ -30,6 +30,32 @@ angular.module('contentful')
   var spaceTemplateEvents = require('analytics/events/SpaceCreation');
 
 
+  controller.organizations = OrganizationList.getAll();
+
+  // Keep track of the view state
+  controller.viewState = 'createSpaceForm';
+
+  // Set new space defaults
+  controller.newSpace = {
+    data: {
+      defaultLocale: 'en-US'
+    },
+    useTemplate: false,
+    errors: {fields: {}}
+  };
+
+  // Load the list of writable organizations
+  controller.writableOrganizations = _.filter(controller.organizations, function (org) {
+    return org && org.sys ? accessChecker.canCreateSpaceInOrganization(org.sys.id) : false;
+  });
+
+  if (controller.writableOrganizations.length > 0) {
+    controller.newSpace.organization = (
+      _.find(controller.writableOrganizations, ['sys.id', $scope.organizationId]) ||
+      _.first(controller.writableOrganizations)
+    );
+  }
+
   // A/B experiment - onboarding-invite-users
   var K = require('utils/kefir');
   var $q = require('$q');
@@ -43,7 +69,7 @@ angular.module('contentful')
 
     if (shouldShow) {
       controller.userLimit = _.get(
-        spaceContext.getData('organization'),
+        controller.newSpace.organization,
         'subscriptionPlan.limits.permanent.organizationMembership'
       );
 
@@ -87,32 +113,6 @@ angular.module('contentful')
     });
   }
   // End of A/B experiment code
-
-
-  controller.organizations = OrganizationList.getAll();
-  // Keep track of the view state
-  controller.viewState = 'createSpaceForm';
-
-  // Set new space defaults
-  controller.newSpace = {
-    data: {
-      defaultLocale: 'en-US'
-    },
-    useTemplate: false,
-    errors: {fields: {}}
-  };
-
-  // Load the list of writable organizations
-  controller.writableOrganizations = _.filter(controller.organizations, function (org) {
-    return org && org.sys ? accessChecker.canCreateSpaceInOrganization(org.sys.id) : false;
-  });
-
-  if (controller.writableOrganizations.length > 0) {
-    controller.newSpace.organization = (
-      _.find(controller.writableOrganizations, ['sys.id', $scope.organizationId]) ||
-      _.first(controller.writableOrganizations)
-    );
-  }
 
   // Load the list of space templates
   controller.templates = [];
