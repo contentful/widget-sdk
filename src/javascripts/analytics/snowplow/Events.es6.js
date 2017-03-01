@@ -4,7 +4,7 @@ import {getSchema as fetchSchema} from 'analytics/snowplow/Schemas';
 import EntityAction from 'analytics/snowplow/transformers/SpaceEntityAction';
 import Generic from 'analytics/snowplow/transformers/Generic';
 import SpaceCreate from 'analytics/snowplow/transformers/SpaceCreate';
-import ExperimentTransform from 'analytics/snowplow/transformers/Experiment';
+import createExperimentTransformer from 'analytics/snowplow/transformers/Experiment';
 import {
   ClipboardCopyTransform,
   BoilerplateTransform
@@ -28,8 +28,6 @@ registerGenericEvent('learn:language_selected');
 registerGenericEvent('learn:resource_selected');
 registerGenericEvent('learn:step_clicked');
 
-registerEvent('experiment:start', 'experiment', ExperimentTransform);
-
 registerBulkEditorEvent('bulk_editor:action');
 registerBulkEditorEvent('bulk_editor:add');
 registerBulkEditorEvent('bulk_editor:close');
@@ -43,15 +41,17 @@ registerSnapshotEvent('versioning:snapshot_restored');
 registerSnapshotEvent('versioning:published_restored');
 
 registerEvent('api_key:clipboard_copy', 'api_key', ClipboardCopyTransform);
-
 registerEvent('api_key:boilerplate', 'boilerplate', BoilerplateTransform);
 
-registerEntityActionEvent('content_type:create');
-registerEntityActionEvent('entry:create');
-registerEntityActionEvent('api_key:create');
-registerEntityActionEvent('asset:create');
+registerActionEvent('experiment:start', createExperimentTransformer('start'));
 
-registerEvent('space:create', 'space_create', SpaceCreate);
+registerActionEvent('content_type:create', EntityAction);
+registerActionEvent('entry:create', EntityAction);
+registerActionEvent('api_key:create', EntityAction);
+registerActionEvent('asset:create', EntityAction);
+
+registerActionEvent('space:create', SpaceCreate);
+
 registerEvent('global:app_loaded', 'app_open', AppOpen);
 
 
@@ -59,8 +59,8 @@ function registerGenericEvent (event) {
   registerEvent(event, 'generic', Generic);
 }
 
-function registerEntityActionEvent (event) {
-  registerEvent(event, snakeCase(event), EntityAction);
+function registerActionEvent (event, transformer) {
+  registerEvent(event, snakeCase(event), transformer);
 }
 
 function registerBulkEditorEvent (event) {

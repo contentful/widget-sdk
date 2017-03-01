@@ -76,6 +76,11 @@ registerSchema({
 
 registerSchema({
   name: 'experiment',
+  version: '1-0-1'
+});
+
+registerSchema({
+  name: 'experiment_start',
   version: '1-0-0'
 });
 
