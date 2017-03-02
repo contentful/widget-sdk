@@ -73,3 +73,23 @@ $learn-content-box()
         &__link
           color: $colors.text-light
           text-decoration: underline
+
+// A/B experiment - onboarding-invite-users
+.learn-experiment
+  border: 1px solid $colors.element-mid
+  background-color: $colors.element-light
+  margin: $new-rhythm(1.5) auto 0 auto
+  padding: $new-rhythm(1)
+
+.learn-experiment__form
+  display: flex
+  > *:not(:last-child)
+    margin-right: 10px
+    height: 40px
+
+.learn-experiment__email
+  width: 440px
+
+.learn-experiment__role
+  width: 210px
+

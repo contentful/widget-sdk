@@ -131,6 +131,32 @@
                 ui-sref="{{step.sref}}")
                 | {{step.linkText}}
 
+
+      //- A/B experiment - onboarding-invite-users
+      div(style="display:flex" ng-form="inviteUserForm")
+        .learn-experiment(ng-if="learn.showInviteUserTest")
+          p
+            strong
+              | Invite people
+          p
+            |  Let's get this project off the ground! Invite teammates to your space - your plan includes up to {{learn.userLimit}} users.
+          .learn-experiment__form
+            input.learn-experiment__email.cfnext-form__input(
+              ng-model="learn.email"
+              ng-keypress="learn.handleInviteUserKeyPress($event)"
+              type="email"
+              placeholder="Enter email address..."
+              autocomplete="off")
+            select.learn-experiment__role.cfnext-select-box(
+              ng-options="option.name for option in learn.roleOptions"
+              ng-model="learn.role")
+            button.btn-primary-action.learn-experiment__submit(
+              ng-click="learn.inviteUser()")
+              | Invite
+          .cfnext-form__hint(ng-class="{'cfnext-form__field-error': learn.message.invalid}")
+            | {{learn.message.text}}
+
+
       //- Build with Contentful
       .learn__build-with-contentful
         h2 Build with Contentful
