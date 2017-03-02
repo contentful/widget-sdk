@@ -8,6 +8,7 @@
  * breadcrumb. This breadcrumb is associated to the current page.
  */
 angular.module('contentful').directive('cfBreadcrumbs', ['require', function (require) {
+  var Logger = require('logger');
   var $parse = require('$parse');
   var $state = require('$state');
   var analytics = require('analytics/Analytics');
@@ -110,7 +111,21 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
 
       function closeAncestorListIfVisible (e) {
         var $ancestorList = $el.find(ancestorMenuContainerSelector);
-        var isAncestorBtn = e.target.getAttribute('aria-label') === 'breadcrumbs-ancestor-btn';
+        var targetLabel;
+        // This might fail on IE. I’m not sure why. Logging should be
+        // temporary
+        try {
+          targetLabel = e.target.getAttribute('aria-label');
+        } catch (e) {
+          Logger.logWarn('Failed to call "getAttribute()"', {
+            error: e,
+            data: {
+              targetNodeName: e.target.nodeName,
+              targetTagName: e.target.tagName
+            }
+          });
+        }
+        var isAncestorBtn = targetLabel === 'breadcrumbs-ancestor-btn';
 
         if ($ancestorList.is(':visible') && !isAncestorBtn) {
           toggleAncestorList();
