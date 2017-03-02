@@ -7,7 +7,7 @@ describe('data/document/ResourceStateManager', function () {
     this.Action = Action;
     this.State = State;
 
-    const DocLoad = this.$inject('data/ShareJS/Connection').DocLoad;
+    const DocLoad = this.$inject('data/sharejs/Connection').DocLoad;
     const Doc = this.$inject('entityEditor/Document');
 
     const endpoint = this.$inject('mocks/spaceEndpoint').create();

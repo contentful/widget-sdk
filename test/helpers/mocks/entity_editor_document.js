@@ -59,7 +59,8 @@ angular.module('contentful/mocks')
         isDirty$: K.createMockProperty(),
         isSaving$: K.createMockProperty(false),
         isConnected$: K.createMockProperty(true),
-        loaded$: K.createMockProperty(true)
+        loaded$: K.createMockProperty(true),
+        error$: K.createMockStream()
       },
 
       getData: sinon.spy(getData),

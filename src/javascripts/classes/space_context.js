@@ -25,12 +25,11 @@ angular.module('contentful')
   var ctHelpers = require('data/ContentTypes');
   var Widgets = require('widgets');
   var spaceEndpoint = require('data/spaceEndpoint');
-  var authentication = require('authentication');
   var environment = require('environment');
   var createEIRepo = require('data/editingInterfaces');
   var createQueue = require('overridingRequestQueue');
   var ApiClient = require('data/ApiClient');
-  var ShareJSConnection = require('data/ShareJS/Connection');
+  var ShareJSConnection = require('data/sharejs/Connection');
   var Subscription = require('Subscription');
   var previewEnvironmentsCache = require('data/previewEnvironmentsCache');
   var PublishedCTRepo = require('data/ContentTypeRepo/Published');
@@ -39,6 +38,7 @@ angular.module('contentful')
   var tokenStore = require('tokenStore');
   var createApiKeyRepo = require('data/CMA/ApiKeyRepo').default;
   var K = require('utils/kefir');
+  var Auth = require('Authentication');
 
   var requestContentTypes = createQueue(function (extraHandler) {
     if (!spaceContext.space) {
@@ -96,9 +96,9 @@ angular.module('contentful')
     resetWithSpace: function (space) {
       var self = this;
       var endpoint = spaceEndpoint.create(
-        authentication.token,
         environment.settings.apiUrl,
-        space.getId()
+        space.getId(),
+        Auth
       );
 
       resetMembers(self);
@@ -115,8 +115,9 @@ angular.module('contentful')
       // used only in a process of creating space out
       // of a template. We shouldn't use it in newly
       // created code.
+
       self.docConnection = ShareJSConnection.create(
-        authentication.token,
+        Auth.getToken,
         environment.settings.otUrl,
         space.getId()
       );

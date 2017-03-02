@@ -7,13 +7,12 @@ angular.module('contentful')
  * @description
  * Allows to resend the activation email sent to each new user.
  */
-.factory('activationEmailResender', ['$injector', function ($injector) {
+.factory('activationEmailResender', ['require', function (require) {
 
-  var Config = $injector.get('Config');
-  var $http = $injector.get('$http');
-  var $q = $injector.get('$q');
-  var uriEncode = $injector.get('$window').encodeURIComponent;
-  var logger = $injector.get('logger');
+  var $q = require('$q');
+  var Config = require('Config');
+  var logger = require('logger');
+  var postForm = require('data/Request/PostForm').default;
 
   var ENDPOINT = Config.authUrl('confirmation');
 
@@ -28,7 +27,7 @@ angular.module('contentful')
      * or if the given email address is not associated with any user.
      *
      * @param {string} email
-     * @return {Promise}
+     * @return {Promise<void>}
      */
     resend: resendActivationEmail
   };
@@ -37,25 +36,18 @@ angular.module('contentful')
     if (!_.isString(email)) {
       throw new Error('email is required and expected to be a string');
     }
-    var data = uriEncode('user[email]') + '=' + uriEncode(email);
-    var request = {
-      method: 'POST',
-      url: ENDPOINT,
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      data: data
-    };
-
-    return $http(request).then(_.noop, function (response) {
-      logger.logError('Failed activation email resend attempt', {
-        data: {
-          email: email,
-          request: _.extend({}, request, {headers: response.config.headers}),
-          response: _.pick(response, ['status', 'statusText', 'data'])
-        }
-      });
-      return $q.reject(new Error('The email could not be sent'));
-    });
+    var data = {user: {email: email}};
+    return postForm(ENDPOINT, data)
+      .then(
+        _.constant(undefined),
+        function (response) {
+          logger.logError('Failed activation email resend attempt', {
+            data: {
+              email: email,
+              response: _.pick(response, ['status', 'statusText', 'data'])
+            }
+          });
+          return $q.reject(new Error('The email could not be sent'));
+        });
   }
 }]);

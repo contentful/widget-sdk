@@ -1,31 +1,24 @@
 'use strict';
 
 angular.module('contentful')
-.factory('activationEmailResendController', ['$injector', function ($injector){
-
-  var $rootScope            = $injector.get('$rootScope');
-  var $timeout              = $injector.get('$timeout');
-  var $q                    = $injector.get('$q');
-  var moment                = $injector.get('moment');
-  var authentication        = $injector.get('authentication');
-  var modalDialog           = $injector.get('modalDialog');
-  var resendActivationEmail = $injector.get('activationEmailResender').resend;
-  var TheStore              = $injector.get('TheStore');
+.factory('activationEmailResendController', ['require', function (require) {
+  var $timeout = require('$timeout');
+  var $q = require('$q');
+  var moment = require('moment');
+  var tokenStore = require('tokenStore');
+  var modalDialog = require('modalDialog');
+  var resendActivationEmail = require('activationEmailResender').resend;
+  var TheStore = require('TheStore');
 
   var HOUR_IN_MS = 1000 * 60 * 60;
   var HOURS_BEFORE_REOPEN_DIALOG = 24;
-  var LAST_REMINDER_STORE_KEY = 'lastActivationEmailResendReminderTimestamp';
+  var store = TheStore.forKey('lastActivationEmailResendReminderTimestamp');
 
-  return {
-    init: init,
-    LAST_REMINDER_STORE_KEY: LAST_REMINDER_STORE_KEY
-  };
+  return { init: init };
 
   function init () {
     storeDialogLastShownTimestamp(); // Wait 24h before showing the dialog.
-    $rootScope.$watch(function () {
-      return dotty.get(authentication, 'tokenLookup.sys.createdBy');
-    }, watcher);
+    tokenStore.user$.onValue(watcher);
   }
 
   function watcher (user) {
@@ -39,7 +32,7 @@ angular.module('contentful')
         storeDialogLastShownTimestamp();
       }
     } else {
-      TheStore.remove(LAST_REMINDER_STORE_KEY);
+      store.remove();
     }
   }
 
@@ -110,7 +103,7 @@ angular.module('contentful')
   }
 
   function fetchDialogLastShownTimestamp () {
-    var lastUnixTimestamp = TheStore.get(LAST_REMINDER_STORE_KEY);
+    var lastUnixTimestamp = store.get();
     if (lastUnixTimestamp) {
       var lastShown = moment.unix(lastUnixTimestamp);
       return lastShown.isValid() ? lastShown : null;
@@ -120,7 +113,7 @@ angular.module('contentful')
   }
 
   function storeDialogLastShownTimestamp () {
-    TheStore.set(LAST_REMINDER_STORE_KEY, moment().unix());
+    store.set(moment().unix());
   }
 
 }]);

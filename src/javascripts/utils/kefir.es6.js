@@ -2,7 +2,6 @@ import * as Kefir from 'libs/kefir';
 import {noop, zipObject} from 'lodash';
 import {makeSum} from 'libs/sum-types';
 
-
 /**
  * @ngdoc service
  * @name utils/kefir
@@ -429,6 +428,37 @@ export function getValue (prop) {
 
 
 /**
+ * Returns a reference object to the current value of the property.
+ *
+ * ~~~js
+ * const ref = K.getRef(prop)
+ * ref.value // => current value
+ * ref.dispose() // => unsubcribes once and for all
+ * ~~~
+ *
+ * The function subscribes to the property immediately and sets the
+ * `value` property of the reference object.
+ *
+ * The reference object also has a `dispose()` function that
+ * unsubscribes from the property. In addition it cleans up the
+ * reference deleting both the `value` and `dispose` properties.
+ */
+export function getRef (prop) {
+  assertIsProperty(prop);
+  const ref = {dispose};
+
+  const unsub = onValue(prop, (value) => { ref.value = value; });
+  return ref;
+
+  function dispose () {
+    unsub();
+    delete ref.value;
+    delete ref.dispose;
+  }
+}
+
+
+/**
  * @ngdoc method
  * @name utils/kefir#scopeLifeline
  * @description
@@ -483,7 +513,6 @@ export function endWith (prop, lifeline) {
     lifelineSub.unsubscribe();
   }
 }
-
 
 function assertIsProperty (prop) {
   if (

@@ -21,7 +21,7 @@ angular.module('contentful')
   var PresenceHub = require('entityEditor/Document/PresenceHub');
   var StringField = require('entityEditor/Document/StringField');
   var PathUtils = require('utils/Path');
-  var DocLoad = require('data/ShareJS/Connection').DocLoad;
+  var DocLoad = require('data/sharejs/Connection').DocLoad;
   var caseof = require('libs/sum-types').caseof;
   var Reverter = require('entityEditor/Document/Reverter');
   var accessChecker = require('accessChecker');
@@ -29,6 +29,7 @@ angular.module('contentful')
   var Permissions = require('access_control/EntityPermissions');
   var deepFreeze = require('utils/DeepFreeze').deepFreeze;
   var ResourceStateManager = require('data/document/ResourceStateManager');
+  var DocError = require('data/document/Error').Error;
 
   return {create: create};
 
@@ -47,6 +48,21 @@ angular.module('contentful')
     // `{doc: doc, name: name, data: data}`.
     var docEventsBus = K.createBus();
     cleanupTasks.push(docEventsBus.end);
+
+
+    /**
+     * @ngdoc property
+     * @name Document#state.error$
+     * @type K.Stream<Doc.Error>
+     * @description
+     * A stream of error values. The value constructors are defined in
+     * 'data/document/Error'.
+     * It emits an event when opending or updating a document fails
+     * with a 'forbidden' response from the server. In the future we
+     * should include more errors.
+     */
+    var errorBus = K.createBus();
+    cleanupTasks.push(errorBus.end);
 
 
     /**
@@ -213,14 +229,20 @@ angular.module('contentful')
     var offDoc = K.onValue(doc$, setDoc);
     cleanupTasks.push(offDoc);
 
-    // Property<boolean>
-    // Is true if there was an error opening the document. E.g. when
-    // disconnected from the server.
+    // Property<string?>
+    // Is `null` if there is no error and the error code otherwise.
+    // Known error codes are 'forbidden' and 'disconnected'.
     var docLoadError$ = docLoader.doc.map(function (doc) {
       return caseof(doc, [
-        [DocLoad.Error, _.constant(true)],
-        [null, _.constant(false)]
+        [DocLoad.Error, function (e) { return e.error; }],
+        [null, _.constant(null)]
       ]);
+    });
+
+    docLoadError$.onValue(function (error) {
+      if (error === 'forbidden') {
+        errorBus.emit(DocError.OpenForbidden());
+      }
     });
 
 
@@ -321,7 +343,9 @@ angular.module('contentful')
         // Used by Entry/Asset editor controller
         isDirty$: isDirty$,
 
-        loaded$: loaded$
+        loaded$: loaded$,
+
+        error$: errorBus.stream
       },
 
       status$: status$,
@@ -427,6 +451,10 @@ angular.module('contentful')
         } else {
           return ShareJS.setDeep(doc, path, value);
         }
+      }, function (error) {
+        if (error === 'forbidden') {
+          errorBus.emit(DocError.SetValueForbidden(path));
+        }
       });
     }
 
@@ -434,6 +462,10 @@ angular.module('contentful')
       return withRawDoc(function (doc) {
         maybeEmitLocalChange(path);
         return ShareJS.remove(doc, path);
+      }, function (error) {
+        if (error === 'forbidden') {
+          errorBus.emit(DocError.SetValueForbidden(path));
+        }
       });
     }
 
@@ -443,6 +475,11 @@ angular.module('contentful')
           maybeEmitLocalChange(path);
           return $q.denodeify(function (cb) {
             doc.insertAt(path, i, x, cb);
+          }).catch(function (error) {
+            if (error === 'forbidden') {
+              errorBus.emit(DocError.SetValueForbidden(path));
+            }
+            return $q.reject(error);
           });
         } else if (i === 0) {
           maybeEmitLocalChange(path);
@@ -495,12 +532,19 @@ angular.module('contentful')
       docEventsBus.emit({doc: doc, name: 'open'});
     }
 
-    function withRawDoc (cb) {
+    function withRawDoc (cb, errorListener) {
+      var result;
       if (currentDoc) {
-        return cb(currentDoc);
+        result = cb(currentDoc);
       } else {
-        return $q.reject(new Error('ShareJS document is not connected'));
+        result = $q.reject(new Error('ShareJS document is not connected'));
       }
+      return result.catch(function (error) {
+        if (errorListener) {
+          errorListener(error);
+        }
+        return $q.reject(error);
+      });
     }
 
     function normalize (doc) {

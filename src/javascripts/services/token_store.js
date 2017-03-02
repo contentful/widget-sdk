@@ -5,33 +5,40 @@
  * @name tokenStore
  *
  * @description
- * This service is responsible for fetching, storing and exposing
- * data included in an access token.
+ * This service is responsible for exposing data included in the user's token
  */
 angular.module('contentful')
 .factory('tokenStore', ['require', function (require) {
-
   var $q = require('$q');
   var K = require('utils/kefir');
+  var createMVar = require('utils/Concurrent/MVar').default;
   var client = require('client');
-  var authentication = require('authentication');
-  var modalDialog = require('modalDialog');
+  var auth = require('Authentication');
+  var makeFetchWithAuth = require('data/CMA/TokenInfo').default;
   var ReloadNotification = require('ReloadNotification');
-  var logger = require('logger');
-  var createQueue = require('overridingRequestQueue');
+  var presence = require('presence');
+  var $window = require('$window');
 
-  var currentToken = null;
-  var request = createQueue(getTokenLookup, setupLookupHandler);
-  var refreshPromise = $q.resolve();
+  // Refresh token info every 5 minutes
+  var TOKEN_INFO_REFRESH_INTERVAL = 5 * 60 * 1000;
+
+  var fetchInfo = makeFetchWithAuth(auth);
 
   var userBus = K.createPropertyBus(null);
   var spacesBus = K.createPropertyBus([]);
 
+  // MVar that holds the token data
+  var tokenInfoMVar = createMVar(tokenInfo);
+  // Variable storing the token data, so that it can be accessed synchronously.
+  // @todo - remove it and use promise
+  var tokenInfo = null;
+
   return {
+    init: init,
     refresh: refresh,
-    refreshWithLookup: refreshWithLookup,
-    getSpaces: getSpaces,
     getSpace: getSpace,
+    getDomains: getDomains,
+    getTokenLookup: function () { return tokenInfo; },
     /**
      * @ngdoc property
      * @name tokenStore#user$
@@ -62,54 +69,50 @@ angular.module('contentful')
     })
   };
 
-  function getTokenLookup () {
-    return authentication.getTokenLookup();
-  }
-
-  function setupLookupHandler (promise) {
-    promise.then(function (lookup) {
-      refreshWithLookup(lookup);
-    }, communicateError);
-  }
 
   /**
-   * @ngdoc method
-   * @name tokenStore#refreshWithLookup
-   * @param {object} tokenLookup
-   * @description
-   * This (synchronous) method takes a token lookup object and:
-   * - stores user
-   * - stores updated spaces (existing space objects are updated, not recreated)
-   * - notifies all subscribers of "changed" signal
+   * Start refreshing the token data every five minutes and every time
+   * the access token changes.
    */
-  function refreshWithLookup (tokenLookup) {
-    currentToken = {
-      user: tokenLookup.sys.createdBy,
-      spaces: updateSpaces(tokenLookup.spaces)
+  function init () {
+    var offToken = K.onValue(auth.token$, refresh);
+    var refreshInterval = $window.setInterval(function () {
+      if (presence.isActive()) {
+        refresh();
+      }
+    }, TOKEN_INFO_REFRESH_INTERVAL);
+
+    return function deinit () {
+      $window.clearInterval(refreshInterval);
+      offToken();
     };
-    userBus.set(currentToken.user);
-    spacesBus.set(currentToken.spaces);
   }
 
   /**
    * @ngdoc method
-   * @name tokenStore#refreshWithLookup
+   * @name tokenStore#refresh
    * @returns {Promise<void>}
    * @description
-   * This method should be called when token data needs to be refreshed.
+   * Fetches data from the `/token` endpoint and updates the state of
+   * the service with the reponse.
    *
-   * For requesting data we're using a queue:
-   * - subsequent calls are queued and performed one after another
-   * - returned promise is resolved with a value of the last call!
-   *
-   * As defined in "setupLookupHandler":
-   * On failure we call "communicateError", what basically forces an user
-   * to reload the app. On success we call "refreshWithLookup" (see docs above).
+   * Returns the response from the token endpoint.
    */
   function refresh () {
-    refreshPromise = request();
-    return refreshPromise;
+    if (!tokenInfoMVar.isEmpty()) {
+      tokenInfoMVar.empty();
+      fetchInfo().then(function (newTokenInfo) {
+        tokenInfo = newTokenInfo;
+        tokenInfoMVar.put(newTokenInfo);
+        userBus.set(newTokenInfo.sys.createdBy);
+        spacesBus.set(updateSpaces(newTokenInfo.spaces));
+      }, function () {
+        ReloadNotification.trigger('The application was unable to authenticate with the server');
+      });
+    }
+    return tokenInfoMVar.read();
   }
+
 
   /**
    * @ngdoc method
@@ -120,29 +123,29 @@ angular.module('contentful')
    * This method returns a promise of a single stored space
    * If some calls are in progress, we're waiting until these are done.
    * Promise is rejected if space with a provided ID couldn't be found.
+   *
+   * TODO only used by the space detail state. Find a better way
    */
   function getSpace (id) {
-    return refreshPromise.then(function () {
+    return tokenInfoMVar.read().then(function () {
       var space = findSpace(id);
       return space || $q.reject(new Error('No space with given ID could be found.'));
     });
   }
 
-  /**
-   * @ngdoc method
-   * @name tokenStore#getSpaces
-   * @returns {Promise<API.Space[]>}
-   * @description
-   * This method returns a promise of all stored spaces.
-   * If some calls are in progress, we're waiting until these are done.
-   */
-  function getSpaces () {
-    return refreshPromise.then(getCurrentSpaces);
+  // TODO move this into the OrganizationContext once this is
+  // implemented
+  function getDomains () {
+    var domains = _.get(tokenInfo, 'domains', []);
+    return domains.reduce(function (map, value) {
+      map[value.name] = value.domain;
+      return map;
+    }, {});
   }
 
   function updateSpaces (rawSpaces) {
     var updated = _.map(rawSpaces, updateSpace);
-    updated.sort(getSorter(updated));
+    updated.sort(sortByName);
     return updated;
   }
 
@@ -157,50 +160,15 @@ angular.module('contentful')
   }
 
   function findSpace (id) {
-    return _.find(getCurrentSpaces(), function (space) {
+    var spaces = K.getValue(spacesBus.property);
+    return _.find(spaces, function (space) {
       return space.getId() === id;
     });
   }
 
-  function getCurrentSpaces () {
-    return currentToken ? currentToken.spaces : [];
+  function sortByName (a, b) {
+    var nameA = _.get(a, 'data.name', '');
+    var nameB = _.get(b, 'data.name', '');
+    return nameA.localeCompare(nameB);
   }
-
-  function getSorter (spaces) {
-    return function sortByName (a, b) {
-      try {
-        return a.data.name.localeCompare(b.data.name);
-      } catch (e) {
-        logger.logError('Space is not defined.', {
-          data: {
-            msg: e.message,
-            exp: e,
-            spaces: _.map(spaces, function (space) {
-              return _.map(space, 'data');
-            })
-          }
-        });
-      }
-    };
-  }
-
-  function communicateError (err) {
-    if (err && err.statusCode === 401) {
-      modalDialog.open({
-        title: 'Your login token is invalid',
-        message: 'You need to login again to refresh your login token.',
-        cancelLabel: null,
-        confirmLabel: 'Login',
-        backgroundClose: false,
-        disableTopCloseButton: true,
-        ignoreEsc: true,
-        attachTo: 'body'
-      }).promise.then(function () {
-        authentication.clearAndLogin();
-      });
-    } else {
-      ReloadNotification.trigger('The browser was unable to obtain the login token.');
-    }
-  }
-
 }]);

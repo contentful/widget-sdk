@@ -87,7 +87,12 @@ export function makePrefetchEntryLoader (spaceContext, ids$) {
         if (entity) {
           return entity;
         } else {
-          return $q.reject(new Error('Entity not found'));
+          // Fall back to requesting a single entry
+          // The prefetch cache uses the query endpoint to get entries.
+          // Because the CMA is inconsistent newly created entries may
+          // not be available from the query endpoint yet. We try to
+          // get them from the single resource endpoint instead.
+          return spaceContext.space.getEntry(id);
         }
       });
   };

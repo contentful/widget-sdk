@@ -7,13 +7,13 @@ angular.module('cf.data')
  * @name data/spaceEndpoint
  * @usage[js]
  * var spaceEndpoint = $injector.get('data/spaceEndpoint')
- * var makeRequest = spaceEndpoint.create('TOKEN', '//api.contentful.com', 'SPACE_ID')
- * var entries = makeRequest({
+ * var makeEndpointRequest = spaceEndpoint.create('TOKEN', '//api.contentful.com', 'SPACE_ID')
+ * var entries = makeEndpointRequest({
  *   method: 'GET',
  *   path: ['entries'],
  *   query: {limit: 10}
  * })
- * var asset = makeRequest({
+ * var asset = makeEndpointRequest({
  *   method: 'PUT',
  *   path: ['assets', 'asset-id'],
  *   version: 12,
@@ -21,9 +21,8 @@ angular.module('cf.data')
  * })
  */
 .factory('data/spaceEndpoint', ['require', function (require) {
-  var $http = require('$http');
   var $q = require('$q');
-  var RequestQueue = require('data/RequestQueue');
+  var makeRequest = require('data/Request').default;
 
   return {create: create};
 
@@ -60,17 +59,19 @@ angular.module('cf.data')
    * - `request` The original request configuration
    * - `headers` The HTTP response headers
    *
-   * @param {string} token
    * @param {string} baseUrl
    * @param {string} spaceId
+   * @param {object} auth
+   * @param {function(): Promise<string>} auth.getToken
+   * @param {function(): Promise<string>} auth.refreshToken
    * @returns {function}
    */
-  function create (token, baseUrl, spaceId) {
-    return RequestQueue.create(makeRequest);
+  function create (baseUrl, spaceId, auth) {
+    var baseRequest = makeRequest(auth);
 
-    function makeRequest (config, headers) {
+    return function request (config, headers) {
       var url = joinPath([baseUrl, 'spaces', spaceId].concat(config.path));
-      var request = {
+      var req = {
         method: config.method,
         url: url,
         headers: makeHeaders(config.version, headers),
@@ -78,7 +79,7 @@ angular.module('cf.data')
         params: config.query
       };
 
-      return $http(request).then(function (response) {
+      return baseRequest(req).then(function (response) {
         return response.data;
       }, function (response) {
         var status = parseInt(response.status, 10);
@@ -90,16 +91,15 @@ angular.module('cf.data')
           code: dotty.get(response, ['data', 'sys', 'id'], response.status),
           data: response.data,
           headers: response.headers,
-          request: redactAuthorizationHeader(request)
+          request: req
         });
         return $q.reject(error);
       });
-    }
+    };
 
     function makeHeaders (version, additional) {
       var headers = _.extend({
-        'Content-Type': 'application/vnd.contentful.management.v1+json',
-        'Authorization': 'Bearer ' + token
+        'Content-Type': 'application/vnd.contentful.management.v1+json'
       }, additional);
       if (version) {
         headers['X-Contentful-Version'] = version;
@@ -110,13 +110,5 @@ angular.module('cf.data')
 
   function joinPath (components) {
     return _.filter(components).join('/');
-  }
-
-  function redactAuthorizationHeader (request) {
-    if (request.headers['Authorization']) {
-      request = _.cloneDeep(request);
-      request.headers['Authorization'] = '[REDACTED]';
-    }
-    return request;
   }
 }]);

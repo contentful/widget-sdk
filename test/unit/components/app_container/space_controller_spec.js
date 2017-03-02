@@ -2,7 +2,7 @@
 
 describe('Space Controller', function () {
   beforeEach(function () {
-    var self = this;
+    const self = this;
     module('contentful/test', function ($provide) {
       self.authorizationMock = {
         isUpdated: sinon.stub()
@@ -27,12 +27,16 @@ describe('Space Controller', function () {
       };
       $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
     });
+
+    this.tokenStore = this.mockService('tokenStore', {
+      getTokenLookup: sinon.stub()
+    });
     this.$rootScope = this.$inject('$rootScope');
     this.scope = this.$rootScope.$new();
-    var cfStub = this.$inject('cfStub');
+    const cfStub = this.$inject('cfStub');
 
-    var space = cfStub.space('test');
-    var contentTypeData = cfStub.contentTypeData('testType');
+    const space = cfStub.space('test');
+    const contentTypeData = cfStub.contentTypeData('testType');
     this.scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
 
     this.$inject('$controller')('SpaceController', {$scope: this.scope});
@@ -40,8 +44,7 @@ describe('Space Controller', function () {
 
   describe('watches for updated tokenLookup', function () {
     beforeEach(function () {
-      var authentication = this.$inject('authentication');
-      authentication.tokenLookup = {};
+      this.tokenStore.getTokenLookup.returns({items: [{sys: {}}]});
       this.authorizationMock.isUpdated.returns(true);
       this.enforcementsMock.getPeriodUsage.returns(true);
       this.broadcastStub = sinon.stub(this.$rootScope, '$broadcast');
