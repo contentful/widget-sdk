@@ -7,7 +7,7 @@ describe('entityEditor/Document', function () {
     });
 
     this.K = this.$inject('mocks/kefir');
-    this.DocLoad = this.$inject('data/ShareJS/Connection').DocLoad;
+    this.DocLoad = this.$inject('data/sharejs/Connection').DocLoad;
     const OtDoc = this.$inject('mocks/OtDoc');
 
     this.docLoader = {
@@ -131,12 +131,20 @@ describe('entityEditor/Document', function () {
       this.K.assertCurrentValue(this.doc.status$, 'ok');
     });
 
-    it('is "ot-connection-error" when there is a document error', function () {
+    it('is "ot-connection-error" when there is a disconnected error', function () {
       this.connectAndOpen();
       this.$apply();
       this.K.assertCurrentValue(this.doc.status$, 'ok');
-      this.docLoader.doc.set(this.DocLoad.Error());
+      this.docLoader.doc.set(this.DocLoad.Error('disconnected'));
       this.K.assertCurrentValue(this.doc.status$, 'ot-connection-error');
+    });
+
+    it('is "editing-not-allowed" when doc opening is forbidden', function () {
+      this.connectAndOpen();
+      this.$apply();
+      this.K.assertCurrentValue(this.doc.status$, 'ok');
+      this.docLoader.doc.set(this.DocLoad.Error('forbidden'));
+      this.K.assertCurrentValue(this.doc.status$, 'editing-not-allowed');
     });
 
     it('is "archived" when the entity is archived', function () {
@@ -169,6 +177,16 @@ describe('entityEditor/Document', function () {
       expect(this.doc.getValueAt(['a', 'b'])).toBe(undefined);
       this.doc.setValueAt(['a', 'b'], 'VAL');
       expect(this.doc.getValueAt(['a', 'b'])).toBe('VAL');
+    });
+
+    it('emits error on state.error$ when forbidden', function () {
+      const sjsDoc = this.connectAndOpen();
+      sjsDoc.setAt = sinon.stub().yields('forbidden');
+
+      const errors = this.K.extractValues(this.doc.state.error$);
+      this.doc.setValueAt(['a', 'b'], 'VAL');
+      this.$apply();
+      expect(errors[0].constructor.name).toBe('SetValueForbidden');
     });
 
     testDiff('Text');
@@ -245,6 +263,16 @@ describe('entityEditor/Document', function () {
       this.doc.removeValueAt('PATH').then(resolved);
       this.$apply();
       sinon.assert.called(resolved);
+    });
+
+    it('emits error on state.error$ when forbidden', function () {
+      const sjsDoc = this.connectAndOpen();
+      sjsDoc.removeAt = sinon.stub().yields('forbidden');
+
+      const errors = this.K.extractValues(this.doc.state.error$);
+      this.doc.removeValueAt(['a', 'b']);
+      this.$apply();
+      expect(errors[0].constructor.name).toBe('SetValueForbidden');
     });
   });
 
@@ -527,6 +555,15 @@ describe('entityEditor/Document', function () {
       this.K.assertCurrentValue(this.doc.state.isConnected$, true);
       this.docLoader.doc.set(this.DocLoad.Error());
       this.K.assertCurrentValue(this.doc.state.isConnected$, false);
+    });
+  });
+
+  describe('#state.error$', function () {
+    it('emits "OpenForbidden" error when opening fails', function () {
+      const errors = this.K.extractValues(this.doc.state.error$);
+      this.docLoader.doc.set(this.DocLoad.Error('forbidden'));
+      this.$apply();
+      expect(errors[0].constructor.name).toBe('OpenForbidden');
     });
   });
 

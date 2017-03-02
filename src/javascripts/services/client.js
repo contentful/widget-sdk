@@ -2,37 +2,38 @@
 
 angular.module('contentful')
 .factory('client', ['$injector', function ($injector) {
-  var $http = $injector.get('$http');
   var $q = $injector.get('$q');
   var environment = $injector.get('environment');
-  var createRequestQueue = $injector.get('data/RequestQueue').create;
   var Client = $injector.get('libs/@contentful/client').Client;
+  var auth = $injector.get('Authentication');
+  var makeRequest = $injector.get('data/Request').default;
 
+  var baseRequest = makeRequest(auth);
   var baseUrl = environment.settings.apiUrl;
-  var defaultHeaders = null;
-  var queuedRequestFn = createRequestQueue(request);
+  var defaultHeaders = {
+    'X-Contentful-Skip-Transformation': true,
+    // @todo content_api's preflight middleware has to accept this header first
+    // 'X-Contentful-UI-Version': window.CF_UI_VERSION || 'development',
+    'Content-Type': 'application/vnd.contentful.management.v1+json'
+  };
 
-  return _.extend(new Client({request: queuedRequestFn}), {
-    init: init,
-    request: queuedRequestFn
+  return _.extend(new Client({request: request}), {
+    request: request
   });
 
-  function init (token) {
-    defaultHeaders = {
-      'X-Contentful-Skip-Transformation': true,
-      // @todo content_api's preflight middleware has to accept this header first
-      // 'X-Contentful-UI-Version': window.CF_UI_VERSION || 'development',
-      'Content-Type': 'application/vnd.contentful.management.v1+json',
-      Authorization: 'Bearer ' + token
-    };
-  }
-
   function request (req) {
-    if (!defaultHeaders) {
-      throw new Error('Call #init(token) first!');
-    }
-
-    return performRequest(buildRequest(req));
+    req = buildRequest(req);
+    return baseRequest(req)
+    .then(function (res) {
+      return res.data;
+    }, function (res) {
+      // @todo most likely we should reject with an Error instance
+      return $q.reject({
+        statusCode: parseInt(res.status, 10),
+        body: res.data,
+        request: req
+      });
+    });
   }
 
   function buildRequest (data) {
@@ -46,19 +47,5 @@ angular.module('contentful')
     req[payloadProperty] = data.payload;
 
     return req;
-  }
-
-  function performRequest (req) {
-    return $http(req)
-    .then(function (res) {
-      return res.data;
-    }, function (res) {
-      // @todo most likely we should reject with an Error instance
-      return $q.reject({
-        statusCode: parseInt(res.status, 10),
-        body: res.data,
-        request: req
-      });
-    });
   }
 }]);

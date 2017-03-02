@@ -1,5 +1,5 @@
-import $q from '$q';
 import $timeout from '$timeout';
+import $q from '$q';
 import moment from 'moment';
 
 const CALLS_IN_PERIOD = 7;
@@ -22,7 +22,7 @@ const GATEWAY_TIMEOUT = 504;
  * @param {function} request function ($http(...))
  * @returns {function} wrapped request function
  */
-export function create (requestFn) {
+export default function wrapWithRetry (requestFn) {
 
   let inFlight = 0;
   const queue = [];

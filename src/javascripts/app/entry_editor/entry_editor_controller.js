@@ -42,6 +42,7 @@ angular.module('contentful')
   var Focus = require('app/entity_editor/Focus');
   var installTracking = require('app/entity_editor/Tracking').default;
   var deepFreeze = require('utils/DeepFreeze').deepFreeze;
+  var initDocErrorHandler = require('app/entity_editor/DocumentErrorHandler').default;
 
   var editorData = $scope.editorData;
   var entityInfo = this.entityInfo = editorData.entityInfo;
@@ -57,6 +58,7 @@ angular.module('contentful')
   var doc = editorData.openDoc(K.scopeLifeline($scope));
   // TODO rename the scope property
   $scope.otDoc = doc;
+  initDocErrorHandler($scope, doc.state.error$);
 
   installTracking(entityInfo, doc, K.scopeLifeline($scope));
 

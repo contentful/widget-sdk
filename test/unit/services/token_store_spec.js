@@ -6,10 +6,16 @@ describe('Token store service', function () {
     module('contentful/test');
 
     this.K = this.$inject('mocks/kefir');
-    this.tokenStore = this.$inject('tokenStore');
 
-    this.auth = this.$inject('authentication');
-    this.auth.getTokenLookup = sinon.stub();
+    this.fetchWithAuth = sinon.stub().resolves({
+      sys: {createdBy: this.user},
+      spaces: []
+    });
+    this.$inject('data/CMA/TokenInfo').default = function () {
+      return this.fetchWithAuth;
+    }.bind(this);
+
+    this.tokenStore = this.$inject('tokenStore');
 
     this.client = this.$inject('client');
     this.client.newSpace = sinon.stub();
@@ -32,148 +38,53 @@ describe('Token store service', function () {
       };
     });
 
-    this.refresh = function () {
-      this.tokenStore.refreshWithLookup({
+    this.refresh = function (...spaces) {
+      this.fetchWithAuth.resolves({
         sys: {createdBy: this.user},
-        spaces: Array.prototype.slice.apply(arguments)
+        spaces: spaces
       });
-    }.bind(this);
-  });
-
-  describe('#refreshWithLookup', function () {
-    beforeEach(function () {
-      this.client.newSpace.returns(this.spaces[0]);
-      this.refresh(this.rawSpaces[0]);
-    });
-
-    it('updates user$ property', function () {
-      this.K.assertCurrentValue(this.tokenStore.user$, this.user);
-    });
-
-    it('updates spaces$ property', function () {
-      this.K.assertCurrentValue(this.tokenStore.spaces$, [this.spaces[0]]);
-    });
-
-    it('updates spacesByOrganization$ property', function () {
-      this.K.assertMatchCurrentValue(
-        this.tokenStore.spacesByOrganization$,
-        sinon.match({testorg: [this.spaces[0]]})
-      );
-    });
-
-    it('modifies space object if already stored', function () {
-      this.refresh(this.rawSpaces[0]);
-      sinon.assert.calledOnce(this.spaces[0].update.withArgs(this.rawSpaces[0]));
-    });
-
-    it('stores added, new space', function () {
-      this.client.newSpace.returns(this.spaces[1]);
-      this.refresh(this.rawSpaces[0], this.rawSpaces[1]);
-      sinon.assert.calledTwice(this.client.newSpace);
-      this.K.assertCurrentValue(this.tokenStore.spaces$, [this.spaces[0], this.spaces[1]]);
-    });
-
-    it('sorts spaces by name', function () {
-      this.client.newSpace.returns(this.spaces[2]);
-      this.refresh(this.rawSpaces[2], this.rawSpaces[0]);
-      this.K.assertCurrentValue(this.tokenStore.spaces$, [this.spaces[0], this.spaces[2]]);
-    });
-
-    it('removes stored space if not present in a new token', function () {
-      this.client.newSpace.returns(this.spaces[1]);
-      this.refresh(this.rawSpaces[0], this.rawSpaces[1]);
-      this.refresh(this.rawSpaces[0]);
-      this.K.assertCurrentValue(this.tokenStore.spaces$, [this.spaces[0]]);
-    });
+      return this.tokenStore.refresh();
+    };
   });
 
   describe('#refresh()', function () {
-    pit('fetches token returns promise of token refresh', function () {
+    it('fetches token returns promise of token refresh', function* () {
       this.client.newSpace.returns(this.spaces[0]);
-      this.auth.getTokenLookup.resolves({
+      this.fetchWithAuth.resolves({
         sys: {createdBy: this.user},
         spaces: [this.rawSpaces[0]]
       });
 
-      return this.tokenStore.refresh().then(function () {
-        sinon.assert.calledOnce(this.auth.getTokenLookup);
-      }.bind(this));
+      yield this.tokenStore.refresh();
+      sinon.assert.calledOnce(this.fetchWithAuth);
     });
-  });
-
-  it('reuses promise if some requests are in progress', function () {
-    const d = this.auth.getTokenLookup.defers();
-    const promise = this.tokenStore.refresh();
-    expect(this.tokenStore.refresh()).toBe(promise);
-
-    d.resolve({sys: {createdBy: this.user}, spaces: []});
-    this.$apply();
-    expect(this.tokenStore.refresh()).not.toBe(promise);
-  });
-
-  it('shows dialog and clears auth data on 401', function () {
-    const dialog = this.$inject('modalDialog');
-    dialog.open = sinon.stub().returns({promise: this.$inject('$q').resolve()});
-    this.auth.clearAndLogin = sinon.spy();
-    this.auth.getTokenLookup.rejects({statusCode: 401});
-
-    this.tokenStore.refresh();
-    this.$apply();
-    sinon.assert.calledOnce(dialog.open);
-    sinon.assert.calledOnce(this.auth.clearAndLogin);
   });
 
   it('reloads app on =/= 401', function () {
     const notification = this.$inject('ReloadNotification');
     notification.trigger = sinon.spy();
-    this.auth.getTokenLookup.rejects({statusCode: 404});
+    this.fetchWithAuth.rejects({statusCode: 404});
 
     this.tokenStore.refresh();
     this.$apply();
     sinon.assert.calledOnce(notification.trigger);
   });
 
-  describe('#getSpaces()', function () {
-    pit('returns promise resolving to currently stored spaces', function () {
-      this.client.newSpace.returns(this.spaces[0]);
-      this.refresh(this.rawSpaces[0]);
-
-      return this.tokenStore.getSpaces().then(function (spaces) {
-        expect(spaces.length).toBe(1);
-        expect(spaces[0]).toBe(this.spaces[0]);
-      }.bind(this));
-    });
-
-    it('waits for a request in progress', function () {
-      const d = this.auth.getTokenLookup.defers();
-      this.tokenStore.refresh();
-
-      const spaceHandler = sinon.spy();
-      this.tokenStore.getSpace('a-space-id').then(spaceHandler);
-      sinon.assert.notCalled(spaceHandler);
-
-      this.client.newSpace.returns(this.spaces[0]);
-      d.resolve({sys: {createdBy: this.user}, spaces: [this.rawSpaces[0]]});
-      this.$apply();
-      sinon.assert.calledOnce(spaceHandler);
-    });
-  });
-
   describe('#getSpace()', function () {
-    pit('returns promise resolving to requested space', function () {
+    it('returns promise resolving to requested space', function* () {
       this.client.newSpace.returns(this.spaces[0]);
-      this.refresh(this.rawSpaces[0]);
-
-      return this.tokenStore.getSpace('a-space-id').then(function (space) {
-        expect(space).toBe(this.spaces[0]);
-      }.bind(this));
+      yield this.refresh(this.rawSpaces[0]);
+      const space = yield this.tokenStore.getSpace('a-space-id');
+      expect(space).toBe(this.spaces[0]);
     });
 
-    pit('returns rejected promise if space cannot be found', function () {
-      return this.tokenStore.getSpace('xyz').then(_.noop, function (err) {
+    it('returns rejected promise if space cannot be found', function* () {
+      try {
+        yield this.tokenStore.getSpace('xyz');
+      } catch (err) {
         expect(err instanceof Error).toBe(true);
         expect(err.message).toBe('No space with given ID could be found.');
-      });
+      }
     });
   });
 
@@ -182,15 +93,15 @@ describe('Token store service', function () {
       this.K.assertCurrentValue(this.tokenStore.user$, null);
     });
 
-    it('updates user when tokenStore is refreshed', function () {
-      this.refresh();
+    it('updates user when tokenStore is refreshed', function* () {
+      yield this.refresh();
       this.K.assertCurrentValue(this.tokenStore.user$, this.user);
     });
 
-    it('skips duplicates', function () {
+    it('skips duplicates', function* () {
       const usersArr = this.K.extractValues(this.tokenStore.user$);
-      this.refresh();
-      this.refresh();
+      yield this.refresh();
+      yield this.refresh();
       expect(usersArr.filter(_.identity).length).toBe(1);
     });
   });
@@ -200,9 +111,9 @@ describe('Token store service', function () {
       this.K.assertCurrentValue(this.tokenStore.spaces$, []);
     });
 
-    it('updates spaces when tokenStore is refreshed', function () {
+    it('updates spaces when tokenStore is refreshed', function* () {
       this.client.newSpace.returns(this.spaces[0]);
-      this.refresh(this.rawSpaces[0]);
+      yield this.refresh(this.rawSpaces[0]);
       this.K.assertCurrentValue(this.tokenStore.spaces$, [this.spaces[0]]);
     });
   });
@@ -212,9 +123,9 @@ describe('Token store service', function () {
       this.K.assertCurrentValue(this.tokenStore.spacesByOrganization$, {});
     });
 
-    it('updates property when tokenStore is refreshed', function () {
+    it('updates property when tokenStore is refreshed', function* () {
       this.client.newSpace.returns(this.spaces[0]);
-      this.refresh(this.rawSpaces[0]);
+      yield this.refresh(this.rawSpaces[0]);
       this.K.assertMatchCurrentValue(
         this.tokenStore.spacesByOrganization$,
         sinon.match({testorg: [this.spaces[0]]})

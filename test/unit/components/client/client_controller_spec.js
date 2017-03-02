@@ -28,6 +28,7 @@ describe('Client Controller', function () {
     this.tokenStore = this.$inject('tokenStore');
     this.tokenStore.refresh = sinon.stub().resolves();
     this.tokenStore.user$ = this.K.createMockProperty();
+    this.tokenStore.getTokenLookup = sinon.stub().returns({});
 
     const $rootScope = this.$inject('$rootScope');
     scope = $rootScope.$new();
@@ -45,10 +46,10 @@ describe('Client Controller', function () {
     });
   });
 
-  describe('on authentication.tokenLookup update', function () {
+  describe('on tokenLookup update', function () {
     it('it calls authorization.setTokenLookup', function () {
-      const TOKEN = {};
-      this.$inject('authentication').tokenLookup = TOKEN;
+      const TOKEN = {sys: {}};
+      this.tokenStore.getTokenLookup.returns(TOKEN);
       this.$apply();
       sinon.assert.calledWith(this.authorizationStubs.setTokenLookup, TOKEN);
     });
@@ -59,7 +60,6 @@ describe('Client Controller', function () {
       this.spaceContext = this.$inject('spaceContext');
       this.hasSpace = sinon.stub().returns(false);
       this.authorizationStubs.authContext = {hasSpace: this.hasSpace};
-      this.$inject('authentication').tokenLookup = {};
     });
 
     it('sets authorization space if authContext has space', function () {
@@ -193,17 +193,6 @@ describe('Client Controller', function () {
         sinon.assert.notCalled(this.presence.isActive);
         this.clock.tick(50 * 60 * 1000);
         sinon.assert.called(this.presence.isActive);
-      });
-
-      it('reload is triggered if lookup fails', function () {
-        const tokenStore = this.$inject('tokenStore');
-        tokenStore.refresh.rejects();
-        const ReloadNotification = this.$inject('ReloadNotification');
-        ReloadNotification.trigger = sinon.stub();
-
-        this.clock.tick(50 * 60 * 1000);
-        this.$apply();
-        sinon.assert.called(ReloadNotification.trigger);
       });
     });
   });

@@ -161,6 +161,7 @@ angular.module('contentful')
   var errorMessageBuilder = require('errorMessageBuilder');
   var Focus = require('app/entity_editor/Focus');
   var K = require('utils/kefir');
+  var initDocErrorHandler = require('app/entity_editor/DocumentErrorHandler').default;
 
   var editorData = $scope.editorData;
   var entityInfo = this.entityInfo = editorData.entityInfo;
@@ -172,6 +173,7 @@ angular.module('contentful')
   $scope.editorContext = this;
   $scope.entityInfo = entityInfo;
 
+  initDocErrorHandler($scope, $scope.otDoc.state.error$);
 
   var schema = createEntrySchema(entityInfo.contentType, localeStore.getPrivateLocales());
   var buildMessage = errorMessageBuilder(spaceContext.publishedCTs);

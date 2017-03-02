@@ -49,8 +49,8 @@ angular.module('contentful')
       reloadWithCacheBuster();
     },
 
-    trigger: function (message) {
-      trigger({message: message});
+    trigger: function (message, title) {
+      trigger({message: message, title: title});
     },
 
     gatekeeperErrorHandler: function (err) {

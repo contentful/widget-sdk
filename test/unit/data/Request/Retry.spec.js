@@ -1,11 +1,10 @@
 'use strict';
 
-describe('data/request-queue', function () {
+describe('data/Request/Retry', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    const rq = this.$inject('data/RequestQueue');
-    const wrap = rq.create;
+    const wrap = this.$inject('data/Request/Retry').default;
     this.$timeout = this.$inject('$timeout');
     this.$q = this.$inject('$q');
 

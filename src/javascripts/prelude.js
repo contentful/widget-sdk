@@ -64,12 +64,10 @@ angular.module('contentful/app', ['contentful'])
   }
 }])
 .run(['require', function (require) {
-  var authentication = require('authentication');
-  authentication.login();
-
   require('utils/LaunchDarkly').init();
+  require('Authentication').init();
+  require('tokenStore').init();
   require('presence').startTracking();
-  require('client').init(authentication.token);
   require('uiVersionSwitcher').checkIfVersionShouldBeSwitched();
   require('navigation/stateChangeHandlers').setup();
   require('contextMenu').init();

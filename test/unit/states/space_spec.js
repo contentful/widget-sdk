@@ -8,21 +8,20 @@ describe('states/spaces', function () {
   }));
 
   beforeEach(function () {
+    const cfStub = this.$inject('cfStub');
+    this.space = cfStub.space('SPACE');
+    this.space.getPublishedContentTypes = sinon.stub().resolves([]);
+    this.space.getContentTypes = sinon.stub().resolves([]);
+
+    this.tokenStore = this.mockService('tokenStore');
+    this.tokenStore.getSpace.resolves(this.space);
+
     const states = this.$inject('states');
     const spaceState = this.$inject('states/spaces');
     states.load([spaceState]);
 
     const $state = this.$inject('$state');
     this.$state = $state;
-
-    const cfStub = this.$inject('cfStub');
-    this.adapter = cfStub.adapter;
-    this.space = cfStub.space('SPACE');
-    this.space.getPublishedContentTypes = sinon.stub().resolves([]);
-    this.space.getContentTypes = sinon.stub().resolves([]);
-
-    this.tokenStore = this.$inject('tokenStore');
-    this.tokenStore.getSpace = sinon.stub().resolves(this.space);
 
     this.widgets = this.$inject('widgets');
     this.widgets.setSpace = sinon.stub().resolves();
