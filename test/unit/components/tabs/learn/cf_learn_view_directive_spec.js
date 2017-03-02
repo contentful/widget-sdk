@@ -40,6 +40,12 @@ describe('cfLearnView directive', function () {
 
     $rootScope = this.$inject('$rootScope');
 
+    // A/B experiment - onboarding-invite-users
+    // TODO: refactor as a helper
+    const LD = this.$inject('utils/LaunchDarkly');
+    LD.get = sinon.stub().returns(this.$inject('mocks/kefir').createMockProperty(false));
+    // End A/B experiment
+
     this.compile = function () {
       element = this.$compile('<cf-learn-view />', {
         context: {}

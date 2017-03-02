@@ -53,6 +53,7 @@ describe('cfCreateNewSpace directive', function () {
         getAll: sinon.stub()
       },
       spaceContext: {
+        getData: sinon.stub(),
         space: {
           createDeliveryApiKey: sinon.stub()
         }
@@ -77,6 +78,12 @@ describe('cfCreateNewSpace directive', function () {
     stubs.spaceTemplateLoader.getTemplatesList.resolves(true);
 
     $rootScope = this.$inject('$rootScope');
+
+    // A/B experiment - onboarding-invite-users
+    // TODO: refactor as a helper
+    const LD = this.$inject('utils/LaunchDarkly');
+    LD.get = sinon.stub().returns(this.$inject('mocks/kefir').createMockProperty(false));
+    // End A/B experiment
 
     this.setupDirective = function (organizationId) {
       element = this.$compile('<cf-create-new-space>', {
