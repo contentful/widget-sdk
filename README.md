@@ -1,4 +1,13 @@
-# HTML Client App
+# Contentful Web Application
+
+## Quickstart
+
+Guides around writing code, tooling, and processes can be found in
+[`docs/guides`](./docs/guides/README.md).
+
+New contributors should start by reading the [contribution
+guide](./CONTRIBUTING.md).
+
 
 ## Running and developing
 
@@ -46,7 +55,7 @@ logged in.
 [cf-auth-doc]: http://www.flinkly.com/developers/docs/references/authentication/#the-content-management-api
 
 
-## Documentation
+## Showing API documentation
 
 The repo comes with a self hosting API documentation and guides. To
 view them run `gulp docs` and `gulp serve` and go to the
@@ -54,11 +63,6 @@ view them run `gulp docs` and `gulp serve` and go to the
 server.
 
 To continuously rebuild the documentation use `gulp docs/watch`.
-
-## Testing
-
-For more information on testing consult the generated guides on the
-documentation or refer to [testing.md](docs/guides/testing.md)
 
 ## Styleguide
 
