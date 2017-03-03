@@ -117,6 +117,14 @@ angular.module('contentful')
     // Don't care if any fail
     .catch(_.noop)
     .then(function () {
+      if (_.size(controller.usersToInvite)) {
+        analytics.track('invite_user:create_space', {
+          experiment: {
+            id: 'onboarding-invite-users',
+            variation: controller.showInviteUserTest
+          }
+        });
+      }
       return space;
     });
   }
