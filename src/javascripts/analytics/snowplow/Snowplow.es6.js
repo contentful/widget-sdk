@@ -1,9 +1,8 @@
 import $window from '$window';
-import {once, pickBy, identity} from 'lodash';
+import {once} from 'lodash';
 import {snowplow as snowplowConfig, domain} from 'Config';
 import LazyLoader from 'LazyLoader';
 import {getSchema as getSchemaForEvent, transform} from 'analytics/snowplow/Events';
-import {getSchema} from 'analytics/snowplow/Schemas';
 
 /**
  * @ngdoc service
@@ -77,46 +76,44 @@ export function identify (userId) {
  * @ngdoc method
  * @name analytics/snowplow/Snowplow#track
  * @param {string} eventName
+ * @param {object} data
  *
  * @description
  * Tracks an event in Snowplow if it is registered in the snowplow events service
  */
 export function track (eventName, data) {
-  const schema = getSchemaForEvent(eventName);
-  if (schema) {
-    const transformedData = transform(eventName, data);
+  const eventData = buildUnstructEventData(eventName, data);
 
-    snowplowSend('trackUnstructEvent', {
-      schema: schema.path,
-      data: transformedData.data
-    }, transformedData.contexts);
+  if (eventData) {
+    snowplowSend.apply(null, eventData);
   }
 }
 
 /**
  * @ngdoc method
- * @name analytics/snowplow/Snowplow#page
- * @param {string} data
+ * @name analytics/snowplow/Snowplow#buildUnstructEventData
+ * @param {string} eventName
+ * @param {object} data
  *
  * @description
- * Tracks a page view event in Snowplow if there is a user available
+ * Builds an unstructured event for Snowplow. All our current events that reach
+ * Snowplow are unstructured in Snowplow parlance.
  */
-export function page (data) {
-  const snowplowData = pickBy({
-    to_state: data.state,
-    to_state_params: data.params,
-    from_state: data.fromState,
-    from_state_params: data.fromStateParams,
-    executing_user_id: data.userId,
-    space_id: data.spaceId,
-    organization_id: data.organizationId
-  }, identity);
 
-  if (snowplowData.executing_user_id) {
-    snowplowSend('trackUnstructEvent', {
-      schema: getSchema('page_view').path,
-      data: snowplowData
-    });
+export function buildUnstructEventData (eventName, data) {
+  const schema = getSchemaForEvent(eventName);
+
+  if (schema) {
+    const transformedData = transform(eventName, data);
+
+    return [
+      'trackUnstructEvent',
+      {
+        schema: schema.path,
+        data: transformedData.data
+      },
+      transformedData.contexts
+    ];
   }
 }
 
