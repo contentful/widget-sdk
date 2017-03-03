@@ -95,7 +95,8 @@ angular.module('contentful')
      */
     resetWithSpace: function (space) {
       var self = this;
-      var endpoint = spaceEndpoint.create(
+
+      self.endpoint = spaceEndpoint.create(
         environment.settings.apiUrl,
         space.getId(),
         Auth
@@ -103,10 +104,10 @@ angular.module('contentful')
 
       resetMembers(self);
       self.space = space;
-      self.cma = new ApiClient(endpoint);
+      self.cma = new ApiClient(self.endpoint);
       self.users = createUserCache(space);
-      self.apiKeyRepo = createApiKeyRepo(endpoint);
-      self.editingInterfaces = createEIRepo(endpoint);
+      self.apiKeyRepo = createApiKeyRepo(self.endpoint);
+      self.editingInterfaces = createEIRepo(self.endpoint);
       var organization = self.getData('organization') || null;
       self.subscription =
         organization && Subscription.newFromOrganization(organization);
@@ -122,7 +123,7 @@ angular.module('contentful')
         space.getId()
       );
 
-      self.docPool = DocumentPool.create(self.docConnection, endpoint);
+      self.docPool = DocumentPool.create(self.docConnection, self.endpoint);
 
       self.publishedCTs = PublishedCTRepo.create(space);
       self.publishedCTs.wrappedItems$.onValue(function (cts) {

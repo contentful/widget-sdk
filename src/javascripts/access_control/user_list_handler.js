@@ -6,12 +6,15 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var RoleRepository = require('RoleRepository');
   var SpaceMembershipRepository = require('SpaceMembershipRepository');
+  var fetchAll = require('data/CMA/FetchAll').fetchAll;
 
   var ADMIN_ROLE_ID = '__cf_builtin_admin';
   var ADMIN_ROLE_NAME = 'Administrator';
   var ADMIN_OPT = { id: ADMIN_ROLE_ID, name: ADMIN_ROLE_NAME };
   var UNKNOWN_ROLE_NAME = 'Unknown';
   var NOT_DEFINED_USER_NAME = 'Name not defined';
+  // `GET /spaces/:id/users` endpoint returns a max of 100 items
+  var PER_PAGE = 100;
 
   return { create: create };
 
@@ -38,9 +41,9 @@ angular.module('contentful')
 
     function reset () {
       return $q.all({
-        memberships: SpaceMembershipRepository.getInstance(spaceContext.space).getAll(),
+        memberships: SpaceMembershipRepository.getInstance(spaceContext.endpoint).getAll(),
         roles: RoleRepository.getInstance(spaceContext.space).getAll(),
-        users: getUsers()
+        users: getAllUsers()
       }).then(processData);
     }
 
@@ -87,8 +90,7 @@ angular.module('contentful')
 
     function prepareUsers (users) {
       return _(users).map(function (user) {
-        var data = user.data;
-        var id = user.getId();
+        var id = user.sys.id;
 
         return {
           id: id,
@@ -96,11 +98,15 @@ angular.module('contentful')
           isAdmin: adminMap[id],
           roles: userRolesMap[id] || [],
           roleNames: getRoleNamesForUser(id),
-          avatarUrl: data.avatarUrl,
-          name: data.firstName && data.lastName ? user.getName() : (data.email || NOT_DEFINED_USER_NAME),
-          confirmed: data.activated
+          avatarUrl: user.avatarUrl,
+          name: user.firstName && user.lastName ? getName(user) : (user.email || NOT_DEFINED_USER_NAME),
+          confirmed: user.activated
         };
       }).sortBy('name').value();
+    }
+
+    function getName (user) {
+      return user.firstName + ' ' + user.lastName;
     }
 
     function getRoleNamesForUser (userId) {
@@ -194,14 +200,9 @@ angular.module('contentful')
         };
       });
     }
-  }
 
-  function getUsers () {
-    return spaceContext.space.getUsers()
-    .then(function (users) {
-      return _.uniqBy(users, function (user) {
-        return user.data.sys.id;
-      });
-    });
+    function getAllUsers () {
+      return fetchAll(spaceContext.endpoint, ['users'], PER_PAGE);
+    }
   }
 }]);
