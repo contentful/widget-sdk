@@ -99,7 +99,7 @@ export function track (eventName, data) {
  * @param {string} data
  *
  * @description
- * Tracks a page view event in Snowplow
+ * Tracks a page view event in Snowplow if there is a user available
  */
 export function page (data) {
   const snowplowData = pickBy({
@@ -112,10 +112,12 @@ export function page (data) {
     organization_id: data.organizationId
   }, identity);
 
-  snowplowSend('trackUnstructEvent', {
-    schema: getSchema('page_view').path,
-    data: snowplowData
-  });
+  if (snowplowData.executing_user_id) {
+    snowplowSend('trackUnstructEvent', {
+      schema: getSchema('page_view').path,
+      data: snowplowData
+    });
+  }
 }
 
 function snowplowSend () {
