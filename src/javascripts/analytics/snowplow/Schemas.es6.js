@@ -11,7 +11,7 @@ const _schemas = {};
 
 registerSchema({
   name: 'generic',
-  version: '1-0-0'
+  version: '1-0-1'
 });
 
 registerSchema({
@@ -76,6 +76,11 @@ registerSchema({
 
 registerSchema({
   name: 'experiment',
+  version: '1-0-1'
+});
+
+registerSchema({
+  name: 'experiment_start',
   version: '1-0-0'
 });
 

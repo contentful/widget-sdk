@@ -99,6 +99,10 @@ angular.module('contentful')
     'create',
     'clipboard_copy',
     'boilerplate'
+  ],
+  invite_user: [
+    'learn',
+    'create_space'
   ]
 })
 
