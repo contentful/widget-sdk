@@ -41,6 +41,12 @@ header.workbench-header
 
 .workbench-main
   form.workbench-main__right-content(name="contentTypeForm")
+    //- A/B experiment - ps-03-2017-next-step-hints
+    .note-box.note-box--success(style="margin: 0; max-width:700px" ng-if="showNextStepHint")
+      h3 Congratulations! You've created your first content type
+      a(ui-sref="spaces.detail.learn") Now let’s create some content
+    //- End A/B experiment - ps-03-2017-next-step-hints
+
     div(ng-if="stateIs('^.preview')")
       cf-content-type-preview.u-bce
 

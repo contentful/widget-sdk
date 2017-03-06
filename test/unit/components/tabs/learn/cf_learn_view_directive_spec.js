@@ -1,5 +1,3 @@
-import * as K from 'helpers/mocks/kefir';
-
 describe('cfLearnView directive', function () {
 
   let controller, stubs, $rootScope;
@@ -36,15 +34,10 @@ describe('cfLearnView directive', function () {
         }
       });
       $provide.value('$state', stubs.$state);
+      $provide.stubLaunchDarkly();
     });
 
     $rootScope = this.$inject('$rootScope');
-
-    // A/B experiment - onboarding-invite-users
-    // TODO: refactor as a helper
-    const LD = this.$inject('utils/LaunchDarkly');
-    LD.get = sinon.stub().returns(K.createMockProperty(false));
-    // End A/B experiment
 
     this.compile = function () {
       element = this.$compile('<cf-learn-view />', {
