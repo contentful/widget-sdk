@@ -12,6 +12,7 @@ import {
 import AppOpen from 'analytics/snowplow/transformers/AppOpen';
 import BulkEditor from 'analytics/snowplow/transformers/BulkEditor';
 import Snapshot from 'analytics/snowplow/transformers/Snapshot';
+import InviteUserExperiment from 'analytics/snowplow/transformers/InviteUserExperiment';
 
 /**
  * @ngdoc service
@@ -54,6 +55,7 @@ registerActionEvent('space:create', SpaceCreate);
 
 registerEvent('global:app_loaded', 'app_open', AppOpen);
 
+registerEvent('invite_user:learn', 'generic', InviteUserExperiment);
 
 function registerGenericEvent (event) {
   registerEvent(event, 'generic', Generic);

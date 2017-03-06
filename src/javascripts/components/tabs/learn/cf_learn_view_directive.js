@@ -82,6 +82,13 @@ angular.module('contentful')
         return;
       }
 
+      analytics.track('invite_user:learn', {
+        experiment: {
+          id: 'onboarding-invite-users',
+          variation: controller.showInviteUserTest
+        }
+      });
+
       controller.email = '';
       var isAdmin = userListHandler.isAdminRole(controller.role.id);
       var method = isAdmin ? 'inviteAdmin' : 'invite';
