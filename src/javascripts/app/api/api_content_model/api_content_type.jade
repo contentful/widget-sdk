@@ -2,7 +2,7 @@
   .content-model__summary
     .content-model__info
       h3.content-model__name {{contentType.getName()}}
-      .content-model__description {{contentType.data.description}}
+      .content-model__description {{contentType.data.description | truncate:100}}
     .content-model__id
       .content-model__id__title.uppercase
         | Identifier
