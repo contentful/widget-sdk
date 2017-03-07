@@ -23,13 +23,16 @@ You can run the code for a specific commit in the user interface by navigating t
 
 You can also view the styleguide for a specific commit by navigating to `https://static.quirely.com/styleguide/{branch}/index.html`.
 
-## <a name="guidelines"></a> Submission guidelines
+## <a name="guidelines"></a> Code submission guidelines
 - Make your changes in a new git branch based off `master` or one of the release branches. We generally use the prefixes `fix`,`feature`, `refactor` or `release` for our branches.
 - More about our [git workflow](https://contentful.atlassian.net/wiki/display/ENG/Git+flow+and+release+flow+-+proposal) on the wiki.
 - Please follow our [coding guidelines](https://contentful.atlassian.net/wiki/display/ENG/Frontend+JS+Coding+Style+Guideline)
 - Include relevant test cases
 - Use the GitHub label `Please review` when your code is ready for review
 - You can assign the PR to a specific individual, multiple individuals or leave it unassigned for anyone to pick up
+
+For an in-depth reference of the submission process see the [submission
+guide](./docs/buides/code-submission.md)
 
 ## <a name="info"></a> More information
 - See the [frontend space](https://contentful.atlassian.net/wiki/display/ENG/Frontend) on the wiki
