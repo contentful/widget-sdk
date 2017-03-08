@@ -1,4 +1,4 @@
-'use strict';
+import * as K from 'helpers/mocks/kefir';
 
 describe('Client Controller', function () {
   let scope;
@@ -24,10 +24,9 @@ describe('Client Controller', function () {
       };
       $provide.value('authorization', this.authorizationStubs);
     });
-    this.K = this.$inject('mocks/kefir');
     this.tokenStore = this.$inject('tokenStore');
     this.tokenStore.refresh = sinon.stub().resolves();
-    this.tokenStore.user$ = this.K.createMockProperty();
+    this.tokenStore.user$ = K.createMockProperty();
     this.tokenStore.getTokenLookup = sinon.stub().returns({});
 
     const $rootScope = this.$inject('$rootScope');

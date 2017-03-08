@@ -1,4 +1,4 @@
-'use strict';
+import * as K from 'helpers/mocks/kefir';
 
 describe('activationEmailResendController', function () {
   let moment;
@@ -20,7 +20,6 @@ describe('activationEmailResendController', function () {
       resend: sinon.stub().resolves()
     });
 
-    const K = this.$inject('mocks/kefir');
     const tokenStore = this.mockService('tokenStore', {
       user$: K.createMockProperty()
     });

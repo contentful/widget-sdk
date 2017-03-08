@@ -1,18 +1,12 @@
-'use strict';
+import * as K from 'utils/kefir';
+import * as KMock from 'helpers/mocks/kefir';
+import sinon from 'npm:sinon';
 
 describe('utils/kefir', function () {
-  let K;
-  let KMock;
 
   beforeEach(function () {
-    module('cf.utils', 'contentful/test');
-    K = this.$inject('utils/kefir');
-    KMock = this.$inject('mocks/kefir');
+    module('ng');
     this.scope = this.$inject('$rootScope').$new();
-  });
-
-  afterEach(function () {
-    K = null;
   });
 
   describe('#fromScopeEvent()', function () {

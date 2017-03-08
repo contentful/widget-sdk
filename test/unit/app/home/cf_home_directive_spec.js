@@ -1,4 +1,4 @@
-'use strict';
+import * as K from 'helpers/mocks/kefir';
 
 describe('cfHome directive', function () {
   beforeEach(function () {
@@ -10,11 +10,10 @@ describe('cfHome directive', function () {
       });
     });
 
-    this.K = this.$inject('mocks/kefir');
     this.tokenStore = this.$inject('tokenStore');
 
     this.compileElement = (isNew) => {
-      this.tokenStore.user$ = this.K.createMockProperty({
+      this.tokenStore.user$ = K.createMockProperty({
         firstName: 'Foo',
         signInCount: isNew ? 1 : 2
       });

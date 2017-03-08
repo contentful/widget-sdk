@@ -1,4 +1,4 @@
-'use strict';
+import * as K from 'helpers/mocks/kefir';
 
 describe('cfWidgetApi directive', function () {
   beforeEach(function () {
@@ -10,7 +10,6 @@ describe('cfWidgetApi directive', function () {
     });
 
     const $controller = this.$inject('$controller');
-    const K = this.$inject('mocks/kefir');
 
     this.scope = this.$inject('$rootScope').$new();
     this.widget = {

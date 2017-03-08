@@ -1,8 +1,6 @@
-'use strict';
+import * as K from 'helpers/mocks/kefir';
 
 describe('entityEditor/Document/PresenceHub', function () {
-  let K;
-
   function extractUserIds (userStream) {
     return K.extractValues(userStream.map((users = []) => {
       return users.map((user) => user.sys.id);
@@ -11,11 +9,10 @@ describe('entityEditor/Document/PresenceHub', function () {
 
   beforeEach(function () {
     module('contentful/test');
-    K = this.$inject('mocks/kefir');
 
     this.shout = sinon.stub();
 
-    const docEvents = this.$inject('mocks/kefir').createMockStream();
+    const docEvents = K.createMockStream();
 
     this.receiveShout = function (data) {
       docEvents.emit({name: 'shout', data});

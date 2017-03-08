@@ -17,7 +17,9 @@ export const options = {
   // syntax from the ESLint blacklist in src/javascripts/.eslint-es6.yml
   presets: [],
   plugins: [
-    ['transform-es2015-modules-systemjs'],
+    ['transform-es2015-modules-systemjs', {
+      systemGlobal: 'AngularSystem'
+    }],
     // Transforms 'const' and 'let' to 'var' with block scope
     ['transform-es2015-block-scoping'],
     // Make sure 'const' variables are not reassigned

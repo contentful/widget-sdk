@@ -1,8 +1,9 @@
+import * as K from 'helpers/mocks/kefir';
+
 describe('ui/ResizeDetector', function () {
   beforeEach(function () {
     module('contentful/test');
     this.$scope = this.$inject('$rootScope').$new();
-    this.K = this.$inject('mocks/kefir');
   });
 
   afterEach(function () {
@@ -44,7 +45,7 @@ describe('ui/ResizeDetector', function () {
     const inner = container.find('#inner');
     const resize$ = observeResize(inner.get(0));
     expect(inner.children().length).toBe(0);
-    const off = this.K.onValue(resize$, _.noop);
+    const off = K.onValue(resize$, _.noop);
     yield rafWait();
     expect(inner.children().length).toBe(1);
     off();

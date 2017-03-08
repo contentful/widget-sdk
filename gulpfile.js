@@ -73,8 +73,7 @@ var src = {
       'node_modules/bootstrap/js/tooltip.js',
       'node_modules/browserchannel/dist/bcsocket-uncompressed.js',
       'vendor/sharejs/webclient/share.uncompressed.js',
-      'vendor/sharejs/webclient/json.uncompressed.js',
-      'vendor/sharejs/webclient/textarea.js'
+      'vendor/sharejs/webclient/json.uncompressed.js'
     ]),
     kaltura: assertFilesExist([
       'vendor/kaltura-16-01-2014/webtoolkit.md5.js',
