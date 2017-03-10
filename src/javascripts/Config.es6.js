@@ -1,4 +1,4 @@
-import * as JQuery from 'jquery';
+import * as QS from 'qs';
 import {settings} from 'environment';
 
 /**
@@ -45,8 +45,7 @@ export function apiUrl (path) {
 export function authUrl (path, params) {
   let base = settings.authUrl + ensureLeadingSlash(path);
   if (params) {
-    // TODO use qs module instead
-    base += '?' + JQuery.param(params);
+    base += '?' + QS.stringify(params);
   }
   return base;
 }
