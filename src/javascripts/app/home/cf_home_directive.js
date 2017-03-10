@@ -23,6 +23,8 @@ angular.module('contentful')
   var accessChecker = require('accessChecker');
   var OrganizationList = require('OrganizationList');
 
+  var createSpaceDialog;
+
   // Fetch user and set greeting
   K.onValue(tokenStore.user$, function (user) {
     controller.user = user;
@@ -35,6 +37,17 @@ angular.module('contentful')
 
   K.onValue(tokenStore.spacesByOrganization$, function (spacesByOrg) {
     controller.spacesByOrganization = spacesByOrg;
+  });
+
+  // open the create space dialog if there are no spaces and user has access
+  var promptCreateSpace$ = K.combineProperties([tokenStore.spaces$, accessChecker.canCreateSpace$], function (spaces, canCreate) {
+    return _.isEqual(spaces, []) && canCreate;
+  });
+
+  K.onValue(promptCreateSpace$, function (shouldOpen) {
+    if (shouldOpen && !createSpaceDialog) {
+      createSpaceDialog = CreateSpace.showDialog();
+    }
   });
 
   controller.canCreateSpace = accessChecker.canCreateSpace;
