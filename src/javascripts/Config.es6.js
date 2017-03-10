@@ -1,4 +1,4 @@
-import * as QS from 'qs';
+import * as QS from 'libs/qs';
 import {settings} from 'environment';
 
 /**
@@ -126,6 +126,16 @@ export const snowplow = settings.snowplow;
  * @returns {object}
  */
 export const launchDarkly = settings.launchDarkly;
+
+
+export function toolsUrl (path, params) {
+  let base = settings.toolsServiceUrl + ensureLeadingSlash(path.join('/'));
+  if (params) {
+    base += '?' + QS.stringify(params);
+  }
+  return base;
+}
+
 
 function ensureLeadingSlash (x = '') {
   if (x.charAt(0) === '/') {

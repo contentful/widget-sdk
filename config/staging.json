@@ -6,6 +6,7 @@
   "assetUrl" : "//static.flinkly.com",
   "marketingUrl": "//www.flinkly.com",
   "main_domain" : "flinkly.com",
+  "toolsServiceUrl": "https://tools.flinkly.com",
   "contentful" : {
     "apiUrl" : "api.contentful.com",
     "cdaApiUrl" : "cdn.contentful.com",
