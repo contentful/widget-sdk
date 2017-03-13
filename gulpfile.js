@@ -486,6 +486,7 @@ gulp.task('build/styles', ['build/static', 'stylesheets'], function () {
     // Need to reload the source maps because 'rework' inlines them.
     .pipe(sourceMaps.init({ loadMaps: true }))
     .pipe(changeBase('build'))
+    .pipe(writeFile())
     .pipe(rev())
     .pipe(writeFile())
     .pipe(sourceMaps.write('.', {sourceRoot: '/'}))
