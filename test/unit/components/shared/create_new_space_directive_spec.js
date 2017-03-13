@@ -1,4 +1,4 @@
-'use strict';
+import * as K from 'helpers/mocks/kefir';
 
 describe('cfCreateNewSpace directive', function () {
 
@@ -82,7 +82,7 @@ describe('cfCreateNewSpace directive', function () {
     // A/B experiment - onboarding-invite-users
     // TODO: refactor as a helper
     const LD = this.$inject('utils/LaunchDarkly');
-    LD.get = sinon.stub().returns(this.$inject('mocks/kefir').createMockProperty(false));
+    LD.get = sinon.stub().returns(K.createMockProperty(false));
     // End A/B experiment
 
     this.setupDirective = function (organizationId) {

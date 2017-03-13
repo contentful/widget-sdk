@@ -1,14 +1,21 @@
-// Karma configuration
-// Generated on Sat Aug 09 2014 23:18:39 GMT+0200 (CEST)
+/* global require module */
 
 require('babel-register');
 var babelOptions = require('./tools/app-babel-options').options;
 var P = require('path');
+var root = P.resolve() + '/';
+var express = require('express')
 
 module.exports = function (config) {
 
   config.plugins.push(
-    require('./tools/lib/karma-slimer-launcher').default
+    require('./tools/lib/karma-slimer-launcher').default,
+    // Serve static files from root directory under /base
+    // Using the files array is too much overhead for files that are
+    // not loaded eagerly
+    {'middleware:static': ['factory', function () {
+      return express().use('/base', express.static(__dirname));
+    }]}
   );
 
   config.set({
@@ -29,54 +36,56 @@ module.exports = function (config) {
       'public/app/templates.js',
       'public/app/libs.js',
       'src/javascripts/prelude.js',
-      'src/javascripts/**/*.js',
-
-      // Test libraries
-      'node_modules/angular-mocks/angular-mocks.js',
-      'node_modules/sinon/pkg/sinon.js',
-
-      'test/helpers/**/*.js',
-      'test/unit/**/*.js',
-      'test/integration/**/*.js',
-      {pattern: 'vendor/ui-extensions-sdk/dist/cf-extension-api.js', included: false}
-    ],
-
+      'src/javascripts/**/*.js'
+    ].concat(testFiles),
 
     // list of files to exclude
     exclude: [
       'src/javascripts/libs/**/*.js'
     ],
 
+    middleware: ['static'],
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'src/**/*.es6.js': ['babel', 'sourcemap'],
-      'test/**/*.js': ['wrap']
+      'src/**/*.es6.js': ['babelApp', 'sourcemap'],
+      'test/**/*.js': ['babelTest', 'sourcemap']
     },
 
-    babelPreprocessor: {
-      options: Object.assign({}, babelOptions, {
-        sourceMap: 'inline',
-        // Since we strip the '.es6.js' extension from the filename we
-        // do not need to match /.es6.js/. This is done by the
-        // preprocessor glob.
-        only: null
-      }),
-      filename: function (file) {
-        return file.originalPath
-          .replace(/\.es6\.js$/, '.js');
+    customPreprocessors: {
+      babelApp: {
+        base: 'babel',
+        options: Object.assign({}, babelOptions, {
+          sourceMap: 'inline',
+          // Since we strip the '.es6.js' extension from the filename we
+          // do not need to match /.es6.js/. This is done by the
+          // preprocessor glob.
+          only: null
+        }),
+        filename: function (file) {
+          return file.originalPath
+            .replace(/\.es6\.js$/, '.js');
+        },
+        sourceFileName: makeSourceFileName
       },
-      sourceFileName: function (file) {
-        return file.originalPath
-          .replace(P.resolve(), '');
+      babelTest: {
+        base: 'babel',
+        options: {
+          moduleIds: true,
+          getModuleId: stripRoot,
+          babelrc: false,
+          sourceMap: 'inline',
+          ignore: ['test/prelude.js', 'test/system-config.js'],
+          plugins: [
+            ['transform-es2015-modules-systemjs', {
+              systemGlobal: 'SystemTest'
+            }]
+          ]
+        },
+        sourceFileName: makeSourceFileName
       }
     },
-
-    wrapPreprocessor: {
-      template: '(function () { "use strict"; <%= contents %> })()'
-    },
-
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
@@ -122,3 +131,26 @@ module.exports = function (config) {
     singleRun: false
   });
 };
+
+// Test file patterns common to the karma config and the development config
+var testFiles = module.exports.testFiles = [
+  'node_modules/systemjs/dist/system.src.js',
+  'test/system-config.js',
+  'test/prelude.js',
+
+  'test/helpers/**/*.js',
+  'test/unit/**/*.js',
+  'test/integration/**/*.js'
+];
+
+function stripRoot (path) {
+  if (path.startsWith(root)) {
+    return path.replace(root, '');
+  } else {
+    return path;
+  }
+}
+
+function makeSourceFileName (karmaFile) {
+  return '/' + stripRoot(karmaFile.originalPath);
+}

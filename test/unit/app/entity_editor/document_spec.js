@@ -1,4 +1,4 @@
-'use strict';
+import * as K from 'helpers/mocks/kefir';
 
 describe('entityEditor/Document', function () {
   beforeEach(function () {
@@ -6,12 +6,11 @@ describe('entityEditor/Document', function () {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
 
-    this.K = this.$inject('mocks/kefir');
     this.DocLoad = this.$inject('data/sharejs/Connection').DocLoad;
     const OtDoc = this.$inject('mocks/OtDoc');
 
     this.docLoader = {
-      doc: this.K.createMockProperty(this.DocLoad.None()),
+      doc: K.createMockProperty(this.DocLoad.None()),
       destroy: sinon.spy(),
       close: sinon.spy()
     };
@@ -122,37 +121,37 @@ describe('entityEditor/Document', function () {
 
   describe('#status$', function () {
     it('is "ok" initially', function () {
-      this.K.assertCurrentValue(this.doc.status$, 'ok');
+      K.assertCurrentValue(this.doc.status$, 'ok');
     });
 
     it('is "ok" when the document connects', function () {
       this.connectAndOpen();
       this.$apply();
-      this.K.assertCurrentValue(this.doc.status$, 'ok');
+      K.assertCurrentValue(this.doc.status$, 'ok');
     });
 
     it('is "ot-connection-error" when there is a disconnected error', function () {
       this.connectAndOpen();
       this.$apply();
-      this.K.assertCurrentValue(this.doc.status$, 'ok');
+      K.assertCurrentValue(this.doc.status$, 'ok');
       this.docLoader.doc.set(this.DocLoad.Error('disconnected'));
-      this.K.assertCurrentValue(this.doc.status$, 'ot-connection-error');
+      K.assertCurrentValue(this.doc.status$, 'ot-connection-error');
     });
 
     it('is "editing-not-allowed" when doc opening is forbidden', function () {
       this.connectAndOpen();
       this.$apply();
-      this.K.assertCurrentValue(this.doc.status$, 'ok');
+      K.assertCurrentValue(this.doc.status$, 'ok');
       this.docLoader.doc.set(this.DocLoad.Error('forbidden'));
-      this.K.assertCurrentValue(this.doc.status$, 'editing-not-allowed');
+      K.assertCurrentValue(this.doc.status$, 'editing-not-allowed');
     });
 
     it('is "archived" when the entity is archived', function () {
       const doc = this.connectAndOpen();
       this.$apply();
-      this.K.assertCurrentValue(this.doc.status$, 'ok');
+      K.assertCurrentValue(this.doc.status$, 'ok');
       doc.setAt(['sys', 'archivedVersion'], 1);
-      this.K.assertCurrentValue(this.doc.status$, 'archived');
+      K.assertCurrentValue(this.doc.status$, 'archived');
     });
   });
 
@@ -183,7 +182,7 @@ describe('entityEditor/Document', function () {
       const sjsDoc = this.connectAndOpen();
       sjsDoc.setAt = sinon.stub().yields('forbidden');
 
-      const errors = this.K.extractValues(this.doc.state.error$);
+      const errors = K.extractValues(this.doc.state.error$);
       this.doc.setValueAt(['a', 'b'], 'VAL');
       this.$apply();
       expect(errors[0].constructor.name).toBe('SetValueForbidden');
@@ -269,7 +268,7 @@ describe('entityEditor/Document', function () {
       const sjsDoc = this.connectAndOpen();
       sjsDoc.removeAt = sinon.stub().yields('forbidden');
 
-      const errors = this.K.extractValues(this.doc.state.error$);
+      const errors = K.extractValues(this.doc.state.error$);
       this.doc.removeValueAt(['a', 'b']);
       this.$apply();
       expect(errors[0].constructor.name).toBe('SetValueForbidden');
@@ -461,7 +460,7 @@ describe('entityEditor/Document', function () {
 
   describe('#sysProperty', function () {
     it('holds entity.data.sys as initial value', function () {
-      this.K.assertCurrentValue(
+      K.assertCurrentValue(
         this.doc.sysProperty,
         this.entity.data.sys
       );
@@ -475,7 +474,7 @@ describe('entityEditor/Document', function () {
       doc.emit('some event');
       this.$apply();
 
-      this.K.assertMatchCurrentValue(
+      K.assertMatchCurrentValue(
         this.doc.sysProperty,
         sinon.match({
           version: 20,
@@ -487,22 +486,22 @@ describe('entityEditor/Document', function () {
 
   describe('#state.isSaving$', function () {
     it('is false if there is no document initially', function () {
-      this.K.assertCurrentValue(this.doc.state.isSaving$, false);
+      K.assertCurrentValue(this.doc.state.isSaving$, false);
     });
 
     it('changes to if document has inflight operation', function () {
       this.otDoc = this.connectAndOpen();
-      this.K.assertCurrentValue(this.doc.state.isSaving$, false);
+      K.assertCurrentValue(this.doc.state.isSaving$, false);
 
       this.otDoc.inflightOp = true;
       this.otDoc.emit('change', []);
       this.$apply();
-      this.K.assertCurrentValue(this.doc.state.isSaving$, true);
+      K.assertCurrentValue(this.doc.state.isSaving$, true);
 
       this.otDoc.inflightOp = false;
       this.otDoc.emit('acknowledge');
       this.$apply();
-      this.K.assertCurrentValue(this.doc.state.isSaving$, false);
+      K.assertCurrentValue(this.doc.state.isSaving$, false);
     });
   });
 
@@ -516,51 +515,51 @@ describe('entityEditor/Document', function () {
     });
 
     it('changes to false if document is at published version', function () {
-      this.K.assertCurrentValue(this.doc.state.isDirty$, true);
+      K.assertCurrentValue(this.doc.state.isDirty$, true);
 
       this.otDoc.version = 12;
       this.docUpdate(['sys', 'publishedVersion'], 12);
-      this.K.assertCurrentValue(this.doc.state.isDirty$, false);
+      K.assertCurrentValue(this.doc.state.isDirty$, false);
     });
 
     xit('changes to true if a published document is changed', function () {
       this.otDoc.version = 12;
       this.docUpdate(['sys', 'publishedVersion'], 12);
-      this.K.assertCurrentValue(this.doc.state.isDirty$, false);
+      K.assertCurrentValue(this.doc.state.isDirty$, false);
 
       this.docUpdate(['fields'], {});
       expect(this.isDirtyValues[0]).toBe(true);
-      this.K.assertCurrentValue(this.doc.state.isDirty$, true);
+      K.assertCurrentValue(this.doc.state.isDirty$, true);
     });
 
     it('changes to true if a document is unpublishd', function () {
       this.otDoc.version = 12;
       this.docUpdate(['sys', 'publishedVersion'], 12);
-      this.K.assertCurrentValue(this.doc.state.isDirty$, false);
+      K.assertCurrentValue(this.doc.state.isDirty$, false);
 
       this.docUpdate(['sys', 'publishedVersion'], undefined);
-      this.K.assertCurrentValue(this.doc.state.isDirty$, true);
+      K.assertCurrentValue(this.doc.state.isDirty$, true);
     });
   });
 
   describe('#state.isConnected$', function () {
     it('changes to true when connecting', function () {
-      this.K.assertCurrentValue(this.doc.state.isConnected$, false);
+      K.assertCurrentValue(this.doc.state.isConnected$, false);
       this.connectAndOpen();
-      this.K.assertCurrentValue(this.doc.state.isConnected$, true);
+      K.assertCurrentValue(this.doc.state.isConnected$, true);
     });
 
     it('changes to false when there is a connection error', function () {
       this.connectAndOpen();
-      this.K.assertCurrentValue(this.doc.state.isConnected$, true);
+      K.assertCurrentValue(this.doc.state.isConnected$, true);
       this.docLoader.doc.set(this.DocLoad.Error());
-      this.K.assertCurrentValue(this.doc.state.isConnected$, false);
+      K.assertCurrentValue(this.doc.state.isConnected$, false);
     });
   });
 
   describe('#state.error$', function () {
     it('emits "OpenForbidden" error when opening fails', function () {
-      const errors = this.K.extractValues(this.doc.state.error$);
+      const errors = K.extractValues(this.doc.state.error$);
       this.docLoader.doc.set(this.DocLoad.Error('forbidden'));
       this.$apply();
       expect(errors[0].constructor.name).toBe('OpenForbidden');

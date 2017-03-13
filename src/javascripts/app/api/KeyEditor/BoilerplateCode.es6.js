@@ -1,5 +1,4 @@
 import {once} from 'lodash';
-import marked from 'libs/marked';
 import {newClient as createCfClient} from 'contentfulClient';
 import * as Config from 'Config';
 
@@ -39,7 +38,7 @@ const boilerplateSpace = createCfClient({
  * {
  *   id: string,
  *   name: string,
- *   sourceUrl: string,
+ *   sourceUrl: function(space, token): string,
  *   repoUrl: string,
  *   instructions: string,
  * }
@@ -58,35 +57,15 @@ function fetch () {
   .then((items) => items.map(makeBoilerplateData));
 }
 
-
-/**
- * @ngdoc service
- * @name app/api/KeyEditor/BoilerplateCode#renderInstructions
- * @description
- * Given a boilerplate entry and API parameters this function produces
- * an HTML string that shows the instructions.
- *
- * In particular it replaces the space ID and token variables and
- * renders the markdown.
- *
- * @param boilerplate
- * @param {string} spaceId
- * @param {string?} cdaToken
- * @returns {string}
- */
-export function renderInstructions (boilerplate, spaceId, cdaToken) {
-  const instructions =
-    boilerplate.instructions
-    .replace(/{{SPACE_ID}}/g, spaceId)
-    .replace(/{{CDA_TOKEN}}/g, cdaToken || '{{CDA_TOKEN}}');
-  return marked(instructions);
-}
-
 function makeBoilerplateData (entry) {
   return {
     id: entry.sys.id,
     name: entry.fields.name,
-    sourceUrl: entry.fields.sourceUrl,
+    sourceUrl: function (space, cdaToken) {
+      return Config.toolsUrl(
+        ['boilerplates', entry.fields.platformId, 'download'],
+        { space_id: space, access_token: cdaToken });
+    },
     repoUrl: entry.fields.repoUrl,
     instructions: entry.fields.instructions,
     platform: entry.fields.platformId

@@ -17,6 +17,65 @@ $ gulp prepare-tests
 $ xvfb-run karma start --browsers SlimerJS
 ~~~
 
+Deprecated Patterns
+-------------------
+
+This is a list of patterns used in old code but deprecated.
+
+* `pit()` DSL to create promise based tests. Use generator functions instead.
+* `this.$inject()` for ES6 modules. Use native `import X from 'Y'` instead.
+* Using the `$compile` service to compile directives. Use `this.$comile()`
+  instead.
+
+
+Module System
+-------------
+
+Test files are only executed when their file name ends with `.spec.js`.
+
+All files in the `test/` folder are treated as ES6 modules. Files in the
+`test/helper/` directory can by imported with `import 'helpers/my-helper'`.
+ES6 modules defined in the application code can also be loaded from test files.
+Their name is relative to the `src/javascripts` folder.
+
+~~~js
+// test/unit/utils/Kefir.spec.js
+
+import * as KM from 'helpers/mocks/kefir';
+// from src/javscripts/utils.kefir.es6.js
+import * as K from 'utils/kefir';
+
+// ...
+~~~
+
+Unlike ES6 modules defined in the `src/` directory we can not import Angular
+services in test files. To use Angular services that are not defined as ES6
+modules see [“Using Angular”](#using-angular) below.
+
+NPM packages can be imported in the tests using the `npm` prefix.
+
+~~~js
+import sinon from 'npm:sinon'
+~~~
+
+For performance reasons it is heavily advised to load a UMD distribution of the
+file. This is defined in the SystemJS config in `test/system-config.js`.
+
+~~~js
+SystemJS.config({
+  packages: {
+    'npm:package-name': {
+      main: 'dist/file.js'
+      format: 'amd',
+    }
+  }
+})
+~~~
+
+For more information see the [SystemJS config documentation][systemjs-config].
+
+[systemjs-config]: https://github.com/systemjs/systemjs/blob/master/docs/config-api.md
+
 
 Testing DSL
 -----------

@@ -1,4 +1,4 @@
-'use strict';
+import * as K from 'test/helpers/mocks/kefir';
 
 angular.module('contentful/mocks')
 /**
@@ -9,7 +9,6 @@ angular.module('contentful/mocks')
  * Use `mockWidgetApi._state` to inspect internal state modified by methods.
  */
 .factory('mocks/widgetApi', ['require', function (require) {
-  const K = require('mocks/kefir');
   const $q = require('$q');
 
   return {

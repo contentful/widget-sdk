@@ -23,7 +23,7 @@ const urlSchema = {
 
 // For each item 'x' we require a property 'xUrl' that has a URL format.
 const URL_KEYS = [
-  'auth', 'api', 'ot', 'asset', 'marketing'
+  'auth', 'api', 'ot', 'asset', 'marketing', 'toolsService'
 ]
 
 export default strictObject(Object.assign({

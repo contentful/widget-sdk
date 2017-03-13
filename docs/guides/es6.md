@@ -1,7 +1,7 @@
 Writing ES6
 ===========
 
-Angular services can no can be written using ES6 syntax and are transpiled with
+Angular services can now be written using ES6 syntax and are transpiled with
 [Babel][babel].
 
 ES6 transpilation is enabled for files with the `.es6.js` extension. See the
@@ -88,5 +88,11 @@ var Z = $injector.get('a/b/z')
 
 The implementation uses the [SystemJS Babel plugin][babel-systemjs] and is
 provided in `src/javascripts/prelude.js`.
+
+All files in the `test` directory are treated as ES6 modules by default. However
+they are not integrated into Angular which means that they can only import
+native ES6 modules. See the [Testing Guide](./testing.md#module-system) for more
+information.
+
 
 [babel-systemjs]: http://babeljs.io/docs/plugins/transform-es2015-modules-systemjs/

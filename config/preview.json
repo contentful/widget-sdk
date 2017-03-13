@@ -6,6 +6,7 @@
   "assetUrl" : "//static.quirely.com",
   "marketingUrl" : "//www.quirely.com",
   "main_domain" : "quirely.com",
+  "toolsServiceUrl": "https://tools.flinkly.com",
   "contentful" : {
     "previewApiUrl" : "preview.contentful.com",
     "spaceTemplatesUserReadOnlyToken" : "8adea107285afc11819019618341f5b98e5808c84b957cba9ede1e57c6026475",

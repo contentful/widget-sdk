@@ -1,4 +1,4 @@
-'use strict';
+import * as K from 'test/helpers/mocks/kefir';
 
 angular.module('contentful/mocks')
 /**
@@ -11,7 +11,6 @@ angular.module('contentful/mocks')
  * The implementation is not yet complete.
  */
 .factory('mocks/entityEditor/Context', ['require', function (require) {
-  const K = require('mocks/kefir');
   const Focus = require('app/entity_editor/Focus');
 
   return {create: create};

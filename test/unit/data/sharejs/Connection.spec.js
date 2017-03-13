@@ -1,12 +1,6 @@
-'use strict';
+import * as K from 'helpers/mocks/kefir';
 
 describe('data/sharejs/Connection', function () {
-  let K;
-
-  afterEach(function () {
-    K = null;
-  });
-
   beforeEach(function () {
     this.baseConnection = {
       socket: {},
@@ -35,8 +29,6 @@ describe('data/sharejs/Connection', function () {
     module('contentful/test', ($provide) => {
       $provide.constant('libs/sharejs', this.sharejs);
     });
-
-    K = this.$inject('mocks/kefir');
 
     const OtDoc = this.$inject('mocks/OtDoc');
     this.resolveOpen = function () {

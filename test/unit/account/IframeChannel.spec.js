@@ -1,10 +1,9 @@
-'use strict';
+import * as K from 'helpers/mocks/kefir';
 
 describe('account/IframeChannel', function () {
   beforeEach(function () {
     module('contentful/test');
     const $window = this.$inject('$window');
-    const K = this.$inject('mocks/kefir');
     const IframeChannel = this.$inject('account/IframeChannel');
 
     const iframe = {contentWindow: {}};

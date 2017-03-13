@@ -1,4 +1,4 @@
-'use strict';
+import * as K from 'helpers/mocks/kefir';
 
 describe('cfIframeWidget directive', function () {
   let widgetAPI;
@@ -13,8 +13,6 @@ describe('cfIframeWidget directive', function () {
         return widgetAPI;
       });
     });
-
-    const K = this.$inject('mocks/kefir');
 
     this.otDoc = this.$inject('mocks/entityEditor/Document').create();
 

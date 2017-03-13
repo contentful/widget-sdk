@@ -1,12 +1,10 @@
-'use strict';
+import * as K from 'helpers/mocks/kefir';
 
 describe('Extension SDK', function () {
   beforeEach(function () {
     module('contentful/test', ($provide) => {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
-
-    const K = this.$inject('mocks/kefir');
 
     const widgets = this.$inject('widgets');
     widgets.get = sinon.stub().returns({
