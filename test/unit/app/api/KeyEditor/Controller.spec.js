@@ -13,7 +13,7 @@ describe('app/api/KeyEditor/Controller', function () {
     sinon.stub($state, 'go').resolves();
 
     sinon.stub(Boilerplate, 'get').resolves([
-      {id: 'BP_ID', instructions: ''}
+      {id: 'BP_ID', instructions: '', sourceUrl: sinon.stub()}
     ]);
 
     this.accessChecker = this.$inject('accessChecker');

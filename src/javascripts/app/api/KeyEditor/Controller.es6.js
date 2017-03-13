@@ -1,5 +1,6 @@
 import {assign, get, constant, find} from 'lodash';
 import Command from 'command';
+import marked from 'libs/marked';
 import {truncate} from 'stringUtils';
 import {deepFreeze} from 'utils/DeepFreeze';
 import * as K from 'utils/kefir';
@@ -56,14 +57,10 @@ function initBoilerplate ($scope) {
 
     $scope.$watchGroup(['apiKeyEditor.data.deliveryToken', 'boilerplate.selectedId'], function ([deliveryToken, selectedId]) {
       const bp = find(boilerplates, (bp) => bp.id === selectedId);
-      const instructions = $sce.trustAsHtml(Boilerplate.renderInstructions(
-        bp,
-        spaceContext.getId(),
-        deliveryToken
-      ));
+      const instructions = $sce.trustAsHtml(marked(bp.instructions));
       assign($scope.boilerplate, {
         repoUrl: bp.repoUrl,
-        sourceUrl: bp.sourceUrl,
+        sourceUrl: bp.sourceUrl(spaceContext.getId(), deliveryToken),
         platform: bp.platform,
         instructions: instructions
       });

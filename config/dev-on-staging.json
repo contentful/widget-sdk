@@ -6,6 +6,7 @@
   "otUrl": "https://ot.flinkly.com",
   "marketingUrl": "https://www.flinkly.com",
   "main_domain": "flinkly.com",
+  "toolsServiceUrl": "https://tools.flinkly.com",
   "contentful": {
     "apiUrl": "api.contentful.com",
     "accessToken": "0c783036ae7540a10db86150e1cb564c8c0bad53482794604f227dc199e6dde1",
