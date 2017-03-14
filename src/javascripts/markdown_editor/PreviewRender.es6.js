@@ -168,8 +168,14 @@ export default function create (libs) {
 
   function createHtmlEl (item, key) {
     const props = { key: key, className: 'markdown-html markdown-block' };
-    const html = item.html.reduce(accStrings, '');
-    return createLeafEl('div', html, props);
+
+    if (isString(item.html)) {
+      return createLeafEl('div', item.html, props);
+    } else if (isArray(item.html)) {
+      return createLeafEl('div', item.html.reduce(accStrings, ''), props);
+    } else {
+      return null;
+    }
   }
 
   /**
