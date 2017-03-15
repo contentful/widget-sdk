@@ -16,7 +16,6 @@ angular.module('contentful')
   var controller = this;
   var K = require('utils/kefir');
   var moment = require('moment');
-  var resources = require('app/home/language_resources');
   var analyticsEvents = require('analytics/events/home');
   var tokenStore = require('tokenStore');
   var CreateSpace = require('services/CreateSpace');
@@ -38,10 +37,6 @@ angular.module('contentful')
   });
 
   controller.canCreateSpace = accessChecker.canCreateSpace;
-  controller.resources = resources.languageResources;
-  controller.docsUrls = resources.apiDocsUrls;
-  controller.selectLanguage = selectLanguage;
-  controller.selectedLanguage = 'JavaScript';
   controller.analytics = analyticsEvents;
   controller.showCreateSpaceDialog = CreateSpace.showDialog;
   controller.getOrganizationName = OrganizationList.getName;
@@ -57,11 +52,6 @@ angular.module('contentful')
         return 'Good ' + getTimeOfDay() + ', ' + name + '.';
       }
     }
-  }
-
-  function selectLanguage (language) {
-    controller.selectedLanguage = language;
-    controller.analytics.selectedLanguage(language);
   }
 
   function getTimeOfDay () {

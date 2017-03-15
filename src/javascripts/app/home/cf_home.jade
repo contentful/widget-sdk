@@ -1,5 +1,3 @@
-include ./cf_home_mixins
-
 .home(cf-ui-sticky-container)
   .home__header
     section.home-section
@@ -32,65 +30,4 @@ include ./cf_home_mixins
               ui-sref="spaces.detail.learn({spaceId: space.getId()})"
               ng-click="home.analytics.spaceLearnNavigation(space)")
               | Set up the basics
-    section
-      ul.tab-list.x--home(cf-ui-sticky)
-        li(
-          role="tab"
-          aria-selected="{{home.selectedLanguage === name}}"
-          ng-click="home.selectLanguage(name)"
-          ng-repeat="(name, language) in home.resources track by name")
-          | {{name}}
-      section.home-section(ng-switch="home.selectedLanguage" cf-track-copy-event)
-        h3.home-section__heading Get the SDK
-        div(ng-switch-when="PHP")
-          +sdk-section-php
-        div(ng-switch-when=".NET")
-          +sdk-section-dotnet
-        div(ng-switch-when="Ruby")
-          +sdk-section-ruby
-        div(ng-switch-when="iOS")
-          +sdk-section-ios
-        div(ng-switch-when="Android")
-          +sdk-section-android
-        div(ng-switch-when="Java")
-          +sdk-section-java
-        div(ng-switch-when="Python")
-          +sdk-section-python
-        div(ng-switch-default)
-          +sdk-section-javascript
-
-      section.home-section(ng-if="home.resources[home.selectedLanguage].examples.length")
-        h3.home-section__heading Build with Contentful
-        p.home-section__description
-          | Here are examples of what you can build with Contentful.
-        .home__examples
-          .home-example(
-            ng-repeat="example in home.resources[home.selectedLanguage].examples track by example.name")
-            div
-              .home-example__dot
-              h4.home-example__header {{example.name}}
-              p.home-example__description {{example.description}}
-            a.home-example__link(
-              ng-href="{{example.url}}"
-              target="_blank"
-              ng-click="home.analytics.linkOpened(home.selectedLanguage, example.url)")
-              | View
-
-      section.home-section
-        h3.home-section__heading Learning &amp; documentation
-        p.home-section__description
-          | What you need to help you get started.
-        .home-links
-          .home-links__col(ng-if="home.resources[home.selectedLanguage].links.length")
-            a(
-              ng-repeat="link in home.resources[home.selectedLanguage].links track by link.name"
-              ng-href="{{link.url}}"
-              target="_blank"
-              ng-click="home.analytics.linkOpened(home.selectedLanguage, link.url)")
-              | {{link.name}}
-          .home-links__col
-            a(ng-repeat="link in home.docsUrls track by link.name"
-              ng-href="{{link.url}}"
-              target="_blank"
-              ng-click="home.analytics.linkOpened(home.selectedLanguage, link.url)")
-              | {{link.name}}
+    cf-language-resources
