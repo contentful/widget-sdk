@@ -1,19 +1,5 @@
 import {track} from 'analytics/Analytics';
 
-export function spaceSelected (space) {
-  track('home:space_selected', {
-    targetSpaceId: space.getId(),
-    targetSpaceName: space.getName()
-  });
-}
-
-export function spaceLearnSelected (space) {
-  track('home:space_learn_selected', {
-    targetSpaceId: space.getId(),
-    targetSpaceName: space.getName()
-  });
-}
-
 export function selectedLanguage (language) {
   track('home:language_selected', {
     language: language

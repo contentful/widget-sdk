@@ -2,7 +2,7 @@ import environment from 'environment';
 
 const MARKETING_BASE_URL = environment.settings.marketingUrl;
 
-export const languageResources = {
+export const developerResources = {
   'JavaScript': {
     examples: [
       {

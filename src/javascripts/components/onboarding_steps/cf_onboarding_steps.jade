@@ -1,0 +1,13 @@
+section.home-section.x--onboarding-steps
+  h3.home-section__heading
+    | Get started with this project
+  p.home-section__description
+    | To get started with creating your content and distributing it, we recommend starting with these steps.
+  .onboarding-step(ng-repeat="step in steps.onboardingSteps track by $index")
+    .onboarding-step__icon
+      cf-icon(name="{{step.icon}}" scale="0.6")
+    .onboarding-step__text
+      h4.onboarding-step__heading {{step.title}}
+      .onboarding-step__description {{step.description}}
+    .onboarding-step__button
+      button.btn-action {{step.cta}}
