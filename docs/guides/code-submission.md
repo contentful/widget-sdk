@@ -48,6 +48,7 @@ Code Review
 5. Merge the fixup commits from the review and rebase the branch. Continue with
    QA approval.
 
+An in-depth guide and communication principles can be found [here](./docs/code-review.md)
 
 QA Approval
 -----------
