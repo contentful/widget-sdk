@@ -20,9 +20,8 @@ describe('ContentTypeEditor Controller', function () {
       $provide.factory('openFieldDialog', function () {
         return sinon.stub();
       });
+      $provide.stubLaunchDarkly();
     });
-
-    this.$inject('utils/LaunchDarkly').init();
 
     const cfStub = this.$inject('cfStub');
     const $rootScope = this.$inject('$rootScope');
@@ -39,7 +38,6 @@ describe('ContentTypeEditor Controller', function () {
         contentTypes: []
       }
     });
-
 
     const $controller = this.$inject('$controller');
     createContentType = function (fields) {

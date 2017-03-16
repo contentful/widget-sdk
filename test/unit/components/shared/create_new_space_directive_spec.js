@@ -1,5 +1,3 @@
-import * as K from 'helpers/mocks/kefir';
-
 describe('cfCreateNewSpace directive', function () {
 
   let element, $scope, $rootScope, controller;
@@ -73,17 +71,12 @@ describe('cfCreateNewSpace directive', function () {
       $provide.value('OrganizationList', stubs.OrganizationList);
       $provide.value('spaceContext', stubs.spaceContext);
       $provide.removeDirectives('cfIcon');
+      $provide.stubLaunchDarkly();
     });
 
     stubs.spaceTemplateLoader.getTemplatesList.resolves(true);
 
     $rootScope = this.$inject('$rootScope');
-
-    // A/B experiment - onboarding-invite-users
-    // TODO: refactor as a helper
-    const LD = this.$inject('utils/LaunchDarkly');
-    LD.get = sinon.stub().returns(K.createMockProperty(false));
-    // End A/B experiment
 
     this.setupDirective = function (organizationId) {
       element = this.$compile('<cf-create-new-space>', {
