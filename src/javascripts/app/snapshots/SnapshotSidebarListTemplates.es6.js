@@ -26,7 +26,7 @@ const styles = {
 
 export function snapshotSidebarlist () {
   const compareHelpText = 'Select a previous version to compare it with the current version of this entry.';
-  const noSnapshotsText = 'There are previous versions because you haven\'t made changes to this entry yet. As soon as you publish changes, you\'ll be able to compare different versions.';
+  const noSnapshotsText = 'There are no previous versions because you haven\'t made changes to this entry yet. As soon as you publish changes, you\'ll be able to compare different versions.';
 
   return h('.snapshot-sidebar', { ariaLabel: 'snapshots-list' }, [
     errorMessage(),
