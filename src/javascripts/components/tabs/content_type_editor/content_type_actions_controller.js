@@ -171,7 +171,7 @@ angular.module('contentful')
    * @type {Command}
    */
   controller.cancel = Command.create(function () {
-    return $state.go('^.list');
+    return $state.go('spaces.detail.content_types.list');
   }, {
     available: function () {
       return $scope.context.isNew;

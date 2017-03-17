@@ -73,7 +73,8 @@ angular.module('contentful')
     },
     // A/B experiment - ps-03-2017-next-step-hints
     params: {
-      showNextStepHint: null
+      showNextStepHint: null,
+      addToContext: true
     },
     // End A/B experiment - ps-03-2017-next-step-hints
     resolve: {
