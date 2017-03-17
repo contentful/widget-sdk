@@ -220,6 +220,8 @@ this.$apply()
 
 ### Individual methods
 
+*For mocking an entire service, see [the next section](#services).*
+
 If you want to mock only some methods in a dependency of the tested unit, but
 leave other properties intact, you can simply inject it in the test and replace
 these method with stubs:
