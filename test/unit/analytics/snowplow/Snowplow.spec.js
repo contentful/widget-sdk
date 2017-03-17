@@ -109,8 +109,16 @@ describe('Snowplow service', function () {
         });
       });
 
-      it('should have a contexts array', function () {
+      it('can have a contexts array', function () {
         expect(this.unstructData[2]).toEqual(['ctx']);
+
+        this.Events.transform.returns({
+          data: { key: 'val' }
+        });
+
+        this.unstructData = this.Snowplow.buildUnstructEventData('a', {});
+
+        expect(this.unstructData[2]).toEqual(undefined);
       });
     });
   });
