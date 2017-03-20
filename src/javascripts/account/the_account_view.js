@@ -18,16 +18,12 @@ angular.module('contentful')
   var tokenStore = require('tokenStore');
 
   var canShowIntercomLink$ = tokenStore.user$.map(function (user) {
-    var organizationMemberships = user && user.organizationMemberships;
-    if (!organizationMemberships) {
-      return false;
-    } else {
-      var canShowIntercomLink = _.find(organizationMemberships, function (membership) {
-        var subscriptionStatus = _.get(membership, 'organization.subscription.status');
-        return subscriptionStatus !== 'free';
-      });
-      return !!canShowIntercomLink;
-    }
+    var organizationMemberships = user && user.organizationMemberships || [];
+    var canShowIntercomLink = _.find(organizationMemberships, function (membership) {
+      var subscriptionStatus = _.get(membership, 'organization.subscription.status');
+      return subscriptionStatus !== 'free';
+    });
+    return !!canShowIntercomLink;
   }).skipDuplicates();
 
   return {

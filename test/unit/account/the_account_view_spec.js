@@ -46,17 +46,17 @@ describe('TheAccountView service', function () {
     });
 
     it('hides link when user is loading', function () {
-      expect(K.getValue(this.view.canShowIntercomLink$)).toEqual(false);
+      K.assertCurrentValue(this.view.canShowIntercomLink$, false);
     });
 
     it('shows when user is member of paid organization', function () {
       this.addOrganizations(this.createOrganization('free'), this.createOrganization('paid'));
-      expect(K.getValue(this.view.canShowIntercomLink$)).toEqual(true);
+      K.assertCurrentValue(this.view.canShowIntercomLink$, true);
     });
 
     it('shows when user is not a member of paid organization', function () {
       this.addOrganizations(this.createOrganization('free'), this.createOrganization('free'));
-      expect(K.getValue(this.view.canShowIntercomLink$)).toEqual(false);
+      K.assertCurrentValue(this.view.canShowIntercomLink$, false);
     });
   });
 
