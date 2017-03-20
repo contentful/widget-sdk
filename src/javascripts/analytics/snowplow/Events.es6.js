@@ -5,6 +5,7 @@ import EntityAction from 'analytics/snowplow/transformers/SpaceEntityAction';
 import Generic from 'analytics/snowplow/transformers/Generic';
 import SpaceCreate from 'analytics/snowplow/transformers/SpaceCreate';
 import createExperimentTransformer from 'analytics/snowplow/transformers/Experiment';
+import PageViewTransform from 'analytics/snowplow/transformers/PageView';
 import {
   ClipboardCopyTransform,
   BoilerplateTransform
@@ -13,6 +14,7 @@ import AppOpen from 'analytics/snowplow/transformers/AppOpen';
 import BulkEditor from 'analytics/snowplow/transformers/BulkEditor';
 import Snapshot from 'analytics/snowplow/transformers/Snapshot';
 import InviteUserExperiment from 'analytics/snowplow/transformers/InviteUserExperiment';
+
 
 /**
  * @ngdoc service
@@ -24,6 +26,8 @@ import InviteUserExperiment from 'analytics/snowplow/transformers/InviteUserExpe
  */
 
 const _events = {};
+
+registerEvent('global:state_changed', 'page_view', PageViewTransform);
 
 registerGenericEvent('learn:language_selected');
 registerGenericEvent('learn:resource_selected');
@@ -76,8 +80,8 @@ function registerSnapshotEvent (event) {
 
 function registerEvent (event, schema, transformer) {
   _events[event] = {
-    'schema': schema,
-    'transformer': transformer
+    schema,
+    transformer
   };
 }
 
