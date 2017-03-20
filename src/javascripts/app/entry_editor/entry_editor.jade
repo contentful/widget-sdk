@@ -38,6 +38,14 @@ cf-loader(watch-state-change="true")
     cf-editor-status-notification(status="otDoc.status$" entity-label="entry")
 
     .entity-editor-form
+      //- A/B experiment - ps-03-2017-next-step-hints
+      div(style="margin-bottom: 2rem" ng-if="nextStepHint")
+        .note-box.note-box--success(style="margin: 0")
+          h3 {{nextStepHint.title}}
+          p(bind-html-compile="nextStepHint.html")
+      //- End A/B experiment - ps-03-2017-next-step-hints
+
+
       cf-error-list.form-box-error(cf-error-path="['fields']")
       cf-entity-field(ng-repeat="widget in widgets track by widget.fieldId")
 

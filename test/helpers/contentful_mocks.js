@@ -1,5 +1,6 @@
 'use strict';
 
+import * as K from 'helpers/mocks/kefir';
 
 angular.module('cf.ui')
 // We do not load the file containing the icons. Therefore we need to
@@ -78,7 +79,6 @@ angular.module('contentful/mocks', [])
       info: sinon.stub()
     };
   });
-
 }])
 
 .config(['$provide', '$controllerProvider', function ($provide, $controllerProvider) {
@@ -89,6 +89,15 @@ angular.module('contentful/mocks', [])
         restrict: 'A',
         priority: 0
       }, definition)];
+    });
+  };
+
+  $provide.stubLaunchDarkly = function () {
+    $provide.factory('utils/LaunchDarkly', function () {
+      return {
+        init: function () {},
+        get: function () { return K.createMockProperty(null); }
+      };
     });
   };
 

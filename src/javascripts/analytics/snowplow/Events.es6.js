@@ -56,6 +56,7 @@ registerActionEvent('space:create', SpaceCreate);
 registerEvent('global:app_loaded', 'app_open', AppOpen);
 
 registerEvent('invite_user:learn', 'generic', InviteUserExperiment);
+registerEvent('invite_user:create_space', 'generic', InviteUserExperiment);
 
 function registerGenericEvent (event) {
   registerEvent(event, 'generic', Generic);

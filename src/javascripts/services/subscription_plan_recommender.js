@@ -12,7 +12,6 @@ angular.module('contentful')
 .factory('subscriptionPlanRecommender', ['require', function (require) {
 
   var Config = require('Config');
-  var Auth = require('Authentication');
   var $http = require('$http');
   var $q = require('$q');
 
@@ -38,20 +37,14 @@ angular.module('contentful')
   };
 
   function recommendSubscriptionPlan (organizationId) {
-    return Auth.getToken()
-    .then(function (token) {
-      var request = {
-        method: 'GET',
-        url: organizationEndpoint(organizationId),
-        // TODO use header
-        params: {
-          access_token: token
-        }
-      };
+    var request = {
+      method: 'GET',
+      url: organizationEndpoint(organizationId),
+      withCredentials: true
+    };
 
-      return $http(request)
-      .then(extractPlanHtml, reject);
-    });
+    return $http(request)
+    .then(extractPlanHtml, reject);
   }
 
   function extractPlanHtml (response) {
