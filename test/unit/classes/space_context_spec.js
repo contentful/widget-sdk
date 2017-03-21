@@ -648,7 +648,7 @@ describe('spaceContext', function () {
       this.spaceContext.docConnection = {close: stubs[0]};
       this.spaceContext.docPool = {destroy: stubs[1]};
       this.spaceContext.resetWithSpace(makeSpaceMock());
-      stubs.forEach(sinon.assert.calledOnce);
+      stubs.forEach((s) => sinon.assert.calledOnce(s));
     });
 
     it('cleans up on purge', function () {
@@ -656,7 +656,7 @@ describe('spaceContext', function () {
       this.spaceContext.docConnection = {close: stubs[0]};
       this.spaceContext.docPool = {destroy: stubs[1]};
       this.spaceContext.purge();
-      stubs.forEach(sinon.assert.calledOnce);
+      stubs.forEach((s) => sinon.assert.calledOnce(s));
     });
   });
 
