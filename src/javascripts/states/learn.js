@@ -13,10 +13,10 @@ angular.module('contentful')
     name: 'learn',
     url: '/learn',
     label: 'Learn',
-    template: '<cf-learn-view />',
+    template: JST.cf_learn_view(),
     loadingText: 'Loading...',
     controller: ['$scope', function ($scope) {
-      $scope.context = {};
+      $scope.context = {ready: true};
       $scope.context.forbidden = !accessChecker.getSectionVisibility().learn;
     }]
   });

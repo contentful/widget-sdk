@@ -24,7 +24,8 @@ function steps () {
   return h('.onboarding-step', {
     ngRepeat: 'step in onboarding.steps track by $index',
     ngIf: 'step.page === onboarding.currentPage',
-    ngClass: '{"x--disabled": step.disabled}'
+    ngClass: '{"x--disabled": step.disabled}',
+    dataTestId: 'step-{{step.id}}'
   }, [
     h('.onboarding-step__icon', [
       h('cf-icon', {name: '{{step.icon}}', scale: '0.6'})
