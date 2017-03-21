@@ -15,6 +15,16 @@ angular.module('contentful')
   var $state = require('$state');
   var spaceContext = require('spaceContext');
   var OrganizationList = require('OrganizationList');
+  var tokenStore = require('tokenStore');
+
+  var canShowIntercomLink$ = tokenStore.user$.map(function (user) {
+    var organizationMemberships = user && user.organizationMemberships || [];
+    var canShowIntercomLink = _.find(organizationMemberships, function (membership) {
+      var subscriptionStatus = _.get(membership, 'organization.subscription.status');
+      return subscriptionStatus !== 'free';
+    });
+    return !!canShowIntercomLink;
+  }).skipDuplicates();
 
   return {
     goToUserProfile: goToUserProfile,
@@ -23,7 +33,8 @@ angular.module('contentful')
     goToSubscription: goToSubscription,
     goToBilling: goToBilling,
     silentlyChangeState: silentlyChangeState,
-    canGoToOrganizations: canGoToOrganizations
+    canGoToOrganizations: canGoToOrganizations,
+    canShowIntercomLink$: canShowIntercomLink$
   };
 
   function goTo (pathSuffix, options) {

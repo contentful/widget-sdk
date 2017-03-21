@@ -1,4 +1,4 @@
-'use strict';
+import * as K from 'helpers/mocks/kefir';
 
 describe('TheAccountView service', function () {
   beforeEach(function () {
@@ -16,10 +16,48 @@ describe('TheAccountView service', function () {
       $provide.value('OrganizationList', this.OrganizationList);
     });
 
+    this.tokenStore = this.mockService('tokenStore', {
+      user$: K.createMockProperty(null)
+    });
+
     this.view = this.$inject('TheAccountView');
     const $state = this.$inject('$state');
 
     this.go = $state.go = sinon.spy();
+  });
+
+  describe('.canShowIntercomLink$', function () {
+    beforeEach(function () {
+      this.addOrganizations = function (...organizations) {
+        const user = {
+          organizationMemberships: []
+        };
+        organizations.forEach(function (organization) {
+          user.organizationMemberships.push({ organization });
+        });
+        this.tokenStore.user$.set(user);
+      };
+
+      this.createOrganization = function (status) {
+        return {
+          subscription: { status }
+        };
+      };
+    });
+
+    it('hides link when user is loading', function () {
+      K.assertCurrentValue(this.view.canShowIntercomLink$, false);
+    });
+
+    it('shows when user is member of paid organization', function () {
+      this.addOrganizations(this.createOrganization('free'), this.createOrganization('paid'));
+      K.assertCurrentValue(this.view.canShowIntercomLink$, true);
+    });
+
+    it('shows when user is not a member of paid organization', function () {
+      this.addOrganizations(this.createOrganization('free'), this.createOrganization('free'));
+      K.assertCurrentValue(this.view.canShowIntercomLink$, false);
+    });
   });
 
   describe('.goToUserProfile()', function () {
