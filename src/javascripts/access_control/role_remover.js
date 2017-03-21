@@ -8,9 +8,9 @@ angular.module('contentful').factory('createRoleRemover', ['$injector', function
   var modalDialog         = $injector.get('modalDialog');
   var notification        = $injector.get('notification');
   var Command             = $injector.get('command');
-  var space               = $injector.get('spaceContext').space;
-  var roleRepo            = $injector.get('RoleRepository').getInstance(space);
-  var spaceMembershipRepo = $injector.get('SpaceMembershipRepository').getInstance(space);
+  var spaceContext        = $injector.get('spaceContext');
+  var roleRepo            = $injector.get('RoleRepository').getInstance(spaceContext.space);
+  var spaceMembershipRepo = $injector.get('SpaceMembershipRepository').getInstance(spaceContext.endpoint);
 
   return function createRoleRemover(listHandler, doneFn) {
 

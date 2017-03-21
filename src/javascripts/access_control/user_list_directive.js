@@ -54,7 +54,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
   var modalDialog = $injector.get('modalDialog');
   var spaceContext = $injector.get('spaceContext');
   var spaceMembershipRepo =
-    $injector.get('SpaceMembershipRepository').getInstance(spaceContext.space);
+    $injector.get('SpaceMembershipRepository').getInstance(spaceContext.endpoint);
   var listHandler = $injector.get('UserListHandler').create();
   var stringUtils = $injector.get('stringUtils');
   var notification = $injector.get('notification');

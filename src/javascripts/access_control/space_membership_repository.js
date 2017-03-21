@@ -1,10 +1,14 @@
 'use strict';
 
-angular.module('contentful').factory('SpaceMembershipRepository', [function () {
+angular.module('contentful').factory('SpaceMembershipRepository', ['require', function (require) {
+  var fetchAll = require('data/CMA/FetchAll').fetchAll;
+
+  // `GET /spaces/:id/space_memberships` endpoint returns a max of 100 items
+  var PER_PAGE = 100;
 
   return { getInstance: getInstance };
 
-  function getInstance(space) {
+  function getInstance(spaceEndpoint) {
 
     return {
       getAll: getAll,
@@ -16,25 +20,27 @@ angular.module('contentful').factory('SpaceMembershipRepository', [function () {
     };
 
     function invite(mail, roleId) {
-      return getBaseCall()
-      .payload({
-        email: mail,
-        admin: false,
-        roles: getRoleLink(roleId)
-      })
-      .post();
+      return spaceEndpoint({
+        method: 'POST',
+        path: ['space_memberships'],
+        data: {
+          email: mail,
+          admin: false,
+          roles: getRoleLink(roleId)
+        }
+      });
     }
 
     function inviteAdmin(mail) {
-      return getBaseCall()
-      .payload({ email: mail, admin: true })
-      .post();
+      return spaceEndpoint({
+        method: 'POST',
+        path: ['space_memberships'],
+        data: { email: mail, admin: true }
+      });
     }
 
     function getAll() {
-      return getBaseCall()
-      .payload({ limit: 100 })
-      .get().then(function (res) { return res.items; });
+      return fetchAll(spaceEndpoint, ['space_memberships'], PER_PAGE);
     }
 
     function changeRoleTo(membership, roleId) {
@@ -48,31 +54,19 @@ angular.module('contentful').factory('SpaceMembershipRepository', [function () {
     }
 
     function changeRole(oldMembership, newMembership) {
-      return getBaseCall({
-        id: oldMembership.sys.id,
-        version: oldMembership.sys.version
-      })
-      .payload(newMembership)
-      .put();
+      return spaceEndpoint({
+        method: 'PUT',
+        path: ['space_memberships', oldMembership.sys.id],
+        version: oldMembership.sys.version,
+        data: newMembership
+      });
     }
 
     function remove(membership) {
-      return getBaseCall({
-        id: membership.sys.id,
-        rejectEmpty: false
-      })
-      .delete();
-    }
-
-    function getBaseCall(config) {
-      var headers = {};
-      config = config || {};
-      if (config.version) {
-        headers['X-Contentful-Version'] = config.version;
-      }
-
-      var call = space.endpoint('space_memberships', config.id).headers(headers);
-      return config.rejectEmpty ? call.rejectEmpty() : call;
+      return spaceEndpoint({
+        method: 'DELETE',
+        path: ['space_memberships', membership.sys.id.toString()]
+      });
     }
   }
 
