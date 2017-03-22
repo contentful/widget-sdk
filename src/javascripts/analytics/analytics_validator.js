@@ -33,7 +33,6 @@ angular.module('contentful')
   ],
   space_switcher: [
     'opened',
-    'create_clicked',
     'space_switched'
   ],
   space: [

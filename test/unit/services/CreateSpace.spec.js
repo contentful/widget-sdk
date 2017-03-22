@@ -12,11 +12,6 @@ describe('CreateSpace', function () {
   });
 
   describe('#showDialog', function () {
-    it('tracks analytics event', function () {
-      this.CreateSpace.showDialog();
-      sinon.assert.calledWith(this.analytics.track, 'space_switcher:create_clicked');
-    });
-
     it('opens dialog without org ID', function () {
       this.CreateSpace.showDialog();
       expect(this.modalDialog.open.firstCall.args[0].scopeData.organizationId).toBeUndefined();

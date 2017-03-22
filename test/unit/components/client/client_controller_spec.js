@@ -96,12 +96,6 @@ describe('Client Controller', function () {
       scope.showCreateSpaceDialog();
       sinon.assert.called(this.modalDialog.open);
     });
-
-    it('tracks analytics event', function () {
-      const analytics = this.$inject('analytics/Analytics');
-      scope.showCreateSpaceDialog();
-      sinon.assert.called(analytics.track);
-    });
   });
 
   describe('initializes client', function () {

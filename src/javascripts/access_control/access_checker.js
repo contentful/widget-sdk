@@ -22,6 +22,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
   var policyChecker = require('accessChecker/policy');
   var cache = require('accessChecker/responseCache');
   var capitalize = require('stringUtils').capitalize;
+  var K = require('utils/kefir');
 
   var ACTIONS_FOR_ENTITIES = {
     contentType: ['create', 'read', 'update', 'delete', 'publish', 'unpublish'],
@@ -38,9 +39,12 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
   var userQuota = {};
   var sectionVisibility = {};
 
+  var canCreateSpaceBus = K.createPropertyBus();
+
   $rootScope.$watchCollection(function () {
     return {
-      authContext: authorization.spaceContext,
+      authContext: authorization.authContext,
+      spaceContext: authorization.spaceContext,
       organization: getSpaceData('organization'),
       spaceMembership: getSpaceData('spaceMembership')
     };
@@ -116,7 +120,8 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
     canCreateSpace: canCreateSpace,
     canCreateSpaceInAnyOrganization: canCreateSpaceInAnyOrganization,
     canCreateSpaceInOrganization: canCreateSpaceInOrganization,
-    wasForbidden: wasForbidden
+    wasForbidden: wasForbidden,
+    canCreateSpace$: canCreateSpaceBus.property
   };
 
   /**
@@ -131,6 +136,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
     collectResponses();
     collectFeatures();
     collectSectionVisibility();
+    canCreateSpaceBus.set(canCreateSpace());
   }
 
   function collectResponses () {

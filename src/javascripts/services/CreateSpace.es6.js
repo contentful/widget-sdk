@@ -1,4 +1,3 @@
-import {track} from 'analytics/Analytics';
 import modalDialog from 'modalDialog';
 import spaceContext from 'spaceContext';
 import $rootScope from '$rootScope';
@@ -11,8 +10,7 @@ import $rootScope from '$rootScope';
  * @param {string} [organizationId]
  */
 export function showDialog (organizationId) {
-  track('space_switcher:create_clicked');
-  modalDialog.open({
+  return modalDialog.open({
     title: 'Space templates',
     template: 'create_new_space_dialog',
     backgroundClose: false,
