@@ -29,21 +29,36 @@ The test code should _always_ be bound by comments in the format shown above to 
 - `Default rule`: Rule that decides what qualified users receive as their variation for a test.
 
 
-## Default qualification criteria
+## Qualification criteria
+### Default qualification criteria
 <span id="default-qualification-criteria"></span>
 
 Only users that don't belong to _any_ paying/converted organization are qualified for A/B tests. What this means is that only these users will get a bucketed into a variation for a test.
 All unqualified users receive `null` as the value for a test variation. Any other test specific qualification logic *must* be handled in the test code.
 
 
+### Custom qualification criteria
+Custom qualification criteria can be passed to the `get` method that the Launch Darkly integration exposes. It is applied along with the default qualification criteria.
+Currently, there is no way to bypass the default qualification criteria.
+
+```js
+var K = require('utils/kefir');
+var LD = require('utils/LaunchDarkly');
+var someTest$ = LD.get('some-test', currentUser => false);
+
+K.onValueScope($scope, someTest$, function (showTest) {
+    // showTest will always be null since custom qualification
+    // function returns false and hence disqualifies the user
+});
+```
+
 ## Environments on Launch Darkly
 
-###`Development`
+### `Development`
 Feature flags defined here are served to `app.joistio.com:8888` aka local dev
 
 ### `Staging`
-Feature flags defined here are served to `app.flinkly.com` aka
-`staging`
+Feature flags defined here are served to `app.flinkly.com` aka `staging`
 
 ### `Preview`
 Feature flags defined here are served to `app.quirely.com` aka `preview`
@@ -61,18 +76,30 @@ We follow a promotion based approach to releasing an A/B test as outlined below.
 3. Once the PR is merged to `master`, the developer duplicates it from `Staging` to `Production` environment via the LD UI
 
 __Important__:
-Please note that tests created in the `Staging` environment must have `false` as the default rule so that the automated tests can run successfully. This ensures that the automated tests don't see the test.
+
+1. Please note that tests created in the `Staging` environment must have `false` as the default rule so that the automated tests can run successfully. This ensures that the automated tests don't see the test.
+2. In the "If targeting is off" section, make sure there is no variation so that LD serves `null` when targeting is turned off.
+
+### Naming
+
+A test name should have the following format: `teamname-mm-yyyy-test-name`.
+
+For example, `ps-03-2017-example-space-impact` where `ps` stands for `Team Product Success`.
+
+Also, please add a link to the experiment wiki page in the description.
 
 ### Creating test
 
 1. Switch to the environment you require in the LD UI
 2. Goto Feature Flags and click New
-3. In the pane that slides in, fill in the details and make sure you select "Make this flag available to the client-side (JavaScript) SDK"
+3. In the pane that slides in, fill in the details and make sure you select "Make this flag available to the client-side (JavaScript) SDK" and Boolean under the flag type.
 4. Choose the default bucket split
-5. Enable targeting to enable the test
-6. The test should now be available in `user_interface` for [qualified users](#default-qualification-criteria)
+5. In the "If targeting is off" section, remove the variation assigned by clicking the cross on it
+6. Enable targeting to enable the test
 
-![create feature flag](https://cloud.githubusercontent.com/assets/635512/23408313/e12ab360-fdc7-11e6-8b52-4cce064b1b2a.gif)
+The test should now be available in `user_interface` for [qualified users](#default-qualification-criteria)
+
+![create feature flag](https://cloud.githubusercontent.com/assets/635512/24458269/bdac9d94-1498-11e7-8f93-b34bd2ef8ae5.gif)
 
 
 ### Concluding the test

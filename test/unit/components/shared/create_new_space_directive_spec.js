@@ -1,3 +1,5 @@
+import { createMockProperty } from 'helpers/mocks/kefir';
+
 describe('cfCreateNewSpace directive', function () {
 
   let element, $scope, $rootScope, controller;
@@ -36,7 +38,11 @@ describe('cfCreateNewSpace directive', function () {
       },
       tokenStore: {
         refresh: sinon.stub(),
-        getSpace: sinon.stub()
+        getSpace: sinon.stub(),
+        user$: createMockProperty({
+          firstName: 'firstName'
+        }),
+        spaces$: createMockProperty([])
       },
       space: {
         getId: sinon.stub()

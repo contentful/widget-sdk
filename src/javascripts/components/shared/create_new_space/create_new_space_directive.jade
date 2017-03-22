@@ -1,4 +1,5 @@
-.create-new-space-dialog.modal-dialog
+.create-new-space-dialog.modal-dialog(
+      ng-class="{'ps-03-2017-example-space-impact': createSpace.exampleSpaceTest.isActive}")
   .modal-dialog__header.create-new-space-dialog__header
     button.create-new-space-dialog__close.modal-dialog__close(
       ng-if="createSpace.viewState === 'createSpaceForm'"
@@ -8,15 +9,78 @@
     ng-submit="createSpace.requestSpaceCreation()"
     name="newSpaceForm")
     .create-new-space-dialog__content.modal-dialog__content
-      div(ng-show="createSpace.isOnboarding")
-        h2.create-new-space-dialog__heading
-          | Let's create your first space now
-      div(ng-show="!createSpace.isOnboarding")
+      //- when cleaning up test ps-03-2017-example-space-impact
+      //- remove the condition from this div
+      div(ng-if="!createSpace.exampleSpaceTest.isActive")
         h2.create-new-space-dialog__heading
           | Create a new space
-      p.create-new-space-dialog__subheading
-        | A space is a place where you keep all the content related to a single project.
-      .create-new-space__form
+        p.create-new-space-dialog__subheading
+          | A space is a place where you keep all the content related to a single project.
+
+      //- Begin A/B experiment code - ps-03-2017-example-space-impact
+      div(ng-if="createSpace.exampleSpaceTest.isActive")
+        h2.create-new-space-dialog__heading
+          | Hey {{createSpace.exampleSpaceTest.firstName}}! We're well on our way to your first API call.
+        p.create-new-space-dialog__subheading
+          | Now we’ll create a basic demo project with some content on top of it so that
+          | you don’t have to spend time on that part right now and can go straight to making an API call.
+      .create-new-space__form(ng-if="createSpace.exampleSpaceTest.isActive")
+        .create-new-space__fieldset
+          .cfnext-form__field(ng-hide="createSpace.writableOrganizations.length === 1")
+            label
+              strong Organization
+            select.cfnext-select-box(
+              data-test-id="select-organization"
+              ng-model="createSpace.newSpace.organization"
+              ng-options="opt as opt.name for opt in createSpace.writableOrganizations"
+              ng-disabled="createSpace.createSpaceInProgress"
+              aria-invalid="{{!!createSpace.newSpace.errors.fields.organization}}")
+            p.cfnext-form__field-error(
+              ng-if="createSpace.newSpace.errors.fields.organization")
+              | {{createSpace.newSpace.errors.fields.organization}}
+          .cfnext-form__field
+            label(for="newspace-name")
+              strong Name your project
+            input.cfnext-form__input(
+              id="newspace-name"
+              placeholder="\"Hello World\" would work nicely"
+              ng-model="createSpace.newSpace.data.name"
+              ng-required="required"
+              cf-focus-on-render
+              type="text"
+              ng-disabled="createSpace.createSpaceInProgress"
+              aria-invalid="{{!!createSpace.newSpace.errors.fields.name}}")
+            p.cfnext-form__field-error(
+              ng-if="createSpace.newSpace.errors.fields.name")
+              | {{createSpace.newSpace.errors.fields.name}}
+
+        .cfnext-form__field(ng-show="createSpace.newSpace.errors.form")
+          .cfnext-form__field-error
+            | {{createSpace.newSpace.errors.form}}
+
+      .modal-dialog__slice.create-new-space__templates.open(ng-if="createSpace.exampleSpaceTest.isActive")
+        .create-new-space__templates__inner
+          p(style="cursor: default")
+            strong Choose an example
+          div
+            .create-new-space__templates__nav
+              a.create-new-space__templates__navitem(
+                ng-repeat="template in createSpace.templates"
+                ng-click="createSpace.selectTemplate(template)"
+                ng-class="{selected: createSpace.newSpace.selectedTemplate === template}")
+                cf-icon.create-new-space__templates__navitem__icon(
+                  name="{{template.svgName}}")
+                | {{template.name}}
+            .create-new-space__templates__description(
+              ng-show="template === createSpace.newSpace.selectedTemplate"
+              ng-repeat="template in createSpace.templates")
+              img.create-new-space__templates__image(
+                ng-src="{{template.image.fields.file.url}}")
+              .create-new-space__templates__text
+                div(ng-bind-html="template.descriptionV2")
+      //- End A/B experiment code - ps-03-2017-example-space-impact
+
+      .create-new-space__form(ng-if="!createSpace.exampleSpaceTest.isActive")
         .create-new-space__fieldset
           .cfnext-form__field(ng-hide="createSpace.writableOrganizations.length === 1")
             label
@@ -87,6 +151,7 @@
               span.create-new-space__form__label-description
                 |  I'd like to see how things work first.
       .modal-dialog__slice.create-new-space__templates(
+        ng-if="!createSpace.exampleSpaceTest.isActive"
         ng-class="{'open': createSpace.newSpace.useTemplate && createSpace.templates.length}")
         cf-icon(name="arrow-up")
         .create-new-space__templates__inner
@@ -107,7 +172,16 @@
               .create-new-space__templates__text
                 div(ng-bind-html="template.descriptionV2")
 
-    .modal-dialog__controls.create-new-space-dialog__controls--right
+    //- Begin A/B experiment code - ps-03-2017-example-space-impact
+    .modal-dialog__controls.create-new-space-dialog__controls--centered(ng-if="createSpace.exampleSpaceTest.isActive")
+      button.btn-action(
+        ng-class="{'is-loading': createSpace.createSpaceInProgress}"
+        ng-disabled="createSpace.createSpaceInProgress"
+        data-test-id="create-space")
+        | Create sample content
+    //- End A/B experiment code - ps-03-2017-example-space-impact
+
+    .modal-dialog__controls.create-new-space-dialog__controls--right(ng-if="!createSpace.exampleSpaceTest.isActive")
       button.btn-action(
         ng-class="{'is-loading': createSpace.createSpaceInProgress}"
         ng-disabled="createSpace.createSpaceInProgress"
