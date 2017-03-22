@@ -192,7 +192,7 @@ describe('ContentType Actions Controller', function () {
 
   it('when cancelling navigates back to list', function () {
     controller.cancel.execute();
-    sinon.assert.called(this.$state.go, '^.list');
+    sinon.assert.calledWith(this.$state.go, 'spaces.detail.content_types.list');
   });
 
   describe('#save command', function () {
@@ -328,13 +328,14 @@ describe('ContentType Actions Controller', function () {
       });
     });
 
-    pit('redirects if the content type is new', function () {
-      const goStub = this.$state.go;
+    it('redirects if the content type is new', function* () {
       scope.context.isNew = true;
-      return controller.save.execute()
-      .then(function () {
-        sinon.assert.called(goStub, 'spaces.detail.content_types.detail', {contentTypeId: 'typeid'});
-      });
+      yield controller.save.execute();
+      sinon.assert.calledWith(
+        this.$state.go,
+        'spaces.detail.content_types.detail.fields',
+        sinon.match({contentTypeId: 'typeid'})
+      );
     });
   });
 

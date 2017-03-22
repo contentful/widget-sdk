@@ -100,6 +100,7 @@ export function getSessionData (path, defaultValue) {
 export function track (event, data) {
   data = _.isObject(data) ? _.cloneDeep(data) : {};
   data = removeCircularRefs(_.extend(data, getBasicPayload()));
+
   segment.track(event, data);
   Snowplow.track(event, data);
   analyticsConsole.add(event, data);
@@ -170,7 +171,6 @@ export function trackStateChange (state, params, from, fromParams) {
   sendSessionDataToConsole();
   track('global:state_changed', data);
   segment.page(state.name, params);
-  Snowplow.page(_.extend(data, getBasicPayload()));
 }
 
 function getBasicPayload () {

@@ -15,7 +15,7 @@
         | User profile
       li(role="menuitem" ng-click="goToOrganizations()" ng-show="canGoToOrganizations")
         | Organizations & billing
-      li(role="menuitem" ng-click="openIntercom()" ng-if="isIntercomLoaded()")
+      li(role="menuitem" ng-click="openIntercom()" ng-if="canShowIntercomLink && isIntercomLoaded()")
         | Talk to us
       li(role="menuitem" ng-click="openSupport()")
         | Get support

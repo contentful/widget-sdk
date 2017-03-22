@@ -19,6 +19,8 @@ angular.module('contentful')
   var K = require('utils/kefir');
   var validateEvent = require('analytics/validateEvent');
   var logger = require('logger');
+  var buildSnowplowEvent = require('analytics/snowplow/Snowplow').buildUnstructEventData;
+  var getSnowplowSchema = require('analytics/snowplow/Events').getSchema;
 
   var isEnabled = false;
   var el = null;
@@ -93,12 +95,25 @@ angular.module('contentful')
    * Adds an event to the console.
    */
   function add (name, data) {
+    var snowplowEvent = buildSnowplowEvent(name, data);
+
     var event = {
       time: moment().format('HH:mm:ss'),
       name: name,
       data: data,
       isValid: validateEvent(name)
     };
+
+    if (snowplowEvent) {
+      var snowplowSchema = getSnowplowSchema(name);
+
+      event.snowplow = {
+        name: snowplowSchema.name,
+        version: snowplowSchema.version,
+        data: snowplowEvent[1],
+        context: snowplowEvent[2]
+      };
+    }
 
     eventsBus.emit(event);
     throwOrLogInvalidEvent(event);
@@ -126,11 +141,22 @@ angular.module('contentful')
     link: function (scope, $el) {
       var containerEl = $el.find('.analytics-console__content').get(0);
 
-      scope.toggle = function () {
+      scope.toggleSessionData = function () {
+        scope.showingSnowplowDebugInfo = false;
         scope.showSessionData = !scope.showSessionData;
+
         if (scope.showSessionData) {
           scrollUp();
         } else {
+          scrollDown();
+        }
+      };
+
+      scope.toggleSnowplowDebugInfo = function () {
+        scope.showSessionData = false;
+        scope.showingSnowplowDebugInfo = !scope.showingSnowplowDebugInfo;
+
+        if (scope.showingSnowplowDebugInfo) {
           scrollDown();
         }
       };

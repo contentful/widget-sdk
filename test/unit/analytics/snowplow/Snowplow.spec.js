@@ -79,27 +79,46 @@ describe('Snowplow service', function () {
     });
   });
 
-  describe('#page', function () {
-    it('tracks page event', function () {
-      const pageData = {
-        userId: 'user1',
-        spaceId: null,
-        organizationId: null,
-        state: 'home',
-        params: {},
-        fromState: 'spaces.detail.entries',
-        fromStateParams: {spaceId: 'abc'}
-      };
-      this.Snowplow.enable();
-      this.Snowplow.page(pageData);
+  describe('#buildUnstructEventData', function () {
+    beforeEach(function () {
+      this.Events.getSchema.returns({
+        name: 'xyz',
+        path: 'schema/xyz/path'
+      });
 
-      expect(this.getLastEvent()[1].schema).toBe('iglu:com.contentful/page_view/jsonschema/1-0-0');
-      expect(this.getLastEvent()[1].data).toEqual({
-        executing_user_id: 'user1',
-        to_state: 'home',
-        to_state_params: {},
-        from_state: 'spaces.detail.entries',
-        from_state_params: {spaceId: 'abc'}
+      this.Events.transform.returns({
+        data: { key: 'val' },
+        contexts: ['ctx']
+      });
+
+      this.unstructData = this.Snowplow.buildUnstructEventData('a', {});
+    });
+
+    it('should return an array', function () {
+      expect(Array.isArray(this.unstructData)).toBe(true);
+    });
+    describe('has following data', function () {
+      it('should be an unstructured event', function () {
+        expect(this.unstructData[0]).toBe('trackUnstructEvent');
+      });
+
+      it('should have an object containing schema url and data', function () {
+        expect(this.unstructData[1]).toEqual({
+          schema: 'schema/xyz/path',
+          data: { key: 'val' }
+        });
+      });
+
+      it('can have a contexts array', function () {
+        expect(this.unstructData[2]).toEqual(['ctx']);
+
+        this.Events.transform.returns({
+          data: { key: 'val' }
+        });
+
+        this.unstructData = this.Snowplow.buildUnstructEventData('a', {});
+
+        expect(this.unstructData[2]).toEqual(undefined);
       });
     });
   });

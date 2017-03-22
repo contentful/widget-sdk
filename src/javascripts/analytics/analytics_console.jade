@@ -9,10 +9,13 @@
     | close
   button(ng-click="isCollapsed = !isCollapsed")
     | {{ isCollapsed ? 'expand' : 'collapse' }}
-  button(ng-click="toggle()")
+  button(ng-click="toggleSessionData()")
     | {{ showSessionData ? 'show events' : 'show session data' }}
+  button(ng-click="toggleSnowplowDebugInfo()")
+    | {{ showingSnowplowDebugInfo ? 'show all events' : 'show snowplow events'}}
+
   .analytics-console__content(style=style.content ng-show="!isCollapsed")
-    .analytics-console__events(ng-show="!showSessionData")
+    .analytics-console__events(ng-show="!showSessionData && !showingSnowplowDebugInfo")
       .analytics-console__event(
         style=style.box
         ng-repeat="event in events track by $index")
@@ -22,5 +25,19 @@
             |  invalid name
         pre(style=style.json)
           | {{ (event.data || 'no data') | json }}
-    .analytics-console__session-data(ng-show="showSessionData")
+
+    .analytics-console__events(ng-show="showingSnowplowDebugInfo && !showSessionData")
+      .analytics-console__event(
+        style=style.box
+        ng-repeat="event in events track by $index"
+        ng-if="event.snowplow")
+        p
+          | {{ event.time }} <strong>{{ event.snowplow.name }}, version: {{ event.snowplow.version }}</strong>
+        pre(style=style.json)
+          | {{ (event.snowplow.data || 'no data') | json }}
+        pre(style=style.json
+          ng-if="event.snowplow.context")
+          | context: {{ event.snowplow.context | json }}
+
+    .analytics-console__session-data(ng-show="showSessionData && !showingSnowplowDebugInfo")
       pre(style=style.json) {{ (sessionData || 'no data') | json }}

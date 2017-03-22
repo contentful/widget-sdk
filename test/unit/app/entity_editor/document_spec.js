@@ -380,9 +380,9 @@ describe('entityEditor/Document', function () {
       this.doc.valuePropertyAt(['foo', 'bar']).onValue(cb);
       cb.reset();
 
-      paths.forEach(function (path, i) {
+      paths.forEach(function (path) {
         doc.emit('change', [{p: path}]);
-        sinon.assert.notCalled(cb, i);
+        sinon.assert.notCalled(cb);
       });
     });
 
