@@ -20,6 +20,7 @@ angular.module('contentful')
 
   var isResettingPage = false;
   var isResettingTerm = false;
+  var isReplacingPage = false;
 
   var setIsSearching = makeIsSearchingSetter(true);
   var unsetIsSearching = makeIsSearchingSetter(false);
@@ -27,7 +28,7 @@ angular.module('contentful')
 
   var debouncedUpdateWithTerm = debounce(updateWithTerm, 200);
   var updateEntries = createRequestQueue(requestEntries, setupEntriesHandler);
-  var debouncedUpdateEntries = debounce(updateEntries.bind(null, MODE_REPLACE), 1000);
+  var debouncedUpdateEntries = debounce(updateEntries.bind(null, MODE_REPLACE), 3000);
 
   /**
    * Public API
@@ -43,8 +44,9 @@ angular.module('contentful')
    */
 
   $scope.$watch('paginator.getPage()', function () {
-    if (isResettingPage) {
+    if (isResettingPage || isReplacingPage) {
       isResettingPage = false;
+      isReplacingPage = false;
     } else {
       updateEntries(MODE_REPLACE);
     }
@@ -128,15 +130,25 @@ angular.module('contentful')
   }
 
   function requestEntries (mode) {
+    var currPage = $scope.paginator.getPage();
+
     mode = mode || MODE_RESET;
     $scope.context.loading = true;
 
     // MODE_RESET is to reset page to 0 from whatever page the user is on
     // The page is set to 0 before the call to prepareQuery as that uses
     // paginator.getPage() to build the query to request entries
-    if (mode === MODE_RESET && $scope.paginator.getPage() !== 0) {
+    if (mode === MODE_RESET && currPage !== 0) {
       $scope.paginator.setPage(0);
       isResettingPage = true;
+    }
+
+    // if a user deletes the last entry on page > first page, we should decrement the page by one before
+    // refreshing the entries to display. This makes sure that the user doesn't see the
+    // no entries advice when he/she deletes the last entry on a page > first page.
+    if (mode === MODE_REPLACE && (!$scope.entries || !$scope.entries.length) && currPage > 0) {
+      $scope.paginator.setPage(currPage - 1);
+      isReplacingPage = true;
     }
 
     setIsSearching();
