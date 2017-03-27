@@ -12,7 +12,7 @@ angular.module('contentful')
   return base({
     name: 'home',
     url: '/*path',
-    template: '<cf-home />',
+    template: JST.cf_home(),
     loadingText: 'Loading...',
     controller: ['$scope', function ($scope) {
       $scope.context = {ready: false};

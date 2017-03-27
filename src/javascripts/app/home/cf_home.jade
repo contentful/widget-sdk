@@ -1,16 +1,5 @@
 .home(cf-ui-sticky-container)
   .home__container
     .home__content
-      section.home-section
-        h2.home-section__heading {{home.greeting}}
-        p(ng-if="home.user.signInCount === 1")
-          | Looks like you're new here. Learn more about Contentful from the resources below.
-        p(ng-if="home.user.signInCount > 1")
-          | What will you build today?
-        cf-icon.home__welcome-image(name="home-welcome")
-      section.home-section(ng-if="home.canCreateSpace() && !home.spaces.length")
-        h3.home-section__heading Create a new space
-        p.home-section__description
-          | A space is where you keep all the content related to one project.
-        button.btn-action(ng-click="home.showCreateSpaceDialog()") Create new space
+      cf-welcome
       cf-developer-resources
