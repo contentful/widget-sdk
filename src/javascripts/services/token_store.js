@@ -18,6 +18,7 @@ angular.module('contentful')
   var ReloadNotification = require('ReloadNotification');
   var presence = require('presence');
   var $window = require('$window');
+  var deepFreeze = require('utils/DeepFreeze').deepFreeze;
 
   // Refresh token info every 5 minutes
   var TOKEN_INFO_REFRESH_INTERVAL = 5 * 60 * 1000;
@@ -37,6 +38,7 @@ angular.module('contentful')
     init: init,
     refresh: refresh,
     getSpace: getSpace,
+    getSpaces: getSpaces,
     getDomains: getDomains,
     getTokenLookup: function () { return tokenInfo; },
     /**
@@ -130,6 +132,22 @@ angular.module('contentful')
     return tokenInfoMVar.read().then(function () {
       var space = findSpace(id);
       return space || $q.reject(new Error('No space with given ID could be found.'));
+    });
+  }
+
+  /**
+   * @ngdoc method
+   * @name tokenStore#getSpaces
+   * @returns {Array[Promise<API.Space>]}
+   * @description
+   * This method returns a promise of the list of spaces.
+   * If some calls are in progress, we're waiting until these are done.
+   *
+   */
+  function getSpaces () {
+    return tokenInfoMVar.read().then(function () {
+      return K.getValue(spacesBus.property)
+      .map(function (s) { return deepFreeze(_.cloneDeep(s.data)); });
     });
   }
 

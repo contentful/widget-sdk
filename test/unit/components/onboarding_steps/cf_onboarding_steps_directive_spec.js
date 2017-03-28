@@ -20,7 +20,7 @@ describe('cfOnboardingSteps Directive', function () {
     };
   });
 
-  describe('home page', function () {
+  describe('app home page', function () {
     beforeEach(function () {
       this.compile();
       const spaceContext = this.$inject('spaceContext');
@@ -35,7 +35,7 @@ describe('cfOnboardingSteps Directive', function () {
     });
   });
 
-  describe('learn page', function () {
+  describe('space home page', function () {
     describe('not activated', function () {
       beforeEach(function () {
         this.spaceContext = this.$inject('spaceContext');

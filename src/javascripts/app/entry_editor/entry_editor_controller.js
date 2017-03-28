@@ -45,7 +45,7 @@ angular.module('contentful')
   var initDocErrorHandler = require('app/entity_editor/DocumentErrorHandler').default;
   var LD = require('utils/LaunchDarkly');
   var analytics = require('analytics/Analytics');
-  var hasAccessToLearnView = require('accessChecker').getSectionVisibility().learn;
+  var hasAccessToSpaceHome = require('accessChecker').getSectionVisibility().spaceHome;
   var State = require('data/CMA/EntityState').State;
   var SumTypes = require('libs/sum-types/caseof-eq');
   var caseof = SumTypes.caseof;
@@ -177,12 +177,12 @@ angular.module('contentful')
 
   var nextStepHintsTest$ = LD.getTest('ps-03-2017-next-step-hints');
   var notActivated = !spaceContext.getData('activatedAt');
-  var learnModeOn = hasAccessToLearnView && notActivated;
+  var learnModeOn = hasAccessToSpaceHome && notActivated;
   var showNextStepHint;
 
   var HINT_API_CALL = {
     title: 'Now let’s fetch the content using the API',
-    html: '<a ui-sref="spaces.detail.learn" ng-click="trackNextStepHint()">Get an API access token</a>'
+    html: '<a ui-sref="spaces.detail.home" ng-click="trackNextStepHint()">Get an API access token</a>'
   };
 
   var HINT_PUBLISH = {

@@ -29,6 +29,7 @@ angular.module('contentful')
 .factory('states/spaces/detail', ['require', function (require) {
   var analytics = require('analytics/Analytics');
   var sectionAccess = require('sectionAccess');
+  var TheStore = require('TheStore');
 
   return {
     name: 'detail',
@@ -57,6 +58,7 @@ angular.module('contentful')
 
       if (sectionAccess.hasAccessToAny()) {
         sectionAccess.redirectToFirstAccessible();
+        TheStore.set('lastUsedSpace', space.getId());
       }
     }],
     templateProvider: ['space', function (space) {
@@ -72,7 +74,7 @@ angular.module('contentful')
       require('states/assets'),
       require('app/api/State').default,
       require('states/settings'),
-      require('states/learn')
+      require('states/space_home')
     ]
   };
 }]);

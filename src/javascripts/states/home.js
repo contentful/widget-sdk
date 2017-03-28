@@ -4,16 +4,43 @@ angular.module('contentful')
 /**
  * @ngdoc service
  * @name states/home
+ * @description
+ * If any space exists, the user is redirected to the last accessed space (as
+ * defined in local storage) or the first space returned in the spaces listing.
+ * The `home` view is loaded only if there are no spaces.
  */
 .factory('states/home', ['require', function (require) {
   var base = require('states/base');
   var $location = require('$location');
+  var $state = require('$state');
+  var tokenStore = require('tokenStore');
+  var TheStore = require('TheStore');
 
   return base({
     name: 'home',
     url: '/*path',
     template: JST.cf_home(),
     loadingText: 'Loading...',
+    resolve: {
+      spaces: function () {
+        return tokenStore.getSpaces().then(function (spaces) {
+
+          if (spaces.length) {
+            var lastUsedSpace = getLastUsedSpace(spaces);
+            var space = lastUsedSpace || spaces[0];
+
+            $state.go('spaces.detail', {spaceId: space.sys.id});
+          }
+        });
+
+        function getLastUsedSpace (spaces) {
+          var spaceId = TheStore.get('lastUsedSpace');
+          return _.find(spaces, function (space) {
+            return space.sys.id === spaceId;
+          });
+        }
+      }
+    },
     controller: ['$scope', function ($scope) {
       $scope.context = {ready: false};
 

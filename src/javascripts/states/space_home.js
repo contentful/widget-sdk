@@ -3,21 +3,21 @@
 angular.module('contentful')
 /**
  * @ngdoc service
- * @name states/learn
+ * @name states/space_home
  */
-.factory('states/learn', ['require', function (require) {
+.factory('states/space_home', ['require', function (require) {
   var base = require('states/base');
   var accessChecker = require('accessChecker');
 
   return base({
-    name: 'learn',
-    url: '/learn',
-    label: 'Learn',
-    template: JST.cf_learn_view(),
+    name: 'home',
+    url: '/home',
+    label: 'Space home',
+    template: JST.cf_space_home(),
     loadingText: 'Loading...',
     controller: ['$scope', function ($scope) {
       $scope.context = {ready: true};
-      $scope.context.forbidden = !accessChecker.getSectionVisibility().learn;
+      $scope.context.forbidden = !accessChecker.getSectionVisibility().spaceHome;
     }]
   });
 }]);

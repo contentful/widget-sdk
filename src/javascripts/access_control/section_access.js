@@ -62,7 +62,7 @@ angular.module('contentful')
    * is instantiated for child states, too. Caller should use `hasAccessToAny` first.
    *
    * If a user has sign in count == 1, is a space admin and the space is not
-   * activated, go to `Learn`.
+   * activated, go to `Space Home`.
    *
    */
   function redirectToFirstAccessible () {
@@ -70,10 +70,10 @@ angular.module('contentful')
     var firstAccessible = getFirstAccessibleSection();
     var userIsAdmin = spaceContext.getData('spaceMembership.admin', false);
     var notActivated = !spaceContext.getData('activatedAt');
-    var shouldGoToLearn = notActivated && userIsAdmin;
+    var shouldGoToHome = notActivated && userIsAdmin;
     var targetStateName = [
       BASE_STATE,
-      shouldGoToLearn ? 'learn' : firstAccessible
+      shouldGoToHome ? 'home' : firstAccessible
     ].join('.');
 
     if (currentStateName === BASE_STATE) {

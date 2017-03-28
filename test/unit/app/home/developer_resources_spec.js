@@ -7,10 +7,10 @@ describe('cfDeveloperResources directive', function () {
     });
     this.controller = element.isolateScope().languageResources;
     this.$inject('$rootScope').$digest();
-    this.controller.selectLanguage(this.controller.languageData[0]);
+    this.controller.selectLanguage(this.controller.resources[0]);
   });
 
   it('shows selected language', function () {
-    this.controller.selectedLanguage.name = 'Javascript';
+    this.controller.selectedLanguage = 'Javascript';
   });
 });

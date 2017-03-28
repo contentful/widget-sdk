@@ -63,7 +63,7 @@ angular.module('contentful')
           title: 'Invite users',
           description: 'Invite your teammates to the space to get your project off the ground.',
           cta: 'Invite users',
-          icon: 'learn-add-user',
+          icon: 'onboarding-add-user',
           page: 2,
           link: {
             text: 'View users',
@@ -75,7 +75,7 @@ angular.module('contentful')
           title: 'Locales',
           description: 'Set up locales to manage and deliver content in different languages.',
           cta: 'Add locales',
-          icon: 'learn-locales',
+          icon: 'onboarding-locales',
           page: 2,
           link: {
             text: 'View locales',
@@ -87,7 +87,7 @@ angular.module('contentful')
           title: 'Webhooks',
           description: 'Configure webhooks to send requests triggered by changes to your content.',
           cta: 'Add webhooks',
-          icon: 'learn-webhooks',
+          icon: 'onboarding-webhooks',
           page: 2,
           link: {
             text: 'View webhooks',
@@ -112,9 +112,9 @@ angular.module('contentful')
       });
 
       if (spaceContext.space) {
-        initLearnPage();
+        initSpaceHomePage();
         // Refresh after new space creation as content types and entries might have been created
-        $scope.$on('spaceTemplateCreated', initLearnPage);
+        $scope.$on('spaceTemplateCreated', initSpaceHomePage);
       } else {
         initHomePage();
       }
@@ -124,7 +124,7 @@ angular.module('contentful')
         setCompletionStep(0);
       }
 
-      function initLearnPage () {
+      function initSpaceHomePage () {
         var hasContentTypes = spaceContext.publishedContentTypes.length > 0;
         var isActivated = !!spaceContext.getData('activatedAt');
 
