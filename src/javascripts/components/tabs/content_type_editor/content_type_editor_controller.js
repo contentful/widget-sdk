@@ -36,6 +36,17 @@ angular.module('contentful')
   // A/B experiment - ps-03-2017-next-step-hints
   var $stateParams = require('$stateParams');
   $scope.showNextStepHint = $stateParams.showNextStepHint;
+
+  $scope.trackNextStepHint = function () {
+    analytics.track('experiment:interaction', {
+      experiment: {
+        id: 'ps-03-2017-next-step-hints',
+        variation: true,
+        interaction_context: 'content_type_editor'
+      }
+    });
+  };
+
   // End A/B experiment - ps-03-2017-next-step-hints
 
 

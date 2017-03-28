@@ -165,6 +165,16 @@ angular.module('contentful')
 
 
   // A/B experiment - ps-03-2017-next-step-hints
+  $scope.trackNextStepHint = function () {
+    analytics.track('experiment:interaction', {
+      experiment: {
+        id: 'ps-03-2017-next-step-hints',
+        variation: true,
+        interaction_context: 'entry_editor'
+      }
+    });
+  };
+
   var nextStepHintsTest$ = LD.get('ps-03-2017-next-step-hints');
   var notActivated = !spaceContext.getData('activatedAt');
   var learnModeOn = hasAccessToLearnView && notActivated;
@@ -172,7 +182,7 @@ angular.module('contentful')
 
   var HINT_API_CALL = {
     title: 'Now let’s fetch the content using the API',
-    html: '<a ui-sref="spaces.detail.learn">Get an API access token</a>'
+    html: '<a ui-sref="spaces.detail.learn" ng-click="trackNextStepHint()">Get an API access token</a>'
   };
 
   var HINT_PUBLISH = {

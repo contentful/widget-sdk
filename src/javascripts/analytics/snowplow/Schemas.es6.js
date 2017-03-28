@@ -76,13 +76,19 @@ registerSchema({
 
 registerSchema({
   name: 'experiment',
-  version: '1-0-1'
+  version: '1-0-2'
 });
 
 registerSchema({
   name: 'experiment_start',
   version: '1-0-0'
 });
+
+registerSchema({
+  name: 'experiment_interaction',
+  version: '1-0-0'
+});
+
 
 registerSchema({
   name: 'app',

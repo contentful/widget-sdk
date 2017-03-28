@@ -49,6 +49,7 @@ registerEvent('api_key:clipboard_copy', 'api_key', ClipboardCopyTransform);
 registerEvent('api_key:boilerplate', 'boilerplate', BoilerplateTransform);
 
 registerActionEvent('experiment:start', createExperimentTransformer('start'));
+registerActionEvent('experiment:interaction', createExperimentTransformer('interaction'));
 
 registerActionEvent('content_type:create', EntityAction);
 registerActionEvent('entry:create', EntityAction);

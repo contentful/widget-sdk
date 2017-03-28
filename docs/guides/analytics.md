@@ -167,3 +167,4 @@ yet).
 | api                 | boilerplate                           | <code>platform: string<br>action: select|download|github</code>
 | api                 | clipboard_copy                        | <code>source: space|cda|cpa</code>
 | experiment          | start                                 | <code>id: string<br />variation: bool</code>
+| experiment          | interaction                           | <code>id: string<br />variation: bool<br />interaction_context: string</code>
