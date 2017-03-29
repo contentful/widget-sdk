@@ -6,14 +6,13 @@ describe('contentPreview', function () {
 
   beforeEach(function () {
 
-    spaceContext = {};
-
     module('contentful/test', function ($provide) {
       $provide.value('TheLocaleStore', {
         getDefaultLocale: _.constant({internal_code: 'en'})
       });
-      $provide.value('spaceContext', spaceContext);
     });
+
+    spaceContext = this.$inject('mocks/spaceContext').init();
 
     spaceContext.space = {
       endpoint: sinon.spy(function () {
@@ -74,14 +73,14 @@ describe('contentPreview', function () {
 
   function makeCt (id) {
     return {
-      getId: _.constant(id),
-      getName: _.constant(id),
-      data: {
-        fields: [
-          { id: 'internal-title-id', apiName: 'title' },
-          { id: 'internal-slug-id', apiName: 'slug' }
-        ]
-      }
+      sys: {
+        id: id
+      },
+      name: id,
+      fields: [
+        { id: 'internal-title-id', apiName: 'title' },
+        { id: 'internal-slug-id', apiName: 'slug' }
+      ]
     };
   }
 
@@ -259,7 +258,7 @@ describe('contentPreview', function () {
       this.compiledUrl = this.contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[0].url,
         makeEntry('entry-1').data,
-        makeCt('ct-1').data
+        makeCt('ct-1')
       );
       expect(this.compiledUrl).toBe('https://www.test.com/entry-1/Title/my-slug');
     });
@@ -268,7 +267,7 @@ describe('contentPreview', function () {
       this.compiledUrl = this.contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[1].url,
         makeEntry('entry-1').data,
-        makeCt('ct-1').data
+        makeCt('ct-1')
       );
       expect(this.compiledUrl).toBe('https://www.test.com/{entry_field.invalid}');
     });

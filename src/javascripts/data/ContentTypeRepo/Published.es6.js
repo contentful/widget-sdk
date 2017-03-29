@@ -57,7 +57,8 @@ export function create (space) {
     fetch: fetch,
     publish: publish,
     unpublish: unpublish,
-    refresh: refresh
+    refresh: refresh,
+    refreshBare: refreshBare
   };
 
   /**
@@ -158,6 +159,21 @@ export function create (space) {
    * If the HTTP request fails we show an application notification and reject
    * the promise.
    *
+   * @returns {Promise<API.ContentType[]>}
+   */
+  function refreshBare () {
+    return refresh().then((cts) => cts.map((ct) => deepFreeze(cloneDeep(ct.data))));
+  }
+
+  /**
+   * @ngdoc method
+   * @name Data.ContentTypeRepo.Published#refresh
+   * @description
+   * Similar to 'refreshBare()' but returns an array of client
+   * instances instead of only the data.
+   *
+   * @deprecated Please use 'refreshBare()' instead
+   *
    * @returns {Promise<Client.ContentType[]>}
    */
   // TODO we should throttle this function so that multiple
@@ -170,6 +186,7 @@ export function create (space) {
         return contentTypes;
       }, handleReloadError);
   }
+
 }
 
 function removeDeleted (contentTypes) {

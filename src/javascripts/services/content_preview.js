@@ -234,11 +234,11 @@ angular.module('contentful')
 
   function getDefaultConfig (ct) {
     return {
-      name: ct.getName(),
-      contentType: ct.getId(),
+      name: ct.name || 'Untitled',
+      contentType: ct.sys.id,
       url: '',
       enabled: false,
-      contentTypeFields: _.map(ct.data.fields, function (field) {
+      contentTypeFields: _.map(ct.fields, function (field) {
         return _.pick(field, ['apiName', 'type']);
       })
     };
@@ -275,7 +275,7 @@ angular.module('contentful')
       return contentTypes.map(function (ct) {
         var config = _.find(
           external.configurations,
-          _.matches({'contentType': ct.getId()})
+          _.matches({'contentType': ct.sys.id})
         ) || {};
         return _.defaults(config, getDefaultConfig(ct));
       });
