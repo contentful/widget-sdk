@@ -29,26 +29,11 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var editingInterfaces = spaceContext.editingInterfaces;
   var analytics = require('analytics/Analytics');
-  var K = require('utils/kefir');
-  var LD = require('utils/LaunchDarkly');
-  var createNewContentTypeAATest$ = LD.get('create-new-content-type-a-a-test');
 
   // A/B experiment - ps-03-2017-next-step-hints
   var $stateParams = require('$stateParams');
   $scope.showNextStepHint = $stateParams.showNextStepHint;
   // End A/B experiment - ps-03-2017-next-step-hints
-
-
-  // if the user has no existing content types
-  // then track experiment name and variation
-  if (!$scope.spaceContext.contentTypes.length) {
-    analytics.track('experiment:start', {
-      experiment: {
-        id: 'create-new-content-type-a-a-test',
-        variation: K.getValue(createNewContentTypeAATest$)
-      }
-    });
-  }
 
   $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
 
