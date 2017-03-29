@@ -109,14 +109,6 @@ angular.module('contentful')
     }
   };
 
-  // Finish creating space
-  controller.finishedSpaceCreation = function () {
-    var template = controller.newSpace.useTemplate
-      ? controller.newSpace.selectedTemplate
-      : { name: 'Blank' };
-    $scope.dialog.confirm(template);
-  };
-
   function setupTemplates (templates) {
     // Don't need this once the `Blank` template gets removed from Contentful
     controller.templates = _.reduce(templates, function (acc, template) {
@@ -186,7 +178,7 @@ angular.module('contentful')
     .then(function () {
       if (template.name === 'Blank') {
         createApiKey();
-        controller.finishedSpaceCreation();
+        $scope.dialog.confirm();
       } else {
         controller.createTemplateInProgress = true;
         controller.viewState = 'creatingTemplate';
@@ -206,6 +198,11 @@ angular.module('contentful')
       if (!retried) {
         createTemplate(data.template, true);
       }
+    }).then(function () {
+      return spaceContext.publishedCTs.refresh();
+    }).then(function () {
+      // Picked up by the learn page which then refreshes itself
+      $rootScope.$broadcast('spaceTemplateCreated');
     });
   }
 

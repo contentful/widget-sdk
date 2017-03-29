@@ -106,7 +106,7 @@ angular.module('contentful')
 
   initLearnPage();
   // Refresh after new space creation as content types and entries might have been created
-  $scope.$on('reloadEntries', initLearnPage);
+  $scope.$on('spaceTemplateCreated', initLearnPage);
 
   // Clicking `Use the API` goes to the delivery API key if there is exactly
   // one otherwise API home
