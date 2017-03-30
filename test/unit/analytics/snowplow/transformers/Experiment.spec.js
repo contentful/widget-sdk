@@ -7,7 +7,8 @@ describe('Experiment transformer', function () {
     this.data = {
       experiment: {
         id: 'experiment',
-        variation: true
+        variation: true,
+        interaction_context: 'test'
       },
       organizationId: 'org',
       spaceId: 'space',
@@ -32,6 +33,7 @@ describe('Experiment transformer', function () {
       expect(experiment.data).toEqual({
         experiment_id: this.data.experiment.id,
         variation: this.data.experiment.variation,
+        interaction_context: this.data.experiment.interaction_context,
         action: 'action',
         executing_user_id: this.data.userId,
         organization_id: this.data.organizationId,
