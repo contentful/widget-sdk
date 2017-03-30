@@ -51,7 +51,8 @@ angular.module('contentful')
     'custom_extension_selected'
   ],
   experiment: [
-    'start'
+    'start',
+    'interaction'
   ],
   entry_editor: [
     'state_changed',
