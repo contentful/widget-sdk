@@ -5,6 +5,7 @@
 Create a test via the LaunchDarkly(LD) UI for the environment you are interested in. Then, in the directive you are running the A/B test, import `utils/LaunchDarkly` and use the `get` method to get the test stream to which you can add a handler. This handler will receive the test variation values if/as they change.
 
 ```js
+// Begin A/B experiment code - teamname-mm-yy-test-name
 var K = require('utils/kefir');
 var LD = require('utils/LaunchDarkly');
 var someTest$ = LD.get('some-test');
@@ -16,8 +17,10 @@ K.onValueScope($scope, someTest$, function (showTest) {
 	  // control code
 	}
 });
+// End A/B experiment code - teamname-mm-yy-test-name
 ```
 
+The test code should _always_ be bound by comments in the format shown above to aid cleanup once the test is finished.
 
 ## Terminology
 
