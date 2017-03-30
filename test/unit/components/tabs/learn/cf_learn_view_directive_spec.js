@@ -34,7 +34,6 @@ describe('cfLearnView directive', function () {
         }
       });
       $provide.value('$state', stubs.$state);
-      $provide.stubLaunchDarkly();
     });
 
     $rootScope = this.$inject('$rootScope');
