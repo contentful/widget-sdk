@@ -57,37 +57,6 @@
               ng-if="createSpace.newSpace.errors.fields.default_locale")
               | {{createSpace.newSpace.errors.fields.default_locale}}
 
-        //- A/B experiment - onboarding-invite-users
-        .cfnext-form__field(ng-if="createSpace.showInviteUserTest")
-          label(for="newspace-invite")
-            strong Invite people
-            span.create-new-space__form__label-description(
-              style="display: block")
-              | Let's get this project off the ground! Invite teammates to your space - your plan includes up to {{createSpace.userLimit}} users.
-          input.cfnext-form__input--full-size(
-            ng-model="createSpace.email"
-            ng-keypress="createSpace.handleInviteUserKeyPress($event)"
-            type="email"
-            autocomplete="off"
-            id="newspace-invite"
-            placeholder="Enter email address and hit enter...")
-          div(ng-show="createSpace.usersToInvite.length")
-            p.cfnext-form__hint
-              | We'll send them an email invite. They will be thrilled!
-            ul.pill-list(
-              style="margin-top: 10px")
-              li.pill-item(
-                ng-repeat="item in createSpace.usersToInvite track by $index")
-                button.pill-item__remove(
-                  aria-label="remove"
-                  type="button"
-                  ng-hide="isDisabled"
-                  ng-disabled="isDisabled"
-                  ng-click="createSpace.removeUser($index)")
-                  cf-icon(name="close")
-                | {{ item }}
-        //- End of A/B experiment
-
         .cfnext-form__field(ng-show="createSpace.newSpace.errors.form")
           .cfnext-form__field-error
             | {{createSpace.newSpace.errors.form}}
@@ -187,4 +156,3 @@
         ng-disabled="createSpace.createTemplateInProgress"
         ng-click="createSpace.finishedSpaceCreation()")
         | Get started
-
