@@ -53,8 +53,6 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
   var $rootScope = $injector.get('$rootScope');
   var modalDialog = $injector.get('modalDialog');
   var spaceContext = $injector.get('spaceContext');
-  var spaceMembershipRepo =
-    $injector.get('SpaceMembershipRepository').getInstance(spaceContext.endpoint);
   var listHandler = $injector.get('UserListHandler').create();
   var stringUtils = $injector.get('stringUtils');
   var notification = $injector.get('notification');
@@ -117,7 +115,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
       user: user,
       input: {},
       removeUser: Command.create(function () {
-        return spaceMembershipRepo.remove(user.membership)
+        return spaceContext.memberships.remove(user.membership)
         .then(reload)
         .then(function () {
           notification.info('User successfully removed from this space.');
@@ -170,7 +168,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
         method = 'changeRoleToAdmin';
       }
 
-      return spaceMembershipRepo[method](user.membership, roleId);
+      return spaceContext.memberships[method](user.membership, roleId);
     }
   }
 
@@ -204,7 +202,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
         method = 'inviteAdmin';
       }
 
-      return spaceMembershipRepo[method](data.mail, data.roleId);
+      return spaceContext.memberships[method](data.mail, data.roleId);
     }
 
     function handleSuccess () {
@@ -223,7 +221,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
         scope.backendMessage = null;
       } else if (isForbidden(res)) {
         scope.taken = null;
-        scope.backendMessage = res.body.message;
+        scope.backendMessage = res.data.message;
       } else {
         ReloadNotification.basicErrorHandler();
         scope.dialog.confirm();
@@ -231,15 +229,15 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
     }
 
     function isTaken (res) {
-      var errors = dotty.get(res, 'body.details.errors', []);
+      var errors = dotty.get(res, 'data.details.errors', []);
       var errorNames = _.map(errors, 'name');
       return errorNames.indexOf('taken') > -1;
     }
 
     function isForbidden (res) {
       return (
-        dotty.get(res, 'body.sys.id') === 'Forbidden' &&
-        _.isString(dotty.get(res, 'body.message'))
+        dotty.get(res, 'data.sys.id') === 'Forbidden' &&
+        _.isString(dotty.get(res, 'data.message'))
       );
     }
 

@@ -10,7 +10,6 @@ angular.module('contentful').factory('createRoleRemover', ['$injector', function
   var Command = $injector.get('command');
   var spaceContext = $injector.get('spaceContext');
   var roleRepo = $injector.get('RoleRepository').getInstance(spaceContext.space);
-  var spaceMembershipRepo = $injector.get('SpaceMembershipRepository').getInstance(spaceContext.endpoint);
 
   return function createRoleRemover (listHandler, doneFn) {
 
@@ -59,7 +58,7 @@ angular.module('contentful').factory('createRoleRemover', ['$injector', function
         }
 
         var promises = _.map(memberships, function (membership) {
-          return spaceMembershipRepo[method](membership, moveToRoleId);
+          return spaceContext.memberships[method](membership, moveToRoleId);
         });
 
         return $q.all(promises).then(function () {

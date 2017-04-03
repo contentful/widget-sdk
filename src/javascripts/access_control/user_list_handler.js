@@ -5,7 +5,6 @@ angular.module('contentful')
   var $q = require('$q');
   var spaceContext = require('spaceContext');
   var RoleRepository = require('RoleRepository');
-  var SpaceMembershipRepository = require('SpaceMembershipRepository');
   var fetchAll = require('data/CMA/FetchAll').fetchAll;
 
   var ADMIN_ROLE_ID = '__cf_builtin_admin';
@@ -41,7 +40,7 @@ angular.module('contentful')
 
     function reset () {
       return $q.all({
-        memberships: SpaceMembershipRepository.getInstance(spaceContext.endpoint).getAll(),
+        memberships: spaceContext.memberships.getAll(),
         roles: RoleRepository.getInstance(spaceContext.space).getAll(),
         users: getAllUsers()
       }).then(processData);
