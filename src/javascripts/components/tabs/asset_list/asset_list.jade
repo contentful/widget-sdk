@@ -17,7 +17,7 @@ header.workbench-header
       search-content-type="assetContentType"
       placeholder="Type to search. Press the down arrow key for help.")
 
-    .search-results-position(cf-search-results-position paginator="searchController.paginator" ng-hide="!searchController.paginator.getTotal()")
+    .search-results-position(cf-search-results-position paginator="paginator" ng-hide="!paginator.getTotal()")
 
   .workbench-header__actions(
     ng-show="!showNoAssetsAdvice() && !shouldHide('createAsset')")
@@ -44,8 +44,8 @@ header.workbench-header
     cf-view-menu="uiConfig.assetListViews")
 
   .workbench-main__right-content
-    .search-results__count(ng-show="searchController.paginator.getTotal() > 0")
-      +pluralize-entity("asset", "searchController.paginator.getTotal()", "found")
+    .search-results__count(ng-show="paginator.getTotal() > 0")
+      +pluralize-entity("asset", "paginator.getTotal()", "found")
     .table(ng-show="assets.length && !isEmpty")
       .table__head
         table
@@ -137,9 +137,9 @@ header.workbench-header
                 span(ng-class="entityStatus.getClassname(asset)")
                   | {{entityStatus.getLabel(asset) || '&nbsp;'}}
 
-    cf-search-results-paginator(paginator="searchController.paginator" pages="7")
+    cf-search-results-paginator(paginator="paginator" pages="7")
 
-    +no-search-results("!assets.length || isEmpty", "context.view.searchTerm")
+    +no-search-results("hasQuery && !paginator.getTotal() && !context.isSearching || isEmpty", "context.view.searchTerm")
 
 .workbench-main.x--content(ng-show="showNoAssetsAdvice()")
   include ./no_assets_advice
