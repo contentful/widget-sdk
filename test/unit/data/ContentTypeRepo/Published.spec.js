@@ -1,3 +1,4 @@
+import sinon from 'npm:sinon';
 import * as K from 'helpers/mocks/kefir';
 
 describe('data/ContentTypeRepo/Published', function () {
@@ -63,7 +64,7 @@ describe('data/ContentTypeRepo/Published', function () {
       ]);
       this.repo.refresh();
       this.$apply();
-      this.space.getPublishedContentTypes.reset();
+      this.space.getPublishedContentTypes.resetHistory();
     });
 
     it('returns existing ct and does not trigger refresh', function () {

@@ -1,4 +1,4 @@
-'use strict';
+import sinon from 'npm:sinon';
 
 describe('Promised loader service', function () {
   var loader, stubs, $rootScope, $q;
@@ -16,7 +16,7 @@ describe('Promised loader service', function () {
       $rootScope                = $injector.get('$rootScope');
       $q                        = $injector.get('$q');
       loader = new PromisedLoader();
-      sinon.stub(loader, '_loadPromise', delayedInvocationStub(loader._loadPromise));
+      loader._loadPromise = delayedInvocationStub(loader._loadPromise);
 
       host = {
         methodName: stubs.method

@@ -1,4 +1,4 @@
-'use strict';
+import sinon from 'npm:sinon';
 
 describe('spaceContext', function () {
 
@@ -19,8 +19,8 @@ describe('spaceContext', function () {
       space = space || makeSpaceMock();
       this.spaceContext.resetWithSpace(space);
       this.$apply();
-      space.getContentTypes.reset();
-      space.getPublishedContentTypes.reset();
+      space.getContentTypes.resetHistory();
+      space.getPublishedContentTypes.resetHistory();
       return space;
     };
   });
@@ -76,7 +76,7 @@ describe('spaceContext', function () {
     it('creates the user cache', function () {
       const userCache = {};
       const createUserCache = this.$inject('data/userCache');
-      createUserCache.reset().returns(userCache);
+      createUserCache.resetHistory().returns(userCache);
       this.spaceContext.resetWithSpace(SPACE);
       sinon.assert.calledWithExactly(createUserCache, SPACE);
       expect(this.spaceContext.users).toBe(userCache);

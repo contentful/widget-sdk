@@ -1,3 +1,4 @@
+import sinon from 'npm:sinon';
 import * as K from 'helpers/mocks/kefir';
 
 describe('Client Controller', function () {
@@ -138,7 +139,7 @@ describe('Client Controller', function () {
       it('is run five minutes after loading', function () {
         this.clock.tick(5 * A_SECOND);
         this.$apply();
-        this.hasNewVersion.reset();
+        this.hasNewVersion.resetHistory();
         this.clock.tick(5 * A_MINUTE);
         this.$apply();
         sinon.assert.calledOnce(this.hasNewVersion);
@@ -150,7 +151,7 @@ describe('Client Controller', function () {
 
         this.clock.tick(5 * A_SECOND);
         this.$apply();
-        this.hasNewVersion.reset();
+        this.hasNewVersion.resetHistory();
         this.clock.tick(5 * A_MINUTE);
         this.$apply();
         sinon.assert.notCalled(this.hasNewVersion);
