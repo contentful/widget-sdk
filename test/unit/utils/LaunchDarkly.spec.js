@@ -108,7 +108,7 @@ describe('utils/LaunchDarkly', function () {
     });
   });
 
-  describe('#get(testName)', function () {
+  describe('#get(testName, customQualificationFn)', function () {
     beforeEach(function () {
       this.unqualifiedUser = {
         email: 'mehh@example.com',
@@ -173,6 +173,32 @@ describe('utils/LaunchDarkly', function () {
 
         this.user$.set(this.qualifiedUser);
         this.assertPropVal(propA, 'dude');
+      });
+    });
+
+    describe('when a custom qualification function is provided', function () {
+      beforeEach(function () {
+        client.variation.returns('test');
+        this.user$.set(this.qualifiedUser);
+      });
+
+      it('should get current user as an argument', function () {
+        const propA = this.get('a', user => {
+          return user.organizationMemberships[0].organization.subscription.status === 'paid';
+        });
+        this.assertPropVal(propA, null);
+      });
+
+      it('should qualify/disqualify the user based on it in addition to default qualification criteria', function () {
+        let propA = this.get('a', _ => false);
+        this.assertPropVal(propA, null);
+
+        propA = this.get('a', _ => true);
+        this.assertPropVal(propA, 'test');
+      });
+
+      it('should default to a function that returns true', function () {
+        this.assertPropVal(this.get('a'), 'test');
       });
     });
   });
