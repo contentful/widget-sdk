@@ -116,7 +116,12 @@ export function track (event, data) {
  */
 export function identify (extension) {
   session.user = session.user || {};
-  const user = _.merge(session.user, extension || {});
+  const rawUserData = _.merge(session.user, extension || {});
+
+  // We need to remove the list of organization memberships as this array gets
+  // flattened when it is passed to Intercom and creates a lot of noise
+  const user = _.omit(rawUserData, 'organizationMemberships');
+
   const userId = getSessionData('user.sys.id');
 
   if (userId && user) {

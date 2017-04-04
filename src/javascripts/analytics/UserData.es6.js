@@ -1,5 +1,5 @@
 import cookieStore from 'TheStore/cookieStore';
-import {pickBy, merge, omit} from 'lodash';
+import {pickBy, merge} from 'lodash';
 
 /**
  * @ngdoc service
@@ -18,12 +18,7 @@ import {pickBy, merge, omit} from 'lodash';
  * Sanitizes and extends user data with details
  * specific to the first visit.
  */
-export function prepareUserData (rawData) {
-
-  // We need to remove the list of organization memberships as this array gets
-  // flattened when it is passed to Intercom and creates a lot of noise
-  const userData = omit(rawData, 'organizationMemberships');
-
+export function prepareUserData (userData) {
   if (userData.signInCount === 1) {
     // On first login, send referrer, campaign and A/B test data
     // if it has been set in marketing website cookie
