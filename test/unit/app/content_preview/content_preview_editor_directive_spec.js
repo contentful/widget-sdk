@@ -5,19 +5,16 @@ describe('cfContentPreviewEditor directive', function () {
   let spaceContext, contentPreview, notification, $state;
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
-      $provide.value('spaceContext', spaceContext);
-      $provide.value('accessChecker', {wasForbidden: sinon.stub().returns(false)});
-      $provide.value('notification', notification);
-    });
-    spaceContext = {
-      refreshContentTypes: sinon.stub(),
-      getId: _.constant('sid')
-    };
     notification = {
       info: sinon.stub().returns(),
       warn: sinon.stub().returns()
     };
+    module('contentful/test', function ($provide) {
+      $provide.value('accessChecker', {wasForbidden: sinon.stub().returns(false)});
+      $provide.value('notification', notification);
+    });
+    spaceContext = this.$inject('mocks/spaceContext').init();
+    spaceContext.getId = _.constant('sid');
     contentPreview = this.$inject('contentPreview');
     contentPreview.get = sinon.stub();
     contentPreview.create = sinon.stub();
@@ -72,15 +69,17 @@ describe('cfContentPreviewEditor directive', function () {
   describe('Create new content preview environment', function () {
     beforeEach(function () {
       contentPreview.get.rejects();
-      spaceContext.contentTypes = [{
-        getId: _.constant('ct-1'),
-        getName: _.constant('Ct - 1'),
-        data: {fields:
-          [{apiName: 'field1', type: 'Symbol'}, {apiName: 'field2', type: 'Array'}]
-        }
-      }];
+      spaceContext.publishedCTs.refreshBare.resolves([{
+        sys: {
+          id: 'ct-1'
+        },
+        name: 'Ct - 1',
+        fields: [
+          {apiName: 'field1', type: 'Symbol'},
+          {apiName: 'field2', type: 'Array'}
+        ]
+      }]);
       contentPreview.create.resolves({sys: {id: 'foo'}});
-      spaceContext.refreshContentTypes.resolves();
       this.isNew = true;
     });
 
@@ -187,16 +186,15 @@ describe('cfContentPreviewEditor directive', function () {
       contentPreview.get.resolves(env);
       contentPreview.update.resolves({sys: {id: 'foo'}});
 
-      spaceContext.contentTypes = [{
-        getId: _.constant('foo'),
-        getName: _.constant('Foo'),
-        data: {fields: [{apiName: 'field1'}]}
+      spaceContext.publishedCTs.refreshBare.resolves([{
+        sys: { id: 'foo' },
+        name: 'Foo',
+        fields: [{apiName: 'field1'}]
       }, {
-        getId: _.constant('bar'),
-        getName: _.constant('Bar'),
-        data: {fields: [{apiName: 'field2'}]}
-      }];
-      spaceContext.refreshContentTypes.resolves();
+        sys: { id: 'bar' },
+        name: 'Bar',
+        fields: [{apiName: 'field2'}]
+      }]);
       this.isNew = false;
     });
 

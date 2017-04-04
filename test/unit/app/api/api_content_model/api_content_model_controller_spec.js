@@ -1,58 +1,25 @@
 'use strict';
 
 describe('apiContentModel Controller', function () {
-
-  let scope, spaceContext, accessChecker;
-
   beforeEach(function () {
-    spaceContext = {
-      refreshContentTypes: sinon.stub()
-    };
-    accessChecker = {
-      wasForbidden: sinon.stub()
-    };
+    module('contentful/test');
 
-    module('contentful/test', function ($provide) {
-      $provide.value('accessChecker', accessChecker);
-      $provide.value('spaceContext', spaceContext);
-    });
+    this.spaceContext = this.$inject('mocks/spaceContext').init();
 
     const $rootScope = this.$inject('$rootScope');
     const $controller = this.$inject('$controller');
 
-    this.makeContentType = function (id) {
-      return {
-        getId: function () {
-          return id;
-        }
-      };
-    };
-
-    this.setup = function () {
-      spaceContext.refreshContentTypes.resolves();
-      accessChecker.wasForbidden.resolves(false);
-      scope = $rootScope.$new();
+    this.create = function () {
+      const scope = $rootScope.$new();
       $controller('apiContentModelController', {$scope: scope});
       scope.$apply();
+      return scope;
     };
   });
 
-  afterEach(function () {
-    spaceContext = accessChecker = scope = null;
-  });
-
-  it('displays content types', function () {
-    spaceContext.contentTypes = [
-      this.makeContentType('foo'),
-      this.makeContentType('bar')
-    ];
-    this.setup();
-    expect(scope.contentTypes.length).toBe(2);
-  });
-
-  it('displays empty state if there are no content types', function () {
-    spaceContext.contentTypes = [];
-    this.setup();
-    expect(scope.contentTypes.length).toBe(0);
+  it('assigns content types', function () {
+    this.spaceContext.publishedCTs.refresh.resolves('CTS');
+    const scope = this.create();
+    expect(scope.contentTypes).toBe('CTS');
   });
 });

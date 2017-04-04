@@ -127,8 +127,28 @@ describe('data/ContentTypeRepo/Published', function () {
       yield this.repo.refresh();
       expect(this.idValues[0]).toEqual(['C', 'A', 'B']);
     });
+
+    it('returns filtered content types', function* () {
+      this.space.getPublishedContentTypes.resolves([
+        makeCtMock('A'),
+        makeCtMock('B', {isDeleted: true}),
+        makeCtMock('C')
+      ]);
+      const cts = yield this.repo.refresh();
+      expect(cts.map((ct) => ct.getId())).toEqual(['A', 'C']);
+    });
   });
 
+  describe('#refreshBare()', function () {
+    it('returns bare content type', function* () {
+      this.space.getPublishedContentTypes.resolves([
+        makeCtMock('A'),
+        makeCtMock('B')
+      ]);
+      const cts = yield this.repo.refreshBare();
+      expect(cts.map((ct) => ct.sys.id)).toEqual(['A', 'B']);
+    });
+  });
 
   describe('#publish()', function () {
     it('calls #publish() on content type', function* () {

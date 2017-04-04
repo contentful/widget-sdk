@@ -23,8 +23,6 @@ angular.module('contentful')
   var accessChecker = require('accessChecker');
   var OrganizationList = require('OrganizationList');
 
-  var createSpaceDialog;
-
   // Fetch user and set greeting
   K.onValueScope($scope, tokenStore.user$, function (user) {
     controller.user = user;
@@ -40,13 +38,16 @@ angular.module('contentful')
   });
 
   // open the create space dialog if there are no spaces and user has access
-  var promptCreateSpace$ = K.combineProperties([tokenStore.spaces$, accessChecker.canCreateSpace$], function (spaces, canCreate) {
+  var shouldOpenCreateSpace$ = K.combineProperties([tokenStore.spaces$, accessChecker.canCreateSpace$], function (spaces, canCreate) {
     return _.isEqual(spaces, []) && canCreate;
   });
 
-  K.onValueScope($scope, promptCreateSpace$, function (shouldOpen) {
-    if (shouldOpen && !createSpaceDialog) {
-      createSpaceDialog = CreateSpace.showDialog();
+  // Emits 'true' only once
+  var openCreateSpace$ = K.holdWhen(shouldOpenCreateSpace$, _.identity);
+
+  K.onValueScope($scope, openCreateSpace$, function (shouldOpen) {
+    if (shouldOpen) {
+      CreateSpace.showDialog();
     }
   });
 
