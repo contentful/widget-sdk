@@ -18,7 +18,6 @@ angular.module('contentful')
 .factory('spaceContext', ['require', function (require) {
   var $parse = require('$parse');
   var $q = require('$q');
-  var $timeout = require('$timeout');
   var ReloadNotification = require('ReloadNotification');
   var TheLocaleStore = require('TheLocaleStore');
   var createUserCache = require('data/userCache');
@@ -49,21 +48,6 @@ angular.module('contentful')
     .then(refreshContentTypes, ReloadNotification.apiErrorHandler)
     .then(extraHandler || _.identity);
   });
-
-  var waiter = {
-    reset: function () {
-      this.attempts = _.range(5);
-      return this;
-    },
-    canWait: function () {
-      return _.isNumber(this.attempts.pop());
-    },
-    waitAndRetry: function () {
-      return $timeout(function () {
-        spaceContext.refreshContentTypesUntilChanged();
-      }, 1500);
-    }
-  }.reset();
 
   var spaceContext = {
     /**
@@ -176,37 +160,6 @@ angular.module('contentful')
         return requestContentTypes();
       } else {
         throw new Error('Cannot refresh content types: no space in the context.');
-      }
-    },
-
-    /**
-     * @ngdoc method
-     * @name spaceContext#refreshContentTypesUntilChanged
-     * @description
-     * Refreshes all Content Type related information in the context.
-     * If refresh doesn't change state of content types, it tries
-     * again (with limit of 5 tries and 1500ms of delay between requests).
-     *
-     * This is needed because when a content type is created publishing it is
-     * not immediately possible. We use the list enpoint as a proxy to determine
-     * when the backend has processed the created content type.
-     *
-     * TODO we should remove this method and instead introduce a special purpose
-     * publish method for CTs that retries when it fails for CTs not yet
-     * processed by the backend.
-     */
-    refreshContentTypesUntilChanged: function () {
-      var before = getContentTypeIds(spaceContext.contentTypes);
-      return requestContentTypes.hasToFinish(retryIfNotChanged);
-
-      function retryIfNotChanged (response) {
-        var after = getContentTypeIds(spaceContext.contentTypes);
-        if (after === before && waiter.canWait()) {
-          return waiter.waitAndRetry();
-        } else {
-          waiter.reset();
-          return response;
-        }
       }
     },
 
@@ -449,12 +402,6 @@ angular.module('contentful')
 
   resetMembers(spaceContext);
   return spaceContext;
-
-  function getContentTypeIds (cts) {
-    return _(cts).map(function (ct) {
-      return ct.getId();
-    }).sortBy().join(',');
-  }
 
   function refreshContentTypes (contentTypes) {
     spaceContext.contentTypes = filterAndSortContentTypes(contentTypes);

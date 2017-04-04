@@ -117,9 +117,4 @@ angular.module('contentful')
       return response && response.total > 0;
     });
   }
-
-  $scope.$on('reloadEntries', function () {
-    $scope.updateEntries();
-  });
-
 }]);

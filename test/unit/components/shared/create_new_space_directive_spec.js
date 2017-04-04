@@ -49,12 +49,6 @@ describe('cfCreateNewSpace directive', function () {
       },
       OrganizationList: {
         getAll: sinon.stub()
-      },
-      spaceContext: {
-        getData: sinon.stub(),
-        space: {
-          createDeliveryApiKey: sinon.stub()
-        }
       }
     };
 
@@ -69,10 +63,16 @@ describe('cfCreateNewSpace directive', function () {
       $provide.value('tokenStore', stubs.tokenStore);
       $provide.value('$state', stubs.state);
       $provide.value('OrganizationList', stubs.OrganizationList);
-      $provide.value('spaceContext', stubs.spaceContext);
       $provide.removeDirectives('cfIcon');
       $provide.stubLaunchDarkly();
     });
+
+    this.spaceContext = this.$inject('mocks/spaceContext').init();
+
+    this.spaceContext.getData = sinon.stub();
+    this.spaceContext.space = {
+      createDeliveryApiKey: sinon.stub()
+    };
 
     stubs.spaceTemplateLoader.getTemplatesList.resolves(true);
 
@@ -262,7 +262,7 @@ describe('cfCreateNewSpace directive', function () {
           stubs.tokenStore.refresh.resolves();
           stubs.client.createSpace.resolves(space);
           stubs.tokenStore.getSpace.resolves(space);
-          stubs.spaceContext.space.createDeliveryApiKey.resolves();
+          this.spaceContext.space.createDeliveryApiKey.resolves();
           stubs.spaceTemplateLoader.getTemplate.resolves();
           this.setupDirective();
         });
@@ -303,11 +303,11 @@ describe('cfCreateNewSpace directive', function () {
           });
 
           it('creates one Delivery API key', function () {
-            sinon.assert.calledOnce(stubs.spaceContext.space.createDeliveryApiKey);
+            sinon.assert.calledOnce(this.spaceContext.space.createDeliveryApiKey);
           });
         });
 
-        describe('template was selected', function () {
+        describe('creating space from template', function () {
           beforeEach(function () {
             stubs.spaceTemplateCreator.getCreator.returns({
               create: stubs.spaceTemplateCreator.create.resolves()
@@ -316,7 +316,8 @@ describe('cfCreateNewSpace directive', function () {
             controller.newSpace.useTemplate = true;
             controller.newSpace.selectedTemplate = {name: 'Blog'};
             controller.requestSpaceCreation();
-            $rootScope.$digest();
+            sinon.stub($rootScope, '$broadcast');
+            this.$apply();
           });
 
           it('refreshes token', function () {
@@ -330,6 +331,14 @@ describe('cfCreateNewSpace directive', function () {
               'space:create',
               {templateName: 'Blog'}
             );
+          });
+
+          it('triggers a content type refresh', function () {
+            sinon.assert.called(this.spaceContext.publishedCTs.refresh);
+          });
+
+          it('emits "spaceTemplateCreated" event', function () {
+            sinon.assert.calledWith($rootScope.$broadcast, 'spaceTemplateCreated');
           });
         });
       });
