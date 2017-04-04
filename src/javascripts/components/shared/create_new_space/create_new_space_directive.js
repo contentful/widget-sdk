@@ -56,10 +56,11 @@ angular.module('contentful')
     );
   } else {
     // TODO This should never happen, but unfortunately it does
-    // We need to figure out why and fix it
+    // We need to figure out why and fix it. Maybe when this dialog is
+    // triggered from the organizations page
     logger.logError('No writable organizations for space creation', {
       data: {
-        writableOrganizations: controller.writableOrganizations
+        organizations: controller.organizations
       }
     });
   }
