@@ -11,7 +11,9 @@ angular.module('contentful')
   var K = require('utils/kefir');
   var N = require('app/entity_editor/Notifications');
   var Notification = N.Notification;
-  var caseof = require('libs/sum-types/caseof-eq').caseof;
+  var SumTypes = require('libs/sum-types');
+  var caseof = SumTypes.caseofEq;
+  var otherwise = SumTypes.otherwise;
   var EntityState = require('data/CMA/EntityState');
   var State = EntityState.State;
   var Action = EntityState.Action;
@@ -153,7 +155,7 @@ angular.module('contentful')
       var canMoveToDraft = caseof(controller.current, [
         ['archived', _.constant(permissions.can('unarchive'))],
         ['changes', 'published', _.constant(permissions.can('unpublish'))],
-        ['draft', _.constant(true)]
+        [otherwise, _.constant(true)]
       ]);
 
       return !canDelete || !canMoveToDraft;
