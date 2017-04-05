@@ -170,6 +170,10 @@ angular.module('contentful')
      * Returns a property that always has the current value at the given
      * path of the document.
      *
+     * @deprecated
+     * TODO replace this with specialized field access like, `getFieldValue(fid,
+     * locale)`.
+     *
      * @param {string[]} path
      * @returns {Property<any>}
      */
@@ -300,13 +304,22 @@ angular.module('contentful')
       spaceEndpoint
     );
 
-    // We cannot simply use `valuePropertiesAt([])` because the SJS
-    // document does not track the 'updatedAt' property.
+    /**
+     * @ngdoc property
+     * @name Document#data$
+     * @type Property<API.Entity>
+     * @description
+     * Holds the current entity data, i.e. the 'sys' and 'fields' properties.
+     *
+     * Note that we cannot simply use `valuePropertiesAt([])` because this will
+     * represents the raw SJS snapshot which does not have 'sys.updatedAt'.
+     */
     var data$ = K.combinePropertiesObject({
       sys: sysProperty,
       fields: valuePropertyAt(['fields'])
     });
 
+    // Sync the data to the entity instance.
     // The entity instance is unique for the ID. Other views will share
     // the same instance and not necessarily load the data. This is why
     // we need to make sure that we keep it up date.
@@ -314,6 +327,8 @@ angular.module('contentful')
       entity.data = data;
       if (data.sys.deletedVersion) {
         entity.setDeleted();
+        // We need to remove the `data` property. Otherwise `entity.isDeleted()`
+        // will return `false`.
         delete entity.data;
       }
     });
@@ -362,6 +377,7 @@ angular.module('contentful')
 
       valuePropertyAt: memoizedValuePropertyAt,
       sysProperty: sysProperty,
+      data$: data$,
 
       // TODO only expose presence
       collaboratorsFor: presence.collaboratorsFor,
