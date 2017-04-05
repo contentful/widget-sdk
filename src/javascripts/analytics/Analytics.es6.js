@@ -114,7 +114,7 @@ export function track (event, data) {
  * Sets or extends session user data. Identifying
  * data is also set on Segment's client.
  */
-export function identify (extension) {
+function identify (extension) {
   session.user = session.user || {};
   const rawUserData = _.merge(session.user, extension || {});
 
