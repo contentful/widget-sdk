@@ -58,6 +58,12 @@ This is a list of all the guides for developing the Contentful web application.
 * How routing in the app works
 * How to change and add new routes and views
 
+## [Technical Debt](./technical-debt.md)
+
+* Libraries and modules to avoid
+* Code hotspots that need constant improvement
+* Deprecated programming patterns
+
 ## [Testing](./testing.md)
 
 * How to run tests
