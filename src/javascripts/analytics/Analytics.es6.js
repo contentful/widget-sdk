@@ -120,7 +120,9 @@ function identify (extension) {
 
   // We need to remove the list of organization memberships as this array gets
   // flattened when it is passed to Intercom and creates a lot of noise
-  const user = _.omit(rawUserData, 'organizationMemberships');
+  const user = _.omitBy(rawUserData, function (val) {
+    return _.isArray(val) || _.isObject(val);
+  });
 
   const userId = getSessionData('user.sys.id');
 
