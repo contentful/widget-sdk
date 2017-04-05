@@ -56,13 +56,46 @@ angular.module('contentful')
     );
   } else {
     // TODO This should never happen, but unfortunately it does
-    // We need to figure out why and fix it
+    // We need to figure out why and fix it. Maybe when this dialog is
+    // triggered from the organizations page
     logger.logError('No writable organizations for space creation', {
       data: {
-        writableOrganizations: controller.writableOrganizations
+        organizations: controller.organizations
       }
     });
   }
+
+  // Begin A/B Experiment code: ps-03-2017-example-space-impact
+  var K = require('utils/kefir');
+  var LD = require('utils/LaunchDarkly');
+  var firstName = K.getValue(tokenStore.user$).firstName;
+  var userHasSpaces = !!K.getValue(tokenStore.spaces$).length;
+  var $timeout = require('$timeout');
+  var debounce = require('debounce');
+  var debouncedDialogCenter = debounce(function () {
+    $scope.dialog._centerOnBackground();
+  }, 100);
+  var exampleSpaceImpactTest$ = LD.get('ps-03-2017-example-space-impact', _.constant(!userHasSpaces));
+
+  K.onValueScope($scope, exampleSpaceImpactTest$, function (variation) {
+    controller.exampleSpaceTest = {};
+    controller.exampleSpaceTest.isActive = !!variation;
+    controller.exampleSpaceTest.firstName = firstName;
+
+    if (variation) {
+      controller.newSpace.useTemplate = true;
+    }
+
+    $timeout(debouncedDialogCenter, 0);
+
+    analytics.track('experiment:start', {
+      experiment: {
+        id: 'ps-03-2017-example-space-impact',
+        variation: variation
+      }
+    });
+  });
+  // End A/B experiment code: ps-03-2017-example-space-impact
 
   // Load the list of space templates
   controller.templates = [];

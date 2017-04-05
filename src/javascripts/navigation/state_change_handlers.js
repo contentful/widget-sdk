@@ -13,14 +13,15 @@ angular.module('cf.app')
  * @usage[js]
  * $injector.get('navigation/stateChangeHandlers').setup()
  */
-.factory('navigation/stateChangeHandlers', ['$injector', function ($injector) {
-  var $rootScope = $injector.get('$rootScope');
-  var $state = $injector.get('$state');
-  var contextHistory = $injector.get('contextHistory');
-  var logger = $injector.get('logger');
-  var modalDialog = $injector.get('modalDialog');
-  var analytics = $injector.get('analytics/Analytics');
-  var spaceContext = $injector.get('spaceContext');
+.factory('navigation/stateChangeHandlers', ['require', function (require) {
+  var $rootScope = require('$rootScope');
+  var $state = require('$state');
+  var contextHistory = require('contextHistory');
+  var logger = require('logger');
+  var modalDialog = require('modalDialog');
+  var analytics = require('analytics/Analytics');
+  var spaceContext = require('spaceContext');
+  var $location = require('$location');
 
   // Result of confirmation dialog
   var navigationConfirmed = false;
@@ -42,9 +43,11 @@ angular.module('cf.app')
   }
 
   function stateChangeSuccessHandler (_event, toState, toStateParams, fromState, fromStateParams) {
-    logger.leaveBreadcrumb('Enter state', _.extend({
-      state: toState
-    }, toStateParams));
+    logger.leaveBreadcrumb('Enter state', {
+      state: toState && toState.name,
+      // This is the limit for breadcrumb values
+      location: $location.path().substr(0, 140)
+    });
 
     // we do it here instead of "onExit" hook in "spaces" state
     // using the latter caused problems when redirecting with

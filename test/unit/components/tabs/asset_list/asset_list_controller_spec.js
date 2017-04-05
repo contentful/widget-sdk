@@ -358,7 +358,7 @@ describe('Asset List Controller', function () {
     let files, entity;
     beforeEach(function () {
       files = [{}, {}];
-      scope.searchController.resetAssets = sinon.stub();
+      scope.searchController.resetAssets = sinon.stub().resolves();
       scope.spaceContext.space.getDefaultLocale = sinon.stub();
       scope.spaceContext.space.getDefaultLocale.returns({code: 'en-US'});
       scope.spaceContext.space.createAsset = sinon.stub();
@@ -401,26 +401,29 @@ describe('Asset List Controller', function () {
   describe('#showNoAssetsAdvice', function () {
     beforeEach(function () {
       scope.context.view = {};
+      this.assertShowNoAssetsAdvice = function (total = 0, searchTerm = null, isSearching = false, value = true) {
+        scope.searchController.paginator.setTotal(total);
+        scope.context.view.searchTerm = searchTerm;
+        scope.$digest();
+        scope.context.isSearching = isSearching;
+        expect(scope.showNoAssetsAdvice()).toBe(value);
+      };
     });
 
-    it('is true when there are no entries', function () {
-      scope.assets = null;
-      expect(scope.showNoAssetsAdvice()).toBe(true);
-      scope.assets = [];
-      expect(scope.showNoAssetsAdvice()).toBe(true);
+    it('is true when there are no entries, no search term and not searching', function () {
+      this.assertShowNoAssetsAdvice();
+    });
+
+    it('is false when there are entries', function () {
+      this.assertShowNoAssetsAdvice(1, '', false, false);
     });
 
     it('is false when there is a search term', function () {
-      scope.assets = null;
-      scope.context.view.searchTerm = 'foo';
-      expect(scope.showNoAssetsAdvice()).toBe(false);
+      this.assertShowNoAssetsAdvice(0, 'foo', false, false);
     });
 
     it('is false when the view is loading', function () {
-      scope.assets = [{}];
-      scope.context.view.searchTerm = 'foo';
-      scope.context.isSearching = true;
-      expect(scope.showNoAssetsAdvice()).toBe(false);
+      this.assertShowNoAssetsAdvice(0, '', true, false);
     });
   });
 });

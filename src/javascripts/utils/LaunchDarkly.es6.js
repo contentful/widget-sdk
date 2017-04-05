@@ -89,9 +89,12 @@ function isQualifiedUser ({organizationMemberships}) {
  * value for the test as it is on Launch Darkly servers.
  *
  * @param {String} testName
+ * @param {function} [customQualificationFn = _ => true] - An optional fn that
+ * receives the current user and returns a bool. It is applied along with default
+ * qualification criteria.
  * @returns {utils/kefir.Property<boolean>}
  */
-export function get (testName) {
+export function get (testName, customQualificationFn = _ => true) {
   const testVal$ = mergeValues([
     fromEvents(client, 'ready'),
     fromEvents(client, `change:${testName}`)
@@ -104,7 +107,7 @@ export function get (testName) {
     // `null`
     const currentUser = getValue(user$);
 
-    if (currentUser && isQualifiedUser(currentUser)) {
+    if (currentUser && isQualifiedUser(currentUser) && customQualificationFn(currentUser)) {
       return client.variation(testName, DEFAULT_VAL);
     } else {
       return DEFAULT_VAL;
