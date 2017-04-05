@@ -1,4 +1,4 @@
-'use strict';
+import sinon from 'npm:sinon';
 
 describe('ContentType Actions Controller', function () {
   let controller, scope, $q, logger, notification, accessChecker, ReloadNotification, spaceContext;
@@ -65,7 +65,7 @@ describe('ContentType Actions Controller', function () {
       space.getEntries = sinon.stub().resolves([]);
 
       this.modalDialog = this.$inject('modalDialog');
-      sinon.stub(this.modalDialog, 'open', function (params) {
+      sinon.stub(this.modalDialog, 'open').callsFake((params) => {
         if (params.scope && params.scope.delete) {
           params.scope.delete.execute();
         }
@@ -385,7 +385,7 @@ describe('ContentType Actions Controller', function () {
     }
 
     beforeEach(function () {
-      sinon.stub(this.$inject('modalDialog'), 'open', function (params) {
+      sinon.stub(this.$inject('modalDialog'), 'open').callsFake((params) => {
         if (params.scope && params.scope.duplicate) {
           _.extend(params.scope.contentTypeMetadata, {name: 'test', id: 'test'});
           const confirm = sinon.spy();
@@ -400,18 +400,18 @@ describe('ContentType Actions Controller', function () {
         }
       });
 
-      sinon.stub(spaceContext.space, 'newContentType', function (data) {
+      sinon.stub(spaceContext.space, 'newContentType').callsFake((data) => {
         const ct = this.cfStub.contentType(space, 'ct-id', 'ct-name');
         _.extend(ct.data, data);
         ct.save = sinon.stub().resolves(ct);
         ct.publish = sinon.stub().resolves(ct);
         return ct;
-      }.bind(this));
+      });
 
       scope.editingInterface = {sys: {}, controls: []};
       spaceContext.editingInterfaces.save = sinon.stub().resolves();
 
-      sinon.stub(spaceContext.editingInterfaces, 'get', function (ctData) {
+      sinon.stub(spaceContext.editingInterfaces, 'get').callsFake((ctData) => {
         return $q.resolve({
           sys: { version: 1 },
           controls: _.map(ctData.fields, function (field) {

@@ -1,4 +1,4 @@
-'use strict';
+import sinon from 'npm:sinon';
 
 angular.module('contentful/mocks')
 
