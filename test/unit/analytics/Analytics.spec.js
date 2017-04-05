@@ -80,7 +80,11 @@ describe('Analytics', function () {
       sinon.assert.notCalled(this.segment.identify);
       sinon.assert.notCalled(this.Snowplow.identify);
       this.analytics.enable(this.userData);
-      sinon.assert.calledWith(this.segment.identify, 'userid', this.userData);
+
+      sinon.assert.calledWith(this.segment.identify, 'userid', {
+        firstName: 'Hans',
+        lastName: 'Wurst'
+      });
       sinon.assert.calledWith(this.Snowplow.identify, 'userid');
     });
   });

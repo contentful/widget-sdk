@@ -114,13 +114,15 @@ export function track (event, data) {
  * Sets or extends session user data. Identifying
  * data is also set on Segment's client.
  */
-export function identify (extension) {
+function identify (extension) {
   session.user = session.user || {};
   const rawUserData = _.merge(session.user, extension || {});
 
   // We need to remove the list of organization memberships as this array gets
   // flattened when it is passed to Intercom and creates a lot of noise
-  const user = _.omit(rawUserData, 'organizationMemberships');
+  const user = _.omitBy(rawUserData, function (val) {
+    return _.isArray(val) || _.isObject(val);
+  });
 
   const userId = getSessionData('user.sys.id');
 
