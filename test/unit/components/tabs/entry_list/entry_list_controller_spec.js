@@ -1,4 +1,4 @@
-'use strict';
+import sinon from 'npm:sinon';
 
 describe('Entry List Controller', function () {
   let scope, spaceContext;
@@ -122,7 +122,7 @@ describe('Entry List Controller', function () {
       entries = createEntries(30);
       scope.$apply();
       spaceContext.space.getEntries.resolve(entries);
-      spaceContext.space.getEntries.reset();
+      spaceContext.space.getEntries.resetHistory();
     });
 
     it('sets loading flag', function () {

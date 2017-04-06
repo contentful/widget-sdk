@@ -820,9 +820,6 @@
             }
           }
         },
-        "util": {
-          "version": "0.10.3"
-        },
         "vm-browserify": {
           "version": "0.0.4",
           "dependencies": {
@@ -938,6 +935,9 @@
     "detect-newline": {
       "version": "2.1.0"
     },
+    "diff": {
+      "version": "3.2.0"
+    },
     "dottie": {
       "version": "1.1.0"
     },
@@ -1010,7 +1010,7 @@
       "version": "0.1.4"
     },
     "formatio": {
-      "version": "1.1.1"
+      "version": "1.2.0"
     },
     "fs-exists-sync": {
       "version": "0.1.0"
@@ -2160,7 +2160,7 @@
       "version": "4.5.0"
     },
     "lolex": {
-      "version": "1.3.2"
+      "version": "1.6.0"
     },
     "longest": {
       "version": "1.0.1"
@@ -2234,6 +2234,9 @@
     },
     "ms": {
       "version": "0.7.1"
+    },
+    "native-promise-only": {
+      "version": "0.8.1"
     },
     "natives": {
       "version": "1.1.0"
@@ -2332,6 +2335,9 @@
     },
     "path-root-regex": {
       "version": "0.1.2"
+    },
+    "path-to-regexp": {
+      "version": "1.7.0"
     },
     "pegjs": {
       "version": "0.8.0"
@@ -2500,7 +2506,7 @@
       }
     },
     "samsam": {
-      "version": "1.1.2"
+      "version": "1.2.1"
     },
     "sax": {
       "version": "0.5.8"
@@ -2515,7 +2521,7 @@
       "version": "1.0.1"
     },
     "sinon": {
-      "version": "1.17.7"
+      "version": "2.1.0"
     },
     "slash": {
       "version": "1.0.0"
@@ -2647,6 +2653,9 @@
     "symbol-observable": {
       "version": "1.0.4"
     },
+    "text-encoding": {
+      "version": "0.6.4"
+    },
     "through": {
       "version": "2.3.8"
     },
@@ -2661,6 +2670,9 @@
     },
     "trim-right": {
       "version": "1.0.1"
+    },
+    "type-detect": {
+      "version": "4.0.0"
     },
     "uglify-js": {
       "version": "2.7.5",

@@ -1,4 +1,8 @@
-'use strict';
+import sinon from 'npm:sinon';
+
+// TODO Global 'sinon' is deprecated but still used by a lot of test
+// files.
+window.sinon = sinon;
 
 sinon.stub.resolves = function (value) {
   return this.returns(get$q().when(value));

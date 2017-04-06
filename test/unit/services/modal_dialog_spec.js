@@ -146,7 +146,7 @@ describe('Modal dialog service', function () {
         expect($('.modal-background').length).toBe(1);
       });
 
-      it('calls the success stub', function () {
+      it('calls the success stub', function* () {
         dialog.cancel().promise.finally(function () {
           sinon.assert.called(errorStub);
         });

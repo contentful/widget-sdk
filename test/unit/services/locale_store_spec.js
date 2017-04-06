@@ -10,7 +10,7 @@ describe('TheLocaleStore', function () {
     const persistorSet = function (data) { this.activeLocales = data; };
 
     this.TheStore = this.$inject('TheStore');
-    this.TheStore.forKey = sinon.stub(this.TheStore, 'forKey', function (key) {
+    this.TheStore.forKey = sinon.stub(this.TheStore, 'forKey').callsFake((key) => {
       let persitor = persistors[key];
       persistors[key] = persitor = persitor || {get: persistorGet, set: persistorSet};
       return persitor;
