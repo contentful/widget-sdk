@@ -45,7 +45,7 @@ angular.module('contentful')
       actionMessage: 'Status',
       action: function () {
         trackPersistentNotification.action('Visit Status Page');
-        $window.location = 'http://status.contentful.com';
+        $window.location = 'https://www.contentfulstatus.com';
       }
     },
     {
