@@ -5,12 +5,18 @@ describe('cfDeveloperResources directive', function () {
     const element = this.$compile('<cf-developer-resources />', {
       context: {}
     });
-    this.controller = element.isolateScope().languageResources;
+    this.controller = element.isolateScope().resources;
     this.$inject('$rootScope').$digest();
-    this.controller.selectLanguage(this.controller.resources[0]);
+  });
+
+  it('JavaScript is selected by default', function () {
+    expect(this.controller.selected).toBe('JavaScript');
+    expect(this.controller.languageResources.examples[0].name).toBe('Discovery app');
   });
 
   it('shows selected language', function () {
-    this.controller.selectedLanguage = 'Javascript';
+    this.controller.selectLanguage('PHP');
+    expect(this.controller.selected).toBe('PHP');
+    expect(this.controller.languageResources.examples[0].name).toBe('Symfony');
   });
 });

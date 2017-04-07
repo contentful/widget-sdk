@@ -4,11 +4,11 @@ section
   ul.tab-list.x--home(cf-ui-sticky)
     li(
       role="tab"
-      aria-selected="{{languageResources.selectedLanguage === name}}"
-      ng-click="languageResources.selectLanguage(name)"
-      ng-repeat="(name, language) in languageResources.resources track by name")
-      | {{name}}
-  section.home-section(ng-switch="languageResources.selectedLanguage" cf-track-copy-event)
+      aria-selected="{{resources.selected === language}}"
+      ng-click="resources.selectLanguage(language)"
+      ng-repeat="language in resources.languages track by $index")
+      | {{language}}
+  section.home-section(ng-switch="resources.selected" cf-track-copy-event)
     h3.home-section__heading Get the SDK
     div(ng-switch-when="PHP")
       +sdk-section-php
@@ -27,13 +27,13 @@ section
     div(ng-switch-default)
       +sdk-section-javascript
 
-  section.home-section(ng-if="languageResources.resources[languageResources.selectedLanguage].examples.length")
+  section.home-section(ng-if="resources.languageResources.examples.length")
     h3.home-section__heading Build with Contentful
     p.home-section__description
       | Here are examples of what you can build with Contentful.
     .home__examples
       .home-example(
-        ng-repeat="example in languageResources.resources[languageResources.selectedLanguage].examples track by example.name")
+        ng-repeat="example in resources.languageResources.examples track by example.name")
         div
           .home-example__dot
           h4.home-example__header {{example.name}}
@@ -41,7 +41,7 @@ section
         a.home-example__link(
           ng-href="{{example.url}}"
           target="_blank"
-          ng-click="languageResources.analytics.linkOpened(languageResources.selectedLanguage, example.url)")
+          ng-click="resources.analytics.linkOpened(resources.selected, example.url)")
           | View
 
   section.home-section
@@ -49,16 +49,16 @@ section
     p.home-section__description
       | What you need to help you get started.
     .home-links
-      .home-links__col(ng-if="languageResources.resources[languageResources.selectedLanguage].links.length")
+      .home-links__col(ng-if="resources.languageResources.links.length")
         a(
-          ng-repeat="link in languageResources.resources[languageResources.selectedLanguage].links track by link.name"
+          ng-repeat="link in resources.languageResources.links track by link.name"
           ng-href="{{link.url}}"
           target="_blank"
-          ng-click="languageResources.analytics.linkOpened(languageResources.selectedLanguage, link.url)")
+          ng-click="resources.analytics.linkOpened(resources.selected, link.url)")
           | {{link.name}}
       .home-links__col
-        a(ng-repeat="link in languageResources.docsUrls track by link.name"
+        a(ng-repeat="link in resources.docsUrls track by link.name"
           ng-href="{{link.url}}"
           target="_blank"
-          ng-click="languageResources.analytics.linkOpened(languageResources.selectedLanguage, link.url)")
+          ng-click="resources.analytics.linkOpened(resources.selected, link.url)")
           | {{link.name}}

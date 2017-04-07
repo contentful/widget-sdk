@@ -7,7 +7,7 @@ angular.module('contentful')
     restrict: 'E',
     scope: {},
     controller: 'LanguageResourcesController',
-    controllerAs: 'languageResources'
+    controllerAs: 'resources'
   };
 })
 
@@ -16,15 +16,16 @@ angular.module('contentful')
   var resources = require('app/home/developer_resources/DeveloperResources');
   var analyticsEvents = require('analytics/events/home');
 
-  controller.resources = resources.developerResources;
+  controller.languages = _.keys(resources.developerResources);
   controller.docsUrls = resources.apiDocsUrls;
   controller.selectLanguage = selectLanguage;
-  controller.selectedLanguage = 'JavaScript';
   controller.analytics = analyticsEvents;
 
+  selectLanguage('JavaScript');
+
   function selectLanguage (language) {
-    controller.selectedLanguage = language;
+    controller.selected = language;
+    controller.languageResources = resources.developerResources[language];
     controller.analytics.selectedLanguage(language);
   }
-
 }]);
