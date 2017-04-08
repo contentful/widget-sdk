@@ -15,11 +15,12 @@ angular.module('contentful')
   var $state = require('$state');
   var tokenStore = require('tokenStore');
   var TheStore = require('TheStore');
+  var template = require('app/home/HomeTemplate').default;
 
   return base({
     name: 'home',
     url: '/*path',
-    template: JST.cf_home(),
+    template: template(),
     loadingText: 'Loading...',
     resolve: {
       spaces: function () {

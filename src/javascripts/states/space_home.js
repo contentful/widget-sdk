@@ -8,12 +8,13 @@ angular.module('contentful')
 .factory('states/space_home', ['require', function (require) {
   var base = require('states/base');
   var accessChecker = require('accessChecker');
+  var template = require('app/home/HomeTemplate').default;
 
   return base({
     name: 'home',
     url: '/home',
     label: 'Space home',
-    template: JST.cf_space_home(),
+    template: template(),
     loadingText: 'Loading...',
     controller: ['$scope', function ($scope) {
       $scope.context = {ready: true};
