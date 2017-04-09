@@ -72,7 +72,6 @@ function isQualifiedUser ({organizationMemberships}) {
   }, false);
 }
 
-
 /**
  * @ngdoc method
  * @name utils/LaunchDarkly#get
@@ -84,9 +83,10 @@ function isQualifiedUser ({organizationMemberships}) {
  * awesomeTest$.onValue(callback)
  *
  * @description
- * Fetches the value for the requested test.
+ * Fetches the value for the requested test only for qualified users.
  * It returns a kefir property that will always give you the
- * value for the test as it is on Launch Darkly servers.
+ * value for the test as it is on Launch Darkly servers if current user is a
+ * qualified one, othervise it will be null.
  *
  * @param {String} testName
  * @param {function} [customQualificationFn = _ => true] - An optional fn that
@@ -95,22 +95,48 @@ function isQualifiedUser ({organizationMemberships}) {
  * @returns {utils/kefir.Property<boolean>}
  */
 export function get (testName, customQualificationFn = _ => true) {
+  const testVal$ = getForAllUsers(testName);
+
+  // Launch Darkly has no way of preventing anonymous users from
+  // receiving test flags so this makes sure that if the user
+  // isn't qualified the test value for any test name is always
+  // `null`
+  return sampleBy(testVal$, (value) => {
+    const currentUser = getValue(user$);
+
+    if (currentUser && isQualifiedUser(currentUser) && customQualificationFn(currentUser)) {
+      return value;
+    } else {
+      return DEFAULT_VAL;
+    }
+  }).skipDuplicates();
+}
+
+/**
+ * @ngdoc method
+ * @name utils/LaunchDarkly#getForAllUsers
+ * @usage[js]
+ * const ld = require('utils/LaunchDarkly')
+ * const awesomeFeatureFlag$ = ld.getForAllUsers('my-awesome-feature-flag')
+ * K.onValueScope($scope, awesomeFeatureFlag$, callback) // to bind to lifetime of scope
+ * // or
+ * awesomeFeatureFlag$.onValue(callback)
+ *
+ * @description
+ * Fetches the value for the requested feature flag.
+ * It returns a kefir property that will always give you the
+ * value for the test as it is on Launch Darkly servers.
+ *
+ * @param {String} testName
+ * @returns {utils/kefir.Property<boolean>}
+ */
+export function getForAllUsers (testName) {
   const testVal$ = mergeValues([
     fromEvents(client, 'ready'),
     fromEvents(client, `change:${testName}`)
   ]);
 
   return sampleBy(testVal$, () => {
-    // Launch Darkly has no way of preventing anonymous users from
-    // receiving test flags so this makes sure that if the user
-    // isn't qualified the test value for any test name is always
-    // `null`
-    const currentUser = getValue(user$);
-
-    if (currentUser && isQualifiedUser(currentUser) && customQualificationFn(currentUser)) {
-      return client.variation(testName, DEFAULT_VAL);
-    } else {
-      return DEFAULT_VAL;
-    }
+    return client.variation(testName, DEFAULT_VAL);
   }).skipDuplicates();
 }

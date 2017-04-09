@@ -35,6 +35,23 @@ describe('utils/LaunchDarkly', function () {
       }
     };
 
+    this.unqualifiedUser = {
+      email: 'mehh@example.com',
+      organizationMemberships: [
+        {
+          organization: {
+            name: 'some-org',
+            subscription: {
+              status: 'paid'
+            }
+          }
+        }
+      ],
+      sys: {
+        id: 2
+      }
+    };
+
     this.user$ = K.createMockProperty();
     this.mockService('tokenStore', {
       user$: this.user$
@@ -48,6 +65,7 @@ describe('utils/LaunchDarkly', function () {
     launchDarkly.init(); // init LD before every spec
 
     this.get = launchDarkly.get;
+    this.getForAllUsers = launchDarkly.getForAllUsers;
 
     this.assertPropVal = K.assertCurrentValue;
   });
@@ -109,25 +127,6 @@ describe('utils/LaunchDarkly', function () {
   });
 
   describe('#get(testName, customQualificationFn)', function () {
-    beforeEach(function () {
-      this.unqualifiedUser = {
-        email: 'mehh@example.com',
-        organizationMemberships: [
-          {
-            organization: {
-              name: 'some-org',
-              subscription: {
-                status: 'paid'
-              }
-            }
-          }
-        ],
-        sys: {
-          id: 2
-        }
-      };
-    });
-
     describe('for a qualified user', function () {
       beforeEach(function () {
         this.user$.set(this.qualifiedUser);
@@ -201,5 +200,33 @@ describe('utils/LaunchDarkly', function () {
         this.assertPropVal(this.get('a'), 'test');
       });
     });
+  });
+
+  describe('#getForAllUsers(testName)', function () {
+    it('should return a kefir property that has the initial value of the flag', function () {
+      client.variation.returns('initial-val');
+      const propA = this.getForAllUsers('a');
+
+      expect(this.getValue(propA)).toBe('initial-val');
+    });
+
+    it('should set the property returned to new value when value of the test changes', function () {
+      const propA = this.getForAllUsers('a');
+
+      client.variation.returns('one');
+      this.assertPropVal(propA, 'one');
+
+      client.on.withArgs('change:a');
+      client.variation.returns('two');
+      this.assertPropVal(propA, 'two');
+    });
+
+    it('should have property value for unqualified users', function () {
+      this.user$.set(this.unqualifiedUser);
+      client.variation.returns('test-val');
+      const propA = this.getForAllUsers('a');
+      this.assertPropVal(propA, 'test-val');
+    });
+
   });
 });
