@@ -57,6 +57,10 @@ describe('stringUtils service', function () {
     it('does currently not honor word boundaries other than spaces', function () {
       expect(this.utils.truncate('go-22-ahead', 4)).toEqual('go-2…');
     });
+
+    it('cuts off `.` as last character', function () {
+      expect(this.utils.truncate('go.ahead', 3)).toEqual('go…');
+    });
   });
 
   describe('#truncateMiddle()', function () {
@@ -79,6 +83,10 @@ describe('stringUtils service', function () {
 
     it('omits orphaned letters before the middle', function () {
       expect(this.utils.truncateMiddle('ab cdefgh xyz', 7, 3)).toEqual('ab…xyz');
+    });
+
+    it('removes `.` if they would result in visually awkward “....”', function () {
+      expect(this.utils.truncateMiddle('foo.bar.baz', 8, 4)).toEqual('foo…baz');
     });
   });
 
