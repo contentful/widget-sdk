@@ -1,10 +1,10 @@
 'use strict';
 
-angular.module('contentful').directive('cfUserList', ['$injector', function ($injector) {
+angular.module('contentful').directive('cfUserList', ['require', function (require) {
 
-  var popRoleId = $injector.get('UserListController/jumpToRole').popRoleId;
-  var $timeout = $injector.get('$timeout');
-  var store = $injector.get('TheStore').forKey('userListView');
+  var popRoleId = require('UserListController/jumpToRole').popRoleId;
+  var $timeout = require('$timeout');
+  var store = require('TheStore').forKey('userListView');
 
   var VIEW_BY_NAME = 'name';
   var VIEW_BY_ROLE = 'role';
@@ -46,18 +46,17 @@ angular.module('contentful').directive('cfUserList', ['$injector', function ($in
   }
 }]);
 
-angular.module('contentful').controller('UserListController', ['$scope', '$injector', function ($scope, $injector) {
-
-  var ReloadNotification = $injector.get('ReloadNotification');
-  var Command = $injector.get('command');
-  var $rootScope = $injector.get('$rootScope');
-  var modalDialog = $injector.get('modalDialog');
-  var spaceContext = $injector.get('spaceContext');
-  var listHandler = $injector.get('UserListHandler').create();
-  var stringUtils = $injector.get('stringUtils');
-  var notification = $injector.get('notification');
-  var accessChecker = $injector.get('accessChecker');
-  var TheAccountView = $injector.get('TheAccountView');
+angular.module('contentful').controller('UserListController', ['$scope', 'require', function ($scope, require) {
+  var ReloadNotification = require('ReloadNotification');
+  var Command = require('command');
+  var $rootScope = require('$rootScope');
+  var modalDialog = require('modalDialog');
+  var spaceContext = require('spaceContext');
+  var userListHandler = require('UserListHandler').create();
+  var stringUtils = require('stringUtils');
+  var notification = require('notification');
+  var accessChecker = require('accessChecker');
+  var TheAccountView = require('TheAccountView');
 
   var MODAL_OPTS_BASE = {
     noNewScope: true,
@@ -95,7 +94,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
    * Remove an user from a space
    */
   function openRemovalConfirmationDialog (user) {
-    if (listHandler.isLastAdmin(user.id)) {
+    if (userListHandler.isLastAdmin(user.id)) {
       return modalDialog.open(_.extend({
         template: 'admin_removal_confirm_dialog',
         scope: prepareRemovalConfirmationDialogScope(user)
@@ -129,7 +128,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
     });
 
     function isDisabled () {
-      return listHandler.isLastAdmin(user.id) && scope.input.confirm !== 'I UNDERSTAND';
+      return userListHandler.isLastAdmin(user.id) && scope.input.confirm !== 'I UNDERSTAND';
     }
   }
 
@@ -150,7 +149,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
       user: user,
       startsWithVowel: stringUtils.startsWithVowel,
       input: {},
-      roleOptions: listHandler.getRoleOptions(),
+      roleOptions: userListHandler.getRoleOptions(),
       changeRole: Command.create(function () {
         return changeRole(scope.input.id)
         .then(reload)
@@ -163,12 +162,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
     });
 
     function changeRole (roleId) {
-      var method = 'changeRoleTo';
-      if (listHandler.isAdminRole(roleId)) {
-        method = 'changeRoleToAdmin';
-      }
-
-      return spaceContext.memberships[method](user.membership, roleId);
+      return spaceContext.memberships.changeRoleTo(user.membership, roleId);
     }
   }
 
@@ -187,7 +181,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
 
     return _.extend(scope, {
       input: {},
-      roleOptions: listHandler.getRoleOptions(),
+      roleOptions: userListHandler.getRoleOptions(),
       invite: Command.create(function () {
         return invite(scope.input)
         .then(handleSuccess, handleFailure);
@@ -197,12 +191,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
     });
 
     function invite (data) {
-      var method = 'invite';
-      if (listHandler.isAdminRole(data.roleId)) {
-        method = 'inviteAdmin';
-      }
-
-      return spaceContext.memberships[method](data.mail, data.roleId);
+      return spaceContext.memberships.invite(data.mail, data.roleId);
     }
 
     function handleSuccess () {
@@ -250,22 +239,22 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
    * Reset the list with a new data
    */
   function reload () {
-    return listHandler.reset()
+    return userListHandler.reset()
     .then(onResetResponse, accessChecker.wasForbidden($scope.context))
     .finally(accessChecker.reset);
   }
 
   function onResetResponse () {
-    $scope.count = listHandler.getUserCount();
-    $scope.by = listHandler.getGroupedUsers();
+    $scope.count = userListHandler.getUserCount();
+    $scope.by = userListHandler.getGroupedUsers();
     $scope.context.ready = true;
     $scope.jumpToRole();
   }
 }]);
 
-angular.module('contentful').factory('UserListController/jumpToRole', ['$injector', function ($injector) {
+angular.module('contentful').factory('UserListController/jumpToRole', ['require', function (require) {
 
-  var $state = $injector.get('$state');
+  var $state = require('$state');
   var targetRoleId = null;
 
   jump.popRoleId = popRoleId;

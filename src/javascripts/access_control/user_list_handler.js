@@ -5,9 +5,10 @@ angular.module('contentful')
   var $q = require('$q');
   var spaceContext = require('spaceContext');
   var RoleRepository = require('RoleRepository');
+  var SpaceMembershipRepository = require('access_control/SpaceMembershipRepository');
   var fetchAll = require('data/CMA/FetchAll').fetchAll;
 
-  var ADMIN_ROLE_ID = '__cf_builtin_admin';
+  var ADMIN_ROLE_ID = SpaceMembershipRepository.ADMIN_ROLE_ID;
   var ADMIN_ROLE_NAME = 'Administrator';
   var ADMIN_OPT = { id: ADMIN_ROLE_ID, name: ADMIN_ROLE_NAME };
   var UNKNOWN_ROLE_NAME = 'Unknown';
@@ -33,9 +34,7 @@ angular.module('contentful')
       getUsersByRole: getUsersByRole,
       getRoleOptions: getRoleOptions,
       getRoleOptionsBut: getRoleOptionsBut,
-      isLastAdmin: isLastAdmin,
-      isAdminRole: isAdminRole,
-      getAdminRoleId: _.constant(ADMIN_ROLE_ID)
+      isLastAdmin: isLastAdmin
     };
 
     function reset () {

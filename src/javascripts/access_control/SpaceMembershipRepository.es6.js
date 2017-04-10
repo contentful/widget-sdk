@@ -1,5 +1,9 @@
-import {fetchAll} from 'data/CMA/FetchAll';
-import {omit, assign} from 'lodash';
+import { fetchAll } from 'data/CMA/FetchAll';
+import { omit, extend } from 'lodash';
+
+
+export const ADMIN_ROLE_ID = '__cf_builtin_admin';
+
 
 // `GET /spaces/:id/space_memberships` endpoint returns a max of 100 items
 const PER_PAGE = 100;
@@ -17,29 +21,15 @@ export function create (spaceEndpoint) {
   return {
     getAll: getAll,
     invite: invite,
-    inviteAdmin: inviteAdmin,
     changeRoleTo: changeRoleTo,
-    changeRoleToAdmin: changeRoleToAdmin,
     remove: remove
   };
 
-  function invite (mail, roleId) {
+  function invite (email, roleId) {
     return spaceEndpoint({
       method: 'POST',
       path: ['space_memberships'],
-      data: {
-        email: mail,
-        admin: false,
-        roles: getRoleLink(roleId)
-      }
-    });
-  }
-
-  function inviteAdmin (mail) {
-    return spaceEndpoint({
-      method: 'POST',
-      path: ['space_memberships'],
-      data: { email: mail, admin: true }
+      data: newMembership(email, roleId)
     });
   }
 
@@ -48,13 +38,20 @@ export function create (spaceEndpoint) {
   }
 
   function changeRoleTo (membership, roleId) {
-    const newMembership = prepareRoleMembership(membership, roleId);
+    let newMembership;
+    if (roleId === ADMIN_ROLE_ID) {
+      newMembership = prepareAdminMembership(membership);
+    } else {
+      newMembership = prepareRoleMembership(membership, roleId);
+    }
     return changeRole(membership, newMembership);
   }
 
-  function changeRoleToAdmin (membership) {
-    const newMembership = prepareAdminMembership(membership);
-    return changeRole(membership, newMembership);
+  function remove (membership) {
+    return spaceEndpoint({
+      method: 'DELETE',
+      path: ['space_memberships', membership.sys.id.toString()]
+    });
   }
 
   function changeRole (oldMembership, newMembership) {
@@ -65,23 +62,27 @@ export function create (spaceEndpoint) {
       data: newMembership
     });
   }
+}
 
-  function remove (membership) {
-    return spaceEndpoint({
-      method: 'DELETE',
-      path: ['space_memberships', membership.sys.id.toString()]
-    });
+function newMembership (email, roleId) {
+  const membership = {
+    email: email,
+    admin: roleId === ADMIN_ROLE_ID
+  };
+  if (roleId !== ADMIN_ROLE_ID) {
+    membership.roles = getRoleLink(roleId);
   }
+  return membership;
 }
 
 function prepareAdminMembership (membership) {
   const base = omit(membership, ['sys', 'user']);
-  return assign(base, { admin: true, roles: [] });
+  return extend(base, { admin: true, roles: [] });
 }
 
 function prepareRoleMembership (membership, roleId) {
   const base = omit(membership, ['sys', 'user']);
-  return assign(base, { admin: false, roles: getRoleLink(roleId) });
+  return extend(base, { admin: false, roles: getRoleLink(roleId) });
 }
 
 function getRoleLink (roleId) {

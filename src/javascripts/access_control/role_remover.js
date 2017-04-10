@@ -1,15 +1,14 @@
 'use strict';
 
-angular.module('contentful').factory('createRoleRemover', ['$injector', function ($injector) {
-
-  var ReloadNotification = $injector.get('ReloadNotification');
-  var $q = $injector.get('$q');
-  var $rootScope = $injector.get('$rootScope');
-  var modalDialog = $injector.get('modalDialog');
-  var notification = $injector.get('notification');
-  var Command = $injector.get('command');
-  var spaceContext = $injector.get('spaceContext');
-  var roleRepo = $injector.get('RoleRepository').getInstance(spaceContext.space);
+angular.module('contentful').factory('createRoleRemover', ['require', function (require) {
+  var ReloadNotification = require('ReloadNotification');
+  var $q = require('$q');
+  var $rootScope = require('$rootScope');
+  var modalDialog = require('modalDialog');
+  var notification = require('notification');
+  var Command = require('command');
+  var spaceContext = require('spaceContext');
+  var roleRepo = require('RoleRepository').getInstance(spaceContext.space);
 
   return function createRoleRemover (listHandler, doneFn) {
 
@@ -51,14 +50,9 @@ angular.module('contentful').factory('createRoleRemover', ['$injector', function
         var users = listHandler.getUsersByRole(role.sys.id);
         var memberships = _.map(users, 'membership');
         var moveToRoleId = scope.input.id;
-        var method = 'changeRoleTo';
-
-        if (listHandler.isAdminRole(moveToRoleId)) {
-          method = 'changeRoleToAdmin';
-        }
 
         var promises = _.map(memberships, function (membership) {
-          return spaceContext.memberships[method](membership, moveToRoleId);
+          return spaceContext.memberships.changeRoleTo(membership, moveToRoleId);
         });
 
         return $q.all(promises).then(function () {
