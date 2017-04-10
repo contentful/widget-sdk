@@ -25,15 +25,28 @@ angular.module('cf.app')
 
   return {
     api: api,
-    newForLocale: newForLocale
+    newByType: newByType,
+    newForUsers: newForUsers
   };
 
-  function newForLocale (locale) {
+  function newByType (entityType, locale) {
+    return entityType === 'User' ? newForUsers() : newForRecords(locale);
+  }
+
+  function newForRecords (locale) {
     return _.extend(_.clone(api), {
       entityTitle: _.partialRight(api.entityTitle, locale),
       entityDescription: _.partialRight(api.entityDescription, locale),
       entryImage: _.partialRight(api.entryImage, locale),
       assetFile: _.partialRight(api.assetFile, locale)
+    });
+  }
+
+  function newForUsers () {
+    return _.extend(_.clone(api), {
+      entityTitle: _.partialRight(api.entityTitle, null),
+      entityDescription: _.constant($q.resolve(null)),
+      assetFile: _.constant($q.resolve(null))
     });
   }
 

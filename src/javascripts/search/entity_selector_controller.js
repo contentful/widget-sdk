@@ -31,7 +31,7 @@ angular.module('contentful')
     selectedIds: {},
     toggleSelection: toggleSelection,
     loadMore: loadMore,
-    helpers: EntityHelpers.newForLocale(config.locale)
+    helpers: EntityHelpers.newByType(config.entityType, config.locale)
   });
 
   $scope.$watch('view.searchTerm', handleTermChange);

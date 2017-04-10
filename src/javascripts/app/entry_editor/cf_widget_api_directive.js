@@ -77,7 +77,7 @@ angular.module('contentful')
   };
 
   this.space = spaceContext.cma;
-  this.entityHelpers = EntityHelpers.newForLocale($scope.locale.code);
+  this.entityHelpers = EntityHelpers.newByType('Entry', $scope.locale.code);
   this.state = {
     goToEditor: function (entity) {
       var ref = Navigator.makeEntityRef(entity);

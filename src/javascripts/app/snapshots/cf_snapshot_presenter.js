@@ -92,7 +92,7 @@ angular.module('cf.app')
         });
       });
 
-      $scope.helper = EntityHelpers.newForLocale($scope.locale.code);
+      $scope.helper = EntityHelpers.newByType($scope.linkType, $scope.locale.code);
       $scope.config = {};
     }]
   };

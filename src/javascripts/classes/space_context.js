@@ -398,11 +398,24 @@ angular.module('contentful')
      */
     entityTitle: function (entity, localeCode) {
       var type = entity.getType();
-      if (!_.includes(['Entry', 'Asset'], type)) {
+      if (!_.includes(['Entry', 'Asset', 'User'], type)) {
         return null;
       }
       var getterName = type.toLowerCase() + 'Title'; // entryTitle() or assetTitle()
       return this[getterName](entity, localeCode, true);
+    },
+
+    /**
+     * @ngdoc method
+     * @name spaceContext#userTitle
+     * @param {Object} user
+     * @return {string|null}
+     * @description
+     * Returns the title (email) for a given user. Returns null if
+     * no title can be found for the user.
+     */
+    userTitle: function (user) {
+      return this.localizedField(user, 'data.fields.email');
     }
   };
 
