@@ -74,7 +74,7 @@ angular.module('cf.app')
     $scope.addExisting = function (event) {
       var currentSize = $scope.entityModels.length;
       event.preventDefault();
-      entitySelector.open(field, currentSize)
+      entitySelector.openFromField(field, currentSize)
       .then(state.addEntities);
     };
 
