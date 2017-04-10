@@ -51,6 +51,8 @@ describe('Account Dropdown Controller', function () {
   describe('navigation to organization settings', function () {
     beforeEach(function () {
       const OrganizationList = this.$inject('OrganizationList');
+      this.spaceContext = this.$inject('spaceContext');
+      this.spaceContext.organizationContext = {organization: null};
       this.isOwnerStub = OrganizationList.isOwnerOrAdmin = sinon.stub().returns(false);
       this.$apply();
     });
@@ -61,7 +63,7 @@ describe('Account Dropdown Controller', function () {
 
     it('is enabled if is the user is an organization owner', function () {
       this.isOwnerStub.returns(true);
-      this.$inject('spaceContext').space = {data: {organization: {sys: {id: 42}}}};
+      this.spaceContext.organizationContext.organization = {sys: {id: 42, type: 'Organization'}};
       this.$apply();
       expect(this.scope.canGoToOrganizations).toBe(true);
     });

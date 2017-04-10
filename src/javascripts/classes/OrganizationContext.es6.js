@@ -1,8 +1,19 @@
 import { createOrganizationEndpoint } from 'data/Endpoint';
 import { fetchAll } from 'data/CMA/FetchAll';
 import * as Authentication from 'Authentication';
-import environment from 'environment';
+import * as Config from 'Config';
 import { get } from 'lodash';
+import { deepFreezeClone } from 'utils/DeepFreeze';
+
+/**
+ * @ngdoc module
+ * @description
+ * This service should hold all context related to an organization - currently
+ * only users.
+ *
+ * It can be accessed as a property on `spaceContext`, linked to the space's
+ * organization.
+ */
 
 // `GET /organizations/:id/users` endpoint returns a max of 100 items
 const PER_PAGE = 100;
@@ -20,7 +31,7 @@ export function create (organization) {
   }
 
   const endpoint = createOrganizationEndpoint(
-    '//' + environment.settings.apiUrl,
+    '//' + Config.apiUrl(),
     organization.sys.id,
     Authentication
   );
@@ -38,6 +49,6 @@ export function create (organization) {
      * @name OrganizationContext#organization
      * @type {Object}
      */
-    organization: organization
+    organization: deepFreezeClone(organization)
   };
 }

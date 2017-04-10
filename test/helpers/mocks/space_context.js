@@ -64,6 +64,7 @@ angular.module('contentful/mocks')
 
     spaceContext.endpoint = createMockEndpoint();
     spaceContext.apiKeyRepo = createApiKeyRepo(spaceContext.endpoint);
+    spaceContext.organizationContext = {};
 
     return spaceContext;
   }

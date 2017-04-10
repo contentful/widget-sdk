@@ -24,7 +24,7 @@ angular.module('contentful')
   var ctHelpers = require('data/ContentTypes');
   var Widgets = require('widgets');
   var createSpaceEndpoint = require('data/Endpoint').createSpaceEndpoint;
-  var environment = require('environment');
+  var Config = require('Config');
   var createEIRepo = require('data/editingInterfaces');
   var createQueue = require('overridingRequestQueue');
   var ApiClient = require('data/ApiClient');
@@ -38,6 +38,7 @@ angular.module('contentful')
   var createApiKeyRepo = require('data/CMA/ApiKeyRepo').default;
   var K = require('utils/kefir');
   var Auth = require('Authentication');
+  var OrganizationContext = require('classes/OrganizationContext');
 
   var requestContentTypes = createQueue(function (extraHandler) {
     if (!spaceContext.space) {
@@ -81,7 +82,7 @@ angular.module('contentful')
       var self = this;
 
       self.endpoint = createSpaceEndpoint(
-        environment.settings.apiUrl,
+        Config.apiUrl(),
         space.getId(),
         Auth
       );
@@ -93,6 +94,7 @@ angular.module('contentful')
       self.apiKeyRepo = createApiKeyRepo(self.endpoint);
       self.editingInterfaces = createEIRepo(self.endpoint);
       var organization = self.getData('organization') || null;
+      self.organizationContext = OrganizationContext.create(organization);
       self.subscription =
         organization && Subscription.newFromOrganization(organization);
 
@@ -103,7 +105,7 @@ angular.module('contentful')
 
       self.docConnection = ShareJSConnection.create(
         Auth.getToken,
-        environment.settings.otUrl,
+        Config.otUrl,
         space.getId()
       );
 

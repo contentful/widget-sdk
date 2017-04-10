@@ -80,7 +80,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
   });
 
   function showTranslator () {
-    var organization = spaceContext.getData('organization');
+    var organization = spaceContext.organizationContext.organization;
     var subscriptionHasAdvancedRoles = dotty.get(organization, 'subscriptionPlan.limits.features.advancedRoles');
     var nameStartsWithTranslator = /^Translator/.test($scope.role.name);
     return subscriptionHasAdvancedRoles && nameStartsWithTranslator;

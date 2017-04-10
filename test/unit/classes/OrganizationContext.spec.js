@@ -13,13 +13,13 @@ describe('OrganizationContext', function () {
       createOrganizationEndpoint: sinon.stub().returns(ENDPOINT)
     };
     this.authentication = { __esModule: true };
-    this.environment = { settings: { apiUrl: API_HOST } };
+    this.Config = { apiUrl: function () { return API_HOST; } };
     this.fetchAll = sinon.stub();
 
     module('contentful/test', ($provide) => {
       $provide.value('data/Endpoint', this.Endpoint);
       $provide.value('Authentication', this.authentication);
-      $provide.constant('environment', this.environment);
+      $provide.constant('Config', this.Config);
       $provide.value('data/CMA/FetchAll', {fetchAll: this.fetchAll});
     });
     this.fetchAll.resolves([]);
@@ -40,7 +40,7 @@ describe('OrganizationContext', function () {
   describe('#organization', function () {
     it('is set to the object given in .create()', function () {
       const context = this.OrganizationContext.create(ORG);
-      expect(context.organization).toBe(ORG);
+      expect(context.organization).toEqual(ORG);
     });
   });
 
