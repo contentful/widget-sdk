@@ -110,8 +110,8 @@ export function getState (sys) {
  * entry is possible by transitioning to a draft state first and then
  * publishing.
  *
- * 'spaceEndpoint' is a function to make the request as defined in the
- * 'data/spaceEndpoint' module.
+ * 'spaceEndpoint' is a function to make the request to a space as defined in
+ * the 'data/Endpoint' module.
  */
 export function makeApply (spaceEndpoint) {
   const changeTo = makeChangeTo(spaceEndpoint);

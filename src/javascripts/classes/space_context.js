@@ -23,7 +23,7 @@ angular.module('contentful')
   var createUserCache = require('data/userCache');
   var ctHelpers = require('data/ContentTypes');
   var Widgets = require('widgets');
-  var spaceEndpoint = require('data/spaceEndpoint');
+  var createSpaceEndpoint = require('data/Endpoint').createSpaceEndpoint;
   var environment = require('environment');
   var createEIRepo = require('data/editingInterfaces');
   var createQueue = require('overridingRequestQueue');
@@ -80,7 +80,7 @@ angular.module('contentful')
     resetWithSpace: function (space) {
       var self = this;
 
-      self.endpoint = spaceEndpoint.create(
+      self.endpoint = createSpaceEndpoint(
         environment.settings.apiUrl,
         space.getId(),
         Auth

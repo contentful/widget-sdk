@@ -24,9 +24,9 @@ import $q from '$q';
  * result. The cache can be refreshed by calling `refresh()`. The
  * preview key links are not resolved for `getAll()`.
  *
- * @param {SpaceEndpoint} spaceEndpoint
+ * @param {data/Endpoint} spaceEndpoint
  *   Function that sends requests to space ednpoints. Should be
- *   constructed with the 'spaceEndpoint' service.
+ *   constructed with the 'data/Endpoint.createSpaceEndpoint()' service.
  * @returns {ApiKeyRepo}
  */
 export default function create (spaceEndpoint) {

@@ -12,7 +12,7 @@ const GATEWAY_TIMEOUT = 504;
 
 /**
  * @ngdoc service
- * @name data/RequestQueue
+ * @name data/Request/Retry
 
  * @description
  * Queue wrapper for api requests
