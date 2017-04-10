@@ -71,13 +71,7 @@ function main () {
 
 function keyEditor () {
   return [
-    h('h3.section-title', {
-      style: {
-        // TODO fix .section-title overide
-        fontSize: '18px',
-        marginTop: '0'
-      }
-    }, ['Access tokens']),
+    h('h3.section-title', ['Access tokens']),
     styledDiv({
       marginBottom: '1.5em'
     }, [
