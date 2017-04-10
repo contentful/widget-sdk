@@ -34,7 +34,7 @@ angular.module('contentful')
 
   function upgradeAction () {
     trackPersistentNotification.action('Quota Increase');
-    $location.path('/account/organizations/' + getOrgId() + '/subscription');
+    $location.path('/account/organizations/' + getOrgId() + '/z_subscription');
   }
 
 
