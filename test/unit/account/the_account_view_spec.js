@@ -151,7 +151,7 @@ describe('TheAccountView service', function () {
 
     it('returns path if user has permission', function () {
       this.OrganizationList.isOwnerOrAdmin.returns(true);
-      const path = 'account.pathSuffix({ pathSuffix: \'organizations/ORG_0/subscription\'})';
+      const path = 'account.pathSuffix({ pathSuffix: \'organizations/ORG_0/z_subscription\'})';
       expect(this.view.getSubscriptionState()).toBe(path);
     });
 
