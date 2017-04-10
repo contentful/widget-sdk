@@ -321,7 +321,10 @@ Styleguide 4.5
 $button-plain()
   background: none
   $button-layout()
-  color: $colors.blue
+  color: $colors.blue-darkest
+  text-decoration: underline
+  &:hover
+    color: $colors.text-dark
   outline: 0
 
 .btn-plain
