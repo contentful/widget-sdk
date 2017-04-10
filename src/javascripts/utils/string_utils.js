@@ -154,8 +154,9 @@ angular.module('cf.utils')
     if (str && str.length > length) {
       return str && str
       .substr(0, length + 1) // +1 to look ahead and be replaced below.
-      // Get rid of orphan letters but not one letter words (I, a, 2):
-      .replace(/(\s+\S(?=\S)|\s*).$/, '…');
+      // Get rid of orphan letters but not one letter words (I, a, 2).
+      // Try to not have “.” as last character to avoid awkward “....”.
+      .replace(/(\s+\S(?=\S)|\s*)\.?.$/, '…');
     } else {
       return str;
     }
@@ -178,7 +179,8 @@ angular.module('cf.utils')
       throw new Error('`length` has to be greater or equal to `endOfStrLength`');
     }
     if (str && str.length > length) {
-      var endOfStr = str.substr(-endOfStrLength);
+      var endOfStr = str.substr(-endOfStrLength)
+        .replace(/^\./, ''); // Avoid visually awkward “....”.
       var beginningOfStr = truncate(str, length - endOfStrLength);
       return beginningOfStr + endOfStr;
     } else {
