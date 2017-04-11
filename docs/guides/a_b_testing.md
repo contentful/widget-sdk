@@ -1,14 +1,27 @@
-# A/B Testing in the Contentful web app
+# A/B Testing and feature flags
 
-## Quickstart
+We use [LaunchDarkly](https://app.launchdarkly.com) for A/B (or multivariate) testing and feature flags. To get access to LD, contact Team Product Success or IT dept.
+
+
+## Terminology
+
+- `A/B test`: An A/B test is what you set up via LaunchDarkly's web app (note: it is called 'Feature flag' in LD interface, but we have a distinction between the two - see `Feature flag` below). We call a test with percentage variations and available only for qualified users, an `A/B test`, and a flag that is set for all users without a variation a `Feature flag`.
+- `Variation`: A bucket for a test. We have `null` for unqualified users and `Boolean` for qualified users.
+- `Default rule`: Rule that decides what qualified users receive as their variation for a test.
+- `Feature flag`: A feature flag is set up in the same way as A/B tests in LaunchDarkly, but unlike an A/B test it should be always set to true or false *for all users* (no variations). It affects all users, not only qualified ones.
+
+
+## A/B tests
+
+### Quickstart
 
 Create a test via the LaunchDarkly(LD) UI for the environment you are interested in. Then, in the directive you are running the A/B test, import `utils/LaunchDarkly` and use the `get` method to get the test stream to which you can add a handler. This handler will receive the test variation values if/as they change.
 
 ```js
-// Begin A/B experiment code - teamname-mm-yy-test-name
+// Begin A/B experiment code - test-teamname-mm-yy-test-name
 var K = require('utils/kefir');
 var LD = require('utils/LaunchDarkly');
-var someTest$ = LD.get('some-test');
+var someTest$ = LD.getTest('some-test');
 
 K.onValueScope($scope, someTest$, function (showTest) {
 	if (showTest) {
@@ -17,34 +30,29 @@ K.onValueScope($scope, someTest$, function (showTest) {
 	  // control code
 	}
 });
-// End A/B experiment code - teamname-mm-yy-test-name
+// End A/B experiment code - test-teamname-mm-yy-test-name
 ```
 
 The test code should _always_ be bound by comments in the format shown above to aid cleanup once the test is finished.
 
-## Terminology
+### Qualification criteria
 
-- `Feature flag`: A feature flag is what you set up via LaunchDarkly's web app. It corresponds to an A/B test. These two terms are used interchangeably in this document.
-- `Variation`: A bucket for a test. We have `null` for unqualified users and `Boolean` for qualified users.
-- `Default rule`: Rule that decides what qualified users receive as their variation for a test.
+#### Default qualification criteria
 
-
-## Qualification criteria
-### Default qualification criteria
 <span id="default-qualification-criteria"></span>
 
 Only users that don't belong to _any_ paying/converted organization are qualified for A/B tests. What this means is that only these users will get a bucketed into a variation for a test.
 All unqualified users receive `null` as the value for a test variation. Any other test specific qualification logic *must* be handled in the test code.
 
 
-### Custom qualification criteria
+#### Custom qualification criteria
 Custom qualification criteria can be passed to the `get` method that the Launch Darkly integration exposes. It is applied along with the default qualification criteria.
-Currently, there is no way to bypass the default qualification criteria.
+Currently, there is no way to bypass the default qualification criteria for A/B tests.
 
 ```js
 var K = require('utils/kefir');
 var LD = require('utils/LaunchDarkly');
-var someTest$ = LD.get('some-test', currentUser => false);
+var someTest$ = LD.getTest('some-test', currentUser => false);
 
 K.onValueScope($scope, someTest$, function (showTest) {
     // showTest will always be null since custom qualification
@@ -52,22 +60,7 @@ K.onValueScope($scope, someTest$, function (showTest) {
 });
 ```
 
-## Environments on Launch Darkly
-
-### `Development`
-Feature flags defined here are served to `app.joistio.com:8888` aka local dev
-
-### `Staging`
-Feature flags defined here are served to `app.flinkly.com` aka `staging`
-
-### `Preview`
-Feature flags defined here are served to `app.quirely.com` aka `preview`
-
-### `Production`
-Feature flags defined here are served to `app.contentful.com` aka `production`
-
-
-## Running an A/B test
+### Running an A/B test
 
 We follow a promotion based approach to releasing an A/B test as outlined below.
 
@@ -82,9 +75,9 @@ __Important__:
 
 ### Naming
 
-A test name should have the following format: `teamname-mm-yyyy-test-name`.
+A test name should have the following format: `test-teamname-mm-yyyy-test-name`.
 
-For example, `ps-03-2017-example-space-impact` where `ps` stands for `Team Product Success`.
+For example, `test-ps-03-2017-example-space-impact` where `ps` stands for `Team Product Success`.
 
 Also, please add a link to the experiment wiki page in the description.
 
@@ -101,7 +94,6 @@ The test should now be available in `user_interface` for [qualified users](#defa
 
 ![create feature flag](https://cloud.githubusercontent.com/assets/635512/24458269/bdac9d94-1498-11e7-8f93-b34bd2ef8ae5.gif)
 
-
 ### Concluding the test
 <span id="concluding-the-test"></span>
 
@@ -116,8 +108,7 @@ Once you conclude the test,
 
 In LD, turn the test off (targeting -> off) and finally, document your findings.
 
-
-## QA
+### QA
 
 As discussed with folks from the QA team, the idea is to not have automated tests for A/B tests since they are shortlived by definition. Instead, A/B tests will only undergo manual testing.
 
@@ -132,7 +123,7 @@ Doing this will send the flag value to the user in the environment they made the
 To grab you user id, inspect the network tab in your browser's dev tools. Look for a call to `token`. The response for that should have a `user` property which in turn will have a `sys.id`. That is your user id as seen on LD.
 
 
-## Analytics
+### Analytics
 
 Three golden rules of A/B testing analytics:
 
@@ -169,6 +160,67 @@ K.onValueScope($scope, someTest$, function (showTest) {
 ```
 
 There is no corresponding `experiment:end` event yet.
+
+## Feature flags
+
+### Quickstart
+
+You can create a feature flag in LD and use it in the same way as A/B test:
+
+```js
+// Begin feature flag code - feature-teamname-mm-yy-feature-name
+var K = require('utils/kefir');
+var LD = require('utils/LaunchDarkly');
+var someFeatureFlag$ = LD.getFeatureFlag('some-feature-flag');
+
+K.onValueScope($scope, someFeatureFlag$, function (showFeature) {
+    // showFeature has the same value of either true or false for all users at a time
+});
+// End feature flag code - feature-teamname-mm-yy-feature-name
+```
+The comments in the format shown above are required to aid cleanup once we ship the feature.
+
+Feature flags don't have qualification criteria - they are either off or on, for all users.
+
+### Running a feature flag
+
+1. The developer implementing the feature creates the feature flag in the `Development` environment on LD
+2. Once the developer opens a PR and wants the feature to be available on our `staging` environment aka `flinkly`, he/she duplicates it from `Development` to `Staging` environment via the LD UI, setting feature flag to `false`.
+3. The PR is merged to `master` as soon as regression tests are passing. Once it is merged, the developer duplicates it from `Staging` to `Production` environment via the LD UI, setting it to `false`.
+4. To be able to QA a feature on `flinkly`, feature flag on `Staging` should be set to `true`.
+5. When we are ready to release the feature, the flag on production is set to `true`.
+6. The feature flag code in webapp and the flag itself in LD will be eventually removed when the feature is well tested and we decide to keep it.
+
+### Naming
+
+A feature flag should have the following format: `feature-teamname-mm-yyyy-test-name`.
+
+For example, `feature-ps-03-2017-example-space-impact`.
+
+### Creating a feature flag
+
+The process is the same as for an A/B test, but targeting should be set to off, and default rule must be either `true` or `false`.
+
+### QA
+
+To manually QA the new feature, it should be turned on for `Staging` in LD.
+
+We don't cover features under a feature flag with automated tests, so if we want to run them against `Staging`, the feature should be disabled. This process can change in the future.
+
+
+## Environments on Launch Darkly
+
+### `Development`
+Tests and feature flags defined here are served to `app.joistio.com:8888` aka local dev
+
+### `Staging`
+Tests and feature flags defined here are served to `app.flinkly.com` aka `staging`
+
+### `Preview`
+Tests and feature flags defined here are served to `app.quirely.com` aka `preview`
+
+### `Production`
+Tests and feature flags defined here are served to `app.contentful.com` aka `production`
 
 
 ## Considerations

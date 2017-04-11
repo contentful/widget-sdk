@@ -175,7 +175,7 @@ angular.module('contentful')
     });
   };
 
-  var nextStepHintsTest$ = LD.get('ps-03-2017-next-step-hints');
+  var nextStepHintsTest$ = LD.getTest('ps-03-2017-next-step-hints');
   var notActivated = !spaceContext.getData('activatedAt');
   var learnModeOn = hasAccessToLearnView && notActivated;
   var showNextStepHint;

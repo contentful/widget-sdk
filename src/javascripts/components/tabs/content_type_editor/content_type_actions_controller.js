@@ -29,7 +29,7 @@ angular.module('contentful')
   var K = require('utils/kefir');
   var LD = require('utils/LaunchDarkly');
   var analytics = require('analytics/Analytics');
-  var nextStepHintsTest$ = LD.get('ps-03-2017-next-step-hints');
+  var nextStepHintsTest$ = LD.getTest('ps-03-2017-next-step-hints');
   var shouldShowNextStep;
 
   K.onValueScope($scope, nextStepHintsTest$, function (shouldShow) {

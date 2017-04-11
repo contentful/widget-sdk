@@ -74,10 +74,10 @@ function isQualifiedUser ({organizationMemberships}) {
 
 /**
  * @ngdoc method
- * @name utils/LaunchDarkly#get
+ * @name utils/LaunchDarkly#getTest
  * @usage[js]
  * const ld = require('utils/LaunchDarkly')
- * const awesomeTest$ = ld.get('my-awesome-test')
+ * const awesomeTest$ = ld.getTest('my-awesome-test')
  * K.onValueScope($scope, awesomeTest$, callback) // to bind to lifetime of scope
  * // or
  * awesomeTest$.onValue(callback)
@@ -94,8 +94,8 @@ function isQualifiedUser ({organizationMemberships}) {
  * qualification criteria.
  * @returns {utils/kefir.Property<boolean>}
  */
-export function get (testName, customQualificationFn = _ => true) {
-  const testVal$ = getForAllUsers(testName);
+export function getTest (testName, customQualificationFn = _ => true) {
+  const testVal$ = getFeatureFlag(testName);
 
   // Launch Darkly has no way of preventing anonymous users from
   // receiving test flags so this makes sure that if the user
@@ -114,10 +114,10 @@ export function get (testName, customQualificationFn = _ => true) {
 
 /**
  * @ngdoc method
- * @name utils/LaunchDarkly#getForAllUsers
+ * @name utils/LaunchDarkly#getFeatureFlag
  * @usage[js]
  * const ld = require('utils/LaunchDarkly')
- * const awesomeFeatureFlag$ = ld.getForAllUsers('my-awesome-feature-flag')
+ * const awesomeFeatureFlag$ = ld.getFeatureFlag('my-awesome-feature-flag')
  * K.onValueScope($scope, awesomeFeatureFlag$, callback) // to bind to lifetime of scope
  * // or
  * awesomeFeatureFlag$.onValue(callback)
@@ -125,18 +125,18 @@ export function get (testName, customQualificationFn = _ => true) {
  * @description
  * Fetches the value for the requested feature flag.
  * It returns a kefir property that will always give you the
- * value for the test as it is on Launch Darkly servers.
+ * value for the feature flag as it is on Launch Darkly servers.
  *
- * @param {String} testName
+ * @param {String} featureFlagName
  * @returns {utils/kefir.Property<boolean>}
  */
-export function getForAllUsers (testName) {
+export function getFeatureFlag (featureFlagName) {
   const testVal$ = mergeValues([
     fromEvents(client, 'ready'),
-    fromEvents(client, `change:${testName}`)
+    fromEvents(client, `change:${featureFlagName}`)
   ]);
 
   return sampleBy(testVal$, () => {
-    return client.variation(testName, DEFAULT_VAL);
+    return client.variation(featureFlagName, DEFAULT_VAL);
   }).skipDuplicates();
 }
