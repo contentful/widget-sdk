@@ -171,5 +171,15 @@ export function create (baseUrl, auth) {
 }
 
 function joinPath (components) {
-  return filter(components).join('/');
+  const startSlashRegex = /^\//;
+  const endSlashRegex = /\/$/;
+  return filter(components).map(function (component, ix) {
+    if (ix > 0) {
+      component = component.replace(startSlashRegex, '');
+    }
+    if (ix < components.length - 1) {
+      component = component.replace(endSlashRegex, '');
+    }
+    return component;
+  }).join('/');
 }

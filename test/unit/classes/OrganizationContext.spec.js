@@ -1,5 +1,5 @@
 describe('OrganizationContext', function () {
-  const API_HOST = 'SOME_API_HOST';
+  const API_HOST = '//SOME_API_HOST';
   const ORG = Object.freeze({
     sys: {
       type: 'Organization',
@@ -50,7 +50,7 @@ describe('OrganizationContext', function () {
       const query = {};
       orgContext.getAllUsers(query);
       sinon.assert.calledWithExactly(this.fetchAll, ENDPOINT, ['users'], 100, query);
-      sinon.assert.calledWithExactly(this.Endpoint.createOrganizationEndpoint, `//${API_HOST}`, ORG.sys.id, this.authentication);
+      sinon.assert.calledWithExactly(this.Endpoint.createOrganizationEndpoint, `${API_HOST}`, ORG.sys.id, this.authentication);
     });
 
     it('resolves with fetchAll results', function* () {

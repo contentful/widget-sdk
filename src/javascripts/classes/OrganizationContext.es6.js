@@ -31,7 +31,7 @@ export function create (organization) {
   }
 
   const endpoint = createOrganizationEndpoint(
-    '//' + Config.apiUrl(),
+    Config.apiUrl(),
     organization.sys.id,
     Authentication
   );

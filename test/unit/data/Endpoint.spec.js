@@ -1,5 +1,5 @@
 describe('data/Endpoint', function () {
-  const baseUrl = '//test.io/';
+  const baseUrl = '//test.io';
 
   beforeEach(function () {
     module('contentful/test');
@@ -129,45 +129,38 @@ describe('data/Endpoint', function () {
     });
   });
 
-  describe('.createSpaceEndpoint()', function () {
-    it('sends request relative to space resource', function () {
-      const auth = {
-        getToken: sinon.stub().resolves('TOKEN')
-      };
-      const headers = {
-        'Authorization': 'Bearer TOKEN',
-        'Accept': 'application/json, text/plain, */*'
-      };
+  describeCreateEndpoint('createSpaceEndpoint', 'spaces');
+  describeCreateEndpoint('createOrganizationEndpoint', 'organizations');
 
-      this.$http.expectGET('//test.io/spaces/SPACE_ID/foo/bar', headers).respond();
-      const spaceEndpoint = this.Endpoint.createSpaceEndpoint('//test.io', 'SPACE_ID', auth);
-      spaceEndpoint({
-        method: 'GET',
-        path: ['foo', 'bar']
+  function describeCreateEndpoint (methodName, endpointUrl) {
+    describe(`.${methodName}()`, function () {
+      beforeEach(function () {
+        this.auth = {
+          getToken: sinon.stub().resolves('TOKEN')
+        };
+        this.headers = {
+          'Authorization': 'Bearer TOKEN',
+          'Accept': 'application/json, text/plain, */*'
+        };
+        this.expectGetRequest = function (baseUrl, resourceId, path, expectedUrl) {
+          this.$http.expectGET(expectedUrl, this.headers).respond();
+          const spaceEndpoint = this.Endpoint[methodName](baseUrl, resourceId, this.auth);
+          spaceEndpoint({
+            method: 'GET',
+            path: path
+          });
+          this.$timeout.flush();
+          this.$http.flush();
+        };
       });
-      this.$timeout.flush();
-      this.$http.flush();
-    });
-  });
 
-  describe('.createOrganizationEndpoint()', function () {
-    it('sends request relative to space resource', function () {
-      const auth = {
-        getToken: sinon.stub().resolves('TOKEN')
-      };
-      const headers = {
-        'Authorization': 'Bearer TOKEN',
-        'Accept': 'application/json, text/plain, */*'
-      };
-
-      this.$http.expectGET('//test.io/organizations/ORG_ID/foo/bar', headers).respond();
-      const organizationEndpoint = this.Endpoint.createOrganizationEndpoint('//test.io', 'ORG_ID', auth);
-      organizationEndpoint({
-        method: 'GET',
-        path: ['foo', 'bar']
+      it(`sends request relative to ${endpointUrl} resource`, function () {
+        this.expectGetRequest('//test.io', 'ID', ['foo', 'bar'], `//test.io/${endpointUrl}/ID/foo/bar`);
       });
-      this.$timeout.flush();
-      this.$http.flush();
+
+      it('doesn\'t add extra slashes to url', function () {
+        this.expectGetRequest('//test.io/', 'ID', ['/foo/', '/bar/'], `//test.io/${endpointUrl}/ID/foo/bar/`);
+      });
     });
-  });
+  }
 });
