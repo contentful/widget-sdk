@@ -49,23 +49,6 @@ angular.module('contentful')
       }
     },
     {
-      label: 'subscriptionUnsettled',
-      message: function () {
-        return '<strong>Outstanding invoices.</strong> ' + (
-          isOwner()
-            ? 'To be able to edit content within your Organization, please update your billing details.'
-            : 'To be able to edit content within your Organization, the Organization Owner must update billing details.'
-        );
-      },
-      actionMessage: function () {
-        return isOwner() ? 'Update' : undefined;
-      },
-      action: function () {
-        trackPersistentNotification.action('Update Billing Details');
-        $location.path('/account/organizations/' + getOrgId() + '/subscription/billing');
-      }
-    },
-    {
       label: 'periodUsageExceeded',
       message: '<strong>You have reached one of your limits.</strong> To check your current limits, go to your subscription page. If you have overages enabled, don’t worry - we’ll charge you as you go.',
       actionMessage: 'Go to subscription',

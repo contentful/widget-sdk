@@ -61,7 +61,7 @@ angular.module('contentful')
   function getSubscriptionState () {
     var org = getGoToOrganizationsOrganization();
     if (org) {
-      var pathSuffix = 'organizations/' + org.sys.id + '/subscription';
+      var pathSuffix = 'organizations/' + org.sys.id + '/z_subscription';
       return 'account.pathSuffix({ pathSuffix: \'' + pathSuffix + '\'})';
     }
   }

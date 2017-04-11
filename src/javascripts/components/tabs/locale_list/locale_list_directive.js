@@ -25,7 +25,7 @@ angular.module('contentful')
   _.extend($scope, STATES);
 
   var organizationId = spaceContext.space.getOrganizationId();
-  var suffix = 'organizations/' + organizationId + '/subscription';
+  var suffix = 'organizations/' + organizationId + '/z_subscription';
   $scope.accountUpgradeState = 'account.pathSuffix({ pathSuffix: \'' + suffix + '\' })';
 
   $scope.locales = [];
