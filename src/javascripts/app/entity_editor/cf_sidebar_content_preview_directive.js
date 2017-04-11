@@ -26,7 +26,7 @@ angular.module('contentful')
           $scope.showDefaultMessage = true;
         }
 
-        K.onValueScope($scope, $scope.otDoc.valuePropertyAt([]), function (entry) {
+        K.onValueScope($scope, $scope.otDoc.data$, function (entry) {
           $scope.contentPreviewEnvironments.forEach(function (environment) {
             environment.compiledUrl = contentPreview.replaceVariablesInUrl(
               environment.url, entry, $scope.entityInfo.contentType
