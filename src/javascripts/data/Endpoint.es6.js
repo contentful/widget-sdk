@@ -45,7 +45,7 @@ import { extend, filter, get } from 'lodash';
  * @returns {function(): Promise<Object>}
  */
 export function createSpaceEndpoint (baseUrl, spaceId, auth) {
-  const spaceBaseUrl = joinPath([baseUrl.replace(/\/$/, ''), 'spaces', spaceId]);
+  const spaceBaseUrl = joinPath([baseUrl, 'spaces', spaceId]);
   return create(spaceBaseUrl, auth);
 }
 
@@ -75,7 +75,7 @@ export function createSpaceEndpoint (baseUrl, spaceId, auth) {
  * @returns {function(): Promise<Object>}
  */
 export function createOrganizationEndpoint (baseUrl, organizationId, auth) {
-  const organizationBaseUrl = joinPath([baseUrl.replace(/\/$/, ''), 'organizations', organizationId]);
+  const organizationBaseUrl = joinPath([baseUrl, 'organizations', organizationId]);
   return create(organizationBaseUrl, auth);
 }
 
@@ -171,5 +171,15 @@ export function create (baseUrl, auth) {
 }
 
 function joinPath (components) {
-  return filter(components).join('/');
+  const startSlashRegex = /^\//;
+  const endSlashRegex = /\/$/;
+  return filter(components).map(function (component, ix) {
+    if (ix > 0) {
+      component = component.replace(startSlashRegex, '');
+    }
+    if (ix < components.length - 1) {
+      component = component.replace(endSlashRegex, '');
+    }
+    return component;
+  }).join('/');
 }
