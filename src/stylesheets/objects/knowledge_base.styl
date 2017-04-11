@@ -1,8 +1,12 @@
-.knowledge-base-link
+// Need to use 'a' selector to overide globally set link colors
+a.knowledge-base-link
   display: inline-block
   position: relative
+  color: $colors.blue-darkest
+  text-decoration: underline
+  cursor: pointer
   &:hover
-    color: $blue-dark-link
+    color: $colors.text-dark
   .fa-question-circle
     display: inline-block
     margin-left: 4px
