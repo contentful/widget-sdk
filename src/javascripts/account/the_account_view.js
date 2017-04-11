@@ -130,7 +130,7 @@ angular.module('contentful')
    * user hasn't got any space yet - the next best current user owned organization.
    */
   function getGoToOrganizationsOrganization () {
-    var orgs = [spaceContext.organizationContext.organization];
+    var orgs = [spaceContext.getData('organization')];
     if (!orgs[0]) {
       // No space yet, get next best organization.
       orgs = OrganizationList.getAll();

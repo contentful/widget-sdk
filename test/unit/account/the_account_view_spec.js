@@ -3,10 +3,10 @@ import * as K from 'helpers/mocks/kefir';
 describe('TheAccountView service', function () {
   beforeEach(function () {
     this.spaceContext = {
-      organizationContext: {organization: null}
+      getData: sinon.stub()
     };
     this.setOrganization = function (org) {
-      this.spaceContext.organizationContext.organization = org;
+      this.spaceContext.getData.withArgs('organization').returns(org);
     };
 
     this.OrganizationList = {
