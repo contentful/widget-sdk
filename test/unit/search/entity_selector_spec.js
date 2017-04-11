@@ -10,7 +10,7 @@ describe('entitySelector', function () {
     this.$inject('modalDialog').open = this.openDialogStub;
 
     this.open = function (field, links) {
-      const promise = this.entitySelector.open(field, links);
+      const promise = this.entitySelector.openFromField(field, links);
       this.$apply();
       return promise;
     };
@@ -30,10 +30,8 @@ describe('entitySelector', function () {
     return t;
   }
 
-  pit('rejects if no valid field is provided', function () {
-    return this.open({}).then(_.noop, function (err) {
-      expect(err.message).toMatch(/valid/);
-    });
+  it('rejects if no valid field is provided', function () {
+    expect(() => this.open({})).toThrow();
   });
 
   describe('config preparation', function () {
@@ -124,45 +122,6 @@ describe('entitySelector', function () {
           height: {min: 300, max: 400}
         });
       });
-    });
-  });
-
-  describe('query extension preparation', function () {
-    beforeEach(function () {
-      this.qe = function (type, vs) {
-        this.open({linkType: type, itemValidations: _.isArray(vs) ? vs : [vs]});
-        return this.getConfig().queryExtension;
-      };
-    });
-
-    it('extends query with allowed content types', function () {
-      const ext = this.qe('Entry', {linkContentType: ['ctid1', 'ctid2']});
-      expect(ext['sys.contentType.sys.id[in]']).toBe('ctid1,ctid2');
-    });
-
-    it('extends query with allowed asset MIMEs', function () {
-      this.$inject('mimetype').getTypesForGroup = sinon.stub().returns('mimez');
-      const ext = this.qe('Asset', {linkMimetypeGroup: ['g1', 'g2']});
-      expect(ext['fields.file.contentType[in]']).toBe('mimez,mimez');
-    });
-
-    // see "prepareQueryExtension" function in "entity_selector.js"
-    xit('extends query with asset size constraints', function () {
-      const dimensions = _.extend(size(100, 200, 'width'), size(300, 400, 'height'));
-      const validations = [{assetImageDimensions: dimensions}, size(100, 200, 'assetFileSize')];
-      const ext = this.qe('Asset', validations);
-
-      expect(Object.keys(ext).length).toBe(6);
-      expect(path('size', false)).toBe(100);
-      expect(path('size', true)).toBe(200);
-      expect(path('width', false)).toBe(100);
-      expect(path('width', true)).toBe(200);
-      expect(path('height', false)).toBe(300);
-      expect(path('height', true)).toBe(400);
-
-      function path (property, lowerThan) {
-        return ext['fields.file.details.' + property + '[' + (lowerThan ? 'l' : 'g') + 'te]'];
-      }
     });
   });
 

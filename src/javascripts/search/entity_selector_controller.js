@@ -196,7 +196,7 @@ angular.module('contentful')
     if (!placeholder) {
       return '';
     }
-    var totalEntities = $scope.paginator.getTotal().length;
+    var totalEntities = $scope.paginator.getTotal();
     placeholder = placeholder.replace(/%total%\s*/, totalEntities > 1 ? totalEntities + ' ' : '');
     if ($scope.supportsAdvancedSearch) {
       placeholder += ', press down arrow key for help';
