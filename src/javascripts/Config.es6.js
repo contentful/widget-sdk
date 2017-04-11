@@ -76,6 +76,18 @@ export function accountUrl (path) {
   return authUrl('/account' + ensureLeadingSlash(path));
 }
 
+
+/**
+ * @ngdoc property
+ * @name Config#otUrl
+ * URL for ShareJS connection.
+ *
+ * In production this is `//ot.contentful.com/`.
+ * @param {string} path
+ * @returns {string}
+ */
+export const otUrl = settings.otUrl;
+
 /**
  * @ngdoc property
  * @name Config#supportUrl

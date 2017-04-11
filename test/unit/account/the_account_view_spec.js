@@ -3,7 +3,10 @@ import * as K from 'helpers/mocks/kefir';
 describe('TheAccountView service', function () {
   beforeEach(function () {
     this.spaceContext = {
-      getData: sinon.stub()
+      organizationContext: {organization: null}
+    };
+    this.setOrganization = function (org) {
+      this.spaceContext.organizationContext.organization = org;
     };
 
     this.OrganizationList = {
@@ -23,7 +26,11 @@ describe('TheAccountView service', function () {
     this.view = this.$inject('TheAccountView');
     const $state = this.$inject('$state');
 
-    this.go = $state.go = sinon.spy();
+    this.go = $state.go = sinon.stub();
+  });
+
+  const ORG = Object.freeze({
+    subscriptionState: 'active', sys: {id: 'ORG_0'}
   });
 
   describe('.canShowIntercomLink$', function () {
@@ -69,7 +76,7 @@ describe('TheAccountView service', function () {
 
   describe('.goToOrganizations() and .canGoToOrganizations()', function () {
     const ORGS = [
-      {subscriptionState: 'active', sys: {id: 'ORG_0'}},
+      ORG,
       {subscriptionState: 'active', sys: {id: 'ORG_1'}},
       {subscriptionState: 'active', sys: {id: 'ORG_2'}}
     ];
@@ -80,10 +87,10 @@ describe('TheAccountView service', function () {
 
     describe('with at least one space', function () {
       beforeEach(function () {
-        this.spaceContext.getData.withArgs('organization').returns(ORGS[0]);
+        this.setOrganization(ORG);
       });
 
-      itGoesToTheOrganizationOf('the next best organization', ORGS[0]);
+      itGoesToTheOrganizationOf('the next best organization', ORG);
 
       itRejectsToNavigateNonOrganizationOwnersOrAdmins();
     });
@@ -128,13 +135,15 @@ describe('TheAccountView service', function () {
       const RETURN_VALUE = {};
 
       beforeEach(function () {
-        this.view.goToOrganizations = sinon.stub().returns(RETURN_VALUE);
+        this.setOrganization({ sys: { id: 'ORG_ID' } });
+        this.OrganizationList.isOwnerOrAdmin.returns(true);
+        this.go.returns(RETURN_VALUE);
         this.returnValue = this.view[name]();
       });
 
-      it(`calls .goToOrganizations('${subpage}')`, function () {
-        sinon.assert.calledOnce(this.view.goToOrganizations);
-        sinon.assert.calledWithExactly(this.view.goToOrganizations, subpage);
+      it(`calls $state.go('${subpage}')`, function () {
+        sinon.assert.calledOnce(this.go);
+        sinon.assert.calledWithExactly(this.go, 'account.pathSuffix', { pathSuffix: `organizations/ORG_ID/${subpage}` }, { reload: true });
       });
 
       it('returns .goToOrganizations() returned promise', function () {
@@ -145,8 +154,7 @@ describe('TheAccountView service', function () {
 
   describe('getSubScriptionState()', function () {
     beforeEach(function () {
-      this.org = {subscriptionState: 'active', sys: {id: 'ORG_0'}};
-      this.spaceContext.getData.withArgs('organization').returns(this.org);
+      this.setOrganization({subscriptionState: 'active', sys: {id: 'ORG_0'}});
     });
 
     it('returns path if user has permission', function () {

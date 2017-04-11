@@ -9,12 +9,12 @@ describe('data/ApiClient', function () {
       $provide.value('$http', $http);
     });
 
-    const SpaceEndpoint = this.$inject('data/spaceEndpoint');
+    const createSpaceEndpoint = this.$inject('data/Endpoint').createSpaceEndpoint;
     const Client = this.$inject('data/ApiClient');
     const $timeout = this.$inject('$timeout');
 
     const auth = { getToken: sinon.stub().resolves('TOKEN') };
-    const endpoint = SpaceEndpoint.create('//api.test.local', 'SPACE', auth);
+    const endpoint = createSpaceEndpoint('//api.test.local', 'SPACE', auth);
     this.client = new Client(function (...args) {
       const response = endpoint(...args);
       $timeout.flush();

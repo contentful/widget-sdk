@@ -11,7 +11,7 @@ angular.module('contentful')
   var OrganizationList = require('OrganizationList');
 
   function isOwner () {
-    var organization = spaceContext.getData('organization');
+    var organization = spaceContext.organizationContext.organization;
     return OrganizationList.isOwner(organization);
   }
 

@@ -6,10 +6,13 @@ describe('spaceContext', function () {
     this.Subscription = {
       newFromOrganization: sinon.stub()
     };
+    this.organization = {sys: {id: 'ORG_ID'}};
+    this.OrganizationContext = { create: sinon.stub().returns({organization: this.organization}) };
     module('contentful/test', ($provide) => {
       $provide.value('data/userCache', sinon.stub());
       $provide.value('data/editingInterfaces', sinon.stub());
       $provide.value('Subscription', this.Subscription);
+      $provide.value('classes/OrganizationContext', this.OrganizationContext);
     });
     this.spaceContext = this.$inject('spaceContext');
     this.theLocaleStore = this.$inject('TheLocaleStore');
@@ -150,6 +153,10 @@ describe('spaceContext', function () {
       expect(
         this.spaceContext.publishedContentTypes.map((ct) => ct.getId())
       ).toEqual(['A', 'B']);
+    });
+
+    it('inits organization context', function () {
+      expect(this.spaceContext.organizationContext.organization).toEqual(this.organization);
     });
   });
 

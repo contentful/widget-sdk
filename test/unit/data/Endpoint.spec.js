@@ -1,36 +1,41 @@
-'use strict';
+describe('data/Endpoint', function () {
+  const baseUrl = '//test.io/';
 
-describe('data/spaceEndpoint', function () {
   beforeEach(function () {
     module('contentful/test');
 
     const auth = {
       getToken: sinon.stub().resolves('TOKEN')
     };
-    const spaceEndpoint = this.$inject('data/spaceEndpoint');
-    const request = spaceEndpoint.create('//test.io', 'SPACE', auth);
-    this.makeEndpointRequest = function (...args) {
+
+    this.Endpoint = this.$inject('data/Endpoint');
+    this.$http = this.$inject('$httpBackend');
+    this.$timeout = this.$inject('$timeout');
+
+    this.makeRequest = function (...args) {
+      const request = this.Endpoint.create(baseUrl, auth);
       const response = request(...args);
       this.$inject('$timeout').flush();
       return response;
     };
-
-    this.$http = this.$inject('$httpBackend');
   });
 
   afterEach(function () {
     this.$http.verifyNoOutstandingExpectation();
     this.$http.verifyNoOutstandingRequest();
+    this.Endpoint = null;
   });
 
-  it('sends GET request relative to space resource', function () {
-    const url = '//test.io/spaces/SPACE/foo/bar';
+
+  it('sends GET request relative to resource', function () {
+    const url = `${baseUrl}/foo/bar`;
     const headers = {
       'Authorization': 'Bearer TOKEN',
       'Accept': 'application/json, text/plain, */*'
     };
+
     this.$http.expectGET(url, headers).respond();
-    this.makeEndpointRequest({
+    this.makeRequest({
       method: 'GET',
       path: ['foo', 'bar']
     });
@@ -39,9 +44,9 @@ describe('data/spaceEndpoint', function () {
 
   it('resolves the promise with response data', function () {
     const responseHandler = sinon.stub();
-    this.$http.expectGET('//test.io/spaces/SPACE/foo/bar')
-    .respond('DATA');
-    this.makeEndpointRequest({
+    this.$http.expectGET(`${baseUrl}/foo/bar`)
+      .respond('DATA');
+    this.makeRequest({
       method: 'GET',
       path: ['foo', 'bar']
     }).then(responseHandler);
@@ -50,7 +55,7 @@ describe('data/spaceEndpoint', function () {
   });
 
   it('sends POST request without version header', function () {
-    const url = '//test.io/spaces/SPACE/foo/bar';
+    const url = `${baseUrl}/foo/bar`;
     const headers = {
       'Content-Type': 'application/vnd.contentful.management.v1+json',
       'Authorization': 'Bearer TOKEN',
@@ -58,7 +63,7 @@ describe('data/spaceEndpoint', function () {
     };
     const data = {foo: 42};
     this.$http.expectPOST(url, JSON.stringify(data), headers).respond();
-    this.makeEndpointRequest({
+    this.makeRequest({
       method: 'POST',
       path: ['foo', 'bar'],
       data: data
@@ -67,7 +72,7 @@ describe('data/spaceEndpoint', function () {
   });
 
   it('sends POST request with version header', function () {
-    const url = '//test.io/spaces/SPACE/foo/bar';
+    const url = `${baseUrl}/foo/bar`;
     const headers = {
       'Content-Type': 'application/vnd.contentful.management.v1+json',
       'Authorization': 'Bearer TOKEN',
@@ -76,7 +81,7 @@ describe('data/spaceEndpoint', function () {
     };
     const data = {foo: 42};
     this.$http.expectPOST(url, JSON.stringify(data), headers).respond();
-    this.makeEndpointRequest({
+    this.makeRequest({
       method: 'POST',
       path: ['foo', 'bar'],
       data: data,
@@ -89,7 +94,7 @@ describe('data/spaceEndpoint', function () {
 
     it('is an error object', function* () {
       this.$http.whenGET(/./).respond(500);
-      const req = this.makeEndpointRequest({
+      const req = this.makeRequest({
         method: 'GET',
         path: ['foo']
       });
@@ -101,19 +106,19 @@ describe('data/spaceEndpoint', function () {
 
     it('has "request" object', function* () {
       this.$http.whenGET(/./).respond(500);
-      const req = this.makeEndpointRequest({
+      const req = this.makeRequest({
         method: 'GET',
         path: ['foo']
       });
       this.$http.flush();
       const error = yield this.catchPromise(req);
       expect(error.request.method).toBe('GET');
-      expect(error.request.url).toBe('//test.io/spaces/SPACE/foo');
+      expect(error.request.url).toBe(`${baseUrl}/foo`);
     });
 
     it('has "response" properties', function* () {
       this.$http.whenGET(/./).respond(455, 'ERRORS');
-      const req = this.makeEndpointRequest({
+      const req = this.makeRequest({
         method: 'GET',
         path: ['foo']
       });
@@ -121,6 +126,48 @@ describe('data/spaceEndpoint', function () {
       const error = yield this.catchPromise(req);
       expect(error.status).toBe(455);
       expect(error.data).toEqual('ERRORS');
+    });
+  });
+
+  describe('.createSpaceEndpoint()', function () {
+    it('sends request relative to space resource', function () {
+      const auth = {
+        getToken: sinon.stub().resolves('TOKEN')
+      };
+      const headers = {
+        'Authorization': 'Bearer TOKEN',
+        'Accept': 'application/json, text/plain, */*'
+      };
+
+      this.$http.expectGET('//test.io/spaces/SPACE_ID/foo/bar', headers).respond();
+      const spaceEndpoint = this.Endpoint.createSpaceEndpoint('//test.io', 'SPACE_ID', auth);
+      spaceEndpoint({
+        method: 'GET',
+        path: ['foo', 'bar']
+      });
+      this.$timeout.flush();
+      this.$http.flush();
+    });
+  });
+
+  describe('.createOrganizationEndpoint()', function () {
+    it('sends request relative to space resource', function () {
+      const auth = {
+        getToken: sinon.stub().resolves('TOKEN')
+      };
+      const headers = {
+        'Authorization': 'Bearer TOKEN',
+        'Accept': 'application/json, text/plain, */*'
+      };
+
+      this.$http.expectGET('//test.io/organizations/ORG_ID/foo/bar', headers).respond();
+      const organizationEndpoint = this.Endpoint.createOrganizationEndpoint('//test.io', 'ORG_ID', auth);
+      organizationEndpoint({
+        method: 'GET',
+        path: ['foo', 'bar']
+      });
+      this.$timeout.flush();
+      this.$http.flush();
     });
   });
 });

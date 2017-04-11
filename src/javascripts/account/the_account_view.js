@@ -74,7 +74,7 @@ angular.module('contentful')
    * organizatin's subscription page.
    */
   function goToSubscription () {
-    return this.goToOrganizations('z_subscription');
+    return goToOrganizations('z_subscription');
   }
 
   /**
@@ -85,7 +85,7 @@ angular.module('contentful')
    * organizatin's billing page.
    */
   function goToBilling () {
-    return this.goToOrganizations('z_billing');
+    return goToOrganizations('z_billing');
   }
 
   /**
@@ -130,7 +130,7 @@ angular.module('contentful')
    * user hasn't got any space yet - the next best current user owned organization.
    */
   function getGoToOrganizationsOrganization () {
-    var orgs = [spaceContext.getData('organization')];
+    var orgs = [spaceContext.organizationContext.organization];
     if (!orgs[0]) {
       // No space yet, get next best organization.
       orgs = OrganizationList.getAll();

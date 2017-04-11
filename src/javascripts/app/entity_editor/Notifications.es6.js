@@ -25,7 +25,7 @@
  * - `revert`
  *
  * The `Notification.Error` constructor accepts an additional HTTP
- * error response object like the one returned by 'data/spaceEndpoint'.
+ * error response object like the one returned by 'data/Endpoint'.
  *
  * Among the inspected response properties are
  * - `reponse.data.sys.id`

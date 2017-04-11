@@ -9,7 +9,7 @@ import _ from 'lodash';
  * a given endpoint.
  *
  * Accepts the following arguments:
- * - `spaceEndpoint`. An instance of `data/spaceEndpoint`.
+ * - `endpoint`. An instance of `data/Endpoint`.
  * - `path`. The API path to request, e.g. `['users']`.
  * - `batchLimit`. An integer, representing the maximum number of resources
  *   to retrieve per request.
@@ -18,22 +18,22 @@ import _ from 'lodash';
 /**
  * @ngdoc method
  * @name data/CMA/FetchAll#fetchAll
- * @param {SpaceEndpoint} spaceEndpoint
+ * @param {Endpoint} endpoint
  * @param {array} path
  * @param {integer} batchLimit
  * @returns {array}
  */
-export function fetchAll (spaceEndpoint, path, batchLimit) {
+export function fetchAll (endpoint, path, batchLimit) {
   let query = { skip: 0, limit: batchLimit };
   const requestPromises = [];
 
-  return makeRequest(spaceEndpoint, path, query).then((response) => {
+  return makeRequest(endpoint, path, query).then((response) => {
     const total = response.total;
     let skip = batchLimit;
 
     while (skip < total) {
       query = { skip: skip, limit: batchLimit };
-      requestPromises.push(makeRequest(spaceEndpoint, path, query));
+      requestPromises.push(makeRequest(endpoint, path, query));
       skip += batchLimit;
     }
 
@@ -45,8 +45,8 @@ export function fetchAll (spaceEndpoint, path, batchLimit) {
   });
 }
 
-function makeRequest (spaceEndpoint, path, query) {
-  return spaceEndpoint({
+function makeRequest (endpoint, path, query) {
+  return endpoint({
     method: 'GET',
     path: path,
     query: query
