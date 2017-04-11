@@ -1,5 +1,13 @@
 'use strict';
 
+/**
+ * TODO This module is basically an adapter for the entity helper methods on
+ * `spaceContext` with logic split across the two modules. This makes this
+ * module also stateful, i.e. it depends on the set space.
+ *
+ * We should collect all entity helper logic in one point and create that
+ * object where it is needed.
+ */
 angular.module('cf.app')
 .factory('EntityHelpers', ['require', function (require) {
 
