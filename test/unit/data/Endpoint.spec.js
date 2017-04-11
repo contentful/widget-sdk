@@ -1,5 +1,5 @@
 describe('data/Endpoint', function () {
-  const baseUrl = '//test.io/';
+  const baseUrl = '//test.io';
 
   beforeEach(function () {
     module('contentful/test');

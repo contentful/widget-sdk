@@ -45,7 +45,7 @@ import { extend, filter, get } from 'lodash';
  * @returns {function(): Promise<Object>}
  */
 export function createSpaceEndpoint (baseUrl, spaceId, auth) {
-  const spaceBaseUrl = joinPath([baseUrl, 'spaces', spaceId]);
+  const spaceBaseUrl = joinPath([baseUrl.replace(/\/$/, ''), 'spaces', spaceId]);
   return create(spaceBaseUrl, auth);
 }
 
@@ -75,7 +75,7 @@ export function createSpaceEndpoint (baseUrl, spaceId, auth) {
  * @returns {function(): Promise<Object>}
  */
 export function createOrganizationEndpoint (baseUrl, organizationId, auth) {
-  const organizationBaseUrl = joinPath([baseUrl, 'organizations', organizationId]);
+  const organizationBaseUrl = joinPath([baseUrl.replace(/\/$/, ''), 'organizations', organizationId]);
   return create(organizationBaseUrl, auth);
 }
 
