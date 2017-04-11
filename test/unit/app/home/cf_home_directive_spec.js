@@ -11,10 +11,6 @@ describe('cfHome directive', function () {
     });
 
     this.tokenStore = this.$inject('tokenStore');
-    this.CreateSpace = this.$inject('services/CreateSpace');
-    this.CreateSpace.showDialog = sinon.stub();
-    this.accessChecker = this.$inject('accessChecker');
-    this.accessChecker.canCreateSpace$ = K.createMockProperty(true);
 
     this.compileElement = (isNew) => {
       this.tokenStore.user$ = K.createMockProperty({
@@ -44,25 +40,5 @@ describe('cfHome directive', function () {
       const ctrl = this.compileElement(false);
       expect(ctrl.greeting).toBe(`Good ${timeOfDay}, Foo.`);
     }
-  });
-
-  describe('prompt space creation', function () {
-    it('does not show modal when spaces are not loaded yet', function () {
-      this.tokenStore.spaces$ = K.createMockProperty(null);
-      this.compileElement();
-      sinon.assert.notCalled(this.CreateSpace.showDialog);
-    });
-
-    it('does not show modal when spaces exist', function () {
-      this.tokenStore.spaces$ = K.createMockProperty([{}]);
-      this.compileElement();
-      sinon.assert.notCalled(this.CreateSpace.showDialog);
-    });
-
-    it('shows modal when there are no spaces', function () {
-      this.tokenStore.spaces$ = K.createMockProperty([]);
-      this.compileElement();
-      sinon.assert.calledOnce(this.CreateSpace.showDialog);
-    });
   });
 });

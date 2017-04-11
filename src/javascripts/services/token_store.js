@@ -25,7 +25,7 @@ angular.module('contentful')
   var fetchInfo = makeFetchWithAuth(auth);
 
   var userBus = K.createPropertyBus(null);
-  var spacesBus = K.createPropertyBus(null);
+  var spacesBus = K.createPropertyBus([]);
 
   // MVar that holds the token data
   var tokenInfoMVar = createMVar(tokenInfo);
