@@ -14,6 +14,7 @@ angular.module('contentful')
  * @property {Client.ContentType[]} publishedContentTypes
  * @property {Client.Space} space
  * @property {Data.APIClient} cma
+ * @property {ACL.SpaceMembershipRepository} memberships
  */
 .factory('spaceContext', ['require', function (require) {
   var $parse = require('$parse');
@@ -39,6 +40,7 @@ angular.module('contentful')
   var K = require('utils/kefir');
   var Auth = require('Authentication');
   var OrganizationContext = require('classes/OrganizationContext');
+  var MembershipRepo = require('access_control/SpaceMembershipRepository');
 
   var requestContentTypes = createQueue(function (extraHandler) {
     if (!spaceContext.space) {
@@ -108,6 +110,8 @@ angular.module('contentful')
         Config.otUrl,
         space.getId()
       );
+
+      self.memberships = MembershipRepo.create(self.endpoint);
 
       self.docPool = DocumentPool.create(self.docConnection, self.endpoint);
 

@@ -8,15 +8,16 @@ angular.module('contentful').directive('cfRoleList', function () {
   };
 });
 
-angular.module('contentful').controller('RoleListController', ['$scope', '$injector', function ($scope, $injector) {
+angular.module('contentful').controller('RoleListController', ['$scope', 'require', function ($scope, require) {
 
-  var $state = $injector.get('$state');
-  var ReloadNotification = $injector.get('ReloadNotification');
-  var listHandler = $injector.get('UserListHandler').create();
-  var createRoleRemover = $injector.get('createRoleRemover');
-  var accessChecker = $injector.get('accessChecker');
-  var jumpToRoleMembers = $injector.get('UserListController/jumpToRole');
-  var spaceContext = $injector.get('spaceContext');
+  var $state = require('$state');
+  var ReloadNotification = require('ReloadNotification');
+  var listHandler = require('UserListHandler').create();
+  var createRoleRemover = require('createRoleRemover');
+  var accessChecker = require('accessChecker');
+  var jumpToRoleMembers = require('UserListController/jumpToRole');
+  var spaceContext = require('spaceContext');
+  var ADMIN_ROLE_ID = require('access_control/SpaceMembershipRepository').ADMIN_ROLE_ID;
 
   $scope.duplicateRole = duplicateRole;
   $scope.jumpToRoleMembers = jumpToRoleMembers;
@@ -26,7 +27,7 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
   reload().catch(ReloadNotification.basicErrorHandler);
 
   function jumpToAdminRoleMembers () {
-    jumpToRoleMembers(listHandler.getAdminRoleId());
+    jumpToRoleMembers(ADMIN_ROLE_ID);
   }
 
   function canModifyRoles () {
