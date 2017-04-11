@@ -54,7 +54,7 @@ mixin single-list-item
       .entity-selector__item-list.endless-container(
         ng-if="view.mode === AVAILABLE"
         ng-style="{height: listHeight}"
-        ng-class="{'entity-selector__thumbnails': config.linksAsset, 'entity-selector__item-list--empty': !items.length}"
+        ng-class="{'entity-selector__thumbnails': config.entityType === 'Asset', 'entity-selector__item-list--empty': !items.length}"
         cf-endless-container
         at-bottom="loadMore()"
         num-elements="paginator.getPage()")

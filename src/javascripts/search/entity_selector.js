@@ -164,8 +164,6 @@ angular.module('contentful')
       max: max,
       min: min,
       entityType: entityType,
-      linksEntry: field.linkType === 'Entry' || field.itemLinkType === 'Entry', // TODO: Remove
-      linksAsset: field.linkType === 'Asset' || field.itemLinkType === 'Asset', // TODO: Remove
       linkedContentTypeIds: findLinkValidation(field, 'linkContentType'),
       linkedMimetypeGroups: findLinkValidation(field, 'linkMimetypeGroup')
 
@@ -183,8 +181,6 @@ angular.module('contentful')
 
     config = _.extend(config, {
       locale: config.locale || TheLocaleStore.getDefaultLocale().code,
-      linksEntry: options.entityType === 'Entry',
-      linksAsset: options.entityType === 'Asset',
       linkedContentTypeIds: options.contentTypes || [],
       linkedMimetypeGroups: []
     });
@@ -233,7 +229,7 @@ angular.module('contentful')
   }
 
   function prepareConfigWithSingleContentType (config) {
-    if (!config.linksEntry && !config.linksAsset) {
+    if (['Entry', 'Asset'].indexOf(config.entityType) < 0) {
       return $q.reject(new Error('Provide a valid configuration object.'));
     }
     config.scope = config.scope || {};
@@ -245,12 +241,12 @@ angular.module('contentful')
   }
 
   function getSingleContentType (config) {
-    if (config.linksAsset) {
+    if (config.entityType === 'Asset') {
       return $q.resolve(assetContentType);
     }
 
     var linked = config.linkedContentTypeIds;
-    if (config.linksEntry && linked.length === 1) {
+    if (config.entityType === 'Entry' && linked.length === 1) {
       return spaceContext.publishedCTs.fetch(linked[0]);
     }
 
@@ -260,14 +256,14 @@ angular.module('contentful')
   function prepareQueryExtension (config) {
     var extension = {};
 
-    if (config.linksEntry) {
+    if (config.entityType === 'Entry') {
       var ids = config.linkedContentTypeIds;
       if (Array.isArray(ids) && ids.length > 1) {
         extension['sys.contentType.sys.id[in]'] = ids.join(',');
       }
     }
 
-    if (config.linksAsset) {
+    if (config.entityType === 'Asset') {
       var groups = config.linkedMimetypeGroups;
       if (Array.isArray(groups) && groups.length > 0) {
         extension['fields.file.contentType[in]'] = _.reduce(groups, function (cts, group) {

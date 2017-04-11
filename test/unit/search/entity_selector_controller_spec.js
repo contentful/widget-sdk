@@ -37,10 +37,7 @@ describe('EntitySelectorController', function () {
     };
 
     this.config = function (config) {
-      return _.extend({
-        linksEntry: true,
-        entityType: 'Entry'
-      }, config);
+      return _.extend({ entityType: 'Entry' }, config);
     };
   });
 
@@ -158,7 +155,7 @@ describe('EntitySelectorController', function () {
       this.ct = {getId: _.constant('ctid'), data: {}};
       this.withData = (data) => {
         this.createController(
-          this.config({linksEntry: true}), {}, _.extend(this.ct, {data: data}));
+          this.config({entityType: 'Entry'}), {}, _.extend(this.ct, {data: data}));
       };
     });
 

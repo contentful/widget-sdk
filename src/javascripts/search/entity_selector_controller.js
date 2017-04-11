@@ -11,8 +11,6 @@
  *   max: {Number?}, // for multiple=true
  *   min: {Number?}, // for multiple=true
  *   entityType: {String},
- *   linksEntry: {Boolean}, // TODO: Remove
- *   linksAsset: {Boolean}, // TODO: Remove
  *   linkedContentTypeIds: {Array?},
  *   linkedMimetypeGroups: {Array?},
  *   fetch: {function(params): Promise<{items: {Array}, total: {Number}}>}
@@ -80,7 +78,7 @@ angular.module('contentful')
       paginator: $scope.paginator
     };
 
-    if (config.linksEntry && $scope.singleContentType) {
+    if (config.entityType === 'Entry' && $scope.singleContentType) {
       params.contentTypeId = $scope.singleContentType.getId();
     }
 

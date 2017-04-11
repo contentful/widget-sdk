@@ -37,11 +37,9 @@ describe('entitySelector', function () {
   describe('config preparation', function () {
     it('sets type of linked entity', function () {
       this.open({linkType: 'Entry'});
-      expect(this.getConfig().linksEntry).toBe(true);
-      expect(this.getConfig().linksAsset).toBe(false);
+      expect(this.getConfig().entityType).toBe('Entry');
       this.open({linkType: 'Asset'});
-      expect(this.getConfig().linksEntry).toBe(false);
-      expect(this.getConfig().linksAsset).toBe(true);
+      expect(this.getConfig().entityType).toBe('Asset');
     });
 
     describe('setting min/max number of linked entities', function () {
