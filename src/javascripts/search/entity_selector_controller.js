@@ -20,6 +20,7 @@
  *   title: {String},
  *   input: {String},
  *   info: {String?}, // for multiple=false
+ *   infoHtml: {String?}, // for multiple=false, can be used instead of `.info`
  *   selected: {String}, // for multiple=true
  *   empty: {String},
  *   insert: {String},

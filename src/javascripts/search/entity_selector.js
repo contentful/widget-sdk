@@ -68,10 +68,30 @@ angular.module('contentful')
    * @ngdoc method
    * @name entitySelector#open
    * @param {Object} config
+   * {
+   *   locale: {String},
+   *   multiple: {Boolean},
+   *   max: {Number?}, // for multiple=true
+   *   min: {Number?}, // for multiple=true
+   *   entityType: {String},
+   *   linkedContentTypeIds: {Array?},
+   *   linkedMimetypeGroups: {Array?},
+   *   fetch: {function(params): Promise<{items: {Array}, total: {Number}}>},
+   *   scope: {Object}, // other scope data that could be needed in custom html in `.labels`
+   *   labels: {
+   *     title: {String},
+   *     input: {String},
+   *     info: {String?}, // for multiple=false
+   *     infoHtml: {String?}, // for multiple=false, can be used instead of `.info`
+   *     selected: {String}, // for multiple=true
+   *     empty: {String},
+   *     insert: {String},
+   *     searchPlaceholder: {String}
+   *   }
+   * }
    * @returns {Promise<API.Entity[]>}
    * @description
-   * Opens a modal for the provided reference
-   * field and optional list of existing links.
+   * Opens a modal for the provided custom config object
    */
   function open (config) {
     var entitySelectorControllerConfig = _.omit(config, 'scope', 'labels');
