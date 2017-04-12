@@ -12,7 +12,7 @@ angular.module('contentful')
   };
 })
 
-.controller('HomeController', ['$scope', 'require', function ($scope, require) {
+.controller('HomeController', ['require', function (require) {
   var controller = this;
   var K = require('utils/kefir');
   var moment = require('moment');
@@ -24,31 +24,17 @@ angular.module('contentful')
   var OrganizationList = require('OrganizationList');
 
   // Fetch user and set greeting
-  K.onValueScope($scope, tokenStore.user$, function (user) {
+  K.onValue(tokenStore.user$, function (user) {
     controller.user = user;
     controller.greeting = getGreeting(user);
   });
 
-  K.onValueScope($scope, tokenStore.spaces$, function (spaces) {
+  K.onValue(tokenStore.spaces$, function (spaces) {
     controller.spaces = spaces;
   });
 
-  K.onValueScope($scope, tokenStore.spacesByOrganization$, function (spacesByOrg) {
+  K.onValue(tokenStore.spacesByOrganization$, function (spacesByOrg) {
     controller.spacesByOrganization = spacesByOrg;
-  });
-
-  // open the create space dialog if there are no spaces and user has access
-  var shouldOpenCreateSpace$ = K.combineProperties([tokenStore.spaces$, accessChecker.canCreateSpace$], function (spaces, canCreate) {
-    return _.isEqual(spaces, []) && canCreate;
-  });
-
-  // Emits 'true' only once
-  var openCreateSpace$ = K.holdWhen(shouldOpenCreateSpace$, _.identity);
-
-  K.onValueScope($scope, openCreateSpace$, function (shouldOpen) {
-    if (shouldOpen) {
-      CreateSpace.showDialog();
-    }
   });
 
   controller.canCreateSpace = accessChecker.canCreateSpace;
