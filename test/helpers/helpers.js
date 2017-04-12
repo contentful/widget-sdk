@@ -1,4 +1,4 @@
-'use strict';
+import * as sinon from 'helpers/sinon';
 
 /**
  * @ngdoc service

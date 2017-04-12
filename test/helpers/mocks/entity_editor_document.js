@@ -1,4 +1,4 @@
-import sinon from 'npm:sinon';
+import * as sinon from 'helpers/sinon';
 import * as K from 'test/helpers/mocks/kefir';
 
 angular.module('contentful/mocks')

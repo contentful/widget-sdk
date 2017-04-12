@@ -1,6 +1,6 @@
 import * as K from 'utils/kefir';
 import * as KMock from 'helpers/mocks/kefir';
-import sinon from 'npm:sinon';
+import * as sinon from 'helpers/sinon';
 
 describe('utils/kefir', function () {
 

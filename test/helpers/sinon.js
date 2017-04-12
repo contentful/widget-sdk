@@ -4,13 +4,19 @@ import sinon from 'npm:sinon';
 // files.
 window.sinon = sinon;
 
-sinon.stub.resolves = function (value) {
-  return this.returns(get$q().when(value));
-};
+export const stub = sinon.stub;
+export const spy = sinon.spy;
+export const assert = sinon.assert;
+export const useFakeTimers = sinon.useFakeTimers;
+export const sandbox = sinon.sandbox;
 
-sinon.stub.rejects = function (err) {
-  return this.returns(get$q().reject(err));
-};
+sinon.addBehavior('resolves', (stub, value) => {
+  stub.callsFake(() => get$q().resolve(value));
+});
+
+sinon.addBehavior('rejects', (stub, value) => {
+  stub.callsFake(() => get$q().reject(value));
+});
 
 sinon.stub.defers = function () {
   const deferred = get$q().defer();
@@ -20,7 +26,7 @@ sinon.stub.defers = function () {
   return this;
 };
 
-sinon.stubAll = function (object) {
+export function stubAll (object) {
   /* eslint prefer-const: off */
   for (let key in object) {
     if (typeof object[key] === 'function') {
@@ -28,7 +34,7 @@ sinon.stubAll = function (object) {
     }
   }
   return object;
-};
+}
 
 function get$q () {
   let $q;

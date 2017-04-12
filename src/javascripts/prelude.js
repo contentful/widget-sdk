@@ -186,11 +186,13 @@ angular.module('cf.es6')
     // IE does not support string.startsWith()
     if (to.substr(0, 2) === './' || to.substr(0, 3) === '../') {
       var froms = from.split('/');
+      // Last 'from' is the filename but we resolve relative to the
+      // directory.
       froms.pop();
       var tos = to.split('/');
       return tos.reduce(function (resolved, seg) {
         if (seg === '..') {
-          resolved.shift();
+          resolved.pop();
         } else if (seg !== '.') {
           resolved.push(seg);
         }

@@ -1,4 +1,4 @@
-import sinon from 'npm:sinon';
+import * as sinon from 'helpers/sinon';
 
 describe('Promised loader service', function () {
   var loader, stubs, $rootScope, $q;
