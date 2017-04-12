@@ -124,9 +124,23 @@
 .user-list__info
   margin-left: 15px
   margin-right: auto
+  overflow: hidden
   strong
     display: block
     margin: 3px 0 2px
   small
     font-size: .9em
     color: $colors.text-lightest
+
+.user-list__add-users-btn-wrapper
+  position: relative
+
+.user-list__add-users-tooltip-surface
+  position: absolute
+  top: 0
+  height: 100%
+  width: 100%
+
+.user-removal-confirm-dialog__name
+.role-change-dialog__name
+  word-wrap: break-word

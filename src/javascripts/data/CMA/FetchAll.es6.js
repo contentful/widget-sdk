@@ -13,6 +13,7 @@ import _ from 'lodash';
  * - `path`. The API path to request, e.g. `['users']`.
  * - `batchLimit`. An integer, representing the maximum number of resources
  *   to retrieve per request.
+ * - `params`. An optional object with query params.
  */
 
 /**
@@ -21,18 +22,19 @@ import _ from 'lodash';
  * @param {Endpoint} endpoint
  * @param {array} path
  * @param {integer} batchLimit
+ * @param {Object} params
  * @returns {array}
  */
-export function fetchAll (endpoint, path, batchLimit) {
-  let query = { skip: 0, limit: batchLimit };
+export function fetchAll (endpoint, path, batchLimit, params) {
   const requestPromises = [];
+  let query = _.extend({}, params, { skip: 0, limit: batchLimit });
 
   return makeRequest(endpoint, path, query).then((response) => {
     const total = response.total;
     let skip = batchLimit;
 
     while (skip < total) {
-      query = { skip: skip, limit: batchLimit };
+      query = _.extend({}, params, { skip: skip, limit: batchLimit });
       requestPromises.push(makeRequest(endpoint, path, query));
       skip += batchLimit;
     }
