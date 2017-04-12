@@ -218,9 +218,7 @@ src/javascripts/access_control/cf_rule_list.js
 src/javascripts/access_control/policy_builder.js
 src/javascripts/access_control/remove_outdated_rules.js
 src/javascripts/access_control/response_cache.js
-src/javascripts/access_control/role_remover.js
 src/javascripts/access_control/role_repository.js
-src/javascripts/access_control/space_membership_repository.js
 src/javascripts/webhooks/webhook_call_status_directive.js
 src/javascripts/webhooks/webhook_editor_directive.js
 src/javascripts/webhooks/webhook_headers_directive.js

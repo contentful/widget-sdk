@@ -16,6 +16,7 @@ import sinon from 'npm:sinon';
  * - `editingInterfaces` Always returns default interface.
  * - `widgets` without custom extensions.
  * - `docPool.get` Creates mock document
+ * - `memberships` Instance of 'access_control/SpaceMembershipRepository
  *
  * @usage[js]
  * const spaceContext = this.$inject('mocks/spaceContext').init();
@@ -62,9 +63,23 @@ angular.module('contentful/mocks')
       }
     };
 
+    spaceContext.memberships = createMembershipsMock();
+
     spaceContext.endpoint = createMockEndpoint();
     spaceContext.apiKeyRepo = createApiKeyRepo(spaceContext.endpoint);
+    spaceContext.organizationContext = {};
 
     return spaceContext;
+  }
+
+  function createMembershipsMock () {
+    return {
+      getAll: sinon.stub().resolves([]),
+      invite: sinon.stub().resolves(),
+      inviteAdmin: sinon.stub().resolves(),
+      changeRoleTo: sinon.stub().resolves(),
+      changeRoleToAdmin: sinon.stub().resolves(),
+      remove: sinon.stub().resolves()
+    };
   }
 }]);

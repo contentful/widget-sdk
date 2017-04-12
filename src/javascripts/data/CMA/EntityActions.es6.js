@@ -69,10 +69,9 @@ export const Action = {
  * makePerform(spaceEndpoint)(action, data)
  * ~~~
  * where
- * - 'spaceEndpoint' is a function to make the request as defined
- *   in the 'data/spaceEndpoint' module,
- * - 'action' is one of the actions constructed from the 'Action'
- *   export,
+ * - 'spaceEndpoint' is a function to make the request to a space as defined
+ *   in the 'data/Endpoint' module,
+ * - 'action' is one of the actions constructed from the 'Action' export,
  * - and 'data' is the entity payload we want to call the action on.
  *
  * The call returns a promise that resolves with the response payload

@@ -14,6 +14,7 @@ angular.module('contentful')
  * @property {Client.ContentType[]} publishedContentTypes
  * @property {Client.Space} space
  * @property {Data.APIClient} cma
+ * @property {ACL.SpaceMembershipRepository} memberships
  */
 .factory('spaceContext', ['require', function (require) {
   var $parse = require('$parse');
@@ -23,8 +24,8 @@ angular.module('contentful')
   var createUserCache = require('data/userCache');
   var ctHelpers = require('data/ContentTypes');
   var Widgets = require('widgets');
-  var spaceEndpoint = require('data/spaceEndpoint');
-  var environment = require('environment');
+  var createSpaceEndpoint = require('data/Endpoint').createSpaceEndpoint;
+  var Config = require('Config');
   var createEIRepo = require('data/editingInterfaces');
   var createQueue = require('overridingRequestQueue');
   var ApiClient = require('data/ApiClient');
@@ -38,6 +39,8 @@ angular.module('contentful')
   var createApiKeyRepo = require('data/CMA/ApiKeyRepo').default;
   var K = require('utils/kefir');
   var Auth = require('Authentication');
+  var OrganizationContext = require('classes/OrganizationContext');
+  var MembershipRepo = require('access_control/SpaceMembershipRepository');
 
   var requestContentTypes = createQueue(function (extraHandler) {
     if (!spaceContext.space) {
@@ -80,8 +83,8 @@ angular.module('contentful')
     resetWithSpace: function (space) {
       var self = this;
 
-      self.endpoint = spaceEndpoint.create(
-        environment.settings.apiUrl,
+      self.endpoint = createSpaceEndpoint(
+        Config.apiUrl(),
         space.getId(),
         Auth
       );
@@ -93,6 +96,7 @@ angular.module('contentful')
       self.apiKeyRepo = createApiKeyRepo(self.endpoint);
       self.editingInterfaces = createEIRepo(self.endpoint);
       var organization = self.getData('organization') || null;
+      self.organizationContext = OrganizationContext.create(organization);
       self.subscription =
         organization && Subscription.newFromOrganization(organization);
 
@@ -103,9 +107,11 @@ angular.module('contentful')
 
       self.docConnection = ShareJSConnection.create(
         Auth.getToken,
-        environment.settings.otUrl,
+        Config.otUrl,
         space.getId()
       );
+
+      self.memberships = MembershipRepo.create(self.endpoint);
 
       self.docPool = DocumentPool.create(self.docConnection, self.endpoint);
 

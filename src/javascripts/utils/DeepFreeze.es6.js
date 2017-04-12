@@ -1,4 +1,4 @@
-import {isObjectLike} from 'lodash';
+import {isObjectLike, cloneDeep} from 'lodash';
 
 /**
  * @ngdoc service
@@ -42,4 +42,19 @@ export function deepFreeze (o) {
   }
 
   return o;
+}
+
+
+/**
+ * @ngdoc method
+ * @module cf.utils
+ * @name utils/DeepFreeze#deepFreezeClone
+ * @description
+ * Shorthand method to create a deep copy of an object or array, and freeze it.
+ *
+ * @param {object|array} target
+ * @returns {object|array}
+ */
+export function deepFreezeClone (o) {
+  return deepFreeze(cloneDeep(o));
 }

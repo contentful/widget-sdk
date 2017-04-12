@@ -34,7 +34,7 @@ angular.module('contentful')
     // Reset notification related to the previous space.
     $rootScope.$broadcast('persistentNotification', null);
 
-    var organization = spaceContext.getData('organization') || {};
+    var organization = spaceContext.organizationContext.organization || {};
 
     subscriptionNotifier.notifyAbout(organization);
     billingNotifier.notifyAbout(organization);

@@ -34,9 +34,9 @@ describe('subscriptionNotifier', function () {
     this.setupOrganization = function (extension) {
       _.extend(membership.organization, extension);
       spaceContext.space = {
-        getId: _.constant('some-space-id'),
-        data: {organization: membership.organization}
+        getId: _.constant('some-space-id')
       };
+      spaceContext.organizationContext = {organization: membership.organization};
     };
 
     this.makeOwner = function () { membership.role = 'owner'; };

@@ -11,7 +11,7 @@ angular.module('contentful')
   var OrganizationList = require('OrganizationList');
 
   function isOwner () {
-    var organization = spaceContext.getData('organization');
+    var organization = spaceContext.organizationContext.organization;
     return OrganizationList.isOwner(organization);
   }
 
@@ -46,23 +46,6 @@ angular.module('contentful')
       action: function () {
         trackPersistentNotification.action('Visit Status Page');
         $window.location = 'https://www.contentfulstatus.com';
-      }
-    },
-    {
-      label: 'subscriptionUnsettled',
-      message: function () {
-        return '<strong>Outstanding invoices.</strong> ' + (
-          isOwner()
-            ? 'To be able to edit content within your Organization, please update your billing details.'
-            : 'To be able to edit content within your Organization, the Organization Owner must update billing details.'
-        );
-      },
-      actionMessage: function () {
-        return isOwner() ? 'Update' : undefined;
-      },
-      action: function () {
-        trackPersistentNotification.action('Update Billing Details');
-        $location.path('/account/organizations/' + getOrgId() + '/subscription/billing');
       }
     },
     {

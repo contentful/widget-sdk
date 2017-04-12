@@ -40,8 +40,7 @@ describe('dialogsInitController', function () {
 
       beforeEach(function () {
         this.spaceContext.getId.returns('SPACE_ID');
-        this.spaceContext.getData =
-          sinon.stub().withArgs('organization').returns(ORGANIZATION);
+        this.spaceContext.organizationContext = { organization: ORGANIZATION };
         this.OrganizationList.isEmpty.returns(false);
         this.$apply();
       });

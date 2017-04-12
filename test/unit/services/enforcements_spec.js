@@ -84,18 +84,6 @@ describe('Enforcements service', function () {
 
       });
 
-      describe('returns subscription unsettled', function () {
-        var enforcement;
-        beforeEach(function () {
-          enforcement = enforcements.determineEnforcement(['subscriptionUnsettled']);
-        });
-
-        it('has an error', function () {
-          expect(enforcement.message).toBeDefined();
-        });
-
-      });
-
       describe('returns period usage exceeded', function () {
         var enforcement;
         beforeEach(function () {

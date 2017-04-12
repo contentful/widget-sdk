@@ -12,7 +12,8 @@ describe('API Key List Controller', function () {
     this.spaceContext = _.extend(this.$inject('spaceContext'), {
       getData: _.constant(2),
       space: {getOrganizationId: _.constant(1)},
-      apiKeyRepo: {getAll: this.getApiKeys}
+      apiKeyRepo: {getAll: this.getApiKeys},
+      organizationContext: {organization: {}}
     });
 
     this.create = () => {
