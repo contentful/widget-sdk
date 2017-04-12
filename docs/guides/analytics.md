@@ -48,11 +48,13 @@ and follow the instructions provided there. If you are creating or updating a
 schema you will also need to add the schema or bump the version in the file
 `analytics/snowplow/Schemas.es6.js`.
 
-To debug sent events, you can use [http://com-contentful.mini.snplow.net:5601]
-(non production environments) and [https://search-com-contentful-es-1-bida4oyd7qk6gfsuhokpw3ioge.eu-central-1.es.amazonaws.com/_plugin/kibana/https://search-com-contentful-es-1-bida4oyd7qk6gfsuhokpw3ioge.eu-central-1.es.amazonaws.com/_plugin/kibana/]
-(production environment).
-In production, data is processed into Redshift every 12 hours where it can be later
-checked, e.g. via Looker or Periscope.
+To debug sent events, you can use Kibana for [non-production
+environments][kibana-staing] and the [production environment][kibana-production]
+In production, data is processed into Redshift every 12 hours where it can be
+later checked, e.g. via Looker or Periscope.
+
+[kibana-staging]: http://com-contentful.mini.snplow.net:5601
+[kibana-production]: https://search-com-contentful-es-1-bida4oyd7qk6gfsuhokpw3ioge.eu-central-1.es.amazonaws.com/_plugin/kibana
 
 ## Analytics console
 
