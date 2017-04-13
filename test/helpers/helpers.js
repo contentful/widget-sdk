@@ -43,6 +43,24 @@ beforeEach(function () {
     this.$inject('$rootScope').$apply();
   };
 
+
+  /**
+   * @ngdoc method
+   * @name helpers#$flush
+   * @description
+   * Call `$apply` on the root scope and flush outstanding timeout
+   * callbacks and mock HTTP responses.
+   */
+  this.$flush = function () {
+    const $http = this.$inject('$httpBackend');
+    const $timeout = this.$inject('$timeout');
+
+    this.$apply();
+    $timeout.flush();
+    $http.flush();
+  };
+
+
   /**
    * @ngdoc method
    * @name helpers#resolve
