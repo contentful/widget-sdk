@@ -17,12 +17,14 @@ import InviteUserExperiment from 'analytics/snowplow/transformers/InviteUserExpe
 
 
 /**
- * @ngdoc service
+ * @ngdoc module
  * @name analytics/snowplow/Events
  * @description
  * Registers each analytics event which should be sent to Snowplow with a
- * corresponding schema and transformer name. Returns transformers and schemas
- * associated with specific analytics events.
+ * corresponding schema and transformer name. Exports functions to obtain the
+ * schema and transformer for a given event.
+ *
+ * See the documentation of `registerEvent()` on how to register an event.
  */
 
 const _events = {};
@@ -63,6 +65,30 @@ registerEvent('global:app_loaded', 'app_open', AppOpen);
 registerEvent('invite_user:learn', 'generic', InviteUserExperiment);
 registerEvent('invite_user:create_space', 'generic', InviteUserExperiment);
 
+
+/**
+ * Registers an event to be tracked by snowplow.
+ * @param {string} event
+ *   Name passed to `analytics.track()`
+ * @param {string} schema
+ *   Name of the schema to put the data into. Must be registered in
+ *   `analytics/snowplow/Schemas`.
+ * @param {function} transformer
+ *   A function to transform the parameters passed to `analytics.track()` to the
+ *   data send to snowplow.
+ *   Accepts two arguments, the event name and the tracking data. The tracking
+ *   data is the second argument of `analytics.track()` merged with common
+ *   payload defined in `analytics/Analytics`.
+ *   Returns an object with a `data` and optional `context` property.
+ */
+function registerEvent (event, schema, transformer) {
+  _events[event] = {
+    schema,
+    transformer
+  };
+}
+
+// Common register patterns
 function registerGenericEvent (event) {
   registerEvent(event, 'generic', Generic);
 }
@@ -79,12 +105,6 @@ function registerSnapshotEvent (event) {
   registerEvent(event, 'feature_snapshot', Snapshot);
 }
 
-function registerEvent (event, schema, transformer) {
-  _events[event] = {
-    schema,
-    transformer
-  };
-}
 
 /**
  * @ngdoc method
