@@ -123,8 +123,7 @@ angular.module('contentful')
    * field and optional list of existing links.
    */
   function openFromField (field, currentSize) {
-    return prepareConfigWithSingleContentType(newConfigFromField(field, currentSize || 0))
-      .then(open);
+    return newConfigFromField(field, currentSize || 0).then(open);
   }
 
   /**
@@ -143,7 +142,7 @@ angular.module('contentful')
    * namespace.
    */
   function openFromExtension (options) {
-    return prepareConfigWithSingleContentType(newConfigFromExtension(options))
+    return newConfigFromExtension(options)
       .then(open)
       .then(function (selected) {
         // resolve with a single object if selecting only
@@ -169,6 +168,12 @@ angular.module('contentful')
     }
   }
 
+  /**
+   * Builds a config for #openFromField
+   * @param {API.Field} field
+   * @param {number?} currentSize
+   * @returns config for #open
+   */
   function newConfigFromField (field, currentSize) {
     field = field || {};
 
@@ -179,6 +184,7 @@ angular.module('contentful')
     min = min < 1 ? 1 : min;
 
     var config = {
+      scope: {},
       locale: field.locale,
       multiple: max !== min && field.type === 'Array',
       max: max,
@@ -191,26 +197,50 @@ angular.module('contentful')
       // linkedFileSize: findValidation(field, 'assetFileSize', {}),
       // linkedImageDimensions: findValidation(field, 'assetImageDimensions', {})
     };
+    config.fetch = makeFetch(config);
 
-    return _.extend(config, {fetch: makeFetch(entityType, config)});
+    return getSingleContentType(config).then(function (singleContentType) {
+      config.scope.singleContentType = singleContentType;
+      return config;
+    });
   }
 
+
+  /**
+   * Builds a config for #openFromExtension
+   * @param {object} options
+   * @returns Promise<object> resolves with config for #open
+   */
   function newConfigFromExtension (options) {
     options = options || {};
     var config = _.pick(options, ['locale', 'multiple', 'min', 'max', 'entityType']);
 
     config = _.extend(config, {
+      scope: {},
       locale: config.locale || TheLocaleStore.getDefaultLocale().code,
       linkedContentTypeIds: options.contentTypes || [],
       linkedMimetypeGroups: []
     });
+    config.fetch = makeFetch(config);
 
-    return _.extend(config, {fetch: makeFetch(config.entityType, config)});
+    return getSingleContentType(config).then(function (singleContentType) {
+      config.scope.singleContentType = singleContentType;
+      return config;
+    });
   }
 
-  function makeFetch (entityType, config) {
-    var fnName = 'get' + getEntityTypePlural(entityType);
-    var queryMethod = 'getFor' + getEntityTypePlural(entityType);
+  /**
+   * Creates fetch function for Entity and Asset entity types
+   *
+   * @TODO move fetch logic for entries and assets to EntitySelectorController
+   * or separate module.
+   */
+  function makeFetch (config) {
+    if (['Entry', 'Asset'].indexOf(config.entityType) < 0) {
+      throw new Error('Unsupported entity type: \'' + config.entityType + '\'.');
+    }
+    var fnName = 'get' + getEntityTypePlural(config.entityType);
+    var queryMethod = 'getFor' + getEntityTypePlural(config.entityType);
     var queryExtension = prepareQueryExtension(config);
 
     return function (params) {
@@ -222,15 +252,10 @@ angular.module('contentful')
   }
 
   function getEntityTypePlural (singular) {
-    var plural = {
+    return {
       'Asset': 'Assets',
-      'Entry': 'Entries',
-      'User': 'Users'
+      'Entry': 'Entries'
     }[singular];
-    if (!plural) {
-      throw new Error('unsupported entity type "' + singular + '"');
-    }
-    return plural;
   }
 
   function findLinkValidation (field, property) {
@@ -246,18 +271,6 @@ angular.module('contentful')
     });
 
     return (found && found[property]) || defaultValue;
-  }
-
-  function prepareConfigWithSingleContentType (config) {
-    if (['Entry', 'Asset'].indexOf(config.entityType) < 0) {
-      return $q.reject(new Error('Provide a valid configuration object.'));
-    }
-    config.scope = config.scope || {};
-    return getSingleContentType(config)
-      .then(function (singleContentType) {
-        config.scope.singleContentType = singleContentType;
-        return config;
-      });
   }
 
   function getSingleContentType (config) {

@@ -68,10 +68,10 @@ angular.module('contentful')
   resetAndLoad();
 
   function getEntityHelpers (config) {
-    if (['Entry', 'Asset'].indexOf(config.entityType) <= 0) {
-      return EntityHelpers.newForRecords(config.locale);
-    } else {
+    if (['Entry', 'Asset'].indexOf(config.entityType) < 0) {
       return null;
+    } else {
+      return EntityHelpers.newForLocale(config.locale);
     }
   }
 
@@ -105,7 +105,7 @@ angular.module('contentful')
     }
   }
 
-  // TODO: Move toggle logic into a service and improve edge cases.
+  // @TODO: Move toggle logic into a service and improve edge cases.
   var lastToggled;
   function toggleSelection (entity, event) {
     if (!config.multiple) {

@@ -1,3 +1,5 @@
+import sinon from 'npm:sinon';
+
 describe('EntitySelectorController', function () {
   beforeEach(function () {
     module('contentful/test');
@@ -8,18 +10,10 @@ describe('EntitySelectorController', function () {
 
     this.entitySelector = this.$inject('entitySelector');
 
-    this.organizationContext = this.mockService('classes/OrganizationContext', {
-      create: function () {
-        return {
-          getAllUsers: sinon.stub().resolves({items: []})
-        };
-      }
-    });
-
     this.fetch = sinon.stub().resolves({items: []});
 
     this.createController = function (config = {}, labels = {}, singleContentType) {
-      config = _.extend({ fetch: this.fetch }, config);
+      config = _.extend({ entityType: 'Entry', fetch: this.fetch }, config);
       this.scope = _.extend($rootScope.$new(), {
         config,
         labels,
@@ -34,10 +28,6 @@ describe('EntitySelectorController', function () {
       this.scope.paginator.isAtLast = _.constant(false);
       this.scope.loadMore();
       this.$apply();
-    };
-
-    this.config = function (config) {
-      return _.extend({ entityType: 'Entry' }, config);
     };
   });
 
@@ -54,7 +44,7 @@ describe('EntitySelectorController', function () {
 
   describe('triggering search', function () {
     it('responds to "forceSearch" event', function () {
-      this.createController(this.config());
+      this.createController();
       this.scope.$broadcast('forceSearch');
       this.$apply();
       // (1) init (2) forced
@@ -62,7 +52,7 @@ describe('EntitySelectorController', function () {
     });
 
     it('triggers when term >= 1', function () {
-      this.createController(this.config());
+      this.createController();
       this.scope.view.searchTerm = '';
       this.$apply();
       this.scope.view.searchTerm = '1';
@@ -71,7 +61,7 @@ describe('EntitySelectorController', function () {
     });
 
     it('triggers when clearing', function () {
-      this.createController(this.config());
+      this.createController();
       this.scope.view.searchTerm = '4444';
       this.$apply();
       this.scope.view.searchTerm = '333';
@@ -80,7 +70,7 @@ describe('EntitySelectorController', function () {
     });
 
     it('triggers when deleting the value', function () {
-      this.createController(this.config());
+      this.createController();
       this.scope.view.searchTerm = '4444';
       this.$apply();
       delete this.scope.view.searchTerm;
@@ -97,27 +87,25 @@ describe('EntitySelectorController', function () {
     });
 
     it('mentions number of searchable entities if more than two', function () {
-      this.createController(this.config(), { searchPlaceholder: 'Search %total% entries' });
+      this.createController({}, { searchPlaceholder: 'Search %total% entries' });
       this.scope.paginator.getTotal = sinon.stub().returns(2);
       this.expectPlaceholder('Search 2 entries, press down arrow key for help');
     });
 
     it('does not mention number of searchable entities if only one', function () {
-      this.createController(this.config(), { searchPlaceholder: 'Search %total% entries' });
+      this.createController({}, { searchPlaceholder: 'Search %total% entries' });
       this.scope.paginator.getTotal = sinon.stub().returns(1);
       this.expectPlaceholder('Search entries, press down arrow key for help');
     });
 
     it('does not mention number of searchable entities if zero', function () {
-      this.createController(this.config(), { searchPlaceholder: 'Search %total% entries' });
+      this.createController({}, { searchPlaceholder: 'Search %total% entries' });
       this.scope.paginator.getTotal = sinon.stub().returns(0);
       this.expectPlaceholder('Search entries, press down arrow key for help');
     });
 
     it('has no advanced search hint when entity type is not entry or asset', function () {
-      this.createController(this.config({
-        entityType: 'User'
-      }), { searchPlaceholder: 'Search %total% users' });
+      this.createController({entityType: 'User'}, {searchPlaceholder: 'Search %total% users'});
       this.scope.paginator.getTotal = sinon.stub().returns(100);
       this.expectPlaceholder('Search 100 users');
     });
@@ -125,14 +113,14 @@ describe('EntitySelectorController', function () {
 
   describe('fetching entities', function () {
     it('requests first page of results on init', function () {
-      this.createController(this.config());
+      this.createController();
       sinon.assert.calledOnce(this.fetch);
       expect(this.scope.paginator.getPage()).toBe(0);
     });
 
     it('updates total number of entities', function () {
       this.fetch.resolves({total: 123, items: []});
-      this.createController(this.config());
+      this.createController();
       expect(this.scope.paginator.getTotal()).toBe(123);
     });
 
@@ -140,7 +128,7 @@ describe('EntitySelectorController', function () {
       const entities = [entity('e1'), entity('e2')];
 
       this.fetch.resolves({total: 2, items: [entities[0]]});
-      this.createController(this.config());
+      this.createController();
       expect(this.scope.items).toEqual([entities[0]]);
 
       this.fetch.resolves({total: 2, items: entities});
@@ -154,13 +142,12 @@ describe('EntitySelectorController', function () {
     beforeEach(function () {
       this.ct = {getId: _.constant('ctid'), data: {}};
       this.withData = (data) => {
-        this.createController(
-          this.config({entityType: 'Entry'}), {}, _.extend(this.ct, {data: data}));
+        this.createController({entityType: 'Entry'}, {}, _.extend(this.ct, {data: data}));
       };
     });
 
     it('sets content type on query', function () {
-      this.createController(this.config(), {}, this.ct);
+      this.createController({}, {}, this.ct);
       expect(this.fetch.firstCall.args[0].contentTypeId).toBe('ctid');
     });
 
@@ -189,7 +176,7 @@ describe('EntitySelectorController', function () {
     });
 
     it('closes dialog with single entity', function () {
-      this.createController(this.config({multiple: false}));
+      this.createController({multiple: false});
       const confirm = sinon.spy();
       this.scope.dialog = {confirm: confirm};
       this.scope.toggleSelection(this.e1);
@@ -197,7 +184,7 @@ describe('EntitySelectorController', function () {
     });
 
     it('selects multiple entities', function () {
-      this.createController(this.config({multiple: true}));
+      this.createController({multiple: true});
       this.scope.toggleSelection(this.e1);
       this.scope.toggleSelection(this.e3);
       expect(this.scope.selected).toEqual([this.e1, this.e3]);
@@ -205,7 +192,7 @@ describe('EntitySelectorController', function () {
     });
 
     it('deselects if entity is already selected', function () {
-      this.createController(this.config({multiple: true}));
+      this.createController({multiple: true});
       this.scope.toggleSelection(this.e1);
       expect(this.scope.selected).toEqual([this.e1]);
       expect(this.scope.selectedIds).toEqual({e1: true});

@@ -30,8 +30,8 @@ describe('entitySelector', function () {
     return t;
   }
 
-  it('rejects if no valid field is provided', function () {
-    expect(() => this.open({})).toThrow();
+  it('throws error if invalid entity type is provided', function () {
+    expect(() => this.open({linkType: 'Foobar'})).toThrowError('Unsupported entity type: \'Foobar\'.');
   });
 
   describe('config preparation', function () {

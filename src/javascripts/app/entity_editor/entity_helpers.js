@@ -25,10 +25,10 @@ angular.module('cf.app')
 
   return {
     api: api,
-    newForRecords: newForRecords
+    newForLocale: newForLocale
   };
 
-  function newForRecords (locale) {
+  function newForLocale (locale) {
     return _.extend(_.clone(api), {
       entityTitle: _.partialRight(api.entityTitle, locale),
       entityDescription: _.partialRight(api.entityDescription, locale),
