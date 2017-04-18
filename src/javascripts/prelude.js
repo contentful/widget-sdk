@@ -64,13 +64,14 @@ angular.module('contentful/app', ['contentful'])
   }
 }])
 .run(['require', function (require) {
+  var $document = require('$document');
   require('utils/LaunchDarkly').init();
   require('Authentication').init();
   require('tokenStore').init();
   require('presence').startTracking();
   require('uiVersionSwitcher').checkIfVersionShouldBeSwitched();
   require('navigation/stateChangeHandlers').setup();
-  require('contextMenu').init();
+  require('ui/ContextMenuHandler').default($document);
   require('notification').setupClearMessageHooks();
   require('states').loadAll();
   require('dialogsInitController').init();
