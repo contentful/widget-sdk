@@ -150,6 +150,35 @@ beforeEach(function () {
 
   /**
    * @ngdoc method
+   * @name helpers#$compileWith
+   * @description
+   * Compiles a given element and attaches it to a new scope and
+   * returns the compiled JQuery element.
+   *
+   * The `initScope` argument is a function that is called with the
+   * new scope before the template is compiled.
+   *
+   * @param {string} template
+   * @param {function} initScope
+   * @return {JQueryElement}
+   */
+  this.$compileWith = function (template, initScope) {
+    const $compile = this.$inject('$compile');
+    const $rootScope = this.$inject('$rootScope');
+    const scope = $rootScope.$new(true);
+    if (initScope) {
+      initScope(scope);
+    }
+
+    const element = $compile(template)(scope);
+
+    this._angularElements.push(element);
+    scope.$digest();
+    return element;
+  };
+
+  /**
+   * @ngdoc method
    * @name helpers#mockService
    * @description
    * Stubs all methods on a service object.

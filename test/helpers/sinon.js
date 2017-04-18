@@ -8,8 +8,14 @@ window.sinon = sinon;
 export const stub = sinon.stub;
 export const spy = sinon.spy;
 export const assert = sinon.assert;
+export const match = sinon.match;
 export const useFakeTimers = sinon.useFakeTimers;
 export const sandbox = sinon.sandbox;
+
+assert.calledOnceWith = function (spy, ...args) {
+  assert.calledOnce(spy);
+  assert.calledWith(spy, ...args);
+};
 
 // We need to call the $q methods lazily because the angular injector
 // might not yet be created.
