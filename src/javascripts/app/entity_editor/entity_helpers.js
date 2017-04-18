@@ -25,13 +25,8 @@ angular.module('cf.app')
 
   return {
     api: api,
-    newByType: newByType,
-    newForUsers: newForUsers
+    newForRecords: newForRecords
   };
-
-  function newByType (entityType, locale) {
-    return entityType === 'User' ? newForUsers() : newForRecords(locale);
-  }
 
   function newForRecords (locale) {
     return _.extend(_.clone(api), {
@@ -39,14 +34,6 @@ angular.module('cf.app')
       entityDescription: _.partialRight(api.entityDescription, locale),
       entryImage: _.partialRight(api.entryImage, locale),
       assetFile: _.partialRight(api.assetFile, locale)
-    });
-  }
-
-  function newForUsers () {
-    return _.extend(_.clone(api), {
-      entityTitle: _.partialRight(api.entityTitle, null),
-      entityDescription: _.constant($q.resolve(null)),
-      assetFile: _.constant($q.resolve(null))
     });
   }
 

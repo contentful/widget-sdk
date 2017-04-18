@@ -59,13 +59,21 @@ angular.module('contentful')
     loadMore: loadMore,
     getSearchPlaceholder: getSearchPlaceholder,
     supportsAdvancedSearch: _.includes(['Entry', 'Asset'], config.entityType),
-    helpers: EntityHelpers.newByType(config.entityType, config.locale)
+    helpers: getEntityHelpers(config)
   });
 
   $scope.$watch('view.searchTerm', handleTermChange);
   $scope.$on('forceSearch', resetAndLoad);
 
   resetAndLoad();
+
+  function getEntityHelpers (config) {
+    if (['Entry', 'Asset'].indexOf(config.entityType) <= 0) {
+      return EntityHelpers.newForRecords(config.locale);
+    } else {
+      return null;
+    }
+  }
 
   function fetch () {
     $scope.isLoading = true;

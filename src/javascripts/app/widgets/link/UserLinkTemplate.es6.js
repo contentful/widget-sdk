@@ -1,30 +1,23 @@
 import {h} from 'utils/hyperscript';
-import {
-  dragHandle,
-  actions
-} from './TemplateCommons';
 
 export default function () {
   return h('.user-link', [
-    dragHandle(),
     h('img.entity-link__image', {
-      ngIf: 'config.showDetails',
-      ngSrc: '{{entity.avatarUrl}}'
+      ngSrc: '{{user.avatarUrl}}'
     }),
     h('.entity-link__text', [
       h('.user-link__full-name', {
-        ngIf: 'entity.firstName || entity.lastName'
+        ngIf: 'user.firstName || user.lastName'
       }, [
-        '{{ entity.firstName }} {{ entity.lastName }}',
-        unconfirmed('!entity.confirmed')
+        '{{ user.firstName }} {{ user.lastName }}',
+        unconfirmed('!user.confirmed')
       ]),
       h('.user-link__email', [
         h('span', [
-          '{{ entity.email | truncateMiddle:45:15 }}',
-          unconfirmed('!entity.confirmed && !entity.firstName && !entity.lastName')
+          '{{ user.email | truncateMiddle:45:15 }}',
+          unconfirmed('!user.confirmed && !user.firstName && !user.lastName')
         ])
-      ]),
-      actions()
+      ])
     ])
   ]);
 }
@@ -33,12 +26,12 @@ function unconfirmed (conditions) {
   return h('span.user-link__unconfirmed', {ngIf: conditions}, [
     '&#32;(',
     h('a', {
-      ngIf: 'entity.activated',
+      ngIf: 'user.activated',
       tooltip: 'This user hasn’t confirmed their email address yet. Therefore  we can’t guarantee the identity of the user',
       tooltipPlacement: 'bottom'
     }, ['not confirmed']),
     h('a', {
-      ngIf: '!entity.activated',
+      ngIf: '!user.activated',
       tooltip: 'This user hasn’t accepted the invitation to your organization yet.',
       tooltipPlacement: 'bottom'
     }, ['hasn’t accepted invitation']),

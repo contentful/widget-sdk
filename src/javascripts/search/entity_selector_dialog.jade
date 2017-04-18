@@ -16,10 +16,7 @@ mixin single-list-item
   cf-user-link(
     ng-if="config.entityType === 'User'"
     ng-click="toggleSelection(entity, $event)"
-    entity="entity"
-    entity-helpers="helpers"
-    actions="actions"
-    config="{showDetails: true}")
+    user="entity")
 
 .modal-background
   .modal-dialog.entity-selector-dialog(
