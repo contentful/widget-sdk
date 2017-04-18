@@ -52,9 +52,10 @@ header.workbench-header
           thead
             tr
               th(aria-label="cell-preview").x--image-cell
-                label(ng-click="$event.stopPropagation()")
-                  input(type="checkbox" cf-selection="assets" ng-click="selection.toggleList(assets, $event)" ng-show="assets.length > 0" tabindex="-1")
-                | Preview
+                div.table__checkbox-cell
+                  label(ng-click="$event.stopPropagation()")
+                    input(type="checkbox" cf-selection="assets" ng-click="selection.toggleList(assets, $event)" ng-show="assets.length > 0" tabindex="-1")
+                  | Preview
               th(aria-label="cell-name").x--large-cell Name
               th(aria-label="cell-dimensions").x--medium-cell Dimensions
               th(aria-label="cell-type") Type
@@ -109,7 +110,7 @@ header.workbench-header
                 ui-sref="{{linkToAsset}}"
                 ng-class="{'x--highlight': selection.isSelected(asset)}")
               td.x--image-cell(style="cursor: pointer" aria-label="cell-preview")
-                div
+                div.table__checkbox-cell
                   label(ng-click="$event.stopPropagation()")
                     input(type="checkbox" cf-selection="asset" tabindex="-1" ng-click="selection.toggle(asset, $event)")
                   a(ui-sref="{{linkToAsset}}")
