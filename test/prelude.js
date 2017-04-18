@@ -49,6 +49,7 @@
    */
   function register (id, deps, run) {
     SystemJS.register(id, deps, run);
+    registerDirectoryAlias(id);
     if (id.match(/(\.|_)spec$/)) {
       testModules.push(id);
     }
@@ -72,5 +73,20 @@
         };
       });
     });
+  }
+
+  /**
+   * If module ID matches 'a/b/index.js' then also register as 'a/b'.
+   */
+  function registerDirectoryAlias (moduleId) {
+    const path = moduleId.split('/');
+    const last = path.pop();
+    if (last === 'index') {
+      SystemJS.config({
+        map: {
+          [path.join('/')]: moduleId
+        }
+      });
+    }
   }
 })();
