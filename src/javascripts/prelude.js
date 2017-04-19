@@ -169,6 +169,10 @@ angular.module('cf.es6')
     }
   }
 
+  /**
+   * If module ID matches 'a/b/index' then register a module 'a/b'
+   * that is an alias for the index module.
+   */
   function registerDirectoryAlias (moduleId) {
     var path = moduleId.split('/');
     var last = path.pop();
