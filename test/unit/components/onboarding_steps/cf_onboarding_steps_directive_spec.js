@@ -1,8 +1,12 @@
 'use strict';
 
+import * as K from 'helpers/mocks/kefir';
+import * as I from 'libs/Immutable';
+
 describe('cfOnboardingSteps Directive', function () {
   beforeEach(function () {
     module('contentful/test');
+    this.$state = this.$inject('$state');
     this.compile = function () {
       this.element = this.$compile('<cf-onboarding-steps />');
       this.controller = this.element.isolateScope().onboarding;
@@ -22,9 +26,12 @@ describe('cfOnboardingSteps Directive', function () {
 
   describe('app home page', function () {
     beforeEach(function () {
+      this.$state.current.name = 'home';
       this.compile();
       const spaceContext = this.$inject('spaceContext');
-      spaceContext.publishedContentTypes = [];
+      spaceContext.publishedCTs = {
+        items$: K.createMockProperty(I.List([]))
+      };
       spaceContext.getData = sinon.stub().withArgs('activatedAt').returns(null);
       spaceContext.space = null;
     });
@@ -38,8 +45,11 @@ describe('cfOnboardingSteps Directive', function () {
   describe('space home page', function () {
     describe('not activated', function () {
       beforeEach(function () {
+        this.$state.current.name = 'spaces.detail.home';
         this.spaceContext = this.$inject('spaceContext');
-        this.spaceContext.publishedContentTypes = [];
+        this.spaceContext.publishedCTs = {
+          items$: K.createMockProperty(I.List())
+        };
         this.spaceContext.getData = sinon.stub().withArgs('activatedAt').returns(null);
         this.spaceContext.space = {};
       });
@@ -51,7 +61,7 @@ describe('cfOnboardingSteps Directive', function () {
       });
 
       it('no entries yet', function () {
-        this.spaceContext.publishedContentTypes = [{}];
+        this.spaceContext.publishedCTs.items$.set(I.List([{}]));
         this.spaceContext.space.getEntries = sinon.stub().resolves([]);
         this.compile();
         this.assertCompletedSteps(2);
@@ -59,7 +69,7 @@ describe('cfOnboardingSteps Directive', function () {
       });
 
       it('content types and entries created', function () {
-        this.spaceContext.publishedContentTypes = [{}];
+        this.spaceContext.publishedCTs.items$.set(I.List([{}]));
         this.spaceContext.space.getEntries = sinon.stub().resolves([{}]);
         this.compile();
         this.assertCompletedSteps(3);
@@ -69,8 +79,10 @@ describe('cfOnboardingSteps Directive', function () {
 
     describe('activated', function () {
       beforeEach(function () {
+        this.$state.current.name = 'spaces.detail.home';
         this.spaceContext = this.$inject('spaceContext');
-        this.spaceContext.publishedContentTypes = [{}];
+        this.spaceContext.publishedCTs = {items$: K.createMockProperty()};
+        this.spaceContext.publishedCTs.items$.set(I.List([{}]));
         this.spaceContext.getData = sinon.stub();
         this.spaceContext.getData.withArgs('activatedAt').returns('2017-03-03T16:14:00Z');
         this.spaceContext.space = {};

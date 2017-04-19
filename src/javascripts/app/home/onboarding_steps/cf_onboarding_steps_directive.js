@@ -9,6 +9,8 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var WebhookRepository = require('WebhookRepository');
   var CreateSpace = require('services/CreateSpace');
+  var caseofEq = require('libs/sum-types').caseofEq;
+  var K = require('utils/kefir');
 
   return {
     template: template(),
@@ -17,14 +19,14 @@ angular.module('contentful')
     controller: ['$scope', function ($scope) {
       var controller = this;
 
-      var steps = [
+      var firstSteps = [
         {
           id: 'create_space',
           title: 'Create a space',
           description: 'A space is a place where you keep all the content related to a single project.',
           cta: 'Create space',
           icon: 'onboarding-space',
-          page: 1
+          action: makeAction(CreateSpace.showDialog, 'Create space')
         },
         {
           id: 'create_content_type',
@@ -32,11 +34,11 @@ angular.module('contentful')
           description: 'Create your content model. It’s comprised of content types, which define the structure of your entries.',
           cta: 'Create a content type',
           icon: 'page-ct',
-          page: 1,
           link: {
             text: 'View content model',
             state: 'spaces.detail.content_types.list'
-          }
+          },
+          action: makeAction(addContentType, 'Create a content type')
         },
         {
           id: 'create_entry',
@@ -44,11 +46,11 @@ angular.module('contentful')
           description: 'Add an entry. They are your actual pieces of content, based on the content types you have created.',
           cta: 'Add an entry',
           icon: 'page-entries',
-          page: 1,
           link: {
             text: 'View content',
             state: 'spaces.detail.entries.list'
-          }
+          },
+          action: makeAction(addEntry, 'Add an entry')
         },
         {
           id: 'use_api',
@@ -56,19 +58,22 @@ angular.module('contentful')
           description: 'Use the API to see your content wherever you like. We’ll show you different ways of delivering your content.',
           cta: 'Use the API',
           icon: 'page-api',
-          page: 1
-        },
+          action: makeAction(goToApiKeySection, 'Use the API')
+        }
+      ];
+
+      var advancedSteps = [
         {
           id: 'invite_user',
           title: 'Invite users',
           description: 'Invite your teammates to the space to get your project off the ground.',
           cta: 'Invite users',
           icon: 'onboarding-add-user',
-          page: 2,
           link: {
             text: 'View users',
             state: 'spaces.detail.settings.users.list'
-          }
+          },
+          action: makeAction(goToSettings('users'), 'Invite users')
         },
         {
           id: 'add_locale',
@@ -76,11 +81,11 @@ angular.module('contentful')
           description: 'Set up locales to manage and deliver content in different languages.',
           cta: 'Add locales',
           icon: 'onboarding-locales',
-          page: 2,
           link: {
             text: 'View locales',
             state: 'spaces.detail.settings.locales.list'
-          }
+          },
+          action: makeAction(goToSettings('locales'), 'Add locales')
         },
         {
           id: 'create_webhook',
@@ -88,73 +93,67 @@ angular.module('contentful')
           description: 'Configure webhooks to send requests triggered by changes to your content.',
           cta: 'Add webhooks',
           icon: 'onboarding-webhooks',
-          page: 2,
           link: {
             text: 'View webhooks',
             state: 'spaces.detail.settings.webhooks.list'
-          }
+          },
+          action: makeAction(goToSettings('webhooks'), 'Add webhooks')
         }
       ];
 
-      var actions = [
-        createSpace,
-        addContentType,
-        addEntry,
-        goToApiKeySection,
-        goToSettings('users'),
-        goToSettings('locales'),
-        goToSettings('webhooks')
-      ];
-
-      controller.steps = _.zipWith(steps, actions, function (step, action) {
-        step.action = action.bind(null, step);
-        return step;
-      });
-
-      if (spaceContext.space) {
-        initSpaceHomePage();
-        // Refresh after new space creation as content types and entries might have been created
-        $scope.$on('spaceTemplateCreated', initSpaceHomePage);
-      } else {
-        initHomePage();
+      function makeAction (action, cta) {
+        return function () {
+          analytics.track('learn:step_clicked', {linkName: cta});
+          action();
+        };
       }
 
+      caseofEq($state.current.name, [
+        ['home', initHomePage],
+        ['spaces.detail.home', function () {
+          initSpaceHomePage();
+          // Refresh after new space creation as content types and entries might have been created
+          $scope.$on('spaceTemplateCreated', initSpaceHomePage);
+        }]
+      ]);
+
       function initHomePage () {
-        controller.currentPage = 1;
-        setCompletionStep(0);
+        controller.steps = firstSteps;
+        setStepCompletion(0);
       }
 
       function initSpaceHomePage () {
-        var hasContentTypes = spaceContext.publishedContentTypes.length > 0;
+        var hasContentTypes = K.getValue(spaceContext.publishedCTs.items$).size > 0;
         var isActivated = !!spaceContext.getData('activatedAt');
+        var showAdvancedSteps = isActivated && hasContentTypes;
 
-        controller.currentPage = isActivated && hasContentTypes ? 2 : 1;
-
-        if (controller.currentPage === 1) {
-          getOnboardingSteps();
+        if (showAdvancedSteps) {
+          controller.steps = advancedSteps;
+          setAdvancedStepsCompletion();
         } else {
-          getOtherSteps();
+          controller.steps = firstSteps;
+          setOnboardingStepsCompletion();
         }
       }
 
-      function getOnboardingSteps () {
-        var hasContentTypes = spaceContext.publishedContentTypes.length > 0;
+      function setOnboardingStepsCompletion () {
+        var hasContentTypes = K.getValue(spaceContext.publishedCTs.items$).size > 0;
 
         if (hasContentTypes) {
           spaceContext.space.getEntries().then(function (entries) {
             var hasEntries = !!_.size(entries);
             var nextStep = hasEntries ? 3 : 2;
-            setCompletionStep(nextStep);
+            setStepCompletion(nextStep);
           });
         } else {
-          setCompletionStep(1);
+          setStepCompletion(1);
         }
       }
 
-      function setCompletionStep (nextStepIdx) {
+      function setStepCompletion (nextStepIdx) {
         // Set previous steps to completed and disable future steps
         // This is for the first page only
-        controller.steps.slice(0, 4).forEach(function (step, i) {
+        firstSteps.forEach(function (step, i) {
           step.disabled = false;
           step.completed = i < nextStepIdx;
 
@@ -164,35 +163,30 @@ angular.module('contentful')
         });
       }
 
-      function getOtherSteps () {
+      function setAdvancedStepsCompletion () {
         var hasLocales = spaceContext.getData('locales').length > 1;
-        controller.steps[5].completed = hasLocales;
+        advancedSteps[1].completed = hasLocales;
 
         spaceContext.space.getUsers().then(function (users) {
-          controller.steps[4].completed = users.length > 1;
+          controller.steps[0].completed = users.length > 1;
         });
 
         WebhookRepository.getInstance(spaceContext.space).getAll()
         .then(function (webhooks) {
-          controller.steps[6].completed = webhooks.length > 0;
+          controller.steps[2].completed = webhooks.length > 0;
         });
       }
 
-      function createSpace () {
-        CreateSpace.showDialog();
-      }
-
-      function addContentType (data) {
-        trackClickedButton(data.cta);
+      function addContentType () {
         $state.go('spaces.detail.content_types.new.home');
       }
 
-      function addEntry (data) {
-        trackClickedButton(data.cta);
-        var contentTypes = spaceContext.publishedContentTypes;
-        if (contentTypes.length === 1) {
+      function addEntry () {
+        var contentTypes = K.getValue(spaceContext.publishedCTs.wrappedItems$);
+
+        if (contentTypes.size === 1) {
           var entityCreationController = $controller('EntityCreationController');
-          entityCreationController.newEntry(contentTypes[0]);
+          entityCreationController.newEntry(contentTypes.get(0));
         } else {
           $state.go('spaces.detail.entries.list');
         }
@@ -200,13 +194,12 @@ angular.module('contentful')
 
       // Clicking `Use the API` goes to the delivery API key if there is exactly
       // one otherwise API home
-      function goToApiKeySection (data) {
-        trackClickedButton(data.cta);
-        spaceContext.space.getDeliveryApiKeys()
+      function goToApiKeySection () {
+        spaceContext.apiKeyRepo.getAll()
         .then(function (keys) {
           if (keys.length === 1) {
             var name = 'spaces.detail.api.keys.detail';
-            var params = { apiKeyId: keys[0].data.sys.id };
+            var params = { apiKeyId: keys[0].sys.id };
             $state.go(name, params);
           } else {
             $state.go('spaces.detail.api.home');
@@ -215,14 +208,9 @@ angular.module('contentful')
       }
 
       function goToSettings (page) {
-        return function (data) {
-          trackClickedButton(data.cta);
+        return function () {
           $state.go('spaces.detail.settings.' + page + '.list');
         };
-      }
-
-      function trackClickedButton (name) {
-        analytics.track('learn:step_clicked', {linkName: name});
       }
     }],
     controllerAs: 'onboarding'
