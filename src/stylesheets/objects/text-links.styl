@@ -4,6 +4,7 @@ Text links pattern
 Text links are used to display actions that have a lower priority compared to actions that are accessible via a button.
 
 Markup:
+a.text-link Default
 a.text-link--destructive(aria-label="delete") Delete asset
 span.text-link--neutral Show
 span.text-link--neutral-emphasis-mid(aria-label="unpublish") Unpublish
@@ -21,6 +22,7 @@ Styleguide text-links-pattern
  * Todo: Revisit why text-decoration is none for all links in base.styl
  */
 
+.text-link
 .text-link--standard
 .text-link--neutral
 .text-link--constructive
@@ -34,8 +36,10 @@ Styleguide text-links-pattern
   a&
     text-decoration: underline
 
+.text-link
 .text-link--standard
 .text-link--neutral
+a.text-link
 a.text-link--standard
 a.text-link--neutral
   color: $colors.blue-darkest

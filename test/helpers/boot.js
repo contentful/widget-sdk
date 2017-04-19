@@ -1,7 +1,6 @@
 // We import all these modules which have side effects.
 // They may register Angular services, register test suite hooks or define
 // global variables
-import 'npm:sinon';
 import 'npm:angular-mocks';
 import './application';
 import './boot';

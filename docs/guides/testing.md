@@ -26,6 +26,7 @@ This is a list of patterns used in old code but deprecated.
 * `this.$inject()` for ES6 modules. Use native `import X from 'Y'` instead.
 * Using the `$compile` service to compile directives. Use `this.$comile()`
   instead.
+* Global `sinon`. Use `import sinon from 'helpers/sinon'` instead.
 
 
 Module System
@@ -322,6 +323,28 @@ for certain parts of the app. Use of `cfStub` service is *deprecated* and needs
 some major cleanup.
 
 
+UI Acceptance Test
+------------------
+
+
+We provide a small library to write acceptance tests. The library creates
+objects that allow you to interact with the DOM and provides assertions
+
+~~~js
+import {createView} from 'helpers/DOM'
+
+const view = createView(document.body)
+view.find('input-field').setValue('thomas')
+view.find('submit-button').click()
+view.find('notification').assertText('Hello thomas!')
+~~~
+
+Elements are selected using the `data-test-id` property. For API documentation,
+see the `test/helpers/DOM.js` file.
+
+This technique is fairly new and requires extending.
+
+
 Reporters
 ---------
 
@@ -344,4 +367,3 @@ the test run. You can choose a reporter by passing the
 [tape]: https://github.com/substack/tape
 [service:helpers]: api/contentful/test/service/helpers
 [require]: https://docs.angularjs.org/api/ng/service/$compile#-require-
-

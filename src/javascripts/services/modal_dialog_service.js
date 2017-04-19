@@ -69,8 +69,13 @@ angular.module('contentful').factory('modalDialog', ['require', function (requir
         'template', 'confirmLabel', 'cancelLabel',
         'attachTo', 'enterAction', 'backgroundClose',
         'ignoreEnter', 'ignoreEsc', 'disableTopCloseButton',
-        'persistOnNavigation'])
+        'persistOnNavigation'
+      ])
     );
+
+    if (params.controller) {
+      params.controller(this.scope);
+    }
 
     this._deferred = $q.defer();
     this.promise = this._deferred.promise;

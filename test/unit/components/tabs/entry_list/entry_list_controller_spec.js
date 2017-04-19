@@ -1,4 +1,4 @@
-import sinon from 'npm:sinon';
+import * as sinon from 'helpers/sinon';
 
 describe('Entry List Controller', function () {
   let scope, spaceContext;

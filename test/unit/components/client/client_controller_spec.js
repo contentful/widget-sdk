@@ -1,4 +1,4 @@
-import sinon from 'npm:sinon';
+import * as sinon from 'helpers/sinon';
 import * as K from 'helpers/mocks/kefir';
 
 describe('Client Controller', function () {
