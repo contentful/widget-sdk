@@ -112,7 +112,7 @@ describe('cfReferenceEditorDirective', function () {
 
       it('sets field value when entity is being selected', function () {
         const entity = {sys: {type: 'Entry', id: 'testid2'}};
-        this.$inject('entitySelector').open = sinon.stub().resolves([entity]);
+        this.$inject('entitySelector').openFromField = sinon.stub().resolves([entity]);
         this.scope.addExisting({preventDefault: _.noop});
         this.$apply();
         expect(this.field.setValue.firstCall.args[0]).toEqual([link1, link2, link2]);
