@@ -3,11 +3,13 @@ import {h} from 'utils/hyperscript';
 import baseState from 'states/base';
 import * as contextHistory from 'contextHistory';
 import * as crumbFactory from 'navigation/CrumbFactory';
+import * as Auth from 'Authentication';
 
-import * as CMAKeys from './CMAKeys';
 import * as ContentModel from './ContentModel';
 import attachEditorController from './KeyEditor/Controller';
 import editorTemplate from './KeyEditor/Template';
+import openCMATokenCreateDialog from './CMATokens/CreateDialog';
+import cmaTokenPage from './CMATokens/Page';
 
 
 /**
@@ -79,9 +81,17 @@ export default {
     url: '/keys',
     children: [cdaKeyList(), newKey, keyDetail]
   }, {
+    // Legacy path
     name: 'cma_keys',
     url: '/cma_keys',
-    template: CMAKeys.template(),
+    redirectTo: 'spaces.detail.api.cma_tokens'
+  }, {
+    name: 'cma_tokens',
+    url: '/cma_tokens',
+    template: cmaTokenPage(),
+    controller: ['$scope', function ($scope) {
+      $scope.openCreateDialog = () => openCMATokenCreateDialog(Auth);
+    }],
     onEnter () {
       contextHistory.add(crumbFactory.CMAKeyList());
     }

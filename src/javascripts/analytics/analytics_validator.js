@@ -104,6 +104,9 @@ angular.module('contentful')
   invite_user: [
     'learn',
     'create_space'
+  ],
+  personal_access_token: [
+    'create'
   ]
 })
 

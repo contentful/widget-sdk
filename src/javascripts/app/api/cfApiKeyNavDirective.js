@@ -32,12 +32,12 @@ angular.module('contentful')
 
       var tabs = [
         {
-          name: 'Content delivery / preview keys',
+          name: 'Content delivery / preview tokens',
           state: 'spaces.detail.api.keys.list'
         },
         {
-          name: 'Content management keys',
-          state: 'spaces.detail.api.cma_keys'
+          name: 'Content management tokens',
+          state: 'spaces.detail.api.cma_tokens'
         },
         {
           name: 'Content model explorer',
