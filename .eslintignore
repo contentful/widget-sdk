@@ -40,7 +40,6 @@ test/unit/services/authorization_spec.js
 test/unit/services/editing_interfaces_helpers_spec.js
 test/unit/services/enforcements_spec.js
 test/unit/services/features_spec.js
-test/unit/services/modal_dialog_spec.js
 test/unit/services/promised_loader_spec.js
 test/unit/services/reload_notification_spec.js
 test/unit/services/sdk_info_supplier_spec.js
