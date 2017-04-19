@@ -109,9 +109,9 @@ function getValue (element) {
  */
 function assertValid (element, valid) {
   if (valid) {
-    expect(element.getAttribute('aria-invalid')).toBe('true');
-  } else {
     expect(element.getAttribute('aria-invalid')).not.toBe('true');
+  } else {
+    expect(element.getAttribute('aria-invalid')).toBe('true');
   }
 }
 

@@ -38,7 +38,7 @@ describe('app/api/CMATokens/CreateDialog', function () {
   it('shows an error message when empty name is provided', function* () {
     this.open();
     const nameInput = this.container.find('pat.create.tokenName');
-    nameInput.setValue('TOKEN NAME');
+    nameInput.setValue('  ');
     this.container.find('pat.create.generate').click();
     this.$apply();
     nameInput.assertValid(false);
