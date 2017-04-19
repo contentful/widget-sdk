@@ -1,16 +1,14 @@
-'use strict';
+import * as sinon from 'helpers/sinon';
 
 describe('Modal dialog service', function () {
   let modalDialog, scope;
   let successStub, errorStub;
   beforeEach(function () {
     module('contentful/test');
-    inject(function ($rootScope, _modalDialog_) {
-      scope = $rootScope.$new();
-      modalDialog = _modalDialog_;
-      successStub = sinon.stub();
-      errorStub = sinon.stub();
-    });
+    scope = this.$inject('$rootScope').$new();
+    modalDialog = this.$inject('modalDialog');
+    successStub = sinon.stub();
+    errorStub = sinon.stub();
   });
 
   describe('create a dialog', function () {
@@ -24,7 +22,7 @@ describe('Modal dialog service', function () {
       });
       dialog.promise.then(successStub)
                     .catch(errorStub);
-      scope.$digest();
+      this.$apply();
     });
 
     afterEach(function () {

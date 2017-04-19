@@ -12,6 +12,7 @@ describe('app/api/CMATokens/CreateDialog', function () {
     const openDialog = this.$inject('app/api/CMATokens/CreateDialog').default;
     this.open = function () {
       openDialog(auth);
+      this.$apply();
     };
 
     this.containerEl = $('<div class=client>').appendTo('body').get(0);
