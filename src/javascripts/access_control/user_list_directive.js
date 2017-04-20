@@ -62,9 +62,8 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
   var OrganizationList = require('OrganizationList');
   var $q = require('$q');
 
-  // @TODO uncomment when https://github.com/contentful/user_interface/pull/1798 gets merged
-  // var K = require('utils/kefir');
-  // var LD = require('utils/LaunchDarkly');
+  var K = require('utils/kefir');
+  var LD = require('utils/LaunchDarkly');
 
   var organization = spaceContext.organizationContext.organization;
 
@@ -83,21 +82,20 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
 
   // Begin feature flag code - feature-bv-04-2017-new-space-invitation-flow
 
-  // @TODO uncomment when https://github.com/contentful/user_interface/pull/1798 gets merged
-  // K.onValueScope($scope, usesNewSpaceInvitationFlow$, function (usesNewSpaceInvitationFlow) {
-  // var usesNewSpaceInvitationFlow$ = LD.getFeatureFlag('feature-bv-04-2017-new-space-invitation-flow');
-  $scope.usesNewSpaceInvitationFlow = true; // usesNewSpaceInvitationFlow;
-  //   if (usesNewSpaceInvitationFlow) {
-  $scope.goToSubscription = TheAccountView.goToSubscription;
-  $scope.goToOrganizationUsers = TheAccountView.goToUsers;
-  $scope.canInviteUsersToOrganization = canInviteUsersToOrganization;
-  $scope.hasUsersLeftToAdd = hasUsersLeftToAdd;
-  $scope.openSpaceInvitationDialog = openSpaceInvitationDialog;
-  //   } else {
-  $scope.canInviteUsers = canInviteUsers;
-  $scope.openInvitationDialog = openInvitationDialog;
-  //   }
-  // });
+  var usesNewSpaceInvitationFlow$ = LD.getFeatureFlag('feature-bv-04-2017-new-space-invitation-flow');
+  K.onValueScope($scope, usesNewSpaceInvitationFlow$, function (usesNewSpaceInvitationFlow) {
+    $scope.usesNewSpaceInvitationFlow = usesNewSpaceInvitationFlow;
+    if (usesNewSpaceInvitationFlow) {
+      $scope.goToSubscription = TheAccountView.goToSubscription;
+      $scope.goToOrganizationUsers = TheAccountView.goToUsers;
+      $scope.canInviteUsersToOrganization = canInviteUsersToOrganization;
+      $scope.hasUsersLeftToAdd = hasUsersLeftToAdd;
+      $scope.openSpaceInvitationDialog = openSpaceInvitationDialog;
+    } else {
+      $scope.canInviteUsers = canInviteUsers;
+      $scope.openInvitationDialog = openInvitationDialog;
+    }
+  });
 
   // End feature flag code - feature-bv-04-2017-new-space-invitation-flow
 
@@ -118,6 +116,7 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
   }
 
   // Begin feature flag code - feature-bv-04-2017-new-space-invitation-flow
+
   function canInviteUsersToOrganization () {
     return OrganizationList.isOwnerOrAdmin(organization);
   }
@@ -130,6 +129,7 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
     var organizationUserCount = organization.usage.permanent.organizationMembership;
     return organizationUserCount > getSpaceUserCount();
   }
+
   // End feature flag code - feature-bv-04-2017-new-space-invitation-flow
 
   /**
@@ -278,6 +278,7 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
   }
 
   // Begin feature flag code - feature-bv-04-2017-new-space-invitation-flow
+
   function openSpaceInvitationDialog () {
     var labels = {
       title: 'Add users to space',
@@ -347,6 +348,7 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
       $scope.isInvitingUsersToSpace = false;
     }
   }
+
   // End feature flag code - feature-bv-04-2017-new-space-invitation-flow
 
   /**

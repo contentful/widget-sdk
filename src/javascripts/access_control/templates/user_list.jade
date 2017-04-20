@@ -53,7 +53,7 @@ header.workbench-header
         ng-disabled="!canModifyUsers() || !canInviteUsers()")
         | Invite users to this space
 
-    //- Feature flag - bv-ff-04-2017-new-space-invitation-flow
+    //- Begin feature flag code - feature-bv-04-2017-new-space-invitation-flow
     .entity-sidebar(ng-if="usesNewSpaceInvitationFlow")
       h2.entity-sidebar__heading
         | Add users
@@ -77,4 +77,4 @@ header.workbench-header
             "  : 'Get in touch with an organization owner or admin to invite new users to your organization'" +
             ") }}"
           tooltip-placement="bottom")
-    //- End of feature flag bv-ff-04-2017-new-space-invitation-flow
+    //- End feature flag code - feature-bv-04-2017-new-space-invitation-flow
