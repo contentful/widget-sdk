@@ -1,13 +1,13 @@
 'use strict';
 
 describe('cfValidateForm directive', function () {
-  beforeEach(module('contentful', function ($provide) {
-    $provide.constant('$timeout', function (fn) {
-      fn();
-    });
-  }));
-
   beforeEach(function () {
+    module('contentful/test', function ($provide) {
+      $provide.constant('$timeout', function (fn) {
+        fn();
+      });
+    })
+
     var $compile = this.$inject('$compile');
 
     var $rootScope = this.$inject('$rootScope');

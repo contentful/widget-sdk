@@ -5,14 +5,11 @@ import {settings} from 'environment';
  * @ngdoc service
  * @name Config
  * @description
- * This module exposes all the static data that depends on the
- * environment the app runs in.
+ * This module exposes all the static settings that depend on
+ * the environment the app runs in. They are read from the
+ * `environment` constant.
  *
- * The environment settings are injected into the code using the
- * `CF_CONFIG` global variable. It is set in the `index.html` file and
- * read by the `environment` service.
- *
- * TODO We should remove the 'environment' service and expose
+ * TODO We should remove the `environment` constant and expose
  * everything here.
  */
 

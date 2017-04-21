@@ -1,13 +1,12 @@
 'use strict';
 
 describe('notifications', function () {
-  beforeEach(module('contentful'));
+  beforeEach(function () {
+    module('contentful/test');
+    this.notify = this.$inject('notification');
+  });
 
   describe('main bus', function () {
-    beforeEach(function () {
-      this.notify = this.$inject('notification');
-    });
-
     it('sets error message', function () {
       this.notify.error('MESSAGE');
       expect(this.notify.message.body).toEqual('MESSAGE');
@@ -30,7 +29,6 @@ describe('notifications', function () {
 
   describe('directive', function () {
     beforeEach(function () {
-      this.notify = this.$inject('notification');
       this.element = this.$compile('<cf-notifications>');
       this.$apply();
     });
