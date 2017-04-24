@@ -4,8 +4,11 @@
  */
 
 
+export {default as createMVar} from './Concurrent/MVar';
+
+
 /**
- * A bucket attaches a callback to at most one promise at once.
+ * A slot attaches a callback to at most one promise at once.
  *
  * ~~~js
  * const put = createSlot ((result) => {
