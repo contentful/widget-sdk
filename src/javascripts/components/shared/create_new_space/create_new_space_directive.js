@@ -75,7 +75,7 @@ angular.module('contentful')
   var debouncedDialogCenter = debounce(function () {
     $scope.dialog._centerOnBackground();
   }, 100);
-  var exampleSpaceImpactTest$ = LD.get('ps-03-2017-example-space-impact', _.constant(!userHasSpaces));
+  var exampleSpaceImpactTest$ = LD.getTest('ps-03-2017-example-space-impact', _.constant(!userHasSpaces));
 
   K.onValueScope($scope, exampleSpaceImpactTest$, function (variation) {
     controller.exampleSpaceTest = {};

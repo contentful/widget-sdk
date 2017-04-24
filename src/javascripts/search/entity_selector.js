@@ -11,6 +11,7 @@ angular.module('contentful')
 
   var modalDialog = require('modalDialog');
   var spaceContext = require('spaceContext');
+  var ListQuery = require('ListQuery');
   var $q = require('$q');
   var assetContentType = require('assetContentType');
   var mimetype = require('mimetype');
@@ -21,36 +22,96 @@ angular.module('contentful')
       title: 'Insert existing entry',
       input: 'Search for an entry:',
       info: 'You can insert only one entry. Click on any entry to insert it.',
-      empty: 'No entries'
+      empty: 'No entries',
+      searchPlaceholder: 'Search %total% entries'
     },
     entry_multiple: {
       title: 'Insert existing entries',
       input: 'Search for entries:',
       selected: 'selected entries',
-      empty: 'No entries'
+      empty: 'No entries',
+      insert: 'Insert selected entries',
+      searchPlaceholder: 'Search %total% entries'
     },
     asset_single: {
       title: 'Insert existing asset',
       input: 'Search for a media asset:',
       info: 'You can insert only one asset. Click on any asset to insert it.',
-      empty: 'No assets'
+      empty: 'No assets',
+      searchPlaceholder: 'Search %total% assets'
     },
     asset_multiple: {
       title: 'Insert existing assets',
       input: 'Search for assets:',
       selected: 'selected assets',
-      empty: 'No assets'
+      empty: 'No assets',
+      insert: 'Insert selected assets',
+      searchPlaceholder: 'Search %total% assets'
+    },
+    user_multiple: {
+      title: 'Insert existing users',
+      input: 'Search for users',
+      selected: 'selected users',
+      empty: 'No users',
+      insert: 'Insert selected users',
+      searchPlaceholder: 'Search %total% users in your organization'
     }
   };
 
   return {
-    open: openFromField,
-    openFromExtension: openFromExtension
+    openFromField: openFromField,
+    openFromExtension: openFromExtension,
+    open: open
   };
 
   /**
    * @ngdoc method
    * @name entitySelector#open
+   * @param {Object} config
+   * {
+   *   locale: {String},
+   *   multiple: {Boolean},
+   *   max: {Number?}, // for multiple=true
+   *   min: {Number?}, // for multiple=true
+   *   entityType: {String},
+   *   linkedContentTypeIds: {Array?},
+   *   linkedMimetypeGroups: {Array?},
+   *   fetch: {function(params): Promise<{items: {Array}, total: {Number}}>},
+   *   scope: {Object}, // other scope data that could be needed in custom html in `.labels`
+   *   labels: {
+   *     title: {String},
+   *     input: {String},
+   *     info: {String?}, // for multiple=false
+   *     infoHtml: {String?}, // for multiple=false, can be used instead of `.info`
+   *     selected: {String}, // for multiple=true
+   *     empty: {String},
+   *     insert: {String},
+   *     searchPlaceholder: {String}
+   *   }
+   * }
+   * @returns {Promise<API.Entity[]>}
+   * @description
+   * Opens a modal for the provided custom config object
+   */
+  function open (config) {
+    var entitySelectorControllerConfig = _.omit(config, 'scope', 'labels');
+    var scopeData = _.extend({}, config.scope, {
+      config: entitySelectorControllerConfig,
+      labels: _.extend(getLabels(config), config.labels),
+      listHeight: getListHeight()
+    });
+    return modalDialog.open({
+      template: 'entity_selector_dialog',
+      backgroundClose: false,
+      ignoreEsc: true,
+      noNewScope: true,
+      scopeData: scopeData
+    }).promise;
+  }
+
+  /**
+   * @ngdoc method
+   * @name entitySelector#openFromField
    * @param {API.Field} field
    * @param {number?} currentSize
    *   Current number of entities on the field. Used to calculate the
@@ -62,7 +123,7 @@ angular.module('contentful')
    * field and optional list of existing links.
    */
   function openFromField (field, currentSize) {
-    return open(prepareFieldConfig(field, currentSize || 0));
+    return newConfigFromField(field, currentSize || 0).then(open);
   }
 
   /**
@@ -81,37 +142,17 @@ angular.module('contentful')
    * namespace.
    */
   function openFromExtension (options) {
-    return open(prepareExtensionConfig(options))
-    .then(function (selected) {
-      // resolve with a single object if selecting only
-      // one entity, resolve with an array otherwise
-      return options.multiple ? selected : selected[0];
-    }, function (err) {
-      // resolve with `null` if a user skipped selection,
-      // reject with an error otherwise
-      return err ? $q.reject(err) : null;
-    });
-  }
-
-  function open (config) {
-    if (!config.linksEntry && !config.linksAsset) {
-      return $q.reject(new Error('Provide a valid configuration object.'));
-    }
-
-    return getSingleContentType(config)
-    .then(function openDialog (singleContentType) {
-      return modalDialog.open({
-        template: 'entity_selector_dialog',
-        ignoreEsc: true,
-        noNewScope: true,
-        scopeData: {
-          config: config,
-          labels: getLabels(config),
-          singleContentType: singleContentType,
-          listHeight: getListHeight()
-        }
-      }).promise;
-    });
+    return newConfigFromExtension(options)
+      .then(open)
+      .then(function (selected) {
+        // resolve with a single object if selecting only
+        // one entity, resolve with an array otherwise
+        return options.multiple ? selected : selected[0];
+      }, function (err) {
+        // resolve with `null` if a user skipped selection,
+        // reject with an error otherwise
+        return err ? $q.reject(err) : null;
+      });
   }
 
   function getListHeight () {
@@ -127,21 +168,28 @@ angular.module('contentful')
     }
   }
 
-  function prepareFieldConfig (field, currentSize) {
+  /**
+   * Builds a config for #openFromField
+   * @param {API.Field} field
+   * @param {number?} currentSize
+   * @returns config for #open
+   */
+  function newConfigFromField (field, currentSize) {
     field = field || {};
 
+    var entityType = field.linkType || field.itemLinkType;
     var size = findValidation(field, 'size', {});
     var max = (size.max || +Infinity) - currentSize;
     var min = (size.min || 1) - currentSize;
     min = min < 1 ? 1 : min;
 
     var config = {
+      scope: {},
       locale: field.locale,
       multiple: max !== min && field.type === 'Array',
       max: max,
       min: min,
-      linksEntry: field.linkType === 'Entry' || field.itemLinkType === 'Entry',
-      linksAsset: field.linkType === 'Asset' || field.itemLinkType === 'Asset',
+      entityType: entityType,
       linkedContentTypeIds: findLinkValidation(field, 'linkContentType'),
       linkedMimetypeGroups: findLinkValidation(field, 'linkMimetypeGroup')
 
@@ -149,23 +197,65 @@ angular.module('contentful')
       // linkedFileSize: findValidation(field, 'assetFileSize', {}),
       // linkedImageDimensions: findValidation(field, 'assetImageDimensions', {})
     };
+    config.fetch = makeFetch(config);
 
-    return _.extend(config, {queryExtension: prepareQueryExtension(config)});
+    return getSingleContentType(config).then(function (singleContentType) {
+      config.scope.singleContentType = singleContentType;
+      return config;
+    });
   }
 
-  function prepareExtensionConfig (options) {
+
+  /**
+   * Builds a config for #openFromExtension
+   * @param {object} options
+   * @returns Promise<object> resolves with config for #open
+   */
+  function newConfigFromExtension (options) {
     options = options || {};
-    var config = _.pick(options, ['locale', 'multiple', 'min', 'max']);
+    var config = _.pick(options, ['locale', 'multiple', 'min', 'max', 'entityType']);
 
     config = _.extend(config, {
+      scope: {},
       locale: config.locale || TheLocaleStore.getDefaultLocale().code,
-      linksEntry: options.entityType === 'Entry',
-      linksAsset: options.entityType === 'Asset',
       linkedContentTypeIds: options.contentTypes || [],
       linkedMimetypeGroups: []
     });
+    config.fetch = makeFetch(config);
 
-    return _.extend(config, {queryExtension: prepareQueryExtension(config)});
+    return getSingleContentType(config).then(function (singleContentType) {
+      config.scope.singleContentType = singleContentType;
+      return config;
+    });
+  }
+
+  /**
+   * Creates fetch function for Entity and Asset entity types
+   *
+   * @TODO move fetch logic for entries and assets to EntitySelectorController
+   * or separate module.
+   */
+  function makeFetch (config) {
+    if (['Entry', 'Asset'].indexOf(config.entityType) < 0) {
+      throw new Error('Unsupported entity type: \'' + config.entityType + '\'.');
+    }
+    var fnName = 'get' + getEntityTypePlural(config.entityType);
+    var queryMethod = 'getFor' + getEntityTypePlural(config.entityType);
+    var queryExtension = prepareQueryExtension(config);
+
+    return function (params) {
+      return ListQuery[queryMethod](params).then(function (query) {
+        query = _.extend(query, queryExtension);
+        return spaceContext.cma[fnName](query);
+      });
+    };
+  }
+
+  function getEntityTypePlural (singular) {
+    return {
+      'Asset': 'Assets',
+      'Entry': 'Entries'
+    }[singular];
   }
 
   function findLinkValidation (field, property) {
@@ -184,12 +274,12 @@ angular.module('contentful')
   }
 
   function getSingleContentType (config) {
-    if (config.linksAsset) {
+    if (config.entityType === 'Asset') {
       return $q.resolve(assetContentType);
     }
 
     var linked = config.linkedContentTypeIds;
-    if (config.linksEntry && linked.length === 1) {
+    if (config.entityType === 'Entry' && linked.length === 1) {
       return spaceContext.publishedCTs.fetch(linked[0]);
     }
 
@@ -199,14 +289,14 @@ angular.module('contentful')
   function prepareQueryExtension (config) {
     var extension = {};
 
-    if (config.linksEntry) {
+    if (config.entityType === 'Entry') {
       var ids = config.linkedContentTypeIds;
       if (Array.isArray(ids) && ids.length > 1) {
         extension['sys.contentType.sys.id[in]'] = ids.join(',');
       }
     }
 
-    if (config.linksAsset) {
+    if (config.entityType === 'Asset') {
       var groups = config.linkedMimetypeGroups;
       if (Array.isArray(groups) && groups.length > 0) {
         extension['fields.file.contentType[in]'] = _.reduce(groups, function (cts, group) {
@@ -241,10 +331,10 @@ angular.module('contentful')
 
   function getLabels (config) {
     var key = [
-      (config.linksEntry ? 'entry' : 'asset'),
+      config.entityType.toLowerCase(),
       (config.multiple ? 'multiple' : 'single')
     ].join('_');
 
-    return LABELS[key];
+    return _.clone(LABELS[key]);
   }
 }]);

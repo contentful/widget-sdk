@@ -321,8 +321,10 @@ gulp.task('serve', function () {
   var configName = process.env.UI_CONFIG || 'development';
   var watchFiles = !process.env.NO_WATCHING;
 
-  var svgPattern = path.join(src.svg.sourceDirectory, '**/*.svg');
-  var appSrc = [svgPattern].concat(src.components);
+  var appSrc = [
+    'src/javascripts/**/*.js',
+    path.join(src.svg.sourceDirectory, '**/*.svg')
+  ];
   var patternTaskMap = [
     [appSrc, ['js/app']],
     [src.templates, ['templates']],

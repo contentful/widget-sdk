@@ -35,6 +35,23 @@ describe('utils/LaunchDarkly', function () {
       }
     };
 
+    this.unqualifiedUser = {
+      email: 'mehh@example.com',
+      organizationMemberships: [
+        {
+          organization: {
+            name: 'some-org',
+            subscription: {
+              status: 'paid'
+            }
+          }
+        }
+      ],
+      sys: {
+        id: 2
+      }
+    };
+
     this.user$ = K.createMockProperty();
     this.mockService('tokenStore', {
       user$: this.user$
@@ -47,7 +64,8 @@ describe('utils/LaunchDarkly', function () {
     const launchDarkly = this.$inject('utils/LaunchDarkly');
     launchDarkly.init(); // init LD before every spec
 
-    this.get = launchDarkly.get;
+    this.getTest = launchDarkly.getTest;
+    this.getFeatureFlag = launchDarkly.getFeatureFlag;
 
     this.assertPropVal = K.assertCurrentValue;
   });
@@ -108,26 +126,7 @@ describe('utils/LaunchDarkly', function () {
     });
   });
 
-  describe('#get(testName, customQualificationFn)', function () {
-    beforeEach(function () {
-      this.unqualifiedUser = {
-        email: 'mehh@example.com',
-        organizationMemberships: [
-          {
-            organization: {
-              name: 'some-org',
-              subscription: {
-                status: 'paid'
-              }
-            }
-          }
-        ],
-        sys: {
-          id: 2
-        }
-      };
-    });
-
+  describe('#getTest(testName, customQualificationFn)', function () {
     describe('for a qualified user', function () {
       beforeEach(function () {
         this.user$.set(this.qualifiedUser);
@@ -135,13 +134,13 @@ describe('utils/LaunchDarkly', function () {
 
       it('should return a kefir property that has the initial value of the flag', function () {
         client.variation.returns('initial-val');
-        const propA = this.get('a');
+        const propA = this.getTest('a');
 
         expect(this.getValue(propA)).toBe('initial-val');
       });
 
       it('should set the property returned to new value when value of the test changes', function () {
-        const propA = this.get('a');
+        const propA = this.getTest('a');
 
         client.variation.returns('one');
         this.assertPropVal(propA, 'one');
@@ -155,7 +154,7 @@ describe('utils/LaunchDarkly', function () {
     describe('for an unqualified user', function () {
       it('should return a kefir property that has null as the value for an unqualified user', function () {
         this.user$.set(this.unqualifiedUser);
-        const propA = this.get('a');
+        const propA = this.getTest('a');
 
         client.variation.returns('one');
         this.assertPropVal(propA, null);
@@ -166,7 +165,7 @@ describe('utils/LaunchDarkly', function () {
       it('should return null and then the actual test value', function () {
         this.user$.set(this.unqualifiedUser);
 
-        const propA = this.get('a');
+        const propA = this.getTest('a');
 
         client.variation.returns('dude');
         this.assertPropVal(propA, null);
@@ -183,23 +182,51 @@ describe('utils/LaunchDarkly', function () {
       });
 
       it('should get current user as an argument', function () {
-        const propA = this.get('a', user => {
+        const propA = this.getTest('a', user => {
           return user.organizationMemberships[0].organization.subscription.status === 'paid';
         });
         this.assertPropVal(propA, null);
       });
 
       it('should qualify/disqualify the user based on it in addition to default qualification criteria', function () {
-        let propA = this.get('a', _ => false);
+        let propA = this.getTest('a', _ => false);
         this.assertPropVal(propA, null);
 
-        propA = this.get('a', _ => true);
+        propA = this.getTest('a', _ => true);
         this.assertPropVal(propA, 'test');
       });
 
       it('should default to a function that returns true', function () {
-        this.assertPropVal(this.get('a'), 'test');
+        this.assertPropVal(this.getTest('a'), 'test');
       });
     });
+  });
+
+  describe('#getFeatureFlag(testName)', function () {
+    it('should return a kefir property that has the initial value of the flag', function () {
+      client.variation.returns('initial-val');
+      const propA = this.getFeatureFlag('a');
+
+      expect(this.getValue(propA)).toBe('initial-val');
+    });
+
+    it('should set the property returned to new value when value of the test changes', function () {
+      const propA = this.getFeatureFlag('a');
+
+      client.variation.returns('one');
+      this.assertPropVal(propA, 'one');
+
+      client.on.withArgs('change:a');
+      client.variation.returns('two');
+      this.assertPropVal(propA, 'two');
+    });
+
+    it('should have property value for unqualified users', function () {
+      this.user$.set(this.unqualifiedUser);
+      client.variation.returns('test-val');
+      const propA = this.getFeatureFlag('a');
+      this.assertPropVal(propA, 'test-val');
+    });
+
   });
 });

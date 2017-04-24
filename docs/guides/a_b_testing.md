@@ -5,29 +5,29 @@
 Create a test via the LaunchDarkly(LD) UI for the environment you are interested in. Then, in the directive you are running the A/B test, import `utils/LaunchDarkly` and use the `get` method to get the test stream to which you can add a handler. This handler will receive the test variation values if/as they change.
 
 ```js
-// Begin A/B experiment code - teamname-mm-yy-test-name
+// Begin A/B experiment code - test-teamname-mm-yy-test-name
 var K = require('utils/kefir');
 var LD = require('utils/LaunchDarkly');
-var someTest$ = LD.get('some-test');
+var someTest$ = LD.getTest('test-teamname-mm-yy-test-name');
 
 K.onValueScope($scope, someTest$, function (showTest) {
-	if (showTest) {
-	  // test code
-	} else {
-	  // control code
-	}
+    if (showTest) {
+      // test code
+    } else {
+      // control code
+    }
 });
-// End A/B experiment code - teamname-mm-yy-test-name
+// End A/B experiment code - test-teamname-mm-yy-test-name
 ```
 
 The test code should _always_ be bound by comments in the format shown above to aid cleanup once the test is finished.
 
 ## Terminology
 
-- `Feature flag`: A feature flag is what you set up via LaunchDarkly's web app. It corresponds to an A/B test. These two terms are used interchangeably in this document.
+- `A/B test`: An A/B test is what you set up via LaunchDarkly's web app (note: it is called 'Feature flag' in LD interface, but we have a distinction between the two - see `Feature flag` below). We call a test with percentage variations and available only for qualified users, an `A/B test`, and a flag that is set for all users without a variation a `Feature flag`.
 - `Variation`: A bucket for a test. We have `null` for unqualified users and `Boolean` for qualified users.
 - `Default rule`: Rule that decides what qualified users receive as their variation for a test.
-
+- `Feature flag`: A feature flag is set up in the same way as A/B tests in LaunchDarkly, but unlike an A/B test it should be always set to true or false *for all users* (no variations). It affects all users, not only qualified ones. They are described in detail in [a separate document](/docs/guides/feature-flags).
 
 ## Qualification criteria
 ### Default qualification criteria
@@ -44,7 +44,7 @@ Currently, there is no way to bypass the default qualification criteria.
 ```js
 var K = require('utils/kefir');
 var LD = require('utils/LaunchDarkly');
-var someTest$ = LD.get('some-test', currentUser => false);
+var someTest$ = LD.getTest('some-test', currentUser => false);
 
 K.onValueScope($scope, someTest$, function (showTest) {
     // showTest will always be null since custom qualification
@@ -55,16 +55,16 @@ K.onValueScope($scope, someTest$, function (showTest) {
 ## Environments on Launch Darkly
 
 ### `Development`
-Feature flags defined here are served to `app.joistio.com:8888` aka local dev
+Tests and feature flags defined here are served to `app.joistio.com:8888` aka local dev
 
 ### `Staging`
-Feature flags defined here are served to `app.flinkly.com` aka `staging`
+Tests and feature flags defined here are served to `app.flinkly.com` aka `staging`
 
 ### `Preview`
-Feature flags defined here are served to `app.quirely.com` aka `preview`
+Tests and feature flags defined here are served to `app.quirely.com` aka `preview`
 
 ### `Production`
-Feature flags defined here are served to `app.contentful.com` aka `production`
+Tests and feature flags defined here are served to `app.contentful.com` aka `production`
 
 
 ## Running an A/B test
@@ -82,7 +82,7 @@ __Important__:
 
 ### Naming
 
-A test name should have the following format: `teamname-mm-yyyy-test-name`.
+A test name should have the following format: `test-teamname-mm-yyyy-test-name`.
 
 For example, `ps-03-2017-example-space-impact` where `ps` stands for `Team Product Success`.
 

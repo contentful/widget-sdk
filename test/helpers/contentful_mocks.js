@@ -96,7 +96,8 @@ angular.module('contentful/mocks', [])
     $provide.factory('utils/LaunchDarkly', function () {
       return {
         init: function () {},
-        get: function () { return K.createMockProperty(null); }
+        getTest: function () { return K.createMockProperty(null); },
+        getFeatureFlag: function () { return K.createMockProperty(null); }
       };
     });
   };

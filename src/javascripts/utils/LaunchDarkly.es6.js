@@ -72,21 +72,21 @@ function isQualifiedUser ({organizationMemberships}) {
   }, false);
 }
 
-
 /**
  * @ngdoc method
- * @name utils/LaunchDarkly#get
+ * @name utils/LaunchDarkly#getTest
  * @usage[js]
  * const ld = require('utils/LaunchDarkly')
- * const awesomeTest$ = ld.get('my-awesome-test')
+ * const awesomeTest$ = ld.getTest('my-awesome-test')
  * K.onValueScope($scope, awesomeTest$, callback) // to bind to lifetime of scope
  * // or
  * awesomeTest$.onValue(callback)
  *
  * @description
- * Fetches the value for the requested test.
+ * Fetches the value for the requested test only for qualified users.
  * It returns a kefir property that will always give you the
- * value for the test as it is on Launch Darkly servers.
+ * value for the test as it is on Launch Darkly servers if current user is a
+ * qualified one, othervise it will be null.
  *
  * @param {String} testName
  * @param {function} [customQualificationFn = _ => true] - An optional fn that
@@ -94,23 +94,49 @@ function isQualifiedUser ({organizationMemberships}) {
  * qualification criteria.
  * @returns {utils/kefir.Property<boolean>}
  */
-export function get (testName, customQualificationFn = _ => true) {
-  const testVal$ = mergeValues([
-    fromEvents(client, 'ready'),
-    fromEvents(client, `change:${testName}`)
-  ]);
+export function getTest (testName, customQualificationFn = _ => true) {
+  const testVal$ = getFeatureFlag(testName);
 
-  return sampleBy(testVal$, () => {
-    // Launch Darkly has no way of preventing anonymous users from
-    // receiving test flags so this makes sure that if the user
-    // isn't qualified the test value for any test name is always
-    // `null`
+  // Launch Darkly has no way of preventing anonymous users from
+  // receiving test flags so this makes sure that if the user
+  // isn't qualified the test value for any test name is always
+  // `null`
+  return sampleBy(testVal$, (value) => {
     const currentUser = getValue(user$);
 
     if (currentUser && isQualifiedUser(currentUser) && customQualificationFn(currentUser)) {
-      return client.variation(testName, DEFAULT_VAL);
+      return value;
     } else {
       return DEFAULT_VAL;
     }
+  }).skipDuplicates();
+}
+
+/**
+ * @ngdoc method
+ * @name utils/LaunchDarkly#getFeatureFlag
+ * @usage[js]
+ * const ld = require('utils/LaunchDarkly')
+ * const awesomeFeatureFlag$ = ld.getFeatureFlag('my-awesome-feature-flag')
+ * K.onValueScope($scope, awesomeFeatureFlag$, callback) // to bind to lifetime of scope
+ * // or
+ * awesomeFeatureFlag$.onValue(callback)
+ *
+ * @description
+ * Fetches the value for the requested feature flag.
+ * It returns a kefir property that will always give you the
+ * value for the feature flag as it is on Launch Darkly servers.
+ *
+ * @param {String} featureFlagName
+ * @returns {utils/kefir.Property<boolean>}
+ */
+export function getFeatureFlag (featureFlagName) {
+  const testVal$ = mergeValues([
+    fromEvents(client, 'ready'),
+    fromEvents(client, `change:${featureFlagName}`)
+  ]);
+
+  return sampleBy(testVal$, () => {
+    return client.variation(featureFlagName, DEFAULT_VAL);
   }).skipDuplicates();
 }

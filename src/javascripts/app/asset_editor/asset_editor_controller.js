@@ -3,7 +3,6 @@
 angular.module('contentful')
 .controller('AssetEditorController', ['$scope', 'require', function AssetEditorController ($scope, require) {
   var $controller = require('$controller');
-  var logger = require('logger');
   var notification = require('notification');
   var stringUtils = require('stringUtils');
   var makeNotify = require('app/entity_editor/Notifications').makeNotify;
@@ -78,9 +77,18 @@ angular.module('contentful')
     setTitleOnDoc(file, locale.internal_code);
     editorData.entity.process($scope.otDoc.getVersion(), locale.internal_code)
     .catch(function (err) {
-      $scope.$emit('fileProcessingFailed');
-      notification.error('There has been a problem processing the Asset.');
-      logger.logServerWarn('There has been a problem processing the Asset.', {error: err});
+      // this event is handled in a child directive (cfFileEditor)
+      // we need to broadcast it down the element tree
+      $scope.$broadcast('fileProcessingFailed');
+
+      var errors = _.get(err, ['body', 'details', 'errors'], []);
+      var invalidContentTypeErr = _.find(errors, {name: 'invalidContentType'});
+
+      if (invalidContentTypeErr) {
+        notification.error(invalidContentTypeErr.details);
+      } else {
+        notification.error('There has been a problem processing the Asset.');
+      }
     });
   });
 

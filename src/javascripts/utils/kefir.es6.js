@@ -21,9 +21,9 @@ export const PromiseStatus = makeSum({
 
 /**
  * @ngdoc method
- * @name utils/kefir#createBus
+ * @name utils/kefir#createStreamBus
  * @usage[js]
- * var bus = K.createBus(scope)
+ * var bus = K.createStreamBus(scope)
  * bus.stream.onValue(cb)
  * bus.emit('VAL')
  * // 'cb' is called with 'VAL'
@@ -40,7 +40,7 @@ export const PromiseStatus = makeSum({
  * @param {Scope?} scope
  * @returns {utils/kefir.Bus}
  */
-export function createBus (scope) {
+export function createStreamBus (scope) {
   let currentEmitter;
 
   const stream = Kefir.stream(function (emitter) {
@@ -68,6 +68,8 @@ export function createBus (scope) {
     currentEmitter.end();
   }
 }
+// Deprecated alias
+export {createStreamBus as createBus};
 
 
 /**
@@ -96,7 +98,7 @@ export function createBus (scope) {
  * @returns {utils/kefir.PropertyBus}
  */
 export function createPropertyBus (initialValue, scope) {
-  const streamBus = createBus(scope);
+  const streamBus = createStreamBus(scope);
 
   const property = streamBus.stream.toProperty();
 

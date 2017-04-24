@@ -141,7 +141,7 @@ angular.module('contentful')
 
     function addExistingEntries () {
       var currentSize = K.getValue(links$).length;
-      entitySelector.open(extendedField, currentSize)
+      entitySelector.openFromField(extendedField, currentSize)
       .then(function (entities) {
         track.addExisting(entities.length);
         addLinks(entities.map(linkEntity));

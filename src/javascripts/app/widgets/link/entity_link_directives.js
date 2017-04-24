@@ -55,6 +55,17 @@ angular.module('cf.app')
   return create(require('app/widgets/link/EntityLinkTemplate').default());
 }])
 
+.directive('cfUserLink', ['require', function (require) {
+  return {
+    restrict: 'E',
+    scope: {
+      // user to be rendered:
+      user: '<'
+    },
+    template: require('app/widgets/link/UserLinkTemplate').default()
+  };
+}])
+
 .controller('EntityLinkController', ['require', '$scope', function (require, $scope) {
   var makeEntityRef = require('states/Navigator').makeEntityRef;
   var EntityState = require('data/CMA/EntityState');
@@ -83,21 +94,8 @@ angular.module('cf.app')
   });
 
   if (data) {
-    if ($scope.config.link && !$scope.actions.edit) {
-      $scope.stateRef = makeEntityRef(data);
-    }
-    var state = EntityState.getState(data.sys);
-
-    // We do not show the state indicator for published assets
-    if (!(data.sys.type === 'Asset' && state === EntityState.State.Published())) {
-      $scope.entityState = EntityState.stateName(state);
-    }
-
-    $scope.statusDotStyle = {
-      backgroundColor: entityStateColor(state)
-    };
-
     getBasicEntityInfo();
+    getEntityState();
     maybeGetEntryDetails();
     maybeGetAssetDetails();
   } else {
@@ -120,6 +118,22 @@ angular.module('cf.app')
       get('assetFile', 'file')
       .then(_.partial(get, 'assetFileUrl', 'downloadUrl'));
     }
+  }
+
+  function getEntityState () {
+    if ($scope.config.link && !$scope.actions.edit) {
+      $scope.stateRef = makeEntityRef(data);
+    }
+    var state = EntityState.getState(data.sys);
+
+    // We do not show the state indicator for published assets
+    if (!(data.sys.type === 'Asset' && state === EntityState.State.Published())) {
+      $scope.entityState = EntityState.stateName(state);
+    }
+
+    $scope.statusDotStyle = {
+      backgroundColor: entityStateColor(state)
+    };
   }
 
   function get (getter, scopeProperty, arg) {
