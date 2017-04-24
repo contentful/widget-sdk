@@ -5,11 +5,11 @@ describe('UserSpaceInvitationController', function () {
     const $rootScope = this.$inject('$rootScope');
     const $controller = this.$inject('$controller');
 
-    this.$timeout = this.$inject('$timeout');
+    const $timeout = this.$inject('$timeout');
     this.spaceContext = this.$inject('mocks/spaceContext').init();
     this.spaceContext.memberships.invite = sinon.stub().resolves();
 
-    this.scope = _.extend($rootScope.$new(), {
+    const scope = this.scope = _.extend($rootScope.$new(), {
       users: [],
       roleOptions: [],
       selectedRoles: {},
@@ -21,20 +21,20 @@ describe('UserSpaceInvitationController', function () {
     });
 
     function addRole (id) {
-      this.scope.roleOptions.push({ id: id, name: id });
+      scope.roleOptions.push({ id: id, name: id });
     }
 
     function addUser (id) {
-      this.scope.users.push({ sys: { id: id, type: 'User' }, email: `${id}@example.com` });
+      scope.users.push({ sys: { id: id, type: 'User' }, email: `${id}@example.com` });
     }
 
     this.selectUserRole = function (userId, roleId) {
-      this.scope.selectedRoles[userId] = roleId;
+      scope.selectedRoles[userId] = roleId;
     };
 
     this.sendInvites = function () {
-      const promise = this.scope.tryInviteSelectedUsers();
-      this.$timeout.flush();
+      const promise = scope.tryInviteSelectedUsers();
+      $timeout.flush();
       return promise;
     };
 
@@ -64,18 +64,20 @@ describe('UserSpaceInvitationController', function () {
       expect(this.scope.canNotInvite).toEqual(true);
     });
 
-    it('can invite users when all have roles selected', function () {
+    it('can invite users and sets counter correctly when all have roles selected', function () {
       this.selectUserRole('foo', 'admin');
       this.selectUserRole('bar', 'admin');
       this.sendInvites();
       expect(this.scope.canNotInvite).toEqual(false);
+      expect(this.scope.invitationsScheduled).toEqual(2);
     });
 
-    it('calls memberships.invite() once for every user', function* () {
+    it('calls memberships.invite() once for every user and sets counter correctly', function* () {
       this.selectUserRole('foo', 'admin');
       this.selectUserRole('bar', 'admin');
       yield this.sendInvites();
       sinon.assert.callCount(this.spaceContext.memberships.invite, 2);
+      expect(this.scope.invitationsDone).toEqual(2);
     });
 
     it('closes dialog when all invitations were successful', function* () {
@@ -85,13 +87,15 @@ describe('UserSpaceInvitationController', function () {
       sinon.assert.calledOnce(this.scope.dialog.confirm);
     });
 
-    it('sets failed invitations flag when some invitations were not successful', function* () {
+    it('sets failed invitations flag and resets counters when some invitations were not successful', function* () {
       this.selectUserRole('foo', 'admin');
       this.selectUserRole('bar', 'admin');
       this.spaceContext.memberships.invite.rejects();
       yield this.sendInvites();
       sinon.assert.notCalled(this.scope.dialog.confirm);
       expect(this.scope.hasFailedInvitations).toEqual(true);
+      expect(this.scope.invitationsScheduled).toEqual(0);
+      expect(this.scope.invitationsDone).toEqual(0);
     });
   });
 });

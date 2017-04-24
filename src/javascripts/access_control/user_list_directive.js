@@ -320,6 +320,8 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
 
     function fetchUsers (params) {
       return ListQuery.getForUsers(params).then(function (query) {
+        // @TODO space.getUsers() should be replaced here (possibly not only here?)
+        // by an implementation with `data/CMA/FetchAll`
         return $q.all([spaceContext.organizationContext.getAllUsers(query), spaceContext.space.getUsers()]);
       }).then(function (results) {
         var organizationUsers = results[0];

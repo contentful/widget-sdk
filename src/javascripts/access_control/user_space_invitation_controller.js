@@ -26,18 +26,16 @@ angular.module('contentful')
   };
 
   $scope.getInvalidRoleSelectionsCount = function () {
-    var userIds = $scope.users.map(_.property('sys.id'));
-    var roleIds = $scope.roleOptions.map(_.property('id'));
-    var assignedUserIds = _($scope.selectedRoles).pickBy(isValidRole).keys().value();
-    return _.difference(userIds, assignedUserIds).length;
-
-    function isValidRole (roleId) {
-      return _.includes(roleIds, roleId);
-    }
+    var invalidUsers = $scope.users.filter(function (user) {
+      return !$scope.selectedRoles[user.sys.id];
+    });
+    return invalidUsers.length;
   };
 
   function inviteUsers () {
-    resetInvitationsCounter();
+    $scope.hasFailedInvitations = false;
+    $scope.invitationsScheduled = $scope.users.length;
+    $scope.invitationsDone = 0;
 
     var invitees = $scope.users.map(function (user) {
       return {
@@ -45,15 +43,18 @@ angular.module('contentful')
         roleId: $scope.selectedRoles[user.sys.id]
       };
     });
+    var currentInvitationId = 0;
 
-    return $q.all(_.map(invitees, scheduleInvitation)).then(function () {
+    return $q.all(invitees.map(scheduleInvitation)).then(function () {
       $scope.dialog.confirm();
     }, function () {
       $scope.hasFailedInvitations = true;
+      $scope.invitationsScheduled = 0;
+      $scope.invitationsDone = 0;
     });
 
     function scheduleInvitation (invitee) {
-      var i = $scope.invitationsScheduled++;
+      var i = currentInvitationId++;
       // We wait 350ms between invitations to avoid rate limitation errors
       // @TODO we need a backend endpoint for batch invitation:
       // https://contentful.tpondemand.com/entity/17146
@@ -64,12 +65,6 @@ angular.module('contentful')
           $scope.users = _.without($scope.users, invitee.user);
         });
       });
-    }
-
-    function resetInvitationsCounter () {
-      $scope.hasFailedInvitations = false;
-      $scope.invitationsScheduled = 0;
-      $scope.invitationsDone = 0;
     }
   }
 }]);
