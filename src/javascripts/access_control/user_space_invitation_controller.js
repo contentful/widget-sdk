@@ -6,7 +6,7 @@
  *
  * @scope.requires {Array} users
  * @scope.requires {Array} roleOptions
- * @scope.requires {Array} selectedRoles
+ * @scope.requires {object} selectedRoles
  * @scope.requires {modalDialog} dialog
  */
 angular.module('contentful')
@@ -19,7 +19,9 @@ angular.module('contentful')
   $scope.tryInviteSelectedUsers = function () {
     $scope.canNotInvite = $scope.getInvalidRoleSelectionsCount() > 0;
     if (!$scope.canNotInvite) {
-      inviteUsers();
+      return inviteUsers();
+    } else {
+      return $q.reject();
     }
   };
 
