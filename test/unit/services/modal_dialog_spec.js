@@ -1,20 +1,18 @@
-'use strict';
+import * as sinon from 'helpers/sinon';
 
 describe('Modal dialog service', function () {
-  var modalDialog, scope;
-  var successStub, errorStub;
+  let modalDialog, scope;
+  let successStub, errorStub;
   beforeEach(function () {
     module('contentful/test');
-    inject(function ($rootScope, _modalDialog_) {
-      scope = $rootScope.$new();
-      modalDialog = _modalDialog_;
-      successStub = sinon.stub();
-      errorStub = sinon.stub();
-    });
+    scope = this.$inject('$rootScope').$new();
+    modalDialog = this.$inject('modalDialog');
+    successStub = sinon.stub();
+    errorStub = sinon.stub();
   });
 
   describe('create a dialog', function () {
-    var dialog;
+    let dialog;
     beforeEach(function () {
       $('<div class="client"></div>').appendTo('body');
       dialog = modalDialog.open({
@@ -24,7 +22,7 @@ describe('Modal dialog service', function () {
       });
       dialog.promise.then(successStub)
                     .catch(errorStub);
-      scope.$digest();
+      this.$apply();
     });
 
     afterEach(function () {
@@ -53,8 +51,8 @@ describe('Modal dialog service', function () {
     });
 
     describe('closes by clicking on background', function () {
-      var event;
-      var cancelStub;
+      let event;
+      let cancelStub;
       beforeEach(function () {
         event = {};
         event.target = $('.modal-background').get(0);
@@ -79,8 +77,8 @@ describe('Modal dialog service', function () {
     });
 
     describe('closes via keyboard shortcuts', function () {
-      var event;
-      var confirmStub, cancelStub;
+      let event;
+      let confirmStub, cancelStub;
       beforeEach(function () {
         event = {};
         cancelStub = sinon.stub(dialog, 'cancel');
@@ -106,8 +104,8 @@ describe('Modal dialog service', function () {
 
     });
 
-    describe('with a scope', function() {
-      beforeEach(function() {
+    describe('with a scope', function () {
+      beforeEach(function () {
         dialog.scope = {$apply: sinon.stub(), $destroy: sinon.stub()};
       });
 
@@ -121,7 +119,7 @@ describe('Modal dialog service', function () {
       });
 
       it('confirms with values', function () {
-        var result;
+        let result;
         dialog.confirm('foo');
         dialog.promise.then(function (value) { result = value; });
         scope.$apply();
@@ -129,7 +127,7 @@ describe('Modal dialog service', function () {
       });
 
       it('cancels with values', function () {
-        var result;
+        let result;
         dialog.cancel('bar');
         dialog.promise.catch(function (value) { result = value; });
         scope.$apply();
@@ -161,17 +159,17 @@ describe('Modal dialog service', function () {
   });
 
   describe('#closeAll()', function () {
-    beforeEach(function() {
-      _.times(2, function() {
+    beforeEach(function () {
+      _.times(2, function () {
         modalDialog.open({
           message: 'test'
         }).promise
-        .then(function() {})
+        .then(function () {})
         .catch(errorStub);
       });
     });
 
-    it ('closes all opened dialogs by default', function () {
+    it('closes all opened dialogs by default', function () {
       expect(modalDialog.getOpened().length).toBe(2);
       modalDialog.closeAll();
       scope.$apply();
@@ -179,12 +177,12 @@ describe('Modal dialog service', function () {
       expect(modalDialog.getOpened().length).toBe(0);
     });
 
-    it ('does not close modals with `persistOnNavigation` =  true', function () {
+    it('does not close modals with `persistOnNavigation` =  true', function () {
       modalDialog.open({
         message: 'yo',
         persistOnNavigation: true
       }).promise
-      .then(function() {})
+      .then(function () {})
       .catch(errorStub);
 
       expect(modalDialog.getOpened().length).toBe(3);

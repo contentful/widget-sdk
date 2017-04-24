@@ -28,7 +28,6 @@ angular.module('contentful').factory('modalDialog', ['require', function (requir
   var $q = require('$q');
   var $window = require('$window');
   var keycodes = require('keycodes');
-  var defer = require('defer');
   var $rootScope = require('$rootScope');
   var debounce = require('debounce');
   var $timeout = require('$timeout');
@@ -96,13 +95,12 @@ angular.module('contentful').factory('modalDialog', ['require', function (requir
 
       // Defer rendering to prevent positioning issues when firing dialogs
       // on page load
-      defer(_.bind(function () {
+      $rootScope.$applyAsync(_.bind(function () {
         this.domElement.appendTo(this.params.attachTo);
         $compile(this.domElement)(scope);
 
         this.domElement.on('click', _.bind(this._closeOnBackground, this));
         this.open = true;
-        scope.$apply();
 
         this._centerOnBackground();
 
