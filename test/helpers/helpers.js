@@ -55,9 +55,26 @@ beforeEach(function () {
     const $http = this.$inject('$httpBackend');
     const $timeout = this.$inject('$timeout');
 
-    this.$apply();
-    $timeout.flush();
-    $http.flush();
+    // We need to run this multiple times because flushing an HTTP
+    // response might change something that requires another apply.
+    _.times(3, () => {
+      this.$apply();
+      // We ignore errors when there is nothing to be flushed
+      try {
+        $timeout.flush();
+      } catch (error) {
+        if (error.message !== 'No deferred tasks to be flushed') {
+          throw error;
+        }
+      }
+      try {
+        $http.flush();
+      } catch (error) {
+        if (error.message !== 'No pending request to flush !') {
+          throw error;
+        }
+      }
+    });
   };
 
 
