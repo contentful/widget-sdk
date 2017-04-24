@@ -95,21 +95,10 @@ Styleguide table-pattern
     text-align: left
     img
       margin-right: 10px
-    input[type="checkbox"]
-      width: 15px
-      height: 15px
     img
       height: 25px
     p
       width: 100%
-    label
-      padding: 10px
-      margin: -12px
-      margin-right: 0
-
-  th
-    input[type="checkbox"]
-      margin-top: 0
 
   thead
     border-bottom: 1px solid $colors.element-mid
@@ -126,20 +115,11 @@ Styleguide table-pattern
     tr
       color: $colors.text-mid
       &:hover
-        cursor: pointer
         background-color: $colors.element-lightest
       td
         border-bottom: 1px solid $colors.element-light
         padding-top: 16px
         padding-bottom: 16px
-        div
-          display: flex
-          flex-direction: row
-          align-items: center
-          > span
-            text-overflow: ellipsis
-            overflow: hidden
-
   .table__head
     flex-shrink: 0
     flex-basis: auto
@@ -183,11 +163,6 @@ Styleguide table-pattern
   .x--multiline
     > td
       vertical-align: top
-      div
-        align-items: flex-start
-        > a
-          white-space: normal
-          text-overflow: clip
     p
       margin-bottom: 0
 
@@ -201,3 +176,26 @@ Styleguide table-pattern
 
   .x--active-sort
     font-weight: bold
+
+
+// Used by the entry and asset list.
+.table__checkbox-cell
+  display: flex
+  flex-direction: row
+  align-items: center
+  // TODO smelly nested selector
+  input[type="checkbox"]
+    width: 15px
+    height: 15px
+  // TODO smelly nested selector
+  label
+    padding: 10px
+    margin: -12px
+    margin-right: 0
+
+  &.x--multiline
+    align-items: flex-start
+    // TODO smelly nested selector
+    > a
+      white-space: normal
+      text-overflow: clip

@@ -1,6 +1,6 @@
 mixin td
   - var uiSref = attributes['ui-sref']
   - delete attributes['ui-sref']
-  td&attributes(attributes)
+  td(style="cursor: pointer")&attributes(attributes)
     a(ui-sref=uiSref)
       block
