@@ -24,6 +24,7 @@
  *   }, 3000);
  */
 angular.module('contentful').factory('modalDialog', ['require', function (require) {
+  var defer = require('defer');
   var $compile = require('$compile');
   var $q = require('$q');
   var $window = require('$window');
@@ -95,13 +96,16 @@ angular.module('contentful').factory('modalDialog', ['require', function (requir
 
       // Defer rendering to prevent positioning issues when firing dialogs
       // on page load
-      $rootScope.$applyAsync(_.bind(function () {
+      defer(_.bind(function () {
         this.domElement.appendTo(this.params.attachTo);
         $compile(this.domElement)(scope);
 
         this.domElement.on('click', _.bind(this._closeOnBackground, this));
         this.open = true;
 
+        // Make sure everything is rendered so that the dialog dimensions are
+        // properly calculated
+        scope.$apply();
         this._centerOnBackground();
 
         if (this.domElement.find('input').length > 0) {
