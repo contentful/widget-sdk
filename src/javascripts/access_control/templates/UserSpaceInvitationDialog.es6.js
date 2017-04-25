@@ -44,13 +44,13 @@ function dialogContent () {
         inlineText: 'true'
       })
     ]),
-    h('.note-box.note-box--warning', { ngIf: 'canNotInvite' }, [
+    h('.note-box--warning', { ngIf: 'canNotInvite' }, [
       'You are trying to add {{ getInvalidRoleSelectionsCount() === 1 ? ' +
       '"a user without a role. Please assign the user" : ' +
       'getInvalidRoleSelectionsCount() + " users without a role. Please assign them" }} ' +
       'a role before continuing.'
     ]),
-    h('.note-box.note-box--warning', { ngIf: 'hasFailedInvitations' }, [
+    h('.note-box--warning', { ngIf: 'hasFailedInvitations' }, [
       'Whoops, something went wrong on our side. There ' +
       '{{ users.length === 1 ? "is one user" : "are some users" }} we weren’t able to ' +
       'add to your space. Press the green button once more to add the remaining ' +

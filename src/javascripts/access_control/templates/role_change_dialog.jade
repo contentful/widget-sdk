@@ -6,7 +6,7 @@
     .modal-dialog__content
       .modal-dialog__richtext
         p
-          | <span class="modal-dialog__highlight role-change-dialog__name">{{ user.name }}</span> is currently
+          | <span class="modal-dialog__highlight" style="word-wrap: break-word">{{ user.name }}</span> is currently
           | a<span ng-show="startsWithVowel(user.roleNames)">n</span> {{ user.roleNames }}.
         .cfnext-form__field
           label(for="field-role") New role

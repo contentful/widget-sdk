@@ -327,12 +327,10 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
         var organizationUsers = results[0];
         var spaceUsers = results[1];
         var spaceUserIds = spaceUsers.map(_.property('data.sys.id'));
-        var displayedUsers = _.transform(organizationUsers, function (acc, item) {
-          var id = dotty.get(item, 'sys.id');
-          if (id && !_.includes(spaceUserIds, id)) {
-            acc.push(item);
-          }
-        }, []);
+        var displayedUsers = organizationUsers.filter(function (item) {
+          var id = _.get(item, 'sys.id');
+          return id && !_.includes(spaceUserIds, id);
+        });
         return { items: displayedUsers, total: organizationUsers.length };
       });
     }
@@ -341,7 +339,6 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
       $scope.isInvitingUsersToSpace = false;
       return reload().then(function () {
         notification.info('Invitations successfully sent.');
-        $scope.userQuota.used += 1;
       })
       .catch(ReloadNotification.basicErrorHandler);
     }

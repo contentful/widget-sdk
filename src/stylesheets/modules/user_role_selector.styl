@@ -4,7 +4,9 @@
   background-color: $colors.element-lightest
   max-height: 235px
   overflow: auto
+  padding: 12.5px 0
 
+  // Hide 'unconfirmed' message from cf-user-link
   .user-link__unconfirmed
     display: none
 
@@ -14,14 +16,7 @@
     justify-content: space-between
     padding-right: 25px
     margin: 0
-    &:first-child
-      padding-top: 12.5px
-    &:last-child
-      padding-bottom: 12.5px
 
   &__selector-field
-    margin: 0
-    > label
-      display: none
     > select
       max-width: 200px
