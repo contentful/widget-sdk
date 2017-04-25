@@ -5,8 +5,7 @@
  * @name UserSpaceInvitationController
  *
  * @scope.requires {Array} users
- * @scope.requires {Array} roleOptions
- * @scope.requires {object} selectedRoles
+ * @scope.requires {Array} roleOptions - available role options in the format of { id, name }
  * @scope.requires {modalDialog} dialog
  */
 angular.module('contentful')
@@ -16,21 +15,27 @@ angular.module('contentful')
   var $timeout = require('$timeout');
   var spaceContext = require('spaceContext');
 
-  $scope.tryInviteSelectedUsers = function () {
-    $scope.canNotInvite = $scope.getInvalidRoleSelectionsCount() > 0;
+  // A hash with user ids as keys, and role ids as values
+  $scope.selectedRoles = {};
+
+  this.tryInviteSelectedUsers = tryInviteSelectedUsers;
+  this.getInvalidRoleSelectionsCount = getInvalidRoleSelectionsCount;
+
+  function tryInviteSelectedUsers () {
+    $scope.canNotInvite = getInvalidRoleSelectionsCount() > 0;
     if (!$scope.canNotInvite) {
       return inviteUsers();
     } else {
       return $q.reject();
     }
-  };
+  }
 
-  $scope.getInvalidRoleSelectionsCount = function () {
+  function getInvalidRoleSelectionsCount () {
     var invalidUsers = $scope.users.filter(function (user) {
       return !$scope.selectedRoles[user.sys.id];
     });
     return invalidUsers.length;
-  };
+  }
 
   function inviteUsers () {
     $scope.hasFailedInvitations = false;

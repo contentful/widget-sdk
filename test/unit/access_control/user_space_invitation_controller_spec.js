@@ -16,7 +16,7 @@ describe('UserSpaceInvitationController', function () {
       dialog: { confirm: sinon.stub() }
     });
 
-    this.controller = $controller('UserSpaceInvitationController', {
+    const controller = this.controller = $controller('UserSpaceInvitationController', {
       $scope: this.scope
     });
 
@@ -33,7 +33,7 @@ describe('UserSpaceInvitationController', function () {
     };
 
     this.sendInvites = function () {
-      const promise = scope.tryInviteSelectedUsers();
+      const promise = controller.tryInviteSelectedUsers();
       $timeout.flush();
       return promise;
     };
@@ -45,22 +45,22 @@ describe('UserSpaceInvitationController', function () {
 
   describe('.getInvalidRoleSelectionsCount()', function () {
     it('returns number of users without selected role', function () {
-      expect(this.scope.getInvalidRoleSelectionsCount()).toEqual(2);
+      expect(this.controller.getInvalidRoleSelectionsCount()).toEqual(2);
 
       this.selectUserRole('foo', 'admin');
-      expect(this.scope.getInvalidRoleSelectionsCount()).toEqual(1);
+      expect(this.controller.getInvalidRoleSelectionsCount()).toEqual(1);
 
       this.selectUserRole('bar', 'admin');
-      expect(this.scope.getInvalidRoleSelectionsCount()).toEqual(0);
+      expect(this.controller.getInvalidRoleSelectionsCount()).toEqual(0);
 
-      delete this.scope.selectedRoles['foo'];
-      expect(this.scope.getInvalidRoleSelectionsCount()).toEqual(1);
+      this.selectUserRole('bar', null);
+      expect(this.controller.getInvalidRoleSelectionsCount()).toEqual(1);
     });
   });
 
   describe('.tryInviteSelectedUsers()', function () {
     it('cannot invite when some user has no role selected', function () {
-      this.scope.tryInviteSelectedUsers();
+      this.controller.tryInviteSelectedUsers();
       expect(this.scope.canNotInvite).toEqual(true);
     });
 
