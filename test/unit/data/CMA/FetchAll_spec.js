@@ -22,6 +22,12 @@ describe('FetchAll', function () {
       const result = yield this.fetchAll(this.stub, '/path', this.query.limit);
       expect(result).toEqual(this.response.items);
     });
+
+    it('sends custom query parameters', function () {
+      this.fetchAll(this.stub, '/path', this.query.limit, { foo: 42 });
+      this.$apply();
+      sinon.assert.called(this.stub.withArgs({ method: 'GET', path: '/path', query: { skip: 0, limit: 10, foo: 42 } }));
+    });
   });
 
   describe('when there is more than one page of results', function () {

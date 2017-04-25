@@ -1,7 +1,7 @@
 import {h} from 'utils/hyperscript';
 
 export default function () {
-  return h('.user-link', [
+  return h('.user-link', {dataUserEmail: '{{user.email}}'}, [
     h('img.entity-link__image', {
       ngSrc: '{{user.avatarUrl}}'
     }),

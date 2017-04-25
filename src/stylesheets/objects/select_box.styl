@@ -11,7 +11,9 @@ select.cfnext-select-box.pseudo-class-hover
 select.cfnext-select-box(disabled)
   option value
   option more
-input.form-control
+select.cfnext-select-box(aria-invalid="true")
+  option value
+  option more
 
 Styleguide 5.2
 */
@@ -61,6 +63,8 @@ $select-box-hover-gradient = linear-gradient(to bottom, white, #F9F9F9)
     color: hsl(0, 0%, 61%)
     cursor: not-allowed;
 
+  &[aria-invalid=true]
+    border-color: $colors.red-mid
 
 .inline-select
   background: transparent
