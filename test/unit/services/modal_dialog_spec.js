@@ -22,7 +22,6 @@ describe('Modal dialog service', function () {
       });
       dialog.promise.then(successStub)
                     .catch(errorStub);
-      this.$apply();
     });
 
     afterEach(function () {
