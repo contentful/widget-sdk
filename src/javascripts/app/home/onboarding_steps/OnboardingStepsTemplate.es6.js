@@ -10,7 +10,7 @@ export default function template () {
 
 function heading () {
   return h('h3.home-section__heading', [
-    'Get started with this project'
+    'Get started with content creation'
   ]);
 }
 

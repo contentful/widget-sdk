@@ -8,6 +8,12 @@ angular.module('contentful')
   var K = require('utils/kefir');
   var tokenStore = require('tokenStore');
 
+  var scrollToDeveloperResources = h('span', {}, [
+    'Get started with content creation in your space or get ',
+    h('a', {ngClick: 'welcome.scrollToDeveloperResources()'}, ['SDKs, tools & tutorials below']),
+    '.'
+  ]);
+
   var template = h('section.home-section', [
     h('h2.home-section__heading', ['{{welcome.greeting}}']),
     h('p', {ngIf: 'welcome.user.signInCount === 1'}, [
@@ -16,6 +22,7 @@ angular.module('contentful')
     h('p', {ngIf: 'welcome.user.signInCount > 1'}, [
       'What will you build today?'
     ]),
+    scrollToDeveloperResources,
     h('cf-icon.home__welcome-image', {name: 'home-welcome'})
   ]);
 
@@ -31,6 +38,15 @@ angular.module('contentful')
         controller.user = user;
         controller.greeting = getGreeting(user);
       });
+
+      // Short term solution to encourage new users to immediately access
+      // the resources. In the future we would provide a collapsed view
+      // of steps to ensure this content is 'above the fold'
+      controller.scrollToDeveloperResources = function () {
+        $('cf-developer-resources').get(0).scrollIntoView(
+          {block: 'end', behavior: 'smooth'}
+        );
+      };
 
       function getGreeting (user) {
         if (user) {
