@@ -65,6 +65,15 @@ registerEvent('global:app_loaded', 'app_open', AppOpen);
 registerEvent('invite_user:learn', 'generic', InviteUserExperiment);
 registerEvent('invite_user:create_space', 'generic', InviteUserExperiment);
 
+registerEvent('personal_access_token:action', 'personal_access_token', (_, data) => {
+  return {
+    data: {
+      personal_access_token_id: data.patId,
+      action: data.action,
+      executing_user_id: data.userId
+    }
+  };
+});
 
 /**
  * Registers an event to be tracked by snowplow.

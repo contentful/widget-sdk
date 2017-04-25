@@ -115,6 +115,11 @@ registerSchema({
   version: '1-0-0'
 });
 
+registerSchema({
+  name: 'personal_access_token',
+  version: '1-0-0'
+});
+
 function registerSchema (schema) {
   _schemas[schema.name] = schema;
   _schemas[schema.name].path = buildPath(schema);

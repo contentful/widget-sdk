@@ -106,7 +106,7 @@ angular.module('contentful')
     'create_space'
   ],
   personal_access_token: [
-    'create'
+    'action'
   ]
 })
 
