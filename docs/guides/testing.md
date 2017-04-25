@@ -27,6 +27,7 @@ This is a list of patterns used in old code but deprecated.
 * Using the `$compile` service to compile directives. Use `this.$comile()`
   instead.
 * Global `sinon`. Use `import sinon from 'helpers/sinon'` instead.
+* `this.$inject('q')`. You can use `import $q from '$q'`.
 
 
 Module System
@@ -147,14 +148,16 @@ module.
 ~~~js
 beforeEach(function () {
   module('contentful/test');
-  var $q = this.$inject('$q');
+  const $rootScope = this.$inject('$rootScope');
 })
 ~~~
 
-The [`ngMock`][ng-mock] module is automatically required. The
-`contentful/test` module includes the main `contentful` module and the
-`contentful/mocks` module. The latter provides various services that
-mock certain parts of the application.
+You can import the `$q` service directly instead of using `this.$inject()`.
+~~~js
+import $q from '$q';
+~~~
+Note that the methods on `$q` may only be called after the Angular module has
+been instantiated.
 
 Directives can be compiled and tested with the
 [`$compile` helper][service:helpers].
