@@ -60,7 +60,6 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
   var ListQuery = require('ListQuery');
   var entitySelector = require('entitySelector');
   var OrganizationList = require('OrganizationList');
-  var $q = require('$q');
 
   var K = require('utils/kefir');
   var LD = require('utils/LaunchDarkly');
@@ -327,7 +326,7 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
           var id = _.get(item, 'sys.id');
           return id && !_.includes(spaceUserIds, id);
         });
-        return { items: displayedUsers, total: organizationUsers.length };
+        return { items: displayedUsers, total: displayedUsers.length };
       });
     }
 
