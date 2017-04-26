@@ -24,7 +24,6 @@ rules:
   - LabeledStatement
   - MetaProperty
   - MethodDefinition
-  - RestElement
   - SequenceExpression
   - SpreadElement
   - Super
