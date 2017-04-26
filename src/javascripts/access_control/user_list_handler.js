@@ -30,6 +30,7 @@ angular.module('contentful')
       reset: reset,
       getMembershipCounts: function () { return membershipCounts; },
       getUserCount: function () { return users.length; },
+      getUserIds: function () { return users.map(function (user) { return user.id; }); },
       getGroupedUsers: getGroupedUsers,
       getUsersByRole: getUsersByRole,
       getRoleOptions: getRoleOptions,

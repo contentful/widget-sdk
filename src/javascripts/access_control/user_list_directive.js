@@ -60,7 +60,6 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
   var ListQuery = require('ListQuery');
   var entitySelector = require('entitySelector');
   var OrganizationList = require('OrganizationList');
-  var $q = require('$q');
 
   var K = require('utils/kefir');
   var LD = require('utils/LaunchDarkly');
@@ -320,18 +319,14 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
 
     function fetchUsers (params) {
       return ListQuery.getForUsers(params).then(function (query) {
-        // @TODO space.getUsers() should be replaced here (possibly not only here?)
-        // by an implementation with `data/CMA/FetchAll`
-        return $q.all([spaceContext.organizationContext.getAllUsers(query), spaceContext.space.getUsers()]);
-      }).then(function (results) {
-        var organizationUsers = results[0];
-        var spaceUsers = results[1];
-        var spaceUserIds = spaceUsers.map(_.property('data.sys.id'));
+        return spaceContext.organizationContext.getAllUsers(query);
+      }).then(function (organizationUsers) {
+        var spaceUserIds = userListHandler.getUserIds();
         var displayedUsers = organizationUsers.filter(function (item) {
           var id = _.get(item, 'sys.id');
           return id && !_.includes(spaceUserIds, id);
         });
-        return { items: displayedUsers, total: organizationUsers.length };
+        return { items: displayedUsers, total: displayedUsers.length };
       });
     }
 
@@ -365,6 +360,7 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
     $scope.context.ready = true;
     $scope.jumpToRole();
   }
+
 }]);
 
 angular.module('contentful').factory('UserListController/jumpToRole', ['require', function (require) {
