@@ -14,6 +14,9 @@ SystemJS.config({
     // Convenience alias
     'helpers': 'test/helpers'
   },
+  map: {
+    '$q': 'test/helpers/$q'
+  },
   packageConfigPaths: [
     'npm:*/package.json'
   ],

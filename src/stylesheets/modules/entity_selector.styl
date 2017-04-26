@@ -7,7 +7,6 @@
   position: relative
 
 .entity-selector__item-list
-  width: 600px
   height: 500px
   overflow-y: scroll
 
@@ -41,3 +40,58 @@
 
     &.x--selected
       background: $colors.element-light
+
+.entity-selector__note
+  margin-left: 0
+  margin-right: 0
+
+
+// Special styling of "Users" entity selector.
+// TODO: Merge with default styles on entity selector redesign if applicable.
+.entity-selector-dialog--for-user-entities
+  width: 66vw
+  max-width: 720px
+
+.entity-selector-dialog--for-user-entities .entity-selector
+  &__mode-switcher // TODO: Get rid of this general assumption that we don't want to show this.
+    display: none
+
+  &__input-label > p:first-child
+    font-weight: bold
+    margin-bottom: $rhythm(1)
+
+  &__item-list
+    height: auto!important
+    min-height: 235px // TODO: Remove this as soon as we solve modal dialog re-positioning.
+    max-height: 235px
+    border: 1px solid $colors.ice-dark
+    padding: 12.5px 0
+    background-color: $colors.element-lightest
+    &--empty
+      background: transparent
+
+  &__last-item .user-link
+    padding-bottom: 25px
+
+  &__item
+    margin: 0
+    background-color: $colors.element-lightest
+
+    &.x--selected
+      background-color: $colors.element-mid
+      .user-link::after
+        content: "\f058"
+        color: $colors.green-dark
+
+    &:hover
+      background-color: $colors.element-light
+
+    .user-link::after
+      font-size: 18px
+      font-family: FontAwesome
+      content: "\f055"
+      color: $colors.text-lightest
+
+  .loading
+    width: 100%
+    box-shadow: inset 0 1px 2px $colors.element-mid

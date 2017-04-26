@@ -130,6 +130,8 @@ describe('TheAccountView service', function () {
 
   describeGoToMethod('goToSubscription', 'z_subscription');
 
+  describeGoToMethod('goToUsers', 'organization_memberships');
+
   function describeGoToMethod (name, subpage) {
     describe(`.${name}()`, function () {
       const RETURN_VALUE = {};
