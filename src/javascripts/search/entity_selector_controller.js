@@ -111,21 +111,21 @@ angular.module('contentful')
     if (!config.multiple) {
       $scope.dialog.confirm([entity]);
     } else {
-      var action;
+      var toggleMethod;
       if (event && event.shiftKey && lastToggled) {
         var from = $scope.items.indexOf(entity);
         var to = $scope.items.indexOf(lastToggled.entity);
         var first = Math.min(from, to);
         var last = Math.max(from, to) + 1;
-        action = lastToggled.action;
-        $scope.items.slice(first, last).forEach(toggle[action]);
+        toggleMethod = lastToggled.toggleMethod;
+        $scope.items.slice(first, last).forEach(toggleMethod);
         event.preventDefault();
         document.getSelection().removeAllRanges();
       } else {
-        var toggleMethod = $scope.selectedIds[entity.sys.id] ? toggle.deselect : toggle.select;
+        toggleMethod = $scope.selectedIds[entity.sys.id] ? toggle.deselect : toggle.select;
         toggleMethod(entity);
       }
-      lastToggled = { entity: entity, action: action };
+      lastToggled = { entity: entity, toggleMethod: toggleMethod };
     }
   }
 
