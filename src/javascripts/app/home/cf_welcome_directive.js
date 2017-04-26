@@ -44,7 +44,7 @@ angular.module('contentful')
       // of steps to ensure this content is 'above the fold'
       controller.scrollToDeveloperResources = function () {
         $('cf-developer-resources').get(0).scrollIntoView(
-          {block: 'end', behavior: 'smooth'}
+          {block: 'start', behavior: 'smooth'}
         );
       };
 
