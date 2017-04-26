@@ -14,6 +14,8 @@ describe('Asset editor controller', function () {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
 
+    this.mockService('notification');
+
     scope = this.$inject('$rootScope').$new();
     const accessChecker = this.$inject('accessChecker');
     accessChecker.canUpdateAsset = sinon.stub().returns(true);

@@ -27,7 +27,7 @@ describe('EntityCreationController', function () {
     const cfStub = this.$inject('cfStub');
     const $controller = this.$inject('$controller');
 
-    this.notification = this.$inject('notification');
+    this.notification = this.mockService('notification');
     this.$q = this.$inject('$q');
 
     this.spaceContext = this.$inject('spaceContext');
