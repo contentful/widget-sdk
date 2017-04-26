@@ -1,7 +1,7 @@
 angular.module('contentful')
 
 .directive('cfMockXhrConsole', ['require', function (require) {
-  var MockXhr = require('debug/mock_xhr/MockXhr');
+  var MockXhr = require('debug/XHR/Mocker');
   var h = require('utils/hyperscript').h;
 
   return {

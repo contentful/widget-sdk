@@ -2,7 +2,7 @@ import {env} from 'Config';
 import segment from 'analytics/segment';
 import * as Snowplow from 'analytics/snowplow/Snowplow';
 import {prepareUserData} from 'analytics/UserData';
-import analyticsConsole from 'analytics/console';
+import * as analyticsConsole from 'analytics/console';
 import stringifySafe from 'stringifySafe';
 import _ from 'lodash';
 

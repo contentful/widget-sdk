@@ -76,6 +76,7 @@ angular.module('contentful/app', ['contentful'])
   require('states').loadAll();
   require('dialogsInitController').init();
   require('navigation/DocumentTitle').init();
+  require('Debug').init(window);
 }]);
 
 angular.module('contentful')
