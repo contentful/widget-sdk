@@ -1,4 +1,4 @@
-import {h, doctype} from '../../src/javascripts/utils/hyperscript/h.es6.js'
+import {h, doctype} from './hyperscript'
 import {create as createResolver} from './manifest-resolver'
 
 const DEV_ENTRY_SCRIPTS = [

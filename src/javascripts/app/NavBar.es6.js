@@ -45,7 +45,7 @@ function navbarItem (data, tabIndex = 0) {
     uiSref: data.sref,
     uiSrefActive: 'is-active',
     dataViewType: data.dataViewType,
-    tabindex: tabIndex
+    tabindex: String(tabIndex)
   }, [
     h('cf-icon', { name: data.icon }),
     h('span.nav-bar__list-label', [data.title])
@@ -57,7 +57,7 @@ function navbarDropdown (data, tabIndex = 0) {
     h('a.nav-bar__link.app-top-bar__menu-trigger', {
       role: 'button',
       dataViewType: data.dataViewType,
-      tabindex: tabIndex,
+      tabindex: String(tabIndex),
       cfContextMenuTrigger: 'cf-context-menu-trigger',
       ngClass: `{ "is-active": $state.includes("${data.rootSref}") }`
     }, [

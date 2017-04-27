@@ -1,3 +1,5 @@
+Error.stackTraceLimit = 1000;
+
 // We import all these modules which have side effects.
 // They may register Angular services, register test suite hooks or define
 // global variables
