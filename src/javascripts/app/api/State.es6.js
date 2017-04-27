@@ -8,8 +8,7 @@ import * as Auth from 'Authentication';
 import * as ContentModel from './ContentModel';
 import attachEditorController from './KeyEditor/Controller';
 import editorTemplate from './KeyEditor/Template';
-import openCMATokenCreateDialog from './CMATokens/CreateDialog';
-import cmaTokenPage from './CMATokens/Page';
+import * as CMATokensPage from './CMATokens/Page';
 
 
 /**
@@ -88,9 +87,9 @@ export default {
   }, {
     name: 'cma_tokens',
     url: '/cma_tokens',
-    template: cmaTokenPage(),
-    controller: ['$scope', function ($scope) {
-      $scope.openCreateDialog = () => openCMATokenCreateDialog(Auth);
+    template: CMATokensPage.template(),
+    controller: ['$scope', ($scope) => {
+      CMATokensPage.initController($scope, Auth);
     }],
     onEnter () {
       contextHistory.add(crumbFactory.CMAKeyList());

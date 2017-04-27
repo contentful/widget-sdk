@@ -1,9 +1,7 @@
 import {h} from 'utils/hyperscript';
 import {container, vspace, hfill} from 'ui/Layout';
-import * as Config from 'Config';
 import * as Command from 'command';
 import {open as openDialog} from 'modalDialog';
-import {create as createEndpoint} from 'data/Endpoint';
 import {track} from 'analytics/Analytics';
 
 /**
@@ -16,18 +14,16 @@ import {track} from 'analytics/Analytics';
  * The 'auth' parameter is provided by the 'Authentication' module to
  * authenticate API requests.
  */
-export default function open (auth) {
-  openDialog({
+export default function open (tokenResourceManager) {
+  return openDialog({
     template: dialogTemplate(),
-    controller: ($scope) => initController(auth, $scope),
+    controller: ($scope) => initController(tokenResourceManager, $scope),
     backgroundClose: false
-  });
+  }).promise;
 }
 
 
-function initController (auth, $scope) {
-  const tokenEndpoint = makeTokenEndpoint(auth);
-
+function initController (tokenResourceManager, $scope) {
   $scope.input = {};
   $scope.state = {input: true};
 
@@ -35,9 +31,9 @@ function initController (auth, $scope) {
     const tokenName = ($scope.input.tokenName || '').trim();
     const valid = validate(tokenName);
     if (valid) {
-      return tokenEndpoint.create(tokenName)
+      return tokenResourceManager.create(tokenName)
         .then((data) => {
-          track('personal_access_token:create', {patId: data.sys.id});
+          track('personal_access_token:action', {action: 'create', patId: data.sys.id});
           showSuccess(tokenName, data.token);
         }, showFailure);
     }
@@ -60,28 +56,6 @@ function initController (auth, $scope) {
   function validate (name) {
     $scope.hasError = !name;
     return !!name;
-  }
-}
-
-/**
- * Create an API for sending requests to the 'access_tokens' endpoint.
- *
- * @param {object} auth  As provided by the 'Authentication' module.
- */
-function makeTokenEndpoint (auth) {
-  const endpoint = createEndpoint(Config.apiUrl('users/me/access_tokens'), auth);
-
-  return { create };
-
-  function create (name) {
-    return endpoint({
-      method: 'POST',
-      path: [],
-      data: {
-        name: name,
-        scopes: ['content_management_manage']
-      }
-    });
   }
 }
 
@@ -182,6 +156,7 @@ function inputTemplate () {
           ngModel: 'input.tokenName',
           dataTestId: 'pat.create.tokenName',
           ariaInvalid: '{{hasError && "true"}}',
+          uiAutofocus: 'true',
           type: 'text',
           maxlength: '150',
           style: { width: '100%' }
