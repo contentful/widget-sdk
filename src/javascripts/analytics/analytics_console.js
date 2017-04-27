@@ -6,11 +6,15 @@ angular.module('contentful')
  * @ngdoc service
  * @name analytics/console
  * @description
- * A small UI component presenting all events
- * being tracked. Can be turned on (not in
- * production) by invoking a global function
- * `window.__ANALYTICS_CONSOLE` (see the `run`
- * block above).
+ * A small UI component presenting all events being tracked. Can be
+ * turned on (not in production) by calling `cfDegub.analytics()` from
+ * the console
+ *
+ * TODO We should invert the dependencies. Currently the 'Analytics'
+ * module requires this module and uses 'add()' and 'setSessionData()'
+ * to interact with the console. Instead this module should require
+ * 'Analytics' and use an event stream provided by the 'Analytics'
+ * module.
  */
 .factory('analytics/console', ['require', function (require) {
   var $compile = require('$compile');
@@ -41,15 +45,20 @@ angular.module('contentful')
   return {
     /**
      * @ngdoc method
-     * @name analytics/console#enable
+     * @name analytics/console#default
      * @description
-     * Enables the console. W/o this call
-     * the console cannot be opened. It's
-     * called when we're in an environment
-     * where it's safe to expose dev data.
+     * Enables and opens the console.
+     *
+     * After this we record events send from the analytics service.
+     *
+     * Mocks ES6 default export. Used by 'Debug' module to initialize
+     * service.
      */
-    enable: function () { isEnabled = true; },
-    show: show,
+    default: function () {
+      isEnabled = true;
+      show();
+    },
+
     add: add,
     /**
      * @ngdoc method
@@ -69,10 +78,6 @@ angular.module('contentful')
    * Activates the console.
    */
   function show () {
-    if (!isEnabled) {
-      return;
-    }
-
     el = el || $compile('<cf-analytics-console />')(scope);
     var first = el[0];
     if (!first.parentElement) {
