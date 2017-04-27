@@ -2,6 +2,13 @@ import { extend } from 'lodash';
 import $window from '$window';
 import * as K from 'utils/kefir';
 
+/**
+ * Create a XHR debugger.
+ *
+ * Has methods to enable, disable, and control the rules.
+ *
+ * This is used by the cfMockXhrConsole directive.
+ */
 export function create () {
   const eventsBus = K.createBus();
   const rules = [];
@@ -30,6 +37,16 @@ export function create () {
   function restore () {
     $window.XMLHttpRequest = OrigXHR;
   }
+
+  /**
+   * Add a rule for mocking HTTP requests
+   *
+   * A rule has the following properties
+   * - `urlPattern`. RegExp that is matched against the URL of the XHR request
+   * - `status`  Status code to be returned for the matched URLs
+   * - `responseText`  Response to be returned for the matched URLs. Defaults to
+   *   the empty string.
+   */
   function addRule (rule) {
     if (!(rule.urlPattern instanceof RegExp)) {
       rule.urlPattern = RegExp(rule.urlPattern);
@@ -42,18 +59,31 @@ export function create () {
   }
 }
 
+/**
+ * Create a mock XHR adapter class.
+ *
+ * Instances of that class either delegate to a corresponding instance of the
+ * original XHR class or sends mock responses if a rule matches the URL on the
+ * instance.
+ *
+ * Note that rules is a reference to a mutable array that is changed by the
+ * `addRule()` method above.
+ *
+ * Instances also emit events on the `eventBus` whenever one of the class
+ * methods is called.
+ */
 function createMockClass (rules, eventsBus, XMLHttpRequest) {
   const XHR = function () {
     this._xhr = new XMLHttpRequest();
   };
 
-  XHR.prototype.open = function () {
-    const url = arguments[1];
+  XHR.prototype.open = function (...args) {
+    const url = args[1];
     this._rule = rules.find(function (rule) {
       return rule.urlPattern.exec(url);
     });
 
-    eventsBus.emit({ method: 'open', rule: this._rule, params: arguments });
+    eventsBus.emit({ method: 'open', rule: this._rule, params: args });
 
     if (!this._rule) {
       return this._xhr.open.apply(this._xhr, arguments);

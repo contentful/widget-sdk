@@ -15,15 +15,28 @@
  * not exist when `find()` is called. The element is resolved lazily
  * when one of the element methods is called.
  *
+ * When an element is resolved we also assert that it is visible in the
+ * DOM and throw an error otherwise.
+ *
  * TODO We should use the 'assert' library instead of `expect`.
  */
 export function createView (container) {
   return {
+    element: container,
     find (id) {
       return createElement(container, `[data-test-id="${id}"]`);
+    },
+
+    /**
+     * Assert that the view does not have an element with the given
+     * test ID.
+     */
+    assertNotHasElement (id) {
+      assertNotHasSelector(container, `[data-test-id="${id}"]`);
     }
   };
 }
+
 
 /**
  * Returns an interface for controlling a DOM element and making
@@ -48,7 +61,8 @@ function createElement (container, selector) {
     // Assertions
     assertValue: bindEl(assertValue),
     assertValid: bindEl(assertValid),
-    assertIsAlert: bindEl(assertIsAlert)
+    assertIsAlert: bindEl(assertIsAlert),
+    assertHasText: bindEl(assertHasText)
   };
 
   // Bind a function that excepts an element as its first argument to
@@ -60,7 +74,9 @@ function createElement (container, selector) {
   }
 
   function getElement () {
-    return findOne(container, selector);
+    const el = findOne(container, selector);
+    assertIsVisible(el);
+    return el;
   }
 }
 
@@ -136,4 +152,44 @@ function assertIsAlert (element) {
  */
 function assertValue (element, value) {
   expect(getValue(element)).toBe(value);
+}
+
+
+/**
+ * Assert that the element is visible in the DOM.
+ *
+ * Specifically
+ * - The element is rendered in the current window
+ * - The 'visibility' style is not set to 'hidden'
+ * - The opacity is not 0
+ *
+ * TODO we should probably walk up the element tree to assert that the
+ * element is visible and not transparent.
+ */
+function assertIsVisible (element) {
+  expect(element.getClientRects().length).not.toBe(0, 'Element is not rendered on the page');
+  const styles = window.getComputedStyle(element);
+  expect(styles.opacity).not.toBe(0, 'Element is not visible. Opacity is 0');
+  expect(styles.visibility).not.toBe('hidden', 'Element is not visible. Visibility is \'hidden\'');
+}
+
+
+/**
+ * Assert that the text content of the element matches `text`.
+ *
+ * `text` maybe a regular expression or a string. In the latter case
+ * substring matching is performed.
+ */
+function assertHasText (element, text) {
+  expect(element.textContent).toMatch(text);
+}
+
+
+/**
+ * Assert that the element does not have a descendant element that
+ * matches the given selector.
+ */
+function assertNotHasSelector (element, selector) {
+  const results = element.querySelectorAll(selector);
+  expect(results.length).toBe(0, `Expected element not to have child matching ${selector}`);
 }
