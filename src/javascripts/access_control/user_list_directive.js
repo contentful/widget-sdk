@@ -60,6 +60,7 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
   var ListQuery = require('ListQuery');
   var entitySelector = require('entitySelector');
   var OrganizationList = require('OrganizationList');
+  var UserListCommands = require('access_control/UserListCommands');
 
   var K = require('utils/kefir');
   var LD = require('utils/LaunchDarkly');
@@ -72,10 +73,12 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
     backgroundClose: false
   };
 
+  var commands = UserListCommands.create(spaceContext, userListHandler, reload);
+
   $scope.userQuota = {used: 1};
   $scope.$watch(accessChecker.getUserQuota, function (q) { $scope.userQuota = q; });
 
-  $scope.openRemovalConfirmationDialog = openRemovalConfirmationDialog;
+  $scope.openRemovalConfirmationDialog = commands.openRemovalConfirmationDialog;
   $scope.openRoleChangeDialog = openRoleChangeDialog;
   $scope.canModifyUsers = canModifyUsers;
 
@@ -133,47 +136,7 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
 
   // End feature flag code - feature-bv-04-2017-new-space-invitation-flow
 
-  /**
-   * Remove an user from a space
-   */
-  function openRemovalConfirmationDialog (user) {
-    if (userListHandler.isLastAdmin(user.id)) {
-      return modalDialog.open(_.extend({
-        template: 'admin_removal_confirm_dialog',
-        scope: prepareRemovalConfirmationDialogScope(user)
-      }, MODAL_OPTS_BASE));
-    }
 
-    return modalDialog.open(_.extend({
-      template: 'user_removal_confirm_dialog',
-      scope: prepareRemovalConfirmationDialogScope(user)
-    }, MODAL_OPTS_BASE));
-  }
-
-  function prepareRemovalConfirmationDialogScope (user) {
-    var scope = $rootScope.$new();
-
-    return _.extend(scope, {
-      user: user,
-      input: {},
-      removeUser: Command.create(function () {
-        return spaceContext.memberships.remove(user.membership)
-        .then(reload)
-        .then(function () {
-          notification.info('User successfully removed from this space.');
-          $scope.userQuota.used -= 1;
-        })
-        .catch(ReloadNotification.basicErrorHandler)
-        .finally(function () { scope.dialog.confirm(); });
-      }, {
-        disabled: isDisabled
-      })
-    });
-
-    function isDisabled () {
-      return userListHandler.isLastAdmin(user.id) && scope.input.confirm !== 'I UNDERSTAND';
-    }
-  }
 
   /**
    * Change a role of an user
