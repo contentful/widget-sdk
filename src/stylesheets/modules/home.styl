@@ -6,10 +6,10 @@ $home-width = 820px
   overflow-y: auto
   overflow-x: hidden
 
-  &__header
-    background-image: url('/app/svg/home-bg.svg')
-    background-size: cover
-    padding: 26px 0 10px 0
+  &__container
+    background-image: url('/app/images/home-bg.png')
+    background-size: 1280px auto
+    background-repeat: repeat-x
 
   &__content
     position: relative
@@ -38,10 +38,19 @@ $home-width = 820px
       color: $colors.text-mid
       line-height: 1.5em
       margin: 20px 0
-    &.x--spaces
-      padding: 0 0 14px 0
+    &.x--onboarding-steps
+      padding: 0
       .home-section__heading
-        padding: 24px 24px 16px 24px
+        padding: 24px 24px 0 24px
+      .home-section__description
+        padding: 0 24px
+  &-links
+    display: flex
+    &__col
+      width: 50%
+      a
+        display: block
+        line-height: 2em
 
   &__examples
     display: flex
@@ -81,33 +90,35 @@ $home-width = 820px
       .home-example__dot
         background-color: $colors.red-light
 
-  &-spaces
-    max-height: 160px
-    overflow-y: auto
-    border-top: 1px solid $colors.element-light
-    &__org-name, &__space
-      border-bottom: 1px solid $colors.element-light
-      padding: 10px 24px
-    &__org-name
-      color: $colors.text-mid
-      font-weight: bold
-    &__org-desc
-      letter-spacing: 0
-      font-weight: lighter
-      color: $colors.text-light
-      margin-left: 20px
-    &__space
-      display: flex
-      justify-content: space-between
-
-
-  &-links
+.onboarding-step
+  padding: 24px
+  border-top: 1px solid $colors.element-mid
+  display: flex
+  align-items: center
+  &.x--disabled
+    opacity: 0.6
+  &__icon
+    min-width: 44px
+    max-width: 44px
+  &__text
+    flex-grow: 1
+  &__heading
+    margin-top: 0
+  &__cta
+    text-align: right
+    min-width: 210px
+    cf-icon
+      margin-right: 4px
+  &__completed
+    font-weight: bold
+    color: $colors.green-darkest
     display: flex
-    &__col
-      width: 50%
-      a
-        display: block
-        line-height: 2em
+    justify-content: flex-end
+  &__link
+    margin-top: 6px
+    a
+      color: $colors.text-light
+      text-decoration: underline
 
 .tab-list.x--home
   border: 1px solid transparent

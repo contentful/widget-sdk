@@ -1,14 +1,17 @@
-'use strict';
+import setupContextMenuHandler from 'ui/ContextMenuHandler';
+import {h} from 'utils/hyperscript';
 
 describe('context menu', function () {
-  beforeEach(module('cf.ui'));
   beforeEach(function () {
-    this.detach = this.$inject('contextMenu').init();
-    var $document = this.$inject('$document');
+    module('contentful/test');
+    const $document = this.$inject('$document');
+    this.detach = setupContextMenuHandler($document);
     this.$body = $document.find('body');
     this.$body.append(
-      '<style>[cf-context-menu] {display: none}</style>'
-    )
+      h('style', [
+        '[cf-context-menu] { display: none }'
+      ])
+    );
   });
 
   afterEach(function () {
@@ -19,13 +22,17 @@ describe('context menu', function () {
   describe('one context menu', function () {
 
     beforeEach(function () {
-      this.$body.append(this.$compile(
-        '<button cf-context-menu-trigger>Open</button>' +
-        '<div cf-context-menu>' +
-          '<button>Action</button>' +
-        '</div>' +
-        '<div id="outside"></div>'
-      ));
+      this.$body.append(this.$compile([
+        h('button', {
+          cfContextMenuTrigger: true
+        }, ['Open']),
+        h('div', {
+          cfContextMenu: true
+        }, [
+          h('button', ['Action'])
+        ]),
+        h('div#outside')
+      ].join('')));
     });
 
     it('is opened by trigger', function () {
@@ -42,11 +49,11 @@ describe('context menu', function () {
     });
 
     it('is not opened by button disabled trigger', function () {
-      var trigger = this.$body.find('button[cf-context-menu-trigger]');
+      const trigger = this.$body.find('button[cf-context-menu-trigger]');
       trigger.prop('disabled', true);
       expect(this.$body.find('[cf-context-menu]').is(':visible')).toBe(false);
 
-      var inner = $('<div>inner not disabled</div>');
+      const inner = $('<div>inner not disabled</div>');
       trigger.append(inner);
       inner.click();
       expect(this.$body.find('[cf-context-menu]').is(':visible')).toBe(false);
@@ -125,8 +132,8 @@ describe('context menu', function () {
 
   describe('two context menus', function () {
 
-    var selectA = '[cf-context-menu]:contains(A)';
-    var selectB = '[cf-context-menu]:contains(B)';
+    const selectA = '[cf-context-menu]:contains(A)';
+    const selectB = '[cf-context-menu]:contains(B)';
 
     beforeEach(function () {
       this.$body.append(this.$compile(
@@ -157,6 +164,4 @@ describe('context menu', function () {
     });
 
   });
-
-
 });

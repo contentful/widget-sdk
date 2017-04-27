@@ -94,7 +94,7 @@ describe('Section Access', function () {
       expect(goStub.args[0][1].spaceId).toBe('anothersid');
     });
 
-    describe('redirects to learn if space is not activated', function () {
+    describe('redirects to space home if space is not activated', function () {
       beforeEach(function () {
         $state.$current.name = 'spaces.detail';
         $stateParams.spaceId = 'yetanothersid';
@@ -111,7 +111,7 @@ describe('Section Access', function () {
       it('redirects admins', function () {
         sectionAccess.redirectToFirstAccessible();
         sinon.assert.calledOnce(goStub);
-        expect(goStub.args[0][0]).toBe('spaces.detail.learn');
+        expect(goStub.args[0][0]).toBe('spaces.detail.home');
         expect(goStub.args[0][1].spaceId).toBe('yetanothersid');
       });
 
@@ -119,7 +119,7 @@ describe('Section Access', function () {
         spaceContext.space.data.spaceMembership.admin = false;
         sectionAccess.redirectToFirstAccessible();
         sinon.assert.calledOnce(goStub);
-        expect(goStub.args[0][0]).not.toBe('spaces.detail.learn');
+        expect(goStub.args[0][0]).not.toBe('spaces.detail.home');
       });
     });
   });

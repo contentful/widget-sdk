@@ -5,21 +5,6 @@ describe('Token store service', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    this.fetchWithAuth = sinon.stub().resolves({
-      sys: {createdBy: this.user},
-      spaces: []
-    });
-    this.$inject('data/CMA/TokenInfo').default = function () {
-      return this.fetchWithAuth;
-    }.bind(this);
-
-    this.tokenStore = this.$inject('tokenStore');
-
-    this.client = this.$inject('client');
-    this.client.newSpace = sinon.stub();
-
-    this.user = {firstName: 'hello'};
-
     this.rawSpaces = _.map(['a-space', 'b-space', 'c-space'], function (name) {
       return {
         name: name,
@@ -27,6 +12,21 @@ describe('Token store service', function () {
         organization: {sys: {id: 'testorg'}}
       };
     });
+
+    this.fetchWithAuth = sinon.stub().resolves({
+      sys: {createdBy: this.user},
+      spaces: this.rawSpaces
+    });
+    this.$inject('data/CMA/TokenInfo').default = () => {
+      return this.fetchWithAuth;
+    };
+
+    this.tokenStore = this.$inject('tokenStore');
+
+    this.client = this.$inject('client');
+    this.client.newSpace = sinon.stub();
+
+    this.user = {firstName: 'hello'};
 
     this.spaces = _.map(this.rawSpaces, function (raw) {
       return {
@@ -83,6 +83,16 @@ describe('Token store service', function () {
         expect(err instanceof Error).toBe(true);
         expect(err.message).toBe('No space with given ID could be found.');
       }
+    });
+  });
+
+  describe('#getSpaces()', function () {
+    it('returns promise resolving to spaces list', function* () {
+      this.client.newSpace.onFirstCall().returns(this.spaces[0]);
+      this.client.newSpace.onSecondCall().returns(this.spaces[1]);
+      yield this.refresh(this.rawSpaces[0], this.rawSpaces[1]);
+      const spaces = yield this.tokenStore.getSpaces();
+      expect(spaces).toEqual([this.rawSpaces[0], this.rawSpaces[1]]);
     });
   });
 

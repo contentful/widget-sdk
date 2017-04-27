@@ -153,7 +153,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
       asset: !shouldHide('readAsset') || policyChecker.canAccessAssets(),
       apiKey: !shouldHide('readApiKey'),
       settings: !shouldHide('updateSettings'),
-      learn: getSpaceData('spaceMembership.admin', false)
+      spaceHome: getSpaceData('spaceMembership.admin', false)
     };
   }
 

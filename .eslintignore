@@ -56,7 +56,6 @@ test/unit/data/editing_interfaces/transformer_spec.js
 test/unit/data/user_cache_spec.js
 test/unit/markdown_editor/link_organizer_spec.js
 test/unit/ui/command_spec.js
-test/unit/ui/context_menu_spec.js
 test/unit/ui/command_directive_spec.js
 test/unit/utils/overriding_request_queue_spec.js
 test/unit/utils/signal_spec.js
@@ -192,7 +191,6 @@ src/javascripts/forms/validation.js
 src/javascripts/navigation/confirm_leave_editor.js
 src/javascripts/navigation/close_state.js
 src/javascripts/ui/cf_ui_tab.js
-src/javascripts/ui/context_menu.js
 src/javascripts/widgets/id_map.js
 src/javascripts/widgets/checks.js
 src/javascripts/widgets/default.js
