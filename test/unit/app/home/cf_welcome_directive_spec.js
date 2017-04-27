@@ -1,6 +1,6 @@
 import * as K from 'helpers/mocks/kefir';
 
-describe('cfHome directive', function () {
+describe('cfWelcome directive', function () {
   beforeEach(function () {
     this.hourStub = sinon.stub();
 
@@ -17,9 +17,9 @@ describe('cfHome directive', function () {
         firstName: 'Foo',
         signInCount: isNew ? 1 : 2
       });
-      const el = this.$compile('<cf-home />');
+      const el = this.$compile('<cf-welcome />');
 
-      return el.isolateScope().home;
+      return el.isolateScope().welcome;
     };
   });
 
