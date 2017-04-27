@@ -26,7 +26,7 @@ mixin single-list-item
       h1 {{ labels.title }}
       button.modal-dialog__close(ng-click="dialog.cancel()")
 
-    .modal-dialog__content
+    .modal-dialog__content(ng-if="!showCustomEmptyMessage()")
       .entity-selector__input-label
         p {{ labels.input }}
         p.entity-selector__mode-switcher(ng-if="config.multiple")
@@ -84,7 +84,11 @@ mixin single-list-item
         ng-if="labels.infoHtml"
         bind-html-compile="labels.infoHtml")
 
-    .modal-dialog__controls(ng-if="config.multiple")
+    .modal-dialog__content(
+      ng-if="showCustomEmptyMessage()"
+      bind-html-compile="labels.noEntitiesCustomHtml")
+
+    .modal-dialog__controls(ng-if="config.multiple && !showCustomEmptyMessage()")
       button.btn-primary-action.modal-dialog__controls-confirm(
         type="button"
         ng-click="dialog.confirm(selected)"
