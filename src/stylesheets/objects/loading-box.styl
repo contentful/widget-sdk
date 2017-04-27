@@ -51,7 +51,11 @@ Styleguide 17.2
   width: 100%
 
 /*
-Full screen loading box for relative containers.
+Overlay loader
+
+Stretches over its parent container with white background.
+
+Fades in and out on `ngIf` animations.
 
 Markup:
 div(style="display: flex; height: 140px; position: relative")
@@ -70,3 +74,13 @@ Styleguide 17.3
   top: 0
   right: 0
   bottom: 0
+  background: white
+  transition: opacity 0.15s linear
+  &.ng-enter
+    opacity: 0
+  &.ng-enter.ng-enter-active
+    opacity: 1
+  &.ng-leave
+    opacity: 1
+  &.ng-leave.ng-leave-active
+    opacity: 0
