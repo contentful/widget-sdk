@@ -1,7 +1,7 @@
 .file-buttons
   a.btn-secondary-action(type="button"
     aria-label="Download file" tooltip="Download file"
-    href="{{file.url|assetUrl}}" target="_blank"
+    href="{{file.url|assetUrl}}" target="_blank" rel="noopener noreferrer"
     ng-show="file|isFileReady")
     i.fa.fa-download
   button.btn-secondary-action(type="button"

@@ -54,7 +54,11 @@ export function docsLink (text, target) {
  * @returns {VNode}
  */
 export function linkOpen (content, url) {
-  return h('a.text-link', {href: url, target: '_blank'}, content);
+  return h('a.text-link', {
+    href: url,
+    target: '_blank',
+    rel: 'noopener noreferrer'
+  }, content);
 }
 
 

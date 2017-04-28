@@ -126,8 +126,13 @@ export default function create (libs) {
   }
 
   function createLinkEl (item, key) {
-    const props = { key: key, href: getSafeHref(item), title: item.title, target: '_blank' };
-    return createParentEl('a', props, item.text);
+    return createParentEl('a', {
+      key: key,
+      href: getSafeHref(item),
+      title: item.title,
+      target: '_blank',
+      rel: 'noopener noreferrer'
+    }, item.text);
   }
 
   function createTerminalEl (item, key) {

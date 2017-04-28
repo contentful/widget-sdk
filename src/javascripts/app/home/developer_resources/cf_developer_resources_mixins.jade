@@ -1,8 +1,13 @@
+mixin linkOpen(url)
+  a(href=url target="_blank" rel="noopener noreferrer")
+    block
+
 mixin sdk-section-javascript
   .separated-links
-    a(href="https://contentful.github.io/contentful.js" target="_blank")
+
+    +linkOpen("https://contentful.github.io/contentful.js")
       | SDK documentation
-    a(href="https://github.com/contentful/contentful.js" target="_blank")
+    +linkOpen("https://github.com/contentful/contentful.js")
       | View on GitHub
   p.home-section__description
     | Get the JavaScript SDK and use it in your project:
@@ -12,9 +17,9 @@ mixin sdk-section-javascript
 
 mixin sdk-section-php
   .separated-links
-    a(href="https://contentful.github.io/contentful.php/api/" target="_blank")
+    +linkOpen("https://contentful.github.io/contentful.php/api/")
       | SDK documentation
-    a(href="https://github.com/contentful/contentful.php" target="_blank")
+    +linkOpen("https://github.com/contentful/contentful.php")
       | View on GitHub
 
   p.home-section__description
@@ -25,9 +30,9 @@ mixin sdk-section-php
 
 mixin sdk-section-dotnet
   .separated-links
-    a(href="https://contentful.github.io/contentful.net-docs/api/index.html" target="_blank")
+    +linkOpen("https://contentful.github.io/contentful.net-docs/api/index.html")
       | SDK documentation
-    a(href="https://github.com/contentful/contentful.net" target="_blank")
+    +linkOpen("https://github.com/contentful/contentful.net")
       | View on GitHub
   p.home-section__description
     | Get the .NET SDK and use it in your project by using the following command in your NuGet package manager console:
@@ -37,9 +42,9 @@ mixin sdk-section-dotnet
 
 mixin sdk-section-ruby
   .separated-links
-    a(href="http://www.rubydoc.info/gems/contentful/" target="_blank")
+    +linkOpen("http://www.rubydoc.info/gems/contentful/")
       | SDK documentation
-    a(href="https://github.com/contentful/contentful.rb" target="_blank")
+    +linkOpen("https://github.com/contentful/contentful.rb")
       | View on GitHub
   p.home-section__description
     | Get the Ruby SDK and use it in your project by adding the following to your <em>Gemfile</em>:
@@ -49,9 +54,9 @@ mixin sdk-section-ruby
 
 mixin sdk-section-ios
   .separated-links
-    a(href="https://github.com/contentful/ContentfulPlayground" target="_blank")
+    +linkOpen("https://github.com/contentful/ContentfulPlayground")
       | SDK documentation
-    a(href="https://github.com/contentful/contentful.swift" target="_blank")
+    +linkOpen("https://github.com/contentful/contentful.swift")
       | View on GitHub
   p.home-section__description
     | Get the Swift SDK and use it in your project by adding the following to your <em>Podfile</em>:
@@ -67,9 +72,9 @@ mixin sdk-section-ios
 
 mixin sdk-section-android
   .separated-links
-    a(href="https://contentful.github.io/contentful.java/" target="_blank")
+    +linkOpen("https://contentful.github.io/contentful.java/")
       | SDK documentation
-    a(href="https://github.com/contentful/contentful.java" target="_blank")
+    +linkOpen("https://github.com/contentful/contentful.java")
       | View on GitHub
   p.home-section__description
     | Get the Java SDK and use it in your Android project by adding the following to your <em>build.gradle</em> file:
@@ -79,9 +84,9 @@ mixin sdk-section-android
 
 mixin sdk-section-java
   .separated-links
-    a(href="https://contentful.github.io/contentful.java/" target="_blank")
+    +linkOpen("https://contentful.github.io/contentful.java/")
       | SDK documentation
-    a(href="https://github.com/contentful/contentful.java" target="_blank")
+    +linkOpen("https://github.com/contentful/contentful.java")
       | View on GitHub
   p.home-section__description
     | Get the Java SDK and use it in your project by adding the following to your <em>pom.xml</em> file:
@@ -95,9 +100,9 @@ mixin sdk-section-java
 
 mixin sdk-section-python
   .separated-links
-    a(href="https://github.com/contentful/contentful.py/blob/master/README.rst" target="_blank")
+    +linkOpen("https://github.com/contentful/contentful.py/blob/master/README.rst")
       | SDK documentation
-    a(href="https://github.com/contentful/contentful.py" target="_blank")
+    +linkOpen("https://github.com/contentful/contentful.py")
       | View on GitHub
   p.home-section__description
     | Get the Python SDK and use it in your project:
