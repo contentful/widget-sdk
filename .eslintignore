@@ -89,7 +89,6 @@ src/javascripts/components/shared/validation_error_display/error_path_controller
 src/javascripts/components/shared/accordion_controller.js
 src/javascripts/components/shared/cf_dropdown_toggle_directive.js
 src/javascripts/components/shared/cf_inline_editor_directive.js
-src/javascripts/components/shared/cf_marketing_directive.js
 src/javascripts/components/shared/cf_progress_bar_directive.js
 src/javascripts/components/shared/data_size_scale_controller.js
 src/javascripts/components/shared/endless_container_directive.js
