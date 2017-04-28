@@ -40,7 +40,7 @@ section
           p.home-example__description {{example.description}}
         a.home-example__link(
           ng-href="{{example.url}}"
-          target="_blank"
+          target="_blank" rel="noopener noreferrer"
           ng-click="resources.analytics.linkOpened(resources.selected, example.url)")
           | View
 
@@ -53,12 +53,12 @@ section
         a(
           ng-repeat="link in resources.languageResources.links track by link.name"
           ng-href="{{link.url}}"
-          target="_blank"
+          target="_blank" rel="noopener noreferrer"
           ng-click="resources.analytics.linkOpened(resources.selected, link.url)")
           | {{link.name}}
       .home-links__col
         a(ng-repeat="link in resources.docsUrls track by link.name"
           ng-href="{{link.url}}"
-          target="_blank"
+          target="_blank" rel="noopener noreferrer"
           ng-click="resources.analytics.linkOpened(resources.selected, link.url)")
           | {{link.name}}

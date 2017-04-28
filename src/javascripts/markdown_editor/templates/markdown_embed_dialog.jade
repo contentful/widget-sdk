@@ -10,7 +10,7 @@ include ../../components/forms/embedly_preview/embedly_status.mixin.jade
       .cfnext-form__field
         label
           | Content URL (
-          a(href="http://embed.ly/providers" target="_blank") supported sources
+          a(href="http://embed.ly/providers" target="_blank" rel="noopener noreferrer") supported sources
           | )
         input.cfnext-form__input--full-size(
         ng-model="model.value"
@@ -51,7 +51,7 @@ include ../../components/forms/embedly_preview/embedly_status.mixin.jade
 
       .cfnext-form__hint
         | To enable this embedded content in your application make sure to add the&nbsp;
-        a(href="http://embed.ly/docs/products/cards" target="_blank") Embedly's platform.js
+        a(href="http://embed.ly/docs/products/cards" target="_blank" rel="noopener noreferrer") Embedly's platform.js
         |  on your development environment
 
       cf-embedly-preview(preview-url="model.value" url-status="urlStatus")

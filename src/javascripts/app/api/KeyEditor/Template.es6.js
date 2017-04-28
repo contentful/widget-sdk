@@ -171,6 +171,7 @@ function boilerplateInfo () {
     h('a.text-link--neutral', {
       href: '{{boilerplate.repoUrl}}',
       target: '_blank',
+      rel: 'noopener noreferrer',
       ngClick: 'track.boilerplate.viewRepo(boilerplate.platform)',
       style: {marginTop: '0.75em'}
     }, [ 'View on Github' ]),
