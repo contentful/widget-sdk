@@ -58,6 +58,7 @@ angular.module('contentful')
     toggleSelection: toggleSelection,
     loadMore: loadMore,
     getSearchPlaceholder: getSearchPlaceholder,
+    showCustomEmptyMessage: showCustomEmptyMessage,
     supportsAdvancedSearch: _.includes(['Entry', 'Asset'], config.entityType),
     helpers: getEntityHelpers(config)
   });
@@ -209,5 +210,9 @@ angular.module('contentful')
       placeholder += ', press down arrow key for help';
     }
     return placeholder;
+  }
+
+  function showCustomEmptyMessage () {
+    return $scope.labels.noEntitiesCustomHtml && !$scope.isLoading && $scope.items.length < 1 && !$scope.view.searchTerm;
   }
 }]);

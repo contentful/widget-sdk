@@ -50,7 +50,7 @@ header.workbench-header
       p(ng-show="canModifyUsers()") <a href="" ng-click="goToSubscription()">Increase your plan quotas here</a>.
       button.btn-primary-action(
         ng-click="openInvitationDialog()"
-        ng-disabled="!canModifyUsers() || !canInviteUsers()")
+        ng-disabled="!canInviteUsers()")
         | Invite users to this space
 
     //- Begin feature flag code - feature-bv-04-2017-new-space-invitation-flow
@@ -59,23 +59,11 @@ header.workbench-header
         | Add users
       p
         include ./users_add_note
-      div(style="position: relative")
-        //- @TODO: use `ui-command` for invitation
-        button.btn-action.x--block(
-          ng-class="{'is-loading': isInvitingUsersToSpace}"
-          ng-click="openSpaceInvitationDialog()"
-          ng-disabled="!canModifyUsers() || !hasUsersLeftToAdd()")
-            cf-icon.btn-icon.inverted(name="plus")
-            | Add users to space
-        //- Necessary as a disabled button won't trigger the tooltip or mouse events in general.
-        div(
-          style="width: 100%; height: 100%; position: absolute; top: 0"
-          ng-if="!hasUsersLeftToAdd()"
-          tooltip="{{" +
-            "'There are no users in your organization who are not part of this space already. ' + " +
-            "( canInviteUsersToOrganization() " +
-            "  ? 'Go to organizations & billings to invite new users to your organization'" +
-            "  : 'Get in touch with an organization owner or admin to invite new users to your organization'" +
-            ") }}"
-          tooltip-placement="bottom")
+      //- @TODO: use `ui-command` for invitation
+      button.btn-action.x--block(
+        ng-class="{'is-loading': isInvitingUsersToSpace}"
+        ng-click="openSpaceInvitationDialog()"
+        ng-disabled="!canModifyUsers()")
+          cf-icon.btn-icon.inverted(name="plus")
+          | Add users to space
     //- End feature flag code - feature-bv-04-2017-new-space-invitation-flow

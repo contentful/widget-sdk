@@ -50,7 +50,7 @@ angular.module('contentful')
     },
     user_multiple: {
       title: 'Insert existing users',
-      input: 'Search for users',
+      input: 'Select users',
       selected: 'selected users',
       empty: 'No users',
       insert: 'Insert selected users',
@@ -85,6 +85,7 @@ angular.module('contentful')
    *     infoHtml: {String?}, // for multiple=false, can be used instead of `.info`
    *     selected: {String}, // for multiple=true
    *     empty: {String},
+   *     noEntitiesCustomHtml: {String?} // custom html for the whole dialog when there are no entities
    *     insert: {String},
    *     searchPlaceholder: {String}
    *   }
@@ -335,6 +336,6 @@ angular.module('contentful')
       (config.multiple ? 'multiple' : 'single')
     ].join('_');
 
-    return _.clone(LABELS[key]);
+    return _.clone(LABELS[key] || {});
   }
 }]);

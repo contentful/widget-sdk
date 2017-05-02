@@ -88,7 +88,6 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
       $scope.goToSubscription = TheAccountView.goToSubscription;
       $scope.goToOrganizationUsers = TheAccountView.goToUsers;
       $scope.canInviteUsersToOrganization = canInviteUsersToOrganization;
-      $scope.hasUsersLeftToAdd = hasUsersLeftToAdd;
       $scope.openSpaceInvitationDialog = openSpaceInvitationDialog;
     } else {
       $scope.canInviteUsers = canInviteUsers;
@@ -104,6 +103,7 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
     var subscription = spaceContext.subscription;
     var trialLockdown = subscription &&
       subscription.isTrial() && subscription.hasTrialEnded();
+
     return accessChecker.canModifyUsers() && !trialLockdown;
   }
 
@@ -118,15 +118,6 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
 
   function canInviteUsersToOrganization () {
     return OrganizationList.isOwnerOrAdmin(organization);
-  }
-
-  function getSpaceUserCount () {
-    return userListHandler.getUserCount();
-  }
-
-  function hasUsersLeftToAdd () {
-    var organizationUserCount = organization.usage.permanent.organizationMembership;
-    return organizationUserCount > getSpaceUserCount();
   }
 
   // End feature flag code - feature-bv-04-2017-new-space-invitation-flow
@@ -281,10 +272,9 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
   function openSpaceInvitationDialog () {
     var labels = {
       title: 'Add users to space',
-      input: 'Select users',
-      selected: 'selected users',
       insert: 'Assign roles to selected users',
-      infoHtml: JST.users_add_note() // @TODO use hyperscript
+      infoHtml: JST.users_add_note(), // @TODO use hyperscript
+      noEntitiesCustomHtml: require('access_control/templates/UserSpaceInvitationNoUsersMessage').default()
     };
     $scope.isInvitingUsersToSpace = true;
 
