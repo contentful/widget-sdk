@@ -60,7 +60,7 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
   var ListQuery = require('ListQuery');
   var entitySelector = require('entitySelector');
   var OrganizationList = require('OrganizationList');
-  var UserListCommands = require('access_control/UserListCommands');
+  var UserListActions = require('access_control/UserListActions');
 
   var K = require('utils/kefir');
   var LD = require('utils/LaunchDarkly');
@@ -73,13 +73,13 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
     backgroundClose: false
   };
 
-  var commands = UserListCommands.create(spaceContext, userListHandler, reload);
+  var actions = UserListActions.create(spaceContext, userListHandler);
 
   $scope.userQuota = {used: 1};
   $scope.$watch(accessChecker.getUserQuota, function (q) { $scope.userQuota = q; });
 
-  $scope.openRemovalConfirmationDialog = commands.openRemovalConfirmationDialog;
-  $scope.openRoleChangeDialog = openRoleChangeDialog;
+  $scope.openRemovalConfirmationDialog = decorate(actions.openRemovalConfirmationDialog, reload);
+  $scope.openRoleChangeDialog = decorate(actions.openRoleChangeDialog, reload);
   $scope.canModifyUsers = canModifyUsers;
 
   // Begin feature flag code - feature-bv-04-2017-new-space-invitation-flow
@@ -113,6 +113,12 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
 
   reload().catch(ReloadNotification.basicErrorHandler);
 
+  function decorate (command, fn) {
+    return function (...args) {
+      return command.apply(null, args).then(fn);
+    }
+  }
+
   function canModifyUsers () {
     var subscription = spaceContext.subscription;
     var trialLockdown = subscription &&
@@ -137,40 +143,6 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
   // End feature flag code - feature-bv-04-2017-new-space-invitation-flow
 
 
-
-  /**
-   * Change a role of an user
-   */
-  function openRoleChangeDialog (user) {
-    modalDialog.open(_.extend({
-      template: 'role_change_dialog',
-      scope: prepareRoleChangeDialogScope(user)
-    }, MODAL_OPTS_BASE));
-  }
-
-  function prepareRoleChangeDialogScope (user) {
-    var scope = $rootScope.$new();
-
-    return _.extend(scope, {
-      user: user,
-      startsWithVowel: stringUtils.startsWithVowel,
-      input: {},
-      roleOptions: userListHandler.getRoleOptions(),
-      changeRole: Command.create(function () {
-        return changeRole(scope.input.id)
-        .then(reload)
-        .then(function () { notification.info('User role successfully changed.'); })
-        .catch(ReloadNotification.basicErrorHandler)
-        .finally(function () { scope.dialog.confirm(); });
-      }, {
-        disabled: function () { return !scope.input.id; }
-      })
-    });
-
-    function changeRole (roleId) {
-      return spaceContext.memberships.changeRoleTo(user.membership, roleId);
-    }
-  }
 
   /**
    * Send an invitation
