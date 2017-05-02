@@ -86,7 +86,8 @@ mixin single-list-item
 
     .modal-dialog__content(
       ng-if="showCustomEmptyMessage()"
-      bind-html-compile="labels.noEntitiesCustomHtml")
+      bind-html-compile="labels.noEntitiesCustomHtml"
+      data-test-id="custom-empty-message")
 
     .modal-dialog__controls(ng-if="config.multiple && !showCustomEmptyMessage()")
       button.btn-primary-action.modal-dialog__controls-confirm(
