@@ -1,9 +1,12 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfContentTypeEditor', ['$timeout', function ($timeout) {
+.directive('cfContentTypeEditor', ['require', function (require) {
+  var $timeout = require('$timeout');
+  var template = require('app/ContentModel/Editor/Template').default;
+
   return {
-    template: JST.content_type_editor(),
+    template: template,
     restrict: 'A',
     controller: 'ContentTypeEditorController',
     controllerAs: 'ctEditorController',

@@ -17,7 +17,6 @@ angular.module('contentful')
   var $controller = require('$controller');
   var $state = require('$state');
   var validation = require('validation');
-  var hints = require('ContentTypeEditorController/hints')();
   var modalDialog = require('modalDialog');
   var openFieldDialog = require('openFieldDialog');
   var leaveConfirmator = require('navigation/confirmLeaveEditor');
@@ -44,6 +43,13 @@ angular.module('contentful')
     });
   };
 
+  // Read-only data for template
+  $scope.data = {};
+
+  // TODO This does not belong here. Instead it should be set in the template.
+  // Unfortunately the cfUiSortable directive does not support this.
+  $scope.uiSortable = { placeholder: 'ct-field--placeholder' };
+
   // End A/B experiment - ps-03-2017-next-step-hints
 
   $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
@@ -53,8 +59,6 @@ angular.module('contentful')
   $scope.goTo = function (stateName) {
     $state.go('^.' + stateName);
   };
-
-  $scope.hints = hints;
 
   $scope.context.requestLeaveConfirmation = leaveConfirmator($scope.actions.saveAndClose);
   $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
@@ -71,13 +75,13 @@ angular.module('contentful')
 
   $scope.$watch('contentType.data.fields', function (newVal, oldVal) {
     checkForDirtyForm(newVal, oldVal);
-    hints.updateFields(newVal);
   }, true);
 
   $scope.$watch('contentType.data.fields.length', function (length) {
     $scope.hasFields = length > 0;
     ctHelpers.assureDisplayField($scope.contentType.data);
     setDirtyState();
+    $scope.data.fieldsUsed = length;
   });
 
   if ($scope.context.isNew) {
@@ -218,70 +222,5 @@ angular.module('contentful')
    */
   function syncEditingInterface () {
     editingInterfaces.syncControls($scope.contentType.data, $scope.editingInterface);
-  }
-}])
-
-.factory('ContentTypeEditorController/hints', ['require', function (require) {
-
-  var hints = require('hints');
-
-  return function prepareContentTypeHints () {
-    var fieldPropertyCounts = countFieldProperties([]);
-
-    return {
-      updateFields: function (fields) {
-        fieldPropertyCounts = countFieldProperties(fields);
-      },
-      shouldShow: shouldShowHint,
-      dismiss: dismissHint,
-      lifecycle: {
-        shouldShow: function (id) {
-          return shouldShowLifecycleHint(fieldPropertyCounts, id);
-        },
-        dismiss: dismissLifecycleHint
-      }
-    };
-  };
-
-  function shouldShowLifecycleHint (propertyCounts, id) {
-    var pc = propertyCounts;
-    var shouldShow = shouldShowHint(getLifecycleHintId(id));
-
-    switch (id) {
-      case 'neutral':
-        return shouldShow && pc.omitted < 1 && pc.disabled < 1;
-      case 'disabled':
-        return shouldShow && pc.both < 1 && pc.disabled > 0;
-      case 'omitted':
-        return shouldShow && pc.both < 1 && pc.omitted > 0;
-      case 'both':
-        return shouldShow && pc.both > 0;
-      default:
-        return false;
-    }
-  }
-
-  function dismissLifecycleHint (id) {
-    dismissHint(getLifecycleHintId(id));
-  }
-
-  function shouldShowHint (id) {
-    return hints.shouldShow(id);
-  }
-
-  function dismissHint (id) {
-    hints.setAsSeen(id);
-  }
-
-  function getLifecycleHintId (id) {
-    return 'ct-field-lifecycle-' + id;
-  }
-
-  function countFieldProperties (fields) {
-    return _.transform(fields, function (acc, field) {
-      if (field.disabled) { acc.disabled += 1; }
-      if (field.omitted) { acc.omitted += 1; }
-      if (field.disabled && field.omitted) { acc.both += 1; }
-    }, {disabled: 0, omitted: 0, both: 0});
   }
 }]);

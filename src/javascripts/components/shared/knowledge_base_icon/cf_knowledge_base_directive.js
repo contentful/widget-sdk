@@ -45,6 +45,7 @@ angular.module('contentful').factory('KnowledgeBase/getUrl', ['$injector', funct
     management_api: 'developers/docs/references/content-management-api',
     cma_key: 'developers/docs/references/authentication/#the-management-api',
     content_preview: 'r/knowledgebase/setup-content-preview/',
+    contentModellingBasics: 'r/knowledgebase/content-modelling-basics/',
     createOAuthApp: 'developers/docs/references/authentication/#creating-an-oauth-20-application'
   };
 

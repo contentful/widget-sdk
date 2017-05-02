@@ -1,25 +1,23 @@
 $content-type-field-empty-style()
-    border: 1px dashed $colors.light-gray
-    background-color: lighten($colors.light-gray, 80%)
+  border: 1px dashed $colors.light-gray
+  background-color: lighten($colors.light-gray, 80%)
 
-.content-type-fields
-  position: relative
-  max-width: 50em
-  margin-top: $rhythm(1)
-  flex-grow: 1
-
-  .sortable-placeholder
-    $content-type-field-empty-style()
-
-
-$ct__field-padding = 0.8em
-.ct-field
+$ct-field-dimensions()
   padding-right: 1em
   height: $rhythm(2.5)
+  margin-bottom: $rhythm(1)
+
+
+.ct-field--placeholder
+  $ct-field-dimensions()
+  $content-type-field-empty-style()
+
+
+.ct-field
+  $ct-field-dimensions()
   display: flex
   align-items: center
   white-space: nowrap
-  margin-bottom: $rhythm(1)
   border: 1px solid $colors.light-gray
   border-radius: 1px
   box-shadow: 1px 1px 2px 0 $colors.light-gray
@@ -29,7 +27,6 @@ $ct__field-padding = 0.8em
     // We need to explicitly overide the button color
     &, .btn-inline
       color: $text-dimmed
-
 
   &__name
     $text-truncate()
@@ -76,16 +73,6 @@ $ct__field-padding = 0.8em
 
   &__settings
     position: relative
-
-  .ui-hint
-    top: 20px
-    left: 67px
-    cf-icon
-      transform: scale(1.5) rotate(2deg)
-    .ui-hint-content
-      top: -15px
-      left: 95px
-      width: 175px
 
 
 .ct-fields--dummy

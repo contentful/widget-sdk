@@ -44,16 +44,18 @@ export function simple (title, icon, actions, content) {
  * Renders the breadcrumbs, an optional icon, the title, and optional
  * actions.
  *
- * @param {string}  title     HTML of title
- * @param {string?}  icon     name of an icon to use
- * @param {string?}  actions  HTML of actions area
+ * @param {string}     title    HTML of title
+ * @param {string?}    icon     name of an icon to use
+ * @param {string[]?}  actions  HTML of actions area
+ * @param {string?}    afterTitle  Additional HTML that cose after the title
  * @returns {string}
  */
-export function header (title, icon, actions) {
+export function header (title, icon, actions, afterTitle) {
   return h('header.workbench-header', [
     h('cf-breadcrumbs'),
     icon && h('cf-icon.workbench-header__icon', {name: icon}),
     h('h1.workbench-header__title', [title]),
+    afterTitle,
     actions && h('.workbench-header__actions', actions)
   ]);
 }
