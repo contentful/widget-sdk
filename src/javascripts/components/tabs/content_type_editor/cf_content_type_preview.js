@@ -26,10 +26,7 @@ angular.module('contentful')
       }, true);
 
       function loadPreview (isNew) {
-        if (isNew)
-          return loadLocalPreview();
-        else
-          return loadServerPreview();
+        if (isNew) { return loadLocalPreview(); } else { return loadServerPreview(); }
       }
 
       function loadServerPreview () {
@@ -83,7 +80,7 @@ angular.module('contentful')
   // We rely on the fact the keys are displayed in the order they
   // were added.
   function orderPreviewKeys (data) {
-    var ordered =_.transform(orderedKeys, function (preview, key) {
+    var ordered = _.transform(orderedKeys, function (preview, key) {
       preview[key] = data[key];
     }, {});
     return _.defaults(ordered, data);
