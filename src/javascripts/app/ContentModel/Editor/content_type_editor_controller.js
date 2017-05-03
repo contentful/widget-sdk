@@ -43,12 +43,18 @@ angular.module('contentful')
     });
   };
 
+  var canEdit = accessChecker.can('update', 'ContentType');
   // Read-only data for template
-  $scope.data = {};
+  $scope.data = {
+    canEdit: canEdit
+  };
 
   // TODO This does not belong here. Instead it should be set in the template.
   // Unfortunately the cfUiSortable directive does not support this.
-  $scope.uiSortable = { placeholder: 'ct-field--placeholder' };
+  $scope.uiSortable = {
+    disabled: !canEdit,
+    placeholder: 'ct-field--placeholder'
+  };
 
   // End A/B experiment - ps-03-2017-next-step-hints
 

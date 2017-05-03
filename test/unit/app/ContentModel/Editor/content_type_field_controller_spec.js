@@ -24,7 +24,10 @@ describe('Content Type Field Controller', function () {
         contentType: this.contentType,
         publishedFields: [],
         ctEditorController: this.ctEditorController,
-        context: this.context
+        context: this.context,
+        data: {
+          canEdit: true
+        }
       });
     };
     this.createFieldElements();
