@@ -80,6 +80,7 @@ function indexPage (uiVersion, config, resolve, entryScripts) {
     ]),
     h('body', {
       ngApp: 'contentful/app',
+      ngCsp: 'no-inline-style;no-unsafe-eval',
       ngController: 'ClientController',
       ngInit: 'initClient()'
     }, [
