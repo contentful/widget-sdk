@@ -102,6 +102,7 @@
     "gulp-clean": "^0.3.1",
     "gulp-util": "^3.0.1",
     "highlight.js": "^9.2.0",
+    "html-to-hyperscript": "^0.8.0",
     "karma": "~1.4.1",
     "karma-babel-preprocessor": "^6.0.1",
     "karma-chrome-launcher": "^2.0.0",

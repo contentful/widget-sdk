@@ -5,7 +5,7 @@ div(ng-if="contentPreviewEnvironments && contentPreviewEnvironments.length")
     a.btn-secondary-action.x--block(
       ng-click="trackClickedLink()"
       ng-href="{{selectedEnvironment.compiledUrl}}"
-      target="_blank")
+      target="_blank" rel="noopener noreferrer")
       i.fa.fa-external-link
       span Open preview
     .entity-sidebar__help-text(role="note" ng-if="showDefaultMessage")
