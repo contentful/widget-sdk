@@ -1,7 +1,7 @@
 .modal-background
   .modal-dialog
     header.modal-dialog__header
-      h1 Change role for {{ user.name }}
+      h1 Change role for {{ user.name | truncateMiddle:45:15 }}
 
     .modal-dialog__content
       .modal-dialog__richtext
