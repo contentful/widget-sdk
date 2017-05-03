@@ -6,7 +6,6 @@ angular.module('contentful')
   return {
     template: JST.cf_account_dropdown(),
     restrict: 'E',
-    replace: true, // @todo adjust styles so it's not needed
     scope: {user: '='},
     controller: 'cfAccountDropdownController'
   };
