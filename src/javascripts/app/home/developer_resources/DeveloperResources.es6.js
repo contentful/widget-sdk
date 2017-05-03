@@ -142,8 +142,18 @@ export const developerResources = {
     ]
   },
   'Python': {
-    examples: [],
-    links: []
+    examples: [
+      {
+        name: 'Django',
+        url: 'https://github.com/contentful/contentful_django_tutorial',
+        description: 'This GitHub project shows you how to create a Django app with Contentful.'
+      }
+    ],
+    links: [
+      {name: 'Overview', url: 'https://www.contentful.com/developers/docs/python/'},
+      {name: 'Getting started', url: 'https://www.contentful.com/developers/docs/python/tutorials/getting-started-with-contentful-and-python/'},
+      {name: 'Tutorials', url: 'https://www.contentful.com/developers/docs/python/#tutorials'}
+    ]
   }
 };
 
