@@ -1,7 +1,7 @@
 'use strict';
 
 // TODO Rewrite this with the new actor based test DSL.
-describe('AddFieldDialogController', function() {
+describe('AddFieldDialogController', function () {
   beforeEach(module('contentful/test'));
 
   beforeEach(function () {
@@ -10,11 +10,11 @@ describe('AddFieldDialogController', function() {
     };
     this.dialog.confirm = sinon.stub().returns(this.dialog);
 
-    var contentType = {data: {}};
+    const contentType = {data: {}};
 
     this.el = this.$compile(JST.add_field_dialog(), {
       dialog: this.dialog,
-      contentType: contentType,
+      contentType: contentType
     });
 
   });
@@ -57,7 +57,7 @@ describe('AddFieldDialogController', function() {
       this.$apply();
 
       sinon.assert.calledWith(this.dialog.confirm, sinon.match({
-        type: 'Text',
+        type: 'Text'
       }));
     });
 
@@ -65,8 +65,8 @@ describe('AddFieldDialogController', function() {
       this.el.find('#field-type-long').prop('checked', true).click();
       this.$apply();
 
-      var listOption = this.el.find('#add-field-form__field-is-list');
-      var hiddenParents = listOption.parents('.ng-hide');
+      const listOption = this.el.find('#add-field-form__field-is-list');
+      const hiddenParents = listOption.parents('.ng-hide');
       expect(hiddenParents.length).not.toEqual(0);
     });
   });
@@ -90,7 +90,7 @@ describe('AddFieldDialogController', function() {
       sinon.assert.calledWith(this.dialog.confirm, sinon.match({
         name: 'my field',
         apiName: 'myField',
-        type: 'Integer',
+        type: 'Integer'
       }));
     });
 
@@ -103,7 +103,7 @@ describe('AddFieldDialogController', function() {
       sinon.assert.calledWith(this.dialog.confirm, sinon.match({
         name: 'my field',
         apiName: 'myField',
-        type: 'Number',
+        type: 'Number'
       }));
     });
 
@@ -158,7 +158,7 @@ describe('AddFieldDialogController', function() {
       this.el.find('[name=fieldName]').val('my field').trigger('change');
       this.$apply();
 
-      var apiName = this.el.find('[name=apiName]');
+      const apiName = this.el.find('[name=apiName]');
       expect(apiName.val()).toEqual('myField');
     });
 
@@ -179,7 +179,7 @@ describe('AddFieldDialogController', function() {
     it('shows errors for invalid characters', function () {
       this.el.find('[name=fieldName]').val('my field').trigger('change');
       this.$apply();
-      var apiName = this.el.find('[name=apiName]');
+      const apiName = this.el.find('[name=apiName]');
 
       expect(apiName.attr('aria-invalid')).not.toEqual('true');
       apiName.val('-').trigger('change');
@@ -199,7 +199,7 @@ describe('AddFieldDialogController', function() {
     it('shows an error if empty', function () {
       this.el.find('button[aria-label="Text"]').click();
       this.$apply();
-      var fieldName = this.el.find('[name=fieldName]');
+      const fieldName = this.el.find('[name=fieldName]');
 
       expect(fieldName.attr('aria-invalid')).not.toEqual('true');
       this.el.find('button:contains(Create)').first().click();
@@ -211,8 +211,8 @@ describe('AddFieldDialogController', function() {
   });
 
   it('opens the field dialog when configure button is pressed', function () {
-    var scope = this.el.scope();
-    var openFieldDialog = sinon.stub();
+    const scope = this.el.scope();
+    const openFieldDialog = sinon.stub();
     scope.ctEditorController = {
       openFieldDialog: openFieldDialog
     };

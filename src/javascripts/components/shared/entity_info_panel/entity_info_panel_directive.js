@@ -19,6 +19,7 @@ angular.module('contentful')
       if ($scope.contentType) {
         $scope.contentTypeName = $scope.contentType.name || 'Untitled';
         $scope.contentTypeDescription = $scope.contentType.description;
+        $scope.contentTypeId = $scope.contentType.sys.id;
       }
 
       K.onValueScope($scope, $scope.entitySysProperty, function (sys) {
