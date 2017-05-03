@@ -12,8 +12,6 @@ angular.module('contentful')
   var baseUrl = environment.settings.apiUrl;
   var defaultHeaders = {
     'X-Contentful-Skip-Transformation': true,
-    // @todo content_api's preflight middleware has to accept this header first
-    // 'X-Contentful-UI-Version': window.CF_UI_VERSION || 'development',
     'Content-Type': 'application/vnd.contentful.management.v1+json'
   };
 

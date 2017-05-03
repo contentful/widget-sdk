@@ -12,6 +12,7 @@ describe('Gatekeeper Message Handler', function () {
         return 'website/' + path;
       }
     });
+    this.mockService('notification');
   });
 
   describe('actions on message', function () {
@@ -38,8 +39,7 @@ describe('Gatekeeper Message Handler', function () {
 
     it('shows notification', function () {
       const notification = this.$inject('notification');
-      notification.info = sinon.spy();
-      notification.warn = sinon.spy();
+
       this.handle({type: 'flash', resource: {message: 'OK', type: 'info'}});
       this.handle({type: 'flash', resource: {message: 'FAIL', type: 'error'}});
       sinon.assert.calledOnce(notification.info.withArgs('OK'));
