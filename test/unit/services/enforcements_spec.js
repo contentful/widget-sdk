@@ -131,6 +131,11 @@ describe('Enforcements service', function () {
         expect(enforcements.getPeriodUsage()).toBeUndefined();
       });
 
+      it('has no error when subscription has additional usage enabled', function () {
+        sinon.stub(OrganizationList, 'isOwner').returns(true);
+        sinon.stub(spaceContext.subscription, 'isAdditionalUsageAllowed').returns(true);
+        expect(enforcements.getPeriodUsage()).toBeUndefined();
+      });
     });
   });
 

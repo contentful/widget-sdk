@@ -15,6 +15,10 @@ angular.module('contentful')
     return OrganizationList.isOwner(organization);
   }
 
+  function isAdditionalUsageAllowed () {
+    return spaceContext.subscription.isAdditionalUsageAllowed();
+  }
+
   function getOrgId () {
     try {
       return spaceContext.space.getOrganizationId();
@@ -50,7 +54,7 @@ angular.module('contentful')
     },
     {
       label: 'periodUsageExceeded',
-      message: '<strong>You have reached one of your limits.</strong> To check your current limits, go to your subscription page. If you have overages enabled, don’t worry - we’ll charge you as you go.',
+      message: '<strong>You have reached one of your limits.</strong> To check your current limits, go to your subscription page.',
       actionMessage: 'Go to subscription',
       action: upgradeAction
     },
@@ -138,7 +142,7 @@ angular.module('contentful')
   }
 
   function getPeriodUsage () {
-    if (!isOwner()) return;
+    if (!isOwner() || isAdditionalUsageAllowed()) return;
 
     var enforcement;
     _.forEach(periodUsageMetrics, function (metric) {
