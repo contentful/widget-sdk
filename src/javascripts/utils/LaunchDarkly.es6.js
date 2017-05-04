@@ -95,21 +95,14 @@ function isQualifiedUser ({organizationMemberships}) {
  * @returns {utils/kefir.Property<boolean>}
  */
 export function getTest (testName, customQualificationFn = _ => true) {
-  const testVal$ = getFeatureFlag(testName);
-
   // Launch Darkly has no way of preventing anonymous users from
   // receiving test flags so this makes sure that if the user
   // isn't qualified the test value for any test name is always
   // `null`
-  return sampleBy(testVal$, (value) => {
-    const currentUser = getValue(user$);
+  return getFeatureFlag(testName, (currentUser) => {
+    return currentUser && isQualifiedUser(currentUser) && customQualificationFn(currentUser);
+  });
 
-    if (currentUser && isQualifiedUser(currentUser) && customQualificationFn(currentUser)) {
-      return value;
-    } else {
-      return DEFAULT_VAL;
-    }
-  }).skipDuplicates();
 }
 
 /**
@@ -128,15 +121,19 @@ export function getTest (testName, customQualificationFn = _ => true) {
  * value for the feature flag as it is on Launch Darkly servers.
  *
  * @param {String} featureFlagName
+ * @param {function} [customQualificationFn = _ => true] - An optional fn that
+ * receives the current user and returns a bool.
  * @returns {utils/kefir.Property<boolean>}
  */
-export function getFeatureFlag (featureFlagName) {
+export function getFeatureFlag (featureFlagName, customQualificationFn = _ => true) {
   const testVal$ = mergeValues([
     fromEvents(client, 'ready'),
     fromEvents(client, `change:${featureFlagName}`)
   ]);
 
   return sampleBy(testVal$, () => {
-    return client.variation(featureFlagName, DEFAULT_VAL);
+    const currentUser = getValue(user$);
+
+    return customQualificationFn(currentUser) ? client.variation(featureFlagName, DEFAULT_VAL) : DEFAULT_VAL;
   }).skipDuplicates();
 }
