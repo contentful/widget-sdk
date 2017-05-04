@@ -15,6 +15,7 @@ describe('ListViewsController', function () {
     var FilterQS = this.$inject('FilterQueryString');
     $q = this.$inject('$q');
 
+    this.mockService('notification');
     scope = this.$inject('$rootScope').$new();
     scope.context = {};
     scope.selection = {clear: sinon.spy()};

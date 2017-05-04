@@ -2,7 +2,7 @@
 
 describe('overridingRequestQueue', function () {
   beforeEach(function () {
-    module('contentful');
+    module('contentful/test');
     this.createQueue = this.$inject('overridingRequestQueue');
     this.$q = this.$inject('$q');
   });

@@ -9,6 +9,9 @@ table
   tr
     th ID
     td {{sys.id}}
+  tr(ng-if="contentTypeId")
+    th Content type ID
+    td {{contentTypeId}}
   tr
     th Current version
     td {{sys.version}}
