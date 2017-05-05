@@ -54,17 +54,19 @@ function header () {
     descriptionAndEdit()
   );
 
+  // TODO Wrap this in conditional instead of having `ngIf` on each
+  // item. Does not work because CSS sets margin on each child
   function actions () {
-    return [h('div', {
-      ngIf: 'data.canEdit'
-    }, [
+    return [
       // Cancel
       h('button.btn-secondary-action', {
+        ngIf: 'data.canEdit',
         uiCommand: 'actions.cancel'
       }, ['Cancel']),
 
       // Actions dropdown trigger
       h('button.btn-secondary-action', {
+        ngIf: 'data.canEdit',
         cfContextMenuTrigger: 'cf-context-menu-trigger'
       }, [
         h('cf-icon.btn-dropdown-icon', { name: 'dd-arrow-down' }),
@@ -73,6 +75,7 @@ function header () {
 
       // Actions dropdown
       h('div.context-menu', {
+        ngIf: 'data.canEdit',
         cfContextMenu: ''
       }, [
         h('div', {
@@ -87,9 +90,10 @@ function header () {
 
       // Save
       h('button.btn-primary-action', {
+        ngIf: 'data.canEdit',
         uiCommand: 'actions.save'
       }, ['Save'])
-    ])];
+    ];
   }
 
   function descriptionAndEdit () {
