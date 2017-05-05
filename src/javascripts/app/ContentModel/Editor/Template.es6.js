@@ -55,7 +55,9 @@ function header () {
   );
 
   function actions () {
-    return [
+    return [h('div', {
+      ngIf: 'data.canEdit'
+    }, [
       // Cancel
       h('button.btn-secondary-action', {
         uiCommand: 'actions.cancel'
@@ -87,7 +89,7 @@ function header () {
       h('button.btn-primary-action', {
         uiCommand: 'actions.save'
       }, ['Save'])
-    ];
+    ])];
   }
 
   function descriptionAndEdit () {
@@ -96,6 +98,7 @@ function header () {
         '{{contentType.data.description}}'
       ]),
       h('button.text-link', {
+        ngIf: 'data.canEdit',
         uiCommand: 'showMetadataDialog'
       }, ['Edit'])
     ].join('');
@@ -219,7 +222,8 @@ export function fields () {
       role: 'toolbar'
     }, [
       h('div.ct-field__drag-handle', {
-        dataDragHandle: true
+        dataDragHandle: true,
+        ngClass: '{"x--no-drag": !canEdit}'
       }),
       h('div.ct-field__icon', [
         h('cf-icon', { ngIf: 'iconId', name: '{{iconId}}' })
@@ -242,17 +246,21 @@ export function fields () {
         ngIf: 'fieldIsTitle'
       }, ['Entry title']),
 
-      h('button.ct-field__settings.btn-inline', {
-        ariaLabel: 'Settings',
-        ngIf: '!field.deleted',
-        ngClick: 'fieldController.openSettingsDialog()'
-      }, ['Settings']),
-      h('button.ct-field__actions.btn-inline', {
-        type: 'button',
-        ariaLabel: 'Actions',
-        cfContextMenuTrigger: 'cf-context-menu-trigger'
-      }, ['•••']),
-      fieldActionsContextMenu()
+      h('div', {
+        ngIf: 'data.canEdit'
+      }, [
+        h('button.ct-field__settings.btn-inline', {
+          ariaLabel: 'Settings',
+          ngIf: '!field.deleted',
+          ngClick: 'fieldController.openSettingsDialog()'
+        }, ['Settings']),
+        h('button.ct-field__actions.btn-inline', {
+          type: 'button',
+          ariaLabel: 'Actions',
+          cfContextMenuTrigger: 'cf-context-menu-trigger'
+        }, ['•••']),
+        fieldActionsContextMenu()
+      ])
     ])
   ]);
 }
@@ -311,12 +319,17 @@ function sidebar () {
     h('p', [
       'The content type has used {{ data.fieldsUsed }} out of 50 fields.'
     ]),
-    vspace(4),
-    h('button.btn-action.x--block', {
-      uiCommand: 'showNewFieldDialog'
+
+    h('div', {
+      ngIf: 'data.canEdit'
     }, [
-      h('cf-icon.btn-icon.inverted', { name: 'plus' }),
-      'Add field'
+      vspace(4),
+      h('button.btn-action.x--block', {
+        uiCommand: 'showNewFieldDialog'
+      }, [
+        h('cf-icon.btn-icon.inverted', { name: 'plus' }),
+        'Add field'
+      ])
     ]),
 
     // Content type ID

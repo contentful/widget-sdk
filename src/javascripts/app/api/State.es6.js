@@ -5,7 +5,6 @@ import * as contextHistory from 'contextHistory';
 import * as crumbFactory from 'navigation/CrumbFactory';
 import * as Auth from 'Authentication';
 
-import * as ContentModel from './ContentModel';
 import attachEditorController from './KeyEditor/Controller';
 import editorTemplate from './KeyEditor/Template';
 import * as CMATokensPage from './CMATokens/Page';
@@ -97,9 +96,7 @@ export default {
   }, {
     name: 'content_model',
     url: '/content_model',
-    label: 'Content model explorer',
-    controller: 'apiContentModelController',
-    template: ContentModel.template()
+    redirectTo: 'spaces.detail.content_types.list'
   }]
 };
 
