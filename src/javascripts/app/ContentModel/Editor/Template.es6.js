@@ -111,7 +111,8 @@ function tabSelect () {
     style: {
       position: 'sticky',
       top: '0',
-      paddingLeft: '40px'
+      paddingLeft: '40px',
+      zIndex: 1
     }
   }, [
     h('ul.workbench-nav__tabs', [
@@ -223,7 +224,7 @@ export function fields () {
     }, [
       h('div.ct-field__drag-handle', {
         dataDragHandle: true,
-        ngClass: '{"x--no-drag": !canEdit}'
+        ngClass: '{"x--no-drag": !data.canEdit}'
       }),
       h('div.ct-field__icon', [
         h('cf-icon', { ngIf: 'iconId', name: '{{iconId}}' })
