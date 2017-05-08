@@ -7,7 +7,6 @@ import stringUtils from 'stringUtils';
 import ListQuery from 'ListQuery';
 import entitySelector from 'entitySelector';
 import { get, includes, extend, map, isString } from 'lodash';
-import UserSpaceInvitationNoUsersMessage from 'access_control/templates/UserSpaceInvitationNoUsersMessage';
 import UserSpaceInvitationDialog from 'access_control/templates/UserSpaceInvitationDialog';
 
 const MODAL_OPTS_BASE = {
@@ -156,12 +155,12 @@ export function create (spaceContext, userListHandler) {
   /**
    * Invite an existing user to space
    */
-  function openSpaceInvitationDialog (goToOrganizationUsers, canInviteUsersToOrganization) {
+  function openSpaceInvitationDialog () {
     const labels = {
       title: 'Add users to space',
       insert: 'Assign roles to selected users',
-      infoHtml: JST.users_add_note(), // @TODO use hyperscript
-      noEntitiesCustomHtml: UserSpaceInvitationNoUsersMessage()
+      infoHtml: '<cf-add-users-to-space-note></cf-add-users-to-space-note>',
+      noEntitiesCustomHtml: '<cf-no-users-to-add-to-space-dialog></cf-no-users-to-add-to-space-dialog>'
     };
 
     return entitySelector.open({
@@ -170,11 +169,7 @@ export function create (spaceContext, userListHandler) {
       multiple: true,
       min: 1,
       max: Infinity,
-      labels: labels,
-      scope: {
-        goToOrganizationUsers: goToOrganizationUsers,
-        canInviteUsersToOrganization: canInviteUsersToOrganization
-      }
+      labels: labels
     })
     .then(function (result) {
       return modalDialog.open({

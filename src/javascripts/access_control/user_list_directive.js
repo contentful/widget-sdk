@@ -52,7 +52,6 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
   var userListHandler = require('UserListHandler').create();
   var accessChecker = require('accessChecker');
   var TheAccountView = require('TheAccountView');
-  var OrganizationList = require('OrganizationList');
   var UserListActions = require('access_control/UserListActions');
 
   var K = require('utils/kefir');
@@ -84,12 +83,10 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
   K.onValueScope($scope, usesNewSpaceInvitationFlow$, function (usesNewSpaceInvitationFlow) {
     $scope.usesNewSpaceInvitationFlow = usesNewSpaceInvitationFlow;
     if (usesNewSpaceInvitationFlow) {
-      $scope.goToSubscription = TheAccountView.goToSubscription;
-      $scope.goToOrganizationUsers = TheAccountView.goToUsers;
-      $scope.canInviteUsersToOrganization = canInviteUsersToOrganization;
       $scope.openSpaceInvitationDialog = openSpaceInvitationDialog;
     } else {
       $scope.canInviteUsers = canInviteUsers;
+      $scope.goToSubscription = TheAccountView.goToSubscription;
       $scope.openInvitationDialog = decorateWithReload(actions.openOldInvitationDialog);
     }
   });
@@ -121,18 +118,10 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
 
   // Begin feature flag code - feature-bv-04-2017-new-space-invitation-flow
 
-  function canInviteUsersToOrganization () {
-    var organization = spaceContext.organizationContext.organization;
-    return OrganizationList.isOwnerOrAdmin(organization);
-  }
-
   function openSpaceInvitationDialog () {
     $scope.isInvitingUsersToSpace = true;
 
-    decorateWithReload(actions.openSpaceInvitationDialog)(
-      $scope.goToOrganizationUsers,
-      $scope.canInviteUsersToOrganization
-    ).finally(function () {
+    decorateWithReload(actions.openSpaceInvitationDialog)().finally(function () {
       $scope.isInvitingUsersToSpace = false;
     });
   }
