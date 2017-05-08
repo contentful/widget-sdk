@@ -1,6 +1,5 @@
 import modalDialog from 'modalDialog';
 import $rootScope from '$rootScope';
-import $q from '$q';
 import Command from 'command';
 import notification from 'notification';
 import ReloadNotification from 'ReloadNotification';
@@ -76,7 +75,7 @@ export function create (spaceContext, userListHandler) {
           notification.info('User role successfully changed.');
         })
         .catch(ReloadNotification.basicErrorHandler)
-        .finally(function () { scope.dialog.confirm(); })
+        .finally(function () { scope.dialog.confirm(); });
       }, {
         disabled: function () { return !scope.input.id; }
       })
@@ -175,17 +174,22 @@ export function create (spaceContext, userListHandler) {
       labels: labels
     })
     .then(function (result) {
-      return modalDialog.open({
-        template: UserSpaceInvitationDialog(),
-        backgroundClose: false,
-        ignoreEsc: true,
-        noNewScope: true,
-        scopeData: {
-          users: result,
-          roleOptions: userListHandler.getRoleOptions(),
-          selectedRoles: {}
+      const scope = $rootScope.$new();
+
+      extend(scope, {
+        users: result,
+        roleOptions: userListHandler.getRoleOptions(),
+        selectedRoles: {},
+        goBackToSelection: function () {
+          openSpaceInvitationDialog();
+          scope.dialog.confirm();
         }
-      }).promise;
+      });
+
+      return modalDialog.open(extend({
+        template: UserSpaceInvitationDialog(),
+        scope: scope
+      }, MODAL_OPTS_BASE)).promise;
     })
     .then(function () {
       notification.info('Invitations successfully sent.');

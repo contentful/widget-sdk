@@ -1,7 +1,5 @@
 import {h} from 'utils/hyperscript';
 
-// @TODO add 'go back' button
-
 export default function () {
   return h('.modal-background', [
     h('article.modal-dialog.user-space-invitation-dialog', {
@@ -28,8 +26,13 @@ export default function () {
 
 function dialogContent () {
   return h('.modal-dialog__content', [
-    h('h2.user-space-invitation-dialog__step-label', [
-      '{{ users.length === 1 ? "Assign a role to selected user" : "Assign roles to selected users" }}'
+    h('div', { style: { position: 'relative' } }, [
+      h('h2.user-space-invitation-dialog__step-label', [
+        '{{ users.length === 1 ? "Assign a role to selected user" : "Assign roles to selected users" }}'
+      ]),
+      h('.user-space-invitation-dialog__back-link', [
+        h('a', { href: '', ngClick: 'goBackToSelection()', style: { position: 'absolute', top: 0, right: 0 } }, ['Edit selection'])
+      ])
     ]),
     userRoleSelector(),
     h('p.user-space-invitation-dialog__faq-link', [
