@@ -93,11 +93,11 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
 
   // End feature flag code - feature-bv-04-2017-new-space-invitation-flow
 
-  reload().catch(ReloadNotification.basicErrorHandler);
+  reload();
 
   function decorateWithReload (command) {
     return function () {
-      return command.apply(null, arguments).then(reload).catch(ReloadNotification.basicErrorHandler);
+      return command.apply(null, arguments).then(reload);
     };
   }
 
@@ -134,6 +134,7 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
   function reload () {
     return userListHandler.reset()
     .then(onResetResponse, accessChecker.wasForbidden($scope.context))
+    .catch(ReloadNotification.basicErrorHandler)
     .finally(accessChecker.reset);
   }
 

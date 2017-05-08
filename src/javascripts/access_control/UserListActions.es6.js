@@ -3,6 +3,7 @@ import $rootScope from '$rootScope';
 import $q from '$q';
 import Command from 'command';
 import notification from 'notification';
+import ReloadNotification from 'ReloadNotification';
 import stringUtils from 'stringUtils';
 import ListQuery from 'ListQuery';
 import entitySelector from 'entitySelector';
@@ -41,6 +42,7 @@ export function create (spaceContext, userListHandler) {
         .then(function () {
           notification.info('User successfully removed from this space.');
         })
+        .catch(ReloadNotification.basicErrorHandler)
         .finally(function () { scope.dialog.confirm(); });
       }, {
         disabled: isDisabled
@@ -73,7 +75,8 @@ export function create (spaceContext, userListHandler) {
         .then(function () {
           notification.info('User role successfully changed.');
         })
-        .finally(function () { scope.dialog.confirm(); });
+        .catch(ReloadNotification.basicErrorHandler)
+        .finally(function () { scope.dialog.confirm(); })
       }, {
         disabled: function () { return !scope.input.id; }
       })
@@ -126,8 +129,8 @@ export function create (spaceContext, userListHandler) {
           scope.taken = null;
           scope.backendMessage = res.data.message;
         } else {
+          ReloadNotification.basicErrorHandler();
           scope.dialog.confirm();
-          return $q.reject;
         }
       }
 
