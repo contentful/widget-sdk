@@ -1,5 +1,4 @@
 import modalDialog from 'modalDialog';
-import $rootScope from '$rootScope';
 import Command from 'command';
 import notification from 'notification';
 import ReloadNotification from 'ReloadNotification';
@@ -15,6 +14,15 @@ const MODAL_OPTS_BASE = {
   backgroundClose: false
 };
 
+/**
+ * Creates a instance of actions used in space users list view to open the following dialogs:
+ *
+ * - `.openRemovalConfirmationDialog()` remove a user from space
+ * - `.openRoleChangeDialog()` change user's role
+ * - `.openOldInvitationDialog()` invite user to organization and space (old dialog, will be
+ *   completely removed after `feature-bv-04-2017-new-space-invitation-flow` is released)
+ * - `.openSpaceInvitationDialog()` invite users to the space from a list of organization's users
+ */
 export function create (spaceContext, userListHandler) {
   return {
     openRemovalConfirmationDialog: openRemovalConfirmationDialog,
@@ -31,27 +39,24 @@ export function create (spaceContext, userListHandler) {
       ? 'admin_removal_confirm_dialog'
       : 'user_removal_confirm_dialog';
 
-    const scope = $rootScope.$new();
+    return openDialog(templateName, controller);
 
-    extend(scope, {
-      user: user,
-      input: {},
-      removeUser: Command.create(function () {
-        return spaceContext.memberships.remove(user.membership)
-        .then(function () {
-          notification.info('User successfully removed from this space.');
+    function controller (scope) {
+      extend(scope, {
+        user: user,
+        input: {},
+        removeUser: Command.create(function () {
+          return spaceContext.memberships.remove(user.membership)
+          .then(function () {
+            notification.info('User successfully removed from this space.');
+          })
+          .catch(ReloadNotification.basicErrorHandler)
+          .finally(function () { scope.dialog.confirm(); });
+        }, {
+          disabled: isDisabled
         })
-        .catch(ReloadNotification.basicErrorHandler)
-        .finally(function () { scope.dialog.confirm(); });
-      }, {
-        disabled: isDisabled
-      })
-    });
-
-    return modalDialog.open(extend({
-      template: templateName,
-      scope: scope
-    }, MODAL_OPTS_BASE)).promise;
+      });
+    }
 
     function isDisabled () {
       return userListHandler.isLastAdmin(user.id) && scope.input.confirm !== 'I UNDERSTAND';
@@ -62,29 +67,26 @@ export function create (spaceContext, userListHandler) {
    * Change a role of an user
    */
   function openRoleChangeDialog (user) {
-    const scope = $rootScope.$new();
+    return openDialog('role_change_dialog', controller);
 
-    extend(scope, {
-      user: user,
-      startsWithVowel: stringUtils.startsWithVowel,
-      input: {},
-      roleOptions: userListHandler.getRoleOptions(),
-      changeRole: Command.create(function () {
-        return spaceContext.memberships.changeRoleTo(user.membership, scope.input.id)
-        .then(function () {
-          notification.info('User role successfully changed.');
+    function controller (scope) {
+      extend(scope, {
+        user: user,
+        startsWithVowel: stringUtils.startsWithVowel,
+        input: {},
+        roleOptions: userListHandler.getRoleOptions(),
+        changeRole: Command.create(function () {
+          return spaceContext.memberships.changeRoleTo(user.membership, scope.input.id)
+          .then(function () {
+            notification.info('User role successfully changed.');
+          })
+          .catch(ReloadNotification.basicErrorHandler)
+          .finally(function () { scope.dialog.confirm(); });
+        }, {
+          disabled: function () { return !scope.input.id; }
         })
-        .catch(ReloadNotification.basicErrorHandler)
-        .finally(function () { scope.dialog.confirm(); });
-      }, {
-        disabled: function () { return !scope.input.id; }
-      })
-    });
-
-    return modalDialog.open(extend({
-      template: 'role_change_dialog',
-      scope: scope
-    }, MODAL_OPTS_BASE)).promise;
+      });
+    }
   }
 
   /**
@@ -92,14 +94,9 @@ export function create (spaceContext, userListHandler) {
    * @TODO remove after feature-bv-04-2017-new-space-invitation-flow is released
    */
   function openOldInvitationDialog () {
-    return modalDialog.open(extend({
-      template: 'invitation_dialog',
-      scope: prepareInvitationDialogScope()
-    }, MODAL_OPTS_BASE)).promise;
+    return openDialog('invitation_dialog', controller);
 
-    function prepareInvitationDialogScope () {
-      const scope = $rootScope.$new();
-
+    function controller (scope) {
       return extend(scope, {
         input: {},
         roleOptions: userListHandler.getRoleOptions(),
@@ -174,22 +171,19 @@ export function create (spaceContext, userListHandler) {
       labels: labels
     })
     .then(function (result) {
-      const scope = $rootScope.$new();
+      return openDialog(UserSpaceInvitationDialog(), controller);
 
-      extend(scope, {
-        users: result,
-        roleOptions: userListHandler.getRoleOptions(),
-        selectedRoles: {},
-        goBackToSelection: function () {
-          openSpaceInvitationDialog();
-          scope.dialog.confirm();
-        }
-      });
-
-      return modalDialog.open(extend({
-        template: UserSpaceInvitationDialog(),
-        scope: scope
-      }, MODAL_OPTS_BASE)).promise;
+      function controller (scope) {
+        extend(scope, {
+          users: result,
+          roleOptions: userListHandler.getRoleOptions(),
+          selectedRoles: {},
+          goBackToSelection: function () {
+            openSpaceInvitationDialog();
+            scope.dialog.confirm();
+          }
+        });
+      }
     })
     .then(function () {
       notification.info('Invitations successfully sent.');
@@ -210,5 +204,13 @@ export function create (spaceContext, userListHandler) {
   }
 
   // End feature flag code - feature-bv-04-2017-new-space-invitation-flow
+
+  function openDialog (template, controller) {
+    return modalDialog.open(extend({
+      template: template,
+      controller: controller
+    }, MODAL_OPTS_BASE)).promise;
+
+  }
 
 }
