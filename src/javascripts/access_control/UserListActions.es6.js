@@ -56,11 +56,12 @@ export function create (spaceContext, userListHandler) {
           disabled: isDisabled
         })
       });
+
+      function isDisabled () {
+        return userListHandler.isLastAdmin(user.id) && scope.input.confirm !== 'I UNDERSTAND';
+      }
     }
 
-    function isDisabled () {
-      return userListHandler.isLastAdmin(user.id) && scope.input.confirm !== 'I UNDERSTAND';
-    }
   }
 
   /**
