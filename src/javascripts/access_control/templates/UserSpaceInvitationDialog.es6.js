@@ -30,15 +30,14 @@ function dialogContent () {
       h('h2.user-space-invitation-dialog__step-label', [
         '{{ users.length === 1 ? "Assign a role to selected user" : "Assign roles to selected users" }}'
       ]),
-      h('.user-space-invitation-dialog__back-link', [
-        h('a', { href: '', ngClick: 'goBackToSelection()', style: { position: 'absolute', top: 0, right: 0 } }, ['Edit selection'])
-      ])
+      h('a.text-link--neutral-emphasis-low', { href: '', ngClick: 'goBackToSelection()', style: { position: 'absolute', top: 0, right: 0 } }, ['Edit selection'])
     ]),
     userRoleSelector(),
-    h('p.user-space-invitation-dialog__faq-link', [
+    h('p', [
       h('cf-knowledge-base', {
         target: 'roles',
         text: 'What\'s the difference between Administrator, Developer and Editor?',
+        cssClass: 'text-link--neutral-emphasis-low',
         inlineText: 'true'
       })
     ]),
