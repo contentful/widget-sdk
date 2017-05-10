@@ -15,8 +15,7 @@ describe('spaceContext', function () {
       $provide.value('classes/OrganizationContext', this.OrganizationContext);
     });
     this.spaceContext = this.$inject('spaceContext');
-    this.theLocaleStore = this.$inject('TheLocaleStore');
-    this.theLocaleStore.resetWithSpace = sinon.stub();
+    this.mockService('TheLocaleStore');
 
     this.resetWithSpace = function (space) {
       space = space || makeSpaceMock();
@@ -72,8 +71,13 @@ describe('spaceContext', function () {
       expect(this.spaceContext.contentTypes.length).toEqual(0);
     });
 
-    it('refreshes locales', function () {
-      sinon.assert.calledOnce(this.theLocaleStore.resetWithSpace);
+    it('calls TheLocaleStore.reset()', function () {
+      const theLocaleStore = this.$inject('TheLocaleStore');
+      sinon.assert.calledOnceWith(
+        theLocaleStore.reset,
+        SPACE.getId(),
+        SPACE.getPrivateLocales()
+      );
     });
 
     it('creates the user cache', function () {
@@ -590,6 +594,32 @@ describe('spaceContext', function () {
     });
   });
 
+  describe('#reloadLocales', function () {
+    beforeEach(function () {
+      this.resetWithSpace();
+      this.tokenStore = this.mockService('tokenStore');
+      this.tokenStore.refresh.resolves();
+    });
+
+    it('calls tokenStore.refresh()', function () {
+      this.spaceContext.reloadLocales();
+      sinon.assert.calledOnce(this.tokenStore.refresh);
+    });
+
+    it('calls TheLocaleStore.reset()', function () {
+      const localeStore = this.$inject('TheLocaleStore');
+      localeStore.reset.reset();
+      const space = this.spaceContext.space;
+      this.spaceContext.reloadLocales();
+      this.$apply();
+      sinon.assert.calledOnceWith(
+        localeStore.reset,
+        space.getId(),
+        space.getPrivateLocales()
+      );
+    });
+  });
+
   function makeCtMock (id, opts = {}) {
     return {
       data: {
@@ -611,7 +641,8 @@ describe('spaceContext', function () {
       }),
       getId: sinon.stub().returns('SPACE_ID'),
       getContentTypes: sinon.stub().resolves([]),
-      getPublishedContentTypes: sinon.stub().resolves([])
+      getPublishedContentTypes: sinon.stub().resolves([]),
+      getPrivateLocales: sinon.stub().returns([{code: 'en'}])
     };
   }
 

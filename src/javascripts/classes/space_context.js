@@ -122,11 +122,34 @@ angular.module('contentful')
       self.user = K.getValue(tokenStore.user$);
 
       previewEnvironmentsCache.clearAll();
-      TheLocaleStore.resetWithSpace(space);
+      TheLocaleStore.reset(self.space.getId(), self.space.getPrivateLocales());
       return $q.all([loadWidgets(self, space), requestContentTypes()])
       .then(function () {
         return self;
       });
+    },
+
+    /**
+     * @ngdoc method
+     * @name spaceContext#reloadLocales
+     * @description
+     * Reload the list of locales for the current space and updates
+     * 'TheLocaleStore' service.
+     *
+     * Currently only called by 'LocaleEditorController'.
+     *
+     * @returns {Promise<void>}
+     */
+    reloadLocales: function () {
+      var self = this;
+      // TODO Do not use 'tokenStore'. This service mutates the
+      // 'this.space' object so that '.getPrivateLocales()' returns a
+      // different value. Instead we should get the locales from the
+      // dedicated /locales endpoint.
+      return tokenStore.refresh()
+        .then(function () {
+          TheLocaleStore.reset(self.space.getId(), self.space.getPrivateLocales());
+        });
     },
 
     /**
