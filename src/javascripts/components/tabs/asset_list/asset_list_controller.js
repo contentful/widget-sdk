@@ -61,6 +61,8 @@ angular.module('contentful')
     return !hasAssets && !$scope.hasQuery && !$scope.context.isSearching;
   };
 
+  $scope.getAssetFile = getAssetFile;
+
   $scope.$watch('showNoAssetsAdvice()', function (show) {
     if (show) {
       $scope.hasArchivedAssets = false;
@@ -141,7 +143,7 @@ angular.module('contentful')
   }
 
   function getAssetDimensions (asset) {
-    var file = spaceContext.localizedField(asset, 'data.fields.file');
+    var file = getAssetFile(asset);
     var width = dotty.get(file, 'details.image.width', false);
     var height = dotty.get(file, 'details.image.height', false);
 
@@ -152,4 +154,8 @@ angular.module('contentful')
     }
   }
 
+  // Get the default asset file for the default locale
+  function getAssetFile (asset) {
+    return spaceContext.getFieldValue(asset, 'file');
+  }
 }]);

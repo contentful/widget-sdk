@@ -291,7 +291,7 @@ describe('spaceContext', function () {
     });
 
     it('gets a localized field', function () {
-      expect(this.spaceContext.localizedField(asset, 'data.fields.title')).toBe('the title');
+      expect(this.spaceContext.getFieldValue(asset, 'title')).toBe('the title');
     });
   });
 
@@ -422,49 +422,6 @@ describe('spaceContext', function () {
       const CTRepo = this.$inject('data/ContentTypeRepo/Published');
       this.spaceContext.publishedCTs = sinon.stubAll(CTRepo.create());
       this.spaceContext.publishedCTs.get.withArgs('CTID').returns(this.ct);
-    });
-
-    describe('#findLocalizedField()', function () {
-      it('returns undefined if no field can be found', function () {
-        const val = this.spaceContext.findLocalizedField(
-          this.entry, {type: 'AnotherType'});
-
-        expect(val).toBe(undefined);
-      });
-
-      it('returns value of first matching field`s value', function () {
-        const val = this.spaceContext.findLocalizedField(
-          this.entry, {type: 'Symbol'});
-
-        expect(val).toBe('SYMBOL VAL');
-      });
-
-      it('returns value for given locale', function () {
-        const val = this.spaceContext.findLocalizedField(
-          this.entry, 'it', {type: 'Link', linkType: 'Asset'});
-
-        expect(val).toBe(ASSET_LINK_IT);
-      });
-
-      it('returns value for enity`s first locale code', function () {
-        delete this.entry.data.fields.TEXT.xx; // Delete default field
-
-        const val = this.spaceContext.findLocalizedField(
-          this.entry, {type: 'Text'});
-
-        expect(val).toBe('VAL EN');
-      });
-
-      it('accepts a callback for the search', function () {
-        const fields = [];
-        const val = this.spaceContext.findLocalizedField(
-          this.entry, function (field) {
-            fields.push(field);
-          });
-
-        expect(fields).toEqual(this.fields);
-        expect(val).toEqual(undefined);
-      });
     });
 
     describe('#entityDescription()', function () {
