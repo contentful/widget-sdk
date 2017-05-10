@@ -81,13 +81,7 @@ angular.module('cf.app')
   }
 
   function assetFile (data, locale) {
-    var file = dotty.get(data, 'fields.file.' + locale);
-
-    if (_.isObject(file)) {
-      return $q.resolve(file);
-    } else {
-      return $q.reject();
-    }
+    return $q.resolve(spaceContext.getFieldValue({data: data}, 'file', locale));
   }
 
   function assetFileUrl (file) {

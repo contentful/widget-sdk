@@ -13,22 +13,6 @@ describe('EntityHelpers', function () {
     this.helpers = this.$inject('EntityHelpers').newForLocale('en-US');
   });
 
-  describe('#assetUrl', function () {
-    it('rejects if the file object cannot be found', function* () {
-      yield this.helpers.assetFile(makeAsset({})).then(throwingFn, _.noop);
-    });
-
-    it('resolves with file field for a specific locale', function* () {
-      const fileEn = {};
-      const file = yield this.helpers.assetFile(makeAsset({'en-US': fileEn}));
-      expect(file).toBe(fileEn);
-    });
-
-    function makeAsset (file) {
-      return {fields: {file}};
-    }
-  });
-
   describe('#assetFileUrl', function () {
     it('rejects if invalid file is provided', function* () {
       yield this.helpers.assetFileUrl({}).then(throwingFn, _.noop);
