@@ -128,7 +128,7 @@ angular.module('cf.app')
       // TODO We should notify the user of what happened and maybe
       // rethrow the exception. As a temporary measure we log the error
       // to figure out what errors are actually thrown.
-      $state.go('home');
+      $state.go('error');
       logRoutingError(
         event, error,
         { state: toState, params: toParams },
