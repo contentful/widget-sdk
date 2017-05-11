@@ -177,10 +177,6 @@ angular.module('contentful')
     if (!orgId) {
       return showFormError('You don’t have permission to create a space');
     }
-    if (!accessChecker.canCreateSpaceInOrganization(orgId)) {
-      logger.logError('You can\'t create a Space in this Organization');
-      return showFormError('You can\'t create a Space in this Organization');
-    }
 
     analytics.track('space:template_selected', {
       templateName: template.name
