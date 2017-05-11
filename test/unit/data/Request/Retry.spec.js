@@ -98,6 +98,18 @@ describe('data/Request/Retry', function () {
     });
   });
 
+  it('fails after 6 tries for 429', function* () {
+    this.requestStub.rejects({statusCode: 429});
+    const responsePromise = this.push();
+
+    // This is the formula for the sum of exponentially increasing
+    // waiting periods.
+    this.flush((Math.pow(2, 7) + 1) * 1000);
+    this.expectCallCount(6);
+    const response = yield responsePromise.catch(_.identity);
+    expect(response.statusCode).toBe(429);
+  });
+
   it('retries 5 times for 502', function () {
     this.requestStub.rejects({statusCode: 502});
     this.push();
@@ -125,6 +137,7 @@ describe('data/Request/Retry', function () {
       expect(requestRes).toBe(res);
     });
   });
+
   pit('rejects when all retries fail', function () {
     const onSuccess = sinon.stub();
     const onError = sinon.stub();
@@ -138,6 +151,5 @@ describe('data/Request/Retry', function () {
       sinon.assert.notCalled(onSuccess);
       sinon.assert.calledOnce(onError);
     });
-
   });
 });
