@@ -8,6 +8,7 @@ angular.module('contentful')
  */
 .factory('states', ['$injector', function ($injector) {
   var config = $injector.get('states/config');
+  var notification = $injector.get('notification');
 
   return {
     loadAll: loadAll,
@@ -26,7 +27,17 @@ angular.module('contentful')
     load([
       $injector.get('states/account'),
       $injector.get('states/spaces'),
-      $injector.get('states/home')
+      $injector.get('states/home'),
+      {
+        name: 'error',
+        url: 'error',
+        controller: function () {
+          notification.error(
+            'We were unable to process your request. ' +
+            'If this problem persists, please contact support'
+          );
+        }
+      }
     ]);
   }
 
