@@ -170,7 +170,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
 
   function collectSectionVisibility () {
     sectionVisibility = {
-      contentType: true,
+      contentType: !shouldHide('updateContentType') || !shouldHide('readApiKey'),
       entry: !shouldHide('readEntry') || policyChecker.canAccessEntries(),
       asset: !shouldHide('readAsset') || policyChecker.canAccessAssets(),
       apiKey: !shouldHide('readApiKey'),
