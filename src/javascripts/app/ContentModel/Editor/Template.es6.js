@@ -54,17 +54,19 @@ function header () {
     descriptionAndEdit()
   );
 
+  // TODO Wrap this in conditional instead of having `ngIf` on each
+  // item. Does not work because CSS sets margin on each child
   function actions () {
-    return [h('div', {
-      ngIf: 'data.canEdit'
-    }, [
+    return [
       // Cancel
       h('button.btn-secondary-action', {
+        ngIf: 'data.canEdit',
         uiCommand: 'actions.cancel'
       }, ['Cancel']),
 
       // Actions dropdown trigger
       h('button.btn-secondary-action', {
+        ngIf: 'data.canEdit',
         cfContextMenuTrigger: 'cf-context-menu-trigger'
       }, [
         h('cf-icon.btn-dropdown-icon', { name: 'dd-arrow-down' }),
@@ -73,6 +75,7 @@ function header () {
 
       // Actions dropdown
       h('div.context-menu', {
+        ngIf: 'data.canEdit',
         cfContextMenu: ''
       }, [
         h('div', {
@@ -87,9 +90,10 @@ function header () {
 
       // Save
       h('button.btn-primary-action', {
+        ngIf: 'data.canEdit',
         uiCommand: 'actions.save'
       }, ['Save'])
-    ])];
+    ];
   }
 
   function descriptionAndEdit () {
@@ -111,7 +115,8 @@ function tabSelect () {
     style: {
       position: 'sticky',
       top: '0',
-      paddingLeft: '40px'
+      paddingLeft: '40px',
+      zIndex: 1
     }
   }, [
     h('ul.workbench-nav__tabs', [
@@ -190,13 +195,12 @@ function noFieldsAdvice () {
       h('div.advice__frame', [
         h('header', [
           h('h1.advice__title', ['It’s time to add some fields']),
-          h('div.advice__sub-title', ['Click that blue button on the right'])
+          h('div.advice__sub-title', ['Click the blue button on the right'])
         ]),
         h('p.advice__description', [
-          'The field defines the nature of content that can be put there ', h('br'),
-          `For instance, text field would accept titles and
-          descriptions, whereas media field is best used for images and
-          videos`
+          'The field type defines what content can be stored.', h('br'),
+          `For instance, a text field accepts titles and descriptions,
+          and a media field is used for images and videos.`
         ])
       ])
     ])
@@ -223,7 +227,7 @@ export function fields () {
     }, [
       h('div.ct-field__drag-handle', {
         dataDragHandle: true,
-        ngClass: '{"x--no-drag": !canEdit}'
+        ngClass: '{"x--no-drag": !data.canEdit}'
       }),
       h('div.ct-field__icon', [
         h('cf-icon', { ngIf: 'iconId', name: '{{iconId}}' })
