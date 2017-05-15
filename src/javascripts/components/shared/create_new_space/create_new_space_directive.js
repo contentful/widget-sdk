@@ -49,15 +49,15 @@ angular.module('contentful')
     return org && org.sys ? accessChecker.canCreateSpaceInOrganization(org.sys.id) : false;
   });
 
+  // TODO The create space dialog should not be opened when the user
+  // has no writable organizations. But there is a bug
+  // https://contentful.tpondemand.com/entity/18031
   if (controller.writableOrganizations.length > 0) {
     controller.newSpace.organization = (
       _.find(controller.writableOrganizations, ['sys.id', $scope.organizationId]) ||
       _.first(controller.writableOrganizations)
     );
   } else {
-    // TODO This should never happen, but unfortunately it does
-    // We need to figure out why and fix it. Maybe when this dialog is
-    // triggered from the organizations page
     logger.logError('No writable organizations for space creation', {
       data: {
         organizations: controller.organizations
@@ -172,18 +172,10 @@ angular.module('contentful')
     var data = controller.newSpace.data;
     var orgId = dotty.get(controller, 'newSpace.organization.sys.id');
 
-    // TODO We should never be in this state
+    // TODO This may happen due to 'writableOrganizations' being empty.
+    // See above for more info
     if (!orgId) {
-      logger.logError('No organization id set', {
-        data: {
-          currentOrg: controller.newSpace.organization
-        }
-      });
       return showFormError('You don’t have permission to create a space');
-    }
-    if (!accessChecker.canCreateSpaceInOrganization(orgId)) {
-      logger.logError('You can\'t create a Space in this Organization');
-      return showFormError('You can\'t create a Space in this Organization');
     }
 
     analytics.track('space:template_selected', {
