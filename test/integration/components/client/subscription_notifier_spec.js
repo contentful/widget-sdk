@@ -7,7 +7,6 @@
  * @covers Subscription
  */
 describe('subscriptionNotifier', function () {
-  const A_DAY = 24;
   let broadcastStub, openPaywallStub;
 
   beforeEach(function () {
@@ -52,25 +51,7 @@ describe('subscriptionNotifier', function () {
     broadcastStub = openPaywallStub = null;
   });
 
-  describe('without trial user', function () {
-    beforeEach(function () {
-      this.setupOrganization({subscription: {status: ''}});
-      this.$apply();
-    });
-
-    describe('removal of old notification (e.g. after switch orga)', function () {
-      it('calls broadcast with null once', function () {
-        const notificationCalls = broadcastStub.args.filter(function (x) {
-          return x[0] === 'persistentNotification';
-        });
-
-        expect(notificationCalls.length).toBe(1);
-        expect(notificationCalls[0][1]).toBeNull();
-      });
-    });
-  });
-
-  describe('shows a persistent notification', function () {
+  describe('paywall notifier', function () {
     beforeEach(function () {
       jasmine.clock().install();
       jasmine.clock().mockDate(new Date());
@@ -102,20 +83,7 @@ describe('subscriptionNotifier', function () {
             this.$apply();
           });
 
-          itShowsATrialEndNotification().forOwner();
-
           itOpensPaywallForSettingUpPayment();
-        });
-
-        describe('for user who is an admin in the organization', function () {
-          beforeEach(function () {
-            this.makeAdmin();
-            this.$apply();
-          });
-
-          itShowsATrialEndNotification().forUserOrAdmin();
-
-          itOpensPaywallToNotifyTheUser();
         });
 
         describe('for user not owning the organization', function () {
@@ -123,57 +91,27 @@ describe('subscriptionNotifier', function () {
             this.$apply();
           });
 
-          itShowsATrialEndNotification().forUserOrAdmin();
-
           itOpensPaywallToNotifyTheUser();
         });
       });
 
-      describe('ending in less than an hour for an owner', function () {
+      describe('ending in less than an hour', function () {
         beforeEach(function () {
-          this.makeOwner();
           this.trialHoursLeft(0.2);
           this.$apply();
         });
 
-        itShowsATrialWillEndNotification('0 hours').forOwner();
-
         itDoesNotOpenPaywall();
       });
 
-      describe('ending in less than a day for an user', function () {
+      describe('ending in less than a day', function () {
         beforeEach(function () {
           this.trialHoursLeft(20);
           this.$apply();
         });
 
-        itShowsATrialWillEndNotification('20 hours').forUserOrAdmin();
-
         itDoesNotOpenPaywall();
       });
-
-      describe('ending in a few days for an admin', function () {
-        beforeEach(function () {
-          this.makeAdmin();
-          this.trialHoursLeft(3.2 * A_DAY);
-          this.$apply();
-        });
-
-        itShowsATrialWillEndNotification('3 days').forUserOrAdmin();
-
-        itDoesNotOpenPaywall();
-      });
-
-      describe('no action', function () {
-        beforeEach(function () {
-          this.$apply();
-        });
-
-        itDoesNotShowAnActionMessage();
-
-        itDoesNotHaveAnAction();
-      });
-
     });
 
     describe('for a free subscription', function () {
@@ -187,99 +125,12 @@ describe('subscriptionNotifier', function () {
             kind: 'default'
           }
         });
+        this.$apply();
       });
 
-      describe('with an action', function () {
-        beforeEach(function () {
-          this.makeOwner();
-          this.$apply();
-        });
-
-        itShowsAMessage('free version');
-
-        itShowsAnActionMessage();
-
-        itHasAnAction();
-
-        itDoesNotOpenPaywall();
-      });
-
-      describe('no action', function () {
-        beforeEach(function () {
-          this.$apply();
-        });
-
-        itDoesNotShowAnActionMessage();
-
-        itDoesNotHaveAnAction();
-
-        itDoesNotOpenPaywall();
-      });
+      itDoesNotOpenPaywall();
     });
   });
-
-  function itShowsATrialEndNotification () {
-    itShowsAMessage(/Your trial is over.*TEST_ORGA_NAME organization/);
-    return {
-      forOwner: () => {
-        itShowsAMessage(/please choose a plan/i);
-        itShowsAnActionMessage();
-        itHasAnAction();
-      },
-      forUserOrAdmin: () => {
-        itShowsAMessage(/talk to one of your organization owners/i);
-        itDoesNotShowAnActionMessage();
-        itDoesNotHaveAnAction();
-      }
-    };
-  }
-
-  function itShowsATrialWillEndNotification (time) {
-    itShowsAMessage(/TEST_ORGA_NAME organization/);
-    itShowsAMessage('trial will expire in ' + time);
-    return {
-      forOwner: () => {
-        itShowsAMessage(/choose a subscription plan/i);
-        itShowsAnActionMessage();
-        itHasAnAction();
-      },
-      forUserOrAdmin: () => {
-        itShowsAMessage(/subscription.*upgrade.*organization owners/i);
-        itDoesNotShowAnActionMessage();
-        itDoesNotHaveAnAction();
-      }
-    };
-  }
-
-  function itShowsAMessage (match) {
-    it('shows a message', function () {
-      expect(broadcastStub.args[1][1].message).toMatch(match);
-    });
-  }
-
-  function itShowsAnActionMessage () {
-    it('shows an action message', function () {
-      expect(broadcastStub.args[1][1].actionMessage).toBe('Choose a plan');
-    });
-  }
-
-  function itDoesNotShowAnActionMessage () {
-    it('does not show an action message', function () {
-      expect(broadcastStub.args[1][1].actionMessage).toBeUndefined();
-    });
-  }
-
-  function itHasAnAction () {
-    it('has an action', function () {
-      expect(typeof broadcastStub.args[1][1].action).toBe('function');
-    });
-  }
-
-  function itDoesNotHaveAnAction () {
-    it('does not have an action', function () {
-      expect(broadcastStub.args[1][1].action).toBeUndefined();
-    });
-  }
 
   function itOpensPaywallForSettingUpPayment () {
     itOpensPaywall();

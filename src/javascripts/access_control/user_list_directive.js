@@ -81,7 +81,18 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
 
   // Begin feature flag code - feature-bv-04-2017-new-space-invitation-flow
 
-  var usesNewSpaceInvitationFlow$ = LD.getFeatureFlag('feature-bv-04-2017-new-space-invitation-flow');
+  var usesNewSpaceInvitationFlow$ = LD.getFeatureFlag('feature-bv-04-2017-new-space-invitation-flow', function (user) {
+    // Disable feature flag for enterprise customers
+    var memberships = user && user.organizationMemberships || [];
+    var enterpriseMembership = _.find(memberships, function (membership) {
+      var subscriptionPlan = _.get(membership, 'organization.subscription.subscriptionPlan.name');
+
+      // @TODO we need a better way to check for this, e.g. using `subscriptionPlan`.kind
+      return subscriptionPlan && subscriptionPlan.startsWith('Enterprise');
+    });
+    return !enterpriseMembership;
+  });
+
   K.onValueScope($scope, usesNewSpaceInvitationFlow$, function (usesNewSpaceInvitationFlow) {
     $scope.usesNewSpaceInvitationFlow = usesNewSpaceInvitationFlow;
     if (usesNewSpaceInvitationFlow) {

@@ -118,7 +118,7 @@ describe('app/api/CMATokens', function () {
 
   describe('revoke', function () {
     beforeEach(function () {
-      this.notification = this.$inject('notification');
+      this.notification = this.mockService('notification');
       this.init();
     });
 

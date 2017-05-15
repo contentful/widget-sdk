@@ -108,7 +108,9 @@ var src = {
     './vendor/html5reset-1.6.1.css',
     // Custom jQuery UI build: see the file for version and contents
     './vendor/jquery-ui/jqui.css',
-    './node_modules/codemirror/lib/codemirror.css'
+    './node_modules/codemirror/lib/codemirror.css',
+    // Add angular styles since we are disabling inline-styles in ngCsp
+    './node_modules/angular/angular-csp.css'
   ])
 };
 

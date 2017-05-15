@@ -71,14 +71,6 @@ angular.module('contentful/mocks', [])
       log: sinon.stub()
     };
   });
-
-  $provide.factory('notification', function () {
-    return {
-      error: sinon.stub(),
-      warn: sinon.stub(),
-      info: sinon.stub()
-    };
-  });
 }])
 
 .config(['$provide', '$controllerProvider', function ($provide, $controllerProvider) {

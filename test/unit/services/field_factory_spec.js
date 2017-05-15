@@ -1,8 +1,8 @@
 'use strict';
 
 describe('field factory', function () {
-  beforeEach(module('contentful'));
   beforeEach(function () {
+    module('contentful/test');
     this.fieldFactory = this.$inject('fieldFactory');
   });
 

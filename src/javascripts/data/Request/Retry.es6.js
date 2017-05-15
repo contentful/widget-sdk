@@ -90,7 +90,7 @@ export default function wrapWithRetry (requestFn) {
 function backOff (call) {
   call.ttl -= 1;
   const attempt = DEFAULT_TTL - call.ttl;
-  call.wait = Math.pow(2, attempt) * PERIOD;
+  call.wait = Math.random() * Math.pow(2, attempt) * PERIOD;
   return call;
 }
 

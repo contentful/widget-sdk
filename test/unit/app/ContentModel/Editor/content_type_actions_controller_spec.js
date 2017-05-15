@@ -33,7 +33,7 @@ describe('ContentType Actions Controller', function () {
 
     $q = this.$inject('$q');
     logger = this.$inject('logger');
-    notification = this.$inject('notification');
+    notification = this.mockService('notification');
     accessChecker = this.$inject('accessChecker');
     accessChecker.canPerformActionOnEntryOfType = sinon.stub().returns(true);
     ReloadNotification = this.$inject('ReloadNotification');

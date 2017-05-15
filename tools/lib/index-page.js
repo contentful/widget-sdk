@@ -19,17 +19,16 @@ const DEFAULT_ENTRY_SCRIPTS = ['application.min.js']
  * Returns a configured HTML index file as string. No further
  * processing is needed to run this file in the given environment.
  *
- * The `version` and `config` arguments are exposed as
- * `window.CF_UI_VERSION` and `window.CF_CONFIG` in a script tag.
- *
- * The `manifest` maps asset paths to their fingerprinted version. For example
+ * The `manifest` maps asset paths to their fingerprinted version. It is used
+ * to resolve all `src` and `href` properties. For example:
  * ~~~js
  * {
  *   "app/application.js": "app/application-3ef9a.js"
  * }
  * ~~~
- * It is used to resolve all `src` and `href` properties and exposed as
- * `window.CF_MANIFEST` in a script tag.
+ *
+ * All `uiVersion`, `config` and resolved `manifest` are put together and
+ * exposed as content of <meta name="external-config" content="..."> element.
  *
  * @param {string} uiVersion
  * @param {object} config
@@ -69,17 +68,18 @@ function indexPage (uiVersion, config, resolve, entryScripts) {
     h('head', [
       h('meta', {charset: 'UTF-8'}),
       h('meta', {httpEquiv: 'x-ua-compatible', content: 'ID=edge'}),
+      configMetaTag(uiVersion, config, resolve),
       h('title', ['Contentful']),
       stylesheet(resolve('vendor.css')),
       stylesheet(resolve('main.css')),
       iconLink('shortcut icon', resolve('images/favicons/favicon32x32.png')),
       iconLink('apple-touch-icon', resolve('images/favicons/apple_icon57x57.png')),
       iconLink('apple-touch-icon', resolve('images/favicons/apple_icon72x72.png')),
-      iconLink('apple-touch-icon', resolve('images/favicons/apple_icon114x114.png')),
-      configScript(uiVersion, config, resolve)
+      iconLink('apple-touch-icon', resolve('images/favicons/apple_icon114x114.png'))
     ]),
     h('body', {
       ngApp: 'contentful/app',
+      ngCsp: 'no-inline-style;no-unsafe-eval',
       ngController: 'ClientController',
       ngInit: 'initClient()'
     }, [
@@ -98,20 +98,19 @@ function indexPage (uiVersion, config, resolve, entryScripts) {
   ])
 }
 
-function configScript (uiVersion, config, resolve) {
-  let appManifest = {
-    'app/kaltura.js': resolve('kaltura.js'),
-    'app/markdown_vendors.js': resolve('markdown_vendors.js'),
-    'app/snowplow.js': resolve('snowplow.js')
-  }
-
-  return h('script', [
-    `
-    window.CF_CONFIG = ${JSON.stringify(config)};
-    window.CF_UI_VERSION = '${uiVersion}';
-    window.CF_MANIFEST = ${JSON.stringify(appManifest)};
-    `
-  ])
+function configMetaTag (uiVersion, config, resolve) {
+  return h('meta', {
+    name: 'external-config',
+    content: JSON.stringify({
+      config,
+      uiVersion,
+      manifest: {
+        'app/kaltura.js': resolve('kaltura.js'),
+        'app/markdown_vendors.js': resolve('markdown_vendors.js'),
+        'app/snowplow.js': resolve('snowplow.js')
+      }
+    })
+  })
 }
 
 function stylesheet (href) {

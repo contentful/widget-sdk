@@ -239,6 +239,9 @@ function createDocWrapper (connection, key) {
     return $q.denodeify(function (cb) {
       try {
         doc.close(cb);
+        // Because of a bug in ShareJS we also need to listen for the
+        // 'closed' event
+        doc.on('closed', () => cb());
       } catch (e) {
         cb(e.message === 'Cannot send to a closed connection' ? null : e);
       }
