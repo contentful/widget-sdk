@@ -136,6 +136,10 @@ angular.module('contentful')
       return;
     }
 
+    if (!this.iframe || !this.iframe.contentWindow) {
+      return;
+    }
+
     this.iframe.contentWindow.postMessage({
       id: id,
       error: {
