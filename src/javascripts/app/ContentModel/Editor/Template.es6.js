@@ -195,13 +195,12 @@ function noFieldsAdvice () {
       h('div.advice__frame', [
         h('header', [
           h('h1.advice__title', ['It’s time to add some fields']),
-          h('div.advice__sub-title', ['Click that blue button on the right'])
+          h('div.advice__sub-title', ['Click the blue button on the right'])
         ]),
         h('p.advice__description', [
-          'The field defines the nature of content that can be put there ', h('br'),
-          `For instance, text field would accept titles and
-          descriptions, whereas media field is best used for images and
-          videos`
+          'The field type defines what content can be stored.', h('br'),
+          `For instance, a text field accepts titles and descriptions,
+          and a media field is used for images and videos.`
         ])
       ])
     ])
