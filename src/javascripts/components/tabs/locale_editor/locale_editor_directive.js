@@ -31,10 +31,9 @@ angular.module('contentful')
 */
 .controller('LocaleEditorController', ['$scope', 'require', function ($scope, require) {
   var controller = this;
-  var TheLocaleStore = require('TheLocaleStore');
+  var spaceContext = require('spaceContext');
   var $q = require('$q');
   var modalDialog = require('modalDialog');
-  var tokenStore = require('tokenStore');
   var Command = require('command');
   var leaveConfirmator = require('navigation/confirmLeaveEditor');
   var $state = require('$state');
@@ -178,10 +177,8 @@ angular.module('contentful')
   function deleteLocale () {
     return $scope.locale.delete()
     .then(function deletedSuccesfully () {
-      return tokenStore.refresh()
+      return spaceContext.reloadLocales()
       .then(function () {
-        // TODO Should probably be handled by the token store
-        TheLocaleStore.refresh();
         return closeState();
       })
       .finally(notify.deleteSuccess);
@@ -241,10 +238,8 @@ angular.module('contentful')
   function saveSuccessHandler (response) {
     $scope.localeForm.$setPristine();
     $scope.context.dirty = false;
-    return tokenStore.refresh().then(function () {
+    return spaceContext.reloadLocales().then(function () {
       onLoadOrUpdate();
-      // TODO Should probably be handled by the token store
-      TheLocaleStore.refresh();
       notify.saveSuccess();
       if ($scope.context.isNew) {
         return $state.go('spaces.detail.settings.locales.detail', { localeId: response.getId() });

@@ -15,30 +15,30 @@ angular.module('cf.app')
   var spaceContext = require('spaceContext');
   var assetUrlFilter = require('$filter')('assetUrl');
 
-  var api = {
-    entityTitle: wrapAsEntity('entityTitle'),
-    entityDescription: wrapAsEntity('entityDescription'),
-    entryImage: wrapAsEntity('entryImage'),
-    assetFile: assetFile,
-    assetFileUrl: assetFileUrl
-  };
-
   return {
-    api: api,
     newForLocale: newForLocale
   };
 
   function newForLocale (locale) {
-    return _.extend(_.clone(api), {
-      entityTitle: _.partialRight(api.entityTitle, locale),
-      entityDescription: _.partialRight(api.entityDescription, locale),
-      entryImage: _.partialRight(api.entryImage, locale),
-      assetFile: _.partialRight(api.assetFile, locale)
-    });
+    return {
+      entityTitle: spaceContextDelegator('entityTitle', locale),
+      entityDescription: spaceContextDelegator('entityDescription', locale),
+      entryImage: spaceContextDelegator('entryImage', locale),
+      assetFile: _.partialRight(assetFile, locale),
+      assetFileUrl: assetFileUrl
+    };
   }
 
-  function wrapAsEntity (methodName) {
-    return function (data, localeCode) {
+  /**
+   * Create a function that delegates to given space context method
+   * with the given locale code.
+   *
+   * The argument of the returned function is external entity data.
+   * This data is transformed into an entity for the space context
+   * method to work.
+   */
+  function spaceContextDelegator (methodName, localeCode) {
+    return function (data) {
       return dataToEntity(data).then(function (entity) {
         return spaceContext[methodName](entity, localeCode);
       });
@@ -81,13 +81,7 @@ angular.module('cf.app')
   }
 
   function assetFile (data, locale) {
-    var file = dotty.get(data, 'fields.file.' + locale);
-
-    if (_.isObject(file)) {
-      return $q.resolve(file);
-    } else {
-      return $q.reject();
-    }
+    return $q.resolve(spaceContext.getFieldValue({data: data}, 'file', locale));
   }
 
   function assetFileUrl (file) {
