@@ -8,7 +8,6 @@ describe('dialogsInitController', function () {
     this.initEmailSpy = sinon.spy();
     this.initOnboardingSpy = sinon.spy();
     this.subscriptionNotifierNotify = sinon.spy();
-    this.billingNotifierNotify = sinon.spy();
 
     module('contentful/test', ($provide) => {
       $provide.value('spaceContext', this.spaceContext);
@@ -21,9 +20,6 @@ describe('dialogsInitController', function () {
       });
       $provide.value('subscriptionNotifier', {
         notifyAbout: this.subscriptionNotifierNotify
-      });
-      $provide.value('billingNotifier', {
-        notifyAbout: this.billingNotifierNotify
       });
     });
 
@@ -48,11 +44,6 @@ describe('dialogsInitController', function () {
       it('calls `subscriptionNotifier.notifyAbout()`', function () {
         assertCalledServiceNTimesWith(
           this.subscriptionNotifierNotify, 1, ORGANIZATION);
-      });
-
-      it('calls `billingNotifier.notifyAbout()`', function () {
-        assertCalledServiceNTimesWith(
-          this.billingNotifierNotify, 1, ORGANIZATION);
       });
 
       it('calls `notifyAbout()` again on switching space', function () {
