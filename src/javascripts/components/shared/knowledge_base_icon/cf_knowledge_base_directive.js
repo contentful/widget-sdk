@@ -14,7 +14,8 @@ angular.module('contentful').directive('cfKnowledgeBase', ['$injector', function
       text: '@',
       tooltipText: '@',
       target: '@',
-      inlineText: '@'
+      inlineText: '@',
+      cssClass: '@'
     },
     link: function (scope) {
       scope.url = getUrl(scope.target);

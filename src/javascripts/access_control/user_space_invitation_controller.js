@@ -7,6 +7,7 @@
  * @scope.requires {Array} users
  * @scope.requires {Array} roleOptions - available role options in the format of { id, name }
  * @scope.requires {modalDialog} dialog
+ * @scope.requires {fn} goBackToSelection - fn to go back to the previous step
  */
 angular.module('contentful')
 .controller('UserSpaceInvitationController', ['require', '$scope', function (require, $scope) {
