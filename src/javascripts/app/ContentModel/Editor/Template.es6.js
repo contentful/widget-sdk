@@ -116,7 +116,8 @@ function tabSelect () {
       position: 'sticky',
       top: '0',
       paddingLeft: '40px',
-      zIndex: 1
+      zIndex: 1,
+      background: 'white'
     }
   }, [
     h('ul.workbench-nav__tabs', [
