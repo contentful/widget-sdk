@@ -54,7 +54,7 @@ angular.module('contentful/mocks')
       }, locale);
     });
     locales[0].default = true;
-    localeStoreMock.resetWithSpace(createSpaceMock(locales));
+    localeStoreMock.reset('SID', locales);
     localeStoreMock.setActiveLocales(_.reject(locales, function (locale) {
       return 'active' in locale && !locale.active;
     }));
@@ -63,12 +63,4 @@ angular.module('contentful/mocks')
   localeStoreMock.setLocales(locales);
 
   return localeStoreMock;
-
-  function createSpaceMock (locales) {
-    return {
-      getId: _.constant('SID'),
-      getPrivateLocales: _.constant(locales),
-      getDefaultLocale: _.constant(locales[0])
-    };
-  }
 }]);

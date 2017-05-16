@@ -1,4 +1,4 @@
-'use strict';
+import * as sinon from 'helpers/sinon';
 
 describe('Space Controller', function () {
   beforeEach(function () {
@@ -19,13 +19,6 @@ describe('Space Controller', function () {
         track: sinon.stub()
       };
       $provide.value('analytics/Analytics', self.analyticsMock);
-
-      self.TheLocaleStoreMock = {
-        resetWithSpace: sinon.stub(),
-        getPrivateLocales: sinon.stub(),
-        refreshLocales: sinon.stub()
-      };
-      $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
     });
 
     this.tokenStore = this.mockService('tokenStore', {

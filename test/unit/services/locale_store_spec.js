@@ -1,6 +1,10 @@
 'use strict';
 
 describe('TheLocaleStore', function () {
+  const DEFAULT_LOCALES = [
+    {code: 'en-US', internal_code: 'en-US', default: true},
+    {code: 'de-DE', internal_code: 'de-DE'}
+  ];
 
   beforeEach(function () {
     module('contentful/test');
@@ -17,9 +21,7 @@ describe('TheLocaleStore', function () {
     });
 
     this.theLocaleStore = this.$inject('TheLocaleStore');
-    this.cfStub = this.$inject('cfStub');
-    this.space = this.cfStub.space('test');
-    this.theLocaleStore.resetWithSpace(this.space);
+    this.theLocaleStore.reset('SPACE ID', DEFAULT_LOCALES);
   });
 
   describe('refreshes locales', function () {
@@ -29,9 +31,7 @@ describe('TheLocaleStore', function () {
         { code: 'en-US', internal_code: 'en-US', default: true },
         { code: 'de-DE', internal_code: 'de-DE' }
       ];
-      this.space.getPrivateLocales = sinon.stub().returns(privateLocales);
-
-      this.theLocaleStore.refresh();
+      this.theLocaleStore.reset('test', privateLocales);
     });
 
     it('private locales is the supplied array', function () {
@@ -39,7 +39,7 @@ describe('TheLocaleStore', function () {
     });
 
     it('gets default locale', function () {
-      expect(this.theLocaleStore.getDefaultLocale()).toEqual(this.space.getPrivateLocales()[0]);
+      expect(this.theLocaleStore.getDefaultLocale()).toEqual(privateLocales[0]);
     });
 
     it('gets active locale states', function () {
@@ -122,8 +122,7 @@ describe('TheLocaleStore', function () {
 
     it('gets different stores for different spaces', function () {
       const test = function (id) {
-        const space = this.cfStub.space(id);
-        this.theLocaleStore.resetWithSpace(space);
+        this.theLocaleStore.reset(id, DEFAULT_LOCALES);
         const call = this.TheStore.forKey.lastCall;
         expect(call.args[0]).toBe(k(id));
       }.bind(this);
@@ -135,8 +134,8 @@ describe('TheLocaleStore', function () {
     it('activates locales form the store', function () {
       const persistor = this.TheStore.forKey(k('test'));
       persistor.set(['save']);
-      this.space.data.locales.push(saved, notSaved);
-      this.theLocaleStore.refresh();
+      const locales = DEFAULT_LOCALES.concat([saved, notSaved]);
+      this.theLocaleStore.reset('test', locales);
 
       expect(this.theLocaleStore.isLocaleActive(saved)).toBe(true);
       expect(this.theLocaleStore.isLocaleActive(notSaved)).toBe(false);
@@ -144,17 +143,15 @@ describe('TheLocaleStore', function () {
 
     it('saves locales to store', function () {
       const persistor = this.TheStore.forKey(k('test'));
-      this.space.data.locales.push(saved);
-
-      this.theLocaleStore.refresh();
+      const locales1 = DEFAULT_LOCALES.concat([saved]);
+      this.theLocaleStore.reset('test', locales1);
       expect(persistor.get()).toEqual(['en-US']);
 
       this.theLocaleStore.setActiveLocales([saved]);
       expect(persistor.get()).toEqual(['en-US', 'save']);
 
-      const space = this.cfStub.space('another');
-      space.data.locales.push(deLocale);
-      this.theLocaleStore.resetWithSpace(space);
+      const locales2 = DEFAULT_LOCALES.concat([deLocale]);
+      this.theLocaleStore.reset('another', locales2);
       const anotherPersistor = this.TheStore.forKey(k('another'));
 
       expect(persistor.get()).toEqual(['en-US', 'save']);

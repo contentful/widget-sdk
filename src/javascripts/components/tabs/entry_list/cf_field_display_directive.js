@@ -34,7 +34,7 @@ angular.module('contentful')
       };
 
       scope.dataForField = function (entry, field) {
-        return scope.spaceContext.localizedField(entry, 'data.fields.' + field.id);
+        return scope.spaceContext.getFieldValue(entry, field.id);
       };
 
       function filterVisibleItems (items) {
@@ -97,16 +97,16 @@ angular.module('contentful')
 
       scope.dataForAsset = function (assetLink) {
         var asset = scope.assetCache.get(assetLink.sys.id);
-        return scope.spaceContext.localizedField(asset, 'data.fields.file');
+        return scope.spaceContext.getFieldValue(asset, 'file');
       };
 
       scope.dataForLinkedEntry = function (entry, field) {
-        var entryLinkField = scope.spaceContext.localizedField(entry, 'data.fields.' + field.id);
+        var entryLinkField = scope.spaceContext.getFieldValue(entry, field.id);
         return entryLinkField ? scope.dataForEntry(entryLinkField) : '';
       };
 
       scope.dataForLinkedAsset = function (entry, field) {
-        var assetLinkField = scope.spaceContext.localizedField(entry, 'data.fields.' + field.id);
+        var assetLinkField = scope.spaceContext.getFieldValue(entry, field.id);
         return assetLinkField ? scope.dataForAsset(assetLinkField) : '';
       };
 
