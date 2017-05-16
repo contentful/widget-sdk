@@ -15,8 +15,7 @@ describe('spaceContext', function () {
       $provide.value('classes/OrganizationContext', this.OrganizationContext);
     });
     this.spaceContext = this.$inject('spaceContext');
-    this.theLocaleStore = this.$inject('TheLocaleStore');
-    this.theLocaleStore.resetWithSpace = sinon.stub();
+    this.mockService('TheLocaleStore');
 
     this.resetWithSpace = function (space) {
       space = space || makeSpaceMock();
@@ -72,8 +71,13 @@ describe('spaceContext', function () {
       expect(this.spaceContext.contentTypes.length).toEqual(0);
     });
 
-    it('refreshes locales', function () {
-      sinon.assert.calledOnce(this.theLocaleStore.resetWithSpace);
+    it('calls TheLocaleStore.reset()', function () {
+      const theLocaleStore = this.$inject('TheLocaleStore');
+      sinon.assert.calledOnceWith(
+        theLocaleStore.reset,
+        SPACE.getId(),
+        SPACE.getPrivateLocales()
+      );
     });
 
     it('creates the user cache', function () {
@@ -287,7 +291,7 @@ describe('spaceContext', function () {
     });
 
     it('gets a localized field', function () {
-      expect(this.spaceContext.localizedField(asset, 'data.fields.title')).toBe('the title');
+      expect(this.spaceContext.getFieldValue(asset, 'title')).toBe('the title');
     });
   });
 
@@ -420,49 +424,6 @@ describe('spaceContext', function () {
       this.spaceContext.publishedCTs.get.withArgs('CTID').returns(this.ct);
     });
 
-    describe('#findLocalizedField()', function () {
-      it('returns undefined if no field can be found', function () {
-        const val = this.spaceContext.findLocalizedField(
-          this.entry, {type: 'AnotherType'});
-
-        expect(val).toBe(undefined);
-      });
-
-      it('returns value of first matching field`s value', function () {
-        const val = this.spaceContext.findLocalizedField(
-          this.entry, {type: 'Symbol'});
-
-        expect(val).toBe('SYMBOL VAL');
-      });
-
-      it('returns value for given locale', function () {
-        const val = this.spaceContext.findLocalizedField(
-          this.entry, 'it', {type: 'Link', linkType: 'Asset'});
-
-        expect(val).toBe(ASSET_LINK_IT);
-      });
-
-      it('returns value for enity`s first locale code', function () {
-        delete this.entry.data.fields.TEXT.xx; // Delete default field
-
-        const val = this.spaceContext.findLocalizedField(
-          this.entry, {type: 'Text'});
-
-        expect(val).toBe('VAL EN');
-      });
-
-      it('accepts a callback for the search', function () {
-        const fields = [];
-        const val = this.spaceContext.findLocalizedField(
-          this.entry, function (field) {
-            fields.push(field);
-          });
-
-        expect(fields).toEqual(this.fields);
-        expect(val).toEqual(undefined);
-      });
-    });
-
     describe('#entityDescription()', function () {
       it('returns value of first text or symbol field, falls back to default locale', function () {
         const desc = this.spaceContext.entityDescription(this.entry);
@@ -590,6 +551,32 @@ describe('spaceContext', function () {
     });
   });
 
+  describe('#reloadLocales', function () {
+    beforeEach(function () {
+      this.resetWithSpace();
+      this.tokenStore = this.mockService('tokenStore');
+      this.tokenStore.refresh.resolves();
+    });
+
+    it('calls tokenStore.refresh()', function () {
+      this.spaceContext.reloadLocales();
+      sinon.assert.calledOnce(this.tokenStore.refresh);
+    });
+
+    it('calls TheLocaleStore.reset()', function () {
+      const localeStore = this.$inject('TheLocaleStore');
+      localeStore.reset.reset();
+      const space = this.spaceContext.space;
+      this.spaceContext.reloadLocales();
+      this.$apply();
+      sinon.assert.calledOnceWith(
+        localeStore.reset,
+        space.getId(),
+        space.getPrivateLocales()
+      );
+    });
+  });
+
   function makeCtMock (id, opts = {}) {
     return {
       data: {
@@ -611,7 +598,8 @@ describe('spaceContext', function () {
       }),
       getId: sinon.stub().returns('SPACE_ID'),
       getContentTypes: sinon.stub().resolves([]),
-      getPublishedContentTypes: sinon.stub().resolves([])
+      getPublishedContentTypes: sinon.stub().resolves([]),
+      getPrivateLocales: sinon.stub().returns([{code: 'en'}])
     };
   }
 

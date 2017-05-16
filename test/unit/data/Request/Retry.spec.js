@@ -1,8 +1,11 @@
 'use strict';
+import * as sinon from 'helpers/sinon';
 
 describe('data/Request/Retry', function () {
   beforeEach(function () {
     module('contentful/test');
+
+    this.sandbox = sinon.sandbox.create();
 
     const wrap = this.$inject('data/Request/Retry').default;
     this.$timeout = this.$inject('$timeout');
@@ -30,6 +33,10 @@ describe('data/Request/Retry', function () {
     };
   });
 
+  afterEach(function () {
+    this.sandbox.restore();
+  });
+
   pit('executes a request', function () {
     const promise = this.push();
     const res = {};
@@ -53,7 +60,7 @@ describe('data/Request/Retry', function () {
     this.expectCallCount(15);
   });
 
-  it('waits for the end of period (1000) to free a slot', function () {
+  it('consumes queue at rate of 7 requests per second', function () {
     this.requestStub.resolves({});
     this.push(15);
     this.flush(10);
@@ -68,10 +75,12 @@ describe('data/Request/Retry', function () {
     this.expectCallCount(15);
   });
 
-  pit('retries with an exponential backoff for 429', function () {
+  it('retries with an exponential backoff for 429', function* () {
+    // We wait maximum number of times
+    this.sandbox.stub(Math, 'random').returns(1);
+
     this.requestStub.rejects({statusCode: 429});
-    const promise = this.push();
-    const res = {};
+    const requestPromise = this.push();
 
     this.flush(10);
     this.expectCallCount(1);
@@ -89,13 +98,25 @@ describe('data/Request/Retry', function () {
     this.flush(3900);
     this.expectCallCount(2);
 
+    const res = {};
     this.requestStub.resolves(res);
     this.flush(110);
     this.expectCallCount(3);
 
-    return promise.then(function (requestRes) {
-      expect(requestRes).toBe(res);
-    });
+    const requestRes = yield requestPromise;
+    expect(requestRes).toBe(res);
+  });
+
+  it('fails after 6 tries for 429', function* () {
+    this.requestStub.rejects({statusCode: 429});
+    const responsePromise = this.push();
+
+    // This is the formula for the sum of exponentially increasing
+    // waiting periods.
+    this.flush((Math.pow(2, 7) + 1) * 1000);
+    this.expectCallCount(6);
+    const response = yield responsePromise.catch(_.identity);
+    expect(response.statusCode).toBe(429);
   });
 
   it('retries 5 times for 502', function () {
@@ -125,6 +146,7 @@ describe('data/Request/Retry', function () {
       expect(requestRes).toBe(res);
     });
   });
+
   pit('rejects when all retries fail', function () {
     const onSuccess = sinon.stub();
     const onError = sinon.stub();
@@ -138,6 +160,5 @@ describe('data/Request/Retry', function () {
       sinon.assert.notCalled(onSuccess);
       sinon.assert.calledOnce(onError);
     });
-
   });
 });

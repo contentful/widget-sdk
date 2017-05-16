@@ -16,7 +16,6 @@ describe('Asset List Controller', function () {
   }
 
   beforeEach(function () {
-    const self = this;
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'archived',
@@ -47,12 +46,6 @@ describe('Asset List Controller', function () {
         pickMultiple: stubs.pickMultiple,
         parseFPFile: stubs.parseFPFile
       });
-
-      self.TheLocaleStoreMock = {
-        resetWithSpace: sinon.stub(),
-        getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'})
-      };
-      $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
     });
 
     $rootScope = this.$inject('$rootScope');

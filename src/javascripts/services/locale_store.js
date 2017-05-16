@@ -7,8 +7,13 @@ angular.module('contentful')
  * @name TheLocaleStore
  *
  * @description
- * This service holds all context related to a space, including contentTypes,
- * locales, and helper methods.
+ * This service holds information about the locales for the current
+ * space.
+ *
+ * It is updated with the space ID and the space locales from the
+ * 'spaceContext' service.
+ *
+ * This service also stores locale preferences in localStorage.
 */
 .factory('TheLocaleStore', ['$injector', function ($injector) {
   var TheStore = $injector.get('TheStore');
@@ -22,8 +27,6 @@ angular.module('contentful')
   };
 
   function create (TheStore) {
-
-    var currentSpace = null;
     var currentSpaceId = null;
     var defaultLocale = null;
 
@@ -41,8 +44,7 @@ angular.module('contentful')
     var codeToActiveLocaleMap = {};
 
     return {
-      resetWithSpace: resetWithSpace,
-      refresh: refreshLocales,
+      reset: reset,
       getDefaultLocale: getDefaultLocale,
       getActiveLocales: getActiveLocales,
       getPrivateLocales: getPrivateLocales,
@@ -55,32 +57,18 @@ angular.module('contentful')
 
     /**
      * @ngdoc method
-     * @name TheLocaleStore#resetWithSpace
+     * @name TheLocaleStore#reset
      * @description
-     * Updates the state of this service with the data set for the
+     * Updates the state of this service with the given data.
      * given space.
      *
-     * Only `spaceContext.resetWithSpace()` is responsible for calling
-     * this method.
-     * @param {API.Space} space
+     * This must only be called by the 'spaceContext' service
+     * @param {string} spaceId
+     * @param {API.Locale[]} locales
      */
-    function resetWithSpace (space) {
-      currentSpace = space;
-      refreshLocales();
-    }
-
-    /**
-     * @ngdoc method
-     * @name TheLocaleStore#refresh
-     * @description
-     * Updates the state of this service with the data set for the
-     * current space.
-     *
-     * This is called by the `locale_editor_directive`.
-     */
-    function refreshLocales () {
-      currentSpaceId = currentSpace.getId();
-      privateLocales = currentSpace.getPrivateLocales();
+    function reset (spaceId, locales) {
+      currentSpaceId = spaceId;
+      privateLocales = locales;
 
       // @contentful/client caches the default locale, so calling
       // space.getDefaultLocale() always returns the same locale
