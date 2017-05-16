@@ -118,16 +118,14 @@ describe('Access Checker', function () {
         expect(ac.getSectionVisibility()[key]).toBe(val);
       }
 
-      ['update,contentType',
-        'read,entry',
-        'read,asset',
-        'read,apiKey',
-        'update,settings'
-      ].forEach(function (x) {
-        const action = x.split(',').shift();
-        const key = x.split(',').pop();
-        test(action, key, true);
-        test(action, key, false);
+      [
+        ['read', 'entry'],
+        ['read', 'asset'],
+        ['read', 'apiKey'],
+        ['update', 'settings']
+      ].forEach(([action, section]) => {
+        test(action, section, true);
+        test(action, section, false);
       });
     });
 

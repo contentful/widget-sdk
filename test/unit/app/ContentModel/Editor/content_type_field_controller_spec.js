@@ -1,4 +1,4 @@
-'use strict';
+import {fields as fieldsTemplate} from 'app/ContentModel/Editor/Template';
 
 // TODO rewrite this with new interaction test framework
 describe('Content Type Field Controller', function () {
@@ -20,11 +20,14 @@ describe('Content Type Field Controller', function () {
     this.context = {isNew: false};
 
     this.createFieldElements = function () {
-      this.fieldElement = this.$compile(JST.content_type_field_list(), {
+      this.fieldElement = this.$compile(fieldsTemplate(), {
         contentType: this.contentType,
         publishedFields: [],
         ctEditorController: this.ctEditorController,
-        context: this.context
+        context: this.context,
+        data: {
+          canEdit: true
+        }
       });
     };
     this.createFieldElements();
