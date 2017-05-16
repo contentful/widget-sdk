@@ -1,6 +1,6 @@
 import {range} from 'lodash';
 import {h} from 'utils/hyperscript';
-import {vspace} from 'ui/Layout';
+import {vspace, container} from 'ui/Layout';
 import {docsLink} from 'ui/Content';
 import * as Workbench from 'app/Workbench';
 
@@ -116,7 +116,8 @@ function tabSelect () {
       position: 'sticky',
       top: '0',
       paddingLeft: '40px',
-      zIndex: 1
+      zIndex: 1,
+      background: 'white'
     }
   }, [
     h('ul.workbench-nav__tabs', [
@@ -172,7 +173,9 @@ function tabPanel () {
 
 function nextStepHint () {
   return h('.note-box--success', {
-    style: 'max-width:700px'
+    style: {
+      maxWidth: '700px'
+    }
   }, [
     h('h3', ['Congratulations! You’ve created your first content type']),
     h('a', {
@@ -184,7 +187,10 @@ function nextStepHint () {
 
 
 function noFieldsAdvice () {
-  return h('div', [
+  return container({
+    position: 'relative',
+    maxWidth: '50em'
+  }, [
     h('ul.ct-fields--dummy', range(1, 6).map((i) => {
       return h('li.ct-field', [
         h('div.ct-field__drag-handle'),
