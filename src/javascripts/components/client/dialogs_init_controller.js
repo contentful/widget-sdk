@@ -16,7 +16,6 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var activationEmailResendController = require('activationEmailResendController');
   var subscriptionNotifier = require('subscriptionNotifier');
-  var billingNotifier = require('billingNotifier');
 
   return {
     init: init
@@ -37,7 +36,6 @@ angular.module('contentful')
     var organization = spaceContext.organizationContext.organization || {};
 
     subscriptionNotifier.notifyAbout(organization);
-    billingNotifier.notifyAbout(organization);
   }
 
   function initSpaceWatcher () {

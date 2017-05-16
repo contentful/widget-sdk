@@ -29,7 +29,9 @@ $entity-sidebar-content()
     // We need to hide the border
     transform: translateX(-1px)
 
+// TODO rename workbench-sidebar
 .entity-sidebar
+// TODO rename workbench-sidebar__content
   $entity-sidebar-content()
 
   &__heading
@@ -212,9 +214,10 @@ Styleguide sidebar.text-profile
 .entity-sidebar__text-profile
   color: $colors.text-mid
   p, ul
+    line-height: 1.5
     margin-bottom: $rhythm(0.5)
   ul
     margin-left: 15px
   ul > li
     list-style: disc
-    margin-bottom: $rhythm(0.25)
+    margin-bottom: $new-rhythm(0.5)

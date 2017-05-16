@@ -129,8 +129,6 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
     padding-right: 20px
     .table
       height: calc(100% - 86px) // results + paginator height
-      table
-        width: 79.2vw
     .search-results__count
       padding: 10px 20px
       padding-top: 0
@@ -275,22 +273,12 @@ Styleguide 9.4
 /*
 Workbench Nav with tabs
 
-The `.workbench-nav__left-content` section fills exactly the same space
-as the main sidebar.
-
 Markup:
 .workbench-nav
-  .workbench-nav__left-content
-    button.btn-action Add some
   ul.workbench-nav__tabs
     li(role="tab") First Tab
     li(role="tab" aria-selected="true") Active Tab
     li(role="tab") Last Tab
-.workbench-main.with-header-nav
-  .workbench-main__left-sidebar.styleguide-filled-box1
-    | sidebar
-  .workbench-main__right-content.styleguide-filled-box2
-    | content
 
 Styleguide 9.5
 */
@@ -300,12 +288,6 @@ Styleguide 9.5
   justify-content: space-between
   height: 4rem
   border-bottom: 1px solid $colors.light-gray
-
-
-.workbench-nav__left-content
-  padding-left: $workbench-header-horizontal-padding
-  flex-shrink: 0
-  padding-right: 2em
 
 
 .workbench-nav__tabs

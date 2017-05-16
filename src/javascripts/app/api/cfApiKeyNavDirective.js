@@ -38,10 +38,6 @@ angular.module('contentful')
         {
           name: 'Content management tokens',
           state: 'spaces.detail.api.cma_tokens'
-        },
-        {
-          name: 'Content model explorer',
-          state: 'spaces.detail.api.content_model'
         }
       ];
 
