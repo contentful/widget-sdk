@@ -1,4 +1,4 @@
-'use strict';
+import * as sinon from 'helpers/sinon';
 
 /**
  * @ngdoc service
@@ -15,7 +15,8 @@
  *   TODO provide a mock implementation with space endpoint
  * - `editingInterfaces` Always returns default interface.
  * - `widgets` without custom extensions.
- * - `docPool.load` Creates mock document
+ * - `docPool.get` Creates mock document
+ * - `memberships` Instance of 'access_control/SpaceMembershipRepository
  *
  * @usage[js]
  * const spaceContext = this.$inject('mocks/spaceContext').init();
@@ -28,6 +29,8 @@ angular.module('contentful/mocks')
   const createEIRepo = require('data/editingInterfaces');
   const Widgets = require('widgets');
   const MockDocument = require('mocks/entityEditor/Document');
+  const createApiKeyRepo = require('data/CMA/ApiKeyRepo').default;
+  const createMockEndpoint = require('mocks/spaceEndpoint').create;
 
   return {
     init: init
@@ -55,9 +58,28 @@ angular.module('contentful/mocks')
     spaceContext.widgets = Widgets;
 
     spaceContext.docPool = {
-      load: sinon.stub().resolves(MockDocument.create())
+      get: function (entity, _contentType) {
+        return MockDocument.create(entity.data);
+      }
     };
 
+    spaceContext.memberships = createMembershipsMock();
+
+    spaceContext.endpoint = createMockEndpoint();
+    spaceContext.apiKeyRepo = createApiKeyRepo(spaceContext.endpoint);
+    spaceContext.organizationContext = {};
+
     return spaceContext;
+  }
+
+  function createMembershipsMock () {
+    return {
+      getAll: sinon.stub().resolves([]),
+      invite: sinon.stub().resolves(),
+      inviteAdmin: sinon.stub().resolves(),
+      changeRoleTo: sinon.stub().resolves(),
+      changeRoleToAdmin: sinon.stub().resolves(),
+      remove: sinon.stub().resolves()
+    };
   }
 }]);

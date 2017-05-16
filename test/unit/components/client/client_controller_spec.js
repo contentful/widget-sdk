@@ -1,4 +1,5 @@
-'use strict';
+import * as sinon from 'helpers/sinon';
+import * as K from 'helpers/mocks/kefir';
 
 describe('Client Controller', function () {
   let scope;
@@ -24,10 +25,10 @@ describe('Client Controller', function () {
       };
       $provide.value('authorization', this.authorizationStubs);
     });
-    this.K = this.$inject('mocks/kefir');
     this.tokenStore = this.$inject('tokenStore');
     this.tokenStore.refresh = sinon.stub().resolves();
-    this.tokenStore.user$ = this.K.createMockProperty();
+    this.tokenStore.user$ = K.createMockProperty();
+    this.tokenStore.getTokenLookup = sinon.stub().returns({});
 
     const $rootScope = this.$inject('$rootScope');
     scope = $rootScope.$new();
@@ -45,10 +46,10 @@ describe('Client Controller', function () {
     });
   });
 
-  describe('on authentication.tokenLookup update', function () {
+  describe('on tokenLookup update', function () {
     it('it calls authorization.setTokenLookup', function () {
-      const TOKEN = {};
-      this.$inject('authentication').tokenLookup = TOKEN;
+      const TOKEN = {sys: {}};
+      this.tokenStore.getTokenLookup.returns(TOKEN);
       this.$apply();
       sinon.assert.calledWith(this.authorizationStubs.setTokenLookup, TOKEN);
     });
@@ -59,7 +60,6 @@ describe('Client Controller', function () {
       this.spaceContext = this.$inject('spaceContext');
       this.hasSpace = sinon.stub().returns(false);
       this.authorizationStubs.authContext = {hasSpace: this.hasSpace};
-      this.$inject('authentication').tokenLookup = {};
     });
 
     it('sets authorization space if authContext has space', function () {
@@ -96,12 +96,6 @@ describe('Client Controller', function () {
     it('opens dialog', function () {
       scope.showCreateSpaceDialog();
       sinon.assert.called(this.modalDialog.open);
-    });
-
-    it('tracks analytics event', function () {
-      const analytics = this.$inject('analytics/Analytics');
-      scope.showCreateSpaceDialog();
-      sinon.assert.called(analytics.track);
     });
   });
 
@@ -145,7 +139,7 @@ describe('Client Controller', function () {
       it('is run five minutes after loading', function () {
         this.clock.tick(5 * A_SECOND);
         this.$apply();
-        this.hasNewVersion.reset();
+        this.hasNewVersion.resetHistory();
         this.clock.tick(5 * A_MINUTE);
         this.$apply();
         sinon.assert.calledOnce(this.hasNewVersion);
@@ -157,7 +151,7 @@ describe('Client Controller', function () {
 
         this.clock.tick(5 * A_SECOND);
         this.$apply();
-        this.hasNewVersion.reset();
+        this.hasNewVersion.resetHistory();
         this.clock.tick(5 * A_MINUTE);
         this.$apply();
         sinon.assert.notCalled(this.hasNewVersion);
@@ -193,17 +187,6 @@ describe('Client Controller', function () {
         sinon.assert.notCalled(this.presence.isActive);
         this.clock.tick(50 * 60 * 1000);
         sinon.assert.called(this.presence.isActive);
-      });
-
-      it('reload is triggered if lookup fails', function () {
-        const tokenStore = this.$inject('tokenStore');
-        tokenStore.refresh.rejects();
-        const ReloadNotification = this.$inject('ReloadNotification');
-        ReloadNotification.trigger = sinon.stub();
-
-        this.clock.tick(50 * 60 * 1000);
-        this.$apply();
-        sinon.assert.called(ReloadNotification.trigger);
       });
     });
   });

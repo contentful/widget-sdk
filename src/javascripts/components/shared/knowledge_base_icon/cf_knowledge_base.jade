@@ -1,6 +1,6 @@
 a.knowledge-base-link(
   ng-class="{'x--no-text': !text.length, 'x--inline': inlineText}"
-  target="_blank"
+  target="_blank" rel="noopener noreferrer"
   ng-href="{{ url }}"
   tooltip="{{ tooltipText }}")
   | {{ text }}

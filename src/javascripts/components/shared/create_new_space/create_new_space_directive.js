@@ -29,7 +29,9 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var spaceTemplateEvents = require('analytics/events/SpaceCreation');
 
+
   controller.organizations = OrganizationList.getAll();
+
   // Keep track of the view state
   controller.viewState = 'createSpaceForm';
 
@@ -52,7 +54,48 @@ angular.module('contentful')
       _.find(controller.writableOrganizations, ['sys.id', $scope.organizationId]) ||
       _.first(controller.writableOrganizations)
     );
+  } else {
+    // TODO This should never happen, but unfortunately it does
+    // We need to figure out why and fix it. Maybe when this dialog is
+    // triggered from the organizations page
+    logger.logError('No writable organizations for space creation', {
+      data: {
+        organizations: controller.organizations
+      }
+    });
   }
+
+  // Begin A/B Experiment code: ps-03-2017-example-space-impact
+  var K = require('utils/kefir');
+  var LD = require('utils/LaunchDarkly');
+  var firstName = K.getValue(tokenStore.user$).firstName;
+  var userHasSpaces = !!K.getValue(tokenStore.spaces$).length;
+  var $timeout = require('$timeout');
+  var debounce = require('debounce');
+  var debouncedDialogCenter = debounce(function () {
+    $scope.dialog._centerOnBackground();
+  }, 100);
+  var exampleSpaceImpactTest$ = LD.getTest('ps-03-2017-example-space-impact', _.constant(!userHasSpaces));
+
+  K.onValueScope($scope, exampleSpaceImpactTest$, function (variation) {
+    controller.exampleSpaceTest = {};
+    controller.exampleSpaceTest.isActive = !!variation;
+    controller.exampleSpaceTest.firstName = firstName;
+
+    if (variation) {
+      controller.newSpace.useTemplate = true;
+    }
+
+    $timeout(debouncedDialogCenter, 0);
+
+    analytics.track('experiment:start', {
+      experiment: {
+        id: 'ps-03-2017-example-space-impact',
+        variation: variation
+      }
+    });
+  });
+  // End A/B experiment code: ps-03-2017-example-space-impact
 
   // Load the list of space templates
   controller.templates = [];
@@ -99,14 +142,6 @@ angular.module('contentful')
     }
   };
 
-  // Finish creating space
-  controller.finishedSpaceCreation = function () {
-    var template = controller.newSpace.useTemplate
-      ? controller.newSpace.selectedTemplate
-      : { name: 'Blank' };
-    $scope.dialog.confirm(template);
-  };
-
   function setupTemplates (templates) {
     // Don't need this once the `Blank` template gets removed from Contentful
     controller.templates = _.reduce(templates, function (acc, template) {
@@ -137,7 +172,15 @@ angular.module('contentful')
     var data = controller.newSpace.data;
     var orgId = dotty.get(controller, 'newSpace.organization.sys.id');
 
-    // Check user permissions
+    // TODO We should never be in this state
+    if (!orgId) {
+      logger.logError('No organization id set', {
+        data: {
+          currentOrg: controller.newSpace.organization
+        }
+      });
+      return showFormError('You don’t have permission to create a space');
+    }
     if (!accessChecker.canCreateSpaceInOrganization(orgId)) {
       logger.logError('You can\'t create a Space in this Organization');
       return showFormError('You can\'t create a Space in this Organization');
@@ -157,6 +200,10 @@ angular.module('contentful')
   }
 
   function handleSpaceCreation (newSpace, template) {
+    analytics.track('space:create', {
+      templateName: _.get(template, 'name')
+    });
+
     tokenStore.getSpace(newSpace.getId())
     .then(function (space) {
       return $state.go('spaces.detail', {spaceId: space.getId()});
@@ -164,7 +211,7 @@ angular.module('contentful')
     .then(function () {
       if (template.name === 'Blank') {
         createApiKey();
-        controller.finishedSpaceCreation();
+        $scope.dialog.confirm();
       } else {
         controller.createTemplateInProgress = true;
         controller.viewState = 'creatingTemplate';
@@ -184,6 +231,11 @@ angular.module('contentful')
       if (!retried) {
         createTemplate(data.template, true);
       }
+    }).then(function () {
+      return spaceContext.publishedCTs.refresh();
+    }).then(function () {
+      // Picked up by the learn page which then refreshes itself
+      $rootScope.$broadcast('spaceTemplateCreated');
     });
   }
 

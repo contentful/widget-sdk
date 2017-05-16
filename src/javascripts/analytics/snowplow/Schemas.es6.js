@@ -11,7 +11,7 @@ const _schemas = {};
 
 registerSchema({
   name: 'generic',
-  version: '1-0-0'
+  version: '1-0-1'
 });
 
 registerSchema({
@@ -66,6 +66,57 @@ registerSchema({
 
 registerSchema({
   name: 'space_template',
+  version: '1-0-0'
+});
+
+registerSchema({
+  name: 'boilerplate',
+  version: '1-0-0'
+});
+
+registerSchema({
+  name: 'experiment',
+  version: '1-0-2'
+});
+
+registerSchema({
+  name: 'experiment_start',
+  version: '1-0-0'
+});
+
+registerSchema({
+  name: 'experiment_interaction',
+  version: '1-0-0'
+});
+
+
+registerSchema({
+  name: 'app',
+  version: '1-0-0'
+});
+
+registerSchema({
+  name: 'app_open',
+  version: '1-0-0'
+});
+
+registerSchema({
+  name: 'page_view',
+  version: '1-0-0'
+});
+
+registerSchema({
+  name: 'feature_bulk_editor',
+  version: '1-0-0'
+});
+
+registerSchema({
+  name: 'feature_snapshot',
+  version: '1-0-0'
+});
+
+registerSchema({
+  name: 'personal_access_token',
   version: '1-0-0'
 });
 

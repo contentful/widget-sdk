@@ -6,6 +6,9 @@
 
 set -e
 
+# Skip this whole script if this is a PR build
+if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then exit 0; fi
+
 pushd $TRAVIS_BUILD_DIR
 
 # Download estivador and validate checksum
@@ -16,16 +19,17 @@ echo "$(curl -sSL https://contentful-lab-assets.s3.amazonaws.com/estivador.sum)"
 
 # Upload infrastructure assets
 # Packages are only produced for main environments
+./estivador put-image
 if [[ "$TRAVIS_BRANCH" =~ ^(preview|master|production)$ ]]; then
   ./estivador put-package --package $(ls output/package/archive/user_interface/pool/*.deb)
+  ./estivador notify-slack
 fi
-./estivador put-image
-./estivador notify-slack
+
+./estivador promote-image
 # Promote infrastructure assets
 if [[ "$TRAVIS_BRANCH" =~ ^(preview|master|production)$ ]]; then
   ./estivador promote-package
+  ./estivador notify-slack --promotion
 fi
-./estivador promote-image
-./estivador notify-slack --promotion
 
 popd

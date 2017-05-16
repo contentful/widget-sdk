@@ -48,8 +48,7 @@ angular.module('contentful')
   }
 
   function getExtensions (space) {
-    // TODO rename the endpoint to 'extensions'
-    return space.endpoint('widgets').get()
+    return space.endpoint('extensions').get()
     .then(function (response) {
       return createExtensionsMap(response.items);
     }, function () {

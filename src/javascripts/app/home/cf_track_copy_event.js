@@ -37,7 +37,7 @@ angular.module('contentful')
           var selectedNode = _.get(selection, 'anchorNode.parentNode');
           // Only track event if selected text is contained in this section
           if ($.contains(element[0], selectedNode)) {
-            var language = scope.home.selectedLanguage;
+            var language = scope.resources.selected;
             analyticsEvents.commandCopied(language, selection.toString());
           }
         }

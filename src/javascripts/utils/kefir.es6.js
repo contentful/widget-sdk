@@ -2,7 +2,6 @@ import * as Kefir from 'libs/kefir';
 import {noop, zipObject} from 'lodash';
 import {makeSum} from 'libs/sum-types';
 
-
 /**
  * @ngdoc service
  * @name utils/kefir
@@ -22,9 +21,9 @@ export const PromiseStatus = makeSum({
 
 /**
  * @ngdoc method
- * @name utils/kefir#createBus
+ * @name utils/kefir#createStreamBus
  * @usage[js]
- * var bus = K.createBus(scope)
+ * var bus = K.createStreamBus(scope)
  * bus.stream.onValue(cb)
  * bus.emit('VAL')
  * // 'cb' is called with 'VAL'
@@ -41,7 +40,7 @@ export const PromiseStatus = makeSum({
  * @param {Scope?} scope
  * @returns {utils/kefir.Bus}
  */
-export function createBus (scope) {
+export function createStreamBus (scope) {
   let currentEmitter;
 
   const stream = Kefir.stream(function (emitter) {
@@ -69,6 +68,8 @@ export function createBus (scope) {
     currentEmitter.end();
   }
 }
+// Deprecated alias
+export {createStreamBus as createBus};
 
 
 /**
@@ -97,7 +98,7 @@ export function createBus (scope) {
  * @returns {utils/kefir.PropertyBus}
  */
 export function createPropertyBus (initialValue, scope) {
-  const streamBus = createBus(scope);
+  const streamBus = createStreamBus(scope);
 
   const property = streamBus.stream.toProperty();
 
@@ -230,6 +231,29 @@ export function fromScopeEvent (scope, event, uncurry) {
     };
   });
 }
+
+
+/**
+ * @ngdoc method
+ * @name utils/kefir#fromScopeValue
+ * @description
+ * Create a property that is updated whenever the scope value changes.
+ *
+ * This installs a watcher on the scope that calls the `get` function to obtain
+ * the value.
+ *
+ * @param {Scope} scope
+ * @param {function(scope): T} get
+ *   Function that takes the scope and returns the value
+ * @returns {Property<T>}
+ */
+export function fromScopeValue (scope, get) {
+  const bus = createPropertyBus(get(scope));
+  scope.$watch(get, bus.set);
+  scope.$on('$destroy', bus.end);
+  return bus.property;
+}
+
 
 /**
  * @ngdoc method
@@ -406,6 +430,37 @@ export function getValue (prop) {
 
 
 /**
+ * Returns a reference object to the current value of the property.
+ *
+ * ~~~js
+ * const ref = K.getRef(prop)
+ * ref.value // => current value
+ * ref.dispose() // => unsubcribes once and for all
+ * ~~~
+ *
+ * The function subscribes to the property immediately and sets the
+ * `value` property of the reference object.
+ *
+ * The reference object also has a `dispose()` function that
+ * unsubscribes from the property. In addition it cleans up the
+ * reference deleting both the `value` and `dispose` properties.
+ */
+export function getRef (prop) {
+  assertIsProperty(prop);
+  const ref = {dispose};
+
+  const unsub = onValue(prop, (value) => { ref.value = value; });
+  return ref;
+
+  function dispose () {
+    unsub();
+    delete ref.value;
+    delete ref.dispose;
+  }
+}
+
+
+/**
  * @ngdoc method
  * @name utils/kefir#scopeLifeline
  * @description
@@ -429,6 +484,37 @@ export function scopeLifeline (scope) {
   });
 }
 
+
+/**
+ * @ngdoc method
+ * @name utils/kefir#endWith
+ * @description
+ * Returns a property that ends when
+ *
+ * This starts listening on both the `prop` and `lifeline` observables.
+ *
+ * @params {Kefir.Property<T>} prop
+ * @params {Kefir.Stream<any>} lifeline
+ * @returns {Kefir.Property<T>}
+ */
+export function endWith (prop, lifeline) {
+  const bus = createPropertyBus();
+
+  const propSub = prop.observe({
+    value: bus.set,
+    end: end
+  });
+
+  const lifelineSub = lifeline.observe({end});
+
+  return bus.property;
+
+  function end () {
+    bus.end();
+    propSub.unsubscribe();
+    lifelineSub.unsubscribe();
+  }
+}
 
 function assertIsProperty (prop) {
   if (

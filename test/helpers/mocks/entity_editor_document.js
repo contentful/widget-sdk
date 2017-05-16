@@ -1,4 +1,5 @@
-'use strict';
+import * as sinon from 'helpers/sinon';
+import * as K from 'test/helpers/mocks/kefir';
 
 angular.module('contentful/mocks')
 /**
@@ -12,7 +13,6 @@ angular.module('contentful/mocks')
  * implementation with just the ShareJS Doc mock
  */
 .factory('mocks/entityEditor/Document', ['require', function (require) {
-  const K = require('mocks/kefir');
   const $q = require('$q');
   const ResourceStateManager = require('data/document/ResourceStateManager');
 
@@ -58,7 +58,9 @@ angular.module('contentful/mocks')
       state: {
         isDirty$: K.createMockProperty(),
         isSaving$: K.createMockProperty(false),
-        isConnected$: K.createMockProperty(true)
+        isConnected$: K.createMockProperty(true),
+        loaded$: K.createMockProperty(true),
+        error$: K.createMockStream()
       },
 
       getData: sinon.spy(getData),

@@ -8,12 +8,13 @@
  * It also displays the version in the UI and provides an easy way to clear it.
 */
 angular.module('contentful')
-.factory('uiVersionSwitcher', ['$injector', function ($injector) {
-  var $location = $injector.get('$location');
-  var $window = $injector.get('$window');
-  var $document = $injector.get('$document');
-  var Cookies = $injector.get('Cookies');
-  var moment = $injector.get('moment');
+.factory('uiVersionSwitcher', ['require', function (require) {
+  var $location = require('$location');
+  var $window = require('$window');
+  var $document = require('$document');
+  var Cookies = require('Cookies');
+  var moment = require('moment');
+  var gitRevision = require('environment').gitRevision;
 
   return {
     checkIfVersionShouldBeSwitched: function () {
@@ -28,7 +29,7 @@ angular.module('contentful')
       Cookies.set('ui_version', uiVersion, {
         expires: moment().add(24, 'h').toDate()
       });
-      if (window.CF_UI_VERSION !== uiVersion) {
+      if (gitRevision !== uiVersion) {
         // This reloads the page without the query string
         $window.location.search = '';
       }
@@ -42,12 +43,10 @@ angular.module('contentful')
       return;
     }
 
-    var uiVersion = window.CF_UI_VERSION;
-
     $document.find('body')
     .append(
       '<div class="cf-ui-version-display">Contentful UI Version: ' +
-      '<a href="?ui_version=' + uiVersion + '">' + uiVersion + '</a> ' +
+      '<a href="?ui_version=' + gitRevision + '">' + gitRevision + '</a> ' +
       '<a href="#" data-cf-ui-version-reload>Clear</a></div>'
     );
 

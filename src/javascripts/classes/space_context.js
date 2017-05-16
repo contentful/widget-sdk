@@ -14,29 +14,33 @@ angular.module('contentful')
  * @property {Client.ContentType[]} publishedContentTypes
  * @property {Client.Space} space
  * @property {Data.APIClient} cma
+ * @property {ACL.SpaceMembershipRepository} memberships
  */
-.factory('spaceContext', ['$injector', function ($injector) {
-  var $parse = $injector.get('$parse');
-  var $q = $injector.get('$q');
-  var $timeout = $injector.get('$timeout');
-  var ReloadNotification = $injector.get('ReloadNotification');
-  var TheLocaleStore = $injector.get('TheLocaleStore');
-  var createUserCache = $injector.get('data/userCache');
-  var ctHelpers = $injector.get('data/ContentTypes');
-  var Widgets = $injector.get('widgets');
-  var spaceEndpoint = $injector.get('data/spaceEndpoint');
-  var authentication = $injector.get('authentication');
-  var environment = $injector.get('environment');
-  var createEIRepo = $injector.get('data/editingInterfaces');
-  var createQueue = $injector.get('overridingRequestQueue');
-  var ApiClient = $injector.get('data/ApiClient');
-  var ShareJSConnection = $injector.get('data/ShareJS/Connection');
-  var Subscription = $injector.get('Subscription');
-  var previewEnvironmentsCache = $injector.get('data/previewEnvironmentsCache');
-  var apiKeysCache = $injector.get('data/apiKeysCache');
-  var PublishedCTRepo = $injector.get('data/ContentTypeRepo/Published');
-  var logger = $injector.get('logger');
-  var DocumentPool = $injector.get('data/sharejs/DocumentPool');
+.factory('spaceContext', ['require', function (require) {
+  var $parse = require('$parse');
+  var $q = require('$q');
+  var ReloadNotification = require('ReloadNotification');
+  var TheLocaleStore = require('TheLocaleStore');
+  var createUserCache = require('data/userCache');
+  var ctHelpers = require('data/ContentTypes');
+  var Widgets = require('widgets');
+  var createSpaceEndpoint = require('data/Endpoint').createSpaceEndpoint;
+  var Config = require('Config');
+  var createEIRepo = require('data/editingInterfaces');
+  var createQueue = require('overridingRequestQueue');
+  var ApiClient = require('data/ApiClient');
+  var ShareJSConnection = require('data/sharejs/Connection');
+  var Subscription = require('Subscription');
+  var previewEnvironmentsCache = require('data/previewEnvironmentsCache');
+  var PublishedCTRepo = require('data/ContentTypeRepo/Published');
+  var logger = require('logger');
+  var DocumentPool = require('data/sharejs/DocumentPool');
+  var tokenStore = require('tokenStore');
+  var createApiKeyRepo = require('data/CMA/ApiKeyRepo').default;
+  var K = require('utils/kefir');
+  var Auth = require('Authentication');
+  var OrganizationContext = require('classes/OrganizationContext');
+  var MembershipRepo = require('access_control/SpaceMembershipRepository');
 
   var requestContentTypes = createQueue(function (extraHandler) {
     if (!spaceContext.space) {
@@ -47,21 +51,6 @@ angular.module('contentful')
     .then(refreshContentTypes, ReloadNotification.apiErrorHandler)
     .then(extraHandler || _.identity);
   });
-
-  var waiter = {
-    reset: function () {
-      this.attempts = _.range(5);
-      return this;
-    },
-    canWait: function () {
-      return _.isNumber(this.attempts.pop());
-    },
-    waitAndRetry: function () {
-      return $timeout(function () {
-        spaceContext.refreshContentTypesUntilChanged();
-      }, 1500);
-    }
-  }.reset();
 
   var spaceContext = {
     /**
@@ -93,19 +82,21 @@ angular.module('contentful')
      */
     resetWithSpace: function (space) {
       var self = this;
-      var endpoint = spaceEndpoint.create(
-        authentication.token,
-        environment.settings.apiUrl,
-        space.getId()
+
+      self.endpoint = createSpaceEndpoint(
+        Config.apiUrl(),
+        space.getId(),
+        Auth
       );
 
       resetMembers(self);
       self.space = space;
-      self.cma = new ApiClient(endpoint);
+      self.cma = new ApiClient(self.endpoint);
       self.users = createUserCache(space);
-      self.apiKeys = apiKeysCache.create(space);
-      self.editingInterfaces = createEIRepo(endpoint);
+      self.apiKeyRepo = createApiKeyRepo(self.endpoint);
+      self.editingInterfaces = createEIRepo(self.endpoint);
       var organization = self.getData('organization') || null;
+      self.organizationContext = OrganizationContext.create(organization);
       self.subscription =
         organization && Subscription.newFromOrganization(organization);
 
@@ -113,18 +104,22 @@ angular.module('contentful')
       // used only in a process of creating space out
       // of a template. We shouldn't use it in newly
       // created code.
+
       self.docConnection = ShareJSConnection.create(
-        authentication.token,
-        environment.settings.otUrl,
+        Auth.getToken,
+        Config.otUrl,
         space.getId()
       );
 
-      self.docPool = DocumentPool.create(self.docConnection, endpoint);
+      self.memberships = MembershipRepo.create(self.endpoint);
+
+      self.docPool = DocumentPool.create(self.docConnection, self.endpoint);
 
       self.publishedCTs = PublishedCTRepo.create(space);
       self.publishedCTs.wrappedItems$.onValue(function (cts) {
         self.publishedContentTypes = cts.toArray();
       });
+      self.user = K.getValue(tokenStore.user$);
 
       previewEnvironmentsCache.clearAll();
       TheLocaleStore.resetWithSpace(space);
@@ -171,37 +166,6 @@ angular.module('contentful')
         return requestContentTypes();
       } else {
         throw new Error('Cannot refresh content types: no space in the context.');
-      }
-    },
-
-    /**
-     * @ngdoc method
-     * @name spaceContext#refreshContentTypesUntilChanged
-     * @description
-     * Refreshes all Content Type related information in the context.
-     * If refresh doesn't change state of content types, it tries
-     * again (with limit of 5 tries and 1500ms of delay between requests).
-     *
-     * This is needed because when a content type is created publishing it is
-     * not immediately possible. We use the list enpoint as a proxy to determine
-     * when the backend has processed the created content type.
-     *
-     * TODO we should remove this method and instead introduce a special purpose
-     * publish method for CTs that retries when it fails for CTs not yet
-     * processed by the backend.
-     */
-    refreshContentTypesUntilChanged: function () {
-      var before = getContentTypeIds(spaceContext.contentTypes);
-      return requestContentTypes.hasToFinish(retryIfNotChanged);
-
-      function retryIfNotChanged (response) {
-        var after = getContentTypeIds(spaceContext.contentTypes);
-        if (after === before && waiter.canWait()) {
-          return waiter.waitAndRetry();
-        } else {
-          waiter.reset();
-          return response;
-        }
       }
     },
 
@@ -444,12 +408,6 @@ angular.module('contentful')
 
   resetMembers(spaceContext);
   return spaceContext;
-
-  function getContentTypeIds (cts) {
-    return _(cts).map(function (ct) {
-      return ct.getId();
-    }).sortBy().join(',');
-  }
 
   function refreshContentTypes (contentTypes) {
     spaceContext.contentTypes = filterAndSortContentTypes(contentTypes);

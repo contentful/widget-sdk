@@ -1,13 +1,8 @@
 import {env} from 'Config';
 import segment from 'analytics/segment';
-import {
-  enable as enableSnowplow,
-  disable as disableSnowplow,
-  track as trackSnowplow,
-  identify as identifySnowplow
-} from 'analytics/snowplow/Snowplow';
+import * as Snowplow from 'analytics/snowplow/Snowplow';
 import {prepareUserData} from 'analytics/UserData';
-import analyticsConsole from 'analytics/console';
+import * as analyticsConsole from 'analytics/console';
 import stringifySafe from 'stringifySafe';
 import _ from 'lodash';
 
@@ -57,7 +52,7 @@ export const enable = _.once(function (user) {
 
   if (shouldSend) {
     segment.enable();
-    enableSnowplow();
+    Snowplow.enable();
   }
 
   identify(prepareUserData(removeCircularRefs(user)));
@@ -73,7 +68,7 @@ export const enable = _.once(function (user) {
  */
 export function disable () {
   segment.disable();
-  disableSnowplow();
+  Snowplow.disable();
   isDisabled = true;
   session = {};
   sendSessionDataToConsole();
@@ -105,8 +100,9 @@ export function getSessionData (path, defaultValue) {
 export function track (event, data) {
   data = _.isObject(data) ? _.cloneDeep(data) : {};
   data = removeCircularRefs(_.extend(data, getBasicPayload()));
+
   segment.track(event, data);
-  trackSnowplow(event, data);
+  Snowplow.track(event, data);
   analyticsConsole.add(event, data);
 }
 
@@ -118,14 +114,21 @@ export function track (event, data) {
  * Sets or extends session user data. Identifying
  * data is also set on Segment's client.
  */
-export function identify (extension) {
+function identify (extension) {
   session.user = session.user || {};
-  const user = _.merge(session.user, extension || {});
+  const rawUserData = _.merge(session.user, extension || {});
+
+  // We need to remove the list of organization memberships as this array gets
+  // flattened when it is passed to Intercom and creates a lot of noise
+  const user = _.omitBy(rawUserData, function (val) {
+    return _.isArray(val) || _.isObject(val);
+  });
+
   const userId = getSessionData('user.sys.id');
 
   if (userId && user) {
     segment.identify(userId, user);
-    identifySnowplow(userId);
+    Snowplow.identify(userId);
   }
 
   sendSessionDataToConsole();

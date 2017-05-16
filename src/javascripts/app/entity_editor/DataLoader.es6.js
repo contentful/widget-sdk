@@ -1,7 +1,10 @@
-import {find, isPlainObject, cloneDeep} from 'lodash';
+import {find, isPlainObject, cloneDeep, memoize} from 'lodash';
 import assetEditorInterface from 'data/editingInterfaces/asset';
 import {caseof as caseofEq} from 'libs/sum-types/caseof-eq';
 import {deepFreeze} from 'utils/DeepFreeze';
+import $q from '$q';
+import createPrefetchCache from 'data/CMA/EntityPrefetchCache';
+
 
 /**
  * @ngdoc service
@@ -21,6 +24,9 @@ import {deepFreeze} from 'utils/DeepFreeze';
  * When loading an entry the returned object has an additional
  * `contentType` property. Its value is an instance of a client
  * library content type.
+ *
+ * Editor data can be mocked using the
+ * 'mocks/app/entity_editor/DataLoader' module.
  */
 
 
@@ -35,52 +41,9 @@ import {deepFreeze} from 'utils/DeepFreeze';
 // space context.
 // TODO we should deep freeze all the data
 export function loadEntry (spaceContext, id) {
-  const context = {};
-
-  return fetchEntity(spaceContext, 'Entry', id)
-  .then((entity) => {
-    context.entity = entity;
-    const ctId = entity.data.sys.contentType.sys.id;
-    return spaceContext.publishedCTs.fetch(ctId);
-  }).then((ct) => {
-    context.contentType = ct;
-    return spaceContext.editingInterfaces.get(ct.data);
-  }).then((ei) => {
-    context.fieldControls = spaceContext.widgets.buildRenderable(ei.controls);
-    context.entityInfo = makeEntityInfo(context.entity, context.contentType);
-    return context;
-  });
+  const loader = makeEntryLoader(spaceContext);
+  return loadEditorData(loader, id);
 }
-
-
-/**
- * @ngdoc method
- * @name app/entity_editor/DataLoader#loadEntryWithDoc
- * @description
- * Same as `loadEntry()` but also loads the entry document from the connection
- * pool (see the 'data/sharejs/DocumentPool' module). The promise is resolved
- * then the document connection has been established.
- * @param {SpaceContext} spaceContext
- * @param {string} id
- * @param {API.User} user
- * @param {Property<void>} lifeline
- * @returns {Promise<object>}
- */
-export function loadEntryWithDoc (spaceContext, id, user, lifeline) {
-  return loadEntry(spaceContext, id)
-  .then((context) => {
-    return spaceContext.docPool.load(
-      context.entity,
-      context.contentType,
-      user,
-      lifeline
-    ).then((doc) => {
-      context.doc = doc;
-      return context;
-    });
-  });
-}
-
 
 /**
  * @ngdoc method
@@ -90,14 +53,145 @@ export function loadEntryWithDoc (spaceContext, id, user, lifeline) {
  * @returns {object}
  */
 export function loadAsset (spaceContext, id) {
+  const loader = makeAssetLoader(spaceContext);
+  return loadEditorData(loader, id);
+}
+
+
+/**
+ * @ngdoc method
+ * @name app/entity_editor/DataLoader#makePrefetchEntryLoader
+ * @description
+ * Given a space context and a property of an array of IDs we return a
+ * function that loads and caches editor data. The returned function
+ * accepts an ID and returns the editor data for that ID.
+ *
+ * The entry data is prefetched in bulk when the value of `ids$` changes.
+ * Content type and editor interface data is cached.
+ *
+ * NOTE This function currently is specialized to entries. It should be
+ * easy to generlize this if needed.
+ *
+ * @param {SpaceContext} spaceContext
+ * @param {K.Property<string[]>} ids$
+ */
+export function makePrefetchEntryLoader (spaceContext, ids$) {
+  const cache = createPrefetchCache((query) => {
+    return spaceContext.space.getEntries(query);
+  });
+
+  const loader = makeEntryLoader(spaceContext);
+  loader.getEntity = function getEntity (id) {
+    return cache.get(id)
+      .then((entity) => {
+        if (entity) {
+          return entity;
+        } else {
+          // Fall back to requesting a single entry
+          // The prefetch cache uses the query endpoint to get entries.
+          // Because the CMA is inconsistent newly created entries may
+          // not be available from the query endpoint yet. We try to
+          // get them from the single resource endpoint instead.
+          return spaceContext.space.getEntry(id);
+        }
+      });
+  };
+  loader.getFieldControls = memoize(loader.getFieldControls);
+
+  ids$.onValue(cache.set);
+
+  return function load (id) {
+    return loadEditorData(loader, id);
+  };
+}
+
+
+/**
+ * Loads all the resources from the loader and builds the editor data.
+ *
+ * Loaders are created by `makeEntryLoader()` and `makeAssetLoader()`.
+ */
+function loadEditorData (loader, id) {
   const context = {};
-  return fetchEntity(spaceContext, 'Asset', id)
+  return loader.getEntity(id)
   .then((entity) => {
     context.entity = entity;
-    context.fieldControls =
-      spaceContext.widgets.buildRenderable(assetEditorInterface.widgets);
-    context.entityInfo = makeEntityInfo(entity);
-    return context;
+    return loader.getContentType(entity);
+  }).then((ct) => {
+    context.contentType = ct;
+    return loader.getFieldControls(ct);
+  }).then((controls) => {
+    context.fieldControls = controls;
+    context.entityInfo = makeEntityInfo(context.entity, context.contentType);
+    context.openDoc = loader.getOpenDoc(context.entity, context.contentType);
+    return Object.freeze(context);
+  });
+}
+
+
+// Loaders provide a specialized interface to fetch the resources need
+// for the editor data.
+// They provide a bridge between the 'spaceContext' and the
+// `loadEditorData()` function.
+function makeEntryLoader (spaceContext) {
+  return {
+    getEntity (id) {
+      return fetchEntity(spaceContext, 'Entry', id);
+    },
+    getContentType (entity) {
+      const ctId = entity.data.sys.contentType.sys.id;
+      return spaceContext.publishedCTs.fetch(ctId);
+    },
+    getFieldControls (contentType) {
+      return spaceContext.editingInterfaces.get(contentType.data)
+      .then((ei) => {
+        return spaceContext.widgets.buildRenderable(ei.controls);
+      });
+    },
+    getOpenDoc: makeDocOpener(spaceContext)
+  };
+}
+
+function makeAssetLoader (spaceContext) {
+  return {
+    getEntity (id) {
+      return fetchEntity(spaceContext, 'Asset', id);
+    },
+    getContentType () {
+      return $q.resolve(null);
+    },
+    getFieldControls () {
+      return spaceContext.widgets.buildRenderable(assetEditorInterface.widgets);
+    },
+    getOpenDoc: makeDocOpener(spaceContext)
+  };
+}
+
+
+function makeDocOpener (spaceContext) {
+  return function getOpenDoc (entity, contentType) {
+    return function open (lifeline) {
+      return spaceContext.docPool.get(
+        entity,
+        contentType,
+        spaceContext.user,
+        lifeline
+      );
+    };
+  };
+}
+
+
+function makeEntityInfo (entity, contentType) {
+  return deepFreeze({
+    id: entity.data.sys.id,
+    type: entity.data.sys.type,
+    contentTypeId: contentType ? contentType.data.sys.id : null,
+    // TODO Normalize CT data if this property is used by more advanced
+    // services like the 'Document' controller and the 'cfEntityField'
+    // directive. Normalizing means that we set external field IDs from
+    // internal ones, etc. See for example 'data/editingInterfaces/transformer'
+    contentType: contentType ? cloneDeep(contentType.data) : null
   });
 }
 
@@ -112,20 +206,6 @@ function fetchEntity (spaceContext, type, id) {
   ]).then((entity) => {
     sanitizeEntityData(entity.data, space.getPrivateLocales());
     return entity;
-  });
-}
-
-
-function makeEntityInfo (entity, contentType) {
-  return deepFreeze({
-    id: entity.data.sys.id,
-    type: entity.data.sys.type,
-    contentTypeId: contentType ? contentType.data.sys.id : null,
-    // TODO Normalize CT data if this property is used by more advanced
-    // services like the 'Document' controller and the 'cfEntityField'
-    // directive. Normalizing means that we set external field IDs from
-    // internal ones, etc. See for example 'data/editingInterfaces/transformer'
-    contentType: contentType ? cloneDeep(contentType.data) : null
   });
 }
 

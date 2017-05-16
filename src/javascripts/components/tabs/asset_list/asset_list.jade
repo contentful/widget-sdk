@@ -1,5 +1,6 @@
 include ../advice.mixin.jade
 include ../pluralize_entity.mixin.jade
+include ../../shared/table_pattern.mixin.jade
 
 header.workbench-header
   cf-breadcrumbs
@@ -16,7 +17,7 @@ header.workbench-header
       search-content-type="assetContentType"
       placeholder="Type to search. Press the down arrow key for help.")
 
-    .search-results-position(cf-search-results-position paginator="searchController.paginator" ng-hide="!searchController.paginator.getTotal()")
+    .search-results-position(cf-search-results-position paginator="paginator" ng-hide="!paginator.getTotal()")
 
   .workbench-header__actions(
     ng-show="!showNoAssetsAdvice() && !shouldHide('createAsset')")
@@ -43,17 +44,18 @@ header.workbench-header
     cf-view-menu="uiConfig.assetListViews")
 
   .workbench-main__right-content
-    .search-results__count(ng-show="searchController.paginator.getTotal() > 0")
-      +pluralize-entity("asset", "searchController.paginator.getTotal()", "found")
+    .search-results__count(ng-show="paginator.getTotal() > 0")
+      +pluralize-entity("asset", "paginator.getTotal()", "found")
     .table(ng-show="assets.length && !isEmpty")
       .table__head
         table
           thead
             tr
               th(aria-label="cell-preview").x--image-cell
-                label(ng-click="$event.stopPropagation()")
-                  input(type="checkbox" cf-selection="assets" ng-click="selection.toggleList(assets, $event)" ng-show="assets.length > 0" tabindex="-1")
-                | Preview
+                div.table__checkbox-cell
+                  label(ng-click="$event.stopPropagation()")
+                    input(type="checkbox" cf-selection="assets" ng-click="selection.toggleList(assets, $event)" ng-show="assets.length > 0" tabindex="-1")
+                  | Preview
               th(aria-label="cell-name").x--large-cell Name
               th(aria-label="cell-dimensions").x--medium-cell Dimensions
               th(aria-label="cell-type") Type
@@ -104,33 +106,41 @@ header.workbench-header
         table
           tbody
             tr(ng-repeat="asset in assets track by asset.getId()"
-                ng-init="file=spaceContext.localizedField(asset, 'data.fields.file')"
-                ui-sref="spaces.detail.assets.detail({ assetId: asset.getId() })"
+                ng-init="file=spaceContext.localizedField(asset, 'data.fields.file');linkToAsset='spaces.detail.assets.detail({ assetId: asset.getId() })'"
+                ui-sref="{{linkToAsset}}"
                 ng-class="{'x--highlight': selection.isSelected(asset)}")
-              td(aria-label="cell-preview").x--image-cell
-                div
+              td.x--image-cell(style="cursor: pointer" aria-label="cell-preview")
+                div.table__checkbox-cell
                   label(ng-click="$event.stopPropagation()")
                     input(type="checkbox" cf-selection="asset" tabindex="-1" ng-click="selection.toggle(asset, $event)")
-                  cf-thumbnail(file="file" size="30" ng-if="file")
-              td(aria-label="cell-name").x--large-cell {{ spaceContext.assetTitle(asset) }}
-              td(aria-label="cell-dimensions").x--medium-cell
+                  a(ui-sref="{{linkToAsset}}")
+                    cf-thumbnail(file="file" size="30" ng-if="file")
+              +td.x--large-cell(aria-label="cell-name"
+                ui-sref="{{linkToAsset}}")
+                | {{ spaceContext.assetTitle(asset) || '&nbsp;' }}
+              +td.x--medium-cell(aria-label="cell-dimensions"
+                ui-sref="{{linkToAsset}}")
                 span(ng-bind-html="getAssetDimensions(asset)")
-              td(aria-label="cell-type")
+              +td(aria-label="cell-type"
+                ui-sref="{{linkToAsset}}")
                 span {{file|fileType}}
                 span.extension {{file|fileExtension}}
-              td(aria-label="cell-updated")
+              +td(aria-label="cell-updated"
+                ui-sref="{{linkToAsset}}")
                 date(ng-if="asset.getUpdatedAt()" datetime="{{asset.getUpdatedAt()}}" cf-relative-datetime)
-              td.x--small-cell(aria-label="cell-author")
+              +td.x--small-cell(aria-label="cell-author"
+                ui-sref="{{linkToAsset}}")
                 span(cf-user link="asset.getUpdatedBy()" as="updater")
                   | {{updater | userNameDisplay:user}}
-              td.entity-status.x--small-cell(
+              +td.entity-status.x--small-cell(
                 aria-label="cell-status"
-                ng-class="entityStatus.getClassname(asset)")
-                | {{entityStatus.getLabel(asset)}}
+                ui-sref="{{linkToAsset}}")
+                span(ng-class="entityStatus.getClassname(asset)")
+                  | {{entityStatus.getLabel(asset) || '&nbsp;'}}
 
-    cf-search-results-paginator(paginator="searchController.paginator" pages="7")
+    cf-search-results-paginator(paginator="paginator" pages="7")
 
-    +no-search-results("!assets.length || isEmpty", "context.view.searchTerm")
+    +no-search-results("hasQuery && !paginator.getTotal() && !context.isSearching || isEmpty", "context.view.searchTerm")
 
 .workbench-main.x--content(ng-show="showNoAssetsAdvice()")
   include ./no_assets_advice

@@ -1,4 +1,4 @@
-'use strict';
+import * as KefirMock from 'helpers/mocks/kefir';
 
 describe('cfBreadcrumbsDirective spec', function () {
   const contextHistoryMock = {
@@ -26,7 +26,6 @@ describe('cfBreadcrumbsDirective spec', function () {
       });
     });
 
-    const KefirMock = this.$inject('mocks/kefir');
     contextHistoryMock.crumbs$ = KefirMock.createMockProperty([]);
 
     this.compileElement = function (backHint, ancestorHint) {

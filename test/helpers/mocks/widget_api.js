@@ -1,4 +1,5 @@
-'use strict';
+import * as sinon from 'helpers/sinon';
+import * as K from 'test/helpers/mocks/kefir';
 
 angular.module('contentful/mocks')
 /**
@@ -9,7 +10,6 @@ angular.module('contentful/mocks')
  * Use `mockWidgetApi._state` to inspect internal state modified by methods.
  */
 .factory('mocks/widgetApi', ['require', function (require) {
-  const K = require('mocks/kefir');
   const $q = require('$q');
 
   return {
@@ -75,7 +75,9 @@ angular.module('contentful/mocks')
         name: '',
         locale: 'en-US',
         type: '',
-        registerPublicationWarning: sinon.stub().returns(_.noop)
+        registerPublicationWarning: sinon.stub().returns(_.noop),
+
+        value$: K.createMockProperty()
       },
       space: {
         getEntries: sinon.stub().resolves({ total: 0, items: [] }),

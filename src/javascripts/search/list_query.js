@@ -22,6 +22,13 @@ angular.module('contentful').factory('ListQuery', ['$injector', function ($injec
     },
     getForAssets: function (opts) {
       return prepareEntityListQuery(assetContentType, opts);
+    },
+    getForUsers: function (opts) {
+      var userContentType = {
+        data: {},
+        getId: _.constant(undefined)
+      };
+      return prepareEntityListQuery(userContentType, opts);
     }
   };
 

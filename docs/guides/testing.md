@@ -17,6 +17,67 @@ $ gulp prepare-tests
 $ xvfb-run karma start --browsers SlimerJS
 ~~~
 
+Deprecated Patterns
+-------------------
+
+This is a list of patterns used in old code but deprecated.
+
+* `pit()` DSL to create promise based tests. Use generator functions instead.
+* `this.$inject()` for ES6 modules. Use native `import X from 'Y'` instead.
+* Using the `$compile` service to compile directives. Use `this.$comile()`
+  instead.
+* Global `sinon`. Use `import sinon from 'helpers/sinon'` instead.
+* `this.$inject('q')`. You can use `import $q from '$q'`.
+
+
+Module System
+-------------
+
+Test files are only executed when their file name ends with `.spec.js`.
+
+All files in the `test/` folder are treated as ES6 modules. Files in the
+`test/helper/` directory can by imported with `import 'helpers/my-helper'`.
+ES6 modules defined in the application code can also be loaded from test files.
+Their name is relative to the `src/javascripts` folder.
+
+~~~js
+// test/unit/utils/Kefir.spec.js
+
+import * as KM from 'helpers/mocks/kefir';
+// from src/javscripts/utils.kefir.es6.js
+import * as K from 'utils/kefir';
+
+// ...
+~~~
+
+Unlike ES6 modules defined in the `src/` directory we can not import Angular
+services in test files. To use Angular services that are not defined as ES6
+modules see [“Using Angular”](#using-angular) below.
+
+NPM packages can be imported in the tests using the `npm` prefix.
+
+~~~js
+import sinon from 'npm:sinon'
+~~~
+
+For performance reasons it is heavily advised to load a UMD distribution of the
+file. This is defined in the SystemJS config in `test/system-config.js`.
+
+~~~js
+SystemJS.config({
+  packages: {
+    'npm:package-name': {
+      main: 'dist/file.js'
+      format: 'amd',
+    }
+  }
+})
+~~~
+
+For more information see the [SystemJS config documentation][systemjs-config].
+
+[systemjs-config]: https://github.com/systemjs/systemjs/blob/master/docs/config-api.md
+
 
 Testing DSL
 -----------
@@ -87,14 +148,16 @@ module.
 ~~~js
 beforeEach(function () {
   module('contentful/test');
-  var $q = this.$inject('$q');
+  const $rootScope = this.$inject('$rootScope');
 })
 ~~~
 
-The [`ngMock`][ng-mock] module is automatically required. The
-`contentful/test` module includes the main `contentful` module and the
-`contentful/mocks` module. The latter provides various services that
-mock certain parts of the application.
+You can import the `$q` service directly instead of using `this.$inject()`.
+~~~js
+import $q from '$q';
+~~~
+Note that the methods on `$q` may only be called after the Angular module has
+been instantiated.
 
 Directives can be compiled and tested with the
 [`$compile` helper][service:helpers].
@@ -159,9 +222,80 @@ this.$apply()
 // `cb` is called with 'val'
 ~~~
 
+### Individual methods
+
+*For mocking an entire service, see [the next section](#services).*
+
+If you want to mock only some methods in a dependency of the tested unit, but
+leave other properties intact, you can simply inject it in the test and replace
+these method with stubs:
+
+~~~js
+// foo.js
+angular.module('contentful')
+
+.service('foo', function (require) {
+  var bar = require('bar');
+
+  return function () {
+    return bar.buzz();
+  }
+});
+
+// unit test for 'foo'
+before(function () {
+  this.foo = this.$inject('foo');
+  this.bar = this.$inject('bar');
+  this.bar.buzz = sinon.stub().returns('herp');
+});
+
+it('should herp', function () {
+  expect(this.foo()).toBe('herp');
+});
+~~~
+
+However, this won't work if `foo` is an ES6 module:
+
+~~~js
+// Foo.es6.js
+import * as bar from 'bar';
+
+export function () {
+  return bar.buzz();
+}
+~~~
+
+All dependencies of ES6 modules are shallow-copied, so the changes that are
+made to `bar` after it was imported in `foo` will not be applied to the
+imported instance. However, if we change the order of imports in the test:
+
+~~~js
+before(function () {
+  module('contentful/test');
+
+  this.bar = this.$inject('bar');
+  this.bar.buzz = sinon.stub().returns('herp');
+  this.foo = this.$inject('foo');
+});
+~~~
+
+Then import statement inside `Foo.es6.js` will be executed after we inject and
+modify `bar`, and receive the modified version.
+
+This also means that we currently cannot modify ES6 dependencies on the fly:
+
+~~~js
+// works with a es5 foo, but not with es6 :(
+it('should derp', function () {
+  this.bar.buzz = sinon.stub().returns('derp');
+  expect(this.foo()).toBe('derp');
+});
+~~~
+
+
 ### Services
 
-The `this.mockService()` helper mocks all methods in an Angular service.
+Use `this.mockService()` helper to mock *all* methods in an Angular service.
 
 Assume the `myService` service is an object that exports the `foo` and `bar`
 methods.
@@ -184,9 +318,34 @@ The object passed to `this.mockService()` contains custom extensions to the
 service. It only allows you to change properties that already exist on the
 service.
 
+Note that for testing ES6 modules with mock services, imports order matters in
+the same way as for [mock individual methods](#individual-methods).
+
 There is a `mocks` module and a `cfStub` service that provide elaborate mocks
 for certain parts of the app. Use of `cfStub` service is *deprecated* and needs
 some major cleanup.
+
+
+UI Acceptance Test
+------------------
+
+
+We provide a small library to write acceptance tests. The library creates
+objects that allow you to interact with the DOM and provides assertions
+
+~~~js
+import {createView} from 'helpers/DOM'
+
+const view = createView(document.body)
+view.find('input-field').setValue('thomas')
+view.find('submit-button').click()
+view.find('notification').assertText('Hello thomas!')
+~~~
+
+Elements are selected using the `data-test-id` property. For API documentation,
+see the `test/helpers/DOM.js` file.
+
+This technique is fairly new and requires extending.
 
 
 Reporters

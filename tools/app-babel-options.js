@@ -17,7 +17,9 @@ export const options = {
   // syntax from the ESLint blacklist in src/javascripts/.eslint-es6.yml
   presets: [],
   plugins: [
-    ['transform-es2015-modules-systemjs'],
+    ['transform-es2015-modules-systemjs', {
+      systemGlobal: 'AngularSystem'
+    }],
     // Transforms 'const' and 'let' to 'var' with block scope
     ['transform-es2015-block-scoping'],
     // Make sure 'const' variables are not reassigned
@@ -25,6 +27,8 @@ export const options = {
     ['transform-es2015-template-literals'],
     // Loose option: All iterable destructuring are assumed to be arrays.
     ['transform-es2015-destructuring', {options: 'loose'}],
+    // For function parameters enables destructuring, defaults, rest
+    ['transform-es2015-parameters'],
     ['transform-es2015-arrow-functions']
   ],
 

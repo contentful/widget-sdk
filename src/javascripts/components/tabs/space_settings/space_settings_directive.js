@@ -41,8 +41,10 @@ angular.module('contentful')
   }
 
   function handleSaveError (err) {
-    if (dotty.get(err, 'data.details.errors', []).length > 0) {
+    if (_.get(err, 'data.details.errors', []).length > 0) {
       notification.error('Please provide a valid space name.');
+    } else if (_.get(err, 'data.sys.id') === 'Conflict') {
+      notification.error('Unable to update space: Your data is outdated. Please reload and try again');
     } else {
       ReloadNotification.basicErrorHandler();
     }
@@ -59,8 +61,8 @@ angular.module('contentful')
   }
 
   function isSaveDisabled () {
-    var input = dotty.get($scope, 'model.name');
-    var currentName = dotty.get(spaceContext, 'space.data.name');
+    var input = _.get($scope, 'model.name');
+    var currentName = _.get(spaceContext, 'space.data.name');
 
     return !input || input === currentName;
   }
@@ -68,6 +70,7 @@ angular.module('contentful')
   function openRemovalDialog () {
     var spaceName = spaceContext.space.data.name;
     var scope = _.extend($rootScope.$new(), {
+      spaceName: spaceName,
       input: {spaceName: ''},
       remove: Command.create(remove, {
         disabled: function () {
@@ -77,7 +80,7 @@ angular.module('contentful')
     });
 
     modalDialog.open({
-      template: templates.removalConfirmation(spaceName),
+      template: templates.removalConfirmation(),
       noNewScope: true,
       scope: scope
     });

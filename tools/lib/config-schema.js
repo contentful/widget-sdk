@@ -23,7 +23,7 @@ const urlSchema = {
 
 // For each item 'x' we require a property 'xUrl' that has a URL format.
 const URL_KEYS = [
-  'auth', 'api', 'ot', 'asset', 'marketing'
+  'auth', 'api', 'ot', 'asset', 'marketing', 'toolsService'
 ]
 
 export default strictObject(Object.assign({
@@ -55,6 +55,9 @@ function hosts () {
 
 function integrations () {
   return {
+    launchDarkly: strictObject({
+      envId: alnum(24)
+    }),
     filepicker: strictObject({
       api_key: alnum(22),
       policy: alnum(60),

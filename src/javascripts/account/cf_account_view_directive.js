@@ -5,7 +5,7 @@ angular.module('contentful')
 
   var $timeout = require('$timeout');
   var $location = require('$location');
-  var authentication = require('authentication');
+  var authentication = require('Authentication');
   var modalDialog = require('modalDialog');
   var createChannel = require('account/IframeChannel').default;
   var K = require('utils/kefir');
@@ -71,7 +71,7 @@ angular.module('contentful')
       ignoreEsc: true,
       attachTo: 'body'
     }).promise.then(function () {
-      authentication.clearAndLogin();
+      authentication.redirectToLogin();
     });
   }
 }]);

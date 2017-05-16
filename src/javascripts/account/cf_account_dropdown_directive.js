@@ -6,24 +6,28 @@ angular.module('contentful')
   return {
     template: JST.cf_account_dropdown(),
     restrict: 'E',
-    replace: true, // @todo adjust styles so it's not needed
     scope: {user: '='},
     controller: 'cfAccountDropdownController'
   };
 })
 
-.controller('cfAccountDropdownController', ['$scope', '$injector', function cfAccountDropdownController ($scope, $injector) {
+.controller('cfAccountDropdownController', ['$scope', 'require', function cfAccountDropdownController ($scope, require) {
 
-  var $window = $injector.get('$window');
-  var TheAccountView = $injector.get('TheAccountView');
-  var authentication = $injector.get('authentication');
-  var Config = $injector.get('Config');
-  var analytics = $injector.get('analytics/Analytics');
-  var intercom = $injector.get('intercom');
+  var $window = require('$window');
+  var TheAccountView = require('TheAccountView');
+  var authentication = require('Authentication');
+  var K = require('utils/kefir');
+  var Config = require('Config');
+  var analytics = require('analytics/Analytics');
+  var intercom = require('intercom');
 
   $scope.$watch(TheAccountView.canGoToOrganizations, function (canGo) {
     $scope.canGoToOrganizations = canGo;
     $scope.orgId = _.get(TheAccountView.getGoToOrganizationsOrganization(), 'sys.id');
+  });
+
+  K.onValueScope($scope, TheAccountView.canShowIntercomLink$, function (canShowIntercomLink) {
+    $scope.canShowIntercomLink = canShowIntercomLink;
   });
 
   $scope.openSupport = openSupport;

@@ -1,5 +1,4 @@
-// Karma configuration
-// Generated on Sat Aug 09 2014 23:18:39 GMT+0200 (CEST)
+/* global require module */
 
 require('babel-register');
 
@@ -9,19 +8,8 @@ module.exports = function (config) {
   base(config);
   config.set({
     files: [
-      'build/app/**/*.js',
-
-      // Test libraries
-      'node_modules/angular-mocks/angular-mocks.js',
-      'node_modules/sinon/pkg/sinon.js',
-
-      'test/helpers/**/*.js',
-      'test/unit/**/*.js',
-      'test/integration/**/*.js',
-
-      // Vendored scripts
-      {pattern: 'vendor/ui-extensions-sdk/dist/cf-extension-api.js', included: false}
-    ],
+      'build/app/**/*.js'
+    ].concat(base.testFiles),
 
     reporters: ['dots'],
     browsers: ['SlimerJS'],

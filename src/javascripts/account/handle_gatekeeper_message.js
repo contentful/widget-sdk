@@ -5,17 +5,16 @@ angular.module('contentful')
 .factory('handleGatekeeperMessage', ['require', function (require) {
   var $location = require('$location');
   var $state = require('$state');
-  var authentication = require('authentication');
+  var authentication = require('Authentication');
   var notification = require('notification');
   var tokenStore = require('tokenStore');
-  var ReloadNotification = require('ReloadNotification');
   var CreateSpace = require('services/CreateSpace');
 
   return function handleGatekeeperMessage (data) {
     var match = makeMessageMatcher(data);
 
     if (match('create', 'UserCancellation')) {
-      authentication.goodbye();
+      authentication.cancelUser();
 
     } else if (match('new', 'space')) {
       CreateSpace.showDialog(data.organizationId);
@@ -32,9 +31,6 @@ angular.module('contentful')
 
     } else if (match('update', 'location') && data.path) {
       updateUrl(data.path);
-
-    } else if (data.token) {
-      updateToken(data.token);
 
     } else { tokenStore.refresh(); }
   };
@@ -77,15 +73,6 @@ angular.module('contentful')
       $state.go($state.current, params, {location: 'replace'});
     } else {
       $location.url(target);
-    }
-  }
-
-  function updateToken (data) {
-    authentication.updateTokenLookup(data);
-    if (authentication.tokenLookup) {
-      tokenStore.refreshWithLookup(authentication.tokenLookup);
-    } else {
-      ReloadNotification.trigger();
     }
   }
 }]);

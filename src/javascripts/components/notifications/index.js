@@ -2,9 +2,9 @@
 
 angular.module('contentful')
 
-.factory('notification', ['$injector', function($injector) {
-  var getNotificationBus = $injector.get('notifications/bus');
-  var setupClearMessageHooks = $injector.get('notifications/clearMessageHooks');
+.factory('notification', ['require', function (require) {
+  var getNotificationBus = require('notifications/bus');
+  var setupClearMessageHooks = require('notifications/clearMessageHooks');
 
   var main = getNotificationBus('main');
   return _.extend(main, {

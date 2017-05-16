@@ -2,7 +2,6 @@
 
 angular.module('contentful')
 .controller('EntityCreationController', ['require', function EntityCreationController (require) {
-  var analytics = require('analytics/Analytics');
   var notification = require('notification');
   var logger = require('logger');
   var enforcements = require('enforcements');
@@ -40,15 +39,6 @@ angular.module('contentful')
 
   this.newContentType = function () {
     $state.go('spaces.detail.content_types.new.home');
-  };
-
-  this.newApiKey = function () {
-    var usage = enforcements.computeUsage('apiKey');
-    if (usage) {
-      return notification.error(usage);
-    }
-    $state.go('spaces.detail.api.keys.new');
-    analytics.track('api_keys:create_screen_opened');
   };
 
   this.newLocale = function () {

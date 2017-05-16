@@ -8,6 +8,7 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
 
   var qs = FilterQS.create('contentTypes');
   var view = qs.readView();
+
   $scope.context.list = view.list || 'all';
   $scope.searchTerm = view.searchTerm || '';
   $scope.empty = true;

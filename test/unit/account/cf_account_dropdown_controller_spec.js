@@ -6,7 +6,7 @@ describe('Account Dropdown Controller', function () {
 
     module('contentful/test', function ($provide) {
       $provide.value('analytics/Analytics', stubs.analytics);
-      $provide.value('authentication', stubs.authentication);
+      $provide.value('Authentication', stubs.authentication);
       $provide.value('$window', stubs.window);
     });
 

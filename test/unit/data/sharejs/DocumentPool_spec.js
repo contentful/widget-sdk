@@ -1,15 +1,14 @@
-'use strict';
+import * as K from 'helpers/mocks/kefir';
 
 describe('DocumentPool', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    this.K = this.$inject('mocks/kefir');
     const Document = this.$inject('entityEditor/Document');
     this.doc = {
       destroy: sinon.stub(),
       state: {
-        loaded$: this.K.createMockProperty(false)
+        loaded$: K.createMockProperty(false)
       }
     };
     this.doc2 = {destroy: sinon.stub()};
@@ -28,7 +27,7 @@ describe('DocumentPool', function () {
       expect(
         Object.keys(this.pool).sort()
       ).toEqual(
-        ['get', 'destroy', 'load'].sort()
+        ['get', 'destroy'].sort()
       );
     });
   });
@@ -42,7 +41,7 @@ describe('DocumentPool', function () {
     beforeEach(function () {
       this.get = function (id, type) {
         const entity = {data: {sys: {id: id, type: type || 'Entry'}}};
-        return this.pool.get(entity, ct, user, this.K.createMockProperty());
+        return this.pool.get(entity, ct, user, K.createMockProperty());
       };
     });
 
@@ -81,26 +80,11 @@ describe('DocumentPool', function () {
     });
   });
 
-  describe('#load', function () {
-    it('resolves when document emits loaded', function () {
-      const load = this.pool.load(entity, ct, user, this.K.createMockProperty());
-      const loaded = sinon.spy();
-      load.then(loaded);
-      this.$apply();
-      sinon.assert.notCalled(loaded);
-
-      this.doc.state.loaded$.set(true);
-      this.doc.state.loaded$.end();
-      this.$apply();
-      sinon.assert.calledWith(loaded, this.doc);
-    });
-  });
-
   describe('disposing', function () {
     beforeEach(function () {
-      this.lifeline1 = this.K.createMockStream();
+      this.lifeline1 = K.createMockStream();
       this.pool.get(entity, ct, user, this.lifeline1);
-      this.lifeline2 = this.K.createMockStream();
+      this.lifeline2 = K.createMockStream();
       this.pool.get(entity, ct, user, this.lifeline2);
     });
 
@@ -118,7 +102,7 @@ describe('DocumentPool', function () {
 
   describe('#destroy', function () {
     it('destroys all document instances', function () {
-      const lifeline = this.K.createMockStream();
+      const lifeline = K.createMockStream();
       this.pool.get(entity, ct, user, lifeline);
       this.ref1 = this.pool.get(entity, ct, user, lifeline);
       this.ref2 = this.pool.get(entity2, ct, user, lifeline);

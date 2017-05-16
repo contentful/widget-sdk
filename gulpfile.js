@@ -73,8 +73,7 @@ var src = {
       'node_modules/bootstrap/js/tooltip.js',
       'node_modules/browserchannel/dist/bcsocket-uncompressed.js',
       'vendor/sharejs/webclient/share.uncompressed.js',
-      'vendor/sharejs/webclient/json.uncompressed.js',
-      'vendor/sharejs/webclient/textarea.js'
+      'vendor/sharejs/webclient/json.uncompressed.js'
     ]),
     kaltura: assertFilesExist([
       'vendor/kaltura-16-01-2014/webtoolkit.md5.js',
@@ -109,7 +108,9 @@ var src = {
     './vendor/html5reset-1.6.1.css',
     // Custom jQuery UI build: see the file for version and contents
     './vendor/jquery-ui/jqui.css',
-    './node_modules/codemirror/lib/codemirror.css'
+    './node_modules/codemirror/lib/codemirror.css',
+    // Add angular styles since we are disabling inline-styles in ngCsp
+    './node_modules/angular/angular-csp.css'
   ])
 };
 
@@ -322,8 +323,10 @@ gulp.task('serve', function () {
   var configName = process.env.UI_CONFIG || 'development';
   var watchFiles = !process.env.NO_WATCHING;
 
-  var svgPattern = path.join(src.svg.sourceDirectory, '**/*.svg');
-  var appSrc = [svgPattern].concat(src.components);
+  var appSrc = [
+    'src/javascripts/**/*.js',
+    path.join(src.svg.sourceDirectory, '**/*.svg')
+  ];
   var patternTaskMap = [
     [appSrc, ['js/app']],
     [src.templates, ['templates']],
@@ -487,6 +490,7 @@ gulp.task('build/styles', ['build/static', 'stylesheets'], function () {
     // Need to reload the source maps because 'rework' inlines them.
     .pipe(sourceMaps.init({ loadMaps: true }))
     .pipe(changeBase('build'))
+    .pipe(writeFile())
     .pipe(rev())
     .pipe(writeFile())
     .pipe(sourceMaps.write('.', {sourceRoot: '/'}))

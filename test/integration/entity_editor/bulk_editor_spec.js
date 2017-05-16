@@ -1,3 +1,5 @@
+import * as K from 'helpers/mocks/kefir';
+
 describe('bulk editor', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -12,31 +14,18 @@ describe('bulk editor', function () {
       {code: 'EN', name: 'English'}
     ]);
 
-    const K = this.$inject('mocks/kefir');
     const $q = this.$inject('$q');
 
     this.spaceContext = this.$inject('mocks/spaceContext').init();
-    this.spaceContext.space.getEntry = function (id) {
-      return $q.resolve({
-        data: {
-          sys: {
-            id: id,
-            type: 'Entry',
-            contentType: {sys: {id: 'CTID'}}
-          }
-        }
-      });
+
+    this.spaceContext.space.getEntries = function (query) {
+      const ids = query['sys.id[in]'].split(',');
+      const entities = ids.map((id) => makeEntry(id, 'CTID'));
+      return $q.resolve(entities);
     };
 
     this.spaceContext.publishedCTs.fetch = function (id) {
-      return $q.resolve({
-        data: {
-          sys: {
-            id: id,
-            type: 'ContentType'
-          }
-        }
-      });
+      return $q.resolve(makeContentType(id));
     };
 
     this.compile = function (ids = []) {
@@ -52,15 +41,6 @@ describe('bulk editor', function () {
       return el;
     };
 
-    function makeLink (id) {
-      return {
-        sys: {
-          id: id,
-          linkType: 'Entry',
-          type: 'Link'
-        }
-      };
-    }
   });
 
   it('closes editor when clicking back button', function () {
@@ -77,4 +57,37 @@ describe('bulk editor', function () {
       .get();
     expect(entityIds).toEqual(['A', 'B']);
   });
+
+  function makeEntry (id, ctId) {
+    return {
+      data: {
+        sys: {
+          id: id,
+          type: 'Entry',
+          contentType: {sys: {id: ctId}}
+        }
+      }
+    };
+  }
+
+  function makeLink (id) {
+    return {
+      sys: {
+        id: id,
+        linkType: 'Entry',
+        type: 'Link'
+      }
+    };
+  }
+
+  function makeContentType (id) {
+    return {
+      data: {
+        sys: {
+          id: id,
+          type: 'ContentType'
+        }
+      }
+    };
+  }
 });

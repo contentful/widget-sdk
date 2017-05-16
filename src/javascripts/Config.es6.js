@@ -1,20 +1,31 @@
-import * as JQuery from 'jquery';
+import * as QS from 'libs/qs';
 import {settings} from 'environment';
 
 /**
  * @ngdoc service
  * @name Config
  * @description
- * This module exposes all the static data that depends on the
- * environment the app runs in.
+ * This module exposes all the static settings that depend on
+ * the environment the app runs in. They are read from the
+ * `environment` constant.
  *
- * The environment settings are injected into the code using the
- * `CF_CONFIG` global variable. It is set in the `index.html` file and
- * read by the `environment` service.
- *
- * TODO We shhould remove the 'environment' service and expose
+ * TODO We should remove the `environment` constant and expose
  * everything here.
  */
+
+
+/**
+ * @ngdoc method
+ * @name Config#apiUrl
+ * Given a path return the URL for the CMA.
+ *
+ * In production returns something like `//api.contentful.com/path`.
+ * @param {string} path
+ * @returns {string}
+ */
+export function apiUrl (path) {
+  return settings.apiUrl + ensureLeadingSlash(path);
+}
 
 
 /**
@@ -31,8 +42,7 @@ import {settings} from 'environment';
 export function authUrl (path, params) {
   let base = settings.authUrl + ensureLeadingSlash(path);
   if (params) {
-    // TODO use qs module instead
-    base += '?' + JQuery.param(params);
+    base += '?' + QS.stringify(params);
   }
   return base;
 }
@@ -62,6 +72,18 @@ export function websiteUrl (path) {
 export function accountUrl (path) {
   return authUrl('/account' + ensureLeadingSlash(path));
 }
+
+
+/**
+ * @ngdoc property
+ * @name Config#otUrl
+ * URL for ShareJS connection.
+ *
+ * In production this is `//ot.contentful.com/`.
+ * @param {string} path
+ * @returns {string}
+ */
+export const otUrl = settings.otUrl;
 
 /**
  * @ngdoc property
@@ -104,8 +126,27 @@ export const domain = settings.main_domain;
  */
 export const snowplow = settings.snowplow;
 
-function ensureLeadingSlash (x) {
-  x = x || '';
+/**
+ * @ngdoc property
+ * @name Config#launchDarkly
+ * @description
+ * Launch Darkly config object
+ *
+ * @returns {object}
+ */
+export const launchDarkly = settings.launchDarkly;
+
+
+export function toolsUrl (path, params) {
+  let base = settings.toolsServiceUrl + ensureLeadingSlash(path.join('/'));
+  if (params) {
+    base += '?' + QS.stringify(params);
+  }
+  return base;
+}
+
+
+function ensureLeadingSlash (x = '') {
   if (x.charAt(0) === '/') {
     return x;
   } else {

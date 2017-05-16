@@ -1,4 +1,4 @@
-'use strict';
+import * as sinon from 'helpers/sinon';
 
 describe('widgets', function () {
   let widgets;
@@ -59,7 +59,7 @@ describe('widgets', function () {
     });
 
     it('calls store.getMap()', function () {
-      this.storeGetMap.reset();
+      this.storeGetMap.resetHistory();
       widgets.getAvailable('number');
       sinon.assert.calledOnce(this.storeGetMap);
     });

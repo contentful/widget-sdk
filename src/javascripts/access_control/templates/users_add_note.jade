@@ -1,0 +1,10 @@
+//- @TODO move to hyperscript after user_list.jade
+span.add-users-to-space-note
+  | You can only add users to this space who are already part of your organization.&#32;
+  span(ng-if="canInviteUsersToOrganization()")
+    | To invite new users to your organization, and ultimately this space, head to&#32;
+    a(href ng-click="goToOrganizationUsers()")
+      | organizations &amp; billing
+    |.
+  span(ng-if="!canInviteUsersToOrganization()")
+    | Inviting new users to your organization can be done by an organization owner or admin.

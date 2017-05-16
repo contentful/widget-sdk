@@ -341,19 +341,18 @@ describe('Access Checker', function () {
 
     it('returns result of organization authContext "can" call', function () {
       const organizationCanStub = sinon.stub().returns('YES WE CAN');
-      authorization.authContext = {
-        organization: sinon.stub().withArgs('orgid').returns({can: organizationCanStub})
-      };
+      authorization.authContext = makeAuthContext({
+        orgid: organizationCanStub
+      });
 
       expect(ac.canCreateSpaceInOrganization('orgid')).toBe('YES WE CAN');
-      sinon.assert.calledOnce(authorization.authContext.organization.withArgs('orgid'));
       sinon.assert.calledOnce(organizationCanStub.withArgs('create', 'Space'));
     });
 
     it('returns false and logs if organization authContext throws', function () {
-      authorization.authContext = {
-        organization: _.constant({can: function () { throw new Error(); }})
-      };
+      authorization.authContext = makeAuthContext({
+        orgid: sinon.stub().throws()
+      });
 
       expect(ac.canCreateSpaceInOrganization('orgid')).toBe(false);
       const logger = this.$inject('logger');
@@ -374,33 +373,34 @@ describe('Access Checker', function () {
     });
 
     it('returns true if space can be created in at least on organization', function () {
-      authorization.authContext = {
-        organization: function (orgId) {
-          return {can: _.constant(orgId === 'org1')};
-        }
-      };
+      authorization.authContext = makeAuthContext({
+        org1: sinon.stub().returns(false),
+        org2: sinon.stub().returns(true)
+      });
 
       expect(ac.canCreateSpaceInAnyOrganization()).toBe(true);
     });
 
     it('returns false if space cannot be create in any organization', function () {
-      authorization.authContext = {organization: _.constant({can: _.constant(false)})};
+      authorization.authContext = makeAuthContext({
+        org1: sinon.stub().returns(false),
+        org2: sinon.stub().returns(false)
+      });
+
       expect(ac.canCreateSpaceInAnyOrganization()).toBe(false);
     });
   });
 
   describe('#canCreateSpace', function () {
-    let organizationCanStub, authCanStub;
+    let organizationCanStub;
 
     beforeEach(function () {
       organizationCanStub = sinon.stub().returns(false);
-      authCanStub = sinon.stub().returns(false);
       sinon.stub(OrganizationList, 'isEmpty').returns(false);
       sinon.stub(OrganizationList, 'getAll').returns([{sys: {id: 'org1'}}]);
-      authorization.authContext = {
-        organization: _.constant({can: organizationCanStub}),
-        can: authCanStub
-      };
+      authorization.authContext = makeAuthContext({
+        org1: organizationCanStub
+      });
     });
 
     afterEach(function () {
@@ -427,22 +427,22 @@ describe('Access Checker', function () {
 
     it('returns true if can create space in some organization and can create space in general', function () {
       organizationCanStub.returns(true);
-      authCanStub.returns(true);
+      authorization.authContext.can.returns(true);
       expect(ac.canCreateSpace()).toBe(true);
       sinon.assert.calledOnce(organizationCanStub);
     });
 
     it('returns false if can create space in some organization but cannot create spaces in general', function () {
       organizationCanStub.returns(true);
-      authCanStub.returns(false);
+      authorization.authContext.can.returns(false);
       expect(ac.canCreateSpace()).toBe(false);
       sinon.assert.calledOnce(organizationCanStub);
-      sinon.assert.calledOnce(authCanStub);
+      sinon.assert.calledOnce(authorization.authContext.can);
     });
 
     it('broadcasts enforcement if found for a general case', function () {
       organizationCanStub.returns(true);
-      authCanStub.returns(false);
+      authorization.authContext.can.returns(false);
       const reasons = ['REASONS!'];
       reasonsDeniedStub.withArgs('create', 'Space').returns(reasons);
       enforcements.determineEnforcement.withArgs(reasons, 'Space').returns({message: 'MESSAGE'});
@@ -490,3 +490,20 @@ describe('Access Checker', function () {
     });
   });
 });
+
+/**
+ * Create a mock for a @contentful/worf authContext object.
+ *
+ * The argument is a map from organization IDs to 'can' functions.
+ */
+function makeAuthContext (orgs) {
+  return {
+    organization (id) {
+      return {can: orgs[id]};
+    },
+    hasOrganization (id) {
+      return id in orgs;
+    },
+    can: sinon.stub()
+  };
+}

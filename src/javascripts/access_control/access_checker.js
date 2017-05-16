@@ -153,7 +153,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
       asset: !shouldHide('readAsset') || policyChecker.canAccessAssets(),
       apiKey: !shouldHide('readApiKey'),
       settings: !shouldHide('updateSettings'),
-      learn: getSpaceData('spaceMembership.admin', false)
+      spaceHome: getSpaceData('spaceMembership.admin', false)
     };
   }
 
@@ -382,7 +382,12 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
   function canCreateSpaceInOrganization (organizationId) {
     if (!authorization.authContext) { return false; }
 
-    return checkIfCanCreateSpace(authorization.authContext.organization(organizationId));
+    var authContext = authorization.authContext;
+    if (authContext.hasOrganization(organizationId)) {
+      return checkIfCanCreateSpace(authContext.organization(organizationId));
+    } else {
+      return false;
+    }
   }
 
   function checkIfCanCreateSpace (context) {

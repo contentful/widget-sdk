@@ -1,44 +1,57 @@
 mixin single-list-item
   cf-entity-link(
-    ng-if="config.linksEntry"
-    ng-click="toggleSelection(entity)"
+    ng-if="config.entityType === 'Entry'"
+    ng-click="toggleSelection(entity, $event)"
     entity="entity"
     entity-helpers="helpers"
     config="{showDetails: true}")
 
   cf-asset-card(
-    ng-if="config.linksAsset"
-    ng-click="toggleSelection(entity)"
+    ng-if="config.entityType === 'Asset'"
+    ng-click="toggleSelection(entity, $event)"
     entity="entity"
     entity-helpers="helpers"
     config="{asThumb: true, disableTooltip: true}")
 
+  cf-user-link(
+    ng-if="config.entityType === 'User'"
+    ng-click="toggleSelection(entity, $event)"
+    user="entity")
+
 .modal-background
-  .modal-dialog.entity-selector-dialog(ng-controller="EntitySelectorController")
+  .modal-dialog.entity-selector-dialog(
+    ng-controller="EntitySelectorController"
+    ng-class="'entity-selector-dialog--for-{{ config.entityType.toLowerCase() }}-entities'")
     header.modal-dialog__header
       h1 {{ labels.title }}
       button.modal-dialog__close(ng-click="dialog.cancel()")
 
-    .modal-dialog__content
+    .modal-dialog__content(ng-if="!showCustomEmptyMessage()")
       .entity-selector__input-label
         p {{ labels.input }}
-        p(ng-if="config.multiple")
+        p.entity-selector__mode-switcher(ng-if="config.multiple")
           a(href ng-click="view.mode = SELECTED" ng-if="view.mode === AVAILABLE")
             | Show {{ labels.selected }} ({{ selected.length }})
           a(href ng-click="view.mode = AVAILABLE" ng-if="view.mode === SELECTED")
             | Hide {{ labels.selected }} ({{ selected.length }})
 
       .entity-selector__search(
+        ng-if="supportsAdvancedSearch"
         cf-tokenized-search="view.searchTerm"
         search-content-type="singleContentType"
-        placeholder="Type to search, press down arrow key for help"
+        placeholder="{{ getSearchPlaceholder() }}"
         cf-on-blur-component="leftSearch($event)"
         cf-on-blur-component-when="showAutocompletions")
+
+      .entity-selector__search(ng-if="!supportsAdvancedSearch")
+        input.cfnext-form__input--full-size(
+          ng-model="view.searchTerm"
+          placeholder="{{ getSearchPlaceholder() }}")
 
       .entity-selector__item-list.endless-container(
         ng-if="view.mode === AVAILABLE"
         ng-style="{height: listHeight}"
-        ng-class="{'entity-selector__thumbnails': config.linksAsset}"
+        ng-class="{'entity-selector__thumbnails': config.entityType === 'Asset', 'entity-selector__item-list--empty': !items.length}"
         cf-endless-container
         at-bottom="loadMore()"
         num-elements="paginator.getPage()")
@@ -49,10 +62,10 @@ mixin single-list-item
 
         .entity-selector__item(
           ng-repeat="entity in items track by entity.sys.id"
-          ng-class="{'x--selected': selectedIds[entity.sys.id]}")
+          ng-class="{'x--selected': selectedIds[entity.sys.id],'entity-selector__last-item': $last && paginator.atLast()}")
           +single-list-item
 
-        .loading(ng-show="isLoading")
+        .loading(ng-if="isLoading")
 
       .entity-selector__item-list(
         ng-if="view.mode === SELECTED"
@@ -64,14 +77,24 @@ mixin single-list-item
         .entity-selector__item.x--selected(ng-repeat="entity in selected track by entity.sys.id")
           +single-list-item
 
-      .note-box.note-box--info(
-        ng-if="!config.multiple"
+      .entity-selector__note.note-box.note-box--info(
+        ng-if="labels.info"
         ng-bind="labels.info")
+      .entity-selector__note.note-box.note-box--info(
+        ng-if="labels.infoHtml"
+        bind-html-compile="labels.infoHtml")
 
-    .modal-dialog__controls(ng-if="config.multiple")
+    .modal-dialog__content(
+      ng-if="showCustomEmptyMessage()"
+      bind-html-compile="labels.noEntitiesCustomHtml"
+      data-test-id="custom-empty-message")
+
+    .modal-dialog__controls(ng-if="config.multiple && !showCustomEmptyMessage()")
       button.btn-primary-action.modal-dialog__controls-confirm(
         type="button"
         ng-click="dialog.confirm(selected)"
         ng-disabled="selected.length < config.min || selected.length > config.max")
-        | Insert {{ labels.selected }}
+        | {{ labels.insert }}
         span(ng-if="selected.length > 0") &nbsp;({{ selected.length }})
+      button.btn-secondary-action(type="button" ng-click="dialog.cancel()")
+        | Cancel

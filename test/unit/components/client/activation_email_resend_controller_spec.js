@@ -1,72 +1,63 @@
-'use strict';
+import * as K from 'helpers/mocks/kefir';
 
-xdescribe('activationEmailResendController', function () {
-  var $rootScope, $q, authentication, moment;
-  var openDialogStub, dialogConfirmSpy, resendConfirmationEmailStub;
-  var userMock, storeMock;
+describe('activationEmailResendController', function () {
+  let moment;
+  let openDialogStub, dialogConfirmSpy;
 
-  var A_SECOND = 1000;
-  var A_DAY = 24 * 1000 * 60 * 60;
-  var LAST_REMINDER_STORE_KEY;
+  const A_SECOND = 1000;
+  const A_DAY = 24 * 60 * 60 * A_SECOND;
 
   beforeEach(function () {
     openDialogStub = sinon.stub();
     dialogConfirmSpy = sinon.spy();
-    resendConfirmationEmailStub = sinon.stub();
-    userMock = {
-      name: 'Some User',
-      email: 'user@example.com',
-      confirmed: false
-    };
-    storeMock = {
-      set: sinon.spy(),
-      get: sinon.stub(),
-      remove: sinon.spy()
-    };
-
     module('contentful/test', function ($provide) {
       $provide.value('modalDialog', {
         open: openDialogStub
       });
-      $provide.value('authentication', {
-        tokenLookup: {sys: {createdBy: userMock}}
-      });
-      $provide.value('activationEmailResender', {
-        resend: resendConfirmationEmailStub
-      });
-      $provide.value('TheStore', storeMock);
     });
 
-    $q = this.$inject('$q');
+    this.mockService('activationEmailResender', {
+      resend: sinon.stub().resolves()
+    });
+
+    const tokenStore = this.mockService('tokenStore', {
+      user$: K.createMockProperty()
+    });
+    this.setUser = function (props) {
+      tokenStore.user$.set(_.assign({
+        name: 'Some User',
+        email: 'user@example.com',
+        confirmed: false
+      }, props));
+    };
+
+    const $q = this.$inject('$q');
 
     openDialogStub.returns({
       promise: $q(_.noop),
       scope: {},
       confirm: dialogConfirmSpy
     });
-    resendConfirmationEmailStub.returns($q(_.noop));
 
     moment = this.$inject('moment');
-    $rootScope = this.$inject('$rootScope');
-    authentication = this.$inject('authentication');
 
-    var controller = this.$inject('activationEmailResendController');
-    LAST_REMINDER_STORE_KEY = controller.LAST_REMINDER_STORE_KEY;
+    const controller = this.$inject('activationEmailResendController');
+
+    const TheStore = this.$inject('TheStore');
+    this.store = TheStore.forKey('lastActivationEmailResendReminderTimestamp');
     controller.init();
   });
 
   describe('with user already activated', function () {
-    beforeEach(function () {
-      userMock.confirmed = true;
-      $rootScope.$apply();
-    });
-
     it('does not open the resend activation email dialog', function () {
+      this.setUser({confirmed: true});
       sinon.assert.notCalled(openDialogStub);
     });
 
     it('removes dialog related store info which is no longer required', function () {
-      sinon.assert.calledWithExactly(storeMock.remove, LAST_REMINDER_STORE_KEY);
+      this.store.set(true);
+      this.setUser({confirmed: true});
+      expect(this.store.get()).toBe(null);
     });
   });
 
@@ -74,106 +65,105 @@ xdescribe('activationEmailResendController', function () {
     beforeEach(function () {
       jasmine.clock().install();
       jasmine.clock().mockDate(new Date(2016, 1, 1));
-      userMock.confirmed = false;
     });
 
     afterEach(jasmine.clock().uninstall);
 
     it('opens the resend activation email dialog', function () {
-      $rootScope.$apply();
+      this.setUser({confirmed: false});
       sinon.assert.calledOnce(openDialogStub);
     });
 
     it('adds info to the store when the dialog got last shown', function () {
-      $rootScope.$apply();
-      sinon.assert.calledWith(storeMock.set, LAST_REMINDER_STORE_KEY);
+      this.store.remove();
+      this.setUser({confirmed: false});
+      expect(this.store.get()).toBeTruthy();
     });
 
     describe('dialog has been shown before in another session', function () {
       beforeEach(function () {
-        var lastShownTime = moment().unix();
-        storeMock.get.withArgs(LAST_REMINDER_STORE_KEY).returns(lastShownTime);
+        this.store.set(moment().unix());
       });
 
       it('opens the dialog after 24 hours', function () {
         sinon.assert.callCount(openDialogStub, 0);
         jasmine.clock().tick(A_DAY);
-        $rootScope.$apply();
+        this.setUser({confirmed: false});
         sinon.assert.callCount(openDialogStub, 1);
       });
 
       it('does not open the dialog after 24 hours if meanwhile the user got activated', function () {
         jasmine.clock().tick(A_DAY);
-        userMock.confirmed = true;
-        $rootScope.$apply();
+        this.setUser({confirmed: true});
         sinon.assert.callCount(openDialogStub, 0);
       });
 
       it('does not open the dialog for the next 23:59 hours', function () {
         jasmine.clock().tick(A_DAY - A_SECOND);
-        $rootScope.$apply();
+        this.setUser({confirmed: false});
         sinon.assert.callCount(openDialogStub, 0);
       });
     });
 
     describe('dialog gets shown and the browser tab remains open', function () {
       beforeEach(function () {
-        $rootScope.$apply();
-        var lastShownTime = storeMock.set.args[0][1];
-        storeMock.get.withArgs(LAST_REMINDER_STORE_KEY).returns(lastShownTime);
+        this.setUser({confirmed: false});
       });
 
       it('reopens the dialog after 24 hours', function () {
         sinon.assert.callCount(openDialogStub, 1);
-        jasmine.clock().tick(A_DAY);
+
+        jasmine.clock().tick(A_DAY - A_SECOND);
+        this.setUser({confirmed: false});
+        sinon.assert.callCount(openDialogStub, 1);
+
+        jasmine.clock().tick(A_SECOND);
+        this.setUser({confirmed: false});
         sinon.assert.callCount(openDialogStub, 2);
       });
 
       it('does not reopen the dialog after 24 hours if meanwhile the user got activated', function () {
         sinon.assert.callCount(openDialogStub, 1);
-        userMock.confirmed = true;
+        this.setUser({confirmed: true});
         jasmine.clock().tick(A_DAY);
-        sinon.assert.callCount(openDialogStub, 1);
-      });
-
-      it('does not reopen the dialog for the next 23:59 hours', function () {
-        sinon.assert.callCount(openDialogStub, 1);
-        jasmine.clock().tick(A_DAY - A_SECOND);
         sinon.assert.callCount(openDialogStub, 1);
       });
     });
 
     describe('dialog is not shown because only 12 hours have passed since last time', function () {
       beforeEach(function () {
-        var lastShownMoment = moment().subtract(12, 'hours');
-        storeMock.get.withArgs(LAST_REMINDER_STORE_KEY).returns(lastShownMoment.unix());
-        $rootScope.$apply();
+        const lastShown = moment().subtract(12, 'hours').unix();
+        this.store.set(lastShown);
+        // this.setUser({confirmed: false});
       });
 
       it('opens the dialog after 12 hours', function () {
         sinon.assert.callCount(openDialogStub, 0);
         jasmine.clock().tick(A_DAY / 2);
+        this.setUser({confirmed: false});
         sinon.assert.callCount(openDialogStub, 1);
       });
 
       it('does not open the dialog after 12 hours if meanwhile the user got activated', function () {
-        userMock.confirmed = true;
         jasmine.clock().tick(A_DAY / 2);
+        this.setUser({confirmed: true});
         sinon.assert.callCount(openDialogStub, 0);
       });
 
       it('does not open the dialog for the next 13:59 hours', function () {
         jasmine.clock().tick(A_DAY / 2 - A_SECOND);
+        this.setUser({confirmed: false});
         sinon.assert.callCount(openDialogStub, 0);
       });
     });
 
     describe('resend activation email`s “Resend” button', function () {
-      var $timeout, openDialogOptions, openEmailSentDialogStub;
+      let $timeout, openDialogOptions, openEmailSentDialogStub;
       beforeEach(function () {
-        $rootScope.$apply();
+        this.resendConfirmation = this.$inject('activationEmailResender').resend;
+
         $timeout = this.$inject('$timeout');
-        $timeout.verifyNoPendingTasks();
+        this.setUser({confirmed: false, email: 'EMAIL'});
         openDialogOptions = openDialogStub.args[0][0];
         // Following tests only care about the 2nd Dialog, the email confirmation.
         openDialogStub.reset();
@@ -182,12 +172,10 @@ xdescribe('activationEmailResendController', function () {
 
       it('resends the current user`s activation email', function () {
         openDialogOptions.scopeData.resendEmail();
-        sinon.assert.calledWithExactly(resendConfirmationEmailStub, userMock.email);
+        sinon.assert.calledWithExactly(this.resendConfirmation, 'EMAIL');
       });
 
       it('shows a confirmation dialog on success and closes the first one', function () {
-        resendConfirmationEmailStub.returns($q.resolve());
-
         openDialogOptions.scopeData.resendEmail();
         $timeout.flush();
 
@@ -197,7 +185,7 @@ xdescribe('activationEmailResendController', function () {
       });
 
       it('opens no confirmation dialog and leaves the first one open on failure', function () {
-        resendConfirmationEmailStub.returns($q.reject());
+        this.resendConfirmation.rejects();
 
         openDialogOptions.scopeData.resendEmail();
         $timeout.flush();

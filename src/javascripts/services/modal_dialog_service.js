@@ -24,11 +24,11 @@
  *   }, 3000);
  */
 angular.module('contentful').factory('modalDialog', ['require', function (require) {
+  var defer = require('defer');
   var $compile = require('$compile');
   var $q = require('$q');
   var $window = require('$window');
   var keycodes = require('keycodes');
-  var defer = require('defer');
   var $rootScope = require('$rootScope');
   var debounce = require('debounce');
   var $timeout = require('$timeout');
@@ -69,8 +69,13 @@ angular.module('contentful').factory('modalDialog', ['require', function (requir
         'template', 'confirmLabel', 'cancelLabel',
         'attachTo', 'enterAction', 'backgroundClose',
         'ignoreEnter', 'ignoreEsc', 'disableTopCloseButton',
-        'persistOnNavigation'])
+        'persistOnNavigation'
+      ])
     );
+
+    if (params.controller) {
+      params.controller(this.scope);
+    }
 
     this._deferred = $q.defer();
     this.promise = this._deferred.promise;
@@ -97,8 +102,10 @@ angular.module('contentful').factory('modalDialog', ['require', function (requir
 
         this.domElement.on('click', _.bind(this._closeOnBackground, this));
         this.open = true;
-        scope.$apply();
 
+        // Make sure everything is rendered so that the dialog dimensions are
+        // properly calculated
+        scope.$apply();
         this._centerOnBackground();
 
         if (this.domElement.find('input').length > 0) {

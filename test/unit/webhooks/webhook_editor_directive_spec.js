@@ -10,9 +10,7 @@ describe('Webhook Editor directive', function () {
     this.go = sinon.stub();
     this.$inject('$state').go = this.go;
 
-    this.notification = this.$inject('notification');
-    this.notification.info = sinon.stub();
-    this.notification.error = sinon.stub();
+    this.notification = this.mockService('notification');
 
     this.repo = {
       save: sinon.stub(),

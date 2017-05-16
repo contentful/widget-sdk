@@ -1,6 +1,7 @@
 include ./create_entry_button.mixin.jade
 include ../advice.mixin.jade
 include ../pluralize_entity.mixin.jade
+include ../../shared/table_pattern.mixin.jade
 
 header.workbench-header
   cf-breadcrumbs
@@ -46,9 +47,10 @@ header.workbench-header
               th.x--large-cell(
                 aria-label="cell-display-name"
                 ng-if="!context.view.contentTypeId || !displayFieldForFilteredContentType()")
-                label(ng-click="$event.stopPropagation()")
-                  input(type="checkbox" cf-selection="entries" ng-click="selection.toggleList(entries, $event)" ng-show="entries.length > 0" tabindex="-1")
-                | Name
+                div.table__checkbox-cell
+                  label(ng-click="$event.stopPropagation()")
+                    input(type="checkbox" cf-selection="entries" ng-click="selection.toggleList(entries, $event)" ng-show="entries.length > 0" tabindex="-1")
+                  | Name
               th.x--medium-cell(
                 aria-label="cell-content-type"
                 ng-if="!context.view.contentTypeId && !context.view.contentTypeHidden")
@@ -59,12 +61,13 @@ header.workbench-header
                 ng-init="getField=displayFieldForFilteredContentType"
                 ng-class="{'x--sortable': fieldIsSortable(getField()), 'x--active-sort': isOrderField(getField())}"
                 ng-click="fieldIsSortable(getField()) && orderColumnBy(getField())")
-                  label(ng-click="$event.stopPropagation()")
-                    input(type="checkbox" cf-selection="entries" ng-click="selection.toggleList(entries, $event)" ng-show="entries.length > 0" tabindex="-1")
-                  | Name
-                  span(ng-show="fieldIsSortable(getField())")
-                    i.fa.fa-caret-up(ng-show="context.view.order.direction === 'ascending' && isOrderField(getField())")
-                    i.fa.fa-caret-down(ng-show="context.view.order.direction === 'descending' && isOrderField(getField())")
+                  div.table__checkbox-cell
+                    label(ng-click="$event.stopPropagation()")
+                      input(type="checkbox" cf-selection="entries" ng-click="selection.toggleList(entries, $event)" ng-show="entries.length > 0" tabindex="-1")
+                    | Name
+                    span(ng-show="fieldIsSortable(getField())")
+                      i.fa.fa-caret-up(ng-show="context.view.order.direction === 'ascending' && isOrderField(getField())")
+                      i.fa.fa-caret-down(ng-show="context.view.order.direction === 'descending' && isOrderField(getField())")
               th.x--small-cell(
                 ng-repeat="field in displayedFields track by field.id"
                 ng-class="{'x--sortable': fieldIsSortable(field), 'x--active-sort': isOrderField(field)}"
@@ -123,24 +126,28 @@ header.workbench-header
         table
           tbody
             tr.x--multiline(ng-repeat="entry in entries track by entry.getId()"
-              ui-sref="spaces.detail.entries.detail({ entryId: entry.getId() })"
-              ng-class="{'x--highlight': selection.isSelected(entry)}")
-              td(aria-label="cell-display-name").x--large-cell
-                div
-                  label(ng-click="$event.stopPropagation()")
-                    input(type="checkbox" cf-selection="entry" tabindex="-1" aria-label="cell-select" ng-click="selection.toggle(entry, $event)")
-                  p {{entryTitle(entry)}}
-              td.x--medium-cell(
+              ng-init="linkToEntry = 'spaces.detail.entries.detail({ entryId: entry.getId() })'"
+              ng-class="{'x--highlight': selection.isSelected(entry)}"
+              ui-sref="{{linkToEntry}}")
+              td.x--large-cell(aria-label="cell-display-name")
+                div.table__checkbox-cell.x--multline
+                  label(ng-click="$event.stopPropagation();")
+                    input(type="checkbox" cf-selection="entry" tabindex="-1" aria-label="cell-select" ng-click="selection.toggle(entry, $event);")
+                  a(ui-sref="{{linkToEntry}}") {{entryTitle(entry)}}
+              +td.x--medium-cell(
                 aria-label="cell-content-type"
+                ui-sref="{{linkToEntry}}"
                 ng-show="!context.view.contentTypeId && !context.view.contentTypeHidden")
-                | {{contentTypeName(entry)}}
-              td.x--small-cell(
+                | {{contentTypeName(entry) || '&nbsp;'}}
+              +td.x--small-cell(
+                ui-sref="{{linkToEntry}}"
                 ng-repeat="field in displayedFields track by field.id")
                 cf-field-display
-              td.entity-status.x--small-cell(
-                aria-label="cell-status"
-                ng-class="entityStatus.getClassname(entry)")
-                | {{entityStatus.getLabel(entry)}}
+              +td.entity-status.x--small-cell(
+                ui-sref="{{linkToEntry}}"
+                aria-label="cell-status")
+                span(ng-class="entityStatus.getClassname(entry)")
+                  | {{entityStatus.getLabel(entry) || '&nbsp;'}}
 
     cf-search-results-paginator(paginator="paginator" pages="7" ng-show="hasPage()")
 

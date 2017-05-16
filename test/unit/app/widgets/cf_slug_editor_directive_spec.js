@@ -115,7 +115,7 @@ describe('SlugEditor directive', function () {
     it('queries duplicates when input value changes', function () {
       const $inputEl = this.compileElement().find('input');
       const getEntries = this.cfWidgetApi.space.getEntries;
-      getEntries.reset();
+      getEntries.resetHistory();
 
       $inputEl.val('SLUG');
       this.$apply();
@@ -125,7 +125,7 @@ describe('SlugEditor directive', function () {
     it('queries duplicates when field value changes', function () {
       this.compileElement();
       const getEntries = this.cfWidgetApi.space.getEntries;
-      getEntries.reset();
+      getEntries.resetHistory();
 
       this.cfWidgetApi.field.onValueChanged.yield('SLUG');
       this.$apply();
@@ -136,7 +136,7 @@ describe('SlugEditor directive', function () {
       this.entrySys.id = 'ENTRY ID';
       this.compileElement();
       const getEntries = this.cfWidgetApi.space.getEntries;
-      getEntries.reset();
+      getEntries.resetHistory();
 
       this.cfWidgetApi.field.onValueChanged.yield('SLUG');
       this.$apply();

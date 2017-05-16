@@ -42,6 +42,14 @@ angular.module('contentful')
   var Focus = require('app/entity_editor/Focus');
   var installTracking = require('app/entity_editor/Tracking').default;
   var deepFreeze = require('utils/DeepFreeze').deepFreeze;
+  var initDocErrorHandler = require('app/entity_editor/DocumentErrorHandler').default;
+  var LD = require('utils/LaunchDarkly');
+  var analytics = require('analytics/Analytics');
+  var hasAccessToSpaceHome = require('accessChecker').getSectionVisibility().spaceHome;
+  var State = require('data/CMA/EntityState').State;
+  var SumTypes = require('libs/sum-types/caseof-eq');
+  var caseof = SumTypes.caseof;
+  var otherwise = SumTypes.otherwise;
 
   var editorData = $scope.editorData;
   var entityInfo = this.entityInfo = editorData.entityInfo;
@@ -54,16 +62,10 @@ angular.module('contentful')
 
   $scope.locales = $controller('entityEditor/LocalesController');
 
-  var doc = spaceContext.docPool.get(
-    // TODO put $scope.user on editorData and pass it as the only
-    // argument
-    editorData.entity,
-    editorData.contentType,
-    $scope.user,
-    K.scopeLifeline($scope)
-  );
+  var doc = editorData.openDoc(K.scopeLifeline($scope));
   // TODO rename the scope property
   $scope.otDoc = doc;
+  initDocErrorHandler($scope, doc.state.error$);
 
   installTracking(entityInfo, doc, K.scopeLifeline($scope));
 
@@ -104,12 +106,18 @@ angular.module('contentful')
   });
 
   this.editReferences = function (field, locale, index, cb) {
+    // The links$ property should end when the editor is closed
+    var lifeline = K.createBus();
+    var links$ = K.endWith(
+      doc.valuePropertyAt(['fields', field, locale]),
+      lifeline.stream
+    );
+
     notifications.clearSeen();
     $scope.referenceContext = {
-      links$: doc.valuePropertyAt(['fields', field, locale]),
+      links$: links$,
       focusIndex: index,
       editorSettings: deepFreeze(_.cloneDeep($scope.preferences)),
-      user: $scope.user,
       parentId: entityInfo.id,
       field: _.find(entityInfo.contentType.fields, {id: field}),
       add: function (link) {
@@ -119,6 +127,7 @@ angular.module('contentful')
         return doc.removeValueAt(['fields', field, locale, index]);
       },
       close: function () {
+        lifeline.end();
         $scope.referenceContext = null;
         notifications.clearSeen();
         if (cb) {
@@ -153,4 +162,67 @@ angular.module('contentful')
   var fields = contentTypeData.fields;
   $scope.fields = DataFields.create(fields, $scope.otDoc);
   $scope.transformedContentTypeData = ContentTypes.internalToPublic(contentTypeData);
+
+
+  // A/B experiment - ps-03-2017-next-step-hints
+  $scope.trackNextStepHint = function () {
+    analytics.track('experiment:interaction', {
+      experiment: {
+        id: 'ps-03-2017-next-step-hints',
+        variation: true,
+        interaction_context: 'entry_editor'
+      }
+    });
+  };
+
+  var nextStepHintsTest$ = LD.getTest('ps-03-2017-next-step-hints');
+  var notActivated = !spaceContext.getData('activatedAt');
+  var learnModeOn = hasAccessToSpaceHome && notActivated;
+  var showNextStepHint;
+
+  var HINT_API_CALL = {
+    title: 'Now let’s fetch the content using the API',
+    html: '<a ui-sref="spaces.detail.home" ng-click="trackNextStepHint()">Get an API access token</a>'
+  };
+
+  var HINT_PUBLISH = {
+    title: 'Make any change and publish it',
+    html: 'Click the “Publish” button on the right'
+  };
+
+  K.onValueScope($scope, nextStepHintsTest$, function (shouldShow) {
+    showNextStepHint = shouldShow;
+
+    if (learnModeOn) {
+      if (_.isBoolean(showNextStepHint)) {
+        analytics.track('experiment:start', {
+          experiment: {
+            id: 'ps-03-2017-next-step-hints',
+            variation: showNextStepHint
+          }
+        });
+      }
+    }
+  });
+
+  var nextStepHint$ = K.combineProperties(
+    [nextStepHintsTest$, doc.resourceState.state$],
+    function (showTest, docState) {
+      if (showTest && learnModeOn) {
+        return caseof(docState, [
+          [State.Published(), _.constant(HINT_API_CALL)],
+          [State.Archived(), _.constant(null)],
+          [otherwise, _.constant(HINT_PUBLISH)]
+        ]);
+      } else {
+        return null;
+      }
+    }
+  );
+
+  K.onValueScope($scope, nextStepHint$, function (nextStepHint) {
+    $scope.nextStepHint = nextStepHint;
+  });
+  // End A/B experiment - ps-03-2017-next-step-hints
+
 }]);

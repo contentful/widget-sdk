@@ -14,6 +14,7 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var accessChecker = require('accessChecker');
   var entityStatus = require('entityStatus');
+  var debounce = require('debounce');
 
   $controller('AssetListViewsController', {
     $scope: $scope,
@@ -33,6 +34,13 @@ angular.module('contentful')
 
   $scope.selection = createSelection();
   $scope.getAssetDimensions = getAssetDimensions;
+  $scope.paginator = $scope.searchController.paginator;
+
+  var debouncedResetAssets = debounce(function () {
+    $scope.searchController.resetAssets();
+  }, 3000);
+
+  $scope.$watch('paginator.getTotal()', debouncedResetAssets);
 
   $scope.$watch(function pageParameters () {
     return {
@@ -42,16 +50,15 @@ angular.module('contentful')
       spaceId: spaceContext.getId()
     };
   }, function (pageParameters, old, scope) {
+    scope.hasQuery = !_.isEmpty(scope.context.view.searchTerm);
     scope.searchController.resetAssets(pageParameters.page === old.page);
   }, true);
 
   // TODO this code is duplicated in the entry list controller
   $scope.showNoAssetsAdvice = function () {
-    var view = $scope.context.view;
-    var hasQuery = !_.isEmpty(view.searchTerm);
-    var hasEntries = $scope.assets && $scope.assets.length > 0;
+    var hasAssets = $scope.paginator.getTotal() > 0;
 
-    return !hasEntries && !hasQuery && !$scope.context.isSearching;
+    return !hasAssets && !$scope.hasQuery && !$scope.context.isSearching;
   };
 
   $scope.$watch('showNoAssetsAdvice()', function (show) {
@@ -90,14 +97,16 @@ angular.module('contentful')
       // TODO Instead of querying the collection endpoint we should
       // add the assets manually
       delay(function () {
-        $scope.searchController.resetAssets();
+        $scope.searchController.resetAssets().then(function () {
+          notification.info('Updated asset list');
+        });
       }, 5000);
     })
     .then(function (entities) {
       entities = _.filter(entities);
       notification.info('Assets uploaded. Processing...');
       return $q.all(_.map(entities, processAssetForFile)).then(function () {
-        notification.info('Assets processed');
+        notification.info('Assets processed. Updating...');
       }).catch(function (err) {
         notification.warn('Some assets failed to process');
         return $q.reject(err);

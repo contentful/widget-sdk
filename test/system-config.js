@@ -1,0 +1,29 @@
+/* global SystemJS */
+
+// A list of _static_ Angular services from the 'cf.libs' and 'cf.es6' modules
+// that we want to expose in SystemJS
+SystemJS.exposeFromAngular = [
+  'libs/kefir', 'libs/sum-types', 'lodash', 'jquery', 'libs/Immutable'
+];
+
+SystemJS.config({
+  baseURL: '/base',
+  paths: {
+    // Load node module served by karma.
+    'npm:': '/base/node_modules/',
+    // Convenience alias
+    'helpers': 'test/helpers'
+  },
+  map: {
+    '$q': 'test/helpers/$q'
+  },
+  packageConfigPaths: [
+    'npm:*/package.json'
+  ],
+  packages: {
+    'npm:sinon': {
+      main: 'pkg/sinon',
+      format: 'amd'
+    }
+  }
+});

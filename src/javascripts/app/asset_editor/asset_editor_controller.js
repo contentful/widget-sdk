@@ -3,7 +3,6 @@
 angular.module('contentful')
 .controller('AssetEditorController', ['$scope', 'require', function AssetEditorController ($scope, require) {
   var $controller = require('$controller');
-  var logger = require('logger');
   var notification = require('notification');
   var stringUtils = require('stringUtils');
   var makeNotify = require('app/entity_editor/Notifications').makeNotify;
@@ -16,6 +15,7 @@ angular.module('contentful')
   var errorMessageBuilder = require('errorMessageBuilder');
   var Focus = require('app/entity_editor/Focus');
   var installTracking = require('app/entity_editor/Tracking').default;
+  var initDocErrorHandler = require('app/entity_editor/DocumentErrorHandler').default;
 
   var editorData = $scope.editorData;
   var entityInfo = this.entityInfo = editorData.entityInfo;
@@ -29,12 +29,8 @@ angular.module('contentful')
   $scope.locales = $controller('entityEditor/LocalesController');
 
   // TODO rename the scope property
-  $scope.otDoc = spaceContext.docPool.get(
-    editorData.entity,
-    null,
-    $scope.user,
-    K.scopeLifeline($scope)
-  );
+  $scope.otDoc = editorData.openDoc(K.scopeLifeline($scope));
+  initDocErrorHandler($scope, $scope.otDoc.state.error$);
 
   installTracking(entityInfo, $scope.otDoc, K.scopeLifeline($scope));
 
@@ -81,9 +77,18 @@ angular.module('contentful')
     setTitleOnDoc(file, locale.internal_code);
     editorData.entity.process($scope.otDoc.getVersion(), locale.internal_code)
     .catch(function (err) {
-      $scope.$emit('fileProcessingFailed');
-      notification.error('There has been a problem processing the Asset.');
-      logger.logServerWarn('There has been a problem processing the Asset.', {error: err});
+      // this event is handled in a child directive (cfFileEditor)
+      // we need to broadcast it down the element tree
+      $scope.$broadcast('fileProcessingFailed');
+
+      var errors = _.get(err, ['body', 'details', 'errors'], []);
+      var invalidContentTypeErr = _.find(errors, {name: 'invalidContentType'});
+
+      if (invalidContentTypeErr) {
+        notification.error(invalidContentTypeErr.details);
+      } else {
+        notification.error('There has been a problem processing the Asset.');
+      }
     });
   });
 

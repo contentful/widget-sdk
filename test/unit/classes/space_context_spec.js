@@ -1,4 +1,4 @@
-'use strict';
+import * as sinon from 'helpers/sinon';
 
 describe('spaceContext', function () {
 
@@ -6,10 +6,13 @@ describe('spaceContext', function () {
     this.Subscription = {
       newFromOrganization: sinon.stub()
     };
+    this.organization = {sys: {id: 'ORG_ID'}};
+    this.OrganizationContext = { create: sinon.stub().returns({organization: this.organization}) };
     module('contentful/test', ($provide) => {
       $provide.value('data/userCache', sinon.stub());
       $provide.value('data/editingInterfaces', sinon.stub());
       $provide.value('Subscription', this.Subscription);
+      $provide.value('classes/OrganizationContext', this.OrganizationContext);
     });
     this.spaceContext = this.$inject('spaceContext');
     this.theLocaleStore = this.$inject('TheLocaleStore');
@@ -19,8 +22,8 @@ describe('spaceContext', function () {
       space = space || makeSpaceMock();
       this.spaceContext.resetWithSpace(space);
       this.$apply();
-      space.getContentTypes.reset();
-      space.getPublishedContentTypes.reset();
+      space.getContentTypes.resetHistory();
+      space.getPublishedContentTypes.resetHistory();
       return space;
     };
   });
@@ -76,7 +79,7 @@ describe('spaceContext', function () {
     it('creates the user cache', function () {
       const userCache = {};
       const createUserCache = this.$inject('data/userCache');
-      createUserCache.reset().returns(userCache);
+      createUserCache.resetHistory().returns(userCache);
       this.spaceContext.resetWithSpace(SPACE);
       sinon.assert.calledWithExactly(createUserCache, SPACE);
       expect(this.spaceContext.users).toBe(userCache);
@@ -150,6 +153,10 @@ describe('spaceContext', function () {
       expect(
         this.spaceContext.publishedContentTypes.map((ct) => ct.getId())
       ).toEqual(['A', 'B']);
+    });
+
+    it('inits organization context', function () {
+      expect(this.spaceContext.organizationContext.organization).toEqual(this.organization);
     });
   });
 
@@ -281,83 +288,6 @@ describe('spaceContext', function () {
 
     it('gets a localized field', function () {
       expect(this.spaceContext.localizedField(asset, 'data.fields.title')).toBe('the title');
-    });
-  });
-
-  describe('#refreshContentTypesUntilChanged()', function () {
-    let contentTypes;
-
-    beforeEach(function () {
-      this.space = this.resetWithSpace();
-
-      contentTypes = [
-        makeCtMock('content_type1'),
-        makeCtMock('content_type2')
-      ];
-
-      this.space.getContentTypes.resolves(contentTypes);
-      this.space.getPublishedContentTypes.resolves(contentTypes);
-
-      this.spaceContext.refreshContentTypes();
-      this.$apply();
-
-      const $timeout = this.$inject('$timeout');
-      this.flush = () => {
-        this.$apply();
-        $timeout.flush();
-      };
-
-      this.removeSecondCt = function () {
-        const slice = contentTypes.slice(0, 1);
-        this.space.getContentTypes.resolves(slice);
-        this.space.getPublishedContentTypes.resolves(slice);
-      };
-    });
-
-    pit('resolves with content types when one was added', function () {
-      const newCt = makeCtMock('new-ct');
-      const cts = contentTypes.concat(newCt);
-      this.space.getContentTypes.resolves(cts);
-      this.space.getPublishedContentTypes.resolves(cts);
-      return this.spaceContext.refreshContentTypesUntilChanged().then(function (data) {
-        expect(data.length).toBe(3);
-        expect(data[2]).toBe(newCt);
-      });
-    });
-
-    pit('resolves with content types when it one was removed', function () {
-      this.removeSecondCt();
-      return this.spaceContext.refreshContentTypesUntilChanged().then(function (data) {
-        expect(data.length).toBe(1);
-        expect(data[0]).toBe(contentTypes[0]);
-      });
-    });
-
-    pit('it retries if content types are not changed', function () {
-      const p = this.spaceContext.refreshContentTypesUntilChanged();
-
-      this.removeSecondCt();
-      this.flush();
-
-      return p.then((data) => {
-        expect(data.length).toBe(1);
-        // asserting that was called thrice:
-        // (1) initial refresh, (2) no data changed, (3) changed data
-        sinon.assert.calledThrice(this.space.getContentTypes);
-        sinon.assert.calledThrice(this.space.getPublishedContentTypes);
-      });
-    });
-
-    pit('it tries 5 times and resolves this old content types if not changed', function () {
-      const p = this.spaceContext.refreshContentTypesUntilChanged();
-
-      _.range(5).forEach(this.flush);
-
-      return p.then((data) => {
-        expect(data.length).toBe(2);
-        // (1) initial refresh, (2) first request, (3-7) retries
-        expect(this.space.getContentTypes.callCount).toBe(7);
-      });
     });
   });
 
@@ -631,7 +561,7 @@ describe('spaceContext', function () {
 
   describe('#docConnection and #docPool', function () {
     beforeEach(function () {
-      const ShareJSConnection = this.$inject('data/ShareJS/Connection');
+      const ShareJSConnection = this.$inject('data/sharejs/Connection');
       const DocumentPool = this.$inject('data/sharejs/DocumentPool');
       this.createConnection = ShareJSConnection.create = sinon.stub().returns({});
       this.createPool = DocumentPool.create = sinon.stub();
@@ -648,7 +578,7 @@ describe('spaceContext', function () {
       this.spaceContext.docConnection = {close: stubs[0]};
       this.spaceContext.docPool = {destroy: stubs[1]};
       this.spaceContext.resetWithSpace(makeSpaceMock());
-      stubs.forEach(sinon.assert.calledOnce);
+      stubs.forEach((s) => sinon.assert.calledOnce(s));
     });
 
     it('cleans up on purge', function () {
@@ -656,7 +586,7 @@ describe('spaceContext', function () {
       this.spaceContext.docConnection = {close: stubs[0]};
       this.spaceContext.docPool = {destroy: stubs[1]};
       this.spaceContext.purge();
-      stubs.forEach(sinon.assert.calledOnce);
+      stubs.forEach((s) => sinon.assert.calledOnce(s));
     });
   });
 

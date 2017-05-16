@@ -2,7 +2,7 @@ import $window from '$window';
 import {once} from 'lodash';
 import {snowplow as snowplowConfig, domain} from 'Config';
 import LazyLoader from 'LazyLoader';
-import {getSchema, transform} from 'analytics/snowplow/Events';
+import {getSchema as getSchemaForEvent, transform} from 'analytics/snowplow/Events';
 
 /**
  * @ngdoc service
@@ -38,11 +38,8 @@ function initSnowplow () {
     }
   });
 
-  // Commented out for now as something here is causing the Snowplow library to send
-  // too long URLs
-  // _snowplow('enableActivityTracking', 30, 30); // Ping every 30 seconds after 30 seconds
-  // _snowplow('enableLinkClickTracking');
-  // _snowplow('trackPageView');
+  // Ping every 30 seconds
+  snowplowSend('enableActivityTracking', 30, 30);
 }
 
 /**
@@ -79,18 +76,44 @@ export function identify (userId) {
  * @ngdoc method
  * @name analytics/snowplow/Snowplow#track
  * @param {string} eventName
+ * @param {object} data
  *
  * @description
  * Tracks an event in Snowplow if it is registered in the snowplow events service
  */
 export function track (eventName, data) {
-  const schema = getSchema(eventName);
+  const eventData = buildUnstructEventData(eventName, data);
+
+  if (eventData) {
+    snowplowSend.apply(null, eventData);
+  }
+}
+
+/**
+ * @ngdoc method
+ * @name analytics/snowplow/Snowplow#buildUnstructEventData
+ * @param {string} eventName
+ * @param {object} data
+ *
+ * @description
+ * Builds an unstructured event for Snowplow. All our current events that reach
+ * Snowplow are unstructured in Snowplow parlance.
+ */
+
+export function buildUnstructEventData (eventName, data) {
+  const schema = getSchemaForEvent(eventName);
+
   if (schema) {
     const transformedData = transform(eventName, data);
-    snowplowSend('trackUnstructEvent', {
-      'schema': schema.path,
-      'data': transformedData.data
-    }, transformedData.contexts);
+
+    return [
+      'trackUnstructEvent',
+      {
+        schema: schema.path,
+        data: transformedData.data
+      },
+      transformedData.contexts
+    ];
   }
 }
 

@@ -1,10 +1,10 @@
 'use strict';
 
-angular.module('contentful').directive('cfUserList', ['$injector', function ($injector) {
+angular.module('contentful').directive('cfUserList', ['require', function (require) {
 
-  var popRoleId = $injector.get('UserListController/jumpToRole').popRoleId;
-  var $timeout = $injector.get('$timeout');
-  var store = $injector.get('TheStore').forKey('userListView');
+  var popRoleId = require('UserListController/jumpToRole').popRoleId;
+  var $timeout = require('$timeout');
+  var store = require('TheStore').forKey('userListView');
 
   var VIEW_BY_NAME = 'name';
   var VIEW_BY_ROLE = 'role';
@@ -46,20 +46,25 @@ angular.module('contentful').directive('cfUserList', ['$injector', function ($in
   }
 }]);
 
-angular.module('contentful').controller('UserListController', ['$scope', '$injector', function ($scope, $injector) {
+angular.module('contentful').controller('UserListController', ['$scope', 'require', function ($scope, require) {
+  var ReloadNotification = require('ReloadNotification');
+  var Command = require('command');
+  var $rootScope = require('$rootScope');
+  var modalDialog = require('modalDialog');
+  var spaceContext = require('spaceContext');
+  var userListHandler = require('UserListHandler').create();
+  var stringUtils = require('stringUtils');
+  var notification = require('notification');
+  var accessChecker = require('accessChecker');
+  var TheAccountView = require('TheAccountView');
+  var ListQuery = require('ListQuery');
+  var entitySelector = require('entitySelector');
+  var OrganizationList = require('OrganizationList');
 
-  var ReloadNotification = $injector.get('ReloadNotification');
-  var Command = $injector.get('command');
-  var $rootScope = $injector.get('$rootScope');
-  var modalDialog = $injector.get('modalDialog');
-  var spaceContext = $injector.get('spaceContext');
-  var spaceMembershipRepo =
-    $injector.get('SpaceMembershipRepository').getInstance(spaceContext.space);
-  var listHandler = $injector.get('UserListHandler').create();
-  var stringUtils = $injector.get('stringUtils');
-  var notification = $injector.get('notification');
-  var accessChecker = $injector.get('accessChecker');
-  var TheAccountView = $injector.get('TheAccountView');
+  var K = require('utils/kefir');
+  var LD = require('utils/LaunchDarkly');
+
+  var organization = spaceContext.organizationContext.organization;
 
   var MODAL_OPTS_BASE = {
     noNewScope: true,
@@ -72,10 +77,36 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
 
   $scope.openRemovalConfirmationDialog = openRemovalConfirmationDialog;
   $scope.openRoleChangeDialog = openRoleChangeDialog;
-  $scope.openInvitationDialog = openInvitationDialog;
   $scope.canModifyUsers = canModifyUsers;
-  $scope.canInviteUsers = canInviteUsers;
-  $scope.goToSubscription = TheAccountView.goToSubscription.bind(TheAccountView);
+
+  // Begin feature flag code - feature-bv-04-2017-new-space-invitation-flow
+
+  var usesNewSpaceInvitationFlow$ = LD.getFeatureFlag('feature-bv-04-2017-new-space-invitation-flow', function (user) {
+    // Disable feature flag for enterprise customers
+    var memberships = user && user.organizationMemberships || [];
+    var enterpriseMembership = _.find(memberships, function (membership) {
+      var subscriptionPlan = _.get(membership, 'organization.subscription.subscriptionPlan.name');
+
+      // @TODO we need a better way to check for this, e.g. using `subscriptionPlan`.kind
+      return subscriptionPlan && subscriptionPlan.startsWith('Enterprise');
+    });
+    return !enterpriseMembership;
+  });
+
+  K.onValueScope($scope, usesNewSpaceInvitationFlow$, function (usesNewSpaceInvitationFlow) {
+    $scope.usesNewSpaceInvitationFlow = usesNewSpaceInvitationFlow;
+    if (usesNewSpaceInvitationFlow) {
+      $scope.goToSubscription = TheAccountView.goToSubscription;
+      $scope.goToOrganizationUsers = TheAccountView.goToUsers;
+      $scope.canInviteUsersToOrganization = canInviteUsersToOrganization;
+      $scope.openSpaceInvitationDialog = openSpaceInvitationDialog;
+    } else {
+      $scope.canInviteUsers = canInviteUsers;
+      $scope.openInvitationDialog = openInvitationDialog;
+    }
+  });
+
+  // End feature flag code - feature-bv-04-2017-new-space-invitation-flow
 
   reload().catch(ReloadNotification.basicErrorHandler);
 
@@ -83,6 +114,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
     var subscription = spaceContext.subscription;
     var trialLockdown = subscription &&
       subscription.isTrial() && subscription.hasTrialEnded();
+
     return accessChecker.canModifyUsers() && !trialLockdown;
   }
 
@@ -93,11 +125,19 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
     return withinQuota && canModifyUsers();
   }
 
+  // Begin feature flag code - feature-bv-04-2017-new-space-invitation-flow
+
+  function canInviteUsersToOrganization () {
+    return OrganizationList.isOwnerOrAdmin(organization);
+  }
+
+  // End feature flag code - feature-bv-04-2017-new-space-invitation-flow
+
   /**
    * Remove an user from a space
    */
   function openRemovalConfirmationDialog (user) {
-    if (listHandler.isLastAdmin(user.id)) {
+    if (userListHandler.isLastAdmin(user.id)) {
       return modalDialog.open(_.extend({
         template: 'admin_removal_confirm_dialog',
         scope: prepareRemovalConfirmationDialogScope(user)
@@ -117,7 +157,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
       user: user,
       input: {},
       removeUser: Command.create(function () {
-        return spaceMembershipRepo.remove(user.membership)
+        return spaceContext.memberships.remove(user.membership)
         .then(reload)
         .then(function () {
           notification.info('User successfully removed from this space.');
@@ -131,7 +171,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
     });
 
     function isDisabled () {
-      return listHandler.isLastAdmin(user.id) && scope.input.confirm !== 'I UNDERSTAND';
+      return userListHandler.isLastAdmin(user.id) && scope.input.confirm !== 'I UNDERSTAND';
     }
   }
 
@@ -152,7 +192,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
       user: user,
       startsWithVowel: stringUtils.startsWithVowel,
       input: {},
-      roleOptions: listHandler.getRoleOptions(),
+      roleOptions: userListHandler.getRoleOptions(),
       changeRole: Command.create(function () {
         return changeRole(scope.input.id)
         .then(reload)
@@ -165,12 +205,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
     });
 
     function changeRole (roleId) {
-      var method = 'changeRoleTo';
-      if (listHandler.isAdminRole(roleId)) {
-        method = 'changeRoleToAdmin';
-      }
-
-      return spaceMembershipRepo[method](user.membership, roleId);
+      return spaceContext.memberships.changeRoleTo(user.membership, roleId);
     }
   }
 
@@ -182,92 +217,156 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
       template: 'invitation_dialog',
       scope: prepareInvitationDialogScope()
     }, MODAL_OPTS_BASE));
-  }
 
-  function prepareInvitationDialogScope () {
-    var scope = $rootScope.$new();
+    function prepareInvitationDialogScope () {
+      var scope = $rootScope.$new();
 
-    return _.extend(scope, {
-      input: {},
-      roleOptions: listHandler.getRoleOptions(),
-      invite: Command.create(function () {
-        return invite(scope.input)
-        .then(handleSuccess, handleFailure);
-      }, {
-        disabled: isDisabled
-      })
-    });
+      return _.extend(scope, {
+        input: {},
+        roleOptions: userListHandler.getRoleOptions(),
+        invite: Command.create(function () {
+          return invite(scope.input)
+          .then(handleSuccess, handleFailure);
+        }, {
+          disabled: isDisabled
+        })
+      });
 
-    function invite (data) {
-      var method = 'invite';
-      if (listHandler.isAdminRole(data.roleId)) {
-        method = 'inviteAdmin';
+      function invite (data) {
+        return spaceContext.memberships.invite(data.mail, data.roleId);
       }
 
-      return spaceMembershipRepo[method](data.mail, data.roleId);
+      function handleSuccess () {
+        return reload()
+        .then(function () {
+          notification.info('Invitation successfully sent.');
+          $scope.userQuota.used += 1;
+        })
+        .catch(ReloadNotification.basicErrorHandler)
+        .finally(function () { scope.dialog.confirm(); });
+      }
+
+      function handleFailure (res) {
+        if (isTaken(res)) {
+          scope.taken = scope.input.mail;
+          scope.backendMessage = null;
+        } else if (isForbidden(res)) {
+          scope.taken = null;
+          scope.backendMessage = res.data.message;
+        } else {
+          ReloadNotification.basicErrorHandler();
+          scope.dialog.confirm();
+        }
+      }
+
+      function isTaken (res) {
+        var errors = dotty.get(res, 'data.details.errors', []);
+        var errorNames = _.map(errors, 'name');
+        return errorNames.indexOf('taken') > -1;
+      }
+
+      function isForbidden (res) {
+        return (
+          dotty.get(res, 'data.sys.id') === 'Forbidden' &&
+          _.isString(dotty.get(res, 'data.message'))
+        );
+      }
+
+      function isDisabled () {
+        return !scope.invitationForm.$valid || !scope.input.roleId;
+      }
+    }
+  }
+
+  // Begin feature flag code - feature-bv-04-2017-new-space-invitation-flow
+
+  function openSpaceInvitationDialog () {
+    var labels = {
+      title: 'Add users to space',
+      insert: 'Assign roles to selected users',
+      infoHtml: JST.users_add_note(), // @TODO use hyperscript
+      noEntitiesCustomHtml: require('access_control/templates/UserSpaceInvitationNoUsersMessage').default()
+    };
+    $scope.isInvitingUsersToSpace = true;
+
+    return entitySelector.open({
+      entityType: 'User',
+      fetch: fetchUsers,
+      multiple: true,
+      min: 1,
+      max: Infinity,
+      labels: labels,
+      scope: {
+        goToOrganizationUsers: $scope.goToOrganizationUsers,
+        canInviteUsersToOrganization: $scope.canInviteUsersToOrganization
+      }
+    })
+    .then(function (result) {
+      var scopeData = {
+        users: result,
+        roleOptions: userListHandler.getRoleOptions(),
+        selectedRoles: {}
+      };
+
+      return modalDialog.open({
+        template: require('access_control/templates/UserSpaceInvitationDialog').default(),
+        backgroundClose: false,
+        ignoreEsc: true,
+        noNewScope: true,
+        scopeData: scopeData
+      }).promise;
+    })
+    .then(handleSuccess, handleCancel);
+
+    function fetchUsers (params) {
+      return ListQuery.getForUsers(params).then(function (query) {
+        return spaceContext.organizationContext.getAllUsers(query);
+      }).then(function (organizationUsers) {
+        var spaceUserIds = userListHandler.getUserIds();
+        var displayedUsers = organizationUsers.filter(function (item) {
+          var id = _.get(item, 'sys.id');
+          return id && !_.includes(spaceUserIds, id);
+        });
+        return { items: displayedUsers, total: displayedUsers.length };
+      });
     }
 
     function handleSuccess () {
-      return reload()
-      .then(function () {
-        notification.info('Invitation successfully sent.');
-        $scope.userQuota.used += 1;
+      $scope.isInvitingUsersToSpace = false;
+      return reload().then(function () {
+        notification.info('Invitations successfully sent.');
       })
-      .catch(ReloadNotification.basicErrorHandler)
-      .finally(function () { scope.dialog.confirm(); });
+      .catch(ReloadNotification.basicErrorHandler);
     }
 
-    function handleFailure (res) {
-      if (isTaken(res)) {
-        scope.taken = scope.input.mail;
-        scope.backendMessage = null;
-      } else if (isForbidden(res)) {
-        scope.taken = null;
-        scope.backendMessage = res.body.message;
-      } else {
-        ReloadNotification.basicErrorHandler();
-        scope.dialog.confirm();
-      }
-    }
-
-    function isTaken (res) {
-      var errors = dotty.get(res, 'body.details.errors', []);
-      var errorNames = _.map(errors, 'name');
-      return errorNames.indexOf('taken') > -1;
-    }
-
-    function isForbidden (res) {
-      return (
-        dotty.get(res, 'body.sys.id') === 'Forbidden' &&
-        _.isString(dotty.get(res, 'body.message'))
-      );
-    }
-
-    function isDisabled () {
-      return !scope.invitationForm.$valid || !scope.input.roleId;
+    function handleCancel () {
+      $scope.isInvitingUsersToSpace = false;
     }
   }
+
+  // End feature flag code - feature-bv-04-2017-new-space-invitation-flow
 
   /**
    * Reset the list with a new data
    */
   function reload () {
-    return listHandler.reset()
+    return userListHandler.reset()
     .then(onResetResponse, accessChecker.wasForbidden($scope.context))
     .finally(accessChecker.reset);
   }
 
   function onResetResponse () {
-    $scope.count = listHandler.getUserCount();
-    $scope.by = listHandler.getGroupedUsers();
+    $scope.spaceUsersCount = userListHandler.getUserCount();
+    $scope.by = userListHandler.getGroupedUsers();
     $scope.context.ready = true;
     $scope.jumpToRole();
   }
+
 }]);
 
-angular.module('contentful').factory('UserListController/jumpToRole', ['$injector', function ($injector) {
+angular.module('contentful').factory('UserListController/jumpToRole', ['require', function (require) {
 
-  var $state = $injector.get('$state');
+  var $state = require('$state');
   var targetRoleId = null;
 
   jump.popRoleId = popRoleId;

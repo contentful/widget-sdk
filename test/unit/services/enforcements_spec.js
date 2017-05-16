@@ -84,18 +84,6 @@ describe('Enforcements service', function () {
 
       });
 
-      describe('returns subscription unsettled', function () {
-        var enforcement;
-        beforeEach(function () {
-          enforcement = enforcements.determineEnforcement(['subscriptionUnsettled']);
-        });
-
-        it('has an error', function () {
-          expect(enforcement.message).toBeDefined();
-        });
-
-      });
-
       describe('returns period usage exceeded', function () {
         var enforcement;
         beforeEach(function () {
@@ -143,6 +131,11 @@ describe('Enforcements service', function () {
         expect(enforcements.getPeriodUsage()).toBeUndefined();
       });
 
+      it('has no error when subscription has additional usage enabled', function () {
+        sinon.stub(OrganizationList, 'isOwner').returns(true);
+        sinon.stub(spaceContext.subscription, 'isAdditionalUsageAllowed').returns(true);
+        expect(enforcements.getPeriodUsage()).toBeUndefined();
+      });
     });
   });
 

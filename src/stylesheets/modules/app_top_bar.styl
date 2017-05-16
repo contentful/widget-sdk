@@ -9,7 +9,6 @@ $app-top-bar__action-color()
   background-color: $colors.dark-blue
 
   &__logo
-    cursor: pointer
     display: flex
     justify-content: center
     align-items: center
@@ -26,12 +25,8 @@ $app-top-bar__action-color()
     $app-top-bar__action-color()
     padding-left: 1em
 
-  &__child,
-  &__child-action,
-  &__dropdown
-    height: 70%
-    margin-top: auto
-    margin-bottom: auto
+  &__child
+    height: 100%
 
   &__main-nav
     flex-grow: 1
@@ -49,8 +44,7 @@ $app-top-bar__action-color()
       > cf-icon[name="dd-arrow-down"] path
         fill: $colors.blue-mid
 
-  &__action,
-  &__child-action
+  &__action
     display: flex
     flex-direction: column
     justify-content: center

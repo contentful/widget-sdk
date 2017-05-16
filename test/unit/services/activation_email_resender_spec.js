@@ -105,7 +105,6 @@ describe('activationEmailResender', function () {
           sinon.match({
             data: {
               email: 'user@example.com',
-              request: this.request,
               response: {
                 status: 418,
                 statusText: 'I\'m a teapot',

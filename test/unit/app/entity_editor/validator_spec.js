@@ -1,7 +1,8 @@
+import * as K from 'helpers/mocks/kefir';
+
 describe('entityEditor/Validator', function () {
   beforeEach(function () {
     module('contentful/test');
-    this.K = this.$inject('mocks/kefir');
 
     const Validator = this.$inject('entityEditor/Validator');
     this.schemaErrors = sinon.stub();
@@ -31,21 +32,21 @@ describe('entityEditor/Validator', function () {
 
       this.validator.run();
       setError('ValidationFailed');
-      this.K.assertCurrentValue(this.validator.errors$, errors);
+      K.assertCurrentValue(this.validator.errors$, errors);
 
       this.validator.run();
       setError('UnresolvedLinks');
-      this.K.assertCurrentValue(this.validator.errors$, errors);
+      K.assertCurrentValue(this.validator.errors$, errors);
 
       this.validator.run();
       setError('InvalidEntry', 'Validation error');
-      this.K.assertCurrentValue(this.validator.errors$, errors);
+      K.assertCurrentValue(this.validator.errors$, errors);
 
       const current = [{id: 'INITIAL', path: [], message: ''}];
       this.schemaErrors.returns(current);
       this.validator.run();
       setError('VersionMismatch');
-      this.K.assertCurrentValue(this.validator.errors$, current);
+      K.assertCurrentValue(this.validator.errors$, current);
     });
   });
 });

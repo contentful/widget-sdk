@@ -1,4 +1,4 @@
-'use strict';
+import * as sinon from 'helpers/sinon';
 
 describe('Segment service', function () {
   beforeEach(function () {
@@ -15,7 +15,7 @@ describe('Segment service', function () {
     };
 
     const resolve = this.$inject('$q').resolve;
-    sinon.stub(this.loader, 'get', () => {
+    sinon.stub(this.loader, 'get').callsFake(() => {
       return resolve(this.window.analytics = this.analytics);
     });
   });

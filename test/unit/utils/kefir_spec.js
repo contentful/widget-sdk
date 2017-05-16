@@ -1,18 +1,12 @@
-'use strict';
+import * as K from 'utils/kefir';
+import * as KMock from 'helpers/mocks/kefir';
+import * as sinon from 'helpers/sinon';
 
 describe('utils/kefir', function () {
-  let K;
-  let KMock;
 
   beforeEach(function () {
-    module('cf.utils', 'contentful/test');
-    K = this.$inject('utils/kefir');
-    KMock = this.$inject('mocks/kefir');
+    module('ng');
     this.scope = this.$inject('$rootScope').$new();
-  });
-
-  afterEach(function () {
-    K = null;
   });
 
   describe('#fromScopeEvent()', function () {
@@ -42,6 +36,35 @@ describe('utils/kefir', function () {
       stream.onEnd(ended);
       sinon.assert.notCalled(ended);
       this.scope.$destroy();
+      sinon.assert.calledOnce(ended);
+    });
+  });
+
+  describe('#fromScopeValue()', function () {
+    beforeEach(function () {
+      this.$scope = this.$inject('$rootScope').$new();
+    });
+
+    it('obtains initial value', function () {
+      this.$scope.value = {a: true};
+      const prop = K.fromScopeValue(this.$scope, (s) => s.value);
+      expect(K.getValue(prop)).toEqual({a: true});
+    });
+
+    it('updates value', function () {
+      this.$scope.value = {a: true};
+      const prop = K.fromScopeValue(this.$scope, (s) => s.value);
+      this.$scope.value.a = false;
+      this.$scope.$apply();
+      expect(K.getValue(prop)).toEqual({a: false});
+    });
+
+    it('ends property when scope is destroyed', function () {
+      this.$scope.value = {a: true};
+      const ended = sinon.spy();
+      K.fromScopeValue(this.$scope, (s) => s.value).onEnd(ended);
+      sinon.assert.notCalled(ended);
+      this.$scope.$destroy();
       sinon.assert.calledOnce(ended);
     });
   });
@@ -293,6 +316,34 @@ describe('utils/kefir', function () {
       const ended = sinon.spy();
       this.scope.$destroy();
       K.scopeLifeline(this.scope).onEnd(ended);
+      sinon.assert.called(ended);
+    });
+  });
+
+  describe('#endWith', function () {
+    beforeEach(function () {
+      this.prop = KMock.createMockProperty('A');
+      this.lifeline = KMock.createMockStream();
+      this.result = K.endWith(this.prop, this.lifeline);
+    });
+
+    it('holds original property values', function () {
+      KMock.assertCurrentValue(this.result, 'A');
+      this.prop.set('B');
+      KMock.assertCurrentValue(this.result, 'B');
+    });
+
+    it('ends when property ends', function () {
+      const ended = sinon.spy();
+      this.result.onEnd(ended);
+      this.prop.end();
+      sinon.assert.called(ended);
+    });
+
+    it('ends when lifeline ends', function () {
+      const ended = sinon.spy();
+      this.result.onEnd(ended);
+      this.lifeline.end();
       sinon.assert.called(ended);
     });
   });

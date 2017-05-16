@@ -1,4 +1,4 @@
-'use strict';
+import * as sinon from 'helpers/sinon';
 
 /**
  * @ngdoc service
@@ -42,6 +42,41 @@ beforeEach(function () {
   this.$apply = function () {
     this.$inject('$rootScope').$apply();
   };
+
+
+  /**
+   * @ngdoc method
+   * @name helpers#$flush
+   * @description
+   * Call `$apply` on the root scope and flush outstanding timeout
+   * callbacks and mock HTTP responses.
+   */
+  this.$flush = function () {
+    const $http = this.$inject('$httpBackend');
+    const $timeout = this.$inject('$timeout');
+
+    // We need to run this multiple times because flushing an HTTP
+    // response might change something that requires another apply.
+    _.times(3, () => {
+      this.$apply();
+      // We ignore errors when there is nothing to be flushed
+      try {
+        $timeout.flush();
+      } catch (error) {
+        if (error.message !== 'No deferred tasks to be flushed') {
+          throw error;
+        }
+      }
+      try {
+        $http.flush();
+      } catch (error) {
+        if (error.message !== 'No pending request to flush !') {
+          throw error;
+        }
+      }
+    });
+  };
+
 
   /**
    * @ngdoc method
@@ -109,6 +144,35 @@ beforeEach(function () {
 
     this._angularElements.push(element);
 
+    scope.$digest();
+    return element;
+  };
+
+  /**
+   * @ngdoc method
+   * @name helpers#$compileWith
+   * @description
+   * Compiles a given element and attaches it to a new scope and
+   * returns the compiled JQuery element.
+   *
+   * The `initScope` argument is a function that is called with the
+   * new scope before the template is compiled.
+   *
+   * @param {string} template
+   * @param {function} initScope
+   * @return {JQueryElement}
+   */
+  this.$compileWith = function (template, initScope) {
+    const $compile = this.$inject('$compile');
+    const $rootScope = this.$inject('$rootScope');
+    const scope = $rootScope.$new(true);
+    if (initScope) {
+      initScope(scope);
+    }
+
+    const element = $compile(template)(scope);
+
+    this._angularElements.push(element);
     scope.$digest();
     return element;
   };

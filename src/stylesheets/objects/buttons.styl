@@ -77,7 +77,7 @@ $button-layout()
 
 $button-large()
   font-size: 1.15rem
-  padding: 1rem 2.5rem
+  padding: .875rem 1.25rem
 
   > .btn-icon
     height: 0.8em
@@ -321,7 +321,10 @@ Styleguide 4.5
 $button-plain()
   background: none
   $button-layout()
-  color: $colors.blue
+  color: $colors.blue-darkest
+  text-decoration: underline
+  &:hover
+    color: $colors.text-dark
   outline: 0
 
 .btn-plain
@@ -453,7 +456,6 @@ $btn-icon()
   display: inline-block
   height: 0.9em
   margin-right: 0.55em
-  margin-left: -0.7em
   > svg
     display: block
 

@@ -14,7 +14,7 @@
         | User profile
       li(role="menuitem" ui-sref="account.organizations.subscription({orgId: orgId})" ng-show="canGoToOrganizations")
         | Organizations &amp; billing
-      li(role="menuitem" ng-click="openIntercom()" ng-if="isIntercomLoaded()")
+      li(role="menuitem" ng-click="openIntercom()" ng-if="canShowIntercomLink && isIntercomLoaded()")
         | Talk to us
       li(role="menuitem" ng-click="openSupport()")
         | Get support

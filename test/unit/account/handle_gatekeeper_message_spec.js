@@ -2,15 +2,23 @@
 
 describe('Gatekeeper Message Handler', function () {
   beforeEach(function () {
-    module('contentful/test');
+    this.window = {location: ''};
+    module('contentful/test', ($provide) => {
+      $provide.value('$window', this.window);
+    });
     this.handle = this.$inject('handleGatekeeperMessage');
+    this.mockService('Config', {
+      websiteUrl: function (path) {
+        return 'website/' + path;
+      }
+    });
+    this.mockService('notification');
   });
 
   describe('actions on message', function () {
-    it('says "goodbye" to a cancelled user', function () {
-      const goodbye = this.$inject('authentication').goodbye = sinon.spy();
+    it('logs out cancelled user and redirects them', function () {
       this.handle({action: 'create', type: 'UserCancellation'});
-      sinon.assert.calledOnce(goodbye);
+      expect(this.window.location).toBe('website/goodbye');
     });
 
     it('opens the space creation dialog', function () {
@@ -31,8 +39,7 @@ describe('Gatekeeper Message Handler', function () {
 
     it('shows notification', function () {
       const notification = this.$inject('notification');
-      notification.info = sinon.spy();
-      notification.warn = sinon.spy();
+
       this.handle({type: 'flash', resource: {message: 'OK', type: 'info'}});
       this.handle({type: 'flash', resource: {message: 'FAIL', type: 'error'}});
       sinon.assert.calledOnce(notification.info.withArgs('OK'));
@@ -75,13 +82,6 @@ describe('Gatekeeper Message Handler', function () {
         sinon.assert.notCalled(this.$state.go);
         sinon.assert.calledOnce($location.url.withArgs(newPath));
       });
-    });
-
-    it('updates token if present', function () {
-      const token = {super: 'token'};
-      const update = this.$inject('authentication').updateTokenLookup = sinon.spy();
-      this.handle({token: token});
-      sinon.assert.calledOnce(update.withArgs(token));
     });
 
     it('refreshes token for any other message', function () {

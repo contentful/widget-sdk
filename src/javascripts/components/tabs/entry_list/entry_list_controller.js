@@ -37,6 +37,8 @@ angular.module('contentful')
     limit: 3
   });
 
+  $scope.hasContentType = spaceContext.publishedContentTypes.length > 0;
+
   $scope.getSearchContentType = function () {
     return spaceContext.publishedCTs.get(dotty.get($scope, 'context.view.contentTypeId'));
   };
@@ -115,9 +117,4 @@ angular.module('contentful')
       return response && response.total > 0;
     });
   }
-
-  $scope.$on('reloadEntries', function () {
-    $scope.updateEntries();
-  });
-
 }]);

@@ -141,6 +141,20 @@ angular.module('cf.app')
       isAtLast: function () {
         return page >= this.getPageCount() - 1;
       },
+
+      /**
+       * @ngdoc method
+       * @name Paginator#isBeyondLast
+       * @returns {boolean}
+       * @description
+       * Returns true if the currently selected page exceeds the number of
+       * available pages.
+       *
+       * Returns fals if the page count is zero.
+       */
+      isBeyondLast: function () {
+        return this.getPageCount() > 0 && page >= this.getPageCount();
+      },
       /**
        * @ngdoc method
        * @name Paginator#isAtFirst

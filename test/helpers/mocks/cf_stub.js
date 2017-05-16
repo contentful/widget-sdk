@@ -93,7 +93,8 @@ angular.module('contentful/mocks')
       locales: cfStub.locales('en-US', 'de-DE'),
       organization: {
         sys: {
-          id: '456'
+          id: '456',
+          type: 'Organization'
         },
         usage: {},
         subscription: {},
@@ -197,8 +198,8 @@ angular.module('contentful/mocks')
         version: 1
       },
       fields: _.merge({
-        title: '',
-        description: '',
+        title: {},
+        description: {},
         file: {}
       }, fields || {})
     }, extraData || {}));

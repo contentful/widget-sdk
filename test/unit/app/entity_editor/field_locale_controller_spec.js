@@ -1,12 +1,10 @@
-'use strict';
+import * as K from 'helpers/mocks/kefir';
 
 describe('FieldLocaleController', function () {
-  let K;
   beforeEach(function () {
     module('contentful/test');
     const $rootScope = this.$inject('$rootScope');
     const $controller = this.$inject('$controller');
-    K = this.$inject('mocks/kefir');
     this.extractValues = K.extractValues;
     this.init = function (patchScope) {
       this.otDoc = this.otDoc || this.$inject('mocks/entityEditor/Document').create();
@@ -26,10 +24,6 @@ describe('FieldLocaleController', function () {
       this.$apply();
       return scope;
     };
-  });
-
-  afterEach(function () {
-    K = null;
   });
 
   describe('#errors$ and #errors', function () {

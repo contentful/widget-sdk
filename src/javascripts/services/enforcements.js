@@ -11,8 +11,12 @@ angular.module('contentful')
   var OrganizationList = require('OrganizationList');
 
   function isOwner () {
-    var organization = spaceContext.getData('organization');
+    var organization = spaceContext.organizationContext.organization;
     return OrganizationList.isOwner(organization);
+  }
+
+  function isAdditionalUsageAllowed () {
+    return spaceContext.subscription.isAdditionalUsageAllowed();
   }
 
   function getOrgId () {
@@ -34,7 +38,7 @@ angular.module('contentful')
 
   function upgradeAction () {
     trackPersistentNotification.action('Quota Increase');
-    $location.path('/account/organizations/' + getOrgId() + '/subscription');
+    $location.path('/account/organizations/' + getOrgId() + '/z_subscription');
   }
 
 
@@ -45,29 +49,12 @@ angular.module('contentful')
       actionMessage: 'Status',
       action: function () {
         trackPersistentNotification.action('Visit Status Page');
-        $window.location = 'http://status.contentful.com';
-      }
-    },
-    {
-      label: 'subscriptionUnsettled',
-      message: function () {
-        return '<strong>Outstanding invoices.</strong> ' + (
-          isOwner()
-            ? 'To be able to edit content within your Organization, please update your billing details.'
-            : 'To be able to edit content within your Organization, the Organization Owner must update billing details.'
-        );
-      },
-      actionMessage: function () {
-        return isOwner() ? 'Update' : undefined;
-      },
-      action: function () {
-        trackPersistentNotification.action('Update Billing Details');
-        $location.path('/account/organizations/' + getOrgId() + '/subscription/billing');
+        $window.location = 'https://www.contentfulstatus.com';
       }
     },
     {
       label: 'periodUsageExceeded',
-      message: '<strong>You have reached one of your limits.</strong> To check your current limits, go to your subscription page. If you have overages enabled, don’t worry - we’ll charge you as you go.',
+      message: '<strong>You have reached one of your limits.</strong> To check your current limits, go to your subscription page.',
       actionMessage: 'Go to subscription',
       action: upgradeAction
     },
@@ -155,7 +142,7 @@ angular.module('contentful')
   }
 
   function getPeriodUsage () {
-    if (!isOwner()) return;
+    if (!isOwner() || isAdditionalUsageAllowed()) return;
 
     var enforcement;
     _.forEach(periodUsageMetrics, function (metric) {

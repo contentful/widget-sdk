@@ -37,7 +37,7 @@ export function create (editor, localeCode) {
   }
 
   function asset () {
-    entitySelector.open({
+    entitySelector.openFromField({
       type: 'Array',
       itemLinkType: 'Asset',
       locale: localeCode

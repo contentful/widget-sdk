@@ -7,7 +7,6 @@ angular.module('contentful')
   var features = require('features');
   var logger = require('logger');
   var spaceContext = require('spaceContext');
-  var authentication = require('authentication');
   var tokenStore = require('tokenStore');
   var analytics = require('analytics/Analytics');
   var authorization = require('authorization');
@@ -36,7 +35,7 @@ angular.module('contentful')
   $scope.$watchCollection(function () {
     return {
       space: spaceContext.space,
-      tokenLookup: authentication.tokenLookup
+      tokenLookup: tokenStore.getTokenLookup()
     };
   }, spaceAndTokenWatchHandler);
 
@@ -46,17 +45,10 @@ angular.module('contentful')
   $scope.showCreateSpaceDialog = CreateSpace.showDialog;
 
   function initClient () {
-    tokenStore.refresh();
-
     setTimeout(newVersionCheck, 5000);
-
     setInterval(function () {
       if (presence.isActive()) {
         newVersionCheck();
-        tokenStore.refresh()
-        .catch(function () {
-          ReloadNotification.trigger('Your authentication data needs to be refreshed. Please try logging in again.');
-        });
       }
     }, 5 * 60 * 1000);
   }

@@ -53,6 +53,10 @@ function isThenable (obj) {
 
 function createCoroutineTestFactory (testFactory) {
   return function (desc, runner, before) {
+    if (!runner) {
+      return testFactory(desc);
+    }
+
     return testFactory(desc, function (done) {
       const $apply = this.$apply.bind(this);
       before = before || _.noop;

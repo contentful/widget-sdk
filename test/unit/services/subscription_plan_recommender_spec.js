@@ -1,26 +1,22 @@
 'use strict';
 
 describe('subscriptionPlanRecommender', function () {
-
   let $httpBackend;
   let recommend;
 
   const HOST = 'be.contentful.com:443';
   const TEST_ORG_ID = 'TEST_ORG_ID';
-  const TEST_TOKEN = 'TEST_TOKEN';
-  const ENDPOINT = '//' + HOST + '/account/organizations/' + TEST_ORG_ID +
+  const ENDPOINT = HOST + '/account/organizations/' + TEST_ORG_ID +
     '/z_subscription_plans/recommended';
-  const REQUEST = ENDPOINT + '?access_token=' + TEST_TOKEN;
 
   const PLAN_CLASS = {'class': 'z-subscription-plan'};
   const REASON_CLASS = {'class': 'z-subscription-plan-recommendation-reason'};
 
   beforeEach(function () {
-    module('contentful/test', function ($provide, environment) {
-      environment.settings.authUrl = '//' + HOST;
-      $provide.value('authentication', {
-        token: TEST_TOKEN
-      });
+    module('contentful/test');
+
+    this.mockService('environment', {
+      settings: {authUrl: HOST}
     });
 
     recommend = this.$inject('subscriptionPlanRecommender').recommend;
@@ -36,11 +32,11 @@ describe('subscriptionPlanRecommender', function () {
   describe('.recommend(organizationId)', function () {
     beforeEach(function () {
       this.promise = recommend(TEST_ORG_ID);
-      this.respond = $httpBackend.whenGET(REQUEST).respond;
+      this.respond = $httpBackend.whenGET(ENDPOINT).respond;
     });
 
     it('requests the organization`s recommended plan card on GK', function () {
-      $httpBackend.expectGET(REQUEST).respond();
+      $httpBackend.expectGET(ENDPOINT).respond();
       $httpBackend.flush();
     });
 

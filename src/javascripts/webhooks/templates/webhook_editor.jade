@@ -1,3 +1,5 @@
+include ../../components/shared/table_pattern.mixin.jade
+
 header.workbench-header
   cf-breadcrumbs
   cf-icon.workbench-header__icon(name="page-settings")
@@ -59,7 +61,11 @@ cf-loader(watch-state-change="true")
           li URLs that resolve to localhost or redirects
         p
           | For further information please visit&#32;
-          a(href="http://docs.contentfulcma.apiary.io/#reference/webhooks" target="_blank") our content management API reference
+          a(
+            href="https://www.contentful.com/developers/docs/references/content-management-api/#/reference/webhooks"
+            target="_blank"
+            rel="noopener noreferrer"
+            ) our content management API reference
           | .
 
       h2.entity-sidebar__heading
@@ -67,7 +73,7 @@ cf-loader(watch-state-change="true")
       .entity-sidebar__text-profile
         p
           | If in order to configure webhooks in your network you need more information about their IP range visit&#32;
-          a(href="http://docs.aws.amazon.com/general/latest/gr/aws-ip-ranges.html" target="_blank") this page
+          a(href="http://docs.aws.amazon.com/general/latest/gr/aws-ip-ranges.html" target="_blank" rel="noopener noreferrer") this page
           | .
 
 .workbench-main(ui-tabpanel="activity")
@@ -87,13 +93,16 @@ cf-loader(watch-state-change="true")
               ng-show="activity.visible && !activity.loading"
               ng-repeat="log in activity.visible track by log.sys.id"
               ng-init="entityNavState = 'spaces.detail.settings.webhooks.detail.call({ callId: log.sys.id })'"
-              ui-sref="{{ entityNavState }}")
-              td(aria-label="cell-time")
+              ui-sref="{{entityNavState}}")
+              +td(aria-label="cell-time"
+                ui-sref="{{entityNavState}}")
                 | {{ log.requestAt }}
-              td(aria-label="cell-result").x--large-cell
+              +td.x--large-cell(aria-label="cell-result"
+                ui-sref="{{entityNavState}}")
                 cf-webhook-call-status(call="log")
-              td(aria-label="cell-actions")
-                a.text-link--standard(ui-sref="{{ entityNavState }}") View details
+              +td(aria-label="cell-actions"
+                ui-sref="{{entityNavState}}")
+                span.text-link--standard View details
             tr(ng-show="activity.visible.length < 1")
               td(colspan="3")
                 | No webhook calls yet!

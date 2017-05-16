@@ -21,11 +21,6 @@ angular.module('contentful')
     name: 'spaces',
     url: '/spaces',
     abstract: true,
-    resolve: {
-      spaces: ['tokenStore', function (tokenStore) {
-        return tokenStore.getSpaces();
-      }]
-    },
     views: {'nav-bar': { template: '<cf-main-nav-bar />' }},
     children: [newSpace, require('states/spaces/detail')]
   };
@@ -34,6 +29,7 @@ angular.module('contentful')
 .factory('states/spaces/detail', ['require', function (require) {
   var analytics = require('analytics/Analytics');
   var sectionAccess = require('sectionAccess');
+  var TheStore = require('TheStore');
 
   return {
     name: 'detail',
@@ -62,6 +58,7 @@ angular.module('contentful')
 
       if (sectionAccess.hasAccessToAny()) {
         sectionAccess.redirectToFirstAccessible();
+        TheStore.set('lastUsedSpace', space.getId());
       }
     }],
     templateProvider: ['space', function (space) {
@@ -75,9 +72,9 @@ angular.module('contentful')
       require('states/contentTypes'),
       require('states/entries'),
       require('states/assets'),
-      require('states/api'),
+      require('app/api/State').default,
       require('states/settings'),
-      require('states/learn')
+      require('states/space_home')
     ]
   };
 }]);

@@ -51,16 +51,16 @@ angular.module('contentful')
     'field_added',
     'custom_extension_selected'
   ],
+  experiment: [
+    'start',
+    'interaction'
+  ],
   entry_editor: [
     'state_changed',
     'disabled_fields_visibility_toggled',
     'created_with_same_ct',
     'preview_opened',
     'custom_extension_rendered'
-  ],
-  api_keys: [
-    'create_screen_opened',
-    'language_selected'
   ],
   versioning: [
     'no_snapshots',
@@ -97,7 +97,16 @@ angular.module('contentful')
     'create'
   ],
   api_key: [
-    'create'
+    'create',
+    'clipboard_copy',
+    'boilerplate'
+  ],
+  invite_user: [
+    'learn',
+    'create_space'
+  ],
+  personal_access_token: [
+    'action'
   ]
 })
 

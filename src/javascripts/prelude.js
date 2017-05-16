@@ -64,18 +64,19 @@ angular.module('contentful/app', ['contentful'])
   }
 }])
 .run(['require', function (require) {
-  var authentication = require('authentication');
-  authentication.login();
-
+  var $document = require('$document');
+  require('utils/LaunchDarkly').init();
+  require('Authentication').init();
+  require('tokenStore').init();
   require('presence').startTracking();
-  require('client').init(authentication.token);
   require('uiVersionSwitcher').checkIfVersionShouldBeSwitched();
   require('navigation/stateChangeHandlers').setup();
-  require('contextMenu').init();
+  require('ui/ContextMenuHandler').default($document);
   require('notification').setupClearMessageHooks();
   require('states').loadAll();
   require('dialogsInitController').init();
   require('navigation/DocumentTitle').init();
+  require('Debug').init(window);
 }]);
 
 angular.module('contentful')
@@ -103,11 +104,14 @@ angular.module('cf.es6')
 
 
 (function () {
-  window.System = {
-    register: register
+  var registry = [];
+  window.AngularSystem = {
+    register: register,
+    registry: registry
   };
 
   function register (id, deps, run) {
+    registry.push([id, deps, run]);
     registerDirectoryAlias(id);
     angular.module('cf.es6')
     .factory(id, ['require', function (require) {
@@ -167,6 +171,10 @@ angular.module('cf.es6')
     }
   }
 
+  /**
+   * If module ID matches 'a/b/index' then register a module 'a/b'
+   * that is an alias for the index module.
+   */
   function registerDirectoryAlias (moduleId) {
     var path = moduleId.split('/');
     var last = path.pop();
@@ -184,11 +192,13 @@ angular.module('cf.es6')
     // IE does not support string.startsWith()
     if (to.substr(0, 2) === './' || to.substr(0, 3) === '../') {
       var froms = from.split('/');
+      // Last 'from' is the filename but we resolve relative to the
+      // directory.
       froms.pop();
       var tos = to.split('/');
       return tos.reduce(function (resolved, seg) {
         if (seg === '..') {
-          resolved.shift();
+          resolved.pop();
         } else if (seg !== '.') {
           resolved.push(seg);
         }

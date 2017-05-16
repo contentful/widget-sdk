@@ -30,11 +30,11 @@ export function form () {
   return simpleWorkbench('Space settings', 'page-settings', actions, content);
 }
 
-export function removalConfirmation (spaceName) {
+export function removalConfirmation () {
   const content = [
     h('p', [
       'You are about to remove space ',
-      h('span.modal-dialog__highlight', [spaceName]), '.'
+      h('span.modal-dialog__highlight', {ngBind: 'spaceName'}), '.'
     ]),
     h('p', [
       h('strong', [

@@ -9,15 +9,19 @@
   &__page
     margin-left: 10px
     padding: 10px
+    cursor: pointer
     &:hover
       background: $colors.element-lightest
-      cursor: pointer
 
   &__prev, &__next
     text-decoration: none
+    cursor: pointer
     &:hover
       color: $colors.text-dark
-      cursor: pointer
+    &[aria-disabled=true]
+      color: $colors.element-light
+      cursor: default
+
 
   &__prev
     margin-right: 30px
@@ -33,11 +37,6 @@
   .x--active-page
     color: $colors.text-dark
     background: $colors.element-light
-
-  .x--disabled
-    color: $colors.element-light
-    &:hover
-      cursor: default
 
   .x--dots
     &:hover

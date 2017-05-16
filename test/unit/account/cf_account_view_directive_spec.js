@@ -1,4 +1,4 @@
-'use strict';
+import * as K from 'helpers/mocks/kefir';
 
 describe('Account View directive', function () {
   beforeEach(function () {
@@ -7,7 +7,6 @@ describe('Account View directive', function () {
       $provide.value('handleGatekeeperMessage', this.handleGatekeeperMessage);
     });
 
-    const K = this.$inject('mocks/kefir');
     this.messages$ = K.createMockStream();
 
     const IframeChannel = this.mockService('account/IframeChannel');
@@ -43,6 +42,6 @@ describe('Account View directive', function () {
     this.$inject('authentication').authUrl = _.constant('http://test.com');
     this.$inject('$location').path = _.constant('/account/x/y/z/');
     this.compile();
-    expect(this.element.find('iframe').first().prop('src')).toBe('http://be.test.com/account/x/y/z/');
+    expect(this.element.find('iframe').first().prop('src')).toBe('http://be.test.com/account/x/y/z/?withoutNavigation=true');
   });
 });

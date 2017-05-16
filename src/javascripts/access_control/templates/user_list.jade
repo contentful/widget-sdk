@@ -1,6 +1,8 @@
+//- @TODO move to hyperscript
+
 header.workbench-header
   cf-icon.workbench-header__icon(name="page-settings")
-  h1.workbench-header__title Users ({{ count || 0 }})
+  h1.workbench-header__title Users ({{ spaceUsersCount || 0 }})
   .workbench-header__actions
     button.btn-secondary-action(cf-context-menu-trigger)
       cf-icon.btn-dropdown-icon(name="dd-arrow-down")
@@ -18,7 +20,7 @@ header.workbench-header
       .user-list__item(ng-repeat="user in item.users track by user.id")
         img(ng-src="{{ user.avatarUrl }}" width="50" height="50")
         .user-list__info
-          strong.user-list__name {{ user.name }}
+          strong.user-list__name.u-truncate {{ user.name }}
           small(ng-if="!user.confirmed") This account is not confirmed
           .user-list__roles {{ user.roleNames }}
         button.user-list__actions.user-list__actions--disabled.btn-inline(ng-if="!canModifyUsers()")
@@ -39,7 +41,7 @@ header.workbench-header
               | Remove from this space
 
   .workbench-main__sidebar
-    .entity-sidebar
+    .entity-sidebar(ng-if="!usesNewSpaceInvitationFlow")
       h2.entity-sidebar__heading
         | Invite users
       p
@@ -48,5 +50,20 @@ header.workbench-header
       p(ng-show="canModifyUsers()") <a href="" ng-click="goToSubscription()">Increase your plan quotas here</a>.
       button.btn-primary-action(
         ng-click="openInvitationDialog()"
-        ng-disabled="!canModifyUsers() || !canInviteUsers()")
+        ng-disabled="!canInviteUsers()")
         | Invite users to this space
+
+    //- Begin feature flag code - feature-bv-04-2017-new-space-invitation-flow
+    .entity-sidebar(ng-if="usesNewSpaceInvitationFlow")
+      h2.entity-sidebar__heading
+        | Add users
+      p
+        include ./users_add_note
+      //- @TODO: use `ui-command` for invitation
+      button.btn-action.x--block(
+        ng-class="{'is-loading': isInvitingUsersToSpace}"
+        ng-click="openSpaceInvitationDialog()"
+        ng-disabled="!canModifyUsers()")
+          cf-icon.btn-icon.inverted(name="plus")
+          | Add users to space
+    //- End feature flag code - feature-bv-04-2017-new-space-invitation-flow

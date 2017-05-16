@@ -82,9 +82,9 @@ filters.filter('fileType', ['mimetype', function (mimetype) {
  * `/token` endpoint. The token has a domain map mapping `TYPE` to the
  * actual domain. This is used to replace the hosts.
  */
-filters.filter('assetUrl', ['hostnameTransformer', 'authentication', function (hostnameTransformer, authentication) {
+filters.filter('assetUrl', ['hostnameTransformer', 'tokenStore', function (hostnameTransformer, tokenStore) {
   return function (assetOrUrl) {
-    var domains = dotty.get(authentication, 'tokenInfo.domains');
+    var domains = tokenStore.getDomains();
     if (domains) {
       return hostnameTransformer.toExternal(assetOrUrl, domains);
     } else {

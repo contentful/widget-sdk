@@ -15,6 +15,16 @@ angular.module('contentful')
   var $state = require('$state');
   var spaceContext = require('spaceContext');
   var OrganizationList = require('OrganizationList');
+  var tokenStore = require('tokenStore');
+
+  var canShowIntercomLink$ = tokenStore.user$.map(function (user) {
+    var organizationMemberships = user && user.organizationMemberships || [];
+    var canShowIntercomLink = _.find(organizationMemberships, function (membership) {
+      var subscriptionStatus = _.get(membership, 'organization.subscription.status');
+      return subscriptionStatus !== 'free';
+    });
+    return !!canShowIntercomLink;
+  }).skipDuplicates();
 
   return {
     getSubscriptionState: getSubscriptionState,
@@ -22,7 +32,9 @@ angular.module('contentful')
     goToSubscription: goToSubscription,
     goToBilling: goToBilling,
     canGoToOrganizations: canGoToOrganizations,
-    getGoToOrganizationsOrganization: getGoToOrganizationsOrganization
+    getGoToOrganizationsOrganization: getGoToOrganizationsOrganization,
+    goToUsers: goToUsers,
+    canShowIntercomLink$: canShowIntercomLink$
   };
 
   /**
@@ -44,10 +56,10 @@ angular.module('contentful')
    * @name TheAccountView#goToSubscription
    * @description
    * `TheAccountView#goToOrganizations` shorthand to navigate to the current
-   * organizatin's subscription page.
+   * organization's subscription page.
    */
   function goToSubscription () {
-    return this.goToOrganizations('subscription');
+    return goToOrganizations('z_subscription');
   }
 
   /**
@@ -58,7 +70,18 @@ angular.module('contentful')
    * organization's billing page.
    */
   function goToBilling () {
-    return this.goToOrganizations('billing');
+    return goToOrganizations('z_billing');
+  }
+
+  /**
+   * @ngdoc method
+   * @name TheAccountView#goToUsers
+   * @description
+   * `TheAccountView#goToOrganizations` shorthand to navigate to the current
+   * organization's users (memberships) page.
+   */
+  function goToUsers () {
+    return goToOrganizations('organization_memberships');
   }
 
   /**

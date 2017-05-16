@@ -81,7 +81,8 @@ export function actions (actionClass) {
       dataTestId: 'asset-download',
       ngIf: '!missing && downloadUrl',
       ngHref: '{{downloadUrl}}',
-      target: '_blank'
+      target: '_blank',
+      rel: 'noopener noreferrer'
     }, [h('cf-icon', {name: 'download'})]),
     h(`button.${actionClass}`, {
       dataTestId: 'entity-remove',

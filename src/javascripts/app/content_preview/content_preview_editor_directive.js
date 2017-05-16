@@ -25,10 +25,10 @@ angular.module('contentful')
 
   // Fetch content types and preview environment
   var getPreviewEnvironment = contentPreview.get($stateParams.contentPreviewId);
-  var getContentTypes = spaceContext.refreshContentTypes();
+  var contentTypes = spaceContext.publishedCTs.refreshBare();
   var promises = ($scope.context.isNew
-    ? [getContentTypes]
-    : [getPreviewEnvironment, getContentTypes]
+    ? [contentTypes]
+    : [contentTypes, getPreviewEnvironment]
   );
 
   $q.all(promises).then(handleSuccessResponse, redirectToList);
@@ -118,7 +118,7 @@ angular.module('contentful')
   }
 
   function handleSuccessResponse (responses) {
-    var cts = spaceContext.contentTypes;
+    var cts = responses[0];
     if ($scope.context.isNew) {
       contentPreview.canCreate().then(function (allowed) {
         if (allowed) {
@@ -130,7 +130,7 @@ angular.module('contentful')
       });
     } else {
       $scope.context.ready = true;
-      var env = responses[0];
+      var env = responses[1];
       if (env) {
         $scope.previewEnvironment = contentPreview.toInternal(env, cts);
         validate();

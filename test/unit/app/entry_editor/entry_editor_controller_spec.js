@@ -1,5 +1,3 @@
-'use strict';
-
 describe('Entry Editor Controller', function () {
   beforeEach(function () {
     module('contentful/test', ($provide) => {
@@ -9,8 +7,10 @@ describe('Entry Editor Controller', function () {
         'entityEditor/StatusNotificationsController'
       );
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
+      $provide.stubLaunchDarkly();
     });
 
+    const {makeEditorData} = this.$inject('mocks/app/entity_editor/DataLoader');
 
     this.createController = () => {
       const cfStub = this.$inject('cfStub');
@@ -24,20 +24,7 @@ describe('Entry Editor Controller', function () {
       const entry = cfStub.entry(space, 'testEntry', 'testType', {}, {
         sys: { publishedVersion: 1 }
       });
-      scope.editorData = {
-        entity: entry,
-        contentType: {
-          getId: _.constant(ctData.sys.id),
-          data: ctData
-        },
-        fieldControls: {},
-        entityInfo: {
-          id: entry.data.sys.id,
-          type: 'Entry',
-          contentTypeId: ctData.sys.id,
-          contentType: ctData
-        }
-      };
+      scope.editorData = makeEditorData(entry.data, ctData);
 
       const $controller = this.$inject('$controller');
       $controller('EntryEditorController', {$scope: scope});
@@ -45,11 +32,7 @@ describe('Entry Editor Controller', function () {
       return scope;
     };
 
-    const createDoc = sinon.stub();
-    createDoc.returns(this.$inject('mocks/entityEditor/Document').create());
-
     this.spaceContext = _.extend(this.$inject('spaceContext'), {
-      docPool: {get: createDoc},
       entryTitle: function (entry) {
         return dotty.get(entry, 'data.fields.title');
       }

@@ -1,4 +1,4 @@
-'use strict';
+import * as sinon from 'helpers/sinon';
 
 describe('cfZenmode', function () {
   let editor;
@@ -24,7 +24,7 @@ describe('cfZenmode', function () {
     const LazyLoader = this.$inject('LazyLoader');
     const scopeProps = { zenApi: apiMock, preview: {} };
 
-    sinon.stub(LazyLoader, 'get', function () {
+    sinon.stub(LazyLoader, 'get').callsFake(function () {
       return $q.resolve(libs);
     });
 

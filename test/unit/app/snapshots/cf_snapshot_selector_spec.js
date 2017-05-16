@@ -1,4 +1,4 @@
-'use strict';
+import * as K from 'helpers/mocks/kefir';
 
 describe('cfSnapshotSelector', function () {
   const PER_PAGE = 20; // page size
@@ -14,7 +14,6 @@ describe('cfSnapshotSelector', function () {
       }
     };
 
-    const K = this.$inject('mocks/kefir');
     const moment = this.$inject('moment');
     const spaceContext = this.$inject('mocks/spaceContext').init();
     const doc = this.$inject('mocks/entityEditor/Document').create(mockEntry);

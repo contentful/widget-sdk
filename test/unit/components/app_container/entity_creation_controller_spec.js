@@ -27,7 +27,7 @@ describe('EntityCreationController', function () {
     const cfStub = this.$inject('cfStub');
     const $controller = this.$inject('$controller');
 
-    this.notification = this.$inject('notification');
+    this.notification = this.mockService('notification');
     this.$q = this.$inject('$q');
 
     this.spaceContext = this.$inject('spaceContext');
@@ -153,21 +153,6 @@ describe('EntityCreationController', function () {
 
     it('navigates to editor', function () {
       sinon.assert.calledWith(this.$state.go, 'spaces.detail.content_types.new.home');
-    });
-  });
-
-  describe('opens editor for new api key', function () {
-    beforeEach(function () {
-      stubs.computeUsage.returns(null);
-      this.entityCreationController.newApiKey();
-    });
-
-    it('computes the api key usage', function () {
-      sinon.assert.calledWith(stubs.computeUsage, 'apiKey');
-    });
-
-    it('navigates to editor', function () {
-      sinon.assert.calledWith(this.$state.go, 'spaces.detail.api.keys.new');
     });
   });
 

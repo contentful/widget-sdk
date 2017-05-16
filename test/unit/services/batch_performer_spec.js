@@ -8,9 +8,7 @@ describe('Batch performer service', function () {
   beforeEach(function () {
     module('contentful/test');
     this.create = this.$inject('batchPerformer').create;
-    this.notification = this.$inject('notification');
-    this.notification.info = sinon.spy();
-    this.notification.warn = sinon.spy();
+    this.notification = this.mockService('notification');
     this.analytics = this.$inject('analytics/Analytics');
     this.analytics.track = sinon.spy();
   });

@@ -1,25 +1,36 @@
 Debug tools
 ===========
 
-We have some custom tools for debugging certain features. You can find them
-under `src/debug`. These tools are only available in `development`, `preview`
-and `staging` environments.
+We have some custom tools for debugging certain features. These tools are only
+available in `development`, `preview` and `staging` environments.
 
-A tool name (prefixed with two underscores) is available as a function in
-global namespace - you can call it from developer console.
+A debug tool can be enabled by calling `cfDebug.toolName()` from the browser
+console.
 
-List of debug tools
--------------------
-- __ANALYTICS_CONSOLE - a simple front-end tool that allows to intercept and
-show data sent to Segment. See [Analytics guide][analytics].
-- __MOCK_XHR - mocks XHR request, allowing to set responce status codes for
-given urls.
+Existing Tools
+--------------
 
-[analytics]: /docs/guides/analytics
+### `cfDebug.analytics()`
 
-Creating a new debug tool
--------------------------
+Calling this function will show a window that logs calls to `analytics.track()`.
 
-To add a new debug tool, create a service that exports one `show()` function,
-and add reference to it to `src/debug/debug.js`
+### `cfDebug.http()`
 
+This tool allows you to mock HTTP requests through XHR.
+
+Initializing will open a console that lets you specify return codes for URLs
+matching a pattern. All HTTP requests to URLs matching the given pattern will
+return the specified status.
+
+
+Development
+-----------
+
+The source code for debug tools is located in the `src/javascripts/debug` folder.
+
+To add a debug tool create a new folder or file in `debug` and add your logic.
+Each tool must have an entry module that has an initializer as the default
+export. The initializer may return an object with an additional debugging API.
+
+The entry module is then added to the `module` variable in
+`src/javascripts/Debug.es6.js`. This will expose the tool on `cfDebug`.

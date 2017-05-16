@@ -39,8 +39,9 @@ describe('Snowplow service', function () {
     });
 
     it('calling #track does not add event to queue', function () {
+      const queueSize = this.$window.snowplow.q.length;
       this.Snowplow.track('learn:language_selected');
-      expect(this.$window.snowplow.q.length).toBe(1);
+      expect(this.$window.snowplow.q.length).toBe(queueSize);
     });
   });
 
@@ -75,6 +76,50 @@ describe('Snowplow service', function () {
       expect(this.getLastEvent()[1].schema).toBe('main/schema/path');
       expect(this.getLastEvent()[1].data).toEqual({something: 'someValue'});
       expect(this.getLastEvent()[2]).toEqual(['ctx']);
+    });
+  });
+
+  describe('#buildUnstructEventData', function () {
+    beforeEach(function () {
+      this.Events.getSchema.returns({
+        name: 'xyz',
+        path: 'schema/xyz/path'
+      });
+
+      this.Events.transform.returns({
+        data: { key: 'val' },
+        contexts: ['ctx']
+      });
+
+      this.unstructData = this.Snowplow.buildUnstructEventData('a', {});
+    });
+
+    it('should return an array', function () {
+      expect(Array.isArray(this.unstructData)).toBe(true);
+    });
+    describe('has following data', function () {
+      it('should be an unstructured event', function () {
+        expect(this.unstructData[0]).toBe('trackUnstructEvent');
+      });
+
+      it('should have an object containing schema url and data', function () {
+        expect(this.unstructData[1]).toEqual({
+          schema: 'schema/xyz/path',
+          data: { key: 'val' }
+        });
+      });
+
+      it('can have a contexts array', function () {
+        expect(this.unstructData[2]).toEqual(['ctx']);
+
+        this.Events.transform.returns({
+          data: { key: 'val' }
+        });
+
+        this.unstructData = this.Snowplow.buildUnstructEventData('a', {});
+
+        expect(this.unstructData[2]).toEqual(undefined);
+      });
     });
   });
 });

@@ -1,4 +1,4 @@
-'use strict';
+import { createMockProperty } from 'helpers/mocks/kefir';
 
 describe('cfCreateNewSpace directive', function () {
 
@@ -38,7 +38,11 @@ describe('cfCreateNewSpace directive', function () {
       },
       tokenStore: {
         refresh: sinon.stub(),
-        getSpace: sinon.stub()
+        getSpace: sinon.stub(),
+        user$: createMockProperty({
+          firstName: 'firstName'
+        }),
+        spaces$: createMockProperty([])
       },
       space: {
         getId: sinon.stub()
@@ -51,11 +55,6 @@ describe('cfCreateNewSpace directive', function () {
       },
       OrganizationList: {
         getAll: sinon.stub()
-      },
-      spaceContext: {
-        space: {
-          createDeliveryApiKey: sinon.stub()
-        }
       }
     };
 
@@ -70,9 +69,16 @@ describe('cfCreateNewSpace directive', function () {
       $provide.value('tokenStore', stubs.tokenStore);
       $provide.value('$state', stubs.state);
       $provide.value('OrganizationList', stubs.OrganizationList);
-      $provide.value('spaceContext', stubs.spaceContext);
       $provide.removeDirectives('cfIcon');
+      $provide.stubLaunchDarkly();
     });
+
+    this.spaceContext = this.$inject('mocks/spaceContext').init();
+
+    this.spaceContext.getData = sinon.stub();
+    this.spaceContext.space = {
+      createDeliveryApiKey: sinon.stub()
+    };
 
     stubs.spaceTemplateLoader.getTemplatesList.resolves(true);
 
@@ -157,8 +163,8 @@ describe('cfCreateNewSpace directive', function () {
       });
 
       it('shows error', function () {
-        expect(controller.newSpace.errors.form).toEqual('You can\'t create a Space in this Organization');
-        sinon.assert.calledOnce(stubs.logger.logError);
+        expect(controller.newSpace.errors.form).toEqual('You don’t have permission to create a space');
+        sinon.assert.called(stubs.logger.logError);
       });
     });
 
@@ -262,7 +268,7 @@ describe('cfCreateNewSpace directive', function () {
           stubs.tokenStore.refresh.resolves();
           stubs.client.createSpace.resolves(space);
           stubs.tokenStore.getSpace.resolves(space);
-          stubs.spaceContext.space.createDeliveryApiKey.resolves();
+          this.spaceContext.space.createDeliveryApiKey.resolves();
           stubs.spaceTemplateLoader.getTemplate.resolves();
           this.setupDirective();
         });
@@ -303,11 +309,11 @@ describe('cfCreateNewSpace directive', function () {
           });
 
           it('creates one Delivery API key', function () {
-            sinon.assert.calledOnce(stubs.spaceContext.space.createDeliveryApiKey);
+            sinon.assert.calledOnce(this.spaceContext.space.createDeliveryApiKey);
           });
         });
 
-        describe('template was selected', function () {
+        describe('creating space from template', function () {
           beforeEach(function () {
             stubs.spaceTemplateCreator.getCreator.returns({
               create: stubs.spaceTemplateCreator.create.resolves()
@@ -316,12 +322,29 @@ describe('cfCreateNewSpace directive', function () {
             controller.newSpace.useTemplate = true;
             controller.newSpace.selectedTemplate = {name: 'Blog'};
             controller.requestSpaceCreation();
-            $rootScope.$digest();
+            sinon.stub($rootScope, '$broadcast');
+            this.$apply();
           });
 
           it('refreshes token', function () {
             sinon.assert.calledOnce(stubs.tokenStore.refresh);
             sinon.assert.calledOnce(stubs.tokenStore.getSpace);
+          });
+
+          it('tracks analytics event', function () {
+            sinon.assert.calledWith(
+              stubs.analytics.track,
+              'space:create',
+              {templateName: 'Blog'}
+            );
+          });
+
+          it('triggers a content type refresh', function () {
+            sinon.assert.called(this.spaceContext.publishedCTs.refresh);
+          });
+
+          it('emits "spaceTemplateCreated" event', function () {
+            sinon.assert.calledWith($rootScope.$broadcast, 'spaceTemplateCreated');
           });
         });
       });

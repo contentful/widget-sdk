@@ -1,10 +1,19 @@
 nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
   ul.nav-bar__list(ng-show="spaceContext.space && !spaceContext.space.isHibernated()")
     li.app-top-bar__action.nav-bar__list-item(
+      ng-if="canNavigateTo.spaceHome")
+      a.nav-bar__link(
+        ng-class="{'is-active': $state.is('spaces.detail.home')}"
+        ui-sref="spaces.detail.home"
+        data-view-type="space_home"
+        tabindex="0")
+        cf-icon(name="nav-home")
+        span.nav-bar__list-label Space home
+    li.app-top-bar__action.nav-bar__list-item(
       ng-if="canNavigateTo.contentType")
       a.nav-bar__link(
           ng-class="{'is-active': $state.includes('spaces.detail.content_types')}"
-          ui-sref="spaces.detail.content_types.list({ spaceId: $stateParams.spaceId })"
+          ui-sref="spaces.detail.content_types.list"
           data-view-type="content-type-list"
           tabindex="0")
         cf-icon(name="nav-ct")
@@ -13,7 +22,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
       ng-if="canNavigateTo.entry")
       a.nav-bar__link(
           ng-class="{'is-active': $state.includes('spaces.detail.entries')}"
-          ui-sref="spaces.detail.entries.list({ spaceId: $stateParams.spaceId })"
+          ui-sref="spaces.detail.entries.list"
           data-view-type="entry-list"
           tabindex="0")
         cf-icon(name="nav-entries")
@@ -22,7 +31,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
       ng-if="canNavigateTo.asset")
       a.nav-bar__link(
           ng-class="{'is-active': $state.includes('spaces.detail.assets')}"
-          ui-sref="spaces.detail.assets.list({ spaceId: $stateParams.spaceId })"
+          ui-sref="spaces.detail.assets.list"
           data-view-type="asset-list"
           tabindex="0")
         cf-icon(name="nav-media")
@@ -31,7 +40,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
       ng-if="canNavigateTo.apiKey")
       a.nav-bar__link(
           ng-class="{'is-active': $state.includes('spaces.detail.api')}"
-          ui-sref="spaces.detail.api.home({ spaceId: $stateParams.spaceId })"
+          ui-sref="spaces.detail.api.home"
           data-view-type="api-home"
           tabindex="0")
         cf-icon(name="nav-api")
@@ -81,12 +90,3 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
             ng-class="{'selected': $state.includes('spaces.detail.settings.content_preview')}"
             ui-sref="spaces.detail.settings.content_preview.list")
             | Content preview
-    li.app-top-bar__action.nav-bar__list-item--right(
-      ng-if="canNavigateTo.learn")
-      a.nav-bar__link(
-        ng-class="{'is-active': $state.is('spaces.detail.learn')}"
-        ui-sref="spaces.detail.learn({ spaceId: $stateParams.spaceId })"
-        data-view-type="learn"
-        tabindex="0")
-        cf-icon(name="nav-learn")
-        span.nav-bar__list-label Learn

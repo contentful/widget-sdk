@@ -36,7 +36,7 @@ mixin field-locale-errors
         data-test-id="uniqueness-conflicts-list")
         li.entity-editor__control-error(ng-repeat="conflict in error.conflicting track by conflict.sys.id")
           a.cfnext-form__field-error(
-            target="_blank"
+            target="_blank" rel="noopener noreferrer"
             ui-sref="spaces.detail.entries.detail({ entryId: \"{{conflict.sys.id}}\", notALinkedEntity: true })")
             | {{ conflict.data.entryTitle || 'Loading title for conflicting entry..'}}
             i.fa.fa-external-link
