@@ -39,7 +39,7 @@ describe('Account View directive', function () {
   });
 
   it('sets a source of the GK iframe using $location', function () {
-    this.$inject('authentication').authUrl = _.constant('http://test.com');
+    this.$inject('Config').authUrl = sinon.stub.resolves('http://test.com');
     this.$inject('$location').path = _.constant('/account/x/y/z/');
     this.compile();
     expect(this.element.find('iframe').first().prop('src')).toBe('http://be.test.com/account/x/y/z/?withoutNavigation=true');

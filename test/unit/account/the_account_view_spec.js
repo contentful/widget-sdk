@@ -119,7 +119,7 @@ describe('TheAccountView service', function () {
     });
   });
 
-  describeGoToMethod('goToBilling', 'billing');
+  describeGoToMethod('goToBilling', 'z_billing');
 
   describeGoToMethod('goToSubscription', 'z_subscription');
 
@@ -138,7 +138,7 @@ describe('TheAccountView service', function () {
 
       it(`calls $state.go('${subpage}')`, function () {
         sinon.assert.calledOnce(this.go);
-        sinon.assert.calledWithExactly(this.go, 'account.pathSuffix', { pathSuffix: `organizations/ORG_ID/${subpage}` }, { reload: true });
+        sinon.assert.calledWithExactly(this.go, `account.organizations.${subpage}`, { orgId: 'ORG_ID' }, { reload: true });
       });
 
       it('returns .goToOrganizations() returned promise', function () {

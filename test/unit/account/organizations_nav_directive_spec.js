@@ -1,9 +1,8 @@
-'use strict';
+import * as K from 'helpers/mocks/kefir';
 
 describe('cfAccountOrganizationsNav directive', function () {
   beforeEach(function () {
     module('contentful/test');
-    this.K = this.$inject('mocks/kefir');
     this.OrganizationList = this.$inject('OrganizationList');
     this.$state = this.$inject('$state');
     this.$state.go = sinon.stub();
@@ -13,7 +12,7 @@ describe('cfAccountOrganizationsNav directive', function () {
     this.compile = function () {
       this.element = this.$compile('<cf-account-organizations-nav />');
       this.controller = this.element.isolateScope().nav;
-      this.OrganizationList.organizations$ = this.K.createMockProperty(this.orgs);
+      this.OrganizationList.organizations$ = K.createMockProperty(this.orgs);
     };
     this.orgs = [{
       subscriptionPlan: {limits: {features: {offsiteBackup: true}}},
