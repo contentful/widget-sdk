@@ -9,6 +9,10 @@ header.workbench-header.x--with-nav
         ng-options="org.sys.id as org.name for org in nav.organizations"
         ng-model="nav.selectedOrganizationId"
         ng-change="nav.goToOrganization(nav.selectedOrganizationId)")
+      a(
+        ui-sref="account.organizations.new"
+        ng-if="!nav.isNewOrgState")
+        | Add new organization
 
   nav.workbench-nav__tabs
     a(
