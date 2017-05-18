@@ -12,12 +12,14 @@ angular.module('contentful').directive('cfAddUsersToSpaceNote', ['require', func
   function addUsersNoteTemplate () {
     return h('p', [
       h('span.add-users-to-space-note', ['You can only add users to this space who are already part of your organization.&#32;']),
-      h('span', { ngIf: 'canInviteUsersToOrganization()' }, [
+      h('span', { 'data-test-id': 'can-invite-users-to-organization', ngIf: 'canInviteUsersToOrganization()' }, [
         'To invite new users to your organization, and ultimately this space, head to&#32;',
         h('a', { href: '', ngClick: 'goToOrganizationUsers()' }, ['organizations &amp; billing']),
         '.'
       ]),
-      h('span', { ngIf: '!canInviteUsersToOrganization()' }, ['Inviting new users to your organization can be done by an organization owner or admin.'])
+      h('span', { 'data-test-id': 'cannot-invite-users-to-organization', ngIf: '!canInviteUsersToOrganization()' }, [
+        'Inviting new users to your organization can be done by an organization owner or admin.'
+      ])
     ]);
   }
 }])
