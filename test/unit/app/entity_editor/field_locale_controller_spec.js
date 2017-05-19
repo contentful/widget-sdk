@@ -8,6 +8,8 @@ describe('FieldLocaleController', function () {
     this.extractValues = K.extractValues;
     this.init = function (patchScope) {
       this.otDoc = this.otDoc || this.$inject('mocks/entityEditor/Document').create();
+      // Make sure .can() returns false if a custom field ID constraint exists
+      this.otDoc.permissions.can = sinon.stub().withArgs('update').returns(false);
       const scope = Object.assign($rootScope.$new(), {
         widget: {
           field: {id: 'FID'}

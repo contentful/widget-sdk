@@ -190,9 +190,11 @@ angular.module('contentful')
    * - `editable` Is true if 'disabled' is false
    */
 
-  var editingAllowed =
-    $scope.docImpl
+  var canEditContentType = $scope.docImpl
     .permissions.canEditFieldLocale(field.apiName, locale.code);
+  var canEditThisEntity = $scope.docImpl.permissions.can('update');
+
+  var editingAllowed = canEditContentType || canEditThisEntity;
 
   // TODO move this to FieldLocaleDocument
   controller.access$ =
