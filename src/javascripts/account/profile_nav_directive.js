@@ -33,6 +33,7 @@ angular.module('contentful')
       controller.stateName = $state.current.name;
 
       controller.tabs = _.map(tabs, function (tab) {
+        tab.id = 'profile-nav-tab-' + tab.name.toLowerCase().replace(/\s+/g, '-');
         tab.selected = controller.stateName === tab.state;
         return tab;
       });

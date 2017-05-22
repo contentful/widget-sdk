@@ -17,6 +17,7 @@ header.workbench-header.x--with-nav
   nav.workbench-nav__tabs
     a(
       role="tab"
+      data-test-id="{{tab.id}"
       ui-sref="{{tab.state + tab.params}}"
       ng-repeat="tab in nav.tabs track by $index"
       aria-selected='{{tab.selected}}'

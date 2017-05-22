@@ -87,6 +87,7 @@ angular.module('contentful')
         return {
           name: tab.name,
           state: tab.state,
+          id: 'org-nav-tab-' + tab.name.toLowerCase().replace(/\s+/g, '-'),
           params: '(' + JSON.stringify(_.assign({orgId: orgId}, tab.stateParams)) + ')',
           isActive: _.defaultTo(tab.isActive, true)
         };
