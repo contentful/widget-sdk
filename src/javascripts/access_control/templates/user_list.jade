@@ -41,20 +41,7 @@ header.workbench-header
               | Remove from this space
 
   .workbench-main__sidebar
-    .entity-sidebar(ng-if="!usesNewSpaceInvitationFlow")
-      h2.entity-sidebar__heading
-        | Invite users
-      p
-        | Your organization has used {{ userQuota.used }} out of
-        |  {{ userQuota.limit > 0 ? userQuota.limit : 'unlimited' }} user accounts.
-      p(ng-show="canModifyUsers()") <a href="" ng-click="goToSubscription()">Increase your plan quotas here</a>.
-      button.btn-primary-action(
-        ng-click="openInvitationDialog()"
-        ng-disabled="!canInviteUsers()")
-        | Invite users to this space
-
-    //- Begin feature flag code - feature-bv-04-2017-new-space-invitation-flow
-    .entity-sidebar(ng-if="usesNewSpaceInvitationFlow")
+    .entity-sidebar
       h2.entity-sidebar__heading
         | Add users
       cf-add-users-to-space-note
@@ -65,4 +52,3 @@ header.workbench-header
         ng-disabled="!canModifyUsers()")
           cf-icon.btn-icon.inverted(name="plus")
           | Add users to space
-    //- End feature flag code - feature-bv-04-2017-new-space-invitation-flow
