@@ -9,7 +9,7 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var truncate = require('stringUtils').truncate;
   var K = require('utils/kefir');
-  var Validator = require('entityEditor/Validator');
+  var Validator = require('app/entity_editor/Validator');
   var localeStore = require('TheLocaleStore');
   var createAssetSchema = require('validation').schemas.Asset;
   var errorMessageBuilder = require('errorMessageBuilder');

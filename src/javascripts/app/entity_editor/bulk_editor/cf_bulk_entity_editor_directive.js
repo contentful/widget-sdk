@@ -155,7 +155,7 @@ angular.module('contentful')
   var truncate = require('stringUtils').truncate;
   var DataFields = require('EntityEditor/DataFields');
   var ContentTypes = require('data/ContentTypes');
-  var Validator = require('entityEditor/Validator');
+  var Validator = require('app/entity_editor/Validator');
   var createEntrySchema = require('validation').fromContentType;
   var localeStore = require('TheLocaleStore');
   var errorMessageBuilder = require('errorMessageBuilder');

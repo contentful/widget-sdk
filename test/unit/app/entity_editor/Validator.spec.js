@@ -1,10 +1,10 @@
 import * as K from 'helpers/mocks/kefir';
 
-describe('entityEditor/Validator', function () {
+describe('app/entity_editor/Validator', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    const Validator = this.$inject('entityEditor/Validator');
+    const Validator = this.$inject('app/entity_editor/Validator');
     this.schemaErrors = sinon.stub();
     this.validator = Validator.create(
       (_error) => '',
