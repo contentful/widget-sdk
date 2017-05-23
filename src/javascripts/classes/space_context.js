@@ -17,7 +17,6 @@ angular.module('contentful')
  * @property {ACL.SpaceMembershipRepository} memberships
  */
 .factory('spaceContext', ['require', function (require) {
-  var $parse = require('$parse');
   var $q = require('$q');
   var ReloadNotification = require('ReloadNotification');
   var TheLocaleStore = require('TheLocaleStore');
@@ -122,11 +121,34 @@ angular.module('contentful')
       self.user = K.getValue(tokenStore.user$);
 
       previewEnvironmentsCache.clearAll();
-      TheLocaleStore.resetWithSpace(space);
+      TheLocaleStore.reset(self.space.getId(), self.space.getPrivateLocales());
       return $q.all([loadWidgets(self, space), requestContentTypes()])
       .then(function () {
         return self;
       });
+    },
+
+    /**
+     * @ngdoc method
+     * @name spaceContext#reloadLocales
+     * @description
+     * Reload the list of locales for the current space and updates
+     * 'TheLocaleStore' service.
+     *
+     * Currently only called by 'LocaleEditorController'.
+     *
+     * @returns {Promise<void>}
+     */
+    reloadLocales: function () {
+      var self = this;
+      // TODO Do not use 'tokenStore'. This service mutates the
+      // 'this.space' object so that '.getPrivateLocales()' returns a
+      // different value. Instead we should get the locales from the
+      // dedicated /locales endpoint.
+      return tokenStore.refresh()
+        .then(function () {
+          TheLocaleStore.reset(self.space.getId(), self.space.getPrivateLocales());
+        });
     },
 
     /**
@@ -196,70 +218,37 @@ angular.module('contentful')
 
     /**
      * @ngdoc method
-     * @name spaceContext#localizedValue
-     * @param {Object} field Object with locales as keys.
-     * @param {string?} localeCode
-     * @returns {Object?}
+     * @name spaceContext#getFieldValue
      * @description
-     * Returns a localized value from a field. Optionally takes a localeCode and
-     * falls back to the space's default locale or any other defined locale.
+     * Given an entity (entry/asset) instance from the client libary,
+     * and an internal field ID, returns the field’s value for the
+     * given locale.
+     *
+     * If there is no value set for the given locale, the default
+     * locale is used. If the locale code is omitted the default locale
+     * is used, too.
+     *
+     * If there is no value set for the given local _and_ the default
+     * locale the first value in the field object is used.
+     *
+     * @param {Client.Entity} entity
+     * @param {string} internalFieldId
+     * @param {string?} localeCode
+     * @return {any}
      */
-    localizedValue: function (field, localeCode) {
-      if (!field) {
+    getFieldValue: function (entity, fieldId, localeCode) {
+      var values = _.get(entity, ['data', 'fields', fieldId]);
+      if (!_.isObject(values)) {
         return;
       }
+
       var defaultLocale = this.space && this.space.getDefaultLocale();
       var defaultLocaleCode = defaultLocale && defaultLocale.internal_code;
-      var firstLocaleCode = Object.keys(field)[0];
+      var firstLocaleCode = Object.keys(values)[0];
 
       localeCode = localeCode || defaultLocaleCode || firstLocaleCode;
 
-      return field[localeCode] || field[defaultLocaleCode] || field[firstLocaleCode];
-    },
-
-    /**
-     * @ngdoc method
-     * @name spaceContext#localizedField
-     * @param {Object} entity
-     * @param {string|Array} path
-     * @param {string} localeCode
-     * @return {Object?}
-     * @description
-     * Given an entity (entry/asset), and a field path, returns the field
-     * content for a given locale.
-    */
-    localizedField: function (entity, path, localeCode) {
-      var getField = $parse(path);
-      var field = getField(entity);
-
-      return this.localizedValue(field, localeCode);
-    },
-
-    /**
-     * @ngdoc method
-     * @name spaceContext#findLocalizedField
-     * @param {Object} entity
-     * @param {string?} localeCode
-     * @param {Object|function} fieldDefinition Part of a field definition, e.g.
-     *        `{type: 'Link', linkType: 'Entry'}`.
-     * @returns {Object?}
-     * @description
-     * Given an entity (entry/asset), and part of a field definition, returns
-     * the field content for a given locale.
-     */
-    findLocalizedField: function (entity, localeCode, fieldDefinition) {
-      fieldDefinition = fieldDefinition || localeCode;
-
-      var contentTypeId = entity.getContentTypeId();
-      var contentType = this.publishedCTs.get(contentTypeId);
-      if (!contentType) {
-        return;
-      }
-      var field = _.find(contentType.data.fields, fieldDefinition);
-      if (field) {
-        var fieldPath = 'data.fields.' + field.id;
-        return this.localizedField(entity, fieldPath, localeCode);
-      }
+      return values[localeCode] || values[defaultLocaleCode] || values[firstLocaleCode];
     },
 
     /**
@@ -289,7 +278,7 @@ angular.module('contentful')
         if (!displayField) {
           return defaultTitle;
         } else {
-          var title = this.localizedField(entry, 'data.fields.' + displayField, localeCode);
+          var title = this.getFieldValue(entry, displayField, localeCode);
           if (!title || title.match(/^\s*$/)) {
             return defaultTitle;
           } else {
@@ -322,10 +311,14 @@ angular.module('contentful')
         return;
       }
       var displayFieldId = contentType.data.displayField;
-
-      return this.findLocalizedField(entity, localeCode, function (field) {
+      var field = _.find(contentType.data.fields, function (field) {
         return _.includes(['Symbol', 'Text'], field.type) && field.id !== displayFieldId;
       });
+      if (!field) {
+        return;
+      }
+
+      return this.getFieldValue(entity, field.id, localeCode);
     },
 
     /**
@@ -339,14 +332,12 @@ angular.module('contentful')
      * given entities image. The promise may resolve with null.
      */
     entryImage: function (entry, localeCode) {
-      var link = spaceContext.findLocalizedField(
-        entry, localeCode, {type: 'Link', linkType: 'Asset'});
+      var link = getValueForMatchedField(this, entry, localeCode, {type: 'Link', linkType: 'Asset'});
 
       var assetId = dotty.get(link, 'sys.id');
       if (link && assetId) {
         return this.space.getAsset(assetId).then(function (asset) {
-          var fileField = dotty.get(asset, 'data.fields.file');
-          var file = this.localizedValue(fileField, localeCode);
+          var file = this.getFieldValue(asset, 'file', localeCode);
           var isImage = dotty.get(file, 'details.image');
           return isImage ? file : null;
         }.bind(this), function () {
@@ -375,7 +366,7 @@ angular.module('contentful')
       var defaultTitle = modelValue ? null : 'Untitled';
 
       try {
-        var title = this.localizedField(asset, 'data.fields.title', localeCode);
+        var title = this.getFieldValue(asset, 'title', localeCode);
         if (!title || title.match(/^\s*$/)) {
           return defaultTitle;
         } else {
@@ -454,5 +445,34 @@ angular.module('contentful')
     return Widgets.setSpace(space).then(function (widgets) {
       spaceContext.widgets = widgets;
     });
+  }
+
+
+  /**
+   * @description
+   * Return the value of the first field that matches the field
+   * definition.
+   *
+   * The field ID is obtained from the entity’s content type and the
+   * field value for the given locale is obtained using
+   * `getFieldValue()`.
+   *
+   * @param {SpaceContext} spaceContext
+   * @param {Client.Entity} entity
+   * @param {string?} localeCode  Uses default locale if falsy
+   * @param {Object|function} fieldMatcher
+   *   Field matcher that is passed to '_.find'
+   * @returns {any}
+   */
+  function getValueForMatchedField (spaceContext, entity, localeCode, fieldDefinition) {
+    var contentTypeId = entity.getContentTypeId();
+    var contentType = spaceContext.publishedCTs.get(contentTypeId);
+    if (!contentType) {
+      return;
+    }
+    var field = _.find(contentType.data.fields, fieldDefinition);
+    if (field) {
+      return spaceContext.getFieldValue(entity, field.id, localeCode);
+    }
   }
 }]);

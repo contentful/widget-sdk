@@ -612,7 +612,14 @@ describe('entityEditor/Document', function () {
     });
 
     describe('#canEditFieldLocale()', function () {
+      it('returns false if `update` permission is denied', function () {
+        this.accessChecker.canUpdateEntry.returns(false);
+        expect(this.doc.permissions.canEditFieldLocale('FIELD', 'LOCALE')).toBe(false);
+      });
+
       it('delegates to "policyAccessChecker"', function () {
+        this.accessChecker.canUpdateEntry.returns(true);
+
         const pac = this.mockService('accessChecker/policy');
 
         pac.canEditFieldLocale.returns(true);

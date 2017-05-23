@@ -57,8 +57,7 @@ header.workbench-header
     .entity-sidebar(ng-if="usesNewSpaceInvitationFlow")
       h2.entity-sidebar__heading
         | Add users
-      p
-        include ./users_add_note
+      cf-add-users-to-space-note
       //- @TODO: use `ui-command` for invitation
       button.btn-action.x--block(
         ng-class="{'is-loading': isInvitingUsersToSpace}"

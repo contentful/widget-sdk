@@ -3,7 +3,8 @@
 // A list of _static_ Angular services from the 'cf.libs' and 'cf.es6' modules
 // that we want to expose in SystemJS
 SystemJS.exposeFromAngular = [
-  'libs/kefir', 'libs/sum-types', 'lodash', 'jquery', 'libs/Immutable'
+  'libs/kefir', 'libs/sum-types', 'lodash', 'jquery', 'libs/Immutable',
+  'libs/sum-types/caseof-eq'
 ];
 
 SystemJS.config({

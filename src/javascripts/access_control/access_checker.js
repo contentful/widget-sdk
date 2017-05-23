@@ -89,7 +89,9 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
      * @param {string} actionName
      * @returns {boolean}
      * @description
-     * Returns true if action with a given name should be hidden.
+     * Returns true if the user is not allowed to perform the given
+     * action and the ACLs does not provide a reason why. If the ACLs
+     * give a reason this is false but `shouldDisable` is true.
      */
     shouldHide: shouldHide,
 
@@ -99,9 +101,29 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
      * @param {string} actionName
      * @returns {boolean}
      * @description
-     * Returns true if action with a given name should be disabled.
+     * Returns true if the user is not allowed to perform the given
+     * action and the ACLs provide a reason why. If the ACLs give no
+     * reason then this is false but `shouldHide` is true.
      */
     shouldDisable: shouldDisable,
+
+    /**
+     * @ngdoc method
+     * @name accessChecker#can
+     * @param {string} action
+     * @param {string} entityType
+     * @returns {boolean}
+     * @description
+     * Returns true if the user is allowed to perform `action` on
+     * entities of type `entityType`.
+     *
+     * See the definition of `ACTIONS_FOR_ENTITIES` above for a list of
+     * actions and entity types. Note that entity types should be
+     * provided in camel case
+     */
+    can: function (action, entityType) {
+      return getPermissions(action, entityType).can;
+    },
 
     reset: reset,
     canPerformActionOnEntity: canPerformActionOnEntity,
@@ -139,7 +161,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
     _.forEach(ACTIONS_FOR_ENTITIES, function (actions, entity) {
       entity = stringUtils.capitalizeFirst(entity);
       _.forEach(actions, function (action) {
-        replacement[action + entity] = can(action, entity);
+        replacement[action + entity] = getPermissions(action, entity);
       });
     });
 
@@ -148,7 +170,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
 
   function collectSectionVisibility () {
     sectionVisibility = {
-      contentType: !shouldHide('updateContentType'),
+      contentType: !shouldHide('updateContentType') || !shouldHide('readApiKey'),
       entry: !shouldHide('readEntry') || policyChecker.canAccessEntries(),
       asset: !shouldHide('readAsset') || policyChecker.canAccessAssets(),
       apiKey: !shouldHide('readApiKey'),
@@ -170,7 +192,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
     };
   }
 
-  function can (action, entity) {
+  function getPermissions (action, entity) {
     var response = { shouldHide: false, shouldDisable: false };
 
     if (!authorization.spaceContext) { return response; }
@@ -213,11 +235,11 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
    * This method can be provided with an entity object or string `"Entry"` or `"Asset"`.
    */
   function canPerformActionOnEntity (action, entity) {
-    return can(action, entity.data).can;
+    return getPermissions(action, entity.data).can;
   }
 
   function canPerformActionOnType (action, type) {
-    return can(action, capitalize(type)).can;
+    return getPermissions(action, capitalize(type)).can;
   }
 
   /**

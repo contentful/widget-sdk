@@ -1,4 +1,4 @@
-'use strict';
+import * as sinon from 'helpers/sinon';
 
 describe('Locale editor controller', function () {
   beforeEach(function () {
@@ -14,9 +14,6 @@ describe('Locale editor controller', function () {
       openConfirmDialog: sinon.stub(),
       open: sinon.stub()
     };
-    this.TheLocaleStoreMock = {
-      refresh: sinon.stub()
-    };
     this.closeStateSpy = sinon.spy();
 
     module('contentful/test', function ($provide) {
@@ -24,15 +21,14 @@ describe('Locale editor controller', function () {
       $provide.value('notification', self.notification);
       $provide.value('analytics/Analytics', self.analytics);
       $provide.value('modalDialog', self.modalDialog);
-      $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
       $provide.value('navigation/closeState', self.closeStateSpy);
     });
 
-    this.$inject('tokenStore').refresh = sinon.stub().resolves();
     this.scope = this.$inject('$rootScope').$new();
 
     const spaceContext = this.$inject('spaceContext');
     spaceContext.space = {};
+    spaceContext.reloadLocales = sinon.stub().resolves();
     dotty.put(spaceContext, 'space.data.organization.subscriptionPlan.name', 'Unlimited');
 
     this.scope.context = {};
@@ -252,8 +248,9 @@ describe('Locale editor controller', function () {
         sinon.assert.called(this.scope.localeForm.$setPristine);
       });
 
-      it('refreshes locales', function () {
-        sinon.assert.called(this.TheLocaleStoreMock.refresh);
+      it('reloads locales', function () {
+        const spaceContext = this.$inject('spaceContext');
+        sinon.assert.called(spaceContext.reloadLocales);
       });
 
       it('sets form to submitted state', function () {
