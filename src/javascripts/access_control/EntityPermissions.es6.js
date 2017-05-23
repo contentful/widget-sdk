@@ -37,12 +37,9 @@ const ACTIONS = [
  * @returns {EntityPermissions}
  */
 export function create (entitySys) {
-  const ctId = entitySys.type === 'Entry'
-    ? entitySys.contentType.sys.id
-    : null;
   return {
     can: partial(canPerformAction, entitySys),
-    canEditFieldLocale: partial(canEditFieldLocale, ctId)
+    canEditFieldLocale: partial(canEditFieldLocale, entitySys)
   };
 }
 
@@ -64,7 +61,14 @@ function canPerformAction (sys, action) {
   }
 }
 
-function canEditFieldLocale (ctId, fieldId, localeCode) {
+function canEditFieldLocale (entitySys, fieldId, localeCode) {
+  if (!canPerformAction(entitySys, 'update')) {
+    return false;
+  }
+
+  const ctId = entitySys.type === 'Entry'
+    ? entitySys.contentType.sys.id
+    : null;
   const field = {apiName: fieldId};
   const locale = {code: localeCode};
   if (field) {

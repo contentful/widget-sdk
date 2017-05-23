@@ -172,6 +172,9 @@ angular.module('contentful')
     }
   };
 
+  var editingAllowed = $scope.docImpl
+    .permissions.canEditFieldLocale(field.apiName, locale.code);
+
   /**
    * @ngdoc property
    * @name FieldLocaleController#access$
@@ -189,13 +192,8 @@ angular.module('contentful')
    * - `disabled` Is true if one of the above is true
    * - `editable` Is true if 'disabled' is false
    */
-
-  var editingAllowed =
-    $scope.docImpl
-    .permissions.canEditFieldLocale(field.apiName, locale.code);
-
-  // TODO move this to FieldLocaleDocument
   controller.access$ =
+    // TODO move this to FieldLocaleDocument
     $scope.docImpl.state.isConnected$
     .map(function (connected) {
       if (field.disabled) {
