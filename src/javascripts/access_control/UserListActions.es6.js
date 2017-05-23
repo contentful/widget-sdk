@@ -5,7 +5,7 @@ import ReloadNotification from 'ReloadNotification';
 import stringUtils from 'stringUtils';
 import ListQuery from 'ListQuery';
 import entitySelector from 'entitySelector';
-import { get, includes, extend, map, isString } from 'lodash';
+import { get, includes, extend } from 'lodash';
 import UserSpaceInvitationDialog from 'access_control/templates/UserSpaceInvitationDialog';
 
 const MODAL_OPTS_BASE = {
@@ -19,15 +19,12 @@ const MODAL_OPTS_BASE = {
  *
  * - `.openRemovalConfirmationDialog()` remove a user from space
  * - `.openRoleChangeDialog()` change user's role
- * - `.openOldInvitationDialog()` invite user to organization and space (old dialog, will be
- *   completely removed after `feature-bv-04-2017-new-space-invitation-flow` is released)
  * - `.openSpaceInvitationDialog()` invite users to the space from a list of organization's users
  */
 export function create (spaceContext, userListHandler) {
   return {
     openRemovalConfirmationDialog: openRemovalConfirmationDialog,
     openRoleChangeDialog: openRoleChangeDialog,
-    openOldInvitationDialog: openOldInvitationDialog,
     openSpaceInvitationDialog: openSpaceInvitationDialog
   };
 
@@ -91,68 +88,6 @@ export function create (spaceContext, userListHandler) {
   }
 
   /**
-   * Send an invitation
-   * @TODO remove after feature-bv-04-2017-new-space-invitation-flow is released
-   */
-  function openOldInvitationDialog () {
-    return openDialog('invitation_dialog', controller);
-
-    function controller (scope) {
-      return extend(scope, {
-        input: {},
-        roleOptions: userListHandler.getRoleOptions(),
-        invite: Command.create(function () {
-          return invite(scope.input)
-          .then(handleSuccess, handleFailure);
-        }, {
-          disabled: isDisabled
-        })
-      });
-
-      function invite (data) {
-        return spaceContext.memberships.invite(data.mail, data.roleId);
-      }
-
-      function handleSuccess () {
-        notification.info('Invitation successfully sent.');
-        scope.dialog.confirm();
-      }
-
-      function handleFailure (res) {
-        if (isTaken(res)) {
-          scope.taken = scope.input.mail;
-          scope.backendMessage = null;
-        } else if (isForbidden(res)) {
-          scope.taken = null;
-          scope.backendMessage = res.data.message;
-        } else {
-          ReloadNotification.basicErrorHandler();
-          scope.dialog.confirm();
-        }
-      }
-
-      function isTaken (res) {
-        const errors = get(res, 'data.details.errors', []);
-        const errorNames = map(errors, 'name');
-        return errorNames.indexOf('taken') > -1;
-      }
-
-      function isForbidden (res) {
-        return (
-          get(res, 'data.sys.id') === 'Forbidden' &&
-          isString(get(res, 'data.message'))
-        );
-      }
-
-      function isDisabled () {
-        return !scope.invitationForm.$valid || !scope.input.roleId;
-      }
-    }
-  }
-
-  // Begin feature flag code - feature-bv-04-2017-new-space-invitation-flow
-
-  /**
    * Invite an existing user to space
    */
   function openSpaceInvitationDialog () {
@@ -203,8 +138,6 @@ export function create (spaceContext, userListHandler) {
       });
     }
   }
-
-  // End feature flag code - feature-bv-04-2017-new-space-invitation-flow
 
   function openDialog (template, controller) {
     return modalDialog.open(extend({

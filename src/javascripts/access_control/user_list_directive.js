@@ -14,7 +14,7 @@ angular.module('contentful').directive('cfUserList', ['require', function (requi
 
   return {
     restrict: 'E',
-    template: JST['user_list'](),
+    template: require('access_control/templates/UserList').default(),
     controller: 'UserListController',
     link: link
   };
@@ -51,11 +51,7 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
   var spaceContext = require('spaceContext');
   var userListHandler = require('UserListHandler').create();
   var accessChecker = require('accessChecker');
-  var TheAccountView = require('TheAccountView');
   var UserListActions = require('access_control/UserListActions');
-
-  var K = require('utils/kefir');
-  var LD = require('utils/LaunchDarkly');
 
   var actions = UserListActions.create(spaceContext, userListHandler);
 
@@ -65,33 +61,7 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
   $scope.openRemovalConfirmationDialog = decorateWithReload(actions.openRemovalConfirmationDialog);
   $scope.openRoleChangeDialog = decorateWithReload(actions.openRoleChangeDialog);
   $scope.canModifyUsers = canModifyUsers;
-
-  // Begin feature flag code - feature-bv-04-2017-new-space-invitation-flow
-
-  var usesNewSpaceInvitationFlow$ = LD.getFeatureFlag('feature-bv-04-2017-new-space-invitation-flow', function (user) {
-    // Disable feature flag for enterprise customers
-    var memberships = user && user.organizationMemberships || [];
-    var enterpriseMembership = _.find(memberships, function (membership) {
-      var subscriptionPlan = _.get(membership, 'organization.subscription.subscriptionPlan.name');
-
-      // @TODO we need a better way to check for this, e.g. using `subscriptionPlan`.kind
-      return subscriptionPlan && subscriptionPlan.startsWith('Enterprise');
-    });
-    return !enterpriseMembership;
-  });
-
-  K.onValueScope($scope, usesNewSpaceInvitationFlow$, function (usesNewSpaceInvitationFlow) {
-    $scope.usesNewSpaceInvitationFlow = usesNewSpaceInvitationFlow;
-    if (usesNewSpaceInvitationFlow) {
-      $scope.openSpaceInvitationDialog = openSpaceInvitationDialog;
-    } else {
-      $scope.canInviteUsers = canInviteUsers;
-      $scope.goToSubscription = TheAccountView.goToSubscription;
-      $scope.openInvitationDialog = decorateWithReload(actions.openOldInvitationDialog);
-    }
-  });
-
-  // End feature flag code - feature-bv-04-2017-new-space-invitation-flow
+  $scope.openSpaceInvitationDialog = openSpaceInvitationDialog;
 
   reload();
 
@@ -109,15 +79,6 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
     return accessChecker.canModifyUsers() && !trialLockdown;
   }
 
-  function canInviteUsers () {
-    var q = $scope.userQuota;
-    var withinQuota = !(q.used >= q.limit && q.limit > 0);
-
-    return withinQuota && canModifyUsers();
-  }
-
-  // Begin feature flag code - feature-bv-04-2017-new-space-invitation-flow
-
   function openSpaceInvitationDialog () {
     $scope.isInvitingUsersToSpace = true;
 
@@ -125,8 +86,6 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
       $scope.isInvitingUsersToSpace = false;
     });
   }
-
-  // End feature flag code - feature-bv-04-2017-new-space-invitation-flow
 
   /**
    * Reset the list with a new data
