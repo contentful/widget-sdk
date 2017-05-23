@@ -42,6 +42,22 @@ angular.module('contentful')
   var editorContext = $scope.editorContext;
 
   /**
+   * @ngdoc method
+   * @name FieldLocaleController#revalidate
+   * @description
+   * Reruns validations only for the current field locale.
+   *
+   * The change in errors is picked up in the `validator.errors$`
+   * listener below.
+   *
+   * This is called by the `cfWidgetRenderer` directive when a field
+   * editor is unfocussed.
+   */
+  controller.revalidate = function () {
+    $scope.editorContext.validator.validateFieldLocale(field.id, locale.internal_code);
+  };
+
+  /**
    * @ngdoc property
    * @name FieldLocaleController#errors$
    * @description

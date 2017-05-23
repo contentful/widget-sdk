@@ -15,7 +15,7 @@
 
 import {
   constant, noop, isEmpty,
-  filter, assign, get as getAtPath
+  assign, get as getAtPath
 } from 'lodash';
 import * as K from 'utils/kefir';
 import * as Path from 'utils/Path';
@@ -106,6 +106,7 @@ export function createBase (buildMessage, schema, doc) {
      */
     errors$: errors$,
     run: run,
+    validateFieldLocale: validateFieldLocale,
     hasFieldError: hasFieldError,
     hasFieldLocaleError: hasFieldLocaleError,
     setApiResponseErrors: setApiResponseErrors
@@ -153,8 +154,8 @@ export function createBase (buildMessage, schema, doc) {
    * @return {boolean}
    */
   function run () {
-    const entityData = K.getValue(doc.data$);
-    const errors = setErrors(schema.errors(entityData, {skipDeletedLocaleFieldValidation: true}));
+    const errors = validate();
+    errorsBus.set(errors);
     return isEmpty(errors);
   }
 
@@ -179,27 +180,61 @@ export function createBase (buildMessage, schema, doc) {
       (errorId === 'InvalidEntry' && data.message === 'Validation error');
 
     if (isValidationError) {
-      const errors = getAtPath(data, ['details', 'errors'], []);
-      setErrors(errors);
+      const rawErrors = getAtPath(data, ['details', 'errors'], []);
+      const errors = processErrors(rawErrors);
+      errorsBus.set(errors);
     }
   }
 
-  function setErrors (errors) {
-    errors = filter(errors, function (error) {
-      return error && error.path;
+  /**
+   * @ngdoc property
+   * @name entityEditor/Validator#validateFieldLocale
+   * @description
+   * Reruns validation only for given field and locale.
+   *
+   * This means that we remove all old errors for this field and locale
+   * validate the data and add only the errors for this field and
+   * locale. We keep the errors for all other fields and locales.
+   *
+   * @param {string} fieldId  internal field id
+   * @param {string} localeCode  internal locale code
+   */
+  function validateFieldLocale (fieldId, localeCode) {
+    const errors = validate();
+    const fieldErrors = errors.filter(function (error) {
+      return Path.isPrefix(['fields', fieldId, localeCode], error.path);
     });
+    const otherErrors = K.getValue(errors$).filter((error) => {
+      return !Path.isPrefix(['fields', fieldId, localeCode], error.path);
+    });
+    const newErrors = fieldErrors.concat(otherErrors);
+    errorsBus.set(newErrors);
+  }
 
-    errors = errors.map(function (error) {
+  /**
+   * Run validations fro the current entity data and return the
+   * processed errors.
+   */
+  function validate () {
+    const entityData = K.getValue(doc.data$);
+    const rawErrors = schema.errors(entityData, {skipDeletedLocaleFieldValidation: true});
+    return processErrors(rawErrors);
+  }
+
+  /**
+   * Filter invalid error objects and add user facing error messages
+   *
+   * This function is applied to errors coming from the validation
+   * library or API responses.
+   */
+  function processErrors (errors) {
+    return errors.filter(function (error) {
+      return error && error.path;
+    }).map(function (error) {
       // TODO we should freeze this but duplicate errors modify this.
-      return assign({
-        path: []
-      }, error, {
+      return assign({}, error, {
         message: buildMessage(error)
       });
     });
-
-    errorsBus.set(errors);
-
-    return errors;
   }
 }

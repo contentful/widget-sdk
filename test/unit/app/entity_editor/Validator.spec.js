@@ -55,4 +55,25 @@ describe('app/entity_editor/Validator', function () {
       expect(this.getErrorIds()).toEqual(['INITIAL']);
     });
   });
+
+  describe('#validateFieldLocale', function () {
+    it('it only updates errors on specified field', function () {
+      // Initial errors
+      this.schemaErrors.returns([
+        {id: 'THIS BEFORE', path: ['fields', 'FID-1', 'LOCALE']},
+        {id: 'OTHER BEFORE', path: ['fields', 'FID-2', 'LOCALE']}
+      ]);
+      this.validator.run();
+      expect(this.getErrorIds()).toEqual(['THIS BEFORE', 'OTHER BEFORE']);
+
+      // New errors. Validate only specified field
+      this.schemaErrors.returns([
+        {id: 'THIS AFTER', path: ['fields', 'FID-1', 'LOCALE']},
+        {id: 'OTHER AFTER', path: ['fields', 'FID-2', 'LOCALE']}
+      ]);
+      this.validator.validateFieldLocale('FID-1', 'LOCALE');
+
+      expect(this.getErrorIds()).toEqual(['THIS AFTER', 'OTHER BEFORE']);
+    });
+  });
 });

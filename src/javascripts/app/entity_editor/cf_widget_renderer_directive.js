@@ -42,6 +42,7 @@ angular.module('cf.app')
       element.on('focusout', function () {
         scope.$applyAsync(function () {
           scope.fieldLocale.setActive(false);
+          scope.fieldLocale.revalidate();
         });
       });
     }
