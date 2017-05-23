@@ -10,7 +10,6 @@ angular.module('contentful')
 .factory('entityEditor/Validator', ['require', function (require) {
   var K = require('utils/kefir');
   var Path = require('utils/Path');
-  var logger = require('logger');
 
   return {
     create: create,
@@ -149,24 +148,7 @@ angular.module('contentful')
 
     function setErrors (errors) {
       errors = _.filter(errors, function (error) {
-        if (!error) {
-          return false;
-        }
-
-        if (error.path) {
-          // Entity data might be manipulated by ngRepeat if we iterate
-          // over it. Not sure this happens anymore.
-          if (error.path[error.path.length - 1] === '$$hashKey') {
-            logger.logWarn('Entity validation error with $$hashKey', {data: {
-              path: error.path
-            }});
-            return false;
-          } else {
-            return true;
-          }
-        } else {
-          return true;
-        }
+        return error && error.path;
       });
 
       errors = errors.map(function (error) {
