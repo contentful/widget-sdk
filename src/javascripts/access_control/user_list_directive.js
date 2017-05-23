@@ -14,7 +14,7 @@ angular.module('contentful').directive('cfUserList', ['require', function (requi
 
   return {
     restrict: 'E',
-    template: JST['user_list'](),
+    template: require('access_control/templates/UserList').default(),
     controller: 'UserListController',
     link: link
   };
