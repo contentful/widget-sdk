@@ -2,16 +2,26 @@
  * @ngdoc service
  * @name entityEditor/Validator
  * @description
- * Factory to construct a validator for the EntryEditorController and
- * AssetEditorController.
+ * This module exports factories to construct 'Validator' objects used
+ * by the EntryEditorController and AssetEditorController.
+ *
+ * A validator holds the current validation errors for an entity and
+ * exposes the following API:
+ * - `run()` Validates entity data against schema and updates errors
+ * - `setApiResponseErrors` Set the current errors from an API response
+ * - `errors$`, `hasFieldError()`, `hasFieldLocaleError()` Accessors
+ *   for information on current errors
  */
 
-import * as K from 'utils/kefir';
-import * as Path from 'utils/Path';
 import {
   constant, noop, isEmpty,
   filter, assign, get as getAtPath
 } from 'lodash';
+import * as K from 'utils/kefir';
+import * as Path from 'utils/Path';
+
+import errorMessageBuilder from 'errorMessageBuilder';
+import * as Schema from 'validation';
 
 /**
  * @ngdoc method
@@ -32,20 +42,44 @@ export function createNoop () {
   };
 }
 
+/**
+ * @ngdoc method
+ * @name entityEditor/Validator#createForEntry
+ * @param {API.ContentType} contentType
+ * @param {Property<API.Entry>} entryData$
+ * @param {ContentTypeRepo} publishedCTs
+ * @param {API.Locale[]} locales
+ * @returns {entityEditor/Validator}
+ */
+export function createForEntry (contentType, entryData$, publishedCTs, locales) {
+  const schema = Schema.fromContentType(contentType, locales);
+  const buildMessage = errorMessageBuilder(publishedCTs);
+  return createBase(buildMessage, schema, entryData$);
+}
+
 
 /**
  * @ngdoc method
- * @name entityEditor/Validator#create
- * @param {function(error): string} buildMessage
- * @param {object} schema
- *   A '@contentful/validation' schema
- * @param {function(): object} getData
- *   Function that returns the entity data we want to validate
+ * @name entityEditor/Validator#createForAsset
+ * @param {API.ContentType} contentType
+ * @param {Property<API.Entry>} entryData$
+ * @param {ContentTypeRepo} publishedCTs
+ * @param {API.Locale[]} locales
  * @returns {entityEditor/Validator}
  */
-export function create (buildMessage, schema, getData) {
-  let currentErrors = [];
-  const errorsBus = K.createPropertyBus(currentErrors);
+export function createForAsset (assetData$, locales) {
+  const schema = Schema.schemas.Asset(locales);
+  const buildMessage = errorMessageBuilder.forAsset;
+  return createBase(buildMessage, schema, assetData$);
+}
+
+
+// Only exported for tests
+export function createBase (buildMessage, schema, entityData$) {
+  const errorsBus = K.createPropertyBus([]);
+  const errors$ = errorsBus.property;
+
+  run();
 
   /**
    * @ngdoc type
@@ -64,7 +98,7 @@ export function create (buildMessage, schema, getData) {
      *
      * @type {Property<Error[]>}
      */
-    errors$: errorsBus.property,
+    errors$: errors$,
     run: run,
     hasFieldError: hasFieldError,
     hasFieldLocaleError: hasFieldLocaleError,
@@ -81,7 +115,7 @@ export function create (buildMessage, schema, getData) {
    * @return {boolean}
    */
   function hasFieldError (fieldId) {
-    return currentErrors.some(function (error) {
+    return K.getValue(errors$).some(function (error) {
       return Path.isPrefix(['fields', fieldId], error.path);
     });
   }
@@ -98,7 +132,7 @@ export function create (buildMessage, schema, getData) {
    * @return {boolean}
    */
   function hasFieldLocaleError (fieldId, localeCode) {
-    return currentErrors.some(function (error) {
+    return K.getValue(errors$).some(function (error) {
       return Path.isPrefix(['fields', fieldId, localeCode], error.path);
     });
   }
@@ -113,8 +147,9 @@ export function create (buildMessage, schema, getData) {
    * @return {boolean}
    */
   function run () {
-    setErrors(schema.errors(getData(), {skipDeletedLocaleFieldValidation: true}));
-    return isEmpty(currentErrors);
+    const entityData = K.getValue(entityData$);
+    const errors = setErrors(schema.errors(entityData, {skipDeletedLocaleFieldValidation: true}));
+    return isEmpty(errors);
   }
 
   /**
@@ -157,7 +192,6 @@ export function create (buildMessage, schema, getData) {
       });
     });
 
-    currentErrors = errors;
     errorsBus.set(errors);
 
     return errors;

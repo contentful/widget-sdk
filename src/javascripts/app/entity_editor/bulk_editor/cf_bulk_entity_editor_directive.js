@@ -156,9 +156,7 @@ angular.module('contentful')
   var DataFields = require('EntityEditor/DataFields');
   var ContentTypes = require('data/ContentTypes');
   var Validator = require('app/entity_editor/Validator');
-  var createEntrySchema = require('validation').fromContentType;
   var localeStore = require('TheLocaleStore');
-  var errorMessageBuilder = require('errorMessageBuilder');
   var Focus = require('app/entity_editor/Focus');
   var K = require('utils/kefir');
   var initDocErrorHandler = require('app/entity_editor/DocumentErrorHandler').default;
@@ -175,19 +173,18 @@ angular.module('contentful')
 
   initDocErrorHandler($scope, $scope.otDoc.state.error$);
 
-  var schema = createEntrySchema(entityInfo.contentType, localeStore.getPrivateLocales());
-  var buildMessage = errorMessageBuilder(spaceContext.publishedCTs);
-  var validator = Validator.create(buildMessage, schema, function () {
-    return $scope.otDoc.getValueAt([]);
-  });
-  validator.run();
-  this.validator = validator;
+  this.validator = Validator.createForEntry(
+    entityInfo.contentType,
+    $scope.otDoc.data$,
+    spaceContext.publishedCTs,
+    localeStore.getPrivateLocales()
+  );
 
   $scope.state = $controller('entityEditor/StateController', {
     $scope: $scope,
     entity: editorData.entity,
     notify: notify,
-    validator: validator,
+    validator: this.validator,
     otDoc: $scope.otDoc
   });
 

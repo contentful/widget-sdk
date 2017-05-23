@@ -6,10 +6,10 @@ describe('app/entity_editor/Validator', function () {
 
     const Validator = this.$inject('app/entity_editor/Validator');
     this.schemaErrors = sinon.stub();
-    this.validator = Validator.create(
+    this.validator = Validator.createBase(
       (_error) => '',
       {errors: this.schemaErrors},
-      () => this.data
+      K.createMockProperty()
     );
   });
 
