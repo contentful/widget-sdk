@@ -148,14 +148,6 @@ function tabPanel () {
     }
   }, [
     vspace(5),
-    // A/B experiment - ps-03-2017-next-step-hints
-    h('div', {
-      ngIf: 'showNextStepHint'
-    }, [
-      nextStepHint(),
-      vspace(5)
-    ]),
-    // End A/B experiment - ps-03-2017-next-step-hints
     h('div', {
       ngIf: 'stateIs("^.preview")'
     }, [
@@ -169,22 +161,6 @@ function tabPanel () {
     ])
   ]);
 }
-
-
-function nextStepHint () {
-  return h('.note-box--success', {
-    style: {
-      maxWidth: '700px'
-    }
-  }, [
-    h('h3', ['Congratulations! You’ve created your first content type']),
-    h('a', {
-      uiSref: 'spaces.detail.home',
-      ngClick: 'trackNextStepHint()'
-    }, ['Now let’s create some content'])
-  ]);
-}
-
 
 function noFieldsAdvice () {
   return container({

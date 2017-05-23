@@ -25,18 +25,6 @@ angular.module('contentful')
   var uiConfig = require('uiConfig');
   var previewEnvironmentsCache = require('data/previewEnvironmentsCache');
 
-  // A/B experiment - ps-03-2017-next-step-hints
-  var K = require('utils/kefir');
-  var LD = require('utils/LaunchDarkly');
-  var analytics = require('analytics/Analytics');
-  var nextStepHintsTest$ = LD.getTest('ps-03-2017-next-step-hints');
-  var shouldShowNextStep;
-
-  K.onValueScope($scope, nextStepHintsTest$, function (shouldShow) {
-    shouldShowNextStep = shouldShow;
-  });
-  // End A/B experiment - ps-03-2017-next-step-hints
-
   /**
    * @ngdoc property
    * @name ContentTypeActionsController#delete
@@ -230,23 +218,6 @@ angular.module('contentful')
       previewEnvironmentsCache.clearAll();
       uiConfig.addOrEditCt($scope.contentType);
       if (redirect && $scope.context.isNew) {
-
-        // A/B experiment - ps-03-2017-next-step-hints
-        if (spaceContext.publishedContentTypes.length === 1) {
-          if (_.isBoolean(shouldShowNextStep)) {
-            analytics.track('experiment:start', {
-              experiment: {
-                id: 'ps-03-2017-next-step-hints',
-                variation: $scope.showNextStepHint
-              }
-            });
-          }
-          if (shouldShowNextStep) {
-            return goToDetails($scope.contentType, true);
-          }
-        }
-        // End A/B experiment - ps-03-2017-next-step-hints
-
         return goToDetails($scope.contentType);
       }
     })
@@ -284,10 +255,9 @@ angular.module('contentful')
     }
   }
 
-  function goToDetails (contentType, showHint) {
+  function goToDetails (contentType) {
     return $state.go('spaces.detail.content_types.detail.fields', {
-      contentTypeId: contentType.getId(),
-      showNextStepHint: showHint
+      contentTypeId: contentType.getId()
     });
   }
 
