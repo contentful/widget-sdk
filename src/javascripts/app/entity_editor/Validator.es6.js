@@ -46,15 +46,15 @@ export function createNoop () {
  * @ngdoc method
  * @name entityEditor/Validator#createForEntry
  * @param {API.ContentType} contentType
- * @param {Property<API.Entry>} entryData$
+ * @param {EntityEditor.Document} doc
  * @param {ContentTypeRepo} publishedCTs
  * @param {API.Locale[]} locales
  * @returns {entityEditor/Validator}
  */
-export function createForEntry (contentType, entryData$, publishedCTs, locales) {
+export function createForEntry (contentType, doc, publishedCTs, locales) {
   const schema = Schema.fromContentType(contentType, locales);
   const buildMessage = errorMessageBuilder(publishedCTs);
-  return createBase(buildMessage, schema, entryData$);
+  return createBase(buildMessage, schema, doc);
 }
 
 
@@ -62,24 +62,30 @@ export function createForEntry (contentType, entryData$, publishedCTs, locales) 
  * @ngdoc method
  * @name entityEditor/Validator#createForAsset
  * @param {API.ContentType} contentType
- * @param {Property<API.Entry>} entryData$
+ * @param {EntityEditor.Document} doc
  * @param {ContentTypeRepo} publishedCTs
  * @param {API.Locale[]} locales
  * @returns {entityEditor/Validator}
  */
-export function createForAsset (assetData$, locales) {
+export function createForAsset (doc, locales) {
   const schema = Schema.schemas.Asset(locales);
   const buildMessage = errorMessageBuilder.forAsset;
-  return createBase(buildMessage, schema, assetData$);
+  return createBase(buildMessage, schema, doc);
 }
 
 
 // Only exported for tests
-export function createBase (buildMessage, schema, entityData$) {
+export function createBase (buildMessage, schema, doc) {
   const errorsBus = K.createPropertyBus([]);
   const errors$ = errorsBus.property;
 
-  run();
+  // We do not run validations for newly created documents
+  // Newly created documents have version number 2 because version one
+  // is the create event and version 2 is the normalization that takes
+  // place in the UI and is not caused by the user
+  if (doc.getVersion() > 2) {
+    run();
+  }
 
   /**
    * @ngdoc type
@@ -147,7 +153,7 @@ export function createBase (buildMessage, schema, entityData$) {
    * @return {boolean}
    */
   function run () {
-    const entityData = K.getValue(entityData$);
+    const entityData = K.getValue(doc.data$);
     const errors = setErrors(schema.errors(entityData, {skipDeletedLocaleFieldValidation: true}));
     return isEmpty(errors);
   }

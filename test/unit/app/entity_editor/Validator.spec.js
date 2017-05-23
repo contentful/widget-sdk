@@ -3,14 +3,19 @@ import * as K from 'helpers/mocks/kefir';
 describe('app/entity_editor/Validator', function () {
   beforeEach(function () {
     module('contentful/test');
+    const MockDocument = this.$inject('mocks/entityEditor/Document');
 
     const Validator = this.$inject('app/entity_editor/Validator');
     this.schemaErrors = sinon.stub();
     this.validator = Validator.createBase(
       (_error) => '',
       {errors: this.schemaErrors},
-      K.createMockProperty()
+      MockDocument.create()
     );
+
+    this.getErrorIds = function () {
+      return K.getValue(this.validator.errors$).map((e) => e.id);
+    };
   });
 
   describe('#setApiResponseErrors', function () {
@@ -32,21 +37,22 @@ describe('app/entity_editor/Validator', function () {
 
       this.validator.run();
       setError('ValidationFailed');
-      K.assertCurrentValue(this.validator.errors$, errors);
+      expect(this.getErrorIds()).toEqual(['EID']);
 
       this.validator.run();
       setError('UnresolvedLinks');
-      K.assertCurrentValue(this.validator.errors$, errors);
+      expect(this.getErrorIds()).toEqual(['EID']);
 
       this.validator.run();
       setError('InvalidEntry', 'Validation error');
-      K.assertCurrentValue(this.validator.errors$, errors);
+      expect(this.getErrorIds()).toEqual(['EID']);
 
+      // validator.run() removes API errors
       const current = [{id: 'INITIAL', path: [], message: ''}];
       this.schemaErrors.returns(current);
       this.validator.run();
       setError('VersionMismatch');
-      K.assertCurrentValue(this.validator.errors$, current);
+      expect(this.getErrorIds()).toEqual(['INITIAL']);
     });
   });
 });
