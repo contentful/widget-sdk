@@ -53,6 +53,19 @@ export default function create (doc, fieldId, localeCode) {
    */
   const value$ = doc.valuePropertyAt(path);
 
+  /**
+   * @ngdoc property
+   * @name FieldLocaleDocument#localChanges$
+   * @description
+   * Emits an event whenever a change to this field value is triggered
+   * by the user.
+   *
+   * @type {Property<void>}
+   */
+  const localChanges$ = doc.localFieldChanges$.filter(([otherFieldId, otherLocaleCode]) => {
+    return otherFieldId === fieldId && otherLocaleCode === localeCode;
+  }).map(() => undefined);
+
   return {
     sys: doc.sysProperty,
     set: set,
@@ -65,7 +78,8 @@ export default function create (doc, fieldId, localeCode) {
     value$: value$,
     valueProperty: valueProperty,
     collaborators: doc.collaboratorsFor(fieldId, localeCode),
-    notifyFocus: notifyFocus
+    notifyFocus: notifyFocus,
+    localChanges$: localChanges$
   };
 
   function notifyFocus () {

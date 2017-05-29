@@ -82,7 +82,8 @@ export function createBase (buildMessage, schema, doc) {
   // We do not run validations for newly created documents
   // Newly created documents have version number 2 because version one
   // is the create event and version 2 is the normalization that takes
-  // place in the UI and is not caused by the user
+  // place in the UI and is not caused by the user. See the
+  // 'data/document_normalizer' module.
   if (doc.getVersion() > 2) {
     run();
   }

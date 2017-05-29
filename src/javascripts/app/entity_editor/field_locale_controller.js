@@ -57,6 +57,15 @@ angular.module('contentful')
     $scope.editorContext.validator.validateFieldLocale(field.id, locale.internal_code);
   };
 
+  // Revalidate the current field locale after the user has stopped
+  // editing for 800ms
+  K.onValueScope(
+    $scope,
+    controller.doc.localChanges$.debounce(800),
+    controller.revalidate
+  );
+
+
   /**
    * @ngdoc property
    * @name FieldLocaleController#errors$

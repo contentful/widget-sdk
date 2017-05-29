@@ -1,11 +1,12 @@
 import * as K from 'helpers/mocks/kefir';
+import * as sinon from 'helpers/sinon';
 
 describe('FieldLocaleController', function () {
   beforeEach(function () {
     module('contentful/test');
     const $rootScope = this.$inject('$rootScope');
     const $controller = this.$inject('$controller');
-    this.extractValues = K.extractValues;
+    this.sandbox = sinon.sandbox.create();
     this.init = function (patchScope) {
       this.otDoc = this.otDoc || this.$inject('mocks/entityEditor/Document').create();
       const scope = Object.assign($rootScope.$new(), {
@@ -26,6 +27,10 @@ describe('FieldLocaleController', function () {
     };
   });
 
+  afterEach(function () {
+    this.sandbox.restore();
+  });
+
   describe('#errors$ and #errors', function () {
     it('get filtered items from "validator.errors"', function () {
       const scope = this.init();
@@ -43,7 +48,7 @@ describe('FieldLocaleController', function () {
         {path: null}
       ];
 
-      const errorsStream = this.extractValues(scope.fieldLocale.errors$);
+      const errorsStream = K.extractValues(scope.fieldLocale.errors$);
       scope.editorContext.validator.errors$.set(fieldLocaleErrors.concat(otherErrors));
       this.$apply();
       expect(scope.fieldLocale.errors).toEqual(fieldLocaleErrors);
@@ -54,7 +59,7 @@ describe('FieldLocaleController', function () {
       const scope = this.init();
       scope.editorContext.validator.errors$.set([{path: 'does not match'}]);
       this.$apply();
-      const errorsStream = this.extractValues(scope.fieldLocale.errors$);
+      const errorsStream = K.extractValues(scope.fieldLocale.errors$);
       expect(scope.fieldLocale.errors).toEqual(null);
       expect(errorsStream[0]).toEqual(null);
     });
@@ -66,7 +71,7 @@ describe('FieldLocaleController', function () {
       ];
       const scope = this.init();
       scope.locale.optional = true;
-      const errorsStream = this.extractValues(scope.fieldLocale.errors$);
+      const errorsStream = K.extractValues(scope.fieldLocale.errors$);
       scope.editorContext.validator.errors$.set(errors);
       this.$apply();
       expect(scope.fieldLocale.errors).toEqual([errors[1]]);
@@ -216,5 +221,15 @@ describe('FieldLocaleController', function () {
         editable: true
       });
     });
+  });
+
+  it('revalidates the field locale whenever the user has stopped editing for 800ms', function () {
+    const clock = this.sandbox.useFakeTimers();
+    const scope = this.init();
+    const validator = scope.editorContext.validator;
+    this.otDoc.localFieldChanges$.emit(['FID', 'LID']);
+    sinon.assert.notCalled(validator.validateFieldLocale);
+    clock.tick(800);
+    sinon.assert.calledOnceWith(validator.validateFieldLocale, 'FID', 'LID');
   });
 });
