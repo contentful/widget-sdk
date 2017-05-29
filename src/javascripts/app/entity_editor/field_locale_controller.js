@@ -19,7 +19,7 @@ angular.module('contentful')
 .controller('FieldLocaleController', ['require', '$scope', '$attrs', function (require, $scope, $attrs) {
   var spaceContext = require('spaceContext');
   var K = require('utils/kefir');
-  var FieldLocaleDoc = require('entityEditor/FieldLocaleDocument');
+  var createFieldLocaleDoc = require('app/entity_editor/FieldLocaleDocument').default;
 
   var controller = this;
   var field = $scope.widget.field;
@@ -36,7 +36,7 @@ angular.module('contentful')
   // TODO We should remove the dependency on $attrs. This was the
   // source of a bug.
   $scope.docImpl = $scope[$attrs.documentProperty || 'otDoc'];
-  controller.doc = FieldLocaleDoc.create($scope.docImpl, field.id, locale.internal_code);
+  controller.doc = createFieldLocaleDoc($scope.docImpl, field.id, locale.internal_code);
 
   // Provided by the entry and asset controllers
   var editorContext = $scope.editorContext;

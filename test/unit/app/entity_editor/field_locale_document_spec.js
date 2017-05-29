@@ -1,4 +1,4 @@
-'use strict';
+import createFieldLocaleDoc from 'app/entity_editor/FieldLocaleDocument';
 
 describe('entityEditor/FieldLocaleDocument', function () {
   const path = ['fields', 'FID', 'LC'];
@@ -8,8 +8,7 @@ describe('entityEditor/FieldLocaleDocument', function () {
 
     this.rootDoc = this.$inject('mocks/entityEditor/Document').create();
 
-    const Doc = this.$inject('entityEditor/FieldLocaleDocument');
-    this.doc = Doc.create(this.rootDoc, 'FID', 'LC');
+    this.doc = createFieldLocaleDoc(this.rootDoc, 'FID', 'LC');
   });
 
   describe('delegates', function () {
