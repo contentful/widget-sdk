@@ -65,10 +65,12 @@ angular.module('contentful')
   // update the URL. Otherwise, update the location triggering a state change.
   function updateUrl (target) {
     var base = $state.href($state.current.name);
-    var isCurrentState = _.startsWith(target, base) && target !== base;
+    // decode forward slashes and remove trailing slash
+    var baseDecoded = decodeURIComponent(base).replace(/\/$/, '');
+    var isCurrentState = _.startsWith(target, baseDecoded) || _.startsWith(baseDecoded, target);
 
     if (isCurrentState) {
-      var pathSuffix = target.replace(base, '');
+      var pathSuffix = target.replace(baseDecoded, '');
       var params = _.extend($state.params, {pathSuffix: pathSuffix});
       $state.go($state.current, params, {location: 'replace'});
     } else {

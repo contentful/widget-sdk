@@ -66,7 +66,7 @@ describe('Gatekeeper Message Handler', function () {
           path: '/account/profile/user/blah/blah/'
         });
         sinon.assert.calledOnce(this.$state.go);
-        expect(this.$state.go.lastCall.args[1].pathSuffix).toBe('blah/blah/');
+        expect(this.$state.go.lastCall.args[1].pathSuffix).toBe('/blah/blah/');
       });
 
       it('update location if the state has changed', function () {
