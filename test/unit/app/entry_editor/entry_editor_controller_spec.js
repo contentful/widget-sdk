@@ -7,7 +7,6 @@ describe('Entry Editor Controller', function () {
         'entityEditor/StatusNotificationsController'
       );
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
-      $provide.stubLaunchDarkly();
     });
 
     const {makeEditorData} = this.$inject('mocks/app/entity_editor/DataLoader');

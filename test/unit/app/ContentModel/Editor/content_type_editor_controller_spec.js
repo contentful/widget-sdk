@@ -20,7 +20,6 @@ describe('ContentTypeEditor Controller', function () {
       $provide.factory('openFieldDialog', function () {
         return sinon.stub();
       });
-      $provide.stubLaunchDarkly();
     });
 
     const cfStub = this.$inject('cfStub');

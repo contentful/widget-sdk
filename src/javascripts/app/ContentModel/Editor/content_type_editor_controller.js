@@ -29,20 +29,6 @@ angular.module('contentful')
   var editingInterfaces = spaceContext.editingInterfaces;
   var analytics = require('analytics/Analytics');
 
-  // A/B experiment - ps-03-2017-next-step-hints
-  var $stateParams = require('$stateParams');
-  $scope.showNextStepHint = $stateParams.showNextStepHint;
-
-  $scope.trackNextStepHint = function () {
-    analytics.track('experiment:interaction', {
-      experiment: {
-        id: 'ps-03-2017-next-step-hints',
-        variation: true,
-        interaction_context: 'content_type_editor'
-      }
-    });
-  };
-
   var canEdit = accessChecker.can('update', 'ContentType');
   // Read-only data for template
   $scope.data = {
@@ -55,8 +41,6 @@ angular.module('contentful')
     disabled: !canEdit,
     placeholder: 'ct-field--placeholder'
   };
-
-  // End A/B experiment - ps-03-2017-next-step-hints
 
   $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
 
