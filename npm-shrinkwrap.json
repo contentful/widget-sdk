@@ -2573,28 +2573,13 @@
       }
     },
     "stylus": {
-      "version": "0.52.4",
+      "version": "0.54.5",
       "dependencies": {
         "glob": {
-          "version": "3.2.11",
-          "dependencies": {
-            "minimatch": {
-              "version": "0.3.0",
-              "dependencies": {
-                "lru-cache": {
-                  "version": "2.7.0"
-                }
-              }
-            }
-          }
+          "version": "7.0.6"
         },
         "source-map": {
-          "version": "0.1.43",
-          "dependencies": {
-            "amdefine": {
-              "version": "1.0.0"
-            }
-          }
+          "version": "0.1.43"
         }
       }
     },
