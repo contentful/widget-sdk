@@ -576,7 +576,7 @@ angular.module('contentful')
     }
 
     function getVersion () {
-      return currentDoc && currentDoc.version;
+      return K.getValue(sysProperty).version;
     }
 
     function maybeEmitLocalChange (path) {

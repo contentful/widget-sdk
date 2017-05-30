@@ -637,6 +637,21 @@ describe('entityEditor/Document', function () {
     });
   });
 
+  describe('#getVersion', function () {
+    it('gets version from entity data if document is not connected', function () {
+      this.entity.data.sys.version = 1999;
+      const doc = this.createDoc();
+      expect(doc.getVersion()).toBe(1999);
+    });
+
+    it('gets version from SJS Doc if document is connected', function () {
+      const sjsDoc = this.connectAndOpen();
+      sjsDoc.version = 2000;
+      sjsDoc.emit();
+      expect(this.doc.getVersion()).toBe(2000);
+    });
+  });
+
   describe('client entity instance', function () {
     it('updates data when OtDoc emits changes', function () {
       const otDoc = this.connectAndOpen();
