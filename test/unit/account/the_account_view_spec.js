@@ -119,11 +119,9 @@ describe('TheAccountView service', function () {
     });
   });
 
-  describeGoToMethod('goToBilling', 'z_billing');
+  describeGoToMethod('goToSubscription', 'subscription');
 
-  describeGoToMethod('goToSubscription', 'z_subscription');
-
-  describeGoToMethod('goToUsers', 'organization_memberships');
+  describeGoToMethod('goToUsers', 'users');
 
   function describeGoToMethod (name, subpage) {
     describe(`.${name}()`, function () {

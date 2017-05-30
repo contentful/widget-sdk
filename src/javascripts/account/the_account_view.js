@@ -30,7 +30,6 @@ angular.module('contentful')
     getSubscriptionState: getSubscriptionState,
     goToOrganizations: goToOrganizations,
     goToSubscription: goToSubscription,
-    goToBilling: goToBilling,
     canGoToOrganizations: canGoToOrganizations,
     getGoToOrganizationsOrganization: getGoToOrganizationsOrganization,
     goToUsers: goToUsers,
@@ -59,18 +58,7 @@ angular.module('contentful')
    * organization's subscription page.
    */
   function goToSubscription () {
-    return goToOrganizations('z_subscription');
-  }
-
-  /**
-   * @ngdoc method
-   * @name TheAccountView#goToBilling
-   * @description
-   * `TheAccountView#goToOrganizations` shorthand to navigate to the current
-   * organization's billing page.
-   */
-  function goToBilling () {
-    return goToOrganizations('z_billing');
+    return goToOrganizations('subscription');
   }
 
   /**
@@ -81,7 +69,7 @@ angular.module('contentful')
    * organization's users (memberships) page.
    */
   function goToUsers () {
-    return goToOrganizations('organization_memberships');
+    return goToOrganizations('users');
   }
 
   /**
