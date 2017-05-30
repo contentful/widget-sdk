@@ -9,26 +9,32 @@
   .context-menu.x--top-bar.x--arrow-right(
     role="menu" cf-context-menu="bottom-right"
     aria-label="Account Menu" data-test-id="account-menu")
-    ul.context-menu__items
-      li(role="menuitem"
-        data-test-id="account-menu-item-profile"
-        ui-sref="account.profile.user")
-        | User profile
-      li(role="menuitem"
-        data-test-id="account-menu-item-organizations"
-        ui-sref="account.organizations.subscription({orgId: orgId})"
-        ng-show="canGoToOrganizations")
-        | Organizations &amp; billing
-      li(role="menuitem"
-        data-test-id="account-menu-item-intercom"
-        ng-click="openIntercom()"
-        ng-if="canShowIntercomLink && isIntercomLoaded()")
-        | Talk to us
-      li(role="menuitem"
-        data-test-id="account-menu-item-support"
-        ng-click="openSupport()")
-        | Get support
-      li(role="menuitem"
-        data-test-id="account-menu-item-logout"
-        ng-click="logout()")
-        | Log out
+    a.context-menu__item(
+      role="menuitem"
+      data-test-id="nav.account.userProfile"
+      ui-sref="account.profile.user")
+      | User profile
+    a.context-menu__item(
+      role="menuitem"
+      data-test-id="nav.account.organization"
+      ng-if="organizationsRef"
+      cf-sref="organizationsRef")
+      | Organizations &amp; billing
+    .context-menu__item(
+      role="menuitem"
+      ng-click="openIntercom()"
+      data-test-id="nav.account.intercom"
+      ng-if="canShowIntercomLink && isIntercomLoaded()")
+      | Talk to us
+    a.context-menu__item(
+      role="menuitem"
+      href="{{supportUrl}}"
+      data-test-id="nav.account.support"
+      target="_blank"
+      rel="noopener noreferrer")
+      | Get support
+    .context-menu__item(
+      role="menuitem"
+      data-test-id="nav.account.logout"
+      ng-click="logout()")
+      | Log out

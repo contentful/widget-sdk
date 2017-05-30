@@ -12,10 +12,10 @@ angular.module('contentful')
  */
 .factory('TheAccountView', ['require', function (require) {
   var $q = require('$q');
-  var $state = require('$state');
   var spaceContext = require('spaceContext');
   var OrganizationList = require('OrganizationList');
   var tokenStore = require('tokenStore');
+  var Navigator = require('states/Navigator');
 
   var canShowIntercomLink$ = tokenStore.user$.map(function (user) {
     var organizationMemberships = user && user.organizationMemberships || [];
@@ -28,10 +28,8 @@ angular.module('contentful')
 
   return {
     getSubscriptionState: getSubscriptionState,
-    goToOrganizations: goToOrganizations,
+    getOrganizationRef: getOrganizationRef,
     goToSubscription: goToSubscription,
-    canGoToOrganizations: canGoToOrganizations,
-    getGoToOrganizationsOrganization: getGoToOrganizationsOrganization,
     goToUsers: goToUsers,
     canShowIntercomLink$: canShowIntercomLink$
   };
@@ -45,6 +43,7 @@ angular.module('contentful')
    */
   function getSubscriptionState () {
     var org = getGoToOrganizationsOrganization();
+    // TODO use a navigator reference
     if (org) {
       return 'account.organizations.subscription({ orgId: \'' + org.sys.id + '\' })';
     }
@@ -81,10 +80,9 @@ angular.module('contentful')
    * organization. Only organization owners and admins get navigated.
    */
   function goToOrganizations (subpage) {
-    var org = getGoToOrganizationsOrganization();
-    if (org) {
-      subpage = subpage || 'subscription';
-      return $state.go('account.organizations.' + subpage, {orgId: org.sys.id}, {reload: true});
+    var ref = getOrganizationRef(subpage);
+    if (ref) {
+      return Navigator.go(ref);
     } else {
       return $q.reject();
     }
@@ -92,16 +90,35 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
-   * @name TheAccountView#canGoToOrganizations
-   * @returns {boolean}
+   * @name TheAccountView#getOrganizationRef
    * @description
+   * Returns a state reference for the current users current
+   * organization management view. The current organization is
+   * determined by `getGoToOrganizationsOrganization()`.
    *
-   * Returns whether the current user can actually navigate to the organizations
-   * settings view.
+   * The state reference can by used by the `states/Navigator` module
+   * or the `cfSref` directive.
+   *
+   * @param {string?} subpage
+   *   The subpage in the organization view
+   * @returns {Navigator.Ref}
    */
-  function canGoToOrganizations () {
-    return !!getGoToOrganizationsOrganization();
+  function getOrganizationRef (subpage) {
+    var org = getGoToOrganizationsOrganization();
+    if (org) {
+      subpage = subpage || 'subscription';
+      return {
+        path: ['account', 'organizations', subpage],
+        params: {
+          orgId: org.sys.id
+        },
+        options: { reload: true }
+      };
+    } else {
+      return null;
+    }
   }
+
 
   /**
    * @ngdoc method

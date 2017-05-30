@@ -10,12 +10,12 @@ angular.module('cf.app')
  * with the `states/Navigator` module.
  */
 .directive('cfSref', ['require', function (require) {
-  var $state = require('$state');
+  var Navigator = require('states/Navigator');
   return {
     restrict: 'A',
     link: function ($scope, _$elem, $attrs) {
       $scope.$watch($attrs.cfSref, function (state) {
-        $attrs.$set('href', $state.href(state.path.join('.'), state.params));
+        $attrs.$set('href', Navigator.href(state));
       });
     }
   };

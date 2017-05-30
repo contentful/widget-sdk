@@ -12,8 +12,6 @@ angular.module('contentful')
 })
 
 .controller('cfAccountDropdownController', ['$scope', 'require', function cfAccountDropdownController ($scope, require) {
-
-  var $window = require('$window');
   var TheAccountView = require('TheAccountView');
   var authentication = require('Authentication');
   var K = require('utils/kefir');
@@ -21,23 +19,25 @@ angular.module('contentful')
   var analytics = require('analytics/Analytics');
   var intercom = require('intercom');
 
-  $scope.$watch(TheAccountView.canGoToOrganizations, function (canGo) {
-    $scope.canGoToOrganizations = canGo;
-    $scope.orgId = _.get(TheAccountView.getGoToOrganizationsOrganization(), 'sys.id');
-  });
+  $scope.$watch(function () {
+    return TheAccountView.getOrganizationRef();
+  }, function (ref) {
+    $scope.organizationsRef = ref;
+  }, true);
 
   K.onValueScope($scope, TheAccountView.canShowIntercomLink$, function (canShowIntercomLink) {
     $scope.canShowIntercomLink = canShowIntercomLink;
   });
 
-  $scope.openSupport = openSupport;
+  $scope.userProfileRef = {
+    path: ['account', 'profile', 'user'],
+    options: { reload: true }
+  };
+
+  $scope.supportUrl = Config.supportUrl;
   $scope.openIntercom = intercom.open;
   $scope.isIntercomLoaded = intercom.isLoaded;
   $scope.logout = logout;
-
-  function openSupport () {
-    $window.open(Config.supportUrl);
-  }
 
   function logout () {
     analytics.track('global:logout_clicked');
