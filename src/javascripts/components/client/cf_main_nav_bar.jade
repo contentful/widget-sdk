@@ -60,32 +60,32 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
         role="menu" cf-context-menu
         data-test-id="settings-menu")
         ul.context-menu__items
-          li(
+          a.context-menu__item(
             role="menuitem"
             ng-class="{'selected': $state.includes('spaces.detail.settings.space')}"
             ui-sref="spaces.detail.settings.space")
             | Space
-          li(
+          a.context-menu__item(
             role="menuitem"
             ng-class="{'selected': $state.includes('spaces.detail.settings.locales')}"
             ui-sref="spaces.detail.settings.locales.list")
             | Locales
-          li(
+          a.context-menu__item(
             role="menuitem"
             ng-class="{'selected': $state.includes('spaces.detail.settings.users')}"
             ui-sref="spaces.detail.settings.users.list")
             | Users
-          li(
+          a.context-menu__item(
             role="menuitem"
             ng-class="{'selected': $state.includes('spaces.detail.settings.roles')}"
             ui-sref="spaces.detail.settings.roles.list")
             | Roles
-          li(
+          a.context-menu__item(
             role="menuitem"
             ng-class="{'selected': $state.includes('spaces.detail.settings.webhooks')}"
             ui-sref="spaces.detail.settings.webhooks.list")
             | Webhooks
-          li(
+          a.context-menu__item(
             role="menuitem"
             ng-class="{'selected': $state.includes('spaces.detail.settings.content_preview')}"
             ui-sref="spaces.detail.settings.content_preview.list")
