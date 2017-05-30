@@ -113,7 +113,7 @@ header.workbench-header
                 div.table__checkbox-cell
                   label(ng-click="$event.stopPropagation()")
                     input(type="checkbox" cf-selection="asset" tabindex="-1" ng-click="selection.toggle(asset, $event)")
-                  a(ui-sref="{{linkToAsset}}")
+                  a(ui-sref="{{linkToAsset}}" ng-click="$event.stopPropagation();")
                     cf-thumbnail(file="file" size="30" ng-if="file")
               +td.x--large-cell(aria-label="cell-name"
                 ui-sref="{{linkToAsset}}")
