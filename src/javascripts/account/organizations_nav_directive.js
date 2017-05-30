@@ -35,7 +35,7 @@ angular.module('contentful')
 
     var targetState = canSwitchOrgInCurrentState ? $state.current : defaultState;
 
-    $state.go(targetState, {orgId: selectedOrgId});
+    $state.go(targetState, {orgId: selectedOrgId}, {inherit: false});
   };
 
   function initOrganizations (organizations) {
