@@ -71,12 +71,6 @@ angular.module('contentful')
     data: {
       isNew: false
     },
-    // A/B experiment - ps-03-2017-next-step-hints
-    params: {
-      showNextStepHint: null,
-      addToContext: true
-    },
-    // End A/B experiment - ps-03-2017-next-step-hints
     resolve: {
       contentType: ['require', '$stateParams', 'space', function (require, $stateParams, space) {
         var ctHelpers = require('data/ContentTypes');
