@@ -1,10 +1,10 @@
 angular.module('contentful')
-.directive('cfAccountProfileNav', function () {
+.directive('cfAccountProfileNav', ['require', function (require) {
   return {
-    template: JST['profile_nav'](),
+    template: require('account/ProfileNav').default(),
     restrict: 'E',
     scope: {},
-    controller: ['require', function (require) {
+    controller: function () {
       var $state = require('$state');
       var controller = this;
       var tabs = [
@@ -30,15 +30,13 @@ angular.module('contentful')
         }
       ];
 
-      controller.stateName = $state.current.name;
-
-      controller.tabs = _.map(tabs, function (tab) {
-        tab.id = 'profile-nav-tab-' + tab.name.toLowerCase().replace(/\s+/g, '-');
-        tab.selected = controller.stateName === tab.state;
+      controller.tabs = tabs.map(function (tab) {
+        tab.testId = 'profile-nav-tab-' + tab.name.toLowerCase().replace(/\s+/g, '-');
+        tab.selected = $state.current.name === tab.state;
         return tab;
       });
 
-    }],
+    },
     controllerAs: 'nav'
   };
-});
+}]);

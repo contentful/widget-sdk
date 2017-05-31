@@ -1,13 +1,13 @@
 angular.module('contentful')
-.directive('cfAccountOrganizationsNav', function () {
+.directive('cfAccountOrganizationsNav', ['require', function (require) {
   return {
-    template: JST['organizations_nav'](),
+    template: require('account/OrganizationsNav').default(),
     restrict: 'E',
     scope: {},
     controller: 'organizationsNavController',
     controllerAs: 'nav'
   };
-})
+}])
 
 .controller('organizationsNavController', ['$scope', 'require', function ($scope, require) {
   var controller = this;
@@ -17,9 +17,11 @@ angular.module('contentful')
   var OrganizationList = require('OrganizationList');
   var tokenStore = require('tokenStore');
 
-  controller.isNewOrgState = $state.current.name === 'account.organizations.new';
+  init();
 
-  K.onValueScope($scope, OrganizationList.organizations$, initOrganizations);
+  K.onValueScope($scope, OrganizationList.organizations$, function (organizations) {
+    controller.organizations = organizations;
+  });
 
   // Go to the corresponding page in the other organization or the defualt
   // `subscription` page if it's not available
@@ -38,14 +40,14 @@ angular.module('contentful')
     $state.go(targetState, {orgId: selectedOrgId}, {inherit: false});
   };
 
-  function initOrganizations (organizations) {
-    var requestedOrgId = $state.params.orgId;
+  function init () {
+    var orgId = $state.params.orgId;
 
-    controller.organizations = organizations;
-    controller.selectedOrganizationId = requestedOrgId;
+    controller.selectedOrganizationId = orgId;
+    controller.isNewOrgState = $state.current.name === 'account.organizations.new';
 
     if (!controller.isNewOrgState) {
-      getOrganization(requestedOrgId).then(function (org) {
+      getOrganization(orgId).then(function (org) {
         controller.tabs = _.map(makeTabs(org), function (tab) {
           tab.selected = $state.current.name === tab.state;
           return tab;
@@ -73,8 +75,7 @@ angular.module('contentful')
       return $q.resolve(org);
     } else {
       return tokenStore.refresh().then(function () {
-        org = OrganizationList.get(orgId);
-        return org ? $q.resolve(org) : $q.reject();
+        return OrganizationList.get(orgId);
       });
     }
   }
@@ -87,7 +88,7 @@ angular.module('contentful')
         return {
           name: tab.name,
           state: tab.state,
-          id: 'org-nav-tab-' + tab.name.toLowerCase().replace(/\s+/g, '-'),
+          testId: 'org-nav-tab-' + tab.name.toLowerCase().replace(/\s+/g, '-'),
           params: '(' + JSON.stringify(_.assign({orgId: orgId}, tab.stateParams)) + ')',
           isActive: _.defaultTo(tab.isActive, true)
         };

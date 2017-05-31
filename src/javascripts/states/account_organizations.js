@@ -7,6 +7,7 @@ angular.module('contentful')
  */
 .factory('states/account/organizations', ['require', function (require) {
   var base = require('states/base');
+  var h = require('utils/hyperscript').h;
 
   var newOrg = organizationsBase({
     name: 'new',
@@ -52,10 +53,7 @@ angular.module('contentful')
       params: {
         pathSuffix: ''
       },
-      template: (
-        '<cf-account-organizations-nav></cf-account-organizations-nav>' +
-        '<cf-account-view></cf-account-view>'
-      )
+      template: [h('cf-account-organizations-nav'), h('cf-account-view')].join('')
     };
     return base(_.extend(definition, defaults));
   }

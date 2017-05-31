@@ -7,6 +7,7 @@ angular.module('contentful')
  */
 .factory('states/account/profile', ['require', function (require) {
   var base = require('states/base');
+  var h = require('utils/hyperscript').h;
 
   var user = userBase({
     name: 'user',
@@ -42,10 +43,7 @@ angular.module('contentful')
       params: {
         pathSuffix: ''
       },
-      template: (
-        '<cf-account-profile-nav></cf-account-profile-nav>' +
-        '<cf-account-view></cf-account-view>'
-      )
+      template: [h('cf-account-profile-nav'), h('cf-account-view')].join('')
     };
 
     return base(_.extend(definition, defaults));
