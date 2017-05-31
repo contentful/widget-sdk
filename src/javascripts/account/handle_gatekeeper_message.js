@@ -9,6 +9,7 @@ angular.module('contentful')
   var notification = require('notification');
   var tokenStore = require('tokenStore');
   var CreateSpace = require('services/CreateSpace');
+  var UrlSyncHelper = require('account/UrlSyncHelper');
 
   return function handleGatekeeperMessage (data) {
     var match = makeMessageMatcher(data);
@@ -26,11 +27,11 @@ angular.module('contentful')
     } else if (data.type === 'flash') {
       showNotification(data);
 
-    } else if (match('navigate', 'location') && data.path) {
+    } else if (match('navigate', 'location')) {
       $location.url(data.path);
 
-    } else if (match('update', 'location') && data.path) {
-      updateUrl(data.path);
+    } else if (match('update', 'location')) {
+      UrlSyncHelper.updateWebappUrl(data.path);
 
     } else { tokenStore.refresh(); }
   };
@@ -58,23 +59,6 @@ angular.module('contentful')
 
     if (message) {
       notification[level](message);
-    }
-  }
-
-  // If the state is the same as the current one (except for path suffix), silently
-  // update the URL. Otherwise, update the location triggering a state change.
-  function updateUrl (target) {
-    var base = $state.href($state.current.name);
-    // decode forward slashes and remove trailing slash
-    var baseDecoded = decodeURIComponent(base).replace(/\/$/, '');
-    var isCurrentState = _.startsWith(target, baseDecoded) || _.startsWith(baseDecoded, target);
-
-    if (isCurrentState) {
-      var pathSuffix = target.replace(baseDecoded, '');
-      var params = _.extend($state.params, {pathSuffix: pathSuffix});
-      $state.go($state.current, params, {location: 'replace'});
-    } else {
-      $location.url(target);
     }
   }
 }]);

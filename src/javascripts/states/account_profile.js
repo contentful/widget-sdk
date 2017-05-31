@@ -10,33 +10,33 @@ angular.module('contentful')
 
   var user = userBase({
     name: 'user',
-    url: '/user{pathSuffix:PathSuffix}'
+    url: '/user/{pathSuffix:PathSuffix}'
   });
 
   var spaceMemberships = userBase({
     name: 'space_memberships',
-    url: '/space_memberships{pathSuffix:PathSuffix}'
+    url: '/space_memberships/{pathSuffix:PathSuffix}'
   });
 
   var organizationMemberships = userBase({
     name: 'organization_memberships',
-    url: '/organization_memberships{pathSuffix:PathSuffix}'
+    url: '/organization_memberships/{pathSuffix:PathSuffix}'
   });
 
   var accessGrants = userBase({
     name: 'access_grants',
-    url: '/access_grants{pathSuffix:PathSuffix}'
+    url: '/access_grants/{pathSuffix:PathSuffix}'
   });
 
   var applications = userBase({
     name: 'applications',
-    url: '/developers/applications{pathSuffix:PathSuffix}'
+    url: '/developers/applications/{pathSuffix:PathSuffix}'
   });
 
   function userBase (definition) {
     var defaults = {
       label: 'Account',
-      controller: ['$scope', function ($scope) {
+      controller: ['$scope', '$state', function ($scope) {
         $scope.context = {};
       }],
       params: {
