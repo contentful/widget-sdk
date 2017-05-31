@@ -33,7 +33,7 @@ angular.module('cf.app')
   var $stateParams = require('$stateParams');
   var notification = require('notification');
   var trackVersioning = require('analyticsEvents/versioning');
-  var Validator = require('entityEditor/Validator');
+  var Validator = require('app/entity_editor/Validator');
 
   $scope.versionPicker = require('SnapshotComparatorController/versionPicker').create();
   $scope.snapshotCount = $stateParams.snapshotCount;
