@@ -23,6 +23,8 @@ describe('CodeMirror wrapper', function () {
   });
 
   afterEach(function () {
+    wrapper.destroy();
+    $(textarea).remove();
     textarea = wrapper = cm = focusSpy = null;
   });
 
