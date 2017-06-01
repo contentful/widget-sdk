@@ -1,4 +1,4 @@
-'use strict';
+import {setCheckbox} from 'helpers/DOM';
 
 describe('Webhook Segmentation directive', function () {
 
@@ -112,7 +112,7 @@ describe('Webhook Segmentation directive', function () {
       }.bind(this);
 
       this.compile(['Entry.save']);
-      inputs().first().prop('checked', true).click();
+      setCheckbox(inputs().first(), true);
       this.$apply();
 
       inputs().each(function () { expect(this.checked).toBe(true); });
@@ -126,7 +126,7 @@ describe('Webhook Segmentation directive', function () {
       }.bind(this);
 
       this.compile(['Asset.create']);
-      inputs().last().prop('checked', true).click();
+      setCheckbox(inputs().last(), true);
       this.$apply();
 
       inputs().each(function () { expect(this.checked).toBe(true); });

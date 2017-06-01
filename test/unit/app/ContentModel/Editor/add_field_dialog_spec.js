@@ -1,4 +1,5 @@
-'use strict';
+import {setCheckbox} from 'helpers/DOM';
+import * as sinon from 'helpers/sinon';
 
 // TODO Rewrite this with the new actor based test DSL.
 describe('AddFieldDialogController', function () {
@@ -39,7 +40,7 @@ describe('AddFieldDialogController', function () {
     });
 
     it('creates a symbol list field', function () {
-      this.el.find('#add-field-form__field-is-list').prop('checked', true).click();
+      setCheckbox(this.el.find('#add-field-form__field-is-list').get(0), true);
       this.$apply();
       this.el.find('button:contains(Create)').first().click();
       this.$apply();

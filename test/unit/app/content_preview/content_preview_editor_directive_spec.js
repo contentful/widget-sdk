@@ -1,4 +1,5 @@
-'use strict';
+import {setCheckbox} from 'helpers/DOM';
+import * as sinon from 'helpers/sinon';
 
 describe('cfContentPreviewEditor directive', function () {
 
@@ -139,7 +140,7 @@ describe('cfContentPreviewEditor directive', function () {
 
     it('shows error if a content type is active but has no value', function () {
       this.updateName('My PE');
-      this.element.find('#ct-1').prop('checked', true).trigger('click');
+      setCheckbox(this.element.find('#ct-1').get(0), true);
       this.clickSave();
       expect(this.scope.invalidFields.errors.configs['ct-1']).toBeTruthy();
       sinon.assert.notCalled(contentPreview.create);
