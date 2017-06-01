@@ -133,7 +133,7 @@ header.workbench-header
                 div.table__checkbox-cell.x--multline
                   label(ng-click="$event.stopPropagation();")
                     input(type="checkbox" cf-selection="entry" tabindex="-1" aria-label="cell-select" ng-click="selection.toggle(entry, $event);")
-                  a(ui-sref="{{linkToEntry}}") {{entryTitle(entry)}}
+                  a(ui-sref="{{linkToEntry}}" ng-click="$event.stopPropagation();") {{entryTitle(entry)}}
               +td.x--medium-cell(
                 aria-label="cell-content-type"
                 ui-sref="{{linkToEntry}}"
