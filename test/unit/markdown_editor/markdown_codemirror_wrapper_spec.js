@@ -44,10 +44,9 @@ describe('CodeMirror wrapper', function () {
     });
 
     it('restores to original textarea on destroy', function () {
-      function countStyles () { return Object.keys(textarea.style).length; }
-      expect(countStyles()).toBe(1);
+      expect(textarea.style.display).toBe('none');
       wrapper.destroy();
-      expect(countStyles()).toBe(0);
+      expect(textarea.style.display).toBe('');
     });
   });
 
