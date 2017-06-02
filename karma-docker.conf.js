@@ -12,7 +12,6 @@ module.exports = function (config) {
     ].concat(base.testFiles),
 
     reporters: ['dots'],
-    browsers: ['SlimerJS'],
     singleRun: true
   });
 };
