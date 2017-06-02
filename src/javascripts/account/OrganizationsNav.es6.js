@@ -4,7 +4,7 @@ export default function () {
   return h('header.workbench-header.x--with-nav', [
     h('cf-breadcrumbs'),
     h('div.page-header', [
-      h('div.organizations-page-header', {
+      h('div', {
         style: {
           display: 'flex',
           alignItems: 'center'
@@ -21,7 +21,7 @@ export default function () {
           style: { margin: '0 1.2em 0 0.8em' }
         }),
         h('a', {
-          uiSref: 'account.organizations.new',
+          cfSref: '{ path: ["account", "organizations", "new"] }',
           ngIf: '!nav.isNewOrgState'
         }, ['Add new organization'])
       ])
@@ -29,11 +29,10 @@ export default function () {
     h('nav.workbench-nav__tabs', [
       h('a', {
         role: 'tab',
-        dataTestId: '{{tab.testId}',
-        uiSref: '{{tab.state + tab.params}}',
+        dataTestId: '{{tab.testId}}',
+        cfSref: 'tab.state',
         ngRepeat: 'tab in nav.tabs track by $index',
-        ariaSelected: '{{tab.selected}}',
-        ngIf: 'tab.isActive'
+        ariaSelected: '{{tab.selected}}'
       }, ['{{tab.name}}'])
     ])
   ]);

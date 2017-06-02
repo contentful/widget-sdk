@@ -1,7 +1,7 @@
 import $state from '$state';
 import $location from '$location';
 import { accountUrl } from 'Config';
-import { extend } from 'lodash';
+import { extend, startsWith, endsWith } from 'lodash';
 
 /**
  * @module account/UrlSyncHelper
@@ -14,7 +14,7 @@ import { extend } from 'lodash';
  */
 
 export function getGatekeeperUrl () {
-  const webappUrl = $state.href($state.current);
+  const webappUrl = $location.url();
   const baseUrl = $state.href('account');
 
 
@@ -41,10 +41,10 @@ export function getGatekeeperUrl () {
  * @param {string} gkUrl
  */
 export function updateWebappUrl (gkUrl = '') {
-  gkUrl = gkUrl.endsWith('/') ? gkUrl : gkUrl + '/';
+  gkUrl = endsWith(gkUrl, '/') ? gkUrl : gkUrl + '/';
 
   const baseUrl = $state.href($state.current.name, {pathSuffix: ''});
-  const isCurrentState = gkUrl.startsWith(baseUrl);
+  const isCurrentState = startsWith(gkUrl, baseUrl);
 
   if (isCurrentState) {
     const pathSuffix = gkUrl.replace(baseUrl, '');

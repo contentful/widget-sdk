@@ -36,7 +36,7 @@ angular.module('contentful')
 
   var offsitebackup = organizationsBase({
     name: 'offsitebackup',
-    url: '/:orgId/offsite_backup{pathSuffix:PathSuffix}'
+    url: '/:orgId/offsite_backup/edit{pathSuffix:PathSuffix}'
   });
 
   var billing = organizationsBase({

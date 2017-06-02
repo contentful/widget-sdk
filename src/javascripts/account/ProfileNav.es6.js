@@ -10,7 +10,7 @@ export default function () {
       h('a', {
         role: 'tab',
         dataTestId: '{{tab.testId}}',
-        uiSref: '{{tab.state}}',
+        cfSref: 'tab.state',
         ngRepeat: 'tab in nav.tabs track by $index',
         ariaSelected: '{{tab.selected}}'
       }, ['{{tab.name}}'])

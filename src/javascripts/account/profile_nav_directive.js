@@ -10,29 +10,29 @@ angular.module('contentful')
       var tabs = [
         {
           name: 'Settings',
-          state: 'account.profile.user'
+          state: { path: ['account', 'profile', 'user'] }
         },
         {
           name: 'Spaces',
-          state: 'account.profile.space_memberships'
+          state: { path: ['account', 'profile', 'space_memberships'] }
         },
         {
           name: 'Organizations',
-          state: 'account.profile.organization_memberships'
+          state: { path: ['account', 'profile', 'organization_memberships'] }
         },
         {
           name: 'Access Tokens',
-          state: 'account.profile.access_grants'
+          state: { path: ['account', 'profile', 'access_grants'] }
         },
         {
           name: 'Applications',
-          state: 'account.profile.applications'
+          state: { path: ['account', 'profile', 'applications'] }
         }
       ];
 
       controller.tabs = tabs.map(function (tab) {
         tab.testId = 'profile-nav-tab-' + tab.name.toLowerCase().replace(/\s+/g, '-');
-        tab.selected = $state.current.name === tab.state;
+        tab.selected = $state.current.name === tab.state.path.join('.');
         return tab;
       });
 

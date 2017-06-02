@@ -3,7 +3,6 @@ describe('account/UrlSyncHelper', function () {
     module('contentful/test');
     this.$state = this.mockService('$state');
     this.$state.go = sinon.spy();
-    this.accountUrl = sinon.stub().returns('http://be.test.com/');
     this.$location = this.mockService('$location');
     this.UrlSyncHelper = this.$inject('account/UrlSyncHelper');
   });

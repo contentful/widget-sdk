@@ -30,12 +30,11 @@ angular.module('contentful')
 
     var defaultState = 'account.organizations.subscription';
 
-    var canSwitchOrgInCurrentState = !controller.isNewOrgState && _.get(
-      _.find(makeTabs(targetOrg), ['state', $state.current.name]),
-      'isActive'
-    );
+    var hasCurrentStateRef = _.find(makeTabs(targetOrg), function (tab) {
+      return tab.state.path.join('.') === $state.current.name;
+    });
 
-    var targetState = canSwitchOrgInCurrentState ? $state.current : defaultState;
+    var targetState = hasCurrentStateRef ? $state.current : defaultState;
 
     $state.go(targetState, {orgId: selectedOrgId}, {inherit: false});
   };
@@ -49,20 +48,17 @@ angular.module('contentful')
     if (controller.isNewOrgState) {
       controller.tabs = [{
         name: 'New Organization',
-        state: 'account.organizations.new',
-        params: '',
-        selected: true,
-        isActive: true
+        state: { path: ['account', 'organizations', 'new'] },
+        selected: true
       }];
     } else {
       getOrganization(orgId).then(function (org) {
-        controller.tabs = _.map(makeTabs(org), function (tab) {
-          tab.selected = $state.current.name === tab.state;
-          return tab;
-        });
-      }).catch(function () {
-        // Redirect to home since the organization is invalid
-        $state.go('home');
+        if (org) {
+          controller.tabs = makeTabs(org);
+        } else {
+          // Redirect to home since the organization is invalid
+          $state.go('home');
+        }
       });
     }
   }
@@ -76,67 +72,63 @@ angular.module('contentful')
     } else {
       return tokenStore.refresh().then(function () {
         return OrganizationList.get(orgId);
+      }).catch(function () {
+        return null;
       });
     }
   }
 
   function makeTabs (org) {
-    var orgId = _.get(org, 'sys.id');
-
-    function applyDefaults (tabList) {
-      return tabList.map(function (tab) {
-        var params = _.assign({orgId: orgId}, tab.stateParams)
-        return {
-          name: tab.name,
-          state: tab.state,
-          testId: 'org-nav-tab-' + tab.name.toLowerCase().replace(/\s+/g, '-'),
-          params: '(' + JSON.stringify(params) + ')',
-          isActive: _.defaultTo(tab.isActive, true)
-        };
-      });
-    }
-
     return applyDefaults([
       {
         name: 'Settings',
-        state: 'account.organizations.edit'
+        state: { path: ['account', 'organizations', 'edit'] }
       },
       {
         name: 'Subscription',
-        state: 'account.organizations.subscription'
+        state: { path: ['account', 'organizations', 'subscription'] }
       },
       {
         name: 'Billing',
-        state: 'account.organizations.billing',
-        isActive: isPaid(org) && OrganizationList.isOwnerOrAdmin(org)
+        state: { path: ['account', 'organizations', 'billing'] },
+        isHidden: !(isPaid(org) && OrganizationList.isOwnerOrAdmin(org))
       },
       {
         name: 'Users',
-        state: 'account.organizations.users'
+        state: { path: ['account', 'organizations', 'users'] }
       },
       {
         name: 'Spaces',
-        state: 'account.organizations.spaces'
+        state: { path: ['account', 'organizations', 'spaces'] }
       },
       {
         name: 'Offsite backup',
-        state: 'account.organizations.offsitebackup',
-        stateParams: {pathSuffix: '/edit'},
-        isActive: hasOffsiteBackup()
+        state: { path: ['account', 'organizations', 'offsitebackup'] },
+        isHidden: !hasOffsiteBackup(org)
       }
     ]);
+
+    function applyDefaults (tabList) {
+      return tabList.filter(function (tab) {
+        return !tab.isHidden;
+      }).map(function (tab) {
+        var state = { path: tab.state.path, params: { orgId: org.sys.id } };
+        return {
+          name: tab.name,
+          state: state,
+          testId: 'org-nav-tab-' + tab.name.toLowerCase().replace(/\s+/g, '-'),
+          selected: $state.current.name === tab.state.path.join('.')
+        };
+      });
+    }
   }
 
   function isPaid (org) {
     return ['paid', 'free_paid']
-      .indexOf(_.get(org, 'subscription.status')) >= 0;
+      .indexOf(org.subscription.status) >= 0;
   }
 
   function hasOffsiteBackup (org) {
-    return _.get(
-      org,
-      'subscriptionPlan.limits.features.offsiteBackup',
-      false
-    );
+    return !!org.subscriptionPlan.limits.features.offsiteBackup;
   }
 }]);
