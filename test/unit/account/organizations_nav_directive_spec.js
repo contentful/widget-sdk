@@ -8,11 +8,10 @@ describe('cfAccountOrganizationsNav directive', function () {
     this.$state.go = sinon.stub();
     this.tokenStore = this.$inject('tokenStore');
     this.tokenStore.refresh = sinon.stub().resolves();
+    this.OrganizationList.organizations$ = K.createMockProperty(this.orgs);
 
     this.compile = function () {
-      this.element = this.$compile('<cf-account-organizations-nav />');
-      this.controller = this.element.isolateScope().nav;
-      this.OrganizationList.organizations$ = K.createMockProperty(this.orgs);
+      return this.$compile('<cf-account-organizations-nav />');
     };
     this.orgs = [{
       subscriptionPlan: {limits: {features: {offsiteBackup: true}}},
@@ -26,7 +25,8 @@ describe('cfAccountOrganizationsNav directive', function () {
   describe('new state', function () {
     beforeEach(function () {
       this.$state.current.name = 'account.organizations.new';
-      this.compile();
+      this.element = this.compile();
+      this.controller = this.element.isolateScope().nav;
     });
 
     it('displays the new organization tabs', function () {
@@ -38,6 +38,7 @@ describe('cfAccountOrganizationsNav directive', function () {
     });
 
     it('organization switcher goes to the subscriptions state', function () {
+      this.OrganizationList.get = sinon.stub().withArgs('test-org-1').returns(this.orgs[0]);
       this.controller.goToOrganization('test-org-1');
 
       sinon.assert.calledWith(
@@ -57,17 +58,17 @@ describe('cfAccountOrganizationsNav directive', function () {
       it('with offsite backup', function () {
         this.$state.params.orgId = 'test-org-1';
         this.OrganizationList.get = sinon.stub().returns(this.orgs[0]);
-        this.compile();
-        expect(this.controller.tabs.length).toBe(5);
-        const tabList = this.element.find('a[role="tab"]');
+        const element = this.compile();
+        expect(element.isolateScope().nav.tabs.length).toBe(5);
+        const tabList = element.find('a[role="tab"]');
         expect(tabList.length).toBe(5);
       });
 
       it('without offsite backup', function () {
         this.$state.params.orgId = 'test-org-2';
         this.OrganizationList.get = sinon.stub().returns(this.orgs[1]);
-        this.compile();
-        const tabList = this.element.find('a[role="tab"]');
+        const element = this.compile();
+        const tabList = element.find('a[role="tab"]');
         expect(tabList.length).toBe(4);
       });
     });

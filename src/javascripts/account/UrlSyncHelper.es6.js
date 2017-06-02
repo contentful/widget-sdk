@@ -18,7 +18,7 @@ export function getGatekeeperUrl () {
   const baseUrl = $state.href('account');
 
 
-  if (!webappUrl.startsWith(baseUrl)) {
+  if (!startsWith(webappUrl, baseUrl)) {
     return null;
   }
 

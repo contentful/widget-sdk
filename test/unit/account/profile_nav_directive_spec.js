@@ -5,7 +5,7 @@ describe('cfAccountProfileNav directive', function () {
     module('contentful/test');
     this.$state = this.$inject('$state');
     this.compile = function () {
-      this.element = this.$compile('<cf-account-profile-nav />');
+      return this.$compile('<cf-account-profile-nav />');
     };
   });
 
@@ -17,8 +17,8 @@ describe('cfAccountProfileNav directive', function () {
 
     states.forEach((state) => {
       this.$state.current.name = state.stateName;
-      this.compile();
-      const selectedTab = this.element.find('a[aria-selected="true"]');
+      const element = this.compile();
+      const selectedTab = element.find('a[aria-selected="true"]');
       expect(selectedTab.text()).toBe(state.text);
     });
 

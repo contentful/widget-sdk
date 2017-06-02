@@ -9,7 +9,7 @@ describe('account/UrlSyncHelper', function () {
 
   describe('.getGatekeeperUrl()', function () {
     beforeEach(function () {
-      this.$state.href.withArgs(this.$state.current).returns('/account/profile/user/foo%2fbar');
+      this.$location.url.returns('/account/profile/user/foo%2fbar');
       this.$state.href.withArgs('account').returns('/account/');
     });
     it('returns gatekeeper url', function () {
