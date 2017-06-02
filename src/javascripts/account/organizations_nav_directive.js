@@ -46,7 +46,15 @@ angular.module('contentful')
     controller.selectedOrganizationId = orgId;
     controller.isNewOrgState = $state.current.name === 'account.organizations.new';
 
-    if (!controller.isNewOrgState) {
+    if (controller.isNewOrgState) {
+      controller.tabs = [{
+        name: 'New Organization',
+        state: 'account.organizations.new',
+        params: '',
+        selected: true,
+        isActive: true
+      }];
+    } else {
       getOrganization(orgId).then(function (org) {
         controller.tabs = _.map(makeTabs(org), function (tab) {
           tab.selected = $state.current.name === tab.state;
@@ -56,14 +64,6 @@ angular.module('contentful')
         // Redirect to home since the organization is invalid
         $state.go('home');
       });
-    } else {
-      controller.tabs = [{
-        name: 'New Organization',
-        state: 'account.organizations.new',
-        params: '',
-        selected: true,
-        isActive: true
-      }];
     }
   }
 
@@ -85,11 +85,12 @@ angular.module('contentful')
 
     function applyDefaults (tabList) {
       return tabList.map(function (tab) {
+        var params = _.assign({orgId: orgId}, tab.stateParams)
         return {
           name: tab.name,
           state: tab.state,
           testId: 'org-nav-tab-' + tab.name.toLowerCase().replace(/\s+/g, '-'),
-          params: '(' + JSON.stringify(_.assign({orgId: orgId}, tab.stateParams)) + ')',
+          params: '(' + JSON.stringify(params) + ')',
           isActive: _.defaultTo(tab.isActive, true)
         };
       });
@@ -105,6 +106,11 @@ angular.module('contentful')
         state: 'account.organizations.subscription'
       },
       {
+        name: 'Billing',
+        state: 'account.organizations.billing',
+        isActive: isPaid(org) && OrganizationList.isOwnerOrAdmin(org)
+      },
+      {
         name: 'Users',
         state: 'account.organizations.users'
       },
@@ -116,12 +122,21 @@ angular.module('contentful')
         name: 'Offsite backup',
         state: 'account.organizations.offsitebackup',
         stateParams: {pathSuffix: '/edit'},
-        isActive: _.get(
-          org,
-          'subscriptionPlan.limits.features.offsiteBackup',
-          false
-        )
+        isActive: hasOffsiteBackup()
       }
     ]);
+  }
+
+  function isPaid (org) {
+    return ['paid', 'free_paid']
+      .indexOf(_.get(org, 'subscription.status')) >= 0;
+  }
+
+  function hasOffsiteBackup (org) {
+    return _.get(
+      org,
+      'subscriptionPlan.limits.features.offsiteBackup',
+      false
+    );
   }
 }]);
