@@ -9,16 +9,27 @@ describe('cfAccountOrganizationsNav directive', function () {
     this.tokenStore = this.$inject('tokenStore');
     this.tokenStore.refresh = sinon.stub().resolves();
     this.OrganizationList.organizations$ = K.createMockProperty(this.orgs);
+    this.OrganizationList.isOwnerOrAdmin = sinon.stub().returns(true);
 
     this.compile = function () {
       return this.$compile('<cf-account-organizations-nav />');
     };
     this.orgs = [{
       subscriptionPlan: {limits: {features: {offsiteBackup: true}}},
+      subscription: { status: 'paid' },
       sys: {id: 'test-org-1'}
     }, {
       subscriptionPlan: {limits: {features: {offsiteBackup: false}}},
+      subscription: { status: 'free' },
       sys: {id: 'test-org-2'}
+    }, {
+      subscriptionPlan: {limits: {features: {offsiteBackup: true}}},
+      subscription: { status: 'free' },
+      sys: {id: 'test-org-3'}
+    }, {
+      subscriptionPlan: {limits: {features: {offsiteBackup: false}}},
+      subscription: { status: 'paid' },
+      sys: {id: 'test-org-4'}
     }];
   });
 
@@ -55,22 +66,25 @@ describe('cfAccountOrganizationsNav directive', function () {
     });
 
     describe('displays the list of available tabs', function () {
-      it('with offsite backup', function () {
-        this.$state.params.orgId = 'test-org-1';
-        this.OrganizationList.get = sinon.stub().returns(this.orgs[0]);
-        const element = this.compile();
-        expect(element.isolateScope().nav.tabs.length).toBe(5);
-        const tabList = element.find('a[role="tab"]');
-        expect(tabList.length).toBe(5);
-      });
+      describeTabsLengthTest('with offsite backup and billing', 'test-org-1', 6);
 
-      it('without offsite backup', function () {
-        this.$state.params.orgId = 'test-org-2';
-        this.OrganizationList.get = sinon.stub().returns(this.orgs[1]);
-        const element = this.compile();
-        const tabList = element.find('a[role="tab"]');
-        expect(tabList.length).toBe(4);
-      });
+      describeTabsLengthTest('without offsite backup and billing', 'test-org-2', 4);
+
+      describeTabsLengthTest('with offsite backup, without billing', 'test-org-3', 5);
+
+      describeTabsLengthTest('without offsite backup, with billing', 'test-org-4', 5);
+
+      function describeTabsLengthTest (name, orgId, tabsLength) {
+        it(name, function () {
+          const org = this.orgs.find((org) => org.sys.id === orgId);
+          this.OrganizationList.get = sinon.stub().returns(org);
+          this.$state.params.orgId = orgId;
+          const element = this.compile();
+          expect(element.isolateScope().nav.tabs.length).toBe(tabsLength);
+          const tabList = element.find('a[role="tab"]');
+          expect(tabList.length).toBe(tabsLength);
+        });
+      }
     });
 
     describe('invalid org', function () {
