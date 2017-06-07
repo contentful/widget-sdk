@@ -85,4 +85,26 @@ describe('Markdown tree', function () {
       expect(anchor._store.props.href).toBe(null);
     });
   });
+
+  it('Handles different image srcs', function () {
+    const tests = [
+      ['![img1](//images.contentful.com/x.jpg)', 'h=200'],
+      ['![img2](//images.contentful.com/x.jpg?w=100)', 'w=100&h=200'],
+      ['![img3](//images.contentful.com/x.jpg?h=123)', 'h=123'],
+      ['![img4](//images.contentful.com/x.jpg?w=100&h=123)', 'w=100&h=123'],
+      ['![img5](//images.wat.io/y.jpg)', ''],
+      ['![img6](//images.wat.io/y.jpg?w=100)', 'w=100'],
+      ['![img7](//images.wat.io/y.jpg?h=300)', 'h=300'],
+      ['![img8](//images.wat.io/y.jpg?w=99&h=66)', 'w=99&h=66']
+    ];
+
+    const root = getRoot(tests.map(t => t[0]).join('\n\n'));
+
+    getChildren(root).forEach((paragraph, i) => {
+      const imgWrapperDiv = getChildren(paragraph);
+      const img = getChildren(imgWrapperDiv);
+      const qs = img._store.props.src.split('?')[1] || '';
+      expect(qs).toBe(tests[i][1]);
+    });
+  });
 });
