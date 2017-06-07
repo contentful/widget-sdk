@@ -19,7 +19,7 @@ angular.module('contentful')
 .controller('FieldLocaleController', ['require', '$scope', '$attrs', function (require, $scope, $attrs) {
   var spaceContext = require('spaceContext');
   var K = require('utils/kefir');
-  var FieldLocaleDoc = require('entityEditor/FieldLocaleDocument');
+  var createFieldLocaleDoc = require('app/entity_editor/FieldLocaleDocument').default;
 
   var controller = this;
   var field = $scope.widget.field;
@@ -36,10 +36,35 @@ angular.module('contentful')
   // TODO We should remove the dependency on $attrs. This was the
   // source of a bug.
   $scope.docImpl = $scope[$attrs.documentProperty || 'otDoc'];
-  controller.doc = FieldLocaleDoc.create($scope.docImpl, field.id, locale.internal_code);
+  controller.doc = createFieldLocaleDoc($scope.docImpl, field.id, locale.internal_code);
 
   // Provided by the entry and asset controllers
   var editorContext = $scope.editorContext;
+
+  /**
+   * @ngdoc method
+   * @name FieldLocaleController#revalidate
+   * @description
+   * Reruns validations only for the current field locale.
+   *
+   * The change in errors is picked up in the `validator.errors$`
+   * listener below.
+   *
+   * This is called by the `cfWidgetRenderer` directive when a field
+   * editor is unfocussed.
+   */
+  controller.revalidate = function () {
+    $scope.editorContext.validator.validateFieldLocale(field.id, locale.internal_code);
+  };
+
+  // Revalidate the current field locale after the user has stopped
+  // editing for 800ms
+  K.onValueScope(
+    $scope,
+    controller.doc.localChanges$.debounce(800),
+    controller.revalidate
+  );
+
 
   /**
    * @ngdoc property

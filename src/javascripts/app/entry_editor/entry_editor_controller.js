@@ -62,7 +62,7 @@ angular.module('contentful')
 
   this.validator = Validator.createForEntry(
     entityInfo.contentType,
-    $scope.otDoc.data$,
+    $scope.otDoc,
     spaceContext.publishedCTs,
     localeStore.getPrivateLocales()
   );

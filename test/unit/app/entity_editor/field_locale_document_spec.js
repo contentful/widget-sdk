@@ -1,4 +1,5 @@
-'use strict';
+import createFieldLocaleDoc from 'app/entity_editor/FieldLocaleDocument';
+import * as sinon from 'helpers/sinon';
 
 describe('entityEditor/FieldLocaleDocument', function () {
   const path = ['fields', 'FID', 'LC'];
@@ -7,9 +8,7 @@ describe('entityEditor/FieldLocaleDocument', function () {
     module('contentful/test');
 
     this.rootDoc = this.$inject('mocks/entityEditor/Document').create();
-
-    const Doc = this.$inject('entityEditor/FieldLocaleDocument');
-    this.doc = Doc.create(this.rootDoc, 'FID', 'LC');
+    this.doc = createFieldLocaleDoc(this.rootDoc, 'FID', 'LC');
   });
 
   describe('delegates', function () {
@@ -63,6 +62,18 @@ describe('entityEditor/FieldLocaleDocument', function () {
       this.doc.set('VAL');
       this.rootDoc.setValueAt(path, 'VAL');
       sinon.assert.notCalled(changed);
+    });
+  });
+
+  describe('#fieldChanges$', function () {
+    it('emits when root document emits "localFieldChanges$" for current field', function () {
+      const emitted = sinon.spy();
+      this.doc.localChanges$.onValue(emitted);
+      this.rootDoc.localFieldChanges$.emit(['FID', 'LC-other']);
+      this.rootDoc.localFieldChanges$.emit(['FID-other', 'LC']);
+      sinon.assert.notCalled(emitted);
+      this.rootDoc.localFieldChanges$.emit(['FID', 'LC']);
+      sinon.assert.calledOnce(emitted);
     });
   });
 });
