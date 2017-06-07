@@ -21,7 +21,6 @@ if (window.cfFeedLazyLoader) {
 function getMarkdownVendors () {
   return {
     CodeMirror: require('codemirror'),
-    MarkedAst: require('marked-ast'),
     React: require('react')
   };
 }
