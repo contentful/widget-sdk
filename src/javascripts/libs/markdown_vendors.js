@@ -1,11 +1,5 @@
 'use strict';
 
-var libs = {
-  CodeMirror: require('codemirror'),
-  MarkedAst:  require('marked-ast'),
-  React:      require('react')
-};
-
 // For JSON field editor component
 require('codemirror/addon/edit/closebrackets');
 require('codemirror/mode/javascript/javascript');
@@ -18,8 +12,16 @@ require('codemirror/addon/edit/continuelist');
 require('codemirror/addon/mode/overlay');
 
 if (window.cfFeedLazyLoader) {
-  window.cfFeedLazyLoader('markdown', libs);
+  window.cfFeedLazyLoader('markdown', getMarkdownVendors());
 } else {
   window.cfLibs = window.cfLibs || {};
-  window.cfLibs.markdown = libs;
+  window.cfLibs.markdown = getMarkdownVendors();
+}
+
+function getMarkdownVendors () {
+  return {
+    CodeMirror: require('codemirror'),
+    MarkedAst: require('marked-ast'),
+    React: require('react')
+  };
 }
