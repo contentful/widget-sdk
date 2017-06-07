@@ -28,6 +28,7 @@ var rework = require('rework');
 var reworkUrlRewrite = require('rework-plugin-url');
 var fs = require('fs');
 var babel = require('gulp-babel');
+var envify = require('envify/custom');
 
 var S = require('./tools/lib/stream-utils');
 var U = require('./tools/lib/utils');
@@ -196,6 +197,10 @@ gulp.task('js/vendor/markdown', function () {
   var dest = gulp.dest('./public/app/');
   return browserify()
     .add('./src/javascripts/libs/markdown_vendors.js')
+    // Making React smaller and faster
+    // https://facebook.github.io/react/docs/optimizing-performance.html
+    .transform({global: true}, envify({NODE_ENV: 'production'}))
+    .plugin('bundle-collapser/plugin')
     .bundle()
     .on('error', passError(dest))
     .pipe(source('markdown_vendors.js'))

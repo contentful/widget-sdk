@@ -21,6 +21,7 @@ if (window.cfFeedLazyLoader) {
 function getMarkdownVendors () {
   return {
     CodeMirror: require('codemirror'),
-    React: require('react')
+    React: require('react'),
+    ReactDOM: require('react-dom')
   };
 }
