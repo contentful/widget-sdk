@@ -21,8 +21,7 @@ export default function () {
           style: { margin: '0 1.2em 0 0.8em' }
         }),
         h('a', {
-          cfSref: '{ path: ["account", "organizations", "new"] }',
-          ngIf: '!nav.isNewOrgState'
+          cfSref: '{ path: ["account", "organizations", "new"] }'
         }, ['Add new organization'])
       ])
     ]),
