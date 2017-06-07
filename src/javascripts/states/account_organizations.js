@@ -8,10 +8,16 @@ angular.module('contentful')
 .factory('states/account/organizations', ['require', function (require) {
   var base = require('states/base');
   var h = require('utils/hyperscript').h;
+  var Workbench = require('app/Workbench');
 
-  var newOrg = organizationsBase({
+  var newOrg = base({
     name: 'new',
-    url: '/new'
+    url: '/new',
+    label: 'Create new organization',
+    controller: ['$scope', function ($scope) {
+      $scope.context = {};
+    }],
+    template: [Workbench.header('Add new organization'), h('cf-account-view')].join('')
   });
 
   var edit = organizationsBase({
