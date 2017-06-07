@@ -1,22 +1,34 @@
-'use strict';
+import {toArray} from 'lodash';
 
-
-afterEach(inject(function ($rootElement, $rootScope) {
-  $rootScope.$destroy();
-  $rootElement.remove();
-}));
-
-/**
- * These hooks clean up elements created with the `$compile()` helper
- * from `test/helpers/helpers`.
- */
 beforeEach(function () {
   this._angularElements = [];
 });
 
 afterEach(function () {
+  // Destroy all elements created with `this.$compile()`
   this._angularElements.forEach(function (el) {
     el.remove();
   });
   delete this._angularElements;
+
+  // Destroy root element
+  const $rootElement = this.$inject('$rootElement');
+  $rootElement.remove();
+
+  // Destroy all scopes
+  const $rootScope = this.$inject('$rootScope');
+  $rootScope.$destroy();
+
+  // Warn if there is still an element
+  const bodyChildren = toArray(document.body.children);
+  const leakedElements = bodyChildren.filter((el) => el.tagName !== 'SCRIPT');
+  if (leakedElements.length > 0) {
+    /* eslint no-console: off */
+    console.warn(
+      'Detected leaked element in document body.\n' +
+      'Please make sure that your tests remove all DOM elements they create',
+      leakedElements
+    );
+  }
+  leakedElements.forEach((el) => el.remove());
 });
