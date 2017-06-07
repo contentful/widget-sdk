@@ -54,7 +54,7 @@
     "kss": "^2.4.0",
     "ldclient-js": "^1.1.8",
     "lodash": "^4.14.2",
-    "marked-ast": "0.2.2",
+    "marked-ast": "^0.3.0",
     "merge-stream": "^0.1.7",
     "moment": "~2.11.2",
     "nib": "^1.0.3",
