@@ -15,7 +15,7 @@
 
 import {
   constant, noop, isEmpty,
-  filter, assign, get as getAtPath
+  assign, get as getAtPath
 } from 'lodash';
 import * as K from 'utils/kefir';
 import * as Path from 'utils/Path';
@@ -46,15 +46,15 @@ export function createNoop () {
  * @ngdoc method
  * @name entityEditor/Validator#createForEntry
  * @param {API.ContentType} contentType
- * @param {Property<API.Entry>} entryData$
+ * @param {EntityEditor.Document} doc
  * @param {ContentTypeRepo} publishedCTs
  * @param {API.Locale[]} locales
  * @returns {entityEditor/Validator}
  */
-export function createForEntry (contentType, entryData$, publishedCTs, locales) {
+export function createForEntry (contentType, doc, publishedCTs, locales) {
   const schema = Schema.fromContentType(contentType, locales);
   const buildMessage = errorMessageBuilder(publishedCTs);
-  return createBase(buildMessage, schema, entryData$);
+  return createBase(buildMessage, schema, doc);
 }
 
 
@@ -62,24 +62,31 @@ export function createForEntry (contentType, entryData$, publishedCTs, locales) 
  * @ngdoc method
  * @name entityEditor/Validator#createForAsset
  * @param {API.ContentType} contentType
- * @param {Property<API.Entry>} entryData$
+ * @param {EntityEditor.Document} doc
  * @param {ContentTypeRepo} publishedCTs
  * @param {API.Locale[]} locales
  * @returns {entityEditor/Validator}
  */
-export function createForAsset (assetData$, locales) {
+export function createForAsset (doc, locales) {
   const schema = Schema.schemas.Asset(locales);
   const buildMessage = errorMessageBuilder.forAsset;
-  return createBase(buildMessage, schema, assetData$);
+  return createBase(buildMessage, schema, doc);
 }
 
 
 // Only exported for tests
-export function createBase (buildMessage, schema, entityData$) {
+export function createBase (buildMessage, schema, doc) {
   const errorsBus = K.createPropertyBus([]);
   const errors$ = errorsBus.property;
 
-  run();
+  // We do not run validations for newly created documents
+  // Newly created documents have version number 2 because version one
+  // is the create event and version 2 is the normalization that takes
+  // place in the UI and is not caused by the user. See the
+  // 'data/document_normalizer' module.
+  if (doc.getVersion() > 2) {
+    run();
+  }
 
   /**
    * @ngdoc type
@@ -100,6 +107,7 @@ export function createBase (buildMessage, schema, entityData$) {
      */
     errors$: errors$,
     run: run,
+    validateFieldLocale: validateFieldLocale,
     hasFieldError: hasFieldError,
     hasFieldLocaleError: hasFieldLocaleError,
     setApiResponseErrors: setApiResponseErrors
@@ -147,8 +155,8 @@ export function createBase (buildMessage, schema, entityData$) {
    * @return {boolean}
    */
   function run () {
-    const entityData = K.getValue(entityData$);
-    const errors = setErrors(schema.errors(entityData, {skipDeletedLocaleFieldValidation: true}));
+    const errors = validate();
+    errorsBus.set(errors);
     return isEmpty(errors);
   }
 
@@ -173,27 +181,61 @@ export function createBase (buildMessage, schema, entityData$) {
       (errorId === 'InvalidEntry' && data.message === 'Validation error');
 
     if (isValidationError) {
-      const errors = getAtPath(data, ['details', 'errors'], []);
-      setErrors(errors);
+      const rawErrors = getAtPath(data, ['details', 'errors'], []);
+      const errors = processErrors(rawErrors);
+      errorsBus.set(errors);
     }
   }
 
-  function setErrors (errors) {
-    errors = filter(errors, function (error) {
-      return error && error.path;
+  /**
+   * @ngdoc property
+   * @name entityEditor/Validator#validateFieldLocale
+   * @description
+   * Reruns validation only for given field and locale.
+   *
+   * This means that we remove all old errors for this field and locale
+   * validate the data and add only the errors for this field and
+   * locale. We keep the errors for all other fields and locales.
+   *
+   * @param {string} fieldId  internal field id
+   * @param {string} localeCode  internal locale code
+   */
+  function validateFieldLocale (fieldId, localeCode) {
+    const errors = validate();
+    const fieldErrors = errors.filter(function (error) {
+      return Path.isPrefix(['fields', fieldId, localeCode], error.path);
     });
+    const otherErrors = K.getValue(errors$).filter((error) => {
+      return !Path.isPrefix(['fields', fieldId, localeCode], error.path);
+    });
+    const newErrors = fieldErrors.concat(otherErrors);
+    errorsBus.set(newErrors);
+  }
 
-    errors = errors.map(function (error) {
+  /**
+   * Run validations fro the current entity data and return the
+   * processed errors.
+   */
+  function validate () {
+    const entityData = K.getValue(doc.data$);
+    const rawErrors = schema.errors(entityData, {skipDeletedLocaleFieldValidation: true});
+    return processErrors(rawErrors);
+  }
+
+  /**
+   * Filter invalid error objects and add user facing error messages
+   *
+   * This function is applied to errors coming from the validation
+   * library or API responses.
+   */
+  function processErrors (errors) {
+    return errors.filter(function (error) {
+      return error && error.path;
+    }).map(function (error) {
       // TODO we should freeze this but duplicate errors modify this.
-      return assign({
-        path: []
-      }, error, {
+      return assign({}, error, {
         message: buildMessage(error)
       });
     });
-
-    errorsBus.set(errors);
-
-    return errors;
   }
 }

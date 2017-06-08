@@ -33,7 +33,7 @@ angular.module('contentful')
   installTracking(entityInfo, $scope.otDoc, K.scopeLifeline($scope));
 
   this.validator = Validator.createForAsset(
-    $scope.otDoc.data$,
+    $scope.otDoc,
     localeStore.getPrivateLocales()
   );
 

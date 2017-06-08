@@ -3,8 +3,7 @@
 set -ev
 
 # We ignore errors when installing dependencies required for testing
-./bin/install-firefox || true
-SLIMERJS_BIN=./bin/slimerjs ./bin/install_slimerjs || true
+./bin/install-slimerjs || true
 
 npm install --no-optional
 git submodule update --init
