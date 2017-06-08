@@ -31,7 +31,7 @@ export default function () {
         dataTestId: '{{tab.testId}}',
         cfSref: 'tab.state',
         ngRepeat: 'tab in nav.tabs track by $index',
-        ariaSelected: '{{tab.selected}}'
+        ariaSelected: '{{nav.isTabSelected(tab)}}'
       }, ['{{tab.name}}'])
     ])
   ]);
