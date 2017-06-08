@@ -201,7 +201,6 @@ src/javascripts/utils/encoder.js
 src/javascripts/utils/keycodes.js
 src/javascripts/utils/memoize.js
 src/javascripts/utils/overriding_request_queue.js
-src/javascripts/libs/markdown_vendors.js
 src/javascripts/kaltura_credentials.js
 src/javascripts/ui.js
 src/javascripts/access_control/cf_rule_list.js

@@ -1,5 +1,8 @@
 import $sanitize from '$sanitize';
 import {extend, isString, isObject, isArray, isNull} from 'lodash';
+import {htmlDecode} from 'encoder';
+import tokenStore from 'tokenStore';
+import MarkedAst from 'libs/MarkedAst';
 
 let currentId = 1;
 
@@ -10,6 +13,7 @@ const WHITESPACE_RE = /\s+/g;
 const NEWLINE_ENTITY_RE = new RegExp('&#10;', 'g');
 const EMBEDLY_CLASS_RE = new RegExp('class="embedly-card"', 'g');
 const EMBEDLY_CLASS_REPLACEMENT = 'class="embedly-card markdown-block" data-card-controls="0"';
+const IMAGES_API_DEFAULT_H = 200;
 
 /**
  * Given an object of vendor packages it returns a
@@ -23,11 +27,7 @@ const EMBEDLY_CLASS_REPLACEMENT = 'class="embedly-card markdown-block" data-card
  * The 'libs' object is the one exported by the
  * `libs/markdown_vendor.js`.
  */
-export default function create (libs) {
-  const MarkedAst = libs.MarkedAst;
-  const AstBuilder = libs.MarkedAst.AstBuilder;
-  const React = libs.React;
-
+export default function create ({React}) {
   const rootKey = 'root/' + currentId;
   let conflicts = {};
   let words = 0;
@@ -37,7 +37,7 @@ export default function create (libs) {
   return function buildTree (source) {
     const ast = MarkedAst._marked(source, {
       // use renderer with altered methods for links and images
-      renderer: new AstBuilder(),
+      renderer: new MarkedAst.AstBuilder(),
       // turn on Github-flavored MD goodies
       gfm: true,
       tables: true,
@@ -119,10 +119,29 @@ export default function create (libs) {
   }
 
   function createImageEl (item, key) {
-    const href = isString(item.href) ? (item.href + '?h=200') : null;
-    const imgEl = createReactEl('img', { src: href, title: item.title, alt: item.text });
+    const src = isString(item.href) ? prepareImageSrc(item.href) : null;
+    const imgEl = createReactEl('img', { src, title: item.title, alt: item.text });
     const props = { key: key, className: 'markdown-image-placeholder markdown-block' };
     return createReactEl('div', props, imgEl);
+  }
+
+  function prepareImageSrc (src) {
+    // AST contains an encoded URL.
+    // React expects decoded one to handle on its own.
+    src = htmlDecode(src);
+    const domain = tokenStore.getDomains().images || 'images.contentful.com';
+
+    return src.indexOf(domain) > -1 ? prepareImagesAPISrc(src) : src;
+  }
+
+  function prepareImagesAPISrc (src) {
+    const qs = src.split('?')[1];
+
+    if (isString(qs) && qs.length > 0) {
+      return qs.indexOf('h=') > -1 ? src : `${src}&h=${IMAGES_API_DEFAULT_H}`;
+    } else {
+      return `${src}?h=${IMAGES_API_DEFAULT_H}`;
+    }
   }
 
   function createLinkEl (item, key) {

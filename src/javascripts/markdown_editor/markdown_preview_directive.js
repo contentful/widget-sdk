@@ -26,7 +26,7 @@ angular.module('contentful')
       LazyLoader.get('markdown').then(initPreview);
 
       function initPreview (libs) {
-        var React = libs.React;
+        var ReactDOM = libs.ReactDOM;
 
         scope.$watch('preview.tree', update);
         scope.$watch('isDisabled', update);
@@ -46,11 +46,11 @@ angular.module('contentful')
         }
 
         function mount () {
-          React.render(scope.preview.tree, mountingPoint);
+          ReactDOM.render(scope.preview.tree, mountingPoint);
         }
 
         function unmount () {
-          React.unmountComponentAtNode(mountingPoint);
+          ReactDOM.unmountComponentAtNode(mountingPoint);
         }
       }
     }
