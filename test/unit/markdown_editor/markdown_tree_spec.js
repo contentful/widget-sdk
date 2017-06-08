@@ -9,11 +9,11 @@ describe('Markdown tree', function () {
   }
 
   function getChildren (node) {
-    return dotty.get(node, '_store.props.children');
+    return dotty.get(node, 'props.children');
   }
 
   function getHTML (node) {
-    return dotty.get(node, '_store.props.dangerouslySetInnerHTML.__html');
+    return dotty.get(node, 'props.dangerouslySetInnerHTML.__html');
   }
 
   function hash (str) {
@@ -82,7 +82,7 @@ describe('Markdown tree', function () {
       // paragraph is created -> getting children twice to get the anchor
       const anchor = getChildren(getChildren(root));
       expect(getHTML(anchor)).toBe('test');
-      expect(anchor._store.props.href).toBe(null);
+      expect(anchor.props.href).toBe(null);
     });
   });
 
@@ -103,7 +103,7 @@ describe('Markdown tree', function () {
     getChildren(root).forEach((paragraph, i) => {
       const imgWrapperDiv = getChildren(paragraph);
       const img = getChildren(imgWrapperDiv);
-      const qs = img._store.props.src.split('?')[1] || '';
+      const qs = img.props.src.split('?')[1] || '';
       expect(qs).toBe(tests[i][1]);
     });
   });
