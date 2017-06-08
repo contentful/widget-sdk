@@ -65,7 +65,6 @@ test/unit/webhooks/webhook_call_status_directive_spec.js
 test/unit/webhooks/webhook_editor_directive_spec.js
 test/unit/webhooks/webhook_health_directive_spec.js
 test/unit/webhooks/webhook_repository_spec.js
-test/unit/webhooks/webhook_segmentation_spec.js
 test/helpers/deep_diff.js
 test/integration/field_validation_dialog_spec.js
 src/javascripts/components/client/cf_main_nav_bar_directive.js

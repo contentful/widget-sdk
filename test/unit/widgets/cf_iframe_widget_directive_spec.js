@@ -22,7 +22,8 @@ describe('cfIframeWidget directive', function () {
     widgetAPI = {
       registerHandler: sinon.stub(),
       send: sinon.stub(),
-      destroy: sinon.stub()
+      destroy: sinon.stub(),
+      connect: sinon.stub()
     };
 
     this.element = this.$compile('<cf-iframe-widget>', {

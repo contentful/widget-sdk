@@ -21,6 +21,8 @@ describe('markdown_editor/commands', function () {
   });
 
   afterEach(function () {
+    editor.destroy();
+    textarea.remove();
     textarea = editor = commands = cm = null;
   });
 

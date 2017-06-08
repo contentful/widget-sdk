@@ -17,7 +17,7 @@ describe('navigation/confirmLeaveEditor', function () {
   });
 
   afterEach(function () {
-    this.$inject('$document').empty();
+    this.dialog.remove();
   });
 
   pit('confirms leave when "Save" is clicked', function () {

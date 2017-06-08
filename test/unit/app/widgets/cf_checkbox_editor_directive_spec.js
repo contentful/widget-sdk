@@ -1,4 +1,5 @@
-'use strict';
+import {setCheckbox} from 'helpers/DOM';
+import * as sinon from 'helpers/sinon';
 
 describe('cfCheckboxEditor directive', function () {
   beforeEach(function () {
@@ -55,9 +56,10 @@ describe('cfCheckboxEditor directive', function () {
 
     this.fieldApi.setValue.reset();
 
-    this.el.find('label:contains(C)')
-    .find('input[type=checkbox]')
-    .prop('checked', true).trigger('click');
+    const checkbox =
+      this.el.find('label:contains(C)')
+      .find('input[type=checkbox]');
+    setCheckbox(checkbox, true);
 
     sinon.assert.calledOnce(this.fieldApi.setValue);
     sinon.assert.calledWithExactly(this.fieldApi.setValue, ['A', 'C']);
@@ -68,9 +70,10 @@ describe('cfCheckboxEditor directive', function () {
     this.$apply();
     this.fieldApi.setValue.reset();
 
-    this.el.find('label:contains(C)')
-    .find('input[type=checkbox]')
-    .prop('checked', false).trigger('click');
+    const checkbox =
+      this.el.find('label:contains(C)')
+      .find('input[type=checkbox]');
+    setCheckbox(checkbox, false);
     this.$apply();
 
     sinon.assert.calledOnce(this.fieldApi.setValue);
@@ -82,9 +85,10 @@ describe('cfCheckboxEditor directive', function () {
     this.$apply();
 
     this.fieldApi.removeValue.reset();
-    this.el.find('label:contains(A)')
-    .find('input[type=checkbox]')
-    .prop('checked', false).trigger('click');
+    const checkbox =
+      this.el.find('label:contains(A)')
+      .find('input[type=checkbox]');
+    setCheckbox(checkbox, false);
     this.$apply();
 
     sinon.assert.calledOnce(this.fieldApi.removeValue);

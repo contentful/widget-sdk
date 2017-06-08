@@ -2,7 +2,9 @@
 
 describe('cfUrlEditor directive', function () {
   beforeEach(function () {
-    module('contentful/test');
+    module('contentful/test', ($provide) => {
+      $provide.removeDirectives(['cfEmbedlyPreview']);
+    });
 
     this.widgetApi = this.$inject('mocks/widgetApi').create();
 

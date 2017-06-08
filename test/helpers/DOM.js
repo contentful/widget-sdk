@@ -1,3 +1,5 @@
+import JQuery from 'jquery';
+
 /**
  * Create a high-level interface to interact with the DOM and make
  * assertions on it.
@@ -37,6 +39,16 @@ export function createView (container) {
   };
 }
 
+// TODO document
+export function setCheckbox (el, value) {
+  if (el instanceof JQuery) {
+    el = el.get(0);
+  }
+  // TODO assert input[type=checkbox]
+  el.checked = value;
+  // TODO explain click
+  el.dispatchEvent(new Event('click', {bubbles: true}));
+}
 
 /**
  * Returns an interface for controlling a DOM element and making
