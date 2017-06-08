@@ -10,6 +10,7 @@ angular.module('contentful')
   return {
     add: add,
     set: set,
+    extendCurrent: extendCurrent,
     isEmpty: isEmpty,
     pop: pop,
     purge: purge,
@@ -17,11 +18,20 @@ angular.module('contentful')
     crumbs$: crumbBus.property
   };
 
+  function extendCurrent (props) {
+    var current = _.last(history);
+    _.assign(current, props);
+    crumbBus.set(history);
+  }
+
   function add (crumb) {
+    var old;
     var index = findIndex(crumb);
     if (index > -1) {
+      old = history[index];
       history = history.slice(0, index);
     }
+    crumb = _.assign({}, old, crumb);
     history.push(crumb);
     crumbBus.set(history);
   }

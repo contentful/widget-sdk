@@ -34,7 +34,7 @@ header.workbench-header
 cf-loader(watch-state-change="true")
 
 .workbench-main
-  .workbench-main__content
+  .workbench-main__content(ui-on-scroll="scroll-editor" ui-set-scroll="initialEditorScroll")
     cf-editor-status-notification(status="otDoc.status$" entity-label="entry")
 
     .entity-editor-form
