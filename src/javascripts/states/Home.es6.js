@@ -1,6 +1,5 @@
-import {includes, find} from 'lodash';
+import {find} from 'lodash';
 import makeState from 'states/base';
-import $location from '$location';
 import $state from '$state';
 import tokenStore from 'tokenStore';
 import TheStore from 'TheStore';
@@ -17,7 +16,7 @@ import template from 'app/home/HomeTemplate';
  */
 export default makeState({
   name: 'home',
-  url: '/*path',
+  url: '/',
   template: template(),
   loadingText: 'Loading...',
   resolve: {
@@ -41,14 +40,6 @@ export default makeState({
     }
   },
   controller: ['$scope', function ($scope) {
-    $scope.context = {ready: false};
-
-    // if this state was loaded, but we don't
-    // recognize the URL, redirect to /
-    if (includes(['', '/'], $location.url())) {
-      $scope.context.ready = true;
-    } else {
-      $location.url('/');
-    }
+    $scope.context = {ready: true};
   }]
 });

@@ -29,6 +29,10 @@ angular.module('contentful')
       $injector.get('states/spaces'),
       $injector.get('states/Home').default,
       {
+        name: '_other',
+        url: '/*path',
+        redirectTo: 'home'
+      }, {
         name: 'error',
         url: 'error',
         controller: function () {
