@@ -21,8 +21,7 @@ export default function () {
           style: { margin: '0 1.2em 0 0.8em' }
         }),
         h('a', {
-          cfSref: '{ path: ["account", "organizations", "new"] }',
-          ngIf: '!nav.isNewOrgState'
+          cfSref: '{ path: ["account", "organizations", "new"] }'
         }, ['Add new organization'])
       ])
     ]),
@@ -32,7 +31,7 @@ export default function () {
         dataTestId: '{{tab.testId}}',
         cfSref: 'tab.state',
         ngRepeat: 'tab in nav.tabs track by $index',
-        ariaSelected: '{{tab.selected}}'
+        ariaSelected: '{{nav.isTabSelected(tab)}}'
       }, ['{{tab.name}}'])
     ])
   ]);

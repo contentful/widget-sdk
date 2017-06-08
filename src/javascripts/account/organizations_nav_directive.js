@@ -17,50 +17,42 @@ angular.module('contentful')
   var OrganizationList = require('OrganizationList');
   var tokenStore = require('tokenStore');
 
-  init();
+  var orgId = $state.params.orgId;
+  controller.selectedOrganizationId = orgId;
+  controller.goToOrganization = goToOrganization;
+  controller.isTabSelected = isTabSelected;
 
   K.onValueScope($scope, OrganizationList.organizations$, function (organizations) {
     controller.organizations = organizations;
   });
 
+  getOrganization(orgId).then(function (org) {
+    if (org) {
+      controller.tabs = makeTabs(org);
+    } else {
+      // Redirect to home since the organization is invalid
+      $state.go('home');
+    }
+  });
+
   // Go to the corresponding page in the other organization or the defualt
   // `subscription` page if it's not available
-  controller.goToOrganization = function (selectedOrgId) {
+  function goToOrganization (selectedOrgId) {
     var targetOrg = OrganizationList.get(selectedOrgId);
 
     var defaultState = 'account.organizations.subscription';
 
     var hasCurrentStateRef = _.find(makeTabs(targetOrg), function (tab) {
-      return tab.state.path.join('.') === $state.current.name;
+      return isTabSelected(tab);
     });
 
     var targetState = hasCurrentStateRef ? $state.current : defaultState;
 
-    $state.go(targetState, {orgId: selectedOrgId}, {inherit: false});
-  };
+    $state.go(targetState, { orgId: selectedOrgId }, { inherit: false });
+  }
 
-  function init () {
-    var orgId = $state.params.orgId;
-
-    controller.selectedOrganizationId = orgId;
-    controller.isNewOrgState = $state.current.name === 'account.organizations.new';
-
-    if (controller.isNewOrgState) {
-      controller.tabs = [{
-        name: 'New Organization',
-        state: { path: ['account', 'organizations', 'new'] },
-        selected: true
-      }];
-    } else {
-      getOrganization(orgId).then(function (org) {
-        if (org) {
-          controller.tabs = makeTabs(org);
-        } else {
-          // Redirect to home since the organization is invalid
-          $state.go('home');
-        }
-      });
-    }
+  function isTabSelected (tab) {
+    return $state.current.name === tab.state.path.join('.');
   }
 
   // Get the requested organization. Try to refresh the user token if the
@@ -79,49 +71,50 @@ angular.module('contentful')
   }
 
   function makeTabs (org) {
-    return applyDefaults([
-      {
-        name: 'Settings',
-        state: { path: ['account', 'organizations', 'edit'] }
-      },
-      {
-        name: 'Subscription',
-        state: { path: ['account', 'organizations', 'subscription'] }
-      },
-      {
-        name: 'Billing',
-        state: { path: ['account', 'organizations', 'billing'] },
-        isHidden: !(isPaid(org) && OrganizationList.isOwnerOrAdmin(org))
-      },
-      {
-        name: 'Users',
-        state: { path: ['account', 'organizations', 'users'] }
-      },
-      {
-        name: 'Spaces',
-        state: { path: ['account', 'organizations', 'spaces'] }
-      },
-      {
-        name: 'Offsite backup',
-        state: { path: ['account', 'organizations', 'offsitebackup'] },
-        isHidden: !hasOffsiteBackup(org)
-      }
-    ]);
-
-    function applyDefaults (tabList) {
-      return tabList.filter(function (tab) {
-        return !tab.isHidden;
-      }).map(function (tab) {
-        var state = { path: tab.state.path, params: { orgId: org.sys.id } };
-        return {
-          name: tab.name,
-          state: state,
-          testId: 'org-nav-tab-' + tab.name.toLowerCase().replace(/\s+/g, '-'),
-          selected: $state.current.name === tab.state.path.join('.')
-        };
-      });
-    }
+    return tabs.filter(function (tab) {
+      return !(tab.isHidden && tab.isHidden(org));
+    })
+    .map(function (tab) {
+      return {
+        name: tab.name,
+        testId: 'org-nav-tab-' + tab.name.toLowerCase().replace(/\s+/g, '-'),
+        state: { path: tab.path, params: { orgId: org.sys.id } }
+      };
+    });
   }
+
+  var tabs = [
+    {
+      name: 'Settings',
+      path: ['account', 'organizations', 'edit']
+    },
+    {
+      name: 'Subscription',
+      path: ['account', 'organizations', 'subscription']
+    },
+    {
+      name: 'Billing',
+      path: ['account', 'organizations', 'billing'],
+      isHidden: function (org) {
+        return !(isPaid(org) && OrganizationList.isOwnerOrAdmin(org));
+      }
+    },
+    {
+      name: 'Users',
+      path: ['account', 'organizations', 'users']
+    },
+    {
+      name: 'Spaces',
+      path: ['account', 'organizations', 'spaces']
+    },
+    {
+      name: 'Offsite backup',
+      path: ['account', 'organizations', 'offsitebackup'],
+      isHidden: function (org) {
+        return !hasOffsiteBackup(org);
+      }
+    }
+  ];
 
   function isPaid (org) {
     return ['paid', 'free_paid']
