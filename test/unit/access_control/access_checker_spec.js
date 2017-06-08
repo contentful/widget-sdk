@@ -22,7 +22,7 @@ describe('Access Checker', function () {
     spaceContext = this.$inject('spaceContext');
     authorization = this.$inject('authorization');
     enforcements = this.$inject('enforcements');
-    OrganizationList = this.$inject('OrganizationList');
+    OrganizationList = this.$inject('services/OrganizationList');
     policyChecker = this.$inject('accessChecker/policy');
     ac = this.$inject('accessChecker');
 

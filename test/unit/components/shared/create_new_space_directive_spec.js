@@ -68,7 +68,7 @@ describe('cfCreateNewSpace directive', function () {
       $provide.value('enforcements', stubs.enforcements);
       $provide.value('tokenStore', stubs.tokenStore);
       $provide.value('$state', stubs.state);
-      $provide.value('OrganizationList', stubs.OrganizationList);
+      $provide.value('services/OrganizationList', stubs.OrganizationList);
       $provide.removeDirectives('cfIcon');
       $provide.stubLaunchDarkly();
     });

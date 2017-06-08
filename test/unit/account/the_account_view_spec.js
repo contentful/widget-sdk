@@ -17,7 +17,7 @@ describe('TheAccountView service', function () {
 
     module('contentful/test', ($provide) => {
       $provide.value('spaceContext', this.spaceContext);
-      $provide.value('OrganizationList', this.OrganizationList);
+      $provide.value('services/OrganizationList', this.OrganizationList);
     });
 
     this.tokenStore = this.mockService('tokenStore', {

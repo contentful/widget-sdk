@@ -6,7 +6,7 @@
  */
 angular.module('contentful')
 .factory('subscriptionNotifier', ['require', function (require) {
-  var OrganizationList = require('OrganizationList');
+  var OrganizationList = require('services/OrganizationList');
   var openPaywall = require('paywallOpener').openPaywall;
   var Subscription = require('Subscription');
 

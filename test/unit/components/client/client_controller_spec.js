@@ -83,7 +83,7 @@ describe('Client Controller', function () {
 
   describe('shows create space dialog', function () {
     beforeEach(function () {
-      this.$inject('OrganizationList').resetWithUser({
+      this.$inject('services/OrganizationList').resetWithUser({
         organizationMemberships: [
           {organization: {sys: {id: 'abc'}}},
           {organization: {sys: {id: 'def'}}}
@@ -195,7 +195,7 @@ describe('Client Controller', function () {
     let OrganizationList, logger;
 
     beforeEach(function () {
-      OrganizationList = this.$inject('OrganizationList');
+      OrganizationList = this.$inject('services/OrganizationList');
       logger = this.$inject('logger');
     });
 

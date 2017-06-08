@@ -13,7 +13,7 @@ angular.module('contentful')
   var presence = require('presence');
   var revision = require('revision');
   var ReloadNotification = require('ReloadNotification');
-  var OrganizationList = require('OrganizationList');
+  var OrganizationList = require('services/OrganizationList');
   var environment = require('environment');
   var fontsDotCom = require('fontsDotCom');
   var CreateSpace = require('services/CreateSpace');

@@ -56,7 +56,7 @@ angular.module('contentful').directive('cfAddUsersToSpaceNote', ['require', func
 .controller('UserInvitationNotesController', ['$scope', 'require', function ($scope, require) {
   var spaceContext = require('spaceContext');
   var TheAccountView = require('TheAccountView');
-  var OrganizationList = require('OrganizationList');
+  var OrganizationList = require('services/OrganizationList');
   var organization = spaceContext.organizationContext.organization;
 
   $scope.canInviteUsersToOrganization = function () {

@@ -3,7 +3,7 @@ import * as K from 'helpers/mocks/kefir';
 describe('cfAccountOrganizationsNav directive', function () {
   beforeEach(function () {
     module('contentful/test');
-    this.OrganizationList = this.$inject('OrganizationList');
+    this.OrganizationList = this.$inject('services/OrganizationList');
     this.$state = this.$inject('$state');
     this.$state.go = sinon.stub();
     this.tokenStore = this.$inject('tokenStore');

@@ -11,7 +11,7 @@ describe('dialogsInitController', function () {
 
     module('contentful/test', ($provide) => {
       $provide.value('spaceContext', this.spaceContext);
-      $provide.value('OrganizationList', this.OrganizationList);
+      $provide.value('services/OrganizationList', this.OrganizationList);
       $provide.value('onboardingController', {
         init: this.initOnboardingSpy
       });

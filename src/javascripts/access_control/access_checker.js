@@ -18,7 +18,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
   var stringUtils = require('stringUtils');
   var authorization = require('authorization');
   var logger = require('logger');
-  var OrganizationList = require('OrganizationList');
+  var OrganizationList = require('services/OrganizationList');
   var policyChecker = require('accessChecker/policy');
   var cache = require('accessChecker/responseCache');
   var capitalize = require('stringUtils').capitalize;

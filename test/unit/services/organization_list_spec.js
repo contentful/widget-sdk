@@ -14,7 +14,7 @@ describe('OrgniaztionList', function () {
 
   beforeEach(function () {
     module('contentful/test');
-    OrganizationList = this.$inject('OrganizationList');
+    OrganizationList = this.$inject('services/OrganizationList');
 
     ORG_1 = { sys: { id: 'org1' }, name: '1st ORG' };
     ORG_2 = { sys: { id: 'org2' }, name: '2nd ORG' };

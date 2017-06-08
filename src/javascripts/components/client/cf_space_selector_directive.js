@@ -15,7 +15,7 @@ angular.module('contentful')
   var K = require('utils/kefir');
   var analytics = require('analytics/Analytics');
   var spaceContext = require('spaceContext');
-  var OrganizationList = require('OrganizationList');
+  var OrganizationList = require('services/OrganizationList');
   var accessChecker = require('accessChecker');
   var tokenStore = require('tokenStore');
   var CreateSpace = require('services/CreateSpace');

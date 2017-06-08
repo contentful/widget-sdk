@@ -13,7 +13,7 @@ angular.module('contentful')
 .factory('TheAccountView', ['require', function (require) {
   var $q = require('$q');
   var spaceContext = require('spaceContext');
-  var OrganizationList = require('OrganizationList');
+  var OrganizationList = require('services/OrganizationList');
   var tokenStore = require('tokenStore');
   var Navigator = require('states/Navigator');
 
