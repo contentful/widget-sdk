@@ -33,33 +33,6 @@ describe('cfAccountOrganizationsNav directive', function () {
     }];
   });
 
-  describe('new state', function () {
-    beforeEach(function () {
-      this.$state.current.name = 'account.organizations.new';
-      this.element = this.compile();
-      this.controller = this.element.isolateScope().nav;
-    });
-
-    it('displays the new organization tabs', function () {
-      const tabList = this.element.find('a[role="tab"]');
-      const tab = $(tabList[0]);
-      expect(tabList.length).toBe(1);
-      expect(tab.text()).toBe('New Organization');
-      expect(tab.attr('aria-selected')).toBe('true');
-    });
-
-    it('organization switcher goes to the subscriptions state', function () {
-      this.OrganizationList.get = sinon.stub().withArgs('test-org-1').returns(this.orgs[0]);
-      this.controller.goToOrganization('test-org-1');
-
-      sinon.assert.calledWith(
-        this.$state.go,
-        'account.organizations.subscription',
-        {orgId: 'test-org-1'}
-      );
-    });
-  });
-
   describe('organization state', function () {
     beforeEach(function () {
       this.$state.current.name = 'account.organizations.users';
