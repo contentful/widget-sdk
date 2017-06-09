@@ -7,12 +7,9 @@ angular.module('contentful')
  * @name states/assets
  */
 .factory('states/assets', ['require', function (require) {
-  var contextHistory = require('contextHistory');
-  var $state = require('$state');
-  var crumbFactory = require('navigation/CrumbFactory');
-
   var base = require('states/base');
   var loadEditorData = require('app/entity_editor/DataLoader').loadAsset;
+  var createAssetController = require('app/entity_editor/AssetController').default;
 
   var list = base({
     name: 'list',
@@ -30,19 +27,8 @@ angular.module('contentful')
         return loadEditorData(spaceContext, $stateParams.assetId);
       }]
     },
-    controller: ['$scope', 'editorData', function ($scope, editorData) {
-      $state.current.data = $scope.context = {};
-      $scope.editorData = editorData;
-
-      // add list view as parent if it's a deep link to the media/asset
-      if (contextHistory.isEmpty()) {
-        contextHistory.add(crumbFactory.AssetList());
-      }
-
-      // add current state
-      contextHistory.add(crumbFactory.Asset(editorData.entity.getSys(), $scope.context));
-    }],
-    template: '<cf-asset-editor class="asset-editor workbench">'
+    controller: ['$scope', 'editorData', createAssetController],
+    template: JST.asset_editor()
   };
 
   return {

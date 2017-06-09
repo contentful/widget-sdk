@@ -1,24 +1,40 @@
-'use strict';
+import $state from '$state';
+import $controller from '$controller';
 
-angular.module('contentful')
-.controller('AssetEditorController', ['$scope', 'require', function AssetEditorController ($scope, require) {
-  var $controller = require('$controller');
-  var notification = require('notification');
-  var stringUtils = require('stringUtils');
-  var makeNotify = require('app/entity_editor/Notifications').makeNotify;
-  var spaceContext = require('spaceContext');
-  var truncate = require('stringUtils').truncate;
-  var K = require('utils/kefir');
-  var Validator = require('app/entity_editor/Validator');
-  var localeStore = require('TheLocaleStore');
-  var Focus = require('app/entity_editor/Focus');
-  var installTracking = require('app/entity_editor/Tracking').default;
-  var initDocErrorHandler = require('app/entity_editor/DocumentErrorHandler').default;
+import * as K from 'utils/kefir';
+import {truncate, fileNameToTitle} from 'stringUtils';
+import {get, find, constant} from 'lodash';
 
-  var editorData = $scope.editorData;
-  var entityInfo = this.entityInfo = editorData.entityInfo;
+import spaceContext from 'spaceContext';
+import notification from 'notification';
+import localeStore from 'TheLocaleStore';
+import contextHistory from 'contextHistory';
 
-  var notify = makeNotify('Asset', function () {
+import * as crumbFactory from 'navigation/CrumbFactory';
+
+import * as Validator from './Validator';
+import * as Focus from './Focus';
+import initDocErrorHandler from './DocumentErrorHandler';
+import {makeNotify} from './Notifications';
+import installTracking from './Tracking';
+
+export default function create ($scope, editorData) {
+  $state.current.data = $scope.context = {};
+  $scope.editorData = editorData;
+
+  // add list view as parent if it's a deep link to the media/asset
+  if (contextHistory.isEmpty()) {
+    contextHistory.add(crumbFactory.AssetList());
+  }
+
+  // add current state
+  contextHistory.add(crumbFactory.Asset(editorData.entity.getSys(), $scope.context));
+
+  const editorContext = $scope.editorContext = {};
+
+  const entityInfo = editorContext.entityInfo = editorData.entityInfo;
+
+  const notify = makeNotify('Asset', function () {
     return '“' + $scope.title + '”';
   });
 
@@ -32,25 +48,25 @@ angular.module('contentful')
 
   installTracking(entityInfo, $scope.otDoc, K.scopeLifeline($scope));
 
-  this.validator = Validator.createForAsset(
+  editorContext.validator = Validator.createForAsset(
     $scope.otDoc,
     localeStore.getPrivateLocales()
   );
 
-  this.focus = Focus.create();
+  editorContext.focus = Focus.create();
 
   $scope.state = $controller('entityEditor/StateController', {
     $scope: $scope,
     entity: editorData.entity,
     notify: notify,
-    validator: this.validator,
+    validator: editorContext.validator,
     otDoc: $scope.otDoc
   });
 
 
   K.onValueScope($scope, $scope.otDoc.valuePropertyAt([]), function (data) {
-    var title = spaceContext.assetTitle({
-      getContentTypeId: _.constant(),
+    const title = spaceContext.assetTitle({
+      getContentTypeId: constant(),
       data: data
     });
     $scope.context.title = title;
@@ -76,8 +92,8 @@ angular.module('contentful')
       // we need to broadcast it down the element tree
       $scope.$broadcast('fileProcessingFailed');
 
-      var errors = _.get(err, ['body', 'details', 'errors'], []);
-      var invalidContentTypeErr = _.find(errors, {name: 'invalidContentType'});
+      const errors = get(err, ['body', 'details', 'errors'], []);
+      const invalidContentTypeErr = find(errors, {name: 'invalidContentType'});
 
       if (invalidContentTypeErr) {
         notification.error(invalidContentTypeErr.details);
@@ -88,10 +104,10 @@ angular.module('contentful')
   });
 
   function setTitleOnDoc (file, localeCode) {
-    var path = ['fields', 'title', localeCode];
-    var fileName = stringUtils.fileNameToTitle(file.fileName);
+    const path = ['fields', 'title', localeCode];
+    const fileName = fileNameToTitle(file.fileName);
     if (!$scope.otDoc.getValueAt(path)) {
       $scope.otDoc.setValueAt(path, fileName);
     }
   }
-}]);
+}

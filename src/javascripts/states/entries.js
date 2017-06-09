@@ -14,6 +14,7 @@ angular.module('contentful')
 
   var base = require('states/base');
   var loadEditorData = require('app/entity_editor/DataLoader').loadEntry;
+  var createEditorController = require('app/entity_editor/EntryController').default;
 
   var list = base({
     name: 'list',
@@ -126,21 +127,8 @@ angular.module('contentful')
         return loadEditorData(spaceContext, $stateParams.entryId);
       }]
     },
-    controller: ['$scope', 'editorData', function ($scope, editorData) {
-      $state.current.data = $scope.context = {
-        ready: true
-      };
-      $scope.editorData = editorData;
-
-      // add list as parent state only if it's a deep link
-      if (contextHistory.isEmpty()) {
-        contextHistory.add(crumbFactory.EntryList());
-      }
-
-      // add current state
-      contextHistory.add(crumbFactory.Entry(editorData.entity.getSys(), $scope.context));
-    }],
-    template: '<cf-entry-editor class="entry-editor workbench">'
+    controller: ['$scope', 'editorData', createEditorController],
+    template: JST.entry_editor()
   });
 
 

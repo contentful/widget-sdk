@@ -1,5 +1,3 @@
-'use strict';
-
 describe('Asset editor controller', function () {
 
   let scope;
@@ -16,6 +14,8 @@ describe('Asset editor controller', function () {
 
     this.mockService('notification');
 
+    const createAssetController = this.$inject('app/entity_editor/AssetController').default;
+
     scope = this.$inject('$rootScope').$new();
     const accessChecker = this.$inject('accessChecker');
     accessChecker.canUpdateAsset = sinon.stub().returns(true);
@@ -25,13 +25,10 @@ describe('Asset editor controller', function () {
     this.asset = cfStub.asset(space, 'testAsset');
 
     const {makeEditorData} = this.$inject('mocks/app/entity_editor/DataLoader');
-    scope.editorData = makeEditorData(this.asset.data);
-    scope.editorData.entity.process = sinon.stub().resolves();
-    scope.context = {};
+    const editorData = makeEditorData(this.asset.data);
+    editorData.entity.process = sinon.stub().resolves();
 
-    const $controller = this.$inject('$controller');
-    $controller('AssetEditorController', {$scope: scope});
-
+    createAssetController(scope, editorData);
     scope.validate = sinon.stub();
 
     scope.$apply();

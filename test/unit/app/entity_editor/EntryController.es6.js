@@ -10,6 +10,7 @@ describe('Entry Editor Controller', function () {
     });
 
     const {makeEditorData} = this.$inject('mocks/app/entity_editor/DataLoader');
+    const createEntryController = this.$inject('app/entity_editor/EntryController').default;
 
     this.createController = () => {
       const cfStub = this.$inject('cfStub');
@@ -23,10 +24,9 @@ describe('Entry Editor Controller', function () {
       const entry = cfStub.entry(space, 'testEntry', 'testType', {}, {
         sys: { publishedVersion: 1 }
       });
-      scope.editorData = makeEditorData(entry.data, ctData);
 
-      const $controller = this.$inject('$controller');
-      $controller('EntryEditorController', {$scope: scope});
+      const editorData = makeEditorData(entry.data, ctData);
+      createEntryController(scope, editorData);
 
       return scope;
     };
