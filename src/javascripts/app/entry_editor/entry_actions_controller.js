@@ -24,7 +24,7 @@ angular.module('contentful')
     .then(function (entry) {
       $state.go('spaces.detail.entries.detail', {
         entryId: entry.getId(),
-        notALinkedEntity: true
+        addToContext: false
       });
     })
     .catch(function () {
@@ -62,7 +62,7 @@ angular.module('contentful')
       // anythings if the state has changed in the meantime
       $state.go('spaces.detail.entries.detail', {
         entryId: entry.getId(),
-        notALinkedEntity: true
+        addToContext: false
       });
     });
     // TODO error handler

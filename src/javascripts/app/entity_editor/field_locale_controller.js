@@ -20,6 +20,7 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var K = require('utils/kefir');
   var createFieldLocaleDoc = require('app/entity_editor/FieldLocaleDocument').default;
+  var Navigator = require('states/Navigator');
 
   var controller = this;
   var field = $scope.widget.field;
@@ -80,10 +81,14 @@ angular.module('contentful')
     .map(function (errors) {
       errors = filterLocaleErrors(errors);
 
-      // side-effecting in progress below :(
-      errors
-        .filter(function (error) { return error.name === 'unique'; })
-        .forEach(decorateUniquenessErrors);
+      // TODO instead of initiating a request that mutates the error
+      // object we should have a dedicated error component that takes
+      // care of this.
+      errors.forEach(function (error) {
+        if (error.name === 'unique') {
+          decorateUniquenessError(error);
+        }
+      });
 
       return errors.length > 0 ? errors : null;
     });
@@ -123,29 +128,27 @@ angular.module('contentful')
     });
   }
 
-  // TODO there are no tests for this
-  function decorateUniquenessErrors (error) {
-    if (error.name === 'unique') {
-      var conflicts = error.conflicting;
-      var conflictingEntryIds = conflicts.map(_.property('sys.id')).join(',');
-      var query = { 'sys.id[in]': conflictingEntryIds };
+  function decorateUniquenessError (error) {
+    var conflicts = error.conflicting;
+    var conflictingEntryIds = conflicts.map(_.property('sys.id')).join(',');
+    var query = { 'sys.id[in]': conflictingEntryIds };
 
-      // asynchronously add conflicting entry title to the error objects
-      // so that we can display the list in the UI
-      spaceContext.space.getEntries(query).then(function (entries) {
-        entries.forEach(function (entry) {
-          var conflict = _.find(conflicts, function (c) {
-            return c.sys.id === entry.data.sys.id;
-          });
-
-          conflict.data = conflict.data || {};
-          conflict.data.entryTitle = spaceContext.entryTitle(entry);
+    // asynchronously add conflicting entry title to the error objects
+    // so that we can display the list in the UI
+    spaceContext.space.getEntries(query).then(function (entries) {
+      entries.forEach(function (entry) {
+        var conflict = _.find(conflicts, function (c) {
+          return c.sys.id === entry.data.sys.id;
         });
-      });
 
-      // poor man's string interpolation
-      error.message = error.message.replace('${fieldName}', field.name);
-    }
+        conflict.data = conflict.data || {};
+        conflict.data.entryTitle = spaceContext.entryTitle(entry);
+        conflict.data.ref = Navigator.makeEntityRef(entry.data);
+      });
+    });
+
+    // poor man's string interpolation
+    error.message = error.message.replace('${fieldName}', field.name);
   }
 
   /**

@@ -123,22 +123,17 @@ angular.module('contentful')
     name: 'detail',
     url: '/:entryId',
     children: [compare],
-    params: { addToContext: true, notALinkedEntity: false },
+    params: { addToContext: true },
     resolve: {
       editorData: ['$stateParams', 'spaceContext', function ($stateParams, spaceContext) {
         return loadEditorData(spaceContext, $stateParams.entryId);
       }]
     },
-    controller: ['$scope', '$stateParams', 'editorData', function ($scope, $stateParams, editorData) {
+    controller: ['$scope', 'editorData', function ($scope, editorData) {
       $state.current.data = $scope.context = {
         ready: true
       };
       $scope.editorData = editorData;
-
-      // purge context history
-      if ($stateParams.notALinkedEntity) {
-        contextHistory.purge();
-      }
 
       // add list as parent state only if it's a deep link
       if (contextHistory.isEmpty()) {
