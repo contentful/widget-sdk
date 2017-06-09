@@ -19,9 +19,6 @@ angular.module('contentful')
     name: 'list',
     url: '',
     loadingText: 'Loading content...',
-    controller: [function () {
-      contextHistory.add(crumbFactory.EntryList());
-    }],
     template: '<div cf-entry-list class="workbench entry-list entity-list"></div>'
   });
 

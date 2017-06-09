@@ -172,6 +172,9 @@ angular.module('cf.app')
   /**
    * Compares a state transition and returns true if everything except
    * the `addToContext` property of the parameters stays the same.
+   *
+   * The `addToContext` parameter controls _how_ we transition, not
+   * where we transition to.
    */
   function onlyAddToContextParamChanged (to, toParams, from, fromParams) {
     return to.name === from.name &&

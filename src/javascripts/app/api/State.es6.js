@@ -27,7 +27,6 @@ import * as CMATokensPage from './CMATokens/Page';
 // These properties are common to the key editor state for new and
 // existing keys.
 const apiKeyEditorState = {
-  params: { addToContext: true },
   controller: ['$scope', 'require', 'apiKey', function ($scope, require, apiKey) {
     const $state = require('$state');
     const $stateParams = require('$stateParams');
@@ -35,8 +34,10 @@ const apiKeyEditorState = {
     $state.current.data = $scope.context = {};
     attachEditorController($scope, apiKey);
 
-    contextHistory.add(crumbFactory.CDAKeyList());
-    contextHistory.add(crumbFactory.CDAKey($stateParams.apiKeyId, $scope.context));
+    contextHistory.set([
+      crumbFactory.CDAKeyList(),
+      crumbFactory.CDAKey($stateParams.apiKeyId, $scope.context)
+    ]);
   }],
   template: editorTemplate()
 };
@@ -89,10 +90,7 @@ export default {
     template: CMATokensPage.template(),
     controller: ['$scope', ($scope) => {
       CMATokensPage.initController($scope, Auth);
-    }],
-    onEnter () {
-      contextHistory.add(crumbFactory.CMAKeyList());
-    }
+    }]
   }, {
     name: 'content_model',
     url: '/content_model',
@@ -107,7 +105,6 @@ function cdaKeyList () {
     url: '/',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
-      contextHistory.add(crumbFactory.CDAKeyList());
     }],
     template: h('cf-api-key-list.workbench')
   });
