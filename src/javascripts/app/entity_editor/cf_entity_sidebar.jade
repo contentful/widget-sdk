@@ -90,7 +90,7 @@
       cf-user link="link" as="presenceUser"
       tooltip-placement="bottom"
       tooltip="{{presenceUser | userNameDisplay:user}}")
-      img(ng-src="{{presenceUser.data.avatarUrl}}")
+      img(ng-src="{{presenceUser.avatarUrl}}")
 
   .entity-sidebar__widget(
     ng-repeat="widget in sidebarControls track by widget.field.id"

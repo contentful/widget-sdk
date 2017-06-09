@@ -43,7 +43,7 @@ export function withAuthorName (spaceContext, snapshots) {
 
     return spaceContext.users.get(userId)
       .then(function (user) {
-        const authorName = user ? user.getName() : '';
+        const authorName = user ? (user.firstName + ' ' + user.lastName) : '';
 
         snapshot.sys.createdBy.authorName = authorName;
         return snapshot;

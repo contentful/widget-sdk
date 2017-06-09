@@ -1,33 +1,36 @@
 'use strict';
 
 describe('data/userCache', function () {
-  var userCache, space;
+  let userCache, fetchAll;
 
   beforeEach(function () {
-    module('cf.data');
-    var createCache = this.$inject('data/userCache');
-    space = {
-      getUsers: sinon.stub().resolves()
-    };
-    userCache = createCache(space);
+    module('cf.data', function ($provide) {
+      $provide.value('data/CMA/FetchAll', {
+        fetchAll: fetchAll = sinon.stub().resolves()
+      });
+    });
+
+    const createCache = this.$inject('data/userCache');
+    const endpoint = {};
+    userCache = createCache(endpoint);
   });
 
   function makeUser (id) {
-    return { getId: _.constant(id) };
+    return {sys: {id: id}};
   }
 
   describe('#getAll()', function () {
     it('fetches users only once', function () {
-      sinon.assert.notCalled(space.getUsers);
+      sinon.assert.notCalled(fetchAll);
       userCache.getAll();
-      sinon.assert.calledOnce(space.getUsers);
+      sinon.assert.calledOnce(fetchAll);
       userCache.getAll();
-      sinon.assert.calledOnce(space.getUsers);
+      sinon.assert.calledOnce(fetchAll);
     });
 
     pit('it maps users by id', function () {
-      var userResponse = [makeUser('0'), makeUser('1')];
-      space.getUsers.resolves(userResponse);
+      const userResponse = [makeUser('0'), makeUser('1')];
+      fetchAll.resolves(userResponse);
       return userCache.getAll()
       .then(function (users) {
         expect(users).toEqual(userResponse);
@@ -35,9 +38,9 @@ describe('data/userCache', function () {
     });
 
     it('it caches resulst', function () {
-      var userResponse = [makeUser('0'), makeUser('1')];
-      space.getUsers.resolves(userResponse);
-      var handleUsers = sinon.stub();
+      const userResponse = [makeUser('0'), makeUser('1')];
+      fetchAll.resolves(userResponse);
+      const handleUsers = sinon.stub();
       userCache.getAll().then(handleUsers);
       userCache.getAll().then(handleUsers);
       this.$apply();
@@ -47,16 +50,16 @@ describe('data/userCache', function () {
 
   describe('#get()', function () {
     it('fetches users only once', function () {
-      sinon.assert.notCalled(space.getUsers);
+      sinon.assert.notCalled(fetchAll);
       userCache.get();
-      sinon.assert.calledOnce(space.getUsers);
+      sinon.assert.calledOnce(fetchAll);
       userCache.get();
-      sinon.assert.calledOnce(space.getUsers);
+      sinon.assert.calledOnce(fetchAll);
     });
 
     pit('it gets users by id', function () {
-      var userResponse = [makeUser('0'), makeUser('1')];
-      space.getUsers.resolves(userResponse);
+      const userResponse = [makeUser('0'), makeUser('1')];
+      fetchAll.resolves(userResponse);
       return userCache.get('1')
       .then(function (user) {
         expect(user).toEqual(userResponse[1]);
@@ -64,14 +67,14 @@ describe('data/userCache', function () {
     });
 
     pit('resuses response from call to "#getAll()"', function () {
-      var userResponse = [makeUser('0'), makeUser('1')];
-      space.getUsers.resolves(userResponse);
+      const userResponse = [makeUser('0'), makeUser('1')];
+      fetchAll.resolves(userResponse);
       return userCache.getAll()
       .then(function (users) {
         return userCache.get('0')
         .then(function (user) {
           expect(user).toBe(users[0]);
-          sinon.assert.calledOnce(space.getUsers);
+          sinon.assert.calledOnce(fetchAll);
         });
       });
     });

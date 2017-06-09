@@ -248,9 +248,9 @@ angular.module('contentful')
       var names = _.map(users, 'getName');
       var occurences = _.countBy(names);
       return _.transform(users, function (map, user) {
-        var name = user.getName();
-        name = occurences[name] > 1 ? name + ' (' + user.getId() + ')' : name;
-        map[name] = user.getId();
+        var name = user.firstName + ' ' + user.lastName;
+        name = occurences[name] > 1 ? name + ' (' + user.sys.id + ')' : name;
+        map[name] = user.sys.id;
       }, {});
     });
   }
