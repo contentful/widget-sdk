@@ -16,7 +16,7 @@ angular.module('contentful')
   var analytics = require('analytics/Analytics');
   var spaceContext = require('spaceContext');
   var accessChecker = require('accessChecker');
-  var tokenStore = require('tokenStore');
+  var tokenStore = require('services/TokenStore');
   var CreateSpace = require('services/CreateSpace');
 
   // subscribe to changes in token:

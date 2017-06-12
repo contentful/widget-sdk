@@ -13,7 +13,7 @@ angular.module('contentful')
   var base = require('states/base');
   var $location = require('$location');
   var $state = require('$state');
-  var tokenStore = require('tokenStore');
+  var tokenStore = require('services/TokenStore');
   var TheStore = require('TheStore');
   var template = require('app/home/HomeTemplate').default;
 

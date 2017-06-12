@@ -554,7 +554,7 @@ describe('spaceContext', function () {
   describe('#reloadLocales', function () {
     beforeEach(function () {
       this.resetWithSpace();
-      this.tokenStore = this.mockService('tokenStore');
+      this.tokenStore = this.mockService('services/TokenStore');
       this.tokenStore.refresh.resolves();
     });
 

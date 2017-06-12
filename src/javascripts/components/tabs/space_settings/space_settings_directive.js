@@ -16,7 +16,7 @@ angular.module('contentful')
   var $state = require('$state');
   var spaceContext = require('spaceContext');
   var Command = require('command');
-  var tokenStore = require('tokenStore');
+  var tokenStore = require('services/TokenStore');
   var modalDialog = require('modalDialog');
   var notification = require('notification');
   var ReloadNotification = require('ReloadNotification');

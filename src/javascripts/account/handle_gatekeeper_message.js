@@ -7,7 +7,7 @@ angular.module('contentful')
   var $state = require('$state');
   var authentication = require('Authentication');
   var notification = require('notification');
-  var tokenStore = require('tokenStore');
+  var tokenStore = require('services/TokenStore');
   var CreateSpace = require('services/CreateSpace');
   var UrlSyncHelper = require('account/UrlSyncHelper');
 

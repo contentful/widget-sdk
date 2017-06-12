@@ -21,7 +21,7 @@ describe('Space Controller', function () {
       $provide.value('analytics/Analytics', self.analyticsMock);
     });
 
-    this.tokenStore = this.mockService('tokenStore', {
+    this.tokenStore = this.mockService('services/TokenStore', {
       getTokenLookup: sinon.stub()
     });
     this.$rootScope = this.$inject('$rootScope');

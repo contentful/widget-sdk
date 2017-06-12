@@ -15,7 +15,7 @@ angular.module('contentful')
   var $state = require('$state');
   var K = require('utils/kefir');
   var OrganizationList = require('services/OrganizationList');
-  var tokenStore = require('tokenStore');
+  var tokenStore = require('services/TokenStore');
 
   var orgId = $state.params.orgId;
   controller.selectedOrganizationId = orgId;

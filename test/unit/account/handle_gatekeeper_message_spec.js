@@ -29,7 +29,7 @@ describe('Gatekeeper Message Handler', function () {
     });
 
     it('leaves a deleted space', function () {
-      const refresh = this.$inject('tokenStore').refresh = sinon.spy();
+      const refresh = this.$inject('services/TokenStore').refresh = sinon.spy();
       const go = this.$inject('$state').go = sinon.spy();
 
       this.handle({action: 'delete', type: 'space'});
@@ -59,7 +59,7 @@ describe('Gatekeeper Message Handler', function () {
     });
 
     it('refreshes token for any other message', function () {
-      const refresh = this.$inject('tokenStore').refresh = sinon.spy();
+      const refresh = this.$inject('services/TokenStore').refresh = sinon.spy();
       this.handle({blah: 'blah'});
       sinon.assert.calledOnce(refresh);
     });

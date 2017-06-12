@@ -10,7 +10,7 @@ describe('cfWelcome directive', function () {
       });
     });
 
-    this.tokenStore = this.$inject('tokenStore');
+    this.tokenStore = this.$inject('services/TokenStore');
 
     this.compileElement = (isNew) => {
       this.tokenStore.user$ = K.createMockProperty({

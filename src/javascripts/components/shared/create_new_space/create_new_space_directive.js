@@ -20,7 +20,7 @@ angular.module('contentful')
   var spaceTemplateLoader = require('spaceTemplateLoader');
   var spaceTemplateCreator = require('spaceTemplateCreator');
   var accessChecker = require('accessChecker');
-  var tokenStore = require('tokenStore');
+  var tokenStore = require('services/TokenStore');
   var enforcements = require('enforcements');
   var $state = require('$state');
   var logger = require('logger');

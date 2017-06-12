@@ -7,7 +7,7 @@ angular.module('contentful')
   var features = require('features');
   var logger = require('logger');
   var spaceContext = require('spaceContext');
-  var tokenStore = require('tokenStore');
+  var tokenStore = require('services/TokenStore');
   var analytics = require('analytics/Analytics');
   var authorization = require('authorization');
   var presence = require('presence');

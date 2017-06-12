@@ -34,7 +34,7 @@ angular.module('contentful')
   var PublishedCTRepo = require('data/ContentTypeRepo/Published');
   var logger = require('logger');
   var DocumentPool = require('data/sharejs/DocumentPool');
-  var tokenStore = require('tokenStore');
+  var tokenStore = require('services/TokenStore');
   var createApiKeyRepo = require('data/CMA/ApiKeyRepo').default;
   var K = require('utils/kefir');
   var Auth = require('Authentication');
@@ -141,7 +141,7 @@ angular.module('contentful')
      */
     reloadLocales: function () {
       var self = this;
-      // TODO Do not use 'tokenStore'. This service mutates the
+      // TODO Do not use 'services/TokenStore'. This service mutates the
       // 'this.space' object so that '.getPrivateLocales()' returns a
       // different value. Instead we should get the locales from the
       // dedicated /locales endpoint.

@@ -21,12 +21,11 @@ describe('Token store service', function () {
       return this.fetchWithAuth;
     };
 
-    this.tokenStore = this.$inject('tokenStore');
+    this.tokenStore = this.$inject('services/TokenStore');
     this.OrganizationList = this.$inject('services/OrganizationList');
 
     this.client = this.$inject('client');
     this.client.newSpace = sinon.stub();
-
 
     this.spaces = _.map(this.rawSpaces, function (raw) {
       return {

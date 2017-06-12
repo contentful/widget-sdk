@@ -14,7 +14,7 @@ angular.module('contentful')
   var $q = require('$q');
   var spaceContext = require('spaceContext');
   var OrganizationList = require('services/OrganizationList');
-  var tokenStore = require('tokenStore');
+  var tokenStore = require('services/TokenStore');
   var Navigator = require('states/Navigator');
 
   var canShowIntercomLink$ = tokenStore.user$.map(function (user) {

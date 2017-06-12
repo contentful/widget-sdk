@@ -20,7 +20,7 @@ describe('TheAccountView service', function () {
       $provide.value('services/OrganizationList', this.OrganizationList);
     });
 
-    this.tokenStore = this.mockService('tokenStore', {
+    this.tokenStore = this.mockService('services/TokenStore', {
       user$: K.createMockProperty(null)
     });
 

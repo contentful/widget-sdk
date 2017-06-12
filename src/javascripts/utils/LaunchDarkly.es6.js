@@ -1,6 +1,6 @@
 import LD from 'libs/launch-darkly-client';
 
-import {user$} from 'tokenStore';
+import {user$} from 'services/TokenStore';
 import {includes, noop} from 'lodash';
 import {launchDarkly as config} from 'Config';
 import {
