@@ -1,4 +1,4 @@
-import {h} from 'utils/hyperscript';
+import {h} from 'ui/Framework';
 import * as Colors from 'Styles/Colors';
 
 /**

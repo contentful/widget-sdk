@@ -26,3 +26,6 @@ import './mocks/spaceEndpoint';
 import './mocks/the_store';
 import './mocks/timing';
 import './mocks/widget_api';
+
+import installTestCaseContext from './TestCaseContext';
+installTestCaseContext();

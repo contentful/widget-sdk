@@ -12,6 +12,9 @@
  * the `pages` attribute. When this attribute is not provided it
  * defaults to 5.
  *
+ * TODO This directive is deprecated. Use `ui/Components/Paginator`
+ * instead.
+ *
  * @usage[jade]
  * div
  *   header

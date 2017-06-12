@@ -329,11 +329,11 @@ function sidebar () {
     h('h2.entity-sidebar__heading', ['Documentation']),
     h('ul', [
       h('li', [
-        'Read more about content types in our ', docsLink(['guide to content modelling'], 'contentModellingBasics'), '.'
+        'Read more about content types in our ', docsLink('guide to content modelling', 'contentModellingBasics'), '.'
       ]),
       h('li', [
         'To learn more about the various ways of disabling and deleting fields have a look at the ',
-        docsLink(['field lifecycle'], 'field_lifecycle'), '.'
+        docsLink('field lifecycle', 'field_lifecycle'), '.'
       ])
     ])
   ]);
