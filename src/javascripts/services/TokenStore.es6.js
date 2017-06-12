@@ -115,7 +115,6 @@ export function refresh () {
       userBus.set(user);
       organizationsBus.set(organizations);
       OrganizationList.setUser(user);
-      OrganizationList.setOrganizations(organizations);
     }, function () {
       ReloadNotification.trigger('The application was unable to authenticate with the server');
     });

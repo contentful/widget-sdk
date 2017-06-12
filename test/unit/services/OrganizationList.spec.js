@@ -2,7 +2,6 @@
 
 describe('OrgniaztionList', function () {
   let OrganizationList, ORG_1, ORG_2, ORG_3;
-  const UNKNOWN_ORG_ID = 'UNKNOWN_ORG_ID';
 
   function makeUser (organizations) {
     return {
@@ -19,21 +18,6 @@ describe('OrgniaztionList', function () {
     ORG_1 = { sys: { id: 'org1' }, name: '1st ORG' };
     ORG_2 = { sys: { id: 'org2' }, name: '2nd ORG' };
     ORG_3 = { sys: { id: 'org3' }, name: '3rd ORG' };
-  });
-
-  describe('#get', function () {
-    beforeEach(function () {
-      OrganizationList.setUser(makeUser([ ORG_1, ORG_2 ]));
-      OrganizationList.setOrganizations([ ORG_1, ORG_2 ]);
-    });
-
-    it('gets organization by id', function () {
-      expect(OrganizationList.get(ORG_2.sys.id)).toBe(ORG_2);
-    });
-
-    it('returns null for non-existent organization', function () {
-      expect(OrganizationList.get(UNKNOWN_ORG_ID)).toBe(null);
-    });
   });
 
   describe('#isAdmin, #isOwner and #isOwnerOrAdmin', function () {
