@@ -8,7 +8,7 @@ describe('cfAccountOrganizationsNav directive', function () {
     this.$state.go = sinon.stub();
     this.tokenStore = this.$inject('tokenStore');
     this.tokenStore.refresh = sinon.stub().resolves();
-    this.OrganizationList.organizations$ = K.createMockProperty(this.orgs);
+    this.tokenStore.organizations$ = K.createMockProperty(this.orgs);
     this.OrganizationList.isOwnerOrAdmin = sinon.stub().returns(true);
 
     this.compile = function () {

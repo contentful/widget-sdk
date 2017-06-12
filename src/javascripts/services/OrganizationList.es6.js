@@ -6,12 +6,10 @@
  * This service keeps global state of organizations.
  * It exposes multiple utility getter methods.
  */
-import * as K from 'utils/kefir';
 import { filter, map, get, find } from 'lodash';
 
 let currentUser = null;
 let organizations = [];
-const organizationsBus = K.createPropertyBus([]);
 
 /**
  * @ngdoc method
@@ -34,15 +32,6 @@ export const isAdmin = createRoleChecker('admin');
 export const isOwner = createRoleChecker('owner');
 
 /**
- * @ngdoc property
- * @name OrganizationList#organizations$
- * @type {Property<object>}
- * @description
- * The list of user's organizations.
- */
-export const organizations$ = organizationsBus.property;
-
-/**
  * @ngdoc method
  * @name OrganizationList#resetWithUser
  * @param {API.User} user
@@ -52,7 +41,6 @@ export const organizations$ = organizationsBus.property;
 export function resetWithUser (user) {
   currentUser = user;
   organizations = map(user.organizationMemberships, 'organization');
-  organizationsBus.set(organizations);
 }
 
 /**
@@ -78,19 +66,6 @@ export { getOrganization as get };
 function getOrganization (id) {
   const result = filter(organizations, { sys: { id: id } });
   return result.length > 0 ? result[0] : null;
-}
-
-/**
- * @ngdoc method
- * @name OrganizationList#getName
- * @param {string} id
- * @returns {string}
- * @description
- * Gets name of organization (by ID).
- */
-export function getName (id) {
-  const organization = getOrganization(id);
-  return organization ? organization.name : '';
 }
 
 /**

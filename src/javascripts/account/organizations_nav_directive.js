@@ -22,7 +22,7 @@ angular.module('contentful')
   controller.goToOrganization = goToOrganization;
   controller.isTabSelected = isTabSelected;
 
-  K.onValueScope($scope, OrganizationList.organizations$, function (organizations) {
+  K.onValueScope($scope, tokenStore.organizations$, function (organizations) {
     controller.organizations = organizations;
   });
 
@@ -38,7 +38,7 @@ angular.module('contentful')
   // Go to the corresponding page in the other organization or the defualt
   // `subscription` page if it's not available
   function goToOrganization (selectedOrgId) {
-    var targetOrg = OrganizationList.get(selectedOrgId);
+    var targetOrg = controller.organizations.find({ sys: { id: selectedOrgId } });
 
     var defaultState = 'account.organizations.subscription';
 
@@ -58,12 +58,12 @@ angular.module('contentful')
   // Get the requested organization. Try to refresh the user token if the
   // requested org is not on the list as the list may not be up to date.
   function getOrganization (orgId) {
-    var org = OrganizationList.get(orgId);
+    var org = _.find(controller.organizations, { sys: { id: orgId } });
     if (org) {
       return $q.resolve(org);
     } else {
       return tokenStore.refresh().then(function () {
-        return OrganizationList.get(orgId);
+        return tokenStore.getOrganization(orgId);
       }).catch(function () {
         return null;
       });

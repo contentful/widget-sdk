@@ -16,9 +16,10 @@ angular.module('contentful')
   var auth = require('Authentication');
   var makeFetchWithAuth = require('data/CMA/TokenInfo').default;
   var ReloadNotification = require('ReloadNotification');
+  var OrganizationList = require('services/OrganizationList');
   var presence = require('presence');
   var $window = require('$window');
-  var deepFreeze = require('utils/DeepFreeze').deepFreeze;
+  var deepFreezeClone = require('utils/DeepFreeze').deepFreezeClone;
 
   // Refresh token info every 5 minutes
   var TOKEN_INFO_REFRESH_INTERVAL = 5 * 60 * 1000;
@@ -27,6 +28,7 @@ angular.module('contentful')
 
   var userBus = K.createPropertyBus(null);
   var spacesBus = K.createPropertyBus([]);
+  var organizationsBus = K.createPropertyBus([]);
 
   // MVar that holds the token data
   var tokenInfoMVar = createMVar(tokenInfo);
@@ -40,6 +42,8 @@ angular.module('contentful')
     getSpace: getSpace,
     getSpaces: getSpaces,
     getDomains: getDomains,
+    getOrganization: getOrganization,
+    getOrganizations: getOrganizations,
     getTokenLookup: function () { return tokenInfo; },
     /**
      * @ngdoc property
@@ -57,6 +61,14 @@ angular.module('contentful')
      * The list of spaces from the token
      */
     spaces$: spacesBus.property,
+    /**
+     * @ngdoc property
+     * @name tokenStore#spaces$
+     * @type {Property<Api.Spaces>}
+     * @description
+     * The list of spaces from the token
+     */
+    organizations$: organizationsBus.property,
     /**
      * @ngdoc property
      * @name tokenStore#spacesByOrganization$
@@ -106,8 +118,11 @@ angular.module('contentful')
       fetchInfo().then(function (newTokenInfo) {
         tokenInfo = newTokenInfo;
         tokenInfoMVar.put(newTokenInfo);
-        userBus.set(newTokenInfo.sys.createdBy);
+        var user = newTokenInfo.sys.createdBy;
+        userBus.set(user);
         spacesBus.set(updateSpaces(newTokenInfo.spaces));
+        organizationsBus.set(_.map(user.organizationMemberships, 'organization'));
+        OrganizationList.resetWithUser(user);
       }, function () {
         ReloadNotification.trigger('The application was unable to authenticate with the server');
       });
@@ -147,18 +162,49 @@ angular.module('contentful')
   function getSpaces () {
     return tokenInfoMVar.read().then(function () {
       return K.getValue(spacesBus.property)
-      .map(function (s) { return deepFreeze(_.cloneDeep(s.data)); });
+      .map(function (s) { return deepFreezeClone(s.data); });
     });
   }
 
-  // TODO move this into the OrganizationContext once this is
-  // implemented
   function getDomains () {
     var domains = _.get(tokenInfo, 'domains', []);
     return domains.reduce(function (map, value) {
       map[value.name] = value.domain;
       return map;
     }, {});
+  }
+
+  /**
+   * @ngdoc method
+   * @name tokenStore#getOrganization
+   * @param {string} id
+   * @returns {Promise<API.Organization>}
+   * @description
+   * This method returns a promise of a single stored organization
+   * If some calls are in progress, we're waiting until these are done.
+   * Promise is rejected if organization with a provided ID couldn't be found.
+   */
+  function getOrganization (id) {
+    return tokenInfoMVar.read().then(function () {
+      var orgs = K.getValue(organizationsBus.property);
+      var org = _.find(orgs, { sys: { id: id } });
+      return org || $q.reject(new Error('No organization with given ID could be found.'));
+    });
+  }
+
+  /**
+   * @ngdoc method
+   * @name tokenStore#getOrganizations
+   * @returns {Array[Promise<API.Organization>]}
+   * @description
+   * This method returns a promise of the list of organizations.
+   * If some calls are in progress, we're waiting until these are done.
+   *
+   */
+  function getOrganizations () {
+    return tokenInfoMVar.read().then(function () {
+      return deepFreezeClone(K.getValue(organizationsBus.property));
+    });
   }
 
   function updateSpaces (rawSpaces) {
