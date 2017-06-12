@@ -117,6 +117,10 @@ beforeEach(function () {
    * To retrieve the scope use `element.scope()`.
    * If the element has an isolated scope, use `element.isolateScope()`.
    *
+   * The element is attached to the document’s '<body>' element. It is
+   * automatically destroyed and removed from the DOM in an `afterEach`
+   * hook. See `test/helpers/hooks` for details.
+   *
    * @param {string} template
    * @param {object} scopeProperties
    * @param {object} controllers Object with controller names as keys and controller
@@ -142,6 +146,7 @@ beforeEach(function () {
       transcludeControllers: transcludeControllers
     });
 
+    element.appendTo('body');
     this._angularElements.push(element);
 
     scope.$digest();

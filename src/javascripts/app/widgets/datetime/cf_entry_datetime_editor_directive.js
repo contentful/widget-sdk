@@ -87,6 +87,10 @@ angular.module('cf.app')
         }
       });
 
+      $scope.$on('$destroy', function () {
+        datepicker.destroy();
+      });
+
       $scope.focusDateInput = function () {
         // We delay this so that any click events that close the
         // datepicker are handled before.

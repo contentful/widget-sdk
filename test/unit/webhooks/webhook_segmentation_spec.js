@@ -1,4 +1,4 @@
-'use strict';
+import {setCheckbox} from 'helpers/DOM';
 
 describe('Webhook Segmentation directive', function () {
 
@@ -6,7 +6,7 @@ describe('Webhook Segmentation directive', function () {
     module('contentful/test');
 
     this.compile = function (topics) {
-      var data = {topics: topics || []};
+      const data = {topics: topics || []};
       this.element = this.$compile('<cf-webhook-segmentation topics="topics" />', data);
       this.scope = this.element.isolateScope();
     }.bind(this);
@@ -107,12 +107,12 @@ describe('Webhook Segmentation directive', function () {
 
   describe('wildcard selections', function () {
     it('selects all horizontal checkboxes for entity wildcard, stores selection', function () {
-      var inputs = function () {
+      const inputs = function () {
         return this.element.find('tbody tr:nth-child(2) input');
       }.bind(this);
 
       this.compile(['Entry.save']);
-      inputs().first().prop('checked', true).click();
+      setCheckbox(inputs().first(), true);
       this.$apply();
 
       inputs().each(function () { expect(this.checked).toBe(true); });
@@ -121,12 +121,12 @@ describe('Webhook Segmentation directive', function () {
     });
 
     it('selects all vertical checkboxes for action wildcard, stores selection', function () {
-      var inputs = function () {
+      const inputs = function () {
         return this.element.find('tbody tr td:nth-child(2) input');
       }.bind(this);
 
       this.compile(['Asset.create']);
-      inputs().last().prop('checked', true).click();
+      setCheckbox(inputs().last(), true);
       this.$apply();
 
       inputs().each(function () { expect(this.checked).toBe(true); });

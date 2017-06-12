@@ -105,8 +105,13 @@ filters.filter('fileExtension', ['mimetype', function (mimetype) {
 
 filters.filter('userNameDisplay', function () {
   return function (currentUser, user) {
-    if (!currentUser || !user) return '';
-    return (currentUser.getId() === user.sys.id) ? 'Me' : currentUser.getName();
+    if (!currentUser || !user) {
+      return '';
+    } else if (currentUser.sys.id === user.sys.id) {
+      return 'Me';
+    } else {
+      return currentUser.firstName + ' ' + currentUser.lastName;
+    }
   };
 });
 
