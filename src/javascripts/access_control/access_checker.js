@@ -18,7 +18,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
   var stringUtils = require('stringUtils');
   var authorization = require('authorization');
   var logger = require('logger');
-  var OrganizationList = require('services/OrganizationList');
+  var OrganizationRoles = require('services/OrganizationRoles');
   var TokenStore = require('services/TokenStore');
   var K = require('utils/kefir');
   var policyChecker = require('accessChecker/policy');
@@ -358,8 +358,8 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
   function isSuperUser () {
     var isSpaceAdmin = getSpaceData('spaceMembership.admin', false);
     var organization = getSpaceData('organization');
-    var isOrganizationAdmin = OrganizationList.isAdmin(organization);
-    var isOrganizationOwner = OrganizationList.isOwner(organization);
+    var isOrganizationAdmin = OrganizationRoles.isAdmin(organization);
+    var isOrganizationOwner = OrganizationRoles.isOwner(organization);
 
     return isSpaceAdmin || isOrganizationAdmin || isOrganizationOwner;
   }

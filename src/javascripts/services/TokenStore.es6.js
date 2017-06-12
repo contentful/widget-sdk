@@ -12,7 +12,7 @@ import client from 'client';
 import * as auth from 'Authentication';
 import makeFetchWithAuth from 'data/CMA/TokenInfo';
 import ReloadNotification from 'ReloadNotification';
-import * as OrganizationList from 'services/OrganizationList';
+import * as OrganizationRoles from 'services/OrganizationRoles';
 import presence from 'presence';
 import $window from '$window';
 import { deepFreezeClone } from 'utils/DeepFreeze';
@@ -114,7 +114,7 @@ export function refresh () {
       spacesBus.set(updateSpaces(newTokenInfo.spaces));
       userBus.set(user);
       organizationsBus.set(organizations);
-      OrganizationList.setUser(user);
+      OrganizationRoles.setUser(user);
     }, function () {
       ReloadNotification.trigger('The application was unable to authenticate with the server');
     });

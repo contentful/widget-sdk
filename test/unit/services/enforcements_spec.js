@@ -5,7 +5,7 @@ describe('Enforcements service', function () {
   var enforcements;
   var organizationMock;
   var spaceContext;
-  var OrganizationList;
+  var OrganizationRoles;
 
   beforeEach(function () {
     module('contentful/test');
@@ -13,8 +13,8 @@ describe('Enforcements service', function () {
     var cfStub = this.$inject('cfStub');
     enforcements = this.$inject('enforcements');
     spaceContext = this.$inject('spaceContext');
-    OrganizationList = this.$inject('services/OrganizationList');
-    OrganizationList.setUser({ sys: {id: 123} });
+    OrganizationRoles = this.$inject('services/OrganizationRoles');
+    OrganizationRoles.setUser({ sys: {id: 123} });
 
     _.extend(spaceContext, cfStub.mockSpaceContext());
 
@@ -122,17 +122,17 @@ describe('Enforcements service', function () {
       });
 
       it('has an error when user is an owner', function () {
-        sinon.stub(OrganizationList, 'isOwner').returns(true);
+        sinon.stub(OrganizationRoles, 'isOwner').returns(true);
         expect(enforcements.getPeriodUsage().message).toBeDefined();
       });
 
       it('has no error when user is not an owner', function () {
-        sinon.stub(OrganizationList, 'isOwner').returns(false);
+        sinon.stub(OrganizationRoles, 'isOwner').returns(false);
         expect(enforcements.getPeriodUsage()).toBeUndefined();
       });
 
       it('has no error when subscription has additional usage enabled', function () {
-        sinon.stub(OrganizationList, 'isOwner').returns(true);
+        sinon.stub(OrganizationRoles, 'isOwner').returns(true);
         sinon.stub(spaceContext.subscription, 'isAdditionalUsageAllowed').returns(true);
         expect(enforcements.getPeriodUsage()).toBeUndefined();
       });

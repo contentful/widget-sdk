@@ -56,11 +56,11 @@ angular.module('contentful').directive('cfAddUsersToSpaceNote', ['require', func
 .controller('UserInvitationNotesController', ['$scope', 'require', function ($scope, require) {
   var spaceContext = require('spaceContext');
   var TheAccountView = require('TheAccountView');
-  var OrganizationList = require('services/OrganizationList');
+  var OrganizationRoles = require('services/OrganizationRoles');
   var organization = spaceContext.organizationContext.organization;
 
   $scope.canInviteUsersToOrganization = function () {
-    return OrganizationList.isOwnerOrAdmin(organization);
+    return OrganizationRoles.isOwnerOrAdmin(organization);
   };
   $scope.goToOrganizationUsers = TheAccountView.goToUsers;
 }]);

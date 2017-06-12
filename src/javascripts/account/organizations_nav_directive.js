@@ -14,7 +14,7 @@ angular.module('contentful')
   var $q = require('$q');
   var $state = require('$state');
   var K = require('utils/kefir');
-  var OrganizationList = require('services/OrganizationList');
+  var OrganizationRoles = require('services/OrganizationRoles');
   var tokenStore = require('services/TokenStore');
 
   var orgId = $state.params.orgId;
@@ -96,7 +96,7 @@ angular.module('contentful')
       name: 'Billing',
       path: ['account', 'organizations', 'billing'],
       isHidden: function (org) {
-        return !(isPaid(org) && OrganizationList.isOwnerOrAdmin(org));
+        return !(isPaid(org) && OrganizationRoles.isOwnerOrAdmin(org));
       }
     },
     {

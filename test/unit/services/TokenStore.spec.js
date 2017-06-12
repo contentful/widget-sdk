@@ -22,7 +22,7 @@ describe('Token store service', function () {
     };
 
     this.tokenStore = this.$inject('services/TokenStore');
-    this.OrganizationList = this.$inject('services/OrganizationList');
+    this.OrganizationRoles = this.$inject('services/OrganizationRoles');
 
     this.client = this.$inject('client');
     this.client.newSpace = sinon.stub();

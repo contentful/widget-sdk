@@ -6,7 +6,7 @@
  */
 angular.module('contentful')
 .factory('subscriptionNotifier', ['require', function (require) {
-  var OrganizationList = require('services/OrganizationList');
+  var OrganizationRoles = require('services/OrganizationRoles');
   var openPaywall = require('paywallOpener').openPaywall;
   var Subscription = require('Subscription');
 
@@ -22,7 +22,7 @@ angular.module('contentful')
   };
 
   function notifyAbout (organization) {
-    var userOwnsOrganization = OrganizationList.isOwner(organization);
+    var userOwnsOrganization = OrganizationRoles.isOwner(organization);
     var subscription = Subscription.newFromOrganization(organization);
 
     if (!subscription) {

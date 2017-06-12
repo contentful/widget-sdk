@@ -13,7 +13,7 @@ angular.module('contentful')
 .factory('TheAccountView', ['require', function (require) {
   var $q = require('$q');
   var spaceContext = require('spaceContext');
-  var OrganizationList = require('services/OrganizationList');
+  var OrganizationRoles = require('services/OrganizationRoles');
   var TokenStore = require('services/TokenStore');
   var K = require('utils/kefir');
   var Navigator = require('states/Navigator');
@@ -145,7 +145,7 @@ angular.module('contentful')
     return _.find(orgs, filter);
 
     function filter (organization) {
-      return OrganizationList.isOwnerOrAdmin(organization) &&
+      return OrganizationRoles.isOwnerOrAdmin(organization) &&
         (organization.subscriptionState === state || state === '*');
     }
   }

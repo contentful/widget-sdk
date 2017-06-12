@@ -1,7 +1,7 @@
 'use strict';
 
-describe('OrgniaztionList', function () {
-  let OrganizationList, ORG_1, ORG_2, ORG_3;
+describe('OrganizationRoles', function () {
+  let OrganizationRoles, ORG_1, ORG_2, ORG_3;
 
   function makeUser (organizations) {
     return {
@@ -13,7 +13,7 @@ describe('OrgniaztionList', function () {
 
   beforeEach(function () {
     module('contentful/test');
-    OrganizationList = this.$inject('services/OrganizationList');
+    OrganizationRoles = this.$inject('services/OrganizationRoles');
 
     ORG_1 = { sys: { id: 'org1' }, name: '1st ORG' };
     ORG_2 = { sys: { id: 'org2' }, name: '2nd ORG' };
@@ -26,7 +26,7 @@ describe('OrgniaztionList', function () {
       user.organizationMemberships[0].role = 'member';
       user.organizationMemberships[1].role = 'admin';
       user.organizationMemberships[2].role = 'owner';
-      OrganizationList.setUser(user);
+      OrganizationRoles.setUser(user);
     });
 
     it('returns `false` if undefined is given',
@@ -43,21 +43,21 @@ describe('OrgniaztionList', function () {
     });
 
     it('returns `false`', function () {
-      expect(OrganizationList.isOwner(ORG_2)).toBe(false);
-      expect(OrganizationList.isAdmin(ORG_3)).toBe(false);
+      expect(OrganizationRoles.isOwner(ORG_2)).toBe(false);
+      expect(OrganizationRoles.isAdmin(ORG_3)).toBe(false);
     });
 
     it('returns `true`', function () {
-      expect(OrganizationList.isAdmin(ORG_2)).toBe(true);
-      expect(OrganizationList.isOwner(ORG_3)).toBe(true);
-      expect(OrganizationList.isOwnerOrAdmin(ORG_2)).toBe(true);
-      expect(OrganizationList.isOwnerOrAdmin(ORG_3)).toBe(true);
+      expect(OrganizationRoles.isAdmin(ORG_2)).toBe(true);
+      expect(OrganizationRoles.isOwner(ORG_3)).toBe(true);
+      expect(OrganizationRoles.isOwnerOrAdmin(ORG_2)).toBe(true);
+      expect(OrganizationRoles.isOwnerOrAdmin(ORG_3)).toBe(true);
     });
 
     function returnsFalseWithArg (value) {
-      expect(OrganizationList.isAdmin(value)).toBe(false);
-      expect(OrganizationList.isOwner(value)).toBe(false);
-      expect(OrganizationList.isOwnerOrAdmin(value)).toBe(false);
+      expect(OrganizationRoles.isAdmin(value)).toBe(false);
+      expect(OrganizationRoles.isOwner(value)).toBe(false);
+      expect(OrganizationRoles.isOwnerOrAdmin(value)).toBe(false);
     }
   });
 

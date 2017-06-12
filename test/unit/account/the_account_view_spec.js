@@ -10,13 +10,13 @@ describe('TheAccountView service', function () {
       this.spaceContext.getData.withArgs('organization').returns(org);
     };
 
-    this.OrganizationList = {
+    this.OrganizationRoles = {
       isOwnerOrAdmin: sinon.stub()
     };
 
     module('contentful/test', ($provide) => {
       $provide.value('spaceContext', this.spaceContext);
-      $provide.value('services/OrganizationList', this.OrganizationList);
+      $provide.value('services/OrganizationRoles', this.OrganizationRoles);
     });
 
     this.TokenStore = this.mockService('services/TokenStore', {
@@ -72,11 +72,11 @@ describe('TheAccountView service', function () {
     ];
 
     beforeEach(function () {
-      this.OrganizationList.isOwnerOrAdmin.returns(true);
+      this.OrganizationRoles.isOwnerOrAdmin.returns(true);
     });
 
     it('returns undefined when user is not an admin', function () {
-      this.OrganizationList.isOwnerOrAdmin.returns(false);
+      this.OrganizationRoles.isOwnerOrAdmin.returns(false);
       expect(this.view.getOrganizationRef()).toBe(null);
     });
 
@@ -107,7 +107,7 @@ describe('TheAccountView service', function () {
       });
 
       it('references the next best owned trial organization', function () {
-        this.OrganizationList.isOwnerOrAdmin.withArgs(ORGS[1]).returns(false);
+        this.OrganizationRoles.isOwnerOrAdmin.withArgs(ORGS[1]).returns(false);
         ORGS[1].subscriptionState = 'trial'; // Trial but not owned.
         ORGS[2].subscriptionState = 'trial';
 
@@ -116,7 +116,7 @@ describe('TheAccountView service', function () {
       });
 
       it('references the next best owned active organization', function () {
-        this.OrganizationList.isOwnerOrAdmin.withArgs(ORGS[0]).returns(false);
+        this.OrganizationRoles.isOwnerOrAdmin.withArgs(ORGS[0]).returns(false);
         ORGS[1].subscriptionState = 'inactive';
 
         const ref = this.view.getOrganizationRef('foo');
@@ -124,8 +124,8 @@ describe('TheAccountView service', function () {
       });
 
       it('references the next best owned organization', function () {
-        this.OrganizationList.isOwnerOrAdmin.withArgs(ORGS[0]).returns(false);
-        this.OrganizationList.isOwnerOrAdmin.withArgs(ORGS[2]).returns(false);
+        this.OrganizationRoles.isOwnerOrAdmin.withArgs(ORGS[0]).returns(false);
+        this.OrganizationRoles.isOwnerOrAdmin.withArgs(ORGS[2]).returns(false);
         ORGS[1].subscriptionState = 'inactive';
 
         const ref = this.view.getOrganizationRef('foo');
@@ -144,7 +144,7 @@ describe('TheAccountView service', function () {
 
       beforeEach(function () {
         this.setOrganizationForCurrentSpace({ sys: { id: 'ORG_ID' } });
-        this.OrganizationList.isOwnerOrAdmin.returns(true);
+        this.OrganizationRoles.isOwnerOrAdmin.returns(true);
         this.go.returns(RETURN_VALUE);
         this.returnValue = this.view[name]();
       });
@@ -166,13 +166,13 @@ describe('TheAccountView service', function () {
     });
 
     it('returns path if user has permission', function () {
-      this.OrganizationList.isOwnerOrAdmin.returns(true);
+      this.OrganizationRoles.isOwnerOrAdmin.returns(true);
       const path = 'account.organizations.subscription({ orgId: \'ORG_0\' })';
       expect(this.view.getSubscriptionState()).toBe(path);
     });
 
     it('returns undefined if user does not have permission to access path', function () {
-      this.OrganizationList.isOwnerOrAdmin.returns(false);
+      this.OrganizationRoles.isOwnerOrAdmin.returns(false);
       expect(this.view.getSubscriptionState()).toBe(undefined);
     });
   });

@@ -3,7 +3,7 @@
 /**
  * @covers dialogsInitController
  * @covers subscriptionNotifier
- * @covers OrganizationList
+ * @covers OrganizationRoles
  * @covers Subscription
  */
 describe('subscriptionNotifier', function () {
@@ -18,7 +18,7 @@ describe('subscriptionNotifier', function () {
 
     const dialogsInitController = this.$inject('dialogsInitController');
     const moment = this.$inject('moment');
-    const OrganizationList = this.$inject('services/OrganizationList');
+    const OrganizationRoles = this.$inject('services/OrganizationRoles');
     const spaceContext = this.$inject('spaceContext');
     const $rootScope = this.$inject('$rootScope');
 
@@ -27,7 +27,7 @@ describe('subscriptionNotifier', function () {
 
     this.organization = {sys: {id: 42}};
     const membership = {organization: this.organization};
-    OrganizationList.setUser({organizationMemberships: [membership]});
+    OrganizationRoles.setUser({organizationMemberships: [membership]});
     dialogsInitController.init();
 
     this.setupOrganization = function (extension) {

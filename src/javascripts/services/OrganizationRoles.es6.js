@@ -1,6 +1,6 @@
 /**
  * @ngdoc service
- * @name OrganizationList
+ * @name OrganizationRoles
  *
  * @description
  * This service keeps global state of organizations.
@@ -12,7 +12,7 @@ let currentUser = null;
 
 /**
  * @ngdoc method
- * @name OrganizationList#isAdmin
+ * @name OrganizationRoles#isAdmin
  * @param {object} organization
  * @returns {boolean}
  * @description
@@ -22,7 +22,7 @@ export const isAdmin = createRoleChecker('admin');
 
 /**
  * @ngdoc method
- * @name OrganizationList#isOwner
+ * @name OrganizationRoles#isOwner
  * @param {object} organization
  * @returns {boolean}
  * @description
@@ -32,7 +32,7 @@ export const isOwner = createRoleChecker('owner');
 
 /**
  * @ngdoc method
- * @name OrganizationList#setUser
+ * @name OrganizationRoles#setUser
  * @param {API.User} user
  */
 export function setUser (user) {
@@ -41,7 +41,7 @@ export function setUser (user) {
 
 /**
  * @ngdoc method
- * @name OrganizationList#isOwnerOrAdmin
+ * @name OrganizationRoles#isOwnerOrAdmin
  * @param {object} organization
  * @description
  * Checks if the user is an owner or admin of the organization with the given ID.

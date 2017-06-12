@@ -3,13 +3,13 @@ import * as K from 'helpers/mocks/kefir';
 describe('cfAccountOrganizationsNav directive', function () {
   beforeEach(function () {
     module('contentful/test');
-    this.OrganizationList = this.$inject('services/OrganizationList');
+    this.OrganizationRoles = this.$inject('services/OrganizationRoles');
     this.$state = this.$inject('$state');
     this.$state.go = sinon.stub();
     this.tokenStore = this.$inject('services/TokenStore');
     this.tokenStore.refresh = sinon.stub().resolves();
     this.tokenStore.organizations$ = K.createMockProperty(this.orgs);
-    this.OrganizationList.isOwnerOrAdmin = sinon.stub().returns(true);
+    this.OrganizationRoles.isOwnerOrAdmin = sinon.stub().returns(true);
 
     this.compile = function () {
       return this.$compile('<cf-account-organizations-nav />');

@@ -1,7 +1,7 @@
 import * as K from 'helpers/mocks/kefir';
 
 describe('Access Checker', function () {
-  let $rootScope, spaceContext, authorization, enforcements, OrganizationList, TokenStore, policyChecker, ac;
+  let $rootScope, spaceContext, authorization, enforcements, OrganizationRoles, TokenStore, policyChecker, ac;
   let getResStub, reasonsDeniedStub;
 
   function triggerChange () {
@@ -11,7 +11,7 @@ describe('Access Checker', function () {
 
   afterEach(function () {
     $rootScope = spaceContext = authorization =
-      enforcements = OrganizationList = policyChecker =
+      enforcements = OrganizationRoles = policyChecker =
       ac = getResStub = reasonsDeniedStub = null;
   });
 
@@ -22,7 +22,7 @@ describe('Access Checker', function () {
     spaceContext = this.$inject('spaceContext');
     authorization = this.$inject('authorization');
     enforcements = this.$inject('enforcements');
-    OrganizationList = this.$inject('services/OrganizationList');
+    OrganizationRoles = this.$inject('services/OrganizationRoles');
     TokenStore = this.$inject('services/TokenStore');
     policyChecker = this.$inject('accessChecker/policy');
     ac = this.$inject('accessChecker');
@@ -300,7 +300,7 @@ describe('Access Checker', function () {
     }
 
     it('returns true when has feature and is admin of space, false otherwise', function () {
-      OrganizationList.setUser({organizationMemberships: []});
+      OrganizationRoles.setUser({organizationMemberships: []});
       changeSpace(false, true);
       expect(ac.canModifyRoles()).toBe(false);
       changeSpace(true, false);
@@ -316,7 +316,7 @@ describe('Access Checker', function () {
         {organization: {sys: {id: 'org3id'}}, role: 'owner'}
       ]};
 
-      OrganizationList.setUser(user);
+      OrganizationRoles.setUser(user);
       changeSpace(true, false);
 
       expect(ac.canModifyUsers()).toBe(false);
