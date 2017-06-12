@@ -35,10 +35,14 @@ mixin field-locale-errors
         ng-if="error.name === 'unique'"
         data-test-id="uniqueness-conflicts-list")
         li.entity-editor__control-error(ng-repeat="conflict in error.conflicting track by conflict.sys.id")
+          div.cfnext-form__field-error(
+            ng-if="!conflict.data.ref")
+            | Loading title for conflicting entry…
           a.cfnext-form__field-error(
+            ng-if="conflict.data.ref"
             target="_blank" rel="noopener noreferrer"
-            ui-sref="spaces.detail.entries.detail({ entryId: \"{{conflict.sys.id}}\", notALinkedEntity: true })")
-            | {{ conflict.data.entryTitle || 'Loading title for conflicting entry..'}}
+            cf-sref="conflict.data.ref")
+            | {{ conflict.data.entryTitle }}
             i.fa.fa-external-link
 
 div.entity-editor__field-group(

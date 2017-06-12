@@ -3,13 +3,13 @@
 angular.module('contentful')
 .factory('contextHistory', ['require', function (require) {
   var K = require('utils/kefir');
-  var $stateParams = require('$stateParams');
 
   var history = [];
   var crumbBus = K.createPropertyBus(history);
 
   return {
     add: add,
+    set: set,
     isEmpty: isEmpty,
     pop: pop,
     purge: purge,
@@ -18,17 +18,17 @@ angular.module('contentful')
   };
 
   function add (crumb) {
-    // TODO: make it an argument
-    var shouldAdd = $stateParams.addToContext;
-
-    if (isEmpty() || shouldAdd) {
-      var index = findIndex(crumb);
-      if (index > -1) {
-        history = history.slice(0, index);
-      }
-      history.push(crumb);
-      crumbBus.set(history);
+    var index = findIndex(crumb);
+    if (index > -1) {
+      history = history.slice(0, index);
     }
+    history.push(crumb);
+    crumbBus.set(history);
+  }
+
+  function set (crumbs) {
+    history = crumbs;
+    crumbBus.set(history);
   }
 
   function findIndex (crumb) {
