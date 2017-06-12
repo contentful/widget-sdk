@@ -226,11 +226,6 @@ describe('Client Controller', function () {
         this.analytics = this.$inject('analytics/Analytics');
       });
 
-      it('are set', function () {
-        this.prepare();
-        expect(OrganizationList.getAll()).toEqual([org1, org2, org3]);
-      });
-
       it('sets analytics user data and enables tracking', function () {
         this.prepare();
         sinon.assert.calledWithExactly(this.analytics.enable, user);

@@ -58,20 +58,6 @@ describe('OrgniaztionList', function () {
     });
   });
 
-  describe('#getName', function () {
-    beforeEach(function () {
-      OrganizationList.resetWithUser(makeUser([ ORG_1, ORG_2 ]));
-    });
-
-    it('gets organization name', function () {
-      expect(OrganizationList.getName(ORG_2.sys.id)).toEqual(ORG_2.name);
-    });
-
-    it('gets an empty string for non-existent organization', function () {
-      expect(OrganizationList.getName(UNKNOWN_ORG_ID)).toEqual('');
-    });
-  });
-
   describe('#isAdmin, #isOwner and #isOwnerOrAdmin', function () {
     beforeEach(function () {
       const user = makeUser([ ORG_1, ORG_2, ORG_3 ]);

@@ -22,11 +22,11 @@ describe('Token store service', function () {
     };
 
     this.tokenStore = this.$inject('tokenStore');
+    this.OrganizationList = this.$inject('services/OrganizationList');
 
     this.client = this.$inject('client');
     this.client.newSpace = sinon.stub();
 
-    this.user = {firstName: 'hello'};
 
     this.spaces = _.map(this.rawSpaces, function (raw) {
       return {
@@ -35,6 +35,12 @@ describe('Token store service', function () {
         update: sinon.stub()
       };
     });
+
+    this.organizations = [{ sys: { id: 'org1' } }, { sys: { id: 'org2' } }, { sys: { id: 'org3' } }];
+    this.user = {
+      firstName: 'hello',
+      organizationMemberships: this.organizations.map((organization) => { return { organization }; })
+    };
 
     this.refresh = function (...spaces) {
       this.fetchWithAuth.resolves({
@@ -140,4 +146,24 @@ describe('Token store service', function () {
       );
     });
   });
+
+  describe('#organizations$', function () {
+    it('is initially empty', function () {
+      K.assertCurrentValue(this.tokenStore.organizations$, []);
+    });
+
+    it('updates property when tokenStore is refreshed', function* () {
+      yield this.refresh();
+      K.assertMatchCurrentValue(
+        this.tokenStore.organizations$,
+        sinon.match(this.organizations)
+      );
+    });
+
+    it('OrganizationList orgs are set', function* () {
+      yield this.refresh();
+      expect(this.OrganizationList.getAll()).toEqual(this.organizations);
+    });
+  });
+
 });

@@ -50,7 +50,7 @@ describe('cfAccountOrganizationsNav directive', function () {
       function describeTabsLengthTest (name, orgId, tabsLength) {
         it(name, function () {
           const org = this.orgs.find((org) => org.sys.id === orgId);
-          this.OrganizationList.get = sinon.stub().returns(org);
+          this.tokenStore.getOrganization = sinon.stub().resolves(org);
           this.$state.params.orgId = orgId;
           const element = this.compile();
           expect(element.isolateScope().nav.tabs.length).toBe(tabsLength);
@@ -63,7 +63,7 @@ describe('cfAccountOrganizationsNav directive', function () {
     describe('invalid org', function () {
       beforeEach(function () {
         this.$state.params.orgId = 'test-org-3';
-        this.OrganizationList.get = sinon.stub().returns();
+        this.tokenStore.getOrganization = sinon.stub().resolves();
         this.compile();
       });
 
