@@ -27,7 +27,8 @@ describe('subscriptionNotifier', function () {
 
     this.organization = {sys: {id: 42}};
     const membership = {organization: this.organization};
-    OrganizationList.resetWithUser({organizationMemberships: [membership]});
+    OrganizationList.setUser({organizationMemberships: [membership]});
+    OrganizationList.setOrganizations([this.organization]);
     dialogsInitController.init();
 
     this.setupOrganization = function (extension) {

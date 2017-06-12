@@ -21,18 +21,6 @@ describe('OrgniaztionList', function () {
     ORG_3 = { sys: { id: 'org3' }, name: '3rd ORG' };
   });
 
-  describe('#resetWithUser', function () {
-    it('initially stores empty list', function () {
-      expect(OrganizationList.getAll().length).toBe(0);
-    });
-
-    it('initializes with user data', function () {
-      const orgs = [ ORG_1, ORG_2 ];
-      OrganizationList.resetWithUser(makeUser(orgs));
-      expect(OrganizationList.getAll()).toEqual(orgs);
-    });
-  });
-
   describe('#isEmpty', function () {
     it('returns `false` initially', function () {
       expect(OrganizationList.isEmpty()).toBe(true);
@@ -46,7 +34,8 @@ describe('OrgniaztionList', function () {
 
   describe('#get', function () {
     beforeEach(function () {
-      OrganizationList.resetWithUser(makeUser([ ORG_1, ORG_2 ]));
+      OrganizationList.setUser(makeUser([ ORG_1, ORG_2 ]));
+      OrganizationList.setOrganizations([ ORG_1, ORG_2 ]);
     });
 
     it('gets organization by id', function () {
@@ -64,7 +53,7 @@ describe('OrgniaztionList', function () {
       user.organizationMemberships[0].role = 'member';
       user.organizationMemberships[1].role = 'admin';
       user.organizationMemberships[2].role = 'owner';
-      OrganizationList.resetWithUser(user);
+      OrganizationList.setUser(user);
     });
 
     it('returns `false` if undefined is given',

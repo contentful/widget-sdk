@@ -6,7 +6,7 @@
  * This service keeps global state of organizations.
  * It exposes multiple utility getter methods.
  */
-import { filter, map, get, find } from 'lodash';
+import { filter, get, find } from 'lodash';
 
 let currentUser = null;
 let organizations = [];
@@ -33,14 +33,20 @@ export const isOwner = createRoleChecker('owner');
 
 /**
  * @ngdoc method
- * @name OrganizationList#resetWithUser
+ * @name OrganizationList#setUser
  * @param {API.User} user
- * @description
- * Gets user object and initializes list with organizations.
  */
-export function resetWithUser (user) {
+export function setUser (user) {
   currentUser = user;
-  organizations = map(user.organizationMemberships, 'organization');
+}
+
+/**
+ * @ngdoc method
+ * @name OrganizationList#setOrganizations
+ * @param {API.Organization[]} organizations
+ */
+export function setOrganizations (orgs) {
+  organizations = orgs;
 }
 
 /**

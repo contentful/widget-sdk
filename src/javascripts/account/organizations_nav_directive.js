@@ -38,17 +38,17 @@ angular.module('contentful')
   // Go to the corresponding page in the other organization or the defualt
   // `subscription` page if it's not available
   function goToOrganization (selectedOrgId) {
-    var targetOrg = controller.organizations.find({ sys: { id: selectedOrgId } });
-
     var defaultState = 'account.organizations.subscription';
 
-    var hasCurrentStateRef = _.find(makeTabs(targetOrg), function (tab) {
-      return isTabSelected(tab);
+    tokenStore.getOrganization(selectedOrgId).then(function (targetOrg) {
+      var hasCurrentStateRef = _.find(makeTabs(targetOrg), function (tab) {
+        return isTabSelected(tab);
+      });
+
+      var targetState = hasCurrentStateRef ? $state.current : defaultState;
+
+      $state.go(targetState, { orgId: selectedOrgId }, { inherit: false });
     });
-
-    var targetState = hasCurrentStateRef ? $state.current : defaultState;
-
-    $state.go(targetState, { orgId: selectedOrgId }, { inherit: false });
   }
 
   function isTabSelected (tab) {

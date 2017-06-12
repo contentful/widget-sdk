@@ -299,7 +299,7 @@ describe('Access Checker', function () {
     }
 
     it('returns true when has feature and is admin of space, false otherwise', function () {
-      OrganizationList.resetWithUser({organizationMemberships: []});
+      OrganizationList.setUser({organizationMemberships: []});
       changeSpace(false, true);
       expect(ac.canModifyRoles()).toBe(false);
       changeSpace(true, false);
@@ -315,7 +315,7 @@ describe('Access Checker', function () {
         {organization: {sys: {id: 'org3id'}}, role: 'owner'}
       ]};
 
-      OrganizationList.resetWithUser(user);
+      OrganizationList.setUser(user);
       changeSpace(true, false);
 
       expect(ac.canModifyUsers()).toBe(false);

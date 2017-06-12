@@ -14,7 +14,7 @@ describe('Enforcements service', function () {
     enforcements = this.$inject('enforcements');
     spaceContext = this.$inject('spaceContext');
     OrganizationList = this.$inject('services/OrganizationList');
-    OrganizationList.resetWithUser({ sys: {id: 123} });
+    OrganizationList.setUser({ sys: {id: 123} });
 
     _.extend(spaceContext, cfStub.mockSpaceContext());
 

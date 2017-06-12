@@ -19,33 +19,26 @@ angular.module('contentful')
   var tokenStore = require('tokenStore');
   var CreateSpace = require('services/CreateSpace');
 
-  // subscribe to changes of spaces in token:
-  K.onValueScope($scope, tokenStore.spaces$, storeSpaces);
-  K.onValueScope($scope, tokenStore.spacesByOrganization$, storeSpacesByOrganization);
-  K.onValueScope($scope, tokenStore.organizations$, storeOrganizations);
+  // subscribe to changes in token:
+  K.onValueScope($scope, tokenStore.spaces$, function (spaces) {
+    $scope.spaces = spaces;
+  });
+  K.onValueScope($scope, tokenStore.spacesByOrganization$, function (spacesByOrg) {
+    $scope.spacesByOrganization = spacesByOrg;
+  });
+  K.onValueScope($scope, tokenStore.organizations$, function (organizations) {
+    $scope.organizations = organizations;
+  });
 
   $scope.spaceContext = spaceContext;
   $scope.canCreateSpace = accessChecker.canCreateSpace;
   $scope.canCreateSpaceInAnyOrganization = accessChecker.canCreateSpaceInAnyOrganization;
   $scope.clickedSpaceSwitcher = _.partial(analytics.track, 'space_switcher:opened');
   $scope.getOrganizationName = function (id) {
-    var org = _.find($scope.organizations, { sys: { id: id } });
-    return org && org.name;
+    return _.get(_.find($scope.organizations, { sys: { id: id } }), 'name');
   };
   $scope.showCreateSpaceDialog = CreateSpace.showDialog;
   $scope.trackSpaceChange = trackSpaceChange;
-
-  function storeSpaces (spaces) {
-    $scope.spaces = spaces;
-  }
-
-  function storeSpacesByOrganization (spacesByOrg) {
-    $scope.spacesByOrganization = spacesByOrg;
-  }
-
-  function storeOrganizations (organizations) {
-    $scope.organizations = organizations;
-  }
 
   function trackSpaceChange (space) {
     if (spaceContext.getId() !== space.getId()) {

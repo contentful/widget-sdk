@@ -119,10 +119,12 @@ angular.module('contentful')
         tokenInfo = newTokenInfo;
         tokenInfoMVar.put(newTokenInfo);
         var user = newTokenInfo.sys.createdBy;
-        userBus.set(user);
+        var organizations = _.map(user.organizationMemberships, 'organization');
         spacesBus.set(updateSpaces(newTokenInfo.spaces));
-        organizationsBus.set(_.map(user.organizationMemberships, 'organization'));
-        OrganizationList.resetWithUser(user);
+        userBus.set(user);
+        organizationsBus.set(organizations);
+        OrganizationList.setUser(user);
+        OrganizationList.setOrganizations(organizations);
       }, function () {
         ReloadNotification.trigger('The application was unable to authenticate with the server');
       });
@@ -185,8 +187,7 @@ angular.module('contentful')
    * Promise is rejected if organization with a provided ID couldn't be found.
    */
   function getOrganization (id) {
-    return tokenInfoMVar.read().then(function () {
-      var orgs = K.getValue(organizationsBus.property);
+    return getOrganizations().then(function (orgs) {
       var org = _.find(orgs, { sys: { id: id } });
       return org || $q.reject(new Error('No organization with given ID could be found.'));
     });
