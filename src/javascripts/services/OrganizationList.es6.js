@@ -49,16 +49,6 @@ export function setOrganizations (orgs) {
   organizations = orgs;
 }
 
-/**
- * @ngdoc method
- * @name OrganizationList#isEmpty
- * @returns {boolean}
- * @description
- * Returns true if there are no organizations, false otherwise.
- */
-export function isEmpty () {
-  return organizations.length === 0;
-}
 
 export { getOrganization as get };
 /**

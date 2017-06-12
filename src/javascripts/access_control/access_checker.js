@@ -19,6 +19,8 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
   var authorization = require('authorization');
   var logger = require('logger');
   var OrganizationList = require('services/OrganizationList');
+  var TokenStore = require('services/TokenStore');
+  var K = require('utils/kefir');
   var policyChecker = require('accessChecker/policy');
   var cache = require('accessChecker/responseCache');
   var capitalize = require('stringUtils').capitalize;
@@ -370,7 +372,6 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
    * Returns true if space can be created.
    */
   function canCreateSpace () {
-    if (OrganizationList.isEmpty()) { return false; }
     if (!authorization.authContext) { return false; }
     if (!canCreateSpaceInAnyOrganization()) { return false; }
 
@@ -388,7 +389,8 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
    * Returns true if space can be created in any organization.
    */
   function canCreateSpaceInAnyOrganization () {
-    return _.some(OrganizationList.getAll(), function (org) {
+    var orgs = K.getValue(TokenStore.organizations$);
+    return _.some(orgs, function (org) {
       return canCreateSpaceInOrganization(org.sys.id);
     });
   }

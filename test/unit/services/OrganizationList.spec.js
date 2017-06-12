@@ -21,17 +21,6 @@ describe('OrgniaztionList', function () {
     ORG_3 = { sys: { id: 'org3' }, name: '3rd ORG' };
   });
 
-  describe('#isEmpty', function () {
-    it('returns `false` initially', function () {
-      expect(OrganizationList.isEmpty()).toBe(true);
-    });
-
-    it('returns `true` if user data is given', function () {
-      OrganizationList.resetWithUser(makeUser([ ORG_1 ]));
-      expect(OrganizationList.isEmpty()).toBe(false);
-    });
-  });
-
   describe('#get', function () {
     beforeEach(function () {
       OrganizationList.setUser(makeUser([ ORG_1, ORG_2 ]));

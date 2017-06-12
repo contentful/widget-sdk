@@ -192,19 +192,14 @@ describe('Client Controller', function () {
   });
 
   describe('organizations on the scope', function () {
-    let OrganizationList, logger;
+    let logger;
 
     beforeEach(function () {
-      OrganizationList = this.$inject('services/OrganizationList');
       logger = this.$inject('logger');
     });
 
     afterEach(function () {
-      OrganizationList = logger = null;
-    });
-
-    it('are initially not set', function () {
-      expect(OrganizationList.isEmpty()).toBe(true);
+      logger = null;
     });
 
     describe('if user exists', function () {

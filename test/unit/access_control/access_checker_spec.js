@@ -1,7 +1,7 @@
-'use strict';
+import * as K from 'helpers/mocks/kefir';
 
 describe('Access Checker', function () {
-  let $rootScope, spaceContext, authorization, enforcements, OrganizationList, policyChecker, ac;
+  let $rootScope, spaceContext, authorization, enforcements, OrganizationList, TokenStore, policyChecker, ac;
   let getResStub, reasonsDeniedStub;
 
   function triggerChange () {
@@ -23,6 +23,7 @@ describe('Access Checker', function () {
     authorization = this.$inject('authorization');
     enforcements = this.$inject('enforcements');
     OrganizationList = this.$inject('services/OrganizationList');
+    TokenStore = this.$inject('services/TokenStore');
     policyChecker = this.$inject('accessChecker/policy');
     ac = this.$inject('accessChecker');
 
@@ -361,13 +362,9 @@ describe('Access Checker', function () {
 
   describe('#canCreateSpaceInAnyOrganization', function () {
     beforeEach(function () {
-      sinon.stub(OrganizationList, 'getAll').returns([
+      TokenStore.organizations$ = K.createMockProperty([
         {sys: {id: 'org1'}}, {sys: {id: 'org2'}}
       ]);
-    });
-
-    afterEach(function () {
-      OrganizationList.getAll.restore();
     });
 
     it('returns true if space can be created in at least on organization', function () {
@@ -394,16 +391,10 @@ describe('Access Checker', function () {
 
     beforeEach(function () {
       organizationCanStub = sinon.stub().returns(false);
-      sinon.stub(OrganizationList, 'isEmpty').returns(false);
-      sinon.stub(OrganizationList, 'getAll').returns([{sys: {id: 'org1'}}]);
+      TokenStore.organizations$ = K.createMockProperty([{sys: {id: 'org1'}}]);
       authorization.authContext = makeAuthContext({
         org1: organizationCanStub
       });
-    });
-
-    afterEach(function () {
-      OrganizationList.getAll.restore();
-      OrganizationList.isEmpty.restore();
     });
 
     it('returns false when authContext is not defined', function () {
@@ -412,9 +403,8 @@ describe('Access Checker', function () {
     });
 
     it('returns false when there are no organizations', function () {
-      OrganizationList.isEmpty.returns(true);
+      TokenStore.organizations$.set([]);
       expect(ac.canCreateSpace()).toBe(false);
-      sinon.assert.calledOnce(OrganizationList.isEmpty);
     });
 
     it('returns false when cannot create space in some organization', function () {
