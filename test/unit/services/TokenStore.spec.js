@@ -158,11 +158,5 @@ describe('Token store service', function () {
         sinon.match(this.organizations)
       );
     });
-
-    it('OrganizationList orgs are set', function* () {
-      yield this.refresh();
-      expect(this.OrganizationList.getAll()).toEqual(this.organizations);
-    });
   });
-
 });

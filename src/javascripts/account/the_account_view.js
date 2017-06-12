@@ -14,10 +14,11 @@ angular.module('contentful')
   var $q = require('$q');
   var spaceContext = require('spaceContext');
   var OrganizationList = require('services/OrganizationList');
-  var tokenStore = require('services/TokenStore');
+  var TokenStore = require('services/TokenStore');
+  var K = require('utils/kefir');
   var Navigator = require('states/Navigator');
 
-  var canShowIntercomLink$ = tokenStore.user$.map(function (user) {
+  var canShowIntercomLink$ = TokenStore.user$.map(function (user) {
     var organizationMemberships = user && user.organizationMemberships || [];
     var canShowIntercomLink = _.find(organizationMemberships, function (membership) {
       var subscriptionStatus = _.get(membership, 'organization.subscription.status');
@@ -132,7 +133,7 @@ angular.module('contentful')
     var orgs = [spaceContext.getData('organization')];
     if (!orgs[0]) {
       // No space yet, get next best organization.
-      orgs = OrganizationList.getAll();
+      orgs = K.getValue(TokenStore.organizations$);
     }
     return findOwnedOrgWithState(orgs, 'trial') ||
       findOwnedOrgWithState(orgs, 'active') ||

@@ -66,17 +66,6 @@ function getOrganization (id) {
 
 /**
  * @ngdoc method
- * @name OrganizationList#getAll
- * @returns {object[]}
- * @description
- * Gets all organizations as an array.
- */
-export function getAll () {
-  return organizations;
-}
-
-/**
- * @ngdoc method
  * @name OrganizationList#isOwnerOrAdmin
  * @param {object} organization
  * @description

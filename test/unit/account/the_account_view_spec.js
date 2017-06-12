@@ -11,8 +11,7 @@ describe('TheAccountView service', function () {
     };
 
     this.OrganizationList = {
-      isOwnerOrAdmin: sinon.stub(),
-      getAll: sinon.stub()
+      isOwnerOrAdmin: sinon.stub()
     };
 
     module('contentful/test', ($provide) => {
@@ -20,8 +19,9 @@ describe('TheAccountView service', function () {
       $provide.value('services/OrganizationList', this.OrganizationList);
     });
 
-    this.tokenStore = this.mockService('services/TokenStore', {
-      user$: K.createMockProperty(null)
+    this.TokenStore = this.mockService('services/TokenStore', {
+      user$: K.createMockProperty(null),
+      organizations$: K.createMockProperty([])
     });
 
     this.view = this.$inject('TheAccountView');
@@ -39,7 +39,7 @@ describe('TheAccountView service', function () {
         organizations.forEach(function (organization) {
           user.organizationMemberships.push({ organization });
         });
-        this.tokenStore.user$.set(user);
+        this.TokenStore.user$.set(user);
       };
 
       this.createOrganization = function (status) {
@@ -98,7 +98,7 @@ describe('TheAccountView service', function () {
 
     describe('without any space', function () {
       beforeEach(function () {
-        this.OrganizationList.getAll.returns(ORGS);
+        this.TokenStore.organizations$.set(ORGS);
       });
 
       it('references the next best organization', function () {
