@@ -17,23 +17,26 @@ angular.module('contentful')
   var OrganizationRoles = require('services/OrganizationRoles');
   var tokenStore = require('services/TokenStore');
 
-  var orgId = $state.params.orgId;
-  controller.selectedOrganizationId = orgId;
   controller.goToOrganization = goToOrganization;
   controller.isTabSelected = isTabSelected;
 
   K.onValueScope($scope, tokenStore.organizations$, function (organizations) {
-    controller.organizations = organizations;
+    updateNav(organizations, $state.params.orgId);
   });
 
-  getOrganization(orgId).then(function (org) {
-    if (org) {
-      controller.tabs = makeTabs(org);
-    } else {
-      // Redirect to home since the organization is invalid
-      $state.go('home');
-    }
-  });
+  function updateNav (organizations, selectedOrgId) {
+    controller.selectedOrganizationId = selectedOrgId;
+    controller.organizations = organizations;
+
+    getOrganization(selectedOrgId).then(function (org) {
+      if (org) {
+        controller.tabs = makeTabs(org);
+      } else {
+        // Redirect to home since the organization is invalid
+        $state.go('home');
+      }
+    });
+  }
 
   // Go to the corresponding page in the other organization or the defualt
   // `subscription` page if it's not available
