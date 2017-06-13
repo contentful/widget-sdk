@@ -315,6 +315,34 @@ describe('Policy Access Checker', function () {
       }]};
     }
 
+    function allowIdPolicy (entityId) {
+      return {policies: [{
+        effect: 'allow',
+        actions: ['all'],
+        constraint: {and: [
+          {equals: [{doc: 'sys.type'}, 'Entry']},
+          {equals: [{doc: 'sys.id'}, entityId]}
+        ]}
+      }]};
+    }
+
+    function denyIdPolicy (entityId) {
+      return {policies: [{
+        effect: 'allow',
+        actions: ['all'],
+        constraint: {and: [
+          {equals: [{doc: 'sys.type'}, 'Entry']}
+        ]}
+      }, {
+        effect: 'deny',
+        actions: ['all'],
+        constraint: {and: [
+          {equals: [{doc: 'sys.type'}, 'Entry']},
+          {equals: [{doc: 'sys.id'}, entityId]}
+        ]}
+      }]};
+    }
+
     function assetPathPolicy (path, effect) {
       return {policies: [{
         effect: (effect || 'allow'),
@@ -397,6 +425,16 @@ describe('Policy Access Checker', function () {
     it('returns false if CT does not match', function () {
       setRole(pathPolicy('fields.test.pl'));
       test({apiName: 'test'}, {code: 'pl'}, false, 'x');
+    });
+
+    it('returns true if entity has been allowed by ID', function () {
+      setRole(allowIdPolicy('entry1'));
+      test({apiName: 'test'}, {code: 'pl'}, true);
+    });
+
+    it('returns false if entity has been denied by ID', function () {
+      setRole(denyIdPolicy('entry1'));
+      test({apiName: 'test'}, {code: 'pl'}, false);
     });
 
     it('returns false for asset field w/o allow policies', function () {

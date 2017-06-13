@@ -41,6 +41,8 @@ angular.module('contentful').factory('accessChecker/policy', ['require', functio
 
     groupByContentType('allowed');
     groupByContentType('denied');
+    groupByEntityId('entry', 'allowed');
+    groupByEntityId('entry', 'denied');
   }
 
   function groupByContentType (collectionName) {
@@ -51,6 +53,17 @@ angular.module('contentful').factory('accessChecker/policy', ['require', functio
       if (_.isString(p.contentType)) {
         collection.byContentType[p.contentType] = collection.byContentType[p.contentType] || [];
         collection.byContentType[p.contentType].push(p);
+      }
+    });
+  }
+
+  function groupByEntityId (type, collectionName) {
+    var collection = policies[type][collectionName];
+    collection.byId = [];
+
+    _.forEach(collection.flat, function (p) {
+      if (_.isString(p.entityId)) {
+        collection.byId.push(p);
       }
     });
   }
@@ -66,8 +79,13 @@ angular.module('contentful').factory('accessChecker/policy', ['require', functio
       return cached;
     }
 
-    var allowed = contentTypeId ? getAllowed(contentTypeId) : policies.asset.allowed;
-    var denied = contentTypeId ? getDenied(contentTypeId) : policies.asset.denied;
+    var allowed = contentTypeId
+      ? getAllowed(contentTypeId).concat(getAllowedEntries())
+      : policies.asset.allowed;
+
+    var denied = contentTypeId
+      ? getDenied(contentTypeId).concat(getDeniedEntries())
+      : policies.asset.denied;
 
     var hasAllowing = checkPolicyCollectionForPath(allowed, fieldId, localeCode);
     var hasDenying = checkPolicyCollectionForPath(denied, fieldId, localeCode);
@@ -133,6 +151,14 @@ angular.module('contentful').factory('accessChecker/policy', ['require', functio
     var generalItems = ctGroups[CONFIG.ALL_CTS] || [];
 
     return _.union(ctSpecificItems, generalItems);
+  }
+
+  function getAllowedEntries () {
+    return policies.entry.allowed.byId;
+  }
+
+  function getDeniedEntries () {
+    return policies.entry.denied.byId;
   }
 
   function anyUserUpdatePoliciesOnly (c) {

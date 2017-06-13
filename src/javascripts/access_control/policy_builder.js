@@ -4,6 +4,7 @@ angular.module('contentful').constant('PolicyBuilder/CONFIG', {
   ALL_FIELDS: '__cf_internal_all_fields__',
   ALL_LOCALES: '__cf_internal_all_locales__',
   ALL_CTS: '__cf_internal_all_cts__',
+  NO_CTS: '__cf_internal_no_cts__',
   PATH_WILDCARD: '%',
   PATH_SEPARATOR: '.'
 });
@@ -165,14 +166,22 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['$injector', f
       rest.splice(ctConstraint.index, 1);
     }
 
-    // 3. find scope
+    // 3. find matching entity ID
+    var idConstraint = findIdConstraint(rest);
+    if (idConstraint.value) {
+      rule.contentType = CONFIG.NO_CTS;
+      rule.entityId = idConstraint.value;
+      rest.splice(idConstraint.index, 1);
+    }
+
+    // 4. find scope
     var scopeConstraint = findScopeConstraint(rest);
     if (scopeConstraint.value) {
       rule.scope = _.isString(scopeConstraint.value) ? 'user' : 'any';
       rest.splice(scopeConstraint.index, 1);
     }
 
-    // 4. find path
+    // 5. find path
     var pathConstraint = findPathConstraint(rest);
     if (pathConstraint.value) {
       rule.isPath = true;
@@ -194,6 +203,12 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['$injector', f
   function findContentTypeConstraint(cs) {
     return searchResult(cs, _.findIndex(cs, function (c) {
       return docEq(c, 'sys.contentType.sys.id') && _.isString(c.equals[1]);
+    }));
+  }
+
+  function findIdConstraint(cs) {
+    return searchResult(cs, _.findIndex(cs, function (c) {
+      return docEq(c, 'sys.id') && _.isString(c.equals[1]);
     }));
   }
 
