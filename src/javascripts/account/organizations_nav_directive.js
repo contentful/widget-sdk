@@ -11,7 +11,6 @@ angular.module('contentful')
 
 .controller('organizationsNavController', ['$scope', 'require', function ($scope, require) {
   var controller = this;
-  var $q = require('$q');
   var $state = require('$state');
   var K = require('utils/kefir');
   var OrganizationRoles = require('services/OrganizationRoles');
@@ -28,13 +27,11 @@ angular.module('contentful')
     controller.selectedOrganizationId = selectedOrgId;
     controller.organizations = organizations;
 
-    getOrganization(selectedOrgId).then(function (org) {
-      if (org) {
-        controller.tabs = makeTabs(org);
-      } else {
-        // Redirect to home since the organization is invalid
-        $state.go('home');
-      }
+    tokenStore.getOrganization(selectedOrgId).then(function (org) {
+      controller.tabs = makeTabs(org);
+    }, function () {
+      // Redirect to home since the organization is invalid
+      $state.go('home');
     });
   }
 
@@ -56,21 +53,6 @@ angular.module('contentful')
 
   function isTabSelected (tab) {
     return $state.current.name === tab.state.path.join('.');
-  }
-
-  // Get the requested organization. Try to refresh the user token if the
-  // requested org is not on the list as the list may not be up to date.
-  function getOrganization (orgId) {
-    var org = _.find(controller.organizations, { sys: { id: orgId } });
-    if (org) {
-      return $q.resolve(org);
-    } else {
-      return tokenStore.refresh().then(function () {
-        return tokenStore.getOrganization(orgId);
-      }).catch(function () {
-        return null;
-      });
-    }
   }
 
   function makeTabs (org) {
