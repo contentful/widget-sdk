@@ -11,28 +11,27 @@ guide](./CONTRIBUTING.md).
 
 ## Running and developing
 
-The application can be run from the [Lab][] or against the staging and
-production APIs.
+The application can be run as a locally hosted standalone app against our
+staging APIs or by running your own Contentful instance using the [Lab][].
 
-If you are using the Lab follow its readme to provision the VM using vagrant.
-Then start the UI environment with
-~~~
-vagrant ssh
-tmuxinator user_interface
-~~~
 
-[Lab]: https://github.com/contentful/lab/
-
-### Using Staging and Production APIs
+### Running the standalone app
 
 The Web App can be served locally as a stand-alone app by using the staging and
 production APIs.
 
-* You must be a member of the [“Frontend” team][gh-fe-team] on Github
-* You must be a member of the [“Frontend” team][npm-fe-team] on NPM
+* You must be a member of the [“Frontend” team][gh-fe-team] on Github or any
+  other team that has access to the required repositories
+* You must be a member of the [“Frontend” team][npm-fe-team] on NPM or any
+  other team that has access to the required repositories
 * You must have [NVM][] installed
+* You must have an account on our staging environment `app.flinkly.com`.
 
-Now you can install the dependencies and start the server
+You first must obtain an access token for the staging environment: Visit to
+`app.flinkly.com`, log in, and go to “APIs” → “Content management tokens”.
+Create a new token and copy its value. You’ll need it later
+
+Now you can install the dependencies and start hosting the web application.
 
 ~~~js
 nvm use
@@ -41,19 +40,43 @@ bin/install-dependencies
 UI_CONFIG=dev-on-staging ./node_modules/.bin/gulp all serve
 ~~~
 
-The usual login flow does not work with this setup. You need to manually open
-`localhost:3001/#access_token=<your access token>`.
-The easiest way to obtain an access token is to use the [Contentful
-authentication documentation][cf-auth-doc]. Alternatively you can inspect
-`localStorage.token` in the browser console on `app.flinkly.com` when you are
-logged in.
+Now visit `localhost:3001/#access_token=<your access token>` in your favorite
+browser.
 
+#### Limitations
+
+Running the web app against the staging environment has a couple of limitations.
+If you run into them you’ll need to run the application in the Lab.
+
+* You cannot use the normal login flow. You can only use
+  `localhost:3001/#access_token=<your access token>` to login.
+* The Gatekeeper views cannot be shown.
 
 [NVM]: https://github.com/creationix/nvm
 [npm-fe-team]: https://www.npmjs.com/org/contentful/team/frontend
 [gh-fe-team]: https://github.com/orgs/contentful/teams/frontend
 [cf-auth-doc]: http://www.flinkly.com/developers/docs/references/authentication/#the-content-management-api
 
+
+### Running the tests
+
+You need to have Firefox installed.
+
+~~~bash
+$ npm install -g karma-cli gulp-cli
+$ bin/install-slimerjs
+$ gulp prepare-tests
+$ karma start
+~~~
+
+For more information, see the [testing guide](./tree/master/docs/guides/testing.md)
+
+
+### Running a full Contentful Instance
+
+See the [Lab Readme][].
+
+[Lab]: https://github.com/contentful/lab/
 
 ## Showing API documentation
 

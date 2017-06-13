@@ -50,7 +50,6 @@ test/unit/app/entity_editor/locales_controller_spec.js
 test/unit/app/entity_editor/status_notifications_controller_spec.js
 test/unit/data/content_types_spec.js
 test/unit/data/editing_interfaces/transformer_spec.js
-test/unit/data/user_cache_spec.js
 test/unit/markdown_editor/link_organizer_spec.js
 test/unit/ui/command_spec.js
 test/unit/ui/command_directive_spec.js
@@ -65,7 +64,6 @@ test/unit/webhooks/webhook_call_status_directive_spec.js
 test/unit/webhooks/webhook_editor_directive_spec.js
 test/unit/webhooks/webhook_health_directive_spec.js
 test/unit/webhooks/webhook_repository_spec.js
-test/unit/webhooks/webhook_segmentation_spec.js
 test/helpers/deep_diff.js
 test/integration/field_validation_dialog_spec.js
 src/javascripts/components/client/cf_main_nav_bar_directive.js
@@ -191,7 +189,6 @@ src/javascripts/widgets/deprecations.js
 src/javascripts/widgets/migrations.js
 src/javascripts/data/content_types.js
 src/javascripts/data/editing_interfaces/transformer.js
-src/javascripts/data/user_cache.js
 src/javascripts/markdown_editor/cf_markdown_action_directive.js
 src/javascripts/markdown_editor/link_organizer.js
 src/javascripts/markdown_editor/markdown_special_characters.js
@@ -201,7 +198,6 @@ src/javascripts/utils/encoder.js
 src/javascripts/utils/keycodes.js
 src/javascripts/utils/memoize.js
 src/javascripts/utils/overriding_request_queue.js
-src/javascripts/libs/markdown_vendors.js
 src/javascripts/kaltura_credentials.js
 src/javascripts/ui.js
 src/javascripts/access_control/cf_rule_list.js

@@ -35,10 +35,8 @@ angular.module('contentful')
   var DataFields = require('EntityEditor/DataFields');
   var ContentTypes = require('data/ContentTypes');
   var K = require('utils/kefir');
-  var Validator = require('entityEditor/Validator');
-  var createEntrySchema = require('validation').fromContentType;
+  var Validator = require('app/entity_editor/Validator');
   var localeStore = require('TheLocaleStore');
-  var errorMessageBuilder = require('errorMessageBuilder');
   var Focus = require('app/entity_editor/Focus');
   var installTracking = require('app/entity_editor/Tracking').default;
   var deepFreeze = require('utils/DeepFreeze').deepFreeze;
@@ -62,19 +60,18 @@ angular.module('contentful')
 
   installTracking(entityInfo, doc, K.scopeLifeline($scope));
 
-  var schema = createEntrySchema(entityInfo.contentType, localeStore.getPrivateLocales());
-  var buildMessage = errorMessageBuilder(spaceContext.publishedCTs);
-  var validator = Validator.create(buildMessage, schema, function () {
-    return $scope.otDoc.getValueAt([]);
-  });
-  validator.run();
-  this.validator = validator;
+  this.validator = Validator.createForEntry(
+    entityInfo.contentType,
+    $scope.otDoc,
+    spaceContext.publishedCTs,
+    localeStore.getPrivateLocales()
+  );
 
   $scope.state = $controller('entityEditor/StateController', {
     $scope: $scope,
     entity: editorData.entity,
     notify: notify,
-    validator: validator,
+    validator: this.validator,
     otDoc: $scope.otDoc
   });
 

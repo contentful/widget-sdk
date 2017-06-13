@@ -91,7 +91,7 @@ angular.module('contentful')
       resetMembers(self);
       self.space = space;
       self.cma = new ApiClient(self.endpoint);
-      self.users = createUserCache(space);
+      self.users = createUserCache(self.endpoint);
       self.apiKeyRepo = createApiKeyRepo(self.endpoint);
       self.editingInterfaces = createEIRepo(self.endpoint);
       var organization = self.getData('organization') || null;

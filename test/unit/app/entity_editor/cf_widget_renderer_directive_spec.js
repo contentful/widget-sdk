@@ -16,7 +16,8 @@ describe('cfWidgetRenderer Directive', function () {
     };
 
     this.fieldLocale = {
-      setActive: sinon.stub()
+      setActive: sinon.stub(),
+      revalidate: sinon.stub()
     };
 
     this.compile = function () {
@@ -65,5 +66,13 @@ describe('cfWidgetRenderer Directive', function () {
     this.$apply();
     sinon.assert.calledOnce(this.fieldLocale.setActive);
     sinon.assert.calledWith(this.fieldLocale.setActive, false);
+  });
+
+  it('revalidates field locale when element is unfocused', function () {
+    this.widget.template = '<div>';
+    const el = this.compile();
+    el.trigger('focusout');
+    this.$apply();
+    sinon.assert.calledOnce(this.fieldLocale.revalidate);
   });
 });

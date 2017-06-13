@@ -17,14 +17,12 @@ angular.module('contentful')
     loadingText: 'Loading Locales...',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
-      contextHistory.add(crumbFactory.LocaleList());
     }],
     template: '<div cf-locale-list class="workbench locale-list entity-list"></div>'
   });
 
   var localeEditorState = {
     template: '<cf-locale-editor class="workbench" />',
-    params: { addToContext: true },
     controller: [
       '$scope', 'require', 'locale', 'spaceLocales',
       function ($scope, require, locale, spaceLocales) {
@@ -35,8 +33,10 @@ angular.module('contentful')
         $scope.locale = locale;
         $scope.spaceLocales = spaceLocales;
 
-        contextHistory.add(crumbFactory.LocaleList());
-        contextHistory.add(crumbFactory.Locale($stateParams.localeId, $scope.context));
+        contextHistory.set([
+          crumbFactory.LocaleList(),
+          crumbFactory.Locale($stateParams.localeId, $scope.context)
+        ]);
       }
     ]
   };

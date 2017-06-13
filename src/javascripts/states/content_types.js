@@ -19,7 +19,6 @@ angular.module('contentful')
     loadingText: 'Loading content model...',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
-      contextHistory.add(crumbFactory.ContentTypeList());
     }],
     template: '<div cf-content-type-list class="workbench entity-list"></div>'
   });
@@ -106,7 +105,6 @@ angular.module('contentful')
 
   function editorBase (options) {
     return _.extend({
-      params: { addToContext: true },
       abstract: true,
       controller: [
         '$scope', 'require', 'contentType', 'editingInterface', 'publishedContentType',
@@ -119,8 +117,10 @@ angular.module('contentful')
           $scope.editingInterface = editingInterface;
           $scope.publishedContentType = publishedContentType;
 
-          contextHistory.add(crumbFactory.ContentTypeList());
-          contextHistory.add(crumbFactory.ContentType($stateParams.contentTypeId, $scope.context));
+          contextHistory.set([
+            crumbFactory.ContentTypeList(),
+            crumbFactory.ContentType($stateParams.contentTypeId, $scope.context)
+          ]);
         }
       ],
       template:

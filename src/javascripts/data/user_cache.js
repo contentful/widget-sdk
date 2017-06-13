@@ -8,12 +8,13 @@ angular.module('cf.data')
  * @description
  * Creates a user cache for a space.
  *
- * Only one request to the users API is sent. All further calls use
+ * Users are fetched only once, but we use the `FetchAll` utility so multiple
+ * requests can be fired. All further calls to `get` and `getAll` will use
  * the first result.
  *
  * @usage[js]
  * var createCache = $injector.get('data/userCache')
- * var users = createCache(space)
+ * var users = createCache(spaceContext.endpoint)
  *
  * // triggers request
  * users.getAll()
@@ -27,11 +28,12 @@ angular.module('cf.data')
  *   // ...
  * })
  */
-.factory('data/userCache', ['$injector', function ($injector) {
-  var memoize = $injector.get('utils/memoize');
+.factory('data/userCache', ['require', function (require) {
+  var memoize = require('utils/memoize');
+  var fetchAll = require('data/CMA/FetchAll').fetchAll;
 
-  return function createCache (space) {
-    var getUserMap = createUserFetcher(space);
+  return function createCache (endpoint) {
+    var getUserMap = createUserFetcher(endpoint);
 
     var getUserList = memoize(function () {
       return getUserMap().then(_.values);
@@ -47,15 +49,15 @@ angular.module('cf.data')
     };
   };
 
-  function createUserFetcher (space) {
+  function createUserFetcher (endpoint) {
     return memoize(function () {
-      return space.getUsers().then(mapUsersById);
+      return fetchAll(endpoint, ['users'], 100).then(mapUsersById);
     });
   }
 
   function mapUsersById (users) {
     return _.transform(users, function (map, user) {
-      map[user.getId()] = user;
+      map[user.sys.id] = user;
     }, {});
   }
 }]);

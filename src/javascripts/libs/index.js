@@ -4,7 +4,8 @@ require('angular-ui-sortable');
 
 angular.module('cf.libs', [])
   .constant('libs/qs', require('qs'))
-  .constant('libs/marked', require('marked'))
+  .constant('libs/marked', require('marked-ast')._marked)
+  .constant('libs/MarkedAst', require('marked-ast'))
   .constant('libs/launch-darkly-client', require('ldclient-js'))
   .constant('libs/element-resize-detector', require('element-resize-detector'))
   .constant('libs/sum-types', require('sum-types'))

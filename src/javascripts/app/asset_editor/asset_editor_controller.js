@@ -9,10 +9,8 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var truncate = require('stringUtils').truncate;
   var K = require('utils/kefir');
-  var Validator = require('entityEditor/Validator');
+  var Validator = require('app/entity_editor/Validator');
   var localeStore = require('TheLocaleStore');
-  var createAssetSchema = require('validation').schemas.Asset;
-  var errorMessageBuilder = require('errorMessageBuilder');
   var Focus = require('app/entity_editor/Focus');
   var installTracking = require('app/entity_editor/Tracking').default;
   var initDocErrorHandler = require('app/entity_editor/DocumentErrorHandler').default;
@@ -34,13 +32,10 @@ angular.module('contentful')
 
   installTracking(entityInfo, $scope.otDoc, K.scopeLifeline($scope));
 
-  var schema = createAssetSchema(localeStore.getPrivateLocales());
-  var buildMessage = errorMessageBuilder.forAsset;
-  var validator = Validator.create(buildMessage, schema, function () {
-    return $scope.otDoc.getValueAt([]);
-  });
-  validator.run();
-  this.validator = validator;
+  this.validator = Validator.createForAsset(
+    $scope.otDoc,
+    localeStore.getPrivateLocales()
+  );
 
   this.focus = Focus.create();
 
@@ -48,7 +43,7 @@ angular.module('contentful')
     $scope: $scope,
     entity: editorData.entity,
     notify: notify,
-    validator: validator,
+    validator: this.validator,
     otDoc: $scope.otDoc
   });
 

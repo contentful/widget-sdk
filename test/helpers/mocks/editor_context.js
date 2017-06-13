@@ -38,7 +38,8 @@ angular.module('contentful/mocks')
       hasFieldLocaleError: sinon.stub().returns(false),
       setApiResponseErrors: sinon.spy(function (response) {
         errors$.set(dotty.get(response, ['body', 'details', 'errors']));
-      })
+      }),
+      validateFieldLocale: sinon.spy()
     };
   }
 }]);

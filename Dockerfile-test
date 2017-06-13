@@ -1,4 +1,4 @@
-FROM contentful/user-interface-base:2
+FROM contentful/user-interface-base:3
 
 ARG NPM_TOKEN
 WORKDIR /app

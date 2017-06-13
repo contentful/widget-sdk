@@ -37,6 +37,7 @@ angular.module('cf.app')
       moveValueAt: $q.resolve,
       sysProperty: K.constant(data.sys),
       changes: K.constant([]),
+      localFieldChanges$: K.never(),
       collaboratorsFor: _.constant(K.constant([])),
       notifyFocus: _.noop,
       setReadOnly: _.noop

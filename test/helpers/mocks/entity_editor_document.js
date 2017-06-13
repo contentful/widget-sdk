@@ -64,6 +64,7 @@ angular.module('contentful/mocks')
       },
 
       getData: sinon.spy(getData),
+      data$: data$,
 
       getValueAt: sinon.spy(getValueAt),
 

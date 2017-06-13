@@ -40,6 +40,15 @@ angular.module('contentful')
   $scope.showCreateSpaceDialog = CreateSpace.showDialog;
   $scope.trackSpaceChange = trackSpaceChange;
 
+  /**
+   * This is a temporary hack for showing spaces that use the closed
+   * beta feature of cloning. We are going to remove it as the feature
+   * progresses
+   */
+  $scope.isDevSpace = function (space) {
+    return !!_.get(space, 'data.sys.id', '').match('-');
+  };
+
   function trackSpaceChange (space) {
     if (spaceContext.getId() !== space.getId()) {
       analytics.track('space_switcher:space_switched', {

@@ -1,10 +1,13 @@
+- var devSpaceMsg = "This space is using a beta feature. Do not use unless you know what you are doing"
 .space-selector.app-top-bar__child.app-top-bar--right-separator(
   ng-show="spaces.length > 0 || canCreateSpaceInAnyOrganization()")
   a.app-top-bar__menu-trigger(
     role="button"
     cf-context-menu-trigger ng-click="clickedSpaceSwitcher()"
     data-test-id="space-selector-trigger")
-    span.space-selector__name.u-truncate(ng-bind="spaceContext.space.data.name || 'Spaces'")
+    span.space-selector__dev-badge-head(ng-if="isDevSpace(spaceContext.space)" title=devSpaceMsg)
+    span.space-selector__name.u-truncate
+      | {{spaceContext.space.data.name || 'Spaces'}}
     cf-icon.icon-dd-arrow-down(name="dd-arrow-down" size="10")
   .space-selector__menu.context-menu.x--arrow-left.x--top-bar(
     role="menu" cf-context-menu="bottom-left"
@@ -19,6 +22,7 @@
           ng-repeat="space in org track by space.getId()"
           ng-click="trackSpaceChange(space)"
           ng-class="{selected: space.getId() === spaceContext.getId()}")
+          span.space-selector__dev-badge(ng-if="isDevSpace(space)" title=devSpaceMsg)
           | {{space.data.name}}
     .space-selector__group(
       ng-show="canCreateSpace()")

@@ -85,7 +85,7 @@ describe('spaceContext', function () {
       const createUserCache = this.$inject('data/userCache');
       createUserCache.resetHistory().returns(userCache);
       this.spaceContext.resetWithSpace(SPACE);
-      sinon.assert.calledWithExactly(createUserCache, SPACE);
+      sinon.assert.calledWithExactly(createUserCache, this.spaceContext.endpoint);
       expect(this.spaceContext.users).toBe(userCache);
     });
 

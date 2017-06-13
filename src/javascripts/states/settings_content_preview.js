@@ -23,16 +23,12 @@ angular.module('contentful')
       if (!accessChecker.getSectionVisibility().settings) {
         $scope.context.forbidden = true;
       }
-
-      // add list view as top state
-      contextHistory.add(crumbFactory.PreviewEnvList());
     }]
   });
 
   function editorBase (options) {
     var contentPreviewEditorState = base({
       template: '<cf-content-preview-editor class="workbench">',
-      params: { addToContext: true },
       loadingText: 'Loading content preview...',
       controller: ['require', '$scope', 'contentPreview', function (require, $scope, contentPreview) {
         var $state = require('$state');
@@ -41,11 +37,10 @@ angular.module('contentful')
         $scope.context = $state.current.data;
         $scope.contentPreview = contentPreview;
 
-        // add list view as parent
-        contextHistory.add(crumbFactory.PreviewEnvList());
-
-        // add current view as child
-        contextHistory.add(crumbFactory.PreviewEnv($stateParams.contentPreviewId, $scope.context));
+        contextHistory.set([
+          crumbFactory.PreviewEnvList(),
+          crumbFactory.PreviewEnv($stateParams.contentPreviewId, $scope.context)
+        ]);
       }]
     });
 

@@ -1,7 +1,0 @@
-#!/bin/bash
-# This file is run by the lab when it provisions the VM
-
-set -ev
-
-./bin/provision
-./bin/install-dependencies
