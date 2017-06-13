@@ -33,6 +33,13 @@ describe('cfAccountOrganizationsNav directive', function () {
     }];
   });
 
+  it('when org is invalid, redirects to home', function () {
+    this.$state.params.orgId = 'test-org-3';
+    this.tokenStore.getOrganization = sinon.stub().rejects();
+    this.compile();
+    sinon.assert.calledWith(this.$state.go, 'home');
+  });
+
   describe('organization state', function () {
     beforeEach(function () {
       this.$state.current.name = 'account.organizations.users';
@@ -58,22 +65,6 @@ describe('cfAccountOrganizationsNav directive', function () {
           expect(tabList.length).toBe(tabsLength);
         });
       }
-    });
-
-    describe('invalid org', function () {
-      beforeEach(function () {
-        this.$state.params.orgId = 'test-org-3';
-        this.tokenStore.getOrganization = sinon.stub().resolves();
-        this.compile();
-      });
-
-      it('attempts to refresh token', function () {
-        sinon.assert.calledOnce(this.tokenStore.refresh);
-      });
-
-      it('redirects to home', function () {
-        sinon.assert.calledWith(this.$state.go, 'home');
-      });
     });
   });
 });
