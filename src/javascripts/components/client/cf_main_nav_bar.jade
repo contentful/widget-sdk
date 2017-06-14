@@ -1,4 +1,5 @@
 nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
+  cf-space-selector
   ul.nav-bar__list(ng-show="spaceContext.space && !spaceContext.space.isHibernated()")
     li.app-top-bar__action.nav-bar__list-item(
       ng-if="canNavigateTo.spaceHome")
