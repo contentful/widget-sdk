@@ -29,10 +29,7 @@ angular.module('contentful')
 
     tokenStore.getOrganization(selectedOrgId).then(function (org) {
       controller.tabs = makeTabs(org);
-    }, function () {
-      // Redirect to home since the organization is invalid
-      $state.go('home');
-    });
+    }, handleInvalidOrganization);
   }
 
   // Go to the corresponding page in the other organization or the defualt
@@ -48,11 +45,15 @@ angular.module('contentful')
       var targetState = hasCurrentStateRef ? $state.current : defaultState;
 
       $state.go(targetState, { orgId: selectedOrgId }, { inherit: false });
-    });
+    }, handleInvalidOrganization);
   }
 
   function isTabSelected (tab) {
     return $state.current.name === tab.state.path.join('.');
+  }
+
+  function handleInvalidOrganization () {
+    $state.go('home');
   }
 
   function makeTabs (org) {
