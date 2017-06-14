@@ -1,17 +1,17 @@
 'use strict';
 
-angular.module('contentful').directive('cfMainNavBar', ['$injector', function ($injector) {
+angular.module('contentful').directive('cfMainNavBar', ['require', function (require) {
 
-  var accessChecker = $injector.get('accessChecker');
+  var accessChecker = require('accessChecker');
 
   return {
-    template: JST.cf_main_nav_bar(),
+    template: require('components/client/MainNavBar').default(),
     restrict: 'E',
     replace: true,
-    controller: ['$scope', '$injector', function ($scope, $injector) {
+    controller: ['$scope', function ($scope) {
 
-      $scope.$state       = $injector.get('$state');
-      $scope.$stateParams = $injector.get('$stateParams');
+      $scope.$state = require('$state');
+      $scope.$stateParams = require('$stateParams');
 
       $scope.$watch(function () {
         return accessChecker.getSectionVisibility();
