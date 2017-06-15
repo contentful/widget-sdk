@@ -13,7 +13,7 @@ describe('states/spaces', function () {
     this.space.getPublishedContentTypes = sinon.stub().resolves([]);
     this.space.getContentTypes = sinon.stub().resolves([]);
 
-    this.tokenStore = this.mockService('tokenStore');
+    this.tokenStore = this.mockService('services/TokenStore');
     this.tokenStore.getSpace.resolves(this.space);
 
     const states = this.$inject('states');

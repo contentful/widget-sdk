@@ -25,7 +25,7 @@ describe('Client Controller', function () {
       };
       $provide.value('authorization', this.authorizationStubs);
     });
-    this.tokenStore = this.$inject('tokenStore');
+    this.tokenStore = this.$inject('services/TokenStore');
     this.tokenStore.refresh = sinon.stub().resolves();
     this.tokenStore.user$ = K.createMockProperty();
     this.tokenStore.getTokenLookup = sinon.stub().returns({});
@@ -83,7 +83,7 @@ describe('Client Controller', function () {
 
   describe('shows create space dialog', function () {
     beforeEach(function () {
-      this.$inject('OrganizationList').resetWithUser({
+      this.$inject('services/OrganizationRoles').setUser({
         organizationMemberships: [
           {organization: {sys: {id: 'abc'}}},
           {organization: {sys: {id: 'def'}}}
@@ -192,19 +192,14 @@ describe('Client Controller', function () {
   });
 
   describe('organizations on the scope', function () {
-    let OrganizationList, logger;
+    let logger;
 
     beforeEach(function () {
-      OrganizationList = this.$inject('OrganizationList');
       logger = this.$inject('logger');
     });
 
     afterEach(function () {
-      OrganizationList = logger = null;
-    });
-
-    it('are initially not set', function () {
-      expect(OrganizationList.isEmpty()).toBe(true);
+      logger = null;
     });
 
     describe('if user exists', function () {
@@ -224,11 +219,6 @@ describe('Client Controller', function () {
         };
 
         this.analytics = this.$inject('analytics/Analytics');
-      });
-
-      it('are set', function () {
-        this.prepare();
-        expect(OrganizationList.getAll()).toEqual([org1, org2, org3]);
       });
 
       it('sets analytics user data and enables tracking', function () {

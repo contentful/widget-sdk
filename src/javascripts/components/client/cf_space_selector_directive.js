@@ -15,20 +15,28 @@ angular.module('contentful')
   var K = require('utils/kefir');
   var analytics = require('analytics/Analytics');
   var spaceContext = require('spaceContext');
-  var OrganizationList = require('OrganizationList');
   var accessChecker = require('accessChecker');
-  var tokenStore = require('tokenStore');
+  var tokenStore = require('services/TokenStore');
   var CreateSpace = require('services/CreateSpace');
 
-  // subscribe to changes of spaces in token:
-  K.onValueScope($scope, tokenStore.spaces$, storeSpaces);
-  K.onValueScope($scope, tokenStore.spacesByOrganization$, storeSpacesByOrganization);
+  // subscribe to changes in token:
+  K.onValueScope($scope, tokenStore.spaces$, function (spaces) {
+    $scope.spaces = spaces;
+  });
+  K.onValueScope($scope, tokenStore.spacesByOrganization$, function (spacesByOrg) {
+    $scope.spacesByOrganization = spacesByOrg;
+  });
+  K.onValueScope($scope, tokenStore.organizations$, function (organizations) {
+    $scope.organizations = organizations;
+  });
 
   $scope.spaceContext = spaceContext;
   $scope.canCreateSpace = accessChecker.canCreateSpace;
   $scope.canCreateSpaceInAnyOrganization = accessChecker.canCreateSpaceInAnyOrganization;
   $scope.clickedSpaceSwitcher = _.partial(analytics.track, 'space_switcher:opened');
-  $scope.getOrganizationName = OrganizationList.getName;
+  $scope.getOrganizationName = function (id) {
+    return _.get(_.find($scope.organizations, { sys: { id: id } }), 'name');
+  };
   $scope.showCreateSpaceDialog = CreateSpace.showDialog;
   $scope.trackSpaceChange = trackSpaceChange;
 
@@ -40,14 +48,6 @@ angular.module('contentful')
   $scope.isDevSpace = function (space) {
     return !!_.get(space, 'data.sys.id', '').match('-');
   };
-
-  function storeSpaces (spaces) {
-    $scope.spaces = spaces;
-  }
-
-  function storeSpacesByOrganization (spacesByOrg) {
-    $scope.spacesByOrganization = spacesByOrg;
-  }
 
   function trackSpaceChange (space) {
     if (spaceContext.getId() !== space.getId()) {

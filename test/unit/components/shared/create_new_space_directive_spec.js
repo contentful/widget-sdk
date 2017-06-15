@@ -42,7 +42,8 @@ describe('cfCreateNewSpace directive', function () {
         user$: createMockProperty({
           firstName: 'firstName'
         }),
-        spaces$: createMockProperty([])
+        spaces$: createMockProperty([]),
+        organizations$: createMockProperty([])
       },
       space: {
         getId: sinon.stub()
@@ -52,9 +53,6 @@ describe('cfCreateNewSpace directive', function () {
       },
       dialog: {
         confirm: sinon.stub()
-      },
-      OrganizationList: {
-        getAll: sinon.stub()
       }
     };
 
@@ -66,9 +64,8 @@ describe('cfCreateNewSpace directive', function () {
       $provide.value('logger', stubs.logger);
       $provide.value('client', stubs.client);
       $provide.value('enforcements', stubs.enforcements);
-      $provide.value('tokenStore', stubs.tokenStore);
+      $provide.value('services/TokenStore', stubs.tokenStore);
       $provide.value('$state', stubs.state);
-      $provide.value('OrganizationList', stubs.OrganizationList);
       $provide.removeDirectives('cfIcon');
       $provide.stubLaunchDarkly();
     });
@@ -107,7 +104,7 @@ describe('cfCreateNewSpace directive', function () {
         {sys: {id: 'orgid2'}},
         {badorg: true}
       ];
-      stubs.OrganizationList.getAll.returns(this.orgs);
+      stubs.tokenStore.organizations$.set(this.orgs);
       stubs.accessChecker.canCreateSpaceInOrganization.withArgs('orgid').returns(true);
       stubs.accessChecker.canCreateSpaceInOrganization.withArgs('orgid2').returns(false);
       this.setupDirective();
@@ -123,7 +120,7 @@ describe('cfCreateNewSpace directive', function () {
       this.org = {sys: {id: 'orgid'}};
       this.org2 = {sys: {id: 'orgid2'}};
       this.orgs = [this.org, this.org2];
-      stubs.OrganizationList.getAll.returns(this.orgs);
+      stubs.tokenStore.organizations$.set(this.orgs);
       stubs.accessChecker.canCreateSpaceInOrganization.returns(true);
     });
 
@@ -146,7 +143,7 @@ describe('cfCreateNewSpace directive', function () {
   describe('creates a space', function () {
     beforeEach(function () {
       this.orgs = [{sys: {id: 'orgid'}}];
-      stubs.OrganizationList.getAll.returns(this.orgs);
+      stubs.tokenStore.organizations$.set(this.orgs);
     });
 
     describe('if user cant create space in org', function () {

@@ -1,7 +1,7 @@
 import {find} from 'lodash';
 import makeState from 'states/base';
 import $state from '$state';
-import tokenStore from 'tokenStore';
+import {getSpaces} from 'services/TokenStore';
 import TheStore from 'TheStore';
 import template from 'app/home/HomeTemplate';
 
@@ -21,7 +21,7 @@ export default makeState({
   loadingText: 'Loading...',
   resolve: {
     spaces: function () {
-      return tokenStore.getSpaces().then(function (spaces) {
+      return getSpaces().then(function (spaces) {
 
         if (spaces.length) {
           const lastUsedSpace = getLastUsedSpace(spaces);

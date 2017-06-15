@@ -12,7 +12,8 @@
  * // Yields
  * {
  *   path: ['spaces', 'detail', 'entries', 'detail'],
- *   params: {entryId: 'entry-id'}
+ *   params: {entryId: 'entry-id'},
+ *   options: {}
  * }
  * ~~~
  *
@@ -35,7 +36,20 @@ const ENTITY_PLURALS = {
  * @returns {Promise<void>}
  */
 export function go (state) {
-  return $state.go(state.path.join('.'), state.params);
+  return $state.go(state.path.join('.'), state.params, state.options);
+}
+
+
+/**
+ * @ngdoc method
+ * @name state/Navigator#href:
+ * @description
+ * Like `$state.href()` but accepts a full state reference
+ * @param {Navigator.Ref}
+ * @returns {string}
+ */
+export function href (state) {
+  return $state.href(state.path.join('.'), state.params);
 }
 
 

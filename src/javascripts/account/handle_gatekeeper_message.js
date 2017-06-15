@@ -7,10 +7,9 @@ angular.module('contentful')
   var $state = require('$state');
   var authentication = require('Authentication');
   var notification = require('notification');
-  var TheAccountView = require('TheAccountView');
-  var tokenStore = require('tokenStore');
-  var logger = require('logger');
+  var tokenStore = require('services/TokenStore');
   var CreateSpace = require('services/CreateSpace');
+  var UrlSyncHelper = require('account/UrlSyncHelper');
 
   return function handleGatekeeperMessage (data) {
     var match = makeMessageMatcher(data);
@@ -28,11 +27,11 @@ angular.module('contentful')
     } else if (data.type === 'flash') {
       showNotification(data);
 
-    } else if (match('navigate', 'location') && data.path) {
+    } else if (match('navigate', 'location')) {
       $location.url(data.path);
 
-    } else if (match('update', 'location') && data.path) {
-      updateState(data);
+    } else if (match('update', 'location')) {
+      UrlSyncHelper.updateWebappUrl(data.path);
 
     } else { tokenStore.refresh(); }
   };
@@ -60,21 +59,6 @@ angular.module('contentful')
 
     if (message) {
       notification[level](message);
-    }
-  }
-
-  function updateState (data) {
-    var valid = _.isObject(data) && _.isString(data.path);
-
-    // @todo in a long run we want to detect when GK is sending
-    // "update location" message w/o a path
-    if (valid) {
-      var suffix = data.path.match(/account\/(.*)$/);
-      TheAccountView.silentlyChangeState(suffix && suffix[1]);
-    } else {
-      logger.logError('Path for location update not given', {
-        gatekeeperData: data
-      });
     }
   }
 }]);

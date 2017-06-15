@@ -8,11 +8,11 @@ angular.module('contentful')
   var trackPersistentNotification = require('analyticsEvents/persistentNotification');
   var logger = require('logger');
   var spaceContext = require('spaceContext');
-  var OrganizationList = require('OrganizationList');
+  var OrganizationRoles = require('services/OrganizationRoles');
 
   function isOwner () {
     var organization = spaceContext.organizationContext.organization;
-    return OrganizationList.isOwner(organization);
+    return OrganizationRoles.isOwner(organization);
   }
 
   function isAdditionalUsageAllowed () {

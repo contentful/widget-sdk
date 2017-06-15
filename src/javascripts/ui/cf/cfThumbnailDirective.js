@@ -25,7 +25,7 @@ angular.module('contentful')
 .directive('cfThumbnail', ['require', function (require) {
   var mimetype = require('mimetype');
   var h = require('utils/hyperscript').h;
-  var tokenStore = require('tokenStore');
+  var tokenStore = require('services/TokenStore');
   var HostnameTransformer = require('hostnameTransformer');
 
   var groupToIconMap = {

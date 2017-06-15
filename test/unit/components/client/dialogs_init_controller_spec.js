@@ -4,14 +4,14 @@ describe('dialogsInitController', function () {
 
   beforeEach(function () {
     this.spaceContext = { getId: sinon.stub() };
-    this.OrganizationList = { isEmpty: sinon.stub() };
+    this.OrganizationRoles = { isEmpty: sinon.stub() };
     this.initEmailSpy = sinon.spy();
     this.initOnboardingSpy = sinon.spy();
     this.subscriptionNotifierNotify = sinon.spy();
 
     module('contentful/test', ($provide) => {
       $provide.value('spaceContext', this.spaceContext);
-      $provide.value('OrganizationList', this.OrganizationList);
+      $provide.value('services/OrganizationRoles', this.OrganizationRoles);
       $provide.value('onboardingController', {
         init: this.initOnboardingSpy
       });
@@ -37,7 +37,6 @@ describe('dialogsInitController', function () {
       beforeEach(function () {
         this.spaceContext.getId.returns('SPACE_ID');
         this.spaceContext.organizationContext = { organization: ORGANIZATION };
-        this.OrganizationList.isEmpty.returns(false);
         this.$apply();
       });
 

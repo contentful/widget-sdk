@@ -1,17 +1,15 @@
 'use strict';
 
 angular.module('contentful')
+.directive('cfAccountView', ['require', function (require) {
 
-.directive('cfAccountView', ['$injector', function ($injector) {
-
-  var $timeout = $injector.get('$timeout');
-  var $stateParams = $injector.get('$stateParams');
-  var authentication = $injector.get('Authentication');
-  var Config = $injector.get('Config');
-  var modalDialog = $injector.get('modalDialog');
-  var createChannel = $injector.get('account/IframeChannel').default;
-  var handleGK = $injector.get('handleGatekeeperMessage');
-  var K = $injector.get('utils/kefir');
+  var $timeout = require('$timeout');
+  var authentication = require('Authentication');
+  var modalDialog = require('modalDialog');
+  var createChannel = require('account/IframeChannel').default;
+  var K = require('utils/kefir');
+  var handleGK = require('handleGatekeeperMessage');
+  var UrlSyncHelper = require('account/UrlSyncHelper');
 
   return {
     template: '<div class="account-container"><iframe width="100%" height="100%" id="accountViewFrame" /></div>',
@@ -25,7 +23,7 @@ angular.module('contentful')
       K.onValueScope(scope, messages$, closeModalsIfLocationUpdated);
 
       iframe.ready(waitAndForceLogin);
-      iframe.prop('src', Config.accountUrl($stateParams.pathSuffix));
+      iframe.prop('src', UrlSyncHelper.getGatekeeperUrl());
       scope.$on('$destroy', cancelTimeout);
 
       function waitAndForceLogin () {
