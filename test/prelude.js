@@ -66,7 +66,7 @@
     SystemJS.exposeFromAngular.forEach(function (lib) {
       SystemJS.register(lib, [], function (export_) {
         const exports = libInjector.get(lib);
-        export_(_.assign({default: exports}, exports));
+        export_(Object.assign({default: exports}, exports));
         return {
           setters: [],
           execute: function () {}
@@ -82,11 +82,9 @@
     const path = moduleId.split('/');
     const last = path.pop();
     if (last === 'index') {
-      SystemJS.config({
-        map: {
-          [path.join('/')]: moduleId
-        }
-      });
+      SystemJS.register(path.join('/'), [moduleId], ($export) => ({
+        setters: [$export]
+      }));
     }
   }
 })();
