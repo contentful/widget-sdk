@@ -9,15 +9,15 @@ angular.module('contentful').directive('cfMainNavBar', ['require', function (req
     restrict: 'E',
     replace: true,
     controller: ['$scope', function ($scope) {
-
+      var spaceContext = require('spaceContext');
       $scope.$state = require('$state');
-      $scope.$stateParams = require('$stateParams');
-
-      $scope.$watch(function () {
-        return accessChecker.getSectionVisibility();
-      }, function (sectionVisibility) {
-        $scope.canNavigateTo = sectionVisibility;
-      });
+      $scope.canNavigateTo = function (section) {
+        if (!spaceContext.space || spaceContext.space.isHibernated()) {
+          return false;
+        } else {
+          return accessChecker.getSectionVisibility()[section];
+        }
+      }
     }]
   };
 }]);
