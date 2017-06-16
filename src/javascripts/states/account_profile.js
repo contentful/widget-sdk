@@ -48,7 +48,7 @@ angular.module('contentful')
       params: {
         pathSuffix: ''
       },
-      template: [h('cf-account-profile-nav'), h('cf-account-view')].join('')
+      template: h('cf-account-view')
     };
 
     return base(_.extend(definition, defaults));
@@ -58,6 +58,9 @@ angular.module('contentful')
     name: 'profile',
     url: '/profile',
     abstract: true,
+    views: {
+      'nav-bar@': { template: '<cf-profile-nav />' }
+    },
     children: [
       user,
       spaceMemberships,

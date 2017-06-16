@@ -1,5 +1,5 @@
 angular.module('contentful')
-.directive('cfAccountProfileNav', ['require', function (require) {
+.directive('cfProfileNav', ['require', function (require) {
   return {
     template: require('account/ProfileNav').default(),
     restrict: 'E',
