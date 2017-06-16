@@ -1,11 +1,11 @@
 'use strict';
 
-angular.module('contentful').directive('cfMainNavBar', ['require', function (require) {
+angular.module('contentful').directive('cfSpaceNavBar', ['require', function (require) {
 
   var accessChecker = require('accessChecker');
 
   return {
-    template: require('components/client/MainNavBar').default(),
+    template: require('components/client/templates/SpaceNavBar').default(),
     restrict: 'E',
     replace: true,
     controller: ['$scope', function ($scope) {
