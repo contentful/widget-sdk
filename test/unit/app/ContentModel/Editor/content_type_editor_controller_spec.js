@@ -1,4 +1,4 @@
-'use strict';
+import * as sinon from 'helpers/sinon';
 
 describe('ContentTypeEditor Controller', function () {
   let scope;
@@ -25,6 +25,8 @@ describe('ContentTypeEditor Controller', function () {
     const cfStub = this.$inject('cfStub');
     const $rootScope = this.$inject('$rootScope');
 
+    this.$inject('mocks/spaceContext').init();
+
     scope = $rootScope.$new();
 
     _.extend(scope, {
@@ -32,10 +34,7 @@ describe('ContentTypeEditor Controller', function () {
         $setDirty: sinon.stub()
       },
       context: {},
-      editingInterface: {},
-      spaceContext: {
-        contentTypes: []
-      }
+      editingInterface: {}
     });
 
     const $controller = this.$inject('$controller');

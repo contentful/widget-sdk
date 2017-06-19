@@ -5,7 +5,6 @@
  * @name ContentTypeEditorController
  *
  * @scope.requires  context
- * @scope.requires  spaceContext
  * @scope.requires  contentTypeForm
  *
  * @scope.provides  contentType
@@ -29,6 +28,12 @@ angular.module('contentful')
   var analytics = require('analytics/Analytics');
   var createActions = require('app/ContentModel/Editor/Actions').default;
 
+  var contentTypeIds = spaceContext.cma.getContentTypes().then(function (response) {
+    return response.items.map(function (ct) {
+      return ct.sys.id;
+    });
+  });
+
   var canEdit = accessChecker.can('update', 'ContentType');
   // Read-only data for template
   $scope.data = {
@@ -42,7 +47,7 @@ angular.module('contentful')
     placeholder: 'ct-field--placeholder'
   };
 
-  $scope.actions = createActions($scope);
+  $scope.actions = createActions($scope, contentTypeIds);
 
   $scope.stateIs = $state.is;
 
@@ -75,7 +80,7 @@ angular.module('contentful')
   });
 
   if ($scope.context.isNew) {
-    metadataDialog.openCreateDialog()
+    metadataDialog.openCreateDialog(contentTypeIds)
     .then(applyContentTypeMetadata(true), function () {
       $state.go('spaces.detail.content_types.list');
     });

@@ -35,9 +35,7 @@ describe('spaceContext', function () {
       ['space', 'users', 'widgets'].forEach(function (field) {
         expect(sc[field]).toEqual(null);
       });
-      ['contentTypes', 'publishedContentTypes'].forEach(function (field) {
-        expect(sc[field]).toEqual([]);
-      });
+      expect(sc.publishedContentTypes).toEqual([]);
     });
   });
 
@@ -54,8 +52,6 @@ describe('spaceContext', function () {
       SPACE = makeSpaceMock();
       SPACE.getContentTypes.defers();
       SPACE.getPublishedContentTypes.defers();
-      sinon.stub(this.spaceContext, 'refreshContentTypes');
-      this.spaceContext.contentTypes = [{}];
       this.result = this.spaceContext.resetWithSpace(SPACE);
     });
 
@@ -65,10 +61,6 @@ describe('spaceContext', function () {
 
     it('sets space on context', function () {
       expect(this.spaceContext.space).toBe(SPACE);
-    });
-
-    it('clears content types', function () {
-      expect(this.spaceContext.contentTypes.length).toEqual(0);
     });
 
     it('calls TheLocaleStore.reset()', function () {
@@ -292,61 +284,6 @@ describe('spaceContext', function () {
 
     it('gets a localized field', function () {
       expect(this.spaceContext.getFieldValue(asset, 'title')).toBe('the title');
-    });
-  });
-
-  describe('#refreshContentTypes()', function () {
-    beforeEach(function () {
-      this.space = this.resetWithSpace();
-    });
-
-    it('updates "contentTypes" property', function () {
-      const cts = [
-        makeCtMock('A'),
-        makeCtMock('B')
-      ];
-      this.space.getContentTypes.resolves(cts);
-      this.spaceContext.refreshContentTypes();
-      this.$apply();
-      expect(this.spaceContext.contentTypes).toEqual(cts);
-    });
-
-    it('updates "publishedContentTypes" property', function () {
-      const cts = [
-        makeCtMock('A'),
-        makeCtMock('B')
-      ];
-      this.space.getPublishedContentTypes.resolves(cts);
-      this.spaceContext.refreshContentTypes();
-      this.$apply();
-      expect(this.spaceContext.publishedContentTypes).toEqual(cts);
-    });
-
-    it('enqueues requests for content types', function () {
-      const p1 = this.spaceContext.refreshContentTypes();
-      const p2 = this.spaceContext.refreshContentTypes();
-      expect(p1).toBe(p2);
-      sinon.assert.calledTwice(this.space.getContentTypes);
-    });
-
-    it('results in an error message if API broken', function () {
-      const handler = this.$inject('ReloadNotification').apiErrorHandler;
-      this.space.getContentTypes.rejects({statusCode: 500});
-      this.spaceContext.refreshContentTypes();
-      this.$apply();
-      sinon.assert.called(handler);
-    });
-
-    it('does not include deleted published content Types', function () {
-      this.space.getContentTypes.resolves([
-        makeCtMock('A'),
-        makeCtMock('B', {isDeleted: true}),
-        makeCtMock('C')
-      ]);
-      this.spaceContext.refreshContentTypes();
-      this.$apply();
-      const ctIds = this.spaceContext.contentTypes.map((ct) => ct.getId());
-      expect(ctIds).toEqual(['A', 'C']);
     });
   });
 

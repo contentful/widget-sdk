@@ -10,7 +10,6 @@ angular.module('contentful')
  * This service holds all context related to a space, including
  * contentTypes, users, widgets, and helper methods.
  *
- * @property {Client.ContentType[]} contentTypes
  * @property {Client.ContentType[]} publishedContentTypes
  * @property {Client.Space} space
  * @property {Data.APIClient} cma
@@ -18,15 +17,12 @@ angular.module('contentful')
  */
 .factory('spaceContext', ['require', function (require) {
   var $q = require('$q');
-  var ReloadNotification = require('ReloadNotification');
   var TheLocaleStore = require('TheLocaleStore');
   var createUserCache = require('data/userCache');
-  var ctHelpers = require('data/ContentTypes');
   var Widgets = require('widgets');
   var createSpaceEndpoint = require('data/Endpoint').createSpaceEndpoint;
   var Config = require('Config');
   var createEIRepo = require('data/editingInterfaces');
-  var createQueue = require('overridingRequestQueue');
   var ApiClient = require('data/ApiClient');
   var ShareJSConnection = require('data/sharejs/Connection');
   var Subscription = require('Subscription');
@@ -40,16 +36,6 @@ angular.module('contentful')
   var Auth = require('Authentication');
   var OrganizationContext = require('classes/OrganizationContext');
   var MembershipRepo = require('access_control/SpaceMembershipRepository');
-
-  var requestContentTypes = createQueue(function (extraHandler) {
-    if (!spaceContext.space) {
-      return $q.resolve();
-    }
-
-    return spaceContext.space.getContentTypes({order: 'name', limit: 1000})
-    .then(refreshContentTypes, ReloadNotification.apiErrorHandler)
-    .then(extraHandler || _.identity);
-  });
 
   var spaceContext = {
     /**
@@ -122,8 +108,10 @@ angular.module('contentful')
 
       previewEnvironmentsCache.clearAll();
       TheLocaleStore.reset(self.space.getId(), self.space.getPrivateLocales());
-      return $q.all([loadWidgets(self, space), requestContentTypes()])
-      .then(function () {
+      return $q.all([
+        loadWidgets(self, space),
+        self.publishedCTs.refresh()
+      ]).then(function () {
         return self;
       });
     },
@@ -175,32 +163,6 @@ angular.module('contentful')
     getData: function (path, defaultValue) {
       var data = dotty.get(this, 'space.data', {});
       return dotty.get(data, path, defaultValue);
-    },
-
-    /**
-     * @ngdoc method
-     * @name spaceContext#refreshContentTypes
-     * @description
-     * Refreshes all Content Type related information in the context
-     */
-    refreshContentTypes: function () {
-      if (this.space) {
-        return requestContentTypes();
-      } else {
-        throw new Error('Cannot refresh content types: no space in the context.');
-      }
-    },
-
-    /**
-     * @ngdoc method
-     * @name spaceContext#removeContentType
-     * @param {Client.ContentType} contentType
-    */
-    removeContentType: function (contentType) {
-      var index = _.indexOf(this.contentTypes, contentType);
-      if (index === -1) return;
-      this.contentTypes.splice(index, 1);
-      this.refreshContentTypes();
     },
 
     /**
@@ -400,31 +362,8 @@ angular.module('contentful')
   resetMembers(spaceContext);
   return spaceContext;
 
-  function refreshContentTypes (contentTypes) {
-    spaceContext.contentTypes = filterAndSortContentTypes(contentTypes);
-
-    // Some legacy content types do not have a name. If it is
-    // missing we set it to 'Untitled' so we can display
-    // something in the UI. Note that the API requires new
-    // Content Types to have a name.
-    _.forEach(spaceContext.contentTypes, function (ct) {
-      ctHelpers.assureName(ct.data);
-    });
-
-    return spaceContext.publishedCTs.refresh();
-  }
-
-  function filterAndSortContentTypes (contentTypes) {
-    contentTypes = _.reject(contentTypes, function (ct) { return ct.isDeleted(); });
-    contentTypes.sort(function (a, b) {
-      return a.getName().localeCompare(b.getName());
-    });
-    return contentTypes;
-  }
-
   function resetMembers (spaceContext) {
     spaceContext.space = null;
-    spaceContext.contentTypes = [];
     spaceContext.publishedContentTypes = [];
     spaceContext.users = null;
     spaceContext.widgets = null;

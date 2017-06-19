@@ -5,6 +5,7 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
   var spaceContext = require('spaceContext');
   var FilterQS = require('FilterQueryString');
   var accessChecker = require('accessChecker');
+  var ctHelpers = require('data/ContentTypes');
 
   var qs = FilterQS.create('contentTypes');
   var view = qs.readView();
@@ -26,13 +27,26 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
   function updateList () {
     $scope.context.isSearching = true;
 
-    spaceContext.refreshContentTypes()
-      .then(function () {
+    // TODO Do not use client instances
+    spaceContext.space.getContentTypes({order: 'name', limit: 1000})
+      .then(function (contentTypes) {
+
+        // Some legacy content types do not have a name. If it is
+        // missing we set it to 'Untitled' so we can display
+        // something in the UI. Note that the API requires new
+        // Content Types to have a name.
+        _.forEach(contentTypes, function (ct) {
+          ctHelpers.assureName(ct.data);
+        });
+
+        contentTypes.sort(function (a, b) {
+          return a.getName().localeCompare(b.getName());
+        });
+
         var sectionVisibility = accessChecker.getSectionVisibility();
 
         $scope.context.forbidden = !sectionVisibility.contentType;
         $scope.context.ready = true;
-        var contentTypes = spaceContext.contentTypes;
         $scope.empty = contentTypes.length === 0;
         $scope.visibleContentTypes = _.filter(contentTypes, shouldBeVisible);
       }, accessChecker.wasForbidden($scope.context))

@@ -24,8 +24,13 @@ import * as notify from './Notifications';
  * - `editingInterface` is read and updated on `save`.
  * - `contentTypeForm` is read to check whether the local modal is “dirty”, i.e.
  *   whether the user has made some changes.
+ *
+ * @param {object} $scope
+ * @param {Promise<string[]>} contentTypeIds
+ *   A promise that resolves to all the used content type IDs. It is passed to
+ *   the duplication dialog to verify new IDs.
  */
-export default function create ($scope) {
+export default function create ($scope, contentTypeIds) {
   const controller = {};
 
   /**
@@ -141,7 +146,6 @@ export default function create ($scope) {
     return $scope.contentType.delete()
     .then(function () {
       notify.deleteSuccess();
-      spaceContext.removeContentType($scope.contentType);
       return closeState();
     }, notify.deleteFail);
   }
@@ -271,7 +275,7 @@ export default function create ($scope) {
    */
   controller.duplicate = Command.create(function () {
     return metadataDialog
-    .openDuplicateDialog($scope.contentType, duplicate)
+    .openDuplicateDialog($scope.contentType, duplicate, contentTypeIds)
     .then(askAboutRedirection)
     .then(notify.duplicateSuccess);
   }, {
