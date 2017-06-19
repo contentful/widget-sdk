@@ -3,6 +3,7 @@
 angular.module('contentful')
 .directive('cfAccountView', ['require', function (require) {
 
+  var h = require('utils/hyperscript').h;
   var $timeout = require('$timeout');
   var authentication = require('Authentication');
   var modalDialog = require('modalDialog');
@@ -12,8 +13,16 @@ angular.module('contentful')
   var UrlSyncHelper = require('account/UrlSyncHelper');
 
   return {
-    template: '<div class="account-container"><iframe width="100%" height="100%" id="accountViewFrame" /></div>',
+    template: h('.account-container', {
+      ngClass: '{ "with-tabs": withTabs }'
+    }, [
+      h('iframe', { width: '100%', height: '100%', id: 'accountViewFrame' })
+    ]),
     restrict: 'E',
+    scope: {
+      withTabs: '@',
+      context: '='
+    },
     link: function (scope, elem) {
       var iframe = elem.find('iframe');
       var messages$ = createChannel(iframe.get(0));

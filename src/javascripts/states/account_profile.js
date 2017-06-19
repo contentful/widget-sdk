@@ -48,7 +48,7 @@ angular.module('contentful')
       params: {
         pathSuffix: ''
       },
-      template: h('cf-account-view')
+      template: h('cf-account-view', { context: 'context' })
     };
 
     return base(_.extend(definition, defaults));
