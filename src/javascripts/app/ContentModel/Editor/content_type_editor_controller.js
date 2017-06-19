@@ -95,25 +95,17 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
-   * @name ContentTypeEditorController#registerPublishedFields
-   * @param {Client.ContentType} contentType
-   */
-  controller.registerPublishedFields = registerPublishedFields;
-
-  var publishedFields = [];
-  registerPublishedFields($scope.publishedContentType);
-
-  function registerPublishedFields (contentType) {
-    publishedFields = _.cloneDeep(dotty.get(contentType, 'data.fields', []));
-  }
-
-  /**
-   * @ngdoc method
    * @name ContentTypeEditorController#getPublishedField
+   * @description
+   * Get the field data for the given ID from the content type data
+   * published on the server.
+   *
    * @param {string} id
+   * @returns {API.ContentType.Field}
    */
   controller.getPublishedField = function (id) {
-    return _.find(publishedFields, {id: id});
+    var publishedFields = _.get($scope.publishedContentType, 'data.fields', []);
+    return _.cloneDeep(_.find(publishedFields, {id: id}));
   };
 
   /**

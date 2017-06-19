@@ -15,10 +15,15 @@ import previewEnvironmentsCache from 'data/previewEnvironmentsCache';
 import * as notify from './Notifications';
 
 /**
- * @ngdoc type
- * @name ContentTypeActionsController
+ * @description
+ * Uses the following scope properties
  *
- * @scope.requires {client.ContentType} contentType
+ * - `contentType` for persistence methods and data access
+ * - `publishedContentType` is updated whenever the content type is published or
+ *   unpublished. Corresponds to the server data.
+ * - `editingInterface` is read and updated on `save`.
+ * - `contentTypeForm` is read to check whether the local modal is “dirty”, i.e.
+ *   whether the user has made some changes.
  */
 export default function create ($scope) {
   const controller = {};
@@ -124,18 +129,12 @@ export default function create ($scope) {
 
   function unpublish () {
     return spaceContext.publishedCTs.unpublish($scope.contentType)
-      .then(unpublishSuccessHandler, unpublishErrorHandler);
-  }
-
-  function unpublishSuccessHandler (publishedContentType) {
-    $scope.publishedContentType = null;
-    $scope.ctEditorController.registerPublishedFields(null);
-    return publishedContentType;
-  }
-
-  function unpublishErrorHandler (err) {
-    logger.logServerWarn('Error deactivating Content Type', {error: err});
-    return $q.reject(err);
+      .then(() => {
+        $scope.publishedContentType = null;
+      }, (err) => {
+        logger.logServerWarn('Error deactivating Content Type', {error: err});
+        return $q.reject(err);
+      });
   }
 
   function sendDeleteRequest () {
@@ -200,8 +199,7 @@ export default function create ($scope) {
     return $scope.contentType.save()
     .then(publishContentType)
     .then(function (published) {
-      $scope.publishedContentType = published;
-      $scope.ctEditorController.registerPublishedFields(published);
+      $scope.publishedContentType = cloneDeep(published);
       return published;
     })
     .then(saveEditingInterface)

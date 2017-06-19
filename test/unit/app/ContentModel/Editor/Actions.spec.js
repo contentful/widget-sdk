@@ -50,7 +50,6 @@ describe('app/ContentModel/Editor/Actions', function () {
     scope.context = {};
     scope.contentType = contentType;
     scope.broadcastFromSpace = sinon.stub();
-    scope.ctEditorController = {registerPublishedFields: sinon.spy()};
 
     controller = this.$inject('app/ContentModel/Editor/Actions').default(scope);
   });
@@ -230,7 +229,6 @@ describe('app/ContentModel/Editor/Actions', function () {
         const ct = scope.contentType;
         sinon.assert.calledOnce(ct.save);
         sinon.assert.calledOnce(ct.publish);
-        sinon.assert.calledOnce(scope.ctEditorController.registerPublishedFields);
       });
     });
 
