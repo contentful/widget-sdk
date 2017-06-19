@@ -38,8 +38,8 @@ export function removalConfirmation () {
     ]),
     h('p', [
       h('strong', [
-        'All space contents and the space itself will removed. ',
-        'This operation cannot be undone.'
+        `All space contents and the space itself will be removed.
+         This operation cannot be undone.`
       ])
     ]),
     h('p', ['To confirm, type the name of the space in the field below:']),
