@@ -65,8 +65,10 @@ describe('app/ContentModel/Editor/Actions', function () {
 
       this.modalDialog = this.$inject('modalDialog');
       sinon.stub(this.modalDialog, 'open').callsFake((params) => {
-        if (params.scope && params.scope.delete) {
-          params.scope.delete.execute();
+        if (params.controller) {
+          const $scope = this.$inject('$rootScope').$new();
+          params.controller($scope);
+          $scope.delete.execute();
         }
       });
     });

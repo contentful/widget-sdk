@@ -1,5 +1,4 @@
 import {noop, cloneDeep, every, assign, map} from 'lodash';
-import $rootScope from '$rootScope';
 import logger from 'logger';
 import $q from '$q';
 import modalDialog from 'modalDialog';
@@ -103,27 +102,23 @@ export default function create ($scope) {
   function confirmRemoval (isPublished) {
     return modalDialog.open({
       template: 'content_type_removal_confirm_dialog',
-      scope: prepareRemovalDialogScope(isPublished),
-      noNewScope: true,
-      persistOnNavigation: true
-    });
-  }
-
-  function prepareRemovalDialogScope (isPublished) {
-    const scope = $rootScope.$new();
-    return assign(scope, {
-      input: {},
-      contentTypeName: $scope.contentType.data.name,
-      delete: Command.create(function () {
-        return remove(isPublished)
-        .finally(function () {
-          scope.dialog.confirm();
+      persistOnNavigation: true,
+      controller (scope) {
+        assign(scope, {
+          input: {},
+          contentTypeName: $scope.contentType.data.name,
+          delete: Command.create(function () {
+            return remove(isPublished)
+            .finally(function () {
+              scope.dialog.confirm();
+            });
+          }, {
+            disabled: function () {
+              return scope.input.contentTypeName !== scope.contentTypeName;
+            }
+          })
         });
-      }, {
-        disabled: function () {
-          return scope.input.contentTypeName !== scope.contentTypeName;
-        }
-      })
+      }
     });
   }
 
