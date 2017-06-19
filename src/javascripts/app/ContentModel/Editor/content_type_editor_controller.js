@@ -14,7 +14,6 @@
 angular.module('contentful')
 .controller('ContentTypeEditorController', ['$scope', 'require', function ContentTypeEditorController ($scope, require) {
   var controller = this;
-  var $controller = require('$controller');
   var $state = require('$state');
   var validation = require('validation');
   var modalDialog = require('modalDialog');
@@ -28,6 +27,7 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var editingInterfaces = spaceContext.editingInterfaces;
   var analytics = require('analytics/Analytics');
+  var createActions = require('app/ContentModel/Editor/Actions').default;
 
   var canEdit = accessChecker.can('update', 'ContentType');
   // Read-only data for template
@@ -42,7 +42,7 @@ angular.module('contentful')
     placeholder: 'ct-field--placeholder'
   };
 
-  $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
+  $scope.actions = createActions($scope);
 
   $scope.stateIs = $state.is;
 
