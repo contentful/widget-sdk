@@ -17,7 +17,7 @@ angular.module('contentful').directive('cfMainNavBar', ['require', function (req
         } else {
           return accessChecker.getSectionVisibility()[section];
         }
-      }
+      };
     }]
   };
 }]);

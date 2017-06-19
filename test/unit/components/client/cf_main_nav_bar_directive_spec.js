@@ -2,17 +2,16 @@
 
 describe('Main nav bar directive', function () {
 
-  var container, scope, accessChecker, stubs, spaceContext;
-  var compileElement;
+  let container, scope, accessChecker, spaceContext;
+  let compileElement;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs(['section', 'viewType']);
       $provide.removeDirectives('otDocPresence', 'entryEditor', 'apiKeyEditor', 'entryList', 'cfIcon');
       $provide.removeControllers('UiConfigController');
     });
 
-    var $compile = this.$inject('$compile');
+    const $compile = this.$inject('$compile');
     spaceContext = this.mockService('spaceContext', {
       space: { isHibernated: sinon.stub().returns(false) }
     });
@@ -31,12 +30,11 @@ describe('Main nav bar directive', function () {
 
   afterEach(function () {
     container.remove();
-    container = scope = accessChecker =
-      stubs = compileElement = null;
+    container = scope = accessChecker = compileElement = null;
   });
 
   describe('hide navigation when space is hibernated', function () {
-    beforeEach (function () {
+    beforeEach(function () {
       accessChecker.getSectionVisibility.returns({ contentType: true });
     });
 
@@ -52,9 +50,9 @@ describe('Main nav bar directive', function () {
     });
   });
 
-  function makeNavbarItemTest(key, viewType){
-    describe('navbar item for '+key, function () {
-      var selector = 'a[data-view-type="'+viewType+'"]';
+  function makeNavbarItemTest (key, viewType) {
+    describe('navbar item for ' + key, function () {
+      const selector = 'a[data-view-type="' + viewType + '"]';
 
       it('is hidden', function () {
         accessChecker.getSectionVisibility.returns(getVisibility(key, false));
@@ -70,8 +68,8 @@ describe('Main nav bar directive', function () {
     });
   }
 
-  function getVisibility(key, value) {
-    var returnVal = {};
+  function getVisibility (key, value) {
+    const returnVal = {};
     returnVal[key] = value;
     return returnVal;
   }
