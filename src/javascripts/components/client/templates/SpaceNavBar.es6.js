@@ -1,4 +1,4 @@
-import {navBar} from 'ui/NavBar';
+import navBar from 'ui/NavBar';
 
 export default function () {
   return navBar([

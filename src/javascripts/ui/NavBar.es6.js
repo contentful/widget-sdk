@@ -1,6 +1,37 @@
 import {h} from 'utils/hyperscript';
 
-export function navBar (listItems = []) {
+/**
+ * @ngdoc method
+ * @name ui/NavBar
+ * @param {Object[]} listItems
+ * @description
+ *
+ * Builds template for top navbar, given array of items as parameter.
+ * Nav items should have the following format:
+ * {
+ *   sref: {String},
+ *   rootSref: {String?}, // for highlighting the active nav item,
+ *                           default is item.sref
+ *   title: {String},
+ *   dataViewType: {String}, // test identificator
+ *   icon: {String?},
+ *   if: {String?} // ngIf expression
+ * }
+ * or for dropdown:
+ * {
+ *   rootSref: {String},
+ *   title: {String},
+ *   dataViewType: {String},
+ *   icon: {String?},
+ *   if: {String?},
+ *   children: [
+ *     { title, sref, rootSref, if }
+ *   ]
+ * }
+ * @scope.requires {ui.router.state.$state} $state for highlighting the
+ * active nav item.
+ */
+export default function (listItems = []) {
   return h('nav.nav-bar', [
     h('cf-space-selector'),
     h('ul.nav-bar__list', listItems.map(function (data, index) {
