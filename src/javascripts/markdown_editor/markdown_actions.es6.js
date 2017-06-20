@@ -23,16 +23,17 @@ export function create (editor, localeCode) {
 
   function link () {
     editor.usePrimarySelection();
+    const selectedText = editor.getSelectedText();
     modalDialog.open({
       scopeData: {
+        showLinkTextInput: !selectedText,
         model: {
-          url: 'https://',
-          text: editor.getSelectedText()
+          url: 'https://'
         }
       },
       template: 'markdown_link_dialog'
-    }).promise.then(function (data) {
-      editor.actions.link(data.url, data.text, data.title);
+    }).promise.then(({url, text, title}) => {
+      editor.actions.link(url, selectedText || text, title);
     });
   }
 
