@@ -31,6 +31,9 @@ describe('Entry Editor Controller', function () {
       return scope;
     };
 
+    const contextHistory = this.$inject('contextHistory');
+    contextHistory.set([{}]);
+
     this.spaceContext = _.extend(this.$inject('spaceContext'), {
       entryTitle: function (entry) {
         return dotty.get(entry, 'data.fields.title');
