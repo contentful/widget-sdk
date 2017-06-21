@@ -1,7 +1,7 @@
 import $sanitize from '$sanitize';
 import {extend, isString, isObject, isArray, isNull} from 'lodash';
 import {htmlDecode} from 'encoder';
-import tokenStore from 'tokenStore';
+import {getDomains} from 'services/TokenStore';
 import MarkedAst from 'libs/MarkedAst';
 
 let currentId = 1;
@@ -129,7 +129,7 @@ export default function create ({React}) {
     // AST contains an encoded URL.
     // React expects decoded one to handle on its own.
     src = htmlDecode(src);
-    const domain = tokenStore.getDomains().images || 'images.contentful.com';
+    const domain = getDomains().images || 'images.contentful.com';
 
     return src.indexOf(domain) > -1 ? prepareImagesAPISrc(src) : src;
   }

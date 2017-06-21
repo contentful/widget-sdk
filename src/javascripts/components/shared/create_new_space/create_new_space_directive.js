@@ -20,17 +20,18 @@ angular.module('contentful')
   var spaceTemplateLoader = require('spaceTemplateLoader');
   var spaceTemplateCreator = require('spaceTemplateCreator');
   var accessChecker = require('accessChecker');
-  var tokenStore = require('tokenStore');
+  var TokenStore = require('services/TokenStore');
+  var K = require('utils/kefir');
   var enforcements = require('enforcements');
   var $state = require('$state');
   var logger = require('logger');
   var analytics = require('analytics/Analytics');
-  var OrganizationList = require('OrganizationList');
   var spaceContext = require('spaceContext');
   var spaceTemplateEvents = require('analytics/events/SpaceCreation');
 
-
-  controller.organizations = OrganizationList.getAll();
+  K.onValueScope($scope, TokenStore.organizations$, function (organizations) {
+    controller.organizations = organizations;
+  });
 
   // Keep track of the view state
   controller.viewState = 'createSpaceForm';
@@ -66,10 +67,9 @@ angular.module('contentful')
   }
 
   // Begin A/B Experiment code: ps-03-2017-example-space-impact
-  var K = require('utils/kefir');
   var LD = require('utils/LaunchDarkly');
-  var firstName = K.getValue(tokenStore.user$).firstName;
-  var userHasSpaces = !!K.getValue(tokenStore.spaces$).length;
+  var firstName = K.getValue(TokenStore.user$).firstName;
+  var userHasSpaces = !!K.getValue(TokenStore.spaces$).length;
   var $timeout = require('$timeout');
   var debounce = require('debounce');
   var debouncedDialogCenter = debounce(function () {
@@ -185,7 +185,7 @@ angular.module('contentful')
     // Create space
     client.createSpace(data, orgId)
     .then(function (newSpace) {
-      tokenStore.refresh()
+      TokenStore.refresh()
       .then(_.partial(handleSpaceCreation, newSpace, template));
     })
     .catch(handleSpaceCreationFailure);
@@ -196,7 +196,7 @@ angular.module('contentful')
       templateName: _.get(template, 'name')
     });
 
-    tokenStore.getSpace(newSpace.getId())
+    TokenStore.getSpace(newSpace.getId())
     .then(function (space) {
       return $state.go('spaces.detail', {spaceId: space.getId()});
     })

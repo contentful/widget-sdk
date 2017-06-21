@@ -12,14 +12,12 @@ angular.module('contentful')
     name: 'account',
     url: '/account',
     abstract: true,
-    template: '<cf-account-view />',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
     }],
-    children: [{
-      name: 'pathSuffix',
-      url: '/{pathSuffix:PathSuffix}',
-      label: 'Account'
-    }]
+    children: [
+      require('states/account/organizations'),
+      require('states/account/profile')
+    ]
   });
 }]);

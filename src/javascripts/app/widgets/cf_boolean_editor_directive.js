@@ -7,8 +7,9 @@ angular.module('cf.app')
  * @module cf.app
  * @name cfBooleanEditor
  */
-.directive('cfBooleanEditor', ['$injector', function ($injector) {
-  var selectionController = $injector.get('widgets/selectionController');
+.directive('cfBooleanEditor', ['require', function (require) {
+  var selectionController = require('widgets/selectionController');
+  var Random = require('random');
 
   return {
     restrict: 'E',
@@ -24,7 +25,7 @@ angular.module('cf.app')
       selectionController.create(widgetApi, scope, options);
 
       var field = widgetApi.field;
-      scope.radioGroupName = ['entity', field.id, field.locale].join('.');
+      scope.radioGroupName = ['entity', field.id, field.locale, Random.letter(5)].join('.');
       scope.horizontalLayout = true;
     }
   };

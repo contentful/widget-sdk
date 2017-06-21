@@ -9,6 +9,7 @@ describe('Account View directive', function () {
 
     this.messages$ = K.createMockStream();
 
+    this.UrlSyncHelper = this.mockService('account/UrlSyncHelper');
     const IframeChannel = this.mockService('account/IframeChannel');
     IframeChannel.default.returns(this.messages$);
 
@@ -38,9 +39,9 @@ describe('Account View directive', function () {
     sinon.assert.calledOnce(modalDialog.closeAll);
   });
 
-  it('sets a source of the GK iframe using state params', function () {
-    this.$inject('$stateParams').pathSuffix = 'x/y/z';
+  it('sets a source of the GK iframe using UrlSyncHelper', function () {
+    this.UrlSyncHelper.getGatekeeperUrl.returns('http://blah/');
     this.compile();
-    expect(this.element.find('iframe').first().prop('src')).toBe('http://be.test.com/account/x/y/z');
+    expect(this.element.find('iframe').first().prop('src')).toBe('http://blah/');
   });
 });

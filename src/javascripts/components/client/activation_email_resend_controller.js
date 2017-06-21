@@ -5,7 +5,7 @@ angular.module('contentful')
   var $timeout = require('$timeout');
   var $q = require('$q');
   var moment = require('moment');
-  var tokenStore = require('tokenStore');
+  var tokenStore = require('services/TokenStore');
   var modalDialog = require('modalDialog');
   var resendActivationEmail = require('activationEmailResender').resend;
   var TheStore = require('TheStore');

@@ -12,12 +12,13 @@ angular.module('contentful')
  */
 .factory('TheAccountView', ['require', function (require) {
   var $q = require('$q');
-  var $state = require('$state');
   var spaceContext = require('spaceContext');
-  var OrganizationList = require('OrganizationList');
-  var tokenStore = require('tokenStore');
+  var OrganizationRoles = require('services/OrganizationRoles');
+  var TokenStore = require('services/TokenStore');
+  var K = require('utils/kefir');
+  var Navigator = require('states/Navigator');
 
-  var canShowIntercomLink$ = tokenStore.user$.map(function (user) {
+  var canShowIntercomLink$ = TokenStore.user$.map(function (user) {
     var organizationMemberships = user && user.organizationMemberships || [];
     var canShowIntercomLink = _.find(organizationMemberships, function (membership) {
       var subscriptionStatus = _.get(membership, 'organization.subscription.status');
@@ -27,30 +28,12 @@ angular.module('contentful')
   }).skipDuplicates();
 
   return {
-    goToUserProfile: goToUserProfile,
     getSubscriptionState: getSubscriptionState,
-    goToOrganizations: goToOrganizations,
+    getOrganizationRef: getOrganizationRef,
     goToSubscription: goToSubscription,
-    goToBilling: goToBilling,
     goToUsers: goToUsers,
-    silentlyChangeState: silentlyChangeState,
-    canGoToOrganizations: canGoToOrganizations,
     canShowIntercomLink$: canShowIntercomLink$
   };
-
-  function goTo (pathSuffix, options) {
-    return $state.go('account.pathSuffix', { pathSuffix: pathSuffix }, options);
-  }
-
-  /**
-   * @ngdoc method
-   * @name TheAccountView#goToUserProfile
-   * @description
-   * Navigates to the current user's user profile.
-   */
-  function goToUserProfile () {
-    return goTo('profile/user', {reload: true});
-  }
 
   /**
    * @ngdoc method
@@ -61,9 +44,9 @@ angular.module('contentful')
    */
   function getSubscriptionState () {
     var org = getGoToOrganizationsOrganization();
+    // TODO use a navigator reference
     if (org) {
-      var pathSuffix = 'organizations/' + org.sys.id + '/z_subscription';
-      return 'account.pathSuffix({ pathSuffix: \'' + pathSuffix + '\'})';
+      return 'account.organizations.subscription({ orgId: \'' + org.sys.id + '\' })';
     }
   }
 
@@ -75,18 +58,7 @@ angular.module('contentful')
    * organization's subscription page.
    */
   function goToSubscription () {
-    return goToOrganizations('z_subscription');
-  }
-
-  /**
-   * @ngdoc method
-   * @name TheAccountView#goToBilling
-   * @description
-   * `TheAccountView#goToOrganizations` shorthand to navigate to the current
-   * organization's billing page.
-   */
-  function goToBilling () {
-    return goToOrganizations('z_billing');
+    return goToOrganizations('subscription');
   }
 
   /**
@@ -97,7 +69,7 @@ angular.module('contentful')
    * organization's users (memberships) page.
    */
   function goToUsers () {
-    return goToOrganizations('organization_memberships');
+    return goToOrganizations('users');
   }
 
   /**
@@ -109,12 +81,9 @@ angular.module('contentful')
    * organization. Only organization owners and admins get navigated.
    */
   function goToOrganizations (subpage) {
-    var org = getGoToOrganizationsOrganization();
-    if (org) {
-      // TODO: Support route in GK without `/z_subscription` part and remove it here.
-      var subpageSuffix = subpage ? ('/' + subpage) : '/z_subscription';
-      var pathSuffix = 'organizations/' + org.sys.id + subpageSuffix;
-      return goTo(pathSuffix, {reload: true});
+    var ref = getOrganizationRef(subpage);
+    if (ref) {
+      return Navigator.go(ref);
     } else {
       return $q.reject();
     }
@@ -122,16 +91,35 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
-   * @name TheAccountView#canGoToOrganizations
-   * @returns {boolean}
+   * @name TheAccountView#getOrganizationRef
    * @description
+   * Returns a state reference for the current users current
+   * organization management view. The current organization is
+   * determined by `getGoToOrganizationsOrganization()`.
    *
-   * Returns whether the current user can actually navigate to the organizations
-   * settings view.
+   * The state reference can by used by the `states/Navigator` module
+   * or the `cfSref` directive.
+   *
+   * @param {string?} subpage
+   *   The subpage in the organization view
+   * @returns {Navigator.Ref}
    */
-  function canGoToOrganizations () {
-    return !!getGoToOrganizationsOrganization();
+  function getOrganizationRef (subpage) {
+    var org = getGoToOrganizationsOrganization();
+    if (org) {
+      subpage = subpage || 'subscription';
+      return {
+        path: ['account', 'organizations', subpage],
+        params: {
+          orgId: org.sys.id
+        },
+        options: { reload: true }
+      };
+    } else {
+      return null;
+    }
   }
+
 
   /**
    * @ngdoc method
@@ -145,7 +133,7 @@ angular.module('contentful')
     var orgs = [spaceContext.getData('organization')];
     if (!orgs[0]) {
       // No space yet, get next best organization.
-      orgs = OrganizationList.getAll();
+      orgs = K.getValue(TokenStore.organizations$);
     }
     return findOwnedOrgWithState(orgs, 'trial') ||
       findOwnedOrgWithState(orgs, 'active') ||
@@ -153,25 +141,11 @@ angular.module('contentful')
       null;
   }
 
-  /**
-   * @ngdoc method
-   * @name TheAccountView#silentlyChangeState
-   * @description
-   * Changes URL, without any other side effects.
-   */
-  function silentlyChangeState (pathSuffix) {
-    if (pathSuffix) {
-      return goTo(pathSuffix, {location: 'replace'});
-    } else {
-      return $q.reject();
-    }
-  }
-
   function findOwnedOrgWithState (orgs, state) {
     return _.find(orgs, filter);
 
     function filter (organization) {
-      return OrganizationList.isOwnerOrAdmin(organization) &&
+      return OrganizationRoles.isOwnerOrAdmin(organization) &&
         (organization.subscriptionState === state || state === '*');
     }
   }

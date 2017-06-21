@@ -46,7 +46,8 @@ describe('ui/ResizeDetector', function () {
     const resize$ = observeResize(inner.get(0));
     expect(inner.children().length).toBe(0);
     const off = K.onValue(resize$, _.noop);
-    yield rafWait();
+    // Not sure why we need to wait twice.
+    yield rafWait(2);
     expect(inner.children().length).toBe(1);
     off();
     yield rafWait();

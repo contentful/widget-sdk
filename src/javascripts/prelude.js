@@ -67,7 +67,7 @@ angular.module('contentful/app', ['contentful'])
   var $document = require('$document');
   require('utils/LaunchDarkly').init();
   require('Authentication').init();
-  require('tokenStore').init();
+  require('services/TokenStore').init();
   require('presence').startTracking();
   require('uiVersionSwitcher').checkIfVersionShouldBeSwitched();
   require('navigation/stateChangeHandlers').setup();

@@ -7,7 +7,7 @@ angular.module('contentful')
   var authorization = require('authorization');
   var enforcements = require('enforcements');
   var spaceContext = require('spaceContext');
-  var tokenStore = require('tokenStore');
+  var tokenStore = require('services/TokenStore');
 
   $controller('UiConfigController', {$scope: $scope});
   // TODO: it's not a controller, it should be a service

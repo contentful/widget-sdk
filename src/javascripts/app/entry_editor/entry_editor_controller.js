@@ -41,6 +41,7 @@ angular.module('contentful')
   var installTracking = require('app/entity_editor/Tracking').default;
   var deepFreeze = require('utils/DeepFreeze').deepFreeze;
   var initDocErrorHandler = require('app/entity_editor/DocumentErrorHandler').default;
+  var contextHistory = require('contextHistory');
 
   var editorData = $scope.editorData;
   var entityInfo = this.entityInfo = editorData.entityInfo;
@@ -127,7 +128,24 @@ angular.module('contentful')
     };
   };
 
-  this.hasInitialFocus = true;
+
+  // TODO We assume that the current state has already been added to
+  // the history. This is done in 'state/entries.js'. We should
+  // consolidate this.
+  $scope.$on('scroll-editor', function (_ev, scrollTop) {
+    contextHistory.extendCurrent({scroll: scrollTop});
+  });
+
+  var startScroll = contextHistory.getLast().scroll;
+  if (startScroll) {
+    $scope.initialEditorScroll = startScroll;
+  } else {
+    // The first input element of the editor will become focused once
+    // the document is loaded and the editor will scroll to that
+    // position.
+    this.hasInitialFocus = true;
+  }
+
 
   K.onValueScope($scope, $scope.otDoc.state.isDirty$, function (isDirty) {
     $scope.context.dirty = isDirty;

@@ -1,4 +1,5 @@
-'use strict';
+import $q from '$q';
+import * as DOM from 'helpers/DOM';
 
 /**
  * Tests the integration of the 'cfEntityField' directive with
@@ -9,6 +10,8 @@
  * 'cfEntityField'.
  *
  * Does not render the widget.
+ *
+ * TODO Use DOM helpers
  */
 describe('entity editor field integration', function () {
 
@@ -248,6 +251,34 @@ describe('entity editor field integration', function () {
       el.fieldController.setInvalid('DEF', false);
       this.$apply();
       assertInvalidState(el.field, false);
+    });
+
+    it('shows link for duplicate errors', function () {
+      const spaceContext = this.mockService('spaceContext', {
+        entryTitle (entry) {
+          return `TITLE ${entry.data.sys.id}`;
+        }
+      });
+
+      spaceContext.space = {
+        getEntries (query) {
+          const ids = query['sys.id[in]'].split(',');
+          return $q.resolve(ids.map((id) => {
+            return {data: {sys: {id: id, type: 'Entry'}}};
+          }));
+        }
+      };
+
+      const view = DOM.createView(this.compile().get(0));
+
+      this.validator.errors$.set([{
+        path: ['fields', 'FID', 'DEF-internal'],
+        name: 'unique',
+        conflicting: [{sys: { id: 'DUPLICATE' }}],
+        message: ''
+      }]);
+      this.$apply();
+      view.find('uniqueness-conflicts-list').assertHasText('TITLE DUPLICATE');
     });
   });
 

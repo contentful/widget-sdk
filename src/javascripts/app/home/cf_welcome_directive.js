@@ -6,7 +6,7 @@ angular.module('contentful')
   var h = require('utils/hyperscript').h;
   var moment = require('moment');
   var K = require('utils/kefir');
-  var tokenStore = require('tokenStore');
+  var tokenStore = require('services/TokenStore');
 
   var scrollToDeveloperResources = h('span', {}, [
     'Get started with content creation in your space or get ',

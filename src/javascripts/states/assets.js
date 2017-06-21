@@ -18,9 +18,6 @@ angular.module('contentful')
     name: 'list',
     url: '',
     loadingText: 'Loading media...',
-    controller: [function () {
-      contextHistory.add(crumbFactory.AssetList());
-    }],
     template: '<div cf-asset-list class="workbench asset-list entity-list"></div>'
   });
 

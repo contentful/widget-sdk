@@ -36,7 +36,7 @@ angular.module('contentful')
     url: '/:spaceId',
     resolve: {
       spaceContext: ['require', '$stateParams', function (require, $stateParams) {
-        var tokenStore = require('tokenStore');
+        var tokenStore = require('services/TokenStore');
         var spaceContext = require('spaceContext');
         return tokenStore.getSpace($stateParams.spaceId)
         .then(function (space) {

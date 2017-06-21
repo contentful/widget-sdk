@@ -53,7 +53,7 @@ describe('utils/LaunchDarkly', function () {
     };
 
     this.user$ = K.createMockProperty();
-    this.mockService('tokenStore', {
+    this.mockService('services/TokenStore', {
       user$: this.user$
     });
 

@@ -19,7 +19,6 @@ angular.module('contentful')
     template: '<cf-webhook-list class="workbench webhook-list" />',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
-      contextHistory.add(crumbFactory.WebhookList());
     }]
   });
 
@@ -29,7 +28,6 @@ angular.module('contentful')
     data: {
       isNew: true
     },
-    params: { addToContext: true },
     template: '<cf-webhook-editor cf-ui-tab class="workbench webhook-editor" />',
     controller: ['$scope', 'require', function ($scope, require) {
       var $state = require('$state');
@@ -37,15 +35,16 @@ angular.module('contentful')
       $scope.context = $state.current.data;
       $scope.webhook = { headers: [], topics: ['*.*'] };
 
-      contextHistory.add(crumbFactory.WebhookList());
-      contextHistory.add(crumbFactory.Webhook(null, $scope.context));
+      contextHistory.set([
+        crumbFactory.WebhookList(),
+        crumbFactory.Webhook(null, $scope.context)
+      ]);
     }]
   };
 
   var callState = {
     name: 'call',
     url: '/call/:callId',
-    params: { addToContext: true },
     resolve: {
       call: ['WebhookRepository', 'space', 'webhook', '$stateParams', function (WebhookRepository, space, webhook, $stateParams) {
         return WebhookRepository.getInstance(space).logs.getCall(webhook.sys.id, $stateParams.callId);
@@ -63,9 +62,11 @@ angular.module('contentful')
         /* eslint no-empty: off */
       }
 
-      contextHistory.add(crumbFactory.WebhookList());
-      contextHistory.add(crumbFactory.Webhook($stateParams.webhookId, {title: webhook.name}));
-      contextHistory.add(crumbFactory.WebhookCall(call));
+      contextHistory.set([
+        crumbFactory.WebhookList(),
+        crumbFactory.Webhook($stateParams.webhookId, {title: webhook.name}),
+        crumbFactory.WebhookCall(call)
+      ]);
     }]
   };
 
@@ -75,7 +76,6 @@ angular.module('contentful')
     data: {
       isNew: false
     },
-    params: { addToContext: true },
     resolve: {
       webhook: ['WebhookRepository', 'space', '$stateParams', function (WebhookRepository, space, $stateParams) {
         return WebhookRepository.getInstance(space).get($stateParams.webhookId);
@@ -86,8 +86,10 @@ angular.module('contentful')
       $scope.context = $state.current.data;
       $scope.webhook = webhook;
 
-      contextHistory.add(crumbFactory.WebhookList());
-      contextHistory.add(crumbFactory.Webhook($stateParams.webhookId, $scope.context));
+      contextHistory.set([
+        crumbFactory.WebhookList(),
+        crumbFactory.Webhook($stateParams.webhookId, $scope.context)
+      ]);
     }],
     children: [callState]
   };

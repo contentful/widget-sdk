@@ -29,7 +29,7 @@ describe('Gatekeeper Message Handler', function () {
     });
 
     it('leaves a deleted space', function () {
-      const refresh = this.$inject('tokenStore').refresh = sinon.spy();
+      const refresh = this.$inject('services/TokenStore').refresh = sinon.spy();
       const go = this.$inject('$state').go = sinon.spy();
 
       this.handle({action: 'delete', type: 'space'});
@@ -52,14 +52,14 @@ describe('Gatekeeper Message Handler', function () {
       sinon.assert.calledOnce(url.withArgs('blah/blah'));
     });
 
-    it('changes state when navigating', function () {
-      const change = this.$inject('TheAccountView').silentlyChangeState = sinon.spy();
-      this.handle({action: 'update', type: 'location', path: 'account/blah/blah'});
-      sinon.assert.calledOnce(change.withArgs('blah/blah'));
+    it('updates location', function () {
+      const urlSyncHelper = this.mockService('account/UrlSyncHelper');
+      this.handle({action: 'update', type: 'location', path: 'blah/blah'});
+      sinon.assert.calledOnce(urlSyncHelper.updateWebappUrl.withArgs('blah/blah'));
     });
 
     it('refreshes token for any other message', function () {
-      const refresh = this.$inject('tokenStore').refresh = sinon.spy();
+      const refresh = this.$inject('services/TokenStore').refresh = sinon.spy();
       this.handle({blah: 'blah'});
       sinon.assert.calledOnce(refresh);
     });
