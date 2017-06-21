@@ -9,6 +9,11 @@ angular.module('contentful')
   var base = require('states/base');
   var h = require('utils/hyperscript').h;
 
+  // Begin feature flag code - feature-bv-06-2017-use-new-navigation
+  var K = require('utils/kefir');
+  var LD = require('utils/LaunchDarkly');
+  // End feature flag code - feature-bv-06-2017-use-new-navigation
+
   var user = userBase({
     name: 'user',
     url: '/user/{pathSuffix:PathSuffix}'
@@ -42,13 +47,20 @@ angular.module('contentful')
   function userBase (definition) {
     var defaults = {
       label: 'Account',
-      controller: ['$scope', '$state', function ($scope) {
-        $scope.context = {};
-      }],
       params: {
         pathSuffix: ''
       },
-      template: h('cf-account-view', { context: 'context' })
+      controller: ['$scope', function ($scope) {
+        $scope.context = {};
+
+        // Begin feature flag code - feature-bv-06-2017-use-new-navigation
+        setShowNewNav($scope);
+        // End feature flag code - feature-bv-06-2017-use-new-navigation
+      }],
+      template: [
+        h('cf-profile-old-nav', { ngIf: '!showNewNav' }),
+        h('cf-account-view', { withTabs: '!showNewNav', context: 'context' })
+      ].join('')
     };
 
     return base(_.extend(definition, defaults));
@@ -59,7 +71,13 @@ angular.module('contentful')
     url: '/profile',
     abstract: true,
     views: {
-      'nav-bar@': { template: '<cf-profile-nav />' }
+      'nav-bar@': {
+        template: h('cf-profile-nav', { ngIf: 'showNewNav' }),
+
+        // Begin feature flag code - feature-bv-06-2017-use-new-navigation
+        controller: ['$scope', function ($scope) { setShowNewNav($scope); }]
+        // End feature flag code - feature-bv-06-2017-use-new-navigation
+      }
     },
     children: [
       user,
@@ -70,4 +88,13 @@ angular.module('contentful')
       userCancellation
     ]
   });
+
+  // Begin feature flag code - feature-bv-06-2017-use-new-navigation
+  function setShowNewNav ($scope) {
+    var showNewNav$ = LD.getFeatureFlag('feature-bv-06-2017-use-new-navigation');
+    K.onValueScope($scope, showNewNav$, function (showNewNav) {
+      $scope.showNewNav = showNewNav;
+    });
+  }
+  // End feature flag code - feature-bv-06-2017-use-new-navigation
 }]);

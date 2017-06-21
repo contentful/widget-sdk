@@ -20,7 +20,7 @@ angular.module('contentful')
     ]),
     restrict: 'E',
     scope: {
-      withTabs: '@',
+      withTabs: '=',
       context: '='
     },
     link: function (scope, elem) {
