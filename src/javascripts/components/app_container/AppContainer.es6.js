@@ -7,9 +7,8 @@ export default function () {
     }),
     h('div.app-top-bar', [
       h('div.app-top-bar__logo.app-top-bar__child.app-top-bar--right-separator', [
-        h('a.app-top-bar__logo-element', {
-          cfCustomLogo: 'cf-custom-logo',
-          cfSref: '{ path: ["home"] }'
+        h('.app-top-bar__logo-element', {
+          cfCustomLogo: 'cf-custom-logo'
         })
       ]),
       h('div.app-top-bar__child.app-top-bar__main-nav', {

@@ -1,6 +1,6 @@
 import {h} from 'utils/hyperscript';
 
-export function navBar (listItems) {
+export function navBar (listItems = []) {
   return h('nav.nav-bar', [
     h('cf-space-selector'),
     h('ul.nav-bar__list', listItems.map(function (data, index) {
