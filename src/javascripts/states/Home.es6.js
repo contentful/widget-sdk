@@ -4,6 +4,7 @@ import $state from '$state';
 import {getSpaces} from 'services/TokenStore';
 import TheStore from 'TheStore';
 import template from 'app/home/HomeTemplate';
+import {navBar} from 'ui/NavBar';
 
 
 /**
@@ -17,6 +18,7 @@ import template from 'app/home/HomeTemplate';
 export default makeState({
   name: 'home',
   url: '/',
+  views: { 'nav-bar': { template: navBar() } },
   template: template(),
   loadingText: 'Loading...',
   resolve: {

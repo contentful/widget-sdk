@@ -1,10 +1,10 @@
 'use strict';
 
-angular.module('contentful').directive('cfAppContainer', function () {
+angular.module('contentful').directive('cfAppContainer', ['require', function (require) {
   return {
-    template: JST.cf_app_container(),
+    template: require('components/app_container/AppContainer').default(),
     restrict: 'E',
     // FIXME move this further down maybe
     controller: 'SpaceController'
   };
-});
+}]);

@@ -1,23 +1,23 @@
 'use strict';
 
-angular.module('contentful').directive('cfMainNavBar', ['$injector', function ($injector) {
+angular.module('contentful').directive('cfMainNavBar', ['require', function (require) {
 
-  var accessChecker = $injector.get('accessChecker');
+  var accessChecker = require('accessChecker');
 
   return {
-    template: JST.cf_main_nav_bar(),
+    template: require('components/client/MainNavBar').default(),
     restrict: 'E',
     replace: true,
-    controller: ['$scope', '$injector', function ($scope, $injector) {
-
-      $scope.$state       = $injector.get('$state');
-      $scope.$stateParams = $injector.get('$stateParams');
-
-      $scope.$watch(function () {
-        return accessChecker.getSectionVisibility();
-      }, function (sectionVisibility) {
-        $scope.canNavigateTo = sectionVisibility;
-      });
+    controller: ['$scope', function ($scope) {
+      var spaceContext = require('spaceContext');
+      $scope.$state = require('$state');
+      $scope.canNavigateTo = function (section) {
+        if (!spaceContext.space || spaceContext.space.isHibernated()) {
+          return false;
+        } else {
+          return accessChecker.getSectionVisibility()[section];
+        }
+      };
     }]
   };
 }]);
