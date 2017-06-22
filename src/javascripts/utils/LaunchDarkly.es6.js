@@ -7,7 +7,8 @@ import {
   fromEvents,
   getValue,
   merge as mergeValues,
-  sampleBy
+  sampleBy,
+  onValueScope
 } from 'utils/kefir';
 
 
@@ -136,4 +137,55 @@ export function getFeatureFlag (featureFlagName, customQualificationFn = _ => tr
 
     return customQualificationFn(currentUser) ? client.variation(featureFlagName, DEFAULT_VAL) : DEFAULT_VAL;
   }).skipDuplicates();
+}
+
+/**
+ * @ngdoc method
+ * @name utils/LaunchDarkly#setOnScope
+ * @usage[js]
+ * const ld = require('utils/LaunchDarkly')
+ * // sets $scope.fooBar
+ * ld.setOnScope($scope, 'test-01-01-foo-bar')
+ *
+ *
+ * @description
+ * Convenience method for commonly used scenario - set scope property to a
+ * feature flag or A/B test value.
+ * It parses the name in format 'feature|test-xx-00-00-kebab-case-property-name'
+ * and automatically guesses the name of the property, and whether it is a feature
+ * flag or A/B test.
+ * If name cannot be parsed, an error is thrown.
+ *
+ * @param {Scope} $scope
+ * @param {String} flagName - name of flag in LaunchDarkly
+ * @returns {type {String}, title {String}} - type of flag ('test' or 'feature')
+ * and title of created scope property
+ */
+export function setOnScope ($scope, flagName) {
+  const parsed = parseLDName(flagName);
+  if (!parsed) {
+    throw new Error('Invalid LD flag name: ' + flagName);
+  }
+
+  const value$ = parsed.type === 'test'
+      ? getTest(flagName) : getFeatureFlag(flagName);
+
+  onValueScope($scope, value$, function (value) {
+    $scope[parsed.title] = value;
+  });
+}
+
+function parseLDName (name) {
+  const matches = /^(?:(feature|test)-)?\w+-\d+-\d+-(.+)$/.exec(name);
+  if (!matches || !matches[1] || !matches[2]) {
+    return null;
+  }
+  const type = matches[1];
+  const title = kebabToCamelCase(matches[2]);
+
+  return { type, title };
+}
+
+function kebabToCamelCase (str) {
+  return str.replace(/-\w/g, (capture) => capture[1].toUpperCase());
 }

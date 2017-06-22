@@ -66,6 +66,7 @@ describe('utils/LaunchDarkly', function () {
 
     this.getTest = launchDarkly.getTest;
     this.getFeatureFlag = launchDarkly.getFeatureFlag;
+    this.setOnScope = launchDarkly.setOnScope;
 
     this.assertPropVal = K.assertCurrentValue;
   });
@@ -228,5 +229,24 @@ describe('utils/LaunchDarkly', function () {
       this.assertPropVal(propA, 'test-val');
     });
 
+  });
+
+  describe('#setOnScope($scope, testName)', function () {
+    beforeEach(function () {
+      const $rootScope = this.$inject('$rootScope');
+      this.$scope = $rootScope.$new();
+      client.variation.returns('some-val');
+    });
+
+    it('should set scope property for feature flag', function () {
+      this.setOnScope(this.$scope, 'feature-xx-00-00-foo-bar');
+      expect(this.$scope.fooBar).toBe('some-val');
+    });
+
+    it('should set scope property for A/B test for qualified user', function () {
+      this.user$.set(this.qualifiedUser);
+      this.setOnScope(this.$scope, 'test-xx-00-00-foo-bar');
+      expect(this.$scope.fooBar).toBe('some-val');
+    });
   });
 });
