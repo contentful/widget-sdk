@@ -110,8 +110,8 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
 
       function closeAncestorListIfVisible (e) {
         var $ancestorList = $el.find(ancestorMenuContainerSelector);
-        // IE 11 does not always have a target :(
-        var targetLabel = e.target && e.target.getAttribute('aria-label');
+        // IE 11 does not always have a target or getAttribute method :(
+        var targetLabel = e.target && e.target.getAttribute && e.target.getAttribute('aria-label');
         var isAncestorBtn = targetLabel === 'breadcrumbs-ancestor-btn';
 
         if ($ancestorList.is(':visible') && !isAncestorBtn) {
