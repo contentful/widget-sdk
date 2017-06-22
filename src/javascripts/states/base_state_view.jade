@@ -1,5 +1,6 @@
 div(ng-show="context.ready && !context.forbidden")
   cf-loader(watch-state-change="true")
+  docs-sidebar
   | ${{template}}
 
 cf-loader(is-shown="!context.ready && !context.forbidden", loader-msg="${{loadingText}}")
