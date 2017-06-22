@@ -1,6 +1,12 @@
+/**
+ * @ngdoc directive
+ * @name cfSpaceNavBar
+ * @description
+ * Displays the top navigation bar for space views.
+ */
 angular.module('contentful')
 .directive('cfSpaceNavBar', ['require', function (require) {
-  var navBar = require('ui/NavBar').default;
+  var navBar = require('app/NavBar').default;
   var accessChecker = require('accessChecker');
   var spaceContext = require('spaceContext');
 

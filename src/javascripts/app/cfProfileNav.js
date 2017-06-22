@@ -1,6 +1,12 @@
-angular.module('contentful')
+/**
+ * @ngdoc directive
+ * @name cfProfileNavBar
+ * @description
+ * Displays the top navigation bar for user profile views.
+ */
+ angular.module('contentful')
 .directive('cfProfileNav', ['require', function (require) {
-  var navBar = require('ui/NavBar').default;
+  var navBar = require('app/NavBar').default;
 
   return {
     template: template(),

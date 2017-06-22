@@ -7,7 +7,7 @@ angular.module('contentful')
  */
 .factory('states/account', ['require', function (require) {
   var base = require('states/base');
-  var navBar = require('ui/NavBar').default;
+  var navBar = require('app/NavBar').default;
 
   return base({
     name: 'account',
