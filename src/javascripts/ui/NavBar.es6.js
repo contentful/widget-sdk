@@ -30,7 +30,6 @@ function navbarDropdown (data, tabIndex = 0) {
       dataViewType: data.dataViewType,
       tabindex: tabIndex,
       cfContextMenuTrigger: 'cf-context-menu-trigger',
-      dataTestId: data.dataTestId,
       ngClass: `{ "is-active": $state.includes("${data.rootSref || data.sref}") }`
     }, [
       h('cf-icon', { name: data.icon }),
@@ -42,7 +41,7 @@ function navbarDropdown (data, tabIndex = 0) {
     h('div.context-menu.x--top-bar', {
       role: 'menu',
       cfContextMenu: true,
-      dataTestId: 'settings-menu'
+      dataTestId: 'navbar-dropdown-menu'
     }, [
       h('ul.context-menu__items', data.children.map(navbarDropdownItem))
     ])
