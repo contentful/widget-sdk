@@ -42,16 +42,6 @@ const apiKeyEditorState = {
   template: editorTemplate()
 };
 
-const newKey = assign({
-  name: 'new',
-  url: '_new',
-  resolve: {
-    apiKey: ['spaceContext', function (spaceContext) {
-      return spaceContext.apiKeyRepo.makeNew();
-    }]
-  }
-}, apiKeyEditorState);
-
 const keyDetail = assign({
   name: 'detail',
   url: '/:apiKeyId',
@@ -78,7 +68,7 @@ export default {
     name: 'keys',
     abstract: true,
     url: '/keys',
-    children: [cdaKeyList(), newKey, keyDetail]
+    children: [cdaKeyList(), keyDetail]
   }, {
     // Legacy path
     name: 'cma_keys',

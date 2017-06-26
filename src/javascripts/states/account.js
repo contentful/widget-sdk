@@ -7,6 +7,7 @@ angular.module('contentful')
  */
 .factory('states/account', ['require', function (require) {
   var base = require('states/base');
+  var navBar = require('ui/NavBar').navBar;
 
   return base({
     name: 'account',
@@ -15,6 +16,7 @@ angular.module('contentful')
     controller: ['$scope', function ($scope) {
       $scope.context = {};
     }],
+    views: { 'nav-bar': { template: navBar() } },
     children: [
       require('states/account/organizations'),
       require('states/account/profile')

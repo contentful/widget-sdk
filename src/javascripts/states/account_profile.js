@@ -34,6 +34,11 @@ angular.module('contentful')
     url: '/developers/applications/{pathSuffix:PathSuffix}'
   });
 
+  var userCancellation = userBase({
+    name: 'user_cancellation',
+    url: '/user_cancellation/{pathSuffix:PathSuffix}'
+  });
+
   function userBase (definition) {
     var defaults = {
       label: 'Account',
@@ -58,7 +63,8 @@ angular.module('contentful')
       spaceMemberships,
       organizationMemberships,
       accessGrants,
-      applications
+      applications,
+      userCancellation
     ]
   });
 }]);

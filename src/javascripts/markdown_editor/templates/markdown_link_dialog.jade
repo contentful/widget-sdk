@@ -4,6 +4,9 @@
       h1 Insert link
       button.modal-dialog__close(ng-click="dialog.cancel()")
     form.modal-dialog__content(name="linkForm")
+      .cfnext-form__field(ng-if="showLinkTextInput")
+        label Link text
+        input.cfnext-form__input--full-size(ng-model="model.text" name="text" type="text")
       .cfnext-form__field
         label Target URL
         input.cfnext-form__input--full-size(
@@ -13,13 +16,9 @@
           cf-focus-on-render="model")
         .cfnext-form__hint Please include protocol (e.g. <code>https://</code>).
       .cfnext-form__field
-        label Link label
-        input.cfnext-form__input--full-size(ng-model="model.text" name="text" type="text")
-        .cfnext-form__hint Optional.
-      .cfnext-form__field
-        label Link title
+        label Title of the link
         input.cfnext-form__input--full-size(ng-model="model.title" name="title" type="text")
-        .cfnext-form__hint Optional.
+        .cfnext-form__hint Optional, although commonly used to improve accessibility.
     .modal-dialog__controls
       button.btn-primary-action.modal-dialog__controls-confirm(
         ng-click="dialog.confirm(model)"
