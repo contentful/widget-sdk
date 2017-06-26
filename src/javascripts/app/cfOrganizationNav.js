@@ -29,26 +29,31 @@
   function template () {
     return navBar([
       {
-        title: 'Settings',
+        title: 'Organization information',
         // TODO use cf-sref for navbar links
-        sref: 'account.organizations.edit({orgId: orgId})'
+        sref: 'account.organizations.edit({orgId: orgId})',
+        icon: 'nav-organization-information'
       },
       {
         title: 'Subscription',
-        sref: 'account.organizations.subscription({orgId: orgId})'
+        sref: 'account.organizations.subscription({orgId: orgId})',
+        icon: 'nav-organization-subscription'
       },
       {
         title: 'Billing',
         sref: 'account.organizations.billing({orgId: orgId})',
+        icon: 'nav-organization-billing',
         if: 'hasBillingTab'
       },
       {
         title: 'Users',
-        sref: 'account.organizations.users({orgId: orgId})'
+        sref: 'account.organizations.users({orgId: orgId})',
+        icon: 'nav-organization-billing'
       },
       {
         title: 'Spaces',
-        sref: 'account.organizations.spaces({orgId: orgId})'
+        sref: 'account.organizations.spaces({orgId: orgId})',
+        icon: 'nav-spaces'
       },
       {
         title: 'Offsite backup',
