@@ -10,7 +10,6 @@ angular.module('contentful')
   var h = require('utils/hyperscript').h;
 
   // Begin feature flag code - feature-bv-06-2017-use-new-navigation
-  var K = require('utils/kefir');
   var LD = require('utils/LaunchDarkly');
   // End feature flag code - feature-bv-06-2017-use-new-navigation
 
@@ -54,12 +53,12 @@ angular.module('contentful')
         $scope.context = {};
 
         // Begin feature flag code - feature-bv-06-2017-use-new-navigation
-        setShowNewNav($scope);
+        LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation');
         // End feature flag code - feature-bv-06-2017-use-new-navigation
       }],
       template: [
-        h('cf-profile-old-nav', { ngIf: '!showNewNav' }),
-        h('cf-account-view', { withTabs: '!showNewNav', context: 'context' })
+        h('cf-profile-old-nav', { ngIf: '!useNewNavigation' }),
+        h('cf-account-view', { withTabs: '!useNewNavigation', context: 'context' })
       ].join('')
     };
 
@@ -72,10 +71,12 @@ angular.module('contentful')
     abstract: true,
     views: {
       'nav-bar@': {
-        template: h('cf-profile-nav', { ngIf: 'showNewNav' }),
+        template: h('cf-profile-nav', { ngIf: 'useNewNavigation' }),
 
         // Begin feature flag code - feature-bv-06-2017-use-new-navigation
-        controller: ['$scope', function ($scope) { setShowNewNav($scope); }]
+        controller: ['$scope', function ($scope) {
+          LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation');
+        }]
         // End feature flag code - feature-bv-06-2017-use-new-navigation
       }
     },
@@ -88,13 +89,4 @@ angular.module('contentful')
       userCancellation
     ]
   });
-
-  // Begin feature flag code - feature-bv-06-2017-use-new-navigation
-  function setShowNewNav ($scope) {
-    var showNewNav$ = LD.getFeatureFlag('feature-bv-06-2017-use-new-navigation');
-    K.onValueScope($scope, showNewNav$, function (showNewNav) {
-      $scope.showNewNav = showNewNav;
-    });
-  }
-  // End feature flag code - feature-bv-06-2017-use-new-navigation
 }]);
