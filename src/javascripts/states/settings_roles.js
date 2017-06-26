@@ -85,7 +85,7 @@ angular.module('contentful')
   return {
     name: 'roles',
     url: '/roles',
-    abstract: true,
+    redirectTo: 'spaces.detail.settings.roles.list',
     children: [newRole, detail, list]
   };
 }]);
