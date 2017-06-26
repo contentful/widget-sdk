@@ -9,6 +9,10 @@ angular.module('contentful')
   var base = require('states/base');
   var h = require('utils/hyperscript').h;
 
+  // Begin feature flag code - feature-bv-06-2017-use-new-navigation
+  var LD = require('utils/LaunchDarkly');
+  // End feature flag code - feature-bv-06-2017-use-new-navigation
+
   var newOrg = base({
     name: 'new',
     url: '/new',
@@ -54,13 +58,17 @@ angular.module('contentful')
       label: 'Organizations & Billing',
       controller: ['$scope', function ($scope) {
         $scope.context = {};
+
+        // Begin feature flag code - feature-bv-06-2017-use-new-navigation
+        LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation');
+        // End feature flag code - feature-bv-06-2017-use-new-navigation
       }],
       params: {
         pathSuffix: ''
       },
       template: [
-        h('cf-account-organizations-nav'),
-        h('cf-account-view', { withTabs: 'true', context: 'context' })
+        h('cf-organizations-old-nav', { ngIf: '!useNewNavigation' }),
+        h('cf-account-view', { withTabs: '!useNewNavigation', context: 'context' })
       ].join('')
     };
     return base(_.extend(definition, defaults));
@@ -70,6 +78,17 @@ angular.module('contentful')
     name: 'organizations',
     url: '/organizations',
     abstract: true,
+    views: {
+      'nav-bar@': {
+        template: h('cf-organization-nav', { ngIf: 'useNewNavigation' }),
+
+        // Begin feature flag code - feature-bv-06-2017-use-new-navigation
+        controller: ['$scope', function ($scope) {
+          LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation');
+        }]
+        // End feature flag code - feature-bv-06-2017-use-new-navigation
+      }
+    },
     children: [
       newOrg,
       edit,
