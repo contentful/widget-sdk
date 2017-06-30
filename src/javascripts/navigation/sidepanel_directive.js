@@ -73,6 +73,13 @@ angular.module('contentful')
 
           $scope.selectedOrgId = orgId;
           $scope.canGotoOrgSettings = isOwnerOrAdmin(org);
+          $scope.organizationRef = {
+            path: ['account', 'organizations', 'subscription'],
+            params: {
+              orgId: org.sys.id
+            },
+            options: { reload: true }
+          };
           $scope.canCreateSpaceInCurrOrg = canCreateSpaceInOrg(orgId);
         }
       });
@@ -117,6 +124,8 @@ angular.module('contentful')
       $scope.$watch(function () {
         return TheAccountView.getOrganizationRef();
       }, function (ref) {
+        console.log('Org ref', ref)
+        $scope.selectedOrgId = ref && ref.params.orgId;
         $scope.organizationRef = ref;
       }, true);
 

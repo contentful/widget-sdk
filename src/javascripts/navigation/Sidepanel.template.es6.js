@@ -65,7 +65,7 @@ export default function () {
     }, [
       h('a', {
         ngIf: 'canGotoOrgSettings',
-        cfHref: '{{organizationRef}}'
+        cfSref: 'organizationRef'
       }, ['Goto org settings'])
     ])
   ]);
