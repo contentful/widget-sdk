@@ -32,6 +32,7 @@ angular.module('cf.app')
       //   clicking on any part of the entity link will call this
       //   function.
       actions: '<?',
+      contentType: '<?',
       // object of visual configuration options
       // valid options are
       // - draggable
@@ -92,6 +93,11 @@ angular.module('cf.app')
   }, function (hasTooltip) {
     $scope.hasTooltip = hasTooltip;
   });
+  if ($scope.contentType) {
+    $scope.contentType.then(function (ct) {
+      $scope.contentTypeName = ct.data.name;
+    });
+  }
 
   if (data) {
     getBasicEntityInfo();

@@ -1,4 +1,5 @@
 import {h} from 'utils/hyperscript';
+import * as Colors from 'Styles/Colors';
 import {
   dragHandle,
   status,
@@ -60,7 +61,24 @@ function content () {
     }),
     h('div', {
       style: {flexGrow: 1}
-    }, text())
+    }, text()),
+
+    // Content type information
+    h('div', {
+      dataTooltip: 'Content type',
+      style: {
+        marginTop: '1px',
+        marginBottom: '-1px',
+        marginRight: '10px',
+        color: Colors.byName.textLight,
+        maxWidth: '30%',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden'
+      }
+    }, [
+      '{{ contentTypeName }}'
+    ])
   ].join('');
 }
 

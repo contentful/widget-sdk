@@ -48,6 +48,14 @@ angular.module('contentful')
     resultPromise.then(handleResponse);
   });
 
+  // Returns a promise for the content type of the given entry.
+  // We cache this by the entry id
+  var getContentType = _.memoize(function (entity) {
+    return spaceContext.publishedCTs.fetch(entity.sys.contentType.sys.id);
+  }, function (entity) {
+    return entity.sys.id;
+  });
+
   _.extend($scope, MODES, {
     spaceContext: spaceContext,
     view: {mode: MODES.AVAILABLE},
@@ -60,7 +68,8 @@ angular.module('contentful')
     getSearchPlaceholder: getSearchPlaceholder,
     showCustomEmptyMessage: showCustomEmptyMessage,
     supportsAdvancedSearch: _.includes(['Entry', 'Asset'], config.entityType),
-    helpers: getEntityHelpers(config)
+    helpers: getEntityHelpers(config),
+    getContentType: getContentType
   });
 
   $scope.$watch('view.searchTerm', handleTermChange);

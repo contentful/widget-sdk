@@ -5,6 +5,7 @@ import * as List from 'utils/List';
 import entitySelector from 'entitySelector';
 import modalDialog from 'modalDialog';
 import createEntity from 'cfReferenceEditor/createEntity';
+import spaceContext from 'spaceContext';
 
 import * as State from './State';
 
@@ -74,9 +75,7 @@ export default function create ($scope, widgetApi) {
     if (models) {
       // We could just use models but for performance reasons we use
       // a keyed list.
-      $scope.entityModels = List.makeKeyed(models, function (model) {
-        return model.hash;
-      });
+      $scope.entityModels = List.makeKeyed(models, (model) => model.hash);
       $scope.isReady = true;
     }
   });
@@ -142,11 +141,15 @@ export default function create ($scope, widgetApi) {
   // Build an object that is passed to the 'cfEntityLink' directive
   function buildEntityModel (id, entity, index, isDisabled) {
     const version = entity ? entity.sys.version : '';
-    const hash = [id, version, isDisabled].join('!');
+    const contentTypeId = entity && entity.sys.contentType && entity.sys.contentType.sys.id;
+    const hash = [id, version, isDisabled, contentTypeId].join('!');
+
+    const contentType = contentTypeId && spaceContext.publishedCTs.fetch(contentTypeId);
 
     return {
       id: id,
       entity: entity,
+      contentType,
       hash: hash,
       actions: {
         edit: prepareEditAction(entity, index, isDisabled),

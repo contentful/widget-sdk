@@ -31,7 +31,8 @@ export function status (style) {
     style: assign({
       width: '13px',
       height: '13px',
-      borderRadius: '50%'
+      borderRadius: '50%',
+      flexShrink: 0
     }, style)
   });
 }
