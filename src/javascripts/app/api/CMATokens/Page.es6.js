@@ -3,10 +3,11 @@ import * as Command from 'command';
 import * as K from 'utils/kefir';
 import {truncate} from 'stringUtils';
 
-import {h, text} from 'utils/hyperscript';
+import {h} from 'ui/Framework';
+import {text} from 'utils/hyperscript';
 import {container, vspace} from 'ui/Layout';
 import {docsLink, linkOpen, p} from 'ui/Content';
-import * as Table from 'ui/Content/Table';
+import {table, tr, td, th} from 'ui/Content/Table';
 import * as Workbench from '../Workbench';
 
 import * as Config from 'Config';
@@ -16,9 +17,10 @@ import openCreateDialog from './CreateDialog';
 import Notification from 'notification';
 import {track} from 'analytics/Analytics';
 
+import renderPaginator from 'ui/Components/Paginator';
 
 // Number of tokens to fetch and show per page
-const PER_PAGE = 10;
+const PER_PAGE = 2;
 
 export function initController ($scope, auth) {
   const tokenResourceManager = ResourceManager.create(auth);
@@ -53,6 +55,7 @@ export function initController ($scope, auth) {
     } else {
       $scope.loadingTokensError = true;
     }
+    renderWithScope();
   });
 
   // Open the dialog to create a token. Reload afterwards
@@ -61,8 +64,15 @@ export function initController ($scope, auth) {
     .then(() => reloadBus.emit());
   };
 
+  $scope.selectPage = function (page) {
+    paginator.setPage(page);
+    fetch(page);
+  };
+
   K.onValueScope($scope, reloadPage$, fetch);
   K.onValueScope($scope, userPage$, fetch);
+
+  renderWithScope();
 
   // Fetch the given page of cma tokens and put it into the renderer.
   function fetch (page) {
@@ -72,6 +82,11 @@ export function initController ($scope, auth) {
       limit: PER_PAGE
     });
     putRequest(request);
+    renderWithScope();
+  }
+
+  function renderWithScope () {
+    $scope.component = render($scope);
   }
 
   // Turn a token resource into an object consumed by the view.
@@ -96,31 +111,26 @@ export function initController ($scope, auth) {
   }
 }
 
+function render (state) {
+  return container({
+    padding: '2em 3em'
+  }, [
+    oauthSection(),
+    vspace(7),
+    patSection(state)
+  ]);
+}
+
 
 export function template () {
   return Workbench.withSidebar(
-    container({
-      padding: '2em 3em'
-    }, [
-      main()
-    ]),
+    h('cf-component-bridge', {component: 'component'}),
     sidebar()
   );
 }
 
-
-function main () {
-  return [
-    h('h1.section-title', ['OAuth tokens']),
-    p([
-      'OAuth tokens are issued by ', linkOpen(['OAuth applications'], '/account/profile/developers/applications'),
-      ` and represent the user who granted access through this
-      application. These tokens have the same rights as the owner of
-      the account. You can `,
-      docsLink('learn more about OAuth appliactions in our documentation', 'createOAuthApp'),
-      '.'
-    ]),
-    vspace(7),
+function patSection (state) {
+  return h('div', [
     h('h1.section-title', ['Personal Access Tokens']),
     container({
       display: 'flex'
@@ -138,13 +148,28 @@ function main () {
       }, [
         h('button.btn-action', {
           dataTestId: 'pat.create.open',
-          ngClick: 'openCreateDialog()'
+          onClick: state.openCreateDialog
         }, ['Generate personal token'])
       ])
     ]),
     vspace(5),
-    tokenList()
-  ].join('');
+    tokenList(state)
+  ]);
+}
+
+
+function oauthSection () {
+  return h('div', [
+    h('h1.section-title', ['OAuth tokens']),
+    h('p', [
+      'OAuth tokens are issued by OAuth applications',
+      ` and represent the user who granted access through this
+      application. These tokens have the same rights as the owner of
+      the account. You can `,
+      docsLink('learn more about OAuth appliactions in our documentation', 'createOAuthApp'),
+      '.'
+    ])
+  ]);
 }
 
 
@@ -154,74 +179,75 @@ function main () {
  * Also includes the error note box when fetching the tokens failed and
  * the loader.
  */
-function tokenList () {
-  return h('div', [
-    h('div', {
-      ngIf: 'loadingTokensError'
-    }, [h('.note-box--warning', [
+function tokenList ({
+  loadingTokens,
+  loadingTokensError,
+  tokens,
+  paginator, selectPage
+}) {
+  return loadingTokensError
+    ? h('.note-box--warning', [
       `The list of tokens failed to load, try refreshing the page. If
       the problem persists `, linkOpen(['contact support'], Config.supportUrl)
-    ])]),
-    h('div', {
-      ngIf: '!loadingTokensError',
+    ])
+    : h('div', {
       dataTestId: 'pat.list'
     }, [
       container({
         position: 'relative',
         minHeight: '6em'
       }, [
-        h('.loading-box--stretched.animate', {
-          ngIf: 'loadingTokens'
-        }, [
-          h('.loading-box__spinner'),
-          h('.loading-box__message', ['Loading'])
-        ]),
-        h('div', {
-          ngIf: 'tokens.length'
-        }, [
-          tokenTable()
-        ])
+        loadingTokens &&
+          h('.loading-box--stretched.animate', [
+            h('.loading-box__spinner'),
+            h('.loading-box__message', ['Loading'])
+          ]),
+        tokenTable(tokens)
       ]),
       vspace(5),
-      h('cf-search-results-paginator', {paginator: 'paginator', pages: 3})
-    ])
-  ]);
+      renderPaginator(selectPage, paginator.getPage(), paginator.getPageCount())
+    ]);
 }
 
-function tokenTable () {
-  return Table.table(
-    Table.head([
-      [['Name'], {}],
-      [[''], {}]
-    ]),
-    Table.body({
-      ngRepeat: 'token in tokens track by token.id',
-      dataTestId: 'pat.tokenRow.{{token.id}}'
-    }, [
-      [['{{token.name}}'], {
-        style: {
-          overflow: 'hidden',
-          whiteSpace: 'nowrap',
-          textOverflow: 'ellipsis'
-        }
-      }],
-      [[revokeButton()], {
-        style: {
-          width: '7em',
-          textAlign: 'right'
-        }
-      }]
-    ])
+function tokenTable (tokens = []) {
+  if (tokens.length === 0) {
+    return h('div');
+  }
+
+  return table(
+    [
+      th(['Name']),
+      th(['']) // Revoke action
+    ], tokens.map((token) => {
+      return tr({
+        dataTestId: `pat.tokenRow.${token.id}`
+      }, [
+        td({
+          style: {
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis'
+          }
+        }, [token.name]),
+        td({
+          style: {
+            width: '7em',
+            textAlign: 'right'
+          }
+        }, [revokeButton(token)])
+      ]);
+    })
   );
 }
 
-function revokeButton () {
+
+function revokeButton (token) {
   return h('div', {
     style: { textAlign: 'right' }
   }, [
     h('button.text-link--destructive', {
       cfContextMenuTrigger: '',
-      dataTestId: 'pat.revoke.{{token.id}}.request'
+      dataTestId: `pat.revoke.${token.id}.request`
     }, [ 'Revoke' ]),
     h('.delete-confirm.context-menu.x--arrow-right', {
       style: {display: 'none'},
@@ -232,8 +258,8 @@ function revokeButton () {
         it might break. Do you confirm?`
       ]),
       h('button.btn-caution', {
-        dataTestId: 'pat.revoke.{{token.id}}.confirm',
-        uiCommand: 'token.revokeCommand'
+        dataTestId: `pat.revoke.${token.id}.confirm`,
+        onClick: () => token.revokeCommand.execute()
       }, ['Revoke']),
       h('button.btn-secondary-action', ['Cancel'])
     ])
@@ -260,5 +286,5 @@ function sidebar () {
         ])
       ])
     ])
-  ].join('');
+  ];
 }

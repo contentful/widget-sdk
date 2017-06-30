@@ -1,0 +1,80 @@
+import * as VTree from './VTree';
+import {kebabCase, mapKeys, isPlainObject} from 'lodash';
+
+/**
+ * @description
+ * Convenience constructor for virtual DOM nodes.
+ *
+ * Usage is described in the guide:
+ * docs/guides/hyperscript.md
+ *
+ * @param {string} elSpec
+ * @param {{string: string}} props
+ * @param {VNode[]} children
+ * @returns {VNode} children
+ */
+export default function h (elSpec, props, children) {
+  if (Array.isArray(props)) {
+    children = props;
+    props = {};
+  }
+
+  props = props || {};
+  children = children || [];
+
+  if (!isPlainObject(props)) {
+    throw new TypeError('Element properties must be a plain object');
+  }
+
+  if (!Array.isArray(children)) {
+    throw new TypeError('Element children must be an array');
+  }
+
+  const {tag, id, classes} = parseElSpec(elSpec);
+
+  if (id) {
+    props.id = id;
+  }
+
+  if (classes && classes.length) {
+    props['class'] = classes.concat(props['class'] || []).join(' ');
+  }
+
+  props = mapKeys(props, (_value, key) => kebabCase(key));
+
+  children = children
+    .filter((c) => !!c)
+    .map((c) => {
+      if (typeof c === 'string') {
+        return VTree.Text(c);
+      } else {
+        return c;
+      }
+    });
+
+  return VTree.Element(tag, props, children);
+}
+
+
+const TAG_RE = /^[^#.]+/;
+const ID_OR_CLASS_RE = /([#.][^#.]+)/g;
+
+function parseElSpec (elSpec) {
+  elSpec = elSpec.trim();
+  const tagMatch = elSpec.match(TAG_RE);
+  const idOrClassMatches = elSpec.match(ID_OR_CLASS_RE) || [];
+  const result = {tag: 'div', classes: []};
+
+  if (Array.isArray(tagMatch) && tagMatch[0]) {
+    result.tag = tagMatch[0];
+  }
+
+  return idOrClassMatches.reduce((acc, match) => {
+    if (match.charAt(0) === '#') {
+      acc.id = match.trim().substr(1);
+    } else if (match.charAt(0) === '.') {
+      acc.classes.push(match.trim().substr(1));
+    }
+    return acc;
+  }, result);
+}

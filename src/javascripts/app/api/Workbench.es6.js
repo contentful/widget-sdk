@@ -6,7 +6,7 @@ export function withSidebar (content, sidebar) {
     h('.workbench-main', [
       h('.workbench-main__content', [content]),
       h('.workbench-main__sidebar', [
-        h('.entity-sidebar', [sidebar])
+        h('.entity-sidebar', sidebar)
       ])
     ])
   ]);

@@ -330,7 +330,6 @@ some major cleanup.
 UI Acceptance Test
 ------------------
 
-
 We provide a small library to write acceptance tests. The library creates
 objects that allow you to interact with the DOM and provides assertions
 
@@ -344,7 +343,18 @@ view.find('notification').assertText('Hello thomas!')
 ~~~
 
 Elements are selected using the `data-test-id` property. For API documentation,
-see the `test/helpers/DOM.js` file.
+see the `test/helpers/DOM` module.
+
+There exists a context helper for testing stateless components. You can find the
+documentation in `test/helpers/DOM`.
+
+~~~js
+it('tests my component', function () {
+  const ui = this.createUI()
+  ui.render(h('div', [ ... ]))
+  ui.find('my-input').setValue('hello')
+})
+~~~
 
 This technique is fairly new and requires extending.
 

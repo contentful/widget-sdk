@@ -49,9 +49,10 @@ This is a list of all the guides for developing the Contentful web application.
 * What features are supported and how to add new ones
 * How the transpilation works
 
-## [Hyperscript](./hyperscript.md)
+## [UI](./ui.md)
 
-* How we use as JS DSL for templating
+* How to build user facing components using virtual DOM
+* How to migrate legacy code
 
 ## [Routing](./routing.md)
 
