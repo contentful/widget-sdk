@@ -111,9 +111,12 @@ describe('app/api/CMATokens', function () {
         {sys: {id: 'TOKEN-7'}, name: 'TOKEN-7-NAME'}
       ]
     }]);
-    this.container.find('paginator.select.2').click();
+    // Labales are 0-based
+    this.container.find('paginator.select.1').click();
     this.$flush();
     this.container.find('pat.tokenRow.TOKEN-6').assertHasText('TOKEN-6-NAME');
+
+    this.container.find('paginator.select.2').assertNonExistent();
   });
 
   describe('revoke', function () {

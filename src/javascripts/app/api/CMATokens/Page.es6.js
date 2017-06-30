@@ -20,7 +20,7 @@ import {track} from 'analytics/Analytics';
 import renderPaginator from 'ui/Components/Paginator';
 
 // Number of tokens to fetch and show per page
-const PER_PAGE = 2;
+const PER_PAGE = 10;
 
 export function initController ($scope, auth) {
   const tokenResourceManager = ResourceManager.create(auth);

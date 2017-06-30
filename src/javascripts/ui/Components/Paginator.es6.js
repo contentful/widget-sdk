@@ -60,7 +60,7 @@ export default function (select, page, pageCount) {
     h('span.search-results-paginator__next', {
       dataTestId: 'paginator.next',
       onClick: () => !atLast && select(page + 1),
-      airaDisabled: String(atLast)
+      ariaDisabled: String(atLast)
     }, ['Next'])
   ]);
 }
