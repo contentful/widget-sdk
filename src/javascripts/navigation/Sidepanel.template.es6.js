@@ -71,7 +71,10 @@ export default function () {
               ngRepeat: 'space in spacesByOrg[currOrg.sys.id] track by space.data.sys.id',
               ngIf: 'spacesByOrg[currOrg.sys.id].length',
               ngStyle: '{"text-decoration": currSpace && currSpace.sys.id === space.data.sys.id ? "underline": "none"}',
-              ngClick: 'setAndGotoSpace(space.data)'
+              ngClick: 'setAndGotoSpace(space.data)',
+              style: {
+                cursor: 'pointer'
+              }
             }, ['{{space.data.name}}'])
           ]),
           h('p', {
