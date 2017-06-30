@@ -21,12 +21,7 @@ angular.module('contentful')
 
   var sidepanelTemplate = require('navigation/Sidepanel.template').default();
 
-  // var dummyTemplate = '';
-  // dummyTemplate += '<div>';
-  // dummyTemplate += '  <a ng-show="canGotoOrgSettings" cf-href="{{organizationRef}}">Goto org settings</a>';
-  // dummyTemplate += '  <a cf-sref="{path:[\'account\', \'organizations\', \'new\']}">Create org</a>';
-  // dummyTemplate += '  <a ng-show="canCreateSpaceInCurrOrg" ng-click="showCreateSpaceModal()">Create Space</a>';
-  // dummyTemplate += '</div>';
+  var $state = require('$state');
 
   return {
     restrict: 'E',
@@ -35,10 +30,21 @@ angular.module('contentful')
     controller: ['$scope', function ($scope) {
       // base data
 
+      // side panel shown
+      $scope.sidePanelIsShown = false;
+      $scope.toggleSidePanel = function () {
+        $scope.sidePanelIsShown = !$scope.sidePanelIsShown;
+      };
+
       // List of org objects
       $scope.orgs = [];
       K.onValueScope($scope, orgs$, function (orgs) {
-        $scope.orgs = orgs;
+        if (orgs) {
+          $scope.orgs = orgs;
+          if (orgs.length === 1) {
+            $scope.currOrg = orgs[0];
+          }
+        }
       });
 
       // Object of spaces by org
@@ -57,7 +63,6 @@ angular.module('contentful')
         return spaceContext.organizationContext && spaceContext.organizationContext.organization;
       }, function (org) {
         if (org) {
-          console.log('org on space context changed', org);
           $scope.currOrg = org;
         }
       });
@@ -68,7 +73,6 @@ angular.module('contentful')
         return $scope.currOrg;
       }, function (org) {
         if (org) {
-          console.log('org changed', org);
           var orgId = org.sys.id;
 
           $scope.selectedOrgId = orgId;
@@ -86,7 +90,18 @@ angular.module('contentful')
 
       $scope.sp = spaceContext;
 
-      // supported actions
+      $scope.currSpace = spaceContext.space && spaceContext.space.data;
+      $scope.$watch(function () {
+        return spaceContext.space && spaceContext.space.data;
+      }, function (space) {
+        $scope.currSpace = space;
+      });
+      $scope.setAndGotoSpace = function (space) {
+        $scope.currSpace = space;
+        $state.go('spaces.detail.home', { spaceId: space.sys.id });
+      };
+
+      // Supported actions
       // select org
       // create org
       // create space
@@ -124,7 +139,6 @@ angular.module('contentful')
       $scope.$watch(function () {
         return TheAccountView.getOrganizationRef();
       }, function (ref) {
-        console.log('Org ref', ref)
         $scope.selectedOrgId = ref && ref.params.orgId;
         $scope.organizationRef = ref;
       }, true);
