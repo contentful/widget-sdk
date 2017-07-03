@@ -36,7 +36,6 @@ export default function () {
         background: byName.elementLightest
       },
       ngClass: '{"nav-sidepanel--slide-in": sidePanelIsShown, "nav-sidepanel--slide-out": !sidePanelIsShown}'
-      // ngStyle: '{display: sidePanelIsShown ? "block" : "none"}'
     }, [
       h('.nav-sidepanel__header', {
         style: {
@@ -144,7 +143,7 @@ export default function () {
               display: 'block'
             },
             ngClick: 'createNewOrg()'
-          }, ['+ Create organisation'])
+          }, ['+ Create organization'])
         ])
       ]),
       h('.nav-sidepanel__spaces-container', [

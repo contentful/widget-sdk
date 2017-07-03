@@ -56,9 +56,7 @@ angular.module('contentful')
       K.onValueScope($scope, orgs$, function (orgs) {
         if (orgs) {
           $scope.orgs = orgs;
-          if (orgs.length === 1) {
-            $scope.currOrg = orgs[0];
-          }
+          $scope.currOrg = orgs[0];
         }
       });
       $scope.toggleOrgsDropdown = function () {
@@ -97,16 +95,6 @@ angular.module('contentful')
 
           $scope.selectedOrgId = orgId;
           $scope.canGotoOrgSettings = isOwnerOrAdmin(org);
-
-          // shape needed for cf-sref
-          $scope.organizationRef = {
-            path: ['account', 'organizations', 'subscription'],
-            params: {
-              orgId: org.sys.id
-            },
-            options: { reload: true }
-          };
-
           $scope.canCreateSpaceInCurrOrg = canCreateSpaceInOrg(orgId);
           $scope.twoLetterOrgName = org.name.slice(0, 2).toUpperCase();
         }
@@ -118,7 +106,7 @@ angular.module('contentful')
         $scope.toggleSidePanel();
         $state.go('account.organizations.subscription', {
           orgId: $scope.currOrg.sys.id
-        }, true);
+        });
       };
       $scope.createNewOrg = function () {
         $scope.toggleSidePanel();
