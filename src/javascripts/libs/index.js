@@ -3,6 +3,7 @@
 require('angular-ui-sortable');
 
 angular.module('cf.libs', [])
+  .constant('libs/preact', require('preact'))
   .constant('libs/qs', require('qs'))
   .constant('libs/marked', require('marked-ast')._marked)
   .constant('libs/MarkedAst', require('marked-ast'))

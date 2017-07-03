@@ -1,8 +1,23 @@
-import {h, doctype} from './h';
+import {h as h_, renderString} from 'ui/Framework';
 import {constant} from 'lodash';
 import {caseofEq} from 'libs/sum-types';
 
-export {h, doctype};
+/**
+ * @description
+ * Create an HTML string from an HTML element specification.
+ *
+ * Usage is described in the guide:
+ * docs/guides/hyperscript.md
+ *
+ * @param {string} elSpec
+ * @param {{string: string}} attrs
+ * @param {string[]} children
+ * @returns {string}
+ */
+export function h (elSpec, attrs, children) {
+  return renderString(h_(elSpec, attrs, children));
+}
+
 
 /**
  * @ngdoc method

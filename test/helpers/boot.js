@@ -1,3 +1,5 @@
+Error.stackTraceLimit = 1000;
+
 // We import all these modules which have side effects.
 // They may register Angular services, register test suite hooks or define
 // global variables
@@ -24,3 +26,6 @@ import './mocks/spaceEndpoint';
 import './mocks/the_store';
 import './mocks/timing';
 import './mocks/widget_api';
+
+import installTestCaseContext from './TestCaseContext';
+installTestCaseContext();

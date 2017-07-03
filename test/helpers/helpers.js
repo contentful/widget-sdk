@@ -1,5 +1,8 @@
 import * as sinon from 'helpers/sinon';
 
+// TODO This module is deprecated. We should move stuff to
+// 'test/helpers/TestCaseContext'
+
 /**
  * @ngdoc service
  * @name helpers

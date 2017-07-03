@@ -1,4 +1,4 @@
-import {styledDiv} from 'utils/hyperscript';
+import {h} from 'ui/Framework';
 
 /**
  * @module
@@ -25,8 +25,8 @@ import {styledDiv} from 'utils/hyperscript';
  * @param {string[]} children  List of children for the container
  * @returns {string}
  */
-export function container (styles, children) {
-  return styledDiv(styles, children);
+export function container (style, children) {
+  return h('div', {style}, children);
 }
 
 

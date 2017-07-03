@@ -1,4 +1,55 @@
 import JQuery from 'jquery';
+import createMountPoint from 'ui/Framework/DOMRenderer';
+
+
+/**
+ * Create an object that allows you to render virtual DOM trees,
+ * interact with the result and make assertions.
+ *
+ * This function should not be used directly. Instead use the
+ * `this.createUI()` test context helper.
+ *
+ * ~~~js
+ * const ui = createUI()
+ * ui.render(h('div', [
+ *   h('input', { dataTestId: 'my-input' })
+ * ]))
+ * ui.find('my-input').setValue('hello')
+ * ui.find('my-input').assertValue('hello')
+ * ~~~
+ *
+ * The returned object has the following methods
+ * - render(vtree)
+ * - find(testId)
+ * - destroy()`
+ *
+ * See `createView()` below for more information on interacting with
+ * a UI.
+ *
+ * This function is available in a test case context
+ * ~~~js
+ * beforeEach(function () {
+ *   this.ui = this.createUI();
+ * });
+ * ~~~
+ *
+ * The rendered DOM element is attached to the document body and must
+ * be removed with `ui.destroy()`.
+ *
+ */
+export function createUI () {
+  const sandbox = document.createElement('div');
+  document.body.appendChild(sandbox);
+  const view = createView(sandbox);
+  const mountpoint = createMountPoint(sandbox);
+  return Object.assign(view, mountpoint, {
+    destroy () {
+      mountpoint.destroy();
+      sandbox.remove();
+    }
+  });
+}
+
 
 /**
  * Create a high-level interface to interact with the DOM and make
@@ -32,12 +83,15 @@ export function createView (container) {
     /**
      * Assert that the view does not have an element with the given
      * test ID.
+     *
+     * TODO Deprecated. Replace with `find(id).assertNonExistent()`.
      */
     assertNotHasElement (id) {
       assertNotHasSelector(container, `[data-test-id="${id}"]`);
     }
   };
 }
+
 
 // TODO document
 export function setCheckbox (el, value) {
@@ -74,7 +128,12 @@ function createElement (container, selector) {
     assertValue: bindEl(assertValue),
     assertValid: bindEl(assertValid),
     assertIsAlert: bindEl(assertIsAlert),
-    assertHasText: bindEl(assertHasText)
+    assertIsSelected: bindEl(assertIsSelected),
+    assertIsVisible: bindEl(assertIsVisible),
+    assertHasText: bindEl(assertHasText),
+    assertNonExistent () {
+      assertNotHasSelector(container, selector);
+    }
   };
 
   // Bind a function that excepts an element as its first argument to
@@ -183,6 +242,18 @@ function assertIsVisible (element) {
   const styles = window.getComputedStyle(element);
   expect(styles.opacity).not.toBe(0, 'Element is not visible. Opacity is 0');
   expect(styles.visibility).not.toBe('hidden', 'Element is not visible. Visibility is \'hidden\'');
+}
+
+
+/**
+ * Assert that the element’s 'aria-selected' attribute is set to
+ * 'true'.
+ */
+function assertIsSelected (element) {
+  const message =
+    'Expected element to be selected. ' +
+    '\'aria-selected\' attribute is not \'true\'';
+  expect(element.getAttribute('aria-selected')).toBe('true', message);
 }
 
 
