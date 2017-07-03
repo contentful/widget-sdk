@@ -7,11 +7,23 @@ export default function () {
   return h('.nav-sidepanel-container.app-top-bar--right-separator', {
     style: {
       height: '100%',
-      textAlign: 'left'
-    },
-    ngClass: '{"modal-background": sidePanelIsShown, "is-visible": sidePanelIsShown}'
+      zIndex: 1000
+    }
   }, [
-    h('div', {
+    h('div.nav-sidepanel__bg', {
+      style: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        backgroundColor: 'rgba(12, 20, 28, 0.75)',
+        height: '100%',
+        width: '100%',
+        zIndex: 0
+      },
+      ngShow: 'sidePanelIsShown',
+      ngClick: 'toggleSidePanel()'
+    }),
+    h('div.nav-sidepanel__logo-container', {
       ngClick: 'toggleSidePanel()',
       style: {
         height: '100%',
@@ -28,12 +40,12 @@ export default function () {
       style: {
         position: 'absolute',
         top: 0,
-        zIndex: 999,
         display: 'flex',
         flexDirection: 'column',
         width: '350px',
         height: '100%',
-        background: byName.elementLightest
+        background: byName.elementLightest,
+        zIndex: 1
       },
       ngClass: '{"nav-sidepanel--slide-in": sidePanelIsShown, "nav-sidepanel--slide-out": !sidePanelIsShown}'
     }, [
@@ -42,6 +54,7 @@ export default function () {
           display: 'flex',
           flexGrow: 1,
           maxHeight: '63px',
+          minHeight: '63px',
           background: byName.elementLight,
           borderBottom: `1px solid ${byName.elementDark}`,
           padding: `15px ${padding}`,
