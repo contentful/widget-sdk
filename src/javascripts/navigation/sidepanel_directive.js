@@ -2,38 +2,53 @@
 
 angular.module('contentful')
 .directive('cfNavSidePanel', ['require', function (require) {
+  // access related imports
   var canCreateSpaceInOrg = require('accessChecker').canCreateSpaceInOrganization;
+  var orgRoles = require('services/OrganizationRoles');
+  var isOwnerOrAdmin = orgRoles.isOwnerOrAdmin;
 
+  // core data related imports
   var tokenStore = require('services/TokenStore');
   var spacesByOrg$ = tokenStore.spacesByOrganization$;
   var orgs$ = tokenStore.organizations$;
 
-  var orgRoles = require('services/OrganizationRoles');
-  var isOwnerOrAdmin = orgRoles.isOwnerOrAdmin;
 
   var spaceContext = require('spaceContext');
 
   var showCreateSpaceModal = require('services/CreateSpace').showDialog;
 
-  var TheAccountView = require('TheAccountView');
-
+  // stream utils import
   var K = require('utils/kefir');
 
-  var sidepanelTemplate = require('navigation/Sidepanel.template').default();
-
+  // state transition related import
   var $state = require('$state');
+
+  // view template import
+  var sidepanelTemplate = require('navigation/Sidepanel.template').default();
 
   return {
     restrict: 'E',
     template: sidepanelTemplate,
     scope: {},
+    replace: true,
     controller: ['$scope', function ($scope) {
       // base data
 
       // side panel shown
       $scope.sidePanelIsShown = false;
       $scope.toggleSidePanel = function () {
+        // check if value in currOrg is equal to the org the
+        // current space belongs to. If so, reset currOrg to
+        // org of current space as it means user didn't
+        // "commit" to the org selected from the dropdown
+        var currOrgFromSpaceContext = spaceContext.organizationContext && spaceContext.organizationContext.organization;
+
+        if (spaceContext.organizationContext && ($scope.currOrg.sys.id !== currOrgFromSpaceContext.sys.id)) {
+          $scope.currOrg = currOrgFromSpaceContext;
+        }
+
         $scope.sidePanelIsShown = !$scope.sidePanelIsShown;
+        $scope.orgDropdownIsShown = false;
       };
 
       // List of org objects
@@ -46,6 +61,9 @@ angular.module('contentful')
           }
         }
       });
+      $scope.toggleOrgsDropdown = function () {
+        $scope.orgDropdownIsShown = !$scope.orgDropdownIsShown;
+      };
 
       // Object of spaces by org
       // shape: { orgId: [spaceObjects] }
@@ -64,6 +82,8 @@ angular.module('contentful')
       }, function (org) {
         if (org) {
           $scope.currOrg = org;
+        } else {
+          $scope.currOrg = $scope.orgs && $scope.orgs[0];
         }
       });
 
@@ -77,6 +97,8 @@ angular.module('contentful')
 
           $scope.selectedOrgId = orgId;
           $scope.canGotoOrgSettings = isOwnerOrAdmin(org);
+
+          // shape needed for cf-sref
           $scope.organizationRef = {
             path: ['account', 'organizations', 'subscription'],
             params: {
@@ -84,20 +106,36 @@ angular.module('contentful')
             },
             options: { reload: true }
           };
+
           $scope.canCreateSpaceInCurrOrg = canCreateSpaceInOrg(orgId);
+          $scope.twoLetterOrgName = org.name.slice(0, 2).toUpperCase();
         }
       });
-
-      $scope.sp = spaceContext;
+      $scope.setAndGotoOrg = function (org) {
+        $scope.currOrg = org;
+      };
+      $scope.gotoOrgSettings = function () {
+        $scope.toggleSidePanel();
+        $state.go('account.organizations.subscription', {
+          orgId: $scope.currOrg.sys.id
+        }, true);
+      };
+      $scope.createNewOrg = function () {
+        $scope.toggleSidePanel();
+        $state.go('account.organizations.new');
+      };
 
       $scope.currSpace = spaceContext.space && spaceContext.space.data;
       $scope.$watch(function () {
         return spaceContext.space && spaceContext.space.data;
       }, function (space) {
-        $scope.currSpace = space;
+        if (space) {
+          $scope.currSpace = space;
+        }
       });
       $scope.setAndGotoSpace = function (space) {
         $scope.currSpace = space;
+        $scope.toggleSidePanel();
         $state.go('spaces.detail.home', { spaceId: space.sys.id });
       };
 
@@ -124,7 +162,10 @@ angular.module('contentful')
       };
 
       // show space creation modal
-      $scope.showCreateSpaceModal = showCreateSpaceModal;
+      $scope.showCreateSpaceModal = function (orgId) {
+        $scope.toggleSidePanel();
+        showCreateSpaceModal(orgId);
+      };
 
       // flag that says if user can view org settings
       // $scope.canGotoOrgSettings = isOwnerOrAdmin($scope.currOrg);
@@ -134,15 +175,6 @@ angular.module('contentful')
 
       // TODO: add a watcher that updates this when current org changes
       // $scope.canCreateSpaceInCurrOrg = canCreateSpaceInOrg(currOrg.sys.id);
-
-      // organization settings page should use cf-sref
-      $scope.$watch(function () {
-        return TheAccountView.getOrganizationRef();
-      }, function (ref) {
-        $scope.selectedOrgId = ref && ref.params.orgId;
-        $scope.organizationRef = ref;
-      }, true);
-
     }]
   };
 }]);
