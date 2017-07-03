@@ -69,7 +69,7 @@ $ gulp prepare-tests
 $ karma start
 ~~~
 
-For more information, see the [testing guide](./tree/master/docs/guides/testing.md)
+For more information, see the [testing guide](./docs/guides/testing.md)
 
 
 ### Running a full Contentful Instance
