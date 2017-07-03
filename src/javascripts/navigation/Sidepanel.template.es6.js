@@ -28,7 +28,6 @@ export default function () {
       style: {
         position: 'absolute',
         top: 0,
-        left: 0,
         zIndex: 999,
         display: 'flex',
         flexDirection: 'column',
@@ -36,7 +35,8 @@ export default function () {
         height: '100%',
         background: byName.elementLightest
       },
-      ngStyle: '{display: sidePanelIsShown ? "block" : "none"}'
+      ngClass: '{"nav-sidepanel--slide-in": sidePanelIsShown, "nav-sidepanel--slide-out": !sidePanelIsShown}'
+      // ngStyle: '{display: sidePanelIsShown ? "block" : "none"}'
     }, [
       h('.nav-sidepanel__header', {
         style: {
@@ -138,7 +138,7 @@ export default function () {
               }
             }, ['{{org.name}}'])
           ]),
-          h('a.text-link--constructive', {
+          h('a.text-link', {
             style: {
               padding: `10px ${padding} ${padding}`,
               display: 'block'
@@ -161,7 +161,7 @@ export default function () {
               fontWeight: 'bold'
             }
           }, ['Spaces']),
-          h('a.text-link--constructive', {
+          h('a.text-link', {
             ngIf: 'canCreateSpaceInCurrOrg',
             ngClick: 'showCreateSpaceModal(currOrg.sys.id)'
           }, [
