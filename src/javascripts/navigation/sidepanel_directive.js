@@ -12,7 +12,6 @@ angular.module('contentful')
   var spacesByOrg$ = tokenStore.spacesByOrganization$;
   var orgs$ = tokenStore.organizations$;
 
-
   var spaceContext = require('spaceContext');
 
   var showCreateSpaceModal = require('services/CreateSpace').showDialog;
@@ -22,6 +21,7 @@ angular.module('contentful')
 
   // state transition related import
   var $state = require('$state');
+  var $stateParams = require('$stateParams');
 
   // view template import
   var sidepanelTemplate = require('navigation/Sidepanel.template').default();
@@ -36,17 +36,18 @@ angular.module('contentful')
 
       // side panel shown
       $scope.sidePanelIsShown = false;
-      $scope.toggleSidePanel = function () {
+      $scope.toggleSidePanel = function (orgCommitted) {
         // check if value in currOrg is equal to the org the
         // current space belongs to. If so, reset currOrg to
         // org of current space as it means user didn't
         // "commit" to the org selected from the dropdown
-        var currOrgFromSpaceContext = spaceContext.organizationContext && spaceContext.organizationContext.organization;
+        if (!orgCommitted) {
+          var currCommittedOrg =
+              _.find($scope.orgs, function (org) { return org.sys.id === $stateParams.orgId; }) ||
+              (spaceContext.organizationContext && spaceContext.organizationContext.organization);
 
-        if (spaceContext.organizationContext && ($scope.currOrg.sys.id !== currOrgFromSpaceContext.sys.id)) {
-          $scope.currOrg = currOrgFromSpaceContext;
+          $scope.currOrg = currCommittedOrg;
         }
-
         $scope.sidePanelIsShown = !$scope.sidePanelIsShown;
         $scope.orgDropdownIsShown = false;
       };
@@ -117,7 +118,8 @@ angular.module('contentful')
         $scope.currOrg = org;
       };
       $scope.gotoOrgSettings = function () {
-        $scope.toggleSidePanel();
+        $scope.toggleSidePanel(true); // committed org since goto org settings was clicked
+
         $state.go('account.organizations.subscription', {
           orgId: $scope.currOrg.sys.id
         });
@@ -125,17 +127,6 @@ angular.module('contentful')
       $scope.createNewOrg = function () {
         $scope.toggleSidePanel();
         $state.go('account.organizations.new');
-      };
-      $scope.selectOrgById = function (orgId) {
-        var selectedOrg = _.find($scope.orgs, function (org) {
-          return org.sys.id === orgId;
-        });
-
-        if (selectedOrg) {
-          $scope.currOrg = selectedOrg;
-        } else {
-          // handle invalid org
-        }
       };
 
       // show space creation modal
