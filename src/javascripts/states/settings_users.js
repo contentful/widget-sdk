@@ -23,7 +23,7 @@ angular.module('contentful')
   return {
     name: 'users',
     url: '/users',
-    redirectTo: 'spaces.detail.settings.users.list',
+    abstract: true,
     children: [list]
   };
 }]);

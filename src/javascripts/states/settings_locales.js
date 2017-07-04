@@ -81,7 +81,7 @@ angular.module('contentful')
   return {
     name: 'locales',
     url: '/locales',
-    redirectTo: 'spaces.detail.settings.locales.list',
+    abstract: true,
     children: [list, newLocale, detail]
   };
 }]);

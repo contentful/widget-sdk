@@ -99,7 +99,7 @@ angular.module('contentful')
   return {
     name: 'content_types',
     url: '/content_types',
-    redirectTo: 'spaces.detail.content_types.list',
+    abstract: true,
     children: [list, newState, detail]
   };
 
