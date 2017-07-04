@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Space nav bar directive', function () {
+describe('Main nav bar directive', function () {
 
   let container, scope, accessChecker, spaceContext;
   let compileElement;
@@ -22,7 +22,7 @@ describe('Space nav bar directive', function () {
     spaceContext.space.isHibernated = sinon.stub().returns(false);
 
     compileElement = function () {
-      container = $('<cf-space-nav-bar></cf-space-nav-bar>');
+      container = $('<cf-main-nav-bar></cf-main-nav-bar>');
       $compile(container)(scope);
       scope.$apply();
     };

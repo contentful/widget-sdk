@@ -63,7 +63,7 @@ var src = {
     main: assertFilesExist([
       'node_modules/jquery/dist/jquery.js',
       // Custom jQuery UI build: see the file for version and contents
-      'vendor/jquery-ui/jqui.js',
+      'vendor/jquery-ui/jquery-ui.js',
       'node_modules/jquery-textrange/jquery-textrange.js',
       'node_modules/angular/angular.js',
       'node_modules/angular-animate/angular-animate.js',
@@ -108,7 +108,7 @@ var src = {
     // Not sure if we need this
     './vendor/html5reset-1.6.1.css',
     // Custom jQuery UI build: see the file for version and contents
-    './vendor/jquery-ui/jqui.css',
+    './vendor/jquery-ui/jquery-ui.css',
     './node_modules/codemirror/lib/codemirror.css',
     // Add angular styles since we are disabling inline-styles in ngCsp
     './node_modules/angular/angular-csp.css'

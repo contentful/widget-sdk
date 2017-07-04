@@ -8,7 +8,8 @@ FROM node:4.6
 
 RUN apt-get update && \
   apt-get install -qqy firefox-esr unzip xvfb ruby-dev ruby gcc make && \
-  gem install --no-document 'json:<2.0' fpm
+  gem install --no-document 'json:<2.0' fpm && \
+  ln -sf /usr/bin/firefox-esr /usr/bin/firefox
 
 RUN \
   mkdir -p /app/vendor && cd /app/vendor && \

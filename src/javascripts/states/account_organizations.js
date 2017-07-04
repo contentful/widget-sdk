@@ -8,6 +8,7 @@ angular.module('contentful')
 .factory('states/account/organizations', ['require', function (require) {
   var base = require('states/base');
   var h = require('utils/hyperscript').h;
+  var Workbench = require('app/Workbench');
 
   var newOrg = base({
     name: 'new',
@@ -16,7 +17,7 @@ angular.module('contentful')
     controller: ['$scope', function ($scope) {
       $scope.context = {};
     }],
-    template: h('cf-account-view', { context: 'context' })
+    template: [Workbench.header('Add new organization'), h('cf-account-view')].join('')
   });
 
   var edit = organizationsBase({
@@ -58,10 +59,7 @@ angular.module('contentful')
       params: {
         pathSuffix: ''
       },
-      template: [
-        h('cf-account-organizations-nav'),
-        h('cf-account-view', { withTabs: 'true', context: 'context' })
-      ].join('')
+      template: [h('cf-account-organizations-nav'), h('cf-account-view')].join('')
     };
     return base(_.extend(definition, defaults));
   }

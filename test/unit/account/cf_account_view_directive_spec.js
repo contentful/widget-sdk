@@ -14,7 +14,7 @@ describe('Account View directive', function () {
     IframeChannel.default.returns(this.messages$);
 
     this.compile = function () {
-      this.element = this.$compile('<cf-account-view context="context" />', { context: {} });
+      this.element = this.$compile('<cf-account-view />', {context: {}});
     }.bind(this);
   });
 
