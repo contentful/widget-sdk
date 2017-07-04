@@ -142,7 +142,7 @@ export default function () {
               ngRepeat: 'org in orgs track by org.sys.id',
               ngIf: 'orgs.length',
               ngStyle: `{"background": currOrg && currOrg.sys.id === org.sys.id ? "${byName.elementLight}": ""}`,
-              ngClick: 'setAndGotoOrg(org)',
+              ngClick: 'setCurrOrg(org)',
               style: {
                 cursor: 'pointer',
                 padding: `10px ${padding}`,
@@ -169,12 +169,13 @@ export default function () {
           }
         }, [
           h('p', {
+            ngIf: 'spacesByOrg[currOrg.sys.id].length',
             style: {
               fontWeight: 'bold'
             }
           }, ['Spaces']),
           h('a.text-link', {
-            ngIf: 'canCreateSpaceInCurrOrg',
+            ngIf: 'canCreateSpaceInCurrOrg && spacesByOrg[currOrg.sys.id].length',
             ngClick: 'showCreateSpaceModal(currOrg.sys.id)'
           }, [
             h('span', ['+ Add space'])
@@ -200,14 +201,24 @@ export default function () {
               margin: 0
             }
           }, ['{{space.data.name}}']),
-          h('p', {
+          h('.nav-sidepanel__no-spaces', {
             ngIf: '!spacesByOrg[currOrg.sys.id].length',
             style: {
               padding,
               paddingTop: 0,
-              margin: 0
+              margin: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center'
             }
-          }, ['no spaces found'])
+          }, [
+            h('p', ['{{canCreateSpaceInCurrOrg ? "Let’s go - create your first space!" : "Uh oh! Nothing to see here"}}']),
+            h('p', ['{{canCreateSpaceInCurrOrg ? "A space is a place where you keep all the content related to a single project." : "Seems like you don’t have access to any of your organization’s spaces. Contact your organization admin to add you to spaces."}}']),
+            h('button.btn-action', {
+              ngIf: 'canCreateSpaceInCurrOrg',
+              ngClick: 'showCreateSpaceModal(currOrg.sys.id)'
+            }, ['Create Space'])
+          ])
         ])
       ]),
       h('.nav-sidepanel__org-actions', {
