@@ -85,9 +85,15 @@ $entity-sidebar-content()
     color: $colors.text-light
     margin-top: $rhythm(1)
     display: flex
+    align-items: baseline
     .context-menu.x--arrow-up
       &:before, &:after
         left: 90%
+
+  &__save-status
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
 
   &__saving-spinner
     display: inline-block
