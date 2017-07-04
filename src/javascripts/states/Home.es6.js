@@ -4,7 +4,7 @@ import $state from '$state';
 import {getSpaces} from 'services/TokenStore';
 import TheStore from 'TheStore';
 import template from 'app/home/HomeTemplate';
-import navBar from 'app/NavBar';
+import {navBar} from 'ui/NavBar';
 
 
 /**

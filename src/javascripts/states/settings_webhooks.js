@@ -97,7 +97,7 @@ angular.module('contentful')
   return {
     name: 'webhooks',
     url: '/webhooks',
-    redirectTo: 'spaces.detail.settings.webhooks.list',
+    abstract: true,
     children: [list, newWebhook, detail]
   };
 }]);

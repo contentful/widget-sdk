@@ -66,7 +66,7 @@ angular.module('contentful')
   return {
     name: 'content_preview',
     url: '/content_preview',
-    redirectTo: 'spaces.detail.settings.content_preview.list',
+    abstract: true,
     children: [list, newContentPreview, detail]
   };
 }]);
