@@ -1,4 +1,4 @@
-import {filter, first, map, get} from 'lodash';
+import {first, get} from 'lodash';
 import logger from 'logger';
 import notification from 'notification';
 import {truncate} from 'stringUtils';
@@ -35,15 +35,16 @@ export function deleteFail (err) {
 }
 
 export function invalidAccordingToScope (errors, fieldNames) {
-  const fieldErrors = filter(errors, function (error) {
+  errors = errors || [];
+  const fieldErrors = errors.filter((error) => {
     return error.path && error.path[0] === 'fields';
   });
 
-  const errorFieldName = first(map(fieldErrors, function (error) {
+  const errorFieldName = first(fieldErrors.map((error) => {
     return fieldNames[error.path[1]];
   }));
 
-  const errorWithoutFieldName = first(map(errors, function (error) {
+  const errorWithoutFieldName = first(errors.map((error) => {
     return error.message;
   }));
 
@@ -74,18 +75,18 @@ export function saveSuccess () {
   notification.info(messages.save.success);
 }
 
-export function saveInvalidError (errData, contentType) {
+export function saveInvalidError (error, contentType) {
   notification.error(messages.save.invalid);
   logger.logServerWarn('Error saving invalid Content Type', {
-    error: errData,
+    error,
     contentType: contentType.data
   });
 }
 
-export function saveOutdatedError (errData, contentType) {
+export function saveOutdatedError (error, contentType) {
   notification.error(messages.save.outdated);
   logger.logServerWarn('Error activating outdated Content Type', {
-    error: errData,
+    error,
     contentType: contentType.data
   });
 }

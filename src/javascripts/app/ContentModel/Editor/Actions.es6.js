@@ -1,4 +1,4 @@
-import {noop, cloneDeep, every, assign, map} from 'lodash';
+import {noop, cloneDeep, assign, map} from 'lodash';
 import logger from 'logger';
 import $q from '$q';
 import modalDialog from 'modalDialog';
@@ -119,13 +119,11 @@ export default function create ($scope, contentTypeIds) {
           contentTypeName: $scope.contentType.data.name,
           delete: Command.create(function () {
             return remove(isPublished)
-            .finally(function () {
+            .finally(() => {
               scope.dialog.confirm();
             });
           }, {
-            disabled: function () {
-              return scope.input.contentTypeName !== scope.contentTypeName;
-            }
+            disabled: () => scope.input.contentTypeName !== scope.contentTypeName
           })
         });
       }
@@ -263,9 +261,8 @@ export default function create ($scope, contentTypeIds) {
   }
 
   function allFieldsInactive (contentType) {
-    return every(contentType.data.fields, function (field) {
-      return field.disabled || field.omitted;
-    });
+    const fields = contentType.data.fields || [];
+    return fields.every((field) => field.disabled || field.omitted);
   }
 
   /**
@@ -275,7 +272,7 @@ export default function create ($scope, contentTypeIds) {
    */
   controller.duplicate = Command.create(function () {
     return metadataDialog
-    .openDuplicateDialog($scope.contentType, duplicate, contentTypeIds)
+    .openDuplicateDialog($scope.contentType, createDuplicate, contentTypeIds)
     .then(askAboutRedirection)
     .then(notify.duplicateSuccess);
   }, {
@@ -291,8 +288,15 @@ export default function create ($scope, contentTypeIds) {
     }
   });
 
-  function duplicate (metadata) {
-    const duplicate = prepareDuplicate(metadata);
+  function createDuplicate (metadata) {
+    const data = $scope.contentType.data;
+    const duplicate = spaceContext.space.newContentType({
+      sys: {type: 'ContentType', id: metadata.id},
+      name: metadata.name,
+      description: metadata.description || '',
+      fields: cloneDeep(data.fields),
+      displayField: data.displayField
+    });
 
     return duplicate.save()
     .then(publishContentType)
@@ -304,17 +308,6 @@ export default function create ($scope, contentTypeIds) {
     }, function (err) {
       notify.duplicateError();
       return $q.reject(err);
-    });
-  }
-
-  function prepareDuplicate (metadata) {
-    const data = $scope.contentType.data;
-    return spaceContext.space.newContentType({
-      sys: {type: 'ContentType', id: metadata.id},
-      name: metadata.name,
-      description: metadata.description || '',
-      fields: cloneDeep(data.fields),
-      displayField: data.displayField
     });
   }
 
