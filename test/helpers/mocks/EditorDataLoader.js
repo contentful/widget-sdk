@@ -17,7 +17,8 @@ angular.module('contentful/mocks')
     const entitySys = _.get(entity, 'sys', {});
     return {
       entity: {
-        data: entity
+        data: entity,
+        getSys: _.constant(entitySys)
       },
       contentType: {
         getId: _.constant(ctId),

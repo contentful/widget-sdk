@@ -1,6 +1,26 @@
-'use strict';
+import $state from '$state';
+import $controller from '$controller';
 
-angular.module('contentful')
+import {deepFreeze} from 'utils/DeepFreeze';
+import * as K from 'utils/kefir';
+import {truncate} from 'stringUtils';
+import {cloneDeep, find, constant} from 'lodash';
+
+import spaceContext from 'spaceContext';
+import notifications from 'notification';
+import localeStore from 'TheLocaleStore';
+import contextHistory from 'contextHistory';
+
+import DataFields from 'EntityEditor/DataFields';
+import ContentTypes from 'data/ContentTypes';
+import * as crumbFactory from 'navigation/CrumbFactory';
+
+import * as Validator from './Validator';
+import * as Focus from './Focus';
+import initDocErrorHandler from './DocumentErrorHandler';
+import {makeNotify} from './Notifications';
+import installTracking from './Tracking';
+
 /**
  * @ngdoc type
  * @name EntryEditorController
@@ -26,42 +46,40 @@ angular.module('contentful')
  * @scope.requires {Data.FieldControl[]} formControls
  *   Passed to FormWidgetsController to render field controls
  */
-.controller('EntryEditorController', ['$scope', 'require', function EntryEditorController ($scope, require) {
-  var $controller = require('$controller');
-  var spaceContext = require('spaceContext');
-  var notifications = require('notification');
-  var makeNotify = require('app/entity_editor/Notifications').makeNotify;
-  var truncate = require('stringUtils').truncate;
-  var DataFields = require('EntityEditor/DataFields');
-  var ContentTypes = require('data/ContentTypes');
-  var K = require('utils/kefir');
-  var Validator = require('app/entity_editor/Validator');
-  var localeStore = require('TheLocaleStore');
-  var Focus = require('app/entity_editor/Focus');
-  var installTracking = require('app/entity_editor/Tracking').default;
-  var deepFreeze = require('utils/DeepFreeze').deepFreeze;
-  var initDocErrorHandler = require('app/entity_editor/DocumentErrorHandler').default;
-  var contextHistory = require('contextHistory');
+export default function create ($scope, editorData) {
+  $state.current.data = $scope.context = {
+    ready: true
+  };
+  $scope.editorData = editorData;
 
-  var editorData = $scope.editorData;
-  var entityInfo = this.entityInfo = editorData.entityInfo;
+  // add list as parent state only if it's a deep link
+  if (contextHistory.isEmpty()) {
+    contextHistory.add(crumbFactory.EntryList());
+  }
 
-  var notify = makeNotify('Entry', function () {
+  // add current state
+  contextHistory.add(crumbFactory.Entry(editorData.entity.getSys(), $scope.context));
+
+  const editorContext = $scope.editorContext = {};
+  const entityInfo = editorContext.entityInfo = editorData.entityInfo;
+
+  const notify = makeNotify('Entry', function () {
     return '“' + $scope.title + '”';
   });
 
   $scope.entityInfo = entityInfo;
 
+  $scope.editorData = editorData;
   $scope.locales = $controller('entityEditor/LocalesController');
 
-  var doc = editorData.openDoc(K.scopeLifeline($scope));
+  const doc = editorData.openDoc(K.scopeLifeline($scope));
   // TODO rename the scope property
   $scope.otDoc = doc;
   initDocErrorHandler($scope, doc.state.error$);
 
   installTracking(entityInfo, doc, K.scopeLifeline($scope));
 
-  this.validator = Validator.createForEntry(
+  editorContext.validator = Validator.createForEntry(
     entityInfo.contentType,
     $scope.otDoc,
     spaceContext.publishedCTs,
@@ -72,7 +90,7 @@ angular.module('contentful')
     $scope: $scope,
     entity: editorData.entity,
     notify: notify,
-    validator: this.validator,
+    validator: editorContext.validator,
     otDoc: $scope.otDoc
   });
 
@@ -84,22 +102,22 @@ angular.module('contentful')
     preferences: $scope.preferences
   });
 
-  this.focus = Focus.create();
+  editorContext.focus = Focus.create();
 
   // TODO Move this into a separate function
   K.onValueScope($scope, doc.valuePropertyAt([]), function (data) {
-    var title = spaceContext.entryTitle({
-      getContentTypeId: _.constant(entityInfo.contentTypeId),
+    const title = spaceContext.entryTitle({
+      getContentTypeId: constant(entityInfo.contentTypeId),
       data: data
     });
     $scope.context.title = title;
     $scope.title = truncate(title, 50);
   });
 
-  this.editReferences = function (field, locale, index, cb) {
+  editorContext.editReferences = function (field, locale, index, cb) {
     // The links$ property should end when the editor is closed
-    var lifeline = K.createBus();
-    var links$ = K.endWith(
+    const lifeline = K.createBus();
+    const links$ = K.endWith(
       doc.valuePropertyAt(['fields', field, locale]),
       lifeline.stream
     );
@@ -108,9 +126,9 @@ angular.module('contentful')
     $scope.referenceContext = {
       links$: links$,
       focusIndex: index,
-      editorSettings: deepFreeze(_.cloneDeep($scope.preferences)),
+      editorSettings: deepFreeze(cloneDeep($scope.preferences)),
       parentId: entityInfo.id,
-      field: _.find(entityInfo.contentType.fields, {id: field}),
+      field: find(entityInfo.contentType.fields, {id: field}),
       add: function (link) {
         return doc.pushValueAt(['fields', field, locale], link);
       },
@@ -128,24 +146,19 @@ angular.module('contentful')
     };
   };
 
-
-  // TODO We assume that the current state has already been added to
-  // the history. This is done in 'state/entries.js'. We should
-  // consolidate this.
   $scope.$on('scroll-editor', function (_ev, scrollTop) {
     contextHistory.extendCurrent({scroll: scrollTop});
   });
 
-  var startScroll = contextHistory.getLast().scroll;
+  const startScroll = contextHistory.getLast().scroll;
   if (startScroll) {
     $scope.initialEditorScroll = startScroll;
   } else {
     // The first input element of the editor will become focused once
     // the document is loaded and the editor will scroll to that
     // position.
-    this.hasInitialFocus = true;
+    editorContext.hasInitialFocus = true;
   }
-
 
   K.onValueScope($scope, $scope.otDoc.state.isDirty$, function (isDirty) {
     $scope.context.dirty = isDirty;
@@ -166,8 +179,8 @@ angular.module('contentful')
    * for every widget. Instead, we share this version in every
    * cfWidgetApi instance.
    */
-  var contentTypeData = entityInfo.contentType;
-  var fields = contentTypeData.fields;
+  const contentTypeData = entityInfo.contentType;
+  const fields = contentTypeData.fields;
   $scope.fields = DataFields.create(fields, $scope.otDoc);
   $scope.transformedContentTypeData = ContentTypes.internalToPublic(contentTypeData);
-}]);
+}
