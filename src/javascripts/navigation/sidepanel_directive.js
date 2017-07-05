@@ -117,7 +117,7 @@ angular.module('contentful')
         $scope.currSpace = space;
         $scope.toggleSidePanel();
         Navigator.go({
-          path: ['spaces', 'detail', 'home'],
+          path: ['spaces', 'detail'],
           params: { spaceId: space.sys.id }
         });
       };

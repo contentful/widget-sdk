@@ -1,5 +1,5 @@
 import { h } from 'utils/hyperscript';
-import { byName } from 'Styles/Colors';
+import { byName, genBoxShadow } from 'Styles/Colors';
 
 const padding = '20px';
 
@@ -18,9 +18,10 @@ export default function () {
         backgroundColor: 'rgba(12, 20, 28, 0.75)',
         height: '100%',
         width: '100%',
-        zIndex: 0
+        zIndex: 0,
+        transition: 'opacity 0.2s ease-in-out'
       },
-      ngShow: 'sidePanelIsShown',
+      ngClass: 'sidePanelIsShown ? "nav-sidepanel__bg--is-visible" : "nav-sidepanel__bg--is-not-visible"',
       ngClick: 'toggleSidePanel()'
     }),
     h('div.nav-sidepanel__logo-container', {
@@ -56,7 +57,7 @@ export default function () {
           maxHeight: '63px',
           minHeight: '63px',
           background: byName.elementLight,
-          borderBottom: `1px solid ${byName.elementDark}`,
+          borderBottom: `1px solid ${byName.elementMid}`,
           padding: `15px ${padding}`,
           cursor: 'pointer'
         },
@@ -112,48 +113,53 @@ export default function () {
             background: 'white',
             flexDirection: 'column',
             position: 'absolute',
-            top: '61px',
             width: '90%',
             left: '18px',
-            boxShadow: `0px 1px 3px 1px ${byName.elementMid}`,
-            display: 'flex'
+            boxShadow: genBoxShadow(),
+            border: `1px solid ${byName.elementMid}`,
+            display: 'flex',
+            transition: 'all 0.2s ease-in-out'
           },
-          ngShow: 'orgDropdownIsShown'
+          ngClass: 'orgDropdownIsShown ? "nav-sidepanel__org-list-container--is-visible" : "nav-sidepanel__org-list-container--is-not-visible"'
         }, [
-          h('p', {
-            style: {
-              fontWeight: 'bold',
-              marginBottom: 0,
-              padding,
-              paddingBottom: '10px',
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-              fontSize: '0.9em'
-            }
-          }, ['Organizations']),
           h('.nav-sidepanel__org-list', {
             style: {
-              maxHeight: '150px',
+              maxHeight: '184px',
               overflow: 'hidden',
-              overflowY: 'auto'
+              overflowY: 'auto',
+              paddingBottom: '8px',
+              lineHeight: 1.5
             }
           }, [
             h('p', {
+              style: {
+                fontWeight: 600,
+                marginBottom: 0,
+                padding,
+                paddingBottom: '10px',
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                fontSize: '0.9em'
+              }
+            }, ['Organizations']),
+            h('p.nav-sidepanel__org-name', {
               ngRepeat: 'org in orgs track by org.sys.id',
               ngIf: 'orgs.length',
               ngStyle: `{"background": currOrg && currOrg.sys.id === org.sys.id ? "${byName.elementLight}": ""}`,
               ngClick: 'setCurrOrg(org)',
               style: {
                 cursor: 'pointer',
-                padding: `10px ${padding}`,
-                margin: 0
+                padding: `8px ${padding} 8px`,
+                margin: 0,
+                transition: 'background-color 0.1s ease-in-out'
               }
             }, ['{{org.name}}'])
           ]),
           h('a.text-link', {
             style: {
-              padding: `10px ${padding} ${padding}`,
-              display: 'block'
+              padding: `${padding} ${padding} ${padding}`,
+              display: 'block',
+              borderTop: `1px solid ${byName.elementMid}`
             },
             ngClick: 'createNewOrg()'
           }, ['+ Create organization'])
@@ -249,7 +255,7 @@ export default function () {
         h('div', {
           style: {
             marginBottom: padding,
-            borderBottom: `1px solid ${byName.elementDark}`
+            borderBottom: `1px solid ${byName.elementMid}`
           }
         }, []),
         h('a.text-link', {
