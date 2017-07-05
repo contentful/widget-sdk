@@ -60,16 +60,18 @@ function content () {
       marginRight: '0.5em'
     }),
     h('div', {
-      style: {flexGrow: 1}
+      style: {
+        flex: '1 1 auto',
+        overflow: 'hidden'
+      }
     }, text()),
 
     // Content type information
     h('div', {
       dataTooltip: 'Content type',
       style: {
-        marginTop: '1px',
-        marginBottom: '-1px',
-        marginRight: '10px',
+        flexShrink: '0',
+        margin: '1px 10px -1px 10px',
         color: Colors.byName.textLight,
         maxWidth: '30%',
         textOverflow: 'ellipsis',
@@ -105,7 +107,12 @@ function text () {
   return [
     h('div', {
       dataTestId: 'entity-link-title',
-      style: {fontSize: '16px'}
+      style: {
+        fontSize: '16px',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis'
+      }
     }, [titleText()]),
     h('div', {
       ngIf: 'config.showDetails',
