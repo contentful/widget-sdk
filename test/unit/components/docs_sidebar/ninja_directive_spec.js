@@ -5,25 +5,19 @@ import {times} from 'lodash';
 describe('cfNinja Directive', function () {
   beforeEach(function () {
     module('contentful/test');
-    this.element = this.$compile('<cf-ninja />');
     this.$timeout = this.$inject('$timeout');
     this.$document = this.$inject('$document');
+    this.TheStore = this.$inject('TheStore');
+    this.TheStore.get = sinon.stub();
+    this.TheStore.set = sinon.stub();
 
     const ninjaSelector = '[aria-label="Open docs sidebar"]';
     const modalSelector = '.docs-helper__modal';
     const bgSelector = '.docs-helper__bg';
     const nextSelector = '[aria-label="Next"]';
 
-    this.assertMinimized = function () {
-      expect(this.element.find(ninjaSelector).length).toBe(1);
-    };
-
-    this.assertHidden = function () {
-      expect(this.element.find(ninjaSelector).length).toBe(0);
-    };
-
-    this.assertExpanded = function () {
-      expect(this.element.find(modalSelector).length).toBe(1);
+    this.compileElement = function () {
+      this.element = this.$compile('<cf-ninja />');
     };
 
     this.keyDown = function (code) {
@@ -42,18 +36,42 @@ describe('cfNinja Directive', function () {
       this.$timeout.flush();
     };
 
-    this.hasText = function (text) {
-      const el = this.element.find(`:contains("${text}")`);
-      expect(el.length).toBeGreaterThan(0);
+    this.hasText = function (text, isPresent = true) {
+      const isFound = !!this.element.find(`:contains("${text}")`).length;
+      expect(isFound).toBe(isPresent);
+    };
+
+    this.assertMinimized = function () {
+      expect(this.element.find(ninjaSelector).length).toBe(1);
+    };
+
+    this.assertHidden = function () {
+      expect(this.element.find(ninjaSelector).length).toBe(0);
+    };
+
+    this.assertExpanded = function () {
+      expect(this.element.find(modalSelector).length).toBe(1);
     };
 
     this.assertShowNextPrompt = function (shouldShow = true) {
       const isFound = !!this.element.find(nextSelector).length;
       expect(isFound).toBe(shouldShow);
     };
+
+    this.assertValuePersisted = function (key, value) {
+      sinon.assert.calledWith(
+        this.TheStore.set,
+        'docsSidebar',
+        sinon.match.has(key, value)
+      );
+    };
   });
 
   describe('Show/hide ninja', function () {
+    beforeEach(function () {
+      this.compileElement();
+    });
+
     it('displays collapsed ninja', function () {
       this.assertMinimized();
     });
@@ -81,6 +99,7 @@ describe('cfNinja Directive', function () {
 
   describe('Intro sequence', function () {
     beforeEach(function () {
+      this.compileElement();
       this.clickNinja();
     });
 
@@ -95,16 +114,41 @@ describe('cfNinja Directive', function () {
       });
       this.keyDown(32);
       this.assertShowNextPrompt(false);
-
     });
-
-
-    xit('is not displayed if it has been seen already');
-
   });
 
   xdescribe('State / navigation');
 
-  xdescribe('Progress is stored');
+  describe('Progress is stored', function () {
+    it('displays intro sequence', function () {
+      this.compileElement();
+      this.clickNinja();
+      this.hasText('Hello fellow Content-Ninja');
+    });
 
+    it('skips intro sequence if it has been seen', function () {
+      this.TheStore.get.withArgs('docsSidebar').returns({introCompleted: true});
+      this.compileElement();
+      this.clickNinja();
+      this.hasText('Hello fellow Content-Ninja', false);
+    });
+
+    it('marks intro as completed when all steps are seen', function () {
+      this.compileElement();
+      this.clickNinja();
+      times(9, () => {
+        this.keyDown(32);
+      });
+      this.clickBg();
+      this.assertValuePersisted('introCompleted', true);
+    });
+
+    it('updates store when visibility is toggled', function () {
+      this.compileElement();
+      this.keyDown(78);
+      this.assertValuePersisted('isVisible', false);
+      this.keyDown(78);
+      this.assertValuePersisted('isVisible', true);
+    });
+  });
 });

@@ -7,24 +7,17 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
   var SumTypes = require('libs/sum-types');
   var caseof = SumTypes.caseofEq;
   var otherwise = SumTypes.otherwise;
-  var KEYCODES = require('keycodes');
   var Ninja = require('components/docs_sidebar/Ninja').default;
+  var TheStore = require('TheStore');
+  var KEYCODES = require('keycodes');
+  var STORE_KEY = 'docsSidebar';
 
   return {
     template: '<cf-component-bridge component="component">',
     restrict: 'E',
     link: function (scope, el) {
 
-      var state = {
-        view: $state.current.name || '',
-        isExpanded: false,
-        isVisible: true,
-        toggle: toggle,
-        intro: {
-          completed: false,
-          progress: 1
-        }
-      };
+      var state = getState();
 
       scope.component = Ninja(state);
 
@@ -58,12 +51,14 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
       function toggleVisibility () {
         updateProgress();
         state.isVisible = !state.isVisible;
+        setStoreValue({isVisible: state.isVisible});
         update(state);
       }
 
       function updateProgress () {
         if (!state.intro.completed && state.intro.progress >= 10) {
           state.intro.completed = true;
+          setStoreValue({introCompleted: true});
         }
       }
 
@@ -93,6 +88,31 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
             [otherwise, function () {}]
           ]);
         }
+      }
+
+      function setStoreValue (data) {
+        var defaults = {
+          introCompleted: state.intro.completed,
+          isVisible: state.isVisible
+        };
+        TheStore.set(STORE_KEY, _.merge(defaults, data));
+      }
+
+      function getState () {
+        var store = TheStore.get(STORE_KEY) || {};
+        var isCompleted = !!store.introCompleted;
+        var isVisible = !!store.isVisible || true;
+
+        return {
+          view: $state.current.name || '',
+          isExpanded: false,
+          isVisible: isVisible,
+          toggle: toggle,
+          intro: {
+            completed: isCompleted,
+            progress: 1
+          }
+        };
       }
     }
   };
