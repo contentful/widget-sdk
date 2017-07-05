@@ -205,16 +205,33 @@ export default function () {
             ngIf: '!spacesByOrg[currOrg.sys.id].length',
             style: {
               padding,
-              paddingTop: 0,
+              paddingBottom: '40px',
               margin: 0,
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              alignItems: 'center',
+              textAlign: 'center'
             }
           }, [
-            h('p', ['{{canCreateSpaceInCurrOrg ? "Let’s go - create your first space!" : "Uh oh! Nothing to see here"}}']),
+            h('cf-icon', {
+              name: 'sidepanel-spaces-advice',
+              scale: '1.2',
+              style: {
+                marginBottom: '20px'
+              }
+            }),
+            h('p', {
+              style: {
+                fontWeight: 'bold'
+              }
+            }, ['{{canCreateSpaceInCurrOrg ? "Let’s go - create your first space!" : "Uh oh! Nothing to see here"}}']),
             h('p', ['{{canCreateSpaceInCurrOrg ? "A space is a place where you keep all the content related to a single project." : "Seems like you don’t have access to any of your organization’s spaces. Contact your organization admin to add you to spaces."}}']),
             h('button.btn-action', {
+              style: {
+                width: '44%',
+                marginTop: '10px'
+              },
               ngIf: 'canCreateSpaceInCurrOrg',
               ngClick: 'showCreateSpaceModal(currOrg.sys.id)'
             }, ['Create Space'])
@@ -222,6 +239,7 @@ export default function () {
         ])
       ]),
       h('.nav-sidepanel__org-actions', {
+        ngIf: 'canGotoOrgSettings',
         style: {
           flexGrow: 1,
           padding,
@@ -235,7 +253,6 @@ export default function () {
           }
         }, []),
         h('a.text-link', {
-          ngIf: 'canGotoOrgSettings',
           ngClick: 'gotoOrgSettings()'
         }, ['Organization settings'])
       ]),
