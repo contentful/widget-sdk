@@ -29,6 +29,7 @@ export const options = {
     ['transform-es2015-destructuring', {options: 'loose'}],
     // For function parameters enables destructuring, defaults, rest
     ['transform-es2015-parameters'],
+    ['transform-es2015-shorthand-properties'],
     ['transform-es2015-arrow-functions']
   ],
 
