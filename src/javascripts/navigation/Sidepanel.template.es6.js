@@ -57,16 +57,17 @@ export default function () {
           flexGrow: 1,
           maxHeight: '70px',
           minHeight: '70px',
-          background: byName.elementLight,
           borderBottom: `1px solid ${byName.elementDark}`,
           padding: `15px ${padding}`,
-          cursor: 'pointer'
+          cursor: 'pointer',
+          transition: 'background-color 0.1s ease-in-out'
         },
+        ngClass: 'orgDropdownIsShown ? "nav-sidepanel__header--is-active": ""',
         ngClick: 'toggleOrgsDropdown()'
       }, [
         h('p.nav-sidepanel__org-img', {
           style: {
-            padding: '8px',
+            padding: '10px',
             background: byName.elementDark,
             color: byName.textDark,
             fontWeight: 'bold',
@@ -119,7 +120,8 @@ export default function () {
             boxShadow: genBoxShadow(),
             border: `1px solid ${byName.elementMid}`,
             display: 'flex',
-            transition: 'all 0.2s ease-in-out'
+            transition: 'all 0.2s ease-in-out',
+            cursor: 'auto'
           },
           ngClass: 'orgDropdownIsShown ? "nav-sidepanel__org-list-container--is-visible" : "nav-sidepanel__org-list-container--is-not-visible"'
         }, [
@@ -255,10 +257,17 @@ export default function () {
       }, [
         h('div', {
           style: {
-            marginBottom: '12px',
-            borderBottom: `1px solid ${byName.elementDark}`
+            paddingLeft: `${padding}`,
+            paddingRight: `${padding}`
           }
-        }, []),
+        }, [
+          h('div', {
+            style: {
+              marginBottom: '12px',
+              borderBottom: `1px solid ${byName.elementDark}`
+            }
+          })
+        ]),
         h('p.nav-sidepanel__org-actions-goto-settings', {
           ngClick: 'gotoOrgSettings()',
           style: {
@@ -273,7 +282,7 @@ export default function () {
         style: {
           position: 'absolute',
           left: '375px',
-          top: '20px',
+          top: '27px',
           fontSize: '1.7em',
           color: 'white',
           cursor: 'pointer'
