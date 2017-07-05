@@ -46,7 +46,8 @@ export default function () {
         width: '350px',
         height: '100%',
         background: byName.elementLightest,
-        zIndex: 1
+        zIndex: 1,
+        lineHeight: 1.5
       },
       ngClass: '{"nav-sidepanel--slide-in": sidePanelIsShown, "nav-sidepanel--slide-out": !sidePanelIsShown}'
     }, [
@@ -54,10 +55,10 @@ export default function () {
         style: {
           display: 'flex',
           flexGrow: 1,
-          maxHeight: '63px',
-          minHeight: '63px',
+          maxHeight: '70px',
+          minHeight: '70px',
           background: byName.elementLight,
-          borderBottom: `1px solid ${byName.elementMid}`,
+          borderBottom: `1px solid ${byName.elementDark}`,
           padding: `15px ${padding}`,
           cursor: 'pointer'
         },
@@ -196,15 +197,16 @@ export default function () {
             overflowY: 'auto'
           }
         }, [
-          h('p', {
+          h('p.nav-sidepanel__space-name', {
             ngRepeat: 'space in spacesByOrg[currOrg.sys.id] track by space.data.sys.id',
             ngIf: 'spacesByOrg[currOrg.sys.id].length',
-            ngStyle: `{"background": currSpace && currSpace.sys.id === space.data.sys.id ? "${byName.elementLight}": ""}`,
+            ngStyle: `{"background": currSpace && currSpace.sys.id === space.data.sys.id ? "${byName.elementMid}": ""}`,
             ngClick: 'setAndGotoSpace(space.data)',
             style: {
               cursor: 'pointer',
-              padding: `10px ${padding}`,
-              margin: 0
+              padding: `8px ${padding}`,
+              margin: 0,
+              transition: 'background-color 0.1s ease-in-out'
             }
           }, ['{{space.data.name}}']),
           h('.nav-sidepanel__no-spaces', {
@@ -248,18 +250,23 @@ export default function () {
         ngIf: 'canGotoOrgSettings',
         style: {
           flexGrow: 1,
-          padding,
           paddingTop: '10px'
         }
       }, [
         h('div', {
           style: {
-            marginBottom: padding,
-            borderBottom: `1px solid ${byName.elementMid}`
+            marginBottom: '12px',
+            borderBottom: `1px solid ${byName.elementDark}`
           }
         }, []),
-        h('a.text-link', {
-          ngClick: 'gotoOrgSettings()'
+        h('p.nav-sidepanel__org-actions-goto-settings', {
+          ngClick: 'gotoOrgSettings()',
+          style: {
+            cursor: 'pointer',
+            margin: 0,
+            padding: `8px ${padding}`,
+            transition: 'background-color 0.1s ease-in-out'
+          }
         }, ['Organization settings'])
       ]),
       h('.nav-sidepanel__close-btn', {
