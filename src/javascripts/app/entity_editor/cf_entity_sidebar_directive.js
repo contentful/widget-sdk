@@ -39,8 +39,20 @@ angular.module('contentful')
 
       $scope.entitySys$ = $scope.otDoc.sysProperty;
 
-      K.onValueScope($scope, $scope.otDoc.state.isSaving$, function (isSaving) {
-        $scope.data.documentIsSaving = isSaving;
+      // This code is responsible for showing the saving indicator. We
+      // debounce switching the indicator off so that it is shown for
+      // at least one second.
+      var setNotSavingTimeout;
+      K.onValueScope($scope, $scope.otDoc.state.isSaving$.skipDuplicates(), function (isSaving) {
+        clearTimeout(setNotSavingTimeout);
+        if (isSaving) {
+          $scope.data.documentIsSaving = true;
+        } else {
+          setNotSavingTimeout = setTimeout(function () {
+            $scope.data.documentIsSaving = false;
+            $scope.$apply();
+          }, 1000);
+        }
       });
 
       K.onValueScope($scope, $scope.otDoc.sysProperty, function (sys) {
