@@ -19,7 +19,7 @@ export default function () {
         height: '100%',
         width: '100%',
         zIndex: 0,
-        transition: 'opacity 0.2s ease-in-out'
+        transition: 'all 0.2s ease-in-out'
       },
       ngClass: 'sidePanelIsShown ? "nav-sidepanel__bg--is-visible" : "nav-sidepanel__bg--is-not-visible"',
       ngClick: 'toggleSidePanel()'
