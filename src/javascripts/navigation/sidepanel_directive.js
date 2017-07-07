@@ -117,9 +117,7 @@ angular.module('contentful')
       $scope.$watch(function () {
         return getCurrSpace();
       }, function (space) {
-        if (space) {
-          $scope.currSpace = space;
-        }
+        $scope.currSpace = space;
       });
       $scope.setAndGotoSpace = function (space) {
         $scope.currSpace = space;
