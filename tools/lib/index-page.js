@@ -77,6 +77,14 @@ function indexPage (uiVersion, config, resolve, entryScripts) {
       iconLink('apple-touch-icon', resolve('images/favicons/apple_icon72x72.png')),
       iconLink('apple-touch-icon', resolve('images/favicons/apple_icon114x114.png'))
     ]),
+    // We inline this style so it is immediately available no page
+    // load. Otherwise the loader animation from below will not work.
+    h('style', [
+      `@keyframes rotate {
+        from { transform: rotate(0deg) }
+        to { transform: rotate(360deg) }
+      }`
+    ]),
     h('body', {
       ngApp: 'contentful/app',
       ngCsp: 'no-inline-style;no-unsafe-eval',
@@ -85,17 +93,80 @@ function indexPage (uiVersion, config, resolve, entryScripts) {
     }, [
       h('.client', [
         h('cf-app-container.app-container.ng-hide', {ngShow: 'user'}),
-        h('.client-loading', {ngIf: '!user'}, [
-          h('.client-loading__container', [
-            h('.client-loading__icon.fa.fa-cog.fa-spin'),
-            h('.client-loading__text', ['Loading Contentful...'])
-          ])
+        h('div', {ngIf: '!user'}, [
+          appLoader()
         ])
       ])
     ].concat(
       entryScripts.map((src) => scriptTag(resolve(src)))
     ))
   ])
+}
+
+/**
+ * Show an animated Contentful log with the text 'Loading Contentful'.
+ *
+ * The element is positioned absolutely and covers its whole container.
+ * The loader is centered within this element.
+ */
+function appLoader () {
+  return h('div', {
+    style: {
+      position: 'absolute',
+      top: '0',
+      right: '0',
+      bottom: '0',
+      left: '0',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center'
+    }
+  }, [
+    h('svg', {
+      width: '60',
+      height: '60',
+      style: {
+        transform: 'rotate(-45deg)'
+      }
+    }, [
+      loaderSegment('M10,30 a20,20 0 0,0 20,20', '0', '#e0534e'),
+      loaderSegment('M30,10 a20,20 0 0,0 -20,20', '0.3s', '#faec28'),
+      loaderSegment('M50,30 a20,20 0 0,0 -20,-20', '.15s', '#56aed2')
+    ]),
+    h('div', {
+      style: {
+        // Font size should be the same as for the other page loaders
+        // in the app.
+        fontSize: '2em',
+        marginTop: '0.9em',
+        // better horizontal visual balance because of the hanging
+        // ellipsis
+        marginLeft: '28px'
+      }
+    }, [
+      'Loading Contentful…'
+    ])
+  ])
+}
+
+/**
+ * One arc segment of the Contentful logo.
+ */
+function loaderSegment (path, delay, color) {
+  return h('path', {
+    d: path,
+    style: {
+      strokeWidth: '11px',
+      stroke: color,
+      strokeLinecap: 'round',
+      fill: 'transparent',
+      mixBlendMode: 'darken',
+      animation: 'rotate 2s infinite cubic-bezier(0.6, 0.03, 0.15, 1)',
+      transformOrigin: '30px 30px',
+      animationDelay: delay
+    }
+  })
 }
 
 function configMetaTag (uiVersion, config, resolve) {
