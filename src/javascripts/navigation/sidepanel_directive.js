@@ -79,7 +79,15 @@ angular.module('contentful')
           $scope.canGotoOrgSettings = isOwnerOrAdmin(org);
           $scope.canCreateSpaceInCurrOrg = canCreateSpaceInOrg(orgId);
           $scope.twoLetterOrgName = org.name.slice(0, 2).toUpperCase();
+          $scope.viewingOrgSettings = $stateParams.orgId === orgId;
         }
+      });
+      // mark org settings as active if org id is in state params and curr
+      // org id is same as state params org id
+      $scope.$watch(function () {
+        return $stateParams.orgId;
+      }, function (orgId) {
+        $scope.viewingOrgSettings = !!$scope.currOrg && $scope.currOrg.sys.id === orgId;
       });
       $scope.setCurrOrg = function (org) {
         $scope.currOrg = org;

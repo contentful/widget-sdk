@@ -148,7 +148,7 @@ export default function () {
             h('p.nav-sidepanel__org-name', {
               ngRepeat: 'org in orgs track by org.sys.id',
               ngIf: 'orgs.length',
-              ngStyle: `{"background": currOrg && currOrg.sys.id === org.sys.id ? "${byName.elementLight}": ""}`,
+              ngClass: '{"nav-sidepanel__org-name--is-active": currOrg && currOrg.sys.id === org.sys.id}',
               ngClick: 'setCurrOrg(org)',
               style: {
                 cursor: 'pointer',
@@ -202,7 +202,7 @@ export default function () {
           h('p.nav-sidepanel__space-name', {
             ngRepeat: 'space in spacesByOrg[currOrg.sys.id] track by space.data.sys.id',
             ngIf: 'spacesByOrg[currOrg.sys.id].length',
-            ngStyle: `{"background": currSpace && currSpace.sys.id === space.data.sys.id ? "${byName.elementMid}": ""}`,
+            ngClass: '{"nav-sidepanel__space-name--is-active": currSpace && currSpace.sys.id === space.data.sys.id}',
             ngClick: 'setAndGotoSpace(space.data)',
             style: {
               cursor: 'pointer',
@@ -275,7 +275,8 @@ export default function () {
             margin: 0,
             padding: `8px ${padding}`,
             transition: 'background-color 0.1s ease-in-out'
-          }
+          },
+          ngClass: '{"nav-sidepanel__org-actions-goto-settings--is-active": viewingOrgSettings }'
         }, ['Organization settings'])
       ]),
       h('.nav-sidepanel__close-btn', {
