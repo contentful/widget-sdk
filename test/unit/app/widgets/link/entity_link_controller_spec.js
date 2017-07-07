@@ -1,4 +1,4 @@
-'use strict';
+import $q from '$q';
 
 describe('EntityLinkController', function () {
   beforeEach(function () {
@@ -85,5 +85,12 @@ describe('EntityLinkController', function () {
       expect(this.scope.file).toBe(file);
       expect(this.scope.downloadUrl).toBe(url);
     });
+  });
+
+  it('exposes content type when it is loaded', function () {
+    const contentType = $q.resolve({data: { name: 'CTNAME' }});
+    this.init({contentType});
+    this.$apply();
+    expect(this.scope.contentTypeName).toBe('CTNAME');
   });
 });

@@ -1,4 +1,5 @@
 import {h} from 'utils/hyperscript';
+import * as Colors from 'Styles/Colors';
 import {
   dragHandle,
   status,
@@ -59,8 +60,27 @@ function content () {
       marginRight: '0.5em'
     }),
     h('div', {
-      style: {flexGrow: 1}
-    }, text())
+      style: {
+        flex: '1 1 auto',
+        overflow: 'hidden'
+      }
+    }, text()),
+
+    // Content type information
+    h('div', {
+      dataTooltip: 'Content type',
+      style: {
+        flexShrink: '0',
+        margin: '1px 10px -1px 10px',
+        color: Colors.byName.textLight,
+        maxWidth: '30%',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden'
+      }
+    }, [
+      '{{ contentTypeName }}'
+    ])
   ].join('');
 }
 
@@ -87,7 +107,12 @@ function text () {
   return [
     h('div', {
       dataTestId: 'entity-link-title',
-      style: {fontSize: '16px'}
+      style: {
+        fontSize: '16px',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis'
+      }
     }, [titleText()]),
     h('div', {
       ngIf: 'config.showDetails',
