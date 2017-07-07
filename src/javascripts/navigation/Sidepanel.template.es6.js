@@ -79,7 +79,8 @@ export default function () {
         }, ['{{twoLetterOrgName}}']),
         h('.nav-sidepanel__org-selector', {
           style: {
-            flexGrow: 2
+            flexGrow: 2,
+            minWidth: 0
           }
         }, [
           h('div', {
@@ -96,8 +97,12 @@ export default function () {
             }, ['Organization']),
             h('p', {
               style: {
-                marginBottom: 0
-              }
+                marginBottom: 0,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
+              },
+              title: '{{currOrg.name}}'
             }, ['{{currOrg.name}}'])
           ])
         ]),
