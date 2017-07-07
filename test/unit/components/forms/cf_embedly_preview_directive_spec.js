@@ -56,6 +56,15 @@ describe('cfEmbedlyPreview Directive', function () {
       expect(this.element[0].firstChild.innerHTML).toBe('I am a card from http://contentful.com');
     });
 
+    it('gains a card when a URL with special characters is provided', function () {
+      const url = 'https://www.k-rauta.fi/ratakaüppa/seinälaatta-primus-675-15x15-persikka-kiiltävä';
+      const encodedUrl = encodeURI(url);
+
+      this.compileElement(url);
+      expect(this.element[0].children.length).toBe(1);
+      expect(this.element[0].firstChild.innerHTML).toBe('I am a card from ' + encodedUrl);
+    });
+
     it('changes cards when the value changes', function () {
       this.compileElement('http://contentful.com');
       expect(this.element[0].firstChild.innerHTML).toBe('I am a card from http://contentful.com');
