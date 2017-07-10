@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Content Type List Controller', function () {
-  let scope, cfStub, stubs, $q, spaceContext;
+  let scope, cfStub, stubs, spaceContext;
 
   function makeCT (extensions) {
     const space = cfStub.space('spaceid');
@@ -23,9 +23,8 @@ describe('Content Type List Controller', function () {
     const TheStore = this.$inject('TheStore');
 
     cfStub = this.$inject('cfStub');
-    $q = this.$inject('$q');
-    spaceContext = this.$inject('spaceContext');
-    sinon.stub(spaceContext, 'refreshContentTypes').returns($q.resolve([]));
+    spaceContext = this.$inject('mocks/spaceContext').init();
+    spaceContext.space.getContentTypes = sinon.stub().resolves([]);
 
     scope = $rootScope.$new();
     scope.context = {};
@@ -57,7 +56,7 @@ describe('Content Type List Controller', function () {
       });
 
       it('content types are refreshed', function () {
-        sinon.assert.called(spaceContext.refreshContentTypes);
+        sinon.assert.called(spaceContext.space.getContentTypes);
       });
     });
   });
@@ -73,7 +72,7 @@ describe('Content Type List Controller', function () {
     it('refreshes content types', function () {
       scope.context.list = 'changed';
       this.$apply();
-      sinon.assert.called(spaceContext.refreshContentTypes);
+      sinon.assert.called(spaceContext.space.getContentTypes);
     });
   });
 
@@ -81,15 +80,15 @@ describe('Content Type List Controller', function () {
     it('only contains content types matched by the search', function () {
       const matched = makeCT({getName: sinon.stub().returns('MATCH')});
       const unmatched = makeCT({getName: sinon.stub().returns('MA')});
-      spaceContext.contentTypes = [matched, unmatched];
+      spaceContext.space.getContentTypes.resolves([matched, unmatched]);
 
       scope.searchTerm = 'MA';
       this.$apply();
-      expect(scope.visibleContentTypes).toEqual([matched, unmatched]);
+      expect(scope.visibleContentTypes.map((ct) => ct.getName())).toEqual(['MA', 'MATCH']);
 
       scope.searchTerm = 'MAT';
       this.$apply();
-      expect(scope.visibleContentTypes).toEqual([matched]);
+      expect(scope.visibleContentTypes.map((ct) => ct.getName())).toEqual(['MATCH']);
     });
 
     it('it does not include deleted content types', function () {

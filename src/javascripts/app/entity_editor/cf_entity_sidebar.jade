@@ -50,7 +50,7 @@
   .entity-sidebar__status-more
     .entity-sidebar__save-status
       i.entity-sidebar__saving-spinner(ng-class="data.documentIsSaving && 'x--active'")
-      span.entity-sidebar__last-saved(ng-hide="data.documentIsSaving")
+      span.entity-sidebar__last-saved
         | Last saved&nbsp;
         time(datetime="{{data.documentUpdatedAt}}" cf-relative-datetime)
     button.entity-sidebar__revert.btn-link(

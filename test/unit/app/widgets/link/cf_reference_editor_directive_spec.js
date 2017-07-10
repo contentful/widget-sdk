@@ -1,4 +1,4 @@
-'use strict';
+import $q from '$q';
 
 describe('cfReferenceEditorDirective', function () {
 
@@ -15,7 +15,6 @@ describe('cfReferenceEditorDirective', function () {
     this.widgetApi = this.$inject('mocks/widgetApi').create();
     this.field = this.widgetApi.field;
 
-    this.$q = this.$inject('$q');
     this.modalDialog = this.$inject('modalDialog');
 
     this.init = function (scopeProps) {
@@ -184,7 +183,7 @@ describe('cfReferenceEditorDirective', function () {
 
         this.modalDialog.open = (config) => {
           expect(config.scopeData.cts).toEqual([ct1, ct2]);
-          return {promise: this.$q.resolve(ct1)};
+          return {promise: $q.resolve(ct1)};
         };
 
         return this.create('Entry', {}, this.space)
@@ -276,7 +275,7 @@ describe('cfReferenceEditorDirective', function () {
       this.modalDialog.open = (config) => {
         expect(config.scopeData.unpublishedRefs).toEqual([validWarning]);
         expect(config.scopeData.linkedEntityTypes).toBe('entries');
-        return {promise: this.$q.resolve()};
+        return {promise: $q.resolve()};
       };
 
       this.warning.warnFn([null, {count: 0}, validWarning]);
@@ -292,7 +291,7 @@ describe('cfReferenceEditorDirective', function () {
           expect(config.scopeData.linkedEntityTypes).toBe('assets');
         }
 
-        return {promise: this.$q.resolve()};
+        return {promise: $q.resolve()};
       };
 
       this.warning.warnFn([validWarning, assetWarning]);

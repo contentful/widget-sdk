@@ -5,7 +5,6 @@
  * @name ContentTypeEditorController
  *
  * @scope.requires  context
- * @scope.requires  spaceContext
  * @scope.requires  contentTypeForm
  *
  * @scope.provides  contentType
@@ -14,7 +13,6 @@
 angular.module('contentful')
 .controller('ContentTypeEditorController', ['$scope', 'require', function ContentTypeEditorController ($scope, require) {
   var controller = this;
-  var $controller = require('$controller');
   var $state = require('$state');
   var validation = require('validation');
   var modalDialog = require('modalDialog');
@@ -28,6 +26,13 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var editingInterfaces = spaceContext.editingInterfaces;
   var analytics = require('analytics/Analytics');
+  var createActions = require('app/ContentModel/Editor/Actions').default;
+
+  var contentTypeIds = spaceContext.cma.getContentTypes().then(function (response) {
+    return response.items.map(function (ct) {
+      return ct.sys.id;
+    });
+  });
 
   var canEdit = accessChecker.can('update', 'ContentType');
   // Read-only data for template
@@ -42,7 +47,7 @@ angular.module('contentful')
     placeholder: 'ct-field--placeholder'
   };
 
-  $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
+  $scope.actions = createActions($scope, contentTypeIds);
 
   $scope.stateIs = $state.is;
 
@@ -75,7 +80,7 @@ angular.module('contentful')
   });
 
   if ($scope.context.isNew) {
-    metadataDialog.openCreateDialog()
+    metadataDialog.openCreateDialog(contentTypeIds)
     .then(applyContentTypeMetadata(true), function () {
       $state.go('spaces.detail.content_types.list');
     });
@@ -95,25 +100,17 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
-   * @name ContentTypeEditorController#registerPublishedFields
-   * @param {Client.ContentType} contentType
-   */
-  controller.registerPublishedFields = registerPublishedFields;
-
-  var publishedFields = [];
-  registerPublishedFields($scope.publishedContentType);
-
-  function registerPublishedFields (contentType) {
-    publishedFields = _.cloneDeep(dotty.get(contentType, 'data.fields', []));
-  }
-
-  /**
-   * @ngdoc method
    * @name ContentTypeEditorController#getPublishedField
+   * @description
+   * Get the field data for the given ID from the content type data
+   * published on the server.
+   *
    * @param {string} id
+   * @returns {API.ContentType.Field}
    */
   controller.getPublishedField = function (id) {
-    return _.find(publishedFields, {id: id});
+    var publishedFields = _.get($scope.publishedContentType, 'data.fields', []);
+    return _.cloneDeep(_.find(publishedFields, {id: id}));
   };
 
   /**

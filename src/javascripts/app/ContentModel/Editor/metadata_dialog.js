@@ -21,9 +21,10 @@ angular.module('contentful')
    * @ngdoc method
    * @name contentTypeEditor/metadataDialog#openCreateDialog
    */
-  function openCreateDialog () {
+  function openCreateDialog (contentTypeIds) {
     return openDialog({
       isNew: true,
+      contentTypeIds: contentTypeIds,
       labels: {
         title: 'Create new content type',
         save: 'Create'
@@ -50,10 +51,11 @@ angular.module('contentful')
     });
   }
 
-  function openDuplicateDialog (contentType, duplicate) {
+  function openDuplicateDialog (contentType, duplicate, contentTypeIds) {
     var scope = prepareScope({
       description: contentType.data.description,
       isNew: true,
+      contentTypeIds: contentTypeIds,
       namePlaceholder: 'Duplicate of "' + contentType.data.name + '"'
     });
 
@@ -103,7 +105,8 @@ angular.module('contentful')
         id: ''
       },
       contentTypeIsNew: params.isNew,
-      namePlaceholder: params.namePlaceholder || 'For example Product, Blog Post, Author'
+      namePlaceholder: params.namePlaceholder || 'For example Product, Blog Post, Author',
+      contentTypeIds: params.contentTypeIds
     });
   }
 }])
@@ -118,13 +121,14 @@ angular.module('contentful')
 */
 .controller('ContentTypeMetadataController', ['$scope', '$injector', function ($scope, $injector) {
   var stringUtils = $injector.get('stringUtils');
-  var spaceContext = $injector.get('spaceContext');
-
-  var contentTypeIds = _.map(spaceContext.contentTypes, function (ct) {
-    return ct.getId();
-  });
-
   var ID_REGEXP = /^[a-zA-Z0-9-_.]*$/;
+
+  var contentTypeIds = [];
+  if ($scope.contentTypeIds) {
+    $scope.contentTypeIds.then(function (ctIds) {
+      contentTypeIds = ctIds;
+    });
+  }
 
   $scope.$watch('newContentTypeForm.contentTypeId', function (ctrl) {
     if (!ctrl) { return; }

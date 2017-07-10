@@ -13,6 +13,7 @@ div(ng-show="!isReady")
       cf-entity-link(
         ng-if="!isAssetCard"
         entity="model.value.entity"
+        content-type="model.value.contentType"
         entity-helpers="helpers"
         actions="model.value.actions"
         config="config")

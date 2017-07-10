@@ -1,6 +1,6 @@
 import sinon from 'npm:sinon';
 
-describe('ContentType Actions Controller', function () {
+describe('app/ContentModel/Editor/Actions', function () {
   let controller, scope, $q, logger, notification, accessChecker, ReloadNotification, spaceContext;
   let space, contentType;
 
@@ -50,10 +50,8 @@ describe('ContentType Actions Controller', function () {
     scope.context = {};
     scope.contentType = contentType;
     scope.broadcastFromSpace = sinon.stub();
-    scope.ctEditorController = {registerPublishedFields: sinon.spy()};
 
-    const $controller = this.$inject('$controller');
-    controller = $controller('ContentTypeActionsController', {$scope: scope});
+    controller = this.$inject('app/ContentModel/Editor/Actions').default(scope);
   });
 
   describe('#delete command', function () {
@@ -66,8 +64,10 @@ describe('ContentType Actions Controller', function () {
 
       this.modalDialog = this.$inject('modalDialog');
       sinon.stub(this.modalDialog, 'open').callsFake((params) => {
-        if (params.scope && params.scope.delete) {
-          params.scope.delete.execute();
+        if (params.controller) {
+          const $scope = this.$inject('$rootScope').$new();
+          params.controller($scope);
+          $scope.delete.execute();
         }
       });
     });
@@ -229,7 +229,6 @@ describe('ContentType Actions Controller', function () {
         const ct = scope.contentType;
         sinon.assert.calledOnce(ct.save);
         sinon.assert.calledOnce(ct.publish);
-        sinon.assert.calledOnce(scope.ctEditorController.registerPublishedFields);
       });
     });
 

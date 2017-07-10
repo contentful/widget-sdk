@@ -31,6 +31,7 @@ angular.module('contentful/mocks')
   const MockDocument = require('mocks/entityEditor/Document');
   const createApiKeyRepo = require('data/CMA/ApiKeyRepo').default;
   const createMockEndpoint = require('mocks/spaceEndpoint').create;
+  const CMAClient = require('data/ApiClient');
 
   return {
     init: init
@@ -66,6 +67,7 @@ angular.module('contentful/mocks')
     spaceContext.memberships = createMembershipsMock();
 
     spaceContext.endpoint = createMockEndpoint();
+    spaceContext.cma = new CMAClient(spaceContext.endpoint.request);
     spaceContext.apiKeyRepo = createApiKeyRepo(spaceContext.endpoint);
     spaceContext.organizationContext = {};
 

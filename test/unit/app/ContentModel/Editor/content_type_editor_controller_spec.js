@@ -1,4 +1,4 @@
-'use strict';
+import * as sinon from 'helpers/sinon';
 
 describe('ContentTypeEditor Controller', function () {
   let scope;
@@ -25,6 +25,8 @@ describe('ContentTypeEditor Controller', function () {
     const cfStub = this.$inject('cfStub');
     const $rootScope = this.$inject('$rootScope');
 
+    this.$inject('mocks/spaceContext').init();
+
     scope = $rootScope.$new();
 
     _.extend(scope, {
@@ -32,10 +34,7 @@ describe('ContentTypeEditor Controller', function () {
         $setDirty: sinon.stub()
       },
       context: {},
-      editingInterface: {},
-      spaceContext: {
-        contentTypes: []
-      }
+      editingInterface: {}
     });
 
     const $controller = this.$inject('$controller');
@@ -146,37 +145,22 @@ describe('ContentTypeEditor Controller', function () {
     });
   });
 
-  describe('sets array with published content fields', function () {
-    const fields = [
-      {apiName: 'a1', id: 'i1'},
-      {apiName: 'a2', id: 'i2'},
-      {apiName: 'a3', id: 'i3'}
-    ];
+  describe('#getPublishedField', function () {
+    it('returns field from published content type', function () {
+      const $controller = this.$inject('$controller');
+      const controller = $controller('ContentTypeEditorController', {$scope: scope});
 
-    it('handles initial published content type', function () {
-      scope.publishedContentType = {data: {fields: fields}};
-      const ctrl = createContentType([]);
-      expect(ctrl.getPublishedField('i2')).toEqual(fields[1]);
-    });
+      const field = { id: 'FID' };
+      scope.publishedContentType = {
+        data: {
+          fields: [ field ]
+        }
+      };
 
-    it('handles lack of initial published content type', function () {
-      scope.publishedContentType = null;
-      const ctrl = createContentType([]);
-      expect(ctrl.getPublishedField('i2')).toBeUndefined();
-    });
-
-    it('registers published content type field', function () {
-      const ctrl = createContentType([]);
-      ctrl.registerPublishedFields({data: {fields: fields}});
-      expect(ctrl.getPublishedField('i2')).toEqual(fields[1]);
-    });
-
-    it('clears published content type fields if call with null', function () {
-      const ctrl = createContentType([]);
-      ctrl.registerPublishedFields({data: {fields: fields}});
-      expect(ctrl.getPublishedField('i2')).toEqual(fields[1]);
-      ctrl.registerPublishedFields(null);
-      expect(ctrl.getPublishedField('i2')).toBeUndefined();
+      expect(controller.getPublishedField('FID')).toEqual(field);
+      // Should not be the same reference
+      expect(controller.getPublishedField('FID')).not.toBe(field);
+      expect(controller.getPublishedField('non-existent')).toBe(undefined);
     });
   });
 

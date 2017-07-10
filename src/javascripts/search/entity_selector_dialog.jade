@@ -3,6 +3,7 @@ mixin single-list-item
     ng-if="config.entityType === 'Entry'"
     ng-click="toggleSelection(entity, $event)"
     entity="entity"
+    content-type="getContentType(entity)"
     entity-helpers="helpers"
     config="{showDetails: true}")
 

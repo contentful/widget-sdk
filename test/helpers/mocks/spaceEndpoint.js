@@ -148,8 +148,8 @@ angular.module('contentful/test')
   }
 
   function rejectResponse (status, message) {
-    return _.assign(new Error(`${status} ${message}`), {
+    return $q.reject(_.assign(new Error(`${status} ${message}`), {
       statusCode: status
-    });
+    }));
   }
 }]);

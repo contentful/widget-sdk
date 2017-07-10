@@ -106,26 +106,9 @@ angular.module('contentful/mocks')
   };
 
   cfStub.spaceContext = function (space, contentTypes) {
-    const context = spaceContext;
-    context.resetWithSpace(space);
-    context.refreshContentTypes();
-    adapter.resolveLast({
-      sys: {
-        type: 'Array'
-      },
-      items: contentTypes,
-      total: contentTypes.length
-    });
-    $rootScope.$apply();
-    adapter.resolveLast({
-      sys: {
-        type: 'Array'
-      },
-      items: contentTypes,
-      total: contentTypes.length
-    });
-    $rootScope.$apply();
-    return context;
+    space.getContentTypes = sinon.stub().resolves(contentTypes);
+    spaceContext.resetWithSpace(space);
+    return spaceContext;
   };
 
   cfStub.mockSpaceContext = function () {
