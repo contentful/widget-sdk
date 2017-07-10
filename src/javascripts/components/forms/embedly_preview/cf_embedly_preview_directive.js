@@ -27,7 +27,7 @@ angular.module('contentful').directive('cfEmbedlyPreview', ['$injector', functio
 
         function requestPreview (url) {
           var previewElement = $('<a/>', {
-            href: encodeURI(url),
+            href: encodeURI(decodeURI(url)),
             'data-card-controls': 0,
             'data-card-chrome': 0,
             'data-card-align': 'left'
