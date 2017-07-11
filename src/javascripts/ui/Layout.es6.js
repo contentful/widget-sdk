@@ -53,14 +53,31 @@ export function container (style, children) {
  * @returns {VNode}
  */
 export function vspace (key) {
+  const height = vheight(key);
+  return vspace_(`${height}px`);
+}
+
+// TODO document
+function vheight (key) {
   // Defined by the UI Design Principles
   const height = [4, 8, 14, 20, 28, 40, 60, 80][key - 1];
   if (!height) {
     throw new Error(`Unknown spacing key ${key}`);
   }
+  return height;
+}
 
+// TODO document
+export function vspace_ (height) {
   return container({
-    marginTop: `${height}px`
+    marginTop: height
+  });
+}
+
+// TODO document
+export function hspace (width) {
+  return container({
+    marginLeft: width
   });
 }
 

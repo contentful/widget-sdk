@@ -6,6 +6,12 @@
  *
  * @description
  * This service exposes methods to load, update and save UI configuration.
+ *
+ * This is a stateful service. It holds the UI config for the current
+ * space determined by 'spaceContext'. Loading a new UI config when the
+ * space changes is done in the UiConfigController.
+ *
+ * TODO This service should not be stateful.
  */
 angular.module('contentful')
 .factory('uiConfig', ['$injector', function ($injector) {
