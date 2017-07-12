@@ -1,6 +1,35 @@
 'use strict';
 
 angular.module('contentful')
+/**
+ * @ngdoc directive
+ * @name cfNavSidePanel
+ *
+ * This directive display the new navigation side panel.
+ * It depends on the following paramters.
+ *
+ * @param {object} accessChecker
+ *   This service is used to check if the user can create
+ *   a space in an org.
+ * @param {object} OrganizationRoles
+ *   This service is used to check if the user is an owner or
+ *   admin of an org.
+ * @param {object} TokenStore
+ *   This service is provides orgs current user belongs to and
+ *   a map of org id to list of spaces.
+ * @param {object} spaceContext
+ *   This service provides all the data we need for the current
+ *   space user is in.
+ * @param {object} CreateSpace
+ *   This service gives us a way of showing the create space modal
+ *   for the given org id.
+ * @param {object} Kefir
+ *   This service is used to deal with kefir buses and streams.
+ * @param {object} Navigator
+ *   This service is used to perform state transitions.
+ * @param {object} $stateParams
+ *   This service is used to grab params for current state.
+ */
 .directive('cfNavSidePanel', ['require', function (require) {
   // access related imports
   var canCreateSpaceInOrg = require('accessChecker').canCreateSpaceInOrganization;
@@ -32,9 +61,7 @@ angular.module('contentful')
     scope: {},
     replace: true,
     controller: ['$scope', function ($scope) {
-      // base data
-
-      // side panel shown
+      // side panel visibility
       $scope.sidePanelIsShown = false;
       $scope.toggleSidePanel = function (committedOrg) {
         $scope.currOrg = committedOrg || getCurrentCommittedOrg();
@@ -54,11 +81,11 @@ angular.module('contentful')
         $scope.orgDropdownIsShown = !$scope.orgDropdownIsShown;
       };
 
-      // Org object representing the org current space belongs to
+      // Org object representing the org current space belongs to.
       // This will be switched by choosing a new org from the dropdown
-      // and selecting and operation on it like create space.
+      // and selecting an operation on it like create space or goto settings.
       // If no operation is performed, it is reverted back to previously
-      // selected org in the toggleSidePanel method
+      // selected org when the side panel is closed.
       $scope.$watch(function () {
         return getCurrentCommittedOrg();
       }, function (org) {
@@ -82,6 +109,7 @@ angular.module('contentful')
           $scope.viewingOrgSettings = $stateParams.orgId === orgId;
         }
       });
+
       // mark org settings as active if org id is in state params and curr
       // org id is same as state params org id
       $scope.$watch(function () {
@@ -93,7 +121,8 @@ angular.module('contentful')
         $scope.currOrg = org;
       };
       $scope.gotoOrgSettings = function () {
-        $scope.toggleSidePanel($scope.currOrg); // committed org since goto org settings was clicked
+        // "committed" org since goto org settings was clicked
+        $scope.toggleSidePanel($scope.currOrg);
 
         Navigator.go({
           path: ['account', 'organizations', 'subscription'],
@@ -107,8 +136,7 @@ angular.module('contentful')
         });
       };
 
-      // Object of spaces by org
-      // shape: { orgId: [spaceObjects] }
+      // Map of orgId -> [Space]
       $scope.spacesByOrg = {};
       K.onValueScope($scope, spacesByOrg$, function (spacesByOrg) {
         $scope.spacesByOrg = spacesByOrg;
@@ -127,7 +155,7 @@ angular.module('contentful')
           params: { spaceId: space.sys.id }
         });
       };
-      // show space creation modal
+      // show space creation modal for given org id
       $scope.showCreateSpaceModal = function (orgId) {
         $scope.toggleSidePanel();
         showCreateSpaceModal(orgId);
