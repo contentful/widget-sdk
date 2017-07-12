@@ -32,9 +32,8 @@ angular.module('contentful')
  */
 .directive('cfNavSidePanel', ['require', function (require) {
   // access related imports
-  var canCreateSpaceInOrg = require('accessChecker').canCreateSpaceInOrganization;
+  var accessChecker = require('accessChecker');
   var orgRoles = require('services/OrganizationRoles');
-  var isOwnerOrAdmin = orgRoles.isOwnerOrAdmin;
 
   // core data related imports
   var tokenStore = require('services/TokenStore');
@@ -102,9 +101,8 @@ angular.module('contentful')
         if (org) {
           var orgId = org.sys.id;
 
-          $scope.selectedOrgId = orgId;
-          $scope.canGotoOrgSettings = isOwnerOrAdmin(org);
-          $scope.canCreateSpaceInCurrOrg = canCreateSpaceInOrg(orgId);
+          $scope.canGotoOrgSettings = orgRoles.isOwnerOrAdmin(org);
+          $scope.canCreateSpaceInCurrOrg = accessChecker.canCreateSpaceInOrganization(orgId);
           $scope.twoLetterOrgName = org.name.slice(0, 2).toUpperCase();
           $scope.viewingOrgSettings = $stateParams.orgId === orgId;
         }
@@ -124,10 +122,12 @@ angular.module('contentful')
         // "committed" org since goto org settings was clicked
         $scope.toggleSidePanel($scope.currOrg);
 
-        Navigator.go({
-          path: ['account', 'organizations', 'subscription'],
-          params: { orgId: $scope.currOrg.sys.id }
-        });
+        if (orgRoles.isOwnerOrAdmin($scope.currOrg)) {
+          Navigator.go({
+            path: ['account', 'organizations', 'subscription'],
+            params: { orgId: $scope.currOrg.sys.id }
+          });
+        }
       };
       $scope.createNewOrg = function () {
         $scope.toggleSidePanel();
@@ -149,6 +149,7 @@ angular.module('contentful')
       });
       $scope.setAndGotoSpace = function (space) {
         $scope.currSpace = space;
+
         $scope.toggleSidePanel();
         Navigator.go({
           path: ['spaces', 'detail'],
@@ -168,7 +169,7 @@ angular.module('contentful')
       function getCurrentCommittedOrg () {
         // return org based on orgId in url or based on what's in spaceContext or finally
         // just return the 1st org from list of orgs
-        return _.find($scope.orgs, function (org) { return org.sys.id === $stateParams.orgId; }) ||
+        return ($stateParams.orgId && _.find($scope.orgs, function (org) { return org.sys.id === $stateParams.orgId; })) ||
           (spaceContext.organizationContext && spaceContext.organizationContext.organization) ||
           ($scope.orgs && $scope.orgs[0]);
       }
