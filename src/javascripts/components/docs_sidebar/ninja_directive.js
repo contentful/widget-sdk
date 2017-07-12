@@ -33,7 +33,7 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
         return $state.current.name;
       }, function (stateName) {
         state.view = stateName;
-        update(state);
+        render(state);
       });
 
       $document.on('keydown', handleKeydown);
@@ -43,40 +43,48 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
       });
 
       function toggle () {
-        updateProgress();
         state.isExpanded = !state.isExpanded;
-        update(state);
+        dismissCallout();
+        render(state);
       }
 
       function toggleVisibility () {
-        updateProgress();
-        state.isVisible = !state.isVisible;
-        setStoreValue({isVisible: state.isVisible});
-        update(state);
+        state.isHidden = !state.isHidden;
+        setStoreValue({isHidden: state.isHidden});
+        render(state);
+      }
+
+      function dismissCallout () {
+        if (!state.calloutSeen) {
+          state.calloutSeen = true;
+          setStoreValue({calloutSeen: true});
+          render(state);
+        }
       }
 
       function updateProgress () {
-        if (!state.intro.completed && state.intro.progress >= 10) {
-          state.intro.completed = true;
+        if (state.introProgress === 10) {
+          state.introCompleted = true;
           setStoreValue({introCompleted: true});
         }
       }
 
       function handleSpace () {
-        if (!state.intro.completed && state.isVisible && state.isExpanded) {
-          state.intro.progress += 1;
-          update(state);
+        if (!state.introCompleted && !state.isHidden && state.isExpanded) {
+          state.introProgress += 1;
+          // Rerender first then mark intro as completed
+          render(state).then(updateProgress);
         }
       }
 
-      function update (state) {
-        $timeout(function () {
+      function render (state) {
+        return $timeout(function () {
           scope.component = Ninja(state);
         });
       }
 
       function handleKeydown (evt) {
-        if ($(evt.target).is('body')) {
+        if ($(evt.target).is($('body, a'))) {
           caseof(evt.keyCode, [
             [KEYCODES.ESC, function () {
               if (state.isExpanded) {
@@ -92,27 +100,26 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
 
       function setStoreValue (data) {
         var defaults = {
-          introCompleted: state.intro.completed,
-          isVisible: state.isVisible
+          introCompleted: state.introCompleted,
+          isHidden: state.isHidden
         };
         TheStore.set(STORE_KEY, _.merge(defaults, data));
       }
 
       function getState () {
         var store = TheStore.get(STORE_KEY) || {};
-        var isCompleted = !!store.introCompleted;
-        var isVisible = !!store.isVisible || true;
-
-        return {
+        var defaults = {
           view: $state.current.name || '',
           isExpanded: false,
-          isVisible: isVisible,
+          isHidden: false,
+          calloutSeen: false,
+          introCompleted: false,
+          introProgress: 1,
           toggle: toggle,
-          intro: {
-            completed: isCompleted,
-            progress: 1
-          }
+          dismissCallout: dismissCallout
         };
+
+        return _.merge(defaults, store);
       }
     }
   };

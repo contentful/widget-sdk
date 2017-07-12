@@ -1,7 +1,7 @@
 import {h} from 'ui/Framework';
 
 export default function template (state) {
-  const currentStep = state.intro.progress;
+  const currentStep = state.introProgress;
   const allContent = content(state);
   const prompt = h(
     'p.docs-helper__prompt',

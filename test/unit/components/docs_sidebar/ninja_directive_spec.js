@@ -15,6 +15,7 @@ describe('cfNinja Directive', function () {
     const modalSelector = '.docs-helper__modal';
     const bgSelector = '.docs-helper__bg';
     const nextSelector = '[aria-label="Next"]';
+    const calloutSelector = '.docs-helper__callout';
 
     this.compileElement = function () {
       this.element = this.$compile('<cf-ninja />');
@@ -41,8 +42,14 @@ describe('cfNinja Directive', function () {
       expect(isFound).toBe(isPresent);
     };
 
+    this.assertMinimizedWithCallout = function () {
+      expect(this.element.find(ninjaSelector).length).toBe(1);
+      expect(this.element.find(calloutSelector).length).toBe(1);
+    };
+
     this.assertMinimized = function () {
       expect(this.element.find(ninjaSelector).length).toBe(1);
+      expect(this.element.find(calloutSelector).length).toBe(0);
     };
 
     this.assertHidden = function () {
@@ -67,23 +74,17 @@ describe('cfNinja Directive', function () {
     };
   });
 
-  describe('Show/hide ninja', function () {
+  describe('Displays ninja state', function () {
     beforeEach(function () {
       this.compileElement();
     });
 
-    it('displays collapsed ninja', function () {
-      this.assertMinimized();
-    });
-
-    it('toggles with N', function () {
-      this.keyDown(78);
-      this.assertHidden();
-      this.keyDown(78);
-      this.assertMinimized();
+    it('displays ninja with callout', function () {
+      this.assertMinimizedWithCallout();
     });
 
     it('closes on background click', function () {
+      this.clickNinja();
       this.clickBg();
       this.assertMinimized();
     });
@@ -94,8 +95,17 @@ describe('cfNinja Directive', function () {
       this.keyDown(27);
       this.assertMinimized();
     });
-  });
 
+    it('toggles with N', function () {
+      this.clickNinja();
+      this.keyDown(78);
+      this.assertHidden();
+      this.assertValuePersisted('isHidden', true);
+      this.keyDown(78);
+      this.assertValuePersisted('isHidden', false);
+      this.assertExpanded();
+    });
+  });
 
   describe('Intro sequence', function () {
     beforeEach(function () {
@@ -115,11 +125,7 @@ describe('cfNinja Directive', function () {
       this.keyDown(32);
       this.assertShowNextPrompt(false);
     });
-  });
 
-  xdescribe('State / navigation');
-
-  describe('Progress is stored', function () {
     it('displays intro sequence', function () {
       this.compileElement();
       this.clickNinja();
@@ -142,13 +148,9 @@ describe('cfNinja Directive', function () {
       this.clickBg();
       this.assertValuePersisted('introCompleted', true);
     });
-
-    it('updates store when visibility is toggled', function () {
-      this.compileElement();
-      this.keyDown(78);
-      this.assertValuePersisted('isVisible', false);
-      this.keyDown(78);
-      this.assertValuePersisted('isVisible', true);
-    });
   });
+
+  xdescribe('State / navigation');
+
+
 });

@@ -3,29 +3,40 @@ import entries from 'components/docs_sidebar/Entries';
 import intro from 'components/docs_sidebar/Intro';
 
 export default function Ninja (state) {
-  if (state.isVisible) {
-    return state.isExpanded ? opened(state) : closed(state);
-  } else {
+  if (state.isHidden) {
     return h('div');
+  } else {
+    return state.isExpanded ? expanded(state) : minimized(state);
   }
 }
 
-function opened (state) {
+function expanded (state) {
   return h('.docs-helper__bg', [
     h('.docs-helper__modal', [
-      state.intro.completed ? getTemplate(state.view) : intro(state)
+      state.introCompleted ? getTemplate(state.view) : intro(state)
     ])
   ]);
 }
 
-function closed ({toggle}) {
+function minimized ({toggle, dismissCallout, calloutSeen}) {
+  const ninja = h('.docs-helper__ninja__image', {
+    onClick: toggle,
+    ariaLabel: 'Open docs sidebar'
+  });
+
+  const callout = h('.docs-helper__callout', [
+    'Hello! I can show you around here! ',
+    h('a.text-link--neutral-emphasis-low', {
+      onClick: toggle
+    }, ['Show']),
+    h('a.text-link--neutral-emphasis-low.sometest', {
+      onClick: dismissCallout
+    }, ['Close'])
+  ]);
+
   return h(
-    '.docs-helper__ninja', [
-      h('.docs-helper__ninja__image', {
-        onClick: toggle,
-        ariaLabel: 'Open docs sidebar'
-      })
-    ]
+    '.docs-helper__ninja',
+    calloutSeen ? [ninja] : [ninja, callout]
   );
 }
 
