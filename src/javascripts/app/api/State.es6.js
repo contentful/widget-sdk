@@ -38,11 +38,13 @@ const apiKeyEditorState = {
       crumbFactory.CDAKeyList(),
       crumbFactory.CDAKey($stateParams.apiKeyId, $scope.context)
     ]);
+
+    $scope.context = {ready: true};
   }],
   template: editorTemplate()
 };
 
-const keyDetail = assign({
+const keyDetail = baseState(assign({
   name: 'detail',
   url: '/:apiKeyId',
   resolve: {
@@ -50,7 +52,7 @@ const keyDetail = assign({
       return spaceContext.apiKeyRepo.get($stateParams.apiKeyId);
     }]
   }
-}, apiKeyEditorState);
+}, apiKeyEditorState));
 
 
 export default {
