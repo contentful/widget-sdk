@@ -59,12 +59,10 @@ angular.module('contentful').factory('accessChecker/policy', ['require', functio
 
   function groupByEntityId (type, collectionName) {
     var collection = policies[type][collectionName];
-    collection.byId = [];
 
-    _.forEach(collection.flat, function (p) {
-      if (_.isString(p.entityId)) {
-        collection.byId.push(p);
-      }
+
+    collection.byId = collection.flat.filter(function (p) {
+      return _.isString(p.entityId);
     });
   }
 
