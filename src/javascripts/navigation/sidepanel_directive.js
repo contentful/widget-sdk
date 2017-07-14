@@ -71,10 +71,7 @@ angular.module('contentful')
       // List of org objects
       $scope.orgs = [];
       K.onValueScope($scope, orgs$, function (orgs) {
-        if (orgs) {
-          $scope.orgs = orgs;
-          $scope.currOrg = orgs[0];
-        }
+        $scope.orgs = orgs || [];
       });
       $scope.toggleOrgsDropdown = function () {
         $scope.orgDropdownIsShown = !$scope.orgDropdownIsShown;
@@ -88,9 +85,7 @@ angular.module('contentful')
       $scope.$watch(function () {
         return getCurrentCommittedOrg();
       }, function (org) {
-        if (org) {
-          $scope.currOrg = org;
-        }
+        $scope.currOrg = org || $scope.currOrg;
       });
 
       // this is separated from the watcher above as currOrg
@@ -119,7 +114,7 @@ angular.module('contentful')
         $scope.currOrg = org;
       };
       $scope.gotoOrgSettings = function () {
-        // "committed" org since goto org settings was clicked
+        // "commit" the curr org since goto org settings was clicked
         $scope.toggleSidePanel($scope.currOrg);
 
         if (orgRoles.isOwnerOrAdmin($scope.currOrg)) {
