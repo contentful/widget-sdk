@@ -29,13 +29,11 @@ The test code should _always_ be bound by comments in the format shown above to 
 - `Default rule`: Rule that decides what qualified users receive as their variation for a test.
 - `Feature flag`: A feature flag is set up in the same way as A/B tests in LaunchDarkly, but unlike an A/B test it should be always set to true or false *for all users* (no variations). It affects all users, not only qualified ones. They are described in detail in [a separate document](/docs/guides/feature-flags).
 
-## Qualification criteria
-### Default qualification criteria
+## Default qualification criteria
 <span id="default-qualification-criteria"></span>
 
 Only users that don't belong to _any_ paying/converted organization are qualified for A/B tests. What this means is that only these users will get a bucketed into a variation for a test.
 All unqualified users receive `null` as the value for a test variation. Any other test specific qualification logic *must* be handled in the test code.
-
 
 ### Custom qualification criteria
 Custom qualification criteria can be passed to the `get` method that the Launch Darkly integration exposes. It is applied along with the default qualification criteria.
@@ -87,19 +85,18 @@ A test name should have the following format: `test-teamname-mm-yyyy-test-name`.
 For example, `ps-03-2017-example-space-impact` where `ps` stands for `Team Product Success`.
 
 Also, please add a link to the experiment wiki page in the description.
+Please note that tests created in the `Staging` environment must have `false` as the default rule so that the automated tests can run successfully. This ensures that the automated tests don't see the test.
 
 ### Creating test
 
 1. Switch to the environment you require in the LD UI
 2. Goto Feature Flags and click New
-3. In the pane that slides in, fill in the details and make sure you select "Make this flag available to the client-side (JavaScript) SDK" and Boolean under the flag type.
+3. In the pane that slides in, fill in the details and make sure you select "Make this flag available to the client-side (JavaScript) SDK"
 4. Choose the default bucket split
-5. In the "If targeting is off" section, remove the variation assigned by clicking the cross on it
-6. Enable targeting to enable the test
+5. Enable targeting to enable the test
+6. The test should now be available in `user_interface` for [qualified users](#default-qualification-criteria)
 
-The test should now be available in `user_interface` for [qualified users](#default-qualification-criteria)
-
-![create feature flag](https://cloud.githubusercontent.com/assets/635512/24458269/bdac9d94-1498-11e7-8f93-b34bd2ef8ae5.gif)
+![create feature flag](https://cloud.githubusercontent.com/assets/635512/23408313/e12ab360-fdc7-11e6-8b52-4cce064b1b2a.gif)
 
 
 ### Concluding the test
