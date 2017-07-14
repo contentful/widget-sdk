@@ -1,8 +1,8 @@
 import {h} from 'ui/Framework';
 
-export default function template (state) {
+export default function template ({state, toggle}) {
   const currentStep = state.introProgress;
-  const allContent = content(state);
+  const allContent = content(toggle);
   const prompt = h(
     'p.docs-helper__prompt',
     {ariaLabel: 'Next'},
@@ -20,7 +20,7 @@ export default function template (state) {
   return h('div', storyContent);
 }
 
-function content (state) {
+function content (toggle) {
   return [
     [h('h3', ['Hello fellow Content-Ninja!'])],
     ['Welcome to the Contentful Jungle.'],
@@ -31,7 +31,7 @@ function content (state) {
     curl(),
     ['This curl command GETs all the entries that belong to this space.'],
     docs(),
-    summon(state.toggle)
+    summon(toggle)
   ];
 }
 

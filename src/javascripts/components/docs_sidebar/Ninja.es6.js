@@ -2,23 +2,23 @@ import {h} from 'ui/Framework';
 import entries from 'components/docs_sidebar/Entries';
 import intro from 'components/docs_sidebar/Intro';
 
-export default function Ninja (state) {
-  if (state.isHidden) {
+export default function Ninja (data) {
+  if (data.state.isHidden) {
     return h('div');
   } else {
-    return state.isExpanded ? expanded(state) : minimized(state);
+    return data.state.isExpanded ? expanded(data) : minimized(data);
   }
 }
 
-function expanded (state) {
+function expanded (data) {
   return h('.docs-helper__bg', [
     h('.docs-helper__modal', [
-      state.introCompleted ? getTemplate(state.view) : intro(state)
+      data.state.introCompleted ? getTemplate(data.state.view) : intro(data)
     ])
   ]);
 }
 
-function minimized ({toggle, dismissCallout, calloutSeen}) {
+function minimized ({toggle, dismissCallout, state}) {
   const ninja = h('.docs-helper__ninja__image', {
     onClick: toggle,
     ariaLabel: 'Open docs sidebar'
@@ -36,7 +36,7 @@ function minimized ({toggle, dismissCallout, calloutSeen}) {
 
   return h(
     '.docs-helper__ninja',
-    calloutSeen ? [ninja] : [ninja, callout]
+    state.calloutSeen ? [ninja] : [ninja, callout]
   );
 }
 

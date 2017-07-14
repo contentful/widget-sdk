@@ -108,45 +108,43 @@ describe('cfNinja Directive', function () {
   });
 
   describe('Intro sequence', function () {
-    beforeEach(function () {
-      this.compileElement();
-      this.clickNinja();
-    });
-
-    it('is displayed if not seen yet', function () {
-      this.hasText('Hello fellow Content-Ninja');
-    });
-
-    it('displays next prompt until all messages are seen', function () {
-      times(8, () => {
-        this.keyDown(32);
-        this.assertShowNextPrompt();
+    describe('Not yet seen', function () {
+      beforeEach(function () {
+        this.compileElement();
+        this.clickNinja();
       });
-      this.keyDown(32);
-      this.assertShowNextPrompt(false);
-    });
 
-    it('displays intro sequence', function () {
-      this.compileElement();
-      this.clickNinja();
-      this.hasText('Hello fellow Content-Ninja');
-    });
-
-    it('skips intro sequence if it has been seen', function () {
-      this.TheStore.get.withArgs('docsSidebar').returns({introCompleted: true});
-      this.compileElement();
-      this.clickNinja();
-      this.hasText('Hello fellow Content-Ninja', false);
-    });
-
-    it('marks intro as completed when all steps are seen', function () {
-      this.compileElement();
-      this.clickNinja();
-      times(9, () => {
-        this.keyDown(32);
+      it('displays intro sequence', function () {
+        this.hasText('Hello fellow Content-Ninja');
       });
-      this.clickBg();
-      this.assertValuePersisted('introCompleted', true);
+
+      it('displays next prompt until all messages are seen', function () {
+        times(8, () => {
+          this.keyDown(32);
+          this.assertShowNextPrompt();
+        });
+        this.keyDown(32);
+        this.assertShowNextPrompt(false);
+      });
+
+      it('marks intro as completed when all steps are seen', function () {
+        times(9, () => {
+          this.keyDown(32);
+        });
+        this.clickBg();
+        this.assertValuePersisted('introCompleted', true);
+      });
+    });
+
+    describe('Already seen', function () {
+      beforeEach(function () {
+        this.TheStore.get.withArgs('docsSidebar').returns({introCompleted: true});
+        this.compileElement();
+        this.clickNinja();
+      });
+      it('skips intro sequence', function () {
+        this.hasText('Hello fellow Content-Ninja', false);
+      });
     });
   });
 

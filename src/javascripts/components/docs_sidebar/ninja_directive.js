@@ -7,19 +7,24 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
   var SumTypes = require('libs/sum-types');
   var caseof = SumTypes.caseofEq;
   var otherwise = SumTypes.otherwise;
+  var NinjaStore = require('components/docs_sidebar/Store');
   var Ninja = require('components/docs_sidebar/Ninja').default;
-  var TheStore = require('TheStore');
   var KEYCODES = require('keycodes');
-  var STORE_KEY = 'docsSidebar';
 
   return {
     template: '<cf-component-bridge component="component">',
     restrict: 'E',
     link: function (scope, el) {
 
-      var state = getState();
+      NinjaStore.setView($state.current.name);
 
-      scope.component = Ninja(state);
+      var ninjaData = {
+        state: NinjaStore.get(),
+        toggle: toggle,
+        dismissCallout: dismissCallout
+      };
+
+      scope.component = Ninja(ninjaData);
 
       var bgSelector = '.docs-helper__bg';
 
@@ -29,13 +34,6 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
         }
       });
 
-      scope.$watch(function () {
-        return $state.current.name;
-      }, function (stateName) {
-        state.view = stateName;
-        render(state);
-      });
-
       $document.on('keydown', handleKeydown);
 
       scope.$on('$destroy', function () {
@@ -43,43 +41,29 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
       });
 
       function toggle () {
-        state.isExpanded = !state.isExpanded;
-        dismissCallout();
-        render(state);
+        NinjaStore.toggle();
+        render();
       }
 
       function toggleVisibility () {
-        state.isHidden = !state.isHidden;
-        setStoreValue({isHidden: state.isHidden});
-        render(state);
+        NinjaStore.toggleVisibility();
+        render();
       }
 
       function dismissCallout () {
-        if (!state.calloutSeen) {
-          state.calloutSeen = true;
-          setStoreValue({calloutSeen: true});
-          render(state);
-        }
-      }
-
-      function updateProgress () {
-        if (state.introProgress === 10) {
-          state.introCompleted = true;
-          setStoreValue({introCompleted: true});
-        }
+        NinjaStore.dismissCallout();
+        render();
       }
 
       function handleSpace () {
-        if (!state.introCompleted && !state.isHidden && state.isExpanded) {
-          state.introProgress += 1;
-          // Rerender first then mark intro as completed
-          render(state).then(updateProgress);
-        }
+        NinjaStore.continueIntro();
+        render().then(NinjaStore.completeIntro);
       }
 
-      function render (state) {
+      function render () {
+        ninjaData.state = NinjaStore.get();
         return $timeout(function () {
-          scope.component = Ninja(state);
+          scope.component = Ninja(ninjaData);
         });
       }
 
@@ -87,7 +71,7 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
         if ($(evt.target).is($('body, a'))) {
           caseof(evt.keyCode, [
             [KEYCODES.ESC, function () {
-              if (state.isExpanded) {
+              if (ninjaData.state.isExpanded) {
                 toggle();
               }
             }],
@@ -96,30 +80,6 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
             [otherwise, function () {}]
           ]);
         }
-      }
-
-      function setStoreValue (data) {
-        var defaults = {
-          introCompleted: state.introCompleted,
-          isHidden: state.isHidden
-        };
-        TheStore.set(STORE_KEY, _.merge(defaults, data));
-      }
-
-      function getState () {
-        var store = TheStore.get(STORE_KEY) || {};
-        var defaults = {
-          view: $state.current.name || '',
-          isExpanded: false,
-          isHidden: false,
-          calloutSeen: false,
-          introCompleted: false,
-          introProgress: 1,
-          toggle: toggle,
-          dismissCallout: dismissCallout
-        };
-
-        return _.merge(defaults, store);
       }
     }
   };
