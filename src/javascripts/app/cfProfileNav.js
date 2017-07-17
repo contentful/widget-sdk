@@ -10,7 +10,8 @@
 
   return {
     template: template(),
-    restrict: 'E'
+    restrict: 'E',
+    scope: {}
   };
 
   function template () {

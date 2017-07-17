@@ -11,19 +11,24 @@
   return {
     template: template(),
     restrict: 'E',
-    controller: ['$scope', 'require', function ($scope, require) {
-      var $state = require('$state');
+    scope: {},
+    controllerAs: 'nav',
+    controller: function () {
+      var Navigator = require('states/Navigator');
+      var $stateParams = require('$stateParams');
       var tokenStore = require('services/TokenStore');
       var OrganizationRoles = require('services/OrganizationRoles');
-      var orgId = $scope.orgId = $state.params.orgId;
+
+      var nav = this;
+      var orgId = nav.orgId = $stateParams.orgId;
 
       tokenStore.getOrganization(orgId).then(function (org) {
-        $scope.hasOffsiteBackup = hasOffsiteBackup(org);
-        $scope.hasBillingTab = isPaid(org) && OrganizationRoles.isOwnerOrAdmin(org);
+        nav.hasOffsiteBackup = hasOffsiteBackup(org);
+        nav.hasBillingTab = isPaid(org) && OrganizationRoles.isOwnerOrAdmin(org);
       }, function () {
-        $state.go('home');
+        Navigator.go({ path: 'home' });
       });
-    }]
+    }
   };
 
   function template () {
@@ -31,34 +36,34 @@
       {
         title: 'Organization information',
         // TODO use cf-sref for navbar links
-        sref: 'account.organizations.edit({orgId: orgId})',
+        sref: 'account.organizations.edit({orgId: nav.orgId})',
         icon: 'nav-organization-information'
       },
       {
         title: 'Subscription',
-        sref: 'account.organizations.subscription({orgId: orgId})',
+        sref: 'account.organizations.subscription({orgId: nav.orgId})',
         icon: 'nav-organization-subscription'
       },
       {
         title: 'Billing',
-        sref: 'account.organizations.billing({orgId: orgId})',
+        sref: 'account.organizations.billing({orgId: nav.orgId})',
         icon: 'nav-organization-billing',
-        if: 'hasBillingTab'
+        if: 'nav.hasBillingTab'
       },
       {
         title: 'Users',
-        sref: 'account.organizations.users({orgId: orgId})',
+        sref: 'account.organizations.users({orgId: nav.orgId})',
         icon: 'nav-organization-billing'
       },
       {
         title: 'Spaces',
-        sref: 'account.organizations.spaces({orgId: orgId})',
+        sref: 'account.organizations.spaces({orgId: nav.orgId})',
         icon: 'nav-spaces'
       },
       {
         title: 'Offsite backup',
-        sref: 'account.organizations.offsitebackup({orgId: orgId})',
-        if: 'hasOffsiteBackup'
+        sref: 'account.organizations.offsitebackup({orgId: nav.orgId})',
+        if: 'nav.hasOffsiteBackup'
       }
     ]);
   }
