@@ -4,7 +4,7 @@
 # - Installs firefox, xvfb, unzip, and fpm as packages
 # - Installs SlimerJS into /app/vendor
 #
-FROM node:4.6
+FROM node:6.11
 
 RUN apt-get update && \
   apt-get install -qqy firefox-esr unzip xvfb ruby-dev ruby gcc make && \
