@@ -1,4 +1,4 @@
-import {includes} from 'lodash';
+import {includes, assign} from 'lodash';
 import {h} from 'ui/Framework';
 import {container, hfill, vspace_, vspace, hspace} from 'ui/Layout';
 import {byName as Colors} from 'Styles/Colors';
@@ -7,16 +7,16 @@ import {open as openDialog} from 'modalDialog';
 
 // TODO doc
 
-export default function open (spaceEndpoint, selectedRoles) {
+export default function open (spaceEndpoint, selectedRoles, labels = {}) {
   return openDialog({
     template: '<cf-component-bridge class="modal-background" component="component">',
     controller: function ($scope) {
-      createRoleSelector($scope, spaceEndpoint, selectedRoles);
+      createRoleSelector($scope, spaceEndpoint, selectedRoles, labels);
     }
   }).promise;
 }
 
-function createRoleSelector ($scope, spaceEndpoint, selectedRoles) {
+function createRoleSelector ($scope, spaceEndpoint, selectedRoles, labels) {
   const data = {
     cancelSelection: () => $scope.dialog.cancel(),
     confirmSelection: () => {
@@ -29,7 +29,8 @@ function createRoleSelector ($scope, spaceEndpoint, selectedRoles) {
     toggleRoleSelection: (index) => {
       data.roles[index].selected = !data.roles[index].selected;
       rerender();
-    }
+    },
+    labels: assign({title: 'Select role(s)', confirmation: 'OK'}, labels)
   };
 
   // TODO fetch all
@@ -59,12 +60,13 @@ function render ({
   roles,
   toggleRoleSelection,
   confirmSelection,
-  cancelSelection
+  cancelSelection,
+  labels
 }) {
   return h('.modal-dialog', [
     h('header.modal-dialog__header', [
       h('h1', [
-        'Select role'
+        labels.title
       ]),
       h('button.modal-dialog__close', {
         onClick: () => cancelSelection()
@@ -79,7 +81,7 @@ function render ({
         h('button.btn-primary-action', {
           onClick: confirmSelection
         }, [
-          'Assign selected roles'
+          labels.confirmation
         ]),
         hspace('10px'),
         h('button.btn-secondary-action', {
