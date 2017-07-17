@@ -15,7 +15,7 @@ import BulkEditor from 'analytics/snowplow/transformers/BulkEditor';
 import Snapshot from 'analytics/snowplow/transformers/Snapshot';
 import InviteUserExperiment from 'analytics/snowplow/transformers/InviteUserExperiment';
 import SearchAndViews from 'analytics/snowplow/transformers/SearchAndViews';
-
+import DocsSidebar from 'analytics/snowplow/transformers/DocsSidebar';
 
 /**
  * @ngdoc module
@@ -81,6 +81,9 @@ registerEvent('search:view_created', 'view_create', SearchAndViews);
 registerEvent('search:view_edited', 'view_edit', SearchAndViews);
 registerEvent('search:view_deleted', 'view_delete', SearchAndViews);
 registerEvent('search:view_loaded', 'view_load', SearchAndViews);
+
+registerEvent('docs_sidebar:action', 'docs_sidebar', DocsSidebar);
+
 
 /**
  * Registers an event to be tracked by snowplow.

@@ -145,6 +145,11 @@ registerSchema({
   version: '1-0-0'
 });
 
+registerSchema({
+  name: 'docs_sidebar',
+  version: '1-0-0'
+});
+
 function registerSchema (schema) {
   _schemas[schema.name] = schema;
   _schemas[schema.name].path = buildPath(schema);

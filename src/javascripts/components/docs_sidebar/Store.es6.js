@@ -30,7 +30,7 @@ export function get () {
 export function setView (view) {
   state.view = view;
   if (state.isExpanded && !state.isHidden) {
-    events.navigateWhileOpen(view);
+    events.navigateWhileOpen({isIntro: !state.introCompleted});
   }
 }
 
@@ -39,13 +39,13 @@ export function toggle () {
   if (!state.calloutSeen) {
     closeCallout();
   }
-  events.toggle(state.isExpanded);
+  events.toggle({isExpanded: state.isExpanded, isIntro: !state.introCompleted});
 }
 
 export function toggleVisibility () {
   state.isHidden = !state.isHidden;
   setStoreValue({isHidden: state.isHidden});
-  events.toggleVisibility(state.isHidden);
+  events.toggleVisibility({isHidden: state.isHidden, isIntro: !state.introCompleted});
 }
 
 export function dismissCallout () {
