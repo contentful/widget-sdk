@@ -56,7 +56,7 @@ const keyDetail = assign({
 export default {
   name: 'api',
   url: '/api',
-  redirectTo: 'spaces.detail.api.keys.list',
+  abstract: true,
   onEnter: ['spaceContext', function (spaceContext) {
     spaceContext.apiKeyRepo.refresh();
   }],

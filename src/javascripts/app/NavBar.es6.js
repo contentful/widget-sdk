@@ -10,6 +10,8 @@ import {h} from 'utils/hyperscript';
  * Nav items should have the following format:
  * {
  *   sref: {String},
+ *   rootSref: {String?}, // for highlighting the active nav item,
+ *                           default is item.sref
  *   title: {String},
  *   dataViewType: {String}, // test identificator
  *   icon: {String?},
@@ -17,13 +19,13 @@ import {h} from 'utils/hyperscript';
  * }
  * or for dropdown:
  * {
- *   rootSref: {String}, // for highlighting the active item
+ *   rootSref: {String},
  *   title: {String},
  *   dataViewType: {String},
  *   icon: {String?},
  *   if: {String?},
  *   children: [
- *     { title, sref, if }
+ *     { title, sref, rootSref, if }
  *   ]
  * }
  * @scope.requires {ui.router.state.$state} $state for highlighting the
@@ -42,8 +44,8 @@ export default function (listItems = []) {
 
 function navbarItem (data, tabIndex = 0) {
   return h('a.nav-bar__link', {
+    ngClass: `{ "is-active": $state.includes("${data.rootSref || data.sref}") }`,
     uiSref: data.sref,
-    uiSrefActive: 'is-active',
     dataViewType: data.dataViewType,
     tabindex: String(tabIndex)
   }, [
@@ -59,7 +61,7 @@ function navbarDropdown (data, tabIndex = 0) {
       dataViewType: data.dataViewType,
       tabindex: String(tabIndex),
       cfContextMenuTrigger: 'cf-context-menu-trigger',
-      ngClass: `{ "is-active": $state.includes("${data.rootSref}") }`
+      ngClass: `{ "is-active": $state.includes("${data.rootSref || data.sref}") }`
     }, [
       h('cf-icon', { name: data.icon }),
       h('span.nav-bar__list-label', [data.title]),
@@ -80,8 +82,8 @@ function navbarDropdown (data, tabIndex = 0) {
 function navbarDropdownItem (data) {
   const attrs = {
     role: 'menuitem',
-    uiSref: data.sref,
-    uiSrefActive: 'selected'
+    ngClass: `{ "selected": $state.includes("${data.rootSref || data.sref}") }`,
+    uiSref: data.sref
   };
   if (data.if) {
     attrs.ngIf = data.if;

@@ -37,25 +37,29 @@ angular.module('contentful')
         title: 'Space home'
       }, {
         if: 'canNavigateTo("contentType")',
-        sref: 'spaces.detail.content_types',
+        sref: 'spaces.detail.content_types.list',
+        rootSref: 'spaces.detail.content_types',
         dataViewType: 'content-type-list',
         icon: 'nav-ct',
         title: 'Content model'
       }, {
         if: 'canNavigateTo("entry")',
-        sref: 'spaces.detail.entries',
+        sref: 'spaces.detail.entries.list',
+        rootSref: 'spaces.detail.entries',
         dataViewType: 'entry-list',
         icon: 'nav-entries',
         title: 'Content'
       }, {
         if: 'canNavigateTo("asset")',
-        sref: 'spaces.detail.assets',
+        sref: 'spaces.detail.assets.list',
+        rootSref: 'spaces.detail.assets',
         dataViewType: 'asset-list',
         icon: 'nav-media',
         title: 'Media'
       }, {
         if: 'canNavigateTo("apiKey")',
-        sref: 'spaces.detail.api',
+        sref: 'spaces.detail.api.home',
+        rootSref: 'spaces.detail.api',
         dataViewType: 'api-home',
         icon: 'nav-api',
         title: 'APIs'
@@ -68,22 +72,28 @@ angular.module('contentful')
         children: [
           {
             sref: 'spaces.detail.settings.space',
-            title: 'Space'
+            title: 'Space',
+            rootSref: 'spaces.detail.settings.space'
           }, {
-            sref: 'spaces.detail.settings.locales',
-            title: 'Locales'
+            sref: 'spaces.detail.settings.locales.list',
+            title: 'Locales',
+            rootSref: 'spaces.detail.settings.locales'
           }, {
-            sref: 'spaces.detail.settings.users',
-            title: 'Users'
+            sref: 'spaces.detail.settings.users.list',
+            title: 'Users',
+            rootSref: 'spaces.detail.settings.users'
           }, {
-            sref: 'spaces.detail.settings.roles',
-            title: 'Roles'
+            sref: 'spaces.detail.settings.roles.list',
+            title: 'Roles',
+            rootSref: 'spaces.detail.settings.roles'
           }, {
-            sref: 'spaces.detail.settings.webhooks',
-            title: 'Webhooks'
+            sref: 'spaces.detail.settings.webhooks.list',
+            title: 'Webhooks',
+            rootSref: 'spaces.detail.settings.webhooks'
           }, {
-            sref: 'spaces.detail.settings.content_preview',
-            title: 'Content preview'
+            sref: 'spaces.detail.settings.content_preview.list',
+            title: 'Content preview',
+            rootSref: 'spaces.detail.settings.content_preview'
           }
         ]
       }
