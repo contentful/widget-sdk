@@ -10,11 +10,7 @@
 
   return {
     template: template(),
-    restrict: 'E',
-    controller: ['$scope', function ($scope) {
-      // Required by navbar to highlight the active tab
-      $scope.$state = require('$state');
-    }]
+    restrict: 'E'
   };
 
   function template () {

@@ -15,8 +15,6 @@ angular.module('contentful')
     restrict: 'E',
     replace: true,
     controller: ['$scope', function ($scope) {
-      // Required by navbar to highlight the active tab
-      $scope.$state = require('$state');
       $scope.canNavigateTo = function (section) {
         if (!spaceContext.space || spaceContext.space.isHibernated()) {
           return false;
