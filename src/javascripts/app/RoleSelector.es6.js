@@ -97,7 +97,8 @@ function renderRolesContainer ({roles, toggleRoleSelection}) {
     border: `1px solid ${Colors.iceDark}`,
     backgroundColor: Colors.elementLightest,
     height: '230px',
-    position: 'relative'
+    position: 'relative',
+    overflowX: 'scroll'
   }, roles
       ? renderRoles({roles, toggleRoleSelection})
       : [ loader() ]
