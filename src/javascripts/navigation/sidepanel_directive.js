@@ -54,12 +54,20 @@ angular.module('contentful')
   // view template import
   var sidepanelTemplate = require('navigation/Sidepanel.template').default();
 
+  // Begin feature flag code - feature-bv-06-2017-use-new-navigation
+  var LD = require('utils/LaunchDarkly');
+  // End feature flag code - feature-bv-06-2017-use-new-navigation
+
   return {
     restrict: 'E',
     template: sidepanelTemplate,
     scope: {},
     replace: true,
     controller: ['$scope', function ($scope) {
+      // Begin feature flag code - feature-bv-06-2017-use-new-navigation
+      LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation');
+      // End feature flag code - feature-bv-06-2017-use-new-navigation
+
       // side panel visibility
       $scope.sidePanelIsShown = false;
       $scope.toggleSidePanel = function (committedOrg) {

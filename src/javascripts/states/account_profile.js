@@ -73,7 +73,7 @@ angular.module('contentful')
       'nav-bar@': {
         // Begin feature flag code - feature-bv-06-2017-use-new-navigation
         template: [
-          h('cf-space-selector'),
+          h('cf-space-selector', { ngIf: '!useNewNavigation' }),
           h('cf-profile-nav', { ngIf: 'useNewNavigation' })
         ].join(''),
         controller: ['$scope', function ($scope) {

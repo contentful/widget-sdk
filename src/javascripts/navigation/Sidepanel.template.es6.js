@@ -25,7 +25,9 @@ export default function () {
       ngClick: 'toggleSidePanel()'
     }),
     h('div.nav-sidepanel__logo-container', {
-      ngClick: 'toggleSidePanel()',
+      // Begin feature flag code - feature-bv-06-2017-use-new-navigation
+      ngClick: 'useNewNavigation && toggleSidePanel()',
+      // End feature flag code - feature-bv-06-2017-use-new-navigation
       style: {
         height: '100%',
         display: 'flex',
