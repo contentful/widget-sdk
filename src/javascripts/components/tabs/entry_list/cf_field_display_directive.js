@@ -123,7 +123,7 @@ angular.module('contentful')
       }
 
       function hasItemsOfType (items, type) {
-        return items && items.length > 0 && items[0].sys && items[0].sys.linkType === type;
+        return _.get(items, ['0', 'sys', 'linkType']) === type;
       }
 
     }
