@@ -165,7 +165,7 @@ export function getFeatureFlag (featureFlagName, customQualificationFn = _ => tr
 export function setOnScope ($scope, flagName, propertyName) {
   const parsed = parseLDName(flagName);
   if (!parsed) {
-    throw new Error('Invalid LD flag name: ' + flagName);
+    throw new Error(`Invalid LD flag name: ${flagName}`);
   }
 
   const value$ = parsed.type === 'test'

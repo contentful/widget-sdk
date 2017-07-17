@@ -243,6 +243,11 @@ describe('utils/LaunchDarkly', function () {
       expect(this.$scope.fooBar).toBe('some-val');
     });
 
+    it('should set scope property with custom name', function () {
+      this.setOnScope(this.$scope, 'feature-xx-00-00-foo-bar', 'hello');
+      expect(this.$scope.hello).toBe('some-val');
+    });
+
     it('should set scope property for A/B test for qualified user', function () {
       this.user$.set(this.qualifiedUser);
       this.setOnScope(this.$scope, 'test-xx-00-00-foo-bar');
