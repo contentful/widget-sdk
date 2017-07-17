@@ -10,9 +10,9 @@ angular.module('contentful')
 }])
 
 .controller('LocaleListController', ['$scope', 'require', function ($scope, require) {
-
   var ReloadNotification = require('ReloadNotification');
   var spaceContext = require('spaceContext');
+  var TheAccountView = require('TheAccountView');
 
   var STATES = {
     NO_MULTIPLE_LOCALES: 1,
@@ -24,9 +24,7 @@ angular.module('contentful')
 
   _.extend($scope, STATES);
 
-  var organizationId = spaceContext.space.getOrganizationId();
-  var suffix = 'organizations/' + organizationId + '/z_subscription';
-  $scope.accountUpgradeState = 'account.pathSuffix({ pathSuffix: \'' + suffix + '\' })';
+  $scope.accountUpgradeState = TheAccountView.getSubscriptionState();
 
   $scope.locales = [];
   $scope.localeNamesByCode = {};
