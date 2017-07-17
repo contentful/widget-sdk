@@ -158,10 +158,11 @@ export function getFeatureFlag (featureFlagName, customQualificationFn = _ => tr
  *
  * @param {Scope} $scope
  * @param {String} flagName - name of flag in LaunchDarkly
+ * @param {String?} propertyName - name of property set on scope (default is parsed from flag name)
  * @returns {type {String}, title {String}} - type of flag ('test' or 'feature')
  * and title of created scope property
  */
-export function setOnScope ($scope, flagName) {
+export function setOnScope ($scope, flagName, propertyName) {
   const parsed = parseLDName(flagName);
   if (!parsed) {
     throw new Error('Invalid LD flag name: ' + flagName);
@@ -171,12 +172,12 @@ export function setOnScope ($scope, flagName) {
       ? getTest(flagName) : getFeatureFlag(flagName);
 
   onValueScope($scope, value$, function (value) {
-    $scope[parsed.title] = value;
+    $scope[propertyName || parsed.title] = value;
   });
 }
 
 function parseLDName (name) {
-  const matches = /^(?:(feature|test)-)?\w+-\d+-\d+-(.+)$/.exec(name);
+  const matches = /^(feature|test)-\w+-\d+-\d+-(.+)$/.exec(name);
   if (!matches || !matches[1] || !matches[2]) {
     return null;
   }
