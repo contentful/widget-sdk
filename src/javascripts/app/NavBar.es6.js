@@ -44,7 +44,7 @@ export default function (listItems = []) {
 
 function navbarItem (data, tabIndex = 0) {
   return h('a.nav-bar__link', {
-    ngClass: `{ "is-active": $state.includes("${data.rootSref || data.sref}") }`,
+    uiSrefActive: `{ "is-active": "${data.rootSref || data.sref}" }`,
     uiSref: data.sref,
     dataViewType: data.dataViewType,
     tabindex: String(tabIndex)
@@ -61,7 +61,7 @@ function navbarDropdown (data, tabIndex = 0) {
       dataViewType: data.dataViewType,
       tabindex: String(tabIndex),
       cfContextMenuTrigger: 'cf-context-menu-trigger',
-      ngClass: `{ "is-active": $state.includes("${data.rootSref || data.sref}") }`
+      uiSrefActive: `{ "is-active": "${data.rootSref || data.sref}" }`
     }, [
       h('cf-icon', { name: data.icon }),
       h('span.nav-bar__list-label', [data.title]),
@@ -82,7 +82,7 @@ function navbarDropdown (data, tabIndex = 0) {
 function navbarDropdownItem (data) {
   const attrs = {
     role: 'menuitem',
-    ngClass: `{ "selected": $state.includes("${data.rootSref || data.sref}") }`,
+    uiSrefActive: `{ "selected": "${data.rootSref || data.sref}" }`,
     uiSref: data.sref
   };
   if (data.if) {
