@@ -21,7 +21,7 @@ angular.module('contentful')
     name: 'spaces',
     url: '/spaces',
     abstract: true,
-    views: {'nav-bar': { template: '<cf-main-nav-bar />' }},
+    views: {'nav-bar': { template: '<cf-space-nav-bar />' }},
     children: [newSpace, require('states/spaces/detail')]
   };
 }])

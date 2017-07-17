@@ -135,7 +135,7 @@ angular.module('contentful')
   return {
     name: 'entries',
     url: '/entries',
-    abstract: true,
+    redirectTo: 'spaces.detail.entries.list',
     children: [list, detail]
   };
 }]);

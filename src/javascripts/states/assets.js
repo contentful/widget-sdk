@@ -34,7 +34,7 @@ angular.module('contentful')
   return {
     name: 'assets',
     url: '/assets',
-    abstract: true,
+    redirectTo: 'spaces.detail.assets.list',
     children: [list, detail]
   };
 }]);
