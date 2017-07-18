@@ -17,6 +17,11 @@ angular.module('contentful')
     name: 'new',
     url: '/new',
     label: 'Create new organization',
+    views: {
+      'nav-bar@': {
+        template: h('cf-space-selector')
+      }
+    },
     controller: ['$scope', function ($scope) {
       $scope.context = {};
     }],
@@ -80,9 +85,11 @@ angular.module('contentful')
     abstract: true,
     views: {
       'nav-bar@': {
-        template: h('cf-organization-nav', { ngIf: 'useNewNavigation' }),
-
         // Begin feature flag code - feature-bv-06-2017-use-new-navigation
+        template: [
+          h('cf-space-selector'),
+          h('cf-organization-nav', { ngIf: 'useNewNavigation' })
+        ].join(''),
         controller: ['$scope', function ($scope) {
           LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation');
         }]

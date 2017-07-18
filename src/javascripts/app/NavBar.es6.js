@@ -33,7 +33,6 @@ import {h} from 'utils/hyperscript';
  */
 export default function (listItems = []) {
   return h('nav.nav-bar', [
-    h('cf-space-selector'),
     h('ul.nav-bar__list', listItems.map(function (data, index) {
       const html = data.children ? navbarDropdown(data, index) : navbarItem(data, index);
       const attrs = data.if ? { ngIf: data.if } : {};

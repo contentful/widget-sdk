@@ -26,7 +26,7 @@
         nav.hasOffsiteBackup = hasOffsiteBackup(org);
         nav.hasBillingTab = isPaid(org) && OrganizationRoles.isOwnerOrAdmin(org);
       }, function () {
-        Navigator.go({ path: 'home' });
+        Navigator.go({ path: ['home'] });
       });
     }
   };
