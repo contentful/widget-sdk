@@ -13,22 +13,28 @@
     restrict: 'E',
     scope: {},
     controllerAs: 'nav',
-    controller: function () {
-      var Navigator = require('states/Navigator');
+    controller: ['$scope', function ($scope) {
       var $stateParams = require('$stateParams');
       var tokenStore = require('services/TokenStore');
       var OrganizationRoles = require('services/OrganizationRoles');
+      var K = require('utils/kefir');
 
       var nav = this;
       var orgId = nav.orgId = $stateParams.orgId;
 
-      tokenStore.getOrganization(orgId).then(function (org) {
-        nav.hasOffsiteBackup = hasOffsiteBackup(org);
-        nav.hasBillingTab = isPaid(org) && OrganizationRoles.isOwnerOrAdmin(org);
-      }, function () {
-        Navigator.go({ path: ['home'] });
+      K.onValueScope($scope, tokenStore.organizations$, function () {
+        updateNav();
       });
-    }
+
+      function updateNav () {
+        tokenStore.getOrganization(orgId).then(function (org) {
+          nav.hasOffsiteBackup = hasOffsiteBackup(org);
+          nav.hasBillingTab = isPaid(org) && OrganizationRoles.isOwnerOrAdmin(org);
+        }, function () {
+          throw new Error('No organization with given ID could be found.');
+        });
+      }
+    }]
   };
 
   function template () {
