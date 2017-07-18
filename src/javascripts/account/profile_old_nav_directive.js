@@ -1,7 +1,7 @@
 angular.module('contentful')
-.directive('cfAccountProfileNav', ['require', function (require) {
+.directive('cfProfileOldNav', ['require', function (require) {
   return {
-    template: require('account/ProfileNav').default(),
+    template: require('account/ProfileOldNav').default(),
     restrict: 'E',
     scope: {},
     controller: function () {
