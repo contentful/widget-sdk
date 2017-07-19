@@ -128,13 +128,15 @@ function render ({
 }
 
 function renderModeInput ({label, value, mode, setMode}) {
+  const checked = mode === value;
   return h('li.cfnext-form-option', [
     h('label', [
       h('input', {
         name: 'mode',
         type: 'radio',
-        checked: mode === value ? 'checked' : '',
-        onClick: () => setMode(value)
+        checked: checked ? 'checked' : '',
+        onClick: () => setMode(value),
+        ref: el => el && checked && el.focus()
       }),
       ` ${label}`
     ])
