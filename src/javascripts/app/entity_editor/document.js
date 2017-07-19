@@ -125,7 +125,7 @@ angular.module('contentful')
 
     docEventsBus.stream.onValue(function (event) {
       var previousVersion = currentSys.version;
-      var version = event.doc.version;
+      var version = event.doc.version + (event.doc.compressed || 0);
       var nextSys = _.cloneDeep(event.doc.snapshot.sys);
       if (version > previousVersion) {
         nextSys.updatedAt = (new Date()).toISOString();

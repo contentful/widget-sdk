@@ -482,6 +482,18 @@ describe('entityEditor/Document', function () {
         })
       );
     });
+
+    it('calculates version from doc.version + doc.compressed', function () {
+      const doc = this.connectAndOpen();
+
+      doc.version = 20;
+      doc.compressed = 10;
+      doc.emit('some event');
+      this.$apply();
+
+      const version = K.getValue(this.doc.sysProperty).version;
+      expect(version).toBe(30);
+    });
   });
 
   describe('#state.isSaving$', function () {
