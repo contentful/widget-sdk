@@ -43,6 +43,13 @@ angular.module('contentful')
         }
       };
 
+      /**
+       * Only views for Entries can be assigned role(s)
+       */
+      $scope.canAssignViewRoles = function () {
+        return !$scope.assetContentType;
+      };
+
       $scope.editViewRoles = function (view) {
         openRoleSelector(spaceContext.endpoint, view.roles, labels)
           .then(function (roles) {
