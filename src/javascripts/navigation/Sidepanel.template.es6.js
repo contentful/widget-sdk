@@ -28,6 +28,7 @@ export default function () {
       // Begin feature flag code - feature-bv-06-2017-use-new-navigation
       ngClick: 'useNewNavigation && toggleSidePanel()',
       // End feature flag code - feature-bv-06-2017-use-new-navigation
+      dataTestId: 'sidepanel-trigger',
       style: {
         height: '100%',
         display: 'flex',
@@ -51,7 +52,8 @@ export default function () {
         zIndex: 1,
         lineHeight: 1.5
       },
-      ngClass: '{"nav-sidepanel--slide-in": sidePanelIsShown, "nav-sidepanel--slide-out": !sidePanelIsShown}'
+      ngClass: '{"nav-sidepanel--slide-in": sidePanelIsShown, "nav-sidepanel--slide-out": !sidePanelIsShown}',
+      dataTestId: 'sidepanel'
     }, [
       h('.nav-sidepanel__header', {
         style: {
@@ -130,7 +132,8 @@ export default function () {
             transition: 'all 0.2s ease-in-out',
             cursor: 'auto'
           },
-          ngClass: 'orgDropdownIsShown ? "nav-sidepanel__org-list-container--is-visible" : "nav-sidepanel__org-list-container--is-not-visible"'
+          ngClass: 'orgDropdownIsShown ? "nav-sidepanel__org-list-container--is-visible" : "nav-sidepanel__org-list-container--is-not-visible"',
+          dataTestId: 'sidepanel-org-list'
         }, [
           h('.nav-sidepanel__org-list', {
             style: {
@@ -157,6 +160,7 @@ export default function () {
               ngIf: 'orgs.length',
               ngClass: '{"nav-sidepanel__org-name--is-active": currOrg && currOrg.sys.id === org.sys.id}',
               ngClick: 'setCurrOrg(org)',
+              dataTestId: 'sidepanel-org-link',
               style: {
                 cursor: 'pointer',
                 padding: `8px ${padding} 8px`,
@@ -171,7 +175,8 @@ export default function () {
               display: 'block',
               borderTop: `1px solid ${byName.elementMid}`
             },
-            ngClick: 'createNewOrg()'
+            ngClick: 'createNewOrg()',
+            dataTestId: 'sidepanel-create-org-link'
           }, ['+ Create organization'])
         ])
       ]),
@@ -192,7 +197,8 @@ export default function () {
           }, ['Spaces']),
           h('a.text-link', {
             ngIf: 'canCreateSpaceInCurrOrg && spacesByOrg[currOrg.sys.id].length',
-            ngClick: 'showCreateSpaceModal(currOrg.sys.id)'
+            ngClick: 'showCreateSpaceModal(currOrg.sys.id)',
+            dataTestId: 'sidepanel-create-space-link'
           }, [
             h('span', ['+ Add space'])
           ])
@@ -211,6 +217,7 @@ export default function () {
             ngIf: 'spacesByOrg[currOrg.sys.id].length',
             ngClass: '{"nav-sidepanel__space-name--is-active": currSpace && currSpace.sys.id === space.data.sys.id}',
             ngClick: 'setAndGotoSpace(space.data)',
+            dataTestId: 'sidepanel-space-link',
             style: {
               cursor: 'pointer',
               padding: `8px ${padding}`,
@@ -220,6 +227,7 @@ export default function () {
           }, ['{{space.data.name}}']),
           h('.nav-sidepanel__no-spaces', {
             ngIf: '!spacesByOrg[currOrg.sys.id].length',
+            dataTestId: 'sidepanel-no-spaces',
             style: {
               padding,
               paddingBottom: '40px',
@@ -257,6 +265,7 @@ export default function () {
       ]),
       h('.nav-sidepanel__org-actions', {
         ngIf: 'canGotoOrgSettings',
+        dataTestId: 'sidepanel-org-actions',
         style: {
           flexGrow: 1,
           paddingTop: '10px'
@@ -277,6 +286,7 @@ export default function () {
         ]),
         h('p.nav-sidepanel__org-actions-goto-settings', {
           ngClick: 'gotoOrgSettings()',
+          dataTestId: 'sidepanel-org-actions-settings',
           style: {
             cursor: 'pointer',
             margin: 0,
@@ -295,7 +305,8 @@ export default function () {
           color: 'white',
           cursor: 'pointer'
         },
-        ngClick: 'toggleSidePanel()'
+        ngClick: 'toggleSidePanel()',
+        dataTestId: 'sidepanel-close-btn'
       }, [
         h('cf-icon', {
           name: 'close',
