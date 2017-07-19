@@ -6,6 +6,10 @@ describe('The Locale list directive', function () {
       $provide.removeDirectives('relative');
     });
 
+    this.mockService('TheAccountView', {
+      getSubscriptionState: sinon.stub().returns('stateref')
+    });
+
     this.container = null;
     this.compileElement = null;
     this.$q = this.$inject('$q');
