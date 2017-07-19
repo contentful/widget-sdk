@@ -29,6 +29,10 @@ describe('cfNavSidePanel directive', () => {
     go: sinon.stub()
   };
 
+  const LaunchDarkly = {
+    setOnScope: sinon.stub()
+  };
+
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       // stub $stateParams
@@ -38,6 +42,7 @@ describe('cfNavSidePanel directive', () => {
       $provide.value('spaceContext', spaceContext);
       $provide.value('accessChecker', accessChecker);
       $provide.value('services/OrganizationRoles', OrganizationRoles);
+      $provide.value('utils/LaunchDarkly', LaunchDarkly);
     });
 
     // tokenStore
