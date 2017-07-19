@@ -2,6 +2,7 @@ import {includes, assign} from 'lodash';
 import {h} from 'ui/Framework';
 import {container, hfill, vspace_, vspace, hspace} from 'ui/Layout';
 import {byName as Colors} from 'Styles/Colors';
+import {fetchAll} from 'data/CMA/FetchAll';
 
 import {open as openDialog} from 'modalDialog';
 
@@ -43,14 +44,10 @@ function createRoleSelector ($scope, spaceEndpoint, assignedRoles, labels) {
     labels: assign({title: 'Select role(s)', confirmation: 'OK'}, labels)
   };
 
-  // TODO fetch all
-  spaceEndpoint({
-    method: 'GET',
-    path: ['roles'],
-    query: { limit: 100 }
-  }).then((res) => {
+  fetchAll(spaceEndpoint, ['roles'], 100)
+  .then((roles) => {
     // TODO handle errors
-    data.roles = res.items.map((role) => ({
+    data.roles = roles.map((role) => ({
       id: role.sys.id,
       name: role.name,
       selected: includes(assignedRoles, role.sys.id)
