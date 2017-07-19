@@ -33,6 +33,7 @@ function createRoleSelector ($scope, spaceEndpoint, assignedRoles, labels) {
     },
     mode: determineInitialMode(assignedRoles),
     roles: null,
+    fetchError: null,
     toggleRoleSelection: (index) => {
       data.roles[index].selected = !data.roles[index].selected;
       rerender();
@@ -46,12 +47,14 @@ function createRoleSelector ($scope, spaceEndpoint, assignedRoles, labels) {
 
   fetchAll(spaceEndpoint, ['roles'], 100)
   .then((roles) => {
-    // TODO handle errors
     data.roles = roles.map((role) => ({
       id: role.sys.id,
       name: role.name,
       selected: includes(assignedRoles, role.sys.id)
     }));
+    rerender();
+  }, (err) => {
+    data.fetchError = err;
     rerender();
   });
 
@@ -77,6 +80,7 @@ function getSelectedRoleIds (roles) {
 
 function render ({
   roles,
+  fetchError,
   mode,
   toggleRoleSelection,
   setMode,
@@ -99,7 +103,7 @@ function render ({
         renderModeInput({label: 'Admins only', value: MODE_ADMINS, mode, setMode}),
         renderModeInput({label: 'Specific role(s)', value: MODE_ROLES, mode, setMode})
       ]),
-      mode === MODE_ROLES && renderRolesContainer({roles, toggleRoleSelection}),
+      mode === MODE_ROLES && renderRolesContainer({roles, fetchError, toggleRoleSelection}),
       vspace(4),
       container({
         display: 'flex'
@@ -137,17 +141,33 @@ function renderModeInput ({label, value, mode, setMode}) {
   ]);
 }
 
-function renderRolesContainer ({roles, toggleRoleSelection}) {
+function renderRolesContainer (props) {
   return container({
     border: `1px solid ${Colors.iceDark}`,
     backgroundColor: Colors.elementLightest,
     height: '230px',
     position: 'relative',
     overflowX: 'scroll'
-  }, roles
-      ? renderRoles({roles, toggleRoleSelection})
-      : [ loader() ]
-  );
+  }, renderRolesArea(props));
+}
+
+function renderRolesArea (props) {
+  if (props.fetchError) {
+    return [ fetchError() ];
+  } else {
+    return props.roles ? renderRoles(props) : [ loader() ];
+  }
+}
+
+function fetchError () {
+  return h('p', {
+    style: {
+      padding: '80px 25px',
+      textAlign: 'center'
+    }
+  }, [
+    'Couldn’t fetch your space roles. Please try again later'
+  ]);
 }
 
 function loader () {
@@ -155,6 +175,7 @@ function loader () {
     h('.loading-box__spinner')
   ]);
 }
+
 function renderRoles ({roles, toggleRoleSelection}) {
   return [
     vspace_('12.5px'),
