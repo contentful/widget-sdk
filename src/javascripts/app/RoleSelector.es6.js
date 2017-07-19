@@ -5,29 +5,39 @@ import {byName as Colors} from 'Styles/Colors';
 
 import {open as openDialog} from 'modalDialog';
 
+const MODE_EVERYBODY = 'everybody';
+const MODE_ADMINS = 'admins';
+const MODE_ROLES = 'roles';
+
 // TODO doc
 
-export default function open (spaceEndpoint, selectedRoles, labels = {}) {
+export default function open (spaceEndpoint, assignedRoles, labels = {}) {
   return openDialog({
     template: '<cf-component-bridge class="modal-background" component="component">',
     controller: function ($scope) {
-      createRoleSelector($scope, spaceEndpoint, selectedRoles, labels);
+      createRoleSelector($scope, spaceEndpoint, assignedRoles, labels);
     }
   }).promise;
 }
 
-function createRoleSelector ($scope, spaceEndpoint, selectedRoles, labels) {
+function createRoleSelector ($scope, spaceEndpoint, assignedRoles, labels) {
   const data = {
     cancelSelection: () => $scope.dialog.cancel(),
     confirmSelection: () => {
-      const selectedRoles = data.roles
-        .filter((role) => role.selected)
-        .map((role) => role.id);
-      $scope.dialog.confirm(selectedRoles);
+      $scope.dialog.confirm({
+        [MODE_EVERYBODY]: undefined,
+        [MODE_ADMINS]: [],
+        [MODE_ROLES]: getSelectedRoleIds(data.roles)
+      }[data.mode]);
     },
+    mode: determineInitialMode(assignedRoles),
     roles: null,
     toggleRoleSelection: (index) => {
       data.roles[index].selected = !data.roles[index].selected;
+      rerender();
+    },
+    setMode: (mode) => {
+      data.mode = mode;
       rerender();
     },
     labels: assign({title: 'Select role(s)', confirmation: 'OK'}, labels)
@@ -43,7 +53,7 @@ function createRoleSelector ($scope, spaceEndpoint, selectedRoles, labels) {
     data.roles = res.items.map((role) => ({
       id: role.sys.id,
       name: role.name,
-      selected: includes(selectedRoles, role.sys.id)
+      selected: includes(assignedRoles, role.sys.id)
     }));
     rerender();
   });
@@ -56,9 +66,23 @@ function createRoleSelector ($scope, spaceEndpoint, selectedRoles, labels) {
   }
 }
 
+function determineInitialMode (assignedRoles) {
+  if (Array.isArray(assignedRoles)) {
+    return assignedRoles.length > 0 ? MODE_ROLES : MODE_ADMINS;
+  } else {
+    return MODE_EVERYBODY;
+  }
+}
+
+function getSelectedRoleIds (roles) {
+  return (roles || []).filter(({selected}) => selected).map(({id}) => id);
+}
+
 function render ({
   roles,
+  mode,
   toggleRoleSelection,
+  setMode,
   confirmSelection,
   cancelSelection,
   labels
@@ -73,12 +97,20 @@ function render ({
       })
     ]),
     h('.modal-dialog__only-content', [
-      renderRolesContainer({roles, toggleRoleSelection}),
+      h('ul', [
+        renderModeInput({label: 'Everybody', value: MODE_EVERYBODY, mode, setMode}),
+        renderModeInput({label: 'Admins only', value: MODE_ADMINS, mode, setMode}),
+        renderModeInput({label: 'Specific role(s)', value: MODE_ROLES, mode, setMode})
+      ]),
+      mode === MODE_ROLES && renderRolesContainer({roles, toggleRoleSelection}),
       vspace(4),
       container({
         display: 'flex'
       }, [
         h('button.btn-primary-action', {
+          disabled: (mode === MODE_ROLES && getSelectedRoleIds(roles).length < 1)
+            ? 'disabled'
+            : '',
           onClick: confirmSelection
         }, [
           labels.confirmation
@@ -90,6 +122,20 @@ function render ({
           'Cancel'
         ])
       ])
+    ])
+  ]);
+}
+
+function renderModeInput ({label, value, mode, setMode}) {
+  return h('li.cfnext-form-option', [
+    h('label', [
+      h('input', {
+        name: 'mode',
+        type: 'radio',
+        checked: mode === value ? 'checked' : '',
+        onClick: () => setMode(value)
+      }),
+      ` ${label}`
     ])
   ]);
 }
