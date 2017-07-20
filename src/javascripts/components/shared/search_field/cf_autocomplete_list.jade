@@ -4,3 +4,10 @@ ul.search-autocomplete-list
       ng-click="selectAutocompletion(item, $event)")
     span.item-value {{item.value}}
     span.item-description {{item.description}}
+
+.search-autocomplete-list__help
+  cf-icon(name="fd-info-text")
+  p
+    | Get more out of search. Here's&#32;
+    a(href="https://www.contentful.com/r/knowledgebase/content-search/" target="_blank") how search works
+    | .

@@ -4,4 +4,7 @@ mixin no-search-results(condition, searchTerm, filter)
     i.fa.fa-search.fa-flip-horizontal.advice__icon.advice__icon--normal.advice__icon--margin-right.advice__icon--margin-bottom
     .advice__frame.advice__frame--no-margin.advice__frame--align-left
       header.advice__title.advice__title--normal Sadly, we didn't find anything matching #[i {{ #{searchTerm} || (#{filter} !== 'all' ? 'status:' + #{filter} : '""')}}]
-      p.advice__subtext Try checking the spelling, changing the filters, the space or search term.
+      p.advice__subtext
+        | Have you tried a different search term or filter? Here's&#32;
+        a(href="https://www.contentful.com/r/knowledgebase/content-search/" target="_blank") how search works
+        | .
