@@ -2,7 +2,10 @@ import {includes} from 'lodash';
 import {h} from 'ui/Framework';
 import {container, hfill, vspace_, vspace, hspace} from 'ui/Layout';
 import {byName as Colors} from 'Styles/Colors';
+
 import {fetchAll} from 'data/CMA/FetchAll';
+import {PromiseStatus} from 'utils/kefir';
+import {caseof} from 'libs/sum-types';
 
 import {open as openDialog} from 'modalDialog';
 
@@ -53,7 +56,7 @@ function createRoleSelector ($scope, spaceEndpoint, assignedRoles) {
     },
     mode: determineInitialMode(assignedRoles),
     roles: null,
-    fetchError: null,
+    rolesPromise: PromiseStatus.Pending(),
     toggleRoleSelection: (index) => {
       data.roles[index].selected = !data.roles[index].selected;
       rerender();
@@ -71,9 +74,10 @@ function createRoleSelector ($scope, spaceEndpoint, assignedRoles) {
       name: role.name,
       selected: includes(assignedRoles, role.sys.id)
     }));
+    data.rolesPromise = PromiseStatus.Resolved(data);
     rerender();
   }, (err) => {
-    data.fetchError = err;
+    data.rolesPromise = PromiseStatus.Rejected(err);
     rerender();
   });
 
@@ -99,9 +103,8 @@ function getSelectedRoleIds (roles) {
 
 function render ({
   roles,
-  fetchError,
+  rolesPromise,
   mode,
-  toggleRoleSelection,
   setMode,
   confirmSelection,
   cancelSelection
@@ -121,7 +124,7 @@ function render ({
         renderModeInput({label: 'Admins only', value: MODE_ADMINS, mode, setMode}),
         renderModeInput({label: 'Specific role(s)', value: MODE_ROLES, mode, setMode})
       ]),
-      mode === MODE_ROLES && renderRolesContainer({roles, fetchError, toggleRoleSelection}),
+      mode === MODE_ROLES && renderRolesContainer({rolesPromise}),
       vspace(4),
       container({
         display: 'flex'
@@ -171,12 +174,12 @@ function renderRolesContainer (props) {
   }, renderRolesArea(props));
 }
 
-function renderRolesArea (props) {
-  if (props.fetchError) {
-    return [ fetchError() ];
-  } else {
-    return props.roles ? renderRoles(props) : [ loader() ];
-  }
+function renderRolesArea ({rolesPromise}) {
+  return caseof(rolesPromise, [
+    [PromiseStatus.Pending, () => [ loader() ]],
+    [PromiseStatus.Resolved, ({value}) => renderRoles(value)],
+    [PromiseStatus.Rejected, () => [ fetchError() ]]
+  ]);
 }
 
 function fetchError () {
