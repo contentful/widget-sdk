@@ -82,7 +82,7 @@ __Important__:
 
 A test name should have the following format: `test-teamname-mm-yyyy-test-name`.
 
-For example, `ps-03-2017-example-space-impact` where `ps` stands for `Team Product Success`.
+For example, `test-ps-03-2017-example-space-impact` where `ps` stands for `Team Product Success`.
 
 Also, please add a link to the experiment wiki page in the description.
 Please note that tests created in the `Staging` environment must have `false` as the default rule so that the automated tests can run successfully. This ensures that the automated tests don't see the test.

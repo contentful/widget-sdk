@@ -1,6 +1,6 @@
 import LD from 'libs/launch-darkly-client';
 
-import {user$} from 'services/TokenStore';
+import {user$, spacesByOrganization$} from 'services/TokenStore';
 import {includes, noop} from 'lodash';
 import {launchDarkly as config} from 'Config';
 import {
@@ -99,8 +99,8 @@ export function getTest (testName, customQualificationFn = _ => true) {
   // receiving test flags so this makes sure that if the user
   // isn't qualified the test value for any test name is always
   // `null`
-  return getFeatureFlag(testName, (currentUser) => {
-    return currentUser && isQualifiedUser(currentUser) && customQualificationFn(currentUser);
+  return getFeatureFlag(testName, (currentUser, spacesByOrg) => {
+    return currentUser && isQualifiedUser(currentUser) && customQualificationFn(currentUser, spacesByOrg);
   });
 
 }
@@ -128,12 +128,16 @@ export function getTest (testName, customQualificationFn = _ => true) {
 export function getFeatureFlag (featureFlagName, customQualificationFn = _ => true) {
   const testVal$ = mergeValues([
     fromEvents(client, 'ready'),
-    fromEvents(client, `change:${featureFlagName}`)
+    fromEvents(client, `change:${featureFlagName}`),
+    user$, // if user changes, the feature flag value should be updated as well
+    spacesByOrganization$
   ]);
+
 
   return sampleBy(testVal$, () => {
     const currentUser = getValue(user$);
+    const spacesByOrg = getValue(spacesByOrganization$);
 
-    return customQualificationFn(currentUser) ? client.variation(featureFlagName, DEFAULT_VAL) : DEFAULT_VAL;
+    return customQualificationFn(currentUser, spacesByOrg) ? client.variation(featureFlagName, DEFAULT_VAL) : DEFAULT_VAL;
   }).skipDuplicates();
 }

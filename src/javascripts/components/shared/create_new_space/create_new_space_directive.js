@@ -150,7 +150,6 @@ angular.module('contentful')
     analytics.track('space:template_selected', {
       templateName: template.name
     });
-
     // Create space
     client.createSpace(data, orgId)
     .then(function (newSpace) {
@@ -214,7 +213,6 @@ angular.module('contentful')
       itemHandlers,
       selectedTemplate.name
     );
-
     return spaceTemplateLoader.getTemplate(selectedTemplate)
     .then(createTemplate);
   }
