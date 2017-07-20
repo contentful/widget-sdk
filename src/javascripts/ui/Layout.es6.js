@@ -5,7 +5,11 @@ import {h} from 'ui/Framework';
  * This module exports layout helpers for building UIs, like
  *
  * - generic containers
+ * - scales for lengths and distances
+ *   - vheight
  * - spacing elements
+ *   - vspace, vspace_
+ *   - hspace, hfill
  */
 
 
@@ -37,17 +41,10 @@ export function container (style, children) {
  * Returns an empty element acting as a vertical space with predefined
  * heights.
  *
- * The spacing amount is determined by the integer key.
- * Note that the spacing is implemented as a 'div' element with a top
- * margin.
+ * It uses the keyed vertical heights defined in `vheight()`. This
+ * function is equivalent to
  *
- * ~~~js
- * h('div', [
- *   h('div', ['...']),
- *   vspace(3),
- *   h('div', ['...'])
- * ])
- * ~~~
+ *     vspace_(vheight(key) + 'px')
  *
  * @param {number} key  Ranges from 1 to 8
  * @returns {VNode}
@@ -57,7 +54,20 @@ export function vspace (key) {
   return vspace_(`${height}px`);
 }
 
-// TODO document
+/**
+ * @ngdoc method
+ * @name ui/Layout#vheigth
+ * @description
+ * Returns the height in pixels for a given vertical space key.
+ *
+ *     vheight(3) // => 14
+ *
+ * These vertical spaces are defined and used by design to create
+ * vertical rhythm. They are used by the `vspace()` function.
+ *
+ * @param {number} key  Ranges from 1 to 8
+ * @returns {VNode}
+ */
 function vheight (key) {
   // Defined by the UI Design Principles
   const height = [4, 8, 14, 20, 28, 40, 60, 80][key - 1];
@@ -67,14 +77,55 @@ function vheight (key) {
   return height;
 }
 
-// TODO document
+/**
+ * @ngdoc method
+ * @name ui/Layout#vspace
+ * @description
+ * Returns an empty element acting as a vertical space with a given
+ * height.
+ *
+ * Note that the spacing is implemented as a 'div' element with a top
+ * margin and is subject to margin collapsing.
+ *
+ * ~~~js
+ * h('div', [
+ *   h('div', ['...']),
+ *   vspace_('3em'),
+ *   h('div', ['...'])
+ * ])
+ * ~~~
+ *
+ * @param {String} height  CSS value for the top margin
+ * @returns {VNode}
+ */
 export function vspace_ (height) {
   return container({
     marginTop: height
   });
 }
 
-// TODO document
+
+/**
+ * @ngdoc method
+ * @name ui/Layout#vspace
+ * @description
+ * Returns an empty element acting as a vertical space with a given
+ * height.
+ *
+ * Note that the spacing is implemented as a 'div' element with a top
+ * margin and is subject to margin collapsing.
+ *
+ * ~~~js
+ * h('div', [
+ *   h('div', ['...']),
+ *   vspace_('3em'),
+ *   h('div', ['...'])
+ * ])
+ * ~~~
+ *
+ * @param {String} height  CSS value for the top margin
+ * @returns {VNode}
+ */
 export function hspace (width) {
   return container({
     marginLeft: width
