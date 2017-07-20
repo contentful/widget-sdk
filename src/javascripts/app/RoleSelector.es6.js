@@ -1,4 +1,4 @@
-import {includes, assign} from 'lodash';
+import {includes} from 'lodash';
 import {h} from 'ui/Framework';
 import {container, hfill, vspace_, vspace, hspace} from 'ui/Layout';
 import {byName as Colors} from 'Styles/Colors';
@@ -10,18 +10,16 @@ const MODE_EVERYBODY = 'everybody';
 const MODE_ADMINS = 'admins';
 const MODE_ROLES = 'roles';
 
-// TODO doc
-
-export default function open (spaceEndpoint, assignedRoles, labels = {}) {
+export default function open (spaceEndpoint, assignedRoles) {
   return openDialog({
     template: '<cf-component-bridge class="modal-background" component="component">',
     controller: function ($scope) {
-      createRoleSelector($scope, spaceEndpoint, assignedRoles, labels);
+      createRoleSelector($scope, spaceEndpoint, assignedRoles);
     }
   }).promise;
 }
 
-function createRoleSelector ($scope, spaceEndpoint, assignedRoles, labels) {
+function createRoleSelector ($scope, spaceEndpoint, assignedRoles) {
   const data = {
     cancelSelection: () => $scope.dialog.cancel(),
     confirmSelection: () => {
@@ -41,8 +39,7 @@ function createRoleSelector ($scope, spaceEndpoint, assignedRoles, labels) {
     setMode: (mode) => {
       data.mode = mode;
       rerender();
-    },
-    labels: assign({title: 'Select role(s)', confirmation: 'OK'}, labels)
+    }
   };
 
   fetchAll(spaceEndpoint, ['roles'], 100)
@@ -85,13 +82,12 @@ function render ({
   toggleRoleSelection,
   setMode,
   confirmSelection,
-  cancelSelection,
-  labels
+  cancelSelection
 }) {
   return h('.modal-dialog', [
     h('header.modal-dialog__header', [
       h('h1', [
-        labels.title
+        'Select who can see this view'
       ]),
       h('button.modal-dialog__close', {
         onClick: () => cancelSelection()
@@ -114,7 +110,7 @@ function render ({
             : '',
           onClick: confirmSelection
         }, [
-          labels.confirmation
+          'Apply selection'
         ]),
         hspace('10px'),
         h('button.btn-secondary-action', {

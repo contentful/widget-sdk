@@ -5,11 +5,6 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var openRoleSelector = require('app/RoleSelector').default;
 
-  var labels = {
-    title: 'Select which roles can see this view',
-    confirmation: 'Assign to selected roles'
-  };
-
   return {
     restrict: 'A',
     template: JST['cf_view_folder'](),
@@ -51,7 +46,7 @@ angular.module('contentful')
       };
 
       $scope.editViewRoles = function (view) {
-        openRoleSelector(spaceContext.endpoint, view.roles, labels)
+        openRoleSelector(spaceContext.endpoint, view.roles)
           .then(function (roles) {
             view.roles = roles;
             $scope.saveViews();
