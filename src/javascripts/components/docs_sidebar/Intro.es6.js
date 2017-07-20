@@ -1,8 +1,9 @@
 import {h} from 'ui/Framework';
+import inputWithCopy from 'components/docs_sidebar/InputWithCopy';
 
-export default function template ({state, toggle}) {
-  const currentStep = state.introProgress;
-  const allContent = content(toggle);
+export default function template (data) {
+  const currentStep = data.state.introProgress;
+  const allContent = content(data);
   const prompt = h(
     'p.docs-helper__prompt',
     {ariaLabel: 'Next'},
@@ -20,28 +21,27 @@ export default function template ({state, toggle}) {
   return h('div', storyContent);
 }
 
-function content (toggle) {
+function content (data) {
   return [
     [h('h3', ['Hello fellow Content-Ninja!'])],
     ['Welcome to the Contentful Jungle.'],
     ['My name is Misao and I\'m here to guide Contentful developers along the way.'],
     ['First I want to give you something useful.'],
     ['Here is an ', h('strong', ['API token']), '. You will need it to fetch your data.'],
-    token(),
+    token(data),
     curl(),
     ['This curl command GETs all the entries that belong to this space.'],
     docs(),
-    summon(toggle)
+    summon(data.actions.toggle)
   ];
 }
 
-function token () {
+function token (data) {
   return [
     h('.docs-helper__token-line', [
       h('.docs-helper__key-icon'),
-      h('.cfnext-form__input-group.docs-helper__token', [
-        h('input.cfnext-form__input--full-size', {type: 'text', value: 'SUPERTOKENHERENOW'}),
-        h('button.cfnext-form__icon-suffix.x--input-suffix.fa.fa-copy', {tooltip: 'Take Token!'})
+      h('.docs-helper__token', [
+        inputWithCopy('introToken', data.state.token, data.actions.render)
       ])
     ])
   ];

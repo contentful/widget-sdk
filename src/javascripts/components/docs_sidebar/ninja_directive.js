@@ -20,8 +20,11 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
 
       var ninjaData = {
         state: NinjaStore.get(),
-        toggle: toggle,
-        dismissCallout: dismissCallout
+        actions: {
+          toggle: toggle,
+          dismissCallout: dismissCallout,
+          render: render
+        }
       };
 
       scope.component = Ninja(ninjaData);

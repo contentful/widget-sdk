@@ -18,19 +18,19 @@ function expanded (data) {
   ]);
 }
 
-function minimized ({toggle, dismissCallout, state}) {
+function minimized ({actions, state}) {
   const ninja = h('.docs-helper__ninja__image', {
-    onClick: toggle,
+    onClick: actions.toggle,
     ariaLabel: 'Open docs sidebar'
   });
 
   const callout = h('.docs-helper__callout', [
     'Hello! I can show you around here! ',
     h('a.text-link--neutral-emphasis-low', {
-      onClick: toggle
+      onClick: actions.toggle
     }, ['Show']),
     h('a.text-link--neutral-emphasis-low.sometest', {
-      onClick: dismissCallout
+      onClick: actions.dismissCallout
     }, ['Close'])
   ]);
 
