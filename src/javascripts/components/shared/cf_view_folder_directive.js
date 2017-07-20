@@ -45,6 +45,10 @@ angular.module('contentful')
         return !$scope.assetContentType;
       };
 
+      /**
+       * Opens a dialog when saved view's visibility setting is clicked.
+       * Updates the view locally and propagates the change to the backend.
+       */
       $scope.editViewRoles = function (view) {
         openRoleSelector(spaceContext.endpoint, view.roles)
           .then(function (roles) {

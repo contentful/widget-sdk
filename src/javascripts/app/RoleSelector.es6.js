@@ -10,6 +10,28 @@ const MODE_EVERYBODY = 'everybody';
 const MODE_ADMINS = 'admins';
 const MODE_ROLES = 'roles';
 
+/**
+ * @ngdoc service
+ * @name app/RoleSelector
+ * @description
+ * Exports the role selection dialog for the saved views visibility setting.
+ */
+
+/**
+ * @ngdoc method
+ * @name app/RoleSelector#open
+ * @description
+ * Opens a dialog with three options:
+ * - Everybody (maps to `undefined`)
+ * - Admins only (maps to an empty array)
+ * - Specific roles (maps to an array of strings representing role IDs)
+ *
+ * @param {spaceEndpoint}       spaceEndpoint  an instance created by
+ *                                             data/Endpoint.createSpaceEndpoint
+ * @param {undefined|string[]}  assignedRoles  currently assigned role IDs
+ * @returns {Promise<undefined|string[]>}
+ */
+
 export default function open (spaceEndpoint, assignedRoles) {
   return openDialog({
     template: '<cf-component-bridge class="modal-background" component="component">',
