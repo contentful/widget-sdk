@@ -160,7 +160,7 @@ angular.module('contentful')
 
       // qualify a user if it was created in the last week
       function isRecentUser (user) {
-        var secondsInAWeek = 1; // 7 * 24 * 60 * 60;
+        var secondsInAWeek = 7 * 24 * 60 * 60;
         var creationDate = moment(user.sys.createdAt);
         var now = moment();
         var diff = now.diff(creationDate, 'seconds');
@@ -169,7 +169,7 @@ angular.module('contentful')
       }
 
       function getFirstOwnedOrgWithoutSpaces (user, spacesByOrg) {
-        const organizationMemberships = user.organizationMemberships;
+        var organizationMemberships = user.organizationMemberships;
         // filter out orgs user owns
         var ownedOrgs = organizationMemberships.filter(function (org) {
           return org.role === 'owner';
