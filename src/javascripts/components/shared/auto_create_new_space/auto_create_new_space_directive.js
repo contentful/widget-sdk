@@ -17,7 +17,6 @@ angular.module('contentful')
       var spaceTemplateCreator = require('spaceTemplateCreator');
       var tokenStore = require('services/TokenStore');
       var nav = require('states/Navigator');
-      var notification = require('notification');
       var analytics = require('analytics/Analytics');
       var spaceTemplateEvents = require('analytics/events/SpaceCreation');
 
@@ -177,11 +176,8 @@ angular.module('contentful')
       }
 
       function handleSpaceAutoCreateError (e) {
-        $scope.autoSpaceCreationFailed = true;
         $scope.autoSpaceCreationError = e;
         dialog.cancel();
-        notification.error('Sample project creation failed');
-        // trigger analytics call with error as payload
       }
 
       function qualifyUser (user, spacesByOrg) {
