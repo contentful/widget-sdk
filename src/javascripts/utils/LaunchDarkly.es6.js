@@ -18,7 +18,7 @@ const DEFAULT_VAL = null;
  * @ngdoc method
  * @name utils/LaunchDarkly#init
  * @usage[js]
- * require('utils/LaunchDarkly').init(<unique id>)
+ * require('utils/LaunchDarkly').init()
  *
  * @description
  * Initialize a LaunchDarkly client.

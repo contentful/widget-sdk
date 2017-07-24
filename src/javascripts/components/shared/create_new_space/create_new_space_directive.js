@@ -66,37 +66,6 @@ angular.module('contentful')
     });
   }
 
-  // Begin A/B Experiment code: ps-03-2017-example-space-impact
-  var LD = require('utils/LaunchDarkly');
-  var firstName = K.getValue(TokenStore.user$).firstName;
-  var userHasSpaces = !!K.getValue(TokenStore.spaces$).length;
-  var $timeout = require('$timeout');
-  var debounce = require('debounce');
-  var debouncedDialogCenter = debounce(function () {
-    $scope.dialog._centerOnBackground();
-  }, 100);
-  var exampleSpaceImpactTest$ = LD.getTest('ps-03-2017-example-space-impact', _.constant(!userHasSpaces));
-
-  K.onValueScope($scope, exampleSpaceImpactTest$, function (variation) {
-    controller.exampleSpaceTest = {};
-    controller.exampleSpaceTest.isActive = !!variation;
-    controller.exampleSpaceTest.firstName = firstName;
-
-    if (variation) {
-      controller.newSpace.useTemplate = true;
-    }
-
-    $timeout(debouncedDialogCenter, 0);
-
-    analytics.track('experiment:start', {
-      experiment: {
-        id: 'ps-03-2017-example-space-impact',
-        variation: variation
-      }
-    });
-  });
-  // End A/B experiment code: ps-03-2017-example-space-impact
-
   // Load the list of space templates
   controller.templates = [];
   spaceTemplateLoader.getTemplatesList().then(setupTemplates)
