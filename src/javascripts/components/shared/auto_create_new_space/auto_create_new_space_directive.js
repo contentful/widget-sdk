@@ -6,9 +6,7 @@ angular.module('contentful')
     restrict: 'A',
     scope: {},
     controller: ['$scope', 'require', function ($scope, require) {
-      var $q = require('$q');
       var $rootScope = require('$rootScope');
-      var theStore = require('TheStore');
       var modalDialog = require('modalDialog');
       var LD = require('utils/LaunchDarkly');
       var K = require('utils/kefir');
@@ -19,6 +17,7 @@ angular.module('contentful')
       var spaceTemplateCreator = require('spaceTemplateCreator');
       var tokenStore = require('services/TokenStore');
       var nav = require('states/Navigator');
+      var notification = require('notification');
       var spaceTemplateEvents = require('analytics/events/SpaceCreation');
 
       var autoCreateSpaceTemplate = require('components/shared/auto_create_new_space/auto_create_new_space.template').default();
@@ -28,8 +27,13 @@ angular.module('contentful')
       var user$ = tokenStore.user$;
       var spacesByOrganization$ = tokenStore.spacesByOrganization$;
 
+      var myStore = require('TheStore').forKey(testName + ':spaceAutoCreated');
+
+      var SECONDS_IN_WEEK = 7 * 24 * 60 * 60;
+      var dialog;
+
       K.onValueScope($scope, test$, function (shouldAutoCreateNewSpace) {
-        var spaceAutoCreated = theStore.get(testName + ':spaceAutoCreated');
+        var spaceAutoCreated = myStore.get();
 
         // TODO: do a debounced create space so as to take the latest value
         // of the test flag and not some old stale value
@@ -42,113 +46,123 @@ angular.module('contentful')
         $scope.isCreatingSpace = true;
         spaceTemplateLoader.getTemplatesList()
           // choose template
-          .then(function (templates) {
-            return _.find(templates, function (t) {
-              return t.fields.name.toLowerCase() === 'product catalogue';
-            }).fields;
-          })
+          .then(chooseTemplate)
           // bring up dialog
-          .then(function (v) {
-            modalDialog.open({
-              title: 'Space auto creation',
-              template: autoCreateSpaceTemplate,
-              backgroundClose: false,
-              persistOnNavigation: true,
-              scope: $scope
-            });
-
-            return v;
-          })
+          .then(openDialog)
           // create space
-          .then(function (template) {
-            var org = getFirstOwnedOrgWithoutSpaces(K.getValue(user$), K.getValue(spacesByOrganization$));
-            var data = {
-              name: 'Demo catalogue',
-              defaultLocale: 'en-US'
-            };
-
-            return client
-              .createSpace(data, org.sys.id)
-              .catch(function (e) {
-                return $q.reject(e);
-              })
-              .then(function (newSpace) {
-                tokenStore.refresh();
-                return { newSpace: newSpace, template: template };
-              });
-          })
+          .then(createEmptySpace)
           // go to new space
-          .then(function (v) {
-            var newSpace = v.newSpace;
-
-            return tokenStore
-              .getSpace(newSpace.getId())
-              .then(function (space) {
-                return nav.go({
-                  path: ['spaces', 'detail'],
-                  params: {
-                    spaceId: space.getId()
-                  }
-                });
-              })
-              // pass new space and template down the chain
-              .then(function () {
-                return v;
-              });
-          })
+          .then(gotoNewSpace)
           // setup before loading template
-          .then(function (v) {
-            var selectedTemplate = v.template;
-            var itemHandlers = {
-              // no need to show status of individual items
-              onItemSuccess: spaceTemplateEvents.entityActionSuccess,
-              onItemError: _.noop
-            };
-            var templateLoader = spaceTemplateCreator.getCreator(
-              spaceContext,
-              itemHandlers,
-              selectedTemplate.name
-            );
-
-            return spaceTemplateLoader
-              .getTemplate(selectedTemplate)
-              .then(function (template, retried) {
-                return {
-                  template: template,
-                  retried: retried,
-                  templateLoader: templateLoader
-                };
-              });
-          })
+          .then(preTemplateLoadSetup)
           // load template into space
           // handle v.retried
-          .then(function loadTemplateIntoSpace (v) {
-            var template = v.template;
-            var templateLoader = v.templateLoader;
-
-            return templateLoader
-              .create(template)
-              .then(function () {
-                return spaceContext.publishedCTs.refresh();
-              })
-              .then(function () {
-                $rootScope.$broadcast('spaceTemplateCreated');
-              })
-              .then(function () {
-                theStore.set(testName + ':spaceAutoCreated', true);
-              });
-          })
-          .catch(function (e) {
-            $scope.autoSpaceCreationFailed = true;
-            $scope.autoSpaceCreationError = e;
-          })
+          .then(loadTemplateIntoSpace)
+          // handle error
+          .catch(handleSpaceAutoCreateError)
           .finally(function () {
             $scope.isCreatingSpace = false;
           });
       }
 
+      function chooseTemplate (templates) {
+        return _.find(templates, function (t) {
+          return t.fields.name.toLowerCase() === 'product catalogue';
+        }).fields;
+      }
+
+      function openDialog (template) {
+        dialog = modalDialog.open({
+          title: 'Space auto creation',
+          template: autoCreateSpaceTemplate,
+          backgroundClose: false,
+          persistOnNavigation: true,
+          scope: $scope
+        });
+
+        return template;
+      }
+
+      function createEmptySpace (template) {
+        var org = getFirstOwnedOrgWithoutSpaces(K.getValue(user$), K.getValue(spacesByOrganization$));
+        var data = {
+          name: 'Demo catalogue',
+          defaultLocale: 'en-US'
+        };
+
+        return client
+          .createSpace(data, org.sys.id)
+          .then(function (newSpace) {
+            return tokenStore
+              .refresh()
+              .then(function () {
+                return { newSpace: newSpace, template: template };
+              });
+          });
+      }
+
+      function gotoNewSpace (newSpaceAndTemplate) {
+        return tokenStore
+          .getSpace(newSpaceAndTemplate.newSpace.getId())
+          .then(function (space) {
+            return nav.go({
+              path: ['spaces', 'detail'],
+              params: {
+                spaceId: space.getId()
+              }
+            });
+          })
+          // pass new space and template down the chain
+          .then(function () {
+            return newSpaceAndTemplate;
+          });
+      }
+
+      function preTemplateLoadSetup (newSpaceAndTemplate) {
+        var selectedTemplate = newSpaceAndTemplate.template;
+        var itemHandlers = {
+          // no need to show status of individual items
+          onItemSuccess: spaceTemplateEvents.entityActionSuccess,
+          onItemError: _.noop
+        };
+        var templateLoader = spaceTemplateCreator.getCreator(
+          spaceContext,
+          itemHandlers,
+          selectedTemplate.name
+        );
+
+        return spaceTemplateLoader
+          .getTemplate(selectedTemplate)
+          .then(function (template, retried) {
+            return {
+              template: template,
+              retried: retried,
+              templateLoader: templateLoader
+            };
+          });
+      }
+
+      function loadTemplateIntoSpace (v) {
+        return v.templateLoader
+          .create(v.template)
+          .then(function () {
+            return spaceContext.publishedCTs.refresh();
+          })
+          .then(function () {
+            $rootScope.$broadcast('spaceTemplateCreated');
+            myStore.set(true);
+          });
+      }
+
+      function handleSpaceAutoCreateError (e) {
+        $scope.autoSpaceCreationFailed = true;
+        $scope.autoSpaceCreationError = e;
+        dialog.cancel();
+        notification.error('Sample project creation failed');
+        // trigger analytics call with error as payload
+      }
+
       function qualifyUser (user, spacesByOrg) {
-        // to be qualified, the user's age must b
         return isRecentUser(user) && !hasAnOrgWithSpaces(spacesByOrg);
       }
 
@@ -160,12 +174,11 @@ angular.module('contentful')
 
       // qualify a user if it was created in the last week
       function isRecentUser (user) {
-        var secondsInAWeek = 7 * 24 * 60 * 60;
         var creationDate = moment(user.sys.createdAt);
         var now = moment();
         var diff = now.diff(creationDate, 'seconds');
 
-        return diff >= secondsInAWeek;
+        return diff >= SECONDS_IN_WEEK;
       }
 
       function getFirstOwnedOrgWithoutSpaces (user, spacesByOrg) {

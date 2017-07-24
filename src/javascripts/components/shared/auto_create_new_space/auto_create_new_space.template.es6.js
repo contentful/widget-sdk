@@ -36,8 +36,8 @@ export default function () {
               fontWeight: 'bold',
               marginTop: 0
             }
-          }, ['Hang on, we’re preparing your sample project!']),
-          h('p.modal-dialog__plaintext', ['Here’s what you’ll find inside'])
+          }, ['We’re preparing your sample e-commerce project']),
+          h('p.modal-dialog__plaintext', ['Here’s what you can do with it'])
         ]),
         h('.auto-create-space-modal__overview', {
           style: {
@@ -45,25 +45,25 @@ export default function () {
             marginTop: '20px'
           }
         }, [
-          getOverviewItem(
+          overviewItem(
             'ct',
             'Flexible content and fields',
-            'Easily customize the structure of your records with flexibly fields using content types.'
+            'Easily customize the structure of your content fields using content types.'
           ),
-          getOverviewItem(
+          overviewItem(
             'entries',
-            'Localized and versioned content',
-            'Create localized content which can be versioned. You have control over who sees what depending on their role.'
+            'Versioned content',
+            'Manage content in multiple languages which is automatically versioned.'
           ),
-          getOverviewItem(
+          overviewItem(
             'media',
-            'Images, videos or any file type',
-            'Store assets such as images, videos or any other file type and use them in the entries you have.'
+            'Images, videos and more, in the cloud',
+            'Manage assets such as images, videos while benefiting from our caching CDN.'
           ),
-          getOverviewItem(
+          overviewItem(
             'api',
             'RESTful APIs',
-            'Quickly manage, integrate, and deliver your content to any of the platforms you need to, using any of the four REST APIs.'
+            'Quickly deliver your content to any of your platforms or update it programmatically using our APIs.'
           )
         ])
       ]),
@@ -83,11 +83,11 @@ export default function () {
 }
 
 // valid types are ct, entries, media, api
-function getOverviewItem (type, heading, text, noMargin) {
+function overviewItem (type, heading, text) {
   return h('div', {
     style: {
       display: 'flex',
-      marginBottom: noMargin ? '0' : '20px'
+      marginBottom: '20px'
     }
   }, [
     h('cf-icon', {
