@@ -120,7 +120,7 @@ export default function create ($scope, editorData) {
     const links$ = K.endWith(
       doc.valuePropertyAt(['fields', field, locale]),
       lifeline.stream
-    );
+    ).map((links) => links || []);
 
     notifications.clearSeen();
     $scope.referenceContext = {
