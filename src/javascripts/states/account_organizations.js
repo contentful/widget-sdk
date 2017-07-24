@@ -65,7 +65,7 @@ angular.module('contentful')
         $scope.context = {};
 
         // Begin feature flag code - feature-bv-06-2017-use-new-navigation
-        LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation');
+        LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation');
         // End feature flag code - feature-bv-06-2017-use-new-navigation
       }],
       params: {
@@ -91,7 +91,7 @@ angular.module('contentful')
           h('cf-organization-nav', { ngIf: 'useNewNavigation' })
         ].join(''),
         controller: ['$scope', function ($scope) {
-          LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation');
+          LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation');
         }]
         // End feature flag code - feature-bv-06-2017-use-new-navigation
       }

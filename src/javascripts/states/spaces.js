@@ -35,7 +35,7 @@ angular.module('contentful')
           h('cf-space-nav-bar')
         ].join(''),
         controller: ['$scope', function ($scope) {
-          LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation');
+          LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation');
         }]
         // End feature flag code - feature-bv-06-2017-use-new-navigation
       }
