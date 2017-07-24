@@ -1,5 +1,8 @@
 /**
  * This module exports a JSON schema for the application configuration.
+ *
+ * Application configuration files reside in the `config` directory. To
+ * check these files use `tools/bin/validate-config.js`.
  */
 
 const domainPattern = '\\w[\\w-]*'
@@ -16,9 +19,10 @@ const hostSchema = {
   pattern: `^(${domainPattern}\\.)(${domainPattern})(:\\d{2,4})?$`
 }
 
+// Matches protocol relative URLs, e.g. '//example.com'.
 const urlSchema = {
   type: 'string',
-  format: 'url'
+  format: 'uri-reference'
 }
 
 // For each item 'x' we require a property 'xUrl' that has a URL format.
