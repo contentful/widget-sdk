@@ -79,13 +79,13 @@ function organizationSelector () {
   const currentOrgIcon = h('p.nav-sidepanel__org-img', {
     style: {
       padding: '10px',
-      background: colors.elementDark,
+      background: colors.elementDarkest,
       color: colors.textDark,
       fontWeight: 'bold',
       fontSize: '0.9em',
       borderRadius: '2px',
       marginBottom: 0,
-      marginRight: '10px'
+      marginRight: '15px'
     }
   }, ['{{twoLetterOrgName}}']);
 
@@ -109,6 +109,7 @@ function organizationSelector () {
       }, ['Organization']),
       h('p', {
         style: {
+          color: colors.textMid,
           marginBottom: 0,
           whiteSpace: 'nowrap',
           overflow: 'hidden',
@@ -172,7 +173,7 @@ function orgListDropdown () {
         maxHeight: '184px',
         overflow: 'hidden',
         overflowY: 'auto',
-        paddingBottom: '8px',
+        paddingBottom: '12px',
         lineHeight: 1.5
       }
     }, [
@@ -247,6 +248,7 @@ function orgSpaces () {
         ngClick: 'setAndGotoSpace(space.data)',
         dataTestId: 'sidepanel-space-link',
         style: {
+          color: colors.textMid,
           cursor: 'pointer',
           padding: `8px ${padding}`,
           margin: 0,
@@ -332,6 +334,7 @@ function orgActions () {
       ngClick: 'gotoOrgSettings()',
       dataTestId: 'sidepanel-org-actions-settings',
       style: {
+        color: colors.textMid,
         cursor: 'pointer',
         margin: 0,
         padding: `8px ${padding}`,
