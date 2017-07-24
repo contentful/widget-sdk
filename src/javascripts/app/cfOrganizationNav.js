@@ -7,6 +7,7 @@
  angular.module('contentful')
 .directive('cfOrganizationNav', ['require', function (require) {
   var navBar = require('app/NavBar').default;
+  var PAID_SUBSCRIPTION_STATUSES = ['paid', 'free_paid'];
 
   return {
     template: template(),
@@ -24,9 +25,7 @@
       var nav = this;
       var orgId = nav.orgId = $stateParams.orgId;
 
-      K.onValueScope($scope, tokenStore.organizations$, function () {
-        updateNav();
-      });
+      K.onValueScope($scope, tokenStore.organizations$, updateNav);
 
       function updateNav () {
         tokenStore.getOrganization(orgId).then(function (org) {
@@ -82,11 +81,10 @@
   }
 
   function isPaid (org) {
-    return ['paid', 'free_paid']
-      .indexOf(org.subscription.status) >= 0;
+    return PAID_SUBSCRIPTION_STATUSES.indexOf(org.subscription.status) >= 0;
   }
 
   function hasOffsiteBackup (org) {
-    return !!org.subscriptionPlan.limits.features.offsiteBackup;
+    return _.get(org, 'subscriptionPlan.limits.features.offsiteBackup', false);
   }
 }]);

@@ -6,52 +6,18 @@ angular.module('contentful')
  * @name cfNavSidePanel
  *
  * This directive display the new navigation side panel.
- * It depends on the following paramters.
- *
- * @param {object} accessChecker
- *   This service is used to check if the user can create
- *   a space in an org.
- * @param {object} OrganizationRoles
- *   This service is used to check if the user is an owner or
- *   admin of an org.
- * @param {object} TokenStore
- *   This service is provides orgs current user belongs to and
- *   a map of org id to list of spaces.
- * @param {object} spaceContext
- *   This service provides all the data we need for the current
- *   space user is in.
- * @param {object} CreateSpace
- *   This service gives us a way of showing the create space modal
- *   for the given org id.
- * @param {object} Kefir
- *   This service is used to deal with kefir buses and streams.
- * @param {object} Navigator
- *   This service is used to perform state transitions.
- * @param {object} $stateParams
- *   This service is used to grab params for current state.
  */
 .directive('cfNavSidePanel', ['require', function (require) {
-  // access related imports
   var accessChecker = require('accessChecker');
   var orgRoles = require('services/OrganizationRoles');
-
-  // core data related imports
   var tokenStore = require('services/TokenStore');
   var spacesByOrg$ = tokenStore.spacesByOrganization$;
   var orgs$ = tokenStore.organizations$;
-
   var spaceContext = require('spaceContext');
-
   var showCreateSpaceModal = require('services/CreateSpace').showDialog;
-
-  // stream utils import
   var K = require('utils/kefir');
-
-  // state transition related import
   var Navigator = require('states/Navigator');
   var $stateParams = require('$stateParams');
-
-  // view template import
   var sidepanelTemplate = require('navigation/Sidepanel.template').default();
 
   // Begin feature flag code - feature-bv-06-2017-use-new-navigation
@@ -172,9 +138,12 @@ angular.module('contentful')
       function getCurrentCommittedOrg () {
         // return org based on orgId in url or based on what's in spaceContext or finally
         // just return the 1st org from list of orgs
-        return ($stateParams.orgId && _.find($scope.orgs, function (org) { return org.sys.id === $stateParams.orgId; })) ||
-          (spaceContext.organizationContext && spaceContext.organizationContext.organization) ||
-          ($scope.orgs && $scope.orgs[0]);
+        var org;
+        if ($stateParams.orgId) {
+          org = _.find($scope.orgs, function (org) { return org.sys.id === $stateParams.orgId; });
+        }
+        org = org || _.get(spaceContext, 'organizationContext.organization');
+        return org || _.get($scope, 'orgs[0]');
       }
     }]
   };
