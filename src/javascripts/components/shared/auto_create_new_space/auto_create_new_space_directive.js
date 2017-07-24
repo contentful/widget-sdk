@@ -18,6 +18,7 @@ angular.module('contentful')
       var tokenStore = require('services/TokenStore');
       var nav = require('states/Navigator');
       var notification = require('notification');
+      var analytics = require('analytics/Analytics');
       var spaceTemplateEvents = require('analytics/events/SpaceCreation');
 
       var autoCreateSpaceTemplate = require('components/shared/auto_create_new_space/auto_create_new_space.template').default();
@@ -40,7 +41,20 @@ angular.module('contentful')
         if (shouldAutoCreateNewSpace && !spaceAutoCreated && !$scope.isCreatingSpace) {
           createSpace();
         }
+
+        if (!shouldAutoCreateNewSpace) {
+          trackExperiment(shouldAutoCreateNewSpace);
+        }
       });
+
+      function trackExperiment (variation) {
+        analytics.track('experiment:start', {
+          experiment: {
+            id: testName,
+            variation: variation
+          }
+        });
+      }
 
       function createSpace () {
         $scope.isCreatingSpace = true;
@@ -58,6 +72,14 @@ angular.module('contentful')
           // load template into space
           // handle v.retried
           .then(loadTemplateIntoSpace)
+          // track variation seen by user
+          // this is done at the end so that we only
+          // trigger analytics for those users who saw
+          // the completion of the test. I.e., users for whom
+          // auto creation was successful
+          .then(function () {
+            trackExperiment(true);
+          })
           // handle error
           .catch(handleSpaceAutoCreateError)
           .finally(function () {
