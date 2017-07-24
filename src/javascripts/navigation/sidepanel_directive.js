@@ -17,7 +17,7 @@ angular.module('contentful')
   var showCreateSpaceModal = require('services/CreateSpace').showDialog;
   var K = require('utils/kefir');
   var Navigator = require('states/Navigator');
-  var $stateParams = require('$stateParams');
+  var $state = require('$state');
   var sidepanelTemplate = require('navigation/Sidepanel.template').default();
 
   // Begin feature flag code - feature-bv-06-2017-use-new-navigation
@@ -97,7 +97,7 @@ angular.module('contentful')
 
           $scope.canGotoOrgSettings = orgRoles.isOwnerOrAdmin(org);
           $scope.canCreateSpaceInCurrOrg = accessChecker.canCreateSpaceInOrganization(orgId);
-          $scope.viewingOrgSettings = $stateParams.orgId === orgId;
+          $scope.viewingOrgSettings = $state.includes('account') && $state.params.orgId === orgId;
           $scope.twoLetterOrgName = org.name.slice(0, 2).toUpperCase();
         }
       }
