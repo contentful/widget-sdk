@@ -29,14 +29,14 @@ function sidepanelBackground () {
       transition: 'all 0.2s ease-in-out'
     },
     ngClass: 'sidePanelIsShown ? "nav-sidepanel__bg--is-visible" : "nav-sidepanel__bg--is-not-visible"',
-    ngClick: 'toggleSidePanel()'
+    ngClick: 'closeSidePanel()'
   });
 }
 
 function sidepanelTrigger () {
   return h('div.nav-sidepanel__logo-container', {
     // Begin feature flag code - feature-bv-06-2017-use-new-navigation
-    ngClick: 'useNewNavigation && toggleSidePanel()',
+    ngClick: 'useNewNavigation && openSidePanel()',
     // End feature flag code - feature-bv-06-2017-use-new-navigation
     dataTestId: 'sidepanel-trigger',
     style: {
@@ -76,7 +76,7 @@ function sidepanel () {
 }
 
 function organizationSelector () {
-  const currentOrgIcon = h('p.nav-sidepanel__org-img', {
+  const currOrgIcon = h('p.nav-sidepanel__org-img', {
     style: {
       padding: '10px',
       background: colors.elementDarkest,
@@ -89,7 +89,7 @@ function organizationSelector () {
     }
   }, ['{{twoLetterOrgName}}']);
 
-  const currentOrgText = h('.nav-sidepanel__org-selector', {
+  const currOrgText = h('.nav-sidepanel__org-selector', {
     style: {
       flexGrow: 2,
       minWidth: 0
@@ -144,8 +144,8 @@ function organizationSelector () {
     ngClass: 'orgDropdownIsShown ? "nav-sidepanel__header--is-active": ""',
     ngClick: 'toggleOrgsDropdown()'
   }, [
-    currentOrgIcon,
-    currentOrgText,
+    currOrgIcon,
+    currOrgText,
     triangleDown,
     orgListDropdown()
   ]);
@@ -301,7 +301,7 @@ function noSpacesMsg () {
         marginTop: '10px'
       },
       ngIf: 'canCreateSpaceInCurrOrg',
-      ngClick: 'showCreateSpaceModal(currOrg.sys.id)'
+      ngClick: 'showCreateSpaceModal()'
     }, ['Create Space'])
   ]);
 }
@@ -355,7 +355,7 @@ function closeBtn () {
       color: 'white',
       cursor: 'pointer'
     },
-    ngClick: 'toggleSidePanel()',
+    ngClick: 'closeSidePanel()',
     dataTestId: 'sidepanel-close-btn'
   }, [
     h('cf-icon', {

@@ -18,7 +18,8 @@ describe('cfNavSidePanel directive', () => {
 
   };
   const accessChecker = {
-    canCreateSpaceInOrganization: sinon.stub()
+    canCreateSpaceInOrganization: sinon.stub(),
+    isInitialized$: K.createMockProperty(true)
   };
 
   const OrganizationRoles = {
@@ -112,7 +113,7 @@ describe('cfNavSidePanel directive', () => {
     OrganizationRoles.isOwnerOrAdmin = sinon.stub().returns(true);
     accessChecker.canCreateSpaceInOrganization = sinon.stub().returns(true);
 
-    this.$scope.setCurrOrg(org);
+    this.$scope.setCurrentOrg(org);
     $stateParamsOrgId = org.sys.id; // to emulate user on org settings page
     this.$scope.$apply();
     this.verifyScopePropsBasedOnOrg(org, true, true, true);
@@ -209,14 +210,14 @@ describe('cfNavSidePanel directive', () => {
     });
   });
 
-  describe('#setCurrOrg', function () {
-    it('sets curr org to the argument given to setCurrOrg method', function () {
+  describe('#setCurrentOrg', function () {
+    it('sets curr org to the argument given to setCurrentOrg method', function () {
       expect(this.$scope.currOrg).toEqual(this.orgs[0]);
       this.verifyScopePropsBasedOnOrg(this.orgs[0], undefined, undefined, false);
 
       OrganizationRoles.isOwnerOrAdmin = sinon.stub().returns(true);
       accessChecker.canCreateSpaceInOrganization = sinon.stub().returns(true);
-      this.$scope.setCurrOrg(this.orgs[2]);
+      this.$scope.setCurrentOrg(this.orgs[2]);
       this.$scope.$apply();
       expect(this.$scope.currOrg).toEqual(this.orgs[2]);
       this.verifyScopePropsBasedOnOrg(this.orgs[2], true, true, false);
@@ -242,7 +243,7 @@ describe('cfNavSidePanel directive', () => {
         OrganizationRoles.isOwnerOrAdmin = sinon.stub().returns(isOwnerOrAdmin);
         accessChecker.canCreateSpaceInOrganization = sinon.stub().returns(canCreateSpaceInOrg);
         // choose new org and go to org settings
-        this.$scope.setCurrOrg(org);
+        this.$scope.setCurrentOrg(org);
         this.$scope.gotoOrgSettings();
         $stateParamsOrgId = orgId; // to fake that we are on org settings page for current org
         this.$scope.$apply();
@@ -379,7 +380,7 @@ describe('cfNavSidePanel directive', () => {
         this.$spacesContainer = this.$sidePanel.find('.nav-sidepanel__spaces-container');
         this.updateOrgAndPerm = function (org, perm) {
           accessChecker.canCreateSpaceInOrganization = sinon.stub().returns(perm);
-          this.$scope.setCurrOrg(org);
+          this.$scope.setCurrentOrg(org);
           $stateParamsOrgId = org.sys.id;
           this.$scope.$apply(); // run the watchers
         };
@@ -404,7 +405,7 @@ describe('cfNavSidePanel directive', () => {
       it('marks current space as active', function () {
         const org = this.orgs[2];
 
-        this.$scope.setCurrOrg(org);
+        this.$scope.setCurrentOrg(org);
         $stateParamsOrgId = org.sys.id; // make current org "committed" or "selected"
         this.$scope.$apply();
         this.$scope.setAndGotoSpace(this.spacesByOrg[org.sys.id][1].data);
@@ -437,7 +438,7 @@ describe('cfNavSidePanel directive', () => {
       beforeEach(function () {
         this.updateOrgAndPerm = function (org, perm, viewingOrgSettings = false) {
           OrganizationRoles.isOwnerOrAdmin = sinon.stub().returns(perm);
-          this.$scope.setCurrOrg(org);
+          this.$scope.setCurrentOrg(org);
           $stateParamsOrgId = viewingOrgSettings ? org.sys.id : null;
           this.$scope.$apply(); // run the watchers
         };

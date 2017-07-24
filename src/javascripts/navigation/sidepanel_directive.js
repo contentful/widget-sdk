@@ -34,116 +34,98 @@ angular.module('contentful')
       LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation');
       // End feature flag code - feature-bv-06-2017-use-new-navigation
 
-      // side panel visibility
       $scope.sidePanelIsShown = false;
-      $scope.toggleSidePanel = function (committedOrg) {
-        $scope.currOrg = committedOrg || getCurrentCommittedOrg();
-        $scope.sidePanelIsShown = !$scope.sidePanelIsShown;
-        $scope.orgDropdownIsShown = false;
-      };
+      $scope.orgDropdownIsShown = false;
 
-      // List of org objects
-      $scope.orgs = [];
+      K.onValueScope($scope, accessChecker.isInitialized$, refreshPermissions);
       K.onValueScope($scope, orgs$, function (orgs) {
         $scope.orgs = orgs || [];
-      });
-      $scope.toggleOrgsDropdown = function () {
-        $scope.orgDropdownIsShown = !$scope.orgDropdownIsShown;
-      };
-
-      // Org object representing the org current space belongs to.
-      // This will be switched by choosing a new org from the dropdown
-      // and selecting an operation on it like create space or goto settings.
-      // If no operation is performed, it is reverted back to previously
-      // selected org when the side panel is closed.
-      $scope.$watch(function () {
-        return getCurrentCommittedOrg();
-      }, function (org) {
-        $scope.currOrg = org || $scope.currOrg;
-      });
-
-      // this is separated from the watcher above as currOrg
-      // can be changed by user action as well
-      $scope.$watch(function () {
-        return $scope.currOrg;
-      }, function (org) {
-        if (org) {
-          var orgId = org.sys.id;
-
-          $scope.canGotoOrgSettings = orgRoles.isOwnerOrAdmin(org);
-          $scope.canCreateSpaceInCurrOrg = accessChecker.canCreateSpaceInOrganization(orgId);
-          $scope.twoLetterOrgName = org.name.slice(0, 2).toUpperCase();
-          $scope.viewingOrgSettings = $stateParams.orgId === orgId;
+        if (!$scope.currOrg) {
+          setCurrOrg(getCurrCommittedOrg());
         }
       });
-
-      // mark org settings as active if org id is in state params and curr
-      // org id is same as state params org id
-      $scope.$watch(function () {
-        return $stateParams.orgId;
-      }, function (orgId) {
-        $scope.viewingOrgSettings = !!$scope.currOrg && $scope.currOrg.sys.id === orgId;
+      K.onValueScope($scope, spacesByOrg$, function (spacesByOrg) {
+        $scope.spacesByOrg = spacesByOrg || {};
       });
-      $scope.setCurrOrg = function (org) {
-        $scope.currOrg = org;
-      };
+
+      // TODO add kefir property
+      $scope.$watch(function () {
+        return _.get(spaceContext, 'space.data');
+      }, function (currSpace) {
+        $scope.currSpace = currSpace;
+      });
+
+      $scope.setCurrOrg = setCurrOrg;
+      $scope.closeSidePanel = closeSidePanel;
+      $scope.openSidePanel = openSidePanel;
+      $scope.toggleOrgsDropdown = toggleOrgsDropdown;
+
       $scope.gotoOrgSettings = function () {
-        // "commit" the curr org since goto org settings was clicked
-        $scope.toggleSidePanel($scope.currOrg);
-
-        if (orgRoles.isOwnerOrAdmin($scope.currOrg)) {
-          Navigator.go({
-            path: ['account', 'organizations', 'subscription'],
-            params: { orgId: $scope.currOrg.sys.id }
-          });
-        }
+        $scope.closeSidePanel();
+        Navigator.go({
+          path: ['account', 'organizations', 'subscription'],
+          params: { orgId: $scope.currOrg.sys.id }
+        });
       };
       $scope.createNewOrg = function () {
-        $scope.toggleSidePanel();
+        $scope.closeSidePanel();
         Navigator.go({
           path: ['account', 'organizations', 'new']
         });
       };
-
-      // Map of orgId -> [Space]
-      $scope.spacesByOrg = {};
-      K.onValueScope($scope, spacesByOrg$, function (spacesByOrg) {
-        $scope.spacesByOrg = spacesByOrg;
-      });
-      $scope.currSpace = getCurrSpace();
-      $scope.$watch(function () {
-        return getCurrSpace();
-      }, function (space) {
-        $scope.currSpace = space;
-      });
       $scope.setAndGotoSpace = function (space) {
-        $scope.currSpace = space;
-
-        $scope.toggleSidePanel();
+        $scope.closeSidePanel();
         Navigator.go({
           path: ['spaces', 'detail'],
           params: { spaceId: space.sys.id }
         });
       };
-      // show space creation modal for given org id
-      $scope.showCreateSpaceModal = function (orgId) {
-        $scope.toggleSidePanel();
-        showCreateSpaceModal(orgId);
+      $scope.showCreateSpaceModal = function () {
+        $scope.closeSidePanel();
+        showCreateSpaceModal($scope.currOrg.sys.id);
       };
 
-      function getCurrSpace () {
-        return spaceContext.space && spaceContext.space.data;
+      function setCurrOrg (org) {
+        $scope.currOrg = org;
+        refreshPermissions();
       }
 
-      function getCurrentCommittedOrg () {
+      function refreshPermissions () {
+        var org = $scope.currOrg;
+        if (org) {
+          var orgId = org.sys.id;
+
+          $scope.canGotoOrgSettings = orgRoles.isOwnerOrAdmin(org);
+          $scope.canCreateSpaceInCurrOrg = accessChecker.canCreateSpaceInOrganization(orgId);
+          $scope.viewingOrgSettings = $stateParams.orgId === orgId;
+          $scope.twoLetterOrgName = org.name.slice(0, 2).toUpperCase();
+        }
+      }
+
+      function openSidePanel () {
+        $scope.orgDropdownIsShown = false;
+        setCurrOrg(getCurrCommittedOrg());
+        $scope.sidePanelIsShown = true;
+      }
+
+      function closeSidePanel () {
+        $scope.sidePanelIsShown = false;
+      }
+
+      function toggleOrgsDropdown () {
+        $scope.orgDropdownIsShown = !$scope.orgDropdownIsShown;
+      }
+
+      function getCurrCommittedOrg () {
         // return org based on orgId in url or based on what's in spaceContext or finally
         // just return the 1st org from list of orgs
-        var org;
-        if ($stateParams.orgId) {
-          org = _.find($scope.orgs, function (org) { return org.sys.id === $stateParams.orgId; });
-        }
-        org = org || _.get(spaceContext, 'organizationContext.organization');
-        return org || _.get($scope, 'orgs[0]');
+        return getOrgById($state.params.orgId) ||
+          _.get(spaceContext, 'organizationContext.organization') ||
+          _.get($scope, 'orgs[0]');
+      }
+
+      function getOrgById (orgId) {
+        return orgId && _.find($scope.orgs, function (org) { return org.sys.id === orgId; });
       }
     }]
   };
