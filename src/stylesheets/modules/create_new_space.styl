@@ -1,23 +1,5 @@
 @require '../variables/colors'
 
-// Begin A/B experiment code - ps-03-2017-example-space-impact
-.ps-03-2017-example-space-impact
-  .create-new-space__form
-    .create-new-space__fieldset
-      > .cfnext-form__field
-        width: 100%
-        margin-right: 0
-        margin-bottom: 10px
-        .cfnext-form__input
-          width: 100%
-      > .cfnext-form__field:nth-child(1)
-        margin-right: 12px
-    > .cfnext-form__field
-      margin-bottom: 0.5em
-      .cfnext-form__field-error
-        margin-top: 0
-// End A/B experiment code - ps-03-2017-example-space-impact
-
 .create-new-space-dialog
   &.modal-dialog
     width: 750px
@@ -41,7 +23,7 @@
 
 .create-new-space__form
   text-align: left
-  padding: 20px 0 0
+  padding: 20px 12px 0 12px
   &__option
     margin-bottom: 10px
   &__label-description
@@ -70,7 +52,7 @@
     overflow: hidden
     height: 310px
   &__inner
-    padding: 30px
+    padding: 30px 42px
     margin-top: 11px
     background-color: $colors.element-lightest
     border-top: 1px solid $colors.element-mid
