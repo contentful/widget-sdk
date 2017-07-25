@@ -23,7 +23,12 @@ const ORG_ID_PATH = ['space', 'data', 'organization', 'sys', 'id'];
 
 const FEATURE_TO_ORG_IDS = {
   view_roles: [
-    '2d1a93a348d003ae117ee423cb9e89e4' // Jakub's private org (prod)
+    // Jakub's private org (prod)
+    '2d1a93a348d003ae117ee423cb9e89e4',
+    // Contentful main (prod)
+    '281d50856fc72daca2e39b4e68bdb3ee',
+    // Google Docs Test (preview)
+    'afbd22d6944eb429cf2b16d5a8ad279b'
   ]
 };
 
