@@ -24,19 +24,29 @@ angular.module('contentful')
 
       var testName = 'test-ps-07-2017-auto-create-space';
       var test$ = LD.getTest(testName, qualifyUser);
-      var user$ = tokenStore.user$;
+      var user$ = tokenStore.user$.filter(function (user) {
+        return !!user;
+      });
+      // emit user with every test value that is emitted
+      // null user's are filtered out above so you will
+      // always get a truthy user (the user object)
+      var testAndUser$ = K.combine([test$], [user$], function (testFlag, user) {
+        return { testFlag: testFlag, user: user };
+      });
       var spacesByOrganization$ = tokenStore.spacesByOrganization$;
 
-      var myStore = require('TheStore').forKey(testName + ':spaceAutoCreated');
+      var theStore = require('TheStore');
 
       var SECONDS_IN_WEEK = 7 * 24 * 60 * 60;
-      var dialog;
+      var dialog, myStore;
 
-      K.onValueScope($scope, test$, function (shouldAutoCreateNewSpace) {
+
+      K.onValueScope($scope, testAndUser$, function (value) {
+        myStore = theStore.forKey(testName + ':' + value.user.sys.id + ':spaceAutoCreated');
+
+        var shouldAutoCreateNewSpace = value.testFlag;
         var spaceAutoCreated = myStore.get();
 
-        // TODO: do a debounced create space so as to take the latest value
-        // of the test flag and not some old stale value
         if (shouldAutoCreateNewSpace && !spaceAutoCreated && !$scope.isCreatingSpace) {
           createSpace();
         }
