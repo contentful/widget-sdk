@@ -10,6 +10,14 @@ angular.module('contentful').factory('ListQuery', ['$injector', function ($injec
   var DEFAULT_ORDER = systemFields.getDefaultOrder();
 
   return {
+    /**
+     * @param {string} opts.contentTypeId
+     * @param {string} opts.searchTerm
+     * @param {string} opts.order
+     *   TODO it is a structured value
+     * @param {Paginator} opts.paginator
+     * @returns {Query}
+     */
     getForEntries: function (opts) {
       if (opts.contentTypeId) {
         return spaceContext.publishedCTs.fetch(opts.contentTypeId)
@@ -19,6 +27,20 @@ angular.module('contentful').factory('ListQuery', ['$injector', function ($injec
       } else {
         return prepareEntityListQuery(null, opts);
       }
+    },
+    /**
+     * TODO document
+     * TODO we should probably limit the number of items to keep query
+     * url size low
+     */
+    getForEntryCollection: function (ids, order, paginator) {
+      return prepareEntityListQuery(null, {
+        order: order,
+        paginator: paginator
+      }).then(function (query) {
+        query['sys.id[in]'] = ids.join(',');
+        return query;
+      });
     },
     getForAssets: function (opts) {
       return prepareEntityListQuery(assetContentType, opts);

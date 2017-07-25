@@ -36,6 +36,7 @@ angular.module('contentful')
   var Auth = require('Authentication');
   var OrganizationContext = require('classes/OrganizationContext');
   var MembershipRepo = require('access_control/SpaceMembershipRepository');
+  var createContentCollectionsRepo = require('app/EntryList/Collections/Store').default;
 
   var spaceContext = {
     /**
@@ -74,6 +75,8 @@ angular.module('contentful')
         Auth
       );
 
+      self.contentCollections = createContentCollectionsRepo();
+
       resetMembers(self);
       self.space = space;
       self.cma = new ApiClient(self.endpoint);
@@ -110,7 +113,10 @@ angular.module('contentful')
       TheLocaleStore.reset(self.space.getId(), self.space.getPrivateLocales());
       return $q.all([
         loadWidgets(self, space),
-        self.publishedCTs.refresh()
+        self.publishedCTs.refresh(),
+        createContentCollectionsRepo().then(function (contentCollections) {
+          self.contentCollections = contentCollections;
+        })
       ]).then(function () {
         return self;
       });

@@ -14,6 +14,11 @@ import {omit, omitBy, isEmpty, isObject} from 'lodash';
  *
  * This module is used in the ListViewsController and The
  * ContentTypeListController.
+ *
+ * TODO we need to separate the serialization logic for content types
+ * and content.
+ *
+ * TODO test collection serialization
  */
 export default function create (spaceId, entityType) {
   const key = `lastFilterQueryString.${entityType}.${spaceId}`;
@@ -32,35 +37,56 @@ export default function create (spaceId, entityType) {
     $location.replace();
   }
 
-  function read () {
+  function read (collections) {
     const currentQS = $location.search();
     const previousQS = localStorage.get() || {};
     const qs = isEmpty(currentQS) ? previousQS : currentQS;
-    return fromStorageFormat(qs);
+    return fromStorageFormat(qs, collections);
   }
 }
 
 
 function toStorageFormat (view) {
-  view = omit(view, ['title']);
+  if (view.collection) {
+    view = {
+      // Format version so that we can migrate stored data
+      // TODO omit this from query string
+      _v: 1,
+      collectionId: view.collection.id,
+      order: view.order,
+      displayedFieldsIds: view.displayedFieldIds
+    };
+  } else {
+    view = omit(view, ['title']);
+  }
+
   view = omitBy(view, (item) => {
     return item === undefined || item === null || item === '';
   });
+
   return dotty.flatten(view);
 }
 
 
-function fromStorageFormat (stored) {
+function fromStorageFormat (stored, collections) {
   const view = dotty.transform(stored);
-  stringToBool(view, 'contentTypeHidden');
 
-  // migration of faulty query strings
-  if (view && isObject(view.order)) {
-    delete view.order.sys;
-    delete view.order.isSys;
+  if (view.collectionId) {
+    return {
+      collection: collections.find((c) => c.id === view.collectionId),
+      order: view.order,
+      displayedFieldsIds: view.displayedFieldIds
+    };
+  } else {
+    stringToBool(view, 'contentTypeHidden');
+    // migration of faulty query strings
+    if (view && isObject(view.order)) {
+      delete view.order.sys;
+      delete view.order.isSys;
+    }
+
+    return view;
   }
-
-  return view;
 }
 
 

@@ -11,6 +11,7 @@ angular.module('contentful')
     var accessChecker = require('accessChecker');
     var spaceContext = require('spaceContext');
     var Tracking = require('analytics/events/SearchAndViews');
+    var K = require('utils/kefir');
 
     var getCurrentView = $parse('context.view');
     var setCurrentView = getCurrentView.assign;
@@ -19,7 +20,8 @@ angular.module('contentful')
 
     if (preserveStateAs) {
       var viewPersistor = createViewPersistor(spaceContext.getId(), preserveStateAs);
-      replaceView(viewPersistor.read());
+      var collections = K.getValue(spaceContext.contentCollections.state$);
+      replaceView(viewPersistor.read(collections));
       $scope.$watch('context.view', viewPersistor.save, true);
     }
 

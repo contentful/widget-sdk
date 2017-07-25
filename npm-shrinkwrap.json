@@ -1731,6 +1731,9 @@
     "homedir-polyfill": {
       "version": "1.0.1"
     },
+    "icepick": {
+      "version": "2.1.1"
+    },
     "iconv-lite": {
       "version": "0.4.17"
     },
@@ -2834,6 +2837,9 @@
     },
     "xtend": {
       "version": "4.0.1"
+    },
+    "yaku": {
+      "version": "0.18.2"
     }
   }
 }

@@ -4,7 +4,9 @@ require('angular-ui-sortable');
 
 window.dotty = require('./dottie_wrapper.js');
 angular.module('cf.libs', [])
+  .constant('libs/yaku', require('yaku'))
   .constant('libs/dotty', window.dotty)
+  .constant('libs/icepick', require('icepick'))
   .constant('libs/preact', require('preact'))
   .constant('libs/qs', require('qs'))
   .constant('libs/marked', require('marked-ast')._marked)

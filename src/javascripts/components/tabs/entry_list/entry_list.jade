@@ -122,6 +122,8 @@ header.workbench-header
             ng-show="showPublish()"
             aria-label="publish")
             | {{publishButtonName()}}
+          cf-component-bridge(component="addToCollectionComponent" style="margin-left: auto")
+
 
       .table__body
         table
@@ -153,6 +155,13 @@ header.workbench-header
     cf-search-results-paginator(paginator="paginator" pages="7" ng-show="hasPage()")
 
     +no-search-results("hasNoSearchResults()", "displaySearch()")
+
+    .advice.advice--row-aligned(ng-show="isEmptyCollection()")
+      .advice__frame.advice__frame--no-margin.advice__frame--align-left
+        header.advice__title.advice__title--normal
+          | The collection is empty
+        p.advice__subtext
+          | You can add entries to collections to better group and organize content.
 
 .workbench-main.x--content(ng-show="showNoEntriesAdvice()")
   include ./no_entries_advice

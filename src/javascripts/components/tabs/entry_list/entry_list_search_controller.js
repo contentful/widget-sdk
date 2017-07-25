@@ -32,6 +32,14 @@ angular.module('contentful')
   this.resetSearchTerm = resetSearchTerm;
   this.hasQuery = hasQuery;
 
+  $scope.hasNoSearchResults = function () {
+    return hasQuery() && !$scope.paginator.getTotal() && !$scope.context.loading && !$scope.context.view.collection;
+  };
+
+  $scope.emptyCollection = function () {
+    return !$scope.paginator.getTotal() && $scope.context.view.collection;
+  };
+
   /**
    * Watches: triggering list updates
    */
@@ -106,7 +114,11 @@ angular.module('contentful')
   }
 
   function hasQuery () {
-    return !_.isEmpty(searchTerm) || !_.isEmpty(getViewItem('contentTypeId'));
+    return (
+      !_.isEmpty(searchTerm) ||
+      !_.isEmpty(getViewItem('contentTypeId')) ||
+      getViewItem('collection')
+    );
   }
 
   function updateWithTerm (term) {
@@ -182,12 +194,21 @@ angular.module('contentful')
   }
 
   function prepareQuery () {
-    return ListQuery.getForEntries({
-      contentTypeId: getViewItem('contentTypeId'),
-      searchTerm: getViewItem('searchTerm'),
-      order: getViewItem('order'),
-      paginator: $scope.paginator
-    });
+    var collection = getViewItem('collection');
+    if (collection) {
+      return ListQuery.getForEntryCollection(
+        collection.items,
+        getViewItem('order'),
+        $scope.paginator
+      );
+    } else {
+      return ListQuery.getForEntries({
+        contentTypeId: getViewItem('contentTypeId'),
+        searchTerm: getViewItem('searchTerm'),
+        order: getViewItem('order'),
+        paginator: $scope.paginator
+      });
+    }
   }
 
   function refreshEntityCaches () {

@@ -1,0 +1,78 @@
+import {includes} from 'lodash';
+import {h} from 'ui/Framework';
+import {hfill} from 'ui/Layout';
+import * as K from 'utils/kefir';
+
+
+// TODO documentation
+export function sidebarSelector (entryId, collectionsStore) {
+  return selector('bottom-left', K.constant([entryId]), collectionsStore);
+}
+
+export function bulkSelector (selectedIds$, collectionsStore) {
+  return selector('bottom-right', selectedIds$, collectionsStore);
+}
+
+function selector (menuAlignment, selectedIds$, collectionsStore) {
+  const state$ = K.combineProperties([selectedIds$, collectionsStore.state$]);
+  return state$.map(([entryIds, collections]) => {
+    return h('div', {
+      style: {marginRight: '2em'}
+    }, [
+      h('button.text-link', {
+        cfContextMenuTrigger: true
+      }, [ 'Add to collection' ]),
+      h('.context-menu', {
+        cfContextMenu: menuAlignment,
+        role: 'menu'
+      }, [
+        h('div.context-menu__header', ['Collections'])
+      ].concat(collections.map(({name, id}) => {
+        if (allInCollection(collections, id, entryIds)) {
+          return h('div', {
+            role: 'menuitem',
+            // Prevent dialog from closing with stopPropagation
+            onClick: withStopPropagation(() => collectionsStore.removeItems(id, entryIds)),
+            style: {display: 'flex'}
+          }, [
+            name,
+            hfill(),
+            h('i.fa.fa-check')
+          ]);
+        } else {
+          return h('div', {
+            role: 'menuitem',
+            // Prevent dialog from closing with stopPropagation
+            onClick: withStopPropagation(() => collectionsStore.addItems(id, entryIds))
+          }, [ name ]);
+        }
+      })).concat([
+        h('div', {
+          role: 'menuitem',
+          onClick: () => collectionsStore.requestCreate(entryIds)
+        }, [
+          h('span.text-link', ['Create collection'])
+        ])
+      ]))
+    ]);
+  });
+
+  // TODO more performant algo
+  function allInCollection (collections, collectionId, itemIds) {
+    const collection = collections.find((c) => c.id === collectionId);
+    if (!collection) {
+      return;
+    }
+
+    return itemIds.every((id) => includes(collection.items, id));
+  }
+}
+
+
+// TODO candidate for framework utils
+function withStopPropagation (fn) {
+  return function (e) {
+    e.stopPropagation();
+    fn(e);
+  };
+}

@@ -46,6 +46,7 @@
     "gulp-sourcemaps": "^2.4.0",
     "gulp-stylus": "^2.6.0",
     "gulp-uglify": "^2.0.1",
+    "icepick": "^2.1.1",
     "immutable": "^3.8.1",
     "jade": "^1.11.0",
     "jasmine-core": "^2.5.2",
@@ -81,7 +82,8 @@
     "through2": "^2.0.3",
     "vinyl": "^0.4.6",
     "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "~1.0.0"
+    "vinyl-source-stream": "~1.0.0",
+    "yaku": "^0.18.2"
   },
   "devDependencies": {
     "angular-mocks": "~1.5.7",
