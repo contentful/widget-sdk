@@ -8,6 +8,8 @@ angular.module('contentful')
  */
 
 .factory('states/spaces', ['require', function (require) {
+  var h = require('utils/hyperscript').h;
+
   var newSpace = {
     name: 'new',
     url: '_new',
@@ -21,7 +23,14 @@ angular.module('contentful')
     name: 'spaces',
     url: '/spaces',
     abstract: true,
-    views: {'nav-bar': { template: '<cf-space-nav-bar />' }},
+    views: {
+      'nav-bar': {
+        template: [
+          h('cf-space-selector'),
+          h('cf-space-nav-bar')
+        ].join('')
+      }
+    },
     children: [newSpace, require('states/spaces/detail')]
   };
 }])

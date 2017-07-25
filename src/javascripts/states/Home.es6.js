@@ -4,8 +4,7 @@ import $state from '$state';
 import {getSpaces} from 'services/TokenStore';
 import TheStore from 'TheStore';
 import template from 'app/home/HomeTemplate';
-import navBar from 'app/NavBar';
-
+import {h} from 'utils/hyperscript';
 
 /**
  * @ngdoc service
@@ -18,7 +17,7 @@ import navBar from 'app/NavBar';
 export default makeState({
   name: 'home',
   url: '/',
-  views: { 'nav-bar': { template: navBar() } },
+  views: { 'nav-bar': { template: h('cf-space-selector') } },
   template: template(),
   loadingText: 'Loading...',
   resolve: {

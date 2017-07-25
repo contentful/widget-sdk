@@ -33,7 +33,6 @@ import {h} from 'utils/hyperscript';
  */
 export default function (listItems = []) {
   return h('nav.nav-bar', [
-    h('cf-space-selector'),
     h('ul.nav-bar__list', listItems.map(function (data, index) {
       const html = data.children ? navbarDropdown(data, index) : navbarItem(data, index);
       const attrs = data.if ? { ngIf: data.if } : {};
@@ -46,10 +45,10 @@ function navbarItem (data, tabIndex = 0) {
   return h('a.nav-bar__link', {
     uiSrefActive: `{ "is-active": "${data.rootSref || data.sref}" }`,
     uiSref: data.sref,
-    dataViewType: data.dataViewType,
+    dataViewType: data.dataViewType || '',
     tabindex: String(tabIndex)
   }, [
-    h('cf-icon', { name: data.icon }),
+    data.icon && h('cf-icon', { name: data.icon }),
     h('span.nav-bar__list-label', [data.title])
   ]);
 }
@@ -58,12 +57,12 @@ function navbarDropdown (data, tabIndex = 0) {
   return [
     h('a.nav-bar__link.app-top-bar__menu-trigger', {
       role: 'button',
-      dataViewType: data.dataViewType,
+      dataViewType: data.dataViewType || '',
       tabindex: String(tabIndex),
       cfContextMenuTrigger: 'cf-context-menu-trigger',
       uiSrefActive: `{ "is-active": "${data.rootSref || data.sref}" }`
     }, [
-      h('cf-icon', { name: data.icon }),
+      data.icon && h('cf-icon', { name: data.icon }),
       h('span.nav-bar__list-label', [data.title]),
       h('cf-icon.icon-dd-arrow-down.pull-right', {
         name: 'dd-arrow-down'
