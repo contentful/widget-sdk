@@ -3,10 +3,10 @@
 This guide explains how to get code changes deployed.
 
 1. [Create a release PR from your branch to `master`](#creating-a-release-pr)
-1. [Get code reviewed and approved](#code-review)
-1. [Get QA approval](#qa-approval)
-1. [Merge to master](#merging-a-release-pr)
-1. [Deploy `master` to `production`](#deploying-to-production)
+2. [Get code reviewed and approved](#code-review)
+3. [Get QA approval](#qa-approval)
+4. [Merge to master](#merging-a-release-pr)
+5. [Deploy `master` to `production`](#deploying-to-production)
 
 
 Although generally this process should be followed closely you may deviate from
@@ -155,3 +155,13 @@ following conditions:
 Changes during code review and testing must be added on top of the branch head.
 No force pushes are allowed. Theses commits must be squashed after the review
 and tests have finished.
+
+### Reverting a deploy
+
+This process is fairly straightforward.
+
+1. Branch off `master`
+2. Find the commit you want to revert and
+`git revert` it. If it is a merge commit, don't forget to use the `-m` flag
+with `git revert`
+3. [Follow the usual code submission and review process](#code-submission-and-release-process)
