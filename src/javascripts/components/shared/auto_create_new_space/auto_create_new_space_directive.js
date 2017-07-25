@@ -196,7 +196,7 @@ angular.module('contentful')
         var now = moment();
         var diff = now.diff(creationDate, 'seconds');
 
-        return diff >= SECONDS_IN_WEEK;
+        return diff <= SECONDS_IN_WEEK;
       }
 
       function getFirstOwnedOrgWithoutSpaces (user, spacesByOrg) {
