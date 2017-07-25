@@ -170,7 +170,8 @@ function renderRolesContainer (props) {
     backgroundColor: Colors.elementLightest,
     height: '230px',
     position: 'relative',
-    overflowX: 'scroll'
+    overflowX: 'hidden',
+    overflowY: 'auto'
   }, renderRolesArea(props));
 }
 
