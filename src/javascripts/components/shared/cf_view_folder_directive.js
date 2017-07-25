@@ -4,6 +4,7 @@ angular.module('contentful')
 .directive('cfViewFolder', ['require', function (require) {
   var spaceContext = require('spaceContext');
   var openRoleSelector = require('app/RoleSelector').default;
+  var isFeatureEnabled = require('analytics/OrganizationTargeting').default;
 
   return {
     restrict: 'A',
@@ -13,6 +14,16 @@ angular.module('contentful')
         $scope.regularFolder = id !== 'default';
       });
 
+      if (isFeatureEnabled('view_roles')) {
+        $scope.isVisible = isVisible;
+        $scope.canAssignViewRoles = canAssignViewRoles;
+        $scope.editViewRoles = editViewRoles;
+      } else {
+        $scope.isVisible = _.constant(true);
+        $scope.canAssignViewRoles = _.constant(false);
+        $scope.editViewRoles = _.noop;
+      }
+
       /**
        * If the view has a `roles` property we only return true if the
        * user has one of the roles given.
@@ -20,7 +31,7 @@ angular.module('contentful')
        * We always return true if the user is an admin or if the view
        * does not have the `roles` property.
        */
-      $scope.isVisible = function (view) {
+      function isVisible (view) {
         var spaceMembership = spaceContext.space.data.spaceMembership;
 
         if (spaceMembership.admin) {
@@ -36,26 +47,26 @@ angular.module('contentful')
             return true;
           }
         }
-      };
+      }
 
       /**
        * Only views for Entries can be assigned role(s)
        */
-      $scope.canAssignViewRoles = function () {
+      function canAssignViewRoles () {
         return !$scope.assetContentType;
-      };
+      }
 
       /**
        * Opens a dialog when saved view's visibility setting is clicked.
        * Updates the view locally and propagates the change to the backend.
        */
-      $scope.editViewRoles = function (view) {
+      function editViewRoles (view) {
         openRoleSelector(spaceContext.endpoint, view.roles)
           .then(function (roles) {
             view.roles = roles;
             $scope.saveViews();
           });
-      };
+      }
     }]
   };
 }]);
