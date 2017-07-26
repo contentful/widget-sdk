@@ -32,6 +32,10 @@ function checkProps (props) {
   forEach(props, (value, key) => {
     if (key === 'style') {
       // nothing to check
+    } else if (key === 'ref') {
+      if (typeof value !== 'function') {
+        throw new TypeError('Ref handler must be a function');
+      }
     } else if (key.substr(0, 3) === 'on-') {
       if (typeof value !== 'function') {
         throw new TypeError(`Event handler ${key} must be a function`);

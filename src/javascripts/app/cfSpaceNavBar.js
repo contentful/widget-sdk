@@ -13,56 +13,57 @@ angular.module('contentful')
   return {
     template: template(),
     restrict: 'E',
-    replace: true,
-    controller: ['$scope', function ($scope) {
-      $scope.canNavigateTo = function (section) {
+    scope: {},
+    controllerAs: 'nav',
+    controller: function () {
+      this.canNavigateTo = function (section) {
         if (!spaceContext.space || spaceContext.space.isHibernated()) {
           return false;
         } else {
           return accessChecker.getSectionVisibility()[section];
         }
       };
-    }]
+    }
   };
 
   function template () {
     return navBar([
       {
-        if: 'canNavigateTo("spaceHome")',
+        if: 'nav.canNavigateTo("spaceHome")',
         sref: 'spaces.detail.home',
         dataViewType: 'space-home',
         icon: 'nav-home',
         title: 'Space home'
       }, {
-        if: 'canNavigateTo("contentType")',
+        if: 'nav.canNavigateTo("contentType")',
         sref: 'spaces.detail.content_types.list',
         rootSref: 'spaces.detail.content_types',
         dataViewType: 'content-type-list',
         icon: 'nav-ct',
         title: 'Content model'
       }, {
-        if: 'canNavigateTo("entry")',
+        if: 'nav.canNavigateTo("entry")',
         sref: 'spaces.detail.entries.list',
         rootSref: 'spaces.detail.entries',
         dataViewType: 'entry-list',
         icon: 'nav-entries',
         title: 'Content'
       }, {
-        if: 'canNavigateTo("asset")',
+        if: 'nav.canNavigateTo("asset")',
         sref: 'spaces.detail.assets.list',
         rootSref: 'spaces.detail.assets',
         dataViewType: 'asset-list',
         icon: 'nav-media',
         title: 'Media'
       }, {
-        if: 'canNavigateTo("apiKey")',
+        if: 'nav.canNavigateTo("apiKey")',
         sref: 'spaces.detail.api.home',
         rootSref: 'spaces.detail.api',
         dataViewType: 'api-home',
         icon: 'nav-api',
         title: 'APIs'
       }, {
-        if: 'canNavigateTo("settings")',
+        if: 'nav.canNavigateTo("settings")',
         dataViewType: 'space-settings',
         rootSref: 'spaces.detail.settings',
         icon: 'nav-settings',

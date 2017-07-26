@@ -1,6 +1,6 @@
 import * as K from 'helpers/mocks/kefir';
 
-describe('cfAccountOrganizationsNav directive', function () {
+describe('cfOrganizationsOldNav directive', function () {
   beforeEach(function () {
     module('contentful/test');
     this.OrganizationRoles = this.$inject('services/OrganizationRoles');
@@ -12,7 +12,7 @@ describe('cfAccountOrganizationsNav directive', function () {
     this.OrganizationRoles.isOwnerOrAdmin = sinon.stub().returns(true);
 
     this.compile = function () {
-      return this.$compile('<cf-account-organizations-nav />');
+      return this.$compile('<cf-organizations-old-nav />');
     };
     this.orgs = [{
       subscriptionPlan: {limits: {features: {offsiteBackup: true}}},

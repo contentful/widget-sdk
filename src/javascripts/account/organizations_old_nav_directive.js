@@ -1,7 +1,7 @@
 angular.module('contentful')
-.directive('cfAccountOrganizationsNav', ['require', function (require) {
+.directive('cfOrganizationsOldNav', ['require', function (require) {
   return {
-    template: require('account/OrganizationsNav').default(),
+    template: require('account/OrganizationsOldNav').default(),
     restrict: 'E',
     scope: {},
     controller: 'organizationsNavController',
