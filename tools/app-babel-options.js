@@ -29,6 +29,9 @@ export const options = {
     ['transform-es2015-destructuring', {options: 'loose'}],
     // For function parameters enables destructuring, defaults, rest
     ['transform-es2015-parameters'],
+    // Supports the `...` expression. E.g. `let x = [...list, 2]`.
+    // Loose option: All iterable are assumed to be arrays.
+    ['transform-es2015-spread', {loose: true}],
     ['transform-es2015-shorthand-properties'],
     ['transform-es2015-arrow-functions']
   ],
