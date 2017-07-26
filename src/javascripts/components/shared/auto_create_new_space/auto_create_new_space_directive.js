@@ -190,13 +190,23 @@ angular.module('contentful')
           });
       }
 
-      function handleSpaceAutoCreateError (e) {
-        $scope.autoSpaceCreationError = e;
+      function handleSpaceAutoCreateError () {
         dialog.cancel();
       }
 
+      function getOwnedOrgs (orgMemberships) {
+        // filter out orgs user owns
+        return orgMemberships.filter(function (org) {
+          return org.role === 'owner';
+        });
+      }
+
       function qualifyUser (user, spacesByOrg) {
-        return isRecentUser(user) && !hasAnOrgWithSpaces(spacesByOrg);
+        return isRecentUser(user) && !hasAnOrgWithSpaces(spacesByOrg) && ownsAtleastOneOrg(user);
+      }
+
+      function ownsAtleastOneOrg (user) {
+        return !!getOwnedOrgs(user.organizationMemberships).length;
       }
 
       function hasAnOrgWithSpaces (spacesByOrg) {
@@ -215,11 +225,7 @@ angular.module('contentful')
       }
 
       function getFirstOwnedOrgWithoutSpaces (user, spacesByOrg) {
-        var organizationMemberships = user.organizationMemberships;
-        // filter out orgs user owns
-        var ownedOrgs = organizationMemberships.filter(function (org) {
-          return org.role === 'owner';
-        });
+        var ownedOrgs = getOwnedOrgs(user.organizationMemberships);
 
         // return the first org that has no spaces
         var orgMembership = _.find(ownedOrgs, function (ownedOrg) {
