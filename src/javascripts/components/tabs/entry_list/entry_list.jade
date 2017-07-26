@@ -44,13 +44,14 @@ header.workbench-header
         table
           thead
             tr
-              th.x--large-cell(
+              th.th__checkbox-cell.x--large-cell(
                 aria-label="cell-display-name"
                 ng-if="!context.view.contentTypeId || !displayFieldForFilteredContentType()")
-                div.table__checkbox-cell
+                div
                   label(ng-click="$event.stopPropagation()")
                     input(type="checkbox" cf-selection="entries" ng-click="selection.toggleList(entries, $event)" ng-show="entries.length > 0" tabindex="-1")
-                  | Name
+                  div
+                    | Name
               th.x--medium-cell(
                 aria-label="cell-content-type"
                 ng-if="!context.view.contentTypeId && !context.view.contentTypeHidden")
@@ -129,9 +130,9 @@ header.workbench-header
               ng-init="linkToEntry = 'spaces.detail.entries.detail({ entryId: entry.getId() })'"
               ng-class="{'x--highlight': selection.isSelected(entry)}"
               ui-sref="{{linkToEntry}}")
-              td.x--large-cell(aria-label="cell-display-name")
-                div.table__checkbox-cell.x--multline
-                  label(ng-click="$event.stopPropagation();")
+              td.x--large-cell.td__checkbox-cell(aria-label="cell-display-name")
+                div
+                  label(ng-click="$event.stopPropagation()")
                     input(type="checkbox" cf-selection="entry" tabindex="-1" aria-label="cell-select" ng-click="selection.toggle(entry, $event);")
                   a(ui-sref="{{linkToEntry}}" ng-click="$event.stopPropagation();") {{entryTitle(entry)}}
               +td.x--medium-cell(
