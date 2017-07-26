@@ -14,15 +14,16 @@
  */
 angular.module('cf.ui')
 .directive('cfIcon', ['require', function (require) {
-  var icons = require('icons');
+  var createMountPoint = require('ui/Framework/DOMRenderer').default;
   var uniquifyIds = require('globalSvgIdUniquifier').uniquifyIds;
 
   return {
     restrict: 'E',
     link: function (_scope, el, attrs) {
-      // TODO: Cache parsed element for <cf-icon/> using the same svg.
-      var iconTemplate = icons[attrs.name];
-      var iconElem = $(iconTemplate).get(0);
+      var mountPoint = createMountPoint(el.get(0));
+      mountPoint.render(require('svg/' + attrs.name).default);
+
+      var iconElem = el.children().get(0);
       if (!iconElem) {
         return;
       }
@@ -44,7 +45,6 @@ angular.module('cf.ui')
       }
 
       uniquifyIds(iconElem);
-      el.append(iconElem);
     }
   };
 }]);
