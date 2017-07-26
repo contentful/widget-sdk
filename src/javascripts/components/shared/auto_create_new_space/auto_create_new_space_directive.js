@@ -118,7 +118,7 @@ angular.module('contentful')
       function createEmptySpace (template) {
         var org = getFirstOwnedOrgWithoutSpaces(K.getValue(user$), K.getValue(spacesByOrganization$));
         var data = {
-          name: 'Demo catalogue',
+          name: 'Sample project',
           defaultLocale: 'en-US'
         };
 
