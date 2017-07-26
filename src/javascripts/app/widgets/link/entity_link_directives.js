@@ -95,7 +95,7 @@ angular.module('cf.app')
   });
   if ($scope.contentType) {
     $scope.contentType.then(function (ct) {
-      $scope.contentTypeName = ct.data.name;
+      $scope.contentTypeName = _.get(ct, 'data.name');
     });
   }
 
