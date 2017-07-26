@@ -61,7 +61,9 @@ angular.module('contentful')
 
       function setTitle (title) {
         if (isTracking()) {
-          updateInput(makeSlug(title));
+          var val = makeSlug(title);
+          updateInput(val);
+          field.setValue(val);
         }
         trackingTitle = title;
       }
