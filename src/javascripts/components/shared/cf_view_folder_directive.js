@@ -14,7 +14,7 @@ angular.module('contentful')
         $scope.regularFolder = id !== 'default';
       });
 
-      if (isFeatureEnabled('view_roles')) {
+      if (isFeatureEnabled('view_roles', spaceContext.space)) {
         $scope.isVisible = isVisible;
         $scope.canAssignViewRoles = canAssignViewRoles;
         $scope.editViewRoles = editViewRoles;

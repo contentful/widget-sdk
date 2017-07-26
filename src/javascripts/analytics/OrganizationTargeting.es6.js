@@ -1,8 +1,7 @@
-import spaceContext from 'spaceContext';
 import {get as getAtPath} from 'lodash';
 import md5 from 'md5';
 
-const ORG_ID_PATH = ['space', 'data', 'organization', 'sys', 'id'];
+const ORG_ID_PATH = ['data', 'organization', 'sys', 'id'];
 
 /**
  * @ngdoc service
@@ -36,14 +35,20 @@ const FEATURE_TO_ORG_IDS = {
  * @ngdoc method
  * @name analytics/OrganizationTargeting#default
  * @param {string} featureKey
+ * @param {Space}  space
  * @returns {boolean}
  * @description
  * Returns `true` if the feature with `featureKey`
  * is enabled for the current organization.
  * Returns `false` otherwise.
  */
-export default function isEnabled (featureKey) {
-  const hashes = FEATURE_TO_ORG_IDS[featureKey] || [];
-  const orgId = getAtPath(spaceContext, ORG_ID_PATH);
-  return hashes.indexOf(md5(orgId)) > -1;
+export default function isEnabled (featureKey, space) {
+  const hashes = FEATURE_TO_ORG_IDS[featureKey];
+  const orgId = getAtPath(space, ORG_ID_PATH);
+
+  if (Array.isArray(hashes)) {
+    return hashes.indexOf(md5(orgId)) > -1;
+  } else {
+    throw new Error(`Unknown feature: ${featureKey}`);
+  }
 }
