@@ -1,12 +1,12 @@
-'use strict';
-var fs = require('fs');
-var PEG = require('pegjs');
+'use strict'
+const fs = require('fs')
+const PEG = require('pegjs')
 
-var grammar = fs.readFileSync('app/assets/commonjs_modules/user_interface/search.pegjs', 'utf8');
-var parser = PEG.buildParser(grammar, {trackLineAndColumn: true});
+const grammar = fs.readFileSync('app/assets/commonjs_modules/user_interface/search.pegjs', 'utf8')
+const parser = PEG.buildParser(grammar, {trackLineAndColumn: true})
 try {
-  var output = parser.parse('George Clooney ');
-  console.log(JSON.stringify(output, null, 2));
+  const output = parser.parse('George Clooney ')
+  console.log(JSON.stringify(output, null, 2))
 } catch (e) {
-  console.log(JSON.stringify(e, null, 2, true));
+  console.log(JSON.stringify(e, null, 2, true))
 }

@@ -18,14 +18,14 @@ const MANIFEST_PATHS = [
  * The application is configured with config/development.json.
  */
 export default function* serve () {
-  let assetsDir = P.resolve('build', 'app')
-  let configPath = P.resolve('config', 'development.json')
-  let [manifest, config] = yield B.all([
+  const assetsDir = P.resolve('build', 'app')
+  const configPath = P.resolve('config', 'development.json')
+  const [manifest, config] = yield B.all([
     readMergeJSON(MANIFEST_PATHS),
     readJSON(configPath)
   ])
 
-  let app = express()
+  const app = express()
   app.use('/app', express.static(assetsDir))
   app.get('*', function (req, res, next) {
     if (req.accepts('html')) {
@@ -38,13 +38,13 @@ export default function* serve () {
   })
   app.use((_, res) => res.sendStatus(404))
 
-  let server = createServer(app)
+  const server = createServer(app)
   yield new B.Promise(function (resolve, reject) {
     server.listen(3001, resolve)
     server.once('error', reject)
   })
 
-  let {address, port} = server.address()
+  const {address, port} = server.address()
   console.log(`Serving Contentful Web App at ${address}:${port}`)
   return () => server.close()
 }

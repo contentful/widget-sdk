@@ -2,7 +2,7 @@ import AJV from 'ajv'
 import schema from './config-schema'
 
 export function validate (data) {
-  let ajv = new AJV()
+  const ajv = new AJV()
   if (!ajv.validate(schema, data)) {
     throw new ValidationError(ajv.errors)
   }
