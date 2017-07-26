@@ -8,16 +8,14 @@ export default h('svg', {
   'xmlns:xlink': 'http://www.w3.org/1999/xlink'
 }, [
   h('defs', [
-    h('rect#a', {
-      id: 'a',
+    h('rect#entries--a', {
       width: '13',
       height: '16',
       x: '2',
       y: '2.375',
       rx: '2'
     }),
-    h('mask#d', {
-      id: 'd',
+    h('mask#entries--d', {
       width: '13',
       height: '16',
       x: '0',
@@ -25,18 +23,16 @@ export default h('svg', {
       fill: '#fff'
     }, [
       h('use', {
-        'xlink:href': '#a'
+        'xlink:href': '#entries--a'
       })
     ]),
-    h('rect#b', {
-      id: 'b',
+    h('rect#entries--b', {
       width: '13',
       height: '16',
       y: '.375',
       rx: '2'
     }),
-    h('mask#e', {
-      id: 'e',
+    h('mask#entries--e', {
       width: '13',
       height: '16',
       x: '0',
@@ -44,17 +40,17 @@ export default h('svg', {
       fill: '#fff'
     }, [
       h('use', {
-        'xlink:href': '#b'
+        'xlink:href': '#entries--b'
       })
     ]),
-    h('mask#c', [
+    h('mask#entries--c', [
       h('rect', {
         width: '100%',
         height: '100%',
         fill: '#fff'
       }),
       h('use', {
-        'xlink:href': '#b'
+        'xlink:href': '#entries--b'
       })
     ])
   ]),
@@ -65,24 +61,24 @@ export default h('svg', {
   }, [
     h('use', {
       strokeWidth: '2',
-      mask: 'url(#b)',
+      mask: 'url(#entries--b)',
       'xlink:href': '#rect'
     }),
     h('g', {
-      mask: 'url(#c)'
+      mask: 'url(#entries--c)'
     }, [
       h('use', {
         fill: 'currentColor',
         fillOpacity: '.1',
         strokeWidth: '2',
-        mask: 'url(#d)',
-        'xlink:href': '#a'
+        mask: 'url(#entries--d)',
+        'xlink:href': '#entries--a'
       })
     ]),
     h('use', {
       strokeWidth: '2',
-      mask: 'url(#e)',
-      'xlink:href': '#b'
+      mask: 'url(#entries--e)',
+      'xlink:href': '#entries--b'
     }),
     h('g', {
       strokeLinecap: 'round',

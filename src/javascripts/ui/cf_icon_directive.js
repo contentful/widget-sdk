@@ -15,7 +15,6 @@
 angular.module('cf.ui')
 .directive('cfIcon', ['require', function (require) {
   var createMountPoint = require('ui/Framework/DOMRenderer').default;
-  var uniquifyIds = require('globalSvgIdUniquifier').uniquifyIds;
 
   return {
     restrict: 'E',
@@ -43,8 +42,6 @@ angular.module('cf.ui')
       if (!isNaN(setHeight)) {
         iconElem.setAttribute('height', setHeight);
       }
-
-      uniquifyIds(iconElem);
     }
   };
 }]);

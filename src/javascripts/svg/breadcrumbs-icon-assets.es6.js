@@ -8,15 +8,13 @@ export default h('svg', {
   'xmlns:xlink': 'http://www.w3.org/1999/xlink'
 }, [
   h('defs', [
-    h('rect#a', {
-      id: 'a',
+    h('rect#breadcrumbs-icon-assets--a', {
       width: '16',
       height: '15.59',
       y: '.2',
       rx: '2'
     }),
-    h('mask#c', {
-      id: 'c',
+    h('mask#breadcrumbs-icon-asset--c', {
       width: '16',
       height: '15.59',
       x: '0',
@@ -24,15 +22,13 @@ export default h('svg', {
       fill: '#fff'
     }, [
       h('use', {
-        'xlink:href': '#a'
+        'xlink:href': '#breadcrumbs-icon-asset--a'
       })
     ]),
-    h('path#b', {
-      id: 'b',
+    h('path#breadcrumbs-icon-asset--b', {
       d: 'M2 4.567v-.57A2 2 0 0 1 4.004 2H15.99C17.1 2 18 2.895 18 3.994v12.012C18 17.107 17.1 18 16.006 18h-.356'
     }),
-    h('mask#d', {
-      id: 'd',
+    h('mask#breadcrumbs-icon-asset--d', {
       width: '16',
       height: '16',
       x: '0',
@@ -40,7 +36,7 @@ export default h('svg', {
       fill: '#fff'
     }, [
       h('use', {
-        'xlink:href': '#b'
+        'xlink:href': '#breadcrumbs-icon-asset--b'
       })
     ])
   ]),
@@ -53,8 +49,8 @@ export default h('svg', {
       fill: '#FFF',
       fillOpacity: '0',
       strokeWidth: '2',
-      mask: 'url(#c)',
-      'xlink:href': '#a'
+      mask: 'url(#breadcrumbs-icon-asset--c)',
+      'xlink:href': '#breadcrumbs-icon-asset--a'
     }),
     h('path', {
       strokeLinecap: 'round',
@@ -69,9 +65,9 @@ export default h('svg', {
     }),
     h('use', {
       strokeWidth: '2',
-      mask: 'url(#d)',
+      mask: 'url(#breadcrumbs-icon-asset--d)',
       transform: 'rotate(90 10 10)',
-      'xlink:href': '#b'
+      'xlink:href': '#breadcrumbs-icon-asset--b'
     })
   ])
 ]);

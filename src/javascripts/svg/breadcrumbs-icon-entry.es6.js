@@ -8,14 +8,12 @@ export default h('svg', {
   'xmlns:xlink': 'http://www.w3.org/1999/xlink'
 }, [
   h('defs', [
-    h('rect#a', {
-      id: 'a',
+    h('rect#breadcrumbs-icon-entry--a', {
       width: '16',
       height: '16',
       rx: '2'
     }),
-    h('mask#b', {
-      id: 'b',
+    h('mask#breadcrumbs-icon-entry--b', {
       width: '16',
       height: '16',
       x: '0',
@@ -23,7 +21,7 @@ export default h('svg', {
       fill: '#fff'
     }, [
       h('use', {
-        'xlink:href': '#a'
+        'xlink:href': '#breadcrumbs-icon-entry--a'
       })
     ])
   ]),
@@ -34,8 +32,8 @@ export default h('svg', {
   }, [
     h('use', {
       strokeWidth: '2',
-      mask: 'url(#b)',
-      'xlink:href': '#a'
+      mask: 'url(#breadcrumbs-icon-entry--b)',
+      'xlink:href': '#breadcrumbs-icon-entry--a'
     }),
     h('path', {
       d: 'M3.7 4.2h8.6M3.7 6.9h8.6M3.7 9.6h8.6m-8.6 2.5h6.5',

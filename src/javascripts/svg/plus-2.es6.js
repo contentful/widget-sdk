@@ -8,8 +8,7 @@ export default h('svg', {
   'xmlns:xlink': 'http://www.w3.org/1999/xlink'
 }, [
   h('defs', [
-    h('path#c', {
-      id: 'c',
+    h('path#plus-2--plus-segment', {
       fill: 'currentColor',
       d: 'M7.5 4.5h2v8h-2z'
     })
@@ -23,7 +22,7 @@ export default h('svg', {
         cy: '8.5',
         r: '49%',
         opacity: '.5',
-        filter: 'url(#a)'
+        filter: 'url(#plus-2--a)'
       }),
       h('circle', {
         cx: '8.5',
@@ -31,20 +30,20 @@ export default h('svg', {
         r: '46%',
         stroke: 'currentColor',
         fill: 'transparent',
-        filter: 'url(#b)'
+        filter: 'url(#plus-2--b)'
       })
     ]),
     h('g', [
       h('use', {
-        'xlink:href': '#c'
+        'xlink:href': '#plus-2--plus-segment'
       }),
       h('use', {
-        'xlink:href': '#c',
+        'xlink:href': '#plus-2--plus-segment',
         transform: 'rotate(-90 8.5 8.5)'
       })
     ])
   ]),
-  h('filter#a', [
+  h('filter#plus-2--a', [
     h('feColorMatrix', {
       in: 'SourceGraphic',
       type: 'saturate',
@@ -65,7 +64,7 @@ export default h('svg', {
       })
     ])
   ]),
-  h('filter#b', [
+  h('filter#plus-2--b', [
     h('feColorMatrix', {
       in: 'SourceGraphic',
       type: 'saturate',

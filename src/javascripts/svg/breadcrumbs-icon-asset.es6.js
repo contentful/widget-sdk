@@ -8,15 +8,13 @@ export default h('svg', {
   'xmlns:xlink': 'http://www.w3.org/1999/xlink'
 }, [
   h('defs', [
-    h('rect#a', {
-      id: 'a',
+    h('rect#breadcrumbs-icon-assets--a', {
       width: '16',
       height: '15.59',
       y: '.2',
       rx: '2'
     }),
-    h('mask#b', {
-      id: 'b',
+    h('mask#breadcrumbs-icon-assets--b', {
       width: '16',
       height: '15.59',
       x: '0',
@@ -24,7 +22,7 @@ export default h('svg', {
       fill: '#fff'
     }, [
       h('use', {
-        'xlink:href': '#a'
+        'xlink:href': '#breadcrumbs-icon-assets--a'
       })
     ])
   ]),
@@ -37,8 +35,8 @@ export default h('svg', {
     h('use', {
       fill: '#FFF',
       strokeWidth: '2',
-      mask: 'url(#b)',
-      'xlink:href': '#a'
+      mask: 'url(#breadcrumbs-icon-assets--b)',
+      'xlink:href': '#breadcrumbs-icon-assets--a'
     }),
     h('path', {
       strokeLinecap: 'round',

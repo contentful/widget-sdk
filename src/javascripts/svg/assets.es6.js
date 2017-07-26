@@ -8,15 +8,13 @@ export default h('svg', {
   viewBox: '-1 -1 18 18'
 }, [
   h('defs', [
-    h('rect#a', {
-      id: 'a',
+    h('rect#assets-a', {
       width: '13.665',
       height: '13.314',
       y: '2.175',
       rx: '2'
     }),
-    h('mask#b', {
-      id: 'b',
+    h('mask#assets-mask', {
       width: '13.665',
       height: '13.314',
       x: '0',
@@ -24,7 +22,7 @@ export default h('svg', {
       fill: '#fff'
     }, [
       h('use', {
-        'xlink:href': '#a'
+        'xlink:href': '#assets-a'
       })
     ]),
     h('mask#c', [
@@ -34,7 +32,7 @@ export default h('svg', {
         fill: '#fff'
       }),
       h('use', {
-        'xlink:href': '#a'
+        'xlink:href': '#assets-a'
       })
     ])
   ]),
@@ -45,8 +43,8 @@ export default h('svg', {
   }, [
     h('use', {
       strokeWidth: '2',
-      mask: 'url(#b)',
-      'xlink:href': '#a'
+      mask: 'url(#assets-mask)',
+      'xlink:href': '#assets-a'
     }),
     h('path', {
       mask: 'url(#c)',
