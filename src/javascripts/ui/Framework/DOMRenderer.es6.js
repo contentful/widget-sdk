@@ -38,6 +38,8 @@ function asPreact (tree) {
         // expects the keys to be camel-cased.
         if (key.substr(0, 3) === 'on-') {
           return camelCase(key);
+        } else if (key === 'view-box') {
+          return camelCase(key);
         } else {
           return key;
         }
