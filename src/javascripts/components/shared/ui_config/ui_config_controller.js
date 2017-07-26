@@ -1,5 +1,9 @@
 'use strict';
 angular.module('contentful')
+/**
+ * TODO Remove this controller. Move `saveUiConfig` to where it is
+ * needed and load and normalize the configuration from `spaceContext`.
+ */
 .controller('UiConfigController', ['$scope', '$injector', function ($scope, $injector) {
 
   var $q = $injector.get('$q');
@@ -41,8 +45,9 @@ angular.module('contentful')
     .then(function (config) {
       $scope.uiConfig = config;
     })
-    .catch(function () {
+    .catch(function (err) {
       loadUiConfig();
+      return $q.reject(err);
     });
   };
 

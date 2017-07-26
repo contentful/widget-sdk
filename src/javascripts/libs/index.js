@@ -30,7 +30,8 @@ angular.module('cf.libs', [])
   .constant('worf', require('@contentful/worf'))
   .constant('Pikaday', require('pikaday'))
   .constant('validation', require('@contentful/validation'))
-  .constant('widgetMap', require('@contentful/widget-map'));
+  .constant('widgetMap', require('@contentful/widget-map'))
+  .constant('md5', require('blueimp-md5'));
 window.dotty = require('./dottie_wrapper.js');
 
 // This needs to be called after everything else so we override any
