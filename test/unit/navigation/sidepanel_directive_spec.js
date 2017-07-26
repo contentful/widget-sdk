@@ -3,19 +3,28 @@ import * as K from 'helpers/mocks/kefir';
 
 describe('cfNavSidePanel directive', () => {
   let $stateParamsOrgId = '';
-  const $stateParams = Object.defineProperty({}, 'orgId', {
-    get () {
-      return $stateParamsOrgId;
-    }
-  });
+  let spaceContextData;
+
+  const $state = {
+    includes: sinon.stub(),
+    params: Object.defineProperty({}, 'orgId', {
+      get () {
+        return $stateParamsOrgId;
+      }
+    })
+  };
 
   const CreateSpace = {
     showDialog: sinon.stub()
   };
 
   const spaceContext = {
-    getData: sinon.stub()
-
+    getData: sinon.stub(),
+    space: Object.defineProperty({}, 'data', {
+      get () {
+        return spaceContextData;
+      }
+    })
   };
   const accessChecker = {
     canCreateSpaceInOrganization: sinon.stub(),
@@ -37,7 +46,7 @@ describe('cfNavSidePanel directive', () => {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       // stub $stateParams
-      $provide.value('$stateParams', $stateParams);
+      $provide.value('$state', $state);
       $provide.value('services/CreateSpace', CreateSpace);
       $provide.value('states/Navigator', Navigator);
       $provide.value('spaceContext', spaceContext);
@@ -85,36 +94,50 @@ describe('cfNavSidePanel directive', () => {
       this.$apply();
     };
 
+    this.emulateSettingsPage = function (isSettingsPage, org) {
+      $state.includes.returns(isSettingsPage);
+      $stateParamsOrgId = org && org.sys.id;
+    };
+
+    this.emulateSpacePage = function (space) {
+      spaceContextData = space;
+    };
+
     this.verifyScopePropsBasedOnOrg = function (org, isOwnerOrAdmin, canCreateSpaceInOrg, viewingOrgSettings) {
       expect(this.$scope.canGotoOrgSettings).toEqual(isOwnerOrAdmin);
       expect(this.$scope.canCreateSpaceInCurrOrg).toEqual(canCreateSpaceInOrg);
       expect(this.$scope.twoLetterOrgName).toEqual(org.name.slice(0, 2).toUpperCase());
       expect(this.$scope.viewingOrgSettings).toEqual(viewingOrgSettings);
     };
+
+    this.expectSidePanelVisibility =
+      expectVisibility(this.$sidePanel, 'nav-sidepanel--slide-in', 'nav-sidepanel--slide-out');
+
+    this.expectDropdownVisibility = expectVisibility(
+      this.$sidePanel.find('.nav-sidepanel__org-list-container'),
+      'nav-sidepanel__org-list-container--is-visible',
+      'nav-sidepanel__org-list-container--is-not-visible'
+    );
+
   });
 
   afterEach(function () {
-    // reset stub call counts
+    // reset stubs
+    $state.includes.reset();
     spaceContext.getData.reset();
     accessChecker.canCreateSpaceInOrganization.reset();
     OrganizationRoles.isOwnerOrAdmin.reset();
     Navigator.go.reset();
-
-    // reset $spaceParams.orgId
     $stateParamsOrgId = '';
-
-    // delete space data
-    delete spaceContext.space;
+    spaceContextData = undefined;
   });
 
   it('derives properties from currOrg', function () {
     const org = this.orgs[2];
-
-    OrganizationRoles.isOwnerOrAdmin = sinon.stub().returns(true);
-    accessChecker.canCreateSpaceInOrganization = sinon.stub().returns(true);
-
-    this.$scope.setCurrentOrg(org);
-    $stateParamsOrgId = org.sys.id; // to emulate user on org settings page
+    OrganizationRoles.isOwnerOrAdmin.returns(true);
+    accessChecker.canCreateSpaceInOrganization.returns(true);
+    this.emulateSettingsPage(true, org);
+    this.$scope.setCurrOrg(org);
     this.$scope.$apply();
     this.verifyScopePropsBasedOnOrg(org, true, true, true);
   });
@@ -128,150 +151,134 @@ describe('cfNavSidePanel directive', () => {
     expect(this.$scope.spacesByOrg).toEqual(this.spacesByOrg);
   });
 
-  it('it sets curr org based on commit logic', function () {
-    // prefer org id in stateParams over all
-    $stateParamsOrgId = 'test-org-id-2';
-    this.$scope.$digest();
-    expect(this.$scope.currOrg).toEqual(this.orgs[1]);
-
-    // else choose org of current space
-    $stateParamsOrgId = '';
-    spaceContext.organizationContext = {
-      organization: this.orgs[2]
-    };
-    this.$scope.$digest();
-    expect(this.$scope.currOrg).toEqual(this.orgs[2]);
-
-    // else choose first org from list of orgs
-    $stateParamsOrgId = '';
-    spaceContext.organizationContext = null;
-    this.$scope.$digest();
-    expect(this.$scope.currOrg).toEqual(this.orgs[0]);
-  });
-
-  it('updates viewingOrgSettings flag based on curr org id and org id in url', function () {
-    const orgId = 'test-org-id-2';
-
-    $stateParamsOrgId = orgId;
-    this.$scope.currOrg = this.orgs[1];
-    this.$scope.$digest();
-    expect(this.$scope.viewingOrgSettings).toEqual(true);
-
-    $stateParamsOrgId = 1;
-    this.$scope.$digest();
-    expect(this.$scope.viewingOrgSettings).toEqual(false);
-  });
-
   it('updates curr space based on space context', function () {
+    const space = {name: 'test-space-1-1', sys: {id: 'test-space-id-1-1'}};
     expect(this.$scope.currSpace).toEqual(undefined);
-    spaceContext.space = {
-      data: {name: 'test-space-1-1', sys: {id: 'test-space-id-1-1'}}
-    };
+    this.emulateSpacePage(space);
     this.$scope.$apply();
-    expect(this.$scope.currSpace).toEqual(spaceContext.space.data);
+    expect(this.$scope.currSpace).toEqual(space);
   });
 
-  describe('#toggleSidePanel', function () {
-    it('toggles sidepanel visibility based on a property on scope', function () {
-      expect(this.$sidePanel.hasClass('nav-sidepanel--slide-in')).toBe(false);
-      expect(this.$sidePanel.hasClass('nav-sidepanel--slide-out')).toBe(true);
-      this.$scope.orgDropdownIsShown = true;
-      this.$scope.toggleSidePanel();
-      this.$scope.$apply();
-      expect(this.$sidePanel.hasClass('nav-sidepanel--slide-in')).toBe(true);
-      expect(this.$sidePanel.hasClass('nav-sidepanel--slide-out')).toBe(false);
-      expect(this.$scope.orgDropdownIsShown).toBe(false);
+  describe('#openSidePanel', function () {
+    it('it sets curr org based on commit logic', function () {
+      // prefer org id in stateParams over all
+      $stateParamsOrgId = 'test-org-id-2';
+      this.$scope.openSidePanel();
+      expect(this.$scope.currOrg).toEqual(this.orgs[1]);
+
+      // else choose org of current space
+      $stateParamsOrgId = '';
+      spaceContext.organizationContext = {
+        organization: this.orgs[2]
+      };
+      this.$scope.openSidePanel();
+      expect(this.$scope.currOrg).toEqual(this.orgs[2]);
+
+      // else choose first org from list of orgs
+      $stateParamsOrgId = '';
+      spaceContext.organizationContext = null;
+      this.$scope.openSidePanel();
+      expect(this.$scope.currOrg).toEqual(this.orgs[0]);
     });
+
+    it('toggles sidepanel visibility based on a property on scope', function () {
+      expect(this.$scope.sidePanelIsShown).toBe(false);
+      this.expectSidePanelVisibility(false);
+      this.$scope.openSidePanel();
+      this.$scope.$apply();
+      expect(this.$scope.sidePanelIsShown).toBe(true);
+      this.expectSidePanelVisibility(true);
+    });
+
     it('hides org list dropdown', function () {
-      const $dropdownContainer = this.$sidePanel.find('.nav-sidepanel__org-list-container');
-
       this.$scope.toggleOrgsDropdown();
+      this.$scope.openSidePanel();
       this.$scope.$apply();
-      expect($dropdownContainer.hasClass('nav-sidepanel__org-list-container--is-visible')).toBe(true);
-      expect($dropdownContainer.hasClass('nav-sidepanel__org-list-container--is-not-visible')).toBe(false);
+      this.expectDropdownVisibility(false);
+    });
+  });
 
-      this.$scope.toggleSidePanel();
+  describe('#closeSidePanel', function () {
+    it('toggles sidepanel visibility based on a property on scope', function () {
+      const expectSidePanelVisibility =
+        expectVisibility(this.$sidePanel, 'nav-sidepanel--slide-in', 'nav-sidepanel--slide-out');
+
+      this.$scope.openSidePanel();
+      this.$scope.closeSidePanel();
       this.$scope.$apply();
-      expect($dropdownContainer.hasClass('nav-sidepanel__org-list-container--is-visible')).toBe(false);
-      expect($dropdownContainer.hasClass('nav-sidepanel__org-list-container--is-not-visible')).toBe(true);
+      expect(this.$scope.sidePanelIsShown).toBe(false);
+      expectSidePanelVisibility(false);
     });
   });
 
   describe('#toggleOrgsDropdown', function () {
     it('toggles org dropdown visibility based on a property on scope', function () {
-      const $dropdownContainer = this.$sidePanel.find('.nav-sidepanel__org-list-container');
+      const expectDropdownVisibility = expectVisibility(
+        this.$sidePanel.find('.nav-sidepanel__org-list-container'),
+        'nav-sidepanel__org-list-container--is-visible',
+        'nav-sidepanel__org-list-container--is-not-visible'
+      );
 
-      expect($dropdownContainer.hasClass('nav-sidepanel__org-list-container--is-visible')).toBe(false);
-      expect($dropdownContainer.hasClass('nav-sidepanel__org-list-container--is-not-visible')).toBe(true);
+      expectDropdownVisibility(false);
       this.$scope.toggleOrgsDropdown();
       this.$apply();
-      expect($dropdownContainer.hasClass('nav-sidepanel__org-list-container--is-visible')).toBe(true);
-      expect($dropdownContainer.hasClass('nav-sidepanel__org-list-container--is-not-visible')).toBe(false);
+      expectDropdownVisibility(true);
     });
   });
 
-  describe('#setCurrentOrg', function () {
-    it('sets curr org to the argument given to setCurrentOrg method', function () {
+  describe('#setCurrOrg', function () {
+    it('sets curr org to the argument given to setCurrOrg method', function () {
+      this.$scope.setCurrOrg(this.orgs[0]);
       expect(this.$scope.currOrg).toEqual(this.orgs[0]);
-      this.verifyScopePropsBasedOnOrg(this.orgs[0], undefined, undefined, false);
+      this.verifyScopePropsBasedOnOrg(this.orgs[0], undefined, undefined, undefined);
 
       OrganizationRoles.isOwnerOrAdmin = sinon.stub().returns(true);
       accessChecker.canCreateSpaceInOrganization = sinon.stub().returns(true);
-      this.$scope.setCurrentOrg(this.orgs[2]);
+      this.$scope.setCurrOrg(this.orgs[2]);
       this.$scope.$apply();
       expect(this.$scope.currOrg).toEqual(this.orgs[2]);
-      this.verifyScopePropsBasedOnOrg(this.orgs[2], true, true, false);
+      this.verifyScopePropsBasedOnOrg(this.orgs[2], true, true, undefined);
+    });
+
+    it('updates viewingOrgSettings flag based on curr org id and org id in state params', function () {
+      const org = this.orgs[1];
+      this.emulateSettingsPage(true, org);
+      this.$scope.setCurrOrg(org);
+      expect(this.$scope.viewingOrgSettings).toEqual(true);
+
+      this.emulateSettingsPage(true, this.orgs[0]);
+      this.$scope.setCurrOrg(org);
+      expect(this.$scope.viewingOrgSettings).toEqual(false);
     });
   });
 
   describe('#gotoOrgSettings', function () {
-    beforeEach(function () {
-      this.testNav = function (org, isOwnerOrAdmin, canCreateSpaceInOrg) {
-        const orgId = org.sys.id;
+    it('navigates to subscription page for the current org, hides the sidepanel and sets navigated to org as curr org', function () {
+      const org = this.orgs[1];
 
-        // default selected org is the first one
-        expect(this.$scope.currOrg).toEqual(this.orgs[0]);
-        this.verifyScopePropsBasedOnOrg(this.orgs[0], undefined, undefined, false);
+      this.$scope.openSidePanel();
+      // default selected org is the first one
+      expect(this.$scope.currOrg).toEqual(this.orgs[0]);
 
-        // toggle sidepanel, toggle org dropdown
-        this.$scope.toggleSidePanel();
-        this.$scope.toggleOrgsDropdown();
-        expect(this.$scope.sidePanelIsShown).toBe(true);
-        expect(this.$scope.orgDropdownIsShown).toBe(true);
-
-        // setup stub return values to be tested in the verify method
-        OrganizationRoles.isOwnerOrAdmin = sinon.stub().returns(isOwnerOrAdmin);
-        accessChecker.canCreateSpaceInOrganization = sinon.stub().returns(canCreateSpaceInOrg);
-        // choose new org and go to org settings
-        this.$scope.setCurrentOrg(org);
-        this.$scope.gotoOrgSettings();
-        $stateParamsOrgId = orgId; // to fake that we are on org settings page for current org
-        this.$scope.$apply();
-        expect(this.$scope.sidePanelIsShown).toBe(false);
-        expect(this.$scope.orgDropdownIsShown).toBe(false);
-        this.verifyScopePropsBasedOnOrg(org, isOwnerOrAdmin, canCreateSpaceInOrg, true);
-      };
-    });
-    it('navigates to subscription page for the current org, hides the sidepanel and sets navigated to org as curr org if user is allowed', function () {
-      this.testNav(this.orgs[1], true, true);
-      sinon.assert.calledOnce(Navigator.go);
-    });
-    it('does not navigate if the user does not have permission to view the settings page', function () {
-      this.testNav(this.orgs[1], false, true);
-      sinon.assert.notCalled(Navigator.go);
+      // choose new org and go to org settings
+      this.$scope.setCurrOrg(org);
+      this.$scope.gotoOrgSettings();
+      sinon.assert.calledWith(Navigator.go, {
+        path: ['account', 'organizations', 'subscription'],
+        params: { orgId: org.sys.id }
+      });
+      expect(this.$scope.sidePanelIsShown).toBe(false);
+      this.emulateSettingsPage(true, org);
+      this.$scope.openSidePanel();
+      this.verifyScopePropsBasedOnOrg(org, undefined, undefined, true);
     });
   });
 
   describe('#createNewOrg', function () {
-    it('it toggles sidepanel and navigates to create new org page', function () {
-      this.$scope.toggleSidePanel();
-      this.$scope.toggleOrgsDropdown();
-      expect(this.$scope.sidePanelIsShown).toBe(true);
-      expect(this.$scope.orgDropdownIsShown).toBe(true);
-
+    it('it hides sidepanel and navigates to create new org page', function () {
+      this.$scope.openSidePanel();
       this.$scope.createNewOrg();
       expect(this.$scope.sidePanelIsShown).toBe(false);
-      expect(this.$scope.orgDropdownIsShown).toBe(false);
       sinon.assert.calledWith(Navigator.go, {
         path: ['account', 'organizations', 'new']
       });
@@ -280,20 +287,14 @@ describe('cfNavSidePanel directive', () => {
 
   describe('#setAndGotoSpace', function () {
     it('navigates to given space and toggles the side panel', function () {
-      const space = {
-        sys: { id: 1234 }
-      };
+      const space = { sys: { id: 1234 } };
 
-      this.$scope.toggleSidePanel();
-      this.$scope.toggleOrgsDropdown();
-      expect(this.$scope.sidePanelIsShown).toBe(true);
-      expect(this.$scope.orgDropdownIsShown).toBe(true);
-
+      this.$scope.openSidePanel();
       this.$scope.setAndGotoSpace(space);
+      this.emulateSpacePage(space);
       this.$scope.$apply();
       expect(this.$scope.currSpace).toEqual(space);
       expect(this.$scope.sidePanelIsShown).toBe(false);
-      expect(this.$scope.orgDropdownIsShown).toBe(false);
       sinon.assert.calledWith(Navigator.go, {
         path: ['spaces', 'detail'],
         params: { spaceId: space.sys.id }
@@ -303,16 +304,12 @@ describe('cfNavSidePanel directive', () => {
 
   describe('#showCreateSpaceModal', function () {
     it('shows create space modal for the given org id and toggles sidepanel', function () {
-      this.$scope.toggleSidePanel();
-      this.$scope.toggleOrgsDropdown();
-      expect(this.$scope.sidePanelIsShown).toBe(true);
-      expect(this.$scope.orgDropdownIsShown).toBe(true);
-
-      this.$scope.showCreateSpaceModal(1);
-
+      const org = this.orgs[1];
+      this.$scope.openSidePanel();
+      this.$scope.setCurrOrg(org);
+      this.$scope.showCreateSpaceModal();
       expect(this.$scope.sidePanelIsShown).toBe(false);
-      expect(this.$scope.orgDropdownIsShown).toBe(false);
-      sinon.assert.calledWith(CreateSpace.showDialog, 1);
+      sinon.assert.calledWith(CreateSpace.showDialog, org.sys.id);
     });
   });
 
@@ -326,23 +323,20 @@ describe('cfNavSidePanel directive', () => {
 
     it('toggles sidepanel based on a flag', function () {
       this.setScopeProp('sidePanelIsShown', true);
-      expect(this.$sidePanel.hasClass('nav-sidepanel--slide-in')).toBe(true);
-      expect(this.$sidePanel.hasClass('nav-sidepanel--slide-out')).toBe(false);
+      this.expectSidePanelVisibility(true);
       this.setScopeProp('sidePanelIsShown', false);
-      expect(this.$sidePanel.hasClass('nav-sidepanel--slide-in')).toBe(false);
-      expect(this.$sidePanel.hasClass('nav-sidepanel--slide-out')).toBe(true);
+      this.expectSidePanelVisibility(false);
     });
 
     it('toggles org dropdown based on a flag', function () {
-      const $orgContainer = this.$sidePanel.find('.nav-sidepanel__org-list-container');
       const $sidePanelHeader = this.$sidePanel.find('.nav-sidepanel__header');
 
       this.setScopeProp('orgDropdownIsShown', true);
-      expect($orgContainer.hasClass('nav-sidepanel__org-list-container--is-visible')).toBe(true);
+      this.expectDropdownVisibility(true);
       expect($sidePanelHeader.hasClass('nav-sidepanel__header--is-active')).toBe(true);
 
       this.setScopeProp('orgDropdownIsShown', false);
-      expect($orgContainer.hasClass('nav-sidepanel__org-list-container--is-not-visible')).toBe(true);
+      this.expectDropdownVisibility(false);
       expect($sidePanelHeader.hasClass('nav-sidepanel__header--is-active')).toBe(false);
     });
 
@@ -380,7 +374,7 @@ describe('cfNavSidePanel directive', () => {
         this.$spacesContainer = this.$sidePanel.find('.nav-sidepanel__spaces-container');
         this.updateOrgAndPerm = function (org, perm) {
           accessChecker.canCreateSpaceInOrganization = sinon.stub().returns(perm);
-          this.$scope.setCurrentOrg(org);
+          this.$scope.setCurrOrg(org);
           $stateParamsOrgId = org.sys.id;
           this.$scope.$apply(); // run the watchers
         };
@@ -404,12 +398,13 @@ describe('cfNavSidePanel directive', () => {
 
       it('marks current space as active', function () {
         const org = this.orgs[2];
+        const space = this.spacesByOrg[org.sys.id][1].data;
 
-        this.$scope.setCurrentOrg(org);
-        $stateParamsOrgId = org.sys.id; // make current org "committed" or "selected"
+        this.$scope.setCurrOrg(org);
+        this.$scope.setAndGotoSpace(space);
+        this.emulateSpacePage(space);
         this.$scope.$apply();
-        this.$scope.setAndGotoSpace(this.spacesByOrg[org.sys.id][1].data);
-        this.$scope.$apply();
+        this.$scope.openSidePanel();
 
         const $space = this.$spacesContainer.find('.nav-sidepanel__space-name:nth-child(2)');
 
@@ -438,8 +433,8 @@ describe('cfNavSidePanel directive', () => {
       beforeEach(function () {
         this.updateOrgAndPerm = function (org, perm, viewingOrgSettings = false) {
           OrganizationRoles.isOwnerOrAdmin = sinon.stub().returns(perm);
-          this.$scope.setCurrentOrg(org);
-          $stateParamsOrgId = viewingOrgSettings ? org.sys.id : null;
+          this.emulateSettingsPage(viewingOrgSettings, org);
+          this.$scope.setCurrOrg(org);
           this.$scope.$apply(); // run the watchers
         };
       });
@@ -470,17 +465,18 @@ describe('cfNavSidePanel directive', () => {
     describe('Close button', function () {
       it('should close side panel if open', function () {
         const $closeBtn = this.$sidePanel.find('.nav-sidepanel__close-btn');
-
-        expect(this.$sidePanel.hasClass('nav-sidepanel--slide-in')).toBe(false);
-        expect(this.$sidePanel.hasClass('nav-sidepanel--slide-out')).toBe(true);
-        this.$scope.toggleSidePanel();
+        this.$scope.openSidePanel();
         this.$scope.$apply();
-        expect(this.$sidePanel.hasClass('nav-sidepanel--slide-in')).toBe(true);
-        expect(this.$sidePanel.hasClass('nav-sidepanel--slide-out')).toBe(false);
+        this.expectSidePanelVisibility(true);
         $closeBtn.click();
-        expect(this.$sidePanel.hasClass('nav-sidepanel--slide-in')).toBe(false);
-        expect(this.$sidePanel.hasClass('nav-sidepanel--slide-out')).toBe(true);
+        this.expectSidePanelVisibility(false);
       });
     });
   });
 });
+
+const expectVisibility = (element, shownClass, hiddenClass) =>
+  (isVisible) => {
+    expect(element.hasClass(hiddenClass)).toBe(!isVisible);
+    expect(element.hasClass(shownClass)).toBe(isVisible);
+  };
