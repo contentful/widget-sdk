@@ -7,6 +7,7 @@ angular.module('contentful')
     scope: {},
     controller: ['$scope', 'require', function ($scope, require) {
       var $rootScope = require('$rootScope');
+      var $q = require('$q');
       var modalDialog = require('modalDialog');
       var LD = require('utils/LaunchDarkly');
       var K = require('utils/kefir');
@@ -120,6 +121,10 @@ angular.module('contentful')
           name: 'Demo catalogue',
           defaultLocale: 'en-US'
         };
+
+        if (!org) {
+          return $q.reject(new Error('No owned org found'));
+        }
 
         return client
           .createSpace(data, org.sys.id)
