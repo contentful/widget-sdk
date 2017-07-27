@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-'use strict';
+'use strict'
 
 /**
  * This script removes unnecessary properties from
@@ -10,37 +10,37 @@
  * property if it is not a URL.
  */
 
-var _ = require('lodash-node');
-var fs = require('fs');
+var _ = require('lodash-node')
+var fs = require('fs')
 
-var URL_MATCHER = /^[\w+]+:\/\//;
-var SHRINKWRAP = __dirname + '/../npm-shrinkwrap.json';
-var dependencies = require(SHRINKWRAP);
-var cleaned = cleanDependency(dependencies);
+var URL_MATCHER = /^[\w+]+:\/\//
+var SHRINKWRAP = __dirname + '/../npm-shrinkwrap.json'
+var dependencies = require(SHRINKWRAP)
+var cleaned = cleanDependency(dependencies)
 
-fs.writeFileSync(SHRINKWRAP, stringify(cleaned) + '\n', 'utf-8');
+fs.writeFileSync(SHRINKWRAP, stringify(cleaned) + '\n', 'utf-8')
 
 function cleanDependency (dep) {
-  dep = _.omit(dep, 'resolved');
+  dep = _.omit(dep, 'resolved')
 
   if (!URL_MATCHER.test(dep.from)) {
-    delete dep.from;
+    delete dep.from
   }
 
   if (dep.dependencies) {
-    dep.dependencies = sortByKey(_.mapValues(dep.dependencies, cleanDependency));
+    dep.dependencies = sortByKey(_.mapValues(dep.dependencies, cleanDependency))
   }
 
-  return dep;
+  return dep
 }
 
 function sortByKey (object) {
   var keys = _.sortBy(_.keys(object))
   return _.transform(keys, function (sorted, key) {
-    sorted[key] = object[key];
-  }, {});
+    sorted[key] = object[key]
+  }, {})
 
 }
 function stringify (obj) {
-  return JSON.stringify(obj, null, 2);
+  return JSON.stringify(obj, null, 2)
 }

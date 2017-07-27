@@ -1,19 +1,19 @@
-'use strict';
+'use strict'
 
 // init WebdriverJS
-var client = require('webdriverjs').remote({desiredCapabilities:{browserName: 'chrome'}});
+const client = require('webdriverjs').remote({desiredCapabilities: {browserName: 'chrome'}})
 // init WebdriverCSS
 require('webdrivercss').init(client, {
   misMatchTolerance: 0,
   screenshotRoot: 'webdrivercss',
   api: 'http://localhost:9000/api/repositories/'
-});
+})
 
 client.fullPageScreenshot = function (id, path) {
   return this
-    .url('http://app.joistio.com:8888/'+path)
-    .webdrivercss(id, {timeout: 3000, screenWidth: [1600]});
-};
+    .url('http://app.joistio.com:8888/' + path)
+    .webdrivercss(id, {timeout: 3000, screenWidth: [1600]})
+}
 
 client
   .init()
@@ -38,4 +38,4 @@ client
   .fullPageScreenshot('space_settings', 'spaces/a44t2my4kpo8/settings/edit')
 
   .sync()
-  .end();
+  .end()

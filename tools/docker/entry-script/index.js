@@ -8,13 +8,13 @@ import runTravis from './travis'
 export default B.coroutine(main)
 
 function* main (argv) {
-  let {command, options} = parseArgs(argv)
+  const {command, options} = parseArgs(argv)
   if (command === 'travis') {
     yield* runTravis(options)
   } else if (command === 'test') {
     kexec('./bin/docker-test')
   } else if (command === 'serve') {
-    let close = yield* serve()
+    const close = yield* serve()
     process.on('SIGINT', close)
   } else {
     throw new Error(`Unknown command "${command}"`)
@@ -36,7 +36,7 @@ const TEST_DESC =
   'Run the karma test suite.'
 
 function parseArgs (argv) {
-  let args = yargs(argv)
+  const args = yargs(argv)
     .strict()
     .usage(
       'Usage: ... travis --branch BRANCH --pr PR --version VERSION\n' +

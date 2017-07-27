@@ -49,8 +49,8 @@ export default strictObject(Object.assign({
 
 
 function hosts () {
-  let props = {}
-  for (let key of URL_KEYS) {
+  const props = {}
+  for (const key of URL_KEYS) {
     props[key + 'Url'] = urlSchema
   }
   return props

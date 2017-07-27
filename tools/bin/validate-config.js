@@ -8,8 +8,8 @@ B.coroutine(validateFiles)(process.argv.slice(2))
 .done()
 
 function* validateFiles (files) {
-  for (let file of files) {
-    let config = yield U.readJSON(file)
+  for (const file of files) {
+    const config = yield U.readJSON(file)
     try {
       validateConfig(config)
     } catch (e) {
