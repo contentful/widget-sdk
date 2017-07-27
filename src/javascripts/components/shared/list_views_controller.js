@@ -7,8 +7,9 @@ angular.module('contentful')
     var logger = $injector.get('logger');
     var notification = $injector.get('notification');
     var $parse = $injector.get('$parse');
-    var FilterQS = $injector.get('FilterQueryString');
+    var createViewPersistor = $injector.get('data/ListViewPersistor').default;
     var accessChecker = $injector.get('accessChecker');
+    var spaceContext = $injector.get('spaceContext');
 
     var getCurrentView = $parse('context.view');
     var setCurrentView = getCurrentView.assign;
@@ -16,9 +17,9 @@ angular.module('contentful')
     var hiddenContentTypes = [];
 
     if (preserveStateAs) {
-      var qs = FilterQS.create(preserveStateAs);
-      replaceView(qs.readView());
-      $scope.$watch('context.view', qs.update, true);
+      var viewPersistor = createViewPersistor(spaceContext.getId(), preserveStateAs);
+      replaceView(viewPersistor.read());
+      $scope.$watch('context.view', viewPersistor.save, true);
     }
 
     setCurrentView($scope, getCurrentView($scope) || getBlankView());

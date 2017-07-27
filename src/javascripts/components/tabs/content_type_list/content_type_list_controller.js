@@ -3,12 +3,12 @@
 angular.module('contentful').controller('ContentTypeListController', ['$scope', 'require', function ($scope, require) {
   var notification = require('notification');
   var spaceContext = require('spaceContext');
-  var FilterQS = require('FilterQueryString');
   var accessChecker = require('accessChecker');
   var ctHelpers = require('data/ContentTypes');
+  var createViewPersistor = require('data/ListViewPersistor').default;
 
-  var qs = FilterQS.create('contentTypes');
-  var view = qs.readView();
+  var qs = createViewPersistor(spaceContext.getId(), 'contentTypes');
+  var view = qs.read();
 
   $scope.context.list = view.list || 'all';
   $scope.searchTerm = view.searchTerm || '';
@@ -19,7 +19,7 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
 
   $scope.$watchGroup(['context.list', 'searchTerm'], function (args) {
     if (args[0] || args[1]) {
-      qs.update({list: args[0], searchTerm: args[1]});
+      qs.save({list: args[0], searchTerm: args[1]});
       updateList();
     }
   });
