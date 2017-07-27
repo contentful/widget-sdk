@@ -59,8 +59,11 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
       }
 
       function handleSpace () {
-        NinjaStore.continueIntro();
-        render().then(NinjaStore.completeIntro);
+        // Don't do anything if all steps have been completed
+        if (ninjaData.state.introProgress < 10) {
+          NinjaStore.continueIntro();
+          render().then(NinjaStore.completeIntro);
+        }
       }
 
       function render () {
