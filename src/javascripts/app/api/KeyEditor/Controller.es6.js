@@ -59,7 +59,6 @@ function initBoilerplate ($scope) {
       const bp = find(boilerplates, (bp) => bp.id === selectedId);
       const instructions = $sce.trustAsHtml(marked(bp.instructions));
       assign($scope.boilerplate, {
-        repoUrl: bp.repoUrl,
         sourceUrl: bp.sourceUrl(spaceContext.getId(), deliveryToken),
         platform: bp.platform,
         instructions: instructions
@@ -177,9 +176,6 @@ function createTracker () {
       },
       download (platform) {
         track('api_key:boilerplate', {action: 'download', platform});
-      },
-      viewRepo (platform) {
-        track('api_key:boilerplate', {action: 'github', platform});
       }
     }
   };

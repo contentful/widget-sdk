@@ -168,13 +168,6 @@ function boilerplateInfo () {
       ngClick: 'track.boilerplate.download(boilerplate.platform)',
       style: {margin: '0.75em 0'}
     }, [ 'Download boilerplate .zip' ]),
-    h('a.text-link--neutral', {
-      href: '{{boilerplate.repoUrl}}',
-      target: '_blank',
-      rel: 'noopener noreferrer',
-      ngClick: 'track.boilerplate.viewRepo(boilerplate.platform)',
-      style: {marginTop: '0.75em'}
-    }, [ 'View on Github' ]),
     h4(['Run locally'], {marginTop: '1.5em'}),
     h('div.api-key-boilerplate-instructions', {
       ngBindHtml: 'boilerplate.instructions',
