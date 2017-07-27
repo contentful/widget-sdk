@@ -89,7 +89,6 @@ src/javascripts/components/shared/view_state_controller.js
 src/javascripts/components/shared/cf_form_widget_directive.js
 src/javascripts/components/shared/cf_selection_directive.js
 src/javascripts/components/shared/cf_user_directive.js
-src/javascripts/components/shared/list_views_controller.js
 src/javascripts/components/tabs/asset_list/asset_list_directive.js
 src/javascripts/components/tabs/asset_list/asset_list_actions_controller.js
 src/javascripts/components/tabs/content_type_list/content_type_list_directive.js
