@@ -39,7 +39,6 @@ const boilerplateSpace = createCfClient({
  *   id: string,
  *   name: string,
  *   sourceUrl: function(space, token): string,
- *   repoUrl: string,
  *   instructions: string,
  * }
  * ~~~
@@ -66,7 +65,6 @@ function makeBoilerplateData (entry) {
         ['boilerplates', entry.fields.platformId, 'download'],
         { space_id: space, access_token: cdaToken });
     },
-    repoUrl: entry.fields.repoUrl,
     instructions: entry.fields.instructions,
     platform: entry.fields.platformId
   };

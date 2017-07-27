@@ -113,7 +113,7 @@ angular.module('contentful')
         return 'Please use a letter as the first character';
       }
       if (error.name === 'regexp') {
-        return 'Please use only letters and number';
+        return 'Please use only letters and numbers';
       }
       if (error.name === 'size') {
         return 'Please shorten the text so it’s no longer than 64 characters';
