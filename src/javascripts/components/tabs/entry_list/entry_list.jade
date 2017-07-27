@@ -151,7 +151,7 @@ header.workbench-header
 
     cf-search-results-paginator(paginator="paginator" pages="7" ng-show="hasPage()")
 
-    +no-search-results("hasQuery() && !paginator.getTotal() && !context.loading || isEmpty", "(context.view.contentTypeId ? 'Content type \"' + context.view.contentTypeId + '\", term: ' : '') + context.view.searchTerm")
+    +no-search-results("hasNoSearchResults()", "displaySearch()")
 
 .workbench-main.x--content(ng-show="showNoEntriesAdvice()")
   include ./no_entries_advice

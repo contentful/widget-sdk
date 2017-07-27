@@ -50,15 +50,33 @@ angular.module('contentful')
       spaceId: spaceContext.getId()
     };
   }, function (pageParameters, old, scope) {
-    scope.hasQuery = !_.isEmpty(scope.context.view.searchTerm);
     scope.searchController.resetAssets(pageParameters.page === old.page);
   }, true);
 
+
+  /**
+   * @ngdoc method
+   * @name AssetListController#$scope.hasNoSearchResult
+   * @description
+   * Returns true if the user has provided a query but no results have
+   * been returned from the API.
+   *
+   * @return {boolean}
+   */
+  // TODO this code is duplicated in the entry list controller
+  $scope.hasNoSearchResults = function () {
+    var hasQuery = _.isEmpty($scope.context.view.searchTerm);
+    var hasAssets = $scope.paginator.getTotal() > 0;
+    return !hasAssets && hasQuery && !$scope.context.isSearching;
+  };
+
+
   // TODO this code is duplicated in the entry list controller
   $scope.showNoAssetsAdvice = function () {
+    var hasQuery = _.isEmpty($scope.context.view.searchTerm);
     var hasAssets = $scope.paginator.getTotal() > 0;
 
-    return !hasAssets && !$scope.hasQuery && !$scope.context.isSearching;
+    return !hasAssets && !hasQuery && !$scope.context.isSearching;
   };
 
   $scope.getAssetFile = getAssetFile;
