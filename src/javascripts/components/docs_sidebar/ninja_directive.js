@@ -74,7 +74,9 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
       }
 
       function handleKeydown (evt) {
-        if ($(evt.target).is($('body, a'))) {
+        var target = evt.target || evt.srcElement;
+
+        if ($(target).is($('body, a'))) {
           caseof(evt.keyCode, [
             [KEYCODES.ESC, function () {
               if (ninjaData.state.isExpanded) {
