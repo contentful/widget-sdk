@@ -13,11 +13,11 @@ angular.module('contentful').directive('docsSidebar', ['require', function (requ
 
       var testFlag = 'ps-07-2017-ninja-sidebar';
 
-      var isOrgOwner = function (user) {
+      var isOrgCreator = function (user) {
         return user === spaceContext.getData('organization.sys.createdBy');
       };
 
-      var ninjaTest$ = LD.getTest(testFlag, isOrgOwner);
+      var ninjaTest$ = LD.getTest(testFlag, isOrgCreator);
 
       K.onValueScope($scope, ninjaTest$, function (variation) {
         $scope.showNinja = variation;
