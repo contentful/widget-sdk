@@ -31,3 +31,11 @@ export function expandCallout () {
 export function navigateWhileOpen ({isIntro}) {
   track(eventName, {action: 'navigate_while_open', isIntro});
 }
+
+export function clickLink (url) {
+  track(eventName, {action: 'click_link', url});
+}
+
+export function copyToClipboard (contentCopied) {
+  track(eventName, {action: 'copy_to_clipboard', content_copied: contentCopied});
+}
