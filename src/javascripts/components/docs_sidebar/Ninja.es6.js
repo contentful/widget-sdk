@@ -1,6 +1,7 @@
 import {h} from 'ui/Framework';
 import entries from 'components/docs_sidebar/Entries';
 import intro from 'components/docs_sidebar/Intro';
+import icon from 'svg/help-bot-icon';
 
 export default function Ninja (data) {
   if (data.state.isHidden) {
@@ -11,20 +12,34 @@ export default function Ninja (data) {
 }
 
 function expanded (data) {
-  return h('.docs-helper__bg', [
-    h('.docs-helper__modal', [
-      data.state.introCompleted ? getTemplate(data.state.view) : intro(data)
+  return h('.docs-sidebar__bg', [
+    h('.docs-sidebar__modal', [
+      header(data.actions.toggle),
+      h('.docs-sidebar__body', [
+        data.state.introCompleted ? getTemplate(data.state.view) : intro(data)
+      ])
     ])
   ]);
 }
 
+function header (toggle) {
+  return h('.docs-sidebar__header', [
+    icon,
+    h('span', {style: {marginLeft: '10px', flexGrow: 1}}, ['Contentful help']),
+    h('button.close', {onClick: toggle}, ['X'])
+  ]);
+}
+
 function minimized ({actions, state}) {
-  const ninja = h('.docs-helper__ninja__image', {
+  const button = h('button.docs-sidebar__button', {
     onClick: actions.toggle,
     ariaLabel: 'Open docs sidebar'
-  });
+  }, [
+    icon,
+    h('.docs-sidebar__button-text', ['Help'])
+  ]);
 
-  const callout = h('.docs-helper__callout', [
+  const callout = h('.docs-sidebar__callout', [
     'Hello! I can show you around here! ',
     h('a.text-link--neutral-emphasis-low', {
       onClick: actions.toggle
@@ -35,8 +50,8 @@ function minimized ({actions, state}) {
   ]);
 
   return h(
-    '.docs-helper__ninja',
-    state.calloutSeen ? [ninja] : [ninja, callout]
+    '.docs-sidebar__ninja',
+    state.calloutSeen ? [button] : [button, callout]
   );
 }
 

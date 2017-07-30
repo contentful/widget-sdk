@@ -12,10 +12,10 @@ describe('cfNinja Directive', function () {
     this.TheStore.set = sinon.stub();
 
     const ninjaSelector = '[aria-label="Open docs sidebar"]';
-    const modalSelector = '.docs-helper__modal';
-    const bgSelector = '.docs-helper__bg';
+    const modalSelector = '.docs-sidebar__modal';
+    const bgSelector = '.docs-sidebar__bg';
     const nextSelector = '[aria-label="Next"]';
-    const calloutSelector = '.docs-helper__callout';
+    const calloutSelector = '.docs-sidebar__callout';
 
     this.compileElement = function () {
       this.element = this.$compile('<cf-ninja />');

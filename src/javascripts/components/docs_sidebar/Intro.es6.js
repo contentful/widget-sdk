@@ -5,13 +5,13 @@ export default function template (data) {
   const currentStep = data.state.introProgress;
   const allContent = content(data);
   const prompt = h(
-    'p.docs-helper__prompt',
+    'p.docs-sidebar__prompt',
     {ariaLabel: 'Next'},
     ['[ Press space to continue ]']
   );
 
   const storyContent = allContent.slice(0, currentStep).map((step) => {
-    return h('div.docs-helper__line', step);
+    return h('div.docs-sidebar__line', step);
   });
 
   if (currentStep < allContent.length) {
@@ -38,9 +38,9 @@ function content (data) {
 
 function token (data) {
   return [
-    h('.docs-helper__token-line', [
-      h('.docs-helper__key-icon'),
-      h('.docs-helper__token', [
+    h('.docs-sidebar__token-line', [
+      h('.docs-sidebar__key-icon'),
+      h('.docs-sidebar__token', [
         inputWithCopy('introToken', data.state.token, data.actions.render)
       ])
     ])

@@ -1,4 +1,4 @@
-.docs-helper
+.docs-sidebar
   &__bg
     $stretch()
     background-color: rgba(0,0,0,0.3)
@@ -6,16 +6,29 @@
 
   &__modal
     position: absolute
+    width: 400px
     right: 14px
     top: 14px
     bottom: 14px
-    padding: 20px
-    width: 400px
-    background-color: white
     border-radius: 4px
     overflow-y: scroll
+    background-color: white
     &::-webkit-scrollbar
       display: none
+
+  &__header
+    padding: 20px
+    background-color: $colors.element-light
+    border-bottom: 1px solid $colors.element-darkest
+    color: $colors.text-mid
+    display: flex
+    align-items: center
+    justify-content: space-between
+    font-size: 1.4em
+    line-height: 1.4em
+
+  &__body
+    padding: 20px
     h3
       margin-bottom: 1em
     code
@@ -29,6 +42,21 @@
       display: block
     hr
       margin: 14px 0
+
+  &__button
+    position: absolute
+    right: 20px
+    bottom: 20px
+    z-index: 1000
+    background-color: black
+    color: white
+    display: flex
+    font-weight: bold
+    padding: 10px 20px
+    border-radius: 22px
+    align-items: center
+    &-text
+      margin-left: 10px
 
   &__ninja
     position: absolute

@@ -29,7 +29,7 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
 
       scope.component = Ninja(ninjaData);
 
-      var bgSelector = '.docs-helper__bg';
+      var bgSelector = '.docs-sidebar__bg';
 
       el.on('click', bgSelector, function (evt) {
         if ($(evt.target).is(bgSelector)) {
