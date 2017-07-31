@@ -18,7 +18,7 @@ $app-top-bar__action-color()
     position: relative
     width: 29px
     height: 29px
-    background-image: url('/app/images/logo-label.png')
+    background-image: url('/app/svg/logo-label.svg')
     background-size: 29px 29px
 
   &__logo-text
@@ -60,7 +60,3 @@ $app-top-bar__action-color()
   &--right-separator
     border-right: 1px solid transparentify($colors.white, 20%)
 
-
-  @media (min-device-pixel-ratio: 2), (min-resolution: 192dpi)
-    &__logo-element
-      background-image: url('/app/images/logo-label@2x.png')

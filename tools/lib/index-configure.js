@@ -8,7 +8,7 @@ import * as U from './utils'
 import {render as renderIndexPage} from './index-page'
 import {validate as validateConfig} from './config-validator'
 
-let FS = B.promisifyAll(require('fs'))
+const FS = B.promisifyAll(require('fs'))
 
 
 /**
@@ -36,15 +36,15 @@ let FS = B.promisifyAll(require('fs'))
  */
 
 export default function* configure (revision, configPath, outPath) {
-  let [manifest, config] = yield B.all([
+  const [manifest, config] = yield B.all([
     U.readMergeJSON(MANIFEST_PATHS),
     U.readJSON(configPath)
   ])
 
   validateConfig(config)
 
-  manifest = mapValues(manifest, (path) => URL.resolve(config.assetUrl, path))
-  let indexPage = renderIndexPage(revision, config, manifest)
+  const manifestResolved = mapValues(manifest, (path) => URL.resolve(config.assetUrl, path))
+  const indexPage = renderIndexPage(revision, config, manifestResolved)
   yield U.mkdirp(P.dirname(outPath))
   yield FS.writeFileAsync(outPath, indexPage, 'utf8')
   return config.environment

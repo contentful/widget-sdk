@@ -3,9 +3,9 @@ import * as P from 'path'
 import * as CP from 'child_process'
 
 
-export let FS = B.promisifyAll(require('fs-extra'))
+export const FS = B.promisifyAll(require('fs-extra'))
 
-export let mkdirp = FS.mkdirsAsync.bind(FS)
+export const mkdirp = FS.mkdirsAsync.bind(FS)
 
 
 /**
@@ -34,7 +34,7 @@ export function readMergeJSON (paths) {
 export function writeJSON (path, obj) {
   return mkdirp(P.dirname(path))
   .then(() => {
-    var content = JSON.stringify(obj)
+    const content = JSON.stringify(obj)
     return FS.writeFileAsync(path, content, 'utf8')
   })
 }

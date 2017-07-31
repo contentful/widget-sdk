@@ -163,7 +163,7 @@ function boilerplateInfo () {
       ngChange: 'track.boilerplate.select(boilerplate.platform)',
       ngOptions: 'bp.id as bp.name for bp in boilerplate.available'
     }),
-    h('a.btn-secondary-action.x--block', {
+    h('a.btn-action.x--block', {
       href: '{{boilerplate.sourceUrl}}',
       ngClick: 'track.boilerplate.download(boilerplate.platform)',
       style: {margin: '0.75em 0'}

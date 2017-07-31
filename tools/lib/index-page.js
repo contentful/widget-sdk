@@ -35,7 +35,7 @@ const DEFAULT_ENTRY_SCRIPTS = ['application.min.js']
  * @param {function} manifest
  */
 export function render (uiVersion, config, manifest) {
-  let resolve = createResolver(manifest, '/app')
+  const resolve = createResolver(manifest, '/app')
   return renderPage(uiVersion, config, resolve, DEFAULT_ENTRY_SCRIPTS)
 }
 
@@ -55,7 +55,7 @@ export function render (uiVersion, config, manifest) {
  *   separate scripts are loaded. (See `DEV_ENTRY_SCRIPTS` above).
  */
 export function renderDev (config) {
-  let resolve = (path) => `/app/${path}`
+  const resolve = (path) => `/app/${path}`
   return renderPage(null, config, resolve, DEV_ENTRY_SCRIPTS)
 }
 
@@ -92,7 +92,7 @@ function indexPage (uiVersion, config, resolve, entryScripts) {
       ngInit: 'initClient()'
     }, [
       h('.client', [
-        h('cf-app-container.app-container.ng-hide', {ngShow: 'user'}),
+        h('cf-app-container.app-container.ng-hide', {ngShow: 'user', cfAutoCreateNewSpace: ''}),
         h('div', {ngIf: '!user'}, [
           appLoader()
         ])

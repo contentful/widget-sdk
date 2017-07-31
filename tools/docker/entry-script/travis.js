@@ -37,7 +37,7 @@ const PKG_DEST = P.resolve('./output/package')
  *   'master', 'production', or 'preview' branch.
  */
 export default function* runTravis ({branch, pr, version}) {
-  let travis = loadTravisEnv(branch, pr)
+  const travis = loadTravisEnv(branch, pr)
   yield* createFileDist('preview', version, travis.distBranch, true)
   yield* createFileDist('staging', version, travis.distBranch)
   yield* createFileDist('production', version, travis.distBranch)
@@ -65,10 +65,10 @@ export default function* runTravis ({branch, pr, version}) {
  *   building a branch head.
  */
 function loadTravisEnv (branch, pullRequest) {
-  let isMerge = pullRequest !== 'false'
-  let distBranch = isMerge ? null : branch
-  let targetEnv = getTravisTargetEnv(branch, isMerge)
-  let isMainBranch = !isMerge && includes(MAIN_BRANCHES, branch)
+  const isMerge = pullRequest !== 'false'
+  const distBranch = isMerge ? null : branch
+  const targetEnv = getTravisTargetEnv(branch, isMerge)
+  const isMainBranch = !isMerge && includes(MAIN_BRANCHES, branch)
   return {
     branch, pullRequest, isMerge, targetEnv,
     isMainBranch, distBranch
@@ -118,13 +118,13 @@ function* createFileDist (env, version, branch, includeStyleguide) {
   console.log(`Creating file distribution for "${env}"`)
   yield copy(P.join(BUILD_SRC, 'app'), targetPath('app'))
 
-  let commitHashIndex = targetPath('archive', version, 'index-compiled.html')
+  const commitHashIndex = targetPath('archive', version, 'index-compiled.html')
   yield* configureIndex(version, env, commitHashIndex)
   if (branch) {
-    let branchIndexPath = targetPath('archive', branch, 'index-compiled.html')
+    const branchIndexPath = targetPath('archive', branch, 'index-compiled.html')
     yield* configureIndex(version, env, branchIndexPath)
     if (includeStyleguide) {
-      let styleguidePath = targetPath('styleguide', branch)
+      const styleguidePath = targetPath('styleguide', branch)
       yield copy(P.join(BUILD_SRC, 'styleguide'), styleguidePath)
     }
   }
@@ -152,13 +152,13 @@ function* createFileDist (env, version, branch, includeStyleguide) {
  */
 function* createPackageDist (version) {
   console.log(`Creating package distribution in ${PKG_DEST}`)
-  let buildRoot = P.resolve('/tmp', 'cf-build')
+  const buildRoot = P.resolve('/tmp', 'cf-build')
   const destBuild = P.join(buildRoot, 'build')
-  let epochSeconds = Math.floor(Date.now() / 1000)
-  let pkgVersion = `0.${epochSeconds}-g${version}`
-  let poolDirRelative = P.join('archive', 'user_interface', 'pool')
-  let poolDir = P.join(PKG_DEST, poolDirRelative)
-  let linkFile = P.join(PKG_DEST, 'archive', 'user_interface', 'git', version)
+  const epochSeconds = Math.floor(Date.now() / 1000)
+  const pkgVersion = `0.${epochSeconds}-g${version}`
+  const poolDirRelative = P.join('archive', 'user_interface', 'pool')
+  const poolDir = P.join(PKG_DEST, poolDirRelative)
+  const linkFile = P.join(PKG_DEST, 'archive', 'user_interface', 'git', version)
   yield FS.mkdirsAsync(buildRoot)
   yield FS.mkdirsAsync(poolDir)
   yield FS.mkdirsAsync(P.dirname(linkFile))
@@ -173,7 +173,7 @@ function* createPackageDist (version) {
     `--version ${pkgVersion} -C ${buildRoot}`,
     {cwd: poolDir}
   )
-  let packageFiles = yield FS.readdirAsync(poolDir)
+  const packageFiles = yield FS.readdirAsync(poolDir)
   console.log('Created package', packageFiles[0])
   yield FS.writeFileAsync(linkFile, P.join(poolDirRelative, packageFiles[0]), 'utf8')
 }
@@ -200,6 +200,6 @@ function copy (src, dest) {
 
 function* configureIndex (version, env, dest) {
   console.log(`Creating index for "${env}" at ${P.relative('', dest)}`)
-  let configPath = `config/${env}.json`
+  const configPath = `config/${env}.json`
   yield* configureIndex_(version, configPath, dest)
 }

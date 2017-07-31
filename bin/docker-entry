@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-require('regenerator-runtime/runtime');
-require('babel-register');
+require('regenerator-runtime/runtime')
+require('babel-register')
 
-var run = require('../tools/docker/entry-script').default;
-run(process.argv.slice(2)).done();
+var run = require('../tools/docker/entry-script').default
+run(process.argv.slice(2)).done()

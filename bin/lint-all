@@ -17,4 +17,4 @@ eslint \
   src/javascripts
 
 eslint \
-  test gulpfile.js tools
+  test bin tools
