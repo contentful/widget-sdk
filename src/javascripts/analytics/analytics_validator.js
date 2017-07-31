@@ -41,11 +41,12 @@ angular.module('contentful')
     'create'
   ],
   search: [
-    'view_folder_added',
-    'view_folder_deleted',
-    'view_added',
+    'bulk_action_performed',
+    'search_performed',
+    'view_created',
+    'view_edited',
     'view_deleted',
-    'bulk_action_performed'
+    'view_loaded'
   ],
   modelling: [
     'field_added',
