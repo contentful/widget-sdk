@@ -33,7 +33,8 @@ export function viewDeleted (view) {
 export function viewLoaded (view, folder) {
   track('view_loaded', extend(
     basic(view, folder),
-    details(view)
+    details(view),
+    query(view)
   ));
 }
 
@@ -41,7 +42,7 @@ function viewEdited (view, folder, changedProperty = null) {
   track('view_edited', extend(
     basic(view, folder),
     details(view),
-    {changed_property: changedProperty}
+    {change_property: changedProperty}
   ));
 }
 
@@ -56,7 +57,7 @@ function basic (view, folder) {
 function details ({title, roles}) {
   return {
     view_title: title,
-    view_roles: roles
+    view_roles: Array.isArray(roles) ? roles.join(',') : roles
   };
 }
 

@@ -1,7 +1,9 @@
 import { merge } from 'lodash';
 
-export function addUserOrgSpace (transformer) {
-  return (_, data) => merge(transformer(_, data), {
+const noopTransformer = (_, data) => data;
+
+export function addUserOrgSpace (transformer = noopTransformer) {
+  return (event, data) => merge(transformer(event, data), {
     data: {
       organization_id: data.organizationId,
       space_id: data.spaceId,

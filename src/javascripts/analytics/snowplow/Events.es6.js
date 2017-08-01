@@ -14,6 +14,8 @@ import AppOpen from 'analytics/snowplow/transformers/AppOpen';
 import BulkEditor from 'analytics/snowplow/transformers/BulkEditor';
 import Snapshot from 'analytics/snowplow/transformers/Snapshot';
 import InviteUserExperiment from 'analytics/snowplow/transformers/InviteUserExperiment';
+import {ViewTransform} from 'analytics/snowplow/transformers/SearchAndViews';
+import {addUserOrgSpace} from 'analytics/snowplow/transformers/Decorators';
 
 
 /**
@@ -65,15 +67,12 @@ registerEvent('global:app_loaded', 'app_open', AppOpen);
 registerEvent('invite_user:learn', 'generic', InviteUserExperiment);
 registerEvent('invite_user:create_space', 'generic', InviteUserExperiment);
 
-registerEvent('personal_access_token:action', 'personal_access_token', (_, data) => {
-  return {
-    data: {
-      personal_access_token_id: data.patId,
-      action: data.action,
-      executing_user_id: data.userId
-    }
-  };
-});
+registerEvent('personal_access_token:action', 'personal_access_token', addUserOrgSpace());
+
+registerEvent('search:view_created', 'view_create', ViewTransform);
+registerEvent('search:view_edited', 'view_edit', ViewTransform);
+registerEvent('search:view_deleted', 'view_delete', ViewTransform);
+registerEvent('search:view_loaded', 'view_load', ViewTransform);
 
 /**
  * Registers an event to be tracked by snowplow.
