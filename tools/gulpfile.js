@@ -1,6 +1,5 @@
 'use strict'
 
-/* global require, process, Buffer, console */
 require('babel-register')
 require('regenerator-runtime/runtime')
 
@@ -29,9 +28,12 @@ const reworkUrlRewrite = require('rework-plugin-url')
 const fs = require('fs')
 const babel = require('gulp-babel')
 const envify = require('envify/custom')
+const co = require('co')
+const proxyquire = require('proxyquire')
 
 const S = require('./lib/stream-utils')
-const U = require('./lib/utils')
+const FS = require('./lib/utils').FS
+const h = require('./lib/hyperscript').h
 const jstConcat = require('../tasks/build-template')
 const serve = require('./lib/server').serveWatch
 const createManifestResolver = require('./lib/manifest-resolver').create
@@ -93,11 +95,6 @@ const src = {
     'src/images/**/*',
     './vendor/jquery-ui/images/*'
   ],
-  svg: {
-    sourceDirectory: 'src/svg',
-    outputDirectory: 'public/app/svg',
-    outputFile: 'public/app/contentful_icons.js'
-  },
   static: [
     'vendor/font-awesome/*.+(eot|svg|ttf|woff)',
     'vendor/fonts.com/*.+(woff|woff2)'
@@ -154,7 +151,7 @@ gulp.task('copy-static', function () {
     .pipe(gulp.dest('./public/app'))
 })
 
-gulp.task('copy-images', function () {
+gulp.task('copy-images', ['svg'], function () {
   return gulp.src(src.images)
     .pipe(gulp.dest('./public/app/images'))
 })
@@ -226,13 +223,12 @@ gulp.task('js/external-bundle', function () {
   return bundleBrowserify(createBrowserify())
 })
 
-gulp.task('js/app', ['icons'], function () {
-  const srcs = src.components.concat([src.svg.outputFile])
+gulp.task('js/app', function () {
   return S.pipe([
     S.join([
       // Use `base: '.'` for correct source map paths
       gulp.src('src/javascripts/prelude.js', {base: '.'}),
-      gulp.src(srcs, {base: '.'})
+      gulp.src(src.components, {base: '.'})
     ]),
     sourceMaps.init(),
     babel(babelOptions),
@@ -243,34 +239,35 @@ gulp.task('js/app', ['icons'], function () {
 })
 
 /**
- * Compress and strip SVG source files and put them into
- * 'public/app/svg'.
+ * Render some of the SVGs defined as Hyperscript in
+ * 'src/javascripts/svg' as SVG files so they can be used as static
+ * assets.
+ *
+ * The SVG files are put into 'public/app/svg'. Once can reference them
+ * from stylesheets using `url("/app/svg/my-file.svg")`.
  */
-gulp.task('svg', function () {
-  return U.mkdirp(path.dirname(src.svg.outputDirectory))
-  .then(function () {
-    return spawnOnlyStderr('svgo', [
-      '--enable', 'removeTitle',
-      '--disable', 'collapseGroups',
-      '-f', src.svg.sourceDirectory,
-      '-o', src.svg.outputDirectory
-    ])
-  })
-})
+gulp.task('svg', co.wrap(function* () {
+  const targetDir = path.resolve('public', 'app', 'svg')
+  yield FS.mkdirsAsync(targetDir)
 
-/**
- * Inline SVGs from 'public/app/svg' as angular service in
- * 'public/app/contentful_icons.js'.
- */
-gulp.task('icons', ['svg'], function () {
-  return U.mkdirp(path.dirname(src.svg.outputDirectory))
-  .then(function () {
-    return spawnOnlyStderr('./bin/prepare_svg.js', [
-      src.svg.outputDirectory,
-      src.svg.outputFile
-    ])
-  })
-})
+  yield Promise.all([
+    'chevron-blue',
+    'dd-arrow-down',
+    'dd-arrow-down-disabled',
+    'dotted-border',
+    'logo-label',
+    'note-info',
+    'note-success',
+    'note-warning'
+  ].map((icon) => {
+    const src = path.resolve('src', 'javascripts', 'svg', icon + '.es6.js')
+    const target = path.join(targetDir, icon + '.svg')
+    const output = proxyquire.noCallThru()(src, {
+      'ui/Framework': {h}
+    }).default
+    return FS.writeFile(target, output, 'utf8')
+  }))
+}))
 
 gulp.task('stylesheets', [
   'stylesheets/vendor',
@@ -328,10 +325,7 @@ gulp.task('serve', function () {
   const configName = process.env.UI_CONFIG || 'development'
   const watchFiles = !process.env.NO_WATCHING
 
-  const appSrc = [
-    'src/javascripts/**/*.js',
-    path.join(src.svg.sourceDirectory, '**/*.svg')
-  ]
+  const appSrc = [ 'src/javascripts/**/*.js' ]
   const patternTaskMap = [
     [appSrc, ['js/app']],
     [src.templates, ['templates']],

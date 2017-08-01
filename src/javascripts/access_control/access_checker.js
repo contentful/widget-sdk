@@ -40,6 +40,8 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
   var userQuota = {};
   var sectionVisibility = {};
 
+  var isInitializedBus = K.createPropertyBus(false);
+
   $rootScope.$watchCollection(function () {
     return {
       authContext: authorization.spaceContext,
@@ -49,6 +51,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
   }, reset);
 
   return {
+    isInitialized$: isInitializedBus.property,
     /**
      * @ngdoc method
      * @name accessChecker#getResponses
@@ -155,6 +158,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
     collectResponses();
     collectFeatures();
     collectSectionVisibility();
+    isInitializedBus.set(true);
   }
 
   function collectResponses () {

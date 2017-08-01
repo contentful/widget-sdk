@@ -149,48 +149,37 @@ export function getFeatureFlag (featureFlagName, customQualificationFn = _ => tr
  * @usage[js]
  * const ld = require('utils/LaunchDarkly')
  * // sets $scope.fooBar
- * ld.setOnScope($scope, 'test-01-01-foo-bar')
+ * ld.setOnScope($scope, 'test-01-01-foo-bar', 'fooBar')
  *
  *
  * @description
  * Convenience method for commonly used scenario - set scope property to a
  * feature flag or A/B test value.
- * It parses the name in format 'feature|test-xx-00-00-kebab-case-property-name'
- * and automatically guesses the name of the property, and whether it is a feature
- * flag or A/B test.
+ * It automatically guesses whether it is a feature flag or A/B test based on
+ * its name that shoud start with 'feature|test-...'.
  * If name cannot be parsed, an error is thrown.
  *
  * @param {Scope} $scope
  * @param {String} flagName - name of flag in LaunchDarkly
- * @param {String?} propertyName - name of property set on scope (default is parsed from flag name)
- * @returns {type {String}, title {String}} - type of flag ('test' or 'feature')
- * and title of created scope property
+ * @param {String} propertyName - name of property set on scope
  */
 export function setOnScope ($scope, flagName, propertyName) {
-  const parsed = parseLDName(flagName);
-  if (!parsed) {
+  const type = parseLDTypeFromName(flagName);
+  if (!type) {
     throw new Error(`Invalid LD flag name: ${flagName}`);
   }
 
-  const value$ = parsed.type === 'test'
-      ? getTest(flagName) : getFeatureFlag(flagName);
+  const value$ = type === 'test' ? getTest(flagName) : getFeatureFlag(flagName);
 
   onValueScope($scope, value$, function (value) {
-    $scope[propertyName || parsed.title] = value;
+    $scope[propertyName] = value;
   });
 }
 
-function parseLDName (name) {
-  const matches = /^(feature|test)-\w+-\d+-\d+-(.+)$/.exec(name);
-  if (!matches || !matches[1] || !matches[2]) {
+function parseLDTypeFromName (name) {
+  const matches = /^(feature|test)-/.exec(name);
+  if (!matches || !matches[1]) {
     return null;
   }
-  const type = matches[1];
-  const title = kebabToCamelCase(matches[2]);
-
-  return { type, title };
-}
-
-function kebabToCamelCase (str) {
-  return str.replace(/-\w/g, (capture) => capture[1].toUpperCase());
+  return matches[1];
 }

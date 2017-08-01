@@ -5,6 +5,7 @@ import ReloadNotification from 'ReloadNotification';
 import stringUtils from 'stringUtils';
 import ListQuery from 'ListQuery';
 import entitySelector from 'entitySelector';
+import { go } from 'states/Navigator';
 import { get, includes, extend } from 'lodash';
 import UserSpaceInvitationDialog from 'access_control/templates/UserSpaceInvitationDialog';
 
@@ -21,7 +22,7 @@ const MODAL_OPTS_BASE = {
  * - `.openRoleChangeDialog()` change user's role
  * - `.openSpaceInvitationDialog()` invite users to the space from a list of organization's users
  */
-export function create (spaceContext, userListHandler) {
+export function create (spaceContext, userListHandler, tokenStore) {
   return {
     openRemovalConfirmationDialog: openRemovalConfirmationDialog,
     openRoleChangeDialog: openRoleChangeDialog,
@@ -36,6 +37,9 @@ export function create (spaceContext, userListHandler) {
       ? 'admin_removal_confirm_dialog'
       : 'user_removal_confirm_dialog';
 
+    const currentUserId = spaceContext.getData('spaceMembership.user.sys.id');
+    const isCurrentUser = currentUserId === user.id;
+
     return openDialog(templateName, controller);
 
     function controller (scope) {
@@ -46,6 +50,9 @@ export function create (spaceContext, userListHandler) {
           return spaceContext.memberships.remove(user.membership)
           .then(function () {
             notification.info('User successfully removed from this space.');
+            if (isCurrentUser) {
+              tokenStore.refresh().then(() => go({ path: ['home'] }));
+            }
           })
           .catch(ReloadNotification.basicErrorHandler)
           .finally(function () { scope.dialog.confirm(); });
