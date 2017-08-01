@@ -71,8 +71,7 @@ angular.module('contentful')
         children: [
           {
             sref: 'spaces.detail.settings.space',
-            title: 'Space',
-            rootSref: 'spaces.detail.settings.space'
+            title: 'Space'
           }, {
             sref: 'spaces.detail.settings.locales.list',
             title: 'Locales',

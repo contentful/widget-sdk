@@ -111,10 +111,10 @@ export function refresh () {
       tokenInfoMVar.put(newTokenInfo);
       const user = newTokenInfo.sys.createdBy;
       const organizations = map(user.organizationMemberships, 'organization');
-      spacesBus.set(updateSpaces(newTokenInfo.spaces));
+      OrganizationRoles.setUser(user);
       userBus.set(user);
       organizationsBus.set(organizations);
-      OrganizationRoles.setUser(user);
+      spacesBus.set(updateSpaces(newTokenInfo.spaces));
     }, function () {
       ReloadNotification.trigger('The application was unable to authenticate with the server');
     });

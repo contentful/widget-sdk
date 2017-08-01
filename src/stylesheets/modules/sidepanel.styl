@@ -1,0 +1,62 @@
+.nav-sidepanel__header
+  background-color: $colors.element-light
+
+.nav-sidepanel__header:hover
+.nav-sidepanel__header--is-active
+  background-color: $colors.element-mid
+
+.nav-sidepanel__close-btn
+  cf-icon
+    g
+      fill: white
+      transition: opacity 0.1s ease-in-out
+
+.nav-sidepanel__close-btn:hover
+  cf-icon
+    g
+      opacity: .9
+
+.nav-sidepanel__no-spaces
+  cf-icon
+    g
+      fill: $colors.green-dark
+
+.nav-sidepanel--slide-in
+  left: 0
+  transition: left 0.3s cubic-bezier(0.29, 0.54, 0.07, 0.99)
+
+.nav-sidepanel--slide-out
+  left: -395px
+  transition: left 0.2s ease-in-out
+
+.nav-sidepanel__org-name:not(.nav-sidepanel__org-name--is-active):hover
+  background-color: $colors.element-lightest
+
+.nav-sidepanel__org-name--is-active
+  background-color: $colors.element-light
+
+.nav-sidepanel__space-name:not(.nav-sidepanel__space-name--is-active):hover
+.nav-sidepanel__org-actions-goto-settings:hover
+  background-color: $colors.element-light
+
+.nav-sidepanel__bg--is-not-visible
+  visibility: hidden
+  opacity: 0
+
+.nav-sidepanel__bg--is-visible
+  visibility: visible
+  opacity: 1
+
+.nav-sidepanel__org-list-container--is-not-visible
+  top: 63px
+  opacity: 0
+  visibility: hidden
+
+.nav-sidepanel__org-list-container--is-visible
+  top: 66px
+  opacity: 1
+  visiblility: visible
+
+.nav-sidepanel__space-name--is-active
+.nav-sidepanel__org-actions-goto-settings--is-active
+  background-color: $colors.element-mid
