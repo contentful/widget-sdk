@@ -76,7 +76,7 @@
     "stream-combiner": "^0.2.1",
     "stylus": "^0.54.5",
     "sum-types": "^0.9.4",
-    "svgo": "^0.6.6",
+    "svgo": "^0.7.2",
     "through2": "^2.0.3",
     "vinyl": "^0.4.6",
     "vinyl-buffer": "^1.0.0",

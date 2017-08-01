@@ -177,7 +177,8 @@ describe('cfBreadcrumbsDirective spec', function () {
         params: params
       },
       type: type,
-      id: id
+      id: id,
+      icon: 'settings'
     };
   }
 });

@@ -97,6 +97,7 @@
                 ng-click="createSpace.selectTemplate(template)"
                 ng-class="{selected: createSpace.newSpace.selectedTemplate === template}")
                 cf-icon.create-new-space__templates__navitem__icon(
+                  ng-if="template.svgName"
                   name="{{template.svgName}}")
                 | {{template.name}}
             .create-new-space__templates__description(

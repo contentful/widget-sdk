@@ -40,7 +40,20 @@ export default function h (elSpec, props, children) {
     props['class'] = classes.concat(props['class'] || []).join(' ');
   }
 
-  props = mapKeys(props, (_value, key) => kebabCase(key));
+  props = mapKeys(props, (_value, key) => {
+    if (key.indexOf(':') > -1) {
+      // We keep keys that contain a colon as is. (These are namespaced
+      // attributes.) Applying `kebabCase` to them would remove the
+      // colon and change the behavior of the attribute.
+      return key;
+    } else if (key === 'viewBox') {
+      // This is a special SVG attribute that needs to be camel cased.
+      // <svg view-box=...> is not valid.
+      return key;
+    } else {
+      return kebabCase(key);
+    }
+  });
 
   children = children
     .filter((c) => !!c)
