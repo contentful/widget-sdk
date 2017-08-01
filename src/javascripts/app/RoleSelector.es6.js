@@ -8,6 +8,7 @@ import {PromiseStatus} from 'utils/kefir';
 import {caseof} from 'libs/sum-types';
 
 import {open as openDialog} from 'modalDialog';
+import $timeout from '$timeout';
 
 const MODE_EVERYBODY = 'everybody';
 const MODE_ADMINS = 'admins';
@@ -64,6 +65,7 @@ function createRoleSelector ($scope, spaceEndpoint, assignedRoles) {
     setMode: (mode) => {
       data.mode = mode;
       rerender();
+      $timeout(() => $scope.$emit('centerOn:reposition'));
     }
   };
 
