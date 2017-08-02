@@ -71,7 +71,7 @@ angular.module('contentful').directive('docsSidebar', ['require', function (requ
         var now = moment();
         var diff = now.diff(creationDate, 'seconds');
 
-        return diff <= SECONDS_IN_WEEK + 99999;
+        return diff <= SECONDS_IN_WEEK;
       }
 
       function spaceHasEntry () {
