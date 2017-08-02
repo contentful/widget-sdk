@@ -3,6 +3,7 @@ import $document from '$document';
 import userAgent from 'userAgent';
 import { byName as colorByName } from 'Styles/Colors';
 import $timeout from '$timeout';
+import { copyToClipboard as trackCopyToClipboard } from 'analytics/events/DocsSidebar';
 
 const state = {};
 
@@ -44,6 +45,7 @@ export default function ({ children, text, id }, render) {
     doc.body.appendChild(input);
     input.select();
     doc.execCommand('copy', false);
+    trackCopyToClipboard(id);
     state[id].copied = true;
     render();
     $timeout(() => {
