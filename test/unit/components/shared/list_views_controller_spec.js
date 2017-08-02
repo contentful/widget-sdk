@@ -1,29 +1,25 @@
 'use strict';
 
 describe('ListViewsController', function () {
-  var controller, scope, $q;
-  var getBlankView, generateDefaultViews, resetList;
-
+  let scope, generateDefaultViews, resetList;
   afterEach(function () {
-    scope = $q = controller = null;
-    getBlankView = generateDefaultViews = resetList = null;
+    scope = generateDefaultViews = resetList = null;
   });
 
   beforeEach(function () {
     module('contentful/test');
-    var $controller = this.$inject('$controller');
-    var FilterQS = this.$inject('FilterQueryString');
-    $q = this.$inject('$q');
+    const $controller = this.$inject('$controller');
+    const ListViewPersistor = this.$inject('data/ListViewPersistor');
 
     this.mockService('notification');
     scope = this.$inject('$rootScope').$new();
     scope.context = {};
     scope.selection = {clear: sinon.spy()};
-    FilterQS.create = _.constant({ readView: _.constant({ from_qs: 'test' }), update: _.noop });
+    ListViewPersistor.default = _.constant({ read: _.constant({ from_qs: 'test' }), save: _.noop });
 
-    controller = $controller('ListViewsController', {
+    $controller('ListViewsController', {
       $scope: scope,
-      getBlankView: getBlankView = sinon.stub().returns({id: 'blankView'}),
+      getBlankView: sinon.stub().returns({id: 'blankView'}),
       viewCollectionName: 'views',
       preserveStateAs: 'test',
       generateDefaultViews: generateDefaultViews = sinon.stub().returns(['defaultViews']),
@@ -73,7 +69,7 @@ describe('ListViewsController', function () {
 
   describe('loading view', function () {
     it('should assign a deep copy of the view to the tab, reset the title and reset the list', function () {
-      var view = {id: 'foo'};
+      const view = {id: 'foo'};
       scope.loadView(view);
       expect(scope.context.view.id).toBe('foo');
       expect(scope.context.view).not.toBe(view);
@@ -84,18 +80,18 @@ describe('ListViewsController', function () {
 
   describe('saveViews', function () {
     it('should call saveUiConfig and return the promise', function () {
-      var handler = sinon.stub();
-      scope.saveUiConfig = sinon.stub().returns($q.resolve());
+      const handler = sinon.stub();
+      scope.saveUiConfig = sinon.stub().resolves();
       scope.saveViews().then(handler);
       scope.$apply();
       sinon.assert.called(scope.saveUiConfig);
       sinon.assert.called(handler);
     });
     it('should show an error notification', function () {
-      var notification = this.$inject('notification');
-      var logger = this.$inject('logger');
-      var errorHandler = sinon.stub();
-      scope.saveUiConfig = sinon.stub().returns($q.reject());
+      const notification = this.$inject('notification');
+      const logger = this.$inject('logger');
+      const errorHandler = sinon.stub();
+      scope.saveUiConfig = sinon.stub().rejects();
       scope.saveViews().catch(errorHandler);
       scope.$apply();
       sinon.assert.called(errorHandler);

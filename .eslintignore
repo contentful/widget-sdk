@@ -10,7 +10,6 @@ test/unit/components/shared/accordion_controller_spec.js
 test/unit/components/shared/cf_form_widget_directive_spec.js
 test/unit/components/shared/cf_search_directive_spec.js
 test/unit/components/shared/cf_validation_error_display_spec.js
-test/unit/components/shared/list_views_controller_spec.js
 test/unit/components/shared/view_menu_controller_spec.js
 test/unit/components/tabs/asset_list/asset_list_actions_controller_spec.js
 test/unit/components/field_dialog/appearance_controller_spec.js
