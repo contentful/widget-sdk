@@ -4,7 +4,7 @@ import { get as getAtPath, omit, extend } from 'lodash';
 const ENTITY_TYPE_MAPPING = {entries: 'entry', assets: 'asset'};
 const PROPS_TO_OMIT = ['userId', 'spaceId', 'organizationId', 'currentState'];
 
-export const ViewTransform = addUserOrgSpace((_, data) => {
+export default addUserOrgSpace((_, data) => {
   return {
     data: extend(
       {entity_type: getEntityType(data)},

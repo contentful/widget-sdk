@@ -121,6 +121,11 @@ registerSchema({
 });
 
 registerSchema({
+  name: 'search_perform',
+  version: '1-0-0'
+});
+
+registerSchema({
   name: 'view_create',
   version: '1-0-0'
 });

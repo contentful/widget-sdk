@@ -13,6 +13,7 @@ angular.module('contentful')
   var ListQuery = require('ListQuery');
   var systemFields = require('systemFields');
   var accessChecker = require('accessChecker');
+  var Tracking = require('analytics/events/SearchAndViews');
 
   var assetLoader = new PromisedLoader();
 
@@ -40,6 +41,7 @@ angular.module('contentful')
       .then(function (assets) {
         $scope.context.ready = true;
         controller.paginator.setTotal(assets.total);
+        Tracking.searchPerformed($scope.context.view, assets.total);
         $scope.assets = filterOutDeleted(assets);
         $scope.selection.updateList($scope.assets);
       }, accessChecker.wasForbidden($scope.context))

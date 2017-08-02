@@ -10,6 +10,7 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var accessChecker = require('accessChecker');
   var debounce = require('debounce');
+  var Tracking = require('analytics/events/SearchAndViews');
 
   var AUTOTRIGGER_MIN_LEN = 4;
 
@@ -137,6 +138,7 @@ angular.module('contentful')
       })
      .then(function (result) {
        $scope.context.isSearching = false;
+       Tracking.searchPerformed($scope.context.view, result.total);
        return result;
      })
      .catch(function (error) {
