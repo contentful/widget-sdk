@@ -4,19 +4,37 @@ import intro from 'components/docs_sidebar/Intro';
 import icon from 'svg/help-bot-icon';
 import { byName as colorByName } from 'Styles/Colors';
 
+
 export default function Ninja (data) {
   if (data === null || data.state.isHidden) {
     return h('div');
   } else {
-    return data.state.isExpanded ? expanded(data) : minimized(data);
+    var modal = data.state.isExpanded ? expanded(data) : minimized(data);
+
+    return h('div.docs-sidebar__main-container', {
+      style: {
+        zIndex: 1000
+      }
+    }, modal.concat(helpButton(data.actions)));
   }
 }
 
+function helpButton (actions) {
+  return h('button.docs-sidebar__button', {
+    onClick: actions.toggle,
+    ariaLabel: 'Open docs sidebar'
+  }, [
+    icon,
+    h('.docs-sidebar__button-text', ['Help'])
+  ]);
+}
+
 function expanded (data) {
-  return h('.docs-sidebar__bg', [
+  return [
     h('.docs-sidebar__modal', {
       style: {
-        color: colorByName.textMid
+        color: colorByName.textMid,
+        boxShadow: '0 5px 40px 1px rgba(0, 0, 0, 0.16)'
       }
     }, [
       header(data.actions.toggle),
@@ -24,26 +42,10 @@ function expanded (data) {
         data.state.introCompleted ? getTemplate(data.state.view)(data) : intro(data)
       ])
     ])
-  ]);
-}
-
-function header (toggle) {
-  return h('.docs-sidebar__header', [
-    icon,
-    h('span', {style: {marginLeft: '10px', flexGrow: 1}}, ['Onboarding tour']),
-    h('button.close', {onClick: toggle}, ['×'])
-  ]);
+  ];
 }
 
 function minimized ({actions, state}) {
-  const button = h('button.docs-sidebar__button', {
-    onClick: actions.toggle,
-    ariaLabel: 'Open docs sidebar'
-  }, [
-    icon,
-    h('.docs-sidebar__button-text', ['Help'])
-  ]);
-
   const callout = h('.docs-sidebar__callout', [
     h('div', {
       style: {
@@ -71,10 +73,15 @@ function minimized ({actions, state}) {
     }, ['See tour'])
   ]);
 
-  return h(
-    '.docs-sidebar__ninja',
-    state.calloutSeen ? [button] : [button, callout]
-  );
+  return state.calloutSeen ? [] : [callout];
+}
+
+function header (toggle) {
+  return h('.docs-sidebar__header', [
+    icon,
+    h('span', {style: {marginLeft: '10px', flexGrow: 1}}, ['Onboarding tour']),
+    h('button.close', {onClick: toggle}, ['×'])
+  ]);
 }
 
 function getTemplate (route) {

@@ -58,6 +58,11 @@ export function toggle () {
   events.toggle({isExpanded: state.isExpanded, isIntro: !state.introCompleted});
 }
 
+export function hide () {
+  state.isExpanded = true;
+  toggle();
+}
+
 export function toggleVisibility () {
   state.isHidden = !state.isHidden;
   setStoreValue({isHidden: state.isHidden});

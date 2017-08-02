@@ -18,8 +18,7 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
   return {
     template: '<cf-component-bridge component="component">',
     restrict: 'E',
-    link: function (scope, el) {
-      var bgSelector = '.docs-sidebar__bg';
+    link: function (scope) {
       var ninjaData = {
         state: NinjaStore.get(),
         actions: {
@@ -51,12 +50,13 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
         logger.logError('Could not instantiate the contextual sidebar', error);
       });
 
+      $document[0].addEventListener('click', function (e) {
+        var isChildOfSidebar = !!$(e.target).parents('.docs-sidebar__main-container').length;
 
-      el.on('click', bgSelector, function (evt) {
-        if ($(evt.target).is(bgSelector)) {
-          toggle();
+        if (!isChildOfSidebar && $('.docs-sidebar__modal').is(':visible')) {
+          hide();
         }
-      });
+      }, true);
 
       $document.on('keydown', handleKeydown);
 
@@ -128,6 +128,11 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
 
       function toggle () {
         NinjaStore.toggle();
+        render();
+      }
+
+      function hide () {
+        NinjaStore.hide();
         render();
       }
 
