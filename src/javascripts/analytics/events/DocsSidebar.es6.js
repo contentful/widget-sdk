@@ -37,5 +37,5 @@ export function clickLink (url) {
 }
 
 export function copyToClipboard (contentCopied) {
-  track(eventName, {action: 'copy_to_clipboard', content_copied: contentCopied});
+  track(eventName, {action: 'copy_to_clipboard', contentCopied});
 }

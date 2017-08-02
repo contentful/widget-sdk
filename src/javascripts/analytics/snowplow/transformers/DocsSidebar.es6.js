@@ -13,7 +13,7 @@ export default addUserOrgSpace((_, data) => {
     data: {
       action: data.action,
       url: data.url,
-      contentCopied: data.contentCopied
+      content_copied: data.contentCopied
     }
   }, isNil);
 });
