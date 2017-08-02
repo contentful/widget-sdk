@@ -20,7 +20,11 @@ const defaults = {
   introTotalSteps: 4,
   token: '<YOUR TOKEN>',
   spaceId: '<YOUR SPACE ID>',
-  entryId: '<YOUR ENTRY ID>'
+  entryId: '<YOUR ENTRY ID>',
+  contentType: {
+    id: '<CONTENT TYPE ID>',
+    name: '<CONTENT TYPE NAME>'
+  }
 };
 
 const state = merge(defaults, TheStore.get(STORE_KEY));
@@ -34,6 +38,16 @@ export function setView (view) {
   if (state.isExpanded && !state.isHidden) {
     events.navigateWhileOpen({isIntro: !state.introCompleted});
   }
+}
+
+export function setSpaceData ({ spaceId, entryId, contentType }) {
+  state.spaceId = spaceId;
+  state.entryId = entryId;
+  state.contentType = contentType;
+}
+
+export function setToken (token) {
+  state.token = token;
 }
 
 export function toggle () {
