@@ -2,6 +2,7 @@ import {h} from 'ui/Framework';
 import clickToCopy from './InputWithCopy';
 import { byName as colorByName } from 'Styles/Colors';
 import { clickLink as trackLinkClick } from 'analytics/events/DocsSidebar';
+import { domain } from 'Config';
 
 export default function template (data) {
   const currentStep = data.state.introProgress;
@@ -34,7 +35,7 @@ export default function template (data) {
 }
 
 function content (data) {
-  const linkUrl = `https://app.contentful.com/spaces/${data.state.spaceId}/entries`;
+  const linkUrl = `https://app.${domain}/spaces/${data.state.spaceId}/entries`;
 
   return [
     [h('div', [
@@ -43,7 +44,7 @@ function content (data) {
     ])],
     ['Contentful is a content management infrastructure that lets you build applications with its flexible APIs and global CDN.'],
     [h('div', [
-      h('strong', ['Try and fetch your entry called "Toys":']),
+      h('strong', ['Try and fetch an entry:']),
       clickToCopy(curl(data), data.actions.render),
       docs()
     ])],
@@ -74,12 +75,13 @@ function curl (data) {
           color: colorByName.textMid
         }
       }, [
-        h('span', ['curl https://cdn.contentful.com/']),
+        h('span', [`curl https://cdn.${domain}/`]),
         h('span', colorBlue, ['spaces']),
         h('span', ['/']),
         h('span', colorGreen, [`${data.state.spaceId}`]),
         h('span', ['/']),
         h('span', colorBlue, ['entries']),
+        h('span', ['/']),
         h('span', colorGreen, [`${data.state.entryId}`]),
         h('span', ['?']),
         h('span', colorBlue, ['access_token']),
@@ -87,7 +89,7 @@ function curl (data) {
         h('span', colorGreen, [`${data.state.token}`])
       ])
     ],
-    text: `curl https://cdn.contentful.com/spaces/${data.state.spaceId}/entries/${data.state.entryId}?access_token=${data.state.token}`,
+    text: `curl https://cdn.${domain}/spaces/${data.state.spaceId}/entries/${data.state.entryId}?access_token=${data.state.token}`,
     id: 'introCurl'
   };
 

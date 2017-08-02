@@ -5,7 +5,7 @@ import icon from 'svg/help-bot-icon';
 import { byName as colorByName } from 'Styles/Colors';
 
 export default function Ninja (data) {
-  if (data.state.isHidden) {
+  if (data === null || data.state.isHidden) {
     return h('div');
   } else {
     return data.state.isExpanded ? expanded(data) : minimized(data);
@@ -15,7 +15,9 @@ export default function Ninja (data) {
 function expanded (data) {
   return h('.docs-sidebar__bg', [
     h('.docs-sidebar__modal', {
-      color: colorByName.textMid
+      style: {
+        color: colorByName.textMid
+      }
     }, [
       header(data.actions.toggle),
       h('.docs-sidebar__body', [
@@ -85,5 +87,9 @@ function getTemplate (route) {
 
 
 function empty () {
-  return h('div', ['Sorry, I don\'t have any tips for you right now.']);
+  return h('div', {
+    style: {
+      padding: '20px 30px'
+    }
+  }, ['Sorry, I don\'t have any tips for you right now.']);
 }
