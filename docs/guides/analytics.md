@@ -147,6 +147,12 @@ yet).
 | space_switcher      | space_switched                        | <code>targetSpaceId: id-string<br>targetSpaceName: string</code>
 | space               | template_selected                     | <code>templateName: string</code>
 | space               | create                                | <code>templateName: string</code>
+| search              | bulk_action_performed                 | <code>entityType: string (Entry, Asset)<br>method: string (publish, duplicate...)
+| search              | search_performed                      | TODO: link Snowplow schema when merged
+| search              | view_created                          | TODO: link Snowplow schema when merged
+| search              | view_edited                           | TODO: link Snowplow schema when merged
+| search              | view_deleted                          | TODO: link Snowplow schema when merged
+| search              | view_loaded                           | TODO: link Snowplow schema when merged
 | modelling           | field_added                           | <code>contentTypeId: id-string<br>contentTypeName: string<br>fieldId: id-string<br>fieldName: string<br>fieldType: string<br>fieldItemType: string<br>fieldLocalized: bool<br>fieldRequired: bool</code>
 | modelling           | custom_extension_selected             | <code>extensionId: id-string<br>extensionName: string<br>fieldType: string (Text, Symbol...)<br>contentTypeId: id-string</code>
 | entry_editor        | state_changed                         | <code>entityType: string (Asset, Entry)<br>entityId: id-string<br>fromState: string (draft, published...)<br>toState: string</code>
