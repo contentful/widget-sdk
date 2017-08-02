@@ -19,7 +19,12 @@ angular.module('contentful')
     label: 'Create new organization',
     views: {
       'nav-bar@': {
-        template: h('cf-space-selector')
+        // Begin feature flag code - feature-bv-06-2017-use-new-navigation
+        template: h('cf-space-selector', { ngIf: '!useNewNavigation' }),
+        controller: ['$scope', function ($scope) {
+          LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation');
+        }]
+        // End feature flag code - feature-bv-06-2017-use-new-navigation
       }
     },
     controller: ['$scope', function ($scope) {
