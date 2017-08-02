@@ -26,7 +26,7 @@ export default function template (data) {
       style: {
         height: '2px',
         backgroundColor: colorByName.blueMid,
-        transition: 'width 0.2s ease-in',
+        transition: 'width 0.3s ease-in-out',
         width: `${(data.state.introProgress / data.state.introTotalSteps) * 100}%`
       }
     }),
