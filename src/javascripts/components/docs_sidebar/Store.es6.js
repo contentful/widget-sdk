@@ -17,8 +17,10 @@ const defaults = {
   calloutSeen: false,
   introCompleted: false,
   introProgress: 1,
+  introTotalSteps: 4,
   token: '<YOUR TOKEN>',
-  spaceId: '<YOUR SPACE ID>'
+  spaceId: '<YOUR SPACE ID>',
+  entryId: '<YOUR ENTRY ID>'
 };
 
 const state = merge(defaults, TheStore.get(STORE_KEY));
@@ -61,7 +63,7 @@ export function continueIntro () {
 }
 
 export function completeIntro () {
-  if (state.introProgress === 10 && state.introCompleted === false) {
+  if (state.introProgress === state.introTotalSteps && state.introCompleted === false) {
     state.introCompleted = true;
     setStoreValue({introCompleted: true});
     events.completeIntro();

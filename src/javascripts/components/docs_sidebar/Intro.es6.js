@@ -1,5 +1,6 @@
 import {h} from 'ui/Framework';
-import inputWithCopy from 'components/docs_sidebar/InputWithCopy';
+import { byName as colorByName } from 'Styles/Colors';
+import clickToCopy from './InputWithCopy';
 
 export default function template (data) {
   const currentStep = data.state.introProgress;
@@ -18,63 +19,92 @@ export default function template (data) {
     storyContent.push(prompt);
   }
 
-  return h('div', storyContent);
+  return h('div.docs-sidebar__intro', [
+    h('div.docs-sidebar__progress', {
+      style: {
+        height: '2px',
+        backgroundColor: colorByName.blueMid,
+        transition: 'width 0.2s ease-in',
+        width: `${(data.state.introProgress / data.state.introTotalSteps) * 100}%`
+      }
+    }),
+    h('div.docs-sidebar__intro-content', storyContent)
+  ]);
 }
 
 function content (data) {
   return [
-    [h('h3', ['Hello fellow Content-Ninja!'])],
-    ['Welcome to the Contentful Jungle.'],
-    ['My name is Misao and I\'m here to guide Contentful developers along the way.'],
-    ['First I want to give you something useful.'],
-    ['Here is an ', h('strong', ['API token']), '. You will need it to fetch your data.'],
-    token(data),
-    curl(),
-    ['This curl command GETs all the entries that belong to this space.'],
-    docs(),
-    summon(data.actions.toggle)
+    [h('div', [
+      h('p', ['👋 Hi! I’m here to help you learn about Contentful and to make your first API calls']),
+      h('p', ['I will show you different info on the main pages. To hide or display this help, press n.'])
+    ])],
+    ['Contentful is a content management infrastructure that lets you build applications with its flexible APIs and global CDN.'],
+    [h('div', [
+      h('strong', ['Try and fetch your entry called "Toys":']),
+      clickToCopy(curl(data), data.actions.render),
+      docs()
+    ])],
+    [h('div', [
+      h('strong', ['What‘s next?']),
+      h('a.text-link', {
+        href: `https://app.contentful.com/spaces/${data.state.spaceId}/entries`,
+        style: {
+          display: 'block',
+          marginTop: '10px'
+        }
+      }, ['Explore all your entries'])
+    ])]
   ];
 }
 
-function token (data) {
-  return [
-    h('.docs-sidebar__token-line', [
-      h('.docs-sidebar__key-icon'),
-      h('.docs-sidebar__token', [
-        inputWithCopy('introToken', data.state.token, data.actions.render)
+function curl (data) {
+  const colorBlue = colorize(colorByName.blueDarkest);
+  const colorGreen = colorize(colorByName.greenDarkest);
+
+  return {
+    children: [
+      h('pre', {
+        style: {
+          whiteSpace: 'pre-wrap',
+          wordWrap: 'break-word',
+          color: colorByName.textMid
+        }
+      }, [
+        h('span', ['curl https://cdn.contentful.com/']),
+        h('span', colorBlue, ['spaces']),
+        h('span', ['/']),
+        h('span', colorGreen, [`${data.state.spaceId}`]),
+        h('span', ['/']),
+        h('span', colorBlue, ['entries']),
+        h('span', colorGreen, [`${data.state.entryId}`]),
+        h('span', ['?']),
+        h('span', colorBlue, ['access_token']),
+        h('span', ['=']),
+        h('span', colorGreen, [`${data.state.token}`])
       ])
-    ])
-  ];
-}
+    ],
+    text: `curl https://cdn.contentful.com/spaces/${data.state.spaceId}/entries/${data.state.entryId}?access_token=${data.state.token}`,
+    id: 'introCurl'
+  };
 
-function curl () {
-  return [
-    h('p', ['Now you can do things like this:']),
-    h('code', [
-      'curl https://cdn.contentful.com/spaces/{{spaceContext.getId()}}?access_token=SUPERTOKENHERENOW'
-    ])
-  ];
+  function colorize (color) {
+    return {
+      style: {
+        color: `${color}`
+      }
+    };
+  }
 }
 
 function docs () {
-  return [
-    'Visit the ',
-    h(
-      'a.text-link',
-      {href: 'https://www.contentful.com/developers/docs/', target: '_blank'},
-      ['developer docs']
-    ),
-    ' to read about this and other API endpoints.'
-  ];
-}
-
-function summon (toggle) {
-  return [
-    h('p', [
-      h('span', ['By the way, you can summon or hide me at any time by pressing the shortcut ']),
-      h('strong', ['n']),
-      '.'
-    ]),
-    h('a.text-link--neutral-emphasis-low', {onClick: toggle}, ['Close'])
-  ];
+  return h('div', [
+    h('span', ['Read about this and other API endpoints in the ']),
+    h('a.text-link', {
+      href: 'https://www.contentful.com/developers/docs/',
+      target: '_blank',
+      style: {
+        display: 'block'
+      }
+    }, ['developer docs.'])
+  ]);
 }

@@ -1,6 +1,6 @@
 import {h} from 'ui/Framework';
 
-export default function template () {
+export default function template (data) {
   return h('div', [
     h('h3', {style: 'color:#bd19ce;'}, ['Entries. Entries! Entries!!!!!!']),
     h('.docs-sidebar__line', ['Entries are your content.']),
@@ -10,7 +10,7 @@ export default function template () {
     ]),
     h('.docs-sidebar__line', ['You can fetch all of your entries in this space like this:']),
     h('code.docs-sidebar__line', [
-      'curl https://cdn.contentful.com/spaces/{{spaceContext.getId()}}/entries?access_token=SUPERTOKENHERENOW'
+      `curl https://cdn.contentful.com/spaces/${data.state.spaceId}/entries?access_token=${data.state.token}`
     ]),
     h('hr'),
     h('.docs-sidebar__line', [
@@ -18,7 +18,7 @@ export default function template () {
     ]),
     h('.docs-sidebar__line', ['Or, just the entries of the ', h('strong', ['ninja']), ' type:']),
     h('code.docs-sidebar__line', [
-      'curl https://cdn.contentful.com/spaces/{{spaceContext.getId()}}/entries?content_type=ninjas&access_token=SUPERTOKENHERENOW'
+      `curl https://cdn.contentful.com/spaces/${data.state.spaceId}/entries?content_type=ninjas&access_token=${data.state.token}`
     ]),
     h('hr'),
     h('.docs-sidebar__line', [

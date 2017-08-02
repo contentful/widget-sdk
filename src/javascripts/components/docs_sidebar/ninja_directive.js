@@ -43,6 +43,13 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
         $document.off('keydown', handleKeydown);
       });
 
+      function render () {
+        ninjaData.state = NinjaStore.get();
+        return $timeout(function () {
+          scope.component = Ninja(ninjaData);
+        });
+      }
+
       function toggle () {
         NinjaStore.toggle();
         render();
@@ -60,17 +67,10 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
 
       function handleSpace () {
         // Don't do anything if all steps have been completed
-        if (ninjaData.state.introProgress < 10) {
+        if (ninjaData.state.introProgress < 4) {
           NinjaStore.continueIntro();
           render().then(NinjaStore.completeIntro);
         }
-      }
-
-      function render () {
-        ninjaData.state = NinjaStore.get();
-        return $timeout(function () {
-          scope.component = Ninja(ninjaData);
-        });
       }
 
       function handleKeydown (evt) {

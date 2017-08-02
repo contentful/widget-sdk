@@ -1,71 +1,54 @@
 import {h} from 'ui/Framework';
-import $ from 'jquery';
 import $document from '$document';
 import userAgent from 'userAgent';
+import { byName as colorByName } from 'Styles/Colors';
 import $timeout from '$timeout';
 
 const state = {};
 
-export default function render (id, value, rerender) {
-
+export default function ({ children, text, id }, render) {
   const canCopy = !userAgent.isSafari();
 
-  state[id] = state[id] || {copying: false};
+  state[id] = state[id] || { copied: false };
 
-  const input = h('input.cfnext-form__input--full-size', {
-    value,
-    type: 'text',
-    readonly: true,
-    ariaLabel: id,
-    onClick: selectAllInput,
-    style: {cursor: 'pointer'}
+  const copyButton = h(`button.docs-sidebar__copy-button.fa.${state[id].copied ? 'fa-check' : 'fa-copy'}`, {
+    style: {
+      height: '30px',
+      width: '30px',
+      position: 'absolute',
+      bottom: '5px',
+      right: '5px',
+      backgroundColor: colorByName.elementLight,
+      border: `1px solid ${colorByName.elementDark}`
+    },
+    onClick: copy
   });
 
-  const copyBtn = h('button', {
-    class: [
-      'cfnext-form__icon-suffix',
-      'copy-to-clipboard', 'x--input-suffix',
-      'fa', state[id].copying ? 'fa-check' : 'fa-copy'
-    ].join(' '),
-    onClick: () => copy(id, value)
-  }, [tooltip()]);
+  return h('div', {
+    style: {
+      border: `1px solid ${colorByName.elementMid}`,
+      backgroundColor: colorByName.elementLightest,
+      padding: '10px',
+      position: 'relative',
+      marginTop: '10px',
+      marginBottom: '10px'
+    }
+  }, children.concat(canCopy ? copyButton : []));
 
+  function copy () {
+    const doc = $document[0];
+    const input = doc.createElement('input');
 
-  return h('.cfnext-form__input-group--full-size', {},
-    canCopy ? [input, copyBtn] : [input]
-  );
-
-  function copy (id, value) {
-    copyToClipboard(value);
-    state[id].copying = true;
-    rerender();
-    $timeout(function () {
-      state[id].copying = false;
-      rerender();
-    }, 1500);
+    input.value = text;
+    input.type = 'text';
+    doc.body.appendChild(input);
+    input.select();
+    doc.execCommand('copy', false);
+    state[id].copied = true;
+    render();
+    $timeout(() => {
+      state[id].copied = false;
+      render();
+    }, 500);
   }
-}
-
-function tooltip () {
-  return h('.copy-tooltip.tooltip.top', [
-    h('.tooltip-inner', ['Copy to clipboard']),
-    h('span', {class: 'tooltip-arrow'})
-  ]);
-}
-
-function selectAllInput (evt) {
-  const $el = $(evt.target);
-  const end = $el.val().length;
-  $el.textrange('set', 0, end);
-}
-
-function copyToClipboard (text) {
-  const doc = $document[0];
-  const input = doc.createElement('input');
-  input.value = text;
-  input.type = 'text';
-  doc.body.appendChild(input);
-  input.select();
-  doc.execCommand('copy', false, null);
-  input.remove();
 }

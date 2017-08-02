@@ -2,6 +2,7 @@ import {h} from 'ui/Framework';
 import entries from 'components/docs_sidebar/Entries';
 import intro from 'components/docs_sidebar/Intro';
 import icon from 'svg/help-bot-icon';
+import { byName as colorByName } from 'Styles/Colors';
 
 export default function Ninja (data) {
   if (data.state.isHidden) {
@@ -13,10 +14,12 @@ export default function Ninja (data) {
 
 function expanded (data) {
   return h('.docs-sidebar__bg', [
-    h('.docs-sidebar__modal', [
+    h('.docs-sidebar__modal', {
+      color: colorByName.textMid
+    }, [
       header(data.actions.toggle),
       h('.docs-sidebar__body', [
-        data.state.introCompleted ? getTemplate(data.state.view) : intro(data)
+        data.state.introCompleted ? getTemplate(data.state.view)(data) : intro(data)
       ])
     ])
   ]);
@@ -25,8 +28,8 @@ function expanded (data) {
 function header (toggle) {
   return h('.docs-sidebar__header', [
     icon,
-    h('span', {style: {marginLeft: '10px', flexGrow: 1}}, ['Contentful help']),
-    h('button.close', {onClick: toggle}, ['X'])
+    h('span', {style: {marginLeft: '10px', flexGrow: 1}}, ['Onboarding tour']),
+    h('button.close', {onClick: toggle}, ['×'])
   ]);
 }
 
@@ -40,13 +43,30 @@ function minimized ({actions, state}) {
   ]);
 
   const callout = h('.docs-sidebar__callout', [
-    'Hello! I can show you around here! ',
+    h('div', {
+      style: {
+        display: 'flex',
+        justifyContent: 'space-between'
+      }
+    }, [
+      h('p', {
+        style: { fontWeight: 'bold' }
+      }, ['Onboarding tour']),
+      h('p', {
+        style: {
+          fontSize: '2em',
+          cursor: 'pointer',
+          color: colorByName.textLight
+        },
+        onClick: actions.dismissCallout
+      }, ['×'])
+    ]),
+    h('p', {
+      style: {}
+    }, ['👋 Hi! I am here to you learn about Contentful and to make your first API call.']),
     h('a.text-link--neutral-emphasis-low', {
       onClick: actions.toggle
-    }, ['Show']),
-    h('a.text-link--neutral-emphasis-low.sometest', {
-      onClick: actions.dismissCallout
-    }, ['Close'])
+    }, ['See tour'])
   ]);
 
   return h(
@@ -57,10 +77,10 @@ function minimized ({actions, state}) {
 
 function getTemplate (route) {
   const views = {
-    'spaces.detail.entries.list': entries()
+    'spaces.detail.entries.list': entries
   };
 
-  return views[route] || empty();
+  return views[route] || empty;
 }
 
 
