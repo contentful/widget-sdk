@@ -85,7 +85,41 @@ angular.module('contentful')
     return !hasEntries && !hasQuery && !$scope.context.loading;
   };
 
-  $scope.hasQuery = searchController.hasQuery;
+
+  /**
+   * @ngdoc method
+   * @name EntryListController#$scope.hasNoSearchResult
+   * @description
+   * Returns true if the user has provided a query but no results have
+   * been returned from the API.
+   *
+   * @return {boolean}
+   */
+  $scope.hasNoSearchResults = function () {
+    var hasQuery = searchController.hasQuery();
+    var hasEntries = $scope.paginator.getTotal() > 0;
+    return !hasEntries && hasQuery && !$scope.context.loading;
+  };
+
+
+  /**
+   * @ngdoc method
+   * @name EntryListController#$scope.displaySearch
+   * @description
+   * Returns a string that describes the current search.
+   *
+   * This is displayed to the user when the search was unsuccessful
+   *
+   * @return {string}
+   */
+  $scope.displaySearch = function () {
+    var view = $scope.context.view;
+    if (view.contentTypeId) {
+      return 'Content type "' + view.contentTypeId + '", term: ' + view.searchTerm;
+    } else {
+      return view.searchTerm;
+    }
+  };
 
   /**
    * @ngdoc property
