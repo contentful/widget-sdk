@@ -10,7 +10,7 @@ div(
           ng-class="{'is-selected': selectedWidgetIndex === $index}"
           data-current-widget-index="{{$index}}"
           ng-click="selectWidget($index)")
-        cf-icon.field-dialog__widget-icon(name="{{w.icon}}-widget")
+        cf-icon.field-dialog__widget-icon(ng-if="w.icon" name="{{w.icon}}-widget")
         p {{w.name}}
         p.field-dialog__widget-default(ng-if="w.id === defaultWidgetId") (default)
         cf-icon(name="checkmark")
