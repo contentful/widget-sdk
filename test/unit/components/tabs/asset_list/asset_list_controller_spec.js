@@ -394,29 +394,28 @@ describe('Asset List Controller', function () {
   describe('#showNoAssetsAdvice', function () {
     beforeEach(function () {
       scope.context.view = {};
-      this.assertShowNoAssetsAdvice = function (total = 0, searchTerm = null, isSearching = false, value = true) {
+      this.assertShowNoAssetsAdvice = function ({total, term, searching, expected}) {
         scope.searchController.paginator.setTotal(total);
-        scope.context.view.searchTerm = searchTerm;
-        scope.$digest();
-        scope.context.isSearching = isSearching;
-        expect(scope.showNoAssetsAdvice()).toBe(value);
+        scope.context.view.searchTerm = term;
+        scope.context.isSearching = searching;
+        expect(scope.showNoAssetsAdvice()).toBe(expected);
       };
     });
 
     it('is true when there are no entries, no search term and not searching', function () {
-      this.assertShowNoAssetsAdvice();
+      this.assertShowNoAssetsAdvice({total: 0, term: null, searching: false, expected: true});
     });
 
     it('is false when there are entries', function () {
-      this.assertShowNoAssetsAdvice(1, '', false, false);
+      this.assertShowNoAssetsAdvice({total: 1, term: '', searching: false, expected: false});
     });
 
     it('is false when there is a search term', function () {
-      this.assertShowNoAssetsAdvice(0, 'foo', false, false);
+      this.assertShowNoAssetsAdvice({total: 0, term: 'foo', searching: false, expected: false});
     });
 
     it('is false when the view is loading', function () {
-      this.assertShowNoAssetsAdvice(0, '', true, false);
+      this.assertShowNoAssetsAdvice({total: 0, term: '', searching: true, expected: false});
     });
   });
 });

@@ -65,7 +65,7 @@ angular.module('contentful')
    */
   // TODO this code is duplicated in the entry list controller
   $scope.hasNoSearchResults = function () {
-    var hasQuery = _.isEmpty($scope.context.view.searchTerm);
+    var hasQuery = !_.isEmpty($scope.context.view.searchTerm);
     var hasAssets = $scope.paginator.getTotal() > 0;
     return !hasAssets && hasQuery && !$scope.context.isSearching;
   };
@@ -73,7 +73,7 @@ angular.module('contentful')
 
   // TODO this code is duplicated in the entry list controller
   $scope.showNoAssetsAdvice = function () {
-    var hasQuery = _.isEmpty($scope.context.view.searchTerm);
+    var hasQuery = !_.isEmpty($scope.context.view.searchTerm);
     var hasAssets = $scope.paginator.getTotal() > 0;
 
     return !hasAssets && !hasQuery && !$scope.context.isSearching;
