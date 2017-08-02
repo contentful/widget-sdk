@@ -1,6 +1,8 @@
 'use strict';
 
-angular.module('contentful').directive('cfViewCustomizer', ['defer', function (defer) {
+angular.module('contentful').directive('cfViewCustomizer', ['require', 'defer', function (require, defer) {
+  var $timeout = require('$timeout');
+
   return {
     template: JST.view_customizer(),
     restrict: 'A',
@@ -35,6 +37,15 @@ angular.module('contentful').directive('cfViewCustomizer', ['defer', function (d
         },
         stop: function (_, ui) {
           ui.item.removeClass('dragging');
+        },
+        update: function () {
+          // Ensure that function isn't called before displayedFields is updated
+          $timeout(function () {
+            var fieldIds = $scope.displayedFields.map(function (field) {
+              return field.id;
+            });
+            $scope.context.view.displayedFieldIds = fieldIds;
+          });
         }
       };
 
