@@ -5,6 +5,9 @@ import {getSpaces} from 'services/TokenStore';
 import TheStore from 'TheStore';
 import template from 'app/home/HomeTemplate';
 import {h} from 'utils/hyperscript';
+// Begin feature flag code - feature-bv-06-2017-use-new-navigation
+import {setOnScope as setFeatureFlag} from 'utils/LaunchDarkly';
+// End feature flag code - feature-bv-06-2017-use-new-navigation
 
 /**
  * @ngdoc service
@@ -17,7 +20,16 @@ import {h} from 'utils/hyperscript';
 export default makeState({
   name: 'home',
   url: '/',
-  views: { 'nav-bar': { template: h('cf-space-selector') } },
+  views: {
+    'nav-bar': {
+      // Begin feature flag code - feature-bv-06-2017-use-new-navigation
+      template: h('cf-space-selector', { ngIf: '!useNewNavigation' }),
+      controller: ['$scope', function ($scope) {
+        setFeatureFlag($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation');
+      }]
+      // End feature flag code - feature-bv-06-2017-use-new-navigation
+    }
+  },
   template: template(),
   loadingText: 'Loading...',
   resolve: {
