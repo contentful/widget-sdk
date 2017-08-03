@@ -11,6 +11,7 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var tokenStore = require('services/TokenStore');
   var $state = require('$state');
+  var $rootScope = require('$rootScope');
   var SumTypes = require('libs/sum-types');
   var caseof = SumTypes.caseofEq;
   var otherwise = SumTypes.otherwise;
@@ -24,23 +25,30 @@ angular.module('contentful')
     },
     replace: true,
     controller: ['$scope', function ($scope) {
+
+      $rootScope.$on('$stateChangeSuccess', function () {
+        if ($state.current.name === 'account.organizations.new') {
+          setState('NewOrg');
+        } else if ($state.current.name.startsWith('account.profile')) {
+          setState('UserProfile');
+        } else if ($state.current.name.startsWith('account.organizations') && $state.params.orgId) {
+          tokenStore.getOrganization($state.params.orgId).then(function (org) {
+            setState('OrgSettings', { org: org });
+          });
+        } else if (!spaceContext.space) {
+          setState('Default');
+        }
+      });
+
       // TODO add kefir properties and use K.onValueScope
       $scope.$watchCollection(function () {
         return {
           space: _.get(spaceContext, 'space.data'),
-          org: _.get(spaceContext, 'organizationContext.organization'),
-          orgId: $state.params.orgId
+          org: _.get(spaceContext, 'organizationContext.organization')
         };
       }, function (values) {
         if (values.space && values.org) {
           setState('Space', values);
-        } else if (values.orgId) {
-          tokenStore.getOrganization(values.orgId).then(function (org) {
-            setState('OrgSettings', { org: org });
-          });
-        } else {
-          // TODO : user profile and new org states
-          setState('Default');
         }
       });
 
