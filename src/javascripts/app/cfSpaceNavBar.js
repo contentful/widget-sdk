@@ -15,7 +15,12 @@ angular.module('contentful')
     restrict: 'E',
     scope: {},
     controllerAs: 'nav',
-    controller: function () {
+    controller: ['$scope', function ($scope) {
+      // Begin feature flag code - feature-bv-06-2017-use-new-navigation
+      var LD = require('utils/LaunchDarkly');
+      LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation');
+      // End feature flag code - feature-bv-06-2017-use-new-navigation
+
       this.canNavigateTo = function (section) {
         if (!spaceContext.space || spaceContext.space.isHibernated()) {
           return false;
@@ -23,7 +28,7 @@ angular.module('contentful')
           return accessChecker.getSectionVisibility()[section];
         }
       };
-    }
+    }]
   };
 
   function template () {
@@ -67,11 +72,11 @@ angular.module('contentful')
         dataViewType: 'space-settings',
         rootSref: 'spaces.detail.settings',
         icon: 'nav-settings',
-        title: 'Settings',
+        title: '{{ useNewNavigation ? "Space settings" : "Settings" }}',
         children: [
           {
             sref: 'spaces.detail.settings.space',
-            title: 'Space'
+            title: '{{ useNewNavigation ? "General" : "Space" }}'
           }, {
             sref: 'spaces.detail.settings.locales.list',
             title: 'Locales',
