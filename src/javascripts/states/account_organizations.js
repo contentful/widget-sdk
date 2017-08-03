@@ -17,6 +17,10 @@ angular.module('contentful')
     name: 'new',
     url: '/new',
     label: 'Create new organization',
+    views: {
+      // Override org navbar from paremt state
+      'nav-bar@': { template: '' }
+    },
     controller: ['$scope', function ($scope) {
       $scope.context = {};
     }],
