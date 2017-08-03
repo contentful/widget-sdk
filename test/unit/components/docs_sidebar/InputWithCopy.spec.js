@@ -1,4 +1,4 @@
-describe('docs_sidebar/InputWithCopy', function () {
+xdescribe('docs_sidebar/InputWithCopy', function () {
   beforeEach(function () {
     module('contentful/test');
 
