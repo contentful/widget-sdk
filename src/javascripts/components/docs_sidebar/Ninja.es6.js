@@ -13,7 +13,7 @@ export default function Ninja (data) {
   if (data === null || data.state.isHidden) {
     return h('div');
   } else {
-    var modal = data.state.isExpanded ? expanded(data) : minimized(data);
+    const modal = data.state.isExpanded ? expanded(data) : minimized(data);
 
     return h('div.docs-sidebar__main-container', {
       style: {
