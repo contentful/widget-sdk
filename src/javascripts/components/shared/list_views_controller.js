@@ -1,15 +1,16 @@
 'use strict';
 angular.module('contentful')
 .controller('ListViewsController', [
-  '$scope', '$injector', 'generateDefaultViews', 'getBlankView', 'resetList', 'viewCollectionName', 'preserveStateAs',
-  function ($scope, $injector, generateDefaultViews, getBlankView, resetList, viewCollectionName, preserveStateAs) {
-    var $q = $injector.get('$q');
-    var logger = $injector.get('logger');
-    var notification = $injector.get('notification');
-    var $parse = $injector.get('$parse');
-    var createViewPersistor = $injector.get('data/ListViewPersistor').default;
-    var accessChecker = $injector.get('accessChecker');
-    var spaceContext = $injector.get('spaceContext');
+  '$scope', 'require', 'generateDefaultViews', 'getBlankView', 'resetList', 'viewCollectionName', 'preserveStateAs',
+  function ($scope, require, generateDefaultViews, getBlankView, resetList, viewCollectionName, preserveStateAs) {
+    var $q = require('$q');
+    var logger = require('logger');
+    var notification = require('notification');
+    var $parse = require('$parse');
+    var createViewPersistor = require('data/ListViewPersistor').default;
+    var accessChecker = require('accessChecker');
+    var spaceContext = require('spaceContext');
+    var Tracking = require('analytics/events/SearchAndViews');
 
     var getCurrentView = $parse('context.view');
     var setCurrentView = getCurrentView.assign;
@@ -46,7 +47,19 @@ angular.module('contentful')
     $scope.loadView = function (view) {
       replaceView(view);
       resetList();
+
+      // track only when loading a stored view
+      if (view.id) {
+        Tracking.viewLoaded(view, getFolderFor(view));
+      }
     };
+
+    function getFolderFor (view) {
+      var folders = _.get($scope, ['uiConfig', viewCollectionName], []);
+      return _.find(folders, function (f) {
+        return _.get(f, ['views'], []).indexOf(view) > -1;
+      });
+    }
 
     $scope.saveViews = function () {
       return $scope.saveUiConfig().catch(function (err) {

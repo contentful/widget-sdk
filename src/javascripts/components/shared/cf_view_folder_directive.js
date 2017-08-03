@@ -5,6 +5,7 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var openRoleSelector = require('app/RoleSelector').default;
   var isFeatureEnabled = require('analytics/OrganizationTargeting').default;
+  var Tracking = require('analytics/events/SearchAndViews');
 
   return {
     restrict: 'A',
@@ -65,6 +66,7 @@ angular.module('contentful')
           .then(function (roles) {
             view.roles = roles;
             $scope.saveViews();
+            Tracking.viewRolesEdited(view, $scope.folder);
           });
       }
     }]

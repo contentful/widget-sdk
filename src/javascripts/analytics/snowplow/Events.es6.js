@@ -14,6 +14,7 @@ import AppOpen from 'analytics/snowplow/transformers/AppOpen';
 import BulkEditor from 'analytics/snowplow/transformers/BulkEditor';
 import Snapshot from 'analytics/snowplow/transformers/Snapshot';
 import InviteUserExperiment from 'analytics/snowplow/transformers/InviteUserExperiment';
+import SearchAndViews from 'analytics/snowplow/transformers/SearchAndViews';
 
 
 /**
@@ -74,6 +75,12 @@ registerEvent('personal_access_token:action', 'personal_access_token', (_, data)
     }
   };
 });
+
+registerEvent('search:search_performed', 'search_perform', SearchAndViews);
+registerEvent('search:view_created', 'view_create', SearchAndViews);
+registerEvent('search:view_edited', 'view_edit', SearchAndViews);
+registerEvent('search:view_deleted', 'view_delete', SearchAndViews);
+registerEvent('search:view_loaded', 'view_load', SearchAndViews);
 
 /**
  * Registers an event to be tracked by snowplow.
