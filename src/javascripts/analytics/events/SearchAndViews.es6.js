@@ -55,7 +55,7 @@ function details ({title, roles}) {
 
 function query ({searchTerm, contentTypeId}) {
   return {
-    search_query: searchTerm,
-    content_type_id: contentTypeId
+    search_query: searchTerm || null,
+    content_type_id: contentTypeId || null
   };
 }
