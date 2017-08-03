@@ -15,7 +15,6 @@ import BulkEditor from 'analytics/snowplow/transformers/BulkEditor';
 import Snapshot from 'analytics/snowplow/transformers/Snapshot';
 import InviteUserExperiment from 'analytics/snowplow/transformers/InviteUserExperiment';
 import SearchAndViews from 'analytics/snowplow/transformers/SearchAndViews';
-import {addUserOrgSpace} from 'analytics/snowplow/transformers/Decorators';
 
 
 /**
@@ -67,7 +66,15 @@ registerEvent('global:app_loaded', 'app_open', AppOpen);
 registerEvent('invite_user:learn', 'generic', InviteUserExperiment);
 registerEvent('invite_user:create_space', 'generic', InviteUserExperiment);
 
-registerEvent('personal_access_token:action', 'personal_access_token', addUserOrgSpace());
+registerEvent('personal_access_token:action', 'personal_access_token', (_, data) => {
+  return {
+    data: {
+      personal_access_token_id: data.patId,
+      action: data.action,
+      executing_user_id: data.userId
+    }
+  };
+});
 
 registerEvent('search:search_performed', 'search_perform', SearchAndViews);
 registerEvent('search:view_created', 'view_create', SearchAndViews);
