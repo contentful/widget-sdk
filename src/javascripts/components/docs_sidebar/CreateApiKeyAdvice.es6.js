@@ -6,7 +6,9 @@ export default function (spaceId) {
   const apiKeyPageLink = `https://app.${domain}/spaces/${spaceId}/api/keys/`;
 
   return h('.docs-sidebar__line', {
-    marginTop: '10px'
+    style: {
+      marginTop: '10px'
+    }
   }, [
     h('p', ['It looks like you don‘t have any API access tokens.']),
     h('p', ['To be able to perform any queries, you‘ll need to generate one.']),
