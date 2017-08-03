@@ -51,6 +51,6 @@ export default function ({ children, text, id }, render) {
     $timeout(() => {
       state[id].copied = false;
       render();
-    }, 500);
+    }, 1000);
   }
 }

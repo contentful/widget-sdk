@@ -5,8 +5,8 @@ import { clickLink as trackLinkClick } from 'analytics/events/DocsSidebar';
 import { domain } from 'Config';
 
 export default function template (data) {
-  const otherQueriesLink = 'https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/entries';
-  const contentTypesLink = `https://app.${domain}/spaces/${data.state.spaceId}/content_types`;
+  const otherQueriesLink = 'https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/content-types';
+  const apiKeyLink = `https://app.${domain}/spaces/${data.state.spaceId}/api/keys/${data.state.apiKeyId}`;
 
   return h('div', {
     style: {
@@ -14,34 +14,39 @@ export default function template (data) {
     }
   }, [
     h('.docs-sidebar__line', [
-      h('p', ['These are your ', h('strong', ['entries']), ', where you create and manage your written content.'])
+      h('p', [
+        'These are your ',
+        h('strong', ['content types']),
+        ', which are similar to schemas, and for each content type,',
+        'you can customize its fields and field properties.'
+      ])
     ]),
     h('.docs-sidebar__line', [
-      h('p', ['Each entry’s fields are defined by the way you customize the fields in your content types'])
+      h('p', ['Here we have example content types for Brand, Category and Product.'])
     ]),
     h('.docs-sidebar__line', [
-      h('strong', [`Fetch entries for "${data.state.contentType.name}" content type:`]),
+      h('strong', [`Try and fetch your "${data.state.contentType.name}" content type:`]),
       clickToCopy(curl(data), data.actions.render),
       h('p', [
-        'There are also ',
+        'Read about ',
         h('a.text-link', {
           href: otherQueriesLink,
           target: '_blank',
           onClick: () => trackLinkClick(otherQueriesLink)
-        }, ['other queries']),
-        ' that you can perform on an entry.'
+        }, ['other types of queries']),
+        ' you can perform.'
       ])
     ]),
     h('.docs-sidebar__line', [
       h('strong', ['What‘s next?']),
       h('a.text-link', {
-        href: contentTypesLink,
+        href: apiKeyLink,
         style: {
           display: 'block',
           marginTop: '10px'
         },
-        onClick: () => trackLinkClick(contentTypesLink)
-      }, ['Play with your content types'])
+        onClick: () => trackLinkClick(apiKeyLink)
+      }, ['Download a code boilerplate'])
     ])
   ]);
 }
@@ -64,19 +69,17 @@ function curl (data) {
         h('span', ['/']),
         h('span', colorGreen, [`${data.state.spaceId}`]),
         h('span', ['/']),
-        h('span', colorBlue, ['entries']),
+        h('span', colorBlue, ['content_types']),
+        h('span', ['/']),
+        h('span', colorGreen, [`${data.state.contentType.id}`]),
         h('span', ['?']),
         h('span', colorBlue, ['access_token']),
         h('span', ['=']),
-        h('span', colorGreen, [`${data.state.token}`]),
-        h('span', ['&']),
-        h('span', colorBlue, ['content_type']),
-        h('span', ['=']),
-        h('span', colorGreen, [`${data.state.contentType.id}`])
+        h('span', colorGreen, [`${data.state.token}`])
       ])
     ],
-    text: `curl 'https://cdn.${domain}/spaces/${data.state.spaceId}/entries?access_token=${data.state.token}&content_type=${data.state.contentType.id}'`,
-    id: 'entriesCurl'
+    text: `curl 'https://cdn.${domain}/spaces/${data.state.spaceId}/content_types/${data.state.contentType.id}?access_token=${data.state.token}'`,
+    id: 'contentTypesCurl'
   };
 
   function colorize (color) {

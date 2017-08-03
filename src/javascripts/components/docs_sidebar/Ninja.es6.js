@@ -1,5 +1,6 @@
 import {h} from 'ui/Framework';
 import entries from 'components/docs_sidebar/Entries';
+import contentTypes from 'components/docs_sidebar/ContentTypes';
 import intro from 'components/docs_sidebar/Intro';
 import icon from 'svg/help-bot-icon';
 import { byName as colorByName } from 'Styles/Colors';
@@ -86,7 +87,8 @@ function header (toggle) {
 
 function getTemplate (route) {
   const views = {
-    'spaces.detail.entries.list': entries
+    'spaces.detail.entries.list': entries,
+    'spaces.detail.content_types.list': contentTypes
   };
 
   return views[route] || empty;

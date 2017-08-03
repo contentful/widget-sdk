@@ -28,7 +28,8 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
         }
       };
 
-      scope.component = Ninja(null); // initial empty render a data is loaded asynchronously
+      // initial empty render as data is loaded asynchronously
+      scope.component = Ninja(null);
 
       // init store with sane data
       $q.all([
@@ -41,9 +42,12 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
         NinjaStore.setSpaceData({
           spaceId: values[0],
           entryId: values[1],
-          contentType: values[2]
+          contentType: values[2],
+          apiKeyId: values[3].id
         });
-        NinjaStore.setToken(values[3]);
+        NinjaStore.setToken(values[3].accessToken);
+
+        console.log($state.current.name, values)
 
         render();
       }).catch(function (error) {
@@ -116,9 +120,17 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
             .getAll()
             .then(function (apiKeys) {
               if (!apiKeys.length) {
-                return '<No API key found. Please create one from the API page.>';
+                return {
+                  accessToken: '<No API key found. Please create one from the API page.>',
+                  id: null
+                }
               } else {
-                return apiKeys[0].accessToken;
+                var key = apiKeys[0];
+
+                return {
+                  accessToken: key.accessToken,
+                  id: key.sys.id
+                };
               }
             });
         } else {
@@ -164,9 +176,9 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
                 toggle();
               }
             }],
-            [KEYCODES.N, toggleVisibility],
+            [KEYCODES.H, toggleVisibility],
             [KEYCODES.SPACE, handleSpace],
-            [otherwise, function () {}]
+            [otherwise, _.noop]
           ]);
         }
       }

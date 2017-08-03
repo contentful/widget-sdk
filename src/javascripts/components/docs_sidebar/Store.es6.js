@@ -24,7 +24,8 @@ const defaults = {
   contentType: {
     id: '<CONTENT TYPE ID>',
     name: '<CONTENT TYPE NAME>'
-  }
+  },
+  apiKeyId: '<YOUR API KEY ID>'
 };
 
 const state = merge(defaults, TheStore.get(STORE_KEY));
@@ -40,10 +41,11 @@ export function setView (view) {
   }
 }
 
-export function setSpaceData ({ spaceId, entryId, contentType }) {
+export function setSpaceData ({ spaceId, entryId, contentType, apiKeyId }) {
   state.spaceId = spaceId;
   state.entryId = entryId;
   state.contentType = contentType;
+  state.apiKeyId = apiKeyId;
 }
 
 export function setToken (token) {
