@@ -10,10 +10,6 @@ angular.module('contentful')
 .factory('states/spaces', ['require', function (require) {
   var h = require('utils/hyperscript').h;
 
-  // Begin feature flag code - feature-bv-06-2017-use-new-navigation
-  var LD = require('utils/LaunchDarkly');
-  // End feature flag code - feature-bv-06-2017-use-new-navigation
-
   var newSpace = {
     name: 'new',
     url: '_new',
@@ -29,15 +25,7 @@ angular.module('contentful')
     abstract: true,
     views: {
       'nav-bar': {
-        // Begin feature flag code - feature-bv-06-2017-use-new-navigation
-        template: [
-          h('cf-space-selector', { ngIf: '!useNewNavigation' }),
-          h('cf-space-nav-bar', {class: 'app-top-bar__child'})
-        ].join(''),
-        controller: ['$scope', function ($scope) {
-          LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation');
-        }]
-        // End feature flag code - feature-bv-06-2017-use-new-navigation
+        template: h('cf-space-nav-bar', {class: 'app-top-bar__child'})
       }
     },
     children: [newSpace, require('states/spaces/detail')]

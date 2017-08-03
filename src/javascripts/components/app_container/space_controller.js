@@ -9,6 +9,11 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var tokenStore = require('services/TokenStore');
 
+  // Begin feature flag code - feature-bv-06-2017-use-new-navigation
+  var LD = require('utils/LaunchDarkly');
+  LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation');
+  // End feature flag code - feature-bv-06-2017-use-new-navigation
+
   $controller('UiConfigController', {$scope: $scope});
   // TODO: it's not a controller, it should be a service
   $scope.entityCreationController = $controller('EntityCreationController');

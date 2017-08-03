@@ -1,7 +1,7 @@
 import * as sinon from 'helpers/sinon';
 import * as K from 'helpers/mocks/kefir';
 
-describe('cfNavSidePanel directive', () => {
+describe('cfNavSidepanel directive', () => {
   let $stateParamsOrgId = '';
   let spaceContextData;
 
@@ -82,7 +82,7 @@ describe('cfNavSidePanel directive', () => {
     this.tokenStore.spacesByOrganization$ = K.createMockProperty(this.spacesByOrg);
 
     // directive element
-    const $rootEl = this.$compile('<cf-nav-side-panel />');
+    const $rootEl = this.$compile('<cf-nav-sidepanel is-shown="false" />');
 
     this.$containerEl = $rootEl.find('.nav-sidepanel-container');
     this.$sidePanel = $rootEl.find('.nav-sidepanel');
