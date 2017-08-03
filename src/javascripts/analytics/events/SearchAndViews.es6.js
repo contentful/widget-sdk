@@ -12,52 +12,44 @@ export function searchPerformed (view, resultCount = 0) {
 }
 
 export function viewCreated (view, folder) {
-  track('view_created', extend(
-    basic(view, folder),
-    query(view)
-  ));
+  track('view_created', extend(query(view), {
+    view_id: view.id,
+    folder_id: folder && folder.id,
+    folder_title: folder && folder.title
+  }));
 }
 
-export function viewTitleEdited (view, folder) {
-  viewEdited(view, folder, 'title');
+export function viewTitleEdited (view) {
+  viewEdited(view, 'title');
 }
 
-export function viewRolesEdited (view, folder) {
-  viewEdited(view, folder, 'roles');
+export function viewRolesEdited (view) {
+  viewEdited(view, 'roles');
 }
 
 export function viewDeleted (view) {
   track('view_deleted', {view_id: view.id});
 }
 
-export function viewLoaded (view, folder) {
+export function viewLoaded (view) {
   track('view_loaded', extend(
-    basic(view, folder),
+    {view_id: view.id},
     details(view),
     query(view)
   ));
 }
 
-function viewEdited (view, folder, changedProperty = null) {
-  track('view_edited', extend(
-    basic(view, folder),
-    details(view),
-    {change_property: changedProperty}
-  ));
-}
-
-function basic (view, folder) {
-  return {
-    folder_id: folder && folder.id,
-    folder_name: folder && folder.title,
-    view_id: view.id
-  };
+function viewEdited (view, changedProperty = null) {
+  track('view_edited', extend(details(view), {
+    view_id: view.id,
+    change_property: changedProperty
+  }));
 }
 
 function details ({title, roles}) {
   return {
     view_title: title,
-    view_roles: Array.isArray(roles) ? roles.join(',') : roles
+    view_roles: Array.isArray(roles) ? roles.join(',') : (roles || null)
   };
 }
 
