@@ -2,7 +2,7 @@
 
 import {times} from 'lodash';
 
-describe('cfNinja Directive', function () {
+xdescribe('cfNinja Directive', function () {
   beforeEach(function () {
     module('contentful/test');
     this.$timeout = this.$inject('$timeout');
