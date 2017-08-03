@@ -1,7 +1,10 @@
 import {h} from 'ui/Framework';
 import entries from 'components/docs_sidebar/Entries';
-import contentTypes from 'components/docs_sidebar/ContentTypes';
-import intro from 'components/docs_sidebar/Intro';
+import contentTypes from './ContentTypes';
+import apiDetail from './ApiDetail';
+import apisList from './ApisList';
+import intro from './Intro';
+import noContent from './NoContent';
 import icon from 'svg/help-bot-icon';
 import { byName as colorByName } from 'Styles/Colors';
 
@@ -88,17 +91,10 @@ function header (toggle) {
 function getTemplate (route) {
   const views = {
     'spaces.detail.entries.list': entries,
-    'spaces.detail.content_types.list': contentTypes
+    'spaces.detail.content_types.list': contentTypes,
+    'spaces.detail.api.keys.detail': apiDetail,
+    'spaces.detail.api.keys.list': apisList
   };
 
-  return views[route] || empty;
-}
-
-
-function empty () {
-  return h('div', {
-    style: {
-      padding: '20px 30px'
-    }
-  }, ['Sorry, I don\'t have any tips for you right now.']);
+  return views[route] || noContent;
 }

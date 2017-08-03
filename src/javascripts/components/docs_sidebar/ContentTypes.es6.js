@@ -3,6 +3,7 @@ import clickToCopy from './InputWithCopy';
 import { byName as colorByName } from 'Styles/Colors';
 import { clickLink as trackLinkClick } from 'analytics/events/DocsSidebar';
 import { domain } from 'Config';
+import createApiKeyAdvice from './CreateApiKeyAdvice';
 
 export default function template (data) {
   const otherQueriesLink = 'https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/content-types';
@@ -26,7 +27,7 @@ export default function template (data) {
     ]),
     h('.docs-sidebar__line', [
       h('strong', [`Try and fetch your "${data.state.contentType.name}" content type:`]),
-      clickToCopy(curl(data), data.actions.render),
+      data.state.apiKeyId ? clickToCopy(curl(data), data.actions.render) : createApiKeyAdvice(data.state.spaceId),
       h('p', [
         'Read about ',
         h('a.text-link', {

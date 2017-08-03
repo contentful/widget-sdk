@@ -47,8 +47,6 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
         });
         NinjaStore.setToken(values[3].accessToken);
 
-        console.log($state.current.name, values)
-
         render();
       }).catch(function (error) {
         logger.logError('Could not instantiate the contextual sidebar', error);
@@ -123,7 +121,7 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
                 return {
                   accessToken: '<No API key found. Please create one from the API page.>',
                   id: null
-                }
+                };
               } else {
                 var key = apiKeys[0];
 
