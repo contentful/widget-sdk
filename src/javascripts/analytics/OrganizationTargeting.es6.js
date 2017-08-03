@@ -40,9 +40,6 @@ const FEATURE_TO_ORG_IDS = {
     '281d50856fc72daca2e39b4e68bdb3ee',
     // Google Docs Test (preview)
     'afbd22d6944eb429cf2b16d5a8ad279b'
-
-    // TELUS digital (prod) - waiting for confirmation
-    // '3dfbcbf7667b2f443cba4415ca963b46'
   ]
 };
 
@@ -50,6 +47,7 @@ const FEATURE_TO_SPACE_IDS = {
   view_roles: [
     // Jakub's contentfiddle space (prod)
     'f6868d368b5e2fc62d0a3fc7ab6eb29e',
+
     // Eli Lilly GSIT-CONN-CONNECT (prod)
     '3e027c8e222e4efdb3d82dacd4f9db6b',
     // Eli Lilly gsit-conn-connect-tst (prod)
@@ -61,7 +59,18 @@ const FEATURE_TO_SPACE_IDS = {
     // Eli Lilly GSIT-CONN-CONNECT-STG (prod)
     '6ec110b6d3c1bb19d76c04ee612b55c4',
     // Eli Lilly IdentityHub-DEV (prod)
-    'dceb6b907bf7707ac4e75cc3894c460a'
+    'dceb6b907bf7707ac4e75cc3894c460a',
+
+    // TELUS digital [G] > Legal (prod)
+    'e890507ca8569c47aea8188a50ef9b19',
+    // TELUS digital [G] Products & Services (prod)
+    '1a0c43b1f1ff4fc432c52dc4cf64e96c',
+    // TELUS digital BUS > Marketing Prod (prod)
+    '8f0b0f8ae17203663d458c20092dc430',
+    // TELUS digital C MOB > Accessories (prod)
+    '97c56b9d15c6a7ae389d6632877543d4',
+    // TELUS digital C MOB > Marketing (prod)
+    'e908a9e5d6ea0330fa5c661d1477c8de'
   ]
 };
 
