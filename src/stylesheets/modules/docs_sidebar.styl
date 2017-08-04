@@ -4,13 +4,23 @@
     position: absolute
     width: 370px
     right: 24px
-    top: 17px
+    top: 37px
     bottom: 80px
     border-radius: 10px
     overflow-y: scroll
     background-color: white
+    color: $colors.text-mid
+    box-shadow: 0 5px 40px 1px rgba(0, 0, 0, 0.16)
+    visibility: hidden
+    opacity: 0
+    transition: all 150ms ease-in
     &::-webkit-scrollbar
       display: none
+    &--fade-in
+      visibility: visible
+      opacity: 1
+      top: 17px
+
 
   &__header
     padding: 20px 30px
@@ -62,6 +72,9 @@
     z-index: 1
     border-radius: 10px
     box-shadow: 0 5px 40px 1px rgba(0, 0, 0, 0.16)
+    transition: all 150ms ease-in
+    &--hide
+      display: none
 
   &__line
     display: block

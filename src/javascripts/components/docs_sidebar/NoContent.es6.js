@@ -24,7 +24,11 @@ export default function ({ state: { spaceId, apiKeyId } }) {
       }, ['I have no specific help for this page.'])
     ]),
     h('.docs-sidebar__line', [
-      h('p', ['At the moment I have help for these pages:']),
+      h('p', {
+        style: {
+          marginBottom: 0
+        }
+      }, ['At the moment I have help for these pages:']),
       link({
         href: `https://app.${domain}/spaces/${spaceId}/content_types`,
         text: 'Content model'

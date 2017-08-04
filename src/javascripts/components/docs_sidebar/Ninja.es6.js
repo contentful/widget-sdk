@@ -13,13 +13,15 @@ export default function Ninja (data) {
   if (data === null || data.state.isHidden) {
     return h('div');
   } else {
-    const modal = data.state.isExpanded ? expanded(data) : minimized(data);
-
     return h('div.docs-sidebar__main-container', {
       style: {
         zIndex: 1000
       }
-    }, modal.concat(helpButton(data.actions)));
+    }, [
+      minimized(data),
+      expanded(data),
+      helpButton(data.actions)
+    ]);
   }
 }
 
@@ -34,23 +36,16 @@ function helpButton (actions) {
 }
 
 function expanded (data) {
-  return [
-    h('.docs-sidebar__modal', {
-      style: {
-        color: colorByName.textMid,
-        boxShadow: '0 5px 40px 1px rgba(0, 0, 0, 0.16)'
-      }
-    }, [
-      header(data.actions.toggle),
-      h('.docs-sidebar__body', [
-        data.state.introCompleted ? getTemplate(data.state.view)(data) : intro(data)
-      ])
+  return h(`.docs-sidebar__modal${data.state.isExpanded ? '.docs-sidebar__modal--fade-in' : ''}`, [
+    header(data.actions.toggle),
+    h('.docs-sidebar__body', [
+      data.state.introCompleted ? getTemplate(data.state.view)(data) : intro(data)
     ])
-  ];
+  ]);
 }
 
 function minimized ({actions, state}) {
-  const callout = h('.docs-sidebar__callout', [
+  const callout = h(`.docs-sidebar__callout${state.calloutSeen ? '.docs-sidebar__callout--hide' : ''}`, [
     h('div', {
       style: {
         display: 'flex',
@@ -77,7 +72,7 @@ function minimized ({actions, state}) {
     }, ['See tour'])
   ]);
 
-  return state.calloutSeen ? [] : [callout];
+  return callout;
 }
 
 function header (toggle) {
