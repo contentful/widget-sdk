@@ -39,7 +39,9 @@ const FEATURE_TO_ORG_IDS = {
     // Contentful main (prod)
     '281d50856fc72daca2e39b4e68bdb3ee',
     // Google Docs Test (preview)
-    'afbd22d6944eb429cf2b16d5a8ad279b'
+    'afbd22d6944eb429cf2b16d5a8ad279b',
+    // Capital One (prod)
+    '484282f25eeac45516812e9de55357ef'
   ]
 };
 
