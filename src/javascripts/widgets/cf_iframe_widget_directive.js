@@ -53,10 +53,12 @@ angular.module('contentful')
       }, {});
 
       var widgetAPI = new WidgetAPI(
-        spaceContext.cma, fields, doc.getValueAt([]), scope.transformedContentTypeData,
+        spaceContext.cma, spaceContext.space.data.spaceMembership,
+        fields, doc.getValueAt([]), scope.transformedContentTypeData,
         // TODO the isDisabled property is only required for <v2.1 of the
         // extension SDK. We should remove it
-        {field: scope.widget.field, locale: scope.locale, isDisabled: scope.fieldLocale.access.disabled}, iframe
+        {field: scope.widget.field, locale: scope.locale, isDisabled: scope.fieldLocale.access.disabled},
+        iframe
       );
 
       scope.$on('$destroy', function () {

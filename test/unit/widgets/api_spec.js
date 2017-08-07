@@ -1,18 +1,22 @@
 'use strict';
 
 describe('widgets/API', function () {
-  let API;
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
-    API = this.$inject('widgets/API');
+
+    const API = this.$inject('widgets/API');
 
     const TheLocaleStore = this.$inject('TheLocaleStore');
     this.setLocales = TheLocaleStore.setLocales;
 
     // API constructor parameters
-    this.space = {data: {sys: {id: 'SPACE_ID'}}};
+    const spaceMembership = {
+      user: {},
+      roles: []
+    };
+
     this.fields = [];
     this.entryData = {fields: {}};
     this.contentTypeData = {};
@@ -28,7 +32,7 @@ describe('widgets/API', function () {
 
     this.createAPI = function () {
       return new API(
-        this.space, this.fields, this.entryData, this.contentTypeData,
+        {}, spaceMembership, this.fields, this.entryData, this.contentTypeData,
         this.context, this.iframe
       );
     };
