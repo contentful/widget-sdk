@@ -1,10 +1,8 @@
 import {h} from 'ui/Framework';
-import { domain } from 'Config';
 import $state from '$state';
 import { clickLink as trackLinkClick } from 'analytics/events/DocsSidebar';
 
-export default function (spaceId) {
-  const apiKeyPageLink = `https://app.${domain}/spaces/${spaceId}/api/keys/`;
+export default function () {
   const apiKeyList = 'spaces.detail.api.keys.list';
 
   return h('.docs-sidebar__line', {

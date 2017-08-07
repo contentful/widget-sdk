@@ -37,7 +37,6 @@ export default function template (data) {
 }
 
 function content (data) {
-  const linkUrl = `https://app.${domain}/spaces/${data.state.spaceId}/entries`;
   const entriesList = 'spaces.detail.entries.list';
 
   return [

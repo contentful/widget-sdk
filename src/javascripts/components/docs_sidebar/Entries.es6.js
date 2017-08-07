@@ -8,7 +8,6 @@ import createApiKeyAdvice from './CreateApiKeyAdvice';
 
 export default function template (data) {
   const otherQueriesLink = 'https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/entries';
-  const contentTypesLink = `https://app.${domain}/spaces/${data.state.spaceId}/content_types`;
   const contentTypesList = 'spaces.detail.content_types.list';
 
   return h('div', {
