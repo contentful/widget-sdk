@@ -3,11 +3,14 @@ import clickToCopy from './InputWithCopy';
 import { byName as colorByName } from 'Styles/Colors';
 import { clickLink as trackLinkClick } from 'analytics/events/DocsSidebar';
 import { domain } from 'Config';
+import $state from '$state';
 import createApiKeyAdvice from './CreateApiKeyAdvice';
 
 export default function template (data) {
   const otherQueriesLink = 'https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/content-types';
   const apiKeyLink = `https://app.${domain}/spaces/${data.state.spaceId}/api/keys/${data.state.apiKeyId}`;
+  const apiKeyDetail = 'spaces.detail.api.keys.detail';
+  const params = {apiKeyId: data.state.apiKeyId};
 
   return h('div', {
     style: {
@@ -39,14 +42,18 @@ export default function template (data) {
       ])
     ]),
     h('.docs-sidebar__line', [
-      h('strong', ['What‘s next?']),
-      h('a.text-link', {
-        href: apiKeyLink,
+      h('strong', {
         style: {
           display: 'block',
-          marginTop: '10px'
-        },
-        onClick: () => trackLinkClick(apiKeyLink)
+          marginBottom: '10px'
+        }
+      }, ['What‘s next?']),
+      h('a.text-link', {
+        onClick: (e) => {
+          e.preventDefault();
+          trackLinkClick($state.href(apiKeyDetail, params));
+          $state.go(apiKeyDetail, params);
+        }
       }, ['Download a code boilerplate'])
     ])
   ]);

@@ -1,11 +1,14 @@
 import {h} from 'ui/Framework';
 import { clickLink as trackLinkClick } from 'analytics/events/DocsSidebar';
 import { domain } from 'Config';
+import $state from '$state';
 import apis from './ApisSkeleton';
 import createApiKeyAdvice from './CreateApiKeyAdvice';
 
 export default function template ({ state: { spaceId, apiKeyId } }) {
   const apiKeyLink = `https://app.${domain}/spaces/${spaceId}/api/keys/${apiKeyId}`;
+  const apiKeyDetail = 'spaces.detail.api.keys.detail';
+  const params = {apiKeyId};
 
   return h('div', {
     style: {
@@ -22,15 +25,19 @@ export default function template ({ state: { spaceId, apiKeyId } }) {
     ]),
     apis(),
     h('.docs-sidebar__line', [
-      h('strong', ['What‘s next?']),
+      h('strong', {
+        style: {
+          display: 'block',
+          marginBottom: '10px'
+        }
+      }, ['What‘s next?']),
       apiKeyId
         ? h('a.text-link', {
-          href: apiKeyLink,
-          style: {
-            display: 'block',
-            marginTop: '10px'
-          },
-          onClick: () => trackLinkClick(apiKeyLink)
+          onClick: (e) => {
+            e.preventDefault();
+            trackLinkClick($state.href(apiKeyDetail, params));
+            $state.go(apiKeyDetail, params);
+          }
         }, ['Download a code boilerplate'])
         : createApiKeyAdvice(spaceId)
     ])

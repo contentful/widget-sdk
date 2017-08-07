@@ -1,9 +1,11 @@
 import {h} from 'ui/Framework';
 import { domain } from 'Config';
+import $state from '$state';
 import { clickLink as trackLinkClick } from 'analytics/events/DocsSidebar';
 
 export default function (spaceId) {
   const apiKeyPageLink = `https://app.${domain}/spaces/${spaceId}/api/keys/`;
+  const apiKeyList = 'spaces.detail.api.keys.list';
 
   return h('.docs-sidebar__line', {
     style: {
@@ -16,8 +18,11 @@ export default function (spaceId) {
       style: {
         display: 'block'
       },
-      href: apiKeyPageLink,
-      onClick: () => trackLinkClick(apiKeyPageLink)
+      onClick: (e) => {
+        e.preventDefault();
+        trackLinkClick($state.href(apiKeyList));
+        $state.go(apiKeyList);
+      }
     }, ['Create API access tokens'])
   ]);
 }

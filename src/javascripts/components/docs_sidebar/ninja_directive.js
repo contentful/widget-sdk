@@ -47,6 +47,8 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
         });
         NinjaStore.setToken(values[3].accessToken);
 
+        console.log($state.current.name)
+
         render();
       }).catch(function (error) {
         logger.logError('Could not instantiate the contextual sidebar', error);

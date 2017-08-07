@@ -39,6 +39,7 @@ function apiDescription ({ href, text, description }) {
       style: {
         display: 'block'
       },
+      target: '_blank',
       onClick: () => trackLinkClick(href)
     }, [text]),
     h('p', [description])

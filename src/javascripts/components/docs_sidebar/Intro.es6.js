@@ -1,5 +1,6 @@
 import {h} from 'ui/Framework';
 import clickToCopy from './InputWithCopy';
+import $state from '$state';
 import { byName as colorByName } from 'Styles/Colors';
 import { clickLink as trackLinkClick } from 'analytics/events/DocsSidebar';
 import { domain } from 'Config';
@@ -37,6 +38,7 @@ export default function template (data) {
 
 function content (data) {
   const linkUrl = `https://app.${domain}/spaces/${data.state.spaceId}/entries`;
+  const entriesList = 'spaces.detail.entries.list';
 
   return [
     [h('div', [
@@ -54,14 +56,18 @@ function content (data) {
       docs()
     ])],
     [h('div', [
-      h('strong', ['What‘s next?']),
-      h('a.text-link', {
-        href: linkUrl,
+      h('strong', {
         style: {
           display: 'block',
-          marginTop: '10px'
-        },
-        onClick: () => trackLinkClick(linkUrl)
+          marginBottom: '10px'
+        }
+      }, ['What‘s next?']),
+      h('a.text-link', {
+        onClick: (e) => {
+          e.preventDefault();
+          trackLinkClick($state.href(entriesList));
+          $state.go(entriesList);
+        }
       }, ['Explore all your entries'])
     ])]
   ];
@@ -108,17 +114,17 @@ function curl (data) {
 }
 
 function docs () {
-  const linkUrl = 'https://www.contentful.com/developers/docs/';
+  const docsUrl = 'https://www.contentful.com/developers/docs/';
 
   return h('div', [
     h('span', ['Read about this and other API endpoints in the ']),
     h('a.text-link', {
-      href: linkUrl,
+      href: docsUrl,
       target: '_blank',
       style: {
         display: 'block'
       },
-      onClick: () => trackLinkClick(linkUrl)
+      onClick: () => trackLinkClick(docsUrl)
     }, ['developer docs.'])
   ]);
 }

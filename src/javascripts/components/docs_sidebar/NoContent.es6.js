@@ -1,13 +1,24 @@
 import {h} from 'ui/Framework';
-import { domain } from 'Config';
-import { clickLink as trackLinkClick } from 'analytics/events/DocsSidebar';
+import $state from '$state';
 import createApiKeyAdvice from './CreateApiKeyAdvice';
+import { clickLink as trackLinkClick } from 'analytics/events/DocsSidebar';
 
-function link ({ href, text }) {
-  return h('a.text-link', {
-    href,
-    onClick: () => trackLinkClick(href)
-  }, [text]);
+function link ({ href, sref, text }) {
+  if (href) {
+    return h('a.text-link', {
+      href,
+      target: '_blank',
+      onClick: () => trackLinkClick(href)
+    }, [text]);
+  } else {
+    return h('a.text-link', {
+      onClick: (e) => {
+        e.preventDefault();
+        trackLinkClick($state.href(sref));
+        $state.go(sref);
+      }
+    }, [text]);
+  }
 }
 
 export default function ({ state: { spaceId, apiKeyId } }) {
@@ -30,17 +41,17 @@ export default function ({ state: { spaceId, apiKeyId } }) {
         }
       }, ['At the moment I have help for these pages:']),
       link({
-        href: `https://app.${domain}/spaces/${spaceId}/content_types`,
+        sref: 'spaces.detail.content_types.list',
         text: 'Content model'
       }),
       ', ',
       link({
-        href: `https://app.${domain}/spaces/${spaceId}/entries`,
+        sref: 'spaces.detail.entries.list',
         text: 'Content'
       }),
       ' and ',
       link({
-        href: `https://app.${domain}/spaces/${spaceId}/api/keys`,
+        sref: 'spaces.detail.api.keys.list',
         text: 'APIs'
       })
     ]),

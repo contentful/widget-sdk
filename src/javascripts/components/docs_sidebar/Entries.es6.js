@@ -3,11 +3,13 @@ import clickToCopy from './InputWithCopy';
 import { byName as colorByName } from 'Styles/Colors';
 import { clickLink as trackLinkClick } from 'analytics/events/DocsSidebar';
 import { domain } from 'Config';
+import $state from '$state';
 import createApiKeyAdvice from './CreateApiKeyAdvice';
 
 export default function template (data) {
   const otherQueriesLink = 'https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/entries';
   const contentTypesLink = `https://app.${domain}/spaces/${data.state.spaceId}/content_types`;
+  const contentTypesList = 'spaces.detail.content_types.list';
 
   return h('div', {
     style: {
@@ -34,14 +36,18 @@ export default function template (data) {
       ])
     ]),
     h('.docs-sidebar__line', [
-      h('strong', ['What‘s next?']),
-      h('a.text-link', {
-        href: contentTypesLink,
+      h('strong', {
         style: {
           display: 'block',
-          marginTop: '10px'
-        },
-        onClick: () => trackLinkClick(contentTypesLink)
+          marginBottom: '10px'
+        }
+      }, ['What‘s next?']),
+      h('a.text-link', {
+        onClick: (e) => {
+          e.preventDefault();
+          trackLinkClick($state.href(contentTypesList));
+          $state.go(contentTypesList);
+        }
       }, ['Play with your content types'])
     ])
   ]);
