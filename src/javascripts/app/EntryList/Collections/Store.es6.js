@@ -1,7 +1,8 @@
-import {union, difference, find} from 'lodash';
+import {union, difference, find, assign} from 'lodash';
 import random from 'random';
-import TheStore from 'TheStore';
 import * as K from 'utils/kefir';
+import { createQueue } from 'utils/Concurrent';
+import $q from '$q';
 
 import openCreateCollectionDialog from './CreateDialog';
 import Notification from 'notification';
@@ -102,19 +103,80 @@ export default function createContentCollectionsStore (spaceEndpoint, spaceId) {
   }
 }
 
-// TODO relying on the native Promise
-// will use spaceEndpoint return values
-function createPersistor (_spaceEndpoint, spaceId) {
-  const localStorage = TheStore.forKey(`contentCollections:${spaceId}`);
+/**
+ * Object with 'get' and 'put' methods to handle persistence of
+ * collections to the API.
+ *
+ * Note that the internal format differs from the API format.
+ */
+function createPersistor (spaceEndpoint) {
+  // Keep a reference to the most recent version.
+  let version = 0;
+  const putQueue = createQueue();
 
   return {get, put};
 
   function get () {
-    return Promise.resolve(localStorage.get() || []); // eslint-disable-line no-undef
+    return request({
+      method: 'GET'
+    }).then(
+      (result) => {
+        version = result.sys.version;
+        return fromApiFormat(result.collections);
+      },
+      (error) => {
+        if (error.status === 404) {
+          return [];
+        } else {
+          return $q.reject(error);
+        }
+      }
+    );
   }
 
-  // TODO We need to build a queue
   function put (collections) {
-    return Promise.resolve(localStorage.set(collections)); // eslint-disable-line no-undef
+    return putQueue.push(() => sendPut(collections));
   }
+
+  function sendPut (collections) {
+    return request({
+      method: 'PUT',
+      version: version,
+      data: {
+        collections: toApiFormat(collections)
+      }
+    }).then((result) => {
+      version = result.sys.version;
+    });
+  }
+
+  function request (opts) {
+    return spaceEndpoint(assign(opts, {
+      path: ['__user_settings']
+    }), {
+      'x-contentful-enable-experimental-feature': 'user_settings'
+    });
+  }
+}
+
+function toApiFormat (collections) {
+  return collections.map((c) => {
+    c.items = c.items.map((id) => {
+      return {
+        sys: {
+          id: id,
+          type: 'Link',
+          linkType: 'Entry'
+        }
+      };
+    });
+    return c;
+  });
+}
+
+function fromApiFormat (collections) {
+  return collections.map((c) => {
+    c.items = c.items.map((link) => link.sys.id);
+    return c;
+  });
 }
