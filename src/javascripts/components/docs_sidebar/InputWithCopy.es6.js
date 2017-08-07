@@ -1,6 +1,5 @@
 import {h} from 'ui/Framework';
 import $document from '$document';
-import userAgent from 'userAgent';
 import { byName as colorByName } from 'Styles/Colors';
 import $timeout from '$timeout';
 import { copyToClipboard as trackCopyToClipboard } from 'analytics/events/DocsSidebar';
@@ -8,8 +7,6 @@ import { copyToClipboard as trackCopyToClipboard } from 'analytics/events/DocsSi
 const state = {};
 
 export default function ({ children, text, id }, render) {
-  const canCopy = !userAgent.isSafari();
-
   state[id] = state[id] || { copied: false };
 
   const copyButton = h(`button.docs-sidebar__copy-button.fa.${state[id].copied ? 'fa-check' : 'fa-copy'}`, {
@@ -34,7 +31,7 @@ export default function ({ children, text, id }, render) {
       marginTop: '10px',
       marginBottom: '10px'
     }
-  }, children.concat(canCopy ? copyButton : []));
+  }, children.concat(copyButton));
 
   function copy () {
     const doc = $document[0];
