@@ -34,7 +34,7 @@ angular.module('contentful').directive('docsSidebar', ['require', function (requ
 
         analytics.track('experiment:start', {
           experiment: {
-            id: 'ps-03-2017-example-space-impact',
+            id: testFlag,
             variation: variation
           }
         });

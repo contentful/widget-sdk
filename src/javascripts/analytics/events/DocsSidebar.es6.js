@@ -11,8 +11,7 @@ export function completeIntro () {
 }
 
 export function toggle ({isExpanded, isIntro}) {
-  const action = isExpanded ? 'expand' : 'minimize';
-  track(eventName, {isIntro, action});
+  track(eventName, {isIntro, action: isExpanded ? 'expand' : 'minimize'});
 }
 
 export function toggleVisibility ({isHidden, isIntro}) {
@@ -22,10 +21,6 @@ export function toggleVisibility ({isHidden, isIntro}) {
 
 export function dismissCallout () {
   track(eventName, {action: 'dismiss_callout'});
-}
-
-export function expandCallout () {
-  track(eventName, {action: 'expand_callout'});
 }
 
 export function navigateWhileOpen ({isIntro}) {

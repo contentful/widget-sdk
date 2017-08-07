@@ -47,26 +47,28 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
         });
         NinjaStore.setToken(values[3].accessToken);
 
-        console.log($state.current.name)
-
         render();
       }).catch(function (error) {
         logger.logError('Could not instantiate the contextual sidebar', error);
       });
 
-      $document[0].addEventListener('click', function (e) {
-        var isChildOfSidebar = !!$(e.target).parents('.docs-sidebar__main-container').length;
-
-        if (!isChildOfSidebar && $('.docs-sidebar__modal').is(':visible')) {
-          hide();
-        }
-      }, true);
+      $document[0].addEventListener('click', handleClick, true);
 
       $document.on('keydown', handleKeydown);
 
       scope.$on('$destroy', function () {
         $document.off('keydown', handleKeydown);
+        $document[0].removeEventListener('click', handleClick, true);
       });
+
+      function handleClick (e) {
+        var isTargetChildOfSidebar = !!$(e.target).parents('.docs-sidebar__main-container').length;
+        var isDocsSidebarVisible = $('.docs-sidebar__modal').hasClass('docs-sidebar__modal--fade-in');
+
+        if (isDocsSidebarVisible && !isTargetChildOfSidebar) {
+          hide();
+        }
+      }
 
       function render () {
         ninjaData.state = NinjaStore.get();
