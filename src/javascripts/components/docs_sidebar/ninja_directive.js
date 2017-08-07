@@ -165,20 +165,22 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
       }
 
       function handleKeydown (evt) {
-        var target = evt.target || evt.srcElement;
-
-        if ($(target).is($('body, a'))) {
-          caseof(evt.keyCode, [
-            [KEYCODES.ESC, function () {
-              if (ninjaData.state.isExpanded) {
-                toggle();
-              }
-            }],
-            [KEYCODES.H, toggleVisibility],
-            [KEYCODES.SPACE, handleSpace],
-            [otherwise, _.noop]
-          ]);
-        }
+        caseof(evt.keyCode, [
+          [KEYCODES.ESC, function () {
+            if (ninjaData.state.isExpanded) {
+              toggle();
+            }
+          }],
+          [KEYCODES.H, toggleVisibility],
+          [KEYCODES.SPACE, function () {
+            if (ninjaData.state.isExpanded) {
+              evt.preventDefault();
+              evt.stopPropagation();
+              handleSpace();
+            }
+          }],
+          [otherwise, _.noop]
+        ]);
       }
     }
   };
