@@ -13,6 +13,12 @@ describe('states/spaces', function () {
     this.space.getPublishedContentTypes = sinon.stub().resolves([]);
     this.space.getContentTypes = sinon.stub().resolves([]);
 
+    this.spaceContext = this.$inject('mocks/spaceContext').init();
+    this.spaceContext.resetWithSpace = sinon.spy((space) => {
+      this.spaceContext.space = space;
+      return this.spaceContext;
+    });
+
     this.tokenStore = this.mockService('services/TokenStore');
     this.tokenStore.getSpace.resolves(this.space);
 
@@ -33,12 +39,10 @@ describe('states/spaces', function () {
     sinon.assert.calledWith(this.tokenStore.getSpace, 'SPACE');
   });
 
-  it('reset the space context', function () {
-    const spaceContext = this.$inject('spaceContext');
-    const resetWithSpace = sinon.spy(spaceContext, 'resetWithSpace');
+  it('resets the space context', function () {
     this.$state.go('spaces.detail', {spaceId: 'SPACE'});
     this.$apply();
-    sinon.assert.calledWith(resetWithSpace, this.space);
+    sinon.assert.calledWith(this.spaceContext.resetWithSpace, this.space);
   });
 
   it('exposes the space as a local', function () {
@@ -46,11 +50,4 @@ describe('states/spaces', function () {
     this.$apply();
     expect(this.$state.$current.locals.globals.space).toEqual(this.space);
   });
-
-  it('sets the space on the widgets service', function () {
-    this.$state.go('spaces.detail', {spaceId: 'SPACE'});
-    this.$apply();
-    sinon.assert.calledWith(this.widgets.setSpace, this.space);
-  });
-
 });

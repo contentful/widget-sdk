@@ -75,8 +75,6 @@ angular.module('contentful')
         Auth
       );
 
-      self.contentCollections = createContentCollectionsRepo();
-
       resetMembers(self);
       self.space = space;
       self.cma = new ApiClient(self.endpoint);
@@ -110,12 +108,16 @@ angular.module('contentful')
       self.user = K.getValue(tokenStore.user$);
 
       previewEnvironmentsCache.clearAll();
-      TheLocaleStore.reset(self.space.getId(), self.space.getPrivateLocales());
+      TheLocaleStore.reset(space.getId(), space.getPrivateLocales());
+
       return $q.all([
-        loadWidgets(self, space),
+        Widgets.setSpace(space).then(function (widgets) {
+          self.widgets = widgets;
+        }),
         self.publishedCTs.refresh(),
-        createContentCollectionsRepo().then(function (contentCollections) {
-          self.contentCollections = contentCollections;
+        // TODO do not pass space's ID when the repo really use self.endpoint
+        createContentCollectionsRepo(self.endpoint, space.getId()).then(function (api) {
+          self.contentCollections = api;
         })
       ]).then(function () {
         return self;
@@ -373,6 +375,7 @@ angular.module('contentful')
     spaceContext.publishedContentTypes = [];
     spaceContext.users = null;
     spaceContext.widgets = null;
+    spaceContext.contentCollections = null;
     if (spaceContext.docPool) {
       spaceContext.docPool.destroy();
       spaceContext.docPool = null;
@@ -385,13 +388,6 @@ angular.module('contentful')
       self.publishedCTs = null;
     }
   }
-
-  function loadWidgets (spaceContext, space) {
-    return Widgets.setSpace(space).then(function (widgets) {
-      spaceContext.widgets = widgets;
-    });
-  }
-
 
   /**
    * @description

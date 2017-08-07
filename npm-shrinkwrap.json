@@ -1033,6 +1033,14 @@
     "flagged-respawn": {
       "version": "0.3.2"
     },
+    "flat": {
+      "version": "4.0.0",
+      "dependencies": {
+        "is-buffer": {
+          "version": "1.1.5"
+        }
+      }
+    },
     "for-in": {
       "version": "0.1.6"
     },
@@ -1730,9 +1738,6 @@
     },
     "homedir-polyfill": {
       "version": "1.0.1"
-    },
-    "icepick": {
-      "version": "2.1.1"
     },
     "iconv-lite": {
       "version": "0.4.17"
@@ -2837,9 +2842,6 @@
     },
     "xtend": {
       "version": "4.0.1"
-    },
-    "yaku": {
-      "version": "0.18.2"
     }
   }
 }

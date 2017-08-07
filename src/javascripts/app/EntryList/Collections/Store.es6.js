@@ -1,102 +1,120 @@
-// TODO use native find
-import {findIndex, union, difference} from 'lodash';
-
-import I from 'libs/icepick';
-import Promise from 'libs/yaku';
+import {union, difference, find} from 'lodash';
 import random from 'random';
 import TheStore from 'TheStore';
 import * as K from 'utils/kefir';
 
 import openCreateCollectionDialog from './CreateDialog';
+import Notification from 'notification';
 
-// TODO Use lenses for updates
-// TODO store per space
-// TODO use Immutable or icepick
-export default function createContentCollectionsStore (spaceEndpoint) {
-  const persistor = createPersistor(spaceEndpoint);
+const MAX_COLLECTION_SIZE = 120;
+
+const notifySizeExceeded = () => Notification.error(`Collection size cannot exceed ${MAX_COLLECTION_SIZE} entries.`);
+const itemsLen = (arr) => arr.length === 1 ? '1 entry was' : `${arr.length} entries were`;
+
+// TODO consider use of immutable data structures
+// TODO when persistor uses spaceEndpoint drop spaceId
+export default function createContentCollectionsStore (spaceEndpoint, spaceId) {
+  const persistor = createPersistor(spaceEndpoint, spaceId);
   const stateBus = K.createPropertyBus([]);
 
   return persistor.get()
-    .then(function (collections) {
+    .then((collections) => {
       stateBus.set(collections);
-      return {
-        state$: stateBus.property,
-        addItems: addItems,
-        removeItems: removeItems,
-        requestCreate: requestCreate,
-        remove: remove,
-        setName: setName
-      };
+      const state$ = stateBus.property;
+      return {state$, addItems, removeItems, requestCreate, remove, setName};
     });
 
   function requestCreate (items) {
-    openCreateCollectionDialog()
-      .then((name) => {
-        name = name || 'Untitled collection';
-        update((collections) => {
-          const id = random.id();
-          return I.push(collections, {id, name, items});
-        });
-      });
+    if (items.length > MAX_COLLECTION_SIZE) {
+      notifySizeExceeded();
+      return;
+    }
+
+    openCreateCollectionDialog(getCollections())
+      .then((name) => update((colls) => {
+        const id = random.id();
+        Notification.info(`"${name}" was successfully created.`);
+        return [].concat(colls).concat([{id, name, items}]);
+      }));
   }
 
   function remove (id) {
-    update((collections) => {
-      return collections.filter((c) => c.id !== id);
-    });
+    update((colls) => colls.filter((coll) => {
+      if (coll.id === id) {
+        Notification.info(`"${coll.name}" was successfully removed.`);
+        return false;
+      } else {
+        return true;
+      }
+    }));
   }
 
   function addItems (collectionId, itemIds) {
-    updateCollection(collectionId, (collection) => {
-      return I.updateIn(collection, ['items'], (oldItemIds) => union(oldItemIds, itemIds));
+    updateCollection(collectionId, ({id, name, items}) => {
+      const updatedItems = union(items, itemIds);
+      if (updatedItems.length > MAX_COLLECTION_SIZE) {
+        notifySizeExceeded();
+        return {id, name, items};
+      } else {
+        Notification.info(`${itemsLen(itemIds)} successfully added to "${name}".`);
+        return {id, name, items: updatedItems};
+      }
     });
   }
 
   function removeItems (collectionId, itemIds) {
-    updateCollection(collectionId, (collection) => {
-      return I.updateIn(collection, ['items'], (oldItemIds) => difference(oldItemIds, itemIds));
+    updateCollection(collectionId, ({id, name, items}) => {
+      Notification.info(`${itemsLen(itemIds)} successfully removed from "${name}".`);
+      return {id, name, items: difference(items, itemIds)};
     });
   }
 
-  function setName (id, name) {
-    updateCollection(id, (collection) => {
-      return I.set(collection, ['name'], name);
+  function setName (collectionId, newName) {
+    updateCollection(collectionId, ({id, name, items}) => {
+      if (find(getCollections(), {name: newName})) {
+        Notification.error(`There is already a collection named "${newName}".`);
+        return {id, name, items};
+      } else {
+        Notification.info(`Successfully renamed "${name}" to "${newName}".`);
+        return {id, name: newName, items};
+      }
     });
   }
 
   function update (fn) {
-    const newValue = fn(K.getValue(stateBus.property));
+    const value = getCollections();
+    const newValue = fn(value);
     stateBus.set(newValue);
 
-    // TODO handle failures
-    persistor.put(newValue);
+    persistor.put(newValue)
+      .catch(() => {
+        Notification.error('Changes could not be stored. You change was reverted.');
+        stateBus.set(value);
+      });
   }
 
-  function updateCollection (collectionId, fn) {
-    update((collections) => {
-      const ix = findIndex(collections, {id: collectionId});
-      if (ix > -1) {
-        return I.updateIn(collections, [ix], fn);
-      } else {
-        return collections;
-      }
-    });
+  function updateCollection (id, fn) {
+    update((colls) => colls.map(coll => coll.id === id ? fn(coll) : coll));
+  }
+
+  function getCollections () {
+    return K.getValue(stateBus.property);
   }
 }
 
-
-function createPersistor (_spaceEndpoint) {
-  const localStorage = TheStore.forKey('contentCollections');
+// TODO relying on the native Promise
+// will use spaceEndpoint return values
+function createPersistor (_spaceEndpoint, spaceId) {
+  const localStorage = TheStore.forKey(`contentCollections:${spaceId}`);
 
   return {get, put};
 
-  // TODO do not use $q
   function get () {
-    return Promise.resolve(I.freeze(localStorage.get() || []));
+    return Promise.resolve(localStorage.get() || []); // eslint-disable-line no-undef
   }
 
   // TODO We need to build a queue
   function put (collections) {
-    return Promise.resolve(localStorage.set(collections));
+    return Promise.resolve(localStorage.set(collections)); // eslint-disable-line no-undef
   }
 }

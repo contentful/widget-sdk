@@ -1,22 +1,31 @@
 'use strict';
 
-angular.module('contentful').factory('ListQuery', ['$injector', function ($injector) {
-
-  var systemFields = $injector.get('systemFields');
-  var spaceContext = $injector.get('spaceContext');
-  var buildQuery = $injector.get('search/queryBuilder');
-  var assetContentType = $injector.get('assetContentType');
+/**
+ * @ngdoc service
+ * @name ListQuery
+ * @description
+ * Various helpers for preparing API queries.
+ */
+angular.module('contentful').factory('ListQuery', ['require', function (require) {
+  var systemFields = require('systemFields');
+  var spaceContext = require('spaceContext');
+  var buildQuery = require('search/queryBuilder');
+  var assetContentType = require('assetContentType');
 
   var DEFAULT_ORDER = systemFields.getDefaultOrder();
 
   return {
     /**
+     * @ngdoc method
+     * @name ListQuery#getForEntries
+     * @description
+     * Prepares an API query for the entry list.
+     *
      * @param {string} opts.contentTypeId
      * @param {string} opts.searchTerm
-     * @param {string} opts.order
-     *   TODO it is a structured value
+     * @param {object} opts.order
      * @param {Paginator} opts.paginator
-     * @returns {Query}
+     * @returns {object}
      */
     getForEntries: function (opts) {
       if (opts.contentTypeId) {
@@ -29,9 +38,15 @@ angular.module('contentful').factory('ListQuery', ['$injector', function ($injec
       }
     },
     /**
-     * TODO document
-     * TODO we should probably limit the number of items to keep query
-     * url size low
+     * @ngdoc method
+     * @name ListQuery#getForEntryCollection
+     * @description
+     * Prepares an API query for the collection screen.
+     *
+     * @param {string[]} opts.ids
+     * @param {object} opts.order
+     * @param {Paginator} opts.paginator
+     * @returns {object}
      */
     getForEntryCollection: function (ids, order, paginator) {
       return prepareEntityListQuery(null, {
@@ -42,9 +57,29 @@ angular.module('contentful').factory('ListQuery', ['$injector', function ($injec
         return query;
       });
     },
+    /**
+     * @ngdoc method
+     * @name ListQuery#getForAssets
+     * @description
+     * Prepares an API query for the asset list.
+     *
+     * @param {string} opts.searchTerm
+     * @param {object} opts.order
+     * @param {Paginator} opts.paginator
+     * @returns {object}
+     */
     getForAssets: function (opts) {
       return prepareEntityListQuery(assetContentType, opts);
     },
+    /**
+     * @ngdoc method
+     * @name ListQuery#getForUsers
+     * @description
+     * Prepares an API query for the user list.
+     *
+     * @param {Paginator} opts.paginator
+     * @returns {object}
+     */
     getForUsers: function (opts) {
       var userContentType = {
         data: {},

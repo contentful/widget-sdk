@@ -32,14 +32,6 @@ angular.module('contentful')
   this.resetSearchTerm = resetSearchTerm;
   this.hasQuery = hasQuery;
 
-  $scope.hasNoSearchResults = function () {
-    return hasQuery() && !$scope.paginator.getTotal() && !$scope.context.loading && !$scope.context.view.collection;
-  };
-
-  $scope.emptyCollection = function () {
-    return !$scope.paginator.getTotal() && $scope.context.view.collection;
-  };
-
   /**
    * Watches: triggering list updates
    */
@@ -61,24 +53,37 @@ angular.module('contentful')
   $scope.$watchCollection(function () {
     return {
       value: getViewItem('searchTerm'),
-      view: dotty.get($scope, 'context.view.id')
+      view: getViewItem('id')
     };
   }, function (next, prev) {
     var value = next.value;
     var viewChanged = next.view !== prev.view;
     var hasTerm = _.isString(value) && value.length > 0;
 
+    // if view was changed updated immediately
+    if (viewChanged) {
+      updateWithTerm(value);
+      return;
+    }
+
+    // for initial run or resetting term just set search term w/o list update
     if (value === prev.value || isResettingTerm) {
-      // for initial run or resetting term just set search term w/o list update
       searchTerm = value;
       isResettingTerm = false;
-    } else if (viewChanged || !hasTerm) {
-      // if view was changed or term was cleared then update immediately
+      return;
+    }
+
+    // if term was cleared then update immediately
+    if (!hasTerm) {
       updateWithTerm(value);
-    } else if (hasTerm && value.length >= AUTOTRIGGER_MIN_LEN) {
-      // use debounced version when user is actively typing
-      // we autotrigger only when query is long enough
+      return;
+    }
+
+    // use debounced version when user is actively typing
+    // we autotrigger only when query is long enough
+    if (hasTerm && value.length >= AUTOTRIGGER_MIN_LEN) {
       debouncedUpdateWithTerm(value);
+      return;
     }
   });
 
@@ -223,6 +228,6 @@ angular.module('contentful')
 
   function getViewItem (path) {
     path = _.isString(path) ? path.split('.') : path;
-    return dotty.get($scope, ['context', 'view'].concat(path));
+    return _.get($scope, ['context', 'view'].concat(path));
   }
 }]);

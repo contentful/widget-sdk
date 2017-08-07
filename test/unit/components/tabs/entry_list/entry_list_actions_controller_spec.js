@@ -1,11 +1,11 @@
 'use strict';
 
 describe('Entry List Actions Controller', function () {
-  let scope, stubs, $q, accessChecker;
+  let scope, stubs, accessChecker;
   let action1, action2, action3, action4;
 
   afterEach(function () {
-    scope = stubs = $q = accessChecker = null;
+    scope = stubs = accessChecker = null;
     action1 = action2 = action3 = action4 = null;
   });
 
@@ -23,9 +23,9 @@ describe('Entry List Actions Controller', function () {
         'action2',
         'action3',
         'action4',
-        'timeout',
-        'broadcast'
+        'timeout'
       ]);
+
       $provide.value('analytics/Analytics', {
         track: stubs.track
       });
@@ -38,12 +38,7 @@ describe('Entry List Actions Controller', function () {
       $provide.value('$timeout', stubs.timeout);
     });
 
-    $q = this.$inject('$q');
-
-    const $rootScope = this.$inject('$rootScope');
-    $rootScope.$broadcast = stubs.broadcast;
-    scope = $rootScope.$new();
-
+    const $q = this.$inject('$q');
     action1 = $q.defer();
     action2 = $q.defer();
     action3 = $q.defer();
@@ -53,17 +48,16 @@ describe('Entry List Actions Controller', function () {
     stubs.action3.returns(action3.promise);
     stubs.action4.returns(action4.promise);
 
+    scope = this.$inject('$rootScope').$new();
+    scope.paginator = this.$inject('Paginator').create();
     scope.selection = {
       size: stubs.size,
-      getSelected: stubs.getSelected,
+      getSelected: stubs.getSelected.returns([]),
       clear: stubs.clear
     };
 
-    this.$inject('spaceContext').space = {
-      createEntry: stubs.createEntry
-    };
-
-    scope.paginator = this.$inject('Paginator').create();
+    const spaceContext = this.$inject('mocks/spaceContext').init();
+    spaceContext.space = {createEntry: stubs.createEntry};
 
     accessChecker = this.$inject('accessChecker');
     accessChecker.shouldHide = sinon.stub().returns(false);
@@ -75,7 +69,7 @@ describe('Entry List Actions Controller', function () {
   });
 
   function makeEntity (action, stub) {
-    const entity = {};
+    const entity = {data: {sys: {id: 'entityid'}}};
     entity[action] = stub;
     return entity;
   }

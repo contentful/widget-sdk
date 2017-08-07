@@ -2,11 +2,7 @@
 
 require('angular-ui-sortable');
 
-window.dotty = require('./dottie_wrapper.js');
 angular.module('cf.libs', [])
-  .constant('libs/yaku', require('yaku'))
-  .constant('libs/dotty', window.dotty)
-  .constant('libs/icepick', require('icepick'))
   .constant('libs/preact', require('preact'))
   .constant('libs/qs', require('qs'))
   .constant('libs/marked', require('marked-ast')._marked)
@@ -20,6 +16,7 @@ angular.module('cf.libs', [])
   .constant('libs/kefir', require('kefir'))
   .constant('libs/@contentful/client', require('@contentful/client'))
   .constant('libs/sharejs', window.sharejs)
+  .constant('libs/flat', require('flat'))
   .constant('hostnameTransformer', require('@contentful/hostname-transformer'))
   .constant('mimetype', require('@contentful/mimetype'))
   .constant('raw/moment', require('moment'))
@@ -40,3 +37,19 @@ angular.module('cf.libs', [])
 // This needs to be called after everything else so we override any
 // previously imported versions of lodash
 window._ = require('lodash');
+
+// TODO dotty should be replaced with _.get / _.set
+window.dotty = {
+  get: function (obj, path, defaultValue) {
+    if (Array.isArray(path) && path.length === 0) {
+      return obj;
+    } else {
+      path = Array.isArray(path) ? path.slice() : path;
+      return window._.get(obj, path, defaultValue);
+    }
+  },
+  put: function (obj, path, value) {
+    path = Array.isArray(path) ? path.slice() : path;
+    return window._.set(obj, path, value);
+  }
+};

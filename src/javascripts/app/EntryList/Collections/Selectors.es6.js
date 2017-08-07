@@ -1,14 +1,40 @@
-import {includes} from 'lodash';
+import {find, includes} from 'lodash';
 import {h} from 'ui/Framework';
 import {hfill} from 'ui/Layout';
 import * as K from 'utils/kefir';
 
+/**
+ * @ngdoc service
+ * @name Collections/Selectors
+ * @description
+ * This module exports components allowing the user
+ * to (un)assign entries from collections.
+ */
 
-// TODO documentation
+/**
+ * @ngdoc method
+ * @name Collections/Selectors#sidebarSelector
+ * @description
+ * Selector displayed in the entity sidebar.
+ *
+ * @param {string} entryId
+ * @param {Collections/Store} collectionsStore
+ * @returns {VNode[]}
+ */
 export function sidebarSelector (entryId, collectionsStore) {
   return selector('bottom-left', K.constant([entryId]), collectionsStore);
 }
 
+/**
+ * @ngdoc method
+ * @name Collections/Selectors#bulkSelector
+ * @description
+ * Selector displayed for bulk list actions.
+ *
+ * @param {Kefir/Property} selectedIds$
+ * @param {Collections/Store} collectionsStore
+ * @returns {VNode[]}
+ */
 export function bulkSelector (selectedIds$, collectionsStore) {
   return selector('bottom-right', selectedIds$, collectionsStore);
 }
@@ -44,7 +70,7 @@ function selector (menuAlignment, selectedIds$, collectionsStore) {
             role: 'menuitem',
             // Prevent dialog from closing with stopPropagation
             onClick: withStopPropagation(() => collectionsStore.addItems(id, entryIds))
-          }, [ name ]);
+          }, [name]);
         }
       })).concat([
         h('div', {
@@ -56,20 +82,16 @@ function selector (menuAlignment, selectedIds$, collectionsStore) {
       ]))
     ]);
   });
+}
 
-  // TODO more performant algo
-  function allInCollection (collections, collectionId, itemIds) {
-    const collection = collections.find((c) => c.id === collectionId);
-    if (!collection) {
-      return;
-    }
-
+function allInCollection (collections, collectionId, itemIds) {
+  const collection = find(collections, (c) => c.id === collectionId);
+  if (collection) {
     return itemIds.every((id) => includes(collection.items, id));
   }
 }
 
-
-// TODO candidate for framework utils
+// TODO should be part of framework utils
 function withStopPropagation (fn) {
   return function (e) {
     e.stopPropagation();

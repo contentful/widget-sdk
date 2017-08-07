@@ -34,9 +34,9 @@
     "browserify": "^13.1.0",
     "browserify-pegjs": "~0.8.0-2",
     "codemirror": "^5.24.2",
-    "dottie": "^1.1.0",
     "element-resize-detector": "^1.1.10",
     "file-size": "^1.0.0",
+    "flat": "^4.0.0",
     "glob": "^5.0.14",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.1",
@@ -46,7 +46,6 @@
     "gulp-sourcemaps": "^2.4.0",
     "gulp-stylus": "^2.6.0",
     "gulp-uglify": "^2.0.1",
-    "icepick": "^2.1.1",
     "immutable": "^3.8.1",
     "jade": "^1.11.0",
     "jasmine-core": "^2.5.2",
@@ -82,8 +81,7 @@
     "through2": "^2.0.3",
     "vinyl": "^0.4.6",
     "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "~1.0.0",
-    "yaku": "^0.18.2"
+    "vinyl-source-stream": "~1.0.0"
   },
   "devDependencies": {
     "angular-mocks": "~1.5.7",

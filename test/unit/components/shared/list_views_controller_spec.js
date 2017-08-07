@@ -12,6 +12,7 @@ describe('ListViewsController', function () {
     const ListViewPersistor = this.$inject('data/ListViewPersistor');
 
     this.mockService('notification');
+    this.$inject('mocks/spaceContext').init();
     scope = this.$inject('$rootScope').$new();
     scope.context = {};
     scope.selection = {clear: sinon.spy()};

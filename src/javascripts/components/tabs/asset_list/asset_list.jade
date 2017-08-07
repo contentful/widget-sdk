@@ -143,13 +143,5 @@ header.workbench-header
 
     +no-search-results("hasNoSearchResults()", "context.view.searchTerm")
 
-    .advice.advice--row-aligned(ng-show="emptyCollection()")
-      i.fa.fa-search.fa-flip-horizontal.advice__icon.advice__icon--normal.advice__icon--margin-right.advice__icon--margin-bottom
-      .advice__frame.advice__frame--no-margin.advice__frame--align-left
-        header.advice__title.advice__title--normal
-          | The collection is empty
-        p.advice__subtext
-          | You can add entries to collections to better group and organize content.
-
 .workbench-main.x--content(ng-show="showNoAssetsAdvice()")
   include ./no_assets_advice
