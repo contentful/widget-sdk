@@ -15,6 +15,7 @@ describe('cfIframeWidget directive', function () {
     });
 
     this.otDoc = this.$inject('mocks/entityEditor/Document').create();
+    this.$inject('mocks/spaceContext').init();
 
     const Widgets = this.$inject('widgets');
     Widgets.get = sinon.stub().returns({});

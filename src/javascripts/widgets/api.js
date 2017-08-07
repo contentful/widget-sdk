@@ -21,19 +21,24 @@ angular.module('contentful')
    * @name widgets/API#API
    *
    * @param {Client.Space} apiClient
+   * @param {object} spaceMembership
    * @param {Array<API.ContentType.Field>} fields
    * @param {API.Entry} entryData
    * @param {API.ContentType.Data} contentTypeData
-   * @param {object} current
+   * @param {API.ContentType.Field} current.field
+   *   The field the widget is attached to.
+   * @param {API.Locale} current.locale
+   *   The locale the widget is attached to.
    * @param {IFrame} iframe
    */
-  function API (apiClient, fields, entryData, contentTypeData, current, iframe) {
+  function API (apiClient, spaceMembership, fields, entryData, contentTypeData, current, iframe) {
     this.channel = new Channel(iframe);
     this.idMap = createIDMap(fields);
     this.current = current;
     this.fields = fields;
     this.entryData = entryData;
     this.contentTypeData = contentTypeData;
+    this.spaceMembership = spaceMembership;
     this.channel.handlers = createHandlers(apiClient, iframe);
   }
 
@@ -49,7 +54,7 @@ angular.module('contentful')
   API.prototype.connect = function () {
     this.channel.connect(buildContext(
       this.idMap, this.current.field, this.current.locale, this.current.isDisabled,
-      this.fields, this.entryData, this.contentTypeData
+      this.fields, this.entryData, this.contentTypeData, this.spaceMembership
     ));
   };
 
@@ -158,12 +163,14 @@ angular.module('contentful')
    * Content type data with internal ids transformed to public ids
    * and displayField property added.
    *
+   * @param {object} spaceMembership
    */
-  function buildContext (idMap, field, locale, isDisabled, fields, entryData, contentTypeData) {
+  function buildContext (idMap, field, locale, isDisabled, fields, entryData, contentTypeData, spaceMembership) {
     var apiName = field.apiName;
     var fieldValue = dotty.get(entryData, ['fields', field.id, locale.internal_code]);
     var fieldInfo = buildFieldInfo(idMap, entryData, fields);
     return {
+      user: buildUser(spaceMembership),
       field: {
         id: apiName,
         locale: locale.code,
@@ -224,4 +231,20 @@ angular.module('contentful')
     };
   }
 
+  function buildUser (spaceMembership) {
+    var user = spaceMembership.user;
+    return {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      spaceMembership: {
+        admin: !!spaceMembership.admin,
+        roles: spaceMembership.roles.map(function (role) {
+          return {
+            name: role.name,
+            description: role.description
+          };
+        })
+      }
+    };
+  }
 }]);

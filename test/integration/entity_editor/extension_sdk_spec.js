@@ -14,7 +14,13 @@ describe('Extension SDK', function () {
     });
 
     const spaceContext = this.$inject('spaceContext');
-    spaceContext.space = { data: {sys: {}} };
+    spaceContext.space = { data: {
+      sys: {},
+      spaceMembership: {
+        user: {},
+        roles: []
+      }
+    }};
 
     this.apiClient = {};
     spaceContext.cma = this.apiClient;
@@ -477,6 +483,45 @@ describe('Extension SDK', function () {
         const err = yield api.dialogs[method]().catch(_.identity);
         expect(err.message).toBe('boom!');
       }
+    });
+  });
+
+  describe('#user', function () {
+    beforeEach(function () {
+      const spaceContext = this.$inject('spaceContext');
+      spaceContext.space = { data: {
+        sys: {},
+        spaceMembership: {
+          admin: false,
+          sys: 'OMITTED',
+          roles: [{
+            sys: 'OMITTED',
+            name: 'Assistant to the regional manager',
+            description: 'Not “Assistant regional manager”',
+            policies: [],
+            permissions: {}
+          }],
+          user: {
+            sys: 'OMITTED',
+            firstName: 'Dwight',
+            lastName: 'Schrute'
+          }
+        }
+      }};
+    });
+
+    it('makes user data available', function* (api) {
+      expect(api.user).toEqual({
+        firstName: 'Dwight',
+        lastName: 'Schrute',
+        spaceMembership: {
+          admin: false,
+          roles: [{
+            name: 'Assistant to the regional manager',
+            description: 'Not “Assistant regional manager”'
+          }]
+        }
+      });
     });
   });
 
