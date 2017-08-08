@@ -1,4 +1,5 @@
 import {h} from 'utils/hyperscript';
+import { getSvg as getHelpIcon } from 'svg/help-bot-icon';
 
 export default function template () {
   return h('.home', {'cf-ui-sticky-container': true}, [
@@ -18,16 +19,42 @@ function ninja () {
     ngIf: 'showNinja'
   }, [
     h('h3.home-section__heading', [
-      'Not all who wander are lost'
+      'Contextual help'
     ]),
-    h('p.home-section__description', [
-      'Misao is here to help guide wandering developers get started with Contentful.',
-      h('br'),
-      'She\'ll tell you about how to use the API and offer some tips and tricks along the way.',
-      h('br')
-    ]),
-    h('code.code-block', [
-      'Press \'n\' to start'
+    h('div', {
+      style: {
+        display: 'flex'
+      }
+    }, [
+      h('div', {
+        style: {
+          flexBasis: '80%'
+        }
+      }, [
+        h('p.home-section__description', [
+          'This helps developers get started with Contentful.',
+          h('br'),
+          'It offers help on different topics and helps developers learn the basics of Contentful.'
+        ]),
+        h('.code-block', [
+          h('.code-block__line', ['Click on the ‘Help‘ button to access it'])
+        ]),
+        h('p.home-section__description', [
+          'You can hide the help away completely by pressing ',
+          h('strong', ['h']),
+          '.'
+        ])
+      ]),
+      h('div', {
+        style: {
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexGrow: 1
+        }
+      }, [
+        getHelpIcon(100, 100)
+      ])
     ])
   ]);
 }
