@@ -26,9 +26,10 @@ export default function Ninja (data) {
 }
 
 function helpButton (actions) {
-  return h('button.docs-sidebar__button', {
+  return h('div.docs-sidebar__button', {
     onClick: actions.toggle,
-    ariaLabel: 'Open docs sidebar'
+    ariaLabel: 'Open docs sidebar',
+    role: 'button'
   }, [
     icon,
     h('.docs-sidebar__button-text', ['Help'])
