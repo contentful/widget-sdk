@@ -8,12 +8,13 @@ ES6 transpilation is enabled for files with the `.es6.js` extension. See the
 [ES6 Modules](#es6-modules) section for more info on how to integrate ES6 code
 with Angular.
 
-We use a restricted set of Babel transform plugins that we will extend when
-necessary. See `tools/app-babel-options.js` for the list of supported plugins.
+We use the [`es2015` preset][es2015-preset] with the `loose` option and the
+SystemJS transform for ES6 modules.
 
 ES6 syntax is not yet supported for directives and controllers.
 
 [babel]: http://babeljs.io/
+[es2015-preset]: http://babeljs.io/docs/plugins/preset-es2015/
 
 
 Adding a Transform Plugin
