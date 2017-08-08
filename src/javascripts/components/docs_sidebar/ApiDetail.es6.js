@@ -10,15 +10,19 @@ export default function template ({ state: { spaceId, apiKeyId } }) {
   }, [
     h('.docs-sidebar__line', [
       h('p', [
-        'Contentful is an ',
+        'Contentful is ',
         h('strong', ['API focused']),
-        ', content management system. So you can use any of the ',
-        'four REST APIs to work with your content.'
+        '. You can use any of the following REST APIs. '
       ])
     ]),
     apis(),
     h('.docs-sidebar__line', [
-      h('strong', ['What‘s next?']),
+      h('strong', {
+        style: {
+          display: 'block',
+          marginBottom: '10px'
+        }
+      }, ['What‘s next?']),
       apiKeyId
         ? h('p', ['Download a boilerplate project for a language of your choice on this page.'])
         : createApiKeyAdvice(spaceId)

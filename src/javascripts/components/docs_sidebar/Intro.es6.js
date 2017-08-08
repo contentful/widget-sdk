@@ -41,7 +41,7 @@ function content (data) {
 
   return [
     [h('div', [
-      h('p', ['👋 Hi! I’m here to help you learn about Contentful and to make your first API calls']),
+      h('p', ['👋 Hi! I’m here to help you learn about Contentful and to make your first few API calls.']),
       h('p', [
         'I will show you different info on the main pages. To hide or display this help, press ',
         h('strong', ['h']),
