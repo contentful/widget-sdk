@@ -50,7 +50,7 @@ function content (data) {
     ])],
     ['Contentful is a content management infrastructure that lets you build applications with its flexible APIs and global CDN.'],
     [h('div', [
-      h('strong', ['Try and fetch an entry:']),
+      h('strong', ['Try and fetch an entry.']),
       data.state.apiKeyId ? clickToCopy(curl(data), data.actions.render) : createApiKeyAdvice(data.state.spaceId),
       docs()
     ])],
@@ -120,9 +120,6 @@ function docs () {
     h('a.text-link', {
       href: docsUrl,
       target: '_blank',
-      style: {
-        display: 'block'
-      },
       onClick: () => trackLinkClick(docsUrl)
     }, ['developer docs.'])
   ]);

@@ -20,24 +20,21 @@ export default function template (data) {
       h('p', [
         'These are your ',
         h('strong', ['content types']),
-        ', which are similar to schemas, and for each content type,',
+        ', which are similar to schemas, and for each content type, ',
         'you can customize its fields and field properties.'
       ])
     ]),
     h('.docs-sidebar__line', [
-      h('p', ['Here we have example content types for Brand, Category and Product.'])
-    ]),
-    h('.docs-sidebar__line', [
-      h('strong', [`Try and fetch your "${data.state.contentType.name}" content type:`]),
+      h('strong', [`Fetch the content type named '${data.state.contentType.name}'.`]),
       data.state.apiKeyId ? clickToCopy(curl(data), data.actions.render) : createApiKeyAdvice(data.state.spaceId),
       h('p', [
-        'Read about ',
+        'You can read about ',
         h('a.text-link', {
           href: otherQueriesLink,
           target: '_blank',
           onClick: () => trackLinkClick(otherQueriesLink)
-        }, ['other types of queries']),
-        ' you can perform.'
+        }, ['other content type queries']),
+        '.'
       ])
     ]),
     h('.docs-sidebar__line', [

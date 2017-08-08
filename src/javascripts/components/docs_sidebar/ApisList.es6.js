@@ -15,10 +15,9 @@ export default function template ({ state: { spaceId, apiKeyId } }) {
   }, [
     h('.docs-sidebar__line', [
       h('p', [
-        'Contentful is an ',
+        'Contentful is ',
         h('strong', ['API focused']),
-        ', content management system. So you can use any of the ',
-        'four REST APIs to work with your content.'
+        '. You can use any of the following REST APIs. '
       ])
     ]),
     apis(),

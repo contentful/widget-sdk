@@ -32,28 +32,30 @@ export default function ({ state: { spaceId, apiKeyId } }) {
         style: {
           marginBottom: 0
         }
-      }, ['I have no specific help for this page.'])
+      }, ['There is no help for this page.'])
     ]),
     h('.docs-sidebar__line', [
       h('p', {
         style: {
           marginBottom: 0
         }
-      }, ['At the moment I have help for these pages:']),
-      link({
-        sref: 'spaces.detail.content_types.list',
-        text: 'Content model'
-      }),
-      ', ',
-      link({
-        sref: 'spaces.detail.entries.list',
-        text: 'Content'
-      }),
-      ' and ',
-      link({
-        sref: 'spaces.detail.api.keys.list',
-        text: 'APIs'
-      })
+      }, [
+        'You can get help about ',
+        link({
+          sref: 'spaces.detail.content_types.list',
+          text: 'content types'
+        }),
+        ', ',
+        link({
+          sref: 'spaces.detail.entries.list',
+          text: 'entries'
+        }),
+        ', or ',
+        link({
+          sref: 'spaces.detail.api.keys.list',
+          text: 'APIs'
+        })
+      ])
     ]),
     h('.docs-sidebar__link', [
       h('p', [

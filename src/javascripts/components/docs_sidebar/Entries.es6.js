@@ -16,22 +16,22 @@ export default function template (data) {
     }
   }, [
     h('.docs-sidebar__line', [
-      h('p', ['These are your ', h('strong', ['entries']), ', where you create and manage your written content.'])
+      h('p', ['These are your ', h('strong', ['entries']), ', which you use to create written content and to manage media.'])
     ]),
     h('.docs-sidebar__line', [
       h('p', ['Each entry’s fields are defined by the way you customize the fields in your content types'])
     ]),
     h('.docs-sidebar__line', [
-      h('strong', [`Fetch entries for "${data.state.contentType.name}" content type:`]),
+      h('strong', [`Fetch the entries for the content type name '${data.state.contentType.name}'.`]),
       data.state.apiKeyId ? clickToCopy(curl(data), data.actions.render) : createApiKeyAdvice(data.state.spaceId),
       h('p', [
-        'There are also ',
+        'You can read about ',
         h('a.text-link', {
           href: otherQueriesLink,
           target: '_blank',
           onClick: () => trackLinkClick(otherQueriesLink)
-        }, ['other queries']),
-        ' that you can perform on an entry.'
+        }, ['other entry queries']),
+        '.'
       ])
     ]),
     h('.docs-sidebar__line', [

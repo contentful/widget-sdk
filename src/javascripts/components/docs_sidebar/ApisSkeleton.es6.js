@@ -17,7 +17,7 @@ export default function apis () {
     apiDescription({
       href: 'https://www.contentful.com/developers/docs/references/content-management-api/',
       text: 'Content Management API',
-      description: 'Programmatically create or update content'
+      description: 'Create or update content programmatically'
     }),
     apiDescription({
       href: 'https://www.contentful.com/developers/docs/references/content-preview-api/',
