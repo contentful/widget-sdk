@@ -89,7 +89,8 @@ function getTemplate (route) {
     'spaces.detail.entries.list': entries,
     'spaces.detail.content_types.list': contentTypes,
     'spaces.detail.api.keys.detail': apiDetail,
-    'spaces.detail.api.keys.list': apisList
+    'spaces.detail.api.keys.list': apisList,
+    'spaces.detail.api.cma_tokens': apisList
   };
 
   return views[route] || noContent;
