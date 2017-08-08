@@ -23,15 +23,16 @@ export default function () {
         height: '100%',
         justifyContent: 'center',
         paddingLeft: `${navPadding}`
-      },
-      dataTestId: 'sidepanel-trigger-text'
+      }
     }, [
       h('span', {
-        style: { color: colors.textInverted }
+        style: { color: colors.textInverted },
+        dataTestId: 'sidepanel-trigger-text-title'
       }, ['{{title}}']),
       h('span', {
         ngIf: 'subtitle',
-        style: { color: colors.textLight }
+        style: { color: colors.textLight },
+        dataTestId: 'sidepanel-trigger-text-subtitle'
       }, ['{{subtitle}}'])
     ])
   ]);
