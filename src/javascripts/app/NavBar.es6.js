@@ -64,8 +64,9 @@ function navbarDropdown (data, tabIndex = 0) {
     }, [
       data.icon && h('cf-icon', { name: data.icon }),
       h('span.nav-bar__list-label', [data.title]),
-      h('cf-icon.icon-dd-arrow-down.pull-right', {
-        name: 'dd-arrow-down'
+      h('cf-icon', {
+        name: 'dd-arrow-down',
+        style: { marginLeft: '10px' }
       })
     ]),
     h('div.context-menu.x--top-bar', {

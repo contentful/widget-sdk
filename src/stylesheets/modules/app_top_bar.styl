@@ -6,7 +6,7 @@ $app-top-bar__action-color()
 .app-top-bar
   height: $nav-bar-height
   display: flex
-  background-color: $colors.dark-blue
+  background-color: $colors.contrast-light
 
   &__logo
     display: flex
@@ -15,7 +15,6 @@ $app-top-bar__action-color()
     padding: 0 1em
 
   &__logo-element
-    position: relative
     width: 29px
     height: 29px
     background-image: url('/app/svg/logo-label.svg')
@@ -49,7 +48,7 @@ $app-top-bar__action-color()
     display: flex
     flex-direction: column
     justify-content: center
-    padding: 0 15px
+    padding-left: 30px
     a
       $app-top-bar__action-color()
     &:focus
