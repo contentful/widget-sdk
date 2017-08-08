@@ -22,6 +22,9 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
   var ancestorLinkSelector = ancestorMenuSelector + ' [role="link"]';
   var hintDismissBtnSelector = '[aria-label="ui-hint-dismiss-btn"]';
 
+  var renderString = require('ui/Framework').renderString;
+  var template = require('app/Breadcrumbs').template;
+
   var analyticsData = {
     clickedOn: {
       BACK: 'back',
@@ -42,7 +45,7 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
   };
 
   return {
-    template: JST.cf_breadcrumbs(),
+    template: renderString(template()),
     restrict: 'E',
     replace: true,
     scope: {},
