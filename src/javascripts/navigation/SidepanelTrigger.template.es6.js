@@ -5,7 +5,6 @@ const navPadding = '15px';
 
 export default function () {
   return h('.nav-sidepanel__trigger.app-top-bar--right-separator', {
-    ngClick: 'triggerClick()',
     dataTestId: 'sidepanel-trigger',
     style: {
       height: '100%',

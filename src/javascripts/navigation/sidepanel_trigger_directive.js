@@ -20,9 +20,7 @@ angular.module('contentful')
   return {
     restrict: 'E',
     template: template,
-    scope: {
-      triggerClick: '&'
-    },
+    scope: {},
     replace: true,
     controller: ['$scope', function ($scope) {
 

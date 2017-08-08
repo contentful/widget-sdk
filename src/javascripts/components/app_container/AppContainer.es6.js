@@ -7,13 +7,13 @@ export default function () {
       role: 'banner'
     }),
     h('cf-nav-sidepanel', {
-      ngShow: 'useNewNavigation',
+      ngIf: 'useNewNavigation',
       isShown: 'sidepanelIsShown'
     }),
     h('div.app-top-bar', [
       h('cf-nav-sidepanel-trigger', {
-        ngShow: 'useNewNavigation',
-        triggerClick: 'sidepanelIsShown = !sidepanelIsShown'
+        ngIf: 'useNewNavigation',
+        ngClick: '$parent.sidepanelIsShown = !$parent.sidepanelIsShown'
       }),
       oldLogoAndSpaceSelector({ ngIf: '!useNewNavigation' }),
       h('div.app-top-bar__child.app-top-bar__main-nav', {
@@ -43,7 +43,7 @@ function oldLogoAndSpaceSelector (attrs) {
     style: containerStyle({ padding: `0 ${padding}` })
   }, attrs), [
     h('.app-top-bar--right-separator', {
-      style: containerStyle({ paddingRight: `${padding}` })
+      style: containerStyle({ paddingRight: padding })
     }, [
       h('.app-top-bar__logo-element', { cfCustomLogo: 'cf-custom-logo' })
     ]),
