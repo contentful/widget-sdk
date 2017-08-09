@@ -1,5 +1,6 @@
 import { h } from 'utils/hyperscript';
 import { byName as colors } from 'Styles/Colors';
+import { triangleDown } from 'Styles/Helpers';
 import { extend, omit } from 'lodash';
 
 export default function () {
@@ -20,12 +21,13 @@ export default function () {
         style: {
           borderRadius: '50%',
           width: '24px',
-          height: '24px',
-          margin: '0 20px 0 10px'
+          height: '24px'
         }
       }),
-      h('cf-icon.icon-dd-arrow-down.pull-right', {
-        name: 'dd-arrow-down'
+      h('span', {
+        style: extend(triangleDown(4, '#fff'), {
+          margin: '2px 0 0 10px'
+        })
       })
     ]),
     h('div.context-menu.x--top-bar.x--arrow-right', {

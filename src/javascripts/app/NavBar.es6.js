@@ -64,9 +64,10 @@ function navbarDropdown (data, tabIndex = 0) {
     }, [
       data.icon && h('cf-icon', { name: data.icon }),
       h('span.nav-bar__list-label', [data.title]),
-      h('cf-icon', {
-        name: 'dd-arrow-down',
-        style: { marginLeft: '10px' }
+      h('span.triangle-down', {
+        style: {
+          margin: '2px 0 0 12px'
+        }
       })
     ]),
     h('div.context-menu.x--top-bar', {

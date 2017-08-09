@@ -1,5 +1,7 @@
 import { h } from 'utils/hyperscript';
 import { byName as colors, genBoxShadow } from 'Styles/Colors';
+import { triangleDown } from 'Styles/Helpers';
+import { extend } from 'lodash';
 
 const padding = '20px';
 
@@ -99,16 +101,6 @@ function organizationSelector () {
     ])
   ]);
 
-  const triangleDown = h('span', {
-    style: {
-      alignSelf: 'center',
-      border: `4px solid ${colors.textDark}`,
-      borderLeftColor: 'transparent',
-      borderRightColor: 'transparent',
-      borderBottomColor: 'transparent'
-    }
-  });
-
   return h('.nav-sidepanel__header', {
     style: {
       display: 'flex',
@@ -125,7 +117,7 @@ function organizationSelector () {
   }, [
     currOrgIcon,
     currOrgText,
-    triangleDown,
+    h('span', { style: extend(triangleDown(), { alignSelf: 'center' }) }),
     orgListDropdown()
   ]);
 }
