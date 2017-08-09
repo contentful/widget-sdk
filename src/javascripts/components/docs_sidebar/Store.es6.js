@@ -23,7 +23,7 @@ const defaultState = {
 const STORE_KEY_PREFIX = 'contextualSidebar';
 
 let ContextualSidebarStore = {
-  state: defaultState,
+  state: {},
   actions: {}
 };
 
@@ -32,8 +32,10 @@ let myBrowserStore;
 export function init (userId, state, actions) {
   myBrowserStore = TheStore.forKey(`${STORE_KEY_PREFIX}:${userId}`);
   ContextualSidebarStore = merge(
+    {},
     ContextualSidebarStore,
-    { state: myBrowserStore.get() },
+    { state: defaultState },
+    { state: myBrowserStore.get() || {} },
     { state },
     { actions },
     {
@@ -62,6 +64,9 @@ export function toggle () {
   if (!ContextualSidebarStore.state.calloutSeen) {
     closeCallout();
   }
+  setStoreValue({
+    isExpanded: ContextualSidebarStore.state.isExpanded
+  });
   events.toggle({isExpanded: ContextualSidebarStore.state.isExpanded, isIntro: !ContextualSidebarStore.state.introCompleted});
   ContextualSidebarStore.actions.render();
 }
@@ -88,6 +93,10 @@ export function continueIntro () {
   if (!ContextualSidebarStore.state.introCompleted && !ContextualSidebarStore.state.isHidden) {
     ContextualSidebarStore.state.introProgress += 1;
     ContextualSidebarStore.state.introStepsRemaining -= 1;
+    setStoreValue({
+      introProgress: ContextualSidebarStore.state.introProgress,
+      introStepsRemaining: ContextualSidebarStore.state.introStepsRemaining
+    });
     events.continueIntro();
   }
 }
@@ -106,5 +115,13 @@ function closeCallout () {
 }
 
 function setStoreValue (data) {
-  myBrowserStore.set(merge(pick(ContextualSidebarStore.state, ['introCompleted', 'isHidden', 'calloutSeen']), data));
+  myBrowserStore.set(
+    merge(
+      pick(
+        ContextualSidebarStore.state,
+        ['isExpanded', 'isHidden', 'calloutSeen', 'introCompleted', 'introProgress', 'introStepsRemaining']
+      ),
+      data
+    )
+  );
 }

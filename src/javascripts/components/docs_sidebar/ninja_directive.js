@@ -20,9 +20,9 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
   return {
     template: '<cf-component-bridge component="component">',
     restrict: 'E',
-    link: function (scope) {
+    controller: ['$scope', function ($scope) {
       // initial empty render as data is loaded asynchronously
-      scope.component = Ninja(null);
+      $scope.component = Ninja(null);
 
       // init store with sane data
       $q.all([
@@ -55,7 +55,7 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
 
       $document.on('keydown', handleKeydown);
 
-      scope.$on('$destroy', function () {
+      $scope.$on('$destroy', function () {
         $document.off('keydown', handleKeydown);
         $document[0].removeEventListener('click', handleClick, true);
       });
@@ -71,7 +71,7 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
 
       function render () {
         return $timeout(function () {
-          scope.component = Ninja(NinjaStore.get());
+          $scope.component = Ninja(NinjaStore.get());
         });
       }
 
@@ -139,9 +139,9 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
       }
 
 
-      function handleSpace () {
+      function handleSpace (introStepsRemaining) {
         // Don't do anything if all steps have been completed
-        if (NinjaStore.get().state.introStepsRemaining) {
+        if (introStepsRemaining) {
           NinjaStore.continueIntro();
           render().then(NinjaStore.completeIntro);
         }
@@ -152,15 +152,17 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
           [KEYCODES.ESC, NinjaStore.hide],
           [KEYCODES.H, NinjaStore.toggleVisibility],
           [KEYCODES.SPACE, function () {
-            if (NinjaStore.get().state.isExpanded) {
+            var ninjaState = NinjaStore.get().state;
+
+            if (ninjaState.isExpanded) {
               evt.preventDefault();
               evt.stopPropagation();
-              handleSpace();
+              handleSpace(ninjaState.introStepsRemaining);
             }
           }],
           [otherwise, _.noop]
         ]);
       }
-    }
+    }]
   };
 }]);

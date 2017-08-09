@@ -25,9 +25,9 @@ export default function Ninja (data) {
   }
 }
 
-function helpButton (actions) {
+function helpButton ({ toggle }) {
   return h('div.docs-sidebar__button', {
-    onClick: actions.toggle,
+    onClick: toggle,
     ariaLabel: 'Open docs sidebar',
     role: 'button'
   }, [
@@ -67,7 +67,7 @@ function minimized ({actions, state}) {
     ]),
     h('p', {
       style: {}
-    }, ['👋 Hi! I am here to you learn about Contentful and to make your first API call.']),
+    }, ['👋 Hi! I am here to help you learn about Contentful and to make your first API call.']),
     h('a.text-link--neutral-emphasis-low', {
       onClick: actions.toggle
     }, ['See tour'])
