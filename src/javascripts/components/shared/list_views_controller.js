@@ -47,19 +47,8 @@ angular.module('contentful')
     $scope.loadView = function (view) {
       replaceView(view);
       resetList();
-
-      // track only when loading a stored view
-      if (view.id) {
-        Tracking.viewLoaded(view, getFolderFor(view));
-      }
+      Tracking.viewLoaded(view);
     };
-
-    function getFolderFor (view) {
-      var folders = _.get($scope, ['uiConfig', viewCollectionName], []);
-      return _.find(folders, function (f) {
-        return _.get(f, ['views'], []).indexOf(view) > -1;
-      });
-    }
 
     $scope.saveViews = function () {
       return $scope.saveUiConfig().catch(function (err) {
