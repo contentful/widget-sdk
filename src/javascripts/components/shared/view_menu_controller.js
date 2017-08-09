@@ -184,8 +184,8 @@ angular.module('contentful')
     }
   };
 
-  $scope.nameChanged = function (view, folder) {
+  $scope.nameChanged = function (view) {
     $scope.saveViews();
-    Tracking.viewTitleEdited(view, folder);
+    Tracking.viewTitleEdited(view);
   };
 }]);

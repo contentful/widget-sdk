@@ -3,6 +3,7 @@ import {track as analyticsTrack} from 'analytics/Analytics';
 
 const PREFIX = 'search:';
 const track = (e, data) => analyticsTrack(PREFIX + e, data);
+const isStoredView = (v) => v && v.id;
 
 export function searchPerformed (view, resultCount = 0) {
   track('search_performed', extend(
@@ -12,11 +13,13 @@ export function searchPerformed (view, resultCount = 0) {
 }
 
 export function viewCreated (view, folder) {
-  track('view_created', extend(query(view), {
-    view_id: view.id,
-    folder_id: folder && folder.id,
-    folder_title: folder && folder.title
-  }));
+  if (isStoredView(view)) {
+    track('view_created', extend(query(view), {
+      view_id: view.id,
+      folder_id: folder && folder.id,
+      folder_title: folder && folder.title
+    }));
+  }
 }
 
 export function viewTitleEdited (view) {
@@ -28,22 +31,28 @@ export function viewRolesEdited (view) {
 }
 
 export function viewDeleted (view) {
-  track('view_deleted', {view_id: view.id});
+  if (isStoredView(view)) {
+    track('view_deleted', {view_id: view.id});
+  }
 }
 
 export function viewLoaded (view) {
-  track('view_loaded', extend(
-    {view_id: view.id},
-    details(view),
-    query(view)
-  ));
+  if (isStoredView(view)) {
+    track('view_loaded', extend(
+      {view_id: view.id},
+      details(view),
+      query(view)
+    ));
+  }
 }
 
 function viewEdited (view, changedProperty = null) {
-  track('view_edited', extend(details(view), {
-    view_id: view.id,
-    change_property: changedProperty
-  }));
+  if (isStoredView(view)) {
+    track('view_edited', extend(details(view), {
+      view_id: view.id,
+      change_property: changedProperty
+    }));
+  }
 }
 
 function details ({title, roles}) {

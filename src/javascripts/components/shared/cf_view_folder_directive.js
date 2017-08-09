@@ -66,7 +66,7 @@ angular.module('contentful')
           .then(function (roles) {
             view.roles = roles;
             $scope.saveViews();
-            Tracking.viewRolesEdited(view, $scope.folder);
+            Tracking.viewRolesEdited(view);
           });
       }
     }]
