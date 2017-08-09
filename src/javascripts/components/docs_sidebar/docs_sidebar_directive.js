@@ -14,19 +14,19 @@ angular.module('contentful').directive('docsSidebar', ['require', function (requ
     restrict: 'E',
     controller: ['$scope', function ($scope) {
       var testFlag = 'test-ps-07-2017-ninja-sidebar';
-      var entriesBus = K.createPropertyBus(false, $scope);
+      var hasEntriesBus = K.createPropertyBus(false, $scope);
 
-      updateEntriesBus();
+      updateHasEntriesBus();
 
       var ninjaTest$ = K.combine(
-        [ LD.getTest(testFlag, qualifyUser), entriesBus.property ],
+        [ LD.getTest(testFlag, qualifyUser), hasEntriesBus.property ],
         function (variation, hasEntries, _) {
           return hasEntries ? variation : null;
         }
       );
 
       $scope.$on('spaceTemplateCreated', function () {
-        updateEntriesBus();
+        updateHasEntriesBus();
       });
 
       K.onValueScope($scope, ninjaTest$, function (variation) {
@@ -84,9 +84,9 @@ angular.module('contentful').directive('docsSidebar', ['require', function (requ
         }
       }
 
-      function updateEntriesBus () {
+      function updateHasEntriesBus () {
         spaceHasEntry().then(function (hasEntries) {
-          entriesBus.set(hasEntries);
+          hasEntriesBus.set(hasEntries);
         });
       }
 
