@@ -27,7 +27,15 @@ export default function ({ children, text, id }, render) {
       padding: '10px',
       position: 'relative',
       marginTop: '10px',
-      marginBottom: '10px'
+      marginBottom: '10px',
+      outline: 0
+    },
+    tabindex: '0',
+    onKeyDown: ({ keyCode, metaKey, ctrlKey }) => {
+      // ctrl + c or cmd + c
+      if ((metaKey || ctrlKey) && keyCode === 67) {
+        copy();
+      }
     }
   }, children.concat(copyButton));
 
