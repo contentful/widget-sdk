@@ -45,7 +45,6 @@ export function init (userId, state, actions) {
       }
     }
   );
-  console.log('Initial state:', ContextualSidebarStore)
 }
 
 export function get () {
