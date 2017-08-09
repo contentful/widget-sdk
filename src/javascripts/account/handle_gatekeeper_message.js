@@ -9,6 +9,8 @@ angular.module('contentful')
   var tokenStore = require('services/TokenStore');
   var CreateSpace = require('services/CreateSpace');
   var UrlSyncHelper = require('account/UrlSyncHelper');
+  var modalDialog = require('modalDialog');
+  var logger = require('logger');
 
   return function handleGatekeeperMessage (data) {
     var match = makeMessageMatcher(data);
@@ -31,8 +33,14 @@ angular.module('contentful')
     } else if (match('update', 'location')) {
       UrlSyncHelper.updateWebappUrl(data.path);
 
+    } else if (matchesError(data)) {
+      showErrorModal(data);
     } else { tokenStore.refresh(); }
   };
+
+  function matchesError (data) {
+    return data.type === 'error' && /^(4|5)[0-9]{2}$/.test(data.status);
+  }
 
   function makeMessageMatcher (data) {
     return function matchMessage (action, type) {
@@ -41,6 +49,23 @@ angular.module('contentful')
 
       return action.toLowerCase() === messageAction && type.toLowerCase() === messageType;
     };
+  }
+
+  function showErrorModal (data) {
+    var defaultTitle = 'Something went wrong';
+    var defaultMessage = 'An error has occurred. We have been automatically notified and will investigate. If it re-occurs, please contact support.';
+
+    modalDialog.open({
+      title: data.heading || defaultTitle,
+      message: data.body || defaultMessage,
+      ignoreEsc: true,
+      backgroundClose: false
+    }).promise
+    .then(function () {
+      $state.go('home');
+    });
+
+    logger.logError('Gatekeeper error occurred', data);
   }
 
   function showNotification (data) {
