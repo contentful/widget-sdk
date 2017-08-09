@@ -11,7 +11,8 @@ export default function () {
       dataTestId: 'account-menu-trigger',
       style: {
         background: colors.contrastMid,
-        boxShadow: 'inset 5px 0 6px -2px rgba(0, 0, 0, 0.1)'
+        boxShadow: 'inset 5px 0 6px -2px rgba(0, 0, 0, 0.1)',
+        padding: '0 15px'
       }
     }, [
       h('img', {
