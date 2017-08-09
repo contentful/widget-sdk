@@ -4,7 +4,6 @@ angular.module('contentful')
 
 .factory('handleGatekeeperMessage', ['require', function (require) {
   var $location = require('$location');
-  var $state = require('$state');
   var authentication = require('Authentication');
   var notification = require('notification');
   var tokenStore = require('services/TokenStore');
@@ -22,7 +21,6 @@ angular.module('contentful')
 
     } else if (match('delete', 'space')) {
       tokenStore.refresh();
-      $state.go('home');
 
     } else if (data.type === 'flash') {
       showNotification(data);

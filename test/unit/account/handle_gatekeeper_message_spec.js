@@ -28,13 +28,11 @@ describe('Gatekeeper Message Handler', function () {
       sinon.assert.calledOnce(CreateSpace.showDialog.withArgs('orgId'));
     });
 
-    it('leaves a deleted space', function () {
+    it('refreshes token when space is deleted', function () {
       const refresh = this.$inject('services/TokenStore').refresh = sinon.spy();
-      const go = this.$inject('$state').go = sinon.spy();
 
       this.handle({action: 'delete', type: 'space'});
       sinon.assert.calledOnce(refresh);
-      sinon.assert.calledOnce(go.withArgs('home'));
     });
 
     it('shows notification', function () {
