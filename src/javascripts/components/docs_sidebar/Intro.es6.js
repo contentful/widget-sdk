@@ -6,9 +6,12 @@ import { clickLink as trackLinkClick } from 'analytics/events/DocsSidebar';
 import { domain } from 'Config';
 import createApiKeyAdvice from './CreateApiKeyAdvice';
 
-export default function template (data) {
+export default function (data) {
   const currentStep = data.state.introProgress;
+  const introTotalSteps = data.state.introProgress + data.state.introStepsRemaining;
+
   const allContent = content(data);
+
   const prompt = h(
     'p.docs-sidebar__prompt',
     {ariaLabel: 'Next'},
@@ -29,7 +32,7 @@ export default function template (data) {
         height: '2px',
         backgroundColor: colorByName.blueMid,
         transition: 'width 0.3s ease-in-out',
-        width: `${(data.state.introProgress / data.state.introTotalSteps) * 100}%`
+        width: `${(data.state.introProgress / introTotalSteps) * 100}%`
       }
     }),
     h('div.docs-sidebar__intro-content', storyContent)

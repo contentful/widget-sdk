@@ -9,100 +9,103 @@ import {merge, pick} from 'lodash';
 import TheStore from 'TheStore';
 import * as events from 'analytics/events/DocsSidebar';
 
-const STORE_KEY = 'docsSidebar';
 
-const defaults = {
+const defaultState = {
   isExpanded: false,
   isHidden: false,
   calloutSeen: false,
   introCompleted: false,
   introProgress: 1,
-  introTotalSteps: 4,
-  token: '<YOUR TOKEN>',
-  spaceId: '<YOUR SPACE ID>',
-  entryId: '<YOUR ENTRY ID>',
-  contentType: {
-    id: '<CONTENT TYPE ID>',
-    name: '<CONTENT TYPE NAME>'
-  },
-  apiKeyId: '<YOUR API KEY ID>'
+  introStepsRemaining: 3,
+  copied: false
 };
 
-const state = merge(defaults, TheStore.get(STORE_KEY));
+const STORE_KEY_PREFIX = 'contextualSidebar';
+
+let ContextualSidebarStore = {
+  state: defaultState,
+  actions: {}
+};
+
+let myBrowserStore;
+
+export function init (userId, state, actions) {
+  myBrowserStore = TheStore.forKey(`${STORE_KEY_PREFIX}:${userId}`);
+  ContextualSidebarStore = merge(
+    ContextualSidebarStore,
+    { state: myBrowserStore.get() },
+    { state },
+    { actions },
+    {
+      actions: {
+        toggle,
+        hide,
+        toggleVisibility,
+        dismissCallout
+      }
+    }
+  );
+  console.log('Initial state:', ContextualSidebarStore)
+}
 
 export function get () {
-  return state;
+  return ContextualSidebarStore;
 }
 
-export function setView (view) {
-  state.view = view;
-  if (state.isExpanded && !state.isHidden) {
-    events.navigateWhileOpen({isIntro: !state.introCompleted});
+export function checkNavigatedWhileOpen () {
+  if (ContextualSidebarStore.state.isExpanded && !ContextualSidebarStore.state.isHidden) {
+    events.navigateWhileOpen({isIntro: !ContextualSidebarStore.state.introCompleted});
   }
-}
-
-export function setSpaceData ({ spaceId, entryId, contentType, apiKeyId }) {
-  state.spaceId = spaceId;
-  state.entryId = entryId;
-  state.contentType = contentType;
-  state.apiKeyId = apiKeyId;
-}
-
-export function setToken (token) {
-  state.token = token;
 }
 
 export function toggle () {
-  state.isExpanded = !state.isExpanded;
-  if (!state.calloutSeen) {
+  ContextualSidebarStore.state.isExpanded = !ContextualSidebarStore.state.isExpanded;
+  if (!ContextualSidebarStore.state.calloutSeen) {
     closeCallout();
   }
-  events.toggle({isExpanded: state.isExpanded, isIntro: !state.introCompleted});
+  events.toggle({isExpanded: ContextualSidebarStore.state.isExpanded, isIntro: !ContextualSidebarStore.state.introCompleted});
+  ContextualSidebarStore.actions.render();
 }
 
 export function hide () {
-  state.isExpanded = true;
+  ContextualSidebarStore.state.isExpanded = true;
   toggle();
 }
 
 export function toggleVisibility () {
-  state.isHidden = !state.isHidden;
-  setStoreValue({isHidden: state.isHidden});
-  events.toggleVisibility({isHidden: state.isHidden, isIntro: !state.introCompleted});
+  ContextualSidebarStore.state.isHidden = !ContextualSidebarStore.state.isHidden;
+  setStoreValue({isHidden: ContextualSidebarStore.state.isHidden});
+  events.toggleVisibility({isHidden: ContextualSidebarStore.state.isHidden, isIntro: !ContextualSidebarStore.state.introCompleted});
+  ContextualSidebarStore.actions.render();
 }
 
 export function dismissCallout () {
   closeCallout();
   events.dismissCallout();
+  ContextualSidebarStore.actions.render();
 }
 
 export function continueIntro () {
-  if (!state.introCompleted && !state.isHidden && state.isExpanded) {
-    state.introProgress += 1;
+  if (!ContextualSidebarStore.state.introCompleted && !ContextualSidebarStore.state.isHidden) {
+    ContextualSidebarStore.state.introProgress += 1;
+    ContextualSidebarStore.state.introStepsRemaining -= 1;
     events.continueIntro();
   }
 }
 
 export function completeIntro () {
-  if (state.introProgress === state.introTotalSteps && state.introCompleted === false) {
-    state.introCompleted = true;
+  if (!ContextualSidebarStore.state.introStepsRemaining && ContextualSidebarStore.state.introCompleted === false) {
+    ContextualSidebarStore.state.introCompleted = true;
     setStoreValue({introCompleted: true});
     events.completeIntro();
   }
 }
 
-export function markCopied (id, isCopied) {
-  state.copyButtons[id].copied = isCopied;
-}
-
 function closeCallout () {
-  state.calloutSeen = true;
+  ContextualSidebarStore.state.calloutSeen = true;
   setStoreValue({calloutSeen: true});
 }
 
 function setStoreValue (data) {
-  TheStore.set(
-    STORE_KEY,
-    merge(pick(state, ['introCompleted', 'isHidden', 'calloutSeen']), data)
-  );
+  myBrowserStore.set(merge(pick(ContextualSidebarStore.state, ['introCompleted', 'isHidden', 'calloutSeen']), data));
 }

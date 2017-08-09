@@ -4,12 +4,10 @@ import { byName as colorByName } from 'Styles/Colors';
 import $timeout from '$timeout';
 import { copyToClipboard as trackCopyToClipboard } from 'analytics/events/DocsSidebar';
 
-const state = {};
+let copied = false;
 
 export default function ({ children, text, id }, render) {
-  state[id] = state[id] || { copied: false };
-
-  const copyButton = h(`button.docs-sidebar__copy-button.fa.${state[id].copied ? 'fa-check' : 'fa-copy'}`, {
+  const copyButton = h(`button.docs-sidebar__copy-button.fa.${copied ? 'fa-check' : 'fa-copy'}`, {
     style: {
       height: '30px',
       width: '30px',
@@ -43,10 +41,10 @@ export default function ({ children, text, id }, render) {
     input.select();
     doc.execCommand('copy', false);
     trackCopyToClipboard(id);
-    state[id].copied = true;
+    copied = true;
     render();
     $timeout(() => {
-      state[id].copied = false;
+      copied = false;
       render();
     }, 1000);
   }

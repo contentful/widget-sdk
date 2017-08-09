@@ -11,23 +11,16 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
   var Ninja = require('components/docs_sidebar/Ninja').default;
   var KEYCODES = require('keycodes');
   var spaceContext = require('spaceContext');
+  var user$ = require('services/TokenStore').user$;
   var $stateParams = require('$stateParams');
   var $q = require('$q');
+  var K = require('utils/kefir');
   var logger = require('logger');
 
   return {
     template: '<cf-component-bridge component="component">',
     restrict: 'E',
     link: function (scope) {
-      var ninjaData = {
-        state: NinjaStore.get(),
-        actions: {
-          toggle: toggle,
-          dismissCallout: dismissCallout,
-          render: render
-        }
-      };
-
       // initial empty render as data is loaded asynchronously
       scope.component = Ninja(null);
 
@@ -38,14 +31,20 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
         getFirstContentType(),
         getToken()
       ]).then(function (values) {
-        NinjaStore.setView($state.current.name);
-        NinjaStore.setSpaceData({
+        var userId = K.getValue(user$).sys.id;
+
+        NinjaStore.init(userId, {
+          view: $state.current.name,
           spaceId: values[0],
           entryId: values[1],
           contentType: values[2],
-          apiKeyId: values[3].id
+          apiKeyId: values[3].id,
+          token: values[3].accessToken
+        }, {
+          render: render
         });
-        NinjaStore.setToken(values[3].accessToken);
+
+        NinjaStore.checkNavigatedWhileOpen();
 
         render();
       }).catch(function (error) {
@@ -66,14 +65,13 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
         var isDocsSidebarVisible = $('.docs-sidebar__modal').hasClass('docs-sidebar__modal--fade-in');
 
         if (isDocsSidebarVisible && !isTargetChildOfSidebar) {
-          hide();
+          NinjaStore.hide();
         }
       }
 
       function render () {
-        ninjaData.state = NinjaStore.get();
         return $timeout(function () {
-          scope.component = Ninja(ninjaData);
+          scope.component = Ninja(NinjaStore.get());
         });
       }
 
@@ -140,29 +138,10 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
         }
       }
 
-      function toggle () {
-        NinjaStore.toggle();
-        render();
-      }
-
-      function hide () {
-        NinjaStore.hide();
-        render();
-      }
-
-      function toggleVisibility () {
-        NinjaStore.toggleVisibility();
-        render();
-      }
-
-      function dismissCallout () {
-        NinjaStore.dismissCallout();
-        render();
-      }
 
       function handleSpace () {
         // Don't do anything if all steps have been completed
-        if (ninjaData.state.introProgress < 4) {
+        if (NinjaStore.get().state.introStepsRemaining) {
           NinjaStore.continueIntro();
           render().then(NinjaStore.completeIntro);
         }
@@ -170,14 +149,10 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
 
       function handleKeydown (evt) {
         caseof(evt.keyCode, [
-          [KEYCODES.ESC, function () {
-            if (ninjaData.state.isExpanded) {
-              toggle();
-            }
-          }],
-          [KEYCODES.H, toggleVisibility],
+          [KEYCODES.ESC, NinjaStore.hide],
+          [KEYCODES.H, NinjaStore.toggleVisibility],
           [KEYCODES.SPACE, function () {
-            if (ninjaData.state.isExpanded) {
+            if (NinjaStore.get().state.isExpanded) {
               evt.preventDefault();
               evt.stopPropagation();
               handleSpace();
