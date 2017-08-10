@@ -25,7 +25,7 @@ export function getGatekeeperUrl () {
   let gkUrl = webappUrl.replace(baseUrl, '');
   // ui router escapes slashes in path suffix, we have to unescape them
   gkUrl = decodeURIComponent(gkUrl);
-  return accountUrl(gkUrl + '?withoutNavigation=true');
+  return accountUrl(gkUrl);
 }
 
 /**
