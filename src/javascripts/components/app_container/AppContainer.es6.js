@@ -8,7 +8,7 @@ export default function () {
     }),
     h('cf-nav-sidepanel', {
       ngIf: 'useNewNavigation',
-      isShown: 'sidepanelIsShown'
+      isShown: '$parent.sidepanelIsShown'
     }),
     h('div.app-top-bar', [
       h('cf-nav-sidepanel-trigger', {
