@@ -17,7 +17,7 @@ export default function Ninja (data) {
       `div.docs-sidebar__main-container${data.state.isHidden ? '.docs-sidebar__main-container--fade-out' : ''}`,
       {
         style: {
-          zIndex: 1000
+          zIndex: 1
         }
       }, [
         minimized(data),
@@ -30,6 +30,9 @@ export default function Ninja (data) {
 
 function helpButton ({ toggle }) {
   return h('div.docs-sidebar__button', {
+    style: {
+      zIndex: 2
+    },
     onClick: toggle,
     ariaLabel: 'Open docs sidebar',
     role: 'button'
@@ -40,41 +43,52 @@ function helpButton ({ toggle }) {
 }
 
 function expanded (data) {
-  return h(`.docs-sidebar__modal${data.state.isExpanded ? '.docs-sidebar__modal--fade-in' : ''}`, [
-    header(data.actions.toggle),
-    h('.docs-sidebar__body', [
-      data.state.introCompleted ? getTemplate(data.state.view)(data) : intro(data)
-    ])
-  ]);
+  return h(
+    `.docs-sidebar__modal${data.state.isExpanded ? '.docs-sidebar__modal--fade-in' : ''}`, {
+      style: {
+        zIndex: 2
+      }
+    }, [
+      header(data.actions.toggle),
+      h('.docs-sidebar__body', [
+        data.state.introCompleted ? getTemplate(data.state.view)(data) : intro(data)
+      ])
+    ]
+  );
 }
 
 function minimized ({actions, state}) {
-  const callout = h(`.docs-sidebar__callout${state.calloutSeen ? '.docs-sidebar__callout--hide' : ''}`, [
-    h('div', {
-      style: {
-        display: 'flex',
-        justifyContent: 'space-between'
-      }
-    }, [
-      h('p', {
-        style: { fontWeight: 'bold' }
-      }, ['Onboarding tour']),
-      h('p', {
-        style: {
-          fontSize: '2em',
-          cursor: 'pointer',
-          color: colorByName.textLight
-        },
-        onClick: actions.dismissCallout
-      }, ['×'])
-    ]),
-    h('p', {
-      style: {}
-    }, ['👋 Hi! I am here to help you learn about Contentful and to make your first API call.']),
-    h('a.text-link--neutral-emphasis-low', {
-      onClick: actions.toggle
-    }, ['See tour'])
-  ]);
+  const callout =
+        h(`.docs-sidebar__callout${state.calloutSeen ? '.docs-sidebar__callout--hide' : ''}`, {
+          style: {
+            zIndex: 2
+          }
+        }, [
+          h('div', {
+            style: {
+              display: 'flex',
+              justifyContent: 'space-between'
+            }
+          }, [
+            h('p', {
+              style: { fontWeight: 'bold' }
+            }, ['Onboarding tour']),
+            h('p', {
+              style: {
+                fontSize: '2em',
+                cursor: 'pointer',
+                color: colorByName.textLight
+              },
+              onClick: actions.dismissCallout
+            }, ['×'])
+          ]),
+          h('p', {
+            style: {}
+          }, ['👋 Hi! I am here to help you learn about Contentful and to make your first API call.']),
+          h('a.text-link--neutral-emphasis-low', {
+            onClick: actions.toggle
+          }, ['See tour'])
+        ]);
 
   return callout;
 }
