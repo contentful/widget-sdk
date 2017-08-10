@@ -68,6 +68,6 @@ export default function () {
 
 function dropdownItem (attrs) {
   const itemAttrs = extend({ role: 'menuitem' }, omit(attrs, 'text'));
-  const tag = attrs.href || attrs.cfSref || attrs.uiSref ? 'a' : 'div';
+  const tag = (attrs.href || attrs.cfSref || attrs.uiSref) ? 'a' : 'div';
   return h(`${tag}.context-menu__item`, itemAttrs, [attrs.text]);
 }
