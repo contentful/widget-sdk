@@ -10,18 +10,21 @@ import { byName as colorByName } from 'Styles/Colors';
 
 
 export default function Ninja (data) {
-  if (data === null || data.state.isHidden) {
+  if (data === null) {
     return h('div');
   } else {
-    return h('div.docs-sidebar__main-container', {
-      style: {
-        zIndex: 1000
-      }
-    }, [
-      minimized(data),
-      expanded(data),
-      helpButton(data.actions)
-    ]);
+    return h(
+      `div.docs-sidebar__main-container${data.state.isHidden ? '.docs-sidebar__main-container--fade-out' : ''}`,
+      {
+        style: {
+          zIndex: 1000
+        }
+      }, [
+        minimized(data),
+        expanded(data),
+        helpButton(data.actions)
+      ]
+    );
   }
 }
 
