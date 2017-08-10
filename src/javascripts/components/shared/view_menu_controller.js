@@ -190,6 +190,9 @@ angular.module('contentful')
     $scope.folderSortOptions.disabled = !can;
   });
 
+  // TODO this should come from feature flag
+  $scope.canUseCollections = true;
+
   $scope.viewSortOptions = {
     connectWith: '[ui-sortable=viewSortOptions]',
     placeholder: 'filter-list-item-placeholder',
