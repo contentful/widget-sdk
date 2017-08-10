@@ -104,9 +104,7 @@ function organizationSelector () {
   return h('.nav-sidepanel__header', {
     style: {
       display: 'flex',
-      flexGrow: 1,
-      maxHeight: '70px',
-      minHeight: '70px',
+      height: '70px',
       borderBottom: `1px solid ${colors.elementDark}`,
       padding: `15px ${padding}`,
       cursor: 'pointer',
@@ -185,7 +183,12 @@ function orgListDropdown () {
 }
 
 function orgSpaces () {
-  return h('.nav-sidepanel__spaces-container', [
+  return h('.nav-sidepanel__spaces-container', {
+    style: {
+      display: 'flex',
+      flexDirection: 'column'
+    }
+  }, [
     h('.nav-sidepanel__spaces-header', {
       ngIf: 'spacesByOrg[currOrg.sys.id].length',
       style: {
@@ -206,10 +209,6 @@ function orgSpaces () {
     ]),
     h('.nav-sidepanel__space-list', {
       style: {
-        maxHeight: '500px',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
         overflowY: 'auto'
       }
     }, [
