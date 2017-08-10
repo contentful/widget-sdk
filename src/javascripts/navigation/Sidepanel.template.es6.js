@@ -249,10 +249,6 @@ function noSpacesMsg () {
       padding,
       paddingBottom: '40px',
       margin: 0,
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
       textAlign: 'center'
     }
   }, [
@@ -261,7 +257,8 @@ function noSpacesMsg () {
       scale: '1.2',
       style: {
         margin: '20px 0',
-        fill: colors.greenDark
+        fill: colors.greenDark,
+        display: 'inline-block'
       }
     }),
     h('p', { style: { fontWeight: 'bold' } }, [`{{canCreateSpaceInCurrOrg ? "${messages.canCreateSpace.title}" : "${messages.canNotCreateSpace.title}"}}`]),
