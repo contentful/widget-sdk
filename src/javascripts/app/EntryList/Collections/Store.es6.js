@@ -1,4 +1,4 @@
-import {union, difference, find, assign} from 'lodash';
+import {union, difference, find, assign, cloneDeep} from 'lodash';
 import random from 'random';
 import * as K from 'utils/kefir';
 import { createQueue } from 'utils/Concurrent';
@@ -160,7 +160,7 @@ function createPersistor (spaceEndpoint) {
 }
 
 function toApiFormat (collections) {
-  return collections.map((c) => {
+  return cloneDeep(collections).map((c) => {
     c.items = c.items.map((id) => {
       return {
         sys: {
