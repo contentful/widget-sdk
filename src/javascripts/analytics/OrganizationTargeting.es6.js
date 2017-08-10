@@ -53,15 +53,15 @@ const FEATURE_TO_SPACE_IDS = {
     // Eli Lilly GSIT-CONN-CONNECT (prod)
     '3e027c8e222e4efdb3d82dacd4f9db6b',
     // Eli Lilly gsit-conn-connect-tst (prod)
-    'bfb379e41c085d18f4cf95ff4df31e26',
+    // 'bfb379e41c085d18f4cf95ff4df31e26',
     // Eli Lilly GSIT-CONN-CONNECT-MIG (prod)
-    '852fca113cb2dd65c563dfc56c63ceab',
+    // '852fca113cb2dd65c563dfc56c63ceab',
     // Eli Lilly gsit-conn-connect-dmo (prod)
-    'e1f053b6ad94769135505bfdbb0be407',
+    // 'e1f053b6ad94769135505bfdbb0be407',
     // Eli Lilly GSIT-CONN-CONNECT-STG (prod)
-    '6ec110b6d3c1bb19d76c04ee612b55c4',
+    // '6ec110b6d3c1bb19d76c04ee612b55c4',
     // Eli Lilly IdentityHub-DEV (prod)
-    'dceb6b907bf7707ac4e75cc3894c460a',
+    // 'dceb6b907bf7707ac4e75cc3894c460a',
 
     // TELUS digital [G] > Legal (prod)
     'e890507ca8569c47aea8188a50ef9b19',
