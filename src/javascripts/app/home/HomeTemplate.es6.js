@@ -32,17 +32,12 @@ function ninja () {
         }
       }, [
         h('p.home-section__description', [
-          'This helps developers get started with Contentful.',
+          'It‘s here to help developers learn about Contentful and to make their first few API calls.',
           h('br'),
-          'It offers help on different topics and helps developers learn the basics of Contentful.'
+          'It will show different information about content types, entries and APIs. '
         ]),
         h('.code-block', [
-          h('.code-block__line', ['Click on the ‘Help‘ button to access it'])
-        ]),
-        h('p.home-section__description', [
-          'You can hide the help away completely by pressing ',
-          h('strong', ['h']),
-          '.'
+          h('.code-block__line', ['Press ‘H‘ to show or hide help'])
         ])
       ]),
       h('div', {
