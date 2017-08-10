@@ -150,7 +150,13 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
       function handleKeydown (evt) {
         caseof(evt.keyCode, [
           [KEYCODES.ESC, NinjaStore.hide],
-          [KEYCODES.H, NinjaStore.toggleVisibility],
+          [KEYCODES.H, function () {
+            var $target = $(evt.target);
+
+            if (!$target.is('input, textarea, [contenteditable="true"]')) {
+              NinjaStore.toggleVisibility();
+            }
+          }],
           [KEYCODES.SPACE, function () {
             var ninjaState = NinjaStore.get().state;
 
