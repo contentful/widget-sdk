@@ -1,6 +1,7 @@
 import {create as createPaginator} from 'Paginator';
 import * as Command from 'command';
 import * as K from 'utils/kefir';
+import {makeMatcher} from 'utils/TaggedValues';
 import {truncate} from 'stringUtils';
 
 import {h} from 'ui/Framework';
@@ -11,7 +12,7 @@ import {table, tr, td, th} from 'ui/Content/Table';
 import * as Workbench from '../Workbench';
 
 import * as Config from 'Config';
-import {createSlot} from 'utils/Concurrent';
+import {createSlot, Success, Failure} from 'utils/Concurrent';
 import * as ResourceManager from './Resource';
 import openCreateDialog from './CreateDialog';
 import Notification from 'notification';
@@ -39,9 +40,8 @@ export function initController ($scope, auth) {
   const reloadBus = K.createStreamBus($scope);
   const reloadPage$ = userPage$.sampledBy(reloadBus.stream);
 
-  const putRequest = createSlot((result) => {
-    if (result.type === 'success') {
-      const {total, items} = result.value;
+  const putRequest = createSlot(makeMatcher({
+    [Success]: ({total, items}) => {
       $scope.tokens = items.map(makeViewToken);
       paginator.setTotal(total);
       if (paginator.isBeyondLast()) {
@@ -52,11 +52,14 @@ export function initController ($scope, auth) {
       } else {
         $scope.loadingTokens = false;
       }
-    } else {
+      renderWithScope();
+    },
+    [Failure]: () => {
       $scope.loadingTokensError = true;
+      renderWithScope();
     }
-    renderWithScope();
-  });
+  }));
+
 
   // Open the dialog to create a token. Reload afterwards
   $scope.openCreateDialog = () => {
