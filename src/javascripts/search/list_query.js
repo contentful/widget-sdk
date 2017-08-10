@@ -39,26 +39,6 @@ angular.module('contentful').factory('ListQuery', ['require', function (require)
     },
     /**
      * @ngdoc method
-     * @name ListQuery#getForEntryCollection
-     * @description
-     * Prepares an API query for the collection screen.
-     *
-     * @param {string[]} opts.ids
-     * @param {object} opts.order
-     * @param {Paginator} opts.paginator
-     * @returns {object}
-     */
-    getForEntryCollection: function (ids, order, paginator) {
-      return prepareEntityListQuery(null, {
-        order: order,
-        paginator: paginator
-      }).then(function (query) {
-        query['sys.id[in]'] = ids.join(',');
-        return query;
-      });
-    },
-    /**
-     * @ngdoc method
      * @name ListQuery#getForAssets
      * @description
      * Prepares an API query for the asset list.

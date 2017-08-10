@@ -199,21 +199,18 @@ angular.module('contentful')
   }
 
   function prepareQuery () {
-    var collection = getViewItem('collection');
-    if (collection) {
-      return ListQuery.getForEntryCollection(
-        collection.items,
-        getViewItem('order'),
-        $scope.paginator
-      );
-    } else {
-      return ListQuery.getForEntries({
-        contentTypeId: getViewItem('contentTypeId'),
-        searchTerm: getViewItem('searchTerm'),
-        order: getViewItem('order'),
-        paginator: $scope.paginator
-      });
-    }
+    return ListQuery.getForEntries({
+      contentTypeId: getViewItem('contentTypeId'),
+      searchTerm: getViewItem('searchTerm'),
+      order: getViewItem('order'),
+      paginator: $scope.paginator
+    }).then(function (query) {
+      var collection = getViewItem('collection');
+      if (collection && Array.isArray(collection.items)) {
+        query['sys.id[in]'] = collection.items.join(',');
+      }
+      return query;
+    });
   }
 
   function refreshEntityCaches () {
