@@ -14,7 +14,7 @@ describe('account/UrlSyncHelper', function () {
     });
     it('returns gatekeeper url', function () {
       expect(this.UrlSyncHelper.getGatekeeperUrl())
-        .toBe('//be.test.com/account/profile/user/foo/bar?withoutNavigation=true');
+        .toBe('//be.test.com/account/profile/user/foo/bar');
     });
   });
 
