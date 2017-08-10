@@ -261,7 +261,8 @@ function noSpacesMsg () {
       name: 'sidepanel-spaces-advice',
       scale: '1.2',
       style: {
-        marginBottom: '20px'
+        margin: '20px 0',
+        fill: colors.greenDark
       }
     }),
     h('p', { style: { fontWeight: 'bold' } }, [`{{canCreateSpaceInCurrOrg ? "${messages.canCreateSpace.title}" : "${messages.canNotCreateSpace.title}"}}`]),
