@@ -19,10 +19,10 @@ env:
     - secure: "eXBRhtfrIBfoszICbvyBmIQxLf+JEp9+OeEh1FGbqWmKWXlDTApyt6+vsOEaD0Akrc4yYdIw+DdP43tFn9VbXzun1AL/RCjDqo6l9yNvCvA5k7rF2w9rAd+ZHKYRMGLvpQ4vfNEuWwiwtjdzLA9VvrDYU/484XuH/1pSpt0rOyw="
 before_install:
 # Install latest version of docker. We require at least 1.12
-- sudo sh -c 'echo "deb https://apt.dockerproject.org/repo ubuntu-trusty main" > /etc/apt/sources.list.d/docker.list'
-- sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+- curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+- sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 - sudo apt-get update
-- sudo apt-get -qqy -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install docker-engine
+- sudo apt-get -y install docker-ce
 install:
 - bin/docker-build
 script:

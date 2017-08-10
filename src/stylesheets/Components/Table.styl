@@ -15,6 +15,12 @@ Markup:
           th.x--sortable.x--active-sort
             input(type="checkbox")
             | Title
+          td.th__checkbox-cell.x--sortable.x--active-sort
+            div
+              label
+                input(type="checkbox")
+              div
+                | Title 1
           th Content type
           th.x--sortable(ng-class="{'x--active-sort': <some condition>}")
             | Updated at
@@ -30,30 +36,32 @@ Markup:
     table
       tbody
         tr
-          td
-            input(type="checkbox")
-            | Title 1
+          td.td__checkbox-cell
+            div
+              label
+                input(type="checkbox")
+              div
+                | Title 1
           td Sponsor
           td Yesterday
           td Two months ago
         tr.x--highlight
-          td
-            input(type="checkbox")
-            | This large entry title will be truncated and have an ellipsis at the end
+          td.td__checkbox-cell
+            div
+              label
+                input(type="checkbox")
+              div
+                | This large entry title will be truncated and have an ellipsis at the end
           td Another title
           td Yesterday
           td Two months ago
         tr.x--multiline
-          td
+          td.td__checkbox-cell
             div
-              input(type="checkbox")
-              p This is a large entry title which will wrap and not cause the ellipsis to kick in
-          td Title
-          td Yesterday
-          td Two months ago
-        tr.x--multiline
-          td
-            p This is a large entry title which will wrap and not cause the ellipsis to kick in
+              label
+                input(type="checkbox")
+              div
+                p This is a large entry title which will wrap and not cause the ellipsis to kick in
           td Title
           td Yesterday
           td Two months ago
@@ -180,23 +188,25 @@ Styleguide table-pattern
 
 
 // Used by the entry and asset list.
-.table__checkbox-cell
-  display: flex
-  flex-direction: row
-  align-items: center
-  // TODO smelly nested selector
-  input[type="checkbox"]
-    width: 15px
-    height: 15px
-  // TODO smelly nested selector
-  label
-    padding: 10px
-    margin: -12px
-    margin-right: 0
-
-  &.x--multiline
-    align-items: flex-start
-    // TODO smelly nested selector
-    > a
-      white-space: normal
-      text-overflow: clip
+.td__checkbox-cell, .th__checkbox-cell
+  // Override .table ... td selector
+  padding: 0 !important
+  > div
+    display: flex
+    align-items: center
+    > label
+      flex-shrink: 0
+      cursor: pointer
+      align-self: stretch
+      display: flex
+      align-items: center
+      padding-left: 20px
+      padding-right: 10px
+      > input
+        cursor: pointer
+.td__checkbox-cell > div > *
+  padding-top: 16px
+  padding-bottom: 16px
+.th__checkbox-cell > div > *
+  padding-top: 10px
+  padding-bottom: 10px
