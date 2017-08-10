@@ -1,4 +1,5 @@
-'use strict';
+import * as sinon from 'helpers/sinon';
+import * as K from 'helpers/mocks/kefir';
 
 describe('navigation/stateChangeHandlers', function () {
   let logger;
@@ -7,10 +8,18 @@ describe('navigation/stateChangeHandlers', function () {
 
   beforeEach(function () {
     this.state = {go: sinon.stub()};
+    this.spaceContext = {
+      space: null,
+      organizationContext: null,
+      purge: sinon.stub()
+    };
+    this.tokenStore = { getOrganization: sinon.stub().resolves({}) };
     modalCloseStub = sinon.stub();
 
     module('contentful/test', ($provide) => {
       $provide.value('$state', this.state);
+      $provide.value('spaceContext', this.spaceContext);
+      $provide.value('services/TokenStore', this.tokenStore);
       $provide.value('contextHistory');
       $provide.value('logger', {});
       $provide.value('modalDialog', { closeAll: modalCloseStub });
@@ -19,9 +28,11 @@ describe('navigation/stateChangeHandlers', function () {
 
     $rootScope = this.$inject('$rootScope');
     logger = this.$inject('logger');
+    this.NavStates = this.$inject('navigation/NavStates').NavStates;
 
-    const setup = this.$inject('navigation/stateChangeHandlers').setup;
-    setup();
+    const stateChangeHandlers = this.$inject('navigation/stateChangeHandlers');
+    this.navState$ = stateChangeHandlers.navState$;
+    stateChangeHandlers.setup();
   });
 
   describe('state change', function () {
@@ -117,6 +128,72 @@ describe('navigation/stateChangeHandlers', function () {
         {addToContext: false}
       );
       expect(change.defaultPrevented).toBe(false);
+    });
+  });
+
+  describe('nav states', function () {
+    beforeEach(function () {
+      logger.leaveBreadcrumb = () => {};
+
+      this.emitStateChange = function (stateName, params) {
+        this.state.params = params;
+        $rootScope.$emit('$stateChangeSuccess', { name: stateName }, params);
+      };
+      this.setSpaceContext = function (space, org) {
+        this.spaceContext.space = { data: space };
+        this.spaceContext.organizationContext = { organization: org };
+      };
+      this.setOrgContext = function (org) {
+        this.tokenStore.getOrganization.resolves(org);
+      };
+      this.expectNavState = function (state, props) {
+        return new Promise((resolve) => {
+          const off = K.onValue(this.navState$.changes(), (currNavState) => {
+            expect(currNavState instanceof state).toBe(true);
+            for (const prop in props) {
+              expect(currNavState[prop]).toEqual(props[prop]);
+            }
+            off();
+            resolve();
+          });
+        });
+      };
+    });
+
+    it('starts with default state', function () {
+      expect(K.getValue(this.navState$) instanceof this.NavStates.Default).toBe(true);
+    });
+
+    it('sets space state', function* () {
+      const space = { sys: { id: 'test-space-1' } };
+      const org = { sys: { id: 'test-org-1' } };
+      this.setSpaceContext(space, org);
+      this.emitStateChange('spaces.detail', { spaceId: space.sys.id });
+      yield this.expectNavState(this.NavStates.Space, { space, org });
+
+    });
+
+    it('sets org settings state', function* () {
+      const org = { sys: { id: 'test-org-1' } };
+      this.setOrgContext(org);
+      this.emitStateChange('account.organizations.detail', { orgId: org.sys.id });
+      yield this.expectNavState(this.NavStates.OrgSettings, { org });
+
+    });
+
+    it('setsnew org state', function* () {
+      this.emitStateChange('account.organizations.new');
+      yield this.expectNavState(this.NavStates.NewOrg);
+    });
+
+    it('sets user profile state', function* () {
+      this.emitStateChange('account.profile');
+      yield this.expectNavState(this.NavStates.UserProfile);
+    });
+
+    it('defaults to the Default state', function* () {
+      this.emitStateChange('foo.bar');
+      yield this.expectNavState(this.NavStates.Default);
     });
   });
 });

@@ -18,14 +18,8 @@ angular.module('contentful')
     url: '/new',
     label: 'Create new organization',
     views: {
-      'nav-bar@': {
-        // Begin feature flag code - feature-bv-06-2017-use-new-navigation
-        template: h('cf-space-selector', { ngIf: '!useNewNavigation' }),
-        controller: ['$scope', function ($scope) {
-          LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation');
-        }]
-        // End feature flag code - feature-bv-06-2017-use-new-navigation
-      }
+      // Override org navbar from paremt state
+      'nav-bar@': { template: '' }
     },
     controller: ['$scope', function ($scope) {
       $scope.context = {};
@@ -91,10 +85,7 @@ angular.module('contentful')
     views: {
       'nav-bar@': {
         // Begin feature flag code - feature-bv-06-2017-use-new-navigation
-        template: [
-          h('cf-space-selector', { ngIf: '!useNewNavigation' }),
-          h('cf-organization-nav', { ngIf: 'useNewNavigation' })
-        ].join(''),
+        template: h('cf-organization-nav', { ngIf: 'useNewNavigation' }),
         controller: ['$scope', function ($scope) {
           LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation');
         }]

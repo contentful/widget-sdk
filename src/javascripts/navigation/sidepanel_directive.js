@@ -7,7 +7,7 @@ angular.module('contentful')
  *
  * This directive display the new navigation side panel.
  */
-.directive('cfNavSidePanel', ['require', function (require) {
+.directive('cfNavSidepanel', ['require', function (require) {
   var accessChecker = require('accessChecker');
   var orgRoles = require('services/OrganizationRoles');
   var tokenStore = require('services/TokenStore');
@@ -20,29 +20,19 @@ angular.module('contentful')
   var $state = require('$state');
   var sidepanelTemplate = require('navigation/Sidepanel.template').default();
 
-  // Begin feature flag code - feature-bv-06-2017-use-new-navigation
-  var LD = require('utils/LaunchDarkly');
-  // End feature flag code - feature-bv-06-2017-use-new-navigation
-
   return {
     restrict: 'E',
     template: sidepanelTemplate,
-    scope: {},
+    scope: {
+      sidePanelIsShown: '=isShown'
+    },
     replace: true,
     controller: ['$scope', function ($scope) {
-      // Begin feature flag code - feature-bv-06-2017-use-new-navigation
-      LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation');
-      // End feature flag code - feature-bv-06-2017-use-new-navigation
-
-      $scope.sidePanelIsShown = false;
       $scope.orgDropdownIsShown = false;
 
-      K.onValueScope($scope, accessChecker.isInitialized$, refreshPermissions);
-      K.onValueScope($scope, orgs$, function (orgs) {
-        $scope.orgs = orgs || [];
-        if (!$scope.currOrg) {
-          setCurrOrg(getCurrCommittedOrg());
-        }
+      K.onValueScope($scope, orgs$.combine(accessChecker.isInitialized$), function (values) {
+        $scope.orgs = values[1] && values[0] || [];
+        setCurrOrg(getCurrCommittedOrg());
       });
       K.onValueScope($scope, spacesByOrg$, function (spacesByOrg) {
         $scope.spacesByOrg = spacesByOrg || {};

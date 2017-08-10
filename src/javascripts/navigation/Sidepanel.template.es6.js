@@ -4,14 +4,12 @@ import { byName as colors, genBoxShadow } from 'Styles/Colors';
 const padding = '20px';
 
 export default function () {
-  return h('.nav-sidepanel-container.app-top-bar--right-separator', {
+  return h('.nav-sidepanel-container', {
     style: {
-      height: '100%',
       zIndex: 1000
     }
   }, [
     sidepanelBackground(),
-    sidepanelTrigger(),
     sidepanel()
   ]);
 }
@@ -31,25 +29,6 @@ function sidepanelBackground () {
     ngClass: 'sidePanelIsShown ? "nav-sidepanel__bg--is-visible" : "nav-sidepanel__bg--is-not-visible"',
     ngClick: 'closeSidePanel()'
   });
-}
-
-function sidepanelTrigger () {
-  return h('div.nav-sidepanel__logo-container', {
-    // Begin feature flag code - feature-bv-06-2017-use-new-navigation
-    ngClick: 'useNewNavigation && openSidePanel()',
-    // End feature flag code - feature-bv-06-2017-use-new-navigation
-    dataTestId: 'sidepanel-trigger',
-    style: {
-      height: '100%',
-      display: 'flex',
-      alignItems: 'center',
-      padding: '0 15px'
-    }
-  }, [
-    h('.app-top-bar__logo-element', {
-      cfCustomLogo: 'cf-custom-logo'
-    })
-  ]);
 }
 
 function sidepanel () {
