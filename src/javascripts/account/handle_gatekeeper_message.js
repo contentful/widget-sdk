@@ -11,6 +11,7 @@ angular.module('contentful')
   var UrlSyncHelper = require('account/UrlSyncHelper');
   var modalDialog = require('modalDialog');
   var logger = require('logger');
+  var $state = require('$state');
 
   return function handleGatekeeperMessage (data) {
     var match = makeMessageMatcher(data);
