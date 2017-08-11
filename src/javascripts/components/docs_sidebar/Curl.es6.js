@@ -1,7 +1,7 @@
 import { h } from 'ui/Framework';
 import clickToCopy from './InputWithCopy';
 import { byName as colorByName } from 'Styles/Colors';
-import { repeat } from 'lodash';
+import { repeat, flattenDeep, zip } from 'lodash';
 
 export default function (url, id, render) {
   return clickToCopy({
@@ -35,11 +35,11 @@ function makeCurl (url) {
     return [key, '=', value];
   });
 
-  const splitUrl = _.flattenDeep(
+  const splitUrl = flattenDeep(
     [].concat(
-      _.zip(uri, repeat('/', uri.length).split('')),
-      _.zip([slug], ['?']),
-      _.zip(queryParamPairs, repeat('&', queryParamPairs.length - 1).split(''))
+      zip(uri, repeat('/', uri.length).split('')),
+      zip([slug], ['?']),
+      zip(queryParamPairs, repeat('&', queryParamPairs.length - 1).split(''))
     )
   ).filter(v => !!v);
 

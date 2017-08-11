@@ -1,4 +1,6 @@
 # Eslint configuration for files ending in .es6.js
+globals:
+  setTimeout: false
 parserOptions:
   ecmaVersion: 6
   sourceType: module
