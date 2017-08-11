@@ -104,7 +104,7 @@ function organizationSelector () {
   return h('.nav-sidepanel__header', {
     style: {
       display: 'flex',
-      height: '70px',
+      minHeight: '70px',
       borderBottom: `1px solid ${colors.elementDark}`,
       padding: `15px ${padding}`,
       cursor: 'pointer',

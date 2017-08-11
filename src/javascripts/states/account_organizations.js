@@ -85,7 +85,7 @@ angular.module('contentful')
     views: {
       'nav-bar@': {
         // Begin feature flag code - feature-bv-06-2017-use-new-navigation
-        template: h('cf-organization-nav', { ngIf: 'useNewNavigation' }),
+        template: h('cf-organization-nav', { ngIf: 'useNewNavigation', class: 'app-top-bar__child' }),
         controller: ['$scope', function ($scope) {
           LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation');
         }]
