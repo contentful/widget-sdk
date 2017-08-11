@@ -8,7 +8,8 @@ const padding = '20px';
 export default function () {
   return h('.nav-sidepanel-container', {
     style: {
-      zIndex: 1000
+      zIndex: 1000,
+      position: 'absolute'
     }
   }, [
     sidepanelBackground(),
@@ -23,8 +24,8 @@ function sidepanelBackground () {
       top: 0,
       left: 0,
       backgroundColor: 'rgba(12, 20, 28, 0.75)',
-      height: '100%',
-      width: '100%',
+      height: '100vh',
+      width: '100vw',
       zIndex: 0,
       transition: 'all 0.2s ease-in-out'
     },
@@ -41,7 +42,7 @@ function sidepanel () {
       display: 'flex',
       flexDirection: 'column',
       width: '350px',
-      height: '100%',
+      height: '100vh',
       background: colors.elementLightest,
       zIndex: 1,
       lineHeight: 1.5
@@ -73,6 +74,7 @@ function organizationSelector () {
   const currOrgText = h('.nav-sidepanel__org-selector', {
     style: {
       flexGrow: 2,
+      width: '100%',
       minWidth: 0
     }
   }, [
