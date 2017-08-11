@@ -1,14 +1,16 @@
 import {h} from 'ui/Framework';
-import clickToCopy from './InputWithCopy';
-import { byName as colorByName } from 'Styles/Colors';
 import { clickLink as trackLinkClick } from 'analytics/events/DocsSidebar';
-import { domain } from 'Config';
 import $state from '$state';
+import { domain } from 'Config';
 import createApiKeyAdvice from './CreateApiKeyAdvice';
+import curl from './Curl';
+
+const otherQueriesLink = 'https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/entries';
+const contentTypesList = 'spaces.detail.content_types.list';
 
 export default function template (data) {
-  const otherQueriesLink = 'https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/entries';
-  const contentTypesList = 'spaces.detail.content_types.list';
+  const entriesCurlUrl =
+        `https://cdn.${domain}/spaces/${data.state.spaceId}/entries?access_token=${data.state.token}&content_type=${data.state.contentType.id}`;
 
   return h('div', {
     style: {
@@ -22,8 +24,8 @@ export default function template (data) {
       h('p', ['Each entry’s fields are defined by the way you customize the fields in your content types'])
     ]),
     h('.docs-sidebar__line', [
-      h('strong', [`Fetch the entries for the content type name '${data.state.contentType.name}'.`]),
-      data.state.apiKeyId ? clickToCopy(curl(data), data.actions.render) : createApiKeyAdvice(data.state.spaceId),
+      h('strong', [`Fetch the entries for the content type named '${data.state.contentType.name}'.`]),
+      data.state.apiKeyId ? curl(entriesCurlUrl, 'entriesCurl', data.actions.render) : createApiKeyAdvice(data.state.spaceId),
       h('p', [
         'You can read about ',
         h('a.text-link', {
@@ -50,46 +52,4 @@ export default function template (data) {
       }, ['Play with your content types'])
     ])
   ]);
-}
-
-function curl (data) {
-  const colorBlue = colorize(colorByName.blueDarkest);
-  const colorGreen = colorize(colorByName.greenDarkest);
-
-  return {
-    children: [
-      h('pre', {
-        style: {
-          whiteSpace: 'pre-wrap',
-          wordWrap: 'break-word',
-          color: colorByName.textMid
-        }
-      }, [
-        h('span', [`curl https://cdn.${domain}/`]),
-        h('span', colorBlue, ['spaces']),
-        h('span', ['/']),
-        h('span', colorGreen, [`${data.state.spaceId}`]),
-        h('span', ['/']),
-        h('span', colorBlue, ['entries']),
-        h('span', ['?']),
-        h('span', colorBlue, ['access_token']),
-        h('span', ['=']),
-        h('span', colorGreen, [`${data.state.token}`]),
-        h('span', ['&']),
-        h('span', colorBlue, ['content_type']),
-        h('span', ['=']),
-        h('span', colorGreen, [`${data.state.contentType.id}`])
-      ])
-    ],
-    text: `curl 'https://cdn.${domain}/spaces/${data.state.spaceId}/entries?access_token=${data.state.token}&content_type=${data.state.contentType.id}'`,
-    id: 'entriesCurl'
-  };
-
-  function colorize (color) {
-    return {
-      style: {
-        color: `${color}`
-      }
-    };
-  }
 }

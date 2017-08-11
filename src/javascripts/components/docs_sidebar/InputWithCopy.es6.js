@@ -1,7 +1,6 @@
 import {h} from 'ui/Framework';
 import $document from '$document';
 import { byName as colorByName } from 'Styles/Colors';
-import $timeout from '$timeout';
 import { copyToClipboard as trackCopyToClipboard } from 'analytics/events/DocsSidebar';
 
 let copied = false;
@@ -51,7 +50,7 @@ export default function ({ children, text, id }, render) {
     trackCopyToClipboard(id);
     copied = true;
     render();
-    $timeout(() => {
+    setTimeout(() => {
       copied = false;
       render();
     }, 1000);

@@ -37,7 +37,7 @@ function ninja () {
           'It will show different information about content types, entries and APIs. '
         ]),
         h('.code-block', [
-          h('.code-block__line', ['Press ‘H‘ to show or hide help'])
+          h('.code-block__line', ['To show or hide help, press ‘H‘'])
         ])
       ]),
       h('div', {

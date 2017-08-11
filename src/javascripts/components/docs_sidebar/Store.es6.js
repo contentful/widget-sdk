@@ -85,7 +85,6 @@ export function toggleVisibility () {
 
 export function dismissCallout () {
   closeCallout();
-  events.dismissCallout();
   ContextualSidebarStore.actions.render();
 }
 
@@ -112,6 +111,7 @@ export function completeIntro () {
 function closeCallout () {
   ContextualSidebarStore.state.calloutSeen = true;
   setStoreValue({calloutSeen: true});
+  events.dismissCallout();
 }
 
 function setStoreValue (data) {

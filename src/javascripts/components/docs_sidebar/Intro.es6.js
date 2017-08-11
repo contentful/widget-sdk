@@ -1,10 +1,12 @@
 import {h} from 'ui/Framework';
-import clickToCopy from './InputWithCopy';
 import $state from '$state';
 import { byName as colorByName } from 'Styles/Colors';
 import { clickLink as trackLinkClick } from 'analytics/events/DocsSidebar';
 import { domain } from 'Config';
 import createApiKeyAdvice from './CreateApiKeyAdvice';
+import curl from './Curl';
+
+const entriesList = 'spaces.detail.entries.list';
 
 export default function (data) {
   const currentStep = data.state.introProgress;
@@ -19,10 +21,10 @@ export default function (data) {
   );
 
   const storyContent = allContent.slice(0, currentStep).map((step) => {
-    return h('div.docs-sidebar__line', step);
+    return h('div.docs-sidebar__line', [step]);
   });
 
-  if (currentStep < allContent.length) {
+  if (data.state.introStepsRemaining) {
     storyContent.push(prompt);
   }
 
@@ -40,24 +42,25 @@ export default function (data) {
 }
 
 function content (data) {
-  const entriesList = 'spaces.detail.entries.list';
+  const introCurlUrl =
+        `https://cdn.${domain}/spaces/${data.state.spaceId}/entries/${data.state.entryId}?access_token=${data.state.token}`;
 
   return [
-    [h('div', [
+    h('div', [
       h('p', ['👋 Hi! I’m here to help you learn about Contentful and to make your first few API calls.']),
       h('p', [
         'I will show you different info on the main pages. To hide or display this help, press ',
         h('strong', ['H']),
         '.'
       ])
-    ])],
-    ['Contentful is a content management infrastructure that lets you build applications with its flexible APIs and global CDN.'],
-    [h('div', [
+    ]),
+    'Contentful is a content management infrastructure that lets you build applications with its flexible APIs and global CDN.',
+    h('div', [
       h('strong', ['Try and fetch an entry.']),
-      data.state.apiKeyId ? clickToCopy(curl(data), data.actions.render) : createApiKeyAdvice(data.state.spaceId),
+      data.state.apiKeyId ? curl(introCurlUrl, 'introCurl', data.actions.render) : createApiKeyAdvice(data.state.spaceId),
       docs()
-    ])],
-    [h('div', [
+    ]),
+    h('div', [
       h('strong', {
         style: {
           display: 'block',
@@ -75,48 +78,8 @@ function content (data) {
           }
         }
       }, ['Explore all your entries'])
-    ])]
+    ])
   ];
-}
-
-function curl (data) {
-  const colorBlue = colorize(colorByName.blueDarkest);
-  const colorGreen = colorize(colorByName.greenDarkest);
-
-  return {
-    children: [
-      h('pre', {
-        style: {
-          whiteSpace: 'pre-wrap',
-          wordWrap: 'break-word',
-          color: colorByName.textMid
-        }
-      }, [
-        h('span', [`curl https://cdn.${domain}/`]),
-        h('span', colorBlue, ['spaces']),
-        h('span', ['/']),
-        h('span', colorGreen, [`${data.state.spaceId}`]),
-        h('span', ['/']),
-        h('span', colorBlue, ['entries']),
-        h('span', ['/']),
-        h('span', colorGreen, [`${data.state.entryId}`]),
-        h('span', ['?']),
-        h('span', colorBlue, ['access_token']),
-        h('span', ['=']),
-        h('span', colorGreen, [`${data.state.token}`])
-      ])
-    ],
-    text: `curl https://cdn.${domain}/spaces/${data.state.spaceId}/entries/${data.state.entryId}?access_token=${data.state.token}`,
-    id: 'introCurl'
-  };
-
-  function colorize (color) {
-    return {
-      style: {
-        color: `${color}`
-      }
-    };
-  }
 }
 
 function docs () {

@@ -58,39 +58,36 @@ function expanded (data) {
 }
 
 function minimized ({actions, state}) {
-  const callout =
-        h(`.docs-sidebar__callout${state.calloutSeen ? '.docs-sidebar__callout--hide' : ''}`, {
-          style: {
-            zIndex: 2
-          }
-        }, [
-          h('div', {
-            style: {
-              display: 'flex',
-              justifyContent: 'space-between'
-            }
-          }, [
-            h('p', {
-              style: { fontWeight: 'bold' }
-            }, ['Onboarding tour']),
-            h('p', {
-              style: {
-                fontSize: '2em',
-                cursor: 'pointer',
-                color: colorByName.textLight
-              },
-              onClick: actions.dismissCallout
-            }, ['×'])
-          ]),
-          h('p', {
-            style: {}
-          }, ['👋 Hi! I am here to help you learn about Contentful and to make your first API call.']),
-          h('a.text-link--neutral-emphasis-low', {
-            onClick: actions.toggle
-          }, ['See tour'])
-        ]);
-
-  return callout;
+  return h(`.docs-sidebar__callout${state.calloutSeen ? '.docs-sidebar__callout--hide' : ''}`, {
+    style: {
+      zIndex: 2
+    }
+  }, [
+    h('div', {
+      style: {
+        display: 'flex',
+        justifyContent: 'space-between'
+      }
+    }, [
+      h('p', {
+        style: { fontWeight: 'bold' }
+      }, ['Onboarding tour']),
+      h('p', {
+        style: {
+          fontSize: '2em',
+          cursor: 'pointer',
+          color: colorByName.textLight
+        },
+        onClick: actions.dismissCallout
+      }, ['×'])
+    ]),
+    h('p', {
+      style: {}
+    }, ['👋 Hi! I am here to help you learn about Contentful and to make your first API call.']),
+    h('a.text-link--neutral-emphasis-low', {
+      onClick: actions.toggle
+    }, ['See tour'])
+  ]);
 }
 
 function header (toggle) {
@@ -101,7 +98,7 @@ function header (toggle) {
   ]);
 }
 
-function getTemplate (route) {
+function getTemplate (stateName) {
   const views = {
     'spaces.detail.entries.list': entries,
     'spaces.detail.content_types.list': contentTypes,
@@ -110,5 +107,5 @@ function getTemplate (route) {
     'spaces.detail.api.cma_tokens': apisList
   };
 
-  return views[route] || noContent;
+  return views[stateName] || noContent;
 }

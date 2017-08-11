@@ -1,15 +1,16 @@
 import {h} from 'ui/Framework';
-import clickToCopy from './InputWithCopy';
-import { byName as colorByName } from 'Styles/Colors';
 import { clickLink as trackLinkClick } from 'analytics/events/DocsSidebar';
 import { domain } from 'Config';
 import $state from '$state';
 import createApiKeyAdvice from './CreateApiKeyAdvice';
+import curl from './Curl';
+
+const otherQueriesLink = 'https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/content-types';
+const apiKeyDetail = 'spaces.detail.api.keys.detail';
 
 export default function template (data) {
-  const otherQueriesLink = 'https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/content-types';
-  const apiKeyDetail = 'spaces.detail.api.keys.detail';
   const params = {apiKeyId: data.state.apiKeyId};
+  const contentTypesCurlUrl = `https://cdn.${domain}/spaces/${data.state.spaceId}/content_types/${data.state.contentType.id}?access_token=${data.state.token}`;
 
   return h('div', {
     style: {
@@ -26,7 +27,7 @@ export default function template (data) {
     ]),
     h('.docs-sidebar__line', [
       h('strong', [`Fetch the content type named '${data.state.contentType.name}'.`]),
-      data.state.apiKeyId ? clickToCopy(curl(data), data.actions.render) : createApiKeyAdvice(data.state.spaceId),
+      data.state.apiKeyId ? curl(contentTypesCurlUrl, 'contentTypesCurl', data.actions.render) : createApiKeyAdvice(data.state.spaceId),
       h('p', [
         'You can read about ',
         h('a.text-link', {
@@ -53,44 +54,4 @@ export default function template (data) {
       }, ['Download a code boilerplate'])
     ])
   ]);
-}
-
-function curl (data) {
-  const colorBlue = colorize(colorByName.blueDarkest);
-  const colorGreen = colorize(colorByName.greenDarkest);
-
-  return {
-    children: [
-      h('pre', {
-        style: {
-          whiteSpace: 'pre-wrap',
-          wordWrap: 'break-word',
-          color: colorByName.textMid
-        }
-      }, [
-        h('span', [`curl https://cdn.${domain}/`]),
-        h('span', colorBlue, ['spaces']),
-        h('span', ['/']),
-        h('span', colorGreen, [`${data.state.spaceId}`]),
-        h('span', ['/']),
-        h('span', colorBlue, ['content_types']),
-        h('span', ['/']),
-        h('span', colorGreen, [`${data.state.contentType.id}`]),
-        h('span', ['?']),
-        h('span', colorBlue, ['access_token']),
-        h('span', ['=']),
-        h('span', colorGreen, [`${data.state.token}`])
-      ])
-    ],
-    text: `curl 'https://cdn.${domain}/spaces/${data.state.spaceId}/content_types/${data.state.contentType.id}?access_token=${data.state.token}'`,
-    id: 'contentTypesCurl'
-  };
-
-  function colorize (color) {
-    return {
-      style: {
-        color: `${color}`
-      }
-    };
-  }
 }
