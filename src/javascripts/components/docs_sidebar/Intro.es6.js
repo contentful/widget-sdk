@@ -68,7 +68,11 @@ function content (data) {
         onClick: (e) => {
           e.preventDefault();
           trackLinkClick($state.href(entriesList));
-          $state.go(entriesList);
+          if ($state.current.name === entriesList) {
+            data.actions.render();
+          } else {
+            $state.go(entriesList);
+          }
         }
       }, ['Explore all your entries'])
     ])]
