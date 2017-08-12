@@ -1,10 +1,10 @@
-import {create as createPaginator} from 'Paginator';
-import * as Command from 'command';
-import * as K from 'utils/kefir';
-import {makeMatcher} from 'utils/TaggedValues';
-import {truncate} from 'stringUtils';
+import { assign } from 'lodash';
+import { createSlot, Success, Failure } from 'utils/Concurrent';
+import { truncate } from 'stringUtils';
+import { makeCtor, match } from 'utils/TaggedValues';
 
 import {h} from 'ui/Framework';
+import {createStore, bindActions, makeReducer} from 'ui/Framework/Store';
 import {text} from 'utils/hyperscript';
 import {container, vspace} from 'ui/Layout';
 import {docsLink, linkOpen, p} from 'ui/Content';
@@ -12,7 +12,6 @@ import {table, tr, td, th} from 'ui/Content/Table';
 import * as Workbench from '../Workbench';
 
 import * as Config from 'Config';
-import {createSlot, Success, Failure} from 'utils/Concurrent';
 import * as ResourceManager from './Resource';
 import openCreateDialog from './CreateDialog';
 import Notification from 'notification';
@@ -23,116 +22,125 @@ import renderPaginator from 'ui/Components/Paginator';
 // Number of tokens to fetch and show per page
 const PER_PAGE = 10;
 
+// Actions
+const SelectPage = makeCtor('SelectPage');
+const Revoke = makeCtor('Revoke');
+const Reload = makeCtor('Reload');
+const OpenCreateDialog = makeCtor('OpenCreateDialog');
+const ReceiveResponse = makeCtor('ReceiveResponse');
+
 export function initController ($scope, auth) {
+  // TODO This hack is unfortunate. But until we come up with a better
+  // way to write components with side effects it is necessary.
+  /* eslint-disable no-use-before-define */
   const tokenResourceManager = ResourceManager.create(auth);
 
-  const paginator = createPaginator(PER_PAGE);
-  $scope.paginator = paginator;
+  const initialState = {
+    tokens: [],
+    currentPage: 0,
+    totalPages: 0
+  };
 
-  // Property that holds the page number currently selected by the
-  // user.
-  const userPage$ =
-    K.fromScopeValue($scope, (scope) => scope.paginator.getPage())
-    .skipDuplicates();
+  // Request slot for updating the list.
+  const putRequest = createSlot((result) => {
+    store.dispatch(ReceiveResponse, result);
+  });
 
-
-  // Emits an event if we want to reload the current token page
-  const reloadBus = K.createStreamBus($scope);
-  const reloadPage$ = userPage$.sampledBy(reloadBus.stream);
-
-  const putRequest = createSlot(makeMatcher({
-    [Success]: ({total, items}) => {
-      $scope.tokens = items.map(makeViewToken);
-      paginator.setTotal(total);
-      if (paginator.isBeyondLast()) {
-        // This triggers 'fetch' again through a change in the
-        // userPage$ property. This is an akward solution. We should
-        // improve on it with a better paginator
-        paginator.setPage(paginator.getPageCount() - 1);
-      } else {
-        $scope.loadingTokens = false;
-      }
-      renderWithScope();
+  const reduce = makeReducer({
+    [SelectPage]: selectPage,
+    [Reload]: (state) => {
+      return selectPage(state, state.currentPage);
     },
-    [Failure]: () => {
-      $scope.loadingTokensError = true;
-      renderWithScope();
-    }
-  }));
+    [Revoke]: (state, token) => {
+      const id = token.id;
+      tokenResourceManager.revoke(id).then(
+        () => {
+          track('personal_access_token:action', {action: 'revoke', patId: id});
+          Notification.info(`The token “${text(truncate(token.name, 30))}” has been successfully revoked.`);
+          actions.Reload();
+        },
+        () => {
+          Notification.error(
+            'Revoking failed, please try again. If the problem persists, contact support.'
+          );
+        }
+      );
+      return state;
+    },
+    [OpenCreateDialog]: (state) => {
+      openCreateDialog(tokenResourceManager)
+        .then(() => actions.Reload());
+      return state;
+    },
+    [ReceiveResponse]: (state, result) => match(result, {
+      [Success]: ({total, items}) => {
+        const totalPages = Math.ceil(total / PER_PAGE);
+        if (state.currentPage >= totalPages && totalPages > 0) {
+          return selectPage(state, totalPages - 1);
+        } else {
+          return assign({}, state, {
+            tokens: items.map((token) => ({
+              id: token.sys.id,
+              name: token.name
+            })),
+            loadingTokens: false,
+            totalPages: totalPages
+          });
+        }
+      },
+      [Failure]: () => assign(state, {loadingTokensError: true})
+    })
+  });
 
-
-  // Open the dialog to create a token. Reload afterwards
-  $scope.openCreateDialog = () => {
-    openCreateDialog(tokenResourceManager)
-    .then(() => reloadBus.emit());
-  };
-
-  $scope.selectPage = function (page) {
-    paginator.setPage(page);
-    fetch(page);
-  };
-
-  K.onValueScope($scope, reloadPage$, fetch);
-  K.onValueScope($scope, userPage$, fetch);
-
-  renderWithScope();
-
-  // Fetch the given page of cma tokens and put it into the renderer.
-  function fetch (page) {
-    $scope.loadingTokens = true;
+  function selectPage (state, page) {
     const request = tokenResourceManager.fetch({
       skip: page * PER_PAGE,
       limit: PER_PAGE
     });
     putRequest(request);
-    renderWithScope();
+    return assign(state, {
+      currentPage: page,
+      loadingTokens: true
+    });
   }
 
-  function renderWithScope () {
-    $scope.component = render($scope);
-  }
+  const store = createStore(initialState, reduce);
+  const actions = bindActions(store, {
+    SelectPage, Revoke, OpenCreateDialog, Reload
+  });
 
-  // Turn a token resource into an object consumed by the view.
-  function makeViewToken (token) {
-    const id = token.sys.id;
-    return {
-      id: id,
-      name: token.name,
-      revokeCommand: Command.create(() => {
-        return tokenResourceManager.revoke(id)
-          .then(() => {
-            reloadBus.emit();
-            track('personal_access_token:action', {action: 'revoke', patId: id});
-            Notification.info(`The token “${text(truncate(token.name, 30))}” has been successfully revoked.`);
-          }, () => {
-            Notification.error(
-              'Revoking failed, please try again. If the problem persists, contact support.'
-            );
-          });
-      })
-    };
-  }
+  actions.SelectPage(0);
+
+  $scope.component = {
+    store,
+    render,
+    actions: {
+      SelectPage, Revoke, OpenCreateDialog, Reload
+    }
+  };
+  /* eslint-enable no-use-before-define */
 }
 
-function render (state) {
+
+function render (state, actions) {
   return container({
     padding: '2em 3em'
   }, [
     oauthSection(),
     vspace(7),
-    patSection(state)
+    patSection(state, actions)
   ]);
 }
 
 
 export function template () {
   return Workbench.withSidebar(
-    h('cf-component-bridge', {component: 'component'}),
+    h('cf-component-store-bridge', {component: 'component'}),
     sidebar()
   );
 }
 
-function patSection (state) {
+function patSection (state, actions) {
   return h('div', [
     h('h1.section-title', ['Personal Access Tokens']),
     container({
@@ -151,12 +159,12 @@ function patSection (state) {
       }, [
         h('button.btn-action', {
           dataTestId: 'pat.create.open',
-          onClick: state.openCreateDialog
+          onClick: actions.OpenCreateDialog
         }, ['Generate personal token'])
       ])
     ]),
     vspace(5),
-    tokenList(state)
+    tokenList(state, actions)
   ]);
 }
 
@@ -186,7 +194,11 @@ function tokenList ({
   loadingTokens,
   loadingTokensError,
   tokens,
-  paginator, selectPage
+  currentPage,
+  totalPages
+}, {
+  Revoke,
+  SelectPage
 }) {
   return loadingTokensError
     ? h('.note-box--warning', [
@@ -205,14 +217,14 @@ function tokenList ({
             h('.loading-box__spinner'),
             h('.loading-box__message', ['Loading'])
           ]),
-        tokenTable(tokens)
+        tokenTable(tokens, Revoke)
       ]),
       vspace(5),
-      renderPaginator(selectPage, paginator.getPage(), paginator.getPageCount())
+      renderPaginator(SelectPage, currentPage, totalPages)
     ]);
 }
 
-function tokenTable (tokens = []) {
+function tokenTable (tokens, revoke) {
   if (tokens.length === 0) {
     return h('div');
   }
@@ -237,14 +249,14 @@ function tokenTable (tokens = []) {
             width: '7em',
             textAlign: 'right'
           }
-        }, [revokeButton(token)])
+        }, [revokeButton(revoke, token)])
       ]);
     })
   );
 }
 
 
-function revokeButton (token) {
+function revokeButton (revoke, token) {
   return h('div', {
     style: { textAlign: 'right' }
   }, [
@@ -262,7 +274,7 @@ function revokeButton (token) {
       ]),
       h('button.btn-caution', {
         dataTestId: `pat.revoke.${token.id}.confirm`,
-        onClick: () => token.revokeCommand.execute()
+        onClick: () => revoke(token)
       }, ['Revoke']),
       h('button.btn-secondary-action', ['Cancel'])
     ])
