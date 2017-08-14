@@ -8,7 +8,8 @@
     cf-icon.icon-dd-arrow-down.pull-right(name="dd-arrow-down")
   .context-menu.x--top-bar.x--arrow-right(
     role="menu" cf-context-menu="bottom-right"
-    aria-label="Account Menu" data-test-id="account-menu")
+    aria-label="Account Menu" data-test-id="account-menu"
+    style="min-width: 200px;")
     a.context-menu__item(
       role="menuitem"
       data-test-id="nav.account.userProfile"
@@ -17,7 +18,7 @@
     a.context-menu__item(
       role="menuitem"
       data-test-id="nav.account.organization"
-      ng-if="organizationsRef"
+      ng-if="!useNewNavigation && organizationsRef"
       cf-sref="organizationsRef")
       | Organizations &amp; billing
     .context-menu__item(

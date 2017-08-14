@@ -11,13 +11,18 @@ angular.module('contentful')
   };
 })
 
-.controller('cfAccountDropdownController', ['$scope', 'require', function cfAccountDropdownController ($scope, require) {
+.controller('cfAccountDropdownController', ['$scope', 'require', function ($scope, require) {
   var TheAccountView = require('TheAccountView');
   var authentication = require('Authentication');
   var K = require('utils/kefir');
   var Config = require('Config');
   var analytics = require('analytics/Analytics');
   var intercom = require('intercom');
+
+  // Begin feature flag code - feature-bv-06-2017-use-new-navigation
+  var LD = require('utils/LaunchDarkly');
+  LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation');
+  // End feature flag code - feature-bv-06-2017-use-new-navigation
 
   $scope.$watch(function () {
     return TheAccountView.getOrganizationRef();

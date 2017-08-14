@@ -44,14 +44,15 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
 
   $rootScope.$watchCollection(function () {
     return {
-      authContext: authorization.spaceContext,
+      authContext: authorization.authContext,
+      spaceContext: authorization.spaceContext,
       organization: getSpaceData('organization'),
       spaceMembership: getSpaceData('spaceMembership')
     };
   }, reset);
 
   return {
-    isInitialized$: isInitializedBus.property,
+    isInitialized$: isInitializedBus.property.skipDuplicates(),
     /**
      * @ngdoc method
      * @name accessChecker#getResponses
@@ -158,7 +159,8 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
     collectResponses();
     collectFeatures();
     collectSectionVisibility();
-    isInitializedBus.set(true);
+
+    isInitializedBus.set(!!authorization.authContext);
   }
 
   function collectResponses () {

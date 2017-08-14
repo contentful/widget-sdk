@@ -35,9 +35,12 @@ describe('Access Checker', function () {
   });
 
   describe('Initialization', function () {
-    it('sets isInitialized$ to true', function () {
+    it('sets isInitialized$ to true when authContext is set', function () {
       expect(K.getValue(ac.isInitialized$)).toEqual(false);
       triggerChange();
+      expect(K.getValue(ac.isInitialized$)).toEqual(false);
+      authorization.authContext = {};
+      $rootScope.$apply();
       expect(K.getValue(ac.isInitialized$)).toEqual(true);
     });
   });

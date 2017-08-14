@@ -17,6 +17,7 @@ export const byName = {
   textMid: '#536171',
   textLight: '#8091A5',
   textLightest: '#A9B9C0',
+  textInverted: '#F6F8FA',
 
   elementDarkest: '#B4C3CA',
   elementDark: '#C3CFD5',

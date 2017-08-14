@@ -9,6 +9,7 @@ describe('Space nav bar directive', function () {
     module('contentful/test', function ($provide) {
       $provide.removeDirectives('otDocPresence', 'entryEditor', 'apiKeyEditor', 'entryList', 'cfIcon');
       $provide.removeControllers('UiConfigController');
+      $provide.value('utils/LaunchDarkly', { setOnScope: function () {} });
     });
 
     const $compile = this.$inject('$compile');

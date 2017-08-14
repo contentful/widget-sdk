@@ -14,6 +14,7 @@ describe('Space Controller', function () {
         setSpaceContext: sinon.stub()
       };
       $provide.value('enforcements', self.enforcementsMock);
+      $provide.value('utils/LaunchDarkly', { setOnScope: function () {} });
 
       self.analyticsMock = {
         track: sinon.stub()

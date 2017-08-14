@@ -12,28 +12,13 @@ const basePath = P.resolve('src', 'javascripts')
 export const options = {
   moduleIds: true,
   only: /\.es6\.js$/,
+  babelrc: false,
 
-  // If you add presets or plugins make sure to remove the supported
-  // syntax from the ESLint blacklist in src/javascripts/.eslint-es6.yml
-  presets: [],
+  presets: [['es2015', { loose: true }]],
   plugins: [
     ['transform-es2015-modules-systemjs', {
       systemGlobal: 'AngularSystem'
-    }],
-    // Transforms 'const' and 'let' to 'var' with block scope
-    ['transform-es2015-block-scoping'],
-    // Make sure 'const' variables are not reassigned
-    ['check-es2015-constants'],
-    ['transform-es2015-template-literals'],
-    // Loose option: All iterable destructuring are assumed to be arrays.
-    ['transform-es2015-destructuring', {options: 'loose'}],
-    // For function parameters enables destructuring, defaults, rest
-    ['transform-es2015-parameters'],
-    // Supports the `...` expression. E.g. `let x = [...list, 2]`.
-    // Loose option: All iterable are assumed to be arrays.
-    ['transform-es2015-spread', {loose: true}],
-    ['transform-es2015-shorthand-properties'],
-    ['transform-es2015-arrow-functions']
+    }]
   ],
 
   // Get the SystemJS module ID from the source path
