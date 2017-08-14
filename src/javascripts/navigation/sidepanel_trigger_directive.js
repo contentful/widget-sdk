@@ -10,8 +10,8 @@ angular.module('contentful')
 .directive('cfNavSidepanelTrigger', ['require', function (require) {
   var K = require('utils/kefir');
   var caseof = require('libs/sum-types').caseof;
-  var NavStates = require('navigation/NavStates').NavStates;
-  var navState$ = require('navigation/stateChangeHandlers').navState$;
+  var NavStates = require('navigation/NavState').NavStates;
+  var navState$ = require('navigation/NavState').navState$;
   var template = require('navigation/SidepanelTrigger.template').default();
 
   return {

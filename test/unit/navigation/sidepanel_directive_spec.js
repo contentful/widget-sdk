@@ -28,7 +28,6 @@ describe('cfNavSidepanel directive', () => {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      // stub $stateParams
       $provide.value('navigation/stateChangeHandlers', { navState$ });
       $provide.value('services/CreateSpace', CreateSpace);
       $provide.value('states/Navigator', Navigator);
@@ -36,8 +35,11 @@ describe('cfNavSidepanel directive', () => {
       $provide.value('services/OrganizationRoles', OrganizationRoles);
       $provide.value('utils/LaunchDarkly', LaunchDarkly);
     });
-    NavStates = this.$inject('navigation/NavStates').NavStates;
-    navState$.set(new NavStates.Default());
+
+    const NavState = this.$inject('navigation/NavState');
+    NavState.navState$ = navState$;
+    NavStates = NavState.NavStates;
+    navState$.set(NavStates.Default());
 
     // tokenStore
     this.orgs = [{
@@ -79,11 +81,11 @@ describe('cfNavSidepanel directive', () => {
     };
 
     this.emulateSettingsPage = function (org) {
-      navState$.set(new NavStates.OrgSettings(org));
+      navState$.set(NavStates.OrgSettings(org));
     };
 
     this.emulateSpacePage = function (space, org) {
-      navState$.set(new NavStates.Space(space, org));
+      navState$.set(NavStates.Space(space, org));
     };
 
     this.verifyScopePropsBasedOnOrg = function (org, isOwnerOrAdmin, canCreateSpaceInOrg, viewingOrgSettings) {

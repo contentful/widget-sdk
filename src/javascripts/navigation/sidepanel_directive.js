@@ -15,8 +15,8 @@ angular.module('contentful')
   var orgs$ = tokenStore.organizations$;
   var showCreateSpaceModal = require('services/CreateSpace').showDialog;
   var K = require('utils/kefir');
-  var NavStates = require('navigation/NavStates').NavStates;
-  var navState$ = require('navigation/stateChangeHandlers').navState$;
+  var NavStates = require('navigation/NavState').NavStates;
+  var navState$ = require('navigation/NavState').navState$;
   var Navigator = require('states/Navigator');
   var sidepanelTemplate = require('navigation/Sidepanel.template').default();
 

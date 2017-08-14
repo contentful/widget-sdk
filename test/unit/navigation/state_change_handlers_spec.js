@@ -28,10 +28,11 @@ describe('navigation/stateChangeHandlers', function () {
 
     $rootScope = this.$inject('$rootScope');
     logger = this.$inject('logger');
-    this.NavStates = this.$inject('navigation/NavStates').NavStates;
+    const NavState = this.$inject('navigation/NavState');
+    this.NavStates = NavState.NavStates;
+    this.navState$ = NavState.navState$;
 
     const stateChangeHandlers = this.$inject('navigation/stateChangeHandlers');
-    this.navState$ = stateChangeHandlers.navState$;
     stateChangeHandlers.setup();
   });
 
@@ -181,7 +182,7 @@ describe('navigation/stateChangeHandlers', function () {
 
     });
 
-    it('setsnew org state', function* () {
+    it('sets new org state', function* () {
       this.emitStateChange('account.organizations.new');
       yield this.expectNavState(this.NavStates.NewOrg);
     });

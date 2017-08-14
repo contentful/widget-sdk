@@ -21,11 +21,8 @@ angular.module('cf.app')
   var modalDialog = require('modalDialog');
   var analytics = require('analytics/Analytics');
   var spaceContext = require('spaceContext');
-  var tokenStore = require('services/TokenStore');
   var $location = require('$location');
-  var $q = require('$q');
-  var K = require('utils/kefir');
-  var NavStates = require('navigation/NavStates').NavStates;
+  var updateNavState = require('navigation/NavState').updateNavState;
 
   // Result of confirmation dialog
   var navigationConfirmed = false;
@@ -34,14 +31,9 @@ angular.module('cf.app')
   // Used for detecting inconsistent state changes.
   var confirmationInProgress = false;
 
-  // Navigation state for sidepanel trigger
-  // For possible values see `navigation/NavStates`
-  var navStateBus = K.createPropertyBus(NavStates.Default());
-
   return {
     setup: setupHandlers,
-    setNavigationConfirmed: function (isConfirmed) { navigationConfirmed = isConfirmed; },
-    navState$: navStateBus.property
+    setNavigationConfirmed: function (isConfirmed) { navigationConfirmed = isConfirmed; }
   };
 
   function setupHandlers () {
@@ -52,7 +44,7 @@ angular.module('cf.app')
   }
 
   function stateChangeSuccessHandler (_event, toState, toStateParams, fromState, fromStateParams) {
-    getNavState(toState, toStateParams).then(function (state) { navStateBus.set(state); });
+    updateNavState(toState, toStateParams, spaceContext);
 
     logger.leaveBreadcrumb('Enter state', {
       state: toState && toState.name,
@@ -196,21 +188,4 @@ angular.module('cf.app')
            );
   }
 
-  function getNavState (state, params) {
-    if (state.name === 'account.organizations.new') {
-      return $q.resolve(NavStates.NewOrg());
-    } else if (_.startsWith(state.name, 'account.profile')) {
-      return $q.resolve(NavStates.UserProfile());
-    } else if (_.startsWith(state.name, 'account.organizations') && params.orgId) {
-      return tokenStore.getOrganization($state.params.orgId).then(function (org) {
-        return NavStates.OrgSettings(org);
-      });
-    } else if (spaceContext.space) {
-      var space = spaceContext.space.data;
-      var org = spaceContext.organizationContext.organization;
-      return $q.resolve(NavStates.Space(space, org));
-    } else {
-      return $q.resolve(NavStates.Default());
-    }
-  }
 }]);
