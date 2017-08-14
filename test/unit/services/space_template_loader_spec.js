@@ -1,336 +1,6 @@
 'use strict';
 
 describe('Space Template loading service', function () {
-  beforeEach(function () {
-    module('contentful/test', function ($provide) {
-      $provide.value('contentfulClient', {
-        newClient: sinon.stub()
-      });
-    });
-
-    this.$q = this.$inject('$q');
-    this.$rootScope = this.$inject('$rootScope');
-    this.client = {
-      contentTypes: sinon.stub(),
-      entries: sinon.stub(),
-      assets: sinon.stub(),
-      editingInterface: sinon.stub()
-    };
-    this.contentfulClient = this.$inject('contentfulClient');
-    this.contentfulClient.newClient.returns(this.client);
-    this.spaceTemplateLoader = this.$inject('spaceTemplateLoader');
-  });
-
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
-  describe('gets template list from contentful', function () {
-    beforeEach(function () {
-      const self = this;
-      this.client.entries.returns(this.$q.resolve([
-        {fields: {id: 3}},
-        {fields: {id: 2, order: 1}},
-        {fields: {id: 1, order: 0}}
-      ]));
-      this.spaceTemplateLoader.getTemplatesList()
-      .then(function (entries) {
-        self.returnedEntries = entries;
-      });
-      this.$rootScope.$digest();
-    });
-
-    it('gets entries from client library', function () {
-      sinon.assert.called(this.client.entries);
-    });
-
-    it('sorts entries by order field', function () {
-      expect(this.returnedEntries[0].fields.id).toBe(1);
-      expect(this.returnedEntries[1].fields.id).toBe(2);
-      expect(this.returnedEntries[2].fields.id).toBe(3);
-    });
-  });
-
-  describe('gets a template from contentful', function () {
-    let template, templateInfo;
-
-    beforeEach(function () {
-      templateInfo = {
-        templateDeliveryApiKeys: [
-          {fields: {name: 'first api key', description: 'first api key desc'}},
-          {fields: {name: 'second api key', description: 'second api key desc'}}
-        ]
-      };
-
-      this.client.contentTypes.returns(this.$q.resolve(sourceContentTypes));
-      this.client.entries.returns(this.$q.resolve(sourceEntries));
-      this.client.assets.returns(this.$q.resolve(sourceAssets));
-      this.client.editingInterface.returns(this.$q.resolve(sourceEditingInterfaces[0]));
-
-      this.spaceTemplateLoader.getTemplate(templateInfo).then(function (_template_) {
-        template = _template_;
-      });
-      this.$rootScope.$digest();
-    });
-
-    it('gets content types', function () {
-      sinon.assert.called(this.client.contentTypes);
-    });
-
-    it('gets entries', function () {
-      sinon.assert.called(this.client.entries);
-    });
-
-    it('gets assets', function () {
-      sinon.assert.called(this.client.assets);
-    });
-
-    it('returns a template', function () {
-      expect(template).toBeDefined();
-    });
-
-    it('template has content types', function () {
-      expect(template.contentTypes).toBeDefined();
-    });
-
-    it('template has entries', function () {
-      expect(template.entries).toBeDefined();
-    });
-
-    it('template has assets', function () {
-      expect(template.assets).toBeDefined();
-    });
-
-    it('template has editing interfaces', function () {
-      expect(template.editingInterfaces).toBeDefined();
-    });
-
-    it('first content type is formatted correctly', function () {
-      expect(template.contentTypes[0]).toEqualObj({
-        'sys': {
-          'id': '68VvdXqINiM0MCoqwa8CQC'
-        },
-        'fields': [
-          {
-            'name': 'Name',
-            'id': 'name',
-            'type': 'Text',
-            'required': true
-          }
-        ],
-        'name': 'Category',
-        'displayField': 'name'
-      });
-    });
-
-    it('second content type is formatted correctly', function () {
-      expect(template.contentTypes[1]).toEqualObj({
-        'sys': {
-          'id': '1Lkju6MyzqSIcwEaAOeM4s'
-        },
-        'fields': [
-          {
-            'name': 'Title',
-            'id': 'title',
-            'type': 'Text',
-            'required': true,
-            'localized': true
-          },
-          {
-            'name': 'Content',
-            'id': 'content',
-            'type': 'Text',
-            'localized': true
-          },
-          {
-            'name': 'Category',
-            'id': 'category',
-            'type': 'Link',
-            'linkType': 'Entry'
-          },
-          {
-            'name': 'Image',
-            'id': 'image',
-            'type': 'Link',
-            'linkType': 'Asset'
-          }
-        ],
-        'name': 'Post',
-        'displayField': 'title'
-      });
-    });
-
-    it('3rd entry has been reordered', function () {
-      expect(template.entries[0].sys.id).toBe('3rdct');
-    });
-
-    it('4th entry has been reordered', function () {
-      expect(template.entries[1].sys.id).toBe('4thct');
-    });
-
-    it('5th entry has been reordered', function () {
-      expect(template.entries[2].sys.id).toBe('5thct');
-    });
-
-    it('first entry is formatted correctly', function () {
-      expect(template.entries[4]).toEqualObj({
-        'sys': {
-          'id': '4Gwo3bNWc8UW2ycWiswGsM',
-          'contentType': {
-            'sys': {
-              'id': '1Lkju6MyzqSIcwEaAOeM4s'
-            }
-          }
-        },
-        'fields': {
-          'content': {'en-US': '...'},
-          'title': {'en-US': 'Lick butt jump off balcony, onto stranger head'},
-          'category': {
-            'en-US': {
-              'sys': {
-                'id': '5AMisZG9BmqqYWge0Acmik',
-                'type': 'Link',
-                'linkType': 'Entry'
-              }
-            }
-          },
-          'image': {
-            'en-US': {
-              'sys': {
-                'id': '1C0dHUP04kAgYwm0G2WiQE',
-                'type': 'Link',
-                'linkType': 'Asset'
-              }
-            }
-          }
-        }
-      });
-    });
-
-    it('second entry is formatted correctly', function () {
-      expect(template.entries[3]).toEqualObj({
-        'sys': {
-          'id': '6kMpB6YZz2EeEuqYMqYQaM',
-          'contentType': {
-            'sys': {
-              'id': '1v2MUtzrg8oQAw0ogCwwE8'
-            }
-          }
-        },
-        'fields': {
-          'text': {'en-US': 'akshdljashdlaihsd'},
-          'symbol': {'en-US': 'content'},
-          'number': {'en-US': 2},
-          'decimal': {'en-US': 2.2},
-          'bool': {'en-US': true},
-          'cal': {'en-US': '2014-12-11T12:00+03:00'},
-          'loc': {
-            'en-US': {
-              'lat': 51.08282186160978,
-              'lon': 8.600234985351562
-            }
-          },
-          'entry': {
-            'en-US': {
-              'sys': {
-                'id': '5AMisZG9BmqqYWge0Acmik',
-                'type': 'Link',
-                'linkType': 'Entry'
-              }
-            }
-          },
-          'asset': {
-            'en-US': {
-              'sys': {
-                'id': '5o4iPgRgYMmaGac8SckKCc',
-                'type': 'Link',
-                'linkType': 'Asset'
-              }
-            }
-          },
-          'obj': {'en-US': { 'value': 123 }},
-          'entries': {
-            'en-US': [{
-              'sys': {
-                'id': 'pBTk6jJsoSaWmCic0OAeO',
-                'type': 'Link',
-                'linkType': 'Entry'
-              }
-            }]
-          },
-          'assets': {
-            'en-US': [{
-              'sys': {
-                'id': '1GdRqUQ0V2yCU2Ee00eoq6',
-                'type': 'Link',
-                'linkType': 'Asset'
-              }
-            }]
-          },
-          'symbolList': {
-            'en-US': [
-              'this',
-              'that',
-              'something'
-            ]
-          }
-        }
-      });
-    });
-
-    it('first asset is formatted correctly', function () {
-      expect(template.assets[0]).toEqualObj({
-        'sys': {
-          'id': '5o4iPgRgYMmaGac8SckKCc'
-        },
-        'fields': {
-          'title': {
-            'en-US': 'soon-horse'
-          },
-          'file': {
-            'en-US': {
-              'fileName': 'soon-horse.jpg',
-              'contentType': 'image/jpeg',
-              'upload': 'http://images.contentful.com/4o9zrkqge2wv/5o4iPgRgYMmaGac8SckKCc/ab03f95234ce91a878e27408192d35b5/soon-horse.jpg'
-            }
-          }
-        }
-      });
-    });
-
-    it('second asset is formatted correctly', function () {
-      expect(template.assets[1]).toEqualObj({
-        'sys': {
-          'id': '367wIzFbCwmWs6mQKeM6Mu'
-        },
-        'fields': {
-          'title': {
-            'en-US': 'soon-meme'
-          },
-          'file': {
-            'en-US': {
-              'fileName': 'soon-meme.jpg',
-              'contentType': 'image/jpeg',
-              'upload': 'http://images.contentful.com/4o9zrkqge2wv/367wIzFbCwmWs6mQKeM6Mu/4f1c6ee48df8a13dc07552597cf99c48/soon-meme.jpg'
-            }
-          }
-        }
-      });
-    });
-
-    it('has the first api key', function () {
-      expect(template.apiKeys[0]).toEqualObj({name: 'first api key', description: 'first api key desc'});
-    });
-
-    it('has the second api key', function () {
-      expect(template.apiKeys[1]).toEqualObj({name: 'second api key', description: 'second api key desc'});
-    });
-
-    it('editing interface is formatted correctly', function () {
-      expect(template.editingInterfaces[0].data).toEqualObj(sourceEditingInterfaces[0]);
-      expect(template.editingInterfaces[0].contentType).toEqualObj(sourceContentTypes[0]);
-    });
-  });
 
   const sourceContentTypes = [
     {
@@ -834,4 +504,334 @@ describe('Space Template loading service', function () {
     }
   ];
 
+  beforeEach(function () {
+    module('contentful/test', function ($provide) {
+      $provide.value('contentfulClient', {
+        newClient: sinon.stub()
+      });
+    });
+
+    this.$q = this.$inject('$q');
+    this.$rootScope = this.$inject('$rootScope');
+    this.client = {
+      contentTypes: sinon.stub(),
+      entries: sinon.stub(),
+      assets: sinon.stub(),
+      editingInterface: sinon.stub()
+    };
+    this.contentfulClient = this.$inject('contentfulClient');
+    this.contentfulClient.newClient.returns(this.client);
+    this.spaceTemplateLoader = this.$inject('spaceTemplateLoader');
+  });
+
+  afterEach(inject(function ($log) {
+    $log.assertEmpty();
+  }));
+
+  describe('gets template list from contentful', function () {
+    beforeEach(function () {
+      const self = this;
+      this.client.entries.returns(this.$q.resolve([
+        {fields: {id: 3}},
+        {fields: {id: 2, order: 1}},
+        {fields: {id: 1, order: 0}}
+      ]));
+      this.spaceTemplateLoader.getTemplatesList()
+      .then(function (entries) {
+        self.returnedEntries = entries;
+      });
+      this.$rootScope.$digest();
+    });
+
+    it('gets entries from client library', function () {
+      sinon.assert.called(this.client.entries);
+    });
+
+    it('sorts entries by order field', function () {
+      expect(this.returnedEntries[0].fields.id).toBe(1);
+      expect(this.returnedEntries[1].fields.id).toBe(2);
+      expect(this.returnedEntries[2].fields.id).toBe(3);
+    });
+  });
+
+  describe('gets a template from contentful', function () {
+    let template, templateInfo;
+
+    beforeEach(function () {
+      templateInfo = {
+        templateDeliveryApiKeys: [
+          {fields: {name: 'first api key', description: 'first api key desc'}},
+          {fields: {name: 'second api key', description: 'second api key desc'}}
+        ]
+      };
+
+      this.client.contentTypes.returns(this.$q.resolve(sourceContentTypes));
+      this.client.entries.returns(this.$q.resolve(sourceEntries));
+      this.client.assets.returns(this.$q.resolve(sourceAssets));
+      this.client.editingInterface.returns(this.$q.resolve(sourceEditingInterfaces[0]));
+
+      this.spaceTemplateLoader.getTemplate(templateInfo).then(function (_template_) {
+        template = _template_;
+      });
+      this.$rootScope.$digest();
+    });
+
+    it('gets content types', function () {
+      sinon.assert.called(this.client.contentTypes);
+    });
+
+    it('gets entries', function () {
+      sinon.assert.called(this.client.entries);
+    });
+
+    it('gets assets', function () {
+      sinon.assert.called(this.client.assets);
+    });
+
+    it('returns a template', function () {
+      expect(template).toBeDefined();
+    });
+
+    it('template has content types', function () {
+      expect(template.contentTypes).toBeDefined();
+    });
+
+    it('template has entries', function () {
+      expect(template.entries).toBeDefined();
+    });
+
+    it('template has assets', function () {
+      expect(template.assets).toBeDefined();
+    });
+
+    it('template has editing interfaces', function () {
+      expect(template.editingInterfaces).toBeDefined();
+    });
+
+    it('first content type is formatted correctly', function () {
+      expect(template.contentTypes[0]).toEqualObj({
+        'sys': {
+          'id': '68VvdXqINiM0MCoqwa8CQC'
+        },
+        'fields': [
+          {
+            'name': 'Name',
+            'id': 'name',
+            'type': 'Text',
+            'required': true
+          }
+        ],
+        'name': 'Category',
+        'displayField': 'name'
+      });
+    });
+
+    it('second content type is formatted correctly', function () {
+      expect(template.contentTypes[1]).toEqualObj({
+        'sys': {
+          'id': '1Lkju6MyzqSIcwEaAOeM4s'
+        },
+        'fields': [
+          {
+            'name': 'Title',
+            'id': 'title',
+            'type': 'Text',
+            'required': true,
+            'localized': true
+          },
+          {
+            'name': 'Content',
+            'id': 'content',
+            'type': 'Text',
+            'localized': true
+          },
+          {
+            'name': 'Category',
+            'id': 'category',
+            'type': 'Link',
+            'linkType': 'Entry'
+          },
+          {
+            'name': 'Image',
+            'id': 'image',
+            'type': 'Link',
+            'linkType': 'Asset'
+          }
+        ],
+        'name': 'Post',
+        'displayField': 'title'
+      });
+    });
+
+    it('3rd entry has been reordered', function () {
+      expect(template.entries[0].sys.id).toBe('3rdct');
+    });
+
+    it('4th entry has been reordered', function () {
+      expect(template.entries[1].sys.id).toBe('4thct');
+    });
+
+    it('5th entry has been reordered', function () {
+      expect(template.entries[2].sys.id).toBe('5thct');
+    });
+
+    it('first entry is formatted correctly', function () {
+      expect(template.entries[4]).toEqualObj({
+        'sys': {
+          'id': '4Gwo3bNWc8UW2ycWiswGsM',
+          'contentType': {
+            'sys': {
+              'id': '1Lkju6MyzqSIcwEaAOeM4s'
+            }
+          }
+        },
+        'fields': {
+          'content': {'en-US': '...'},
+          'title': {'en-US': 'Lick butt jump off balcony, onto stranger head'},
+          'category': {
+            'en-US': {
+              'sys': {
+                'id': '5AMisZG9BmqqYWge0Acmik',
+                'type': 'Link',
+                'linkType': 'Entry'
+              }
+            }
+          },
+          'image': {
+            'en-US': {
+              'sys': {
+                'id': '1C0dHUP04kAgYwm0G2WiQE',
+                'type': 'Link',
+                'linkType': 'Asset'
+              }
+            }
+          }
+        }
+      });
+    });
+
+    it('second entry is formatted correctly', function () {
+      expect(template.entries[3]).toEqualObj({
+        'sys': {
+          'id': '6kMpB6YZz2EeEuqYMqYQaM',
+          'contentType': {
+            'sys': {
+              'id': '1v2MUtzrg8oQAw0ogCwwE8'
+            }
+          }
+        },
+        'fields': {
+          'text': {'en-US': 'akshdljashdlaihsd'},
+          'symbol': {'en-US': 'content'},
+          'number': {'en-US': 2},
+          'decimal': {'en-US': 2.2},
+          'bool': {'en-US': true},
+          'cal': {'en-US': '2014-12-11T12:00+03:00'},
+          'loc': {
+            'en-US': {
+              'lat': 51.08282186160978,
+              'lon': 8.600234985351562
+            }
+          },
+          'entry': {
+            'en-US': {
+              'sys': {
+                'id': '5AMisZG9BmqqYWge0Acmik',
+                'type': 'Link',
+                'linkType': 'Entry'
+              }
+            }
+          },
+          'asset': {
+            'en-US': {
+              'sys': {
+                'id': '5o4iPgRgYMmaGac8SckKCc',
+                'type': 'Link',
+                'linkType': 'Asset'
+              }
+            }
+          },
+          'obj': {'en-US': { 'value': 123 }},
+          'entries': {
+            'en-US': [{
+              'sys': {
+                'id': 'pBTk6jJsoSaWmCic0OAeO',
+                'type': 'Link',
+                'linkType': 'Entry'
+              }
+            }]
+          },
+          'assets': {
+            'en-US': [{
+              'sys': {
+                'id': '1GdRqUQ0V2yCU2Ee00eoq6',
+                'type': 'Link',
+                'linkType': 'Asset'
+              }
+            }]
+          },
+          'symbolList': {
+            'en-US': [
+              'this',
+              'that',
+              'something'
+            ]
+          }
+        }
+      });
+    });
+
+    it('first asset is formatted correctly', function () {
+      expect(template.assets[0]).toEqualObj({
+        'sys': {
+          'id': '5o4iPgRgYMmaGac8SckKCc'
+        },
+        'fields': {
+          'title': {
+            'en-US': 'soon-horse'
+          },
+          'file': {
+            'en-US': {
+              'fileName': 'soon-horse.jpg',
+              'contentType': 'image/jpeg',
+              'upload': 'http://images.contentful.com/4o9zrkqge2wv/5o4iPgRgYMmaGac8SckKCc/ab03f95234ce91a878e27408192d35b5/soon-horse.jpg'
+            }
+          }
+        }
+      });
+    });
+
+    it('second asset is formatted correctly', function () {
+      expect(template.assets[1]).toEqualObj({
+        'sys': {
+          'id': '367wIzFbCwmWs6mQKeM6Mu'
+        },
+        'fields': {
+          'title': {
+            'en-US': 'soon-meme'
+          },
+          'file': {
+            'en-US': {
+              'fileName': 'soon-meme.jpg',
+              'contentType': 'image/jpeg',
+              'upload': 'http://images.contentful.com/4o9zrkqge2wv/367wIzFbCwmWs6mQKeM6Mu/4f1c6ee48df8a13dc07552597cf99c48/soon-meme.jpg'
+            }
+          }
+        }
+      });
+    });
+
+    it('has the first api key', function () {
+      expect(template.apiKeys[0]).toEqualObj({name: 'first api key', description: 'first api key desc'});
+    });
+
+    it('has the second api key', function () {
+      expect(template.apiKeys[1]).toEqualObj({name: 'second api key', description: 'second api key desc'});
+    });
+
+    it('editing interface is formatted correctly', function () {
+      expect(template.editingInterfaces[0].data).toEqualObj(sourceEditingInterfaces[0]);
+      expect(template.editingInterfaces[0].contentType).toEqualObj(sourceContentTypes[0]);
+    });
+  });
 });

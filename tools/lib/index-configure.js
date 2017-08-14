@@ -11,6 +11,13 @@ import {validate as validateConfig} from './config-validator'
 const FS = B.promisifyAll(require('fs'))
 
 
+export const MANIFEST_PATHS = [
+  'build/static-manifest.json',
+  'build/styles-manifest.json',
+  'build/app-manifest.json'
+]
+
+
 /**
  * @usage
  * import configure from '.../index-configure'
@@ -49,10 +56,3 @@ export default function* configure (revision, configPath, outPath) {
   yield FS.writeFileAsync(outPath, indexPage, 'utf8')
   return config.environment
 }
-
-
-export const MANIFEST_PATHS = [
-  'build/static-manifest.json',
-  'build/styles-manifest.json',
-  'build/app-manifest.json'
-]

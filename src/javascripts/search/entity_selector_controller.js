@@ -115,6 +115,25 @@ angular.module('contentful')
     }
   }
 
+  var toggle = {
+    select: function select (entity) {
+
+      var index = _.findIndex($scope.selected, ['sys.id', entity.sys.id]);
+
+      if (index === -1) {
+        $scope.selected.push(entity);
+      }
+      $scope.selectedIds[entity.sys.id] = true;
+    },
+    deselect: function deselect (entity) {
+      var index = _.findIndex($scope.selected, ['sys.id', entity.sys.id]);
+      if (index > -1) {
+        $scope.selected.splice(index, 1);
+      }
+      delete $scope.selectedIds[entity.sys.id];
+    }
+  };
+
   // @TODO: Move toggle logic into a service and improve edge cases.
   var lastToggled;
   function toggleSelection (entity, event) {
@@ -138,25 +157,6 @@ angular.module('contentful')
       lastToggled = { entity: entity, toggleMethod: toggleMethod };
     }
   }
-
-  var toggle = {
-    select: function select (entity) {
-
-      var index = _.findIndex($scope.selected, ['sys.id', entity.sys.id]);
-
-      if (index === -1) {
-        $scope.selected.push(entity);
-      }
-      $scope.selectedIds[entity.sys.id] = true;
-    },
-    deselect: function deselect (entity) {
-      var index = _.findIndex($scope.selected, ['sys.id', entity.sys.id]);
-      if (index > -1) {
-        $scope.selected.splice(index, 1);
-      }
-      delete $scope.selectedIds[entity.sys.id];
-    }
-  };
 
   function handleTermChange (term, prev) {
     if (isTermTriggering(term) || isClearingTerm(term, prev)) {
