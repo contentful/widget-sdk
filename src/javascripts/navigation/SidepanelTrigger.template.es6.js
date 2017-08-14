@@ -25,9 +25,10 @@ export default function () {
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        width: '100%',
+        flexGrow: 99,
+        overflow: 'hidden',
         justifyContent: 'center',
-        paddingLeft: `${navPadding}`
+        padding: `0 ${navPadding}`
       }
     }, [
       h('span.u-truncate', {
@@ -39,6 +40,12 @@ export default function () {
         style: { color: colors.textLight },
         dataTestId: 'sidepanel-trigger-text-subtitle'
       }, ['{{subtitle}}'])
-    ])
+    ]),
+    h('cf-icon', {
+      name: 'hamburger',
+      style: {
+        fill: 'white'
+      }
+    })
   ]);
 }
