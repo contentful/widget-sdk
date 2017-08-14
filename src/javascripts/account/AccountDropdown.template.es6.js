@@ -18,6 +18,7 @@ export default function () {
     }, [
       h('img', {
         ngSrc: '{{user.avatarUrl}}',
+        dataUserEmail: '{{user.email}}',
         style: {
           borderRadius: '50%',
           width: '24px',
