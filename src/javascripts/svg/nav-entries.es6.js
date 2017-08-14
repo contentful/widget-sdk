@@ -1,69 +1,18 @@
 import {h} from 'ui/Framework';
 
 export default h('svg', {
-  width: '30',
-  height: '26',
-  viewBox: '-1 -1 32 28',
-  xmlns: 'http://www.w3.org/2000/svg'
+  xmlns: 'http://www.w3.org/2000/svg',
+  width: '24',
+  height: '24',
+  viewBox: '0 0 24 24'
 }, [
-  h('g', {
-    fill: 'none',
-    fillRule: 'evenodd'
-  }, [
-    h('g', {
-      stroke: '#FFF'
-    }, [
-      h('g', [
-        h('rect', {
-          strokeWidth: '1.5',
-          fill: '#21304A',
-          width: '20.25',
-          height: '26',
-          rx: '2'
-        }),
-        h('g', {
-          transform: 'rotate(45 6.656 27.76)'
-        }, [
-          h('path', {
-            d: 'M6 20.58L.294 11.31l2.18-3.742h7.053l2.18 3.741L6 20.58z',
-            strokeWidth: '1.5',
-            strokeLinecap: 'round',
-            strokeLinejoin: 'round',
-            fill: '#21304A'
-          }),
-          h('rect', {
-            strokeWidth: '1.5',
-            fill: '#21304A',
-            x: '.75',
-            y: '4.541',
-            width: '10.5',
-            height: '3.784',
-            rx: '2'
-          }),
-          h('path', {
-            d: 'M2.25 4.919L1.5 0M9.75 4.919L10.5 0',
-            strokeWidth: '1.5',
-            strokeLinecap: 'round',
-            strokeLinejoin: 'round'
-          }),
-          h('path', {
-            d: 'M6 20.045v-5.352',
-            strokeLinecap: 'square'
-          }),
-          h('ellipse', {
-            cx: '6',
-            cy: '12.8',
-            rx: '1.125',
-            ry: '1.135'
-          })
-        ]),
-        h('path', {
-          d: 'M5 5h11M5 9h8.515M5 13h5.523M5 17h4.528',
-          strokeWidth: '1.5',
-          strokeLinecap: 'round',
-          strokeLinejoin: 'round'
-        })
-      ])
-    ])
-  ])
+  h('path', {
+    d: 'M19.5 24H.5c-.3 0-.5-.2-.5-.5v-21c0-.3.2-.5.5-.5H13c.3 0 .5.2.5.5s-.2.5-.5.5H1v20h18V13c0-.3.2-.5.5-.5s.5.2.5.5v10.5c0 .3-.2.5-.5.5z'
+  }),
+  h('path', {
+    d: 'M7.6 17.4c-.1 0-.3 0-.4-.1-.2-.2-.2-.5 0-.7l9.1-9.1c.2-.2.5-.2.7 0s.2.5 0 .7l-9 9c-.1.1-.2.2-.4.2z'
+  }),
+  h('path', {
+    d: 'M13.3 14.2c-.9 0-1.7-.3-2.2-.8-1.3-1.3-1.6-2.9-1-4.8.9-2.5 3.4-4.9 4.3-5 .1 0 .3 0 .4.1.1.1.2.2.2.4v1.7c1.2-.6 1.8-3 1.8-3.1 0-.2.1-.3.3-.4C20.1 1 23.3.5 23.4.5c.2 0 .3 0 .4.2.2.1.2.3.2.4-.1.3-1.5 6.6-4.9 9.9-2.3 2.3-4.3 3.2-5.8 3.2zm.7-9.3c-.9.7-2.5 2.4-3 4.2-.4 1.4-.1 2.5.8 3.5 1 1 3.5.8 6.6-2.3 2.5-2.5 3.9-7 4.4-8.7-1.1.2-3.1.7-5.1 1.5-.2.9-1.1 3.7-3.2 3.7-.3 0-.5-.2-.5-.5V4.9z'
+  })
 ]);

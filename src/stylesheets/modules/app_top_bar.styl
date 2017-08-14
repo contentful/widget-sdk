@@ -6,7 +6,7 @@ $app-top-bar__action-color()
 .app-top-bar
   height: $nav-bar-height
   display: flex
-  background-color: $colors.dark-blue
+  background-color: $colors.contrast-light
 
   &__logo
     display: flex
@@ -15,11 +15,11 @@ $app-top-bar__action-color()
     padding: 0 1em
 
   &__logo-element
-    position: relative
     width: 29px
     height: 29px
     background-image: url('/app/svg/logo-label.svg')
     background-size: 29px 29px
+    flex: 1 0 auto
 
   &__logo-text
     $app-top-bar__action-color()
@@ -33,23 +33,27 @@ $app-top-bar__action-color()
     display: flex
 
   &__menu-trigger
-    padding-left: 1em
-    padding-right: 1em
     height: 100%
     display: flex
     align-items: center;
     justify-content: space-between
     cursor: pointer;
     $app-top-bar__action-color()
+    > .triangle-down
+      border: 4px solid $colors.white
+      border-left-color: transparent
+      border-right-color: transparent
+      border-bottom-color: transparent
     &:hover, &.is-active
-      > cf-icon[name="dd-arrow-down"] path
-        fill: $colors.blue-mid
+      > .triangle-down
+        border-top-color: $colors.blue-mid
 
   &__action
     display: flex
     flex-direction: column
     justify-content: center
-    padding: 0 15px
+    padding: 0 22px
+    height: 100%
     a
       $app-top-bar__action-color()
     &:focus

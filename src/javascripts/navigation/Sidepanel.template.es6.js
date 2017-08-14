@@ -1,12 +1,15 @@
 import { h } from 'utils/hyperscript';
 import { byName as colors, genBoxShadow } from 'Styles/Colors';
+import { triangleDown } from 'Styles/Helpers';
+import { extend } from 'lodash';
 
 const padding = '20px';
 
 export default function () {
   return h('.nav-sidepanel-container', {
     style: {
-      zIndex: 1000
+      zIndex: 1000,
+      position: 'absolute'
     }
   }, [
     sidepanelBackground(),
@@ -21,8 +24,8 @@ function sidepanelBackground () {
       top: 0,
       left: 0,
       backgroundColor: 'rgba(12, 20, 28, 0.75)',
-      height: '100%',
-      width: '100%',
+      height: '100vh',
+      width: '100vw',
       zIndex: 0,
       transition: 'all 0.2s ease-in-out'
     },
@@ -39,7 +42,7 @@ function sidepanel () {
       display: 'flex',
       flexDirection: 'column',
       width: '350px',
-      height: '100%',
+      height: '100vh',
       background: colors.elementLightest,
       zIndex: 1,
       lineHeight: 1.5
@@ -71,6 +74,7 @@ function organizationSelector () {
   const currOrgText = h('.nav-sidepanel__org-selector', {
     style: {
       flexGrow: 2,
+      width: '100%',
       minWidth: 0
     }
   }, [
@@ -99,21 +103,9 @@ function organizationSelector () {
     ])
   ]);
 
-  const triangleDown = h('span', {
-    style: {
-      alignSelf: 'center',
-      border: `4px solid ${colors.textDark}`,
-      borderLeftColor: 'transparent',
-      borderRightColor: 'transparent',
-      borderBottomColor: 'transparent'
-    }
-  });
-
   return h('.nav-sidepanel__header', {
     style: {
       display: 'flex',
-      flexGrow: 1,
-      maxHeight: '70px',
       minHeight: '70px',
       borderBottom: `1px solid ${colors.elementDark}`,
       padding: `15px ${padding}`,
@@ -125,7 +117,7 @@ function organizationSelector () {
   }, [
     currOrgIcon,
     currOrgText,
-    triangleDown,
+    h('span', { style: extend(triangleDown(), { alignSelf: 'center' }) }),
     orgListDropdown()
   ]);
 }
@@ -193,7 +185,12 @@ function orgListDropdown () {
 }
 
 function orgSpaces () {
-  return h('.nav-sidepanel__spaces-container', [
+  return h('.nav-sidepanel__spaces-container', {
+    style: {
+      display: 'flex',
+      flexDirection: 'column'
+    }
+  }, [
     h('.nav-sidepanel__spaces-header', {
       ngIf: 'spacesByOrg[currOrg.sys.id].length',
       style: {
@@ -214,10 +211,6 @@ function orgSpaces () {
     ]),
     h('.nav-sidepanel__space-list', {
       style: {
-        maxHeight: '500px',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
         overflowY: 'auto'
       }
     }, [
@@ -258,10 +251,6 @@ function noSpacesMsg () {
       padding,
       paddingBottom: '40px',
       margin: 0,
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
       textAlign: 'center'
     }
   }, [
@@ -269,7 +258,9 @@ function noSpacesMsg () {
       name: 'sidepanel-spaces-advice',
       scale: '1.2',
       style: {
-        marginBottom: '20px'
+        margin: '20px 0',
+        fill: colors.greenDark,
+        display: 'inline-block'
       }
     }),
     h('p', { style: { fontWeight: 'bold' } }, [`{{canCreateSpaceInCurrOrg ? "${messages.canCreateSpace.title}" : "${messages.canNotCreateSpace.title}"}}`]),

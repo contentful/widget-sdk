@@ -199,9 +199,9 @@ angular.module('cf.app')
   function getNavState (state, params) {
     if (state.name === 'account.organizations.new') {
       return $q.resolve(NavStates.NewOrg());
-    } else if (state.name.startsWith('account.profile')) {
+    } else if (_.startsWith(state.name, 'account.profile')) {
       return $q.resolve(NavStates.UserProfile());
-    } else if (state.name.startsWith('account.organizations') && params.orgId) {
+    } else if (_.startsWith(state.name, 'account.organizations') && params.orgId) {
       return tokenStore.getOrganization($state.params.orgId).then(function (org) {
         return NavStates.OrgSettings(org);
       });
