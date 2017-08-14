@@ -115,6 +115,7 @@ angular.module('contentful')
   });
 
 
+  // if collection is modified - refresh the list
   K.onValueScope($scope, spaceContext.contentCollections.state$, function (colls) {
     var viewColl = getViewItem('collection');
     var coll = _.find(colls, {id: viewColl && viewColl.id});

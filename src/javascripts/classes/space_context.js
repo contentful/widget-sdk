@@ -115,8 +115,7 @@ angular.module('contentful')
           self.widgets = widgets;
         }),
         self.publishedCTs.refresh(),
-        // TODO do not pass space's ID when the repo really use self.endpoint
-        createContentCollectionsRepo(self.endpoint, space.getId()).then(function (api) {
+        createContentCollectionsRepo(self.endpoint).then(function (api) {
           self.contentCollections = api;
         })
       ]).then(function () {

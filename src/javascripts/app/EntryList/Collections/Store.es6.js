@@ -13,9 +13,8 @@ const notifySizeExceeded = () => Notification.error(`Collection size cannot exce
 const itemsLen = (arr) => arr.length === 1 ? '1 entry was' : `${arr.length} entries were`;
 
 // TODO consider use of immutable data structures
-// TODO when persistor uses spaceEndpoint drop spaceId
-export default function createContentCollectionsStore (spaceEndpoint, spaceId) {
-  const persistor = createPersistor(spaceEndpoint, spaceId);
+export default function createContentCollectionsStore (spaceEndpoint) {
+  const persistor = createPersistor(spaceEndpoint);
   const stateBus = K.createPropertyBus([]);
 
   return persistor.get()

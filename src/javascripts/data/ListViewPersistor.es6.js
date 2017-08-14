@@ -42,7 +42,7 @@ export default function create (spaceId, entityType) {
 
 function toStorageFormat (view) {
   const storedView = view.collection
-    ? prepareCollectionStoredView(view)
+    ? collectionToStorageFormat(view)
     : omit(view, ['title']);
 
   return flatten(omitBy(storedView, (item) => {
@@ -50,7 +50,7 @@ function toStorageFormat (view) {
   }), {safe: true});
 }
 
-function prepareCollectionStoredView (view) {
+function collectionToStorageFormat (view) {
   return {
     _v: 1, // Include version for migrations in the future
     collectionId: view.collection.id,
@@ -73,11 +73,11 @@ function fromStorageFormat (stored, collections) {
   const view = flatten.unflatten(stored, {safe: true});
 
   return view.collectionId
-    ? prepareCollectionView(view, collections)
-    : prepareRegularView(view);
+    ? collectionFromStorageFormat(view, collections)
+    : viewFromStorageFormat(view);
 }
 
-function prepareCollectionView (view, collections) {
+function collectionFromStorageFormat (view, collections) {
   return {
     collection: find(collections, {id: view.collectionId}),
     order: view.order,
@@ -85,7 +85,7 @@ function prepareCollectionView (view, collections) {
   };
 }
 
-function prepareRegularView (view) {
+function viewFromStorageFormat (view) {
   if (!isObject(view)) {
     return {};
   }

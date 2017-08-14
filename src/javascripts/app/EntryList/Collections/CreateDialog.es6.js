@@ -1,7 +1,7 @@
 import {h} from 'ui/Framework';
 import modalDialog from 'modalDialog';
 
-export default function openCreateCollectionDialog (existingCollections = []) {
+export default function openCreateCollectionDialog (existingCollections) {
   return modalDialog.open({
     template: '<cf-component-bridge class="modal-background" component="component">',
     controller ($scope) {
