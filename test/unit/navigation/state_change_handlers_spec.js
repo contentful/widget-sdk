@@ -148,14 +148,13 @@ describe('navigation/stateChangeHandlers', function () {
         this.tokenStore.getOrganization.resolves(org);
       };
       this.expectNavState = function (state, props) {
-        return new Promise((resolve) => {
+        return Promise.resolve().then(() => {
           const off = K.onValue(this.navState$.changes(), (currNavState) => {
             expect(currNavState instanceof state).toBe(true);
             for (const prop in props) {
               expect(currNavState[prop]).toEqual(props[prop]);
             }
             off();
-            resolve();
           });
         });
       };

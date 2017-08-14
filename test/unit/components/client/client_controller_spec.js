@@ -67,6 +67,9 @@ describe('Client Controller', function () {
       this.spaceContext.space = {
         getId: sinon.stub().returns('SPACE ID')
       };
+      this.spaceContext.organizationContext = {
+        getOrganization: sinon.stub().resolves({sys: {id: '1'}})
+      };
       sinon.assert.notCalled(this.authorizationStubs.setSpace);
       this.$apply();
       sinon.assert.calledWith(this.authorizationStubs.setSpace, this.spaceContext.space);
@@ -75,6 +78,9 @@ describe('Client Controller', function () {
     it('does not set authorization space if authContext does not have space', function () {
       this.spaceContext.space = {
         getId: sinon.stub().returns('SPACE ID')
+      };
+      this.spaceContext.organizationContext = {
+        getOrganization: sinon.stub().resolves({sys: {id: '1'}})
       };
       this.$apply();
       sinon.assert.notCalled(this.authorizationStubs.setSpace);
