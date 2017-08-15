@@ -260,6 +260,9 @@ angular.module('cf.data')
     });
   };
 
+  Client.prototype.deleteExtension = function (id) {
+    return this._deleteResource('extensions', id);
+  };
 
   Client.prototype._request = function (req, headers) {
     return this._endpoint(req, headers);

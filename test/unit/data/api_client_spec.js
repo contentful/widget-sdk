@@ -159,6 +159,14 @@ describe('data/ApiClient', function () {
         params: 'QUERY'
       }));
     });
+
+    pit('deleteExtension(id)', function () {
+      return this.client.deleteExtension('ID')
+      .then(assertRequestResponse(undefined, {
+        method: 'DELETE',
+        url: '//api.test.local/spaces/SPACE/extensions/ID'
+      }));
+    });
   });
 
   /**
