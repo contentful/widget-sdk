@@ -23,10 +23,14 @@ import {h} from 'utils/hyperscript';
 
 export function simple (title, icon, actions, content) {
   return [
-    h('header.workbench-header', [
-      icon && h('cf-icon.workbench-header__icon', {name: icon}),
-      h('h1.workbench-header__title', [title]),
-      actions && h('.workbench-header__actions', actions)
+    // Workaround for ie11 min-height bug
+    // https://github.com/philipwalton/flexbugs#3-min-height-on-a-flex-container-wont-apply-to-its-flex-items
+    h('.workbench-header__wrapper', [
+      h('header.workbench-header', [
+        icon && h('cf-icon.workbench-header__icon', {name: icon}),
+        h('h1.workbench-header__title', [title]),
+        actions && h('.workbench-header__actions', actions)
+      ])
     ]),
     h('.workbench-main.x--content', [
       h('.workbench-main__middle-content', content)
