@@ -143,6 +143,7 @@ function orgListDropdown () {
     h('.nav-sidepanel__org-list', {
       style: {
         maxHeight: '184px',
+        width: '100%',
         overflow: 'hidden',
         overflowY: 'auto',
         paddingBottom: '12px',
@@ -160,7 +161,7 @@ function orgListDropdown () {
           fontSize: '0.9em'
         }
       }, ['Organizations']),
-      h('p.nav-sidepanel__org-name', {
+      h('p.nav-sidepanel__org-name.u-truncate', {
         ngRepeat: 'org in orgs track by org.sys.id',
         ngClass: '{"nav-sidepanel__org-name--is-active": currOrg && currOrg.sys.id === org.sys.id}',
         ngClick: 'setCurrOrg(org)',
