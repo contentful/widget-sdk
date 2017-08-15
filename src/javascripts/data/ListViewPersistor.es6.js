@@ -24,6 +24,7 @@ export default function create (spaceId, entityType) {
   return {read, save};
 
   function save (view) {
+    return
     const viewData = toStorageFormat(view);
     localStorage.set(viewData);
     $location.search(prepareQueryString(viewData));
@@ -31,6 +32,7 @@ export default function create (spaceId, entityType) {
   }
 
   function read () {
+    return {};
     const currentQS = $location.search();
     const previousQS = localStorage.get() || {};
     const qs = isEmpty(currentQS) ? previousQS : currentQS;

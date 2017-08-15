@@ -11,12 +11,17 @@ angular.module('contentful')
   var accessChecker = require('accessChecker');
   var debounce = require('debounce');
   var Tracking = require('analytics/events/SearchAndViews');
+  var K = require('utils/kefir');
+  var createSearchInput = require('app/ContentList/Search').default;
+
+  $scope.context = { ready: true, loading: false };
 
   var AUTOTRIGGER_MIN_LEN = 4;
 
   var searchTerm = null;
 
   var isResettingTerm = false;
+  var currentQuery;
 
   var debouncedUpdateWithTerm = debounce(updateWithTerm, 200);
 
@@ -122,7 +127,8 @@ angular.module('contentful')
     return (
       !_.isEmpty(searchTerm) ||
       !_.isEmpty(getViewItem('contentTypeId')) ||
-      getViewItem('collection')
+      getViewItem('collection') ||
+      currentQuery
     );
   }
 
@@ -163,6 +169,37 @@ angular.module('contentful')
        return $q.reject(error);
      });
   }
+
+  var triggerSearch = createRequestQueue(triggerSearch_, setupEntriesHandler);
+  function triggerSearch_ (query) {
+    if (!query) {
+      currentQuery = null;
+      return;
+    }
+    currentQuery = query;
+    // TODO support ordering
+    query = _.assign({}, query, {
+      limit: $scope.paginator.getPerPage(),
+      skip: $scope.paginator.getSkipParam()
+    });
+    $scope.context.loading = true;
+    $scope.context.isSearching = true;
+    return spaceContext.space.getEntries(query)
+     .then(function (result) {
+       $scope.context.isSearching = false;
+       Tracking.searchPerformed($scope.context.view, result.total);
+       return result;
+     })
+     .catch(function (error) {
+       return $q.reject(error);
+     });
+  }
+
+  var isSearching$ = K.fromScopeValue($scope, function ($scope) {
+    return $scope.context.isSearching;
+  });
+
+  createSearchInput($scope, spaceContext, triggerSearch, isSearching$);
 
   function setupEntriesHandler (promise) {
     return promise

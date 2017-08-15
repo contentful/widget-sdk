@@ -11,24 +11,7 @@ header.workbench-header
       | Content
       cf-knowledge-base.workbench-header__kb-link(target="entry")
 
-  .workbench-header__search(
-    style="display: flex"
-    ng-if="context.ready && !showNoEntriesAdvice()")
-    div(
-      style="flex-grow: 1; margin-right: 10px"
-      cf-tokenized-search="context.view.searchTerm"
-      search-content-type="getSearchContentType()"
-      placeholder="Search for an entry"
-      cf-on-blur-component="leftSearch($event)"
-      cf-on-blur-component-when="showAutocompletions")
-
-    select.cfnext-select-box(
-      style="cursor: pointer; height: 42px; max-width: 200px;"
-      ng-model="context.view.contentTypeId"
-      ng-change="selectedContentType()"
-      ng-options="ct.id as ct.name group by 'Content types' for ct in contentTypeSelectOptions"
-      data-test-id="search-ct-selector")
-      option(value="") All content types
+  cf-component-bridge(style="flex-grow: 1; flex-shrink: 1; z-index: 1" component="search")
 
   .workbench-header__actions(ng-if="!showNoEntriesAdvice()")
     +create-entry-button

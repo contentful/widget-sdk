@@ -1,0 +1,26 @@
+@require 'base/colors'
+
+.search-next__completion-item
+  height: 56px
+  padding: 0 20px
+  display: flex
+  align-items: center
+  cursor: pointer
+  border-bottom: 1px solid $colors.element-light
+  &:last-child
+    border-bottom: 0
+
+  &.--selected,
+  &:hover
+    // TODO use $colors
+    background-color: #F4F4F2
+    .__filter-pill
+      background-color: $colors.blue-darkest
+
+  .__filter-pill
+    display: inline-block
+    background: $colors.blue-mid
+    color: white
+    padding: 6px 10px 5px
+    line-height: 18px
+    border-radius: 3px
