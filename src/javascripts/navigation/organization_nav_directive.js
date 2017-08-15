@@ -6,7 +6,7 @@
  */
  angular.module('contentful')
 .directive('cfOrganizationNav', ['require', function (require) {
-  var navBar = require('app/NavBar').default;
+  var navBar = require('navigation/templates/NavBar').default;
 
   return {
     template: template(),

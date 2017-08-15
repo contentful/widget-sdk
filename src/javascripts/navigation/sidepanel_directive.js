@@ -18,7 +18,7 @@ angular.module('contentful')
   var NavStates = require('navigation/NavState').NavStates;
   var navState$ = require('navigation/NavState').navState$;
   var Navigator = require('states/Navigator');
-  var sidepanelTemplate = require('navigation/Sidepanel.template').default();
+  var sidepanelTemplate = require('navigation/templates/Sidepanel.template').default();
 
   return {
     restrict: 'E',
