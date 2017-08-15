@@ -475,8 +475,9 @@ describe('cfNavSidepanel directive', () => {
   });
 });
 
-const expectVisibility = (element, shownClass, hiddenClass) =>
-  (isVisible) => {
+function expectVisibility (element, shownClass, hiddenClass) {
+  return function (isVisible) {
     expect(element.hasClass(hiddenClass)).toBe(!isVisible);
     expect(element.hasClass(shownClass)).toBe(isVisible);
   };
+}

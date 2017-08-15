@@ -3,13 +3,6 @@ angular.module('contentful')
 .factory('widgets/builtin', [function () {
   var _widgets = {};
 
-  function registerWidget (id, desc) {
-    _widgets[id] = _.extend({}, desc, {
-      id: id,
-      options: COMMON_OPTIONS.concat(desc.options || [])
-    });
-  }
-
   var COMMON_OPTIONS = [
     {
       param: 'helpText',
@@ -19,6 +12,13 @@ angular.module('contentful')
     }
   ];
 
+
+  function registerWidget (id, desc) {
+    _widgets[id] = _.extend({}, desc, {
+      id: id,
+      options: COMMON_OPTIONS.concat(desc.options || [])
+    });
+  }
   /**
    * @ngdoc type
    * @name Widget.Descriptor

@@ -43,6 +43,40 @@ export const Notification = makeSum({
   ValidationError: []
 });
 
+const publishValidationFailMessage =
+  publishFail('Validation failed. Please check the individual fields for errors.');
+
+const publishServerFailMessage =
+  makeTemplate(
+    'Publishing %{title} has failed due to a server issue. ' +
+    'We have been notified.'
+  );
+
+
+const successMessages = {
+  // We cannot use `getTitle()` because that function will
+  // return undefined after the entity has been deleted
+  delete: makeTemplate('%{Type} deleted successfully'),
+
+  archive: makeTemplate('%{title} archived successfully'),
+  unarchive: makeTemplate('%{title} unarchived successfully'),
+  publish: makeTemplate('%{title} published successfully'),
+  unpublish: makeTemplate('%{title} unpublished successfully'),
+  revert: makeTemplate('Discarded changes of %{title} successfully'),
+  duplicate: null
+};
+
+const errorMessages = {
+  delete: makeTemplate('Error deleting %{title} (%{error})'),
+  archive: makeTemplate('Error archiving %{title} (%{error})'),
+  unarchive: makeTemplate('Error unarchiving %{title} (%{error})'),
+  publish: makeTemplate('Error publishing %{title} (%{error})'),
+  unpublish: makeTemplate('Error unpublishing %{title} (%{error})'),
+  revert: makeTemplate('Error discarding changes of %{title}'),
+  duplicate: makeTemplate('Could not duplicate %{type}')
+};
+
+
 export function makeNotify (Type, getTitle) {
   if (Type !== 'Entry' && Type !== 'Asset') {
     throw new Error(`Unknown entity type ${Type}`);
@@ -129,43 +163,9 @@ function publishErrorMessage (error) {
 }
 
 
-const publishValidationFailMessage =
-  publishFail('Validation failed. Please check the individual fields for errors.');
-
-
 function publishFail (message) {
   return makeTemplate(`Error publishing %{title}: ${message}`);
 }
-
-const publishServerFailMessage =
-  makeTemplate(
-    'Publishing %{title} has failed due to a server issue. ' +
-    'We have been notified.'
-  );
-
-
-const successMessages = {
-  // We cannot use `getTitle()` because that function will
-  // return undefined after the entity has been deleted
-  delete: makeTemplate('%{Type} deleted successfully'),
-
-  archive: makeTemplate('%{title} archived successfully'),
-  unarchive: makeTemplate('%{title} unarchived successfully'),
-  publish: makeTemplate('%{title} published successfully'),
-  unpublish: makeTemplate('%{title} unpublished successfully'),
-  revert: makeTemplate('Discarded changes of %{title} successfully'),
-  duplicate: null
-};
-
-const errorMessages = {
-  delete: makeTemplate('Error deleting %{title} (%{error})'),
-  archive: makeTemplate('Error archiving %{title} (%{error})'),
-  unarchive: makeTemplate('Error unarchiving %{title} (%{error})'),
-  publish: makeTemplate('Error publishing %{title} (%{error})'),
-  unpublish: makeTemplate('Error unpublishing %{title} (%{error})'),
-  revert: makeTemplate('Error discarding changes of %{title}'),
-  duplicate: makeTemplate('Could not duplicate %{type}')
-};
 
 function isLinkValidationError (response) {
   const errors = getAtPath(response, 'data.details.errors');

@@ -33,10 +33,6 @@ angular.module('contentful')
   var $q = require('$q');
   var moment = require('moment');
 
-  function operatorDescription (op) {
-    return operatorDescriptions[op] || '';
-  }
-
   var operatorDescriptions = {
     '<=': 'Less than or equal',
     '<': 'Less than',
@@ -47,8 +43,8 @@ angular.module('contentful')
     '!=': 'Not equal'
   };
 
-  function dateOperatorDescription (op) {
-    return dateOperatorDescriptions[op] || '';
+  function operatorDescription (op) {
+    return operatorDescriptions[op] || '';
   }
 
   var dateOperatorDescriptions = {
@@ -60,6 +56,9 @@ angular.module('contentful')
     '!=': 'Not on that date/time'
   };
 
+  function dateOperatorDescription (op) {
+    return dateOperatorDescriptions[op] || '';
+  }
 
   // Autocomplete object {{{1
   //

@@ -27,11 +27,12 @@ const userBus = K.createPropertyBus(null);
 const spacesBus = K.createPropertyBus([]);
 const organizationsBus = K.createPropertyBus([]);
 
-// MVar that holds the token data
-const tokenInfoMVar = createMVar(tokenInfo);
 // Variable storing the token data, so that it can be accessed synchronously.
 // @todo - remove it and use promise
 let tokenInfo = null;
+
+// MVar that holds the token data
+const tokenInfoMVar = createMVar(null);
 
 /**
  * @ngdoc property

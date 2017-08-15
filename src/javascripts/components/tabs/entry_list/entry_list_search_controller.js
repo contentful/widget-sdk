@@ -27,6 +27,8 @@ angular.module('contentful')
   // TODO rename this everywhere
   $scope.updateEntries = resetEntries;
 
+  var updateEntries = createRequestQueue(requestEntries, setupEntriesHandler);
+
   this.resetSearchTerm = resetSearchTerm;
   this.hasQuery = hasQuery;
 
@@ -128,7 +130,6 @@ angular.module('contentful')
     return updateEntries();
   }
 
-  var updateEntries = createRequestQueue(requestEntries, setupEntriesHandler);
   function requestEntries () {
     $scope.context.loading = true;
     $scope.context.isSearching = true;
