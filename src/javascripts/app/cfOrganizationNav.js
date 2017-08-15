@@ -7,7 +7,6 @@
  angular.module('contentful')
 .directive('cfOrganizationNav', ['require', function (require) {
   var navBar = require('app/NavBar').default;
-  var PAID_SUBSCRIPTION_STATUSES = ['paid', 'free_paid'];
 
   return {
     template: template(),
@@ -37,7 +36,7 @@
         var orgId = nav.orgId = $stateParams.orgId;
         tokenStore.getOrganization(orgId).then(function (org) {
           nav.hasOffsiteBackup = hasOffsiteBackup(org);
-          nav.hasBillingTab = isPaid(org) && OrganizationRoles.isOwnerOrAdmin(org);
+          nav.hasBillingTab = org.isBillable && OrganizationRoles.isOwnerOrAdmin(org);
         }, function () {
           modalDialog.openConfirmDialog({
             title: 'Organization not found',
@@ -97,10 +96,6 @@
         if: 'nav.hasOffsiteBackup'
       }
     ]);
-  }
-
-  function isPaid (org) {
-    return PAID_SUBSCRIPTION_STATUSES.indexOf(org.subscription.status) >= 0;
   }
 
   function hasOffsiteBackup (org) {
