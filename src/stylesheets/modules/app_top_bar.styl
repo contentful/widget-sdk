@@ -8,6 +8,23 @@ $app-top-bar__action-color()
   display: flex
   background-color: $colors.contrast-light
 
+  &__sidepanel-trigger,
+  &__account-menu-trigger
+    background-color: $colors.contrast-mid
+    transition: background-color 0.1s ease-in-out
+    &:hover
+      background-color: $colors.contrast-dark
+
+  &__sidepanel-trigger
+    box-shadow: inset -1px 0 2px 0 rgba(0, 0, 0, 0.4), inset -2px 0 5px 0 rgba(0, 0, 0, 0.35)
+    &:hover
+      box-shadow: inset -1px 0 2px 0 rgba(0, 0, 0, 0.9), inset -2px 0 5px 0 rgba(0, 0, 0, 0.75)
+
+  &__account-menu-trigger
+    box-shadow: inset 1px 0 2px 0 rgba(0, 0, 0, 0.4), inset 2px 0 5px 0 rgba(0, 0, 0, 0.35)
+    &:hover
+      box-shadow: inset 1px 0 2px 0 rgba(0, 0, 0, 0.9), inset 2px 0 5px 0 rgba(0, 0, 0, 0.75)
+
   &__logo
     display: flex
     justify-content: center
@@ -63,4 +80,3 @@ $app-top-bar__action-color()
     border-left: 1px solid transparentify($colors.white, 20%)
   &--right-separator
     border-right: 1px solid transparentify($colors.white, 20%)
-

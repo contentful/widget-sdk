@@ -1,19 +1,16 @@
 import { h } from 'utils/hyperscript';
-import { byName as colors } from 'Styles/Colors';
 import { triangleDown } from 'Styles/Helpers';
 import { extend, omit } from 'lodash';
 
 export default function () {
   return h('div.account-dropdown.app-top-bar__child', [
-    h('a.app-top-bar__menu-trigger', {
+    h('a.app-top-bar__menu-trigger.app-top-bar__account-menu-trigger', {
       role: 'button',
       cfContextMenuTrigger: 'cf-context-menu-trigger',
       tabindex: '0',
       dataTestId: 'account-menu-trigger',
       style: {
-        background: colors.contrastMid,
-        boxShadow: 'inset 5px 0 6px -2px rgba(0, 0, 0, 0.1)',
-        padding: '0 15px'
+        padding: '0 20px'
       }
     }, [
       h('img', {
