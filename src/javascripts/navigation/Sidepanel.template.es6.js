@@ -30,7 +30,7 @@ function sidepanelBackground () {
       transition: 'all 0.2s ease-in-out'
     },
     ngClass: 'sidePanelIsShown ? "nav-sidepanel__bg--is-visible" : "nav-sidepanel__bg--is-not-visible"',
-    ngClick: 'closeSidePanel()'
+    ngClick: 'orgDropdownIsShown ? closeOrgsDropdown() : closeSidePanel()'
   });
 }
 
@@ -48,6 +48,7 @@ function sidepanel () {
       lineHeight: 1.5
     },
     ngClass: '{"nav-sidepanel--slide-in": sidePanelIsShown, "nav-sidepanel--slide-out": !sidePanelIsShown}',
+    ngClick: 'orgDropdownIsShown && closeOrgsDropdown()',
     dataTestId: 'sidepanel'
   }, [
     organizationSelector(),
@@ -113,7 +114,7 @@ function organizationSelector () {
       transition: 'background-color 0.1s ease-in-out'
     },
     ngClass: 'orgDropdownIsShown ? "nav-sidepanel__header--is-active": ""',
-    ngClick: 'toggleOrgsDropdown()'
+    ngClick: '!orgDropdownIsShown && openOrgsDropdown($event);'
   }, [
     currOrgIcon,
     currOrgText,

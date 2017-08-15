@@ -56,8 +56,17 @@ angular.module('contentful')
         $scope.sidePanelIsShown = true;
       };
 
-      $scope.toggleOrgsDropdown = function () {
-        $scope.orgDropdownIsShown = !$scope.orgDropdownIsShown;
+      $scope.openOrgsDropdown = function ($event) {
+        if (!$scope.orgDropdownIsShown) {
+          $scope.orgDropdownIsShown = true;
+
+          // Don't bubble click event to container that would close the dropdown
+          if ($event) { $event.stopPropagation(); }
+        }
+      };
+
+      $scope.closeOrgsDropdown = function () {
+        $scope.orgDropdownIsShown = false;
       };
 
       $scope.gotoOrgSettings = function () {

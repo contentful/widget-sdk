@@ -165,7 +165,7 @@ describe('cfNavSidepanel directive', () => {
     });
 
     it('hides org list dropdown', function () {
-      this.$scope.toggleOrgsDropdown();
+      this.$scope.openOrgsDropdown();
       this.$scope.openSidePanel();
       this.$scope.$apply();
       this.expectDropdownVisibility(false);
@@ -174,29 +174,36 @@ describe('cfNavSidepanel directive', () => {
 
   describe('#closeSidePanel', function () {
     it('toggles sidepanel visibility based on a property on scope', function () {
-      const expectSidePanelVisibility =
-        expectVisibility(this.$sidePanel, 'nav-sidepanel--slide-in', 'nav-sidepanel--slide-out');
-
       this.$scope.openSidePanel();
       this.$scope.closeSidePanel();
       this.$scope.$apply();
       expect(this.$scope.sidePanelIsShown).toBe(false);
-      expectSidePanelVisibility(false);
+      this.expectSidePanelVisibility(false);
     });
   });
 
-  describe('#toggleOrgsDropdown', function () {
-    it('toggles org dropdown visibility based on a property on scope', function () {
-      const expectDropdownVisibility = expectVisibility(
-        this.$sidePanel.find('.nav-sidepanel__org-list-container'),
-        'nav-sidepanel__org-list-container--is-visible',
-        'nav-sidepanel__org-list-container--is-not-visible'
-      );
-
-      expectDropdownVisibility(false);
-      this.$scope.toggleOrgsDropdown();
+  describe('#openOrgsDropdown', function () {
+    it('shows dropdown', function () {
+      this.expectDropdownVisibility(false);
+      this.$scope.openOrgsDropdown();
       this.$apply();
-      expectDropdownVisibility(true);
+      this.expectDropdownVisibility(true);
+    });
+
+    it('stops event propagation', function () {
+      const stopPropagation = sinon.stub();
+      this.$scope.openOrgsDropdown({stopPropagation});
+      sinon.assert.calledOnce(stopPropagation);
+    });
+  });
+
+  describe('#closeOrgsDropdown', function () {
+    it('hides dropdown', function () {
+      this.$scope.openOrgsDropdown();
+      this.$apply();
+      this.$scope.closeOrgsDropdown();
+      this.$apply();
+      this.expectDropdownVisibility(false);
     });
   });
 
