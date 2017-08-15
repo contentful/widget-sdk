@@ -27,7 +27,7 @@ angular.module('contentful')
             $scope.subtitle = 'in ' + navState.org.name;
           }],
           [NavStates.OrgSettings, function () {
-            $scope.title = 'Organization Settings';
+            $scope.title = 'Organization settings';
             $scope.subtitle = 'in ' + navState.org.name;
           }],
           [NavStates.NewOrg, function () {
@@ -35,7 +35,7 @@ angular.module('contentful')
             $scope.subtitle = undefined;
           }],
           [NavStates.UserProfile, function () {
-            $scope.title = 'User Profile';
+            $scope.title = 'User profile';
             $scope.subtitle = undefined;
           }],
           [NavStates.Default, function () {
