@@ -1,6 +1,7 @@
 import {State as EntityState} from 'data/CMA/EntityState';
 import {caseof as caseofEq} from 'libs/sum-types/caseof-eq';
 import {constant} from 'lodash';
+export {default as Color} from 'libs/color';
 
 /**
  * This module exports CSS color values.

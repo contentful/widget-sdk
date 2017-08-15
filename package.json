@@ -33,6 +33,7 @@
     "browserify": "^13.1.0",
     "browserify-pegjs": "~0.8.0-2",
     "codemirror": "^5.24.2",
+    "color": "^2.0.0",
     "element-resize-detector": "^1.1.10",
     "file-size": "^1.0.0",
     "flat": "^4.0.0",

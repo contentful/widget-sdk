@@ -23,6 +23,10 @@ angular.module('cf.ui')
  */
 .directive('cfLoader', ['require', function (require) {
   var h = require('utils/hyperscript').h;
+  var spinner = require('ui/Components/Spinner').default;
+  var Layout = require('ui/Layout');
+  var hspace = Layout.hspace;
+  var container = Layout.container;
 
   return {
     restrict: 'E',
@@ -38,8 +42,11 @@ angular.module('cf.ui')
       ariaLabel: 'loader-interstitial'
     }, [
       h('.loader__container', [
-        h('.loader__spinner'),
-        h('.loader__message', ['{{loaderMsg}}'])
+        spinner({ diameter: '36px' }),
+        hspace('10px'),
+        container({ fontSize: '2em' }, [
+          '{{loaderMsg}}'
+        ])
       ])
     ]),
     controller: ['$scope', 'require', function ($scope, require) {
