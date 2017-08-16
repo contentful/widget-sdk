@@ -8,6 +8,7 @@ angular.module('contentful').
       authContext: null,
       spaceContext: null,
       setTokenLookup: function (tokenLookup, space) {
+        console.log(tokenLookup);
         this._tokenLookup = tokenLookup;
         try {
           this.authContext = worf(tokenLookup);

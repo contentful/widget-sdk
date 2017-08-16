@@ -458,6 +458,23 @@ describe('Access Checker', function () {
       });
     });
 
+    describe('#canCreateOrganization', function () {
+      beforeEach(function () {
+        TokenStore.user$ = K.createMockProperty();
+      });
+
+      it('maps to TokenStore.user$.canCreateOrganization', function () {
+        TokenStore.user$.set({ canCreateOrganization: true });
+        expect(ac.canCreateOrganization()).toEqual(true);
+        TokenStore.user$.set({ canCreateOrganization: false });
+        expect(ac.canCreateOrganization()).toEqual(false);
+      });
+      it('defaults to false', function () {
+        TokenStore.user$.set(null);
+        expect(ac.canCreateOrganization()).toEqual(false);
+      });
+    });
+
     describe('#wasForbidden', function () {
       it('returns callback function', function () {
         expect(_.isFunction(ac.wasForbidden)).toBe(true);

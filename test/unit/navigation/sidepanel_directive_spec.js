@@ -11,6 +11,7 @@ describe('cfNavSidepanel directive', () => {
 
   const accessChecker = {
     canCreateSpaceInOrganization: sinon.stub(),
+    canCreateOrganization: sinon.stub(),
     isInitialized$: K.createMockProperty(true)
   };
 
@@ -109,6 +110,7 @@ describe('cfNavSidepanel directive', () => {
   afterEach(function () {
     // reset stubs
     accessChecker.canCreateSpaceInOrganization.reset();
+    accessChecker.canCreateOrganization.reset();
     OrganizationRoles.isOwnerOrAdmin.reset();
     Navigator.go.reset();
     navState$.set(new NavStates.Default());
@@ -118,9 +120,11 @@ describe('cfNavSidepanel directive', () => {
     const org = this.orgs[2];
     OrganizationRoles.isOwnerOrAdmin.returns(true);
     accessChecker.canCreateSpaceInOrganization.returns(true);
-    this.emulateSettingsPage(org);
+    accessChecker.canCreateOrganization.returns(true);
+    this.emulateSettingsPage(true, org);
     this.$scope.$apply();
     this.verifyScopePropsBasedOnOrg(org, true, true, true);
+    expect(this.$scope.canCreateOrg).toEqual(true);
   });
 
   it('grabs orgs from the organizatons$ stream', function () {
