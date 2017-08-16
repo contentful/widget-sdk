@@ -1,6 +1,6 @@
 import { h } from 'utils/hyperscript';
 import { byName as colors } from 'Styles/Colors';
-import logo from 'svg/logo-label'
+import logo from 'svg/logo-label';
 
 const navPadding = '15px';
 

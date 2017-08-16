@@ -18,8 +18,8 @@ export default function () {
         dataUserEmail: '{{user.email}}',
         style: {
           borderRadius: '50%',
-          width: '24px',
-          height: '24px'
+          width: '25px',
+          height: '25px'
         }
       }),
       h('span', {
