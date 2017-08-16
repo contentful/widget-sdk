@@ -6,7 +6,7 @@
  */
  angular.module('contentful')
 .directive('cfProfileNav', ['require', function (require) {
-  var navBar = require('app/NavBar').default;
+  var navBar = require('navigation/templates/NavBar').default;
 
   return {
     template: template(),
@@ -32,7 +32,7 @@
         sref: 'account.profile.organization_memberships',
         dataViewType: 'profile-organizations'
       }, {
-        title: 'Access Tokens',
+        title: 'OAuth Tokens',
         icon: 'nav-user-oauth',
         sref: 'account.profile.access_grants',
         dataViewType: 'profile-tokens'

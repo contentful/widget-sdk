@@ -13,12 +13,12 @@ angular.module('contentful')
   var tokenStore = require('services/TokenStore');
   var spacesByOrg$ = tokenStore.spacesByOrganization$;
   var orgs$ = tokenStore.organizations$;
-  var spaceContext = require('spaceContext');
   var showCreateSpaceModal = require('services/CreateSpace').showDialog;
   var K = require('utils/kefir');
+  var NavStates = require('navigation/NavState').NavStates;
+  var navState$ = require('navigation/NavState').navState$;
   var Navigator = require('states/Navigator');
-  var $state = require('$state');
-  var sidepanelTemplate = require('navigation/Sidepanel.template').default();
+  var sidepanelTemplate = require('navigation/templates/Sidepanel.template').default();
 
   return {
     restrict: 'E',
@@ -29,26 +29,45 @@ angular.module('contentful')
     replace: true,
     controller: ['$scope', function ($scope) {
       $scope.orgDropdownIsShown = false;
+      var navState;
 
-      K.onValueScope($scope, orgs$.combine(accessChecker.isInitialized$), function (values) {
-        $scope.orgs = values[1] && values[0] || [];
-        setCurrOrg(getCurrCommittedOrg());
+      K.onValueScope($scope, orgs$, function (orgs) {
+        $scope.orgs = orgs || [];
       });
       K.onValueScope($scope, spacesByOrg$, function (spacesByOrg) {
         $scope.spacesByOrg = spacesByOrg || {};
       });
 
-      // TODO add kefir property
-      $scope.$watch(function () {
-        return _.get(spaceContext, 'space.data');
-      }, function (currSpace) {
-        $scope.currSpace = currSpace;
+      K.onValueScope($scope, navState$.combine(accessChecker.isInitialized$), function (values) {
+        if (values[1]) {
+          navState = values[0];
+          $scope.currSpace = navState.space;
+          setCurrOrg(navState.org || _.get($scope, 'orgs[0]'));
+        }
       });
 
       $scope.setCurrOrg = setCurrOrg;
-      $scope.closeSidePanel = closeSidePanel;
-      $scope.openSidePanel = openSidePanel;
-      $scope.toggleOrgsDropdown = toggleOrgsDropdown;
+      $scope.closeSidePanel = function () {
+        $scope.sidePanelIsShown = false;
+      };
+
+      $scope.openSidePanel = function () {
+        $scope.orgDropdownIsShown = false;
+        $scope.sidePanelIsShown = true;
+      };
+
+      $scope.openOrgsDropdown = function ($event) {
+        if (!$scope.orgDropdownIsShown) {
+          $scope.orgDropdownIsShown = true;
+
+          // Don't bubble click event to container that would close the dropdown
+          if ($event) { $event.stopPropagation(); }
+        }
+      };
+
+      $scope.closeOrgsDropdown = function () {
+        $scope.orgDropdownIsShown = false;
+      };
 
       $scope.gotoOrgSettings = function () {
         $scope.closeSidePanel();
@@ -77,45 +96,19 @@ angular.module('contentful')
 
       function setCurrOrg (org) {
         $scope.currOrg = org;
-        refreshPermissions();
+        refreshPermissions(navState, org);
       }
 
-      function refreshPermissions () {
-        var org = $scope.currOrg;
-        if (org) {
+      function refreshPermissions (navState, org) {
+        if (navState && org) {
           var orgId = org.sys.id;
 
           $scope.canGotoOrgSettings = orgRoles.isOwnerOrAdmin(org);
           $scope.canCreateSpaceInCurrOrg = accessChecker.canCreateSpaceInOrganization(orgId);
-          $scope.viewingOrgSettings = $state.includes('account') && $state.params.orgId === orgId;
+          $scope.viewingOrgSettings =
+            (navState instanceof NavStates.OrgSettings) && navState.org.sys.id === orgId;
           $scope.twoLetterOrgName = org.name.slice(0, 2).toUpperCase();
         }
-      }
-
-      function openSidePanel () {
-        $scope.orgDropdownIsShown = false;
-        setCurrOrg(getCurrCommittedOrg());
-        $scope.sidePanelIsShown = true;
-      }
-
-      function closeSidePanel () {
-        $scope.sidePanelIsShown = false;
-      }
-
-      function toggleOrgsDropdown () {
-        $scope.orgDropdownIsShown = !$scope.orgDropdownIsShown;
-      }
-
-      function getCurrCommittedOrg () {
-        // return org based on orgId in url or based on what's in spaceContext or finally
-        // just return the 1st org from list of orgs
-        return getOrgById($state.params.orgId) ||
-          _.get(spaceContext, 'organizationContext.organization') ||
-          _.get($scope, 'orgs[0]');
-      }
-
-      function getOrgById (orgId) {
-        return orgId && _.find($scope.orgs, function (org) { return org.sys.id === orgId; });
       }
     }]
   };

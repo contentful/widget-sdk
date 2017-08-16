@@ -4,7 +4,7 @@ angular.module('contentful')
 
 .directive('cfAccountDropdown', ['require', function (require) {
   return {
-    template: require('account/AccountDropdown.template').default(),
+    template: require('navigation/templates/AccountDropdown.template').default(),
     restrict: 'E',
     scope: {user: '='},
     controller: 'cfAccountDropdownController'

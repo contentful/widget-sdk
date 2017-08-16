@@ -2,7 +2,7 @@ import {h} from 'utils/hyperscript';
 
 /**
  * @ngdoc method
- * @name app/NavBar
+ * @name navigation/templates/NavBar
  * @param {Object[]} listItems
  * @description
  *
