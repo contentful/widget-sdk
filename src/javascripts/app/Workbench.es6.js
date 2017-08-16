@@ -55,11 +55,13 @@ export function simple (title, icon, actions, content) {
  * @returns {string}
  */
 export function header (title, icon, actions, afterTitle) {
-  return h('header.workbench-header', [
-    h('cf-breadcrumbs'),
-    icon && h('cf-icon.workbench-header__icon', {name: icon}),
-    h('h1.workbench-header__title', [title]),
-    afterTitle,
-    actions && h('.workbench-header__actions', actions)
+  return h('.workbench-header__wrapper', [
+    h('header.workbench-header', [
+      h('cf-breadcrumbs'),
+      icon && h('cf-icon.workbench-header__icon', {name: icon}),
+      h('h1.workbench-header__title', [title]),
+      afterTitle,
+      actions && h('.workbench-header__actions', actions)
+    ])
   ]);
 }
