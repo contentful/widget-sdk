@@ -14,8 +14,6 @@
     scope: {},
     controllerAs: 'nav',
     controller: ['$scope', function ($scope) {
-      var Navigator = require('states/Navigator');
-      var modalDialog = require('modalDialog');
       var $stateParams = require('$stateParams');
       var tokenStore = require('services/TokenStore');
       var OrganizationRoles = require('services/OrganizationRoles');
@@ -37,13 +35,6 @@
         tokenStore.getOrganization(orgId).then(function (org) {
           nav.hasOffsiteBackup = hasOffsiteBackup(org);
           nav.hasBillingTab = org.isBillable && OrganizationRoles.isOwnerOrAdmin(org);
-        }, function () {
-          modalDialog.openConfirmDialog({
-            title: 'Organization not found',
-            message: 'The organization you are looking for cannot be found. Click \'OK\' to go to homepage.'
-          }).then(function () {
-            Navigator.go({ path: ['home'] });
-          });
         });
       }
     }]
