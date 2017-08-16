@@ -61,11 +61,14 @@ function sidepanel () {
 function organizationSelector () {
   const currOrgIcon = h('p.nav-sidepanel__org-img', {
     style: {
-      padding: '10px',
+      flex: '0 0 35px',
+      height: '35px',
       background: colors.elementDarkest,
       color: colors.textDark,
       fontWeight: 'bold',
       fontSize: '0.9em',
+      textAlign: 'center',
+      lineHeight: '35px',
       borderRadius: '2px',
       marginBottom: 0,
       marginRight: '15px'
@@ -75,7 +78,6 @@ function organizationSelector () {
   const currOrgText = h('.nav-sidepanel__org-selector', {
     style: {
       flexGrow: 2,
-      width: '100%',
       minWidth: 0
     }
   }, [
@@ -95,6 +97,7 @@ function organizationSelector () {
         style: {
           color: colors.textMid,
           marginBottom: 0,
+          paddingRight: '10px',
           whiteSpace: 'nowrap',
           overflow: 'hidden',
           textOverflow: 'ellipsis'
@@ -107,9 +110,10 @@ function organizationSelector () {
   return h('.nav-sidepanel__header', {
     style: {
       display: 'flex',
-      minHeight: '70px',
+      alignItems: 'center',
+      height: '70px',
       borderBottom: `1px solid ${colors.elementDark}`,
-      padding: `15px ${padding}`,
+      padding: `0 ${padding}`,
       cursor: 'pointer',
       transition: 'background-color 0.1s ease-in-out'
     },
