@@ -112,6 +112,7 @@ function organizationSelector () {
       display: 'flex',
       alignItems: 'center',
       height: '70px',
+      flexShrink: 0,
       borderBottom: `1px solid ${colors.elementDark}`,
       padding: `0 ${padding}`,
       cursor: 'pointer',
@@ -195,13 +196,15 @@ function orgSpaces () {
   return h('.nav-sidepanel__spaces-container', {
     style: {
       display: 'flex',
-      flexDirection: 'column'
+      flexDirection: 'column',
+      height: '100%'
     }
   }, [
     h('.nav-sidepanel__spaces-header', {
       ngIf: 'spacesByOrg[currOrg.sys.id].length',
       style: {
         display: 'flex',
+        flexShrink: 0,
         justifyContent: 'space-between',
         padding,
         paddingBottom: 0
