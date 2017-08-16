@@ -1,5 +1,6 @@
 import { h } from 'utils/hyperscript';
 import { byName as colors } from 'Styles/Colors';
+import logo from 'svg/logo-label'
 
 const navPadding = '15px';
 
@@ -15,9 +16,9 @@ export default function () {
       width: '280px'
     }
   }, [
-    h('.app-top-bar__logo-element', {
-      cfCustomLogo: 'cf-custom-logo'
-    }),
+    h('.app-top-bar__logo-element', [
+      logo
+    ]),
     h('.nav-sidepanel__trigger__text', {
       style: {
         display: 'flex',

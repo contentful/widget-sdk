@@ -256,16 +256,15 @@ function noSpacesMsg () {
     dataTestId: 'sidepanel-no-spaces',
     style: {
       padding,
-      paddingBottom: '40px',
+      paddingBottom: '28px',
       margin: 0,
       textAlign: 'center'
     }
   }, [
     h('cf-icon', {
       name: 'sidepanel-spaces-advice',
-      scale: '1.2',
       style: {
-        margin: '20px 0',
+        margin: '20px 0 14px',
         fill: colors.greenDark,
         display: 'inline-block'
       }
@@ -303,7 +302,7 @@ function orgActions () {
     dataTestId: 'sidepanel-org-actions',
     style: {
       flexGrow: 1,
-      paddingTop: '10px'
+      padding: '12px 0'
     }
   }, [
     separator,

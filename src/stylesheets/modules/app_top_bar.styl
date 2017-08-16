@@ -32,10 +32,8 @@ $app-top-bar__action-color()
     padding: 0 1em
 
   &__logo-element
-    width: 29px
-    height: 29px
-    background-image: url('/app/svg/logo-label.svg')
-    background-size: 29px 29px
+    width: 21px
+    height: 24px
     flex: 1 0 auto
 
   &__logo-text
@@ -61,6 +59,7 @@ $app-top-bar__action-color()
       border-left-color: transparent
       border-right-color: transparent
       border-bottom-color: transparent
+      transition: border-top-color 0.1s ease-in-out
     &:hover, &.is-active
       > .triangle-down
         border-top-color: $colors.blue-mid
@@ -70,6 +69,8 @@ $app-top-bar__action-color()
     flex-direction: column
     justify-content: center
     padding: 0 20px
+    &:first-child
+      padding-left: 30px
     height: 100%
     a
       $app-top-bar__action-color()
