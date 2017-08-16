@@ -31,10 +31,15 @@ $app-top-bar__action-color()
     align-items: center
     padding: 0 1em
 
-  &__logo-element
+  &__logo-element,
+  &__logo-element-old
+    flex: 1 0 auto
     width: 21px
     height: 24px
-    flex: 1 0 auto
+
+  &__logo-element-old
+    background-image: url('/app/svg/logo-label.svg')
+    background-size: 21px 24px
 
   &__logo-text
     $app-top-bar__action-color()
