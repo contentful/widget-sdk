@@ -122,7 +122,7 @@ function organizationSelector () {
   }, [
     currOrgIcon,
     currOrgText,
-    h('span', { style: extend(triangleDown(), { alignSelf: 'center' }) }),
+    h('span', { style: extend(triangleDown()) }),
     orgListDropdown()
   ]);
 }
@@ -150,7 +150,7 @@ function orgListDropdown () {
         width: '100%',
         overflow: 'hidden',
         overflowY: 'auto',
-        paddingBottom: '12px',
+        paddingBottom: '6px',
         lineHeight: 1.5
       }
     }, [
@@ -159,10 +159,11 @@ function orgListDropdown () {
           fontWeight: 600,
           marginBottom: 0,
           padding,
-          paddingBottom: '10px',
+          paddingBottom: '8px',
           textTransform: 'uppercase',
           letterSpacing: '1px',
-          fontSize: '0.9em'
+          fontSize: '0.9em',
+          lineHeight: '1'
         }
       }, ['Organizations']),
       h('p.nav-sidepanel__org-name.u-truncate', {
@@ -180,7 +181,7 @@ function orgListDropdown () {
     ]),
     h('a.text-link', {
       style: {
-        padding: `${padding} ${padding} ${padding}`,
+        padding: `14px ${padding} ${padding}`,
         display: 'block',
         borderTop: `1px solid ${colors.elementMid}`
       },
