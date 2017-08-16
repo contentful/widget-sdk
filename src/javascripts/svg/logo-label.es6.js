@@ -36,4 +36,4 @@ export default h('svg', {
       fill: '#cd4739'
     })
   ])
-])
+]);
