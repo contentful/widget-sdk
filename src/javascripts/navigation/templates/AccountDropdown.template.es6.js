@@ -3,7 +3,7 @@ import { triangleDown } from 'Styles/Helpers';
 import { extend, omit } from 'lodash';
 
 export default function () {
-  return h('div.account-dropdown.app-top-bar__child', [
+  return h('div.account-dropdown.app-top-bar__child', { style: {position: 'relative'} }, [
     h('a.app-top-bar__menu-trigger.app-top-bar__account-menu-trigger', {
       role: 'button',
       cfContextMenuTrigger: 'cf-context-menu-trigger',
@@ -30,7 +30,7 @@ export default function () {
     ]),
     h('div.context-menu.x--top-bar.x--arrow-right', {
       role: 'menu',
-      cfContextMenu: 'bottom-right',
+      cfContextMenu: 'bottom-right-fit',
       ariaLabel: 'Account Menu',
       dataTestId: 'account-menu',
       style: 'min-width: 200px;'
