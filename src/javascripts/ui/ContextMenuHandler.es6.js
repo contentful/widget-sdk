@@ -156,6 +156,14 @@ function getPositioning (position) {
       my: 'right top',
       at: 'right bottom+13'
     },
+    /** Why 'fit' for `collsion`? On zoom levels above and below 100% (but not at all levels) the
+        user account dropdown was being positioned outside the app window
+     **/
+    'bottom-right-fit': {
+      my: 'right top',
+      at: 'right bottom+13',
+      collision: 'fit'
+    },
     'bottom-left': {
       my: 'left top',
       at: 'left bottom+13'
