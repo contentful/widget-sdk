@@ -31,7 +31,9 @@ function checkProps (props) {
   }
   forEach(props, (value, key) => {
     if (key === 'style') {
-      // nothing to check
+      if (!isPlainObject(value)) {
+        throw new TypeError('Style value must be a plain object');
+      }
     } else if (key === 'ref') {
       if (typeof value !== 'function') {
         throw new TypeError('Ref handler must be a function');
