@@ -12,6 +12,7 @@ angular.module('contentful')
   var htmlEncode = require('encoder').htmlEncode;
   var Tracking = require('analytics/events/SearchAndViews');
   var K = require('utils/kefir');
+  var isFeatureEnabled = require('analytics/OrganizationTargeting').default;
 
   $scope.tempFreeViews = [];
   $scope.folderStates = TheStore.get('folderStates') || {};
@@ -190,8 +191,7 @@ angular.module('contentful')
     $scope.folderSortOptions.disabled = !can;
   });
 
-  // TODO this should come from feature flag
-  $scope.canUseCollections = true;
+  $scope.canUseCollections = isFeatureEnabled('collections', spaceContext.space);
 
   $scope.viewSortOptions = {
     connectWith: '[ui-sortable=viewSortOptions]',
