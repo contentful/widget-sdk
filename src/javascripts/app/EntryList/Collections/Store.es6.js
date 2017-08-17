@@ -153,7 +153,7 @@ function createPersistor (spaceEndpoint) {
     return spaceEndpoint(assign(opts, {
       path: ['__user_settings']
     }), {
-      'x-contentful-enable-experimental-feature': 'user_settings'
+      'x-contentful-enable-experimental-feature': 'user_space_settings'
     });
   }
 }
