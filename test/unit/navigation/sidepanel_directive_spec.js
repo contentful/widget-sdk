@@ -29,7 +29,6 @@ describe('cfNavSidepanel directive', () => {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      $provide.value('navigation/stateChangeHandlers', { navState$ });
       $provide.value('services/CreateSpace', CreateSpace);
       $provide.value('states/Navigator', Navigator);
       $provide.value('accessChecker', accessChecker);
@@ -121,7 +120,7 @@ describe('cfNavSidepanel directive', () => {
     OrganizationRoles.isOwnerOrAdmin.returns(true);
     accessChecker.canCreateSpaceInOrganization.returns(true);
     accessChecker.canCreateOrganization.returns(true);
-    this.emulateSettingsPage(true, org);
+    this.emulateSettingsPage(org);
     this.$scope.$apply();
     this.verifyScopePropsBasedOnOrg(org, true, true, true);
     expect(this.$scope.canCreateOrg).toEqual(true);
