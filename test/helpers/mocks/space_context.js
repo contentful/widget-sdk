@@ -31,6 +31,7 @@ angular.module('contentful/mocks')
   const Widgets = require('widgets');
   const MockDocument = require('mocks/entityEditor/Document');
   const createApiKeyRepo = require('data/CMA/ApiKeyRepo').default;
+  const createUiConfigStore = require('data/UiConfig/Store').default;
   const createMockEndpoint = require('mocks/spaceEndpoint').create;
   const CMAClient = require('data/ApiClient');
   const K = require('utils/kefir');
@@ -73,6 +74,9 @@ angular.module('contentful/mocks')
     spaceContext.apiKeyRepo = createApiKeyRepo(spaceContext.endpoint);
     spaceContext.organizationContext = {};
     spaceContext.contentCollections = {state$: K.constant([])};
+    spaceContext.uiConfig = sinon.stubAll(createUiConfigStore(spaceContext));
+    spaceContext.uiConfig.get.returns({});
+    spaceContext.uiConfig.save.resolves({});
 
     return spaceContext;
   }

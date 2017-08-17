@@ -185,10 +185,11 @@ angular.module('contentful')
     $scope.insideInlineEditor = false;
   });
 
-  $scope.$watch('canEditUiConfig && !insideInlineEditor', function (can) {
-    $scope.viewMenuEditable = can;
-    $scope.viewSortOptions.disabled = !can;
-    $scope.folderSortOptions.disabled = !can;
+  $scope.$watch('insideInlineEditor', function (editing) {
+    var canEdit = spaceContext.uiConfig.canEdit && !editing;
+    $scope.viewMenuEditable = canEdit;
+    $scope.viewSortOptions.disabled = !canEdit;
+    $scope.folderSortOptions.disabled = !canEdit;
   });
 
   $scope.canUseCollections = isFeatureEnabled('collections', spaceContext.space);
