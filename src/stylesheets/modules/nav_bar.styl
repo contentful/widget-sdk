@@ -13,9 +13,15 @@
 .nav-bar__link
   display: flex
   align-items: center
-  &.is-active
+  height: 100%
+  border-top: solid 3px transparent
+  border-bottom: solid 3px transparent
+  transition: color 0.1s ease-in-out
+  &:hover, &.is-active
     color: $colors.blue-mid
+  &.is-active
+    border-bottom-color: $colors.blue-mid
 
 .nav-bar__list-label
-  margin: 0 10px
+  margin-left: 10px
 

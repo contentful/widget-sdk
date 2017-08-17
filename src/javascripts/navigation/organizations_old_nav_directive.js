@@ -1,7 +1,7 @@
 angular.module('contentful')
 .directive('cfOrganizationsOldNav', ['require', function (require) {
   return {
-    template: require('account/OrganizationsOldNav').default(),
+    template: require('navigation/templates/OrganizationsOldNav').default(),
     restrict: 'E',
     scope: {},
     controller: 'organizationsNavController',
@@ -56,19 +56,6 @@ angular.module('contentful')
     $state.go('home');
   }
 
-  function makeTabs (org) {
-    return tabs.filter(function (tab) {
-      return !(tab.isHidden && tab.isHidden(org));
-    })
-    .map(function (tab) {
-      return {
-        name: tab.name,
-        testId: 'org-nav-tab-' + tab.name.toLowerCase().replace(/\s+/g, '-'),
-        state: { path: tab.path, params: { orgId: org.sys.id } }
-      };
-    });
-  }
-
   var tabs = [
     {
       name: 'Settings',
@@ -101,6 +88,19 @@ angular.module('contentful')
       }
     }
   ];
+
+  function makeTabs (org) {
+    return tabs.filter(function (tab) {
+      return !(tab.isHidden && tab.isHidden(org));
+    })
+    .map(function (tab) {
+      return {
+        name: tab.name,
+        testId: 'org-nav-tab-' + tab.name.toLowerCase().replace(/\s+/g, '-'),
+        state: { path: tab.path, params: { orgId: org.sys.id } }
+      };
+    });
+  }
 
   function isPaid (org) {
     return ['paid', 'free_paid']

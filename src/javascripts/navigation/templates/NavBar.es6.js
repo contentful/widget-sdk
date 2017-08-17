@@ -2,7 +2,7 @@ import {h} from 'utils/hyperscript';
 
 /**
  * @ngdoc method
- * @name app/NavBar
+ * @name navigation/templates/NavBar
  * @param {Object[]} listItems
  * @description
  *
@@ -64,8 +64,10 @@ function navbarDropdown (data, tabIndex = 0) {
     }, [
       data.icon && h('cf-icon', { name: data.icon }),
       h('span.nav-bar__list-label', [data.title]),
-      h('cf-icon.icon-dd-arrow-down.pull-right', {
-        name: 'dd-arrow-down'
+      h('span.triangle-down', {
+        style: {
+          margin: '2px 0 0 12px'
+        }
       })
     ]),
     h('div.context-menu.x--top-bar', {

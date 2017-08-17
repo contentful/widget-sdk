@@ -59,6 +59,9 @@ function fromAdapter (widgetApi, editor) {
     }
   });
 
+  const offValueChanged = field.onValueChanged(editor.setValue, true);
+  const offStateChanged = editor.onStateChange(updateState);
+
   const controller = {
     undo: undoCmd,
     redo: redoCmd,
@@ -71,9 +74,7 @@ function fromAdapter (widgetApi, editor) {
     }
   };
 
-  const offValueChanged = field.onValueChanged(editor.setValue, true);
-
-  const offStateChanged = editor.onStateChange(function (editorState) {
+  function updateState (editorState) {
     $rootScope.$applyAsync(function () {
       if ('value' in editorState) {
         if (editorState.value) {
@@ -92,7 +93,7 @@ function fromAdapter (widgetApi, editor) {
         state[key] = val;
       });
     });
-  });
+  }
 
   return controller;
 }

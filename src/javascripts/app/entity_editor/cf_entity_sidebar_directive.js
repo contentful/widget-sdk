@@ -22,6 +22,8 @@ angular.module('contentful')
  */
 .directive('cfEntitySidebar', ['require', function (require) {
   var K = require('utils/kefir');
+  var spaceContext = require('spaceContext');
+  var collectionSelector = require('app/EntryList/Collections/Selectors').sidebarSelector;
   return {
     restrict: 'E',
     scope: true,
@@ -62,6 +64,14 @@ angular.module('contentful')
       K.onValueScope($scope, $scope.otDoc.collaborators, function (collaborators) {
         $scope.data.docCollaborators = collaborators;
       });
+
+      K.onValueScope(
+        $scope,
+        collectionSelector($scope.entityInfo.id, spaceContext.contentCollections),
+        function (component) {
+          $scope.collectionsSelector = component;
+        }
+      );
     }]
   };
 }]);

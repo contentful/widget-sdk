@@ -45,7 +45,7 @@ function oldLogoAndSpaceSelector (attrs) {
     h('.app-top-bar--right-separator', {
       style: containerStyle({ paddingRight: padding })
     }, [
-      h('.app-top-bar__logo-element', { cfCustomLogo: 'cf-custom-logo' })
+      h('.app-top-bar__logo-element-old', { cfCustomLogo: 'cf-custom-logo' })
     ]),
     h('cf-space-selector')
   ]);

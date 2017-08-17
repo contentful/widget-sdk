@@ -1,39 +1,50 @@
 import { h } from 'utils/hyperscript';
 import { byName as colors } from 'Styles/Colors';
+import logo from 'svg/logo-label';
 
 const navPadding = '15px';
 
 export default function () {
-  return h('.nav-sidepanel__trigger.app-top-bar--right-separator', {
+  return h('.app-top-bar__sidepanel-trigger', {
     dataTestId: 'sidepanel-trigger',
     style: {
-      height: '100%',
+      cursor: 'pointer',
       display: 'flex',
       alignItems: 'center',
-      padding: `0 ${navPadding}`
+      padding: `0 ${navPadding}`,
+      lineHeight: '1.5',
+      width: '280px'
     }
   }, [
-    h('.app-top-bar__logo-element', {
-      cfCustomLogo: 'cf-custom-logo'
-    }),
+    h('.app-top-bar__logo-element', [
+      logo
+    ]),
     h('.nav-sidepanel__trigger__text', {
       style: {
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
+        flexGrow: 99,
+        overflow: 'hidden',
         justifyContent: 'center',
-        paddingLeft: `${navPadding}`
+        padding: `0 ${navPadding}`
       }
     }, [
-      h('span', {
-        style: { color: colors.textInverted },
+      h('span.u-truncate', {
+        style: { color: '#fff' },
         dataTestId: 'sidepanel-trigger-text-title'
       }, ['{{title}}']),
-      h('span', {
+      h('span.u-truncate', {
         ngIf: 'subtitle',
         style: { color: colors.textLight },
         dataTestId: 'sidepanel-trigger-text-subtitle'
       }, ['{{subtitle}}'])
-    ])
+    ]),
+    h('cf-icon', {
+      name: 'hamburger',
+      style: {
+        fill: 'white'
+      }
+    })
   ]);
 }

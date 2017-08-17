@@ -21,7 +21,29 @@
       cf-view-folder
       ng-class="{'allow-drag': editable(folder)}")
 
-.view-menu-buttons.menu-with-buttons-bottom(ng-if="viewMenuEditable")
+  .view-folder(ng-if="canUseCollections")
+    header.filter-list-header.filter-list-row
+      .filter-list-row-main.filter-list-row-truncate
+        | Collections
+    ul.filter-list
+      li.filter-list-item.filter-list-row(
+        ng-repeat="collection in collections track by collection.id"
+        ng-class="{active: collectionIsActive(collection)}"
+        ng-click="loadCollection(collection)")
+        .filter-list-row-main.filter-list-title(
+          cf-inline-editor="collection"
+          ng-model="collection.name"
+          ng-change="updateCollectionName(collection)"
+          required="true")
+          | {{ collection.name }}
+        .filter-list-row-end.filter-list-row-hover.hover-remove(ng-hide="insideInlineEditor")
+          i.fa.fa-pencil(cf-click-local="editName(collection)")
+          | &nbsp;
+          i.fa.fa-close(cf-click-local="removeCollection(collection.id)")
+
+
+
+.view-menu-buttons.menu-with-buttons-bottom(ng-if="!insideInlineEditor && (viewMenuEditable || canUseCollections)")
   .dropdown-btn
     i.fa.fa-plus.dropdown-toggle(role="button"
       cf-context-menu-trigger
@@ -30,5 +52,9 @@
       role="menu" cf-context-menu="top-right"
       aria-label="Add View menu" data-test-id="add-view-menu")
       ul.context-menu__items
-        li(role="menuitem" ng-click="addFolder()") Add Folder
-        li(role="menuitem" ng-click="addViewToDefault()") Save current view as…
+        li(role="menuitem" ng-click="addFolder()" ng-if="viewMenuEditable")
+          | Add Folder
+        li(role="menuitem" ng-click="addViewToDefault()" ng-if="viewMenuEditable")
+          | Save current view
+        li(role="menuitem" ng-click="addCollection()" ng-if="canUseCollections")
+          | Add collection

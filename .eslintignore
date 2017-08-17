@@ -10,8 +10,6 @@ test/unit/components/shared/accordion_controller_spec.js
 test/unit/components/shared/cf_form_widget_directive_spec.js
 test/unit/components/shared/cf_search_directive_spec.js
 test/unit/components/shared/cf_validation_error_display_spec.js
-test/unit/components/shared/view_menu_controller_spec.js
-test/unit/components/tabs/asset_list/asset_list_actions_controller_spec.js
 test/unit/components/field_dialog/appearance_controller_spec.js
 test/unit/components/search.js
 test/unit/forms/cf_null_empty_input_spec.js
@@ -164,7 +162,6 @@ src/javascripts/services/revision.js
 src/javascripts/services/validation_dialog_error_messages.js
 src/javascripts/services/validation_views.js
 src/javascripts/services/moment.js
-src/javascripts/services/authorization.js
 src/javascripts/services/editing_interfaces_helpers.js
 src/javascripts/services/features.js
 src/javascripts/services/filepicker.js

@@ -107,7 +107,7 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
       return {
         name: contentType.name,
         displayField: contentType.displayField,
-        sys: {id: dotty.get(contentType, 'sys.id')},
+        sys: {id: _.get(contentType, 'sys.id')},
         fields: contentType.fields
       };
     });
@@ -165,7 +165,7 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
   }
 
   function getFieldEntriesIndex (field, entries) {
-    var id = dotty.get(field, 'sys.id');
+    var id = _.get(field, 'sys.id');
     return _.findIndex(entries, function (entry) { return entry.sys.id === id; });
   }
 
@@ -173,10 +173,10 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
     return _.map(entries, function (entry) {
       return {
         sys: {
-          id: dotty.get(entry, 'sys.id'),
+          id: _.get(entry, 'sys.id'),
           contentType: {
             sys: {
-              id: dotty.get(entry, 'sys.contentType.sys.id')
+              id: _.get(entry, 'sys.contentType.sys.id')
             }
           }
         },
@@ -214,9 +214,9 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
   function parseEntryLink (field) {
     return {
       sys: {
-        id: dotty.get(field, 'sys.id'),
+        id: _.get(field, 'sys.id'),
         type: 'Link',
-        linkType: dotty.get(field, 'sys.type')
+        linkType: _.get(field, 'sys.type')
       }
     };
   }
@@ -224,9 +224,9 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
   function parseAssetLink (field) {
     return {
       sys: {
-        id: dotty.get(field, 'sys.id'),
-        type: dotty.get(field, 'sys.type'),
-        linkType: dotty.get(field, 'sys.linkType')
+        id: _.get(field, 'sys.id'),
+        type: _.get(field, 'sys.type'),
+        linkType: _.get(field, 'sys.linkType')
       }
     };
   }
@@ -234,7 +234,7 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
   function parseAssets (assets) {
     return _.map(assets, function (asset) {
       return {
-        sys: {id: dotty.get(asset, 'sys.id')},
+        sys: {id: _.get(asset, 'sys.id')},
         fields: parseAssetFields(asset.fields)
       };
     });
@@ -279,18 +279,16 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
   }
 
   function isEntryLink (item) {
-    return dotty.get(item, 'sys.type') === 'Entry' ||
-           dotty.get(item, 'sys.linkType') === 'Entry';
+    return _.get(item, 'sys.type') === 'Entry' ||
+           _.get(item, 'sys.linkType') === 'Entry';
   }
 
   function isAssetLink (item) {
-    return dotty.get(item, 'sys.type') === 'Asset' ||
-           dotty.get(item, 'sys.linkType') === 'Asset';
+    return _.get(item, 'sys.type') === 'Asset' ||
+           _.get(item, 'sys.linkType') === 'Asset';
   }
 
   function isEntityArray (item) {
-    return _.isArray(item) && item.length > 0 && dotty.exists(item[0], 'sys');
+    return _.isArray(item) && item.length > 0 && typeof item[0].sys === 'object';
   }
-
-
 }]);

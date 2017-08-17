@@ -1,12 +1,15 @@
 import { h } from 'utils/hyperscript';
 import { byName as colors, genBoxShadow } from 'Styles/Colors';
+import { triangleDown } from 'Styles/Helpers';
+import { extend } from 'lodash';
 
 const padding = '20px';
 
 export default function () {
   return h('.nav-sidepanel-container', {
     style: {
-      zIndex: 1000
+      zIndex: 1000,
+      position: 'absolute'
     }
   }, [
     sidepanelBackground(),
@@ -21,13 +24,13 @@ function sidepanelBackground () {
       top: 0,
       left: 0,
       backgroundColor: 'rgba(12, 20, 28, 0.75)',
-      height: '100%',
-      width: '100%',
+      height: '100vh',
+      width: '100vw',
       zIndex: 0,
       transition: 'all 0.2s ease-in-out'
     },
     ngClass: 'sidePanelIsShown ? "nav-sidepanel__bg--is-visible" : "nav-sidepanel__bg--is-not-visible"',
-    ngClick: 'closeSidePanel()'
+    ngClick: 'orgDropdownIsShown ? closeOrgsDropdown() : closeSidePanel()'
   });
 }
 
@@ -39,12 +42,13 @@ function sidepanel () {
       display: 'flex',
       flexDirection: 'column',
       width: '350px',
-      height: '100%',
+      height: '100vh',
       background: colors.elementLightest,
       zIndex: 1,
       lineHeight: 1.5
     },
     ngClass: '{"nav-sidepanel--slide-in": sidePanelIsShown, "nav-sidepanel--slide-out": !sidePanelIsShown}',
+    ngClick: 'orgDropdownIsShown && closeOrgsDropdown()',
     dataTestId: 'sidepanel'
   }, [
     organizationSelector(),
@@ -57,11 +61,14 @@ function sidepanel () {
 function organizationSelector () {
   const currOrgIcon = h('p.nav-sidepanel__org-img', {
     style: {
-      padding: '10px',
+      flex: '0 0 35px',
+      height: '35px',
       background: colors.elementDarkest,
       color: colors.textDark,
       fontWeight: 'bold',
       fontSize: '0.9em',
+      textAlign: 'center',
+      lineHeight: '35px',
       borderRadius: '2px',
       marginBottom: 0,
       marginRight: '15px'
@@ -90,6 +97,7 @@ function organizationSelector () {
         style: {
           color: colors.textMid,
           marginBottom: 0,
+          paddingRight: '10px',
           whiteSpace: 'nowrap',
           overflow: 'hidden',
           textOverflow: 'ellipsis'
@@ -99,33 +107,23 @@ function organizationSelector () {
     ])
   ]);
 
-  const triangleDown = h('span', {
-    style: {
-      alignSelf: 'center',
-      border: `4px solid ${colors.textDark}`,
-      borderLeftColor: 'transparent',
-      borderRightColor: 'transparent',
-      borderBottomColor: 'transparent'
-    }
-  });
-
   return h('.nav-sidepanel__header', {
     style: {
       display: 'flex',
-      flexGrow: 1,
-      maxHeight: '70px',
-      minHeight: '70px',
+      alignItems: 'center',
+      height: '70px',
+      flexShrink: 0,
       borderBottom: `1px solid ${colors.elementDark}`,
-      padding: `15px ${padding}`,
+      padding: `0 ${padding}`,
       cursor: 'pointer',
       transition: 'background-color 0.1s ease-in-out'
     },
     ngClass: 'orgDropdownIsShown ? "nav-sidepanel__header--is-active": ""',
-    ngClick: 'toggleOrgsDropdown()'
+    ngClick: '!orgDropdownIsShown && openOrgsDropdown($event);'
   }, [
     currOrgIcon,
     currOrgText,
-    triangleDown,
+    h('span', { style: extend(triangleDown()) }),
     orgListDropdown()
   ]);
 }
@@ -150,9 +148,10 @@ function orgListDropdown () {
     h('.nav-sidepanel__org-list', {
       style: {
         maxHeight: '184px',
+        width: '100%',
         overflow: 'hidden',
         overflowY: 'auto',
-        paddingBottom: '12px',
+        paddingBottom: '6px',
         lineHeight: 1.5
       }
     }, [
@@ -161,13 +160,14 @@ function orgListDropdown () {
           fontWeight: 600,
           marginBottom: 0,
           padding,
-          paddingBottom: '10px',
+          paddingBottom: '8px',
           textTransform: 'uppercase',
           letterSpacing: '1px',
-          fontSize: '0.9em'
+          fontSize: '0.9em',
+          lineHeight: '1'
         }
       }, ['Organizations']),
-      h('p.nav-sidepanel__org-name', {
+      h('p.nav-sidepanel__org-name.u-truncate', {
         ngRepeat: 'org in orgs track by org.sys.id',
         ngClass: '{"nav-sidepanel__org-name--is-active": currOrg && currOrg.sys.id === org.sys.id}',
         ngClick: 'setCurrOrg(org)',
@@ -182,22 +182,30 @@ function orgListDropdown () {
     ]),
     h('a.text-link', {
       style: {
-        padding: `${padding} ${padding} ${padding}`,
+        padding: `14px ${padding} ${padding}`,
         display: 'block',
         borderTop: `1px solid ${colors.elementMid}`
       },
       ngClick: 'createNewOrg()',
+      ngShow: 'canCreateOrg',
       dataTestId: 'sidepanel-create-org-link'
     }, ['+ Create organization'])
   ]);
 }
 
 function orgSpaces () {
-  return h('.nav-sidepanel__spaces-container', [
+  return h('.nav-sidepanel__spaces-container', {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100%'
+    }
+  }, [
     h('.nav-sidepanel__spaces-header', {
       ngIf: 'spacesByOrg[currOrg.sys.id].length',
       style: {
         display: 'flex',
+        flexShrink: 0,
         justifyContent: 'space-between',
         padding,
         paddingBottom: 0
@@ -214,10 +222,6 @@ function orgSpaces () {
     ]),
     h('.nav-sidepanel__space-list', {
       style: {
-        maxHeight: '500px',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
         overflowY: 'auto'
       }
     }, [
@@ -256,20 +260,17 @@ function noSpacesMsg () {
     dataTestId: 'sidepanel-no-spaces',
     style: {
       padding,
-      paddingBottom: '40px',
+      paddingBottom: '28px',
       margin: 0,
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
       textAlign: 'center'
     }
   }, [
     h('cf-icon', {
       name: 'sidepanel-spaces-advice',
-      scale: '1.2',
       style: {
-        marginBottom: '20px'
+        margin: '20px 0 14px',
+        fill: colors.greenDark,
+        display: 'inline-block'
       }
     }),
     h('p', { style: { fontWeight: 'bold' } }, [`{{canCreateSpaceInCurrOrg ? "${messages.canCreateSpace.title}" : "${messages.canNotCreateSpace.title}"}}`]),
@@ -305,7 +306,7 @@ function orgActions () {
     dataTestId: 'sidepanel-org-actions',
     style: {
       flexGrow: 1,
-      paddingTop: '10px'
+      padding: '12px 0'
     }
   }, [
     separator,

@@ -2,32 +2,16 @@ import * as sinon from 'helpers/sinon';
 import * as K from 'helpers/mocks/kefir';
 
 describe('cfNavSidepanel directive', () => {
-  let $stateParamsOrgId = '';
-  let spaceContextData;
-
-  const $state = {
-    includes: sinon.stub(),
-    params: Object.defineProperty({}, 'orgId', {
-      get () {
-        return $stateParamsOrgId;
-      }
-    })
-  };
+  let NavStates;
+  const navState$ = K.createMockProperty();
 
   const CreateSpace = {
     showDialog: sinon.stub()
   };
 
-  const spaceContext = {
-    getData: sinon.stub(),
-    space: Object.defineProperty({}, 'data', {
-      get () {
-        return spaceContextData;
-      }
-    })
-  };
   const accessChecker = {
     canCreateSpaceInOrganization: sinon.stub(),
+    canCreateOrganization: sinon.stub(),
     isInitialized$: K.createMockProperty(true)
   };
 
@@ -45,15 +29,17 @@ describe('cfNavSidepanel directive', () => {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      // stub $stateParams
-      $provide.value('$state', $state);
       $provide.value('services/CreateSpace', CreateSpace);
       $provide.value('states/Navigator', Navigator);
-      $provide.value('spaceContext', spaceContext);
       $provide.value('accessChecker', accessChecker);
       $provide.value('services/OrganizationRoles', OrganizationRoles);
       $provide.value('utils/LaunchDarkly', LaunchDarkly);
     });
+
+    const NavState = this.$inject('navigation/NavState');
+    NavState.navState$ = navState$;
+    NavStates = NavState.NavStates;
+    navState$.set(NavStates.Default());
 
     // tokenStore
     this.orgs = [{
@@ -94,13 +80,12 @@ describe('cfNavSidepanel directive', () => {
       this.$apply();
     };
 
-    this.emulateSettingsPage = function (isSettingsPage, org) {
-      $state.includes.returns(isSettingsPage);
-      $stateParamsOrgId = org && org.sys.id;
+    this.emulateSettingsPage = function (org) {
+      navState$.set(NavStates.OrgSettings(org));
     };
 
-    this.emulateSpacePage = function (space) {
-      spaceContextData = space;
+    this.emulateSpacePage = function (space, org) {
+      navState$.set(NavStates.Space(space, org));
     };
 
     this.verifyScopePropsBasedOnOrg = function (org, isOwnerOrAdmin, canCreateSpaceInOrg, viewingOrgSettings) {
@@ -123,23 +108,22 @@ describe('cfNavSidepanel directive', () => {
 
   afterEach(function () {
     // reset stubs
-    $state.includes.reset();
-    spaceContext.getData.reset();
     accessChecker.canCreateSpaceInOrganization.reset();
+    accessChecker.canCreateOrganization.reset();
     OrganizationRoles.isOwnerOrAdmin.reset();
     Navigator.go.reset();
-    $stateParamsOrgId = '';
-    spaceContextData = undefined;
+    navState$.set(new NavStates.Default());
   });
 
   it('derives properties from currOrg', function () {
     const org = this.orgs[2];
     OrganizationRoles.isOwnerOrAdmin.returns(true);
     accessChecker.canCreateSpaceInOrganization.returns(true);
-    this.emulateSettingsPage(true, org);
-    this.$scope.setCurrOrg(org);
+    accessChecker.canCreateOrganization.returns(true);
+    this.emulateSettingsPage(org);
     this.$scope.$apply();
     this.verifyScopePropsBasedOnOrg(org, true, true, true);
+    expect(this.$scope.canCreateOrg).toEqual(true);
   });
 
   it('grabs orgs from the organizatons$ stream', function () {
@@ -160,23 +144,16 @@ describe('cfNavSidepanel directive', () => {
   });
 
   describe('#openSidePanel', function () {
-    it('it sets curr org based on commit logic', function () {
-      // prefer org id in stateParams over all
-      $stateParamsOrgId = 'test-org-id-2';
+    it('sets curr org from nav state or default', function () {
+      const org = this.orgs[2];
+      const space = this.spacesByOrg[org.sys.id][1];
+      this.emulateSpacePage(space, org);
       this.$scope.openSidePanel();
-      expect(this.$scope.currOrg).toEqual(this.orgs[1]);
+      expect(this.$scope.currOrg).toEqual(org);
+    });
 
-      // else choose org of current space
-      $stateParamsOrgId = '';
-      spaceContext.organizationContext = {
-        organization: this.orgs[2]
-      };
-      this.$scope.openSidePanel();
-      expect(this.$scope.currOrg).toEqual(this.orgs[2]);
-
-      // else choose first org from list of orgs
-      $stateParamsOrgId = '';
-      spaceContext.organizationContext = null;
+    it('defaults currOrg to first if nav state has no org', function () {
+      this.emulateSpacePage(null, null);
       this.$scope.openSidePanel();
       expect(this.$scope.currOrg).toEqual(this.orgs[0]);
     });
@@ -191,7 +168,7 @@ describe('cfNavSidepanel directive', () => {
     });
 
     it('hides org list dropdown', function () {
-      this.$scope.toggleOrgsDropdown();
+      this.$scope.openOrgsDropdown();
       this.$scope.openSidePanel();
       this.$scope.$apply();
       this.expectDropdownVisibility(false);
@@ -200,29 +177,36 @@ describe('cfNavSidepanel directive', () => {
 
   describe('#closeSidePanel', function () {
     it('toggles sidepanel visibility based on a property on scope', function () {
-      const expectSidePanelVisibility =
-        expectVisibility(this.$sidePanel, 'nav-sidepanel--slide-in', 'nav-sidepanel--slide-out');
-
       this.$scope.openSidePanel();
       this.$scope.closeSidePanel();
       this.$scope.$apply();
       expect(this.$scope.sidePanelIsShown).toBe(false);
-      expectSidePanelVisibility(false);
+      this.expectSidePanelVisibility(false);
     });
   });
 
-  describe('#toggleOrgsDropdown', function () {
-    it('toggles org dropdown visibility based on a property on scope', function () {
-      const expectDropdownVisibility = expectVisibility(
-        this.$sidePanel.find('.nav-sidepanel__org-list-container'),
-        'nav-sidepanel__org-list-container--is-visible',
-        'nav-sidepanel__org-list-container--is-not-visible'
-      );
-
-      expectDropdownVisibility(false);
-      this.$scope.toggleOrgsDropdown();
+  describe('#openOrgsDropdown', function () {
+    it('shows dropdown', function () {
+      this.expectDropdownVisibility(false);
+      this.$scope.openOrgsDropdown();
       this.$apply();
-      expectDropdownVisibility(true);
+      this.expectDropdownVisibility(true);
+    });
+
+    it('stops event propagation', function () {
+      const stopPropagation = sinon.stub();
+      this.$scope.openOrgsDropdown({stopPropagation});
+      sinon.assert.calledOnce(stopPropagation);
+    });
+  });
+
+  describe('#closeOrgsDropdown', function () {
+    it('hides dropdown', function () {
+      this.$scope.openOrgsDropdown();
+      this.$apply();
+      this.$scope.closeOrgsDropdown();
+      this.$apply();
+      this.expectDropdownVisibility(false);
     });
   });
 
@@ -230,23 +214,23 @@ describe('cfNavSidepanel directive', () => {
     it('sets curr org to the argument given to setCurrOrg method', function () {
       this.$scope.setCurrOrg(this.orgs[0]);
       expect(this.$scope.currOrg).toEqual(this.orgs[0]);
-      this.verifyScopePropsBasedOnOrg(this.orgs[0], undefined, undefined, undefined);
+      this.verifyScopePropsBasedOnOrg(this.orgs[0], undefined, undefined, false);
 
       OrganizationRoles.isOwnerOrAdmin = sinon.stub().returns(true);
       accessChecker.canCreateSpaceInOrganization = sinon.stub().returns(true);
       this.$scope.setCurrOrg(this.orgs[2]);
       this.$scope.$apply();
       expect(this.$scope.currOrg).toEqual(this.orgs[2]);
-      this.verifyScopePropsBasedOnOrg(this.orgs[2], true, true, undefined);
+      this.verifyScopePropsBasedOnOrg(this.orgs[2], true, true, false);
     });
 
     it('updates viewingOrgSettings flag based on curr org id and org id in state params', function () {
       const org = this.orgs[1];
-      this.emulateSettingsPage(true, org);
+      this.emulateSettingsPage(org);
       this.$scope.setCurrOrg(org);
       expect(this.$scope.viewingOrgSettings).toEqual(true);
 
-      this.emulateSettingsPage(true, this.orgs[0]);
+      this.emulateSettingsPage(this.orgs[0]);
       this.$scope.setCurrOrg(org);
       expect(this.$scope.viewingOrgSettings).toEqual(false);
     });
@@ -268,7 +252,7 @@ describe('cfNavSidepanel directive', () => {
         params: { orgId: org.sys.id }
       });
       expect(this.$scope.sidePanelIsShown).toBe(false);
-      this.emulateSettingsPage(true, org);
+      this.emulateSettingsPage(org);
       this.$scope.openSidePanel();
       this.verifyScopePropsBasedOnOrg(org, undefined, undefined, true);
     });
@@ -375,7 +359,6 @@ describe('cfNavSidepanel directive', () => {
         this.updateOrgAndPerm = function (org, perm) {
           accessChecker.canCreateSpaceInOrganization = sinon.stub().returns(perm);
           this.$scope.setCurrOrg(org);
-          $stateParamsOrgId = org.sys.id;
           this.$scope.$apply(); // run the watchers
         };
         this.assertCreateSpaceOnPerm = function (org, perm) {
@@ -402,7 +385,7 @@ describe('cfNavSidepanel directive', () => {
 
         this.$scope.setCurrOrg(org);
         this.$scope.setAndGotoSpace(space);
-        this.emulateSpacePage(space);
+        this.emulateSpacePage(space, org);
         this.$scope.$apply();
         this.$scope.openSidePanel();
 
@@ -431,10 +414,9 @@ describe('cfNavSidepanel directive', () => {
 
     describe('Org settings panel', function () {
       beforeEach(function () {
-        this.updateOrgAndPerm = function (org, perm, viewingOrgSettings = false) {
+        this.updateOrgAndPerm = function (org, perm) {
           OrganizationRoles.isOwnerOrAdmin = sinon.stub().returns(perm);
-          this.emulateSettingsPage(viewingOrgSettings, org);
-          this.$scope.setCurrOrg(org);
+          this.emulateSettingsPage(org);
           this.$scope.$apply(); // run the watchers
         };
       });
@@ -450,15 +432,9 @@ describe('cfNavSidepanel directive', () => {
         expect(!!$orgSettings.get(0)).toBe(true);
       });
       it('toggles goto org settings action activation based on whether is user is viewing org settings currently', function () {
-        let $orgSettingsAction;
-
-        this.updateOrgAndPerm(this.orgs[2], true, true);
-        $orgSettingsAction = this.$sidePanel.find('.nav-sidepanel__org-actions-goto-settings');
+        this.updateOrgAndPerm(this.orgs[2], true);
+        const $orgSettingsAction = this.$sidePanel.find('.nav-sidepanel__org-actions-goto-settings');
         expect($orgSettingsAction.hasClass('nav-sidepanel__org-actions-goto-settings--is-active')).toBe(true);
-
-        this.updateOrgAndPerm(this.orgs[1], true, false);
-        $orgSettingsAction = this.$sidePanel.find('.nav-sidepanel__org-actions-goto-settings');
-        expect($orgSettingsAction.hasClass('nav-sidepanel__org-actions-goto-settings--is-active')).toBe(false);
       });
     });
 
@@ -475,8 +451,9 @@ describe('cfNavSidepanel directive', () => {
   });
 });
 
-const expectVisibility = (element, shownClass, hiddenClass) =>
-  (isVisible) => {
+function expectVisibility (element, shownClass, hiddenClass) {
+  return function (isVisible) {
     expect(element.hasClass(hiddenClass)).toBe(!isVisible);
     expect(element.hasClass(shownClass)).toBe(isVisible);
   };
+}

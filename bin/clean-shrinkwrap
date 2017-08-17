@@ -10,37 +10,32 @@
  * property if it is not a URL.
  */
 
-var _ = require('lodash-node')
-var fs = require('fs')
+const fs = require('fs')
 
-var URL_MATCHER = /^[\w+]+:\/\//
-var SHRINKWRAP = __dirname + '/../npm-shrinkwrap.json'
-var dependencies = require(SHRINKWRAP)
-var cleaned = cleanDependency(dependencies)
+const URL_MATCHER = /^[\w+]+:\/\//
+const SHRINKWRAP = __dirname + '/../npm-shrinkwrap.json'
+const dependencies = require(SHRINKWRAP)
+const cleaned = cleanDependency(dependencies)
 
-fs.writeFileSync(SHRINKWRAP, stringify(cleaned) + '\n', 'utf-8')
+fs.writeFileSync(SHRINKWRAP, `${JSON.stringify(cleaned, null, 2)}\n`, 'utf8')
 
 function cleanDependency (dep) {
-  dep = _.omit(dep, 'resolved')
+  delete dep.resolved;
 
   if (!URL_MATCHER.test(dep.from)) {
     delete dep.from
   }
 
   if (dep.dependencies) {
-    dep.dependencies = sortByKey(_.mapValues(dep.dependencies, cleanDependency))
+    const keys = Object.keys(dep.dependencies)
+      .filter(key => !dep.dependencies[key].dev)
+      .sort();
+
+    dep.dependencies = keys.reduce((acc, key) => {
+      acc[key] = cleanDependency(dep.dependencies[key]);
+      return acc;
+    }, {});
   }
 
   return dep
-}
-
-function sortByKey (object) {
-  var keys = _.sortBy(_.keys(object))
-  return _.transform(keys, function (sorted, key) {
-    sorted[key] = object[key]
-  }, {})
-
-}
-function stringify (obj) {
-  return JSON.stringify(obj, null, 2)
 }

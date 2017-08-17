@@ -6,8 +6,7 @@
  */
  angular.module('contentful')
 .directive('cfOrganizationNav', ['require', function (require) {
-  var navBar = require('app/NavBar').default;
-  var PAID_SUBSCRIPTION_STATUSES = ['paid', 'free_paid'];
+  var navBar = require('navigation/templates/NavBar').default;
 
   return {
     template: template(),
@@ -15,8 +14,6 @@
     scope: {},
     controllerAs: 'nav',
     controller: ['$scope', function ($scope) {
-      var Navigator = require('states/Navigator');
-      var modalDialog = require('modalDialog');
       var $stateParams = require('$stateParams');
       var tokenStore = require('services/TokenStore');
       var OrganizationRoles = require('services/OrganizationRoles');
@@ -37,14 +34,7 @@
         var orgId = nav.orgId = $stateParams.orgId;
         tokenStore.getOrganization(orgId).then(function (org) {
           nav.hasOffsiteBackup = hasOffsiteBackup(org);
-          nav.hasBillingTab = isPaid(org) && OrganizationRoles.isOwnerOrAdmin(org);
-        }, function () {
-          modalDialog.openConfirmDialog({
-            title: 'Organization not found',
-            message: 'The organization you are looking for cannot be found. Click \'OK\' to go to homepage.'
-          }).then(function () {
-            Navigator.go({ path: ['home'] });
-          });
+          nav.hasBillingTab = org.isBillable && OrganizationRoles.isOwnerOrAdmin(org);
         });
       }
     }]
@@ -97,10 +87,6 @@
         if: 'nav.hasOffsiteBackup'
       }
     ]);
-  }
-
-  function isPaid (org) {
-    return PAID_SUBSCRIPTION_STATUSES.indexOf(org.subscription.status) >= 0;
   }
 
   function hasOffsiteBackup (org) {

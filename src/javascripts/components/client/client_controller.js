@@ -3,6 +3,7 @@
 angular.module('contentful')
 .controller('ClientController', ['$scope', 'require', function ClientController ($scope, require) {
   var $rootScope = require('$rootScope');
+  var $state = require('$state');
   var K = require('utils/kefir');
   var features = require('features');
   var logger = require('logger');
@@ -16,6 +17,7 @@ angular.module('contentful')
   var environment = require('environment');
   var fontsDotCom = require('fontsDotCom');
   var CreateSpace = require('services/CreateSpace');
+  var refreshNavState = require('navigation/NavState').makeStateRefresher($state, spaceContext);
 
   // TODO remove this eventually. All components should access it as a service
   $scope.spaceContext = spaceContext;
@@ -58,6 +60,7 @@ angular.module('contentful')
       if (collection.space && authorization.authContext && authorization.authContext.hasSpace(collection.space.getId())) {
         authorization.setSpace(collection.space);
       }
+      refreshNavState();
     }
   }
 

@@ -3,7 +3,7 @@
 angular.module('contentful')
 
 .controller('ViewMenuController', ['$scope', '$attrs', 'require', '$parse', function ($scope, $attrs, require, $parse) {
-
+  var spaceContext = require('spaceContext');
   var modalDialog = require('modalDialog');
   var random = require('random');
   var $timeout = require('$timeout');
@@ -11,6 +11,8 @@ angular.module('contentful')
   var getCurrentView = $parse('context.view');
   var htmlEncode = require('encoder').htmlEncode;
   var Tracking = require('analytics/events/SearchAndViews');
+  var K = require('utils/kefir');
+  var isFeatureEnabled = require('analytics/OrganizationTargeting').default;
 
   $scope.tempFreeViews = [];
   $scope.folderStates = TheStore.get('folderStates') || {};
@@ -128,6 +130,36 @@ angular.module('contentful')
     return defaultFolder;
   };
 
+  K.onValueScope($scope, spaceContext.contentCollections.state$, function (collections) {
+    // Since we use ng-repeat Angular is going to mutate the objects
+    // with `hashKey`.
+    $scope.collections = _.cloneDeep(collections);
+  });
+
+  $scope.loadCollection = function (collection) {
+    $scope.loadView({
+      collection: _.cloneDeep(collection),
+      id: 'collection: ' + collection.id
+    });
+  };
+
+  $scope.collectionIsActive = function (collection) {
+    var v = getCurrentView($scope);
+    return v.collection && v.collection.id === collection.id;
+  };
+
+  $scope.removeCollection = function (id) {
+    spaceContext.contentCollections.remove(id);
+  };
+
+  $scope.addCollection = function () {
+    spaceContext.contentCollections.requestCreate([]);
+  };
+
+  $scope.updateCollectionName = function (collection) {
+    spaceContext.contentCollections.setName(collection.id, collection.name);
+  };
+
   $scope.viewIsActive = function (view) {
     if (!view) return false;
     var p = getCurrentView($scope);
@@ -158,6 +190,8 @@ angular.module('contentful')
     $scope.viewSortOptions.disabled = !can;
     $scope.folderSortOptions.disabled = !can;
   });
+
+  $scope.canUseCollections = isFeatureEnabled('collections', spaceContext.space);
 
   $scope.viewSortOptions = {
     connectWith: '[ui-sortable=viewSortOptions]',

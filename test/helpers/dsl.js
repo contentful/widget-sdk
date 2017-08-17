@@ -126,7 +126,8 @@ function runGenerator (gen, $apply) {
           ret.value.then(resolve, reject);
         }))
         .then(next, throwTo);
-        $apply();
+        // Repeatedly run $apply() to flush all promises
+        _.times(5, () => $apply());
       }
     }
   });
