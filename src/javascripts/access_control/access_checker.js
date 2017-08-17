@@ -144,6 +144,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
     canCreateSpace: canCreateSpace,
     canCreateSpaceInAnyOrganization: canCreateSpaceInAnyOrganization,
     canCreateSpaceInOrganization: canCreateSpaceInOrganization,
+    canCreateOrganization: canCreateOrganization,
     wasForbidden: wasForbidden
   };
 
@@ -428,6 +429,17 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
       logger.logError('Worf exception - can create new space?', e);
     }
     return response;
+  }
+
+  /**
+   * @ngdoc method
+   * @name accessChecker#canCreateOrganization
+   * @returns {boolean}
+   * @description
+   * Returns true if current user can create a new organization.
+   */
+  function canCreateOrganization () {
+    return _.get(K.getValue(TokenStore.user$), 'canCreateOrganization', false);
   }
 
   /**

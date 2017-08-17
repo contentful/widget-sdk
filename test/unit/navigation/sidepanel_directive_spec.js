@@ -11,6 +11,7 @@ describe('cfNavSidepanel directive', () => {
 
   const accessChecker = {
     canCreateSpaceInOrganization: sinon.stub(),
+    canCreateOrganization: sinon.stub(),
     isInitialized$: K.createMockProperty(true)
   };
 
@@ -28,7 +29,6 @@ describe('cfNavSidepanel directive', () => {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      $provide.value('navigation/stateChangeHandlers', { navState$ });
       $provide.value('services/CreateSpace', CreateSpace);
       $provide.value('states/Navigator', Navigator);
       $provide.value('accessChecker', accessChecker);
@@ -109,6 +109,7 @@ describe('cfNavSidepanel directive', () => {
   afterEach(function () {
     // reset stubs
     accessChecker.canCreateSpaceInOrganization.reset();
+    accessChecker.canCreateOrganization.reset();
     OrganizationRoles.isOwnerOrAdmin.reset();
     Navigator.go.reset();
     navState$.set(new NavStates.Default());
@@ -118,9 +119,11 @@ describe('cfNavSidepanel directive', () => {
     const org = this.orgs[2];
     OrganizationRoles.isOwnerOrAdmin.returns(true);
     accessChecker.canCreateSpaceInOrganization.returns(true);
+    accessChecker.canCreateOrganization.returns(true);
     this.emulateSettingsPage(org);
     this.$scope.$apply();
     this.verifyScopePropsBasedOnOrg(org, true, true, true);
+    expect(this.$scope.canCreateOrg).toEqual(true);
   });
 
   it('grabs orgs from the organizatons$ stream', function () {

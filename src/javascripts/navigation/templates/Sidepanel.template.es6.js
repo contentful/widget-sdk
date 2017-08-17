@@ -187,6 +187,7 @@ function orgListDropdown () {
         borderTop: `1px solid ${colors.elementMid}`
       },
       ngClick: 'createNewOrg()',
+      ngShow: 'canCreateOrg',
       dataTestId: 'sidepanel-create-org-link'
     }, ['+ Create organization'])
   ]);

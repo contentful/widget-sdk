@@ -34,6 +34,7 @@ angular.module('contentful')
       K.onValueScope($scope, orgs$, function (orgs) {
         $scope.orgs = orgs || [];
       });
+
       K.onValueScope($scope, spacesByOrg$, function (spacesByOrg) {
         $scope.spacesByOrg = spacesByOrg || {};
       });
@@ -107,6 +108,7 @@ angular.module('contentful')
           $scope.canCreateSpaceInCurrOrg = accessChecker.canCreateSpaceInOrganization(orgId);
           $scope.viewingOrgSettings =
             (navState instanceof NavStates.OrgSettings) && navState.org.sys.id === orgId;
+          $scope.canCreateOrg = accessChecker.canCreateOrganization();
           $scope.twoLetterOrgName = org.name.slice(0, 2).toUpperCase();
         }
       }
