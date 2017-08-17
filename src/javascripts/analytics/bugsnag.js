@@ -100,11 +100,12 @@ angular.module('contentful')
   }
 
   function setUserInfo (user, bugsnag) {
-    if (dotty.exists(user, 'sys.id')) {
+    var userId = _.get(user, ['sys', 'id']);
+    if (userId) {
       bugsnag.user = {
-        id: dotty.get(user, 'sys.id'),
-        firstName: dotty.get(user, 'firstName'),
-        lastName: dotty.get(user, 'lastName'),
+        id: userId,
+        firstName: _.get(user, 'firstName'),
+        lastName: _.get(user, 'lastName'),
         adminLink: getAdminLink(user),
         organizations: getOrganizations(user)
       };
@@ -119,7 +120,7 @@ angular.module('contentful')
   }
 
   function getAdminLink (user) {
-    var id = dotty.get(user, 'sys.id');
+    var id = _.get(user, ['sys', 'id']);
     return 'https://admin.' + environment.settings.main_domain + '/admin/users/' + id;
   }
 }]);

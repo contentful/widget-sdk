@@ -42,6 +42,12 @@ const FEATURE_TO_ORG_IDS = {
     'afbd22d6944eb429cf2b16d5a8ad279b',
     // Capital One (prod)
     '484282f25eeac45516812e9de55357ef'
+  ],
+  collections: [
+    // Contentful main (prod)
+    '281d50856fc72daca2e39b4e68bdb3ee',
+    // Google Docs Test (preview)
+    'afbd22d6944eb429cf2b16d5a8ad279b'
   ]
 };
 
@@ -73,7 +79,8 @@ const FEATURE_TO_SPACE_IDS = {
     '97c56b9d15c6a7ae389d6632877543d4',
     // TELUS digital C MOB > Marketing (prod)
     'e908a9e5d6ea0330fa5c661d1477c8de'
-  ]
+  ],
+  collections: []
 };
 
 /**

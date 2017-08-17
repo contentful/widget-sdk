@@ -62,6 +62,11 @@
   cf-sidebar-content-preview(ng-if="data.isEntry")
 
   h2.entity-sidebar__heading
+    | My Collections
+
+  cf-component-bridge(component="collectionsSelector")
+
+  h2.entity-sidebar__heading
     | Translation
 
   .pill-list

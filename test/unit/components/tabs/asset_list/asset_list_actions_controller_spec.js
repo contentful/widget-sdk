@@ -1,8 +1,13 @@
 'use strict';
 
 describe('Asset List Actions Controller', function () {
-  var controller, scope, stubs, accessChecker;
-  var action1, action2, action3, action4;
+  let scope, stubs, accessChecker;
+  let action1, action2, action3, action4;
+
+  afterEach(function () {
+    scope = stubs = accessChecker = null;
+    action1 = action2 = action3 = action4 = null;
+  });
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -18,9 +23,9 @@ describe('Asset List Actions Controller', function () {
         'action2',
         'action3',
         'action4',
-        'timeout',
-        'broadcast'
+        'timeout'
       ]);
+
       $provide.value('analytics/Analytics', {
         track: stubs.track
       });
@@ -33,49 +38,44 @@ describe('Asset List Actions Controller', function () {
       $provide.value('$timeout', stubs.timeout);
     });
 
-    inject(function ($rootScope, $controller, $q, _accessChecker_) {
-      $rootScope.$broadcast = stubs.broadcast;
-      scope = $rootScope.$new();
+    const $q = this.$inject('$q');
+    action1 = $q.defer();
+    action2 = $q.defer();
+    action3 = $q.defer();
+    action4 = $q.defer();
+    stubs.action1.returns(action1.promise);
+    stubs.action2.returns(action2.promise);
+    stubs.action3.returns(action3.promise);
+    stubs.action4.returns(action4.promise);
 
-      action1 = $q.defer();
-      action2 = $q.defer();
-      action3 = $q.defer();
-      action4 = $q.defer();
-      stubs.action1.returns(action1.promise);
-      stubs.action2.returns(action2.promise);
-      stubs.action3.returns(action3.promise);
-      stubs.action4.returns(action4.promise);
+    scope = this.$inject('$rootScope').$new();
+    scope.selection = {
+      size: stubs.size,
+      getSelected: stubs.getSelected.returns([]),
+      clear: stubs.clear
+    };
 
-      scope.selection = {
-        size: stubs.size,
-        getSelected: stubs.getSelected,
-        clear: stubs.clear
-      };
+    const spaceContext = this.$inject('mocks/spaceContext').init();
+    spaceContext.space = {createAsset: stubs.createAsset};
 
-      scope.spaceContext = {
-        space: {
-          createAsset: stubs.createAsset
-        }
-      };
+    accessChecker = this.$inject('accessChecker');
+    accessChecker.canPerformActionOnEntity = sinon.stub();
 
-      accessChecker = _accessChecker_;
-      accessChecker.canPerformActionOnEntity = sinon.stub();
-
-      controller = $controller('AssetListActionsController', {$scope: scope});
-    });
+    const $controller = this.$inject('$controller');
+    $controller('AssetListActionsController', {$scope: scope});
   });
 
-  function makeEntity(action, stub) {
-    var entity = {};
+  function makeEntity (action, stub) {
+    const entity = {data: {sys: {id: 'entityid'}}};
     entity[action] = stub;
     return entity;
   }
 
-  function makePerformTests(action, extraSpecs){
-    describe(action+' selected assets', function () {
+  function makePerformTests (action, extraSpecs) {
+    describe(action + ' selected assets', function () {
       beforeEach(function () {
         stubs.size.returns(2);
-        var entities = [
+        const entities = [
           makeEntity(action, stubs.action1),
           makeEntity(action, stubs.action2),
           makeEntity(action, stubs.action3),
@@ -88,23 +88,23 @@ describe('Asset List Actions Controller', function () {
         stubs.getSelected.returns(entities);
         stubs.timeout.callsArg(0);
 
-        scope[action+'Selected']();
+        scope[action + 'Selected']();
         scope.$digest();
       });
 
-      it('calls '+action+' on first selected entry', function () {
+      it('calls ' + action + ' on first selected entry', function () {
         sinon.assert.called(stubs.action1);
       });
 
-      it('calls '+action+' on second selected entry', function () {
+      it('calls ' + action + ' on second selected entry', function () {
         sinon.assert.called(stubs.action2);
       });
 
-      it('calls '+action+' on third selected entry', function () {
+      it('calls ' + action + ' on third selected entry', function () {
         sinon.assert.called(stubs.action3);
       });
 
-      it('calls '+action+' on fourth selected entry', function () {
+      it('calls ' + action + ' on fourth selected entry', function () {
         sinon.assert.called(stubs.action4);
       });
 
@@ -132,7 +132,9 @@ describe('Asset List Actions Controller', function () {
         sinon.assert.called(stubs.track);
       });
 
-      if(extraSpecs){ extraSpecs(); }
+      if (extraSpecs) {
+        extraSpecs();
+      }
     });
   }
 
@@ -142,11 +144,11 @@ describe('Asset List Actions Controller', function () {
   makePerformTests('archive');
   makePerformTests('unarchive');
 
-  function makePermissionTests(action){
-    var methodName = 'show'+action.charAt(0).toUpperCase()+action.substr(1);
-    var canMethodName = 'can'+action.charAt(0).toUpperCase()+action.substr(1);
+  function makePermissionTests (action) {
+    const methodName = 'show' + action.charAt(0).toUpperCase() + action.substr(1);
+    const canMethodName = 'can' + action.charAt(0).toUpperCase() + action.substr(1);
 
-    it('can show '+action+' action', function () {
+    it('can show ' + action + ' action', function () {
       stubs.action1.returns(true);
       stubs.action2.returns(true);
       accessChecker.canPerformActionOnEntity.returns(true);
@@ -158,7 +160,7 @@ describe('Asset List Actions Controller', function () {
       expect(scope[methodName]()).toBeTruthy();
     });
 
-    it('cannot show delete '+action+' because no general permission', function () {
+    it('cannot show delete ' + action + ' because no general permission', function () {
       stubs.action1.returns(true);
       stubs.action2.returns(true);
       accessChecker.canPerformActionOnEntity.returns(false);
@@ -170,7 +172,7 @@ describe('Asset List Actions Controller', function () {
       expect(scope[methodName]()).toBeFalsy();
     });
 
-    it('cannot show '+action+' action because no permission on item', function () {
+    it('cannot show ' + action + ' action because no permission on item', function () {
       stubs.action1.returns(true);
       stubs.action2.returns(false);
       accessChecker.canPerformActionOnEntity.returns(true);

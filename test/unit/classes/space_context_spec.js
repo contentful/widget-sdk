@@ -13,6 +13,9 @@ describe('spaceContext', function () {
       $provide.value('data/editingInterfaces', sinon.stub());
       $provide.value('Subscription', this.Subscription);
       $provide.value('classes/OrganizationContext', this.OrganizationContext);
+      $provide.value('app/EntryList/Collections/Store', {
+        default: sinon.stub().resolves()
+      });
     });
     this.spaceContext = this.$inject('spaceContext');
     this.mockService('TheLocaleStore');

@@ -98,7 +98,22 @@ angular.module('contentful')
   $scope.hasNoSearchResults = function () {
     var hasQuery = searchController.hasQuery();
     var hasEntries = $scope.paginator.getTotal() > 0;
-    return !hasEntries && hasQuery && !$scope.context.loading;
+    var hasCollection = $scope.context.view.collection;
+    return !hasEntries && hasQuery && !hasCollection && !$scope.context.loading;
+  };
+
+
+  /**
+   * @ngdoc method
+   * @name EntryListController#$scope.isEmptyCollection
+   * @description
+   * Returns true if a collection view is active but there is nothing
+   * in the collection.
+   *
+   * @return {boolean}
+   */
+  $scope.isEmptyCollection = function () {
+    return !$scope.paginator.getTotal() && $scope.context.view.collection && !$scope.context.loading;
   };
 
 

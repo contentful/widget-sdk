@@ -1,10 +1,10 @@
 'use strict';
 
 describe('Asset List Controller', function () {
-  let scope, stubs, $q, $rootScope, getAssets;
+  let scope, spaceContext, stubs, $q, getAssets;
 
   afterEach(function () {
-    scope = stubs = $q = $rootScope = getAssets = null;
+    scope = spaceContext = stubs = $q = getAssets = null;
   });
 
   function createAssets (n) {
@@ -32,6 +32,7 @@ describe('Asset List Controller', function () {
         'getVersion',
         'publish'
       ]);
+
       $provide.value('logger', {
         logError: stubs.logError
       });
@@ -46,25 +47,26 @@ describe('Asset List Controller', function () {
         pickMultiple: stubs.pickMultiple,
         parseFPFile: stubs.parseFPFile
       });
+
+      $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
 
-    $rootScope = this.$inject('$rootScope');
     $q = this.$inject('$q');
-    const $controller = this.$inject('$controller');
-    const cfStub = this.$inject('cfStub');
 
-    getAssets = $q.defer();
-    scope = $rootScope.$new();
-
+    scope = this.$inject('$rootScope').$new();
     scope.context = {};
 
+    const cfStub = this.$inject('cfStub');
     const space = cfStub.space('test');
-    const contentTypeData = cfStub.contentTypeData('testType');
-    scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
 
+    getAssets = $q.defer();
     stubs.getAssets.returns(getAssets.promise);
     space.getAssets = stubs.getAssets;
 
+    spaceContext = this.$inject('mocks/spaceContext').init();
+    spaceContext.space = space;
+
+    const $controller = this.$inject('$controller');
     $controller('AssetListController', {$scope: scope});
     scope.selection.updateList = sinon.stub();
   });
@@ -136,7 +138,7 @@ describe('Asset List Controller', function () {
     });
 
     it('space id', function () {
-      stubs.id = sinon.stub(scope.spaceContext.space, 'getId');
+      stubs.id = sinon.stub(spaceContext.space, 'getId');
       stubs.id.returns(123);
       scope.$digest();
       sinon.assert.called(stubs.reset);
@@ -159,7 +161,7 @@ describe('Asset List Controller', function () {
 
     // infinite loader when the query fails with a status code of -1
     it('sets isSearching flag if it fails with statusCode of -1', function () {
-      scope.spaceContext.space.getAssets = sinon.stub().rejects({
+      spaceContext.space.getAssets = sinon.stub().rejects({
         statusCode: -1
       });
       scope.searchController.resetAssets();
@@ -352,16 +354,14 @@ describe('Asset List Controller', function () {
     beforeEach(function () {
       files = [{}, {}];
       scope.searchController.resetAssets = sinon.stub().resolves();
-      scope.spaceContext.space.getDefaultLocale = sinon.stub();
-      scope.spaceContext.space.getDefaultLocale.returns({code: 'en-US'});
-      scope.spaceContext.space.createAsset = sinon.stub();
+      spaceContext.space.createAsset = sinon.stub();
       stubs.pickMultiple.returns($q.resolve(files));
       stubs.getVersion.returns(2);
       stubs.parseFPFile.returns({fileName: 'file_name.jpg'});
       entity = {process: stubs.process, getVersion: stubs.getVersion, publish: stubs.publish};
 
 
-      scope.spaceContext.space.createAsset
+      spaceContext.space.createAsset
         .onCall(0).returns($q.resolve(entity))
         .onCall(1).returns($q.resolve(entity));
       stubs.publish
@@ -374,7 +374,7 @@ describe('Asset List Controller', function () {
         .onCall(3).returns($q.resolve());
 
       scope.createMultipleAssets();
-      $rootScope.$apply();
+      this.$apply();
     });
 
     it('filepicker is called', function () {
@@ -382,7 +382,7 @@ describe('Asset List Controller', function () {
     });
 
     it('asset is created', function () {
-      sinon.assert.calledTwice(scope.spaceContext.space.createAsset);
+      sinon.assert.calledTwice(spaceContext.space.createAsset);
     });
 
     it('process is triggered', function () {
