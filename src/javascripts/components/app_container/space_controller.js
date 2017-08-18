@@ -11,7 +11,7 @@ angular.module('contentful')
 
   // Begin feature flag code - feature-bv-06-2017-use-new-navigation
   var LD = require('utils/LaunchDarkly');
-  LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation');
+  LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation', true);
   // End feature flag code - feature-bv-06-2017-use-new-navigation
 
   $controller('UiConfigController', {$scope: $scope});
