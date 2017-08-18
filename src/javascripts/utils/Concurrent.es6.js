@@ -1,4 +1,5 @@
 import $q from '$q';
+import {makeCtor} from 'utils/TaggedValues';
 
 /**
  * This modules exports control functions that help with concurrent and
@@ -9,16 +10,24 @@ import $q from '$q';
 export {default as createMVar} from './Concurrent/MVar';
 
 
+// Constructors for promise results;
+export const Success = makeCtor('Success');
+export const Failure = makeCtor('Failure');
+
+
 /**
  * A slot attaches a callback to at most one promise at once.
  *
  * ~~~js
  * const put = createSlot ((result) => {
- *   if (result.type === 'success') {
- *     console.log('resolved with', result.value)
- *   } else if (result.type === 'error') {
- *     console.log('rejected with', result.error)
- *   }
+ *   match(result, {
+ *     [Success]: (value) => {
+ *       console.log('resolved with', value)
+ *     },
+ *     [Failure]: (error) => {
+ *       console.log('rejected with', error)
+ *     },
+ *   })
  * })
  *
  * put(promiseA)
@@ -36,7 +45,6 @@ export {default as createMVar} from './Concurrent/MVar';
  *
  * A good use case is when a user action triggers an asynchronous
  * request which in turn updates a view.
- *
  */
 export function createSlot (onResult) {
   let currentId = 0;
@@ -45,8 +53,8 @@ export function createSlot (onResult) {
     currentId += 1;
     const id = currentId;
     promise.then(
-      (value) => onResultIfCurrent(id, {type: 'success', value}),
-      (error) => onResultIfCurrent(id, {type: 'error', error})
+      (value) => onResultIfCurrent(id, Success(value)),
+      (error) => onResultIfCurrent(id, Failure(error))
     );
   };
 

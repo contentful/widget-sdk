@@ -22,8 +22,7 @@ describe('utils/Concurrent', function () {
       b.resolve('VAL B');
       this.$apply();
 
-      sinon.assert.calledOnce(onResult);
-      sinon.assert.calledWith(onResult, {type: 'success', value: 'VAL B'});
+      sinon.assert.calledOnceWith(onResult, C.Success('VAL B'));
     });
 
     it('only rejects current promise', function* () {
@@ -40,7 +39,7 @@ describe('utils/Concurrent', function () {
       this.$apply();
 
       sinon.assert.calledOnce(onResult);
-      sinon.assert.calledWith(onResult, {type: 'error', error: 'ERR B'});
+      sinon.assert.calledOnceWith(onResult, C.Failure('ERR B'));
     });
   });
 
