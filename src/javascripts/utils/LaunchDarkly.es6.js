@@ -148,8 +148,8 @@ export function getFeatureFlag (featureFlagName, customQualificationFn = _ => tr
  * @name utils/LaunchDarkly#setOnScope
  * @usage[js]
  * const ld = require('utils/LaunchDarkly')
- * // sets $scope.fooBar
- * ld.setOnScope($scope, 'test-01-01-foo-bar', 'fooBar')
+ * // sets $scope.fooBar for qualufied users only
+ * ld.setOnScope($scope, 'foo-bar', 'fooBar', true)
  *
  *
  * @description
@@ -162,24 +162,13 @@ export function getFeatureFlag (featureFlagName, customQualificationFn = _ => tr
  * @param {Scope} $scope
  * @param {String} flagName - name of flag in LaunchDarkly
  * @param {String} propertyName - name of property set on scope
+ * @param {boolean?} isForQualifiedUsersOnly - whether it should be set for
+ * qualified users only (default: false)
  */
-export function setOnScope ($scope, flagName, propertyName) {
-  const type = parseLDTypeFromName(flagName);
-  if (!type) {
-    throw new Error(`Invalid LD flag name: ${flagName}`);
-  }
-
-  const value$ = type === 'test' ? getTest(flagName) : getFeatureFlag(flagName);
+export function setOnScope ($scope, flagName, propertyName, isForQualifiedUsersOnly = false) {
+  const value$ = isForQualifiedUsersOnly ? getTest(flagName) : getFeatureFlag(flagName);
 
   onValueScope($scope, value$, function (value) {
     $scope[propertyName] = value;
   });
-}
-
-function parseLDTypeFromName (name) {
-  const matches = /^(feature|test)-/.exec(name);
-  if (!matches || !matches[1]) {
-    return null;
-  }
-  return matches[1];
 }

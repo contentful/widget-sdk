@@ -239,13 +239,13 @@ describe('utils/LaunchDarkly', function () {
     });
 
     it('should set scope property for feature flag', function () {
-      this.setOnScope(this.$scope, 'feature-xx-00-00-foo-bar', 'fooBar');
+      this.setOnScope(this.$scope, 'foo-bar', 'fooBar');
       expect(this.$scope.fooBar).toBe('some-val');
     });
 
     it('should set scope property for A/B test for qualified user', function () {
       this.user$.set(this.qualifiedUser);
-      this.setOnScope(this.$scope, 'test-xx-00-00-foo-bar', 'fooBar');
+      this.setOnScope(this.$scope, 'foo-bar', 'fooBar', true);
       expect(this.$scope.fooBar).toBe('some-val');
     });
   });
