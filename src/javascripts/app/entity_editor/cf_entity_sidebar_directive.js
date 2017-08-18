@@ -24,6 +24,8 @@ angular.module('contentful')
   var K = require('utils/kefir');
   var spaceContext = require('spaceContext');
   var collectionSelector = require('app/EntryList/Collections/Selectors').sidebarSelector;
+  var isFeatureEnabled = require('analytics/OrganizationTargeting').default;
+
   return {
     restrict: 'E',
     scope: true,
@@ -65,13 +67,15 @@ angular.module('contentful')
         $scope.data.docCollaborators = collaborators;
       });
 
-      K.onValueScope(
-        $scope,
-        collectionSelector($scope.entityInfo.id, spaceContext.contentCollections),
-        function (component) {
-          $scope.collectionsSelector = component;
-        }
-      );
+      if ($scope.entityInfo.type === 'Entry' && isFeatureEnabled('collections', spaceContext.space)) {
+        K.onValueScope(
+          $scope,
+          collectionSelector($scope.entityInfo.id, spaceContext.contentCollections),
+          function (component) {
+            $scope.collectionsSelector = component;
+          }
+        );
+      }
     }]
   };
 }]);

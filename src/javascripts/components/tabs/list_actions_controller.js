@@ -9,6 +9,7 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var K = require('utils/kefir');
   var makeAddToCollectionComponent = require('app/EntryList/Collections/Selectors').bulkSelector;
+  var isFeatureEnabled = require('analytics/OrganizationTargeting').default;
 
   var collection = entityType === 'Entry' ? 'entries' : 'assets';
 
@@ -48,13 +49,15 @@ angular.module('contentful')
     return selected.map(function (entry) { return entry.data.sys.id; });
   });
 
-  K.onValueScope(
-    $scope,
-    makeAddToCollectionComponent(selectedIds$, spaceContext.contentCollections),
-    function (component) {
-      $scope.addToCollectionComponent = component;
-    }
-  );
+  if (entityType === 'Entry' && isFeatureEnabled('collections', spaceContext.space)) {
+    K.onValueScope(
+      $scope,
+      makeAddToCollectionComponent(selectedIds$, spaceContext.contentCollections),
+      function (component) {
+        $scope.addToCollectionComponent = component;
+      }
+    );
+  }
 
   function createShowChecker (action, predicate) {
     return function () {
