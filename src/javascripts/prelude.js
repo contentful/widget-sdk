@@ -65,6 +65,12 @@ angular.module('contentful/app', ['contentful'])
 }])
 .run(['require', function (require) {
   var $document = require('$document');
+  var Config = require('Config');
+  if (Config.env === 'development') {
+    Error.stackTraceLimit = 100;
+  } else {
+    Error.stackTraceLimit = 25;
+  }
   require('utils/LaunchDarkly').init();
   require('Authentication').init();
   require('services/TokenStore').init();
