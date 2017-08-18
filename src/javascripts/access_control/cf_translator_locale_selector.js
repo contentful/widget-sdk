@@ -26,7 +26,7 @@ angular.module('contentful')
 
   controller.updateLocale = updateLocale;
 
-  controller.localeCode = dotty.get(getUpdateEntityPolicies()[0], 'locale') || controller.locales[0].code;
+  controller.localeCode = _.get(getUpdateEntityPolicies()[0], 'locale') || controller.locales[0].code;
 
   function updateLocale () {
     _.forEach(getUpdateEntityPolicies(), function (policy) {

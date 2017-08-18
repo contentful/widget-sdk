@@ -271,11 +271,11 @@ angular.module('cf.data')
     if (_.isString(identifiable)) {
       return identifiable;
     } else {
-      return dotty.get(identifiable, ['sys', 'id']);
+      return _.get(identifiable, ['sys', 'id']);
     }
   }
 
   function getVersion (resource) {
-    return dotty.get(resource, ['sys', 'version']);
+    return _.get(resource, ['sys', 'version']);
   }
 }]);

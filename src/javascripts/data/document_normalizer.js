@@ -36,7 +36,7 @@ angular.module('cf.data')
    * @param {API.Locale[]} locales
    */
   function normalize (otDoc, snapshot, contentType, locales) {
-    var ctFields = dotty.get(contentType, ['data', 'fields']);
+    var ctFields = _.get(contentType, ['data', 'fields']);
     var localeMap = makeLocaleMap(locales);
     removeUnknownLocales(snapshot, localeMap);
     removeDeletedFields(snapshot, ctFields);

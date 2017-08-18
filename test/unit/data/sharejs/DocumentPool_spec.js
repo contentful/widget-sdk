@@ -51,7 +51,7 @@ describe('DocumentPool', function () {
       sinon.assert.calledWith(
         this.createDoc,
         this.conn,
-        sinon.match((x) => dotty.get(x, 'data.sys.id', 'DOC')),
+        sinon.match((x) => _.get(x, 'data.sys.id', 'DOC')),
         ct,
         user
       );

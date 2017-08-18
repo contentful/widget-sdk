@@ -36,7 +36,7 @@ describe('Entry Editor Controller', function () {
 
     this.spaceContext = _.extend(this.$inject('spaceContext'), {
       entryTitle: function (entry) {
-        return dotty.get(entry, 'data.fields.title');
+        return _.get(entry, 'data.fields.title');
       }
     });
 

@@ -22,7 +22,7 @@ describe('Tracking persistent notification', function () {
     it('tracks action and contains current plan name', function () {
       const space = {};
       const planName = 'subscriptionPlanName';
-      dotty.put(space, 'data.organization.subscriptionPlan.name', planName);
+      _.set(space, 'data.organization.subscriptionPlan.name', planName);
 
       this.analytics.trackSpaceChange(space);
       this.trackPersistenNotification.action('ACTION_NAME');

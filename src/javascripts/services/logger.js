@@ -89,7 +89,7 @@ angular.module('contentful')
       var err = findActualServerError(errOrResponse);
 
       // Never send auth token.
-      var headers = dotty.get(errOrResponse, 'request.headers');
+      var headers = _.get(errOrResponse, 'request.headers');
       if (headers && headers.Authorization) {
         headers.Authorization = '[SECRET]';
       }
@@ -126,7 +126,7 @@ angular.module('contentful')
     errOrErrContainer = errOrErrContainer || {};
     var actualErr =
       errOrErrContainer.body || errOrErrContainer.data || errOrErrContainer;
-    return dotty.get(actualErr, 'sys.type') === 'Error' ? actualErr : undefined;
+    return _.get(actualErr, 'sys.type') === 'Error' ? actualErr : undefined;
   }
 
   return {
@@ -230,7 +230,7 @@ angular.module('contentful')
      *                                field holding the actual API error.
      */
     logServerError: function (message, metaData) {
-      if (dotty.get(metaData, 'error.statusCode') === 0) {
+      if (_.get(metaData, 'error.statusCode') === 0) {
         this._logCorsWarn(message, metaData);
       } else {
         this._log('Logged Server Error', 'error', message, flattenServerErrors(metaData));
@@ -253,7 +253,7 @@ angular.module('contentful')
      *                                field holding the actual API error.
      */
     logServerWarn: function (message, metaData) {
-      if (dotty.get(metaData, 'error.statusCode') === 0) {
+      if (_.get(metaData, 'error.statusCode') === 0) {
         this._logCorsWarn(message, metaData);
       } else {
         this._log('Logged Server Warning', 'warning', message, flattenServerErrors(metaData));

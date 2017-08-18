@@ -4,8 +4,7 @@ import specialCharacters from './markdown_special_characters';
 import LinkOrganizer from 'LinkOrganizer';
 import notification from 'notification';
 import entitySelector from 'entitySelector';
-import { defaults, isEmpty, isObject } from 'lodash';
-import dotty from 'dotty';
+import { defaults, isEmpty, isObject, get as getAtPath } from 'lodash';
 
 export function create (editor, localeCode) {
 
@@ -52,8 +51,8 @@ export function create (editor, localeCode) {
   }
 
   function _makeAssetLink (asset) {
-    const title = dotty.get(asset, ['fields', 'title', localeCode]);
-    const file = dotty.get(asset, ['fields', 'file', localeCode]);
+    const title = getAtPath(asset, ['fields', 'title', localeCode]);
+    const file = getAtPath(asset, ['fields', 'file', localeCode]);
 
     if (title && isObject(file) && file.url) {
       return '![' + title + '](' + assetUrl(file.url) + ')';

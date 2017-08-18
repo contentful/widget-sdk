@@ -48,7 +48,7 @@ angular.module('contentful')
   function kalturaCredentialsCheck() {
     var kalturaCredentials = $injector.get('kalturaCredentials');
     var authorization      = $injector.get('authorization');
-    var organizationId     = dotty.get(authorization, 'spaceContext.space.organization.sys.id', null);
+    var organizationId     = _.get(authorization, 'spaceContext.space.organization.sys.id', null);
 
     // there's really no way to say if get() call failed due to HTTP issue
     // or just because of lack of integration configuration

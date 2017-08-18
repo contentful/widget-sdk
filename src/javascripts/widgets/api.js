@@ -167,7 +167,7 @@ angular.module('contentful')
    */
   function buildContext (idMap, field, locale, isDisabled, fields, entryData, contentTypeData, spaceMembership) {
     var apiName = field.apiName;
-    var fieldValue = dotty.get(entryData, ['fields', field.id, locale.internal_code]);
+    var fieldValue = _.get(entryData, ['fields', field.id, locale.internal_code]);
     var fieldInfo = buildFieldInfo(idMap, entryData, fields);
     return {
       user: buildUser(spaceMembership),

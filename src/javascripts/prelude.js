@@ -105,8 +105,7 @@ angular.module('contentful')
 
 angular.module('cf.es6')
 .constant('jquery', $)
-.constant('lodash', _)
-.constant('dotty', dotty);
+.constant('lodash', _);
 
 
 (function () {

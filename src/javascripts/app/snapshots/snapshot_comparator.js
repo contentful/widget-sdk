@@ -71,7 +71,7 @@ angular.module('cf.app')
   $scope.showSnapshotSelector$ = showSnapshotSelectorBus.property;
 
   $scope.showOnlyDifferences = false;
-  $scope.otDoc = SnapshotDoc.create(dotty.get($scope, 'entry.data', {}));
+  $scope.otDoc = SnapshotDoc.create(_.get($scope, 'entry.data', {}));
   $scope.snapshotDoc = SnapshotDoc.create(snapshotData);
   $scope.fields = DataFields.create(ctData.fields, $scope.otDoc);
   $scope.transformedContentTypeData = ContentTypes.internalToPublic(ctData);
@@ -123,7 +123,7 @@ angular.module('cf.app')
     $scope.versionPicker.getPathsToRestore()
     .forEach(function (path) {
       path = Entries.internalPathToExternal(ctData, path);
-      dotty.put(result, path, dotty.get(snapshot, path));
+      _.set(result, path, _.get(snapshot, path));
     });
 
     return result;

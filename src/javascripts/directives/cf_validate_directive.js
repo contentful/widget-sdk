@@ -135,7 +135,11 @@ angular.module('contentful')
   };
 
   controller.hasError = function (path) {
-    return !!dotty.get(errorTree, path);
+    if (Array.isArray(path) && path.length === 0) {
+      return !!errorTree;
+    } else {
+      return !!_.get(errorTree, path);
+    }
   };
 
 
@@ -175,7 +179,7 @@ angular.module('contentful')
    * var tree = makeTree(items)
    * items.forEach(function (item) {
    *   assertEqual(
-   *     dotty.get(tree, item.path).$data,
+   *     valueAt(tree, item.path).$data,
    *     item
    *   )
    * })

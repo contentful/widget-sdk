@@ -9,11 +9,11 @@ describe('Markdown tree', function () {
   }
 
   function getChildren (node) {
-    return dotty.get(node, 'props.children');
+    return _.get(node, 'props.children');
   }
 
   function getHTML (node) {
-    return dotty.get(node, 'props.dangerouslySetInnerHTML.__html');
+    return _.get(node, 'props.dangerouslySetInnerHTML.__html');
   }
 
   function hash (str) {

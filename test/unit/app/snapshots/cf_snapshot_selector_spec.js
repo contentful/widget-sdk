@@ -166,7 +166,7 @@ describe('cfSnapshotSelector', function () {
 
           expect(_.filter(scope.sortOrder, _.identity).length).toEqual(1);
 
-          const pluckedPropArray = _.map(scope.snapshots, s => transformFn(dotty.get(s, sortedOnProp)));
+          const pluckedPropArray = _.map(scope.snapshots, s => transformFn(_.get(s, sortedOnProp)));
           const assertOrdering = isAscending ? isSortedAscending : isSortedDescending;
 
           expect(assertOrdering(pluckedPropArray)).toEqual(true);

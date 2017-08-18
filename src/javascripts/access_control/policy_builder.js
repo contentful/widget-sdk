@@ -64,8 +64,8 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['$injector', f
 
   return function toInternal(external) {
     return _.extend({
-      id: dotty.get(external, 'sys.id', null),
-      version: dotty.get(external, 'sys.version', null),
+      id: _.get(external, 'sys.id', null),
+      version: _.get(external, 'sys.version', null),
       name: external.name,
       description: external.description
     }, (_.cloneDeep(external.permissions) || {}), translatePolicies(external));
@@ -289,10 +289,10 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['$injector', f
 
   function prepare(internal) {
     return _.union(
-      prepareCollection(dotty.get(internal, 'entries.allowed', []), 'entry', 'allow'),
-      prepareCollection(dotty.get(internal, 'entries.denied',  []), 'entry', 'deny'),
-      prepareCollection(dotty.get(internal, 'assets.allowed',  []), 'asset', 'allow'),
-      prepareCollection(dotty.get(internal, 'assets.denied',   []), 'asset', 'deny')
+      prepareCollection(_.get(internal, 'entries.allowed', []), 'entry', 'allow'),
+      prepareCollection(_.get(internal, 'entries.denied',  []), 'entry', 'deny'),
+      prepareCollection(_.get(internal, 'assets.allowed',  []), 'asset', 'allow'),
+      prepareCollection(_.get(internal, 'assets.denied',   []), 'asset', 'deny')
     );
   }
 

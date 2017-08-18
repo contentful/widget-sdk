@@ -301,7 +301,7 @@ angular.module('contentful')
     {
       message: NOT_RENAMEABLE_MESSAGE,
       check: function (err) {
-        return status === 403 && dotty.get(err, 'body.sys.id') === 'FallbackLocaleNotRenameable';
+        return status === 403 && _.get(err, 'body.sys.id') === 'FallbackLocaleNotRenameable';
       }
     }
   ];
@@ -355,8 +355,8 @@ angular.module('contentful')
   }
 
   function checkUnprocessableEntityErrorName (name, err) {
-    var status = dotty.get(err, 'statusCode');
-    var errors = dotty.get(err, 'body.details.errors');
+    var status = _.get(err, 'statusCode');
+    var errors = _.get(err, 'body.details.errors');
 
     return status === 422 && errors && errors.length > 0 && errors[0].name === name;
   }

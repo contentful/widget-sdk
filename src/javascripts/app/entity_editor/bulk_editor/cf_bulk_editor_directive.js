@@ -121,8 +121,8 @@ angular.module('contentful')
   function makeActions (field, addLinks, links$, track) {
     // TODO necessary for entitySelector change it
     var extendedField = _.extend({}, field, {
-      itemLinkType: dotty.get(field, ['items', 'linkType']),
-      itemValidations: dotty.get(field, ['items', 'validations'], [])
+      itemLinkType: _.get(field, ['items', 'linkType']),
+      itemValidations: _.get(field, ['items', 'validations'], [])
     });
 
     return {
@@ -158,7 +158,7 @@ angular.module('contentful')
    * the content type validation on the field.
    */
   function getAccessibleCTs (field) {
-    var itemValidations = dotty.get(field, ['items', 'validations']);
+    var itemValidations = _.get(field, ['items', 'validations']);
 
     var contentTypeValidation = _.find(itemValidations, function (validation) {
       return !!validation.linkContentType;

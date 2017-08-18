@@ -413,7 +413,7 @@ describe('spaceContext', function () {
       beforeEach(function () {
         this.file = {details: {image: {}}};
         const asset = {};
-        dotty.put(asset, 'data.fields.file.xx', this.file);
+        _.set(asset, 'data.fields.file.xx', this.file);
 
         this.spaceContext.space.getAsset = sinon.stub();
         this.spaceContext.space.getAsset

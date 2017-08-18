@@ -454,8 +454,10 @@ angular.module('contentful')
     function getValueAt (path) {
       if (currentDoc) {
         return _.cloneDeep(ShareJS.peek(currentDoc, path));
+      } else if (Array.isArray(path) && path.length === 0) {
+        return _.cloneDeep(entity.data);
       } else {
-        return _.cloneDeep(dotty.get(entity.data, path));
+        return _.cloneDeep(_.get(entity.data, path));
       }
     }
 

@@ -21,7 +21,7 @@ angular.module('cf.app')
       $scope.value = $scope.fieldLocale.doc.get();
       $scope.hasValue = !isEmpty($scope.value);
       $scope.isCustom = ($scope.widget.template || '').indexOf('cf-iframe-widget') > -1;
-      $scope.linkType = dotty.get(field, 'linkType', dotty.get(field, 'items.linkType'));
+      $scope.linkType = _.get(field, 'linkType', _.get(field, 'items.linkType'));
     }]
   };
 
@@ -107,7 +107,7 @@ angular.module('cf.app')
     template: '<span>{{ dtString }}</span>',
     controller: ['$scope', function ($scope) {
       var dt = Data.userInputFromDatetime($scope.value);
-      var mode = dotty.get($scope, 'widget.settings.format', 'date');
+      var mode = _.get($scope, 'widget.settings.format', 'date');
       var s = moment(dt.date).format('dddd, MMMM Do YYYY');
 
       if (mode === 'date') {
@@ -115,7 +115,7 @@ angular.module('cf.app')
         return;
       }
 
-      if (parseInt(dotty.get($scope, 'widget.settings.ampm'), 10) !== 24) {
+      if (parseInt(_.get($scope, 'widget.settings.ampm'), 10) !== 24) {
         var x = dt.time.split(':');
         s += ', ' + moment().hour(x[0]).minute(x[1]).format('LT');
       } else {

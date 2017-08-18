@@ -38,8 +38,8 @@ angular.module('contentful').factory('accessChecker/responseCache', [function ()
     var id = null;
 
     if (_.isObject(entity)) {
-      id = dotty.get(entity, 'sys.id', null);
-      var type = dotty.get(entity, 'sys.type', null);
+      id = _.get(entity, 'sys.id', null);
+      var type = _.get(entity, 'sys.type', null);
       category = _.includes(['Entry', 'Asset'], type) ? ('specific' + type) : null;
     } else if (_.isString(entity)) {
       id = 'none';

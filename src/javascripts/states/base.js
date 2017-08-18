@@ -11,7 +11,7 @@ angular.module('contentful')
 .factory('states/base', [function () {
   return function base (definition) {
     if (!definition.loadingText) {
-      var label = dotty.get(definition, 'label');
+      var label = _.get(definition, 'label');
 
       definition.loadingText = label ? ('Loading ' + label + '...') : 'Please hold on...';
     }

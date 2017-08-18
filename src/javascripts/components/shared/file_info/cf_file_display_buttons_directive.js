@@ -22,7 +22,7 @@ angular.module('contentful')
       }
 
       function isEditable () {
-        return dotty.get($scope, 'fieldLocale.access.editable', false);
+        return _.get($scope, 'fieldLocale.access.editable', false);
       }
     }]
   };

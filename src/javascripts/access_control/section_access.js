@@ -66,7 +66,7 @@ angular.module('contentful')
    *
    */
   function redirectToFirstAccessible () {
-    var currentStateName = dotty.get($state, '$current.name');
+    var currentStateName = _.get($state, '$current.name');
     var firstAccessible = getFirstAccessibleSection();
     var userIsAdmin = spaceContext.getData('spaceMembership.admin', false);
     var notActivated = !spaceContext.getData('activatedAt');

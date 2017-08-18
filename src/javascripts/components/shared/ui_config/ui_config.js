@@ -91,7 +91,7 @@ angular.module('contentful')
       return config;
     }, function (err) {
       isConfigSaved = false;
-      var statusCode = dotty.get(err, 'statusCode');
+      var statusCode = _.get(err, 'statusCode');
       if (statusCode === 404) {
         currentConfig = {};
         return currentConfig;

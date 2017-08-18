@@ -24,15 +24,15 @@ angular.module('contentful').factory('PolicyBuilder/removeOutdatedRules', ['$inj
 
     function filterPolicies(internal) {
       return _.transform(PATHS, function (acc, path) {
-        var collection = dotty.get(internal, path, []);
+        var collection = _.get(internal, path, []);
         var filtered = filterPolicyCollection(collection);
-        dotty.put(acc, path, filtered);
+        _.set(acc, path, filtered);
       }, {});
     }
 
     function countPolicies(wrapper) {
       return _.reduce(PATHS, function (acc, path) {
-        return acc + dotty.get(wrapper, path, []).length;
+        return acc + _.get(wrapper, path, []).length;
       }, 0);
     }
 
@@ -64,7 +64,7 @@ angular.module('contentful').factory('PolicyBuilder/removeOutdatedRules', ['$inj
 
     function hasField(ctId, fieldId) {
       var ct = findCt(ctId);
-      var fields = dotty.get(ct, 'data.fields', []);
+      var fields = _.get(ct, 'data.fields', []);
       var field = _.find(fields, {apiName: fieldId}) || _.find(fields, {id: fieldId});
       return _.isObject(field);
     }
