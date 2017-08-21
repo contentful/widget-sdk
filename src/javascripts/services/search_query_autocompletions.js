@@ -33,6 +33,8 @@ angular.module('contentful')
   var $q = require('$q');
   var moment = require('moment');
 
+  var NOT_SEARCHABLE_FIELD_TYPES = ['Location', 'Object', 'File'];
+
   var operatorDescriptions = {
     '<=': 'Less than or equal',
     '<': 'Less than',
@@ -191,14 +193,6 @@ angular.module('contentful')
     }
   }
 
-  // All possible keys for a content Type
-  function staticKeys (contentType) {
-    var completions = staticAutocompletions(contentType);
-    return _.map(completions, function (completion, key) {
-      return {value: key, description: completion.description};
-    });
-  }
-
   // Generates a factory for completing a key that contains a date
   function dateCompletions (key, description) {
     var RELATIVE = /(\d+) +days +ago/i;
@@ -271,30 +265,28 @@ angular.module('contentful')
    * Return completions for static fields (i.e. `sys`) properties and
    * dynamic fields on the Content Type.
    *
-   * @param {Client.ContentType?} contentType
+   * @param {Client.ContentType?} ct
    * @return {CompletionData}
    */
-  function keyCompletion (contentType) {
-    return makeListCompletion(_.union(
-      searchableFieldCompletions(contentType),
-      staticKeys(contentType)));
+  function keyCompletion (ct) {
+    var staticCompletions = _.map(staticAutocompletions(ct), function (completion, key) {
+      return {value: key, description: completion.description};
+    });
 
-    function searchableFieldCompletions (contentType) {
-      if (!contentType) return [];
-
-      var fields = contentType.data.fields;
-      var searchableFields = _.filter(fields, fieldIsSearchable);
-      return _.map(searchableFields, function (field) {
+    var fieldCompletions = _.get(ct, ['data', 'fields'], [])
+      .filter(function (field) {
+        var isSearchable = !field.disabled && NOT_SEARCHABLE_FIELD_TYPES.indexOf(field.type) < 0;
+        var isNotStaticDuplicate = !_.find(staticCompletions, {value: apiNameOrId(field)});
+        return isSearchable && isNotStaticDuplicate;
+      })
+      .map(function (field) {
         return {
           value: apiNameOrId(field),
           description: field.name
         };
       });
-    }
 
-    function fieldIsSearchable (field) {
-      return !field.disabled && !field.type.match(/Location|Object|File/);
-    }
+    return makeListCompletion(_.union(fieldCompletions, staticCompletions));
   }
 
   function operatorCompletion (key, contentType) {
