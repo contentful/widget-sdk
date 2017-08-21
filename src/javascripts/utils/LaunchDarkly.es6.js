@@ -154,23 +154,16 @@ export function getFeatureFlag (featureFlagName, customQualificationFn = _ => tr
  * @ngdoc method
  * @name utils/LaunchDarkly#setOnScope
  * @usage[js]
- * const ld = require('utils/LaunchDarkly')
- * // sets $scope.fooBar for qualufied users only
- * ld.setOnScope($scope, 'foo-bar', 'fooBar', true)
- *
+ * const LD = require('utils/LaunchDarkly')
+ * LD.setOnScope($scope, 'foo-bar', 'fooBar')
  *
  * @description
  * Convenience method for commonly used scenario - set scope property to a
- * feature flag or A/B test value.
- * It automatically guesses whether it is a feature flag or A/B test based on
- * its name that shoud start with 'feature|test-...'.
- * If name cannot be parsed, an error is thrown.
+ * feature flag value.
  *
  * @param {Scope} $scope
  * @param {String} flagName - name of flag in LaunchDarkly
  * @param {String} propertyName - name of property set on scope
- * @param {boolean?} isForQualifiedUsersOnly - whether it should be set for
- * qualified users only (default: false)
  */
 export function setOnScope ($scope, flagName, propertyName) {
   const value$ = getFeatureFlag(flagName);
