@@ -78,6 +78,11 @@ function isQualifiedUser ({organizationMemberships}) {
 /**
  * @ngdoc method
  * @name utils/LaunchDarkly#getTest
+ *
+ * @deprecated Don't use for new A/B tests - instead, use #getFeatureFlag
+ * and configure LD to target only users who have the property
+ * `isNonPayingUser=true`.
+ *
  * @usage[js]
  * const ld = require('utils/LaunchDarkly')
  * const awesomeTest$ = ld.getTest('my-awesome-test')
