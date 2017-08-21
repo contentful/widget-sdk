@@ -1,43 +1,24 @@
 # A/B Testing in the Contentful web app
 
-## Quickstart
+We use [LaunchDarkly](launch-darkly-app) for A/B tests as well as for feature flags. Please read the [doc on feature flags](feature-flags-doc) before this one.
 
-Create a test via the LaunchDarkly(LD) UI for the environment you are interested in. Then, in the directive you are running the A/B test, import `utils/LaunchDarkly` and use the `get` method to get the test stream to which you can add a handler. This handler will receive the test variation values if/as they change.
-
-```js
-// Begin A/B experiment code - test-teamname-mm-yy-test-name
-var K = require('utils/kefir');
-var LD = require('utils/LaunchDarkly');
-var someTest$ = LD.getTest('test-teamname-mm-yy-test-name');
-
-K.onValueScope($scope, someTest$, function (showTest) {
-    if (showTest) {
-      // test code
-    } else {
-      // control code
-    }
-});
-// End A/B experiment code - test-teamname-mm-yy-test-name
-```
-
-The test code should _always_ be bound by comments in the format shown above to aid cleanup once the test is finished.
 
 ## Terminology
 
-- `A/B test`: An A/B test is what you set up via LaunchDarkly's web app (note: it is called 'Feature flag' in LD interface, but we have a distinction between the two - see `Feature flag` below). We call a test with percentage variations and available only for qualified users, an `A/B test`, and a flag that is set for all users without a variation a `Feature flag`.
-- `Variation`: A bucket for a test. We have `null` for unqualified users and `Boolean` for qualified users.
-- `Default rule`: Rule that decides what qualified users receive as their variation for a test.
-- `Feature flag`: A feature flag is set up in the same way as A/B tests in LaunchDarkly, but unlike an A/B test it should be always set to true or false *for all users* (no variations). It affects all users, not only qualified ones. They are described in detail in [a separate document](/docs/guides/feature-flags).
+- `A/B test`: We call a feature flag with percentage variations that is available only for qualified users, an `A/B test`.
+- `Qualified user` aka `non-paying user`: Only users that don't belong to _any_ paying/converted organization are qualified for A/B tests. Every A/B test *must* be set up in Launch Darkly so that only users with property `isNonPayingUser=true` can receive a `true` test value.
+- `Variation`: A bucket for an A/B test. It is `Boolean`, and must always be `false` for non-qualified users.
+- `Default rule`: Rule that decides what all users that don't fit any custom targeting rules will receive as their variation for a test.
 
-## Default qualification criteria
+## Qualification criteria
 <span id="default-qualification-criteria"></span>
 
-Only users that don't belong to _any_ paying/converted organization are qualified for A/B tests. What this means is that only these users will get a bucketed into a variation for a test.
-All unqualified users receive `null` as the value for a test variation. Any other test specific qualification logic *must* be handled in the test code.
+Only users that don't belong to _any_ paying/converted organization (in LD `isNonPayingUser=true`) must be qualified for A/B tests. What this means is that only these users will get a bucketed into a variation for a test and all unqualified users will receive `false` as the default rule for a test variation.
+
+Any other test specific qualification logic must be either derived from existing user properties on LD, or handled in the test code via _custom qualificationcriteria_ - see below.
 
 ### Custom qualification criteria
-Custom qualification criteria can be passed to the `get` method that the Launch Darkly integration exposes. It is applied along with the default qualification criteria.
-Currently, there is no way to bypass the default qualification criteria.
+There is an option to pass a custom qualification criteria to the `LD#getFeatureFlag` method. It overrides *any* targeting rules on LD side: i.e. if qualification function returns `false` for user with `id=1`, he will *always* receive `null` as test value.
 
 ```js
 var K = require('utils/kefir');
@@ -50,24 +31,15 @@ K.onValueScope($scope, someTest$, function (showTest) {
 });
 ```
 
-## Environments on Launch Darkly
+_Note:_
 
-### `Development`
-Tests and feature flags defined here are served to `app.joistio.com:8888` aka local dev
-
-### `Staging`
-Tests and feature flags defined here are served to `app.flinkly.com` aka `staging`
-
-### `Preview`
-Tests and feature flags defined here are served to `app.quirely.com` aka `preview`
-
-### `Production`
-Tests and feature flags defined here are served to `app.contentful.com` aka `production`
+- This approach requires redeployment of code every time you change the criteria, or want to release the test for everyone. It should be used as a last resort if it is not possible to configure the desired behavior on LD side through existing user properties, and it is not possible to add a new one - see "Adding new user properties" in the [feature flags doc](feature-flags-doc).
+- Custom qualfication criteria are currently not supported in `LD#setOnScope` method.
 
 
 ## Running an A/B test
 
-We follow a promotion based approach to releasing an A/B test as outlined below.
+We follow a promotion based approach to releasing an A/B test that is similar to what we have with feature flags. It is outlined below.
 
 1. The developer implementing the test creates the A/B test in the `Development` environment on LD
 2. Once the developer opens a PR and wants the test available on our `staging` environment aka `flinkly`, he/she duplicates it from `Development` to `Staging` environment via the LD UI
@@ -82,29 +54,16 @@ __Important__:
 
 A test name should have the following format: `test-teamname-mm-yyyy-test-name`.
 
-For example, `test-ps-03-2017-example-space-impact` where `ps` stands for `Team Product Success`.
+For example, `test-ps-03-2017-example-space-impact` where `ps` stands for `Team Product Success` (see [feature flags doc](feature-flags-doc) for list of team name abbreviations).
 
 Also, please add a link to the experiment wiki page in the description.
-Please note that tests created in the `Staging` environment must have `false` as the default rule so that the automated tests can run successfully. This ensures that the automated tests don't see the test.
 
-#### Team abbreviations
 
-This list should be updated by new teams using the Launch Darkly integration.
+### Creating the test
 
-- Product Success (`ps`)
-- Biz Velocity (`bv`)
+A/B tests are created the same way as [feature flags](feature-flags-doc).
 
-### Creating test
-
-1. Switch to the environment you require in the LD UI
-2. Goto Feature Flags and click New
-3. In the pane that slides in, fill in the details and make sure you select "Make this flag available to the client-side (JavaScript) SDK"
-4. Choose the default bucket split
-5. Enable targeting to enable the test
-6. The test should now be available in `user_interface` for [qualified users](#default-qualification-criteria)
-
-![create feature flag](https://cloud.githubusercontent.com/assets/635512/23408313/e12ab360-fdc7-11e6-8b52-4cce064b1b2a.gif)
-
+In the default bucket split, you *must* target only users with `isNonPayingUser=true` and serve `false` as default rule.
 
 ### Concluding the test
 <span id="concluding-the-test"></span>
@@ -214,3 +173,6 @@ If not, create a dashboard.
 
 #### What if my test had a bug?
 Fix it and rename + restart the test, discarding the previous iteration's data.
+
+[feature-flags-doc]: /docs/guides/feature-flags
+[launch-darkly-app]: https://app.launchdarkly.com
