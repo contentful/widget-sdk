@@ -25,6 +25,7 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var collectionSelector = require('app/EntryList/Collections/Selectors').sidebarSelector;
   var isFeatureEnabled = require('analytics/OrganizationTargeting').default;
+  var h = require('ui/Framework').h;
 
   return {
     restrict: 'E',
@@ -75,6 +76,8 @@ angular.module('contentful')
             $scope.collectionsSelector = component;
           }
         );
+      } else {
+        $scope.collectionsSelector = h('span');
       }
     }]
   };
