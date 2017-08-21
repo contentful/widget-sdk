@@ -32,7 +32,7 @@ angular.module('contentful/mocks')
   function OtDoc (snapshot) {
     this.snapshot = snapshot || {};
 
-    this.version = dotty.get(snapshot, ['sys', 'version']) || 0;
+    this.version = _.get(snapshot, ['sys', 'version']) || 0;
 
     this.on = sinon.stub();
     this.removeListener = sinon.stub();
@@ -42,7 +42,7 @@ angular.module('contentful/mocks')
 
   OtDoc.prototype.setAt = function (path, value, cb) {
     assertParentContainer(this.snapshot, path);
-    dotty.put(this.snapshot, path, value);
+    _.set(this.snapshot, path, value);
     this.version++;
     this.emit('change', [{p: path}]);
     if (cb) {
@@ -73,7 +73,7 @@ angular.module('contentful/mocks')
 
   OtDoc.prototype.getAt = function (path) {
     assertParentContainer(this.snapshot, path);
-    return dotty.get(this.snapshot, path);
+    return getAtPath(this.snapshot, path);
   };
 
   OtDoc.prototype.at = function (path) {
@@ -91,7 +91,7 @@ angular.module('contentful/mocks')
   OtDoc.prototype.remove = function (cb) {
     const containerPath = this.path.slice(0, -1);
     const index = this.path.slice(-1)[0];
-    const container = dotty.get(this.snapshot, containerPath);
+    const container = getAtPath(this.snapshot, containerPath);
     container.splice(index, 1);
     if (cb) {
       cb();
@@ -99,7 +99,7 @@ angular.module('contentful/mocks')
   };
 
   OtDoc.prototype.removeAt = function (path, cb) {
-    dotty.put(this.snapshot, path, undefined);
+    _.set(this.snapshot, path, undefined);
     if (cb) {
       cb();
     }
@@ -173,8 +173,16 @@ angular.module('contentful/mocks')
     }
 
     path = path.slice(0, -1);
-    if (!_.isObject(dotty.get(obj, path))) {
+    if (!_.isObject(getAtPath(obj, path))) {
       throw new Error('Parent container does not exist');
+    }
+  }
+
+  function getAtPath (obj, path) {
+    if (Array.isArray(path) && path.length === 0) {
+      return obj;
+    } else {
+      return _.get(obj, path);
     }
   }
 }]);

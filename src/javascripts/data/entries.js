@@ -31,8 +31,8 @@ angular.module('cf.data')
     var result = {sys: _.cloneDeep(entryData.sys)};
 
     getAllPathsOf(entryData.fields).forEach(function (path) {
-      var value = _.cloneDeep(dotty.get(entryData, path));
-      dotty.put(result, transformPath(path), value);
+      var value = _.cloneDeep(_.get(entryData, path));
+      _.set(result, transformPath(path), value);
     });
 
     return result;

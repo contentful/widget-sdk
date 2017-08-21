@@ -23,7 +23,7 @@ angular.module('contentful')
   $scope.$watch(function () {
     return uiConfig.get();
   }, function (config) {
-    if (dotty.get(config, 'sys.version') > dotty.get($scope.uiConfig, 'sys.version')) {
+    if (_.get(config, 'sys.version') > _.get($scope.uiConfig, 'sys.version')) {
       $scope.uiConfig = config;
     }
   });

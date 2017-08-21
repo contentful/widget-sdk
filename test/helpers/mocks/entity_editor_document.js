@@ -101,13 +101,21 @@ angular.module('contentful/mocks')
     }
 
     function getValueAt (path) {
-      return _.cloneDeep(dotty.get(currentData, path));
+      return _.cloneDeep(getAtPath(currentData, path));
     }
 
     function valuePropertyAt (path) {
       return data$.map(function (data) {
-        return _.cloneDeep(dotty.get(data, path));
+        return _.cloneDeep(getAtPath(data, path));
       });
+    }
+
+    function getAtPath (obj, path) {
+      if (Array.isArray(path) && path.length === 0) {
+        return obj;
+      } else {
+        return _.get(obj, path);
+      }
     }
 
     function insertValueAt (path, pos, val) {
@@ -134,7 +142,7 @@ angular.module('contentful/mocks')
 
     function setValueAt (path, value) {
       const data = _.cloneDeep(currentData);
-      dotty.put(data, path, value);
+      _.set(data, path, value);
       data$.set(data);
       return $q.resolve(value);
     }

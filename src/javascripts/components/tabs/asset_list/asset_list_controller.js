@@ -162,8 +162,8 @@ angular.module('contentful')
 
   function getAssetDimensions (asset) {
     var file = getAssetFile(asset);
-    var width = dotty.get(file, 'details.image.width', false);
-    var height = dotty.get(file, 'details.image.height', false);
+    var width = _.get(file, 'details.image.width', false);
+    var height = _.get(file, 'details.image.height', false);
 
     if (width && height) {
       return width + ' &times; ' + height + '&thinsp;px';

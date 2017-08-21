@@ -45,7 +45,7 @@ angular.module('contentful')
         var ct = spaceContext.publishedCTs.get(id);
 
         // get fields of selected content type
-        $scope.contentTypeFields = _.map(dotty.get(ct, 'data.fields', []), function (f) {
+        $scope.contentTypeFields = _.map(_.get(ct, 'data.fields', []), function (f) {
           return { id: f.apiName || f.id, name: f.name };
         });
         $scope.contentTypeFields.unshift({ id: CONFIG.ALL_FIELDS, name: 'All fields' });

@@ -52,7 +52,7 @@ angular.module('cf.app')
    */
   function dataToEntity (data) {
     var prepareFields = $q.resolve(data.fields);
-    var ctId = dotty.get(data, 'sys.contentType.sys.id');
+    var ctId = _.get(data, 'sys.contentType.sys.id');
 
     if (data.sys.type === 'Entry') {
       prepareFields = spaceContext
@@ -60,7 +60,7 @@ angular.module('cf.app')
       .then(function (ct) {
         if (ct) {
           return _.transform(ct.data.fields, function (acc, ctField) {
-            var field = dotty.get(data, ['fields', ctField.apiName]);
+            var field = _.get(data, ['fields', ctField.apiName]);
             if (field) {
               acc[ctField.id] = field;
             }

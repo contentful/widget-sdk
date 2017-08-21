@@ -80,7 +80,7 @@ angular.module('contentful')
     var load = getLoaderFor(resource);
     var loadPromise = load(resource.url).then(function () {
       if (resource.globalObject) {
-        store[name] = dotty.get(window, resource.globalObject);
+        store[name] = _.get(window, resource.globalObject);
       }
 
       var value = store[name];
@@ -125,7 +125,7 @@ angular.module('contentful')
     },
     fontsDotCom: {
       url: '//fast.fonts.net/t/1.css?apiType=css&projectid=' +
-        dotty.get(environment, 'settings.fonts_dot_com.project_id')
+        _.get(environment, 'settings.fonts_dot_com.project_id')
     },
     // JavaScript:
     markdown: {

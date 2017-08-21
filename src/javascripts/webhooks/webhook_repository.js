@@ -48,7 +48,7 @@ angular.module('contentful').factory('WebhookRepository', [function () {
     }
 
     function save(webhook) {
-      if (!dotty.get(webhook, 'sys.id')) {
+      if (!_.get(webhook, 'sys.id')) {
         return create(webhook);
       }
 

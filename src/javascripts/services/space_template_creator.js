@@ -160,7 +160,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
           if (handlers.itemWasHandled) {
             return $q.resolve();
           }
-          var version = dotty.get(contentType, 'data.sys.version');
+          var version = _.get(contentType, 'data.sys.version');
           return contentType.publish(version)
           .then(handlers.success)
           .catch(handlers.error);
@@ -198,8 +198,8 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
           if (handlers.itemWasHandled) {
             return $q.resolve();
           }
-          var version = dotty.get(asset, 'data.sys.version');
-          var locale = _.keys(dotty.get(asset, 'data.fields.file'))[0];
+          var version = _.get(asset, 'data.sys.version');
+          var locale = _.keys(_.get(asset, 'data.fields.file'))[0];
           return self.processAsset(asset, version, locale)
           .then(handlers.success)
           .catch(handlers.error);
@@ -259,7 +259,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
           if (handlers.itemWasHandled) {
             return $q.resolve();
           }
-          var version = dotty.get(asset, 'data.sys.version');
+          var version = _.get(asset, 'data.sys.version');
           return asset.publish(version + 1)
           .then(handlers.success)
           .catch(handlers.error);
@@ -272,7 +272,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
       if (handlers.itemWasHandled) {
         return $q.resolve(handlers.response);
       }
-      var contentTypeId = dotty.get(entry, 'sys.contentType.sys.id');
+      var contentTypeId = _.get(entry, 'sys.contentType.sys.id');
       delete entry.contentType;
       return this.spaceContext.space.createEntry(contentTypeId, entry)
       .then(handlers.success)
@@ -289,7 +289,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
             if (handlers.itemWasHandled) {
               return $q.resolve();
             }
-            var version = dotty.get(entry, 'data.sys.version');
+            var version = _.get(entry, 'data.sys.version');
             return entry.publish(version)
             .then(handlers.success)
             .catch(handlers.error);
@@ -365,7 +365,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
   }
 
   function getItemId (item) {
-    return dotty.get(item, 'sys.id') || item.name;
+    return _.get(item, 'sys.id') || item.name;
   }
 
   function setDefaultLocale (entities, locale) {

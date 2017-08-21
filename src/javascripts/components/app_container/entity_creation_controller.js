@@ -56,7 +56,7 @@ angular.module('contentful')
         stateParams[params.stateParam] = entity.getId();
         $state.go(params.stateName, stateParams);
       } else {
-        if (dotty.get(err, 'body.details.reasons')) {
+        if (_.get(err, 'body.details.reasons')) {
           var enforcement = enforcements.determineEnforcement(
             err.body.details.reasons, params.entityType);
           if (enforcement) {

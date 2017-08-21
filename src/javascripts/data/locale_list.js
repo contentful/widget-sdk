@@ -67,7 +67,7 @@ angular.module('cf.data')
    * created before the predefined list existed.
    */
   function getListExtension (locale) {
-    if (!_.find(localesList, {code: locale.code}) && !!dotty.get(locale, 'sys.id')) {
+    if (!_.find(localesList, {code: locale.code}) && !!_.get(locale, 'sys.id')) {
       return [{code: locale.code, name: locale.name}];
     } else {
       return [];

@@ -161,8 +161,8 @@ angular.module('cf.app')
 
   function sortAsStringAtPath (stringPropertyPath, isAscending) {
     $scope.snapshots.sort(function (a, b) {
-      a = dotty.get(a, stringPropertyPath, '');
-      b = dotty.get(b, stringPropertyPath, '');
+      a = _.get(a, stringPropertyPath, '');
+      b = _.get(b, stringPropertyPath, '');
 
       if (a === b) {
         return 0;

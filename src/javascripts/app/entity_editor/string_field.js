@@ -94,7 +94,7 @@ angular.module('cf.app')
   }
 
   function isStringField (fieldId, contentType) {
-    var field = _.find(dotty.get(contentType, 'data.fields', []), function (field) {
+    var field = _.find(_.get(contentType, 'data.fields', []), function (field) {
       return field.id === fieldId;
     });
 

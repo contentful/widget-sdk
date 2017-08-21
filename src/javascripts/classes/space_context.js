@@ -168,8 +168,8 @@ angular.module('contentful')
      * @returns *
      */
     getData: function (path, defaultValue) {
-      var data = dotty.get(this, 'space.data', {});
-      return dotty.get(data, path, defaultValue);
+      var data = _.get(this, 'space.data', {});
+      return _.get(data, path, defaultValue);
     },
 
     /**
@@ -303,11 +303,11 @@ angular.module('contentful')
     entryImage: function (entry, localeCode) {
       var link = getValueForMatchedField(this, entry, localeCode, {type: 'Link', linkType: 'Asset'});
 
-      var assetId = dotty.get(link, 'sys.id');
+      var assetId = _.get(link, 'sys.id');
       if (link && assetId) {
         return this.space.getAsset(assetId).then(function (asset) {
           var file = this.getFieldValue(asset, 'file', localeCode);
-          var isImage = dotty.get(file, 'details.image');
+          var isImage = _.get(file, 'details.image');
           return isImage ? file : null;
         }.bind(this), function () {
           return null;

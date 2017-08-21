@@ -20,8 +20,8 @@ describe('entityEditor/Document', function () {
 
     this.connectAndOpen = function (data) {
       data = _.cloneDeep(data || this.entity.data);
-      if (!dotty.get(data, ['sys', 'type'])) {
-        dotty.put(data, ['sys', 'type'], 'Entry');
+      if (!_.get(data, ['sys', 'type'])) {
+        _.set(data, ['sys', 'type'], 'Entry');
       }
       const doc = new OtDoc(data);
       this.docLoader.doc.set(this.DocLoad.Doc(doc));
@@ -158,12 +158,12 @@ describe('entityEditor/Document', function () {
   describe('#getValueAt()', function () {
     it('gets value from snapshot if doc is connected', function () {
       const doc = this.connectAndOpen();
-      dotty.put(doc.snapshot, ['a', 'b'], 'VAL');
+      _.set(doc.snapshot, ['a', 'b'], 'VAL');
       expect(this.doc.getValueAt(['a', 'b'])).toEqual('VAL');
     });
 
     it('gets value from entity data if doc is not connected', function () {
-      dotty.put(this.entity.data, ['a', 'b'], 'VAL');
+      _.set(this.entity.data, ['a', 'b'], 'VAL');
       expect(this.doc.getValueAt(['a', 'b'])).toEqual('VAL');
     });
   });

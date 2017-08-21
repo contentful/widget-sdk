@@ -226,9 +226,9 @@ angular.module('contentful')
     if (type === 'Link') {
       return field.linkType;
     } else if (type === 'Array') {
-      var itemsType = dotty.get(field, 'items.type');
+      var itemsType = _.get(field, 'items.type');
       if (itemsType === 'Link') {
-        var linkType  = dotty.get(field, 'items.linkType');
+        var linkType  = _.get(field, 'items.linkType');
         if (linkType === 'Entry') {
           return 'Entries';
         }

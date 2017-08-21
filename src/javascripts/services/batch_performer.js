@@ -82,7 +82,7 @@ angular.module('contentful').factory('batchPerformer', ['$injector', function ($
     function callDuplicate (entity) {
       var sys = entity.getSys();
       if (sys.type === 'Entry') {
-        var ctId = dotty.get(sys, 'contentType.sys.id');
+        var ctId = _.get(sys, 'contentType.sys.id');
         var data = _.omit(entity.data, 'sys');
         return spaceContext.space.createEntry(ctId, data);
       } else {

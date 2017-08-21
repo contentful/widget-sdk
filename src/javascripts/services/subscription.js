@@ -86,7 +86,7 @@ angular.module('contentful')
 
   function buildLink (org) {
     return {
-      id: dotty.get(org, 'sys.id'),
+      id: _.get(org, 'sys.id'),
       type: 'Link',
       linkType: 'Organization'
     };

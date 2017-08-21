@@ -81,14 +81,14 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
 
   function showTranslator () {
     var organization = spaceContext.organizationContext.organization;
-    var subscriptionHasAdvancedRoles = dotty.get(organization, 'subscriptionPlan.limits.features.advancedRoles');
+    var subscriptionHasAdvancedRoles = _.get(organization, 'subscriptionPlan.limits.features.advancedRoles');
     var nameStartsWithTranslator = /^Translator/.test($scope.role.name);
     return subscriptionHasAdvancedRoles && nameStartsWithTranslator;
   }
 
 
   function duplicateRole () {
-    if (dotty.get($scope, 'role.sys.id')) {
+    if (_.get($scope, 'role.sys.id')) {
       $state.go('spaces.detail.settings.roles.new', {baseRoleId: $scope.role.sys.id});
     }
   }
@@ -109,7 +109,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
   }
 
   function save () {
-    if (!dotty.get($scope, 'external.policies', null)) {
+    if (!_.get($scope, 'external.policies', null)) {
       notification.error('Policies: invalid JSON.');
       return $q.reject();
     }
@@ -133,9 +133,9 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
   }
 
   function handleError (res) {
-    var errors = dotty.get(res, 'body.details.errors', []);
+    var errors = _.get(res, 'body.details.errors', []);
 
-    if (_.includes([403, 404], parseInt(dotty.get(res, 'statusCode'), 10))) {
+    if (_.includes([403, 404], parseInt(_.get(res, 'statusCode'), 10))) {
       notification.error('Your plan does not include Custom Roles.');
       return $q.reject();
     }

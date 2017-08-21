@@ -45,8 +45,8 @@ angular.module('contentful')
 
   function makeMessageMatcher (data) {
     return function matchMessage (action, type) {
-      var messageAction = dotty.get(data, 'action', '').toLowerCase();
-      var messageType = dotty.get(data, 'type', '').toLowerCase();
+      var messageAction = _.get(data, 'action', '').toLowerCase();
+      var messageType = _.get(data, 'type', '').toLowerCase();
 
       return action.toLowerCase() === messageAction && type.toLowerCase() === messageType;
     };
@@ -70,8 +70,8 @@ angular.module('contentful')
   }
 
   function showNotification (data) {
-    var level = dotty.get(data, 'resource.type', 'info');
-    var message = dotty.get(data, 'resource.message');
+    var level = _.get(data, 'resource.type', 'info');
+    var message = _.get(data, 'resource.message');
 
     if (!level) {
       return;

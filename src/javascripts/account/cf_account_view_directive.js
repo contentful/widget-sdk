@@ -37,7 +37,7 @@ angular.module('contentful')
 
       function waitAndForceLogin () {
         timeout = $timeout(function () {
-          if (!dotty.get(scope, 'context.ready')) { forceLogin(); }
+          if (!_.get(scope, 'context.ready')) { forceLogin(); }
           timeout = null;
         }, 5000);
       }

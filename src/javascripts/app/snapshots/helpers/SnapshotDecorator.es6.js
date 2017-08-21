@@ -1,5 +1,5 @@
 import $q from '$q';
-import dotty from 'dotty';
+import {get as getAtPath} from 'lodash';
 
 /**
  * @ngdoc method
@@ -20,7 +20,7 @@ export function withCurrent (entrySys, snapshots) {
     const version = entrySys.version;
     if (version) {
       snapshots.forEach(function (snapshot) {
-        const isCurrent = dotty.get(snapshot, 'snapshot.sys.version') === version;
+        const isCurrent = getAtPath(snapshot, 'snapshot.sys.version') === version;
         snapshot.sys.isCurrent = isCurrent;
       });
     }
@@ -39,7 +39,7 @@ export function withCurrent (entrySys, snapshots) {
  */
 export function withAuthorName (spaceContext, snapshots) {
   const promises = snapshots.map(function (snapshot) {
-    const userId = dotty.get(snapshot, 'sys.createdBy.sys.id');
+    const userId = getAtPath(snapshot, 'sys.createdBy.sys.id');
 
     return spaceContext.users.get(userId)
       .then(function (user) {

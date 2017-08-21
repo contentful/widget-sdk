@@ -58,7 +58,7 @@ angular.module('contentful')
 
         $state.current.data = $scope.context = {};
         $scope.widgets = _.filter(editorData.fieldControls.form, function (widget) {
-          return !dotty.get(widget, 'field.disabled') || $scope.preferences.showDisabledFields;
+          return !_.get(widget, 'field.disabled') || $scope.preferences.showDisabledFields;
         });
         // TODO remove this and use entityInfo instead
         $scope.entry = $scope.entity = entry;
@@ -90,7 +90,7 @@ angular.module('contentful')
 
       spaceContext.cma.getEntrySnapshots(entityId, {limit: 2})
       .then(function (res) {
-        var count = dotty.get(res, 'items.length', 0);
+        var count = _.get(res, 'items.length', 0);
         return count > 0 ? compare(_.first(res.items), count) : back();
       }, back);
 

@@ -54,7 +54,7 @@ angular.module('contentful')
     }
 
     function loadScopeData () {
-      var organizationId = dotty.get(organization, 'sys.id');
+      var organizationId = _.get(organization, 'sys.id');
       var scope = {
         offerToSetUpPayment: options.offerPlanUpgrade,
         setUpPayment: newUpgradeAction(),

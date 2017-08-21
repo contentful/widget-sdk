@@ -120,10 +120,10 @@ angular.module('contentful')
     locale: $scope.locale.code,
     type: ctField.type,
     linkType: ctField.linkType,
-    itemLinkType: dotty.get(ctField, ['items', 'linkType']),
+    itemLinkType: _.get(ctField, ['items', 'linkType']),
     required: !!ctField.required,
     validations: ctField.validations || [],
-    itemValidations: dotty.get(ctField, ['items', 'validations'], []),
+    itemValidations: _.get(ctField, ['items', 'validations'], []),
 
     registerPublicationWarning: $scope.state.registerPublicationWarning,
 

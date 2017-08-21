@@ -103,7 +103,7 @@ angular.module('cf.data')
       return value;
     } else {
       var obj = {};
-      dotty.put(obj, path, value);
+      _.set(obj, path, value);
       return obj;
     }
   }
