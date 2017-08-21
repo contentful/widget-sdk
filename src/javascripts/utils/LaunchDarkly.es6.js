@@ -40,15 +40,17 @@ export function init () {
     bootstrap: 'localStorage'
   });
 
-  const changeUserContext = ({sys: {id: userId}}) => {
+  const changeUserContext = (user) => {
     client.identify({
-      key: userId
+      key: user.sys.id,
+      custom: {
+        isNonPayingUser: isQualifiedUser(user)
+      }
     }, null, noop);
   };
 
   user$
     .filter(validUser)
-    .filter(isQualifiedUser)
     .onValue(changeUserContext);
 }
 
@@ -165,8 +167,8 @@ export function getFeatureFlag (featureFlagName, customQualificationFn = _ => tr
  * @param {boolean?} isForQualifiedUsersOnly - whether it should be set for
  * qualified users only (default: false)
  */
-export function setOnScope ($scope, flagName, propertyName, isForQualifiedUsersOnly = false) {
-  const value$ = isForQualifiedUsersOnly ? getTest(flagName) : getFeatureFlag(flagName);
+export function setOnScope ($scope, flagName, propertyName) {
+  const value$ = getFeatureFlag(flagName);
 
   onValueScope($scope, value$, function (value) {
     $scope[propertyName] = value;
