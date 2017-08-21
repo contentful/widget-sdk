@@ -92,25 +92,14 @@ angular.module('contentful')
         });
       }
     },
-    author: {
-      description: 'User who created the item',
-      complete: function () {
-        return getUserMap().then(function (userMap) {
-          return makeListCompletion(_(userMap).keys().map(function (userName) {
-            return {value: '"' + userName + '"', description: userName};
-          }).value());
-        });
-      },
-      convert: function (_operator, value, space) {
-        return getUserMap(space).then(function (userMap) {
-          if (userMap[value]) {
-            var query = {};
-            query['sys.createdBy.sys.id'] = userMap[value];
-            return query;
-          }
-        });
-      }
-    },
+    author: createUserAutocompletion({
+      path: 'sys.createdBy.sys.id',
+      description: 'User who created the item'
+    }),
+    updater: createUserAutocompletion({
+      path: 'sys.updatedBy.sys.id',
+      description: 'User who updated the item most recently'
+    }),
     status: {
       description: 'Current status of the item',
       complete: makeListCompletion([
@@ -136,6 +125,29 @@ angular.module('contentful')
       }
     }
   };
+
+  function createUserAutocompletion (opts) {
+    return {
+      description: opts.description,
+      complete: function () {
+        return getUserMap().then(function (userMap) {
+          var values = Object.keys(userMap).map(function (name) {
+            return {value: '"' + name + '"', description: name};
+          });
+          return makeListCompletion(values);
+        });
+      },
+      convert: function (_op, value) {
+        return getUserMap().then(function (userMap) {
+          if (userMap[value]) {
+            var query = {};
+            query[opts.path] = userMap[value];
+            return query;
+          }
+        });
+      }
+    };
+  }
 
   // Factories for assets
   var assetcompletions = {
