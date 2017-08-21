@@ -1,26 +1,29 @@
 'use strict';
 
 describe('cfAutocompleteResultsController', function () {
-  var controller, scope;
-
-  beforeEach(module('contentful/test'));
-
+  let controller, scope;
   afterEach(function () {
     controller = scope = null;
   });
 
-  beforeEach(inject(function ($controller, $rootScope){
-    scope = $rootScope;
+  beforeEach(function () {
+    module('contentful/test');
+
+    const $rootScope = this.$inject('$rootScope');
+    scope = $rootScope.$new();
     scope.searchController = {
       clearSearch: sinon.stub()
     };
+
+    const $controller = this.$inject('$controller');
     controller = $controller('CfAutocompleteResultsController', {
-      $scope: $rootScope,
-      $attrs: {cfAutocompleteResults: 'results'}});
-  }));
+      $scope: scope,
+      $attrs: {cfAutocompleteResults: 'results'}
+    });
+  });
 
   it('should adjust selectedIndex, numResults when results change', function () {
-    scope.results = [1,2,3,4];
+    scope.results = [1, 2, 3, 4];
     scope.$apply();
     expect(controller.selectedIndex).toBe(0);
     expect(controller.numResults).toBe(4);
@@ -32,7 +35,7 @@ describe('cfAutocompleteResultsController', function () {
   });
 
   it('should return the selected element from the autocompleteResults in getSelected', function () {
-    scope.results = [1,2,3,4];
+    scope.results = [1, 2, 3, 4];
     scope.$apply();
     expect(controller.getSelectedResult()).toBe(1);
     controller.selectNext();
@@ -41,7 +44,7 @@ describe('cfAutocompleteResultsController', function () {
   });
 
   it('should never go past the upper border with selectNext', function () {
-    scope.results = [1,2,3,4];
+    scope.results = [1, 2, 3, 4];
     scope.$apply();
     controller.selectedIndex = 3;
     controller.selectNext();
@@ -49,7 +52,7 @@ describe('cfAutocompleteResultsController', function () {
   });
 
   it('should never go past 0 with selectPrevious', function () {
-    scope.results = [1,2,3,4];
+    scope.results = [1, 2, 3, 4];
     scope.$apply();
     controller.selectedIndex = 0;
     controller.selectPrevious();
@@ -101,7 +104,7 @@ describe('cfAutocompleteResultsController', function () {
   });
 
   it('should return false from the action methods if operating on a normal list', function () {
-    scope.results = [1,2,3];
+    scope.results = [1, 2, 3];
     scope.$apply();
     expect(controller.selectPrevious()).toBe(true);
     expect(controller.selectNext()).toBe(true);
