@@ -11,19 +11,22 @@ header.workbench-header
       | Content
       cf-knowledge-base.workbench-header__kb-link(target="entry")
 
-  .workbench-header__search.search-area--with-filter(ng-show="!showNoEntriesAdvice()")
-    select.search-area__select-box.cfnext-select-box(
-      ng-model="context.view.contentTypeId"
-      ng-change="selectedContentType()"
-      ng-options="ct.id as ct.name group by 'Content types' for ct in contentTypeSelectOptions")
-      option(value="") All
-
-    .search-area__input(
+  .workbench-header__search(
+    style="display: flex"
+    ng-show="!showNoEntriesAdvice()")
+    div(
+      style="flex-grow: 1; margin-right: 20px"
       cf-tokenized-search="context.view.searchTerm"
       search-content-type="getSearchContentType()"
       placeholder="Type to search. Press the down arrow key for help."
       cf-on-blur-component="leftSearch($event)"
       cf-on-blur-component-when="showAutocompletions")
+
+    select.cfnext-select-box(
+      ng-model="context.view.contentTypeId"
+      ng-change="selectedContentType()"
+      ng-options="ct.id as ct.name group by 'Content types' for ct in contentTypeSelectOptions")
+      option(value="") All content types
 
   .workbench-header__actions(ng-if="!showNoEntriesAdvice()")
     +create-entry-button

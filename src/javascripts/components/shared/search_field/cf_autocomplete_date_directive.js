@@ -7,7 +7,7 @@ angular.module('contentful').directive('cfAutocompleteDate', ['require', functio
 
   return {
     restrict: 'A',
-    template: JST['cf_autocomplete_date'](),
+    template: '<div class="datepicker"></div>',
     link: function (scope, elem) {
       var $datepicker = elem.find('.datepicker');
       $datepicker.datepicker({

@@ -10,14 +10,12 @@ header.workbench-header
       | Media
       cf-knowledge-base.workbench-headr__kb-link(target="asset")
 
-  .workbench-header__search.search-area(
+  .workbench-header__search(
     ng-hide="showNoAssetsAdvice()")
-    .search-area__input(
+    div(
       cf-tokenized-search="context.view.searchTerm"
       search-content-type="assetContentType"
       placeholder="Type to search. Press the down arrow key for help.")
-
-    .search-results-position(cf-search-results-position paginator="paginator" ng-hide="!paginator.getTotal()")
 
   .workbench-header__actions(
     ng-show="!showNoAssetsAdvice() && !shouldHide('createAsset')")

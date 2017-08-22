@@ -1,9 +1,20 @@
 'use strict';
-angular.module('contentful').directive('cfAutocompleteList', function () {
+angular.module('contentful').directive('cfAutocompleteList', ['require', function (require) {
+  var h = require('utils/hyperscript').h;
+
   return {
+    template: h('ul.search-autocomplete-list', [
+      h('li', {
+        ngRepeat: '(index, item) in autocompletion.items',
+        ngClass: '{selected: item.value === selectedAutocompletion.value}',
+        ngClick: 'selectAutocompletion(item, $event)'
+      }, [
+        h('span.item-value', ['{{item.value}}']),
+        h('span.item-description', ['{{item.description}}'])
+      ])
+    ]),
     restrict: 'A',
     scope: true,
-    template: JST['cf_autocomplete_list'](),
     controller: ['$scope', function ($scope) {
       $scope.$on('selectNextAutocompletion', function () {
         selectNextAutocompletion();
@@ -71,4 +82,4 @@ angular.module('contentful').directive('cfAutocompleteList', function () {
       }
     }]
   };
-});
+}]);
