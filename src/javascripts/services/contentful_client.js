@@ -257,7 +257,7 @@ angular.module('contentful').factory('contentfulClient', ['$injector', function 
   }
 
   function isLink(object) {
-    return dotty.get(object, 'sys.type') === 'Link';
+    return _.get(object, 'sys.type') === 'Link';
   }
 
   function getLink(response, link) {

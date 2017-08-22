@@ -245,7 +245,7 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$injector', functio
       }
 
       function uses24hMode () {
-        return dotty.get(scope, 'widget.settings.ampm') !== '12';
+        return _.get(scope, 'widget.settings.ampm') !== '12';
       }
 
     }

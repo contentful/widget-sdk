@@ -12,8 +12,8 @@
 angular.module('contentful').factory('userAgent', ['$injector', function ($injector) {
 
   var $window   = $injector.get('$window');
-  var userAgent = dotty.get($window, 'navigator.userAgent', '');
-  var platform  = dotty.get($window, 'navigator.platform', '');
+  var userAgent = _.get($window, 'navigator.userAgent', '');
+  var platform  = _.get($window, 'navigator.platform', '');
   var ctrlKey   = 'Ctrl';
 
   /**

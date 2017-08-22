@@ -18,7 +18,7 @@ describe('utils/LaunchDarkly', function () {
       $provide.constant('libs/launch-darkly-client', LD);
     });
 
-    this.qualifiedUser = {
+    this.user = {
       email: 'user@example.com',
       organizationMemberships: [
         {
@@ -35,6 +35,8 @@ describe('utils/LaunchDarkly', function () {
       }
     };
 
+    // TODO: remove corresponding bits after deprecated method
+    // utils/LaunchDarkly#getTest() is removed
     this.unqualifiedUser = {
       email: 'mehh@example.com',
       organizationMemberships: [
@@ -69,6 +71,15 @@ describe('utils/LaunchDarkly', function () {
     this.setOnScope = launchDarkly.setOnScope;
 
     this.assertPropVal = K.assertCurrentValue;
+
+    this.setSubscription = function (value) {
+      this.user.organizationMemberships[0].organization.subscription.status = value;
+    };
+
+    this.update = function () {
+      this.user$.set(this.user);
+      this.$apply();
+    };
   });
 
   afterEach(() => {
@@ -77,21 +88,6 @@ describe('utils/LaunchDarkly', function () {
   });
 
   describe('#init()', function () {
-    beforeEach(function () {
-      this.assertContextChange = function (assertion, status) {
-        if (status) {
-          this.qualifiedUser.organizationMemberships[0].organization.subscription = {
-            status
-          };
-        }
-
-        this.user$.set(this.qualifiedUser);
-        this.$apply();
-
-        assertion();
-      };
-    });
-
     it('should call launch darkly client initialize with anon user and bootstrap it', function () {
       sinon.assert.calledWithExactly(
         LD.initialize,
@@ -101,36 +97,40 @@ describe('utils/LaunchDarkly', function () {
       );
     });
 
-    it('should change user context when a logged in and qualified user is available', function () {
-      const ldUser = {
-        key: this.qualifiedUser.sys.id
-      };
-      const assertSwitchedToUser = () => sinon.assert.calledWith(client.identify, ldUser);
-      const assertSwitchedOnlyOnce = () => sinon.assert.calledOnce(client.identify);
-
+    it('should change user context when the user is available', function () {
       sinon.assert.notCalled(client.identify);
-      this.assertContextChange(assertSwitchedToUser);
-      // paid users don't qualify for tests
-      this.assertContextChange(assertSwitchedOnlyOnce, 'paid');
+      this.update();
+      sinon.assert.calledOnce(client.identify);
+      expect(client.identify.getCall(0).args[0].key).toEqual(this.user.sys.id);
     });
 
-    it('should not change from anon user if user is not valid or qualified', function () {
-      const assertNoSwitchOccured = () => sinon.assert.notCalled(client.identify);
+    it('should set `isNonPayingUser` flag for LD', function () {
+      sinon.assert.notCalled(client.identify);
 
-      client.identify.reset();
-      sinon.assert.calledWith(LD.initialize, this.envId, {
-        key: 'anonymous-user',
-        anonymous: true
-      });
-      this.assertContextChange(assertNoSwitchOccured, 'free_paid');
-      this.assertContextChange(assertNoSwitchOccured, 'paid');
+      this.setSubscription('paid');
+      this.update();
+      expect(client.identify.getCall(0).args[0].custom.isNonPayingUser).toEqual(false);
+
+      this.setSubscription('free_paid');
+      this.update();
+      expect(client.identify.getCall(1).args[0].custom.isNonPayingUser).toEqual(false);
+
+      this.setSubscription('free');
+      this.update();
+      expect(client.identify.getCall(2).args[0].custom.isNonPayingUser).toEqual(true);
+    });
+
+    it('should not change from anon user if user is not valid', function () {
+      this.user = {};
+      this.update();
+      sinon.assert.notCalled(client.identify);
     });
   });
 
   describe('#getTest(testName, customQualificationFn)', function () {
     describe('for a qualified user', function () {
       beforeEach(function () {
-        this.user$.set(this.qualifiedUser);
+        this.user$.set(this.user);
       });
 
       it('should return a kefir property that has the initial value of the flag', function () {
@@ -171,7 +171,7 @@ describe('utils/LaunchDarkly', function () {
         client.variation.returns('dude');
         this.assertPropVal(propA, null);
 
-        this.user$.set(this.qualifiedUser);
+        this.user$.set(this.user);
         this.assertPropVal(propA, 'dude');
       });
     });
@@ -179,7 +179,7 @@ describe('utils/LaunchDarkly', function () {
     describe('when a custom qualification function is provided', function () {
       beforeEach(function () {
         client.variation.returns('test');
-        this.user$.set(this.qualifiedUser);
+        this.user$.set(this.user);
       });
 
       it('should get current user as an argument', function () {
@@ -239,13 +239,7 @@ describe('utils/LaunchDarkly', function () {
     });
 
     it('should set scope property for feature flag', function () {
-      this.setOnScope(this.$scope, 'feature-xx-00-00-foo-bar', 'fooBar');
-      expect(this.$scope.fooBar).toBe('some-val');
-    });
-
-    it('should set scope property for A/B test for qualified user', function () {
-      this.user$.set(this.qualifiedUser);
-      this.setOnScope(this.$scope, 'test-xx-00-00-foo-bar', 'fooBar');
+      this.setOnScope(this.$scope, 'foo-bar', 'fooBar');
       expect(this.$scope.fooBar).toBe('some-val');
     });
   });

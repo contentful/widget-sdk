@@ -53,7 +53,7 @@ describe('SnapshotComparatorController/snapshotDoc', function () {
 
       return $q.all(mutatingMethods.map((method) => {
         return this.doc[method](path, {blah: 'blah'}).then(() => {
-          expect(this.doc.getValueAt(path)).toEqual(dotty.get(data, path));
+          expect(this.doc.getValueAt(path)).toEqual(_.get(data, path));
         });
       }));
     });

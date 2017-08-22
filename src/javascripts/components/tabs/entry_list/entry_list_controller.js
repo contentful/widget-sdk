@@ -40,7 +40,7 @@ angular.module('contentful')
   $scope.hasContentType = spaceContext.publishedContentTypes.length > 0;
 
   $scope.getSearchContentType = function () {
-    return spaceContext.publishedCTs.get(dotty.get($scope, 'context.view.contentTypeId'));
+    return spaceContext.publishedCTs.get(_.get($scope, 'context.view.contentTypeId'));
   };
 
   $scope.$watchCollection(function () {

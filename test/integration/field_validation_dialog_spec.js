@@ -15,11 +15,11 @@ xdescribe('validation dialog', function() {
   var openDialog, dialog, scope;
 
   function getFieldProperty(scope, path) {
-    return dotty.get(scope, ['field', path].join('.'));
+    return _.get(scope, ['field', path].join('.'));
   }
 
   function setFieldProperty(scope, path, value) {
-    return dotty.put(scope, ['field', path].join('.'), value);
+    return _.set(scope, ['field', path].join('.'), value);
   }
 
   beforeEach(function () {

@@ -185,7 +185,7 @@ angular.module('contentful')
     // @TODO - does backend ever return duplicate items for any query?
     // If no, we should remove this
     return _.transform(res.items, function (acc, item) {
-      var id = dotty.get(item, 'sys.id');
+      var id = _.get(item, 'sys.id');
       if (id && !itemsById[id]) {
         itemsById[id] = item;
         acc.push(item);

@@ -157,7 +157,7 @@ angular.module('contentful')
   }
 
   function optionsForWidget (widgetId) {
-    return dotty.get(WIDGETS, [widgetId, 'options'], []);
+    return _.get(WIDGETS, [widgetId, 'options'], []);
   }
 
 

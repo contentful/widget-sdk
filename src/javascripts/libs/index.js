@@ -37,19 +37,3 @@ angular.module('cf.libs', [])
 // This needs to be called after everything else so we override any
 // previously imported versions of lodash
 window._ = require('lodash');
-
-// TODO dotty should be replaced with _.get / _.set
-window.dotty = {
-  get: function (obj, path, defaultValue) {
-    if (Array.isArray(path) && path.length === 0) {
-      return obj;
-    } else {
-      path = Array.isArray(path) ? path.slice() : path;
-      return window._.get(obj, path, defaultValue);
-    }
-  },
-  put: function (obj, path, value) {
-    path = Array.isArray(path) ? path.slice() : path;
-    return window._.set(obj, path, value);
-  }
-};

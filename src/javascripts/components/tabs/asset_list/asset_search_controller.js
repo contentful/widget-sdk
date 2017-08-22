@@ -27,7 +27,7 @@ angular.module('contentful')
     var currPage = this.paginator.getPage();
 
     if (resetPage) { this.paginator.setPage(0); }
-    if (!resetPage && !dotty.get($scope.assets, 'length', 0) && currPage > 0) {
+    if (!resetPage && !_.get($scope.assets, 'length', 0) && currPage > 0) {
       this.paginator.setPage(currPage - 1);
     }
 

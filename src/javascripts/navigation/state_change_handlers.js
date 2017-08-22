@@ -148,12 +148,12 @@ angular.module('cf.app')
       },
       data: {
         toState: {
-          name: dotty.get(to, 'state.name'),
-          params: dotty.get(to, 'params')
+          name: _.get(to, 'state.name'),
+          params: _.get(to, 'params')
         },
         fromState: {
-          name: dotty.get(from, 'state.name'),
-          params: dotty.get(from, 'params')
+          name: _.get(from, 'state.name'),
+          params: _.get(from, 'params')
         }
       }
     };

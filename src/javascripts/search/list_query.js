@@ -119,7 +119,7 @@ angular.module('contentful').factory('ListQuery', ['require', function (require)
   }
 
   function getCtField (id, ct) {
-    var ctFields = dotty.get(ct, 'data.fields', []);
+    var ctFields = _.get(ct, 'data.fields', []);
     return _.find(ctFields, {id: id});
   }
 }]);

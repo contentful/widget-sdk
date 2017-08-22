@@ -28,16 +28,16 @@ angular.module('contentful').factory('accessChecker/policy', ['require', functio
   };
 
   function setMembership (membership) {
-    var role = _.first(dotty.get(membership, 'roles', []));
+    var role = _.first(_.get(membership, 'roles', []));
     var internal = role ? PolicyBuilder.toInternal(role) : {};
 
-    isAdmin = dotty.get(membership, 'admin', false);
+    isAdmin = _.get(membership, 'admin', false);
     fieldAccessCache = {};
 
-    policies.entry.allowed.flat = dotty.get(internal, 'entries.allowed', []);
-    policies.entry.denied.flat = dotty.get(internal, 'entries.denied', []);
-    policies.asset.allowed = dotty.get(internal, 'assets.allowed', []);
-    policies.asset.denied = dotty.get(internal, 'assets.denied', []);
+    policies.entry.allowed.flat = _.get(internal, 'entries.allowed', []);
+    policies.entry.denied.flat = _.get(internal, 'entries.denied', []);
+    policies.asset.allowed = _.get(internal, 'assets.allowed', []);
+    policies.asset.denied = _.get(internal, 'assets.denied', []);
 
     groupByContentType('allowed');
     groupByContentType('denied');

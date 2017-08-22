@@ -5,6 +5,5 @@ env:
 globals:
   angular: false
   _: false
-  dotty: false
   JST: false
   $: false

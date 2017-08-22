@@ -337,7 +337,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
    * Returns true if API Keys can be modified.
    */
   function canModifyApiKeys () {
-    return dotty.get(responses, 'createApiKey.can', false);
+    return _.get(responses, 'createApiKey.can', false);
   }
 
   /**
@@ -348,7 +348,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
    * Returns true if Roles can be modified.
    */
   function canModifyRoles () {
-    return isSuperUser() && dotty.get(features, 'customRoles', false);
+    return isSuperUser() && _.get(features, 'customRoles', false);
   }
 
   /**
@@ -453,7 +453,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
    */
   function wasForbidden (context) {
     return function (res) {
-      if (_.includes([403, 404], parseInt(dotty.get(res, 'statusCode'), 10))) {
+      if (_.includes([403, 404], parseInt(_.get(res, 'statusCode'), 10))) {
         context.forbidden = true;
         return $q.resolve(context);
       } else {
@@ -483,7 +483,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
     if (_.isString(entity)) {
       return entity;
     } else {
-      return dotty.get(entity, 'sys.type', null);
+      return _.get(entity, 'sys.type', null);
     }
   }
 
@@ -492,11 +492,11 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
   }
 
   function getContentTypeIdFor (entry) {
-    return dotty.get(entry, 'data.sys.contentType.sys.id');
+    return _.get(entry, 'data.sys.contentType.sys.id');
   }
 
   function getAuthorIdFor (entry) {
-    return dotty.get(entry, 'data.sys.createdBy.sys.id');
+    return _.get(entry, 'data.sys.createdBy.sys.id');
   }
 
   function determineEnforcement (reasonsDenied, entityType) {

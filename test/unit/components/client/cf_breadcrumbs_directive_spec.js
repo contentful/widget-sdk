@@ -39,7 +39,7 @@ describe('cfBreadcrumbsDirective spec', function () {
       contextHistoryMock.crumbs$.set(makeEntities(entityCount));
       const $el = this.compileElement();
       const scope = $el.find(':first-child').scope();
-      expect(dotty.get(scope, prop)).toEqual(val);
+      expect(_.get(scope, prop)).toEqual(val);
     };
 
     this.makeEntitesAndCompileEl = function (count) {
@@ -111,7 +111,7 @@ describe('cfBreadcrumbsDirective spec', function () {
         return function (entityCount, prop, value) {
           const $el = self.makeEntitesAndCompileEl(entityCount).find(selector);
 
-          expect(dotty.get($el, prop)).toEqual(value);
+          expect(_.get($el, prop)).toEqual(value);
         };
       };
     });

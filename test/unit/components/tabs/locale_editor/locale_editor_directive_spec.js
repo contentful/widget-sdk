@@ -17,7 +17,7 @@ describe('Locale Editor Directive', function () {
 
     const spaceContext = this.$inject('spaceContext');
     spaceContext.space = {};
-    dotty.put(spaceContext, 'space.data.organization.subscriptionPlan.name');
+    _.set(spaceContext, 'space.data.organization.subscriptionPlan.name');
 
     this.locale = locale('co-DE');
 

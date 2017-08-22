@@ -198,7 +198,7 @@ angular.module('contentful')
       fieldId: field.id,
       fieldName: field.name,
       fieldType: field.type,
-      fieldItemType: dotty.get(field, 'items.type') || null,
+      fieldItemType: _.get(field, 'items.type') || null,
       fieldLocalized: field.localized,
       fieldRequired: field.required
     });

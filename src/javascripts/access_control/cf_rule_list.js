@@ -27,7 +27,7 @@ angular.module('contentful').directive('cfRuleList', ['$injector', function ($in
       $scope.locales.unshift({ code: ALL_LOCALES, name: 'All locales' });
 
       $scope.$watch(function () {
-        return dotty.get($scope, 'rules.allowed', []).length;
+        return _.get($scope, 'rules.allowed', []).length;
       }, function (current, previous) {
         if (current === 0 && previous > 0) {
           $scope.rules.denied = [];

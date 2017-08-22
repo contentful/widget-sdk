@@ -48,7 +48,11 @@ angular.module('cf.app')
     }
 
     function valueAt (path) {
-      return dotty.get(data, path);
+      if (Array.isArray(path) && path.length === 0) {
+        return data;
+      } else {
+        return _.get(data, path);
+      }
     }
   }
 }]);

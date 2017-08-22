@@ -29,7 +29,7 @@ describe('Locale editor controller', function () {
     const spaceContext = this.$inject('spaceContext');
     spaceContext.space = {};
     spaceContext.reloadLocales = sinon.stub().resolves();
-    dotty.put(spaceContext, 'space.data.organization.subscriptionPlan.name', 'Unlimited');
+    _.set(spaceContext, 'space.data.organization.subscriptionPlan.name', 'Unlimited');
 
     this.scope.context = {};
 

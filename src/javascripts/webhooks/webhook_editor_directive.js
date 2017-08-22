@@ -142,7 +142,7 @@ angular.module('contentful')
   }
 
   function isEmpty (prop) {
-    var value = dotty.get($scope, ['webhook', prop], null);
+    var value = _.get($scope, ['webhook', prop], null);
     return !_.isString(value) || value.length < 1;
   }
 
@@ -223,7 +223,7 @@ angular.module('contentful')
   }
 
   function handleServerError (res) {
-    var errors = dotty.get(res, 'body.details.errors', []);
+    var errors = _.get(res, 'body.details.errors', []);
     var error = _.isObject(errors[0]) ? errors[0] : {};
 
     switch (error.path) {

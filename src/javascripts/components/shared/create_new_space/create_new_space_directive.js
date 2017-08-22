@@ -139,7 +139,7 @@ angular.module('contentful')
     }
 
     var data = controller.newSpace.data;
-    var orgId = dotty.get(controller, 'newSpace.organization.sys.id');
+    var orgId = _.get(controller, 'newSpace.organization.sys.id');
 
     // TODO This may happen due to 'writableOrganizations' being empty.
     // See above for more info
@@ -229,7 +229,7 @@ angular.module('contentful')
   function handleSpaceCreationFailure (err) {
     controller.createSpaceInProgress = false;
 
-    var errors = dotty.get(err, 'body.details.errors');
+    var errors = _.get(err, 'body.details.errors');
     var usage = enforcements.computeUsage('space');
     var fieldErrors = [
       {name: 'length', path: 'name', message: 'Space name is too long'},
