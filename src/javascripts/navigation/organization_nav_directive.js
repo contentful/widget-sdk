@@ -34,7 +34,8 @@
         var orgId = nav.orgId = $stateParams.orgId;
         tokenStore.getOrganization(orgId).then(function (org) {
           nav.hasOffsiteBackup = hasOffsiteBackup(org);
-          nav.hasBillingTab = org.isBillable && OrganizationRoles.isOwnerOrAdmin(org);
+          nav.hasBillingTab = org.isBillable && OrganizationRoles.isOwner(org);
+          nav.hasSettingsTab = OrganizationRoles.isOwner(org);
         });
       }
     }]
@@ -48,7 +49,8 @@
         sref: 'account.organizations.edit({orgId: nav.orgId})',
         rootSref: 'account.organizations.edit',
         icon: 'nav-organization-information',
-        dataViewType: 'organization-information'
+        dataViewType: 'organization-information',
+        if: 'nav.hasSettingsTab'
       },
       {
         title: 'Subscription',
