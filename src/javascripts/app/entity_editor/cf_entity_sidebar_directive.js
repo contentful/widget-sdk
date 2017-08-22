@@ -76,8 +76,6 @@ angular.module('contentful')
             $scope.collectionsSelector = component;
           }
         );
-      } else {
-        $scope.collectionsSelector = h('span');
       }
     }]
   };
