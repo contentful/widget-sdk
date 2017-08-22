@@ -1,12 +1,15 @@
 'use strict';
 
 describe('Search parser', function () {
-  var parser;
-  beforeEach(module('contentful/test'));
+  let parser;
+  afterEach(function () {
+    parser = null;
+  });
 
-  beforeEach(inject(function (searchParser){
-    parser = searchParser;
-  }));
+  beforeEach(function () {
+    module('contentful/test');
+    parser = this.$inject('searchParser');
+  });
 
   it('should detect a simple search', function () {
     expect(parser.parse('Foobar')).toEqual([

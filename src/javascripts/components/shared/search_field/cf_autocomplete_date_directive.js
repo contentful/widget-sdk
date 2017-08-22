@@ -1,29 +1,31 @@
 'use strict';
-angular.module('contentful').directive('cfAutocompleteDate', ['$injector', function ($injector) {
-  var moment = $injector.get('moment');
+angular.module('contentful').directive('cfAutocompleteDate', ['require', function (require) {
+  var moment = require('moment');
 
-  var DATE_FORMAT          =   'yy-mm-dd'; // datepicker format
+  var DATE_FORMAT = 'yy-mm-dd'; // datepicker format
   var DATE_FORMAT_INTERNAL = 'YYYY-MM-DD'; // moment.js format
 
   return {
     restrict: 'A',
     template: JST['cf_autocomplete_date'](),
-    link: function(scope, elem){
+    link: function (scope, elem) {
       var $datepicker = elem.find('.datepicker');
       $datepicker.datepicker({
         dateFormat: DATE_FORMAT,
-        onSelect: function(dateString) {
-          scope.$apply(function(scope) {
+        onSelect: function (dateString) {
+          scope.$apply(function (scope) {
             scope.fillAutocompletion(dateString);
           });
         },
         defaultDate: getDate(),
-        firstDay: 1,
+        firstDay: 1
       });
 
       scope.$on('autocompletionsUpdated', function () {
         var date = getDate();
-        if (date) $datepicker.datepicker('setDate', date);
+        if (date) {
+          $datepicker.datepicker('setDate', date);
+        }
       });
 
       scope.$evalAsync(function () {
@@ -39,7 +41,7 @@ angular.module('contentful').directive('cfAutocompleteDate', ['$injector', funct
         adjustDate(-1);
       });
 
-      function adjustDate(offset) {
+      function adjustDate (offset) {
         var date = $datepicker.datepicker('getDate');
         var m = date ? moment(date) : moment();
         m = m.add(offset, 'days');
@@ -47,7 +49,7 @@ angular.module('contentful').directive('cfAutocompleteDate', ['$injector', funct
         scope.fillAutocompletion(m.format(DATE_FORMAT_INTERNAL));
       }
 
-      function getDate() {
+      function getDate () {
         var dateStr = scope.currentTokenContent();
         if (dateStr && dateStr.match(/\d{4}-\d{1,2}-\d{1,2}/)) {
           return dateStr;

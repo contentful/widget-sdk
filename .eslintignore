@@ -2,16 +2,13 @@
 # have been migrated.
 
 test/unit/app/widgets/cf_video_player_directive_spec.js
-test/unit/components/forms/cf_autocomplete_results_controller_spec.js
 test/unit/components/forms/cf_field_alert_directive_spec.js
 test/unit/components/forms/cf_multi_video_editor_controller_spec.js
 test/unit/components/shared/data_size_scale_controller_spec.js
 test/unit/components/shared/accordion_controller_spec.js
 test/unit/components/shared/cf_form_widget_directive_spec.js
-test/unit/components/shared/cf_search_directive_spec.js
 test/unit/components/shared/cf_validation_error_display_spec.js
 test/unit/components/field_dialog/appearance_controller_spec.js
-test/unit/components/search.js
 test/unit/forms/cf_null_empty_input_spec.js
 test/unit/forms/cf_validate_form_spec.js
 test/unit/forms/cf_validate_model_spec.js
@@ -23,11 +20,9 @@ test/unit/services/assert_spec.js
 test/unit/services/contentful_client_spec.js
 test/unit/services/exception_handler_spec.js
 test/unit/services/field_factory_spec.js
-test/unit/services/filter_query_string_spec.js
 test/unit/services/intercom_spec.js
 test/unit/services/kaltura_search_spec.js
 test/unit/services/revision_spec.js
-test/unit/services/search_parser_spec.js
 test/unit/services/validation_views_spec.js
 test/unit/services/authorization_spec.js
 test/unit/services/editing_interfaces_helpers_spec.js
@@ -69,9 +64,6 @@ src/javascripts/components/shared/file_drop/cf_file_drop_directive.js
 src/javascripts/components/shared/file_info/cf_file_display_metadata_directive.js
 src/javascripts/components/shared/file_info/cf_file_display_directive.js
 src/javascripts/components/shared/getty_dialog/getty_dialog_controller.js
-src/javascripts/components/shared/search_field/cf_autocomplete_date_directive.js
-src/javascripts/components/shared/search_field/cf_autocomplete_list_directive.js
-src/javascripts/components/shared/search_field/cf_search_directive.js
 src/javascripts/components/shared/validation_error_display/cf_error_list_directive.js
 src/javascripts/components/shared/validation_error_display/cf_error_messages_directive.js
 src/javascripts/components/shared/validation_error_display/cf_error_path_directive.js
@@ -97,8 +89,6 @@ src/javascripts/components/field_dialog/cf_validation_settings_directive.js
 src/javascripts/components/field_dialog/field_decorator.js
 src/javascripts/components/field_dialog/image_dimensions_validation_controller.js
 src/javascripts/components/field_dialog/validation_asset_types_controller.js
-src/javascripts/components/forms/autocomplete_results/cf_autocomplete_results_controller.js
-src/javascripts/components/forms/autocomplete_results/cf_autocomplete_results_directive.js
 src/javascripts/components/forms/datetime_editor/cf_datetime_editor_directive.js
 src/javascripts/components/forms/field_alert/cf_field_alert_directive.js
 src/javascripts/app/widgets/kaltura/cf_kaltura_editor_directive.js
@@ -185,8 +175,6 @@ src/javascripts/data/editing_interfaces/transformer.js
 src/javascripts/markdown_editor/cf_markdown_action_directive.js
 src/javascripts/markdown_editor/link_organizer.js
 src/javascripts/markdown_editor/markdown_special_characters.js
-src/javascripts/search/cached_parser.js
-src/javascripts/search/query_builder.js
 src/javascripts/utils/encoder.js
 src/javascripts/utils/keycodes.js
 src/javascripts/utils/memoize.js

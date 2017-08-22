@@ -1,10 +1,9 @@
 'use strict';
 
 describe('search#buildQuery()', function () {
-  beforeEach(module('contentful/test'));
-
   beforeEach(function () {
-    var buildQuery = this.$inject('search/queryBuilder');
+    module('contentful/test');
+    const buildQuery = this.$inject('search/queryBuilder');
     this.space = {};
     this.buildQuery = function (query) {
       return buildQuery(this.space, this.contentType, query);
@@ -17,5 +16,4 @@ describe('search#buildQuery()', function () {
       expect(q['sys.id']).toEqual('MYID');
     });
   });
-
 });
