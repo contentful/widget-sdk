@@ -40,15 +40,17 @@ export function init () {
     bootstrap: 'localStorage'
   });
 
-  const changeUserContext = ({sys: {id: userId}}) => {
+  const changeUserContext = (user) => {
     client.identify({
-      key: userId
+      key: user.sys.id,
+      custom: {
+        isNonPayingUser: isQualifiedUser(user)
+      }
     }, null, noop);
   };
 
   user$
     .filter(validUser)
-    .filter(isQualifiedUser)
     .onValue(changeUserContext);
 }
 
@@ -76,6 +78,11 @@ function isQualifiedUser ({organizationMemberships}) {
 /**
  * @ngdoc method
  * @name utils/LaunchDarkly#getTest
+ *
+ * @deprecated Don't use for new A/B tests - instead, use #getFeatureFlag
+ * and configure LD to target only users who have the property
+ * `isNonPayingUser=true`.
+ *
  * @usage[js]
  * const ld = require('utils/LaunchDarkly')
  * const awesomeTest$ = ld.getTest('my-awesome-test')
@@ -147,26 +154,19 @@ export function getFeatureFlag (featureFlagName, customQualificationFn = _ => tr
  * @ngdoc method
  * @name utils/LaunchDarkly#setOnScope
  * @usage[js]
- * const ld = require('utils/LaunchDarkly')
- * // sets $scope.fooBar for qualufied users only
- * ld.setOnScope($scope, 'foo-bar', 'fooBar', true)
- *
+ * const LD = require('utils/LaunchDarkly')
+ * LD.setOnScope($scope, 'foo-bar', 'fooBar')
  *
  * @description
  * Convenience method for commonly used scenario - set scope property to a
- * feature flag or A/B test value.
- * It automatically guesses whether it is a feature flag or A/B test based on
- * its name that shoud start with 'feature|test-...'.
- * If name cannot be parsed, an error is thrown.
+ * feature flag value.
  *
  * @param {Scope} $scope
  * @param {String} flagName - name of flag in LaunchDarkly
  * @param {String} propertyName - name of property set on scope
- * @param {boolean?} isForQualifiedUsersOnly - whether it should be set for
- * qualified users only (default: false)
  */
-export function setOnScope ($scope, flagName, propertyName, isForQualifiedUsersOnly = false) {
-  const value$ = isForQualifiedUsersOnly ? getTest(flagName) : getFeatureFlag(flagName);
+export function setOnScope ($scope, flagName, propertyName) {
+  const value$ = getFeatureFlag(flagName);
 
   onValueScope($scope, value$, function (value) {
     $scope[propertyName] = value;

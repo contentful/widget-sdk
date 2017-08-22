@@ -18,7 +18,7 @@ angular.module('contentful')
     controller: ['$scope', function ($scope) {
       // Begin feature flag code - feature-bv-06-2017-use-new-navigation
       var LD = require('utils/LaunchDarkly');
-      LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation', true);
+      LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation');
       // End feature flag code - feature-bv-06-2017-use-new-navigation
 
       this.canNavigateTo = function (section) {
