@@ -3,17 +3,20 @@
 angular.module('contentful').directive('cfTokenizedSearch', ['require', function (require) {
   var $timeout = require('$timeout');
   var h = require('utils/hyperscript').h;
+  var Colors = require('Styles/Colors').byName;
+  var renderString = require('ui/Framework').renderString;
+  var serachIcon = renderString(require('svg/search').default);
 
   return {
     template: h('div', {
       style: {
         position: 'relative',
         display: 'flex',
-        background: '#fff',
-        border: '1px solid red'
+        backgroundColor: 'white',
+        border: '1px solid ' + Colors.blueMid
       }
     }, [
-      h('input', {
+      h('input.cfnext-form__input', {
         style: {
           flexGrow: '1',
           border: '0'
@@ -28,21 +31,21 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
         ngBlur: 'inputBlurred($event)'
       }),
       h('button', {
+        style: {padding: '0 10px'},
         ngClick: 'updateFromButton()',
         tabindex: '0'
-      }, [
-        h('i.fa.fa-search.fa-flip-horizontal')
-      ]),
+      }, [serachIcon]),
       h('div', {
-        ngIf: 'showAutocompletions',
+        ngIf: 'showAutocompletions && autocompletion.type',
         style: {
           zIndex: '300',
           position: 'absolute',
-          left: '0',
-          right: '0',
+          top: '31px',
+          left: '-1px',
+          right: '-1px',
           fontSize: '14px',
-          background: '#fff',
-          border: '1px solid green'
+          backgroundColor: 'white',
+          border: '1px solid ' + Colors.blueMid
         }
       }, [
         h('div', {
@@ -57,20 +60,22 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
           style: {
             display: 'flex',
             alignItems: 'center',
-            background: 'pink',
-            borderTop: '1px solid green',
+            background: Colors.iceMid,
+            borderTop: '1px solid ' + Colors.iceDark,
             padding: '15px 20px'
           }
         }, [
           h('cf-icon', {name: 'fd-info-text'}),
           h('p', {
             style: {
+              color: Colors.textLight,
               margin: '0',
               marginLeft: '7px'
             }
           }, [
             'Get more out of search. Here\'s&#32;',
             h('a', {
+              style: {textDecoration: 'underline'},
               href: 'https://www.contentful.com/r/knowledgebase/content-search/',
               target: '_blank'
             }, ['how search works']),

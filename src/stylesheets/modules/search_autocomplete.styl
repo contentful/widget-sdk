@@ -1,27 +1,47 @@
 .search-autocomplete-list
-  padding: 7px 0;
+  padding: 15px 0
   display: table
-  width: 100%
+
+  // fix for https://bugs.chromium.org/p/chromium/issues/detail?id=306878
+  width: 100.2%
+
   > li
     display: table-row
     cursor: pointer
+
   > li:hover
-    $highlight(lighten($blue, 20), 6%, 'darken')
-    color: white
-  .item-value
-    color: $gray
-    padding: 7px;
-    padding-left: 20px
-  .selected,
-  .selected:hover
-    color: white
-    $highlight($blue)
-    > .item-value
-      color: white
-  .item-description
-    color: $colors.dark-gray
-    padding: 7px;
-    padding-right: 20px;
+    background-color: $colors.ice-mid
+
+    // fix, part 2
+    .item-description
+      border-right: 1px solid $colors.blue-mid
+
   .item-value,
   .item-description
     display: table-cell
+
+  .item-value
+    padding: 7px
+    padding-left: 20px
+    > span
+      display: inline-block
+      padding: 3px 7px 2px
+      border-radius: 2px
+      background: $colors.blue-mid
+      color: white
+      font-weight: bold
+
+  .item-description
+    color: $colors.text-light
+    padding: 7px
+    padding-right: 20px
+
+  .selected,
+  .selected:hover
+    color: white
+    background-color: $colors.blue-mid
+    .item-description
+      color: white
+    .item-value > span
+      color: $colors.blue-mid
+      background-color: white
