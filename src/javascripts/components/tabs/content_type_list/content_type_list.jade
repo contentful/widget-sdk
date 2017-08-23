@@ -9,11 +9,11 @@ header.workbench-header
       | Content model
       cf-knowledge-base.workbench-header__kb-link(target="content_model")
 
-  .workbench-header__search.search-area(ng-hide="!hasContentTypes()")
-    .search-field(
+  .workbench-header__search(
+    ng-show="hasContentTypes()")
+    div(
       cf-search="searchTerm"
       is-searching="context.isSearching"
-      search-type-ahead="true"
       placeholder="Type to search")
 
   .workbench-header__actions(ng-hide="!hasContentTypes()")

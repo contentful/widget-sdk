@@ -4,24 +4,35 @@ angular.module('contentful').directive('cfSearch', ['require', function (require
   var keycodes = require('keycodes');
   var debounce = require('debounce');
   var h = require('utils/hyperscript').h;
+  var Colors = require('Styles/Colors').byName;
+  var renderString = require('ui/Framework').renderString;
+  var serachIcon = renderString(require('svg/search').default);
 
   return {
-    template: [
-      h('.search-field__input', [
-        h('input.form-control', {
-          type: 'search',
-          ngModel: 'inner.term',
-          placeholder: '{{placeholder}}'
-        }),
-        h('cf-inline-loader', {isShown: 'isSearching'})
-      ]),
-      h('.search-field__button.btn-secondary-action', {
+    template: h('div', {
+      style: {
+        display: 'flex',
+        backgroundColor: 'white',
+        border: '1px solid ' + Colors.blueMid
+      }
+    }, [
+      h('input.cfnext-form__input', {
+        style: {
+          flexGrow: '1',
+          border: '0',
+          height: '31px'
+        },
+        ngModel: 'inner.term',
+        placeholder: '{{placeholder}}'
+      }),
+      // TODO: refactor loaders
+      h('cf-inline-loader', {isShown: 'isSearching'}),
+      h('button', {
+        style: {padding: '0 10px'},
         ngClick: 'updateFromButton()',
         tabindex: '0'
-      }, [
-        h('i.fa.fa-search.fa-flip-horizontal')
-      ])
-    ].join(''),
+      }, [serachIcon])
+    ]),
     restrict: 'A',
     scope: {
       placeholder: '@',
@@ -31,7 +42,6 @@ angular.module('contentful').directive('cfSearch', ['require', function (require
     },
 
     link: function (scope, element, attr) {
-      var typeAhead = 'searchTypeAhead' in attr;
       var debouncedUpdate = debounce(update, 300);
 
       element.on('keyup', function (ev) {
@@ -44,7 +54,7 @@ angular.module('contentful').directive('cfSearch', ['require', function (require
           ev.preventDefault();
           ev.stopPropagation();
           update();
-        } else if (typeAhead && scope.inner.term) {
+        } else if (scope.inner.term) {
           return debouncedUpdate();
         }
       });
