@@ -48,6 +48,7 @@
         // TODO use cf-sref for navbar links
         sref: 'account.organizations.edit({orgId: nav.orgId})',
         rootSref: 'account.organizations.edit',
+        inheritUrlParams: false,
         icon: 'nav-organization-information',
         dataViewType: 'organization-information',
         if: 'nav.hasSettingsTab'
@@ -56,6 +57,7 @@
         title: 'Subscription',
         sref: 'account.organizations.subscription({orgId: nav.orgId})',
         rootSref: 'account.organizations.subscription',
+        inheritUrlParams: false,
         icon: 'nav-organization-subscription',
         dataViewType: 'subscription'
       },
@@ -63,6 +65,7 @@
         title: 'Billing',
         sref: 'account.organizations.billing({orgId: nav.orgId})',
         rootSref: 'account.organizations.billing',
+        inheritUrlParams: false,
         icon: 'nav-organization-billing',
         dataViewType: 'billing',
         if: 'nav.hasBillingTab'
@@ -71,6 +74,7 @@
         title: 'Users',
         sref: 'account.organizations.users({orgId: nav.orgId})',
         rootSref: 'account.organizations.users',
+        inheritUrlParams: false,
         icon: 'nav-organization-users',
         dataViewType: 'organization-users'
       },
@@ -78,6 +82,7 @@
         title: 'Spaces',
         sref: 'account.organizations.spaces({orgId: nav.orgId})',
         rootSref: 'account.organizations.spaces',
+        inheritUrlParams: false,
         icon: 'nav-spaces',
         dataViewType: 'organization-spaces'
       },
@@ -85,6 +90,7 @@
         title: 'Offsite backup',
         sref: 'account.organizations.offsitebackup({orgId: nav.orgId})',
         rootSref: 'account.organizations.offsitebackup',
+        inheritUrlParams: false,
         dataViewType: 'offsite-backup',
         if: 'nav.hasOffsiteBackup'
       }
