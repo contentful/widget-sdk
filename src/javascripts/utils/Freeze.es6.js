@@ -1,9 +1,9 @@
 import {isObjectLike, cloneDeep} from 'lodash';
 
 /**
- * @ngdoc service
- * @module cf.utils
- * @name utils/DeepFreeze
+ * Export methods for freezing and cloning
+ * - deepFreeze
+ * - deepFreezeClone
  */
 
 

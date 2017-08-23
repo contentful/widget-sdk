@@ -3,7 +3,7 @@ import { fetchAll } from 'data/CMA/FetchAll';
 import * as Authentication from 'Authentication';
 import * as Config from 'Config';
 import { get } from 'lodash';
-import { deepFreezeClone } from 'utils/DeepFreeze';
+import { deepFreezeClone } from 'utils/Freeze';
 
 /**
  * @ngdoc module
