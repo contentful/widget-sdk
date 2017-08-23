@@ -79,7 +79,7 @@ describe('entityEditor/Document', function () {
 
   describe('when doc is loaded', function () {
     beforeEach(function () {
-      const Normalizer = this.$inject('data/documentNormalizer');
+      const Normalizer = this.$inject('data/document/Normalize');
       this.normalize = sinon.spy(Normalizer, 'normalize');
 
       this.contentType.data.fields = [{id: 'field1'}, {id: 'field2'}];

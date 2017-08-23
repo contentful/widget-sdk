@@ -1,9 +1,8 @@
-'use strict';
+import { normalize } from 'data/document/Normalize';
 
-describe('data/documentNormalizer#normalize', function () {
+describe('data/document/Normalize#normalize', function () {
   beforeEach(function () {
-    module('cf.data');
-    const normalize = this.$inject('data/documentNormalizer').normalize;
+    module('contentful/test');
     this.otDoc = {setValueAt: sinon.stub(), getValueAt: sinon.stub()};
     this.snapshot = {};
     this.locales = [];

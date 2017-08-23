@@ -17,7 +17,7 @@ angular.module('contentful')
   var ShareJS = require('data/ShareJS/Utils');
   var TheLocaleStore = require('TheLocaleStore');
   var K = require('utils/kefir');
-  var Normalizer = require('data/documentNormalizer');
+  var Normalizer = require('data/document/Normalize');
   var PresenceHub = require('entityEditor/Document/PresenceHub');
   var StringField = require('entityEditor/Document/StringField');
   var PathUtils = require('utils/Path');
