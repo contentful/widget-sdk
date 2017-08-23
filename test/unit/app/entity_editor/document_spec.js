@@ -37,7 +37,9 @@ describe('entityEditor/Document', function () {
     this.contentType = {
       data: {
         sys: {id: 'CT_ID'},
-        fields: []
+        fields: [
+          { id: 'a' }
+        ]
       }
     };
 
@@ -77,37 +79,48 @@ describe('entityEditor/Document', function () {
     this.doc = this.createDoc();
   });
 
-  describe('when doc is loaded', function () {
+  describe('snapshot normalization', function () {
     beforeEach(function () {
-      const Normalizer = this.$inject('data/document/Normalize');
-      this.normalize = sinon.spy(Normalizer, 'normalize');
-
       this.contentType.data.fields = [{id: 'field1'}, {id: 'field2'}];
+    });
 
-      this.entity.data.fields = {
-        field1: {
-          del: 'deleted'
-        },
-        field2: {
-          en: 'english'
-        },
-        deletedField: {
-          en: 'some value'
+    it('removes unknown fields and locales on document load', function () {
+      this.connectAndOpen({
+        fields: {
+          field1: { en: true, fr: true },
+          field2: { en: true },
+          unknownField: true
         }
-      };
+      });
 
-      this.otDoc = this.connectAndOpen();
+      const normalizedFieldValues = this.doc.getValueAt(['fields']);
+      expect(normalizedFieldValues).toEqual({
+        field1: { en: true },
+        field2: { en: true }
+      });
     });
 
-    afterEach(function () {
-      this.normalize.restore();
-    });
+    it('removes unknown fields and locales on full remote update', function () {
+      const otDoc = this.connectAndOpen();
+      const initialData = this.doc.getValueAt([]);
+      expect(initialData.fields).toEqual({});
 
-    it('calls the document normalizer', function () {
-      sinon.assert.calledWith(
-        this.normalize,
-        this.doc, this.otDoc.snapshot, this.contentType, this.localeStore.getPrivateLocales()
-      );
+      otDoc.setAt([], {
+        sys: initialData.sys,
+        fields: {
+          field1: { en: true, fr: true },
+          field2: { en: true },
+          unknownField: true
+        }
+      });
+
+      this.$apply();
+
+      const normalizedFieldValues = this.doc.getValueAt(['fields']);
+      expect(normalizedFieldValues).toEqual({
+        field1: { en: true },
+        field2: { en: true }
+      });
     });
   });
 
@@ -196,7 +209,7 @@ describe('entityEditor/Document', function () {
         this.contentType.data.fields = [{id: 'id', type: fieldType}];
         const otDoc = this.connectAndOpen();
 
-        const path = ['fields', 'id', 'locale'];
+        const path = ['fields', 'id', 'en'];
         const calledWith = (ops) => {
           sinon.assert.calledWith(otDoc.submitOp, ops);
           otDoc.submitOp.reset();
@@ -668,8 +681,8 @@ describe('entityEditor/Document', function () {
     it('updates data when OtDoc emits changes', function () {
       const otDoc = this.connectAndOpen();
       this.$apply();
-      otDoc.setAt(['fields'], 'FIELDS');
-      expect(this.entity.data.fields).toBe('FIELDS');
+      otDoc.setAt(['fields', 'a', 'en'], 'VALUE');
+      expect(this.entity.data.fields.a.en).toBe('VALUE');
     });
 
     it('marks entity as deleted when sys has deletedVersion', function () {
