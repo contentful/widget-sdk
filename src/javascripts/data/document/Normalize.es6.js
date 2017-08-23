@@ -21,9 +21,9 @@ import { get, isObject, transform, map, forEach, keys } from 'lodash';
 export function normalize (otDoc, snapshot, contentType, locales) {
   const ctFields = get(contentType, ['data', 'fields']);
   const localeMap = makeLocaleMap(locales);
-  removeUnknownLocales(snapshot, localeMap);
-  removeDeletedFields(snapshot, ctFields);
   forceFieldObject(otDoc);
+  removeDeletedFields(snapshot, ctFields);
+  removeUnknownLocales(snapshot, localeMap);
 }
 
 
