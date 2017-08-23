@@ -15,7 +15,7 @@ header.workbench-header
     style="display: flex"
     ng-show="!showNoEntriesAdvice()")
     div(
-      style="flex-grow: 1; margin-right: 20px"
+      style="flex-grow: 1; margin-right: 10px"
       cf-tokenized-search="context.view.searchTerm"
       search-content-type="getSearchContentType()"
       placeholder="Type to search. Press the down arrow key for help."
@@ -23,6 +23,7 @@ header.workbench-header
       cf-on-blur-component-when="showAutocompletions")
 
     select.cfnext-select-box(
+      style="border-radius: 0"
       ng-model="context.view.contentTypeId"
       ng-change="selectedContentType()"
       ng-options="ct.id as ct.name group by 'Content types' for ct in contentTypeSelectOptions")

@@ -20,7 +20,8 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
       h('input.cfnext-form__input', {
         style: {
           flexGrow: '1',
-          border: '0'
+          border: '0',
+          height: '31px'
         },
         ngModel: 'inner.term',
         ngTrim: 'false',
