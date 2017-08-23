@@ -6,19 +6,9 @@ const navPadding = '15px';
 
 export default function () {
   return h('.app-top-bar__sidepanel-trigger', {
-    dataTestId: 'sidepanel-trigger',
-    style: {
-      cursor: 'pointer',
-      display: 'flex',
-      alignItems: 'center',
-      padding: `0 ${navPadding}`,
-      lineHeight: '1.5',
-      width: '280px'
-    }
+    dataTestId: 'sidepanel-trigger'
   }, [
-    h('.app-top-bar__logo-element', [
-      logo
-    ]),
+    h('.app-top-bar__logo-element', [logo]),
     h('.nav-sidepanel__trigger__text', {
       style: {
         display: 'flex',

@@ -68,15 +68,30 @@ $app-top-bar__action-color()
     &:hover, &.is-active
       > .triangle-down
         border-top-color: $colors.blue-mid
+  &__sidepanel-trigger
+    cursor: pointer
+    display: flex
+    align-items: center
+    padding: 0 15px
+    line-height: 1.5
+    width: 280px
+    @media (max-width: $nav-bar-break-width)
+      width: 240px
 
   &__action
     display: flex
     flex-direction: column
     justify-content: center
+    height: 100%
     padding: 0 20px
     &:first-child
       padding-left: 30px
-    height: 100%
+    @media (max-width: $nav-bar-break-width)
+      padding: 0 15px
+      &:first-child
+        padding-left: 20px
+      & > a > cf-icon
+        display: none
     a
       $app-top-bar__action-color()
     &:focus
