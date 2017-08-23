@@ -70,8 +70,12 @@ angular.module('contentful')
   function organizationsBase (definition) {
     var defaults = {
       label: 'Organizations & Billing',
-      controller: ['$scope', function ($scope) {
+      controller: ['$scope', 'require', function ($scope, require) {
+        var TheStore = require('TheStore');
+        var $stateParams = require('$stateParams');
+
         $scope.context = {};
+        TheStore.set('lastUsedOrg', $stateParams.orgId);
 
         // Begin feature flag code - feature-bv-06-2017-use-new-navigation
         LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation');

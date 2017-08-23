@@ -65,6 +65,7 @@ angular.module('contentful')
       if (sectionAccess.hasAccessToAny()) {
         sectionAccess.redirectToFirstAccessible();
         TheStore.set('lastUsedSpace', space.getId());
+        TheStore.set('lastUsedOrg', space.getOrganizationId());
       }
     }],
     templateProvider: ['space', function (space) {
