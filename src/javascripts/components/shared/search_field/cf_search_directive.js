@@ -25,7 +25,6 @@ angular.module('contentful').directive('cfSearch', ['require', function (require
         ngModel: 'inner.term',
         placeholder: '{{placeholder}}'
       }),
-      // TODO: refactor loaders
       h('cf-inline-loader', {isShown: 'isSearching'}),
       h('button', {
         style: {padding: '0 10px'},
@@ -41,7 +40,7 @@ angular.module('contentful').directive('cfSearch', ['require', function (require
       isSearching: '='
     },
 
-    link: function (scope, element, attr) {
+    link: function (scope, element) {
       var debouncedUpdate = debounce(update, 300);
 
       element.on('keyup', function (ev) {

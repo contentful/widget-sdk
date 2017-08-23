@@ -32,6 +32,7 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
         ngFocus: 'inputFocused($event)',
         ngBlur: 'inputBlurred($event)'
       }),
+      h('cf-inline-loader', {isShown: 'context.isSearching'}),
       h('button', {
         style: {padding: '0 10px'},
         ngClick: 'updateFromButton()',
