@@ -6,6 +6,7 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
   var Colors = require('Styles/Colors').byName;
   var renderString = require('ui/Framework').renderString;
   var serachIcon = renderString(require('svg/search').default);
+  var infoIcon = renderString(require('svg/info').default);
 
   return {
     template: h('div', {
@@ -65,12 +66,12 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
             padding: '15px 20px'
           }
         }, [
-          h('cf-icon', {name: 'fd-info-text'}),
+          infoIcon,
           h('p', {
             style: {
               color: Colors.textLight,
               margin: '0',
-              marginLeft: '7px'
+              marginLeft: '10px'
             }
           }, [
             'Get more out of search. Here\'s&#32;',
