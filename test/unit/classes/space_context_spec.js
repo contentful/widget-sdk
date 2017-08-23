@@ -1,4 +1,5 @@
 import * as sinon from 'helpers/sinon';
+import {isObject} from 'lodash';
 
 describe('spaceContext', function () {
 
@@ -156,6 +157,10 @@ describe('spaceContext', function () {
 
     it('inits organization context', function () {
       expect(this.spaceContext.organizationContext.organization).toEqual(this.organization);
+    });
+
+    it('loads UiConfig', function () {
+      sinon.assert.called(SPACE.getUIConfig);
     });
   });
 
@@ -517,6 +522,13 @@ describe('spaceContext', function () {
     });
   });
 
+  describe('#uiConfig', function () {
+    it('exposes the store', function () {
+      this.resetWithSpace();
+      expect(isObject(this.spaceContext.uiConfig)).toBe(true);
+    });
+  });
+
   function makeCtMock (id, opts = {}) {
     return {
       data: {
@@ -532,6 +544,7 @@ describe('spaceContext', function () {
 
   function makeSpaceMock () {
     return {
+      isAdmin: sinon.stub().returns(true),
       data: {},
       endpoint: sinon.stub().returns({
         get: sinon.stub().rejects()
@@ -539,7 +552,8 @@ describe('spaceContext', function () {
       getId: sinon.stub().returns('SPACE_ID'),
       getContentTypes: sinon.stub().resolves([]),
       getPublishedContentTypes: sinon.stub().resolves([]),
-      getPrivateLocales: sinon.stub().returns([{code: 'en'}])
+      getPrivateLocales: sinon.stub().returns([{code: 'en'}]),
+      getUIConfig: sinon.stub().resolves()
     };
   }
 

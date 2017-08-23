@@ -27,8 +27,13 @@ angular.module('contentful')
 
     setCurrentView($scope, getCurrentView($scope) || getBlankView());
 
-    $scope.$watch('uiConfig', function (uiConfig) {
+    $scope.$watch(function () {
+      return spaceContext.uiConfig.get();
+    }, function (uiConfig) {
+      $scope.uiConfig = uiConfig;
       if (uiConfig && !uiConfig[viewCollectionName]) {
+        // TODO This should be handled in the UiConfigRepo when the
+        // data is loaded.
         uiConfig[viewCollectionName] = generateDefaultViews(true);
       }
     });
@@ -36,6 +41,7 @@ angular.module('contentful')
     $scope.$watch('uiConfig', cacheInaccessibleContentTypes, true);
     $scope.$watch(accessChecker.getResponses, cacheInaccessibleContentTypes);
 
+    // TODO Move this to UiConfigRepo
     $scope.resetViews = function () {
       $scope.uiConfig[viewCollectionName] = generateDefaultViews();
       $scope.saveViews();
@@ -53,7 +59,7 @@ angular.module('contentful')
     };
 
     $scope.saveViews = function () {
-      return $scope.saveUiConfig().catch(function (err) {
+      return spaceContext.uiConfig.save($scope.uiConfig).catch(function (err) {
         logger.logServerWarn('Error trying to save view', { error: err });
         notification.error('Error trying to save view');
         return $q.reject(err);
@@ -77,12 +83,12 @@ angular.module('contentful')
 
       _.forEach($scope.uiConfig[viewCollectionName], function (group) {
         _(group.views || [])
-      .filter(function (view) { return _.isString(view.contentTypeId); })
-      .forEach(function (view) {
-        if (!accessChecker.canPerformActionOnEntryOfType('read', view.contentTypeId)) {
-          hiddenContentTypes.push(view.contentTypeId);
-        }
-      });
+          .filter(function (view) { return _.isString(view.contentTypeId); })
+          .forEach(function (view) {
+            if (!accessChecker.canPerformActionOnEntryOfType('read', view.contentTypeId)) {
+              hiddenContentTypes.push(view.contentTypeId);
+            }
+          });
       });
     }
   }]);

@@ -4,7 +4,6 @@ angular.module('contentful')
 .controller('EntryListViewsController', ['$scope', '$injector', function ($scope, $injector) {
 
   var $controller = $injector.get('$controller');
-  var uiConfig = $injector.get('uiConfig');
   var systemFields = $injector.get('systemFields');
 
   var SORTABLE_TYPES = [
@@ -85,11 +84,11 @@ angular.module('contentful')
         if (len > 0) {
           off();
           cts = $scope.spaceContext.publishedContentTypes;
-          return uiConfig.resetEntries(cts);
+          return $scope.spaceContext.uiConfig.resetEntries(cts);
         }
       });
     } else {
-      return uiConfig.resetEntries(cts);
+      return $scope.spaceContext.uiConfig.resetEntries(cts);
     }
   }
 

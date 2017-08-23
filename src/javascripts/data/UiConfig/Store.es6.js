@@ -1,30 +1,27 @@
-'use strict';
+import * as Defaults from './Defaults';
+import $q from '$q';
+import logger from 'logger';
+import { find, findIndex, get as getPath } from 'lodash';
 
 /**
- * @ngdoc service
- * @name uiConfig
+ * This module exports a factory for the UiConfigStore.
  *
- * @description
- * This service exposes methods to load, update and save UI configuration.
- *
- * This is a stateful service. It holds the UI config for the current
- * space determined by 'spaceContext'. Loading a new UI config when the
- * space changes is done in the UiConfigController.
- *
- * TODO This service should not be stateful.
+ * The store gets and updates  the UiConfig and sends this changes to
+ * the API. It is created on space context reset and avaialable as
+ * `spaceContext.uiConfig`.
  */
-angular.module('contentful')
-.factory('uiConfig', ['$injector', function ($injector) {
 
-  var uiConfigDefaults = $injector.get('uiConfig/defaults');
-  var $q = $injector.get('$q');
-  var spaceContext = $injector.get('spaceContext');
-  var logger = $injector.get('logger');
+// TODO do not use spaceContext. Instead use space endpoint and an
+// 'isAdminFlag'.
+export default function create (spaceContext) {
+  let currentConfig = {};
+  let isConfigSaved = false;
 
-  var currentConfig = {};
-  var isConfigSaved = false;
+  const user = spaceContext.getData('spaceMembership.user');
+  const canEdit = spaceContext.space && spaceContext.space.isAdmin(user);
 
   return {
+    canEdit: canEdit,
     get: get,
     load: load,
     save: save,
@@ -43,7 +40,7 @@ angular.module('contentful')
    * Resets entries views to the default configuration.
    */
   function resetEntries (contentTypes) {
-    var defaults = uiConfigDefaults.getEntryViews(contentTypes);
+    const defaults = Defaults.getEntryViews(contentTypes);
     currentConfig.entryListViews = defaults;
     return defaults;
   }
@@ -57,7 +54,7 @@ angular.module('contentful')
    * Resets assets views to the default configuration.
    */
   function resetAssets () {
-    var defaults = uiConfigDefaults.getAssetViews();
+    const defaults = Defaults.getAssetViews();
     currentConfig.assetListViews = defaults;
     return defaults;
   }
@@ -85,20 +82,20 @@ angular.module('contentful')
    */
   function load () {
     return spaceContext.space.getUIConfig()
-    .then(function (config) {
-      currentConfig = config;
-      isConfigSaved = true;
-      return config;
-    }, function (err) {
-      isConfigSaved = false;
-      var statusCode = _.get(err, 'statusCode');
-      if (statusCode === 404) {
-        currentConfig = {};
-        return currentConfig;
-      }
-      logger.logServerWarn('Could not load UIConfig', {error: err});
-      return $q.reject(err);
-    });
+      .then(function (config) {
+        currentConfig = config;
+        isConfigSaved = true;
+        return config;
+      }, function (err) {
+        isConfigSaved = false;
+        const statusCode = getPath(err, 'statusCode');
+        if (statusCode === 404) {
+          currentConfig = {};
+          return currentConfig;
+        }
+        logger.logServerWarn('Could not load UIConfig', {error: err});
+        return $q.reject(err);
+      });
   }
 
   /**
@@ -113,10 +110,13 @@ angular.module('contentful')
    */
   function save (uiConfig) {
     return spaceContext.space.setUIConfig(uiConfig)
-    .then(function (config) {
-      currentConfig = config;
-      return currentConfig;
-    });
+      .then(function (config) {
+        currentConfig = config;
+        return currentConfig;
+      }, (err) => {
+        load();
+        return $q.reject(err);
+      });
   }
 
   /**
@@ -136,7 +136,7 @@ angular.module('contentful')
       return;
     }
 
-    var contentTypeFolder = _.find(currentConfig.entryListViews, function (folder) {
+    const contentTypeFolder = find(currentConfig.entryListViews, function (folder) {
       return folder.title === 'Content Type';
     });
 
@@ -144,24 +144,22 @@ angular.module('contentful')
       return;
     }
 
-    var viewIndex = _.findIndex(contentTypeFolder.views, function (view) {
+    const viewIndex = findIndex(contentTypeFolder.views, function (view) {
       return view.contentTypeId === contentType.getId();
     });
 
-    var viewExists = viewIndex > -1;
+    const viewExists = viewIndex > -1;
 
     if (viewExists) {
-      var view = contentTypeFolder.views[viewIndex];
+      const view = contentTypeFolder.views[viewIndex];
       if (view.title) {
         view.title = contentType.data.name;
       }
     } else {
-      var newView = uiConfigDefaults.createContentTypeView(contentType);
+      const newView = Defaults.createContentTypeView(contentType);
       contentTypeFolder.views.push(newView);
     }
 
     return save(currentConfig);
-
   }
-
-}]);
+}

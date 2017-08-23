@@ -12,7 +12,9 @@ describe('ListViewsController', function () {
     const ListViewPersistor = this.$inject('data/ListViewPersistor');
 
     this.mockService('notification');
-    this.$inject('mocks/spaceContext').init();
+    const spaceContext = this.$inject('mocks/spaceContext').init();
+    this.uiConfigStore = spaceContext.uiConfig;
+
     scope = this.$inject('$rootScope').$new();
     scope.context = {};
     scope.selection = {clear: sinon.spy()};
@@ -38,7 +40,6 @@ describe('ListViewsController', function () {
 
   describe('when the uiConfig changes', function () {
     it('should generate the default views', function () {
-      scope.uiConfig = {};
       scope.$apply();
       sinon.assert.calledWith(generateDefaultViews, true);
       expect(scope.uiConfig.views).toEqual(['defaultViews']);
@@ -82,17 +83,16 @@ describe('ListViewsController', function () {
   describe('saveViews', function () {
     it('should call saveUiConfig and return the promise', function () {
       const handler = sinon.stub();
-      scope.saveUiConfig = sinon.stub().resolves();
       scope.saveViews().then(handler);
       scope.$apply();
-      sinon.assert.called(scope.saveUiConfig);
+      sinon.assert.calledOnceWith(this.uiConfigStore.save, scope.uiConfig);
       sinon.assert.called(handler);
     });
     it('should show an error notification', function () {
       const notification = this.$inject('notification');
       const logger = this.$inject('logger');
+      this.uiConfigStore.save.rejects();
       const errorHandler = sinon.stub();
-      scope.saveUiConfig = sinon.stub().rejects();
       scope.saveViews().catch(errorHandler);
       scope.$apply();
       sinon.assert.called(errorHandler);

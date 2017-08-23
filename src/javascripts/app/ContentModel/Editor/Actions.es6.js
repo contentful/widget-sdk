@@ -10,7 +10,6 @@ import ReloadNotification from 'ReloadNotification';
 import ctHelpers from 'data/ContentTypes';
 import closeState from 'navigation/closeState';
 import metadataDialog from 'contentTypeEditor/metadataDialog';
-import uiConfig from 'uiConfig';
 import previewEnvironmentsCache from 'data/previewEnvironmentsCache';
 import * as notify from './Notifications';
 
@@ -210,7 +209,7 @@ export default function create ($scope, contentTypeIds) {
     .then(function () {
       setPristine();
       previewEnvironmentsCache.clearAll();
-      uiConfig.addOrEditCt($scope.contentType);
+      spaceContext.uiConfig.addOrEditCt($scope.contentType);
       if (redirect && $scope.context.isNew) {
         return goToDetails($scope.contentType);
       }

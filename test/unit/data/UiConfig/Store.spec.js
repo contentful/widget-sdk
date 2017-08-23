@@ -1,6 +1,6 @@
-'use strict';
+import * as sinon from 'helpers/sinon';
 
-describe('uiConfig service', function () {
+describe('data/UiConfig/Store', function () {
 
   let uiConfig, stubs;
 
@@ -9,9 +9,11 @@ describe('uiConfig service', function () {
     stubs = {
       config: sinon.stub(),
       spaceContext: {
+        getData: sinon.stub(),
         space: {
           getUIConfig: sinon.stub(),
-          setUIConfig: sinon.stub()
+          setUIConfig: sinon.stub(),
+          isAdmin: sinon.stub()
         }
       }
     };
@@ -20,7 +22,8 @@ describe('uiConfig service', function () {
       $provide.value('spaceContext', stubs.spaceContext);
     });
 
-    uiConfig = this.$inject('uiConfig');
+    const createUiConfigStore = this.$inject('data/UiConfig/Store').default;
+    uiConfig = createUiConfigStore(stubs.spaceContext);
   });
 
   describe('#load', function () {
@@ -37,27 +40,21 @@ describe('uiConfig service', function () {
       sinon.assert.calledOnce(stubs.spaceContext.space.getUIConfig);
     });
 
-    pit('returns config if available', function () {
-      return uiConfig.load().then(function (val) {
-        expect(val).toBe(config);
-      });
+    it('returns config if available', function* () {
+      const val = yield uiConfig.load();
+      expect(val).toBe(config);
     });
 
-    pit('resolves to empty object if server returns 404', function () {
-      const err = { statusCode: 404 };
-      stubs.spaceContext.space.getUIConfig.rejects(err);
-      return uiConfig.load().then(function (val) {
-        expect(val).toEqual({});
-      });
+    it('resolves to empty object if server returns 404', function* () {
+      stubs.spaceContext.space.getUIConfig.rejects({statusCode: 404});
+      const result = yield uiConfig.load();
+      expect(result).toEqual({});
     });
 
-    pit('rejects if non-404 server error', function () {
-      const err = { statusCode: 502 };
-      stubs.spaceContext.space.getUIConfig.rejects(err);
-
-      return uiConfig.load().catch(function (val) {
-        expect(val).toBe(err);
-      });
+    it('rejects if non-404 server error', function* () {
+      stubs.spaceContext.space.getUIConfig.rejects({ statusCode: 502 });
+      const error = yield uiConfig.load().catch((e) => e);
+      expect(error).toEqual({ statusCode: 502 });
     });
   });
 

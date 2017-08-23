@@ -37,6 +37,7 @@ angular.module('contentful')
   var OrganizationContext = require('classes/OrganizationContext');
   var MembershipRepo = require('access_control/SpaceMembershipRepository');
   var createContentCollectionsRepo = require('app/EntryList/Collections/Store').default;
+  var createUiConfigStore = require('data/UiConfig/Store').default;
 
   var spaceContext = {
     /**
@@ -99,6 +100,8 @@ angular.module('contentful')
 
       self.memberships = MembershipRepo.create(self.endpoint);
 
+      self.uiConfig = createUiConfigStore(self);
+
       self.docPool = DocumentPool.create(self.docConnection, self.endpoint);
 
       self.publishedCTs = PublishedCTRepo.create(space);
@@ -114,6 +117,9 @@ angular.module('contentful')
         Widgets.setSpace(space).then(function (widgets) {
           self.widgets = widgets;
         }),
+        // TODO We should use a similar pattern as for content
+        // collections.
+        self.uiConfig.load(),
         self.publishedCTs.refresh(),
         createContentCollectionsRepo(self.endpoint).then(function (api) {
           self.contentCollections = api;
@@ -370,6 +376,7 @@ angular.module('contentful')
   return spaceContext;
 
   function resetMembers (spaceContext) {
+    spaceContext.uiConfig = null;
     spaceContext.space = null;
     spaceContext.publishedContentTypes = [];
     spaceContext.users = null;
