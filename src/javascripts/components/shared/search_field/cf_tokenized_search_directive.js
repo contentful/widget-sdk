@@ -18,6 +18,7 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
       }
     }, [
       h('input.cfnext-form__input', {
+        type: 'text',
         style: {
           flexGrow: '1',
           border: '0',
@@ -93,6 +94,10 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
     controllerAs: 'tokenizedSearchController',
     link: function (scope, element) {
       var input = element.find('input');
+
+      $timeout(function () {
+        element.find('input').first().focus();
+      });
 
       // Make position query available on the scope so it can be called from the controller
       scope.getPosition = function () {

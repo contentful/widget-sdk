@@ -13,7 +13,7 @@ header.workbench-header
 
   .workbench-header__search(
     style="display: flex"
-    ng-show="!showNoEntriesAdvice()")
+    ng-if="context.ready && !showNoEntriesAdvice()")
     div(
       style="flex-grow: 1; margin-right: 10px"
       cf-tokenized-search="context.view.searchTerm"

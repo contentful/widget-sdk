@@ -11,13 +11,13 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
   var view = qs.read();
 
   $scope.context.list = view.list || 'all';
-  $scope.searchTerm = view.searchTerm || '';
+  $scope.context.searchTerm = view.searchTerm || '';
   $scope.empty = true;
 
   $scope.shouldHide = accessChecker.shouldHide;
   $scope.shouldDisable = accessChecker.shouldDisable;
 
-  $scope.$watchGroup(['context.list', 'searchTerm'], function (args) {
+  $scope.$watchGroup(['context.list', 'context.searchTerm'], function (args) {
     if (args[0] || args[1]) {
       qs.save({list: args[0], searchTerm: args[1]});
       updateList();
@@ -79,7 +79,7 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
 
     try {
       if ($scope.hasQuery()) {
-        searchTermRe = new RegExp($scope.searchTerm.toLowerCase(), 'gi');
+        searchTermRe = new RegExp($scope.context.searchTerm.toLowerCase(), 'gi');
       }
     } catch (exp) {
       notification.warn('Invalid search term');
@@ -93,7 +93,7 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
   };
 
   $scope.hasQuery = function () {
-    return _.isString($scope.searchTerm) && $scope.searchTerm.length > 0;
+    return _.isString($scope.context.searchTerm) && $scope.context.searchTerm.length > 0;
   };
 
   $scope.statusClass = function (contentType) {

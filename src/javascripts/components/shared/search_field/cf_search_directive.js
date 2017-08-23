@@ -3,6 +3,7 @@
 angular.module('contentful').directive('cfSearch', ['require', function (require) {
   var keycodes = require('keycodes');
   var debounce = require('debounce');
+  var $timeout = require('$timeout');
   var h = require('utils/hyperscript').h;
   var Colors = require('Styles/Colors').byName;
   var renderString = require('ui/Framework').renderString;
@@ -17,6 +18,7 @@ angular.module('contentful').directive('cfSearch', ['require', function (require
       }
     }, [
       h('input.cfnext-form__input', {
+        type: 'text',
         style: {
           flexGrow: '1',
           border: '0',
@@ -39,9 +41,12 @@ angular.module('contentful').directive('cfSearch', ['require', function (require
       tooltip: '@',
       isSearching: '='
     },
-
     link: function (scope, element) {
       var debouncedUpdate = debounce(update, 300);
+
+      $timeout(function () {
+        element.find('input').first().focus();
+      });
 
       element.on('keyup', function (ev) {
         var pressedReturn = ev.keyCode === keycodes.ENTER;

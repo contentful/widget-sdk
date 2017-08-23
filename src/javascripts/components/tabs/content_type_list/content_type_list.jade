@@ -10,9 +10,9 @@ header.workbench-header
       cf-knowledge-base.workbench-header__kb-link(target="content_model")
 
   .workbench-header__search(
-    ng-show="hasContentTypes()")
+    ng-if="context.ready && hasContentTypes()")
     div(
-      cf-search="searchTerm"
+      cf-search="context.searchTerm"
       is-searching="context.isSearching"
       placeholder="Type to search")
 
