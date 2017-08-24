@@ -17,7 +17,7 @@ angular.module('contentful')
   var ShareJS = require('data/ShareJS/Utils');
   var TheLocaleStore = require('TheLocaleStore');
   var K = require('utils/kefir');
-  var Normalizer = require('data/documentNormalizer');
+  var Normalizer = require('data/document/Normalize');
   var PresenceHub = require('entityEditor/Document/PresenceHub');
   var StringField = require('entityEditor/Document/StringField');
   var PathUtils = require('utils/Path');
@@ -98,6 +98,26 @@ angular.module('contentful')
         return [[]];
       } else {
         return [];
+      }
+    });
+
+
+    // Normalize snapshot.fields whenever the snapshot root or the
+    // field container changes.
+    // Snapshots send from the server might include removed locales or
+    // deleted fields that the UI can’t handle. We just remove them
+    // locally.
+    // We need to make sure that this is the first handler for the
+    // change stream. Subsequent handlers will access the snapshot on
+    // we need to make sure that we present them with the normalized
+    // version.
+    changes.onValue(function (changePath) {
+      if (PathUtils.isPrefix(changePath, ['fields']) && currentDoc) {
+        var locales = TheLocaleStore.getPrivateLocales();
+        Normalizer.normalize({
+          getValueAt: getValueAt,
+          setValueAt: setValueAt
+        }, currentDoc.snapshot, contentType, locales);
       }
     });
 
@@ -346,7 +366,7 @@ angular.module('contentful')
     cleanupTasks.push(localFieldChangesBus.end);
 
 
-    var instance = {
+    return {
       destroy: destroy,
       getVersion: getVersion,
 
@@ -426,7 +446,6 @@ angular.module('contentful')
       resourceState: resourceState
     };
 
-    return instance;
 
     /**
      * Used by resource state manager
@@ -527,7 +546,6 @@ angular.module('contentful')
 
       if (doc) {
         currentDoc = doc;
-        normalize(doc);
         plugDocEvents(doc);
       }
     }
@@ -563,11 +581,6 @@ angular.module('contentful')
         }
         return $q.reject(error);
       });
-    }
-
-    function normalize (doc) {
-      var locales = TheLocaleStore.getPrivateLocales();
-      Normalizer.normalize(instance, doc.snapshot, contentType, locales);
     }
 
 

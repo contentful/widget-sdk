@@ -1,10 +1,13 @@
-'use strict';
+import { normalize } from 'data/document/Normalize';
+import { get, set } from 'lodash';
 
-describe('data/documentNormalizer#normalize', function () {
+describe('data/document/Normalize#normalize', function () {
   beforeEach(function () {
-    module('cf.data');
-    const normalize = this.$inject('data/documentNormalizer').normalize;
-    this.otDoc = {setValueAt: sinon.stub(), getValueAt: sinon.stub()};
+    module('contentful/test');
+    this.otDoc = {
+      setValueAt: (path, value) => { set(this.snapshot, path, value); },
+      getValueAt: (path) => get(this.snapshot, path)
+    };
     this.snapshot = {};
     this.locales = [];
     this.normalize = function () {
@@ -50,10 +53,8 @@ describe('data/documentNormalizer#normalize', function () {
   });
 
   it('forces field value to be an object', function () {
-    this.otDoc.getValueAt.returns(undefined);
-    this.otDoc.getValueAt.withArgs(['fields']).returns('not an object');
+    this.snapshot.fields = 'not an object';
     this.normalize();
-    sinon.assert.calledWithExactly(this.otDoc.setValueAt, ['fields'], {});
+    expect(this.snapshot.fields).toEqual({});
   });
-
 });
