@@ -6,16 +6,16 @@ angular.module('contentful').directive('cfAutocompleteResults', ['keycodes', fun
     controllerAs: 'resultsController',
     restrict: 'A',
     link: function (scope, elem) {
-      var navigateResultList = function navigateResultList(event) {
+      var navigateResultList = function navigateResultList (event) {
         var handled;
         scope.$apply(function () {
-          if (event.keyCode == keycodes.DOWN){
+          if (event.keyCode === keycodes.DOWN) {
             handled = scope.resultsController.selectNext();
-          } else if (event.keyCode == keycodes.UP) {
+          } else if (event.keyCode === keycodes.UP) {
             handled = scope.resultsController.selectPrevious();
-          } else if (event.keyCode == keycodes.ESC) {
+          } else if (event.keyCode === keycodes.ESC) {
             handled = scope.resultsController.cancelAutocomplete();
-          } else if (event.keyCode == keycodes.ENTER) {
+          } else if (event.keyCode === keycodes.ENTER) {
             handled = scope.resultsController.pickSelected();
           } else {
             handled = false;
@@ -31,7 +31,7 @@ angular.module('contentful').directive('cfAutocompleteResults', ['keycodes', fun
       scope.$on('$destroy', function () {
         elem[0].removeEventListener('keydown', navigateResultList, true);
         navigateResultList = null;
-        scope = null; //MEMLEAK FIX
+        scope = null; // MEMLEAK FIX
       });
     }
   };

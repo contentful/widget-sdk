@@ -8,10 +8,10 @@ angular.module('contentful')
  * @description
  * Build an API query from a query string provided by the user.
  */
-.factory('search/queryBuilder', ['$injector', function ($injector) {
-  var $q                         = $injector.get('$q');
-  var searchQueryAutocompletions = $injector.get('searchQueryAutocompletions');
-  var createParser               = $injector.get('search/cachedParser');
+.factory('search/queryBuilder', ['require', function (require) {
+  var $q = require('$q');
+  var searchQueryAutocompletions = require('searchQueryAutocompletions');
+  var createParser = require('search/cachedParser');
 
   var parse = createParser();
 
@@ -61,14 +61,14 @@ angular.module('contentful')
 
   function filterPairs (tokens) {
     return _.filter(tokens, function (token) {
-      return token.type == 'Pair' && token.content.value.length > 0;
+      return token.type === 'Pair' && token.content.value.length > 0;
     });
   }
 
   // Takes all tokens that are queries and joins them with spaces
   function extractQuery (tokens) {
     var queries = _.filter(tokens, function (token) {
-      return token.type == 'Query' && token.content.length > 0;
+      return token.type === 'Query' && token.content.length > 0;
     });
     var queryContents = _.map(queries, 'content');
     return queryContents.join(' ');

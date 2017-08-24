@@ -1,12 +1,10 @@
 'use strict';
-angular.module('contentful').directive('cfAutocompleteList', function(){
+angular.module('contentful').directive('cfAutocompleteList', function () {
   return {
     restrict: 'A',
     scope: true,
     template: JST['cf_autocomplete_list'](),
     controller: ['$scope', function ($scope) {
-      //selectInitialAutocompletion();
-
       $scope.$on('selectNextAutocompletion', function () {
         selectNextAutocompletion();
         fill();
@@ -27,7 +25,7 @@ angular.module('contentful').directive('cfAutocompleteList', function(){
         $scope.selectedAutocompletion = null;
       });
 
-      $scope.$watch('autocompletion.items', function(items, old) {
+      $scope.$watch('autocompletion.items', function (items, old) {
         if (items === old) {
           selectInitialAutocompletion();
           fill();
@@ -43,32 +41,33 @@ angular.module('contentful').directive('cfAutocompleteList', function(){
         $event.preventDefault();
       };
 
-      function selectInitialAutocompletion() {
+      function selectInitialAutocompletion () {
         var token = $scope.currentTokenContent();
         $scope.selectedAutocompletion = _.find($scope.autocompletion.items, function (i) {
           return i.value.toString() === token;
         });
       }
 
-      function selectNextAutocompletion(){
+      function selectNextAutocompletion () {
         var index = getSelectedIndex();
-        $scope.selectedAutocompletion = $scope.autocompletion.items[index+1] || $scope.autocompletion.items[0];
+        $scope.selectedAutocompletion = $scope.autocompletion.items[index + 1] || $scope.autocompletion.items[0];
       }
 
-      function selectPreviousAutocompletion(){
+      function selectPreviousAutocompletion () {
         var index = getSelectedIndex();
-        $scope.selectedAutocompletion = $scope.autocompletion.items[index-1] || $scope.autocompletion.items[$scope.autocompletion.items.length-1];
+        $scope.selectedAutocompletion = $scope.autocompletion.items[index - 1] || $scope.autocompletion.items[$scope.autocompletion.items.length - 1];
       }
 
-      function getSelectedIndex() {
+      function getSelectedIndex () {
         return _.findIndex($scope.autocompletion.items, function (i) {
           return i.value === ($scope.selectedAutocompletion && $scope.selectedAutocompletion.value);
         });
       }
 
-      function fill() {
-        if ($scope.selectedAutocompletion)
+      function fill () {
+        if ($scope.selectedAutocompletion) {
           $scope.fillAutocompletion($scope.selectedAutocompletion.value);
+        }
       }
     }]
   };

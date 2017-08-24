@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('contentful')
-.factory('search/cachedParser', ['$injector', function($injector) {
-  var searchParser = $injector.get('searchParser');
+.factory('search/cachedParser', ['require', function (require) {
+  var searchParser = require('searchParser');
 
   return function createParser () {
     var cachedInput;
@@ -23,5 +23,4 @@ angular.module('contentful')
       return cachedResult;
     };
   };
-
 }]);

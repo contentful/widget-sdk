@@ -25,7 +25,7 @@ angular.module('contentful').controller('CfAutocompleteResultsController', ['$sc
 
   this.selectNext = function () {
     if (this.numResults === 0) return false;
-    if (this.selectedIndex < this.numResults -1) {
+    if (this.selectedIndex < this.numResults - 1) {
       this.selectedIndex++;
       $scope.$broadcast('autocompleteResultSelected', this.selectedIndex, this.getSelectedResult());
     }
@@ -47,7 +47,7 @@ angular.module('contentful').controller('CfAutocompleteResultsController', ['$sc
     return true;
   };
 
-  this.cancelAutocomplete = function cancelAutocomplete() {
+  this.cancelAutocomplete = function cancelAutocomplete () {
     var event = $scope.$emit('autocompleteResultsCancel');
     // If default prevent that means the search was already
     // canceled and that means we didn't really handle anything
@@ -57,6 +57,6 @@ angular.module('contentful').controller('CfAutocompleteResultsController', ['$sc
   $scope.$on('$destroy', function () {
     unwatchResults();
     unwatchResults = null;
-    $scope = null; //MEMLEAK FIX
+    $scope = null; // MEMLEAK FIX
   });
 }]);

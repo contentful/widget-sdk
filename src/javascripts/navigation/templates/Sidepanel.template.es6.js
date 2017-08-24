@@ -198,7 +198,8 @@ function orgSpaces () {
     style: {
       display: 'flex',
       flexDirection: 'column',
-      height: '100%'
+      maxHeight: '100%',
+      overflow: 'hidden'
     }
   }, [
     h('.nav-sidepanel__spaces-header', {

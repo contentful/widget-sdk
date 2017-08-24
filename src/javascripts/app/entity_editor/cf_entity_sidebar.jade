@@ -61,10 +61,11 @@
 
   cf-sidebar-content-preview(ng-if="data.isEntry")
 
-  h2.entity-sidebar__heading
+  h2.entity-sidebar__heading(ng-if="collectionsSelector")
     | My Collections
 
-  cf-component-bridge(component="collectionsSelector")
+  div(ng-if="collectionsSelector")
+    cf-component-bridge(component="collectionsSelector")
 
   h2.entity-sidebar__heading
     | Translation
