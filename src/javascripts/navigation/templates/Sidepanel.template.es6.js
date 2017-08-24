@@ -48,7 +48,7 @@ function sidepanel () {
       lineHeight: 1.5
     },
     ngClass: '{"nav-sidepanel--slide-in": sidePanelIsShown, "nav-sidepanel--slide-out": !sidePanelIsShown}',
-    ngClick: 'orgDropdownIsShown && closeOrgsDropdown()',
+    ngClick: 'closeOrgsDropdown()',
     dataTestId: 'sidepanel'
   }, [
     organizationSelector(),

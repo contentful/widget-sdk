@@ -60,7 +60,6 @@ angular.module('contentful')
 
       $scope.setCurrOrg = setCurrOrg;
       $scope.closeSidePanel = closeSidePanel;
-      $scope.openSidePanel = openSidePanel;
       $scope.openOrgsDropdown = openOrgsDropdown;
       $scope.closeOrgsDropdown = closeOrgsDropdown;
       $scope.gotoOrgSettings = function () {
@@ -99,17 +98,12 @@ angular.module('contentful')
         $scope.sidePanelIsShown = false;
       }
 
-      function openSidePanel () {
-        $scope.orgDropdownIsShown = false;
-        $scope.sidePanelIsShown = true;
-      }
-
       function openOrgsDropdown ($event) {
         if (!$scope.orgDropdownIsShown) {
           $scope.orgDropdownIsShown = true;
 
           // Don't bubble click event to container that would close the dropdown
-          if ($event) { $event.stopPropagation(); }
+          $event.stopPropagation();
         }
       }
 
