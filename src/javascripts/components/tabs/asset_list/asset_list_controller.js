@@ -15,6 +15,7 @@ angular.module('contentful')
   var accessChecker = require('accessChecker');
   var entityStatus = require('entityStatus');
   var debounce = require('debounce');
+  var Notification = require('notification');
 
   $controller('AssetListViewsController', {
     $scope: $scope,
@@ -104,7 +105,14 @@ angular.module('contentful')
     filepicker.pickMultiple()
     .then(uploadFPFiles, function (FPError) {
       if (FPError.code !== 101) {
-        throw new Error(FPError);
+        // TODO Demote this to a warning if we cannot fix this.
+        logger.logError('filepicker.pickMultiple failed', {
+          fpError: FPError
+        });
+        Notification.error(
+          'An error occured while uploading multiple assets. ' +
+          'Please contact support if this problem persists.'
+        );
       }
     });
   };
