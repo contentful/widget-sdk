@@ -76,7 +76,7 @@ $app-top-bar__action-color()
     line-height: 1.5
     width: 280px
     @media (max-width: $nav-bar-break-width)
-      width: 240px
+      width: 260px
 
   &__action
     display: flex
@@ -86,10 +86,10 @@ $app-top-bar__action-color()
     padding: 0 20px
     &:first-child
       padding-left: 30px
+    & > a > cf-icon
+      margin-right: 10px
     @media (max-width: $nav-bar-break-width)
       padding: 0 15px
-      &:first-child
-        padding-left: 20px
       & > a > cf-icon
         display: none
     a
