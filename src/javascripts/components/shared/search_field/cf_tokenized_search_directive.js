@@ -7,6 +7,7 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
   var renderString = require('ui/Framework').renderString;
   var serachIcon = renderString(require('svg/search').default);
   var infoIcon = renderString(require('svg/info').default);
+  var filtersIcon = renderString(require('svg/filters').default);
 
   return {
     template: h('div', {
@@ -35,10 +36,29 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
       }),
       h('cf-inline-loader', {isShown: 'context.isSearching'}),
       h('button', {
-        style: {padding: '0 10px'},
-        ngClick: 'updateFromButton()',
+        style: {
+          display: 'flex',
+          alignItems: 'center',
+          padding: '0 15px'
+        },
+        ngClick: 'searchButtonClicked()',
         tabindex: '0'
       }, [serachIcon]),
+      h('button', {
+        ngIf: 'autocompletion.type',
+        style: {
+          display: 'flex',
+          alignItems: 'center',
+          padding: '0 15px',
+          color: Colors.blueMid,
+          borderLeft: '1px solid ' + Colors.blueMid
+        },
+        ngClick: 'toggleFilters()',
+        tabindex: '1'
+      }, [
+        filtersIcon,
+        h('span', {style: {marginLeft: '7px'}}, ['Filters'])
+      ]),
       h('div', {
         ngIf: 'showAutocompletions && autocompletion.type',
         style: {
@@ -95,9 +115,18 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
     link: function (scope, element) {
       var input = element.find('input');
 
-      $timeout(function () {
-        element.find('input').first().focus();
-      });
+      $timeout(focus);
+
+      scope.toggleFilters = function () {
+        scope.showAutocompletions = !scope.showAutocompletions;
+        focus();
+      };
+
+      scope.searchButtonClicked = function () {
+        scope.showAutocompletions = false;
+        scope.updateFromButton();
+        focus();
+      };
 
       // Make position query available on the scope so it can be called from the controller
       scope.getPosition = function () {
@@ -114,6 +143,10 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
       scope.$on('$destroy', function () {
         scope = null; // MEMLEAK FIX
       });
+
+      function focus () {
+        input.first().focus();
+      }
     }
   };
 }]);
