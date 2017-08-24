@@ -14,11 +14,11 @@ angular.module('contentful')
   var K = require('utils/kefir');
   var isFeatureEnabled = require('analytics/OrganizationTargeting').default;
 
-  $scope.tempFreeViews = [];
   $scope.folderStates = TheStore.get('folderStates') || {};
 
   $scope.$watch($attrs.cfViewMenu, function (folders) {
-    $scope.folders = folders;
+    $scope.folders = folders || [];
+    ensureDefaultFolder();
   });
 
   $scope.toggleFolder = function (folder) {
@@ -79,11 +79,7 @@ angular.module('contentful')
   };
 
   $scope.addViewToDefault = function () {
-    var defaultFolder = $scope.createDefaultFolder();
-    $scope.addViewToFolder(defaultFolder);
-  };
-
-  $scope.addViewToFolder = function (folder) {
+    var folder = _.find($scope.folders, {id: 'default'});
     var view = getCurrentView($scope);
     view.id = random.id();
     folder.views.push(view);
@@ -105,30 +101,21 @@ angular.module('contentful')
       scope: $scope
     }).promise.then(function () {
       _.remove(folder.views, {id: view.id});
-      $scope.cleanDefaultFolder();
       Tracking.viewDeleted(view);
       return $scope.saveViews();
     });
   };
 
-  $scope.cleanDefaultFolder = function () {
-    _.remove($scope.folders, function (folder) {
-      return folder.id === 'default' && folder.views.length === 0;
-    });
-  };
-
-  $scope.createDefaultFolder = function () {
+  function ensureDefaultFolder () {
     var defaultFolder = _.find($scope.folders, {id: 'default'});
-    if (!defaultFolder) {
-      defaultFolder = {
+    if ($scope.folders && !defaultFolder) {
+      $scope.folders.unshift({
         id: 'default',
         title: 'Views',
         views: []
-      };
-      $scope.folders.unshift(defaultFolder);
+      });
     }
-    return defaultFolder;
-  };
+  }
 
   K.onValueScope($scope, spaceContext.contentCollections.state$, function (collections) {
     // Since we use ng-repeat Angular is going to mutate the objects
@@ -166,18 +153,6 @@ angular.module('contentful')
     return p.id === view.id;
   };
 
-
-  function moveTempFreeViews () {
-    var defaultFolder = $scope.createDefaultFolder();
-    defaultFolder.views.push.apply(defaultFolder.views, $scope.tempFreeViews);
-    $scope.tempFreeViews.length = 0;
-  }
-
-  $scope.showTempFreeViews = function () {
-    var hasDefaultFolder = _.find($scope.folders, {id: 'default'});
-    return $scope.draggingView && !hasDefaultFolder;
-  };
-
   $scope.$on('editingStarted', function () {
     $scope.insideInlineEditor = true;
   });
@@ -195,7 +170,6 @@ angular.module('contentful')
   $scope.canUseCollections = isFeatureEnabled('collections', spaceContext.space);
 
   $scope.viewSortOptions = {
-    connectWith: '[ui-sortable=viewSortOptions]',
     placeholder: 'filter-list-item-placeholder',
     axis: 'y',
     start: function () {
@@ -204,8 +178,6 @@ angular.module('contentful')
     },
     stop: function () {
       $scope.draggingView = false;
-      moveTempFreeViews();
-      $scope.cleanDefaultFolder();
       $scope.saveViews();
     }
   };

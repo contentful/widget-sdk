@@ -8,10 +8,13 @@ describe('ViewMenuController', function () {
 
     this.$inject('mocks/spaceContext').init();
     this.scope = $rootScope.$new();
+    this.scope.folders = [];
 
     $controller('ViewMenuController', {
       $scope: this.scope,
-      $attrs: {},
+      $attrs: {
+        cfViewMenu: 'folders'
+      },
       analytics: {track: sinon.stub()},
       modalDialog: {open: sinon.stub()}
     });
