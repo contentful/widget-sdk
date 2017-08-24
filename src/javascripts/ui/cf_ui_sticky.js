@@ -61,7 +61,11 @@ angular.module('cf.ui')
 
       // Ensures the height of the parent element stays the same
       function insertPlaceholderElement () {
-        var newEl = h('div', {style: 'height:' + $element.outerHeight(true) + 'px'});
+        var newEl = h('div', {
+          style: {
+            height: $element.outerHeight(true) + 'px'
+          }
+        });
         $element.wrap(newEl);
         return $element.parent();
       }

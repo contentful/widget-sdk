@@ -133,10 +133,6 @@ describe('hyperscript', function () {
       expect(generated).toBe(expected);
     });
 
-    it('uses inline styles provided as a string', function () {
-      expect(h('div', {style: 'color: red'})).toBe('<div style="color: red"></div>');
-    });
-
     it('rewrites styles provided as an object', function () {
       const styles = {
         color: 'red',

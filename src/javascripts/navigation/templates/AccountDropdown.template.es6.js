@@ -33,7 +33,9 @@ export default function () {
       cfContextMenu: 'bottom-right-fit',
       ariaLabel: 'Account Menu',
       dataTestId: 'account-menu',
-      style: 'min-width: 200px;'
+      style: {
+        minWidth: '200px'
+      }
     }, [
       {
         text: 'User profile',

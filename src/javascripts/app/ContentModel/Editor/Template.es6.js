@@ -31,7 +31,9 @@ export default h('div.workbench', [
   header(),
   h('div.workbench-main', [
     h('div.workbench-main__content', {
-      style: 'padding-top: 0'
+      style: {
+        paddingTop: '0'
+      }
     }, [
       tabSelect(),
       tabPanel()
