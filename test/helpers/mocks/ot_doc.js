@@ -42,7 +42,11 @@ angular.module('contentful/mocks')
 
   OtDoc.prototype.setAt = function (path, value, cb) {
     assertParentContainer(this.snapshot, path);
-    _.set(this.snapshot, path, value);
+    if (path.length === 0) {
+      this.snapshot = value;
+    } else {
+      _.set(this.snapshot, path, value);
+    }
     this.version++;
     this.emit('change', [{p: path}]);
     if (cb) {
