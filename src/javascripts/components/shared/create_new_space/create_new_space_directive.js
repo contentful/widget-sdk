@@ -45,26 +45,17 @@ angular.module('contentful')
     errors: {fields: {}}
   };
 
-  // Load the list of writable organizations
+  // TODO This list should be empty. The create space dialog should not
+  // be opened when the user has no writable organizations. But there
+  // is a bug https://contentful.tpondemand.com/entity/18031
   controller.writableOrganizations = _.filter(controller.organizations, function (org) {
     return org && org.sys ? accessChecker.canCreateSpaceInOrganization(org.sys.id) : false;
   });
 
-  // TODO The create space dialog should not be opened when the user
-  // has no writable organizations. But there is a bug
-  // https://contentful.tpondemand.com/entity/18031
-  if (controller.writableOrganizations.length > 0) {
-    controller.newSpace.organization = (
-      _.find(controller.writableOrganizations, ['sys.id', $scope.organizationId]) ||
-      _.first(controller.writableOrganizations)
-    );
-  } else {
-    logger.logError('No writable organizations for space creation', {
-      data: {
-        organizations: controller.organizations
-      }
-    });
-  }
+  controller.newSpace.organization = (
+    _.find(controller.writableOrganizations, ['sys.id', $scope.organizationId]) ||
+    _.first(controller.writableOrganizations)
+  );
 
   // Load the list of space templates
   controller.templates = [];
