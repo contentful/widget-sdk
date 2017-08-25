@@ -84,12 +84,13 @@ export function create (getToken, baseUrl, spaceId) {
    * @name data/ShareJS/Connection#getDocLoader
    *
    * @param {Client.Entity} entity
-   * @param {Property<boolean>} readOnly
+   * @param {Property<boolean>} shouldOpen
+   *   Indicates wheter we want to establish a connection.
    * @returns {Document.Loader}
    */
-  function getDocLoader (entity, readOnly) {
+  function getDocLoader (entity, shouldOpen$) {
     const docWrapper = getDocWrapperForEntity(entity);
-    return DocLoader.create(docWrapper, state$, readOnly);
+    return DocLoader.create(docWrapper, state$, shouldOpen$);
   }
 
 
@@ -101,8 +102,8 @@ export function create (getToken, baseUrl, spaceId) {
    * @param {Client.Entity} entity
    */
   function open (entity) {
-    const readOnly = K.constant(false);
-    const loader = getDocLoader(entity, readOnly);
+    const shouldOpen = K.constant(true);
+    const loader = getDocLoader(entity, shouldOpen);
 
     return loader.doc
       .flatten(function (docLoad) {

@@ -157,10 +157,11 @@ angular.module('contentful')
     });
 
 
-    var readOnly$ = sysProperty.map(function (sys) {
-      return sys.archivedVersion || sys.deletedVersion || !permissions.can('update');
+    // Holds true if the user is allowed to edit the entity
+    var isEditable$ = sysProperty.map(function (sys) {
+      return !sys.archivedVersion && !sys.deletedVersion && permissions.can('update');
     }).skipDuplicates();
-    var docLoader = docConnection.getDocLoader(entity, readOnly$);
+    var docLoader = docConnection.getDocLoader(entity, isEditable$);
 
 
     /**
