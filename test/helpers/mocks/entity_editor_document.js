@@ -64,6 +64,8 @@ angular.module('contentful/mocks')
         error$: K.createMockStream()
       },
 
+      status$: K.createMockProperty('ok'),
+
       getData: sinon.spy(getData),
       data$: data$,
 

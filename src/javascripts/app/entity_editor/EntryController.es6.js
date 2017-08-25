@@ -20,6 +20,7 @@ import * as Focus from './Focus';
 import initDocErrorHandler from './DocumentErrorHandler';
 import {makeNotify} from './Notifications';
 import installTracking from './Tracking';
+import renderStatusNotification from './StatusNotification';
 
 /**
  * @ngdoc type
@@ -52,6 +53,7 @@ export default function create ($scope, editorData) {
   };
   $scope.editorData = editorData;
 
+
   // add list as parent state only if it's a deep link
   if (contextHistory.isEmpty()) {
     contextHistory.add(crumbFactory.EntryList());
@@ -76,6 +78,10 @@ export default function create ($scope, editorData) {
   // TODO rename the scope property
   $scope.otDoc = doc;
   initDocErrorHandler($scope, doc.state.error$);
+
+  K.onValueScope($scope, doc.status$, (status) => {
+    $scope.entityStatusComponent = renderStatusNotification(status, 'entry');
+  });
 
   installTracking(entityInfo, doc, K.scopeLifeline($scope));
 

@@ -19,7 +19,7 @@ div.asset-editor.workbench
 
   .workbench-main
     .workbench-main__content
-      cf-editor-status-notification(status="otDoc.status$" entity-label="asset")
+      cf-component-bridge(component="entityStatusComponent")
 
       .entity-editor-form
         cf-error-list.form-box-error(cf-error-path="['fields']")
