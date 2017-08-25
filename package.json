@@ -72,6 +72,7 @@
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
     "run-sequence": "~1.0.2",
+    "sanitize-html": "^1.14.1",
     "sinon": "^2.1.0",
     "speakingurl": "^0.19.0",
     "stream-combiner": "^0.2.1",
