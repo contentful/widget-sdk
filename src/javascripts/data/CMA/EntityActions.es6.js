@@ -12,7 +12,7 @@ import {caseof} from 'libs/sum-types/caseof-eq';
  * ~~~js
  * import {Action, makePerform} from 'data/CMA/EntityActions'
  * const perform = makePerform(spaceEndpoint)
- * perform(Action.Publish(), {
+ * const updatedEntityData = await perform(Action.Publish(), {
  *   sys: {
  *     id: 'foo',
  *     type: 'Entry',
@@ -66,7 +66,7 @@ export const Action = {
  * @description
  * A curried function to perform an action on an entity. Called as
  * ~~~js
- * makePerform(spaceEndpoint)(action, data)
+ * const updatedEntityData = await makePerform(spaceEndpoint)(action, data)
  * ~~~
  * where
  * - 'spaceEndpoint' is a function to make the request to a space as defined

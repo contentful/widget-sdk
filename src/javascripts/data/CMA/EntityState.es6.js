@@ -130,7 +130,9 @@ export function makeApply (spaceEndpoint) {
 
 
 /**
- * Change the state of an entity
+ * A curried function that takes a space endpiont, a target entity
+ * state and the entity data. It performs an API request to change the
+ * entity to the target state and returns the updated entity data.
  */
 function makeChangeTo (spaceEndpoint) {
   const performAction = makePerform(spaceEndpoint);
