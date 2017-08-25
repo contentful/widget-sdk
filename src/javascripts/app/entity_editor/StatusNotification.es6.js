@@ -20,6 +20,11 @@ const messages = {
       'This ${entityLabel} is archived and cannot be ' +
       'modified. Please unarchive it to make any changes.'
     ),
+  'deleted':
+    template(
+      'This ${entityLabel} has been deleted and cannot be ' +
+      'modified anymore.'
+    ),
   'editing-not-allowed':
     template(
       'You have read-only access to this ${entityLabel}. If you need to edit ' +

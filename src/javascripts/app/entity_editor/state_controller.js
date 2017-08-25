@@ -22,6 +22,9 @@ angular.module('contentful')
   var reverter = otDoc.reverter;
   var docStateManager = otDoc.resourceState;
 
+  // Is set to 'true' when the entity has been deleted by another user.
+  var isDeleted = false;
+
   K.onValueScope($scope, docStateManager.inProgress$, function (inProgress) {
     controller.inProgress = inProgress;
   });
@@ -101,8 +104,7 @@ angular.module('contentful')
         controller.allActions = [publishChanges, archive, unpublish];
       }],
       [State.Deleted(), function () {
-        // This state is only present briefly before closing the entry
-        // editor.
+        isDeleted = true;
       }]
     ]);
 
@@ -202,7 +204,7 @@ angular.module('contentful')
   // TODO Move these checks into the document resource manager
   function checkDisallowed (action) {
     return function () {
-      return !permissions.can(action);
+      return isDeleted || !permissions.can(action);
     };
   }
 
