@@ -171,9 +171,8 @@ angular.module('contentful')
     });
   }, {
     available: function () {
-      return permissions.can('update') &&
-             controller.current !== 'archived' &&
-             reverter.hasChanges();
+      var canEdit = K.getValue(otDoc.state.canEdit$);
+      return canEdit && reverter.hasChanges();
     }
   });
 

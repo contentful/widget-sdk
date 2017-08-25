@@ -58,6 +58,7 @@ angular.module('contentful/mocks')
       state: {
         isDirty$: K.createMockProperty(),
         isSaving$: K.createMockProperty(false),
+        canEdit$: K.createMockProperty(true),
         isConnected$: K.createMockProperty(true),
         loaded$: K.createMockProperty(true),
         error$: K.createMockStream()

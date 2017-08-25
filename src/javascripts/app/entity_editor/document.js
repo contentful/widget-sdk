@@ -313,6 +313,27 @@ angular.module('contentful')
       return !!doc;
     }).skipDuplicates();
 
+
+    /**
+     * @ngdoc property
+     * @module contentful
+     * @name Document#state.canEdit$
+     * @description
+     * Property that is `true` if all of the following are true
+     * - The user has general permissions to change the entity
+     * - The entity is not archived and has not been deleted
+     * - The document is connected to the server.
+     *
+     * Note that this does not take field based authorization into
+     * account. For this see the `FieldLocaleController`.
+     *
+     * @type {Property<boolean>}
+     */
+    var canEdit$ = K.combineProperties([isEditable$, isConnected$], function (isEditable, isConnected) {
+      return isEditable && isConnected;
+    });
+
+
     cleanupTasks.push(function () {
       forgetCurrentDoc();
       docLoader.destroy();
@@ -378,6 +399,8 @@ angular.module('contentful')
         isConnected$: isConnected$,
         // Used by Entry/Asset editor controller
         isDirty$: isDirty$,
+
+        canEdit$: canEdit$,
 
         loaded$: loaded$,
 
