@@ -86,9 +86,10 @@ angular.module('contentful')
   }
 
   function computeUsage (filter) {
-    if (!spaceContext.space) return;
+    var organization = spaceContext.organizationContext.organization;
+    if (!organization) return;
+
     if (filter) filter = stringUtils.uncapitalize(filter);
-    var organization = spaceContext.space.data.organization;
     var usage = _.merge(
       organization.usage.permanent,
       organization.usage.period
