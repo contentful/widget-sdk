@@ -34,6 +34,25 @@ angular.module('contentful')
     return $scope.folderStates[folder.id] !== 'closed';
   };
 
+  /**
+   * Returns false if there is only the default folder and it is empty. Returns
+   * true otherwise.
+   */
+  $scope.hasViews = function () {
+    if ($scope.folders.length > 1) {
+      return true;
+    }
+
+    var onlyFolder = $scope.folders[0];
+    if (!onlyFolder) {
+      return false;
+    } else if (onlyFolder.id === 'default' && onlyFolder.views.length === 0) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   function saveFolderStates (folderStates) {
     // Only store closed folders that actually exist
     folderStates = _.pick(folderStates, function (state, folderId) {
