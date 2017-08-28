@@ -2,6 +2,7 @@ import * as Defaults from './Defaults';
 import $q from '$q';
 import logger from 'logger';
 import { find, findIndex, get as getPath } from 'lodash';
+import * as K from 'utils/kefir';
 
 /**
  * This module exports a factory for the UiConfigStore.
@@ -9,60 +10,31 @@ import { find, findIndex, get as getPath } from 'lodash';
  * The store gets and updates the UiConfig and sends this changes to the API. It
  * is created on space context reset and avaialable as `spaceContext.uiConfig`.
  */
-export default function create (spaceEndpoint, canEdit) {
-  let currentConfig = {};
-  let isConfigSaved = false;
+// TODO this implementation relies heavily on mutation. We should
+// rewrite it.
+export default function create (spaceEndpoint, canEdit, publishedCTs) {
+  const currentConfigRef = { value: {} };
 
   return {
-    canEdit: canEdit,
-    get: get,
-    load: load,
-    save: save,
-    addOrEditCt: addOrEditCt,
-    resetEntries: resetEntries,
-    resetAssets: resetAssets
+    canEdit,
+    // TODO Only used once when loading space. Make this part of the
+    // factory
+    load,
+    addOrEditCt,
+    forEntries: function () {
+      const getDefaults = () => {
+        // TODO We do not regenerate default views when a content types is changed
+        // TODO do not use wrapped content types
+        const contentTypes = K.getValue(publishedCTs.wrappedItems$).toJS();
+        return Defaults.getEntryViews(contentTypes);
+      };
+      return forScope('entryListViews', getDefaults, currentConfigRef, save);
+    },
+    forAssets: function () {
+      const getDefaults = Defaults.getAssetViews;
+      return forScope('assetListViews', getDefaults, currentConfigRef, save);
+    }
   };
-
-  /**
-   * @ngdoc method
-   * @name uiConfig#resetEntries
-   * @param {Array<object>} contentTypes
-   * @returns {Array<object>}
-   *
-   * @description
-   * Resets entries views to the default configuration.
-   */
-  function resetEntries (contentTypes) {
-    const defaults = Defaults.getEntryViews(contentTypes);
-    currentConfig.entryListViews = defaults;
-    return defaults;
-  }
-
-  /**
-   * @ngdoc method
-   * @name uiConfig#resetAssets
-   * @returns {Array}
-   *
-   * @description
-   * Resets assets views to the default configuration.
-   */
-  function resetAssets () {
-    const defaults = Defaults.getAssetViews();
-    currentConfig.assetListViews = defaults;
-    return defaults;
-  }
-
-  /**
-   * @ngdoc method
-   * @name uiConfig#get
-   * @returns <object>
-   *
-   * @description
-   * Returns the current UI config
-   */
-  function get () {
-    return currentConfig;
-  }
 
   /**
    * @ngdoc method
@@ -77,41 +49,29 @@ export default function create (spaceEndpoint, canEdit) {
     return spaceEndpoint({
       method: 'GET',
       path: ['ui_config']
-    }).then(function (config) {
-      currentConfig = config;
-      isConfigSaved = true;
-      return config;
-    }, function (err) {
-      isConfigSaved = false;
+    }).then((config) => {
+      currentConfigRef.value = config;
+    }, (err) => {
       const statusCode = getPath(err, 'statusCode');
       if (statusCode === 404) {
-        currentConfig = {};
-        return currentConfig;
+        currentConfigRef.value = {};
+      } else {
+        logger.logServerWarn('Could not load UIConfig', {error: err});
+        return $q.reject(err);
       }
-      logger.logServerWarn('Could not load UIConfig', {error: err});
-      return $q.reject(err);
     });
   }
 
-  /**
-   * @ngdoc method
-   * @name uiConfig#save
-   * @param {Array<object>} uiConfig
-   * @returns {Promise<object>}
-   *
-   * @description
-   * Saves the UiConfig provided and returns a promise that resolves to the config
-   * object.
-   */
+  // TODO We should queue saves to prevent race conditions.
   function save (uiConfig) {
     return spaceEndpoint({
       method: 'PUT',
       path: ['ui_config'],
-      version: getPath(currentConfig, ['sys', 'version']),
+      version: getPath(currentConfigRef.value, ['sys', 'version']),
       data: uiConfig
-    }).then(function (config) {
-      currentConfig = config;
-      return currentConfig;
+    }).then((config) => {
+      currentConfigRef.value = config;
+      return currentConfigRef.value;
     }, (err) => {
       load();
       return $q.reject(err);
@@ -127,15 +87,9 @@ export default function create (spaceEndpoint, canEdit) {
    * @description
    * Adds new content type under the `Content Type` folder or updates its title if
    * it already exists.
-   *
-   * If there is no UI Config defined, do nothing.
    */
   function addOrEditCt (contentType) {
-    if (!isConfigSaved) {
-      return $q.resolve();
-    }
-
-    const contentTypeFolder = find(currentConfig.entryListViews, function (folder) {
+    const contentTypeFolder = find(currentConfigRef.value.entryListViews, (folder) => {
       return folder.title === 'Content Type';
     });
 
@@ -143,7 +97,7 @@ export default function create (spaceEndpoint, canEdit) {
       return $q.resolve();
     }
 
-    const viewIndex = findIndex(contentTypeFolder.views, function (view) {
+    const viewIndex = findIndex(contentTypeFolder.views, (view) => {
       return view.contentTypeId === contentType.getId();
     });
 
@@ -159,6 +113,41 @@ export default function create (spaceEndpoint, canEdit) {
       contentTypeFolder.views.push(newView);
     }
 
-    return save(currentConfig);
+    return save(currentConfigRef.value);
+  }
+}
+
+
+/**
+ * Create a scoped UIConfig for a property on the root UI config.
+ *
+ * The scoped object gets, saves, and resets only the part of the root object
+ * named by `prop`.
+ *
+ * If the scoped value is not set we use `getDefaults()` to return a default.
+ *
+ * The `reset()` method will delete the scoped value and return the defaults
+ * again.
+ */
+function forScope (prop, getDefaults, configRef, saveConfig) {
+
+  return { get, save, reset };
+
+  function get () {
+    const config = configRef.value;
+    if (!config[prop]) {
+      config[prop] = getDefaults();
+    }
+    return config[prop];
+  }
+
+  function save (scopeValue) {
+    configRef.value[prop] = scopeValue;
+    return saveConfig(configRef.value)
+      .then(() => get());
+  }
+
+  function reset () {
+    return save(undefined);
   }
 }

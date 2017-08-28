@@ -109,7 +109,7 @@ angular.module('contentful')
       self.user = K.getValue(tokenStore.user$);
 
       var isAdmin = space.data.spaceMembership.admin;
-      self.uiConfig = createUiConfigStore(self.endpoint, isAdmin);
+      self.uiConfig = createUiConfigStore(self.endpoint, isAdmin, self.publishedCTs);
 
       previewEnvironmentsCache.clearAll();
       TheLocaleStore.reset(space.getId(), space.getPrivateLocales());

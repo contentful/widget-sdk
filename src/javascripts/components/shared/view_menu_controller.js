@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 
-.controller('ViewMenuController', ['$scope', '$attrs', 'require', '$parse', function ($scope, $attrs, require, $parse) {
+.controller('ViewMenuController', ['$scope', 'require', '$parse', function ($scope, require, $parse) {
   var spaceContext = require('spaceContext');
   var modalDialog = require('modalDialog');
   var random = require('random');
@@ -16,7 +16,7 @@ angular.module('contentful')
 
   $scope.folderStates = TheStore.get('folderStates') || {};
 
-  $scope.$watch($attrs.cfViewMenu, function (folders) {
+  $scope.$watch('uiConfig', function (folders) {
     $scope.folders = folders || [];
     ensureDefaultFolder();
   });

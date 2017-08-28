@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('contentful')
-.controller('EntryListViewsController', ['$scope', '$injector', function ($scope, $injector) {
-
-  var $controller = $injector.get('$controller');
-  var systemFields = $injector.get('systemFields');
+.controller('EntryListViewsController', ['$scope', 'require', function ($scope, require) {
+  var spaceContext = require('spaceContext');
+  var $controller = require('$controller');
+  var systemFields = require('systemFields');
 
   var SORTABLE_TYPES = [
     'Boolean',
@@ -51,8 +51,7 @@ angular.module('contentful')
   return $controller('ListViewsController', {
     $scope: $scope,
     getBlankView: getBlankView,
-    viewCollectionName: 'entryListViews',
-    generateDefaultViews: generateDefaultViews,
+    uiConfig: spaceContext.uiConfig.forEntries(),
     preserveStateAs: 'entries',
     resetList: _.noop
   });
@@ -75,21 +74,6 @@ angular.module('contentful')
       order: systemFields.getDefaultOrder(),
       displayedFieldIds: _.map(systemFields.getDefaultFields(), 'id')
     };
-  }
-
-  function generateDefaultViews (wait) {
-    var cts = $scope.spaceContext.publishedContentTypes;
-    if (wait) {
-      var off = $scope.$watch('spaceContext.publishedContentTypes.length', function (len) {
-        if (len > 0) {
-          off();
-          cts = $scope.spaceContext.publishedContentTypes;
-          return $scope.spaceContext.uiConfig.resetEntries(cts);
-        }
-      });
-    } else {
-      return $scope.spaceContext.uiConfig.resetEntries(cts);
-    }
   }
 
 }]);

@@ -8,8 +8,7 @@ angular.module('contentful')
   return $controller('ListViewsController', {
     $scope: $scope,
     getBlankView: getBlankView,
-    viewCollectionName: 'assetListViews',
-    generateDefaultViews: spaceContext.uiConfig.resetAssets,
+    uiConfig: spaceContext.uiConfig.forAssets(),
     preserveStateAs: preserveState ? 'assets' : null,
     resetList: function () {
       $scope.searchController.resetAssets(true);

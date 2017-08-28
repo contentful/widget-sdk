@@ -74,13 +74,12 @@ angular.module('contentful/mocks')
     spaceContext.apiKeyRepo = createApiKeyRepo(spaceContext.endpoint);
     spaceContext.organizationContext = {};
     spaceContext.contentCollections = {state$: K.constant([])};
-    spaceContext.uiConfig = sinon.stubAll(createUiConfigStore(
+    spaceContext.uiConfig = createUiConfigStore(
       spaceContext.endpoint,
       // isAdmin so we can change the UI Config
-      true
-    ));
-    spaceContext.uiConfig.get.returns({});
-    spaceContext.uiConfig.save.resolves({});
+      true,
+      spaceContext.publishedCTs
+    );
 
     return spaceContext;
   }

@@ -1,6 +1,10 @@
-import { cloneDeep } from 'lodash';
+import { cloneDeep, constant } from 'lodash';
+import * as I from 'libs/Immutable';
+
 import * as sinon from 'helpers/sinon';
+import * as K from 'helpers/mocks/kefir';
 import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
+
 
 describe('data/UiConfig/Store', function () {
   let uiConfig;
@@ -9,56 +13,59 @@ describe('data/UiConfig/Store', function () {
     module('contentful/test');
     const createUiConfigStore = this.$inject('data/UiConfig/Store').default;
     const endpoint = createMockSpaceEndpoint();
-    uiConfig = createUiConfigStore(endpoint.request, true);
+
+    const contentTypes$ = K.createMockProperty(I.List([{
+      data: {
+        name: 'bar'
+      },
+      getId: constant(1)
+    }]));
+
+    uiConfig = createUiConfigStore(endpoint.request, true, { wrappedItems$: contentTypes$ });
     this.store = endpoint.stores.ui_config;
   });
 
-  describe('#load', function () {
-    it('returns server data if available', function* () {
-      const config = {
-        entryListViews: [{}]
+  describe('#forEntries()', function () {
+    beforeEach(function () {
+      uiConfig.load();
+      this.$apply();
+      this.entriesConfig = uiConfig.forEntries();
+    });
+
+    it('#get() gets loaded config', function* () {
+      this.store.default = {
+        entryListViews: 'DATA'
       };
-      this.store.default = config;
-      const val = yield uiConfig.load();
-      expect(val).toEqual(config);
-    });
 
-    it('resolves to empty object if server returns 404', function* () {
-      const result = yield uiConfig.load();
-      expect(result).toEqual({});
-    });
-  });
-
-  describe('#resetEntries', function () {
-    it('returns defaults', function () {
-      expect(uiConfig.resetEntries().length).toBe(3);
-    });
-  });
-
-  describe('#resetAssets', function () {
-    it('returns defaults', function () {
-      expect(uiConfig.resetAssets().length).toBe(3);
-    });
-  });
-
-  describe('#save', function () {
-    it('creates UiConfig', function* () {
       yield uiConfig.load();
-      yield uiConfig.save({
-        data: 'DATA'
-      });
-      expect(this.store.default.data).toEqual('DATA');
+      expect(this.entriesConfig.get()).toEqual('DATA');
     });
 
-    it('updates UiConfig', function* () {
+    it('#get() returns default values if not set', function* () {
+      this.store.default = {
+        entryListViews: undefined
+      };
+
       yield uiConfig.load();
-      yield uiConfig.save({
-        data: 'DATA1'
-      });
-      yield uiConfig.save({
-        data: 'DATA2'
-      });
-      expect(this.store.default.data).toEqual('DATA2');
+      expect(this.entriesConfig.get().length).toEqual(3);
+    });
+
+    it('#save() creates and updates UiConfig', function* () {
+      expect(this.store.default).toBe(undefined);
+
+      yield this.entriesConfig.save('DATA1');
+      expect(this.store.default.entryListViews).toEqual('DATA1');
+
+      yield this.entriesConfig.save('DATA2');
+      expect(this.store.default.entryListViews).toEqual('DATA2');
+    });
+
+    it('#reset() deletes views', function* () {
+      yield this.entriesConfig.save('DATA1');
+      expect(this.store.default.entryListViews).toEqual('DATA1');
+
+      yield this.entriesConfig.save(undefined);
+      expect(this.store.default.entryListViews).toEqual(undefined);
     });
   });
 
@@ -129,7 +136,7 @@ describe('data/UiConfig/Store', function () {
           }]
         }]
       };
-      mockCt.getId = _.constant(2);
+      mockCt.getId = constant(2);
 
       yield uiConfig.load();
       yield uiConfig.addOrEditCt(mockCt);
