@@ -1,8 +1,8 @@
 import {h} from 'ui/Framework';
-import { clickLink as trackLinkClick } from 'analytics/events/DocsSidebar';
+import { clickLink as trackLinkClick } from 'analytics/events/ContextualHelp';
 
 export default function apis () {
-  return h('.docs-sidebar__line', [
+  return h('.contextual-help__line', [
     h('strong', {
       style: {
         marginBottom: '10px',

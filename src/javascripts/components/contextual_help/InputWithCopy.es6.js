@@ -1,12 +1,11 @@
 import {h} from 'ui/Framework';
 import $document from '$document';
 import { byName as colorByName } from 'Styles/Colors';
-import { copyToClipboard as trackCopyToClipboard } from 'analytics/events/DocsSidebar';
 
-let copied = false;
+const copied = {};
 
-export default function ({ children, text, id }, render) {
-  const copyButton = h(`button.docs-sidebar__copy-button.fa.${copied ? 'fa-check' : 'fa-copy'}`, {
+export default function ({ children, text, onCopy, id }, render) {
+  const copyButton = h(`button.contextual-help__copy-button.fa.${copied[id] ? 'fa-check' : 'fa-copy'}`, {
     style: {
       height: '30px',
       width: '30px',
@@ -47,11 +46,13 @@ export default function ({ children, text, id }, render) {
     doc.body.appendChild(input);
     input.select();
     doc.execCommand('copy', false);
-    trackCopyToClipboard(id);
-    copied = true;
+
+    onCopy(text);
+    copied[id] = true;
+
     render();
     setTimeout(() => {
-      copied = false;
+      copied[id] = false;
       render();
     }, 1000);
   }

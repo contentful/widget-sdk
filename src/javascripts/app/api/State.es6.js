@@ -1,4 +1,4 @@
-import {assign, set} from 'lodash';
+import {assign, set as setAtPath} from 'lodash';
 import {h} from 'utils/hyperscript';
 import baseState from 'states/base';
 import * as contextHistory from 'contextHistory';
@@ -39,7 +39,7 @@ const apiKeyEditorState = {
       crumbFactory.CDAKey($stateParams.apiKeyId, $scope.context)
     ]);
 
-    set($scope, ['context', 'ready'], true);
+    setAtPath($scope, ['context', 'ready'], true);
   }],
   template: editorTemplate()
 };

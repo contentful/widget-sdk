@@ -1,8 +1,7 @@
 import {h} from 'ui/Framework';
 import $state from '$state';
 import { byName as colorByName } from 'Styles/Colors';
-import { clickLink as trackLinkClick } from 'analytics/events/DocsSidebar';
-import { domain } from 'Config';
+import { clickLink as trackLinkClick } from 'analytics/events/ContextualHelp';
 import createApiKeyAdvice from './CreateApiKeyAdvice';
 import curl from './Curl';
 
@@ -15,21 +14,21 @@ export default function (data) {
   const allContent = content(data);
 
   const prompt = h(
-    'p.docs-sidebar__prompt',
+    'p.contextual-help__prompt',
     {ariaLabel: 'Next'},
     ['[ Press space to continue ]']
   );
 
   const storyContent = allContent.slice(0, currentStep).map((step) => {
-    return h('div.docs-sidebar__line', [step]);
+    return h('div.contextual-help__line', [step]);
   });
 
   if (data.state.introStepsRemaining) {
     storyContent.push(prompt);
   }
 
-  return h('div.docs-sidebar__intro', [
-    h('div.docs-sidebar__progress', {
+  return h('div.contextual-help__intro', [
+    h('div.contextual-help__progress', {
       style: {
         height: '2px',
         backgroundColor: colorByName.blueMid,
@@ -37,14 +36,11 @@ export default function (data) {
         width: `${(data.state.introProgress / introTotalSteps) * 100}%`
       }
     }),
-    h('div.docs-sidebar__intro-content', storyContent)
+    h('div.contextual-help__intro-content', storyContent)
   ]);
 }
 
 function content (data) {
-  const introCurlUrl =
-        `https://cdn.${domain}/spaces/${data.state.spaceId}/entries/${data.state.entryId}?access_token=${data.state.token}`;
-
   return [
     h('div', [
       h('p', ['👋 Hi! I’m here to help you learn about Contentful and to make your first few API calls.']),
@@ -57,7 +53,11 @@ function content (data) {
     'Contentful is a content management infrastructure that lets you build applications with its flexible APIs and global CDN.',
     h('div', [
       h('strong', ['Try and fetch an entry.']),
-      data.state.apiKeyId ? curl(introCurlUrl, 'introCurl', data.actions.render) : createApiKeyAdvice(data.state.spaceId),
+      data.state.apiKeyId ? curl({
+        path: ['spaces', data.state.spaceId, 'entries', data.state.entryId],
+        params: [['access_token', data.state.token]],
+        id: 'introCurl'
+      }, data.actions.render) : createApiKeyAdvice(data.state.spaceId),
       docs()
     ]),
     h('div', [

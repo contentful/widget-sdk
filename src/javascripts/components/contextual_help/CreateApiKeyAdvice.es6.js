@@ -1,11 +1,11 @@
 import {h} from 'ui/Framework';
 import $state from '$state';
-import { clickLink as trackLinkClick } from 'analytics/events/DocsSidebar';
+import { clickLink as trackLinkClick } from 'analytics/events/ContextualHelp';
 
 export default function () {
   const apiKeyList = 'spaces.detail.api.keys.list';
 
-  return h('.docs-sidebar__line', {
+  return h('.contextual-help__line', {
     style: {
       marginTop: '10px'
     }

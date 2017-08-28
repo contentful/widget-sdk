@@ -1,5 +1,5 @@
 import {h} from 'ui/Framework';
-import entries from 'components/docs_sidebar/Entries';
+import entries from 'components/contextual_help/Entries';
 import contentTypes from './ContentTypes';
 import apiDetail from './ApiDetail';
 import apisList from './ApisList';
@@ -9,12 +9,12 @@ import icon from 'svg/help-bot-icon';
 import { byName as colorByName } from 'Styles/Colors';
 
 
-export default function Ninja (data) {
+export default function (data) {
   if (data === null) {
     return h('div');
   } else {
     return h(
-      `div.docs-sidebar__main-container${data.state.isHidden ? '.docs-sidebar__main-container--fade-out' : ''}`,
+      `div.contextual-help__main-container${data.state.isHidden ? '.contextual-help__main-container--fade-out' : ''}`,
       {
         style: {
           zIndex: 1
@@ -29,7 +29,7 @@ export default function Ninja (data) {
 }
 
 function helpButton ({ toggle }) {
-  return h('div.docs-sidebar__button', {
+  return h('div.contextual-help__button', {
     style: {
       zIndex: 2
     },
@@ -38,19 +38,19 @@ function helpButton ({ toggle }) {
     role: 'button'
   }, [
     icon,
-    h('.docs-sidebar__button-text', ['Help'])
+    h('.contextual-help__button-text', ['Help'])
   ]);
 }
 
 function expanded (data) {
   return h(
-    `.docs-sidebar__modal${data.state.isExpanded ? '.docs-sidebar__modal--fade-in' : ''}`, {
+    `.contextual-help__modal${data.state.isExpanded ? '.contextual-help__modal--fade-in' : ''}`, {
       style: {
         zIndex: 2
       }
     }, [
       header(data.actions.toggle),
-      h('.docs-sidebar__body', [
+      h('.contextual-help__body', [
         data.state.introCompleted ? getTemplate(data.state.view)(data) : intro(data)
       ])
     ]
@@ -58,7 +58,7 @@ function expanded (data) {
 }
 
 function minimized ({actions, state}) {
-  return h(`.docs-sidebar__callout${state.calloutSeen ? '.docs-sidebar__callout--hide' : ''}`, {
+  return h(`.contextual-help__callout${state.calloutSeen ? '.contextual-help__callout--hide' : ''}`, {
     style: {
       zIndex: 2
     }
@@ -91,7 +91,7 @@ function minimized ({actions, state}) {
 }
 
 function header (toggle) {
-  return h('.docs-sidebar__header', [
+  return h('.contextual-help__header', [
     icon,
     h('span', {style: {marginLeft: '10px', flexGrow: 1}}, ['Onboarding tour']),
     h('button.close', {onClick: toggle}, ['×'])

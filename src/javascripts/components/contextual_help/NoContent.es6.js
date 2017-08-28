@@ -1,7 +1,7 @@
 import {h} from 'ui/Framework';
 import $state from '$state';
 import createApiKeyAdvice from './CreateApiKeyAdvice';
-import { clickLink as trackLinkClick } from 'analytics/events/DocsSidebar';
+import { clickLink as trackLinkClick } from 'analytics/events/ContextualHelp';
 
 function link ({ href, sref, text }) {
   if (href) {
@@ -27,14 +27,14 @@ export default function ({ state: { spaceId, apiKeyId } }) {
       padding: '20px 30px'
     }
   }, [
-    h('.docs-sidebar__line', [
+    h('.contextual-help__line', [
       h('p', {
         style: {
           marginBottom: 0
         }
       }, ['There is no help for this page.'])
     ]),
-    h('.docs-sidebar__line', [
+    h('.contextual-help__line', [
       h('p', {
         style: {
           marginBottom: 0
@@ -57,7 +57,7 @@ export default function ({ state: { spaceId, apiKeyId } }) {
         })
       ])
     ]),
-    h('.docs-sidebar__link', [
+    h('.contextual-help__link', [
       h('p', [
         'Or you can ',
         link({

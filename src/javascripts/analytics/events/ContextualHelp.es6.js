@@ -1,6 +1,6 @@
 import {track} from 'analytics/Analytics';
 
-const eventName = 'docs_sidebar:action';
+const eventName = 'contextual_help:action';
 
 export function continueIntro () {
   track(eventName, {action: 'continue_intro'});

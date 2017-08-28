@@ -109,7 +109,7 @@ angular.module('contentful')
   personal_access_token: [
     'action'
   ],
-  docs_sidebar: [
+  contextual_help: [
     'action'
   ]
 })

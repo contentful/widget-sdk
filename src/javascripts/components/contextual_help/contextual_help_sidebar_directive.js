@@ -1,14 +1,13 @@
 'use strict';
 
-angular.module('contentful').directive('cfNinja', ['require', function (require) {
+angular.module('contentful').directive('cfContextualHelpSidebar', ['require', function (require) {
   var $document = require('$document');
   var $state = require('$state');
-  var $timeout = require('$timeout');
   var SumTypes = require('libs/sum-types');
   var caseof = SumTypes.caseofEq;
   var otherwise = SumTypes.otherwise;
-  var NinjaStore = require('components/docs_sidebar/Store');
-  var Ninja = require('components/docs_sidebar/Ninja').default;
+  var ContextualSidebarStore = require('components/contextual_help/Store');
+  var ContextualSidebarComponent = require('components/contextual_help/ContextualHelpSidebarComponent').default;
   var KEYCODES = require('keycodes');
   var spaceContext = require('spaceContext');
   var user$ = require('services/TokenStore').user$;
@@ -22,7 +21,7 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
     restrict: 'E',
     controller: ['$scope', function ($scope) {
       // initial empty render as data is loaded asynchronously
-      $scope.component = Ninja(null);
+      $scope.component = ContextualSidebarComponent(null);
 
       // init store with sane data
       $q.all([
@@ -33,7 +32,7 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
       ]).then(function (values) {
         var userId = K.getValue(user$).sys.id;
 
-        NinjaStore.init(userId, {
+        ContextualSidebarStore.init(userId, {
           view: $state.current.name,
           spaceId: values[0],
           entryId: values[1],
@@ -44,7 +43,7 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
           render: render
         });
 
-        NinjaStore.checkNavigatedWhileOpen();
+        ContextualSidebarStore.checkNavigatedWhileOpen();
 
         render();
       }).catch(function (error) {
@@ -61,18 +60,18 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
       });
 
       function handleClick (e) {
-        var isTargetChildOfSidebar = !!$(e.target).parents('.docs-sidebar__main-container').length;
-        var isDocsSidebarVisible = $('.docs-sidebar__modal').hasClass('docs-sidebar__modal--fade-in');
+        var isTargetChildOfSidebar = !!$(e.target).parents('.contextual-help__main-container').length;
+        var isContextualHelpVisible = $('.contextual-help__modal').hasClass('contextual-help__modal--fade-in');
+        var isContainerVisible = !$('.contextual-help__main-container').hasClass('contextual-help__main-container--fade-out');
 
-        if (isDocsSidebarVisible && !isTargetChildOfSidebar) {
-          NinjaStore.hide();
+        if (isContainerVisible && isContextualHelpVisible && !isTargetChildOfSidebar) {
+          ContextualSidebarStore.minimize();
         }
       }
 
       function render () {
-        return $timeout(function () {
-          $scope.component = Ninja(NinjaStore.get());
-        });
+        $scope.component = ContextualSidebarComponent(ContextualSidebarStore.get());
+        $scope.$applyAsync();
       }
 
       function getFirstEntryId () {
@@ -142,28 +141,29 @@ angular.module('contentful').directive('cfNinja', ['require', function (require)
       function handleSpace (introStepsRemaining) {
         // Don't do anything if all steps have been completed
         if (introStepsRemaining) {
-          NinjaStore.continueIntro();
-          render().then(NinjaStore.completeIntro);
+          ContextualSidebarStore.continueIntro();
+          render();
+          ContextualSidebarStore.completeIntro();
         }
       }
 
       function handleKeydown (evt) {
         caseof(evt.keyCode, [
-          [KEYCODES.ESC, NinjaStore.hide],
+          [KEYCODES.ESC, ContextualSidebarStore.minimize],
           [KEYCODES.H, function () {
             var $target = $(evt.target);
 
             if (!$target.is('input, textarea, [contenteditable="true"]')) {
-              NinjaStore.toggleVisibility();
+              ContextualSidebarStore.toggleVisibility();
             }
           }],
           [KEYCODES.SPACE, function () {
-            var ninjaState = NinjaStore.get().state;
+            var state = ContextualSidebarStore.get().state;
 
-            if (ninjaState.isExpanded) {
+            if (state.isExpanded) {
               evt.preventDefault();
               evt.stopPropagation();
-              handleSpace(ninjaState.introStepsRemaining);
+              handleSpace(state.introStepsRemaining);
             }
           }],
           [otherwise, _.noop]

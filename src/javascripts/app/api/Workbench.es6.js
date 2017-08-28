@@ -2,7 +2,7 @@ import {h} from 'utils/hyperscript';
 
 export function withSidebar (content, sidebar) {
   return h('.workbench', [
-    h('docs-sidebar'),
+    h('contextual-help'),
     h('cf-api-key-nav'),
     h('.workbench-main', [
       h('.workbench-main__content', [content]),

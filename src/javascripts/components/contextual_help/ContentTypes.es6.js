@@ -1,6 +1,5 @@
 import {h} from 'ui/Framework';
-import { clickLink as trackLinkClick } from 'analytics/events/DocsSidebar';
-import { domain } from 'Config';
+import { clickLink as trackLinkClick } from 'analytics/events/ContextualHelp';
 import $state from '$state';
 import createApiKeyAdvice from './CreateApiKeyAdvice';
 import curl from './Curl';
@@ -10,14 +9,13 @@ const apiKeyDetail = 'spaces.detail.api.keys.detail';
 
 export default function template (data) {
   const params = {apiKeyId: data.state.apiKeyId};
-  const contentTypesCurlUrl = `https://cdn.${domain}/spaces/${data.state.spaceId}/content_types/${data.state.contentType.id}?access_token=${data.state.token}`;
 
   return h('div', {
     style: {
       padding: '20px 30px'
     }
   }, [
-    h('.docs-sidebar__line', [
+    h('.contextual-help__line', [
       h('p', [
         'These are your ',
         h('strong', ['content types']),
@@ -25,9 +23,13 @@ export default function template (data) {
         'you can customize its fields and field properties.'
       ])
     ]),
-    h('.docs-sidebar__line', [
+    h('.contextual-help__line', [
       h('strong', [`Fetch the content type named '${data.state.contentType.name}'.`]),
-      data.state.apiKeyId ? curl(contentTypesCurlUrl, 'contentTypesCurl', data.actions.render) : createApiKeyAdvice(data.state.spaceId),
+      data.state.apiKeyId ? curl({
+        path: ['spaces', data.state.spaceId, 'content_types', data.state.contentType.id],
+        params: [['access_token', data.state.token]],
+        id: 'contentTypesCurl'
+      }, data.actions.render) : createApiKeyAdvice(data.state.spaceId),
       h('p', [
         'You can read about ',
         h('a.text-link', {
@@ -38,7 +40,7 @@ export default function template (data) {
         '.'
       ])
     ]),
-    h('.docs-sidebar__line', [
+    h('.contextual-help__line', [
       h('strong', {
         style: {
           display: 'block',

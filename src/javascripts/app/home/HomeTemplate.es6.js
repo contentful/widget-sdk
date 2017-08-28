@@ -8,15 +8,15 @@ export default function template () {
         h('cf-welcome'),
         h('cf-onboarding-steps'),
         h('cf-developer-resources'),
-        ninja()
+        contextualHelpSection()
       ])
     ])
   ]);
 }
 
-function ninja () {
+function contextualHelpSection () {
   return h('section.home-section', {
-    ngIf: 'showNinja'
+    ngIf: 'showContextualHelp'
   }, [
     h('h3.home-section__heading', [
       'Contextual help'

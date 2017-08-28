@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('docsSidebar', ['require', function (require) {
+angular.module('contentful').directive('contextualHelp', ['require', function (require) {
   var $q = require('$q');
   var K = require('utils/kefir');
   var LD = require('utils/LaunchDarkly');
@@ -10,7 +10,7 @@ angular.module('contentful').directive('docsSidebar', ['require', function (requ
   var moment = require('moment');
 
   return {
-    template: '<cf-ninja ng-if="showNinja">',
+    template: '<cf-contextual-help-sidebar ng-if="showContextualHelp">',
     restrict: 'E',
     controller: ['$scope', function ($scope) {
       var testFlag = 'test-ps-07-2017-ninja-sidebar';
@@ -18,19 +18,17 @@ angular.module('contentful').directive('docsSidebar', ['require', function (requ
 
       updateHasEntriesBus();
 
-      var ninjaTest$ = K.combine(
+      var contextualHelpTest$ = K.combine(
         [ LD.getTest(testFlag, qualifyUser), hasEntriesBus.property ],
-        function (variation, hasEntries, _) {
+        function (variation, hasEntries) {
           return hasEntries ? variation : null;
         }
       );
 
-      $scope.$on('spaceTemplateCreated', function () {
-        updateHasEntriesBus();
-      });
+      $scope.$on('spaceTemplateCreated', updateHasEntriesBus);
 
-      K.onValueScope($scope, ninjaTest$, function (variation) {
-        $scope.showNinja = variation;
+      K.onValueScope($scope, contextualHelpTest$, function (variation) {
+        $scope.showContextualHelp = variation;
 
         analytics.track('experiment:start', {
           experiment: {
@@ -64,8 +62,6 @@ angular.module('contentful').directive('docsSidebar', ['require', function (requ
         return spacesForOrg && !!spacesForOrg.length;
       }
 
-      // TODO: Remove that 99999 multiplier
-      // it's only for dev
       function isRecentUser (user) {
         var creationDate = moment(user.sys.createdAt);
         var now = moment();

@@ -146,7 +146,7 @@ registerSchema({
 });
 
 registerSchema({
-  name: 'docs_sidebar',
+  name: 'contextual_help',
   version: '1-0-0'
 });
 
