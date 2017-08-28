@@ -6,19 +6,12 @@ import { find, findIndex, get as getPath } from 'lodash';
 /**
  * This module exports a factory for the UiConfigStore.
  *
- * The store gets and updates  the UiConfig and sends this changes to
- * the API. It is created on space context reset and avaialable as
- * `spaceContext.uiConfig`.
+ * The store gets and updates the UiConfig and sends this changes to the API. It
+ * is created on space context reset and avaialable as `spaceContext.uiConfig`.
  */
-
-// TODO do not use spaceContext. Instead use space endpoint and an
-// 'isAdminFlag'.
-export default function create (spaceContext) {
+export default function create (spaceEndpoint, canEdit) {
   let currentConfig = {};
   let isConfigSaved = false;
-
-  const user = spaceContext.getData('spaceMembership.user');
-  const canEdit = spaceContext.space && spaceContext.space.isAdmin(user);
 
   return {
     canEdit: canEdit,
@@ -81,21 +74,23 @@ export default function create (spaceContext) {
    * to the config object.
    */
   function load () {
-    return spaceContext.space.getUIConfig()
-      .then(function (config) {
-        currentConfig = config;
-        isConfigSaved = true;
-        return config;
-      }, function (err) {
-        isConfigSaved = false;
-        const statusCode = getPath(err, 'statusCode');
-        if (statusCode === 404) {
-          currentConfig = {};
-          return currentConfig;
-        }
-        logger.logServerWarn('Could not load UIConfig', {error: err});
-        return $q.reject(err);
-      });
+    return spaceEndpoint({
+      method: 'GET',
+      path: ['ui_config']
+    }).then(function (config) {
+      currentConfig = config;
+      isConfigSaved = true;
+      return config;
+    }, function (err) {
+      isConfigSaved = false;
+      const statusCode = getPath(err, 'statusCode');
+      if (statusCode === 404) {
+        currentConfig = {};
+        return currentConfig;
+      }
+      logger.logServerWarn('Could not load UIConfig', {error: err});
+      return $q.reject(err);
+    });
   }
 
   /**
@@ -109,14 +104,18 @@ export default function create (spaceContext) {
    * object.
    */
   function save (uiConfig) {
-    return spaceContext.space.setUIConfig(uiConfig)
-      .then(function (config) {
-        currentConfig = config;
-        return currentConfig;
-      }, (err) => {
-        load();
-        return $q.reject(err);
-      });
+    return spaceEndpoint({
+      method: 'PUT',
+      path: ['ui_config'],
+      version: getPath(currentConfig, ['sys', 'version']),
+      data: uiConfig
+    }).then(function (config) {
+      currentConfig = config;
+      return currentConfig;
+    }, (err) => {
+      load();
+      return $q.reject(err);
+    });
   }
 
   /**
@@ -133,7 +132,7 @@ export default function create (spaceContext) {
    */
   function addOrEditCt (contentType) {
     if (!isConfigSaved) {
-      return;
+      return $q.resolve();
     }
 
     const contentTypeFolder = find(currentConfig.entryListViews, function (folder) {
@@ -141,7 +140,7 @@ export default function create (spaceContext) {
     });
 
     if (!contentTypeFolder) {
-      return;
+      return $q.resolve();
     }
 
     const viewIndex = findIndex(contentTypeFolder.views, function (view) {

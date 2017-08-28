@@ -99,6 +99,9 @@ angular.module('contentful/mocks')
         usage: {},
         subscription: {},
         subscriptionPlan: {limits: {}}
+      },
+      spaceMembership: {
+        isAdmin: true
       }
     }, extraData || {}));
     $rootScope.$apply();

@@ -1,4 +1,5 @@
 import $q from '$q';
+import { cloneDeep, assign, mapValues, omit, values } from 'lodash';
 
 /**
  * Mock implementation for the 'spaceEndpoint' that simulates a subset
@@ -11,7 +12,7 @@ import $q from '$q';
  * // => {name : 'my key'}
  * ~~~
  *
- * The object created by the factory has to properties: `request()` and
+ * The object created by this factory has two properties: `request()` and
  * `stores`. `request()` is a function with the same interface as the
  * `spaceEndpoint` function. `stores` maps path segments to objects
  * that store the entities for the segment. The objects map IDs to the
@@ -24,19 +25,22 @@ import $q from '$q';
  * - /entries/:id, /assets/:id
  *   - DELETE
  *   - State changes, i.e. PUT and DELETE to /published and /archived
+ * - /ui_config
+ *   - GET and PUT
  */
 export default function create () {
   const endpoints = {
     entries: makeEntityEndpoint('Entry'),
     assets: makeEntityEndpoint('Assets'),
-    api_keys: makeGenericEndpoint('api_keys'),
-    preview_api_keys: makeGenericEndpoint('preview_api_keys')
+    ui_config: makeSingletonEndpoint(),
+    api_keys: makeGenericEndpoint(),
+    preview_api_keys: makeGenericEndpoint()
   };
 
-  const stores = _.mapValues(endpoints, (ep) => ep.store);
+  const stores = mapValues(endpoints, (ep) => ep.store);
 
   function request ({method, path, data, version}) {
-    data = _.cloneDeep(data);
+    data = cloneDeep(data);
     const [typePath, id, state] = path;
     if (typePath in endpoints) {
       return endpoints[typePath].request(method, id, state, data, version);
@@ -93,7 +97,18 @@ function makeEntityEndpoint (type) {
   }
 }
 
-function makeGenericEndpoint (_type) {
+/**
+ * Create a request handler for a generic Contentful resource collection
+ * endpoint.
+ *
+ * Supports the following paths
+ * - GET /
+ * - GET /:id
+ * - POST /
+ * - PUT /:id
+ * - DELETE /:id
+ */
+function makeGenericEndpoint () {
   const store = {};
 
   return {store, request};
@@ -101,26 +116,15 @@ function makeGenericEndpoint (_type) {
   function request (method, id, _state, data, version) {
     if (method === 'GET') {
       if (id) {
-        if (id in store) {
-          return $q.resolve(_.cloneDeep(store[id]));
-        } else {
-          return rejectNotFound();
-        }
+        return getResource(store, id);
       } else {
         return $q.resolve({
-          items: _.values(_.cloneDeep(store))
+          items: values(cloneDeep(store))
         });
       }
     }
     if (method === 'PUT') {
-      const entry = store[id];
-      if (entry.sys.version !== version) {
-        return rejectVersionMismatch();
-      }
-
-      Object.assign(store[id], _.omit(data, 'sys'));
-      store[id].sys.version++;
-      return $q.resolve(_.cloneDeep(store[id]));
+      return putResource(store, id, version, data);
     }
 
     if (method === 'DELETE') {
@@ -134,6 +138,59 @@ function makeGenericEndpoint (_type) {
   }
 }
 
+/**
+ * Create a request handler for a generic singleton Contentful resource
+ * endpoint.
+ *
+ * Supports the following paths
+ * - GET /
+ * - PUT /
+ */
+function makeSingletonEndpoint () {
+  const id = 'default';
+  const store = {};
+  return {store, request};
+
+  function request (method, _id, _state, data, version) {
+    if (method === 'GET') {
+      return getResource(store, id);
+    }
+    if (method === 'PUT') {
+      return putResource(store, id, version, data);
+    }
+  }
+}
+
+
+function getResource (store, id) {
+  if (id in store) {
+    return $q.resolve(cloneDeep(store[id]));
+  } else {
+    return rejectNotFound();
+  }
+}
+
+
+function putResource (store, id, version, data) {
+  let item = store[id];
+  if (!item) {
+    item = {
+      sys: {
+        id: id,
+        version: 1
+      }
+    };
+    store[id] = item;
+  } else if (item.sys.version !== version) {
+    return rejectVersionMismatch();
+  }
+
+  Object.assign(item, omit(data, 'sys'));
+  item.sys.version++;
+  return $q.resolve(cloneDeep(item));
+}
+
+
 function rejectVersionMismatch () {
   return rejectResponse(422, 'Version mismatch');
 }
@@ -143,7 +200,7 @@ function rejectNotFound () {
 }
 
 function rejectResponse (status, message) {
-  return $q.reject(_.assign(new Error(`${status} ${message}`), {
+  return $q.reject(assign(new Error(`${status} ${message}`), {
     statusCode: status
   }));
 }
