@@ -11,7 +11,7 @@ angular.module('contentful')
   var checks = require('widgets/checks');
   var deprecations = require('widgets/deprecations');
   var WidgetStore = require('widgets/store');
-  var deepFreeze = require('utils/DeepFreeze').deepFreeze;
+  var deepFreeze = require('utils/Freeze').deepFreeze;
 
   /**
    * @ngdoc type

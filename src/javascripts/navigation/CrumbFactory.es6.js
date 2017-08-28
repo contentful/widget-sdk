@@ -1,5 +1,5 @@
 import {constant as constantly, extend} from 'lodash';
-import {deepFreeze} from 'utils/DeepFreeze';
+import {deepFreeze} from 'utils/Freeze';
 
 /**
  * @ngdoc service

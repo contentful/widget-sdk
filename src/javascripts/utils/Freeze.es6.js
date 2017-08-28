@@ -1,9 +1,9 @@
 import {isObjectLike, cloneDeep} from 'lodash';
 
 /**
- * @ngdoc service
- * @module cf.utils
- * @name utils/DeepFreeze
+ * Export methods for freezing and cloning
+ * - deepFreeze
+ * - deepFreezeClone
  */
 
 
@@ -18,20 +18,11 @@ import {isObjectLike, cloneDeep} from 'lodash';
  * @returns {object|array}
  */
 export function deepFreeze (o) {
-  try {
-    if (Object.isFrozen(o)) {
-      return o;
-    }
-  } catch (e) {
-    // ES5 throws TypeError if not an object. ES6 is ok.
-    return o;
+  if (isFrozen(o)) {
+    return;
   }
 
-  try {
-    Object.freeze(o);
-  } catch (e) {
-    // ES5 throws TypeError if not an object. ES6 is ok.
-  }
+  o = shallowFreeze(o);
 
   if (Array.isArray(o)) {
     o.forEach(deepFreeze);
@@ -42,6 +33,31 @@ export function deepFreeze (o) {
   }
 
   return o;
+}
+
+
+export function shallowFreeze (o) {
+  if (isFrozen(o)) {
+    return o;
+  }
+
+  try {
+    Object.freeze(o);
+  } catch (e) {
+    // ES5 throws TypeError if not an object. ES6 is ok.
+  }
+
+  return o;
+}
+
+
+function isFrozen (o) {
+  try {
+    return Object.isFrozen(o);
+  } catch (e) {
+    // ES5 throws TypeError if not an object. ES6 is ok.
+    return true;
+  }
 }
 
 

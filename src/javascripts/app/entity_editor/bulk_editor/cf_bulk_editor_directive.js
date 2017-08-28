@@ -5,7 +5,7 @@ angular.module('contentful')
   var accessChecker = require('accessChecker');
   var spaceContext = require('spaceContext');
   var entitySelector = require('entitySelector');
-  var deepFreeze = require('utils/DeepFreeze').deepFreeze;
+  var deepFreeze = require('utils/Freeze').deepFreeze;
   var List = require('utils/List');
   var Tracking = require('app/entity_editor/bulk_editor/Tracking');
   var DataLoader = require('app/entity_editor/DataLoader');
