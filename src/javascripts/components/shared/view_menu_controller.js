@@ -170,6 +170,7 @@ angular.module('contentful')
   $scope.canUseCollections = isFeatureEnabled('collections', spaceContext.space);
 
   $scope.viewSortOptions = {
+    connectWith: '[ui-sortable=viewSortOptions]',
     placeholder: 'filter-list-item-placeholder',
     axis: 'y',
     start: function () {
