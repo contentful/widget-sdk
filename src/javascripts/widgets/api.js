@@ -234,9 +234,16 @@ angular.module('contentful')
   function buildUser (spaceMembership) {
     var user = spaceMembership.user;
     return {
+      sys: {
+        id: user.sys.id
+      },
       firstName: user.firstName,
       lastName: user.lastName,
+      email: user.email,
       spaceMembership: {
+        sys: {
+          id: spaceMembership.sys.id
+        },
         admin: !!spaceMembership.admin,
         roles: spaceMembership.roles.map(function (role) {
           return {
