@@ -1,4 +1,5 @@
 import * as sinon from 'helpers/sinon';
+import createMockEndpoint from 'helpers/mocks/SpaceEndpoint';
 
 /**
  * @ngdoc service
@@ -32,7 +33,6 @@ angular.module('contentful/mocks')
   const MockDocument = require('mocks/entityEditor/Document');
   const createApiKeyRepo = require('data/CMA/ApiKeyRepo').default;
   const createUiConfigStore = require('data/UiConfig/Store').default;
-  const createMockEndpoint = require('mocks/spaceEndpoint').create;
   const CMAClient = require('data/ApiClient');
   const K = require('utils/kefir');
 

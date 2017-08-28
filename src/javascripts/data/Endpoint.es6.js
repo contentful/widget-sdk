@@ -9,6 +9,9 @@ import { extend, filter, get } from 'lodash';
  *
  * Use `.createSpaceEndpoint()` and `.createOrganizationEndpoint()`
  * to create an endpoint, see their description for usage examples.
+ *
+ * A mock implementation for a space endpoint is provided by
+ * 'test/helpers/mocks/SpaceEndpoint'.
  */
 
 /*

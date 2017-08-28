@@ -1,4 +1,5 @@
 import * as K from 'helpers/mocks/kefir';
+import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 
 describe('data/document/ResourceStateManager', function () {
   beforeEach(function () {
@@ -11,7 +12,7 @@ describe('data/document/ResourceStateManager', function () {
     const DocLoad = this.$inject('data/sharejs/Connection').DocLoad;
     const Doc = this.$inject('entityEditor/Document');
 
-    const endpoint = this.$inject('mocks/spaceEndpoint').create();
+    const endpoint = createMockSpaceEndpoint();
     this.spaceEndpoint = sinon.spy(endpoint.request);
 
     const entityData = {
