@@ -78,7 +78,8 @@ function organizationSelector () {
   const currOrgText = h('.nav-sidepanel__org-selector', {
     style: {
       flexGrow: 2,
-      minWidth: 0
+      minWidth: 0,
+      overflow: 'hidden'
     }
   }, [
     h('div', {
@@ -226,7 +227,7 @@ function orgSpaces () {
         overflowY: 'auto'
       }
     }, [
-      h('p.nav-sidepanel__space-name', {
+      h('p.nav-sidepanel__space-name.u-truncate', {
         ngRepeat: 'space in spacesByOrg[currOrg.sys.id] track by space.data.sys.id',
         ngClass: '{"nav-sidepanel__space-name--is-active": currSpace && currSpace.sys.id === space.data.sys.id}',
         ngClick: 'setAndGotoSpace(space.data)',
