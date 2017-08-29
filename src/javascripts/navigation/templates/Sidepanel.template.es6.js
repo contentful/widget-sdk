@@ -108,7 +108,7 @@ function organizationSelector () {
     ])
   ]);
 
-  return h('.nav-sidepanel__header', {
+  return [h('.nav-sidepanel__header', {
     style: {
       display: 'flex',
       alignItems: 'center',
@@ -120,13 +120,12 @@ function organizationSelector () {
       transition: 'background-color 0.1s ease-in-out'
     },
     ngClass: 'orgDropdownIsShown ? "nav-sidepanel__header--is-active": ""',
-    ngClick: '!orgDropdownIsShown && openOrgsDropdown($event);'
+    ngClick: 'openOrgsDropdown($event);'
   }, [
     currOrgIcon,
     currOrgText,
-    h('span', { style: extend(triangleDown()) }),
-    orgListDropdown()
-  ]);
+    h('span', { style: extend(triangleDown()) })
+  ]), orgListDropdown()].join('');
 }
 
 function orgListDropdown () {

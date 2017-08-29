@@ -314,6 +314,7 @@ describe('cfNavSidepanel directive', () => {
     describe('Sidepanel header', function () {
       beforeEach(function () {
         this.$sidePanelHeader = this.$sidePanel.find('.nav-sidepanel__header');
+        this.$orgList = this.$sidePanel.find('.nav-sidepanel__org-list');
       });
 
       it('shows two letter org name', function () {
@@ -333,7 +334,7 @@ describe('cfNavSidepanel directive', () => {
       });
 
       it('uses orgs for org list in org list dropdown', function () {
-        const $orgs = this.$sidePanelHeader.find('.nav-sidepanel__org-name');
+        const $orgs = this.$orgList.find('.nav-sidepanel__org-name');
 
         expect($orgs.length).toEqual(this.orgs.length);
         this.orgs.forEach((org, i) => expect($($orgs[i]).text()).toBe(org.name));
