@@ -1,8 +1,8 @@
 'use strict';
 angular.module('contentful')
 .controller('ListViewsController', [
-  '$scope', 'require', 'generateDefaultViews', 'getBlankView', 'resetList', 'viewCollectionName', 'preserveStateAs',
-  function ($scope, require, generateDefaultViews, getBlankView, resetList, viewCollectionName, preserveStateAs) {
+  '$scope', 'require', 'uiConfig', 'getBlankView', 'resetList', 'preserveStateAs',
+  function ($scope, require, uiConfig, getBlankView, resetList, preserveStateAs) {
     var $q = require('$q');
     var logger = require('logger');
     var notification = require('notification');
@@ -28,24 +28,13 @@ angular.module('contentful')
     setCurrentView($scope, getCurrentView($scope) || getBlankView());
 
     $scope.$watch(function () {
-      return spaceContext.uiConfig.get();
+      return uiConfig.get();
     }, function (uiConfig) {
       $scope.uiConfig = uiConfig;
-      if (uiConfig && !uiConfig[viewCollectionName]) {
-        // TODO This should be handled in the UiConfigRepo when the
-        // data is loaded.
-        uiConfig[viewCollectionName] = generateDefaultViews(true);
-      }
     });
 
     $scope.$watch('uiConfig', cacheInaccessibleContentTypes, true);
     $scope.$watch(accessChecker.getResponses, cacheInaccessibleContentTypes);
-
-    // TODO Move this to UiConfigRepo
-    $scope.resetViews = function () {
-      $scope.uiConfig[viewCollectionName] = generateDefaultViews();
-      $scope.saveViews();
-    };
 
     $scope.clearView = function () {
       setCurrentView($scope, getBlankView());
@@ -59,12 +48,20 @@ angular.module('contentful')
     };
 
     $scope.saveViews = function () {
-      return spaceContext.uiConfig.save($scope.uiConfig).catch(function (err) {
+      saveUiConfig($scope.uiConfig);
+    };
+
+    $scope.resetViews = function () {
+      saveUiConfig(undefined);
+    };
+
+    function saveUiConfig (data) {
+      return uiConfig.save(data).catch(function (err) {
         logger.logServerWarn('Error trying to save view', { error: err });
         notification.error('Error trying to save view');
         return $q.reject(err);
       });
-    };
+    }
 
     $scope.viewIsHidden = function (view) {
       return view && view.contentTypeId && hiddenContentTypes.indexOf(view.contentTypeId) > -1;
@@ -81,7 +78,7 @@ angular.module('contentful')
 
       hiddenContentTypes = [];
 
-      _.forEach($scope.uiConfig[viewCollectionName], function (group) {
+      _.forEach($scope.uiConfig, function (group) {
         _(group.views || [])
           .filter(function (view) { return _.isString(view.contentTypeId); })
           .forEach(function (view) {

@@ -1,5 +1,6 @@
 import * as sinon from 'helpers/sinon';
 import {isObject} from 'lodash';
+import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 
 describe('spaceContext', function () {
 
@@ -16,6 +17,9 @@ describe('spaceContext', function () {
       $provide.value('classes/OrganizationContext', this.OrganizationContext);
       $provide.value('app/EntryList/Collections/Store', {
         default: sinon.stub().resolves()
+      });
+      $provide.value('data/Endpoint', {
+        createSpaceEndpoint: () => createMockSpaceEndpoint().request
       });
     });
     this.spaceContext = this.$inject('spaceContext');
@@ -127,7 +131,7 @@ describe('spaceContext', function () {
       });
 
       it('gets built from context `organization` data', function () {
-        SPACE.data = { organization: ORGANIZATION };
+        SPACE.data.organization = ORGANIZATION;
         this.spaceContext.resetWithSpace(SPACE);
 
         sinon.assert.calledOnce(this.Subscription.newFromOrganization);
@@ -157,10 +161,6 @@ describe('spaceContext', function () {
 
     it('inits organization context', function () {
       expect(this.spaceContext.organizationContext.organization).toEqual(this.organization);
-    });
-
-    it('loads UiConfig', function () {
-      sinon.assert.called(SPACE.getUIConfig);
     });
   });
 
@@ -544,8 +544,9 @@ describe('spaceContext', function () {
 
   function makeSpaceMock () {
     return {
-      isAdmin: sinon.stub().returns(true),
-      data: {},
+      data: {
+        spaceMembership: {}
+      },
       endpoint: sinon.stub().returns({
         get: sinon.stub().rejects()
       }),

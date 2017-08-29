@@ -1,89 +1,76 @@
+import { cloneDeep, constant } from 'lodash';
+import * as I from 'libs/Immutable';
+
 import * as sinon from 'helpers/sinon';
+import * as K from 'helpers/mocks/kefir';
+import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
+
 
 describe('data/UiConfig/Store', function () {
-
-  let uiConfig, stubs;
+  let uiConfig;
 
   beforeEach(function () {
-
-    stubs = {
-      config: sinon.stub(),
-      spaceContext: {
-        getData: sinon.stub(),
-        space: {
-          getUIConfig: sinon.stub(),
-          setUIConfig: sinon.stub(),
-          isAdmin: sinon.stub()
-        }
-      }
-    };
-
-    module('contentful/test', function ($provide) {
-      $provide.value('spaceContext', stubs.spaceContext);
-    });
-
+    module('contentful/test');
     const createUiConfigStore = this.$inject('data/UiConfig/Store').default;
-    uiConfig = createUiConfigStore(stubs.spaceContext);
+    const endpoint = createMockSpaceEndpoint();
+
+    const contentTypes$ = K.createMockProperty(I.List([{
+      data: {
+        name: 'bar'
+      },
+      getId: constant(1)
+    }]));
+
+    uiConfig = createUiConfigStore(endpoint.request, true, { wrappedItems$: contentTypes$ });
+    this.store = endpoint.stores.ui_config;
   });
 
-  describe('#load', function () {
-    let config;
+  describe('#forEntries()', function () {
     beforeEach(function () {
-      config = {
-        entryListViews: [{}]
+      uiConfig.load();
+      this.$apply();
+      this.entriesConfig = uiConfig.forEntries();
+    });
+
+    it('#get() gets loaded config', function* () {
+      this.store.default = {
+        entryListViews: 'DATA'
       };
-      stubs.spaceContext.space.getUIConfig.resolves(config);
+
+      yield uiConfig.load();
+      expect(this.entriesConfig.get()).toEqual('DATA');
     });
 
-    it('calls getUIConfig method', function () {
-      uiConfig.load();
-      sinon.assert.calledOnce(stubs.spaceContext.space.getUIConfig);
+    it('#get() returns default values if not set', function* () {
+      this.store.default = {
+        entryListViews: undefined
+      };
+
+      yield uiConfig.load();
+      expect(this.entriesConfig.get().length).toEqual(3);
     });
 
-    it('returns config if available', function* () {
-      const val = yield uiConfig.load();
-      expect(val).toBe(config);
+    it('#save() creates and updates UiConfig', function* () {
+      expect(this.store.default).toBe(undefined);
+
+      yield this.entriesConfig.save('DATA1');
+      expect(this.store.default.entryListViews).toEqual('DATA1');
+
+      yield this.entriesConfig.save('DATA2');
+      expect(this.store.default.entryListViews).toEqual('DATA2');
     });
 
-    it('resolves to empty object if server returns 404', function* () {
-      stubs.spaceContext.space.getUIConfig.rejects({statusCode: 404});
-      const result = yield uiConfig.load();
-      expect(result).toEqual({});
-    });
+    it('#reset() deletes views', function* () {
+      yield this.entriesConfig.save('DATA1');
+      expect(this.store.default.entryListViews).toEqual('DATA1');
 
-    it('rejects if non-404 server error', function* () {
-      stubs.spaceContext.space.getUIConfig.rejects({ statusCode: 502 });
-      const error = yield uiConfig.load().catch((e) => e);
-      expect(error).toEqual({ statusCode: 502 });
-    });
-  });
-
-  describe('#resetEntries', function () {
-    it('returns defaults', function () {
-      expect(uiConfig.resetEntries().length).toBe(3);
-    });
-  });
-
-  describe('#resetAssets', function () {
-    it('returns defaults', function () {
-      expect(uiConfig.resetAssets().length).toBe(3);
-    });
-  });
-
-  describe('#save', function () {
-    it('calls setUIConfig method', function () {
-      const newConfig = { name: 'new' };
-      stubs.spaceContext.space.getUIConfig.resolves({ name: 'old' });
-      stubs.spaceContext.space.setUIConfig.resolves();
-      uiConfig.load();
-      uiConfig.save(newConfig);
-      sinon.assert.calledWith(stubs.spaceContext.space.setUIConfig, newConfig);
+      yield this.entriesConfig.save(undefined);
+      expect(this.store.default.entryListViews).toEqual(undefined);
     });
   });
 
 
   describe('#addOrEditCt', function () {
-
     let mockCt;
 
     beforeEach(function () {
@@ -95,29 +82,26 @@ describe('data/UiConfig/Store', function () {
       };
     });
 
-    it('does nothing if config is not defined', function () {
+    it('does nothing if config is not defined', function* () {
       const newConfig = { name: 'new' };
-      stubs.spaceContext.space.getUIConfig.rejects({statusCode: 404});
-      stubs.spaceContext.space.setUIConfig.resolves();
-      uiConfig.load();
-      this.$apply();
-      uiConfig.addOrEditCt(newConfig);
-      sinon.assert.notCalled(stubs.spaceContext.space.setUIConfig);
+      yield uiConfig.load();
+      yield uiConfig.addOrEditCt(newConfig);
+      expect(this.store.default).toBe(undefined);
     });
 
-    it('does nothing if there is no `Content Type` folder', function () {
+    it('does nothing if there is no `Content Type` folder', function* () {
       const config = {
         entryListViews: [{ title: 'foo' }]
       };
-      stubs.spaceContext.space.getUIConfig.resolves(config);
-      uiConfig.load();
-      this.$apply();
-      uiConfig.addOrEditCt(mockCt);
-      sinon.assert.notCalled(stubs.spaceContext.space.setUIConfig);
+      this.store.default = cloneDeep(config);
+      yield uiConfig.load();
+      yield uiConfig.addOrEditCt(mockCt);
+      expect(this.store.default).toEqual(config);
     });
 
-    it('adds content type if it doesn\'t exist', function () {
-      const config = {
+    it('adds content type if it doesn’t exist', function* () {
+      this.store.default = {
+        sys: { id: 'default', version: 1 },
         entryListViews: [{
           title: 'Content Type',
           views: [{
@@ -127,20 +111,23 @@ describe('data/UiConfig/Store', function () {
         }]
       };
 
-      stubs.spaceContext.space.getUIConfig.resolves(config);
-      stubs.spaceContext.space.setUIConfig.resolves();
-
-      uiConfig.load();
-      this.$apply();
-      uiConfig.addOrEditCt(mockCt);
-      sinon.assert.calledOnce(stubs.spaceContext.space.setUIConfig);
-      uiConfig.load().then(function (currentConfig) {
-        expect(currentConfig.entryListViews.length).toBe(2);
-      });
+      yield uiConfig.load();
+      yield uiConfig.addOrEditCt(mockCt);
+      sinon.assert.match(this.store.default.entryListViews, sinon.match([{
+        title: 'Content Type',
+        views: [{
+          title: 'foo',
+          contentTypeId: 2
+        }, sinon.match({
+          title: 'bar',
+          contentTypeId: 1
+        })]
+      }]));
     });
 
-    it('edits view title when existing Content Type is changed', function () {
-      const config = {
+    it('edits view title when existing Content Type is changed', function* () {
+      this.store.default = {
+        sys: { id: 'default', version: 1 },
         entryListViews: [{
           title: 'Content Type',
           views: [{
@@ -149,18 +136,17 @@ describe('data/UiConfig/Store', function () {
           }]
         }]
       };
-      mockCt.data.getId = _.constant(2);
+      mockCt.getId = constant(2);
 
-      stubs.spaceContext.space.getUIConfig.resolves(config);
-      stubs.spaceContext.space.setUIConfig.resolves();
-
-      uiConfig.load();
-      this.$apply();
-      uiConfig.addOrEditCt(mockCt);
-      sinon.assert.calledOnce(stubs.spaceContext.space.setUIConfig);
-      uiConfig.load().then(function (currentConfig) {
-        expect(currentConfig.entryListViews.length).toBe(1);
-      });
+      yield uiConfig.load();
+      yield uiConfig.addOrEditCt(mockCt);
+      sinon.assert.match(this.store.default.entryListViews, sinon.match([{
+        title: 'Content Type',
+        views: [sinon.match({
+          title: 'bar',
+          contentTypeId: 2
+        })]
+      }]));
     });
   });
 });

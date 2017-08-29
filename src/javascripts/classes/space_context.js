@@ -100,8 +100,6 @@ angular.module('contentful')
 
       self.memberships = MembershipRepo.create(self.endpoint);
 
-      self.uiConfig = createUiConfigStore(self);
-
       self.docPool = DocumentPool.create(self.docConnection, self.endpoint);
 
       self.publishedCTs = PublishedCTRepo.create(space);
@@ -109,6 +107,9 @@ angular.module('contentful')
         self.publishedContentTypes = cts.toArray();
       });
       self.user = K.getValue(tokenStore.user$);
+
+      var isAdmin = space.data.spaceMembership.admin;
+      self.uiConfig = createUiConfigStore(self.endpoint, isAdmin, self.publishedCTs);
 
       previewEnvironmentsCache.clearAll();
       TheLocaleStore.reset(space.getId(), space.getPrivateLocales());
