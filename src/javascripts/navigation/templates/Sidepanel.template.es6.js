@@ -280,7 +280,8 @@ function noSpacesMsg () {
     h('button.btn-action', {
       style: {
         width: '44%',
-        marginTop: '10px'
+        marginTop: '10px',
+        whteSpace: 'nowrap'
       },
       ngIf: 'canCreateSpaceInCurrOrg',
       ngClick: 'showCreateSpaceModal()'
