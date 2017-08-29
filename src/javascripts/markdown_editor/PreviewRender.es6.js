@@ -1,8 +1,8 @@
-import $sanitize from '$sanitize';
-import {extend, isString, isObject, isArray, isNull} from 'lodash';
+import {cloneDeep, extend, isString, isObject, isArray, isNull} from 'lodash';
 import {htmlDecode} from 'encoder';
 import {getDomains} from 'services/TokenStore';
 import MarkedAst from 'libs/MarkedAst';
+import sanitizeBase from 'libs/sanitize-html';
 
 let currentId = 1;
 
@@ -273,8 +273,28 @@ function prepareChildren (nodes) {
   return nodes;
 }
 
+
+// We copy and extend the base configuration of the 'sanitize-html' package.
+//
+// See the the packages readme for more info:
+// https://github.com/punkave/sanitize-html
+const SANITIZE_CONFIG = cloneDeep(sanitizeBase.defaults);
+
+SANITIZE_CONFIG.allowedTags.push('img');
+
+SANITIZE_CONFIG.allowedAttributes['a'].push('rel');
+SANITIZE_CONFIG.allowedAttributes['img'].push('alt', 'title');
+
+SANITIZE_CONFIG.transformTags = {};
+SANITIZE_CONFIG.transformTags['a'] = function (tagName, attribs, text) {
+  if (attribs.target === '_blank') {
+    attribs.rel = 'noopener noreferrer';
+  }
+  return { tagName, attribs, text };
+};
+
 function sanitize (html) {
-  html = $sanitize(html);
+  html = sanitizeBase(html, SANITIZE_CONFIG);
   html = html.replace(NEWLINE_ENTITY_RE, '\n');
   html = html.replace(EMBEDLY_CLASS_RE, EMBEDLY_CLASS_REPLACEMENT);
 
