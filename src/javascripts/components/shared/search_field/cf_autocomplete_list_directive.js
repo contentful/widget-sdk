@@ -4,7 +4,11 @@ angular.module('contentful').directive('cfAutocompleteList', ['require', functio
 
   return {
     template: h('ul.search-autocomplete-list', [
-      h('li', {
+      h('li', [
+        h('span.header-value', ['Filter']),
+        h('span.header-description', ['Description'])
+      ]),
+      h('li.autocompletion-row', {
         ngRepeat: '(index, item) in autocompletion.items',
         ngClass: '{selected: item.value === selectedAutocompletion.value}',
         ngClick: 'selectAutocompletion(item, $event)'

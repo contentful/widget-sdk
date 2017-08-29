@@ -5,7 +5,7 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
   var h = require('utils/hyperscript').h;
   var Colors = require('Styles/Colors').byName;
   var renderString = require('ui/Framework').renderString;
-  var serachIcon = renderString(require('svg/search').default);
+  var searchIcon = renderString(require('svg/search').default);
   var infoIcon = renderString(require('svg/info').default);
   var filtersIcon = renderString(require('svg/filters').default);
 
@@ -23,7 +23,8 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
         style: {
           flexGrow: '1',
           border: '0',
-          height: '31px'
+          height: '40px',
+          padding: '0 10px'
         },
         ngModel: 'inner.term',
         ngTrim: 'false',
@@ -43,7 +44,7 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
         },
         ngClick: 'searchButtonClicked()',
         tabindex: '0'
-      }, [serachIcon]),
+      }, [searchIcon]),
       h('button', {
         ngIf: 'autocompletion.type',
         style: {
@@ -64,7 +65,7 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
         style: {
           zIndex: '300',
           position: 'absolute',
-          top: '31px',
+          top: '40px',
           left: '-1px',
           right: '-1px',
           fontSize: '14px',
@@ -73,6 +74,10 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
         }
       }, [
         h('div', {
+          style: {
+            maxHeight: '75vh',
+            overflow: 'auto'
+          },
           cfAutocompleteList: true,
           ngIf: 'autocompletion.type === "List"'
         }),
@@ -86,6 +91,7 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
             alignItems: 'center',
             background: Colors.iceMid,
             borderTop: '1px solid ' + Colors.iceDark,
+            height: '56px',
             padding: '15px 20px'
           }
         }, [

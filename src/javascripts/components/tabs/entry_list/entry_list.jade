@@ -23,7 +23,7 @@ header.workbench-header
       cf-on-blur-component-when="showAutocompletions")
 
     select.cfnext-select-box(
-      style="border-radius: 0"
+      style="border-radius: 0; cursor: pointer; height: 42px; max-width: 200px"
       ng-model="context.view.contentTypeId"
       ng-change="selectedContentType()"
       ng-options="ct.id as ct.name group by 'Content types' for ct in contentTypeSelectOptions")

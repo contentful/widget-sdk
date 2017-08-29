@@ -1,47 +1,54 @@
 .search-autocomplete-list
-  padding: 15px 0
   display: table
 
   // fix for https://bugs.chromium.org/p/chromium/issues/detail?id=306878
   width: 100.2%
 
-  > li
+  li
     display: table-row
-    cursor: pointer
 
-  > li:hover
-    background-color: $colors.ice-mid
+  li.autocompletion-row
+    cursor: pointer
 
     // fix, part 2
     .item-description
       border-right: 1px solid $colors.blue-mid
 
+    &.selected,
+    &:hover
+      background-color: #F4F4F2
+
+    &:last-child > *
+      border: 0
+
   .item-value,
-  .item-description
+  .item-description,
+  .header-value,
+  .header-description
     display: table-cell
-
-  .item-value
-    padding: 7px
-    padding-left: 20px
-    > span
-      display: inline-block
-      padding: 3px 7px 2px
-      border-radius: 2px
-      background: $colors.blue-mid
-      color: white
-      font-weight: bold
-
-  .item-description
+    height: 56px
+    vertical-align: middle
     color: $colors.text-light
-    padding: 7px
+    border-bottom: 1px solid $colors.ice-dark
+
+  .header-value,
+  .header-description
+    padding-top: 5px
+    height: 40px
+    font-weight: bold
+
+  .header-value,
+  .item-value
+    padding-left: 20px
+
+  .header-description,
+  .item-description
     padding-right: 20px
 
-  .selected,
-  .selected:hover
+  .item-value > span
+    display: inline-block
+    padding: 6px 10px 5px
+    border-radius: 2px
+    background: $colors.blue-mid
     color: white
-    background-color: $colors.blue-mid
-    .item-description
-      color: white
-    .item-value > span
-      color: $colors.blue-mid
-      background-color: white
+    font-weight: bold

@@ -7,7 +7,7 @@ angular.module('contentful').directive('cfSearch', ['require', function (require
   var h = require('utils/hyperscript').h;
   var Colors = require('Styles/Colors').byName;
   var renderString = require('ui/Framework').renderString;
-  var serachIcon = renderString(require('svg/search').default);
+  var searchIcon = renderString(require('svg/search').default);
 
   return {
     template: h('div', {
@@ -22,7 +22,8 @@ angular.module('contentful').directive('cfSearch', ['require', function (require
         style: {
           flexGrow: '1',
           border: '0',
-          height: '31px'
+          height: '40px',
+          padding: '0 10px'
         },
         ngModel: 'inner.term',
         placeholder: '{{placeholder}}'
@@ -32,7 +33,7 @@ angular.module('contentful').directive('cfSearch', ['require', function (require
         style: {padding: '0 10px'},
         ngClick: 'updateFromButton()',
         tabindex: '0'
-      }, [serachIcon])
+      }, [searchIcon])
     ]),
     restrict: 'A',
     scope: {
