@@ -146,23 +146,13 @@ describe('cfCreateNewSpace directive', function () {
       stubs.tokenStore.organizations$.set(this.orgs);
     });
 
-    describe('if user cant create space in org', function () {
-      beforeEach(function () {
-        stubs.accessChecker.canCreateSpaceInOrganization.returns(false);
-        this.setupDirective();
-        controller.newSpace.data.name = 'My new space';
-        controller.requestSpaceCreation();
-        $rootScope.$digest();
-      });
-
-      it('checks for creation permission', function () {
-        sinon.assert.calledWith(stubs.accessChecker.canCreateSpaceInOrganization, 'orgid');
-      });
-
-      it('shows error', function () {
-        expect(controller.newSpace.errors.form).toEqual('You don’t have permission to create a space');
-        sinon.assert.called(stubs.logger.logError);
-      });
+    it('checks for creation permission', function () {
+      stubs.accessChecker.canCreateSpaceInOrganization.returns(false);
+      this.setupDirective();
+      controller.newSpace.data.name = 'My new space';
+      controller.requestSpaceCreation();
+      $rootScope.$digest();
+      sinon.assert.calledWith(stubs.accessChecker.canCreateSpaceInOrganization, 'orgid');
     });
 
     describe('if user can create space in org', function () {
