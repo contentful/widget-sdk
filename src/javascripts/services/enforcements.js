@@ -6,7 +6,6 @@ angular.module('contentful')
   var $window = require('$window');
   var stringUtils = require('stringUtils');
   var trackPersistentNotification = require('analyticsEvents/persistentNotification');
-  var logger = require('logger');
   var spaceContext = require('spaceContext');
   var OrganizationRoles = require('services/OrganizationRoles');
 
@@ -20,20 +19,11 @@ angular.module('contentful')
   }
 
   function getOrgId () {
-    try {
-      return spaceContext.space.getOrganizationId();
-    } catch (exp) {
-      logger.logError('enforcements organization exception', {
-        data: {
-          space: spaceContext.space,
-          exp: exp
-        }
-      });
-    }
+    return _.get(spaceContext, 'organizationContext.organization.sys.id');
   }
 
-  function upgradeActionMessage () {
-    return isOwner() ? 'Upgrade' : undefined;
+  function upgradeActionMessage (text) {
+    return function () { return isOwner() ? text : undefined; };
   }
 
   function upgradeAction () {
@@ -55,14 +45,14 @@ angular.module('contentful')
     {
       label: 'periodUsageExceeded',
       message: '<strong>You have reached one of your limits.</strong> To check your current limits, go to your subscription page.',
-      actionMessage: 'Go to subscription',
+      actionMessage: upgradeActionMessage('Go to subscription'),
       action: upgradeAction
     },
     {
       label: 'usageExceeded',
       message: '<strong>Over usage limits.</strong> You have exceeded the usage limits for your plan. Please upgrade to proceed with content creation & delivery.',
       tooltip: getMetricMessage,
-      actionMessage: upgradeActionMessage,
+      actionMessage: upgradeActionMessage('Upgrade'),
       action: upgradeAction
     },
     {
