@@ -41,7 +41,7 @@ export function getGatekeeperUrl () {
  * @param {string} gkUrl
  */
 export function updateWebappUrl (gkUrl = '') {
-  gkUrl = endsWith(gkUrl, '/') ? gkUrl : gkUrl + '/';
+  gkUrl = endsWith(gkUrl, '/') ? gkUrl.substr(0, gkUrl.length - 1) : gkUrl;
 
   const baseUrl = $state.href($state.current.name, {pathSuffix: ''});
   const isCurrentState = startsWith(gkUrl, baseUrl);
