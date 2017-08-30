@@ -1,8 +1,8 @@
-import {cloneDeep, extend, isString, isObject, isArray, isNull} from 'lodash';
+import {cloneDeep, extend, isString, isObject, isArray, isNull, includes} from 'lodash';
 import {htmlDecode} from 'encoder';
 import {getDomains} from 'services/TokenStore';
 import MarkedAst from 'libs/MarkedAst';
-import sanitizeBase from 'libs/sanitize-html';
+import sanitize from 'libs/sanitize-html';
 
 let currentId = 1;
 
@@ -10,10 +10,46 @@ const TERMINAL_TAGS = ['br', 'hr'];
 const INLINE_TAGS = ['strong', 'em', 'del'];
 const HTML_TAGS_RE = /<\/?[^>]+(>|$)/g;
 const WHITESPACE_RE = /\s+/g;
-const NEWLINE_ENTITY_RE = new RegExp('&#10;', 'g');
-const EMBEDLY_CLASS_RE = new RegExp('class="embedly-card"', 'g');
-const EMBEDLY_CLASS_REPLACEMENT = 'class="embedly-card markdown-block" data-card-controls="0"';
 const IMAGES_API_DEFAULT_H = 200;
+
+
+// Configuration for raw HTML sanitization
+//
+// We copy and extend the base configuration of the 'sanitize-html' package.
+//
+// See the the packages readme for more info:
+// https://github.com/punkave/sanitize-html
+const SANITIZE_CONFIG = cloneDeep(sanitize.defaults);
+
+SANITIZE_CONFIG.allowedTags.push('img');
+
+SANITIZE_CONFIG.allowedAttributes['a'].push('rel', 'data-card-*');
+SANITIZE_CONFIG.allowedAttributes['img'].push('alt', 'title');
+
+SANITIZE_CONFIG.transformTags = {};
+SANITIZE_CONFIG.transformTags['a'] = function (tagName, attribs, text) {
+  if (attribs.target === '_blank') {
+    attribs.rel = 'noopener noreferrer';
+  }
+
+  const classes = (attribs.class || '').split(' ');
+  if (includes(classes, 'embedly-card')) {
+    classes.push('markdown-block');
+    attribs.class = classes.join(' ');
+    attribs['data-card-controls'] = '0';
+  }
+
+  return { tagName, attribs, text };
+};
+
+SANITIZE_CONFIG.allowedClasses = {};
+SANITIZE_CONFIG.allowedClasses['a'] = ['embedly-card', 'markdown-block'];
+
+const NEWLINE_ENTITY_RE = new RegExp('&#10;', 'g');
+SANITIZE_CONFIG.textFilter = function (text) {
+  return text.replace(NEWLINE_ENTITY_RE, '\n');
+};
+
 
 /**
  * Given an object of vendor packages it returns a
@@ -209,7 +245,7 @@ export default function create ({React}) {
   function createLeafEl (tag, html, props) {
     const isClean = html.indexOf('<') < 0;
 
-    if (!isClean) { html = sanitize(html); }
+    if (!isClean) { html = sanitize(html, SANITIZE_CONFIG); }
     if (!html.length) { return null; }
 
     words += countWords(html, isClean);
@@ -273,33 +309,6 @@ function prepareChildren (nodes) {
   return nodes;
 }
 
-
-// We copy and extend the base configuration of the 'sanitize-html' package.
-//
-// See the the packages readme for more info:
-// https://github.com/punkave/sanitize-html
-const SANITIZE_CONFIG = cloneDeep(sanitizeBase.defaults);
-
-SANITIZE_CONFIG.allowedTags.push('img');
-
-SANITIZE_CONFIG.allowedAttributes['a'].push('rel');
-SANITIZE_CONFIG.allowedAttributes['img'].push('alt', 'title');
-
-SANITIZE_CONFIG.transformTags = {};
-SANITIZE_CONFIG.transformTags['a'] = function (tagName, attribs, text) {
-  if (attribs.target === '_blank') {
-    attribs.rel = 'noopener noreferrer';
-  }
-  return { tagName, attribs, text };
-};
-
-function sanitize (html) {
-  html = sanitizeBase(html, SANITIZE_CONFIG);
-  html = html.replace(NEWLINE_ENTITY_RE, '\n');
-  html = html.replace(EMBEDLY_CLASS_RE, EMBEDLY_CLASS_REPLACEMENT);
-
-  return html;
-}
 
 function getSafeHref (item) {
   // There's no value in trying to be permissive
