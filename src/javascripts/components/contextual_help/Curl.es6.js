@@ -6,7 +6,7 @@ import { copyToClipboard as trackCopyToClipboard } from 'analytics/events/Contex
 import { domain } from 'Config';
 
 
-export default function ({ api = 'cdn', path, params, id }, render) {
+export default function ({api = 'cdn', path, params, id, onCopy = _ => trackCopyToClipboard(id)}, render) {
   const hasParams = params.length;
   const query = params.map(([key, val]) => `${key}=${val}`);
   const url = `curl 'https://${api}.${domain}/${path.join('/')}${hasParams ? '?' + query.join('&') : '/'}'`;
@@ -14,7 +14,7 @@ export default function ({ api = 'cdn', path, params, id }, render) {
   return clickToCopy({
     children: [makeCurl(api, path, params)],
     text: url,
-    onCopy: _ => trackCopyToClipboard(id),
+    onCopy,
     id
   }, render);
 }

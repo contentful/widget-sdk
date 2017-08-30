@@ -13,8 +13,10 @@ export default function (data) {
   if (data === null) {
     return h('div');
   } else {
+    const isHelpHidden = data.state.isHidden ? '.contextual-help__main-container--hidden' : '';
+
     return h(
-      `div.contextual-help__main-container${data.state.isHidden ? '.contextual-help__main-container--fade-out' : ''}`,
+      `div.contextual-help__main-container${isHelpHidden}`,
       {
         style: {
           zIndex: 1

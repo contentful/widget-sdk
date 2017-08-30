@@ -4,7 +4,7 @@ import { byName as colorByName } from 'Styles/Colors';
 
 const copied = {};
 
-export default function ({ children, text, onCopy, id }, render) {
+export default function ({ children, text, onCopy, id = text }, render) {
   const copyButton = h(`button.contextual-help__copy-button.fa.${copied[id] ? 'fa-check' : 'fa-copy'}`, {
     style: {
       height: '30px',

@@ -62,7 +62,7 @@ angular.module('contentful').directive('cfContextualHelpSidebar', ['require', fu
       function handleClick (e) {
         var isTargetChildOfSidebar = !!$(e.target).parents('.contextual-help__main-container').length;
         var isContextualHelpVisible = $('.contextual-help__modal').hasClass('contextual-help__modal--fade-in');
-        var isContainerVisible = !$('.contextual-help__main-container').hasClass('contextual-help__main-container--fade-out');
+        var isContainerVisible = !$('.contextual-help__main-container').hasClass('contextual-help__main-container--hidden');
 
         if (isContainerVisible && isContextualHelpVisible && !isTargetChildOfSidebar) {
           ContextualSidebarStore.minimize();
@@ -87,23 +87,15 @@ angular.module('contentful').directive('cfContextualHelpSidebar', ['require', fu
       }
 
       function getFirstContentType () {
-        if (spaceContext && spaceContext.cma) {
-          return spaceContext.cma
-            .getContentTypes()
-            .then(function (cts) {
-              var ct = _.find(cts.items, function (v) {
-                return v.name.length < 20;
-              });
+        if (spaceContext && spaceContext.publishedContentTypes) {
+          var ct = _.sortBy(spaceContext.publishedContentTypes, function (ct) {
+            return ct.data.name.length;
+          })[0].data;
 
-              if (!ct) {
-                ct = cts.items[0];
-              }
-
-              return {
-                id: ct.sys.id,
-                name: ct.name
-              };
-            });
+          return {
+            id: ct.sys.id,
+            name: ct.name
+          };
         } else {
           return $q.reject('Could not fetch content types due to empty or uninitialized space context');
         }

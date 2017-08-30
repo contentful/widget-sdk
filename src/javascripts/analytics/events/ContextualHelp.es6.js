@@ -1,36 +1,35 @@
-import {track} from 'analytics/Analytics';
+import {track as _track} from 'analytics/Analytics';
 
-const eventName = 'contextual_help:action';
+const track = data => _track('contextual_help:action', data);
 
 export function continueIntro () {
-  track(eventName, {action: 'continue_intro'});
+  track({action: 'continue_intro'});
 }
 
 export function completeIntro () {
-  track(eventName, {action: 'complete_intro'});
+  track({action: 'complete_intro'});
 }
 
-export function toggle ({isExpanded, isIntro}) {
-  track(eventName, {isIntro, action: isExpanded ? 'expand' : 'minimize'});
+export function toggle (isExpanded, isIntro) {
+  track({isIntro, action: isExpanded ? 'expand' : 'minimize'});
 }
 
-export function toggleVisibility ({isHidden, isIntro}) {
-  const action = isHidden ? 'hide' : 'show';
-  track(eventName, {isIntro, action});
+export function toggleVisibility (isHidden, isIntro) {
+  track({isIntro, action: isHidden ? 'hide' : 'show'});
 }
 
 export function dismissCallout () {
-  track(eventName, {action: 'dismiss_callout'});
+  track({action: 'dismiss_callout'});
 }
 
-export function navigateWhileOpen ({isIntro}) {
-  track(eventName, {action: 'navigate_while_open', isIntro});
+export function navigateWhileOpen (isIntro) {
+  track({action: 'navigate_while_open', isIntro});
 }
 
 export function clickLink (url) {
-  track(eventName, {action: 'click_link', url});
+  track({action: 'click_link', url});
 }
 
 export function copyToClipboard (contentId) {
-  track(eventName, {action: 'copy_to_clipboard', contentId: contentId});
+  track({action: 'copy_to_clipboard', contentId});
 }

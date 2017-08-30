@@ -7,11 +7,9 @@ import curl from './Curl';
 
 const entriesList = 'spaces.detail.entries.list';
 
-export default function (data) {
-  const currentStep = data.state.introProgress;
-  const introTotalSteps = data.state.introProgress + data.state.introStepsRemaining;
-
-  const allContent = content(data);
+export default function ({ state, actions }) {
+  const currentStep = state.introProgress;
+  const introTotalSteps = state.introProgress + state.introStepsRemaining;
 
   const prompt = h(
     'p.contextual-help__prompt',
@@ -19,13 +17,9 @@ export default function (data) {
     ['[ Press space to continue ]']
   );
 
-  const storyContent = allContent.slice(0, currentStep).map((step) => {
+  const storyContent = content({ state, actions }).slice(0, currentStep).map((step) => {
     return h('div.contextual-help__line', [step]);
-  });
-
-  if (data.state.introStepsRemaining) {
-    storyContent.push(prompt);
-  }
+  }).concat(state.introStepsRemaining ? prompt : []);
 
   return h('div.contextual-help__intro', [
     h('div.contextual-help__progress', {
@@ -33,14 +27,14 @@ export default function (data) {
         height: '2px',
         backgroundColor: colorByName.blueMid,
         transition: 'width 0.3s ease-in-out',
-        width: `${(data.state.introProgress / introTotalSteps) * 100}%`
+        width: `${(state.introProgress / introTotalSteps) * 100}%`
       }
     }),
     h('div.contextual-help__intro-content', storyContent)
   ]);
 }
 
-function content (data) {
+function content ({ state, actions }) {
   return [
     h('div', [
       h('p', ['👋 Hi! I’m here to help you learn about Contentful and to make your first few API calls.']),
@@ -53,11 +47,11 @@ function content (data) {
     'Contentful is a content management infrastructure that lets you build applications with its flexible APIs and global CDN.',
     h('div', [
       h('strong', ['Try and fetch an entry.']),
-      data.state.apiKeyId ? curl({
-        path: ['spaces', data.state.spaceId, 'entries', data.state.entryId],
-        params: [['access_token', data.state.token]],
+      state.apiKeyId ? curl({
+        path: ['spaces', state.spaceId, 'entries', state.entryId],
+        params: [['access_token', state.token]],
         id: 'introCurl'
-      }, data.actions.render) : createApiKeyAdvice(data.state.spaceId),
+      }, actions.render) : createApiKeyAdvice(state.spaceId),
       docs()
     ]),
     h('div', [
@@ -71,8 +65,8 @@ function content (data) {
         onClick: (e) => {
           e.preventDefault();
           trackLinkClick($state.href(entriesList));
-          if ($state.current.name === entriesList) {
-            data.actions.render();
+          if ($state.is(entriesList)) {
+            actions.render();
           } else {
             $state.go(entriesList);
           }

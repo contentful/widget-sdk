@@ -22,7 +22,7 @@ export default function apis () {
     apiDescription({
       href: 'https://www.contentful.com/developers/docs/references/content-preview-api/',
       text: 'Content Preview API',
-      description: 'Preview unpublished content ("Draft" status)'
+      description: 'Preview unpublished content (“Draft” status)'
     }),
     apiDescription({
       href: 'https://www.contentful.com/developers/docs/references/images-api/',

@@ -17,13 +17,12 @@ const defaultState = {
   calloutSeen: false,
   introCompleted: false,
   introProgress: 1,
-  introStepsRemaining: 3,
-  copied: false
+  introStepsRemaining: 3
 };
 
 const STORE_KEY_PREFIX = 'contextualHelp';
 
-let ContextualHelpStore = {
+let contextualHelpStore = {
   state: {},
   actions: {}
 };
@@ -32,9 +31,9 @@ let myBrowserStore;
 
 export function init (userId, state, actions) {
   myBrowserStore = TheStore.forKey(`${STORE_KEY_PREFIX}:${userId}`);
-  ContextualHelpStore = merge(
+  contextualHelpStore = merge(
     {},
-    ContextualHelpStore,
+    contextualHelpStore,
     { state: defaultState },
     { state: myBrowserStore.get() || {} },
     { state },
@@ -51,66 +50,69 @@ export function init (userId, state, actions) {
 }
 
 export function get () {
-  return ContextualHelpStore;
+  return contextualHelpStore;
 }
 
 export function checkNavigatedWhileOpen () {
-  if (ContextualHelpStore.state.isExpanded && !ContextualHelpStore.state.isHidden) {
-    events.navigateWhileOpen({isIntro: !ContextualHelpStore.state.introCompleted});
+  if (contextualHelpStore.state.isExpanded && !contextualHelpStore.state.isHidden) {
+    events.navigateWhileOpen(!contextualHelpStore.state.introCompleted);
   }
 }
 
 export function toggle () {
-  ContextualHelpStore.state.isExpanded = !ContextualHelpStore.state.isExpanded;
-  if (!ContextualHelpStore.state.calloutSeen) {
+  contextualHelpStore.state.isExpanded = !contextualHelpStore.state.isExpanded;
+  if (!contextualHelpStore.state.calloutSeen) {
     closeCallout();
   }
   setStoreValue({
-    isExpanded: ContextualHelpStore.state.isExpanded
+    isExpanded: contextualHelpStore.state.isExpanded
   });
-  events.toggle({isExpanded: ContextualHelpStore.state.isExpanded, isIntro: !ContextualHelpStore.state.introCompleted});
-  ContextualHelpStore.actions.render();
+  events.toggle(
+    contextualHelpStore.state.isExpanded,
+    !contextualHelpStore.state.introCompleted
+  );
+  contextualHelpStore.actions.render();
 }
 
 export function minimize () {
-  ContextualHelpStore.state.isExpanded = true;
+  contextualHelpStore.state.isExpanded = true;
   toggle();
 }
 
 export function toggleVisibility () {
-  ContextualHelpStore.state.isHidden = !ContextualHelpStore.state.isHidden;
-  setStoreValue({isHidden: ContextualHelpStore.state.isHidden});
-  events.toggleVisibility({isHidden: ContextualHelpStore.state.isHidden, isIntro: !ContextualHelpStore.state.introCompleted});
-  ContextualHelpStore.actions.render();
+  contextualHelpStore.state.isHidden = !contextualHelpStore.state.isHidden;
+  setStoreValue({isHidden: contextualHelpStore.state.isHidden});
+  events.toggleVisibility(contextualHelpStore.state.isHidden, !contextualHelpStore.state.introCompleted);
+  contextualHelpStore.actions.render();
 }
 
 export function dismissCallout () {
   closeCallout();
-  ContextualHelpStore.actions.render();
+  contextualHelpStore.actions.render();
 }
 
 export function continueIntro () {
-  if (!ContextualHelpStore.state.introCompleted && !ContextualHelpStore.state.isHidden) {
-    ContextualHelpStore.state.introProgress += 1;
-    ContextualHelpStore.state.introStepsRemaining -= 1;
+  if (!contextualHelpStore.state.introCompleted && !contextualHelpStore.state.isHidden) {
+    contextualHelpStore.state.introProgress += 1;
+    contextualHelpStore.state.introStepsRemaining -= 1;
     setStoreValue({
-      introProgress: ContextualHelpStore.state.introProgress,
-      introStepsRemaining: ContextualHelpStore.state.introStepsRemaining
+      introProgress: contextualHelpStore.state.introProgress,
+      introStepsRemaining: contextualHelpStore.state.introStepsRemaining
     });
     events.continueIntro();
   }
 }
 
 export function completeIntro () {
-  if (!ContextualHelpStore.state.introStepsRemaining && ContextualHelpStore.state.introCompleted === false) {
-    ContextualHelpStore.state.introCompleted = true;
+  if (!contextualHelpStore.state.introStepsRemaining && contextualHelpStore.state.introCompleted === false) {
+    contextualHelpStore.state.introCompleted = true;
     setStoreValue({introCompleted: true});
     events.completeIntro();
   }
 }
 
 function closeCallout () {
-  ContextualHelpStore.state.calloutSeen = true;
+  contextualHelpStore.state.calloutSeen = true;
   setStoreValue({calloutSeen: true});
   events.dismissCallout();
 }
@@ -119,7 +121,7 @@ function setStoreValue (data) {
   myBrowserStore.set(
     merge(
       pick(
-        ContextualHelpStore.state,
+        contextualHelpStore.state,
         ['isExpanded', 'isHidden', 'calloutSeen', 'introCompleted', 'introProgress', 'introStepsRemaining']
       ),
       data
