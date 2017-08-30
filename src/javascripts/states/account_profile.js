@@ -88,12 +88,12 @@ angular.module('contentful')
       }
     },
     children: [
+      userCancellation,
       user,
       spaceMemberships,
       organizationMemberships,
       accessGrants,
-      applications,
-      userCancellation
+      applications
     ]
   });
 }]);
