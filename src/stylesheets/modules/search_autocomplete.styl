@@ -1,8 +1,6 @@
 .search-autocomplete-list
   display: table
-
-  // fix for https://bugs.chromium.org/p/chromium/issues/detail?id=306878
-  width: 100.2%
+  width: 100%
 
   li
     display: table-row
@@ -10,16 +8,16 @@
   li.autocompletion-row
     cursor: pointer
 
-    // fix, part 2
-    .item-description
-      border-right: 1px solid $colors.blue-mid
-
     &.selected,
     &:hover
       background-color: #F4F4F2
+      .value-pill
+        background-color: $colors.blue-darkest
 
-    &:last-child > *
-      border: 0
+    &:last-child
+      .item-value,
+      .item-description
+        border: 0
 
   .item-value,
   .item-description,
@@ -29,26 +27,26 @@
     height: 56px
     vertical-align: middle
     color: $colors.text-light
-    border-bottom: 1px solid $colors.ice-dark
+    border-bottom: 1px solid $colors.element-light
 
   .header-value,
   .header-description
     padding-top: 5px
     height: 40px
-    font-weight: bold
+    font-size: .9em
 
   .header-value,
   .item-value
-    padding-left: 20px
+    padding-left: 27px
 
   .header-description,
   .item-description
-    padding-right: 20px
+    padding-right: 27px
 
-  .item-value > span
+  .value-pill
     display: inline-block
     padding: 6px 10px 5px
+    margin-right: 27px
     border-radius: 2px
     background: $colors.blue-mid
     color: white
-    font-weight: bold

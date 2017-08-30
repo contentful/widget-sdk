@@ -15,7 +15,9 @@ header.workbench-header
     div(
       cf-tokenized-search="context.view.searchTerm"
       search-content-type="assetContentType"
-      placeholder="Type to search. Press the down arrow key for help.")
+      placeholder="Search for an asset"
+      cf-on-blur-component="leftSearch($event)"
+      cf-on-blur-component-when="showAutocompletions")
 
   .workbench-header__actions(
     ng-show="!showNoAssetsAdvice() && !shouldHide('createAsset')")

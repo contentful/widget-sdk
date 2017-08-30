@@ -14,7 +14,8 @@ angular.module('contentful').directive('cfSearch', ['require', function (require
       style: {
         display: 'flex',
         backgroundColor: 'white',
-        border: '1px solid ' + Colors.blueMid
+        border: '1px solid ' + Colors.blueMid,
+        borderRadius: '2px'
       }
     }, [
       h('input.cfnext-form__input', {

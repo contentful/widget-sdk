@@ -9,14 +9,27 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
   var infoIcon = renderString(require('svg/info').default);
   var filtersIcon = renderString(require('svg/filters').default);
 
+  var metallicGray = '#969FA6';
+  var color = 'hasFocus ? "' + Colors.blueMid + '" : "' + metallicGray + '"';
+  var border = '"1px solid " + (' + color + ')';
+
+  var iconStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '0 15px',
+    fill: 'currentColor',
+    stroke: 'currentColor'
+  };
+
   return {
     template: h('div', {
       style: {
         position: 'relative',
         display: 'flex',
         backgroundColor: 'white',
-        border: '1px solid ' + Colors.blueMid
-      }
+        borderRadius: '2px'
+      },
+      ngStyle: '{border: ' + border + '}'
     }, [
       h('input.cfnext-form__input', {
         type: 'text',
@@ -37,28 +50,20 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
       }),
       h('cf-inline-loader', {isShown: 'context.isSearching'}),
       h('button', {
-        style: {
-          display: 'flex',
-          alignItems: 'center',
-          padding: '0 15px'
-        },
+        style: iconStyle,
         ngClick: 'searchButtonClicked()',
+        ngStyle: '{color: ' + color + '}',
         tabindex: '0'
       }, [searchIcon]),
       h('button', {
-        ngIf: 'autocompletion.type',
-        style: {
-          display: 'flex',
-          alignItems: 'center',
-          padding: '0 15px',
-          color: Colors.blueMid,
-          borderLeft: '1px solid ' + Colors.blueMid
-        },
+        ngIf: 'inner.term.length > 0',
+        style: iconStyle,
         ngClick: 'toggleFilters()',
+        ngStyle: '{"border-left": ' + border + ', color: ' + color + '}',
         tabindex: '1'
       }, [
         filtersIcon,
-        h('span', {style: {marginLeft: '7px'}}, ['Filters'])
+        h('span', {style: {marginLeft: '7px'}}, ['Filter'])
       ]),
       h('div', {
         ngIf: 'showAutocompletions && autocompletion.type',
@@ -75,8 +80,9 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
       }, [
         h('div', {
           style: {
-            maxHeight: '75vh',
-            overflow: 'auto'
+            maxHeight: '50vh',
+            overflowX: 'hidden',
+            overflowY: 'auto'
           },
           cfAutocompleteList: true,
           ngIf: 'autocompletion.type === "List"'
@@ -90,7 +96,7 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
             display: 'flex',
             alignItems: 'center',
             background: Colors.iceMid,
-            borderTop: '1px solid ' + Colors.iceDark,
+            borderTop: '1px solid ' + Colors.elementLight,
             height: '56px',
             padding: '15px 20px'
           }

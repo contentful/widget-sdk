@@ -17,7 +17,7 @@ angular.module('contentful')
   var $parse = require('$parse');
 
   $scope.inner = { term: null };
-  $scope.position = null;
+  $scope.position = 0;
   $scope.showAutocompletions = false; // Indicate if completions should be shown
 
   $scope.getContentType = function () {
@@ -49,7 +49,7 @@ angular.module('contentful')
   // Get out of autocompleting
   $scope.clearAutocompletions = function () {
     $scope.restoreString();
-    toggleAutocompletions(false);
+    $scope.showAutocompletions = false;
   };
 
   $scope.$watch('getContentType()', _.bind($scope.updateAutocompletions, $scope));
@@ -60,7 +60,6 @@ angular.module('contentful')
     // which gives a current token of undefined
     $scope.position = $scope.getPosition();
     $scope.updateAutocompletions();
-    $scope.$emit('tokenizedSearchInputChanged', $scope.inner.term);
   };
 
   $scope.keyReleased = function (event) {
@@ -76,20 +75,20 @@ angular.module('contentful')
         event.keyCode !== keycodes.RIGHT &&
         event.keyCode !== keycodes.ESC &&
         !$scope.showAutocompletions) {
-      $scope.submitSearch($scope.inner.term);
+      submitSearch();
     }
   };
 
   // We communicate keypresses as events downwards so that different autocompletion widgets can handle them as they see fit
   $scope.keyPressed = function (event) {
     if (event.keyCode === keycodes.DOWN) {
-      toggleAutocompletions(true);
+      $scope.showAutocompletions = true;
       if ($scope.autocompletion && $scope.showAutocompletions) {
         $scope.$broadcast('selectNextAutocompletion');
         event.preventDefault();
       }
     } else if (event.keyCode === keycodes.UP) {
-      toggleAutocompletions(true);
+      $scope.showAutocompletions = true;
       if ($scope.autocompletion && $scope.showAutocompletions) {
         $scope.$broadcast('selectPreviousAutocompletion');
         event.preventDefault();
@@ -104,14 +103,14 @@ angular.module('contentful')
       if ($scope.autocompletion && $scope.showAutocompletions) {
         var e = $scope.$broadcast('submitAutocompletion');
         if (e.defaultPrevented) {
-          $scope.submitSearch($scope.inner.term);
-          toggleAutocompletions(false);
+          submitSearch();
+          $scope.showAutocompletions = false;
           forceSearch();
         } else {
           $scope.confirmAutocompletion();
         }
       } else {
-        $scope.submitSearch($scope.inner.term);
+        submitSearch();
         forceSearch();
       }
       event.preventDefault();
@@ -119,7 +118,7 @@ angular.module('contentful')
   };
 
   $scope.updateFromButton = function () {
-    $scope.submitSearch($scope.inner.term);
+    submitSearch();
     forceSearch();
   };
 
@@ -127,11 +126,6 @@ angular.module('contentful')
     var token = $scope.getCurrentToken();
     return token && token.content;
   };
-
-  function toggleAutocompletions (show) {
-    $scope.showAutocompletions = show;
-    $scope.$emit('tokenizedSearchShowAutocompletions', show);
-  }
 
   function forceSearch () {
     $scope.$emit('forceSearch');
@@ -152,10 +146,9 @@ angular.module('contentful')
     $scope.placeholder = placeholder;
   });
 
-  $scope.submitSearch = function (term) {
-    setSearchTerm($scope.$parent, term);
-    $scope.$emit('searchSubmitted');
-  };
+  function submitSearch () {
+    setSearchTerm($scope.$parent, $scope.inner.term);
+  }
 
   $scope.hasFocus = false;
 
@@ -211,8 +204,8 @@ angular.module('contentful')
     $scope.inner.term = spliceSlice(originalString, token.end, 0, appendString);
     $scope.clearBackupString();
     if (token.type === 'Value') {
-      $scope.submitSearch($scope.inner.term);
-      toggleAutocompletions(false);
+      submitSearch();
+      $scope.showAutocompletions = false;
     }
     $scope.selectRange(token.end + appendString.length, 0)
     .then(function () {

@@ -13,7 +13,9 @@ angular.module('contentful').directive('cfAutocompleteList', ['require', functio
         ngClass: '{selected: item.value === selectedAutocompletion.value}',
         ngClick: 'selectAutocompletion(item, $event)'
       }, [
-        h('span.item-value', [h('span', ['{{item.value}}'])]),
+        h('span.item-value', [
+          h('span.value-pill', ['{{item.value}}'])
+        ]),
         h('span.item-description', ['{{item.description}}'])
       ])
     ]),
