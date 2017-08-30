@@ -7,7 +7,7 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
   var renderString = require('ui/Framework').renderString;
   var searchIcon = renderString(require('svg/search').default);
   var infoIcon = renderString(require('svg/info').default);
-  var filtersIcon = renderString(require('svg/filters').default);
+  var filterIcon = renderString(require('svg/filter').default);
 
   var metallicGray = '#969FA6';
   var color = 'hasFocus ? "' + Colors.blueMid + '" : "' + metallicGray + '"';
@@ -17,8 +17,7 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
     display: 'flex',
     alignItems: 'center',
     padding: '0 15px',
-    fill: 'currentColor',
-    stroke: 'currentColor'
+    fill: 'currentColor'
   };
 
   return {
@@ -56,13 +55,12 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
         tabindex: '0'
       }, [searchIcon]),
       h('button', {
-        ngIf: 'inner.term.length > 0',
         style: iconStyle,
         ngClick: 'toggleFilters()',
         ngStyle: '{"border-left": ' + border + ', color: ' + color + '}',
         tabindex: '1'
       }, [
-        filtersIcon,
+        filterIcon,
         h('span', {style: {marginLeft: '7px'}}, ['Filter'])
       ]),
       h('div', {
