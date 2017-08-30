@@ -79,6 +79,11 @@ describe('markdown_editor/PreviewRender', function () {
     expect(normalAnchor).toBe('<a></a>');
   });
 
+  it('extends embedly anchors with attributes', function () {
+    const embedlyAnchor = getHTML(getChildren(getRoot('<a class="embedly-card" data-card-width="100%"></a>')));
+    expect(embedlyAnchor).toBe('<a class="embedly-card markdown-block" data-card-width="100%" data-card-controls="0"></a>');
+  });
+
   it('Sanitizes data: and js: URIs', function () {
     const BAD_URIS = [
       'data:text/html;base64,SomEtHiGBad+',
