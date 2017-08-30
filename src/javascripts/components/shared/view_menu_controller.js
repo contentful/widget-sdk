@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 
-.controller('ViewMenuController', ['$scope', '$attrs', 'require', '$parse', function ($scope, $attrs, require, $parse) {
+.controller('ViewMenuController', ['$scope', 'require', '$parse', function ($scope, require, $parse) {
   var spaceContext = require('spaceContext');
   var modalDialog = require('modalDialog');
   var random = require('random');
@@ -14,11 +14,11 @@ angular.module('contentful')
   var K = require('utils/kefir');
   var isFeatureEnabled = require('analytics/OrganizationTargeting').default;
 
-  $scope.tempFreeViews = [];
   $scope.folderStates = TheStore.get('folderStates') || {};
 
-  $scope.$watch($attrs.cfViewMenu, function (folders) {
-    $scope.folders = folders;
+  $scope.$watch('uiConfig', function (folders) {
+    $scope.folders = folders || [];
+    ensureDefaultFolder();
   });
 
   $scope.toggleFolder = function (folder) {
@@ -32,6 +32,25 @@ angular.module('contentful')
 
   $scope.isFolderOpen = function (folder) {
     return $scope.folderStates[folder.id] !== 'closed';
+  };
+
+  /**
+   * Returns false if there is only the default folder and it is empty. Returns
+   * true otherwise.
+   */
+  $scope.hasViews = function () {
+    if ($scope.folders.length > 1) {
+      return true;
+    }
+
+    var onlyFolder = $scope.folders[0];
+    if (!onlyFolder) {
+      return false;
+    } else if (onlyFolder.id === 'default' && onlyFolder.views.length === 0) {
+      return false;
+    } else {
+      return true;
+    }
   };
 
   function saveFolderStates (folderStates) {
@@ -79,11 +98,7 @@ angular.module('contentful')
   };
 
   $scope.addViewToDefault = function () {
-    var defaultFolder = $scope.createDefaultFolder();
-    $scope.addViewToFolder(defaultFolder);
-  };
-
-  $scope.addViewToFolder = function (folder) {
+    var folder = _.find($scope.folders, {id: 'default'});
     var view = getCurrentView($scope);
     view.id = random.id();
     folder.views.push(view);
@@ -105,30 +120,21 @@ angular.module('contentful')
       scope: $scope
     }).promise.then(function () {
       _.remove(folder.views, {id: view.id});
-      $scope.cleanDefaultFolder();
       Tracking.viewDeleted(view);
       return $scope.saveViews();
     });
   };
 
-  $scope.cleanDefaultFolder = function () {
-    _.remove($scope.folders, function (folder) {
-      return folder.id === 'default' && folder.views.length === 0;
-    });
-  };
-
-  $scope.createDefaultFolder = function () {
+  function ensureDefaultFolder () {
     var defaultFolder = _.find($scope.folders, {id: 'default'});
-    if (!defaultFolder) {
-      defaultFolder = {
+    if ($scope.folders && !defaultFolder) {
+      $scope.folders.unshift({
         id: 'default',
         title: 'Views',
         views: []
-      };
-      $scope.folders.unshift(defaultFolder);
+      });
     }
-    return defaultFolder;
-  };
+  }
 
   K.onValueScope($scope, spaceContext.contentCollections.state$, function (collections) {
     // Since we use ng-repeat Angular is going to mutate the objects
@@ -166,18 +172,6 @@ angular.module('contentful')
     return p.id === view.id;
   };
 
-
-  function moveTempFreeViews () {
-    var defaultFolder = $scope.createDefaultFolder();
-    defaultFolder.views.push.apply(defaultFolder.views, $scope.tempFreeViews);
-    $scope.tempFreeViews.length = 0;
-  }
-
-  $scope.showTempFreeViews = function () {
-    var hasDefaultFolder = _.find($scope.folders, {id: 'default'});
-    return $scope.draggingView && !hasDefaultFolder;
-  };
-
   $scope.$on('editingStarted', function () {
     $scope.insideInlineEditor = true;
   });
@@ -185,10 +179,11 @@ angular.module('contentful')
     $scope.insideInlineEditor = false;
   });
 
-  $scope.$watch('canEditUiConfig && !insideInlineEditor', function (can) {
-    $scope.viewMenuEditable = can;
-    $scope.viewSortOptions.disabled = !can;
-    $scope.folderSortOptions.disabled = !can;
+  $scope.$watch('insideInlineEditor', function (editing) {
+    var canEdit = spaceContext.uiConfig.canEdit && !editing;
+    $scope.viewMenuEditable = canEdit;
+    $scope.viewSortOptions.disabled = !canEdit;
+    $scope.folderSortOptions.disabled = !canEdit;
   });
 
   $scope.canUseCollections = isFeatureEnabled('collections', spaceContext.space);
@@ -203,8 +198,6 @@ angular.module('contentful')
     },
     stop: function () {
       $scope.draggingView = false;
-      moveTempFreeViews();
-      $scope.cleanDefaultFolder();
       $scope.saveViews();
     }
   };

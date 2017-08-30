@@ -22,7 +22,6 @@ import './mocks/entity_editor_document';
 import './mocks/locale_store';
 import './mocks/ot_doc';
 import './mocks/space_context';
-import './mocks/spaceEndpoint';
 import './mocks/the_store';
 import './mocks/timing';
 import './mocks/widget_api';
