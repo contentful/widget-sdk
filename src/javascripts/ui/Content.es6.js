@@ -1,5 +1,6 @@
 import {h} from 'ui/Framework';
 import * as Colors from 'Styles/Colors';
+import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 
 /**
  * @ngdoc service
@@ -33,7 +34,11 @@ import * as Colors from 'Styles/Colors';
  * @returns {VNode}
  */
 export function docsLink (text, target) {
-  return h('cf-knowledge-base', {target, text, inlineText: 'true'});
+  return KnowledgeBase({
+    target,
+    text,
+    inlineText: 'true'
+  });
 }
 
 

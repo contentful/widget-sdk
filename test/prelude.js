@@ -62,7 +62,7 @@
    * The service list is configured in `test/system-config.js`
    */
   function exposeAngularLibs () {
-    const libInjector = angular.injector(['cf.libs', 'cf.es6']);
+    const libInjector = angular.injector(['cf.libs', 'cf.es6', 'contentful/environment']);
     SystemJS.exposeFromAngular.forEach(function (lib) {
       SystemJS.register(lib, [], function (export_) {
         const exports = libInjector.get(lib);

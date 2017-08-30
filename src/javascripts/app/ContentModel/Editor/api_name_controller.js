@@ -10,7 +10,6 @@ angular.module('contentful')
 .controller('ApiNameController', ['$scope', '$injector', function ApiNameController ($scope, $injector) {
   var modalDialog = $injector.get('modalDialog');
   var $q = $injector.get('$q');
-  var getKnowledgeBaseUrl = $injector.get('KnowledgeBase/getUrl');
 
   /**
    * @ngdoc method
@@ -51,8 +50,8 @@ angular.module('contentful')
                'of your content to applications that currently display it. ' +
                'Change the field ID only if you plan to update your client applications ' +
                'as well.</p>' +
-               '<p>Consult our <a href="' + getKnowledgeBaseUrl('id_change') + '">' +
-               'knowledge base</a> for more information on updating published content types.</p>',
+               '<p>Consult our <cf-knowledge-base text="knowledge base" target="id_change" inline-text="true" />' +
+               ' for more information on updating published content types.</p>',
       html: true,
       scope: $scope,
       confirmLabel: 'Edit field ID'
