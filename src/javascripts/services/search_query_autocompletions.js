@@ -294,7 +294,7 @@ angular.module('contentful')
         };
       });
 
-    return makeListCompletion(_.union(fieldCompletions, staticCompletions));
+    return makeListCompletion(fieldCompletions.concat(staticCompletions));
   }
 
   function operatorCompletion (key, contentType) {
