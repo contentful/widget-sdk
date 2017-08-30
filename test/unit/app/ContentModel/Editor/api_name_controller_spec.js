@@ -2,9 +2,7 @@
 
 describe('ApiNameController', function () {
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
-      $provide.value('KnowledgeBase/getUrl', sinon.spy());
-    });
+    module('contentful/test');
 
     const $controller = this.$inject('$controller');
 
