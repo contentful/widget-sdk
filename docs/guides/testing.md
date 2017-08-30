@@ -38,8 +38,15 @@ Test files are only executed when their file name ends with `.spec.js`.
 
 All files in the `test/` folder are treated as ES6 modules. Files in the
 `test/helper/` directory can by imported with `import 'helpers/my-helper'`.
-ES6 modules defined in the application code can also be loaded from test files.
-Their name is relative to the `src/javascripts` folder.
+
+The test module system is configured in
+[`test/system-config.js`][src:test/system-config] and set up in
+[`test/prelude.js`](../../test/prelude.js)
+
+### Using modules from `src/javascripts`
+ES6 modules from the application code in `src/javascripts` can also be loaded
+from test files as long all their dependencies are either ES6 modules or
+constant Angular modules. For example
 
 ~~~js
 // test/unit/utils/Kefir.spec.js
@@ -47,14 +54,18 @@ Their name is relative to the `src/javascripts` folder.
 import * as KM from 'helpers/mocks/kefir';
 // from src/javscripts/utils.kefir.es6.js
 import * as K from 'utils/kefir';
-
-// ...
 ~~~
+
+The ES6 module `utils/kefir` imports the `libs/kefir` module that is registered
+with `angular.module(...).constant('libs/kefir', ...)`. For this module to be
+available to the test environment it must be registered in
+[`test/system-config.js`][src:test/system-config].
 
 Unlike ES6 modules defined in the `src/` directory we can not import Angular
 services in test files. To use Angular services that are not defined as ES6
 modules see [“Using Angular”](#using-angular) below.
 
+### Using NPM packages
 NPM packages can be imported in the tests using the `npm` prefix.
 
 ~~~js
@@ -78,6 +89,7 @@ SystemJS.config({
 For more information see the [SystemJS config documentation][systemjs-config].
 
 [systemjs-config]: https://github.com/systemjs/systemjs/blob/master/docs/config-api.md
+[src:test/system-config]: ../../test/system-config.js
 
 
 Testing DSL
