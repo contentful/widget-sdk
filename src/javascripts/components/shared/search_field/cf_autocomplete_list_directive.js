@@ -24,7 +24,10 @@ angular.module('contentful').directive('cfAutocompleteList', ['require', functio
     restrict: 'A',
     scope: true,
     link: function (scope, el) {
-      scope.$watch('selectedAutocompletion.value', function () {
+      autoscroll();
+      scope.$watch('selectedAutocompletion.value', autoscroll);
+
+      function autoscroll () {
         // wait for the ".selected" class to be applied
         $timeout(function () {
           // scroll-into-view expects a single DOM element
@@ -33,7 +36,7 @@ angular.module('contentful').directive('cfAutocompleteList', ['require', functio
             scrollIntoView(selected);
           }
         });
-      });
+      }
     },
     controller: ['$scope', function ($scope) {
       $scope.$on('selectNextAutocompletion', function () {
