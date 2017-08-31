@@ -45,7 +45,8 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
         ngKeydown: 'keyPressed($event)',
         ngKeyup: 'keyReleased($event)',
         ngFocus: 'inputFocused($event)',
-        ngBlur: 'inputBlurred($event)'
+        ngBlur: 'inputBlurred($event)',
+        dataTestId: 'search-input'
       }),
       h('cf-inline-loader', {
         style: {height: '40px'},
@@ -55,14 +56,16 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
         style: iconStyle,
         ngClick: 'searchButtonClicked()',
         ngStyle: '{color: ' + color + '}',
-        tabindex: '0'
+        tabindex: '0',
+        dataTestId: 'search-button'
       }, [searchIcon]),
       h('button', {
         ngIf: 'autocompletion.type',
         style: iconStyle,
         ngClick: 'toggleFilters()',
         ngStyle: '{"border-left": ' + border + ', color: ' + color + '}',
-        tabindex: '1'
+        tabindex: '1',
+        dataTestId: 'search-filter-button'
       }, [
         h('div', {style: {marginTop: '-3px'}}, [filterIcon]),
         h('div', {style: {marginLeft: '7px'}}, ['Filter'])

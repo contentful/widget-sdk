@@ -26,7 +26,8 @@ header.workbench-header
       style="cursor: pointer; height: 42px; max-width: 200px;"
       ng-model="context.view.contentTypeId"
       ng-change="selectedContentType()"
-      ng-options="ct.id as ct.name group by 'Content types' for ct in contentTypeSelectOptions")
+      ng-options="ct.id as ct.name group by 'Content types' for ct in contentTypeSelectOptions"
+      data-test-id="search-ct-selector")
       option(value="") All content types
 
   .workbench-header__actions(ng-if="!showNoEntriesAdvice()")

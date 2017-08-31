@@ -27,13 +27,15 @@ angular.module('contentful').directive('cfSearch', ['require', function (require
           padding: '0 10px'
         },
         ngModel: 'inner.term',
-        placeholder: '{{placeholder}}'
+        placeholder: '{{placeholder}}',
+        dataTestId: 'search-input'
       }),
       h('cf-inline-loader', {isShown: 'isSearching'}),
       h('button', {
         style: {padding: '0 10px'},
         ngClick: 'updateFromButton()',
-        tabindex: '0'
+        tabindex: '0',
+        dataTestId: 'search-button'
       }, [searchIcon])
     ]),
     restrict: 'A',
