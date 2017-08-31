@@ -58,7 +58,7 @@ header.workbench-header
         span.filter-list-title Active
 
   .workbench-main__right-content
-    +no-search-results("!hasQueryResults()", "searchTerm", "context.list")
+    +no-search-results("!hasQueryResults()", "context.searchTerm", "context.list")
     .table(ng-show="hasQueryResults()")
       .table__head
         table
