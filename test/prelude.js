@@ -50,7 +50,7 @@
   function register (id, deps, run) {
     SystemJS.register(id, deps, run);
     registerDirectoryAlias(id);
-    if (id.match(/(\.|_)spec$/)) {
+    if (id.startsWith('test/unit') || id.startsWith('test/integration')) {
       testModules.push(id);
     }
   }
