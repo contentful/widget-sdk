@@ -1,99 +1,21 @@
 import {h} from 'ui/Framework';
 
 export default h('svg', {
-  width: '40',
+  xmlns: 'http://www.w3.org/2000/svg',
+  width: '48',
   height: '40',
-  viewBox: '-1 -1 42 42',
-  xmlns: 'http://www.w3.org/2000/svg'
+  viewBox: '0 0 48 40'
 }, [
-  h('g', {
-    fill: 'none',
-    fillRule: 'evenodd'
-  }, [
-    h('g', [
-      h('g', [
-        h('rect', {
-          stroke: '#21304A',
-          strokeWidth: '2',
-          fill: '#21304A',
-          x: '8',
-          y: '.4',
-          width: '31.234',
-          height: '30.433',
-          rx: '2'
-        }),
-        h('rect', {
-          fill: '#FFF',
-          x: '12',
-          y: '4.211',
-          width: '3',
-          height: '3',
-          rx: '1'
-        }),
-        h('rect', {
-          fill: '#FFF',
-          x: '33',
-          y: '4.211',
-          width: '3',
-          height: '3',
-          rx: '1'
-        }),
-        h('rect', {
-          fill: '#FFF',
-          x: '33',
-          y: '10.211',
-          width: '3',
-          height: '3',
-          rx: '1'
-        }),
-        h('rect', {
-          fill: '#FFF',
-          x: '33',
-          y: '16.211',
-          width: '3',
-          height: '3',
-          rx: '1'
-        }),
-        h('rect', {
-          fill: '#FFF',
-          x: '33',
-          y: '22.211',
-          width: '3',
-          height: '3',
-          rx: '1'
-        }),
-        h('path', {
-          fill: '#A8E2FF',
-          d: 'M1 10h29v22H1z'
-        }),
-        h('path', {
-          d: 'M1 28l10-8 7 10 5-5 7 6v7l-1 1H2l-1-1V28z',
-          fill: '#16C98D'
-        }),
-        h('rect', {
-          stroke: '#21304A',
-          strokeWidth: '2',
-          y: '9.4',
-          width: '31.234',
-          height: '30.433',
-          rx: '2'
-        }),
-        h('path', {
-          d: 'M1 28.145l10-8 13 18M19 29.145l4-4 7 6.25',
-          stroke: '#21304A',
-          strokeWidth: '2',
-          strokeLinecap: 'round',
-          strokeLinejoin: 'round'
-        }),
-        h('circle', {
-          stroke: '#21304A',
-          strokeWidth: '2',
-          fill: '#F8E81C',
-          cx: '20.5',
-          cy: '17.645',
-          r: '2.5'
-        })
-      ])
-    ])
-  ])
+  h('path', {
+    d: 'M41 5v4H11v25c0 2.8-2.2 5-5 5s-5-2.2-5-5V1h14v4h26z',
+    fill: '#c0f2d6'
+  }),
+  h('path', {
+    d: 'M47 8h-5V5c0-.6-.4-1-1-1H16V1c0-.6-.4-1-1-1H1C.4 0 0 .4 0 1v33c0 3.3 2.7 6 6 6h35c3.9 0 7-3.1 7-7V9c0-.6-.4-1-1-1zM2 34V2h12v3c0 .6.4 1 1 1h25v2H11c-.6 0-1 .4-1 1v25c0 2.2-1.8 4-4 4s-4-1.8-4-4zm44-1c0 2.8-2.2 5-5 5H10.5c1-1.1 1.5-2.5 1.5-4V10h34v23z',
+    fill: '#0eb87f'
+  }),
+  h('path', {
+    d: 'M39 32H19c-.4 0-.7-.2-.9-.6-.2-.4-.1-.8.1-1.1l5-6c.3-.4.8-.5 1.2-.3l3.3 1.7 5.5-6.4c.2-.3.6-.4.9-.3.3 0 .6.3.8.6l5 11c.1.3.1.7-.1 1-.1.2-.5.4-.8.4zm-17.9-2h16.3l-3.7-8.2-5 5.8c-.3.3-.8.4-1.2.2l-3.3-1.6-3.1 3.8zM23 22c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z',
+    fill: '#0eb87f'
+  })
 ]);
