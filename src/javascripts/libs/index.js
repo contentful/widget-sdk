@@ -33,7 +33,8 @@ angular.module('cf.libs', [])
   .constant('Pikaday', require('pikaday'))
   .constant('validation', require('@contentful/validation'))
   .constant('widgetMap', require('@contentful/widget-map'))
-  .constant('md5', require('blueimp-md5'));
+  .constant('md5', require('blueimp-md5'))
+  .constant('scroll-into-view', require('scroll-into-view'));
 
 // This needs to be called after everything else so we override any
 // previously imported versions of lodash

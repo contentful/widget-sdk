@@ -1,6 +1,8 @@
 'use strict';
 angular.module('contentful').directive('cfAutocompleteList', ['require', function (require) {
   var h = require('utils/hyperscript').h;
+  var $timeout = require('$timeout');
+  var scrollIntoView = require('scroll-into-view');
 
   return {
     template: h('ul.search-autocomplete-list', [
@@ -21,6 +23,18 @@ angular.module('contentful').directive('cfAutocompleteList', ['require', functio
     ]),
     restrict: 'A',
     scope: true,
+    link: function (scope, el) {
+      scope.$watch('selectedAutocompletion.value', function () {
+        // wait for the ".selected" class to be applied
+        $timeout(function () {
+          // scroll-into-view expects a single DOM element
+          var selected = el.find('.selected').first().get(0);
+          if (selected) {
+            scrollIntoView(selected);
+          }
+        });
+      });
+    },
     controller: ['$scope', function ($scope) {
       $scope.$on('selectNextAutocompletion', function () {
         selectNextAutocompletion();
