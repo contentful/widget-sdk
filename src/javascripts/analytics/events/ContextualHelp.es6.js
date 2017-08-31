@@ -30,6 +30,6 @@ export function clickLink (url) {
   track({action: 'click_link', url});
 }
 
-export function copyToClipboard (contentId) {
-  track({action: 'copy_to_clipboard', contentId});
+export function copyToClipboard (contentCopiedId) {
+  track({action: 'copy_to_clipboard', contentCopiedId});
 }
