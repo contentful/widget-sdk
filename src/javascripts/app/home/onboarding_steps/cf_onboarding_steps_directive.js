@@ -25,7 +25,7 @@ angular.module('contentful')
           title: 'Create a space',
           description: 'A space is a place where you keep all the content related to a single project.',
           cta: 'Create space',
-          icon: 'onboarding-space',
+          icon: 'space',
           action: makeAction(CreateSpace.showDialog, 'Create space')
         },
         {
@@ -45,7 +45,7 @@ angular.module('contentful')
           title: 'Create your content',
           description: 'Add an entry. They are your actual pieces of content, based on the content types you have created.',
           cta: 'Add an entry',
-          icon: 'page-entries',
+          icon: 'page-content',
           link: {
             text: 'View content',
             state: 'spaces.detail.entries.list'
@@ -57,7 +57,7 @@ angular.module('contentful')
           title: 'Fetch your content',
           description: 'Use the API to see your content wherever you like. We’ll show you different ways of delivering your content.',
           cta: 'Use the API',
-          icon: 'page-api',
+          icon: 'page-apis',
           action: makeAction(goToApiKeySection, 'Use the API')
         }
       ];

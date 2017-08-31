@@ -5,10 +5,10 @@ include ../../shared/table_pattern.mixin.jade
 header.workbench-header
   cf-breadcrumbs
   .workbench-header__left
-    cf-icon.workbench-header__icon(name="page-media")
+    cf-icon.workbench-header__icon(name="page-media", scale="0.75")
     h1.workbench-header__title
       | Media
-      cf-knowledge-base.workbench-headr__kb-link(target="asset")
+      cf-knowledge-base.workbench-header__kb-link(target="asset")
 
   .workbench-header__search(
     ng-if="context.ready && !showNoAssetsAdvice()")

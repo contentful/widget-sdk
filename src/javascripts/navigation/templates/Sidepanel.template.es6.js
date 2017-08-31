@@ -267,7 +267,7 @@ function noSpacesMsg () {
     }
   }, [
     h('cf-icon', {
-      name: 'sidepanel-spaces-advice',
+      name: 'space',
       style: {
         margin: '20px 0 14px',
         fill: colors.greenDark,

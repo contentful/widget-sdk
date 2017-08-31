@@ -27,7 +27,7 @@ export function simple (title, icon, actions, content) {
     // https://github.com/philipwalton/flexbugs#3-min-height-on-a-flex-container-wont-apply-to-its-flex-items
     h('.workbench-header__wrapper', [
       h('header.workbench-header', [
-        icon && h('cf-icon.workbench-header__icon', {name: icon}),
+        icon && h('cf-icon.workbench-header__icon', {name: icon, scale: '0.75'}),
         h('h1.workbench-header__title', [title]),
         actions && h('.workbench-header__actions', actions)
       ])
@@ -58,7 +58,7 @@ export function header (title, icon, actions, afterTitle) {
   return h('.workbench-header__wrapper', [
     h('header.workbench-header', [
       h('cf-breadcrumbs'),
-      icon && h('cf-icon.workbench-header__icon', {name: icon}),
+      icon && h('cf-icon.workbench-header__icon', {name: icon, scale: '0.75'}),
       h('h1.workbench-header__title', [title]),
       afterTitle,
       actions && h('.workbench-header__actions', actions)
