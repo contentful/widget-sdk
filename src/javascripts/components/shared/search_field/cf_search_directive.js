@@ -3,9 +3,41 @@
 angular.module('contentful').directive('cfSearch', ['require', function (require) {
   var keycodes = require('keycodes');
   var debounce = require('debounce');
+  var $timeout = require('$timeout');
+  var h = require('utils/hyperscript').h;
+  var Colors = require('Styles/Colors').byName;
+  var renderString = require('ui/Framework').renderString;
+  var searchIcon = renderString(require('svg/search').default);
 
   return {
-    template: JST['cf_search'](),
+    template: h('div', {
+      style: {
+        display: 'flex',
+        backgroundColor: 'white',
+        border: '1px solid ' + Colors.blueMid,
+        borderRadius: '2px'
+      }
+    }, [
+      h('input.cfnext-form__input', {
+        type: 'text',
+        style: {
+          flexGrow: '1',
+          border: '0',
+          height: '40px',
+          padding: '0 10px'
+        },
+        ngModel: 'inner.term',
+        placeholder: '{{placeholder}}',
+        dataTestId: 'search-input'
+      }),
+      h('cf-inline-loader', {isShown: 'isSearching'}),
+      h('button', {
+        style: {padding: '0 10px'},
+        ngClick: 'updateFromButton()',
+        tabindex: '0',
+        dataTestId: 'search-button'
+      }, [searchIcon])
+    ]),
     restrict: 'A',
     scope: {
       placeholder: '@',
@@ -13,10 +45,12 @@ angular.module('contentful').directive('cfSearch', ['require', function (require
       tooltip: '@',
       isSearching: '='
     },
-
-    link: function (scope, element, attr) {
-      var typeAhead = 'searchTypeAhead' in attr;
+    link: function (scope, element) {
       var debouncedUpdate = debounce(update, 300);
+
+      $timeout(function () {
+        element.find('input').first().focus();
+      });
 
       element.on('keyup', function (ev) {
         var pressedReturn = ev.keyCode === keycodes.ENTER;
@@ -28,7 +62,7 @@ angular.module('contentful').directive('cfSearch', ['require', function (require
           ev.preventDefault();
           ev.stopPropagation();
           update();
-        } else if (typeAhead && scope.inner.term) {
+        } else if (scope.inner.term) {
           return debouncedUpdate();
         }
       });

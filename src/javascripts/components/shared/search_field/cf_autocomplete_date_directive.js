@@ -1,13 +1,25 @@
 'use strict';
 angular.module('contentful').directive('cfAutocompleteDate', ['require', function (require) {
   var moment = require('moment');
+  var h = require('utils/hyperscript').h;
 
   var DATE_FORMAT = 'yy-mm-dd'; // datepicker format
   var DATE_FORMAT_INTERNAL = 'YYYY-MM-DD'; // moment.js format
 
   return {
     restrict: 'A',
-    template: JST['cf_autocomplete_date'](),
+    template: h('div', {
+      style: {
+        padding: '20px',
+        textAlign: 'center'
+      }
+    }, [
+      h('.datepicker', {
+        style: {
+          display: 'inline-block'
+        }
+      })
+    ]),
     link: function (scope, elem) {
       var $datepicker = elem.find('.datepicker');
       $datepicker.datepicker({

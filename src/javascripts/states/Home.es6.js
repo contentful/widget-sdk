@@ -20,21 +20,21 @@ export default makeState({
   loadingText: 'Loading...',
   resolve: {
     spaces: function () {
-      return getSpaces().then(function (spaces) {
-
+      return getSpaces().then((spaces) => {
         if (spaces.length) {
-          const lastUsedSpace = getLastUsedSpace(spaces);
-          const space = lastUsedSpace || spaces[0];
-
+          const space = getLastUsedSpace(spaces) || getLastUsedOrgSpace(spaces) || spaces[0];
           $state.go('spaces.detail', {spaceId: space.sys.id});
         }
       });
 
       function getLastUsedSpace (spaces) {
         const spaceId = TheStore.get('lastUsedSpace');
-        return find(spaces, function (space) {
-          return space.sys.id === spaceId;
-        });
+        return spaceId && find(spaces, (space) => space.sys.id === spaceId);
+      }
+
+      function getLastUsedOrgSpace (spaces) {
+        const orgId = TheStore.get('lastUsedOrg');
+        return orgId && find(spaces, (space) => space.organization.sys.id === orgId);
       }
     }
   },

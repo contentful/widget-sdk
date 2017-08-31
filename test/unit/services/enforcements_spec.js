@@ -118,7 +118,7 @@ describe('Enforcements service', function () {
       var enforcement;
       beforeEach(function () {
         organizationMock.usage.period.assetBandwidth = 5;
-        spaceContext.space.data.organization = organizationMock;
+        spaceContext.organizationContext.organization = organizationMock;
       });
 
       it('has an error when user is an owner', function () {
@@ -158,7 +158,7 @@ describe('Enforcements service', function () {
 
   describe('computes metrics usage', function () {
     beforeEach(function () {
-      spaceContext.space.data.organization = organizationMock;
+      spaceContext.organizationContext.organization = organizationMock;
     });
 
     it('if no space exists returns no message', function() {

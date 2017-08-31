@@ -20,7 +20,7 @@ describe('The ContentType list directive', function () {
     const element = this.$compile('<div cf-content-type-list>', { context: {} });
     const scope = element.scope();
 
-    scope.searchTerm = 'B';
+    scope.context.searchTerm = 'B';
     scope.$apply();
     expect(element.find('.table tbody tr').length).toBe(2);
   });
