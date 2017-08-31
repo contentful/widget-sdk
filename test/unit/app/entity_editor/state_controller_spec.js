@@ -262,10 +262,17 @@ describe('entityEditor/StateController', function () {
   });
 
   describe('#revertToPrevious command', function () {
-    it('is available iff document has changes', function () {
+    it('is available iff document has changes and the document is editable', function () {
       this.doc.reverter.hasChanges.returns(true);
+      this.doc.state.canEdit$.set(true);
       expect(this.controller.revertToPrevious.isAvailable()).toBe(true);
+
+      this.doc.reverter.hasChanges.returns(true);
+      this.doc.state.canEdit$.set(false);
+      expect(this.controller.revertToPrevious.isAvailable()).toBe(false);
+
       this.doc.reverter.hasChanges.returns(false);
+      this.doc.state.canEdit$.set(true);
       expect(this.controller.revertToPrevious.isAvailable()).toBe(false);
     });
 

@@ -17,6 +17,7 @@ angular.module('contentful')
     NOT_ALLOWED: 'editing-not-allowed',
     CONNECTION_ERROR: 'ot-connection-error',
     ARCHIVED: 'archived',
+    DELETED: 'deleted',
     OK: 'ok'
   };
 
@@ -51,8 +52,10 @@ angular.module('contentful')
               }
             });
             return Status.CONNECTION_ERROR;
-          } else if (isArchived(sys)) {
+          } else if (sys.archivedVersion) {
             return Status.ARCHIVED;
+          } else if (sys.deletedVersion) {
+            return Status.DELETED;
           } else {
             return Status.OK;
           }
@@ -61,9 +64,5 @@ angular.module('contentful')
     } else {
       return K.constant(Status.NOT_ALLOWED);
     }
-  }
-
-  function isArchived (sys) {
-    return sys.archivedVersion;
   }
 }]);
