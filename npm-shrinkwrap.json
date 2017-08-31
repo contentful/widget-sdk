@@ -2601,6 +2601,9 @@
     "sax": {
       "version": "0.5.8"
     },
+    "scroll-into-view": {
+      "version": "1.9.0"
+    },
     "semver": {
       "version": "4.3.6"
     },

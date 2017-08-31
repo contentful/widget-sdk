@@ -1,9 +1,43 @@
 'use strict';
-angular.module('contentful').directive('cfAutocompleteList', function () {
+angular.module('contentful').directive('cfAutocompleteList', ['require', function (require) {
+  var h = require('utils/hyperscript').h;
+  var $timeout = require('$timeout');
+  var scrollIntoView = require('scroll-into-view');
+
   return {
+    template: h('ul.search-autocomplete-list', [
+      h('li', [
+        h('span.header-value', ['Filter']),
+        h('span.header-description', ['Description'])
+      ]),
+      h('li.autocompletion-row', {
+        ngRepeat: '(index, item) in autocompletion.items',
+        ngClass: '{selected: item.value === selectedAutocompletion.value}',
+        ngClick: 'selectAutocompletion(item, $event)'
+      }, [
+        h('span.item-value', [
+          h('span.value-pill', ['{{item.value}}'])
+        ]),
+        h('span.item-description', ['{{item.description}}'])
+      ])
+    ]),
     restrict: 'A',
     scope: true,
-    template: JST['cf_autocomplete_list'](),
+    link: function (scope, el) {
+      autoscroll();
+      scope.$watch('selectedAutocompletion.value', autoscroll);
+
+      function autoscroll () {
+        // wait for the ".selected" class to be applied
+        $timeout(function () {
+          // scroll-into-view expects a single DOM element
+          var selected = el.find('.selected').first().get(0);
+          if (selected) {
+            scrollIntoView(selected);
+          }
+        });
+      }
+    },
     controller: ['$scope', function ($scope) {
       $scope.$on('selectNextAutocompletion', function () {
         selectNextAutocompletion();
@@ -71,4 +105,4 @@ angular.module('contentful').directive('cfAutocompleteList', function () {
       }
     }]
   };
-});
+}]);

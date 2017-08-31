@@ -9,12 +9,12 @@ header.workbench-header
       | Content model
       cf-knowledge-base.workbench-header__kb-link(target="content_model")
 
-  .workbench-header__search.search-area(ng-hide="!hasContentTypes()")
-    .search-field(
-      cf-search="searchTerm"
+  .workbench-header__search(
+    ng-if="context.ready && hasContentTypes()")
+    div(
+      cf-search="context.searchTerm"
       is-searching="context.isSearching"
-      search-type-ahead="true"
-      placeholder="Type to search")
+      placeholder="Search for a content type")
 
   .workbench-header__actions(ng-hide="!hasContentTypes()")
     button.btn-action(
@@ -58,7 +58,7 @@ header.workbench-header
         span.filter-list-title Active
 
   .workbench-main__right-content
-    +no-search-results("!hasQueryResults()", "searchTerm", "context.list")
+    +no-search-results("!hasQueryResults()", "context.searchTerm", "context.list")
     .table(ng-show="hasQueryResults()")
       .table__head
         table

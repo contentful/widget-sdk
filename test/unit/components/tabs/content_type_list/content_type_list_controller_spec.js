@@ -28,7 +28,7 @@ describe('Content Type List Controller', function () {
 
     scope = $rootScope.$new();
     scope.context = {};
-    scope.searchTerm = null;
+    scope.context.searchTerm = null;
     TheStore.set = _.noop;
     $controller('ContentTypeListController', {$scope: scope});
     scope.$apply();
@@ -40,14 +40,14 @@ describe('Content Type List Controller', function () {
 
   describe('on search term change', function () {
     it('if term is null list is not changed', function () {
-      scope.searchTerm = null;
+      scope.context.searchTerm = null;
       scope.$apply();
       expect(scope.context.list).toBe('all');
     });
 
     describe('if term is set', function () {
       beforeEach(function () {
-        scope.searchTerm = 'thing';
+        scope.context.searchTerm = 'thing';
         scope.$apply();
       });
 
@@ -63,10 +63,10 @@ describe('Content Type List Controller', function () {
 
   describe('switching lists', function () {
     it('preserves search term', function () {
-      scope.searchTerm = 'thing';
+      scope.context.searchTerm = 'thing';
       scope.context.list = 'changed';
       this.$apply();
-      expect(scope.searchTerm).toBe('thing');
+      expect(scope.context.searchTerm).toBe('thing');
     });
 
     it('refreshes content types', function () {
@@ -82,11 +82,11 @@ describe('Content Type List Controller', function () {
       const unmatched = makeCT({getName: sinon.stub().returns('MA')});
       spaceContext.space.getContentTypes.resolves([matched, unmatched]);
 
-      scope.searchTerm = 'MA';
+      scope.context.searchTerm = 'MA';
       this.$apply();
       expect(scope.visibleContentTypes.map((ct) => ct.getName())).toEqual(['MA', 'MATCH']);
 
-      scope.searchTerm = 'MAT';
+      scope.context.searchTerm = 'MAT';
       this.$apply();
       expect(scope.visibleContentTypes.map((ct) => ct.getName())).toEqual(['MATCH']);
     });
@@ -97,7 +97,7 @@ describe('Content Type List Controller', function () {
         isDeleted: sinon.stub().returns(true)
       })];
 
-      scope.searchTerm = 'MAT';
+      scope.context.searchTerm = 'MAT';
       this.$apply();
       expect(scope.visibleContentTypes.length).toBe(0);
     });
@@ -105,17 +105,17 @@ describe('Content Type List Controller', function () {
 
   describe('query check', function () {
     it('has a query', function () {
-      scope.searchTerm = 'term';
+      scope.context.searchTerm = 'term';
       expect(scope.hasQuery()).toBeTruthy();
     });
 
     it('has no query when term is null', function () {
-      scope.searchTerm = null;
+      scope.context.searchTerm = null;
       expect(scope.hasQuery()).toBeFalsy();
     });
 
     it('has no query when term is empty string', function () {
-      scope.searchTerm = '';
+      scope.context.searchTerm = '';
       expect(scope.hasQuery()).toBeFalsy();
     });
   });

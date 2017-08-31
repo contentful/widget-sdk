@@ -10,14 +10,14 @@ header.workbench-header
       | Media
       cf-knowledge-base.workbench-headr__kb-link(target="asset")
 
-  .workbench-header__search.search-area(
-    ng-hide="showNoAssetsAdvice()")
-    .search-area__input(
+  .workbench-header__search(
+    ng-if="context.ready && !showNoAssetsAdvice()")
+    div(
       cf-tokenized-search="context.view.searchTerm"
       search-content-type="assetContentType"
-      placeholder="Type to search. Press the down arrow key for help.")
-
-    .search-results-position(cf-search-results-position paginator="paginator" ng-hide="!paginator.getTotal()")
+      placeholder="Search for an asset"
+      cf-on-blur-component="leftSearch($event)"
+      cf-on-blur-component-when="showAutocompletions")
 
   .workbench-header__actions(
     ng-show="!showNoAssetsAdvice() && !shouldHide('createAsset')")

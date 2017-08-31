@@ -21,15 +21,8 @@ angular.module('cf.ui')
  * cf-loader(is-shown="isLoading")
  * cf-loader(is-shown="somePropFromParentScope", loader-msg="Loading xyz...")
  */
-.directive('cfLoader', function () {
-  var template = '';
-
-  template += '<div class="loader" ng-show="isShown" role="progressbar" aria-busy="{{ isShown }}" aria-label="loader-interstitial">';
-  template += '  <div class="loader__container">';
-  template += '    <div class="loader__spinner"></div>';
-  template += '    <div class="loader__message">{{ loaderMsg }}</div>';
-  template += '  </div>';
-  template += '</div>';
+.directive('cfLoader', ['require', function (require) {
+  var h = require('utils/hyperscript').h;
 
   return {
     restrict: 'E',
@@ -38,7 +31,17 @@ angular.module('cf.ui')
       loaderMsg: '@',
       watchStateChange: '@'
     },
-    template: template,
+    template: h('.loader', {
+      ngShow: 'isShown',
+      role: 'progressbar',
+      ariaBusy: '{{isShown}}',
+      ariaLabel: 'loader-interstitial'
+    }, [
+      h('.loader__container', [
+        h('.loader__spinner'),
+        h('.loader__message', ['{{loaderMsg}}'])
+      ])
+    ]),
     controller: ['$scope', 'require', function ($scope, require) {
       var $rootScope = require('$rootScope');
       var $parse = require('$parse');
@@ -63,7 +66,7 @@ angular.module('cf.ui')
       }
     }]
   };
-})
+}])
 /*
  * @ngdoc directive
  * @name cfInlineLoader
@@ -78,15 +81,21 @@ angular.module('cf.ui')
  *   input(type="text")
  *   cf-inline-loader(is-shown="isSearching")
  */
-.directive('cfInlineLoader', function () {
+.directive('cfInlineLoader', ['require', function (require) {
+  var h = require('utils/hyperscript').h;
+
   return {
     restrict: 'E',
     scope: {
       isShown: '='
     },
-    template:
-      '<div ng-show=isShown class="loader loader--inline" aria-label="loader-inline" role="progressbar" aria-busy="{{ isShown }}">' +
-        '<span class="loader__spinner--inline"></span>' +
-      '</div>'
+    template: h('.loader.loader--inline', {
+      ngShow: 'isShown',
+      role: 'progressbar',
+      ariaBusy: '{{isShown}}',
+      ariaLabel: 'loader-inline'
+    }, [
+      h('.loader__spinner--inline')
+    ])
   };
-});
+}]);

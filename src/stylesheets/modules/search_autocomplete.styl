@@ -1,46 +1,52 @@
-.l-search-w-autocomplete
-  position: relative
-  width: 100%
-  .search-results.shrink-result-width
-    right: auto
-  .search-results
-    right: 35px
-    margin-right: 0
-
 .search-autocomplete-list
-  padding: 7px 0;
   display: table
   width: 100%
-  > li
-    display: table-row
-    cursor: pointer
-  > li:hover
-    $highlight(lighten($blue, 20), 6%, 'darken')
-    color: white
-  .item-value
-    color: $gray
-    padding: 7px;
-    padding-left: 20px
-  .selected,
-  .selected:hover
-    color: white
-    $highlight($blue)
-    > .item-value
-      color: white
-  .item-description
-    color: $colors.dark-gray
-    padding: 7px;
-    padding-right: 20px;
-  .item-value,
-  .item-description
-    display: table-cell
 
-  &__help
-    display: flex
-    align-items: center
-    background: $colors.ice-mid
-    border-top: 1px solid $colors.element-light
-    padding: 15px 20px
-    > p
-      margin: 0
-      margin-left: 7px
+  li
+    display: table-row
+
+  li.autocompletion-row
+    cursor: pointer
+
+    &.selected,
+    &:hover
+      background-color: #F4F4F2
+      .value-pill
+        background-color: $colors.blue-darkest
+
+    &:last-child
+      .item-value,
+      .item-description
+        border: 0
+
+  .item-value,
+  .item-description,
+  .header-value,
+  .header-description
+    display: table-cell
+    height: 56px
+    vertical-align: middle
+    color: $colors.text-light
+    border-bottom: 1px solid $colors.element-light
+
+  .header-value,
+  .header-description
+    padding-top: 5px
+    height: 40px
+    font-size: .9em
+
+  .header-value,
+  .item-value
+    padding-left: 27px
+
+  .header-description,
+  .item-description
+    padding-right: 27px
+
+  .value-pill
+    display: inline-block
+    padding: 6px 10px 5px
+    margin-right: 27px
+    border-radius: 2px
+    background: $colors.blue-mid
+    color: white

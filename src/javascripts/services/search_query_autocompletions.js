@@ -244,18 +244,26 @@ angular.module('contentful')
     };
   }
 
-  // A map from usernames to the user ids
-  // User names are "First Last"
-  // If this results in duplicates, the duplicates are returned as "First Last (ID)"
-  // BOTH
+  // A map from usernames to the user IDs:
+  // - by default user names are just "First Last"
+  // - duplicates are differentiated with ID: "First Last (someid123)"
   function getUserMap () {
     return spaceContext.users.getAll().then(function (users) {
-      var names = _.map(users, 'getName');
-      var occurences = _.countBy(names);
-      return _.transform(users, function (map, user) {
-        var name = user.firstName + ' ' + user.lastName;
-        name = occurences[name] > 1 ? name + ' (' + user.sys.id + ')' : name;
-        map[name] = user.sys.id;
+      var transformed = users.map(function (user) {
+        return {
+          id: user.sys.id,
+          // remove double quotes from the name
+          // this way user names don't break search box syntax
+          name: (user.firstName + ' ' + user.lastName).replace('"', '')
+        };
+      });
+
+      var counts = _.countBy(transformed, 'name');
+
+      return transformed.reduce(function (acc, u) {
+        var key = counts[u.name] > 1 ? (u.name + ' (' + u.id + ')') : u.name;
+        acc[key] = u.id;
+        return acc;
       }, {});
     });
   }
@@ -286,7 +294,7 @@ angular.module('contentful')
         };
       });
 
-    return makeListCompletion(_.union(fieldCompletions, staticCompletions));
+    return makeListCompletion(fieldCompletions.concat(staticCompletions));
   }
 
   function operatorCompletion (key, contentType) {
