@@ -58,6 +58,7 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
         tabindex: '0'
       }, [searchIcon]),
       h('button', {
+        ngIf: 'autocompletion.type',
         style: iconStyle,
         ngClick: 'toggleFilters()',
         ngStyle: '{"border-left": ' + border + ', color: ' + color + '}',
