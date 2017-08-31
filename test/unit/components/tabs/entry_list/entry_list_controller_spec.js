@@ -29,6 +29,7 @@ describe('Entry List Controller', function () {
     scope.context = {};
 
     spaceContext = this.$inject('mocks/spaceContext').init();
+    scope.spaceContext = spaceContext;
 
     const ct = {
       getId: _.constant(1),

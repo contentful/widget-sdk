@@ -1,7 +1,7 @@
 import {find, isPlainObject, cloneDeep, memoize} from 'lodash';
 import assetEditorInterface from 'data/editingInterfaces/asset';
 import {caseof as caseofEq} from 'libs/sum-types/caseof-eq';
-import {deepFreeze} from 'utils/DeepFreeze';
+import {deepFreeze} from 'utils/Freeze';
 import $q from '$q';
 import createPrefetchCache from 'data/CMA/EntityPrefetchCache';
 

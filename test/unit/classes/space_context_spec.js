@@ -1,4 +1,6 @@
 import * as sinon from 'helpers/sinon';
+import {isObject} from 'lodash';
+import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 
 describe('spaceContext', function () {
 
@@ -15,6 +17,9 @@ describe('spaceContext', function () {
       $provide.value('classes/OrganizationContext', this.OrganizationContext);
       $provide.value('app/EntryList/Collections/Store', {
         default: sinon.stub().resolves()
+      });
+      $provide.value('data/Endpoint', {
+        createSpaceEndpoint: () => createMockSpaceEndpoint().request
       });
     });
     this.spaceContext = this.$inject('spaceContext');
@@ -126,7 +131,7 @@ describe('spaceContext', function () {
       });
 
       it('gets built from context `organization` data', function () {
-        SPACE.data = { organization: ORGANIZATION };
+        SPACE.data.organization = ORGANIZATION;
         this.spaceContext.resetWithSpace(SPACE);
 
         sinon.assert.calledOnce(this.Subscription.newFromOrganization);
@@ -517,6 +522,13 @@ describe('spaceContext', function () {
     });
   });
 
+  describe('#uiConfig', function () {
+    it('exposes the store', function () {
+      this.resetWithSpace();
+      expect(isObject(this.spaceContext.uiConfig)).toBe(true);
+    });
+  });
+
   function makeCtMock (id, opts = {}) {
     return {
       data: {
@@ -532,14 +544,17 @@ describe('spaceContext', function () {
 
   function makeSpaceMock () {
     return {
-      data: {},
+      data: {
+        spaceMembership: {}
+      },
       endpoint: sinon.stub().returns({
         get: sinon.stub().rejects()
       }),
       getId: sinon.stub().returns('SPACE_ID'),
       getContentTypes: sinon.stub().resolves([]),
       getPublishedContentTypes: sinon.stub().resolves([]),
-      getPrivateLocales: sinon.stub().returns([{code: 'en'}])
+      getPrivateLocales: sinon.stub().returns([{code: 'en'}]),
+      getUIConfig: sinon.stub().resolves()
     };
   }
 

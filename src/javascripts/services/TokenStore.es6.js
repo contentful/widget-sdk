@@ -15,7 +15,7 @@ import ReloadNotification from 'ReloadNotification';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import presence from 'presence';
 import $window from '$window';
-import { deepFreezeClone } from 'utils/DeepFreeze';
+import { deepFreezeClone } from 'utils/Freeze';
 import { isEqual, groupBy, map, get, find } from 'lodash';
 
 // Refresh token info every 5 minutes

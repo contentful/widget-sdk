@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Markdown tree', function () {
+describe('markdown_editor/PreviewRender', function () {
   let treeBuilder, buildTree;
   const libs = window.cfLibs.markdown;
 
@@ -65,10 +65,23 @@ describe('Markdown tree', function () {
     expect(result.words).toBe(5);
   });
 
-  it('Sanitizes raw HTML fragments', function () {
+  it('sanitizes img onlick', function () {
     const root = getRoot('<img src="test.jpg" onclick="alert(document.cookie)"/>');
     const html = getHTML(getChildren(root));
-    expect(html).toBe('<img src="test.jpg">');
+    expect(html).toBe('<img src="test.jpg" />');
+  });
+
+  it('adds rel=noopener on target=_blank', function () {
+    const blankAnchor = getHTML(getChildren(getRoot('<a target=_blank></a>')));
+    expect(blankAnchor).toBe('<a target="_blank" rel="noopener noreferrer"></a>');
+
+    const normalAnchor = getHTML(getChildren(getRoot('<a></a>')));
+    expect(normalAnchor).toBe('<a></a>');
+  });
+
+  it('extends embedly anchors with attributes', function () {
+    const embedlyAnchor = getHTML(getChildren(getRoot('<a class="embedly-card" data-card-width="100%"></a>')));
+    expect(embedlyAnchor).toBe('<a class="embedly-card markdown-block" data-card-width="100%" data-card-controls="0"></a>');
   });
 
   it('Sanitizes data: and js: URIs', function () {

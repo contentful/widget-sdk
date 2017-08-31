@@ -3,7 +3,7 @@ import notification from 'notification';
 import logger from 'logger';
 import $q from '$q';
 import Store from 'data/StreamHashSet';
-import {deepFreeze} from 'utils/DeepFreeze';
+import {deepFreeze} from 'utils/Freeze';
 
 /**
  * @ngdoc type

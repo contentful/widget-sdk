@@ -37,6 +37,7 @@ angular.module('contentful')
   var OrganizationContext = require('classes/OrganizationContext');
   var MembershipRepo = require('access_control/SpaceMembershipRepository');
   var createContentCollectionsRepo = require('app/EntryList/Collections/Store').default;
+  var createUiConfigStore = require('data/UiConfig/Store').default;
 
   var spaceContext = {
     /**
@@ -107,6 +108,9 @@ angular.module('contentful')
       });
       self.user = K.getValue(tokenStore.user$);
 
+      var isAdmin = space.data.spaceMembership.admin;
+      self.uiConfig = createUiConfigStore(self.endpoint, isAdmin, self.publishedCTs);
+
       previewEnvironmentsCache.clearAll();
       TheLocaleStore.reset(space.getId(), space.getPrivateLocales());
 
@@ -114,6 +118,9 @@ angular.module('contentful')
         Widgets.setSpace(space).then(function (widgets) {
           self.widgets = widgets;
         }),
+        // TODO We should use a similar pattern as for content
+        // collections.
+        self.uiConfig.load(),
         self.publishedCTs.refresh(),
         createContentCollectionsRepo(self.endpoint).then(function (api) {
           self.contentCollections = api;
@@ -370,6 +377,7 @@ angular.module('contentful')
   return spaceContext;
 
   function resetMembers (spaceContext) {
+    spaceContext.uiConfig = null;
     spaceContext.space = null;
     spaceContext.publishedContentTypes = [];
     spaceContext.users = null;

@@ -80,7 +80,10 @@ const FEATURE_TO_SPACE_IDS = {
     // TELUS digital C MOB > Marketing (prod)
     'e908a9e5d6ea0330fa5c661d1477c8de'
   ],
-  collections: []
+  collections: [
+    // Community member interested in testing (prod)
+    '185555fa5b5f0862f2b80885ae5c8c68'
+  ]
 };
 
 /**

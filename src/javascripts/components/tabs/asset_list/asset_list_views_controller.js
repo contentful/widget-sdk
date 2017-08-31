@@ -1,16 +1,14 @@
 'use strict';
 
 angular.module('contentful')
-.controller('AssetListViewsController', ['$scope', '$injector', 'preserveState', function ($scope, $injector, preserveState) {
-
-  var $controller = $injector.get('$controller');
-  var uiConfig = $injector.get('uiConfig');
+.controller('AssetListViewsController', ['$scope', 'require', 'preserveState', function ($scope, require, preserveState) {
+  var $controller = require('$controller');
+  var spaceContext = require('spaceContext');
 
   return $controller('ListViewsController', {
     $scope: $scope,
     getBlankView: getBlankView,
-    viewCollectionName: 'assetListViews',
-    generateDefaultViews: uiConfig.resetAssets,
+    uiConfig: spaceContext.uiConfig.forAssets(),
     preserveStateAs: preserveState ? 'assets' : null,
     resetList: function () {
       $scope.searchController.resetAssets(true);

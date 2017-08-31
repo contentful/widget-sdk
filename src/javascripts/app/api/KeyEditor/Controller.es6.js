@@ -2,7 +2,7 @@ import {assign, get, constant, find} from 'lodash';
 import Command from 'command';
 import marked from 'libs/marked';
 import {truncate} from 'stringUtils';
-import {deepFreeze} from 'utils/DeepFreeze';
+import {deepFreeze} from 'utils/Freeze';
 import * as K from 'utils/kefir';
 import * as $sce from '$sce';
 

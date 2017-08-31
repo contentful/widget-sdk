@@ -34,6 +34,7 @@ angular.module('cf.app')
   var notification = require('notification');
   var trackVersioning = require('analyticsEvents/versioning');
   var Validator = require('app/entity_editor/Validator');
+  var Focus = require('app/entity_editor/Focus');
 
   $scope.versionPicker = require('SnapshotComparatorController/versionPicker').create();
   $scope.snapshotCount = $stateParams.snapshotCount;
@@ -46,7 +47,8 @@ angular.module('cf.app')
 
   $scope.editorContext = {
     validator: Validator.createNoop(),
-    entityInfo: $scope.entityInfo
+    entityInfo: $scope.entityInfo,
+    focus: Focus.create()
   };
 
   $scope.$watch(function () {

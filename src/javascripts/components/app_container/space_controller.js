@@ -14,7 +14,6 @@ angular.module('contentful')
   LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation');
   // End feature flag code - feature-bv-06-2017-use-new-navigation
 
-  $controller('UiConfigController', {$scope: $scope});
   // TODO: it's not a controller, it should be a service
   $scope.entityCreationController = $controller('EntityCreationController');
 

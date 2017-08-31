@@ -1,8 +1,8 @@
 'use strict';
 angular.module('contentful')
 .controller('ListViewsController', [
-  '$scope', 'require', 'generateDefaultViews', 'getBlankView', 'resetList', 'viewCollectionName', 'preserveStateAs',
-  function ($scope, require, generateDefaultViews, getBlankView, resetList, viewCollectionName, preserveStateAs) {
+  '$scope', 'require', 'uiConfig', 'getBlankView', 'resetList', 'preserveStateAs',
+  function ($scope, require, uiConfig, getBlankView, resetList, preserveStateAs) {
     var $q = require('$q');
     var logger = require('logger');
     var notification = require('notification');
@@ -27,19 +27,14 @@ angular.module('contentful')
 
     setCurrentView($scope, getCurrentView($scope) || getBlankView());
 
-    $scope.$watch('uiConfig', function (uiConfig) {
-      if (uiConfig && !uiConfig[viewCollectionName]) {
-        uiConfig[viewCollectionName] = generateDefaultViews(true);
-      }
+    $scope.$watch(function () {
+      return uiConfig.get();
+    }, function (uiConfig) {
+      $scope.uiConfig = uiConfig;
     });
 
     $scope.$watch('uiConfig', cacheInaccessibleContentTypes, true);
     $scope.$watch(accessChecker.getResponses, cacheInaccessibleContentTypes);
-
-    $scope.resetViews = function () {
-      $scope.uiConfig[viewCollectionName] = generateDefaultViews();
-      $scope.saveViews();
-    };
 
     $scope.clearView = function () {
       setCurrentView($scope, getBlankView());
@@ -53,12 +48,20 @@ angular.module('contentful')
     };
 
     $scope.saveViews = function () {
-      return $scope.saveUiConfig().catch(function (err) {
+      saveUiConfig($scope.uiConfig);
+    };
+
+    $scope.resetViews = function () {
+      saveUiConfig(undefined);
+    };
+
+    function saveUiConfig (data) {
+      return uiConfig.save(data).catch(function (err) {
         logger.logServerWarn('Error trying to save view', { error: err });
         notification.error('Error trying to save view');
         return $q.reject(err);
       });
-    };
+    }
 
     $scope.viewIsHidden = function (view) {
       return view && view.contentTypeId && hiddenContentTypes.indexOf(view.contentTypeId) > -1;
@@ -75,14 +78,14 @@ angular.module('contentful')
 
       hiddenContentTypes = [];
 
-      _.forEach($scope.uiConfig[viewCollectionName], function (group) {
+      _.forEach($scope.uiConfig, function (group) {
         _(group.views || [])
-      .filter(function (view) { return _.isString(view.contentTypeId); })
-      .forEach(function (view) {
-        if (!accessChecker.canPerformActionOnEntryOfType('read', view.contentTypeId)) {
-          hiddenContentTypes.push(view.contentTypeId);
-        }
-      });
+          .filter(function (view) { return _.isString(view.contentTypeId); })
+          .forEach(function (view) {
+            if (!accessChecker.canPerformActionOnEntryOfType('read', view.contentTypeId)) {
+              hiddenContentTypes.push(view.contentTypeId);
+            }
+          });
       });
     }
   }]);

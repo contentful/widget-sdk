@@ -1,7 +1,7 @@
 import $state from '$state';
 import $controller from '$controller';
 
-import {deepFreeze} from 'utils/DeepFreeze';
+import {deepFreeze} from 'utils/Freeze';
 import * as K from 'utils/kefir';
 import {truncate} from 'stringUtils';
 import {cloneDeep, find, constant} from 'lodash';

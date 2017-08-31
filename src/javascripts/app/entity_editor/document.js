@@ -27,7 +27,7 @@ angular.module('contentful')
   var accessChecker = require('accessChecker');
   var Status = require('data/Document/Status');
   var Permissions = require('access_control/EntityPermissions');
-  var deepFreeze = require('utils/DeepFreeze').deepFreeze;
+  var deepFreeze = require('utils/Freeze').deepFreeze;
   var ResourceStateManager = require('data/document/ResourceStateManager');
   var DocError = require('data/document/Error').Error;
 

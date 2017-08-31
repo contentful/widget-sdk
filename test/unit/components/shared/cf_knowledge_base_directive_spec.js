@@ -35,10 +35,6 @@ describe('cfKnowledgeBase directive', function () {
       scope.$digest();
     });
 
-    it('has no tooltip text', function () {
-      expect(getLink().attr('tooltip')).toBe('');
-    });
-
     it('has no link text', function () {
       const children = getLink().children();
       expect(children.length).toBe(1);
@@ -51,18 +47,14 @@ describe('cfKnowledgeBase directive', function () {
     });
   });
 
-  describe('link/tooltip text', function () {
+  describe('link text', function () {
     beforeEach(function () {
-      el = this.$compile('<cf-knowledge-base target="entry" text="testtext" tooltip-text="tooltiptesttext" />');
+      el = this.$compile('<cf-knowledge-base target="entry" text="testtext" />');
       scope.$digest();
     });
 
     it('has link text and icon', function () {
       expect(getLink().text()).toBe('testtext');
-    });
-
-    it('has tooltip text', function () {
-      expect(getLink().attr('tooltip')).toBe('tooltiptesttext');
     });
   });
 });

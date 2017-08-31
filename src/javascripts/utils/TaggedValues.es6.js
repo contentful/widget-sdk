@@ -1,5 +1,5 @@
 import {find} from 'lodash';
-import {deepFreeze} from 'utils/DeepFreeze';
+import {deepFreeze} from 'utils/Freeze';
 
 /**
  * This module provides functions for dealing with tagged values, also
