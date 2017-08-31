@@ -68,7 +68,7 @@ describe('cfNavSidepanel directive', () => {
     this.tokenStore.spacesByOrganization$ = K.createMockProperty(this.spacesByOrg);
 
     // directive element
-    const $rootEl = this.$compile('<cf-nav-sidepanel is-shown="false" />');
+    const $rootEl = this.$compile('<cf-nav-sidepanel is-shown="true" />');
 
     this.$containerEl = $rootEl.find('.nav-sidepanel-container');
     this.$sidePanel = $rootEl.find('.nav-sidepanel');
@@ -143,52 +143,44 @@ describe('cfNavSidepanel directive', () => {
     expect(this.$scope.currSpace).toEqual(space);
   });
 
-  describe('#openSidePanel', function () {
-    it('sets curr org from nav state or default', function () {
-      const org = this.orgs[2];
-      const space = this.spacesByOrg[org.sys.id][1];
-      this.emulateSpacePage(space, org);
-      this.$scope.openSidePanel();
-      expect(this.$scope.currOrg).toEqual(org);
-    });
+  it('sets curr org from nav state or default', function () {
+    const org = this.orgs[2];
+    const space = this.spacesByOrg[org.sys.id][1];
+    this.emulateSpacePage(space, org);
+    expect(this.$scope.currOrg).toEqual(org);
+  });
 
-    it('defaults currOrg to first if nav state has no org', function () {
-      this.emulateSpacePage(null, null);
-      this.$scope.openSidePanel();
-      expect(this.$scope.currOrg).toEqual(this.orgs[0]);
-    });
+  it('defaults currOrg to first if nav state has no org', function () {
+    this.emulateSpacePage(null, null);
+    expect(this.$scope.currOrg).toEqual(this.orgs[0]);
+  });
 
-    it('toggles sidepanel visibility based on a property on scope', function () {
-      expect(this.$scope.sidePanelIsShown).toBe(false);
-      this.expectSidePanelVisibility(false);
-      this.$scope.openSidePanel();
-      this.$scope.$apply();
-      expect(this.$scope.sidePanelIsShown).toBe(true);
-      this.expectSidePanelVisibility(true);
-    });
-
-    it('hides org list dropdown', function () {
-      this.$scope.openOrgsDropdown();
-      this.$scope.openSidePanel();
-      this.$scope.$apply();
-      this.expectDropdownVisibility(false);
-    });
+  it('sets sidepanel visibility based on a property on scope', function () {
+    this.$scope.$apply();
+    expect(this.$scope.sidePanelIsShown).toBe(true);
+    this.expectSidePanelVisibility(true);
   });
 
   describe('#closeSidePanel', function () {
-    it('toggles sidepanel visibility based on a property on scope', function () {
-      this.$scope.openSidePanel();
+    it('toggles sidepanel visibility', function () {
       this.$scope.closeSidePanel();
       this.$scope.$apply();
       expect(this.$scope.sidePanelIsShown).toBe(false);
       this.expectSidePanelVisibility(false);
+    });
+
+    it('hides org list dropdown', function () {
+      this.$scope.openOrgsDropdown({stopPropagation: () => {}});
+      this.$scope.closeSidePanel();
+      this.$scope.$apply();
+      this.expectDropdownVisibility(false);
     });
   });
 
   describe('#openOrgsDropdown', function () {
     it('shows dropdown', function () {
       this.expectDropdownVisibility(false);
-      this.$scope.openOrgsDropdown();
+      this.$scope.openOrgsDropdown({stopPropagation: () => {}});
       this.$apply();
       this.expectDropdownVisibility(true);
     });
@@ -202,7 +194,7 @@ describe('cfNavSidepanel directive', () => {
 
   describe('#closeOrgsDropdown', function () {
     it('hides dropdown', function () {
-      this.$scope.openOrgsDropdown();
+      this.$scope.openOrgsDropdown({stopPropagation: () => {}});
       this.$apply();
       this.$scope.closeOrgsDropdown();
       this.$apply();
@@ -240,7 +232,6 @@ describe('cfNavSidepanel directive', () => {
     it('navigates to subscription page for the current org, hides the sidepanel and sets navigated to org as curr org', function () {
       const org = this.orgs[1];
 
-      this.$scope.openSidePanel();
       // default selected org is the first one
       expect(this.$scope.currOrg).toEqual(this.orgs[0]);
 
@@ -253,14 +244,12 @@ describe('cfNavSidepanel directive', () => {
       });
       expect(this.$scope.sidePanelIsShown).toBe(false);
       this.emulateSettingsPage(org);
-      this.$scope.openSidePanel();
       this.verifyScopePropsBasedOnOrg(org, undefined, undefined, true);
     });
   });
 
   describe('#createNewOrg', function () {
     it('it hides sidepanel and navigates to create new org page', function () {
-      this.$scope.openSidePanel();
       this.$scope.createNewOrg();
       expect(this.$scope.sidePanelIsShown).toBe(false);
       sinon.assert.calledWith(Navigator.go, {
@@ -273,7 +262,6 @@ describe('cfNavSidepanel directive', () => {
     it('navigates to given space and toggles the side panel', function () {
       const space = { sys: { id: 1234 } };
 
-      this.$scope.openSidePanel();
       this.$scope.setAndGotoSpace(space);
       this.emulateSpacePage(space);
       this.$scope.$apply();
@@ -289,7 +277,6 @@ describe('cfNavSidepanel directive', () => {
   describe('#showCreateSpaceModal', function () {
     it('shows create space modal for the given org id and toggles sidepanel', function () {
       const org = this.orgs[1];
-      this.$scope.openSidePanel();
       this.$scope.setCurrOrg(org);
       this.$scope.showCreateSpaceModal();
       expect(this.$scope.sidePanelIsShown).toBe(false);
@@ -327,6 +314,7 @@ describe('cfNavSidepanel directive', () => {
     describe('Sidepanel header', function () {
       beforeEach(function () {
         this.$sidePanelHeader = this.$sidePanel.find('.nav-sidepanel__header');
+        this.$orgList = this.$sidePanel.find('.nav-sidepanel__org-list');
       });
 
       it('shows two letter org name', function () {
@@ -346,7 +334,7 @@ describe('cfNavSidepanel directive', () => {
       });
 
       it('uses orgs for org list in org list dropdown', function () {
-        const $orgs = this.$sidePanelHeader.find('.nav-sidepanel__org-name');
+        const $orgs = this.$orgList.find('.nav-sidepanel__org-name');
 
         expect($orgs.length).toEqual(this.orgs.length);
         this.orgs.forEach((org, i) => expect($($orgs[i]).text()).toBe(org.name));
@@ -387,7 +375,6 @@ describe('cfNavSidepanel directive', () => {
         this.$scope.setAndGotoSpace(space);
         this.emulateSpacePage(space, org);
         this.$scope.$apply();
-        this.$scope.openSidePanel();
 
         const $space = this.$spacesContainer.find('.nav-sidepanel__space-name:nth-child(2)');
 
@@ -441,7 +428,6 @@ describe('cfNavSidepanel directive', () => {
     describe('Close button', function () {
       it('should close side panel if open', function () {
         const $closeBtn = this.$sidePanel.find('.nav-sidepanel__close-btn');
-        this.$scope.openSidePanel();
         this.$scope.$apply();
         this.expectSidePanelVisibility(true);
         $closeBtn.click();

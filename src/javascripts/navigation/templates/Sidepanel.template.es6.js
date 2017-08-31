@@ -48,7 +48,7 @@ function sidepanel () {
       lineHeight: 1.5
     },
     ngClass: '{"nav-sidepanel--slide-in": sidePanelIsShown, "nav-sidepanel--slide-out": !sidePanelIsShown}',
-    ngClick: 'orgDropdownIsShown && closeOrgsDropdown()',
+    ngClick: 'closeOrgsDropdown()',
     dataTestId: 'sidepanel'
   }, [
     organizationSelector(),
@@ -78,7 +78,8 @@ function organizationSelector () {
   const currOrgText = h('.nav-sidepanel__org-selector', {
     style: {
       flexGrow: 2,
-      minWidth: 0
+      minWidth: 0,
+      overflow: 'hidden'
     }
   }, [
     h('div', {
@@ -107,7 +108,7 @@ function organizationSelector () {
     ])
   ]);
 
-  return h('.nav-sidepanel__header', {
+  return [h('.nav-sidepanel__header', {
     style: {
       display: 'flex',
       alignItems: 'center',
@@ -119,13 +120,12 @@ function organizationSelector () {
       transition: 'background-color 0.1s ease-in-out'
     },
     ngClass: 'orgDropdownIsShown ? "nav-sidepanel__header--is-active": ""',
-    ngClick: '!orgDropdownIsShown && openOrgsDropdown($event);'
+    ngClick: 'openOrgsDropdown($event);'
   }, [
     currOrgIcon,
     currOrgText,
-    h('span', { style: extend(triangleDown()) }),
-    orgListDropdown()
-  ]);
+    h('span', { style: extend(triangleDown()) })
+  ]), orgListDropdown()].join('');
 }
 
 function orgListDropdown () {
@@ -226,7 +226,7 @@ function orgSpaces () {
         overflowY: 'auto'
       }
     }, [
-      h('p.nav-sidepanel__space-name', {
+      h('p.nav-sidepanel__space-name.u-truncate', {
         ngRepeat: 'space in spacesByOrg[currOrg.sys.id] track by space.data.sys.id',
         ngClass: '{"nav-sidepanel__space-name--is-active": currSpace && currSpace.sys.id === space.data.sys.id}',
         ngClick: 'setAndGotoSpace(space.data)',
@@ -279,7 +279,8 @@ function noSpacesMsg () {
     h('button.btn-action', {
       style: {
         width: '44%',
-        marginTop: '10px'
+        marginTop: '10px',
+        whteSpace: 'nowrap'
       },
       ngIf: 'canCreateSpaceInCurrOrg',
       ngClick: 'showCreateSpaceModal()'

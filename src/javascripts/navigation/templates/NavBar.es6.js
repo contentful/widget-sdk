@@ -1,4 +1,5 @@
 import {h} from 'utils/hyperscript';
+import {isBoolean} from 'lodash';
 
 /**
  * @ngdoc method
@@ -15,7 +16,9 @@ import {h} from 'utils/hyperscript';
  *   title: {String},
  *   dataViewType: {String}, // test identificator
  *   icon: {String?},
- *   if: {String?} // ngIf expression
+ *   if: {String?}, // ngIf expression
+ *   inheritUrlParams: {Boolean?} // if links should inherit url params,
+ *                                   default: true
  * }
  * or for dropdown:
  * {
@@ -28,8 +31,6 @@ import {h} from 'utils/hyperscript';
  *     { title, sref, rootSref, if }
  *   ]
  * }
- * @scope.requires {ui.router.state.$state} $state for highlighting the
- * active nav item.
  */
 export default function (listItems = []) {
   return h('nav.nav-bar', [
@@ -42,9 +43,11 @@ export default function (listItems = []) {
 }
 
 function navbarItem (data, tabIndex = 0) {
+  const inheritUrlParams = isBoolean(data.inheritUrlParams) ? data.inheritUrlParams : true;
   return h('a.nav-bar__link', {
     uiSrefActive: `{ "is-active": "${data.rootSref || data.sref}" }`,
     uiSref: data.sref,
+    uiSrefOpts: `{ inherit: ${inheritUrlParams} }`,
     dataViewType: data.dataViewType || '',
     tabindex: String(tabIndex)
   }, [
@@ -84,7 +87,8 @@ function navbarDropdownItem (data) {
   const attrs = {
     role: 'menuitem',
     uiSrefActive: `{ "selected": "${data.rootSref || data.sref}" }`,
-    uiSref: data.sref
+    uiSref: data.sref,
+    dataViewType: data.dataViewType || ''
   };
   if (data.if) {
     attrs.ngIf = data.if;

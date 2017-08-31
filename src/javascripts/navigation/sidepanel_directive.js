@@ -8,6 +8,9 @@ angular.module('contentful')
  * This directive display the new navigation side panel.
  */
 .directive('cfNavSidepanel', ['require', function (require) {
+  var $window = require('$window');
+  var keycodes = require('keycodes');
+
   var accessChecker = require('accessChecker');
   var orgRoles = require('services/OrganizationRoles');
   var tokenStore = require('services/TokenStore');
@@ -28,8 +31,16 @@ angular.module('contentful')
     },
     replace: true,
     controller: ['$scope', function ($scope) {
-      $scope.orgDropdownIsShown = false;
       var navState;
+      var win = $($window);
+
+      win.on('keyup', handleEsc);
+
+      $scope.$on('$destroy', function () {
+        win.off('keyup', handleEsc);
+      });
+
+      $scope.orgDropdownIsShown = false;
 
       K.onValueScope($scope, orgs$, function (orgs) {
         $scope.orgs = orgs || [];
@@ -48,52 +59,58 @@ angular.module('contentful')
       });
 
       $scope.setCurrOrg = setCurrOrg;
-      $scope.closeSidePanel = function () {
-        $scope.sidePanelIsShown = false;
-      };
-
-      $scope.openSidePanel = function () {
-        $scope.orgDropdownIsShown = false;
-        $scope.sidePanelIsShown = true;
-      };
-
-      $scope.openOrgsDropdown = function ($event) {
-        if (!$scope.orgDropdownIsShown) {
-          $scope.orgDropdownIsShown = true;
-
-          // Don't bubble click event to container that would close the dropdown
-          if ($event) { $event.stopPropagation(); }
-        }
-      };
-
-      $scope.closeOrgsDropdown = function () {
-        $scope.orgDropdownIsShown = false;
-      };
-
+      $scope.closeSidePanel = closeSidePanel;
+      $scope.openOrgsDropdown = openOrgsDropdown;
+      $scope.closeOrgsDropdown = closeOrgsDropdown;
       $scope.gotoOrgSettings = function () {
-        $scope.closeSidePanel();
+        closeSidePanel();
         Navigator.go({
           path: ['account', 'organizations', 'subscription'],
           params: { orgId: $scope.currOrg.sys.id }
         });
       };
       $scope.createNewOrg = function () {
-        $scope.closeSidePanel();
+        closeSidePanel();
         Navigator.go({
           path: ['account', 'organizations', 'new']
         });
       };
       $scope.setAndGotoSpace = function (space) {
-        $scope.closeSidePanel();
+        closeSidePanel();
         Navigator.go({
           path: ['spaces', 'detail'],
           params: { spaceId: space.sys.id }
         });
       };
       $scope.showCreateSpaceModal = function () {
-        $scope.closeSidePanel();
+        closeSidePanel();
         showCreateSpaceModal($scope.currOrg.sys.id);
       };
+
+      function handleEsc (ev) {
+        if (ev.keyCode === keycodes.ESC) {
+          $scope.$apply(closeSidePanel);
+        }
+      }
+
+      function closeSidePanel () {
+        closeOrgsDropdown();
+        $scope.sidePanelIsShown = false;
+      }
+
+      function openOrgsDropdown ($event) {
+        if (!$scope.orgDropdownIsShown) {
+          $scope.orgDropdownIsShown = true;
+
+          // Don't bubble click event to container that would close the dropdown
+          $event.stopPropagation();
+        }
+      }
+
+
+      function closeOrgsDropdown () {
+        $scope.orgDropdownIsShown = false;
+      }
 
       function setCurrOrg (org) {
         $scope.currOrg = org;

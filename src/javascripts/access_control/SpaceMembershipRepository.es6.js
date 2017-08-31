@@ -13,9 +13,6 @@ const PER_PAGE = 100;
  *
  * This object must only be created by 'spaceContext'. It is mocked in
  * 'mocks/space_context'
- *
- * TODO Merge 'invite' and 'inviteAdmin'. The logic should be
- * determined by the 'roleId' argument. Same for 'changeRoleTo'.
  */
 export function create (spaceEndpoint) {
   return {

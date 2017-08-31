@@ -15,11 +15,13 @@ angular.module('contentful')
     restrict: 'E',
     scope: {},
     controllerAs: 'nav',
-    controller: ['$scope', function ($scope) {
+    controller: ['$scope', '$stateParams', function ($scope, $stateParams) {
       // Begin feature flag code - feature-bv-06-2017-use-new-navigation
       var LD = require('utils/LaunchDarkly');
       LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation');
       // End feature flag code - feature-bv-06-2017-use-new-navigation
+
+      this.spaceId = $stateParams.spaceId;
 
       this.canNavigateTo = function (section) {
         if (!spaceContext.space || spaceContext.space.isHibernated()) {
@@ -76,25 +78,31 @@ angular.module('contentful')
         children: [
           {
             sref: 'spaces.detail.settings.space',
+            dataViewType: 'spaces-settings-space',
             title: '{{ useNewNavigation ? "General" : "Space" }}'
           }, {
             sref: 'spaces.detail.settings.locales.list',
+            dataViewType: 'spaces-settings-locales',
             title: 'Locales',
             rootSref: 'spaces.detail.settings.locales'
           }, {
             sref: 'spaces.detail.settings.users.list',
+            dataViewType: 'spaces-settings-users',
             title: 'Users',
             rootSref: 'spaces.detail.settings.users'
           }, {
             sref: 'spaces.detail.settings.roles.list',
+            dataViewType: 'spaces-settings-roles',
             title: 'Roles',
             rootSref: 'spaces.detail.settings.roles'
           }, {
             sref: 'spaces.detail.settings.webhooks.list',
+            dataViewType: 'spaces-settings-webhooks',
             title: 'Webhooks',
             rootSref: 'spaces.detail.settings.webhooks'
           }, {
             sref: 'spaces.detail.settings.content_preview.list',
+            dataViewType: 'spaces-settings-content-preview',
             title: 'Content preview',
             rootSref: 'spaces.detail.settings.content_preview'
           }
