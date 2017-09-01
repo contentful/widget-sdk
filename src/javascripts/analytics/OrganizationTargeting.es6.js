@@ -36,6 +36,8 @@ const FEATURE_TO_ORG_IDS = {
   view_roles: [
     // Jakub's private org (prod)
     '2d1a93a348d003ae117ee423cb9e89e4',
+    // Thomas's private org (staging)
+    '228115339fe15bc730c698b0529cddd6',
     // Contentful main (prod)
     '281d50856fc72daca2e39b4e68bdb3ee',
     // Google Docs Test (preview)
