@@ -13,7 +13,10 @@ describe('widgets/API', function () {
 
     // API constructor parameters
     const spaceMembership = {
-      user: {},
+      sys: {},
+      user: {
+        sys: {}
+      },
       roles: []
     };
 

@@ -17,7 +17,10 @@ describe('Extension SDK', function () {
     spaceContext.space = { data: {
       sys: {},
       spaceMembership: {
-        user: {},
+        sys: {},
+        user: {
+          sys: {}
+        },
         roles: []
       }
     }};
@@ -493,7 +496,7 @@ describe('Extension SDK', function () {
         sys: {},
         spaceMembership: {
           admin: false,
-          sys: 'OMITTED',
+          sys: { id: 'SMID' },
           roles: [{
             sys: 'OMITTED',
             name: 'Assistant to the regional manager',
@@ -502,9 +505,10 @@ describe('Extension SDK', function () {
             permissions: {}
           }],
           user: {
-            sys: 'OMITTED',
+            sys: { id: 'b33ts' },
             firstName: 'Dwight',
-            lastName: 'Schrute'
+            lastName: 'Schrute',
+            email: 'dwight@dundermifflin.com'
           }
         }
       }};
@@ -512,10 +516,13 @@ describe('Extension SDK', function () {
 
     it('makes user data available', function* (api) {
       expect(api.user).toEqual({
+        sys: { id: 'b33ts' },
         firstName: 'Dwight',
         lastName: 'Schrute',
+        email: 'dwight@dundermifflin.com',
         spaceMembership: {
           admin: false,
+          sys: { id: 'SMID' },
           roles: [{
             name: 'Assistant to the regional manager',
             description: 'Not “Assistant regional manager”'
