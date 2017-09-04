@@ -14,6 +14,8 @@
     text-align: center
     margin-top: 100px
     color: $colors.text-light
+    text-overflow: ellipsis
+    overflow: hidden
 
 .entity-selector__item
   cursor: pointer
@@ -46,12 +48,11 @@
   margin-right: 0
 
 
-// Special styling of "Users" entity selector.
-// TODO: Merge with default styles on entity selector redesign if applicable.
-.entity-selector-dialog--for-user-entities
+.entity-selector-dialog
   width: 66vw
   max-width: 720px
 
+// Special styling of "Users" entity selector.
 .entity-selector-dialog--for-user-entities .entity-selector
   &__mode-switcher // TODO: Get rid of this general assumption that we don't want to show this.
     display: none
