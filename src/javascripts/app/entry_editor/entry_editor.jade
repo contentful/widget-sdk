@@ -10,7 +10,7 @@ div.entry-editor.workbench
         reference-context="referenceContext")
   header.workbench-header
     cf-breadcrumbs
-    cf-icon.workbench-header__icon(name="page-entries")
+    cf-icon.workbench-header__icon(name="page-content", scale="0.75")
     h1.workbench-header__title
       | {{ title }}
       cf-knowledge-base.workbench-header__kb-link(target="entry")
@@ -36,7 +36,7 @@ div.entry-editor.workbench
 
   .workbench-main
     .workbench-main__content(ui-on-scroll="scroll-editor" ui-set-scroll="initialEditorScroll")
-      cf-editor-status-notification(status="otDoc.status$" entity-label="entry")
+      cf-component-bridge(component="entityStatusComponent")
       .entity-editor-form
         cf-error-list.form-box-error(cf-error-path="['fields']")
         cf-entity-field(ng-repeat="widget in widgets track by widget.fieldId")

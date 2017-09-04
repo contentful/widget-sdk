@@ -27,7 +27,7 @@ function steps () {
     dataTestId: 'step-{{step.id}}'
   }, [
     h('.onboarding-step__icon', [
-      h('cf-icon', {name: '{{step.icon}}', scale: '0.6'})
+      h('cf-icon', {name: '{{step.icon}}', scale: '0.5'})
     ]),
     h('.onboarding-step__text', [
       h('h4.onboarding-step__heading', ['{{step.title}}']),

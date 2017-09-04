@@ -3,7 +3,7 @@ include ../entity_editor/entity_editor.mixins.jade
 div.asset-editor.workbench
   header.workbench-header
     cf-breadcrumbs
-    cf-icon.workbench-header__icon(name="page-media")
+    cf-icon.workbench-header__icon(name="page-media", scale="0.75")
     h1.workbench-header__title
       | {{ title }}
       cf-knowledge-base.workbench-header__kb-link(target="asset")
@@ -19,7 +19,7 @@ div.asset-editor.workbench
 
   .workbench-main
     .workbench-main__content
-      cf-editor-status-notification(status="otDoc.status$" entity-label="asset")
+      cf-component-bridge(component="entityStatusComponent")
 
       .entity-editor-form
         cf-error-list.form-box-error(cf-error-path="['fields']")

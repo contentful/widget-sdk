@@ -8,7 +8,7 @@ angular.module('contentful')
   var template = h('header.workbench-header.x--with-nav', [
     h('cf-breadcrumbs'),
     h('.page-header', [
-      h('cf-icon.workbench-header__icon', {name: 'page-api'}),
+      h('cf-icon.workbench-header__icon', {name: 'page-apis', scale: '0.75'}),
       h('h1.workbench-header__title', [
         'APIs',
         h('cf-knowledge-base.workbench-header__kb-link', {target: 'api_key'})

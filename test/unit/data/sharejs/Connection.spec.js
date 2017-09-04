@@ -83,14 +83,14 @@ describe('data/sharejs/Connection', function () {
       };
 
       const connection = this.create('HOST', 'SPACE');
-      const readOnly = K.createMockProperty(false);
+      const shouldOpen$ = K.createMockProperty(true);
 
-      this.docLoader = connection.getDocLoader(this.entity, readOnly);
+      this.docLoader = connection.getDocLoader(this.entity, shouldOpen$);
       this.docValues = K.extractValues(this.docLoader.doc);
       this.$apply();
 
       this.setReadOnly = (val) => {
-        readOnly.set(val);
+        shouldOpen$.set(!val);
       };
     });
 

@@ -33,7 +33,7 @@ export default function () {
     }, ['Save'])
   ];
   return h('.workbench', [
-    Workbench.header(title, 'page-api', actions),
+    Workbench.header(title, 'page-apis', actions),
     h('cf-loader', {watchStateChange: 'true'}),
     main()
   ]);

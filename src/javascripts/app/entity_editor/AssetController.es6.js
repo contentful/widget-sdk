@@ -17,6 +17,7 @@ import * as Focus from './Focus';
 import initDocErrorHandler from './DocumentErrorHandler';
 import {makeNotify} from './Notifications';
 import installTracking from './Tracking';
+import renderStatusNotification from './StatusNotification';
 
 export default function create ($scope, editorData) {
   $state.current.data = $scope.context = {};
@@ -45,6 +46,10 @@ export default function create ($scope, editorData) {
   // TODO rename the scope property
   $scope.otDoc = editorData.openDoc(K.scopeLifeline($scope));
   initDocErrorHandler($scope, $scope.otDoc.state.error$);
+
+  K.onValueScope($scope, $scope.otDoc.status$, (status) => {
+    $scope.entityStatusComponent = renderStatusNotification(status, 'asset');
+  });
 
   installTracking(entityInfo, $scope.otDoc, K.scopeLifeline($scope));
 

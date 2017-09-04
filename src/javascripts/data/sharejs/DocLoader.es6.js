@@ -52,20 +52,20 @@ export const DocLoad = makeSum({
  * @name data/ShareJS/Connection/DocLoader#create
  * @param {DocWrapper} docWrapper
  * @param {Property<string>} connectionState$
- * @param {Property<boolean>} readOnly$
+ *   Holds the global ShareJS connection state.
+ * @param {Property<boolean>} shouldOpen$
+ *   Indicates wheter we want to establish a connection.
  */
-export function create (docWrapper, connectionState$, readOnly$) {
+export function create (docWrapper, connectionState$, shouldOpen$) {
   // The state of the current request for a document. Might be null in
   // case it does not exist yet.
   let currentDocRequest = null;
 
   // Property<{state, shouldOpen}>
-  // 'state' is the string that describes the connection state and
-  // 'shouldOpen' is the inverted value of 'readOnly'
   const requestOpenDoc = K.combine(
-    [connectionState$, readOnly$],
-    function (connectionState, readOnly) {
-      return {connectionState, shouldOpen: !readOnly};
+    [connectionState$, shouldOpen$],
+    function (connectionState, shouldOpen) {
+      return {connectionState, shouldOpen};
     }
   ).skipDuplicates().toProperty();
 
@@ -74,7 +74,7 @@ export function create (docWrapper, connectionState$, readOnly$) {
   const docLoad = requestOpenDoc.flatMapLatest(({connectionState, shouldOpen}) => {
     // TODO we should separate this into two services: One that
     // provides a document stream based on the connection state and
-    // another one, based on the former, that handles the 'readOnly'
+    // another one, based on the former, that handles the 'shouldOpen'
     // state.
     if (connectionState === 'disconnected') {
       close();
