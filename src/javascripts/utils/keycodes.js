@@ -11,4 +11,7 @@ angular.module('cf.utils')
   TAB        : 9,
   BACKSLASH  : 220,
   P          : 80,
+  N          : 78,
+  H          : 72,
+  SPACE      : 32
 });

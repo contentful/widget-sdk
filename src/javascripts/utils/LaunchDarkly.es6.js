@@ -11,7 +11,6 @@ import {
   onValueScope
 } from 'utils/kefir';
 
-
 let client;
 const DEFAULT_VAL = null;
 

@@ -21,6 +21,7 @@ import renderStatusNotification from './StatusNotification';
 
 export default function create ($scope, editorData) {
   $state.current.data = $scope.context = {};
+  $scope.context.ready = true;
   $scope.editorData = editorData;
 
   // add list view as parent if it's a deep link to the media/asset

@@ -185,3 +185,4 @@ yet).
 | experiment          | start                                 | <code>id: string<br />variation: bool</code>
 | experiment          | interaction                           | <code>id: string<br />variation: bool<br />interaction_context: string</code>
 | personal_access_token | action                              | <code>action: string<br>patId: string</code>
+| contextual_help     | action                                | <code>action: string<br>isIntro: bool</code>
