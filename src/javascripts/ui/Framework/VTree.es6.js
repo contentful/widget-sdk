@@ -38,6 +38,10 @@ function checkProps (props) {
       if (typeof value !== 'function') {
         throw new TypeError('Ref handler must be a function');
       }
+    } else if (key === 'disabled' || key === 'checked') {
+      if (typeof value !== 'boolean') {
+        throw new TypeError(`Element property "${key}" must be a boolean`);
+      }
     } else if (key.substr(0, 3) === 'on-') {
       if (typeof value !== 'function') {
         throw new TypeError(`Event handler ${key} must be a function`);
