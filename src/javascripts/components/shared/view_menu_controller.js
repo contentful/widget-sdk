@@ -179,6 +179,11 @@ angular.module('contentful')
     $scope.insideInlineEditor = false;
   });
 
+  // This is different in from `viewMenuEditable` in that it does not
+  // switch to false when the user is currently editing a folder or
+  // view name.
+  $scope.canEdit = spaceContext.uiConfig.canEdit;
+
   $scope.$watch('insideInlineEditor', function (editing) {
     var canEdit = spaceContext.uiConfig.canEdit && !editing;
     $scope.viewMenuEditable = canEdit;

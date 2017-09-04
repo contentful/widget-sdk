@@ -25,6 +25,15 @@ angular.module('contentful')
         $scope.editViewRoles = _.noop;
       }
 
+      $scope.$watch(function () {
+        // Returns true when there are no views in the folder
+        return $scope.folder.views.every(function (view) {
+          return !isVisible(view);
+        });
+      }, function (allHidden) {
+        $scope.folderVisible = !allHidden || $scope.canEdit;
+      });
+
       /**
        * If the view has a `roles` property we only return true if the
        * user has one of the roles given.
