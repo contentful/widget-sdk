@@ -3,7 +3,7 @@
 angular.module('contentful')
 .directive('cfViewFolder', ['require', function (require) {
   var spaceContext = require('spaceContext');
-  var openRoleSelector = require('app/RoleSelector').default;
+  var openRoleSelector = require('app/ContentList/RoleSelector').default;
   var Tracking = require('analytics/events/SearchAndViews');
 
   return {

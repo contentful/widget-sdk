@@ -19,7 +19,7 @@ import { cloneDeep, assign, mapValues, omit, values } from 'lodash';
  * entity data.
  *
  * Currently covered
- * - /api_keys, /preview_api_keys
+ * - /api_keys, /preview_api_keys/ roles
  *   - /  GET collection
  *   - /:id  GET, PUT resource
  * - /entries/:id, /assets/:id
@@ -27,6 +27,13 @@ import { cloneDeep, assign, mapValues, omit, values } from 'lodash';
  *   - State changes, i.e. PUT and DELETE to /published and /archived
  * - /ui_config
  *   - GET and PUT
+ *
+ * TODO Entity stores should provide a better interface to add entities
+ * so that we do not need to specifiy the sys properties. E.g.
+ *
+ *     stores.api_keys.set('xyz', data)
+ *     stores.api_keys.get('xyz').sys  // => { id: 'xyz', type: 'DeliveryKey', ... }
+ *
  */
 export default function create () {
   const endpoints = {
@@ -34,7 +41,8 @@ export default function create () {
     assets: makeEntityEndpoint('Assets'),
     ui_config: makeSingletonEndpoint(),
     api_keys: makeGenericEndpoint(),
-    preview_api_keys: makeGenericEndpoint()
+    preview_api_keys: makeGenericEndpoint(),
+    roles: makeGenericEndpoint()
   };
 
   const stores = mapValues(endpoints, (ep) => ep.store);
