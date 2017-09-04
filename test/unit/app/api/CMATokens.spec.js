@@ -15,6 +15,7 @@ describe('app/api/CMATokens', function () {
       $provide.factory('defer', ($timeout) => {
         return $timeout;
       });
+      $provide.stubLaunchDarkly();
     });
 
     // TODO build helper for HTTP mocking

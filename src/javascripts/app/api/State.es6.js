@@ -1,4 +1,4 @@
-import {assign} from 'lodash';
+import {assign, set as setAtPath} from 'lodash';
 import {h} from 'utils/hyperscript';
 import baseState from 'states/base';
 import * as contextHistory from 'contextHistory';
@@ -38,11 +38,13 @@ const apiKeyEditorState = {
       crumbFactory.CDAKeyList(),
       crumbFactory.CDAKey($stateParams.apiKeyId, $scope.context)
     ]);
+
+    setAtPath($scope, ['context', 'ready'], true);
   }],
   template: editorTemplate()
 };
 
-const keyDetail = assign({
+const keyDetail = baseState(assign({
   name: 'detail',
   url: '/:apiKeyId',
   resolve: {
@@ -50,7 +52,7 @@ const keyDetail = assign({
       return spaceContext.apiKeyRepo.get($stateParams.apiKeyId);
     }]
   }
-}, apiKeyEditorState);
+}, apiKeyEditorState));
 
 
 export default {
