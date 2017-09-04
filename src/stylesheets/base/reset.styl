@@ -7,11 +7,9 @@
 :-moz-ui-invalid
   box-shadow: none
 
-a:focus
-  outline: 0
-
-button:focus
-  outline: 0
+a, button, input[type="checkbox"], input[type="radio"]
+  &:focus
+    outline: 0
 
 $link-reset()
   &, &:link, &:hover, &:visited
