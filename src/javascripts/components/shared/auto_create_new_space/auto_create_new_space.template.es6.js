@@ -9,7 +9,11 @@ export default function () {
         borderRadius: '3px'
       }
     }, [
-      h('.modal-dialog__content', [
+      h('.modal-dialog__content', {
+        style: {
+          paddingBottom: '30px'
+        }
+      }, [
         h('div', {
           style: {
             display: 'flex',
@@ -19,7 +23,7 @@ export default function () {
         }, [
           h('div', {
             style: {
-              marginBottom: '20px'
+              height: '43px'
             }
           }, [
             h('.loader__spinner', {
@@ -41,8 +45,7 @@ export default function () {
         ]),
         h('.auto-create-space-modal__overview', {
           style: {
-            padding: '0 80px',
-            marginTop: '20px'
+            padding: '0 80px'
           }
         }, [
           overviewItem(
@@ -51,7 +54,7 @@ export default function () {
             'Easily customize the structure of your content fields using content types.'
           ),
           overviewItem(
-            'entries',
+            'content',
             'Versioned content',
             'Manage content in multiple languages which is automatically versioned.'
           ),
@@ -61,7 +64,7 @@ export default function () {
             'Manage assets such as images, videos while benefiting from our caching CDN.'
           ),
           overviewItem(
-            'api',
+            'apis',
             'RESTful APIs',
             'Quickly deliver your content to any of your platforms or update it programmatically using our APIs.'
           )
@@ -87,7 +90,7 @@ function overviewItem (type, heading, text) {
   return h('div', {
     style: {
       display: 'flex',
-      marginBottom: '20px'
+      marginTop: '30px'
     }
   }, [
     h('cf-icon', {
@@ -103,7 +106,11 @@ function overviewItem (type, heading, text) {
           marginBottom: '0'
         }
       }, [`${heading}`]),
-      h('p', [`${text}`])
+      h('p', {
+        style: {
+          marginBottom: '0'
+        }
+      }, [`${text}`])
     ])
   ]);
 }
