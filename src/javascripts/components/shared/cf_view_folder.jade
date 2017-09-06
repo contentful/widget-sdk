@@ -1,4 +1,6 @@
-header.filter-list-header.filter-list-row(ng-class="{'filter-list-row-draggable': viewMenuEditable && regularFolder}")
+header.filter-list-header.filter-list-row(
+  ng-if="folderVisible"
+  ng-class="{'filter-list-row-draggable': viewMenuEditable && regularFolder}")
   .filter-list-row-main.filter-list-row-truncate(cf-inline-editor="folder" ng-model="folder.title" ng-change="nameChanged()" required="true")
   .filter-list-row-middle.filter-list-row-hover.hover-remove(ng-if="viewMenuEditable && regularFolder")
     i.fa.fa-pencil(ng-click="editName(folder)")
