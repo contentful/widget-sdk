@@ -129,16 +129,6 @@ angular.module('contentful').directive('cfContextualHelpSidebar', ['require', fu
         }
       }
 
-
-      function handleSpace (introStepsRemaining) {
-        // Don't do anything if all steps have been completed
-        if (introStepsRemaining) {
-          ContextualSidebarStore.continueIntro();
-          render();
-          ContextualSidebarStore.completeIntro();
-        }
-      }
-
       function handleKeydown (evt) {
         caseof(evt.keyCode, [
           [KEYCODES.ESC, ContextualSidebarStore.minimize],
@@ -155,7 +145,7 @@ angular.module('contentful').directive('cfContextualHelpSidebar', ['require', fu
             if (state.isExpanded) {
               evt.preventDefault();
               evt.stopPropagation();
-              handleSpace(state.introStepsRemaining);
+              ContextualSidebarStore.continueIntro();
             }
           }],
           [otherwise, _.noop]
