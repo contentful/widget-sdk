@@ -24,7 +24,7 @@ const TOKEN_INFO_REFRESH_INTERVAL = 5 * 60 * 1000;
 const fetchInfo = makeFetchWithAuth(auth);
 
 const userBus = K.createPropertyBus(null);
-const spacesBus = K.createPropertyBus([]);
+const spacesBus = K.createPropertyBus(null);
 const organizationsBus = K.createPropertyBus([]);
 
 // Variable storing the token data, so that it can be accessed synchronously.
@@ -69,9 +69,13 @@ export const organizations$ = organizationsBus.property;
  * The list of spaces from the token grouped by organization
  */
 export const spacesByOrganization$ = spacesBus.property.map(function (spaces) {
-  return groupBy(spaces || [], function (space) {
-    return space.data.organization.sys.id;
-  });
+  if (!spaces) {
+    return null;
+  } else {
+    return groupBy(spaces, function (space) {
+      return space.data.organization.sys.id;
+    });
+  }
 });
 
 export function getTokenLookup () { return tokenInfo; }

@@ -100,10 +100,11 @@ function overviewItem (type, heading, text) {
       }
     }),
     h('div', {}, [
-      h('p', {
+      h('h3', {
         style: {
           fontWeight: 'bold',
-          marginBottom: '0'
+          margin: '0',
+          marginBottom: '8px'
         }
       }, [`${heading}`]),
       h('p', {
