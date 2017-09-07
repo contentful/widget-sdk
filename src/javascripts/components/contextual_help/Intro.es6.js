@@ -64,6 +64,7 @@ function content ({ state, actions }) {
       h('a.text-link', {
         onClick: (e) => {
           e.preventDefault();
+          actions.completeIntro();
           trackLinkClick($state.href(entriesList));
           if ($state.is(entriesList)) {
             actions.render();

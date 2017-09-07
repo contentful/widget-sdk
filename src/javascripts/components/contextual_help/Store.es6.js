@@ -43,7 +43,8 @@ export function init (userId, state, actions) {
         toggle,
         minimize,
         toggleVisibility,
-        dismissCallout
+        dismissCallout,
+        completeIntro
       }
     }
   );
@@ -100,6 +101,7 @@ export function continueIntro () {
       introStepsRemaining: contextualHelpStore.state.introStepsRemaining
     });
     events.continueIntro();
+    contextualHelpStore.actions.render();
   }
 }
 
