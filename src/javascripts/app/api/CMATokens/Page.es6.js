@@ -68,8 +68,7 @@ export function initController ($scope, auth) {
       return state;
     },
     [OpenCreateDialog]: (state) => {
-      openCreateDialog(tokenResourceManager)
-        .then(() => actions.Reload());
+      openCreateDialog(tokenResourceManager, actions.Reload);
       return state;
     },
     [ReceiveResponse]: (state, result) => match(result, {
