@@ -93,7 +93,7 @@ export function dismissCallout () {
 }
 
 export function continueIntro () {
-  if (!contextualHelpStore.state.introCompleted && !contextualHelpStore.state.isHidden) {
+  if (contextualHelpStore.state.introStepsRemaining && !contextualHelpStore.state.isHidden) {
     contextualHelpStore.state.introProgress += 1;
     contextualHelpStore.state.introStepsRemaining -= 1;
     setStoreValue({
