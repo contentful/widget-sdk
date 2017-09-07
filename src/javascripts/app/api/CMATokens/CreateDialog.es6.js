@@ -13,17 +13,20 @@ import {track} from 'analytics/Analytics';
  *
  * The 'auth' parameter is provided by the 'Authentication' module to
  * authenticate API requests.
+ *
+ * The 'successHandler' parameter is provided by a module creating this
+ * dialog window, and it will be called after successful token creation.
  */
-export default function open (tokenResourceManager) {
+export default function open (tokenResourceManager, successHandler) {
   return openDialog({
     template: dialogTemplate(),
-    controller: ($scope) => initController(tokenResourceManager, $scope),
+    controller: ($scope) => initController(tokenResourceManager, $scope, successHandler),
     backgroundClose: false
   }).promise;
 }
 
 
-function initController (tokenResourceManager, $scope) {
+function initController (tokenResourceManager, $scope, successHandler) {
   $scope.input = {};
   $scope.state = {input: true};
 
@@ -35,6 +38,9 @@ function initController (tokenResourceManager, $scope) {
         .then((data) => {
           track('personal_access_token:action', {action: 'create', patId: data.sys.id});
           showSuccess(tokenName, data.token);
+          if (successHandler) {
+            successHandler();
+          }
         }, showFailure);
     }
   });

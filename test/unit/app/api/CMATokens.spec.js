@@ -63,6 +63,37 @@ describe('app/api/CMATokens', function () {
     this.detachContextMenuHandler();
   });
 
+  it('successfully updates the token list with newly created one', function () {
+    this.listTokenHandler.onFirstCall().returns([200, {
+      total: 1,
+      items: [
+        {sys: {id: 'TOKEN-1'}, name: 'TOKEN-1-NAME'}
+      ]
+    }]);
+    this.listTokenHandler.onSecondCall().returns([200, {
+      total: 2,
+      items: [
+        {sys: {id: 'TOKEN-1'}, name: 'TOKEN-1-NAME'},
+        {sys: {id: 'TOKEN-2'}, name: 'TOKEN-2-NAME'}
+      ]
+    }]);
+    this.init();
+    this.container.find('pat.create.open').click();
+    this.$flush();
+    const rowWithFirstToken = this.container.find('pat.tokenRow.TOKEN-1');
+    const rowWithNewToken = this.container.find('pat.tokenRow.TOKEN-2');
+
+    rowWithFirstToken.assertHasText('TOKEN-1-NAME');
+    rowWithNewToken.assertNonExistent();
+
+    this.container.find('pat.create.tokenName').setValue('TOKEN-2-NAME');
+    this.container.find('pat.create.generate').click();
+    this.$flush();
+
+    rowWithFirstToken.assertHasText('TOKEN-1-NAME');
+    rowWithNewToken.assertHasText('TOKEN-2-NAME');
+  });
+
   describe('create dialog', function () {
     beforeEach(function () {
       this.init();
