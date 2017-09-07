@@ -80,7 +80,12 @@ const FEATURE_TO_SPACE_IDS = {
     // TELUS digital C MOB > Accessories (prod)
     '97c56b9d15c6a7ae389d6632877543d4',
     // TELUS digital C MOB > Marketing (prod)
-    'e908a9e5d6ea0330fa5c661d1477c8de'
+    'e908a9e5d6ea0330fa5c661d1477c8de',
+
+    // Redbrick Health ncx7 dev (prod)
+    '471b1d83ad594b3ac79cf2a4fabfc164',
+    // Redbrick Health ncx7 test (prod)
+    '9801776b50ea6c63002cfe821d04fe0c'
   ],
   collections: [
     // Community member interested in testing (prod)
