@@ -21,7 +21,7 @@ afterEach(function () {
 
   // Warn if there is still an element
   const bodyChildren = toArray(document.body.children);
-  const leakedElements = bodyChildren.filter((el) => el.tagName !== 'SCRIPT');
+  const leakedElements = bodyChildren.filter((el) => el.tagName !== 'SCRIPT' && el.tagName !== 'LINK');
   if (leakedElements.length > 0) {
     /* eslint no-console: off */
     console.warn(

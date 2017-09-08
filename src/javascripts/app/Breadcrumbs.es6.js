@@ -44,6 +44,7 @@ export function template () {
               h('a', {
                 uiSref: '{{crumb.link.state}}({{crumb.link.params}})',
                 role: 'link',
+                dataTestId: 'breadcrumbs.crumb.{{crumb.id}}',
                 title: "{{crumb.getTitle().length > 20 ? crumb.getTitle() : ''}}"
               }, [
                 h('cf-icon', {
