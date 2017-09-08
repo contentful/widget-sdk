@@ -1,5 +1,14 @@
 'use strict';
 
+// Widgets, which we need to instantiate, even despite
+// they are not visible. For example, we need a
+// slugEditor in the background, because it depends
+// on a title, even if it is hidden, so we don't have
+// empty string after publishing
+var BACKGROUND_WIDGETS = {
+  slugEditor: true
+};
+
 angular.module('contentful')
 
 /**
@@ -36,7 +45,26 @@ angular.module('contentful')
   });
 
   function updateWidgets () {
-    $scope.widgets = _.filter(controls, widgetIsVisible);
+    $scope.widgets = controls
+      .map(markWidgetVisibility)
+      .filter(widgetShouldBeListed);
+  }
+
+  // we mark them with a property, because we
+  // might want to have an invisible widget
+  // in the background
+  function markWidgetVisibility (widget) {
+    return _.assign({
+      visible: fieldIsVisible(widget.field)
+    }, widget);
+  }
+
+  function widgetShouldBeListed (widget) {
+    if (BACKGROUND_WIDGETS[widget.widgetId]) {
+      return true;
+    } else {
+      return widgetIsVisible(widget);
+    }
   }
 
   function widgetIsVisible (widget) {
