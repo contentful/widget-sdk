@@ -8,6 +8,7 @@ describe('bugsnag', function () {
 
     this.BugsnagStub = {
       disableAutoBreadcrumbsConsole: sinon.stub(),
+      enableNotifyUnhandledRejections: sinon.stub(),
       notify: sinon.stub(),
       notifyException: sinon.stub(),
       refresh: sinon.stub()
