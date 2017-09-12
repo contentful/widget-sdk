@@ -186,7 +186,7 @@ function render (state, actions) {
   }, [
     h('header.modal-dialog__header', [
       h('h1', [
-        'Share view with'
+        'Share view'
       ]),
       h('button.modal-dialog__close', {
         onClick: actions.CancelSelection
@@ -194,12 +194,9 @@ function render (state, actions) {
     ]),
     h('.modal-dialog__only-content', [
       h('p', { style: { lineHeight: '1.7' } }, [
-        `By sharing this view with people who have a different role or
-        roles, you are granting them access to views from their own
-        sidebars. The same view might display different content because
-        the content is tied to a role and its associated permissions.
-        An administrator has access to all of the content within a view
-        or views.`
+        `This view might display different content depending on the role,
+        as different roles may have access to different Content types.
+        Administrators have access to all views.`
       ]),
       vspace(4),
       container({
