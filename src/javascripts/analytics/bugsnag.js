@@ -88,6 +88,8 @@ angular.module('contentful')
     return LazyLoader.get('bugsnag')
     .then(function (_bugsnag) {
       bugsnag = _bugsnag;
+      // Do not patch `console.log`. It messes up stack traces
+      bugsnag.disableAutoBreadcrumbsConsole();
       bugsnag.apiKey = API_KEY;
       bugsnag.notifyReleaseStages = ['staging', 'production'];
       bugsnag.releaseStage = environment.env;
