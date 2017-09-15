@@ -34,13 +34,24 @@ angular.module('contentful')
     } else if (match('update', 'location')) {
       UrlSyncHelper.updateWebappUrl(data.path);
 
+    } else if (matchesError(data, 401)) {
+      authentication.redirectToLogin();
+
     } else if (matchesError(data)) {
       showErrorModal(data);
     } else { tokenStore.refresh(); }
   };
 
-  function matchesError (data) {
-    return data.type === 'error' && /^(4|5)[0-9]{2}$/.test(data.status);
+  function matchesError (data, errorCode) {
+    if (data.type !== 'error') {
+      return false;
+    }
+
+    if (errorCode) {
+      return data.status === errorCode;
+    } else {
+      return /^(4|5)[0-9]{2}$/.test(data.status);
+    }
   }
 
   function makeMessageMatcher (data) {
