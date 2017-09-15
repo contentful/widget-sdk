@@ -24,9 +24,7 @@ angular.module('contentful')
       this.spaceId = $stateParams.spaceId;
 
       this.canNavigateTo = function (section) {
-        if (section === 'extensions') {
-          return !(spaceContext.widgets && _.isEmpty(spaceContext.widgets.getCustom()));
-        } else if (!spaceContext.space || spaceContext.space.isHibernated()) {
+        if (!spaceContext.space || spaceContext.space.isHibernated()) {
           return false;
         } else {
           return accessChecker.getSectionVisibility()[section];
@@ -108,9 +106,8 @@ angular.module('contentful')
             title: 'Content preview',
             rootSref: 'spaces.detail.settings.content_preview'
           }, {
-            if: 'nav.canNavigateTo("extensions")',
             sref: 'spaces.detail.settings.extensions',
-            title: 'UI Extensions'
+            title: 'Extensions'
           }
         ]
       }

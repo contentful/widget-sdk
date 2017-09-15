@@ -1,13 +1,12 @@
 import * as DOM from 'helpers/DOM';
 import attachContextMenuHandler from 'ui/ContextMenuHandler';
 
-describe('app/UiExtensions', function () {
+describe('app/Extensions', function () {
 
   beforeEach(function () {
     module('contentful/test');
 
-    const Template = this.$inject('app/UiExtensions/Template').default;
-    const Controller = this.$inject('app/UiExtensions/Controller').default;
+    const Extensions = this.$inject('app/Extensions/Extensions').default;
 
     this.spaceContext = this.$inject('spaceContext');
     this.spaceContext.cma = {deleteExtension: sinon.stub()};
@@ -22,13 +21,12 @@ describe('app/UiExtensions', function () {
 
     this.detachContextMenuHandler = attachContextMenuHandler(this.$inject('$document'));
 
-
     this.init = function () {
       this.container = DOM.createView($('<div class=client>').get(0));
       $(this.container.element).appendTo('body');
 
-      this.$compileWith(Template(), ($scope) => {
-        Controller($scope);
+      this.$compileWith('<cf-component-bridge component="component" />', ($scope) => {
+        Extensions($scope);
       }).appendTo(this.container.element);
 
       this.$flush();
@@ -45,16 +43,18 @@ describe('app/UiExtensions', function () {
   describe('custom extensions exist', function () {
     beforeEach(function () {
       this.widgets.getCustom.returns({
-        'test': {id: 'test', name: 'Widget 1'},
-        'test2': {id: 'test2', name: 'Widget 2'}
+        'test': {id: 'test', name: 'Widget 1', fieldTypes: ['Number']},
+        'test2': {id: 'test2', name: 'Widget 2', fieldTypes: ['Symbol', 'Text']}
       });
     });
 
     it('lists extensions', function () {
       this.init();
       const list = this.container.find('extensions.list');
-      list.assertHasText('Widget 1');
-      list.assertHasText('Widget 2');
+      const words = ['Widget 1', 'Widget 2', 'Number', 'Symbol, Text'];
+      words.forEach(word => {
+        list.assertHasText(word);
+      });
     });
 
     describe('delete extension', function () {

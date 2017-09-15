@@ -1,9 +1,11 @@
 import {h} from 'ui/Framework';
 import {table} from 'ui/Content/Table';
 import widgets from 'widgets';
-import {container, vspace} from 'ui/Layout';
+import {container} from 'ui/Layout';
 import notification from 'notification';
 import spaceContext from 'spaceContext';
+import Sidebar from 'app/Extensions/Sidebar';
+import Icon from 'svg/page-settings';
 
 export default function controller ($scope) {
   renderWithScope();
@@ -15,28 +17,35 @@ export default function controller ($scope) {
   }
 
   function render (extensions) {
-    return container({padding: '2em 3em'}, [
-      extensions.length ? list(extensions) : empty()
+    return h('.workbench', [
+      h('header.workbench-header', [
+        h('.workbench-header__icon', {
+          style: {transform: 'scale(0.75)'}
+        }, [
+          Icon
+        ]),
+        h('h1.workbench-header__title', [`Extensions (${extensions.length})`])
+      ]),
+      h('.workbench-main', [
+        container({padding: '2em 3em'}, [
+          extensions.length ? list(extensions) : empty()
+        ]),
+        Sidebar()
+      ])
     ]);
   }
 
   function list (extensions) {
     const body = extensions.map((extension) => {
       return h('tr', [
-        h('td', {
-          style: {
-            overflow: 'hidden',
-            whiteSpace: 'nowrap',
-            textOverflow: 'ellipsis'
-          }
-        }, [
-          h('h4', {style: {marginTop: '0'}}, [extension.name]),
-          h('div', {style: {fontSize: '0.85em'}}, [`(ID: ${extension.id})`])
+        h('td', [extension.name]),
+        h('td', [
+          h('code', [extension.id])
         ]),
-        h('td', {style: {
-          width: '7em',
-          textAlign: 'right'
-        }}, [
+        h('td', [
+          extension.fieldTypes.join(', ')
+        ]),
+        h('td', [
           deleteButton(extension)
         ])
       ]);
@@ -44,12 +53,12 @@ export default function controller ($scope) {
 
     const head = [
       h('th', ['Name']),
-      h('th', [''])
+      h('th', ['ID']),
+      h('th', ['Field types']),
+      h('th', ['Actions'])
     ];
 
     return h('div', {dataTestId: 'extensions.list'}, [
-      h('p', ['The following custom extensions are installed in this space.']),
-      vspace(5),
       table(head, body)
     ]);
   }
@@ -93,8 +102,20 @@ export default function controller ($scope) {
 }
 
 function empty () {
-  return h(
-    'p', {dataTestId: 'extensions.empty'},
-    ['There are no custom extensions currently installed in this space.']
-  );
+  const head = [
+    h('th', ['Name']),
+    h('th', ['ID']),
+    h('th', ['Field types']),
+    h('th', ['Actions'])
+  ];
+
+  return h('div', {dataTestId: 'extensions.empty'}, [
+    table(head, [
+      h('tr', [
+        h('td', [
+          'There are no custom extensions currently installed in this space'
+        ])
+      ])
+    ])
+  ]);
 }
