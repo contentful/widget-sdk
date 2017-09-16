@@ -1,4 +1,4 @@
-import { cloneDeep, constant } from 'lodash';
+import { cloneDeep } from 'lodash';
 import * as I from 'libs/Immutable';
 
 import * as sinon from 'helpers/sinon';
@@ -16,9 +16,9 @@ describe('data/UiConfig/Store', function () {
 
     const contentTypes$ = K.createMockProperty(I.List([{
       data: {
+        sys: {id: 1},
         name: 'bar'
-      },
-      getId: constant(1)
+      }
     }]));
 
     uiConfig = createUiConfigStore(endpoint.request, true, { wrappedItems$: contentTypes$ });
@@ -50,7 +50,7 @@ describe('data/UiConfig/Store', function () {
       expect(this.entriesConfig.get().length).toEqual(3);
     });
 
-    it('#save() creates and updates UiConfig', function* () {
+    it('#save() creates, updates and deletes UiConfig', function* () {
       expect(this.store.default).toBe(undefined);
 
       yield this.entriesConfig.save('DATA1');
@@ -58,11 +58,6 @@ describe('data/UiConfig/Store', function () {
 
       yield this.entriesConfig.save('DATA2');
       expect(this.store.default.entryListViews).toEqual('DATA2');
-    });
-
-    it('#reset() deletes views', function* () {
-      yield this.entriesConfig.save('DATA1');
-      expect(this.store.default.entryListViews).toEqual('DATA1');
 
       yield this.entriesConfig.save(undefined);
       expect(this.store.default.entryListViews).toEqual(undefined);
@@ -76,9 +71,9 @@ describe('data/UiConfig/Store', function () {
     beforeEach(function () {
       mockCt = {
         data: {
+          sys: {id: 1},
           name: 'bar'
-        },
-        getId: _.constant(1)
+        }
       };
     });
 
@@ -136,7 +131,7 @@ describe('data/UiConfig/Store', function () {
           }]
         }]
       };
-      mockCt.getId = constant(2);
+      mockCt.data.sys.id = 2;
 
       yield uiConfig.load();
       yield uiConfig.addOrEditCt(mockCt);

@@ -98,7 +98,7 @@ export default function create (spaceEndpoint, canEdit, publishedCTs) {
     }
 
     const viewIndex = findIndex(contentTypeFolder.views, (view) => {
-      return view.contentTypeId === contentType.getId();
+      return view.contentTypeId === contentType.data.sys.id;
     });
 
     const viewExists = viewIndex > -1;
@@ -121,17 +121,14 @@ export default function create (spaceEndpoint, canEdit, publishedCTs) {
 /**
  * Create a scoped UIConfig for a property on the root UI config.
  *
- * The scoped object gets, saves, and resets only the part of the root object
+ * The scoped object gets and saves only the part of the root object
  * named by `prop`.
  *
  * If the scoped value is not set we use `getDefaults()` to return a default.
- *
- * The `reset()` method will delete the scoped value and return the defaults
- * again.
  */
 function forScope (prop, getDefaults, configRef, saveConfig) {
 
-  return { get, save, reset };
+  return {get, save};
 
   function get () {
     const config = configRef.value;
@@ -145,9 +142,5 @@ function forScope (prop, getDefaults, configRef, saveConfig) {
     configRef.value[prop] = scopeValue;
     return saveConfig(configRef.value)
       .then(() => get());
-  }
-
-  function reset () {
-    return save(undefined);
   }
 }

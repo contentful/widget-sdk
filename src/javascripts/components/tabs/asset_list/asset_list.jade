@@ -39,9 +39,8 @@ header.workbench-header
           | Multiple assets
 
 .workbench-main(ng-hide="showNoAssetsAdvice()")
-  .workbench-main__left-sidebar(
-    ng-show="uiConfig"
-    cf-view-menu="uiConfig.assetListViews")
+  .workbench-main__left-sidebar
+    cf-component-store-bridge(component="savedViewsComponent")
 
   .workbench-main__right-content
     .search-results__count(ng-show="paginator.getTotal() > 0")

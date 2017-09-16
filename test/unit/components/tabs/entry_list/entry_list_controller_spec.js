@@ -68,10 +68,7 @@ describe('Entry List Controller', function () {
     });
 
     it('sets the view', function () {
-      const loaded = _.defaults({
-        title: 'New View'
-      }, view);
-      expect(scope.context.view).toEqual(loaded);
+      expect(scope.context.view).toEqual(view);
       expect(scope.context.view).not.toBe(view);
     });
 

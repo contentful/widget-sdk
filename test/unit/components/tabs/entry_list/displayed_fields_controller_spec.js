@@ -6,7 +6,7 @@ describe('Displayed Fields Controller', function () {
 
     this.mockService('systemFields', {
       getList: sinon.stub().returns([]),
-      getDefaultFields: _.constant([{id: 1}, {id: 2}, {id: 3}])
+      getDefaultFieldIds: () => [1, 2, 3]
     });
 
     this.spaceContext = this.$inject('mocks/spaceContext').init();

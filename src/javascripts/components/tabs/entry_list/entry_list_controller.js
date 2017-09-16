@@ -5,18 +5,36 @@ angular.module('contentful')
  * @ngdoc type
  * @name EntryListController
  */
-.controller('EntryListController', ['$scope', '$injector', function EntryListController ($scope, $injector) {
-  var $controller = $injector.get('$controller');
-  var EntityListCache = $injector.get('EntityListCache');
-  var Paginator = $injector.get('Paginator');
-  var createSelection = $injector.get('selection');
-  var spaceContext = $injector.get('spaceContext');
-  var accessChecker = $injector.get('accessChecker');
-  var entityStatus = $injector.get('entityStatus');
+.controller('EntryListController', ['$scope', 'require', function EntryListController ($scope, require) {
+  var $controller = require('$controller');
+  var EntityListCache = require('EntityListCache');
+  var Paginator = require('Paginator');
+  var createSelection = require('selection');
+  var spaceContext = require('spaceContext');
+  var accessChecker = require('accessChecker');
+  var entityStatus = require('entityStatus');
+  var getBlankView = require('data/UiConfig/Blanks').getBlankEntryView;
+  var initSavedViewsComponent = require('app/ContentList/SavedViewsComponent').default;
 
   var searchController = $controller('EntryListSearchController', {$scope: $scope});
   $controller('DisplayedFieldsController', {$scope: $scope});
-  $controller('EntryListViewsController', {$scope: $scope});
+  $controller('EntryListColumnsController', {$scope: $scope});
+
+  $controller('ListViewsController', {
+    $scope: $scope,
+    getBlankView: getBlankView,
+    preserveStateAs: 'entries',
+    resetList: _.noop
+  });
+
+  initSavedViewsComponent({
+    $scope: $scope,
+    spaceContext: spaceContext,
+    scopedUiConfig: spaceContext.uiConfig.forEntries(),
+    // a view can be assigned to roles only in the Entry List
+    enableRoleAssignment: true
+  });
+
   $scope.entityStatus = entityStatus;
 
   $scope.paginator = Paginator.create();
