@@ -192,5 +192,37 @@ describe('SlugEditor directive', function () {
       this.$apply();
       expect(scope.state).toEqual('unique');
     });
+
+    it('does not show "duplicate" when there are uniqueness errors in the API response', function () {
+      const $duplicateEl = this.compileElement().find('.cfnext-form__field-error');
+      const scope = $duplicateEl.scope();
+
+      this.cfWidgetApi.fieldProperties.schemaErrors$.set([
+        { name: 'unique' }
+      ]);
+      // Let the server respond with one entry
+      this.cfWidgetApi.space.getEntries = sinon.stub().resolves({ total: 1 });
+
+      // Trigger status update
+      this.title.onValueChanged.yield('New Title');
+      this.$apply();
+      expect(scope.hasUniqueError).toEqual(true);
+      expect(scope.state).toEqual('duplicate');
+      expect($duplicateEl.hasClass('ng-hide')).toBe(true);
+    });
+
+    it('does show "duplicate" when there are no uniqueness errors in the API response', function () {
+      const $duplicateEl = this.compileElement().find('.cfnext-form__field-error');
+      const scope = $duplicateEl.scope();
+      // Let the server respond with one entry
+      this.cfWidgetApi.space.getEntries = sinon.stub().resolves({ total: 1 });
+
+      // Trigger status update
+      this.title.onValueChanged.yield('New Title');
+      this.$apply();
+      expect(scope.hasUniqueError).toEqual(false);
+      expect(scope.state).toEqual('duplicate');
+      expect($duplicateEl.hasClass('ng-hide')).toBe(false);
+    });
   });
 });

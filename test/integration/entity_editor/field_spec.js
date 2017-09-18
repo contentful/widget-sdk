@@ -29,6 +29,7 @@ describe('entity editor field integration', function () {
     ]);
 
     this.widget = {
+      visible: true,
       field: {
         id: 'FID',
         localized: true,
