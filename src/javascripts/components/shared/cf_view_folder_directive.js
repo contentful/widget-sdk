@@ -3,8 +3,7 @@
 angular.module('contentful')
 .directive('cfViewFolder', ['require', function (require) {
   var spaceContext = require('spaceContext');
-  var openRoleSelector = require('app/RoleSelector').default;
-  var isFeatureEnabled = require('analytics/OrganizationTargeting').default;
+  var openRoleSelector = require('app/ContentList/RoleSelector').default;
   var Tracking = require('analytics/events/SearchAndViews');
 
   return {
@@ -15,15 +14,9 @@ angular.module('contentful')
         $scope.regularFolder = id !== 'default';
       });
 
-      if (isFeatureEnabled('view_roles', spaceContext.space)) {
-        $scope.isVisible = isVisible;
-        $scope.canAssignViewRoles = canAssignViewRoles;
-        $scope.editViewRoles = editViewRoles;
-      } else {
-        $scope.isVisible = _.constant(true);
-        $scope.canAssignViewRoles = _.constant(false);
-        $scope.editViewRoles = _.noop;
-      }
+      $scope.isVisible = isVisible;
+      $scope.canAssignViewRoles = canAssignViewRoles;
+      $scope.editViewRoles = editViewRoles;
 
       $scope.$watch(function () {
         // Returns true when there are no views in the folder
@@ -61,6 +54,9 @@ angular.module('contentful')
 
       /**
        * Only views for Entries can be assigned role(s)
+       *
+       * TODO We don’t check permissions here. They are implicit in the
+       * visibility of the button.
        */
       function canAssignViewRoles () {
         return !$scope.assetContentType;
