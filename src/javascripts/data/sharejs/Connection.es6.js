@@ -196,18 +196,7 @@ function createDocWrapper (connection, key) {
   };
 
   function waitAndOpen () {
-    return closePromise.then(function () {
-      closePromise = $q.resolve();
-      return open();
-    }, function () {
-      closePromise = $q.resolve();
-    });
-  }
-
-  function open () {
-    return $q.denodeify(function (cb) {
-      connection.open(key, 'json', cb);
-    }).then(function (openedDoc) {
+    return closePromise.then(open).then((openedDoc) => {
       rawDoc = openedDoc;
       return rawDoc;
     });
@@ -220,6 +209,10 @@ function createDocWrapper (connection, key) {
     }
   }
 
+  function open () {
+    return $q.denodeify((cb) => connection.open(key, 'json', cb));
+  }
+
   function close (doc) {
     return $q.denodeify(function (cb) {
       try {
@@ -228,7 +221,8 @@ function createDocWrapper (connection, key) {
         // 'closed' event
         doc.on('closed', () => cb());
       } catch (e) {
-        cb(e.message === 'Cannot send to a closed connection' ? null : e);
+        // Always resolve and ignore errors on closing
+        cb();
       }
     });
   }
