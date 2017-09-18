@@ -61,5 +61,11 @@ describe('Gatekeeper Message Handler', function () {
       this.handle({blah: 'blah'});
       sinon.assert.calledOnce(refresh);
     });
+
+    it('redirects to login', function () {
+      const redirectToLogin = this.$inject('Authentication').redirectToLogin = sinon.spy();
+      this.handle({type: 'error', status: 401});
+      sinon.assert.calledOnce(redirectToLogin);
+    });
   });
 });

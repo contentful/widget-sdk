@@ -63,13 +63,18 @@ export function createUI () {
  * The `find()` method accepts a string and returns an object that
  * interacts with the selected DOM node. (See below for the API)
  *
- * Elements are adressed by their `data-test-id` attribute. The
- * argument to find specifies that attribute. Note that elements need
- * not exist when `find()` is called. The element is resolved lazily
- * when one of the element methods is called.
+ * Elements are adressed by their `data-test-id` attribute. For
+ * example, `view.find('x')` will look for an element with
+ * `data-test-id="x"`. If the id starts with a dot, we find an element
+ * that ends with the ID. For example `view.find('.z')` will select
+ * `data-test-id="x.y.z"`.
  *
- * When an element is resolved we also assert that it is visible in the
- * DOM and throw an error otherwise.
+ * Note that elements need not exist when `find()` is called. The
+ * element is resolved lazily when one of the element methods is
+ * called.
+ *
+ * When an element is resolved we also assert that it is unique in the
+ * container and visible. We throw an error otherwise.
  *
  * TODO We should use the 'assert' library instead of `expect`.
  */
@@ -77,7 +82,7 @@ export function createView (container) {
   return {
     element: container,
     find (id) {
-      return createElement(container, `[data-test-id="${id}"]`);
+      return createElement(container, makeTestIdSelector(id));
     },
 
     /**
@@ -87,9 +92,17 @@ export function createView (container) {
      * TODO Deprecated. Replace with `find(id).assertNonExistent()`.
      */
     assertNotHasElement (id) {
-      assertNotHasSelector(container, `[data-test-id="${id}"]`);
+      assertNotHasSelector(container, makeTestIdSelector(id));
     }
   };
+}
+
+function makeTestIdSelector (id) {
+  if (id.startsWith('.')) {
+    return `[data-test-id$="${id}"]`;
+  } else {
+    return `[data-test-id="${id}"]`;
+  }
 }
 
 
@@ -102,11 +115,16 @@ export function setCheckbox (el, value) {
   el.checked = value;
   // TODO explain click
   el.dispatchEvent(new Event('click', {bubbles: true}));
+  el.dispatchEvent(new Event('change', {bubbles: true}));
 }
+
 
 /**
  * Returns an interface for controlling a DOM element and making
  * assertions.
+ *
+ * You can find documentation for each method above their
+ * implementation below.
  *
  * Note that the element is computed lazily from the `container` and
  * `selector` argument so it need not exist at the time of creation.
@@ -120,6 +138,7 @@ function createElement (container, selector) {
 
     // Input controls
     setValue: bindEl(setValue),
+    setChecked: bindEl(setCheckbox),
 
     // Click control
     click: () => getElement().click(),
@@ -129,6 +148,7 @@ function createElement (container, selector) {
     assertValid: bindEl(assertValid),
     assertIsAlert: bindEl(assertIsAlert),
     assertIsSelected: bindEl(assertIsSelected),
+    assertIsChecked: bindEl(assertIsChecked),
     assertIsVisible: bindEl(assertIsVisible),
     assertHasText: bindEl(assertHasText),
     assertNonExistent () {
@@ -254,6 +274,30 @@ function assertIsSelected (element) {
     'Expected element to be selected. ' +
     '\'aria-selected\' attribute is not \'true\'';
   expect(element.getAttribute('aria-selected')).toBe('true', message);
+}
+
+
+/**
+ * Asserts if an element is checked by either inspecting the `checked`
+ * property for `input[type="checkbox]" or the `aria-checked` attribute
+ * for all other elements
+ *
+ *     // Equivalent
+ *     assertIsChecked(el)
+ *     assertIsChecked(el, true)
+ *
+ *     // Converse
+ *     assertIsChecked(false)
+ */
+function assertIsChecked (element, shouldBeChecked = true) {
+  if (element.tagName === 'INPUT' && element.type === 'checkbox') {
+    expect(element.checked).toBe(shouldBeChecked);
+  } else {
+    const message = shouldBeChecked
+      ? "Expected element to be checked. 'aria-checked' attribute is not 'true'"
+      : "Expected element not to be checked. 'aria-checked' attribute is not 'false'";
+    expect(element.getAttribute('aria-checked')).toBe(String(shouldBeChecked), message);
+  }
 }
 
 
