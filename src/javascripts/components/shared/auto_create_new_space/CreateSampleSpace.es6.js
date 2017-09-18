@@ -15,34 +15,23 @@ import {track} from 'analytics/Analytics';
 import autoCreateSpaceTemplate from './Template';
 import * as tokenStore from 'services/TokenStore';
 
-let dialog;
-let spaceCreationPromise;
-let scope = $rootScope.$new();
+export default function (user, spacesByOrg, templateName = 'product catalogue') {
+  let dialog;
+  const scope = $rootScope.$new();
 
-export default function (user, spacesByOrg) {
-  if (!scope.isCreatingSpace) {
-    scope.isCreatingSpace = true;
-    spaceCreationPromise = getTemplatesList()
-      // choose template
-      .then(chooseTemplate)
-      // bring up dialog
-      .then(openDialog)
-      // create space
-      .then(t => createEmptySpace(t, user, spacesByOrg))
-      // go to new space
-      .then(gotoNewSpace)
-      // setup before loading template
-      .then(preTemplateLoadSetup)
-      // load template into space
-      // handle v.retried
-      .then(loadTemplateIntoSpace)
-      // handle error
-      .catch(handleSpaceAutoCreateError)
-      .finally(_ => {
-        scope.isCreatingSpace = false;
-      });
-  }
-  return spaceCreationPromise;
+  scope.isCreatingSpace = true;
+  return getTemplatesList()
+    .then(chooseTemplate(templateName.toLowerCase()))
+    .then(template => openDialog(template, dialog, scope))
+    .then(({ template }) => createEmptySpace(template, user, spacesByOrg))
+    .then(gotoNewSpace)
+    .then(preTemplateLoadSetup)
+    // TODO: handle v.retried
+    .then(loadTemplateIntoSpace)
+    .catch(_ => handleSpaceAutoCreateError(dialog))
+    .finally(_ => {
+      scope.isCreatingSpace = false;
+    });
 }
 
 export function getOwnedOrgs (orgMemberships) {
@@ -50,17 +39,23 @@ export function getOwnedOrgs (orgMemberships) {
   return orgMemberships.filter(org => org.role === 'owner');
 }
 
-function chooseTemplate (templates) {
-  const template = find(templates, t => t.fields.name.toLowerCase() === 'product catalogue').fields;
+function chooseTemplate (templateName) {
+  return templates => {
+    const template = find(templates, t => t.fields.name.toLowerCase() === templateName);
 
-  track('space:template_selected', {
-    templateName: template.name
-  });
+    if (!template) {
+      return $q.reject(new Error(`Template named ${templateName} not found`));
+    } else {
+      track('space:template_selected', {
+        templateName: template.name
+      });
 
-  return template;
+      return template.fields;
+    }
+  };
 }
 
-function openDialog (template) {
+function openDialog (template, dialog, scope) {
   dialog = modalDialog.open({
     title: 'Space auto creation',
     template: autoCreateSpaceTemplate(),
@@ -69,7 +64,7 @@ function openDialog (template) {
     scope
   });
 
-  return template;
+  return { template, dialog };
 }
 
 function createEmptySpace (template, user, spacesByOrg) {
@@ -119,19 +114,17 @@ function preTemplateLoadSetup (selectedTemplate) {
   );
 
   return getTemplate(selectedTemplate)
-    .then((template, retried) => {
-      return { template, retried, templateLoader };
-    });
+    .then((template, retried) => ({ template, retried, templateLoader }));
 }
 
 function loadTemplateIntoSpace ({ template, templateLoader }) {
   return templateLoader
     .create(template)
-    .then(_ => spaceContext.publishedCTs.refresh())
+    .then(spaceContext.publishedCTs.refresh)
     .then(_ => $rootScope.$broadcast('spaceTemplateCreated'));
 }
 
-function handleSpaceAutoCreateError () {
+function handleSpaceAutoCreateError (dialog) {
   dialog.cancel();
 }
 

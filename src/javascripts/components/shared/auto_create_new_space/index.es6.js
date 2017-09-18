@@ -9,19 +9,16 @@ export function init () {
   let creatingSampleSpace = false;
 
   combine([user$, spacesByOrg$])
-    .filter(([user, spacesByOrg]) => user && spacesByOrg)
-    .filter(([user, spacesByOrg]) => qualifyUser(user, spacesByOrg))
+    .filter(([user, spacesByOrg]) => user && spacesByOrg && qualifyUser(user, spacesByOrg) && !creatingSampleSpace)
     .onValue(([user, spacesByOrg]) => {
-      if (!creatingSampleSpace) {
-        creatingSampleSpace = true;
-        createSampleSpace(user, spacesByOrg)
-          .then(_ => {
-            theStore.set(getKey(user), true);
-          })
-          .finally(_ => {
-            creatingSampleSpace = false;
-          });
-      }
+      creatingSampleSpace = true;
+      createSampleSpace(user, spacesByOrg)
+        .then(_ => {
+          theStore.set(getKey(user), true);
+        })
+        .finally(_ => {
+          creatingSampleSpace = false;
+        });
     });
 }
 
