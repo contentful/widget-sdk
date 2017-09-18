@@ -7,7 +7,8 @@ describe('data/sharejs/Connection', function () {
       emit: _.noop,
       open: sinon.stub(),
       send: sinon.stub(),
-      setState: sinon.stub()
+      setState: sinon.stub(),
+      refreshAuth: sinon.stub()
     };
 
     this.setState = (state) => {
@@ -52,19 +53,13 @@ describe('data/sharejs/Connection', function () {
   });
 
   describe('#create', function () {
-    it('passes URL to base connection', function () {
+    it('passes URL and getToken() to base connection', function () {
       this.create(this.getToken, '//HOST', 'SPACE');
       sinon.assert.calledWith(
         this.sharejs.Connection,
-        '//HOST/spaces/SPACE/channel'
+        '//HOST/spaces/SPACE/channel',
+        this.getToken
       );
-    });
-
-    it('sends auth data when socket is opened', function () {
-      this.create(this.getToken, '//HOST', 'SPACE');
-      this.baseConnection.socket.onopen();
-      this.$apply();
-      sinon.assert.calledWith(this.baseConnection.send, {auth: 'TOKEN'});
     });
   });
 
@@ -287,7 +282,7 @@ describe('data/sharejs/Connection', function () {
         }}
       };
 
-      const connection = this.create('HOST', 'SPACE');
+      const connection = this.create(this.getToken, 'HOST', 'SPACE');
 
       this.open = function () {
         return connection.open(entity);
@@ -316,7 +311,7 @@ describe('data/sharejs/Connection', function () {
 
   describe('#close', function () {
     it('delegates to baseConnection.disconnect', function () {
-      const connection = this.create('HOST');
+      const connection = this.create(this.getToken, 'HOST');
       this.baseConnection.disconnect = sinon.spy();
       connection.close();
       sinon.assert.calledOnce(this.baseConnection.disconnect);

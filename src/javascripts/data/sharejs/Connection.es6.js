@@ -164,7 +164,7 @@ function getEventStream (connection) {
 
 function createBaseConnection (getToken, baseUrl, spaceId) {
   const url = baseUrl + '/spaces/' + spaceId + '/channel';
-  const connection = new ShareJS.Connection(url, null);
+  const connection = new ShareJS.Connection(url, getToken);
 
   // I’m not sure why we do this
   connection.socket.send = function (message) {
@@ -174,22 +174,6 @@ function createBaseConnection (getToken, baseUrl, spaceId) {
     } catch (error) {
       // Silently ignore the error as this is handled on ot_doc_for
     }
-  };
-
-  // This is code is a copy of the original implementation in the
-  // ShareJS client library.
-  // TODO We should implement this properly. In particular we should
-  // handle the case where the authentication fails and we need to
-  // refresh our token.
-  // See https://contentful.tpondemand.com/entity/14908
-  connection.socket.onopen = function () {
-    getToken()
-    .then(function (token) {
-      connection.send({auth: token});
-
-      connection.lastError = connection.lastReceivedDoc = connection.lastSentDoc = null;
-      connection.setState('handshaking');
-    });
   };
 
   return connection;
