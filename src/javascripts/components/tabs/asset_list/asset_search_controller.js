@@ -14,6 +14,7 @@ angular.module('contentful')
   var systemFields = require('systemFields');
   var accessChecker = require('accessChecker');
   var Tracking = require('analytics/events/SearchAndViews');
+  var Notification = require('notification');
 
   var assetLoader = new PromisedLoader();
 
@@ -47,13 +48,22 @@ angular.module('contentful')
       }, accessChecker.wasForbidden($scope.context))
       .then(unsetIsSearching)
       .catch(function (err) {
-        if (_.isObject(err) && 'statusCode' in err && err.statusCode === -1) {
-          // infinite loader if there's network related error
-          setIsSearching();
+        if (_.isObject(err) && 'statusCode' in err) {
+          if (err.statusCode === 400) {
+            // invalid search query, let's reset the view...
+            $scope.loadView({});
+            // ...and let it request assets again after notifing a user
+            Notification.error('We detected an invalid search query. Please try again.');
+            return;
+          } else if (err.statusCode !== -1) {
+            // network/API issue, but the query was fine; show the "is serching"
+            // screen; it'll be covered by the dialog displayed below
+            setIsSearching();
+          }
         }
-        return $q.reject(err);
-      })
-      .catch(ReloadNotification.apiErrorHandler);
+
+        return ReloadNotification.apiErrorHandler(err);
+      });
   };
 
   this.loadMore = function () {
