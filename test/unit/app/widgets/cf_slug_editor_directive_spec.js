@@ -206,7 +206,7 @@ describe('SlugEditor directive', function () {
       // Trigger status update
       this.title.onValueChanged.yield('New Title');
       this.$apply();
-      expect(scope.hasUniqueError).toEqual(true);
+      expect(scope.hasUniqueValidationError).toEqual(true);
       expect(scope.state).toEqual('duplicate');
       expect($duplicateEl.hasClass('ng-hide')).toBe(true);
     });
@@ -220,7 +220,7 @@ describe('SlugEditor directive', function () {
       // Trigger status update
       this.title.onValueChanged.yield('New Title');
       this.$apply();
-      expect(scope.hasUniqueError).toEqual(false);
+      expect(scope.hasUniqueValidationError).toEqual(false);
       expect(scope.state).toEqual('duplicate');
       expect($duplicateEl.hasClass('ng-hide')).toBe(false);
     });

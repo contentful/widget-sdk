@@ -14,9 +14,10 @@ angular.module('contentful')
  * streams, after initialization it erases initial error stream, and
  * in case of any API errors it becomes hidden after API request.
  *
- * Also, until publishing, it tracks the title field and automatically
- * adjusts its own text. It means that in case of disabled field, it
- * is not rendered, and title text is not synced with the slug.
+ * Also, until publishing or until the title and slug mismatch occurs,
+ * it tracks the title field and automatically adjusts its own text.
+ * It means that in case of disabled field, it is not rendered, and
+ * title text is not synced with the slug.
  *
  * In order to avoid that, we render this widget in the background,
  * so the value of the slug will be in sync with a title field.
@@ -57,7 +58,7 @@ angular.module('contentful')
       //
       // technically we can just not fetch anything in case of the slug
       // editor in the background, but it will make it too complicated
-      scope.hasUniqueError = false;
+      scope.hasUniqueValidationError = false;
 
       var debouncedPerformDuplicityCheck = debounce(performDuplicityCheck, 500);
 
@@ -66,9 +67,9 @@ angular.module('contentful')
       });
 
       var offSchemaErrorsChanged = field.onSchemaErrorsChanged(function (errors) {
-        scope.hasErrors = errors && errors.length > 0;
-        if (Array.isArray(errors)) {
-          scope.hasUniqueError = errors.some(function (error) {
+        if (errors) {
+          scope.hasErrors = errors.length > 0;
+          scope.hasUniqueValidationError = errors.some(function (error) {
             return error && error.name === 'unique';
           });
         }
@@ -93,7 +94,6 @@ angular.module('contentful')
           scope.$on('$destroy', detachDefaultLocaleTitleChangeHandler);
         }
       }
-
 
       function setTitle (title) {
         if (isTracking()) {

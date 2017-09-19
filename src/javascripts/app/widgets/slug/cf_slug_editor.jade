@@ -3,9 +3,9 @@ div.entry-editor__input-group
     type="text"
     aria-invalid="{{hasErrors || state === 'duplicate'}}"
     ng-disabled="isDisabled")
-  div.entry-editor__input-spinner(ng-show="state === 'checking' && hasUniqueError === false")
+  div.entry-editor__input-spinner(ng-show="state === 'checking' && !hasUniqueValidationError")
 .cfnext-form__field-error(
   role="status"
   data-status-code="entry.slug.duplicate"
-  ng-show="state === 'duplicate' && hasUniqueError === false")
+  ng-show="state === 'duplicate' && !hasUniqueValidationError")
   | This slug has already been published in another entry
