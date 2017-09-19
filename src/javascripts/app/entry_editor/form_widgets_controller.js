@@ -24,6 +24,18 @@ angular.module('contentful')
   var K = require('utils/kefir');
   var trackCustomWidgets = require('analyticsEvents/customWidgets');
 
+  // Widgets, which we need to instantiate, even despite
+  // they are not visible. For example, we need a
+  // slugEditor in the background, because it depends
+  // on a title, even if it is hidden, so we don't have
+  // empty string after publishing
+  //
+  // we keep this object inside the controller to avoid
+  // global object's polluting
+  var BACKGROUND_WIDGETS = {
+    slugEditor: true
+  };
+
   var validator = $scope.editorContext.validator;
   $scope.$watch('preferences.showDisabledFields', updateWidgets);
   K.onValueScope($scope, validator.errors$, updateWidgets);
@@ -36,14 +48,27 @@ angular.module('contentful')
   });
 
   function updateWidgets () {
-    $scope.widgets = _.filter(controls, widgetIsVisible);
+    $scope.widgets = controls
+      .map(markWidgetVisibility)
+      .filter(widgetShouldBeListed);
   }
 
-  function widgetIsVisible (widget) {
-    if (widget.sidebar) {
+  // we mark them with a property, because we
+  // might want to have an invisible widget
+  // in the background
+  function markWidgetVisibility (widget) {
+    return _.assign({
+      isVisible: fieldIsVisible(widget.field)
+    }, widget);
+  }
+
+  function widgetShouldBeListed (widget) {
+    if (BACKGROUND_WIDGETS[widget.widgetId]) {
+      return true;
+    } else if (widget.sidebar) {
       return false;
     } else {
-      return fieldIsVisible(widget.field);
+      return widget.isVisible;
     }
   }
 
