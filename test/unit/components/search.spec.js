@@ -5,7 +5,7 @@ describe('search#buildQuery()', function () {
     module('contentful/test');
     this.spaceContext = this.$inject('mocks/spaceContext').init();
 
-    const buildQuery = this.$inject('search/queryBuilder').default;
+    const buildQuery = this.$inject('search/queryBuilder').buildQuery;
     this.space = {};
     this.buildQuery = function (query) {
       return buildQuery(this.space, this.contentType, query);
@@ -15,7 +15,6 @@ describe('search#buildQuery()', function () {
       // Make a mutable copy
       const query = _.cloneDeep(yield this.buildQuery(queryString));
       delete query.content_type;
-      delete query['sys.archivedAt[exists]'];
       const expectedQuery = {[key]: value};
       expect(query).toEqual(expectedQuery);
     };
@@ -24,8 +23,6 @@ describe('search#buildQuery()', function () {
       if (this.contentType && 'content_type') {
         _.defaults(expectedQuery, { content_type: this.contentType.getId() });
       }
-      _.defaults(expectedQuery, {'sys.archivedAt[exists]': 'false'});
-
       const query = yield this.buildQuery(queryString);
       expect(query).toEqual(expectedQuery);
     };
