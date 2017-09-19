@@ -28,10 +28,15 @@ angular.module('contentful')
     }
   });
 
-  initSavedViewsComponent({
-    $scope: $scope,
+  $scope.savedViewsComponent = initSavedViewsComponent({
     spaceContext: spaceContext,
-    scopedUiConfig: spaceContext.uiConfig.forAssets()
+    scopedUiConfig: spaceContext.uiConfig.forAssets(),
+    loadView: function (view) {
+      $scope.loadView(view);
+    },
+    getCurrentView: function () {
+      return _.cloneDeep(_.get($scope, ['context', 'view'], {}));
+    }
   });
 
   $scope.entityStatus = entityStatus;

@@ -27,12 +27,17 @@ angular.module('contentful')
     resetList: _.noop
   });
 
-  initSavedViewsComponent({
-    $scope: $scope,
+  $scope.savedViewsComponent = initSavedViewsComponent({
     spaceContext: spaceContext,
     scopedUiConfig: spaceContext.uiConfig.forEntries(),
     // a view can be assigned to roles only in the Entry List
-    enableRoleAssignment: true
+    enableRoleAssignment: true,
+    loadView: function (view) {
+      $scope.loadView(view);
+    },
+    getCurrentView: function () {
+      return _.cloneDeep(_.get($scope, ['context', 'view'], {}));
+    }
   });
 
   $scope.entityStatus = entityStatus;

@@ -110,6 +110,14 @@ export function push (as, a) {
   return shallowFreeze([...as, a]);
 }
 
+export function map (collection, fn) {
+  return shallowFreeze(lodash.map(collection, fn));
+}
+
+export function filter (collection, fn) {
+  return shallowFreeze(lodash.filter(collection, fn));
+}
+
 export function concat (...arrays) {
   return shallowFreeze(arrays.reduce((concatted, array) => {
     if (!Array.isArray(array)) {
