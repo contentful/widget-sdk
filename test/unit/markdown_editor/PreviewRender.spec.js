@@ -86,8 +86,9 @@ describe('markdown_editor/PreviewRender', function () {
 
   it('Sanitizes data: and js: URIs', function () {
     const BAD_URIS = [
+      'javascript:something_bad',
       'data:text/html;base64,SomEtHiGBad+',
-      'javascript:something_bad'
+      'java\nscript:it_would_work_with_nl'
     ];
 
     BAD_URIS.forEach((uri) => {

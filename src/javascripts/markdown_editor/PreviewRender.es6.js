@@ -13,6 +13,11 @@ const WHITESPACE_RE = /\s+/g;
 const IMAGES_API_DEFAULT_H = 200;
 
 
+// There's no value in trying to be permissive in the preview.
+// We're sanitizing all "js:", "vbs:" and "data:" hrefs.
+const FORBIDDEN_HREF_PREFIXES = ['javascript:', 'vbscript:', 'data:'];
+
+
 // Configuration for raw HTML sanitization
 //
 // We copy and extend the base configuration of the 'sanitize-html' package.
@@ -310,17 +315,48 @@ function prepareChildren (nodes) {
 }
 
 
-function getSafeHref (item) {
-  // There's no value in trying to be permissive
-  // in the preview; sanitize all js: and data: URIs
-  const notJs = item.href.substr(0, 11) !== 'javascript:';
-  const notData = item.href.substr(0, 5) !== 'data:';
-
-  if (isString(item.href) && notJs && notData) {
-    return item.href;
+function getSafeHref ({href}) {
+  if (isString(href) && isHrefSafe(href)) {
+    return href;
   } else {
     return null;
   }
+}
+
+// `isHrefSafe` uses relevant parts of Marked's `Renderer.prototype.link`:
+// https://github.com/chjj/marked/blob/master/lib/marked.js
+//
+// Only safety check is perfomed here, no need for HTML construction logic.
+//
+// Safety check: unescape, decode, remove [^\w:], to lowercase, check if doesn't
+// start with a forbidden prefix. Also: catching an error means it's unsafe.
+function isHrefSafe (href) {
+  try {
+    href = decodeURIComponent(unescape(href)).replace(/[^\w:]/g, '').toLowerCase();
+    return FORBIDDEN_HREF_PREFIXES.every(p => href.indexOf(p) !== 0);
+  } catch (e) {
+    return false;
+  }
+}
+
+// `unescape` function is extracted from Marked:
+// https://github.com/chjj/marked/blob/master/lib/marked.js
+// It was adapted to our code style. No logic changes.
+function unescape (html) {
+  return html.replace(/&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/g, (_, n) => {
+    n = n.toLowerCase();
+    if (n === 'colon') {
+      return ':';
+    } else if (n.charAt(0) === '#') {
+      if (n.charAt(1) === 'x') {
+        return String.fromCharCode(parseInt(n.substring(2), 16));
+      } else {
+        return String.fromCharCode(+n.substring(1));
+      }
+    } else {
+      return '';
+    }
+  });
 }
 
 function countWords (html, isClean) {
