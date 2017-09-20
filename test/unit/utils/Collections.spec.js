@@ -45,4 +45,25 @@ describe('utils/Collections', function () {
     });
   });
 
+  describe('.move', function () {
+    it('returns the same array if indexes are equal', function () {
+      const arr = [1, 2, 3];
+      expect(C.move(arr, 1, 1)).toBe(arr);
+    });
+
+    it('moves an element', function () {
+      const arr = [1, 2, 3, 4, 5];
+      expect(C.move(arr, 0, 4)).toEqual([2, 3, 4, 5, 1]);
+      expect(C.move(arr, 4, 0)).toEqual([5, 1, 2, 3, 4]);
+      expect(C.move(arr, 1, 3)).toEqual([1, 3, 4, 2, 5]);
+      expect(C.move(arr, 3, 1)).toEqual([1, 4, 2, 3, 5]);
+    });
+
+    it('throws for invalid input', function () {
+      expect(() => C.move({})).toThrowError(TypeError);
+      expect(() => C.move([1, 2], -1, 1)).toThrowError(TypeError);
+      expect(() => C.move([1, 2, 3], 1, 100)).toThrowError(TypeError);
+    });
+  });
+
 });

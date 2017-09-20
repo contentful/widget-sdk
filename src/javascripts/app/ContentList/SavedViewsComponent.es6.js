@@ -4,6 +4,7 @@ import {makeCtor} from 'utils/TaggedValues';
 import {createStore, makeReducer} from 'ui/Framework/Store';
 
 import ViewMenu from './ViewMenu';
+import createDnD from './SavedViewsDnD';
 import {makeBlankFolder} from 'data/UiConfig/Blanks';
 import * as Tracking from 'analytics/events/SearchAndViews';
 
@@ -16,6 +17,7 @@ const LoadView = makeCtor('LoadView');
 const ToggleOpened = makeCtor('ToggleOpened');
 const RestoreDefaultViews = makeCtor('RestoreDefaultViews');
 const RevertFolders = makeCtor('RevertFolders');
+const AlterFolders = makeCtor('AlterFolders');
 const CreateFolder = makeCtor('CreateFolder');
 const UpdateFolder = makeCtor('UpdateFolder');
 const DeleteFolder = makeCtor('DeleteFolder');
@@ -50,6 +52,9 @@ export default function ({
     },
     [RevertFolders] (state) {
       return assign(state, {folders: scopedUiConfig.get()});
+    },
+    [AlterFolders] (state, folders) {
+      return saveFolders(state, folders);
     },
     [CreateFolder] (state, title) {
       const blank = makeBlankFolder({title});
@@ -102,7 +107,7 @@ export default function ({
     endpoint: spaceContext.endpoint,
     canEdit: spaceContext.uiConfig.canEdit,
     enableRoleAssignment,
-    dnd: {forFolders: () => {}, forViews: () => {}}
+    dnd: createDnD(scopedUiConfig, folders => store.dispatch(AlterFolders, folders))
   }, reduce);
 
   function saveFolders (state, updatedFolders) {
@@ -132,6 +137,7 @@ export default function ({
     ToggleOpened,
     RestoreDefaultViews,
     RevertFolders,
+    AlterFolders,
     CreateFolder,
     UpdateFolder,
     DeleteFolder,

@@ -34,7 +34,8 @@ angular.module('cf.libs', [])
   .constant('validation', require('@contentful/validation'))
   .constant('widgetMap', require('@contentful/widget-map'))
   .constant('md5', require('blueimp-md5'))
-  .constant('scroll-into-view', require('scroll-into-view'));
+  .constant('scroll-into-view', require('scroll-into-view'))
+  .constant('libs/Sortable', require('sortablejs'));
 
 // This needs to be called after everything else so we override any
 // previously imported versions of lodash

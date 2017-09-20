@@ -60,7 +60,7 @@ export default function open (params = {}) {
           h('.modal-dialog__controls', [
             h('button.btn-primary-action', {
               onClick: confirm,
-              disabled: isInvalid ? 'disabled' : ''
+              disabled: isInvalid
             }, ['OK']),
             h('button.btn-secondary-action', {onClick: cancel}, ['Cancel'])
           ])
