@@ -63,7 +63,8 @@ describe('entityEditor/Document', function () {
     this.createDoc = (type = 'Entry') => {
       const Doc = this.$inject('entityEditor/Document');
       const docConnection = {
-        getDocLoader: sinon.stub().returns(this.docLoader)
+        getDocLoader: sinon.stub().returns(this.docLoader),
+        refreshAuth: sinon.stub().resolves()
       };
 
       this.entity.data.sys.type = type;

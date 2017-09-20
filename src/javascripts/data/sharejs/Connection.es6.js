@@ -17,12 +17,12 @@ export const DocLoad = DocLoader.DocLoad;
  */
 
 /**
- * @param {function(): Promise<string>} getToken
+ * @param {{ getToken: function(): Promise<string>, refreshToken: function(): Promise<string>}} auth
  * @param {string} baseUrl  URL where the ShareJS service lives
  * @param {string} spaceId
  * @returns Connection
  */
-export function create (getToken, baseUrl, spaceId) {
+export function create (baseUrl, spaceId, auth) {
   /**
    * `connection.state` may be
    * - 'connecting': The connection is being established
@@ -32,7 +32,7 @@ export function create (getToken, baseUrl, spaceId) {
    * - 'stopped': The connection is closed, and will not reconnect.
    * (From ShareJS client docs)
    */
-  const connection = createBaseConnection(getToken, baseUrl, spaceId);
+  const connection = createBaseConnection(baseUrl, spaceId, auth.getToken);
 
   const events = getEventStream(connection);
 
@@ -74,7 +74,8 @@ export function create (getToken, baseUrl, spaceId) {
   return {
     getDocLoader: getDocLoader,
     open: open,
-    close: close
+    close: close,
+    refreshAuth: refreshAuth
   };
 
 
@@ -131,6 +132,11 @@ export function create (getToken, baseUrl, spaceId) {
     connection.disconnect();
   }
 
+  function refreshAuth () {
+    return auth.refreshToken()
+      .then((token) => connection.refreshAuth(token));
+  }
+
 
   function getDocWrapperForEntity (entity) {
     const key = entityMetadataToKey(entity.data.sys);
@@ -162,7 +168,7 @@ function getEventStream (connection) {
 }
 
 
-function createBaseConnection (getToken, baseUrl, spaceId) {
+function createBaseConnection (baseUrl, spaceId, getToken) {
   const url = baseUrl + '/spaces/' + spaceId + '/channel';
   const connection = new ShareJS.Connection(url, getToken);
 

@@ -49,12 +49,17 @@ describe('data/sharejs/Connection', function () {
 
 
     this.getToken = sinon.stub().resolves('TOKEN');
+    this.refreshToken = sinon.stub().resolves('NEW_TOKEN');
+    this.auth = {
+      getToken: this.getToken,
+      refreshToken: this.refreshToken
+    };
     this.create = this.$inject('data/sharejs/Connection').create;
   });
 
   describe('#create', function () {
     it('passes URL and getToken() to base connection', function () {
-      this.create(this.getToken, '//HOST', 'SPACE');
+      this.create('//HOST', 'SPACE', this.auth);
       sinon.assert.calledWith(
         this.sharejs.Connection,
         '//HOST/spaces/SPACE/channel',
@@ -77,7 +82,7 @@ describe('data/sharejs/Connection', function () {
         }}
       };
 
-      const connection = this.create('HOST', 'SPACE');
+      const connection = this.create('HOST', 'SPACE', this.auth);
       const shouldOpen$ = K.createMockProperty(true);
 
       this.docLoader = connection.getDocLoader(this.entity, shouldOpen$);
@@ -282,7 +287,7 @@ describe('data/sharejs/Connection', function () {
         }}
       };
 
-      const connection = this.create(this.getToken, 'HOST', 'SPACE');
+      const connection = this.create('HOST', 'SPACE', this.auth);
 
       this.open = function () {
         return connection.open(entity);
@@ -309,12 +314,20 @@ describe('data/sharejs/Connection', function () {
     });
   });
 
-  describe('#close', function () {
+  describe('#close()', function () {
     it('delegates to baseConnection.disconnect', function () {
-      const connection = this.create(this.getToken, 'HOST');
+      const connection = this.create('HOST', 'SPACE', this.auth);
       this.baseConnection.disconnect = sinon.spy();
       connection.close();
       sinon.assert.calledOnce(this.baseConnection.disconnect);
+    });
+  });
+
+  describe('#refreshAuth()', function () {
+    it('calls connection.refreshAuth()', function* () {
+      const connection = this.create('//HOST', 'SPACE', this.auth);
+      yield connection.refreshAuth();
+      sinon.assert.calledOnce(this.baseConnection.refreshAuth);
     });
   });
 });

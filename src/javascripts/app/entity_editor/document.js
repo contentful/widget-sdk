@@ -64,11 +64,17 @@ angular.module('contentful')
     var errorBus = K.createBus();
     cleanupTasks.push(errorBus.end);
 
-    function makeDocErrorHandler (docError) {
+    function makeDocErrorHandler (forbiddenDocError) {
+      var isRefreshingAuth = false;
+
       return function (error) {
         if (error === 'forbidden') {
-          // TODO - do stuff here
-          errorBus.emit(docError);
+          if (isRefreshingAuth) { return; }
+
+          isRefreshingAuth = true;
+          docConnection.refreshAuth()
+            .catch(function () { errorBus.emit(forbiddenDocError); })
+            .then(function () { isRefreshingAuth = false; });
         }
       };
     }
