@@ -5,7 +5,9 @@ import {container} from 'ui/Layout';
 import notification from 'notification';
 import spaceContext from 'spaceContext';
 import Sidebar from 'app/Extensions/Sidebar';
-import Icon from 'svg/page-settings';
+import PageSettingsIcon from 'svg/page-settings';
+import EmptyStateIcon from 'svg/empty-extension';
+import {docsLink} from 'ui/Content';
 
 export default function controller ($scope) {
   renderWithScope();
@@ -22,20 +24,22 @@ export default function controller ($scope) {
         h('.workbench-header__icon', {
           style: {transform: 'scale(0.75)'}
         }, [
-          Icon
+          PageSettingsIcon
         ]),
         h('h1.workbench-header__title', [`Extensions (${extensions.length})`])
       ]),
-      h('.workbench-main', [
-        container({padding: '2em 3em'}, [
-          extensions.length ? list(extensions) : empty()
-        ]),
-        Sidebar()
-      ])
+      extensions.length ? list(extensions) : empty()
     ]);
   }
 
   function list (extensions) {
+    const head = [
+      h('th', ['Name']),
+      h('th', ['ID']),
+      h('th', ['Field types']),
+      h('th', ['Actions'])
+    ];
+
     const body = extensions.map((extension) => {
       return h('tr', [
         h('td', [extension.name]),
@@ -51,15 +55,13 @@ export default function controller ($scope) {
       ]);
     });
 
-    const head = [
-      h('th', ['Name']),
-      h('th', ['ID']),
-      h('th', ['Field types']),
-      h('th', ['Actions'])
-    ];
-
-    return h('div', {dataTestId: 'extensions.list'}, [
-      table(head, body)
+    return h('.workbench-main', {dataTestId: 'extensions.list'}, [
+      container({padding: '2em 3em'}, [
+        h('div', [
+          table(head, body)
+        ])
+      ]),
+      Sidebar()
     ]);
   }
 
@@ -102,19 +104,21 @@ export default function controller ($scope) {
 }
 
 function empty () {
-  const head = [
-    h('th', ['Name']),
-    h('th', ['ID']),
-    h('th', ['Field types']),
-    h('th', ['Actions'])
-  ];
-
-  return h('div', {dataTestId: 'extensions.empty'}, [
-    table(head, [
-      h('tr', [
-        h('td', [
-          'There are no custom extensions currently installed in this space'
-        ])
+  return h('.workbench-main', {dataTestId: 'extensions.empty'}, [
+    h('.empty-state', {}, [
+      h('div', {style: {transform: 'scale(0.75)'}}, [
+        EmptyStateIcon
+      ]),
+      h('.empty-state__title', [
+        'There are no extensions installed in this space'
+      ]),
+      h('.empty-state__description', [
+        `The UI extensions SDK allows you to build customized editing
+        experiences for the Contentful web application. Learn how to `,
+        docsLink('Get started with extensions', 'uiExtensionsGuide'),
+        '  or head to the ',
+        docsLink('UI extensions API reference', 'uiExtensions'),
+        '.'
       ])
     ])
   ]);
