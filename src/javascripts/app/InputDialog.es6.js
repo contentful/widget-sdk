@@ -42,8 +42,9 @@ export default function open (params = {}) {
       render(value);
 
       function render (value) {
-        const isInvalid = value.length < min || value.length > max;
-        const confirm = () => !isInvalid && $scope.dialog.confirm(value);
+        const trimmed = value.trim();
+        const isInvalid = trimmed.length < min || trimmed.length > max;
+        const confirm = () => !isInvalid && $scope.dialog.confirm(trimmed);
         const onKeydown = e => e.keyCode === keycodes.ENTER && confirm();
 
         $scope.component = h('.modal-dialog', [
