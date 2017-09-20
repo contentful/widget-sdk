@@ -42,7 +42,24 @@ angular.module('contentful')
   var users = organizationsBase({
     name: 'users',
     title: 'Organization users',
-    url: '/:orgId/organization_memberships{pathSuffix:PathSuffix}'
+    url: '/:orgId/organization_memberships',
+    abstract: true
+  });
+
+  var usersGatekeeper = organizationsBase({
+    name: 'users.gatekeeper',
+    title: 'Organization users',
+    url: '{pathSuffix:PathSuffix}'
+  });
+
+  var newUser = organizationsBase({
+    name: 'users.new',
+    title: 'Organization users',
+    url: '/new',
+    template: [
+      workbenchHeader('Organization users'),
+      h('cf-new-organization-membership', { withTabs: '!useNewNavigation', context: 'context' })
+    ].join('')
   });
 
   var spaces = organizationsBase({
@@ -81,7 +98,7 @@ angular.module('contentful')
         h('cf-account-view', { context: 'context' })
       ].join('')
     };
-    return base(_.extend(definition, defaults));
+    return base(_.extend(defaults, definition));
   }
 
   return base({
@@ -97,6 +114,8 @@ angular.module('contentful')
       newOrg,
       edit,
       subscription,
+      newUser,
+      usersGatekeeper,
       users,
       spaces,
       offsitebackup,
