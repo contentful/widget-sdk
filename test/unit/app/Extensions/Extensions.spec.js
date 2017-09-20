@@ -22,14 +22,11 @@ describe('app/Extensions', function () {
     this.detachContextMenuHandler = attachContextMenuHandler(this.$inject('$document'));
 
     this.init = function () {
-      this.container = DOM.createView($('<div class=client>').get(0));
-      $(this.container.element).appendTo('body');
-
-      this.$compileWith('<cf-component-bridge component="component" />', ($scope) => {
+      const $el = this.$compileWith('<cf-component-bridge component="component" />', ($scope) => {
         Extensions($scope);
-      }).appendTo(this.container.element);
-
-      this.$flush();
+      });
+      $el.appendTo('body');
+      this.container = DOM.createView($el.get(0));
     };
 
     this.delete = function (id) {
@@ -42,10 +39,10 @@ describe('app/Extensions', function () {
 
   describe('custom extensions exist', function () {
     beforeEach(function () {
-      this.widgets.getCustom.returns({
-        'test': {id: 'test', name: 'Widget 1', fieldTypes: ['Number']},
-        'test2': {id: 'test2', name: 'Widget 2', fieldTypes: ['Symbol', 'Text']}
-      });
+      this.widgets.getCustom.returns([
+        {id: 'test', name: 'Widget 1', fieldTypes: ['Number']},
+        {id: 'test2', name: 'Widget 2', fieldTypes: ['Symbol', 'Text']}
+      ]);
     });
 
     it('lists extensions', function () {
@@ -87,9 +84,9 @@ describe('app/Extensions', function () {
 
   describe('no custom widgets', function () {
     it('shows empty message', function () {
-      this.widgets.getCustom.returns({});
+      this.widgets.getCustom.returns([]);
       this.init();
-      expect(this.container.find('extensions.empty').element).toBeTruthy();
+      this.container.find('extensions.empty').assertIsVisible();
     });
   });
 

@@ -115,9 +115,9 @@ angular.module('contentful')
   }
 
   function getCustomWidgets () {
-    return _.pickBy(WIDGETS, function (widget) {
+    return _.values(_.pickBy(WIDGETS, function (widget) {
       return widget.custom === true;
-    });
+    }));
   }
 
   /**
