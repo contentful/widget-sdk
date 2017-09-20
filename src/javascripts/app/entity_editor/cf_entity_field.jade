@@ -46,6 +46,7 @@ mixin field-locale-errors
             i.fa.fa-external-link
 
 div.entity-editor__field-group(
+  ng-show="widget.isVisible"
   data-test-id="entity-field-controls"
   data-field-id="{{data.field.id}}"
   data-field-api-name="{{data.field.apiName}}"

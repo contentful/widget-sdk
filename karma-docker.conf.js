@@ -8,7 +8,8 @@ module.exports = function (config) {
   base(config);
   config.set({
     files: [
-      'build/app/**/*.js'
+      'build/app/**/*.js',
+      'build/app/**/*.css'
     ].concat(base.testFiles),
 
     reporters: ['dots'],

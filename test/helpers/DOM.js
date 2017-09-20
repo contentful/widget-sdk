@@ -150,6 +150,9 @@ function createElement (container, selector) {
     assertIsSelected: bindEl(assertIsSelected),
     assertIsChecked: bindEl(assertIsChecked),
     assertIsVisible: bindEl(assertIsVisible),
+    assertNotVisible () {
+      assertNotVisible(container, selector);
+    },
     assertHasText: bindEl(assertHasText),
     assertNonExistent () {
       assertNotHasSelector(container, selector);
@@ -249,19 +252,49 @@ function assertValue (element, value) {
 /**
  * Assert that the element is visible in the DOM.
  *
- * Specifically
- * - The element is rendered in the current window
+ * Specifically the element and all its parents must satisfy
+ * - The element is rendered in the current window. This implies that
+ *   'display' is not 'none'.
  * - The 'visibility' style is not set to 'hidden'
  * - The opacity is not 0
- *
- * TODO we should probably walk up the element tree to assert that the
- * element is visible and not transparent.
  */
 function assertIsVisible (element) {
-  expect(element.getClientRects().length).not.toBe(0, 'Element is not rendered on the page');
-  const styles = window.getComputedStyle(element);
-  expect(styles.opacity).not.toBe(0, 'Element is not visible. Opacity is 0');
-  expect(styles.visibility).not.toBe('hidden', 'Element is not visible. Visibility is \'hidden\'');
+  let el = element;
+  while (el) {
+    expect(el.getClientRects().length).not.toBe(0, 'Element is not rendered on the page. \'display\' style might be \'none\'');
+    const { opacity, visibility } = window.getComputedStyle(el);
+    expect(opacity).not.toBe(0, 'Element is not visible. Opacity is 0');
+    expect(visibility).not.toBe('hidden', 'Element is not visible. Visibility is \'hidden\'');
+    el = el.parentElement;
+  }
+}
+
+
+/**
+ * Assert that an element matching the selector is not visible or does
+ * not exist.
+ *
+ * This function also throws if the element selected by `selector` is
+ * not unique.
+ */
+function assertNotVisible (container, selector) {
+  const found = container.querySelectorAll(selector);
+  expect(found.length <= 1).toBe(true, `Element selected by ${selector} is not unique`);
+
+  if (!found.length) {
+    return;
+  }
+
+  let el = found[0];
+  while (el) {
+    const notRendered = el.getClientRects().length === 0;
+    const { opacity, visibility } = window.getComputedStyle(el);
+    if (notRendered || !opacity || visibility === 'hidden') {
+      return;
+    }
+    el = el.parentElement;
+  }
+  throw new Error('Element is visible on page');
 }
 
 
