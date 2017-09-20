@@ -35,6 +35,7 @@ module.exports = function (config) {
       'public/app/markdown_vendors.js',
       'public/app/templates.js',
       'public/app/libs.js',
+      'public/app/main.css',
       'src/javascripts/prelude.js',
       'src/javascripts/**/*.js'
     ].concat(testFiles),
