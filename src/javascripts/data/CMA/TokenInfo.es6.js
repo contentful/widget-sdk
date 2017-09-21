@@ -1,5 +1,5 @@
 import $q from '$q';
-import {QueryLinkResolver} from 'libs/@contentful/client';
+import resolveTokenLinks from './resolveTokenLinks';
 import makeFetch from 'data/Request';
 import {apiUrl} from 'Config';
 
@@ -28,7 +28,7 @@ export default function makeFetchWithAuth (auth) {
       const data = response.data;
       if (data) {
         // TODO freeze returned object
-        return QueryLinkResolver.resolveQueryLinks(data)[0];
+        return resolveTokenLinks(data);
       } else {
         return $q.reject(new Error('Could not obtain token info'));
       }
