@@ -110,6 +110,14 @@ export function push (as, a) {
   return shallowFreeze([...as, a]);
 }
 
+export function map (collection, fn) {
+  return shallowFreeze(lodash.map(collection, fn));
+}
+
+export function filter (collection, fn) {
+  return shallowFreeze(lodash.filter(collection, fn));
+}
+
 export function concat (...arrays) {
   return shallowFreeze(arrays.reduce((concatted, array) => {
     if (!Array.isArray(array)) {
@@ -125,6 +133,25 @@ export function slice (as, start, end) {
 
 export function unshift (as, a) {
   return shallowFreeze([a, ...as]);
+}
+
+export function insertAt (arr, index, item) {
+  return shallowFreeze([...arr.slice(0, index), item, ...arr.slice(index)]);
+}
+
+export function move (arr, oldIndex, newIndex) {
+  if (!Array.isArray(arr) || typeof oldIndex !== 'number' || typeof newIndex !== 'number') {
+    throw new TypeError('Arguments to Collections.move must be (array, number, number)');
+  }
+  if (oldIndex < 0 || newIndex < 0 || oldIndex >= arr.length || newIndex >= arr.length) {
+    throw new TypeError('Indexes provided to Collections.move should be in 0, arr.length-1 range');
+  }
+
+  return oldIndex === newIndex ? arr : insertAt(
+    [...arr.slice(0, oldIndex), ...arr.slice(oldIndex + 1)],
+    newIndex,
+    arr[oldIndex]
+  );
 }
 
 

@@ -27,22 +27,29 @@ export default function createMountPoint (container) {
 }
 
 
+const PREACT_PROP_KEY_EXCEPTIONS = {
+  'view-box': 'viewBox',
+  'dangerously-set-inner-html': 'dangerouslySetInnerHTML'
+};
+
+
 /**
  * Turns an abstract virtual DOM tree into a concrete Preact tree.
  */
 function asPreact (tree) {
   return caseof(tree, [
     [VTree.Element, ({tag, props, children}) => {
+      // Property keys are kebab-cased
       props = mapKeys(props, (_, key) => {
-        // Property keys are kebab-cased. For event handlers Preact
-        // expects the keys to be camel-cased.
+        // For event handlers Preact expects the keys to be camel-cased.
         if (key.substr(0, 3) === 'on-') {
           return camelCase(key);
-        } else if (key === 'view-box') {
-          return camelCase(key);
-        } else {
-          return key;
         }
+        // There are some exceptions, as defined in the map
+        if (Object.keys(PREACT_PROP_KEY_EXCEPTIONS).indexOf(key) > -1) {
+          return PREACT_PROP_KEY_EXCEPTIONS[key];
+        }
+        return key;
       });
       children = children.map(asPreact);
       return Preact.h(tag, props, children);

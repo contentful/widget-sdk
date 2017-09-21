@@ -16,10 +16,27 @@ angular.module('contentful')
   var entityStatus = require('entityStatus');
   var debounce = require('debounce');
   var Notification = require('notification');
+  var getBlankView = require('data/UiConfig/Blanks').getBlankAssetView;
+  var initSavedViewsComponent = require('app/ContentList/SavedViewsComponent').default;
 
-  $controller('AssetListViewsController', {
+  $controller('ListViewsController', {
     $scope: $scope,
-    preserveState: true
+    getBlankView: getBlankView,
+    preserveStateAs: 'assets',
+    resetList: function () {
+      $scope.searchController.resetAssets(true);
+    }
+  });
+
+  $scope.savedViewsComponent = initSavedViewsComponent({
+    spaceContext: spaceContext,
+    scopedUiConfig: spaceContext.uiConfig.forAssets(),
+    loadView: function (view) {
+      $scope.loadView(view);
+    },
+    getCurrentView: function () {
+      return _.cloneDeep(_.get($scope, ['context', 'view'], {}));
+    }
   });
 
   $scope.entityStatus = entityStatus;
