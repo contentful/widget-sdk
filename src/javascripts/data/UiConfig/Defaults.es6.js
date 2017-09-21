@@ -8,10 +8,6 @@ import systemFields from 'systemFields';
  * UiConfig.
  */
 
-const defaultOrder = systemFields.getDefaultOrder();
-
-const DEFAULT_FIELD_IDS = map(systemFields.getDefaultFields(), 'id');
-
 export function getEntryViews (contentTypes) {
   return [
     {
@@ -20,8 +16,8 @@ export function getEntryViews (contentTypes) {
       views: [{
         id: random.id(),
         title: 'All',
-        order: defaultOrder,
-        displayedFieldIds: DEFAULT_FIELD_IDS
+        order: systemFields.getDefaultOrder(),
+        displayedFieldIds: systemFields.getDefaultFieldIds()
       }]
     },
     {
@@ -72,35 +68,33 @@ export function getAssetViews () {
 
 function createEntryStatusView (title, searchTerm) {
   return {
-    title: title,
-    searchTerm: searchTerm,
+    title,
+    searchTerm,
     id: random.id(),
-    order: defaultOrder,
-    displayedFieldIds: DEFAULT_FIELD_IDS
+    order: systemFields.getDefaultOrder(),
+    displayedFieldIds: systemFields.getDefaultFieldIds()
   };
 }
 
 function contentTypeViews (contentTypes) {
-  return map(contentTypes, function (contentType) {
-    return createContentTypeView(contentType);
-  });
+  return map(contentTypes, createContentTypeView);
 }
 
-export function createContentTypeView (contentType) {
+export function createContentTypeView ({data}) {
   return {
-    title: contentType.data.name,
-    contentTypeId: contentType.getId(),
+    title: data.name,
+    contentTypeId: data.sys.id,
     id: random.id(),
-    order: defaultOrder,
-    displayedFieldIds: DEFAULT_FIELD_IDS
+    order: systemFields.getDefaultOrder(),
+    displayedFieldIds: systemFields.getDefaultFieldIds()
   };
 }
 
 function fileTypeViews () {
-  return map(mimetype.getGroupNames(), function (name, label) {
+  return map(mimetype.getGroupNames(), (title, label) => {
     return {
-      title: name,
-      searchTerm: 'type:' + label,
+      title,
+      searchTerm: `type:${label}`,
       id: random.id()
     };
   });

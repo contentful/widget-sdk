@@ -41,7 +41,7 @@ angular.module('contentful')
 
   return {
     getList: returnClone(list),
-    getDefaultFields: returnClone(defaultFields),
+    getDefaultFieldIds: returnClone(_.map(defaultFields, 'id')),
     getDefaultOrder: returnClone(defaultOrder),
     getFallbackOrderField: getFallbackOrderField
   };

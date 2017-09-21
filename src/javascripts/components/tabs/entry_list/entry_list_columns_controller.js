@@ -1,9 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.controller('EntryListViewsController', ['$scope', 'require', function ($scope, require) {
-  var spaceContext = require('spaceContext');
-  var $controller = require('$controller');
+.controller('EntryListColumnsController', ['$scope', 'require', function ($scope, require) {
   var systemFields = require('systemFields');
 
   var SORTABLE_TYPES = [
@@ -48,14 +46,6 @@ angular.module('contentful')
     return _.map($scope.displayedFields, 'name').join(', ');
   };
 
-  return $controller('ListViewsController', {
-    $scope: $scope,
-    getBlankView: getBlankView,
-    uiConfig: spaceContext.uiConfig.forEntries(),
-    preserveStateAs: 'entries',
-    resetList: _.noop
-  });
-
   function setOrderField (field) {
     $scope.context.view.order = {fieldId: field.id};
   }
@@ -63,17 +53,4 @@ angular.module('contentful')
   function switchOrderDirection (direction) {
     return direction === 'ascending' ? 'descending' : 'ascending';
   }
-
-  function getBlankView () {
-    return {
-      title: 'New View',
-      searchTerm: null,
-      contentTypeId: null,
-      contentTypeHidden: false,
-      id: null,
-      order: systemFields.getDefaultOrder(),
-      displayedFieldIds: _.map(systemFields.getDefaultFields(), 'id')
-    };
-  }
-
 }]);

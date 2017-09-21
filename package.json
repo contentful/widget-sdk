@@ -75,6 +75,7 @@
     "sanitize-html": "^1.14.1",
     "scroll-into-view": "^1.9.0",
     "sinon": "^2.1.0",
+    "sortablejs": "^1.6.1",
     "speakingurl": "^0.19.0",
     "stream-combiner": "^0.2.1",
     "stylus": "^0.54.5",

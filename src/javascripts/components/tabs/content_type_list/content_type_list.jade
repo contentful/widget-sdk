@@ -46,16 +46,26 @@ header.workbench-header
 
 .workbench-main(ng-show="hasContentTypes()")
   .workbench-main__left-sidebar
-    header.filter-list-header Filter By Status
-    ul.status-filters
-      li.filter-list-item(ng-class="{active: context.list == 'all'}" ng-click="context.list = 'all'")
-        span.filter-list-title All
-      li.filter-list-item(ng-class="{active: context.list == 'changed'}" ng-click="context.list = 'changed'")
-        span.filter-list-title Changed
-      li.filter-list-item(ng-class="{active: context.list == 'draft'}" ng-click="context.list = 'draft'")
-        span.filter-list-title Draft
-      li.filter-list-item(ng-class="{active: context.list == 'active'}" ng-click="context.list = 'active'")
-        span.filter-list-title Active
+    .view-folder
+      header.view-folder__header
+        .view-folder__title Filter by status
+      ul.view-folder__list
+        li.view-folder__item(
+          ng-class="{'-active': context.list == 'all'}"
+          ng-click="context.list = 'all'")
+          .view-folder__item-title All
+        li.view-folder__item(
+          ng-class="{'-active': context.list == 'changed'}"
+          ng-click="context.list = 'changed'")
+          .view-folder__item-title Changed
+        li.view-folder__item(
+          ng-class="{'-active': context.list == 'draft'}"
+          ng-click="context.list = 'draft'")
+          .view-folder__item-title Draft
+        li.view-folder__item(
+          ng-class="{'-active': context.list == 'active'}"
+          ng-click="context.list = 'active'")
+          .view-folder__item-title Active
 
   .workbench-main__right-content
     +no-search-results("!hasQueryResults()", "context.searchTerm", "context.list")

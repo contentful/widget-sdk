@@ -2625,6 +2625,9 @@
     "sort-keys": {
       "version": "1.1.2"
     },
+    "sortablejs": {
+      "version": "1.6.1"
+    },
     "source-map": {
       "version": "0.5.6"
     },

@@ -1,0 +1,101 @@
+.view-menu__actions
+  padding: 20px 8px
+
+  button
+    display: block
+    margin-bottom: 10px
+    i
+      display: inline-block
+      margin-right: 5px
+
+.view-menu .sortable-ghost
+  background-color: $colors.element-lightest
+  opacity: .6
+  border: 1px dashed $colors.element-mid
+
+.view-folder
+  &:first-child
+    .view-folder__header
+      border-top: 0
+
+  i
+    display: inline-block
+    margin-left: 5px
+    cursor: pointer
+    color: $colors.text-lightest
+    &:hover
+      color: $colors.text-mid
+
+  .view-folder__actions
+    display: none
+  .view-folder__header:hover .view-folder__actions,
+  .view-folder__item:hover .view-folder__actions
+    margin-left: 5px
+    display: inline-block
+
+
+.view-folder__empty
+  color: $colors.text-light
+  padding: 4px 8px
+
+.view-folder__header
+  display: flex
+  justify-content: space-between
+  color: $colors.text-mid
+  border-top: 1px solid $colors.element-light
+  font-size: 11px
+  font-weight: bold
+  padding: 0 5px
+  text-transform: uppercase
+  letter-spacing: 1px
+
+.view-folder__title,
+.view-folder__toggle
+  padding: 20px 3px
+
+.view-folder__toggle
+  transition: .15s transform ease-in-out
+
+  &.-collapsed
+    transform: rotate(90deg)
+    transition: .15s transform ease-in-out
+
+.view-folder.-draggable .view-folder__header
+  cursor: move
+  cursor: -webkit-grab
+
+.view-folder__list
+  // we need some minimal height so the list can accept dragged items
+  min-height: 2px
+  margin-bottom: 10px
+
+  &.-collapsed
+    margin-bottom: 0
+
+.view-folder__item
+  display: flex
+  justify-content: space-between
+  padding: 6px 10px
+  margin: 0
+  border: 1px solid transparent
+  cursor: pointer
+
+  .view-folder__item-title
+    color: $colors.text-dark
+    width: 60%
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
+
+  &:hover .view-folder__item-title
+    text-decoration: underline
+
+  &.-active
+    border-radius: 3px
+    background-color: $colors.element-light
+    & .view-folder__item-title
+      font-weight: bold
+
+  .view-folder__actions
+    width: 40%
+    text-align: right
