@@ -1,82 +1,71 @@
-import {isObject} from 'lodash';
+import {isPlainObject, set as setPath, get as getPath} from 'lodash';
+
+const isLink = item => getPath(item, ['sys', 'type']) === 'Link';
 
 export default function resolveTokenLinks (tokenData) {
   const root = tokenData.items[0];
   const {includes} = tokenData;
-  const store = {};
-  const unresolvedLinks = {};
+  const lookup = {};
+  const visited = {};
 
-  processItem(root);
-  Object.keys(includes).forEach(key => includes[key].forEach(processItem));
+  store(root);
+  forEachInclude(store);
+  resolve(root);
+  forEachInclude(resolve);
 
   return root;
 
-  function processItem (item) {
-    collectUnresolvedLinks(item);
-    storeItem(item);
-    resolveUnresolvedLinksTo(item);
-  }
-
-  function storeItem (item) {
+  function store (item) {
     const {type, id} = item.sys;
 
-    if (getItem(type, id)) {
-      throw new Error(`Item ${type},${id} already stored`);
+    if (!getPath(lookup, [type, id])) {
+      setPath(lookup, [type, id], item);
     } else {
-      store[type] = store[type] || {};
-      store[type][id] = item;
+      throw new Error(`Pair ${type},${id} already stored.`);
     }
   }
 
-  function getItem (type, id) {
-    store[type] = store[type] || {};
-    return store[type][id];
+  function forEachInclude (fn) {
+    Object.keys(includes).forEach(type => {
+      includes[type].forEach(item => fn(item));
+    });
   }
 
-  function updateUnresolvedLinksFor (type, id, fn) {
-    unresolvedLinks[type] = unresolvedLinks[type] || {};
-    unresolvedLinks[type][id] = fn(unresolvedLinks[type][id] || []);
-  }
+  function resolve (item) {
+    if (item.sys && alreadyVisited(item)) {
+      return;
+    }
 
-  function collectUnresolvedLinks (item) {
-    Object.keys(item).forEach(function (key) {
-      if (isLink(item[key])) {
-        const {linkType, id} = item[key].sys;
-        const target = getItem(linkType, id);
-        if (target) {
-          item[key] = target;
-        } else {
-          recordUnresolvedLink(item, key);
-        }
-      } else if (isObject(item[key])) {
-        collectUnresolvedLinks(item[key]);
+    Object.keys(item).forEach(key => {
+      const value = item[key];
+      const shouldRecurse = isPlainObject(value) || Array.isArray(value);
+
+      if (isLink(value)) {
+        replaceLink(item, key);
+      } else if (shouldRecurse) {
+        resolve(value);
       }
     });
   }
 
-  function recordUnresolvedLink (container, keyContainingLink) {
-    const {linkType, id} = container[keyContainingLink].sys;
-    updateUnresolvedLinksFor(linkType, id, links => {
-      const unresolvedLink = {container, keyContainingLink};
-      return [].concat(links).concat([unresolvedLink]);
-    });
-  }
+  function replaceLink (item, key) {
+    const {linkType, id} = item[key].sys;
+    const target = getPath(lookup, [linkType, id]);
 
-  function resolveUnresolvedLinksTo (item) {
-    const {type, id} = item.sys;
-    const linkedItem = getItem(type, id);
-
-    if (linkedItem) {
-      unresolvedLinks[type] = unresolvedLinks[type] || {};
-      unresolvedLinks[type][id] = unresolvedLinks[type][id] || [];
-      unresolvedLinks[type][id].forEach(link => {
-        link.container[link.keyContainingLink] = linkedItem;
-      });
-      updateUnresolvedLinksFor(type, id, () => []);
+    if (target) {
+      item[key] = target;
+      resolve(target);
     }
   }
-}
 
-function isLink (obj) {
-  return isObject(obj) && 'sys' in obj && obj.sys.type === 'Link';
+  function alreadyVisited (item) {
+    const {type, id} = item.sys;
+
+    if (!getPath(visited, [type, id])) {
+      setPath(visited, [type, id], true);
+      return false;
+    } else {
+      return true;
+    }
+  }
 }
