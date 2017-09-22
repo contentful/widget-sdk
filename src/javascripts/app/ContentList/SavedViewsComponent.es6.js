@@ -1,4 +1,4 @@
-import {find} from 'lodash';
+import {find, isPlainObject} from 'lodash';
 import {update, assign, map, concat, filter} from 'utils/Collections';
 import {makeCtor} from 'utils/TaggedValues';
 import {createStore, makeReducer} from 'ui/Framework/Store';
@@ -101,7 +101,7 @@ export default function ({
 
   const store = createStore({
     currentView: getCurrentView(),
-    folders: ensureDefaultFolder(scopedUiConfig.get()),
+    folders: prepareFolders(scopedUiConfig.get()),
     folderStates: folderStatesStore.get() || {},
     space: spaceContext.space,
     endpoint: spaceContext.endpoint,
@@ -147,6 +147,18 @@ export default function ({
   };
 
   return {render: ViewMenu, store, actions};
+}
+
+function prepareFolders (folders) {
+  return ensureValidViews(ensureDefaultFolder(folders));
+}
+
+function ensureValidViews (folders) {
+  return map(folders, folder => {
+    return update(folder, ['views'], views => {
+      return filter(views || [], view => isPlainObject(view));
+    });
+  });
 }
 
 function ensureDefaultFolder (folders) {
