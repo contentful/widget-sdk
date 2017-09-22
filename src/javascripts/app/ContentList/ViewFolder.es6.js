@@ -72,6 +72,7 @@ export default function render (folder, state, actions) {
 function renameFolder (folder, UpdateFolder) {
   openInputDialog({
     title: 'Rename folder',
+    confirmLabel: 'Rename folder',
     message: 'Please provide a new name for your folder:',
     input: {value: folder.title, min: 1, max: 32}
   }).promise.then(title => UpdateFolder(assign(folder, {title})));
@@ -80,6 +81,7 @@ function renameFolder (folder, UpdateFolder) {
 function deleteFolder (folder, DeleteFolder) {
   modalDialog.openConfirmDeleteDialog({
     title: 'Delete folder',
+    confirmLabel: 'Delete folder',
     message: `You are about to delete the folder
       <span class="modal-dialog__highlight">${htmlEncode(folder.title)}</span>.
       Deleting this folder will also remove all the saved views inside. If you
