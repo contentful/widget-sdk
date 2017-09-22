@@ -24,7 +24,8 @@ describe('data/CMA/resolveTokenLinks', function () {
 
       const baz0 = {
         sys: {type: 'Baz', id: '0'},
-        baz: 'yes'
+        baz: 'yes',
+        bars: [makeLink('Bar', '1'), makeLink('Bar', '0')]
       };
 
       const baz1 = {
@@ -66,9 +67,40 @@ describe('data/CMA/resolveTokenLinks', function () {
       expect(resolved.myBar.myBaz.myFoo).toEqual(resolved);
     });
 
+    it('resolves arrays of linked items', function () {
+      const resolved = resolveTokenLinks(this.tokenData);
+      expect(resolved.myBar.myBaz.bars).toEqual([
+        this.includes.Bar[1],
+        this.includes.Bar[0]
+      ]);
+    });
+
     it('resolves links in non-referenced include items', function () {
       resolveTokenLinks(this.tokenData);
       expect(this.includes.Baz[1].myBrother).toEqual(this.includes.Baz[0]);
+    });
+  });
+
+  describe('item uniqness', function () {
+    it('throws for repeated type,id pairs', function () {
+      const tokenData = {
+        items: [{
+          sys: {type: 'AccessToken'},
+          spaces: [makeLink('Space', '0'), makeLink('Space', '1')]
+        }],
+        includes: {
+          Space: [
+            {sys: {type: 'Space', id: '0'}, locales: [makeLink('Locale', 'not-unique')]},
+            {sys: {type: 'Space', id: '1'}, locales: [makeLink('Locale', 'not-unique')]}
+          ],
+          Locale: [
+            {sys: {type: 'Locale', id: 'not-unique', space: makeLink('Space', '0')}},
+            {sys: {type: 'Locale', id: 'not-unique', space: makeLink('Space', '1')}}
+          ]
+        }
+      };
+
+      expect(() => resolveTokenLinks(tokenData)).toThrowError(/Locale,not-unique/);
     });
   });
 });
