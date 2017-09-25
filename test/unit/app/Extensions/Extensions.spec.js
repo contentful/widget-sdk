@@ -66,8 +66,8 @@ describe('app/Extensions', function () {
           sinon.assert.calledWith(this.notification.info, 'Extension successfully deleted');
         });
 
-        it('refetches widget list', function () {
-          sinon.assert.calledTwice(this.widgets.getCustom);
+        it('refreshes widget list', function () {
+          sinon.assert.calledTwice(this.widgets.refresh);
         });
       });
 

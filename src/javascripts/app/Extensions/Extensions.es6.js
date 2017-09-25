@@ -11,7 +11,11 @@ import {docsLink} from 'ui/Content';
 
 export default function controller ($scope) {
   renderWithScope();
-  $scope.context = {ready: true};
+
+  widgets.refresh().then(() => {
+    $scope.context = {ready: true};
+    renderWithScope();
+  });
 
   function renderWithScope () {
     $scope.extensions = widgets.getCustom();
