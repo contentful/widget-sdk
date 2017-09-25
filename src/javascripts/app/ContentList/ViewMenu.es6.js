@@ -18,6 +18,7 @@ export default function render (state, actions) {
       h('button.text-link', {
         onClick: () => openInputDialog({
           title: 'Add folder',
+          confirmLabel: 'Add folder',
           message: 'Please provide a name for your new folder:',
           input: {min: 1, max: 32}
         }).promise.then(actions.CreateFolder)
@@ -25,6 +26,7 @@ export default function render (state, actions) {
       h('button.text-link', {
         onClick: () => openInputDialog({
           title: 'Save current view',
+          confirmLabel: 'Save current view',
           message: 'Please provide a name for the view you’re about to save:',
           input: {min: 1, max: 32}
         }).promise.then(actions.SaveCurrentView)

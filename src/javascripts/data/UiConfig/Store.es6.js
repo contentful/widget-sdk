@@ -1,7 +1,7 @@
 import * as Defaults from './Defaults';
 import $q from '$q';
 import logger from 'logger';
-import { find, findIndex, get as getPath } from 'lodash';
+import { find, findIndex, get as getPath, cloneDeep } from 'lodash';
 import * as K from 'utils/kefir';
 
 /**
@@ -139,7 +139,9 @@ function forScope (prop, getDefaults, configRef, saveConfig) {
   }
 
   function save (scopeValue) {
-    configRef.value[prop] = scopeValue;
+    // TODO no mutation. This service assumes it can mutate `configRef`:
+    // clone deep so we're not storing references to frozen objects.
+    configRef.value[prop] = cloneDeep(scopeValue);
     return saveConfig(configRef.value)
       .then(() => get());
   }
