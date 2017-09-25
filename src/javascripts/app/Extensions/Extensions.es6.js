@@ -8,6 +8,7 @@ import Sidebar from 'app/Extensions/Sidebar';
 import PageSettingsIcon from 'svg/page-settings';
 import EmptyStateIcon from 'svg/empty-extension';
 import {docsLink} from 'ui/Content';
+import scaleSvg from '../../utils/ScaleSvg';
 
 export default function controller ($scope) {
   renderWithScope();
@@ -37,10 +38,8 @@ export default function controller ($scope) {
 function render (extensions, deleteExtension) {
   return h('.workbench', [
     h('header.workbench-header', [
-      h('.workbench-header__icon', {
-        style: {transform: 'scale(0.75)'}
-      }, [
-        PageSettingsIcon
+      h('.workbench-header__icon.cf-icon', [
+        scaleSvg(PageSettingsIcon, 0.75)
       ]),
       h('h1.workbench-header__title', [`Extensions (${extensions.length})`])
     ]),
