@@ -49,24 +49,26 @@ function render (extensions, deleteExtension) {
 
 function list (extensions, deleteExtension) {
   const head = [
-    th(['Name']),
+    th({class: 'x--xl-cell'}, ['Name']),
     th(['ID']),
     th(['Field types']),
-    th(['Actions'])
+    th({class: 'x--small-cell'}, ['Actions'])
   ];
 
   const body = extensions.map((extension) => {
     return tr([
-      td([extension.name]),
+      td({class: 'x--xl-cell'}, [extension.name]),
       td([h('code', [extension.id])]),
       td([extension.fieldTypes.join(', ')]),
-      td([deleteButton(extension, deleteExtension)])
+      td({class: 'x--small-cell'}, [deleteButton(extension, deleteExtension)])
     ]);
   });
 
   return h('.workbench-main', {dataTestId: 'extensions.list'}, [
-    container({padding: '2em 3em'}, [
-      table(head, body)
+    h('.workbench-main__content', [
+      container({padding: '0 1em'}, [
+        table(head, body)
+      ])
     ]),
     Sidebar()
   ]);
