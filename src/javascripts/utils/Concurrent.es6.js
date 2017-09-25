@@ -16,6 +16,52 @@ export const Failure = makeCtor('Failure');
 
 
 /**
+ * Run a generator function that yields promises and return the final
+ * promise.
+ *
+ *     function * myTask (value) {
+ *       const result = yield Promise.resolve(value)
+ *       return result
+ *     }
+ *
+ *     runTask(myTask, true).then((val) => assert(val === true))
+ *
+ * This is a small, extendable implementation of the well known
+ * Bluebird.coroutine.
+ */
+export function runTask (genFn, ...args) {
+  return new Promise((resolve, reject) => {
+    const gen = genFn(...args);
+    onFulfilled();
+
+    function onFulfilled (res) {
+      try {
+        next(gen.next(res));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function onRejected (err) {
+      try {
+        next(gen.throw(err));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function next ({done, value}) {
+      if (done) {
+        resolve(value);
+      } else {
+        value.then(onFulfilled, onRejected);
+      }
+    }
+  });
+}
+
+
+/**
  * A slot attaches a callback to at most one promise at once.
  *
  * ~~~js

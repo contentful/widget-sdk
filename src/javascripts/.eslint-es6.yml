@@ -1,6 +1,7 @@
 # Eslint configuration for files ending in .es6.js
 globals:
   setTimeout: false
+  Promise: false
 parserOptions:
   ecmaVersion: 6
   sourceType: module
@@ -33,7 +34,6 @@ rules:
   - TaggedTemplateExpression
   - UpdateExpression
   - WithStatement
-  - YieldExpression
   - JSXIdentifier
   - JSXNamespacedName
   - JSXMemberExpression

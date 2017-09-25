@@ -16,6 +16,10 @@
  * })
  * ~~~
  *
+ * The logger is enabled or disabled from the ClientController.
+ *
+ * ## Logging methods
+ *
  * Each logging method defines the error type and severity and accepts
  * additional parameters.
  *
@@ -34,7 +38,17 @@
  *
  * [bugsnag-tab]: https://bugsnag.com/docs/notifiers/js#metadata
  * [bugsnag-doc]: https://bugsnag.com/docs/notifiers/js
-*/
+ *
+ * ## Unhandled exceptions
+ *
+ * Unhandled exceptions inside Angular’s digest loop are handled by the
+ * `$exceptionHandler` service. This service delegates to
+ * `logger.logException` and shows a dialog informing the user that the
+ * app has crashed.
+ *
+ * Other uncaught exceptions and unhandled promise rejections are
+ * logged to the console and to Bugsnag if bugsnag is enabled.
+ */
 angular.module('contentful')
 .factory('logger', ['$injector', function ($injector) {
   var $window = $injector.get('$window');

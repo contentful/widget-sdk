@@ -1,4 +1,4 @@
-'use strict';
+import * as sinon from 'helpers/sinon';
 
 describe('bugsnag', function () {
   beforeEach(function () {
@@ -7,6 +7,8 @@ describe('bugsnag', function () {
     this.LazyLoader = this.$inject('LazyLoader');
 
     this.BugsnagStub = {
+      disableAutoBreadcrumbsConsole: sinon.stub(),
+      enableNotifyUnhandledRejections: sinon.stub(),
       notify: sinon.stub(),
       notifyException: sinon.stub(),
       refresh: sinon.stub()
