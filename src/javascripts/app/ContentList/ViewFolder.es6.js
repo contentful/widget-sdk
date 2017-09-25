@@ -52,7 +52,9 @@ export default function render (folder, state, actions) {
         class: view.id === currentViewId ? '-active' : '',
         onClick: () => actions.LoadView(view)
       }, [
-        h('.view-folder__item-title', [view.title]),
+        h('.view-folder__item-title', [
+          h('span', {title: view.title}, [view.title])
+        ]),
         canEdit && h('.view-folder__actions', [
           enableRoleAssignment && h('i.fa.fa-eye', {
             onClick: doNotPropagate(() => editViewRoles(view, endpoint, UpdateView))
