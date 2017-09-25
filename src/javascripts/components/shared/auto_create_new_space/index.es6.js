@@ -3,7 +3,14 @@ import moment from 'moment';
 import theStore from 'TheStore';
 import {combine} from 'utils/kefir';
 import {user$, spacesByOrganization$ as spacesByOrg$} from 'services/TokenStore';
-import createSampleSpace, {getOwnedOrgs} from './CreateSampleSpace';
+import createSampleSpace from './CreateSampleSpace';
+
+/**
+ * @description
+ * Auto creates a space using the product catalogue template
+ * for a user that is <= 7 days old.
+ * It is hooked up in the run block in application prelude.
+ */
 
 export function init () {
   let creatingSampleSpace = false;
@@ -11,8 +18,10 @@ export function init () {
   combine([user$, spacesByOrg$])
     .filter(([user, spacesByOrg]) => user && spacesByOrg && qualifyUser(user, spacesByOrg) && !creatingSampleSpace)
     .onValue(([user, spacesByOrg]) => {
+      const org = getFirstOwnedOrgWithoutSpaces(user, spacesByOrg);
+
       creatingSampleSpace = true;
-      createSampleSpace(user, spacesByOrg)
+      createSampleSpace(org, 'product catalogue')
         .then(_ => {
           theStore.set(getKey(user), true);
         })
@@ -53,4 +62,21 @@ function hasAnOrgWithSpaces (spacesByOrg) {
 
 function ownsAtleastOneOrg (user) {
   return !!getOwnedOrgs(user.organizationMemberships).length;
+}
+
+function getOwnedOrgs (orgMemberships) {
+  // filter out orgs user owns
+  return orgMemberships.filter(org => org.role === 'owner');
+}
+
+function getFirstOwnedOrgWithoutSpaces (user, spacesByOrg) {
+  const ownedOrgs = getOwnedOrgs(user.organizationMemberships);
+  // return the first org that has no spaces
+  const orgMembership = find(ownedOrgs, ownedOrg => {
+    const spacesForOrg = spacesByOrg[ownedOrg.organization.sys.id];
+
+    return !spacesForOrg || spacesForOrg.length === 0;
+  });
+
+  return orgMembership && orgMembership.organization;
 }

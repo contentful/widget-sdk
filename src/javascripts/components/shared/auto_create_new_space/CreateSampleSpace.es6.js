@@ -15,28 +15,51 @@ import {track} from 'analytics/Analytics';
 import autoCreateSpaceTemplate from './Template';
 import * as tokenStore from 'services/TokenStore';
 
-export default function (user, spacesByOrg, templateName = 'product catalogue') {
+/**
+ * @description
+ * Creates a sample space using the given template in the
+ * given org.
+ *
+ * @param {object} org
+ * @param {string} templateName
+ *
+ * @returns Promise<undefined>
+ */
+export default function (org = required('org'), templateName) {
   let dialog;
   const scope = $rootScope.$new();
+
+  // not using default fn param as '' should use a default as well
+  templateName = templateName || 'product catalogue';
 
   scope.isCreatingSpace = true;
   return getTemplatesList()
     .then(chooseTemplate(templateName.toLowerCase()))
     .then(template => openDialog(template, dialog, scope))
-    .then(({ template }) => createEmptySpace(template, user, spacesByOrg))
+    .then(({ template }) => createEmptySpace(org, template))
     .then(gotoNewSpace)
     .then(preTemplateLoadSetup)
     // TODO: handle v.retried
     .then(loadTemplateIntoSpace)
-    .catch(_ => handleSpaceAutoCreateError(dialog))
+    .catch(e => {
+      if (dialog) {
+        dialog.cancel();
+      }
+      return $q.reject(e);
+    })
     .finally(_ => {
       scope.isCreatingSpace = false;
     });
 }
 
-export function getOwnedOrgs (orgMemberships) {
-  // filter out orgs user owns
-  return orgMemberships.filter(org => org.role === 'owner');
+/*
+ * throws an error synchronously to differentiate it from
+ * a rejected promise as a rejected promise stands for
+ * something going wrong during space creation
+ * while this stands for a programmer error
+ */
+function required (param) {
+  throw new Error(`Required param ${param} not provided`);
 }
 
 function chooseTemplate (templateName) {
@@ -63,20 +86,14 @@ function openDialog (template, dialog, scope) {
     persistOnNavigation: true,
     scope
   });
-
   return { template, dialog };
 }
 
-function createEmptySpace (template, user, spacesByOrg) {
-  const org = getFirstOwnedOrgWithoutSpaces(user, spacesByOrg);
+function createEmptySpace (org, template) {
   const data = {
     name: 'Sample project',
     defaultLocale: 'en-US'
   };
-
-  if (!org) {
-    return $q.reject(new Error('No owned org found'));
-  }
 
   return client
     .createSpace(data, org.sys.id)
@@ -122,21 +139,4 @@ function loadTemplateIntoSpace ({ template, templateLoader }) {
     .create(template)
     .then(spaceContext.publishedCTs.refresh)
     .then(_ => $rootScope.$broadcast('spaceTemplateCreated'));
-}
-
-function handleSpaceAutoCreateError (dialog) {
-  dialog.cancel();
-}
-
-function getFirstOwnedOrgWithoutSpaces (user, spacesByOrg) {
-  const ownedOrgs = getOwnedOrgs(user.organizationMemberships);
-
-  // return the first org that has no spaces
-  const orgMembership = find(ownedOrgs, ownedOrg => {
-    const spacesForOrg = spacesByOrg[ownedOrg.sys.id];
-
-    return !spacesForOrg || spacesForOrg.length === 0;
-  });
-
-  return orgMembership && orgMembership.organization;
 }
