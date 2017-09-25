@@ -13,14 +13,11 @@ angular.module('contentful')
   var UrlSyncHelper = require('account/UrlSyncHelper');
 
   return {
-    template: h('.account-container', {
-      ngClass: '{ "with-tabs": withTabs }'
-    }, [
+    template: h('.account-container', [
       h('iframe', { width: '100%', height: '100%', id: 'accountViewFrame' })
     ]),
     restrict: 'E',
     scope: {
-      withTabs: '=',
       context: '='
     },
     link: function (scope, elem) {
