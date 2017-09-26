@@ -92,3 +92,47 @@ export function makeReducer (handlers) {
     return (value, state) => handle(state, value);
   }));
 }
+
+/**
+ * This function calls `render` function of a store-backed component with its
+ * current store state and bound actions. Useful when building a VDOM tree out
+ * of reusable components.
+ *
+ *     const render = () => {
+ *       return h('div', [
+ *         renderStoreComponent(storeComponent1),
+ *         renderStoreComponent(storeComponent2)
+ *       ]);
+ *     };
+ *
+ * Use `combineStoreComponents` to produce one component for a nested component
+ * tree that can be used with `cfComponentStoreBridge`.
+ */
+export function renderStoreComponent (c) {
+  const state = K.getValue(c.store.state$);
+  const actions = bindActions(c.store, c.actions);
+  return c.render(state, actions);
+}
+
+/**
+ * This function produces a component that can be used with
+ * `cfComponentStoreBridge` while its tree consists of multiple store-backed
+ * components. `render` will be called every time any of combined components
+ * change its state.
+ *
+ *     const render = ({substate1, substate2}) => {
+ *       // as defined above
+ *     };
+ *
+ *     return combineStoreComponents(render, {
+ *       substate1: storeComponent1,
+ *       substate2: storeComponent2
+ *     });
+ *
+ * Note that `actions` (second argument passed to `render`) will always be `{}`.
+ */
+export function combineStoreComponents (render, components) {
+  const statePropertiesMap = mapValues(components, c => c.store.state$);
+  const state$ = K.combinePropertiesObject(statePropertiesMap);
+  return {render, actions: {}, store: {state$}};
+}
