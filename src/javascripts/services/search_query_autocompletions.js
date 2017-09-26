@@ -30,8 +30,9 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var mimetype = require('mimetype');
   var assetContentType = require('assetContentType');
-  var $q = require('$q');
   var moment = require('moment');
+  var caseofEq = require('libs/sum-types').caseofEq;
+  var otherwise = require('libs/sum-types').otherwise;
 
   var NOT_SEARCHABLE_FIELD_TYPES = ['Location', 'Object', 'File'];
 
@@ -89,9 +90,7 @@ angular.module('contentful')
     id: {
       description: 'Unique identifier',
       convert: function (_operator, value) {
-        return $q.resolve({
-          'sys.id': value
-        });
+        return {'sys.id': value};
       }
     },
     author: createUserAutocompletion({
@@ -110,20 +109,33 @@ angular.module('contentful')
         {value: 'draft', description: 'Not published, invisible to the public'},
         {value: 'archived', description: 'Not published and hidden from editors'}
       ]),
-      convert: {
-        published: {'sys.publishedAt[exists]': 'true'},
-        changed: {
-          'sys.archivedAt[exists]': 'false',
-          'changed': 'true'
-        },
-        draft: {
-          'sys.archivedAt[exists]': 'false',
-          'sys.publishedVersion[exists]': 'false',
-          'changed': 'true'
-        },
-        archived: {
-          'sys.archivedAt[exists]': 'true'
-        }
+      convert: function (_operator, value) {
+        return caseofEq(value, [
+          ['published', function () {
+            return {'sys.publishedAt[exists]': 'true'};
+          }],
+          ['changed', function () {
+            return {
+              'sys.archivedAt[exists]': 'false',
+              'changed': 'true'
+            };
+          }],
+          ['draft', function () {
+            return {
+              'sys.archivedAt[exists]': 'false',
+              'sys.publishedVersion[exists]': 'false',
+              'changed': 'true'
+            };
+          }],
+          ['archived', function () {
+            return {
+              'sys.archivedAt[exists]': 'true'
+            };
+          }],
+          [otherwise, function () {
+            return {};
+          }]
+        ]);
       }
     }
   };
@@ -152,7 +164,7 @@ angular.module('contentful')
   }
 
   // Factories for assets
-  var assetcompletions = {
+  var assetCompletions = _.extend({}, autocompletion, {
     width: imageDimensionCompletion('width', 'Width of an image in pixels'),
     height: imageDimensionCompletion('height', 'Height of an image in pixels'),
     type: {
@@ -182,12 +194,14 @@ angular.module('contentful')
         return {'fields.file.fileName': value};
       }
     }
-  };
+  });
 
   // Returns all the static autocompletions that are possible for the content Type.
   function staticAutocompletions (contentType) {
+    // TODO do not use reference equality. We should check
+    // 'contentType.getId() === undefined' instead.
     if (contentType === assetContentType) {
-      return _.extend({}, autocompletion, assetcompletions);
+      return assetCompletions;
     } else {
       return autocompletion;
     }
@@ -367,58 +381,47 @@ angular.module('contentful')
     }
   }
 
-  // Pair to RequestObject Conversion {{{1
-  //
-  // This part contains the function that turns a parsed key/value pair into a queryObject
-
-  function pairToRequestObject (pair, contentType, space) {
-    var key = pair.content.key.content;
-    var operator = pair.content.operator.content;
-    var value = pair.content.value.content;
+  /**
+   * Given a [key, operator, value] triple, a content type and a space
+   * we build CDA query object for this filter triple.
+   */
+  function filterToQueryObject (filter, contentType, space) {
+    var key = filter[0];
+    var operator = filter[1];
+    var value = filter[2];
     var keyData = staticAutocompletions(contentType)[key];
     if (keyData) {
-      if (_.isFunction(keyData.convert)) {
-        return keyData.convert(operator, value, space);
-      }
-      if (_.isObject(keyData.convert)) {
-        return createConverter(keyData.convert, operator, value, space);
-      }
+      return keyData.convert(operator, value, space);
+    }
+
+    var field = findField(key, contentType);
+    if (field) {
+      return makeFieldQuery(field, operator, value);
     } else {
-      return createFieldQuery(key, operator, value, contentType);
+      return {};
     }
+  }
 
-    // Turn a converter object into a requestobject
-    function createConverter (convertData, operator, value, space) {
-      var converterForValue = convertData[value];
-      if (!converterForValue) return;
+  function makeFieldQuery (field, operator, value) {
+    var q = {};
 
-      if (_.isFunction(converterForValue)) {
-        return converterForValue(operator, value, space);
-      } else { // is requestObject
-        return converterForValue;
-      }
+    // TODO Using apiNameOrId here is a temporary solution while the backend doesn't honor
+    // the Skip-Transformation header for field.ids in searches
+    var queryKey = 'fields.' + apiNameOrId(field) + queryOperator(operator);
+    if (field.type === 'Text') {
+      queryKey = queryKey + '[match]';
     }
-
-    // Turn a field query into a requestobject
-    function createFieldQuery (key, operator, value, contentType) {
-      var field = findField(key, contentType);
-      if (field) {
-        return _.tap({}, function (q) {
-          // TODO Using apiNameOrId here is a temporary solution while the backend doesn't honor
-          // the Skip-Transformation header for field.ids in searches
-          var queryKey = 'fields.' + apiNameOrId(field) + queryOperator(operator);
-          if (field.type === 'Text') queryKey = queryKey + '[match]';
-          if (field.type === 'Boolean') value = value.match(/yes|true/i) ? 'true' : false;
-          if (field.type === 'Link') {
-            queryKey = 'fields.' + apiNameOrId(field) + '.sys.id';
-          }
-          if (field.type === 'Array' && field.items.type === 'Link') {
-            queryKey = 'fields.' + apiNameOrId(field) + '.sys.id';
-          }
-          q[queryKey] = value;
-        });
-      }
+    if (field.type === 'Boolean') {
+      value = value.match(/yes|true/i) ? 'true' : false;
     }
+    if (field.type === 'Link') {
+      queryKey = 'fields.' + apiNameOrId(field) + '.sys.id';
+    }
+    if (field.type === 'Array' && field.items.type === 'Link') {
+      queryKey = 'fields.' + apiNameOrId(field) + '.sys.id';
+    }
+    q[queryKey] = value;
+    return q;
   }
 
   // Helpers {{{1
@@ -535,7 +538,7 @@ angular.module('contentful')
       operator: operatorCompletion,
       value: valueCompletion
     },
-    pairToRequestObject: pairToRequestObject
+    filterToQueryObject: filterToQueryObject
   };
 
   // }}}

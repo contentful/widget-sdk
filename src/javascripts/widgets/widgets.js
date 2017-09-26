@@ -73,12 +73,14 @@ angular.module('contentful')
 
   var widgetsService = {
     get: getWidget,
+    getCustom: getCustomWidgets,
     getAvailable: getAvailable,
     buildRenderable: buildRenderable,
     filterOptions: filterOptions,
     applyDefaults: applyDefaults,
     filteredParams: filteredParams,
-    setSpace: setSpace
+    setSpace: setSpace,
+    refresh: refreshWidgetCache
   };
   return widgetsService;
 
@@ -110,6 +112,12 @@ angular.module('contentful')
 
   function getWidget (id) {
     return WIDGETS[id];
+  }
+
+  function getCustomWidgets () {
+    return _.values(_.pickBy(WIDGETS, function (widget) {
+      return widget.custom === true;
+    }));
   }
 
   /**
