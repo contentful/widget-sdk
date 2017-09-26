@@ -105,6 +105,9 @@ angular.module('contentful')
             dataViewType: 'spaces-settings-content-preview',
             title: 'Content preview',
             rootSref: 'spaces.detail.settings.content_preview'
+          }, {
+            sref: 'spaces.detail.settings.extensions',
+            title: 'Extensions'
           }
         ]
       }

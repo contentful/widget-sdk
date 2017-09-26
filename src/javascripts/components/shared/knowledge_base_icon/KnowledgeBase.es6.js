@@ -22,7 +22,9 @@ const items = {
   cma_key: 'developers/docs/references/authentication/#the-management-api',
   content_preview: 'r/knowledgebase/setup-content-preview/',
   contentModellingBasics: 'r/knowledgebase/content-modelling-basics/',
-  createOAuthApp: 'developers/docs/references/authentication/#creating-an-oauth-20-application'
+  createOAuthApp: 'developers/docs/references/authentication/#creating-an-oauth-20-application',
+  uiExtensions: 'developers/docs/concepts/uiextensions/',
+  uiExtensionsGuide: 'r/knowledgebase/ui-extensions-guide/'
 };
 
 export default function ({ target, text = '', inlineText, cssClass }) {

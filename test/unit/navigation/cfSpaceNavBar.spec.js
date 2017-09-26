@@ -13,7 +13,8 @@ describe('Space nav bar directive', function () {
 
     const $compile = this.$inject('$compile');
     spaceContext = this.mockService('spaceContext', {
-      space: { isHibernated: sinon.stub().returns(false) }
+      space: { isHibernated: sinon.stub().returns(false) },
+      widgets: {getCustom: _.constant([])}
     });
     scope = this.$inject('$rootScope').$new();
     accessChecker = this.$inject('accessChecker');
