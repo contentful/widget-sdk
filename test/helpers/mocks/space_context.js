@@ -75,8 +75,8 @@ angular.module('contentful/mocks')
     const emptyArr = () => [];
     const scopedApi = {get: emptyArr, set: noop, getDefaults: emptyArr, canEdit: true};
     spaceContext.uiConfig = {
-      entries: {shared: scopedApi, private: {}},
-      assets: {shared: scopedApi, private: {}}
+      entries: {shared: scopedApi, private: scopedApi},
+      assets: {shared: scopedApi, private: scopedApi}
     };
 
     return spaceContext;

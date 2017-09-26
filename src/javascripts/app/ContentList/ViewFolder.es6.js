@@ -28,15 +28,15 @@ export default function render (folder, state, actions) {
   const currentViewId = getAtPath(state.currentView, ['id']);
 
   return h('.view-folder', {class: isNotDefault ? '-draggable' : ''}, [
-    h('header.view-folder__header', [
+    isNotDefault && h('header.view-folder__header', [
       h('div.view-folder__title', [
-        folder.title,
-        canEdit && isNotDefault && h('.view-folder__actions', [
+        `${folder.title} (${folder.views.length})`,
+        canEdit && h('.view-folder__actions', [
           h('i.fa.fa-pencil', {onClick: () => renameFolder(folder, UpdateFolder)}),
           h('i.fa.fa-close', {onClick: () => deleteFolder(folder, DeleteFolder)})
         ])
       ]),
-      isNotDefault && h('i.view-folder__toggle', {
+      h('i.view-folder__toggle', {
         class: maybeCollapsed,
         onClick: () => actions.ToggleOpened(folder)
       }, ['▼'])

@@ -1,5 +1,8 @@
+.view-menu
+  padding-top: 10px
+
 .view-menu__actions
-  padding: 20px 8px
+  padding: 20px 1.5em
 
   button
     display: block
@@ -36,16 +39,16 @@
 
 .view-folder__empty
   color: $colors.text-light
-  padding: 4px 8px
+  padding: 1.5rem
 
 .view-folder__header
   display: flex
   justify-content: space-between
-  color: $colors.text-mid
+  color: $colors.text-dark
   border-top: 1px solid $colors.element-light
-  font-size: 11px
+  font-size: 12px
   font-weight: bold
-  padding: 0 5px
+  padding: 0 1.5rem
   text-transform: uppercase
   letter-spacing: 1px
 
@@ -65,9 +68,11 @@
   cursor: -webkit-grab
 
 .view-folder__list
+  padding: 0 calc(1.5rem - 8px)
+  margin-bottom: 10px
+
   // we need some minimal height so the list can accept dragged items
   min-height: 2px
-  margin-bottom: 10px
 
   &.-collapsed
     margin-bottom: 0

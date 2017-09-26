@@ -14,7 +14,7 @@ angular.module('contentful')
   var accessChecker = require('accessChecker');
   var entityStatus = require('entityStatus');
   var getBlankView = require('data/UiConfig/Blanks').getBlankEntryView;
-  var initSavedViewsComponent = require('app/ContentList/SavedViewsComponent').default;
+  var createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar').default;
 
   var searchController = $controller('EntryListSearchController', {$scope: $scope});
   $controller('DisplayedFieldsController', {$scope: $scope});
@@ -27,7 +27,7 @@ angular.module('contentful')
     resetList: _.noop
   });
 
-  $scope.savedViewsComponent = initSavedViewsComponent({
+  $scope.savedViewsSidebar = createSavedViewsSidebar({
     scopedUiConfig: spaceContext.uiConfig.entries.shared,
     loadView: function (view) {
       $scope.loadView(view);

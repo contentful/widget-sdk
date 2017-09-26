@@ -45,9 +45,6 @@ function renderFolders (state, actions) {
 
 function renderEmpty (state) {
   return h('.view-folder', [
-    h('header.view-folder__header', [
-      h('div.view-folder__title', ['Views'])
-    ]),
     h('.view-folder__empty', state.canEdit ? [
       h('strong', ['No views stored']),
       h('p', ['Please use one of the options below.'])

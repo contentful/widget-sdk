@@ -115,10 +115,10 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
 
   &__left-sidebar
     $workbench-content()
+    padding-top: 0
+    padding-right: 1.5em
     width: $workbench-sidebar-width
     max-width: $workbench-max-sidebar-width
-    padding-left: 1.5rem
-    padding-right: 1.5rem
     margin-right: auto
 
   &__right-content
@@ -189,6 +189,7 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
   padding-left: $workbench-header-horizontal-padding
   padding-right: $workbench-header-horizontal-padding
   position relative
+  z-index: 1
   min-height: $workbench-header-height
   width: 100%
   flex-shrink: 0
