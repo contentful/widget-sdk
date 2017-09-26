@@ -18,6 +18,8 @@ import keycodes from 'keycodes';
  *
  * @param {string}  params.title        Dialog's title
  * @param {string}  params.message      Dialog's message
+ * @param {string}  params.confirmLabel Confirmation label (delfaut: "OK")
+ * @param {string}  params.cancelLabel  Cancelation label (default: "Cancel")
  * @param {string}  params.input.value  Initial value of the input
  * @param {string}  params.input.min    Minimal required length (default: 0)
  * @param {string}  params.input.max    Maximal allowed length (default: +Inf)
@@ -62,8 +64,12 @@ export default function open (params = {}) {
             h('button.btn-primary-action', {
               onClick: confirm,
               disabled: isInvalid
-            }, ['OK']),
-            h('button.btn-secondary-action', {onClick: cancel}, ['Cancel'])
+            }, [
+              params.confirmLabel || 'OK'
+            ]),
+            h('button.btn-secondary-action', {onClick: cancel}, [
+              params.cancelLabel || 'Cancel'
+            ])
           ])
         ]);
 

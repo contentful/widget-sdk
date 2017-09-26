@@ -1,6 +1,8 @@
 'use strict';
 
+window.Promise = window.Promise || require('yaku/lib/yaku.core');
 require('angular-ui-sortable');
+require('regenerator-runtime/runtime');
 
 angular.module('cf.libs', [])
   .constant('libs/sanitize-html', require('sanitize-html'))
