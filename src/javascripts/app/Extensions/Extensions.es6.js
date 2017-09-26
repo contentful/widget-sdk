@@ -58,7 +58,7 @@ function list (extensions, deleteExtension) {
   const body = extensions.map((extension) => {
     return tr([
       td({class: 'x--xl-cell'}, [extension.name]),
-      td([h('code', [extension.id])]),
+      td({style: {overflowWrap: 'break-word'}}, [h('code', [extension.id])]),
       td([extension.fieldTypes.join(', ')]),
       td({class: 'x--small-cell'}, [deleteButton(extension, deleteExtension)])
     ]);
