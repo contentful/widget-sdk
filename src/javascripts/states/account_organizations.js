@@ -58,7 +58,8 @@ angular.module('contentful')
     url: '/new',
     template: [
       workbenchHeader('Organization users'),
-      h('cf-new-organization-membership', { withTabs: '!useNewNavigation', context: 'context' })
+      h('cf-new-organization-membership', { ngIf: 'useNewOrgInvitation', context: 'context' }),
+      h('cf-account-view', { ngIf: '!useNewOrgInvitation', context: 'context' })
     ].join('')
   });
 
@@ -86,6 +87,11 @@ angular.module('contentful')
       controller: ['$scope', 'require', function ($scope, require) {
         var TheStore = require('TheStore');
         var $stateParams = require('$stateParams');
+
+        // Begin feature flag code - feature-bv-09-2017-invite-to-org
+        var LD = require('utils/LaunchDarkly');
+        LD.setOnScope($scope, 'feature-bv-09-2017-invite-to-org', 'useNewOrgInvitation');
+        // End feature flag code - feature-bv-09-2017-invite-to-org
 
         $scope.context = {};
         TheStore.set('lastUsedOrg', $stateParams.orgId);
