@@ -9,7 +9,7 @@
 angular.module('contentful').factory('ListQuery', ['require', function (require) {
   var systemFields = require('systemFields');
   var spaceContext = require('spaceContext');
-  var buildQuery = require('search/queryBuilder');
+  var buildQuery = require('search/queryBuilder').buildQuery;
   var assetContentType = require('assetContentType');
 
   var DEFAULT_ORDER = systemFields.getDefaultOrder();
@@ -73,7 +73,8 @@ angular.module('contentful').factory('ListQuery', ['require', function (require)
     var queryObject = {
       order: getOrderQuery(opts.order, contentType),
       limit: opts.paginator.getPerPage(),
-      skip: opts.paginator.getSkipParam()
+      skip: opts.paginator.getSkipParam(),
+      'sys.archivedAt[exists]': 'false'
     };
 
     return buildQuery(spaceContext.space, contentType, opts.searchTerm)
