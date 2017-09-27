@@ -15,6 +15,11 @@ describe('entityEditor/Document', function () {
       close: sinon.spy()
     };
 
+    this.docConnection = {
+      getDocLoader: sinon.stub().returns(this.docLoader),
+      refreshAuth: sinon.stub().resolves()
+    };
+
     this.accessChecker = this.mockService('accessChecker');
     this.accessChecker.canUpdateEntity.returns(true);
 
@@ -62,15 +67,11 @@ describe('entityEditor/Document', function () {
 
     this.createDoc = (type = 'Entry') => {
       const Doc = this.$inject('entityEditor/Document');
-      const docConnection = {
-        getDocLoader: sinon.stub().returns(this.docLoader),
-        refreshAuth: sinon.stub().resolves()
-      };
 
       this.entity.data.sys.type = type;
 
       return Doc.create(
-        docConnection,
+        this.docConnection,
         this.entity,
         this.contentType,
         {sys: {id: 'USER'}}
@@ -192,15 +193,12 @@ describe('entityEditor/Document', function () {
       expect(this.doc.getValueAt(['a', 'b'])).toBe('VAL');
     });
 
-    it('emits error on state.error$ when forbidden', function () {
+    handlesForbidden(function () {
       const sjsDoc = this.connectAndOpen();
       sjsDoc.setAt = sinon.stub().yields('forbidden');
-
-      const errors = K.extractValues(this.doc.state.error$);
+    }, function () {
       this.doc.setValueAt(['a', 'b'], 'VAL');
-      this.$apply();
-      expect(errors[0].constructor.name).toBe('SetValueForbidden');
-    });
+    }, 'SetValueForbidden');
 
     testDiff('Text');
     testDiff('Symbol');
@@ -278,15 +276,12 @@ describe('entityEditor/Document', function () {
       sinon.assert.called(resolved);
     });
 
-    it('emits error on state.error$ when forbidden', function () {
+    handlesForbidden(function () {
       const sjsDoc = this.connectAndOpen();
       sjsDoc.removeAt = sinon.stub().yields('forbidden');
-
-      const errors = K.extractValues(this.doc.state.error$);
+    }, function () {
       this.doc.removeValueAt(['a', 'b']);
-      this.$apply();
-      expect(errors[0].constructor.name).toBe('SetValueForbidden');
-    });
+    }, 'SetValueForbidden');
   });
 
   describe('#insertValueAt()', function () {
@@ -584,12 +579,9 @@ describe('entityEditor/Document', function () {
   });
 
   describe('#state.error$', function () {
-    it('emits "OpenForbidden" error when opening fails', function () {
-      const errors = K.extractValues(this.doc.state.error$);
+    handlesForbidden(function () {
       this.docLoader.doc.set(this.DocLoad.Error('forbidden'));
-      this.$apply();
-      expect(errors[0].constructor.name).toBe('OpenForbidden');
-    });
+    }, function () {}, 'OpenForbidden');
   });
 
   describe('#permissions', function () {
@@ -704,6 +696,28 @@ describe('entityEditor/Document', function () {
       this.doc[method]().catch(errored);
       this.$apply();
       sinon.assert.called(errored);
+    });
+  }
+
+  function handlesForbidden (beforeAction, action, errName) {
+    describe('handles forbidden error', function () {
+      beforeEach(function () {
+        this.docConnection.refreshAuth.rejects();
+        beforeAction.call(this);
+      });
+
+      it('calls auth refresh on `forbidden` error', function () {
+        action.call(this);
+        this.$apply();
+        sinon.assert.calledOnce(this.docConnection.refreshAuth);
+      });
+
+      it('emits error on state.error$ if auth refresh fails', function () {
+        const errors = K.extractValues(this.doc.state.error$);
+        action.call(this);
+        this.$apply();
+        expect(errors[0].constructor.name).toBe(errName);
+      });
     });
   }
 
