@@ -12,6 +12,16 @@ describe('data/UiConfig/Store', function () {
     const createUiConfigStore = this.$inject('data/UiConfig/Store').default;
     const endpoint = createMockSpaceEndpoint();
 
+    const spaceData = {
+      sys: {id: 'spaceid'},
+      spaceMembership: {user: {firstName: 'x', lastName: 'y'}}
+    };
+
+    const spaceContext = {
+      endpoint: endpoint.request,
+      space: {data: spaceData}
+    };
+
     const contentTypes$ = K.createMockProperty(I.List([{
       data: {
         sys: {id: 1},
@@ -22,7 +32,7 @@ describe('data/UiConfig/Store', function () {
     this.store = endpoint.stores.ui_config;
 
     this.create = (isAdmin = true) => {
-      return createUiConfigStore(endpoint.request, isAdmin, { wrappedItems$: contentTypes$ });
+      return createUiConfigStore(spaceContext, isAdmin, { wrappedItems$: contentTypes$ });
     };
   });
 

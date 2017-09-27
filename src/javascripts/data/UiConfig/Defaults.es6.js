@@ -99,3 +99,18 @@ function fileTypeViews () {
     };
   });
 }
+
+export function getPrivateViews ({user}) {
+  const name = `${user.firstName} ${user.lastName}`.replace('"', '');
+
+  return [
+    {
+      id: 'default',
+      title: 'My views',
+      views: [
+        {id: random.id(), title: 'Created by me', searchTerm: `author : "${name}"`},
+        {id: random.id(), title: 'Updated by me', searchTerm: `updater : "${name}"`}
+      ]
+    }
+  ];
+}

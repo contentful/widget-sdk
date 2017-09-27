@@ -541,6 +541,7 @@ describe('spaceContext', function () {
   function makeSpaceMock () {
     return {
       data: {
+        sys: {id: 'spaceid'},
         spaceMembership: {}
       },
       endpoint: sinon.stub().returns({

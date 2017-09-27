@@ -115,7 +115,7 @@ angular.module('contentful')
         Widgets.setSpace(space).then(function (widgets) {
           self.widgets = widgets;
         }),
-        createUiConfigStore(self.endpoint, isAdmin, self.publishedCTs).then(function (api) {
+        createUiConfigStore(self, isAdmin, self.publishedCTs).then(function (api) {
           self.uiConfig = api;
         }),
         self.publishedCTs.refresh()

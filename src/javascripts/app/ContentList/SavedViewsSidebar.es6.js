@@ -24,26 +24,14 @@ export default function ({
   roleAssignment
 }) {
   const sharedSavedViews = initSavedViewsComponent({
-    scopedUiConfig,
+    scopedUiConfig: scopedUiConfig.shared,
     loadView,
     getCurrentView,
     roleAssignment
   });
 
   const privateSavedViews = initSavedViewsComponent({
-    // TODO rename `scopedUiConfig` to `scopedFolders`
-    // TODO Implement a store for private saved views
-    scopedUiConfig: {
-      get: () => [],
-      set: () => Promise.resolve(),
-      getDefaults: () => [
-        {id: 'default', title: 'Default', views: [
-          {id: '1', title: 'Created by me'},
-          {id: '2', title: 'Updated by me'}
-        ]}
-      ],
-      canEdit: true
-    },
+    scopedUiConfig: scopedUiConfig.private,
     loadView,
     getCurrentView
   });
