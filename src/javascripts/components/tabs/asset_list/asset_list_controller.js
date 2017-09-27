@@ -17,7 +17,7 @@ angular.module('contentful')
   var debounce = require('debounce');
   var Notification = require('notification');
   var getBlankView = require('data/UiConfig/Blanks').getBlankAssetView;
-  var initSavedViewsComponent = require('app/ContentList/SavedViewsComponent').default;
+  var createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar').default;
 
   $controller('ListViewsController', {
     $scope: $scope,
@@ -28,8 +28,8 @@ angular.module('contentful')
     }
   });
 
-  $scope.savedViewsComponent = initSavedViewsComponent({
-    scopedUiConfig: spaceContext.uiConfig.assets.shared,
+  $scope.savedViewsSidebar = createSavedViewsSidebar({
+    scopedUiConfig: spaceContext.uiConfig.assets,
     loadView: function (view) {
       $scope.loadView(view);
     },
