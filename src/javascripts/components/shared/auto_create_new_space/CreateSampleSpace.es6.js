@@ -1,5 +1,3 @@
-import {find} from 'lodash';
-
 import $q from '$q';
 import client from 'client';
 import $rootScope from '$rootScope';
@@ -9,8 +7,9 @@ import modalDialog from 'modalDialog';
 import {getCreator} from 'spaceTemplateCreator';
 import {go as gotoState} from 'states/Navigator';
 import {entityActionSuccess} from 'analytics/events/SpaceCreation';
-import {getTemplate, getTemplatesList} from 'spaceTemplateLoader';
 import {track} from 'analytics/Analytics';
+import {getTemplate, getTemplatesList} from 'spaceTemplateLoader';
+import {find, noop} from 'lodash';
 
 import autoCreateSpaceTemplate from './Template';
 import * as tokenStore from 'services/TokenStore';
@@ -25,9 +24,19 @@ import * as tokenStore from 'services/TokenStore';
  *
  * @returns Promise<undefined>
  */
-export default function (org = required('org'), templateName) {
+export default function (org, templateName) {
   let dialog;
   const scope = $rootScope.$new();
+
+  /*
+   * throws an error synchronously to differentiate it from
+   * a rejected promise as a rejected promise stands for
+   * something going wrong during space creation
+   * while this stands for a programmer error
+   */
+  if (!org) {
+    throw new Error('Required param org not provided');
+  }
 
   // not using default fn param as '' should use a default as well
   templateName = templateName || 'product catalogue';
@@ -50,16 +59,6 @@ export default function (org = required('org'), templateName) {
     .finally(_ => {
       scope.isCreatingSpace = false;
     });
-}
-
-/*
- * throws an error synchronously to differentiate it from
- * a rejected promise as a rejected promise stands for
- * something going wrong during space creation
- * while this stands for a programmer error
- */
-function required (param) {
-  throw new Error(`Required param ${param} not provided`);
 }
 
 function chooseTemplate (templateName) {
@@ -122,7 +121,7 @@ function preTemplateLoadSetup (selectedTemplate) {
   const itemHandlers = {
     // no need to show status of individual items
     onItemSuccess: entityActionSuccess,
-    onItemError: _.noop
+    onItemError: noop
   };
   const templateLoader = getCreator(
     spaceContext,
