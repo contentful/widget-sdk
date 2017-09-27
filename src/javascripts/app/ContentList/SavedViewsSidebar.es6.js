@@ -59,11 +59,17 @@ export default function ({
         button(selected, VIEWS_SHARED, 'All views'),
         button(selected, VIEWS_PRIVATE, 'My views')
       ]),
-      h('div', [
-        selected === VIEWS_SHARED && renderStoreComponent(sharedSavedViews),
-        selected === VIEWS_PRIVATE && renderStoreComponent(privateSavedViews)
-      ])
+      views(selected, VIEWS_SHARED, sharedSavedViews),
+      views(selected, VIEWS_PRIVATE, privateSavedViews)
     ]);
+  }
+
+  function views (selected, value, component) {
+    if (selected === value) {
+      // Use `key` so tree is not reused between shared and private views:
+      // it causes nasty DnD bugs
+      return h('div', {key: value}, [renderStoreComponent(component)]);
+    }
   }
 
   function button (selected, value, label) {

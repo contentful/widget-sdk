@@ -4,6 +4,7 @@ import {findIndex, get as getPath} from 'lodash';
 import {update, concat} from 'utils/Collections';
 import {deepFreeze} from 'utils/Freeze';
 import * as K from 'utils/kefir';
+import TheStore from 'TheStore';
 
 const ENTRY_VIEWS_KEY = 'entryListViews';
 const ASSET_VIEWS_KEY = 'assetListViews';
@@ -23,17 +24,12 @@ export default function create ({endpoint, space}, canEdit, publishedCTs) {
   const api = deepFreeze({
     addOrEditCt,
     entries: {
-      shared: forScope(ENTRY_VIEWS_KEY, getEntryViewsDefaults, canEdit),
-      private: {
-        get: () => Defaults.getPrivateViews(space.data.spaceMembership),
-        set: () => Promise.resolve(),
-        getDefaults: () => Defaults.getPrivateViews(space.data.spaceMembership),
-        canEdit: true
-      }
+      shared: forScope(ENTRY_VIEWS_KEY, getEntryViewsDefaults),
+      private: forPrivateScope(ENTRY_VIEWS_KEY)
     },
     assets: {
-      shared: forScope(ASSET_VIEWS_KEY, Defaults.getAssetViews, canEdit),
-      private: {}
+      shared: forScope(ASSET_VIEWS_KEY, Defaults.getAssetViews),
+      private: forPrivateScope(ASSET_VIEWS_KEY)
     }
   });
 
@@ -50,6 +46,33 @@ export default function create ({endpoint, space}, canEdit, publishedCTs) {
     const set = val => save(update(uiConfig, key, () => val)).then(get);
 
     return {get, set, canEdit};
+  }
+
+  function forPrivateScope (key) {
+    const store = TheStore.forKey(`privateSavedViews.${space.data.sys.id}.${key}`);
+    const getDefaults = () => Defaults.getPrivateViews(space.data.spaceMembership);
+
+    const get = () => {
+      const val = store.get();
+      // localStorage, can be modified by a user
+      if (Array.isArray(val)) {
+        return val;
+      } else {
+        return getDefaults();
+      }
+    };
+
+    const set = val => {
+      if (val === undefined) {
+        store.remove();
+      } else {
+        store.set(val);
+      }
+
+      return Promise.resolve(val);
+    };
+
+    return {get, set, getDefaults, canEdit: true};
   }
 
   function getEntryViewsDefaults () {
