@@ -58,6 +58,7 @@ export default function create (scopedUiConfig, saveFolders) {
 
   function forViews (el, {id}) {
     create(['views', id], el, {
+      draggable: '.-draggable',
       group: `views,${viewsGroupId}`,
       onAdd: e => saveFolders(moveViewBetween(scopedUiConfig, [srcFolder(e), id], e)),
       onUpdate: e => saveFolders(moveView(scopedUiConfig, id, e))

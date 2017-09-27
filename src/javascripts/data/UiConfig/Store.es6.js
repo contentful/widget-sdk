@@ -45,7 +45,7 @@ export default function create ({endpoint, space}, canEdit, publishedCTs) {
     const get = () => uiConfig[key] === undefined ? getDefaults() : uiConfig[key];
     const set = val => save(update(uiConfig, key, () => val)).then(get);
 
-    return {get, set, canEdit};
+    return {get, set, canEdit: {views: canEdit, folders: canEdit}};
   }
 
   function forPrivateScope (key) {
@@ -72,7 +72,7 @@ export default function create ({endpoint, space}, canEdit, publishedCTs) {
       return Promise.resolve(val);
     };
 
-    return {get, set, getDefaults, canEdit: true};
+    return {get, set, canEdit: {views: true, folders: false}};
   }
 
   function getEntryViewsDefaults () {

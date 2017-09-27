@@ -70,14 +70,7 @@ angular.module('contentful/mocks')
     spaceContext.cma = new CMAClient(spaceContext.endpoint.request);
     spaceContext.apiKeyRepo = createApiKeyRepo(spaceContext.endpoint);
     spaceContext.organizationContext = {};
-
-    const noop = () => {};
-    const emptyArr = () => [];
-    const scopedApi = {get: emptyArr, set: noop, getDefaults: emptyArr, canEdit: true};
-    spaceContext.uiConfig = {
-      entries: {shared: scopedApi, private: scopedApi},
-      assets: {shared: scopedApi, private: scopedApi}
-    };
+    spaceContext.uiConfig = createUiConfigMock();
 
     return spaceContext;
   }
@@ -90,6 +83,18 @@ angular.module('contentful/mocks')
       changeRoleTo: sinon.stub().resolves(),
       changeRoleToAdmin: sinon.stub().resolves(),
       remove: sinon.stub().resolves()
+    };
+  }
+
+  function createUiConfigMock () {
+    const noop = () => {};
+    const emptyArr = () => [];
+    const canEdit = {views: true, folders: true};
+    const scopedApi = {get: emptyArr, set: noop, getDefaults: emptyArr, canEdit};
+
+    return {
+      entries: {shared: scopedApi, private: scopedApi},
+      assets: {shared: scopedApi, private: scopedApi}
     };
   }
 }]);

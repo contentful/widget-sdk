@@ -18,41 +18,43 @@ export default function render (folder, state, actions) {
   // Do not render anything when:
   // - all views in the folder were hidden from you
   // - AND you cannot drop a view to this folder
-  if (!canEdit && views.length < 1) {
+  if (!canEdit.folders && views.length < 1) {
     return null;
   }
 
   const isNotDefault = folder.id !== 'default';
+  const draggable = canEdit.views ? '-draggable' : '';
   const isClosed = state.folderStates[folder.id] === 'closed';
-  const maybeCollapsed = isClosed ? '-collapsed' : '';
+  const collapsed = isClosed ? '-collapsed' : '';
   const currentViewId = getAtPath(state.currentView, ['id']);
+  const active = view => view.id === currentViewId ? '-active' : '';
 
-  return h('.view-folder', {class: isNotDefault ? '-draggable' : ''}, [
+  return h('.view-folder', {class: isNotDefault ? draggable : ''}, [
     isNotDefault && h('header.view-folder__header', [
       h('div.view-folder__title', [
         `${folder.title} (${folder.views.length})`,
-        canEdit && h('.view-folder__actions', [
+        canEdit.folders && h('.view-folder__actions', [
           h('i.fa.fa-pencil', {onClick: () => renameFolder(folder, UpdateFolder)}),
           h('i.fa.fa-close', {onClick: () => deleteFolder(folder, DeleteFolder)})
         ])
       ]),
       h('i.view-folder__toggle', {
-        class: maybeCollapsed,
+        class: collapsed,
         onClick: () => actions.ToggleOpened(folder)
       }, ['▼'])
     ]),
     h('ul.view-folder__list', {
-      class: maybeCollapsed,
+      class: collapsed,
       ref: el => state.dnd.forViews(el, folder)
     }, isClosed ? [] : views.map(view => {
       return h('li.view-folder__item', {
-        class: view.id === currentViewId ? '-active' : '',
+        class: [active(view), draggable].join(' '),
         onClick: () => actions.LoadView(view)
       }, [
         h('.view-folder__item-title', [
           h('span', {title: view.title}, [view.title])
         ]),
-        canEdit && h('.view-folder__actions', [
+        canEdit.views && h('.view-folder__actions', [
           roleAssignment && h('i.fa.fa-eye', {
             onClick: doNotPropagate(() => editViewRoles(view, roleAssignment.endpoint, UpdateView))
           }),

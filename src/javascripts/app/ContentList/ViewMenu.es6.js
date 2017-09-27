@@ -5,17 +5,19 @@ import ViewFolder from './ViewFolder';
 import openInputDialog from 'app/InputDialog';
 
 export default function render (state, actions) {
+  const {folders, canEdit} = state;
+
   // The default folder is ensured (minimal length is 1):
-  const isEmpty = getAtPath(state, ['folders', 'length']) === 1 &&
-                  getAtPath(state, ['folders', 0, 'views', 'length']) === 0;
+  const isEmpty = getAtPath(folders, ['length']) === 1 &&
+                  getAtPath(folders, [0, 'views', 'length']) === 0;
 
   return h('.view-menu', [
     isEmpty ? renderEmpty(state) : renderFolders(state, actions),
-    state.canEdit && h('.view-menu__actions', [
-      isEmpty && h('button.text-link', {
+    h('.view-menu__actions', [
+      isEmpty && canEdit.views && h('button.text-link', {
         onClick: () => actions.RestoreDefaultViews()
       }, [h('i.fa.fa-refresh'), 'Restore default views']),
-      h('button.text-link', {
+      canEdit.folders && h('button.text-link', {
         onClick: () => openInputDialog({
           title: 'Add folder',
           confirmLabel: 'Add folder',
@@ -23,7 +25,7 @@ export default function render (state, actions) {
           input: {min: 1, max: 32}
         }).promise.then(actions.CreateFolder)
       }, [h('i.fa.fa-folder'), 'Add folder']),
-      h('button.text-link', {
+      canEdit.views && h('button.text-link', {
         onClick: () => openInputDialog({
           title: 'Save current view',
           confirmLabel: 'Save current view',
@@ -45,7 +47,7 @@ function renderFolders (state, actions) {
 
 function renderEmpty (state) {
   return h('.view-folder', [
-    h('.view-folder__empty', state.canEdit ? [
+    h('.view-folder__empty', state.canEdit.views ? [
       h('strong', ['No views stored']),
       h('p', ['Please use one of the options below.'])
     ] : [
