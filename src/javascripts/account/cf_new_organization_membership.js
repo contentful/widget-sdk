@@ -2,9 +2,8 @@
 
 angular.module('contentful')
 .directive('cfNewOrganizationMembership', ['require', function (require) {
-  
   var h = require('utils/hyperscript').h;
-  
+
   return {
     template: h('.ornanization-membership-form', {
     }),
@@ -12,7 +11,7 @@ angular.module('contentful')
       context: '='
     },
     restrict: 'E',
-    link: function(scope, elem) {
+    link: function (scope) {
       scope.context.ready = true;
     }
   };
