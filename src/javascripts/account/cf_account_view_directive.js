@@ -13,14 +13,9 @@ angular.module('contentful')
   var UrlSyncHelper = require('account/UrlSyncHelper');
 
   return {
-    template: h('.account-container', {
-      ngClass: '{ "with-tabs": withTabs }'
-    }, [
-      h('iframe', { width: '100%', height: '100%', id: 'accountViewFrame' })
-    ]),
+    template: template(),
     restrict: 'E',
     scope: {
-      withTabs: '=',
       context: '='
     },
     link: function (scope, elem) {
@@ -60,6 +55,21 @@ angular.module('contentful')
       }
     }
   };
+
+  function template () {
+    return h('div', {
+      style: {
+        position: 'absolute',
+        top: '70px',
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'white'
+      }
+    }, [
+      h('iframe', { width: '100%', height: '100%', id: 'accountViewFrame' })
+    ]);
+  }
 
   function forceLogin () {
     modalDialog.open({

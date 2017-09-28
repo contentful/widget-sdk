@@ -42,11 +42,6 @@ export default function () {
         dataTestId: 'nav.account.userProfile',
         uiSref: 'account.profile.user'
       }, {
-        text: 'Organizations & billing',
-        dataTestId: 'nav.account.organization',
-        ngIf: '!useNewNavigation && organizationsRef',
-        cfSref: 'organizationsRef'
-      }, {
         text: 'Talk to us',
         ngClick: 'openIntercom()',
         dataTestId: 'nav.account.intercom',
