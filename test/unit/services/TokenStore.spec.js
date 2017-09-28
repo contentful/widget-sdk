@@ -17,9 +17,7 @@ describe('Token store service', function () {
       sys: {createdBy: this.user},
       spaces: this.rawSpaces
     });
-    this.$inject('data/CMA/TokenInfo').default = () => {
-      return this.fetchWithAuth;
-    };
+    this.$inject('data/CMA/TokenInfo').default = () => this.fetchWithAuth;
 
     this.tokenStore = this.$inject('services/TokenStore');
     this.OrganizationRoles = this.$inject('services/OrganizationRoles');

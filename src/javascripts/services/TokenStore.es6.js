@@ -127,7 +127,6 @@ export function refresh () {
   return tokenInfoMVar.read();
 }
 
-
 /**
  * @ngdoc method
  * @name tokenStore#getSpace
