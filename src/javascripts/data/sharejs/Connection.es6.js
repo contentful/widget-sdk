@@ -196,42 +196,31 @@ function createDocWrapper (connection, key) {
   let rawDoc = null;
   let closePromise = $q.resolve();
 
-  return {
-    open: waitAndOpen,
-    close: maybeClose
-  };
+  const open = () => $q.denodeify((cb) => connection.open(key, 'json', cb));
+  const close = (doc) => $q.denodeify((cb) => {
+    try {
+      doc.close(cb);
+      // Because of a bug in ShareJS we also need to listen for the
+      // 'closed' event
+      doc.on('closed', () => cb());
+    } catch (e) {
+      // Always resolve and ignore errors on closing
+      cb();
+    }
+  });
 
-  function waitAndOpen () {
-    return closePromise.then(open).then((openedDoc) => {
+  return {
+    open: () => closePromise.then(open).then((openedDoc) => {
       rawDoc = openedDoc;
       return rawDoc;
-    });
-  }
-
-  function maybeClose () {
-    if (rawDoc) {
-      closePromise = close(rawDoc);
-      rawDoc = null;
-    }
-  }
-
-  function open () {
-    return $q.denodeify((cb) => connection.open(key, 'json', cb));
-  }
-
-  function close (doc) {
-    return $q.denodeify(function (cb) {
-      try {
-        doc.close(cb);
-        // Because of a bug in ShareJS we also need to listen for the
-        // 'closed' event
-        doc.on('closed', () => cb());
-      } catch (e) {
-        // Always resolve and ignore errors on closing
-        cb();
+    }),
+    close: () => {
+      if (rawDoc) {
+        closePromise = close(rawDoc);
+        rawDoc = null;
       }
-    });
-  }
+    }
+  };
 }
 
 function entityMetadataToKey (sys) {
