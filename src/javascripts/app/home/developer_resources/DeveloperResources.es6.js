@@ -23,7 +23,7 @@ export const developerResources = {
     ],
     links: [
       {name: 'Overview', url: 'https://www.contentful.com/developers/docs/javascript/'},
-      {name: 'Getting started', url: 'https://www.contentful.com/developers/api-demo/javascript/'},
+      {name: 'Getting started', url: 'https://www.contentful.com/developers/docs/javascript/tutorials/using-js-cda-sdk/'},
       {name: 'Tutorials', url: 'https://www.contentful.com/developers/docs/javascript/#tutorials'},
       {name: 'Example apps', url: 'https://www.contentful.com/developers/docs/javascript/#example-apps'}
     ]
@@ -43,7 +43,7 @@ export const developerResources = {
     ],
     links: [
       {name: 'Overview', url: 'https://www.contentful.com/developers/docs/php/'},
-      {name: 'Getting started', url: 'https://www.contentful.com/developers/api-demo/php/'},
+      {name: 'Getting started', url: 'https://www.contentful.com/developers/docs/php/tutorials/getting-started-with-contentful-and-php/'},
       {name: 'Tutorials', url: 'https://www.contentful.com/developers/docs/php/#tutorials'},
       {name: 'Example apps', url: 'https://www.contentful.com/developers/docs/php/#example-apps'}
     ]
@@ -52,6 +52,7 @@ export const developerResources = {
     examples: [],
     links: [
       {name: 'Overview', url: 'https://www.contentful.com/developers/docs/net/'},
+      {name: 'Getting started', url: 'https://www.contentful.com/developers/docs/net/tutorials/using-net-cda-sdk/'},
       {name: 'Tutorials', url: 'https://www.contentful.com/developers/docs/net/#tutorials'}
     ]
   },
@@ -70,7 +71,7 @@ export const developerResources = {
     ],
     links: [
       {name: 'Overview', url: 'https://www.contentful.com/developers/docs/ruby/'},
-      {name: 'Getting started', url: 'https://www.contentful.com/developers/api-demo/ruby/'},
+      {name: 'Getting started', url: 'https://www.contentful.com/developers/docs/ruby/tutorials/getting-started-with-contentful-and-ruby/'},
       {name: 'Tutorials', url: 'https://www.contentful.com/developers/docs/ruby/#tutorials'},
       {name: 'Example apps', url: 'https://www.contentful.com/developers/docs/ruby/#example-apps'}
     ]
@@ -100,7 +101,7 @@ export const developerResources = {
     ],
     links: [
       {name: 'Overview', url: 'https://www.contentful.com/developers/docs/ios/'},
-      {name: 'Getting started', url: 'https://www.contentful.com/developers/api-demo/ios/'},
+      {name: 'Getting started', url: 'https://www.contentful.com/developers/docs/ios/tutorials/using-delivery-api-with-swift/'},
       {name: 'Tutorials', url: 'https://www.contentful.com/developers/docs/ios/#tutorials'},
       {name: 'Example apps', url: 'https://www.contentful.com/developers/docs/ios/#example-apps'}
     ]
@@ -130,7 +131,7 @@ export const developerResources = {
     ],
     links: [
       {name: 'Overview', url: 'https://www.contentful.com/developers/docs/android/'},
-      {name: 'Getting started', url: 'https://www.contentful.com/developers/api-demo/java/'},
+      {name: 'Getting started', url: 'https://www.contentful.com/developers/docs/android/tutorials/getting-started-with-contentful-and-android/'},
       {name: 'Tutorials', url: 'https://www.contentful.com/developers/docs/android/#tutorials'},
       {name: 'Example apps', url: 'https://www.contentful.com/developers/docs/android/#example-apps'}
     ]
@@ -138,7 +139,8 @@ export const developerResources = {
   'Java': {
     examples: [],
     links: [
-      {name: 'Getting started', url: 'https://www.contentful.com/developers/api-demo/java/'}
+      {name: 'Overview', url: 'https://www.contentful.com/developers/docs/java/'},
+      {name: 'Tutorials', url: 'https://www.contentful.com/developers/docs/java/tutorials/'}
     ]
   },
   'Python': {
