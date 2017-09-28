@@ -121,7 +121,7 @@ describe('Token store service', function () {
 
   describe('#spaces$', function () {
     it('is initially empty', function () {
-      K.assertCurrentValue(this.tokenStore.spaces$, []);
+      K.assertCurrentValue(this.tokenStore.spaces$, null);
     });
 
     it('updates spaces when tokenStore is refreshed', function* () {
@@ -133,7 +133,7 @@ describe('Token store service', function () {
 
   describe('#spacesByOrganization$', function () {
     it('is initially empty', function () {
-      K.assertCurrentValue(this.tokenStore.spacesByOrganization$, {});
+      K.assertCurrentValue(this.tokenStore.spacesByOrganization$, null);
     });
 
     it('updates property when tokenStore is refreshed', function* () {
