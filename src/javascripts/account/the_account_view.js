@@ -69,7 +69,7 @@ angular.module('contentful')
    * organization's users (memberships) page.
    */
   function goToUsers () {
-    return goToOrganizations('users');
+    return goToOrganizations('users.gatekeeper');
   }
 
   /**
