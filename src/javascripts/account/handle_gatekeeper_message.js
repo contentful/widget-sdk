@@ -68,8 +68,8 @@ angular.module('contentful')
     var defaultMessage = 'An error has occurred. We have been automatically notified and will investigate. If it re-occurs, please contact support.';
 
     modalDialog.open({
-      title: data.heading || defaultTitle,
-      message: data.body || defaultMessage,
+      title: _.unescape(data.heading) || defaultTitle,
+      message: _.unescape(data.body) || defaultMessage,
       ignoreEsc: true,
       backgroundClose: false
     }).promise
