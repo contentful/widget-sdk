@@ -324,10 +324,10 @@ describe('data/sharejs/Connection', function () {
   });
 
   describe('#refreshAuth()', function () {
-    it('calls connection.refreshAuth()', function* () {
+    it('calls connection.refreshAuth() with the new token', function* () {
       const connection = this.create('//HOST', 'SPACE', this.auth);
       yield connection.refreshAuth();
-      sinon.assert.calledOnce(this.baseConnection.refreshAuth);
+      sinon.assert.calledOnce(this.baseConnection.refreshAuth.withArgs('NEW_TOKEN'));
     });
   });
 });
