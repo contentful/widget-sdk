@@ -5,11 +5,11 @@ import spaceContext from 'spaceContext';
 import modalDialog from 'modalDialog';
 
 import {getCreator} from 'spaceTemplateCreator';
+import {track} from 'analytics/Analytics';
 import {go as gotoState} from 'states/Navigator';
 import {entityActionSuccess} from 'analytics/events/SpaceCreation';
-import {track} from 'analytics/Analytics';
-import {getTemplate, getTemplatesList} from 'spaceTemplateLoader';
 import {find, noop} from 'lodash';
+import {getTemplate, getTemplatesList} from 'spaceTemplateLoader';
 
 import autoCreateSpaceTemplate from './Template';
 import * as tokenStore from 'services/TokenStore';
@@ -37,9 +37,6 @@ export default function (org, templateName) {
   if (!org) {
     throw new Error('Required param org not provided');
   }
-
-  // not using default fn param as '' should use a default as well
-  templateName = templateName || 'product catalogue';
 
   scope.isCreatingSpace = true;
   return getTemplatesList()
@@ -130,7 +127,7 @@ function preTemplateLoadSetup (selectedTemplate) {
   );
 
   return getTemplate(selectedTemplate)
-    .then((template, retried) => ({ template, retried, templateLoader }));
+    .then((template) => ({ template, templateLoader }));
 }
 
 function loadTemplateIntoSpace ({ template, templateLoader }) {

@@ -93,15 +93,6 @@ describe('CreateSampleSpace service', function () {
     it('should throw when org is falsy', function () {
       expect(_ => this.createSampleSpace()).toThrow(new Error('Required param org not provided'));
     });
-    it('should default to using "product catalogue" as the space template', function* () {
-      try {
-        yield this.createSampleSpace(this.getOrg());
-        const chosenTemplate = this.getCreator.args[0][2];
-        expect(chosenTemplate.toLowerCase()).toBe('product catalogue');
-      } catch (e) {
-        throw e;
-      }
-    });
     it('should create a new space and load the chosen template', function* () {
       yield this.createSampleSpace(this.getOrg(), 'custom template');
 
