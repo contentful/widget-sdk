@@ -87,22 +87,33 @@ angular.module('contentful/app', ['contentful'])
 }]);
 
 angular.module('contentful')
-.config([
-  '$locationProvider', '$compileProvider', '$animateProvider',
-  function ($locationProvider, $compileProvider, $animateProvider) {
-    $locationProvider.html5Mode({
-      enabled: true,
-      requireBase: false
-    });
+.config(['$locationProvider', function ($locationProvider) {
+  $locationProvider.html5Mode({
+    enabled: true,
+    requireBase: false
+  });
 
-    // This is not actually used but prevents gobbling of fragments in
-    // the URL, like the authentication token passed by gatekeeper.
-    $locationProvider.hashPrefix('!!!');
+  // This is not actually used but prevents gobbling of fragments in
+  // the URL, like the authentication token passed by gatekeeper.
+  $locationProvider.hashPrefix('!!!');
+}])
 
-    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|contentful):/);
-    $animateProvider.classNameFilter(/animate/);
-  }
-]);
+.config(['$compileProvider', function ($compileProvider) {
+  $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|contentful):/);
+}])
+
+.config(['$animateProvider', function ($animateProvider) {
+  $animateProvider.classNameFilter(/animate/);
+}])
+
+.config(['$httpProvider', function ($httpProvider) {
+  // IE11 caches AJAX requests by default :facepalm: if we don’t set
+  // these headers.
+  // See: http://viralpatel.net/blogs/ajax-cache-problem-in-ie/
+  $httpProvider.defaults.headers.common['Cache-Control'] = 'no-cache';
+  $httpProvider.defaults.headers.common['If-Modified-Since'] = '0';
+}]);
+
 
 angular.module('cf.es6')
 .constant('jquery', $)
