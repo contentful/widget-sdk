@@ -8,16 +8,12 @@ angular.module('contentful')
   var tokenStore = require('services/TokenStore');
   var RoleRepository = require('RoleRepository');
   var { ADMIN_ROLE_ID } = require('access_control/SpaceMembershipRepository');
-
-  var navState$ = require('navigation/NavState').navState$
-    .filter(state => {
-      return Object.keys(state).length
-    });
+  var { runTask } = require('utils/Concurrent');
   
   return {
     template: '<cf-component-bridge component="component">',
     scope: {
-      context: '='
+      properties: '='
     },
     controller: ['$scope', function ($scope) {
       let state = {
@@ -28,49 +24,45 @@ angular.module('contentful')
         id: ADMIN_ROLE_ID
       };
 
-      $scope.component = h('div', ['...loading']);
-      
-      let spacesByOrg$ = tokenStore.spacesByOrganization$
-        .filter(spaces => {
-          return spaces && Object.keys(spaces).length
-        });
-      let spaces$ = navState$
-        .combine(spacesByOrg$)
-        .map(([navState, spacesByOrg]) => {
-          return spacesByOrg[navState.org.sys.id];
-        });
-      let roles$ = spaces$
-        .flatMap((spaces) => {
-          let roles = spaces.map(space => {
-            return K.fromPromise(RoleRepository.getInstance(space).getAll());
-          });
+      $scope.component = h('noscript');
 
-          return K.combine(roles);
-        })
-        .map(roles => {
-          let allRoles = roles
-            .reduce((a, b) => a.concat(b), [])
-            .map(role => ({
-              name: role.name,
-              id: role.sys.id,
-              spaceId: role.sys.space.sys.id
-            }));
-          return _.groupBy(allRoles, _.property('spaceId'))
+      runTask(function* () {
+        const allSpaces = yield tokenStore.getFatSpaces();
+        const orgSpaces = allSpaces.filter(space => space.data.organization.sys.id === $scope.properties.orgId);
+        const rolesPromise = orgSpaces.map(space => {
+          return RoleRepository.getInstance(space).getAll();
         });
 
-      K.onValueScope($scope, spaces$.combine(roles$).take(1), ([spaces, roles]) => {
+        const roles = yield Promise.all(rolesPromise);
+        const allRoles = roles
+          .reduce((a, b) => a.concat(b), [])
+          .map(role => ({
+            name: role.name,
+            id: role.sys.id,
+            spaceId: role.sys.space.sys.id
+          }));
+        
+        const rolesBySpace = _.groupBy(allRoles, _.property('spaceId'));
+        
+        const spacesWithRoles = orgSpaces.map(space => ({
+          id: space.data.sys.id,
+          name: space.data.name,
+          roles: rolesBySpace[space.data.sys.id]
+        }));
+        
+
         state = {
           ...state,
-          spaces,
-          rolesBySpace: roles
+          maxNumberOfRoles: getBiggestLength(Object.values(rolesBySpace)) + 1,
+          spaces: spacesWithRoles
         };
+
         update();
       });
-
+      
       function update () {
-        $scope.context.ready = true;
+        $scope.properties.context.ready = true;
         $scope.component = render(state);
-        debugger;
       }
 
       function updateSpaceRole(evt, role) {
@@ -80,19 +72,21 @@ angular.module('contentful')
           removeRole(role);
         }
         update();
+        $scope.$applyAsync();
       }
 
       function addRole(role) {
         let { spaceMemberships } = state;
         let spaceRoles = spaceMemberships[role.spaceId] || [];
 
-        if (!spaceRoles.includes(role.id)) {
-          spaceRoles = [
-            ...spaceRoles,
-            role.id
-          ];
-          state.spaceMemberships[role.spaceId] = spaceRoles;
+        if (role.id === adminRole.id) {
+          spaceRoles = [role.id];
+        } else {
+          spaceRoles = spaceRoles.filter((roleId) => roleId !== adminRole.id);
+          spaceRoles.push(role.id);
         }
+
+        state.spaceMemberships[role.spaceId] = spaceRoles;
       }
 
       function removeRole(role) {
@@ -128,21 +122,20 @@ angular.module('contentful')
         ]);
       }
 
-      function render ({spaces, rolesBySpace}) {
+      function render ({spaces, maxNumberOfRoles}) {
         return h('form', {}, [
           h('table.deprecated-table', [
             h('thead', [
               h('th', ['Space']),
               h('th', {
-                colspan: `${getBiggestLength(Object.values(rolesBySpace)) + 1}` //add 1 for Admin
+                colspan: `${maxNumberOfRoles}` //add 1 for Admin
               }, ['Roles'])
             ]),
             h('tbody', spaces.map(space => {
-              let roles = rolesBySpace[space.data.sys.id];
               return h('tr', [
-                h('td', [space.data.name]),
-                roleCell({...adminRole, spaceId: space.data.sys.id}),
-                ...roles.map(role => roleCell(role))
+                h('td', [space.name]),
+                roleCell({...adminRole, spaceId: space.id}),
+                ...space.roles.map(role => roleCell(role))
               ]);
             }))
           ])
