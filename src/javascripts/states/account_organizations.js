@@ -56,7 +56,7 @@ angular.module('contentful')
     name: 'users.new',
     title: 'Organization users',
     url: '/new',
-    controller: ['$stateParams', '$scope', function($stateParams, $scope) {
+    controller: ['$stateParams', '$scope', function ($stateParams, $scope) {
       var TheStore = require('TheStore');
 
       // Begin feature flag code - feature-bv-09-2017-invite-to-org

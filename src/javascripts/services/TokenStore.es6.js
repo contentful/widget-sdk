@@ -163,6 +163,12 @@ export function getSpaces () {
   });
 }
 
+/**
+ * @name tokenStore#getFatSpaces
+ * @returns {Promise<API.Space[]>}
+ * @description
+ * This method returns a promise with the list of whole space instances.
+ */
 export function getFatSpaces () {
   return tokenInfoMVar.read().then(function () {
     return K.getValue(spacesBus.property);
