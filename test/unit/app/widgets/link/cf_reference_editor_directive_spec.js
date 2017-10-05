@@ -82,6 +82,24 @@ describe('cfReferenceEditorDirective', function () {
         expect(this.scope.entityModels[1].value.id).toBe(link2.sys.id);
       });
 
+      it('converts invalid links to null', function () {
+        this.scope = this.init();
+        this.field.setValue([
+          null,
+          undefined,
+          {},
+          {sys: null},
+          {sys: {}},
+          {sys: {id: 1}},
+          {sys: {id: {}}}
+        ]);
+        this.$apply();
+        expect(this.scope.entityModels.length).toBe(7);
+        this.scope.entityModels.forEach(
+          model => expect(model.value.id).toBe(null)
+        );
+      });
+
       it('prefetches linked entities', function () {
         this.scope = this.init();
         this.field.setValue([link1]);
