@@ -9,6 +9,9 @@ angular.module('contentful')
   var tokenStore = require('services/TokenStore');
   // Begin test code: test-ps-09-2017-entry-sample-space-cli
   var LD = require('utils/LaunchDarkly');
+  var analytics = require('analytics/Analytics');
+  var qualifyUser = require('components/shared/auto_create_new_space/index').qualifyUser;
+  var createSpaceAutomatically = require('components/shared/auto_create_new_space/index').init;
 
   var flagName = 'test-ps-09-2017-entry-sample-space-cli';
   // End test code: test-ps-09-2017-entry-sample-space-cli
@@ -51,7 +54,7 @@ angular.module('contentful')
       var controller = this;
 
       // Begin test code: test-ps-09-2017-entry-sample-space-cli
-      const cliEntryOnboardingTest$ = LD.getFeatureFlag(flagName);
+      var cliEntryOnboardingTest$ = LD.getFeatureFlag(flagName, qualifyUser);
       K.onValueScope($scope, cliEntryOnboardingTest$, setOnboardNecessityFlag);
       // End test code: test-ps-09-2017-entry-sample-space-cli
 
@@ -94,19 +97,30 @@ angular.module('contentful')
         }
       }
 
+      LD.waitFlags().then(function () {
+        var cliEntryOnboardingValue = K.getValue(cliEntryOnboardingTest$);
+        if (!cliEntryOnboardingValue) {
+          createSpaceAutomatically();
+        }
+      });
+
       // Begin test code: test-ps-09-2017-entry-sample-space-cli
       // we check that there are no spaces for this user
       // and the flag is true
       function setOnboardNecessityFlag (flag) {
-        if (flag) {
-          tokenStore.getSpaces().then(function (spaces) {
-            controller.onboardNeeded = spaces && spaces.length === 0;
-          });
-        } else {
-          controller.onboardNeeded = false;
-        }
-        // End test code: test-ps-09-2017-entry-sample-space-cli
+        trackExperiment(flag);
+        controller.onboardNeeded = flag;
       }
+
+      function trackExperiment (variation) {
+        analytics.track('experiment:start', {
+          experiment: {
+            id: flagName,
+            variation: variation
+          }
+        });
+      }
+      // End test code: test-ps-09-2017-entry-sample-space-cli
     }],
     controllerAs: 'welcome'
   };

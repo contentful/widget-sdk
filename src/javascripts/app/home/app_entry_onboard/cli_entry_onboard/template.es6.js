@@ -3,10 +3,10 @@ import onboardingIcon from 'svg/onboarding-choose';
 
 const prefix = 'cli-entry-onboard';
 
-export function render (props) {
+export function render (props, actions) {
   const continueButton = h(`button.btn-action.${prefix}__continue_button`, {
     disabled: !props.type,
-    onClick: () => props.continue(props.type)
+    onClick: () => actions.chooseType(props.type)
   }, ['Continue']);
 
   return h('section.home-section', [
@@ -17,7 +17,7 @@ export function render (props) {
     h(`h4.${prefix}__question`, [
       'What would you prefer to use to get started?'
     ]),
-    ...renderRadioButtons(props),
+    ...renderRadioButtons(props, actions),
     continueButton,
     h(`.${prefix}__icon`, [
       onboardingIcon
@@ -25,9 +25,9 @@ export function render (props) {
   ]);
 }
 
-function renderRadioButtons (props) {
+function renderRadioButtons (props, actions) {
   const cliRadioButton = renderRadioButton({
-    selectType: props.selectType,
+    selectType: actions.selectType,
     chosenType: props.type,
     type: 'cli',
     text: [
@@ -35,7 +35,7 @@ function renderRadioButtons (props) {
     ]
   });
   const webappRadioButton = renderRadioButton({
-    selectType: props.selectType,
+    selectType: actions.selectType,
     chosenType: props.type,
     type: 'webapp',
     text: [

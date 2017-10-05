@@ -1,18 +1,18 @@
-import {h} from 'ui/Framework';
+import {h, renderString} from 'ui/Framework';
 import InputWithCopy from 'components/contextual_help/InputWithCopy';
 import backIcon from 'svg/breadcrumbs-icon-back';
 
-export const prefix = 'cli-description-onboard';
+const classPrefix = 'cli-description-onboard';
 
-export function render (props, applyRender) {
+export function render (props, actions) {
   return h('section.home-section', [
-    renderTitle(props),
-    h(`.${prefix}__columns`, [
-      h(`.${prefix}__column.x--left`, [
-        renderSteps(props, applyRender),
-        renderContinueButton(props)
+    renderTitle(props, actions),
+    h(`.${classPrefix}__columns`, [
+      h(`.${classPrefix}__column.x--left`, [
+        renderSteps(props, actions),
+        renderContinueButton(props, actions)
       ]),
-      h(`.${prefix}__column.x--right`, [
+      h(`.${classPrefix}__column.x--right`, [
         renderDescription()
       ])
     ])
@@ -20,10 +20,10 @@ export function render (props, applyRender) {
 }
 
 function renderDescription () {
-  return h(`.${prefix}__description`, [
+  return h(`.${classPrefix}__description`, [
     'The Contentful CLI will guide you to:',
-    h(`ul.${prefix}__list`, [
-      h(`li.${prefix}__list_item`, [
+    h(`ul.${classPrefix}__list`, [
+      h(`li.${classPrefix}__list_item`, [
         'Create a ',
         renderTooltip({
           text: 'space',
@@ -33,13 +33,13 @@ function renderDescription () {
         }),
         ' to hold your content;'
       ]),
-      h(`li.${prefix}__list_item`, [
+      h(`li.${classPrefix}__list_item`, [
         'Create a ',
         renderTooltip({
           text: 'content model',
           tooltip: `Defining a content type is a fundamental step in powering your applications
                     with Contentful. A content type consists of a set of fields and other
-                    information, read this guide to learn more about modelling your content.`
+                    meta information.`
         }),
         ' and ',
         renderTooltip({
@@ -49,7 +49,7 @@ function renderDescription () {
         }),
         ';'
       ]),
-      h(`li.${prefix}__list_item`, [
+      h(`li.${classPrefix}__list_item`, [
         'Preview your content with a sample blog.'
       ])
     ]),
@@ -58,45 +58,45 @@ function renderDescription () {
   ]);
 }
 
-function renderTitle (props) {
+function renderTitle (_props, actions) {
   return h('div', [
-    h(`div.back_button.${prefix}__back`, {
-      onClick: props.back
+    h(`div.back_button.${classPrefix}__back`, {
+      onClick: actions.back
     }, [
       backIcon
     ]),
-    h(`h2.${prefix}__title`, ['Using the command line'])
+    h(`h2.${classPrefix}__title`, ['Using the command line'])
   ]);
 }
 
-function renderSteps (props, applyRender) {
+function renderSteps (_props, actions) {
   const installStep = h('li', [
-    h(`h4.${prefix}__instruction`, [
+    h(`h4.${classPrefix}__instruction`, [
       'Install and run the Contentful CLI'
     ]),
     InputWithCopy({
       text: 'npm install -g contentful-cli',
       children: ['npm install -g contentful-cli']
-    }, applyRender),
-    h(`a.${prefix}__node`, {
-      onClick: props.handleMissingNode
+    }, actions.render),
+    h(`a.${classPrefix}__node`, {
+      onClick: actions.handleMissingNode
     }, [
       'Having trouble installing this?'
     ])
   ]);
 
   const runStep = h('li', [
-    h(`h4.${prefix}__instruction`, [
+    h(`h4.${classPrefix}__instruction`, [
       'Run the guide and follow the steps'
     ]),
     InputWithCopy({
       text: 'contentful guide',
       children: ['contentful guide']
-    }, applyRender)
+    }, actions.render)
   ]);
 
   const appStep = h('li', [
-    h(`.${prefix}__continue_explanation`, [
+    h(`.${classPrefix}__continue_explanation`, [
       'To continue, complete the Contentful CLI guide'
     ])
   ]);
@@ -108,24 +108,70 @@ function renderSteps (props, applyRender) {
   ]);
 }
 
-function renderContinueButton (props) {
+function renderContinueButton (props, actions) {
+  const loadingClassName = props.updatingSpaces ? '.is-loading' : '';
   return h('div', [
-    h(`button.btn-action.${prefix}__continue_button`, {
+    h(`button.btn-action.${classPrefix}__continue_button${loadingClassName}`, {
       disabled: !props.complete,
-      onClick: () => props.navigateToCreatedSpace()
+      onClick: actions.navigateToSpace
     }, ['Start exploring the content'])
   ]);
 }
 
 function renderTooltip ({ text, tooltip }) {
-  return h(`span.${prefix}__tooltip_container`, [
-    h(`span.${prefix}__tooltip_text`, [
+  return h(`span.${classPrefix}__tooltip_container`, [
+    h(`span.${classPrefix}__tooltip_text`, [
       text
     ]),
-    h(`.${prefix}__tooltip_wrapper`, [
+    h(`.${classPrefix}__tooltip_wrapper`, [
       h('div', [
-        h(`.${prefix}__tooltip`, [tooltip])
+        h(`.${classPrefix}__tooltip`, [tooltip])
       ])
     ])
   ]);
+}
+
+export function renderMissingNodeModal () {
+  const VDOMtemplate = h('.modal-background', [
+    h(`.modal-dialog.${classPrefix}__modal-container`, [
+      h('header.modal-dialog__header', [
+        h('h1', [
+          'Having trouble installing the CLI?'
+        ]),
+        h('button.modal-dialog__close', {
+          ngClick: 'dialog.confirm()'
+        })
+      ]),
+      h('.modal-dialog__content', [
+        h('div', [
+          'To install and run the Contentful command line tool, node.js is required.'
+        ]),
+        h(`ul.${classPrefix}__modal-list`, [
+          h(`li.${classPrefix}__modal-elem`, [
+            'Get node.js from ',
+            h('a', {
+              href: 'https://nodejs.org',
+              target: '_blank'
+            }, ['nodejs.org'])
+          ]),
+          h(`li.${classPrefix}__modal-elem`, [
+            'Then come here and continue the process.'
+          ])
+        ]),
+        h(`.${classPrefix}__modal-note`, [
+          `Node.js® is a JavaScript runtime built on Chrome’s V8 JavaScript engine.
+           Node.js uses an event-driven, non-blocking I/O model that makes it lightweight
+           and efficient. Node.js’ package ecosystem, npm, is the largest ecosystem of
+           open source libraries in the world.`
+        ]),
+        h(`button.btn-action.${classPrefix}__modal-btn`, {
+          ngClick: 'dialog.confirm()'
+        }, [
+          'Done'
+        ])
+      ])
+    ])
+  ]);
+
+  return renderString(VDOMtemplate);
 }

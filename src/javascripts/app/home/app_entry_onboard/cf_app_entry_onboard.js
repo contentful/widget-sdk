@@ -16,10 +16,13 @@
 angular.module('contentful')
 .directive('cfAppEntryOnboard', ['require', function (require) {
   var h = require('utils/hyperscript').h;
+  var createSampleSpace = require('components/shared/auto_create_new_space/index').init;
+  var analytics = require('analytics/Analytics');
+  var TEST_NAME = 'test-ps-09-2017-entry-sample-space-cli';
   var template = h('div', [
     h('cf-cli-entry-onboard', {
       ngIf: '!appOnboard.chosen',
-      type: 'appOnboard.type',
+      setType: 'appOnboard.setType(type)',
       choose: 'appOnboard.choose(type)'
     }),
     h('cf-cli-description-onboard', {
@@ -40,9 +43,18 @@ angular.module('contentful')
       controller.type = null;
       controller.chosen = false;
 
+      controller.setType = function (type) {
+        controller.type = type;
+        $scope.$apply();
+      };
+
       controller.choose = function (type) {
         controller.type = type;
         controller.chosen = true;
+        if (type === 'webapp') {
+          createSampleSpace();
+        }
+        trackSelection(type);
         $scope.$apply();
       };
 
@@ -56,6 +68,23 @@ angular.module('contentful')
 
       function isTypeChosen (type) {
         return controller.chosen === true && controller.type === type;
+      }
+
+      // we track each click (so the user can select, go back and select
+      // another option), and later in analysis we will remain only the
+      // last click
+      function trackSelection (type) {
+        analytics.track('experiment:interaction', {
+          experiment: {
+            id: TEST_NAME,
+            // it is not an A/B test per se, so variation
+            // does not make a lot of sense, and we hardcode it
+            // we send information about type of chosen way in
+            // `interaction_context`
+            variation: true,
+            interaction_context: type
+          }
+        });
       }
     }]
   };
