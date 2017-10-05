@@ -19,17 +19,6 @@ angular.module('contentful')
   var analytics = require('analytics/Analytics');
   var intercom = require('intercom');
 
-  // Begin feature flag code - feature-bv-06-2017-use-new-navigation
-  var LD = require('utils/LaunchDarkly');
-  LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation');
-  // End feature flag code - feature-bv-06-2017-use-new-navigation
-
-  $scope.$watch(function () {
-    return TheAccountView.getOrganizationRef();
-  }, function (ref) {
-    $scope.organizationsRef = ref;
-  }, true);
-
   K.onValueScope($scope, TheAccountView.canShowIntercomLink$, function (canShowIntercomLink) {
     $scope.canShowIntercomLink = canShowIntercomLink;
   });

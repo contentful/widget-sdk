@@ -62,10 +62,36 @@ describe('Gatekeeper Message Handler', function () {
       sinon.assert.calledOnce(refresh);
     });
 
-    it('redirects to login', function () {
-      const redirectToLogin = this.$inject('Authentication').redirectToLogin = sinon.spy();
-      this.handle({type: 'error', status: 401});
-      sinon.assert.calledOnce(redirectToLogin);
+    describe('handles gk errors', function () {
+      beforeEach(function () {
+        this.modalDialog = this.$inject('modalDialog');
+        this.modalDialog.open = sinon.stub().returns({promise: Promise.resolve()});
+
+        this.expectModal = function (title, message) {
+          sinon.assert.calledOnce(this.modalDialog.open.withArgs({
+            title: title,
+            message: message,
+            ignoreEsc: true,
+            backgroundClose: false
+          }));
+        };
+      });
+
+      it('shows gk message in modal', function () {
+        this.handle({type: 'error', status: 500, heading: 'oopsie', body: 'error happened'});
+        this.expectModal('oopsie', 'error happened');
+      });
+
+      it('unescapes gk message', function () {
+        this.handle({type: 'error', status: 404, heading: 'Page does&#39;t exist', body: 'Server says: &quot;404&quot;'});
+        this.expectModal('Page does\'t exist', 'Server says: "404"');
+      });
+
+      it('redirects to login', function () {
+        const redirectToLogin = this.$inject('Authentication').redirectToLogin = sinon.spy();
+        this.handle({type: 'error', status: 401});
+        sinon.assert.calledOnce(redirectToLogin);
+      });
     });
   });
 });

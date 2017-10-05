@@ -15,12 +15,7 @@ angular.module('contentful')
     restrict: 'E',
     scope: {},
     controllerAs: 'nav',
-    controller: ['$scope', '$stateParams', function ($scope, $stateParams) {
-      // Begin feature flag code - feature-bv-06-2017-use-new-navigation
-      var LD = require('utils/LaunchDarkly');
-      LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation');
-      // End feature flag code - feature-bv-06-2017-use-new-navigation
-
+    controller: ['$stateParams', function ($stateParams) {
       this.spaceId = $stateParams.spaceId;
 
       this.canNavigateTo = function (section) {
@@ -74,12 +69,12 @@ angular.module('contentful')
         dataViewType: 'space-settings',
         rootSref: 'spaces.detail.settings',
         icon: 'nav-settings',
-        title: '{{ useNewNavigation ? "Space settings" : "Settings" }}',
+        title: 'Space settings',
         children: [
           {
             sref: 'spaces.detail.settings.space',
             dataViewType: 'spaces-settings-space',
-            title: '{{ useNewNavigation ? "General" : "Space" }}'
+            title: 'General'
           }, {
             sref: 'spaces.detail.settings.locales.list',
             dataViewType: 'spaces-settings-locales',

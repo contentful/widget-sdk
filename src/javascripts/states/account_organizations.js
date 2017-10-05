@@ -10,10 +10,6 @@ angular.module('contentful')
   var h = require('utils/hyperscript').h;
   var workbenchHeader = require('app/Workbench').header;
 
-  // Begin feature flag code - feature-bv-06-2017-use-new-navigation
-  var LD = require('utils/LaunchDarkly');
-  // End feature flag code - feature-bv-06-2017-use-new-navigation
-
   var newOrg = base({
     name: 'new',
     url: '/new',
@@ -76,18 +72,13 @@ angular.module('contentful')
 
         $scope.context = {};
         TheStore.set('lastUsedOrg', $stateParams.orgId);
-
-        // Begin feature flag code - feature-bv-06-2017-use-new-navigation
-        LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation');
-        // End feature flag code - feature-bv-06-2017-use-new-navigation
       }],
       params: {
         pathSuffix: ''
       },
       template: [
-        h('cf-organizations-old-nav', { ngIf: '!useNewNavigation' }),
         workbenchHeader(definition.title),
-        h('cf-account-view', { withTabs: '!useNewNavigation', context: 'context' })
+        h('cf-account-view', { context: 'context' })
       ].join('')
     };
     return base(_.extend(definition, defaults));
@@ -99,12 +90,7 @@ angular.module('contentful')
     abstract: true,
     views: {
       'nav-bar@': {
-        // Begin feature flag code - feature-bv-06-2017-use-new-navigation
-        template: h('cf-organization-nav', { ngIf: 'useNewNavigation', class: 'app-top-bar__child' }),
-        controller: ['$scope', function ($scope) {
-          LD.setOnScope($scope, 'feature-bv-06-2017-use-new-navigation', 'useNewNavigation');
-        }]
-        // End feature flag code - feature-bv-06-2017-use-new-navigation
+        template: h('cf-organization-nav', { class: 'app-top-bar__child' })
       }
     },
     children: [

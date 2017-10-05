@@ -83,6 +83,7 @@ angular.module('contentful/app', ['contentful'])
   require('dialogsInitController').init();
   require('navigation/DocumentTitle').init();
   require('Debug').init(window);
+  require('components/shared/auto_create_new_space').init();
 }]);
 
 angular.module('contentful')
