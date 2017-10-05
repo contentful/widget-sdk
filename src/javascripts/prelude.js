@@ -71,11 +71,11 @@ angular.module('contentful/app', ['contentful'])
   } else {
     Error.stackTraceLimit = 25;
   }
-  require('utils/LaunchDarkly').init();
   require('Authentication').init();
   require('services/TokenStore').init();
   require('presence').startTracking();
   require('uiVersionSwitcher').checkIfVersionShouldBeSwitched();
+  require('utils/LaunchDarkly').init();
   require('navigation/stateChangeHandlers').setup();
   require('ui/ContextMenuHandler').default($document);
   require('notification').setupClearMessageHooks();

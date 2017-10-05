@@ -31,6 +31,31 @@ export function init () {
     });
 }
 
+/**
+ * @name components/shared/auto_create_new_space#hasAnOrgWithSpaces
+ * @description
+ * Returns true if the user belongs to an org that has atleast one space
+ *
+ * @param {Object} spacesByOrg
+ * @returns {Boolean}
+ */
+export function hasAnOrgWithSpaces (spacesByOrg) {
+  return !!find(spacesByOrg, spaces => !!spaces.length);
+}
+
+/**
+ * @name components/shared/auto_create_new_space#ownsAtleastOneOrg
+ * @description
+ * Returns true if the user owns atleast one org that he/she is a
+ * member of.
+ *
+ * @param {Object} user
+ * @returns {Boolean}
+ */
+export function ownsAtleastOneOrg (user) {
+  return !!getOwnedOrgs(user.organizationMemberships).length;
+}
+
 function qualifyUser (user, spacesByOrg) {
   return !hadSpaceAutoCreated(user) &&
     isRecentUser(user) &&
@@ -54,14 +79,6 @@ function isRecentUser (user) {
   const diff = now.diff(creationDate, 'seconds');
 
   return diff <= SECONDS_IN_WEEK;
-}
-
-function hasAnOrgWithSpaces (spacesByOrg) {
-  return find(spacesByOrg, spaces => !!spaces.length);
-}
-
-function ownsAtleastOneOrg (user) {
-  return !!getOwnedOrgs(user.organizationMemberships).length;
 }
 
 function getOwnedOrgs (orgMemberships) {

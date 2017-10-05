@@ -1,3 +1,15 @@
+- LD.getTest/getFeatureFlag *must* be called inside of the controller when used in a directive.
+- undefined and '<NIL>' values are skipped for feature flags and tests
+- tests should be setup as multivariate tests with three variations true, false, null. null is what should be sent as default rule i.e., for disqualified users
+- null variation in ab tests stands for disqualified users
+- targeting can choose between true/false or do a 50/50 split or something
+- feature flags can be boolean. So a normal boolean feature flag in LD parlance
+- a context switch is when some data that we send as customData changes and we trigger a ldclient.identify call to update customData in LD
+- a context switch can cause the user to get a new value for the test/flag
+- a context switch is async
+- if a context switch is triggered by some action that remounts directives that use a test or feature flag, then the test/feature flag handler will initially receive the old value till the context switch completes and then it may or maynot receive an updated value subject to whether the context switch actually caused LD to bucket the current user differently. Take care of this in your analytics by making sure the required data is sent in the payload to snowplow so that in our analytics we can figure out the mapping between user, org, test flag, variation.
+- For e.g., if you have a test that does targeting based on space level data, send the spaceId in the analytics payload so that we can stitch the right events together to analyse how the org that the user who saw the variation performed in the funnel
+
 # A/B Testing in the Contentful web app
 
 We use [LaunchDarkly](launch-darkly-app) for A/B tests as well as for feature flags. Please read the [doc on feature flags](feature-flags-doc) before this one.
