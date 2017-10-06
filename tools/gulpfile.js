@@ -47,9 +47,6 @@ const argv = yargs
 
 process.env['PATH'] += ':./node_modules/.bin'
 
-const loadSubtasks = require('../tasks/subtasks')
-loadSubtasks(gulp, 'docs')
-
 const CSS_COMMENT_RE = /\/\*[^*]*\*+([^/*][^*]*\*+)*\//g
 
 const src = {
