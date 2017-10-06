@@ -1,4 +1,4 @@
-import { mapValues } from 'lodash';
+import { mapValues, memoize } from 'lodash';
 import * as K from 'utils/kefir';
 import { makeMatcher } from 'utils/TaggedValues';
 
@@ -93,46 +93,47 @@ export function makeReducer (handlers) {
   }));
 }
 
-/**
- * This function calls `render` function of a store-backed component with its
- * current store state and bound actions. Useful when building a VDOM tree out
- * of reusable components.
- *
- *     const render = () => {
- *       return h('div', [
- *         renderStoreComponent(storeComponent1),
- *         renderStoreComponent(storeComponent2)
- *       ]);
- *     };
- *
- * Use `combineStoreComponents` to produce one component for a nested component
- * tree that can be used with `cfComponentStoreBridge`.
- */
-export function renderStoreComponent (c) {
-  const state = K.getValue(c.store.state$);
-  const actions = bindActions(c.store, c.actions);
-  return c.render(state, actions);
-}
 
 /**
- * This function produces a component that can be used with
- * `cfComponentStoreBridge` while its tree consists of multiple store-backed
- * components. `render` will be called every time any of combined components
- * change its state.
+ * WARNING -- This method is experimental and represents a temporary
+ * solution. Try to avoid it.
  *
- *     const render = ({substate1, substate2}) => {
- *       // as defined above
+ * Combine multiple store components into one with a custom render
+ * function. A _store component_ is a `{store, actions, render}`
+ * triple.
+ *
+ *     const render = ({toggler, subState}) => {
+ *       if (toggler.state === true) {
+ *         return subState.view
+ *       } else {
+ *         return h('button', { onClick: toggler.actions.Toggle() })
+ *       }
  *     };
  *
  *     return combineStoreComponents(render, {
- *       substate1: storeComponent1,
- *       substate2: storeComponent2
+ *       toggler: togglerComponent,
+ *       subState: storeComponent
  *     });
  *
- * Note that `actions` (second argument passed to `render`) will always be `{}`.
+ * The render function receives the substates in an object. Each
+ * substate has the following properties
+ * - `substate.state` The corresponding components current state
+ * - `substate.actions` The corresponding components bound actions
+ * - `substate.view` The result of calling the corresponding components
+ *   render function with its current state.
  */
 export function combineStoreComponents (render, components) {
-  const statePropertiesMap = mapValues(components, c => c.store.state$);
+  const statePropertiesMap = mapValues(components, (c) => {
+    return c.store.state$.map((state) => {
+      const memoizedRender = memoize(() => c.render && c.render(state, c.actions));
+      return {
+        state: state,
+        // We compute the view lazily
+        get view () { return memoizedRender(); },
+        actions: c.actions
+      };
+    });
+  });
   const state$ = K.combinePropertiesObject(statePropertiesMap);
   return {render, actions: {}, store: {state$}};
 }

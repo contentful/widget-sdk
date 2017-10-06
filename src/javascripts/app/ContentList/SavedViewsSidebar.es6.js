@@ -4,7 +4,7 @@ import {makeCtor} from 'utils/TaggedValues';
 import {
   createStore,
   makeReducer,
-  renderStoreComponent,
+  bindActions,
   combineStoreComponents
 } from 'ui/Framework/Store';
 
@@ -38,14 +38,18 @@ export default function ({
 
   const reduce = makeReducer({[Select]: (_, next) => next});
   const store = createStore('shared', reduce);
+  const selector = {
+    store: store,
+    actions: bindActions(store, { Select })
+  };
 
   return combineStoreComponents(render, {
-    selected: {store},
-    shared: sharedSavedViews,
-    private: privateSavedViews
+    selector: selector,
+    sharedViews: sharedSavedViews,
+    privateViews: privateSavedViews
   });
 
-  function render ({selected}) {
+  function render ({selector, sharedViews, privateViews}) {
     return h('div', [
       h('div', {
         style: {
@@ -56,11 +60,11 @@ export default function ({
           borderBottom: `1px solid ${Colors.elementMid}`
         }
       }, [
-        button(selected, VIEWS_SHARED, 'All views'),
-        button(selected, VIEWS_PRIVATE, 'My views')
+        button(selector, VIEWS_SHARED, 'All views'),
+        button(selector, VIEWS_PRIVATE, 'My views')
       ]),
-      views(selected, VIEWS_SHARED, sharedSavedViews),
-      views(selected, VIEWS_PRIVATE, privateSavedViews)
+      views(selector.state, VIEWS_SHARED, sharedViews),
+      views(selector.state, VIEWS_PRIVATE, privateViews)
     ]);
   }
 
@@ -68,20 +72,20 @@ export default function ({
     if (selected === value) {
       // Use `key` so tree is not reused between shared and private views:
       // it causes nasty DnD bugs
-      return h('div', {key: value}, [renderStoreComponent(component)]);
+      return h('div', {key: value}, [component.view]);
     }
   }
 
-  function button (selected, value, label) {
+  function button ({state, actions}, value, label) {
     return h('button', {
       style: {
         color: Colors.textLight,
         letterSpacing: '2px',
         fontSize: '.8em',
         textTransform: 'uppercase',
-        fontWeight: selected === value ? 'bold' : 'normal'
+        fontWeight: state === value ? 'bold' : 'normal'
       },
-      onClick: () => store.dispatch(Select, value)
+      onClick: () => actions.Select(value)
     }, [label]);
   }
 }
