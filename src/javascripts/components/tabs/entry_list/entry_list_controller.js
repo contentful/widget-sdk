@@ -28,7 +28,7 @@ angular.module('contentful')
   });
 
   $scope.savedViewsSidebar = createSavedViewsSidebar({
-    scopedUiConfig: spaceContext.uiConfig.entries,
+    entityFolders: spaceContext.uiConfig.entries,
     loadView: function (view) {
       $scope.loadView(view);
     },

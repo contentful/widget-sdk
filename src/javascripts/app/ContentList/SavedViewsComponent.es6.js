@@ -27,7 +27,7 @@ const DeleteView = makeCtor('DeleteView');
 const folderStatesStore = TheStore.forKey('folderStates');
 
 export default function ({
-  scopedUiConfig,
+  scopedFolders,
   loadView,
   getCurrentView,
   roleAssignment
@@ -49,7 +49,7 @@ export default function ({
       return saveFolders(state, undefined);
     },
     [RevertFolders] (state) {
-      return assign(state, {folders: scopedUiConfig.get()});
+      return assign(state, {folders: scopedFolders.get()});
     },
     [AlterFolders] (state, folders) {
       return saveFolders(state, folders);
@@ -99,10 +99,10 @@ export default function ({
 
   const store = createStore({
     currentView: getCurrentView(),
-    folders: prepareFolders(scopedUiConfig.get()),
-    canEdit: scopedUiConfig.canEdit,
+    folders: prepareFolders(scopedFolders.get()),
+    canEdit: scopedFolders.canEdit,
     folderStates: folderStatesStore.get() || {},
-    dnd: createDnD(scopedUiConfig, folders => store.dispatch(AlterFolders, folders)),
+    dnd: createDnD(scopedFolders.get, folders => store.dispatch(AlterFolders, folders)),
     roleAssignment
   }, reduce);
 
@@ -116,15 +116,15 @@ export default function ({
     // state is reverted.
     notification.info('View(s) updated successfully.');
 
-    scopedUiConfig.set(updated).catch(() => {
+    scopedFolders.set(updated).catch(() => {
       notification.error('Error while updating saved views. Your changes were reverted.');
       store.dispatch(RevertFolders);
     });
 
-    // Calling `scopedUiConfig.set()` updates the local version of the UiConfig
-    // right away. `scopedUiConfig.get()` will return it w/o waiting for the API
+    // Calling `scopedFolders.set()` updates the local version of the UiConfig
+    // right away. `scopedFolders.get()` will return it w/o waiting for the API
     // roundtrip. It returns defaults if the local version is `undefined`.
-    return scopedUiConfig.get();
+    return scopedFolders.get();
   }
 
   const actions = {

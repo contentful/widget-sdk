@@ -17,8 +17,9 @@ import random from 'random';
  * @description
  * Creates an API for registering DOM nodes that can be dragged and dropped.
  *
- * This function takes two arguments: a scoped UIConfig (with `get` method) and
- * a callback that will be called with updated state of folders.
+ * This function takes two arguments: a function returning the current state of
+ * externally maintained folders (a flat array of {id, title, views} objects)
+ * and a callback that will be called with updated state of folders.
  *
  * The API has two methods: `forFolders` and `forViews`. They can be safely
  * called with either nodes obtained with the `ref` handler or null (`ref` is
@@ -29,13 +30,13 @@ import random from 'random';
  * storms": updating a store with a node triggers rerender causing `ref`
  * handlers to update the store again.
  *
- * @param {UIConfig}  scopedUiConfig  Scoped UIConfig (`forEntries`/`forAssets`)
- * @param {function}  saveFolders     A callback receiving updated folders
+ * @param {function}  getFolders   A function returning the current folders
+ * @param {function}  saveFolders  A function called with folders updated by DnD
  *
  * @returns {object}
  */
 
-export default function create (scopedUiConfig, saveFolders) {
+export default function create (getFolders, saveFolders) {
   // Each DnD instance has its own randomly generated view group ID.
   // This way it can be used in many places at the same time, but views can be
   // moved only between the same DnD.
@@ -52,7 +53,7 @@ export default function create (scopedUiConfig, saveFolders) {
       draggable: '.view-folder.-draggable',
       handle: '.view-folder__header',
       filter: '.view-folder__actions, .view-folder__toggle',
-      onUpdate: e => saveFolders(moveFolder(scopedUiConfig, e))
+      onUpdate: e => saveFolders(moveFolder(getFolders(), e))
     });
   }
 
@@ -60,8 +61,8 @@ export default function create (scopedUiConfig, saveFolders) {
     create(['views', id], el, {
       draggable: '.-draggable',
       group: `views,${viewsGroupId}`,
-      onAdd: e => saveFolders(moveViewBetween(scopedUiConfig, [srcFolder(e), id], e)),
-      onUpdate: e => saveFolders(moveView(scopedUiConfig, id, e))
+      onAdd: e => saveFolders(moveViewBetween(getFolders(), [srcFolder(e), id], e)),
+      onUpdate: e => saveFolders(moveView(getFolders(), id, e))
     });
   }
 
@@ -78,11 +79,10 @@ export default function create (scopedUiConfig, saveFolders) {
   }
 }
 
-function moveFolder (scopedUiConfig, {oldIndex, newIndex}) {
+function moveFolder (foldersWithDefault, {oldIndex, newIndex}) {
   // The default folder is not draggable.
   // UiConfig may contain a persisted folder with the "default" ID.
   // `oldIndex` and `newIndex` are not aware of the default folder.
-  const foldersWithDefault = scopedUiConfig.get();
   const defaultFolder = find(foldersWithDefault, {id: 'default'});
 
   // Remove the default folder from the array we're going to rearrange:
@@ -100,8 +100,8 @@ function moveFolder (scopedUiConfig, {oldIndex, newIndex}) {
   }
 }
 
-function moveView (scopedUiConfig, folderId, {oldIndex, newIndex}) {
-  return map(scopedUiConfig.get(), cur => {
+function moveView (folders, folderId, {oldIndex, newIndex}) {
+  return map(folders, cur => {
     if (cur.id === folderId) {
       return assign(cur, {views: move(cur.views, oldIndex, newIndex)});
     } else {
@@ -110,8 +110,7 @@ function moveView (scopedUiConfig, folderId, {oldIndex, newIndex}) {
   });
 }
 
-function moveViewBetween (scopedUiConfig, [srcFolderId, folderId], {oldIndex, newIndex}) {
-  const folders = scopedUiConfig.get();
+function moveViewBetween (folders, [srcFolderId, folderId], {oldIndex, newIndex}) {
   const view = findMap(folders, cur => {
     if (cur.id === srcFolderId) {
       return cur.views[oldIndex];

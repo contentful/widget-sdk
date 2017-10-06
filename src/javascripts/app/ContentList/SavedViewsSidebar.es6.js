@@ -17,20 +17,20 @@ const VIEWS_SHARED = 'shared';
 const VIEWS_PRIVATE = 'private';
 
 export default function ({
-  scopedUiConfig,
+  entityFolders,
   loadView,
   getCurrentView,
   roleAssignment
 }) {
   const sharedViews = initSavedViewsComponent({
-    scopedUiConfig: scopedUiConfig.shared,
+    scopedFolders: entityFolders.shared,
     loadView,
     getCurrentView,
     roleAssignment
   });
 
   const privateViews = initSavedViewsComponent({
-    scopedUiConfig: scopedUiConfig.private,
+    scopedFolders: entityFolders.private,
     loadView,
     getCurrentView
   });
