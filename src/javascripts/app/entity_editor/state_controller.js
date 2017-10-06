@@ -160,7 +160,7 @@ angular.module('contentful')
         [otherwise, _.constant(true)]
       ]);
 
-      return !canDelete || !canMoveToDraft;
+      return isDeleted || !canDelete || !canMoveToDraft;
     }
   });
 
