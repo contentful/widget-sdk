@@ -11,12 +11,9 @@ import accessChecker from 'accessChecker';
 import modalDialog from 'modalDialog';
 
 export default function render (folder, state, actions) {
-  const {canEdit, enableRoleAssignment, space, endpoint} = state;
+  const {canEdit, roleAssignment} = state;
   const {UpdateFolder, DeleteFolder, UpdateView, DeleteView} = actions;
-
-  const views = filter(folder.views, view => {
-    return isViewVisible(view, enableRoleAssignment, space);
-  });
+  const views = filter(folder.views, view => isViewVisible(view, roleAssignment));
 
   // Do not render anything when:
   // - all views in the folder were hidden from you
@@ -56,8 +53,8 @@ export default function render (folder, state, actions) {
           h('span', {title: view.title}, [view.title])
         ]),
         canEdit && h('.view-folder__actions', [
-          enableRoleAssignment && h('i.fa.fa-eye', {
-            onClick: doNotPropagate(() => editViewRoles(view, endpoint, UpdateView))
+          roleAssignment && h('i.fa.fa-eye', {
+            onClick: doNotPropagate(() => editViewRoles(view, roleAssignment.endpoint, UpdateView))
           }),
           h('i.fa.fa-pencil', {
             onClick: doNotPropagate(() => editViewTitle(view, UpdateView))
@@ -124,12 +121,16 @@ function deleteView (view, DeleteView) {
   });
 }
 
-function isViewVisible (view, enableRoleAssignment, space) {
-  if (isContentTypeReadable(view.contentTypeId)) {
-    return enableRoleAssignment ? isVisibleForAssignedRoles(view, space) : true;
-  } else {
+function isViewVisible (view, roleAssignment) {
+  if (!isContentTypeReadable(view.contentTypeId)) {
     return false;
   }
+
+  if (roleAssignment) {
+    return isVisibleForAssignedRoles(view, roleAssignment.membership);
+  }
+
+  return true;
 }
 
 /**
@@ -139,14 +140,12 @@ function isViewVisible (view, enableRoleAssignment, space) {
  * We always return true if the user is an admin or if the view
  * does not have the `roles` property.
  */
-function isVisibleForAssignedRoles (view, space) {
-  const {spaceMembership} = space.data;
-
-  if (spaceMembership.admin) {
+function isVisibleForAssignedRoles (view, membership) {
+  if (membership.admin) {
     return true;
   } else {
     return view.roles ? view.roles.some(viewRoleId => {
-      return spaceMembership.roles.some(role => viewRoleId === role.sys.id);
+      return membership.roles.some(role => viewRoleId === role.sys.id);
     }) : true;
   }
 }

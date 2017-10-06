@@ -32,7 +32,6 @@ angular.module('contentful/mocks')
   const Widgets = require('widgets');
   const MockDocument = require('mocks/entityEditor/Document');
   const createApiKeyRepo = require('data/CMA/ApiKeyRepo').default;
-  const createUiConfigStore = require('data/UiConfig/Store').default;
   const CMAClient = require('data/ApiClient');
   const K = require('utils/kefir');
 
@@ -74,12 +73,14 @@ angular.module('contentful/mocks')
     spaceContext.apiKeyRepo = createApiKeyRepo(spaceContext.endpoint);
     spaceContext.organizationContext = {};
     spaceContext.contentCollections = {state$: K.constant([])};
-    spaceContext.uiConfig = createUiConfigStore(
-      spaceContext.endpoint,
-      // isAdmin so we can change the UI Config
-      true,
-      spaceContext.publishedCTs
-    );
+
+    const noop = () => {};
+    const emptyArr = () => [];
+    const scopedApi = {get: emptyArr, set: noop, getDefaults: emptyArr, canEdit: true};
+    spaceContext.uiConfig = {
+      entries: {shared: scopedApi, private: {}},
+      assets: {shared: scopedApi, private: {}}
+    };
 
     return spaceContext;
   }

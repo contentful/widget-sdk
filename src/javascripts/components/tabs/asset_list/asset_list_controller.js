@@ -29,8 +29,7 @@ angular.module('contentful')
   });
 
   $scope.savedViewsComponent = initSavedViewsComponent({
-    spaceContext: spaceContext,
-    scopedUiConfig: spaceContext.uiConfig.forAssets(),
+    scopedUiConfig: spaceContext.uiConfig.assets.shared,
     loadView: function (view) {
       $scope.loadView(view);
     },

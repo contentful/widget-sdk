@@ -19,7 +19,7 @@ import {isObjectLike, cloneDeep} from 'lodash';
  */
 export function deepFreeze (o) {
   if (isFrozen(o)) {
-    return;
+    return o;
   }
 
   o = shallowFreeze(o);
