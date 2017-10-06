@@ -68,7 +68,6 @@ angular.module('contentful')
      */
     resetWithSpace: function (space) {
       var self = this;
-      var isAdmin = space.data.spaceMembership.admin;
 
       self.endpoint = createSpaceEndpoint(
         Config.apiUrl(),
@@ -115,7 +114,7 @@ angular.module('contentful')
         Widgets.setSpace(space).then(function (widgets) {
           self.widgets = widgets;
         }),
-        createUiConfigStore(self, isAdmin, self.publishedCTs).then(function (api) {
+        createUiConfigStore(space, self.endpoint, self.publishedCTs).then(function (api) {
           self.uiConfig = api;
         }),
         self.publishedCTs.refresh()

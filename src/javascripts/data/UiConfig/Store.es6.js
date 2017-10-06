@@ -15,7 +15,9 @@ const ASSET_VIEWS_KEY = 'assetListViews';
  * The store fetches UI config and sends changes back to the API. It is created
  * on the space context reset and available as `spaceContext.uiConfig`.
  */
-export default function create ({endpoint, space}, canEdit, publishedCTs) {
+export default function create (space, spaceEndpoint, publishedCTs) {
+  const canEdit = space.data.spaceMembership.admin;
+
   // Holds the server resource or `{}` if the resource does not exist.
   // The value is always deeply frozen. Use `setUiConfig` to alter the value.
   let uiConfig;
@@ -91,7 +93,7 @@ export default function create ({endpoint, space}, canEdit, publishedCTs) {
    * to the config object.
    */
   function load () {
-    return endpoint({
+    return spaceEndpoint({
       method: 'GET',
       path: ['ui_config']
     }).then(setUiConfig, error => {
@@ -120,7 +122,7 @@ export default function create ({endpoint, space}, canEdit, publishedCTs) {
   function save (data) {
     setUiConfig(data);
 
-    return endpoint({
+    return spaceEndpoint({
       method: 'PUT',
       path: ['ui_config'],
       version: getPath(data, ['sys', 'version']),
