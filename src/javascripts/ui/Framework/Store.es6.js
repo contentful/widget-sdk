@@ -124,16 +124,24 @@ export function makeReducer (handlers) {
  */
 export function combineStoreComponents (render, components) {
   const statePropertiesMap = mapValues(components, (c) => {
+    const actions = bindActions(c.store, c.actions);
+
     return c.store.state$.map((state) => {
-      const memoizedRender = memoize(() => c.render && c.render(state, c.actions));
+      const memoizedRender = memoize(() => {
+        if (c.render) {
+          return c.render(state, actions);
+        }
+      });
+
       return {
-        state: state,
+        state,
+        actions,
         // We compute the view lazily
-        get view () { return memoizedRender(); },
-        actions: c.actions
+        get view () { return memoizedRender(); }
       };
     });
   });
+
   const state$ = K.combinePropertiesObject(statePropertiesMap);
   return {render, actions: {}, store: {state$}};
 }

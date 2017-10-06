@@ -4,7 +4,6 @@ import {makeCtor} from 'utils/TaggedValues';
 import {
   createStore,
   makeReducer,
-  bindActions,
   combineStoreComponents
 } from 'ui/Framework/Store';
 
@@ -23,31 +22,26 @@ export default function ({
   getCurrentView,
   roleAssignment
 }) {
-  const sharedSavedViews = initSavedViewsComponent({
+  const sharedViews = initSavedViewsComponent({
     scopedUiConfig: scopedUiConfig.shared,
     loadView,
     getCurrentView,
     roleAssignment
   });
 
-  const privateSavedViews = initSavedViewsComponent({
+  const privateViews = initSavedViewsComponent({
     scopedUiConfig: scopedUiConfig.private,
     loadView,
     getCurrentView
   });
 
   const reduce = makeReducer({[Select]: (_, next) => next});
-  const store = createStore('shared', reduce);
   const selector = {
-    store: store,
-    actions: bindActions(store, { Select })
+    store: createStore(VIEWS_SHARED, reduce),
+    actions: {Select}
   };
 
-  return combineStoreComponents(render, {
-    selector: selector,
-    sharedViews: sharedSavedViews,
-    privateViews: privateSavedViews
-  });
+  return combineStoreComponents(render, {selector, sharedViews, privateViews});
 
   function render ({selector, sharedViews, privateViews}) {
     return h('div', [
