@@ -5,8 +5,17 @@ import * as RoleRepository from 'RoleRepository';
 import {ADMIN_ROLE_ID} from 'access_control/SpaceMembershipRepository';
 import {runTask} from 'utils/Concurrent';
 
+const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
 let state = {
-  spaceMemberships: {}
+  spaceMemberships: {},
+  emails: [],
+  invalidAddresses: [],
+  roles: [
+    { name: 'Owner', value: 'owner', description: ''},
+    { name: 'Admin', value: 'admin', description: ''},
+    { name: 'Member', value: 'member', description: ''}
+  ]
 };
 
 const actions = {};
@@ -64,6 +73,25 @@ export default function ($scope) {
 
     update();
   };
+
+  actions.updateOrgRole = (evt, role) => {
+    if (evt.target.checked) {
+      state.orgRole = role;
+      update();
+    }
+  }
+
+  actions.updateEmails = (evt) => {
+    state.emails = evt.target.value
+      .split(',')
+      .map(email => email.trim().replace(/\n|\t/g, ''))
+      .filter(email => email.length);
+    
+    state.invalidAddresses = state.emails
+      .filter(email => !emailRegex.test(email));
+    
+    update();
+  }
 }
 
 function addRole (role) {
@@ -94,7 +122,9 @@ function isChecked (role) {
 }
 
 function roleCell (role) {
-  return h('td', [
+  return h('span.cfnext-form-option', {
+    marginBottom: '0'
+  }, [
     h('label', [
       h('input', {
         type: 'checkbox',
@@ -106,21 +136,60 @@ function roleCell (role) {
   ]);
 }
 
-function render ({spaces, maxNumberOfRoles}) {
-  return h('form', {}, [
+function render ({emails, roles, spaces, maxNumberOfRoles, spaceMemberships, orgRole}) {
+  return h('form', {
+    style: {padding: '2em 3em'}
+  }, [
+    h('h3.section-title', ['Select users']),
+    h('p', ['Add multiple users by filling in a comma-separated list of email addresses. You can add a maximum of 100 users at a time.']),
+    h('.cfnext-form__field.input', [
+      h('textarea', {
+        autofocus: true,
+        class: 'cfnext-form__input',
+        style: {width: '600px'},
+        value: emails.join(', \n'), 
+        onChange: actions.updateEmails
+      }),
+      h('.invalid', [
+        h('p', ['The following e-mail addresses are not valid:']),
+        h('', [state.invalidAddresses.join(', ')])
+      ])
+    ]),
+    h('h3.section-title', ['Organization role']),
+    h('fieldset.cfnext-form__field', roles.map(role => {
+      return h('.cfnext-form-option', [
+        h('label', [
+          h('input', {
+            name: 'organization_membership_role',
+            type: 'radio', 
+            id: `organization_membership_role_${role.value}`,
+            value: role.value,
+            onChange: (evt) => actions.updateOrgRole(evt, role.value)
+          }),
+          role.name
+        ])
+      ])
+    })),
+    h('h3.section-title', ['Access to spaces']),
+    h('p', ['Assign one or multiple roles for each space you want the user to be able to access.']),
     h('table.deprecated-table', [
       h('thead', [
         h('th', ['Space']),
         h('th', {
-          colspan: `${maxNumberOfRoles}`
+          colspan: '2'
         }, ['Roles'])
       ]),
       h('tbody', spaces.map(space => {
         return h('tr', [
           h('td', [space.name]),
-          roleCell(assign({spaceId: space.id}, adminRole))
-        ].concat(space.roles.map(role => roleCell(role))));
+          h('td', [
+            h('.cfnext-form__fieldset--horizontal', [
+              roleCell(assign({spaceId: space.id}, adminRole))
+            ].concat(space.roles.map(role => roleCell(role))))
+          ])
+        ])
       }))
-    ])
+    ]),
+    h('pre', [JSON.stringify({emails, orgRole, spaceMemberships}, null, 2)]),
   ]);
 }
