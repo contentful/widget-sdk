@@ -39,33 +39,24 @@ angular.module('contentful')
     url: '/:orgId/z_subscription{pathSuffix:PathSuffix}'
   });
 
-  var users = organizationsBase({
-    name: 'users',
-    title: 'Organization users',
-    url: '/:orgId/organization_memberships',
-    abstract: true
-  });
-
   var usersGatekeeper = organizationsBase({
-    name: 'users.gatekeeper',
+    name: 'gatekeeper',
     title: 'Organization users',
     url: '{pathSuffix:PathSuffix}'
   });
 
-  var newUser = organizationsBase({
-    name: 'users.new',
+  var newUser = base({
+    label: 'Organizations & Billing',
+    name: 'new',
     title: 'Organization users',
     url: '/new',
     controller: ['$stateParams', '$scope', function ($stateParams, $scope) {
-      var TheStore = require('TheStore');
-
       // Begin feature flag code - feature-bv-09-2017-invite-to-org
       var LD = require('utils/LaunchDarkly');
       LD.setOnScope($scope, 'feature-bv-09-2017-invite-to-org', 'useNewOrgInvitation');
       // End feature flag code - feature-bv-09-2017-invite-to-org
 
       $scope.context = {};
-      TheStore.set('lastUsedOrg', $stateParams.orgId);
 
       $scope.properties = {
         orgId: $stateParams.orgId,
@@ -76,7 +67,24 @@ angular.module('contentful')
       workbenchHeader('Organization users'),
       h('cf-new-organization-membership', { ngIf: 'useNewOrgInvitation', properties: 'properties' }),
       h('cf-account-view', { ngIf: '!useNewOrgInvitation', context: 'context' })
-    ].join('')
+    ].join(''),
+    // this is duplicated code, but there's no way
+    // we can get around it for now
+    onEnter: ['$stateParams', function ($stateParams) {
+      var TheStore = require('TheStore');
+      TheStore.set('lastUsedOrg', $stateParams.orgId);
+    }]
+  });
+
+  var users = organizationsBase({
+    name: 'users',
+    title: 'Organization users',
+    url: '/:orgId/organization_memberships',
+    abstract: true,
+    children: [
+      newUser,
+      usersGatekeeper
+    ]
   });
 
   var spaces = organizationsBase({
@@ -100,17 +108,8 @@ angular.module('contentful')
   function organizationsBase (definition) {
     var defaults = {
       label: 'Organizations & Billing',
-      controller: ['$scope', 'require', function ($scope, require) {
-        var TheStore = require('TheStore');
-        var $stateParams = require('$stateParams');
-
-        // Begin feature flag code - feature-bv-09-2017-invite-to-org
-        var LD = require('utils/LaunchDarkly');
-        LD.setOnScope($scope, 'feature-bv-09-2017-invite-to-org', 'useNewOrgInvitation');
-        // End feature flag code - feature-bv-09-2017-invite-to-org
-
+      controller: ['$scope', function ($scope) {
         $scope.context = {};
-        TheStore.set('lastUsedOrg', $stateParams.orgId);
       }],
       params: {
         pathSuffix: ''
@@ -118,7 +117,11 @@ angular.module('contentful')
       template: [
         workbenchHeader(definition.title),
         h('cf-account-view', { context: 'context' })
-      ].join('')
+      ].join(''),
+      onEnter: ['$stateParams', function ($stateParams) {
+        var TheStore = require('TheStore');
+        TheStore.set('lastUsedOrg', $stateParams.orgId);
+      }]
     };
     return base(_.extend(defaults, definition));
   }
@@ -136,8 +139,6 @@ angular.module('contentful')
       newOrg,
       edit,
       subscription,
-      newUser,
-      usersGatekeeper,
       users,
       spaces,
       offsitebackup,
