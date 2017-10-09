@@ -44,6 +44,7 @@ describe('app/ContentModel/Editor/Actions', function () {
     space = this.cfStub.space('spaceid');
     spaceContext = this.$inject('spaceContext');
     spaceContext.resetWithSpace(space);
+    spaceContext.uiConfig = {addOrEditCt: () => {}};
     contentType = this.cfStub.contentType(space, 'typeid', 'typename');
 
     scope = this.$inject('$rootScope').$new();

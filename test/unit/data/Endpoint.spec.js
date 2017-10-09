@@ -1,5 +1,14 @@
+import { assign } from 'utils/Collections';
+
 describe('data/Endpoint', function () {
   const baseUrl = '//test.io';
+
+  // These headers are set by `$http` by default
+  const defaultHeaders = {
+    'Accept': 'application/json, text/plain, */*',
+    'If-Modified-Since': '0',
+    'Cache-Control': 'no-cache'
+  };
 
   beforeEach(function () {
     module('contentful/test');
@@ -29,10 +38,9 @@ describe('data/Endpoint', function () {
 
   it('sends GET request relative to resource', function () {
     const url = `${baseUrl}/foo/bar`;
-    const headers = {
-      'Authorization': 'Bearer TOKEN',
-      'Accept': 'application/json, text/plain, */*'
-    };
+    const headers = assign(defaultHeaders, {
+      'Authorization': 'Bearer TOKEN'
+    });
 
     this.$http.expectGET(url, headers).respond();
     this.makeRequest({
@@ -56,11 +64,10 @@ describe('data/Endpoint', function () {
 
   it('sends POST request without version header', function () {
     const url = `${baseUrl}/foo/bar`;
-    const headers = {
+    const headers = assign(defaultHeaders, {
       'Content-Type': 'application/vnd.contentful.management.v1+json',
-      'Authorization': 'Bearer TOKEN',
-      'Accept': 'application/json, text/plain, */*'
-    };
+      'Authorization': 'Bearer TOKEN'
+    });
     const data = {foo: 42};
     this.$http.expectPOST(url, JSON.stringify(data), headers).respond();
     this.makeRequest({
@@ -73,12 +80,11 @@ describe('data/Endpoint', function () {
 
   it('sends POST request with version header', function () {
     const url = `${baseUrl}/foo/bar`;
-    const headers = {
+    const headers = assign(defaultHeaders, {
       'Content-Type': 'application/vnd.contentful.management.v1+json',
       'Authorization': 'Bearer TOKEN',
-      'Accept': 'application/json, text/plain, */*',
       'X-Contentful-Version': 3
-    };
+    });
     const data = {foo: 42};
     this.$http.expectPOST(url, JSON.stringify(data), headers).respond();
     this.makeRequest({
@@ -138,10 +144,10 @@ describe('data/Endpoint', function () {
         this.auth = {
           getToken: sinon.stub().resolves('TOKEN')
         };
-        this.headers = {
+        this.headers = assign(defaultHeaders, {
           'Authorization': 'Bearer TOKEN',
           'Accept': 'application/json, text/plain, */*'
-        };
+        });
         this.expectGetRequest = function (baseUrl, resourceId, path, expectedUrl) {
           this.$http.expectGET(expectedUrl, this.headers).respond();
           const spaceEndpoint = this.Endpoint[methodName](baseUrl, resourceId, this.auth);

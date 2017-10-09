@@ -9,7 +9,6 @@ import {makeBlankFolder} from 'data/UiConfig/Blanks';
 import * as Tracking from 'analytics/events/SearchAndViews';
 
 import TheStore from 'TheStore';
-import logger from 'logger';
 import notification from 'notification';
 import random from 'random';
 
@@ -28,11 +27,10 @@ const DeleteView = makeCtor('DeleteView');
 const folderStatesStore = TheStore.forKey('folderStates');
 
 export default function ({
-  spaceContext,
   scopedUiConfig,
-  enableRoleAssignment,
   loadView,
-  getCurrentView
+  getCurrentView,
+  roleAssignment
 }) {
   const reduce = makeReducer({
     [LoadView] (state, view) {
@@ -102,12 +100,10 @@ export default function ({
   const store = createStore({
     currentView: getCurrentView(),
     folders: prepareFolders(scopedUiConfig.get()),
+    canEdit: scopedUiConfig.canEdit,
     folderStates: folderStatesStore.get() || {},
-    space: spaceContext.space,
-    endpoint: spaceContext.endpoint,
-    canEdit: spaceContext.uiConfig.canEdit,
-    enableRoleAssignment,
-    dnd: createDnD(scopedUiConfig, folders => store.dispatch(AlterFolders, folders))
+    dnd: createDnD(scopedUiConfig, folders => store.dispatch(AlterFolders, folders)),
+    roleAssignment
   }, reduce);
 
   function saveFolders (state, updatedFolders) {
@@ -118,17 +114,16 @@ export default function ({
     // We display this notification w/o confirming changes were successfully
     // persisted. If it fails, consecutive notification is presented and the
     // state is reverted.
-    notification.info('Saved views updated successfully.');
+    notification.info('View(s) updated successfully.');
 
-    scopedUiConfig.save(updated).catch(error => {
-      logger.logServerWarn('Error trying to update saved views', {error});
+    scopedUiConfig.set(updated).catch(() => {
       notification.error('Error while updating saved views. Your changes were reverted.');
       store.dispatch(RevertFolders);
     });
 
-    // Updated version is returned right away. We use `scopedUiConfig.get`
-    // instead of `updated` so defaults are returned if the UI config is reset
-    // by passing `undefined` to `scopedUiConfig.save`.
+    // Calling `scopedUiConfig.set()` updates the local version of the UiConfig
+    // right away. `scopedUiConfig.get()` will return it w/o waiting for the API
+    // roundtrip. It returns defaults if the local version is `undefined`.
     return scopedUiConfig.get();
   }
 

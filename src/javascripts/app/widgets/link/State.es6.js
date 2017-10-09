@@ -16,9 +16,10 @@
  *
  * This module is covered by the 'cfReferenceEditor' directive tests.
  */
+import {get} from 'utils/Collections';
 import * as K from 'utils/kefir';
 import * as EntityResolver from 'data/CMA/EntityResolver';
-import {isEqual} from 'lodash';
+import {isEqual, isString} from 'lodash';
 
 
 /**
@@ -152,7 +153,10 @@ function createIdsState (field, fieldValue$, single, type) {
     } else if (single) {
       links = [links];
     }
+    return links.map((link) => {
+      const id = get(link, ['sys', 'id']);
 
-    return links.map((link) => link.sys.id);
+      return isString(id) ? id : null;
+    });
   }
 }

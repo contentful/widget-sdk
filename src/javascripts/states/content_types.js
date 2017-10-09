@@ -25,12 +25,18 @@ angular.module('contentful')
 
   var fields = {
     name: 'fields',
-    url: '/fields'
+    url: '/fields',
+    params: {
+      addToContext: true
+    }
   };
 
   var preview = {
     name: 'preview',
-    url: '/preview'
+    url: '/preview',
+    params: {
+      addToContext: true
+    }
   };
 
   var newState = editorBase({

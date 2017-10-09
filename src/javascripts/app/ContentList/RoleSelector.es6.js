@@ -186,7 +186,7 @@ function render (state, actions) {
   }, [
     h('header.modal-dialog__header', [
       h('h1', [
-        'Share view'
+        'Share this view'
       ]),
       h('button.modal-dialog__close', {
         onClick: actions.CancelSelection
@@ -194,9 +194,9 @@ function render (state, actions) {
     ]),
     h('.modal-dialog__only-content', [
       h('p', { style: { lineHeight: '1.7' } }, [
-        `This view might display different content depending on the role,
-        as different roles may have access to different Content types.
-        Administrators have access to all views.`
+        `A view displays a list of entries you searched for.
+        By sharing this view with people with other roles,
+        you are granting them access to view it.`
       ]),
       vspace(4),
       container({
@@ -205,8 +205,16 @@ function render (state, actions) {
         hfill(),
         selectAllButton(state, actions)
       ]),
-      vspace(2),
+      vspace(4),
       renderRolesContainer(state, actions),
+      vspace(4),
+      h('.note-box--info', [
+        h('p', [
+          `This view might display different content depending on the role,
+          because different roles might have access to different content types.
+          Administrators have access to all views.`
+        ])
+      ]),
       vspace(4),
       container({
         display: 'flex'
@@ -215,7 +223,7 @@ function render (state, actions) {
           dataTestId: testId('apply-selection'),
           onClick: actions.ConfirmSelection
         }, [
-          'Share view'
+          'Share this view'
         ]),
         hspace('10px'),
         h('button.btn-secondary-action', {
@@ -234,7 +242,7 @@ function renderRolesContainer (state, actions) {
     border: `1px solid ${Colors.iceDark}`,
     backgroundColor: Colors.elementLightest,
     // We want to show half of a role if the container scrolls
-    height: '252px',
+    maxHeight: '157px',
     position: 'relative',
     overflowX: 'hidden',
     overflowY: 'auto'

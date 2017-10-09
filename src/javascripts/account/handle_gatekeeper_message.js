@@ -10,7 +10,6 @@ angular.module('contentful')
   var CreateSpace = require('services/CreateSpace');
   var UrlSyncHelper = require('account/UrlSyncHelper');
   var modalDialog = require('modalDialog');
-  var logger = require('logger');
   var $state = require('$state');
 
   return function handleGatekeeperMessage (data) {
@@ -76,8 +75,6 @@ angular.module('contentful')
     .then(function () {
       $state.go('home');
     });
-
-    logger.logError('Gatekeeper error occurred', data);
   }
 
   function showNotification (data) {

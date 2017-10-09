@@ -69,6 +69,7 @@ angular.module('contentful')
      */
     resetWithSpace: function (space) {
       var self = this;
+      var isAdmin = space.data.spaceMembership.admin;
 
       self.endpoint = createSpaceEndpoint(
         Config.apiUrl(),
@@ -108,9 +109,6 @@ angular.module('contentful')
       });
       self.user = K.getValue(tokenStore.user$);
 
-      var isAdmin = space.data.spaceMembership.admin;
-      self.uiConfig = createUiConfigStore(self.endpoint, isAdmin, self.publishedCTs);
-
       previewEnvironmentsCache.clearAll();
       TheLocaleStore.reset(space.getId(), space.getPrivateLocales());
 
@@ -118,9 +116,9 @@ angular.module('contentful')
         Widgets.setSpace(space).then(function (widgets) {
           self.widgets = widgets;
         }),
-        // TODO We should use a similar pattern as for content
-        // collections.
-        self.uiConfig.load(),
+        createUiConfigStore(self.endpoint, isAdmin, self.publishedCTs).then(function (api) {
+          self.uiConfig = api;
+        }),
         self.publishedCTs.refresh(),
         createContentCollectionsRepo(self.endpoint).then(function (api) {
           self.contentCollections = api;
