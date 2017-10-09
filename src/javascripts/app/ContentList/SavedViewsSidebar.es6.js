@@ -10,6 +10,7 @@ import {
 import initSavedViewsComponent from './SavedViewsComponent';
 
 import {byName as Colors} from 'Styles/Colors';
+import {container} from 'ui/Layout';
 
 const Select = makeCtor('Select');
 
@@ -45,14 +46,12 @@ export default function ({
 
   function render ({selector, sharedViews, privateViews}) {
     return h('div', [
-      h('div', {
-        style: {
-          display: 'flex',
-          justifyContent: 'space-between',
-          padding: '1.5rem',
-          backgroundColor: Colors.elementLightest,
-          borderBottom: `1px solid ${Colors.elementMid}`
-        }
+      container({
+        display: 'flex',
+        justifyContent: 'space-between',
+        padding: '1.5rem',
+        backgroundColor: Colors.elementLightest,
+        borderBottom: `1px solid ${Colors.elementMid}`
       }, [
         button(selector, VIEWS_SHARED, 'All views'),
         button(selector, VIEWS_PRIVATE, 'My views')
