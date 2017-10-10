@@ -88,13 +88,13 @@ export const otUrl = settings.otUrl;
 /**
  * @ngdoc property
  * @name Config#supportUrl
- * URL for logging into Zendesk.
+ * URL which allows the user to get in touch with us.
  *
- * In production this is `//be.contentful.com/integrations/zendesk/login`.
+ * In production this is `//www.contentful.com/support`.
  * @param {string} path
  * @returns {string}
  */
-export const supportUrl = authUrl('integrations/zendesk/login');
+export const supportUrl = websiteUrl('support');
 
 /**
  * @ngdoc property
