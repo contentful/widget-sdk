@@ -156,8 +156,9 @@ function emailsInput (emails, invalidAddresses, updateEmails) {
         value: emails.join(', \n'),
         onChange: updateEmails
       }),
+      emails.length > 100 ? h('.cfnext-form__field-error', ['Please fill in no more than 100 email addresses.']) : '',
       invalidAddresses.length ? h('.cfnext-form__field-error', [
-        h('p', ['The following e-mail addresses are not valid:']),
+        h('p', ['The following email addresses are not valid:']),
         h('', [invalidAddresses.join(', ')])
       ]) : ''
     ])
