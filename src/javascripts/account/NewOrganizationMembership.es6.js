@@ -1,4 +1,4 @@
-import {groupBy, property} from 'lodash';
+import {groupBy, property, includes} from 'lodash';
 import {h} from 'ui/Framework';
 import { assign } from 'utils/Collections';
 import {getFatSpaces} from 'services/TokenStore';
@@ -131,7 +131,7 @@ export default function ($scope) {
 
 
 function render (
-  {emails, orgRole, invalidAddresses, roles, spaces, spaceMemberships},
+  {emails, invalidAddresses, roles, spaces, spaceMemberships},
   {updateEmails, updateOrgRole, updateSpaceRole}
 ) {
   return h('form', {
@@ -149,6 +149,7 @@ function emailsInput (emails, invalidAddresses, updateEmails) {
     h('p', ['Add multiple users by filling in a comma-separated list of email addresses. You can add a maximum of 100 users at a time.']),
     h('.cfnext-form__field.input', [
       h('textarea', {
+        id: 'organization_membership_user_email',
         autofocus: true,
         class: 'cfnext-form__input',
         style: {width: '600px'},
@@ -185,7 +186,7 @@ function organizationRole (roles, updateOrgRole) {
 
 function accessToSpaces (spaces, spaceMemberships, updateSpaceRole) {
   function isChecked (role) {
-    return spaceMemberships.hasOwnProperty(role.spaceId) && spaceMemberships[role.spaceId].includes(role.id);
+    return spaceMemberships.hasOwnProperty(role.spaceId) && includes(spaceMemberships[role.spaceId], role.id);
   }
 
   function roleCell (role) {
@@ -196,6 +197,8 @@ function accessToSpaces (spaces, spaceMemberships, updateSpaceRole) {
         h('input', {
           type: 'checkbox',
           checked: isChecked(role),
+          id: `organization_membership_spaces_${role.spaceId}_role_keys_`,
+          value: role.id,
           onChange: (evt) => updateSpaceRole(evt, role, spaceMemberships)
         }),
         ` ${role.name}`
