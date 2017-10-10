@@ -1,4 +1,4 @@
-import {groupBy, property, includes} from 'lodash';
+import {includes} from 'lodash';
 import {h} from 'ui/Framework';
 import { assign } from 'utils/Collections';
 import {getFatSpaces} from 'services/TokenStore';
@@ -29,21 +29,21 @@ export default function ($scope) {
   runTask(function* () {
     const allSpaces = yield getFatSpaces();
     const orgSpaces = allSpaces.filter(space => space.data.organization.sys.id === $scope.properties.orgId);
-    const rolesPromise = orgSpaces.map(space => RoleRepository.getInstance(space).getAll());
-    const roles = yield Promise.all(rolesPromise);
-    const allRoles = roles
-      .reduce((a, b) => a.concat(b), [])
-      .map(role => ({
+    const spacesWithRolesPromises = orgSpaces.map(space => runTask(function* () {
+      const roles = yield RoleRepository.getInstance(space).getAll();
+      const spaceRoles = roles.map(role => ({
         name: role.name,
         id: role.sys.id,
         spaceId: role.sys.space.sys.id
       }));
-    const rolesBySpace = groupBy(allRoles, property('spaceId'));
-    const spacesWithRoles = orgSpaces.map(space => ({
-      id: space.data.sys.id,
-      name: space.data.name,
-      roles: rolesBySpace[space.data.sys.id]
+
+      return {
+        id: space.data.sys.id,
+        name: space.data.name,
+        roles: spaceRoles
+      };
     }));
+    const spacesWithRoles = yield Promise.all(spacesWithRolesPromises);
 
     let state = assign(initialState, {
       spaces: spacesWithRoles,
