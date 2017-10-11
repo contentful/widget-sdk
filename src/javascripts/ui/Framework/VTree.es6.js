@@ -18,11 +18,15 @@ const VTree = makeSum({
       'Text node must be constructed with a string'
     );
     return {text};
+  },
+  Component (constructor, args) {
+    return {constructor, args};
   }
 });
 
 export const Element = VTree.Element;
 export const Text = VTree.Text;
+export const Component = VTree.Component;
 
 // Type assertions for element properties
 

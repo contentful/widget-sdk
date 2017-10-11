@@ -1,5 +1,6 @@
+import {omit, kebabCase, mapKeys, isPlainObject} from 'lodash';
+import {Hook} from './Hooks/Component';
 import * as VTree from './VTree';
-import {kebabCase, mapKeys, isPlainObject} from 'lodash';
 
 /**
  * @description
@@ -13,7 +14,18 @@ import {kebabCase, mapKeys, isPlainObject} from 'lodash';
  * @param {VNode[]} children
  * @returns {VNode} children
  */
-export default function h (elSpec, props, children) {
+export default function h (tag_, props_, children_) {
+  const [tag, props, children] = normalize(tag_, props_, children_);
+  if (props.hooks && props.hooks.length) {
+    const hooks = props.hooks;
+    const propsWithoutHooks = omit(props, ['hooks']);
+    return VTree.Component(Hook, { tag, props: propsWithoutHooks, children, hooks });
+  } else {
+    return VTree.Element(tag, props, children);
+  }
+}
+
+export function normalize (elSpec, props, children) {
   if (Array.isArray(props)) {
     children = props;
     props = {};
@@ -64,8 +76,7 @@ export default function h (elSpec, props, children) {
         return c;
       }
     });
-
-  return VTree.Element(tag, props, children);
+  return [tag, props, children];
 }
 
 
