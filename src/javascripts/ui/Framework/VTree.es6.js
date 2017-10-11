@@ -13,9 +13,10 @@ const VTree = makeSum({
     return {tag, props, children};
   },
   Text (text) {
-    if (typeof text !== 'string') {
-      throw new TypeError('Text node must be constructed with a string');
-    }
+    assert(
+      typeof text === 'string',
+      'Text node must be constructed with a string'
+    );
     return {text};
   }
 });
@@ -23,12 +24,13 @@ const VTree = makeSum({
 export const Element = VTree.Element;
 export const Text = VTree.Text;
 
-// Type assertions for elemet properties
+// Type assertions for element properties
 
 function checkProps (props) {
-  if (!isPlainObject(props)) {
-    throw new TypeError('Element properties must be a plain object');
-  }
+  assert(
+    isPlainObject(props),
+    'Element properties must be a plain object'
+  );
   forEach(props, (value, key) => {
     if (key === 'style') {
       assert(
@@ -51,12 +53,14 @@ function checkProps (props) {
         'Setting innerHTML should be done with the "dangerouslySetInnerHTML: {__html: \'<markup />\'}" form'
       );
     } else if (key === 'focus') {
-      throw new TypeError('Focus property is not allowed');
+      throw new TypeError('"focus" property is not allowed');
     } else if (key.substr(0, 3) === 'on-') {
       assert(
         typeof value === 'function',
         `Event handler ${key} must be a function`
       );
+    } else if (key === 'value') {
+      // Any value is allowed
     } else {
       assert(
         typeof value === 'string' || value === true,
