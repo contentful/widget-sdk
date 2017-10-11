@@ -22,11 +22,11 @@ export function create (spaceEndpoint) {
     remove: remove
   };
 
-  function invite (email, roleId) {
+  function invite (email, roleIds) {
     return spaceEndpoint({
       method: 'POST',
       path: ['space_memberships'],
-      data: newMembership(email, roleId)
+      data: newMembership(email, roleIds)
     });
   }
 
@@ -34,12 +34,12 @@ export function create (spaceEndpoint) {
     return fetchAll(spaceEndpoint, ['space_memberships'], PER_PAGE);
   }
 
-  function changeRoleTo (membership, roleId) {
+  function changeRoleTo (membership, roleIds) {
     let newMembership;
-    if (roleId === ADMIN_ROLE_ID) {
+    if (roleIds[0] === ADMIN_ROLE_ID) {
       newMembership = prepareAdminMembership(membership);
     } else {
-      newMembership = prepareRoleMembership(membership, roleId);
+      newMembership = prepareRoleMembership(membership, roleIds);
     }
     return changeRole(membership, newMembership);
   }
@@ -61,13 +61,13 @@ export function create (spaceEndpoint) {
   }
 }
 
-function newMembership (email, roleId) {
+function newMembership (email, roleIds) {
   const membership = {
     email: email,
-    admin: roleId === ADMIN_ROLE_ID
+    admin: roleIds[0] === ADMIN_ROLE_ID
   };
-  if (roleId !== ADMIN_ROLE_ID) {
-    membership.roles = getRoleLink(roleId);
+  if (roleIds[0] !== ADMIN_ROLE_ID) {
+    membership.roles = getRoleLinks(roleIds);
   }
   return membership;
 }
@@ -77,11 +77,11 @@ function prepareAdminMembership (membership) {
   return extend(base, { admin: true, roles: [] });
 }
 
-function prepareRoleMembership (membership, roleId) {
+function prepareRoleMembership (membership, roleIds) {
   const base = omit(membership, ['sys', 'user']);
-  return extend(base, { admin: false, roles: getRoleLink(roleId) });
+  return extend(base, { admin: false, roles: getRoleLinks(roleIds) });
 }
 
-function getRoleLink (roleId) {
-  return [{ type: 'Link', linkType: 'Role', id: roleId }];
+function getRoleLinks (roleIds) {
+  return roleIds.map(id => ({ type: 'Link', linkType: 'Role', id: id }));
 }

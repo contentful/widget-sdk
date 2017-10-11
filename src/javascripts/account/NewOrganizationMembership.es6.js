@@ -1,10 +1,14 @@
-import {includes} from 'lodash';
+import {includes, forEach} from 'lodash';
 import {h} from 'ui/Framework';
 import { assign } from 'utils/Collections';
 import {getFatSpaces} from 'services/TokenStore';
 import * as RoleRepository from 'RoleRepository';
-import {ADMIN_ROLE_ID} from 'access_control/SpaceMembershipRepository';
 import {runTask} from 'utils/Concurrent';
+import {ADMIN_ROLE_ID, create as createSpaceRepo} from 'access_control/SpaceMembershipRepository';
+import {createEndpoint as createOrgEndpoint, invite as inviteToOrg} from 'access_control/OrganizationMembershipRepository';
+import {createSpaceEndpoint} from 'data/Endpoint';
+import * as auth from 'Authentication';
+import { apiUrl } from 'Config';
 
 const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const adminRole = {
@@ -22,12 +26,14 @@ export default function ($scope) {
 
   let state = {
     spaces: [],
-    spaceMemberships: {},
     emails: [],
-    invalidAddresses: []
+    invalidAddresses: [],
+    orgRole: 'member',
+    spaceMemberships: {},
+    failedOrgInvitations: []
   };
 
-  const endpoint = createEndpoint($scope.properties.orgId);
+  const orgEndpoint = createOrgEndpoint($scope.properties.orgId);
 
   runTask(function* () {
     const allSpaces = yield getFatSpaces();
@@ -82,8 +88,36 @@ export default function ($scope) {
         rerender();
       }
     },
-    submitInvitation: (evt) => {
+    submitInvitations: (evt) => {
       evt.preventDefault();
+      const {orgRole, emails, invalidAddresses, spaceMemberships} = state;
+
+      if (emails.length && !invalidAddresses.length) {
+        const sendSpaceInvitations = (email) => {
+          forEach(spaceMemberships, (roles, spaceId) => {
+            const spaceEndpoint = createSpaceEndpoint(apiUrl(), spaceId, auth);
+            const inviteToSpace = createSpaceRepo(spaceEndpoint).invite;
+            inviteToSpace(email, roles);
+          });
+        };
+        const sendOrgInvitation = (email) => {
+          inviteToOrg(orgEndpoint, {
+            email: email,
+            role: orgRole,
+            suppressInvitation: false
+          }).then(() => {
+            sendSpaceInvitations(email);
+          });
+        };
+
+        forEach(emails, sendOrgInvitation);
+
+        state = assign(state, {
+          emails: []  
+        });
+
+        rerender();
+      }
     },
     /**
      * Receives a string with email addresses
@@ -136,30 +170,30 @@ export default function ($scope) {
 
 
 function render (
-  {emails, invalidAddresses, spaces, spaceMemberships},
-  {updateEmails, updateOrgRole, updateSpaceRole, submitInvitation}
+  {emails, orgRole, invalidAddresses, spaces, spaceMemberships},
+  {updateEmails, updateOrgRole, updateSpaceRole, submitInvitations}
 ) {
   return h('.workbench', [
     header(),
     h('form.workbench-main', {
-      onSubmit: submitInvitation
+      onSubmit: submitInvitations
     }, [
       h('.workbench-main__content', {
         style: { padding: '2rem 3.15rem' }
       }, [
         emailsInput(emails, invalidAddresses, updateEmails),
-        organizationRole(updateOrgRole),
+        organizationRole(orgRole, updateOrgRole),
         accessToSpaces(spaces, spaceMemberships, updateSpaceRole)
       ]),
       sidebar()
     ])
-  ])
+  ]);
 }
 
 function header () {
   return h('.workbench-header__wrapper', [
     h('header.workbench-header', [
-      h('h1.workbench-header__title', ['Organization users']),
+      h('h1.workbench-header__title', ['Organization users'])
     ])
   ]);
 }
@@ -169,7 +203,7 @@ function sidebar () {
     h('.entity-sidebar', [
       h('button.cfnext-btn-primary-action.x--block', {
         type: 'submit'
-      },['Send invitation']),
+      }, ['Send invitation']),
       h('.entity-sidebar__heading', {style: {marginTop: '20px'}}, ['Organization role & space role']),
       h('p', ['The organization role controls the level of access to the organization settings.']),
       h('p', ['Access to your organization\'s spaces works independently from that and needs to be defined per space.'])
@@ -199,7 +233,7 @@ function emailsInput (emails, invalidAddresses, updateEmails) {
   ]);
 }
 
-function organizationRole (updateOrgRole) {
+function organizationRole (orgRole, updateOrgRole) {
   return h('div', [
     h('h3.section-title', ['Organization role']),
     h('fieldset.cfnext-form__field', orgRoles.map(role => {
@@ -209,6 +243,7 @@ function organizationRole (updateOrgRole) {
             name: 'organization_membership_role',
             type: 'radio',
             id: `organization-membership.org-role.${role.value}`,
+            checked: role.value === orgRole,
             onChange: (evt) => updateOrgRole(evt, role.value)
           }),
           ` ${role.name}`
