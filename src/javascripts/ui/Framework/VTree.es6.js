@@ -23,7 +23,7 @@ const VTree = makeSum({
 export const Element = VTree.Element;
 export const Text = VTree.Text;
 
-// Type assertions for elemt properties
+// Type assertions for elemet properties
 
 function checkProps (props) {
   if (!isPlainObject(props)) {
@@ -31,41 +31,53 @@ function checkProps (props) {
   }
   forEach(props, (value, key) => {
     if (key === 'style') {
-      if (!isPlainObject(value)) {
-        throw new TypeError('Style value must be a plain object');
-      }
+      assert(
+        isPlainObject(value),
+        'Style value must be a plain object'
+      );
     } else if (key === 'ref') {
-      if (typeof value !== 'function') {
-        throw new TypeError('Ref handler must be a function');
-      }
+      assert(
+        typeof value === 'function',
+        'Ref handler must be a function'
+      );
     } else if (key === 'disabled' || key === 'checked') {
-      if (typeof value !== 'boolean') {
-        throw new TypeError(`Element property "${key}" must be a boolean`);
-      }
+      assert(
+        typeof value === 'boolean',
+        `Element property "${key}" must be a boolean`
+      );
     } else if (key === 'dangerously-set-inner-html') {
-      if (!isPlainObject(value) || typeof value.__html !== 'string' || Object.keys(value).length !== 1) {
-        throw new TypeError('Setting innerHTML should be done with the "dangerouslySetInnerHTML: {__html: \'<markup />\'}" form');
-      }
+      assert(
+        isPlainObject(value) && typeof value.__html === 'string' && Object.keys(value).length === 1,
+        'Setting innerHTML should be done with the "dangerouslySetInnerHTML: {__html: \'<markup />\'}" form'
+      );
     } else if (key.substr(0, 3) === 'on-') {
-      if (typeof value !== 'function') {
-        throw new TypeError(`Event handler ${key} must be a function`);
-      }
+      assert(
+        typeof value === 'function',
+        `Event handler ${key} must be a function`
+      );
     } else {
-      if (typeof value !== 'string' && value !== true) {
-        throw new TypeError(`Element property ${key} must be a string or 'true'`);
-      }
+      assert(
+        typeof value === 'string' || value === true,
+        `Element property ${key} must be a string or 'true'`
+      );
     }
   });
 }
 
-
 function checkChildren (children) {
-  if (!Array.isArray(children)) {
-    throw new TypeError('Element children must be an array');
-  }
+  assert(
+    Array.isArray(children),
+    'Element children must be an array'
+  );
   children.forEach((value) => {
-    if (!(value instanceof VTree)) {
-      throw new TypeError('Element child must be a VTree');
-    }
+    assert(value instanceof VTree, 'Element child must be a VTree');
   });
+}
+
+
+// TODO at some point we should use an assertion library
+function assert (value, message) {
+  if (!value) {
+    throw new Error(message);
+  }
 }
