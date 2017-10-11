@@ -41,7 +41,12 @@ export default function render (state, actions) {
         ...pills(state.query, state.focus === 'lastValueInput', actions),
         queryInput(state, actions)
       ]),
-      (state.isSearching || state.isTyping) && spinner({diameter: '20px'}, {alignSelf: 'center'}),
+      (state.isSearching || state.isTyping) &&
+        spinner({diameter: '20px'}, {
+          alignSelf: 'flex-start',
+          flexShrink: '0',
+          marginTop: '12px'
+        }),
       h('div', {
         onClick: actions.ToggleSuggestions,
         style: {
@@ -173,7 +178,6 @@ function filterValueText (value, focus, actions) {
   return h('input.input-reset', {
     ref: (el) => {
       if (focus && el) {
-        console.log('FOCUS')
         // TODO Check if we can do away with setTimeout if we use
         // react. If not we should provide a generic hook for this that
         // uses requestAnimationFrame

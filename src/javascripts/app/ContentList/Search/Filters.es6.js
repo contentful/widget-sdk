@@ -1,4 +1,4 @@
-import { includes } from 'lodash';
+import { startsWith } from 'lodash';
 import { makeCtor } from 'utils/TaggedValues';
 import { assign, push, concat } from 'utils/Collections';
 
@@ -135,8 +135,8 @@ export function contentTypeFilter (availableContentTypes) {
 
 
 /**
- * Returns a list of filters matching the search string and the selected
- * content type ID.
+ * Returns a list of filters that begin with the search string and
+ * match the selected content type ID.
  *
  * @param {string} searchString
  *   Only return filters whose name includes this string
@@ -149,7 +149,7 @@ export function getMatchingFilters (searchString, contentTypeId, availableConten
   const filters = allFilters(availableContentTypes);
 
   const matchingFilters = filters.filter((filter) => {
-    return includes(filter.name.toLowerCase(), searchString.toLowerCase());
+    return startsWith(filter.name.toLowerCase(), searchString.toLowerCase());
   });
 
   if (contentTypeId) {
