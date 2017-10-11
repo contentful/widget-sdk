@@ -3,6 +3,8 @@ import {h} from 'ui/Framework';
 
 import ViewFolder from './ViewFolder';
 import openInputDialog from 'app/InputDialog';
+import addFolderIcon from 'svg/add-folder';
+import addViewIcon from 'svg/add-view';
 
 export default function render (state, actions) {
   const {folders, canEdit} = state;
@@ -24,7 +26,10 @@ export default function render (state, actions) {
           message: 'Please provide a name for your new folder:',
           input: {min: 1, max: 32}
         }).promise.then(actions.CreateFolder)
-      }, [h('i.fa.fa-folder'), 'Add folder']),
+      }, [
+        h('i', {style: {marginRight: '5px'}}, [addFolderIcon]),
+        'Add folder'
+      ]),
       canEdit.views && h('button.text-link', {
         onClick: () => openInputDialog({
           title: 'Save current view',
@@ -32,7 +37,9 @@ export default function render (state, actions) {
           message: 'Please provide a name for the view you’re about to save:',
           input: {min: 1, max: 32}
         }).promise.then(actions.SaveCurrentView)
-      }, [h('i.fa.fa-search-plus'), 'Save current view'])
+      }, [
+        h('i', {style: {margingRight: '5px'}}, [addViewIcon]),
+        'Save current view'])
     ])
   ]);
 }
