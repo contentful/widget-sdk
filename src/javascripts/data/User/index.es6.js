@@ -2,7 +2,7 @@ import moment from 'moment';
 import $rootScope from '$rootScope';
 import spaceContext from 'spaceContext';
 
-import {assign, isEqual, find, get, includes, keys} from 'lodash';
+import {isEqual, find, get, includes} from 'lodash';
 import {organizations$, user$, spacesByOrganization$} from 'services/TokenStore';
 
 import {
@@ -12,7 +12,6 @@ import {
 } from 'utils/kefir';
 
 /**
- * @name utils/LaunchDarkly/utils#userDataStream$
  * @description
  * A stream combining user, current org, current space and spaces grouped by org id
  */
@@ -23,38 +22,36 @@ export const userDataStream$ = combine(
   .skipDuplicates(isEqual);
 
 /**
- * @name utils/LaunchDarkly/utils#getOrgRole
  * @description
  * Get the user role for a given org id
  *
- * @param {Array<Object>} orgMemberships
+ * @param {Object<User>} user
  * @param {String} orgId
- * @returns {String} orgRole
+ * @returns {string?} orgRole
  */
-export function getOrgRole (orgMemberships, orgId) {
-  const org = find(orgMemberships, ({organization: {sys: {id}}}) => orgId === id) || { role: '<no role found>' };
+export function getOrgRole (user, orgId) {
+  const orgMemberships = user.organizationMemberships;
+  const org = find(orgMemberships, ({organization: {sys: {id}}}) => orgId === id);
+  const role = org && org.role;
 
-  return org.role;
+  return role || null;
 }
 
 /**
- * @name utils/LaunchDarkly/utils#getUserAgeInDays
  * @description
  * Get the user's age in days (age = now - createdAt in days)
  *
  * @param {Date} createdAt - user createdAt data
  * @returns {Number} user age
  */
-export function getUserAgeInDays (createdAt) {
-  const creationDate = moment(createdAt);
+export function getUserAgeInDays (user) {
+  const creationDate = moment(user.sys.createdAt);
   const now = moment();
 
   return now.diff(creationDate, 'days');
 }
 
 /**
- * @name LaunchDarkly/utils#isNonPayingUser
- *
  * @description
  * Given a user, this returns true if none of the orgs that the user
  * belongs to is a paying org.
@@ -64,7 +61,8 @@ export function getUserAgeInDays (createdAt) {
  * @param {Object} user
  * @returns {boolean}
  */
-export function isNonPayingUser ({organizationMemberships}) {
+export function isNonPayingUser (user) {
+  const {organizationMemberships} = user;
   const convertedStatuses = ['paid', 'free_paid'];
 
   // disqualify all users that don't belong to any org
@@ -81,30 +79,59 @@ export function isNonPayingUser ({organizationMemberships}) {
 }
 
 /**
- * @name getChangesObject
- * @usage[js]
- * getChangesObject({a: 10, b: 20, m: Symbol('a')}, {a: 10, b: 30, c: 'test'})
- * // => {b: 30, c: 'test'}
- *
  * @description
- * This method does a trivial shallow diff between two objects
- * and returns a new object which has all key/value pairs from the new
- * object with duplicated and removed keys from old object deleted.
+ * Returns true if the user belongs to an org that has atleast one space
  *
- * @param {Object} oldObj
- * @param {Object} newObj
- * @returns {Object} shallow diff of input objects
+ * @param {Object} spacesByOrg
+ * @returns {Boolean}
  */
-export function getChangesObject (oldObj = {}, newObj = {}) {
-  const retObj = assign({}, newObj);
+export function hasAnOrgWithSpaces (spacesByOrg) {
+  return !!find(spacesByOrg, spaces => !!spaces.length);
+}
 
-  keys(oldObj).forEach(key => {
-    if (oldObj[key] === newObj[key]) {
-      delete retObj[key];
-    }
+/**
+ * @description
+ * Returns true if the user owns atleast one org that he/she is a
+ * member of.
+ *
+ * @param {Object} user
+ * @returns {Boolean}
+ */
+export function ownsAtleastOneOrg (user) {
+  return !!getOwnedOrgs(user).length;
+}
+
+/**
+ * @description
+ * Returns a list of orgs owned by the give user
+ *
+ * @param {Object} user
+ * @returns {Array<User>}
+ */
+export function getOwnedOrgs (user) {
+  const orgMemberships = user.organizationMemberships || [];
+  // filter out orgs user owns
+  return orgMemberships.filter(org => org.role === 'owner');
+}
+
+/**
+ * @description
+ * Returns the first org that it finds which is owner by the user
+ *
+ * @param {Object} user
+ * @param {Object} spacesByOrg
+ * @returns {Object<Org>?}
+ */
+export function getFirstOwnedOrgWithoutSpaces (user, spacesByOrg) {
+  const ownedOrgs = getOwnedOrgs(user);
+  // return the first org that has no spaces
+  const orgMembership = find(ownedOrgs, ownedOrg => {
+    const spacesForOrg = spacesByOrg[ownedOrg.organization.sys.id];
+
+    return !spacesForOrg || spacesForOrg.length === 0;
   });
 
-  return retObj;
+  return orgMembership && orgMembership.organization;
 }
 
 /**

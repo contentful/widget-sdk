@@ -1,7 +1,5 @@
 'use strict';
 
-import * as K from 'helpers/mocks/kefir';
-
 angular.module('cf.ui')
 // We do not load the file containing the icons. Therefore we need to
 // create a dummy service.
@@ -87,9 +85,9 @@ angular.module('contentful/mocks', [])
   $provide.stubLaunchDarkly = function () {
     $provide.factory('utils/LaunchDarkly', function () {
       return {
-        init: function () {},
-        getTest: function () { return K.createMockProperty(null); },
-        getFeatureFlag: function () { return K.createMockProperty(null); }
+        init: sinon.stub(),
+        onABTest: sinon.stub(),
+        onFeatureFlag: sinon.stub()
       };
     });
   };
