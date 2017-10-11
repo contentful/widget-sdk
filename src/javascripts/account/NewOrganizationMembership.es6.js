@@ -27,6 +27,8 @@ export default function ($scope) {
     invalidAddresses: []
   };
 
+  const endpoint = createEndpoint($scope.properties.orgId);
+
   runTask(function* () {
     const allSpaces = yield getFatSpaces();
     const orgSpaces = allSpaces.filter(space => space.data.organization.sys.id === $scope.properties.orgId);
@@ -80,6 +82,9 @@ export default function ($scope) {
         rerender();
       }
     },
+    submitInvitation: (evt) => {
+      evt.preventDefault();
+    },
     /**
      * Receives a string with email addresses
      * separated by comma and transforms it into
@@ -132,14 +137,43 @@ export default function ($scope) {
 
 function render (
   {emails, invalidAddresses, spaces, spaceMemberships},
-  {updateEmails, updateOrgRole, updateSpaceRole}
+  {updateEmails, updateOrgRole, updateSpaceRole, submitInvitation}
 ) {
-  return h('form', {
-    style: {padding: '2em 3em'}
-  }, [
-    emailsInput(emails, invalidAddresses, updateEmails),
-    organizationRole(updateOrgRole),
-    accessToSpaces(spaces, spaceMemberships, updateSpaceRole)
+  return h('.workbench', [
+    header(),
+    h('form.workbench-main', {
+      onSubmit: submitInvitation
+    }, [
+      h('.workbench-main__content', {
+        style: { padding: '2rem 3.15rem' }
+      }, [
+        emailsInput(emails, invalidAddresses, updateEmails),
+        organizationRole(updateOrgRole),
+        accessToSpaces(spaces, spaceMemberships, updateSpaceRole)
+      ]),
+      sidebar()
+    ])
+  ])
+}
+
+function header () {
+  return h('.workbench-header__wrapper', [
+    h('header.workbench-header', [
+      h('h1.workbench-header__title', ['Organization users']),
+    ])
+  ]);
+}
+
+function sidebar () {
+  return h('.workbench-main__entity-sidebar', [
+    h('.entity-sidebar', [
+      h('button.cfnext-btn-primary-action.x--block', {
+        type: 'submit'
+      },['Send invitation']),
+      h('.entity-sidebar__heading', {style: {marginTop: '20px'}}, ['Organization role & space role']),
+      h('p', ['The organization role controls the level of access to the organization settings.']),
+      h('p', ['Access to your organization\'s spaces works independently from that and needs to be defined per space.'])
+    ])
   ]);
 }
 

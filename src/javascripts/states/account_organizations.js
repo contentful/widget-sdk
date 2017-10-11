@@ -64,9 +64,13 @@ angular.module('contentful')
       };
     }],
     template: [
-      workbenchHeader('Organization users'),
       h('cf-new-organization-membership', { ngIf: 'useNewOrgInvitation', properties: 'properties' }),
-      h('cf-account-view', { ngIf: '!useNewOrgInvitation', context: 'context' })
+      h('div', {
+        ngIf: '!useNewOrgInvitation'
+      }, [
+        workbenchHeader('Organization users'),
+        h('cf-account-view', { context: 'context' })
+      ])
     ].join(''),
     // this is duplicated code, but there's no way
     // we can get around it for now
