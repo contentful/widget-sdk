@@ -136,7 +136,7 @@ describe('TheAccountView service', function () {
 
   describeGoToMethod('goToSubscription', 'subscription');
 
-  describeGoToMethod('goToUsers', 'users');
+  describeGoToMethod('goToUsers', 'users.gatekeeper');
 
   function describeGoToMethod (name, subpage) {
     describe(`.${name}()`, function () {

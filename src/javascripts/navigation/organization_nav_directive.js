@@ -72,7 +72,7 @@
       },
       {
         title: 'Users',
-        sref: 'account.organizations.users({orgId: nav.orgId})',
+        sref: 'account.organizations.users.gatekeeper({orgId: nav.orgId})',
         rootSref: 'account.organizations.users',
         inheritUrlParams: false,
         icon: 'nav-organization-users',
