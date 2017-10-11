@@ -50,6 +50,8 @@ function checkProps (props) {
         isPlainObject(value) && typeof value.__html === 'string' && Object.keys(value).length === 1,
         'Setting innerHTML should be done with the "dangerouslySetInnerHTML: {__html: \'<markup />\'}" form'
       );
+    } else if (key === 'focus') {
+      throw new TypeError('Focus property is not allowed');
     } else if (key.substr(0, 3) === 'on-') {
       assert(
         typeof value === 'function',
