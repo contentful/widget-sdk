@@ -20,7 +20,8 @@ const orgRoles = [
 export default function ($scope) {
   $scope.component = h('noscript');
 
-  const initialState = {
+  let state = {
+    spaces: [],
     spaceMemberships: {},
     emails: [],
     invalidAddresses: []
@@ -45,100 +46,99 @@ export default function ($scope) {
     }));
     const spacesWithRoles = yield Promise.all(spacesWithRolesPromises);
 
-    let state = assign(initialState, {
-      spaces: spacesWithRoles,
-      roles: orgRoles
+    state = assign(state, {
+      spaces: spacesWithRoles
     });
 
-    const actions = {
-      updateSpaceRole: (evt, role, spaceMemberships) => {
-        const spaceRoles = spaceMemberships[role.spaceId] || [];
-        let newSet;
-
-        if (evt.target.checked) {
-          newSet = addRole(role, spaceRoles);
-        } else {
-          newSet = removeRole(role, spaceRoles);
-        }
-
-        state = assign(state, {
-          spaceMemberships: assign(state.spaceMemberships, {
-            [role.spaceId]: newSet
-          })
-        });
-
-        rerender();
-      },
-      updateOrgRole: (evt, role) => {
-        if (evt.target.checked) {
-          state = assign(state, {
-            orgRole: role
-          });
-          rerender();
-        }
-      },
-      /**
-       * Receives a string with email addresses
-       * separated by comma and transforms it into
-       * an array of emails and, possibly, an array with
-       * the invalid addresses
-       */
-      updateEmails: (evt) => {
-        const emails = evt.target.value
-          .split(',')
-          .map(email => email.trim().replace(/\n|\t/g, ''))
-          .filter(email => email.length);
-
-        const invalidAddresses = emails
-          .filter(email => !emailRegex.test(email));
-
-        state = assign(state, {
-          emails,
-          invalidAddresses
-        });
-
-        rerender();
-      }
-    };
-
     rerender();
-
-    function rerender () {
-      $scope.properties.context.ready = true;
-      $scope.component = render(state, actions);
-      $scope.$applyAsync();
-    }
-
-    /**
-     * Add role id to the set of space roles that will be assigned to the users being invited
-     * If the user is Admin, she/he cannot have other assigned roles, and vice-versa
-     */
-    function addRole (role, spaceRoles) {
-      if (role.id === adminRole.id) {
-        return [role.id];
-      } else {
-        return spaceRoles
-          .filter((roleId) => roleId !== adminRole.id)
-          .concat([role.id]);
-      }
-    }
-
-    function removeRole (role, spaceRoles) {
-      return spaceRoles.filter(id => id !== role.id);
-    }
   });
+
+  const actions = {
+    updateSpaceRole: (evt, role, spaceMemberships) => {
+      const spaceRoles = spaceMemberships[role.spaceId] || [];
+      let newSet;
+
+      if (evt.target.checked) {
+        newSet = addRole(role, spaceRoles);
+      } else {
+        newSet = removeRole(role, spaceRoles);
+      }
+
+      state = assign(state, {
+        spaceMemberships: assign(state.spaceMemberships, {
+          [role.spaceId]: newSet
+        })
+      });
+
+      rerender();
+    },
+    updateOrgRole: (evt, role) => {
+      if (evt.target.checked) {
+        state = assign(state, {
+          orgRole: role
+        });
+        rerender();
+      }
+    },
+    /**
+     * Receives a string with email addresses
+     * separated by comma and transforms it into
+     * an array of emails and, possibly, an array with
+     * the invalid addresses
+     */
+    updateEmails: (evt) => {
+      const emails = evt.target.value
+        .split(',')
+        .map(email => email.trim().replace(/\n|\t/g, ''))
+        .filter(email => email.length);
+
+      const invalidAddresses = emails
+        .filter(email => !emailRegex.test(email));
+
+      state = assign(state, {
+        emails,
+        invalidAddresses
+      });
+
+      rerender();
+    }
+  };
+
+  function rerender () {
+    $scope.properties.context.ready = true;
+    $scope.component = render(state, actions);
+    $scope.$applyAsync();
+  }
+
+  /**
+   * Add role id to the set of space roles that will be assigned to the users being invited
+   * If the user is Admin, she/he cannot have other assigned roles, and vice-versa
+   */
+  function addRole (role, spaceRoles) {
+    if (role.id === adminRole.id) {
+      return [role.id];
+    } else {
+      return spaceRoles
+        .filter((roleId) => roleId !== adminRole.id)
+        .concat([role.id]);
+    }
+  }
+
+  function removeRole (role, spaceRoles) {
+    return spaceRoles.filter(id => id !== role.id);
+  }
 }
 
 
 function render (
-  {emails, invalidAddresses, roles, spaces, spaceMemberships},
+  {emails, invalidAddresses, spaces, spaceMemberships},
   {updateEmails, updateOrgRole, updateSpaceRole}
 ) {
   return h('form', {
     style: {padding: '2em 3em'}
   }, [
     emailsInput(emails, invalidAddresses, updateEmails),
-    organizationRole(roles, updateOrgRole),
+    organizationRole(updateOrgRole),
     accessToSpaces(spaces, spaceMemberships, updateSpaceRole)
   ]);
 }
@@ -149,7 +149,7 @@ function emailsInput (emails, invalidAddresses, updateEmails) {
     h('p', ['Add multiple users by filling in a comma-separated list of email addresses. You can add a maximum of 100 users at a time.']),
     h('.cfnext-form__field.input', [
       h('textarea', {
-        id: 'organization_membership_user_email',
+        dataTestId: 'organization-membership.user-email',
         autofocus: true,
         class: 'cfnext-form__input',
         style: {width: '600px'},
@@ -165,17 +165,16 @@ function emailsInput (emails, invalidAddresses, updateEmails) {
   ]);
 }
 
-function organizationRole (roles, updateOrgRole) {
+function organizationRole (updateOrgRole) {
   return h('div', [
     h('h3.section-title', ['Organization role']),
-    h('fieldset.cfnext-form__field', roles.map(role => {
+    h('fieldset.cfnext-form__field', orgRoles.map(role => {
       return h('.cfnext-form-option', [
         h('label', [
           h('input', {
             name: 'organization_membership_role',
             type: 'radio',
-            id: `organization_membership_role_${role.value}`,
-            value: role.value,
+            id: `organization-membership.org-role.${role.value}`,
             onChange: (evt) => updateOrgRole(evt, role.value)
           }),
           ` ${role.name}`
@@ -198,8 +197,7 @@ function accessToSpaces (spaces, spaceMemberships, updateSpaceRole) {
         h('input', {
           type: 'checkbox',
           checked: isChecked(role),
-          id: `organization_membership_spaces_${role.spaceId}_role_keys_`,
-          value: role.id,
+          dataTestId: `organization-membership.space.${role.spaceId}.role.${role.name}`,
           onChange: (evt) => updateSpaceRole(evt, role, spaceMemberships)
         }),
         ` ${role.name}`
