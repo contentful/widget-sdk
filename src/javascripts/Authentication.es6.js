@@ -8,7 +8,6 @@ import * as Config from 'Config';
 import postForm from 'data/Request/PostForm';
 
 /**
- * @ngdoc service
  * @name Authentication
  * @description
  * This module manages the global access token string.

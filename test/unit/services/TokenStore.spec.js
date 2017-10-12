@@ -1,9 +1,16 @@
 import * as K from 'helpers/mocks/kefir';
 
 describe('Token store service', function () {
-
   beforeEach(function () {
-    module('contentful/test');
+    this.fetchWithAuth = sinon.stub().resolves({
+      sys: {createdBy: this.user},
+      spaces: this.rawSpaces
+    });
+    module('contentful/test', $provide => {
+      $provide.value('data/CMA/TokenInfo', {
+        default: () => this.fetchWithAuth
+      });
+    });
 
     this.rawSpaces = _.map(['a-space', 'b-space', 'c-space'], function (name) {
       return {
@@ -12,12 +19,6 @@ describe('Token store service', function () {
         organization: {sys: {id: 'testorg'}}
       };
     });
-
-    this.fetchWithAuth = sinon.stub().resolves({
-      sys: {createdBy: this.user},
-      spaces: this.rawSpaces
-    });
-    this.$inject('data/CMA/TokenInfo').default = () => this.fetchWithAuth;
 
     this.tokenStore = this.$inject('services/TokenStore');
     this.OrganizationRoles = this.$inject('services/OrganizationRoles');

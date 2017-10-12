@@ -1,7 +1,7 @@
 /* global window, clearTimeout, setTimeout */
 
-import * as TokenStore from 'services/TokenStore';
-import * as Navigator from 'states/Navigator';
+import {refresh as refreshTokenStore} from 'services/TokenStore';
+import {go as gotoState} from 'states/Navigator';
 import * as Authentication from 'Authentication';
 import {makeReducer, createStore} from 'ui/Framework/Store';
 import {makeCtor as makeConstructor} from 'utils/TaggedValues';
@@ -10,6 +10,7 @@ import ModalDialog from 'modalDialog';
 import {assign} from 'utils/Collections';
 import {throttle} from 'lodash';
 import {render as renderTemplate, renderMissingNodeModal} from './template';
+import theStore from 'TheStore';
 
 // We don't want to fetch user's spaces too often
 // and we enable button as soon as any space was added
@@ -42,8 +43,23 @@ function checkSpacesWhileUserIsActive (fn) {
   let inactivityTimeoutId;
   let inactive = false;
 
+  const detectMovement = throttle(checkActivity, 500);
+  window.addEventListener('mousemove', detectMovement);
+
+  // kickoff first request manually
+  recheckSpaces();
+  // run checking activity to create timeout
+  // for inactivity
+  checkActivity();
+
+  return () => {
+    clearTimeout(checkSpacesTimerId);
+    clearTimeout(inactivityTimeoutId);
+    window.removeEventListener('mousemove', detectMovement);
+  };
+
   function checkSpaces () {
-    fetchSpaces().then(function (data) {
+    fetchSpaces().then((data) => {
       if (data.total > 0) {
         fn(data);
       } else {
@@ -62,7 +78,7 @@ function checkSpacesWhileUserIsActive (fn) {
     }
   }
 
-  const checkActivity = () => {
+  function checkActivity () {
     clearTimeout(inactivityTimeoutId);
     if (inactive) {
       inactive = false;
@@ -71,28 +87,11 @@ function checkSpacesWhileUserIsActive (fn) {
       checkSpaces();
     } else {
       inactivityTimeoutId = setTimeout(() => {
-        setTimeout(checkSpacesTimerId);
+        clearTimeout(checkSpacesTimerId);
         inactive = true;
       }, INACTIVITY_INTERVAL);
     }
-  };
-
-  const detectMoving = throttle(checkActivity, 500);
-  window.addEventListener('mousemove', detectMoving);
-
-  // kickoff first request manually
-  recheckSpaces();
-  // run checking activity to create timeout
-  // for inactivity
-  checkActivity();
-
-  return {
-    cleanListeners: () => {
-      clearTimeout(checkSpacesTimerId);
-      clearTimeout(inactivityTimeoutId);
-      window.removeEventListener('mousemove', detectMoving);
-    }
-  };
+  }
 }
 
 export function createCliDescriptionComponent (props) {
@@ -106,13 +105,13 @@ export function createCliDescriptionComponent (props) {
   const NavigateToSpace = makeConstructor('NavigateToSpace');
   const HandleMissingNode = makeConstructor('HandleMissingNode');
   const reducer = makeReducer({
-    [SetComplete]: function (state, data) {
+    [SetComplete] (state, data) {
       const spaceId = data.items[0].sys.id;
       return assign(state, { complete: true, spaceId });
     },
-    [NavigateToSpace]: function (state) {
-      TokenStore.refresh().then(function () {
-        return Navigator.go({
+    [NavigateToSpace] (state) {
+      refreshTokenStore().then(function () {
+        return gotoState({
           path: ['spaces', 'detail'],
           params: {
             spaceId: state.spaceId
@@ -121,15 +120,15 @@ export function createCliDescriptionComponent (props) {
       });
       return assign(state, { updatingSpaces: true });
     },
-    [HandleMissingNode]: function (state) {
+    [HandleMissingNode] (state) {
       const template = renderMissingNodeModal();
       ModalDialog.open({ template });
       return state;
     },
-    [DummyRender]: function (state) {
+    [DummyRender] (state) {
       return state;
     },
-    [Back]: function (state) {
+    [Back] (state) {
       props.back();
       return state;
     }
@@ -154,13 +153,18 @@ export function createCliDescriptionComponent (props) {
     actions
   };
 
-  const { cleanListeners } = checkSpacesWhileUserIsActive((data) => {
+  const cleanup = checkSpacesWhileUserIsActive((data) => {
+    setCliEntrySuccessFlag(props.user);
     store.dispatch(SetComplete, data);
-    cleanListeners();
+    cleanup();
   });
 
   return {
     component,
-    cleanup: cleanListeners
+    cleanup
   };
+}
+
+function setCliEntrySuccessFlag (user) {
+  theStore.set(`ctfl:${user.sys.id}:cliEntrySuccess`, true);
 }

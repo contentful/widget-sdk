@@ -6,12 +6,13 @@ angular.module('contentful')
   var h = require('utils/hyperscript').h;
   var moment = require('moment');
   var K = require('utils/kefir');
-  var tokenStore = require('services/TokenStore');
+  var TokenStore = require('services/TokenStore');
   // Begin test code: test-ps-09-2017-entry-sample-space-cli
   var LD = require('utils/LaunchDarkly');
   var analytics = require('analytics/Analytics');
-  var qualifyUser = require('components/shared/auto_create_new_space/index').qualifyUser;
+  var hadSpaceAutoCreated = require('components/shared/auto_create_new_space/index').hadSpaceAutoCreated;
   var createSpaceAutomatically = require('components/shared/auto_create_new_space/index').init;
+  var theStore = require('TheStore');
 
   var flagName = 'test-ps-09-2017-entry-sample-space-cli';
   // End test code: test-ps-09-2017-entry-sample-space-cli
@@ -54,12 +55,27 @@ angular.module('contentful')
       var controller = this;
 
       // Begin test code: test-ps-09-2017-entry-sample-space-cli
-      var cliEntryOnboardingTest$ = LD.getFeatureFlag(flagName, qualifyUser);
-      K.onValueScope($scope, cliEntryOnboardingTest$, setOnboardNecessityFlag);
+      LD.onABTest($scope, flagName, function (flag) {
+        var user = K.getValue(TokenStore.user$);
+        var wasAutoSpaceAlreadyCreated = hadSpaceAutoCreated(user);
+        var spaceCreatedByTest = hasSpaceCreatedByTest(user);
+
+        if (wasAutoSpaceAlreadyCreated || spaceCreatedByTest) {
+          return;
+        }
+
+        if (flag !== true) {
+          createSpaceAutomatically();
+        }
+
+        if (flag !== null) {
+          setOnboardNecessityFlag(flag);
+        }
+      });
       // End test code: test-ps-09-2017-entry-sample-space-cli
 
       // Fetch user and set greeting
-      K.onValueScope($scope, tokenStore.user$, function (user) {
+      K.onValueScope($scope, TokenStore.user$, function (user) {
         controller.user = user;
         controller.greeting = getGreeting(user);
       });
@@ -97,13 +113,6 @@ angular.module('contentful')
         }
       }
 
-      LD.waitFlags().then(function () {
-        var cliEntryOnboardingValue = K.getValue(cliEntryOnboardingTest$);
-        if (!cliEntryOnboardingValue) {
-          createSpaceAutomatically();
-        }
-      });
-
       // Begin test code: test-ps-09-2017-entry-sample-space-cli
       // we check that there are no spaces for this user
       // and the flag is true
@@ -119,6 +128,10 @@ angular.module('contentful')
             variation: variation
           }
         });
+      }
+
+      function hasSpaceCreatedByTest (user) {
+        return theStore.get('ctfl:' + user.sys.id + ':cliEntrySuccess');
       }
       // End test code: test-ps-09-2017-entry-sample-space-cli
     }],

@@ -11,14 +11,14 @@ const ChooseType = makeConstructor('ChooseType');
 
 export function createCliEntryComponent (props) {
   const reducer = makeReducer({
-    [SelectType]: function (state, type) {
+    [SelectType] (state, type) {
       props.selectType(type);
       return assign(state, { type });
     },
-    [SetGreeting]: function (state, greeting) {
+    [SetGreeting] (state, greeting) {
       return assign(state, { greeting });
     },
-    [ChooseType]: function (state) {
+    [ChooseType] (state) {
       props.chooseType(state.type);
       return state;
     }

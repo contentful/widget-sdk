@@ -1,5 +1,5 @@
 import {h, renderString} from 'ui/Framework';
-import InputWithCopy from 'components/contextual_help/InputWithCopy';
+import InputWithCopy from 'components/shared/InputWithCopy';
 import backIcon from 'svg/breadcrumbs-icon-back';
 
 const classPrefix = 'cli-description-onboard';
@@ -34,9 +34,9 @@ function renderDescription () {
         ' to hold your content;'
       ]),
       h(`li.${classPrefix}__list_item`, [
-        'Create a ',
+        'Create ',
         renderTooltip({
-          text: 'content model',
+          text: 'content types',
           tooltip: `Defining a content type is a fundamental step in powering your applications
                     with Contentful. A content type consists of a set of fields and other
                     meta information.`
@@ -148,7 +148,7 @@ export function renderMissingNodeModal () {
         ]),
         h(`ul.${classPrefix}__modal-list`, [
           h(`li.${classPrefix}__modal-elem`, [
-            'Get node.js from ',
+            'Get Node.js from ',
             h('a', {
               href: 'https://nodejs.org',
               target: '_blank'
