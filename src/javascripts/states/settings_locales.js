@@ -21,7 +21,7 @@ angular.module('contentful')
     template: '<div cf-locale-list class="workbench locale-list entity-list"></div>'
   });
 
-  var localeEditorState = base({
+  var localeEditorState = {
     template: '<cf-locale-editor class="workbench" />',
     controller: [
       '$scope', 'require', 'locale', 'spaceLocales',
@@ -30,7 +30,6 @@ angular.module('contentful')
         var $stateParams = require('$stateParams');
 
         $scope.context = $state.current.data;
-        $scope.context.ready = true;
         $scope.locale = locale;
         $scope.spaceLocales = spaceLocales;
 
@@ -40,7 +39,7 @@ angular.module('contentful')
         ]);
       }
     ]
-  });
+  };
 
   var resolveSpaceLocales = ['space', function (space) {
     return space.getLocales();

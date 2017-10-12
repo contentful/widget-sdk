@@ -110,7 +110,7 @@ angular.module('contentful')
   };
 
   function editorBase (options) {
-    return base(_.extend({
+    return _.extend({
       abstract: true,
       controller: [
         '$scope', 'require', 'contentType', 'editingInterface', 'publishedContentType',
@@ -136,7 +136,7 @@ angular.module('contentful')
         'cf-validate="contentType.data" cf-content-type-schema',
         'cf-ui-tab'
       ].join(' ') + '></div>'
-    }, options));
+    }, options);
   }
 
 }]);
