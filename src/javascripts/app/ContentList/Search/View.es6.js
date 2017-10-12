@@ -16,6 +16,9 @@ import { autosizeInput } from 'ui/AutoInputSize';
 
 
 export default function render (state, actions) {
+  const hasSuggestions = state.suggestions.items && state.suggestions.items.length > 0;
+  const hasSpinner = state.isSearching || state.isTyping;
+
   return h('div', {
     hooks: [ H.ClickBlur(actions.HideSuggestions) ],
     onKeyDown: actions.KeyDownContainer,
@@ -41,30 +44,23 @@ export default function render (state, actions) {
         ...pills(state.query, state.focus === 'lastValueInput', actions),
         queryInput(state, actions)
       ]),
-      (state.isSearching || state.isTyping) &&
-        spinner({diameter: '20px'}, {
+      hasSpinner &&
+        spinner({diameter: '18px'}, {
           alignSelf: 'flex-start',
           flexShrink: '0',
-          marginTop: '12px'
+          marginTop: '13px'
         }),
-      h('div', {
+      hasSpinner && hspace('8px'),
+      h('.search-next__filter-toggle', {
         onClick: actions.ToggleSuggestions,
-        style: {
-          alignSelf: 'flex-start',
-          color: Colors.blueMid,
-          display: 'flex',
-          alignItems: 'center',
-          cursor: 'pointer',
-          padding: '0 10px',
-          height: '40px'
-        }
+        class: hasSuggestions ? '-active' : ''
       }, [
         container({marginTop: '-3px'}, [filterIcon]),
         hspace('7px'),
         'Filter'
       ])
     ]),
-    filterSuggestions(state.suggestions, actions.ClickFilterSuggestion)
+    hasSuggestions && filterSuggestions(state.suggestions, actions.ClickFilterSuggestion)
   ]);
 }
 
@@ -224,10 +220,6 @@ function filterValueSelect (options, value, _focus, actions) {
 
 
 function filterSuggestions ({items, selected}, SelectFilterSuggestion) {
-  if (!items || items.length === 0) {
-    return;
-  }
-
   return suggestionsContainer(items.map((field, index) => {
     const isSelected = index === selected;
     return h('div.search-next__completion-item', {
