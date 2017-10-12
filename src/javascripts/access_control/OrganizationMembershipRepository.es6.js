@@ -1,6 +1,6 @@
 import {createOrganizationEndpoint} from 'data/Endpoint';
 import * as auth from 'Authentication';
-import { apiUrl } from 'Config';
+import {apiUrl} from 'Config';
 
 export function createEndpoint (orgId) {
   return createOrganizationEndpoint(apiUrl(), orgId, auth);

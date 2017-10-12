@@ -52,7 +52,7 @@ angular.module('contentful').factory('createRoleRemover', ['require', function (
         var moveToRoleId = scope.input.id;
 
         var promises = _.map(memberships, function (membership) {
-          return spaceContext.memberships.changeRoleTo(membership, moveToRoleId);
+          return spaceContext.memberships.changeRoleTo(membership, [moveToRoleId]);
         });
 
         return $q.all(promises).then(function () {

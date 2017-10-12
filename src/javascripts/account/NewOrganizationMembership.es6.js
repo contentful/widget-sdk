@@ -1,4 +1,4 @@
-import {includes, forEach} from 'lodash';
+import {includes} from 'lodash';
 import {h} from 'ui/Framework';
 import { assign } from 'utils/Collections';
 import {getFatSpaces} from 'services/TokenStore';
@@ -8,7 +8,7 @@ import {ADMIN_ROLE_ID, create as createSpaceRepo} from 'access_control/SpaceMemb
 import {createEndpoint as createOrgEndpoint, invite as inviteToOrg} from 'access_control/OrganizationMembershipRepository';
 import {createSpaceEndpoint} from 'data/Endpoint';
 import * as auth from 'Authentication';
-import { apiUrl } from 'Config';
+import {apiUrl} from 'Config';
 
 const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const adminRole = {
@@ -95,7 +95,7 @@ export default function ($scope) {
 
       if (emails.length && !invalidAddresses.length) {
         const sendSpaceInvitations = (email) => {
-          forEach(spaceMemberships, (roles, spaceId) => {
+          Object.entries(spaceMemberships).forEach(([spaceId, roles]) => {
             const spaceEndpoint = createSpaceEndpoint(apiUrl(), spaceId, auth);
             const inviteToSpace = createSpaceRepo(spaceEndpoint).invite;
             inviteToSpace(email, roles);
@@ -111,7 +111,7 @@ export default function ($scope) {
           });
         };
 
-        forEach(emails, sendOrgInvitation);
+        emails.forEach(sendOrgInvitation);
 
         state = assign(state, {
           emails: [],

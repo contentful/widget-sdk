@@ -1,5 +1,5 @@
 import { fetchAll } from 'data/CMA/FetchAll';
-import { omit, extend } from 'lodash';
+import { omit, extend, includes } from 'lodash';
 
 
 export const ADMIN_ROLE_ID = '__cf_builtin_admin';
@@ -36,7 +36,7 @@ export function create (spaceEndpoint) {
 
   function changeRoleTo (membership, roleIds) {
     let newMembership;
-    if (roleIds[0] === ADMIN_ROLE_ID) {
+    if (includes(roleIds, ADMIN_ROLE_ID)) {
       newMembership = prepareAdminMembership(membership);
     } else {
       newMembership = prepareRoleMembership(membership, roleIds);
@@ -64,9 +64,9 @@ export function create (spaceEndpoint) {
 function newMembership (email, roleIds) {
   const membership = {
     email: email,
-    admin: roleIds[0] === ADMIN_ROLE_ID
+    admin: includes(roleIds, ADMIN_ROLE_ID)
   };
-  if (roleIds[0] !== ADMIN_ROLE_ID) {
+  if (!membership.admin) {
     membership.roles = getRoleLinks(roleIds);
   }
   return membership;
