@@ -78,15 +78,6 @@ See the [Lab Readme][].
 
 [Lab]: https://github.com/contentful/lab/
 
-## Showing API documentation
-
-The repo comes with a self hosting API documentation and guides. To
-view them run `gulp docs` and `gulp serve` and go to the
-[`/docs`](http://app.joistio.com:8888/docs) folder of you development
-server.
-
-To continuously rebuild the documentation use `gulp docs/watch`.
-
 ## Styleguide
 
 The styleguide is generated automatically when running `gulp serve` and

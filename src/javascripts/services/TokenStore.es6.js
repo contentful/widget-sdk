@@ -150,7 +150,7 @@ export function getSpace (id) {
 /**
  * @ngdoc method
  * @name tokenStore#getSpaces
- * @returns {Array[Promise<API.Space>]}
+ * @returns {Promise<API.Space>[]>}
  * @description
  * This method returns a promise of the list of spaces.
  * If some calls are in progress, we're waiting until these are done.
@@ -160,6 +160,18 @@ export function getSpaces () {
   return tokenInfoMVar.read().then(function () {
     return K.getValue(spacesBus.property)
       .map(function (s) { return deepFreezeClone(s.data); });
+  });
+}
+
+/**
+ * @name tokenStore#getFatSpaces
+ * @returns {Promise<API.Space[]>}
+ * @description
+ * This method returns a promise with the list of whole space instances.
+ */
+export function getFatSpaces () {
+  return tokenInfoMVar.read().then(function () {
+    return K.getValue(spacesBus.property);
   });
 }
 

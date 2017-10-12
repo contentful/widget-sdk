@@ -3,6 +3,7 @@ describe('Config', function () {
     module('contentful/test');
     this.settings = this.$inject('environment').settings;
     this.settings.authUrl = '//basehost';
+    this.settings.marketingUrl = 'https://website';
     this.Config = this.$inject('Config');
   });
 
@@ -12,8 +13,7 @@ describe('Config', function () {
 
 
   it('provides websiteUrl', function () {
-    this.settings.marketingUrl = 'http://www';
-    expect(this.Config.websiteUrl('path/a')).toEqual('http://www/path/a');
+    expect(this.Config.websiteUrl('path/a')).toEqual('https://website/path/a');
   });
 
   it('provides accountUrl', function () {
@@ -21,6 +21,6 @@ describe('Config', function () {
   });
 
   it('provides supportUrl', function () {
-    expect(this.Config.supportUrl).toEqual('//basehost/integrations/zendesk/login');
+    expect(this.Config.supportUrl).toEqual('https://website/support');
   });
 });

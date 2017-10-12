@@ -39,10 +39,52 @@ angular.module('contentful')
     url: '/:orgId/z_subscription{pathSuffix:PathSuffix}'
   });
 
+  var usersGatekeeper = organizationsBase({
+    name: 'gatekeeper',
+    title: 'Organization users',
+    url: '{pathSuffix:PathSuffix}'
+  });
+
+  var newUser = base({
+    label: 'Organizations & Billing',
+    name: 'new',
+    title: 'Organization users',
+    url: '/new',
+    controller: ['$stateParams', '$scope', function ($stateParams, $scope) {
+      // Begin feature flag code - feature-bv-09-2017-invite-to-org
+      var LD = require('utils/LaunchDarkly');
+      LD.setOnScope($scope, 'feature-bv-09-2017-invite-to-org', 'useNewOrgInvitation');
+      // End feature flag code - feature-bv-09-2017-invite-to-org
+
+      $scope.context = {};
+
+      $scope.properties = {
+        orgId: $stateParams.orgId,
+        context: $scope.context
+      };
+    }],
+    template: [
+      workbenchHeader('Organization users'),
+      h('cf-new-organization-membership', { ngIf: 'useNewOrgInvitation', properties: 'properties' }),
+      h('cf-account-view', { ngIf: '!useNewOrgInvitation', context: 'context' })
+    ].join(''),
+    // this is duplicated code, but there's no way
+    // we can get around it for now
+    onEnter: ['$stateParams', function ($stateParams) {
+      var TheStore = require('TheStore');
+      TheStore.set('lastUsedOrg', $stateParams.orgId);
+    }]
+  });
+
   var users = organizationsBase({
     name: 'users',
     title: 'Organization users',
-    url: '/:orgId/organization_memberships{pathSuffix:PathSuffix}'
+    url: '/:orgId/organization_memberships',
+    abstract: true,
+    children: [
+      newUser,
+      usersGatekeeper
+    ]
   });
 
   var spaces = organizationsBase({
@@ -66,12 +108,8 @@ angular.module('contentful')
   function organizationsBase (definition) {
     var defaults = {
       label: 'Organizations & Billing',
-      controller: ['$scope', 'require', function ($scope, require) {
-        var TheStore = require('TheStore');
-        var $stateParams = require('$stateParams');
-
+      controller: ['$scope', function ($scope) {
         $scope.context = {};
-        TheStore.set('lastUsedOrg', $stateParams.orgId);
       }],
       params: {
         pathSuffix: ''
@@ -79,9 +117,13 @@ angular.module('contentful')
       template: [
         workbenchHeader(definition.title),
         h('cf-account-view', { context: 'context' })
-      ].join('')
+      ].join(''),
+      onEnter: ['$stateParams', function ($stateParams) {
+        var TheStore = require('TheStore');
+        TheStore.set('lastUsedOrg', $stateParams.orgId);
+      }]
     };
-    return base(_.extend(definition, defaults));
+    return base(_.extend(defaults, definition));
   }
 
   return base({
