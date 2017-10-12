@@ -27,6 +27,7 @@ export default function ($scope) {
   let state = {
     spaces: [],
     emails: [],
+    emailsInputValue: '',
     invalidAddresses: [],
     orgRole: 'member',
     spaceMemberships: {},
@@ -113,7 +114,8 @@ export default function ($scope) {
         forEach(emails, sendOrgInvitation);
 
         state = assign(state, {
-          emails: []  
+          emails: [],
+          emailsInputValue: ''
         });
 
         rerender();
@@ -135,6 +137,7 @@ export default function ($scope) {
         .filter(email => !emailRegex.test(email));
 
       state = assign(state, {
+        emailsInputValue: evt.target.value,
         emails,
         invalidAddresses
       });
@@ -170,7 +173,7 @@ export default function ($scope) {
 
 
 function render (
-  {emails, orgRole, invalidAddresses, spaces, spaceMemberships},
+  {emails, emailsInputValue, orgRole, invalidAddresses, spaces, spaceMemberships},
   {updateEmails, updateOrgRole, updateSpaceRole, submitInvitations}
 ) {
   return h('.workbench', [
@@ -181,7 +184,7 @@ function render (
       h('.workbench-main__content', {
         style: { padding: '2rem 3.15rem' }
       }, [
-        emailsInput(emails, invalidAddresses, updateEmails),
+        emailsInput(emails, emailsInputValue, invalidAddresses, updateEmails),
         organizationRole(orgRole, updateOrgRole),
         accessToSpaces(spaces, spaceMemberships, updateSpaceRole)
       ]),
@@ -211,7 +214,7 @@ function sidebar () {
   ]);
 }
 
-function emailsInput (emails, invalidAddresses, updateEmails) {
+function emailsInput (emails, emailsInputValue, invalidAddresses, updateEmails) {
   return h('div', [
     h('h3.section-title', ['Select users']),
     h('p', ['Add multiple users by filling in a comma-separated list of email addresses. You can add a maximum of 100 users at a time.']),
@@ -221,7 +224,7 @@ function emailsInput (emails, invalidAddresses, updateEmails) {
         autofocus: true,
         class: 'cfnext-form__input',
         style: {width: '600px'},
-        value: emails.join(', \n'),
+        value: emailsInputValue,
         onChange: updateEmails
       }),
       emails.length > 100 ? h('.cfnext-form__field-error', ['Please fill in no more than 100 email addresses.']) : '',
