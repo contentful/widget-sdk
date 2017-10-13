@@ -49,6 +49,7 @@ export function createStore (initial, reduce) {
 
   function dispatch (actionCtor, value) {
     const action = actionCtor(value);
+    console.log(action.name, value);
     const nextState = reduce(action, getState());
     stateBus.set(nextState);
   }

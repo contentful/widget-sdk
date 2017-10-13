@@ -7,7 +7,6 @@ import { caseofEq, otherwise } from 'libs/sum-types';
 
 import { getMatchingFilters, contentTypeFilter, makeQueryObject } from './Filters';
 
-
 const emptySuggestions = freeze({ visible: false, selected: null, items: null });
 
 // The state for this component looks like this
@@ -32,7 +31,7 @@ export const initialState = (contentTypes) => ({
   },
   input: '',
   suggestions: emptySuggestions,
-  focus: null
+  focus: null,
 });
 
 
@@ -58,12 +57,13 @@ const HideSuggestions = makeCtor('HideSuggestions');
 
 const TriggerSearch = makeCtor('TriggerSearch');
 const ToggleSuggestions = makeCtor('ToggleSuggestions');
-const SetActivePill = makeCtor('SetActivePill');
-const SetLoading = makeCtor('SetActivePill');
+
+const SetLoading = makeCtor('SetLoading');
 
 // Emitted 0.5 seconds after user stopped typing
 const UnsetTyping = makeCtor('UnsetTyping');
 
+const RemoveFilter = makeCtor('RemoveFilter');
 
 export const Actions = {
   SetQueryInput,
@@ -73,11 +73,11 @@ export const Actions = {
   KeyDownContainer,
   TriggerSearch,
   KeyDownQueryInput,
-  SetActivePill,
   ToggleSuggestions,
   SetLoading,
   HideSuggestions,
-  FocusOut
+  FocusOut,
+  RemoveFilter
 };
 
 
@@ -154,8 +154,14 @@ export function makeReducer (dispatch, _cma, contentTypes, submitSearch) {
       state = set(state, ['isTyping'], isSearching);
       return state;
     },
-    [SetActivePill] (state, index) {
-      return set(state, ['activePill'], index);
+    [RemoveFilter] (state, selectedFilter) {
+      state = update(state, ['query', 'filters'], (oldFilters) => {
+        return oldFilters.filter(([filter]) => {
+          return filter !== selectedFilter;
+        });
+      });
+
+      return state;
     }
   });
 

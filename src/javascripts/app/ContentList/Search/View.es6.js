@@ -23,7 +23,7 @@ export default function render (state, actions) {
     hooks: [ H.ClickBlur(actions.HideSuggestions) ],
     onKeyDown: actions.KeyDownContainer,
     onFocusOut: actions.FocusOut,
-    tabindex: '1',
+    tabindex: '0',
     style: {
       height: '42px',
       position: 'relative'
@@ -41,7 +41,11 @@ export default function render (state, actions) {
         flexWrap: 'wrap',
         padding: '0 10px 5px'
       }, [
-        ...pills(state.query, state.focus === 'lastValueInput', actions),
+        ...pills({
+          query: state.query, 
+          focusValue: state.focus === 'lastValueInput',
+          actions
+        }),
         queryInput(state, actions)
       ]),
       hasSpinner &&
@@ -93,7 +97,7 @@ function queryInput (state, actions) {
 }
 
 
-function pills (query, focusValue, actions) {
+function pills ({ query, focusValue, actions }) {
   const generic = query.filters.map(([filter, _op, value], index) => {
     const isLast = index === query.filters.length - 1;
     const setValue = (value) => actions.SetFilterValueInput([index, value]);
@@ -103,12 +107,14 @@ function pills (query, focusValue, actions) {
 
     return filterPill({
       state,
-      name: filter.name,
-      value: value,
-      input: filter.valueInput,
+      value,
+      filter,
+      index,
+      isDeletable: true,
       actions: {
         setValue,
-        TriggerSearch: actions.triggerSearch
+        TriggerSearch: actions.triggerSearch,
+        removeFilter: actions.RemoveFilter
       }
     });
   });
@@ -116,9 +122,12 @@ function pills (query, focusValue, actions) {
   return [
     filterPill({
       state: null,
-      name: 'contentType',
       value: query.contentType[2],
-      input: query.contentType[0].valueInput,
+      isDeletable: false,
+      filter: {
+        name: 'contentType',
+        valueInput: query.contentType[0].valueInput
+      },
       actions: {
         setValue: actions.SetContentType,
         TriggerSearch: actions.TriggerSearch
@@ -132,32 +141,53 @@ function pills (query, focusValue, actions) {
 // Filter pills
 // ------------
 
+
+
 function filterPill ({
   state,
-  name,
   value,
-  input,
-  actions
+  filter,
+  isDeletable,
+  actions,
+  index = -1
 }) {
-  return container({
-    display: 'flex',
-    lineHeight: '30px',
-    height: '30px',
-    marginTop: '5px',
-    marginRight: '12px'
+
+  return h('div.search__filter-pill', {
+    style: {
+      display: 'flex',
+      lineHeight: '30px',
+      height: '30px',
+      marginTop: '5px',
+      marginRight: '12px'
+    },
+    tabindex: String(index),
+    onKeyDown: (e) => {
+      if (isDeletable) {
+        if (e.key === 'Backspace') {
+          actions.removeFilter(filter);
+          e.stopPropagation();
+        }
+      }
+    }
   }, [
-    filterName(name),
-    filterValue(input, value, state === 'focus', actions)
+    filterName({ 
+      name: filter.name,
+      onReset: actions.onReset
+    }),
+    filterValue( filter.valueInput, value, state === 'focus', actions)
   ]);
 }
 
 
-function filterName (name) {
-  return container({
-    background: Colors.blueDarkest,
-    color: 'white',
-    padding: '0 12px',
-    borderRadius: '3px 0 0 3px'
+function filterName ({ name, onReset }) {
+  return h('div', {
+    style: {
+      backgroundColor: Colors.blueDarkest,
+      color: 'white',
+      padding: '0 12px',
+      borderRadius: '3px 0 0 3px',
+      cursor: 'pointer'
+    }
   }, [name]);
 }
 
@@ -184,6 +214,7 @@ function filterValueText (value, focus, actions) {
     hooks: [ H.Ref(autosizeInput) ],
     value: value,
     onInput: (e) => actions.setValue(e.target.value),
+    tabindex: '0',
     style: {
       background: Colors.blueMid,
       color: 'white',
