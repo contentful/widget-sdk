@@ -12,6 +12,8 @@ import TheStore from 'TheStore';
 import notification from 'notification';
 import random from 'random';
 
+import openInputDialog from 'app/InputDialog';
+
 const LoadView = makeCtor('LoadView');
 const ToggleOpened = makeCtor('ToggleOpened');
 const RestoreDefaultViews = makeCtor('RestoreDefaultViews');
@@ -103,7 +105,8 @@ export default function ({
     canEdit: scopedFolders.canEdit,
     folderStates: folderStatesStore.get() || {},
     dnd: createDnD(scopedFolders.get, folders => store.dispatch(AlterFolders, folders)),
-    roleAssignment
+    roleAssignment,
+    saveCurrentView
   }, reduce);
 
   function saveFolders (state, updatedFolders) {
@@ -127,6 +130,15 @@ export default function ({
     return scopedFolders.get();
   }
 
+  function saveCurrentView () {
+    return openInputDialog({
+      title: 'Save current view',
+      confirmLabel: 'Save current view',
+      message: 'Please provide a name for the view you’re about to save:',
+      input: {min: 1, max: 32}
+    }).promise.then(payload => store.dispatch(SaveCurrentView, payload));
+  }
+
   const actions = {
     LoadView,
     ToggleOpened,
@@ -141,7 +153,13 @@ export default function ({
     DeleteView
   };
 
-  return {render: ViewMenu, store, actions};
+  return {
+    api: {saveCurrentView},
+    render: ViewMenu,
+    store,
+    actions
+  };
+
 }
 
 function prepareFolders (folders) {

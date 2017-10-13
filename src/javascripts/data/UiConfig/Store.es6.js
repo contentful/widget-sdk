@@ -47,7 +47,7 @@ export default function create (space, spaceEndpoint, publishedCTs) {
     const get = () => uiConfig[key] === undefined ? getDefaults() : uiConfig[key];
     const set = val => save(update(uiConfig, key, () => val)).then(get);
 
-    return {get, set, canEdit: {views: canEdit, folders: canEdit}};
+    return {get, set, canEdit};
   }
 
   function forPrivateScope (key) {

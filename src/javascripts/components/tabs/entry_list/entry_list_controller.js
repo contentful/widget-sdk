@@ -161,6 +161,15 @@ angular.module('contentful')
     }
   };
 
+  $scope.shouldSaveCurrentViewAsShared = false;
+
+  $scope.saveCurrentView = function saveCurrentView (shouldSaveCurrentViewAsShared) {
+    if (shouldSaveCurrentViewAsShared) {
+      $scope.savedViewsSidebar.api.saveCurrentViewAsShared();
+    } else {
+      $scope.savedViewsSidebar.api.saveCurrentViewAsPrivate();
+    }
+  };
   /**
    * @ngdoc property
    * @name EntryListController#$scope.hasArchivedEntries

@@ -1,5 +1,6 @@
 import {h} from 'ui/Framework';
 import {makeCtor} from 'utils/TaggedValues';
+import {assign} from 'utils/Collections';
 
 import {
   createStore,
@@ -42,7 +43,15 @@ export default function ({
     actions: {Select}
   };
 
-  return combineStoreComponents(render, {selector, sharedViews, privateViews});
+  return assign(
+    {
+      api: {
+        saveCurrentViewAsShared: sharedViews.api.saveCurrentView,
+        saveCurrentViewAsPrivate: privateViews.api.saveCurrentView
+      }
+    },
+    combineStoreComponents(render, {selector, sharedViews, privateViews})
+  );
 
   function render ({selector, sharedViews, privateViews}) {
     return h('div', [

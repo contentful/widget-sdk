@@ -30,6 +30,17 @@ header.workbench-header
       data-test-id="search-ct-selector")
       option(value="") All content types
 
+    button(ng-click="saveCurrentView(shouldSaveCurrentViewAsShared)") save
+    input(
+      type="checkbox"
+      name="saveAsShared"
+      ng-show="spaceContext.uiConfig.entries.shared.canEdit"
+      ng-true-value="true"
+      ng-false-value="false"
+      ng-model="shouldSaveCurrentViewAsShared"
+    )
+    label(for="saveAsShared") as shared
+
   .workbench-header__actions(ng-if="!showNoEntriesAdvice()")
     +create-entry-button
 
