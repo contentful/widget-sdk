@@ -51,6 +51,7 @@ export default function open (params = {}) {
 
         $scope.component = h('.modal-dialog', [
           h('header.modal-dialog__header', [
+            h('i.fa.fa-pencil', { style: { marginRight: '15px' } }),
             h('h1', [params.title]),
             h('button.modal-dialog__close', {onClick: cancel})
           ]),
