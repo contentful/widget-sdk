@@ -16,10 +16,10 @@ export default function render (state, actions) {
   return h('.view-menu', [
     isEmpty ? renderEmpty(state) : renderFolders(state, actions),
     h('.view-menu__actions', [
-      isEmpty && canEdit.views && h('button.text-link', {
+      isEmpty && canEdit && h('button.text-link', {
         onClick: () => actions.RestoreDefaultViews()
       }, [h('i.fa.fa-refresh'), 'Restore default views']),
-      canEdit.folders && h('button.text-link', {
+      canEdit && h('button.text-link', {
         onClick: () => openInputDialog({
           title: 'Add folder',
           confirmLabel: 'Add folder',
@@ -30,7 +30,7 @@ export default function render (state, actions) {
         h('i', {style: {marginRight: '5px'}}, [addFolderIcon]),
         'Add folder'
       ]),
-      canEdit.views && h('button.text-link', {
+      canEdit && h('button.text-link', {
         onClick: () => openInputDialog({
           title: 'Save current view',
           confirmLabel: 'Save current view',
@@ -39,7 +39,8 @@ export default function render (state, actions) {
         }).promise.then(actions.SaveCurrentView)
       }, [
         h('i', {style: {margingRight: '5px'}}, [addViewIcon]),
-        'Save current view'])
+        'Save current view'
+      ])
     ])
   ]);
 }
@@ -54,7 +55,7 @@ function renderFolders (state, actions) {
 
 function renderEmpty (state) {
   return h('.view-folder', [
-    h('.view-folder__empty', state.canEdit.views ? [
+    h('.view-folder__empty', state.canEdit ? [
       h('strong', ['No views stored']),
       h('p', ['Please use one of the options below.'])
     ] : [

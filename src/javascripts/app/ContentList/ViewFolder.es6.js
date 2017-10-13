@@ -18,12 +18,12 @@ export default function render (folder, state, actions) {
   // Do not render anything when:
   // - all views in the folder were hidden from you
   // - AND you cannot drop a view to this folder
-  if (!canEdit.folders && views.length < 1) {
+  if (!canEdit && views.length < 1) {
     return null;
   }
 
   const isNotDefault = folder.id !== 'default';
-  const draggable = canEdit.views ? '-draggable' : '';
+  const draggable = canEdit ? '-draggable' : '';
   const isClosed = state.folderStates[folder.id] === 'closed';
   const collapsed = isClosed ? '-collapsed' : '';
   const currentViewId = getAtPath(state.currentView, ['id']);
@@ -33,7 +33,7 @@ export default function render (folder, state, actions) {
     isNotDefault && h('header.view-folder__header', [
       h('div.view-folder__title', [
         `${folder.title} (${folder.views.length})`,
-        canEdit.folders && h('.view-folder__actions', [
+        canEdit && h('.view-folder__actions', [
           h('i.fa.fa-pencil', {onClick: () => renameFolder(folder, UpdateFolder)}),
           h('i.fa.fa-close', {onClick: () => deleteFolder(folder, DeleteFolder)})
         ])
@@ -54,7 +54,7 @@ export default function render (folder, state, actions) {
         h('.view-folder__item-title', [
           h('span', {title: view.title}, [view.title])
         ]),
-        canEdit.views && h('.view-folder__actions', [
+        canEdit && h('.view-folder__actions', [
           roleAssignment && h('i.fa.fa-eye', {
             onClick: doNotPropagate(() => editViewRoles(view, roleAssignment.endpoint, UpdateView))
           }),

@@ -74,7 +74,7 @@ export default function create (space, spaceEndpoint, publishedCTs) {
       return Promise.resolve(val);
     };
 
-    return {get, set, canEdit: {views: true, folders: true}};
+    return {get, set, canEdit};
   }
 
   function getEntryViewsDefaults () {
