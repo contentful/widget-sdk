@@ -100,9 +100,18 @@ export default function render (state, actions) {
         onClick: actions.ToggleSuggestions,
         class: hasSuggestions ? '-active' : ''
       }, [
-        container({marginTop: '-3px'}, [filterIcon]),
-        hspace('7px'),
-        'Filter'
+        container({
+          alignSelf: 'flex-start',
+          height: '42px',
+          display: 'flex',
+          alignItems: 'center'
+        }, [
+          // TODO we should be able to pass a `style` argument to
+          // `filterIcon`.
+          container({marginTop: '-3px'}, [filterIcon]),
+          hspace('7px'),
+          'Filter'
+        ])
       ])
     ]),
     hasSuggestions && filterSuggestions({
@@ -166,6 +175,7 @@ function pills ({ query, defaultFocus, onChange, onRemove }) {
 
 // Filter pills
 // ------------
+
 function filterPill ({
   value,
   filter,
