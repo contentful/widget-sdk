@@ -18,7 +18,7 @@ angular.module('contentful')
     template: '<div cf-asset-list class="workbench asset-list entity-list"></div>'
   });
 
-  var detail = base({
+  var detail = {
     name: 'detail',
     url: '/:assetId',
     params: { addToContext: true },
@@ -29,7 +29,7 @@ angular.module('contentful')
     },
     controller: ['$scope', 'editorData', createAssetController],
     template: JST.asset_editor()
-  });
+  };
 
   return {
     name: 'assets',
