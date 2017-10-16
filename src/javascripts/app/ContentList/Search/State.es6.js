@@ -28,6 +28,10 @@ const emptySuggestions = freeze({ visible: false, selected: null, items: null })
 // query.filters: [[Filter, string, string]]
 //   A list of [filter, operator, value] triples. Corresponds to the
 //   pills we show.
+// searchBoxHasFocus: boolean
+//   Set to 'true' if any of the children of the search box has focus.
+//   If 'false' we grey the border, hide the suggestions box, and
+//   collapse multiline filters.
 
 export const initialState = (contentTypes) => ({
   query: {
@@ -58,6 +62,7 @@ const SetFilterValueInput = makeCtor('SetFilterValueInput');
 const SelectFilterSuggestions = makeCtor('SelectFilterSuggestions');
 
 const KeyDownContainer = makeCtor('KeyDownContainer');
+const SetBoxFocus = makeCtor('SetBoxFocus');
 const HideSuggestions = makeCtor('HideSuggestions');
 
 const TriggerSearch = makeCtor('TriggerSearch');
@@ -88,6 +93,7 @@ export const Actions = {
   ToggleSuggestions,
   SetLoading,
   HideSuggestions,
+  SetBoxFocus,
   RemoveFilter,
   SetFocusOnLast,
   SetFocusOnLastValue,
@@ -103,11 +109,14 @@ export function makeReducer (dispatch, _cma, contentTypes, submitSearch) {
   const putTyping = createSlot(() => dispatch(UnsetTyping));
 
   return Store.makeReducer({
-    [HideSuggestions] (state) {
-      state = set(state, ['suggestions'], emptySuggestions);
+    [SetQueryInput]: setInput,
+    [SetBoxFocus] (state, hasFocus) {
+      state = set(state, ['searchBoxHasFocus'], hasFocus);
+      if (!hasFocus) {
+        state = set(state, ['suggestions'], emptySuggestions);
+      }
       return state;
     },
-    [SetQueryInput]: setInput,
     [KeyDownContainer] (state, event) {
       return caseofEq(event.key, [
         ['Enter', () => {

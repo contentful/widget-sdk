@@ -1,3 +1,4 @@
+/* global requestAnimationFrame */
 import { noop } from 'lodash';
 import { match } from 'utils/TaggedValues';
 
@@ -32,7 +33,7 @@ export default function render (state, actions) {
   };
 
   return h('div', {
-    hooks: [ H.ClickBlur(actions.HideSuggestions) ],
+    hooks: [ H.TrackFocus(actions.SetBoxFocus) ],
     tabindex: '0',
     style: {
       height: '42px',
@@ -43,7 +44,10 @@ export default function render (state, actions) {
       style: {
         display: 'flex',
         background: 'white',
-        border: `1px solid ${Colors.blueMid}`
+        border: '1px solid transparent',
+        borderColor: state.searchBoxHasFocus ? Colors.blueMid : Colors.elementMid,
+        height: state.searchBoxHasFocus ? 'auto' : '42px',
+        overflow: state.searchBoxHasFocus ? '' : 'hidden'
       },
       onFocusOut: actions.ResetFocus
     }, [
@@ -89,20 +93,25 @@ export default function render (state, actions) {
           }
         })
       ]),
-      hasSpinner &&
-        spinner({diameter: '18px'}, {
-          alignSelf: 'flex-start',
-          flexShrink: '0',
-          marginTop: '13px'
-        }),
-      hasSpinner && hspace('8px'),
+      spinner({diameter: '18px'}, {
+        alignSelf: 'flex-start',
+        flexShrink: '0',
+        marginTop: '13px',
+        // We need to occupy the space to prevent breaking based on the
+        // spinners visibility
+        visibility: hasSpinner ? '' : 'hidden'
+      }),
+      hspace('8px'),
       h('.search-next__filter-toggle', {
         onClick: actions.ToggleSuggestions,
-        class: hasSuggestions ? '-active' : ''
+        class: [
+          hasSuggestions ? '-active' : '',
+          state.searchBoxHasFocus ? '-focus' : ''
+        ].join(' ')
       }, [
         container({
           alignSelf: 'flex-start',
-          height: '42px',
+          height: '40px',
           display: 'flex',
           alignItems: 'center'
         }, [
@@ -185,7 +194,6 @@ function filterPill ({
   onChange,
   onRemove = noop
 }) {
-
   return h('div.search__filter-pill', {
     ref: (el) => {
       if (isFocused && el) {
