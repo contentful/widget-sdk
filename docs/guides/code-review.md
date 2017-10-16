@@ -1,5 +1,7 @@
 # Code review guidelines
 
+This document is specifically focused on code review process, for overall process from committing your code to release see [code submission guide][code-submission].
+
 When and why to review
 ----------------------
 
@@ -9,7 +11,7 @@ All changes must go through code review by at least one person, no matter what w
 Communication guidelines
 ------------------------
 
-[Here][communication-guidelines] are some great tips for effective code review communication.
+See [thoughtbot's guide][communication-guidelines] for some great tips for effective code review communication.
 
 *TODO: adapt it and ask everyone's opinion!*
 
@@ -20,12 +22,12 @@ Ready for review checklist:
 
 - [ ] Description contains link to a TP ticket, or if there is no ticket, sufficient description of what was done and why
 - [ ] Link to pull request in TP comments
-- [ ] All functionality from the ticket is implemented
+- [ ] All functionality from the ticket is implemented when applicable
 - [ ] All publicly exposed methods and properties are documented (we use [JSDoc][jsdoc])
 - [ ] Unit tests are in place (and passing)
 - [ ] Lint is passing
 - [ ] Code meets our [coding guidelines][coding-guidelines], best practices and is generally understandable
-- [ ] Al UI elements have appropriate [ARIA attributes][aria-doc]
+- [ ] All UI elements have appropriate [ARIA attributes][aria-doc]
 - [ ] CI checks are green
 - [ ] No conflicts with master
 
@@ -33,7 +35,7 @@ Run unit tests: `npm run test` or `xvfb-run ./node_modules/.bin/karma start --br
 
 Run lint: `bin/lint-all` or `bin/lint-file <filename>`
 
-When PR is ready for review, add `Please review` tag in github. Assign 1 person from the Frontend chapter randomly on small (< 500 lines of code) PR, and 2 people on bigger ones.
+When PR is ready for review, add `Please review` tag in github. Assign one person from the Frontend chapter randomly on smaller PR's, and 2 people on bigger ones. Use your judgement to request review from more people, depending on the scope of changes, and try to avoid big PRs if possible, splitting them into smaller ones.
 
 
 How to review
@@ -57,9 +59,9 @@ You don't need to review codestyle conventions like spaces and brackets style - 
 Responding to changes requests and next steps
 ---------------------------------------------
 
-When changes are requested, remove 'please review' tag, push your changes in a commit with 'fixup' message, and add 'please review' tag again. *Don't rewrite history until PR is approved!*
+When changes are requested, remove 'please review' tag, push your changes in a fixup commit (`git commit --fixup=<parent commit hash>`), and add 'please review' tag again. *Don't rewrite history until PR is approved!*
 
-After PR is approved by all reviewers, all checks are passing, and there are no conflicts with master, rebase the branch on master, squashing the fixup commits (use `rebase -i master`). After that, send it to manual QA by marking the related TP ticket as ready for testing (see [release process][release-process]).
+After PR is approved by all reviewers, all checks are passing, and there are no conflicts with master, clean up the history and squash the fixup commits (`git rebase -i --autosquash origin/master`). If there are user-facing changes, you should then send it to manual QA by marking the related TP ticket as ready for testing (see [release process][code-submission]).
 
 If there are some bugs found, you can push bugfix commits without a code review for a small fix. If the fix requires major work, create new `bugfix` PR on your branch, and request a code review on it.
 
@@ -81,5 +83,5 @@ It happens that some features grow too big or require a major refactoring, and a
 [github-cr-docs]: https://help.github.com/articles/reviewing-proposed-changes-in-a-pull-request/
 [coding-guidelines]: https://github.com/contentful/coding-guidelines
 [aria-doc]: https://contentful.atlassian.net/wiki/display/ENG/Semantic+Markup+in+the+UI
-[release-process]: /docs/guides/code-submission
+[code-submission]: /docs/guides/code-submission
 [launch-darkly]: /docs/guides/a_b_testing
