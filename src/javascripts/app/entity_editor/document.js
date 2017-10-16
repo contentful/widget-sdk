@@ -65,16 +65,10 @@ angular.module('contentful')
     cleanupTasks.push(errorBus.end);
 
     function makeDocErrorHandler (forbiddenDocError) {
-      var isRefreshingAuth = false;
-
       return function (error) {
         if (error === 'forbidden') {
-          if (isRefreshingAuth) { return; }
-
-          isRefreshingAuth = true;
           docConnection.refreshAuth()
-            .catch(function () { errorBus.emit(forbiddenDocError); })
-            .then(function () { isRefreshingAuth = false; });
+            .catch(function () { errorBus.emit(forbiddenDocError); });
         }
       };
     }
@@ -535,12 +529,11 @@ angular.module('contentful')
     function insertValueAt (path, i, x) {
       return withRawDoc(function (doc) {
         if (getValueAt(path)) {
-          var handleError = makeDocErrorHandler(DocError.SetValueForbidden(path));
           maybeEmitLocalChange(path);
           return $q.denodeify(function (cb) {
             doc.insertAt(path, i, x, cb);
           }).catch(function (err) {
-            handleError(err);
+            makeDocErrorHandler(DocError.SetValueForbidden(path))(err);
             return $q.reject(err);
           });
         } else if (i === 0) {

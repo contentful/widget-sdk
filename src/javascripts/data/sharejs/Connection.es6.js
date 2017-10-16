@@ -17,9 +17,9 @@ export const DocLoad = DocLoader.DocLoad;
  */
 
 /**
- * @param {{ getToken: function(): Promise<string>, refreshToken: function(): Promise<string>}} auth
  * @param {string} baseUrl  URL where the ShareJS service lives
  * @param {string} spaceId
+ * @param {{ getToken: function(): Promise<string>, refreshToken: function(): Promise<string>}} auth
  * @returns Connection
  */
 export function create (baseUrl, spaceId, auth) {
@@ -70,6 +70,21 @@ export function create (baseUrl, spaceId, auth) {
 
   }).skipDuplicates();
 
+  /**
+   * @ngdoc method
+   * @module cf.data
+   * @name data/ShareJS/Connection#refreshAuth
+   * @description
+   * Gets a new auth token and sends it to sharejs server. If one refresh auth
+   * call is in progress, doesn't send a new one and returns the ongoing call's
+   * promise.
+   * See wrapActionWithLock() for more details
+   *
+   * @returns {Promise}
+   */
+  const refreshAuth = wrapActionWithLock(() => {
+    return auth.refreshToken().then((token) => connection.refreshAuth(token));
+  });
 
   return {
     getDocLoader: getDocLoader,
@@ -131,12 +146,6 @@ export function create (baseUrl, spaceId, auth) {
   function close () {
     connection.disconnect();
   }
-
-  function refreshAuth () {
-    return auth.refreshToken()
-      .then((token) => connection.refreshAuth(token));
-  }
-
 
   function getDocWrapperForEntity (entity) {
     const key = entityMetadataToKey(entity.data.sys);
@@ -229,4 +238,31 @@ function entityMetadataToKey (sys) {
     ['Asset', () => 'asset']
   ]);
   return [sys.space.sys.id, typeSegment, sys.id].join('!');
+}
+
+/**
+ * @ngdoc method
+ * @name wrapActionWithLock
+ * @description
+ * Wraps a promise-returning action so it can not be called multiple times
+ * simultaneously.
+ *
+ * When wrapped action hasn't been resolved and is called subsequently,
+ * the same promise from previous call is returned and a new action isn't
+ * performed. Rejected state is terminal: if a call ended up being rejected,
+ * all subsequent calls will return a rejected promise.
+ *
+ * @param {function(): Promise} action
+ * @returns {function(): Promise}
+ */
+function wrapActionWithLock (action) {
+  let actionPromise = null;
+
+  return function () {
+    if (!actionPromise) {
+      actionPromise = action().then(() => { actionPromise = null; });
+    }
+
+    return actionPromise;
+  };
 }
