@@ -8,7 +8,6 @@ describe('Account Dropdown Controller', function () {
       $provide.value('analytics/Analytics', stubs.analytics);
       $provide.value('Authentication', stubs.authentication);
       $provide.value('$window', stubs.window);
-      $provide.value('utils/LaunchDarkly', { setOnScope: function () {} });
     });
 
     this.stubs.analytics = {track: sinon.stub()};
