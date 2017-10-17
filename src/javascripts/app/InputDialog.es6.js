@@ -36,17 +36,28 @@ export default function open (params = {}) {
   return modalDialog.open({
     template: '<cf-component-bridge class="modal-background" component="component">',
     controller: function ($scope) {
-      const {min, max, value} = input;
+      const {min, max} = input;
       const maxlength = isFinite(max) ? `${max}` : '';
-      const onInput = e => render(e.target.value);
       const cancel = () => $scope.dialog.cancel();
+      let shouldSaveCurrentViewAsShared = true;
+      let {value = ''} = input;
+
+      function onSaveAsSharedChange () {
+        shouldSaveCurrentViewAsShared = !shouldSaveCurrentViewAsShared;
+        render(value);
+      }
+
+      function onInput (e) {
+        value = e.target.value;
+        render(value);
+      }
 
       render(value);
 
       function render (value) {
         const trimmed = value.trim();
         const isInvalid = trimmed.length < min || trimmed.length > max;
-        const confirm = () => !isInvalid && $scope.dialog.confirm(trimmed);
+        const confirm = () => !isInvalid && $scope.dialog.confirm({ viewTitle: trimmed, shouldSaveCurrentViewAsShared });
         const onKeydown = e => e.keyCode === keycodes.ENTER && confirm();
 
         $scope.component = h('.modal-dialog', [
@@ -59,7 +70,18 @@ export default function open (params = {}) {
             h('p.modal-dialog__richtext', [params.message]),
             h('input.cfnext-form__input--full-size', {
               type: 'text', value, onInput, onKeydown, maxlength
-            })
+            }),
+            params.showSaveAsSharedCheckbox && (
+              h('div', [
+                h('input', {
+                  type: 'checkbox',
+                  name: 'saveAsShared',
+                  onChange: onSaveAsSharedChange,
+                  checked: shouldSaveCurrentViewAsShared
+                }),
+                h('label', ['Save as shared view'])
+              ])
+            )
           ]),
           h('.modal-dialog__controls', [
             h('button.btn-primary-action', {

@@ -13,6 +13,9 @@ import initSavedViewsComponent from './SavedViewsComponent';
 import {byName as Colors} from 'Styles/Colors';
 import {container} from 'ui/Layout';
 
+import openInputDialog from 'app/InputDialog';
+
+
 const Select = makeCtor('Select');
 
 const VIEWS_SHARED = 'shared';
@@ -44,12 +47,7 @@ export default function ({
   };
 
   return assign(
-    {
-      api: {
-        saveCurrentViewAsShared: sharedViews.api.saveCurrentView,
-        saveCurrentViewAsPrivate: privateViews.api.saveCurrentView
-      }
-    },
+    {api: {openSaveCurrentViewModal}},
     combineStoreComponents(render, {selector, sharedViews, privateViews})
   );
 
@@ -90,4 +88,21 @@ export default function ({
       onClick: () => actions.Select(value)
     }, [label]);
   }
+
+  function openSaveCurrentViewModal () {
+    return openInputDialog({
+      title: 'Save current view',
+      confirmLabel: 'Add to views',
+      message: 'Name of the view',
+      input: {min: 1, max: 32},
+      showSaveAsSharedCheckbox: entityFolders.shared.canEdit
+    }).promise.then(payload => {
+      if (payload.shouldSaveCurrentViewAsShared) {
+        sharedViews.api.saveCurrentView(payload.viewTitle);
+      } else {
+        privateViews.api.saveCurrentView(payload.viewTitle);
+      }
+    });
+  }
+
 }

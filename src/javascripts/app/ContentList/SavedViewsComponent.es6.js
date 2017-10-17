@@ -12,7 +12,6 @@ import TheStore from 'TheStore';
 import notification from 'notification';
 import random from 'random';
 
-import openInputDialog from 'app/InputDialog';
 
 const LoadView = makeCtor('LoadView');
 const ToggleOpened = makeCtor('ToggleOpened');
@@ -130,13 +129,8 @@ export default function ({
     return scopedFolders.get();
   }
 
-  function saveCurrentView () {
-    return openInputDialog({
-      title: 'Save current view',
-      confirmLabel: 'Save current view',
-      message: 'Please provide a name for the view you’re about to save:',
-      input: {min: 1, max: 32}
-    }).promise.then(payload => store.dispatch(SaveCurrentView, payload));
+  function saveCurrentView (viewTitle) {
+    store.dispatch(SaveCurrentView, viewTitle);
   }
 
   const actions = {

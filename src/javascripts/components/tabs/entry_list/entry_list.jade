@@ -11,6 +11,14 @@ header.workbench-header
       | Content
       cf-knowledge-base.workbench-header__kb-link(target="entry")
 
+  select.cfnext-select-box(
+        style="cursor: pointer; height: 42px; max-width: 200px; margin-right: 10px;"
+    ng-model="context.view.contentTypeId"
+    ng-change="selectedContentType()"
+    ng-options="ct.id as ct.name group by 'Content types' for ct in contentTypeSelectOptions"
+    data-test-id="search-ct-selector")
+      option(value="") All content types
+
   .workbench-header__search(
     style="display: flex"
     ng-if="context.ready && !showNoEntriesAdvice()")
@@ -22,24 +30,10 @@ header.workbench-header
       cf-on-blur-component="leftSearch($event)"
       cf-on-blur-component-when="showAutocompletions")
 
-    select.cfnext-select-box(
-      style="cursor: pointer; height: 42px; max-width: 200px;"
-      ng-model="context.view.contentTypeId"
-      ng-change="selectedContentType()"
-      ng-options="ct.id as ct.name group by 'Content types' for ct in contentTypeSelectOptions"
-      data-test-id="search-ct-selector")
-      option(value="") All content types
-
-    button(ng-click="saveCurrentView(shouldSaveCurrentViewAsShared)") save
-    input(
-      type="checkbox"
-      name="saveAsShared"
-      ng-show="spaceContext.uiConfig.entries.shared.canEdit"
-      ng-true-value="true"
-      ng-false-value="false"
-      ng-model="shouldSaveCurrentViewAsShared"
-    )
-    label(for="saveAsShared") as shared
+    a.text-link(
+      style="margin-left: 15px"
+      ng-click="openSaveCurrentViewModal()"
+    ) Add to views
 
   .workbench-header__actions(ng-if="!showNoEntriesAdvice()")
     +create-entry-button
