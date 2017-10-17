@@ -45,7 +45,7 @@ export default function () {
         text: 'Talk to us',
         ngClick: 'openIntercom()',
         dataTestId: 'nav.account.intercom',
-        ngIf: 'canShowIntercomLink && isIntercomLoaded()'
+        ngIf: 'isIntercomLoaded()'
       }, {
         text: 'Get support',
         href: '{{supportUrl}}',

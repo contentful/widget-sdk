@@ -12,16 +12,10 @@ angular.module('contentful')
 }])
 
 .controller('cfAccountDropdownController', ['$scope', 'require', function ($scope, require) {
-  var TheAccountView = require('TheAccountView');
   var authentication = require('Authentication');
-  var K = require('utils/kefir');
   var Config = require('Config');
   var analytics = require('analytics/Analytics');
   var intercom = require('intercom');
-
-  K.onValueScope($scope, TheAccountView.canShowIntercomLink$, function (canShowIntercomLink) {
-    $scope.canShowIntercomLink = canShowIntercomLink;
-  });
 
   $scope.userProfileRef = {
     path: ['account', 'profile', 'user'],
