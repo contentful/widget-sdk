@@ -55,9 +55,9 @@ export const spaces$ = spacesBus.property;
 /**
  * @ngdoc property
  * @name tokenStore#spaces$
- * @type {Property<Api.Spaces>}
+ * @type {Property<Api.Organizations>}
  * @description
- * The list of spaces from the token
+ * The list of organizations user is a member of from the token
  */
 export const organizations$ = organizationsBus.property;
 

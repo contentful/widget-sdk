@@ -23,17 +23,12 @@ describe('cfNavSidepanel directive', () => {
     go: sinon.stub()
   };
 
-  const LaunchDarkly = {
-    setOnScope: sinon.stub()
-  };
-
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.value('services/CreateSpace', CreateSpace);
       $provide.value('states/Navigator', Navigator);
       $provide.value('accessChecker', accessChecker);
       $provide.value('services/OrganizationRoles', OrganizationRoles);
-      $provide.value('utils/LaunchDarkly', LaunchDarkly);
     });
 
     const NavState = this.$inject('navigation/NavState');
