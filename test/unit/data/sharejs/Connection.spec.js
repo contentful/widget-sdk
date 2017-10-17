@@ -329,5 +329,37 @@ describe('data/sharejs/Connection', function () {
       yield connection.refreshAuth();
       sinon.assert.calledOnce(this.baseConnection.refreshAuth.withArgs('NEW_TOKEN'));
     });
+
+    it('prevents concurrent calls', function () {
+      const connection = this.create('//HOST', 'SPACE', this.auth);
+      const firstCallPromise = connection.refreshAuth();
+      const secondCallPromise = connection.refreshAuth();
+      expect(firstCallPromise).toEqual(secondCallPromise);
+    });
+
+    it('makes a consequent call after previous one finishes', function* () {
+      const connection = this.create('//HOST', 'SPACE', this.auth);
+      yield connection.refreshAuth();
+      yield connection.refreshAuth();
+      sinon.assert.calledTwice(this.baseConnection.refreshAuth);
+    });
+
+    it('rejects terminally', function* () {
+      const connection = this.create('//HOST', 'SPACE', this.auth);
+      const error = new Error();
+      this.baseConnection.refreshAuth.rejects(error);
+
+      const error1 = yield connection.refreshAuth().catch((e) => e);
+      expect(error1).toBe(error);
+
+      const error2 = yield connection.refreshAuth().catch((e) => e);
+      expect(error2).toBe(error);
+
+      this.baseConnection.refreshAuth.resolves('TOKEN');
+      const error3 = yield connection.refreshAuth().catch((e) => e);
+      expect(error3).toBe(error);
+
+      sinon.assert.calledOnce(this.baseConnection.refreshAuth);
+    });
   });
 });
