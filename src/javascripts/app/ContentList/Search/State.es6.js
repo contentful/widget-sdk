@@ -7,6 +7,12 @@ import { caseofEq, otherwise } from 'libs/sum-types';
 
 import { getMatchingFilters, contentTypeFilter, makeQueryObject } from './Filters';
 
+const defaultFocus = {
+  index: null,
+  isValueFocused: false,
+  isQueryInputFocused: false,
+  suggestionsFocusIndex: null
+};
 const emptySuggestions = freeze({ visible: false, selected: null, items: null });
 
 // The state for this component looks like this
@@ -31,7 +37,8 @@ export const initialState = (contentTypes) => ({
   },
   input: '',
   suggestions: emptySuggestions,
-  focus: null,
+  focus: defaultFocus
+  
 });
 
 
@@ -49,10 +56,9 @@ const SetContentType = makeCtor('SetContentType');
 // user. Holds a [filterIndex, value] pair
 const SetFilterValueInput = makeCtor('SetFilterValueInput');
 
-const ClickFilterSuggestion = makeCtor('SelectFilterSuggestions');
+const SelectFilterSuggestions = makeCtor('SelectFilterSuggestions');
 
 const KeyDownContainer = makeCtor('KeyDownContainer');
-const FocusOut = makeCtor('FocusOut');
 const HideSuggestions = makeCtor('HideSuggestions');
 
 const TriggerSearch = makeCtor('TriggerSearch');
@@ -64,20 +70,33 @@ const SetLoading = makeCtor('SetLoading');
 const UnsetTyping = makeCtor('UnsetTyping');
 
 const RemoveFilter = makeCtor('RemoveFilter');
+const SetFocusOnLast = makeCtor('SetFocusOnLast');
+const SetFocusOnLastValue = makeCtor('SetFocusOnLastValue');
+const ResetFocus = makeCtor('ResetFocus');
+const SetFocusOnFirstSuggestion = makeCtor('SetFocusOnFirstSuggestion');
+const SetFocusOnNextSuggestion = makeCtor('SetFocusOnNextSuggestion');
+const SetFocusOnPrevSuggestion = makeCtor('SetFocusOnPrevSuggestion');
+const SetFocusOnQueryInput = makeCtor('SetFocusOnQueryInput');
 
 export const Actions = {
   SetQueryInput,
   SetFilterValueInput,
   SetContentType,
-  ClickFilterSuggestion,
+  SelectFilterSuggestions,
   KeyDownContainer,
   TriggerSearch,
   KeyDownQueryInput,
   ToggleSuggestions,
   SetLoading,
   HideSuggestions,
-  FocusOut,
-  RemoveFilter
+  RemoveFilter,
+  SetFocusOnLast,
+  SetFocusOnLastValue,
+  ResetFocus,
+  SetFocusOnFirstSuggestion,
+  SetFocusOnNextSuggestion,
+  SetFocusOnPrevSuggestion,
+  SetFocusOnQueryInput,
 };
 
 
@@ -90,7 +109,6 @@ export function makeReducer (dispatch, _cma, contentTypes, submitSearch) {
       return state;
     },
     [SetQueryInput]: setInput,
-    [FocusOut]: (state) => set(state, 'focus', null),
     [KeyDownContainer] (state, event) {
       return caseofEq(event.key, [
         ['Enter', () => {
@@ -105,7 +123,7 @@ export function makeReducer (dispatch, _cma, contentTypes, submitSearch) {
         [otherwise, () => state]
       ]);
     },
-    [ClickFilterSuggestion]: selectFilterSuggestion,
+    [SelectFilterSuggestions]: selectFilterSuggestion,
     [KeyDownQueryInput] (state, event) {
       // TODO Use e.keyCode fallback
       if (event.key === 'Backspace' && event.target.selectionStart === 0 && event.target.selectionEnd === 0) {
@@ -154,17 +172,75 @@ export function makeReducer (dispatch, _cma, contentTypes, submitSearch) {
       state = set(state, ['isTyping'], isSearching);
       return state;
     },
-    [RemoveFilter] (state, selectedFilter) {
+    [RemoveFilter] (state, indexToRemove) {
       state = update(state, ['query', 'filters'], (oldFilters) => {
-        return oldFilters.filter(([filter]) => {
-          return filter !== selectedFilter;
+        return oldFilters.filter((_, index) => {
+          return index !== indexToRemove;
         });
       });
 
+      state = setFocusOnQueryInput(state);
       return state;
-    }
+
+    },
+    [ResetFocus]: resetFocus,
+    [SetFocusOnLast]: setFocusOnLast,
+    [SetFocusOnLastValue]: setFocusOnLastValue,
+    [SetFocusOnQueryInput]: setFocusOnQueryInput,
+    [SetFocusOnFirstSuggestion]: setFocusOnFirstSuggestion,
+    [SetFocusOnNextSuggestion]: setFocusOnNextSuggestion,
+    [SetFocusOnPrevSuggestion]: setFocusOnPrevSuggestion,
   });
 
+  function setFocusOnFirstSuggestion(state) {
+    state = resetFocus(state);
+    return set(state, ['focus', 'suggestionsFocusIndex'], 0);
+  }
+
+  function setFocusOnNextSuggestion(state) {
+    const idx = state.focus.suggestionsFocusIndex;
+    let indexToFocus;
+    if(idx === state.suggestions.items.length - 1) {
+      indexToFocus = 0;
+    } else {
+      indexToFocus = idx + 1;
+    }
+    state = resetFocus(state);
+    return set(state, ['focus', 'suggestionsFocusIndex'], indexToFocus);
+  }
+
+  function setFocusOnPrevSuggestion(state) {    
+    const idx = state.focus.suggestionsFocusIndex;
+    let indexToFocus;
+    if(idx === 0) {
+      indexToFocus = state.suggestions.items.length - 1;
+    } else {
+      indexToFocus = idx - 1;
+    }
+    state = resetFocus(state);
+    return set(state, ['focus', 'suggestionsFocusIndex'], indexToFocus);
+  }
+
+  function setFocusOnQueryInput(state) {
+    state = resetFocus(state);
+    return set(state, ['focus', 'isQueryInputFocused'], true);
+  }
+
+  function resetFocus(state) {
+    return set(state, ['focus'], defaultFocus);
+  }
+
+  function setFocusOnLast(state) {
+    state = resetFocus(state);
+
+    return set(state, ['focus', 'index'], state.query.filters.length - 1);
+  }
+
+  function setFocusOnLastValue(state) {
+    state = setFocusOnLast(state);
+
+    return set(state, ['focus', 'isValueFocused'], true);
+  }
 
   function setInput (state, input) {
     const searchValue = input.trim();
@@ -216,7 +292,8 @@ export function makeReducer (dispatch, _cma, contentTypes, submitSearch) {
       });
     }
     state = setInput(state, '');
-    state = assign(state, { focus: 'lastValueInput' });
+    state = setFocusOnLastValue(state);
+
     return state;
   }
 

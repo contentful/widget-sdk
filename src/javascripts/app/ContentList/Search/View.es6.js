@@ -1,3 +1,4 @@
+import { noop } from 'lodash';
 import { match } from 'utils/TaggedValues';
 
 import {h} from 'ui/Framework';
@@ -14,25 +15,31 @@ import infoIcon from 'svg/info';
 import { ValueInput } from './Filters';
 import { autosizeInput } from 'ui/AutoInputSize';
 
-
 export default function render (state, actions) {
   const hasSuggestions = state.suggestions.items && state.suggestions.items.length > 0;
   const hasSpinner = state.isSearching || state.isTyping;
+  const defaultFocus = state.focus;
+
+  const handlePillValueChange = ({ index, value }) => {
+    actions.SetFilterValueInput([index, value]);
+    actions.TriggerSearch();
+  }
 
   return h('div', {
     hooks: [ H.ClickBlur(actions.HideSuggestions) ],
-    onKeyDown: actions.KeyDownContainer,
-    onFocusOut: actions.FocusOut,
     tabindex: '0',
     style: {
       height: '42px',
       position: 'relative'
     }
   }, [
-    container({
-      display: 'flex',
-      background: 'white',
-      border: `1px solid ${Colors.blueMid}`
+    h('div', {
+      style: {
+        display: 'flex',
+        background: 'white',
+        border: `1px solid ${Colors.blueMid}`
+      },
+      onFocusOut: actions.ResetFocus,
     }, [
       container({
         display: 'flex',
@@ -41,12 +48,41 @@ export default function render (state, actions) {
         flexWrap: 'wrap',
         padding: '0 10px 5px'
       }, [
+        filterPill({
+          value: state.query.contentType[2],
+          isRemovable: false,
+          filter: {
+            name: 'contentType',
+            valueInput: state.query.contentType[0].valueInput
+          },
+          onChange: actions.SetContentType
+        }),
         ...pills({
           query: state.query, 
-          focusValue: state.focus === 'lastValueInput',
-          actions
+          defaultFocus,
+          onChange: handlePillValueChange,
+          onRemove: ({ index }) => actions.RemoveFilter(index),
         }),
-        queryInput(state, actions)
+        queryInput({
+          isPlaceholderVisible: state.query.filters.length === 0,
+          value: state.input,
+          onChange: actions.SetQueryInput,
+          isFocused: defaultFocus.isQueryInputFocused,
+          onKeyDown: (e) => {
+            const { key, target } = e;
+            const isBackspace = key === 'Backspace';
+            const hasSelection = target.selectionStart !== 0 || target.selectionEnd !== 0;
+            if (isBackspace && !hasSelection) {
+              actions.SetFocusOnLast();
+            } else if (key === "ArrowDown") {
+              if(!hasSuggestions) {
+                actions.ToggleSuggestions();
+              } else {
+                actions.SetFocusOnFirstSuggestion();
+              }
+            }
+          }
+        })
       ]),
       hasSpinner &&
         spinner({diameter: '18px'}, {
@@ -64,12 +100,28 @@ export default function render (state, actions) {
         'Filter'
       ])
     ]),
-    hasSuggestions && filterSuggestions(state.suggestions, actions.ClickFilterSuggestion)
+    hasSuggestions && filterSuggestions({
+      items: state.suggestions.items,
+      selected: state.suggestions.selected,
+      defaultFocus,
+      onSelect: (index) => {
+        actions.SelectFilterSuggestions(index);
+      },
+      onKeyDown: (e) => {
+        const {key, ctrlKey} = e;
+
+        if(key === 'ArrowDown' || key === 'Tab') {
+          actions.SetFocusOnNextSuggestion();
+        } else if(key === 'ArrowUp' || (key === 'Tab' && ctrlKey)) {
+          actions.SetFocusOnPrevSuggestion();
+        }
+      }
+    })
   ]);
 }
 
 
-function queryInput (state, actions) {
+function queryInput ({value, isPlaceholderVisible, isFocused, onChange, onKeyDown}) {
   return h('input.input-reset', {
     hooks: [ H.Ref(autosizeInput) ],
     style: {
@@ -79,77 +131,46 @@ function queryInput (state, actions) {
       marginTop: '5px',
       marginRight: '12px'
     },
-    autofocus: true,
     ref: (el) => {
-      if (el && state.focus === 'queryInput') {
-        // TODO Check if we can do away with setTimeout if we use
-        // react. If not we should provide a generic hook for this that
-        // uses requestAnimationFrame
-        // eslint-disable-next-line
+      if(isFocused && el) {
         requestAnimationFrame(() => el.focus());
       }
     },
-    value: state.input,
-    onKeyDown: actions.KeyDownQueryInput,
-    onInput: (e) => actions.SetQueryInput(e.target.value),
-    placeholder: state.query.filters.length ? '' : 'Type to search for entries'
+    autofocus: true,
+    value,
+    onKeyDown,
+    onInput: (e) => {
+      onChange(e.target.value);
+    },
+    placeholder: isPlaceholderVisible ? 'Type to search for entries' : ''
   });
 }
 
 
-function pills ({ query, focusValue, actions }) {
-  const generic = query.filters.map(([filter, _op, value], index) => {
-    const isLast = index === query.filters.length - 1;
-    const setValue = (value) => actions.SetFilterValueInput([index, value]);
-    const state =
-      isLast && focusValue ? 'focus'
-      : null;
-
+function pills ({ query, defaultFocus, onChange, onRemove }) {
+  return query.filters.map(([filter, _op, value], index) => {
     return filterPill({
-      state,
       value,
       filter,
-      index,
-      isDeletable: true,
-      actions: {
-        setValue,
-        TriggerSearch: actions.triggerSearch,
-        removeFilter: actions.RemoveFilter
-      }
+      isFocused: defaultFocus.index === index && !defaultFocus.isValueFocused,
+      isValueFocused: defaultFocus.index === index && defaultFocus.isValueFocused,
+      onChange: (value) => onChange({index, value}),
+      onRemove: () => onRemove({index}),
     });
   });
-
-  return [
-    filterPill({
-      state: null,
-      value: query.contentType[2],
-      isDeletable: false,
-      filter: {
-        name: 'contentType',
-        valueInput: query.contentType[0].valueInput
-      },
-      actions: {
-        setValue: actions.SetContentType,
-        TriggerSearch: actions.TriggerSearch
-      }
-    }),
-    ...generic
-  ];
 }
 
 
 // Filter pills
 // ------------
-
-
-
 function filterPill ({
-  state,
   value,
   filter,
-  isDeletable,
-  actions,
-  index = -1
+  isFocused = false,
+  isValueFocused = false,
+  isRemovable = true,
+  onChange,
+  onRemove = noop,
 }) {
 
   return h('div.search__filter-pill', {
@@ -160,26 +181,36 @@ function filterPill ({
       marginTop: '5px',
       marginRight: '12px'
     },
-    tabindex: String(index),
+    ref:(el) => {
+      if(isFocused && el) {
+        requestAnimationFrame(() => el.focus());
+      }
+    },
+    tabindex: '0',
     onKeyDown: (e) => {
-      if (isDeletable) {
+      if (isRemovable) {
         if (e.key === 'Backspace') {
-          actions.removeFilter(filter);
+          onRemove();
           e.stopPropagation();
         }
       }
     }
   }, [
     filterName({ 
-      name: filter.name,
-      onReset: actions.onReset
+      name: filter.name
     }),
-    filterValue( filter.valueInput, value, state === 'focus', actions)
+    filterValue({ 
+      valueInput: filter.valueInput, 
+      value, 
+      isFocused: isValueFocused,
+      onChange, 
+      onRemove,
+    })
   ]);
 }
 
 
-function filterName ({ name, onReset }) {
+function filterName ({ name }) {
   return h('div', {
     style: {
       backgroundColor: Colors.blueDarkest,
@@ -192,28 +223,50 @@ function filterName ({ name, onReset }) {
 }
 
 
-function filterValue (valueInput, value, focus, actions) {
+function filterValue ({ valueInput, value, isFocused, onChange, onRemove }) {
+  const inputRef = (el) => {
+    if(isFocused && el) {
+      requestAnimationFrame(() => el.focus());
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    const { key, target } = e;
+    const isBackspace = key === 'Backspace';
+    const hasSelection = target.selectionStart !== 0 || target.selectionEnd !== 0;
+    e.stopPropagation();
+    if (isBackspace && !hasSelection) {
+      onRemove();
+    }
+  }
+
   return match(valueInput, {
-    [ValueInput.Text]: () => filterValueText(value, focus, actions),
-    [ValueInput.Select]: (options) => filterValueSelect(options, value, focus, actions)
+    [ValueInput.Text]: () => 
+      filterValueText({
+        value,
+        inputRef,
+        onChange,
+        onKeyDown: handleKeyDown,
+        onRemove
+      }),
+    [ValueInput.Select]: (options) => 
+      filterValueSelect({
+        options,
+        value, 
+        inputRef,
+        onKeyDown: handleKeyDown,
+        onChange
+      })
   });
 }
 
 
-function filterValueText (value, focus, actions) {
+function filterValueText ({value, inputRef, onChange, onKeyDown, onRemove}) {
   return h('input.input-reset', {
-    ref: (el) => {
-      if (focus && el) {
-        // TODO Check if we can do away with setTimeout if we use
-        // react. If not we should provide a generic hook for this that
-        // uses requestAnimationFrame
-        // eslint-disable-next-line
-        setTimeout(() => el.focus());
-      }
-    },
-    hooks: [ H.Ref(autosizeInput) ],
     value: value,
-    onInput: (e) => actions.setValue(e.target.value),
+    ref: inputRef,
+    onInput: (e) => onChange(e.target.value),
+    onKeyDown, 
     tabindex: '0',
     style: {
       background: Colors.blueMid,
@@ -226,13 +279,12 @@ function filterValueText (value, focus, actions) {
   });
 }
 
-function filterValueSelect (options, value, _focus, actions) {
+function filterValueSelect ({options, inputRef, value, onKeyDown, onChange}) {
   return h('select.input-reset', {
     value: value,
-    onChange: (e) => {
-      actions.setValue(e.target.value);
-      actions.TriggerSearch();
-    },
+    ref: inputRef,
+    onChange: ({ target: { value } }) => onChange(value),
+    tabindex: '0',
     style: {
       background: Colors.blueMid,
       color: 'white',
@@ -250,16 +302,26 @@ function filterValueSelect (options, value, _focus, actions) {
 // -----------
 
 
-function filterSuggestions ({items, selected}, SelectFilterSuggestion) {
+function filterSuggestions ({items, selected, defaultFocus, onSelect, onKeyDown}) {
   return suggestionsContainer(items.map((field, index) => {
     const isSelected = index === selected;
     return h('div.search-next__completion-item', {
       class: isSelected ? '--selected' : '',
       ref: (el) => {
-        // TODO use hooks
-        isSelected && el && scrollIntoView(el);
+        if(defaultFocus.suggestionsFocusIndex === index && el) {
+          requestAnimationFrame(() => el.focus());
+        }
       },
-      onClick: () => SelectFilterSuggestion(index)
+      tabindex: '0',
+      onKeyDown: (e) => {
+        if (e.key === 'Enter') {
+          onSelect(index);
+          e.stopPropagation();
+        } else {
+          onKeyDown(e);
+        }
+      },
+      onClick: () => onSelect(index)
     }, [
       // TODO truncate with ellipses
       container({
