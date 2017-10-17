@@ -16,7 +16,11 @@
 angular.module('contentful')
 .directive('cfAppEntryOnboard', ['require', function (require) {
   var h = require('utils/hyperscript').h;
-  var createSampleSpace = require('components/shared/auto_create_new_space/index').init;
+  var K = require('utils/kefir');
+  var theStore = require('TheStore');
+  var TokenStore = require('services/TokenStore');
+  var createSampleSpace = require('components/shared/auto_create_new_space/CreateSampleSpace').default;
+  var getFirstOwnedOrgWithoutSpaces = require('data/User/index').getFirstOwnedOrgWithoutSpaces;
   var analytics = require('analytics/Analytics');
   var TEST_NAME = 'test-ps-09-2017-entry-sample-space-cli';
   var template = h('div', [
@@ -52,7 +56,13 @@ angular.module('contentful')
         controller.type = type;
         controller.chosen = true;
         if (type === 'webapp') {
-          createSampleSpace();
+          var user = K.getValue(TokenStore.user$);
+          var spaces = K.getValue(TokenStore.spacesByOrganization$);
+          var org = getFirstOwnedOrgWithoutSpaces(user, spaces);
+          createSampleSpace(org, 'blog')
+            .then(function () {
+              setCliEntrySuccessFlag(user);
+            });
         }
         trackSelection(type);
         $scope.$apply();
@@ -85,6 +95,15 @@ angular.module('contentful')
             interaction_context: type
           }
         });
+      }
+
+      function setCliEntrySuccessFlag (user) {
+        // we set a flag like we auto-created a space, not just cli entry success
+        // the reason for that is because when we trigger auto-space creation,
+        // it is not a one-time operation, it actually returns us a stream which
+        // will listen until all conditions will be satisfied
+        // and in order to avoid code changing, we just pretend space was auto created
+        theStore.set('ctfl:' + user.sys.id + ':spaceAutoCreated', true);
       }
     }]
   };

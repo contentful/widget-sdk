@@ -44,7 +44,7 @@ export default function (org, templateName) {
   return runTask(function* () {
     scope.isCreatingSpace = true;
     const template = yield* loadTemplate(templateName);
-    const dialog = openDialog(scope);
+    const dialog = openDialog(scope, templateName);
 
     try {
       yield* createSpace(org, template.name);
@@ -125,10 +125,10 @@ function* loadTemplate (name) {
 }
 
 
-function openDialog (scope) {
+function openDialog (scope, templateName) {
   return modalDialog.open({
     title: 'Space auto creation',
-    template: autoCreateSpaceTemplate(),
+    template: autoCreateSpaceTemplate(templateName.toLowerCase()),
     backgroundClose: false,
     persistOnNavigation: true,
     scope

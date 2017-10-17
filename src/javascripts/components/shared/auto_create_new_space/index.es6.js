@@ -52,7 +52,7 @@ function qualifyUser (user, spacesByOrg) {
     ownsAtleastOneOrg(user);
 }
 
-export function hadSpaceAutoCreated (user) {
+function hadSpaceAutoCreated (user) {
   return theStore.get(getKey(user));
 }
 

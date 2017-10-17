@@ -1,5 +1,3 @@
-/* global window, clearTimeout, setTimeout */
-
 import {refresh as refreshTokenStore} from 'services/TokenStore';
 import {go as gotoState} from 'states/Navigator';
 import * as Authentication from 'Authentication';
