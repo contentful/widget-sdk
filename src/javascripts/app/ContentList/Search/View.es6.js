@@ -187,13 +187,6 @@ function filterPill ({
 }) {
 
   return h('div.search__filter-pill', {
-    style: {
-      display: 'flex',
-      lineHeight: '30px',
-      height: '30px',
-      marginTop: '5px',
-      marginRight: '12px'
-    },
     ref: (el) => {
       if (isFocused && el) {
         requestAnimationFrame(() => el.focus());
@@ -223,17 +216,8 @@ function filterPill ({
 }
 
 function filterName ({ name }) {
-  return h('div', {
-    style: {
-      backgroundColor: Colors.blueDarkest,
-      color: 'white',
-      padding: '0 12px',
-      borderRadius: '3px 0 0 3px',
-      cursor: 'pointer'
-    }
-  }, [name]);
+  return h('div.search__filter-pill-label', null, [name]);
 }
-
 
 function filterValue ({ valueInput, value, isFocused, onChange, onRemove }) {
   const inputRef = (el) => {
@@ -272,37 +256,22 @@ function filterValue ({ valueInput, value, isFocused, onChange, onRemove }) {
 
 
 function filterValueText ({value, inputRef, onChange, onKeyDown}) {
-  return h('input.input-reset', {
+  return h('input.input-reset.search__input-text', {
     value: value,
     ref: inputRef,
     onInput: (e) => onChange(e.target.value),
     onKeyDown,
-    tabindex: '0',
-    style: {
-      background: Colors.blueMid,
-      color: 'white',
-      lineHeight: '30px',
-      padding: '0 12px',
-      minWidth: '100px',
-      borderRadius: '0 3px 3px 0'
-    }
+    tabindex: '0'
   });
 }
 
 function filterValueSelect ({options, inputRef, value, onKeyDown, onChange}) {
-  return h('select.input-reset', {
+  return h('select.input-reset.search__select', {
     value: value,
     ref: inputRef,
     onChange: ({ target: { value } }) => onChange(value),
     tabindex: '0',
     onKeyDown,
-    style: {
-      background: Colors.blueMid,
-      color: 'white',
-      lineHeight: '30px',
-      padding: '0 12px',
-      borderRadius: '0 3px 3px 0'
-    }
   }, options.map(([value, label]) => {
     return h('option', {value}, [label]);
   }));
