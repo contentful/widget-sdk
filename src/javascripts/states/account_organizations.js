@@ -52,10 +52,7 @@ angular.module('contentful')
     url: '/new',
     controller: ['$stateParams', '$scope', function ($stateParams, $scope) {
       // Begin feature flag code - feature-bv-09-2017-invite-to-org
-      var LD = require('utils/LaunchDarkly');
-      LD.onFeatureFlag($scope, 'feature-bv-09-2017-invite-to-org', function (variation) {
-        $scope.useNewOrgInvitation = variation;
-      });
+      $scope.useNewOrgInvitation = false;
       // End feature flag code - feature-bv-09-2017-invite-to-org
 
       $scope.context = {};
