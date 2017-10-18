@@ -81,7 +81,7 @@ export function create (spaceContext, userListHandler, tokenStore) {
         input: {},
         roleOptions: userListHandler.getRoleOptions(),
         changeRole: Command.create(function () {
-          return spaceContext.memberships.changeRoleTo(user.membership, scope.input.id)
+          return spaceContext.memberships.changeRoleTo(user.membership, [scope.input.id])
           .then(function () {
             notification.info('User role successfully changed.');
           })

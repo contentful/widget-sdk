@@ -65,7 +65,7 @@ angular.module('contentful')
       // @TODO we need a backend endpoint for batch invitation:
       // https://contentful.tpondemand.com/entity/17146
       return $timeout(350 * i).then(function () {
-        return spaceContext.memberships.invite(invitee.user.email, invitee.roleId)
+        return spaceContext.memberships.invite(invitee.user.email, [invitee.roleId])
         .then(function () {
           $scope.invitationsDone++;
           $scope.users = _.without($scope.users, invitee.user);
