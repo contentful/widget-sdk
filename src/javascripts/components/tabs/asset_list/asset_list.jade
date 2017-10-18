@@ -11,13 +11,20 @@ header.workbench-header
       cf-knowledge-base.workbench-header__kb-link(target="asset")
 
   .workbench-header__search(
+    style="display: flex"
     ng-if="context.ready && !showNoAssetsAdvice()")
     div(
+      style="flex-grow: 1; margin-right: 10px"
       cf-tokenized-search="context.view.searchTerm"
       search-content-type="assetContentType"
       placeholder="Search for an asset"
       cf-on-blur-component="leftSearch($event)"
       cf-on-blur-component-when="showAutocompletions")
+
+    a.text-link(
+      style="margin-left: 15px"
+      ng-click="openSaveCurrentViewModal()"
+    ) Add to views
 
   .workbench-header__actions(
     ng-show="!showNoAssetsAdvice() && !shouldHide('createAsset')")
