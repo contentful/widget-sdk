@@ -3,7 +3,7 @@ import $q from '$q';
 
 /**
  * @ngdoc method
- * @name utils/Concurrent/MVar
+ * @name utils/Concurrent/MVar#create
  * @description
  * Creates an MVar that can either hold a value or be empty, and has the
  * following methods:
@@ -18,7 +18,7 @@ import $q from '$q';
  * set, without emptying the state.
  *
  * @params {Object} value
- * @returns {utils/kefir.MVar}
+ * @returns {utils/Concurrent/MVar}
  */
 export default function create (value) {
   let state = { isEmpty: !arguments.length, value: value };

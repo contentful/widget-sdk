@@ -26,6 +26,12 @@ This is a list of all the guides for developing the Contentful web application.
 * How to get code reviewed
 * How to get code QAed
 
+## [Code Review Guidelines](./code-review.md)
+
+* How to prepare a PR for review
+* How to review PRs
+* How to respond to a review
+
 ## [Debug Tools](./debug.md)
 
 * Lists debugging tools available in the app
