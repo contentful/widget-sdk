@@ -33,13 +33,15 @@
   &:last-child
     border-bottom: 0
 
-  &:focus 
-    border: 1px solid black;
+  &:focus
+    background-color: $colors.element-mid
+    .__filter-pill
+      background-color: $colors.blue-darkest
 
   &.--selected,
-  &:hover
+  &:hover,
     // TODO use $colors
-    background-color: #F4F4F2
+    background-color: $colors.element-lightest
     .__filter-pill
       background-color: $colors.blue-darkest
 

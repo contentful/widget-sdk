@@ -49,9 +49,6 @@ export const initialState = (contentTypes) => ({
 // value.
 const SetQueryInput = makeCtor('SetQueryInput');
 
-// Emitted on every keydown event of the search input
-const KeyDownQueryInput = makeCtor('KeyDownQueryInput');
-
 // Emitted when the user selects a content type from the dropdown.
 // Holds the ID of the selected content type
 const SetContentType = makeCtor('SetContentType');
@@ -61,7 +58,6 @@ const SetFilterValueInput = makeCtor('SetFilterValueInput');
 
 const SelectFilterSuggestions = makeCtor('SelectFilterSuggestions');
 
-const KeyDownContainer = makeCtor('KeyDownContainer');
 const SetBoxFocus = makeCtor('SetBoxFocus');
 const HideSuggestions = makeCtor('HideSuggestions');
 
@@ -87,9 +83,7 @@ export const Actions = {
   SetFilterValueInput,
   SetContentType,
   SelectFilterSuggestions,
-  KeyDownContainer,
   TriggerSearch,
-  KeyDownQueryInput,
   ToggleSuggestions,
   SetLoading,
   HideSuggestions,
@@ -117,28 +111,7 @@ export function makeReducer (dispatch, _cma, contentTypes, submitSearch) {
       }
       return state;
     },
-    [KeyDownContainer] (state, event) {
-      return caseofEq(event.key, [
-        ['Enter', () => {
-          if (state.suggestions.selected != null) {
-            return selectFilterSuggestion(state, state.suggestions.selected);
-          } else {
-            return state;
-          }
-        }],
-        ['ArrowDown', () => handleArrowPress(state, event, 1)],
-        ['ArrowUp', () => handleArrowPress(state, event, -1)],
-        [otherwise, () => state]
-      ]);
-    },
     [SelectFilterSuggestions]: selectFilterSuggestion,
-    [KeyDownQueryInput] (state, event) {
-      // TODO Use e.keyCode fallback
-      if (event.key === 'Backspace' && event.target.selectionStart === 0 && event.target.selectionEnd === 0) {
-        return update(state, ['query', 'filters'], (parts) => drop(parts, -1));
-      }
-      return state;
-    },
     [SetFilterValueInput] (state, [filterIndex, value]) {
       state = set(state, ['isTyping'], true);
       putTyping(sleep(1000));

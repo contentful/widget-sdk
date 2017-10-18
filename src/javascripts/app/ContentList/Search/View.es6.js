@@ -19,7 +19,8 @@ const Keys = {
   arrowDown: (e) => e.key === 'ArrowDown',
   backspace: (e) => e.key === 'Backspace',
   tab: (e) => e.key === 'Tab' && !e.shiftKey,
-  shiftTab: (e) => e.key === 'Tab' && e.shiftKey
+  shiftTab: (e) => e.key === 'Tab' && e.shiftKey,
+  escape: (e) => e.key === 'Escape'
 };
 
 export default function render (state, actions) {
@@ -135,6 +136,9 @@ export default function render (state, actions) {
           actions.SetFocusOnPrevSuggestion();
         } else if (Keys.arrowDown(e) || Keys.tab(e)) {
           actions.SetFocusOnNextSuggestion();
+        } else if (Keys.escape(e)) {
+          actions.ToggleSuggestions();
+          actions.SetFocusOnQueryInput();
         }
       }
     })
