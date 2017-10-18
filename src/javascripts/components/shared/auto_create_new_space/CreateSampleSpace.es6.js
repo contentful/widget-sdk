@@ -1,8 +1,8 @@
-import $q from '$q';
 import client from 'client';
 import $rootScope from '$rootScope';
 import spaceContext from 'spaceContext';
 import modalDialog from 'modalDialog';
+import { runTask } from 'utils/Concurrent';
 
 import {getCreator} from 'spaceTemplateCreator';
 import {track} from 'analytics/Analytics';
@@ -25,9 +25,6 @@ import * as tokenStore from 'services/TokenStore';
  * @returns Promise<undefined>
  */
 export default function (org, templateName) {
-  let dialog;
-  const scope = $rootScope.$new();
-
   /*
    * throws an error synchronously to differentiate it from
    * a rejected promise as a rejected promise stands for
@@ -38,101 +35,102 @@ export default function (org, templateName) {
     throw new Error('Required param org not provided');
   }
 
-  scope.isCreatingSpace = true;
-  return getTemplatesList()
-    .then(chooseTemplate(templateName.toLowerCase()))
-    .then(template => openDialog(template, dialog, scope))
-    .then(({ template }) => createEmptySpace(org, template))
-    .then(gotoNewSpace)
-    .then(preTemplateLoadSetup)
-    // TODO: handle v.retried
-    .then(loadTemplateIntoSpace)
-    .catch(e => {
+  if (!templateName) {
+    throw new Error('Required param templateName not provided');
+  }
+
+  const scope = $rootScope.$new();
+
+  return runTask(function* () {
+    scope.isCreatingSpace = true;
+    const template = yield* loadTemplate(templateName);
+    const dialog = openDialog(scope);
+
+    try {
+      yield* createSpace(org, template.name);
+      yield* applyTemplate(spaceContext, template);
+      yield spaceContext.publishedCTs.refresh();
+      $rootScope.$broadcast('spaceTemplateCreated');
+
+      scope.isCreatingSpace = false;
+    } catch (e) {
+      scope.isCreatingSpace = false;
       if (dialog) {
         dialog.cancel();
       }
-      return $q.reject(e);
-    })
-    .finally(_ => {
-      scope.isCreatingSpace = false;
-    });
-}
-
-function chooseTemplate (templateName) {
-  return templates => {
-    const template = find(templates, t => t.fields.name.toLowerCase() === templateName);
-
-    if (!template) {
-      return $q.reject(new Error(`Template named ${templateName} not found`));
-    } else {
-      track('space:template_selected', {
-        templateName: template.name
-      });
-
-      return template.fields;
+      throw e;
     }
-  };
+  });
 }
 
-function openDialog (template, dialog, scope) {
-  dialog = modalDialog.open({
+
+/**
+ * Create a new space in the given org, reload the token and go to the
+ * space home.
+ */
+function* createSpace (org, templateName) {
+  const newSpace = yield client.createSpace({
+    name: 'Sample project',
+    defaultLocale: 'en-US'
+  }, org.sys.id);
+  track('space:create', { templateName: templateName });
+  yield tokenStore.refresh();
+  yield gotoState({
+    path: ['spaces', 'detail'],
+    params: {
+      spaceId: newSpace.getId()
+    }
+  });
+}
+
+
+/**
+ * Load the space contents for the template info and add it to the
+ * current space.
+ */
+function* applyTemplate (spaceContext, templateInfo) {
+  const templateCreator = getCreator(
+    spaceContext,
+    {
+      onItemSuccess: entityActionSuccess,
+      onItemError: noop
+    },
+    templateInfo.name
+  );
+
+  const loadedTemplate = yield getTemplate(templateInfo);
+
+  yield templateCreator.create(loadedTemplate);
+}
+
+
+/**
+ * Try to load a template with the given name.
+ *
+ * Throws an error if no template with this name is found.
+ */
+function* loadTemplate (name) {
+  const templates = yield getTemplatesList();
+  const template = find(templates, t => t.fields.name.toLowerCase() === name.toLowerCase());
+
+  if (!template) {
+    throw new Error(`Template named ${name} not found`);
+  } else {
+    track('space:template_selected', {
+      templateName: template.name
+    });
+
+    return template.fields;
+  }
+}
+
+
+function openDialog (scope) {
+  return modalDialog.open({
     title: 'Space auto creation',
     template: autoCreateSpaceTemplate(),
     backgroundClose: false,
     persistOnNavigation: true,
     scope
   });
-  return { template, dialog };
-}
-
-function createEmptySpace (org, template) {
-  const data = {
-    name: 'Sample project',
-    defaultLocale: 'en-US'
-  };
-
-  return client
-    .createSpace(data, org.sys.id)
-    .then(
-      newSpace => tokenStore
-        .refresh()
-        .then(_ => {
-          track('space:create', {
-            templateName: template.name
-          });
-          return { newSpace, template };
-        })
-    );
-}
-
-function gotoNewSpace ({ newSpace, template }) {
-  return gotoState({
-    path: ['spaces', 'detail'],
-    params: {
-      spaceId: newSpace.getId()
-    }
-  }).then(_ => template);
-}
-
-function preTemplateLoadSetup (selectedTemplate) {
-  const itemHandlers = {
-    // no need to show status of individual items
-    onItemSuccess: entityActionSuccess,
-    onItemError: noop
-  };
-  const templateLoader = getCreator(
-    spaceContext,
-    itemHandlers,
-    selectedTemplate.name
-  );
-
-  return getTemplate(selectedTemplate)
-    .then((template) => ({ template, templateLoader }));
-}
-
-function loadTemplateIntoSpace ({ template, templateLoader }) {
-  return templateLoader
-    .create(template)
-    .then(spaceContext.publishedCTs.refresh)
-    .then(_ => $rootScope.$broadcast('spaceTemplateCreated'));
 }
