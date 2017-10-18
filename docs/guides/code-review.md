@@ -11,9 +11,10 @@ All changes must go through code review by at least one person, no matter what w
 Communication guidelines
 ------------------------
 
-See [thoughtbot's guide][communication-guidelines] for some great tips for effective code review communication.
+Code review communication should follow the Frontend chapter values - they are currently a WIP and link will be added soon.
 
-*TODO: adapt it and ask everyone's opinion!*
+Also check [thoughtbot's guide][communication-guidelines] for some great tips for effective code review communication.
+
 
 How to make a PR
 ----------------
@@ -23,20 +24,20 @@ Ready for review checklist:
 - [ ] Description contains link to a TP ticket, or if there is no ticket, sufficient description of what was done and why
 - [ ] Link to pull request in TP comments
 - [ ] All functionality from the ticket is implemented when applicable
-- [ ] All publicly exposed methods and properties are documented (we use [JSDoc][jsdoc])
-- [ ] Unit tests are in place (and passing)
-- [ ] Lint is passing
+- [ ] All publicly exposed methods and properties are [documented][documentation]
+- [ ] Unit tests are in place
 - [ ] Code meets our [coding guidelines][coding-guidelines], best practices and is generally understandable
-- [ ] All UI elements have appropriate [ARIA attributes][aria-doc]
+- [ ] Accessibility is considered
 - [ ] CI checks are green
 - [ ] No conflicts with master
 
-Run unit tests: `npm run test` or `xvfb-run ./node_modules/.bin/karma start --browsers SlimerJS`
+Run unit tests: `karma start`
 
 Run lint: `bin/lint-all` or `bin/lint-file <filename>`
 
-When PR is ready for review, add `Please review` tag in github. Assign one person from the Frontend chapter randomly on smaller PR's, and 2 people on bigger ones. Use your judgement to request review from more people, depending on the scope of changes, and try to avoid big PRs if possible, splitting them into smaller ones.
+When PR is ready for review, add `Please review` tag in github. Assign one person from the Frontend chapter randomly on smaller PR's, and 2 people on bigger ones. Use your judgement to request review from more people, depending on the scope of changes, and try to avoid big PRs[^1] if possible, splitting them into smaller ones.
 
+[^1]: A PR with > 1000 added lines is considered big.
 
 How to review
 -------------
@@ -51,7 +52,7 @@ Checklist for approval:
 
 - [ ] *All points from ['ready for review'](#how-to-make-a-pr) checklist*
 - [ ] You understand what the code is doing
-- [ ] You have run the code on your machine and checked the happy path
+- [ ]  (Optionally) you have run the code on your machine and checked the happy path
 
 You don't need to review codestyle conventions like spaces and brackets style - that stuff is handled automatically by a linter.
 
@@ -79,9 +80,8 @@ It happens that some features grow too big or require a major refactoring, and a
 
 
 [communication-guidelines]: https://github.com/thoughtbot/guides/tree/master/code-review
-[jsdoc]: http://usejsdoc.org/
+[documentation]: docs/guides/documentation.md
 [github-cr-docs]: https://help.github.com/articles/reviewing-proposed-changes-in-a-pull-request/
 [coding-guidelines]: https://github.com/contentful/coding-guidelines
-[aria-doc]: https://contentful.atlassian.net/wiki/display/ENG/Semantic+Markup+in+the+UI
 [code-submission]: /docs/guides/code-submission
 [launch-darkly]: /docs/guides/a_b_testing
