@@ -7,13 +7,19 @@ import {container, hspace} from 'ui/Layout';
 import spinner from 'ui/Components/Spinner';
 import {byName as Colors} from 'Styles/Colors';
 
-import scrollIntoView from 'scroll-into-view';
-
 import filterIcon from 'svg/filter';
 import infoIcon from 'svg/info';
 
 import { ValueInput } from './Filters';
 import { autosizeInput } from 'ui/AutoInputSize';
+
+const Keys = {
+  arrowUp: (e) => e.key === 'ArrowUp',
+  arrowDown: (e) => e.key === 'ArrowDown',
+  backspace: (e) => e.key === 'Backspace',
+  tab: (e) => e.key === 'Tab' && !e.shiftKey,
+  shiftTab: (e) => e.key === 'Tab' && e.shiftKey
+};
 
 export default function render (state, actions) {
   const hasSuggestions = state.suggestions.items && state.suggestions.items.length > 0;
@@ -23,7 +29,7 @@ export default function render (state, actions) {
   const handlePillValueChange = ({ index, value }) => {
     actions.SetFilterValueInput([index, value]);
     actions.TriggerSearch();
-  }
+  };
 
   return h('div', {
     hooks: [ H.ClickBlur(actions.HideSuggestions) ],
@@ -39,7 +45,7 @@ export default function render (state, actions) {
         background: 'white',
         border: `1px solid ${Colors.blueMid}`
       },
-      onFocusOut: actions.ResetFocus,
+      onFocusOut: actions.ResetFocus
     }, [
       container({
         display: 'flex',
@@ -58,10 +64,10 @@ export default function render (state, actions) {
           onChange: actions.SetContentType
         }),
         ...pills({
-          query: state.query, 
+          query: state.query,
           defaultFocus,
           onChange: handlePillValueChange,
-          onRemove: ({ index }) => actions.RemoveFilter(index),
+          onRemove: ({ index }) => actions.RemoveFilter(index)
         }),
         queryInput({
           isPlaceholderVisible: state.query.filters.length === 0,
@@ -69,13 +75,12 @@ export default function render (state, actions) {
           onChange: actions.SetQueryInput,
           isFocused: defaultFocus.isQueryInputFocused,
           onKeyDown: (e) => {
-            const { key, target } = e;
-            const isBackspace = key === 'Backspace';
+            const { target } = e;
             const hasSelection = target.selectionStart !== 0 || target.selectionEnd !== 0;
-            if (isBackspace && !hasSelection) {
+            if (Keys.backspace(e) && !hasSelection) {
               actions.SetFocusOnLast();
-            } else if (key === "ArrowDown") {
-              if(!hasSuggestions) {
+            } else if (Keys.arrowDown(e)) {
+              if (!hasSuggestions) {
                 actions.ToggleSuggestions();
               } else {
                 actions.SetFocusOnFirstSuggestion();
@@ -108,12 +113,10 @@ export default function render (state, actions) {
         actions.SelectFilterSuggestions(index);
       },
       onKeyDown: (e) => {
-        const {key, ctrlKey} = e;
-
-        if(key === 'ArrowDown' || key === 'Tab') {
-          actions.SetFocusOnNextSuggestion();
-        } else if(key === 'ArrowUp' || (key === 'Tab' && ctrlKey)) {
+        if (Keys.arrowUp(e) || Keys.shiftTab(e)) {
           actions.SetFocusOnPrevSuggestion();
+        } else if (Keys.arrowDown(e) || Keys.tab(e)) {
+          actions.SetFocusOnNextSuggestion();
         }
       }
     })
@@ -132,8 +135,8 @@ function queryInput ({value, isPlaceholderVisible, isFocused, onChange, onKeyDow
       marginRight: '12px'
     },
     ref: (el) => {
-      if(isFocused && el) {
-        requestAnimationFrame(() => el.focus());
+      if (isFocused && el) {
+        el.focus();
       }
     },
     autofocus: true,
@@ -155,7 +158,7 @@ function pills ({ query, defaultFocus, onChange, onRemove }) {
       isFocused: defaultFocus.index === index && !defaultFocus.isValueFocused,
       isValueFocused: defaultFocus.index === index && defaultFocus.isValueFocused,
       onChange: (value) => onChange({index, value}),
-      onRemove: () => onRemove({index}),
+      onRemove: () => onRemove({index})
     });
   });
 }
@@ -170,7 +173,7 @@ function filterPill ({
   isValueFocused = false,
   isRemovable = true,
   onChange,
-  onRemove = noop,
+  onRemove = noop
 }) {
 
   return h('div.search__filter-pill', {
@@ -181,34 +184,33 @@ function filterPill ({
       marginTop: '5px',
       marginRight: '12px'
     },
-    ref:(el) => {
-      if(isFocused && el) {
+    ref: (el) => {
+      if (isFocused && el) {
         requestAnimationFrame(() => el.focus());
       }
     },
     tabindex: '0',
     onKeyDown: (e) => {
       if (isRemovable) {
-        if (e.key === 'Backspace') {
+        if (Keys.backspace(e)) {
           onRemove();
           e.stopPropagation();
         }
       }
     }
   }, [
-    filterName({ 
+    filterName({
       name: filter.name
     }),
-    filterValue({ 
-      valueInput: filter.valueInput, 
-      value, 
+    filterValue({
+      valueInput: filter.valueInput,
+      value,
       isFocused: isValueFocused,
-      onChange, 
-      onRemove,
+      onChange,
+      onRemove
     })
   ]);
 }
-
 
 function filterName ({ name }) {
   return h('div', {
@@ -225,34 +227,32 @@ function filterName ({ name }) {
 
 function filterValue ({ valueInput, value, isFocused, onChange, onRemove }) {
   const inputRef = (el) => {
-    if(isFocused && el) {
+    if (isFocused && el) {
       requestAnimationFrame(() => el.focus());
     }
   };
 
   const handleKeyDown = (e) => {
-    const { key, target } = e;
-    const isBackspace = key === 'Backspace';
+    const { target } = e;
     const hasSelection = target.selectionStart !== 0 || target.selectionEnd !== 0;
     e.stopPropagation();
-    if (isBackspace && !hasSelection) {
+    if (Keys.backspace(e) && !hasSelection) {
       onRemove();
     }
-  }
+  };
 
   return match(valueInput, {
-    [ValueInput.Text]: () => 
+    [ValueInput.Text]: () =>
       filterValueText({
         value,
         inputRef,
         onChange,
-        onKeyDown: handleKeyDown,
-        onRemove
+        onKeyDown: handleKeyDown
       }),
-    [ValueInput.Select]: (options) => 
+    [ValueInput.Select]: (options) =>
       filterValueSelect({
         options,
-        value, 
+        value,
         inputRef,
         onKeyDown: handleKeyDown,
         onChange
@@ -261,12 +261,12 @@ function filterValue ({ valueInput, value, isFocused, onChange, onRemove }) {
 }
 
 
-function filterValueText ({value, inputRef, onChange, onKeyDown, onRemove}) {
+function filterValueText ({value, inputRef, onChange, onKeyDown}) {
   return h('input.input-reset', {
     value: value,
     ref: inputRef,
     onInput: (e) => onChange(e.target.value),
-    onKeyDown, 
+    onKeyDown,
     tabindex: '0',
     style: {
       background: Colors.blueMid,
@@ -285,6 +285,7 @@ function filterValueSelect ({options, inputRef, value, onKeyDown, onChange}) {
     ref: inputRef,
     onChange: ({ target: { value } }) => onChange(value),
     tabindex: '0',
+    onKeyDown,
     style: {
       background: Colors.blueMid,
       color: 'white',
@@ -308,8 +309,8 @@ function filterSuggestions ({items, selected, defaultFocus, onSelect, onKeyDown}
     return h('div.search-next__completion-item', {
       class: isSelected ? '--selected' : '',
       ref: (el) => {
-        if(defaultFocus.suggestionsFocusIndex === index && el) {
-          requestAnimationFrame(() => el.focus());
+        if (defaultFocus.suggestionsFocusIndex === index && el) {
+          el.focus();
         }
       },
       tabindex: '0',

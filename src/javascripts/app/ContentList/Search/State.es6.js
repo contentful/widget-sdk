@@ -38,7 +38,6 @@ export const initialState = (contentTypes) => ({
   input: '',
   suggestions: emptySuggestions,
   focus: defaultFocus
-  
 });
 
 
@@ -96,7 +95,7 @@ export const Actions = {
   SetFocusOnFirstSuggestion,
   SetFocusOnNextSuggestion,
   SetFocusOnPrevSuggestion,
-  SetFocusOnQueryInput,
+  SetFocusOnQueryInput
 };
 
 
@@ -189,18 +188,18 @@ export function makeReducer (dispatch, _cma, contentTypes, submitSearch) {
     [SetFocusOnQueryInput]: setFocusOnQueryInput,
     [SetFocusOnFirstSuggestion]: setFocusOnFirstSuggestion,
     [SetFocusOnNextSuggestion]: setFocusOnNextSuggestion,
-    [SetFocusOnPrevSuggestion]: setFocusOnPrevSuggestion,
+    [SetFocusOnPrevSuggestion]: setFocusOnPrevSuggestion
   });
 
-  function setFocusOnFirstSuggestion(state) {
+  function setFocusOnFirstSuggestion (state) {
     state = resetFocus(state);
     return set(state, ['focus', 'suggestionsFocusIndex'], 0);
   }
 
-  function setFocusOnNextSuggestion(state) {
+  function setFocusOnNextSuggestion (state) {
     const idx = state.focus.suggestionsFocusIndex;
     let indexToFocus;
-    if(idx === state.suggestions.items.length - 1) {
+    if (idx === state.suggestions.items.length - 1) {
       indexToFocus = 0;
     } else {
       indexToFocus = idx + 1;
@@ -209,34 +208,35 @@ export function makeReducer (dispatch, _cma, contentTypes, submitSearch) {
     return set(state, ['focus', 'suggestionsFocusIndex'], indexToFocus);
   }
 
-  function setFocusOnPrevSuggestion(state) {    
+  function setFocusOnPrevSuggestion (state) {
     const idx = state.focus.suggestionsFocusIndex;
-    let indexToFocus;
-    if(idx === 0) {
-      indexToFocus = state.suggestions.items.length - 1;
-    } else {
-      indexToFocus = idx - 1;
-    }
     state = resetFocus(state);
-    return set(state, ['focus', 'suggestionsFocusIndex'], indexToFocus);
+    let indexToFocus;
+    if (idx > 0) {
+      indexToFocus = idx - 1;
+      state = set(state, ['focus', 'suggestionsFocusIndex'], indexToFocus);
+    } else {
+      state = setFocusOnQueryInput(state);
+    }
+    return state;
   }
 
-  function setFocusOnQueryInput(state) {
+  function setFocusOnQueryInput (state) {
     state = resetFocus(state);
     return set(state, ['focus', 'isQueryInputFocused'], true);
   }
 
-  function resetFocus(state) {
+  function resetFocus (state) {
     return set(state, ['focus'], defaultFocus);
   }
 
-  function setFocusOnLast(state) {
+  function setFocusOnLast (state) {
     state = resetFocus(state);
 
     return set(state, ['focus', 'index'], state.query.filters.length - 1);
   }
 
-  function setFocusOnLastValue(state) {
+  function setFocusOnLastValue (state) {
     state = setFocusOnLast(state);
 
     return set(state, ['focus', 'isValueFocused'], true);
