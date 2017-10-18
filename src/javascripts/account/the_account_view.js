@@ -18,21 +18,11 @@ angular.module('contentful')
   var K = require('utils/kefir');
   var Navigator = require('states/Navigator');
 
-  var canShowIntercomLink$ = TokenStore.user$.map(function (user) {
-    var organizationMemberships = user && user.organizationMemberships || [];
-    var canShowIntercomLink = _.find(organizationMemberships, function (membership) {
-      var subscriptionStatus = _.get(membership, 'organization.subscription.status');
-      return subscriptionStatus !== 'free';
-    });
-    return !!canShowIntercomLink;
-  }).skipDuplicates();
-
   return {
     getSubscriptionState: getSubscriptionState,
     getOrganizationRef: getOrganizationRef,
     goToSubscription: goToSubscription,
-    goToUsers: goToUsers,
-    canShowIntercomLink$: canShowIntercomLink$
+    goToUsers: goToUsers
   };
 
   /**

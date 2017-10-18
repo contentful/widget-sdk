@@ -30,40 +30,6 @@ describe('TheAccountView service', function () {
     this.go = $state.go = sinon.stub();
   });
 
-  describe('.canShowIntercomLink$', function () {
-    beforeEach(function () {
-      this.addOrganizations = function (...organizations) {
-        const user = {
-          organizationMemberships: []
-        };
-        organizations.forEach(function (organization) {
-          user.organizationMemberships.push({ organization });
-        });
-        this.TokenStore.user$.set(user);
-      };
-
-      this.createOrganization = function (status) {
-        return {
-          subscription: { status }
-        };
-      };
-    });
-
-    it('hides link when user is loading', function () {
-      K.assertCurrentValue(this.view.canShowIntercomLink$, false);
-    });
-
-    it('shows when user is member of paid organization', function () {
-      this.addOrganizations(this.createOrganization('free'), this.createOrganization('paid'));
-      K.assertCurrentValue(this.view.canShowIntercomLink$, true);
-    });
-
-    it('shows when user is not a member of paid organization', function () {
-      this.addOrganizations(this.createOrganization('free'), this.createOrganization('free'));
-      K.assertCurrentValue(this.view.canShowIntercomLink$, false);
-    });
-  });
-
   describe('#getOrganizationRef()', function () {
     const ORGS = [
       {subscriptionState: 'active', sys: {id: 'ORG_0'}},
