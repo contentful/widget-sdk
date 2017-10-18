@@ -40,6 +40,7 @@ export default function ($scope) {
     orgRole: 'member',
     spaceMemberships: {},
     failedOrgInvitations: [],
+    successfulOrgInvitations: [],
     status: Idle()
   };
 
@@ -142,6 +143,14 @@ export default function ($scope) {
           });
         };
 
+        const progress = (email) => {
+          sendSpaceInvitations(email);
+          state = assign(state, {
+            successfulOrgInvitations: state.successfulOrgInvitations.concat([email])
+          });
+          rerender();
+        };
+
         const sendOrgInvitation = (email) => {
           return inviteToOrg(orgEndpoint, {
             email: email,
@@ -149,12 +158,12 @@ export default function ($scope) {
             suppressInvitation: false
           })
             .then(() => {
-              sendSpaceInvitations(email);
+              progress(email);
             })
             .catch(err => {
               if (isTaken(err)) {
                 // if already a member, try to send space invitations anyway
-                sendSpaceInvitations(email);
+                progress(email);
               } else {
                 failedOrgInvitations.push(email);
               }
@@ -189,7 +198,8 @@ export default function ($scope) {
         emails: emails || [],
         emailsInputValue: emails ? emails.join(', ') : '',
         status: Idle(),
-        failedOrgInvitations: []
+        failedOrgInvitations: [],
+        successfulOrgInvitations: []
       });
 
       rerender();
@@ -256,7 +266,7 @@ function isTaken (error) {
 }
 
 function render (
-  {emails, emailsInputValue, orgRole, invalidAddresses, spaces, spaceMemberships, status, failedOrgInvitations},
+  {emails, emailsInputValue, orgRole, invalidAddresses, spaces, spaceMemberships, status, failedOrgInvitations, successfulOrgInvitations},
   {updateEmails, updateOrgRole, updateSpaceRole, submitInvitations, restart, goToList}
 ) {
   return h('.workbench', [
@@ -270,7 +280,7 @@ function render (
         match(status, {
           [Success]: () => successMessage(emails, restart, goToList),
           [Failure]: () => errorMessage(failedOrgInvitations, restart),
-          [InProgress]: () => 'Sending',
+          [InProgress]: () => progressMessage(emails, successfulOrgInvitations),
           [Idle]: () => h('', [
             emailsInput(emails, emailsInputValue, invalidAddresses, updateEmails),
             organizationRole(orgRole, updateOrgRole),
@@ -397,6 +407,19 @@ function accessToSpaces (spaces, spaceMemberships, updateSpaceRole) {
   ]);
 }
 
+function progressMessage (emails, successfulOrgInvitations) {
+  return h('', [
+    h('.note-box--info', [
+      h('h3', [`Almost there! ${successfulOrgInvitations.length}/${emails.length} have been added to your organization`]),
+      h('p', ['Please don\'t close this tab until all users have been added successfully'])
+    ]),
+    h('ul.pill-list.u-separator--small', emails.map(email => {
+      const className = includes(successfulOrgInvitations, email) ? '' : 'is-loading';
+      return h('li.pill-item', {class: className}, [email]);
+    }))
+  ]);
+}
+
 function errorMessage (failedEmails, restart) {
   const userString = failedEmails.length > 1 ? 'users' : 'user';
 
@@ -411,7 +434,7 @@ function errorMessage (failedEmails, restart) {
         }, ['invite them again.'])
       ])
     ]),
-    h('ul.pill-list', failedEmails.map(email => {
+    h('ul.pill-list.u-separator--small', failedEmails.map(email => {
       return h('li.pill-item', [email]);
     }))
   ]);
