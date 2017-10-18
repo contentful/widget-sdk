@@ -28,8 +28,7 @@ export function init () {
       createSampleSpace(org, 'product catalogue')
         .then(_ => {
           theStore.set(getKey(user), true);
-        })
-        .finally(_ => {
+        }).catch(_ => {}).then(_ => {
           creatingSampleSpace = false;
         });
     });
