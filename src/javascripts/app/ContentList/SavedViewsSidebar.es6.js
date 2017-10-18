@@ -52,16 +52,23 @@ export default function ({
   );
 
   function render ({selector, sharedViews, privateViews}) {
-    return h('div', [
+    return h('div', {
+      style: {
+        backgroundColor: Colors.elementLightest,
+        height: '100%'
+      }
+    }, [
       container({
-        display: 'flex',
-        justifyContent: 'space-between',
-        padding: '1.5rem',
+        paddingTop: '1rem',
+        paddingRight: '1.5rem',
+        paddingLeft: '1.5rem',
         backgroundColor: Colors.elementLightest,
         borderBottom: `1px solid ${Colors.elementMid}`
       }, [
-        button(selector, VIEWS_SHARED, 'All views'),
-        button(selector, VIEWS_PRIVATE, 'My views')
+        h('ul.workbench-nav__tabs', [
+          button(selector, VIEWS_SHARED, 'All views'),
+          button(selector, VIEWS_PRIVATE, 'My views')
+        ])
       ]),
       views(selector.state, VIEWS_SHARED, sharedViews),
       views(selector.state, VIEWS_PRIVATE, privateViews)
@@ -77,13 +84,13 @@ export default function ({
   }
 
   function button ({state, actions}, value, label) {
-    return h('button', {
+    return h('li', {
+      ariaSelected: (state === value).toString(),
+      role: 'tab',
       style: {
-        color: Colors.textLight,
-        letterSpacing: '2px',
-        fontSize: '.8em',
         textTransform: 'uppercase',
-        fontWeight: state === value ? 'bold' : 'normal'
+        fontWeight: '500',
+        color: (state === value) ? Colors.blueDark : Colors.textLight
       },
       onClick: () => actions.Select(value)
     }, [label]);

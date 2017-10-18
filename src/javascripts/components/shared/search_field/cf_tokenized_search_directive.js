@@ -5,7 +5,6 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
   var h = require('utils/hyperscript').h;
   var Colors = require('Styles/Colors').byName;
   var renderString = require('ui/Framework').renderString;
-  var searchIcon = renderString(require('svg/search').default);
   var infoIcon = renderString(require('svg/info').default);
   var filterIcon = renderString(require('svg/filter').default);
 
@@ -53,17 +52,10 @@ angular.module('contentful').directive('cfTokenizedSearch', ['require', function
         isShown: 'context.isSearching'
       }),
       h('button', {
-        style: iconStyle,
-        ngClick: 'searchButtonClicked()',
-        ngStyle: '{color: ' + color + '}',
-        tabindex: '0',
-        dataTestId: 'search-button'
-      }, [searchIcon]),
-      h('button', {
         ngIf: 'autocompletion.type',
         style: iconStyle,
         ngClick: 'toggleFilters()',
-        ngStyle: '{"border-left": ' + border + ', color: ' + color + '}',
+        ngStyle: '{color: ' + color + '}',
         tabindex: '1',
         dataTestId: 'search-filter-button'
       }, [
