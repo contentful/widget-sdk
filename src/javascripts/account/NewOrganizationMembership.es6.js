@@ -1,8 +1,8 @@
 import $state from '$state';
-import {includes, omit} from 'lodash';
+import {includes, omit, get as getAtPath} from 'lodash';
 import {h} from 'ui/Framework';
 import { assign } from 'utils/Collections';
-import {getFatSpaces} from 'services/TokenStore';
+import {getFatSpaces, getOrganization} from 'services/TokenStore';
 import * as RoleRepository from 'RoleRepository';
 import {runTask} from 'utils/Concurrent';
 import {ADMIN_ROLE_ID} from 'access_control/SpaceMembershipRepository';
@@ -27,6 +27,8 @@ const Failure = makeCtor('failure');
 export default function ($scope) {
   $scope.component = h('noscript');
 
+  const orgId = $scope.properties.orgId;
+
   let state = {
     spaces: [],
     emails: [],
@@ -36,7 +38,8 @@ export default function ($scope) {
     spaceMemberships: {},
     failedOrgInvitations: [],
     successfulOrgInvitations: [],
-    status: Idle()
+    status: Idle(),
+    organization: {}
   };
 
   progress$
@@ -47,10 +50,11 @@ export default function ($scope) {
       rerender();
     })
     .onError(email => state.failedOrgInvitations.push(email));
-
+  
   runTask(function* () {
+    const org = yield getOrganization(orgId);
     const allSpaces = yield getFatSpaces();
-    const orgSpaces = allSpaces.filter(space => space.data.organization.sys.id === $scope.properties.orgId);
+    const orgSpaces = allSpaces.filter(space => space.data.organization.sys.id === orgId);
     const spacesWithRolesPromises = orgSpaces.map(space => runTask(function* () {
       const roles = yield RoleRepository.getInstance(space).getAll();
       const spaceRoles = roles.map(role => ({
@@ -68,7 +72,12 @@ export default function ($scope) {
     const spacesWithRoles = yield Promise.all(spacesWithRolesPromises);
 
     state = assign(state, {
-      spaces: spacesWithRoles
+      spaces: spacesWithRoles,
+      organization: {
+        hasSsoEnabled: org.hasSsoEnabled,
+        membershipLimit: getAtPath(org, 'subscriptionPlan.limits.permanent.organizationMembership'),
+        membershipsCount: getAtPath(org, 'usage.permanent.organizationMembership')
+      }
     });
 
     rerender();
@@ -119,10 +128,10 @@ export default function ($scope) {
     submitInvitations: (evt) => {
       evt.preventDefault();
 
-      const {orgRole, emails, invalidAddresses, failedOrgInvitations, spaceMemberships} = state;
+      const {orgRole, emails, invalidAddresses, failedOrgInvitations, spaceMemberships, suppressInvitation} = state;
 
       if (emails.length && !invalidAddresses.length) {
-        invite(emails, orgRole, spaceMemberships, false, $scope.properties.orgId)
+        invite(emails, orgRole, spaceMemberships, suppressInvitation, $scope.properties.orgId)
           .then(() => {
             state = assign(state, {
               status: failedOrgInvitations.length ? Failure() : Success()
@@ -136,6 +145,12 @@ export default function ($scope) {
 
         rerender();
       }
+    },
+
+    toggleInvitationEmailOption: () => {
+      state = assign(state, {
+        suppressInvitation: !state.suppressInvitation
+      });
     },
 
     /**
@@ -209,8 +224,8 @@ export default function ($scope) {
 }
 
 function render (
-  {emails, emailsInputValue, orgRole, invalidAddresses, spaces, spaceMemberships, status, failedOrgInvitations, successfulOrgInvitations},
-  {updateEmails, updateOrgRole, updateSpaceRole, submitInvitations, restart, goToList}
+  {organization, emails, emailsInputValue, orgRole, invalidAddresses, spaces, spaceMemberships, status, failedOrgInvitations, successfulOrgInvitations, suppressInvitation},
+  {updateEmails, updateOrgRole, updateSpaceRole, submitInvitations, restart, goToList, toggleInvitationEmailOption}
 ) {
   return h('.workbench', [
     header(),
@@ -231,7 +246,7 @@ function render (
           ])
         })
       ]),
-      sidebar(status)
+      sidebar(status, organization, suppressInvitation, toggleInvitationEmailOption)
     ])
   ]);
 }
@@ -244,7 +259,7 @@ function header () {
   ]);
 }
 
-function sidebar (status) {
+function sidebar (status, org, suppressInvitation, toggleInvitationEmailOption) {
   const isDisabled = match(status, {
     [Idle]: () => false,
     _: () => true
@@ -252,10 +267,22 @@ function sidebar (status) {
 
   return h('.workbench-main__entity-sidebar', [
     h('.entity-sidebar', [
+      h('p', [`Your organization is using ${org.membershipsCount} out of ${org.membershipLimit} users.`]),
       h('button.cfnext-btn-primary-action.x--block', {
         type: 'submit',
         disabled: isDisabled
       }, ['Send invitation']),
+      org.hasSsoEnabled ? h('.cfnext-form-option.u-separator--small', [
+        h('label', [
+          h('input', {
+            type: 'checkbox',
+            dataTestId: 'organization-membership.suppress-invitation',
+            checked: !suppressInvitation,
+            onChange: toggleInvitationEmailOption
+          }),
+          'Inform users that they\'ve been added to the organization via email.'
+        ])
+      ]) : '',
       h('.entity-sidebar__heading', {style: {marginTop: '20px'}}, ['Organization role & space role']),
       h('p', ['The organization role controls the level of access to the organization settings.']),
       h('p', ['Access to your organization\'s spaces works independently from that and needs to be defined per space.'])
