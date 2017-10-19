@@ -14,6 +14,7 @@ const adminRole = {
   name: 'Admin',
   id: ADMIN_ROLE_ID
 };
+const maxNumberOfEmails = 100;
 const orgRoles = [
   { name: 'Owner', value: 'owner', description: '' },
   { name: 'Admin', value: 'admin', description: '' },
@@ -130,7 +131,7 @@ export default function ($scope) {
 
       const {orgRole, emails, invalidAddresses, failedOrgInvitations, spaceMemberships, suppressInvitation} = state;
 
-      if (emails.length && !invalidAddresses.length) {
+      if (emails.length && emails.length <= maxNumberOfEmails && !invalidAddresses.length) {
         invite(emails, orgRole, spaceMemberships, suppressInvitation, $scope.properties.orgId)
           .then(() => {
             state = assign(state, {
@@ -303,7 +304,7 @@ function emailsInput (emails, emailsInputValue, invalidAddresses, updateEmails) 
         value: emailsInputValue,
         onChange: updateEmails
       }),
-      emails.length > 100 ? h('.cfnext-form__field-error', ['Please fill in no more than 100 email addresses.']) : '',
+      emails.length > maxNumberOfEmails ? h('.cfnext-form__field-error', ['Please fill in no more than 100 email addresses.']) : '',
       invalidAddresses.length ? h('.cfnext-form__field-error', [
         h('p', ['The following email addresses are not valid:']),
         h('', [invalidAddresses.join(', ')])
