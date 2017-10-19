@@ -9,8 +9,8 @@ import {createEndpoint as createOrgEndpoint, invite as inviteToOrg} from 'access
 import {createSpaceEndpoint} from 'data/Endpoint';
 import * as auth from 'Authentication';
 import {apiUrl} from 'Config';
+import * as stringUtils from 'stringUtils';
 
-const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const adminRole = {
   name: 'Admin',
   id: ADMIN_ROLE_ID
@@ -134,7 +134,7 @@ export default function ($scope) {
         .filter(email => email.length);
 
       const invalidAddresses = emails
-        .filter(email => !emailRegex.test(email));
+        .filter(email => !stringUtils.isValidEmail(email));
 
       state = assign(state, {
         emailsInputValue: evt.target.value,
