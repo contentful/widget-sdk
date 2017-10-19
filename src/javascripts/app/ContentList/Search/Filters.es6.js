@@ -34,9 +34,11 @@ import { assign, push, concat } from 'utils/Collections';
  *
  * Handles the special `__status` key that translates to complicated
  * queries on `sys` fields.
+ *
+ * TODO: Find a better place for this. Write tests.
  */
-export function makeQueryObject (queryItems, searchString) {
-  let queryObj = queryItems.reduce((obj, [key, op, value]) => {
+export function makeCMAQueryObject ({contentTypeId, searchFilters, searchTerm}) {
+  let queryObj = searchFilters.reduce((obj, [key, op, value]) => {
     if (key.queryKey === '__status') {
       if (value === 'published') {
         obj['sys.publishedAt[exists]'] = 'true';
@@ -55,10 +57,6 @@ export function makeQueryObject (queryItems, searchString) {
       } else {
         throw new Error(`Unknown status value ${value}`);
       }
-    } else if (key.queryKey === 'content_type') {
-      if (value) {
-        obj[key.queryKey] = value;
-      }
     } else {
       op = op ? `[${op}]` : '';
       obj[key.queryKey + op] = value;
@@ -66,13 +64,16 @@ export function makeQueryObject (queryItems, searchString) {
     return obj;
   }, {});
 
-  searchString = searchString.trim();
-  if (searchString) {
-    queryObj = assign(queryObj, { query: searchString });
+  if (contentTypeId) {
+    queryObj.content_type = contentTypeId;
+  }
+
+  searchTerm = searchTerm.trim();
+  if (searchTerm) {
+    queryObj = assign(queryObj, { query: searchTerm });
   }
 
   return queryObj;
-
 }
 
 /**

@@ -5,7 +5,7 @@ import { createSlot, sleep } from 'utils/Concurrent';
 import { freeze } from 'utils/Freeze';
 import { caseofEq, otherwise } from 'libs/sum-types';
 
-import { getMatchingFilters, contentTypeFilter, makeQueryObject } from './Filters';
+import { getMatchingFilters, contentTypeFilter} from './Filters';
 
 const defaultFocus = {
   index: null,
@@ -287,7 +287,14 @@ export function makeReducer (dispatch, _cma, contentTypes, submitSearch) {
   function triggerSearch (state) {
     const { query } = state;
     const queryItems = [query.contentType, ...query.filters];
-    submitSearch(makeQueryObject(queryItems, query.search));
+
+    const publicState = {
+      contentTypeId: query.contentType[2],
+      searchFilters: query.filters,
+      searchTerm: query.search
+    };
+    submitSearch(publicState);
+
     return state;
   }
 }

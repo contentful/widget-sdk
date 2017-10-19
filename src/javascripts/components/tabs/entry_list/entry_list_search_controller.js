@@ -13,6 +13,7 @@ angular.module('contentful')
   var Tracking = require('analytics/events/SearchAndViews');
   var K = require('utils/kefir');
   var createSearchInput = require('app/ContentList/Search').default;
+  var makeCMAQueryObject = require('app/ContentList/Search/Filters').makeCMAQueryObject;
 
   $scope.context = { ready: true, loading: false };
 
@@ -171,12 +172,14 @@ angular.module('contentful')
   }
 
   var triggerSearch = createRequestQueue(triggerSearch_, setupEntriesHandler);
-  function triggerSearch_ (query) {
-    if (!query) {
+  function triggerSearch_ (searchState) {
+    if (!searchState) {
       currentQuery = null;
       return;
     }
+    var query = makeCMAQueryObject(searchState);
     currentQuery = query;
+
     // TODO support ordering
     query = _.assign({}, query, {
       limit: $scope.paginator.getPerPage(),
