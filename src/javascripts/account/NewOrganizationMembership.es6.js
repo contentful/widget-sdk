@@ -1,17 +1,14 @@
 import $state from '$state';
-import {includes, omit, identity, get as getValue} from 'lodash';
+import {includes, omit} from 'lodash';
 import {h} from 'ui/Framework';
 import { assign } from 'utils/Collections';
 import {getFatSpaces} from 'services/TokenStore';
 import * as RoleRepository from 'RoleRepository';
 import {runTask} from 'utils/Concurrent';
-import {ADMIN_ROLE_ID, create as createSpaceRepo} from 'access_control/SpaceMembershipRepository';
-import {createEndpoint as createOrgEndpoint, invite as inviteToOrg} from 'access_control/OrganizationMembershipRepository';
-import {createSpaceEndpoint} from 'data/Endpoint';
-import * as auth from 'Authentication';
-import {apiUrl} from 'Config';
-import * as stringUtils from 'stringUtils';
+import {ADMIN_ROLE_ID} from 'access_control/SpaceMembershipRepository';
 import {makeCtor, match} from 'utils/TaggedValues';
+import {invite, progress$} from 'account/SendOrganizationInvitation';
+import * as stringUtils from 'stringUtils';
 
 const adminRole = {
   name: 'Admin',
@@ -22,12 +19,10 @@ const orgRoles = [
   { name: 'Admin', value: 'admin', description: '' },
   { name: 'Member', value: 'member', description: '' }
 ];
-
 const Idle = makeCtor('idle');
 const InProgress = makeCtor('inProgress');
 const Success = makeCtor('success');
 const Failure = makeCtor('failure');
-
 
 export default function ($scope) {
   $scope.component = h('noscript');
@@ -44,7 +39,14 @@ export default function ($scope) {
     status: Idle()
   };
 
-  const orgEndpoint = createOrgEndpoint($scope.properties.orgId);
+  progress$
+    .onValue(email => {
+      state = assign(state, {
+        successfulOrgInvitations: state.successfulOrgInvitations.concat([email])
+      });
+      rerender();
+    })
+    .onError(email => state.failedOrgInvitations.push(email));
 
   runTask(function* () {
     const allSpaces = yield getFatSpaces();
@@ -99,6 +101,7 @@ export default function ($scope) {
 
       rerender();
     },
+
     updateOrgRole: (evt, role) => {
       if (evt.target.checked) {
         state = assign(state, {
@@ -107,78 +110,25 @@ export default function ($scope) {
         rerender();
       }
     },
+
+    /**
+     * Send invitations to the organization to all emails in the form
+     * If the org invitation succeeds (or if it fails with 422 (taken), automatically
+     * proceeds to invite the user to all selected spaces with respective roles
+     */
     submitInvitations: (evt) => {
       evt.preventDefault();
 
-      const {orgRole, emails, invalidAddresses, spaceMemberships} = state;
-      const numberOfSpaces = Object.keys(spaceMemberships).length;
-      const failedOrgInvitations = [];
-
-      let sentOrgInvitations = 0;
-      let sentSpaceInvitations = 0;
+      const {orgRole, emails, invalidAddresses, failedOrgInvitations, spaceMemberships} = state;
 
       if (emails.length && !invalidAddresses.length) {
-        const finish = () => {
-          state = assign(state, {
-            failedOrgInvitations,
-            status: failedOrgInvitations.length ? Failure() : Success()
-          });
-          rerender();
-        };
-
-        const sendSpaceInvitations = (email) => {
-          Object.entries(spaceMemberships).forEach(([spaceId, roles]) => {
-            const spaceEndpoint = createSpaceEndpoint(apiUrl(), spaceId, auth);
-            const inviteToSpace = createSpaceRepo(spaceEndpoint).invite;
-
-            inviteToSpace(email, roles)
-              .catch(identity)
-              .then(() => {
-                sentSpaceInvitations += 1;
-                if (sentSpaceInvitations === sentOrgInvitations * numberOfSpaces) {
-                  // ends if this if the last space invitation
-                  finish();
-                }
-              });
-          });
-        };
-
-        const progress = (email) => {
-          sendSpaceInvitations(email);
-          state = assign(state, {
-            successfulOrgInvitations: state.successfulOrgInvitations.concat([email])
-          });
-          rerender();
-        };
-
-        const sendOrgInvitation = (email) => {
-          return inviteToOrg(orgEndpoint, {
-            email: email,
-            role: orgRole,
-            suppressInvitation: false
-          })
-            .then(() => {
-              progress(email);
-            })
-            .catch(err => {
-              if (isTaken(err)) {
-                // if already a member, try to send space invitations anyway
-                progress(email);
-              } else {
-                failedOrgInvitations.push(email);
-              }
-            })
-            .then(() => {
-              sentOrgInvitations += 1;
-              // ends invitation process if there are no space invitations happening
-              // and this is the last invitation in the row
-              if (numberOfSpaces === 0 && sentOrgInvitations === emails.length) {
-                finish();
-              }
+        invite(emails, orgRole, spaceMemberships, false, $scope.properties.orgId)
+          .then(() => {
+            state = assign(state, {
+              status: failedOrgInvitations.length ? Failure() : Success()
             });
-        };
-
-        emails.forEach(sendOrgInvitation);
+            rerender();
+          });
 
         state = assign(state, {
           status: InProgress()
@@ -256,13 +206,6 @@ export default function ($scope) {
   function removeRole (role, spaceRoles) {
     return spaceRoles.filter(id => id !== role.id);
   }
-}
-
-function isTaken (error) {
-  const status = getValue(error, 'statusCode');
-  const errors = getValue(error, 'data.details.errors');
-
-  return status === 422 && errors && errors.length > 0 && errors[0].name === 'taken';
 }
 
 function render (
