@@ -6,7 +6,16 @@ describe('cfWelcome directive', function () {
 
     module('contentful/test', ($provide) => {
       $provide.value('moment', () => {
-        return {hour: this.hourStub};
+        return {
+          hour: this.hourStub,
+          format: () => {}
+        };
+      });
+      $provide.stubLaunchDarkly();
+      $provide.value('$state', {
+        current: {
+          name: 'home'
+        }
       });
     });
 

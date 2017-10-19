@@ -6,8 +6,9 @@ angular.module('contentful')
 
   // Languages supported by SpeakingURL.
   var languages = [
-    'ar', 'cz', 'de', 'en', 'es', 'fr', 'it',
-    'my', 'nl', 'pt', 'ru', 'sk', 'tr', 'vn'
+    'ar', 'az', 'cs', 'de', 'dv', 'en', 'es', 'fa', 'fi', 'fr', 'ge', 'gr',
+    'hu', 'it', 'lt', 'lv', 'my', 'mk', 'nl', 'pl', 'pt', 'ro', 'ru', 'sk',
+    'sr', 'tr', 'uk', 'vn'
   ];
 
   /**
