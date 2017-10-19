@@ -154,7 +154,8 @@ function queryInput ({value, isPlaceholderVisible, isFocused, onChange, onKeyDow
       lineHeight: '30px',
       height: '30px',
       marginTop: '5px',
-      marginRight: '12px'
+      marginRight: '12px',
+      fontSize: 'inherit'
     },
     ref: (el) => {
       if (isFocused && el) {
@@ -164,9 +165,7 @@ function queryInput ({value, isPlaceholderVisible, isFocused, onChange, onKeyDow
     autofocus: true,
     value,
     onKeyDown,
-    onInput: (e) => {
-      onChange(e.target.value);
-    },
+    onInput: (e) => onChange(e.target.value),
     placeholder: isPlaceholderVisible ? 'Type to search for entries' : ''
   });
 }
@@ -210,6 +209,7 @@ function filterPill ({
         if (Keys.backspace(e)) {
           onRemove();
           e.stopPropagation();
+          e.preventDefault();
         }
       }
     }
