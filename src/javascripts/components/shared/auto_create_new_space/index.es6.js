@@ -16,12 +16,23 @@ import {
  * for a qualified user.
  * It is hooked up in the run block in application prelude.
  */
+
+// this flag ensures that we call init function only once per
+// the whole application
+let wasInitAlreadyCalled = false;
+
 export function init () {
+  if (wasInitAlreadyCalled === true) {
+    return;
+  }
+
+  wasInitAlreadyCalled = true;
   let creatingSampleSpace = false;
 
   combine([user$, spacesByOrg$])
     .filter(([user, spacesByOrg]) => user && spacesByOrg && qualifyUser(user, spacesByOrg) && !creatingSampleSpace)
     .onValue(([user, spacesByOrg]) => {
+
       const org = getFirstOwnedOrgWithoutSpaces(user, spacesByOrg);
 
       creatingSampleSpace = true;
