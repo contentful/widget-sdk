@@ -49,11 +49,10 @@ angular.module('contentful')
 
       var validator = ctrls[0];
       var form = ctrls[1];
-      scope.$watch('enabled', function(enabled) {
+      scope.$watch('enabled', function() {
         if (form.$dirty) {
           validator.run();
         }
-        elem.find('[cf-datetime-editor] input').attr('disabled', !enabled);
       });
     }
   };

@@ -108,9 +108,6 @@ angular.module('contentful')
   ],
   personal_access_token: [
     'action'
-  ],
-  contextual_help: [
-    'action'
   ]
 })
 

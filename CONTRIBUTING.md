@@ -32,7 +32,7 @@ You can also view the styleguide for a specific commit by navigating to `https:/
 - You can assign the PR to a specific individual, multiple individuals or leave it unassigned for anyone to pick up
 
 For an in-depth reference of the submission process see the [submission
-guide](./docs/buides/code-submission.md)
+guide](./docs/guides/code-submission.md) and [code review guide](./docs/guides/code-review.md)
 
 ## <a name="info"></a> More information
 - See the [frontend space](https://contentful.atlassian.net/wiki/display/ENG/Frontend) on the wiki

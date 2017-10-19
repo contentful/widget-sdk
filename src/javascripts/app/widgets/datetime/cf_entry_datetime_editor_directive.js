@@ -87,8 +87,12 @@ angular.module('cf.app')
         }
       });
 
-      $scope.$on('$destroy', function () {
-        datepicker.destroy();
+      $scope.$watch(function () {
+        return $scope.data.date;
+      }, function (date) {
+        if (date) {
+          datepicker.setMoment(date, true);
+        }
       });
 
       $scope.focusDateInput = function () {

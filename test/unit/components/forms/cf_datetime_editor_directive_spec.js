@@ -19,11 +19,7 @@ describe('DateTime Editor', function () {
   }));
 
   afterEach(function () {
-    const widget = element.find('.date').datepicker('widget');
-    element.find('.date').datepicker('destroy');
-    element.remove();
-    // 'destroy' does not actually remove the widget.
-    widget.remove();
+    scope.$destroy();
     element = scope = moment = null;
   });
 

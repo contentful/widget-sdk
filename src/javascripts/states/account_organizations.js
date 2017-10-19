@@ -52,8 +52,7 @@ angular.module('contentful')
     url: '/new',
     controller: ['$stateParams', '$scope', function ($stateParams, $scope) {
       // Begin feature flag code - feature-bv-09-2017-invite-to-org
-      var LD = require('utils/LaunchDarkly');
-      LD.setOnScope($scope, 'feature-bv-09-2017-invite-to-org', 'useNewOrgInvitation');
+      $scope.useNewOrgInvitation = false;
       // End feature flag code - feature-bv-09-2017-invite-to-org
 
       $scope.context = {};
@@ -64,9 +63,13 @@ angular.module('contentful')
       };
     }],
     template: [
-      workbenchHeader('Organization users'),
       h('cf-new-organization-membership', { ngIf: 'useNewOrgInvitation', properties: 'properties' }),
-      h('cf-account-view', { ngIf: '!useNewOrgInvitation', context: 'context' })
+      h('div', {
+        ngIf: '!useNewOrgInvitation'
+      }, [
+        workbenchHeader('Organization users'),
+        h('cf-account-view', { context: 'context' })
+      ])
     ].join(''),
     // this is duplicated code, but there's no way
     // we can get around it for now

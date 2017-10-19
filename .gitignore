@@ -24,3 +24,4 @@ vendor/firefox
 gh-pages/
 build/
 public/*
+.vscode/settings.json

@@ -10,7 +10,8 @@ describe('AutoCreateNewSpace/index', function () {
     this.createSampleSpace = sinon.stub().resolves();
     this.theStore = {
       set: sinon.stub(),
-      get: sinon.stub()
+      get: sinon.stub(),
+      forKey: sinon.stub()
     };
 
     module('contentful/test', $provide => {

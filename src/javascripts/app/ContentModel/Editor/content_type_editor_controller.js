@@ -55,7 +55,6 @@ angular.module('contentful')
     $state.go('^.' + stateName);
   };
 
-  $scope.context.ready = true;
   $scope.context.requestLeaveConfirmation = leaveConfirmator($scope.actions.saveAndClose);
   $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
 
