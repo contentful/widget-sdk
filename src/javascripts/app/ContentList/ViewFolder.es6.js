@@ -152,7 +152,17 @@ function isVisibleForAssignedRoles (view, membership) {
 
 function isContentTypeReadable (contentTypeId) {
   if (typeof contentTypeId === 'string') {
-    return accessChecker.canPerformActionOnEntryOfType('read', contentTypeId);
+    const can = accessChecker.canPerformActionOnEntryOfType;
+    const canRead = can('read', contentTypeId);
+    const canCreate = can('create', contentTypeId);
+
+    // If a user can read entries of a specific content type created by
+    // themselves ONLY, then calls to `can('read', ctId)` will return `false`.
+    // While the return value is correct (a user cannot, in general, read all
+    // entries of a type), it causes confusion by hiding views if user's roles
+    // contain such a policy. To mitigate that we also check if they can create
+    // entries of a given CT.
+    return canRead || canCreate;
   } else {
     return true;
   }
