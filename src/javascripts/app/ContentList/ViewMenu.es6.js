@@ -4,6 +4,7 @@ import {h} from 'ui/Framework';
 import ViewFolder from './ViewFolder';
 import openInputDialog from 'app/InputDialog';
 import addFolderIcon from 'svg/add-folder';
+import { byName as colors } from 'Styles/Colors';
 
 export default function render (state, actions) {
   const {folders, canEdit} = state;
@@ -11,13 +12,26 @@ export default function render (state, actions) {
   // The default folder is ensured (minimal length is 1):
   const isEmpty = getAtPath(folders, ['length']) === 1 &&
                   getAtPath(folders, [0, 'views', 'length']) === 0;
-
+  const separator = h('div', {
+    style: {
+      paddingLeft: '20px',
+      paddingRight: '20px'
+    }
+  }, [
+    h('div', {
+      style: {
+        marginBottom: '12px',
+        borderBottom: `1px solid ${colors.elementDark}`
+      }
+    })
+  ]);
   return h('.view-menu', [
     isEmpty ? renderEmpty(state) : renderFolders(state, actions),
     h('.view-menu__actions', [
       isEmpty && canEdit && h('button.text-link', {
         onClick: () => actions.RestoreDefaultViews()
       }, [h('i.fa.fa-refresh'), 'Restore default views']),
+      separator,
       canEdit && h('button.text-link', {
         onClick: () => openInputDialog({
           title: 'Add folder',

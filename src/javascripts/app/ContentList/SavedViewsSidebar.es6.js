@@ -1,6 +1,7 @@
 import {h} from 'ui/Framework';
 import {makeCtor} from 'utils/TaggedValues';
 import {assign} from 'utils/Collections';
+import * as Tracking from 'analytics/events/SearchAndViews';
 
 import {
   createStore,
@@ -10,9 +11,10 @@ import {
 
 import initSavedViewsComponent from './SavedViewsComponent';
 
-import {byName as Colors} from 'Styles/Colors';
+import {byName as colors} from 'Styles/Colors';
 import {container} from 'ui/Layout';
 
+import openRoleSelector from './RoleSelector';
 import openInputDialog from 'app/InputDialog';
 
 
@@ -54,7 +56,7 @@ export default function ({
   function render ({selector, sharedViews, privateViews}) {
     return h('div', {
       style: {
-        backgroundColor: Colors.elementLightest,
+        backgroundColor: colors.elementLightest,
         height: '100%'
       }
     }, [
@@ -62,8 +64,8 @@ export default function ({
         paddingTop: '1rem',
         paddingRight: '1.5rem',
         paddingLeft: '1.5rem',
-        backgroundColor: Colors.elementLightest,
-        borderBottom: `1px solid ${Colors.elementMid}`
+        backgroundColor: colors.elementLightest,
+        borderBottom: `1px solid ${colors.elementMid}`
       }, [
         h('ul.workbench-nav__tabs', [
           button(selector, VIEWS_SHARED, 'All views'),
@@ -88,9 +90,9 @@ export default function ({
       ariaSelected: (state === value).toString(),
       role: 'tab',
       style: {
-        textTransform: 'uppercase',
-        fontWeight: '500',
-        color: (state === value) ? Colors.blueDark : Colors.textLight
+        fontSize: '14px',
+        fontWeight: 'normal',
+        color: (state === value) ? colors.textDark : colors.textLight
       },
       onClick: () => actions.Select(value)
     }, [label]);
@@ -103,13 +105,24 @@ export default function ({
       message: 'Name of the view',
       input: {min: 1, max: 32},
       showSaveAsSharedCheckbox: entityFolders.shared.canEdit
-    }).promise.then(payload => {
-      if (payload.shouldSaveCurrentViewAsShared) {
-        sharedViews.api.saveCurrentView(payload.viewTitle);
-      } else {
-        privateViews.api.saveCurrentView(payload.viewTitle);
-      }
-    });
+    }).promise.then(saveCurrentView);
+  }
+
+  function saveCurrentView ({shouldSaveCurrentViewAsShared, viewTitle}) {
+    if (shouldSaveCurrentViewAsShared) {
+      sharedViews.api.saveCurrentView(viewTitle);
+
+      openRoleSelector(roleAssignment.endpoint, views.roles)
+        .then(roles => {
+          const updatedSharedView = assign(getCurrentView(), {roles});
+
+          Tracking.viewRolesEdited(updatedSharedView);
+          sharedViews.api.updateView(updatedSharedView);
+        });
+    } else {
+      privateViews.api.saveCurrentView(viewTitle);
+    }
+
   }
 
 }

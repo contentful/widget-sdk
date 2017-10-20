@@ -1,4 +1,5 @@
 import {h} from 'ui/Framework';
+import { byName as colors } from 'Styles/Colors';
 
 import modalDialog from 'modalDialog';
 import keycodes from 'keycodes';
@@ -39,7 +40,7 @@ export default function open (params = {}) {
       const {min, max} = input;
       const maxlength = isFinite(max) ? `${max}` : '';
       const cancel = () => $scope.dialog.cancel();
-      let shouldSaveCurrentViewAsShared = true;
+      let shouldSaveCurrentViewAsShared = false;
       let {value = ''} = input;
 
       function onSaveAsSharedChange () {
@@ -51,6 +52,21 @@ export default function open (params = {}) {
         value = e.target.value;
         render(value);
       }
+
+      const renderSaveOptions = ({name, text, subText, isChecked, onChange}) => (
+        h('li', [
+          h('input', {
+            type: 'radio',
+            name: name,
+            onChange,
+            checked: isChecked
+          }),
+          h('span', {style: {marginLeft: '5px'}}, [
+            h('label', text),
+            h('p', {style: {marginLeft: '22px', color: colors.textLight}}, subText)
+          ])
+        ])
+      );
 
       render(value);
 
@@ -72,14 +88,21 @@ export default function open (params = {}) {
               type: 'text', value, onInput, onKeydown, maxlength
             }),
             params.showSaveAsSharedCheckbox && (
-              h('div', [
-                h('input', {
-                  type: 'checkbox',
-                  name: 'saveAsShared',
+              h('ul', {style: {marginTop: '20px'}}, [
+                renderSaveOptions({
+                  name: 'saveAsPrivate',
+                  text: ['Save under ', h('em', ['my']), ' views'],
+                  subText: ['Only you will see this view.'],
                   onChange: onSaveAsSharedChange,
-                  checked: shouldSaveCurrentViewAsShared
+                  isChecked: !shouldSaveCurrentViewAsShared
                 }),
-                h('label', ['Save as shared view'])
+                renderSaveOptions({
+                  name: 'saveAsShared',
+                  text: ['Save under ', h('em', ['all']), ' views'],
+                  subText: ['You can select which roles should see this view in the next step.'],
+                  onChange: onSaveAsSharedChange,
+                  isChecked: shouldSaveCurrentViewAsShared
+                })
               ])
             )
           ]),

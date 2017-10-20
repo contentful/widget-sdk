@@ -12,7 +12,6 @@ import TheStore from 'TheStore';
 import notification from 'notification';
 import random from 'random';
 
-
 const LoadView = makeCtor('LoadView');
 const ToggleOpened = makeCtor('ToggleOpened');
 const RestoreDefaultViews = makeCtor('RestoreDefaultViews');
@@ -133,6 +132,9 @@ export default function ({
     store.dispatch(SaveCurrentView, viewTitle);
   }
 
+  function updateView (view) {
+    store.dispatch(UpdateView, view);
+  }
   const actions = {
     LoadView,
     ToggleOpened,
@@ -148,7 +150,7 @@ export default function ({
   };
 
   return {
-    api: {saveCurrentView},
+    api: {saveCurrentView, updateView},
     render: ViewMenu,
     store,
     actions
