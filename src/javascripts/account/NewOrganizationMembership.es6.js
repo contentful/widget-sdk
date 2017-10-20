@@ -51,7 +51,7 @@ export default function ($scope) {
       rerender();
     })
     .onError(email => state.failedOrgInvitations.push(email));
-  
+
   runTask(function* () {
     const org = yield getOrganization(orgId);
     const allSpaces = yield getFatSpaces();
