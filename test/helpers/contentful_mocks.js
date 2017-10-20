@@ -87,6 +87,7 @@ angular.module('contentful/mocks', [])
       return {
         init: sinon.stub(),
         onABTest: sinon.stub(),
+        onABTestOnce: sinon.stub(),
         onFeatureFlag: sinon.stub()
       };
     });

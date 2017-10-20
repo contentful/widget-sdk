@@ -1,7 +1,7 @@
 import LD from 'libs/launch-darkly-client';
 
 import {launchDarkly as config} from 'Config';
-import {assign, get, isNull, noop, omitBy} from 'lodash';
+import {assign, get, isNull, omitBy} from 'lodash';
 import {onValueScope, createPropertyBus} from 'utils/kefir';
 import getChangesObject from 'utils/ShallowObjectDiff';
 
@@ -13,6 +13,15 @@ import {
   ownsAtleastOneOrg,
   hasAnOrgWithSpaces
 } from 'data/User';
+
+import createMVar from 'utils/Concurrent/MVar';
+
+// mvar to wait until `ready` event by LD was fired
+// it allows us to implement one-time subscription
+const LDInitMVar = createMVar();
+
+// mvar to wait until LD context is successfully switched
+const LDContextChangeMVar = createMVar();
 
 const UNINIT_VAL = '<UNINITIALIZED>';
 let client, prevCtx, currCtx;
@@ -37,115 +46,111 @@ export function init () {
  * @usage[js]
  * const ld = require('utils/LaunchDarkly')
  *
- * // track all variation changes
- * ld.onFeatureFlag($scope, 'my-awesome-feature-flag', variation => doSomething())
- *
- * // track variation changes only if current org was changed
- * ld.onFeatureFlag(
- *   $scope,
- *   'another-feature-flag',
- *   variationHandler,
- *   changes => !changes.currentOrgId
- * )
+ * // it should be used only outside of the directive controller
+ * let testFlagVariationPromise = ld.onABTestOnce('my-test')
+ * // inside controller body
+ * testFlagVariationPromise.then(setupTest)
  *
  * @description
- * Sets up a handler that receives the variation for the specified feature flag.
- * It tracks changes in flag variation by default. This behaviour can be overridden by providing a custom
- * ignoreChangeFn.
+ * This is a special function, in that it is meant to give you only the
+ * first variation it receives for your user and test flag combination
+ * between app refreshes.
+ * This is achieved by using this function only outside of the controller
+ * body as shown in the usage example above. It does not track changes in
+ * variation for the flag and guarantees that the promise will only settle
+ * once for every app load. This makes it suitable for usage in A/B testing
+ * where we don't want the test to disappear from under the user's feet due
+ * to changes in the LaunchDarkly caused by some user action for example,
+ * new space creation.
  *
- * @param {Scope} $scope
- * @param {String} flagName
- * @param {function} variationHandler
- * @param {function} [ignoreChangeFn = _ => false] - An optional fn that receives diff of old and curr context,
- * new variation and old variation. If it returns true, changes to the test variation are ignored and the
- * variationHandler is not called with the new variation.
+ * Guarantees provided:
+ * 1. The promise will settle only when LD is initialized for the current
+ * context where context is a combination of current user, org and space data.
+ * 2. The promise will resolve with the variation for the provided test name
+ * if it receives a variation from it from LD.
+ * 3. The promise will reject if LD did not find any test with the provided
+ * test name
  *
+ * @param {String} testName
+ * @returns {Promise<Variation>}
  */
-export function onFeatureFlag ($scope, flagName, variationHandler, ignoreChangeFn = _ => false) {
-  const obs$ = createPropertyBus();
+export function onABTestOnce (testName) {
+  return LDInitMVar.read().then(_ => {
+    const variation = client.variation(testName, UNINIT_VAL);
 
-  const readyHandler = _ => setVariation(flagName, obs$);
-
-  const changeHandler = (newVariation = '""', oldVariation = '""') => {
-    const changes = getChangesObject(prevCtx, currCtx);
-    const parsedNewVariation = JSON.parse(newVariation);
-    const parsedOldVariation = JSON.parse(oldVariation);
-
-    if (!ignoreChangeFn(changes, parsedNewVariation, parsedOldVariation)) {
-      setVariation(flagName, obs$);
+    if (variation === UNINIT_VAL) {
+      throw new Error(`Invalid test flag ${testName}`);
+    } else {
+      return JSON.parse(variation);
     }
-  };
-
-  // ready is emitted after the called to init in changeUserContext succeeds
-  client.on('ready', readyHandler);
-  // change for flagName is emitted whenever LD changes the variation for
-  // the given user
-  client.on(`change:${flagName}`, changeHandler);
-
-  // end the observable when scope is destroyed so that we don't leak
-  // handlers for ready and change events
-  $scope.$on('$destroy', _ => {
-    obs$.end();
-    client.off('ready', readyHandler);
-    client.off(`change:${flagName}`, changeHandler);
   });
-
-  // set the initial variation on the prop
-  setVariation(flagName, obs$);
-
-  // setup handler for variation Kefir property
-  onValueScope(
-    $scope,
-    obs$.property
-      .filter(v => v !== undefined && v !== UNINIT_VAL)
-      .map(v => JSON.parse(v)),
-    variationHandler
-  );
 }
 
 /**
  * @usage[js]
  * const ld = require('utils/LaunchDarkly')
  *
- * // track all variation changes
- * ld.onABTest($scope, 'my-test', variation => doSomething())
- *
- * // track variation changes only if current org was changed
- * ld.onABTest(
- *   $scope,
- *   'my-test',
- *   variationHandler,
- *   changes => !changes.currentOrgId
- * )
+ * ld.onFeatureFlag($scope, 'feature-flag', (variation, changes) => {...})
  *
  * @description
- * Sets up handlers which are called with the variation for the specified test.
- * It DOES NOT track changes in test variation by default. This behaviour can be overridden by providing a
- * custom ignoreChangeFn.
+ * Sets up a handler that receives the variation for the specified feature flag.
+ * It tracks changes in variation for the specified flag and passes them to the
+ * handler provided along with the changes in current LaunchDarkly context.
+ * The changes in context are made available to the consumer so that they can
+ * make a smart decision on what they want to do with the variation the handler
+ * received.
+ *
+ * Guarantees provided:
+ * 1. The handler will always be called with the flag for your current context
+ * where current context is a combination of the current user, org and space data.
+ * 2. The handler will only be called once LD is properly initialized which means
+ * the current context is updated to reflect values for the current state of the app.
+ * State of the app here refers to current user, current org and current space.
+ * 3. The handler will always be given changes in context as the second parameter
+ * 4. The handler will _never_ be called with undefined as an argument
  *
  * @param {Scope} $scope
  * @param {String} flagName
- * @param {function} variationHandler
- * @param {function} [ignoreChangeFn = _ => true] - An optional fn that receives diff of old and curr context,
- * new variation and old variation. If it returns true, changes to the test variation are ignored and the
- * variationHandler is not called with the new variation.
- *
+ * @param {function} variationHandler - It receives the current variation for the
+ * flag as the first argument and changes in LaunchDarkly context as the second
+ * argument.
  */
-export function onABTest ($scope, testName, variationHandler, ignoreChangeFn = _ => true) {
-  onFeatureFlag($scope, testName, variationHandler, ignoreChangeFn);
+export function onFeatureFlag ($scope, featureName, handler) {
+  const obs$ = createPropertyBus();
+  const setVariation = getVariationSetter(featureName, obs$);
+
+  LDContextChangeMVar.read().then(_ => {
+    setVariation();
+    client.on(`change:${featureName}`, setVariation);
+  });
+
+  $scope.$on('$destroy', _ => {
+    obs$.end();
+    client.off(`change:${featureName}`, setVariation);
+  });
+
+  onValueScope(
+    $scope,
+    obs$.property
+      .filter(v => v !== undefined && v !== UNINIT_VAL)
+      .map(v => [JSON.parse(v), getChangesObject(prevCtx, currCtx)]),
+    ([variation, changes]) => handler(variation, changes)
+  );
 }
+
+export { onFeatureFlag as onABTest };
 
 /**
  * @description
- * Emit a variation on a given observable
+ * Returns a fn which sets the current variation for the
+ * given feature flag or test flag.
  *
- * @param {String} flagName
+ * @param {String} flagName - feature or test flag
  * @param {utils/Kefir.property<Variation>} obs$
+ * @returns {Function}
  */
-function setVariation (flagName, obs$) {
-  const variation = client.variation(flagName, UNINIT_VAL);
-
-  obs$.set(variation);
+function getVariationSetter (flagName, obs$) {
+  return _ => obs$.set(client.variation(flagName, UNINIT_VAL));
 }
 
 /**
@@ -220,8 +225,9 @@ function initLDClient (user) {
  * @param {Object} user - An LD user with a key and custom properties
  */
 function identify (user) {
+  LDContextChangeMVar.empty();
   setCurrCtx(user);
-  client.identify(user, null, noop);
+  client.identify(user, null, LDContextChangeMVar.put);
 }
 
 /**
@@ -238,6 +244,10 @@ function changeUserContext ([user, currOrg, spacesByOrg, currSpace]) {
 
   if (!client) {
     client = initLDClient(newLDUser);
+    client.on('ready', _ => {
+      LDInitMVar.put();
+      LDContextChangeMVar.put();
+    });
   } else {
     identify(newLDUser);
   }
