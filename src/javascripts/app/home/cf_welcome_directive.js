@@ -54,7 +54,9 @@ angular.module('contentful')
       var controller = this;
 
       // Begin test code: test-ps-09-2017-entry-sample-space-cli
-      LD.onABTest($scope, flagName, function (flag) {
+      // we call handler only once to avoid hiding of the onboarding
+      // widget after user will have a space and will be disqualified
+      LD.onABTest($scope, flagName, _.once(function (flag) {
         var user = K.getValue(TokenStore.user$);
         var wasAutoSpaceAlreadyCreated = hadSpaceAutoCreated(user);
         var spaceCreatedByTest = hasSpaceCreatedByTest(user);
@@ -70,7 +72,7 @@ angular.module('contentful')
         if (flag !== null) {
           setOnboardNecessityFlag(flag);
         }
-      });
+      }));
       // End test code: test-ps-09-2017-entry-sample-space-cli
 
       // Fetch user and set greeting
