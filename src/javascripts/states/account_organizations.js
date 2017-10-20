@@ -66,7 +66,7 @@ angular.module('contentful')
     url: '/new',
     controller: ['$stateParams', '$scope', function ($stateParams, $scope) {
       // Begin feature flag code - feature-bv-09-2017-invite-to-org
-      $scope.useNewOrgInvitation = false;
+      $scope.useNewOrgInvitation = true;
       // End feature flag code - feature-bv-09-2017-invite-to-org
 
       $scope.context = {};
