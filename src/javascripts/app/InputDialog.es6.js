@@ -1,6 +1,4 @@
 import {h} from 'ui/Framework';
-import { byName as colors } from 'Styles/Colors';
-
 import modalDialog from 'modalDialog';
 import keycodes from 'keycodes';
 
@@ -47,21 +45,6 @@ export default function open (params = {}) {
         render(value);
       }
 
-      const renderSaveOptions = ({name, text, subText, isChecked, onChange}) => (
-        h('li', [
-          h('input', {
-            type: 'radio',
-            name: name,
-            onChange,
-            checked: isChecked
-          }),
-          h('span', {style: {marginLeft: '5px'}}, [
-            h('label', text),
-            h('p', {style: {marginLeft: '22px', color: colors.textLight}}, subText)
-          ])
-        ])
-      );
-
       render(value);
 
       function render (value) {
@@ -80,25 +63,7 @@ export default function open (params = {}) {
             h('p.modal-dialog__richtext', [params.message]),
             h('input.cfnext-form__input--full-size', {
               type: 'text', value, onInput, onKeydown, maxlength
-            }),
-            params.showSaveAsSharedCheckbox && (
-              h('ul', {style: {marginTop: '20px'}}, [
-                renderSaveOptions({
-                  name: 'saveAsPrivate',
-                  text: ['Save under ', h('em', ['my']), ' views'],
-                  subText: ['Only you will see this view.'],
-                  onChange: onSaveAsSharedChange,
-                  isChecked: !shouldSaveCurrentViewAsShared
-                }),
-                renderSaveOptions({
-                  name: 'saveAsShared',
-                  text: ['Save under ', h('em', ['all']), ' views'],
-                  subText: ['You can select which roles should see this view in the next step.'],
-                  onChange: onSaveAsSharedChange,
-                  isChecked: shouldSaveCurrentViewAsShared
-                })
-              ])
-            )
+            })
           ]),
           h('.modal-dialog__controls', [
             h('button.btn-primary-action', {

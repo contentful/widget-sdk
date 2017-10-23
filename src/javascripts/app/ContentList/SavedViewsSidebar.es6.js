@@ -15,8 +15,6 @@ import SaveCurrentViewModal from './SaveViewDialog';
 import {byName as colors} from 'Styles/Colors';
 import {container} from 'ui/Layout';
 
-import openInputDialog from 'app/InputDialog';
-
 
 const Select = makeCtor('Select');
 
@@ -62,7 +60,7 @@ export default function ({
     return h('div', {
       style: {
         backgroundColor: colors.elementLightest,
-        height: '100vh',
+        height: '100vh'
       }
     }, [
       container({

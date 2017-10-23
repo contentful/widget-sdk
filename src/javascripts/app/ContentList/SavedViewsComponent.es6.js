@@ -70,7 +70,7 @@ export default function ({
         return cur.id !== folder.id;
       }));
     },
-    [SaveCurrentView] (state, title, roles) {
+    [SaveCurrentView] (state, {title, roles}) {
       const view = assign(getCurrentView(), {id: random.id(), title, roles});
       const folder = findDefaultFolder(state.folders);
       const updated = updateFolderViews(state.folders, folder, views => {
@@ -133,9 +133,9 @@ export default function ({
   function saveCurrentView (title) {
     if (scopedFolders.canEdit && roleAssignment) {
       openRoleSelector(roleAssignment.endpoint)
-        .then(roles => store.dispatch(SaveCurrentView, title, roles));
+        .then(roles => store.dispatch(SaveCurrentView, {title, roles}));
     } else {
-      store.dispatch(SaveCurrentView, title);
+      store.dispatch(SaveCurrentView, {title});
     }
   }
 
