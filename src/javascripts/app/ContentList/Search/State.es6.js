@@ -6,7 +6,7 @@ import { otherwise } from 'libs/sum-types';
 
 import { 
   getMatchingFilters, 
-  buildFilterFieldByQueryKey, 
+  isFieldFilterApplicableToContentType,
   getContentTypeById } from './Filters';
 
 const defaultFocus = {
@@ -145,8 +145,8 @@ export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
       return state;
     },
     [RemoveFilter] (state, indexToRemove) {
-      state = update(state, ['filters'], (oldFilters) => {
-        return oldFilters.filter((_, index) => {
+      state = update(state, ['filters'], (filters) => {
+        return filters.filter((_, index) => {
           return index !== indexToRemove;
         });
       });
@@ -245,7 +245,7 @@ export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
 
   function setContentType (state, contentTypeId) {
     state = set(state, ['contentTypeId'], contentTypeId);
-    state = filterSearchFiltersByContentType(state);
+    state = removeUnapplicableFilters(state);
 
     return state;
   }
@@ -264,17 +264,13 @@ export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
     return state;
   }
 
-  function filterSearchFiltersByContentType (state) {
+  function removeUnapplicableFilters (state) {
     const { contentTypeId } = state;
 
     const contentType = getContentTypeById(contentTypes, contentTypeId);
-    state = update(state, ['filters'], (oldFilters) => {
-
-      return oldFilters.filter(([queryKey]) => {
-        const field = buildFilterFieldByQueryKey(contentType, queryKey);
-        return field.contentType
-          ? field.contentType.id === contentTypeId
-          : true;
+    state = update(state, ['filters'], (filters) => {
+      return filters.filter(([queryKey]) => {
+        return isFieldFilterApplicableToContentType(contentType, queryKey);
       });
     });
 

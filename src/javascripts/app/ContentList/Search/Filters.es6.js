@@ -166,16 +166,32 @@ export function getFiltersFromQueryKey (contentTypes, searchFilters, contentType
  * @param {API.ContentType?} contentType
  * @param {string} queryKey
  *
- * @returns
+ * @returns {FieldFilter}
  */
 export function buildFilterFieldByQueryKey (contentType, queryKey) {
-  const [prefix, apiName] = queryKey.split('.');
-
-  if (prefix === CT_QUERY_KEY_PREFIX) {
-    const field = find(contentType.fields, f => f.apiName === apiName);
+  if (isContentTypeField(queryKey)) {
+    const field = getFieldByApiName(contentType, getApiName(queryKey));
     return buildFilterField(contentType, field);
   } else {
     return find(sysFieldFilters, filter => filter.queryKey === queryKey);
+  }
+}
+
+/**
+ * Checks if provided queryKey is applicable to the ContentType.
+ * 
+ * @param {API.ContentType} contentType 
+ * @param {string} queryKey 
+ * 
+ * @returns {boolean}
+ */
+export function isFieldFilterApplicableToContentType(contentType, queryKey) {
+  if (isContentTypeField(queryKey)) { 
+    const field = getFieldByApiName(contentType, getApiName(queryKey));
+
+    return field !== undefined;
+  } else {
+    return true;
   }
 }
 
@@ -212,9 +228,7 @@ function filterByContentType (filters, contentTypeId) {
   if (contentTypeId) {
     // Remove all filters that do not apply to the given Content Type
     return filters.filter((field) => {
-      if (field.queryKey === 'content_type') {
-        return false;
-      } else if (field.contentType) {
+      if (field.contentType) {
         return field.contentType.id === contentTypeId;
       } else {
         return true;
@@ -223,6 +237,21 @@ function filterByContentType (filters, contentTypeId) {
   } else {
     return filters;
   }
+}
+
+function isContentTypeField (queryKey) {
+  const [prefix, apiName] = queryKey.split('.');
+
+  return prefix === CT_QUERY_KEY_PREFIX;
+}
+
+function getApiName (queryKey) {
+  const [, apiName] = queryKey.split('.');
+  return apiName;
+}
+
+function getFieldByApiName (contentType, apiName) {
+  return find(contentType.fields, field => field.apiName === apiName);
 }
 
 /**
