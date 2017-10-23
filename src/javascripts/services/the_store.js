@@ -12,10 +12,11 @@
  * logic. These are NOT intended to be used on their own.
  */
 angular.module('contentful')
-.factory('TheStore', ['$injector', function ($injector) {
+.factory('TheStore', ['require', function (require) {
 
-  var localStorageStore = $injector.get('TheStore/localStorageStore');
-  var cookieStore = $injector.get('TheStore/cookieStore');
+  var localStorageStore = require('TheStore/localStorageStore');
+  var cookieStore = require('TheStore/cookieStore');
+  var K = require('utils/kefir');
 
   var storage = localStorageStore.isSupported() ? localStorageStore : cookieStore;
 
@@ -24,7 +25,8 @@ angular.module('contentful')
     get: get,
     remove: remove,
     has: has,
-    forKey: forKey
+    forKey: forKey,
+    getProperty: getProperty
   };
 
   /**
@@ -101,14 +103,27 @@ angular.module('contentful')
       get: _.partial(get, key),
       set: _.partial(set, key),
       remove: _.partial(remove, key),
-      has: _.partial(has, key)
+      has: _.partial(has, key),
+      getProperty: _.partial(getProperty, key)
     };
+  }
+
+  function getProperty (key) {
+    var valueBus = K.createPropertyBus(get(key));
+
+    window.addEventListener('storage', function (e) {
+      if (e.key === key) {
+        valueBus.set(e.newValue);
+      }
+    });
+
+    return valueBus.property;
   }
 }])
 
-.factory('TheStore/localStorageStore', ['$injector', function ($injector) {
+.factory('TheStore/localStorageStore', ['require', function (require) {
 
-  var storage = $injector.get('TheStore/localStorageWrapper');
+  var storage = require('TheStore/localStorageWrapper');
 
   return {
     set: set,
@@ -155,10 +170,10 @@ angular.module('contentful')
   return wrapper;
 })
 
-.factory('TheStore/cookieStore', ['$injector', function ($injector) {
+.factory('TheStore/cookieStore', ['require', function (require) {
 
-  var Cookies = $injector.get('Cookies');
-  var config = $injector.get('environment');
+  var Cookies = require('Cookies');
+  var config = require('environment');
 
   return {
     set: set,
