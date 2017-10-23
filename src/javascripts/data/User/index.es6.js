@@ -17,11 +17,12 @@ import {
  * @description
  * A stream combining user, current org, current space and spaces grouped by org id
  */
-export const userDataStream$ = combine(
+export const userDataBus$ = combine(
   [user$, getCurrentOrgAndSpaceStream(), spacesByOrganization$],
   (user, [org, space], spacesByOrg) => [user, org, spacesByOrg, space])
   .filter(([user, org, spacesByOrg]) => user && user.email && org && spacesByOrg) // space is a Maybe
-  .skipDuplicates(isEqual);
+  .skipDuplicates(isEqual)
+  .toProperty();
 
 /**
  * @description

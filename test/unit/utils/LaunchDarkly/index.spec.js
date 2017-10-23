@@ -47,7 +47,7 @@ describe('LaunchDarkly', function () {
     };
 
     this.utils = {
-      userDataStream$: K.createMockProperty([
+      userDataBus$: K.createMockProperty([
         this.user,
         this.org,
         {}
@@ -73,7 +73,7 @@ describe('LaunchDarkly', function () {
     this.onFeatureFlag = ld.onFeatureFlag;
     this.onABTestOnce = ld.onABTestOnce;
     this.setUserDataStream = function (user = this.user, org = this.org, spacesByOrg = {}, space) {
-      this.utils.userDataStream$.set([user, org, spacesByOrg, space]);
+      this.utils.userDataBus$.set([user, org, spacesByOrg, space]);
       this.$apply();
     };
 
