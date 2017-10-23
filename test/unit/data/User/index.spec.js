@@ -18,6 +18,10 @@ describe('data/User', () => {
       }
     };
 
+    this.$stateParams = {
+      orgId: 1
+    };
+
     this.orgs = [{
       role: 'owner',
       organization: {sys: {id: 'org-owner'}}
@@ -29,6 +33,7 @@ describe('data/User', () => {
     module('contentful/test', $provide => {
       $provide.value('services/TokenStore', this.tokenStore);
       $provide.value('spaceContext', this.spaceContext);
+      $provide.value('$stateParams', this.$stateParams);
     });
 
     this.moment = this.$inject('moment');
@@ -56,6 +61,7 @@ describe('data/User', () => {
         this.tokenStore.spacesByOrganization$.set(spacesByOrg);
         this.spaceContext.organizationContext.organization = org;
         this.spaceContext.space.data = space;
+        this.$stateParams.orgId = orgId;
         this.$rootScope.$broadcast('$stateChangeSuccess', null, {orgId});
         this.$apply();
       };
@@ -69,6 +75,7 @@ describe('data/User', () => {
 
       this.set({user, orgs, spacesByOrg: {}, org: null, orgId: 1});
       sinon.assert.calledOnce(this.spy);
+
       sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data]);
 
       this.spy.reset();
