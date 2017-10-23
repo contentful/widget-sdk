@@ -14,6 +14,7 @@
 angular.module('contentful')
 .factory('TheStore', ['require', function (require) {
 
+  var $window = require('$window');
   var localStorageStore = require('TheStore/localStorageStore');
   var cookieStore = require('TheStore/cookieStore');
   var K = require('utils/kefir');
@@ -26,7 +27,7 @@ angular.module('contentful')
     remove: remove,
     has: has,
     forKey: forKey,
-    getProperty: getProperty
+    getPropertyBus: getPropertyBus
   };
 
   /**
@@ -104,20 +105,47 @@ angular.module('contentful')
       set: _.partial(set, key),
       remove: _.partial(remove, key),
       has: _.partial(has, key),
-      getProperty: _.partial(getProperty, key)
+      getPropertyBus: _.partial(getPropertyBus, key)
     };
   }
 
-  function getProperty (key) {
+  /**
+   * @ngdoc method
+   * @name TheStore#getPropertyBus
+   * @param {string} key
+   * @returns { { property: {Observable}, end: {function} } }
+   * @description
+   * Returns a property bus that tracks current value in storage. Property
+   * updates when stored value has been changed within the context of another
+   * document.
+   * Exposes an observable stream as `property` and a method to detach listener
+   * and end the stream as `end()`
+   * ~~~js
+   * var mystore = theStore.forKey('mykey')
+   * var myValueBus = mystore.getPropertyBus();
+   * myValueBus.property.onValue((value) => console.log(`Value changed: ${value}`))
+   * // in another tab on same domain url:
+   * theStore.forKey('mykey').set('hello')
+   * // the first tab logs:
+   * 'Value changed: hello'
+   * ~~~
+   */
+  function getPropertyBus (key) {
     var valueBus = K.createPropertyBus(get(key));
 
-    window.addEventListener('storage', function (e) {
+    $window.addEventListener('storage', emitValue);
+
+    function emitValue (e) {
       if (e.key === key) {
         valueBus.set(e.newValue);
       }
+    }
+
+    valueBus.property.onEnd(function () {
+      $window.removeEventListener('storage', emitValue);
     });
 
-    return valueBus.property;
+    return { property: valueBus.property, end: valueBus.end };
   }
 }])
 

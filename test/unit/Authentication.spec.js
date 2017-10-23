@@ -3,7 +3,7 @@ import * as K from 'helpers/mocks/kefir';
 describe('Authentication', function () {
   beforeEach(function () {
     this.$http = sinon.stub();
-    this.window = {location: ''};
+    this.window = {location: '', addEventListener: sinon.stub()};
 
     module('contentful/test', ($provide) => {
       $provide.value('$http', this.$http);
@@ -93,6 +93,14 @@ describe('Authentication', function () {
       this.store.remove();
       this.$http.resolves({data: {access_token: 'NEW TOKEN'}});
       this.Auth.init();
+      expect(yield this.Auth.getToken()).toBe('NEW TOKEN');
+      expect(K.getValue(this.Auth.token$)).toBe('NEW TOKEN');
+    });
+
+    it('updates token if changed in another tab', function* () {
+      this.store.set('STORED_TOKEN');
+      this.Auth.init();
+      this.window.addEventListener.withArgs('storage').yield({key: 'token', newValue: 'NEW TOKEN'});
       expect(yield this.Auth.getToken()).toBe('NEW TOKEN');
       expect(K.getValue(this.Auth.token$)).toBe('NEW TOKEN');
     });

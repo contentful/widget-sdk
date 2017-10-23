@@ -1,48 +1,54 @@
-'use strict';
+import * as K from 'utils/kefir';
 
-describe('The Store service', function() {
+describe('The Store service', function () {
+  beforeEach(function () {
+    const addEventListener = sinon.stub();
+    const removeEventListener = sinon.stub();
 
-  beforeEach(function() {
     module('contentful/test');
-    module(function($provide) {
+    module(function ($provide) {
       $provide.constant('Cookies', { set: _.noop, get: _.noop, remove: _.noop });
+      $provide.value('$window', { addEventListener, removeEventListener });
     });
+
+    this.addEventListener = addEventListener;
+    this.removeEventListener = removeEventListener;
   });
 
   function testApi(api, store, storage) {
-    Object.keys(api).forEach(function(method) {
-      var methodStub = sinon.stub(storage, api[method]);
+    Object.keys(api).forEach(function (method) {
+      const methodStub = sinon.stub(storage, api[method]);
       expect(typeof store[method]).toEqual('function');
       store[method]();
       sinon.assert.calledOnce(methodStub);
     });
   }
 
-  describe('localStorageWrapper', function() {
-    it('exposes simplified localStorage API', function() {
+  describe('localStorageWrapper', function () {
+    it('exposes simplified localStorage API', function () {
       // The service is mocked by default. We need to fetch the
       // original implementation.
-      var wrapper = this.$inject('TheStore/localStorageWrapper')._noMock;
-      ['setItem', 'getItem', 'removeItem'].forEach(function(method) {
+      const wrapper = this.$inject('TheStore/localStorageWrapper')._noMock;
+      ['setItem', 'getItem', 'removeItem'].forEach(function (method) {
         expect(typeof wrapper[method]).toEqual('function');
       });
     });
   });
 
-  describe('localStorageStore', function() {
-    var localStorageStore, storage;
+  describe('localStorageStore', function () {
+    let localStorageStore, storage;
     beforeEach(function () {
       localStorageStore = this.$inject('TheStore/localStorageStore');
       storage = this.$inject('TheStore/localStorageWrapper');
     });
 
-    it('exposes API proxying to storage', function() {
-      var api = { set: 'setItem', get: 'getItem', remove: 'removeItem'};
+    it('exposes API proxying to storage', function () {
+      const api = { set: 'setItem', get: 'getItem', remove: 'removeItem'};
       testApi(api, localStorageStore, storage);
     });
 
     describe('#isSupported', function () {
-      var setStub;
+      let setStub;
       beforeEach(function () {
         setStub = sinon.stub(storage, 'setItem');
       });
@@ -60,7 +66,7 @@ describe('The Store service', function() {
       });
 
       it('removes test key after successful test', function () {
-        var removeStub = sinon.stub(storage, 'removeItem');
+        const removeStub = sinon.stub(storage, 'removeItem');
         setStub.returns(undefined);
         localStorageStore.isSupported();
         sinon.assert.calledOnce(setStub.withArgs('test', {test: true}));
@@ -70,7 +76,7 @@ describe('The Store service', function() {
   });
 
   describe('cookieStore', function () {
-    var cookieStore, storage, config;
+    let cookieStore, storage, config;
     beforeEach(function () {
       cookieStore = this.$inject('TheStore/cookieStore');
       storage = this.$inject('Cookies');
@@ -78,12 +84,12 @@ describe('The Store service', function() {
     });
 
     it('exposes API proxying to storage', function () {
-      var api = {set: 'set', get: 'get', remove: 'remove'};
+      const api = {set: 'set', get: 'get', remove: 'remove'};
       testApi(api, cookieStore, storage);
     });
 
     describe('#set', function () {
-      var setStub;
+      let setStub;
       beforeEach(function () {
         setStub = sinon.stub(storage, 'set');
       });
@@ -103,7 +109,7 @@ describe('The Store service', function() {
         testSecureCookie('production', true);
       });
 
-      it('expires in distant future', function() {
+      it('expires in distant future', function () {
         cookieStore.set('test', 'test');
         sinon.assert.calledOnce(setStub.withArgs('test', 'test'));
         expect(setStub.firstCall.args[2].expires).toEqual(365);
@@ -111,7 +117,7 @@ describe('The Store service', function() {
     });
 
     describe('#remove', function () {
-      var removeStub;
+      let removeStub;
       beforeEach(function () {
         removeStub = sinon.stub(storage, 'remove');
       });
@@ -134,8 +140,8 @@ describe('The Store service', function() {
   });
 
   describe('TheStore', function () {
-    var TheStore, localStorageStore;
-    var primitives = { '1': 1, '1.1': 1.1, 'true': true, 'null': null };
+    let TheStore, localStorageStore;
+    const primitives = { '1': 1, '1.1': 1.1, 'true': true, 'null': null };
 
     beforeEach(function () {
       localStorageStore = this.$inject('TheStore/localStorageStore');
@@ -144,7 +150,7 @@ describe('The Store service', function() {
     });
 
     describe('#set', function () {
-      var setStub;
+      let setStub;
       beforeEach(function () {
         setStub = sinon.stub(localStorageStore, 'set');
       });
@@ -168,7 +174,7 @@ describe('The Store service', function() {
     });
 
     describe('#get', function () {
-      var getStub;
+      let getStub;
       beforeEach(function () {
         getStub = sinon.stub(localStorageStore, 'get');
       });
@@ -198,7 +204,7 @@ describe('The Store service', function() {
 
     describe('#remove', function () {
       it('proxies to underlying remove function', function () {
-        var stub = sinon.stub(localStorageStore, 'remove');
+        const stub = sinon.stub(localStorageStore, 'remove');
         TheStore.remove('test');
         sinon.assert.calledOnce(stub.withArgs('test'));
       });
@@ -206,13 +212,32 @@ describe('The Store service', function() {
 
     describe('#has', function () {
       it('returns bool depending on #get result', function () {
-        var stub = sinon.stub(localStorageStore, 'get');
+        const stub = sinon.stub(localStorageStore, 'get');
         stub.returns('test-string');
         expect(TheStore.has('test')).toEqual(true);
         sinon.assert.called(stub.withArgs('test'));
         stub.returns(null);
         expect(TheStore.has('non-existent')).toEqual(false);
         sinon.assert.called(stub.withArgs('non-existent'));
+      });
+    });
+
+    describe('#getProperty', function () {
+      it('sends value on `storage` window event', function () {
+        const propBus = TheStore.getPropertyBus('mykey');
+        this.addEventListener.withArgs('storage').yield({key: 'mykey', newValue: 'newvalue'});
+        expect(K.getValue(propBus.property)).toEqual('newvalue');
+      });
+
+
+      it('unsubscribes and ends the stream on `end`', function () {
+        const propBus = TheStore.getPropertyBus('mykey');
+        const listener = sinon.stub();
+        propBus.end();
+        propBus.property.onValue(listener)
+        this.addEventListener.withArgs('storage').yield({key: 'mykey', newValue: 'newvalue'});
+        sinon.assert.notCalled(listener.withArgs('newvalue'));
+        sinon.assert.calledOnce(this.removeEventListener);
       });
     });
   });

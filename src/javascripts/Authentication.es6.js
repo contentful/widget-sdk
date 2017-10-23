@@ -76,7 +76,9 @@ export function init () {
   updateToken(storedToken);
 
   // React to changes made in another tab
-  tokenStore.getProperty().onValue((token) => {
+  const storedTokenBus = tokenStore.getPropertyBus();
+
+  storedTokenBus.property.onValue((token) => {
     tokenMVar.empty();
     updateToken(token);
   });
