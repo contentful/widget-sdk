@@ -224,30 +224,27 @@ export default function ($scope) {
   }
 }
 
-function render (
-  {organization, emails, emailsInputValue, orgRole, invalidAddresses, spaces, spaceMemberships, status, failedOrgInvitations, successfulOrgInvitations, suppressInvitation},
-  {updateEmails, updateOrgRole, updateSpaceRole, submitInvitations, restart, goToList, toggleInvitationEmailOption}
-) {
+function render (state, actions) {
   return h('.workbench', [
     header(),
     h('form.workbench-main', {
-      onSubmit: submitInvitations
+      onSubmit: actions.submitInvitations
     }, [
       h('.workbench-main__content', {
         style: { padding: '2rem 3.15rem' }
       }, [
-        match(status, {
-          [Success]: () => successMessage(emails, restart, goToList),
-          [Failure]: () => errorMessage(failedOrgInvitations, restart),
-          [InProgress]: () => progressMessage(emails, successfulOrgInvitations),
+        match(state.status, {
+          [Success]: () => successMessage(state.emails, actions.restart, actions.goToList),
+          [Failure]: () => errorMessage(state.failedOrgInvitations, actions.restart),
+          [InProgress]: () => progressMessage(state.emails, state.successfulOrgInvitations),
           [Idle]: () => h('', [
-            emailsInput(emails, emailsInputValue, invalidAddresses, updateEmails),
-            organizationRole(orgRole, updateOrgRole),
-            accessToSpaces(spaces, spaceMemberships, updateSpaceRole)
+            emailsInput(state.emails, state.emailsInputValue, state.invalidAddresses, state.organization, actions.updateEmails),
+            organizationRole(state.orgRole, actions.updateOrgRole),
+            accessToSpaces(state.spaces, state.spaceMemberships, actions.updateSpaceRole)
           ])
         })
       ]),
-      sidebar(status, organization, suppressInvitation, toggleInvitationEmailOption)
+      sidebar(state.status, state.emails, state.organization, state.suppressInvitation, actions.toggleInvitationEmailOption)
     ])
   ]);
 }
@@ -260,7 +257,7 @@ function header () {
   ]);
 }
 
-function sidebar (status, org, suppressInvitation, toggleInvitationEmailOption) {
+function sidebar (status, emails, org, suppressInvitation, toggleInvitationEmailOption) {
   const isDisabled = match(status, {
     [Idle]: () => false,
     _: () => true
@@ -272,7 +269,10 @@ function sidebar (status, org, suppressInvitation, toggleInvitationEmailOption) 
       h('button.cfnext-btn-primary-action.x--block', {
         type: 'submit',
         disabled: isDisabled
-      }, ['Send invitation']),
+      }, [
+        'Send invitation',
+        emails.length > 1 ? ` to ${emails.length} users` : ''
+      ]),
       org.hasSsoEnabled ? h('.cfnext-form-option.u-separator--small', [
         h('label', [
           h('input', {
@@ -291,7 +291,9 @@ function sidebar (status, org, suppressInvitation, toggleInvitationEmailOption) 
   ]);
 }
 
-function emailsInput (emails, emailsInputValue, invalidAddresses, updateEmails) {
+function emailsInput (emails, emailsInputValue, invalidAddresses, organization, updateEmails) {
+  const remainingInvitations = organization.membershipLimit - organization.membershipsCount;
+
   return h('div', [
     h('h3.section-title', ['Select users']),
     h('p', ['Add multiple users by filling in a comma-separated list of email addresses. You can add a maximum of 100 users at a time.']),
@@ -304,6 +306,11 @@ function emailsInput (emails, emailsInputValue, invalidAddresses, updateEmails) 
         value: emailsInputValue,
         onChange: updateEmails
       }),
+      emails.length > remainingInvitations ? h('.cfnext-form__field-error', [`
+        You are trying to add ${emails.length} users but you only have ${remainingInvitations} 
+        more available under your plan. Please remove ${emails.length - remainingInvitations} users to proceed. 
+        You can upgrade your plan if you need to add more users.
+      `]) : '',
       emails.length > maxNumberOfEmails ? h('.cfnext-form__field-error', ['Please fill in no more than 100 email addresses.']) : '',
       invalidAddresses.length ? h('.cfnext-form__field-error', [
         h('p', ['The following email addresses are not valid:']),
