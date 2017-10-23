@@ -12,9 +12,20 @@ export function searchPerformed (view, resultCount = 0) {
   ));
 }
 
-export function viewCreated (view, folder) {
+export function forScopedViews (viewType) {
+  return {
+    viewCreated: (view, folder) => viewCreated(viewType, view, folder),
+    viewDeleted: view => viewDeleted(viewType, view),
+    viewLoaded: view => viewLoaded(viewType, view),
+    viewTitleEdited: view => viewEdited(viewType, view, 'title'),
+    viewRolesEdited: view => viewEdited(viewType, view, 'roles')
+  };
+}
+
+function viewCreated (viewType, view, folder) {
   if (isStoredView(view)) {
     track('view_created', extend(query(view), {
+      view_type: viewType,
       view_id: view.id,
       folder_id: folder && folder.id,
       folder_title: folder && folder.title
@@ -22,33 +33,29 @@ export function viewCreated (view, folder) {
   }
 }
 
-export function viewTitleEdited (view) {
-  viewEdited(view, 'title');
-}
-
-export function viewRolesEdited (view) {
-  viewEdited(view, 'roles');
-}
-
-export function viewDeleted (view) {
+function viewDeleted (viewType, view) {
   if (isStoredView(view)) {
-    track('view_deleted', {view_id: view.id});
+    track('view_deleted', {
+      view_type: viewType,
+      view_id: view.id
+    });
   }
 }
 
-export function viewLoaded (view) {
+function viewLoaded (viewType, view) {
   if (isStoredView(view)) {
     track('view_loaded', extend(
-      {view_id: view.id},
+      {view_type: viewType, view_id: view.id},
       details(view),
       query(view)
     ));
   }
 }
 
-function viewEdited (view, changedProperty = null) {
+function viewEdited (viewType, view, changedProperty = null) {
   if (isStoredView(view)) {
     track('view_edited', extend(details(view), {
+      view_type: viewType,
       view_id: view.id,
       change_property: changedProperty
     }));

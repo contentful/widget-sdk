@@ -5,13 +5,12 @@ import {htmlEncode} from 'encoder';
 
 import openRoleSelector from './RoleSelector';
 import openInputDialog from 'app/InputDialog';
-import * as Tracking from 'analytics/events/SearchAndViews';
 
 import accessChecker from 'accessChecker';
 import modalDialog from 'modalDialog';
 
 export default function render (folder, state, actions) {
-  const {canEdit, roleAssignment} = state;
+  const {canEdit, roleAssignment, tracking} = state;
   const {UpdateFolder, DeleteFolder, UpdateView, DeleteView} = actions;
   const views = filter(folder.views, view => isViewVisible(view, roleAssignment));
 
@@ -56,13 +55,13 @@ export default function render (folder, state, actions) {
         ]),
         canEdit && h('.view-folder__actions', [
           roleAssignment && h('i.fa.fa-eye', {
-            onClick: doNotPropagate(() => editViewRoles(view, roleAssignment.endpoint, UpdateView))
+            onClick: doNotPropagate(() => editViewRoles(view, roleAssignment.endpoint, tracking, UpdateView))
           }),
           h('i.fa.fa-pencil', {
-            onClick: doNotPropagate(() => editViewTitle(view, UpdateView))
+            onClick: doNotPropagate(() => editViewTitle(view, tracking, UpdateView))
           }),
           h('i.fa.fa-close', {
-            onClick: doNotPropagate(() => deleteView(view, DeleteView))
+            onClick: doNotPropagate(() => deleteView(view, tracking, DeleteView))
           })
         ])
       ]);
@@ -91,34 +90,34 @@ function deleteFolder (folder, DeleteFolder) {
   }).promise.then(() => DeleteFolder(folder));
 }
 
-function editViewRoles (view, endpoint, UpdateView) {
+function editViewRoles (view, endpoint, tracking, UpdateView) {
   openRoleSelector(endpoint, view.roles)
     .then(roles => {
       view = assign(view, {roles});
-      Tracking.viewRolesEdited(view);
+      tracking.viewRolesEdited(view);
       UpdateView(view);
     });
 }
 
-function editViewTitle (view, UpdateView) {
+function editViewTitle (view, tracking, UpdateView) {
   openInputDialog({
     title: 'Rename view',
     message: 'Please provide a new name for your view:',
     input: {value: view.title, min: 1, max: 32}
   }).promise.then(title => {
     view = assign(view, {title});
-    Tracking.viewTitleEdited(view);
+    tracking.viewTitleEdited(view);
     UpdateView(view);
   });
 }
 
-function deleteView (view, DeleteView) {
+function deleteView (view, tracking, DeleteView) {
   modalDialog.openConfirmDeleteDialog({
     title: 'Delete view',
     message: `Do you really want to delete the view
       <span class="modal-dialog__highlight">${htmlEncode(view.title)}</span>?`
   }).promise.then(() => {
-    Tracking.viewDeleted(view);
+    tracking.viewDeleted(view);
     DeleteView(view);
   });
 }

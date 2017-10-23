@@ -1,7 +1,7 @@
 import {h} from 'ui/Framework';
 import {makeCtor} from 'utils/TaggedValues';
 import {assign} from 'utils/Collections';
-import * as Tracking from 'analytics/events/SearchAndViews';
+import {forScopedViews as trackingForScopedViews} from 'analytics/events/SearchAndViews';
 
 import {
   createStore,
@@ -29,17 +29,22 @@ export default function ({
   getCurrentView,
   roleAssignment
 }) {
+  const sharedViewsTracking = trackingForScopedViews(VIEWS_SHARED);
+  const privateViewsTracking = trackingForScopedViews(VIEWS_PRIVATE);
+
   const sharedViews = initSavedViewsComponent({
     scopedFolders: entityFolders.shared,
     loadView,
     getCurrentView,
-    roleAssignment
+    roleAssignment,
+    tracking: sharedViewsTracking
   });
 
   const privateViews = initSavedViewsComponent({
     scopedFolders: entityFolders.private,
     loadView,
-    getCurrentView
+    getCurrentView,
+    tracking: privateViewsTracking
   });
 
   const reduce = makeReducer({[Select]: (_, next) => next});
@@ -110,7 +115,7 @@ export default function ({
         .then(roles => {
           const updatedSharedView = assign(getCurrentView(), {roles});
 
-          Tracking.viewRolesEdited(updatedSharedView);
+          sharedViewsTracking.viewRolesEdited(updatedSharedView);
           sharedViews.api.updateView(updatedSharedView);
         });
     } else {

@@ -6,7 +6,6 @@ import {createStore, makeReducer} from 'ui/Framework/Store';
 import ViewMenu from './ViewMenu';
 import createDnD from './SavedViewsDnD';
 import {makeBlankFolder} from 'data/UiConfig/Blanks';
-import * as Tracking from 'analytics/events/SearchAndViews';
 
 import TheStore from 'TheStore';
 import notification from 'notification';
@@ -30,12 +29,13 @@ export default function ({
   scopedFolders,
   loadView,
   getCurrentView,
-  roleAssignment
+  roleAssignment,
+  tracking
 }) {
   const reduce = makeReducer({
     [LoadView] (state, view) {
       loadView(view);
-      Tracking.viewLoaded(view);
+      tracking.viewLoaded(view);
       return assign(state, {currentView: view});
     },
     [ToggleOpened] (state, folder) {
@@ -76,7 +76,7 @@ export default function ({
       });
 
       loadView(view);
-      Tracking.viewCreated(view, folder);
+      tracking.viewCreated(view, folder);
 
       return assign(state, {
         folders: saveUiConfig(updated),
@@ -104,7 +104,8 @@ export default function ({
     folderStates: folderStatesStore.get() || {},
     dnd: createDnD(scopedFolders.get, folders => store.dispatch(AlterFolders, folders)),
     roleAssignment,
-    saveCurrentView
+    saveCurrentView,
+    tracking
   }, reduce);
 
   function saveFolders (state, updatedFolders) {
