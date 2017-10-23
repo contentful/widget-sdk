@@ -15,7 +15,7 @@ import SaveCurrentViewModal from './SaveViewDialog';
 import {byName as colors} from 'Styles/Colors';
 import {container} from 'ui/Layout';
 
-import openRoleSelector from './RoleSelector';
+import openInputDialog from 'app/InputDialog';
 
 
 const Select = makeCtor('Select');
@@ -104,23 +104,11 @@ export default function ({
   }
 
   function openSaveCurrentViewModal () {
-    return SaveCurrentViewModal({showSaveAsSharedCheckbox: entityFolders.shared.canEdit}).promise.then(saveCurrentView);
-  }
-
-  function saveCurrentView ({shouldSaveCurrentViewAsShared, viewTitle}) {
-    if (shouldSaveCurrentViewAsShared) {
-      sharedViews.api.saveCurrentView(viewTitle);
-
-      openRoleSelector(roleAssignment.endpoint, views.roles)
-        .then(roles => {
-          const updatedSharedView = assign(getCurrentView(), {roles});
-
-          sharedViewsTracking.viewRolesEdited(updatedSharedView);
-          sharedViews.api.updateView(updatedSharedView);
-        });
-    } else {
-      privateViews.api.saveCurrentView(viewTitle);
-    }
-
+    return SaveCurrentViewModal({
+      showSaveAsSharedCheckbox: entityFolders.shared.canEdit
+    }).promise.then(({viewTitle, shouldSaveCurrentViewAsShared}) => {
+      const api = shouldSaveCurrentViewAsShared ? sharedViews.api : privateViews.api;
+      api.saveCurrentView(viewTitle);
+    });
   }
 }

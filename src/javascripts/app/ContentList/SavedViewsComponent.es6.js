@@ -7,6 +7,8 @@ import ViewMenu from './ViewMenu';
 import createDnD from './SavedViewsDnD';
 import {makeBlankFolder} from 'data/UiConfig/Blanks';
 
+import openRoleSelector from './RoleSelector';
+
 import TheStore from 'TheStore';
 import notification from 'notification';
 import random from 'random';
@@ -68,8 +70,8 @@ export default function ({
         return cur.id !== folder.id;
       }));
     },
-    [SaveCurrentView] (state, title) {
-      const view = assign(getCurrentView(), {id: random.id(), title});
+    [SaveCurrentView] (state, title, roles) {
+      const view = assign(getCurrentView(), {id: random.id(), title, roles});
       const folder = findDefaultFolder(state.folders);
       const updated = updateFolderViews(state.folders, folder, views => {
         return concat(views, [view]);
@@ -104,7 +106,6 @@ export default function ({
     folderStates: folderStatesStore.get() || {},
     dnd: createDnD(scopedFolders.get, folders => store.dispatch(AlterFolders, folders)),
     roleAssignment,
-    saveCurrentView,
     tracking
   }, reduce);
 
@@ -129,13 +130,15 @@ export default function ({
     return scopedFolders.get();
   }
 
-  function saveCurrentView (viewTitle) {
-    store.dispatch(SaveCurrentView, viewTitle);
+  function saveCurrentView (title) {
+    if (scopedFolders.canEdit && roleAssignment) {
+      openRoleSelector(roleAssignment.endpoint)
+        .then(roles => store.dispatch(SaveCurrentView, title, roles));
+    } else {
+      store.dispatch(SaveCurrentView, title);
+    }
   }
 
-  function updateView (view) {
-    store.dispatch(UpdateView, view);
-  }
   const actions = {
     LoadView,
     ToggleOpened,
@@ -151,12 +154,11 @@ export default function ({
   };
 
   return {
-    api: {saveCurrentView, updateView},
+    api: {saveCurrentView},
     render: ViewMenu,
     store,
     actions
   };
-
 }
 
 function prepareFolders (folders) {
