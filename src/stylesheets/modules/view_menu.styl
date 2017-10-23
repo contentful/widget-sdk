@@ -11,6 +11,7 @@
   padding-bottom: 20px
   padding-left: 1.5em
   background-color: $colors.element-lightest
+  border-right: 1px solid $colors.element-darkest;
 
   button
     display: block
@@ -77,7 +78,6 @@
   cursor: -webkit-grab
 
 .view-folder__list
-  padding: 0 calc(1.5rem - 8px)
   margin-bottom: 10px
 
   // we need some minimal height so the list can accept dragged items
@@ -89,11 +89,12 @@
 .view-folder__item
   display: flex
   justify-content: space-between
-  padding: 6px 10px
+  padding: 8px 1.5rem
   margin: 0
   border: 1px solid transparent
   cursor: pointer
-
+  &:hover
+    background-color: $colors.element-mid
   .view-folder__item-title
     color: $colors.text-dark
     width: 60%
@@ -101,8 +102,6 @@
     overflow: hidden
     text-overflow: ellipsis
 
-  &:hover .view-folder__item-title
-    text-decoration: underline
 
   &.-active
     border-radius: 3px
@@ -113,3 +112,10 @@
   .view-folder__actions
     width: 40%
     text-align: right
+
+.view-folder__seperator-wrapper
+  padding-right: 20px;
+
+.view-folder__seperator
+  margin-bottom: 25px;
+  border-bottom: 1px solid $colors.element-dark;

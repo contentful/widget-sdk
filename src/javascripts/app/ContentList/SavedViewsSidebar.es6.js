@@ -10,7 +10,7 @@ import {
 } from 'ui/Framework/Store';
 
 import initSavedViewsComponent from './SavedViewsComponent';
-import SaveCurrentViewModal from './SaveViewDialog';
+import SaveCurrentViewDialog from './SaveViewDialog';
 
 import {byName as colors} from 'Styles/Colors';
 import {container} from 'ui/Layout';
@@ -52,7 +52,7 @@ export default function ({
   };
 
   return assign(
-    {api: {openSaveCurrentViewModal}},
+    {api: {saveCurrentView}},
     combineStoreComponents(render, {selector, sharedViews, privateViews})
   );
 
@@ -60,7 +60,9 @@ export default function ({
     return h('div', {
       style: {
         backgroundColor: colors.elementLightest,
-        height: '100vh'
+        height: '100vh',
+        borderRight: `1px solid ${colors.elementDarkest}`,
+        boxShadow: '1px 0 2px 0 rgba(0,0,0,0.09)'
       }
     }, [
       container({
@@ -90,7 +92,7 @@ export default function ({
 
   function button ({state, actions}, value, label) {
     return h('li', {
-      ariaSelected: String(state === value),
+      ariaSelected: `${state === value}`,
       role: 'tab',
       style: {
         fontSize: '14px',
@@ -101,12 +103,15 @@ export default function ({
     }, [label]);
   }
 
-  function openSaveCurrentViewModal () {
-    return SaveCurrentViewModal({
-      showSaveAsSharedCheckbox: entityFolders.shared.canEdit
-    }).promise.then(({viewTitle, shouldSaveCurrentViewAsShared}) => {
-      const api = shouldSaveCurrentViewAsShared ? sharedViews.api : privateViews.api;
-      api.saveCurrentView(viewTitle);
+  function saveCurrentView () {
+    return SaveCurrentViewDialog({
+      allowViewTypeSelection: entityFolders.shared.canEdit,
+      allowRoleAssignment: roleAssignment
+    }).promise.then(({title, isShared}) => {
+      const [api, tab] = isShared ? [sharedViews.api, VIEWS_SHARED] : [privateViews.api, VIEWS_PRIVATE];
+
+      api.saveCurrentView(title);
+      selector.store.dispatch(selector.actions.Select, tab);
     });
   }
 }

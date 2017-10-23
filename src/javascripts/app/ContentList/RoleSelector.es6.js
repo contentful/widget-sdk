@@ -188,7 +188,6 @@ function render (state, actions) {
     style: { maxWidth: '42em' }
   }, [
     h('header.modal-dialog__header', [
-      h('i.fa.fa-eye', { style: { marginRight: '15px' } }),
       h('h1', [
         'Share this view'
       ]),
@@ -206,6 +205,7 @@ function render (state, actions) {
       container({
         display: 'flex'
       }, [
+        h('strong', ['Select role(s)']),
         hfill(),
         selectAllButton(state, actions)
       ]),

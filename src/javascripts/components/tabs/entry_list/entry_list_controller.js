@@ -161,8 +161,6 @@ angular.module('contentful')
     }
   };
 
-  $scope.openSaveCurrentViewModal = $scope.savedViewsSidebar.api.openSaveCurrentViewModal;
-
   /**
    * @ngdoc property
    * @name EntryListController#$scope.hasArchivedEntries

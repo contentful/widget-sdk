@@ -98,8 +98,6 @@ angular.module('contentful')
 
   $scope.getAssetFile = getAssetFile;
 
-  $scope.openSaveCurrentViewModal = $scope.savedViewsSidebar.api.openSaveCurrentViewModal;
-
   $scope.$watch('showNoAssetsAdvice()', function (show) {
     if (show) {
       $scope.hasArchivedAssets = false;

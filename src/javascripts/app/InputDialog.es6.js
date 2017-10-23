@@ -35,15 +35,10 @@ export default function open (params = {}) {
   return modalDialog.open({
     template: '<cf-component-bridge class="modal-background" component="component">',
     controller: function ($scope) {
-      const {min, max} = input;
+      const {min, max, value} = input;
       const maxlength = isFinite(max) ? `${max}` : '';
       const cancel = () => $scope.dialog.cancel();
-      let {value = ''} = input;
-
-      function onInput (e) {
-        value = e.target.value;
-        render(value);
-      }
+      const onInput = (e) => render(e.target.value);
 
       render(value);
 
@@ -55,7 +50,6 @@ export default function open (params = {}) {
 
         $scope.component = h('.modal-dialog', [
           h('header.modal-dialog__header', [
-            h('i.fa.fa-pencil', { style: { marginRight: '15px' } }),
             h('h1', [params.title]),
             h('button.modal-dialog__close', {onClick: cancel})
           ]),

@@ -105,7 +105,7 @@ export function getPrivateViews ({user}) {
   // combination is not unique in a space. It cannot be easily solved w/o
   // fetching all the users. Storing search criteria in a data structure (e.g.
   // ID of a user) instead of search string should help.
-  const name = `${user.firstName} ${user.lastName}`.replace('"', '');
+  const name = `${user.firstName} ${user.lastName}`.replace(/"/g, '');
 
   return [
     {

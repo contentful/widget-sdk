@@ -73,7 +73,7 @@ function renameFolder (folder, UpdateFolder) {
   openInputDialog({
     title: 'Rename folder',
     confirmLabel: 'Rename folder',
-    message: 'Please provide a new name for your folder:',
+    message: 'New name for the folder',
     input: {value: folder.title, min: 1, max: 32}
   }).promise.then(title => UpdateFolder(assign(folder, {title})));
 }
@@ -102,7 +102,8 @@ function editViewRoles (view, endpoint, tracking, UpdateView) {
 function editViewTitle (view, tracking, UpdateView) {
   openInputDialog({
     title: 'Rename view',
-    message: 'Please provide a new name for your view:',
+    message: 'New name for the view',
+    confirmLabel: 'Rename view',
     input: {value: view.title, min: 1, max: 32}
   }).promise.then(title => {
     view = assign(view, {title});

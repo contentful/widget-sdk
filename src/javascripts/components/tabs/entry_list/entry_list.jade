@@ -32,7 +32,7 @@ header.workbench-header
 
     a.text-link(
       style="margin-left: 15px"
-      ng-click="openSaveCurrentViewModal()"
+      ng-click="savedViewsSidebar.api.saveCurrentView()"
     ) Save as view
 
   .workbench-header__actions(ng-if="!showNoEntriesAdvice()")
