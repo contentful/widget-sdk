@@ -19,7 +19,8 @@ describe('LaunchDarkly', function () {
     this.org = {
       name: 'org',
       role: 'owner',
-      subscription: {status: 'free'}, sys: {id: 1}
+      subscription: {status: 'free'}, sys: {id: 1},
+      subscriptionPlan: { name: 'Best Enterprise 2017' }
     };
 
     this.user = {
@@ -103,6 +104,7 @@ describe('LaunchDarkly', function () {
         expect(customData).toEqual({
           currentOrgId: this.org.sys.id,
           currentOrgSubscriptionStatus: this.org.subscription.status,
+          currentOrgPlanIsEnterprise: true,
           currentOrgHasSpace: false,
           currentUserOrgRole: 'org role',
           currentUserHasAtleastOneSpace: false,
