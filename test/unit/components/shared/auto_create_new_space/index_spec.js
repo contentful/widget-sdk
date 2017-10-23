@@ -5,7 +5,8 @@ describe('AutoCreateNewSpace/index', function () {
   beforeEach(function () {
     this.tokenStore = {
       user$: K.createMockProperty(null),
-      spacesByOrganization$: K.createMockProperty(null)
+      spacesByOrganization$: K.createMockProperty(null),
+      organizations$: K.createMockProperty(null)
     };
     this.createSampleSpace = sinon.stub().resolves();
     this.theStore = {
