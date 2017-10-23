@@ -113,13 +113,12 @@ angular.module('contentful')
    * @ngdoc method
    * @name TheStore#getPropertyBus
    * @param {string} key
-   * @returns { { property: {Observable}, end: {function} } }
+   * @returns {utils/kefir.PropertyBus}
    * @description
    * Returns a property bus that tracks current value in storage. Property
    * updates when stored value has been changed within the context of another
    * document.
-   * Exposes an observable stream as `property` and a method to detach listener
-   * and end the stream as `end()`
+   * Exposes a kefir property bus.
    * ~~~js
    * var mystore = theStore.forKey('mykey')
    * var myValueBus = mystore.getPropertyBus();
@@ -135,17 +134,17 @@ angular.module('contentful')
 
     $window.addEventListener('storage', emitValue);
 
+    valueBus.property.onEnd(function () {
+      $window.removeEventListener('storage', emitValue);
+    });
+
+    return valueBus;
+
     function emitValue (e) {
       if (e.key === key) {
         valueBus.set(e.newValue);
       }
     }
-
-    valueBus.property.onEnd(function () {
-      $window.removeEventListener('storage', emitValue);
-    });
-
-    return { property: valueBus.property, end: valueBus.end };
   }
 }])
 
