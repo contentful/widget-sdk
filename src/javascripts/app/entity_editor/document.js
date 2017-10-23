@@ -64,11 +64,11 @@ angular.module('contentful')
     var errorBus = K.createBus();
     cleanupTasks.push(errorBus.end);
 
-    function makeDocErrorHandler (forbiddenDocError) {
+    function makeDocErrorHandler (path) {
       return function (error) {
         if (error === 'forbidden') {
           docConnection.refreshAuth()
-            .catch(function () { errorBus.emit(forbiddenDocError); });
+            .catch(function () { errorBus.emit(DocError.SetValueForbidden(path)); });
         }
       };
     }
@@ -272,7 +272,11 @@ angular.module('contentful')
       ]);
     });
 
-    docLoadError$.onValue(makeDocErrorHandler(DocError.OpenForbidden()));
+    docLoadError$.onValue(function (error) {
+      if (error === 'forbidden') {
+        errorBus.emit(DocError.OpenForbidden());
+      }
+    });
 
 
     /**
@@ -516,14 +520,14 @@ angular.module('contentful')
         } else {
           return ShareJS.setDeep(doc, path, value);
         }
-      }, makeDocErrorHandler(DocError.SetValueForbidden(path)));
+      }, makeDocErrorHandler(path));
     }
 
     function removeValueAt (path) {
       return withRawDoc(function (doc) {
         maybeEmitLocalChange(path);
         return ShareJS.remove(doc, path);
-      }, makeDocErrorHandler(DocError.SetValueForbidden(path)));
+      }, makeDocErrorHandler(path));
     }
 
     function insertValueAt (path, i, x) {
@@ -533,7 +537,7 @@ angular.module('contentful')
           return $q.denodeify(function (cb) {
             doc.insertAt(path, i, x, cb);
           }).catch(function (err) {
-            makeDocErrorHandler(DocError.SetValueForbidden(path))(err);
+            makeDocErrorHandler(path)(err);
             return $q.reject(err);
           });
         } else if (i === 0) {

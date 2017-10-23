@@ -198,7 +198,7 @@ describe('entityEditor/Document', function () {
       sjsDoc.setAt = sinon.stub().yields('forbidden');
     }, function () {
       this.doc.setValueAt(['a', 'b'], 'VAL');
-    }, 'SetValueForbidden');
+    });
 
     testDiff('Text');
     testDiff('Symbol');
@@ -281,7 +281,7 @@ describe('entityEditor/Document', function () {
       sjsDoc.removeAt = sinon.stub().yields('forbidden');
     }, function () {
       this.doc.removeValueAt(['a', 'b']);
-    }, 'SetValueForbidden');
+    });
   });
 
   describe('#insertValueAt()', function () {
@@ -579,9 +579,12 @@ describe('entityEditor/Document', function () {
   });
 
   describe('#state.error$', function () {
-    handlesForbidden(function () {
+    it('emits "OpenForbidden" error when opening fails', function () {
+      const errors = K.extractValues(this.doc.state.error$);
       this.docLoader.doc.set(this.DocLoad.Error('forbidden'));
-    }, function () {}, 'OpenForbidden');
+      this.$apply();
+      expect(errors[0].constructor.name).toBe('OpenForbidden');
+    });
   });
 
   describe('#permissions', function () {
@@ -699,7 +702,7 @@ describe('entityEditor/Document', function () {
     });
   }
 
-  function handlesForbidden (beforeAction, action, errName) {
+  function handlesForbidden (beforeAction, action) {
     describe('handles forbidden error', function () {
       beforeEach(function () {
         this.docConnection.refreshAuth.rejects();
@@ -716,7 +719,7 @@ describe('entityEditor/Document', function () {
         const errors = K.extractValues(this.doc.state.error$);
         action.call(this);
         this.$apply();
-        expect(errors[0].constructor.name).toBe(errName);
+        expect(errors[0].constructor.name).toBe('SetValueForbidden');
       });
     });
   }
