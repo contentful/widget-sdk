@@ -1,6 +1,8 @@
-import { startsWith } from 'lodash';
+import { startsWith, find } from 'lodash';
 import { makeCtor } from 'utils/TaggedValues';
 import { assign, push, concat } from 'utils/Collections';
+
+const CT_QUERY_KEY_PREFIX = 'fields';
 
 /**
  * This module exports functions to construct field filters.
@@ -125,22 +127,65 @@ const sysFieldFilters = [
  * Takes a list of available content types as an argument. This is used
  * to contstruct the available options to select from.
  */
-export function contentTypeFilter (availableContentTypes) {
-  const ctOptions = availableContentTypes.map((ct) => [ct.sys.id, ct.name]);
+export function contentTypeFilter (contentTypes) {
   return {
     name: 'contentType',
     queryKey: 'content_type',
-    valueInput: ValueInput.Select([['', 'Any']].concat(ctOptions))
+    valueInput: ValueInput.Select([
+      ['', 'Any'],
+      ...contentTypes.map((ct) => [ct.sys.id, ct.name])
+    ])
   };
 }
 
+/**
+ *
+ * @param {API.ContentType[]} contentTypes List of content types
+ * @param {string} contentTypeId ContentType id
+ * 
+ * @returns {API.ContentType?}
+ */
+export function getContentTypeById (contentTypes, contentTypeId) {
+  return find(contentTypes, ct => ct.sys.id === contentTypeId);
+}
+
+export function getFiltersFromQueryKey (contentTypes, searchFilters, contentTypeId) {
+  const contentType = getContentTypeById(contentTypes, contentTypeId);
+
+  const filters = searchFilters.map(([queryKey, op, value]) => {
+    return [buildFilterFieldByQueryKey(contentType, queryKey), op, value];
+  });
+
+  return filters;
+}
+
+/**
+ * Returns a field filter for given queryKey from
+ * the fields of provided Content Type or sys field filters.
+ *
+ * @param {API.ContentType?} contentType
+ * @param {string} queryKey
+ *
+ * @returns
+ */
+export function buildFilterFieldByQueryKey (contentType, queryKey) {
+  const [prefix, apiName] = queryKey.split('.');
+
+  if (prefix === CT_QUERY_KEY_PREFIX) {
+    const field = find(contentType.fields, f => f.apiName === apiName);
+    return buildFilterField(contentType, field);
+  } else {
+    return find(sysFieldFilters, filter => filter.queryKey === queryKey);
+  }
+}
 
 /**
  * Returns a list of filters that begin with the search string and
- * match the selected content type ID.
+ * match the selected content type ID or
+ * a list of all filters if there was no match by name.
  *
  * @param {string} searchString
- *   Only return filters whose name includes this string
+ *   Only return filters whose name starts with this string
  * @param {string?} contentTypeID
  *   If given return only filters for fields on this content type.
  * @param {API.ContentType[]} availableContentTypes
@@ -149,13 +194,24 @@ export function contentTypeFilter (availableContentTypes) {
 export function getMatchingFilters (searchString, contentTypeId, availableContentTypes) {
   const filters = allFilters(availableContentTypes);
 
-  const matchingFilters = filters.filter((filter) => {
-    return startsWith(filter.name.toLowerCase(), searchString.toLowerCase());
-  });
+  let matchingFilters = filterByName(filters, searchString);
+  matchingFilters = filterByContentType(matchingFilters, contentTypeId);
 
+  return matchingFilters.length > 0 ? matchingFilters : filters;
+}
+
+function filterByName (filters, searchString = '') {
+  searchString = searchString.toLowerCase();
+
+  return filters.filter((filter) => {
+    return startsWith(filter.name.toLowerCase(), searchString);
+  });
+}
+
+function filterByContentType (filters, contentTypeId) {
   if (contentTypeId) {
     // Remove all filters that do not apply to the given Content Type
-    return matchingFilters.filter((field) => {
+    return filters.filter((field) => {
       if (field.queryKey === 'content_type') {
         return false;
       } else if (field.contentType) {
@@ -165,10 +221,9 @@ export function getMatchingFilters (searchString, contentTypeId, availableConten
       }
     });
   } else {
-    return matchingFilters;
+    return filters;
   }
 }
-
 
 /**
  * Returns a list of all filters.
@@ -193,7 +248,6 @@ function allFilters (contentTypes) {
   return fields;
 }
 
-
 /**
  * Given a content type and a content type field return the filter for
  * that field.
@@ -202,11 +256,16 @@ function buildFilterField (ct, ctField) {
   return {
     name: ctField.apiName,
     description: ctField.name,
-    queryKey: ['fields', ctField.apiName].join('.'),
-    valueInput: ValueInput.Text(),
+    queryKey: `${CT_QUERY_KEY_PREFIX}.${ctField.apiName}`,
+    valueInput: getControlByType(ctField.type),
     contentType: {
       id: ct.sys.id,
       name: ct.name
     }
   };
+}
+
+// TODO: implement control type resolution
+function getControlByType (_type) {
+  return ValueInput.Text();
 }

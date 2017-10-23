@@ -1,11 +1,13 @@
 import { makeCtor } from 'utils/TaggedValues';
 import * as Store from 'ui/Framework/Store';
-import { drop, assign, update, set, push } from 'utils/Collections';
+import { assign, update, set, push } from 'utils/Collections';
 import { createSlot, sleep } from 'utils/Concurrent';
-import { freeze } from 'utils/Freeze';
-import { caseofEq, otherwise } from 'libs/sum-types';
+import { otherwise } from 'libs/sum-types';
 
-import { getMatchingFilters, contentTypeFilter} from './Filters';
+import { 
+  getMatchingFilters, 
+  buildFilterFieldByQueryKey, 
+  getContentTypeById } from './Filters';
 
 const defaultFocus = {
   index: null,
@@ -13,34 +15,30 @@ const defaultFocus = {
   isQueryInputFocused: false,
   suggestionsFocusIndex: null
 };
-const emptySuggestions = freeze({ visible: false, selected: null, items: null });
 
 // The state for this component looks like this
 // query
 //   Explained in detail below. This is used to build the query object
 //   we send to the API.
-// query.contentType: [Filter, string, string]
+// contentTypeId: string
 //   The filter is the content type filter. The middle value, the
 //   operator, is ignored for now. The last value is the content type
 //   id. If this is an empty string that means we should not filter by
 //   content type.
-//   TODO Use 'null' to represent any content type
-// query.filters: [[Filter, string, string]]
-//   A list of [filter, operator, value] triples. Corresponds to the
+// filters: [[string, string, string]]
+//   A list of [queryKey, operator, value] triples. Corresponds to the
 //   pills we show.
 // searchBoxHasFocus: boolean
 //   Set to 'true' if any of the children of the search box has focus.
 //   If 'false' we grey the border, hide the suggestions box, and
 //   collapse multiline filters.
 
-export const initialState = (contentTypes) => ({
-  query: {
-    contentType: [contentTypeFilter(contentTypes), '', ''],
-    filters: [],
-    search: ''
-  },
-  input: '',
-  suggestions: emptySuggestions,
+export const initialState = ({ contentTypeId = '', filters = [], input = '' }) => ({
+  contentTypeId,
+  filters,
+  input,
+  searchBoxHasFocus: false,
+  isSuggestionOpen: false,
   focus: defaultFocus
 });
 
@@ -77,6 +75,7 @@ const SetFocusOnFirstSuggestion = makeCtor('SetFocusOnFirstSuggestion');
 const SetFocusOnNextSuggestion = makeCtor('SetFocusOnNextSuggestion');
 const SetFocusOnPrevSuggestion = makeCtor('SetFocusOnPrevSuggestion');
 const SetFocusOnQueryInput = makeCtor('SetFocusOnQueryInput');
+const ShowSuggestions = makeCtor('ShowSuggestions');
 
 export const Actions = {
   SetQueryInput,
@@ -86,7 +85,6 @@ export const Actions = {
   TriggerSearch,
   ToggleSuggestions,
   SetLoading,
-  HideSuggestions,
   SetBoxFocus,
   RemoveFilter,
   SetFocusOnLast,
@@ -95,11 +93,17 @@ export const Actions = {
   SetFocusOnFirstSuggestion,
   SetFocusOnNextSuggestion,
   SetFocusOnPrevSuggestion,
-  SetFocusOnQueryInput
+  SetFocusOnQueryInput,
+  HideSuggestions,
+  ShowSuggestions
 };
 
-
-export function makeReducer (dispatch, _cma, contentTypes, submitSearch) {
+export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
+  
+  // TODO: remove side-effects from the reducer and use actionCreators instead.
+  // Reducer must not create side-effects e.g dispatch(UnsetTyping);
+  // http://redux.js.org/docs/basics/Reducers.html#handling-actions
+  // http://redux.js.org/docs/Glossary.html#action-creator
   const putTyping = createSlot(() => dispatch(UnsetTyping));
 
   return Store.makeReducer({
@@ -107,7 +111,7 @@ export function makeReducer (dispatch, _cma, contentTypes, submitSearch) {
     [SetBoxFocus] (state, hasFocus) {
       state = set(state, ['searchBoxHasFocus'], hasFocus);
       if (!hasFocus) {
-        state = set(state, ['suggestions'], emptySuggestions);
+        state = set(state, ['isSuggestionOpen'], false);
       }
       return state;
     },
@@ -115,7 +119,7 @@ export function makeReducer (dispatch, _cma, contentTypes, submitSearch) {
     [SetFilterValueInput] (state, [filterIndex, value]) {
       state = set(state, ['isTyping'], true);
       putTyping(sleep(1000));
-      state = set(state, ['query', 'filters', filterIndex, 2], value);
+      state = set(state, ['filters', filterIndex, 2], value);
       return state;
     },
     [UnsetTyping] (state) {
@@ -125,28 +129,15 @@ export function makeReducer (dispatch, _cma, contentTypes, submitSearch) {
     },
     [TriggerSearch]: triggerSearch,
     [ToggleSuggestions] (state) {
-      state = update(state, ['suggestions', 'items'], (items) => {
-        if (items == null) {
-          return getMatchingFilters(state.input, state.query.contentType[2], contentTypes);
-        } else {
-          return null;
-        }
-      });
-      return state;
+      return update(state, ['isSuggestionOpen'], value => !value);
     },
-    [SetContentType] (state, contentTypeId) {
-      state = set(state, ['query', 'contentType', 2], contentTypeId);
-
-      state = update(state, ['query', 'filters'], (oldFilters) => {
-        return oldFilters.filter(([filter, _operator, _value]) => {
-          return filter.contentType
-            ? filter.contentType.id === contentTypeId
-            : true;
-        });
-      });
-
-      return state;
+    [ShowSuggestions] (state) {
+      return set(state, ['isSuggestionOpen'], true);
     },
+    [HideSuggestions] (state) {
+      return set(state, ['isSuggestionOpen'], false);
+    },
+    [SetContentType]: setContentType,
     // TODO rename
     [SetLoading] (state, isSearching) {
       state = set(state, ['isSearching'], isSearching);
@@ -154,7 +145,7 @@ export function makeReducer (dispatch, _cma, contentTypes, submitSearch) {
       return state;
     },
     [RemoveFilter] (state, indexToRemove) {
-      state = update(state, ['query', 'filters'], (oldFilters) => {
+      state = update(state, ['filters'], (oldFilters) => {
         return oldFilters.filter((_, index) => {
           return index !== indexToRemove;
         });
@@ -170,8 +161,16 @@ export function makeReducer (dispatch, _cma, contentTypes, submitSearch) {
     [SetFocusOnQueryInput]: setFocusOnQueryInput,
     [SetFocusOnFirstSuggestion]: setFocusOnFirstSuggestion,
     [SetFocusOnNextSuggestion]: setFocusOnNextSuggestion,
-    [SetFocusOnPrevSuggestion]: setFocusOnPrevSuggestion
+    [SetFocusOnPrevSuggestion]: setFocusOnPrevSuggestion,
   });
+
+  function showSuggestions (state) {
+    return set(state, ['isSuggestionOpen'], true);
+  }
+
+  function hideSuggestions (state) {
+    return set(state, ['isSuggestionOpen'], false);
+  }
 
   function setFocusOnFirstSuggestion (state) {
     state = resetFocus(state);
@@ -180,8 +179,10 @@ export function makeReducer (dispatch, _cma, contentTypes, submitSearch) {
 
   function setFocusOnNextSuggestion (state) {
     const idx = state.focus.suggestionsFocusIndex;
+    const suggestions = getMatchingFilters(state.input, state.contentTypeId, contentTypes);
     let indexToFocus;
-    if (idx === state.suggestions.items.length - 1) {
+
+    if (idx === suggestions.length - 1) {
       indexToFocus = 0;
     } else {
       indexToFocus = idx + 1;
@@ -215,7 +216,7 @@ export function makeReducer (dispatch, _cma, contentTypes, submitSearch) {
   function setFocusOnLast (state) {
     state = resetFocus(state);
 
-    return set(state, ['focus', 'index'], state.query.filters.length - 1);
+    return set(state, ['focus', 'index'], state.filters.length - 1);
   }
 
   function setFocusOnLastValue (state) {
@@ -234,66 +235,63 @@ export function makeReducer (dispatch, _cma, contentTypes, submitSearch) {
     }
 
     if (searchValue) {
-      // TODO omit content type
-      const items = getMatchingFilters(searchValue, state.query.contentType[2], contentTypes);
-      state = set(state, ['suggestions', 'items'], items);
+      state = showSuggestions(state);
     } else {
-      state = set(state, ['suggestions'], emptySuggestions);
+      state = hideSuggestions(state);
     }
-    state = set(state, ['query', 'search'], searchValue);
+    state = set(state, ['input'], searchValue);
     return state;
   }
 
+  function setContentType (state, contentTypeId) {
+    state = set(state, ['contentTypeId'], contentTypeId);
+    state = filterSearchFiltersByContentType(state);
 
-  function handleArrowPress (state, event, increment) {
-    const suggestionItems = state.suggestions.items;
-    if (!suggestionItems) {
-      return state;
-    }
-
-    event.preventDefault();
-    return update(state, ['suggestions', 'selected'], (selected) => {
-      if (selected === null) {
-        return 0;
-      } else {
-        const length = suggestionItems.length;
-        return (selected + increment + length) % length;
-      }
-    });
+    return state;
   }
 
-
-  function selectFilterSuggestion (state, index) {
-    const filter = state.suggestions.items[index];
-    if (filter) {
-      if (filter.contentType) {
-        state = set(state, ['query', 'contentType', 2], filter.contentType.id);
-      }
-      state = update(state, ['query', 'filters'], (filters) => {
-        return push(filters, [filter, '', null]);
-      });
+  function selectFilterSuggestion (state, field) {
+    if (field.contentType) {
+      state = setContentType(state, field.contentType.id);
     }
+
+    state = update(state, ['filters'], filters => {
+      return push(filters, [field.queryKey, '', null]);
+    });
     state = setInput(state, '');
     state = setFocusOnLastValue(state);
 
     return state;
   }
 
+  function filterSearchFiltersByContentType (state) {
+    const { contentTypeId } = state;
+
+    const contentType = getContentTypeById(contentTypes, contentTypeId);
+    state = update(state, ['filters'], (oldFilters) => {
+
+      return oldFilters.filter(([queryKey]) => {
+        const field = buildFilterFieldByQueryKey(contentType, queryKey);
+        return field.contentType
+          ? field.contentType.id === contentTypeId
+          : true;
+      });
+    });
+
+    return state;
+  }
 
   /**
    * Build the query object from the current filters and pass it to
    * `submitSearch`.
    */
   function triggerSearch (state) {
-    const { query } = state;
-    const queryItems = [query.contentType, ...query.filters];
 
-    const publicState = {
-      contentTypeId: query.contentType[2],
-      searchFilters: query.filters,
-      searchTerm: query.search
-    };
-    submitSearch(publicState);
+    submitSearch({
+      contentTypeId: state.contentTypeId,
+      searchFilters: state.filters,
+      searchTerm: state.input
+    });
 
     return state;
   }

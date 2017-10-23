@@ -23,10 +23,21 @@ const Keys = {
   escape: (e) => e.key === 'Escape'
 };
 
-export default function render (state, actions) {
-  const hasSuggestions = state.suggestions.items && state.suggestions.items.length > 0;
-  const hasSpinner = state.isSearching || state.isTyping;
-  const defaultFocus = state.focus;
+export default function render ({
+  isSearching,
+  isTyping,
+  focus,
+  searchBoxHasFocus,
+  contentTypeId,
+  contentTypeFilter,
+  filters,
+  input,
+  isSuggestionOpen,
+  suggestions,
+  actions
+}) {
+  const hasSpinner = isSearching || isTyping;
+  const defaultFocus = focus;
 
   const handlePillValueChange = ({ index, value }) => {
     actions.SetFilterValueInput([index, value]);
@@ -46,9 +57,9 @@ export default function render (state, actions) {
         display: 'flex',
         background: 'white',
         border: '1px solid transparent',
-        borderColor: state.searchBoxHasFocus ? Colors.blueMid : Colors.elementMid,
-        height: state.searchBoxHasFocus ? 'auto' : '42px',
-        overflow: state.searchBoxHasFocus ? '' : 'hidden'
+        borderColor: searchBoxHasFocus ? Colors.blueMid : Colors.elementMid,
+        height: searchBoxHasFocus ? 'auto' : '42px',
+        overflow: searchBoxHasFocus ? '' : 'hidden'
       },
       onFocusOut: actions.ResetFocus
     }, [
@@ -60,23 +71,20 @@ export default function render (state, actions) {
         padding: '0 10px 5px'
       }, [
         filterPill({
-          value: state.query.contentType[2],
+          value: contentTypeId,
           isRemovable: false,
-          filter: {
-            name: 'contentType',
-            valueInput: state.query.contentType[0].valueInput
-          },
+          filter: contentTypeFilter,
           onChange: actions.SetContentType
         }),
         ...pills({
-          query: state.query,
+          filters: filters,
           defaultFocus,
           onChange: handlePillValueChange,
           onRemove: ({ index }) => actions.RemoveFilter(index)
         }),
         queryInput({
-          isPlaceholderVisible: state.query.filters.length === 0,
-          value: state.input,
+          isPlaceholderVisible: filters.length === 0,
+          value: input,
           onChange: actions.SetQueryInput,
           isFocused: defaultFocus.isQueryInputFocused,
           onKeyDown: (e) => {
@@ -85,11 +93,13 @@ export default function render (state, actions) {
             if (Keys.backspace(e) && !hasSelection) {
               actions.SetFocusOnLast();
             } else if (Keys.arrowDown(e)) {
-              if (!hasSuggestions) {
-                actions.ToggleSuggestions();
+              if (!isSuggestionOpen) {
+                actions.ShowSuggestions();
               } else {
                 actions.SetFocusOnFirstSuggestion();
               }
+            } else if (Keys.escape(e)) {
+              actions.HideSuggestions();
             }
           }
         })
@@ -104,10 +114,10 @@ export default function render (state, actions) {
       }),
       hspace('8px'),
       h('.search-next__filter-toggle', {
-        onClick: actions.ToggleSuggestions,
+        onClick: () => actions.ToggleSuggestions(),
         class: [
-          hasSuggestions ? '-active' : '',
-          state.searchBoxHasFocus ? '-focus' : ''
+          isSuggestionOpen ? '-active' : '',
+          searchBoxHasFocus ? '-focus' : ''
         ].join(' ')
       }, [
         container({
@@ -124,12 +134,11 @@ export default function render (state, actions) {
         ])
       ])
     ]),
-    hasSuggestions && filterSuggestions({
-      items: state.suggestions.items,
-      selected: state.suggestions.selected,
+    isSuggestionOpen && filterSuggestions({
+      items: suggestions,
       defaultFocus,
-      onSelect: (index) => {
-        actions.SelectFilterSuggestions(index);
+      onSelect: (key) => {
+        actions.SelectFilterSuggestions(key);
       },
       onKeyDown: (e) => {
         if (Keys.arrowUp(e) || Keys.shiftTab(e)) {
@@ -171,8 +180,8 @@ function queryInput ({value, isPlaceholderVisible, isFocused, onChange, onKeyDow
 }
 
 
-function pills ({ query, defaultFocus, onChange, onRemove }) {
-  return query.filters.map(([filter, _op, value], index) => {
+function pills ({ filters, defaultFocus, onChange, onRemove }) {
+  return filters.map(([filter, _op, value], index) => {
     return filterPill({
       value,
       filter,
@@ -294,11 +303,9 @@ function filterValueSelect ({options, inputRef, value, onKeyDown, onChange}) {
 // -----------
 
 
-function filterSuggestions ({items, selected, defaultFocus, onSelect, onKeyDown}) {
+function filterSuggestions ({items, defaultFocus, onSelect, onKeyDown}) {
   return suggestionsContainer(items.map((field, index) => {
-    const isSelected = index === selected;
     return h('div.search-next__completion-item', {
-      class: isSelected ? '--selected' : '',
       ref: (el) => {
         if (defaultFocus.suggestionsFocusIndex === index && el) {
           el.focus();
@@ -307,13 +314,13 @@ function filterSuggestions ({items, selected, defaultFocus, onSelect, onKeyDown}
       tabindex: '0',
       onKeyDown: (e) => {
         if (e.key === 'Enter') {
-          onSelect(index);
+          onSelect(field);
           e.stopPropagation();
         } else {
           onKeyDown(e);
         }
       },
-      onClick: () => onSelect(index)
+      onClick: () => onSelect(field)
     }, [
       // TODO truncate with ellipses
       container({
