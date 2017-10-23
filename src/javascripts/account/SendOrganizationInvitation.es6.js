@@ -1,5 +1,5 @@
 import * as K from 'utils/kefir';
-import {get} from 'lodash';
+import {get, entries} from 'lodash';
 import {runTask} from 'utils/Concurrent';
 import {create as createSpaceRepo} from 'access_control/SpaceMembershipRepository';
 import {createEndpoint as createOrgEndpoint, invite as inviteToOrg} from 'access_control/OrganizationMembershipRepository';
@@ -56,8 +56,8 @@ export function invite (emails, role, spaceMemberships, suppressInvitation, orgI
 }
 
 function inviteToSpaces (email, spaceMemberships) {
-  const entries = Object.entries(spaceMemberships);
-  const invitations = entries.map(([spaceId, roles]) => runTask(function* () {
+  const memberships = entries(spaceMemberships);
+  const invitations = memberships.map(([spaceId, roles]) => runTask(function* () {
     const spaceEndpoint = createSpaceEndpoint(apiUrl(), spaceId, auth);
     const inviteToSpace = createSpaceRepo(spaceEndpoint).invite;
     try {
