@@ -228,6 +228,7 @@ function render (state, actions) {
   return h('.workbench', [
     header(),
     h('form.workbench-main', {
+      dataTestId: 'organization-membership.form',
       onSubmit: actions.submitInvitations
     }, [
       h('.workbench-main__content', {
