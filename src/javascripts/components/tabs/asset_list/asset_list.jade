@@ -24,7 +24,7 @@ header.workbench-header
     a.text-link(
       style="margin-left: 15px"
       ng-click="openSaveCurrentViewModal()"
-    ) Add to views
+    ) Save as view
 
   .workbench-header__actions(
     ng-show="!showNoAssetsAdvice() && !shouldHide('createAsset')")
@@ -46,7 +46,7 @@ header.workbench-header
           | Multiple assets
 
 .workbench-main(ng-hide="showNoAssetsAdvice()")
-  .workbench-main__left-sidebar
+  .workbench-main__left-sidebar(style="max-height: 100vh; overflow-y: hidden")
     cf-component-store-bridge(component="savedViewsSidebar")
 
   .workbench-main__right-content

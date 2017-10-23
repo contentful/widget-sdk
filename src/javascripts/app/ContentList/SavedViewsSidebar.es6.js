@@ -10,12 +10,12 @@ import {
 } from 'ui/Framework/Store';
 
 import initSavedViewsComponent from './SavedViewsComponent';
+import SaveCurrentViewModal from './SaveViewDialog';
 
 import {byName as colors} from 'Styles/Colors';
 import {container} from 'ui/Layout';
 
 import openRoleSelector from './RoleSelector';
-import openInputDialog from 'app/InputDialog';
 
 
 const Select = makeCtor('Select');
@@ -57,7 +57,7 @@ export default function ({
     return h('div', {
       style: {
         backgroundColor: colors.elementLightest,
-        height: '100%'
+        height: '100vh',
       }
     }, [
       container({
@@ -87,7 +87,7 @@ export default function ({
 
   function button ({state, actions}, value, label) {
     return h('li', {
-      ariaSelected: (state === value).toString(),
+      ariaSelected: String(state === value),
       role: 'tab',
       style: {
         fontSize: '14px',
@@ -99,13 +99,7 @@ export default function ({
   }
 
   function openSaveCurrentViewModal () {
-    return openInputDialog({
-      title: 'Save current view',
-      confirmLabel: 'Add to views',
-      message: 'Name of the view',
-      input: {min: 1, max: 32},
-      showSaveAsSharedCheckbox: entityFolders.shared.canEdit
-    }).promise.then(saveCurrentView);
+    return SaveCurrentViewModal({showSaveAsSharedCheckbox: entityFolders.shared.canEdit}).promise.then(saveCurrentView);
   }
 
   function saveCurrentView ({shouldSaveCurrentViewAsShared, viewTitle}) {
@@ -124,5 +118,4 @@ export default function ({
     }
 
   }
-
 }

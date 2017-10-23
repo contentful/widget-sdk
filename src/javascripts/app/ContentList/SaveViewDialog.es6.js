@@ -1,54 +1,36 @@
 import {h} from 'ui/Framework';
-import { byName as colors } from 'Styles/Colors';
-
+import {byName as colors} from 'Styles/Colors';
 import modalDialog from 'modalDialog';
 import keycodes from 'keycodes';
 
-/**
- * @ngdoc service
- * @name app/InputDialog
- * @description
- * Exports a generic input dialog constructor.
- */
-
-/**
- * @ngdoc method
- * @name app/InputDialog#open
- * @description
- * Opens a dialog enabling user to provide a single textual value.
- *
- * @param {string}  params.title        Dialog's title
- * @param {string}  params.message      Dialog's message
- * @param {string}  params.confirmLabel Confirmation label (delfaut: "OK")
- * @param {string}  params.cancelLabel  Cancelation label (default: "Cancel")
- * @param {string}  params.input.value  Initial value of the input
- * @param {string}  params.input.min    Minimal required length (default: 0)
- * @param {string}  params.input.max    Maximal allowed length (default: +Inf)
- *
- * @returns {Promise<string>}
- */
-
-export default function open (params = {}) {
-  const {input = {}} = params;
-  input.value = input.value || '';
-  input.min = input.min || 0;
-  input.max = input.max || +Infinity;
-
+export default function SaveViewDialog ({ showSaveAsSharedCheckbox = false }) {
   return modalDialog.open({
     template: '<cf-component-bridge class="modal-background" component="component">',
     controller: function ($scope) {
-      const {min, max} = input;
-      const maxlength = isFinite(max) ? `${max}` : '';
+      const minLength = 1;
+      const maxLength = 32;
       const cancel = () => $scope.dialog.cancel();
-      let {value = ''} = input;
+      const confirmLabels = {
+        true: 'Proceed and select roles',
+        false: 'Add to views'
+      };
+      let shouldSaveCurrentViewAsShared = false;
+      let value = '';
+
+      render(value);
+
+      function onSaveAsSharedChange () {
+        shouldSaveCurrentViewAsShared = !shouldSaveCurrentViewAsShared;
+        render(value);
+      }
 
       function onInput (e) {
         value = e.target.value;
         render(value);
       }
 
-      const renderSaveOptions = ({name, text, subText, isChecked, onChange}) => (
-        h('li', [
+      function renderSaveOptions ({name, text, subText, isChecked, onChange}) {
+        return h('li', [
           h('input', {
             type: 'radio',
             name: name,
@@ -59,29 +41,27 @@ export default function open (params = {}) {
             h('label', text),
             h('p', {style: {marginLeft: '22px', color: colors.textLight}}, subText)
           ])
-        ])
-      );
-
-      render(value);
+        ]);
+      }
 
       function render (value) {
         const trimmed = value.trim();
-        const isInvalid = trimmed.length < min || trimmed.length > max;
-        const confirm = () => !isInvalid && $scope.dialog.confirm(trimmed);
+        const isInvalid = trimmed.length < minLength || trimmed.length > maxLength;
+        const confirm = () => !isInvalid && $scope.dialog.confirm({ viewTitle: trimmed, shouldSaveCurrentViewAsShared });
         const onKeydown = e => e.keyCode === keycodes.ENTER && confirm();
 
         $scope.component = h('.modal-dialog', [
           h('header.modal-dialog__header', [
             h('i.fa.fa-pencil', { style: { marginRight: '15px' } }),
-            h('h1', [params.title]),
+            h('h1', ['Save current view']),
             h('button.modal-dialog__close', {onClick: cancel})
           ]),
           h('.modal-dialog__content', [
-            h('p.modal-dialog__richtext', [params.message]),
+            h('p.modal-dialog__richtext', ['Name of the view']),
             h('input.cfnext-form__input--full-size', {
-              type: 'text', value, onInput, onKeydown, maxlength
+              type: 'text', value, onInput, onKeydown, maxLength: String(maxLength)
             }),
-            params.showSaveAsSharedCheckbox && (
+            showSaveAsSharedCheckbox && (
               h('ul', {style: {marginTop: '20px'}}, [
                 renderSaveOptions({
                   name: 'saveAsPrivate',
@@ -104,17 +84,15 @@ export default function open (params = {}) {
             h('button.btn-primary-action', {
               onClick: confirm,
               disabled: isInvalid
-            }, [
-              params.confirmLabel || 'OK'
-            ]),
-            h('button.btn-secondary-action', {onClick: cancel}, [
-              params.cancelLabel || 'Cancel'
-            ])
+            }, [confirmLabels[shouldSaveCurrentViewAsShared]]),
+            h('button.btn-secondary-action', {onClick: cancel}, ['Cancel'])
           ])
         ]);
 
         $scope.$applyAsync();
       }
+
     }
+
   });
 }

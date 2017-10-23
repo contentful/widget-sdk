@@ -14,7 +14,6 @@ export default function render (state, actions) {
                   getAtPath(folders, [0, 'views', 'length']) === 0;
   const separator = h('div', {
     style: {
-      paddingLeft: '20px',
       paddingRight: '20px'
     }
   }, [
@@ -25,11 +24,12 @@ export default function render (state, actions) {
       }
     })
   ]);
+
   return h('.view-menu', [
     isEmpty ? renderEmpty(state) : renderFolders(state, actions),
     h('.view-menu__actions', [
       isEmpty && canEdit && h('button.text-link', {
-        onClick: () => actions.RestoreDefaultViews()
+        onClick: actions.RestoreDefaultViews
       }, [h('i.fa.fa-refresh'), 'Restore default views']),
       separator,
       canEdit && h('button.text-link', {
@@ -49,7 +49,11 @@ export default function render (state, actions) {
 
 function renderFolders (state, actions) {
   return h('div', {
-    ref: state.dnd.forFolders
+    ref: state.dnd.forFolders,
+    style: {
+      height: 'calc(100vh - 300px)',
+      overflowY: 'scroll'
+    }
   }, state.folders.map(folder => {
     return ViewFolder(folder, state, actions);
   }));
