@@ -61,7 +61,7 @@ export default function ($scope) {
   });
 
   runTask(function* () {
-    const organization = yield getOrgInfo(orgId);
+    const organization = yield* getOrgInfo(orgId);
     const allSpaces = yield getFatSpaces();
     const orgSpaces = allSpaces.filter(space => space.data.organization.sys.id === orgId);
     const spacesWithRolesPromises = orgSpaces.map(space => runTask(function* () {
@@ -138,10 +138,16 @@ export default function ($scope) {
       invalidAddresses,
       failedOrgInvitations,
       spaceMemberships,
-      suppressInvitation
+      suppressInvitation,
+      organization
     } = state;
 
-    if (emails.length && emails.length <= maxNumberOfEmails && !invalidAddresses.length) {
+    if (
+      emails.length &&
+      emails.length <= maxNumberOfEmails &&
+      emails.length <= organization.remainingInvitations &&
+      !invalidAddresses.length
+    ) {
       runTask(function* () {
         yield invite({
           emails,
@@ -151,7 +157,7 @@ export default function ($scope) {
           orgId
         });
         yield refreshTokenStore();
-        const organization = yield getOrgInfo(orgId);
+        const organization = yield* getOrgInfo(orgId);
 
         state = assign(state, {
           status: failedOrgInvitations.length ? Failure() : Success(),
@@ -268,12 +274,17 @@ export default function ($scope) {
     state.failedOrgInvitations.push(email);
   }
 
-  function getOrgInfo (orgId) {
-    return getOrganization(orgId).then(org => ({
+  function* getOrgInfo (orgId) {
+    const org = yield getOrganization(orgId);
+    const membershipLimit = getAtPath(org, 'subscriptionPlan.limits.permanent.organizationMembership');
+    const membershipsCount = getAtPath(org, 'usage.permanent.organizationMembership');
+
+    return {
+      membershipLimit,
+      membershipsCount,
       hasSsoEnabled: org.hasSsoEnabled,
-      membershipLimit: getAtPath(org, 'subscriptionPlan.limits.permanent.organizationMembership'),
-      membershipsCount: getAtPath(org, 'usage.permanent.organizationMembership')
-    }));
+      remainingInvitations: membershipLimit - membershipsCount
+    };
   }
 }
 
@@ -366,8 +377,6 @@ function emailsInput ({
 }, {
   updateEmails
 }) {
-  const remainingInvitations = organization.membershipLimit - organization.membershipsCount;
-
   return h('div', [
     h('h3.section-title', ['Select users']),
     h('p', ['Add multiple users by filling in a comma-separated list of email addresses. You can add a maximum of 100 users at a time.']),
@@ -380,9 +389,9 @@ function emailsInput ({
         value: emailsInputValue,
         onChange: updateEmails
       }),
-      emails.length > remainingInvitations ? h('.cfnext-form__field-error', [`
-        You are trying to add ${emails.length} users but you only have ${remainingInvitations} 
-        more available under your plan. Please remove ${emails.length - remainingInvitations} users to proceed. 
+      emails.length > organization.remainingInvitations ? h('.cfnext-form__field-error', [`
+        You are trying to add ${emails.length} users but you only have ${organization.remainingInvitations}
+        more available under your plan. Please remove ${emails.length - organization.remainingInvitations} users to proceed.
         You can upgrade your plan if you need to add more users.
       `]) : '',
       emails.length > maxNumberOfEmails ? h('.cfnext-form__field-error', ['Please fill in no more than 100 email addresses.']) : '',
