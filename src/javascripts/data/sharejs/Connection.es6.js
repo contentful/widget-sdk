@@ -19,7 +19,7 @@ export const DocLoad = DocLoader.DocLoad;
 /**
  * @param {string} baseUrl  URL where the ShareJS service lives
  * @param {string} spaceId
- * @param {{ getToken: function(): Promise<string>, refreshToken: function(): Promise<string>}} auth
+ * @param {Authorization} auth
  * @returns Connection
  */
 export function create (baseUrl, spaceId, auth) {
@@ -37,7 +37,6 @@ export function create (baseUrl, spaceId, auth) {
   const events = getEventStream(connection);
 
   const docWrappers = {};
-
 
   /**
    * @type {Property<string>}
@@ -84,6 +83,12 @@ export function create (baseUrl, spaceId, auth) {
    */
   const refreshAuth = wrapActionWithLock(() => {
     return auth.refreshToken().then((token) => connection.refreshAuth(token));
+  });
+
+  const unsubscribeAuthTokenChanges = K.onValue(auth.token$, (token) => {
+    if (connection.state === 'ok') {
+      connection.refreshAuth(token);
+    }
   });
 
   return {
@@ -145,6 +150,7 @@ export function create (baseUrl, spaceId, auth) {
    */
   function close () {
     connection.disconnect();
+    unsubscribeAuthTokenChanges();
   }
 
   function getDocWrapperForEntity (entity) {

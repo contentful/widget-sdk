@@ -52,7 +52,8 @@ describe('data/sharejs/Connection', function () {
     this.refreshToken = sinon.stub().resolves('NEW_TOKEN');
     this.auth = {
       getToken: this.getToken,
-      refreshToken: this.refreshToken
+      refreshToken: this.refreshToken,
+      token$: K.createMockProperty('TOKEN')
     };
     this.create = this.$inject('data/sharejs/Connection').create;
   });
@@ -65,6 +66,13 @@ describe('data/sharejs/Connection', function () {
         '//HOST/spaces/SPACE/channel',
         this.getToken
       );
+    });
+
+    it('subscribes to auth token changes', function () {
+      this.create('//HOST', 'SPACE', this.auth);
+      this.setState('ok');
+      this.auth.token$.set('NEW_TOKEN');
+      sinon.assert.calledWith(this.baseConnection.refreshAuth, 'NEW_TOKEN');
     });
   });
 
@@ -320,6 +328,16 @@ describe('data/sharejs/Connection', function () {
       this.baseConnection.disconnect = sinon.spy();
       connection.close();
       sinon.assert.calledOnce(this.baseConnection.disconnect);
+    });
+
+
+    it('unsubscribes from auth token changes', function () {
+      const connection = this.create('//HOST', 'SPACE', this.auth);
+      this.baseConnection.disconnect = sinon.spy();
+      this.setState('ok');
+      connection.close();
+      this.auth.token$.set('NEW_TOKEN');
+      sinon.assert.notCalled(this.baseConnection.refreshAuth);
     });
   });
 
