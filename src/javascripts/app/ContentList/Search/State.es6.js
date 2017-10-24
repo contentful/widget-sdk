@@ -226,10 +226,10 @@ export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
   }
 
   function setInput (state, input) {
-    const searchValue = input.trim();
     state = assign(state, { input });
 
-    if (searchValue.length > 2) {
+    const searchValue = input.trim();
+    if (searchValue.length > 2 || searchValue === '') {
       state = set(state, ['isTyping'], true);
       putTyping(sleep(1000));
     }
@@ -239,14 +239,14 @@ export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
     } else {
       state = hideSuggestions(state);
     }
-    state = set(state, ['input'], searchValue);
+
     return state;
   }
 
   function setContentType (state, contentTypeId) {
     state = set(state, ['contentTypeId'], contentTypeId);
     state = removeUnapplicableFilters(state);
-
+    state = triggerSearch(state);
     return state;
   }
 

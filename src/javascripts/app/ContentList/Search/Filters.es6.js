@@ -217,7 +217,7 @@ export function getMatchingFilters (searchString, contentTypeId, availableConten
 }
 
 function filterByName (filters, searchString = '') {
-  searchString = searchString.toLowerCase();
+  searchString = searchString.trim().toLowerCase();
 
   return filters.filter((filter) => {
     return startsWith(filter.name.toLowerCase(), searchString);
