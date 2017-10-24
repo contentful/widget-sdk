@@ -43,13 +43,14 @@ angular.module('contentful')
     name: 'platform',
     url: '/:orgId/platform',
     label: 'Platform subscription',
-    controller: ['$scope', function ($scope) {
-      $scope.context = { ready: true };
+    controller: ['$stateParams', '$scope', function ($stateParams, $scope) {
+      $scope.context = {};
+      $scope.properties = {
+        orgId: $stateParams.orgId,
+        context: $scope.context
+      };
     }],
-    template: [
-      workbenchHeader('Platform subscription'),
-      h('p', ['Platform subscription details: TODO!'])
-    ].join('')
+    template: h('cf-platform-subscription', { properties: 'properties' })
   });
 
   var usersGatekeeper = organizationsBase({
