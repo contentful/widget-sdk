@@ -27,6 +27,16 @@ export function apiUrl (path) {
   return settings.apiUrl + ensureLeadingSlash(path);
 }
 
+/**
+ * @ngdoc method
+ * @name Config#mockApiUrl
+ * Given a path return the URL for a mock CMA endpoint via http://stoplight.io
+ * @param {string} path
+ * @returns {string}
+ */
+export function mockApiUrl (path) {
+  return settings.mockApiUrl + ensureLeadingSlash(path);
+}
 
 /**
  * @ngdoc method
