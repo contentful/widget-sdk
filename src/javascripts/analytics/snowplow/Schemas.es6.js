@@ -89,7 +89,6 @@ registerSchema({
   version: '1-0-0'
 });
 
-
 registerSchema({
   name: 'app',
   version: '1-0-0'
@@ -142,6 +141,11 @@ registerSchema({
 
 registerSchema({
   name: 'view_load',
+  version: '1-0-0'
+});
+
+registerSchema({
+  name: 'element_click',
   version: '1-0-0'
 });
 

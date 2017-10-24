@@ -15,7 +15,7 @@ import BulkEditor from 'analytics/snowplow/transformers/BulkEditor';
 import Snapshot from 'analytics/snowplow/transformers/Snapshot';
 import InviteUserExperiment from 'analytics/snowplow/transformers/InviteUserExperiment';
 import SearchAndViews from 'analytics/snowplow/transformers/SearchAndViews';
-
+import ElementClickTransform from 'analytics/snowplow/transformers/ElementClick';
 
 /**
  * @ngdoc module
@@ -30,6 +30,7 @@ import SearchAndViews from 'analytics/snowplow/transformers/SearchAndViews';
 
 const _events = {};
 
+registerEvent('element:click', 'element_click', ElementClickTransform);
 registerEvent('global:state_changed', 'page_view', PageViewTransform);
 
 registerGenericEvent('learn:language_selected');
