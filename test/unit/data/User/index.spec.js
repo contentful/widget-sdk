@@ -41,10 +41,10 @@ describe('data/User', () => {
     this.utils = this.$inject('data/User');
   });
 
-  describe('#userDataStream$', function () {
+  describe('#userDataBus$', function () {
     beforeEach(function () {
       this.spy = sinon.spy();
-      this.utils.userDataStream$.onValue(this.spy);
+      this.utils.userDataBus$.onValue(this.spy);
 
       this.set = function (params) {
         const {

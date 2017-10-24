@@ -8,7 +8,7 @@ import {isOrgPlanEnterprise} from 'data/Org';
 
 import {
   getOrgRole,
-  userDataStream$,
+  userDataBus$,
   isNonPayingUser,
   getUserAgeInDays,
   ownsAtleastOneOrg,
@@ -40,7 +40,7 @@ export function init () {
     return;
   }
 
-  userDataStream$.onValue(changeUserContext);
+  userDataBus$.onValue(changeUserContext);
 }
 
 /**
@@ -234,7 +234,7 @@ function identify (user) {
 
 /**
  * @description
- * A handler meant for the userDataStream$ which, based on the user
+ * A handler meant for the userDataBus$ which, based on the user
  * and the current app states, either initializes an LD client
  * or switches user context.
  *
