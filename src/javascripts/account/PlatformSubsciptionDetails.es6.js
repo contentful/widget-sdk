@@ -1,5 +1,6 @@
 import {h} from 'ui/Framework';
 import {runTask} from 'utils/Concurrent';
+import {createMockEndpoint as createOrgEndpoint, getSubscription} from 'access_control/OrganizationMembershipRepository';
 
 export default function ($scope) {
   $scope.component = h('noscript');
@@ -20,26 +21,41 @@ export default function ($scope) {
   }
 }
 
-// TODO: load data here
 function loadStateFromProperties ({orgId}) {
-  return Promise.resolve({orgId});
+  const endpoint = createOrgEndpoint(orgId);
+  return getSubscription(endpoint);
 }
 
-function render ({orgId}) {
+function render (data) {
   return h('.workbench', [
-    header(),
+    h('.workbench-header__wrapper', [
+      h('header.workbench-header', [
+        h('h1.workbench-header__title', ['Platform subscription'])
+      ])
+    ]),
     h('.workbench-main', [
       h('.workbench-main__content', {
         style: { padding: '20px 25px' }
-      }, [h('pre', [orgId])])
+      }, [renderContent(data)])
     ])
   ]);
 }
 
-function header () {
-  return h('.workbench-header__wrapper', [
-    h('header.workbench-header', [
-      h('h1.workbench-header__title', ['Platform subscription'])
+function renderContent ({name, productName}) {
+  return h('.table', [
+    h('.table__head', [
+      h('table', [
+        h('thead', [
+          h('tr', [h('th', ['Name']), h('th', ['Product Name'])])
+        ])
+      ])
+    ]),
+    h('.table__body', [
+      h('table', [
+        h('tbody', [
+          h('tr', [h('td', [name]), h('td', [productName])])
+        ])
+      ])
     ])
   ]);
 }
