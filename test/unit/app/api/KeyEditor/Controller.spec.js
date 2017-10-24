@@ -2,6 +2,9 @@ describe('app/api/KeyEditor/Controller', function () {
   beforeEach(function () {
     module('contentful/test', ($provide) => {
       $provide.value('navigation/closeState', sinon.spy());
+      $provide.value('services/ContactSales', {
+        createContactLink: () => ''
+      });
     });
     const attachController = this.$inject('app/api/KeyEditor/Controller').default;
     const template = this.$inject('app/api/KeyEditor/Template').default();
