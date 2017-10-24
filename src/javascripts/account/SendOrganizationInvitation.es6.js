@@ -35,11 +35,11 @@ export const progress$ = progressBus.stream;
  * @param {String} orgId
  * @returns {Promise}
  */
-export function invite (emails, role, spaceMemberships, suppressInvitation, orgId) {
+export function invite ({emails, orgRole, spaceMemberships, suppressInvitation, orgId}) {
   const orgEndpoint = createOrgEndpoint(orgId);
   const invitations = emails.map(email => runTask(function* () {
     try {
-      yield inviteToOrg(orgEndpoint, {email, role, suppressInvitation});
+      yield inviteToOrg(orgEndpoint, {email, role: orgRole, suppressInvitation});
       yield inviteToSpaces(email, spaceMemberships);
       progressBus.emit(email);
     } catch (e) {

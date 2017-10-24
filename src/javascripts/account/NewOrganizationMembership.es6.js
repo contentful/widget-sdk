@@ -1,5 +1,4 @@
-import $state from '$state';
-import {includes, omit, get as getAtPath} from 'lodash';
+import {includes, omit, pick, get as getAtPath} from 'lodash';
 import {h} from 'ui/Framework';
 import { assign } from 'utils/Collections';
 import {getFatSpaces, getOrganization} from 'services/TokenStore';
@@ -9,6 +8,7 @@ import {ADMIN_ROLE_ID} from 'access_control/SpaceMembershipRepository';
 import {makeCtor, match} from 'utils/TaggedValues';
 import {invite, progress$} from 'account/SendOrganizationInvitation';
 import * as stringUtils from 'stringUtils';
+import {go} from 'states/Navigator';
 
 const adminRole = {
   name: 'Admin',
@@ -27,7 +27,7 @@ const Failure = makeCtor('failure');
 
 export default function ($scope) {
   const orgId = $scope.properties.orgId;
-  const offProgressValue = progress$.onValue(onProgressValue)
+  const offProgressValue = progress$.onValue(onProgressValue);
   const offProgressError = progress$.onError(onProgressError);
 
   let state = {
@@ -84,18 +84,18 @@ export default function ($scope) {
   const actions = {
     updateSpaceRole: (evt, role, spaceMemberships) => {
       const spaceRoles = spaceMemberships[role.spaceId] || [];
-      let newSet;
+      let newSpaceRoles;
       let updatedMemberships;
 
       if (evt.target.checked) {
-        newSet = addRole(role, spaceRoles);
+        newSpaceRoles = addRole(role, spaceRoles);
       } else {
-        newSet = removeRole(role, spaceRoles);
+        newSpaceRoles = removeRole(role, spaceRoles);
       }
 
-      if (newSet.length) {
+      if (newSpaceRoles.length) {
         updatedMemberships = assign(state.spaceMemberships, {
-          [role.spaceId]: newSet
+          [role.spaceId]: newSpaceRoles
         });
       } else {
         // remove property if there are no roles left in it
@@ -126,16 +126,28 @@ export default function ($scope) {
     submitInvitations: (evt) => {
       evt.preventDefault();
 
-      const {orgRole, emails, invalidAddresses, failedOrgInvitations, spaceMemberships, suppressInvitation} = state;
+      const {
+        orgRole,
+        emails,
+        invalidAddresses,
+        failedOrgInvitations,
+        spaceMemberships,
+        suppressInvitation
+      } = state;
 
       if (emails.length && emails.length <= maxNumberOfEmails && !invalidAddresses.length) {
-        invite(emails, orgRole, spaceMemberships, suppressInvitation, $scope.properties.orgId)
-          .then(() => {
-            state = assign(state, {
-              status: failedOrgInvitations.length ? Failure() : Success()
-            });
-            rerender();
+        invite({
+          emails,
+          orgRole,
+          spaceMemberships,
+          suppressInvitation,
+          orgId
+        }).then(() => {
+          state = assign(state, {
+            status: failedOrgInvitations.length ? Failure() : Success()
           });
+          rerender();
+        });
 
         state = assign(state, {
           status: InProgress()
@@ -145,6 +157,11 @@ export default function ($scope) {
       }
     },
 
+    /**
+     * Toggle flag `suppressInvitation` that goes in the org invitation call.
+     * This flag indicates whether or not we should send an email to the invited
+     * users saying they were invited.
+     */
     toggleInvitationEmailOption: () => {
       state = assign(state, {
         suppressInvitation: !state.suppressInvitation
@@ -152,16 +169,17 @@ export default function ($scope) {
     },
 
     /**
-     * Restart the form, keeping the selected orgRole and space roles.
+     * Restart the form, seting the status to `Idle`, and keeping the selected
+     * orgRole and space roles.
      * It also enables to restart with a given list of emails.
      * @param {Array<String>} emails
      */
-    restart: (evt, emails) => {
+    restart: (evt, emails = []) => {
       evt.preventDefault();
 
       state = assign(state, {
-        emails: emails || [],
-        emailsInputValue: emails ? emails.join(', ') : '',
+        emails: emails,
+        emailsInputValue: emails.join(', '),
         status: Idle(),
         failedOrgInvitations: [],
         successfulOrgInvitations: []
@@ -170,9 +188,14 @@ export default function ($scope) {
       rerender();
     },
 
+    /**
+     * Navigate to organization users list
+     */
     goToList: (evt) => {
       evt.preventDefault();
-      $state.go('account.organizations.users.gatekeeper');
+      go({
+        path: ['account', 'organizations', 'users', 'gatekeeper']
+      });
     },
     /**
      * Receives a string with email addresses
@@ -223,15 +246,15 @@ export default function ($scope) {
     return spaceRoles.filter(id => id !== role.id);
   }
 
-  function onProgressValue(email) {
+  function onProgressValue (email) {
     state = assign(state, {
       successfulOrgInvitations: state.successfulOrgInvitations.concat([email])
     });
     rerender();
   }
 
-  function onProgressError(email) {
-    state.failedOrgInvitations.push(email)
+  function onProgressError (email) {
+    state.failedOrgInvitations.push(email);
   }
 }
 
@@ -250,13 +273,19 @@ function render (state, actions) {
           [Failure]: () => errorMessage(state.failedOrgInvitations, actions.restart),
           [InProgress]: () => progressMessage(state.emails, state.successfulOrgInvitations),
           [Idle]: () => h('', [
-            emailsInput(state.emails, state.emailsInputValue, state.invalidAddresses, state.organization, actions.updateEmails),
+            emailsInput(
+              pick(state, ['emails', 'emailsInputValue', 'invalidAddresses', 'organization']),
+              pick(actions, ['updateEmails'])
+            ),
             organizationRole(state.orgRole, actions.updateOrgRole),
             accessToSpaces(state.spaces, state.spaceMemberships, actions.updateSpaceRole)
           ])
         })
       ]),
-      sidebar(state.status, state.emails, state.organization, state.suppressInvitation, actions.toggleInvitationEmailOption)
+      sidebar(
+        pick(state, ['status', 'emails', 'organization', 'suppressInvitation']),
+        pick(actions, ['toggleInvitationEmailOption'])
+      )
     ])
   ]);
 }
@@ -269,7 +298,14 @@ function header () {
   ]);
 }
 
-function sidebar (status, emails, org, suppressInvitation, toggleInvitationEmailOption) {
+function sidebar ({
+  status,
+  emails,
+  organization,
+  suppressInvitation
+}, {
+  toggleInvitationEmailOption
+}) {
   const isDisabled = match(status, {
     [Idle]: () => false,
     _: () => true
@@ -277,7 +313,7 @@ function sidebar (status, emails, org, suppressInvitation, toggleInvitationEmail
 
   return h('.workbench-main__entity-sidebar', [
     h('.entity-sidebar', [
-      h('p', [`Your organization is using ${org.membershipsCount} out of ${org.membershipLimit} users.`]),
+      h('p', [`Your organization is using ${organization.membershipsCount} out of ${organization.membershipLimit} users.`]),
       h('button.cfnext-btn-primary-action.x--block', {
         type: 'submit',
         disabled: isDisabled
@@ -285,7 +321,7 @@ function sidebar (status, emails, org, suppressInvitation, toggleInvitationEmail
         'Send invitation',
         emails.length > 1 ? ` to ${emails.length} users` : ''
       ]),
-      org.hasSsoEnabled ? h('.cfnext-form-option.u-separator--small', [
+      organization.hasSsoEnabled ? h('.cfnext-form-option.u-separator--small', [
         h('label', [
           h('input', {
             type: 'checkbox',
@@ -303,7 +339,14 @@ function sidebar (status, emails, org, suppressInvitation, toggleInvitationEmail
   ]);
 }
 
-function emailsInput (emails, emailsInputValue, invalidAddresses, organization, updateEmails) {
+function emailsInput ({
+  emails,
+  emailsInputValue,
+  invalidAddresses,
+  organization
+}, {
+  updateEmails
+}) {
   const remainingInvitations = organization.membershipLimit - organization.membershipsCount;
 
   return h('div', [

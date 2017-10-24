@@ -55,10 +55,10 @@ export function createStreamBus (scope) {
   }
 
   return {
-    stream: stream,
-    end: end,
-    emit: emit,
-    error: error
+    stream,
+    end,
+    emit,
+    error
   };
 
   function emit (value) {
