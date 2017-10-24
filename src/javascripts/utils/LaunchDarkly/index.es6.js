@@ -4,6 +4,7 @@ import {launchDarkly as config} from 'Config';
 import {assign, get, isNull, omitBy} from 'lodash';
 import {onValueScope, createPropertyBus} from 'utils/kefir';
 import getChangesObject from 'utils/ShallowObjectDiff';
+import {isOrgPlanEnterprise} from 'data/Org';
 
 import {
   getOrgRole,
@@ -170,6 +171,7 @@ function buildLDUser (user, currOrg, spacesByOrg, currSpace) {
   let customData = {
     currentOrgId: orgId,
     currentOrgSubscriptionStatus: currOrg.subscription.status,
+    currentOrgPlanIsEnterprise: isOrgPlanEnterprise(currOrg),
     currentOrgHasSpace: !!get(spacesByOrg[orgId], 'length', 0),
     currentUserOrgRole: getOrgRole(user, orgId),
     currentUserHasAtleastOneSpace: hasAnOrgWithSpaces(spacesByOrg),
