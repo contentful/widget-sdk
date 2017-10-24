@@ -39,6 +39,19 @@ angular.module('contentful')
     url: '/:orgId/z_subscription{pathSuffix:PathSuffix}'
   });
 
+  var platform = base({
+    name: 'platform',
+    url: '/:orgId/platform',
+    label: 'Platform subscription',
+    controller: ['$scope', function ($scope) {
+      $scope.context = { ready: true };
+    }],
+    template: [
+      workbenchHeader('Platform subscription'),
+      h('p', ['Platform subscription details: TODO!'])
+    ].join('')
+  });
+
   var usersGatekeeper = organizationsBase({
     name: 'gatekeeper',
     title: 'Organization users',
@@ -142,6 +155,7 @@ angular.module('contentful')
       newOrg,
       edit,
       subscription,
+      platform,
       users,
       spaces,
       offsitebackup,
