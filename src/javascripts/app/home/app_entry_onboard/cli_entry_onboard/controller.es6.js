@@ -25,6 +25,7 @@ export function createCliEntryComponent (props) {
   });
 
   const store = createStore({
+    short: props.short,
     type: props.type,
     greeting: ''
   }, reducer);
