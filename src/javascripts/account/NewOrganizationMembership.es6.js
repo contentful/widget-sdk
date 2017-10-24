@@ -26,9 +26,9 @@ const Success = makeCtor('success');
 const Failure = makeCtor('failure');
 
 export default function ($scope) {
-  $scope.component = h('noscript');
-
   const orgId = $scope.properties.orgId;
+  const offProgressValue = progress$.onValue(onProgressValue)
+  const offProgressError = progress$.onError(onProgressError);
 
   let state = {
     spaces: [],
@@ -43,14 +43,11 @@ export default function ($scope) {
     organization: {}
   };
 
-  progress$
-    .onValue(email => {
-      state = assign(state, {
-        successfulOrgInvitations: state.successfulOrgInvitations.concat([email])
-      });
-      rerender();
-    })
-    .onError(email => state.failedOrgInvitations.push(email));
+  $scope.component = h('noscript');
+  $scope.$on('$destroy', () => {
+    offProgressValue();
+    offProgressError();
+  });
 
   runTask(function* () {
     const org = yield getOrganization(orgId);
@@ -159,7 +156,9 @@ export default function ($scope) {
      * It also enables to restart with a given list of emails.
      * @param {Array<String>} emails
      */
-    restart: (emails) => {
+    restart: (evt, emails) => {
+      evt.preventDefault();
+
       state = assign(state, {
         emails: emails || [],
         emailsInputValue: emails ? emails.join(', ') : '',
@@ -171,7 +170,8 @@ export default function ($scope) {
       rerender();
     },
 
-    goToList: () => {
+    goToList: (evt) => {
+      evt.preventDefault();
       $state.go('account.organizations.users.gatekeeper');
     },
     /**
@@ -221,6 +221,17 @@ export default function ($scope) {
 
   function removeRole (role, spaceRoles) {
     return spaceRoles.filter(id => id !== role.id);
+  }
+
+  function onProgressValue(email) {
+    state = assign(state, {
+      successfulOrgInvitations: state.successfulOrgInvitations.concat([email])
+    });
+    rerender();
+  }
+
+  function onProgressError(email) {
+    state.failedOrgInvitations.push(email)
   }
 }
 
@@ -407,9 +418,8 @@ function errorMessage (failedEmails, restart) {
       h('h3', ['Whoops! something went wrong']),
       h('p', [
         `The process failed for the following ${userString}. Please try to `,
-        h('button.text-link', {
-          onClick: () => restart(failedEmails),
-          type: 'button'
+        h('a', {
+          onClick: (evt) => restart(evt, failedEmails)
         }, ['invite them again.'])
       ])
     ]),
@@ -426,13 +436,11 @@ function successMessage (emails, restart, goToList) {
     h('h3', [`Yay! ${emails.length} ${userString} been invited to your organization`]),
     h('p', [
       'They should have received an email to confirm the invitation in their inbox. Go ahead and ',
-      h('button.text-link', {
-        type: 'button',
-        onClick: () => restart()
+      h('a', {
+        onClick: restart
       }, ['invite more users']),
       ' or ',
-      h('button.text-link', {
-        type: 'button',
+      h('a', {
         onClick: goToList
       }, ['go back to the users list.'])
     ])
