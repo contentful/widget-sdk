@@ -1,7 +1,7 @@
 import {includes, omit, pick, get as getAtPath} from 'lodash';
 import {h} from 'ui/Framework';
 import { assign } from 'utils/Collections';
-import {getFatSpaces, getOrganization} from 'services/TokenStore';
+import {getFatSpaces, getOrganization, refresh as refreshTokenStore} from 'services/TokenStore';
 import * as RoleRepository from 'RoleRepository';
 import {runTask} from 'utils/Concurrent';
 import {ADMIN_ROLE_ID} from 'access_control/SpaceMembershipRepository';
@@ -26,10 +26,6 @@ const Success = makeCtor('success');
 const Failure = makeCtor('failure');
 
 export default function ($scope) {
-  const orgId = $scope.properties.orgId;
-  const offProgressValue = progress$.onValue(onProgressValue);
-  const offProgressError = progress$.onError(onProgressError);
-
   let state = {
     spaces: [],
     emails: [],
@@ -43,14 +39,29 @@ export default function ($scope) {
     organization: {}
   };
 
+  const actions = {
+    updateSpaceRole,
+    updateOrgRole,
+    updateEmails,
+    toggleInvitationEmailOption,
+    restart,
+    goToList,
+    submitInvitations
+  };
+
+  const orgId = $scope.properties.orgId;
+
+  progress$.onValue(onProgressValue);
+  progress$.onError(onProgressError);
+
   $scope.component = h('noscript');
   $scope.$on('$destroy', () => {
-    offProgressValue();
-    offProgressError();
+    progress$.offValue(onProgressValue);
+    progress$.offError(onProgressError);
   });
 
   runTask(function* () {
-    const org = yield getOrganization(orgId);
+    const organization = yield getOrgInfo(orgId);
     const allSpaces = yield getFatSpaces();
     const orgSpaces = allSpaces.filter(space => space.data.organization.sys.id === orgId);
     const spacesWithRolesPromises = orgSpaces.map(space => runTask(function* () {
@@ -71,156 +82,156 @@ export default function ($scope) {
 
     state = assign(state, {
       spaces: spacesWithRoles,
-      organization: {
-        hasSsoEnabled: org.hasSsoEnabled,
-        membershipLimit: getAtPath(org, 'subscriptionPlan.limits.permanent.organizationMembership'),
-        membershipsCount: getAtPath(org, 'usage.permanent.organizationMembership')
-      }
+      organization
     });
 
     rerender();
   });
 
-  const actions = {
-    updateSpaceRole: (evt, role, spaceMemberships) => {
-      const spaceRoles = spaceMemberships[role.spaceId] || [];
-      let newSpaceRoles;
-      let updatedMemberships;
+  function updateSpaceRole (evt, role, spaceMemberships) {
+    const spaceRoles = spaceMemberships[role.spaceId] || [];
+    let newSpaceRoles;
+    let updatedMemberships;
 
-      if (evt.target.checked) {
-        newSpaceRoles = addRole(role, spaceRoles);
-      } else {
-        newSpaceRoles = removeRole(role, spaceRoles);
-      }
+    if (evt.target.checked) {
+      newSpaceRoles = addRole(role, spaceRoles);
+    } else {
+      newSpaceRoles = removeRole(role, spaceRoles);
+    }
 
-      if (newSpaceRoles.length) {
-        updatedMemberships = assign(state.spaceMemberships, {
-          [role.spaceId]: newSpaceRoles
-        });
-      } else {
-        // remove property if there are no roles left in it
-        updatedMemberships = omit(state.spaceMemberships, [role.spaceId]);
-      }
-
-      state = assign(state, {
-        spaceMemberships: updatedMemberships
+    if (newSpaceRoles.length) {
+      updatedMemberships = assign(state.spaceMemberships, {
+        [role.spaceId]: newSpaceRoles
       });
+    } else {
+      // remove property if there are no roles left in it
+      updatedMemberships = omit(state.spaceMemberships, [role.spaceId]);
+    }
 
+    state = assign(state, {
+      spaceMemberships: updatedMemberships
+    });
+
+    rerender();
+  }
+
+  function updateOrgRole (evt, role) {
+    if (evt.target.checked) {
+      state = assign(state, {
+        orgRole: role
+      });
       rerender();
-    },
+    }
+  }
 
-    updateOrgRole: (evt, role) => {
-      if (evt.target.checked) {
-        state = assign(state, {
-          orgRole: role
-        });
-        rerender();
-      }
-    },
+  /**
+   * Send invitations to the organization to all emails in the form
+   * If the org invitation succeeds (or if it fails with 422 (taken), automatically
+   * proceeds to invite the user to all selected spaces with respective roles
+   */
+  function submitInvitations (evt) {
+    evt.preventDefault();
 
-    /**
-     * Send invitations to the organization to all emails in the form
-     * If the org invitation succeeds (or if it fails with 422 (taken), automatically
-     * proceeds to invite the user to all selected spaces with respective roles
-     */
-    submitInvitations: (evt) => {
-      evt.preventDefault();
+    const {
+      orgRole,
+      emails,
+      invalidAddresses,
+      failedOrgInvitations,
+      spaceMemberships,
+      suppressInvitation
+    } = state;
 
-      const {
-        orgRole,
-        emails,
-        invalidAddresses,
-        failedOrgInvitations,
-        spaceMemberships,
-        suppressInvitation
-      } = state;
-
-      if (emails.length && emails.length <= maxNumberOfEmails && !invalidAddresses.length) {
-        invite({
+    if (emails.length && emails.length <= maxNumberOfEmails && !invalidAddresses.length) {
+      runTask(function* () {
+        yield invite({
           emails,
           orgRole,
           spaceMemberships,
           suppressInvitation,
           orgId
-        }).then(() => {
-          state = assign(state, {
-            status: failedOrgInvitations.length ? Failure() : Success()
-          });
-          rerender();
         });
+        yield refreshTokenStore();
+        const organization = yield getOrgInfo(orgId);
 
         state = assign(state, {
-          status: InProgress()
+          status: failedOrgInvitations.length ? Failure() : Success(),
+          organization
         });
 
         rerender();
-      }
-    },
-
-    /**
-     * Toggle flag `suppressInvitation` that goes in the org invitation call.
-     * This flag indicates whether or not we should send an email to the invited
-     * users saying they were invited.
-     */
-    toggleInvitationEmailOption: () => {
-      state = assign(state, {
-        suppressInvitation: !state.suppressInvitation
-      });
-    },
-
-    /**
-     * Restart the form, seting the status to `Idle`, and keeping the selected
-     * orgRole and space roles.
-     * It also enables to restart with a given list of emails.
-     * @param {Array<String>} emails
-     */
-    restart: (evt, emails = []) => {
-      evt.preventDefault();
-
-      state = assign(state, {
-        emails: emails,
-        emailsInputValue: emails.join(', '),
-        status: Idle(),
-        failedOrgInvitations: [],
-        successfulOrgInvitations: []
       });
 
-      rerender();
-    },
-
-    /**
-     * Navigate to organization users list
-     */
-    goToList: (evt) => {
-      evt.preventDefault();
-      go({
-        path: ['account', 'organizations', 'users', 'gatekeeper']
-      });
-    },
-    /**
-     * Receives a string with email addresses
-     * separated by comma and transforms it into
-     * an array of emails and, possibly, an array with
-     * the invalid addresses.
-     */
-    updateEmails: (evt) => {
-      const emails = evt.target.value
-        .split(',')
-        .map(email => email.trim().replace(/\n|\t/g, ''))
-        .filter(email => email.length);
-
-      const invalidAddresses = emails
-        .filter(email => !stringUtils.isValidEmail(email));
-
       state = assign(state, {
-        emailsInputValue: evt.target.value,
-        emails,
-        invalidAddresses
+        status: InProgress()
       });
 
       rerender();
     }
-  };
+  }
+
+  /**
+   * Toggle flag `suppressInvitation` that goes in the org invitation call.
+   * This flag indicates whether or not we should send an email to the invited
+   * users saying they were invited.
+   */
+  function toggleInvitationEmailOption () {
+    state = assign(state, {
+      suppressInvitation: !state.suppressInvitation
+    });
+  }
+
+  /**
+   * Restart the form, seting the status to `Idle`, and keeping the selected
+   * orgRole and space roles.
+   * It also enables to restart with a given list of emails.
+   * @param {Array<String>} emails
+   */
+  function restart (evt, emails = []) {
+    evt.preventDefault();
+
+    state = assign(state, {
+      emails: emails,
+      emailsInputValue: emails.join(', '),
+      status: Idle(),
+      failedOrgInvitations: [],
+      successfulOrgInvitations: []
+    });
+
+    rerender();
+  }
+
+  /**
+   * Navigate to organization users list
+   */
+  function goToList (evt) {
+    evt.preventDefault();
+    go({
+      path: ['account', 'organizations', 'users', 'gatekeeper']
+    });
+  }
+  /**
+   * Receives a string with email addresses
+   * separated by comma and transforms it into
+   * an array of emails and, possibly, an array with
+   * the invalid addresses.
+   */
+  function updateEmails (evt) {
+    const emails = evt.target.value
+      .split(',')
+      .map(email => email.trim().replace(/\n|\t/g, ''))
+      .filter(email => email.length);
+
+    const invalidAddresses = emails
+      .filter(email => !stringUtils.isValidEmail(email));
+
+    state = assign(state, {
+      emailsInputValue: evt.target.value,
+      emails,
+      invalidAddresses
+    });
+
+    rerender();
+  }
 
   function rerender () {
     $scope.properties.context.ready = true;
@@ -255,6 +266,14 @@ export default function ($scope) {
 
   function onProgressError (email) {
     state.failedOrgInvitations.push(email);
+  }
+
+  function getOrgInfo (orgId) {
+    return getOrganization(orgId).then(org => ({
+      hasSsoEnabled: org.hasSsoEnabled,
+      membershipLimit: getAtPath(org, 'subscriptionPlan.limits.permanent.organizationMembership'),
+      membershipsCount: getAtPath(org, 'usage.permanent.organizationMembership')
+    }));
   }
 }
 
