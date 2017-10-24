@@ -11,12 +11,12 @@ describe('cfWelcome directive', function () {
           format: () => {}
         };
       });
-      $provide.stubLaunchDarkly();
       $provide.value('$state', {
         current: {
           name: 'home'
         }
       });
+      $provide.stubLaunchDarkly();
     });
 
     this.tokenStore = this.$inject('services/TokenStore');

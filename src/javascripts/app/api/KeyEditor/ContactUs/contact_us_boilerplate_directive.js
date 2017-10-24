@@ -1,22 +1,22 @@
 angular.module('contentful')
 .directive('cfContactUsBoilerplate', ['require', function (require) {
-  var LD = require('utils/LaunchDarkly/index');
+  var LD = require('utils/LaunchDarkly');
   var renderTemplate = require('app/api/KeyEditor/ContactUs/template').render;
   var createContactLink = require('services/ContactSales').createContactLink;
 
   var flagName = 'feature-ps-10-2017-contact-us-boilerplate';
-  var flagPromise = LD.onABTestOnce(flagName);
 
   return {
     restrict: 'E',
     template: '<cf-component-bridge component="contact.component" />',
     controllerAs: 'contact',
-    controller: function () {
+    controller: ['$scope', function ($scope) {
       var controller = this;
       controller.link = createContactLink('boilerplate');
 
       render();
-      flagPromise.then(function (flag) {
+
+      LD.onABTest($scope, flagName, function (flag) {
         controller.isVisible = flag;
         render();
       });
@@ -33,6 +33,6 @@ angular.module('contentful')
         // TODO: add tracking after new schema will be added to the snowplow
         // https://contentful.tpondemand.com/entity/23643
       }
-    }
+    }]
   };
 }]);
