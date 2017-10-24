@@ -82,7 +82,7 @@ export function create (baseUrl, spaceId, auth) {
    * @returns {Promise}
    */
   const refreshAuth = wrapActionWithLock(() => {
-    return auth.refreshToken().then((token) => connection.refreshAuth(token));
+    return auth.refreshToken();
   });
 
   const unsubscribeAuthTokenChanges = K.onValue(auth.token$, (token) => {
