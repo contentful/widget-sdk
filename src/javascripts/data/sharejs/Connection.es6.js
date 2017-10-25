@@ -81,15 +81,9 @@ export function create (baseUrl, spaceId, auth) {
    *
    * @returns {Promise}
    */
-  const refreshAuth = wrapActionWithLock(() => {
-    return auth.refreshToken();
-  });
+  const refreshAuth = wrapActionWithLock(() => auth.refreshToken());
 
-  const unsubscribeAuthTokenChanges = K.onValue(auth.token$, (token) => {
-    if (connection.state === 'ok') {
-      connection.refreshAuth(token);
-    }
-  });
+  const unsubscribeAuthTokenChanges = K.onValue(auth.token$, sendAuthToken);
 
   return {
     getDocLoader: getDocLoader,
@@ -97,7 +91,6 @@ export function create (baseUrl, spaceId, auth) {
     close: close,
     refreshAuth: refreshAuth
   };
-
 
   /**
    * @ngdoc method
@@ -113,7 +106,6 @@ export function create (baseUrl, spaceId, auth) {
     const docWrapper = getDocWrapperForEntity(entity);
     return DocLoader.create(docWrapper, state$, shouldOpen$);
   }
-
 
   /**
    * @ngdoc method
@@ -142,7 +134,6 @@ export function create (baseUrl, spaceId, auth) {
       });
   }
 
-
   /**
    * @ngdoc method
    * @module cf.data
@@ -163,8 +154,19 @@ export function create (baseUrl, spaceId, auth) {
 
     return docWrapper;
   }
-}
 
+  function sendAuthToken (token) {
+    // connectin.state should be 'ok' to be able to send a new token
+    if (connection.state === 'ok') {
+      try {
+        connection.refreshAuth(token);
+      } catch (e) {
+        // close the connection if authorization failed
+        close();
+      }
+    }
+  }
+}
 
 /**
  * Patches the underlying ShareJS connection object so that events
@@ -181,7 +183,6 @@ function getEventStream (connection) {
 
   return eventBus.stream;
 }
-
 
 function createBaseConnection (baseUrl, spaceId, getToken) {
   const url = baseUrl + '/spaces/' + spaceId + '/channel';

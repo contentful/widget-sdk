@@ -7,6 +7,7 @@ describe('data/sharejs/Connection', function () {
       emit: _.noop,
       open: sinon.stub(),
       send: sinon.stub(),
+      disconnect: sinon.stub(),
       setState: sinon.stub(),
       refreshAuth: sinon.stub()
     };
@@ -47,29 +48,37 @@ describe('data/sharejs/Connection', function () {
       this.$apply();
     };
 
-
-    this.getToken = sinon.stub().resolves('TOKEN');
+    const token$ = K.createMockProperty('TOKEN');
+    const getToken = sinon.stub().resolves('TOKEN');
     this.refreshToken = sinon.stub().resolves('NEW_TOKEN');
+
     this.auth = {
-      getToken: this.getToken,
-      refreshToken: this.refreshToken,
-      token$: K.createMockProperty('TOKEN')
+      token$,
+      getToken,
+      refreshToken: () => this.refreshToken().then((t) => {
+        token$.set(t);
+        return t;
+      })
     };
+
     this.create = this.$inject('data/sharejs/Connection').create;
+    this.connection = this.create('//HOST', 'SPACE', this.auth);
+  });
+
+  afterEach(function () {
+    this.connection.close();
   });
 
   describe('#create', function () {
     it('passes URL and getToken() to base connection', function () {
-      this.create('//HOST', 'SPACE', this.auth);
       sinon.assert.calledWith(
         this.sharejs.Connection,
         '//HOST/spaces/SPACE/channel',
-        this.getToken
+        this.auth.getToken
       );
     });
 
     it('subscribes to auth token changes', function () {
-      this.create('//HOST', 'SPACE', this.auth);
       this.setState('ok');
       this.auth.token$.set('NEW_TOKEN');
       sinon.assert.calledWith(this.baseConnection.refreshAuth, 'NEW_TOKEN');
@@ -90,10 +99,9 @@ describe('data/sharejs/Connection', function () {
         }}
       };
 
-      const connection = this.create('HOST', 'SPACE', this.auth);
       const shouldOpen$ = K.createMockProperty(true);
 
-      this.docLoader = connection.getDocLoader(this.entity, shouldOpen$);
+      this.docLoader = this.connection.getDocLoader(this.entity, shouldOpen$);
       this.docValues = K.extractValues(this.docLoader.doc);
       this.$apply();
 
@@ -295,10 +303,8 @@ describe('data/sharejs/Connection', function () {
         }}
       };
 
-      const connection = this.create('HOST', 'SPACE', this.auth);
-
       this.open = function () {
-        return connection.open(entity);
+        return this.connection.open(entity);
       };
     });
 
@@ -324,60 +330,53 @@ describe('data/sharejs/Connection', function () {
 
   describe('#close()', function () {
     it('delegates to baseConnection.disconnect', function () {
-      const connection = this.create('HOST', 'SPACE', this.auth);
-      this.baseConnection.disconnect = sinon.spy();
-      connection.close();
+      this.connection.close();
       sinon.assert.calledOnce(this.baseConnection.disconnect);
     });
 
 
     it('unsubscribes from auth token changes', function () {
-      const connection = this.create('//HOST', 'SPACE', this.auth);
-      this.baseConnection.disconnect = sinon.spy();
       this.setState('ok');
-      connection.close();
+      this.connection.close();
       this.auth.token$.set('NEW_TOKEN');
       sinon.assert.notCalled(this.baseConnection.refreshAuth);
     });
   });
 
   describe('#refreshAuth()', function () {
+    beforeEach(function () {
+      this.setState('ok');
+    });
+
     it('calls connection.refreshAuth() with the new token', function* () {
-      const connection = this.create('//HOST', 'SPACE', this.auth);
-      yield connection.refreshAuth();
+      yield this.connection.refreshAuth();
       sinon.assert.calledOnce(this.baseConnection.refreshAuth.withArgs('NEW_TOKEN'));
     });
 
+    it('does not call connection.refreshAuth() if connection is closed', function* () {
+      this.setState('disconnected');
+      yield this.connection.refreshAuth();
+      sinon.assert.notCalled(this.baseConnection.refreshAuth);
+    });
+
     it('prevents concurrent calls', function () {
-      const connection = this.create('//HOST', 'SPACE', this.auth);
-      const firstCallPromise = connection.refreshAuth();
-      const secondCallPromise = connection.refreshAuth();
+      const firstCallPromise = this.connection.refreshAuth();
+      const secondCallPromise = this.connection.refreshAuth();
       expect(firstCallPromise).toEqual(secondCallPromise);
     });
 
     it('makes a consequent call after previous one finishes', function* () {
-      const connection = this.create('//HOST', 'SPACE', this.auth);
-      yield connection.refreshAuth();
-      yield connection.refreshAuth();
+      yield this.connection.refreshAuth();
+      yield this.connection.refreshAuth();
       sinon.assert.calledTwice(this.baseConnection.refreshAuth);
     });
 
-    it('rejects terminally', function* () {
-      const connection = this.create('//HOST', 'SPACE', this.auth);
+    it('closes connection if auth refresh failed', function* () {
       const error = new Error();
-      this.baseConnection.refreshAuth.rejects(error);
+      this.baseConnection.refreshAuth.throws(error);
 
-      const error1 = yield connection.refreshAuth().catch((e) => e);
-      expect(error1).toBe(error);
-
-      const error2 = yield connection.refreshAuth().catch((e) => e);
-      expect(error2).toBe(error);
-
-      this.baseConnection.refreshAuth.resolves('TOKEN');
-      const error3 = yield connection.refreshAuth().catch((e) => e);
-      expect(error3).toBe(error);
-
-      sinon.assert.calledOnce(this.baseConnection.refreshAuth);
+      yield this.connection.refreshAuth();
+      sinon.assert.calledOnce(this.baseConnection.disconnect);
     });
   });
 });
