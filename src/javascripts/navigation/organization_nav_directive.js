@@ -19,6 +19,13 @@
       var OrganizationRoles = require('services/OrganizationRoles');
       var K = require('utils/kefir');
 
+      // Begin feature flag code - feature-bv-11-2017-show-platform-subscription
+      var LD = require('utils/LaunchDarkly');
+      LD.onFeatureFlag($scope, 'feature-bv-11-2017-show-platform-subscription', function (value) {
+        $scope.showPlatfromSubscription = value;
+      });
+      // End feature flag code - feature-bv-11-2017-show-platform-subscription
+
       var nav = this;
 
       // Prevent unnecesary calls from watchers
@@ -60,6 +67,14 @@
         inheritUrlParams: false,
         icon: 'nav-organization-subscription',
         dataViewType: 'subscription'
+      },
+      {
+        if: 'showPlatfromSubscription',
+        title: 'Platform',
+        sref: 'account.organizations.platform({orgId: nav.orgId})',
+        rootSref: 'account.organizations.platform',
+        inheritUrlParams: false,
+        dataViewType: 'platform-subscription'
       },
       {
         title: 'Billing',
