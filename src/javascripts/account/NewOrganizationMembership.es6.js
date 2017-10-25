@@ -313,7 +313,7 @@ function render (state, actions) {
         })
       ]),
       sidebar(
-        pick(state, ['status', 'emails', 'organization', 'suppressInvitation']),
+        pick(state, ['status', 'organization', 'suppressInvitation']),
         pick(actions, ['toggleInvitationEmailOption'])
       )
     ])
@@ -330,7 +330,6 @@ function header () {
 
 function sidebar ({
   status,
-  emails,
   organization,
   suppressInvitation
 }, {
@@ -347,10 +346,7 @@ function sidebar ({
       h('button.cfnext-btn-primary-action.x--block', {
         type: 'submit',
         disabled: isDisabled
-      }, [
-        'Send invitation',
-        emails.length > 1 ? ` to ${emails.length} users` : ''
-      ]),
+      }, ['Send invitation']),
       organization.hasSsoEnabled ? h('.cfnext-form-option.u-separator--small', [
         h('label', [
           h('input', {
