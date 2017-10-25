@@ -226,6 +226,22 @@ angular.module('cf.utils')
     }
   }
 
+  // Adapted from gatekeeper, please don't modify unless you do it in both places
+  // https://github.com/contentful/gatekeeper/blob/master/app/validators/email_validator.rb
+  var emailRegex = RegExp(
+    '(?!.{255})' +         // Lookahead assertion limiting length of email address to under 255 chars
+    '(^\\s*' +             // Start of string and arbitrary amount of whitespace
+    '([^@\\s]{1,64})' +     // Part of address before @, limited to under 64 chars
+    '@' +                  // The @ symbol itself
+    '((?:[\\w\\d-]+\\.)' + // Domain portion (limited to letters and numbers), including the period
+    '+[\\w\\d-]{2,}' +         // The TLD
+    ')\\s*$)',             // Arbitrary whitespace and end of string
+  'i');
+
+  function isValidEmail (string) {
+    return emailRegex.test(string);
+  }
+
   return {
     normalizeWhiteSpace: normalizeWhiteSpace,
     joinAnd: joinAnd,
@@ -243,7 +259,8 @@ angular.module('cf.utils')
     getEntityLabel: getEntityLabel,
     truncate: truncate,
     truncateMiddle: truncateMiddle,
-    startsWithVowel: startsWithVowel
+    startsWithVowel: startsWithVowel,
+    isValidEmail: isValidEmail
   };
 })())
 
