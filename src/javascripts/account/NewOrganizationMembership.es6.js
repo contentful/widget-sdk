@@ -1,10 +1,11 @@
 import {includes, omit, pick, get as getAtPath} from 'lodash';
 import {h} from 'ui/Framework';
 import { assign } from 'utils/Collections';
-import {getFatSpaces, getOrganization, refresh as refreshTokenStore} from 'services/TokenStore';
+import {getFatSpaces, getOrganization} from 'services/TokenStore';
 import * as RoleRepository from 'RoleRepository';
 import {runTask} from 'utils/Concurrent';
 import {ADMIN_ROLE_ID} from 'access_control/SpaceMembershipRepository';
+import {getUsers, createEndpoint} from 'access_control/OrganizationMembershipRepository';
 import {makeCtor, match} from 'utils/TaggedValues';
 import {invite, progress$} from 'account/SendOrganizationInvitation';
 import * as stringUtils from 'stringUtils';
@@ -156,7 +157,6 @@ export default function ($scope) {
           suppressInvitation,
           orgId
         });
-        yield refreshTokenStore();
         const organization = yield* getOrgInfo(orgId);
 
         state = assign(state, {
@@ -274,17 +274,25 @@ export default function ($scope) {
     state.failedOrgInvitations.push(email);
   }
 
+  /**
+   * Gets org info from the token and makes a request to
+   * organization users endpoint to get the `total` value.
+   * This is a workaround for the token 15min cache that won't let
+   * us get an updated number after an invitation request
+   */
   function* getOrgInfo (orgId) {
     const org = yield getOrganization(orgId);
     const membershipLimit = getAtPath(org, 'subscriptionPlan.limits.permanent.organizationMembership');
-    const membershipsCount = getAtPath(org, 'usage.permanent.organizationMembership');
+    const endpoint = createEndpoint(orgId);
+    const users = yield getUsers(endpoint, {limit: 0});
+    const membershipsCount = users.total;
 
-    return {
+    return assign(state.organization, {
       membershipLimit,
       membershipsCount,
       hasSsoEnabled: org.hasSsoEnabled,
       remainingInvitations: membershipLimit - membershipsCount
-    };
+    });
   }
 }
 

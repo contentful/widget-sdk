@@ -17,6 +17,16 @@ export function getAll (endpoint) {
   });
 }
 
+export function getUsers (endpoint, {limit}) {
+  return endpoint({
+    method: 'GET',
+    path: ['users'],
+    query: {
+      limit
+    }
+  });
+}
+
 export function invite (endpoint, {role, email, suppressInvitation}) {
   return endpoint({
     method: 'POST',
