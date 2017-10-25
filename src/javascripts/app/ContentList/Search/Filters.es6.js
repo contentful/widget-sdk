@@ -64,8 +64,11 @@ export function makeCMAQueryObject ({contentTypeId, searchFilters, searchTerm}) 
         throw new Error(`Unknown status value ${value}`);
       }
     } else {
-      op = op ? `[${op}]` : '';
-      obj[key.queryKey + op] = value;
+      // TODO for Boolean fields value will be `false` sometimes in the future
+      if (typeof op === 'string' && value) {
+        op = op.length > 0 ? `[${op}]` : '';
+        obj[key + op] = value;
+      }
     }
     return obj;
   }, {});
