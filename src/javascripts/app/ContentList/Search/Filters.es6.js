@@ -1,7 +1,7 @@
 import { startsWith, find } from 'lodash';
 import { makeCtor } from 'utils/TaggedValues';
 import { assign, push, concat } from 'utils/Collections';
-import { getOperatorsForType } from './Operators'
+import { getOperatorsForType, equality as equalityOperator } from './Operators'
 
 const CT_QUERY_KEY_PREFIX = 'fields';
 
@@ -45,7 +45,7 @@ const CT_QUERY_KEY_PREFIX = 'fields';
  */
 export function makeCMAQueryObject ({contentTypeId, searchFilters, searchTerm}) {
   let queryObj = searchFilters.reduce((obj, [key, op, value]) => {
-    if (key.queryKey === '__status') {
+    if (key === '__status') {
       if (value === 'published') {
         obj['sys.publishedAt[exists]'] = 'true';
         obj['sys.archivedAt[exists]'] = 'false';
@@ -119,6 +119,7 @@ const sysFieldFilters = [
 }).concat([{
   name: 'status',
   queryKey: '__status',
+  operators: [equalityOperator],
   valueInput: ValueInput.Select([
     ['', 'Any'],
     ['published', 'Published'],
@@ -139,6 +140,7 @@ export function contentTypeFilter (contentTypes) {
   return {
     name: 'contentType',
     queryKey: 'content_type',
+    operators: [equalityOperator],
     valueInput: ValueInput.Select([
       ['', 'Any'],
       ...contentTypes.map((ct) => [ct.sys.id, ct.name])

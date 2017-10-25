@@ -50,6 +50,7 @@ const SetQueryInput = makeCtor('SetQueryInput');
 // Emitted when the user selects a content type from the dropdown.
 // Holds the ID of the selected content type
 const SetContentType = makeCtor('SetContentType');
+
 // Triggered whenever the value of a filter pill is changed by the
 // user. Holds a [filterIndex, op, value] 3-tuple
 const SetFilterValueInput = makeCtor('SetFilterValueInput');

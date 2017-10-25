@@ -69,7 +69,7 @@ export default function render ({
           value: contentTypeId,
           isRemovable: false,
           filter: contentTypeFilter,
-          onChange: actions.SetContentType
+          onChange: (_op, value) => actions.SetContentType(value)
         }),
         ...pills({
           filters: filters,
