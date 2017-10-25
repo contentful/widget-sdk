@@ -249,13 +249,13 @@ export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
     return state;
   }
 
-  function selectFilterSuggestion (state, field) {
-    if (field.contentType) {
-      state = setContentType(state, field.contentType.id);
+  function selectFilterSuggestion (state, filter) {
+    if (filter.contentType) {
+      state = setContentType(state, filter.contentType.id);
     }
 
     state = update(state, ['filters'], filters => {
-      return push(filters, [field.queryKey, '', null]);
+      return push(filters, [filter.queryKey, filter.operators[0][0], null]);
     });
     state = setInput(state, '');
     state = setFocusOnLastValue(state);
