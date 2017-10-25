@@ -64,7 +64,10 @@ function main () {
         marginLeft: '4em',
         width: '30em',
         flexShrink: 0
-      }, [ boilerplateInfo() ])
+      }, [
+        boilerplateInfo(),
+        h('cf-contact-us-boilerplate')
+      ])
     ])
   ]);
 }
