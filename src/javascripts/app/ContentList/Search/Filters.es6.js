@@ -307,5 +307,12 @@ function buildFilterField (ct, ctField) {
 
 // TODO: implement control type resolution
 function getControlByType (_type) {
-  return ValueInput.Text();
+  if (_type === 'Boolean') {
+    return ValueInput.Select([
+      ['true', 'Yes'],
+      ['false', 'No']
+    ]);
+  } else {
+    return ValueInput.Text();
+  }
 }
