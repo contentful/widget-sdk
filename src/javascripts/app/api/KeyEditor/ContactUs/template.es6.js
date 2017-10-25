@@ -20,9 +20,7 @@ export function render (props) {
           'Contact an expert'
         ])
       ]),
-      h(`img.${prefix}__img`, {
-        src: '/app/images/faces/contact-experts.jpg'
-      })
+      h(`.${prefix}__img`)
     ]);
   }
 
