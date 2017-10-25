@@ -39,8 +39,8 @@ export default function render ({
   const hasSpinner = isSearching || isTyping;
   const defaultFocus = focus;
 
-  const handlePillValueChange = ({ index, value }) => {
-    actions.SetFilterValueInput([index, value]);
+  const handlePillValueChange = ({ index, op, value }) => {
+    actions.SetFilterValueInput([index, op, value]);
     actions.TriggerSearch();
   };
 
@@ -181,13 +181,14 @@ function queryInput ({value, isPlaceholderVisible, isFocused, onChange, onKeyDow
 
 
 function pills ({ filters, defaultFocus, onChange, onRemove }) {
-  return filters.map(([filter, _op, value], index) => {
+  return filters.map(([filter, op, value], index) => {
     return filterPill({
-      value,
       filter,
+      op,
+      value,
       isFocused: defaultFocus.index === index && !defaultFocus.isValueFocused,
       isValueFocused: defaultFocus.index === index && defaultFocus.isValueFocused,
-      onChange: (value) => onChange({index, value}),
+      onChange: (op, value) => onChange({index, op, value}),
       onRemove: () => onRemove({index})
     });
   });
@@ -198,8 +199,9 @@ function pills ({ filters, defaultFocus, onChange, onRemove }) {
 // ------------
 
 function filterPill ({
-  value,
   filter,
+  op,
+  value,
   isFocused = false,
   isValueFocused = false,
   isRemovable = true,
@@ -223,11 +225,11 @@ function filterPill ({
       }
     }
   }, [
-    filterName({
-      name: filter.name
-    }),
-    filterValue({
+    h('div.search__filter-pill-label', [filter.name]),
+    ...filterValue({
+      operators: filter.operators,
       valueInput: filter.valueInput,
+      op,
       value,
       isFocused: isValueFocused,
       onChange,
@@ -236,11 +238,7 @@ function filterPill ({
   ]);
 }
 
-function filterName ({ name }) {
-  return h('div.search__filter-pill-label', null, [name]);
-}
-
-function filterValue ({ valueInput, value, isFocused, onChange, onRemove }) {
+function filterValue ({ operators, valueInput, op, value, isFocused, onChange, onRemove }) {
   const inputRef = (el) => {
     if (isFocused && el) {
       requestAnimationFrame(() => el.focus());
@@ -256,12 +254,22 @@ function filterValue ({ valueInput, value, isFocused, onChange, onRemove }) {
     }
   };
 
-  return match(valueInput, {
+  const hasOperators = operators && operators.length > 1;
+  const operatorSelect = hasOperators && filterOperatorSelect({
+    op,
+    operators,
+    inputRef,
+    onChange: newOp => onChange(newOp, value),
+    onKeyDown: handleKeyDown
+  });
+
+  const onValueChange = newValue => onChange(op, newValue);
+  const input = match(valueInput, {
     [ValueInput.Text]: () =>
       filterValueText({
         value,
         inputRef,
-        onChange,
+        onChange: onValueChange,
         onKeyDown: handleKeyDown
       }),
     [ValueInput.Select]: (options) =>
@@ -269,10 +277,12 @@ function filterValue ({ valueInput, value, isFocused, onChange, onRemove }) {
         options,
         value,
         inputRef,
-        onKeyDown: handleKeyDown,
-        onChange
+        onChange: onValueChange,
+        onKeyDown: handleKeyDown
       })
   });
+
+  return [operatorSelect, input];
 }
 
 
@@ -284,6 +294,18 @@ function filterValueText ({value, inputRef, onChange, onKeyDown}) {
     onKeyDown,
     tabindex: '0'
   });
+}
+
+function filterOperatorSelect({op, operators, inputRef, onChange, onKeyDown}) {
+  return h('select.input-reset.search__select', {
+    value: op,
+    ref: inputRef,
+    onChange: ({ target: { value } }) => onChange(value),
+    tabindex: '0',
+    onKeyDown
+  }, operators.map(([value, label]) => {
+    return h('option', {value}, [label]);
+  }));
 }
 
 function filterValueSelect ({options, inputRef, value, onKeyDown, onChange}) {

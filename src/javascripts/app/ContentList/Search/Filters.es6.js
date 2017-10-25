@@ -1,6 +1,7 @@
 import { startsWith, find } from 'lodash';
 import { makeCtor } from 'utils/TaggedValues';
 import { assign, push, concat } from 'utils/Collections';
+import { getOperatorsForType } from './Operators'
 
 const CT_QUERY_KEY_PREFIX = 'fields';
 
@@ -21,6 +22,9 @@ const CT_QUERY_KEY_PREFIX = 'fields';
  * - queryKey: string
  *   If a list of filter values is translated to a query object we use
  *   this as the key in the query object.
+ * - operators: [[string, string]]
+ *   List of tuples with available operators (in CDA [format] or an empty
+ *   string for equality) and their respective human readable labels.
  * - valueInput: ValueInput
  *   Describes the type of input used when displaying the filter input.
  *   See below for possible values
@@ -93,19 +97,20 @@ export const ValueInput = {
 
 // The generic filters applicable to all content types
 const sysFieldFilters = [
-  ['updatedAt', 'Time the item was last changed'],
+  ['updatedAt', 'Date', 'Time the item was last changed'],
   ['updatedBy'],
-  ['createdAt'],
+  ['createdAt', 'Date'],
   ['createdBy'],
-  ['publishedAt'],
+  ['publishedAt', 'Date'],
   ['publishedBy'],
   ['id']
-].map(([name, desc]) => {
+].map(([name, type, desc]) => {
   return {
     name: name,
     description: desc,
     queryKey: `sys.${name}`,
-    valueInput: ValueInput.Text(),
+    operators: getOperatorsForType(type),
+    valueInput: getControlByType(type),
     contentType: null
   };
 }).concat([{
@@ -142,7 +147,7 @@ export function contentTypeFilter (contentTypes) {
  *
  * @param {API.ContentType[]} contentTypes List of content types
  * @param {string} contentTypeId ContentType id
- * 
+ *
  * @returns {API.ContentType?}
  */
 export function getContentTypeById (contentTypes, contentTypeId) {
@@ -179,14 +184,14 @@ export function buildFilterFieldByQueryKey (contentType, queryKey) {
 
 /**
  * Checks if provided queryKey is applicable to the ContentType.
- * 
- * @param {API.ContentType} contentType 
- * @param {string} queryKey 
- * 
+ *
+ * @param {API.ContentType} contentType
+ * @param {string} queryKey
+ *
  * @returns {boolean}
  */
 export function isFieldFilterApplicableToContentType(contentType, queryKey) {
-  if (isContentTypeField(queryKey)) { 
+  if (isContentTypeField(queryKey)) {
     const field = getFieldByApiName(contentType, getApiName(queryKey));
 
     return field !== undefined;
@@ -286,6 +291,7 @@ function buildFilterField (ct, ctField) {
     name: ctField.apiName,
     description: ctField.name,
     queryKey: `${CT_QUERY_KEY_PREFIX}.${ctField.apiName}`,
+    operators: getOperatorsForType(ctField.type),
     valueInput: getControlByType(ctField.type),
     contentType: {
       id: ct.sys.id,

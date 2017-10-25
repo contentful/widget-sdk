@@ -4,8 +4,8 @@ import { assign, update, set, push } from 'utils/Collections';
 import { createSlot, sleep } from 'utils/Concurrent';
 import { otherwise } from 'libs/sum-types';
 
-import { 
-  getMatchingFilters, 
+import {
+  getMatchingFilters,
   isFieldFilterApplicableToContentType,
   getContentTypeById } from './Filters';
 
@@ -99,7 +99,7 @@ export const Actions = {
 };
 
 export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
-  
+
   // TODO: remove side-effects from the reducer and use actionCreators instead.
   // Reducer must not create side-effects e.g dispatch(UnsetTyping);
   // http://redux.js.org/docs/basics/Reducers.html#handling-actions
@@ -116,11 +116,10 @@ export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
       return state;
     },
     [SelectFilterSuggestions]: selectFilterSuggestion,
-    [SetFilterValueInput] (state, [filterIndex, value]) {
+    [SetFilterValueInput] (state, [filterIndex, op, value]) {
       state = set(state, ['isTyping'], true);
       putTyping(sleep(1000));
-      state = set(state, ['filters', filterIndex, 2], value);
-      return state;
+      return update(state, ['filters', filterIndex], filter => [filter[0], op, value]);
     },
     [UnsetTyping] (state) {
       state = set(state, ['isTyping'], false);
