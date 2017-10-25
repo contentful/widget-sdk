@@ -1,5 +1,7 @@
 export const equality = ['', '=='];
 
+export const inequality = ['ne', '!='];
+
 export const fts = ['match', 'matches'];
 
 export const ranges = [
@@ -12,12 +14,14 @@ export const ranges = [
 export function getOperatorsForType (type) {
   switch (type) {
     case 'Symbol':
-      return [equality, fts];
+      return [equality, inequality, fts];
+    case 'Text':
+      return [fts];
     case 'Date':
     case 'Integer':
     case 'Number':
-      return [equality, ...ranges];
+      return [equality, inequality, ...ranges];
     default:
-      return [equality];
+      return [equality, inequality];
   }
 }
