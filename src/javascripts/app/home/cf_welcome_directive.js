@@ -71,7 +71,7 @@ angular.module('contentful')
     controller: ['$scope', function ($scope) {
       var controller = this;
 
-      LD.onABTest($scope, contactUsFlagName, function (flag) {
+      LD.onFeatureFlag($scope, contactUsFlagName, function (flag) {
         controller.hasContactUs = flag;
         $scope.$applyAsync();
       });

@@ -15,7 +15,7 @@ angular.module('contentful')
       controller.link = createContactLink('spacehome');
 
       render();
-      LD.onABTest($scope, flagName, function (flag) {
+      LD.onFeatureFlag($scope, flagName, function (flag) {
         controller.isVisible = flag;
         render();
       });
