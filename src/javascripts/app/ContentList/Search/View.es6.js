@@ -39,11 +39,6 @@ export default function render ({
   const hasSpinner = isSearching || isTyping;
   const defaultFocus = focus;
 
-  const handlePillValueChange = ({ index, op, value }) => {
-    actions.SetFilterValueInput([index, op, value]);
-    actions.TriggerSearch();
-  };
-
   return h('div', {
     hooks: [ H.TrackFocus(actions.SetBoxFocus) ],
     tabindex: '0',
@@ -79,7 +74,7 @@ export default function render ({
         ...pills({
           filters: filters,
           defaultFocus,
-          onChange: handlePillValueChange,
+          onChange: ({index, op, value}) => actions.SetFilterValueInput([index, op, value]),
           onRemove: ({ index }) => actions.RemoveFilter(index)
         }),
         queryInput({
