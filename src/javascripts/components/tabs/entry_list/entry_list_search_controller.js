@@ -15,7 +15,7 @@ angular.module('contentful')
   var createSearchInput = require('app/ContentList/Search').default;
   var makeCMAQueryObject = require('app/ContentList/Search/Filters').makeCMAQueryObject;
 
-  $scope.context = { ready: true, loading: false };
+  $scope.context = { ready: false, loading: true };
 
   var AUTOTRIGGER_MIN_LEN = 4;
 
@@ -180,6 +180,12 @@ angular.module('contentful')
     var query = makeCMAQueryObject(searchState);
     currentQuery = query;
 
+    console.log('QUERY', query, searchState);
+
+    var oldView = _.cloneDeep($scope.context.view);
+    var newView = _.extend(oldView, searchState);
+    $scope.loadView(newView);
+
     // TODO support ordering
     query = _.assign({}, query, {
       limit: $scope.paginator.getPerPage(),
@@ -202,7 +208,13 @@ angular.module('contentful')
     return $scope.context.isSearching;
   });
 
-  createSearchInput($scope, spaceContext, triggerSearch, isSearching$);
+  // TODO:danwe Remove this ugly hack for testing the ui with url view data.
+  setTimeout(function () {
+    var initialSearchState = _.pick($scope.context.view,
+      ['contentTypeId', 'searchText', 'searchFilters']);
+    createSearchInput(
+      $scope, spaceContext, triggerSearch, isSearching$, initialSearchState);
+  }, 1000);
 
   function setupEntriesHandler (promise) {
     return promise

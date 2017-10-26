@@ -5,12 +5,16 @@ angular.module('contentful')
   function ($scope, require, getBlankView, resetList, preserveStateAs) {
     var createViewPersistor = require('data/ListViewPersistor').default;
     var spaceContext = require('spaceContext');
-    var viewPersistor = createViewPersistor(spaceContext.getId(), preserveStateAs);
+    var viewPersistor = createViewPersistor(spaceContext.space, preserveStateAs);
 
-    $scope.$watch('context.view', viewPersistor.save, true);
+    $scope.$watch('context.view', function () {
+      console.log('VIEW watch:', $scope.context.view);
+      viewPersistor.save;
+    }, true);
     $scope.loadView = loadView;
 
-    replaceView(viewPersistor.read());
+    viewPersistor.read().then(loadView);
+    replaceView({});
 
     function loadView (view) {
       replaceView(view);

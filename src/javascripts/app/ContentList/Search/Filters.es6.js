@@ -43,7 +43,7 @@ const CT_QUERY_KEY_PREFIX = 'fields';
  *
  * TODO: Find a better place for this. Write tests.
  */
-export function makeCMAQueryObject ({contentTypeId, searchFilters, searchTerm}) {
+export function makeCMAQueryObject ({contentTypeId, searchFilters, searchText}) {
   let queryObj = searchFilters.reduce((obj, [key, op, value]) => {
     if (key === '__status') {
       if (value === 'published') {
@@ -76,9 +76,9 @@ export function makeCMAQueryObject ({contentTypeId, searchFilters, searchTerm}) 
     queryObj.content_type = contentTypeId;
   }
 
-  searchTerm = searchTerm.trim();
-  if (searchTerm) {
-    queryObj = assign(queryObj, { query: searchTerm });
+  searchText = searchText.trim();
+  if (searchText) {
+    queryObj = assign(queryObj, { query: searchText });
   }
 
   return queryObj;
