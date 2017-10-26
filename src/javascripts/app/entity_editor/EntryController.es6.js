@@ -71,7 +71,6 @@ export default function create ($scope, editorData) {
 
   $scope.entityInfo = entityInfo;
 
-  $scope.editorData = editorData;
   $scope.locales = $controller('entityEditor/LocalesController');
 
   const doc = editorData.openDoc(K.scopeLifeline($scope));

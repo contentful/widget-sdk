@@ -17,12 +17,12 @@ export const DocLoad = DocLoader.DocLoad;
  */
 
 /**
- * @param {function(): Promise<string>} getToken
  * @param {string} baseUrl  URL where the ShareJS service lives
  * @param {string} spaceId
+ * @param {Authorization} auth
  * @returns Connection
  */
-export function create (getToken, baseUrl, spaceId) {
+export function create (baseUrl, spaceId, auth) {
   /**
    * `connection.state` may be
    * - 'connecting': The connection is being established
@@ -32,12 +32,11 @@ export function create (getToken, baseUrl, spaceId) {
    * - 'stopped': The connection is closed, and will not reconnect.
    * (From ShareJS client docs)
    */
-  const connection = createBaseConnection(getToken, baseUrl, spaceId);
+  const connection = createBaseConnection(baseUrl, spaceId, auth.getToken);
 
   const events = getEventStream(connection);
 
   const docWrappers = {};
-
 
   /**
    * @type {Property<string>}
@@ -70,13 +69,28 @@ export function create (getToken, baseUrl, spaceId) {
 
   }).skipDuplicates();
 
+  /**
+   * @ngdoc method
+   * @module cf.data
+   * @name data/ShareJS/Connection#refreshAuth
+   * @description
+   * Gets a new auth token and sends it to sharejs server. If one refresh auth
+   * call is in progress, doesn't send a new one and returns the ongoing call's
+   * promise.
+   * See wrapActionWithLock() for more details
+   *
+   * @returns {Promise}
+   */
+  const refreshAuth = wrapActionWithLock(() => auth.refreshToken());
+
+  const unsubscribeAuthTokenChanges = K.onValue(auth.token$, sendAuthToken);
 
   return {
     getDocLoader: getDocLoader,
     open: open,
-    close: close
+    close: close,
+    refreshAuth: refreshAuth
   };
-
 
   /**
    * @ngdoc method
@@ -92,7 +106,6 @@ export function create (getToken, baseUrl, spaceId) {
     const docWrapper = getDocWrapperForEntity(entity);
     return DocLoader.create(docWrapper, state$, shouldOpen$);
   }
-
 
   /**
    * @ngdoc method
@@ -121,7 +134,6 @@ export function create (getToken, baseUrl, spaceId) {
       });
   }
 
-
   /**
    * @ngdoc method
    * @module cf.data
@@ -129,8 +141,8 @@ export function create (getToken, baseUrl, spaceId) {
    */
   function close () {
     connection.disconnect();
+    unsubscribeAuthTokenChanges();
   }
-
 
   function getDocWrapperForEntity (entity) {
     const key = entityMetadataToKey(entity.data.sys);
@@ -142,8 +154,19 @@ export function create (getToken, baseUrl, spaceId) {
 
     return docWrapper;
   }
-}
 
+  function sendAuthToken (token) {
+    // connectin.state should be 'ok' to be able to send a new token
+    if (connection.state === 'ok') {
+      try {
+        connection.refreshAuth(token);
+      } catch (e) {
+        // close the connection if authorization failed
+        close();
+      }
+    }
+  }
+}
 
 /**
  * Patches the underlying ShareJS connection object so that events
@@ -161,10 +184,9 @@ function getEventStream (connection) {
   return eventBus.stream;
 }
 
-
-function createBaseConnection (getToken, baseUrl, spaceId) {
+function createBaseConnection (baseUrl, spaceId, getToken) {
   const url = baseUrl + '/spaces/' + spaceId + '/channel';
-  const connection = new ShareJS.Connection(url, null);
+  const connection = new ShareJS.Connection(url, getToken);
 
   // I’m not sure why we do this
   connection.socket.send = function (message) {
@@ -174,22 +196,6 @@ function createBaseConnection (getToken, baseUrl, spaceId) {
     } catch (error) {
       // Silently ignore the error as this is handled on ot_doc_for
     }
-  };
-
-  // This is code is a copy of the original implementation in the
-  // ShareJS client library.
-  // TODO We should implement this properly. In particular we should
-  // handle the case where the authentication fails and we need to
-  // refresh our token.
-  // See https://contentful.tpondemand.com/entity/14908
-  connection.socket.onopen = function () {
-    getToken()
-    .then(function (token) {
-      connection.send({auth: token});
-
-      connection.lastError = connection.lastReceivedDoc = connection.lastSentDoc = null;
-      connection.setState('handshaking');
-    });
   };
 
   return connection;
@@ -206,48 +212,31 @@ function createDocWrapper (connection, key) {
   let rawDoc = null;
   let closePromise = $q.resolve();
 
+  const open = () => $q.denodeify((cb) => connection.open(key, 'json', cb));
+  const close = (doc) => $q.denodeify((cb) => {
+    try {
+      doc.close(cb);
+      // Because of a bug in ShareJS we also need to listen for the
+      // 'closed' event
+      doc.on('closed', () => cb());
+    } catch (e) {
+      // Always resolve and ignore errors on closing
+      cb();
+    }
+  });
+
   return {
-    open: waitAndOpen,
-    close: maybeClose
-  };
-
-  function waitAndOpen () {
-    return closePromise.then(function () {
-      closePromise = $q.resolve();
-      return open();
-    }, function () {
-      closePromise = $q.resolve();
-    });
-  }
-
-  function open () {
-    return $q.denodeify(function (cb) {
-      connection.open(key, 'json', cb);
-    }).then(function (openedDoc) {
+    open: () => closePromise.then(open).then((openedDoc) => {
       rawDoc = openedDoc;
       return rawDoc;
-    });
-  }
-
-  function maybeClose () {
-    if (rawDoc) {
-      closePromise = close(rawDoc);
-      rawDoc = null;
-    }
-  }
-
-  function close (doc) {
-    return $q.denodeify(function (cb) {
-      try {
-        doc.close(cb);
-        // Because of a bug in ShareJS we also need to listen for the
-        // 'closed' event
-        doc.on('closed', () => cb());
-      } catch (e) {
-        cb(e.message === 'Cannot send to a closed connection' ? null : e);
+    }),
+    close: () => {
+      if (rawDoc) {
+        closePromise = close(rawDoc);
+        rawDoc = null;
       }
-    });
-  }
+    }
+  };
 }
 
 function entityMetadataToKey (sys) {
@@ -256,4 +245,31 @@ function entityMetadataToKey (sys) {
     ['Asset', () => 'asset']
   ]);
   return [sys.space.sys.id, typeSegment, sys.id].join('!');
+}
+
+/**
+ * @ngdoc method
+ * @name wrapActionWithLock
+ * @description
+ * Wraps a promise-returning action so it can not be called multiple times
+ * simultaneously.
+ *
+ * When wrapped action hasn't been resolved and is called subsequently,
+ * the same promise from previous call is returned and a new action isn't
+ * performed. Rejected state is terminal: if a call ended up being rejected,
+ * all subsequent calls will return a rejected promise.
+ *
+ * @param {function(): Promise} action
+ * @returns {function(): Promise}
+ */
+function wrapActionWithLock (action) {
+  let actionPromise = null;
+
+  return function () {
+    if (!actionPromise) {
+      actionPromise = action().then(() => { actionPromise = null; });
+    }
+
+    return actionPromise;
+  };
 }
