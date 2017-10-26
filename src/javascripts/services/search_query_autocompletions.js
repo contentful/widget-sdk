@@ -26,6 +26,7 @@
 // - The public facing API, exposing some functions to the outside
 angular.module('contentful')
 .factory('searchQueryAutocompletions', ['require', function (require) {
+  var $q = require('$q');
   var spaceContext = require('spaceContext');
   var mimetype = require('mimetype');
   var assetContentType = require('assetContentType');
@@ -34,6 +35,7 @@ angular.module('contentful')
   var otherwise = require('libs/sum-types').otherwise;
 
   var NOT_SEARCHABLE_FIELD_TYPES = ['Location', 'Object', 'File'];
+  var RELATIVE_DATE_REGEX = /(\d+) +days +ago/i;
 
   var operatorDescriptions = {
     '<=': 'Less than or equal',
@@ -208,7 +210,6 @@ angular.module('contentful')
 
   // Generates a factory for completing a key that contains a date
   function dateCompletions (key, description) {
-    var RELATIVE = /(\d+) +days +ago/i;
     var DAY = /^\s*\d{2,4}-\d{2}-\d{2}\s*$/;
     var EQUALITY = /^(==|=|:)$/;
     return {
@@ -217,7 +218,7 @@ angular.module('contentful')
       complete: makeDateCompletion(),
       convert: function (op, exp) {
         try {
-          var match = RELATIVE.exec(exp);
+          var match = RELATIVE_DATE_REGEX.exec(exp);
           var date = match ? moment().subtract(match[1], 'days') : moment(exp);
           if (date.isValid()) {
             var query = {};
@@ -388,17 +389,33 @@ angular.module('contentful')
     var key = filter[0];
     var operator = filter[1];
     var value = filter[2];
+    var buildCMAQuery = cmaQueryBuilderForField(key, contentType, space);
+    return buildCMAQuery.build(operator, value);
+  }
+
+  function cmaQueryBuilderForField (key, contentType, space) {
     var keyData = staticAutocompletions(contentType)[key];
     if (keyData) {
-      return keyData.convert(operator, value, space);
+      return {
+        context: keyData,
+        build: _.wrap(keyData.convert, function (convert, operator, value) {
+          return $q.resolve(convert(operator, value, space));
+        })
+      };
     }
-
     var field = findField(key, contentType);
     if (field) {
-      return makeFieldQuery(field, operator, value);
-    } else {
-      return {};
+      return {
+        context: field,
+        build: function (operator, value) {
+          return $q.resolve(makeFieldQuery(field, operator, value));
+        }
+      };
     }
+    return {
+      context: {},
+      build: function () { return $q.resolve({}); }
+    };
   }
 
   function makeFieldQuery (field, operator, value) {
@@ -528,6 +545,10 @@ angular.module('contentful')
     };
   }
 
+  function isRelativeDate (value) {
+    return RELATIVE_DATE_REGEX.test(value);
+  }
+
   // API {{{1
 
   // The public facing API for this service
@@ -537,7 +558,10 @@ angular.module('contentful')
       operator: operatorCompletion,
       value: valueCompletion
     },
-    filterToQueryObject: filterToQueryObject
+    filterToQueryObject: filterToQueryObject,
+    cmaQueryBuilderForField: cmaQueryBuilderForField,
+    isRelativeDate: isRelativeDate,
+    queryOperator: queryOperator
   };
 
   // }}}
