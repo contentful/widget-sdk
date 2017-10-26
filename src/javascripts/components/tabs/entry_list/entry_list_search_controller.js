@@ -9,22 +9,11 @@ angular.module('contentful')
   var createRequestQueue = require('overridingRequestQueue');
   var spaceContext = require('spaceContext');
   var accessChecker = require('accessChecker');
-  var debounce = require('debounce');
   var Tracking = require('analytics/events/SearchAndViews');
   var K = require('utils/kefir');
   var createSearchInput = require('app/ContentList/Search').default;
-  var makeCMAQueryObject = require('app/ContentList/Search/QueryBuilder').buildQuery;
 
   $scope.context = { ready: false, loading: true };
-
-  var AUTOTRIGGER_MIN_LEN = 4;
-
-  var searchTerm = null;
-
-  var isResettingTerm = false;
-  var currentQuery;
-
-  var debouncedUpdateWithTerm = debounce(updateWithTerm, 200);
 
   /**
    * Public API
@@ -35,7 +24,6 @@ angular.module('contentful')
 
   var updateEntries = createRequestQueue(requestEntries, setupEntriesHandler);
 
-  this.resetSearchTerm = resetSearchTerm;
   this.hasQuery = hasQuery;
 
   /**
@@ -56,39 +44,14 @@ angular.module('contentful')
   });
 
 
-  $scope.$watchCollection(function () {
-    return {
-      value: getViewItem('searchTerm'),
-      view: getViewItem('id')
-    };
-  }, function (next, prev) {
-    var value = next.value;
-    var viewChanged = next.view !== prev.view;
-    var hasTerm = _.isString(value) && value.length > 0;
+  $scope.$watch(function () {
+    return getViewItem('id');
+  }, function (nextViewId, prevViewId) {
+    var viewChanged = nextViewId !== prevViewId;
 
     // if view was changed updated immediately
     if (viewChanged) {
-      updateWithTerm(value);
-      return;
-    }
-
-    // for initial run or resetting term just set search term w/o list update
-    if (value === prev.value || isResettingTerm) {
-      searchTerm = value;
-      isResettingTerm = false;
-      return;
-    }
-
-    // if term was cleared then update immediately
-    if (!hasTerm) {
-      updateWithTerm(value);
-      return;
-    }
-
-    // use debounced version when user is actively typing
-    // we autotrigger only when query is long enough
-    if (hasTerm && value.length >= AUTOTRIGGER_MIN_LEN) {
-      debouncedUpdateWithTerm(value);
+      updateWith(getViewSearchState());
       return;
     }
   });
@@ -119,22 +82,19 @@ angular.module('contentful')
     }
   });
 
-  function resetSearchTerm () {
-    isResettingTerm = true;
-    $scope.context.view.searchTerm = null;
-  }
-
   function hasQuery () {
     return (
-      !_.isEmpty(searchTerm) ||
+      !_.isEmpty(getViewItem('searchText')) ||
+      !_.isEmpty(getViewItem('searchFilters')) ||
       !_.isEmpty(getViewItem('contentTypeId')) ||
-      getViewItem('collection') ||
-      currentQuery
+      getViewItem('collection')
     );
   }
 
-  function updateWithTerm (term) {
-    searchTerm = term;
+  function updateWith (newSearchState) {
+    var oldView = _.cloneDeep($scope.context.view);
+    var newView = _.extend(oldView, newSearchState);
+    $scope.loadView(newView);
     resetEntries();
   }
 
@@ -171,37 +131,11 @@ angular.module('contentful')
      });
   }
 
-  var triggerSearch = createRequestQueue(triggerSearch_, setupEntriesHandler);
-  function triggerSearch_ (searchState) {
-    if (!searchState) {
-      currentQuery = null;
+  function triggerSearch (newSearchState) {
+    if (!newSearchState) {
       return;
     }
-    var query = makeCMAQueryObject(searchState);
-    currentQuery = query;
-
-    console.log('QUERY', query, searchState);
-
-    var oldView = _.cloneDeep($scope.context.view);
-    var newView = _.extend(oldView, searchState);
-    $scope.loadView(newView);
-
-    // TODO support ordering
-    query = _.assign({}, query, {
-      limit: $scope.paginator.getPerPage(),
-      skip: $scope.paginator.getSkipParam()
-    });
-    $scope.context.loading = true;
-    $scope.context.isSearching = true;
-    return spaceContext.space.getEntries(query)
-     .then(function (result) {
-       $scope.context.isSearching = false;
-       Tracking.searchPerformed($scope.context.view, result.total);
-       return result;
-     })
-     .catch(function (error) {
-       return $q.reject(error);
-     });
+    updateWith(newSearchState);
   }
 
   var isSearching$ = K.fromScopeValue($scope, function ($scope) {
@@ -210,8 +144,7 @@ angular.module('contentful')
 
   // TODO:danwe Remove this ugly hack for testing the ui with url view data.
   setTimeout(function () {
-    var initialSearchState = _.pick($scope.context.view,
-      ['contentTypeId', 'searchText', 'searchFilters']);
+    var initialSearchState = getViewSearchState();
     createSearchInput(
       $scope, spaceContext, triggerSearch, isSearching$, initialSearchState);
   }, 1000);
@@ -251,12 +184,7 @@ angular.module('contentful')
   }
 
   function prepareQuery () {
-    return ListQuery.getForEntries({
-      contentTypeId: getViewItem('contentTypeId'),
-      searchTerm: getViewItem('searchTerm'),
-      order: getViewItem('order'),
-      paginator: $scope.paginator
-    }).then(function (query) {
+    return ListQuery.getForEntries(getQueryOptions()).then(function (query) {
       var collection = getViewItem('collection');
       if (collection && Array.isArray(collection.items)) {
         query['sys.id[in]'] = collection.items.join(',');
@@ -273,6 +201,21 @@ angular.module('contentful')
       $scope.assetCache.setDisplayedFieldIds(fieldIds);
       $scope.assetCache.resolveLinkedEntities($scope.entries);
     }
+  }
+
+  function getQueryOptions () {
+    return _.extend(getViewSearchState(), {
+      order: getViewItem('order'),
+      paginator: $scope.paginator
+    });
+  }
+
+  function getViewSearchState () {
+    return {
+      searchText: getViewItem('searchText'),
+      searchFilters: getViewItem('searchFilters'),
+      contentTypeId: getViewItem('contentTypeId')
+    };
   }
 
   function getViewItem (path) {

@@ -79,11 +79,6 @@ angular.module('contentful')
     });
   });
 
-  $scope.selectedContentType = function () {
-    searchController.resetSearchTerm();
-    $scope.resetDisplayFields();
-  };
-
   $scope.displayFieldForFilteredContentType = function () {
     return spaceContext.displayFieldForType($scope.context.view.contentTypeId);
   };

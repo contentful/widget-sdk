@@ -7,9 +7,11 @@
  * Various helpers for preparing API queries.
  */
 angular.module('contentful').factory('ListQuery', ['require', function (require) {
+  var $q = require('$q');
   var systemFields = require('systemFields');
   var spaceContext = require('spaceContext');
-  var buildQuery = require('search/queryBuilder').buildQuery;
+  var buildQueryFromLegacySearchTerm = require('search/queryBuilder').buildQuery;
+  var buildQueryFromUISearch = require('app/ContentList/Search/QueryBuilder').buildQuery;
   var assetContentType = require('assetContentType');
 
   var DEFAULT_ORDER = systemFields.getDefaultOrder();
@@ -77,7 +79,13 @@ angular.module('contentful').factory('ListQuery', ['require', function (require)
       'sys.archivedAt[exists]': 'false'
     };
 
-    return buildQuery(spaceContext.space, contentType, opts.searchTerm)
+    // TODO: Remove legacy after new search for Assets.
+    var buildQuery = opts.searchFilters && opts.searchText
+      ? $q.resolve(buildQueryFromUISearch(opts))
+      : buildQueryFromLegacySearchTerm(
+        spaceContext.space, contentType, opts.searchTerm);
+
+    return buildQuery
       .then(function (searchQuery) {
         return _.extend(queryObject, searchQuery);
       });

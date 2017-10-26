@@ -7,10 +7,7 @@ angular.module('contentful')
     var spaceContext = require('spaceContext');
     var viewPersistor = createViewPersistor(spaceContext.space, preserveStateAs);
 
-    $scope.$watch('context.view', function () {
-      console.log('VIEW watch:', $scope.context.view);
-      viewPersistor.save;
-    }, true);
+    $scope.$watch('context.view', viewPersistor.save, true);
     $scope.loadView = loadView;
 
     viewPersistor.read().then(loadView);
