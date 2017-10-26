@@ -14,7 +14,6 @@ import infoIcon from 'svg/info';
 import { ValueInput } from './Filters';
 import { autosizeInput } from 'ui/AutoInputSize';
 import entitySelector from 'entitySelector';
-import ListQuery from 'ListQuery';
 
 const Keys = {
   arrowUp: (e) => e.key === 'ArrowUp',
@@ -332,7 +331,7 @@ function filterValueReference ({ctField, value, inputRef, onChange, onKeyDown}) 
     ref: inputRef,
     onClick: () => {
       entitySelector.openFromField(ctField)
-        .then(entities => onChange(entities[0].sys.id));
+        .then(entities => onChange(entities.map(e => e.sys.id).join(',')));
     },
     onKeyDown,
     tabindex: '0'

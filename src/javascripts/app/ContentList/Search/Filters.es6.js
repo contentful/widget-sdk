@@ -1,4 +1,4 @@
-import { startsWith, find } from 'lodash';
+import { startsWith, find, get } from 'lodash';
 import { makeCtor } from 'utils/TaggedValues';
 import { assign, push, concat } from 'utils/Collections';
 import { getOperatorsForType, equality as equalityOperator } from './Operators';
@@ -113,7 +113,7 @@ const sysFieldFilters = [
     description: desc,
     queryKey: `sys.${name}`,
     operators: getOperatorsForType(type),
-    valueInput: getControlByType(type),
+    valueInput: getControlByType({type}),
     contentType: null
   };
 }).concat([{
@@ -161,7 +161,6 @@ export function getContentTypeById (contentTypes, contentTypeId) {
 
 export function getFiltersFromQueryKey (contentTypes, searchFilters, contentTypeId) {
   const contentType = getContentTypeById(contentTypes, contentTypeId);
-
   const filters = searchFilters.map(([queryKey, op, value]) => {
     return [buildFilterFieldByQueryKey(contentType, queryKey), op, value];
   });
@@ -296,8 +295,8 @@ function buildFilterField (ct, ctField) {
     name: ctField.apiName,
     description: ctField.name,
     queryKey: getQueryKey(ctField),
-    operators: getOperatorsForType(ctField.type),
-    valueInput: getControlByType(ctField.type, ctField),
+    operators: getOperatorsForType(ctField.type, get(ctField, ['items', 'type'])),
+    valueInput: getControlByType(ctField),
     contentType: {
       id: ct.sys.id,
       name: ct.name
@@ -306,21 +305,28 @@ function buildFilterField (ct, ctField) {
 }
 
 function getQueryKey (ctField) {
-  const suffix = ctField.type === 'Link' ? '.sys.id' : '';
+  const suffix = isReferenceField(ctField) ? '.sys.id' : '';
 
   return `${CT_QUERY_KEY_PREFIX}.${ctField.apiName}${suffix}`;
 }
 
 // TODO: implement control type resolution
-function getControlByType (type, ctField) {
-  if (type === 'Boolean') {
+function getControlByType (ctField) {
+  if (ctField.type === 'Boolean') {
     return ValueInput.Select([
       ['true', 'Yes'],
       ['false', 'No']
     ]);
-  } else if (type === 'Link') {
-    return ValueInput.Reference(ctField);
+  } else if (isReferenceField(ctField)) {
+    return ValueInput.Reference(assign(ctField, {
+      // TODO: This is required by the entity selector
+      itemLinkType: get(ctField, ['items', 'linkType'])
+    }));
   } else {
     return ValueInput.Text();
   }
+}
+
+function isReferenceField ({type, items = {}} = {}) {
+  return type === 'Link' || items.type === 'Link';
 }

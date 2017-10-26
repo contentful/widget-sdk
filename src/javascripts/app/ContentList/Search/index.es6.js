@@ -1,4 +1,4 @@
-/*global window*/
+/*global window */
 import * as K from 'utils/kefir';
 import { createStore, bindActions } from 'ui/Framework/Store';
 import logger from 'logger';
