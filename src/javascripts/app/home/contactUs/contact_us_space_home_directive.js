@@ -3,6 +3,8 @@ angular.module('contentful')
   var LD = require('utils/LaunchDarkly');
   var renderTemplate = require('app/home/contactUs/template').render;
   var createContactLink = require('services/ContactSales').createContactLink;
+  var Analytics = require('analytics/Analytics');
+  var $state = require('$state');
 
   var flagName = 'feature-ps-10-2017-contact-us-space-home';
 
@@ -29,7 +31,10 @@ angular.module('contentful')
       }
 
       function onClick () {
-        // TODO: add tracking
+        Analytics.track('element:click', {
+          elementId: 'contact_sales',
+          fromState: $state.current.name
+        });
       }
     }]
   };
