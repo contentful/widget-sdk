@@ -18,7 +18,6 @@ import createMockEndpoint from 'helpers/mocks/SpaceEndpoint';
  * - `widgets` without custom extensions.
  * - `docPool.get` Creates mock document
  * - `memberships` Instance of 'access_control/SpaceMembershipRepository
- * - `contentCollections` Always contains an empty list of collections.
  *
  * @usage[js]
  * const spaceContext = this.$inject('mocks/spaceContext').init();
@@ -33,7 +32,6 @@ angular.module('contentful/mocks')
   const MockDocument = require('mocks/entityEditor/Document');
   const createApiKeyRepo = require('data/CMA/ApiKeyRepo').default;
   const CMAClient = require('data/ApiClient');
-  const K = require('utils/kefir');
 
   return {
     init: init
@@ -72,7 +70,6 @@ angular.module('contentful/mocks')
     spaceContext.cma = new CMAClient(spaceContext.endpoint.request);
     spaceContext.apiKeyRepo = createApiKeyRepo(spaceContext.endpoint);
     spaceContext.organizationContext = {};
-    spaceContext.contentCollections = {state$: K.constant([])};
 
     const noop = () => {};
     const emptyArr = () => [];
