@@ -24,9 +24,7 @@ export const progress$ = progressBus.stream;
 /**
  * @name account/InviteToOrganization#invite
  * @description
- * Sends invitations to the organization to all emails in the list.
- * If the org invitation succeeds (or if it fails with 422 [taken]),
- * invite the user to all selected spaces with respective roles.
+ * Sends invitations to the organization and spaces to all emails in the list.
  *
  * @param {Array<String>} emails
  * @param {String} role an organization role name
@@ -37,7 +35,10 @@ export const progress$ = progressBus.stream;
  */
 export function invite ({emails, orgRole, spaceMemberships, suppressInvitation, orgId}) {
   const orgEndpoint = createOrgEndpoint(orgId);
-  const invitations = emails.map(email => runTask(function* () {
+
+  // If the org invitation succeeds (or if it fails with 422 [taken]),
+  // invite the user to all selected spaces with the respective roles.
+  const sendInvitation = (email) => runTask(function* () {
     try {
       yield inviteToOrg(orgEndpoint, {email, role: orgRole, suppressInvitation});
       yield inviteToSpaces(email, spaceMemberships);
@@ -50,9 +51,9 @@ export function invite ({emails, orgRole, spaceMemberships, suppressInvitation, 
         progressBus.error(email);
       }
     }
-  }));
+  });
 
-  return Promise.all(invitations);
+  return Promise.all(emails.map(sendInvitation));
 }
 
 function inviteToSpaces (email, spaceMemberships) {
@@ -72,7 +73,7 @@ function inviteToSpaces (email, spaceMemberships) {
 
 function isTaken (error) {
   const status = get(error, 'statusCode');
-  const errors = get(error, 'data.details.errors');
+  const errors = get(error, 'data.details.errors', []);
 
-  return status === 422 && errors && errors.length > 0 && errors[0].name === 'taken';
+  return status === 422 && errors.length && errors[0].name === 'taken';
 }

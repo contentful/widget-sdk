@@ -82,6 +82,7 @@ angular.module('contentful')
     template: [
       h('cf-new-organization-membership', { ngIf: 'useNewOrgInvitation', properties: 'properties' }),
       h('div', {
+        // uses strict equally to avoid rendering when the flag value is still undefined
         ngIf: 'useNewOrgInvitation === false'
       }, [
         workbenchHeader('Organization users'),

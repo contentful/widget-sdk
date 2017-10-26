@@ -1,4 +1,4 @@
-import {includes, omit, pick, get as getAtPath} from 'lodash';
+import {includes, omit, pick, negate, trim, get as getAtPath} from 'lodash';
 import {h} from 'ui/Framework';
 import { assign } from 'utils/Collections';
 import {getFatSpaces, getOrganization} from 'services/TokenStore';
@@ -8,7 +8,7 @@ import {ADMIN_ROLE_ID} from 'access_control/SpaceMembershipRepository';
 import {getUsers, createEndpoint} from 'access_control/OrganizationMembershipRepository';
 import {makeCtor, match} from 'utils/TaggedValues';
 import {invite, progress$} from 'account/SendOrganizationInvitation';
-import * as stringUtils from 'stringUtils';
+import {isValidEmail} from 'stringUtils';
 import {go} from 'states/Navigator';
 
 const adminRole = {
@@ -89,12 +89,12 @@ export default function ($scope) {
     rerender();
   });
 
-  function updateSpaceRole (evt, role, spaceMemberships) {
+  function updateSpaceRole (checked, role, spaceMemberships) {
     const spaceRoles = spaceMemberships[role.spaceId] || [];
     let newSpaceRoles;
     let updatedMemberships;
 
-    if (evt.target.checked) {
+    if (checked) {
       newSpaceRoles = addRole(role, spaceRoles);
     } else {
       newSpaceRoles = removeRole(role, spaceRoles);
@@ -116,8 +116,8 @@ export default function ($scope) {
     rerender();
   }
 
-  function updateOrgRole (evt, role) {
-    if (evt.target.checked) {
+  function updateOrgRole (checked, role) {
+    if (checked) {
       state = assign(state, {
         orgRole: role
       });
@@ -192,9 +192,7 @@ export default function ($scope) {
    * It also enables to restart with a given list of emails.
    * @param {Array<String>} emails
    */
-  function restart (evt, emails = []) {
-    evt.preventDefault();
-
+  function restart (emails = []) {
     state = assign(state, {
       emails: emails,
       emailsInputValue: emails.join(', '),
@@ -209,8 +207,7 @@ export default function ($scope) {
   /**
    * Navigate to organization users list
    */
-  function goToList (evt) {
-    evt.preventDefault();
+  function goToList () {
     go({
       path: ['account', 'organizations', 'users', 'gatekeeper']
     });
@@ -221,17 +218,16 @@ export default function ($scope) {
    * an array of emails and, possibly, an array with
    * the invalid addresses.
    */
-  function updateEmails (evt) {
-    const emails = evt.target.value
+  function updateEmails (emailsInputValue) {
+    const emails = emailsInputValue
       .split(',')
-      .map(email => email.trim().replace(/\n|\t/g, ''))
+      .map(trim)
       .filter(email => email.length);
 
-    const invalidAddresses = emails
-      .filter(email => !stringUtils.isValidEmail(email));
+    const invalidAddresses = emails.filter(negate(isValidEmail));
 
     state = assign(state, {
-      emailsInputValue: evt.target.value,
+      emailsInputValue,
       emails,
       invalidAddresses
     });
@@ -265,7 +261,7 @@ export default function ($scope) {
 
   function onProgressValue (email) {
     state = assign(state, {
-      successfulOrgInvitations: state.successfulOrgInvitations.concat([email])
+      successfulOrgInvitations: [...state.successfulOrgInvitations, email]
     });
     rerender();
   }
@@ -391,7 +387,7 @@ function emailsInput ({
         class: 'cfnext-form__input',
         style: {width: '600px'},
         value: emailsInputValue,
-        onChange: updateEmails
+        onChange: (evt) => updateEmails(evt.target.value)
       }),
       emails.length > organization.remainingInvitations ? h('.cfnext-form__field-error', [`
         You are trying to add ${emails.length} users but you only have ${organization.remainingInvitations}
@@ -418,7 +414,7 @@ function organizationRole (orgRole, updateOrgRole) {
             type: 'radio',
             id: `organization-membership.org-role.${role.value}`,
             checked: role.value === orgRole,
-            onChange: (evt) => updateOrgRole(evt, role.value)
+            onChange: (evt) => updateOrgRole(evt.target.checked, role.value)
           }),
           ` ${role.name}`
         ])
@@ -441,7 +437,7 @@ function accessToSpaces (spaces, spaceMemberships, updateSpaceRole) {
           type: 'checkbox',
           checked: isChecked(role),
           dataTestId: `organization-membership.space.${role.spaceId}.role.${role.name}`,
-          onChange: (evt) => updateSpaceRole(evt, role, spaceMemberships)
+          onChange: (evt) => updateSpaceRole(evt.target.checked, role, spaceMemberships)
         }),
         ` ${role.name}`
       ])
@@ -494,7 +490,7 @@ function errorMessage (failedEmails, restart) {
       h('p', [
         `The process failed for the following ${userString}. Please try to `,
         h('a', {
-          onClick: (evt) => restart(evt, failedEmails)
+          onClick: () => restart(failedEmails)
         }, ['invite them again.'])
       ])
     ]),
@@ -512,7 +508,7 @@ function successMessage (emails, restart, goToList) {
     h('p', [
       'They should have received an email to confirm the invitation in their inbox. Go ahead and ',
       h('a', {
-        onClick: restart
+        onClick: () => restart()
       }, ['invite more users']),
       ' or ',
       h('a', {
