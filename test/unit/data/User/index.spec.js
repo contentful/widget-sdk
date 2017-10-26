@@ -230,4 +230,44 @@ describe('data/User', () => {
       this.testGetFirstOwnedOrgWithoutSpaces({'org-owner': [1]}, org => expect(org).toBe(undefined));
     });
   });
+
+  describe('#isAutomationTestUser', function () {
+    beforeEach(function () {
+      this.assertOnEmails = function (emails, value) {
+        emails.forEach(email => {
+          expect(this.utils.isAutomationTestUser({ email })).toEqual(value);
+        });
+      };
+    });
+
+    it('should return true for users whose email matches the automation test user email pattern', function () {
+      const userEmails = [
+        'vlad+autotesting_newuser14288_20171026_071249@contentful.com',
+        'askld+autotesting_newuser1_2_3@contentful.com',
+        'a+autotesting_newuser1_2_3@contentful.com'
+      ];
+
+      this.assertOnEmails(userEmails, true);
+    });
+    it('should return false for all non test automation users', function () {
+      const userEmails = [
+        '+autotesting_newuser14288_20171026_071249@contentful.com',
+        'a+autostesting_newuser1_2_3@contentful.com',
+        'a+autotesting_newusers1_2_3@contentful.com',
+        'a+autotesting_newuser2_3@contentful.com',
+        'askld+autotesting_newuser_2_3@contentful.com',
+        'askld+autotesting_newuser1_2@contentful.com',
+        'askld+autotesting_newuser1_2_@contentful.com',
+        'askld+autotesting_newuser1_2_3@contentful.org',
+        'askld+autotesting_newuser1_2_3@contentfuls.com',
+        'askld+autotesting_newuser1_2_3contentful.com',
+        'askld+autotesting_newsuser1_2_3@contentful.com',
+        'a@b.net',
+        'a@b.net.org',
+        'äå@éö.potato'
+      ];
+
+      this.assertOnEmails(userEmails, false);
+    });
+  });
 });

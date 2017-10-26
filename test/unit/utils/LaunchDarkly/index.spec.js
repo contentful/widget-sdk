@@ -57,7 +57,8 @@ describe('LaunchDarkly', function () {
       getUserAgeInDays: sinon.stub().returns(7),
       isNonPayingUser: sinon.stub().returns(true),
       hasAnOrgWithSpaces: sinon.stub().returns(false),
-      ownsAtleastOneOrg: sinon.stub().returns(true)
+      ownsAtleastOneOrg: sinon.stub().returns(true),
+      isAutomationTestUser: sinon.stub().returns(true)
     };
 
     this.shallowObjectDiff = {default: sinon.stub().returns({})};
@@ -110,7 +111,8 @@ describe('LaunchDarkly', function () {
           currentUserHasAtleastOneSpace: false,
           currentUserOwnsAtleastOneOrg: true,
           currentUserAge: 7,
-          isNonPayingUser: true
+          isNonPayingUser: true,
+          isAutomationTestUser: true
         });
       });
     });

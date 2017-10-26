@@ -138,6 +138,20 @@ export function getFirstOwnedOrgWithoutSpaces (user, spacesByOrg) {
 }
 
 /**
+ * @description
+ * Returns true if the current user email matches the usual
+ * automation test user email pattern. This information is sent to
+ * LD so that we can filter out automation users and not break
+ * automated tests with A/B tests.
+ *
+ * @param {Object} user
+ * @returns {Boolean}
+ */
+export function isAutomationTestUser (user) {
+  return /^\w+\+autotesting_newuser(?:\d+_){2}\d+@contentful.com$/.test(user.email);
+}
+
+/**
  * Implemented together since we want the org and space
  * values to always be in sync which is not the case when
  * there are two streams, one for curr space and one for
