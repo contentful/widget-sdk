@@ -13,7 +13,7 @@ angular.module('contentful')
   var Tracking = require('analytics/events/SearchAndViews');
   var K = require('utils/kefir');
   var createSearchInput = require('app/ContentList/Search').default;
-  var makeCMAQueryObject = require('app/ContentList/Search/Filters').makeCMAQueryObject;
+  var makeCMAQueryObject = require('app/ContentList/Search/QueryBuilder').buildQuery;
 
   $scope.context = { ready: false, loading: true };
 
