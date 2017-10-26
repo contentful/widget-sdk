@@ -32,10 +32,10 @@ const defaultFocus = {
 //   If 'false' we grey the border, hide the suggestions box, and
 //   collapse multiline filters.
 
-export const initialState = ({ contentTypeId = '', filters = [], input = '' }) => ({
+export const initialState = ({ contentTypeId = '', searchFilters = [], searchText = '' }) => ({
   contentTypeId,
-  filters,
-  input,
+  filters: searchFilters,
+  input: searchText,
   searchBoxHasFocus: false,
   isSuggestionOpen: false,
   focus: defaultFocus
@@ -291,7 +291,7 @@ export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
     submitSearch({
       contentTypeId: state.contentTypeId,
       searchFilters: state.filters,
-      searchTerm: state.input
+      searchText: state.input
     });
 
     return state;

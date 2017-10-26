@@ -7,12 +7,14 @@ import render from './View';
 import { initialState, makeReducer, Actions } from './State';
 import { getMatchingFilters, contentTypeFilter, getFiltersFromQueryKey } from './Filters';
 
-export default function create ($scope, spaceContext, submitSearch, isSearching$) {
+export default function create (
+  $scope, spaceContext, submitSearch, isSearching$, initState = {}
+) {
   try {
     const contentTypes = K.getValue(spaceContext.publishedCTs.items$).toJS();
 
     const reduce = makeReducer({ contentTypes }, dispatch, submitSearch);
-    const store = createStore(initialState({}), reduce);
+    const store = createStore(initialState(initState), reduce);
     const actions = bindActions(store, Actions);
 
     isSearching$.onValue(actions.SetLoading);
