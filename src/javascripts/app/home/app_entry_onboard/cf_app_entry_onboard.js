@@ -25,6 +25,7 @@ angular.module('contentful')
   var TEST_NAME = 'test-ps-09-2017-entry-sample-space-cli';
   var template = h('div', [
     h('cf-cli-entry-onboard', {
+      short: 'appOnboard.short',
       ngIf: '!appOnboard.chosen',
       setType: 'appOnboard.setType(type)',
       choose: 'appOnboard.choose(type)'
@@ -39,13 +40,16 @@ angular.module('contentful')
   ]);
   return {
     restrict: 'E',
-    scope: {},
+    scope: {
+      short: '<'
+    },
     template: template,
     controllerAs: 'appOnboard',
     controller: ['$scope', function ($scope) {
       var controller = this;
       controller.type = null;
       controller.chosen = false;
+      controller.short = $scope.short;
 
       controller.setType = function (type) {
         controller.type = type;

@@ -75,6 +75,14 @@ export function init () {
   const storedToken = tokenStore.get();
   updateToken(storedToken);
 
+  // React to changes made in another tab
+  const storedTokenBus = tokenStore.getPropertyBus();
+
+  storedTokenBus.property.onValue((token) => {
+    tokenMVar.empty();
+    updateToken(token);
+  });
+
   if (!storedToken) {
     // Obtain token for the first time after login
     refreshToken();

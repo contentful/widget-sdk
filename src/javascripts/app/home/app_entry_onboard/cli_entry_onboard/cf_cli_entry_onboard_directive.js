@@ -8,11 +8,13 @@ angular.module('contentful')
     restrict: 'E',
     scope: {
       setType: '&',
-      choose: '&'
+      choose: '&',
+      short: '<'
     },
     template: '<cf-component-store-bridge component="component">',
     controller: ['$scope', function ($scope) {
       var componentData = createCliEntryComponent({
+        short: $scope.short,
         selectType: function (type) {
           $scope.type = type;
         },

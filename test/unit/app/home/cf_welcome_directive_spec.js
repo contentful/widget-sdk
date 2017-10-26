@@ -17,6 +17,9 @@ describe('cfWelcome directive', function () {
         }
       });
       $provide.stubLaunchDarkly();
+      $provide.value('services/ContactSales', {
+        createContactLink: () => ''
+      });
     });
 
     this.tokenStore = this.$inject('services/TokenStore');

@@ -16,33 +16,50 @@ angular.module('contentful')
   var flagName = 'test-ps-09-2017-entry-sample-space-cli';
   // End test code: test-ps-09-2017-entry-sample-space-cli
 
+  var contactUsFlagName = 'feature-ps-10-2017-contact-us-space-home';
+
   var scrollToDeveloperResources = h('span', {}, [
     'Get started with content creation in your space or get ',
     h('a', {ngClick: 'welcome.scrollToDeveloperResources()'}, ['SDKs, tools & tutorials below']),
     '.'
   ]);
 
+  var welcomeTemplate = [
+    h('section.home-section', [
+      h('h2.home-section__heading', ['{{welcome.greeting}}']),
+      h('p', {ngIf: 'welcome.user.signInCount === 1 && !welcome.hasContactUs'}, [
+        'Looks like you\'re new here. Learn more about Contentful from the resources below.'
+      ]),
+      h('p', {ngIf: 'welcome.user.signInCount > 1 && !welcome.hasContactUs'}, [
+        'What will you build today?'
+      ]),
+      scrollToDeveloperResources,
+      h('cf-icon.home__welcome-image', {name: 'home-welcome'}),
+      h('div', [
+        h('cf-contact-us-space-home')
+      ])
+    ])
+  ];
+
   var template = h('div', [
     h('div', {
       ngIf: '!welcome.onboardNeeded'
-    }, [
-      h('section.home-section', [
-        h('h2.home-section__heading', ['{{welcome.greeting}}']),
-        h('p', {ngIf: 'welcome.user.signInCount === 1'}, [
-          'Looks like you\'re new here. Learn more about Contentful from the resources below.'
-        ]),
-        h('p', {ngIf: 'welcome.user.signInCount > 1'}, [
-          'What will you build today?'
-        ]),
-        scrollToDeveloperResources,
-        h('cf-icon.home__welcome-image', {name: 'home-welcome'})
-      ]),
-      h('cf-onboarding-steps')
-    ]),
+    }, welcomeTemplate.concat(h('cf-onboarding-steps'))),
     // Begin test code: test-ps-09-2017-entry-sample-space-cli
-    h('cf-app-entry-onboard', {
+    h('div', {
       ngIf: 'welcome.onboardNeeded'
-    })
+    }, [
+      h('div', {
+        ngIf: 'welcome.hasContactUs'
+      }, welcomeTemplate.concat([
+        h('cf-app-entry-onboard', {
+          short: 'true'
+        })
+      ])),
+      h('cf-app-entry-onboard', {
+        ngIf: '!welcome.hasContactUs'
+      })
+    ])
     // End test code: test-ps-09-2017-entry-sample-space-cli
   ]);
 
@@ -50,8 +67,14 @@ angular.module('contentful')
     template: template,
     restrict: 'E',
     scope: {},
+    controllerAs: 'welcome',
     controller: ['$scope', function ($scope) {
       var controller = this;
+
+      LD.onFeatureFlag($scope, contactUsFlagName, function (flag) {
+        controller.hasContactUs = flag;
+        $scope.$applyAsync();
+      });
 
       // Begin test code: test-ps-09-2017-entry-sample-space-cli
       // we call handler only once to avoid hiding of the onboarding
@@ -139,7 +162,6 @@ angular.module('contentful')
         return theStore.get('ctfl:' + user.sys.id + ':spaceAutoCreated');
       }
       // End test code: test-ps-09-2017-entry-sample-space-cli
-    }],
-    controllerAs: 'welcome'
+    }]
   };
 }]);

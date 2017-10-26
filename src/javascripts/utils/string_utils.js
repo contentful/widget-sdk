@@ -228,13 +228,16 @@ angular.module('cf.utils')
 
   // Adapted from gatekeeper, please don't modify unless you do it in both places
   // https://github.com/contentful/gatekeeper/blob/master/app/validators/email_validator.rb
+  //
+  // TODO: don't duplicate backend code, implement an endpoint for email validation in gatekeeper
+  // and use it instead.
   var emailRegex = RegExp(
     '(?!.{255})' +         // Lookahead assertion limiting length of email address to under 255 chars
     '(^\\s*' +             // Start of string and arbitrary amount of whitespace
-    '([^@\\s]{1,64})' +     // Part of address before @, limited to under 64 chars
+    '([^@\\s]{1,64})' +    // Part of address before @, limited to under 64 chars
     '@' +                  // The @ symbol itself
     '((?:[\\w\\d-]+\\.)' + // Domain portion (limited to letters and numbers), including the period
-    '+[\\w\\d-]{2,}' +         // The TLD
+    '+\\w{2,}' +           // The TLD
     ')\\s*$)',             // Arbitrary whitespace and end of string
   'i');
 
