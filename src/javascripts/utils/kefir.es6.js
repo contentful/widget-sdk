@@ -55,13 +55,18 @@ export function createStreamBus (scope) {
   }
 
   return {
-    stream: stream,
-    end: end,
-    emit: emit
+    stream,
+    end,
+    emit,
+    error
   };
 
   function emit (value) {
     currentEmitter.emit(value);
+  }
+
+  function error (value) {
+    currentEmitter.error(value);
   }
 
   function end () {

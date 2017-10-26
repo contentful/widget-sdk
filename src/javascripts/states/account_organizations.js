@@ -66,7 +66,10 @@ angular.module('contentful')
     url: '/new',
     controller: ['$stateParams', '$scope', function ($stateParams, $scope) {
       // Begin feature flag code - feature-bv-09-2017-invite-to-org
-      $scope.useNewOrgInvitation = false;
+      var LD = require('utils/LaunchDarkly');
+      LD.onFeatureFlag($scope, 'feature-bv-09-2017-invite-to-org', function (value) {
+        $scope.useNewOrgInvitation = value;
+      });
       // End feature flag code - feature-bv-09-2017-invite-to-org
 
       $scope.context = {};
@@ -79,7 +82,8 @@ angular.module('contentful')
     template: [
       h('cf-new-organization-membership', { ngIf: 'useNewOrgInvitation', properties: 'properties' }),
       h('div', {
-        ngIf: '!useNewOrgInvitation'
+        // uses strict equally to avoid rendering when the flag value is still undefined
+        ngIf: 'useNewOrgInvitation === false'
       }, [
         workbenchHeader('Organization users'),
         h('cf-account-view', { context: 'context' })
