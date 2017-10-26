@@ -9,17 +9,23 @@ export function render (props, actions) {
     onClick: () => actions.chooseType(props.type)
   }, ['Continue']);
 
+  const welcomeMessage = props.short
+    ? []
+    : [
+      h(`h2.${prefix}__title`, [props.greeting]),
+      h(`.${prefix}__description`, [
+        'Let’s get you set up with a sample blog to explore.'
+      ])
+    ];
+
   return h('section.home-section', [
-    h(`h2.${prefix}__title`, [props.greeting]),
-    h(`.${prefix}__description`, [
-      'Let’s get you set up with a sample blog to explore.'
-    ]),
+    ...welcomeMessage,
     h(`h4.${prefix}__question`, [
       'What would you prefer to use to get started?'
     ]),
     ...renderRadioButtons(props, actions),
     continueButton,
-    h(`.${prefix}__icon`, [
+    h(`.${prefix}__icon.${prefix}__icon--short`, [
       onboardingIcon
     ])
   ]);
