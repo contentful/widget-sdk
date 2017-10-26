@@ -13,6 +13,8 @@ import infoIcon from 'svg/info';
 
 import { ValueInput } from './Filters';
 import { autosizeInput } from 'ui/AutoInputSize';
+import entitySelector from 'entitySelector';
+import ListQuery from 'ListQuery';
 
 const Keys = {
   arrowUp: (e) => e.key === 'ArrowUp',
@@ -274,7 +276,16 @@ function filterValue ({ operators, valueInput, op, value, isFocused, onChange, o
         inputRef,
         onChange: onValueChange,
         onKeyDown: handleKeyDown
+      }),
+    [ValueInput.Reference]: (ctField) =>
+      filterValueReference({
+        ctField,
+        value,
+        inputRef,
+        onChange: onValueChange,
+        onKeyDown: handleKeyDown
       })
+
   });
 
   return [operatorSelect, input];
@@ -313,6 +324,19 @@ function filterValueSelect ({options, inputRef, value, onKeyDown, onChange}) {
   }, options.map(([value, label]) => {
     return h('option', {value}, [label]);
   }));
+}
+
+function filterValueReference ({ctField, value, inputRef, onChange, onKeyDown}) {
+  return h('input.input-reset.search__input-text', {
+    value,
+    ref: inputRef,
+    onClick: () => {
+      entitySelector.openFromField(ctField)
+        .then(entities => onChange(entities[0].sys.id));
+    },
+    onKeyDown,
+    tabindex: '0'
+  });
 }
 
 

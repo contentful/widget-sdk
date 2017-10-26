@@ -93,7 +93,8 @@ export const ValueInput = {
   // Select box. Call the constructor with a list of [value, label] pairs
   Select: makeCtor(),
   // A simple text input
-  Text: makeCtor()
+  Text: makeCtor(),
+  Reference: makeCtor()
 };
 
 
@@ -294,9 +295,9 @@ function buildFilterField (ct, ctField) {
   return {
     name: ctField.apiName,
     description: ctField.name,
-    queryKey: `${CT_QUERY_KEY_PREFIX}.${ctField.apiName}`,
+    queryKey: getQueryKey(ctField),
     operators: getOperatorsForType(ctField.type),
-    valueInput: getControlByType(ctField.type),
+    valueInput: getControlByType(ctField.type, ctField),
     contentType: {
       id: ct.sys.id,
       name: ct.name
@@ -304,13 +305,21 @@ function buildFilterField (ct, ctField) {
   };
 }
 
+function getQueryKey (ctField) {
+  const suffix = ctField.type === 'Link' ? '.sys.id' : '';
+
+  return `${CT_QUERY_KEY_PREFIX}.${ctField.apiName}${suffix}`;
+}
+
 // TODO: implement control type resolution
-function getControlByType (_type) {
-  if (_type === 'Boolean') {
+function getControlByType (type, ctField) {
+  if (type === 'Boolean') {
     return ValueInput.Select([
       ['true', 'Yes'],
       ['false', 'No']
     ]);
+  } else if (type === 'Link') {
+    return ValueInput.Reference(ctField);
   } else {
     return ValueInput.Text();
   }

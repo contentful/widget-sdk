@@ -24,6 +24,8 @@ export function getOperatorsForType (type) {
       return [equality, inequality, ...ranges];
     case 'Boolean':
       return [equality];
+    case 'Link':
+      return [equality, inequality];
     default:
       return [equality, inequality];
   }
