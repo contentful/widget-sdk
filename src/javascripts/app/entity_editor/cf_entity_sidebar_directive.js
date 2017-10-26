@@ -24,7 +24,7 @@ angular.module('contentful')
   var K = require('utils/kefir');
   var spaceContext = require('spaceContext');
   var collectionSelector = require('app/EntryList/Collections/Selectors').sidebarSelector;
-  var isFeatureEnabled = require('analytics/OrganizationTargeting').default;
+  var isFeatureEnabled = function () { return false; };
 
   return {
     restrict: 'E',

@@ -9,7 +9,7 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var K = require('utils/kefir');
   var makeAddToCollectionComponent = require('app/EntryList/Collections/Selectors').bulkSelector;
-  var isFeatureEnabled = require('analytics/OrganizationTargeting').default;
+  var isFeatureEnabled = function () { return false; };
   var h = require('ui/Framework').h;
 
   var collection = entityType === 'Entry' ? 'entries' : 'assets';
