@@ -21,6 +21,8 @@ export function getOperatorsForType (type) {
     case 'Integer':
     case 'Number':
       return [equality, inequality, ...ranges];
+    case 'Boolean':
+      return [equality];
     default:
       return [equality, inequality];
   }
