@@ -1,21 +1,21 @@
 import {get as getAtPath, snakeCase} from 'lodash';
-import {getSchema as fetchSchema} from 'analytics/snowplow/Schemas';
+import {getSchema as fetchSchema} from './Schemas';
 
-import EntityAction from 'analytics/snowplow/transformers/SpaceEntityAction';
-import Generic from 'analytics/snowplow/transformers/Generic';
-import SpaceCreate from 'analytics/snowplow/transformers/SpaceCreate';
-import createExperimentTransformer from 'analytics/snowplow/transformers/Experiment';
-import PageViewTransform from 'analytics/snowplow/transformers/PageView';
+import EntityAction from './transformers/SpaceEntityAction';
+import Generic from './transformers/Generic';
+import SpaceCreate from './transformers/SpaceCreate';
+import createExperimentTransformer from './transformers/Experiment';
+import PageViewTransform from './transformers/PageView';
 import {
   ClipboardCopyTransform,
   BoilerplateTransform
-} from 'analytics/snowplow/transformers/ApiKey';
-import AppOpen from 'analytics/snowplow/transformers/AppOpen';
-import BulkEditor from 'analytics/snowplow/transformers/BulkEditor';
-import Snapshot from 'analytics/snowplow/transformers/Snapshot';
-import InviteUserExperiment from 'analytics/snowplow/transformers/InviteUserExperiment';
-import SearchAndViews from 'analytics/snowplow/transformers/SearchAndViews';
-
+} from './transformers/ApiKey';
+import AppOpen from './transformers/AppOpen';
+import BulkEditor from './transformers/BulkEditor';
+import Snapshot from './transformers/Snapshot';
+import InviteUserExperiment from './transformers/InviteUserExperiment';
+import SearchAndViews from './transformers/SearchAndViews';
+import ElementClickTransform from './transformers/ElementClick';
 
 /**
  * @ngdoc module
@@ -30,6 +30,7 @@ import SearchAndViews from 'analytics/snowplow/transformers/SearchAndViews';
 
 const _events = {};
 
+registerEvent('element:click', 'element_click', ElementClickTransform);
 registerEvent('global:state_changed', 'page_view', PageViewTransform);
 
 registerGenericEvent('learn:language_selected');

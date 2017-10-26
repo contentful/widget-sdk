@@ -19,7 +19,8 @@ describe('LaunchDarkly', function () {
     this.org = {
       name: 'org',
       role: 'owner',
-      subscription: {status: 'free'}, sys: {id: 1}
+      subscription: {status: 'free'}, sys: {id: 1},
+      subscriptionPlan: { name: 'Best Enterprise 2017' }
     };
 
     this.user = {
@@ -47,7 +48,7 @@ describe('LaunchDarkly', function () {
     };
 
     this.utils = {
-      userDataStream$: K.createMockProperty([
+      userDataBus$: K.createMockProperty([
         this.user,
         this.org,
         {}
@@ -73,7 +74,7 @@ describe('LaunchDarkly', function () {
     this.onFeatureFlag = ld.onFeatureFlag;
     this.onABTestOnce = ld.onABTestOnce;
     this.setUserDataStream = function (user = this.user, org = this.org, spacesByOrg = {}, space) {
-      this.utils.userDataStream$.set([user, org, spacesByOrg, space]);
+      this.utils.userDataBus$.set([user, org, spacesByOrg, space]);
       this.$apply();
     };
 
@@ -103,6 +104,7 @@ describe('LaunchDarkly', function () {
         expect(customData).toEqual({
           currentOrgId: this.org.sys.id,
           currentOrgSubscriptionStatus: this.org.subscription.status,
+          currentOrgPlanIsEnterprise: true,
           currentOrgHasSpace: false,
           currentUserOrgRole: 'org role',
           currentUserHasAtleastOneSpace: false,

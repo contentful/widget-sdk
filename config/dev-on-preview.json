@@ -2,9 +2,11 @@
   "environment": "development",
   "authUrl" : "https://be.quirely.com",
   "apiUrl" : "https://api.quirely.com",
+  "mockApiUrl" : "https://pcfjmbizecazdxcwy.stoplight-proxy.io",
   "otUrl" : "https://ot.quirely.com",
   "assetUrl": "//localhost:3001",
   "marketingUrl" : "https://www.quirely.com",
+  "contactSalesUrl": "https://www.quirely.com/contact/sales/",
   "main_domain" : "quirely.com",
   "toolsServiceUrl": "https://tools.flinkly.com",
   "contentful" : {

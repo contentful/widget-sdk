@@ -2,9 +2,11 @@
   "environment": "development",
   "authUrl": "https://be.flinkly.com",
   "apiUrl": "https://api.flinkly.com",
+  "mockApiUrl" : "https://pcfjmbizecazdxcwy.stoplight-proxy.io",
   "assetUrl": "//localhost:3001",
   "otUrl": "https://ot.flinkly.com",
   "marketingUrl": "https://www.flinkly.com",
+  "contactSalesUrl": "https://www.flinkly.com/contact/sales/",
   "main_domain": "flinkly.com",
   "toolsServiceUrl": "https://tools.flinkly.com",
   "contentful": {

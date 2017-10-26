@@ -2,9 +2,11 @@
   "environment": "production",
   "authUrl" : "//be.contentful.com",
   "apiUrl" : "//api.contentful.com",
+  "mockApiUrl" : "https://pcfjmbizecazdxcwy.stoplight-proxy.io",
   "otUrl" : "//ot.contentful.com",
   "assetUrl" : "//static.contentful.com",
   "marketingUrl" : "//www.contentful.com",
+  "contactSalesUrl": "//www.contentful.com/contact/sales/",
   "main_domain" : "contentful.com",
   "toolsServiceUrl": "https://tools.contentful.com",
   "contentful" : {

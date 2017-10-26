@@ -184,4 +184,5 @@ yet).
 | api                 | clipboard_copy                        | <code>source: space|cda|cpa</code>
 | experiment          | start                                 | <code>id: string<br />variation: bool</code>
 | experiment          | interaction                           | <code>id: string<br />variation: bool<br />interaction_context: string</code>
+| element             | click                                 | <code>elementId: string<br />fromState: string<br />toState: string?</code>
 | personal_access_token | action                              | <code>action: string<br>patId: string</code>

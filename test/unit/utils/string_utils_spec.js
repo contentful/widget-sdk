@@ -121,4 +121,35 @@ describe('stringUtils service', function () {
       expect(this.utils.normalizeWhiteSpace(' a  b   c ')).toEqual('a b c');
     });
   });
+
+  describe('#isValidEmail', function () {
+    let isValidEmail;
+    beforeEach(function () {
+      isValidEmail = this.$inject('stringUtils').isValidEmail;
+    });
+
+    it('returns true for valid emails', function () {
+      [
+        'jeffrey.lebowski@gmail.com', // Regular old email address
+        'jeffrey.lebowski+thedude@gmail.com', // Email address with plus sign
+        '0123456789012345678901234567890123456789012345678901234567890123@gmail.com', // 64 char local-part (max)
+        '0123456789012345678901234567890123456789012345678901234567890123@01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234.com' // 254 characters
+      ].forEach((email) => { expect(isValidEmail(email)).toBe(true); });
+    });
+
+    it('returns false for invalid emails', function () {
+      [
+        '@gmail.com', // No Local-part
+        '01234567890123456789012345678901234567890123456789012345678901234@gmail.com', // 65 char local-part (too long)
+        '0123456789012345678901234567890123456789012345678901234567890123@012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345.com', // 255 characters
+        'jeffrey.lebowski@.com', // No host
+        'jeffrey.lebowski@gmail', // No TLD
+        'jeffrey.lebowski@gmail.c' // TLD too short
+      ].forEach((email) => { expect(isValidEmail(email)).toBe(false); });
+    });
+
+    it('returns false for non-strings', function () {
+      expect(isValidEmail({})).toBe(false);
+    });
+  });
 });

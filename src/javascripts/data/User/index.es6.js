@@ -1,5 +1,6 @@
 import moment from 'moment';
 import $rootScope from '$rootScope';
+import $stateParams from '$stateParams';
 import spaceContext from 'spaceContext';
 
 import {isEqual, find, get, includes} from 'lodash';
@@ -7,6 +8,7 @@ import {organizations$, user$, spacesByOrganization$} from 'services/TokenStore'
 
 import {
   combine,
+  onValue,
   getValue,
   createPropertyBus
 } from 'utils/kefir';
@@ -15,11 +17,12 @@ import {
  * @description
  * A stream combining user, current org, current space and spaces grouped by org id
  */
-export const userDataStream$ = combine(
+export const userDataBus$ = combine(
   [user$, getCurrentOrgAndSpaceStream(), spacesByOrganization$],
   (user, [org, space], spacesByOrg) => [user, org, spacesByOrg, space])
   .filter(([user, org, spacesByOrg]) => user && user.email && org && spacesByOrg) // space is a Maybe
-  .skipDuplicates(isEqual);
+  .skipDuplicates(isEqual)
+  .toProperty();
 
 /**
  * @description
@@ -142,19 +145,33 @@ export function getFirstOwnedOrgWithoutSpaces (user, spacesByOrg) {
  */
 function getCurrentOrgAndSpaceStream () {
   const currOrgAndSpaceBus = createPropertyBus([]);
+  const currOrgAndSpaceUpdater = updateCurrOrgAndSpace(currOrgAndSpaceBus);
 
-  $rootScope.$on('$stateChangeSuccess', (_e, _s, {orgId}) => {
-    const orgs = getValue(organizations$);
-    const org =
-          getOrgById(orgs, orgId) ||
-          get(spaceContext, 'organizationContext.organization', null) ||
-          orgs[0];
-    const space = get(spaceContext, 'space.data', null);
-
-    currOrgAndSpaceBus.set([org, space]);
-  });
+  onValue(organizations$.filter(orgs => orgs && orgs.length), currOrgAndSpaceUpdater);
+  $rootScope.$on('$stateChangeSuccess', currOrgAndSpaceUpdater);
 
   return currOrgAndSpaceBus.property;
+}
+
+function updateCurrOrgAndSpace (bus) {
+  return _ => {
+    const orgId = $stateParams.orgId;
+    const orgs = getValue(organizations$);
+    const org = getCurrOrg(orgs, orgId);
+    const space = getCurrSpace();
+
+    bus.set([org, space]);
+  };
+}
+
+function getCurrOrg (orgs, orgId) {
+  return getOrgById(orgs, orgId) ||
+    get(spaceContext, 'organizationContext.organization', null) ||
+    orgs[0];
+}
+
+function getCurrSpace () {
+  return get(spaceContext, 'space.data', null);
 }
 
 function getOrgById (orgs, orgId) {

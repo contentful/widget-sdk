@@ -4,10 +4,11 @@ import {launchDarkly as config} from 'Config';
 import {assign, get, isNull, omitBy} from 'lodash';
 import {onValueScope, createPropertyBus} from 'utils/kefir';
 import getChangesObject from 'utils/ShallowObjectDiff';
+import {isOrgPlanEnterprise} from 'data/Org';
 
 import {
   getOrgRole,
-  userDataStream$,
+  userDataBus$,
   isNonPayingUser,
   getUserAgeInDays,
   ownsAtleastOneOrg,
@@ -39,7 +40,7 @@ export function init () {
     return;
   }
 
-  userDataStream$.onValue(changeUserContext);
+  userDataBus$.onValue(changeUserContext);
 }
 
 /**
@@ -170,6 +171,7 @@ function buildLDUser (user, currOrg, spacesByOrg, currSpace) {
   let customData = {
     currentOrgId: orgId,
     currentOrgSubscriptionStatus: currOrg.subscription.status,
+    currentOrgPlanIsEnterprise: isOrgPlanEnterprise(currOrg),
     currentOrgHasSpace: !!get(spacesByOrg[orgId], 'length', 0),
     currentUserOrgRole: getOrgRole(user, orgId),
     currentUserHasAtleastOneSpace: hasAnOrgWithSpaces(spacesByOrg),
@@ -232,7 +234,7 @@ function identify (user) {
 
 /**
  * @description
- * A handler meant for the userDataStream$ which, based on the user
+ * A handler meant for the userDataBus$ which, based on the user
  * and the current app states, either initializes an LD client
  * or switches user context.
  *
