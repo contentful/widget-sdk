@@ -12,7 +12,8 @@ import {
   isNonPayingUser,
   getUserAgeInDays,
   ownsAtleastOneOrg,
-  hasAnOrgWithSpaces
+  hasAnOrgWithSpaces,
+  isAutomationTestUser
 } from 'data/User';
 
 import createMVar from 'utils/Concurrent/MVar';
@@ -177,7 +178,8 @@ function buildLDUser (user, currOrg, spacesByOrg, currSpace) {
     currentUserHasAtleastOneSpace: hasAnOrgWithSpaces(spacesByOrg),
     currentUserOwnsAtleastOneOrg: ownsAtleastOneOrg(user),
     currentUserAge: getUserAgeInDays(user), // in days
-    isNonPayingUser: isNonPayingUser(user)
+    isNonPayingUser: isNonPayingUser(user),
+    isAutomationTestUser: isAutomationTestUser(user)
   };
 
   if (currSpace) {
