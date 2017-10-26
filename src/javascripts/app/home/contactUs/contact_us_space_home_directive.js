@@ -32,7 +32,7 @@ angular.module('contentful')
 
       function onClick () {
         Analytics.track('element:click', {
-          elementId: 'contact_sales',
+          elementId: 'contact_sales_spacehome',
           fromState: $state.current.name
         });
       }
