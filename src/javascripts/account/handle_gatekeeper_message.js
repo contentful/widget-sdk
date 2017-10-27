@@ -4,7 +4,7 @@ angular.module('contentful')
 
 .factory('handleGatekeeperMessage', ['require', function (require) {
   var $location = require('$location');
-  var authentication = require('Authentication');
+  var Authentication = require('Authentication');
   var notification = require('notification');
   var TokenStore = require('services/TokenStore');
   var CreateSpace = require('services/CreateSpace');
@@ -16,7 +16,7 @@ angular.module('contentful')
     var match = makeMessageMatcher(data);
 
     if (match('create', 'UserCancellation')) {
-      authentication.cancelUser();
+      Authentication.cancelUser();
 
     } else if (match('new', 'space')) {
       CreateSpace.showDialog(data.organizationId);
@@ -34,7 +34,7 @@ angular.module('contentful')
       UrlSyncHelper.updateWebappUrl(data.path);
 
     } else if (matchesError(data, 401)) {
-      authentication.redirectToLogin();
+      Authentication.redirectToLogin();
 
     } else if (matchesError(data)) {
       showErrorModal(data);

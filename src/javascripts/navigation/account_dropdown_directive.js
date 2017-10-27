@@ -12,7 +12,7 @@ angular.module('contentful')
 }])
 
 .controller('cfAccountDropdownController', ['$scope', 'require', function ($scope, require) {
-  var authentication = require('Authentication');
+  var Authentication = require('Authentication');
   var Config = require('Config');
   var analytics = require('analytics/Analytics');
   var intercom = require('intercom');
@@ -29,6 +29,6 @@ angular.module('contentful')
 
   function logout () {
     analytics.track('global:logout_clicked');
-    authentication.logout();
+    Authentication.logout();
   }
 }]);
