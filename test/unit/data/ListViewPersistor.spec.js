@@ -1,4 +1,4 @@
-xdescribe('Filter Query String', function () {
+describe('ListViewPersistor', function () {
   let TheStore, $location, qs;
   const key = 'lastFilterQueryString.testEntity.SPACE_ID';
 
@@ -9,29 +9,49 @@ xdescribe('Filter Query String', function () {
     TheStore = this.$inject('TheStore');
     $location = this.$inject('$location');
 
-    qs = createPersistor('SPACE_ID', 'testEntity');
+    const space = { getId: sinon.stub().returns('SPACE_ID') };
+
+    qs = createPersistor(space, null, 'testEntity');
     sinon.stub($location, 'search');
   });
 
   describe('#read', function () {
-    it('reads data from query string by default', function () {
+    it('reads data from query string by default', function* () {
       $location.search.returns({ fromSearch: true });
-      expect(qs.read().fromSearch).toBe(true);
+      expect((yield qs.read()).fromSearch).toBe(true);
     });
 
-    it('falls back to data from localStorage', function () {
+    it('falls back to data from localStorage', function* () {
       TheStore.set(key, {test: true});
-      expect(qs.read().test).toBe(true);
+      expect((yield qs.read()).test).toBe(true);
     });
 
-    it('restores nested structure', function () {
+    it('restores nested structure', function* () {
       $location.search.returns({ 'x.y': true });
-      expect(qs.read().x.y).toBe(true);
+      expect((yield qs.read()).x.y).toBe(true);
     });
 
-    it('handles boolean fileds', function () {
+    it('handles boolean fields', function* () {
       $location.search.returns({ contentTypeHidden: 'false' });
-      expect(qs.read().contentTypeHidden).toBe(false);
+      expect((yield qs.read()).contentTypeHidden).toBe(false);
+    });
+
+    describe('does `searchTerm` migration', function () {
+      beforeEach(function () {
+        $location.search.returns({ searchTerm: 'some text' });
+      });
+
+      it('removes `searchTerm`', function* () {
+        expect((yield qs.read()).searchTerm).toBe(undefined);
+      });
+
+      it('adds `searchText`', function* () {
+        expect((yield qs.read()).searchText).toBe('some text');
+      });
+
+      it('adds (empty) `searchFilters`', function* () {
+        expect((yield qs.read()).searchFilters).toEqual([]);
+      });
     });
   });
 

@@ -7,11 +7,11 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
   var ctHelpers = require('data/ContentTypes');
   var createViewPersistor = require('data/ListViewPersistor').default;
 
-  var qs = createViewPersistor(spaceContext.getId(), 'contentTypes');
-  var view = qs.read();
+  var viewPersistor = createViewPersistor(
+    spaceContext.space, spaceContext.publishedCTs, 'contentTypes');
 
-  $scope.context.list = view.list || 'all';
-  $scope.context.searchTerm = view.searchTerm || '';
+  viewPersistor.read().then(loadView);
+
   $scope.empty = true;
 
   $scope.shouldHide = accessChecker.shouldHide;
@@ -19,10 +19,15 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
 
   $scope.$watchGroup(['context.list', 'context.searchTerm'], function (args) {
     if (args[0] || args[1]) {
-      qs.save({list: args[0], searchTerm: args[1]});
+      viewPersistor.save({list: args[0], searchTerm: args[1]});
       updateList();
     }
   });
+
+  function loadView (view) {
+    $scope.context.list = view.list || 'all';
+    $scope.context.searchTerm = view.searchText || '';
+  }
 
   function updateList () {
     $scope.context.isSearching = true;

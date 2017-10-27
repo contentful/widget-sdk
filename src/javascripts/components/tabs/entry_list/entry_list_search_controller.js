@@ -15,12 +15,17 @@ angular.module('contentful')
 
   $scope.context = { ready: false, loading: true };
 
+  var initialized = false;
+
   /**
    * Public API
    */
 
   // TODO rename this everywhere
-  $scope.updateEntries = resetEntries;
+  $scope.updateEntries = function () {
+    console.log('UPDATE');
+    resetEntries();
+  }
 
   var updateEntries = createRequestQueue(requestEntries, setupEntriesHandler);
 
@@ -32,8 +37,8 @@ angular.module('contentful')
 
   // We store the page in a local variable.
   // We need this to determine if a change to 'paginator.getPage()'
-  // comes from us or the user or from us.
-  var page = null;
+  // comes from us or the user.
+  var page = 0;
   $scope.$watch(function () {
     return $scope.paginator.getPage();
   }, function (newPage) {
@@ -43,24 +48,27 @@ angular.module('contentful')
     }
   });
 
-
   $scope.$watch(function () {
-    return getViewItem('id');
-  }, function (nextViewId, prevViewId) {
-    var viewChanged = nextViewId !== prevViewId;
+    return {
+      viewId: getViewItem('id'),
+      search: getViewSearchState()
+    };
+  }, function (next, prev) {
+    var viewChanged = next.viewId !== prev.viewId;
 
-    // if view was changed updated immediately
+    // if view was changed update immediately and back to page 1
     if (viewChanged) {
-      updateWith(getViewSearchState());
+      resetEntries();
       return;
     }
-  });
 
-  $scope.$watch('context.view.contentTypeId', function (value, prev) {
-    if (value !== prev) {
+    // search changed
+    var searchChanged = !initialized || !_.isEqual(next.search, prev.search);
+    if (searchChanged) {
+      // TODO: If set from outside, update search ui
       resetEntries();
     }
-  });
+  }, true);
 
   $scope.$watch(function () {
     return {
@@ -91,11 +99,10 @@ angular.module('contentful')
     );
   }
 
-  function updateWith (newSearchState) {
+  function updateViewWithSearch (view) {
     var oldView = _.cloneDeep($scope.context.view);
-    var newView = _.extend(oldView, newSearchState);
+    var newView = _.extend(oldView, view);
     $scope.loadView(newView);
-    resetEntries();
   }
 
   // When the user deletes an entry it is removed from the entries
@@ -115,6 +122,7 @@ angular.module('contentful')
   }
 
   function requestEntries () {
+    initialized = true;
     $scope.context.loading = true;
     $scope.context.isSearching = true;
     return prepareQuery()
@@ -135,7 +143,7 @@ angular.module('contentful')
     if (!newSearchState) {
       return;
     }
-    updateWith(newSearchState);
+    updateViewWithSearch(newSearchState);
   }
 
   var isSearching$ = K.fromScopeValue($scope, function ($scope) {

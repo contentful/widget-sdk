@@ -136,26 +136,6 @@ angular.module('contentful')
     return !$scope.paginator.getTotal() && $scope.context.view.collection && !$scope.context.loading;
   };
 
-
-  /**
-   * @ngdoc method
-   * @name EntryListController#$scope.displaySearch
-   * @description
-   * Returns a string that describes the current search.
-   *
-   * This is displayed to the user when the search was unsuccessful
-   *
-   * @return {string}
-   */
-  $scope.displaySearch = function () {
-    var view = $scope.context.view;
-    if (view.contentTypeId) {
-      return 'Content type "' + view.contentTypeId + '", term: ' + view.searchTerm;
-    } else {
-      return view.searchTerm;
-    }
-  };
-
   /**
    * @ngdoc property
    * @name EntryListController#$scope.hasArchivedEntries

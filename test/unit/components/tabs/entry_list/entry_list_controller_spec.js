@@ -1,7 +1,7 @@
 import * as sinon from 'helpers/sinon';
 
-describe('Entry List Controller', function () {
-  let scope, spaceContext;
+fdescribe('Entry List Controller', function () {
+  let scope, spaceContext, ListQuery;
 
   function createEntries (n) {
     const entries = _.map(new Array(n), function () {
@@ -44,18 +44,21 @@ describe('Entry List Controller', function () {
 
     $controller('EntryListController', {$scope: scope});
     scope.selection.updateList = sinon.stub();
+
+    ListQuery = this.$inject('ListQuery');
   });
 
   describe('#loadView()', function () {
     let view;
 
     beforeEach(function () {
-      scope.updateEntries = sinon.stub();
+      ListQuery.getForEntries = this.getQuery = sinon.stub().resolves({});
 
       view = {
         id: 'foo',
         title: 'Derp',
-        searchTerm: 'search term',
+        searchText: 'search input',
+        searchFilters: [],
         contentTypeId: 'ctid',
         contentTypeHidden: false,
         displayedFieldIds: ['createAt', 'updatedAt'],
@@ -64,7 +67,7 @@ describe('Entry List Controller', function () {
           direction: 'descending'
         }
       };
-      scope.loadView(view);
+      scope.loadView(_.cloneDeep(view));
     });
 
     it('sets the view', function () {
@@ -74,15 +77,15 @@ describe('Entry List Controller', function () {
 
     it('resets entries', function () {
       scope.$apply();
-      sinon.assert.calledOnce(scope.updateEntries);
+      sinon.assert.calledOnce(this.getQuery);
     });
   });
 
-  describe('on search term change', function () {
+  describe('on search change', function () {
     it('page is set to the first one', function () {
       scope.paginator.setPage(1);
       scope.$apply();
-      scope.context.view.searchTerm = 'thing';
+      scope.context.view.searchText = 'thing';
       scope.$apply();
       expect(scope.paginator.getPage()).toBe(0);
     });
@@ -90,24 +93,24 @@ describe('Entry List Controller', function () {
 
   describe('page parameters change trigger entries reset', function () {
     beforeEach(function () {
-      this.$inject('ListQuery').getForEntries = this.getQuery = sinon.stub().resolves({});
+      ListQuery.getForEntries = this.getQuery = sinon.stub().resolves({});
     });
 
-    it('search term', function () {
-      scope.context.view.searchTerm = 'thing';
+    it('search text', function () {
+      scope.context.view.searchText = 'thing';
       scope.$apply();
       sinon.assert.calledOnce(this.getQuery);
     });
 
     it('page', function () {
       scope.paginator.setPage(1);
-      scope.$digest();
+      scope.$apply();
       sinon.assert.calledOnce(this.getQuery);
     });
 
     it('contentTypeId', function () {
       scope.context.view.contentTypeId = 'something';
-      scope.$digest();
+      scope.$apply();
       sinon.assert.calledOnce(this.getQuery);
     });
   });

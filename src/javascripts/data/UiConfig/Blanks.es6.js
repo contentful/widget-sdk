@@ -7,7 +7,8 @@ export function getBlankEntryView () {
   return {
     id: random.id(),
     title: 'New view',
-    searchTerm: null,
+    searchText: '',
+    searchFilters: [],
     contentTypeId: null,
     contentTypeHidden: false,
     order: systemFields.getDefaultOrder(),

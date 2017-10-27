@@ -2,9 +2,9 @@ import querystring from 'querystring';
 import $q from '$q';
 import $location from '$location';
 import TheStore from 'TheStore';
-import flatten from 'libs/flat';
-import {omit, omitBy, isEmpty, isObject} from 'lodash';
+import {omit, isEmpty, isObject} from 'lodash';
 import {textQueryToUISearch} from 'search/TextQueryConverter';
+import {serialize, unserialize} from 'data/ViewSerializer';
 
 /**
  * Create a persitory for entity views.
@@ -18,17 +18,19 @@ import {textQueryToUISearch} from 'search/TextQueryConverter';
  *
  * TODO we need to separate the serialization logic for content types
  * and content.
+ *
+ * @param {Space} space
+ * @param {ContentTypeRepo} contentTypes
+ * @returns {ListViewPersistor}
  */
-export default function create (space, entityType) {
+export default function create (space, contentTypes, entityType) {
   const key = `lastFilterQueryString.${entityType}.${space.getId()}`;
   const localStorage = TheStore.forKey(key);
 
   return {read, save};
 
   function save (view) {
-    console.log('SAVE query', view);
-    return; // TODO:danwe
-    const viewData = toStorageFormat(view);
+    const viewData = serialize(omit(view, ['title']));
     localStorage.set(viewData);
     $location.search(prepareQueryString(viewData));
     $location.replace();
@@ -36,22 +38,22 @@ export default function create (space, entityType) {
 
   function read () {
     const currentQS = $location.search();
-    const previousQS = localStorage.get() || {}; // TODO: don't call get if no need!
-    const qs = isEmpty(currentQS) ? previousQS : currentQS;
-    return fromStorageFormat(qs).then((query) => {
-      console.log('READ query', qs, query);
-      return query;
-    });
+    const qs = isEmpty(currentQS) ? getPreviousQS() : currentQS;
+    return fromStorageFormat(qs);
   }
 
-  function fromStorageFormat (stored) {
-    let view = flatten.unflatten(stored, {safe: true});
-    return viewFromStorageFormat(view);
+  function getPreviousQS () {
+    return localStorage.get() || {};
   }
 
-  function viewFromStorageFormat (view) {
+  function fromStorageFormat (viewData, collections) {
+    const view = unserialize(viewData);
+    return viewMigrations(view);
+  }
+
+  function viewMigrations (view) {
     if (!isObject(view)) {
-      return {};
+      return $q.resolve({});
     }
 
     // For "contentTypeHidden" we cast a string value to a boolean:
@@ -70,35 +72,26 @@ export default function create (space, entityType) {
       delete view.order.isSys;
     }
 
-    // Migration of pure text queries to new search ui powered format.
+    // Migration of pure text queries to new search ui's format.
     if (view.searchTerm) {
-      return getViewContentTypeOrNull(view).then((contentType) => {
-        console.log('CT', contentType);
-        return textQueryToUISearch(space, contentType, view.searchTerm).then((search) => {
-          view.searchText = search.searchText;
-          view.searchFilters = search.searchFilters;
-          delete view.searchTerm;
-          return view;
-        });
+      const contentType = getViewContentTypeOrNull(view.contentTypeId);
+      return textQueryToUISearch(space, contentType, view.searchTerm)
+      .then((search) => {
+        view.searchText = search.searchText;
+        view.searchFilters = search.searchFilters;
+        delete view.searchTerm;
+        return view;
       });
     }
 
     return $q.resolve(view);
   }
 
-  function getViewContentTypeOrNull (view) {
-    return view.contentTypeId
-      ? space.getContentType(view.contentTypeId)
-      : $q.resolve(null);
+  function getViewContentTypeOrNull (contentTypeId) {
+    return contentTypeId
+      ? contentTypes.get(contentTypeId)
+      : null;
   }
-}
-
-function toStorageFormat (view) {
-  const storedView = omit(view, ['title']);
-
-  return flatten(omitBy(storedView, (item) => {
-    return item === undefined || item === null || item === '';
-  }), {safe: true});
 }
 
 function prepareQueryString (viewData) {
@@ -109,8 +102,4 @@ function prepareQueryString (viewData) {
     acc[key] = viewData[key];
     return acc;
   }, {}));
-}
-
-function structuredSearchFromTextQuery (textQuery) {
-  const search = parseTextQuery(view.searchTerm);
 }
