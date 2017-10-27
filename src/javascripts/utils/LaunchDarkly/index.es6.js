@@ -159,6 +159,17 @@ function getVariationSetter (flagName, obs$) {
  * @description
  * Builds a launch darkly user with custom data to help us
  * target users.
+ * Custom data that can be used in targeting users:
+ * - currentOrgId : current org in the app the user is in the context of
+ * - currentOrgSubscriptionStatus : one of free, paid, free_paid, trial
+ * - currentOrgPlanIsEnterprise : true if the current org is on an enterprise plan
+ * - currentOrgHasSpace : true if the current org has a space
+ * - currentUserOrgRole : user's role in current org
+ * - currentUserHasAtleastOneSpace : true if the user has atleast one space in all the orgs he/she is a member of
+ * - currentUserOwnsAtleastOneOrg : true if the user is the owner of atleast one org
+ * - currentUserAge : days since user signed up
+ * - isNonPayingUser : true if non of the orgs the user belongs to is paying us
+ * - isAutomationTestUser : true if the current user was created by the automation suite
  *
  * @param {Object} user
  * @param {Object} currOrg
