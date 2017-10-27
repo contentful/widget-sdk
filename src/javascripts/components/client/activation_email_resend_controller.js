@@ -5,7 +5,7 @@ angular.module('contentful')
   var $timeout = require('$timeout');
   var $q = require('$q');
   var moment = require('moment');
-  var tokenStore = require('services/TokenStore');
+  var TokenStore = require('services/TokenStore');
   var modalDialog = require('modalDialog');
   var resendActivationEmail = require('activationEmailResender').resend;
   var TheStore = require('TheStore');
@@ -18,7 +18,7 @@ angular.module('contentful')
 
   function init () {
     storeDialogLastShownTimestamp(); // Wait 24h before showing the dialog.
-    tokenStore.user$.onValue(watcher);
+    TokenStore.user$.onValue(watcher);
   }
 
   function watcher (user) {

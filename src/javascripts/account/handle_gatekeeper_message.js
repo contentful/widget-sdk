@@ -6,7 +6,7 @@ angular.module('contentful')
   var $location = require('$location');
   var authentication = require('Authentication');
   var notification = require('notification');
-  var tokenStore = require('services/TokenStore');
+  var TokenStore = require('services/TokenStore');
   var CreateSpace = require('services/CreateSpace');
   var UrlSyncHelper = require('account/UrlSyncHelper');
   var modalDialog = require('modalDialog');
@@ -22,7 +22,7 @@ angular.module('contentful')
       CreateSpace.showDialog(data.organizationId);
 
     } else if (match('delete', 'space')) {
-      tokenStore.refresh();
+      TokenStore.refresh();
 
     } else if (data.type === 'flash') {
       showNotification(data);
@@ -38,7 +38,7 @@ angular.module('contentful')
 
     } else if (matchesError(data)) {
       showErrorModal(data);
-    } else { tokenStore.refresh(); }
+    } else { TokenStore.refresh(); }
   };
 
   function matchesError (data, errorCode) {
