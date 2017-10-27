@@ -6,7 +6,7 @@ import {h} from 'ui/Framework';
 import * as H from 'ui/Framework/Hooks';
 import {container, hspace} from 'ui/Layout';
 import spinner from 'ui/Components/Spinner';
-import {byName as Colors} from 'Styles/Colors';
+import {byName as colors} from 'Styles/Colors';
 
 import filterIcon from 'svg/filter';
 import infoIcon from 'svg/info';
@@ -53,7 +53,7 @@ export default function render ({
         display: 'flex',
         background: 'white',
         border: '1px solid transparent',
-        borderColor: searchBoxHasFocus ? Colors.blueMid : Colors.elementMid,
+        borderColor: searchBoxHasFocus ? colors.blueMid : colors.elementMid,
         height: searchBoxHasFocus ? 'auto' : '42px',
         overflow: searchBoxHasFocus ? '' : 'hidden'
       },
@@ -307,7 +307,10 @@ function filterOperatorSelect ({op, operators, inputRef, onChange, onKeyDown}) {
     ref: inputRef,
     onChange: ({ target: { value } }) => onChange(value),
     tabindex: '0',
-    onKeyDown
+    onKeyDown,
+    style: {
+      backgroundColor: colors.blueLight
+    },
   }, operators.map(([value, label]) => {
     return h('option', {value}, [label]);
   }));
@@ -319,7 +322,10 @@ function filterValueSelect ({options, inputRef, value, onKeyDown, onChange}) {
     ref: inputRef,
     onChange: ({ target: { value } }) => onChange(value),
     tabindex: '0',
-    onKeyDown
+    onKeyDown,
+    style: {
+      borderRadius: '0 3px 3px 0'
+    }
   }, options.map(([value, label]) => {
     return h('option', {value}, [label]);
   }));
@@ -368,14 +374,14 @@ function filterSuggestions ({items, defaultFocus, onSelect, onKeyDown}) {
       }, [ h('.__filter-pill', [ field.name ]) ]),
       hspace('20px'),
       container({
-        color: Colors.textLightest,
+        color: colors.textLightest,
         flex: '0 0 30%'
       }, [
         field.contentType ? field.contentType.name : 'All content types'
       ]),
       hspace('20px'),
       container({
-        color: Colors.textLight
+        color: colors.textLight
       }, [ field.description ])
     ]);
   }));
@@ -385,15 +391,15 @@ function searchHelpBanner () {
   return container({
     display: 'flex',
     alignItems: 'center',
-    background: Colors.iceMid,
-    borderTop: '1px solid ' + Colors.elementLight,
+    background: colors.iceMid,
+    borderTop: '1px solid ' + colors.elementLight,
     height: '56px',
     padding: '15px 20px'
   }, [
     infoIcon,
     h('p', {
       style: {
-        color: Colors.textLight,
+        color: colors.textLight,
         margin: '0',
         marginLeft: '10px'
       }
@@ -416,7 +422,7 @@ function suggestionsContainer (content) {
     left: '0',
     right: '0',
     zIndex: 1,
-    border: `solid ${Colors.blueMid}`,
+    border: `solid ${colors.blueMid}`,
     borderWidth: '0 1px 1px 1px',
     background: 'white'
   }, [

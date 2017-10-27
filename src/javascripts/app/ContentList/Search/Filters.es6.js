@@ -1,7 +1,7 @@
 import { startsWith, find, get } from 'lodash';
 import { makeCtor } from 'utils/TaggedValues';
 import { assign, push, concat } from 'utils/Collections';
-import { getOperatorsForType, equality as equalityOperator } from './Operators';
+import { getOperatorsByType, equality as equalityOperator } from './Operators';
 
 const CT_QUERY_KEY_PREFIX = 'fields';
 
@@ -112,7 +112,7 @@ const sysFieldFilters = [
     name: name,
     description: desc,
     queryKey: `sys.${name}`,
-    operators: getOperatorsForType(type),
+    operators: getOperatorsByType(type),
     valueInput: getControlByType({type}),
     contentType: null
   };
@@ -295,7 +295,7 @@ function buildFilterField (ct, ctField) {
     name: ctField.apiName,
     description: ctField.name,
     queryKey: getQueryKey(ctField),
-    operators: getOperatorsForType(ctField.type, get(ctField, ['items', 'type'])),
+    operators: getOperatorsByType(ctField.type, get(ctField, ['items', 'type'])),
     valueInput: getControlByType(ctField),
     contentType: {
       id: ct.sys.id,
@@ -320,7 +320,8 @@ function getControlByType (ctField) {
   } else if (isReferenceField(ctField)) {
     return ValueInput.Reference(assign(ctField, {
       // TODO: This is required by the entity selector
-      itemLinkType: get(ctField, ['items', 'linkType'])
+      itemLinkType: get(ctField, ['items', 'linkType']),
+      itemValidations: get(ctField, ['items', 'validations'])
     }));
   } else {
     return ValueInput.Text();
