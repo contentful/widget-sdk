@@ -33,7 +33,7 @@ angular.module('contentful')
 }])
 
 .factory('states/spaces/detail', ['require', function (require) {
-  var analytics = require('analytics/Analytics');
+  var Analytics = require('analytics/Analytics');
   var sectionAccess = require('sectionAccess');
   var TheStore = require('TheStore');
 
@@ -57,7 +57,7 @@ angular.module('contentful')
       }]
     },
     onEnter: ['space', function (space) {
-      analytics.trackSpaceChange(space);
+      Analytics.trackSpaceChange(space);
     }],
     controller: ['$scope', 'space', function ($scope, space) {
       $scope.label = space.data.name;

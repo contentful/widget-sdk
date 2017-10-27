@@ -21,7 +21,7 @@ angular.module('contentful')
   var TokenStore = require('services/TokenStore');
   var createSampleSpace = require('components/shared/auto_create_new_space/CreateSampleSpace').default;
   var getFirstOwnedOrgWithoutSpaces = require('data/User/index').getFirstOwnedOrgWithoutSpaces;
-  var analytics = require('analytics/Analytics');
+  var Analytics = require('analytics/Analytics');
   var TEST_NAME = 'test-ps-09-2017-entry-sample-space-cli';
   var template = h('div', [
     h('cf-cli-entry-onboard', {
@@ -88,7 +88,7 @@ angular.module('contentful')
       // another option), and later in analysis we will remain only the
       // last click
       function trackSelection (type) {
-        analytics.track('experiment:interaction', {
+        Analytics.track('experiment:interaction', {
           experiment: {
             id: TEST_NAME,
             // it is not an A/B test per se, so variation

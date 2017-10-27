@@ -9,7 +9,7 @@ angular.module('contentful')
   var TokenStore = require('services/TokenStore');
   // Begin test code: test-ps-09-2017-entry-sample-space-cli
   var LD = require('utils/LaunchDarkly');
-  var analytics = require('analytics/Analytics');
+  var Analytics = require('analytics/Analytics');
   var createSpaceAutomatically = require('components/shared/auto_create_new_space/index').init;
   var TheStore = require('TheStore');
 
@@ -149,7 +149,7 @@ angular.module('contentful')
       }
 
       function trackExperiment (variation) {
-        analytics.track('experiment:start', {
+        Analytics.track('experiment:start', {
           experiment: {
             id: flagName,
             variation: variation
