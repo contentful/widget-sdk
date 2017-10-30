@@ -1,4 +1,4 @@
-import {includes, omit, pick, negate, trim, get as getAtPath} from 'lodash';
+import {includes, omit, pick, negate, trim, sortedUniq, get as getAtPath} from 'lodash';
 import {h} from 'ui/Framework';
 import { assign } from 'utils/Collections';
 import {getFatSpaces, getOrganization} from 'services/TokenStore';
@@ -219,11 +219,11 @@ export default function ($scope) {
    * the invalid addresses.
    */
   function updateEmails (emailsInputValue) {
-    const emails = emailsInputValue
+    const list = emailsInputValue
       .split(',')
       .map(trim)
       .filter(email => email.length);
-
+    const emails = sortedUniq(list);
     const invalidAddresses = emails.filter(negate(isValidEmail));
 
     state = assign(state, {
