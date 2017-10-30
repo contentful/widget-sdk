@@ -21,6 +21,7 @@ const orgRoles = [
   { name: 'Admin', value: 'admin', description: '' },
   { name: 'Member', value: 'member', description: '' }
 ];
+const defaultOrgRole = 'member';
 const Idle = makeCtor('idle');
 const Invalid = makeCtor('invalid'); // used to show form errors after user tried to submit
 const InProgress = makeCtor('inProgress');
@@ -33,7 +34,7 @@ export default function ($scope) {
     emails: [],
     emailsInputValue: '',
     invalidAddresses: [],
-    orgRole: 'member',
+    orgRole: defaultOrgRole,
     spaceMemberships: {},
     failedOrgInvitations: [],
     successfulOrgInvitations: [],
@@ -201,7 +202,10 @@ export default function ($scope) {
       emailsInputValue: emails.join(', '),
       status: Idle(),
       failedOrgInvitations: [],
-      successfulOrgInvitations: []
+      successfulOrgInvitations: [],
+      // if re-trying to invite failed users, keep org role and space settings
+      orgRole: emails.length ? state.orgRole : defaultOrgRole,
+      spaceMemberships: emails.length ? state.spaceMemberships : {}
     });
 
     rerender();
