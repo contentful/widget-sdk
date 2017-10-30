@@ -64,6 +64,7 @@ angular.module('contentful/app', ['contentful'])
   }
 }])
 .run(['require', function (require) {
+  var $window = require('$window');
   var $document = require('$document');
   var Config = require('Config');
   if (Config.env === 'development') {
@@ -74,7 +75,12 @@ angular.module('contentful/app', ['contentful'])
   require('Authentication').init();
   require('services/TokenStore').init();
   require('presence').startTracking();
-  require('services/UIVersionSwitcher').checkIfVersionShouldBeSwitched();
+  var shouldSwitchVersion = require('services/UIVersionSwitcher').checkIfVersionShouldBeSwitched();
+  var shouldEnforceFeatureFlags = require('utils/LaunchDarkly/EnforceFeatureFlags').init();
+  if (shouldSwitchVersion || shouldEnforceFeatureFlags) {
+    // Reload the page without the query string
+    $window.location.search = '';
+  }
   require('utils/LaunchDarkly').init();
   require('navigation/stateChangeHandlers').setup();
   require('ui/ContextMenuHandler').default($document);

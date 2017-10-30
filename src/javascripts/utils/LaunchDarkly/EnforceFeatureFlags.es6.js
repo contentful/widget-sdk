@@ -10,6 +10,7 @@ import TheStore from 'TheStore';
 export function init () {
   setFromQuery();
   displayNotification();
+  return !!$location.search['ui_features'];
 }
 
 const store = TheStore.forKey('ui_features');
@@ -25,12 +26,6 @@ function setFromQuery () {
   const features = $location.search()['ui_features'] || '';
   if (features !== getEnabledFeatures()) {
     store.set(features);
-
-    // TODO this collides with ui_version!
-    // Move location update out of both modules.
-
-    // Reload the page without the query string
-    $window.location.search = '';
   }
 }
 
