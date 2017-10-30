@@ -164,6 +164,9 @@ angular.module('contentful')
     snowplow: {
       url: AssetResolver.resolve('app/snowplow.js'),
       globalObject: 'Snowplow'
+    },
+    walkMe: {
+      url: 'https://cdn.walkme.com/users/ae0ec83cc1ba44febf1cec5ac23c85d2/test/walkme_ae0ec83cc1ba44febf1cec5ac23c85d2_https.js'
     }
   };
 
