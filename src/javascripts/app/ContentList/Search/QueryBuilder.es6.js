@@ -1,11 +1,15 @@
 import { assign } from 'utils/Collections';
 
 /**
- * Takes a list of [filter, operator, value] triples and a search
- * string and constructs a query object for the API.
+ * Takes an object representing the `Search` component's public state object and
+ * constructs a query object for the Content Managment API.
  *
  * Handles the special `__status` key that translates to complicated
  * queries on `sys` fields.
+ *
+ * @param {String?} options.contentTypeId
+ * @param {Array} options.searchFilters A list of [filter, operator, value] triples.
+ * @param {String} options.searchText
  *
  * TODO: Write tests.
  */
