@@ -2,7 +2,6 @@
 * Switches the UI version if a `ui_version` query string parameter is specified.
 * It also displays the version in the UI and provides an easy way to clear it.
 */
-import $location from '$location';
 import $window from '$window';
 import $document from '$document';
 import Cookies from 'Cookies';
@@ -11,18 +10,14 @@ import {gitRevision} from 'environment';
 import {h} from 'utils/hyperscript';
 
 /**
- * Sets `ui_version` cookie from location string
- * @returns {boolean} if window location should be updated
+ * Sets `ui_version` cookie from value, and shows a notification.
+ * @param {String} uiVersion
  */
-export function checkIfVersionShouldBeSwitched () {
-  const uiVersion = $location.search().ui_version;
-  const shouldReload = gitRevision !== uiVersion;
-
+export function init (uiVersion) {
   setVersionCookie(uiVersion);
-  if (!shouldReload) {
+  if (gitRevision !== uiVersion) {
     addVersionNotification();
   }
-  return shouldReload;
 }
 
 function setVersionCookie (uiVersion) {

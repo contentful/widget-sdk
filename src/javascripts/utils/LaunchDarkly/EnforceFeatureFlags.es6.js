@@ -1,16 +1,15 @@
-import $location from '$location';
-import $window from '$window';
 import $document from '$document';
 import {h} from 'utils/hyperscript';
 import TheStore from 'TheStore';
 
 /**
- * Stores enabled ui features in local storage, and shows
+ * Stores enabled ui features from value in local storage, and shows
+ * a notification.
+ * @param {String} enabledFeatures
  */
-export function init () {
-  setFromQuery();
+export function init (enabledFeatures) {
+  setFromQuery(enabledFeatures);
   displayNotification();
-  return !!$location.search['ui_features'];
 }
 
 const store = TheStore.forKey('ui_features');
@@ -22,10 +21,9 @@ export function getEnabledFeatures () {
   return store.get() || '';
 }
 
-function setFromQuery () {
-  const features = $location.search()['ui_features'] || '';
-  if (features !== getEnabledFeatures()) {
-    store.set(features);
+function setFromQuery (enabledFeatures) {
+  if (enabledFeatures !== getEnabledFeatures()) {
+    store.set(enabledFeatures);
   }
 }
 

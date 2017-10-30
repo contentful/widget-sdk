@@ -66,6 +66,7 @@ angular.module('contentful/app', ['contentful'])
 .run(['require', function (require) {
   var $window = require('$window');
   var $document = require('$document');
+  var urlParams = require('$location').search();
   var Config = require('Config');
   if (Config.env === 'development') {
     Error.stackTraceLimit = 100;
@@ -75,9 +76,9 @@ angular.module('contentful/app', ['contentful'])
   require('Authentication').init();
   require('services/TokenStore').init();
   require('presence').startTracking();
-  var shouldSwitchVersion = require('services/UIVersionSwitcher').checkIfVersionShouldBeSwitched();
-  var shouldEnforceFeatureFlags = require('utils/LaunchDarkly/EnforceFeatureFlags').init();
-  if (shouldSwitchVersion || shouldEnforceFeatureFlags) {
+  require('services/UIVersionSwitcher').init(urlParams['ui_version']);
+  require('utils/LaunchDarkly/EnforceFeatureFlags').init(urlParams['ui_features']);
+  if (Object.keys(urlParams).length > 0) {
     // Reload the page without the query string
     $window.location.search = '';
   }
