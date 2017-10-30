@@ -6,7 +6,7 @@ import * as RoleRepository from 'RoleRepository';
 import {runTask} from 'utils/Concurrent';
 import {ADMIN_ROLE_ID} from 'access_control/SpaceMembershipRepository';
 import {getUsers, createEndpoint} from 'access_control/OrganizationMembershipRepository';
-import {makeCtor, match} from 'utils/TaggedValues';
+import {makeCtor, match, isTag} from 'utils/TaggedValues';
 import {invite, progress$} from 'account/SendOrganizationInvitation';
 import {isValidEmail} from 'stringUtils';
 import {go} from 'states/Navigator';
@@ -22,6 +22,7 @@ const orgRoles = [
   { name: 'Member', value: 'member', description: '' }
 ];
 const Idle = makeCtor('idle');
+const Invalid = makeCtor('invalid'); // used to show form errors after user tried to submit
 const InProgress = makeCtor('inProgress');
 const Success = makeCtor('success');
 const Failure = makeCtor('failure');
@@ -133,6 +134,7 @@ export default function ($scope) {
   function submitInvitations (evt) {
     evt.preventDefault();
 
+    let status;
     const {
       orgRole,
       emails,
@@ -167,12 +169,13 @@ export default function ($scope) {
         rerender();
       });
 
-      state = assign(state, {
-        status: InProgress()
-      });
-
-      rerender();
+      status = InProgress();
+    } else {
+      status = Invalid();
     }
+
+    state = assign(state, {status});
+    rerender();
   }
 
   /**
@@ -306,9 +309,9 @@ function render (state, actions) {
           [Success]: () => successMessage(state.emails, actions.restart, actions.goToList),
           [Failure]: () => errorMessage(state.failedOrgInvitations, actions.restart),
           [InProgress]: () => progressMessage(state.emails, state.successfulOrgInvitations),
-          [Idle]: () => h('', [
+          _: () => h('', [
             emailsInput(
-              pick(state, ['emails', 'emailsInputValue', 'invalidAddresses', 'organization']),
+              pick(state, ['emails', 'emailsInputValue', 'invalidAddresses', 'organization', 'status']),
               pick(actions, ['updateEmails'])
             ),
             organizationRole(state.orgRole, actions.updateOrgRole),
@@ -341,6 +344,7 @@ function sidebar ({
 }) {
   const isDisabled = match(status, {
     [Idle]: () => false,
+    [Invalid]: () => false,
     _: () => true
   });
 
@@ -373,7 +377,8 @@ function emailsInput ({
   emails,
   emailsInputValue,
   invalidAddresses,
-  organization
+  organization,
+  status
 }, {
   updateEmails
 }) {
@@ -389,16 +394,21 @@ function emailsInput ({
         value: emailsInputValue,
         onChange: (evt) => updateEmails(evt.target.value)
       }),
-      emails.length > organization.remainingInvitations ? h('.cfnext-form__field-error', [`
-        You are trying to add ${emails.length} users but you only have ${organization.remainingInvitations}
-        more available under your plan. Please remove ${emails.length - organization.remainingInvitations} users to proceed.
-        You can upgrade your plan if you need to add more users.
-      `]) : '',
-      emails.length > maxNumberOfEmails ? h('.cfnext-form__field-error', ['Please fill in no more than 100 email addresses.']) : '',
-      invalidAddresses.length ? h('.cfnext-form__field-error', [
-        h('p', ['The following email addresses are not valid:']),
-        h('', [invalidAddresses.join(', ')])
-      ]) : ''
+      emails.length > organization.remainingInvitations
+        ? h('.cfnext-form__field-error', [`
+          You are trying to add ${emails.length} users but you only have ${organization.remainingInvitations}
+          more available under your plan. Please remove ${emails.length - organization.remainingInvitations} users to proceed.
+          You can upgrade your plan if you need to add more users.
+        `]) : '',
+      emails.length > maxNumberOfEmails
+        ? h('.cfnext-form__field-error', ['Please fill in no more than 100 email addresses.']) : '',
+      invalidAddresses.length
+        ? h('.cfnext-form__field-error', [
+          h('p', ['The following email addresses are not valid:']),
+          h('', [invalidAddresses.join(', ')])
+        ]) : '',
+      !emails.length && isTag(status, Invalid)
+        ? h('.cfnext-form__field-error', ['Please fill in at least one email address.']) : ''
     ])
   ]);
 }
