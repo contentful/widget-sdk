@@ -486,7 +486,7 @@ function progressMessage (emails, successfulOrgInvitations) {
   return h('', [
     h('.note-box--info', [
       h('h3', [`Almost there! ${successfulOrgInvitations.length}/${emails.length} have been added to your organization`]),
-      h('p', ['Please don\'t close this tab until all users have been added successfully'])
+      h('p', ['Please don\'t close this tab until all users have been added successfully.'])
     ]),
     h('ul.pill-list.u-separator--small', emails.map(email => {
       const className = includes(successfulOrgInvitations, email) ? '' : 'is-loading';
@@ -505,7 +505,8 @@ function errorMessage (failedEmails, restart) {
         `The process failed for the following ${userString}. Please try to `,
         h('a', {
           onClick: () => restart(failedEmails)
-        }, ['invite them again.'])
+        }, ['invite them again']),
+        '.'
       ])
     ]),
     h('ul.pill-list.u-separator--small', failedEmails.map(email => {
@@ -527,7 +528,8 @@ function successMessage (emails, restart, goToList) {
       ' or ',
       h('a', {
         onClick: goToList
-      }, ['go back to the users list.'])
+      }, ['go back to the users list']),
+      '.'
     ])
   ]);
 }
