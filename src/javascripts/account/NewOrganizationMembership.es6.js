@@ -1,4 +1,4 @@
-import {includes, omit, pick, negate, trim, sortedUniq, get as getAtPath} from 'lodash';
+import {includes, omit, pick, negate, trim, sortedUniq, sortBy, get as getAtPath} from 'lodash';
 import {h} from 'ui/Framework';
 import { assign } from 'utils/Collections';
 import {getFatSpaces, getOrganization} from 'services/TokenStore';
@@ -78,7 +78,7 @@ export default function ($scope) {
       return {
         id: space.data.sys.id,
         name: space.data.name,
-        roles: spaceRoles
+        roles: sortBy(spaceRoles, role => role.name)
       };
     }));
     const spacesWithRoles = yield Promise.all(spacesWithRolesPromises);
