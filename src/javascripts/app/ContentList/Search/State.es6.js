@@ -2,7 +2,6 @@ import { makeCtor } from 'utils/TaggedValues';
 import * as Store from 'ui/Framework/Store';
 import { assign, update, set, push } from 'utils/Collections';
 import { createSlot, sleep } from 'utils/Concurrent';
-import { otherwise } from 'libs/sum-types';
 
 import {
   getMatchingFilters,
@@ -161,7 +160,7 @@ export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
     [SetFocusOnQueryInput]: setFocusOnQueryInput,
     [SetFocusOnFirstSuggestion]: setFocusOnFirstSuggestion,
     [SetFocusOnNextSuggestion]: setFocusOnNextSuggestion,
-    [SetFocusOnPrevSuggestion]: setFocusOnPrevSuggestion,
+    [SetFocusOnPrevSuggestion]: setFocusOnPrevSuggestion
   });
 
   function showSuggestions (state) {

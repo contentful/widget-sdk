@@ -24,19 +24,23 @@ export default function create (spaceId, entityType) {
   return {read, save};
 
   function save (view) {
-    return
+    return;
+    /* eslint-disable no-unreachable */
     const viewData = toStorageFormat(view);
     localStorage.set(viewData);
     $location.search(prepareQueryString(viewData));
     $location.replace();
+    /* eslint-enable no-unreachable */
   }
 
   function read () {
     return {};
+    /* eslint-disable no-unreachable */
     const currentQS = $location.search();
     const previousQS = localStorage.get() || {};
     const qs = isEmpty(currentQS) ? previousQS : currentQS;
     return fromStorageFormat(qs);
+    /* eslint-enable no-unreachable */
   }
 }
 

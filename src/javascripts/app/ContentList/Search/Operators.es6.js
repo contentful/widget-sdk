@@ -12,6 +12,7 @@ export const ranges = [
 ];
 
 export function getOperatorsForType (type) {
+  /* eslint-disable no-restricted-syntax */
   switch (type) {
     case 'Symbol':
       return [equality, inequality, fts];
@@ -26,4 +27,5 @@ export function getOperatorsForType (type) {
     default:
       return [equality, inequality];
   }
+  /* eslint-enable no-restricted-syntax */
 }

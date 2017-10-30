@@ -291,7 +291,7 @@ function filterValueText ({value, inputRef, onChange, onKeyDown}) {
   });
 }
 
-function filterOperatorSelect({op, operators, inputRef, onChange, onKeyDown}) {
+function filterOperatorSelect ({op, operators, inputRef, onChange, onKeyDown}) {
   return h('select.input-reset.search__select', {
     value: op,
     ref: inputRef,
@@ -309,7 +309,7 @@ function filterValueSelect ({options, inputRef, value, onKeyDown, onChange}) {
     ref: inputRef,
     onChange: ({ target: { value } }) => onChange(value),
     tabindex: '0',
-    onKeyDown,
+    onKeyDown
   }, options.map(([value, label]) => {
     return h('option', {value}, [label]);
   }));

@@ -1,7 +1,7 @@
 import { startsWith, find } from 'lodash';
 import { makeCtor } from 'utils/TaggedValues';
 import { assign, push, concat } from 'utils/Collections';
-import { getOperatorsForType, equality as equalityOperator } from './Operators'
+import { getOperatorsForType, equality as equalityOperator } from './Operators';
 
 const CT_QUERY_KEY_PREFIX = 'fields';
 
@@ -194,7 +194,7 @@ export function buildFilterFieldByQueryKey (contentType, queryKey) {
  *
  * @returns {boolean}
  */
-export function isFieldFilterApplicableToContentType(contentType, queryKey) {
+export function isFieldFilterApplicableToContentType (contentType, queryKey) {
   if (isContentTypeField(queryKey)) {
     const field = getFieldByApiName(contentType, getApiName(queryKey));
 
@@ -249,7 +249,7 @@ function filterByContentType (filters, contentTypeId) {
 }
 
 function isContentTypeField (queryKey) {
-  const [prefix, apiName] = queryKey.split('.');
+  const [prefix] = queryKey.split('.');
 
   return prefix === CT_QUERY_KEY_PREFIX;
 }

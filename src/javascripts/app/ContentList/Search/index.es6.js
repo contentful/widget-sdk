@@ -1,5 +1,7 @@
+/*global window*/
 import * as K from 'utils/kefir';
 import { createStore, bindActions } from 'ui/Framework/Store';
+import logger from 'logger';
 
 import render from './View';
 import { initialState, makeReducer, Actions } from './State';
@@ -16,16 +18,17 @@ export default function create ($scope, spaceContext, submitSearch, isSearching$
     isSearching$.onValue(actions.SetLoading);
 
     K.onValueScope($scope, store.state$, (state) => {
-      window._state = state
-      
+      window._state = state;
+
       $scope.search = render(mapStateToProps(state, { contentTypes }, actions));
     });
 
+    // eslint-disable-next-line
     function dispatch (action, payload) {
       store.dispatch(action, payload);
     }
   } catch (e) {
-    console.error(e)
+    logger.logError(e);
   }
 }
 
@@ -46,4 +49,4 @@ function mapStateToProps (state, props, actions) {
     isSuggestionOpen: state.isSuggestionOpen,
     actions
   };
-};
+}
