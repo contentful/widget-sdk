@@ -251,9 +251,10 @@ function filterValue ({ operators, valueInput, op, value, isFocused, onChange, o
   };
 
   const hasOperators = operators && operators.length > 1;
-  const operatorSelect = hasOperators && filterOperatorSelect({
-    op,
-    operators,
+  const operatorSelect = hasOperators && filterSelect({
+    selectedOption: op,
+    options: operators,
+    className: '.search__select-operator',
     inputRef,
     onChange: newOp => onChange(newOp, value),
     onKeyDown: handleKeyDown
@@ -269,9 +270,10 @@ function filterValue ({ operators, valueInput, op, value, isFocused, onChange, o
         onKeyDown: handleKeyDown
       }),
     [ValueInput.Select]: (options) =>
-      filterValueSelect({
+      filterSelect({
         options,
-        value,
+        selectedOption: value,
+        className: '.search__select-value',
         inputRef,
         onChange: onValueChange,
         onKeyDown: handleKeyDown
@@ -301,31 +303,29 @@ function filterValueText ({value, inputRef, onChange, onKeyDown}) {
   });
 }
 
-function filterOperatorSelect ({op, operators, inputRef, onChange, onKeyDown}) {
-  return h('select.input-reset.search__select.search__operator', {
-    value: op,
-    ref: inputRef,
-    onChange: ({ target: { value } }) => onChange(value),
-    tabindex: '0',
-    onKeyDown,
-  }, operators.map(([value, label]) => {
-    return h('option', {value}, [label]);
-  }));
-}
+function filterSelect ({
+  options = [],
+  selectedOption = [], // [value, label]
+  className = '',
+  inputRef,
+  onChange,
+  onKeyDown
+}) {
+  const [_, selectedOptionLabel] = options.find(([v]) => v === selectedOption) || ['', ''];
+  const width = selectedOptionLabel.length ? `${selectedOptionLabel.length + 5}ch` : 'auto';
 
-function filterValueSelect ({options, inputRef, value, onKeyDown, onChange}) {
-  return h('select.input-reset.search__select', {
-    value: value,
-    ref: inputRef,
-    onChange: ({ target: { value } }) => onChange(value),
-    tabindex: '0',
-    onKeyDown,
-    style: {
-      borderRadius: '0 3px 3px 0'
-    }
-  }, options.map(([value, label]) => {
-    return h('option', {value}, [label]);
-  }));
+  return h(`.search_select${className}`, [
+    h('select.input-reset.search__select', {
+      value: selectedOption,
+      ref: inputRef,
+      onChange: ({ target: { value } }) => onChange(value),
+      tabindex: '0',
+      onKeyDown,
+      style: {width}
+    }, options.map(([value, label]) => {
+      return h('option', {value}, [label]);
+    }))
+  ]);
 }
 
 function filterValueReference ({ctField = {}, value, inputRef, onChange, onKeyDown}) {

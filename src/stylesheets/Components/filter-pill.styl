@@ -17,19 +17,51 @@
   border-radius: 3px 0 0 3px;
   cursor: pointer;
 
+
 .search__select
   padding: 5px 10px;
-  background-color: $colors.blue-mid;
+  max-width: 200px;
   color: $colors.white;
   font-size: inherit;
-  -webkit-appearance: none;
+  background-color: transparent;
+
+.search__select-value
   border-radius: 0;
-  text-align-last: center;
+  background-color: $colors.blue-mid;
+  border-radius: 0 3px 3px 0;
+  -webkit-appearance: none;
   &:focus
     background-color: $colors.blue-dark;
 
-.search__operator
+.search__select-operator
+  position: relative;
   background-color: $colors.blue-light;
+  &::before,
+  &::after
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    height: 100%;
+  &::before
+    left: 0;
+    background-color: $colors.blue-darkest
+  &::after
+    right: 0;
+    background-color: $colors.blue-mid;
+  .search__select
+    position: relative;
+    padding: 3px 5px;
+    background-color: $colors.white;
+    border-radius: 10em;
+    z-index: 10;
+    color: $colors.blue-darkest;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align-last: center;
+    font-size: 80%;
+    -webkit-appearance: none;
 
 .search__input-text
   background-color: $colors.blue-mid;
@@ -39,6 +71,3 @@
   line-height: 30px;
   min-width: 100px;
   font-size: inherit;
-
-  &:focus
-    background-color: $colors.blue-dark;
