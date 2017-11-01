@@ -79,7 +79,7 @@ export function init () {
  */
 export function onABTestOnce (testName) {
   return LDInitMVar.read().then(_ => {
-    const variation = client.variation(testName, UNINIT_VAL);
+    const variation = getVariation(testName, UNINIT_VAL);
 
     if (variation === UNINIT_VAL) {
       throw new Error(`Invalid test flag ${testName}`);
@@ -153,7 +153,17 @@ export { onFeatureFlag as onABTest };
  * @returns {Function}
  */
 function getVariationSetter (flagName, obs$) {
-  return _ => obs$.set(client.variation(flagName, UNINIT_VAL));
+  return _ => obs$.set(getVariation(flagName, UNINIT_VAL));
+}
+
+const enabledFeatures = getEnabledFeatures();
+
+function getVariation (flagName, ...args) {
+  if (enabledFeatures.indexOf(flagName) >= 0) {
+    return true;
+  } else {
+    return client.variation(flagName, ...args);
+  }
 }
 
 /**
@@ -180,8 +190,7 @@ function buildLDUser (user, currOrg, spacesByOrg, currSpace) {
     currentUserOwnsAtleastOneOrg: ownsAtleastOneOrg(user),
     currentUserAge: getUserAgeInDays(user), // in days
     isNonPayingUser: isNonPayingUser(user),
-    isAutomationTestUser: isAutomationTestUser(user),
-    enabledFeatures: getEnabledFeatures()
+    isAutomationTestUser: isAutomationTestUser(user)
   };
 
   if (currSpace) {

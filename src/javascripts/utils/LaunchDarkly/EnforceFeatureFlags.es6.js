@@ -18,16 +18,15 @@ export function init (enabledFeatures) {
 const store = TheStore.forKey('ui_features');
 
 /**
- * Returns a comma-separated list of ui features enabled via query string param.
+ * Returns an array of ui features enabled via query string param.
  */
 export function getEnabledFeatures () {
-  return store.get() || '';
+  return store.get() || [];
 }
 
-function setFromQuery (enabledFeatures) {
-  if (enabledFeatures !== getEnabledFeatures()) {
-    store.set(enabledFeatures);
-  }
+function setFromQuery (value) {
+  const enabledFeatures = value && value.length ? value.split(',') : [];
+  store.set(enabledFeatures);
 }
 
 function displayNotification () {
