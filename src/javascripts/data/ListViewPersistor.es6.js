@@ -2,7 +2,7 @@ import querystring from 'querystring';
 import $location from '$location';
 import TheStore from 'TheStore';
 import flatten from 'libs/flat';
-import {omit, omitBy, isEmpty, isObject, find} from 'lodash';
+import {omit, omitBy, isEmpty, isObject} from 'lodash';
 
 /**
  * Create a persitory for entity views.
@@ -16,8 +16,6 @@ import {omit, omitBy, isEmpty, isObject, find} from 'lodash';
  *
  * TODO we need to separate the serialization logic for content types
  * and content.
- *
- * TODO test collection serialization
  */
 export default function create (spaceId, entityType) {
   const key = `lastFilterQueryString.${entityType}.${spaceId}`;
@@ -32,31 +30,20 @@ export default function create (spaceId, entityType) {
     $location.replace();
   }
 
-  function read (collections) {
+  function read () {
     const currentQS = $location.search();
     const previousQS = localStorage.get() || {};
     const qs = isEmpty(currentQS) ? previousQS : currentQS;
-    return fromStorageFormat(qs, collections);
+    return fromStorageFormat(qs);
   }
 }
 
 function toStorageFormat (view) {
-  const storedView = view.collection
-    ? collectionToStorageFormat(view)
-    : omit(view, ['title']);
+  const storedView = omit(view, ['title']);
 
   return flatten(omitBy(storedView, (item) => {
     return item === undefined || item === null || item === '';
   }), {safe: true});
-}
-
-function collectionToStorageFormat (view) {
-  return {
-    _v: 1, // Include version for migrations in the future
-    collectionId: view.collection.id,
-    order: view.order,
-    displayedFieldsIds: view.displayedFieldIds
-  };
 }
 
 function prepareQueryString (viewData) {
@@ -69,20 +56,10 @@ function prepareQueryString (viewData) {
   }, {}));
 }
 
-function fromStorageFormat (stored, collections) {
+function fromStorageFormat (stored) {
   const view = flatten.unflatten(stored, {safe: true});
 
-  return view.collectionId
-    ? collectionFromStorageFormat(view, collections)
-    : viewFromStorageFormat(view);
-}
-
-function collectionFromStorageFormat (view, collections) {
-  return {
-    collection: find(collections, {id: view.collectionId}),
-    order: view.order,
-    displayedFieldsIds: view.displayedFieldIds
-  };
+  return viewFromStorageFormat(view);
 }
 
 function viewFromStorageFormat (view) {
