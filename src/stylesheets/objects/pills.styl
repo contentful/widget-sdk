@@ -1,3 +1,5 @@
+@require '../mixins/spinner'
+
 /*
 Pills
 
@@ -64,7 +66,15 @@ Styleguide: pills.draggable
   > .sortable-placeholder
     border: 1px dashed $colors.element-mid
 
+$pill-loading()
+  $spinner-base()
+  &.is-loading
+    +$spinner-active($colors.text-light, 12px, 1px)
+      display: inline-block
+      margin-left: 5px
+      
 $pill-item()
+  $pill-loading()
   $text-truncate()
   position: relative
   color: $colors.text-mid

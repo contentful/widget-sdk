@@ -17,13 +17,23 @@ export function getAll (endpoint) {
   });
 }
 
-export function invite (endpoint, {role, email, supressInvitation}) {
+export function getUsers (endpoint, {limit}) {
+  return endpoint({
+    method: 'GET',
+    path: ['users'],
+    query: {
+      limit
+    }
+  });
+}
+
+export function invite (endpoint, {role, email, suppressInvitation}) {
   return endpoint({
     method: 'POST',
     data: {
       role,
       email,
-      supressInvitation
+      suppressInvitation
     },
     path: ['organization_memberships']
   });

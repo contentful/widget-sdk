@@ -34,7 +34,10 @@ angular.module('contentful')
         'What will you build today?'
       ]),
       scrollToDeveloperResources,
-      h('cf-icon.home__welcome-image', {name: 'home-welcome'}),
+      h('cf-icon.home__welcome-image', {
+        name: 'home-welcome',
+        ngIf: '!welcome.hasContactUs'
+      }),
       h('div', [
         h('cf-contact-us-space-home')
       ])

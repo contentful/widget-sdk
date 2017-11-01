@@ -3,6 +3,8 @@ angular.module('contentful')
   var LD = require('utils/LaunchDarkly');
   var renderTemplate = require('app/api/KeyEditor/ContactUs/template').render;
   var createContactLink = require('services/ContactSales').createContactLink;
+  var Analytics = require('analytics/Analytics');
+  var $state = require('$state');
 
   var flagName = 'feature-ps-10-2017-contact-us-boilerplate';
 
@@ -16,7 +18,7 @@ angular.module('contentful')
 
       render();
 
-      LD.onABTest($scope, flagName, function (flag) {
+      LD.onFeatureFlag($scope, flagName, function (flag) {
         controller.isVisible = flag;
         render();
       });
@@ -30,8 +32,10 @@ angular.module('contentful')
       }
 
       function onClick () {
-        // TODO: add tracking after new schema will be added to the snowplow
-        // https://contentful.tpondemand.com/entity/23643
+        Analytics.track('element:click', {
+          elementId: 'contact_sales_boilerplate',
+          fromState: $state.current.name
+        });
       }
     }]
   };
