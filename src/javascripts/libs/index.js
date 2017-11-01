@@ -35,7 +35,6 @@ angular.module('cf.libs', [])
   .constant('Pikaday', require('pikaday'))
   .constant('validation', require('@contentful/validation'))
   .constant('widgetMap', require('@contentful/widget-map'))
-  .constant('md5', require('blueimp-md5'))
   .constant('scroll-into-view', require('scroll-into-view'))
   .constant('libs/Sortable', require('sortablejs'));
 
