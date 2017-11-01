@@ -10,6 +10,8 @@ import {makeCtor, match, isTag} from 'utils/TaggedValues';
 import {invite, progress$} from 'account/SendOrganizationInvitation';
 import {isValidEmail} from 'stringUtils';
 import {go} from 'states/Navigator';
+import {default as successIcon} from 'svg/checkmark-alt';
+import {default as errorIcon} from 'svg/error';
 
 const adminRole = {
   name: 'Admin',
@@ -310,7 +312,7 @@ function render (state, actions) {
         style: { padding: '2rem 3.15rem' }
       }, [
         match(state.status, {
-          [Success]: () => successMessage(state.emails, actions.restart, actions.goToList),
+          [Success]: () => successMessage(state.emails, state.successfulOrgInvitations, actions.restart, actions.goToList),
           [Failure]: () => errorMessage(state.failedOrgInvitations, actions.restart),
           [InProgress]: () => progressMessage(state.emails, state.successfulOrgInvitations),
           _: () => h('', [
@@ -483,14 +485,17 @@ function accessToSpaces (spaces, spaceMemberships, updateSpaceRole) {
 }
 
 function progressMessage (emails, successfulOrgInvitations) {
+  const isSuccessful = (email) => includes(successfulOrgInvitations, email);
+
   return h('', [
     h('.note-box--info', [
       h('h3', [`Almost there! ${successfulOrgInvitations.length}/${emails.length} have been added to your organization`]),
       h('p', ['Please don\'t close this tab until all users have been added successfully.'])
     ]),
     h('ul.pill-list.u-separator--small', emails.map(email => {
-      const className = includes(successfulOrgInvitations, email) ? '' : 'is-loading';
-      return h('li.pill-item', {class: className}, [email]);
+      const className = isSuccessful(email) ? 'pill-item--success' : 'is-loading';
+      const icon = isSuccessful(email) ? successIcon : '';
+      return h('li.pill-item', {class: className}, [email, icon]);
     }))
   ]);
 }
@@ -510,26 +515,31 @@ function errorMessage (failedEmails, restart) {
       ])
     ]),
     h('ul.pill-list.u-separator--small', failedEmails.map(email => {
-      return h('li.pill-item', [email]);
+      return h('li.pill-item.pill-item--warning', [email, errorIcon]);
     }))
   ]);
 }
 
-function successMessage (emails, restart, goToList) {
+function successMessage (emails, successfulOrgInvitations, restart, goToList) {
   const userString = emails.length > 1 ? 'users have' : 'user has';
 
-  return h('.note-box--success', [
-    h('h3', [`Yay! ${emails.length} ${userString} been invited to your organization`]),
-    h('p', [
-      'They should have received an email to confirm the invitation in their inbox. Go ahead and ',
-      h('a', {
-        onClick: () => restart()
-      }, ['invite more users']),
-      ' or ',
-      h('a', {
-        onClick: goToList
-      }, ['go back to the users list']),
-      '.'
-    ])
+  return h('', [
+    h('.note-box--success', [
+      h('h3', [`Yay! ${emails.length} ${userString} been invited to your organization`]),
+      h('p', [
+        'They should have received an email to confirm the invitation in their inbox. Go ahead and ',
+        h('a', {
+          onClick: () => restart()
+        }, ['invite more users']),
+        ' or ',
+        h('a', {
+          onClick: goToList
+        }, ['go back to the users list']),
+        '.'
+      ])
+    ]),
+    h('ul.pill-list.u-separator--small', successfulOrgInvitations.map(email => {
+      return h('li.pill-item.pill-item--success', [email, successIcon]);
+    }))
   ]);
 }
