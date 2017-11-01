@@ -92,7 +92,7 @@ function indexPage (uiVersion, config, resolve, entryScripts) {
       ngInit: 'initClient()'
     }, [
       h('.client', [
-        h('cf-app-container.app-container.ng-hide', {ngShow: 'user', cfDecorateWithRoles: ''}),
+        h('cf-app-container.app-container.ng-hide', {ngShow: 'user', cfWalkMeForEliLilly: ''}),
         h('div', {ngIf: '!user'}, [
           appLoader()
         ])
