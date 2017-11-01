@@ -1,6 +1,7 @@
 import $document from '$document';
 import {h} from 'utils/hyperscript';
 import TheStore from 'TheStore';
+import {env} from 'environment';
 
 /**
  * Stores enabled ui features from value in local storage, and shows
@@ -8,8 +9,10 @@ import TheStore from 'TheStore';
  * @param {String} enabledFeatures
  */
 export function init (enabledFeatures) {
-  setFromQuery(enabledFeatures);
-  displayNotification();
+  if (env !== 'production') {
+    setFromQuery(enabledFeatures);
+    displayNotification();
+  }
 }
 
 const store = TheStore.forKey('ui_features');

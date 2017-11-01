@@ -112,7 +112,8 @@ describe('LaunchDarkly', function () {
           currentUserOwnsAtleastOneOrg: true,
           currentUserAge: 7,
           isNonPayingUser: true,
-          isAutomationTestUser: true
+          isAutomationTestUser: true,
+          enabledFeatures: ''
         });
       });
     });

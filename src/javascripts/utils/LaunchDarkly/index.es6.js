@@ -5,6 +5,7 @@ import {assign, get, isNull, omitBy} from 'lodash';
 import {onValueScope, createPropertyBus} from 'utils/kefir';
 import getChangesObject from 'utils/ShallowObjectDiff';
 import {isOrgPlanEnterprise} from 'data/Org';
+import {getEnabledFeatures} from 'utils/LaunchDarkly/EnforceFeatureFlags';
 
 import {
   getOrgRole,
@@ -179,7 +180,8 @@ function buildLDUser (user, currOrg, spacesByOrg, currSpace) {
     currentUserOwnsAtleastOneOrg: ownsAtleastOneOrg(user),
     currentUserAge: getUserAgeInDays(user), // in days
     isNonPayingUser: isNonPayingUser(user),
-    isAutomationTestUser: isAutomationTestUser(user)
+    isAutomationTestUser: isAutomationTestUser(user),
+    enabledFeatures: getEnabledFeatures()
   };
 
   if (currSpace) {
