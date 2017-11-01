@@ -1,5 +1,5 @@
 /* global requestAnimationFrame */
-import { noop } from 'lodash';
+import { noop, cloneDeep } from 'lodash';
 import { match } from 'utils/TaggedValues';
 
 import {h} from 'ui/Framework';
@@ -328,12 +328,17 @@ function filterValueSelect ({options, inputRef, value, onKeyDown, onChange}) {
   }));
 }
 
-function filterValueReference ({ctField, value, inputRef, onChange, onKeyDown}) {
+function filterValueReference ({ctField = {}, value, inputRef, onChange, onKeyDown}) {
+  // We do not want support field type arrays of references yet.
+  const ctFieldClone = cloneDeep(ctField);
+
+  ctFieldClone.type = 'Link';
+
   return h('input.input-reset.search__input-text', {
     value,
     ref: inputRef,
     onClick: () => {
-      entitySelector.openFromField(ctField)
+      entitySelector.openFromField(ctFieldClone)
         .then(entities => onChange(entities.map(e => e.sys.id).join(',')));
     },
     onKeyDown,

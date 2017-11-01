@@ -11,14 +11,6 @@ export const ranges = [
   ['gte', '>=']
 ];
 
-export const arrays = [
-  equality,
-  inequality,
-  ['all', 'matches'],
-  ['in', 'includes'],
-  ['nin', 'doesn\'t include']
-];
-
 export function getOperatorsByType (type) {
   /* eslint-disable no-restricted-syntax */
   switch (type) {
@@ -30,12 +22,11 @@ export function getOperatorsByType (type) {
     case 'Integer':
     case 'Number':
       return [equality, inequality, ...ranges];
+    case 'Array':
     case 'Boolean':
       return [equality];
     case 'Link':
       return [equality, inequality];
-    case 'Array':
-      return arrays;
     default:
       return [equality, inequality];
   }
