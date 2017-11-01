@@ -25,8 +25,10 @@ export function getEnabledFeatures () {
 }
 
 function setFromQuery (value) {
-  const enabledFeatures = value && value.length ? value.split(',') : [];
-  store.set(enabledFeatures);
+  const enabledFeatures = value && value.length ? value.split(',') : null;
+  if (enabledFeatures) {
+    store.set(enabledFeatures);
+  }
 }
 
 function displayNotification () {
@@ -34,11 +36,13 @@ function displayNotification () {
 }
 
 function renderNotification () {
-  const features = getEnabledFeatures().split(',');
+  const features = getEnabledFeatures();
   if (!features.length) {
     return '';
   } else {
     const ul = h('ul', features.map((f) => h('li', [f])));
-    return h('div', { style: {} }, [h('p', ['Enabled features:']), ul]);
+    return h('div', {
+      class: 'cf-ui-version-display'
+    }, [h('h5', ['Enabled features:']), ul]);
   }
 }
