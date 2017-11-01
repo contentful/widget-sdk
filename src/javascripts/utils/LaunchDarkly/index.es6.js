@@ -156,11 +156,16 @@ function getVariationSetter (flagName, obs$) {
   return _ => obs$.set(getVariation(flagName, UNINIT_VAL));
 }
 
-const enabledFeatures = getEnabledFeatures();
 
+/**
+ * @description
+ * Wraps `client.variation()` method, overriding with `true` for feature flags
+ * enabled via query params.
+ */
 function getVariation (flagName, ...args) {
+  const enabledFeatures = getEnabledFeatures();
   if (enabledFeatures.indexOf(flagName) >= 0) {
-    return true;
+    return 'true';
   } else {
     return client.variation(flagName, ...args);
   }
