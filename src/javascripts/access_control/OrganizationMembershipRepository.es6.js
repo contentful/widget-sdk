@@ -27,6 +27,14 @@ export function getUsers (endpoint, {limit}) {
   });
 }
 
+export function getSpaces (endpoint, params) {
+  return endpoint({
+    method: 'GET',
+    path: ['spaces'],
+    query: params
+  });
+}
+
 export function invite (endpoint, {role, email, suppressInvitation}) {
   return endpoint({
     method: 'POST',

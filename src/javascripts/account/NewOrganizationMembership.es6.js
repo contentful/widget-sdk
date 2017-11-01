@@ -1,15 +1,16 @@
 import {includes, omit, pick, negate, trim, sortedUniq, sortBy, get as getAtPath} from 'lodash';
 import {h} from 'ui/Framework';
 import { assign } from 'utils/Collections';
-import {getFatSpaces, getOrganization} from 'services/TokenStore';
+import {getOrganization} from 'services/TokenStore';
 import * as RoleRepository from 'RoleRepository';
 import {runTask} from 'utils/Concurrent';
 import {ADMIN_ROLE_ID} from 'access_control/SpaceMembershipRepository';
-import {getUsers, createEndpoint} from 'access_control/OrganizationMembershipRepository';
+import {getUsers, getSpaces, createEndpoint} from 'access_control/OrganizationMembershipRepository';
 import {makeCtor, match, isTag} from 'utils/TaggedValues';
 import {invite, progress$} from 'account/SendOrganizationInvitation';
 import {isValidEmail} from 'stringUtils';
 import {go} from 'states/Navigator';
+import client from 'client';
 import {default as successIcon} from 'svg/checkmark-alt';
 import {default as errorIcon} from 'svg/error';
 
@@ -32,6 +33,7 @@ const Failure = makeCtor('failure');
 
 export default function ($scope) {
   let state = {
+    orgSpacesCount: null,
     spaces: [],
     emails: [],
     emailsInputValue: '',
@@ -55,6 +57,7 @@ export default function ($scope) {
   };
 
   const orgId = $scope.properties.orgId;
+  const orgEndpoint = createEndpoint(orgId);
 
   progress$.onValue(onProgressValue);
   progress$.onError(onProgressError);
@@ -66,31 +69,36 @@ export default function ($scope) {
   });
 
   runTask(function* () {
+    // 1st step - get org ingo and render page without the spaces grid
     const organization = yield* getOrgInfo(orgId);
-    const allSpaces = yield getFatSpaces();
-    const orgSpaces = allSpaces.filter(space => space.data.organization.sys.id === orgId);
-    const spacesWithRolesPromises = orgSpaces.map(space => runTask(function* () {
-      const roles = yield RoleRepository.getInstance(space).getAll();
-      const spaceRoles = roles.map(role => ({
-        name: role.name,
-        id: role.sys.id,
-        spaceId: role.sys.space.sys.id
-      }));
-
-      return {
-        id: space.data.sys.id,
-        name: space.data.name,
-        roles: sortBy(spaceRoles, role => role.name)
-      };
-    }));
-    const spacesWithRoles = yield Promise.all(spacesWithRolesPromises);
-
-    state = assign(state, {
-      spaces: spacesWithRoles,
-      organization
-    });
-
+    state = assign(state, {organization});
     rerender();
+
+    // 2nd step - load the spaces and assign spaces count
+    const orgSpaces = yield getOrgSpaces(organization.spaceLimit);
+    state = assign(state, {orgSpacesCount: orgSpaces.total});
+    rerender();
+
+    // 3rd step - load all space roles
+    orgSpaces.items
+      .map(space => client.newSpace(space)) // workaround necessary to fetch space roles
+      .forEach(space => runTask(function* () {
+        const roles = yield RoleRepository.getInstance(space).getAll();
+        const spaceRoles = roles.map(role => ({
+          name: role.name,
+          id: role.sys.id,
+          spaceId: role.sys.space.sys.id
+        }));
+
+        state = assign(state, {spaces: [
+          ...state.spaces, {
+            id: space.data.sys.id,
+            name: space.data.name,
+            roles: sortBy(spaceRoles, role => role.name)
+          }
+        ]});
+        rerender();
+      }));
   });
 
   function updateSpaceRole (checked, role, spaceMemberships) {
@@ -285,19 +293,24 @@ export default function ($scope) {
    * This is a workaround for the token 15min cache that won't let
    * us get an updated number after an invitation request
    */
-  function* getOrgInfo (orgId) {
+  function* getOrgInfo () {
     const org = yield getOrganization(orgId);
     const membershipLimit = getAtPath(org, 'subscriptionPlan.limits.permanent.organizationMembership');
-    const endpoint = createEndpoint(orgId);
-    const users = yield getUsers(endpoint, {limit: 0});
+    const spaceLimit = getAtPath(org, 'subscriptionPlan.limits.permanent.space');
+    const users = yield getUsers(orgEndpoint, {limit: 0});
     const membershipsCount = users.total;
 
     return assign(state.organization, {
       membershipLimit,
       membershipsCount,
+      spaceLimit,
       hasSsoEnabled: org.hasSsoEnabled,
       remainingInvitations: membershipLimit - membershipsCount
     });
+  }
+
+  function getOrgSpaces (limit) {
+    return getSpaces(orgEndpoint, {limit});
   }
 }
 
@@ -321,7 +334,7 @@ function render (state, actions) {
               pick(actions, ['updateEmails'])
             ),
             organizationRole(state.orgRole, actions.updateOrgRole),
-            accessToSpaces(state.spaces, state.spaceMemberships, actions.updateSpaceRole)
+            accessToSpaces(state.spaces, state.orgSpacesCount, state.spaceMemberships, actions.updateSpaceRole)
           ])
         })
       ]),
@@ -439,7 +452,10 @@ function organizationRole (orgRole, updateOrgRole) {
   ]);
 }
 
-function accessToSpaces (spaces, spaceMemberships, updateSpaceRole) {
+function accessToSpaces (spaces, orgSpacesCount, spaceMemberships, updateSpaceRole) {
+  const isLoading = orgSpacesCount !== 0 && orgSpacesCount > spaces.length;
+  const isEmpty = orgSpacesCount === 0;
+
   function isChecked (role) {
     return spaceMemberships.hasOwnProperty(role.spaceId) && includes(spaceMemberships[role.spaceId], role.id);
   }
@@ -470,17 +486,24 @@ function accessToSpaces (spaces, spaceMemberships, updateSpaceRole) {
           colspan: '2'
         }, ['Roles'])
       ]),
-      h('tbody', spaces.map(space => {
-        return h('tr', [
-          h('td', [space.name]),
-          h('td', [
-            h('.cfnext-form__fieldset--horizontal', [
-              roleCell(assign({spaceId: space.id}, adminRole), updateSpaceRole)
-            ].concat(space.roles.map(role => roleCell(role, updateSpaceRole))))
-          ])
-        ]);
-      }))
-    ])
+      isLoading
+        ? h('p.u-separator--small', [
+          h('span.spinner--text-inline'),
+          ` Loading your spaces: ${spaces.length} out of ${orgSpacesCount} completed.`
+        ])
+        : h('tbody', spaces.map(space => {
+          return h('tr', [
+            h('td', [space.name]),
+            h('td', [
+              h('.cfnext-form__fieldset--horizontal', [
+                roleCell(assign({spaceId: space.id}, adminRole), updateSpaceRole)
+              ].concat(space.roles.map(role => roleCell(role, updateSpaceRole))))
+            ])
+          ]);
+        }))
+    ]),
+
+    isEmpty ? h('p.u-separator--small', ['You don\'t have any spaces.']) : ''
   ]);
 }
 
