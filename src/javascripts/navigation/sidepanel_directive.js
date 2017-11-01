@@ -13,9 +13,9 @@ angular.module('contentful')
 
   var accessChecker = require('accessChecker');
   var orgRoles = require('services/OrganizationRoles');
-  var tokenStore = require('services/TokenStore');
-  var spacesByOrg$ = tokenStore.spacesByOrganization$;
-  var orgs$ = tokenStore.organizations$;
+  var TokenStore = require('services/TokenStore');
+  var spacesByOrg$ = TokenStore.spacesByOrganization$;
+  var orgs$ = TokenStore.organizations$;
   var showCreateSpaceModal = require('services/CreateSpace').showDialog;
   var K = require('utils/kefir');
   var NavStates = require('navigation/NavState').NavStates;

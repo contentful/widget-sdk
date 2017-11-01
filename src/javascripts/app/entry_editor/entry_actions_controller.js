@@ -6,7 +6,7 @@ angular.module('contentful')
   var Command = require('command');
   var spaceContext = require('spaceContext');
   var $state = require('$state');
-  var analytics = require('analytics/Analytics');
+  var Analytics = require('analytics/Analytics');
   var accessChecker = require('accessChecker');
   var K = require('utils/kefir');
   var Notification = require('app/entity_editor/Notifications').Notification;
@@ -37,7 +37,7 @@ angular.module('contentful')
   controller.toggleDisabledFields = Command.create(function () {
     var show = !preferences.showDisabledFields;
     preferences.showDisabledFields = show;
-    analytics.track('entry_editor:disabled_fields_visibility_toggled', {
+    Analytics.track('entry_editor:disabled_fields_visibility_toggled', {
       entryId: entityInfo.id,
       show: show
     });
@@ -51,7 +51,7 @@ angular.module('contentful')
 
   controller.add = Command.create(function () {
     var contentTypeId = entityInfo.contentTypeId;
-    analytics.track('entry_editor:created_with_same_ct', {
+    Analytics.track('entry_editor:created_with_same_ct', {
       contentTypeId: contentTypeId,
       entryId: entityInfo.id
     });

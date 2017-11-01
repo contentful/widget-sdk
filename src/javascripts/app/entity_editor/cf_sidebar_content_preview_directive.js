@@ -2,7 +2,7 @@ angular.module('contentful')
 .directive('cfSidebarContentPreview', ['require', function (require) {
   var K = require('utils/kefir');
   var contentPreview = require('contentPreview');
-  var analytics = require('analytics/Analytics');
+  var Analytics = require('analytics/Analytics');
   var spaceContext = require('spaceContext');
   return {
     restrict: 'E',
@@ -41,7 +41,7 @@ angular.module('contentful')
       };
 
       $scope.trackClickedLink = function () {
-        analytics.track('entry_editor:preview_opened', {
+        Analytics.track('entry_editor:preview_opened', {
           envName: $scope.selectedEnvironment.name,
           envId: $scope.selectedEnvironment.envId,
           previewUrl: $scope.selectedEnvironment.url,

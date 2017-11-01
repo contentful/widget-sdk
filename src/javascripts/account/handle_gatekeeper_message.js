@@ -4,9 +4,9 @@ angular.module('contentful')
 
 .factory('handleGatekeeperMessage', ['require', function (require) {
   var $location = require('$location');
-  var authentication = require('Authentication');
+  var Authentication = require('Authentication');
   var notification = require('notification');
-  var tokenStore = require('services/TokenStore');
+  var TokenStore = require('services/TokenStore');
   var CreateSpace = require('services/CreateSpace');
   var UrlSyncHelper = require('account/UrlSyncHelper');
   var modalDialog = require('modalDialog');
@@ -16,13 +16,13 @@ angular.module('contentful')
     var match = makeMessageMatcher(data);
 
     if (match('create', 'UserCancellation')) {
-      authentication.cancelUser();
+      Authentication.cancelUser();
 
     } else if (match('new', 'space')) {
       CreateSpace.showDialog(data.organizationId);
 
     } else if (match('delete', 'space')) {
-      tokenStore.refresh();
+      TokenStore.refresh();
 
     } else if (data.type === 'flash') {
       showNotification(data);
@@ -34,11 +34,11 @@ angular.module('contentful')
       UrlSyncHelper.updateWebappUrl(data.path);
 
     } else if (matchesError(data, 401)) {
-      authentication.redirectToLogin();
+      Authentication.redirectToLogin();
 
     } else if (matchesError(data)) {
       showErrorModal(data);
-    } else { tokenStore.refresh(); }
+    } else { TokenStore.refresh(); }
   };
 
   function matchesError (data, errorCode) {

@@ -33,7 +33,7 @@ angular.module('contentful')
 }])
 
 .factory('states/spaces/detail', ['require', function (require) {
-  var analytics = require('analytics/Analytics');
+  var Analytics = require('analytics/Analytics');
   var sectionAccess = require('sectionAccess');
   var TheStore = require('TheStore');
 
@@ -42,9 +42,9 @@ angular.module('contentful')
     url: '/:spaceId',
     resolve: {
       spaceContext: ['require', '$stateParams', function (require, $stateParams) {
-        var tokenStore = require('services/TokenStore');
+        var TokenStore = require('services/TokenStore');
         var spaceContext = require('spaceContext');
-        return tokenStore.getSpace($stateParams.spaceId)
+        return TokenStore.getSpace($stateParams.spaceId)
         .then(function (space) {
           return spaceContext.resetWithSpace(space);
         });
@@ -57,7 +57,7 @@ angular.module('contentful')
       }]
     },
     onEnter: ['space', function (space) {
-      analytics.trackSpaceChange(space);
+      Analytics.trackSpaceChange(space);
     }],
     controller: ['$scope', 'space', function ($scope, space) {
       $scope.label = space.data.name;

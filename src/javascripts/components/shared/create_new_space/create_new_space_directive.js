@@ -25,7 +25,7 @@ angular.module('contentful')
   var enforcements = require('enforcements');
   var $state = require('$state');
   var logger = require('logger');
-  var analytics = require('analytics/Analytics');
+  var Analytics = require('analytics/Analytics');
   var spaceContext = require('spaceContext');
   var spaceTemplateEvents = require('analytics/events/SpaceCreation');
 
@@ -138,7 +138,7 @@ angular.module('contentful')
       return showFormError('You don’t have permission to create a space');
     }
 
-    analytics.track('space:template_selected', {
+    Analytics.track('space:template_selected', {
       templateName: template.name
     });
     // Create space
@@ -151,7 +151,7 @@ angular.module('contentful')
   }
 
   function handleSpaceCreation (newSpace, template) {
-    analytics.track('space:create', {
+    Analytics.track('space:create', {
       templateName: _.get(template, 'name')
     });
 

@@ -15,7 +15,7 @@
     controllerAs: 'nav',
     controller: ['$scope', function ($scope) {
       var $stateParams = require('$stateParams');
-      var tokenStore = require('services/TokenStore');
+      var TokenStore = require('services/TokenStore');
       var OrganizationRoles = require('services/OrganizationRoles');
       var K = require('utils/kefir');
 
@@ -35,11 +35,11 @@
       $scope.$watch(function () { return $stateParams.orgId; }, onNavChange);
 
       // Update when token response is refreshed (e.g. billing tab should appear)
-      K.onValueScope($scope, tokenStore.organizations$, onNavChange);
+      K.onValueScope($scope, TokenStore.organizations$, onNavChange);
 
       function updateNav () {
         var orgId = nav.orgId = $stateParams.orgId;
-        tokenStore.getOrganization(orgId).then(function (org) {
+        TokenStore.getOrganization(orgId).then(function (org) {
           nav.hasOffsiteBackup = hasOffsiteBackup(org);
           nav.hasBillingTab = org.isBillable && OrganizationRoles.isOwner(org);
           nav.hasSettingsTab = OrganizationRoles.isOwner(org);
