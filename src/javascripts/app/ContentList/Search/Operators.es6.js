@@ -19,7 +19,7 @@ export const arrays = [
   ['nin', 'doesn\'t include']
 ];
 
-export function getOperatorsForType (type) {
+export function getOperatorsByType (type) {
   /* eslint-disable no-restricted-syntax */
   switch (type) {
     case 'Symbol':

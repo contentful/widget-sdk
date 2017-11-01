@@ -302,15 +302,12 @@ function filterValueText ({value, inputRef, onChange, onKeyDown}) {
 }
 
 function filterOperatorSelect ({op, operators, inputRef, onChange, onKeyDown}) {
-  return h('select.input-reset.search__select', {
+  return h('select.input-reset.search__select.search__operator', {
     value: op,
     ref: inputRef,
     onChange: ({ target: { value } }) => onChange(value),
     tabindex: '0',
     onKeyDown,
-    style: {
-      backgroundColor: colors.blueLight
-    },
   }, operators.map(([value, label]) => {
     return h('option', {value}, [label]);
   }));
