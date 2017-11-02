@@ -1,5 +1,4 @@
 describe('Asset editor controller', function () {
-
   let scope;
 
   beforeEach(function () {

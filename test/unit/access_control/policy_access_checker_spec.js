@@ -1,7 +1,6 @@
 'use strict';
 
 describe('Policy Access Checker', function () {
-
   let pac;
 
   beforeEach(function () {

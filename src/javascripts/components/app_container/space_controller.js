@@ -26,5 +26,4 @@ angular.module('contentful')
       }
     }
   });
-
 }]);

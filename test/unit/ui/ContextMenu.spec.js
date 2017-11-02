@@ -20,7 +20,6 @@ describe('context menu', function () {
   });
 
   describe('one context menu', function () {
-
     beforeEach(function () {
       this.$body.append(this.$compile([
         h('button', {
@@ -79,7 +78,6 @@ describe('context menu', function () {
       this.$body.find('button[cf-context-menu-trigger]').click();
       expect(this.$body.find('[cf-context-menu]').is(':visible')).toBe(false);
     });
-
   });
 
   describe('nested context menu', function () {
@@ -127,11 +125,9 @@ describe('context menu', function () {
       this.$body.find('#inner-menu > button').click();
       expect(this.$body.find('#outer-menu').is(':visible')).toBe(false);
     });
-
   });
 
   describe('two context menus', function () {
-
     const selectA = '[cf-context-menu]:contains(A)';
     const selectB = '[cf-context-menu]:contains(B)';
 
@@ -162,6 +158,5 @@ describe('context menu', function () {
       this.$body.find('button[cf-context-menu-trigger]:contains(OpenB)').click();
       expect(this.$body.find(selectA).is(':visible')).toBe(false);
     });
-
   });
 });

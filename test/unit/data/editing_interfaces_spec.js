@@ -21,7 +21,6 @@ describe('data/editingInterfaces', function () {
   });
 
   describe('#get()', function () {
-
     describe('with saved content type', function () {
       beforeEach(function () {
         contentType.sys.version = 1;
@@ -75,7 +74,6 @@ describe('data/editingInterfaces', function () {
         this.$apply();
         sinon.assert.calledWithExactly(errorHandler, {status: 500});
       });
-
     });
 
     describe('when content type is new', function () {

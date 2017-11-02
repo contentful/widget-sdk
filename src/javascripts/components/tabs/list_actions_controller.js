@@ -3,7 +3,6 @@
 angular.module('contentful')
 
 .controller('ListActionsController', ['$scope', 'require', 'entityType', function ListActionsController ($scope, require, entityType) {
-
   var accessChecker = require('accessChecker');
   var batchPerformer = require('batchPerformer');
   var spaceContext = require('spaceContext');

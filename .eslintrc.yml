@@ -1,20 +1,29 @@
 # This configuration is further extended by
-# - src/javascripts/.eslint-es5.yml
-# - src/javascripts/.eslint-es6.yml
 # - tools/.eslintrc.yml
 # - tests/.eslintrc.yml
 root: true
 extends:
   - 'eslint:recommended'
-  - './.eslint-standard.yml'
+  - 'standard'
+env:
+  browser: true
+globals:
+  angular: false
+  _: false
+  JST: false
+  $: false
 rules:
-  # eslint:recommended overrides
-  require-yield: off
+  indent: "off"
+  indent-legacy: [2, 2, { "SwitchCase": 1 }]
+  no-template-curly-in-string: "off"
 
-  # eslint-standard overrides
-  padded-blocks: off
+  no-useless-return: "off"
+  no-mixed-operators: "off"
+
+  padded-blocks: [2, "never"] 
+
+
   semi: ["error", "always"]
-
 
   # Other
   no-use-before-define: [error, { functions: false, classes: false }]
@@ -23,3 +32,55 @@ rules:
   eol-last: "error"
   generator-star-spacing: ['error', {before: false, after: true}]
   yield-star-spacing: ['error', {before: false, after: true}]
+
+overrides:
+- files:
+  - "*.es6.js"
+  # Eslint configuration for files ending in .es6.js
+  globals:
+    setTimeout: false
+    Promise: false
+  parserOptions:
+    ecmaVersion: 6
+    sourceType: module
+  rules:
+    # ES6 specific
+    prefer-const: error
+    no-var: error
+    
+    # We disallow everything we do not transpile with babel
+    no-restricted-syntax:
+    - error
+    - BreakStatement
+    - ClassBody
+    - ClassDeclaration
+    - ClassExpression
+    - ContinueStatement
+    - DebuggerStatement
+    - EmptyStatement
+    - ExperimentalRestProperty
+    - ExperimentalSpreadProperty
+    - ForStatement
+    - ForInStatement
+    - ForOfStatement
+    - LabeledStatement
+    - MetaProperty
+    - MethodDefinition
+    - SequenceExpression
+    - Super
+    - SwitchCase
+    - SwitchStatement
+    - TaggedTemplateExpression
+    - UpdateExpression
+    - WithStatement
+    - JSXIdentifier
+    - JSXNamespacedName
+    - JSXMemberExpression
+    - JSXEmptyExpression
+    - JSXExpressionContainer
+    - JSXElement
+    - JSXClosingElement
+    - JSXOpeningElement
+    - JSXAttribute
+    - JSXSpreadAttribute
+    - JSXText

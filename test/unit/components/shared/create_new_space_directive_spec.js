@@ -1,7 +1,6 @@
 import { createMockProperty } from 'helpers/mocks/kefir';
 
 describe('cfCreateNewSpace directive', function () {
-
   let element, $scope, $rootScope, controller;
   let stubs;
 

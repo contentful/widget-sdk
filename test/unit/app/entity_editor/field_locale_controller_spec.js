@@ -138,7 +138,6 @@ describe('FieldLocaleController', function () {
   });
 
   describe('#setActive()', function () {
-
     beforeEach(function () {
       this.scope = this.init();
     });

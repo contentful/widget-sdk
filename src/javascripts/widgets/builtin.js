@@ -296,5 +296,4 @@ angular.module('contentful')
   });
 
   return _widgets;
-
 }]);

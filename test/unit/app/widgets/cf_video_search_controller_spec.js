@@ -94,7 +94,6 @@ describe('Video Search Controller', function () {
             expect(scope.videoSearch.videos).toEqual(['video', 'processed-video']);
           });
         });
-
       });
 
       describe('#loadMore', function () {

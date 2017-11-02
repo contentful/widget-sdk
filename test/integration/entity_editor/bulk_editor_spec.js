@@ -40,7 +40,6 @@ describe('bulk editor', function () {
       this.$apply();
       return el;
     };
-
   });
 
   it('closes editor when clicking back button', function () {

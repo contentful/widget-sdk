@@ -44,7 +44,6 @@ describe('navigation/stateChangeHandlers', function () {
   });
 
   describe('error handling', function () {
-
     it('logs exceptions raised during routing', function () {
       logger.logException = sinon.stub();
 
@@ -60,7 +59,6 @@ describe('navigation/stateChangeHandlers', function () {
       $rootScope.$emit('$stateChangeError', {}, {}, {}, {}, error);
       sinon.assert.called(logger.logServerError);
     });
-
   });
 
   describe('redirections', function () {
@@ -170,7 +168,6 @@ describe('navigation/stateChangeHandlers', function () {
       this.setSpaceContext(space, org);
       this.emitStateChange('spaces.detail', { spaceId: space.sys.id });
       yield this.expectNavState(this.NavStates.Space, { space, org });
-
     });
 
     it('sets org settings state', function* () {
@@ -178,7 +175,6 @@ describe('navigation/stateChangeHandlers', function () {
       this.setOrgContext(org);
       this.emitStateChange('account.organizations.detail', { orgId: org.sys.id });
       yield this.expectNavState(this.NavStates.OrgSettings, { org });
-
     });
 
     it('sets new org state', function* () {

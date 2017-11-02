@@ -66,7 +66,6 @@ export function create (baseUrl, spaceId, auth) {
     } else {
       return connection.state;
     }
-
   }).skipDuplicates();
 
   /**

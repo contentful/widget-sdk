@@ -9,7 +9,6 @@
  */
 angular.module('contentful')
 .factory('Subscription', ['$injector', function ($injector) {
-
   var moment = $injector.get('moment');
 
   return {

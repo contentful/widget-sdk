@@ -1,7 +1,6 @@
 'use strict';
 
 angular.module('contentful').factory('accessChecker/policy', ['require', function (require) {
-
   var PolicyBuilder = require('PolicyBuilder');
   var CONFIG = require('PolicyBuilder/CONFIG');
 

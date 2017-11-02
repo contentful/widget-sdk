@@ -13,7 +13,6 @@ angular.module('contentful').directive('cfEmbedlyPreview', ['$injector', functio
       urlStatus: '='
     },
     link: function (scope, element) {
-
       var TIMEOUT = 7500;
 
       LazyLoader.get('embedly').then(setup);
@@ -71,7 +70,6 @@ angular.module('contentful').directive('cfEmbedlyPreview', ['$injector', functio
           }
         }
       }
-
     }
   };
 }]);

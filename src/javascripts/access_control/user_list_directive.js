@@ -1,7 +1,6 @@
 'use strict';
 
 angular.module('contentful').directive('cfUserList', ['require', function (require) {
-
   var popRoleId = require('UserListController/jumpToRole').popRoleId;
   var $timeout = require('$timeout');
   var store = require('TheStore').forKey('userListView');
@@ -104,11 +103,9 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
     $scope.context.ready = true;
     $scope.jumpToRole();
   }
-
 }]);
 
 angular.module('contentful').factory('UserListController/jumpToRole', ['require', function (require) {
-
   var $state = require('$state');
   var targetRoleId = null;
 

@@ -3,7 +3,6 @@ import { deepFreeze } from 'utils/Freeze';
 import { range } from 'lodash';
 
 describe('utils/Collections', function () {
-
   describe('.update', function () {
     it('deeply updates collection for array of keys', function () {
       const c = { x: [{}, {z: true}, {}] };
@@ -65,5 +64,4 @@ describe('utils/Collections', function () {
       expect(() => C.move([1, 2, 3], 1, 100)).toThrowError(TypeError);
     });
   });
-
 });

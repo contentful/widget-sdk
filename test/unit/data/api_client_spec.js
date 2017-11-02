@@ -101,7 +101,6 @@ describe('data/ApiClient', function () {
   });
 
   describe('resource list', function () {
-
     beforeEach(function () {
       $http.resolves({data: 'DATA'});
     });

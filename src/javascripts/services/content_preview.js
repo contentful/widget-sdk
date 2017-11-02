@@ -8,7 +8,6 @@
  */
 angular.module('contentful')
 .factory('contentPreview', ['require', function (require) {
-
   var $q = require('$q');
   var TheLocaleStore = require('TheLocaleStore');
   var spaceContext = require('spaceContext');
@@ -371,5 +370,4 @@ angular.module('contentful')
   function urlFormatIsValid (urlTemplate) {
     return /^https?:\/\/.+/.test(urlTemplate);
   }
-
 }]);

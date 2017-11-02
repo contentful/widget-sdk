@@ -17,25 +17,18 @@ angular.module('contentful')
 
     if (match('create', 'UserCancellation')) {
       Authentication.cancelUser();
-
     } else if (match('new', 'space')) {
       CreateSpace.showDialog(data.organizationId);
-
     } else if (match('delete', 'space')) {
       TokenStore.refresh();
-
     } else if (data.type === 'flash') {
       showNotification(data);
-
     } else if (match('navigate', 'location')) {
       $location.url(data.path);
-
     } else if (match('update', 'location')) {
       UrlSyncHelper.updateWebappUrl(data.path);
-
     } else if (matchesError(data, 401)) {
       Authentication.redirectToLogin();
-
     } else if (matchesError(data)) {
       showErrorModal(data);
     } else { TokenStore.refresh(); }

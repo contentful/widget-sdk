@@ -222,5 +222,4 @@ describe('Asset List Actions Controller', function () {
 
     expect(scope.publishButtonName()).toBe('(Re)publish');
   });
-
 });

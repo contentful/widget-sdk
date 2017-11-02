@@ -4,7 +4,6 @@
 angular.module('contentful')
 
 .factory('searchQueryHelper', ['require', function (require) {
-
   var $q = require('$q');
   var searchQueryAutocompletions = require('searchQueryAutocompletions');
   var createParser = require('search/cachedParser');
@@ -112,5 +111,4 @@ angular.module('contentful')
 
     return pos;
   }
-
 }]);

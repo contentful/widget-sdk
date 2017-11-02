@@ -13,7 +13,6 @@ angular.module('contentful')
  * [service:states]: api/contentful/app/service/states
  */
 .provider('states/config', ['$stateProvider', function ($stateProvider) {
-
   var VIEW_PROPERTIES = ['controller', 'controllerAs', 'template', 'templateProvider'];
 
   // Collection of registered services

@@ -1,7 +1,6 @@
 'use strict';
 
 describe('AssetResolver service', function () {
-
   beforeEach(function () {
     module('contentful/test');
     const manifest = this.$inject('environment').manifest;
@@ -19,5 +18,4 @@ describe('AssetResolver service', function () {
       this.resolve('unknonw');
     }.bind(this)).toThrow();
   });
-
 });

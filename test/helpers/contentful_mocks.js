@@ -30,7 +30,7 @@ angular.module('contentful/mocks', [])
 
   $provide.decorator('ReloadNotification', ['$delegate', function ($delegate) {
     // TODO firefox does not yet support for (const x in y)
-    /*eslint prefer-const: off*/
+    /* eslint prefer-const: off */
     for (let prop in $delegate) {
       sinon.stub($delegate, prop);
     }
@@ -126,5 +126,4 @@ angular.module('contentful/mocks', [])
     });
     return stubs;
   };
-
 }]);

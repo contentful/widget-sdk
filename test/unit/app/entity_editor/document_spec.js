@@ -737,5 +737,4 @@ describe('entityEditor/Document', function () {
       });
     });
   }
-
 });

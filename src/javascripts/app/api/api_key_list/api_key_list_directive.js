@@ -71,5 +71,4 @@ angular.module('contentful')
     $scope.reachedLimit = $scope.apiKeys.length >= $scope.limit;
   }, accessChecker.wasForbidden($scope.context))
   .catch(ReloadNotification.apiErrorHandler);
-
 }]);

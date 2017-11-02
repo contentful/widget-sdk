@@ -1,7 +1,6 @@
 'use strict';
 
 describe('navigation/confirmLeaveEditor', function () {
-
   beforeEach(function () {
     module('contentful/test');
     const createConfirm = this.$inject('navigation/confirmLeaveEditor');
@@ -88,5 +87,4 @@ describe('navigation/confirmLeaveEditor', function () {
       expect(confirmed).toEqual(false);
     });
   });
-
 });

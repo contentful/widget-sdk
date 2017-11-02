@@ -17,7 +17,6 @@ describe('AddFieldDialogController', function () {
       dialog: this.dialog,
       contentType: contentType
     });
-
   });
 
   describe('text field group', function () {
@@ -107,7 +106,6 @@ describe('AddFieldDialogController', function () {
         type: 'Number'
       }));
     });
-
   });
 
   describe('media field group', function () {
@@ -146,7 +144,6 @@ describe('AddFieldDialogController', function () {
         }
       }));
     });
-
   });
 
   describe('field id input', function () {

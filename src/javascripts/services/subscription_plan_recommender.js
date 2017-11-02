@@ -10,7 +10,6 @@
  */
 angular.module('contentful')
 .factory('subscriptionPlanRecommender', ['require', function (require) {
-
   var Config = require('Config');
   var $http = require('$http');
   var $q = require('$q');

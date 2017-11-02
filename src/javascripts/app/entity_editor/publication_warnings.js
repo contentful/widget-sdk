@@ -45,7 +45,6 @@ angular.module('contentful')
  * });
  */
 .factory('entityEditor/publicationWarnings', ['require', function (require) {
-
   var $q = require('$q');
 
   var NO_GROUP = '__no_group';

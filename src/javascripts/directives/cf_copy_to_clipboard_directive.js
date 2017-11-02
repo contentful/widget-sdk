@@ -32,7 +32,6 @@ angular.module('contentful')
     scope: true,
     template: template,
     link: function (scope, elem, attrs) {
-
       var canCopy = !userAgent.isSafari();
 
       scope.icon = 'fa-copy';
@@ -61,7 +60,6 @@ angular.module('contentful')
         $timeout(function () {
           scope.icon = 'fa-copy';
         }, 1500);
-
       }
     }
   };

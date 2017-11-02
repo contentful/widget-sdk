@@ -130,7 +130,6 @@ function repositionMenu ($menu) {
 
   $menu.removeClass('x--arrow-down x--arrow-up');
   $menu.addClass(arrowClass);
-
 }
 
 function getPositioning (position) {

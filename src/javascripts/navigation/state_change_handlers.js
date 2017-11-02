@@ -187,5 +187,4 @@ angular.module('cf.app')
              _.omit(fromParams, ['addToContext'])
            );
   }
-
 }]);

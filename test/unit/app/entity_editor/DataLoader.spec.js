@@ -107,7 +107,7 @@ describe('app/entity_editor/DataLoader', function () {
         this.entry.fields = null;
         this.entry.fields = {a: null, b: {}};
         const editorData = yield this.loadEntry('EID');
-        expect(Object.keys(editorData.entity.data.fields)).toEqual['b'];
+        expect(Object.keys(editorData.entity.data.fields)).toEqual(['b']);
       });
 
       it('removes unknown locale codes', function* () {

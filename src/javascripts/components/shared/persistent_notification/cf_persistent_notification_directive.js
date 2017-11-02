@@ -2,7 +2,6 @@
 
 angular.module('contentful')
 .directive('cfPersistentNotification', ['require', function (require) {
-
   var $sce = require('$sce');
   var $timeout = require('$timeout');
   var Analytics = require('analytics/Analytics');

@@ -1,11 +1,9 @@
 'use strict';
 
 describe('contentPreview', function () {
-
   let spaceContext;
 
   beforeEach(function () {
-
     module('contentful/test', function ($provide) {
       $provide.value('TheLocaleStore', {
         getDefaultLocale: _.constant({internal_code: 'en'})

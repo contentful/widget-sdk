@@ -2,7 +2,6 @@
 
 angular.module('contentful')
 .directive('cfAccountView', ['require', function (require) {
-
   var h = require('utils/hyperscript').h;
   var $timeout = require('$timeout');
   var Authentication = require('Authentication');

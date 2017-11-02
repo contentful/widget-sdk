@@ -13,7 +13,6 @@
  */
 angular.module('contentful')
 .factory('TheStore', ['require', function (require) {
-
   var $window = require('$window');
   var localStorageStore = require('TheStore/localStorageStore');
   var cookieStore = require('TheStore/cookieStore');
@@ -149,7 +148,6 @@ angular.module('contentful')
 }])
 
 .factory('TheStore/localStorageStore', ['require', function (require) {
-
   var storage = require('TheStore/localStorageWrapper');
 
   return {
@@ -183,7 +181,6 @@ angular.module('contentful')
 }])
 
 .factory('TheStore/localStorageWrapper', function () {
-
   var wrapper = {};
   var methods = ['setItem', 'getItem', 'removeItem'];
 
@@ -198,7 +195,6 @@ angular.module('contentful')
 })
 
 .factory('TheStore/cookieStore', ['require', function (require) {
-
   var Cookies = require('Cookies');
   var config = require('environment');
 

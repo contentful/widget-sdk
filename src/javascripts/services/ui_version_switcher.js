@@ -55,5 +55,4 @@ angular.module('contentful')
       $window.location.reload();
     });
   }
-
 }]);

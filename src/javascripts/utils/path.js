@@ -63,7 +63,7 @@ angular.module('cf.app')
     var segments = _.zip.apply(_, paths);
     var prefix = [];
     var i = 0;
-    /*eslint no-constant-condition: off*/
+    /* eslint no-constant-condition: off */
     while (true) {
       var common = getCommon(segments[i] || []);
       if (common) {

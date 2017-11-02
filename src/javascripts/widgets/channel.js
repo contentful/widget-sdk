@@ -151,5 +151,4 @@ angular.module('contentful')
   };
 
   return Channel;
-
 }]);

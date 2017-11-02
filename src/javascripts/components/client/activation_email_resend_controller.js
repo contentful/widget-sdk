@@ -115,5 +115,4 @@ angular.module('contentful')
   function storeDialogLastShownTimestamp () {
     store.set(moment().unix());
   }
-
 }]);

@@ -19,7 +19,6 @@ describe('widgets', function () {
       widgets.setSpace();
       this.$apply();
     };
-
   });
 
   afterEach(function () {
@@ -27,7 +26,6 @@ describe('widgets', function () {
   });
 
   describe('#setSpace()', function () {
-
     beforeEach(function () {
       this.storeGetMap.resolves();
       widgets = this.$inject('widgets');

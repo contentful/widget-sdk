@@ -107,7 +107,6 @@ export function duplicateSuccess () {
 
 export function duplicateError (errData) {
   notification.error(messages.duplicate.error + getServerMessage(errData));
-
 }
 
 function getServerMessage (errData) {

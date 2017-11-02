@@ -280,5 +280,4 @@ describe('Video Editor Controller', function () {
       sinon.assert.calledOnce(widgetApi.field.removeValue);
     });
   });
-
 });

@@ -16,7 +16,6 @@ import * as sinon from 'helpers/sinon';
  * object in the test runner.
  */
 beforeEach(function () {
-
   /**
    * @ngdoc method
    * @name helpers#$inject

@@ -1,7 +1,6 @@
 'use strict';
 
 describe('cfContentTypePreview directive', function () {
-
   beforeEach(module('contentful/test', function ($provide) {
     const contentTypePreview = sinon.stub();
     contentTypePreview.fromData = sinon.stub();
@@ -35,5 +34,4 @@ describe('cfContentTypePreview directive', function () {
     expect(this.element.text()).not.toMatch('DUMMY PREVIEW');
     expect(this.element.text()).toMatch('SERVER DATA');
   });
-
 });

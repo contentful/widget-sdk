@@ -1,7 +1,6 @@
 import {createMVar} from 'utils/Concurrent';
 
 describe('utils/Concurrent/MVar', function () {
-
   beforeEach(function () {
     module('contentful/test');
   });
@@ -67,5 +66,4 @@ describe('utils/Concurrent/MVar', function () {
     mVar.empty();
     expect(mVar.isEmpty()).toEqual(true);
   });
-
 });

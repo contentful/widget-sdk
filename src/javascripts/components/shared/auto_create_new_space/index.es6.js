@@ -32,7 +32,6 @@ export function init () {
   combine([user$, spacesByOrg$])
     .filter(([user, spacesByOrg]) => user && spacesByOrg && qualifyUser(user, spacesByOrg) && !creatingSampleSpace)
     .onValue(([user, spacesByOrg]) => {
-
       const org = getFirstOwnedOrgWithoutSpaces(user, spacesByOrg);
 
       creatingSampleSpace = true;

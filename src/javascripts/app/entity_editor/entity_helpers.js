@@ -10,7 +10,6 @@
  */
 angular.module('cf.app')
 .factory('EntityHelpers', ['require', function (require) {
-
   var $q = require('$q');
   var spaceContext = require('spaceContext');
   var assetUrlFilter = require('$filter')('assetUrl');

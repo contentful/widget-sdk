@@ -8,7 +8,6 @@
  */
 angular.module('contentful')
 .factory('paywallOpener', ['$injector', function ($injector) {
-
   var $q = $injector.get('$q');
   var $sce = $injector.get('$sce');
   var lazyLoad = $injector.get('LazyLoader').get;

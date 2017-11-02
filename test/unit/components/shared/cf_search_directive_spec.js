@@ -79,7 +79,5 @@ describe('cfSearch Directive', function () {
         sinon.assert.calledWith(isolateScope.$emit, 'refreshSearch', params);
       });
     });
-
   });
-
 });

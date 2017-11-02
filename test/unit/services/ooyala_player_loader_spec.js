@@ -20,7 +20,6 @@ describe('ooyalaPlayerLoader', function () {
       angularLoadSpy.loadScript.and.returnValue(angularLoadDeferred.promise);
 
       $window.OO = {ready: jasmine.createSpy()};
-
     });
 
     baseUrl = '//player.ooyala.com/v3/:player_id?platform=priority-html5';

@@ -27,7 +27,6 @@ describe('cfSearchResultsPaginator', function () {
 
       return { $el, scope };
     };
-
   });
 
   it('should not be visible when there\'s only one page', function () {
@@ -102,5 +101,4 @@ describe('cfSearchResultsPaginator', function () {
       expect(scope.labels).toEqual(spec[2]);
     });
   });
-
 });

@@ -11,7 +11,6 @@
  */
 angular.module('contentful')
 .controller('UserSpaceInvitationController', ['require', '$scope', function (require, $scope) {
-
   var $q = require('$q');
   var $timeout = require('$timeout');
   var spaceContext = require('spaceContext');

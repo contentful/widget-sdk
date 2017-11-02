@@ -1,7 +1,6 @@
 'use strict';
 
 angular.module('contentful').factory('batchPerformer', ['$injector', function ($injector) {
-
   var $q = $injector.get('$q');
   var spaceContext = $injector.get('spaceContext');
   var Analytics = $injector.get('analytics/Analytics');
@@ -24,7 +23,6 @@ angular.module('contentful').factory('batchPerformer', ['$injector', function ($
   return {create: createBatchPerformer};
 
   function createBatchPerformer (config) {
-
     return _.transform(_.keys(ACTION_NAMES), function (acc, action) {
       acc[action] = _.partial(run, action);
     }, {});
