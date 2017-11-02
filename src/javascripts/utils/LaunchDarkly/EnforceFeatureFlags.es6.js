@@ -1,7 +1,9 @@
+import $window from '$window';
 import $document from '$document';
 import {h} from 'utils/hyperscript';
 import TheStore from 'TheStore';
 import {env} from 'environment';
+import {without} from 'lodash';
 
 /**
  * Stores enabled ui features from value in local storage, and shows
@@ -31,8 +33,19 @@ function setFromQuery (value) {
   }
 }
 
+function removeFeature (featureName) {
+  const enabledFeatures = without(getEnabledFeatures(), featureName);
+  store.set(enabledFeatures);
+}
+
 function displayNotification () {
   $document.find('body').append(renderNotification());
+
+  $document.find('[data-cf-ui-feature-remove]').on('click', (el) => {
+    const featureName = el.target.getAttribute('data-cf-ui-feature-remove');
+    removeFeature(featureName);
+    $window.location.reload();
+  });
 }
 
 function renderNotification () {
@@ -40,9 +53,25 @@ function renderNotification () {
   if (!features.length) {
     return '';
   } else {
-    const ul = h('ul', features.map((f) => h('li', [f])));
+    const header = h('h5', {style: {margin: '8px 0'}}, ['Enabled features:']);
+
+    const ul = h('ul', features.map(renderFeatureListItem));
+
     return h('div', {
-      class: 'cf-ui-version-display'
-    }, [h('h5', ['Enabled features:']), ul]);
+      class: 'cf-ui-version-display',
+      style: {
+        left: 0,
+        right: 'auto'
+      }
+    }, [header, ul]);
   }
+}
+
+function renderFeatureListItem (feature) {
+  const clearLink = h('a', {
+    href: '#',
+    dataCfUiFeatureRemove: feature,
+    style: {float: 'right'}
+  }, ['Clear']);
+  return h('li', [feature, clearLink]);
 }
