@@ -1,7 +1,6 @@
 'use strict';
 
 describe('SnapshotComparatorController/snapshotDoc', function () {
-
   const data = {
     sys: {},
     fields: {

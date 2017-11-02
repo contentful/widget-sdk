@@ -11,7 +11,6 @@
  */
 angular.module('contentful')
 .factory('dialogsInitController', ['require', function (require) {
-
   var $rootScope = require('$rootScope');
   var spaceContext = require('spaceContext');
   var activationEmailResendController = require('activationEmailResendController');
@@ -43,5 +42,4 @@ angular.module('contentful')
       return spaceContext.getId();
     }, onSpaceChanged);
   }
-
 }]);

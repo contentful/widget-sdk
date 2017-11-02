@@ -110,7 +110,6 @@ function create_ (CodeMirror) {
       redoable: cm.historySize().redo > 0
     });
   }
-
 }
 
 function parseJSON (str) {

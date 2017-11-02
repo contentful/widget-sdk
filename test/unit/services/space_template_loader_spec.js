@@ -1,7 +1,6 @@
 'use strict';
 
 describe('Space Template loading service', function () {
-
   const sourceContentTypes = [
     {
       'sys': {

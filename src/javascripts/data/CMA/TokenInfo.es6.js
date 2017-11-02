@@ -12,7 +12,7 @@ import {apiUrl} from 'Config';
  *
  * The links in the token data are resolved.
  *
- * Tested as part of the 'tokenStore` module.
+ * Tested as part of the 'TokenStore` module.
  */
 export default function makeFetchWithAuth (auth) {
   const fetch = makeFetch(auth);

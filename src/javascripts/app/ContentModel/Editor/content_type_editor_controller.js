@@ -25,7 +25,7 @@ angular.module('contentful')
   var eiHelpers = require('editingInterfaces/helpers');
   var spaceContext = require('spaceContext');
   var editingInterfaces = spaceContext.editingInterfaces;
-  var analytics = require('analytics/Analytics');
+  var Analytics = require('analytics/Analytics');
   var createActions = require('app/ContentModel/Editor/Actions').default;
 
   var contentTypeIds = spaceContext.cma.getContentTypes().then(function (response) {
@@ -192,7 +192,7 @@ angular.module('contentful')
   }
 
   function trackAddedField (contentType, field) {
-    analytics.track('modelling:field_added', {
+    Analytics.track('modelling:field_added', {
       contentTypeId: contentType.getId(),
       contentTypeName: contentType.getName(),
       fieldId: field.id,

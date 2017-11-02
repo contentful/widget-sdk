@@ -2,7 +2,6 @@
 
 angular.module('contentful')
 .factory('widgets/selectionController', [function () {
-
   return {
     create: create,
     createFromValidations: createFromValidations

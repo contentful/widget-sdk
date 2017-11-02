@@ -276,5 +276,4 @@ describe('CodeMirror wrapper', function () {
       expect(wrapper.lineStartsWith('Some **text** ')).toBe(true);
     });
   });
-
 });

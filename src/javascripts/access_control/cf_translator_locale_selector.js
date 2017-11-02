@@ -39,5 +39,4 @@ angular.module('contentful')
     .concat($scope.policies.assets.allowed)
     .filter(function (policy) { return policy.action === 'update'; });
   }
-
 }]);

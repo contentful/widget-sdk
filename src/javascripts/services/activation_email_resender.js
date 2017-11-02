@@ -8,7 +8,6 @@ angular.module('contentful')
  * Allows to resend the activation email sent to each new user.
  */
 .factory('activationEmailResender', ['require', function (require) {
-
   var $q = require('$q');
   var Config = require('Config');
   var logger = require('logger');

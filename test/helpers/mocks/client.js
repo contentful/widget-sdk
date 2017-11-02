@@ -8,7 +8,6 @@ angular.module('contentful/mocks')
  * @module contentful/mocks
  */
 .factory('contentTypeMock', ['mockClient', function (client) {
-
   let id = 0;
 
   return {
@@ -33,11 +32,9 @@ angular.module('contentful/mocks')
       fields: fields
     }, client.mockPersistenceContext());
   }
-
 }])
 
 .factory('mockClient', ['$q', 'libs/@contentful/client', function ($q, client) {
-
   return _.extend({
     mockPersistenceContext: mockPersistenceContext
   }, client);

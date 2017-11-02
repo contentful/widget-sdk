@@ -4,7 +4,7 @@ angular.module('contentful')
 .directive('cfOnboardingSteps', ['require', function (require) {
   var $state = require('$state');
   var $controller = require('$controller');
-  var analytics = require('analytics/Analytics');
+  var Analytics = require('analytics/Analytics');
   var template = require('app/home/onboarding_steps/OnboardingStepsTemplate').default;
   var spaceContext = require('spaceContext');
   var WebhookRepository = require('WebhookRepository');
@@ -103,7 +103,7 @@ angular.module('contentful')
 
       function makeAction (action, cta) {
         return function () {
-          analytics.track('learn:step_clicked', {linkName: cta});
+          Analytics.track('learn:step_clicked', {linkName: cta});
           action();
         };
       }

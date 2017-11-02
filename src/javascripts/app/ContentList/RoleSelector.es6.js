@@ -123,8 +123,11 @@ function createRoleSelector (dialog, spaceEndpoint, initialAssignedRoles) {
   }, reduce);
 
   const actions = {
-    CancelSelection, ConfirmSelection,
-    ToggleRoleSelection, SelectAll, UnselectAll
+    CancelSelection,
+    ConfirmSelection,
+    ToggleRoleSelection,
+    SelectAll,
+    UnselectAll
   };
 
   fetchAll(spaceEndpoint, ['roles'], 100)

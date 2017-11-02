@@ -4,7 +4,6 @@ describe('cfCopyToClipboard Directive', function () {
   let stubs;
 
   beforeEach(function () {
-
     stubs = {
       userAgent: {
         isSafari: sinon.stub()
@@ -47,5 +46,4 @@ describe('cfCopyToClipboard Directive', function () {
     this.element.find('button').click();
     sinon.assert.calledWith(stubs.$document[0].execCommand, 'copy', false, null);
   });
-
 });

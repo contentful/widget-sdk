@@ -150,5 +150,4 @@ describe('cfSnapshotSidebarList', function () {
       expect(this.scope.snapshots.length).toEqual(2);
     });
   });
-
 });

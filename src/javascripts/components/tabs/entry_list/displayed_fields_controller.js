@@ -57,5 +57,4 @@ angular.module('contentful')
       return id === field.id;
     });
   };
-
 }]);

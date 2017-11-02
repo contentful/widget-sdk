@@ -597,6 +597,7 @@ function mapFileContents (fn) {
   return S.map(function (file) {
     let contents = file.contents.toString()
     contents = fn(contents, file)
+    // eslint-disable-next-line node/no-deprecated-api
     file.contents = new Buffer(contents, 'utf8')
     return file
   })

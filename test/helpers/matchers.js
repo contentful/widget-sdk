@@ -106,7 +106,6 @@ beforeEach(function () {
             pass: objdiff.length === 0,
             message: 'Expected object not to have differences\n\n' + formatDiff(objdiff)
           };
-
         }
       };
     },

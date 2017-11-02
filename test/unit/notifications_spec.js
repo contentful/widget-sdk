@@ -47,6 +47,5 @@ describe('notifications', function () {
       this.$apply();
       expect(this.element.text()).not.toMatch('MESSAGE');
     });
-
   });
 });

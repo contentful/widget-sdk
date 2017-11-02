@@ -8,8 +8,8 @@ angular.module('contentful')
   var features = require('features');
   var logger = require('logger');
   var spaceContext = require('spaceContext');
-  var tokenStore = require('services/TokenStore');
-  var analytics = require('analytics/Analytics');
+  var TokenStore = require('services/TokenStore');
+  var Analytics = require('analytics/Analytics');
   var authorization = require('authorization');
   var presence = require('presence');
   var revision = require('revision');
@@ -36,11 +36,11 @@ angular.module('contentful')
   $scope.$watchCollection(function () {
     return {
       space: spaceContext.space,
-      tokenLookup: tokenStore.getTokenLookup()
+      tokenLookup: TokenStore.getTokenLookup()
     };
   }, spaceAndTokenWatchHandler);
 
-  K.onValueScope($scope, tokenStore.user$, handleUser);
+  K.onValueScope($scope, TokenStore.user$, handleUser);
 
   $scope.initClient = initClient;
   $scope.showCreateSpaceDialog = CreateSpace.showDialog;
@@ -71,11 +71,11 @@ angular.module('contentful')
 
     if (features.allowAnalytics(user)) {
       logger.enable(user);
-      analytics.enable(user);
+      Analytics.enable(user);
       fontsDotCom.enable();
     } else {
       logger.disable();
-      analytics.disable();
+      Analytics.disable();
     }
   }
 

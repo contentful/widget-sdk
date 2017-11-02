@@ -1,9 +1,0 @@
-# This file is used for linting files that are not transpiled using babel
-# See src/javascripts/.eslintrc.yml for the ES6 configuration
-env:
-  browser: true
-globals:
-  angular: false
-  _: false
-  JST: false
-  $: false

@@ -7,15 +7,15 @@ angular.module('contentful')
   var authorization = require('authorization');
   var enforcements = require('enforcements');
   var spaceContext = require('spaceContext');
-  var tokenStore = require('services/TokenStore');
+  var TokenStore = require('services/TokenStore');
 
   // TODO: it's not a controller, it should be a service
   $scope.entityCreationController = $controller('EntityCreationController');
 
   $scope.$watch(function () {
-    return authorization.isUpdated(tokenStore.getTokenLookup(), spaceContext.space);
+    return authorization.isUpdated(TokenStore.getTokenLookup(), spaceContext.space);
   }, function () {
-    if (tokenStore.getTokenLookup()) {
+    if (TokenStore.getTokenLookup()) {
       var enforcement = enforcements.getPeriodUsage();
       if (enforcement) {
         $rootScope.$broadcast('persistentNotification', {
@@ -26,5 +26,4 @@ angular.module('contentful')
       }
     }
   });
-
 }]);

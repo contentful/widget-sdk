@@ -1,9 +1,0 @@
-{
-  "node": true,
-  "browser": false,
-  "quotmark": "single",
-  "strict": "global",
-  "trailing": true,
-  "unused": true,
-  "sub": true
-}

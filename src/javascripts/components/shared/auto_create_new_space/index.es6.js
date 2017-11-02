@@ -1,4 +1,4 @@
-import theStore from 'TheStore';
+import TheStore from 'TheStore';
 import {combine} from 'utils/kefir';
 import {user$, spacesByOrganization$ as spacesByOrg$} from 'services/TokenStore';
 import createSampleSpace from './CreateSampleSpace';
@@ -32,13 +32,12 @@ export function init () {
   combine([user$, spacesByOrg$])
     .filter(([user, spacesByOrg]) => user && spacesByOrg && qualifyUser(user, spacesByOrg) && !creatingSampleSpace)
     .onValue(([user, spacesByOrg]) => {
-
       const org = getFirstOwnedOrgWithoutSpaces(user, spacesByOrg);
 
       creatingSampleSpace = true;
       createSampleSpace(org, 'product catalogue')
         .then(_ => {
-          theStore.set(getKey(user), true);
+          TheStore.set(getKey(user), true);
         }).catch(_ => {}).then(_ => {
           creatingSampleSpace = false;
         });
@@ -53,7 +52,7 @@ function qualifyUser (user, spacesByOrg) {
 }
 
 function hadSpaceAutoCreated (user) {
-  return theStore.get(getKey(user));
+  return TheStore.get(getKey(user));
 }
 
 // qualify a user if it was created in the last week

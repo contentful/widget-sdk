@@ -14,7 +14,6 @@ angular.module('contentful')
     restrict: 'E',
     template: JST.cf_content_type_preview(),
     controller: ['$scope', function ($scope) {
-
       $scope.$watch('contentType.data', function (data) {
         var publishedVersion = _.get(data, 'sys.publishedVersion');
         $scope.isNew = !publishedVersion;
@@ -41,7 +40,6 @@ angular.module('contentful')
       function loadLocalPreview () {
         return getContentTypePreview.fromData($scope.contentType);
       }
-
     }]
   };
 }])
@@ -92,5 +90,4 @@ angular.module('contentful')
     });
     return data;
   }
-
 }]);

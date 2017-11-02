@@ -19,10 +19,6 @@ import {
 
 import createMVar from 'utils/Concurrent/MVar';
 
-// mvar to wait until `ready` event by LD was fired
-// it allows us to implement one-time subscription
-const LDInitMVar = createMVar();
-
 // mvar to wait until LD context is successfully switched
 const LDContextChangeMVar = createMVar();
 
@@ -49,40 +45,30 @@ export function init () {
  * @usage[js]
  * const ld = require('utils/LaunchDarkly')
  *
- * // it should be used only outside of the directive controller
- * let testFlagVariationPromise = ld.onABTestOnce('my-test')
- * // inside controller body
- * testFlagVariationPromise.then(setupTest)
+ * let flagVariationPromise = ld.getCurrentVariation('my-test-or-feature-flag')
+ * flagVariationPromise.then(doSomething)
  *
  * @description
- * This is a special function, in that it is meant to give you only the
- * first variation it receives for your user and test flag combination
- * between app refreshes.
- * This is achieved by using this function only outside of the controller
- * body as shown in the usage example above. It does not track changes in
- * variation for the flag and guarantees that the promise will only settle
- * once for every app load. This makes it suitable for usage in A/B testing
- * where we don't want the test to disappear from under the user's feet due
- * to changes in the LaunchDarkly caused by some user action for example,
- * new space creation.
+ * This function returns a promise that resolves to the variation for the
+ * provided test or feature flag name for the current context.
  *
  * Guarantees provided:
- * 1. The promise will settle only when LD is initialized for the current
- * context where context is a combination of current user, org and space data.
- * 2. The promise will resolve with the variation for the provided test name
+ * 1. The promise will settle only when LD is ready for the current context
+ * where context is a combination of current user, org and space data.
+ * 2. The promise will resolve with the variation for the provided flag name
  * if it receives a variation from it from LD.
- * 3. The promise will reject if LD did not find any test with the provided
- * test name
+ * 3. The promise will reject if LD did not find any flag with the provided
+ * flag name
  *
- * @param {String} testName
+ * @param {String} flagName
  * @returns {Promise<Variation>}
  */
-export function onABTestOnce (testName) {
-  return LDInitMVar.read().then(_ => {
-    const variation = getVariation(testName, UNINIT_VAL);
+export function getCurrentVariation (flagName) {
+  return LDContextChangeMVar.read().then(_ => {
+    const variation = getVariation(flagName, UNINIT_VAL);
 
     if (variation === UNINIT_VAL) {
-      throw new Error(`Invalid test flag ${testName}`);
+      throw new Error(`Invalid flag ${flagName}`);
     } else {
       return JSON.parse(variation);
     }
@@ -175,6 +161,17 @@ function getVariation (flagName, ...args) {
  * @description
  * Builds a launch darkly user with custom data to help us
  * target users.
+ * Custom data that can be used in targeting users:
+ * - currentOrgId : current org in the app the user is in the context of
+ * - currentOrgSubscriptionStatus : one of free, paid, free_paid, trial
+ * - currentOrgPlanIsEnterprise : true if the current org is on an enterprise plan
+ * - currentOrgHasSpace : true if the current org has a space
+ * - currentUserOrgRole : user's role in current org
+ * - currentUserHasAtleastOneSpace : true if the user has atleast one space in all the orgs he/she is a member of
+ * - currentUserOwnsAtleastOneOrg : true if the user is the owner of atleast one org
+ * - currentUserAge : days since user signed up
+ * - isNonPayingUser : true if non of the orgs the user belongs to is paying us
+ * - isAutomationTestUser : true if the current user was created by the automation suite
  *
  * @param {Object} user
  * @param {Object} currOrg
@@ -265,7 +262,6 @@ function changeUserContext ([user, currOrg, spacesByOrg, currSpace]) {
   if (!client) {
     client = initLDClient(newLDUser);
     client.on('ready', _ => {
-      LDInitMVar.put();
       LDContextChangeMVar.put();
     });
   } else {

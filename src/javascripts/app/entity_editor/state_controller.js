@@ -207,5 +207,4 @@ angular.module('contentful')
       return isDeleted || !permissions.can(action);
     };
   }
-
 }]);

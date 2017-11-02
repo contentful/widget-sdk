@@ -40,7 +40,6 @@ describe('Filepicker service', function () {
   });
 
   describe('makeDropPane is called', function () {
-
     const myDropPane = {drop: 'pane'};
 
     beforeEach(function () {
@@ -50,7 +49,6 @@ describe('Filepicker service', function () {
       };
 
       this.callMakeDropPane(myDropPane, {option: 'droppane', extraoption: 'extra'});
-
     });
 
     it('filepicker method gets called', function () {
@@ -81,7 +79,6 @@ describe('Filepicker service', function () {
       this.callMakeDropPane(myDropPane, {});
       expect(makeDropPaneStub.args[1][1].extraoption).toBeUndefined();
     });
-
   });
 
   describe('pick is called', function () {
@@ -111,11 +108,9 @@ describe('Filepicker service', function () {
       $rootScope.$apply();
       expect(pickStub.args[0][0].extraoption).toBeUndefined();
     });
-
   });
 
   describe('store is called', function () {
-
     it('returns a file', function () {
       const successStub = sinon.stub();
       const file = {fileName: 'name', mimetype: 'type', details: {size: 'size'}};
@@ -148,7 +143,5 @@ describe('Filepicker service', function () {
       $rootScope.$apply();
       expect(storeStub.args[0][1].extraoption).toBeUndefined();
     });
-
-
   });
 });

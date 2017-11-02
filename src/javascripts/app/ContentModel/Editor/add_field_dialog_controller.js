@@ -14,7 +14,6 @@
 */
 angular.module('contentful')
 .controller('AddFieldDialogController', ['$scope', 'require', function AddFieldDialogController ($scope, require) {
-
   var $controller = require('$controller');
   var fieldFactory = require('fieldFactory');
   var fieldDecorator = require('fieldDecorator');
@@ -143,5 +142,4 @@ angular.module('contentful')
   function first (array) {
     return array[0];
   }
-
 }]);

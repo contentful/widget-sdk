@@ -232,7 +232,6 @@ describe('Locale editor controller', function () {
   });
 
   describe('#save command succeeds', function () {
-
     describe('with unchanged code', function () {
       beforeEach(function () {
         this.controller.save.execute();
@@ -306,7 +305,6 @@ describe('Locale editor controller', function () {
           sinon.assert.called(this.scope.localeForm.$setPristine);
         });
       });
-
     });
   });
 

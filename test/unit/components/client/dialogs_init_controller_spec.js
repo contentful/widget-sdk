@@ -1,7 +1,6 @@
 'use strict';
 
 describe('dialogsInitController', function () {
-
   beforeEach(function () {
     this.spaceContext = { getId: sinon.stub() };
     this.OrganizationRoles = { isEmpty: sinon.stub() };
@@ -58,5 +57,4 @@ describe('dialogsInitController', function () {
       }
     });
   });
-
 });

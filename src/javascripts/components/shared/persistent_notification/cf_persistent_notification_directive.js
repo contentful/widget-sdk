@@ -2,10 +2,9 @@
 
 angular.module('contentful')
 .directive('cfPersistentNotification', ['require', function (require) {
-
   var $sce = require('$sce');
   var $timeout = require('$timeout');
-  var analytics = require('analytics/Analytics');
+  var Analytics = require('analytics/Analytics');
   var logger = require('logger');
 
   return {
@@ -30,7 +29,7 @@ angular.module('contentful')
     resetNotification();
 
     scope.dismissPersistentNotification = function () {
-      analytics.track('global:top_banner_dismissed');
+      Analytics.track('global:top_banner_dismissed');
       dismissed = true;
       resetNotification();
     };

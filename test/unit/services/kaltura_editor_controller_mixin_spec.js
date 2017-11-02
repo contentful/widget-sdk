@@ -173,6 +173,5 @@ describe('Kaltura Editor Controller Mixin', function () {
         });
       });
     });
-
   });
 });

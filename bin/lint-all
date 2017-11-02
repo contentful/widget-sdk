@@ -7,14 +7,4 @@ set -e
 export PATH="./node_modules/.bin/:${PATH}"
 
 eslint \
-  --config src/javascripts/.eslint-es5.yml \
-  --ignore-pattern '**/*.es6.js' \
-  src/javascripts
-
-eslint \
-  --config src/javascripts/.eslint-es6.yml \
-  --ext .es6.js \
-  src/javascripts
-
-eslint \
-  test bin tools
+  src test bin tools

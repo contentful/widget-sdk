@@ -1,7 +1,6 @@
 'use strict';
 
 describe('Policy Access Checker', function () {
-
   let pac;
 
   beforeEach(function () {
@@ -449,6 +448,17 @@ describe('Policy Access Checker', function () {
     it('returns true for asset with allowing policy', function () {
       setRole(assetPathPolicy('fields.%.en'));
       test({}, {code: 'en'}, true, undefined);
+    });
+
+    it('merges policies from two roles', function () {
+      pac.setMembership({admin: false, roles: [roles.allowReadEntry]});
+      expect(pac.canEditFieldLocale('ctid', {}, {})).toBe(false);
+
+      pac.setMembership({admin: false, roles: [
+        roles.allowReadEntry,
+        roles.allowReadAndEditOfEntry('ctid')
+      ]});
+      expect(pac.canEditFieldLocale('ctid', {}, {})).toBe(true);
     });
   });
 });

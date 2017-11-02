@@ -413,7 +413,7 @@ describe('Extension SDK', function () {
 
   describe('#space methods', function () {
     // TODO firefox does not yet support for (const x in y)
-    /*eslint prefer-const: off*/
+    /* eslint prefer-const: off */
     it('delegates to API client and responds with data', function* (api) {
       for (let method of Object.keys(api.space)) {
         this.apiClient[method] = sinon.stub().resolves('DATA');

@@ -22,7 +22,7 @@ const MODAL_OPTS_BASE = {
  * - `.openRoleChangeDialog()` change user's role
  * - `.openSpaceInvitationDialog()` invite users to the space from a list of organization's users
  */
-export function create (spaceContext, userListHandler, tokenStore) {
+export function create (spaceContext, userListHandler, TokenStore) {
   return {
     openRemovalConfirmationDialog: openRemovalConfirmationDialog,
     openRoleChangeDialog: openRoleChangeDialog,
@@ -51,7 +51,7 @@ export function create (spaceContext, userListHandler, tokenStore) {
           .then(function () {
             notification.info('User successfully removed from this space.');
             if (isCurrentUser) {
-              tokenStore.refresh().then(() => go({ path: ['home'] }));
+              TokenStore.refresh().then(() => go({ path: ['home'] }));
             }
           })
           .catch(ReloadNotification.basicErrorHandler)
@@ -65,7 +65,6 @@ export function create (spaceContext, userListHandler, tokenStore) {
         return userListHandler.isLastAdmin(user.id) && scope.input.confirm !== 'I UNDERSTAND';
       }
     }
-
   }
 
   /**
@@ -151,7 +150,5 @@ export function create (spaceContext, userListHandler, tokenStore) {
       template: template,
       controller: controller
     }, MODAL_OPTS_BASE)).promise;
-
   }
-
 }

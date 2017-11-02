@@ -9,9 +9,9 @@ angular.module('contentful')
   var TokenStore = require('services/TokenStore');
   // Begin test code: test-ps-09-2017-entry-sample-space-cli
   var LD = require('utils/LaunchDarkly');
-  var analytics = require('analytics/Analytics');
+  var Analytics = require('analytics/Analytics');
   var createSpaceAutomatically = require('components/shared/auto_create_new_space/index').init;
-  var theStore = require('TheStore');
+  var TheStore = require('TheStore');
 
   var flagName = 'test-ps-09-2017-entry-sample-space-cli';
   // End test code: test-ps-09-2017-entry-sample-space-cli
@@ -34,7 +34,10 @@ angular.module('contentful')
         'What will you build today?'
       ]),
       scrollToDeveloperResources,
-      h('cf-icon.home__welcome-image', {name: 'home-welcome'}),
+      h('cf-icon.home__welcome-image', {
+        name: 'home-welcome',
+        ngIf: '!welcome.hasContactUs'
+      }),
       h('div', [
         h('cf-contact-us-space-home')
       ])
@@ -146,7 +149,7 @@ angular.module('contentful')
       }
 
       function trackExperiment (variation) {
-        analytics.track('experiment:start', {
+        Analytics.track('experiment:start', {
           experiment: {
             id: flagName,
             variation: variation
@@ -155,11 +158,11 @@ angular.module('contentful')
       }
 
       function hasSpaceCreatedByTest (user) {
-        return theStore.get('ctfl:' + user.sys.id + ':cliEntrySuccess');
+        return TheStore.get('ctfl:' + user.sys.id + ':cliEntrySuccess');
       }
 
       function hadSpaceAutoCreated (user) {
-        return theStore.get('ctfl:' + user.sys.id + ':spaceAutoCreated');
+        return TheStore.get('ctfl:' + user.sys.id + ':spaceAutoCreated');
       }
       // End test code: test-ps-09-2017-entry-sample-space-cli
     }]

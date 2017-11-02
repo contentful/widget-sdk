@@ -7,7 +7,6 @@ import entitySelector from 'entitySelector';
 import { defaults, isEmpty, isObject, get as getAtPath } from 'lodash';
 
 export function create (editor, localeCode) {
-
   const advancedActions = {
     link: link,
     asset: asset,

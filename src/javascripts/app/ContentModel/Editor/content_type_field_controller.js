@@ -98,7 +98,6 @@ angular.module('contentful')
 }])
 
 .factory('ContentTypeFieldController/dialogs', ['require', function (require) {
-
   var modalDialog = require('modalDialog');
   var htmlEncode = require('encoder').htmlEncode;
 

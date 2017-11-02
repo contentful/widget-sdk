@@ -2,7 +2,6 @@
 
 angular.module('cf.app')
 .factory('entityStatus', [function () {
-
   var PREFIX = 'entity-status--';
 
   return {

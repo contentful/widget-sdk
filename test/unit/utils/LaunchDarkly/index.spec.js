@@ -19,7 +19,8 @@ describe('LaunchDarkly', function () {
     this.org = {
       name: 'org',
       role: 'owner',
-      subscription: {status: 'free'}, sys: {id: 1},
+      subscription: {status: 'free'},
+      sys: {id: 1},
       subscriptionPlan: { name: 'Best Enterprise 2017' }
     };
 
@@ -35,7 +36,8 @@ describe('LaunchDarkly', function () {
     this.altOrg = {
       name: 'alternate org',
       role: 'member',
-      subscription: {status: 'free_paid'}, sys: {id: 2}
+      subscription: {status: 'free_paid'},
+      sys: {id: 2}
     };
 
     this.altUser = {
@@ -76,7 +78,7 @@ describe('LaunchDarkly', function () {
 
     this.init = ld.init;
     this.onFeatureFlag = ld.onFeatureFlag;
-    this.onABTestOnce = ld.onABTestOnce;
+    this.getCurrentVariation = ld.getCurrentVariation;
     this.setUserDataStream = function (user = this.user, org = this.org, spacesByOrg = {}, space) {
       this.utils.userDataBus$.set([user, org, spacesByOrg, space]);
       this.$apply();
@@ -121,36 +123,49 @@ describe('LaunchDarkly', function () {
     });
   });
 
-  describe('#onABTestOnce', function () {
+  describe('#getCurrentVariation', function () {
     beforeEach(function () {
-      this.setupABOnce = function (initVal) {
+      this.setupGetCurrentVariation = function (initVal) {
         this.client.variation.returns(initVal);
-        const variationPromise = this.onABTestOnce('test-name');
+        const variationPromise = this.getCurrentVariation('test-or-feature-flag');
 
         const readyHandler = _ => {
           this.client.on.args[0][1](); // execute the callback for LD's 'ready' event
           this.$apply();
         };
 
-        return { variationPromise, readyHandler };
+        const emitChangeOnUserDataBus = _ => {
+          this.utils.userDataBus$.set([this.user, this.org, {}, {sys: {id: 'space-id-999'}}]);
+          this.$apply();
+        };
+
+        return { variationPromise, readyHandler, emitChangeOnUserDataBus };
       };
     });
 
-    it('should return a promise which resolves with variation for test name after LD initializes', function* () {
-      const { variationPromise, readyHandler } = this.setupABOnce('true');
+    it('should return a promise which resolves with variation after LD initializes', function* () {
+      const { variationPromise, readyHandler } = this.setupGetCurrentVariation('true');
 
       readyHandler(); // removing this line will hang the test as LD will not be initialized
       expect(yield variationPromise).toEqual(true);
     });
 
-    it('should return a promise which rejects for non-existing test name after LD initializes', function* () {
-      const { variationPromise, readyHandler } = this.setupABOnce('<UNINITIALIZED>');
+    it('should return a promise which resolves with variation after LD context changes', function* () {
+      const { variationPromise, emitChangeOnUserDataBus } = this.setupGetCurrentVariation('"potato"');
+
+      emitChangeOnUserDataBus();
+      this.client.identify.callArg(2); // invoke the handler passed to client.identify
+      expect(yield variationPromise).toEqual('potato');
+    });
+
+    it('should return a promise which rejects for non-existing test/feature flag after LD initializes', function* () {
+      const { variationPromise, readyHandler } = this.setupGetCurrentVariation('<UNINITIALIZED>');
 
       try {
         readyHandler(); // removing this line will hang the test as LD will not be initialized
         yield variationPromise;
       } catch (e) {
-        expect(e).toEqual(new Error('Invalid test flag test-name'));
+        expect(e).toEqual(new Error('Invalid flag test-or-feature-flag'));
       }
     });
   });

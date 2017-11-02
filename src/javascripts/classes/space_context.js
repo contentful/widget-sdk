@@ -30,7 +30,7 @@ angular.module('contentful')
   var PublishedCTRepo = require('data/ContentTypeRepo/Published');
   var logger = require('logger');
   var DocumentPool = require('data/sharejs/DocumentPool');
-  var tokenStore = require('services/TokenStore');
+  var TokenStore = require('services/TokenStore');
   var createApiKeyRepo = require('data/CMA/ApiKeyRepo').default;
   var K = require('utils/kefir');
   var Auth = require('Authentication');
@@ -107,7 +107,7 @@ angular.module('contentful')
       self.publishedCTs.wrappedItems$.onValue(function (cts) {
         self.publishedContentTypes = cts.toArray();
       });
-      self.user = K.getValue(tokenStore.user$);
+      self.user = K.getValue(TokenStore.user$);
 
       previewEnvironmentsCache.clearAll();
       TheLocaleStore.reset(space.getId(), space.getPrivateLocales());
@@ -145,7 +145,7 @@ angular.module('contentful')
       // 'this.space' object so that '.getPrivateLocales()' returns a
       // different value. Instead we should get the locales from the
       // dedicated /locales endpoint.
-      return tokenStore.refresh()
+      return TokenStore.refresh()
         .then(function () {
           TheLocaleStore.reset(self.space.getId(), self.space.getPrivateLocales());
         });

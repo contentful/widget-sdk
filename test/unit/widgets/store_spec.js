@@ -67,5 +67,4 @@ describe('widgets/store', function () {
       })
     };
   }
-
 });

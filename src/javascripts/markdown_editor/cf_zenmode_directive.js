@@ -1,7 +1,6 @@
 'use strict';
 
 angular.module('contentful').directive('cfZenmode', ['require', function (require) {
-
   var $window = require('$window');
   var MarkdownEditor = require('markdown_editor/markdown_editor');
   var actions = require('markdown_editor/markdown_actions');

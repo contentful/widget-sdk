@@ -1,7 +1,6 @@
 'use strict';
 
 describe('Space nav bar directive', function () {
-
   let container, scope, accessChecker, spaceContext;
   let compileElement;
 

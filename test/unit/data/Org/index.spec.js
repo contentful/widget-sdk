@@ -27,7 +27,15 @@ describe('data/Org', function () {
         'Such a cool eNtErPrIsE',
         '123 enterprise 123',
         'best enterpriSE 2017',
-        'ENTERPRISE'
+        'ENTERPRISE',
+        'Business (Quarterly)',
+        'business (quarterly)',
+        'Business (Monthly)',
+        'Business (Annual)',
+        'Scale (Quarterly)',
+        'Scale (Monthly)',
+        'Scale (Annual)',
+        'scale (annual)'
       ];
 
       this.assertIfEnterprise(planNames, true);
@@ -39,7 +47,11 @@ describe('data/Org', function () {
         undefined,
         123,
         'Professional Edition',
-        'enter prise'
+        'enter prise',
+        'Business',
+        'Business (half-year)',
+        'scale',
+        'scale (yearly)'
       ];
 
       this.assertIfEnterprise(planNames, false);

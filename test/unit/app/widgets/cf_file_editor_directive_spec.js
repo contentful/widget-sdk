@@ -153,7 +153,6 @@ describe('cfFileEditor Directive', function () {
   });
 
   it('shows progress bar when image is loading', function () {
-
     fieldApi.onValueChanged.yield({
       url: '//images.contentful.com',
       contentType: 'image/png'

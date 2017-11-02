@@ -185,7 +185,6 @@ angular.module('contentful')
     var properAvailable = _.intersection(availableIds, properWidgets).length;
     $scope.showPredefinedValueWidgetHint = !isProper && properAvailable;
   });
-
 }])
 
 

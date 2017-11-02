@@ -73,7 +73,6 @@ describe('Asset List Controller', function () {
 
 
   describe('on search term change', function () {
-
     describe('if term is null', function () {
       beforeEach(function () {
         scope.context.view.searchTerm = null;
@@ -95,7 +94,6 @@ describe('Asset List Controller', function () {
         expect(scope.searchController.paginator.getPage()).toBe(0);
       });
     });
-
   });
 
 
@@ -388,7 +386,6 @@ describe('Asset List Controller', function () {
     it('process is triggered', function () {
       sinon.assert.calledTwice(stubs.process);
     });
-
   });
 
   describe('#showNoAssetsAdvice', function () {

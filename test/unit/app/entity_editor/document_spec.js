@@ -7,7 +7,7 @@ describe('entityEditor/Document', function () {
     });
 
     this.DocLoad = this.$inject('data/sharejs/Connection').DocLoad;
-    const OtDoc = this.$inject('mocks/OtDoc');
+    this.OtDoc = this.$inject('mocks/OtDoc');
 
     this.docLoader = {
       doc: K.createMockProperty(this.DocLoad.None()),
@@ -28,7 +28,7 @@ describe('entityEditor/Document', function () {
       if (!_.get(data, ['sys', 'type'])) {
         _.set(data, ['sys', 'type'], 'Entry');
       }
-      const doc = new OtDoc(data);
+      const doc = new this.OtDoc(data);
       this.docLoader.doc.set(this.DocLoad.Doc(doc));
       this.$apply();
       return doc;
@@ -131,6 +131,20 @@ describe('entityEditor/Document', function () {
       this.otDoc = this.connectAndOpen();
       this.doc.destroy();
       sinon.assert.called(this.docLoader.close);
+    });
+  });
+
+  describe('on document change', function () {
+    it('closes current doc', function () {
+      this.otDoc = this.connectAndOpen();
+      this.docLoader.doc.set(this.DocLoad.Doc(new this.OtDoc({sys: {type: 'Entry'}})));
+      sinon.assert.calledOnce(this.docLoader.close);
+    });
+
+    it('doesn\'t close current doc when updated with the same doc', function () {
+      this.otDoc = this.connectAndOpen();
+      this.docLoader.doc.set(this.DocLoad.Doc(this.otDoc));
+      sinon.assert.notCalled(this.docLoader.close);
     });
   });
 
@@ -723,5 +737,4 @@ describe('entityEditor/Document', function () {
       });
     });
   }
-
 });

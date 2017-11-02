@@ -138,5 +138,4 @@ angular.module('contentful')
       ].join(' ') + '></div>'
     }, options);
   }
-
 }]);

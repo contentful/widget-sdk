@@ -1,7 +1,6 @@
 'use strict';
 
 angular.module('contentful').directive('cfUserList', ['require', function (require) {
-
   var popRoleId = require('UserListController/jumpToRole').popRoleId;
   var $timeout = require('$timeout');
   var store = require('TheStore').forKey('userListView');
@@ -51,10 +50,10 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
   var spaceContext = require('spaceContext');
   var userListHandler = require('UserListHandler').create();
   var accessChecker = require('accessChecker');
-  var tokenStore = require('services/TokenStore');
+  var TokenStore = require('services/TokenStore');
   var UserListActions = require('access_control/UserListActions');
 
-  var actions = UserListActions.create(spaceContext, userListHandler, tokenStore);
+  var actions = UserListActions.create(spaceContext, userListHandler, TokenStore);
 
   $scope.userQuota = {used: 1};
   $scope.$watch(accessChecker.getUserQuota, function (q) { $scope.userQuota = q; });
@@ -104,11 +103,9 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
     $scope.context.ready = true;
     $scope.jumpToRole();
   }
-
 }]);
 
 angular.module('contentful').factory('UserListController/jumpToRole', ['require', function (require) {
-
   var $state = require('$state');
   var targetRoleId = null;
 

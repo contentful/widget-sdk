@@ -2,7 +2,6 @@ import * as DOM from 'helpers/DOM';
 import attachContextMenuHandler from 'ui/ContextMenuHandler';
 
 describe('app/Extensions', function () {
-
   beforeEach(function () {
     module('contentful/test');
 

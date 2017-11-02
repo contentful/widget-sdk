@@ -323,5 +323,4 @@ describe('Search parser', function () {
       }
     ]);
   });
-
 });

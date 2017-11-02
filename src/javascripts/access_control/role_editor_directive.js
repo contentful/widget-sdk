@@ -9,7 +9,6 @@ angular.module('contentful').directive('cfRoleEditor', function () {
 });
 
 angular.module('contentful').controller('RoleEditorController', ['$scope', '$injector', function ($scope, $injector) {
-
   var $state = $injector.get('$state');
   var $q = $injector.get('$q');
   var Command = $injector.get('command');

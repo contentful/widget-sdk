@@ -34,7 +34,6 @@ angular.module('contentful')
  */
 angular.module('contentful')
 .factory('SchemaController', [function () {
-
   function SchemaController (messageBuilder, schema) {
     this.messageBuilder = messageBuilder;
     this.context = {};

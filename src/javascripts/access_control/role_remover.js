@@ -11,7 +11,6 @@ angular.module('contentful').factory('createRoleRemover', ['require', function (
   var roleRepo = require('RoleRepository').getInstance(spaceContext.space);
 
   return function createRoleRemover (listHandler, doneFn) {
-
     return function removeRole (role) {
       if (getCountFor(role)) {
         modalDialog.open({

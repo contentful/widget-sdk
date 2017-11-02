@@ -3,7 +3,6 @@ import * as KMock from 'helpers/mocks/kefir';
 import * as sinon from 'helpers/sinon';
 
 describe('utils/kefir', function () {
-
   beforeEach(function () {
     module('ng');
     this.scope = this.$inject('$rootScope').$new();

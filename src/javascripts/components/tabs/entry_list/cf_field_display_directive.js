@@ -16,7 +16,6 @@ angular.module('contentful')
     restrict: 'E',
     replace: true,
     link: function (scope) {
-
       scope.displayType = function (field) {
         if (field.type === 'Date' && (field.id === 'updatedAt' || field.id === 'createdAt' || field.id === 'publishedAt')) {
           return field.id;
@@ -125,7 +124,6 @@ angular.module('contentful')
       function hasItemsOfType (items, type) {
         return _.get(items, ['0', 'sys', 'linkType']) === type;
       }
-
     }
   };
 });

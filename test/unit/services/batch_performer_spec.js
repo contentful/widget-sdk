@@ -1,7 +1,6 @@
 'use strict';
 
 describe('Batch performer service', function () {
-
   const ENTITY_API = ['publish', 'unpublish', 'archive', 'unarchive', 'delete'];
   const API = ENTITY_API.concat(['duplicate']);
 

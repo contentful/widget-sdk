@@ -15,7 +15,6 @@
 angular.module('contentful')
 
 .directive('cfTrackCopyEvent', ['require', function (require) {
-
   var $document = require('$document');
   var $window = require('$window');
   var analyticsEvents = require('analytics/events/home');
@@ -24,7 +23,6 @@ angular.module('contentful')
     restrict: 'A',
     scope: true,
     link: function (scope, element) {
-
       $document.on('keydown', handleKeydown);
 
       scope.$on('$destroy', function () {

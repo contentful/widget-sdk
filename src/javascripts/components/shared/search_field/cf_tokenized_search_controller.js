@@ -11,7 +11,6 @@
  */
 angular.module('contentful')
 .controller('cfTokenizedSearchController', ['$scope', 'require', '$attrs', function ($scope, require, $attrs) {
-
   var searchQueryHelper = require('searchQueryHelper');
   var keycodes = require('keycodes');
   var $parse = require('$parse');
@@ -64,7 +63,6 @@ angular.module('contentful')
   };
 
   $scope.keyReleased = function (event) {
-
     if ($scope.position !== $scope.getPosition()) {
       $scope.position = $scope.getPosition();
       $scope.updateAutocompletions();
@@ -256,5 +254,4 @@ angular.module('contentful')
   $scope.$on('$destroy', function () {
     $scope = null; // MEMLEAK FIX
   });
-
 }]);

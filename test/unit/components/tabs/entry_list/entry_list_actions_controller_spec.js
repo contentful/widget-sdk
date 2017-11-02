@@ -289,5 +289,4 @@ describe('Entry List Actions Controller', function () {
 
     expect(scope.publishButtonName()).toBe('(Re)publish');
   });
-
 });

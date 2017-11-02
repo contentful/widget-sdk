@@ -31,7 +31,6 @@ angular.module('cf.utils')
  * ~~~
  */
 .factory('signal', [function () {
-
   return {
     create: create,
     createMemoized: createMemoized

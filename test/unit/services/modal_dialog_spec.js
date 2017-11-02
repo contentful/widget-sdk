@@ -100,7 +100,6 @@ describe('Modal dialog service', function () {
         dialog.scope.$digest();
         sinon.assert.called(confirmStub);
       });
-
     });
 
     describe('with a scope', function () {
@@ -191,5 +190,4 @@ describe('Modal dialog service', function () {
       expect(modalDialog.getOpened().length).toBe(1);
     });
   });
-
 });

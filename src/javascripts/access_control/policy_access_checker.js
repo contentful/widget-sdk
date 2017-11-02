@@ -1,7 +1,6 @@
 'use strict';
 
 angular.module('contentful').factory('accessChecker/policy', ['require', function (require) {
-
   var PolicyBuilder = require('PolicyBuilder');
   var CONFIG = require('PolicyBuilder/CONFIG');
 
@@ -28,21 +27,30 @@ angular.module('contentful').factory('accessChecker/policy', ['require', functio
   };
 
   function setMembership (membership) {
-    var role = _.first(_.get(membership, 'roles', []));
-    var internal = role ? PolicyBuilder.toInternal(role) : {};
+    var internals = _.get(membership, 'roles', []).map(function (role) {
+      return role && PolicyBuilder.toInternal(role);
+    }).filter(function (internal) {
+      return !!internal;
+    });
 
     isAdmin = _.get(membership, 'admin', false);
     fieldAccessCache = {};
 
-    policies.entry.allowed.flat = _.get(internal, 'entries.allowed', []);
-    policies.entry.denied.flat = _.get(internal, 'entries.denied', []);
-    policies.asset.allowed = _.get(internal, 'assets.allowed', []);
-    policies.asset.denied = _.get(internal, 'assets.denied', []);
+    policies.entry.allowed.flat = reduceInternals(internals, 'entries.allowed');
+    policies.entry.denied.flat = reduceInternals(internals, 'entries.denied');
+    policies.asset.allowed = reduceInternals(internals, 'assets.allowed');
+    policies.asset.denied = reduceInternals(internals, 'assets.denied');
 
     groupByContentType('allowed');
     groupByContentType('denied');
     groupByEntityId('entry', 'allowed');
     groupByEntityId('entry', 'denied');
+  }
+
+  function reduceInternals (internals, path) {
+    return internals.reduce(function (acc, internal) {
+      return acc.concat(_.get(internal, path, []));
+    }, []);
   }
 
   function groupByContentType (collectionName) {

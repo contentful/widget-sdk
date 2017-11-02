@@ -21,7 +21,7 @@ angular.module('contentful')
   var notification = require('notification');
   var logger = require('logger');
   var slugUtils = require('slug');
-  var analytics = require('analytics/Analytics');
+  var Analytics = require('analytics/Analytics');
 
   // Fetch content types and preview environment
   var getPreviewEnvironment = contentPreview.get($stateParams.contentPreviewId);
@@ -191,7 +191,7 @@ angular.module('contentful')
   }
 
   function track (event, env, extraData) {
-    analytics.track('content_preview:' + event, _.extend({
+    Analytics.track('content_preview:' + event, _.extend({
       envName: env.name,
       envId: env.sys.id
     }, extraData || {}));

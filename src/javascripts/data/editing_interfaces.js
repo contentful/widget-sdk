@@ -12,7 +12,6 @@ angular.module('cf.data')
   var Transformer = $injector.get('data/editingInterfaces/transformer');
 
   return function createEIRepo (spaceEndpoint) {
-
     return {
       get: get,
       save: save,

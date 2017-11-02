@@ -14,7 +14,6 @@ import * as DOM from 'helpers/DOM';
  * TODO Use DOM helpers
  */
 describe('entity editor field integration', function () {
-
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
@@ -58,7 +57,6 @@ describe('entity editor field integration', function () {
   });
 
   describe('labels', function () {
-
     it('shows field name for single locale', function () {
       this.setLocales([{code: 'EN'}]);
       const el = this.compile();
@@ -97,7 +95,6 @@ describe('entity editor field integration', function () {
       expect(labels.eq(0).text()).toMatch('Default');
       expect(labels.eq(1).text()).toMatch('English');
     });
-
   });
 
   describe('editing permissions', function () {
@@ -145,7 +142,6 @@ describe('entity editor field integration', function () {
   });
 
   describe('visible locales', function () {
-
     it('only shows default locale when field is not localized', function () {
       this.setLocales([
         {code: 'en', default: true}, {code: 'de'}, {code: 'fr'}

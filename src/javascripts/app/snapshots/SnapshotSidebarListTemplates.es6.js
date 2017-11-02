@@ -37,7 +37,6 @@ export function snapshotSidebarlist () {
     ]),
     h('div', {ngIf: '!snapshots && !isLoading'}, [note(noSnapshotsText)])
   ]);
-
 }
 
 function errorMessage () {

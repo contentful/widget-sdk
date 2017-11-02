@@ -1,10 +1,9 @@
 'use strict';
 
 angular.module('contentful').factory('batchPerformer', ['$injector', function ($injector) {
-
   var $q = $injector.get('$q');
   var spaceContext = $injector.get('spaceContext');
-  var analytics = $injector.get('analytics/Analytics');
+  var Analytics = $injector.get('analytics/Analytics');
   var notification = $injector.get('notification');
 
   var ACTION_NAMES = {
@@ -24,7 +23,6 @@ angular.module('contentful').factory('batchPerformer', ['$injector', function ($
   return {create: createBatchPerformer};
 
   function createBatchPerformer (config) {
-
     return _.transform(_.keys(ACTION_NAMES), function (acc, action) {
       acc[action] = _.partial(run, action);
     }, {});
@@ -39,7 +37,7 @@ angular.module('contentful').factory('batchPerformer', ['$injector', function ($
         results = groupBySuccess(results);
         notifyBatchResult(method, results);
         if (_.isFunction(config.onComplete)) { config.onComplete(); }
-        analytics.track('search:bulk_action_performed', {
+        Analytics.track('search:bulk_action_performed', {
           entityType: config.entityType,
           action: method
         });

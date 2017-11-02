@@ -70,7 +70,7 @@ describe('cfSingleLineEditor directive', function () {
     const $el = this.compileElement();
     this.clock.restore();
 
-    /*eslint prefer-const: off*/
+    /* eslint prefer-const: off */
     for (let {input, expected} of testData) {
       this.dispatchValue(input);
       yield waitRaf();

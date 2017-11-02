@@ -60,5 +60,4 @@ describe('OrganizationRoles', function () {
       expect(OrganizationRoles.isOwnerOrAdmin(value)).toBe(false);
     }
   });
-
 });

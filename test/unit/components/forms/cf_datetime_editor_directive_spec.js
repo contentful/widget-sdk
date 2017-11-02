@@ -24,7 +24,7 @@ describe('DateTime Editor', function () {
   });
 
   function enter (date, time, zone, ampm) {
-    /* jshint eqnull:true*/
+    /* jshint eqnull:true */
     if (date != null) {
       element.find('.date')
         .val(date)

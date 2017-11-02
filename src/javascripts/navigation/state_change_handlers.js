@@ -19,7 +19,7 @@ angular.module('cf.app')
   var contextHistory = require('contextHistory');
   var logger = require('logger');
   var modalDialog = require('modalDialog');
-  var analytics = require('analytics/Analytics');
+  var Analytics = require('analytics/Analytics');
   var spaceContext = require('spaceContext');
   var $location = require('$location');
   var updateNavState = require('navigation/NavState').updateNavState;
@@ -56,11 +56,11 @@ angular.module('cf.app')
     // using the latter caused problems when redirecting with
     // ui-router's option {reload: true}
     if (toState.name.slice(0, 7) !== 'spaces.') {
-      analytics.trackSpaceChange(null);
+      Analytics.trackSpaceChange(null);
       spaceContext.purge();
     }
 
-    analytics.trackStateChange(toState, toStateParams, fromState, fromStateParams);
+    Analytics.trackStateChange(toState, toStateParams, fromState, fromStateParams);
   }
 
   function stateChangeStartHandler (event, toState, toStateParams, fromState, fromStateParams) {
@@ -187,5 +187,4 @@ angular.module('cf.app')
              _.omit(fromParams, ['addToContext'])
            );
   }
-
 }]);

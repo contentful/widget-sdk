@@ -14,7 +14,6 @@
  */
 angular.module('contentful')
 .factory('LazyLoader', ['$injector', function ($injector) {
-
   var $q = $injector.get('$q');
   var $window = $injector.get('$window');
   var $rootScope = $injector.get('$rootScope');
@@ -164,6 +163,9 @@ angular.module('contentful')
     snowplow: {
       url: AssetResolver.resolve('app/snowplow.js'),
       globalObject: 'Snowplow'
+    },
+    walkMe: {
+      url: 'https://cdn.walkme.com/users/ae0ec83cc1ba44febf1cec5ac23c85d2/test/walkme_ae0ec83cc1ba44febf1cec5ac23c85d2_https.js'
     }
   };
 
@@ -175,5 +177,4 @@ angular.module('contentful')
     });
     return embedly;
   }
-
 }]);

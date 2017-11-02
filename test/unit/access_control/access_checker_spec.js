@@ -301,7 +301,6 @@ describe('Access Checker', function () {
     });
 
     describe('#canModifyRoles', function () {
-
       function changeSpace (hasFeature, isSpaceAdmin) {
         spaceContext.space = {data: {
           organization: {
@@ -483,17 +482,17 @@ describe('Access Checker', function () {
       it('sets "forbidden" flag on provided context if response is 404/3', function () {
         [200, 404, 403].forEach(function (status) {
           const context = {};
-          const cb = ac.wasForbidden(context);
-          cb({statusCode: status});
+          const cb1 = ac.wasForbidden(context);
+          cb1({statusCode: status});
           expect(context.forbidden).toBe(status === 200 ? undefined : true);
         });
       });
 
       pit('returns resolved promise with context if was forbidden', function () {
         const ctx = {};
-        const cb = ac.wasForbidden(ctx);
+        const cb1 = ac.wasForbidden(ctx);
 
-        return cb({statusCode: 404}).then(function (ctx2) {
+        return cb1({statusCode: 404}).then(function (ctx2) {
           expect(ctx === ctx2).toBe(true);
           expect(ctx2.forbidden).toBe(true);
         });

@@ -158,5 +158,4 @@ angular.module('contentful')
       $scope.contentTypeMetadata.id = stringUtils.toIdentifier(name);
     }
   });
-
 }]);
