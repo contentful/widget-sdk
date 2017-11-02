@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 
-.directive('cfWalkMeForEliLilly', ['require', function (require) {
+.directive('cfRolesForWalkMe', ['require', function (require) {
   var SpaceContext = require('spaceContext');
   var LD = require('utils/LaunchDarkly');
   var LazyLoader = require('LazyLoader');
