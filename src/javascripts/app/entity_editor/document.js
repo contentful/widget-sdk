@@ -228,7 +228,7 @@ angular.module('contentful')
         }],
         [null, _.constant(null)]
       ]);
-    });
+    }).skipDuplicates();
 
 
     /**
