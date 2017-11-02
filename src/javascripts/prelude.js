@@ -64,23 +64,22 @@ angular.module('contentful/app', ['contentful'])
   }
 }])
 .run(['require', function (require) {
-  var $window = require('$window');
   var $document = require('$document');
-  var urlParams = require('$location').search();
+  var location = require('$location');
   var Config = require('Config');
   if (Config.env === 'development') {
     Error.stackTraceLimit = 100;
   } else {
     Error.stackTraceLimit = 25;
   }
+  var urlParams = location.search();
   require('Authentication').init();
   require('services/TokenStore').init();
   require('presence').startTracking();
   require('services/UIVersionSwitcher').init(urlParams['ui_version']);
   require('utils/LaunchDarkly/EnforceFeatureFlags').init(urlParams['ui_features']);
-  if (Object.keys(urlParams).length > 0) {
-    // Reload the page without the query string
-    $window.location.search = '';
+  if (urlParams['ui_version'] || urlParams['ui_features']) {
+    location.search(_.omit(urlParams, 'ui_version', 'ui_features'));
   }
   require('utils/LaunchDarkly').init();
   require('navigation/stateChangeHandlers').setup();
