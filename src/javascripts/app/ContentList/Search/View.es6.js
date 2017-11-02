@@ -301,7 +301,7 @@ function filterValueText ({value, inputRef, onChange, onKeyDown}) {
     onKeyDown,
     tabindex: '0',
     style: {
-      width: `calc(${(value === null ? 1 : value.length)}ch + 15px)`
+      width: `calc(${(value === null ? 1 : value.length + 1)}ch + 20px)`
     }
   });
 }
