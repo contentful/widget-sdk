@@ -236,7 +236,7 @@ angular.module('cf.utils')
     '([^@\\s]{1,64})' + // Part of address before @, limited to under 64 chars
     '@' + // The @ symbol itself
     '((?:[\\w\\d-]+\\.)' + // Domain portion (limited to letters and numbers), including the period
-    '+\\w{2,}' + // The TLD
+    '+[a-z]{2,}' + // The TLD
     ')\\s*$)', // Arbitrary whitespace and end of string
   'i');
 
