@@ -92,11 +92,11 @@ angular.module('contentful')
    * parameterized by the `key` argument.
    *
    * ~~~js
-   * var mystore = theStore.forKey('mykey')
-   * theStore.set('mykey', true);
+   * var mystore = TheStore.forKey('mykey')
+   * TheStore.set('mykey', true);
    * assert(mystore.get() === true)
    * mystore.set('Hello')
-   * assert(theStore.get('mykey') === 'Hello')
+   * assert(TheStore.get('mykey') === 'Hello')
    * ~~~
    */
   function forKey (key) {
@@ -120,11 +120,11 @@ angular.module('contentful')
    * document.
    * Exposes a kefir property bus.
    * ~~~js
-   * var mystore = theStore.forKey('mykey')
+   * var mystore = TheStore.forKey('mykey')
    * var myValueBus = mystore.getPropertyBus();
    * myValueBus.property.onValue((value) => console.log(`Value changed: ${value}`))
    * // in another tab on same domain url:
-   * theStore.forKey('mykey').set('hello')
+   * TheStore.forKey('mykey').set('hello')
    * // the first tab logs:
    * 'Value changed: hello'
    * ~~~

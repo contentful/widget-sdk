@@ -1,6 +1,6 @@
 /**
  * @ngdoc service
- * @name tokenStore
+ * @name TokenStore
  *
  * @description
  * This service is responsible for exposing data included in the user's token
@@ -36,7 +36,7 @@ const tokenInfoMVar = createMVar(null);
 
 /**
  * @ngdoc property
- * @name tokenStore#user$
+ * @name TokenStore#user$
  * @type {Property<Api.User>}
  * @description
  * The current user object from the token
@@ -45,7 +45,7 @@ export const user$ = userBus.property.skipDuplicates(isEqual);
 
 /**
  * @ngdoc property
- * @name tokenStore#spaces$
+ * @name TokenStore#spaces$
  * @type {Property<Api.Spaces>}
  * @description
  * The list of spaces from the token
@@ -54,7 +54,7 @@ export const spaces$ = spacesBus.property;
 
 /**
  * @ngdoc property
- * @name tokenStore#spaces$
+ * @name TokenStore#spaces$
  * @type {Property<Api.Organizations>}
  * @description
  * The list of organizations user is a member of from the token
@@ -63,7 +63,7 @@ export const organizations$ = organizationsBus.property;
 
 /**
  * @ngdoc property
- * @name tokenStore#spacesByOrganization$
+ * @name TokenStore#spacesByOrganization$
  * @type {Property<object>}
  * @description
  * The list of spaces from the token grouped by organization
@@ -100,7 +100,7 @@ export function init () {
 
 /**
  * @ngdoc method
- * @name tokenStore#refresh
+ * @name TokenStore#refresh
  * @returns {Promise<void>}
  * @description
  * Fetches data from the `/token` endpoint and updates the state of
@@ -129,7 +129,7 @@ export function refresh () {
 
 /**
  * @ngdoc method
- * @name tokenStore#getSpace
+ * @name TokenStore#getSpace
  * @param {string} id
  * @returns {Promise<API.Space>}
  * @description
@@ -148,7 +148,7 @@ export function getSpace (id) {
 
 /**
  * @ngdoc method
- * @name tokenStore#getSpaces
+ * @name TokenStore#getSpaces
  * @returns {Promise<API.Space>[]>}
  * @description
  * This method returns a promise of the list of spaces.
@@ -163,7 +163,7 @@ export function getSpaces () {
 }
 
 /**
- * @name tokenStore#getFatSpaces
+ * @name TokenStore#getFatSpaces
  * @returns {Promise<API.Space[]>}
  * @description
  * This method returns a promise with the list of whole space instances.
@@ -184,7 +184,7 @@ export function getDomains () {
 
 /**
  * @ngdoc method
- * @name tokenStore#getOrganization
+ * @name TokenStore#getOrganization
  * @param {string} id
  * @returns {Promise<API.Organization>}
  * @description
@@ -201,7 +201,7 @@ export function getOrganization (id) {
 
 /**
  * @ngdoc method
- * @name tokenStore#getOrganizations
+ * @name TokenStore#getOrganizations
  * @returns {Array[Promise<API.Organization>]}
  * @description
  * This method returns a promise of the list of organizations.

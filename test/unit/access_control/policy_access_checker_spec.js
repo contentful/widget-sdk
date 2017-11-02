@@ -450,5 +450,16 @@ describe('Policy Access Checker', function () {
       setRole(assetPathPolicy('fields.%.en'));
       test({}, {code: 'en'}, true, undefined);
     });
+
+    it('merges policies from two roles', function () {
+      pac.setMembership({admin: false, roles: [roles.allowReadEntry]});
+      expect(pac.canEditFieldLocale('ctid', {}, {})).toBe(false);
+
+      pac.setMembership({admin: false, roles: [
+        roles.allowReadEntry,
+        roles.allowReadAndEditOfEntry('ctid')
+      ]});
+      expect(pac.canEditFieldLocale('ctid', {}, {})).toBe(true);
+    });
   });
 });

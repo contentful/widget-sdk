@@ -12,7 +12,7 @@ import {find, noop} from 'lodash';
 import {getTemplate, getTemplatesList} from 'spaceTemplateLoader';
 
 import autoCreateSpaceTemplate from './Template';
-import * as tokenStore from 'services/TokenStore';
+import * as TokenStore from 'services/TokenStore';
 
 /**
  * @description
@@ -74,7 +74,7 @@ function* createSpace (org, templateName) {
     defaultLocale: 'en-US'
   }, org.sys.id);
   track('space:create', { templateName: templateName });
-  yield tokenStore.refresh();
+  yield TokenStore.refresh();
   yield gotoState({
     path: ['spaces', 'detail'],
     params: {

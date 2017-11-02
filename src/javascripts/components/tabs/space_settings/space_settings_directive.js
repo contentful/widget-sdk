@@ -16,7 +16,7 @@ angular.module('contentful')
   var $state = require('$state');
   var spaceContext = require('spaceContext');
   var Command = require('command');
-  var tokenStore = require('services/TokenStore');
+  var TokenStore = require('services/TokenStore');
   var modalDialog = require('modalDialog');
   var notification = require('notification');
   var ReloadNotification = require('ReloadNotification');
@@ -33,7 +33,7 @@ angular.module('contentful')
       $scope.model.name,
       spaceContext.space.getVersion()
     )
-    .then(tokenStore.refresh)
+    .then(TokenStore.refresh)
     .then(function () {
       notification.info('Space renamed to ' + $scope.model.name + ' successfully.');
     })
@@ -52,7 +52,7 @@ angular.module('contentful')
 
   function remove () {
     return spaceContext.cma.deleteSpace()
-    .then(tokenStore.refresh)
+    .then(TokenStore.refresh)
     .then(function () {
       $state.go('home');
       notification.info('Space ' + $scope.model.name + ' deleted successfully.');

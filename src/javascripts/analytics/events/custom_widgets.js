@@ -3,7 +3,7 @@
 angular.module('contentful')
 
 .factory('analyticsEvents/customWidgets', ['require', function (require) {
-  var analytics = require('analytics/Analytics');
+  var Analytics = require('analytics/Analytics');
   var Widgets = require('widgets');
   var getFieldLabel = require('fieldFactory').getLabel;
 
@@ -30,7 +30,7 @@ angular.module('contentful')
     var isCustom = descriptor && descriptor.custom;
 
     if (isCustom) {
-      analytics.track(event, _.extend({
+      Analytics.track(event, _.extend({
         extensionId: descriptor.id,
         extensionName: descriptor.name,
         fieldType: getFieldLabel(field)

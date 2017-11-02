@@ -51,10 +51,10 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
   var spaceContext = require('spaceContext');
   var userListHandler = require('UserListHandler').create();
   var accessChecker = require('accessChecker');
-  var tokenStore = require('services/TokenStore');
+  var TokenStore = require('services/TokenStore');
   var UserListActions = require('access_control/UserListActions');
 
-  var actions = UserListActions.create(spaceContext, userListHandler, tokenStore);
+  var actions = UserListActions.create(spaceContext, userListHandler, TokenStore);
 
   $scope.userQuota = {used: 1};
   $scope.$watch(accessChecker.getUserQuota, function (q) { $scope.userQuota = q; });

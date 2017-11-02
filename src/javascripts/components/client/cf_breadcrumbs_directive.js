@@ -10,7 +10,7 @@
 angular.module('contentful').directive('cfBreadcrumbs', ['require', function (require) {
   var $parse = require('$parse');
   var $state = require('$state');
-  var analytics = require('analytics/Analytics');
+  var Analytics = require('analytics/Analytics');
   var contextHistory = require('contextHistory');
   var documentTitle = require('navigation/DocumentTitle');
   var K = require('utils/kefir');
@@ -67,7 +67,7 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
       });
 
       function track (clickedOn) {
-        analytics.track('global:navigated', {
+        Analytics.track('global:navigated', {
           control: clickedOn,
           section: analyticsData.appSection[$scope.crumbs[0].type]
         });

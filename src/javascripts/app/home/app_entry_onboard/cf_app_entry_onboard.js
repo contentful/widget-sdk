@@ -17,11 +17,11 @@ angular.module('contentful')
 .directive('cfAppEntryOnboard', ['require', function (require) {
   var h = require('utils/hyperscript').h;
   var K = require('utils/kefir');
-  var theStore = require('TheStore');
+  var TheStore = require('TheStore');
   var TokenStore = require('services/TokenStore');
   var createSampleSpace = require('components/shared/auto_create_new_space/CreateSampleSpace').default;
   var getFirstOwnedOrgWithoutSpaces = require('data/User/index').getFirstOwnedOrgWithoutSpaces;
-  var analytics = require('analytics/Analytics');
+  var Analytics = require('analytics/Analytics');
   var TEST_NAME = 'test-ps-09-2017-entry-sample-space-cli';
   var template = h('div', [
     h('cf-cli-entry-onboard', {
@@ -88,7 +88,7 @@ angular.module('contentful')
       // another option), and later in analysis we will remain only the
       // last click
       function trackSelection (type) {
-        analytics.track('experiment:interaction', {
+        Analytics.track('experiment:interaction', {
           experiment: {
             id: TEST_NAME,
             // it is not an A/B test per se, so variation
@@ -107,7 +107,7 @@ angular.module('contentful')
         // it is not a one-time operation, it actually returns us a stream which
         // will listen until all conditions will be satisfied
         // and in order to avoid code changing, we just pretend space was auto created
-        theStore.set('ctfl:' + user.sys.id + ':spaceAutoCreated', true);
+        TheStore.set('ctfl:' + user.sys.id + ':spaceAutoCreated', true);
       }
     }]
   };

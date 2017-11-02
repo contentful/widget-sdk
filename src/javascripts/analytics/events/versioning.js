@@ -3,7 +3,7 @@
 angular.module('contentful')
 
 .factory('analyticsEvents/versioning', ['require', function (require) {
-  var analytics = require('analytics/Analytics');
+  var Analytics = require('analytics/Analytics');
   var leaveConfirmator = require('navigation/confirmLeaveEditor');
 
   var data = {};
@@ -80,7 +80,7 @@ angular.module('contentful')
   }
 
   function basicInfo () {
-    var userId = analytics.getSessionData('user.sys.id');
+    var userId = Analytics.getSessionData('user.sys.id');
     var snapshotSys = data.snapshot.sys;
 
     return {
@@ -92,6 +92,6 @@ angular.module('contentful')
   }
 
   function track (event, data) {
-    analytics.track('versioning:' + event, data);
+    Analytics.track('versioning:' + event, data);
   }
 }]);

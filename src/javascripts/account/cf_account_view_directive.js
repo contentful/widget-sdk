@@ -5,7 +5,7 @@ angular.module('contentful')
 
   var h = require('utils/hyperscript').h;
   var $timeout = require('$timeout');
-  var authentication = require('Authentication');
+  var Authentication = require('Authentication');
   var modalDialog = require('modalDialog');
   var createChannel = require('account/IframeChannel').default;
   var K = require('utils/kefir');
@@ -82,7 +82,7 @@ angular.module('contentful')
       ignoreEsc: true,
       attachTo: 'body'
     }).promise.then(function () {
-      authentication.redirectToLogin();
+      Authentication.redirectToLogin();
     });
   }
 }]);
