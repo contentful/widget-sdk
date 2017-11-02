@@ -3,7 +3,7 @@ import $document from '$document';
 import {h} from 'utils/hyperscript';
 import TheStore from 'TheStore';
 import {env} from 'environment';
-import {without} from 'lodash';
+import {uniq, without} from 'lodash';
 
 /**
  * Stores enabled ui features from value in local storage, and shows
@@ -26,10 +26,9 @@ export function getEnabledFeatures () {
   return store.get() || [];
 }
 
-function setFromQuery (value) {
-  const enabledFeatures = value && value.length ? value.split(',') : null;
-  if (enabledFeatures) {
-    store.set(enabledFeatures);
+function setFromQuery (value = '') {
+  if (value.length > 0) {
+    store.set(uniq(value.split(',')));
   }
 }
 
@@ -57,8 +56,7 @@ function renderNotification () {
 
     const ul = h('ul', features.map(renderFeatureListItem));
 
-    return h('div', {
-      class: 'cf-ui-version-display',
+    return h('.cf-ui-version-display', {
       style: {
         left: 0,
         right: 'auto'

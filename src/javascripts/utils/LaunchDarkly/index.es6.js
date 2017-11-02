@@ -151,7 +151,7 @@ function getVariationSetter (flagName, obs$) {
 function getVariation (flagName, ...args) {
   const enabledFeatures = getEnabledFeatures();
   if (enabledFeatures.indexOf(flagName) >= 0) {
-    return 'true';
+    return true;
   } else {
     return client.variation(flagName, ...args);
   }

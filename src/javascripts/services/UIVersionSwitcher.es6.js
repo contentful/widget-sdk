@@ -14,28 +14,21 @@ import {h} from 'utils/hyperscript';
  * @param {String} uiVersion
  */
 export function init (uiVersion) {
+  const isTestRun = !!Cookies.get('cf_test_run');
+  uiVersion = uiVersion || Cookies.get('ui_version');
   setVersionCookie(uiVersion);
-  if (gitRevision !== uiVersion) {
+  if (uiVersion && gitRevision !== uiVersion && !isTestRun) {
     addVersionNotification();
   }
 }
 
 function setVersionCookie (uiVersion) {
-  if (uiVersion) {
-    Cookies.set('ui_version', uiVersion, {
-      expires: moment().add(24, 'h').toDate()
-    });
-  }
+  Cookies.set('ui_version', uiVersion, {
+    expires: moment().add(24, 'h').toDate()
+  });
 }
 
 function addVersionNotification () {
-  const previewVersion = Cookies.get('ui_version');
-
-  const isTestRun = !!Cookies.get('cf_test_run');
-  if (!previewVersion || isTestRun) {
-    return;
-  }
-
   $document.find('body').append(renderVersionNotification({gitRevision}));
 
   $document.find('[data-cf-ui-version-reload]').on('click', () => {
