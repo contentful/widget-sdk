@@ -299,7 +299,10 @@ function filterValueText ({value, inputRef, onChange, onKeyDown}) {
     ref: inputRef,
     onInput: (e) => onChange(e.target.value),
     onKeyDown,
-    tabindex: '0'
+    tabindex: '0',
+    style: {
+      width: `calc(${(value === null ? 1 : value.length)}ch + 15px)`
+    }
   });
 }
 
