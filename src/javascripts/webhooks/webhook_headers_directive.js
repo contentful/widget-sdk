@@ -2,10 +2,10 @@
 
 angular.module('contentful')
 
-.directive('cfWebhookHeaders', ['$injector', function ($injector) {
+.directive('cfWebhookHeaders', ['require', function (require) {
 
-  var Command  = $injector.get('command');
-  var $timeout = $injector.get('$timeout');
+  var Command  = require('command');
+  var $timeout = require('$timeout');
 
   return {
     restrict: 'E',

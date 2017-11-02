@@ -1,7 +1,7 @@
 'use strict';
-angular.module('contentful').directive('cfValidationSetting', ['$injector', function ($injector) {
-  var mimetype        = $injector.get('mimetype');
-  var validationViews = $injector.get('validationViews');
+angular.module('contentful').directive('cfValidationSetting', ['require', function (require) {
+  var mimetype        = require('mimetype');
+  var validationViews = require('validationViews');
 
   return {
     scope: true,

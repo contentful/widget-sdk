@@ -14,9 +14,9 @@
  * reposition-when-scrolls=".widget-list"></cf-icon>
  *
  */
-angular.module('contentful').directive('cfPositionRelativeToWidgetList', ['$injector', function($injector){
-  var defer    = $injector.get('defer');
-  var debounce = $injector.get('debounce');
+angular.module('contentful').directive('cfPositionRelativeToWidgetList', ['require', function (require){
+  var defer    = require('defer');
+  var debounce = require('debounce');
 
   return {
     restrict: 'A',

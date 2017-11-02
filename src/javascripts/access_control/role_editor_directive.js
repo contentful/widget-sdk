@@ -8,21 +8,21 @@ angular.module('contentful').directive('cfRoleEditor', function () {
   };
 });
 
-angular.module('contentful').controller('RoleEditorController', ['$scope', '$injector', function ($scope, $injector) {
-  var $state = $injector.get('$state');
-  var $q = $injector.get('$q');
-  var Command = $injector.get('command');
-  var spaceContext = $injector.get('spaceContext');
-  var TheLocaleStore = $injector.get('TheLocaleStore');
+angular.module('contentful').controller('RoleEditorController', ['$scope', 'require', function ($scope, require) {
+  var $state = require('$state');
+  var $q = require('$q');
+  var Command = require('command');
+  var spaceContext = require('spaceContext');
+  var TheLocaleStore = require('TheLocaleStore');
   var space = spaceContext.space;
-  var roleRepo = $injector.get('RoleRepository').getInstance(space);
-  var listHandler = $injector.get('UserListHandler').create();
-  var createRoleRemover = $injector.get('createRoleRemover');
-  var PolicyBuilder = $injector.get('PolicyBuilder');
-  var leaveConfirmator = $injector.get('navigation/confirmLeaveEditor');
-  var notification = $injector.get('notification');
-  var logger = $injector.get('logger');
-  var accessChecker = $injector.get('accessChecker');
+  var roleRepo = require('RoleRepository').getInstance(space);
+  var listHandler = require('UserListHandler').create();
+  var createRoleRemover = require('createRoleRemover');
+  var PolicyBuilder = require('PolicyBuilder');
+  var leaveConfirmator = require('navigation/confirmLeaveEditor');
+  var notification = require('notification');
+  var logger = require('logger');
+  var accessChecker = require('accessChecker');
 
   // 1. prepare "touch" counter (first touch for role->internal, next for dirty state)
   $scope.context.touched = $scope.context.isNew ? 0 : -1;

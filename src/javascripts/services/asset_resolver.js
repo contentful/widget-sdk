@@ -13,13 +13,13 @@ angular.module('contentful')
  * It uses `environment.manifest` to get fingerprinted URLs for an
  * asset name. It is used exclusively by the `LazyLoader` service.
  * @usage[js]
- * var AssetResolver = $injector.get('AssetResolver')
+ * var AssetResolver = require('AssetResolver')
  * AssetResolver.resolve('app/kaltura.js')
  * // '//static.contentful.com/app/kaltura-5x3jd.js'
  *
  */
-.factory('AssetResolver', ['$injector', function ($injector) {
-  var manifest = $injector.get('environment').manifest;
+.factory('AssetResolver', ['require', function (require) {
+  var manifest = require('environment').manifest;
 
   return {
     resolve: function (file) {

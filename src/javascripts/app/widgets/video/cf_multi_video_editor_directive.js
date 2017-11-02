@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfMultiVideoEditor', ['$injector', function ($injector) {
-  var $controller = $injector.get('$controller');
+.directive('cfMultiVideoEditor', ['require', function (require) {
+  var $controller = require('$controller');
 
   return {
     restrict: 'E',

@@ -1,11 +1,11 @@
 'use strict';
 
-angular.module('contentful').factory('spaceTemplateCreator', ['$injector', function ($injector) {
-  var $q = $injector.get('$q');
-  var $rootScope = $injector.get('$rootScope');
-  var $timeout = $injector.get('$timeout');
-  var contentPreview = $injector.get('contentPreview');
-  var Analytics = $injector.get('analytics/Analytics');
+angular.module('contentful').factory('spaceTemplateCreator', ['require', function (require) {
+  var $q = require('$q');
+  var $rootScope = require('$rootScope');
+  var $timeout = require('$timeout');
+  var contentPreview = require('contentPreview');
+  var Analytics = require('analytics/Analytics');
 
   var ASSET_PROCESSING_TIMEOUT = 60000;
   var PUBLISHING_WAIT = 5000;

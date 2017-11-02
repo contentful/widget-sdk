@@ -6,13 +6,13 @@ angular.module('cf.ui')
  * @module cf.ui
  * @name datepicker
  * @usage[js]
- * var createDatepicker = $injector.get('datepicker').create
+ * var createDatepicker = require('datepicker').create
  * var datePicker = createDatepicker({
  *   // same API as Pikaday
  * })
  */
-.service('datepicker', ['$injector', function ($injector) {
-  var Pikaday = $injector.get('Pikaday');
+.service('datepicker', ['require', function (require) {
+  var Pikaday = require('Pikaday');
 
   var I18N = {
     previousMonth: 'Previous Month',

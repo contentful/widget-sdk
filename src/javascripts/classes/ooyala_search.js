@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('contentful').factory('OoyalaSearch', ['$injector', function($injector){
-  var ooyalaClient        = $injector.get('ooyalaClient');
-  var OoyalaQuery         = $injector.get('OoyalaQuery');
+angular.module('contentful').factory('OoyalaSearch', ['require', function(require){
+  var ooyalaClient        = require('ooyalaClient');
+  var OoyalaQuery         = require('OoyalaQuery');
 
   var PAGE_TOKEN_REGEXP = /page_token=([^&]+).*$/;
 

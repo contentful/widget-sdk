@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('contentful')
-.factory('slug', ['$injector', function ($injector) {
-  var getSlug = $injector.get('speakingurl');
+.factory('slug', ['require', function (require) {
+  var getSlug = require('speakingurl');
 
   // Languages supported by SpeakingURL.
   var languages = [

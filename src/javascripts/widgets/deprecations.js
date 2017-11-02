@@ -16,8 +16,8 @@ angular.module('contentful')
  * @ngdoc service
  * @name widgets/deprecations
  */
-.factory('widgets/deprecations', ['$injector', function ($injector) {
-  var DEPRECATIONS = $injector.get('widgets/deprecations/data');
+.factory('widgets/deprecations', ['require', function (require) {
+  var DEPRECATIONS = require('widgets/deprecations/data');
 
   return {
     createFilter: createFilter,

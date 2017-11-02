@@ -1,10 +1,10 @@
 'use strict';
 
-angular.module('contentful').factory('batchPerformer', ['$injector', function ($injector) {
-  var $q = $injector.get('$q');
-  var spaceContext = $injector.get('spaceContext');
-  var Analytics = $injector.get('analytics/Analytics');
-  var notification = $injector.get('notification');
+angular.module('contentful').factory('batchPerformer', ['require', function (require) {
+  var $q = require('$q');
+  var spaceContext = require('spaceContext');
+  var Analytics = require('analytics/Analytics');
+  var notification = require('notification');
 
   var ACTION_NAMES = {
     publish: 'published',

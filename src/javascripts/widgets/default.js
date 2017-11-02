@@ -6,9 +6,9 @@
  * @name widgets/default
  */
 angular.module('contentful')
-.factory('widgets/default', ['$injector', function($injector) {
-  var fieldFactory = $injector.get('fieldFactory');
-  var widgetMap = $injector.get('widgetMap');
+.factory('widgets/default', ['require', function (require) {
+  var fieldFactory = require('fieldFactory');
+  var widgetMap = require('widgetMap');
 
   // We can use a dropdown widget for these field types
   var DROPDOWN_TYPES = ['Text', 'Symbol', 'Integer', 'Number', 'Boolean'];

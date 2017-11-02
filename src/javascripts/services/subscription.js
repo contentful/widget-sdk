@@ -8,8 +8,8 @@
  * Represents an organization's subscription.
  */
 angular.module('contentful')
-.factory('Subscription', ['$injector', function ($injector) {
-  var moment = $injector.get('moment');
+.factory('Subscription', ['require', function (require) {
+  var moment = require('moment');
 
   return {
     /**

@@ -9,18 +9,18 @@ angular.module('contentful').constant('PolicyBuilder/CONFIG', {
   PATH_SEPARATOR: '.'
 });
 
-angular.module('contentful').factory('PolicyBuilder', ['$injector', function ($injector) {
+angular.module('contentful').factory('PolicyBuilder', ['require', function (require) {
   return {
-    toInternal: $injector.get('PolicyBuilder/toInternal'),
-    toExternal: $injector.get('PolicyBuilder/toExternal'),
-    removeOutdatedRules: $injector.get('PolicyBuilder/removeOutdatedRules')
+    toInternal: require('PolicyBuilder/toInternal'),
+    toExternal: require('PolicyBuilder/toExternal'),
+    removeOutdatedRules: require('PolicyBuilder/removeOutdatedRules')
   };
 }]);
 
-angular.module('contentful').factory('PolicyBuilder/defaultRule', ['$injector', function ($injector) {
+angular.module('contentful').factory('PolicyBuilder/defaultRule', ['require', function (require) {
 
-  var random  = $injector.get('random');
-  var ALL_CTS = $injector.get('PolicyBuilder/CONFIG').ALL_CTS;
+  var random  = require('random');
+  var ALL_CTS = require('PolicyBuilder/CONFIG').ALL_CTS;
 
   var DEFAULT_RULE = {
     action: 'all',
@@ -57,10 +57,10 @@ angular.module('contentful').factory('PolicyBuilder/defaultRule', ['$injector', 
   }
 }]);
 
-angular.module('contentful').factory('PolicyBuilder/toInternal', ['$injector', function ($injector) {
+angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', function (require) {
 
-  var CONFIG            = $injector.get('PolicyBuilder/CONFIG');
-  var getDefaultRuleFor = $injector.get('PolicyBuilder/defaultRule').getDefaultRuleFor;
+  var CONFIG            = require('PolicyBuilder/CONFIG');
+  var getDefaultRuleFor = require('PolicyBuilder/defaultRule').getDefaultRuleFor;
 
   return function toInternal(external) {
     return _.extend({
@@ -253,10 +253,10 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['$injector', f
   }
 }]);
 
-angular.module('contentful').factory('PolicyBuilder/toExternal', ['$injector', function ($injector) {
+angular.module('contentful').factory('PolicyBuilder/toExternal', ['require', function (require) {
 
-  var capitalize = $injector.get('stringUtils').capitalize;
-  var CONFIG     = $injector.get('PolicyBuilder/CONFIG');
+  var capitalize = require('stringUtils').capitalize;
+  var CONFIG     = require('PolicyBuilder/CONFIG');
 
   return function toExternal(internal) {
     return {

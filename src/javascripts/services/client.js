@@ -1,12 +1,12 @@
 'use strict';
 
 angular.module('contentful')
-.factory('client', ['$injector', function ($injector) {
-  var $q = $injector.get('$q');
-  var environment = $injector.get('environment');
-  var Client = $injector.get('libs/@contentful/client').Client;
-  var auth = $injector.get('Authentication');
-  var makeRequest = $injector.get('data/Request').default;
+.factory('client', ['require', function (require) {
+  var $q = require('$q');
+  var environment = require('environment');
+  var Client = require('libs/@contentful/client').Client;
+  var auth = require('Authentication');
+  var makeRequest = require('data/Request').default;
 
   var baseRequest = makeRequest(auth);
   var baseUrl = environment.settings.apiUrl;

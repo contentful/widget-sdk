@@ -4,8 +4,8 @@
  * This module translates between serialized validations that are send
  * to the backend and the front end validation views.
  */
-angular.module('contentful').service('validationViews', ['$injector', function($injector) {
-  var urlRegexp = $injector.get('urlUtils').regexp;
+angular.module('contentful').service('validationViews', ['require', function (require) {
+  var urlRegexp = require('urlUtils').regexp;
 
   /**
    * Map from validation types to input views.

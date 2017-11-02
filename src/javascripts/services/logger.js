@@ -50,15 +50,15 @@
  * logged to the console and to Bugsnag if bugsnag is enabled.
  */
 angular.module('contentful')
-.factory('logger', ['$injector', function ($injector) {
-  var $window = $injector.get('$window');
-  var bugsnag = $injector.get('bugsnag');
-  var environment = $injector.get('environment');
-  var stringifySafe = $injector.get('stringifySafe');
+.factory('logger', ['require', function (require) {
+  var $window = require('$window');
+  var bugsnag = require('bugsnag');
+  var environment = require('environment');
+  var stringifySafe = require('stringifySafe');
 
   function getParams () {
-    var stateName = $injector.get('$state').current.name;
-    var stateParams = $injector.get('$stateParams');
+    var stateName = require('$state').current.name;
+    var stateParams = require('$stateParams');
     return _.extend({
       state: stateName,
       viewport: '' + $window.innerWidth + 'x' + $window.innerHeight,

@@ -20,8 +20,8 @@
  * instantiated, so it might be not available if you call it immediately.
  */
 
-angular.module('contentful').factory('intercom', ['$injector', function ($injector) {
-  var $window = $injector.get('$window');
+angular.module('contentful').factory('intercom', ['require', function (require) {
+  var $window = require('$window');
 
   var intercom = {
     isLoaded: isLoaded,

@@ -7,9 +7,9 @@ angular.module('contentful')
  * @name cfContentTypePreview
  * @scope.requires {Client.ContentType} contentType
  */
-.directive('cfContentTypePreview', ['$injector', function ($injector) {
-  var getContentTypePreview = $injector.get('contentTypePreview');
-  var template = $injector.get('app/ContentModel/Editor/ContentTypePreviewTemplate').default;
+.directive('cfContentTypePreview', ['require', function (require) {
+  var getContentTypePreview = require('contentTypePreview');
+  var template = require('app/ContentModel/Editor/ContentTypePreviewTemplate').default;
 
   return {
     scope: true,

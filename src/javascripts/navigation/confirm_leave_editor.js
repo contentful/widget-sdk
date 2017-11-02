@@ -13,7 +13,7 @@ angular.module('contentful')
  * run the action passed to the factory.
  *
  * ~~~js
- * var createLeaveConfirmator = $injector.get('navigation/requestLeaveEditor')
+ * var createLeaveConfirmator = require('navigation/requestLeaveEditor')
  * function save () {
  *   return runSave
  *   .then(function () {
@@ -23,9 +23,9 @@ angular.module('contentful')
  * $scope.context.confirmLeaveEditor = createLeaveConfirmator(save)
  * ~~~
  */
-.factory('navigation/confirmLeaveEditor', ['$injector', function ($injector) {
-  var modalDialog = $injector.get('modalDialog');
-  var Command     = $injector.get('command');
+.factory('navigation/confirmLeaveEditor', ['require', function (require) {
+  var modalDialog = require('modalDialog');
+  var Command     = require('command');
 
   return function createLeaveConfirmator (runSave, template) {
     return function confirmLeaveEditor () {

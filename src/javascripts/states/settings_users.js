@@ -6,8 +6,8 @@ angular.module('contentful')
  * @ngdoc service
  * @name states/settings/users
  */
-.factory('states/settings/users', ['$injector', function ($injector) {
-  var base = $injector.get('states/base');
+.factory('states/settings/users', ['require', function (require) {
+  var base = require('states/base');
 
   var list = base({
     name: 'list',
