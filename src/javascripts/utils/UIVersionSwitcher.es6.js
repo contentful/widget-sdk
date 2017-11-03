@@ -29,6 +29,8 @@ function setVersionCookie (uiVersion) {
 }
 
 function addVersionNotification () {
+  // This cookie is set to hide version notification in automated test runs:
+  // https://github.com/contentful/ui_integration_suite/blob/c57d378def523b782decff3d02d2b3507b541fa5/app/application.py#L283
   const isTestRun = !!Cookies.get('cf_test_run');
   const uiVersion = Cookies.get('ui_version');
   if (!uiVersion || isTestRun) {
