@@ -22,11 +22,11 @@ angular.module('contentful')
         LD.getCurrentVariation(featureName).then(function (variation) {
           // if the last variation was for a targeted space
           // when you move out of it, reload to unload WalkMe scripts
-          if (lastVariation && lastVariation !== variation) {
+          if (lastVariation && variation !== lastVariation) {
             $window.location.reload();
           }
 
-          if (variation && lastVariation !== variation) {
+          if (variation && variation !== lastVariation) {
             var spaceMembership = SpaceContext.getData('spaceMembership');
             var isSpaceAdmin = spaceMembership.admin;
             var spaceRoleNames = _.sortBy(_.map(spaceMembership.roles, 'name')).join(',');
