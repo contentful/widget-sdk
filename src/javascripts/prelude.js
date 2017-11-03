@@ -77,9 +77,9 @@ angular.module('contentful/app', ['contentful'])
   require('services/TokenStore').init();
   require('presence').startTracking();
   require('services/UIVersionSwitcher').init(urlParams['ui_version']);
-  require('utils/LaunchDarkly/EnforceFeatureFlags').init(urlParams['ui_features']);
-  if (urlParams['ui_version'] || urlParams['ui_features']) {
-    location.search(_.omit(urlParams, 'ui_version', 'ui_features'));
+  require('utils/LaunchDarkly/EnforceFlags').init(urlParams['ui_enable_flags']);
+  if (urlParams['ui_version'] || urlParams['ui_enable_flags']) {
+    location.search(_.omit(urlParams, 'ui_version', 'ui_enable_flags'));
   }
   require('utils/LaunchDarkly').init();
   require('navigation/stateChangeHandlers').setup();

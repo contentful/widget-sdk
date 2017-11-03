@@ -5,7 +5,7 @@ import {assign, get, isNull, omitBy} from 'lodash';
 import {onValueScope, createPropertyBus} from 'utils/kefir';
 import getChangesObject from 'utils/ShallowObjectDiff';
 import {isOrgPlanEnterprise} from 'data/Org';
-import {getEnabledFeatures} from 'utils/LaunchDarkly/EnforceFeatureFlags';
+import {getEnabledFlags} from 'utils/LaunchDarkly/EnforceFlags';
 
 import {
   getOrgRole,
@@ -149,7 +149,7 @@ function getVariationSetter (flagName, obs$) {
  * enabled via query params.
  */
 function getVariation (flagName, ...args) {
-  const enabledFeatures = getEnabledFeatures();
+  const enabledFeatures = getEnabledFlags();
   if (enabledFeatures.indexOf(flagName) >= 0) {
     return true;
   } else {
