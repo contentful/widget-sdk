@@ -1,16 +1,12 @@
 import {createOrganizationEndpoint} from 'data/Endpoint';
 import * as auth from 'Authentication';
-import {apiUrl, mockApiUrl} from 'Config';
+import {apiUrl} from 'Config';
 import {fetchAll} from 'data/CMA/FetchAll';
 
 const BATCH_LIMIT = 100;
 
 export function createEndpoint (orgId) {
   return createOrganizationEndpoint(apiUrl(), orgId, auth);
-}
-
-export function createMockEndpoint (orgId) {
-  return createOrganizationEndpoint(mockApiUrl(), orgId, auth);
 }
 
 export function getAll (endpoint) {

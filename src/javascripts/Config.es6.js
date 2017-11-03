@@ -24,18 +24,8 @@ import {settings} from 'environment';
  * @returns {string}
  */
 export function apiUrl (path) {
-  return settings.apiUrl + ensureLeadingSlash(path);
-}
-
-/**
- * @ngdoc method
- * @name Config#mockApiUrl
- * Given a path return the URL for a mock CMA endpoint via http://stoplight.io
- * @param {string} path
- * @returns {string}
- */
-export function mockApiUrl (path) {
-  return settings.mockApiUrl + ensureLeadingSlash(path);
+  const baseUrl = shouldMockApi() ? settings.mockApiUrl : settings.apiUrl;
+  return baseUrl + ensureLeadingSlash(path);
 }
 
 /**
@@ -162,4 +152,11 @@ function ensureLeadingSlash (x = '') {
   } else {
     return '/' + x;
   }
+}
+
+/**
+ * TODO: set this via url param
+ */
+function shouldMockApi () {
+  return env !== 'production';
 }
