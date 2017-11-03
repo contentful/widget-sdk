@@ -6,7 +6,7 @@ import $window from '$window';
 import $document from '$document';
 import Cookies from 'Cookies';
 import moment from 'moment';
-import {gitRevision} from 'environment';
+import {gitRevision, env} from 'environment';
 import {h} from 'utils/hyperscript';
 
 /**
@@ -14,11 +14,13 @@ import {h} from 'utils/hyperscript';
  * @param {String} uiVersion
  */
 export function init (uiVersion) {
-  const isTestRun = !!Cookies.get('cf_test_run');
-  uiVersion = uiVersion || Cookies.get('ui_version');
-  setVersionCookie(uiVersion);
-  if (uiVersion && gitRevision !== uiVersion && !isTestRun) {
-    addVersionNotification();
+  if (env !== 'production') {
+    const isTestRun = !!Cookies.get('cf_test_run');
+    uiVersion = uiVersion || Cookies.get('ui_version');
+    setVersionCookie(uiVersion);
+    if (uiVersion && gitRevision !== uiVersion && !isTestRun) {
+      addVersionNotification();
+    }
   }
 }
 
