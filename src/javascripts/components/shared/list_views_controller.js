@@ -12,8 +12,11 @@ angular.module('contentful')
     $scope.$watch('context.view', viewPersistor.save, true);
     $scope.loadView = loadView;
 
+    if (preserveStateAs === 'assets') {
+      // TODO: Remove when migrating assets search!
+      replaceView({});
+    }
     viewPersistor.read().then(loadView);
-    replaceView({});
 
     function loadView (view) {
       replaceView(view);

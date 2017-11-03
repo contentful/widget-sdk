@@ -16,6 +16,8 @@ angular.module('contentful')
     return fields;
   }
 
+  $scope.hiddenFields = [];
+
   $scope.refreshDisplayFields = function () {
     var displayedFieldIds = $scope.context.view.displayedFieldIds;
     var fields = getAvailableFields($scope.context.view.contentTypeId);
@@ -42,7 +44,14 @@ angular.module('contentful')
     });
   }
 
-  $scope.$watch('[context.view.contentTypeId, context.view.displayedFieldIds]', $scope.refreshDisplayFields, true);
+  $scope.$watch(
+    '[context.view.contentTypeId, context.view.displayedFieldIds]',
+    function (newValues) {
+      // `view` can be `undefined`.
+      if (newValues[0] || newValues[1]) {
+        $scope.refreshDisplayFields();
+      }
+    }, true);
 
   $scope.resetDisplayFields = function () {
     $scope.context.view.displayedFieldIds = systemFields.getDefaultFieldIds();

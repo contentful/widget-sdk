@@ -118,7 +118,7 @@ angular.module('contentful')
   $scope.hasNoSearchResults = function () {
     var hasQuery = searchController.hasQuery();
     var hasEntries = $scope.paginator.getTotal() > 0;
-    var hasCollection = $scope.context.view.collection;
+    var hasCollection = getViewItem('collection');
     return !hasEntries && hasQuery && !hasCollection && !$scope.context.loading;
   };
 
@@ -133,7 +133,8 @@ angular.module('contentful')
    * @return {boolean}
    */
   $scope.isEmptyCollection = function () {
-    return !$scope.paginator.getTotal() && $scope.context.view.collection && !$scope.context.loading;
+    return !$scope.paginator.getTotal() &&
+      getViewItem('collection') && !$scope.context.loading;
   };
 
   /**
@@ -165,5 +166,10 @@ angular.module('contentful')
     }).then(function (response) {
       return response && response.total > 0;
     });
+  }
+
+  function getViewItem (path) {
+    path = _.isString(path) ? path.split('.') : path;
+    return _.get($scope, ['context', 'view'].concat(path));
   }
 }]);

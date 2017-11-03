@@ -1,7 +1,21 @@
 import * as sinon from 'helpers/sinon';
 
-fdescribe('Entry List Controller', function () {
+describe('Entry List Controller', function () {
   let scope, spaceContext, ListQuery;
+
+  const VIEW = {
+    id: 'VIEW_ID',
+    title: 'Derp',
+    searchText: 'search input',
+    searchFilters: [],
+    contentTypeId: 'ctid',
+    contentTypeHidden: false,
+    displayedFieldIds: ['createdAt', 'updatedAt'],
+    order: {
+      fieldId: 'createdAt',
+      direction: 'descending'
+    }
+  };
 
   function createEntries (n) {
     const entries = _.map(new Array(n), function () {
@@ -12,7 +26,7 @@ fdescribe('Entry List Controller', function () {
   }
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', ($provide) => {
       $provide.removeControllers('DisplayedFieldsController');
 
       $provide.value('analytics/Analytics', {
@@ -22,6 +36,19 @@ fdescribe('Entry List Controller', function () {
       $provide.value('TheLocaleStore', {
         resetWithSpace: sinon.stub(),
         getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'})
+      });
+
+      const readStub = this.readStub = sinon.stub();
+      const promise = this.readPersistedViewPromise = new Promise((resolve) => {
+        this.resolveReadPersistedView = resolve;
+      });
+      $provide.value('data/ListViewPersistor', {
+        default: function () {
+          return {
+            save: sinon.stub().resolves({}),
+            read: readStub.returns(promise)
+          };
+        }
       });
     });
 
@@ -48,41 +75,71 @@ fdescribe('Entry List Controller', function () {
     ListQuery = this.$inject('ListQuery');
   });
 
-  describe('#loadView()', function () {
-    let view;
-
+  describe('initially undefined view', function () {
     beforeEach(function () {
       ListQuery.getForEntries = this.getQuery = sinon.stub().resolves({});
+      scope.$apply();
+    });
 
-      view = {
-        id: 'foo',
-        title: 'Derp',
-        searchText: 'search input',
-        searchFilters: [],
-        contentTypeId: 'ctid',
-        contentTypeHidden: false,
-        displayedFieldIds: ['createAt', 'updatedAt'],
-        order: {
-          fieldId: 'createdAt',
-          direction: 'descending'
-        }
-      };
-      scope.loadView(_.cloneDeep(view));
+    it('is undefined', function () {
+      expect(scope.context.view).toBe(undefined);
+    });
+
+    it('does not trigger query', function () {
+      sinon.assert.notCalled(this.getQuery);
+    });
+
+    it('triggers query after loading view', function* () {
+      this.resolveReadPersistedView({});
+      yield this.readPersistedViewPromise;
+      scope.$apply();
+
+      expect(scope.context.view).not.toBe(undefined);
+      sinon.assert.calledOnce(this.getQuery);
+    });
+  });
+
+  describe('#loadView()', function () {
+    beforeEach(function () {
+      ListQuery.getForEntries = this.getQuery = sinon.stub().resolves({});
+      scope.loadView(VIEW);
     });
 
     it('sets the view', function () {
-      expect(scope.context.view).toEqual(view);
-      expect(scope.context.view).not.toBe(view);
+      expect(scope.context.view).toEqual(VIEW);
+      expect(scope.context.view).not.toBe(VIEW);
     });
 
     it('resets entries', function () {
       scope.$apply();
       sinon.assert.calledOnce(this.getQuery);
     });
+
+    describe('with `order.fieldId` value not in `displayedFieldIds`', function () {
+      const VIEW_WITH_WRONG_ORDER = Object.assign({}, VIEW, {
+        displayedFieldIds: ['createdAt', 'updatedAt'],
+        order: {
+          fieldId: 'publishedAt', // Not in `displayedFieldIds`
+          direction: 'descending'
+        }
+      });
+
+      it('changes `order.fieldId`', function () {
+        scope.loadView(VIEW_WITH_WRONG_ORDER);
+        scope.$apply();
+        const expected = Object.assign({}, VIEW_WITH_WRONG_ORDER, {
+          order: {
+            fieldId: 'createdAt'
+          }
+        });
+        expect(scope.context.view).toEqual(expected);
+      });
+    });
   });
 
   describe('on search change', function () {
     it('page is set to the first one', function () {
+      scope.context.view = {};
       scope.paginator.setPage(1);
       scope.$apply();
       scope.context.view.searchText = 'thing';
@@ -91,34 +148,55 @@ fdescribe('Entry List Controller', function () {
     });
   });
 
-  describe('page parameters change trigger entries reset', function () {
+  describe('page parameters change', function () {
     beforeEach(function () {
       ListQuery.getForEntries = this.getQuery = sinon.stub().resolves({});
     });
 
-    it('search text', function () {
-      scope.context.view.searchText = 'thing';
-      scope.$apply();
-      sinon.assert.calledOnce(this.getQuery);
-    });
-
-    it('page', function () {
+    it('triggers no query on page change if no view is loaded', function () {
       scope.paginator.setPage(1);
       scope.$apply();
-      sinon.assert.calledOnce(this.getQuery);
+      sinon.assert.notCalled(this.getQuery);
     });
 
-    it('contentTypeId', function () {
-      scope.context.view.contentTypeId = 'something';
-      scope.$apply();
-      sinon.assert.calledOnce(this.getQuery);
+    describe('triggers query on change', function () {
+      beforeEach(function () {
+        scope.context.view = {};
+        scope.$apply();
+      });
+
+      it('page', function () {
+        scope.paginator.setPage(1);
+        scope.$apply();
+        sinon.assert.calledTwice(this.getQuery);
+      });
+
+      it('`searchText`', function () {
+        scope.context.view.searchText = 'thing';
+        scope.$apply();
+        sinon.assert.calledTwice(this.getQuery);
+      });
+
+      it('`searchFilters`', function () {
+        scope.context.view.searchFilters = 'thing';
+        scope.$apply();
+        sinon.assert.calledTwice(this.getQuery);
+      });
+
+      it('`contentTypeId`', function () {
+        scope.context.view = { contentTypeId: 'something' };
+        scope.$apply();
+        sinon.assert.calledTwice(this.getQuery);
+      });
     });
+
   });
 
   describe('#updateEntries()', function () {
     let entries;
 
     beforeEach(function () {
+      scope.context.view = {};
       entries = createEntries(30);
       scope.$apply();
       spaceContext.space.getEntries.resolve(entries);
@@ -256,6 +334,7 @@ fdescribe('Entry List Controller', function () {
     });
 
     it('should cause updateEntries to show an error message', function () {
+      scope.context.view = {};
       scope.updateEntries();
       scope.$apply();
       sinon.assert.called(this.handler);

@@ -23,9 +23,10 @@ angular.module('contentful')
 
   // TODO rename this everywhere
   $scope.updateEntries = function () {
-    console.log('UPDATE');
-    resetEntries();
-  }
+    if (isViewLoaded()) {
+      resetEntries();
+    }
+  };
 
   var updateEntries = createRequestQueue(requestEntries, setupEntriesHandler);
 
@@ -42,7 +43,7 @@ angular.module('contentful')
   $scope.$watch(function () {
     return $scope.paginator.getPage();
   }, function (newPage) {
-    if (page !== newPage) {
+    if (page !== newPage && initialized) {
       page = newPage;
       updateEntries();
     }
@@ -54,6 +55,10 @@ angular.module('contentful')
       search: getViewSearchState()
     };
   }, function (next, prev) {
+    if (!isViewLoaded()) {
+      return;
+    }
+
     var viewChanged = next.viewId !== prev.viewId;
 
     // if view was changed update immediately and back to page 1
@@ -118,6 +123,7 @@ angular.module('contentful')
   function resetEntries () {
     $scope.paginator.setPage(0);
     page = 0;
+    initializeSearchUI();
     return updateEntries();
   }
 
@@ -150,12 +156,15 @@ angular.module('contentful')
     return $scope.context.isSearching;
   });
 
-  // TODO:danwe Remove this ugly hack for testing the ui with url view data.
-  setTimeout(function () {
+  function initializeSearchUI () {
+    if (initialized) {
+      // TODO:danwe Re-initialize to display new state!
+      return;
+    }
     var initialSearchState = getViewSearchState();
     createSearchInput(
       $scope, spaceContext, triggerSearch, isSearching$, initialSearchState);
-  }, 1000);
+  }
 
   function setupEntriesHandler (promise) {
     return promise
@@ -209,6 +218,10 @@ angular.module('contentful')
       $scope.assetCache.setDisplayedFieldIds(fieldIds);
       $scope.assetCache.resolveLinkedEntities($scope.entries);
     }
+  }
+
+  function isViewLoaded () {
+    return !!_.get($scope, ['context', 'view']);
   }
 
   function getQueryOptions () {
