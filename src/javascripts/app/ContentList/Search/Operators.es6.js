@@ -25,6 +25,9 @@ export function getOperatorsByType (type) {
     case 'Array':
     case 'Boolean':
       return [equality];
+    case 'SymbolList':
+    case 'SymbolPredefined':
+    case 'SymbolListPredefined':
     case 'Link':
       return [equality, inequality];
     default:

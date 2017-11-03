@@ -1,4 +1,4 @@
-import { startsWith, find, get } from 'lodash';
+import { startsWith, find, get, has } from 'lodash';
 import { makeCtor } from 'utils/TaggedValues';
 import { assign, push, concat } from 'utils/Collections';
 import { getOperatorsByType, equality as equalityOperator } from './Operators';
@@ -291,11 +291,12 @@ function allFilters (contentTypes) {
  * that field.
  */
 function buildFilterField (ct, ctField) {
+
   return {
     name: ctField.apiName,
     description: ctField.name,
     queryKey: getQueryKey(ctField),
-    operators: getOperatorsByType(ctField.type, get(ctField, ['items', 'type'])),
+    operators: getOperatorsByType(getFieldType(ctField)),
     valueInput: getControlByType(ctField),
     contentType: {
       id: ct.sys.id,
@@ -312,11 +313,15 @@ function getQueryKey (ctField) {
 
 // TODO: implement control type resolution
 function getControlByType (ctField) {
-  if (ctField.type === 'Boolean') {
+  const type = getFieldType(ctField);
+
+  if (type === 'Boolean') {
     return ValueInput.Select([
       ['true', 'Yes'],
       ['false', 'No']
     ]);
+  } else if (['SymbolPredefined', 'SymbolListPredefined'].indexOf(type) > -1) {
+    return ValueInput.Select(getPredefinedValues(ctField).map(o => [o, o]));
   } else if (isReferenceField(ctField)) {
     return ValueInput.Reference(assign(ctField, {
       // TODO: This is required by the entity selector
@@ -330,4 +335,31 @@ function getControlByType (ctField) {
 
 function isReferenceField ({type, items = {}} = {}) {
   return type === 'Link' || items.type === 'Link';
+}
+
+function getPredefinedValues (ctField) {
+  const { validations = [] } = (ctField.items || ctField);
+  const validationWithPredefinedValues = validations.find(v => has(v, 'in')) || {};
+
+  return validationWithPredefinedValues.in;
+}
+
+function getFieldType (ctField) {
+  let { type } = ctField;
+  const isList = type === 'Array';
+  const valuesType = get(ctField, ['items', 'type']) || type;
+
+  if (valuesType === 'Symbol') {
+    type = 'Symbol';
+
+    if (isList) {
+      type = `${type}SymbolList`;
+    }
+
+    if (getPredefinedValues(ctField)) {
+      type = `${type}Predefined`;
+    }
+  }
+
+  return type;
 }
