@@ -164,8 +164,11 @@ angular.module('contentful')
       url: AssetResolver.resolve('app/snowplow.js'),
       globalObject: 'Snowplow'
     },
-    walkMe: {
-      url: 'https://cdn.walkme.com/users/ae0ec83cc1ba44febf1cec5ac23c85d2/test/walkme_ae0ec83cc1ba44febf1cec5ac23c85d2_https.js'
+    walkMeStaging: {
+      url: 'https://cdn.walkme.com/users/0b7285ac5c8b4dee81eb418420f778c1/test/walkme_0b7285ac5c8b4dee81eb418420f778c1_https.js'
+    },
+    walkMeProd: {
+      url: 'https://cdn.walkme.com/users/0b7285ac5c8b4dee81eb418420f778c1/walkme_0b7285ac5c8b4dee81eb418420f778c1_https.js'
     }
   };
 
