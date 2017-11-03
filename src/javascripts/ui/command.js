@@ -204,7 +204,6 @@ angular.module('cf.ui')
       return element.html();
     },
     link: function (scope, element) {
-
       if (!element.attr('role')) {
         element.attr('role', 'button');
       }
@@ -240,7 +239,6 @@ angular.module('cf.ui')
           element.removeAttr('aria-disabled');
         }
       }
-
     }
   };
 }]);

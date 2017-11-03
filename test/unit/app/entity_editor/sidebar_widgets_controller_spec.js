@@ -28,5 +28,4 @@ describe('SidebarWidgetRender controller', function () {
       });
     });
   });
-
 });

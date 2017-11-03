@@ -70,8 +70,12 @@ function loadTravisEnv (branch, pullRequest) {
   const targetEnv = getTravisTargetEnv(branch, isMerge)
   const isMainBranch = !isMerge && includes(MAIN_BRANCHES, branch)
   return {
-    branch, pullRequest, isMerge, targetEnv,
-    isMainBranch, distBranch
+    branch,
+    pullRequest,
+    isMerge,
+    targetEnv,
+    isMainBranch,
+    distBranch
   }
 }
 

@@ -2,7 +2,6 @@
 
 angular.module('contentful')
 .directive('cfFileEditor', ['require', function (require) {
-
   var aviary = require('aviary');
   var filepicker = require('filepicker');
   var logger = require('logger');
@@ -126,7 +125,6 @@ angular.module('contentful')
         };
         preview.src = imgUrl;
       }
-
     }
   };
 }]);

@@ -72,12 +72,10 @@ describe('TheLocaleStore', function () {
           { code: 'de-DE', internal_code: 'de-DE' }
         ]);
       });
-
     });
   });
 
   describe('#setActiveLocales', function () {
-
     it('activates given locale', function () {
       const locale = {internal_code: 'zz'};
       expect(this.theLocaleStore.isLocaleActive(locale)).toBe(false);
@@ -103,7 +101,6 @@ describe('TheLocaleStore', function () {
   });
 
   describe('#deactivateLocale', function () {
-
     it('it makes locale inactive', function () {
       const locale = {internal_code: 'zz'};
       this.theLocaleStore.setActiveLocales([locale]);

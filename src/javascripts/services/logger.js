@@ -184,7 +184,7 @@ angular.module('contentful')
     logException: function (exception, metaData) {
       var augmentedMetadata = augmentMetadata(metaData);
       if (environment.env !== 'production' && environment.env !== 'unittest') {
-        /*eslint no-console: off*/
+        /* eslint no-console: off */
         console.error(exception, augmentedMetadata);
       }
       bugsnag.notifyException(exception, null, augmentedMetadata, 'error');
@@ -363,7 +363,7 @@ angular.module('contentful')
 
   function logToConsole (type, severity, message, metadata) {
     message = type + ': ' + message;
-    /*eslint no-console: off*/
+    /* eslint no-console: off */
     switch (severity) {
       case 'error':
         console.error(message, metadata);

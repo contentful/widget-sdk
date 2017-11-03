@@ -5,7 +5,6 @@ import {observeResize} from 'ui/ResizeDetector';
 import * as K from 'utils/kefir';
 
 export function create (textarea, options, CodeMirror) {
-
   options = options || {};
 
   // Set to true if `setValue()` has been called. This is to prevent

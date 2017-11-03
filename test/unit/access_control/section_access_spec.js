@@ -1,7 +1,6 @@
 'use strict';
 
 describe('Section Access', function () {
-
   let sectionAccess, accessChecker, $state, $stateParams, spaceContext;
   let visibilityStub, goStub;
 
@@ -123,5 +122,4 @@ describe('Section Access', function () {
       });
     });
   });
-
 });

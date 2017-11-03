@@ -30,7 +30,6 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
     // TODO Do not use client instances
     spaceContext.space.getContentTypes({order: 'name', limit: 1000})
       .then(function (contentTypes) {
-
         // Some legacy content types do not have a name. If it is
         // missing we set it to 'Untitled' so we can display
         // something in the UI. Note that the API requires new

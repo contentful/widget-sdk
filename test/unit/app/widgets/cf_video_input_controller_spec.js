@@ -117,7 +117,6 @@ describe('cfVideoInput Controller', function () {
   });
 
   describe('on input value change', function () {
-
     it('calls the onChange callback', function () {
       scope.videoInput.assetId = 'value';
       scope.$apply();
@@ -179,6 +178,5 @@ describe('cfVideoInput Controller', function () {
         });
       });
     });
-
   });
 });

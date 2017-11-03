@@ -188,7 +188,6 @@ describe('app/ContentModel/Editor/Actions', function () {
         sinon.assert.called(contentType.delete);
       });
     });
-
   });
 
   it('when cancelling navigates back to list', function () {

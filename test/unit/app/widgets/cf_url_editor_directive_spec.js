@@ -112,5 +112,4 @@ describe('cfUrlEditor directive', function () {
     this.setStatus('invalid');
     expect(this.widgetApi._state.isInvalid).toEqual(true);
   });
-
 });

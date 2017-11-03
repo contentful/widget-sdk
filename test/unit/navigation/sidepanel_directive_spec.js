@@ -98,7 +98,6 @@ describe('cfNavSidepanel directive', () => {
       'nav-sidepanel__org-list-container--is-visible',
       'nav-sidepanel__org-list-container--is-not-visible'
     );
-
   });
 
   afterEach(function () {

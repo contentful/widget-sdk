@@ -1,7 +1,6 @@
 'use strict';
 
 describe('Webhook Headers directive', function () {
-
   beforeEach(function () {
     module('contentful/test');
 

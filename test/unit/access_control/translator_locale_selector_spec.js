@@ -1,7 +1,6 @@
 'use strict';
 
 describe('translatorLocaleSelector directive', function () {
-
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
@@ -54,8 +53,6 @@ describe('translatorLocaleSelector directive', function () {
       const selected = this.element.find('option[selected="selected"]')[0];
       expect(selected.innerHTML).toBe('All locales');
     });
-
-
   });
 
   describe('toggle locale', function () {

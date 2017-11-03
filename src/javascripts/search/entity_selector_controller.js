@@ -31,7 +31,6 @@
  */
 angular.module('contentful')
 .controller('EntitySelectorController', ['require', '$scope', function EntitySelectorController (require, $scope) {
-
   var $timeout = require('$timeout');
   var spaceContext = require('spaceContext');
   var Paginator = require('Paginator');
@@ -117,7 +116,6 @@ angular.module('contentful')
 
   var toggle = {
     select: function select (entity) {
-
       var index = _.findIndex($scope.selected, ['sys.id', entity.sys.id]);
 
       if (index === -1) {

@@ -12,7 +12,6 @@
  * that may change a state of user's permissions.
  */
 angular.module('contentful').factory('accessChecker', ['require', function (require) {
-
   var $rootScope = require('$rootScope');
   var $q = require('$q');
   var stringUtils = require('stringUtils');

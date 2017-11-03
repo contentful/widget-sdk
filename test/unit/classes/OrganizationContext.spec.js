@@ -34,7 +34,6 @@ describe('OrganizationContext', function () {
     it('creates an object if an organization is given', function () {
       expect(this.OrganizationContext.create(ORG)).toBeInstanceOf(Object);
     });
-
   });
 
   describe('#organization', function () {

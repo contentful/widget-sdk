@@ -4,6 +4,8 @@ parserOptions:
 rules:
   prefer-const: error
   no-var: error
+  require-yield: off
+  object-property-newline: off
 env:
   browser: true
   es6: true

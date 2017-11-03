@@ -118,7 +118,6 @@ angular.module('contentful')
       function setError (message) {
         $scope.errorMessages = [message];
       }
-
     }
   };
 }]);

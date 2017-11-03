@@ -9,7 +9,6 @@ angular.module('contentful').directive('cfRoleList', function () {
 });
 
 angular.module('contentful').controller('RoleListController', ['$scope', 'require', function ($scope, require) {
-
   var $state = require('$state');
   var ReloadNotification = require('ReloadNotification');
   var listHandler = require('UserListHandler').create();

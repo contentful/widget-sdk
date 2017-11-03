@@ -171,5 +171,4 @@ describe('paywallOpener', function () {
     self.openPaywall();
     sinon.assert.calledOnce(self.modalDialog.open);
   }
-
 });

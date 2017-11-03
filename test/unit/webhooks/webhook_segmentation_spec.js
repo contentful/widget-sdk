@@ -1,7 +1,6 @@
 import {setCheckbox} from 'helpers/DOM';
 
 describe('Webhook Segmentation directive', function () {
-
   beforeEach(function () {
     module('contentful/test');
 

@@ -1,7 +1,6 @@
 'use strict';
 
 describe('The ApiKey list directive', function () {
-
   let container, sidebar, accessChecker;
 
   beforeEach(function () {

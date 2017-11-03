@@ -135,7 +135,6 @@ angular.module('cf.utils')
     var initialList = list.slice(0, maxLength);
     initialList.push(restLength + ' other ' + itemsName);
     return joinAnd(initialList);
-
   }
 
 
@@ -222,7 +221,7 @@ angular.module('cf.utils')
     if (string) {
       return string.trim().replace(/\s{2,}/g, ' ');
     } else {
-      string;
+      return string;
     }
   }
 
@@ -232,13 +231,13 @@ angular.module('cf.utils')
   // TODO: don't duplicate backend code, implement an endpoint for email validation in gatekeeper
   // and use it instead.
   var emailRegex = RegExp(
-    '(?!.{255})' +         // Lookahead assertion limiting length of email address to under 255 chars
-    '(^\\s*' +             // Start of string and arbitrary amount of whitespace
-    '([^@\\s]{1,64})' +    // Part of address before @, limited to under 64 chars
-    '@' +                  // The @ symbol itself
+    '(?!.{255})' + // Lookahead assertion limiting length of email address to under 255 chars
+    '(^\\s*' + // Start of string and arbitrary amount of whitespace
+    '([^@\\s]{1,64})' + // Part of address before @, limited to under 64 chars
+    '@' + // The @ symbol itself
     '((?:[\\w\\d-]+\\.)' + // Domain portion (limited to letters and numbers), including the period
-    '+\\w{2,}' +           // The TLD
-    ')\\s*$)',             // Arbitrary whitespace and end of string
+    '+[a-z]{2,}' + // The TLD
+    ')\\s*$)', // Arbitrary whitespace and end of string
   'i');
 
   function isValidEmail (string) {

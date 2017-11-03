@@ -23,7 +23,6 @@ const GATEWAY_TIMEOUT = 504;
  * @returns {function} wrapped request function
  */
 export default function wrapWithRetry (requestFn) {
-
   let inFlight = 0;
   const queue = [];
 
@@ -70,7 +69,6 @@ export default function wrapWithRetry (requestFn) {
         queue.unshift(backOff(call));
       } else if ([BAD_GATEWAY, SERVICE_UNAVAILABLE, GATEWAY_TIMEOUT].indexOf(err.statusCode) > -1 &&
           call.ttl > 0) {
-
         call.ttl -= 1;
         queue.unshift(call);
       } else {

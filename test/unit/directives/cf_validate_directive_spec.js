@@ -4,7 +4,6 @@ describe('cfValidate', function () {
   beforeEach(module('contentful/test'));
 
   describe('validator', function () {
-
     beforeEach(function () {
       this.scope = this.$inject('$rootScope').$new();
 
@@ -19,7 +18,6 @@ describe('cfValidate', function () {
     });
 
     describe('#run()', function () {
-
       describe('without schema errors', function () {
         beforeEach(function () {
           this.errors.returns([]);
@@ -116,7 +114,6 @@ describe('cfValidate', function () {
     });
 
     describe('#getPathErrors(path)', function () {
-
       it('returns errors with exact path', function () {
         this.validator.errors = [
           {name: '1', path: ['a']},
@@ -179,7 +176,6 @@ describe('cfValidate', function () {
   });
 
   describe('with cfContentTypeSchema', function () {
-
     const fieldFixture = {
       id: 'fieldId',
       apiName: 'fieldApiName',

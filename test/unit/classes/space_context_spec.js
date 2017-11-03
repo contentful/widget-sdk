@@ -3,7 +3,6 @@ import {isObject} from 'lodash';
 import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 
 describe('spaceContext', function () {
-
   beforeEach(function () {
     this.Subscription = {
       newFromOrganization: sinon.stub()
@@ -557,5 +556,4 @@ describe('spaceContext', function () {
       getUIConfig: sinon.stub().resolves()
     };
   }
-
 });

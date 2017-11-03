@@ -10,7 +10,6 @@
  */
 angular.module('contentful')
 .factory('sectionAccess', ['require', function (require) {
-
   var accessChecker = require('accessChecker');
   var $state = require('$state');
   var $stateParams = require('$stateParams');

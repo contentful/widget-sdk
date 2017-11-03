@@ -14,12 +14,12 @@ for file in "$@"; do
   if [[ "$file" = src/javascripts/**.es6.js ]]; then
     eslint \
       --format compact \
-      --config src/javascripts/.eslint-es6.yml \
+      --config .eslint.yml \
       "$file"
   elif [[ "$file" = src/javascripts/**.js ]]; then
     eslint \
       --format compact \
-      --config src/javascripts/.eslint-es5.yml \
+      --config .eslint.yml \
       "$file"
   else
     eslint \

@@ -3,7 +3,6 @@
 angular.module('contentful')
 
 .directive('cfMarkdownPreview', ['require', function (require) {
-
   var LazyLoader = require('LazyLoader');
 
   return {

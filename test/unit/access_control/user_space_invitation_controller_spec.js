@@ -1,5 +1,4 @@
 describe('UserSpaceInvitationController', function () {
-
   beforeEach(function () {
     module('contentful/test');
     const $rootScope = this.$inject('$rootScope');

@@ -65,7 +65,6 @@ export function create (spaceContext, userListHandler, TokenStore) {
         return userListHandler.isLastAdmin(user.id) && scope.input.confirm !== 'I UNDERSTAND';
       }
     }
-
   }
 
   /**
@@ -151,7 +150,5 @@ export function create (spaceContext, userListHandler, TokenStore) {
       template: template,
       controller: controller
     }, MODAL_OPTS_BASE)).promise;
-
   }
-
 }

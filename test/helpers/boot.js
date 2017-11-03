@@ -3,6 +3,7 @@ Error.stackTraceLimit = 1000;
 // We import all these modules which have side effects.
 // They may register Angular services, register test suite hooks or define
 // global variables
+/* eslint-disable import/first */
 import 'npm:angular-mocks';
 import './application';
 import './boot';

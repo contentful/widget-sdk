@@ -169,7 +169,6 @@ function makeChangeTo (spaceEndpoint) {
       [State.Archived(), () => performAction(Action.Unarchive(), data)],
       [State.Draft(), () => $q.resolve(data)]
     ]);
-
   }
 
   function performActionWithDraftEnsured (action, data) {

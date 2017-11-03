@@ -29,5 +29,4 @@ angular.module('cf.app')
       scope.horizontalLayout = true;
     }
   };
-
 }]);

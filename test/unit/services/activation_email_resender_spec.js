@@ -1,7 +1,6 @@
 'use strict';
 
 describe('activationEmailResender', function () {
-
   let $httpBackend;
   let resend;
 

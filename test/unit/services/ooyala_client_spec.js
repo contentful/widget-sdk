@@ -51,7 +51,6 @@ describe('Ooyala Client', function () {
           headers: { 'X-Contentful-Organization': 'ORG-ID' }
         });
       });
-
     });
 
     describe('when the request fails', function () {
@@ -108,7 +107,6 @@ describe('Ooyala Client', function () {
         });
       });
     });
-
   });
 
   describe('helper methods', function () {
@@ -144,5 +142,4 @@ describe('Ooyala Client', function () {
       });
     });
   });
-
 });

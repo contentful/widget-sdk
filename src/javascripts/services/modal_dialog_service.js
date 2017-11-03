@@ -117,7 +117,6 @@ angular.module('contentful').factory('modalDialog', ['require', function (requir
         $($window).on('keyup', this._handleKeys);
 
         this.domElement.addClass('is-visible');
-
       }, this));
     },
 

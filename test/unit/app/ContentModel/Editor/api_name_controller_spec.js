@@ -50,5 +50,4 @@ describe('ApiNameController', function () {
       expect(apiNameController.isEditable()).toBe(false);
     });
   });
-
 });

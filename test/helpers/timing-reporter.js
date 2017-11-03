@@ -1,4 +1,4 @@
-/*global performance */
+/* global performance */
 'use strict';
 
 // uncomment for gathering spec performance
@@ -47,7 +47,7 @@ function createTimingReporter () {
   };
 
   function printThing (thing) {
-    /*eslint no-console: off*/
+    /* eslint no-console: off */
     if (thing.children) {
       console.groupCollapsed(format(thing.length, thing.description));
       _.each(thing.children, printThing);
@@ -72,5 +72,4 @@ function createTimingReporter () {
     const seconds = timing / 1000;
     return seconds.toFixed(3) + 's: ' + desc;
   }
-
 }

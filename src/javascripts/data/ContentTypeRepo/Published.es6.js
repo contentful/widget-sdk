@@ -186,7 +186,6 @@ export function create (space) {
         return contentTypes;
       }, handleReloadError);
   }
-
 }
 
 function removeDeleted (contentTypes) {

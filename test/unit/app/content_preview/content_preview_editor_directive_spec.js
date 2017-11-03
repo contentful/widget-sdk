@@ -2,7 +2,6 @@ import {setCheckbox} from 'helpers/DOM';
 import * as sinon from 'helpers/sinon';
 
 describe('cfContentPreviewEditor directive', function () {
-
   let spaceContext, contentPreview, notification, $state;
 
   beforeEach(function () {
@@ -212,7 +211,6 @@ describe('cfContentPreviewEditor directive', function () {
     });
 
     it('adds empty config object if none exists for that content type', function () {
-
       const checkboxElement = this.elements.secondConfig.find('input[type="checkbox"]');
       const configElement = this.elements.secondConfig.find('input[type="text"]');
 

@@ -97,7 +97,6 @@ describe('data/Endpoint', function () {
   });
 
   describe('error response', function () {
-
     it('is an error object', function* () {
       this.$http.whenGET(/./).respond(500);
       const req = this.makeRequest({

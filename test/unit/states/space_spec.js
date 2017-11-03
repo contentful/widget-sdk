@@ -1,7 +1,6 @@
 'use strict';
 
 describe('states/spaces', function () {
-
   beforeEach(module('contentful/test', function ($urlRouterProvider) {
     // We do not want to sync the $location to the $urlRouter
     $urlRouterProvider.deferIntercept(true);

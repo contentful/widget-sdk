@@ -26,7 +26,6 @@
 // - The public facing API, exposing some functions to the outside
 angular.module('contentful')
 .factory('searchQueryAutocompletions', ['require', function (require) {
-
   var spaceContext = require('spaceContext');
   var mimetype = require('mimetype');
   var assetContentType = require('assetContentType');

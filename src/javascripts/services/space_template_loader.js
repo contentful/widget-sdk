@@ -1,8 +1,6 @@
 'use strict';
 
 angular.module('contentful').factory('spaceTemplateLoader', ['$injector', function ($injector) {
-
-
   var contentfulClient = $injector.get('contentfulClient');
   var $q = $injector.get('$q');
   var environment = $injector.get('environment');

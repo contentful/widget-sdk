@@ -1,7 +1,6 @@
 'use strict';
 
 angular.module('contentful').factory('spaceTemplateCreator', ['$injector', function ($injector) {
-
   var $q = $injector.get('$q');
   var $rootScope = $injector.get('$rootScope');
   var $timeout = $injector.get('$timeout');
@@ -248,7 +247,6 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
           }
         });
       }
-
     },
 
     publishAssets: function (assets) {
@@ -387,5 +385,4 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
       return templateCreator;
     }
   };
-
 }]);

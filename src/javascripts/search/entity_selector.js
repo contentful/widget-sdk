@@ -8,7 +8,6 @@
  */
 angular.module('contentful')
 .factory('entitySelector', ['require', function (require) {
-
   var modalDialog = require('modalDialog');
   var spaceContext = require('spaceContext');
   var ListQuery = require('ListQuery');

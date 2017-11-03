@@ -21,7 +21,6 @@ angular.module('contentful')
   return create(TheStore);
 }])
 .factory('TheLocaleStore/implementation', [function () {
-
   return {
     create: create
   };

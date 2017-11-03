@@ -16,7 +16,6 @@ describe('Space Template creation service', function () {
       $provide.value('$timeout', stubs.timeout);
 
       $provide.value('contentPreview', {getAll: stubs.getContentPreview, create: stubs.createContentPreview});
-
     });
     inject(function ($injector) {
       spaceTemplateCreator = $injector.get('spaceTemplateCreator');
@@ -254,7 +253,6 @@ describe('Space Template creation service', function () {
         ]);
         stubs.timeout.yield();
         $rootScope.$digest();
-
       });
 
       it('creates 1 content type', function () {
@@ -300,9 +298,6 @@ describe('Space Template creation service', function () {
       it('rejects promise because some have failed', function () {
         sinon.assert.called(stubs.retrySuccess);
       });
-
-
     });
   });
-
 });

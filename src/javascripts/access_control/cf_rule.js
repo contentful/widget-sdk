@@ -10,7 +10,6 @@ angular.module('contentful')
     restrict: 'E',
     template: JST['rule'](),
     controller: ['$scope', function ($scope) {
-
       // prepare content type select options
       K.onValueScope($scope, spaceContext.publishedCTs.items$, function (cts) {
         var ctsInfo = cts.map(function (ct) {

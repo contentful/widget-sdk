@@ -61,6 +61,5 @@ describe('navigator', function () {
       this.$apply();
       sinon.assert.notCalled(exit);
     });
-
   });
 });

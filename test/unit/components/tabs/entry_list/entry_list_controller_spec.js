@@ -76,7 +76,6 @@ describe('Entry List Controller', function () {
       scope.$apply();
       sinon.assert.calledOnce(scope.updateEntries);
     });
-
   });
 
   describe('on search term change', function () {
@@ -209,7 +208,6 @@ describe('Entry List Controller', function () {
   });
 
   describe('#showNoEntriesAdvice()', function () {
-
     beforeEach(function () {
       scope.context.view = {};
       scope.context.loading = false;

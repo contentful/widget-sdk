@@ -47,7 +47,6 @@ angular.module('contentful')
         tab.selected = tab.state === controller.state;
         return tab;
       });
-
     }],
     controllerAs: 'navController'
   };

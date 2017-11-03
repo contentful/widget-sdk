@@ -1,7 +1,6 @@
 'use strict';
 
 describe('ListQuery service', function () {
-
   let ListQuery;
   afterEach(function () {
     ListQuery = null;

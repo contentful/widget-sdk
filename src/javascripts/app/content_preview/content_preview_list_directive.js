@@ -11,7 +11,6 @@ angular.module('contentful')
 }])
 
 .controller('cfContentPreviewListController', ['require', '$scope', function (require, $scope) {
-
   var contentPreview = require('contentPreview');
 
   contentPreview.getAll().then(function (environments) {
