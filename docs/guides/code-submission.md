@@ -107,10 +107,18 @@ satisfied.
 - [ ] The branch is based on top of `master`
 - [ ] The commits follow the required [commit structure](#commit-structure)
 - [ ] The code has been approved by at least one developer
+- [ ] The feature is ready to go to production anytime - don't merge anything
+  that cannot be released right now to master.
 - [ ] The Target Process ticket is in state “Ready to Release” or “Ready to
-  Deploy” (only if a TP ticket exists)
+  Deploy” (only if a TP ticket exists).
 - [ ] The builds include a full run of the acceptance suite (`ci/jenkins/full`).
+  **This job must be run manually for any non-trivial change, especially those
+  that touch a lot of files (e.g. renaming), or core services.**
 - [ ] All builds are green
+
+When a PR is ready to be merged, the author merges it via 'Create merge commit'.
+*Don't* rebase and merge if you have more than one commit! It would make it hard
+to revert to a working state if things go wrong.
 
 After merging a PR you continue with the following steps
 
