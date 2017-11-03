@@ -60,7 +60,7 @@ export function createUI () {
  * view.find('my-input').setValue('hello')
  * ~~~
  *
- * The `find()` method accepts a string and returns an object that
+ * The `find()` method accepts one or more ids ([data-test-id]) and returns an object that
  * interacts with the selected DOM node. (See below for the API)
  *
  * Elements are adressed by their `data-test-id` attribute. For
@@ -68,6 +68,8 @@ export function createUI () {
  * `data-test-id="x"`. If the id starts with a dot, we find an element
  * that ends with the ID. For example `view.find('.z')` will select
  * `data-test-id="x.y.z"`.
+ * If passed more than one selector `view.find('x', 'y')` will return
+ * the element selected by `[data-test-id=x] [data-test-id=y]`
  *
  * Note that elements need not exist when `find()` is called. The
  * element is resolved lazily when one of the element methods is
@@ -81,8 +83,9 @@ export function createUI () {
 export function createView (container) {
   return {
     element: container,
-    find (id) {
-      return createElement(container, makeTestIdSelector(id));
+
+    find (...ids) {
+      return createElement(container, makeTestIdSelector(...ids));
     },
 
     /**
@@ -91,18 +94,20 @@ export function createView (container) {
      *
      * TODO Deprecated. Replace with `find(id).assertNonExistent()`.
      */
-    assertNotHasElement (id) {
-      assertNotHasSelector(container, makeTestIdSelector(id));
+    assertNotHasElement (...ids) {
+      assertNotHasSelector(container, makeTestIdSelector(...ids));
     }
   };
 }
 
-function makeTestIdSelector (id) {
-  if (id.startsWith('.')) {
-    return `[data-test-id$="${id}"]`;
-  } else {
-    return `[data-test-id="${id}"]`;
-  }
+function makeTestIdSelector (...ids) {
+  return ids.map((id) => {
+    if (id.startsWith('.')) {
+      return `[data-test-id$="${id}"]`;
+    } else {
+      return `[data-test-id="${id}"]`;
+    }
+  }).join(' ');
 }
 
 
