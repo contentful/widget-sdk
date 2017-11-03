@@ -51,7 +51,6 @@ export function createStore (initial, reduce) {
     const action = actionCtor(value);
     const nextState = reduce(action, getState());
     stateBus.set(nextState);
-    console.log(action.name, value, nextState);
   }
 }
 

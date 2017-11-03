@@ -69,6 +69,7 @@ const UnsetTyping = makeCtor('UnsetTyping');
 
 const RemoveFilter = makeCtor('RemoveFilter');
 const SetFocusOnLast = makeCtor('SetFocusOnLast');
+const SetFocusOnPill = makeCtor('SetFocusOnPill');
 const SetFocusOnLastValue = makeCtor('SetFocusOnLastValue');
 const ResetFocus = makeCtor('ResetFocus');
 const SetFocusOnFirstSuggestion = makeCtor('SetFocusOnFirstSuggestion');
@@ -87,6 +88,7 @@ export const Actions = {
   SetLoading,
   SetBoxFocus,
   RemoveFilter,
+  SetFocusOnPill,
   SetFocusOnLast,
   SetFocusOnLastValue,
   ResetFocus,
@@ -111,7 +113,7 @@ export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
     [SetBoxFocus] (state, hasFocus) {
       state = set(state, ['searchBoxHasFocus'], hasFocus);
       if (!hasFocus) {
-        state = set(state, ['isSuggestionOpen'], false);
+        state = hideSuggestions(state);
       }
       return state;
     },
@@ -155,6 +157,7 @@ export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
 
     },
     [ResetFocus]: resetFocus,
+    [SetFocusOnPill]: setFocusOnPill,
     [SetFocusOnLast]: setFocusOnLast,
     [SetFocusOnLastValue]: setFocusOnLastValue,
     [SetFocusOnQueryInput]: setFocusOnQueryInput,
@@ -212,10 +215,15 @@ export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
     return set(state, ['focus'], defaultFocus);
   }
 
-  function setFocusOnLast (state) {
+  function setFocusOnPill (state, index) {
     state = resetFocus(state);
 
-    return set(state, ['focus', 'index'], state.filters.length - 1);
+    return set(state, ['focus', 'index'], index);
+  }
+
+  function setFocusOnLast (state) {
+    const lastIndex = state.filters.length - 1;
+    return setFocusOnPill(state, lastIndex);
   }
 
   function setFocusOnLastValue (state) {
@@ -228,10 +236,8 @@ export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
     state = assign(state, { input });
 
     const searchValue = input.trim();
-    if (searchValue.length > 2 || searchValue === '') {
-      state = set(state, ['isTyping'], true);
-      putTyping(sleep(1000));
-    }
+    state = set(state, ['isTyping'], true);
+    putTyping(sleep(1000));
 
     if (searchValue) {
       state = showSuggestions(state);

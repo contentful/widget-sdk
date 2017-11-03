@@ -1,4 +1,4 @@
-describe('Filter Query String', function () {
+xdescribe('Filter Query String', function () {
   let TheStore, $location, qs;
   const key = 'lastFilterQueryString.testEntity.SPACE_ID';
 

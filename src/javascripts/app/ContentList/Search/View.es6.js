@@ -21,7 +21,8 @@ const Keys = {
   backspace: (e) => e.key === 'Backspace',
   tab: (e) => e.key === 'Tab' && !e.shiftKey,
   shiftTab: (e) => e.key === 'Tab' && e.shiftKey,
-  escape: (e) => e.key === 'Escape'
+  escape: (e) => e.key === 'Escape',
+  enter: (e) => e.key === 'Enter'
 };
 
 export default function render ({
@@ -49,34 +50,34 @@ export default function render ({
     }
   }, [
     h('div', {
-      style: {
-        display: 'flex',
-        background: 'white',
-        border: '1px solid transparent',
-        borderColor: searchBoxHasFocus ? colors.blueMid : colors.elementMid,
-        height: searchBoxHasFocus ? 'auto' : '42px',
-        overflow: searchBoxHasFocus ? '' : 'hidden'
-      },
+      class: searchBoxHasFocus
+      ? 'search-next__pills-wrapper search-next__pills-wrapper--state-active'
+      : 'search-next__pills-wrapper',
+      onClick: () => actions.SetFocusOnQueryInput(),
       onFocusOut: actions.ResetFocus
     }, [
-      container({
-        display: 'flex',
-        alignItems: 'stretch',
-        flex: '1 1 auto',
-        flexWrap: 'wrap',
-        padding: '0 10px 5px'
+      h('div', {
+        style: {
+          display: 'flex',
+          alignItems: 'stretch',
+          flex: '1 1 auto',
+          flexWrap: 'wrap',
+          padding: '0 10px 5px'
+        }
       }, [
         filterPill({
           value: contentTypeId,
+          testId: 'contentTypeFilter',
           isRemovable: false,
           filter: contentTypeFilter,
           onChange: (_op, value) => actions.SetContentType(value)
         }),
-        ...pills({
-          filters: filters,
+        ...renderPills({
+          filters,
           defaultFocus,
-          onChange: ({index, op, value}) => actions.SetFilterValueInput([index, op, value]),
-          onRemove: ({ index }) => actions.RemoveFilter(index)
+          onChange: ({ index, op, value }) => actions.SetFilterValueInput([index, op, value]),
+          onRemove: ({ index }) => actions.RemoveFilter(index),
+          onRemoveAttempt: ({ index }) => actions.SetFocusOnPill(index)
         }),
         queryInput({
           isPlaceholderVisible: filters.length === 0,
@@ -94,7 +95,7 @@ export default function render ({
               } else {
                 actions.SetFocusOnFirstSuggestion();
               }
-            } else if (Keys.escape(e)) {
+            } else if (Keys.escape(e) || Keys.enter(e)) {
               actions.HideSuggestions();
             }
           }
@@ -152,19 +153,12 @@ export default function render ({
 
 
 function queryInput ({value, isPlaceholderVisible, isFocused, onChange, onKeyDown}) {
-  return h('input.input-reset', {
+  return h('input.input-reset.search-next__query-input', {
+    dataTestId: 'queryInput',
     hooks: [ H.Ref(autosizeInput) ],
-    style: {
-      flexGrow: '1',
-      lineHeight: '30px',
-      height: '30px',
-      marginTop: '5px',
-      marginRight: '12px',
-      fontSize: 'inherit'
-    },
     ref: (el) => {
       if (isFocused && el) {
-        el.focus();
+        requestAnimationFrame(() => el.focus());
       }
     },
     autofocus: true,
@@ -176,18 +170,28 @@ function queryInput ({value, isPlaceholderVisible, isFocused, onChange, onKeyDow
 }
 
 
-function pills ({ filters, defaultFocus, onChange, onRemove }) {
-  return filters.map(([filter, op, value], index) => {
+function renderPills ({
+  filters,
+  defaultFocus,
+  onChange,
+  onRemove,
+  onRemoveAttempt
+}) {
+  const pills = filters.map(([filter, op, value], index) => {
     return filterPill({
       filter,
       op,
       value,
+      testId: filter.queryKey,
       isFocused: defaultFocus.index === index && !defaultFocus.isValueFocused,
       isValueFocused: defaultFocus.index === index && defaultFocus.isValueFocused,
       onChange: (op, value) => onChange({index, op, value}),
-      onRemove: () => onRemove({index})
+      onRemove: () => onRemove({index}),
+      onRemoveAttempt: () => onRemoveAttempt({index})
     });
   });
+
+  return pills;
 }
 
 
@@ -196,21 +200,27 @@ function pills ({ filters, defaultFocus, onChange, onRemove }) {
 
 function filterPill ({
   filter,
-  op,
+  op = '',
   value,
+  testId,
   isFocused = false,
   isValueFocused = false,
   isRemovable = true,
   onChange,
-  onRemove = noop
+  onRemove = noop,
+  onRemoveAttempt = noop
 }) {
   return h('div.search__filter-pill', {
+    dataTestId: testId,
     ref: (el) => {
       if (isFocused && el) {
         requestAnimationFrame(() => el.focus());
       }
     },
     tabindex: '0',
+    onClick: (e) => {
+      e.stopPropagation();
+    },
     onKeyDown: (e) => {
       if (isRemovable) {
         if (Keys.backspace(e)) {
@@ -222,19 +232,40 @@ function filterPill ({
     }
   }, [
     h('div.search__filter-pill-label', [filter.name]),
-    ...filterValue({
+    filterOperator({
       operators: filter.operators,
-      valueInput: filter.valueInput,
       op,
+      onChange: operator => onChange(operator, value)
+    }),
+    filterValue({
+      valueInput: filter.valueInput,
       value,
       isFocused: isValueFocused,
-      onChange,
-      onRemove
+      onChange: value => onChange(op, value),
+      onRemove: onRemoveAttempt
     })
   ]);
 }
 
-function filterValue ({ operators, valueInput, op, value, isFocused, onChange, onRemove }) {
+function filterOperator ({ op, operators = [], onChange }) {
+  const hasOperators = operators.length > 1;
+
+  if (!hasOperators) {
+    return null;
+  }
+
+  return h('search_select.search__select-operator', {}, [
+    h('select.input-reset.search__select', {
+      value: op,
+      onChange: (e) => onChange(e.target.value),
+      tabindex: '0'
+    }, operators.map(([value, label]) => {
+      return h('option', {value}, [label]);
+    }))
+  ]);
+}
+
+function filterValue ({ valueInput, value, isFocused, onChange, onRemove }) {
   const inputRef = (el) => {
     if (isFocused && el) {
       requestAnimationFrame(() => el.focus());
@@ -250,51 +281,44 @@ function filterValue ({ operators, valueInput, op, value, isFocused, onChange, o
     }
   };
 
-  const hasOperators = operators && operators.length > 1;
-  const operatorSelect = hasOperators && filterSelect({
-    selectedOption: op,
-    options: operators,
-    className: '.search__select-operator',
-    inputRef,
-    onChange: newOp => onChange(newOp, value),
-    onKeyDown: handleKeyDown
-  });
+  const valueTestId = 'value';
 
-  const onValueChange = newValue => onChange(op, newValue);
   const input = match(valueInput, {
     [ValueInput.Text]: () =>
       filterValueText({
+        testId: valueTestId,
         value,
         inputRef,
-        onChange: onValueChange,
+        onChange,
         onKeyDown: handleKeyDown
       }),
     [ValueInput.Select]: (options) =>
       filterSelect({
+        testId: valueTestId,
         options,
-        selectedOption: value,
-        className: '.search__select-value',
+        value,
         inputRef,
-        onChange: onValueChange,
+        onChange,
         onKeyDown: handleKeyDown
       }),
     [ValueInput.Reference]: (ctField) =>
       filterValueReference({
+        testId: valueTestId,
         ctField,
         value,
         inputRef,
-        onChange: onValueChange,
+        onChange,
         onKeyDown: handleKeyDown
       })
 
   });
 
-  return [operatorSelect, input];
+  return input;
 }
 
-
-function filterValueText ({value, inputRef, onChange, onKeyDown}) {
+function filterValueText ({value, testId, inputRef, onChange, onKeyDown}) {
   return h('input.input-reset.search__input-text', {
+    dataTestId: testId,
     value: value,
     ref: inputRef,
     onInput: (e) => onChange(e.target.value),
@@ -307,19 +331,20 @@ function filterValueText ({value, inputRef, onChange, onKeyDown}) {
 }
 
 function filterSelect ({
+  testId,
   options = [],
-  selectedOption = [], // [value, label]
-  className = '',
+  value,
   inputRef,
   onChange,
   onKeyDown
 }) {
-  const [_, selectedOptionLabel] = options.find(([v]) => v === selectedOption) || ['', ''];
+  const [_, selectedOptionLabel] = options.find(([v]) => v === value) || ['', ''];
   const width = selectedOptionLabel.length ? `${selectedOptionLabel.length + 5}ch` : 'auto';
 
-  return h(`.search_select${className}`, [
+  return h('.search_select.search__select-value', [
     h('select.input-reset.search__select', {
-      value: selectedOption,
+      dataTestId: testId,
+      value: value,
       ref: inputRef,
       onChange: ({ target: { value } }) => onChange(value),
       tabindex: '0',
@@ -331,13 +356,14 @@ function filterSelect ({
   ]);
 }
 
-function filterValueReference ({ctField = {}, value, inputRef, onChange, onKeyDown}) {
+function filterValueReference ({ctField = {}, testId, value, inputRef, onChange, onKeyDown}) {
   // We do not want support field type arrays of references yet.
   const ctFieldClone = cloneDeep(ctField);
 
   ctFieldClone.type = 'Link';
 
   return h('input.input-reset.search__input-text', {
+    dataTestId: testId,
     value,
     ref: inputRef,
     onClick: () => {
@@ -422,14 +448,17 @@ function searchHelpBanner () {
 }
 
 function suggestionsContainer (content) {
-  return container({
-    position: 'absolute',
-    left: '0',
-    right: '0',
-    zIndex: 1,
-    border: `solid ${colors.blueMid}`,
-    borderWidth: '0 1px 1px 1px',
-    background: 'white'
+  return h('div', {
+    dataTestId: 'suggestions',
+    style: {
+      position: 'absolute',
+      left: '0',
+      right: '0',
+      zIndex: 1,
+      border: `solid ${colors.blueMid}`,
+      borderWidth: '0 1px 1px 1px',
+      background: 'white'
+    }
   }, [
     container({
       maxHeight: '50vh',

@@ -279,8 +279,8 @@ function allFilters (contentTypes) {
   }, []);
 
   const fields = concat(
-    ctFieldFilters,
-    sysFieldFilters
+    sysFieldFilters,
+    ctFieldFilters
   );
 
   return fields;
