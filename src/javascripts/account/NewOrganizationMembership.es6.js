@@ -20,9 +20,9 @@ const adminRole = {
 };
 const maxNumberOfEmails = 100;
 const orgRoles = [
-  { name: 'Owner', value: 'owner', description: '' },
-  { name: 'Admin', value: 'admin', description: '' },
-  { name: 'Member', value: 'member', description: '' }
+  { name: 'Owner', value: 'owner', description: 'Organization owners can manage subscriptions, billing and organization memberships.' },
+  { name: 'Admin', value: 'admin', description: 'Organization admins cannot manage organization subscriptions nor billing but can manage organization memberships.' },
+  { name: 'Member', value: 'member', description: 'Organization members do not have access to any organization information and only have access to assigned spaces.' }
 ];
 const defaultOrgRole = 'member';
 const Idle = makeCtor('idle');
@@ -445,7 +445,21 @@ function organizationRole (orgRole, updateOrgRole) {
             checked: role.value === orgRole,
             onChange: (evt) => updateOrgRole(evt.target.checked, role.value)
           }),
-          ` ${role.name}`
+          ` ${role.name} `,
+          h('span.tooltip-trigger', {style: {position: 'relative'}}, [
+            h('i.fa.fa-question-circle'),
+            h('.tooltip.fade.top.hidden', {
+              style: {
+                width: '200px',
+                bottom: '100%',
+                left: '50%',
+                marginLeft: '-100px'
+              }
+            }, [
+              h('.tooltip-arrow', {style: {left: '50%'}}),
+              h('.tooltip-inner', [role.description])
+            ])
+          ])
         ])
       ]);
     }))
