@@ -76,7 +76,7 @@ angular.module('contentful/app', ['contentful'])
   require('Authentication').init();
   require('services/TokenStore').init();
   require('presence').startTracking();
-  require('services/UIVersionSwitcher').init(urlParams['ui_version']);
+  require('utils/UIVersionSwitcher').init(urlParams['ui_version']);
   require('utils/LaunchDarkly/EnforceFlags').init(urlParams['ui_enable_flags']);
   if (urlParams['ui_version'] || urlParams['ui_enable_flags']) {
     location.search(_.omit(urlParams, 'ui_version', 'ui_enable_flags'));
