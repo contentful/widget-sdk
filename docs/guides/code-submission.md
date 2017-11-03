@@ -5,8 +5,9 @@ This guide explains how to get code changes deployed.
 1. [Create a release PR from your branch to `master`](#creating-a-release-pr)
 2. [Get code reviewed and approved](#code-review)
 3. [Get QA approval](#qa-approval)
-4. [Merge to master](#merging-a-release-pr)
-5. [Deploy `master` to `production`](#deploying-to-production)
+4. [Run automated tests](#run-automated-tests)
+5. [Merge to master](#merging-a-release-pr)
+6. [Deploy `master` to `production`](#deploying-to-production)
 
 
 Although generally this process should be followed closely you may deviate from
@@ -92,11 +93,28 @@ Implicit approval is only sufficient under the following conditions
 In all other cases explicit approval needs to be obtained from manual QA.
 When in doubt, consult with QA.
 
-To obtain implicit approval you need to successfully run the [full acceptance
-test suite][full-test-job].
+To obtain implicit approval you need to successfully run the full acceptance
+test suite - see below:
 
-[full-test-job]: https://jenkins.quirely.com/job/Custom%20Settings%20Job/
 
+Run automated tests
+-------------------
+
+Smoke tests are run automatically for every PR. In addition to that, for
+larger non-trivial PR's and [implicit approval flow](#qa-approval) the author
+should run the full test suite manually.
+
+- Go to [Jenkins Custom Settings Job][full-test-job]. Use credentials in the
+  Lastpass shared engineering folder to authorize access and your github
+  credentials to log in.
+- Select 'Build with parameters'
+- Modify these parameters:
+  - 'Git commit hash' - your PR branch name or latest commit
+  - 'Update Github' - select this checkbox
+- Press 'Build'
+
+The build status should now be displayed in github. For help and further
+information, go to #dev-qa channel.
 
 Merging a Release PR
 --------------------
@@ -111,7 +129,7 @@ satisfied.
   that cannot be released right now to master.
 - [ ] The Target Process ticket is in state “Ready to Release” or “Ready to
   Deploy” (only if a TP ticket exists).
-- [ ] The builds include a full run of the acceptance suite (`ci/jenkins/full`).
+- [ ] The builds include a [full run of the acceptance suite][#run-automated-tests].
   **This job must be run manually for any non-trivial change, especially those
   that touch a lot of files (e.g. renaming), or core services.**
 - [ ] All builds are green
@@ -174,3 +192,5 @@ This process is fairly straightforward.
 `git revert` it. If it is a merge commit, don't forget to use the `-m` flag
 with `git revert`
 3. [Follow the usual code submission and review process](#code-submission-and-release-process)
+
+[full-test-job]: https://jenkins.quirely.com/job/Custom%20Settings%20Job/
