@@ -20,11 +20,14 @@ import {settings} from 'environment';
  * Given a path return the URL for the CMA.
  *
  * In production returns something like `//api.contentful.com/path`.
+ *
+ * If a flag to mock all requests is set via url param, returns Stoplight url
+ * (this works for quirely only)
  * @param {string} path
  * @returns {string}
  */
 export function apiUrl (path) {
-  const baseUrl = shouldMockApi() ? settings.mockApiUrl : settings.apiUrl;
+  const baseUrl = (shouldMockApi() && settings.mockApiUrl) || settings.apiUrl;
   return baseUrl + ensureLeadingSlash(path);
 }
 
