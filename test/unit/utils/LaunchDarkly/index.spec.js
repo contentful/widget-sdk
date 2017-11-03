@@ -65,10 +65,13 @@ describe('LaunchDarkly', function () {
 
     this.shallowObjectDiff = {default: sinon.stub().returns({})};
 
+    this.EnforceFlags = {getEnabledFlags: sinon.stub().returns([])};
+
     module('contentful/test', $provide => {
       $provide.constant('libs/launch-darkly-client', this.LD);
       $provide.value('data/User', this.utils);
       $provide.value('utils/ShallowObjectDiff', this.shallowObjectDiff);
+      $provide.value('utils/LaunchDarkly/EnforceFlags', this.EnforceFlags);
     });
 
     const ld = this.$inject('utils/LaunchDarkly');
@@ -252,6 +255,15 @@ describe('LaunchDarkly', function () {
       expect(_ => getChangeHandler()).toThrow();
       readyHandler();
       expect(typeof getChangeHandler()).toBe('function');
+    });
+
+    it('overrides value with true for enforced feature flags', function () {
+      this.EnforceFlags.getEnabledFlags.returns(['feature-flag']);
+      const { spy, getChangeHandler } = this.setupFF();
+      const changeHandler = getChangeHandler();
+      this.client.variation.returns('false');
+      changeHandler();
+      expect(spy.args[1][0]).toBe(true);
     });
   });
 });
