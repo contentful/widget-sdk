@@ -11,8 +11,16 @@ import {contactSalesUrl} from 'Config';
 import {userDataBus$} from 'data/User/index';
 
 function getUserData () {
-  const [user, org] = getCurrentValue(userDataBus$);
-  return {user, org};
+  try {
+    // getCurrentValue will fail when the user has no
+    // org memberships which can happen when a user
+    // belongs to one org and cancels the subscription
+    // for that org
+    const [user, org] = getCurrentValue(userDataBus$);
+    return {user, org};
+  } catch (e) {
+    return null;
+  }
 }
 
 /**
@@ -21,18 +29,24 @@ function getUserData () {
  * @return {String} - result URL to the marketing website with prefilled form
  */
 export function createContactLink (source) {
-  const {
-    user: {firstName, lastName, email},
-    org: {name: companyName} = {}
-  } = getUserData();
+  const userData = getUserData();
 
-  const props = {
-    first_name: firstName,
-    last_name: lastName,
-    email: email,
-    company: companyName,
-    inappsource: source
-  };
+  if (userData) {
+    const {
+      user: {firstName, lastName, email},
+      org: {name: companyName} = {}
+    } = getUserData();
 
-  return contactSalesUrl + '?' + stringify(props);
+    const props = {
+      first_name: firstName,
+      last_name: lastName,
+      email: email,
+      company: companyName,
+      inappsource: source
+    };
+
+    return contactSalesUrl + '?' + stringify(props);
+  } else {
+    return '';
+  }
 }
