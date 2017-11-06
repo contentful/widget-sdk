@@ -165,10 +165,10 @@ angular.module('contentful')
       globalObject: 'Snowplow'
     },
     walkMeStaging: {
-      url: 'https://cdn.walkme.com/users/0b7285ac5c8b4dee81eb418420f778c1/test/walkme_0b7285ac5c8b4dee81eb418420f778c1_https.js'
+      url: 'https://cdn.walkme.com/users/cf344057732941ed81018bf903986da9/test/walkme_cf344057732941ed81018bf903986da9_https.js'
     },
     walkMeProd: {
-      url: 'https://cdn.walkme.com/users/0b7285ac5c8b4dee81eb418420f778c1/walkme_0b7285ac5c8b4dee81eb418420f778c1_https.js'
+      url: 'https://cdn.walkme.com/users/cf344057732941ed81018bf903986da9/walkme_cf344057732941ed81018bf903986da9_https.js'
     }
   };
 
