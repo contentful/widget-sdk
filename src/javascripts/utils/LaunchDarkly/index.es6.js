@@ -116,7 +116,9 @@ export function onFeatureFlag ($scope, featureName, handler) {
 
   $scope.$on('$destroy', _ => {
     obs$.end();
-    client.off(`change:${featureName}`, setVariation);
+    if (client) {
+      client.off(`change:${featureName}`, setVariation);
+    }
   });
 
   onValueScope(
