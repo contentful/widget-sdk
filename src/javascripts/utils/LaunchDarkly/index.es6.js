@@ -223,29 +223,6 @@ function setCurrCtx (user) {
     user.custom);
 }
 
-/**
- * @description
- * Initializes the LD client
- *
- * @param {Object} user - An LD user with a key and custom properties
- */
-function initLDClient (user) {
-  setCurrCtx(user);
-  return LD.initialize(config.envId, user);
-}
-
-/**
- * @description
- * Changes the user context which could either be the complete user
- * or just some custom properties.
- *
- * @param {Object} user - An LD user with a key and custom properties
- */
-function identify (user) {
-  LDContextChangeMVar.empty();
-  setCurrCtx(user);
-  client.identify(user, null, LDContextChangeMVar.put);
-}
 
 /**
  * @description
@@ -257,14 +234,15 @@ function identify (user) {
  * a map of spaces by org id and an optional current space
  */
 function changeUserContext ([user, currOrg, spacesByOrg, currSpace]) {
-  const newLDUser = buildLDUser(user, currOrg, spacesByOrg, currSpace);
-
-  if (!client) {
-    client = initLDClient(newLDUser);
+  const ldUser = buildLDUser(user, currOrg, spacesByOrg, currSpace);
+  setCurrCtx(ldUser);
+  if (client) {
+    LDContextChangeMVar.empty();
+    client.identify(ldUser, null, LDContextChangeMVar.put);
+  } else {
+    client = LD.initialize(config.envId, ldUser);
     client.on('ready', _ => {
       LDContextChangeMVar.put();
     });
-  } else {
-    identify(newLDUser);
   }
 }
