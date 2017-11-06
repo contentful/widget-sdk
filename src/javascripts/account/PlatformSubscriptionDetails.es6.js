@@ -48,11 +48,18 @@ function render (data) {
   ]);
 }
 
-function renderLeftSidebar ({name}) {
+function renderLeftSidebar ({name, type = 'team'}) {
   return h('div', [
-    h('h2', ['Your pricing plan']),
-    h('p', [name])
+    h('h2.pricing-heading', ['Your pricing plan']),
+    h(`.pricing-plan.pricing-plan--${type}.pricing-tile`, [
+      renderPricingPlanIcon({type}),
+      h('p.pricing-heading', [name])
+    ])
   ]);
+}
+
+function renderPricingPlanIcon () {
+  return ''; // TODO!
 }
 
 function renderContent ({name, productName}) {
