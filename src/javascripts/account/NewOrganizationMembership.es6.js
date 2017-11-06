@@ -86,28 +86,28 @@ export default function ($scope) {
     // 3rd step - load all space roles
     orgSpaces.items
       .map(space => client.newSpace(space)) // workaround necessary to fetch space roles
-      .forEach(setSpaceRoles);
+      .forEach(space => runTask(function* () {
+        const spaceWithRoles = yield* getSpaceWithRoles(space);
+        state = assign(state, {spaces: [...state.spaces, spaceWithRoles]});
+        // rerender every time a space is complete with roles to show a progress indicator
+        rerender();
+      }));
   });
 
-  function setSpaceRoles (space) {
-    runTask(function* () {
-      const roles = yield RoleRepository.getInstance(space).getAll();
-      const spaceRoles = roles.map(role => ({
-        name: role.name,
-        id: role.sys.id,
-        spaceId: role.sys.space.sys.id
-      }));
+  function* getSpaceWithRoles (space) {
+    const roles = yield RoleRepository.getInstance(space).getAll();
+    const spaceRoles = roles.map(role => ({
+      name: role.name,
+      id: role.sys.id,
+      spaceId: role.sys.space.sys.id
+    }));
 
-      state = assign(state, {spaces: [
-        ...state.spaces, {
-          id: space.data.sys.id,
-          createdAt: space.data.sys.createdAt,
-          name: space.data.name,
-          roles: sortBy(spaceRoles, role => role.name)
-        }
-      ]});
-      rerender();
-    });
+    return {
+      id: space.data.sys.id,
+      createdAt: space.data.sys.createdAt,
+      name: space.data.name,
+      roles: sortBy(spaceRoles, role => role.name)
+    };
   }
 
   function updateSpaceRole (checked, role, spaceMemberships) {
