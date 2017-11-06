@@ -162,8 +162,29 @@ angular.module('contentful')
       return;
     }
     var initialSearchState = getViewSearchState();
+
+    spaceContext.users.getAll().then(function (users) {
+      createSearchInput(
+        $scope,
+        spaceContext,
+        triggerSearch,
+        isSearching$,
+        initialSearchState,
+        users
+      );
+    });
+
+    // If we wait until `users.getAll()` resolves to
+    // render the search input, a render error is thrown.
+    // So we first render the search input and then re-render it
+    // once we have the user data.
     createSearchInput(
-      $scope, spaceContext, triggerSearch, isSearching$, initialSearchState);
+      $scope,
+      spaceContext,
+      triggerSearch,
+      isSearching$,
+      initialSearchState
+    );
   }
 
   function setupEntriesHandler (promise) {

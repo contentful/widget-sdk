@@ -8,7 +8,7 @@ import { initialState, makeReducer, Actions } from './State';
 import { getMatchingFilters, contentTypeFilter, getFiltersFromQueryKey } from './Filters';
 
 export default function create (
-  $scope, spaceContext, submitSearch, isSearching$, initState = {}
+  $scope, spaceContext, submitSearch, isSearching$, initState = {}, users
 ) {
   try {
     const contentTypes = K.getValue(spaceContext.publishedCTs.items$).toJS();
@@ -21,8 +21,7 @@ export default function create (
 
     K.onValueScope($scope, store.state$, (state) => {
       window._state = state;
-
-      $scope.search = render(mapStateToProps(state, { contentTypes }, actions));
+      $scope.search = render(mapStateToProps(state, { contentTypes, users }, actions));
     });
 
     // eslint-disable-next-line
@@ -36,10 +35,12 @@ export default function create (
 
 
 function mapStateToProps (state, props, actions) {
-  const { contentTypes } = props;
+  const { contentTypes, users = [] } = props;
+  const { contentTypeId, filters: searchFilters } = state;
+
   return {
     contentTypeFilter: contentTypeFilter(contentTypes),
-    filters: getFiltersFromQueryKey(contentTypes, state.filters, state.contentTypeId),
+    filters: getFiltersFromQueryKey({users, contentTypes, searchFilters, contentTypeId}),
     suggestions: state.isSuggestionOpen
       ? getMatchingFilters(state.input, state.contentTypeId, contentTypes)
       : [],

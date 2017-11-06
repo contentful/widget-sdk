@@ -1,4 +1,4 @@
-import { startsWith, find, get, has } from 'lodash';
+import { cloneDeep, startsWith, find, get, has } from 'lodash';
 import { makeCtor } from 'utils/TaggedValues';
 import { assign, push, concat } from 'utils/Collections';
 import { getOperatorsByType, equality as equalityOperator } from './Operators';
@@ -50,20 +50,21 @@ export const ValueInput = {
 // The generic filters applicable to all content types
 const sysFieldFilters = [
   ['updatedAt', 'Date', 'Time the item was last changed'],
-  ['updatedBy'],
+  ['updatedBy', 'User', 'Users of this space'],
   ['createdAt', 'Date'],
-  ['createdBy'],
+  ['createdBy', 'User', 'Users of this space'],
   ['publishedAt', 'Date'],
-  ['publishedBy'],
+  ['publishedBy', 'User', 'Users of this space'],
   ['id']
 ].map(([name, type, desc]) => {
   return {
     name: name,
     description: desc,
-    queryKey: `sys.${name}`,
+    queryKey: getSysFieldQueryKey({name, type}),
     operators: getOperatorsByType(type),
     valueInput: getControlByType({type}),
-    contentType: null
+    contentType: null,
+    type
   };
 }).concat([{
   name: 'status',
@@ -77,7 +78,6 @@ const sysFieldFilters = [
     ['archived', 'Archived']
   ])
 }]);
-
 
 /**
  * Create the filter for the contentType field of an entry.
@@ -108,14 +108,15 @@ export function getContentTypeById (contentTypes, contentTypeId) {
   return find(contentTypes, ct => ct.sys.id === contentTypeId);
 }
 
-export function getFiltersFromQueryKey (contentTypes, searchFilters, contentTypeId) {
+export function getFiltersFromQueryKey ({contentTypes, searchFilters, contentTypeId, users}) {
   const contentType = getContentTypeById(contentTypes, contentTypeId);
   const filters = searchFilters.map(([queryKey, op, value]) => {
     return [buildFilterFieldByQueryKey(contentType, queryKey), op, value];
   });
 
-  return filters;
+  return setUserFieldsFilters(users, filters);
 }
+
 
 /**
  * Returns a field filter for given queryKey from
@@ -197,6 +198,20 @@ function filterByContentType (filters, contentTypeId) {
   }
 }
 
+function setUserFieldsFilters (users, filters) {
+  const usersOptions = users.map(user => [user.sys.id, `${user.firstName} ${user.lastName}`]);
+
+  return filters.map(([filter, op, value]) => {
+    const filterClone = cloneDeep(filter);
+
+    if (filterClone.type === 'User') {
+      filterClone.valueInput = ValueInput.Select(usersOptions);
+    }
+
+    return [filterClone, op, value];
+  });
+}
+
 function isContentTypeField (queryKey) {
   const [prefix] = queryKey.split('.');
 
@@ -250,7 +265,8 @@ function buildFilterField (ct, ctField) {
     contentType: {
       id: ct.sys.id,
       name: ct.name
-    }
+    },
+    type: ctField.type
   };
 }
 
@@ -259,6 +275,13 @@ function getQueryKey (ctField) {
 
   return `${CT_QUERY_KEY_PREFIX}.${ctField.apiName}${suffix}`;
 }
+
+function getSysFieldQueryKey ({name, type}) {
+  const suffix = isUserField({type}) ? '.sys.id' : '';
+
+  return `sys.${name}${suffix}`;
+}
+
 
 // TODO: implement control type resolution
 function getControlByType (ctField) {
@@ -284,6 +307,10 @@ function getControlByType (ctField) {
 
 function isReferenceField ({type, items = {}} = {}) {
   return type === 'Link' || items.type === 'Link';
+}
+
+function isUserField ({type}) {
+  return type === 'User';
 }
 
 function getPredefinedValues (ctField) {

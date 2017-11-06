@@ -310,7 +310,6 @@ function filterValue ({ valueInput, value, isFocused, onChange, onRemove }) {
         onChange,
         onKeyDown: handleKeyDown
       })
-
   });
 
   return input;

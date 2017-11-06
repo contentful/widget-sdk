@@ -22,6 +22,7 @@ export function getOperatorsByType (type) {
     case 'Integer':
     case 'Number':
       return [equality, inequality, ...ranges];
+    case 'User':
     case 'Array':
     case 'Boolean':
       return [equality];
