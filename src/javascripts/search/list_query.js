@@ -80,7 +80,7 @@ angular.module('contentful').factory('ListQuery', ['require', function (require)
     };
 
     // TODO: Remove legacy after new search for Assets.
-    var buildQuery = opts.searchFilters && opts.searchText
+    var buildQuery = opts.searchFilters || opts.searchText !== undefined
       ? $q.resolve(buildQueryFromUISearch(opts))
       : buildQueryFromLegacySearchTerm(
         spaceContext.space, contentType, opts.searchTerm);

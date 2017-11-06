@@ -8,12 +8,12 @@ import { assign } from 'utils/Collections';
  * queries on `sys` fields.
  *
  * @param {String?} options.contentTypeId
- * @param {Array} options.searchFilters A list of [filter, operator, value] triples.
- * @param {String} options.searchText
+ * @param {Array?} options.searchFilters A list of [filter, operator, value] triples.
+ * @param {String?} options.searchText
  *
  * TODO: Write tests.
  */
-export function buildQuery ({contentTypeId, searchFilters, searchText}) {
+export function buildQuery ({contentTypeId, searchFilters = [], searchText}) {
   let queryObj = searchFilters.reduce((obj, [key, op, value]) => {
     if (key === '__status') {
       if (value === 'published') {

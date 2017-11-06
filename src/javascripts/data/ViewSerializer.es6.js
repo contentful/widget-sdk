@@ -20,7 +20,7 @@ export function serialize (viewObject) {
 export function unserialize (serializedView) {
   const view = flatten.unflatten(serializedView, {safe: true});
 
-  if (view.filters || view.searchText) {
+  if (view.filters || view.searchText !== undefined) {
     delete view.searchTerm; // Doesn't make sense to have both formats - ignore.
   }
   if (view.filters) {
