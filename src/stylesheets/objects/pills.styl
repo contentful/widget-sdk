@@ -69,9 +69,9 @@ Styleguide: pills.draggable
 $pill-loading()
   $spinner-base()
   &.is-loading
-    +$spinner-active($colors.text-light, 12px, 1px)
+    +$spinner-active($colors.text-light, 14px, 1px)
       display: inline-block
-      margin-left: 5px
+      margin-left: 10px
       
 $pill-item()
   $pill-loading()
@@ -84,8 +84,23 @@ $pill-item()
   // TODO Make this a variable. It is not part of the color scheme yet
   background: #EEF2F4
 
+  > svg
+    margin-left: 10px
+    margin-right: -2px
+    vertical-align: text-bottom
+    max-width: 16px
+    > path
+      fill: white
+
 .pill-item
   $pill-item()
+
+  &--success
+    background-color: $colors.green-dark
+    color: white
+  &--warning
+    background-color: $colors.red-mid
+    color: white
 
   &.x--draggable
     padding-left: 3ex

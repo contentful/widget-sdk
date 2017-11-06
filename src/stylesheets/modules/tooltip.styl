@@ -78,3 +78,14 @@
   margin-left: -5px
   border-bottom-color: #000000
   border-width: 0 5px 5px
+
+// workaround version to use tooltips without a 3rd party jQuery plugin
+// TODO: find a way to use tooltips with Preact components and remove the styles below
+.tooltip.hidden
+  display: none
+
+.tooltip-trigger
+  &:hover
+    > .tooltip
+      display: block
+      opacity: .8
