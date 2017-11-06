@@ -6,6 +6,7 @@ import {onValueScope, createPropertyBus} from 'utils/kefir';
 import getChangesObject from 'utils/ShallowObjectDiff';
 import {isOrgPlanEnterprise} from 'data/Org';
 import {getEnabledFlags} from 'utils/LaunchDarkly/EnforceFlags';
+import $q from '$q';
 
 import {
   getOrgRole,
@@ -68,7 +69,7 @@ export function getCurrentVariation (flagName) {
     const variation = getVariation(flagName, UNINIT_VAL);
 
     if (variation === UNINIT_VAL) {
-      throw new Error(`Invalid flag ${flagName}`);
+      return $q.reject(new Error(`Invalid flag ${flagName}`));
     } else {
       return JSON.parse(variation);
     }
@@ -223,29 +224,6 @@ function setCurrCtx (user) {
     user.custom);
 }
 
-/**
- * @description
- * Initializes the LD client
- *
- * @param {Object} user - An LD user with a key and custom properties
- */
-function initLDClient (user) {
-  setCurrCtx(user);
-  return LD.initialize(config.envId, user);
-}
-
-/**
- * @description
- * Changes the user context which could either be the complete user
- * or just some custom properties.
- *
- * @param {Object} user - An LD user with a key and custom properties
- */
-function identify (user) {
-  LDContextChangeMVar.empty();
-  setCurrCtx(user);
-  client.identify(user, null, LDContextChangeMVar.put);
-}
 
 /**
  * @description
@@ -257,14 +235,18 @@ function identify (user) {
  * a map of spaces by org id and an optional current space
  */
 function changeUserContext ([user, currOrg, spacesByOrg, currSpace]) {
-  const newLDUser = buildLDUser(user, currOrg, spacesByOrg, currSpace);
-
-  if (!client) {
-    client = initLDClient(newLDUser);
+  const ldUser = buildLDUser(user, currOrg, spacesByOrg, currSpace);
+  setCurrCtx(ldUser);
+  // FIXME We need to handle the case where the LD service is not
+  // available. Unfortunately LD does not pass error information to the
+  // callbacks. They are always called, no matter what.
+  if (client) {
+    LDContextChangeMVar.empty();
+    client.identify(ldUser, null, LDContextChangeMVar.put);
+  } else {
+    client = LD.initialize(config.envId, ldUser);
     client.on('ready', _ => {
       LDContextChangeMVar.put();
     });
-  } else {
-    identify(newLDUser);
   }
 }
