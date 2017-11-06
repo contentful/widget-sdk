@@ -22,6 +22,9 @@ Initializing will open a console that lets you specify return codes for URLs
 matching a pattern. All HTTP requests to URLs matching the given pattern will
 return the specified status.
 
+The object returned by this call offers an API to configure the XHR mocking. See
+the `debug/XHR/Mocker` module for more information about the different methods.
+
 
 Development
 -----------
