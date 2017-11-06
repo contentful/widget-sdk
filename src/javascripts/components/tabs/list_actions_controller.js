@@ -5,11 +5,6 @@ angular.module('contentful')
 .controller('ListActionsController', ['$scope', 'require', 'entityType', function ListActionsController ($scope, require, entityType) {
   var accessChecker = require('accessChecker');
   var batchPerformer = require('batchPerformer');
-  var spaceContext = require('spaceContext');
-  var K = require('utils/kefir');
-  var makeAddToCollectionComponent = require('app/EntryList/Collections/Selectors').bulkSelector;
-  var isFeatureEnabled = require('analytics/OrganizationTargeting').default;
-  var h = require('ui/Framework').h;
 
   var collection = entityType === 'Entry' ? 'entries' : 'assets';
 
@@ -38,28 +33,6 @@ angular.module('contentful')
 
   $scope.showUnarchive = createShowChecker('unarchive', 'canUnarchive');
   $scope.unarchiveSelected = performer.unarchive;
-
-
-  if (entityType === 'Entry' && isFeatureEnabled('collections', spaceContext.space)) {
-    var selectedIds$ = K.fromScopeValue($scope, function () {
-      return $scope.selection.getSelected();
-    }).map(function (selected) {
-      // This must not be in the scope watcher. Otherwise we would create
-      // a new object on each watch and retrigger the digest cycle
-      // because it is not stable.
-      return selected.map(function (entry) { return entry.data.sys.id; });
-    });
-
-    K.onValueScope(
-      $scope,
-      makeAddToCollectionComponent(selectedIds$, spaceContext.contentCollections),
-      function (component) {
-        $scope.addToCollectionComponent = component;
-      }
-    );
-  } else {
-    $scope.addToCollectionComponent = h('span');
-  }
 
   function createShowChecker (action, predicate) {
     return function () {

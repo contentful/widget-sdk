@@ -10,7 +10,7 @@ angular.module('contentful')
     $scope.$watch('context.view', viewPersistor.save, true);
     $scope.loadView = loadView;
 
-    replaceView(viewPersistor.read([]));
+    replaceView(viewPersistor.read());
 
     function loadView (view) {
       replaceView(view);

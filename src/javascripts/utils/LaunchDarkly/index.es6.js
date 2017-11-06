@@ -5,6 +5,7 @@ import {assign, get, isNull, omitBy} from 'lodash';
 import {onValueScope, createPropertyBus} from 'utils/kefir';
 import getChangesObject from 'utils/ShallowObjectDiff';
 import {isOrgPlanEnterprise} from 'data/Org';
+import {getEnabledFlags} from 'utils/LaunchDarkly/EnforceFlags';
 
 import {
   getOrgRole,
@@ -64,7 +65,7 @@ export function init () {
  */
 export function getCurrentVariation (flagName) {
   return LDContextChangeMVar.read().then(_ => {
-    const variation = client.variation(flagName, UNINIT_VAL);
+    const variation = getVariation(flagName, UNINIT_VAL);
 
     if (variation === UNINIT_VAL) {
       throw new Error(`Invalid flag ${flagName}`);
@@ -138,7 +139,22 @@ export { onFeatureFlag as onABTest };
  * @returns {Function}
  */
 function getVariationSetter (flagName, obs$) {
-  return _ => obs$.set(client.variation(flagName, UNINIT_VAL));
+  return _ => obs$.set(getVariation(flagName, UNINIT_VAL));
+}
+
+
+/**
+ * @description
+ * Wraps `client.variation()` method, overriding with `true` for feature flags
+ * enabled via query params.
+ */
+function getVariation (flagName, ...args) {
+  const enabledFeatures = getEnabledFlags();
+  if (enabledFeatures.indexOf(flagName) >= 0) {
+    return true;
+  } else {
+    return client.variation(flagName, ...args);
+  }
 }
 
 /**

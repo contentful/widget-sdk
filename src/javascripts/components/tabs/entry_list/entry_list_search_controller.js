@@ -11,7 +11,6 @@ angular.module('contentful')
   var accessChecker = require('accessChecker');
   var debounce = require('debounce');
   var Tracking = require('analytics/events/SearchAndViews');
-  var K = require('utils/kefir');
 
   var AUTOTRIGGER_MIN_LEN = 4;
 
@@ -113,18 +112,6 @@ angular.module('contentful')
       resetEntries();
     }
   });
-
-
-  // if collection is modified - refresh the list
-  K.onValueScope($scope, spaceContext.contentCollections.state$, function (colls) {
-    var viewColl = getViewItem('collection');
-    var coll = _.find(colls, {id: viewColl && viewColl.id});
-    if (viewColl && coll && coll.items.length !== viewColl.items.length) {
-      _.set($scope, ['context', 'view', 'collection'], coll);
-      resetEntries();
-    }
-  });
-
 
   function resetSearchTerm () {
     isResettingTerm = true;

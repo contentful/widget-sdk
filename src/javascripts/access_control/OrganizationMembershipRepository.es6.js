@@ -27,6 +27,19 @@ export function getUsers (endpoint, {limit}) {
   });
 }
 
+/**
+ * Get all spaces of the organization
+ * Opposed to the TokenStore that only lists the spaces that the current user is part of,
+ * this enpoint will bring all spaces of the organization.
+ */
+export function getSpaces (endpoint, params) {
+  return endpoint({
+    method: 'GET',
+    path: ['spaces'],
+    query: params
+  });
+}
+
 export function invite (endpoint, {role, email, suppressInvitation}) {
   return endpoint({
     method: 'POST',

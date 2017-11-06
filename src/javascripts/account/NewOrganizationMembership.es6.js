@@ -1,38 +1,48 @@
-import {includes, omit, pick, negate, trim, get as getAtPath} from 'lodash';
+import {omit, pick, negate, trim, sortedUniq, sortBy, get as getAtPath} from 'lodash';
 import {h} from 'ui/Framework';
 import { assign } from 'utils/Collections';
-import {getFatSpaces, getOrganization} from 'services/TokenStore';
+import {getOrganization} from 'services/TokenStore';
 import * as RoleRepository from 'RoleRepository';
 import {runTask} from 'utils/Concurrent';
 import {ADMIN_ROLE_ID} from 'access_control/SpaceMembershipRepository';
-import {getUsers, createEndpoint} from 'access_control/OrganizationMembershipRepository';
+import {getUsers, getSpaces, createEndpoint} from 'access_control/OrganizationMembershipRepository';
 import {makeCtor, match} from 'utils/TaggedValues';
 import {invite, progress$} from 'account/SendOrganizationInvitation';
 import {isValidEmail} from 'stringUtils';
 import {go} from 'states/Navigator';
+import client from 'client';
+import {
+  header,
+  sidebar,
+  emailsInput,
+  organizationRole,
+  accessToSpaces,
+  progressMessage,
+  errorMessage,
+  successMessage
+} from 'account/NewOrganizationMembershipTemplate';
 
 const adminRole = {
   name: 'Admin',
   id: ADMIN_ROLE_ID
 };
 const maxNumberOfEmails = 100;
-const orgRoles = [
-  { name: 'Owner', value: 'owner', description: '' },
-  { name: 'Admin', value: 'admin', description: '' },
-  { name: 'Member', value: 'member', description: '' }
-];
+const defaultOrgRole = 'member';
+
 const Idle = makeCtor('idle');
+const Invalid = makeCtor('invalid'); // used to show form errors after user tried to submit
 const InProgress = makeCtor('inProgress');
 const Success = makeCtor('success');
 const Failure = makeCtor('failure');
 
 export default function ($scope) {
   let state = {
+    orgSpacesCount: null,
     spaces: [],
     emails: [],
     emailsInputValue: '',
     invalidAddresses: [],
-    orgRole: 'member',
+    orgRole: defaultOrgRole,
     spaceMemberships: {},
     failedOrgInvitations: [],
     successfulOrgInvitations: [],
@@ -51,6 +61,7 @@ export default function ($scope) {
   };
 
   const orgId = $scope.properties.orgId;
+  const orgEndpoint = createEndpoint(orgId);
 
   progress$.onValue(onProgressValue);
   progress$.onError(onProgressError);
@@ -62,32 +73,42 @@ export default function ($scope) {
   });
 
   runTask(function* () {
+    // 1st step - get org ingo and render page without the spaces grid
     const organization = yield* getOrgInfo(orgId);
-    const allSpaces = yield getFatSpaces();
-    const orgSpaces = allSpaces.filter(space => space.data.organization.sys.id === orgId);
-    const spacesWithRolesPromises = orgSpaces.map(space => runTask(function* () {
-      const roles = yield RoleRepository.getInstance(space).getAll();
-      const spaceRoles = roles.map(role => ({
-        name: role.name,
-        id: role.sys.id,
-        spaceId: role.sys.space.sys.id
-      }));
-
-      return {
-        id: space.data.sys.id,
-        name: space.data.name,
-        roles: spaceRoles
-      };
-    }));
-    const spacesWithRoles = yield Promise.all(spacesWithRolesPromises);
-
-    state = assign(state, {
-      spaces: spacesWithRoles,
-      organization
-    });
-
+    state = assign(state, {organization});
     rerender();
+
+    // 2nd step - load the spaces and assign spaces count
+    const orgSpaces = yield getOrgSpaces(organization.spaceLimit);
+    state = assign(state, {orgSpacesCount: orgSpaces.total});
+    rerender();
+
+    // 3rd step - load all space roles
+    orgSpaces.items
+      .map(space => client.newSpace(space)) // workaround necessary to fetch space roles
+      .forEach(space => runTask(function* () {
+        const spaceWithRoles = yield* getSpaceWithRoles(space);
+        state = assign(state, {spaces: [...state.spaces, spaceWithRoles]});
+        // rerender every time a space is complete with roles to show a progress indicator
+        rerender();
+      }));
   });
+
+  function* getSpaceWithRoles (space) {
+    const roles = yield RoleRepository.getInstance(space).getAll();
+    const spaceRoles = roles.map(role => ({
+      name: role.name,
+      id: role.sys.id,
+      spaceId: role.sys.space.sys.id
+    }));
+
+    return {
+      id: space.data.sys.id,
+      createdAt: space.data.sys.createdAt,
+      name: space.data.name,
+      roles: sortBy(spaceRoles, role => role.name)
+    };
+  }
 
   function updateSpaceRole (checked, role, spaceMemberships) {
     const spaceRoles = spaceMemberships[role.spaceId] || [];
@@ -133,6 +154,7 @@ export default function ($scope) {
   function submitInvitations (evt) {
     evt.preventDefault();
 
+    let status;
     const {
       orgRole,
       emails,
@@ -167,12 +189,13 @@ export default function ($scope) {
         rerender();
       });
 
-      state = assign(state, {
-        status: InProgress()
-      });
-
-      rerender();
+      status = InProgress();
+    } else {
+      status = Invalid();
     }
+
+    state = assign(state, {status});
+    rerender();
   }
 
   /**
@@ -198,7 +221,10 @@ export default function ($scope) {
       emailsInputValue: emails.join(', '),
       status: Idle(),
       failedOrgInvitations: [],
-      successfulOrgInvitations: []
+      successfulOrgInvitations: [],
+      // if re-trying to invite failed users, keep org role and space settings
+      orgRole: emails.length ? state.orgRole : defaultOrgRole,
+      spaceMemberships: emails.length ? state.spaceMemberships : {}
     });
 
     rerender();
@@ -219,11 +245,11 @@ export default function ($scope) {
    * the invalid addresses.
    */
   function updateEmails (emailsInputValue) {
-    const emails = emailsInputValue
+    const list = emailsInputValue
       .split(',')
       .map(trim)
       .filter(email => email.length);
-
+    const emails = sortedUniq(list);
     const invalidAddresses = emails.filter(negate(isValidEmail));
 
     state = assign(state, {
@@ -276,19 +302,24 @@ export default function ($scope) {
    * This is a workaround for the token 15min cache that won't let
    * us get an updated number after an invitation request
    */
-  function* getOrgInfo (orgId) {
+  function* getOrgInfo () {
     const org = yield getOrganization(orgId);
     const membershipLimit = getAtPath(org, 'subscriptionPlan.limits.permanent.organizationMembership');
-    const endpoint = createEndpoint(orgId);
-    const users = yield getUsers(endpoint, {limit: 0});
+    const spaceLimit = getAtPath(org, 'subscriptionPlan.limits.permanent.space');
+    const users = yield getUsers(orgEndpoint, {limit: 0});
     const membershipsCount = users.total;
 
     return assign(state.organization, {
       membershipLimit,
       membershipsCount,
+      spaceLimit,
       hasSsoEnabled: org.hasSsoEnabled,
       remainingInvitations: membershipLimit - membershipsCount
     });
+  }
+
+  function getOrgSpaces (limit) {
+    return getSpaces(orgEndpoint, {limit});
   }
 }
 
@@ -303,217 +334,30 @@ function render (state, actions) {
         style: { padding: '2rem 3.15rem' }
       }, [
         match(state.status, {
-          [Success]: () => successMessage(state.emails, actions.restart, actions.goToList),
+          [Success]: () => successMessage(state.emails, state.successfulOrgInvitations, actions.restart, actions.goToList),
           [Failure]: () => errorMessage(state.failedOrgInvitations, actions.restart),
           [InProgress]: () => progressMessage(state.emails, state.successfulOrgInvitations),
-          [Idle]: () => h('', [
+          _: () => h('', [
             emailsInput(
-              pick(state, ['emails', 'emailsInputValue', 'invalidAddresses', 'organization']),
+              maxNumberOfEmails,
+              Invalid,
+              pick(state, ['emails', 'emailsInputValue', 'invalidAddresses', 'organization', 'status']),
               pick(actions, ['updateEmails'])
             ),
             organizationRole(state.orgRole, actions.updateOrgRole),
-            accessToSpaces(state.spaces, state.spaceMemberships, actions.updateSpaceRole)
+            accessToSpaces(
+              adminRole,
+              pick(state, ['spaces', 'orgSpacesCount', 'spaceMemberships']),
+              pick(actions, ['updateSpaceRole'])
+            )
           ])
         })
       ]),
       sidebar(
+        {Idle, Invalid},
         pick(state, ['status', 'organization', 'suppressInvitation']),
         pick(actions, ['toggleInvitationEmailOption'])
       )
-    ])
-  ]);
-}
-
-function header () {
-  return h('.workbench-header__wrapper', [
-    h('header.workbench-header', [
-      h('h1.workbench-header__title', ['Organization users'])
-    ])
-  ]);
-}
-
-function sidebar ({
-  status,
-  organization,
-  suppressInvitation
-}, {
-  toggleInvitationEmailOption
-}) {
-  const isDisabled = match(status, {
-    [Idle]: () => false,
-    _: () => true
-  });
-
-  return h('.workbench-main__entity-sidebar', [
-    h('.entity-sidebar', [
-      h('p', [`Your organization is using ${organization.membershipsCount} out of ${organization.membershipLimit} users.`]),
-      h('button.cfnext-btn-primary-action.x--block', {
-        type: 'submit',
-        disabled: isDisabled
-      }, ['Send invitation']),
-      organization.hasSsoEnabled ? h('.cfnext-form-option.u-separator--small', [
-        h('label', [
-          h('input', {
-            type: 'checkbox',
-            dataTestId: 'organization-membership.suppress-invitation',
-            checked: !suppressInvitation,
-            onChange: toggleInvitationEmailOption
-          }),
-          'Inform users that they\'ve been added to the organization via email.'
-        ])
-      ]) : '',
-      h('.entity-sidebar__heading', {style: {marginTop: '20px'}}, ['Organization role & space role']),
-      h('p', ['The organization role controls the level of access to the organization settings.']),
-      h('p', ['Access to your organization\'s spaces works independently from that and needs to be defined per space.'])
-    ])
-  ]);
-}
-
-function emailsInput ({
-  emails,
-  emailsInputValue,
-  invalidAddresses,
-  organization
-}, {
-  updateEmails
-}) {
-  return h('div', [
-    h('h3.section-title', ['Select users']),
-    h('p', ['Add multiple users by filling in a comma-separated list of email addresses. You can add a maximum of 100 users at a time.']),
-    h('.cfnext-form__field.input', [
-      h('textarea', {
-        dataTestId: 'organization-membership.user-email',
-        autofocus: true,
-        class: 'cfnext-form__input',
-        style: {width: '600px'},
-        value: emailsInputValue,
-        onChange: (evt) => updateEmails(evt.target.value)
-      }),
-      emails.length > organization.remainingInvitations ? h('.cfnext-form__field-error', [`
-        You are trying to add ${emails.length} users but you only have ${organization.remainingInvitations}
-        more available under your plan. Please remove ${emails.length - organization.remainingInvitations} users to proceed.
-        You can upgrade your plan if you need to add more users.
-      `]) : '',
-      emails.length > maxNumberOfEmails ? h('.cfnext-form__field-error', ['Please fill in no more than 100 email addresses.']) : '',
-      invalidAddresses.length ? h('.cfnext-form__field-error', [
-        h('p', ['The following email addresses are not valid:']),
-        h('', [invalidAddresses.join(', ')])
-      ]) : ''
-    ])
-  ]);
-}
-
-function organizationRole (orgRole, updateOrgRole) {
-  return h('div', [
-    h('h3.section-title', ['Organization role']),
-    h('fieldset.cfnext-form__field', orgRoles.map(role => {
-      return h('.cfnext-form-option', [
-        h('label', [
-          h('input', {
-            name: 'organization_membership_role',
-            type: 'radio',
-            id: `organization-membership.org-role.${role.value}`,
-            checked: role.value === orgRole,
-            onChange: (evt) => updateOrgRole(evt.target.checked, role.value)
-          }),
-          ` ${role.name}`
-        ])
-      ]);
-    }))
-  ]);
-}
-
-function accessToSpaces (spaces, spaceMemberships, updateSpaceRole) {
-  function isChecked (role) {
-    return spaceMemberships.hasOwnProperty(role.spaceId) && includes(spaceMemberships[role.spaceId], role.id);
-  }
-
-  function roleCell (role) {
-    return h('span.cfnext-form-option', {
-      style: { marginBottom: '0' }
-    }, [
-      h('label', [
-        h('input', {
-          type: 'checkbox',
-          checked: isChecked(role),
-          dataTestId: `organization-membership.space.${role.spaceId}.role.${role.name}`,
-          onChange: (evt) => updateSpaceRole(evt.target.checked, role, spaceMemberships)
-        }),
-        ` ${role.name}`
-      ])
-    ]);
-  }
-
-  return h('div', [
-    h('h3.section-title', ['Access to spaces']),
-    h('p', ['Assign one or multiple roles for each space you want the user to be able to access.']),
-    h('table.deprecated-table', [
-      h('thead', [
-        h('th', ['Space']),
-        h('th', {
-          colspan: '2'
-        }, ['Roles'])
-      ]),
-      h('tbody', spaces.map(space => {
-        return h('tr', [
-          h('td', [space.name]),
-          h('td', [
-            h('.cfnext-form__fieldset--horizontal', [
-              roleCell(assign({spaceId: space.id}, adminRole), updateSpaceRole)
-            ].concat(space.roles.map(role => roleCell(role, updateSpaceRole))))
-          ])
-        ]);
-      }))
-    ])
-  ]);
-}
-
-function progressMessage (emails, successfulOrgInvitations) {
-  return h('', [
-    h('.note-box--info', [
-      h('h3', [`Almost there! ${successfulOrgInvitations.length}/${emails.length} have been added to your organization`]),
-      h('p', ['Please don\'t close this tab until all users have been added successfully'])
-    ]),
-    h('ul.pill-list.u-separator--small', emails.map(email => {
-      const className = includes(successfulOrgInvitations, email) ? '' : 'is-loading';
-      return h('li.pill-item', {class: className}, [email]);
-    }))
-  ]);
-}
-
-function errorMessage (failedEmails, restart) {
-  const userString = failedEmails.length > 1 ? 'users' : 'user';
-
-  return h('', [
-    h('.note-box--warning', [
-      h('h3', ['Whoops! something went wrong']),
-      h('p', [
-        `The process failed for the following ${userString}. Please try to `,
-        h('a', {
-          onClick: () => restart(failedEmails)
-        }, ['invite them again.'])
-      ])
-    ]),
-    h('ul.pill-list.u-separator--small', failedEmails.map(email => {
-      return h('li.pill-item', [email]);
-    }))
-  ]);
-}
-
-function successMessage (emails, restart, goToList) {
-  const userString = emails.length > 1 ? 'users have' : 'user has';
-
-  return h('.note-box--success', [
-    h('h3', [`Yay! ${emails.length} ${userString} been invited to your organization`]),
-    h('p', [
-      'They should have received an email to confirm the invitation in their inbox. Go ahead and ',
-      h('a', {
-        onClick: () => restart()
-      }, ['invite more users']),
-      ' or ',
-      h('a', {
-        onClick: goToList
-      }, ['go back to the users list.'])
     ])
   ]);
 }

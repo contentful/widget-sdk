@@ -36,7 +36,6 @@ angular.module('contentful')
   var Auth = require('Authentication');
   var OrganizationContext = require('classes/OrganizationContext');
   var MembershipRepo = require('access_control/SpaceMembershipRepository');
-  var createContentCollectionsRepo = require('app/EntryList/Collections/Store').default;
   var createUiConfigStore = require('data/UiConfig/Store').default;
 
   var spaceContext = {
@@ -119,10 +118,7 @@ angular.module('contentful')
         createUiConfigStore(self.endpoint, isAdmin, self.publishedCTs).then(function (api) {
           self.uiConfig = api;
         }),
-        self.publishedCTs.refresh(),
-        createContentCollectionsRepo(self.endpoint).then(function (api) {
-          self.contentCollections = api;
-        })
+        self.publishedCTs.refresh()
       ]).then(function () {
         return self;
       });
@@ -380,7 +376,6 @@ angular.module('contentful')
     spaceContext.publishedContentTypes = [];
     spaceContext.users = null;
     spaceContext.widgets = null;
-    spaceContext.contentCollections = null;
     if (spaceContext.docPool) {
       spaceContext.docPool.destroy();
       spaceContext.docPool = null;
