@@ -1,6 +1,10 @@
 import {h} from 'ui/Framework';
 import {runTask} from 'utils/Concurrent';
-import {createMockEndpoint as createOrgEndpoint, getSubscription} from 'access_control/OrganizationMembershipRepository';
+import {
+  createMockEndpoint as createOrgEndpoint,
+  getSubscription
+} from 'access_control/OrganizationMembershipRepository';
+import {default as subscriptionIcon} from 'svg/nav-organization-subscription';
 
 export default function ($scope) {
   $scope.component = h('noscript');
@@ -30,14 +34,24 @@ function render (data) {
   return h('.workbench', [
     h('.workbench-header__wrapper', [
       h('header.workbench-header', [
-        h('h1.workbench-header__title', ['Platform subscription'])
+        h('.workbench-header__icon', [subscriptionIcon]),
+        h('h1.workbench-header__title', ['Subscription'])
       ])
     ]),
     h('.workbench-main', [
-      h('.workbench-main__content', {
+      h('.workbench-main__left-sidebar', [renderLeftSidebar(data)]),
+      h('.workbench-main__right-content', {
         style: { padding: '20px 25px' }
-      }, [renderContent(data)])
+      }, [renderContent(data)]),
+      h('.workbench-main__sidebar', [renderRightSidebar()])
     ])
+  ]);
+}
+
+function renderLeftSidebar ({name}) {
+  return h('div', [
+    h('h2', ['Your pricing plan']),
+    h('p', [name])
   ]);
 }
 
@@ -57,5 +71,12 @@ function renderContent ({name, productName}) {
         ])
       ])
     ])
+  ]);
+}
+
+function renderRightSidebar () {
+  return h('.entity-sidebar', [
+    h('h2.entity-sidebar__heading', ['Need help?']),
+    h('p.entity-sidebar__help-text', ['Get help!'])
   ]);
 }
