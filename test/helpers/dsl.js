@@ -10,9 +10,29 @@ function createDsl (jasmineDsl) {
 
     it: createCoroutineTestFactory(jasmineDsl.it),
     fit: createCoroutineTestFactory(jasmineDsl.fit),
-    xit: createCoroutineTestFactory(jasmineDsl.xit)
+    xit: createCoroutineTestFactory(jasmineDsl.xit),
+
+    beforeEach: createHookFactory(jasmineDsl.beforeEach),
+    afterEach: createHookFactory(jasmineDsl.afterEach)
   };
 }
+
+
+function createHookFactory (defineHook) {
+  return function (runner) {
+    defineHook(function (done) {
+      Promise.resolve()
+      .then(() => {
+        const result = runner.call(this);
+        if (isGenerator(result)) {
+          return runGenerator(result);
+        }
+      })
+      .then(done, done.fail);
+    });
+  };
+}
+
 
 // TODO deprecate this and use coroutines
 function createPromiseTestFactory (specFactory) {
@@ -90,6 +110,9 @@ function isGenerator (g) {
  *
  * Not that the actual promise is not an Angular promise but the native
  * implementation.
+ *
+ * TODO This is very similar to `runTask` in `utils/Concurrent`. We
+ * should merge the code.
  */
 function runGenerator (gen, $apply) {
   return new Promise((resolve, reject) => {
@@ -128,7 +151,9 @@ function runGenerator (gen, $apply) {
         .then(next, throwTo);
         // Repeatedly run $apply() to flush all promises
         try {
-          _.times(5, () => $apply());
+          if ($apply) {
+            _.times(5, () => $apply());
+          }
         } catch (error) {
           throwTo(error);
         }

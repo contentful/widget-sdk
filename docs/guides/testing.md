@@ -108,13 +108,19 @@ in the [Test module][module:test].
 
 You can write asynchronous tests using generator functions.
 ~~~js
+beforeEach(function* () {
+  yield asyncSetup();
+})
+
 it('a generator test', function* () {
   const value = yield this.resolve('X')
   expect(value).toBe('X')
 })
 ~~~
-You must always yield a promise. `$rootScope.$apply()` will be called after each
-yield and before control is handed back to the generator.
+You must always yield a promise. Inside `it` the function `$rootScope.$apply()`
+will be called after each yield and before control is handed back to the
+generator. This is not the case for generators passed to `beforeEach` and
+`afterEach`.
 
 If you need more control over Angular’s digest cycle and the promise resolution
 consider using spies.
