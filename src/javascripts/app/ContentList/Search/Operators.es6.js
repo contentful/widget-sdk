@@ -1,14 +1,14 @@
-export const equality = ['', '=='];
+export const equality = ['', 'is'];
 
-export const inequality = ['ne', '!='];
+export const inequality = ['ne', 'is not'];
 
 export const fts = ['match', 'matches'];
 
 export const ranges = [
-  ['lt', '<'],
-  ['lte', '<='],
-  ['gt', '>'],
-  ['gte', '>=']
+  ['lt', 'less than'],
+  ['lte', 'less than or equal to'],
+  ['gt', 'greater than'],
+  ['gte', 'greater than or equal to']
 ];
 
 export function getOperatorsByType (type) {
