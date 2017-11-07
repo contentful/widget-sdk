@@ -175,6 +175,7 @@ function getVariation (flagName, ...args) {
  * - currentUserOwnsAtleastOneOrg : true if the user is the owner of atleast one org
  * - currentUserAge : days since user signed up
  * - currentUserIsCurrentOrgCreator : true if the current org was created by the current user
+ * - currentUserSignInCount : count of the number of times the current user has signed in
  * - isNonPayingUser : true if non of the orgs the user belongs to is paying us
  * - isAutomationTestUser : true if the current user was created by the automation suite
  *
@@ -197,6 +198,7 @@ function buildLDUser (user, currOrg, spacesByOrg, currSpace) {
     currentUserOwnsAtleastOneOrg: ownsAtleastOneOrg(user),
     currentUserAge: getUserAgeInDays(user), // in days
     currentUserIsCurrentOrgCreator: isOrgCreator(user, currOrg),
+    currentUserSignInCount: user.signInCount,
     isNonPayingUser: isNonPayingUser(user),
     isAutomationTestUser: isAutomationTestUser(user)
   };

@@ -27,6 +27,7 @@ describe('LaunchDarkly', function () {
     this.user = {
       email: 'a',
       organizationMemberships: [this.org],
+      signInCount: 10,
       sys: {
         createdAt: moment().subtract(7, 'days').toISOString(),
         id: 'user-id-1'
@@ -120,6 +121,7 @@ describe('LaunchDarkly', function () {
           isNonPayingUser: true,
           isAutomationTestUser: true,
           currentUserIsCurrentOrgCreator: false,
+          currentUserSignInCount: 10
         });
       });
     });
