@@ -87,7 +87,7 @@ const sysFieldFilters = [
  */
 export function contentTypeFilter (contentTypes) {
   return {
-    name: 'contentType',
+    name: 'Content type',
     queryKey: 'content_type',
     operators: [equalityOperator],
     valueInput: ValueInput.Select([
