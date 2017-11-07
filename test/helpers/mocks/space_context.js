@@ -65,6 +65,7 @@ angular.module('contentful/mocks')
     };
 
     spaceContext.memberships = createMembershipsMock();
+    spaceContext.users = createUsersMock();
 
     spaceContext.endpoint = createMockEndpoint();
     spaceContext.cma = new CMAClient(spaceContext.endpoint.request);
@@ -91,5 +92,13 @@ angular.module('contentful/mocks')
       changeRoleToAdmin: sinon.stub().resolves(),
       remove: sinon.stub().resolves()
     };
+  }
+
+  function createUsersMock () {
+    return {
+      getAll: sinon.stub().resolves([]),
+      get: sinon.stub().resolves()
+    };
+
   }
 }]);

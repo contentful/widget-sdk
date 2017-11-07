@@ -1,7 +1,6 @@
 import $q from '$q';
-import {reduce, flatten, fromPairs, invert} from 'lodash';
+import {reduce, flatten} from 'lodash';
 import {parseTextQuery} from 'search/queryBuilder';
-import {getOperatorsByType} from 'app/ContentList/Search/Operators';
 import {
   cmaQueryBuilderForField,
   isRelativeDate
@@ -11,7 +10,14 @@ import {
 // In case of a match $1 is the key and $2 will be empty or the operator.
 const API_KEY_AND_OPERATOR_REGEX = /^(.+?)(?:\[(.+)\])?$/;
 
-const DATE_OPERATORS = invert(fromPairs(getOperatorsByType('Date')));
+const DATE_OPERATORS = {
+  '<': 'lt',
+  '<=': 'lte',
+  '>': 'gt',
+  '>=': 'gte',
+  '!=': 'ne',
+  '==': 'eq'
+};
 
 /**
  * Creates a search ui state object from a legacy text query (`searchTerm`).
