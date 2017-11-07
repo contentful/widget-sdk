@@ -6,7 +6,6 @@
   margin-bottom: 20px
 
 .pricing-tile
-  width: 100%
   padding: 45px 20px 20px
   text-align: center
   border: 1px solid $colors.element-mid
@@ -14,6 +13,11 @@
 
 .pricing-tiles-list
   display: flex
+  flex-wrap: wrap
+  .pricing-tile
+    margin 0 20px 20px 0
+    width: 220px
+    height: 220px
 
 .pricing-plan
   position: relative
