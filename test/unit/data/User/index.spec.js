@@ -272,17 +272,17 @@ describe('data/User', () => {
     });
   });
 
-  describe('#isOrgCreator', function () {
+  describe('#isUserOrgCreator', function () {
     it('should return true if the current org was created by the current user', function () {
-      expect(this.utils.isOrgCreator({sys: {id: 1}}, {sys: {createdBy: {sys: {id: 1}}}})).toEqual(true);
+      expect(this.utils.isUserOrgCreator({sys: {id: 1}}, {sys: {createdBy: {sys: {id: 1}}}})).toEqual(true);
     });
 
     it('should return false if the current org was not created by the current user', function () {
-      expect(this.utils.isOrgCreator({sys: {id: 1}}, {sys: {createdBy: {sys: {id: 2}}}})).toEqual(false);
+      expect(this.utils.isUserOrgCreator({sys: {id: 1}}, {sys: {createdBy: {sys: {id: 2}}}})).toEqual(false);
     });
 
     it('should throw if user or org are malformed', function () {
-      expect(this.utils.isOrgCreator.bind(this.utils)).toThrow();
+      expect(this.utils.isUserOrgCreator.bind(this.utils)).toThrow();
     });
   });
 });

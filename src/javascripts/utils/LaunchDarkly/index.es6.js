@@ -10,7 +10,7 @@ import $q from '$q';
 
 import {
   getOrgRole,
-  isOrgCreator,
+  isUserOrgCreator,
   userDataBus$,
   isNonPayingUser,
   getUserAgeInDays,
@@ -208,7 +208,7 @@ function buildLDUser (user, currOrg, spacesByOrg, currSpace) {
     currentUserHasAtleastOneSpace: hasAnOrgWithSpaces(spacesByOrg),
     currentUserOwnsAtleastOneOrg: ownsAtleastOneOrg(user),
     currentUserAge: getUserAgeInDays(user), // in days
-    currentUserIsCurrentOrgCreator: isOrgCreator(user, currOrg),
+    currentUserIsCurrentOrgCreator: isUserOrgCreator(user, currOrg),
     currentUserSignInCount: user.signInCount,
     isNonPayingUser: isNonPayingUser(user),
     isAutomationTestUser: isAutomationTestUser(user)

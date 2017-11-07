@@ -161,7 +161,7 @@ export function isAutomationTestUser (user) {
  * @params {Object} org
  * @returns {Boolean}
  */
-export function isOrgCreator (user, org) {
+export function isUserOrgCreator (user, org) {
   return org.sys.createdBy.sys.id === user.sys.id;
 }
 

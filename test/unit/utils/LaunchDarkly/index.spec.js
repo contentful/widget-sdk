@@ -62,7 +62,7 @@ describe('LaunchDarkly', function () {
       hasAnOrgWithSpaces: sinon.stub().returns(false),
       ownsAtleastOneOrg: sinon.stub().returns(true),
       isAutomationTestUser: sinon.stub().returns(true),
-      isOrgCreator: sinon.stub().returns(false)
+      isUserOrgCreator: sinon.stub().returns(false)
     };
 
     this.shallowObjectDiff = {default: sinon.stub().returns({})};
