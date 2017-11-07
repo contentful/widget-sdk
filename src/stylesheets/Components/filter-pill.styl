@@ -7,11 +7,14 @@
   margin-top: 5px;
   margin-right: 12px;
   border-radius: 3px;
-  &:focus
+  &:hover
+    box-shadow: 0 0 0 1px $colors.text-lightest;
+  &:focus,
+  &:active
     box-shadow: 0 0 0 1px $colors.contrast-light;
 
 .search__filter-pill-label
-  background: $colors.bg-light;
+  background-color: $colors.bg-light;
   color: $colors.text-light;
   padding: 0 12px;
   border-radius: 3px 0 0 3px;
@@ -33,6 +36,8 @@
     background-color: $colors.blue-dark;
 
 .search__select-operator
+  display: flex;
+  align-items: center;
   position: relative;
   &::before,
   &::after
@@ -43,7 +48,7 @@
     width: 50%;
   &::before
     left: 0;
-    background: $colors.bg-light;
+    background-color: $colors.bg-light;
   &::after
     right: 0;
     background-color: $colors.blue-mid;
@@ -55,10 +60,8 @@
     z-index: 10;
     color: $colors.blue-darkest;
     border: 1px solid transparent;
-    letter-spacing: 1px;
-    text-transform: uppercase;
     text-align-last: center;
-    font-size: 75%;
+    font-size: 85%;
     -webkit-appearance: none;
     &:hover,
     &:focus,

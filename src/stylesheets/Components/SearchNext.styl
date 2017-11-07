@@ -18,7 +18,7 @@
   &.-focus
     border-bottom-color: $colors.blue-mid
   &:hover
-    background: $colors.element-lightest
+    background-color: $colors.element-lightest
   &.-active
     border-left-color: $colors.blue-mid
     border-bottom-color: white
@@ -57,19 +57,19 @@
   &:focus
     background-color: $colors.element-mid
     .__filter-pill
-      background-color: $colors.blue-darkest
+      background-color: $colors.element-lightest
 
   &.--selected,
   &:hover,
     // TODO use $colors
     background-color: $colors.element-lightest
     .__filter-pill
-      background-color: $colors.blue-darkest
+      box-shadow: 0 0 0 1px $colors.text-lightest
 
   .__filter-pill
     display: inline-block
-    background: $colors.blue-mid
-    color: white
+    background-color: $colors.bg-light
+    color: $colors.text-light
     padding: 6px 10px 5px
     line-height: 18px
     border-radius: 3px
