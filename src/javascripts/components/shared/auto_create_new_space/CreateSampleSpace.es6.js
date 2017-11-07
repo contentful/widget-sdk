@@ -131,6 +131,7 @@ function openDialog (scope, templateName) {
     template: autoCreateSpaceTemplate(templateName.toLowerCase()),
     backgroundClose: false,
     persistOnNavigation: true,
+    ignoreEsc: true,
     scope
   });
 }
