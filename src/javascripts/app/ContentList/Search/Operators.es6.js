@@ -5,10 +5,10 @@ export const inequality = ['ne', 'is not'];
 export const fts = ['match', 'matches'];
 
 export const ranges = [
-  ['lt', 'less than'],
-  ['lte', 'less than or equal to'],
-  ['gt', 'greater than'],
-  ['gte', 'greater than or equal to']
+  ['lt', 'is less than'],
+  ['lte', 'is less than or equal to'],
+  ['gt', 'is greater than'],
+  ['gte', 'is greater than or equal to']
 ];
 
 export function getOperatorsByType (type) {
