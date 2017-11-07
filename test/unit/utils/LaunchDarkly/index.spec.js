@@ -27,6 +27,7 @@ describe('LaunchDarkly', function () {
     this.user = {
       email: 'a',
       organizationMemberships: [this.org],
+      signInCount: 10,
       sys: {
         createdAt: moment().subtract(7, 'days').toISOString(),
         id: 'user-id-1'
@@ -60,7 +61,8 @@ describe('LaunchDarkly', function () {
       isNonPayingUser: sinon.stub().returns(true),
       hasAnOrgWithSpaces: sinon.stub().returns(false),
       ownsAtleastOneOrg: sinon.stub().returns(true),
-      isAutomationTestUser: sinon.stub().returns(true)
+      isAutomationTestUser: sinon.stub().returns(true),
+      isUserOrgCreator: sinon.stub().returns(false)
     };
 
     this.shallowObjectDiff = {default: sinon.stub().returns({})};
@@ -117,7 +119,9 @@ describe('LaunchDarkly', function () {
           currentUserOwnsAtleastOneOrg: true,
           currentUserAge: 7,
           isNonPayingUser: true,
-          isAutomationTestUser: true
+          isAutomationTestUser: true,
+          currentUserIsCurrentOrgCreator: false,
+          currentUserSignInCount: 10
         });
       });
     });
