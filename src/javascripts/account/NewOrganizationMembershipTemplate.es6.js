@@ -226,7 +226,10 @@ export function errorMessage (failedEmails, restart) {
       ])
     ]),
     h('ul.pill-list.u-separator--small', failedEmails.map(email => {
-      return h('li.pill-item.pill-item--warning', [email, errorIcon]);
+      return h('li.pill-item.pill-item--warning', [
+        h('span.pill-item__text', [email]),
+        errorIcon
+      ]);
     }))
   ]);
 }
@@ -250,7 +253,10 @@ export function successMessage (emails, successfulOrgInvitations, restart, goToL
       ])
     ]),
     h('ul.pill-list.u-separator--small', successfulOrgInvitations.map(email => {
-      return h('li.pill-item.pill-item--success', [email, successIcon]);
+      return h('li.pill-item.pill-item--success', [
+        h('span.pill-item__text', [email]),
+        successIcon
+      ]);
     }))
   ]);
 }
