@@ -4,7 +4,7 @@ import {
   createMockEndpoint as createOrgEndpoint,
   getSubscription
 } from 'access_control/OrganizationMembershipRepository';
-import {default as subscriptionIcon} from 'svg/nav-organization-subscription';
+import {getPricingPlanStyle} from 'account/PricingPlanStyles';
 
 export default function ($scope) {
   $scope.component = h('noscript');
@@ -34,7 +34,7 @@ function render (data) {
   return h('.workbench', [
     h('.workbench-header__wrapper', [
       h('header.workbench-header', [
-        h('.workbench-header__icon', [subscriptionIcon]),
+        h('.workbench-header__icon', [/* TODO missing icon */]),
         h('h1.workbench-header__title', ['Subscription'])
       ])
     ]),
@@ -48,18 +48,16 @@ function render (data) {
   ]);
 }
 
-function renderLeftSidebar ({name, type = 'team'}) {
+function renderLeftSidebar ({productName, type = 'team-edition'}) {
+  const style = getPricingPlanStyle(type);
   return h('div', [
     h('h2.pricing-heading', ['Your pricing plan']),
-    h(`.pricing-plan.pricing-plan--${type}.pricing-tile`, [
-      renderPricingPlanIcon({type}),
-      h('p.pricing-heading', [name])
+    h(`.pricing-plan.pricing-tile`, [
+      h('.pricing-plan__bar', {style: style.bar}),
+      style.icon,
+      h('p.pricing-heading', [productName])
     ])
   ]);
-}
-
-function renderPricingPlanIcon () {
-  return ''; // TODO!
 }
 
 function renderContent ({name, productName}) {
