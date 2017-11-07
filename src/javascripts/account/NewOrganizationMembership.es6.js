@@ -11,6 +11,7 @@ import {invite, progress$} from 'account/SendOrganizationInvitation';
 import {isValidEmail} from 'stringUtils';
 import {go} from 'states/Navigator';
 import client from 'client';
+import {isOwnerOrAdmin} from 'services/OrganizationRoles';
 import {
   header,
   sidebar,
@@ -73,8 +74,17 @@ export default function ($scope) {
   });
 
   runTask(function* () {
-    // 1st step - get org ingo and render page without the spaces grid
-    const organization = yield* getOrgInfo(orgId);
+    // 1st step - get org info and render page without the spaces grid
+    let organization;
+
+    try {
+      organization = yield* getOrgInfo(orgId);
+    } catch (e) {
+      // to go home if user has no access
+      go({path: ['home']});
+      return;
+    }
+
     state = assign(state, {organization});
     rerender();
 
@@ -304,6 +314,11 @@ export default function ($scope) {
    */
   function* getOrgInfo () {
     const org = yield getOrganization(orgId);
+
+    if (!isOwnerOrAdmin(org)) {
+      throw new Error('User not authorized');
+    }
+
     const membershipLimit = getAtPath(org, 'subscriptionPlan.limits.permanent.organizationMembership');
     const spaceLimit = getAtPath(org, 'subscriptionPlan.limits.permanent.space');
     const users = yield getUsers(orgEndpoint, {limit: 0});
