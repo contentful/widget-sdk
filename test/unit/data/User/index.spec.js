@@ -249,6 +249,7 @@ describe('data/User', () => {
 
       this.assertOnEmails(userEmails, true);
     });
+
     it('should return false for all non test automation users', function () {
       const userEmails = [
         '+autotesting_newuser14288_20171026_071249@contentful.com',
@@ -268,6 +269,20 @@ describe('data/User', () => {
       ];
 
       this.assertOnEmails(userEmails, false);
+    });
+  });
+
+  describe('#isOrgCreator', function () {
+    it('should return true if the current org was created by the current user', function () {
+      expect(this.utils.isOrgCreator({sys: {id: 1}}, {sys: {createdBy: {sys: {id: 1}}}})).toEqual(true);
+    });
+
+    it('should return false if the current org was not created by the current user', function () {
+      expect(this.utils.isOrgCreator({sys: {id: 1}}, {sys: {createdBy: {sys: {id: 2}}}})).toEqual(false);
+    });
+
+    it('should throw if user or org are malformed', function () {
+      expect(this.utils.isOrgCreator.bind(this.utils)).toThrow();
     });
   });
 });

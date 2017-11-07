@@ -10,6 +10,7 @@ import $q from '$q';
 
 import {
   getOrgRole,
+  isOrgCreator,
   userDataBus$,
   isNonPayingUser,
   getUserAgeInDays,
@@ -173,6 +174,7 @@ function getVariation (flagName, ...args) {
  * - currentUserHasAtleastOneSpace : true if the user has atleast one space in all the orgs he/she is a member of
  * - currentUserOwnsAtleastOneOrg : true if the user is the owner of atleast one org
  * - currentUserAge : days since user signed up
+ * - currentUserIsCurrentOrgCreator : true if the current org was created by the current user
  * - isNonPayingUser : true if non of the orgs the user belongs to is paying us
  * - isAutomationTestUser : true if the current user was created by the automation suite
  *
@@ -194,6 +196,7 @@ function buildLDUser (user, currOrg, spacesByOrg, currSpace) {
     currentUserHasAtleastOneSpace: hasAnOrgWithSpaces(spacesByOrg),
     currentUserOwnsAtleastOneOrg: ownsAtleastOneOrg(user),
     currentUserAge: getUserAgeInDays(user), // in days
+    currentUserIsCurrentOrgCreator: isOrgCreator(user, currOrg),
     isNonPayingUser: isNonPayingUser(user),
     isAutomationTestUser: isAutomationTestUser(user)
   };
