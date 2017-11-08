@@ -96,16 +96,6 @@ export function accountUrl (path) {
 export const otUrl = settings.otUrl;
 
 /**
- * @name Config#contactSalesUrl
- * URL to the sales form
- *
- * In production this is `//www.contentful.com/contact/sales/`,
- * @param {string} path
- * @returns {string}
- */
-export const contactSalesUrl = settings.contactSalesUrl;
-
-/**
  * @ngdoc property
  * @name Config#supportUrl
  * URL which allows the user to get in touch with us.
