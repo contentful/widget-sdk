@@ -14,6 +14,7 @@ import infoIcon from 'svg/info';
 import { ValueInput } from './Filters';
 import { autosizeInput } from 'ui/AutoInputSize';
 import entitySelector from 'entitySelector';
+import filterValueDate from './ValueInput/Date';
 
 const Keys = {
   arrowUp: (e) => e.key === 'ArrowUp',
@@ -70,12 +71,13 @@ export default function render ({
           testId: 'contentTypeFilter',
           isRemovable: false,
           filter: contentTypeFilter,
-          onChange: (_op, value) => actions.SetContentType(value)
+          onChange: (value) => actions.SetContentType(value)
         }),
         ...renderPills({
           filters,
           defaultFocus,
-          onChange: ({ index, op, value }) => actions.SetFilterValueInput([index, op, value]),
+          onChange: ({ index, value }) => actions.SetFilterValueInput([index, value]),
+          onOperatorChange: ({ index, value }) => actions.SetFilterOperator([index, value]),
           onRemove: ({ index }) => actions.RemoveFilter(index),
           onRemoveAttempt: ({ index }) => actions.SetFocusOnPill(index)
         }),
@@ -174,6 +176,7 @@ function renderPills ({
   filters,
   defaultFocus,
   onChange,
+  onOperatorChange,
   onRemove,
   onRemoveAttempt
 }) {
@@ -185,7 +188,8 @@ function renderPills ({
       testId: filter.queryKey,
       isFocused: defaultFocus.index === index && !defaultFocus.isValueFocused,
       isValueFocused: defaultFocus.index === index && defaultFocus.isValueFocused,
-      onChange: (op, value) => onChange({index, op, value}),
+      onChange: (value) => onChange({index, value}),
+      onOperatorChange: (value) => onOperatorChange({ index, value }),
       onRemove: () => onRemove({index}),
       onRemoveAttempt: () => onRemoveAttempt({index})
     });
@@ -207,6 +211,7 @@ function filterPill ({
   isValueFocused = false,
   isRemovable = true,
   onChange,
+  onOperatorChange = noop,
   onRemove = noop,
   onRemoveAttempt = noop
 }) {
@@ -235,13 +240,13 @@ function filterPill ({
     filterOperator({
       operators: filter.operators,
       op,
-      onChange: operator => onChange(operator, value)
+      onChange: operator => onOperatorChange(operator)
     }),
     filterValue({
       valueInput: filter.valueInput,
       value,
       isFocused: isValueFocused,
-      onChange: value => onChange(op, value),
+      onChange: value => onChange(value),
       onRemove: onRemoveAttempt
     })
   ]);
@@ -254,7 +259,7 @@ function filterOperator ({ op, operators = [], onChange }) {
     return null;
   }
 
-  return h('search_select.search__select-operator', {}, [
+  return h('div.search_select.search__select-operator', {}, [
     h('select.input-reset.search__select', {
       value: op,
       onChange: (e) => onChange(e.target.value),
@@ -292,6 +297,14 @@ function filterValue ({ valueInput, value, isFocused, onChange, onRemove }) {
         onChange,
         onKeyDown: handleKeyDown
       }),
+    [ValueInput.Date]: () =>
+      filterValueDate({
+        testId: valueTestId,
+        value,
+        inputRef,
+        onChange,
+        onKeyDown: handleKeyDown
+      }),
     [ValueInput.Select]: (options) =>
       filterSelect({
         testId: valueTestId,
@@ -318,7 +331,7 @@ function filterValue ({ valueInput, value, isFocused, onChange, onRemove }) {
 function filterValueText ({value, testId, inputRef, onChange, onKeyDown}) {
   return h('input.input-reset.search__input-text', {
     dataTestId: testId,
-    value: value,
+    value,
     ref: inputRef,
     onInput: (e) => onChange(e.target.value),
     onKeyDown,

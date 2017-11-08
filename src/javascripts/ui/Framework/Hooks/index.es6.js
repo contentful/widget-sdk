@@ -3,7 +3,7 @@ import { makeCtor } from 'utils/TaggedValues';
 
 // TODO document
 
-function makeHook (run) {
+export function makeHook (run) {
   return makeCtor((content) => {
     return { content, run };
   });

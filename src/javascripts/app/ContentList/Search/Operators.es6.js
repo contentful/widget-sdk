@@ -1,14 +1,25 @@
-export const equality = ['', 'is'];
+export const Operator = {
+  EQUALS: '',
+  NOT_EQUALS: 'ne',
+  MATCH: 'match',
+  LT: 'lt',
+  LTE: 'lte',
+  GT: 'gt',
+  GTE: 'gte'
+};
 
-export const inequality = ['ne', 'is not'];
+// TODO: decouple operators from labels
+export const equality = [Operator.EQUALS, 'is'];
 
-export const fts = ['match', 'matches'];
+export const inequality = [Operator.NOT_EQUALS, 'is not'];
+
+export const fts = [Operator.MATCH, 'matches'];
 
 export const ranges = [
-  ['lt', 'is less than'],
-  ['lte', 'is less than or equal to'],
-  ['gt', 'is greater than'],
-  ['gte', 'is greater than or equal to']
+  [Operator.LT, 'is less than'],
+  [Operator.LTE, 'is less than or equal to'],
+  [Operator.GT, 'is greater than'],
+  [Operator.GTE, 'is greater than or equal to']
 ];
 
 export function getOperatorsByType (type) {
@@ -19,6 +30,7 @@ export function getOperatorsByType (type) {
     case 'Text':
       return [fts];
     case 'Date':
+      return [equality, ...ranges];
     case 'Integer':
     case 'Number':
       return [equality, inequality, ...ranges];

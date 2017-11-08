@@ -43,9 +43,9 @@ export const ValueInput = {
   Select: makeCtor(),
   // A simple text input
   Text: makeCtor(),
-  Reference: makeCtor()
+  Reference: makeCtor(),
+  Date: makeCtor()
 };
-
 
 // The generic filters applicable to all content types
 const sysFieldFilters = [
@@ -56,18 +56,20 @@ const sysFieldFilters = [
   ['publishedAt', 'Date'],
   ['publishedBy', 'User', 'Users of this space'],
   ['id']
-].map(([name, type, desc]) => {
+].map(([name, type, description]) => {
   return {
-    name: name,
-    description: desc,
+    name,
+    type,
+    description,
     queryKey: getSysFieldQueryKey({name, type}),
     operators: getOperatorsByType(type),
     valueInput: getControlByType({type}),
-    contentType: null,
-    type
+    contentType: null
   };
 }).concat([{
   name: 'status',
+  type: 'status',
+  description: 'Current status of the item',
   queryKey: '__status',
   operators: [equalityOperator],
   valueInput: ValueInput.Select([
@@ -76,7 +78,8 @@ const sysFieldFilters = [
     ['changed', 'Changed'],
     ['draft', 'Draft'],
     ['archived', 'Archived']
-  ])
+  ]),
+  contentType: null
 }]);
 
 /**
@@ -300,6 +303,8 @@ function getControlByType (ctField) {
       itemLinkType: get(ctField, ['items', 'linkType']),
       itemValidations: get(ctField, ['items', 'validations'])
     }));
+  } else if (ctField.type === 'Date') {
+    return ValueInput.Date();
   } else {
     return ValueInput.Text();
   }

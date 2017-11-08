@@ -17,6 +17,11 @@ describe('app/ContentList/Search/View', function () {
 
     SystemJS.set('entitySelector', SystemJS.newModule({ }));
 
+    // TODO: remove after converting datepicker to es6 module.
+    SystemJS.set('datepicker', SystemJS.newModule({ }));
+    SystemJS.set('moment', SystemJS.newModule({ }));
+
+
     SystemJS.import('app/ContentList/Search/View').then(
       ({ default: searchComponent }) => {
         // const searchComponent = this.$inject().default;
@@ -36,13 +41,14 @@ describe('app/ContentList/Search/View', function () {
         };
         done();
       }
-
     );
 
   });
 
   afterEach(function () {
     SystemJS.delete('entitySelector');
+    SystemJS.delete('datepicker');
+    SystemJS.delete('moment');
     this.view.destroy();
   });
 

@@ -11,6 +11,7 @@ angular.module('contentful')
   var accessChecker = require('accessChecker');
   var Tracking = require('analytics/events/SearchAndViews');
   var K = require('utils/kefir');
+  var Kefir = require('libs/kefir');
   var createSearchInput = require('app/ContentList/Search').default;
 
   $scope.context = { ready: false, loading: true };
@@ -163,27 +164,13 @@ angular.module('contentful')
     }
     var initialSearchState = getViewSearchState();
 
-    spaceContext.users.getAll().then(function (users) {
-      createSearchInput(
-        $scope,
-        spaceContext,
-        triggerSearch,
-        isSearching$,
-        initialSearchState,
-        users
-      );
-    });
-
-    // If we wait until `users.getAll()` resolves to
-    // render the search input, a render error is thrown.
-    // So we first render the search input and then re-render it
-    // once we have the user data.
     createSearchInput(
       $scope,
       spaceContext,
       triggerSearch,
       isSearching$,
-      initialSearchState
+      initialSearchState,
+      Kefir.fromPromise(spaceContext.users.getAll())
     );
   }
 

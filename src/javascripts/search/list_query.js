@@ -1,5 +1,4 @@
 'use strict';
-
 /**
  * @ngdoc service
  * @name ListQuery
@@ -8,11 +7,13 @@
  */
 angular.module('contentful').factory('ListQuery', ['require', function (require) {
   var $q = require('$q');
+  var _ = require('lodash');
   var systemFields = require('systemFields');
   var spaceContext = require('spaceContext');
   var buildQueryFromLegacySearchTerm = require('search/queryBuilder').buildQuery;
   var buildQueryFromUISearch = require('app/ContentList/Search/QueryBuilder').buildQuery;
   var assetContentType = require('assetContentType');
+  var K = require('utils/kefir');
 
   var DEFAULT_ORDER = systemFields.getDefaultOrder();
 
@@ -32,9 +33,9 @@ angular.module('contentful').factory('ListQuery', ['require', function (require)
     getForEntries: function (opts) {
       if (opts.contentTypeId) {
         return spaceContext.publishedCTs.fetch(opts.contentTypeId)
-        .then(function (contentType) {
-          return prepareEntityListQuery(contentType, opts);
-        });
+          .then(function (contentType) {
+            return prepareEntityListQuery(contentType, opts);
+          });
       } else {
         return prepareEntityListQuery(null, opts);
       }
@@ -81,7 +82,10 @@ angular.module('contentful').factory('ListQuery', ['require', function (require)
 
     // TODO: Remove legacy after new search for Assets.
     var buildQuery = opts.searchFilters || opts.searchText !== undefined
-      ? $q.resolve(buildQueryFromUISearch(opts))
+      ? $q.resolve(buildQueryFromUISearch({
+        contentTypes: K.getValue(spaceContext.publishedCTs.items$).toJS(),
+        filterParams: opts
+      }))
       : buildQueryFromLegacySearchTerm(
         spaceContext.space, contentType, opts.searchTerm);
 

@@ -51,8 +51,9 @@ const SetQueryInput = makeCtor('SetQueryInput');
 const SetContentType = makeCtor('SetContentType');
 
 // Triggered whenever the value of a filter pill is changed by the
-// user. Holds a [filterIndex, op, value] 3-tuple
+// user. Holds a [filterIndex, value]
 const SetFilterValueInput = makeCtor('SetFilterValueInput');
+const SetFilterOperator = makeCtor('SetFilterOperator');
 
 const SelectFilterSuggestions = makeCtor('SelectFilterSuggestions');
 
@@ -61,8 +62,6 @@ const HideSuggestions = makeCtor('HideSuggestions');
 
 const TriggerSearch = makeCtor('TriggerSearch');
 const ToggleSuggestions = makeCtor('ToggleSuggestions');
-
-const SetLoading = makeCtor('SetLoading');
 
 // Emitted 0.5 seconds after user stopped typing
 const UnsetTyping = makeCtor('UnsetTyping');
@@ -80,12 +79,12 @@ const ShowSuggestions = makeCtor('ShowSuggestions');
 
 export const Actions = {
   SetQueryInput,
+  SetFilterOperator,
   SetFilterValueInput,
   SetContentType,
   SelectFilterSuggestions,
   TriggerSearch,
   ToggleSuggestions,
-  SetLoading,
   SetBoxFocus,
   RemoveFilter,
   SetFocusOnPill,
@@ -118,11 +117,8 @@ export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
       return state;
     },
     [SelectFilterSuggestions]: selectFilterSuggestion,
-    [SetFilterValueInput] (state, [filterIndex, op, value]) {
-      state = set(state, ['isTyping'], true);
-      putTyping(sleep(1000));
-      return update(state, ['filters', filterIndex], filter => [filter[0], op, value]);
-    },
+    [SetFilterOperator]: setFilterOperator,
+    [SetFilterValueInput]: setFilterValueInput,
     [UnsetTyping] (state) {
       state = set(state, ['isTyping'], false);
       state = triggerSearch(state);
@@ -139,22 +135,15 @@ export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
       return set(state, ['isSuggestionOpen'], false);
     },
     [SetContentType]: setContentType,
-    // TODO rename
-    [SetLoading] (state, isSearching) {
-      state = set(state, ['isSearching'], isSearching);
-      state = set(state, ['isTyping'], isSearching);
-      return state;
-    },
     [RemoveFilter] (state, indexToRemove) {
       state = update(state, ['filters'], (filters) => {
         return filters.filter((_, index) => {
           return index !== indexToRemove;
         });
       });
-
+      state = triggerSearch(state);
       state = setFocusOnQueryInput(state);
       return state;
-
     },
     [ResetFocus]: resetFocus,
     [SetFocusOnPill]: setFocusOnPill,
@@ -165,6 +154,26 @@ export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
     [SetFocusOnNextSuggestion]: setFocusOnNextSuggestion,
     [SetFocusOnPrevSuggestion]: setFocusOnPrevSuggestion
   });
+
+  function setFilterOperator (state, [index, op]) {
+    state = update(
+      state,
+      ['filters', index],
+      ([queryKey, _op, value]) => [queryKey, op, value]
+    );
+    state = triggerSearch(state);
+    return state;
+  }
+
+  function setFilterValueInput (state, [index, value]) {
+    state = set(state, ['isTyping'], true);
+    putTyping(sleep(1000));
+    return update(
+      state,
+      ['filters', index],
+      ([queryKey, op, _value]) => [queryKey, op, value]
+    );
+  }
 
   function showSuggestions (state) {
     return set(state, ['isSuggestionOpen'], true);
