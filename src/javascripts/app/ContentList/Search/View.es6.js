@@ -259,14 +259,15 @@ function filterOperator ({ op, operators = [], onChange }) {
     return null;
   }
 
-  return h('div.search_select.search__select-operator', {}, [
-    h('select.input-reset.search__select', {
+  return h('search_select.search__select-operator', [
+    select({
+      testId: '',
+      options: operators,
       value: op,
-      onChange: (e) => onChange(e.target.value),
-      tabindex: '0'
-    }, operators.map(([value, label]) => {
-      return h('option', {value}, [label]);
-    }))
+      inputRef: noop,
+      onKeyDown: noop,
+      onChange
+    })
   ]);
 }
 
@@ -350,22 +351,41 @@ function filterSelect ({
   onChange,
   onKeyDown
 }) {
-  const [_, selectedOptionLabel] = options.find(([v]) => v === value) || ['', ''];
-  const width = selectedOptionLabel.length ? `${selectedOptionLabel.length + 5}ch` : 'auto';
 
   return h('.search_select.search__select-value', [
-    h('select.input-reset.search__select', {
-      dataTestId: testId,
-      value: value,
-      ref: inputRef,
-      onChange: ({ target: { value } }) => onChange(value),
-      tabindex: '0',
-      onKeyDown,
-      style: {width}
-    }, options.map(([value, label]) => {
-      return h('option', {value}, [label]);
-    }))
+    select({
+      testId,
+      options,
+      value,
+      inputRef,
+      onChange,
+      onKeyDown
+    })
   ]);
+}
+
+function select ({
+  testId,
+  options = [],
+  value,
+  inputRef,
+  onChange,
+  onKeyDown
+}) {
+  const [_, selectedOptionLabel] = options.find(([v]) => v === value) || ['', ''];
+  const width = selectedOptionLabel.length ? `${selectedOptionLabel.length + 7}ch` : 'auto';
+
+  return h('select.input-reset.search__select', {
+    dataTestId: testId,
+    value: value,
+    ref: inputRef,
+    onChange: ({ target: { value } }) => onChange(value),
+    tabindex: '0',
+    onKeyDown,
+    style: {width}
+  }, options.map(([value, label]) => {
+    return h('option', {value}, [label]);
+  }));
 }
 
 function filterValueReference ({ctField = {}, testId, value, inputRef, onChange, onKeyDown}) {
