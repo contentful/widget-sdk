@@ -5,6 +5,8 @@ import {
   getPlatformSubscriptionPlan
 } from 'access_control/OrganizationMembershipRepository';
 import {getPlatformPlanStyle} from 'account/subscription/PlatformPlanStyles';
+import {supportUrl, websiteUrl} from 'Config';
+import {byName as colors} from 'Styles/Colors';
 
 export default function ($scope) {
   $scope.component = h('noscript');
@@ -32,8 +34,9 @@ function* loadStateFromProperties ({orgId}) {
   // TODO get the data from endpoint(s)
   const spacePlans = Array(4).fill({});
   const usersPlan = {};
+  const grandTotal = 12345;
 
-  return {platformPlan, spacePlans, usersPlan};
+  return {platformPlan, spacePlans, usersPlan, grandTotal};
 }
 
 function render (state) {
@@ -49,7 +52,7 @@ function render (state) {
       h('.workbench-main__right-content', {
         style: { padding: '20px 25px' }
       }, [renderSpacesAndUsers(state)]),
-      h('.workbench-main__sidebar', [renderRightSidebar()])
+      h('.workbench-main__sidebar', [renderRightSidebar(state)])
     ])
   ]);
 }
@@ -89,9 +92,38 @@ function renderUsersPlan () {
   ]);
 }
 
-function renderRightSidebar () {
+function renderRightSidebar ({grandTotal}) {
   return h('.entity-sidebar', [
+    h('h2.entity-sidebar__heading', ['Grand total']),
+    h('p.entity-sidebar__help-text', [
+      'Your grand total amounts to ',
+      h('b', [`$${grandTotal}`]),
+      ' / month.'
+    ]),
+
     h('h2.entity-sidebar__heading', ['Need help?']),
-    h('p.entity-sidebar__help-text', ['Get help!'])
+    h('p.entity-sidebar__help-text', [
+      'Do you need to make changes to your pricing plan or purchase additional spaces? ' +
+      'Don’t hesitate to talk to our customer success team.'
+    ]),
+    h('p.entity-sidebar__help-text.pricing-csm', [
+      h('.pricing-csm__photo'),
+      h('.pricing-csm__photo'),
+      h('.pricing-csm__photo')
+    ]),
+    h('p.entity-sidebar__help-text', [
+      h('a', {href: supportUrl}, ['Get in touch with us'])
+    ]),
+
+    h('h2.entity-sidebar__heading', ['Cancel subscription']),
+    h('p.entity-sidebar__help-text', [
+      'Cancelling your subscription will delete your organization and all content ' +
+      'associated with it. Make sure to ',
+      h('a', {href: websiteUrl('pricing')}, ['check our pricing plans']),
+      ' before proceeding.'
+    ]),
+    h('p.entity-sidebar__help-text', [
+      h('a', {href: '#', style: {color: colors.redDark}}, ['Cancel subscription'])
+    ])
   ]);
 }
