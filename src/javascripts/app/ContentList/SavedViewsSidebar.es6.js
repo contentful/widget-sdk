@@ -73,7 +73,7 @@ export default function ({
         borderBottom: `1px solid ${colors.elementMid}`
       }, [
         h('ul.workbench-nav__tabs', [
-          button(selector, VIEWS_SHARED, 'All views'),
+          button(selector, VIEWS_SHARED, 'Shared views'),
           button(selector, VIEWS_PRIVATE, 'My views')
         ])
       ]),

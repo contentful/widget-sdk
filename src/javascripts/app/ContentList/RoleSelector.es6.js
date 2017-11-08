@@ -216,7 +216,7 @@ function render (state, actions) {
         h('p', [
           `This view might display different content depending on the role,
           because different roles might have access to different content types.
-          Administrators have access to all views.`
+          Administrators have access to all shared views.`
         ])
       ]),
       vspace(4),

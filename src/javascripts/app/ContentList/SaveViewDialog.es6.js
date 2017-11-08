@@ -58,13 +58,13 @@ export default function SaveViewDialog ({
             }),
             allowViewTypeSelection && h('ul', {style: {marginTop: '20px'}}, [
               renderViewTypeOption({
-                label: ['Save under ', h('em', ['my views'])],
+                label: ['Save under ', h('em', ['My views'])],
                 description: 'Only you will see this view.',
                 select: () => setSaveAsShared(false),
                 checked: !isShared
               }),
               renderViewTypeOption({
-                label: ['Save under ', h('em', ['all views'])],
+                label: ['Save under ', h('em', ['Shared views'])],
                 description: 'You can select which roles should see this view in the next step.',
                 select: () => setSaveAsShared(true),
                 checked: isShared
