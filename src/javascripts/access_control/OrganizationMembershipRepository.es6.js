@@ -52,7 +52,12 @@ export function invite (endpoint, {role, email, suppressInvitation}) {
   });
 }
 
-export function getSubscription (endpoint) {
+/**
+ * TODO this method should be moved to another place
+ *
+ * Gets the base platform subscription plan for the org.
+ */
+export function getPlatformSubscriptionPlan (endpoint) {
   return endpoint({
     method: 'GET',
     path: ['subscription']

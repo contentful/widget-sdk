@@ -61,7 +61,7 @@
         if: 'nav.hasSettingsTab'
       },
       {
-        title: 'Subscription',
+        title: '{{ showPlatfromSubscription ? "Subscription (old)" : "Subscription" }}',
         sref: 'account.organizations.subscription({orgId: nav.orgId})',
         rootSref: 'account.organizations.subscription',
         inheritUrlParams: false,
@@ -70,11 +70,12 @@
       },
       {
         if: 'showPlatfromSubscription',
-        title: 'Platform',
-        sref: 'account.organizations.platform({orgId: nav.orgId})',
-        rootSref: 'account.organizations.platform',
+        title: 'Subscription (new)',
+        sref: 'account.organizations.subscription_new({orgId: nav.orgId})',
+        rootSref: 'account.organizations.subscription_new',
         inheritUrlParams: false,
-        dataViewType: 'platform-subscription'
+        icon: 'nav-organization-subscription',
+        dataViewType: 'subscription-new'
       },
       {
         title: 'Billing',
