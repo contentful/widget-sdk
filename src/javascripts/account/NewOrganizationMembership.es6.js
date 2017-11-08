@@ -80,8 +80,8 @@ export default function ($scope) {
     try {
       organization = yield* getOrgInfo(orgId);
     } catch (e) {
-      // to go home if user has no access
-      go({path: ['home']});
+      // stop if user has no access
+      denyAccess();
       return;
     }
 
@@ -274,6 +274,11 @@ export default function ($scope) {
   function rerender () {
     $scope.properties.context.ready = true;
     $scope.component = render(state, actions);
+    $scope.$applyAsync();
+  }
+
+  function denyAccess () {
+    $scope.properties.context.forbidden = true;
     $scope.$applyAsync();
   }
 
