@@ -95,6 +95,14 @@ describe('LaunchDarkly', function () {
     this.ld = ld;
     this.ld.init();
 
+    // Emit ready on the client and wait until the LD service is ready
+    // to use the client.
+    this.ready = () => {
+      this.client.variation.withArgs('dummy').returns('true');
+      this.client._emit('ready');
+      return this.ld.getCurrentVariation('dummy');
+    };
+
     this.setUserDataStream = function (user, org, spacesByOrg) {
       userModule.userDataBus$.set([user, org, spacesByOrg]);
       this.$apply();
@@ -176,9 +184,9 @@ describe('LaunchDarkly', function () {
       });
     });
 
-    it('should attach a handler for flag variations and changes', function () {
+    it('should attach a handler for flag variations and changes', function* () {
       this.client.variation.returns('true');
-      this.client._emit('ready');
+      yield this.ready();
       expect(this.$scope.flagValue).toBe(true);
 
       const diff = {a: 10};
@@ -190,8 +198,8 @@ describe('LaunchDarkly', function () {
       expect(this.$scope.flagChange).toBe(diff);
     });
 
-    it('should track variation changes by default', function () {
-      this.client._emit('ready');
+    it('should track variation changes by default', function* () {
+      yield this.ready();
 
       const diff = {a: true, b: 'test'};
       this.shallowObjectDiff.default.returns(diff);
@@ -201,15 +209,15 @@ describe('LaunchDarkly', function () {
       expect(this.$scope.flagChange).toBe(diff);
     });
 
-    it('should remove change handler when scope is destroyed', function () {
-      this.client._emit('ready');
+    it('should remove change handler when scope is destroyed', function* () {
+      yield this.ready();
       const changeHandler = this.client.on.args[1][1];
       this.$scope.$destroy();
       expect(this.client.off.args[0][1]).toBe(changeHandler);
     });
 
-    it('should never call the variation handler with undefined', function () {
-      this.client._emit('ready');
+    it('should never call the variation handler with undefined', function* () {
+      yield this.ready();
       const spy = sinon.spy();
 
       this.client.variation.returns(undefined);
@@ -218,14 +226,14 @@ describe('LaunchDarkly', function () {
       sinon.assert.notCalled(spy);
     });
 
-    it('should not attach a change handler until LD is initialized with current context', function () {
+    it('should not attach a change handler until LD is initialized with current context', function* () {
       sinon.assert.callCount(this.client.on.withArgs('change:FLAG'), 0);
-      this.client._emit('ready');
+      yield this.ready();
       sinon.assert.callCount(this.client.on.withArgs('change:FLAG'), 1);
     });
 
-    it('overrides value with true for enforced feature flags', function () {
-      this.client._emit('ready');
+    it('overrides value with true for enforced feature flags', function* () {
+      yield this.ready();
       this.EnforceFlags.getEnabledFlags.returns(['FLAG']);
       this.client.variation.withArgs('FLAG').returns('false');
       this.client._emit('change:FLAG');

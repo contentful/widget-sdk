@@ -1,6 +1,7 @@
 import * as K from 'utils/kefir';
 import $q from '$q';
 
+
 /**
  * @ngdoc method
  * @name utils/Concurrent/MVar#create
@@ -20,14 +21,39 @@ import $q from '$q';
  * @params {Object} value
  * @returns {utils/Concurrent/MVar}
  */
-export default function create (value) {
-  let state = { isEmpty: !arguments.length, value: value };
+export function createMVar (value) {
+  return createBase(Promise, !arguments.length, value);
+}
 
+
+/**
+ * @description
+ * Create an MVar that uses Angular’s $q Promise internally.
+ *
+ * We still need a $q based implementation because some code relies on
+ * the fact that handlers on $q trigger Angular digest cycles that
+ * updated the application state.
+ */
+export function createMVar$q (value) {
+  return createBase($q, !arguments.length, value);
+}
+
+
+// `isEmpty` is used to distinguish between providing `undefined` as an
+// initial value or no initial value at all.
+function createBase (PromiseImplementation, isEmpty, value) {
   // @todo it can be implemented without Kefir, just promises
-  const bus = K.createPropertyBus(state);
+  const bus = K.createPropertyBus();
   const value$ = bus.property.flatten(function (x) {
     return x.isEmpty ? [] : [x.value];
   });
+
+  let state;
+  if (isEmpty) {
+    empty();
+  } else {
+    put(value);
+  }
 
   return {
     read: read,
@@ -44,11 +70,9 @@ export default function create (value) {
 
   function read () {
     if (state.isEmpty) {
-      // resolve after next value is set
-      return value$.take(1).toPromise($q);
+      return value$.take(1).toPromise(PromiseImplementation);
     } else {
-      // value is here, resolve immediately
-      return $q.resolve(state.value);
+      return PromiseImplementation.resolve(state.value);
     }
   }
 

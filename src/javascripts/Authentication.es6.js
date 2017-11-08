@@ -2,7 +2,7 @@ import {get} from 'lodash';
 import $location from '$location';
 import $window from '$window';
 import * as K from 'utils/kefir';
-import createMVar from 'utils/Concurrent/MVar';
+import { createMVar$q, runTask } from 'utils/Concurrent';
 import TheStore from 'TheStore';
 import * as Config from 'Config';
 import postForm from 'data/Request/PostForm';
@@ -30,7 +30,7 @@ const TOKEN_SCOPE = 'content_management_manage';
  *
  * Emits a new value whenever a token is successfully refreshed.
  */
-const tokenMVar = createMVar();
+const tokenMVar = createMVar$q();
 
 const tokenStore = TheStore.forKey('token');
 const afterLoginPathStore = TheStore.forKey('redirect_after_login');
@@ -133,19 +133,24 @@ export function refreshToken () {
  * @description
  * Revoke the current token and remove it from local storage. Redirect
  * to the logout page.
+ *
+ * @returns {Promise<void>}
  */
 export function logout () {
-  tokenMVar.take().then((token) => {
+  return runTask(function* () {
+    const token = yield tokenMVar.take();
     tokenStore.remove();
-    return postForm(Config.authUrl('oauth/revoke'), {
-      token: token
-    }, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    }).finally(function () {
+    try {
+      yield postForm(Config.authUrl('oauth/revoke'), {
+        token: token
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+    } finally {
       setLocation(Config.authUrl('logout'));
-    });
+    }
   });
 }
 
