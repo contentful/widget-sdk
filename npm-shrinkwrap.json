@@ -260,6 +260,25 @@
         }
       }
     },
+    "babel-polyfill": {
+      "version": "6.26.0",
+      "dependencies": {
+        "babel-runtime": {
+          "version": "6.26.0",
+          "dependencies": {
+            "regenerator-runtime": {
+              "version": "0.11.0"
+            }
+          }
+        },
+        "core-js": {
+          "version": "2.5.1"
+        },
+        "regenerator-runtime": {
+          "version": "0.10.5"
+        }
+      }
+    },
     "babel-register": {
       "version": "6.24.1",
       "dependencies": {
