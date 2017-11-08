@@ -10,7 +10,6 @@ import * as K from 'utils/kefir';
  * This is used by the cfMockXhrConsole directive.
  */
 export function create () {
-  const eventsBus = K.createBus();
   const rules = [];
   const defaultRule = {
     urlPattern: '',
@@ -19,7 +18,7 @@ export function create () {
   };
 
   const OrigXHR = $window.XMLHttpRequest;
-  const XHR = createMockClass(rules, eventsBus, OrigXHR);
+  const XHR = createMockClass(rules, OrigXHR);
 
   enable();
 
@@ -27,8 +26,7 @@ export function create () {
     enable,
     restore,
     addRule,
-    removeRule,
-    events$: eventsBus.stream
+    removeRule
   };
 
   function enable () {
@@ -72,34 +70,42 @@ export function create () {
  * Instances also emit events on the `eventBus` whenever one of the class
  * methods is called.
  */
-function createMockClass (rules, eventsBus, XMLHttpRequest) {
+function createMockClass (rules, XMLHttpRequest) {
   const XHR = function () {
+    this._loadBus = K.createBus();
+    this._loadBus.stream.onValue(() => {
+      if (typeof this.onload === 'function') {
+        this.onload();
+      }
+    });
     this._xhr = new XMLHttpRequest();
   };
 
-  XHR.prototype.open = function (...args) {
-    const url = args[1];
+  XHR.prototype.open = function (method, url, ...args) {
+    this._method = method;
+    this._url = url;
     this._rule = rules.find(function (rule) {
       return rule.urlPattern.exec(url);
     });
 
-    eventsBus.emit({ method: 'open', rule: this._rule, params: args });
-
     if (!this._rule) {
-      return this._xhr.open.apply(this._xhr, arguments);
+      return this._xhr.open(method, url, ...args);
     }
   };
 
-  XHR.prototype.send = function () {
-    eventsBus.emit({ method: 'send', rule: this._rule, params: arguments });
-
+  XHR.prototype.send = function (body) {
     if (this._rule) {
+      // eslint-disable-next-line no-console
+      console.log('Sending mock request', {
+        method: this._method,
+        url: this._url,
+        body,
+        status: this._rule.status
+      });
       this.readyState = XMLHttpRequest.DONE;
       this.status = this._rule.status;
       this.responseText = this._rule.responseText;
-      if (typeof this.onload === 'function') {
-        this.onload();
-      }
+      this._loadBus.emit();
     } else {
       const xhrWrapper = this;
       const realXhr = this._xhr;
@@ -110,31 +116,32 @@ function createMockClass (rules, eventsBus, XMLHttpRequest) {
             xhrWrapper[key] = realXhr[key];
           });
 
-        if (typeof xhrWrapper.onload === 'function') {
-          xhrWrapper.onload.apply(realXhr, arguments);
-        }
+        xhrWrapper._loadBus.emit();
       };
 
-      return this._xhr.send.apply(this._xhr, arguments);
+      return this._xhr.send(body);
     }
   };
 
   XHR.prototype.abort = function () {
-    eventsBus.emit({ method: 'abort', rule: this._rule, params: arguments });
     if (!this._rule) {
       return this._xhr.abort.apply(this._xhr, arguments);
     }
   };
 
+  XHR.prototype.addEventListener = function (event, handler) {
+    if (event === 'load') {
+      this._loadBus.stream.onValue(handler);
+    }
+  };
+
   XHR.prototype.setRequestHeader = function () {
-    eventsBus.emit({ method: 'setRequestHeader', rule: this._rule, params: arguments });
     if (!this._rule) {
       this._xhr.setRequestHeader.apply(this._xhr, arguments);
     }
   };
 
   XHR.prototype.getAllResponseHeaders = function () {
-    eventsBus.emit({ method: 'getAllResponseHeaders', rule: this._rule, params: arguments });
     if (this._rule) {
       return '';
     } else {
@@ -143,7 +150,6 @@ function createMockClass (rules, eventsBus, XMLHttpRequest) {
   };
 
   XHR.prototype.getResponseHeader = function () {
-    eventsBus.emit({ method: 'getResponseHeader', rule: this._rule, params: arguments });
     if (this._rule) {
       return '';
     } else {

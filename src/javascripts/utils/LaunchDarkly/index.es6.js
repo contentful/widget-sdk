@@ -10,6 +10,7 @@ import $q from '$q';
 
 import {
   getOrgRole,
+  isUserOrgCreator,
   userDataBus$,
   isNonPayingUser,
   getUserAgeInDays,
@@ -69,6 +70,13 @@ export function getCurrentVariation (flagName) {
     const variation = getVariation(flagName, UNINIT_VAL);
 
     if (variation === UNINIT_VAL) {
+      // we use $q.reject instead of just throwing an error
+      // since MVars are backed by $q and throwing an error
+      // from a handler of a $q promise chain invokes
+      // $exceptionHandler.
+      // FIXME Update this to just throw new Error('...')
+      // once MVar implementation is switched to use a
+      // Promise/A+ compliant implementation
       return $q.reject(new Error(`Invalid flag ${flagName}`));
     } else {
       return JSON.parse(variation);
@@ -150,13 +158,17 @@ function getVariationSetter (flagName, obs$) {
  * @description
  * Wraps `client.variation()` method, overriding with `true` for feature flags
  * enabled via query params.
+ *
+ * @param {String} flagName - feature or test flag
+ * @param {Any} defaultValue - default value to return if the flag is not found
+ * @returns {Any}
  */
-function getVariation (flagName, ...args) {
+function getVariation (flagName, defaultValue) {
   const enabledFeatures = getEnabledFlags();
   if (enabledFeatures.indexOf(flagName) >= 0) {
     return true;
   } else {
-    return client.variation(flagName, ...args);
+    return client.variation(flagName, defaultValue);
   }
 }
 
@@ -173,6 +185,8 @@ function getVariation (flagName, ...args) {
  * - currentUserHasAtleastOneSpace : true if the user has atleast one space in all the orgs he/she is a member of
  * - currentUserOwnsAtleastOneOrg : true if the user is the owner of atleast one org
  * - currentUserAge : days since user signed up
+ * - currentUserIsCurrentOrgCreator : true if the current org was created by the current user
+ * - currentUserSignInCount : count of the number of times the current user has signed in
  * - isNonPayingUser : true if non of the orgs the user belongs to is paying us
  * - isAutomationTestUser : true if the current user was created by the automation suite
  *
@@ -194,6 +208,8 @@ function buildLDUser (user, currOrg, spacesByOrg, currSpace) {
     currentUserHasAtleastOneSpace: hasAnOrgWithSpaces(spacesByOrg),
     currentUserOwnsAtleastOneOrg: ownsAtleastOneOrg(user),
     currentUserAge: getUserAgeInDays(user), // in days
+    currentUserIsCurrentOrgCreator: isUserOrgCreator(user, currOrg),
+    currentUserSignInCount: user.signInCount,
     isNonPayingUser: isNonPayingUser(user),
     isAutomationTestUser: isAutomationTestUser(user)
   };

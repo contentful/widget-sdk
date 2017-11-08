@@ -152,6 +152,20 @@ export function isAutomationTestUser (user) {
 }
 
 /**
+ * @description
+ * Returns true if the current org was created by the currently
+ * logged in user. This can be used as a proxy for the
+ * "contentful pioneer user" in that org.
+ *
+ * @params {Object} user
+ * @params {Object} org
+ * @returns {Boolean}
+ */
+export function isUserOrgCreator (user, org) {
+  return org.sys.createdBy.sys.id === user.sys.id;
+}
+
+/**
  * Implemented together since we want the org and space
  * values to always be in sync which is not the case when
  * there are two streams, one for curr space and one for

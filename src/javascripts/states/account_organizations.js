@@ -39,10 +39,10 @@ angular.module('contentful')
     url: '/:orgId/z_subscription{pathSuffix:PathSuffix}'
   });
 
-  var platform = base({
-    name: 'platform',
-    url: '/:orgId/platform',
-    label: 'Platform subscription',
+  var subscriptionNew = base({
+    name: 'subscription_new',
+    url: '/:orgId/subscription',
+    label: 'Subscription',
     controller: ['$stateParams', '$scope', function ($stateParams, $scope) {
       $scope.context = {};
       $scope.properties = {
@@ -50,7 +50,7 @@ angular.module('contentful')
         context: $scope.context
       };
     }],
-    template: h('cf-platform-subscription', { properties: 'properties' })
+    template: h('cf-subscription-overview', { properties: 'properties' })
   });
 
   var usersGatekeeper = organizationsBase({
@@ -160,7 +160,7 @@ angular.module('contentful')
       newOrg,
       edit,
       subscription,
-      platform,
+      subscriptionNew,
       users,
       spaces,
       offsitebackup,

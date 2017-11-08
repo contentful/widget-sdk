@@ -1,18 +1,12 @@
 angular.module('contentful')
 
 .directive('cfMockXhrConsole', ['require', function (require) {
-  var MockXhr = require('debug/XHR/Mocker');
   var h = require('utils/hyperscript').h;
 
   return {
     template: getTemplate(),
     link: function (scope) {
-      var mxhr = MockXhr.create();
-
-      mxhr.events$.onValue(function (value) {
-        /* eslint no-console: off */
-        console.log(value.method, value.rule ? 'MOCKED (' + value.rule.urlPattern + ')' : '', value.params);
-      });
+      var mxhr = scope.xhrMock;
 
       scope.rules = [];
       scope.enabled = true;
@@ -20,8 +14,6 @@ angular.module('contentful')
       scope.add = add;
       scope.remove = remove;
       scope.toggle = toggle;
-
-      add('.*', 502);
 
       function add (urlPattern, status) {
         var rule = { urlPattern: RegExp(urlPattern), status: status };
