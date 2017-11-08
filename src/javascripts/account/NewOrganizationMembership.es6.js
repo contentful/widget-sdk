@@ -47,17 +47,20 @@ export default function ($scope) {
     failedOrgInvitations: [],
     successfulOrgInvitations: [],
     status: Idle(),
-    organization: {}
+    organization: {},
+    locked: false
   };
 
   const actions = {
     updateSpaceRole,
     updateOrgRole,
     updateEmails,
+    validateEmails,
     toggleInvitationEmailOption,
     restart,
     goToList,
-    submitInvitations
+    submitInvitations,
+    lock: lock
   };
 
   const orgId = $scope.properties.orgId;
@@ -90,7 +93,8 @@ export default function ($scope) {
         const spaceWithRoles = yield* getSpaceWithRoles(space);
         state = assign(state, {spaces: [...state.spaces, spaceWithRoles]});
         // rerender every time a space is complete with roles to show a progress indicator
-        rerender();
+        // do not rerender if the user is typing
+        !state.locked && rerender();
       }));
   });
 
@@ -241,8 +245,7 @@ export default function ($scope) {
   /**
    * Receives a string with email addresses
    * separated by comma and transforms it into
-   * an array of emails and, possibly, an array with
-   * the invalid addresses.
+   * an array of emails.
    */
   function updateEmails (emailsInputValue) {
     const list = emailsInputValue
@@ -250,14 +253,23 @@ export default function ($scope) {
       .map(trim)
       .filter(email => email.length);
     const emails = sortedUniq(list);
-    const invalidAddresses = emails.filter(negate(isValidEmail));
 
     state = assign(state, {
       emailsInputValue,
       emails,
-      invalidAddresses
+      locked: false
     });
 
+    rerender();
+  }
+
+  /**
+   * Update state with invalid emails addresses
+   */
+  function validateEmails () {
+    const invalidAddresses = state.emails.filter(negate(isValidEmail));
+
+    state = assign(state, {invalidAddresses});
     rerender();
   }
 
@@ -321,6 +333,13 @@ export default function ($scope) {
   function getOrgSpaces (limit) {
     return getSpaces(orgEndpoint, {limit});
   }
+
+  /**
+   * Keeps component from rendering while user is typing
+   */
+  function lock () {
+    state = assign(state, {locked: true});
+  }
 }
 
 function render (state, actions) {
@@ -342,7 +361,7 @@ function render (state, actions) {
               maxNumberOfEmails,
               Invalid,
               pick(state, ['emails', 'emailsInputValue', 'invalidAddresses', 'organization', 'status']),
-              pick(actions, ['updateEmails'])
+              pick(actions, ['updateEmails', 'validateEmails', 'lock'])
             ),
             organizationRole(state.orgRole, actions.updateOrgRole),
             accessToSpaces(
