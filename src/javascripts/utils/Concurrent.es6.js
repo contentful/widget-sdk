@@ -54,10 +54,20 @@ export function runTask (genFn, ...args) {
       if (done) {
         resolve(value);
       } else {
+        if (!isThenable(value)) {
+          reject(new Error('Yielded non-promise value'));
+          return;
+        }
         value.then(onFulfilled, onRejected);
       }
     }
   });
+}
+
+function isThenable (obj) {
+  return obj &&
+       typeof obj.then === 'function' &&
+       typeof obj.catch === 'function';
 }
 
 
