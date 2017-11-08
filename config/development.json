@@ -6,7 +6,6 @@
   "otUrl": "//ot.joistio.com:8888",
   "assetUrl": "//static.joistio.com:8888",
   "marketingUrl": "//www.joistio.com:8888",
-  "contactSalesUrl": "//www.joistio.com:8888/contact/sales/",
   "main_domain": "joistio.com:8888",
   "toolsServiceUrl": "https://tools.joistio.com:8888",
   "contentful": {
