@@ -37,14 +37,6 @@ $loader-base()
   padding: 10px
   border-radius: 5em
 
-.loader__spinner
-  $spinner-base()
-  +$spinner-active()
-    display: block
-    width: 2em
-    height: 2em
-    margin-right: $new-rhythm(0.5)
-
 .loader--inline
   position: static
   width: inherit
@@ -54,9 +46,6 @@ $loader-base()
   $spinner-base()
   +$spinner-active()
     display: inline-block
-
-.loader__message
-  font-size: 2em
 
 .spinner--text-inline
   $spinner-base()
