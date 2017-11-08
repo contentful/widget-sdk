@@ -33,7 +33,7 @@ describe('cfCreateNewSpace directive', function () {
         createSpace: sinon.stub()
       },
       enforcements: {
-        computeUsage: sinon.stub()
+        computeUsageForOrganization: sinon.stub()
       },
       tokenStore: {
         refresh: sinon.stub(),
@@ -192,7 +192,7 @@ describe('cfCreateNewSpace directive', function () {
         });
 
         it('computes usage', function () {
-          sinon.assert.called(stubs.enforcements.computeUsage);
+          sinon.assert.called(stubs.enforcements.computeUsageForOrganization);
         });
 
         it('displays and logs error', function () {
@@ -233,7 +233,7 @@ describe('cfCreateNewSpace directive', function () {
         });
 
         it('computes usage', function () {
-          sinon.assert.called(stubs.enforcements.computeUsage);
+          sinon.assert.called(stubs.enforcements.computeUsageForOrganization);
         });
 
         it('shows field length error', function () {

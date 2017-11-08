@@ -130,11 +130,11 @@ angular.module('contentful')
     }
 
     var data = controller.newSpace.data;
-    var orgId = _.get(controller, 'newSpace.organization.sys.id');
+    var organization = controller.newSpace.organization;
 
     // TODO This may happen due to 'writableOrganizations' being empty.
     // See above for more info
-    if (!orgId) {
+    if (!organization) {
       return showFormError('You don’t have permission to create a space');
     }
 
@@ -142,12 +142,14 @@ angular.module('contentful')
       templateName: template.name
     });
     // Create space
-    client.createSpace(data, orgId)
+    client.createSpace(data, organization.sys.id)
     .then(function (newSpace) {
       TokenStore.refresh()
       .then(_.partial(handleSpaceCreation, newSpace, template));
     })
-    .catch(handleSpaceCreationFailure);
+    .catch(function (error) {
+      handleSpaceCreationFailure(organization, error);
+    });
   }
 
   function handleSpaceCreation (newSpace, template) {
@@ -217,11 +219,11 @@ angular.module('contentful')
     return spaceContext.space.createDeliveryApiKey(key);
   }
 
-  function handleSpaceCreationFailure (err) {
+  function handleSpaceCreationFailure (organization, err) {
     controller.createSpaceInProgress = false;
 
     var errors = _.get(err, 'body.details.errors');
-    var usage = enforcements.computeUsage('space');
+    var usage = enforcements.computeUsageForOrganization(organization, 'space');
     var fieldErrors = [
       {name: 'length', path: 'name', message: 'Space name is too long'},
       {name: 'invalid', path: 'default_locale', message: 'Invalid locale'}

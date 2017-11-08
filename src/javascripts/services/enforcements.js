@@ -86,7 +86,10 @@ angular.module('contentful')
   }
 
   function computeUsage (filter) {
-    var organization = spaceContext.organizationContext.organization;
+    return computeUsageForOrganization(spaceContext.organizationContext.organization, filter);
+  }
+
+  function computeUsageForOrganization (organization, filter) {
     if (!organization) return;
 
     if (filter) filter = stringUtils.uncapitalize(filter);
@@ -148,6 +151,7 @@ angular.module('contentful')
   return {
     determineEnforcement: determineEnforcement,
     computeUsage: computeUsage,
+    computeUsageForOrganization: computeUsageForOrganization,
     getPeriodUsage: getPeriodUsage
   };
 }]);
