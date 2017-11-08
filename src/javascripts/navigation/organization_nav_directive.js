@@ -95,12 +95,21 @@
         dataViewType: 'organization-users'
       },
       {
-        title: 'Spaces',
+        title: '{{ showPlatfromSubscription ? "Spaces (old)" : "Spaces" }}',
         sref: 'account.organizations.spaces({orgId: nav.orgId})',
         rootSref: 'account.organizations.spaces',
         inheritUrlParams: false,
         icon: 'nav-spaces',
         dataViewType: 'organization-spaces'
+      },
+      {
+        if: 'showPlatfromSubscription',
+        title: 'Spaces (new)',
+        sref: 'account.organizations.space_plans({orgId: nav.orgId})',
+        rootSref: 'account.organizations.space_plans',
+        inheritUrlParams: false,
+        icon: 'nav-spaces',
+        dataViewType: 'space-plans'
       },
       {
         title: 'Offsite backup',
