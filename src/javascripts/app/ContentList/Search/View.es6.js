@@ -133,8 +133,9 @@ export default function render ({
         ])
       ])
     ]),
-    isSuggestionOpen && filterSuggestions({
+    isSuggestionOpen && suggestionsBox({
       items: suggestions,
+      searchTerm: input,
       defaultFocus,
       onSelect: (key) => {
         actions.SelectFilterSuggestions(key);
@@ -410,10 +411,14 @@ function filterValueReference ({ctField = {}, testId, value, inputRef, onChange,
 
 // Suggestions
 // -----------
-
-
-function filterSuggestions ({items, defaultFocus, onSelect, onKeyDown}) {
-  return suggestionsContainer(items.map((field, index) => {
+function suggestionsBox ({
+  items,
+  searchTerm,
+  defaultFocus,
+  onSelect,
+  onKeyDown
+}) {
+  const suggestions = items.map((field, index) => {
     return h('div.search-next__completion-item', {
       ref: (el) => {
         if (defaultFocus.suggestionsFocusIndex === index && el) {
@@ -432,22 +437,28 @@ function filterSuggestions ({items, defaultFocus, onSelect, onKeyDown}) {
       onClick: () => onSelect(field)
     }, [
       // TODO truncate with ellipses
-      container({
-        flex: '0 0 30%'
-      }, [ h('.__filter-pill', [ field.name ]) ]),
-      hspace('20px'),
+      container({flex: '0 0 30%'}, [
+        h('.__filter-pill', [ field.name ])
+      ]),
+
       container({
         color: colors.textLightest,
         flex: '0 0 30%'
       }, [
         field.contentType ? field.contentType.name : 'All content types'
       ]),
-      hspace('20px'),
+
       container({
+        flex: '0 0 30%',
         color: colors.textLight
       }, [ field.description ])
     ]);
-  }));
+  });
+
+  return suggestionList({
+    items: suggestions,
+    searchTerm
+  });
 }
 
 function searchHelpBanner () {
@@ -479,24 +490,40 @@ function searchHelpBanner () {
   ]);
 }
 
-function suggestionsContainer (content) {
+function noSuggestionsMessage ({ searchTerm }) {
+  return h('div.search-next__suggestions__no-results', [
+    `There are no filters matching "${searchTerm}".`
+  ]);
+}
+
+function suggestionsHeader () {
+  return (
+    h('div.search-next__suggestions-header', [
+      h('div.search-next__suggestions__column', ['Field']),
+      h('div.search-next__suggestions__column', ['Content type']),
+      h('div.search-next__suggestions__column', [ 'Description' ])
+    ])
+  );
+}
+
+function suggestionList ({ items, searchTerm }) {
+  const hasSuggestions = items.length > 0;
   return h('div', {
     dataTestId: 'suggestions',
     style: {
-      position: 'absolute',
-      left: '0',
-      right: '0',
       zIndex: 1,
       border: `solid ${colors.blueMid}`,
       borderWidth: '0 1px 1px 1px',
       background: 'white'
     }
   }, [
-    container({
+    hasSuggestions
+    ? container({
       maxHeight: '50vh',
       overflowX: 'hidden',
       overflowY: 'auto'
-    }, content),
+    }, [suggestionsHeader(), ...items])
+    : noSuggestionsMessage({ searchTerm }),
     searchHelpBanner()
   ]);
 }

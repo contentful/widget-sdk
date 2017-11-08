@@ -175,7 +175,7 @@ export function getMatchingFilters (searchString, contentTypeId, availableConten
   let matchingFilters = filterByName(filters, searchString);
   matchingFilters = filterByContentType(matchingFilters, contentTypeId);
 
-  return matchingFilters.length > 0 ? matchingFilters : filters;
+  return matchingFilters;
 }
 
 function filterByName (filters, searchString = '') {
