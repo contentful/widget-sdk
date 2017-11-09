@@ -12,9 +12,7 @@ export function render (props) {
         'Most projects launch faster when they receive advice from our experts.'
       ]),
       h('div', [
-        h('a.button.btn-secondary-action', {
-          target: '_blank',
-          href: props.link,
+        h('span.button.btn-secondary-action', {
           onClick: props.onClick
         }, [
           'Contact an expert'

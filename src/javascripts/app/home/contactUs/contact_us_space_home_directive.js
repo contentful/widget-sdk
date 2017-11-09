@@ -1,8 +1,8 @@
 angular.module('contentful')
 .directive('cfContactUsSpaceHome', ['require', function (require) {
   var LD = require('utils/LaunchDarkly');
+  var Intercom = require('intercom');
   var renderTemplate = require('app/home/contactUs/template').render;
-  var createContactLink = require('services/ContactSales').createContactLink;
   var Analytics = require('analytics/Analytics');
   var $state = require('$state');
 
@@ -14,7 +14,6 @@ angular.module('contentful')
     controllerAs: 'contact',
     controller: ['$scope', function ($scope) {
       var controller = this;
-      controller.link = createContactLink('spacehome');
 
       render();
       LD.onFeatureFlag($scope, flagName, function (flag) {
@@ -25,7 +24,6 @@ angular.module('contentful')
       function render () {
         controller.component = renderTemplate({
           isVisible: controller.isVisible,
-          link: controller.link,
           onClick: onClick
         });
       }
@@ -35,6 +33,8 @@ angular.module('contentful')
           elementId: 'contact_sales_spacehome',
           fromState: $state.current.name
         });
+
+        Intercom.open();
       }
     }]
   };

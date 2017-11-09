@@ -5,6 +5,7 @@ require('angular-ui-sortable');
 require('regenerator-runtime/runtime');
 
 angular.module('cf.libs', [])
+  .constant('libs/color', require('color'))
   .constant('libs/sanitize-html', require('sanitize-html'))
   .constant('libs/preact', require('preact'))
   .constant('libs/qs', require('qs'))
