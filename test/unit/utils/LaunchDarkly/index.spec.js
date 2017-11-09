@@ -1,14 +1,28 @@
 import * as K from 'helpers/mocks/kefir';
 import * as sinon from 'helpers/sinon';
 import moment from 'npm:moment';
+import { update, push } from 'utils/Collections';
 
 describe('LaunchDarkly', function () {
   beforeEach(function () {
-    // mocks
+    const $apply = this.$apply.bind(this);
+
+    // This is a mock implementation of the LaunchDarkly client
+    // library.
     this.client = {
-      on: sinon.stub(),
-      off: sinon.stub(),
-      identify: sinon.stub(),
+      _eventHandlers: {},
+      on: sinon.spy(function (event, handler) {
+        this._eventHandlers = update(this._eventHandlers, event, (handlers) => {
+          return push(handlers || [], handler);
+        });
+      }),
+      _emit (event, value) {
+        const handlers = this._eventHandlers[event] || [];
+        handlers.forEach((handler) => handler(value));
+        $apply();
+      },
+      off: sinon.spy(),
+      identify: sinon.spy(),
       variation: sinon.stub()
     };
 
@@ -50,7 +64,7 @@ describe('LaunchDarkly', function () {
       }
     };
 
-    this.utils = {
+    const userModule = {
       userDataBus$: K.createMockProperty([
         this.user,
         this.org,
@@ -71,23 +85,20 @@ describe('LaunchDarkly', function () {
 
     module('contentful/test', $provide => {
       $provide.constant('libs/launch-darkly-client', this.LD);
-      $provide.value('data/User', this.utils);
+      $provide.value('data/User', userModule);
       $provide.value('utils/ShallowObjectDiff', this.shallowObjectDiff);
       $provide.value('utils/LaunchDarkly/EnforceFlags', this.EnforceFlags);
     });
 
     const ld = this.$inject('utils/LaunchDarkly');
 
-    this.init = ld.init;
-    this.onFeatureFlag = ld.onFeatureFlag;
-    this.getCurrentVariation = ld.getCurrentVariation;
-    this.setUserDataStream = function (user = this.user, org = this.org, spacesByOrg = {}, space) {
-      this.utils.userDataBus$.set([user, org, spacesByOrg, space]);
+    this.ld = ld;
+    this.ld.init();
+
+    this.setUserDataStream = function (user, org, spacesByOrg) {
+      userModule.userDataBus$.set([user, org, spacesByOrg]);
       this.$apply();
     };
-
-    this.rootScope = this.$inject('$rootScope');
-    this.init();
   });
 
   describe('#init()', function () {
@@ -128,146 +139,97 @@ describe('LaunchDarkly', function () {
   });
 
   describe('#getCurrentVariation', function () {
-    beforeEach(function () {
-      this.setupGetCurrentVariation = function (initVal) {
-        this.client.variation.returns(initVal);
-        const variationPromise = this.getCurrentVariation('test-or-feature-flag');
-
-        const readyHandler = _ => {
-          this.client.on.args[0][1](); // execute the callback for LD's 'ready' event
-          this.$apply();
-        };
-
-        const emitChangeOnUserDataBus = _ => {
-          this.utils.userDataBus$.set([this.user, this.org, {}, {sys: {id: 'space-id-999'}}]);
-          this.$apply();
-        };
-
-        return { variationPromise, readyHandler, emitChangeOnUserDataBus };
-      };
-    });
-
     it('should return a promise which resolves with variation after LD initializes', function* () {
-      const { variationPromise, readyHandler } = this.setupGetCurrentVariation('true');
+      this.client.variation.withArgs('FLAG').returns('true');
+      const variationPromise = this.ld.getCurrentVariation('FLAG');
 
-      readyHandler(); // removing this line will hang the test as LD will not be initialized
+      this.client._emit('ready');
       expect(yield variationPromise).toEqual(true);
     });
 
     it('should return a promise which resolves with variation after LD context changes', function* () {
-      const { variationPromise, emitChangeOnUserDataBus } = this.setupGetCurrentVariation('"potato"');
+      this.client.variation.withArgs('FLAG').returns('"potato"');
+      const variationPromise = this.ld.getCurrentVariation('FLAG');
 
-      emitChangeOnUserDataBus();
-      this.client.identify.callArg(2); // invoke the handler passed to client.identify
+      this.setUserDataStream(this.user, this.org, {}, {sys: {id: 'space-id-999'}});
+      this.client.identify.callArg(2); // invoke the callback passed to client.identify
       expect(yield variationPromise).toEqual('potato');
     });
 
     it('should return a promise which rejects for non-existing test/feature flag after LD initializes', function* () {
-      const { variationPromise, readyHandler } = this.setupGetCurrentVariation('<UNINITIALIZED>');
+      this.client.variation.callsFake((_flag, defaultValue) => defaultValue);
+      const variationPromise = this.ld.getCurrentVariation('FLAG');
 
-      try {
-        readyHandler(); // removing this line will hang the test as LD will not be initialized
-        yield variationPromise;
-      } catch (e) {
-        expect(e).toEqual(new Error('Invalid flag test-or-feature-flag'));
-      }
+      this.client._emit('ready');
+      const error = yield variationPromise.catch((e) => e);
+      expect(error).toEqual(new Error('Invalid flag FLAG'));
     });
   });
 
   describe('#onFeatureFlag', function () {
     beforeEach(function () {
-      this.setupFF = function () {
-        const $scope = this.rootScope.$new();
-        const spy = sinon.spy();
+      this.$scope = this.$inject('$rootScope').$new();
 
-        this.client.variation.returns('true');
-        this.onFeatureFlag($scope, 'feature-flag', spy);
-
-        const readyHandler = _ => {
-          this.client.on.args[0][1](); // execute the callback for LD's 'ready' event
-          this.$apply();
-        };
-
-        readyHandler();
-
-        return {
-          $scope,
-          spy,
-          getChangeHandler: _ => this.client.on.args[1][1] // callback for LD's client.on('change:flag-name`) event
-        };
-      };
+      this.ld.onFeatureFlag(this.$scope, 'FLAG', (value, change) => {
+        this.$scope.flagValue = value;
+        this.$scope.flagChange = change;
+      });
     });
 
     it('should attach a handler for flag variations and changes', function () {
-      const { spy, getChangeHandler } = this.setupFF();
-      const changeHandler = getChangeHandler();
+      this.client.variation.returns('true');
+      this.client._emit('ready');
+      expect(this.$scope.flagValue).toBe(true);
+
       const diff = {a: 10};
-
-      // init val triggered when ld is ready
-      expect(spy.args[0][0]).toBe(true);
-
       this.shallowObjectDiff.default.returns(diff);
       this.client.variation.returns('null');
-      changeHandler();
-      expect(spy.args[1][0]).toBe(null);
-      expect(spy.args[1][1]).toBe(diff);
+
+      this.client._emit('change:FLAG');
+      expect(this.$scope.flagValue).toBe(null);
+      expect(this.$scope.flagChange).toBe(diff);
     });
 
     it('should track variation changes by default', function () {
-      const { spy, getChangeHandler } = this.setupFF();
-      const changeHandler = getChangeHandler();
-      const diff = {a: true, b: 'test'};
+      this.client._emit('ready');
 
+      const diff = {a: true, b: 'test'};
       this.shallowObjectDiff.default.returns(diff);
       this.client.variation.returns('1');
-      changeHandler();
-      expect(spy.args[1][0]).toBe(1);
-      expect(spy.args[1][1]).toBe(diff);
+      this.client._emit('change:FLAG');
+      expect(this.$scope.flagValue).toBe(1);
+      expect(this.$scope.flagChange).toBe(diff);
     });
 
     it('should remove change handler when scope is destroyed', function () {
-      const { $scope, getChangeHandler } = this.setupFF();
-      const changeHandler = getChangeHandler();
-
-      $scope.$destroy();
+      this.client._emit('ready');
+      const changeHandler = this.client.on.args[1][1];
+      this.$scope.$destroy();
       expect(this.client.off.args[0][1]).toBe(changeHandler);
     });
 
     it('should never call the variation handler with undefined', function () {
-      const $scope = this.rootScope.$new();
+      this.client._emit('ready');
       const spy = sinon.spy();
 
       this.client.variation.returns(undefined);
-      this.onFeatureFlag($scope, 'feature-flag', spy);
+      this.ld.onFeatureFlag(this.$scope, 'feature-flag', spy);
 
       sinon.assert.notCalled(spy);
     });
 
     it('should not attach a change handler until LD is initialized with current context', function () {
-      const $scope = this.rootScope.$new();
-      const spy = sinon.spy();
-
-      this.client.variation.returns('false');
-      this.onFeatureFlag($scope, 'feature-flag', spy);
-
-      const readyHandler = _ => {
-        this.client.on.args[0][1]();
-        this.$apply();
-      };
-      const getChangeHandler = _ => this.client.on.args[1][1];
-
-      expect(_ => getChangeHandler()).toThrow();
-      readyHandler();
-      expect(typeof getChangeHandler()).toBe('function');
+      sinon.assert.callCount(this.client.on.withArgs('change:FLAG'), 0);
+      this.client._emit('ready');
+      sinon.assert.callCount(this.client.on.withArgs('change:FLAG'), 1);
     });
 
     it('overrides value with true for enforced feature flags', function () {
-      this.EnforceFlags.getEnabledFlags.returns(['feature-flag']);
-      const { spy, getChangeHandler } = this.setupFF();
-      const changeHandler = getChangeHandler();
-      this.client.variation.returns('false');
-      changeHandler();
-      expect(spy.args[1][0]).toBe(true);
+      this.client._emit('ready');
+      this.EnforceFlags.getEnabledFlags.returns(['FLAG']);
+      this.client.variation.withArgs('FLAG').returns('false');
+      this.client._emit('change:FLAG');
+      expect(this.$scope.flagValue).toBe(true);
     });
   });
 });
