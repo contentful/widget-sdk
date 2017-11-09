@@ -1,5 +1,7 @@
 'use strict';
 
+import { runTask } from 'utils/Concurrent';
+
 _.extend(window, createDsl(window.jasmine.getEnv()));
 
 function createDsl (jasmineDsl) {
@@ -100,64 +102,29 @@ function isGenerator (g) {
   return g && typeof g.next === 'function' && typeof g.throw === 'function';
 }
 
+
 /**
- * Given a generator that yields promises and a $scope.$apply method
- * this function returns a promise.
+ * Run a generator yielding promises as a task. In addition,
+ * continiously call `$apply()` so that handlers of Angular promises
+ * are called.
  *
- * The $apply function is called whenever a promise is yielded from the
- * generator. This is necessary to flush values to handlers in
- * Angular’s promise implementation.
- *
- * Not that the actual promise is not an Angular promise but the native
- * implementation.
- *
- * TODO This is very similar to `runTask` in `utils/Concurrent`. We
- * should merge the code.
+ * The reason behind this is that if we attach a revole or reject
+ * handler to an Angular promise that is already settled the handlers
+ * will not be called until the next digest cycle. During testing we
+ * must trigger digest cycles explicitly by calling `$apply`.
  */
+// We need to guard against mocking of timing functions
+const setInterval = window.setInterval;
+const clearInterval = window.clearInterval;
 function runGenerator (gen, $apply) {
-  return new Promise((resolve, reject) => {
-    const next = makeDispatcher('next');
-    const throwTo = makeDispatcher('throw');
-
-    next();
-
-    function makeDispatcher (method) {
-      return function (val) {
-        let ret;
-        try {
-          ret = gen[method](val);
-        } catch (e) {
-          reject(e);
-          return;
-        }
-
-        handleYield(ret);
-      };
+  return runTask(function* () {
+    const runApply = setInterval($apply, 10);
+    try {
+      yield* gen;
+    } catch (e) {
+      clearInterval(runApply);
+      throw e;
     }
-
-    function handleYield (ret) {
-      if (ret.done) {
-        resolve();
-      } else {
-        if (!isThenable(ret.value)) {
-          reject(new Error('Yielded non-promise value'));
-        }
-        // We need to wrap this in a native promise to escape the digest/apply
-        // loop. We also cannot use Promise.resolve as it does not work with the
-        // Angular promise implementation.
-        (new Promise((resolve, reject) => {
-          ret.value.then(resolve, reject);
-        }))
-        .then(next, throwTo);
-        // Repeatedly run $apply() to flush all promises
-        try {
-          if ($apply) {
-            _.times(5, () => $apply());
-          }
-        } catch (error) {
-          throwTo(error);
-        }
-      }
-    }
+    clearInterval(runApply);
   });
 }
