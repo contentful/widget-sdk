@@ -1,4 +1,4 @@
-/*global window */
+/* global window */
 import * as Kefir from 'libs/kefir';
 import * as K from 'utils/kefir';
 import { createStore, bindActions } from 'ui/Framework/Store';

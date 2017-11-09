@@ -258,7 +258,6 @@ function allFilters (contentTypes) {
  * that field.
  */
 function buildFilterField (ct, ctField) {
-
   return {
     name: ctField.apiName,
     description: ctField.name,

@@ -99,6 +99,5 @@ angular.module('contentful/mocks')
       getAll: sinon.stub().resolves([]),
       get: sinon.stub().resolves()
     };
-
   }
 }]);

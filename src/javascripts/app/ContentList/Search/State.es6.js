@@ -100,7 +100,6 @@ export const Actions = {
 };
 
 export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
-
   // TODO: remove side-effects from the reducer and use actionCreators instead.
   // Reducer must not create side-effects e.g dispatch(UnsetTyping);
   // http://redux.js.org/docs/basics/Reducers.html#handling-actions
@@ -296,7 +295,6 @@ export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
    * `submitSearch`.
    */
   function triggerSearch (state) {
-
     submitSearch({
       contentTypeId: state.contentTypeId,
       searchFilters: state.filters,

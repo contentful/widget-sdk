@@ -46,7 +46,7 @@ export default function create (space, contentTypes, entityType) {
     return localStorage.get() || {};
   }
 
-  function fromStorageFormat (viewData, collections) {
+  function fromStorageFormat (viewData) {
     const view = unserialize(viewData);
     return viewMigrations(view);
   }

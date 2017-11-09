@@ -46,7 +46,7 @@ function checkProps (props) {
         typeof value === 'function',
         'Ref handler must be a function'
       );
-    } else if (key === 'disabled' || key === 'checked') {
+    } else if (key === 'disabled' || key === 'checked' || key === 'autofocus') {
       assert(
         typeof value === 'boolean',
         `Element property "${key}" must be a boolean`

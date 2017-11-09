@@ -40,6 +40,7 @@ export default function render ({
   actions
 }) {
   const hasSpinner = isSearching || isTyping;
+  const hasFilters = filters.length > 0;
   const defaultFocus = focus;
 
   return h('div', {
@@ -82,9 +83,10 @@ export default function render ({
           onRemoveAttempt: ({ index }) => actions.SetFocusOnPill(index)
         }),
         queryInput({
-          isPlaceholderVisible: filters.length === 0,
+          isPlaceholderVisible: !hasFilters,
           value: input,
           onChange: actions.SetQueryInput,
+          autofocus: !input && !hasFilters,
           isFocused: defaultFocus.isQueryInputFocused,
           onKeyDown: (e) => {
             const { target } = e;
@@ -155,7 +157,14 @@ export default function render ({
 }
 
 
-function queryInput ({value, isPlaceholderVisible, isFocused, onChange, onKeyDown}) {
+function queryInput ({
+  value,
+  isPlaceholderVisible,
+  isFocused,
+  autofocus,
+  onChange,
+  onKeyDown
+}) {
   return h('input.input-reset.search-next__query-input', {
     dataTestId: 'queryInput',
     hooks: [ H.Ref(autosizeInput) ],
@@ -164,7 +173,7 @@ function queryInput ({value, isPlaceholderVisible, isFocused, onChange, onKeyDow
         requestAnimationFrame(() => el.focus());
       }
     },
-    autofocus: true,
+    autofocus,
     value,
     onKeyDown,
     onInput: (e) => onChange(e.target.value),
@@ -352,7 +361,6 @@ function filterSelect ({
   onChange,
   onKeyDown
 }) {
-
   return h('.search_select.search__select-value', [
     select({
       testId,

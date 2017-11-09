@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 import * as Preact from 'libs/preact';
 import { omit, clone } from 'lodash';
 import { set } from 'utils/Collections';

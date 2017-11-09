@@ -1,7 +1,7 @@
 /* global SystemJS */
 import sinon from 'npm:sinon';
 import _ from 'lodash';
-import { contentTypeFilter } from 'app/ContentList/Search/Filters';
+import { contentTypeFilter, getFiltersFromQueryKey } from 'app/ContentList/Search/Filters';
 import { Actions } from 'app/ContentList/Search/State';
 import { contentTypes, keyDown } from './helpers';
 
@@ -12,7 +12,7 @@ const Components = {
 };
 
 describe('app/ContentList/Search/View', function () {
-  beforeEach(function (done) {
+  beforeEach(function* () {
     module('contentful/test');
 
     SystemJS.set('entitySelector', SystemJS.newModule({ }));
@@ -22,27 +22,41 @@ describe('app/ContentList/Search/View', function () {
     SystemJS.set('moment', SystemJS.newModule({ }));
 
 
-    SystemJS.import('app/ContentList/Search/View').then(
+    yield SystemJS.import('app/ContentList/Search/View').then(
       ({ default: searchComponent }) => {
         // const searchComponent = this.$inject().default;
 
         this.actions = _.mapValues(Actions, () => {
           return sinon.spy();
         });
-        this.render = props => {
+        this.render = (props = {}) => {
+          const defaultProps = {
+            isSearching: false,
+            isTyping: false,
+            focus,
+            searchBoxHasFocus: false,
+            contentTypeId: '',
+            contentTypeFilter: contentTypeFilter(contentTypes),
+            filters: [],
+            input: '',
+            isSuggestionOpen: false,
+            suggestions: [],
+            actions: this.actions
+          };
           const view = this.createUI();
-          view.render(searchComponent(props));
+          view.render(searchComponent(_.assign({}, defaultProps, props)));
 
           this.view = view;
 
           // Attribute autofocus doesn't work
           // with dynamically created elements (e.g appendChild);
-          Components.queryInput(this.view).element.focus();
+          const queryInputEl = Components.queryInput(this.view).element;
+          if (queryInputEl.autofocus) {
+            queryInputEl.focus();
+          }
         };
-        done();
       }
     );
-
   });
 
   afterEach(function () {
@@ -54,37 +68,24 @@ describe('app/ContentList/Search/View', function () {
 
   describe('with initial state', function () {
     beforeEach(function () {
-      const props = {
-        isSearching: false,
-        isTyping: false,
-        focus,
-        searchBoxHasFocus: false,
-        contentTypeId: '',
-        contentTypeFilter: contentTypeFilter(contentTypes),
-        filters: [],
-        input: '',
-        isSuggestionOpen: false,
-        suggestions: [],
-        actions: this.actions
-      };
-      this.render(props);
+      this.render();
     });
 
-    it('has QueryInput be focused', function () {
+    it('QueryInput is focused', function () {
       const queryInputEl = Components.queryInput(this.view).element;
 
       expect(queryInputEl.value).toBe('');
       expect(queryInputEl.hasAttribute('autofocus')).toEqual(true);
     });
 
-    it('Content Type filter should have a selected Any', function () {
+    it('Content Type filter has a selected Any', function () {
       const contentTypeFilterValue = Components.contentFilterValue(this.view).element;
 
       expect(contentTypeFilterValue.value).toBe('');
       expect(contentTypeFilterValue.selectedOptions[0].label).toBe('Any');
     });
 
-    it('Content Type filter should have all possible content types', function () {
+    it('Content Type filter has all possible content types', function () {
       const contentTypeFilterValue = Components.contentFilterValue(this.view).element;
 
       const AnyOption = ['', 'Any'];
@@ -139,6 +140,41 @@ describe('app/ContentList/Search/View', function () {
       }));
 
       sinon.assert.calledOnce(this.actions.HideSuggestions);
+    });
+  });
+
+  describe('with searchTerm', () => {
+    beforeEach(function () {
+      this.render({
+        input: 'xoxo'
+      });
+    });
+
+    it('QueryInput is not focused', function () {
+      const queryInputEl = Components.queryInput(this.view).element;
+
+      expect(queryInputEl.value).toBe('xoxo');
+      expect(queryInputEl.hasAttribute('autofocus')).toEqual(false);
+    });
+  });
+
+  describe('with filters', () => {
+    beforeEach(function () {
+      this.render({
+        filters: getFiltersFromQueryKey({
+          contentTypes,
+          searchFilters: [['sys.id', '', 'xoxo']],
+          contentTypeId: '',
+          users: []
+        })
+      });
+    });
+
+    it('QueryInput is not focused', function () {
+      const queryInputEl = Components.queryInput(this.view).element;
+
+      expect(queryInputEl.value).toBe('');
+      expect(queryInputEl.hasAttribute('autofocus')).toEqual(false);
     });
   });
 });

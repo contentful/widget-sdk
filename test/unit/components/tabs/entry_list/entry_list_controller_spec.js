@@ -189,7 +189,6 @@ describe('Entry List Controller', function () {
         sinon.assert.calledTwice(this.getQuery);
       });
     });
-
   });
 
   describe('#updateEntries()', function () {

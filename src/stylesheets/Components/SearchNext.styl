@@ -7,19 +7,18 @@
   cursor: pointer
   padding: 0 14px
 
-  // We need to eat up the border of the search box
-  margin-bottom: -1px
-
   font-size: 12px
   color: $colors.blue-mid
 
-  border-bottom: 1px solid $colors.element-mid
   border-left: 1px solid transparent
   &.-focus
     border-bottom-color: $colors.blue-mid
   &:hover
     background-color: $colors.element-lightest
   &.-active
+    // // We need to eat up the border of the search box
+    // margin-bottom: -1px
+    // border-bottom: 2px solid transparent
     border-left-color: $colors.blue-mid
     position: relative
     &:after
