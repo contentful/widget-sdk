@@ -1,7 +1,9 @@
 import TheStore from 'TheStore';
 import {combine} from 'utils/kefir';
+import {getCurrentVariation} from 'utils/LaunchDarkly';
 import {user$, spacesByOrganization$ as spacesByOrg$} from 'services/TokenStore';
 import createSampleSpace from './CreateSampleSpace';
+import seeThinkDoFeatureModalTemplate from './SeeThinkDoTemplate';
 
 import {
   getFirstOwnedOrgWithoutSpaces,
@@ -10,17 +12,16 @@ import {
   getUserAgeInDays
 } from 'data/User';
 
+// this flag ensures that we call init function only once per
+// the whole application
+let wasInitAlreadyCalled = false;
+
 /**
  * @description
  * Auto creates a space using the product catalogue template
  * for a qualified user.
  * It is hooked up in the run block in application prelude.
  */
-
-// this flag ensures that we call init function only once per
-// the whole application
-let wasInitAlreadyCalled = false;
-
 export function init () {
   if (wasInitAlreadyCalled === true) {
     return;
@@ -35,10 +36,15 @@ export function init () {
       const org = getFirstOwnedOrgWithoutSpaces(user, spacesByOrg);
 
       creatingSampleSpace = true;
-      createSampleSpace(org, 'product catalogue')
+
+      getCurrentVariation('feature-ps-11-2017-project-status')
+        .then(variation => variation ? seeThinkDoFeatureModalTemplate : undefined)
+        .catch(_ => {})
+        .then(template => createSampleSpace(org, 'product catalogue', template))
         .then(_ => {
           TheStore.set(getKey(user), true);
-        }).catch(_ => {}).then(_ => {
+        }).catch(_ => {}) // to "fake" finally
+        .then(_ => {
           creatingSampleSpace = false;
         });
     });

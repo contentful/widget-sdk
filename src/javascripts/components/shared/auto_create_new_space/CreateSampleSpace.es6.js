@@ -2,6 +2,7 @@ import client from 'client';
 import $rootScope from '$rootScope';
 import spaceContext from 'spaceContext';
 import modalDialog from 'modalDialog';
+import $state from '$state';
 import { runTask } from 'utils/Concurrent';
 
 import {getCreator} from 'services/SpaceTemplateCreator';
@@ -24,7 +25,7 @@ import * as TokenStore from 'services/TokenStore';
  *
  * @returns Promise<undefined>
  */
-export default function (org, templateName) {
+export default function (org, templateName, modalTemplate = autoCreateSpaceTemplate) {
   /*
    * throws an error synchronously to differentiate it from
    * a rejected promise as a rejected promise stands for
@@ -41,10 +42,20 @@ export default function (org, templateName) {
 
   const scope = $rootScope.$new();
 
+  if (modalTemplate !== autoCreateSpaceTemplate) {
+    scope.onProjectStatusSelect = (elementId) => {
+      track('element:click', {
+        elementId,
+        fromState: $state.current.name
+      });
+      scope.chosenProjectStatus = elementId;
+    };
+  }
+
   return runTask(function* () {
     scope.isCreatingSpace = true;
+    const dialog = openDialog(scope, templateName, modalTemplate);
     const template = yield* loadTemplate(templateName);
-    const dialog = openDialog(scope, templateName);
 
     try {
       yield* createSpace(org, template.name);
@@ -55,6 +66,7 @@ export default function (org, templateName) {
       scope.isCreatingSpace = false;
     } catch (e) {
       scope.isCreatingSpace = false;
+      scope.spaceCreationFailed = true;
       if (dialog) {
         dialog.cancel();
       }
@@ -125,10 +137,10 @@ function* loadTemplate (name) {
 }
 
 
-function openDialog (scope, templateName) {
+function openDialog (scope, templateName, modalTemplate) {
   return modalDialog.open({
     title: 'Space auto creation',
-    template: autoCreateSpaceTemplate(templateName.toLowerCase()),
+    template: modalTemplate(templateName.toLowerCase()),
     backgroundClose: false,
     persistOnNavigation: true,
     ignoreEsc: true,

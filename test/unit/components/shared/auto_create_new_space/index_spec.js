@@ -19,6 +19,9 @@ describe('AutoCreateNewSpace/index', function () {
       $provide.value('services/TokenStore', this.tokenStore);
       $provide.value('components/shared/auto_create_new_space/CreateSampleSpace', this.createSampleSpace);
       $provide.value('TheStore', this.theStore);
+      $provide.value('utils/LaunchDarkly', {
+        getCurrentVariation: sinon.stub().resolves(false)
+      });
     });
 
     const init = this.$inject('components/shared/auto_create_new_space').init;
@@ -100,7 +103,8 @@ describe('AutoCreateNewSpace/index', function () {
       sinon.assert.calledWithExactly(
         this.createSampleSpace,
         this.user.organizationMemberships[0].organization,
-        'product catalogue'
+        'product catalogue',
+        undefined
       );
     });
 
