@@ -50,6 +50,10 @@ describe('Entry List Controller', function () {
           };
         }
       });
+
+      $provide.value('app/ContentList/Search', {
+        default: _.noop // TODO: Test search ui integration.
+      });
     });
 
     scope = this.$inject('$rootScope').$new();
@@ -178,7 +182,7 @@ describe('Entry List Controller', function () {
       });
 
       it('`searchFilters`', function () {
-        scope.context.view.searchFilters = 'thing';
+        scope.context.view.searchFilters = ['__status', '', 'published'];
         scope.$apply();
         sinon.assert.calledTwice(this.getQuery);
       });

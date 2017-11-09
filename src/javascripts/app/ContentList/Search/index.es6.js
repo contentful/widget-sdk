@@ -32,7 +32,11 @@ export default function create (
     // Showing empty component while we're waiting for the data from the streams
     $scope.search = renderLoader();
 
-    K.onValueScope(
+    if ($scope.searchOff) {
+      $scope.searchOff();
+    }
+
+    $scope.searchOff = K.onValueScope(
       $scope,
       Kefir.combine([isSearching$, store.state$, users$]),
       ([isSearching, state, users]) => {

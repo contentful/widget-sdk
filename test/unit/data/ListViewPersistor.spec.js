@@ -1,17 +1,16 @@
 describe('ListViewPersistor', function () {
-  let TheStore, $location, qs;
-  const key = 'lastFilterQueryString.testEntity.SPACE_ID';
+  let TheStore, $location, qs, createPersistor, createViewMigrator;
+  const STORE_KEY = 'lastFilterQueryString.testEntity.SPACE_ID';
 
   beforeEach(function () {
     module('contentful/test');
 
-    const createPersistor = this.$inject('data/ListViewPersistor').default;
+    createPersistor = this.$inject('data/ListViewPersistor').default;
     TheStore = this.$inject('TheStore');
+    createViewMigrator = this.$inject('data/ViewMigrator').default;
     $location = this.$inject('$location');
 
-    const space = { getId: sinon.stub().returns('SPACE_ID') };
-
-    qs = createPersistor(space, null, 'testEntity');
+    qs = createPersistor('SPACE_ID', null, 'testEntity');
     sinon.stub($location, 'search');
   });
 
@@ -22,7 +21,7 @@ describe('ListViewPersistor', function () {
     });
 
     it('falls back to data from localStorage', function* () {
-      TheStore.set(key, {test: true});
+      TheStore.set(STORE_KEY, {test: true});
       expect((yield qs.read()).test).toBe(true);
     });
 
@@ -38,6 +37,10 @@ describe('ListViewPersistor', function () {
 
     describe('does `searchTerm` migration', function () {
       beforeEach(function () {
+        const space = { getId: sinon.stub().returns('SPACE_ID') };
+        const contentTypes = { get: sinon.stub() };
+        const viewMigrator = createViewMigrator(space, contentTypes);
+        qs = createPersistor('SPACE_ID', viewMigrator, 'testEntity');
         $location.search.returns({ searchTerm: 'some text' });
       });
 
@@ -84,7 +87,7 @@ describe('ListViewPersistor', function () {
 
     it('puts last QS into the store', function () {
       qs.save({ test: true });
-      expect(TheStore.get(key)).toEqual({test: true});
+      expect(TheStore.get(STORE_KEY)).toEqual({test: true});
     });
   });
 });

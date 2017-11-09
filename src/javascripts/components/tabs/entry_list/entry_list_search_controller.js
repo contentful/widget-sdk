@@ -17,6 +17,7 @@ angular.module('contentful')
   $scope.context = { ready: false, loading: true };
 
   var initialized = false;
+  var lastUISearchState = null;
 
   /**
    * Public API
@@ -71,7 +72,6 @@ angular.module('contentful')
     // search changed
     var searchChanged = !initialized || !_.isEqual(next.search, prev.search);
     if (searchChanged) {
-      // TODO: If set from outside, update search ui
       resetEntries();
     }
   }, true);
@@ -147,9 +147,7 @@ angular.module('contentful')
   }
 
   function triggerSearch (newSearchState) {
-    if (!newSearchState) {
-      return;
-    }
+    lastUISearchState = newSearchState;
     updateViewWithSearch(newSearchState);
   }
 
@@ -158,11 +156,11 @@ angular.module('contentful')
   });
 
   function initializeSearchUI () {
-    if (initialized) {
-      // TODO:danwe Re-initialize to display new state!
+    var initialSearchState = getViewSearchState();
+
+    if (_.isEqual(lastUISearchState, initialSearchState)) {
       return;
     }
-    var initialSearchState = getViewSearchState();
 
     createSearchInput(
       $scope,

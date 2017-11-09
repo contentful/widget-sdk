@@ -14,9 +14,8 @@ const DATE_OPERATORS = {
   '<': 'lt',
   '<=': 'lte',
   '>': 'gt',
-  '>=': 'gte',
-  '!=': 'ne',
-  '==': 'eq'
+  '>=': 'gte'
+  // '==', '=' and ':' default to ''
 };
 
 /**

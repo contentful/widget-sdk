@@ -3,7 +3,6 @@ import $q from '$q';
 import $location from '$location';
 import TheStore from 'TheStore';
 import {omit, isEmpty, isObject} from 'lodash';
-import {textQueryToUISearch} from 'search/TextQueryConverter';
 import {serialize, unserialize} from 'data/ViewSerializer';
 
 /**
@@ -19,12 +18,12 @@ import {serialize, unserialize} from 'data/ViewSerializer';
  * TODO we need to separate the serialization logic for content types
  * and content.
  *
- * @param {Space} space
- * @param {ContentTypeRepo} contentTypes
+ * @param {string} spaceId
+ * @param {ViewMigrator?} viewMigrator
  * @returns {ListViewPersistor}
  */
-export default function create (space, contentTypes, entityType) {
-  const key = `lastFilterQueryString.${entityType}.${space.getId()}`;
+export default function create (spaceId, viewMigrator, entityType) {
+  const key = `lastFilterQueryString.${entityType}.${spaceId}`;
   const localStorage = TheStore.forKey(key);
 
   return {read, save};
@@ -73,24 +72,11 @@ export default function create (space, contentTypes, entityType) {
     }
 
     // Migration of pure text queries to new search ui's format.
-    if (view.searchTerm) {
-      const contentType = getViewContentTypeOrNull(view.contentTypeId);
-      return textQueryToUISearch(space, contentType, view.searchTerm)
-      .then((search) => {
-        view.searchText = search.searchText;
-        view.searchFilters = search.searchFilters;
-        delete view.searchTerm;
-        return view;
-      });
+    if (viewMigrator) {
+      return viewMigrator.migrateView(view);
     }
 
     return $q.resolve(view);
-  }
-
-  function getViewContentTypeOrNull (contentTypeId) {
-    return contentTypeId
-      ? contentTypes.get(contentTypeId)
-      : null;
   }
 }
 

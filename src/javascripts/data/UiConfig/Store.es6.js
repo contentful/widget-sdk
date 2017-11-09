@@ -4,6 +4,11 @@ import {findIndex, get as getPath} from 'lodash';
 import {update, concat} from 'utils/Collections';
 import {deepFreeze} from 'utils/Freeze';
 import * as K from 'utils/kefir';
+import {
+  isUIConfigDataMigrated,
+  normalizeMigratedUIConfigData,
+  prepareUIConfigForStorage
+} from 'data/ViewMigrator';
 
 const ENTRY_VIEWS_KEY = 'entryListViews';
 const ASSET_VIEWS_KEY = 'assetListViews';
@@ -13,8 +18,14 @@ const ASSET_VIEWS_KEY = 'assetListViews';
  *
  * The store fetches UI config and sends changes back to the API. It is created
  * on the space context reset and available as `spaceContext.uiConfig`.
+ *
+ * @param {Endpoint} spaceEndpoint
+ * @param {boolean} canEdit
+ * @param {ContentTypeRepo} publishedCTs
+ * @param {ViewMigrator} viewMigrator
+ * @returns {Promise<UIConfigStore>}
  */
-export default function create (spaceEndpoint, canEdit, publishedCTs) {
+export default function create (spaceEndpoint, canEdit, publishedCTs, viewMigrator) {
   // Holds the server resource or `{}` if the resource does not exist.
   // The value is always deeply frozen. Use `setUiConfig` to alter the value.
   let uiConfig;
@@ -66,7 +77,7 @@ export default function create (spaceEndpoint, canEdit, publishedCTs) {
     return spaceEndpoint({
       method: 'GET',
       path: ['ui_config']
-    }).then(setUiConfig, error => {
+    }).then(migrateUIConfig, error => {
       const statusCode = getPath(error, 'statusCode');
       if (statusCode === 404) {
         return setUiConfig({});
@@ -75,6 +86,19 @@ export default function create (spaceEndpoint, canEdit, publishedCTs) {
         return Promise.reject(error);
       }
     });
+  }
+
+  function migrateUIConfig (data) {
+    if (isUIConfigDataMigrated(data)) {
+      const uiConfig = normalizeMigratedUIConfigData(data);
+      return setUiConfig(uiConfig);
+    } else {
+      return viewMigrator.migrateUIConfigViews(data).then((migratedUIConfig) => {
+        return canEdit
+          ? save(migratedUIConfig)
+          : setUiConfig(migratedUIConfig);
+      });
+    }
   }
 
   /**
@@ -89,15 +113,17 @@ export default function create (spaceEndpoint, canEdit, publishedCTs) {
    *
    * TODO we should queue saves to prevent race conditions
    */
-  function save (data) {
-    setUiConfig(data);
+  function save (uiConfig) {
+    setUiConfig(uiConfig);
+
+    const data = prepareUIConfigForStorage(uiConfig);
 
     return spaceEndpoint({
       method: 'PUT',
       path: ['ui_config'],
       version: getPath(data, ['sys', 'version']),
       data
-    }).then(setUiConfig, error => {
+    }).then(migrateUIConfig, (error) => {
       const reject = () => Promise.reject(error);
       logger.logServerWarn('Could not save UIConfig', {error});
       return load().then(reject, reject);

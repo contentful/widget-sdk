@@ -1,5 +1,5 @@
 import $q from '$q';
-import { cloneDeep, assign, mapValues, omit, values } from 'lodash';
+import { cloneDeep, assign, mapValues, values } from 'lodash';
 
 /**
  * Mock implementation for the 'spaceEndpoint' that simulates a subset
@@ -192,9 +192,9 @@ function putResource (store, id, version, data) {
   } else if (item.sys.version !== version) {
     return rejectVersionMismatch();
   }
-
-  Object.assign(item, omit(data, 'sys'));
-  item.sys.version++;
+  const sys = item.sys;
+  sys.version++;
+  item = store[id] = Object.assign({}, data, {sys});
   return $q.resolve(cloneDeep(item));
 }
 

@@ -37,6 +37,7 @@ angular.module('contentful')
   var OrganizationContext = require('classes/OrganizationContext');
   var MembershipRepo = require('access_control/SpaceMembershipRepository');
   var createUiConfigStore = require('data/UiConfig/Store').default;
+  var createViewMigrator = require('data/ViewMigrator').default;
 
   var spaceContext = {
     /**
@@ -115,10 +116,15 @@ angular.module('contentful')
         Widgets.setSpace(space).then(function (widgets) {
           self.widgets = widgets;
         }),
-        createUiConfigStore(self.endpoint, isAdmin, self.publishedCTs).then(function (api) {
-          self.uiConfig = api;
-        }),
-        self.publishedCTs.refresh()
+        self.publishedCTs.refresh().then(function () {
+          var viewMigrator = createViewMigrator(space, self.publishedCTs);
+          return createUiConfigStore(
+            self.endpoint, isAdmin, self.publishedCTs, viewMigrator
+          )
+          .then(function (api) {
+            self.uiConfig = api;
+          });
+        })
       ]).then(function () {
         return self;
       });

@@ -24,8 +24,14 @@ describe('TextQueryConverter#textQueryToUISearch()', function () {
     };
   });
 
-  function itConverts (description, textQuery, expectedUISearchObject) {
+  function itConverts (description, setup, textQuery, expectedUISearchObject) {
     it(`converts ${description}`, function* () {
+      if (!_.isFunction(setup)) {
+        expectedUISearchObject = textQuery;
+        textQuery = setup;
+      } else {
+        setup.call(this);
+      }
       yield* this.testConvert(textQuery, expectedUISearchObject);
     });
   }
@@ -195,13 +201,12 @@ describe('TextQueryConverter#textQueryToUISearch()', function () {
       );
     });
 
-    describe('multiple types and system field', function () {
-      beforeEach(function () {
-        this.contentType.data.fields[0].type = 'Link';
-        this.contentType.data.fields[1].type = 'Text';
-      });
-
+    describe('mixed types and system field', function () {
       itConverts('sys field "id"',
+        function () {
+          this.contentType.data.fields[0].type = 'Link';
+          this.contentType.data.fields[1].type = 'Text';
+        },
         'status:archived API_NAME_1: "LINK 1" NAME_2:TEXT some search text',
         {
           contentTypeId: 'CTID',
@@ -210,6 +215,21 @@ describe('TextQueryConverter#textQueryToUISearch()', function () {
             ['__status', '', 'archived'],
             ['fields.API_NAME_1.sys.id', '', 'LINK 1'],
             ['fields.API_NAME_2', 'match', 'TEXT']
+          ]
+        }
+      );
+
+      itConverts('"text" filter followed by status and search text',
+        function () {
+          this.contentType.data.fields[0].type = 'Text';
+        },
+        'NAME_1:text status:published More',
+        {
+          contentTypeId: 'CTID',
+          searchText: 'More',
+          searchFilters: [
+            ['fields.API_NAME_1', 'match', 'text'],
+            ['__status', '', 'published']
           ]
         }
       );
@@ -304,10 +324,11 @@ describe('TextQueryConverter#textQueryToUISearch()', function () {
       ]
     );
 
-    itConvertsFilters('parses day equality ("=" or ":") into a single filter',
-      `${name} = 2000-01-01 ${name}:"1985-05-25`,
+    itConvertsFilters('parses day equality ("==", "=" or ":") into a single filter',
+      `${name} == 2014-03-01 ${name} = 1989-04-01 ${name}:"1985-05-25`,
       [
-        [key, '', '2000-01-01'],
+        [key, '', '2014-03-01'],
+        [key, '', '1989-04-01'],
         [key, '', '1985-05-25']
       ]
     );

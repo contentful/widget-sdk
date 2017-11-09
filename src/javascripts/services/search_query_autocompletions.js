@@ -27,12 +27,14 @@
 angular.module('contentful')
 .factory('searchQueryAutocompletions', ['require', function (require) {
   var $q = require('$q');
-  var spaceContext = require('spaceContext');
   var mimetype = require('mimetype');
   var assetContentType = require('assetContentType');
   var moment = require('moment');
   var caseofEq = require('libs/sum-types').caseofEq;
   var otherwise = require('libs/sum-types').otherwise;
+
+  // Require on demand to avoid circular dependency error in `spaceContext`.
+  var requireSpaceContext = _.once(function () { return require('spaceContext'); });
 
   var NOT_SEARCHABLE_FIELD_TYPES = ['Location', 'Object', 'File'];
   var RELATIVE_DATE_REGEX = /(\d+) +days +ago/i;
@@ -262,7 +264,7 @@ angular.module('contentful')
   // - by default user names are just "First Last"
   // - duplicates are differentiated with ID: "First Last (someid123)"
   function getUserMap () {
-    return spaceContext.users.getAll().then(function (users) {
+    return requireSpaceContext().users.getAll().then(function (users) {
       var transformed = users.map(function (user) {
         return {
           id: user.sys.id,

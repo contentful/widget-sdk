@@ -8,7 +8,7 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
   var createViewPersistor = require('data/ListViewPersistor').default;
 
   var viewPersistor = createViewPersistor(
-    spaceContext.space, spaceContext.publishedCTs, 'contentTypes');
+    spaceContext.getId(), null, 'contentTypes');
 
   viewPersistor.read().then(loadView);
 
