@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-require('regenerator-runtime/runtime')
+require('babel-polyfill')
 require('babel-register')
 
 var run = require('../tools/docker/entry-script').default

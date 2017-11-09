@@ -72,7 +72,6 @@
     "querystring": "^0.2.0",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
-    "regenerator-runtime": "^0.9.6",
     "run-sequence": "~1.0.2",
     "sanitize-html": "^1.14.1",
     "scroll-into-view": "^1.9.0",
@@ -86,8 +85,7 @@
     "through2": "^2.0.3",
     "vinyl": "^0.4.6",
     "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "~1.0.0",
-    "yaku": "^0.18.2"
+    "vinyl-source-stream": "~1.0.0"
   },
   "devDependencies": {
     "angular-mocks": "~1.5.7",
