@@ -1,4 +1,4 @@
-'use strict';
+import createMockEndpoint from 'helpers/mocks/SpaceEndpoint';
 
 describe('widgets/store', function () {
   let Store;
@@ -13,19 +13,19 @@ describe('widgets/store', function () {
   });
 
   describe('#getMap()', function () {
-    pit('returns an object including the builtin widgets', function () {
+    it('returns an object including the builtin widgets', function* () {
       const builtin = this.$inject('widgets/builtin');
       const builtinIds = _.keys(builtin);
-      const store = Store.create(makeSpaceStub());
-      return store.getMap()
-      .then(function (widgets) {
-        const widgetIds = _.keys(widgets);
-        expect(widgetIds).toEqual(builtinIds);
-      });
+      const endpoint = createMockEndpoint();
+      const store = Store.create(endpoint.request);
+      const widgets = yield store.getMap();
+      const widgetIds = _.keys(widgets);
+      expect(widgetIds).toEqual(builtinIds);
     });
 
-    pit('includes processed widgets from API', function () {
-      const custom = {
+    it('includes processed widgets from API', function* () {
+      const endpoint = createMockEndpoint();
+      endpoint.stores.extensions['CUSTOM'] = {
         sys: {id: 'CUSTOM'},
         widget: {
           name: 'NAME',
@@ -34,37 +34,23 @@ describe('widgets/store', function () {
           fieldTypes: [{type: 'Array', items: {type: 'Link', linkType: 'Asset'}}]
         }
       };
-      const store = Store.create(makeSpaceStub([custom]));
+      const store = Store.create(endpoint.request);
 
-      return store.getMap().then(function (widgets) {
-        const processed = widgets['CUSTOM'];
-        expect(processed.sidebar).toEqual('SIDEBAR');
-        expect(processed.src).toEqual('SRC');
-        expect(processed.name).toEqual('NAME');
-        expect(processed.template).toEqual('<cf-iframe-widget>');
-        expect(processed.fieldTypes).toEqual(['Assets']);
-      });
+      const widgets = yield store.getMap();
+      const processed = widgets['CUSTOM'];
+      expect(processed.sidebar).toEqual('SIDEBAR');
+      expect(processed.src).toEqual('SRC');
+      expect(processed.name).toEqual('NAME');
+      expect(processed.template).toEqual('<cf-iframe-widget>');
+      expect(processed.fieldTypes).toEqual(['Assets']);
     });
 
-    pit('returns only builtins if response fails', function () {
-      const store = Store.create({
-        endpoint: sinon.stub().returns({
-          get: sinon.stub().rejects()
-        })
-      });
+    it('returns only builtins if response fails', function* () {
+      const endpoint = sinon.stub().rejects();
+      const store = Store.create(endpoint);
       const builtin = this.$inject('widgets/builtin');
-      return store.getMap()
-      .then(function (widgets) {
-        expect(widgets).toEqual(builtin);
-      });
+      const widgets = yield store.getMap();
+      expect(widgets).toEqual(builtin);
     });
   });
-
-  function makeSpaceStub (widgets) {
-    return {
-      endpoint: sinon.stub().returns({
-        get: sinon.stub().resolves({items: widgets || []})
-      })
-    };
-  }
 });
