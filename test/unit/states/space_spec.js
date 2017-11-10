@@ -22,7 +22,7 @@ describe('states/spaces', function () {
     this.tokenStore.getSpace.resolves(this.space);
 
     const states = this.$inject('states');
-    const spaceState = this.$inject('states/spaces');
+    const spaceState = this.$inject('states/Spaces').default;
     states.load([spaceState]);
 
     const $state = this.$inject('$state');
