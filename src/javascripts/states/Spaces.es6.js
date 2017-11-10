@@ -31,18 +31,13 @@ const spaceDetail = {
       .then(function (space) {
         return spaceContext.resetWithSpace(space);
       });
-    }],
-    space: ['spaceContext', function (spaceContext) {
-      return spaceContext.space;
-    }],
-    widgets: ['spaceContext', function (spaceContext) {
-      return spaceContext.widgets;
     }]
   },
-  onEnter: ['space', function (space) {
-    Analytics.trackSpaceChange(space);
+  onEnter: ['spaceContext', function (spaceContext) {
+    Analytics.trackSpaceChange(spaceContext.space);
   }],
-  controller: ['$scope', 'space', function ($scope, space) {
+  controller: ['$scope', 'spaceContext', function ($scope, spaceContext) {
+    const space = spaceContext.space;
     $scope.label = space.data.name;
 
     if (sectionAccess.hasAccessToAny()) {
@@ -51,8 +46,8 @@ const spaceDetail = {
       TheStore.set('lastUsedOrg', space.getOrganizationId());
     }
   }],
-  templateProvider: ['space', function (space) {
-    if (space.isHibernated()) {
+  templateProvider: ['spaceContext', function (spaceContext) {
+    if (spaceContext.space.isHibernated()) {
       return JST.cf_space_hibernation_advice();
     } else if (!sectionAccess.hasAccessToAny()) {
       return JST.cf_no_section_available();

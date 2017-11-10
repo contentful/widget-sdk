@@ -43,10 +43,4 @@ describe('states/spaces', function () {
     this.$apply();
     sinon.assert.calledWith(this.spaceContext.resetWithSpace, this.space);
   });
-
-  it('exposes the space as a local', function () {
-    this.$state.go('spaces.detail', {spaceId: 'SPACE'});
-    this.$apply();
-    expect(this.$state.$current.locals.globals.space).toEqual(this.space);
-  });
 });
