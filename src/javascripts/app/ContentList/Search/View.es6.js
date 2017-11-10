@@ -386,7 +386,7 @@ function select ({
   onKeyDown
 }) {
   const [_, selectedOptionLabel] = options.find(([v]) => v === value) || ['', ''];
-  const width = selectedOptionLabel.length ? `${selectedOptionLabel.length + 3}ch` : 'auto';
+  const width = selectedOptionLabel.length ? `${selectedOptionLabel.length + 3}ch` : '7ch';
 
   return h('select.input-reset.search__select', {
     dataTestId: testId,
