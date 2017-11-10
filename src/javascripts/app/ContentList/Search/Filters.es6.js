@@ -149,6 +149,10 @@ export function buildFilterFieldByQueryKey (contentType, queryKey) {
  */
 export function isFieldFilterApplicableToContentType (contentType, queryKey) {
   if (isContentTypeField(queryKey)) {
+    if (!contentType) {
+      return false;
+    }
+
     const field = getFieldByApiName(contentType, getApiName(queryKey));
 
     return field !== undefined;
