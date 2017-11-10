@@ -1,4 +1,3 @@
-import * as K from 'utils/kefir';
 import $q from '$q';
 
 
@@ -38,20 +37,13 @@ export function createMVar$q (value) {
   return createBase($q, !arguments.length, value);
 }
 
-
-// `isEmpty` is used to distinguish between providing `undefined` as an
+// `initialEmpty` is used to distinguish between providing `undefined` as an
 // initial value or no initial value at all.
-function createBase (PromiseImplementation, isEmpty, value) {
-  // @todo it can be implemented without Kefir, just promises
-  const bus = K.createPropertyBus();
-  const value$ = bus.property.flatten(function (x) {
-    return x.isEmpty ? [] : [x.value];
-  });
+function createBase (PromiseImplementation, initialEmpty, value) {
+  let readDeferred = makeDeferred(PromiseImplementation);
+  let isEmpty = true;
 
-  let state;
-  if (isEmpty) {
-    empty();
-  } else {
+  if (!initialEmpty) {
     put(value);
   }
 
@@ -60,20 +52,11 @@ function createBase (PromiseImplementation, isEmpty, value) {
     take: take,
     empty: empty,
     put: put,
-    isEmpty: function () { return state.isEmpty; }
+    isEmpty: function () { return isEmpty; }
   };
 
-  function setState (newState) {
-    state = newState;
-    bus.set(newState);
-  }
-
   function read () {
-    if (state.isEmpty) {
-      return value$.take(1).toPromise(PromiseImplementation);
-    } else {
-      return PromiseImplementation.resolve(state.value);
-    }
+    return readDeferred.promise;
   }
 
   function take () {
@@ -84,10 +67,32 @@ function createBase (PromiseImplementation, isEmpty, value) {
   }
 
   function empty () {
-    setState({ isEmpty: true });
+    if (!isEmpty) {
+      readDeferred = makeDeferred(PromiseImplementation);
+      isEmpty = true;
+    }
   }
 
   function put (value) {
-    setState({ isEmpty: false, value: value });
+    if (isEmpty) {
+      readDeferred.resolve(value);
+    } else {
+      readDeferred = makeDeferred(PromiseImplementation);
+      readDeferred.resolve(value);
+    }
+
+    isEmpty = false;
   }
+}
+
+
+// TODO we should probably extract this
+function makeDeferred (PromiseImplementation) {
+  let resolve, reject;
+  // eslint-disable-next-line promise/param-name
+  const promise = new PromiseImplementation((resolve_, reject_) => {
+    resolve = resolve_;
+    reject = reject_;
+  });
+  return { promise, resolve, reject };
 }
