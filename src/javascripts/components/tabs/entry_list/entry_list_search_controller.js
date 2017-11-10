@@ -132,18 +132,23 @@ angular.module('contentful')
     initialized = true;
     $scope.context.loading = true;
     $scope.context.isSearching = true;
+
     return prepareQuery()
       .then(function (query) {
         return spaceContext.space.getEntries(query);
+      }, function (error) {
+        $scope.context.loading = false;
+        $scope.context.isSearching = false;
+        $scope.context.ready = true;
+        return $q.reject(error);
       })
-     .then(function (result) {
-       $scope.context.isSearching = false;
-       Tracking.searchPerformed($scope.context.view, result.total);
-       return result;
-     })
-     .catch(function (error) {
-       return $q.reject(error);
-     });
+      .then(function (result) {
+        $scope.context.isSearching = false;
+        Tracking.searchPerformed($scope.context.view, result.total);
+        return result;
+      }, function (error) {
+        return $q.reject(error);
+      });
   }
 
   function triggerSearch (newSearchState) {
