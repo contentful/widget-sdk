@@ -19,7 +19,7 @@ export default function ($scope) {
 function loadSpaces () {
   return Array(4).fill({
     name: 'MarketingWebsite',
-    planShortName: 'XL'
+    plan: 'XL'
   });
 }
 
@@ -40,9 +40,27 @@ function render ({spaces, orgId}) {
 }
 
 function renderSpaces (spaces) {
-  return h('ul', spaces.map(({name}) => h('li', [name])));
+  return h('.table', [
+    h('.table__head', [
+      h('table', [
+        h('thead', [
+          h('tr', [h('th', ['Name']), h('th', ['Plan'])])
+        ])
+      ])
+    ]),
+    h('.table__body', [
+      h('table', [
+        h('tbody',
+          spaces.map(({name, plan}) => h('tr', [h('td', [name]), h('td', [plan])]))
+        )
+      ])
+    ])
+  ]);
 }
 
 function renderRightSidebar (orgId) {
-  return h('p', [`Add space to org ${orgId}`]);
+  return h('.entity-sidebar', [
+    h('h2.entity-sidebar__heading', ['Add space']),
+    h('p.entity-sidebar__help-text', [`Add space to org ${orgId}`])
+  ]);
 }
