@@ -1,7 +1,10 @@
 /* global SystemJS */
 import sinon from 'npm:sinon';
 import _ from 'lodash';
-import { contentTypeFilter, getFiltersFromQueryKey } from 'app/ContentList/Search/Filters';
+import {
+  contentTypeFilter,
+  getFiltersFromQueryKey
+} from 'app/ContentList/Search/Filters';
 import { Actions } from 'app/ContentList/Search/State';
 import { contentTypes, keyDown } from './helpers';
 
@@ -15,54 +18,56 @@ describe('app/ContentList/Search/View', function () {
   beforeEach(function* () {
     module('contentful/test');
 
-    SystemJS.set('entitySelector', SystemJS.newModule({ }));
+    SystemJS.set('entitySelector', SystemJS.newModule({}));
 
     // TODO: remove after converting datepicker to es6 module.
-    SystemJS.set('datepicker', SystemJS.newModule({ }));
-    SystemJS.set('moment', SystemJS.newModule({ }));
+    SystemJS.set('datepicker', SystemJS.newModule({}));
+    SystemJS.set('moment', SystemJS.newModule({}));
 
-
-    yield SystemJS.import('app/ContentList/Search/View').then(
-      ({ default: searchComponent }) => {
-        // const searchComponent = this.$inject().default;
-
-        this.actions = _.mapValues(Actions, () => {
-          return sinon.spy();
-        });
-        this.render = (props = {}) => {
-          const defaultProps = {
-            isSearching: false,
-            isTyping: false,
-            focus,
-            searchBoxHasFocus: false,
-            contentTypeId: '',
-            contentTypeFilter: contentTypeFilter(contentTypes),
-            filters: [],
-            input: '',
-            isSuggestionOpen: false,
-            suggestions: [],
-            actions: this.actions
-          };
-          const view = this.createUI();
-          view.render(searchComponent(_.assign({}, defaultProps, props)));
-
-          this.view = view;
-
-          // Attribute autofocus doesn't work
-          // with dynamically created elements (e.g appendChild);
-          const queryInputEl = Components.queryInput(this.view).element;
-          if (queryInputEl.autofocus) {
-            queryInputEl.focus();
-          }
-        };
-      }
+    const { default: searchComponent } = yield SystemJS.import(
+      'app/ContentList/Search/View'
     );
+
+    this.actions = _.mapValues(Actions, () => {
+      return sinon.spy();
+    });
+
+    // requirement for TrackFocus hook
+    document.body.setAttribute('tabindex', '0');
+
+    this.render = (props = {}) => {
+      const defaultProps = {
+        isSearching: false,
+        isTyping: false,
+        focus,
+        searchBoxHasFocus: false,
+        contentTypeId: '',
+        contentTypeFilter: contentTypeFilter(contentTypes),
+        filters: [],
+        input: '',
+        isSuggestionOpen: false,
+        suggestions: [],
+        actions: this.actions
+      };
+      const view = this.createUI();
+      view.render(searchComponent(_.assign({}, defaultProps, props)));
+
+      this.view = view;
+
+      // Attribute autofocus doesn't work
+      // with dynamically created elements (e.g appendChild);
+      const queryInputEl = Components.queryInput(this.view).element;
+      if (queryInputEl.autofocus) {
+        queryInputEl.focus();
+      }
+    };
   });
 
   afterEach(function () {
     SystemJS.delete('entitySelector');
     SystemJS.delete('datepicker');
     SystemJS.delete('moment');
+    document.body.removeAttribute('tabindex');
     this.view.destroy();
   });
 
@@ -79,14 +84,16 @@ describe('app/ContentList/Search/View', function () {
     });
 
     it('Content Type filter has a selected Any', function () {
-      const contentTypeFilterValue = Components.contentFilterValue(this.view).element;
+      const contentTypeFilterValue = Components.contentFilterValue(this.view)
+        .element;
 
       expect(contentTypeFilterValue.value).toBe('');
       expect(contentTypeFilterValue.selectedOptions[0].label).toBe('Any');
     });
 
     it('Content Type filter has all possible content types', function () {
-      const contentTypeFilterValue = Components.contentFilterValue(this.view).element;
+      const contentTypeFilterValue = Components.contentFilterValue(this.view)
+        .element;
 
       const AnyOption = ['', 'Any'];
 
@@ -94,7 +101,10 @@ describe('app/ContentList/Search/View', function () {
         AnyOption,
         ...contentTypes.map(({ name, sys: { id } }) => [id, name])
       ]).toEqual(
-        _.map(contentTypeFilterValue.options, ({ label, value }) => [value, label])
+        _.map(contentTypeFilterValue.options, ({ label, value }) => [
+          value,
+          label
+        ])
       );
     });
 
@@ -105,9 +115,11 @@ describe('app/ContentList/Search/View', function () {
     it('emits ShowSuggestions on arrow down', function () {
       const queryInput = Components.queryInput(this.view);
 
-      queryInput.element.dispatchEvent(keyDown({
-        key: 'ArrowDown'
-      }));
+      queryInput.element.dispatchEvent(
+        keyDown({
+          key: 'ArrowDown'
+        })
+      );
 
       sinon.assert.calledOnce(this.actions.ShowSuggestions);
     });
@@ -115,9 +127,11 @@ describe('app/ContentList/Search/View', function () {
     it('selects the last pill on backspace', function () {
       const queryInput = Components.queryInput(this.view);
 
-      queryInput.element.dispatchEvent(keyDown({
-        key: 'Backspace'
-      }));
+      queryInput.element.dispatchEvent(
+        keyDown({
+          key: 'Backspace'
+        })
+      );
 
       sinon.assert.calledOnce(this.actions.SetFocusOnLast);
     });
@@ -125,9 +139,11 @@ describe('app/ContentList/Search/View', function () {
     it('emits HideSuggestions on esc', function () {
       const queryInput = Components.queryInput(this.view);
 
-      queryInput.element.dispatchEvent(keyDown({
-        key: 'Escape'
-      }));
+      queryInput.element.dispatchEvent(
+        keyDown({
+          key: 'Escape'
+        })
+      );
 
       sinon.assert.calledOnce(this.actions.HideSuggestions);
     });
@@ -135,9 +151,11 @@ describe('app/ContentList/Search/View', function () {
     it('emits HideSuggestions on enter', function () {
       const queryInput = Components.queryInput(this.view);
 
-      queryInput.element.dispatchEvent(keyDown({
-        key: 'Enter'
-      }));
+      queryInput.element.dispatchEvent(
+        keyDown({
+          key: 'Enter'
+        })
+      );
 
       sinon.assert.calledOnce(this.actions.HideSuggestions);
     });

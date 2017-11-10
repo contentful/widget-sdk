@@ -55,7 +55,7 @@ const sysFieldFilters = [
   ['createdBy', 'User', 'Users of this space'],
   ['publishedAt', 'Date'],
   ['publishedBy', 'User', 'Users of this space'],
-  ['id']
+  ['id', '', '']
 ].map(([name, type, description]) => {
   return {
     name,
@@ -323,7 +323,7 @@ function isUserField ({type}) {
 
 function getPredefinedValues (ctField) {
   const { validations = [] } = (ctField.items || ctField);
-  const validationWithPredefinedValues = validations.find(v => has(v, 'in')) || {};
+  const validationWithPredefinedValues = find(validations, v => has(v, 'in')) || {};
 
   return validationWithPredefinedValues.in;
 }

@@ -34,7 +34,8 @@ export default function filterValueDate ({ testId, value, inputRef, onChange, on
     value: formattedDate,
     tabindex: '0',
     style: {
-      width: getWidth(formattedDate)
+      width: getWidth(formattedDate),
+      paddingLeft: '10px'
     },
     readonly: true
   });

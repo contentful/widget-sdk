@@ -93,12 +93,16 @@ function createFocusManager (el, setIsFocused) {
   setFocusIfChanged(isParent(el, document.activeElement));
   document.addEventListener('focusin', listener);
 
+  // HACK: Firefox does not respect tabindex on body element
+  document.addEventListener('click', listener);
+
   return {
     setCallback (newCb) {
       setIsFocused = newCb;
     },
     destroy () {
       document.removeEventListener('focusin', listener);
+      document.removeEventListener('click', listener);
     }
   };
 

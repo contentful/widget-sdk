@@ -1,109 +1,139 @@
 @require 'base/colors'
 
 .search__filter-pill
-  display: flex;
-  line-height: 30px;
-  height: 30px;
-  margin-top: 5px;
-  margin-right: 12px;
-  border-radius: 3px;
-  &:hover
-    box-shadow: 0 0 0 1px $colors.text-lightest;
-  &:focus,
+  transition: margin .1s ease-in-out
+  display: flex
+  line-height: 30px
+  height: 30px
+  margin-top: 3px
+  margin-right: 5px
+  border-radius: 3px
+  &:hover,
   &:active
-    box-shadow: 0 0 0 1px $colors.contrast-light;
+    box-shadow: 0 0 0 1px $colors.text-lightest
+  &:focus
+    box-shadow: 0 0 0 1px $colors.contrast-light
 
 .search__filter-pill-label
-  background-color: $colors.bg-light;
-  color: $colors.text-light;
-  padding: 0 12px;
-  border-radius: 3px 0 0 3px;
-  cursor: pointer;
+  background-color: $colors.bg-light
+  color: $colors.text-light
+  padding: 0 12px
+  border-radius: 3px 0 0 3px
+  cursor: pointer
 
 .search__select
-  padding: 5px 10px;
-  max-width: 200px;
-  color: $colors.white;
-  font-size: inherit;
-  background-color: transparent;
+  transition: width .1s ease-in-out
+  padding: 5px 10px
+  min-width: 60px
+  max-width: 200px
+  color: $colors.white
+  font-size: inherit
+  background-color: transparent
+  -webkit-appearance: none
+  -moz-appearance: none
+  appearance: none
+  @-moz-document url-prefix() {
+    select {
+      width: calc(100% + 16px)
+    }
+  }
+  option
+    color: $colors.text-dark
 
 .search__select-value
-  border-radius: 0;
-  background-color: $colors.blue-mid;
-  border-radius: 0 3px 3px 0;
-  -webkit-appearance: none;
-  &:focus
-    background-color: $colors.blue-dark;
+  border-radius: 0
+  background-color: $colors.blue-mid
+  border-radius: 0 3px 3px 0
+  display: inline-block
+  position: relative
+  &:after
+    content:"\f078"
+    font-family:'FontAwesome'
+    position: absolute
+    right: 10px
+    z-index: 5
+    pointer-events: none
+    color: white
+    font-size: 0.7em
+  .search__select:focus
+    background-color: $colors.blue-dark
 
 .search__select-operator
-  display: flex;
-  align-items: center;
-  position: relative;
+  display: flex
+  align-items: center
+  position: relative
   &::before,
   &::after
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 50%;
+    content: ''
+    position: absolute
+    top: 0
+    bottom: 0
+    width: 50%
   &::before
-    left: 0;
-    background-color: $colors.bg-light;
+    left: 0
+    background-color: $colors.bg-light
   &::after
-    right: 0;
-    background-color: $colors.blue-mid;
+    right: 0
+    background-color: $colors.blue-mid
   .search__select
-    position: relative;
-    padding: 3px 8px;
-    background-color: white;
-    border-radius: 10em;
-    z-index: 10;
-    color: $colors.blue-darkest;
-    border: 1px solid transparent;
-    text-align-last: center;
-    font-size: 85%;
-    -webkit-appearance: none;
+    position: relative
+    padding: 3px 8px
+    background-color: white
+    border-radius: 10em
+    z-index: 10
+    color: $colors.blue-darkest
+    border: 1px solid transparent
+    text-align-last: center
+    font-size: 85%
+    -webkit-appearance: none
+    -moz-appearance: none
+    appearance: none
+    @-moz-document url-prefix() {
+      select {
+        width: calc(100% + 16px)
+      }
+    }
     &:hover,
     &:focus,
     &:active
-      border: 1px solid $colors.blue-darkest;
-      cursor: pointer;
+      border: 1px solid $colors.blue-darkest
+      cursor: pointer
 
 .search__datepicker
-  margin-left: -80px;
-
+  margin-left: -80px
 
 .search__input-text
-  position: relative;
-  background-color: $colors.blue-mid;
-  min-width: 50px;
-  max-width: 30ch;
-  border-radius: 0 3px 3px 0;
-  line-height: 30px;
-  font-size: inherit;
+  position: relative
+  background-color: $colors.blue-mid
+  color: $colors.white
+  max-width: 30ch
+  border-radius: 0 3px 3px 0
+  line-height: 30px
+  height: 30px
+  font-size: inherit
+  color: $colors.white
   &:hover,
   &:focus,
   &:active
-    background-image: linear-gradient(to left, $colors.blue-darkest, $colors.blue-mid);
+    background-image: linear-gradient(to left, $colors.blue-darkest, $colors.blue-mid)
 
   .search__input-spacer
-    min-width: 50px;
-    max-width: 30ch;
+    min-width: 50px
+    max-width: 30ch
     white-space: nowrap
     // Add three characters to the left to give enough space
     // to the rendered value of the input and avoids weird jumping.
-    padding: 0 10px 0 3ch;
-    color: transparent;
+    padding: 0 10px 0 3ch
+    color: transparent
 
 .search__input
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-  padding: 0 12px;
-  background-color: transparent;
-  color: $colors.white;
-  line-height: 30px;
-  font-size: inherit;
-
+  position: absolute
+  left: 0
+  bottom: 0
+  width: 100%
+  height: 100%
+  padding: 0 12px
+  background-color: transparent
+  color: $colors.white
+  line-height: 30px
+  font-size: inherit

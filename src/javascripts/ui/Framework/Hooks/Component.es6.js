@@ -1,9 +1,9 @@
 /* eslint-disable no-restricted-syntax */
 import * as Preact from 'libs/preact';
-import { omit, clone } from 'lodash';
+import { omit, clone, get } from 'lodash';
 import { set } from 'utils/Collections';
 
-import {asPreact} from '../DOMRenderer';
+import { asPreact } from '../DOMRenderer';
 import * as VTree from '../VTree';
 
 /**
@@ -34,6 +34,7 @@ export class Hook extends Preact.Component {
   }
   componentDidMount () {
     this.hooks.next = hookMap(this.props.args.hooks);
+    this.applyHooks();
   }
   componentWillReceiveProps (nextProps) {
     this.hooks.prev = this.hooks.next;
@@ -53,7 +54,7 @@ export class Hook extends Preact.Component {
   render ({ args: { tag, props, children } }) {
     props = omit(props, ['hooks']);
     const oldRef = props.ref;
-    props.ref = (el) => {
+    props.ref = el => {
       this.hooks.el = el;
       oldRef && oldRef(el);
     };
@@ -65,18 +66,23 @@ export class Hook extends Preact.Component {
 
     // Previous hooks that are not in `next`.
     const remove = clone(prev);
-    Object.keys(next).forEach((key) => {
+    Object.keys(next).forEach(key => {
       const nextHook = next[key];
       const prevHook = prev[key];
       delete remove[key];
       const prevState = state[key];
-      state[key] = nextHook.run(el, prevState, prevHook.content, nextHook.content);
+      state[key] = nextHook.run(
+        el,
+        prevState,
+        get(prevHook, 'content'),
+        get(nextHook, 'content')
+      );
     });
 
-    Object.keys(remove).forEach((key) => {
+    Object.keys(remove).forEach(key => {
       const prevState = state[key];
       const prevHook = prev[key];
-      state[key] = prevHook.run(el, prevState, prevHook.content, null);
+      state[key] = prevHook.run(el, prevState, get(prevHook, 'content'), null);
       delete state[key];
     });
   }

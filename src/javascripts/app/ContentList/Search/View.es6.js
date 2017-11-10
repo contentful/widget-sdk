@@ -1,5 +1,5 @@
 /* global requestAnimationFrame */
-import { noop, cloneDeep } from 'lodash';
+import { noop, cloneDeep, find } from 'lodash';
 import { match } from 'utils/TaggedValues';
 
 import {h} from 'ui/Framework';
@@ -15,6 +15,7 @@ import { ValueInput } from './Filters';
 import { autosizeInput } from 'ui/AutoInputSize';
 import entitySelector from 'entitySelector';
 import filterValueDate from './ValueInput/Date';
+import { IsOverflownY as IsOverflownYHook } from './Hooks/IsOverflown';
 
 const Keys = {
   arrowUp: (e) => e.key === 'ArrowUp',
@@ -42,13 +43,13 @@ export default function render ({
   const hasSpinner = isSearching || isTyping;
   const hasFilters = filters.length > 0;
   const defaultFocus = focus;
-
   return h('div', {
-    hooks: [ H.TrackFocus(actions.SetBoxFocus) ],
+    hooks: [ H.TrackFocus((value) => actions.SetBoxFocus(value)) ],
     tabindex: '0',
     style: {
-      height: '42px',
-      position: 'relative'
+      height: '40px',
+      position: 'relative',
+      overflowY: searchBoxHasFocus ? 'initial' : 'hidden'
     }
   }, [
     h('div', {
@@ -56,16 +57,11 @@ export default function render ({
       ? 'search-next__pills-wrapper search-next__pills-wrapper--state-active'
       : 'search-next__pills-wrapper',
       onClick: () => actions.SetFocusOnQueryInput(),
-      onFocusOut: actions.ResetFocus
+      onFocusOut: actions.ResetFocus,
+      hooks: [IsOverflownYHook()]
     }, [
       h('div', {
-        style: {
-          display: 'flex',
-          alignItems: 'stretch',
-          flex: '1 1 auto',
-          flexWrap: 'wrap',
-          padding: '0 10px 5px'
-        }
+        class: 'search-next__pills-list'
       }, [
         filterPill({
           value: contentTypeId,
@@ -105,14 +101,20 @@ export default function render ({
           }
         })
       ]),
-      spinner({diameter: '18px'}, {
-        alignSelf: 'flex-start',
-        flexShrink: '0',
-        marginTop: '13px',
-        // We need to occupy the space to prevent breaking based on the
-        // spinners visibility
-        visibility: hasSpinner ? '' : 'hidden'
-      }),
+      h('div', {
+        style: {
+          paddingTop: '10px',
+          // We need to occupy the space to prevent breaking based on the
+          // spinners visibility
+          visibility: hasSpinner ? '' : 'hidden'
+        }
+      }, [
+        spinner({
+          diameter: '18px',
+          style: {
+            display: 'inline-block'
+          }}
+        )]),
       hspace('8px'),
       h('.search-next__filter-toggle', {
         onClick: () => actions.ToggleSuggestions(),
@@ -123,7 +125,7 @@ export default function render ({
       }, [
         container({
           alignSelf: 'flex-start',
-          height: '40px',
+          height: '38px',
           display: 'flex',
           alignItems: 'center'
         }, [
@@ -135,7 +137,9 @@ export default function render ({
         ])
       ])
     ]),
-    isSuggestionOpen && suggestionsBox({
+    isSuggestionOpen &&
+    (defaultFocus.suggestionsFocusIndex >= 0 || defaultFocus.isQueryInputFocused) &&
+    suggestionsBox({
       items: suggestions,
       searchTerm: input,
       defaultFocus,
@@ -155,7 +159,6 @@ export default function render ({
     })
   ]);
 }
-
 
 function queryInput ({
   value,
@@ -269,7 +272,7 @@ function filterOperator ({ op, operators = [], onChange }) {
     return null;
   }
 
-  return h('search_select.search__select-operator', [
+  return h('.search_select.search__select-operator', [
     select({
       testId: '',
       options: operators,
@@ -377,6 +380,11 @@ function filterSelect ({
   ]);
 }
 
+function getSelectWidth (label) {
+  const width = label.length + 4;
+  return Math.max(7, width) + 'ch';
+}
+
 function select ({
   testId,
   options = [],
@@ -385,8 +393,8 @@ function select ({
   onChange,
   onKeyDown
 }) {
-  const [_, selectedOptionLabel] = options.find(([v]) => v === value) || ['', ''];
-  const width = selectedOptionLabel.length ? `${selectedOptionLabel.length + 3}ch` : '7ch';
+  const [_, label] = find(options, ([v]) => v === value) || ['', ''];
+  const width = getSelectWidth(label);
 
   return h('select.input-reset.search__select', {
     dataTestId: testId,
