@@ -340,17 +340,21 @@ function filterValue ({ valueInput, value, isFocused, onChange, onRemove }) {
 }
 
 function filterValueText ({value, testId, inputRef, onChange, onKeyDown}) {
-  return h('input.input-reset.search__input-text', {
-    dataTestId: testId,
-    value,
-    ref: inputRef,
-    onInput: (e) => onChange(e.target.value),
-    onKeyDown,
-    tabindex: '0',
-    style: {
-      width: `calc(${(value === null ? 1 : value.length + 1)}ch + 20px)`
-    }
-  });
+  // In order to make the input fuild, we mirror the value of the input
+  // in a span that pushes the parent div to grow.
+  const shadowValue = value !== null ? value : '';
+
+  return h('fieldset.search__input-text', [
+    h('input.input-reset.search__input', {
+      dataTestId: testId,
+      value,
+      ref: inputRef,
+      onInput: (e) => onChange(e.target.value),
+      onKeyDown,
+      tabindex: '0'
+    }),
+    h('span.search__input-spacer', [shadowValue.replace(/\s/g, '|')])
+  ]);
 }
 
 function filterSelect ({
