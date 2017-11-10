@@ -53,8 +53,7 @@ export default function SaveViewDialog ({
               ['A view displays a list of entries you searched for. By saving the current view, you will be able to re-use it later.']),
             h('span', ['Name of the view', h('span.modal-dialog__richtext', [' (required)'])]),
             h('input.cfnext-form__input--full-size', {
-              type: 'text', value, onInput, onKeydown, maxLength: `${maxLength}`,
-              style: {marginTop: '5px'}
+              type: 'text', value, onInput, onKeydown, maxLength: `${maxLength}`, style: {marginTop: '5px'}
             }),
             allowViewTypeSelection && h('ul', {style: {marginTop: '20px'}}, [
               renderViewTypeOption({

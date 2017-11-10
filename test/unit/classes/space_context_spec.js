@@ -17,6 +17,7 @@ describe('spaceContext', function () {
       $provide.value('data/Endpoint', {
         createSpaceEndpoint: () => createMockSpaceEndpoint().request
       });
+      $provide.value('data/UiConfig/Store', {default: sinon.stub().resolves({store: true})});
     });
     this.spaceContext = this.$inject('spaceContext');
     this.mockService('TheLocaleStore');
@@ -550,8 +551,7 @@ describe('spaceContext', function () {
       getId: sinon.stub().returns('SPACE_ID'),
       getContentTypes: sinon.stub().resolves([]),
       getPublishedContentTypes: sinon.stub().resolves([]),
-      getPrivateLocales: sinon.stub().returns([{code: 'en'}]),
-      getUIConfig: sinon.stub().resolves()
+      getPrivateLocales: sinon.stub().returns([{code: 'en'}])
     };
   }
 });

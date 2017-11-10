@@ -4,7 +4,6 @@ import {h} from 'ui/Framework';
 import ViewFolder from './ViewFolder';
 import openInputDialog from 'app/InputDialog';
 import addFolderIcon from 'svg/add-folder';
-import { byName as colors } from 'Styles/Colors';
 
 export default function render (state, actions) {
   const {folders, canEdit} = state;
