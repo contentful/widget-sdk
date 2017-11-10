@@ -22,6 +22,8 @@ export const options = {
       'loose': true,
       'debug': true,
       'modules': false,
+      // TODO we want to use 'useBuiltIns': 'entry' to reduce bundle size,
+      // but first we heed to pipe `libs/index` through babel.
       'useBuiltIns': false
     }]
   ],
