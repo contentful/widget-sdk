@@ -70,8 +70,7 @@ export function emailsInput (
   status
 }, {
   updateEmails,
-  validateEmails,
-  lock
+  validateEmails
 }) {
   return h('div', [
     h('h3.section-title', ['Select users']),
@@ -83,12 +82,8 @@ export function emailsInput (
         class: 'cfnext-form__input',
         style: {width: '600px'},
         value: emailsInputValue,
-        onKeyup: (evt) => updateEmails(evt.target.value),
-        onChange: validateEmails,
-        onKeydown: () => {
-          lock(); // lock rendering of the component until keyup event
-          return true;
-        }
+        onInput: (evt) => updateEmails(evt.target.value),
+        onChange: validateEmails
       }),
       emails.length > organization.remainingInvitations
         ? h('.cfnext-form__field-error', [`

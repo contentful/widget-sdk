@@ -47,8 +47,7 @@ export default function ($scope) {
     failedOrgInvitations: [],
     successfulOrgInvitations: [],
     status: Idle(),
-    organization: {},
-    locked: false
+    organization: {}
   };
 
   const actions = {
@@ -59,8 +58,7 @@ export default function ($scope) {
     toggleInvitationEmailOption,
     restart,
     goToList,
-    submitInvitations,
-    lock: lock
+    submitInvitations
   };
 
   const orgId = $scope.properties.orgId;
@@ -92,9 +90,7 @@ export default function ($scope) {
       .forEach(space => runTask(function* () {
         const spaceWithRoles = yield* getSpaceWithRoles(space);
         state = assign(state, {spaces: [...state.spaces, spaceWithRoles]});
-        // rerender every time a space is complete with roles to show a progress indicator
-        // do not rerender if the user is typing
-        !state.locked && rerender();
+        rerender();
       }));
   });
 
@@ -256,11 +252,8 @@ export default function ($scope) {
 
     state = assign(state, {
       emailsInputValue,
-      emails,
-      locked: false
+      emails
     });
-
-    rerender();
   }
 
   /**
@@ -333,13 +326,6 @@ export default function ($scope) {
   function getOrgSpaces (limit) {
     return getSpaces(orgEndpoint, {limit});
   }
-
-  /**
-   * Keeps component from rendering while user is typing
-   */
-  function lock () {
-    state = assign(state, {locked: true});
-  }
 }
 
 function render (state, actions) {
@@ -361,7 +347,7 @@ function render (state, actions) {
               maxNumberOfEmails,
               Invalid,
               pick(state, ['emails', 'emailsInputValue', 'invalidAddresses', 'organization', 'status']),
-              pick(actions, ['updateEmails', 'validateEmails', 'lock'])
+              pick(actions, ['updateEmails', 'validateEmails'])
             ),
             organizationRole(state.orgRole, actions.updateOrgRole),
             accessToSpaces(
