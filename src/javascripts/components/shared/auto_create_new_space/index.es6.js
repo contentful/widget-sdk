@@ -4,6 +4,7 @@ import {getCurrentVariation} from 'utils/LaunchDarkly';
 import {user$, spacesByOrganization$ as spacesByOrg$} from 'services/TokenStore';
 import createSampleSpace from './CreateSampleSpace';
 import seeThinkDoFeatureModalTemplate from './SeeThinkDoTemplate';
+import {runTask} from 'utils/Concurrent';
 
 import {
   getFirstOwnedOrgWithoutSpaces,
@@ -37,16 +38,19 @@ export function init () {
 
       creatingSampleSpace = true;
 
-      getCurrentVariation('feature-ps-11-2017-project-status')
-        .then(variation => variation ? seeThinkDoFeatureModalTemplate : undefined)
-        .catch(_ => {})
-        .then(template => createSampleSpace(org, 'product catalogue', template))
-        .then(_ => {
+      runTask(function* () {
+        try {
+          const variation = yield getCurrentVariation('feature-ps-11-2017-project-status');
+          const template = variation ? seeThinkDoFeatureModalTemplate : undefined;
+
+          yield createSampleSpace(org, 'product catalogue', template);
           TheStore.set(getKey(user), true);
-        }).catch(_ => {}) // to "fake" finally
-        .then(_ => {
+        } catch (_) {
+          yield createSampleSpace(org, 'product catalogue');
+        } finally {
           creatingSampleSpace = false;
-        });
+        }
+      });
     });
 }
 
