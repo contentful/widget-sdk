@@ -74,17 +74,14 @@ export default function ($scope) {
   });
 
   runTask(function* () {
-    // 1st step - get org info and render page without the spaces grid
-    let organization;
-
-    try {
-      organization = yield* getOrgInfo(orgId);
-    } catch (e) {
-      // stop if user has no access
+    const canAccess = yield* hasPermission();
+    if (!canAccess) {
       denyAccess();
       return;
     }
 
+    // 1st step - get org info and render page without the spaces grid
+    const organization = yield* getOrgInfo();
     state = assign(state, {organization});
     rerender();
 
@@ -319,11 +316,6 @@ export default function ($scope) {
    */
   function* getOrgInfo () {
     const org = yield getOrganization(orgId);
-
-    if (!isOwnerOrAdmin(org)) {
-      throw new Error('User not authorized');
-    }
-
     const membershipLimit = getAtPath(org, 'subscriptionPlan.limits.permanent.organizationMembership');
     const spaceLimit = getAtPath(org, 'subscriptionPlan.limits.permanent.space');
     const users = yield getUsers(orgEndpoint, {limit: 0});
@@ -340,6 +332,11 @@ export default function ($scope) {
 
   function getOrgSpaces (limit) {
     return getSpaces(orgEndpoint, {limit});
+  }
+
+  function* hasPermission () {
+    const org = yield getOrganization(orgId);
+    return isOwnerOrAdmin(org);
   }
 }
 
