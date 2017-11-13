@@ -17,7 +17,7 @@ export const options = {
   presets: [
     ['env', {
       'targets': {
-        'browsers': ['last 2 versions', 'ie >= 11']
+        'browsers': ['last 2 versions', 'ie >= 10']
       },
       'loose': true,
       'debug': true,
