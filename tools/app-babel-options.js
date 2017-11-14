@@ -14,7 +14,19 @@ export const options = {
   only: /\.es6\.js$/,
   babelrc: false,
 
-  presets: [['es2015', { loose: true }]],
+  presets: [
+    ['env', {
+      'targets': {
+        'browsers': ['last 2 versions', 'ie >= 10']
+      },
+      'loose': true,
+      'debug': true,
+      'modules': false,
+      // TODO we want to use 'useBuiltIns': 'entry' to reduce bundle size,
+      // but first we heed to pipe `libs/index` through babel.
+      'useBuiltIns': false
+    }]
+  ],
   plugins: [
     ['transform-es2015-modules-systemjs', {
       systemGlobal: 'AngularSystem'
