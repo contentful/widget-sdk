@@ -11,6 +11,7 @@ import {invite, progress$} from 'account/SendOrganizationInvitation';
 import {isValidEmail} from 'stringUtils';
 import {go} from 'states/Navigator';
 import client from 'client';
+import {isOwnerOrAdmin} from 'services/OrganizationRoles';
 import {
   header,
   sidebar,
@@ -73,8 +74,14 @@ export default function ($scope) {
   });
 
   runTask(function* () {
-    // 1st step - get org ingo and render page without the spaces grid
-    const organization = yield* getOrgInfo(orgId);
+    const canAccess = yield* hasPermission();
+    if (!canAccess) {
+      denyAccess();
+      return;
+    }
+
+    // 1st step - get org info and render page without the spaces grid
+    const organization = yield* getOrgInfo();
     state = assign(state, {organization});
     rerender();
 
@@ -267,6 +274,11 @@ export default function ($scope) {
     $scope.$applyAsync();
   }
 
+  function denyAccess () {
+    $scope.properties.context.forbidden = true;
+    $scope.$applyAsync();
+  }
+
   /**
    * Add role id to the set of space roles that will be assigned to the users being invited
    * If the user is Admin, she/he cannot have other assigned roles, and vice-versa
@@ -320,6 +332,11 @@ export default function ($scope) {
 
   function getOrgSpaces (limit) {
     return getSpaces(orgEndpoint, {limit});
+  }
+
+  function* hasPermission () {
+    const org = yield getOrganization(orgId);
+    return isOwnerOrAdmin(org);
   }
 }
 
