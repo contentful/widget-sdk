@@ -31,6 +31,12 @@ const REACT_PROP_KEY_EXCEPTIONS = {
   'dangerously-set-inner-html': 'dangerouslySetInnerHTML'
 };
 
+const CUSTOM_ATTR_PREFIXES = [
+  'data-',
+  'aria-',
+  'cf-'
+];
+
 
 /**
  * Turns an abstract virtual DOM tree into a concrete React tree.
@@ -46,7 +52,9 @@ function asReact (tree) {
 
 function mapProps (props) {
   return mapKeys(props, (_, key) => {
-    if (Object.keys(REACT_PROP_KEY_EXCEPTIONS).indexOf(key) > -1) {
+    if (CUSTOM_ATTR_PREFIXES.some(p => key.indexOf(p) === 0)) {
+      return key;
+    } else if (Object.keys(REACT_PROP_KEY_EXCEPTIONS).indexOf(key) > -1) {
       return REACT_PROP_KEY_EXCEPTIONS[key];
     } else {
       return camelCase(key);

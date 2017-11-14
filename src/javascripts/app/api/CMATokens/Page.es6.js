@@ -158,7 +158,7 @@ function patSection (state, actions) {
       }, [
         h('button.btn-action', {
           dataTestId: 'pat.create.open',
-          onClick: actions.OpenCreateDialog
+          onClick: () => actions.OpenCreateDialog()
         }, ['Generate personal token'])
       ])
     ]),
