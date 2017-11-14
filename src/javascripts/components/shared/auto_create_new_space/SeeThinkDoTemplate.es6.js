@@ -51,7 +51,7 @@ export default function () {
             })
           ]),
           h('p.modal-dialog__plaintext', {
-            ngIf: '!chosenProjectStatus'
+            ngIf: 'isCreatingSpace'
           }, ['We’re preparing your example project']),
           h('h2.modal-dialog__plaintext', {
             ngIf: '!chosenProjectStatus',
@@ -91,7 +91,6 @@ export default function () {
         h('div', {
           ngIf: 'chosenProjectStatus',
           style: {
-            padding: '20px 0',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center'
@@ -99,13 +98,37 @@ export default function () {
         }, [
           h('div', {
             style: {
-              width: '500px',
-              height: '100px',
               display: 'flex',
-              justifyContent: 'center'
+              alignItems: 'center',
+              flexDirection: 'column'
             }
-          }, [h('p', ['We need to decide on what goes here'])]),
+          }, [
+            h('div.note-box--success', {
+              style: {
+                marginBottom: '20px'
+              }
+            }, [
+              h('h3', ['Great! We’ll send you an email']),
+              h('p', ['Check your email to view the relevant materials for what you need.'])
+            ]),
+            h('div', {
+              style: {
+                marginBottom: '40px'
+              }
+            }, [
+              h('div', {
+                ngIf: 'chosenProjectStatus === "project-status-see"'
+              }, ['Stuff for "See" status']),
+              h('div', {
+                ngIf: 'chosenProjectStatus === "project-status-think"'
+              }, ['Stuff for "Think" status']),
+              h('div', {
+                ngIf: 'chosenProjectStatus === "project-status-do"'
+              }, ['Stuff for "Do" status'])
+            ])
+          ]),
           h('button.btn-action', {
+            ngDisabled: 'isCreatingSpace',
             ngClick: 'dialog.confirm()'
           }, ['Close'])
         ])
@@ -142,7 +165,6 @@ function projectStatusItem ({title, bodyCopy, btnText, btnId}) {
       style: {
         width: '100%'
       },
-      ngDisabled: 'isCreatingSpace',
       ngClick: `onProjectStatusSelect('${btnId}')`
     }, [btnText])
   ]);
