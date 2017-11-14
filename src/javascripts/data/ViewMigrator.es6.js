@@ -1,6 +1,7 @@
 import $q from '$q';
 import {textQueryToUISearch} from 'search/TextQueryConverter';
-import {clone, cloneDeep, extend, has} from 'lodash';
+import {clone, cloneDeep, extend, omit, pick} from 'lodash';
+import assetContentType from 'assetContentType';
 
 /**
  * @param {Space} space
@@ -21,20 +22,35 @@ export default function create (space, contentTypes) {
    * @returns {Promise<Object>}
    */
   function migrateUIConfigViews (uiConfig) {
-    const {entryListViews = []} = uiConfig;
-    return $q.all(
-      entryListViews.map((folder) => this.migrateViewsFolder(folder))
-    ).then((entryListViews) => extend({}, uiConfig, {entryListViews}));
+    const migratedUIConfig = clone(uiConfig);
+    const {entryListViews, assetListViews} = uiConfig;
+    return $q.all([
+      $q.all((entryListViews || []).map(this.migrateViewsFolder)),
+      $q.all((assetListViews || []).map(
+        (folder) => this.migrateViewsFolder(folder, true)))
+    ])
+    .then(([migratedEntryListViews, migratedAssetListViews]) => {
+      // Only set if not `undefined` initially. Don't even set to an empty array
+      // because in this case default views won't be used.
+      if (entryListViews) {
+        migratedUIConfig.entryListViews = migratedEntryListViews;
+      }
+      if (assetListViews) {
+        migratedUIConfig.assetListViews = migratedAssetListViews;
+      }
+      return migratedUIConfig;
+    });
   }
   /**
    * Takes a folder of views and returns a copy of it with all views migrated.
    *
-   * @param folder
+   * @param {object} folder
+   * @param {boolean?} isAssetsFolder
    * @returns {Promise<Object>}
    */
-  function migrateViewsFolder (folder) {
+  function migrateViewsFolder (folder, isAssetsFolder) {
     return $q.all((folder.views || []).map((view) => {
-      return this.migrateView(view);
+      return this.migrateView(view, isAssetsFolder);
     })).then((views) => extend({}, folder, {views}));
   }
 
@@ -43,9 +59,10 @@ export default function create (space, contentTypes) {
    * migration is required.
    *
    * @param {Object} view
+   * @param {boolean} isAssetsView
    * @returns {Promise<Object>}
    */
-  function migrateView (view) {
+  function migrateView (view, isAssetsView) {
     if (view.searchTerm) {
       const contentType = getViewContentTypeOrNull(view.contentTypeId);
       const migratedView = cloneDeep(view);
@@ -59,23 +76,28 @@ export default function create (space, contentTypes) {
     } else {
       return $q.resolve(view);
     }
-  }
 
-  function getViewContentTypeOrNull (contentTypeId) {
-    return contentTypeId
-      ? contentTypes.get(contentTypeId)
-      : null;
+    function getViewContentTypeOrNull (contentTypeId) {
+      if (isAssetsView) {
+        return assetContentType;
+      }
+      return contentTypeId
+        ? contentTypes.get(contentTypeId)
+        : null;
+    }
   }
 }
 
 /**
  * Returns whether given UIConfig data from storage is migrated.
  *
+ * Note: Does NOT take an UIConfig and check whether the actual views are migrated.
+ *
  * @param uiConfig
  * @returns {boolean}
  */
 export function isUIConfigDataMigrated (data) {
-  return has(data, '_migrated.entryListViews');
+  return !!data._migrated;
 }
 
 /**
@@ -98,9 +120,8 @@ export function normalizeMigratedUIConfigData (data) {
  * @returns {*}
  */
 export function prepareUIConfigForStorage (uiConfig) {
-  const data = clone(uiConfig);
-  const entryListViews = data.entryListViews;
-  data._migrated = {entryListViews};
-  delete data.entryListViews;
+  const migrationFields = ['entryListViews', 'assetListViews'];
+  const data = omit(uiConfig, migrationFields);
+  data._migrated = pick(uiConfig, migrationFields);
   return data;
 }

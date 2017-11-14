@@ -16,12 +16,12 @@ describe('app/ContentList/Search/QueryBuilder', function () {
     });
   };
 
-  const buildQueryWithContentTypesMacro = (message, filterParams, expected) => {
+  const buildQueryWithContentTypesMacro = (message, search, expected) => {
     return buildQueryMacro(
       message,
       {
-        contentTypes,
-        filterParams
+        contentType: contentTypes[0],
+        search
       },
       expected
     );
@@ -52,11 +52,11 @@ describe('app/ContentList/Search/QueryBuilder', function () {
       'searchFilters with contentType specific field',
       {
         searchFilters: [['fields.website', '', '2']],
-        contentTypeId: 'sFzTZbSuM8coEwygeUYes'
+        contentTypeId: 'TEST_CT_ID'
       },
       {
         'fields.website': '2',
-        content_type: 'sFzTZbSuM8coEwygeUYes'
+        content_type: 'TEST_CT_ID'
       }
     );
 
@@ -64,12 +64,12 @@ describe('app/ContentList/Search/QueryBuilder', function () {
       'searchFilters with contentType specific field and search text',
       {
         searchFilters: [['fields.website', '', '2']],
-        contentTypeId: 'sFzTZbSuM8coEwygeUYes',
+        contentTypeId: 'TEST_CT_ID',
         searchText: 'xoxo'
       },
       {
         'fields.website': '2',
-        content_type: 'sFzTZbSuM8coEwygeUYes',
+        content_type: 'TEST_CT_ID',
         query: 'xoxo'
       }
     );
@@ -95,7 +95,8 @@ describe('app/ContentList/Search/QueryBuilder', function () {
       },
       {
         'sys.publishedAt[exists]': 'false',
-        'sys.archivedAt[exists]': 'false'
+        'sys.archivedAt[exists]': 'false',
+        changed: 'true'
       }
     );
 

@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { assign } from 'utils/Collections';
-import { getContentTypeById, buildFilterFieldByQueryKey } from './Filters';
+import { buildFilterFieldByQueryKey } from './Filters';
 import { Operator } from './Operators';
 
 /**
@@ -10,26 +10,26 @@ import { Operator } from './Operators';
  * Handles the special `__status` key that translates to complicated
  * queries on `sys` fields.
  *
- * @param {String?} options.contentTypeId
- * @param {Array?} options.searchFilters A list of [filter, operator, value] triples.
- * @param {String?} options.searchText
- *
- * TODO: Write tests.
+ * @param {ContentType} .contentType
+ * @param {String?} .search.contentTypeId
+ * @param {Array?}  .search.searchFilters A list of [filter, operator, value] triples.
+ * @param {String?} .search.searchText
  */
 
 export function buildQuery ({
-  contentTypes,
-  filterParams: { contentTypeId, searchFilters = [], searchText = '' }
+  search: { contentTypeId = null, searchFilters = [], searchText = '' },
+  contentType
 }) {
+  // Condition is true for special "assetContentType".
+  // TODO: Use the "assetContentType" to build (some) of the asset fields.
+  contentType = contentType && !contentType.sys ? null : contentType;
+
   let query = searchFilters.reduce((query, [queryKey, operator, value]) => {
-    const fieldInfo = buildFilterFieldByQueryKey(
-      getContentTypeById(contentTypes, contentTypeId),
-      queryKey
-    );
+    const fieldInfo = buildFilterFieldByQueryKey(contentType, queryKey);
 
     if (queryKey === '__status') {
       query = applyStatus(query, value);
-    } else if (fieldInfo.type === 'Date') {
+    } else if (fieldInfo && fieldInfo.type === 'Date') {
       query = applyDate(query, [queryKey, operator, value]);
     } else {
       query = applyGenericValue(query, [queryKey, operator, value]);
@@ -39,6 +39,7 @@ export function buildQuery ({
 
   query = applyContentType(query, contentTypeId);
   query = applySearchText(query, searchText);
+
   return query;
 }
 
@@ -57,7 +58,6 @@ function applyDate (query, [queryKey, operator, value]) {
   if (!date.isValid()) {
     return query;
   }
-
 
   if (operator === Operator.EQUALS) {
     query = applyGenericValue(query, [
@@ -125,7 +125,8 @@ function applyStatus (query, status) {
   } else if (status === 'draft') {
     return assign(query, {
       'sys.publishedAt[exists]': 'false',
-      'sys.archivedAt[exists]': 'false'
+      'sys.archivedAt[exists]': 'false',
+      changed: 'true'
     });
   } else if (status === 'changed') {
     return assign(query, {

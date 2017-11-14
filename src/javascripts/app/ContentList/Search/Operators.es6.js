@@ -27,6 +27,7 @@ export function getOperatorsByType (type) {
   switch (type) {
     case 'Symbol':
       return [equality, inequality, fts];
+    case 'AssetField':
     case 'Text':
       return [fts];
     case 'Date':
@@ -34,6 +35,8 @@ export function getOperatorsByType (type) {
     case 'Integer':
     case 'Number':
       return [equality, inequality, ...ranges];
+    case 'AssetFileField':
+    case 'AssetType':
     case 'User':
     case 'Array':
     case 'Boolean':
@@ -43,6 +46,8 @@ export function getOperatorsByType (type) {
     case 'SymbolListPredefined':
     case 'Link':
       return [equality, inequality];
+    case 'AssetDetails':
+      return [equality, ...ranges];
     default:
       return [equality, inequality];
   }

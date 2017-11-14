@@ -1,6 +1,4 @@
 describe('ViewSerializer', function () {
-  // TODO: Test collection serialization.
-
   beforeEach(function () {
     module('contentful/test');
 

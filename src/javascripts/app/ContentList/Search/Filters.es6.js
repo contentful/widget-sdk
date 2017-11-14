@@ -1,7 +1,8 @@
-import { cloneDeep, startsWith, find, get, has } from 'lodash';
+import { cloneDeep, startsWith, find, get, has, map } from 'lodash';
 import { makeCtor } from 'utils/TaggedValues';
 import { assign, push, concat } from 'utils/Collections';
 import { getOperatorsByType, equality as equalityOperator } from './Operators';
+import mimetype from 'mimetype';
 
 const CT_QUERY_KEY_PREFIX = 'fields';
 
@@ -56,9 +57,10 @@ const sysFieldFilters = [
   ['publishedAt', 'Date'],
   ['publishedBy', 'User', 'Users of this space'],
   ['id', '', '']
-].map(([name, type, description]) => {
+].map(([name, type, description, label]) => {
   return {
     name,
+    label: label || name,
     type,
     description,
     queryKey: getSysFieldQueryKey({name, type}),
@@ -81,6 +83,26 @@ const sysFieldFilters = [
   ]),
   contentType: null
 }]);
+
+// These are only applicable to assets
+const assetsFieldFilters = [
+  ['width', 'AssetDetails'],
+  ['height', 'AssetDetails'],
+  ['size', 'AssetDetails', '', 'size (kb)'],
+  ['type', 'AssetType'],
+  ['title', 'AssetField'],
+  ['description', 'AssetField'],
+  ['fileName', 'AssetFileField']
+].map(([name, type, description, label]) => ({
+  name,
+  label: label || name,
+  description,
+  type,
+  queryKey: getAssetQueryKey({name, type}),
+  operators: getOperatorsByType(type),
+  valueInput: getControlByType({type}),
+  contentType: null
+}));
 
 /**
  * Create the filter for the contentType field of an entry.
@@ -111,10 +133,10 @@ export function getContentTypeById (contentTypes, contentTypeId) {
   return find(contentTypes, ct => ct.sys.id === contentTypeId);
 }
 
-export function getFiltersFromQueryKey ({contentTypes, searchFilters, contentTypeId, users}) {
+export function getFiltersFromQueryKey ({contentTypes, searchFilters, contentTypeId, users, withAssets = false}) {
   const contentType = getContentTypeById(contentTypes, contentTypeId);
   const filters = searchFilters.map(([queryKey, op, value]) => {
-    return [buildFilterFieldByQueryKey(contentType, queryKey), op, value];
+    return [buildFilterFieldByQueryKey(contentType, queryKey, withAssets), op, value];
   });
 
   return setUserFieldsFilters(users, filters);
@@ -130,12 +152,12 @@ export function getFiltersFromQueryKey ({contentTypes, searchFilters, contentTyp
  *
  * @returns {FieldFilter}
  */
-export function buildFilterFieldByQueryKey (contentType, queryKey) {
-  if (isContentTypeField(queryKey)) {
+export function buildFilterFieldByQueryKey (contentType, queryKey, withAssets = false) {
+  if (contentType && isContentTypeField(queryKey)) {
     const field = getFieldByApiName(contentType, getApiName(queryKey));
     return buildFilterField(contentType, field);
   } else {
-    return find(sysFieldFilters, filter => filter.queryKey === queryKey);
+    return find(getSysFilters(withAssets), filter => filter.queryKey === queryKey);
   }
 }
 
@@ -173,8 +195,8 @@ export function isFieldFilterApplicableToContentType (contentType, queryKey) {
  * @param {API.ContentType[]} availableContentTypes
  * @returns {Filter[]}
  */
-export function getMatchingFilters (searchString, contentTypeId, availableContentTypes) {
-  const filters = allFilters(availableContentTypes);
+export function getMatchingFilters (searchString, contentTypeId, availableContentTypes, withAssets = false) {
+  const filters = allFilters(availableContentTypes, withAssets);
 
   let matchingFilters = filterByName(filters, searchString);
   matchingFilters = filterByContentType(matchingFilters, contentTypeId);
@@ -242,7 +264,7 @@ function getFieldByApiName (contentType, apiName) {
  * - Filters for sys fields common to each content type
  * - A filter for each field of the given content types
  */
-function allFilters (contentTypes) {
+function allFilters (contentTypes, withAssets = false) {
   const ctFieldFilters = contentTypes.reduce((filters, ct) => {
     return ct.fields.reduce((filters, ctField) => {
       return push(filters, buildFilterField(ct, ctField));
@@ -250,11 +272,15 @@ function allFilters (contentTypes) {
   }, []);
 
   const fields = concat(
-    sysFieldFilters,
-    ctFieldFilters
+    getSysFilters(withAssets),
+    withAssets ? [] : ctFieldFilters
   );
 
   return fields;
+}
+
+function getSysFilters (withAssets = false) {
+  return withAssets ? [...sysFieldFilters, ...assetsFieldFilters] : sysFieldFilters;
 }
 
 /**
@@ -288,6 +314,35 @@ function getSysFieldQueryKey ({name, type}) {
   return `sys.${name}${suffix}`;
 }
 
+function getAssetQueryKey ({name, type}) {
+  let queryKey = CT_QUERY_KEY_PREFIX;
+
+  if (type === 'AssetDetails') {
+    queryKey = getAssetDetailsQueryKey(name);
+  } else if (type === 'AssetFileField') {
+    queryKey = getAssetsFileFieldQueryKey(name);
+  } else if (type === 'AssetField') {
+    queryKey = `fields.${name}`;
+  } else if (type === 'AssetType') {
+    queryKey = 'mimetype_group';
+  }
+
+  return queryKey;
+}
+
+function getAssetDetailsQueryKey (name) {
+  let prefix = 'fields.file.details';
+
+  if (name === 'width' || name === 'height') {
+    prefix += '.image';
+  }
+
+  return `${prefix}.${name}`;
+}
+
+function getAssetsFileFieldQueryKey (name) {
+  return `fields.file.${name}`;
+}
 
 // TODO: implement control type resolution
 function getControlByType (ctField) {
@@ -308,6 +363,10 @@ function getControlByType (ctField) {
     }));
   } else if (ctField.type === 'Date') {
     return ValueInput.Date();
+  } else if (type === 'AssetType') {
+    const mimeTypes = map(mimetype.getGroupNames(),
+      (label, value) => [value, label]);
+    return ValueInput.Select(mimeTypes);
   } else {
     return ValueInput.Text();
   }

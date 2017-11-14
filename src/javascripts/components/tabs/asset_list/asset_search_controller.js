@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 
-.controller('AssetSearchController', ['$scope', 'require', 'getSearchTerm', function AssetSearchController ($scope, require, getSearchTerm) {
+.controller('AssetSearchController', ['$scope', 'require', function ($scope, require) {
   var controller = this;
   var $q = require('$q');
   var Paginator = require('Paginator');
@@ -15,19 +15,49 @@ angular.module('contentful')
   var accessChecker = require('accessChecker');
   var Tracking = require('analytics/events/SearchAndViews');
   var Notification = require('notification');
+  var K = require('utils/kefir');
+  var Kefir = require('libs/kefir');
+  var createSearchInput = require('app/ContentList/Search').default;
 
   var assetLoader = new PromisedLoader();
 
   var setIsSearching = makeIsSearchingSetter(true);
   var unsetIsSearching = makeIsSearchingSetter(false);
 
+  var lastUISearchState = null;
+
+  $scope.context = { ready: false, loading: true };
+
+  this.hasQuery = hasQuery;
+
   this.paginator = Paginator.create();
   $scope.assetContentType = require('assetContentType');
+
+  // TODO: Get rid of duplicate code in entry_list_search_controller.js
+
+  $scope.$watch(function () {
+    return {
+      viewId: getViewItem('id'),
+      search: getViewSearchState()
+    };
+  }, function () {
+    if (!isViewLoaded()) {
+      return;
+    }
+    resetAssets();
+  }, true);
+
+  function resetAssets () {
+    initializeSearchUI();
+    return controller.resetAssets(true);
+  }
 
   this.resetAssets = function (resetPage) {
     var currPage = this.paginator.getPage();
 
-    if (resetPage) { this.paginator.setPage(0); }
+    if (resetPage) {
+      this.paginator.setPage(0);
+    }
     if (!resetPage && !_.get($scope.assets, 'length', 0) && currPage > 0) {
       this.paginator.setPage(currPage - 1);
     }
@@ -56,7 +86,7 @@ angular.module('contentful')
             Notification.error('We detected an invalid search query. Please try again.');
             return;
           } else if (err.statusCode !== -1) {
-            // network/API issue, but the query was fine; show the "is serching"
+            // network/API issue, but the query was fine; show the "is searching"
             // screen; it'll be covered by the dialog displayed below
             setIsSearching();
           }
@@ -115,11 +145,70 @@ angular.module('contentful')
     });
   }
 
+  function onSearchChange (newSearchState) {
+    delete newSearchState.contentTypeId; // Assets don't have a content type.
+    lastUISearchState = newSearchState;
+    var oldView = _.cloneDeep($scope.context.view);
+    var newView = _.extend(oldView, newSearchState);
+    $scope.loadView(newView);
+  }
+
+  var isSearching$ = K.fromScopeValue($scope, function ($scope) {
+    return $scope.context.isSearching;
+  });
+
+  function initializeSearchUI () {
+    var initialSearchState = getViewSearchState();
+    var withAssets = true;
+
+    if (_.isEqual(lastUISearchState, initialSearchState)) {
+      return;
+    }
+
+    createSearchInput(
+      $scope,
+      spaceContext,
+      onSearchChange,
+      isSearching$,
+      initialSearchState,
+      Kefir.fromPromise(spaceContext.users.getAll()),
+      withAssets
+    );
+  }
+
   function prepareQuery () {
-    return ListQuery.getForAssets({
-      paginator: controller.paginator,
+    return ListQuery.getForAssets(getQueryOptions());
+  }
+
+  function getQueryOptions () {
+    return _.extend(getViewSearchState(), {
       order: systemFields.getDefaultOrder(),
-      searchTerm: getSearchTerm()
+      paginator: controller.paginator
     });
+  }
+
+  function isViewLoaded () {
+    return !!_.get($scope, ['context', 'view']);
+  }
+
+  function hasQuery () {
+    var search = getViewSearchState();
+    return (
+      !_.isEmpty(search.searchText) ||
+      !_.isEmpty(search.searchFilters) ||
+      !_.isEmpty(search.contentTypeId)
+    );
+  }
+
+  function getViewSearchState () {
+    return {
+      searchText: getViewItem('searchText'),
+      searchFilters: getViewItem('searchFilters')
+    };
+  }
+
+  function getViewItem (path) {
+    path = _.isString(path) ? path.split('.') : path;
+    return _.get($scope, ['context', 'view'].concat(path));
   }
 }]);

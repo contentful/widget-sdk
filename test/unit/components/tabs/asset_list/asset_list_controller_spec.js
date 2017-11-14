@@ -72,21 +72,22 @@ describe('Asset List Controller', function () {
   });
 
 
-  describe('on search term change', function () {
-    describe('if term is null', function () {
-      beforeEach(function () {
-        scope.context.view.searchTerm = null;
-        scope.$digest();
-      });
+  describe('on search change', function () {
+    beforeEach(function () {
+      scope.context.view = {};
+      scope.$digest();
+    });
 
+    describe('if search is not defined', function () {
       it('list is not defined', function () {
         expect(scope.context.list).toBeUndefined();
       });
     });
 
-    describe('if term is set', function () {
+    describe('if search is set', function () {
       beforeEach(function () {
-        scope.context.view.searchTerm = 'thing';
+        scope.context.view.searchText = 'thing';
+        scope.context.view.searchFilters = [];
         scope.$digest();
       });
 
@@ -106,13 +107,13 @@ describe('Asset List Controller', function () {
       stubs.reset.restore();
     });
 
-    it('search term', function () {
-      scope.context.view.searchTerm = null;
+    it('search', function () {
+      scope.context.view = {};
       scope.searchController.paginator.setPage(0);
       scope.$digest();
       stubs.reset.restore();
       stubs.reset = sinon.stub(scope.searchController, 'resetAssets');
-      scope.context.view.searchTerm = 'thing';
+      scope.context.view.searchText = 'thing';
       scope.$digest();
       sinon.assert.calledOnce(stubs.reset);
     });
@@ -393,7 +394,7 @@ describe('Asset List Controller', function () {
       scope.context.view = {};
       this.assertShowNoAssetsAdvice = function ({total, term, searching, expected}) {
         scope.searchController.paginator.setTotal(total);
-        scope.context.view.searchTerm = term;
+        scope.context.view.searchText = term;
         scope.context.isSearching = searching;
         expect(scope.showNoAssetsAdvice()).toBe(expected);
       };

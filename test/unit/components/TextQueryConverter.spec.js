@@ -125,9 +125,9 @@ describe('TextQueryConverter#textQueryToUISearch()', function () {
       itConvertsFilters('other values to "false"',
         'API_NAME_1 = false NAME_1 : no NAME_1 = "asdf"',
         [
-          ['fields.API_NAME_1', '', false],
-          ['fields.API_NAME_1', '', false],
-          ['fields.API_NAME_1', '', false]
+          ['fields.API_NAME_1', '', 'false'],
+          ['fields.API_NAME_1', '', 'false'],
+          ['fields.API_NAME_1', '', 'false']
         ]
       );
     });
@@ -357,28 +357,28 @@ describe('TextQueryConverter#textQueryToUISearch()', function () {
       itConvertsFilters('with unit "K"',
         'size < 1K',
         [
-          ['fields.file.details.size', 'lt', 1e3]
+          ['fields.file.details.size', 'lt', (1e3).toString()]
         ]
       );
 
       itConvertsFilters('unit "Kib"',
-        'size <= 1Kib',
+        'size<= 1Kib',
         [
-          ['fields.file.details.size', 'lte', Math.pow(2, 10)]
+          ['fields.file.details.size', 'lte', Math.pow(2, 10).toString()]
         ]
       );
 
       itConvertsFilters('unit "mb"',
-        'size > 1mb',
+        'size>1mb',
         [
-          ['fields.file.details.size', 'gt', 1e6]
+          ['fields.file.details.size', 'gt', (1e6).toString()]
         ]
       );
 
       itConvertsFilters('unit "mib"',
-        'size >= 1mib',
+        'size >=1mib',
         [
-          ['fields.file.details.size', 'gte', Math.pow(2, 20)]
+          ['fields.file.details.size', 'gte', Math.pow(2, 20).toString()]
         ]
       );
 

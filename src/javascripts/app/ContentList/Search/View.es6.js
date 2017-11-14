@@ -38,7 +38,8 @@ export default function render ({
   input,
   isSuggestionOpen,
   suggestions,
-  actions
+  actions,
+  withAssets = false
 }) {
   const hasSpinner = isSearching || isTyping;
   const hasFilters = filters.length > 0;
@@ -57,13 +58,13 @@ export default function render ({
       ? 'search-next__pills-wrapper search-next__pills-wrapper--state-active'
       : 'search-next__pills-wrapper',
       onClick: () => actions.SetFocusOnQueryInput(),
-      onFocusOut: actions.ResetFocus,
+      onFocusOut: () => actions.ResetFocus(),
       hooks: [IsOverflownYHook()]
     }, [
       h('div', {
         class: 'search-next__pills-list'
       }, [
-        filterPill({
+        !withAssets && filterPill({
           value: contentTypeId,
           testId: 'contentTypeFilter',
           isRemovable: false,
@@ -254,7 +255,7 @@ function filterPill ({
       }
     }
   }, [
-    h('div.search__filter-pill-label', [filter.name]),
+    h('div.search__filter-pill-label', [filter.label || filter.name]),
     filterOperator({
       operators: filter.operators,
       op,

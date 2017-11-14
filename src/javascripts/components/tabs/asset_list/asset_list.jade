@@ -10,14 +10,7 @@ header.workbench-header
       | Media
       cf-knowledge-base.workbench-header__kb-link(target="asset")
 
-  .workbench-header__search(
-    ng-if="context.ready && !showNoAssetsAdvice()")
-    div(
-      cf-tokenized-search="context.view.searchTerm"
-      search-content-type="assetContentType"
-      placeholder="Search for an asset"
-      cf-on-blur-component="leftSearch($event)"
-      cf-on-blur-component-when="showAutocompletions")
+  cf-component-bridge(style="flex-grow: 1; flex-shrink: 1; z-index: 1" component="search")
 
   .workbench-header__actions(
     ng-show="!showNoAssetsAdvice() && !shouldHide('createAsset')")

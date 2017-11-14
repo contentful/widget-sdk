@@ -62,6 +62,7 @@ function convertCMAQuery (cmaQuery) {
     if (match) {
       const field = match[1];
       const operator = match[2] || '';
+      value = typeof value === 'string' ? value : value.toString();
       uiSearchFilters.push([field, operator, value]);
     }
     return uiSearchFilters;

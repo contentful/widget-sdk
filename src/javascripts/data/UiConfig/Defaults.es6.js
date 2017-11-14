@@ -1,7 +1,9 @@
-import { map } from 'lodash';
+import { extend, map } from 'lodash';
 import random from 'random';
 import mimetype from 'mimetype';
 import systemFields from 'systemFields';
+
+const STATUSES = ['Published', 'Changed', 'Draft', 'Archived'];
 
 /**
  * This modules exports functions that generate default payoads for the
@@ -23,12 +25,7 @@ export function getEntryViews (contentTypes) {
     {
       id: random.id(),
       title: 'Status',
-      views: [
-        createEntryStatusView('Published', 'status:published'),
-        createEntryStatusView('Changed', 'status:changed'),
-        createEntryStatusView('Draft', 'status:draft'),
-        createEntryStatusView('Archived', 'status:archived')
-      ]
+      views: STATUSES.map(createEntryStatusView)
     },
     {
       id: random.id(),
@@ -51,12 +48,7 @@ export function getAssetViews () {
     {
       id: random.id(),
       title: 'Status',
-      views: [
-        {title: 'Published', searchTerm: 'status:published', id: random.id()},
-        {title: 'Changed', searchTerm: 'status:changed', id: random.id()},
-        {title: 'Draft', searchTerm: 'status:draft', id: random.id()},
-        {title: 'Archived', searchTerm: 'status:archived', id: random.id()}
-      ]
+      views: STATUSES.map(createStatusView)
     },
     {
       id: random.id(),
@@ -66,14 +58,21 @@ export function getAssetViews () {
   ];
 }
 
-function createEntryStatusView (title, searchTerm) {
+function createStatusView (status) {
   return {
-    title,
-    searchTerm,
-    id: random.id(),
+    title: status,
+    searchText: '',
+    searchFilters: [['__status', '', status.toLowerCase()]],
+    id: random.id()
+  };
+}
+
+function createEntryStatusView (status) {
+  return extend(createStatusView(status), {
+    contentTypeId: null,
     order: systemFields.getDefaultOrder(),
     displayedFieldIds: systemFields.getDefaultFieldIds()
-  };
+  });
 }
 
 function contentTypeViews (contentTypes) {
@@ -94,7 +93,7 @@ function fileTypeViews () {
   return map(mimetype.getGroupNames(), (title, label) => {
     return {
       title,
-      searchTerm: `type:${label}`,
+      searchFilters: [['mimetype_group', '', label]],
       id: random.id()
     };
   });

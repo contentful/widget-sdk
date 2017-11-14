@@ -38,7 +38,8 @@ export default function create (spaceId, viewMigrator, entityType) {
   function read () {
     const currentQS = $location.search();
     const qs = isEmpty(currentQS) ? getPreviousQS() : currentQS;
-    return fromStorageFormat(qs);
+    const q = fromStorageFormat(qs);
+    return q;
   }
 
   function getPreviousQS () {
@@ -73,7 +74,8 @@ export default function create (spaceId, viewMigrator, entityType) {
 
     // Migration of pure text queries to new search ui's format.
     if (viewMigrator) {
-      return viewMigrator.migrateView(view);
+      const isAssetsView = entityType === 'assets';
+      return viewMigrator.migrateView(view, isAssetsView);
     }
 
     return $q.resolve(view);

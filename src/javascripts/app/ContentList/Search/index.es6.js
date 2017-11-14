@@ -16,15 +16,16 @@ import {
 export default function create (
   $scope,
   spaceContext,
-  submitSearch,
+  onSearchChange,
   isSearching$,
   initState = {},
-  users$
+  users$,
+  withAssets = false
 ) {
   try {
     const contentTypes = K.getValue(spaceContext.publishedCTs.items$).toJS();
 
-    const reduce = makeReducer({ contentTypes }, dispatch, submitSearch);
+    const reduce = makeReducer({ contentTypes }, dispatch, onSearchChange);
     const defaultState = initialState(initState);
     const store = createStore(defaultState, reduce);
     const actions = bindActions(store, Actions);
@@ -42,7 +43,7 @@ export default function create (
       ([isSearching, state, users]) => {
         window._state = state;
         $scope.search = render(
-          mapStateToProps(state, { contentTypes, users, isSearching }, actions)
+          mapStateToProps(state, { contentTypes, users, isSearching, withAssets }, actions)
         );
       }
     );
@@ -58,7 +59,7 @@ export default function create (
 
 function mapStateToProps (state, props, actions) {
   const { contentTypeId, filters } = state;
-  const { contentTypes, users = [], isSearching = false } = props;
+  const { contentTypes, users = [], isSearching = false, withAssets = false } = props;
 
   return {
     contentTypeFilter: contentTypeFilter(contentTypes),
@@ -66,10 +67,11 @@ function mapStateToProps (state, props, actions) {
       users,
       contentTypes,
       searchFilters: filters,
-      contentTypeId
+      contentTypeId,
+      withAssets
     }),
     suggestions: state.isSuggestionOpen
-      ? getMatchingFilters(state.input, state.contentTypeId, contentTypes)
+      ? getMatchingFilters(state.input, state.contentTypeId, contentTypes, withAssets)
       : [],
     focus: state.focus,
     contentTypeId: state.contentTypeId,
@@ -77,6 +79,7 @@ function mapStateToProps (state, props, actions) {
     input: state.input,
     searchBoxHasFocus: state.searchBoxHasFocus,
     isSuggestionOpen: state.isSuggestionOpen,
-    actions
+    actions,
+    withAssets
   };
 }

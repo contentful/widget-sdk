@@ -4,7 +4,7 @@ import {cloneDeep} from 'lodash';
 let step = 0;
 
 describe('ViewMigrator', function () {
-  let migrateView, migrateViewsFolder, migrateUIConfigViews;
+  let ViewMigrator, migrateView, migrateViewsFolder, migrateUIConfigViews;
 
   const SPACE = uniqueObject();
 
@@ -18,7 +18,7 @@ describe('ViewMigrator', function () {
       });
     });
 
-    const ViewMigrator = this.$inject('data/ViewMigrator');
+    ViewMigrator = this.$inject('data/ViewMigrator');
     const createViewMigrator = ViewMigrator.default;
 
     const contentTypesRepo = {
@@ -186,19 +186,54 @@ describe('ViewMigrator', function () {
       this.viewMigrator.migrateViewsFolder = this.migrateViewsFolderStub;
     });
 
-    describe('with multiple folders', function () {
+    describe('without `entryListViews` or `assetListViews`', function () {
+      testDoesNotMigrate({ sys: { id: 'SOME_ID' } });
+    });
+
+    describe('without `assetListViews` and empty `entryListViews`', function () {
+      testDoesNotMigrate({ entryListViews: [] });
+    });
+
+    describe('without `entryListViews` and empty `assetListViews`', function () {
+      testDoesNotMigrate({ someThingElse: 'foo', assetListViews: [] });
+    });
+
+    describe('with empty `entryListViews` and empty `assetListViews`', function () {
+      testDoesNotMigrate({ foo: 'bar', entryListViews: [], assetListViews: [] });
+    });
+
+    function testDoesNotMigrate (uiConfig) {
+      it('does no migration, returns equal UIConfig', function* () {
+        const migratedUIConfig = yield migrateUIConfigViews(uiConfig);
+        expect(migratedUIConfig).toEqual(uiConfig);
+      });
+
+      it('does not call `migrateViewsFolder()`', function* () {
+        yield migrateUIConfigViews(uiConfig);
+        sinon.assert.notCalled(this.migrateViewsFolderStub);
+      });
+    }
+
+    describeWithMultipleFoldersIn('entryListViews');
+
+    describeWithMultipleFoldersIn('assetListViews');
+
+    function describeWithMultipleFoldersIn (field) {
+      describe(
+        `with multiple folders in \`${field}\``,
+        testWithMultipleFoldersIn.bind(null, field)
+      );
+    }
+
+    function testWithMultipleFoldersIn (field) {
       const FOLDERS = [
         uniqueObject(), uniqueObject(), uniqueObject()];
       const MIGRATED_FOLDERS = [
         uniqueObject(), uniqueObject(), uniqueObject()];
-      const UI_CONFIG = {
-        someThingElse: 'foo',
-        entryListViews: FOLDERS
-      };
-      const MIGRATED_UI_CONFIG = {
-        someThingElse: 'foo',
-        entryListViews: MIGRATED_FOLDERS
-      };
+      const UI_CONFIG = { someThingElse: 'foo' };
+      UI_CONFIG[field] = FOLDERS;
+      const MIGRATED_UI_CONFIG = { someThingElse: 'foo' };
+      MIGRATED_UI_CONFIG[field] = MIGRATED_FOLDERS;
 
       beforeEach(function () {
         this.migrateViewsFolderStub
@@ -222,7 +257,48 @@ describe('ViewMigrator', function () {
         const migratedUIConfig = yield migrateUIConfigViews(UI_CONFIG);
         expect(migratedUIConfig).toEqual(MIGRATED_UI_CONFIG);
       });
-    });
+    }
+  });
+
+  describe('.normalizeMigratedUIConfigData(), .prepareUIConfigForStorage() ', function () {
+    testHelpers('without `entryListViews` or `assetListViews`',
+      { sys: { id: 'SOME_ID' } },
+      { sys: { id: 'SOME_ID' }, _migrated: {} }
+    );
+
+    testHelpers('without `assetListViews` and empty `entryListViews`',
+      { entryListViews: [] },
+      { _migrated: { entryListViews: [] } }
+    );
+
+    testHelpers('without `entryListViews` and empty `assetListViews`',
+      { someThingElse: 'foo', assetListViews: [] },
+      { someThingElse: 'foo', _migrated: { assetListViews: [] } }
+    );
+
+    testHelpers('with empty `entryListViews` and empty `assetListViews`',
+      { foo: 'bar', entryListViews: [], assetListViews: [] },
+      { foo: 'bar', _migrated: { entryListViews: [], assetListViews: [] } }
+    );
+
+    function testHelpers (description, normal, stored) {
+      describe(description, function () {
+        it('.normalizeMigratedUIConfigData() normalizes UIConfig data', function () {
+          const normalized = ViewMigrator.normalizeMigratedUIConfigData(stored);
+          expect(normalized).toEqual(normal);
+        });
+
+        it('.prepareUIConfigForStorage() converts UIConfig to store format', function () {
+          const storeReady = ViewMigrator.prepareUIConfigForStorage(normal);
+          expect(storeReady).toEqual(stored);
+        });
+
+        it('.isUIConfigDataMigrated()', function () {
+          expect(ViewMigrator.isUIConfigDataMigrated(normal)).toBe(false);
+          expect(ViewMigrator.isUIConfigDataMigrated(stored)).toBe(true);
+        });
+      });
+    }
   });
 
   // TODO: Move to test helpers and also replace in `logger_spec.js`.

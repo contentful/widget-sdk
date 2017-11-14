@@ -14,14 +14,10 @@ angular.module('contentful')
   var Kefir = require('libs/kefir');
   var createSearchInput = require('app/ContentList/Search').default;
 
-  $scope.context = { ready: false, loading: true };
-
   var initialized = false;
   var lastUISearchState = null;
 
-  /**
-   * Public API
-   */
+  $scope.context = { ready: false, loading: true };
 
   // TODO rename this everywhere
   $scope.updateEntries = function () {
@@ -33,10 +29,6 @@ angular.module('contentful')
   var updateEntries = createRequestQueue(requestEntries, setupEntriesHandler);
 
   this.hasQuery = hasQuery;
-
-  /**
-   * Watches: triggering list updates
-   */
 
   // We store the page in a local variable.
   // We need this to determine if a change to 'paginator.getPage()'
@@ -51,29 +43,18 @@ angular.module('contentful')
     }
   });
 
+  // TODO: Get rid of duplicate code in asset_search_controller.js
+
   $scope.$watch(function () {
     return {
       viewId: getViewItem('id'),
       search: getViewSearchState()
     };
-  }, function (next, prev) {
+  }, function () {
     if (!isViewLoaded()) {
       return;
     }
-
-    var viewChanged = next.viewId !== prev.viewId;
-
-    // if view was changed update immediately and back to page 1
-    if (viewChanged) {
-      resetEntries();
-      return;
-    }
-
-    // search changed
-    var searchChanged = !initialized || !_.isEqual(next.search, prev.search);
-    if (searchChanged) {
-      resetEntries();
-    }
+    resetEntries();
   }, true);
 
   $scope.$watch(function () {
@@ -95,21 +76,6 @@ angular.module('contentful')
       resetEntries();
     }
   });
-
-  function hasQuery () {
-    return (
-      !_.isEmpty(getViewItem('searchText')) ||
-      !_.isEmpty(getViewItem('searchFilters')) ||
-      !_.isEmpty(getViewItem('contentTypeId')) ||
-      getViewItem('collection')
-    );
-  }
-
-  function updateViewWithSearch (view) {
-    var oldView = _.cloneDeep($scope.context.view);
-    var newView = _.extend(oldView, view);
-    $scope.loadView(newView);
-  }
 
   // When the user deletes an entry it is removed from the entries
   // list. If that list becomes empty we want to go to the previous
@@ -151,9 +117,11 @@ angular.module('contentful')
       });
   }
 
-  function triggerSearch (newSearchState) {
+  function onSearchChange (newSearchState) {
     lastUISearchState = newSearchState;
-    updateViewWithSearch(newSearchState);
+    var oldView = _.cloneDeep($scope.context.view);
+    var newView = _.extend(oldView, newSearchState);
+    $scope.loadView(newView);
   }
 
   var isSearching$ = K.fromScopeValue($scope, function ($scope) {
@@ -170,7 +138,7 @@ angular.module('contentful')
     createSearchInput(
       $scope,
       spaceContext,
-      triggerSearch,
+      onSearchChange,
       isSearching$,
       initialSearchState,
       Kefir.fromPromise(spaceContext.users.getAll())
@@ -240,6 +208,15 @@ angular.module('contentful')
       order: getViewItem('order'),
       paginator: $scope.paginator
     });
+  }
+
+  function hasQuery () {
+    var search = getViewSearchState();
+    return (
+      !_.isEmpty(search.searchText) ||
+      !_.isEmpty(search.searchFilters) ||
+      !_.isEmpty(search.contentTypeId)
+    );
   }
 
   function getViewSearchState () {

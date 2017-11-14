@@ -1,34 +1,50 @@
 import flatten from 'libs/flat';
 import {omitBy} from 'lodash';
 
-export function serialize (viewObject) {
-  const view = omitBy(viewObject, isNoValue);
+/**
+ * Takes a `View` object and returns a flattened representation of it that can be
+ * used for local storage and URL.
+ *
+ * @param {View} view
+ * @returns {object} Serialized view.
+ */
+export function serialize (view) {
+  const serializedView = omitBy(view, isNoValue);
 
-  if (view.searchFilters) {
-    const filters = view.searchFilters.map(([key, op, val]) => {
+  if (serializedView.searchFilters) {
+    const filters = serializedView.searchFilters.map(([key, op, val]) => {
       const filter = {key, op, val};
       return omitBy(filter, isNoValue);
     });
     if (filters.length) {
-      view.filters = flatten(filters, {safe: false});
+      serializedView.filters = flatten(filters, {safe: false});
     }
-    delete view.searchFilters;
+    delete serializedView.searchFilters;
   }
-  return flatten(view, {safe: true});
+  return flatten(serializedView, {safe: true});
 }
 
+/**
+ * Takes a serialized view object as returned by `serialize()` and returns the
+ * original `View` object.
+ *
+ * @param {object} serializedView
+ * @returns {View}
+ */
 export function unserialize (serializedView) {
   const view = flatten.unflatten(serializedView, {safe: true});
 
   if (view.filters || view.searchText !== undefined) {
-    delete view.searchTerm; // Doesn't make sense to have both formats - ignore.
+    // `searchTerm` is legacy text search format. Having both formats does not make
+    // sense and should only happen when URL was manually edited. Prefer new format.
+    delete view.searchTerm;
   }
   if (view.filters) {
     view.searchFilters = view.filters.map(({key, op, val}) => {
       return [key || '', op || '', val || ''];
     });
     delete view.filters;
-  } else if (!view.searchTerm) { // TODO: Remove condition after migrating Assets.
+  } else if (!view.searchTerm) {
     view.searchFilters = [];
   }
   return view;

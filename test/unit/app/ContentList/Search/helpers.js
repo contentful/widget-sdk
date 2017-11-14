@@ -99,7 +99,7 @@ export const contentTypes = [
     ],
     sys: {
       space: { sys: { type: 'Link', linkType: 'Space', id: 'vu21149elxz0' } },
-      id: 'sFzTZbSuM8coEwygeUYes',
+      id: 'TEST_CT_ID',
       type: 'ContentType',
       createdAt: '2017-10-02T14:42:27.622Z',
       updatedAt: '2017-10-02T14:42:27.622Z',
