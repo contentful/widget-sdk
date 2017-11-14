@@ -38,12 +38,9 @@ export default function () {
               marginBottom: '20px'
             }
           }, [
-            spinner(32, {
-              style: {
-                display: 'block'
-              },
-              ngShow: 'isCreatingSpace'
-            }),
+            h('div', {ngShow: 'isCreatingSpace'}, [
+              spinner({diameter: '32px', style: {display: 'block'}})
+            ]),
             h('cf-icon', {
               name: 'checkmark',
               scale: '2',
