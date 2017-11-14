@@ -73,7 +73,12 @@ export default function render ({
         ...renderPills({
           filters,
           defaultFocus,
-          onChange: ({ index, value }) => actions.SetFilterValueInput([index, value]),
+          onChange: ({ index, value }) => {
+            // Keep the focus on the search box after setting a pill value
+            // with a dialog/anyway that loses searchbox focus.
+            actions.SetFocusOnLastValue();
+            actions.SetFilterValueInput([index, value]);
+          },
           onOperatorChange: ({ index, value }) => actions.SetFilterOperator([index, value]),
           onRemove: ({ index }) => actions.RemoveFilter(index),
           onRemoveAttempt: ({ index }) => actions.SetFocusOnPill(index)
