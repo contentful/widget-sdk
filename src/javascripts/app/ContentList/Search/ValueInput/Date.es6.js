@@ -11,6 +11,7 @@ const DatePickerHook = H.makeHook((el, datePicker, _prevOnChange, onChange) => {
     if (!datePicker) {
       datePicker = DatePicker.create({
         field: el,
+        yearRange: [1900, moment().add(10, 'years').year()],
         onSelect: function () {
           onChange(this.getMoment().toISOString());
         },
