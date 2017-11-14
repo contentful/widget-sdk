@@ -6,6 +6,7 @@ angular.module('contentful')
   var $q = require('$q');
   var ListQuery = require('ListQuery');
   var ReloadNotification = require('ReloadNotification');
+  var Notification = require('notification');
   var createRequestQueue = require('overridingRequestQueue');
   var spaceContext = require('spaceContext');
   var accessChecker = require('accessChecker');
@@ -102,18 +103,17 @@ angular.module('contentful')
     return prepareQuery()
       .then(function (query) {
         return spaceContext.space.getEntries(query);
-      }, function (error) {
-        $scope.context.loading = false;
-        $scope.context.isSearching = false;
-        $scope.context.ready = true;
-        return $q.reject(error);
+      }, function (err) {
+        handleEntriesError(err);
+        return $q.reject(err);
       })
       .then(function (result) {
         $scope.context.isSearching = false;
         Tracking.searchPerformed($scope.context.view, result.total);
         return result;
-      }, function (error) {
-        return $q.reject(error);
+      }, function (err) {
+        handleEntriesError(err);
+        return $q.reject(err);
       });
   }
 
@@ -177,6 +177,24 @@ angular.module('contentful')
     $scope.selection.updateList($scope.entries);
     $scope.context.ready = true;
     $scope.context.loading = false;
+  }
+
+  function handleEntriesError (err) {
+    const isInvalidQuery = isInvalidQueryError(err);
+    $scope.context.loading = false;
+    $scope.context.isSearching = false;
+    $scope.context.ready = true;
+
+    if (isInvalidQuery) {
+      // invalid search query, let's reset the view...
+      $scope.loadView({});
+      // ...and let it request assets again after notifing a user
+      Notification.error('We detected an invalid search query. Please try again.');
+    }
+  }
+
+  function isInvalidQueryError (err) {
+    return (_.isObject(err) && 'statusCode' in err) && [400, 422].indexOf(err.statusCode) > -1;
   }
 
   function prepareQuery () {

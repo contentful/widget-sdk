@@ -1,4 +1,5 @@
 /* global window */
+import { assign } from 'lodash';
 import * as Kefir from 'libs/kefir';
 import * as K from 'utils/kefir';
 import { createStore, bindActions } from 'ui/Framework/Store';
@@ -10,7 +11,8 @@ import { initialState, makeReducer, Actions } from './State';
 import {
   getMatchingFilters,
   contentTypeFilter,
-  getFiltersFromQueryKey
+  getFiltersFromQueryKey,
+  sanitizeSearchFilters
 } from './Filters';
 
 export default function create (
@@ -24,9 +26,10 @@ export default function create (
 ) {
   try {
     const contentTypes = K.getValue(spaceContext.publishedCTs.items$).toJS();
-
+    // Removes invalid filters before initializing the state.
+    const sanitizedFilters = sanitizeSearchFilters(initState.searchFilters, contentTypes, initState.contentTypeId);
     const reduce = makeReducer({ contentTypes }, dispatch, onSearchChange);
-    const defaultState = initialState(initState);
+    const defaultState = initialState(assign({}, initState, { searchFilters: sanitizedFilters }));
     const store = createStore(defaultState, reduce);
     const actions = bindActions(store, Actions);
 

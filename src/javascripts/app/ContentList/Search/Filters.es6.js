@@ -135,11 +135,23 @@ export function getContentTypeById (contentTypes, contentTypeId) {
 
 export function getFiltersFromQueryKey ({contentTypes, searchFilters, contentTypeId, users, withAssets = false}) {
   const contentType = getContentTypeById(contentTypes, contentTypeId);
-  const filters = searchFilters.map(([queryKey, op, value]) => {
-    return [buildFilterFieldByQueryKey(contentType, queryKey, withAssets), op, value];
-  });
+  const filters = searchFilters
+    .map(([queryKey, op, value]) => [buildFilterFieldByQueryKey(contentType, queryKey, withAssets), op, value])
+    .filter(([queryKey]) => queryKey !== undefined);
 
   return setUserFieldsFilters(users, filters);
+}
+
+export function sanitizeSearchFilters (filters, contentTypes, contentTypeId) {
+  const contentType = getContentTypeById(contentTypes, contentTypeId);
+
+  return filters.filter(([queryKey]) => {
+    if (isContentTypeField(queryKey)) {
+      return getFieldByApiName(contentType, getApiName(queryKey)) !== undefined;
+    } else {
+      return find(sysFieldFilters, filter => filter.queryKey === queryKey) !== undefined;
+    }
+  });
 }
 
 
@@ -153,12 +165,18 @@ export function getFiltersFromQueryKey ({contentTypes, searchFilters, contentTyp
  * @returns {FieldFilter}
  */
 export function buildFilterFieldByQueryKey (contentType, queryKey, withAssets = false) {
+  let filterField;
+
   if (contentType && isContentTypeField(queryKey)) {
     const field = getFieldByApiName(contentType, getApiName(queryKey));
-    return buildFilterField(contentType, field);
+    if (field) {
+      filterField = buildFilterField(contentType, field);
+    }
   } else {
-    return find(getSysFilters(withAssets), filter => filter.queryKey === queryKey);
+    filterField = find(getSysFilters(withAssets), filter => filter.queryKey === queryKey);
   }
+
+  return filterField;
 }
 
 /**
@@ -233,7 +251,7 @@ function setUserFieldsFilters (users, filters) {
   return filters.map(([filter, op, value]) => {
     const filterClone = cloneDeep(filter);
 
-    if (filterClone.type === 'User') {
+    if (filterClone && filterClone.type === 'User') {
       filterClone.valueInput = ValueInput.Select(usersOptions);
     }
 
