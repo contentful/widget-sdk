@@ -83,7 +83,7 @@ export function emailsInput (
         style: {width: '600px'},
         value: emailsInputValue,
         onInput: (evt) => updateEmails(evt.target.value),
-        onChange: validateEmails
+        onBlur: validateEmails
       }),
       emails.length > organization.remainingInvitations
         ? h('.cfnext-form__field-error', [`
