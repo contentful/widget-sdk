@@ -1,59 +1,55 @@
 import {camelCase, mapKeys} from 'lodash';
-import * as Preact from 'libs/preact';
+import * as React from 'libs/react';
+import * as ReactDOM from 'libs/react-dom';
 import {caseof} from 'libs/sum-types';
 import * as VTree from './VTree';
 
 /**
  * This module exports the function that renders a virtual DOM tree
- * into a real DOM node using react.
+ * into a real DOM node using React.
  *
  * Rendering is completely stateless. The DOM tree is only updated when
  * the `render()` function is called.
  */
 
 export default function createMountPoint (container) {
-  let prev;
   return { render, destroy };
 
   function render (vtree) {
-    prev = Preact.render(asPreact(vtree), container, prev);
+    ReactDOM.render(asReact(vtree), container);
   }
 
   function destroy () {
-    // We explicitly remove the tree from the DOM. Removing the
-    // container element is not sufficient to free all resources.
-    render(VTree.Element('noscript', {}, []));
+    ReactDOM.unmountComponentAtNode(container);
   }
 }
 
 
-const PREACT_PROP_KEY_EXCEPTIONS = {
+const REACT_PROP_KEY_EXCEPTIONS = {
+  'class': 'className',
   'view-box': 'viewBox',
   'dangerously-set-inner-html': 'dangerouslySetInnerHTML'
 };
 
 
 /**
- * Turns an abstract virtual DOM tree into a concrete Preact tree.
+ * Turns an abstract virtual DOM tree into a concrete React tree.
  */
-function asPreact (tree) {
+function asReact (tree) {
   return caseof(tree, [
     [VTree.Element, ({tag, props, children}) => {
-      // Property keys are kebab-cased
-      props = mapKeys(props, (_, key) => {
-        // For event handlers Preact expects the keys to be camel-cased.
-        if (key.substr(0, 3) === 'on-') {
-          return camelCase(key);
-        }
-        // There are some exceptions, as defined in the map
-        if (Object.keys(PREACT_PROP_KEY_EXCEPTIONS).indexOf(key) > -1) {
-          return PREACT_PROP_KEY_EXCEPTIONS[key];
-        }
-        return key;
-      });
-      children = children.map(asPreact);
-      return Preact.h(tag, props, children);
+      return React.createElement(tag, mapProps(props), ...children.map(asReact));
     }],
     [VTree.Text, ({text}) => text]
   ]);
+}
+
+function mapProps (props) {
+  return mapKeys(props, (_, key) => {
+    if (Object.keys(REACT_PROP_KEY_EXCEPTIONS).indexOf(key) > -1) {
+      return REACT_PROP_KEY_EXCEPTIONS[key];
+    } else {
+      return camelCase(key);
+    }
+  });
 }

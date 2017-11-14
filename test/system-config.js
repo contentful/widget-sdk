@@ -4,7 +4,7 @@
 // that we want to expose in SystemJS
 SystemJS.exposeFromAngular = [
   'libs/kefir', 'libs/sum-types', 'lodash', 'jquery', 'libs/Immutable',
-  'libs/sum-types/caseof-eq', 'libs/preact', 'libs/color',
+  'libs/sum-types/caseof-eq', 'libs/react', 'libs/react-dom', 'libs/color',
   'libs/qs', 'environment'
 ];
 
