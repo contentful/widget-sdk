@@ -69,7 +69,8 @@ export function emailsInput (
   organization,
   status
 }, {
-  updateEmails
+  updateEmails,
+  validateEmails
 }) {
   return h('div', [
     h('h3.section-title', ['Select users']),
@@ -81,7 +82,8 @@ export function emailsInput (
         class: 'cfnext-form__input',
         style: {width: '600px'},
         value: emailsInputValue,
-        onChange: (evt) => updateEmails(evt.target.value)
+        onInput: (evt) => updateEmails(evt.target.value),
+        onBlur: validateEmails
       }),
       emails.length > organization.remainingInvitations
         ? h('.cfnext-form__field-error', [`

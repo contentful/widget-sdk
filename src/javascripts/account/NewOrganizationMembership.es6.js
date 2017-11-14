@@ -11,6 +11,7 @@ import {invite, progress$} from 'account/SendOrganizationInvitation';
 import {isValidEmail} from 'stringUtils';
 import {go} from 'states/Navigator';
 import client from 'client';
+import {isOwnerOrAdmin} from 'services/OrganizationRoles';
 import {
   header,
   sidebar,
@@ -54,6 +55,7 @@ export default function ($scope) {
     updateSpaceRole,
     updateOrgRole,
     updateEmails,
+    validateEmails,
     toggleInvitationEmailOption,
     restart,
     goToList,
@@ -73,8 +75,14 @@ export default function ($scope) {
   });
 
   runTask(function* () {
-    // 1st step - get org ingo and render page without the spaces grid
-    const organization = yield* getOrgInfo(orgId);
+    const canAccess = yield* hasPermission();
+    if (!canAccess) {
+      denyAccess();
+      return;
+    }
+
+    // 1st step - get org info and render page without the spaces grid
+    const organization = yield* getOrgInfo();
     state = assign(state, {organization});
     rerender();
 
@@ -89,7 +97,6 @@ export default function ($scope) {
       .forEach(space => runTask(function* () {
         const spaceWithRoles = yield* getSpaceWithRoles(space);
         state = assign(state, {spaces: [...state.spaces, spaceWithRoles]});
-        // rerender every time a space is complete with roles to show a progress indicator
         rerender();
       }));
   });
@@ -241,8 +248,7 @@ export default function ($scope) {
   /**
    * Receives a string with email addresses
    * separated by comma and transforms it into
-   * an array of emails and, possibly, an array with
-   * the invalid addresses.
+   * an array of emails.
    */
   function updateEmails (emailsInputValue) {
     const list = emailsInputValue
@@ -250,20 +256,31 @@ export default function ($scope) {
       .map(trim)
       .filter(email => email.length);
     const emails = sortedUniq(list);
-    const invalidAddresses = emails.filter(negate(isValidEmail));
 
     state = assign(state, {
       emailsInputValue,
-      emails,
-      invalidAddresses
+      emails
     });
+  }
 
+  /**
+   * Update state with invalid emails addresses
+   */
+  function validateEmails () {
+    const invalidAddresses = state.emails.filter(negate(isValidEmail));
+
+    state = assign(state, {invalidAddresses});
     rerender();
   }
 
   function rerender () {
     $scope.properties.context.ready = true;
     $scope.component = render(state, actions);
+    $scope.$applyAsync();
+  }
+
+  function denyAccess () {
+    $scope.properties.context.forbidden = true;
     $scope.$applyAsync();
   }
 
@@ -321,6 +338,11 @@ export default function ($scope) {
   function getOrgSpaces (limit) {
     return getSpaces(orgEndpoint, {limit});
   }
+
+  function* hasPermission () {
+    const org = yield getOrganization(orgId);
+    return isOwnerOrAdmin(org);
+  }
 }
 
 function render (state, actions) {
@@ -342,7 +364,7 @@ function render (state, actions) {
               maxNumberOfEmails,
               Invalid,
               pick(state, ['emails', 'emailsInputValue', 'invalidAddresses', 'organization', 'status']),
-              pick(actions, ['updateEmails'])
+              pick(actions, ['updateEmails', 'validateEmails'])
             ),
             organizationRole(state.orgRole, actions.updateOrgRole),
             accessToSpaces(

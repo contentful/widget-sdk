@@ -1,7 +1,7 @@
 'use strict'
 
 require('babel-register')
-require('regenerator-runtime/runtime')
+require('babel-polyfill')
 
 const _ = require('lodash-node/modern')
 const B = require('bluebird')

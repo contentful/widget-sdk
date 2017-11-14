@@ -55,8 +55,6 @@ angular.module('contentful')
     'image/pjpeg',
     'image/x-jps',
     'image/png',
-    'image/tiff',
-    'image/x-tiff',
     'image/svg+xml'
   ];
 
