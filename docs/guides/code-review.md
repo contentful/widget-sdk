@@ -79,8 +79,8 @@ the code within 24 hours. It is not necessary to complete the review. In that
 case the reviewer must add a review comment indicating which part of the diff
 has been covered and comments for any code issues.
 
-For PRs with fewer then 100 lines added the first review should be completed
-within 24h of requesting the review. For PRs with between 100 and 300 lines
+For PRs with fewer then 150 lines added the first review should be completed
+within 24h of requesting the review. For PRs with between 150 and 400 lines
 added that time is 48h. For larger PRs the requester and reviewer should agree
 on a time frame individually.
 
