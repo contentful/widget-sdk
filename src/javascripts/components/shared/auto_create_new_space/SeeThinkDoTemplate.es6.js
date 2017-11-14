@@ -53,6 +53,9 @@ export default function () {
           h('p.modal-dialog__plaintext', {
             ngIf: 'isCreatingSpace'
           }, ['We’re preparing your example project']),
+          h('p.modal-dialog__plaintext', {
+            ngIf: '!isCreatingSpace'
+          }, ['Your example project is ready!']),
           h('h2.modal-dialog__plaintext', {
             ngIf: '!chosenProjectStatus',
             style: {
@@ -62,7 +65,7 @@ export default function () {
           }, ['Where would you like to start?'])
         ]),
         h('div', {
-          ngIf: '!chosenProjectStatus',
+          ngShow: '!chosenProjectStatus',
           style: {
             padding: '40px 0',
             display: 'flex',
@@ -89,7 +92,7 @@ export default function () {
           })
         ]),
         h('div', {
-          ngIf: 'chosenProjectStatus',
+          ngShow: 'chosenProjectStatus',
           style: {
             display: 'flex',
             flexDirection: 'column',
@@ -117,13 +120,21 @@ export default function () {
               }
             }, [
               h('div', {
-                ngIf: 'chosenProjectStatus === "project-status-see"'
-              }, ['Stuff for "See" status']),
+                ngShow: 'chosenProjectStatus === "project-status-see"'
+              }, [
+                h('iframe', {
+                  width: '560',
+                  height: '315',
+                  src: 'https://www.youtube.com/embed/tVj0ZTS4WF4?rel=0&amp;showinfo=0&amp;start=50',
+                  frameborder: '0',
+                  allowfullscreen: ''
+                })
+              ]),
               h('div', {
-                ngIf: 'chosenProjectStatus === "project-status-think"'
+                ngShow: 'chosenProjectStatus === "project-status-think"'
               }, ['Stuff for "Think" status']),
               h('div', {
-                ngIf: 'chosenProjectStatus === "project-status-do"'
+                ngShow: 'chosenProjectStatus === "project-status-do"'
               }, ['Stuff for "Do" status'])
             ])
           ]),

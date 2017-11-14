@@ -41,20 +41,23 @@ export default function (org, templateName, modalTemplate = autoCreateSpaceTempl
   }
 
   const scope = $rootScope.$new();
-
-  if (modalTemplate !== autoCreateSpaceTemplate) {
-    scope.onProjectStatusSelect = (elementId) => {
-      track('element:click', {
-        elementId,
-        fromState: $state.current.name
-      });
-      scope.chosenProjectStatus = elementId;
-    };
-  }
-
   return runTask(function* () {
+    let dialog = null;
+
+    if (modalTemplate !== autoCreateSpaceTemplate) {
+      scope.onProjectStatusSelect = (elementId) => {
+        track('element:click', {
+          elementId,
+          fromState: $state.current.name
+        });
+        scope.chosenProjectStatus = elementId;
+        // hacky way to recenter the modal once it's resized
+        setTimeout(_ => dialog._centerOnBackground(), 0);
+      };
+    }
+
     scope.isCreatingSpace = true;
-    const dialog = openDialog(scope, templateName, modalTemplate);
+    dialog = openDialog(scope, templateName, modalTemplate);
     const template = yield* loadTemplate(templateName);
 
     try {

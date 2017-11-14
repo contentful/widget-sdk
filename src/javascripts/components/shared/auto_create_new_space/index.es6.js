@@ -39,15 +39,16 @@ export function init () {
       creatingSampleSpace = true;
 
       runTask(function* () {
+        let variation = false;
+
         try {
-          const variation = yield getCurrentVariation('feature-ps-11-2017-project-status');
+          variation = yield getCurrentVariation('feature-ps-11-2017-project-status');
+        } finally {
+          // if getCurrentVariation throws, auto create the usual way
           const template = variation ? seeThinkDoFeatureModalTemplate : undefined;
 
           yield createSampleSpace(org, 'product catalogue', template);
           TheStore.set(getKey(user), true);
-        } catch (_) {
-          yield createSampleSpace(org, 'product catalogue');
-        } finally {
           creatingSampleSpace = false;
         }
       });
