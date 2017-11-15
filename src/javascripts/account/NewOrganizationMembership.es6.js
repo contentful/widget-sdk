@@ -1,4 +1,4 @@
-import {omit, pick, negate, trim, sortedUniq, sortBy, get as getAtPath} from 'lodash';
+import {omit, pick, negate, trim, sortedUniq, get as getAtPath} from 'lodash';
 import {h} from 'ui/Framework';
 import { assign } from 'utils/Collections';
 import {getOrganization} from 'services/TokenStore';
@@ -113,7 +113,7 @@ export default function ($scope) {
       id: space.data.sys.id,
       createdAt: space.data.sys.createdAt,
       name: space.data.name,
-      roles: sortBy(spaceRoles, role => role.name)
+      roles: spaceRoles.sort((role, previous) => role.name.localeCompare(previous.name))
     };
   }
 
