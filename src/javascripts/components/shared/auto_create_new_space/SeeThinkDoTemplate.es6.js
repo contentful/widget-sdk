@@ -105,7 +105,7 @@ export default function () {
           }, [
             h('div.note-box--success', {
               style: {
-                marginBottom: '20px'
+                marginBottom: '40px'
               }
             }, [
               h('h3', ['Great! We’ll send you an email']),
@@ -122,7 +122,7 @@ export default function () {
                 h('iframe', {
                   width: '560',
                   height: '315',
-                  src: 'https://www.youtube.com/embed/tVj0ZTS4WF4?rel=0&amp;showinfo=0&amp;start=50',
+                  src: 'https://www.youtube.com/embed/LOcSLS9T6NI?rel=0&showinfo=0',
                   frameborder: '0',
                   allowfullscreen: ''
                 })
@@ -138,7 +138,7 @@ export default function () {
           h('button.btn-action', {
             ngDisabled: 'isCreatingSpace',
             ngClick: 'dialog.confirm()'
-          }, ['Close'])
+          }, ['Continue'])
         ])
       ])
     ])

@@ -22,6 +22,7 @@ import * as TokenStore from 'services/TokenStore';
  *
  * @param {object} org
  * @param {string} templateName
+ * @param {Function} modalTemplate - template used by the modal dialog service
  *
  * @returns Promise<undefined>
  */
@@ -44,12 +45,17 @@ export default function (org, templateName, modalTemplate = autoCreateSpaceTempl
   return runTask(function* () {
     let dialog = null;
 
+    // TODO: Remove after feature-ps-11-2017-project-status
+    // is turned off. It only exists to track clicks and
+    // enable us to have two independent "screens" inside
+    // the modal
     if (modalTemplate !== autoCreateSpaceTemplate) {
       scope.onProjectStatusSelect = (elementId) => {
         track('element:click', {
           elementId,
           fromState: $state.current.name
         });
+        // this is used to goto the next screen _in_ the modal itself
         scope.chosenProjectStatus = elementId;
         // hacky way to recenter the modal once it's resized
         setTimeout(_ => dialog._centerOnBackground(), 0);
