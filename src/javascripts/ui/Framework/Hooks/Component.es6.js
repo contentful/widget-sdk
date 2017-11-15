@@ -47,6 +47,10 @@ export class Hook extends Preact.Component {
     this.applyHooks();
   }
 
+  componentWillUpdate () {
+    this.applyHooks();
+  }
+
   componentDidUpdate () {
     this.applyHooks();
   }

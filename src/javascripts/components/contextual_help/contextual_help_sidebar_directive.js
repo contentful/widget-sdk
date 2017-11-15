@@ -8,7 +8,7 @@ angular.module('contentful').directive('cfContextualHelpSidebar', ['require', fu
   var otherwise = SumTypes.otherwise;
   var ContextualSidebarStore = require('components/contextual_help/Store');
   var ContextualSidebarComponent = require('components/contextual_help/ContextualHelpSidebarComponent').default;
-  var KEYCODES = require('keycodes');
+  var KEYCODES = require('utils/keycodes').default;
   var spaceContext = require('spaceContext');
   var user$ = require('services/TokenStore').user$;
   var $stateParams = require('$stateParams');

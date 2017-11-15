@@ -7,7 +7,7 @@ angular.module('cf.app')
  * @name cfTagEditor
  */
 .directive('cfTagEditor', ['$injector', function ($injector) {
-  var KEYCODES = $injector.get('keycodes');
+  var KEYCODES = $injector.get('utils/keycodes').default;
 
   return {
     restrict: 'E',

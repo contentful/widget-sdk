@@ -1,6 +1,7 @@
 /* global SystemJS */
 import sinon from 'npm:sinon';
 import _ from 'lodash';
+import keycodes from 'utils/keycodes';
 import { contentTypes, keyDown } from './helpers';
 
 const Components = {
@@ -121,7 +122,7 @@ xdescribe('app/ContentList/Search/View', function () {
 
       queryInput.element.dispatchEvent(
         keyDown({
-          key: 'ArrowDown'
+          keyCode: keycodes.DOWN
         })
       );
 
@@ -133,7 +134,7 @@ xdescribe('app/ContentList/Search/View', function () {
 
       queryInput.element.dispatchEvent(
         keyDown({
-          key: 'Backspace'
+          keyCode: keycodes.BACKSPACE
         })
       );
 
@@ -145,7 +146,7 @@ xdescribe('app/ContentList/Search/View', function () {
 
       queryInput.element.dispatchEvent(
         keyDown({
-          key: 'Escape'
+          keyCode: keycodes.ESC
         })
       );
 
@@ -157,7 +158,7 @@ xdescribe('app/ContentList/Search/View', function () {
 
       queryInput.element.dispatchEvent(
         keyDown({
-          key: 'Enter'
+          keyCode: keycodes.ENTER
         })
       );
 

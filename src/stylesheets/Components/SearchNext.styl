@@ -1,9 +1,10 @@
 @require 'base/colors'
 
+.search__next
+  height: 40px
+  position: relative
+
 .search-next__filter-toggle
-  align-self: stretch
-  display: flex
-  align-items: center
   cursor: pointer
   padding: 0 14px
 
@@ -16,9 +17,6 @@
   &:hover
     background-color: $colors.element-lightest
   &.-active
-    // // We need to eat up the border of the search box
-    // margin-bottom: -1px
-    // border-bottom: 2px solid transparent
     border-left-color: $colors.blue-mid
 
 .search-next__pills-wrapper
@@ -33,6 +31,12 @@
     border-color: $colors.blue-mid
     height: auto
     overflow: visible
+    .search-next__pills-list
+      // FIXME: in the current implementation it is possible
+      // to have --state-active and .is-overflown-y classes
+      // in the same time. 
+      // Return to this after we migrate away from hooks.
+      padding: 1px 10px 3px !important
 
   &.is-overflown-y
     .search-next__pills-list
@@ -51,6 +55,7 @@
   transition: width .1s ease-in-out
   flex-grow: 1
   line-height: 30px
+  height: 30px
   margin-right: 12px
   font-size: inherit
   align-self: center

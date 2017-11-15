@@ -42,7 +42,7 @@ describe('navigation/confirmLeaveEditor', function () {
     const confirmation = this.confirm();
     this.$apply();
     this.dialog.trigger(_.extend($.Event('keyup'), {
-      keyCode: this.$inject('keycodes').ENTER
+      keyCode: this.$inject('utils/keycodes').default.ENTER
     }));
     this.$apply();
     sinon.assert.calledOnce(this.save);

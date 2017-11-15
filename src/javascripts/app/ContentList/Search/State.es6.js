@@ -241,6 +241,10 @@ export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
   }
 
   function setInput (state, input) {
+    if (input === state.input) {
+      return state;
+    }
+
     state = assign(state, { input });
 
     const searchValue = input.trim();
@@ -273,6 +277,7 @@ export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
     });
     state = setInput(state, '');
     state = setFocusOnLastValue(state);
+    state = hideSuggestions(state);
 
     return state;
   }

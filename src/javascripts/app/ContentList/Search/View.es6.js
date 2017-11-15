@@ -7,6 +7,7 @@ import * as H from 'ui/Framework/Hooks';
 import {container, hspace} from 'ui/Layout';
 import spinner from 'ui/Components/Spinner';
 import {byName as colors} from 'Styles/Colors';
+import keycodes from 'utils/keycodes';
 
 import filterIcon from 'svg/filter';
 import infoIcon from 'svg/info';
@@ -18,13 +19,13 @@ import filterValueDate from './ValueInput/Date';
 import { IsOverflownY as IsOverflownYHook } from './Hooks/IsOverflown';
 
 const Keys = {
-  arrowUp: (e) => e.key === 'ArrowUp',
-  arrowDown: (e) => e.key === 'ArrowDown',
-  backspace: (e) => e.key === 'Backspace',
-  tab: (e) => e.key === 'Tab' && !e.shiftKey,
-  shiftTab: (e) => e.key === 'Tab' && e.shiftKey,
-  escape: (e) => e.key === 'Escape',
-  enter: (e) => e.key === 'Enter'
+  arrowUp: (e) => e.keyCode === keycodes.UP,
+  arrowDown: (e) => e.keyCode === keycodes.DOWN,
+  backspace: (e) => e.keyCode === keycodes.BACKSPACE,
+  tab: (e) => e.keyCode === keycodes.TAB && !e.shiftKey,
+  shiftTab: (e) => e.keyCode === keycodes.TAB && e.shiftKey,
+  escape: (e) => e.keyCode === keycodes.ESC,
+  enter: (e) => e.keyCode === keycodes.ENTER
 };
 
 export default function render ({
@@ -44,13 +45,15 @@ export default function render ({
   const hasSpinner = isSearching || isTyping;
   const hasFilters = filters.length > 0;
   const defaultFocus = focus;
+
   return h('div', {
     hooks: [ H.TrackFocus((value) => actions.SetBoxFocus(value)) ],
     tabindex: '0',
     style: {
       height: '40px',
-      position: 'relative',
-      overflowY: searchBoxHasFocus ? 'initial' : 'hidden'
+      width: '100%',
+      position: 'relative'
+      // overflowY: searchBoxHasFocus ? 'unset' : 'hidden'
     }
   }, [
     h('div', {
@@ -59,7 +62,14 @@ export default function render ({
       : 'search-next__pills-wrapper',
       onClick: () => actions.SetFocusOnQueryInput(),
       onFocusOut: () => actions.ResetFocus(),
-      hooks: [IsOverflownYHook()]
+      hooks: [IsOverflownYHook()],
+      ref: (el) => {
+        // HACK: fixes the scroll position after selecting entity
+        // in reference filter pill
+        if (el && !searchBoxHasFocus) {
+          el.scrollTop = 0;
+        }
+      }
     }, [
       h('div', {
         class: 'search-next__pills-list'
@@ -87,7 +97,7 @@ export default function render ({
         queryInput({
           isPlaceholderVisible: !hasFilters,
           value: input,
-          onChange: actions.SetQueryInput,
+          onChange: value => actions.SetQueryInput(value),
           autofocus: !input && !hasFilters,
           isFocused: defaultFocus.isQueryInputFocused,
           onKeyDown: (e) => {
@@ -246,12 +256,12 @@ function filterPill ({
       e.stopPropagation();
     },
     onKeyDown: (e) => {
-      if (isRemovable) {
-        if (Keys.backspace(e)) {
+      if (Keys.backspace(e)) {
+        if (isRemovable) {
           onRemove();
-          e.stopPropagation();
-          e.preventDefault();
         }
+        e.stopPropagation();
+        e.preventDefault();
       }
     }
   }, [
@@ -266,7 +276,11 @@ function filterPill ({
       value,
       isFocused: isValueFocused,
       onChange: value => onChange(value),
-      onRemove: onRemoveAttempt
+      onRemove: () => {
+        if (isRemovable) {
+          onRemoveAttempt();
+        }
+      }
     })
   ]);
 }
@@ -356,7 +370,14 @@ function filterValue ({ valueInput, value, isFocused, onChange, onRemove }) {
   return input;
 }
 
-function filterValueText ({value, testId, inputRef, onChange, onKeyDown}) {
+function filterValueText ({
+  value,
+  testId,
+  inputRef,
+  onChange = noop,
+  onKeyDown = noop,
+  onClick = noop
+}) {
   // In order to make the input fuild, we mirror the value of the input
   // in a span that pushes the parent div to grow.
   const shadowValue = value !== null ? String(value) : '';
@@ -368,6 +389,7 @@ function filterValueText ({value, testId, inputRef, onChange, onKeyDown}) {
       ref: inputRef,
       onInput: (e) => onChange(e.target.value),
       onKeyDown,
+      onClick,
       tabindex: '0'
     }),
     h('span.search__input-spacer', [shadowValue.replace(/\s/g, '|')])
@@ -391,7 +413,7 @@ function filterSelect ({
   onChange,
   onKeyDown
 }) {
-  return h('.search_select.search__select-value', [
+  return h('.search__select-value', [
     select({
       testId,
       options,
@@ -400,11 +422,12 @@ function filterSelect ({
       onChange,
       onKeyDown
     })
-  ]);
+  ]
+  );
 }
 
 function getSelectWidth (label) {
-  const width = label.length + 4;
+  const width = label.length + 6;
   return Math.max(7, width) + 'ch';
 }
 
@@ -437,12 +460,13 @@ function filterValueReference ({ctField = {}, testId, value, inputRef, onChange,
   const ctFieldClone = cloneDeep(ctField);
 
   ctFieldClone.type = 'Link';
-
   return h('input.input-reset.search__input-text.search__input-reference', {
     dataTestId: testId,
     value,
-    ref: inputRef,
-    onClick: () => {
+    inputRef,
+    onClick: (event) => {
+      event.stopPropagation();
+      event.preventDefault();
       entitySelector.openFromField(ctFieldClone)
         .then(entities => onChange(entities.map(e => e.sys.id).join(',')));
     },

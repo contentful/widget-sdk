@@ -110,8 +110,8 @@ export const contentTypes = [
   }
 ];
 
-export const keyDown = ({ key }) => {
+export const keyDown = ({ keyCode }) => {
   return new KeyboardEvent('keydown', {
-    key: key
+    keyCode
   });
 };

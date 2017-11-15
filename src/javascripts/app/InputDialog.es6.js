@@ -1,7 +1,7 @@
 import {h} from 'ui/Framework';
 
 import modalDialog from 'modalDialog';
-import keycodes from 'keycodes';
+import keycodes from 'utils/keycodes';
 
 /**
  * @ngdoc service
