@@ -433,12 +433,12 @@ function select ({
 }
 
 function filterValueReference ({ctField = {}, testId, value, inputRef, onChange, onKeyDown}) {
-  // We do not want support field type arrays of references yet.
+  // We do not want to support field type arrays of references yet.
   const ctFieldClone = cloneDeep(ctField);
 
   ctFieldClone.type = 'Link';
 
-  return h('input.input-reset.search__input-text', {
+  return h('input.input-reset.search__input-text.search__input-reference', {
     dataTestId: testId,
     value,
     ref: inputRef,
@@ -446,8 +446,10 @@ function filterValueReference ({ctField = {}, testId, value, inputRef, onChange,
       entitySelector.openFromField(ctFieldClone)
         .then(entities => onChange(entities.map(e => e.sys.id).join(',')));
     },
+    onChange: (e) => onChange(e.target.value),
     onKeyDown,
-    tabindex: '0'
+    tabindex: '0',
+    placeholder: `Select existing ${ctFieldClone.itemLinkType.toLowerCase()}`
   });
 }
 
