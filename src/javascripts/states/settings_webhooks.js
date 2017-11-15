@@ -46,8 +46,8 @@ angular.module('contentful')
     name: 'call',
     url: '/call/:callId',
     resolve: {
-      call: ['WebhookRepository', 'space', 'webhook', '$stateParams', function (WebhookRepository, space, webhook, $stateParams) {
-        return WebhookRepository.getInstance(space).logs.getCall(webhook.sys.id, $stateParams.callId);
+      call: ['WebhookRepository', 'spaceContext', 'webhook', '$stateParams', function (WebhookRepository, spaceContext, webhook, $stateParams) {
+        return WebhookRepository.getInstance(spaceContext.space).logs.getCall(webhook.sys.id, $stateParams.callId);
       }]
     },
     template: JST['webhook_call'](),
@@ -77,8 +77,8 @@ angular.module('contentful')
       isNew: false
     },
     resolve: {
-      webhook: ['WebhookRepository', 'space', '$stateParams', function (WebhookRepository, space, $stateParams) {
-        return WebhookRepository.getInstance(space).get($stateParams.webhookId);
+      webhook: ['WebhookRepository', 'spaceContext', '$stateParams', function (WebhookRepository, spaceContext, $stateParams) {
+        return WebhookRepository.getInstance(spaceContext.space).get($stateParams.webhookId);
       }]
     },
     template: '<cf-webhook-editor cf-ui-tab class="workbench webhook-editor" />',

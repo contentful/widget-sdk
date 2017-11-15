@@ -26,7 +26,7 @@ angular.module('contentful')
   function loadAll () {
     load([
       $injector.get('states/account'),
-      $injector.get('states/spaces'),
+      $injector.get('states/Spaces').default,
       $injector.get('states/Home').default,
       {
         name: '_other',

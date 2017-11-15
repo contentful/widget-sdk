@@ -53,8 +53,8 @@ angular.module('contentful')
       isNew: true
     },
     resolve: {
-      contentType: ['space', function (space) {
-        return space.newContentType({sys: {type: 'ContentType'}, fields: []});
+      contentType: ['spaceContext', function (spaceContext) {
+        return spaceContext.space.newContentType({sys: {type: 'ContentType'}, fields: []});
       }],
       editingInterface: resolvers.editingInterface,
       publishedContentType: [function () {
@@ -77,7 +77,8 @@ angular.module('contentful')
       isNew: false
     },
     resolve: {
-      contentType: ['require', '$stateParams', 'space', function (require, $stateParams, space) {
+      contentType: ['require', '$stateParams', 'spaceContext', function (require, $stateParams, spaceContext) {
+        var space = spaceContext.space;
         var ctHelpers = require('data/ContentTypes');
         return space.getContentType($stateParams.contentTypeId)
           .then(function (ct) {
