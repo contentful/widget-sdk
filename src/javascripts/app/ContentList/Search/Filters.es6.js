@@ -142,14 +142,14 @@ export function getFiltersFromQueryKey ({contentTypes, searchFilters, contentTyp
   return setUserFieldsFilters(users, filters);
 }
 
-export function sanitizeSearchFilters (filters, contentTypes, contentTypeId) {
+export function sanitizeSearchFilters (filters, contentTypes, contentTypeId, withAssets = false) {
   const contentType = getContentTypeById(contentTypes, contentTypeId);
 
   return filters.filter(([queryKey]) => {
-    if (isContentTypeField(queryKey)) {
+    if (contentType && isContentTypeField(queryKey)) {
       return getFieldByApiName(contentType, getApiName(queryKey)) !== undefined;
     } else {
-      return find(sysFieldFilters, filter => filter.queryKey === queryKey) !== undefined;
+      return find(getSysFilters(withAssets), filter => filter.queryKey === queryKey) !== undefined;
     }
   });
 }

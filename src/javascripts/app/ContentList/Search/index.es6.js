@@ -27,7 +27,7 @@ export default function create (
   try {
     const contentTypes = K.getValue(spaceContext.publishedCTs.items$).toJS();
     // Removes invalid filters before initializing the state.
-    const sanitizedFilters = sanitizeSearchFilters(initState.searchFilters, contentTypes, initState.contentTypeId);
+    const sanitizedFilters = sanitizeSearchFilters(initState.searchFilters, contentTypes, initState.contentTypeId, withAssets);
     const reduce = makeReducer({ contentTypes }, dispatch, onSearchChange);
     const defaultState = initialState(assign({}, initState, { searchFilters: sanitizedFilters }));
     const store = createStore(defaultState, reduce);
