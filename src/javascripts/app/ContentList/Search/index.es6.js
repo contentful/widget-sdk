@@ -45,8 +45,15 @@ export default function create (
       Kefir.combine([isSearching$, store.state$, users$]),
       ([isSearching, state, users]) => {
         window._state = state;
+        const props = {
+          contentTypes,
+          isSearching,
+          withAssets,
+          users
+        };
+
         $scope.search = render(
-          mapStateToProps(state, { contentTypes, users, isSearching, withAssets }, actions)
+          mapStateToProps(state, props, actions)
         );
       }
     );
@@ -67,7 +74,7 @@ function mapStateToProps (state, props, actions) {
   return {
     contentTypeFilter: contentTypeFilter(contentTypes),
     filters: getFiltersFromQueryKey({
-      users,
+      users: users.filter(user => user.activated === true),
       contentTypes,
       searchFilters: filters,
       contentTypeId,
