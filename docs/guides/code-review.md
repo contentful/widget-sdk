@@ -89,7 +89,7 @@ the author has made changes in response to the initial review. If the follow-up
 review is requested before noon the review should happen on the same day. If the
 review is requested after noon review should happen before noon the next day.
 
-If you’re code is not reviewed in a timely manner then kindly remind the
+If your code is not reviewed in a timely manner then kindly remind the
 reviewer on Slack or Github using the #sla hash tag.
 
 
