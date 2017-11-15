@@ -148,7 +148,7 @@ export function getFirstOwnedOrgWithoutSpaces (user, spacesByOrg) {
  * @returns {Boolean}
  */
 export function isAutomationTestUser (user) {
-  return /^\w+\+autotesting_newuser(?:\d+_){2}\d+@contentful.com$/.test(user.email);
+  return /^autotest\+.*@contentful.com$/.test(user.email);
 }
 
 /**
