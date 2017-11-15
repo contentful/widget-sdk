@@ -3,7 +3,7 @@
 angular.module('contentful')
 
 .directive('cfMarkdownPreview', ['require', function (require) {
-  var LazyLoader = require('LazyLoader');
+  var ReactDOM = require('libs/react-dom');
 
   return {
     restrict: 'E',
@@ -22,35 +22,30 @@ angular.module('contentful')
     link: function (scope, el) {
       var mountingPoint = el.find('.markdown-preview-mounting-point').get(0);
       scope.mountHasCrashed = false;
-      LazyLoader.get('markdown').then(initPreview);
 
-      function initPreview (libs) {
-        var ReactDOM = libs.ReactDOM;
+      scope.$watch('preview.tree', update);
+      scope.$watch('isDisabled', update);
 
-        scope.$watch('preview.tree', update);
-        scope.$watch('isDisabled', update);
+      scope.$on('$destroy', unmount);
 
-        scope.$on('$destroy', unmount);
+      function update () {
+        var newTree = scope.preview && scope.preview.tree;
+        if (!newTree || scope.isDisabled) { return; }
 
-        function update () {
-          var newTree = scope.preview && scope.preview.tree;
-          if (!newTree || scope.isDisabled) { return; }
-
-          try {
-            mount();
-            scope.mountHasCrashed = false;
-          } catch (e) {
-            scope.mountHasCrashed = true;
-          }
+        try {
+          mount();
+          scope.mountHasCrashed = false;
+        } catch (e) {
+          scope.mountHasCrashed = true;
         }
+      }
 
-        function mount () {
-          ReactDOM.render(scope.preview.tree, mountingPoint);
-        }
+      function mount () {
+        ReactDOM.render(scope.preview.tree, mountingPoint);
+      }
 
-        function unmount () {
-          ReactDOM.unmountComponentAtNode(mountingPoint);
-        }
+      function unmount () {
+        ReactDOM.unmountComponentAtNode(mountingPoint);
       }
     }
   };
