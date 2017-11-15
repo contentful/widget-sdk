@@ -1,4 +1,5 @@
 import { h } from 'utils/hyperscript';
+import spinner from 'ui/Components/Spinner';
 
 // function to show correct type of the project
 // in the title of the modal
@@ -41,12 +42,13 @@ export default function (name) {
         }, [
           h('div', {
             style: {
-              height: '43px'
+              height: '28px',
+              marginBottom: '20px'
             }
           }, [
-            h('.loader__spinner', {
-              ngShow: 'isCreatingSpace'
-            }),
+            h('div', {ngShow: 'isCreatingSpace'}, [
+              spinner({diameter: '32px', style: {display: 'block'}})
+            ]),
             h('cf-icon', {
               name: 'checkmark',
               scale: '2',
