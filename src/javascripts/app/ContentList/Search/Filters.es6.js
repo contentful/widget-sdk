@@ -45,7 +45,8 @@ export const ValueInput = {
   // A simple text input
   Text: makeCtor(),
   Reference: makeCtor(),
-  Date: makeCtor()
+  Date: makeCtor(),
+  AssetDetailsSize: makeCtor()
 };
 
 // The generic filters applicable to all content types
@@ -88,7 +89,7 @@ const sysFieldFilters = [
 const assetsFieldFilters = [
   ['width', 'AssetDetails'],
   ['height', 'AssetDetails'],
-  ['size', 'AssetDetails', '', 'size (kb)'],
+  ['size', 'AssetDetailsSize', '', 'size (kb)'],
   ['type', 'AssetType'],
   ['title', 'AssetField'],
   ['description', 'AssetField'],
@@ -335,7 +336,7 @@ function getSysFieldQueryKey ({name, type}) {
 function getAssetQueryKey ({name, type}) {
   let queryKey = CT_QUERY_KEY_PREFIX;
 
-  if (type === 'AssetDetails') {
+  if (type === 'AssetDetails' || type === 'AssetDetailsSize') {
     queryKey = getAssetDetailsQueryKey(name);
   } else if (type === 'AssetFileField') {
     queryKey = getAssetsFileFieldQueryKey(name);
@@ -385,6 +386,8 @@ function getControlByType (ctField) {
     const mimeTypes = map(mimetype.getGroupNames(),
       (label, value) => [value, label]);
     return ValueInput.Select(mimeTypes);
+  } else if (type === 'AssetDetailsSize') {
+    return ValueInput.AssetDetailsSize();
   } else {
     return ValueInput.Text();
   }

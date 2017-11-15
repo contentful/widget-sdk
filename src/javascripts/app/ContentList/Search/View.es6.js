@@ -1,5 +1,5 @@
 /* global requestAnimationFrame */
-import { noop, cloneDeep, find } from 'lodash';
+import { noop, cloneDeep, find, assign } from 'lodash';
 import { match } from 'utils/TaggedValues';
 
 import {h} from 'ui/Framework';
@@ -317,6 +317,14 @@ function filterValue ({ valueInput, value, isFocused, onChange, onRemove }) {
         onChange,
         onKeyDown: handleKeyDown
       }),
+    [ValueInput.AssetDetailsSize]: () =>
+      filterValueAssetSize({
+        testId: valueTestId,
+        value,
+        inputRef,
+        onChange,
+        onKeyDown: handleKeyDown
+      }),
     [ValueInput.Date]: () =>
       filterValueDate({
         testId: valueTestId,
@@ -351,7 +359,7 @@ function filterValue ({ valueInput, value, isFocused, onChange, onRemove }) {
 function filterValueText ({value, testId, inputRef, onChange, onKeyDown}) {
   // In order to make the input fuild, we mirror the value of the input
   // in a span that pushes the parent div to grow.
-  const shadowValue = value !== null ? value : '';
+  const shadowValue = value !== null ? String(value) : '';
 
   return h('fieldset.search__input-text', [
     h('input.input-reset.search__input', {
@@ -364,6 +372,15 @@ function filterValueText ({value, testId, inputRef, onChange, onKeyDown}) {
     }),
     h('span.search__input-spacer', [shadowValue.replace(/\s/g, '|')])
   ]);
+}
+
+function filterValueAssetSize (props) {
+  const sizeInKb = props.value / 1000;
+
+  return filterValueText(assign({}, props, {
+    value: sizeInKb > 0 ? sizeInKb : '',
+    onChange: (nextValue) => props.onChange(nextValue * 1000)
+  }));
 }
 
 function filterSelect ({

@@ -146,10 +146,12 @@ angular.module('contentful')
   }
 
   function onSearchChange (newSearchState) {
-    delete newSearchState.contentTypeId; // Assets don't have a content type.
-    lastUISearchState = newSearchState;
+    const nextState = _.cloneDeep(newSearchState);
+    delete nextState.contentTypeId; // Assets don't have a content type.
+    lastUISearchState = nextState;
+
     var oldView = _.cloneDeep($scope.context.view);
-    var newView = _.extend(oldView, newSearchState);
+    var newView = _.extend(oldView, nextState);
     $scope.loadView(newView);
   }
 
