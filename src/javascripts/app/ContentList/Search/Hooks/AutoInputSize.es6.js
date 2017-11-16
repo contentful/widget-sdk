@@ -48,11 +48,12 @@ function getGhost () {
 }
 
 export function autosizeInput (element) {
+  const ghost = getGhost();
   if (!element) {
+    ghost.remove();
     return;
   }
 
-  const ghost = getGhost();
   function update () {
     const str = element.value || element.getAttribute('placeholder') || '';
     copyStyles(element, ghost);

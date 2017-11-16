@@ -129,7 +129,12 @@
       background-color: $colors.white
 
 .search__datepicker
-  margin-left: -80px
+  // HACK: this is a fix for the issue in PIKADAY
+  // which was opened 26 Jul 2015
+  // https://github.com/dbushell/Pikaday/issues/368
+  position: absolute !important
+  top: 27px !important
+  left: -80px !important
 
 .search__input-text
   position: relative

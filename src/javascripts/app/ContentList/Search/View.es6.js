@@ -13,7 +13,7 @@ import filterIcon from 'svg/filter';
 import infoIcon from 'svg/info';
 
 import { ValueInput } from './Filters';
-import { autosizeInput } from 'ui/AutoInputSize';
+import { autosizeInput } from './Hooks/AutoInputSize';
 import entitySelector from 'entitySelector';
 import filterValueDate from './ValueInput/Date';
 import { IsOverflownY as IsOverflownYHook } from './Hooks/IsOverflown';
@@ -53,7 +53,6 @@ export default function render ({
       height: '40px',
       width: '100%',
       position: 'relative'
-      // overflowY: searchBoxHasFocus ? 'unset' : 'hidden'
     }
   }, [
     h('div', {

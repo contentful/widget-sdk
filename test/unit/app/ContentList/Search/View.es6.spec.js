@@ -10,7 +10,7 @@ const Components = {
   contentFilterValue: view => view.find('contentTypeFilter', 'value')
 };
 
-xdescribe('app/ContentList/Search/View', function () {
+describe('app/ContentList/Search/View', function () {
   let actions, render, view;
   beforeEach(function* () {
     module('contentful/test');
@@ -31,7 +31,7 @@ xdescribe('app/ContentList/Search/View', function () {
     this.contentTypeFilter = Filters.contentTypeFilter;
     this.getFiltersFromQueryKey = Filters.getFiltersFromQueryKey;
 
-    const Actions =
+    const { Actions } =
       yield SystemJS.import('app/ContentList/Search/State');
 
     actions = _.mapValues(Actions, () => {
@@ -73,6 +73,7 @@ xdescribe('app/ContentList/Search/View', function () {
     SystemJS.delete('moment');
     SystemJS.delete('mimetype');
     document.body.removeAttribute('tabindex');
+
     view.destroy();
   });
 
