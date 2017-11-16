@@ -69,6 +69,7 @@ const UnsetTyping = makeCtor('UnsetTyping');
 const RemoveFilter = makeCtor('RemoveFilter');
 const SetFocusOnLast = makeCtor('SetFocusOnLast');
 const SetFocusOnPill = makeCtor('SetFocusOnPill');
+const SetFocusOnPillValue = makeCtor('SetFocusOnPillValue');
 const SetFocusOnLastValue = makeCtor('SetFocusOnLastValue');
 const ResetFocus = makeCtor('ResetFocus');
 const SetFocusOnFirstSuggestion = makeCtor('SetFocusOnFirstSuggestion');
@@ -88,6 +89,7 @@ export const Actions = {
   SetBoxFocus,
   RemoveFilter,
   SetFocusOnPill,
+  SetFocusOnPillValue,
   SetFocusOnLast,
   SetFocusOnLastValue,
   ResetFocus,
@@ -146,6 +148,7 @@ export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
     },
     [ResetFocus]: resetFocus,
     [SetFocusOnPill]: setFocusOnPill,
+    [SetFocusOnPillValue]: setFocusOnPillValue,
     [SetFocusOnLast]: setFocusOnLast,
     [SetFocusOnLastValue]: setFocusOnLastValue,
     [SetFocusOnQueryInput]: setFocusOnQueryInput,
@@ -229,15 +232,20 @@ export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
     return set(state, ['focus', 'index'], index);
   }
 
+  function setFocusOnPillValue (state, index) {
+    state = setFocusOnPill(state, index);
+
+    return set(state, ['focus', 'isValueFocused'], true);
+  }
   function setFocusOnLast (state) {
     const lastIndex = state.filters.length - 1;
     return setFocusOnPill(state, lastIndex);
   }
 
   function setFocusOnLastValue (state) {
-    state = setFocusOnLast(state);
+    const lastIndex = state.filters.length - 1;
 
-    return set(state, ['focus', 'isValueFocused'], true);
+    return setFocusOnPillValue(state, lastIndex);
   }
 
   function setInput (state, input) {

@@ -86,7 +86,7 @@ export default function render ({
           onChange: ({ index, value }) => {
             // Keep the focus on the search box after setting a pill value
             // with a dialog/anyway that loses searchbox focus.
-            actions.SetFocusOnLastValue();
+            actions.SetFocusOnPillValue(index);
             actions.SetFilterValueInput([index, value]);
           },
           onOperatorChange: ({ index, value }) => actions.SetFilterOperator([index, value]),
