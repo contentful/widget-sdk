@@ -74,7 +74,7 @@ function mapStateToProps (state, props, actions) {
   return {
     contentTypeFilter: contentTypeFilter(contentTypes),
     filters: getFiltersFromQueryKey({
-      users: users.filter(user => user.activated === true),
+      users,
       contentTypes,
       searchFilters: filters,
       contentTypeId,
