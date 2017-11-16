@@ -25,13 +25,12 @@
   border: 1px solid transparent
   border-color: $colors.element-mid
   height: 40px
-  max-height: 200px
   overflow: hidden;
 
   &--state-active
     border-color: $colors.blue-mid
     height: auto
-    overflow-y: auto;
+    overflow: visible;
     .search-next__pills-list
       // FIXME: in the current implementation it is possible
       // to have --state-active and .is-overflown-y classes
