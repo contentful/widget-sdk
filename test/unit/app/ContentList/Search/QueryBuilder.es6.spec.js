@@ -85,6 +85,30 @@ describe('app/ContentList/Search/QueryBuilder', function () {
         query: 'free text'
       }
     );
+
+    buildQueryWithContentTypesMacro(
+      'ignore filters with empty value',
+      {
+        searchFilters: [['sys.id', '', '']]
+      },
+      {}
+    );
+
+    buildQueryWithContentTypesMacro(
+      'ignore filters with null value',
+      {
+        searchFilters: [['sys.id', '', null]]
+      },
+      {}
+    );
+
+    buildQueryWithContentTypesMacro(
+      'ignore filters with undefined value',
+      {
+        searchFilters: [['sys.id', '', undefined]]
+      },
+      {}
+    );
   });
 
   describe('status conversion', () => {

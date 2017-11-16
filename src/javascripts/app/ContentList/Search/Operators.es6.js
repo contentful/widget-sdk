@@ -1,3 +1,10 @@
+import { values } from 'lodash';
+
+/**
+ * Enum of filter operators.
+ * @readonly
+ * @enum {string}
+ */
 export const Operator = {
   EQUALS: '',
   NOT_EQUALS: 'ne',
@@ -7,6 +14,12 @@ export const Operator = {
   GT: 'gt',
   GTE: 'gte'
 };
+
+/**
+ * Checks if operator has a valid Operator enum value.
+ * @param {string} operator
+ */
+export const isValid = operator => values(Operator).indexOf(operator) > -1;
 
 // TODO: decouple operators from labels
 export const equality = [Operator.EQUALS, 'is'];

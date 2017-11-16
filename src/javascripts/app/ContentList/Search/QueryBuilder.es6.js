@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { assign } from 'utils/Collections';
 import { buildFilterFieldByQueryKey } from './Filters';
-import { Operator } from './Operators';
+import { Operator, isValid as isValidOperator } from './Operators';
 
 /**
  * Takes an object representing the `Search` component's public state object and
@@ -44,12 +44,13 @@ export function buildQuery ({
 }
 
 function applyGenericValue (query, [queryKey, operator, value]) {
-  if (typeof operator === 'string' && value) {
-    operator = operator.length > 0 ? `[${operator}]` : '';
-    return assign(query, {
-      [queryKey + operator]: value
-    });
+  if (!value || !isValidOperator(operator)) {
+    return query;
   }
+  operator = operator.length > 0 ? `[${operator}]` : '';
+  return assign(query, {
+    [queryKey + operator]: value
+  });
 }
 
 function applyDate (query, [queryKey, operator, value]) {
