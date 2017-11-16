@@ -457,12 +457,13 @@ function select ({
 function filterValueReference ({ctField = {}, testId, value, inputRef, onChange, onKeyDown}) {
   // We do not want to support field type arrays of references yet.
   const ctFieldClone = cloneDeep(ctField);
+  const {itemLinkType = ''} = ctFieldClone;
 
   ctFieldClone.type = 'Link';
   return h('input.input-reset.search__input-text.search__input-reference', {
     dataTestId: testId,
     value,
-    inputRef,
+    ref: inputRef,
     onClick: (event) => {
       event.stopPropagation();
       event.preventDefault();
@@ -472,7 +473,7 @@ function filterValueReference ({ctField = {}, testId, value, inputRef, onChange,
     onChange: (e) => onChange(e.target.value),
     onKeyDown,
     tabindex: '0',
-    placeholder: `Select existing ${ctFieldClone.itemLinkType.toLowerCase()}`
+    placeholder: `Select existing ${itemLinkType.toLowerCase()}`
   });
 }
 

@@ -25,16 +25,17 @@
   border: 1px solid transparent
   border-color: $colors.element-mid
   height: 40px
+  max-height: 120px
   overflow: hidden;
 
   &--state-active
     border-color: $colors.blue-mid
     height: auto
-    overflow: visible
+    overflow-y: auto;
     .search-next__pills-list
       // FIXME: in the current implementation it is possible
       // to have --state-active and .is-overflown-y classes
-      // in the same time. 
+      // in the same time.
       // Return to this after we migrate away from hooks.
       padding: 1px 10px 3px !important
 
