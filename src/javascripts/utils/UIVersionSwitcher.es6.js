@@ -6,18 +6,17 @@ import $window from '$window';
 import $document from '$document';
 import Cookies from 'Cookies';
 import moment from 'moment';
-import {gitRevision, env} from 'environment';
+import {gitRevision} from 'environment';
 import {h} from 'utils/hyperscript';
+import {addNotification} from 'utils/DevNotifications';
 
 /**
  * Sets `ui_version` cookie from value, and shows a notification.
  * @param {String} uiVersion
  */
 export function init (uiVersion) {
-  if (env !== 'production') {
-    setVersionCookie(uiVersion);
-    addVersionNotification();
-  }
+  setVersionCookie(uiVersion);
+  addVersionNotification();
 }
 
 function setVersionCookie (uiVersion) {
@@ -37,7 +36,7 @@ function addVersionNotification () {
     return;
   }
 
-  $document.find('body').append(renderVersionNotification({gitRevision}));
+  addNotification('Contentful UI Version:', renderVersionNotification(gitRevision));
 
   $document.find('[data-cf-ui-version-reload]').on('click', () => {
     Cookies.remove('ui_version');
@@ -45,9 +44,8 @@ function addVersionNotification () {
   });
 }
 
-function renderVersionNotification ({gitRevision}) {
-  return h('div', {class: 'cf-ui-version-display'}, [
-    'Contentful UI Version: ',
+function renderVersionNotification (gitRevision) {
+  return h('div', [
     h('a', {href: `?ui_version=${gitRevision}`}, [gitRevision]),
     h('a', {href: '#', dataCfUiVersionReload: true}, ['Clear'])
   ]);

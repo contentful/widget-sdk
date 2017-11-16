@@ -72,15 +72,18 @@ angular.module('contentful/app', ['contentful'])
   } else {
     Error.stackTraceLimit = 25;
   }
-  var urlParams = location.search();
+  if (Config.env !== 'production') {
+    var urlParams = location.search();
+    require('utils/DevNotifications').init();
+    require('utils/UIVersionSwitcher').init(urlParams['ui_version']);
+    require('utils/LaunchDarkly/EnforceFlags').init(urlParams['ui_enable_flags']);
+    if (urlParams['ui_version'] || urlParams['ui_enable_flags']) {
+      location.search(_.omit(urlParams, 'ui_version', 'ui_enable_flags'));
+    }
+  }
   require('Authentication').init();
   require('services/TokenStore').init();
   require('presence').startTracking();
-  require('utils/UIVersionSwitcher').init(urlParams['ui_version']);
-  require('utils/LaunchDarkly/EnforceFlags').init(urlParams['ui_enable_flags']);
-  if (urlParams['ui_version'] || urlParams['ui_enable_flags']) {
-    location.search(_.omit(urlParams, 'ui_version', 'ui_enable_flags'));
-  }
   require('utils/LaunchDarkly').init();
   require('navigation/stateChangeHandlers').setup();
   require('ui/ContextMenuHandler').default($document);
