@@ -51,7 +51,14 @@ function asReact (tree) {
 
       return React.createElement(tag, props, ...children.map(asReact));
     }],
-    [VTree.Text, ({text}) => text]
+    [VTree.Text, ({text}) => text],
+    [null, () => {
+      if (React.isValidElement(tree)) {
+        return tree;
+      } else {
+        throw new Error('Expected a VTree or a valid React element.');
+      }
+    }]
   ]);
 }
 
