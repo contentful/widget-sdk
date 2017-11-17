@@ -89,7 +89,7 @@ export function bindActions (store, actions) {
  */
 export function makeReducer (handlers) {
   return makeMatcher(mapValues(handlers, (handle) => {
-    return (value, state) => handle(state, value);
+    return (value, state, ...args) => handle(state, value, ...args);
   }));
 }
 

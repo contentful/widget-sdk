@@ -9,14 +9,20 @@ angular.module('contentful')
   var navBar = require('navigation/templates/NavBar').default;
   var accessChecker = require('accessChecker');
   var spaceContext = require('spaceContext');
+  var LD = require('utils/LaunchDarkly');
 
   return {
     template: template(),
     restrict: 'E',
     scope: {},
     controllerAs: 'nav',
-    controller: ['$stateParams', function ($stateParams) {
+    controller: ['$stateParams', '$scope', function ($stateParams, $scope) {
       this.spaceId = $stateParams.spaceId;
+
+      var controller = this;
+      LD.onFeatureFlag($scope, 'feature-dv-11-2017-environments', function (environmentsEnabled) {
+        controller.environmentsEnabled = environmentsEnabled;
+      });
 
       this.canNavigateTo = function (section) {
         if (!spaceContext.space || spaceContext.space.isHibernated()) {
@@ -103,6 +109,10 @@ angular.module('contentful')
           }, {
             sref: 'spaces.detail.settings.extensions',
             title: 'Extensions'
+          }, {
+            if: 'nav.environmentsEnabled',
+            sref: 'spaces.detail.settings.environments',
+            title: 'Environments'
           }
         ]
       }
