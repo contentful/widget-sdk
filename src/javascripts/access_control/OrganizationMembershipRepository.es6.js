@@ -40,6 +40,14 @@ export function getSpaces (endpoint, params) {
   });
 }
 
+export function getRoles (endpoint, query) {
+  return endpoint({
+    method: 'GET',
+    path: ['roles'],
+    query
+  });
+}
+
 export function invite (endpoint, {role, email, suppressInvitation}) {
   return endpoint({
     method: 'POST',

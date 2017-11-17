@@ -1,16 +1,14 @@
 import {omit, pick, negate, trim, sortedUniq, get as getAtPath} from 'lodash';
 import {h} from 'ui/Framework';
-import { assign } from 'utils/Collections';
+import {assign} from 'utils/Collections';
 import {getOrganization} from 'services/TokenStore';
-import * as RoleRepository from 'RoleRepository';
 import {runTask} from 'utils/Concurrent';
 import {ADMIN_ROLE_ID} from 'access_control/SpaceMembershipRepository';
-import {getUsers, getSpaces, createEndpoint} from 'access_control/OrganizationMembershipRepository';
+import {getUsers, getSpaces, getRoles, createEndpoint} from 'access_control/OrganizationMembershipRepository';
 import {makeCtor, match} from 'utils/TaggedValues';
 import {invite, progress$} from 'account/SendOrganizationInvitation';
 import {isValidEmail} from 'stringUtils';
 import {go} from 'states/Navigator';
-import client from 'client';
 import {isOwnerOrAdmin} from 'services/OrganizationRoles';
 import {
   header,
@@ -30,6 +28,7 @@ const adminRole = {
 const maxNumberOfEmails = 100;
 const defaultOrgRole = 'member';
 
+const Loading = makeCtor('loading');
 const Idle = makeCtor('idle');
 const Invalid = makeCtor('invalid'); // used to show form errors after user tried to submit
 const InProgress = makeCtor('inProgress');
@@ -38,7 +37,6 @@ const Failure = makeCtor('failure');
 
 export default function ($scope) {
   let state = {
-    orgSpacesCount: null,
     spaces: [],
     emails: [],
     emailsInputValue: '',
@@ -47,7 +45,7 @@ export default function ($scope) {
     spaceMemberships: {},
     failedOrgInvitations: [],
     successfulOrgInvitations: [],
-    status: Idle(),
+    status: Loading(),
     organization: {}
   };
 
@@ -86,35 +84,62 @@ export default function ($scope) {
     state = assign(state, {organization});
     rerender();
 
-    // 2nd step - load the spaces and assign spaces count
-    const orgSpaces = yield getOrgSpaces(organization.spaceLimit);
-    state = assign(state, {orgSpacesCount: orgSpaces.total});
+    // 2nd step - load all space roles
+    const orgRoles = yield* getAllSpacesWithRoles();
+    state = assign(state, {
+      spaces: orgRoles,
+      status: Idle()
+    });
     rerender();
-
-    // 3rd step - load all space roles
-    orgSpaces.items
-      .map(space => client.newSpace(space)) // workaround necessary to fetch space roles
-      .forEach(space => runTask(function* () {
-        const spaceWithRoles = yield* getSpaceWithRoles(space);
-        state = assign(state, {spaces: [...state.spaces, spaceWithRoles]});
-        rerender();
-      }));
   });
 
-  function* getSpaceWithRoles (space) {
-    const roles = yield RoleRepository.getInstance(space).getAll();
-    const spaceRoles = roles.map(role => ({
-      name: role.name,
-      id: role.sys.id,
-      spaceId: role.sys.space.sys.id
-    }));
+  function* getAllSpacesWithRoles () {
+    const allRoles = yield* getPaginatedResources(getRoles);
+    // get a map of roles by spaceId
+    const rolesBySpace = allRoles
+      .reduce((acc, role) => {
+        const spaceId = role.sys.space.sys.id;
+        if (!acc[spaceId]) {
+          acc[spaceId] = [];
+        }
+        acc[spaceId].push({
+          name: role.name,
+          id: role.sys.id,
+          spaceId: role.sys.space.sys.id
+        });
+        return acc;
+      }, {});
+    const allSpaces = yield* getPaginatedResources(getSpaces);
 
-    return {
-      id: space.data.sys.id,
-      createdAt: space.data.sys.createdAt,
-      name: space.data.name,
-      roles: spaceRoles.sort((role, previous) => role.name.localeCompare(previous.name))
-    };
+    return allSpaces.map(space => ({
+      id: space.sys.id,
+      createdAt: space.sys.createdAt,
+      name: space.name,
+      roles: rolesBySpace[space.sys.id]
+        .sort((role, previous) => role.name.localeCompare(previous.name))
+    }));
+  }
+
+  /**
+   * Send requests repeatedly, if needed, using `fn`, to fetch all items
+   * available in the database.
+   * This is required when the amount of items can exceed the max
+   * number until pagination (100), but there's no pagination in the UI.
+   * @param {Function} fn
+   */
+  function* getPaginatedResources (fn) {
+    const itemsPerRequest = 100;
+    const {total, items} = yield fn(orgEndpoint, {limit: itemsPerRequest});
+    let resources = items;
+
+    if (total > itemsPerRequest) {
+      while (resources.length < total) {
+        const {items} = yield fn(orgEndpoint, {limit: itemsPerRequest, skip: resources.length});
+        resources = resources.concat(items);
+      }
+    }
+
+    return resources;
   }
 
   function updateSpaceRole (checked, role, spaceMemberships) {
@@ -335,10 +360,6 @@ export default function ($scope) {
     });
   }
 
-  function getOrgSpaces (limit) {
-    return getSpaces(orgEndpoint, {limit});
-  }
-
   function* hasPermission () {
     const org = yield getOrganization(orgId);
     return isOwnerOrAdmin(org);
@@ -368,8 +389,9 @@ function render (state, actions) {
             ),
             organizationRole(state.orgRole, actions.updateOrgRole),
             accessToSpaces(
+              Loading,
               adminRole,
-              pick(state, ['spaces', 'orgSpacesCount', 'spaceMemberships']),
+              pick(state, ['status', 'spaces', 'spaceMemberships']),
               pick(actions, ['updateSpaceRole'])
             )
           ])
