@@ -1,0 +1,8 @@
+globals:
+  it: false
+  describe: false
+  beforeEach: false
+
+rules:
+  # Allows us to do `expect(...).to.be.true`
+  no-unused-expressions: off

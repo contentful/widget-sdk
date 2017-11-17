@@ -1,0 +1,19 @@
+{
+  "node": true,
+  "predef": [
+    "define"
+  ],
+  "globals": { 
+    "Promise": true,
+    "describe": true,
+    "beforeEach": true,
+    "before": true,
+    "it": true
+  },
+  "browser": true,
+  "quotmark": "single",
+  "trailing": true,
+  "unused": true,
+  "sub": true,
+  "esnext": true
+}
