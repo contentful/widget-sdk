@@ -7,15 +7,15 @@
  * Opens the paywall.
  */
 angular.module('contentful')
-.factory('paywallOpener', ['$injector', function ($injector) {
-  var $q = $injector.get('$q');
-  var $sce = $injector.get('$sce');
-  var lazyLoad = $injector.get('LazyLoader').get;
-  var modalDialog = $injector.get('modalDialog');
-  var recommendPlan = $injector.get('subscriptionPlanRecommender').recommend;
-  var intercom = $injector.get('intercom');
-  var Analytics = $injector.get('analytics/Analytics');
-  var TheAccountView = $injector.get('TheAccountView');
+.factory('paywallOpener', ['require', function (require) {
+  var $q = require('$q');
+  var $sce = require('$sce');
+  var lazyLoad = require('LazyLoader').get;
+  var modalDialog = require('modalDialog');
+  var recommendPlan = require('subscriptionPlanRecommender').recommend;
+  var intercom = require('intercom');
+  var Analytics = require('analytics/Analytics');
+  var TheAccountView = require('TheAccountView');
 
   var paywallIsOpen = false;
 

@@ -42,8 +42,8 @@ angular.module('contentful')
  * @ngdoc service
  * @name widgets/migrations
  */
-.factory('widgets/migrations', ['$injector', function ($injector) {
-  var MIGRATIONS = $injector.get('widgets/migrations/data');
+.factory('widgets/migrations', ['require', function (require) {
+  var MIGRATIONS = require('widgets/migrations/data');
 
   /**
    * @ngdoc method

@@ -9,12 +9,12 @@ angular.module('contentful')
  * Exposes constructor for the `API` class that is used to communicate
  * with widgets in iframes.
  */
-.factory('widgets/API', ['$injector', function ($injector) {
-  var Channel = $injector.get('widgets/channel');
-  var TheLocaleStore = $injector.get('TheLocaleStore');
-  var createIDMap = $injector.get('widgets/IDMap');
-  var $q = $injector.get('$q');
-  var entitySelector = $injector.get('entitySelector');
+.factory('widgets/API', ['require', function (require) {
+  var Channel = require('widgets/channel');
+  var TheLocaleStore = require('TheLocaleStore');
+  var createIDMap = require('widgets/IDMap');
+  var $q = require('$q');
+  var entitySelector = require('entitySelector');
 
   /**
    * @ngdoc method

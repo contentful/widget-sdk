@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('cf.ui')
-.directive('uiHighlightMatch', ['$injector', function ($injector) {
-  var document = $injector.get('$document').get(0);
+.directive('uiHighlightMatch', ['require', function (require) {
+  var document = require('$document').get(0);
   return {
     restrict: 'A',
     scope: {

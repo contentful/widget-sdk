@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfOoyalaEditor', ['$injector', function ($injector) {
-  var $controller = $injector.get('$controller');
+.directive('cfOoyalaEditor', ['require', function (require) {
+  var $controller = require('$controller');
   return {
     restrict: 'E',
     scope: true,

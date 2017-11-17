@@ -16,8 +16,8 @@ angular.module('contentful')
  * @param {API.Widget}               widget
  * @return {Promise<void>}
  */
-.factory('openFieldDialog', ['$injector', function ($injector) {
-  var modalDialog = $injector.get('modalDialog');
+.factory('openFieldDialog', ['require', function (require) {
+  var modalDialog = require('modalDialog');
 
   return function openFieldDialog ($scope, field, widget) {
     var scope = _.extend($scope.$new(), {
@@ -42,14 +42,14 @@ angular.module('contentful')
  * @property {string} $scope.widgetSettings.id
  * @property {object} $scope.widgetSettings.params
  */
-.controller('FieldDialogController', ['$scope', '$injector', function FieldDialogController ($scope, $injector) {
+.controller('FieldDialogController', ['$scope', 'require', function FieldDialogController ($scope, require) {
   var dialog = $scope.dialog;
 
-  var validations = $injector.get('validationDecorator');
-  var field = $injector.get('fieldDecorator');
-  var trackCustomWidgets = $injector.get('analyticsEvents/customWidgets');
-  var fieldFactory = $injector.get('fieldFactory');
-  var Widgets = $injector.get('widgets');
+  var validations = require('validationDecorator');
+  var field = require('fieldDecorator');
+  var trackCustomWidgets = require('analyticsEvents/customWidgets');
+  var fieldFactory = require('fieldFactory');
+  var Widgets = require('widgets');
 
   $scope.decoratedField = field.decorate($scope.field, $scope.contentType);
 
@@ -130,10 +130,10 @@ angular.module('contentful')
 }])
 
 
-.controller('FieldDialogSettingsController', ['$scope', '$injector', function ($scope, $injector) {
-  var fieldDecorator = $injector.get('fieldDecorator');
-  var buildMessage = $injector.get('fieldErrorMessageBuilder');
-  var TheLocaleStore = $injector.get('TheLocaleStore');
+.controller('FieldDialogSettingsController', ['$scope', 'require', function ($scope, require) {
+  var fieldDecorator = require('fieldDecorator');
+  var buildMessage = require('fieldErrorMessageBuilder');
+  var TheLocaleStore = require('TheLocaleStore');
 
   $scope.schema = {
     errors: function (decoratedField) {
@@ -157,8 +157,8 @@ angular.module('contentful')
  * @scope.requires {string}  widgetSettings.id
  * @scope.requires {Widgets.Descriptor[]}  availableWidgets
  */
-.controller('FieldDialogValidationsController', ['$scope', '$injector', function ($scope, $injector) {
-  var validations = $injector.get('validationDecorator');
+.controller('FieldDialogValidationsController', ['$scope', 'require', function ($scope, require) {
+  var validations = require('validationDecorator');
 
   $scope.$watch('fieldValidationsForm.$invalid', function (isInvalid) {
     $scope.tab.invalid = isInvalid;
@@ -200,9 +200,9 @@ angular.module('contentful')
  * @property {Widgets.Descriptor}    widget
  * @property {Widgets.Options[]}     widgetOptions
  */
-.controller('FieldDialogAppearanceController', ['$scope', '$injector', function ($scope, $injector) {
-  var Widgets = $injector.get('widgets');
-  var getDefaultWidgetId = $injector.get('widgets/default');
+.controller('FieldDialogAppearanceController', ['$scope', 'require', function ($scope, require) {
+  var Widgets = require('widgets');
+  var getDefaultWidgetId = require('widgets/default');
 
   $scope.defaultWidgetId = getDefaultWidgetId($scope.field, $scope.contentType);
   $scope.widgetParams = $scope.widgetSettings.params;

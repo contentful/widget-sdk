@@ -13,7 +13,7 @@ angular.module('cf.data')
  * the first result.
  *
  * @usage[js]
- * var createCache = $injector.get('data/userCache')
+ * var createCache = require('data/userCache')
  * var users = createCache(spaceContext.endpoint)
  *
  * // triggers request

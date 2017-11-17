@@ -1,9 +1,9 @@
 'use strict';
 
-angular.module('contentful').service('kalturaCredentials', ['$injector', function($injector){
-  var $q     = $injector.get('$q');
-  var client = $injector.get('client');
-  var moment = $injector.get('moment');
+angular.module('contentful').service('kalturaCredentials', ['require', function(require){
+  var $q     = require('$q');
+  var client = require('client');
+  var moment = require('moment');
 
   var credentialsCache = {
     credentials : undefined,

@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('contentful').factory('LinkOrganizer', ['$injector', function ($injector) {
+angular.module('contentful').factory('LinkOrganizer', ['require', function (require) {
 
-  var PROCESSORS = $injector.get('LinkOrganizer/matchProcessors');
+  var PROCESSORS = require('LinkOrganizer/matchProcessors');
   var REGEXS     = {
     inline: /\[([^\r\n\[\]]+)]\(([^\r\n\)]+)\)/,
     ref:    /\[([^\r\n\[\]]+)] ?\[([^\r\n\[\]]+)]/,

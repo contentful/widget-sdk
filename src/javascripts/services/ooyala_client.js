@@ -1,10 +1,10 @@
 'use strict';
 
-angular.module('contentful').factory('ooyalaClient', ['$injector', function($injector){
-  var assert              = $injector.get('assert');
-  var OoyalaErrorMessages = $injector.get('OoyalaErrorMessages');
-  var client              = $injector.get('client');
-  var $q                  = $injector.get('$q');
+angular.module('contentful').factory('ooyalaClient', ['require', function (require){
+  var assert              = require('assert');
+  var OoyalaErrorMessages = require('OoyalaErrorMessages');
+  var client              = require('client');
+  var $q                  = require('$q');
 
   var BASE_URL = '/integrations/ooyala';
 

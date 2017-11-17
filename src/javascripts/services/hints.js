@@ -8,8 +8,8 @@
  * app. These hints should only be shown once for each user.
  */
 angular.module('contentful')
-.service('hints', ['$injector', function ($injector) {
-  var TheStore = $injector.get('TheStore');
+.service('hints', ['require', function (require) {
+  var TheStore = require('TheStore');
 
   return {
     /**

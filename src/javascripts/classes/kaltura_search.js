@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('contentful').factory('KalturaSearch', ['$injector', function($injector){
-  var $window              = $injector.get('$window');
-  var kalturaClientWrapper = $injector.get('kalturaClientWrapper');
+angular.module('contentful').factory('KalturaSearch', ['require', function(require){
+  var $window              = require('$window');
+  var kalturaClientWrapper = require('kalturaClientWrapper');
 
   function KalturaSearch() {
     this.filter = new $window.KalturaBaseEntryFilter();

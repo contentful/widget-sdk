@@ -1,14 +1,14 @@
 'use strict';
 
-angular.module('contentful').directive('cfMarkdownEditor', ['$injector', function ($injector) {
-  var $timeout = $injector.get('$timeout');
-  var LazyLoader = $injector.get('LazyLoader');
-  var MarkdownEditor = $injector.get('markdown_editor/markdown_editor');
-  var actions = $injector.get('markdown_editor/markdown_actions');
-  var makePreview = $injector.get('markdown_editor/PreviewGenerator').default;
-  var notification = $injector.get('notification');
-  var throttle = $injector.get('throttle');
-  var K = $injector.get('utils/kefir');
+angular.module('contentful').directive('cfMarkdownEditor', ['require', function (require) {
+  var $timeout = require('$timeout');
+  var LazyLoader = require('LazyLoader');
+  var MarkdownEditor = require('markdown_editor/markdown_editor');
+  var actions = require('markdown_editor/markdown_actions');
+  var makePreview = require('markdown_editor/PreviewGenerator').default;
+  var notification = require('notification');
+  var throttle = require('throttle');
+  var K = require('utils/kefir');
 
   return {
     restrict: 'E',

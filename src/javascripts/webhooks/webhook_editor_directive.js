@@ -15,15 +15,15 @@ angular.module('contentful')
   };
 })
 
-.controller('WebhookEditorController', ['$scope', '$injector', function ($scope, $injector) {
+.controller('WebhookEditorController', ['$scope', 'require', function ($scope, require) {
 
-  var $q               = $injector.get('$q');
-  var $controller      = $injector.get('$controller');
-  var Command          = $injector.get('command');
-  var modalDialog      = $injector.get('modalDialog');
-  var leaveConfirmator = $injector.get('navigation/confirmLeaveEditor');
-  var spaceContext     = $injector.get('spaceContext');
-  var webhookRepo      = $injector.get('WebhookRepository').getInstance(spaceContext.space);
+  var $q               = require('$q');
+  var $controller      = require('$controller');
+  var Command          = require('command');
+  var modalDialog      = require('modalDialog');
+  var leaveConfirmator = require('navigation/confirmLeaveEditor');
+  var spaceContext     = require('spaceContext');
+  var webhookRepo      = require('WebhookRepository').getInstance(spaceContext.space);
 
   var activityController = $controller('WebhookEditorController/activity', {
     $scope: $scope, repo: webhookRepo
@@ -60,14 +60,14 @@ angular.module('contentful')
   }
 }])
 
-.controller('WebhookEditorController/settings', ['$scope', 'repo', '$injector', function ($scope, repo, $injector) {
+.controller('WebhookEditorController/settings', ['$scope', 'repo', 'require', function ($scope, repo, require) {
 
-  var $q                 = $injector.get('$q');
-  var $state             = $injector.get('$state');
-  var notification       = $injector.get('notification');
-  var ReloadNotification = $injector.get('ReloadNotification');
-  var modalDialog        = $injector.get('modalDialog');
-  var validation         = $injector.get('WebhookEditor/validationHelper');
+  var $q                 = require('$q');
+  var $state             = require('$state');
+  var notification       = require('notification');
+  var ReloadNotification = require('ReloadNotification');
+  var modalDialog        = require('modalDialog');
+  var validation         = require('WebhookEditor/validationHelper');
 
   var touched = getInitialTouchCount();
 
@@ -184,12 +184,12 @@ angular.module('contentful')
   }
 }])
 
-.factory('WebhookEditor/validationHelper', ['$injector', function ($injector) {
+.factory('WebhookEditor/validationHelper', ['require', function (require) {
 
-  var $q           = $injector.get('$q');
-  var notification = $injector.get('notification');
-  var logger       = $injector.get('logger');
-  var urlUtils     = $injector.get('urlUtils');
+  var $q           = require('$q');
+  var notification = require('notification');
+  var logger       = require('logger');
+  var urlUtils     = require('urlUtils');
 
   var MESSAGES = {
     INVALID_NAME: 'Please provide a valid webhook name.',

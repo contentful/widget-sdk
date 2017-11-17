@@ -1,9 +1,9 @@
 'use strict';
 angular.module('contentful')
-.factory('revision', ['$injector', function($injector) {
-  var logger = $injector.get('logger');
-  var $http = $injector.get('$http');
-  var environment = $injector.get('environment');
+.factory('revision', ['require', function (require) {
+  var logger = require('logger');
+  var $http = require('$http');
+  var environment = require('environment');
 
   return {
     hasNewVersion: function() {

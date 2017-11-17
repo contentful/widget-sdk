@@ -6,8 +6,8 @@ angular.module('contentful')
  * @ngdoc service
  * @name states/settings
  */
-.factory('states/settings', ['$injector', function ($injector) {
-  var base = $injector.get('states/base');
+.factory('states/settings', ['require', function (require) {
+  var base = require('states/base');
 
   var space = base({
     name: 'space',
@@ -26,12 +26,12 @@ angular.module('contentful')
     abstract: true,
     children: [
       space,
-      $injector.get('states/settings/locales'),
-      $injector.get('states/settings/users'),
-      $injector.get('states/settings/roles'),
-      $injector.get('states/settings/webhooks'),
-      $injector.get('states/settings/content_preview'),
-      $injector.get('states/settings/Extensions').default
+      require('states/settings/locales'),
+      require('states/settings/users'),
+      require('states/settings/roles'),
+      require('states/settings/webhooks'),
+      require('states/settings/content_preview'),
+      require('states/settings/Extensions').default
     ]
   };
 }]);

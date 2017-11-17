@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('ViewStateController', ['$injector', '$scope', 'defaultState', function ViewStateController($injector, $scope, defaultState) {
+angular.module('contentful').controller('ViewStateController', ['require', '$scope', 'defaultState', function ViewStateController(require, $scope, defaultState) {
   /**
    * @ngdoc type
    * @name ViewStateController

@@ -9,9 +9,9 @@
  * We can ask if browser is: IE, iOS or running on Apple device.
  * We also determine what key is used as keystroke action modifier ("Ctrl" or "Cmd")
  */
-angular.module('contentful').factory('userAgent', ['$injector', function ($injector) {
+angular.module('contentful').factory('userAgent', ['require', function (require) {
 
-  var $window   = $injector.get('$window');
+  var $window   = require('$window');
   var userAgent = _.get($window, 'navigator.userAgent', '');
   var platform  = _.get($window, 'navigator.platform', '');
   var ctrlKey   = 'Ctrl';

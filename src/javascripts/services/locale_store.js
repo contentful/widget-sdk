@@ -15,9 +15,9 @@ angular.module('contentful')
  *
  * This service also stores locale preferences in localStorage.
 */
-.factory('TheLocaleStore', ['$injector', function ($injector) {
-  var TheStore = $injector.get('TheStore');
-  var create = $injector.get('TheLocaleStore/implementation').create;
+.factory('TheLocaleStore', ['require', function (require) {
+  var TheStore = require('TheStore');
+  var create = require('TheLocaleStore/implementation').create;
   return create(TheStore);
 }])
 .factory('TheLocaleStore/implementation', [function () {

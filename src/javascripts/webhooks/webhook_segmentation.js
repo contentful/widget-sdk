@@ -2,9 +2,9 @@
 
 angular.module('contentful')
 
-.directive('cfWebhookSegmentation', ['$injector', function ($injector) {
+.directive('cfWebhookSegmentation', ['require', function (require) {
 
-  var segmentation = $injector.get('webhookSegmentation');
+  var segmentation = require('webhookSegmentation');
 
   var LABELS = {
     ContentType: 'Content type',

@@ -1,10 +1,10 @@
 'use strict';
 
-angular.module('contentful').factory('filepicker', ['$injector', function ($injector) {
-  var $q          = $injector.get('$q');
-  var $rootScope  = $injector.get('$rootScope');
-  var LazyLoader  = $injector.get('LazyLoader');
-  var environment = $injector.get('environment');
+angular.module('contentful').factory('filepicker', ['require', function (require) {
+  var $q          = require('$q');
+  var $rootScope  = require('$rootScope');
+  var LazyLoader  = require('LazyLoader');
+  var environment = require('environment');
 
   var MULTIPLE_UPLOAD_MAXFILES = 20;
 

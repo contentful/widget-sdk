@@ -10,11 +10,11 @@ angular.module('contentful')
   };
 })
 
-.controller('WebhookListController', ['$scope', '$injector', function ($scope, $injector) {
+.controller('WebhookListController', ['$scope', 'require', function ($scope, require) {
 
-  var spaceContext       = $injector.get('spaceContext');
-  var webhookRepo        = $injector.get('WebhookRepository').getInstance(spaceContext.space);
-  var ReloadNotification = $injector.get('ReloadNotification');
+  var spaceContext       = require('spaceContext');
+  var webhookRepo        = require('WebhookRepository').getInstance(spaceContext.space);
+  var ReloadNotification = require('ReloadNotification');
 
   $scope.limit = 20;
 

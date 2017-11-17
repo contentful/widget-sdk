@@ -6,10 +6,10 @@ angular.module('contentful')
  * @ngdoc service
  * @name contentTypeEditor/metadataDialog
  */
-.factory('contentTypeEditor/metadataDialog', ['$injector', function ($injector) {
-  var $rootScope = $injector.get('$rootScope');
-  var modalDialog = $injector.get('modalDialog');
-  var Command = $injector.get('command');
+.factory('contentTypeEditor/metadataDialog', ['require', function (require) {
+  var $rootScope = require('$rootScope');
+  var modalDialog = require('modalDialog');
+  var Command = require('command');
 
   return {
     openCreateDialog: openCreateDialog,
@@ -119,8 +119,8 @@ angular.module('contentful')
  * @scope.requires {object} contentTypeMetadata
  * @scope.requires {bool}   contentTypeIsNew
 */
-.controller('ContentTypeMetadataController', ['$scope', '$injector', function ($scope, $injector) {
-  var stringUtils = $injector.get('stringUtils');
+.controller('ContentTypeMetadataController', ['$scope', 'require', function ($scope, require) {
+  var stringUtils = require('stringUtils');
   var ID_REGEXP = /^[a-zA-Z0-9-_.]*$/;
 
   var contentTypeIds = [];

@@ -7,9 +7,9 @@
  * See https://bugsnag.com/docs/notifiers/js for more details
 */
 angular.module('contentful')
-.factory('bugsnag', ['$injector', function ($injector) {
-  var CallBuffer = $injector.get('utils/CallBuffer');
-  var environment = $injector.get('environment');
+.factory('bugsnag', ['require', function (require) {
+  var CallBuffer = require('utils/CallBuffer');
+  var environment = require('environment');
 
   // TODO this should be stored in the environment configuration. Need
   // to work with devops get this done.
@@ -84,7 +84,7 @@ angular.module('contentful')
 
   function load (user) {
     // Prevent circular dependency
-    var LazyLoader = $injector.get('LazyLoader');
+    var LazyLoader = require('LazyLoader');
     return LazyLoader.get('bugsnag')
     .then(function (_bugsnag) {
       bugsnag = _bugsnag;

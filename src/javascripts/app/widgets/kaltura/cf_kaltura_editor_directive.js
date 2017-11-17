@@ -1,11 +1,11 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfKalturaEditor', ['$injector', function ($injector) {
-  var $controller = $injector.get('$controller');
-  var KalturaEditorControllerMixin = $injector.get('KalturaEditorControllerMixin');
-  var kalturaClientWrapper = $injector.get('kalturaClientWrapper');
-  var spaceContext = $injector.get('spaceContext');
+.directive('cfKalturaEditor', ['require', function (require) {
+  var $controller = require('$controller');
+  var KalturaEditorControllerMixin = require('KalturaEditorControllerMixin');
+  var kalturaClientWrapper = require('kalturaClientWrapper');
+  var spaceContext = require('spaceContext');
 
   return {
     restrict: 'E',

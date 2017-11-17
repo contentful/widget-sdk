@@ -8,10 +8,10 @@ angular.module('contentful')
  * This controller provides an interface for changing the active
  * locales in `TheLocaleStore`.
  */
-.controller('entityEditor/LocalesController', ['$injector', function ($injector) {
-  var localeStore = $injector.get('TheLocaleStore');
-  var modalDialog = $injector.get('modalDialog');
-  var Command     = $injector.get('command');
+.controller('entityEditor/LocalesController', ['require', function (require) {
+  var localeStore = require('TheLocaleStore');
+  var modalDialog = require('modalDialog');
+  var Command     = require('command');
 
   var controller = this;
   var availableLocales = localeStore.getPrivateLocales();

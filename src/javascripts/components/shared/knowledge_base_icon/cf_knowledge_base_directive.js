@@ -3,8 +3,8 @@
 // TODO: should use transclusion
 // e.g. <cf-knowledge-base target="roles">text to be displayed</cf-knowlege-base>
 
-angular.module('contentful').directive('cfKnowledgeBase', ['$injector', function ($injector) {
-  var KnowledgeBaseComponent = $injector.get('components/shared/knowledge_base_icon/KnowledgeBase').default;
+angular.module('contentful').directive('cfKnowledgeBase', ['require', function (require) {
+  var KnowledgeBaseComponent = require('components/shared/knowledge_base_icon/KnowledgeBase').default;
 
   return {
     restrict: 'E',

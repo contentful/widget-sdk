@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('contentful').directive('cfWhenDisabled', ['$injector', function ($injector) {
+angular.module('contentful').directive('cfWhenDisabled', ['require', function (require) {
 
-  var accessChecker = $injector.get('accessChecker');
+  var accessChecker = require('accessChecker');
 
   function makePropGetter(elem){
     return function getCssProperty(name) {

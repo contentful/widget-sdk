@@ -1,11 +1,11 @@
 'use strict';
 
-angular.module('contentful').directive('cfRuleList', ['$injector', function ($injector) {
+angular.module('contentful').directive('cfRuleList', ['require', function (require) {
 
-  var spaceContext            = $injector.get('spaceContext');
-  var TheLocaleStore          = $injector.get('TheLocaleStore');
-  var getDefaultRuleGetterFor = $injector.get('PolicyBuilder/defaultRule').getDefaultRuleGetterFor;
-  var ALL_LOCALES             = $injector.get('PolicyBuilder/CONFIG').ALL_LOCALES;
+  var spaceContext            = require('spaceContext');
+  var TheLocaleStore          = require('TheLocaleStore');
+  var getDefaultRuleGetterFor = require('PolicyBuilder/defaultRule').getDefaultRuleGetterFor;
+  var ALL_LOCALES             = require('PolicyBuilder/CONFIG').ALL_LOCALES;
 
   return {
     restrict: 'E',

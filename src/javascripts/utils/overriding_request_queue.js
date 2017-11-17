@@ -17,7 +17,7 @@ angular.module('cf.utils')
  * Any arguments passed to separate calls will be passed to the base function.
  *
  * @usage[js]
- * var createQueue = $injector.get('overridingRequestQueue');
+ * var createQueue = require('overridingRequestQueue');
  * var request = createQueue(fnReturningPromise, function (resultPromise) {
  *   // This (provided optionally) function will be executed once for all
  *   // calls with a promise of a result. Helpful attaching final handlers.
@@ -32,10 +32,10 @@ angular.module('cf.utils')
  * // - "fnReturningPromise" was called once with ['x'] arguments
  * // - "doSomethingWithData" was called once with a result of the last call
  */
-.factory('overridingRequestQueue', ['$injector', function ($injector) {
+.factory('overridingRequestQueue', ['require', function (require) {
 
-  var $q     = $injector.get('$q');
-  var random = $injector.get('random');
+  var $q     = require('$q');
+  var random = require('random');
 
   return function createQueue(requestFn, onceFn) {
     var deferred, requests, required, performed;

@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('contentful').factory('PolicyBuilder/removeOutdatedRules', ['$injector', function ($injector) {
+angular.module('contentful').factory('PolicyBuilder/removeOutdatedRules', ['require', function (require) {
 
-  var CONFIG = $injector.get('PolicyBuilder/CONFIG');
+  var CONFIG = require('PolicyBuilder/CONFIG');
 
   var PATHS = [
     'entries.allowed',

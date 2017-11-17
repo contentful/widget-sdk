@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('contentful')
-.controller('cfOoyalaEditorController', ['$injector', function($injector){
-  var ooyalaClient = $injector.get('ooyalaClient');
-  var OoyalaSearch = $injector.get('OoyalaSearch');
-  var spaceContext = $injector.get('spaceContext');
+.controller('cfOoyalaEditorController', ['require', function (require){
+  var ooyalaClient = require('ooyalaClient');
+  var OoyalaSearch = require('OoyalaSearch');
+  var spaceContext = require('spaceContext');
 
   ooyalaClient.setOrganizationId(spaceContext.space.getOrganizationId());
 

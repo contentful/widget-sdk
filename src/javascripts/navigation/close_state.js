@@ -1,12 +1,12 @@
 'use strict';
 
-angular.module('contentful').factory('navigation/closeState', ['$injector', function ($injector) {
+angular.module('contentful').factory('navigation/closeState', ['require', function (require) {
 
-  var $q = $injector.get('$q');
-  var $state = $injector.get('$state');
-  var $location = $injector.get('$location');
-  var contextHistory = $injector.get('contextHistory');
-  var stateChangeHandlers = $injector.get('navigation/stateChangeHandlers');
+  var $q = require('$q');
+  var $state = require('$state');
+  var $location = require('$location');
+  var contextHistory = require('contextHistory');
+  var stateChangeHandlers = require('navigation/stateChangeHandlers');
 
   return closeState;
 
