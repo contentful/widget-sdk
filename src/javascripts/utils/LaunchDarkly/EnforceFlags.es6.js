@@ -58,7 +58,7 @@ function renderFlagsListItem (flag) {
   const clearLink = h('a', {
     href: '#',
     dataCfUiFlagRemove: flag,
-    style: {float: 'right'}
+    style: {float: 'right', marginLeft: '3px'}
   }, ['Clear']);
   return h('li', [flag, clearLink]);
 }
