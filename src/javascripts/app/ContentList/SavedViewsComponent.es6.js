@@ -6,7 +6,8 @@ import {createStore, makeReducer} from 'ui/Framework/Store';
 import ViewMenu from './ViewMenu';
 import createDnD from './SavedViewsDnD';
 import {makeBlankFolder} from 'data/UiConfig/Blanks';
-import * as Tracking from 'analytics/events/SearchAndViews';
+
+import openRoleSelector from './RoleSelector';
 
 import TheStore from 'TheStore';
 import notification from 'notification';
@@ -27,15 +28,16 @@ const DeleteView = makeCtor('DeleteView');
 const folderStatesStore = TheStore.forKey('folderStates');
 
 export default function ({
-  scopedUiConfig,
+  scopedFolders,
   loadView,
   getCurrentView,
-  roleAssignment
+  roleAssignment,
+  tracking
 }) {
   const reduce = makeReducer({
     [LoadView] (state, view) {
       loadView(view);
-      Tracking.viewLoaded(view);
+      tracking.viewLoaded(view);
       return assign(state, {currentView: view});
     },
     [ToggleOpened] (state, folder) {
@@ -49,7 +51,7 @@ export default function ({
       return saveFolders(state, undefined);
     },
     [RevertFolders] (state) {
-      return assign(state, {folders: scopedUiConfig.get()});
+      return assign(state, {folders: scopedFolders.get()});
     },
     [AlterFolders] (state, folders) {
       return saveFolders(state, folders);
@@ -68,15 +70,15 @@ export default function ({
         return cur.id !== folder.id;
       }));
     },
-    [SaveCurrentView] (state, title) {
-      const view = assign(getCurrentView(), {id: random.id(), title});
+    [SaveCurrentView] (state, {title, roles}) {
+      const view = assign(getCurrentView(), {id: random.id(), title, roles});
       const folder = findDefaultFolder(state.folders);
       const updated = updateFolderViews(state.folders, folder, views => {
         return concat(views, [view]);
       });
 
       loadView(view);
-      Tracking.viewCreated(view, folder);
+      tracking.viewCreated(view, folder);
 
       return assign(state, {
         folders: saveUiConfig(updated),
@@ -99,11 +101,12 @@ export default function ({
 
   const store = createStore({
     currentView: getCurrentView(),
-    folders: prepareFolders(scopedUiConfig.get()),
-    canEdit: scopedUiConfig.canEdit,
+    folders: prepareFolders(scopedFolders.get()),
+    canEdit: scopedFolders.canEdit,
     folderStates: folderStatesStore.get() || {},
-    dnd: createDnD(scopedUiConfig, folders => store.dispatch(AlterFolders, folders)),
-    roleAssignment
+    dnd: createDnD(scopedFolders.get, folders => store.dispatch(AlterFolders, folders)),
+    roleAssignment,
+    tracking
   }, reduce);
 
   function saveFolders (state, updatedFolders) {
@@ -116,15 +119,24 @@ export default function ({
     // state is reverted.
     notification.info('View(s) updated successfully.');
 
-    scopedUiConfig.set(updated).catch(() => {
+    scopedFolders.set(updated).catch(() => {
       notification.error('Error while updating saved views. Your changes were reverted.');
       store.dispatch(RevertFolders);
     });
 
-    // Calling `scopedUiConfig.set()` updates the local version of the UiConfig
-    // right away. `scopedUiConfig.get()` will return it w/o waiting for the API
+    // Calling `scopedFolders.set()` updates the local version of the UiConfig
+    // right away. `scopedFolders.get()` will return it w/o waiting for the API
     // roundtrip. It returns defaults if the local version is `undefined`.
-    return scopedUiConfig.get();
+    return scopedFolders.get();
+  }
+
+  function saveCurrentView (title) {
+    if (scopedFolders.canEdit && roleAssignment) {
+      openRoleSelector(roleAssignment.endpoint)
+        .then(roles => store.dispatch(SaveCurrentView, {title, roles}));
+    } else {
+      store.dispatch(SaveCurrentView, {title});
+    }
   }
 
   const actions = {
@@ -141,7 +153,12 @@ export default function ({
     DeleteView
   };
 
-  return {render: ViewMenu, store, actions};
+  return {
+    api: {saveCurrentView},
+    render: ViewMenu,
+    store,
+    actions
+  };
 }
 
 function prepareFolders (folders) {

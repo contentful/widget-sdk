@@ -19,7 +19,9 @@ export function getEntryViews (contentTypes) {
         id: random.id(),
         title: 'All',
         order: systemFields.getDefaultOrder(),
-        displayedFieldIds: systemFields.getDefaultFieldIds()
+        displayedFieldIds: systemFields.getDefaultFieldIds(),
+        searchText: '',
+        searchFilters: []
       }]
     },
     {
@@ -71,7 +73,9 @@ function createEntryStatusView (status) {
   return extend(createStatusView(status), {
     contentTypeId: null,
     order: systemFields.getDefaultOrder(),
-    displayedFieldIds: systemFields.getDefaultFieldIds()
+    displayedFieldIds: systemFields.getDefaultFieldIds(),
+    searchText: '',
+    searchFilters: []
   });
 }
 
@@ -85,7 +89,9 @@ export function createContentTypeView ({data}) {
     contentTypeId: data.sys.id,
     id: random.id(),
     order: systemFields.getDefaultOrder(),
-    displayedFieldIds: systemFields.getDefaultFieldIds()
+    displayedFieldIds: systemFields.getDefaultFieldIds(),
+    searchText: '',
+    searchFilters: []
   };
 }
 
@@ -93,8 +99,32 @@ function fileTypeViews () {
   return map(mimetype.getGroupNames(), (title, label) => {
     return {
       title,
+      searchText: '',
       searchFilters: [['mimetype_group', '', label]],
       id: random.id()
     };
   });
+}
+
+export function getPrivateViews (userId) {
+  return [
+    {
+      id: 'default',
+      title: 'My views',
+      views: [
+        {
+          id: random.id(),
+          title: 'Created by me',
+          searchText: '',
+          searchFilters: [['sys.createdBy.sys.id', '', userId]]
+        },
+        {
+          id: random.id(),
+          title: 'Updated by me',
+          searchText: '',
+          searchFilters: [['sys.updatedBy.sys.id', '', userId]]
+        }
+      ]
+    }
+  ];
 }

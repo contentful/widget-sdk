@@ -10,40 +10,62 @@ import {
   prepareUIConfigForStorage
 } from 'data/ViewMigrator';
 
+const SHARED_VIEWS = 'shared';
+const PRIVATE_VIEWS = 'private';
+
 const ENTRY_VIEWS_KEY = 'entryListViews';
 const ASSET_VIEWS_KEY = 'assetListViews';
 
+const ALPHA_HEADER = {'x-contentful-enable-alpha-feature': 'user_ui_config'};
+
 /**
- * This module exports a factory for the UI config store.
+ * This module exports a factory for UI config stores (shared and private).
  *
  * The store fetches UI config and sends changes back to the API. It is created
  * on the space context reset and available as `spaceContext.uiConfig`.
  *
+ * @param {Space} space
  * @param {Endpoint} spaceEndpoint
- * @param {boolean} canEdit
  * @param {ContentTypeRepo} publishedCTs
  * @param {ViewMigrator} viewMigrator
  * @returns {Promise<UIConfigStore>}
  */
-export default function create (spaceEndpoint, canEdit, publishedCTs, viewMigrator) {
-  // Holds the server resource or `{}` if the resource does not exist.
-  // The value is always deeply frozen. Use `setUiConfig` to alter the value.
-  let uiConfig;
-  setUiConfig({});
+export default function create (space, spaceEndpoint$q, publishedCTs, viewMigrator) {
+  const membership = space.data.spaceMembership;
+  const canEdit = membership.admin;
+  const userId = membership.user.sys.id;
+  const getPrivateViewsDefaults = () => Defaults.getPrivateViews(userId);
+
+  // TODO: `spaceEndpoint` is implemented with `$q` and other modules rely
+  // on it. Wrapping with a native `Promise` for the time being.
+  const spaceEndpoint = (...args) => new Promise((resolve, reject) => {
+    spaceEndpoint$q(...args).then(resolve, reject);
+  });
+
+  // State has two properties: [SHARED_VIEWS] and [PRIVATE_VIEWS].
+  // Each property holds the server resource or `{}` if the resource
+  // does not exist. Values are always deeply frozen. Use `setUiConfig`
+  // to alter the value.
+  const state = {};
+  setUiConfig(SHARED_VIEWS, {});
+  setUiConfig(PRIVATE_VIEWS, {});
 
   const api = deepFreeze({
     addOrEditCt,
     entries: {
-      shared: forScope(ENTRY_VIEWS_KEY, getEntryViewsDefaults, canEdit),
-      private: {}
+      shared: forScope(SHARED_VIEWS, ENTRY_VIEWS_KEY, getEntryViewsDefaults),
+      private: forScope(PRIVATE_VIEWS, ENTRY_VIEWS_KEY, getPrivateViewsDefaults)
     },
     assets: {
-      shared: forScope(ASSET_VIEWS_KEY, Defaults.getAssetViews, canEdit),
-      private: {}
+      shared: forScope(SHARED_VIEWS, ASSET_VIEWS_KEY, Defaults.getAssetViews),
+      private: forScope(PRIVATE_VIEWS, ASSET_VIEWS_KEY, getPrivateViewsDefaults)
     }
   });
 
-  return load().then(() => api);
+  return Promise.all([
+    load(SHARED_VIEWS),
+    load(PRIVATE_VIEWS)
+  ]).then(() => api);
 
   /**
    * Create a scoped store for a property on the root UI config.
@@ -51,9 +73,9 @@ export default function create (spaceEndpoint, canEdit, publishedCTs, viewMigrat
    * The scoped store gets and saves only the `key` part of the root object.
    * If the scoped value is not set we use `getDefaults()` to return a default.
    */
-  function forScope (key, getDefaults) {
-    const get = () => uiConfig[key] === undefined ? getDefaults() : uiConfig[key];
-    const set = val => save(update(uiConfig, key, () => val)).then(get);
+  function forScope (type, key, getDefaults) {
+    const get = () => state[type][key] === undefined ? getDefaults() : state[type][key];
+    const set = val => save(type, update(state[type], key, () => val)).then(get);
 
     return {get, set, canEdit};
   }
@@ -73,30 +95,33 @@ export default function create (spaceEndpoint, canEdit, publishedCTs, viewMigrat
    * Loads UI config from the server and returns a promise that resolves
    * to the config object.
    */
-  function load () {
+  function load (type) {
     return spaceEndpoint({
       method: 'GET',
-      path: ['ui_config']
-    }).then(migrateUIConfig, error => {
-      const statusCode = getPath(error, 'statusCode');
-      if (statusCode === 404) {
-        return setUiConfig({});
-      } else {
-        logger.logServerWarn('Could not load UIConfig', {error});
-        return Promise.reject(error);
+      path: getEndpointPath(type)
+    }, getEndpointHeaders(type)).then(
+      remoteData => migrateUIConfig(type, remoteData),
+      error => {
+        const statusCode = getPath(error, 'statusCode');
+        if (statusCode === 404) {
+          return setUiConfig(type, {});
+        } else {
+          logger.logServerWarn(`Could not load ${getEntityName(type)}`, {error});
+          return Promise.reject(error);
+        }
       }
-    });
+    );
   }
 
-  function migrateUIConfig (data) {
+  function migrateUIConfig (type, data) {
     if (isUIConfigDataMigrated(data)) {
       const uiConfig = normalizeMigratedUIConfigData(data);
-      return setUiConfig(uiConfig);
+      return setUiConfig(type, uiConfig);
     } else {
       return viewMigrator.migrateUIConfigViews(data).then((migratedUIConfig) => {
         return canEdit
-          ? save(migratedUIConfig)
-          : setUiConfig(migratedUIConfig);
+          ? save(type, migratedUIConfig)
+          : setUiConfig(type, migratedUIConfig);
       });
     }
   }
@@ -113,62 +138,93 @@ export default function create (spaceEndpoint, canEdit, publishedCTs, viewMigrat
    *
    * TODO we should queue saves to prevent race conditions
    */
-  function save (uiConfig) {
-    setUiConfig(uiConfig);
+  function save (type, uiConfig) {
+    setUiConfig(type, uiConfig);
 
     const data = prepareUIConfigForStorage(uiConfig);
 
     return spaceEndpoint({
       method: 'PUT',
-      path: ['ui_config'],
+      path: getEndpointPath(type),
       version: getPath(data, ['sys', 'version']),
       data
-    }).then(migrateUIConfig, (error) => {
-      const reject = () => Promise.reject(error);
-      logger.logServerWarn('Could not save UIConfig', {error});
-      return load().then(reject, reject);
-    });
+    }, getEndpointHeaders(type)).then(
+      remoteData => migrateUIConfig(type, remoteData),
+      error => {
+        const reject = () => Promise.reject(error);
+        logger.logServerWarn(`Could not save ${getEntityName(type)}`, {error});
+        return load(type).then(reject, reject);
+      }
+    );
   }
 
-  function setUiConfig (data) {
-    uiConfig = deepFreeze(data);
-    return uiConfig;
+  function getEndpointPath (type) {
+    return ['ui_config'].concat(type === PRIVATE_VIEWS ? ['me'] : []);
+  }
+
+  function getEndpointHeaders (type) {
+    return type === PRIVATE_VIEWS ? ALPHA_HEADER : {};
+  }
+
+  function getEntityName (type) {
+    return `${type === PRIVATE_VIEWS ? 'User' : ''}UIConfig`;
+  }
+
+  function setUiConfig (type, data) {
+    state[type] = deepFreeze(data);
+    return state[type];
   }
 
   /**
    * @ngdoc method
    * @name uiConfig#addOrEditCt
-   * @param {Client.ContentType} contentType
+   * @param {Client.ContentType} ct
    * @returns {Promise<object>}
    *
    * @description
    * Adds new content type under the "Content Type" folder or updates its title
    * if it already exists. This method is called from the content type editor.
    */
-  function addOrEditCt (contentType) {
-    const folders = uiConfig[ENTRY_VIEWS_KEY];
-    const ctFolderIndex = findIndex(folders, folder => {
-      return folder.title === 'Content Type';
-    });
+  function addOrEditCt (ct) {
+    const {folder, folderIndex, folderExists} = findCtFolder();
 
-    if (ctFolderIndex < 0 || !canEdit) {
-      return Promise.resolve(uiConfig);
-    }
-
-    const ctFolder = folders[ctFolderIndex];
-    const viewIndex = findIndex(ctFolder.views, view => {
-      return view.contentTypeId === contentType.data.sys.id;
-    });
-
-    const viewExists = viewIndex > -1;
-
-    if (viewExists) {
-      const path = [ENTRY_VIEWS_KEY, ctFolderIndex, 'views', viewIndex, 'title'];
-      return save(update(uiConfig, path, () => contentType.data.name));
+    if (folderExists && canEdit) {
+      const {viewIndex, viewExists} = findCtViewIndex(folder, ct);
+      return viewExists
+        ? updateCtView(folderIndex, viewIndex, ct)
+        : createCtView(folderIndex, ct);
     } else {
-      const path = [ENTRY_VIEWS_KEY, ctFolderIndex, 'views'];
-      const newView = Defaults.createContentTypeView(contentType);
-      return save(update(uiConfig, path, views => concat(views, [newView])));
+      // Nothing was updated but the caller shouldn't know.
+      return Promise.resolve(state[SHARED_VIEWS]);
     }
+  }
+
+  function findCtFolder () {
+    const folders = getPath(state, [SHARED_VIEWS, ENTRY_VIEWS_KEY], []);
+    const index = findIndex(folders, folder => folder.title === 'Content Type');
+
+    return {folder: folders[index], folderIndex: index, folderExists: index > -1};
+  }
+
+  function findCtViewIndex ({views}, ct) {
+    const index = findIndex(views, view => view.contentTypeId === ct.data.sys.id);
+
+    return {viewIndex: index, viewExists: index > -1};
+  }
+
+  function updateCtView (folderIndex, viewIndex, ct) {
+    const path = [ENTRY_VIEWS_KEY, folderIndex, 'views', viewIndex, 'title'];
+    const updated = update(state[SHARED_VIEWS], path, () => ct.data.name);
+
+    return save(SHARED_VIEWS, updated);
+  }
+
+  function createCtView (folderIndex, ct) {
+    const path = [ENTRY_VIEWS_KEY, folderIndex, 'views'];
+    const updated = update(state[SHARED_VIEWS], path, views => {
+      return concat(views, [Defaults.createContentTypeView(ct)]);
+    });
+
+    return save(SHARED_VIEWS, updated);
   }
 }

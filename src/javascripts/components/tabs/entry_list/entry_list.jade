@@ -11,14 +11,21 @@ header.workbench-header
       | Content
       cf-knowledge-base.workbench-header__kb-link(target="entry")
 
-  cf-component-bridge(style="flex:1; z-index: 1" component="search")
+  .workbench-header__search
+    cf-component-bridge(style="flex:1; z-index: 1" component="search")
+    a.text-link(
+      style="margin-left: 15px"
+      ng-click="savedViewsSidebar.api.saveCurrentView()"
+    ) Save as view
 
   .workbench-header__actions(ng-if="!showNoEntriesAdvice()")
     +create-entry-button
 
 .workbench-main(ng-hide="showNoEntriesAdvice()")
-  .workbench-main__left-sidebar
-    cf-component-store-bridge(component="savedViewsComponent")
+  .workbench-main__left-sidebar(
+    style="max-height: 100vh; overflow-y: hidden"
+   )
+    cf-component-store-bridge(component="savedViewsSidebar")
 
   .workbench-main__right-content
     .search-results__count(ng-show="hasPage()")

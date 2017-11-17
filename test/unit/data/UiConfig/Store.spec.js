@@ -11,7 +11,6 @@ describe('data/UiConfig/Store', function () {
     module('contentful/test');
     const createUiConfigStore = this.$inject('data/UiConfig/Store').default;
     const endpoint = createMockSpaceEndpoint();
-
     const contentTypes$ = K.createMockProperty(I.List([{
       data: {
         sys: {id: 1},
@@ -23,13 +22,21 @@ describe('data/UiConfig/Store', function () {
 
     this.migrateStub = sinon.stub();
 
-    const ctRepo = { wrappedItems$: contentTypes$ };
-    const viewMigrator = {
-      migrateUIConfigViews: this.migrateStub
-    };
     this.create = (isAdmin = true) => {
-      return createUiConfigStore(
-        endpoint.request, isAdmin, ctRepo, viewMigrator);
+      const ctRepo = { wrappedItems$: contentTypes$ };
+      const viewMigrator = {
+        migrateUIConfigViews: this.migrateStub
+      };
+      const spaceData = {
+        sys: {id: 'spaceid'},
+        spaceMembership: {
+          admin: isAdmin,
+          user: {
+            firstName: 'x', lastName: 'y', sys: {id: 'userid'}
+          }
+        }
+      };
+      return createUiConfigStore({data: spaceData}, endpoint.request, ctRepo, viewMigrator);
     };
   });
 

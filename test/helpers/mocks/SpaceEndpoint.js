@@ -40,6 +40,7 @@ export default function create () {
     entries: makeEntityEndpoint('Entry'),
     assets: makeEntityEndpoint('Assets'),
     ui_config: makeSingletonEndpoint(),
+    user_ui_config: makeSingletonEndpoint(),
     api_keys: makeGenericEndpoint(),
     preview_api_keys: makeGenericEndpoint(),
     roles: makeGenericEndpoint()
@@ -51,13 +52,19 @@ export default function create () {
     data = cloneDeep(data);
     const [typePath, id, state] = path;
     if (typePath in endpoints) {
-      return endpoints[typePath].request(method, id, state, data, version);
+      const endpoint = getEndpoint(endpoints, path);
+      return endpoint.request(method, id, state, data, version);
     } else {
       return rejectNotFound();
     }
   }
 
   return {stores, request};
+}
+
+function getEndpoint (endpoints, [typePath, id]) {
+  const isUserUIConfig = typePath === 'ui_config' && id === 'me';
+  return isUserUIConfig ? endpoints.user_ui_config : endpoints[typePath];
 }
 
 function makeEntityEndpoint (type) {
