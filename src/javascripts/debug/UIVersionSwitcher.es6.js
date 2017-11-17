@@ -5,26 +5,34 @@
 import $window from '$window';
 import $document from '$document';
 import Cookies from 'Cookies';
+import {omit, toPairs} from 'lodash';
 import moment from 'moment';
 import {gitRevision} from 'environment';
 import {h} from 'utils/hyperscript';
-import {addNotification} from 'utils/DevNotifications';
+import {addNotification} from 'debug/DevNotifications';
+import location from '$location';
 
 /**
- * Sets `ui_version` cookie from value, and shows a notification.
- * @param {String} uiVersion
+ * If url param is given, sets `ui_version` cookie and reloads the app with
+ * given ui version. Otherwise shows a notification, if ui version is set
+ * with cookie.
  */
-export function init (uiVersion) {
-  setVersionCookie(uiVersion);
+export function init () {
+  const urlParams = location.search();
+  const uiVersion = urlParams['ui_version'];
+
+  if (uiVersion) {
+    setVersionCookie(uiVersion);
+    // This will reload the app with new ui version
+    $window.location.search = '?' + toUrlParamsString(omit(urlParams, 'ui_version'));
+  }
   addVersionNotification();
 }
 
 function setVersionCookie (uiVersion) {
-  if (uiVersion) {
-    Cookies.set('ui_version', uiVersion, {
-      expires: moment().add(24, 'h').toDate()
-    });
-  }
+  Cookies.set('ui_version', uiVersion, {
+    expires: moment().add(24, 'h').toDate()
+  });
 }
 
 function addVersionNotification () {
@@ -49,4 +57,8 @@ function renderVersionNotification (gitRevision) {
     h('a', {href: `?ui_version=${gitRevision}`}, [gitRevision]),
     h('a', {href: '#', dataCfUiVersionReload: true}, ['Clear'])
   ]);
+}
+
+function toUrlParamsString (params) {
+  return toPairs(params).map(([k, v]) => k + '=' + v).join('&');
 }

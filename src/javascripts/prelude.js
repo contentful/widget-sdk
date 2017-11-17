@@ -65,21 +65,11 @@ angular.module('contentful/app', ['contentful'])
 }])
 .run(['require', function (require) {
   var $document = require('$document');
-  var location = require('$location');
   var Config = require('Config');
   if (Config.env === 'development') {
     Error.stackTraceLimit = 100;
   } else {
     Error.stackTraceLimit = 25;
-  }
-  if (Config.env !== 'production') {
-    var urlParams = location.search();
-    require('utils/DevNotifications').init();
-    require('utils/UIVersionSwitcher').init(urlParams['ui_version']);
-    require('utils/LaunchDarkly/EnforceFlags').init(urlParams['ui_enable_flags']);
-    if (urlParams['ui_version'] || urlParams['ui_enable_flags']) {
-      location.search(_.omit(urlParams, 'ui_version', 'ui_enable_flags'));
-    }
   }
   require('Authentication').init();
   require('services/TokenStore').init();

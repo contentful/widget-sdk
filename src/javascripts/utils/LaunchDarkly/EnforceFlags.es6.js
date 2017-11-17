@@ -2,16 +2,22 @@ import $window from '$window';
 import $document from '$document';
 import {h} from 'utils/hyperscript';
 import TheStore from 'TheStore';
-import {uniq, without} from 'lodash';
-import {addNotification} from 'utils/DevNotifications';
+import {uniq, without, omit} from 'lodash';
+import {addNotification} from 'debug/DevNotifications';
+import location from '$location';
 
 /**
- * Stores enabled ui flags from value in local storage, and shows
+ * Stores enabled ui flags from url in local storage, and shows
  * a notification.
- * @param {String} enabledFlags
  */
-export function init (enabledFlags) {
+export function init () {
+  const urlParams = location.search();
+  const enabledFlags = urlParams['ui_enable_flags'];
   setFromQuery(enabledFlags);
+  if (enabledFlags) {
+    // Updates url without reloading
+    location.search(omit(urlParams, 'ui_enable_flags'));
+  }
   displayNotification();
 }
 
