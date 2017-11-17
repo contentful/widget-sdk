@@ -110,7 +110,9 @@ angular.module('cf.app')
     // Redirect if redirectTo is set
     if (toState.redirectTo) {
       event.preventDefault();
-      $state.go(toState.redirectTo, toStateParams);
+      $state.go(toState.redirectTo, toStateParams, {
+        relative: toState
+      });
     }
   }
 

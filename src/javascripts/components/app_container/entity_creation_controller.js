@@ -38,7 +38,7 @@ angular.module('contentful')
   };
 
   this.newContentType = function () {
-    $state.go('spaces.detail.content_types.new.home');
+    $state.go('spaces.detail.content_types.new');
   };
 
   this.newLocale = function () {

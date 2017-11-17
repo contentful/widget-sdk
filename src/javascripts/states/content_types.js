@@ -42,13 +42,6 @@ angular.module('contentful')
   var newState = editorBase({
     name: 'new',
     url: '_new',
-    children: [
-      {
-        name: 'home',
-        url: '',
-        redirectTo: 'spaces.detail.content_types.new.fields'
-      }, fields, preview
-    ],
     data: {
       isNew: true
     },
@@ -66,13 +59,6 @@ angular.module('contentful')
   var detail = editorBase({
     name: 'detail',
     url: '/:contentTypeId',
-    children: [
-      {
-        name: 'home',
-        url: '',
-        redirectTo: 'spaces.detail.content_types.detail.fields'
-      }, fields, preview
-    ],
     data: {
       isNew: false
     },
@@ -112,7 +98,8 @@ angular.module('contentful')
 
   function editorBase (options) {
     return _.extend({
-      abstract: true,
+      redirectTo: '.fields',
+      children: [ fields, preview ],
       controller: [
         '$scope', 'require', 'contentType', 'editingInterface', 'publishedContentType',
         function ($scope, require, contentType, editingInterface, publishedContentType) {

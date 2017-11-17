@@ -178,7 +178,7 @@ angular.module('contentful')
       }
 
       function addContentType () {
-        $state.go('spaces.detail.content_types.new.home');
+        $state.go('spaces.detail.content_types.new');
       }
 
       function addEntry () {
