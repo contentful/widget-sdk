@@ -107,6 +107,13 @@ export function track (event, data) {
 }
 
 /**
+ * @description This function allows you to extend user's details
+ * which will be sent to segment (and automatically to Intercom)
+ * @param {object} params - object with new data
+ */
+export const updateUserInSegment = identify;
+
+/**
  * @ngdoc method
  * @name analytics#identify
  * @param {object} extension

@@ -6,7 +6,7 @@ import $state from '$state';
 import { runTask } from 'utils/Concurrent';
 
 import {getCreator} from 'services/SpaceTemplateCreator';
-import {track} from 'analytics/Analytics';
+import {track, updateUserInSegment} from 'analytics/Analytics';
 import {go as gotoState} from 'states/Navigator';
 import {entityActionSuccess} from 'analytics/events/SpaceCreation';
 import {find, noop} from 'lodash';
@@ -55,6 +55,9 @@ export default function (org, templateName, modalTemplate = autoCreateSpaceTempl
           elementId,
           groupId: 'project_status',
           fromState: $state.current.name
+        });
+        updateUserInSegment({
+          projectStatus: elementId
         });
         // this is used to goto the next screen _in_ the modal itself
         scope.chosenProjectStatus = elementId;
