@@ -333,6 +333,7 @@ function createBrowserify (args) {
   return browserify(_.extend({debug: true}, args))
     .add('./src/javascripts/libs')
     .transform({optimize: 'size'}, 'browserify-pegjs')
+    .transform('loose-envify', {global: true}) // Making React smaller and faster
 }
 
 function bundleBrowserify (browserify) {
