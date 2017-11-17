@@ -7,12 +7,6 @@ import {isObjectLike, cloneDeep} from 'lodash';
  */
 
 
-// Keep references to all objects that failed to freeze.
-// These are checked every time and treated as frozen if spotted.
-// It prevents infinite recursion for circular references.
-const failedToFreeze = [];
-
-
 /**
  * @ngdoc method
  * @module cf.utils
@@ -28,7 +22,13 @@ export function deepFreeze (o) {
     return o;
   }
 
-  o = shallowFreeze(o);
+  try {
+    Object.freeze(o);
+  } catch (e) {
+    // Do not recurse if reached an object that cannot be freezed.
+    // For Ch62 and FF57 the `window` object is a good example.
+    return o;
+  }
 
   if (Array.isArray(o)) {
     o.forEach(deepFreeze);
@@ -50,9 +50,6 @@ export function shallowFreeze (o) {
   try {
     Object.freeze(o);
   } catch (e) {
-    if (Array.isArray(o) || isObjectLike(o)) {
-      failedToFreeze.push(o);
-    }
     // ES5 throws TypeError if not an object. ES6 is ok.
   }
 
@@ -61,10 +58,6 @@ export function shallowFreeze (o) {
 
 
 function isFrozen (o) {
-  if (failedToFreeze.indexOf(o) > -1) {
-    return true;
-  }
-
   try {
     return Object.isFrozen(o);
   } catch (e) {
