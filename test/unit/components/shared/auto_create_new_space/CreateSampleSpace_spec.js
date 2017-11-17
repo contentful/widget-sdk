@@ -80,12 +80,9 @@ describe('CreateSampleSpace service', function () {
       };
     };
     this.assertRejection = function* (fn, errorMsg) {
-      try {
-        fn(new Error(errorMsg));
-        yield this.createSampleSpace(this.getOrg(), 'product catalogue');
-      } catch (e) {
-        expect(e.message).toBe(errorMsg);
-      }
+      fn(new Error(errorMsg));
+      const error = yield this.createSampleSpace(this.getOrg(), 'product catalogue').catch((e) => e);
+      expect(error.message).toBe(errorMsg);
     };
   });
 
@@ -119,11 +116,8 @@ describe('CreateSampleSpace service', function () {
       expect(modalScope.isCreatingSpace).toBe(false);
     });
     it('should reject if the template does not exist', function* () {
-      try {
-        yield this.createSampleSpace(this.getOrg(), 'non existing template');
-      } catch (e) {
-        expect(e.message).toBe('Template named non existing template not found');
-      }
+      const error = yield this.createSampleSpace(this.getOrg(), 'non existing template').catch((e) => e);
+      expect(error.message).toBe('Template named non existing template not found');
     });
     it('should reject if space creation fails', function* () {
       yield* this.assertRejection(
