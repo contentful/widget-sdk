@@ -53,6 +53,7 @@ export default function (org, templateName, modalTemplate = autoCreateSpaceTempl
       scope.onProjectStatusSelect = (elementId) => {
         track('element:click', {
           elementId,
+          groupId: 'project_status',
           fromState: $state.current.name
         });
         // this is used to goto the next screen _in_ the modal itself
