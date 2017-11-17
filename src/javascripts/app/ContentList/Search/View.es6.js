@@ -1,5 +1,5 @@
 /* global requestAnimationFrame */
-import { noop, cloneDeep, find, assign } from 'lodash';
+import { noop, find, assign } from 'lodash';
 import { match } from 'utils/TaggedValues';
 
 import {h} from 'ui/Framework';
@@ -14,8 +14,8 @@ import infoIcon from 'svg/info';
 
 import { ValueInput } from './Filters';
 import { autosizeInput } from './Hooks/AutoInputSize';
-import entitySelector from 'entitySelector';
 import filterValueDate from './ValueInput/Date';
+import filterValueReference from './ValueInput/Reference';
 import { IsOverflownY as IsOverflownYHook } from './Hooks/IsOverflown';
 
 const Keys = {
@@ -453,30 +453,6 @@ function select ({
     return h('option', {value}, [label]);
   }));
 }
-
-function filterValueReference ({ctField = {}, testId, value, inputRef, onChange, onKeyDown}) {
-  // We do not want to support field type arrays of references yet.
-  const ctFieldClone = cloneDeep(ctField);
-  const {itemLinkType = ''} = ctFieldClone;
-
-  ctFieldClone.type = 'Link';
-  return h('input.input-reset.search__input-text.search__input-reference', {
-    dataTestId: testId,
-    value,
-    ref: inputRef,
-    onClick: (event) => {
-      event.stopPropagation();
-      event.preventDefault();
-      entitySelector.openFromField(ctFieldClone)
-        .then(entities => onChange(entities.map(e => e.sys.id).join(',')));
-    },
-    onChange: (e) => onChange(e.target.value),
-    onKeyDown,
-    tabindex: '0',
-    placeholder: `Select existing ${itemLinkType.toLowerCase()}`
-  });
-}
-
 
 // Suggestions
 // -----------

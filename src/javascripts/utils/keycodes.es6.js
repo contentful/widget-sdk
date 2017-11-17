@@ -8,5 +8,6 @@ export default {
   TAB: 9,
   BACKSLASH: 220,
   P: 80,
-  BACKSPACE: 8
+  BACKSPACE: 8,
+  SPACE: 32
 };
