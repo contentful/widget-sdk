@@ -6,6 +6,17 @@ import mimetype from 'mimetype';
 
 const CT_QUERY_KEY_PREFIX = 'fields';
 
+const SUPPORTED_CT_FIELD_TYPES = [
+  'Symbol',
+  'Text',
+  'Integer',
+  'Number',
+  'Date',
+  'Boolean',
+  'Array',
+  'Link'
+];
+
 /**
  * This module exports functions to construct field filters.
  *
@@ -57,33 +68,37 @@ const sysFieldFilters = [
   ['createdBy', 'User', 'Users of this space'],
   ['publishedAt', 'Date'],
   ['publishedBy', 'User', 'Users of this space'],
-  ['id', '', '']
-].map(([name, type, description, label]) => {
-  return {
-    name,
-    label: label || name,
-    type,
-    description,
-    queryKey: getSysFieldQueryKey({name, type}),
-    operators: getOperatorsByType(type),
-    valueInput: getControlByType({type}),
-    contentType: null
-  };
-}).concat([{
-  name: 'status',
-  type: 'status',
-  description: 'Current status of the item',
-  queryKey: '__status',
-  operators: [equalityOperator],
-  valueInput: ValueInput.Select([
-    ['', 'Any'],
-    ['published', 'Published'],
-    ['changed', 'Changed'],
-    ['draft', 'Draft'],
-    ['archived', 'Archived']
-  ]),
-  contentType: null
-}]);
+  ['id', 'Text', '']
+]
+  .map(([name, type, description, label]) => {
+    return {
+      name,
+      label: label || name,
+      type,
+      description,
+      queryKey: getSysFieldQueryKey({ name, type }),
+      operators: getOperatorsByType(type),
+      valueInput: getControlByType({ type }),
+      contentType: null
+    };
+  })
+  .concat([
+    {
+      name: 'status',
+      type: 'Text',
+      description: 'Current status of the item',
+      queryKey: '__status',
+      operators: [equalityOperator],
+      valueInput: ValueInput.Select([
+        ['', 'Any'],
+        ['published', 'Published'],
+        ['changed', 'Changed'],
+        ['draft', 'Draft'],
+        ['archived', 'Archived']
+      ]),
+      contentType: null
+    }
+  ]);
 
 // These are only applicable to assets
 const assetsFieldFilters = [
@@ -99,9 +114,9 @@ const assetsFieldFilters = [
   label: label || name,
   description,
   type,
-  queryKey: getAssetQueryKey({name, type}),
+  queryKey: getAssetQueryKey({ name, type }),
   operators: getOperatorsByType(type),
-  valueInput: getControlByType({type}),
+  valueInput: getControlByType({ type }),
   contentType: null
 }));
 
@@ -118,7 +133,7 @@ export function contentTypeFilter (contentTypes) {
     operators: [equalityOperator],
     valueInput: ValueInput.Select([
       ['', 'Any'],
-      ...contentTypes.map((ct) => [ct.sys.id, ct.name])
+      ...contentTypes.map(ct => [ct.sys.id, ct.name])
     ])
   };
 }
@@ -134,27 +149,46 @@ export function getContentTypeById (contentTypes, contentTypeId) {
   return find(contentTypes, ct => ct.sys.id === contentTypeId);
 }
 
-export function getFiltersFromQueryKey ({contentTypes, searchFilters, contentTypeId, users, withAssets = false}) {
+export function getFiltersFromQueryKey ({
+  contentTypes,
+  searchFilters,
+  contentTypeId,
+  users,
+  withAssets = false
+}) {
   const contentType = getContentTypeById(contentTypes, contentTypeId);
   const filters = searchFilters
-    .map(([queryKey, op, value]) => [buildFilterFieldByQueryKey(contentType, queryKey, withAssets), op, value])
+    .map(([queryKey, op, value]) => [
+      buildFilterFieldByQueryKey(contentType, queryKey, withAssets),
+      op,
+      value
+    ])
     .filter(([queryKey]) => queryKey !== undefined);
 
   return setUserFieldsFilters(users, filters);
 }
 
-export function sanitizeSearchFilters (filters, contentTypes, contentTypeId, withAssets = false) {
+export function sanitizeSearchFilters (
+  filters,
+  contentTypes,
+  contentTypeId,
+  withAssets = false
+) {
   const contentType = getContentTypeById(contentTypes, contentTypeId);
 
   return filters.filter(([queryKey]) => {
     if (contentType && isContentTypeField(queryKey)) {
       return getFieldByApiName(contentType, getApiName(queryKey)) !== undefined;
     } else {
-      return find(getSysFilters(withAssets), filter => filter.queryKey === queryKey) !== undefined;
+      return (
+        find(
+          getSysFilters(withAssets),
+          filter => filter.queryKey === queryKey
+        ) !== undefined
+      );
     }
   });
 }
-
 
 /**
  * Returns a field filter for given queryKey from
@@ -165,7 +199,11 @@ export function sanitizeSearchFilters (filters, contentTypes, contentTypeId, wit
  *
  * @returns {FieldFilter}
  */
-export function buildFilterFieldByQueryKey (contentType, queryKey, withAssets = false) {
+export function buildFilterFieldByQueryKey (
+  contentType,
+  queryKey,
+  withAssets = false
+) {
   let filterField;
 
   if (contentType && isContentTypeField(queryKey)) {
@@ -174,7 +212,10 @@ export function buildFilterFieldByQueryKey (contentType, queryKey, withAssets = 
       filterField = buildFilterField(contentType, field);
     }
   } else {
-    filterField = find(getSysFilters(withAssets), filter => filter.queryKey === queryKey);
+    filterField = find(
+      getSysFilters(withAssets),
+      filter => filter.queryKey === queryKey
+    );
   }
 
   return filterField;
@@ -214,19 +255,32 @@ export function isFieldFilterApplicableToContentType (contentType, queryKey) {
  * @param {API.ContentType[]} availableContentTypes
  * @returns {Filter[]}
  */
-export function getMatchingFilters (searchString, contentTypeId, availableContentTypes, withAssets = false) {
-  const filters = allFilters(availableContentTypes, withAssets);
+export function getMatchingFilters (
+  searchString,
+  contentTypeId,
+  availableContentTypes,
+  withAssets = false
+) {
+  let filters = allFilters(availableContentTypes, withAssets);
+  filters = filterByName(filters, searchString);
+  filters = filterByContentType(filters, contentTypeId);
+  filters = filterBySupportedTypes(filters);
+  return filters;
+}
 
-  let matchingFilters = filterByName(filters, searchString);
-  matchingFilters = filterByContentType(matchingFilters, contentTypeId);
-
-  return matchingFilters;
+function filterBySupportedTypes (filters) {
+  return filters.filter(({ queryKey, type }) => {
+    if (isContentTypeField(queryKey)) {
+      return SUPPORTED_CT_FIELD_TYPES.indexOf(type) > -1;
+    }
+    return true;
+  });
 }
 
 function filterByName (filters, searchString = '') {
   searchString = searchString.trim().toLowerCase();
 
-  return filters.filter((filter) => {
+  return filters.filter(filter => {
     return startsWith(filter.name.toLowerCase(), searchString);
   });
 }
@@ -234,7 +288,7 @@ function filterByName (filters, searchString = '') {
 function filterByContentType (filters, contentTypeId) {
   if (contentTypeId) {
     // Remove all filters that do not apply to the given Content Type
-    return filters.filter((field) => {
+    return filters.filter(field => {
       if (field.contentType) {
         return field.contentType.id === contentTypeId;
       } else {
@@ -248,7 +302,9 @@ function filterByContentType (filters, contentTypeId) {
 
 function setUserFieldsFilters (users, filters) {
   const usersOptions = users.map(user => {
-    const label = user.firstName ? `${user.firstName} ${user.lastName}` : user.email;
+    const label = user.firstName
+      ? `${user.firstName} ${user.lastName}`
+      : user.email;
     const value = user.sys.id;
 
     return [value, label];
@@ -304,7 +360,9 @@ function allFilters (contentTypes, withAssets = false) {
 }
 
 function getSysFilters (withAssets = false) {
-  return withAssets ? [...sysFieldFilters, ...assetsFieldFilters] : sysFieldFilters;
+  return withAssets
+    ? [...sysFieldFilters, ...assetsFieldFilters]
+    : sysFieldFilters;
 }
 
 /**
@@ -332,13 +390,13 @@ function getQueryKey (ctField) {
   return `${CT_QUERY_KEY_PREFIX}.${ctField.apiName}${suffix}`;
 }
 
-function getSysFieldQueryKey ({name, type}) {
-  const suffix = isUserField({type}) ? '.sys.id' : '';
+function getSysFieldQueryKey ({ name, type }) {
+  const suffix = isUserField({ type }) ? '.sys.id' : '';
 
   return `sys.${name}${suffix}`;
 }
 
-function getAssetQueryKey ({name, type}) {
+function getAssetQueryKey ({ name, type }) {
   let queryKey = CT_QUERY_KEY_PREFIX;
 
   if (type === 'AssetDetails' || type === 'AssetDetailsSize') {
@@ -373,23 +431,24 @@ function getControlByType (ctField) {
   const type = getFieldType(ctField);
 
   if (type === 'Boolean') {
-    return ValueInput.Select([
-      ['true', 'Yes'],
-      ['false', 'No']
-    ]);
+    return ValueInput.Select([['true', 'Yes'], ['false', 'No']]);
   } else if (['SymbolPredefined', 'SymbolListPredefined'].indexOf(type) > -1) {
     return ValueInput.Select(getPredefinedValues(ctField).map(o => [o, o]));
   } else if (isReferenceField(ctField)) {
-    return ValueInput.Reference(assign(ctField, {
-      // TODO: This is required by the entity selector
-      itemLinkType: get(ctField, ['items', 'linkType']),
-      itemValidations: get(ctField, ['items', 'validations'])
-    }));
+    return ValueInput.Reference(
+      assign(ctField, {
+        // TODO: This is required by the entity selector
+        itemLinkType: get(ctField, ['items', 'linkType']),
+        itemValidations: get(ctField, ['items', 'validations'])
+      })
+    );
   } else if (ctField.type === 'Date') {
     return ValueInput.Date();
   } else if (type === 'AssetType') {
-    const mimeTypes = map(mimetype.getGroupNames(),
-      (label, value) => [value, label]);
+    const mimeTypes = map(mimetype.getGroupNames(), (label, value) => [
+      value,
+      label
+    ]);
     return ValueInput.Select(mimeTypes);
   } else if (type === 'AssetDetailsSize') {
     return ValueInput.AssetDetailsSize();
@@ -398,17 +457,18 @@ function getControlByType (ctField) {
   }
 }
 
-function isReferenceField ({type, items = {}} = {}) {
+function isReferenceField ({ type, items = {} } = {}) {
   return type === 'Link' || items.type === 'Link';
 }
 
-function isUserField ({type}) {
+function isUserField ({ type }) {
   return type === 'User';
 }
 
 function getPredefinedValues (ctField) {
-  const { validations = [] } = (ctField.items || ctField);
-  const validationWithPredefinedValues = find(validations, v => has(v, 'in')) || {};
+  const { validations = [] } = ctField.items || ctField;
+  const validationWithPredefinedValues =
+    find(validations, v => has(v, 'in')) || {};
 
   return validationWithPredefinedValues.in;
 }
