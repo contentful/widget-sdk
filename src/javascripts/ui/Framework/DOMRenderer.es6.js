@@ -25,12 +25,24 @@ export default function createMountPoint (container) {
 }
 
 
+/**
+ * When we create a new VTree elements we standarize prop keys
+ * to kebab case. When constructing a concrete React tree some
+ * exceptions apply (React prop keys cannot be generated just
+ * by converting to camel case for them).
+ */
 const REACT_PROP_KEY_EXCEPTIONS = {
   'class': 'className',
   'view-box': 'viewBox',
   'dangerously-set-inner-html': 'dangerouslySetInnerHTML'
 };
 
+/**
+ * Starting from React 16 custom attributes are accepted. They
+ * work only if they are not camel cased. This list defines what
+ * prop prefixes indicate that a property shouldn't be converted
+ * to camel case when constructing a concrete React tree.
+ */
 const CUSTOM_ATTR_PREFIXES = [
   'data-',
   'aria-',
@@ -44,12 +56,12 @@ const CUSTOM_ATTR_PREFIXES = [
 function asReact (tree) {
   return caseof(tree, [
     [VTree.Element, ({tag, props, children}) => {
-      props = Object.keys(props).reduce((acc, key) => {
-        acc[prepareKey(key)] = prepareValue(key, props[key]);
+      const reactProps = Object.keys(props).reduce((acc, key) => {
+        acc[makeReactPropKey(key)] = makeReactPropValue(key, props[key]);
         return acc;
       }, {});
 
-      return React.createElement(tag, props, ...children.map(asReact));
+      return React.createElement(tag, reactProps, ...children.map(asReact));
     }],
     [VTree.Text, ({text}) => text],
     [null, () => {
@@ -62,7 +74,7 @@ function asReact (tree) {
   ]);
 }
 
-function prepareKey (key) {
+function makeReactPropKey (key) {
   if (isCustomAttribute(key)) {
     return key;
   } else if (Object.keys(REACT_PROP_KEY_EXCEPTIONS).indexOf(key) > -1) {
@@ -72,8 +84,9 @@ function prepareKey (key) {
   }
 }
 
-function prepareValue (key, value) {
+function makeReactPropValue (key, value) {
   if (isCustomAttribute(key)) {
+    // React requires a string value for custom attributes.
     return value === true ? key : value;
   } else {
     return value;
