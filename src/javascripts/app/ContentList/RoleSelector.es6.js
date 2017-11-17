@@ -165,7 +165,7 @@ function selectAllButton (state, actions) {
   if (allSelected) {
     return h('button.text-link', {
       dataTestId: testId('unselect-all'),
-      onClick: () => actions.UnselectAll(),
+      onClick: actions.UnselectAll,
       disabled: disabled
     }, [
       'Unselect all'
@@ -173,7 +173,7 @@ function selectAllButton (state, actions) {
   } else {
     return h('button.text-link', {
       dataTestId: testId('select-all'),
-      onClick: () => actions.SelectAll(),
+      onClick: actions.SelectAll,
       disabled: disabled
     }, [
       'Select all'
@@ -192,7 +192,7 @@ function render (state, actions) {
         'Share this view'
       ]),
       h('button.modal-dialog__close', {
-        onClick: () => actions.CancelSelection()
+        onClick: actions.CancelSelection
       })
     ]),
     h('.modal-dialog__only-content', [
@@ -224,13 +224,13 @@ function render (state, actions) {
       }, [
         h('button.btn-primary-action', {
           dataTestId: testId('apply-selection'),
-          onClick: () => actions.ConfirmSelection()
+          onClick: actions.ConfirmSelection
         }, [
           'Share this view'
         ]),
         hspace('10px'),
         h('button.btn-secondary-action', {
-          onClick: () => actions.CancelSelection()
+          onClick: actions.CancelSelection
         }, [
           'Cancel'
         ])
