@@ -14,7 +14,7 @@ const DatePickerHook = H.makeHook((el, datePicker, _prevOnChange, onChange) => {
         container: el.parentElement,
         yearRange: [1900, moment().add(10, 'years').year()],
         onSelect: function () {
-          onChange(this.getMoment().toISOString());
+          onChange(this.getMoment().format(DATE_FORMAT));
         },
         firstDay: 1,
         theme: 'search__datepicker'
