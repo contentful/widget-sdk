@@ -25,7 +25,7 @@ export default function create (space, contentTypes) {
     const migratedUIConfig = clone(uiConfig);
     const {entryListViews, assetListViews} = uiConfig;
     return $q.all([
-      $q.all((entryListViews || []).map(this.migrateViewsFolder)),
+      $q.all((entryListViews || []).map((folder) => this.migrateViewsFolder(folder))),
       $q.all((assetListViews || []).map(
         (folder) => this.migrateViewsFolder(folder, true)))
     ])
