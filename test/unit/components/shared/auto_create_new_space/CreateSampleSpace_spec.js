@@ -37,7 +37,9 @@ describe('CreateSampleSpace service', function () {
     };
 
     this.templateLoader = {
-      create: sinon.stub().resolves()
+      create: sinon.stub().returns({
+        contentCreated: Promise.resolve()
+      })
     };
 
     this.getCreator = sinon.stub().returns(this.templateLoader);
@@ -58,7 +60,7 @@ describe('CreateSampleSpace service', function () {
       $provide.value('client', this.client);
       $provide.value('modalDialog', this.modalDialog);
       $provide.value('services/TokenStore', this.tokenStore);
-      $provide.value('spaceTemplateCreator', {
+      $provide.value('services/SpaceTemplateCreator', {
         getCreator: this.getCreator
       });
       $provide.value('states/Navigator', {
@@ -144,9 +146,19 @@ describe('CreateSampleSpace service', function () {
       );
     });
     it('should reject if template loader create fails', function* () {
+      this.templateLoader.create.returns({
+        contentCreated: Promise.reject(new Error('Error during creation'))
+      });
+
       yield* this.assertRejection(
-        err => this.templateLoader.create.rejects(err),
-        'loading template failed'
+        err => {
+          this.templateLoader = {
+            create: sinon.stub().returns({
+              contentCreated: Promise.reject(err)
+            })
+          };
+        },
+        'Error during creation'
       );
     });
     it('should reject if refresh of published CTs fails', function* () {

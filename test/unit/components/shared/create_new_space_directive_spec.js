@@ -57,7 +57,7 @@ describe('cfCreateNewSpace directive', function () {
 
     module('contentful/test', function ($provide) {
       $provide.value('spaceTemplateLoader', stubs.spaceTemplateLoader);
-      $provide.value('spaceTemplateCreator', stubs.spaceTemplateCreator);
+      $provide.value('services/SpaceTemplateCreator', stubs.spaceTemplateCreator);
       $provide.value('accessChecker', stubs.accessChecker);
       $provide.value('analytics/Analytics', stubs.analytics);
       $provide.value('logger', stubs.logger);
@@ -302,7 +302,9 @@ describe('cfCreateNewSpace directive', function () {
         describe('creating space from template', function () {
           beforeEach(function () {
             stubs.spaceTemplateCreator.getCreator.returns({
-              create: stubs.spaceTemplateCreator.create.resolves()
+              create: sinon.stub().returns({
+                contentCreated: Promise.resolve()
+              })
             });
             controller.newSpace.data.name = 'name';
             controller.newSpace.useTemplate = true;

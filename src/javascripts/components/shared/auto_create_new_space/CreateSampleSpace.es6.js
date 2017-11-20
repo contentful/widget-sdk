@@ -4,7 +4,7 @@ import spaceContext from 'spaceContext';
 import modalDialog from 'modalDialog';
 import { runTask } from 'utils/Concurrent';
 
-import {getCreator} from 'spaceTemplateCreator';
+import {getCreator} from 'services/SpaceTemplateCreator';
 import {track} from 'analytics/Analytics';
 import {go as gotoState} from 'states/Navigator';
 import {entityActionSuccess} from 'analytics/events/SpaceCreation';
@@ -100,7 +100,7 @@ function* applyTemplate (spaceContext, templateInfo) {
 
   const loadedTemplate = yield getTemplate(templateInfo);
 
-  yield templateCreator.create(loadedTemplate);
+  yield templateCreator.create(loadedTemplate).contentCreated;
 }
 
 
