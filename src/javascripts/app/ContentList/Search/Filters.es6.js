@@ -169,7 +169,7 @@ export function getFiltersFromQueryKey ({
 }
 
 export function sanitizeSearchFilters (
-  filters,
+  filters = [],
   contentTypes,
   contentTypeId,
   withAssets = false
@@ -264,8 +264,8 @@ export function getMatchingFilters (
   let filters = allFilters(availableContentTypes, withAssets);
   filters = filterByName(filters, searchString);
   filters = filterByContentType(filters, contentTypeId);
-  filters = filterBySupportedTypes(filters);
-  return filters;
+
+  return withAssets ? filters : filterBySupportedTypes(filters);
 }
 
 function filterBySupportedTypes (filters) {

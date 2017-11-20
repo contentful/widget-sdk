@@ -185,9 +185,12 @@ angular.module('contentful')
     $scope.context.isSearching = false;
     $scope.context.ready = true;
 
+    // Reset the view only if the UI was not edited yet.
     if (isInvalidQuery) {
-      // invalid search query, let's reset the view...
-      $scope.loadView({});
+      if (lastUISearchState === null) {
+        // invalid search query, let's reset the view...
+        $scope.loadView({});
+      }
       // ...and let it request assets again after notifing a user
       Notification.error('We detected an invalid search query. Please try again.');
     }

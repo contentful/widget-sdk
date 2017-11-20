@@ -12,7 +12,6 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var ListQuery = require('ListQuery');
   var systemFields = require('systemFields');
-  var accessChecker = require('accessChecker');
   var Tracking = require('analytics/events/SearchAndViews');
   var Notification = require('notification');
   var K = require('utils/kefir');
@@ -65,9 +64,7 @@ angular.module('contentful')
     return prepareQuery()
       .then(setIsSearching)
       .then(function (query) {
-        return assetLoader.loadPromise(function () {
-          return spaceContext.space.getAssets(query);
-        });
+        return spaceContext.space.getAssets(query);
       })
       .then(function (assets) {
         $scope.context.ready = true;
@@ -75,26 +72,35 @@ angular.module('contentful')
         Tracking.searchPerformed($scope.context.view, assets.total);
         $scope.assets = filterOutDeleted(assets);
         $scope.selection.updateList($scope.assets);
-      }, accessChecker.wasForbidden($scope.context))
+        return assets;
+      }, function (err) {
+        handleAssetsError(err);
+        return $q.reject(err);
+      })
       .then(unsetIsSearching)
-      .catch(function (err) {
-        if (_.isObject(err) && 'statusCode' in err) {
-          if (err.statusCode === 400) {
-            // invalid search query, let's reset the view...
-            $scope.loadView({});
-            // ...and let it request assets again after notifing a user
-            Notification.error('We detected an invalid search query. Please try again.');
-            return;
-          } else if (err.statusCode !== -1) {
-            // network/API issue, but the query was fine; show the "is searching"
-            // screen; it'll be covered by the dialog displayed below
-            setIsSearching();
-          }
-        }
-
-        return ReloadNotification.apiErrorHandler(err);
-      });
+      .catch(ReloadNotification.apiErrorHandler);
   };
+
+  function handleAssetsError (err) {
+    const isInvalidQuery = isInvalidQueryError(err);
+    $scope.context.loading = false;
+    $scope.context.isSearching = false;
+    $scope.context.ready = true;
+
+    // Reset the view only if the UI was not edited yet.
+    if (isInvalidQuery) {
+      if (lastUISearchState === null) {
+        // invalid search query, let's reset the view...
+        $scope.loadView({});
+      }
+      // ...and let it request assets again after notifing a user
+      Notification.error('We detected an invalid search query. Please try again.');
+    }
+  }
+
+  function isInvalidQueryError (err) {
+    return (_.isObject(err) && 'statusCode' in err) && [400, 422].indexOf(err.statusCode) > -1;
+  }
 
   this.loadMore = function () {
     if (this.paginator.isAtLast()) {

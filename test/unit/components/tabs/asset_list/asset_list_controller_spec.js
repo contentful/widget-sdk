@@ -158,16 +158,6 @@ describe('Asset List Controller', function () {
       expect(scope.context.isSearching).toBe(false);
     });
 
-    // infinite loader when the query fails with a status code of -1
-    it('sets isSearching flag if it fails with statusCode of -1', function () {
-      spaceContext.space.getAssets = sinon.stub().rejects({
-        statusCode: -1
-      });
-      scope.searchController.resetAssets();
-      scope.$apply();
-      expect(scope.context.isSearching).toBe(true);
-    });
-
     it('loads assets', function () {
       scope.searchController.resetAssets();
       scope.$apply();
