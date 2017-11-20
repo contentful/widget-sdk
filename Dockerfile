@@ -1,3 +1,11 @@
+# Builds an image for running a development version of the web app in
+# the contentful lab [1].
+#
+# We just install the node dependencies. The source code is mounted as
+# a volume. The default command runs the development server.
+#
+# [1]: https://github.com/contentful/lab/
+#
 FROM ubuntu:14.04
 
 RUN apt-get update && apt-get install -y curl xz-utils ssh git build-essential
@@ -16,13 +24,10 @@ RUN node_version=$(cat .node-version) && \
 ENV PATH=/opt/node/bin:$PATH
 
 ARG NPM_TOKEN
-RUN echo $'@contentful:registry=https://registry.npmjs.org/\n//registry.npmjs.org/:_authToken=${NPM_TOKEN}' >> ~/.npmrc
+RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
 
 # Install dependencies
-COPY package.json \
-     npm-shrinkwrap.json \
-     ./
-
+COPY package.json npm-shrinkwrap.json ./
 RUN npm install --no-optional
 
 COPY vendor ./vendor
