@@ -1,6 +1,9 @@
 import require from 'require';
 import * as Config from 'Config';
 import {includes, mapValues} from 'lodash';
+import * as DevNotifications from 'debug/DevNotifications';
+import * as UIVersionSwitcher from 'debug/UIVersionSwitcher';
+import * as EnforceFlags from 'utils/LaunchDarkly/EnforceFlags';
 
 const DEBUG_ENVS = ['development', 'preview', 'staging'];
 
@@ -12,6 +15,7 @@ const DEBUG_ENVS = ['development', 'preview', 'staging'];
  */
 export function init (global) {
   if (includes(DEBUG_ENVS, Config.env)) {
+    initDevNotifications();
     global.cfDebug = create();
   }
 }
@@ -25,6 +29,12 @@ const modules = {
   analytics: 'analytics/console',
   http: 'debug/XHR'
 };
+
+function initDevNotifications () {
+  DevNotifications.init();
+  UIVersionSwitcher.init();
+  EnforceFlags.init();
+}
 
 /**
  * Create an object with lazily instantiated debuggers.
