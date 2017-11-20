@@ -6,6 +6,7 @@ import { contentTypes, keyDown } from './helpers';
 
 const Components = {
   queryInput: view => view.find('queryInput'),
+  loader: view => view.find('loader'),
   contentFilterPill: view => view.find('contentTypeFilter'),
   contentFilterValue: view => view.find('contentTypeFilter', 'value')
 };
@@ -20,9 +21,14 @@ describe('app/ContentList/Search/View', function () {
     // TODO: remove after converting datepicker to es6 module.
     SystemJS.set('datepicker', SystemJS.newModule({}));
     SystemJS.set('moment', SystemJS.newModule({}));
-    SystemJS.set('mimetype', SystemJS.newModule({default: {
-      getGroupNames: sinon.stub().returns([])
-    }}));
+    SystemJS.set(
+      'mimetype',
+      SystemJS.newModule({
+        default: {
+          getGroupNames: sinon.stub().returns([])
+        }
+      })
+    );
 
     const { default: searchComponent } = yield SystemJS.import(
       'app/ContentList/Search/View'
@@ -31,8 +37,7 @@ describe('app/ContentList/Search/View', function () {
     this.contentTypeFilter = Filters.contentTypeFilter;
     this.getFiltersFromQueryKey = Filters.getFiltersFromQueryKey;
 
-    const { Actions } =
-      yield SystemJS.import('app/ContentList/Search/State');
+    const { Actions } = yield SystemJS.import('app/ContentList/Search/State');
 
     actions = _.mapValues(Actions, () => {
       return sinon.spy();
@@ -41,7 +46,7 @@ describe('app/ContentList/Search/View', function () {
     // requirement for TrackFocus hook
     document.body.setAttribute('tabindex', '0');
 
-    render = (props = {}) => {
+    render = (customProps = {}) => {
       const defaultProps = {
         isSearching: false,
         isTyping: false,
@@ -53,16 +58,21 @@ describe('app/ContentList/Search/View', function () {
         input: '',
         isSuggestionOpen: false,
         suggestions: [],
+        hasLoaded: true,
         actions: actions
       };
-      view = this.createUI();
-      view.render(searchComponent(_.assign({}, defaultProps, props)));
 
-      // Attribute autofocus doesn't work
-      // with dynamically created elements (e.g appendChild);
-      const queryInputEl = Components.queryInput(view).element;
-      if (queryInputEl.autofocus) {
-        queryInputEl.focus();
+      const props = _.assign({}, defaultProps, customProps);
+      view = this.createUI();
+      view.render(searchComponent(props));
+
+      if (props.hasLoaded) {
+        // Attribute autofocus doesn't work
+        // with dynamically created elements (e.g appendChild);
+        const queryInputEl = Components.queryInput(view).element;
+        if (queryInputEl.autofocus) {
+          queryInputEl.focus();
+        }
       }
     };
   });
@@ -77,7 +87,17 @@ describe('app/ContentList/Search/View', function () {
     view.destroy();
   });
 
-  describe('with initial state', function () {
+  describe('without initial data', function () {
+    it('renders loader', function () {
+      render({
+        hasLoaded: false
+      });
+
+      expect(() => Components.loader(view)).not.toThrow();
+    });
+  });
+
+  describe('with initial data', function () {
     beforeEach(function () {
       render();
     });

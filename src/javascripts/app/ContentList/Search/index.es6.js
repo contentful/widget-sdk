@@ -5,8 +5,8 @@ import * as K from 'utils/kefir';
 import { createStore, bindActions } from 'ui/Framework/Store';
 import logger from 'logger';
 
-import render from './View';
-import renderLoader from './Loader';
+import renderSearch from './View';
+
 import { initialState, makeReducer, Actions } from './State';
 import {
   getMatchingFilters,
@@ -27,38 +27,49 @@ export default function create (
   try {
     const contentTypes = K.getValue(spaceContext.publishedCTs.items$).toJS();
     // Removes invalid filters before initializing the state.
-    const sanitizedFilters = sanitizeSearchFilters(initState.searchFilters, contentTypes, initState.contentTypeId, withAssets);
-    const reduce = makeReducer({ contentTypes }, dispatch, onSearchChange);
-    const defaultState = initialState(assign({}, initState, { searchFilters: sanitizedFilters }));
+    const sanitizedFilters = sanitizeSearchFilters(
+      initState.searchFilters,
+      contentTypes,
+      initState.contentTypeId,
+      withAssets
+    );
+    const reduce = makeReducer(dispatch, onSearchChange);
+    const defaultState = initialState(
+      assign({}, initState, {
+        searchFilters: sanitizedFilters,
+        contentTypes,
+        withAssets
+      })
+    );
     const store = createStore(defaultState, reduce);
     const actions = bindActions(store, Actions);
 
-    // Showing empty component while we're waiting for the data from the streams
-    $scope.search = renderLoader();
-
-    if ($scope.searchOff) {
-      $scope.searchOff();
+    // unsubscribe from stream if rerender happens
+    if ($scope.unsubscribeSearch) {
+      $scope.unsubscribeSearch();
     }
 
-    $scope.searchOff = K.onValueScope(
+    const unsubscribeSearchWidget = K.onValueScope(
       $scope,
-      Kefir.combine([isSearching$, store.state$, users$]),
-      ([isSearching, state, users]) => {
-        window._state = state;
-        const props = {
-          contentTypes,
-          isSearching,
-          withAssets,
-          users
-        };
-
-        $scope.search = render(
-          mapStateToProps(state, props, actions)
-        );
+      Kefir.combine([isSearching$, users$]),
+      ([isSearching, users]) => {
+        actions.SetUsers(users);
+        actions.SetIsSearching(isSearching);
       }
     );
 
-    // eslint-disable-next-line
+    const unsubscribeFromSearchStore = K.onValueScope($scope, store.state$, state => {
+      window._state = state;
+
+      $scope.search = renderSearch(mapStateToProps(state, actions));
+    });
+
+    $scope.unsubscribeSearch = () => {
+      unsubscribeSearchWidget();
+      unsubscribeFromSearchStore();
+    };
+
+    // eslint-disable-next-line no-inner-declarations
     function dispatch (action, payload) {
       store.dispatch(action, payload);
     }
@@ -67,9 +78,15 @@ export default function create (
   }
 }
 
-function mapStateToProps (state, props, actions) {
-  const { contentTypeId, filters } = state;
-  const { contentTypes, users = [], isSearching = false, withAssets = false } = props;
+function mapStateToProps (state, actions) {
+  const {
+    contentTypeId,
+    filters,
+    contentTypes,
+    users,
+    isSearching,
+    withAssets
+  } = state;
 
   return {
     contentTypeFilter: contentTypeFilter(contentTypes),
@@ -81,11 +98,17 @@ function mapStateToProps (state, props, actions) {
       withAssets
     }),
     suggestions: state.isSuggestionOpen
-      ? getMatchingFilters(state.input, state.contentTypeId, contentTypes, withAssets)
+      ? getMatchingFilters(
+          state.input,
+          state.contentTypeId,
+          contentTypes,
+          withAssets
+        )
       : [],
     focus: state.focus,
     contentTypeId: state.contentTypeId,
     isSearching: isSearching,
+    hasLoaded: users.length > 0,
     input: state.input,
     searchBoxHasFocus: state.searchBoxHasFocus,
     isSuggestionOpen: state.isSuggestionOpen,

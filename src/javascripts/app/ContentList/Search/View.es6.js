@@ -12,6 +12,7 @@ import keycodes from 'utils/keycodes';
 import filterIcon from 'svg/filter';
 import infoIcon from 'svg/info';
 
+import renderLoader from './Loader';
 import { ValueInput } from './Filters';
 import { autosizeInput } from './Hooks/AutoInputSize';
 import filterValueDate from './ValueInput/Date';
@@ -40,11 +41,16 @@ export default function render ({
   isSuggestionOpen,
   suggestions,
   actions,
-  withAssets = false
+  withAssets,
+  hasLoaded
 }) {
   const hasSpinner = isSearching || isTyping;
   const hasFilters = filters.length > 0;
   const defaultFocus = focus;
+
+  if (!hasLoaded) {
+    return renderLoader();
+  }
 
   return h('div', {
     hooks: [ H.TrackFocus((value) => actions.SetBoxFocus(value)) ],

@@ -259,7 +259,7 @@ export function getMatchingFilters (
   searchString,
   contentTypeId,
   availableContentTypes,
-  withAssets = false
+  withAssets
 ) {
   let filters = allFilters(availableContentTypes, withAssets);
   filters = filterByName(filters, searchString);

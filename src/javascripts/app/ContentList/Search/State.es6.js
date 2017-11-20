@@ -32,13 +32,26 @@ const defaultFocus = {
 //   If 'false' we grey the border, hide the suggestions box, and
 //   collapse multiline filters.
 
-export const initialState = ({ contentTypeId = '', searchFilters = [], searchText = '' }) => ({
+export const initialState = ({
+  contentTypeId = '',
+  searchFilters = [],
+  searchText = '',
+  contentTypes,
+  withAssets
+}) => ({
   contentTypeId,
   filters: searchFilters,
   input: searchText,
   searchBoxHasFocus: false,
   isSuggestionOpen: false,
-  focus: defaultFocus
+  focus: defaultFocus,
+  withAssets,
+
+  // FIXME: the following fields should have a separate reducer
+  contentTypes,
+  users: [],
+  // FIXME: Should be moved closer to the reducer responsible for the search.
+  isSearching: false
 });
 
 
@@ -77,8 +90,12 @@ const SetFocusOnNextSuggestion = makeCtor('SetFocusOnNextSuggestion');
 const SetFocusOnPrevSuggestion = makeCtor('SetFocusOnPrevSuggestion');
 const SetFocusOnQueryInput = makeCtor('SetFocusOnQueryInput');
 const ShowSuggestions = makeCtor('ShowSuggestions');
+const SetUsers = makeCtor('SetUsers');
+const SetIsSearching = makeCtor('SetIsSearching');
 
 export const Actions = {
+  SetUsers,
+  SetIsSearching,
   SetQueryInput,
   SetFilterOperator,
   SetFilterValueInput,
@@ -101,7 +118,7 @@ export const Actions = {
   ShowSuggestions
 };
 
-export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
+export function makeReducer (dispatch, submitSearch) {
   // TODO: remove side-effects from the reducer and use actionCreators instead.
   // Reducer must not create side-effects e.g dispatch(UnsetTyping);
   // http://redux.js.org/docs/basics/Reducers.html#handling-actions
@@ -109,6 +126,16 @@ export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
   const putTyping = createSlot(() => dispatch(UnsetTyping));
 
   return Store.makeReducer({
+    [SetUsers] (state, users) {
+      return assign(state, {
+        users
+      });
+    },
+    [SetIsSearching] (state, isSearching) {
+      return assign(state, {
+        isSearching
+      });
+    },
     [SetQueryInput]: setInput,
     [SetBoxFocus] (state, hasFocus) {
       state = set(state, ['searchBoxHasFocus'], hasFocus);
@@ -192,7 +219,12 @@ export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
 
   function setFocusOnNextSuggestion (state) {
     const idx = state.focus.suggestionsFocusIndex;
-    const suggestions = getMatchingFilters(state.input, state.contentTypeId, contentTypes);
+    const suggestions = getMatchingFilters(
+      state.input,
+      state.contentTypeId,
+      state.contentTypes,
+      state.withAssets
+    );
     let indexToFocus;
 
     if (idx === suggestions.length - 1) {
@@ -291,7 +323,7 @@ export function makeReducer ({ contentTypes }, dispatch, submitSearch) {
   }
 
   function removeUnapplicableFilters (state) {
-    const { contentTypeId } = state;
+    const { contentTypeId, contentTypes } = state;
 
     const contentType = getContentTypeById(contentTypes, contentTypeId);
     state = update(state, ['filters'], (filters) => {
