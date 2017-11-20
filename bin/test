@@ -4,6 +4,10 @@
 
 set -veo pipefail
 
+pushd packages/client
+  npm test -- --reporter dot
+popd
+
 tools/bin/validate-config.js config/*.json
 xvfb-run karma start karma-docker.conf.js
 npm run hint
