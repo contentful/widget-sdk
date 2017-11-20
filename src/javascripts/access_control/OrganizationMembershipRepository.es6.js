@@ -1,6 +1,9 @@
 import {createOrganizationEndpoint} from 'data/Endpoint';
 import * as auth from 'Authentication';
 import {apiUrl, mockApiUrl} from 'Config';
+import {fetchAll} from 'data/CMA/FetchAll';
+
+const BATCH_LIMIT = 100;
 
 export function createEndpoint (orgId) {
   return createOrganizationEndpoint(apiUrl(), orgId, auth);
@@ -40,12 +43,20 @@ export function getSpaces (endpoint, params) {
   });
 }
 
+export function getAllSpaces (endpoint, params) {
+  return fetchAll(endpoint, ['spaces'], BATCH_LIMIT, params);
+}
+
 export function getRoles (endpoint, query) {
   return endpoint({
     method: 'GET',
     path: ['roles'],
     query
   });
+}
+
+export function getAllRoles (endpoint, params) {
+  return fetchAll(endpoint, ['roles'], BATCH_LIMIT, params);
 }
 
 export function invite (endpoint, {role, email, suppressInvitation}) {

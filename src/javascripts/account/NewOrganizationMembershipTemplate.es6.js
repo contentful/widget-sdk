@@ -185,7 +185,7 @@ export function accessToSpaces (
       isLoading
         ? h('p.u-separator--small', [
           h('span.spinner--text-inline'),
-          ` Loading your spaces.`
+          ' Loading your spaces.'
         ])
         : h('tbody', sortBy(spaces, space => space.createdAt).map(space => { // sort spaces by creation date
           return h('tr', [

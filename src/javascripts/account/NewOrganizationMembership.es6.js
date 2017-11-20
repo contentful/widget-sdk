@@ -4,12 +4,13 @@ import {assign} from 'utils/Collections';
 import {getOrganization} from 'services/TokenStore';
 import {runTask} from 'utils/Concurrent';
 import {ADMIN_ROLE_ID} from 'access_control/SpaceMembershipRepository';
-import {getUsers, getSpaces, getRoles, createEndpoint} from 'access_control/OrganizationMembershipRepository';
+import {getUsers, getAllSpaces, getAllRoles, createEndpoint} from 'access_control/OrganizationMembershipRepository';
 import {makeCtor, match} from 'utils/TaggedValues';
 import {invite, progress$} from 'account/SendOrganizationInvitation';
 import {isValidEmail} from 'stringUtils';
 import {go} from 'states/Navigator';
 import {isOwnerOrAdmin} from 'services/OrganizationRoles';
+
 import {
   header,
   sidebar,
@@ -94,7 +95,7 @@ export default function ($scope) {
   });
 
   function* getAllSpacesWithRoles () {
-    const allRoles = yield* getPaginatedResources(getRoles);
+    const allRoles = yield getAllRoles(orgEndpoint);
     // get a map of roles by spaceId
     const rolesBySpace = allRoles
       .reduce((acc, role) => {
@@ -109,37 +110,17 @@ export default function ($scope) {
         });
         return acc;
       }, {});
-    const allSpaces = yield* getPaginatedResources(getSpaces);
+    const allSpaces = yield getAllSpaces(orgEndpoint);
 
     return allSpaces.map(space => ({
       id: space.sys.id,
       createdAt: space.sys.createdAt,
       name: space.name,
       roles: rolesBySpace[space.sys.id]
-        .sort((role, previous) => role.name.localeCompare(previous.name))
+        ? rolesBySpace[space.sys.id]
+          .sort((role, previous) => role.name.localeCompare(previous.name))
+        : []
     }));
-  }
-
-  /**
-   * Send requests repeatedly, if needed, using `fn`, to fetch all items
-   * available in the database.
-   * This is required when the amount of items can exceed the max
-   * number until pagination (100), but there's no pagination in the UI.
-   * @param {Function} fn
-   */
-  function* getPaginatedResources (fn) {
-    const itemsPerRequest = 100;
-    const {total, items} = yield fn(orgEndpoint, {limit: itemsPerRequest});
-    let resources = items;
-
-    if (total > itemsPerRequest) {
-      while (resources.length < total) {
-        const {items} = yield fn(orgEndpoint, {limit: itemsPerRequest, skip: resources.length});
-        resources = resources.concat(items);
-      }
-    }
-
-    return resources;
   }
 
   function updateSpaceRole (checked, role, spaceMemberships) {
