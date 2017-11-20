@@ -442,6 +442,7 @@ function select ({
   const width = getSelectWidth(label);
 
   return h('select.input-reset.search__select', {
+    title: label,
     dataTestId: testId,
     value: value,
     ref: inputRef,
