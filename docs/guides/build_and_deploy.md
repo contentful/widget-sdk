@@ -52,7 +52,7 @@ commands to test, serve, and distribute the application. Run `bin/docker-run
 
 The user interface image is based on the public
 [`contentful/user-interface-base`][cf-ui-base-image]. This image contains system dependencies like
-Xvfb, Firefox, and the fpm gem that are required to build and test the code. The
+the fpm gem and Chrome that are required to build and test the code. The
 image is hosted on the Docker hub.
 
 [cf-ui-base-image]: https://hub.docker.com/r/contentful/user-interface-base
