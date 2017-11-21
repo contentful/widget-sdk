@@ -37,7 +37,7 @@ const h = require('./lib/hyperscript').h
 const jstConcat = require('../tasks/build-template')
 const serve = require('./lib/server').serveWatch
 const createManifestResolver = require('./lib/manifest-resolver').create
-const babelOptions = require('./app-babel-options').options
+const makeBabelOptions = require('./app-babel-options').makeOptions
 
 const argv = yargs
 .boolean('verbose')
@@ -228,7 +228,9 @@ gulp.task('js/app', function () {
       gulp.src(src.components, {base: '.'})
     ]),
     sourceMaps.init(),
-    babel(babelOptions),
+    babel(makeBabelOptions({
+      browserTargets: ['last 2 versions', 'ie >= 10']
+    })),
     concat('components.js'),
     sourceMaps.write({sourceRoot: '/'}),
     gulp.dest('./public/app/')
