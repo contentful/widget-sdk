@@ -1,59 +1,98 @@
-import {camelCase, mapKeys} from 'lodash';
-import * as Preact from 'libs/preact';
+import {camelCase} from 'lodash';
+import * as React from 'libs/react';
+import * as ReactDOM from 'libs/react-dom';
 import {caseof} from 'libs/sum-types';
 import * as VTree from './VTree';
 
 /**
  * This module exports the function that renders a virtual DOM tree
- * into a real DOM node using react.
+ * into a real DOM node using React.
  *
  * Rendering is completely stateless. The DOM tree is only updated when
  * the `render()` function is called.
  */
 
 export default function createMountPoint (container) {
-  let prev;
   return { render, destroy };
 
   function render (vtree) {
-    prev = Preact.render(asPreact(vtree), container, prev);
+    ReactDOM.render(asReact(vtree), container);
   }
 
   function destroy () {
-    // We explicitly remove the tree from the DOM. Removing the
-    // container element is not sufficient to free all resources.
-    render(VTree.Element('noscript', {}, []));
+    ReactDOM.unmountComponentAtNode(container);
   }
 }
 
 
-const PREACT_PROP_KEY_EXCEPTIONS = {
+/**
+ * When we create a new VTree elements we standarize prop keys
+ * to kebab case. When constructing a concrete React tree some
+ * exceptions apply (React prop keys cannot be generated just
+ * by converting to camel case for them).
+ */
+const REACT_PROP_KEY_EXCEPTIONS = {
+  'class': 'className',
   'view-box': 'viewBox',
   'dangerously-set-inner-html': 'dangerouslySetInnerHTML'
 };
 
+/**
+ * Starting from React 16 custom attributes are accepted. They
+ * work only if they are not camel cased. This list defines what
+ * prop prefixes indicate that a property shouldn't be converted
+ * to camel case when constructing a concrete React tree.
+ */
+const CUSTOM_ATTR_PREFIXES = [
+  'data-',
+  'aria-',
+  'cf-'
+];
+
 
 /**
- * Turns an abstract virtual DOM tree into a concrete Preact tree.
+ * Turns an abstract virtual DOM tree into a concrete React tree.
  */
-function asPreact (tree) {
+function asReact (tree) {
   return caseof(tree, [
     [VTree.Element, ({tag, props, children}) => {
-      // Property keys are kebab-cased
-      props = mapKeys(props, (_, key) => {
-        // For event handlers Preact expects the keys to be camel-cased.
-        if (key.substr(0, 3) === 'on-') {
-          return camelCase(key);
-        }
-        // There are some exceptions, as defined in the map
-        if (Object.keys(PREACT_PROP_KEY_EXCEPTIONS).indexOf(key) > -1) {
-          return PREACT_PROP_KEY_EXCEPTIONS[key];
-        }
-        return key;
-      });
-      children = children.map(asPreact);
-      return Preact.h(tag, props, children);
+      const reactProps = Object.keys(props).reduce((acc, key) => {
+        acc[makeReactPropKey(key)] = makeReactPropValue(key, props[key]);
+        return acc;
+      }, {});
+
+      return React.createElement(tag, reactProps, ...children.map(asReact));
     }],
-    [VTree.Text, ({text}) => text]
+    [VTree.Text, ({text}) => text],
+    [null, () => {
+      if (React.isValidElement(tree)) {
+        return tree;
+      } else {
+        throw new Error('Expected a VTree or a valid React element.');
+      }
+    }]
   ]);
+}
+
+function makeReactPropKey (key) {
+  if (isCustomAttribute(key)) {
+    return key;
+  } else if (Object.keys(REACT_PROP_KEY_EXCEPTIONS).indexOf(key) > -1) {
+    return REACT_PROP_KEY_EXCEPTIONS[key];
+  } else {
+    return camelCase(key);
+  }
+}
+
+function makeReactPropValue (key, value) {
+  if (isCustomAttribute(key)) {
+    // React requires a string value for custom attributes.
+    return value === true ? key : value;
+  } else {
+    return value;
+  }
+}
+
+function isCustomAttribute (key) {
+  return CUSTOM_ATTR_PREFIXES.some(p => key.indexOf(p) === 0);
 }

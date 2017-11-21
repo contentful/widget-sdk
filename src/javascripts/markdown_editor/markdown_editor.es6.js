@@ -1,16 +1,10 @@
 import $timeout from '$timeout';
-import LazyLoader from 'LazyLoader';
 import * as Wrapper from 'markdown_editor/codemirror_wrapper';
 import * as Commands from 'markdown_editor/commands';
 import { isFunction } from 'lodash';
+import * as CodeMirror from 'libs/codemirror';
 
 export function create (textarea, options) {
-  return LazyLoader.get('markdown').then(function (libs) {
-    return createManually(textarea, options, libs.CodeMirror);
-  });
-}
-
-export function createManually (textarea, options, CodeMirror) {
   const editor = Wrapper.create(textarea, options, CodeMirror);
 
   const api = {

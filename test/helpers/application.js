@@ -38,7 +38,6 @@ angular.module('contentful/test', ['contentful', 'contentful/mocks'])
       main_domain: 'test.com'
     },
     manifest: {
-      'app/markdown_vendors.js': 'x',
       'app/kaltura.js': 'x',
       'app/snowplow.js': 'x'
     },
