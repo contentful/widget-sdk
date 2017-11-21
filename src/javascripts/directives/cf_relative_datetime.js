@@ -15,9 +15,9 @@
  * @todo Move this into UI module
  */
 angular.module('contentful')
-.directive('cfRelativeDatetime', ['$injector', function ($injector) {
-  var $timeout = $injector.get('$timeout');
-  var moment   = $injector.get('moment');
+.directive('cfRelativeDatetime', ['require', function (require) {
+  var $timeout = require('$timeout');
+  var moment   = require('moment');
 
   return {
     restrict: 'A',

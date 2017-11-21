@@ -42,19 +42,12 @@ angular.module('contentful')
   var newState = editorBase({
     name: 'new',
     url: '_new',
-    children: [
-      {
-        name: 'home',
-        url: '',
-        redirectTo: 'spaces.detail.content_types.new.fields'
-      }, fields, preview
-    ],
     data: {
       isNew: true
     },
     resolve: {
-      contentType: ['space', function (space) {
-        return space.newContentType({sys: {type: 'ContentType'}, fields: []});
+      contentType: ['spaceContext', function (spaceContext) {
+        return spaceContext.space.newContentType({sys: {type: 'ContentType'}, fields: []});
       }],
       editingInterface: resolvers.editingInterface,
       publishedContentType: [function () {
@@ -66,18 +59,12 @@ angular.module('contentful')
   var detail = editorBase({
     name: 'detail',
     url: '/:contentTypeId',
-    children: [
-      {
-        name: 'home',
-        url: '',
-        redirectTo: 'spaces.detail.content_types.detail.fields'
-      }, fields, preview
-    ],
     data: {
       isNew: false
     },
     resolve: {
-      contentType: ['require', '$stateParams', 'space', function (require, $stateParams, space) {
+      contentType: ['require', '$stateParams', 'spaceContext', function (require, $stateParams, spaceContext) {
+        var space = spaceContext.space;
         var ctHelpers = require('data/ContentTypes');
         return space.getContentType($stateParams.contentTypeId)
           .then(function (ct) {
@@ -111,7 +98,8 @@ angular.module('contentful')
 
   function editorBase (options) {
     return _.extend({
-      abstract: true,
+      redirectTo: '.fields',
+      children: [ fields, preview ],
       controller: [
         '$scope', 'require', 'contentType', 'editingInterface', 'publishedContentType',
         function ($scope, require, contentType, editingInterface, publishedContentType) {

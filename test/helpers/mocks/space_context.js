@@ -51,13 +51,6 @@ angular.module('contentful/mocks')
     const eiSpaceEndpoint = sinon.stub().rejects({status: 404});
     spaceContext.editingInterfaces = createEIRepo(eiSpaceEndpoint);
 
-    Widgets.setSpace({
-      endpoint: sinon.stub().returns({
-        get: sinon.stub().resolves({items: []})
-      })
-    });
-    spaceContext.widgets = Widgets;
-
     spaceContext.docPool = {
       get: function (entity, _contentType) {
         return MockDocument.create(entity.data);
@@ -67,8 +60,9 @@ angular.module('contentful/mocks')
     spaceContext.memberships = createMembershipsMock();
     spaceContext.users = createUsersMock();
 
-    spaceContext.endpoint = createMockEndpoint();
-    spaceContext.cma = new CMAClient(spaceContext.endpoint.request);
+    spaceContext._mockEndpoint = createMockEndpoint();
+    spaceContext.endpoint = spaceContext._mockEndpoint.request;
+    spaceContext.cma = new CMAClient(spaceContext.endpoint);
     spaceContext.apiKeyRepo = createApiKeyRepo(spaceContext.endpoint);
     spaceContext.organizationContext = {};
     spaceContext.uiConfig = createUiConfigMock();

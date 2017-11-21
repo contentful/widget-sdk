@@ -1,11 +1,11 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfKalturaPlayer', ['$injector', function($injector){
-  var kalturaWidgetLoader = $injector.get('kalturaWidgetLoader');
-  var kalturaCredentials = $injector.get('kalturaCredentials');
-  var spaceContext = $injector.get('spaceContext');
-  var $window = $injector.get('$window');
+.directive('cfKalturaPlayer', ['require', function (require){
+  var kalturaWidgetLoader = require('kalturaWidgetLoader');
+  var kalturaCredentials = require('kalturaCredentials');
+  var spaceContext = require('spaceContext');
+  var $window = require('$window');
 
   var ID_PREFIX = 'kaltura-player-';
 

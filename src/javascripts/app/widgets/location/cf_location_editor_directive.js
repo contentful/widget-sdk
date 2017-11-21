@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('cf.app')
-.directive('cfLocationEditor', ['$injector', function ($injector) {
-  var $controller = $injector.get('$controller');
-  var LocationMap = $injector.get('app/widgets/location/Map');
+.directive('cfLocationEditor', ['require', function (require) {
+  var $controller = require('$controller');
+  var LocationMap = require('app/widgets/location/Map');
 
   return {
     restrict: 'E',

@@ -242,9 +242,11 @@ describe('data/User', () => {
 
     it('should return true for users whose email matches the automation test user email pattern', function () {
       const userEmails = [
-        'vlad+autotesting_newuser14288_20171026_071249@contentful.com',
-        'askld+autotesting_newuser1_2_3@contentful.com',
-        'a+autotesting_newuser1_2_3@contentful.com'
+        'autotest+quirely_orgowner_worker1@contentful.com',
+        'autotest+flinkly_orgowner_worker1@contentful.com',
+        'autotest+flinkly_orgmember_worker1@contentful.com',
+        'autotest+flinkly_orgmember_developer@contentful.com',
+        'autotest+flinkly_newuser_1235_1235@contentful.com'
       ];
 
       this.assertOnEmails(userEmails, true);
@@ -252,20 +254,10 @@ describe('data/User', () => {
 
     it('should return false for all non test automation users', function () {
       const userEmails = [
-        '+autotesting_newuser14288_20171026_071249@contentful.com',
-        'a+autostesting_newuser1_2_3@contentful.com',
-        'a+autotesting_newusers1_2_3@contentful.com',
-        'a+autotesting_newuser2_3@contentful.com',
-        'askld+autotesting_newuser_2_3@contentful.com',
-        'askld+autotesting_newuser1_2@contentful.com',
-        'askld+autotesting_newuser1_2_@contentful.com',
-        'askld+autotesting_newuser1_2_3@contentful.org',
-        'askld+autotesting_newuser1_2_3@contentfuls.com',
-        'askld+autotesting_newuser1_2_3contentful.com',
-        'askld+autotesting_newsuser1_2_3@contentful.com',
-        'a@b.net',
-        'a@b.net.org',
-        'äå@éö.potato'
+        'potato@contentful.com',
+        'autotest@contentful.com',
+        'something@gmail.com',
+        'omg@bbq.net'
       ];
 
       this.assertOnEmails(userEmails, false);

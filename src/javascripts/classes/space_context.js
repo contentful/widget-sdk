@@ -112,7 +112,7 @@ angular.module('contentful')
       TheLocaleStore.reset(space.getId(), space.getPrivateLocales());
 
       return $q.all([
-        Widgets.setSpace(space).then(function (widgets) {
+        Widgets.setSpace(self.endpoint).then(function (widgets) {
           self.widgets = widgets;
         }),
         self.publishedCTs.refresh().then(function () {

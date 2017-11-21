@@ -1,10 +1,10 @@
 'use strict';
 angular.module('contentful')
 
-.factory('EntityListCache', ['$injector', function($injector){
-  var $q             = $injector.get('$q');
-  var logger         = $injector.get('logger');
-  var TheLocaleStore = $injector.get('TheLocaleStore');
+.factory('EntityListCache', ['require', function (require) {
+  var $q             = require('$q');
+  var logger         = require('logger');
+  var TheLocaleStore = require('TheLocaleStore');
 
   // params:
   // - space

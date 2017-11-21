@@ -7,7 +7,7 @@
  */
 import $q from '$q';
 import * as K from 'utils/kefir';
-import createMVar from 'utils/Concurrent/MVar';
+import { createMVar } from 'utils/Concurrent';
 import client from 'client';
 import * as auth from 'Authentication';
 import makeFetchWithAuth from 'data/CMA/TokenInfo';

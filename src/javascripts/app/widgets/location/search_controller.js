@@ -1,12 +1,12 @@
 'use strict';
 
 angular.module('cf.app')
-.controller('LocationEditorSearchController', ['$injector', '$scope', function ($injector, $scope) {
-  var $q = $injector.get('$q');
-  var memoize = $injector.get('utils/memoize');
-  var LazyLoader = $injector.get('LazyLoader');
-  var Signal = $injector.get('signal');
-  var throttle = $injector.get('throttle');
+.controller('LocationEditorSearchController', ['require', '$scope', function (require, $scope) {
+  var $q = require('$q');
+  var memoize = require('utils/memoize');
+  var LazyLoader = require('LazyLoader');
+  var Signal = require('signal');
+  var throttle = require('throttle');
 
   var controller = this;
   var resultsAvailable = Signal.create();

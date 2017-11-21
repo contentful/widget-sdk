@@ -6,7 +6,7 @@ angular.module('cf.utils')
  * @module cf.utils
  * @name encoder
  * @usage[js]
- * var htmlEncode = $injector.get('encoder').htmlEncode;
+ * var htmlEncode = require('encoder').htmlEncode;
  * console.log(
  *   htmlEncode('<script src="..."></script>') ==
  *   '&lt;script src=&quot;...&quot;&gt;&lt;/script&gt;');

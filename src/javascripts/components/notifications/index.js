@@ -69,9 +69,9 @@ angular.module('contentful')
   }
 }])
 
-.factory('notifications/clearMessageHooks', ['$injector', function ($injector) {
-  var $rootScope = $injector.get('$rootScope');
-  var Command = $injector.get('command');
+.factory('notifications/clearMessageHooks', ['require', function (require) {
+  var $rootScope = require('$rootScope');
+  var Command = require('command');
 
   return function init (notification) {
     $rootScope.$on('$stateChangeSuccess', function () {

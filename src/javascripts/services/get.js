@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('contentful').factory('get', ['$injector', function ($injector) {
+angular.module('contentful').factory('get', ['require', function (require) {
   return function get(name){
-    return $injector.get(name);
+    return require(name);
   };
 }]);

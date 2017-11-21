@@ -10,6 +10,7 @@ angular.module('contentful')
   var base = require('states/base');
   var contextHistory = require('contextHistory');
   var crumbFactory = require('navigation/CrumbFactory');
+  var $q = require('$q');
 
   var list = base({
     name: 'list',
@@ -31,11 +32,11 @@ angular.module('contentful')
       isNew: true
     },
     resolve: {
-      baseRole: ['RoleRepository', 'space', '$stateParams', '$q', function (RoleRepository, space, $stateParams, $q) {
+      baseRole: ['RoleRepository', 'spaceContext', '$stateParams', function (RoleRepository, spaceContext, $stateParams) {
         if (!$stateParams.baseRoleId) { return $q.when(null); }
-        return RoleRepository.getInstance(space).get($stateParams.baseRoleId);
+        return RoleRepository.getInstance(spaceContext.space).get($stateParams.baseRoleId);
       }],
-      emptyRole: ['RoleRepository', '$q', function (RoleRepository, $q) {
+      emptyRole: ['RoleRepository', function (RoleRepository) {
         return $q.when(RoleRepository.getEmpty());
       }]
     },
@@ -59,8 +60,8 @@ angular.module('contentful')
       isNew: false
     },
     resolve: {
-      role: ['RoleRepository', 'space', '$stateParams', function (RoleRepository, space, $stateParams) {
-        return RoleRepository.getInstance(space).get($stateParams.roleId);
+      role: ['RoleRepository', 'spaceContext', '$stateParams', function (RoleRepository, spaceContext, $stateParams) {
+        return RoleRepository.getInstance(spaceContext.space).get($stateParams.roleId);
       }]
     },
     template: '<cf-role-editor class="workbench role-editor" />',

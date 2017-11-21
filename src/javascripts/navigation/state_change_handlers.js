@@ -11,7 +11,7 @@ angular.module('cf.app')
  * navigation context and exit confirmations.
  *
  * @usage[js]
- * $injector.get('navigation/stateChangeHandlers').setup()
+ * require('navigation/stateChangeHandlers').setup()
  */
 .factory('navigation/stateChangeHandlers', ['require', function (require) {
   var $rootScope = require('$rootScope');
@@ -110,7 +110,9 @@ angular.module('cf.app')
     // Redirect if redirectTo is set
     if (toState.redirectTo) {
       event.preventDefault();
-      $state.go(toState.redirectTo, toStateParams);
+      $state.go(toState.redirectTo, toStateParams, {
+        relative: toState
+      });
     }
   }
 

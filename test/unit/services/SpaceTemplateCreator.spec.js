@@ -1,40 +1,37 @@
-'use strict';
+import * as sinon from 'helpers/sinon';
 
 describe('Space Template creation service', function () {
-  let spaceTemplateCreator, creator, $q, $rootScope, stubs;
-  let attemptedTemplate, spaceContext;
-  let openShareJSDoc;
+  let spaceTemplateCreator, creator, stubs;
+  let spaceContext;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'ctPublish', 'assetPublish', 'assetProcess', 'entryPublish', 'progressSuccess', 'progressError',
-        'success', 'error', 'on', 'timeout', 'timeoutCancel', 'retrySuccess', 'getContentPreview', 'createContentPreview'
+        'success', 'error', 'retrySuccess', 'getContentPreview', 'createContentPreview'
       ]);
 
-      stubs.timeout.cancel = stubs.timeoutCancel;
-      $provide.value('$timeout', stubs.timeout);
-
-      $provide.value('contentPreview', {getAll: stubs.getContentPreview, create: stubs.createContentPreview});
+      $provide.value('contentPreview', {
+        getAll: stubs.getContentPreview,
+        create: stubs.createContentPreview
+      });
+      $provide.value('analytics/Analytics', {track: _.noop});
     });
     inject(function ($injector) {
-      spaceTemplateCreator = $injector.get('spaceTemplateCreator');
-      $q = $injector.get('$q');
-      $rootScope = $injector.get('$rootScope');
-      openShareJSDoc = $q.defer();
-      stubs.getContentPreview.resolves([]);
-      stubs.createContentPreview.resolves({sys: {id: 1}, name: 'test'});
+      spaceTemplateCreator = $injector.get('services/SpaceTemplateCreator');
     });
   });
 
   afterEach(function () {
-    spaceTemplateCreator = creator = $q = $rootScope = stubs =
-    attemptedTemplate = spaceContext = openShareJSDoc = null;
+    spaceTemplateCreator = creator = stubs =
+    spaceContext = null;
   });
 
   describe('creates content based on a template', function () {
     let template;
-    beforeEach(function () {
+    beforeEach(function* () {
+      stubs.getContentPreview.returns(Promise.resolve([]));
+      stubs.createContentPreview.returns(Promise.resolve({sys: {id: 1}, name: 'test'}));
       template = {
         contentTypes: [
           {sys: {id: 'ct1'}, publish: stubs.ctPublish},
@@ -71,73 +68,66 @@ describe('Space Template creation service', function () {
             ]
           },
           getId: _.constant('123'),
-          getDeliveryApiKeys: sinon.stub().returns([{data: {accessToken: 'mock-token'}}]),
+          getDeliveryApiKeys: () => Promise.resolve([{data: {accessToken: 'mock-token'}}]),
           createContentType: sinon.stub(),
           createEntry: sinon.stub(),
           createAsset: sinon.stub(),
           createDeliveryApiKey: sinon.stub(),
           getContentType: function () {
-            return $q.resolve({
+            return Promise.resolve({
               createEditingInterface: spaceContext.createEditingInterface
             });
           }
         },
         docConnection: {
-          open: sinon.stub().returns(openShareJSDoc.promise)
+          open: sinon.stub().returns(Promise.resolve({
+            destroy: _.noop,
+            doc: {
+              on: (_event, handler) => handler([{p: ['fields', 'file'], oi: {url: 'url'}}]),
+              removeListener: sinon.stub(),
+              close: sinon.stub()
+            }
+          }))
         }
       };
 
       _.times(2, function (n) {
-        spaceContext.space.createContentType.onCall(n).returns($q.resolve(template.contentTypes[n]));
+        spaceContext.space.createContentType.onCall(n).returns(Promise.resolve(template.contentTypes[n]));
       });
-      spaceContext.space.createContentType.onThirdCall().returns($q.reject());
-      stubs.ctPublish.returns($q.resolve());
+      spaceContext.space.createContentType.onThirdCall().returns(Promise.reject(new Error('can not create a content type')));
+      stubs.ctPublish.returns(Promise.resolve());
 
-      spaceContext.editingInterfaces.save.returns($q.resolve());
-      spaceContext.editingInterfaces.save.onSecondCall().returns($q.reject());
+      spaceContext.editingInterfaces.save.returns(Promise.resolve());
+      spaceContext.editingInterfaces.save.onSecondCall().returns(Promise.reject(new Error('can not save an editing interface')));
 
       _.times(2, function (n) {
-        spaceContext.space.createAsset.onCall(n).returns($q.resolve(template.assets[n]));
+        spaceContext.space.createAsset.onCall(n).returns(Promise.resolve(template.assets[n]));
       });
-      spaceContext.space.createAsset.onThirdCall().returns($q.reject());
-      stubs.assetProcess.returns($q.resolve());
-      stubs.assetPublish.returns($q.resolve());
+      spaceContext.space.createAsset.onThirdCall().returns(Promise.reject(new Error('can not create an asset')));
+      stubs.assetProcess.returns(Promise.resolve());
+      stubs.assetPublish.returns(Promise.resolve());
 
       _.times(2, function (n) {
-        spaceContext.space.createEntry.onCall(n).returns($q.resolve(template.entries[n]));
+        spaceContext.space.createEntry.onCall(n).returns(Promise.resolve(template.entries[n]));
       });
-      spaceContext.space.createEntry.onThirdCall().returns($q.reject());
-      stubs.entryPublish.returns($q.resolve());
+      spaceContext.space.createEntry.onThirdCall().returns(Promise.reject(new Error('can not createa an entry')));
+      stubs.entryPublish.returns(Promise.resolve());
 
-      spaceContext.space.createDeliveryApiKey.returns($q.resolve());
+      spaceContext.space.createDeliveryApiKey.returns(Promise.resolve());
 
       creator = spaceTemplateCreator.getCreator(
         spaceContext,
         {onItemSuccess: stubs.progressSuccess, onItemError: stubs.progressError}
       );
 
-      creator.create(template)
-      .then(stubs.success)
-      .catch(function (data) {
-        attemptedTemplate = data.template;
+      yield creator.create(template)
+      .spaceSetup
+      .then(data => {
+        stubs.success(data);
+      })
+      .catch(function () {
         stubs.error();
       });
-      $rootScope.$digest();
-
-      openShareJSDoc.resolve({
-        destroy: _.noop,
-        doc: {
-          on: stubs.on,
-          removeListener: sinon.stub(),
-          close: sinon.stub()
-        }
-      });
-      this.$apply();
-      stubs.on.yield([
-        {p: ['fields', 'file'], oi: {url: 'url'}}
-      ]);
-      stubs.timeout.yield();
-      $rootScope.$digest();
     });
 
     it('attempts to create 3 content types', function () {
@@ -214,45 +204,54 @@ describe('Space Template creation service', function () {
     });
 
     describe('retries creating the failed entities', function () {
-      beforeEach(function () {
+      beforeEach(function* () {
+        const template = {
+          contentTypes: [
+            {sys: {id: 'ct1'}, publish: stubs.ctPublish},
+            {sys: {id: 'ct2'}, publish: stubs.ctPublish},
+            {sys: {id: 'ct3'}, publish: stubs.ctPublish}],
+          editingInterfaces: [
+            {contentType: {sys: {id: 'ct1'}}, data: {sys: {id: 'ei1', version: 3}}},
+            {contentType: {sys: {id: 'ct2'}}, data: {sys: {id: 'ei2', version: 5}}}
+          ],
+          assets: [
+            {sys: {id: 'a1'}, fields: {file: {'en-US': 'val'}}, process: stubs.assetProcess, publish: stubs.assetPublish},
+            {sys: {id: 'a2'}, fields: {file: {'en-US': 'val'}}, process: stubs.assetProcess, publish: stubs.assetPublish},
+            {sys: {id: 'a3'}, fields: {file: {'en-US': 'val'}}, process: stubs.assetProcess, publish: stubs.assetPublish}
+          ],
+          entries: [
+            {sys: {id: 'e1', contentType: {sys: {id: 'ct1'}}}, fields: {file: {'en-US': 'val'}}, publish: stubs.entryPublish},
+            {sys: {id: 'e2', contentType: {sys: {id: 'ct2'}}}, fields: {file: {'en-US': 'val'}}, publish: stubs.entryPublish},
+            {sys: {id: 'e3', contentType: {sys: {id: 'ct3'}}}, fields: {file: {'en-US': 'val'}}, publish: stubs.entryPublish}
+          ],
+          apiKeys: [
+            {sys: {id: 'ak1'}},
+            {sys: {id: 'ak2'}}
+          ]
+        };
         spaceContext.space.createContentType = sinon.stub();
         spaceContext.space.createEntry = sinon.stub();
         spaceContext.space.createAsset = sinon.stub();
         spaceContext.space.createDeliveryApiKey = sinon.stub();
         spaceContext.editingInterfaces.save = sinon.stub().resolves();
 
-        spaceContext.space.createContentType.returns($q.resolve({sys: {id: 'ct3'}, publish: stubs.ctPublish}));
-        stubs.ctPublish.returns($q.resolve());
+        spaceContext.space.createContentType.returns(Promise.resolve({sys: {id: 'ct3'}, publish: stubs.ctPublish}));
+        stubs.ctPublish.returns(Promise.resolve());
 
-        spaceContext.space.createAsset.returns($q.resolve({
+        spaceContext.space.createAsset.returns(Promise.resolve({
           sys: {id: 'a3'},
           process: stubs.assetProcess,
           publish: stubs.assetPublish
         }));
-        stubs.assetProcess.returns($q.resolve());
-        stubs.assetPublish.returns($q.resolve());
+        stubs.assetProcess.returns(Promise.resolve());
+        stubs.assetPublish.returns(Promise.resolve());
 
-        spaceContext.space.createEntry.returns($q.resolve({sys: {id: 'e3'}, publish: stubs.entryPublish}));
-        stubs.entryPublish.returns($q.resolve());
+        spaceContext.space.createEntry.returns(Promise.resolve({sys: {id: 'e3'}, publish: stubs.entryPublish}));
+        stubs.entryPublish.returns(Promise.resolve());
 
-        stubs.on.reset();
-        stubs.timeout.reset();
-
-        creator.create(attemptedTemplate)
-        .then(stubs.retrySuccess);
-        $rootScope.$digest();
-
-        openShareJSDoc.resolve({
-          on: stubs.on,
-          removeListener: sinon.stub(),
-          close: sinon.stub()
-        });
-        this.$apply();
-        stubs.on.yield([
-          {p: ['fields', 'file'], oi: {url: 'url'}}
-        ]);
-        stubs.timeout.yield();
-        $rootScope.$digest();
+        yield creator.create(template)
+        .spaceSetup
+        .catch(stubs.retrySuccess);
       });
 
       it('creates 1 content type', function () {

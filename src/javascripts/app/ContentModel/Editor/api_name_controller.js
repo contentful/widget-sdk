@@ -7,9 +7,9 @@
  * for the apiName property of fields.
  */
 angular.module('contentful')
-.controller('ApiNameController', ['$scope', '$injector', function ApiNameController ($scope, $injector) {
-  var modalDialog = $injector.get('modalDialog');
-  var $q = $injector.get('$q');
+.controller('ApiNameController', ['$scope', 'require', function ApiNameController ($scope, require) {
+  var modalDialog = require('modalDialog');
+  var $q = require('$q');
 
   /**
    * @ngdoc method

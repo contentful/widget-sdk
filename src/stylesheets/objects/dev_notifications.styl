@@ -1,0 +1,29 @@
+.cf-dev-notifications
+  position: fixed
+  bottom: 0
+  right: 0
+  padding: 6px 8px 3px
+  background-color: rgba(0,0,0,0.2)
+  border-top-left-radius: 4px
+  text-shadow: 1px 1px 1px rgb(255,255,255)
+  display: none
+  .btn-toggle-collapsed
+    position: absolute
+    right: 0
+    top: -20px
+    height: 20px
+    width: 20px
+    background-color: rgba(0,0,0,0.2)
+    border-radius: 3px 0 0 0
+    padding: 4px
+    &:before
+      content: 'v'
+      display: block
+      position: relative
+      line-height: 1
+      text-align: center
+  &.is-collapsed
+    height: 0
+    .btn-toggle-collapsed:before
+      content: '^'
+      top: 2px

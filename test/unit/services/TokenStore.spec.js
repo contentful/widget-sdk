@@ -81,12 +81,9 @@ describe('Token store service', function () {
     });
 
     it('returns rejected promise if space cannot be found', function* () {
-      try {
-        yield this.tokenStore.getSpace('xyz');
-      } catch (err) {
-        expect(err instanceof Error).toBe(true);
-        expect(err.message).toBe('No space with given ID could be found.');
-      }
+      const error = yield this.tokenStore.getSpace('xyz').catch((e) => e);
+      expect(error instanceof Error).toBe(true);
+      expect(error.message).toBe('No space with given ID could be found.');
     });
   });
 

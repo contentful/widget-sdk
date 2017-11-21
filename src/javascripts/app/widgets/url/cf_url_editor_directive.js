@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfUrlEditor', ['$injector', function ($injector) {
-  var debounce = $injector.get('debounce');
-  var InputUpdater = $injector.get('ui/inputUpdater');
+.directive('cfUrlEditor', ['require', function (require) {
+  var debounce = require('debounce');
+  var InputUpdater = require('ui/inputUpdater');
 
   return {
     restrict: 'E',

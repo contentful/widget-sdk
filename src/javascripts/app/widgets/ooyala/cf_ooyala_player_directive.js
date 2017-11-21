@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('contentful').directive('cfOoyalaPlayer', ['$injector', function($injector){
+angular.module('contentful').directive('cfOoyalaPlayer', ['require', function (require){
 
-  var ooyalaPlayerLoader = $injector.get('ooyalaPlayerLoader');
+  var ooyalaPlayerLoader = require('ooyalaPlayerLoader');
 
   var ID_PREFIX = 'ooyala-player-';
 

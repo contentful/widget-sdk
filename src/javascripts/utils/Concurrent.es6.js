@@ -7,7 +7,7 @@ import {makeCtor} from 'utils/TaggedValues';
  */
 
 
-export {default as createMVar} from './Concurrent/MVar';
+export * from './Concurrent/MVar';
 
 
 // Constructors for promise results;

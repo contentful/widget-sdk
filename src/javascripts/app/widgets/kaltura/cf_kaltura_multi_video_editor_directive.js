@@ -19,10 +19,10 @@ angular.module('contentful').directive('cfKalturaMultiVideoEditor', [function(){
 
 }])
 
-.controller('cfKalturaMultiVideoEditorController', ['$injector', function($injector){
-  var KalturaEditorControllerMixin = $injector.get('KalturaEditorControllerMixin');
-  var kalturaClientWrapper = $injector.get('kalturaClientWrapper');
-  var spaceContext = $injector.get('spaceContext');
+.controller('cfKalturaMultiVideoEditorController', ['require', function (require){
+  var KalturaEditorControllerMixin = require('KalturaEditorControllerMixin');
+  var kalturaClientWrapper = require('kalturaClientWrapper');
+  var spaceContext = require('spaceContext');
 
   kalturaClientWrapper.setOrganizationId(spaceContext.space.getOrganizationId());
 

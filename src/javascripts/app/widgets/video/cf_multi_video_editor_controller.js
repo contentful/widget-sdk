@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 .controller('cfMultiVideoEditorController',
-  ['$scope', '$injector', 'widgetApi', function($scope, $injector, widgetApi) {
+  ['$scope', 'require', 'widgetApi', function($scope, require, widgetApi) {
   var field = widgetApi.field;
   var providerVideoEditorController = $scope.providerVideoEditorController;
 

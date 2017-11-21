@@ -43,7 +43,8 @@ export default function create () {
     user_ui_config: makeSingletonEndpoint(),
     api_keys: makeGenericEndpoint(),
     preview_api_keys: makeGenericEndpoint(),
-    roles: makeGenericEndpoint()
+    roles: makeGenericEndpoint(),
+    extensions: makeGenericEndpoint()
   };
 
   const stores = mapValues(endpoints, (ep) => ep.store);

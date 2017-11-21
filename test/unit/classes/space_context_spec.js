@@ -87,7 +87,7 @@ describe('spaceContext', function () {
     });
 
     it('resets Widgets store', function () {
-      sinon.assert.calledWith(Widgets.setSpace, SPACE);
+      sinon.assert.calledWith(Widgets.setSpace, this.spaceContext.endpoint);
     });
 
     it('sets the widgets property from the widgets service', function () {

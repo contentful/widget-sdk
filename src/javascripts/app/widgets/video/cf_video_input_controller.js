@@ -1,11 +1,11 @@
 'use strict';
 
-angular.module('contentful').controller('cfVideoInputController', ['$attrs', '$scope', '$injector', function($attrs, $scope, $injector){
+angular.module('contentful').controller('cfVideoInputController', ['$attrs', '$scope', 'require', function($attrs, $scope, require){
   var controller = this;
 
-  var assert                  = $injector.get('assert');
-  var debounce                = $injector.get('debounce');
-  var modalDialog             = $injector.get('modalDialog');
+  var assert                  = require('assert');
+  var debounce                = require('debounce');
+  var modalDialog             = require('modalDialog');
   var debouncedFetchAssetInfo = debounce(fetchAssetInfo, 750);
 
   assert.defined($attrs.assetLookup, 'Video Input Directive needs a callback to lookup details about the given asset id');

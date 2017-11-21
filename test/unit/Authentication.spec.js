@@ -71,14 +71,6 @@ describe('Authentication', function () {
       this.$apply();
       expect(this.window.location).toBe('//be.test.com/login');
     });
-
-    it('never resolves result when token fetch fails', function () {
-      this.$http.rejects();
-      const done = sinon.spy();
-      this.Auth.refreshToken().finally(done);
-      this.$apply();
-      sinon.assert.notCalled(done);
-    });
   });
 
   describe('#init()', function () {
@@ -112,15 +104,14 @@ describe('Authentication', function () {
       this.Auth.init();
     });
 
-    it('deletes the token from local storage', function () {
+    it('deletes the token from local storage', function* () {
       expect(this.store.get()).toBe('STORED_TOKEN');
-      this.Auth.logout();
-      this.$apply();
+      yield this.Auth.logout();
       expect(this.store.get()).toBe(null);
     });
 
-    it('revokes the token', function () {
-      this.Auth.logout();
+    it('revokes the token', function* () {
+      yield this.Auth.logout();
       this.$apply();
       sinon.assert.calledWith(this.$http, sinon.match({
         method: 'POST',
@@ -132,16 +123,14 @@ describe('Authentication', function () {
       }));
     });
 
-    it('redirects to the logout page', function () {
-      this.Auth.logout();
-      this.$apply();
+    it('redirects to the logout page', function* () {
+      yield this.Auth.logout();
       expect(this.window.location).toEqual('//be.test.com/logout');
     });
 
-    it('redirects to the logout page if revokation fails', function () {
+    it('redirects to the logout page if revokation fails', function* () {
       this.$http.rejects();
-      this.Auth.logout();
-      this.$apply();
+      yield this.Auth.logout().catch(() => {});
       expect(this.window.location).toEqual('//be.test.com/logout');
     });
   });

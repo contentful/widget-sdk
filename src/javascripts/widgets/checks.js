@@ -5,8 +5,8 @@
  * @name widgets/checks
  */
 angular.module('contentful')
-.factory('widgets/checks', ['$injector', function widgetChecks($injector) {
-  var $q = $injector.get('$q');
+.factory('widgets/checks', ['require', function widgetChecks (require) {
+  var $q = require('$q');
 
   var CHECKS = {
     kalturaEditor:           kalturaCredentialsCheck,
@@ -46,8 +46,8 @@ angular.module('contentful')
   }
 
   function kalturaCredentialsCheck() {
-    var kalturaCredentials = $injector.get('kalturaCredentials');
-    var authorization      = $injector.get('authorization');
+    var kalturaCredentials = require('kalturaCredentials');
+    var authorization      = require('authorization');
     var organizationId     = _.get(authorization, 'spaceContext.space.organization.sys.id', null);
 
     // there's really no way to say if get() call failed due to HTTP issue

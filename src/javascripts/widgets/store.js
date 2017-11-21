@@ -8,7 +8,7 @@ angular.module('contentful')
  *
  * @usage[js]
  * const Store = require('widgets/store')
- * const store = Store.create(space)
+ * const store = Store.create(spaceEndpoint)
  * store.getMap()
  * .then((map) => { ... })
  *
@@ -30,8 +30,8 @@ angular.module('contentful')
     create: create
   };
 
-  function create (space) {
-    if (!space) {
+  function create (spaceEndpoint) {
+    if (!spaceEndpoint) {
       throw new TypeError('Space is not set');
     }
 
@@ -40,16 +40,18 @@ angular.module('contentful')
     };
 
     function getMap () {
-      return getExtensions(space)
+      return getExtensions(spaceEndpoint)
       .then(function (widgets) {
         return _.extend({}, builtin, widgets);
       });
     }
   }
 
-  function getExtensions (space) {
-    return space.endpoint('extensions').get()
-    .then(function (response) {
+  function getExtensions (spaceEndpoint) {
+    return spaceEndpoint({
+      method: 'GET',
+      path: ['extensions']
+    }).then(function (response) {
       return createExtensionsMap(response.items);
     }, function () {
       return {};

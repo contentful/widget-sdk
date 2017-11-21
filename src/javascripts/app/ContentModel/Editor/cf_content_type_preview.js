@@ -7,12 +7,14 @@ angular.module('contentful')
  * @name cfContentTypePreview
  * @scope.requires {Client.ContentType} contentType
  */
-.directive('cfContentTypePreview', ['$injector', function ($injector) {
-  var getContentTypePreview = $injector.get('contentTypePreview');
+.directive('cfContentTypePreview', ['require', function (require) {
+  var getContentTypePreview = require('contentTypePreview');
+  var template = require('app/ContentModel/Editor/ContentTypePreviewTemplate').default;
+
   return {
     scope: true,
     restrict: 'E',
-    template: JST.cf_content_type_preview(),
+    template: template(),
     controller: ['$scope', function ($scope) {
       $scope.$watch('contentType.data', function (data) {
         var publishedVersion = _.get(data, 'sys.publishedVersion');

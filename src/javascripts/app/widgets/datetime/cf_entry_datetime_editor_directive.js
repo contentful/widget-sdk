@@ -6,12 +6,12 @@ angular.module('cf.app')
  * @module cf.app
  * @name cfEntryDatetimeEditor
  */
-.directive('cfEntryDatetimeEditor', ['$injector', function ($injector) {
-  var moment = $injector.get('moment');
-  var zoneOffsets = $injector.get('zoneOffsets');
-  var Datepicker = $injector.get('datepicker');
-  var Data = $injector.get('widgets/datetime/data');
-  var $timeout = $injector.get('$timeout');
+.directive('cfEntryDatetimeEditor', ['require', function (require) {
+  var moment = require('moment');
+  var zoneOffsets = require('zoneOffsets');
+  var Datepicker = require('datepicker');
+  var Data = require('widgets/datetime/data');
+  var $timeout = require('$timeout');
 
   var ERRORS = {
     timeFormat: {

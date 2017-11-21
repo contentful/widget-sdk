@@ -102,11 +102,11 @@ angular.module('contentful')
    * Only `spaceContext.resetWithSpace()` is responsible for calling
    * this method.
    *
-   * @param {Client.Space} space
+   * @param {Data.Endpoint} spaceEndpoint
    * @returns {Promise<Void>}
    */
-  function setSpace (space) {
-    store = WidgetStore.create(space);
+  function setSpace (spaceEndpoint) {
+    store = WidgetStore.create(spaceEndpoint);
     return refreshWidgetCache();
   }
 

@@ -7,9 +7,9 @@ angular.module('cf.data')
  * @module cf.data
  * @name data/editingInterfaces
  */
-.factory('data/editingInterfaces', ['$injector', function ($injector) {
-  var $q = $injector.get('$q');
-  var Transformer = $injector.get('data/editingInterfaces/transformer');
+.factory('data/editingInterfaces', ['require', function (require) {
+  var $q = require('$q');
+  var Transformer = require('data/editingInterfaces/transformer');
 
   return function createEIRepo (spaceEndpoint) {
     return {

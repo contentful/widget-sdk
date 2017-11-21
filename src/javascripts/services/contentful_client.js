@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('contentfulClient', ['$injector', function ($injector) {
+angular.module('contentful').factory('contentfulClient', ['require', function (require) {
   /*
    * This module is a fork of https://github.com/contentful/contentful.js which allows us to use Contentful
    * as if it were an external service. As such it might not reflect other patterns present throughout the app.
@@ -10,9 +10,9 @@ angular.module('contentful').factory('contentfulClient', ['$injector', function 
    * It's also been modified to make use of the CMA instead, with the X-Contentful-Skip-Transformation header.
   */
 
-  var $http       = $injector.get('$http');
-  var $q          = $injector.get('$q');
-  var querystring = $injector.get('querystring');
+  var $http       = require('$http');
+  var $q          = require('$q');
+  var querystring = require('querystring');
 
   var parseableResourceTypes = {
     Asset: Asset,

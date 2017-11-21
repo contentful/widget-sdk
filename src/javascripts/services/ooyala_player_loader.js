@@ -1,9 +1,9 @@
 'use strict';
-angular.module('contentful').factory('ooyalaPlayerLoader', ['$injector', function($injector){
+angular.module('contentful').factory('ooyalaPlayerLoader', ['require', function (require){
 
-  var $window     = $injector.get('$window');
-  var angularLoad = $injector.get('angularLoad');
-  var $q          = $injector.get('$q');
+  var $window     = require('$window');
+  var angularLoad = require('angularLoad');
+  var $q          = require('$q');
 
   /*
    * Force the load of the HTML5 player.

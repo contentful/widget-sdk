@@ -120,11 +120,48 @@ function runGenerator (gen, $apply) {
   return runTask(function* () {
     const runApply = setInterval($apply, 10);
     try {
-      yield* gen;
+      yield* liftToNativePromise(gen);
     } catch (e) {
       clearInterval(runApply);
       throw e;
     }
     clearInterval(runApply);
   });
+}
+
+/**
+ * Takes a generator that yields $q and native Promises and returns a
+ * generator that only yields native Promises.
+ *
+ * We need this to be able to call `this.$apply()` after yielding a $q
+ * promise
+ *
+ *    it('calls $apply', function* () {
+ *      yield $q.resolve();
+ *      this.$apply();
+ *    })
+ *
+ * If we do not lift $q Promises the statement `this.$apply()` will be
+ * called from the `then` handler of the promise and thus in an Angular
+ * digest loop. Calling `$apply()` in a digest loop throws an
+ * exception.
+ */
+function* liftToNativePromise (gen) {
+  let input, error, didThrow;
+  while (true) {
+    const result = didThrow ? gen.throw(error) : gen.next(input);
+    if (result.done) {
+      return result.value;
+    } else {
+      try {
+        input = yield Promise.resolve(result.value);
+        error = null;
+        didThrow = false;
+      } catch (e) {
+        error = e;
+        input = null;
+        didThrow = true;
+      }
+    }
+  }
 }

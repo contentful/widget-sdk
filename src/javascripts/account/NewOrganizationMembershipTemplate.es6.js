@@ -69,7 +69,8 @@ export function emailsInput (
   organization,
   status
 }, {
-  updateEmails
+  updateEmails,
+  validateEmails
 }) {
   return h('div', [
     h('h3.section-title', ['Select users']),
@@ -81,7 +82,8 @@ export function emailsInput (
         class: 'cfnext-form__input',
         style: {width: '600px'},
         value: emailsInputValue,
-        onChange: (evt) => updateEmails(evt.target.value)
+        onInput: (evt) => updateEmails(evt.target.value),
+        onBlur: validateEmails
       }),
       emails.length > organization.remainingInvitations
         ? h('.cfnext-form__field-error', [`
@@ -149,10 +151,12 @@ export function accessToSpaces (
   }
 
   function roleCell (role) {
-    return h('span.cfnext-form-option', {
-      style: { marginBottom: '0' }
+    return h('span', {
+      style: {margin: '0 2em 0 0', display: 'inline-block'}
     }, [
-      h('label', [
+      h('label', {
+        style: {whiteSpace: 'nowrap'}
+      }, [
         h('input', {
           type: 'checkbox',
           checked: isChecked(role),
@@ -183,9 +187,10 @@ export function accessToSpaces (
           return h('tr', [
             h('td', [space.name]),
             h('td', [
-              h('.cfnext-form__fieldset--horizontal', [
-                roleCell(assign({spaceId: space.id}, adminRole), updateSpaceRole)
-              ].concat(space.roles.map(role => roleCell(role, updateSpaceRole))))
+              h('p', [
+                roleCell(assign({spaceId: space.id}, adminRole), updateSpaceRole),
+                ...space.roles.map(role => roleCell(role, updateSpaceRole))
+              ])
             ])
           ]);
         }))

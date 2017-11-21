@@ -86,7 +86,7 @@ export function isNonPayingUser (user) {
  * Returns true if the user belongs to an org that has atleast one space
  *
  * @param {Object} spacesByOrg
- * @returns {Boolean}
+ * @returns {boolean}
  */
 export function hasAnOrgWithSpaces (spacesByOrg) {
   return !!find(spacesByOrg, spaces => !!spaces.length);
@@ -98,7 +98,7 @@ export function hasAnOrgWithSpaces (spacesByOrg) {
  * member of.
  *
  * @param {Object} user
- * @returns {Boolean}
+ * @returns {boolean}
  */
 export function ownsAtleastOneOrg (user) {
   return !!getOwnedOrgs(user).length;
@@ -145,24 +145,25 @@ export function getFirstOwnedOrgWithoutSpaces (user, spacesByOrg) {
  * automated tests with A/B tests.
  *
  * @param {Object} user
- * @returns {Boolean}
+ * @returns {boolean}
  */
 export function isAutomationTestUser (user) {
-  return /^\w+\+autotesting_newuser(?:\d+_){2}\d+@contentful.com$/.test(user.email);
+  return /^autotest\+.*@contentful.com$/.test(user.email);
 }
 
 /**
  * @description
- * Returns true if the current org was created by the currently
- * logged in user. This can be used as a proxy for the
- * "contentful pioneer user" in that org.
+ * Returns true if the given org was created by the given user.
+ * This can be used as a proxy for the "contentful pioneer user"
+ * in that org.
  *
  * @params {Object} user
  * @params {Object} org
- * @returns {Boolean}
+ * @returns {boolean}
  */
 export function isUserOrgCreator (user, org) {
-  return org.sys.createdBy.sys.id === user.sys.id;
+  const creatorUser = org.sys.createdBy;
+  return !!creatorUser && creatorUser.sys.id === user.sys.id;
 }
 
 /**

@@ -1,4 +1,4 @@
-import {omit, pick, negate, trim, sortedUniq, sortBy, get as getAtPath} from 'lodash';
+import {omit, pick, negate, trim, sortedUniq, get as getAtPath} from 'lodash';
 import {h} from 'ui/Framework';
 import { assign } from 'utils/Collections';
 import {getOrganization} from 'services/TokenStore';
@@ -55,6 +55,7 @@ export default function ($scope) {
     updateSpaceRole,
     updateOrgRole,
     updateEmails,
+    validateEmails,
     toggleInvitationEmailOption,
     restart,
     goToList,
@@ -96,7 +97,6 @@ export default function ($scope) {
       .forEach(space => runTask(function* () {
         const spaceWithRoles = yield* getSpaceWithRoles(space);
         state = assign(state, {spaces: [...state.spaces, spaceWithRoles]});
-        // rerender every time a space is complete with roles to show a progress indicator
         rerender();
       }));
   });
@@ -113,7 +113,7 @@ export default function ($scope) {
       id: space.data.sys.id,
       createdAt: space.data.sys.createdAt,
       name: space.data.name,
-      roles: sortBy(spaceRoles, role => role.name)
+      roles: spaceRoles.sort((role, previous) => role.name.localeCompare(previous.name))
     };
   }
 
@@ -248,8 +248,7 @@ export default function ($scope) {
   /**
    * Receives a string with email addresses
    * separated by comma and transforms it into
-   * an array of emails and, possibly, an array with
-   * the invalid addresses.
+   * an array of emails.
    */
   function updateEmails (emailsInputValue) {
     const list = emailsInputValue
@@ -257,14 +256,20 @@ export default function ($scope) {
       .map(trim)
       .filter(email => email.length);
     const emails = sortedUniq(list);
-    const invalidAddresses = emails.filter(negate(isValidEmail));
 
     state = assign(state, {
       emailsInputValue,
-      emails,
-      invalidAddresses
+      emails
     });
+  }
 
+  /**
+   * Update state with invalid emails addresses
+   */
+  function validateEmails () {
+    const invalidAddresses = state.emails.filter(negate(isValidEmail));
+
+    state = assign(state, {invalidAddresses});
     rerender();
   }
 
@@ -359,7 +364,7 @@ function render (state, actions) {
               maxNumberOfEmails,
               Invalid,
               pick(state, ['emails', 'emailsInputValue', 'invalidAddresses', 'organization', 'status']),
-              pick(actions, ['updateEmails'])
+              pick(actions, ['updateEmails', 'validateEmails'])
             ),
             organizationRole(state.orgRole, actions.updateOrgRole),
             accessToSpaces(

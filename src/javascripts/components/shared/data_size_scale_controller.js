@@ -13,8 +13,8 @@
  */
 angular.module('contentful')
 .controller('DataSizeScaleController',
-['$scope', '$attrs', '$injector', function($scope, $attrs, $injector) {
-  var $parse = $injector.get('$parse');
+['$scope', '$attrs', 'require', function($scope, $attrs, require) {
+  var $parse = require('$parse');
   var controller = this;
 
   var getModelValue = _.partial($parse($attrs.model), $scope.$parent);

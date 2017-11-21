@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('cf.app')
-.directive('cfJsonEditor', ['$injector', function ($injector) {
-  var Editor = $injector.get('app/widgets/json/code_editor');
+.directive('cfJsonEditor', ['require', function (require) {
+  var Editor = require('app/widgets/json/code_editor');
 
   return {
     restrict: 'E',

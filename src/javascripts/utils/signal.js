@@ -6,7 +6,7 @@ angular.module('cf.utils')
  * @module cf.utils
  * @name signal
  * @usage[js]
- * var signal = $injector.get('signal').create()
+ * var signal = require('signal').create()
  * var detach = signal.attach(function (message) {
  *   console.log('Simon says: ' + message)
  * })
@@ -17,7 +17,7 @@ angular.module('cf.utils')
  * dispatched value.
  *
  * ~~~js
- * var createMemoized = $injector.get('signal').createMemoized
+ * var createMemoized = require('signal').createMemoized
  * var signal = createSignal('initial')
  * signal.attach(function (v) {
  *   console.log(v)

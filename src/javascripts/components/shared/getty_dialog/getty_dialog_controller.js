@@ -1,13 +1,13 @@
 'use strict';
 
-angular.module('contentful').controller('GettyDialogController', ['$scope', '$injector', function($scope, $injector) {
-  var Paginator          = $injector.get('Paginator');
-  var PromisedLoader     = $injector.get('PromisedLoader');
-  var fileSize           = $injector.get('fileSize');
-  var gettyImagesFactory = $injector.get('gettyImagesFactory');
-  var logger             = $injector.get('logger');
-  var stringUtils        = $injector.get('stringUtils');
-  var moment             = $injector.get('moment');
+angular.module('contentful').controller('GettyDialogController', ['$scope', 'require', function($scope, require) {
+  var Paginator          = require('Paginator');
+  var PromisedLoader     = require('PromisedLoader');
+  var fileSize           = require('fileSize');
+  var gettyImagesFactory = require('gettyImagesFactory');
+  var logger             = require('logger');
+  var stringUtils        = require('stringUtils');
+  var moment             = require('moment');
 
   var IMAGES_PER_PAGE = 6;
 
@@ -337,7 +337,7 @@ angular.module('contentful').controller('GettyDialogController', ['$scope', '$in
    * Use with care, don't leave uncommented when commiting code.
   */
 
-  // var random = $injector.get('random');
+  // var random = require('random');
   // function mockImageResult() {
   //   var metadata = {
   //     Title: 'Kitten',
