@@ -65,6 +65,8 @@ angular.module('contentful/mocks')
     spaceContext.cma = new CMAClient(spaceContext.endpoint);
     spaceContext.apiKeyRepo = createApiKeyRepo(spaceContext.endpoint);
     spaceContext.organizationContext = {};
+    Widgets.setSpace(spaceContext.endpoint);
+    spaceContext.widgets = Widgets;
     spaceContext.uiConfig = createUiConfigMock();
 
     return spaceContext;
