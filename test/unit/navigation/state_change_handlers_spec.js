@@ -6,6 +6,11 @@ describe('navigation/stateChangeHandlers', function () {
   let $rootScope;
   let modalCloseStub;
 
+  afterEach(function () {
+    // Avoid memory leak
+    logger = $rootScope = modalCloseStub = null;
+  });
+
   beforeEach(function () {
     this.state = {go: sinon.stub()};
     this.spaceContext = {
@@ -70,7 +75,7 @@ describe('navigation/stateChangeHandlers', function () {
       this.state.go.returns();
       const to = {name: 'spaces.detail.entries', redirectTo: 'spaces.detail.content_types'};
       $rootScope.$emit('$stateChangeStart', to, {}, {}, {});
-      sinon.assert.calledWith(this.state.go, to.redirectTo, {});
+      sinon.assert.calledWith(this.state.go, to.redirectTo, {}, { relative: to });
     });
   });
 
