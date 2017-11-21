@@ -8,6 +8,8 @@ import {
   isFieldFilterApplicableToContentType,
   getContentTypeById } from './Filters';
 
+const CONTENT_TYPE_ALL = '';
+
 const defaultFocus = {
   index: null,
   isValueFocused: false,
@@ -33,13 +35,13 @@ const defaultFocus = {
 //   collapse multiline filters.
 
 export const initialState = ({
-  contentTypeId = '',
+  contentTypeId,
   searchFilters = [],
   searchText = '',
   contentTypes,
   withAssets
 }) => ({
-  contentTypeId,
+  contentTypeId: contentTypeId || CONTENT_TYPE_ALL,
   filters: searchFilters,
   input: searchText,
   searchBoxHasFocus: false,
