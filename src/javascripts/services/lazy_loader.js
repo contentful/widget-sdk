@@ -13,12 +13,12 @@
  * If a script just adds a global value, define the "globalObject" property.
  */
 angular.module('contentful')
-.factory('LazyLoader', ['$injector', function ($injector) {
-  var $q = $injector.get('$q');
-  var $window = $injector.get('$window');
-  var $rootScope = $injector.get('$rootScope');
-  var loader = $injector.get('angularLoad');
-  var resources = $injector.get('LazyLoader/resources');
+.factory('LazyLoader', ['require', function (require) {
+  var $q = require('$q');
+  var $window = require('$window');
+  var $rootScope = require('$rootScope');
+  var loader = require('angularLoad');
+  var resources = require('LazyLoader/resources');
 
   var store = {};
   var cache = {};
@@ -105,10 +105,10 @@ angular.module('contentful')
   }
 }])
 
-.factory('LazyLoader/resources', ['$injector', function ($injector) {
-  var AssetResolver = $injector.get('AssetResolver');
-  var environment = $injector.get('environment');
-  var Config = $injector.get('Config');
+.factory('LazyLoader/resources', ['require', function (require) {
+  var AssetResolver = require('AssetResolver');
+  var environment = require('environment');
+  var Config = require('Config');
 
   /**
    * Options:

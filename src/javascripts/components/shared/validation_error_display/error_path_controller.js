@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('contentful')
-.controller('ErrorPathController', ['$scope', '$attrs', '$injector',
-function ErrorPathController($scope, $attrs, $injector) {
+.controller('ErrorPathController', ['$scope', '$attrs', 'require',
+function ErrorPathController($scope, $attrs, require) {
   var controller = this;
-  var logger = $injector.get('logger');
+  var logger = require('logger');
 
   controller.messages = [];
 

@@ -1,6 +1,6 @@
 'use strict';
-angular.module('contentful').directive('cfApiNameShadow', ['$injector', function ($injector) {
-  var $parse = $injector.get('$parse');
+angular.module('contentful').directive('cfApiNameShadow', ['require', function (require) {
+  var $parse = require('$parse');
 
   return {
     restrict: 'A',

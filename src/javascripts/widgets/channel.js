@@ -13,11 +13,11 @@ angular.module('contentful')
  *
  * [json-rpc]: http://www.jsonrpc.org/specification
  */
-.factory('widgets/channel', ['$injector', function ($injector) {
-  var $window = $injector.get('$window');
-  var $q = $injector.get('$q');
-  var random = $injector.get('random');
-  var $rootScope = $injector.get('$rootScope');
+.factory('widgets/channel', ['require', function (require) {
+  var $window = require('$window');
+  var $q = require('$q');
+  var random = require('random');
+  var $rootScope = require('$rootScope');
 
   /**
    * @ngdoc type

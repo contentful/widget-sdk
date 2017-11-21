@@ -20,9 +20,9 @@ angular.module('cf.ui')
  *   }
  * })
  */
-.factory('command', ['$injector', function ($injector) {
-  var createSignal = $injector.get('signal').create;
-  var $q = $injector.get('$q');
+.factory('command', ['require', function (require) {
+  var createSignal = require('signal').create;
+  var $q = require('$q');
 
   /**
    * @ngdoc property
@@ -154,8 +154,8 @@ angular.module('cf.ui')
  *
  * [ui/command]: api/cf.ui/service/command
  */
-.directive('uiCommand', ['$injector', function ($injector) {
-  var uiCommandStateDirective = $injector.get('uiCommandStateDirective')[0];
+.directive('uiCommand', ['require', function (require) {
+  var uiCommandStateDirective = require('uiCommandStateDirective')[0];
   return {
     restrict: 'A',
     scope: {

@@ -12,9 +12,9 @@ angular.module('contentful')
     }
   };
 })
-.controller('translatorLocaleSelectorController', ['$scope', '$injector', function ($scope, $injector) {
-  var TheLocaleStore = $injector.get('TheLocaleStore');
-  var ALL_LOCALES = $injector.get('PolicyBuilder/CONFIG').ALL_LOCALES;
+.controller('translatorLocaleSelectorController', ['$scope', 'require', function ($scope, require) {
+  var TheLocaleStore = require('TheLocaleStore');
+  var ALL_LOCALES = require('PolicyBuilder/CONFIG').ALL_LOCALES;
 
   var controller = this;
 

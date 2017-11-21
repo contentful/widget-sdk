@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('contentful').controller('cfVideoSearchController', ['$scope', '$injector', function($scope, $injector){
-  var debounce                    = $injector.get('debounce');
+angular.module('contentful').controller('cfVideoSearchController', ['$scope', 'require', function($scope, require){
+  var debounce                    = require('debounce');
   var debouncedQueryVideoProvider = debounce(queryVideoProvider, 750);
 
   var currentSearch, currentPlayer;

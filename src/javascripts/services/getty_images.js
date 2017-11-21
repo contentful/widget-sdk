@@ -1,10 +1,10 @@
 'use strict';
 
-angular.module('contentful').factory('gettyImagesFactory', ['$injector', function gettyImagesFactory($injector) {
-  var $http  = $injector.get('$http');
-  var $q     = $injector.get('$q');
-  var client = $injector.get('client');
-  var logger = $injector.get('logger');
+angular.module('contentful').factory('gettyImagesFactory', ['requre', function gettyImagesFactory(require) {
+  var $http  = require('$http');
+  var $q     = require('$q');
+  var client = require('client');
+  var logger = require('logger');
 
   var accessTokens = {};
   var service = {};

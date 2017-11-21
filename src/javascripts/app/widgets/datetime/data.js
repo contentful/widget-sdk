@@ -10,8 +10,8 @@ angular.module('cf.app')
  * Collection of function to manipulate view data for the datetime
  * editor.
  */
-.factory('widgets/datetime/data', ['$injector', function ($injector) {
-  var moment = $injector.get('moment');
+.factory('widgets/datetime/data', ['require', function (require) {
+  var moment = require('moment');
 
   var ZONE_RX = /(Z|[+-]\d{2}[:+]?\d{2})$/;
   var TIME_24_RX = /^([01]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?$/;

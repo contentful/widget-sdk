@@ -7,9 +7,9 @@
  * Utilities for creating and handling Content Type Fields
  */
 angular.module('contentful')
-.factory('fieldFactory', ['$injector', function ($injector) {
-  var capitalize = $injector.get('stringUtils').capitalize;
-  var TheLocaleStore = $injector.get('TheLocaleStore');
+.factory('fieldFactory', ['require', function (require) {
+  var capitalize = require('stringUtils').capitalize;
+  var TheLocaleStore = require('TheLocaleStore');
 
   /**
    * @ngdoc property

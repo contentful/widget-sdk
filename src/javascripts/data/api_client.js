@@ -19,8 +19,8 @@ angular.module('cf.data')
  * [cma-js]: https://github.com/contentful/contentful-management.js
  *
  * @usage[js]
- * var APIClient = $injector.get('data/APIClient');
- * var createSpaceEndpoint = $injector.get('data/Endpoint').createSpaceEndpoint;
+ * var APIClient = require('data/APIClient');
+ * var createSpaceEndpoint = require('data/Endpoint').createSpaceEndpoint;
  * var client = new APIClient(createSpaceEndpoint(...));
  * client.getEntries(query).then(handleResponses);
  */

@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('contentful').directive('cfWebhookHealth', ['$injector', function ($injector) {
+angular.module('contentful').directive('cfWebhookHealth', ['require', function (require) {
 
-  var WebhookRepository = $injector.get('WebhookRepository');
+  var WebhookRepository = require('WebhookRepository');
 
   var THRESHOLD = {WARN: 70, OK: 90};
 

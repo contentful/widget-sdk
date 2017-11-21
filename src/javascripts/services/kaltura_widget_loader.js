@@ -1,10 +1,10 @@
 'use strict';
 
-angular.module('contentful').factory('kalturaWidgetLoader', ['$injector', function($injector){
+angular.module('contentful').factory('kalturaWidgetLoader', ['require', function (require){
 
-  var $window     = $injector.get('$window');
-  var angularLoad = $injector.get('angularLoad');
-  var $q          = $injector.get('$q');
+  var $window     = require('$window');
+  var angularLoad = require('angularLoad');
+  var $q          = require('$q');
 
   var SCRIPT_BASE_SRC = 'https://www.kaltura.com/p/:partnerId/sp/:partnerId00/embedIframeJs/uiconf_id/:uiConfId/partner_id/:partnerId';
   var defer           = $q.defer();

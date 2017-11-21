@@ -7,7 +7,7 @@ angular.module('cf.utils')
  * @module cf.utils
  * @name utils/memoize
  * @usage[js]
- * var memoize = $injector.get('utils/memoize')
+ * var memoize = require('utils/memoize')
  * var runOnce = memoize(function () {
  *   console.log('run')
  *   return true

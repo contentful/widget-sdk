@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfNumberEditor', ['$injector', function ($injector) {
-  var InputUpdater = $injector.get('ui/inputUpdater');
-  var parseNumber = $injector.get('cfNumberEditor/parseNumber');
-  var debounce = $injector.get('debounce');
+.directive('cfNumberEditor', ['require', function (require) {
+  var InputUpdater = require('ui/inputUpdater');
+  var parseNumber = require('cfNumberEditor/parseNumber');
+  var debounce = require('debounce');
 
   return {
     scope: {},

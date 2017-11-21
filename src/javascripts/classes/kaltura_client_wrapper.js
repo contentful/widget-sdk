@@ -1,11 +1,11 @@
 'use strict';
 
-angular.module('contentful').factory('kalturaClientWrapper', ['$injector', function($injector){
-  var $window              = $injector.get('$window');
-  var $q                   = $injector.get('$q');
-  var assert               = $injector.get('assert');
-  var KalturaErrorMessages = $injector.get('KalturaErrorMessages');
-  var kalturaCredentials   = $injector.get('kalturaCredentials');
+angular.module('contentful').factory('kalturaClientWrapper', ['require', function (require) {
+  var $window              = require('$window');
+  var $q                   = require('$q');
+  var assert               = require('assert');
+  var KalturaErrorMessages = require('KalturaErrorMessages');
+  var kalturaCredentials   = require('kalturaCredentials');
 
 
   var KalturaAPIResponseCodes = {
@@ -88,7 +88,7 @@ angular.module('contentful').factory('kalturaClientWrapper', ['$injector', funct
          *
          * Declaring this property like that means that everytime
          * a new client is created it will append more calls to this
-         * queue (because the client doesn't have the property and 
+         * queue (because the client doesn't have the property and
          * then it looks for the property in its prototype
          * chain). The evident sideeffect of this is that even if
          * the query value is changed the value on the first call

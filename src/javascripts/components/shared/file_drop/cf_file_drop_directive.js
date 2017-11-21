@@ -1,9 +1,9 @@
 'use strict';
 
-angular.module('contentful').directive('cfFileDrop', ['$injector', function ($injector) {
-  var filepicker   = $injector.get('filepicker');
-  var logger       = $injector.get('logger');
-  var notification = $injector.get('notification');
+angular.module('contentful').directive('cfFileDrop', ['require', function (require) {
+  var filepicker   = require('filepicker');
+  var logger       = require('logger');
+  var notification = require('notification');
 
   var errorHandlers = {
     TooManyFiles: function(){

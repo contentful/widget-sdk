@@ -17,8 +17,8 @@
  * map.locale.toInternal[aLocale.code]  // => aLocale.internal_code
  */
 angular.module('contentful')
-.factory('widgets/IDMap', ['$injector', function ($injector) {
-  var TheLocaleStore = $injector.get('TheLocaleStore');
+.factory('widgets/IDMap', ['require', function (require) {
+  var TheLocaleStore = require('TheLocaleStore');
 
   return createIDMap;
 

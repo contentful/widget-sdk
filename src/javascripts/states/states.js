@@ -6,9 +6,9 @@ angular.module('contentful')
  * @ngdoc service
  * @name states
  */
-.factory('states', ['$injector', function ($injector) {
-  var config = $injector.get('states/config');
-  var notification = $injector.get('notification');
+.factory('states', ['require', function (require) {
+  var config = require('states/config');
+  var notification = require('notification');
 
   return {
     loadAll: loadAll,
@@ -25,9 +25,9 @@ angular.module('contentful')
    */
   function loadAll () {
     load([
-      $injector.get('states/account'),
-      $injector.get('states/Spaces').default,
-      $injector.get('states/Home').default,
+      require('states/account'),
+      require('states/Spaces').default,
+      require('states/Home').default,
       {
         name: '_other',
         url: '/*path',

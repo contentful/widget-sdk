@@ -140,11 +140,11 @@ angular.module('contentful')
  * @method {function(error:Error): string} errorMessageBuilder.forContentType
  * @method {function(error:Error): string} errorMessageBuilder.forAsset
  */
-.factory('errorMessageBuilder', ['$injector', function ($injector) {
-  var moment = $injector.get('moment');
-  var joinAnd = $injector.get('stringUtils').joinAnd;
-  var mimetypeGroupNames = $injector.get('mimetype').getGroupNames();
-  var buildBaseErrorMessage = $injector.get('baseErrorMessageBuilder');
+.factory('errorMessageBuilder', ['require', function (require) {
+  var moment = require('moment');
+  var joinAnd = require('stringUtils').joinAnd;
+  var mimetypeGroupNames = require('mimetype').getGroupNames();
+  var buildBaseErrorMessage = require('baseErrorMessageBuilder');
 
   var messages = {
     linkMimetypeGroup: function (error) {

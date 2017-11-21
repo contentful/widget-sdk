@@ -46,6 +46,16 @@ Before starting review, make sure the aim of the PR (in TP ticket or description
 
 Use [Github code review tool][github-cr-docs] to review and discuss, eventually approving the PR or requesting some changes.
 
+If you are not the requested reviewer you may still approve a PR or add
+comments. You should not reject the PR unless you have a compelling reason to.
+Leave it to the requested reviewer to make a judgement.
+
+It is OK to approve a PR while still requesting some changes. These request
+should be treated as suggestions that the author is free to include.
+
+After you have reviewed the code by either rejecting or accepting the changes
+remove the “Please Review” label.
+
 It's ok to ask for quick clarifications on slack or in person, but try to keep all meaningful communication in github. Reason: if you don't understand why this piece of code is needed or what it does, it's worth adding a comment in the code, if your proposal was considered and rejected, keep history for other reviewers.
 
 Checklist for approval:
@@ -55,6 +65,32 @@ Checklist for approval:
 - [ ]  (Optionally) you have run the code on your machine and checked the happy path
 
 You don't need to review codestyle conventions like spaces and brackets style - that stuff is handled automatically by a linter.
+
+
+Service-level agreement
+-----------------------
+
+In order to keep review times predictable we have a service-level agreement
+between the requester and the reviewer. This SLA lays out the time frame within
+which review of a PR should be completed.
+
+When a review for a PR has been requested the reviewer must have a first look at
+the code within 24 hours. It is not necessary to complete the review. In that
+case the reviewer must add a review comment indicating which part of the diff
+has been covered and comments for any code issues.
+
+For PRs with fewer then 150 lines added the first review should be completed
+within 24h of requesting the review. For PRs with between 150 and 400 lines
+added that time is 48h. For larger PRs the requester and reviewer should agree
+on a time frame individually.
+
+There are additional shorter time frames for follow-up reviews that happen after
+the author has made changes in response to the initial review. If the follow-up
+review is requested before noon the review should happen on the same day. If the
+review is requested after noon review should happen before noon the next day.
+
+If your code is not reviewed in a timely manner then kindly remind the
+reviewer on Slack or Github using the #sla hash tag.
 
 
 Responding to changes requests and next steps

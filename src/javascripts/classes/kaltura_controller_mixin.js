@@ -1,16 +1,16 @@
 'use strict';
 
 angular.module('contentful')
-.factory('KalturaEditorControllerMixin', ['$injector', function($injector){
-  var LazyLoader = $injector.get('LazyLoader');
+.factory('KalturaEditorControllerMixin', ['require', function(require){
+  var LazyLoader = require('LazyLoader');
   var kalturaClientWrapper;
   var KalturaSearch;
   var status = 'loading';
 
   LazyLoader.get('kaltura')
   .then(function(){
-    kalturaClientWrapper = $injector.get('kalturaClientWrapper');
-    KalturaSearch        = $injector.get('KalturaSearch');
+    kalturaClientWrapper = require('kalturaClientWrapper');
+    KalturaSearch        = require('KalturaSearch');
     return kalturaClientWrapper.init();
   }).then(setStatus('ready'), setStatus('failed'));
 

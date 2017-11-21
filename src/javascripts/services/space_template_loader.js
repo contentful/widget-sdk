@@ -1,11 +1,11 @@
 'use strict';
 
-angular.module('contentful').factory('spaceTemplateLoader', ['$injector', function ($injector) {
-  var contentfulClient = $injector.get('contentfulClient');
-  var $q = $injector.get('$q');
-  var environment = $injector.get('environment');
-  var mergeSort = $injector.get('mergeSort');
-  var logger = $injector.get('logger');
+angular.module('contentful').factory('spaceTemplateLoader', ['require', function (require) {
+  var contentfulClient = require('contentfulClient');
+  var $q = require('$q');
+  var environment = require('environment');
+  var mergeSort = require('mergeSort');
+  var logger = require('logger');
 
   var contentfulConfig = environment.settings.contentful;
 

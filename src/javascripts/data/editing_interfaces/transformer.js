@@ -10,10 +10,10 @@ angular.module('cf.data')
  * Sanitizes editing interface data and transforms between the API and
  * the internal UI format.
  */
-.factory('data/editingInterfaces/transformer', ['$injector', function ($injector) {
-  var eiHelpers = $injector.get('editingInterfaces/helpers');
-  var migrateWidgetId = $injector.get('widgets/migrations');
-  var getDefaultWidgetId = $injector.get('widgets/default');
+.factory('data/editingInterfaces/transformer', ['require', function (require) {
+  var eiHelpers = require('editingInterfaces/helpers');
+  var migrateWidgetId = require('widgets/migrations');
+  var getDefaultWidgetId = require('widgets/default');
 
   return {
     fromAPI: fromAPI,

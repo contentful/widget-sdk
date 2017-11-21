@@ -18,7 +18,7 @@ angular.module('contentful')
   var client = require('client');
   var localesList = require('localesList');
   var spaceTemplateLoader = require('spaceTemplateLoader');
-  var spaceTemplateCreator = require('spaceTemplateCreator');
+  var spaceTemplateCreator = require('services/SpaceTemplateCreator');
   var accessChecker = require('accessChecker');
   var TokenStore = require('services/TokenStore');
   var K = require('utils/kefir');
@@ -180,6 +180,7 @@ angular.module('contentful')
 
   function createTemplate (template, retried) {
     return controller.templateCreator.create(template)
+    .contentCreated
     .catch(function (data) {
       if (!retried) {
         createTemplate(data.template, true);

@@ -6,7 +6,7 @@ import {onValueScope, createPropertyBus} from 'utils/kefir';
 import getChangesObject from 'utils/ShallowObjectDiff';
 import {isOrgPlanEnterprise} from 'data/Org';
 import {getEnabledFlags} from 'utils/LaunchDarkly/EnforceFlags';
-import $q from '$q';
+import { createMVar } from 'utils/Concurrent';
 
 import {
   getOrgRole,
@@ -19,7 +19,6 @@ import {
   isAutomationTestUser
 } from 'data/User';
 
-import createMVar from 'utils/Concurrent/MVar';
 
 // mvar to wait until LD context is successfully switched
 const LDContextChangeMVar = createMVar();
@@ -70,14 +69,7 @@ export function getCurrentVariation (flagName) {
     const variation = getVariation(flagName, UNINIT_VAL);
 
     if (variation === UNINIT_VAL) {
-      // we use $q.reject instead of just throwing an error
-      // since MVars are backed by $q and throwing an error
-      // from a handler of a $q promise chain invokes
-      // $exceptionHandler.
-      // FIXME Update this to just throw new Error('...')
-      // once MVar implementation is switched to use a
-      // Promise/A+ compliant implementation
-      return $q.reject(new Error(`Invalid flag ${flagName}`));
+      throw new Error(`Invalid flag ${flagName}`);
     } else {
       return JSON.parse(variation);
     }

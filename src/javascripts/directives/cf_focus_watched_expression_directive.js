@@ -5,10 +5,10 @@
  *
  */
 angular.module('contentful')
-.directive('cfFocusWatchedExpression', ['$injector', function($injector) {
+.directive('cfFocusWatchedExpression', ['require', function(require) {
 
-  var $timeout = $injector.get('$timeout');
-  var $parse = $injector.get('$parse');
+  var $timeout = require('$timeout');
+  var $parse = require('$parse');
 
   return {
     restrict: 'A',
@@ -17,9 +17,9 @@ angular.module('contentful')
       var model = $parse(attrs.cfFocusWatchedExpression);
 
       scope.$watch(model, function(value) {
-        if (value) { 
+        if (value) {
           $timeout( function() {
-            elem[0].focus(); 
+            elem[0].focus();
           });
         }
       });
