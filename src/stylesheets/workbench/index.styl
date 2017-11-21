@@ -122,7 +122,7 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
 
   &__right-content
     $workbench-content()
-    width: $workbench-content-width
+    width: 100%
     margin-left: auto
     height: 100%
     padding-right: 20px
@@ -217,10 +217,12 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
   &__left
     display: flex
     align-self: stretch
-    min-width: $workbench-sidebar-width
-    max-width: $workbench-max-sidebar-width
+    width: 250px
     flex: 0 0 auto
     align-items: center
+
+    @media (max-width: $nav-bar-break-width)
+      width: 230px
 
   &__kb-link
     line-height: normal
