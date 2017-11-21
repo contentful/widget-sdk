@@ -51,7 +51,7 @@ export default function () {
             ngIf: 'isCreatingSpace'
           }, ['We’re preparing your example project']),
           h('p.modal-dialog__plaintext', {
-            ngIf: '!isCreatingSpace'
+            ngIf: '!isCreatingSpace && chosenProjectStatus !== "project-status-see"'
           }, ['Your example project is ready!']),
           h('h2.modal-dialog__plaintext', {
             ngIf: '!chosenProjectStatus',
@@ -158,7 +158,11 @@ function renderChosenProjectStatus () {
         h('div', {
           ngShow: 'chosenProjectStatus === "project-status-see"'
         }, [
-          h('h2', { style: titleStyle }, ['Understand Contentful']),
+          h('p', {
+            ngShow: '!isCreatingSpace',
+            style: { textAlign: 'center' }
+          }, ['Example ready. Here\'s a video presentation of the platform.']),
+          h('h2', { style: titleStyle }, ['Five-minute introduction']),
           h('iframe', {
             width: '560',
             height: '315',
@@ -173,11 +177,17 @@ function renderChosenProjectStatus () {
         h('div', {
           ngShow: 'chosenProjectStatus === "project-status-think"'
         }, [
-          h('h2', { style: titleStyle }, ['Dig through an example app']),
+          h('h2', { style: titleStyle }, ['Get ready to explore an example app']),
           chosenProjectList([
-            'Explore the app code on Github',
+            'See what a full setup looks like',
             'Play with the sample content',
-            'Use the APIs for content in seconds'
+            h('span', [
+              'Check out the source code ',
+              h('a', {
+                target: '_blank',
+                href: 'https://github.com/contentful?utf8=%E2%9C%93&q=product-catalogue&type=&language='
+              }, ['on GitHub'])
+            ])
           ])
         ]),
         h('div', {
@@ -185,9 +195,9 @@ function renderChosenProjectStatus () {
         }, [
           h('h2', { style: titleStyle }, ['Dive right in and start building']),
           chosenProjectList([
-            'All you need to get the project up and running',
-            'Make your first API calls in seconds',
-            'An example project to serve as inspiration'
+            'Get the libraries & tools to develop your project',
+            'Create a new space to start from scratch',
+            'Make your first API call with our examples'
           ])
         ])
       ])
@@ -211,7 +221,10 @@ function chosenProjectList (items) {
     }),
     h('ul', {
       style: {
-        fontSize: '20px'
+        fontSize: '20px',
+        // so bullet points do not look like too much to the left
+        position: 'relative',
+        left: '10px'
       }
     }, items.map(item => h('li', {
       style: {
