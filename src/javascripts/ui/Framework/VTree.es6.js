@@ -32,6 +32,10 @@ function checkProps (props) {
     'Element properties must be a plain object'
   );
   forEach(props, (value, key) => {
+    if (value === undefined) {
+      return;
+    }
+
     if (key === 'style') {
       assert(
         isPlainObject(value),
