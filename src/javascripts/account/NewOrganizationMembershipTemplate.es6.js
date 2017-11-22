@@ -79,8 +79,7 @@ export function emailsInput (
       h('textarea', {
         dataTestId: 'organization-membership.user-email',
         autofocus: true,
-        class: 'cfnext-form__input',
-        style: {width: '600px'},
+        class: 'cfnext-form__input org-invitation-emails-field',
         value: emailsInputValue,
         onInput: (evt) => updateEmails(evt.target.value),
         onBlur: validateEmails
