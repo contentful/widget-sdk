@@ -17,7 +17,9 @@ angular.module('contentful')
   var $rootScope = require('$rootScope');
   var client = require('client');
   var localesList = require('localesList');
-  var spaceTemplateLoader = require('spaceTemplateLoader');
+  var spaceTemplateLoader = require('services/SpaceTemplateLoader');
+  var getTemplatesList = spaceTemplateLoader.getTemplatesList;
+  var getTemplate = spaceTemplateLoader.getTemplate;
   var spaceTemplateCreator = require('services/SpaceTemplateCreator');
   var accessChecker = require('accessChecker');
   var TokenStore = require('services/TokenStore');
@@ -59,7 +61,7 @@ angular.module('contentful')
 
   // Load the list of space templates
   controller.templates = [];
-  spaceTemplateLoader.getTemplatesList().then(setupTemplates)
+  getTemplatesList().then(setupTemplates)
   .catch(function () {
     controller.templates = undefined;
   });
@@ -215,7 +217,7 @@ angular.module('contentful')
       itemHandlers,
       selectedTemplate.name
     );
-    return spaceTemplateLoader.getTemplate(selectedTemplate)
+    return getTemplate(selectedTemplate)
     .then(createTemplate);
   }
 
