@@ -1,5 +1,14 @@
 Error.stackTraceLimit = 1000;
 
+/**
+ * Subscribe to promise rejection and expose error details to karma runner.
+ * Note that it will fail with generic error rather than a failed test case
+ * due to asynchronous event handling.
+ */
+window.addEventListener('unhandledrejection', (ev) => {
+  window.__karma__.error(`Unhandled rejection: ${ev.reason.stack}`);
+});
+
 // We import all these modules which have side effects.
 // They may register Angular services, register test suite hooks or define
 // global variables
