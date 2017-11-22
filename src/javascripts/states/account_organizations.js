@@ -114,6 +114,20 @@ angular.module('contentful')
     url: '/:orgId/spaces{pathSuffix:PathSuffix}'
   });
 
+  var spacesNew = base({
+    name: 'space_plans',
+    label: 'Organization spaces',
+    url: '/:orgId/space_plans',
+    controller: ['$stateParams', '$scope', function ($stateParams, $scope) {
+      $scope.context = {};
+      $scope.properties = {
+        orgId: $stateParams.orgId,
+        context: $scope.context
+      };
+    }],
+    template: h('cf-space-plans', { properties: 'properties' })
+  });
+
   var offsitebackup = organizationsBase({
     name: 'offsitebackup',
     title: 'Offsite backup',
@@ -163,6 +177,7 @@ angular.module('contentful')
       subscriptionNew,
       users,
       spaces,
+      spacesNew,
       offsitebackup,
       billing
     ]
