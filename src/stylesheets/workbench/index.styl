@@ -117,8 +117,17 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
     $workbench-content()
     padding-top: 0
     padding-right: 1.5em
-    flex: 0 0 22.5rem
+    flex: 0 0 300px
     margin-right: auto
+
+    @media (max-width: $nav-bar-break-width)
+      flex: 0 0 280px
+
+    // We only want to change the margin in sidebar
+    // navigation
+    .workbench-nav__tabs [role=tab]
+      margin-right: 1rem
+
 
   &__right-content
     $workbench-content()
