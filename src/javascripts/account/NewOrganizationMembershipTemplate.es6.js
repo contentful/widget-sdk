@@ -139,12 +139,16 @@ export function organizationRole (orgRole, updateOrgRole) {
 }
 
 export function accessToSpaces (
+  Loading,
   adminRole,
-  {spaces, orgSpacesCount, spaceMemberships},
+  {spaces, status, spaceMemberships},
   {updateSpaceRole}
 ) {
-  const isLoading = orgSpacesCount !== 0 && orgSpacesCount > spaces.length;
-  const isEmpty = orgSpacesCount === 0;
+  const isLoading = match(status, {
+    [Loading]: () => true,
+    _: () => false
+  });
+  const isEmpty = !isLoading && !spaces.length;
 
   function isChecked (role) {
     return spaceMemberships.hasOwnProperty(role.spaceId) && includes(spaceMemberships[role.spaceId], role.id);
@@ -181,7 +185,7 @@ export function accessToSpaces (
       isLoading
         ? h('p.u-separator--small', [
           h('span.spinner--text-inline'),
-          ` Loading your spaces: ${spaces.length} out of ${orgSpacesCount} completed.`
+          ' Loading your spaces.'
         ])
         : h('tbody', sortBy(spaces, space => space.createdAt).map(space => { // sort spaces by creation date
           return h('tr', [
