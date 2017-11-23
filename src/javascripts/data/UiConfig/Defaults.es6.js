@@ -73,9 +73,7 @@ function createEntryStatusView (status) {
   return extend(createStatusView(status), {
     contentTypeId: null,
     order: systemFields.getDefaultOrder(),
-    displayedFieldIds: systemFields.getDefaultFieldIds(),
-    searchText: '',
-    searchFilters: []
+    displayedFieldIds: systemFields.getDefaultFieldIds()
   });
 }
 

@@ -119,9 +119,7 @@ export default function create (space, spaceEndpoint$q, publishedCTs, viewMigrat
       return setUiConfig(type, uiConfig);
     } else {
       return viewMigrator.migrateUIConfigViews(data).then((migratedUIConfig) => {
-        return canEdit
-          ? save(type, migratedUIConfig)
-          : setUiConfig(type, migratedUIConfig);
+        return setUiConfig(type, migratedUIConfig);
       });
     }
   }

@@ -162,14 +162,11 @@ describe('data/UiConfig/Store', function () {
       this.migrateStub.resolves(MIGRATED_DATA);
     });
 
-    it('saves migrated version back to store', function* () {
+    // NOTE: We originally designed the migration to be stored back immediately
+    // but ultimately decided against it (for now) to avoid "mass migration".
+    it('does not immediately save migrated version back to store', function* () {
       yield this.create(true);
-      expect(this.store.default).toEqual({
-        sys: { version: 2 },
-        _migrated: {
-          entryListViews: 'MIGRATED DATA'
-        }
-      });
+      expect(this.store.default).toEqual(INITIAL_DATA);
     });
 
     it('does not save migration back to store if non-admin user', function* () {
