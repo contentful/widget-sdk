@@ -37,8 +37,8 @@ export default function open (params = {}) {
     template: '<cf-component-bridge class="modal-background" component="component">',
     controller: function ($scope) {
       const {min, max, value} = input;
-      const maxLength = isFinite(max) ? `${max}` : '';
-      const onChange = e => render(e.target.value);
+      const maxlength = isFinite(max) ? `${max}` : '';
+      const onInput = e => render(e.target.value);
       const cancel = () => $scope.dialog.cancel();
 
       render(value);
@@ -47,7 +47,7 @@ export default function open (params = {}) {
         const trimmed = value.trim();
         const isInvalid = trimmed.length < min || trimmed.length > max;
         const confirm = () => !isInvalid && $scope.dialog.confirm(trimmed);
-        const onKeyDown = e => e.keyCode === keycodes.ENTER && confirm();
+        const onKeydown = e => e.keyCode === keycodes.ENTER && confirm();
 
         $scope.component = h('.modal-dialog', [
           h('header.modal-dialog__header', [
@@ -57,7 +57,7 @@ export default function open (params = {}) {
           h('.modal-dialog__content', [
             h('p.modal-dialog__richtext', [params.message]),
             h('input.cfnext-form__input--full-size', {
-              type: 'text', value, onChange, onKeyDown, maxLength
+              type: 'text', value, onInput, onKeydown, maxlength
             })
           ]),
           h('.modal-dialog__controls', [

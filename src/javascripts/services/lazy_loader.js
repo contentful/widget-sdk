@@ -6,16 +6,28 @@
  *
  * @description
  * This service can be used to lazily load script dependencies.
+ *
  * All the dependencies are defined in "LazyLoader/resources".
+ * If we "own" a script that is lazy-load-enabled, we should call the function
+ * window.cfFeedLazyLoader() with the script's name and an exported value.
+ * If a script just adds a global value, define the "globalObject" property.
  */
 angular.module('contentful')
 .factory('LazyLoader', ['require', function (require) {
   var $q = require('$q');
+  var $window = require('$window');
+  var $rootScope = require('$rootScope');
   var loader = require('angularLoad');
   var resources = require('LazyLoader/resources');
 
   var store = {};
   var cache = {};
+
+  $window.cfFeedLazyLoader = function (name, value) {
+    $rootScope.$apply(function () {
+      provide(name, value);
+    });
+  };
 
   return {
     provide: provide,
@@ -115,6 +127,9 @@ angular.module('contentful')
         _.get(environment, 'settings.fonts_dot_com.project_id')
     },
     // JavaScript:
+    markdown: {
+      url: AssetResolver.resolve('app/markdown_vendors.js')
+    },
     embedly: {
       url: 'https://cdn.embedly.com/widgets/platform.js',
       globalObject: 'embedly',

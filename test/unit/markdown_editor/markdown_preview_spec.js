@@ -7,6 +7,25 @@ describe('Markdown preview', function () {
 
     const PreviewGenerator = this.$inject('markdown_editor/PreviewGenerator');
     this.makePreview = () => PreviewGenerator.default(this.markdown);
+
+    const LazyLoader = this.$inject('LazyLoader');
+    sinon.stub(LazyLoader, 'get').resolves(window.cfLibs.markdown);
+  });
+
+  it('has null preview before libs are loaded', function () {
+    const LazyLoader = this.$inject('LazyLoader');
+    LazyLoader.get.withArgs('markdown').defers();
+    const preview$ = this.makePreview();
+    this.$apply();
+    K.assertMatchCurrentValue(preview$, sinon.match({preview: null}));
+  });
+
+  it('emits error when loading library fails', function () {
+    const LazyLoader = this.$inject('LazyLoader');
+    LazyLoader.get.withArgs('markdown').rejects();
+    const preview$ = this.makePreview();
+    this.$apply();
+    K.assertMatchCurrentValue(preview$, sinon.match({error: true}));
   });
 
   it('emits preview when markdown changes', function () {

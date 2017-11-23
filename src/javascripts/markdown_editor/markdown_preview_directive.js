@@ -3,7 +3,7 @@
 angular.module('contentful')
 
 .directive('cfMarkdownPreview', ['require', function (require) {
-  var createMountPoint = require('ui/Framework/DOMRenderer').default;
+  var LazyLoader = require('LazyLoader');
 
   return {
     restrict: 'E',
@@ -13,33 +13,43 @@ angular.module('contentful')
     },
     template: [
       '<div ng-show="!preview.hasCrashed" class="markdown-preview-mounting-point"></div>',
-      '<div ng-show="preview.hasCrashed || renderHasCrashed" class="markdown-preview-crashed">',
+      '<div ng-show="preview.hasCrashed || mountHasCrashed" class="markdown-preview-crashed">',
       '<i class="fa fa-warning"></i> ',
       'We cannot render the preview. ',
       'If you use HTML tags, check if these are valid.',
       '</div>'
     ].join(''),
     link: function (scope, el) {
-      var container = el.find('.markdown-preview-mounting-point').get(0);
-      var mountPoint = createMountPoint(container);
+      var mountingPoint = el.find('.markdown-preview-mounting-point').get(0);
+      scope.mountHasCrashed = false;
+      LazyLoader.get('markdown').then(initPreview);
 
-      scope.renderHasCrashed = false;
+      function initPreview (libs) {
+        var ReactDOM = libs.ReactDOM;
 
-      scope.$watch('preview.tree', update);
-      scope.$watch('isDisabled', update);
+        scope.$watch('preview.tree', update);
+        scope.$watch('isDisabled', update);
 
-      scope.$on('$destroy', mountPoint.destroy);
+        scope.$on('$destroy', unmount);
 
-      function update () {
-        var newTree = scope.preview && scope.preview.tree;
+        function update () {
+          var newTree = scope.preview && scope.preview.tree;
+          if (!newTree || scope.isDisabled) { return; }
 
-        if (newTree && !scope.isDisabled) {
           try {
-            mountPoint.render(newTree);
-            scope.renderHasCrashed = false;
+            mount();
+            scope.mountHasCrashed = false;
           } catch (e) {
-            scope.renderHasCrashed = true;
+            scope.mountHasCrashed = true;
           }
+        }
+
+        function mount () {
+          ReactDOM.render(scope.preview.tree, mountingPoint);
+        }
+
+        function unmount () {
+          ReactDOM.unmountComponentAtNode(mountingPoint);
         }
       }
     }

@@ -27,6 +27,7 @@ const rework = require('rework')
 const reworkUrlRewrite = require('rework-plugin-url')
 const fs = require('fs')
 const babel = require('gulp-babel')
+const envify = require('envify/custom')
 const co = require('co')
 const proxyquire = require('proxyquire')
 
@@ -172,6 +173,7 @@ gulp.task('js', [
 
 gulp.task('js/vendor', [
   'js/vendor/main',
+  'js/vendor/markdown',
   'js/vendor/kaltura',
   'js/vendor/snowplow'
 ])
@@ -183,6 +185,22 @@ gulp.task('js/vendor/main', function () {
     .pipe(concat('vendor.js'))
     .pipe(sourceMaps.write({sourceRoot: '/'}))
     .pipe(gulp.dest('./public/app'))
+})
+
+gulp.task('js/vendor/markdown', function () {
+  const dest = gulp.dest('./public/app/')
+  return browserify()
+    .add('./src/javascripts/libs/markdown_vendors.js')
+    // Making React smaller and faster
+    // https://facebook.github.io/react/docs/optimizing-performance.html
+    .transform({global: true}, envify({NODE_ENV: 'production'}))
+    .plugin('bundle-collapser/plugin')
+    .bundle()
+    .on('error', passError(dest))
+    .pipe(source('markdown_vendors.js'))
+    .pipe(buffer())
+    .pipe(uglify())
+    .pipe(dest)
 })
 
 gulp.task('js/vendor/snowplow', function () {
@@ -333,7 +351,6 @@ function createBrowserify (args) {
   return browserify(_.extend({debug: true}, args))
     .add('./src/javascripts/libs')
     .transform({optimize: 'size'}, 'browserify-pegjs')
-    .transform('loose-envify', {global: true}) // Making React smaller and faster
 }
 
 function bundleBrowserify (browserify) {
@@ -426,6 +443,7 @@ gulp.task('build/static', [
 ], function () {
   const files = glob.sync('public/app/**/*.!(js|css)')
   files.push('public/app/kaltura.js')
+  files.push('public/app/markdown_vendors.js')
   files.push('public/app/snowplow.js')
 
   return gulp.src(files, {base: 'public'})

@@ -1,5 +1,5 @@
 import {find} from 'lodash';
-import {shallowFreeze} from 'utils/Freeze';
+import {deepFreeze} from 'utils/Freeze';
 
 /**
  * This module provides functions for dealing with tagged values, also
@@ -40,12 +40,11 @@ import {shallowFreeze} from 'utils/Freeze';
  *     Number(5).value // => 6
  *
  *
- * Tagged values are shallow frozen
+ * Tagged values are deep frozen
  *
  *     const MyTag = makeCtor()
  *     const tagged = MyTag({flag: true})
- *     tagged.value.flag = false
- *     tagged.value = {} // => throws error
+ *     tagged.value.flag = false  // => throws error
  *
  *
  * Default case in match
@@ -84,7 +83,7 @@ let nextTag = 0;
  * The tagged value constructor accepts exactly one argument which is
  * available in matchers.
  *
- * Values returned by constructor are shallow frozen.
+ * Values returned by constructor are deep frozen.
  *
  * If the `name` parameter is provided all tagged values created with
  * this constructor carry the same `name` property. This is helpful for
@@ -116,7 +115,7 @@ export function makeCtor (name, fn) {
       obj.name = name;
     }
 
-    return shallowFreeze(obj);
+    return deepFreeze(obj);
   }
 
   ctor.tag = tag;
