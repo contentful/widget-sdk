@@ -1,4 +1,50 @@
 /**
+ * Simple table styles where header and body are connected. Prefer this
+ * over the complicated ones below.
+ */
+table.simple-table
+  width: 100%;
+  table-layout: fixed
+  line-height: 1.5em
+
+  th, td
+    color: $colors.text-mid
+    padding-left: 10px
+    vertical-align: middle
+    text-align: left
+    &:first-child
+      padding-left: 20px
+    &:last-child
+      padding-right: 20px
+    &.x--image-cell
+      width 120px
+    &.x--xl-cell
+      width: 36%
+    &.x--large-cell
+      width: 21%
+    &.x--medium-cell
+      width: 15%
+    &.x--small-cell
+      width: 12%
+
+  td
+    border-bottom: 1px solid $colors.element-light
+    padding-top: 16px
+    padding-bottom: 16px
+
+  th
+    background-color: $colors.element-lightest
+    border-bottom: 1px solid $colors.element-mid
+    font-weight: normal
+    padding-top: 10px
+    padding-bottom: 10px
+    color: $colors.text-light
+
+  tbody tr:hover
+    background-color: $colors.element-lightest
+
+
+/**
 Table
 
 Use the `ui/Content/Table` module to build templates using this component.
