@@ -24,12 +24,12 @@ before_install:
 - sudo apt-get update
 - sudo apt-get -y install docker-ce
 install:
-- bin/docker-build
+- bin/docker-build-ci
 script:
-- bin/docker-run test
+- bin/docker-run-ci test
 after_success:
 # Build the package and static files
-- bin/docker-run travis --branch "${TRAVIS_BRANCH}" --version "${TRAVIS_COMMIT}" --pr "${TRAVIS_PULL_REQUEST}"
+- bin/docker-run-ci travis --branch "${TRAVIS_BRANCH}" --version "${TRAVIS_COMMIT}" --pr "${TRAVIS_PULL_REQUEST}"
 before_deploy:
 - docker build -t $DOCKER_IMAGE -f Dockerfile-prod --build-arg CF_VERSION="${TRAVIS_COMMIT}" .
 deploy:

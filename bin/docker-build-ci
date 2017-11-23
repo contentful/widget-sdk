@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-# Build the contentful/user-interface-test image
+# Build the contentful/user-interface-ci image with
+# `Dockerfile-ci`. To run the ci image use `bin/docker-run-ci`.
 #
 # Uses the NPM_TOKEN environment variable or reads it from ~/.npmrc
 #
@@ -19,7 +20,7 @@ fi
 
 echo "Building docker image"
 docker build \
-  --file Dockerfile-test \
-  --tag contentful/user-interface-test \
+  --file Dockerfile-ci \
+  --tag contentful/user-interface-ci \
   --build-arg "NPM_TOKEN=${NPM_TOKEN}" \
   .
