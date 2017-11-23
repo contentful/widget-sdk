@@ -4,6 +4,8 @@ describe('cfMarkdownEditor', function () {
   beforeEach(function () {
     module('contentful/test');
 
+    this.$inject('LazyLoader').get = sinon.stub().resolves(window.cfLibs.markdown);
+
     this.widgetApi = this.$inject('mocks/widgetApi').create();
     this.widgetApi.field.getValue.returns('test');
     this.fieldStubs = this.widgetApi.field;

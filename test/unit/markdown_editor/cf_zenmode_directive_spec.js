@@ -2,6 +2,7 @@ import * as sinon from 'helpers/sinon';
 
 describe('cfZenmode', function () {
   let editor;
+  const libs = window.cfLibs.markdown;
 
   const tieSpy = sinon.spy();
   const apiMock = {
@@ -19,10 +20,19 @@ describe('cfZenmode', function () {
   beforeEach(function () {
     module('contentful/test');
 
+    const $q = this.$inject('$q');
+    const LazyLoader = this.$inject('LazyLoader');
     const scopeProps = { zenApi: apiMock, preview: {} };
+
+    sinon.stub(LazyLoader, 'get').callsFake(function () {
+      return $q.resolve(libs);
+    });
+
     const elem = this.$compile('<cf-zenmode zen-api="zenApi" />', scopeProps);
     this.scope = elem.isolateScope();
 
+    // resolve lazy-load promise:
+    this.scope.$apply();
     // can get CodeMirror instance from DOM node now:
     editor = elem.find('.CodeMirror').get(0).CodeMirror;
   });

@@ -5,6 +5,11 @@ div(ng-show="isDisabled")
     | // No value
 
 div.json-editor__code-editor-container(ng-show="!isDisabled")
+  div.loading-box(ng-if="isLoading" style="height: 200px")
+    .loading-box__spinner
+    .loading-box__message
+      | Initializing Markdown editor
+
   div.editor-control-warning(ng-if="hasCrashed")
     cf-icon(name="plug" scale="0.8")
     p

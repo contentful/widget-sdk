@@ -22,13 +22,7 @@ export function deepFreeze (o) {
     return o;
   }
 
-  try {
-    Object.freeze(o);
-  } catch (e) {
-    // Do not recurse if reached an object that cannot be freezed.
-    // For Ch62 and FF57 the `window` object is a good example.
-    return o;
-  }
+  o = shallowFreeze(o);
 
   if (Array.isArray(o)) {
     o.forEach(deepFreeze);

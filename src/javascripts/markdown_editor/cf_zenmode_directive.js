@@ -45,7 +45,7 @@ angular.module('contentful').directive('cfZenmode', ['require', function (requir
         }
       });
 
-      initEditor(MarkdownEditor.create(textarea, opts));
+      MarkdownEditor.create(textarea, opts).then(initEditor);
 
       function initEditor (editorInstance) {
         editor = editorInstance;

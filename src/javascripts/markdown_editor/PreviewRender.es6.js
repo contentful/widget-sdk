@@ -3,7 +3,6 @@ import {htmlDecode} from 'encoder';
 import {getDomains} from 'services/TokenStore';
 import MarkedAst from 'libs/MarkedAst';
 import sanitize from 'libs/sanitize-html';
-import * as React from 'libs/react';
 
 let currentId = 1;
 
@@ -58,12 +57,18 @@ SANITIZE_CONFIG.textFilter = function (text) {
 
 
 /**
- * Returns a function that takes a Markdown string and produces preview
- * information. This information is an object with two properties:
- * - `root`: React element containing the root node of the preview
- * - `words`: an integer representing the number of words in the MD source
+ * Given an object of vendor packages it returns a
+ * function that takes a markdown string and produces preview
+ * information.
+ *
+ * The object returned by the preview generator has two properties:
+ * - `root` React element containing the root node of the preview.
+ * - `words` an integer giving the number of words in the MD source
+ *
+ * The 'libs' object is the one exported by the
+ * `libs/markdown_vendor.js`.
  */
-export default function create () {
+export default function create ({React}) {
   const rootKey = 'root/' + currentId;
   let conflicts = {};
   let words = 0;
