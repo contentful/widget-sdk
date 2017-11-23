@@ -9,8 +9,7 @@ import {makeCtor, match} from 'utils/TaggedValues';
 import {invite, progress$} from 'account/SendOrganizationInvitation';
 import {isValidEmail} from 'stringUtils';
 import {go} from 'states/Navigator';
-import {isOwnerOrAdmin} from 'services/OrganizationRoles';
-
+import {isOwner, isOwnerOrAdmin} from 'services/OrganizationRoles';
 import {
   header,
   sidebar,
@@ -74,15 +73,17 @@ export default function ($scope) {
   });
 
   runTask(function* () {
-    const canAccess = yield* hasPermission();
+    const org = yield getOrganization(orgId);
+    const canAccess = isOwnerOrAdmin(org);
+
     if (!canAccess) {
       denyAccess();
       return;
     }
 
-    // 1st step - get org info and render page without the spaces grid
+    // 1st step - get org and user info and render page without the spaces grid
     const organization = yield* getOrgInfo();
-    state = assign(state, {organization});
+    state = assign(state, {organization, isOwner: isOwner(org)});
     rerender();
 
     // 2nd step - load all space roles
@@ -267,6 +268,8 @@ export default function ($scope) {
       emailsInputValue,
       emails
     });
+
+    rerender();
   }
 
   /**
@@ -340,11 +343,6 @@ export default function ($scope) {
       remainingInvitations: membershipLimit - membershipsCount
     });
   }
-
-  function* hasPermission () {
-    const org = yield getOrganization(orgId);
-    return isOwnerOrAdmin(org);
-  }
 }
 
 function render (state, actions) {
@@ -368,7 +366,7 @@ function render (state, actions) {
               pick(state, ['emails', 'emailsInputValue', 'invalidAddresses', 'organization', 'status']),
               pick(actions, ['updateEmails', 'validateEmails'])
             ),
-            organizationRole(state.orgRole, actions.updateOrgRole),
+            organizationRole(state.orgRole, state.isOwner, actions.updateOrgRole),
             accessToSpaces(
               Loading,
               adminRole,
