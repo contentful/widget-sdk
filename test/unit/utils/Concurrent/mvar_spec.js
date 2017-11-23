@@ -68,6 +68,17 @@ describe('utils/Concurrent/MVar', function () {
         mVar.empty();
         expect(mVar.isEmpty()).toEqual(true);
       });
+
+      it('empty() is a no-op if empty', function* () {
+        // This checks that we don’t throw the promise returned by
+        // `read()` away when we call `empty()`.
+        const mVar = createMVar();
+        const readPromise = mVar.read();
+        mVar.empty();
+        mVar.empty();
+        mVar.put();
+        yield readPromise;
+      });
     });
   });
 });
