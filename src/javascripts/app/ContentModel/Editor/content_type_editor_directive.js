@@ -4,9 +4,10 @@ angular.module('contentful')
 .directive('cfContentTypeEditor', ['require', function (require) {
   var $timeout = require('$timeout');
   var template = require('app/ContentModel/Editor/Template').default;
+  var renderString = require('ui/Framework').renderString;
 
   return {
-    template: template,
+    template: renderString(template),
     restrict: 'A',
     controller: 'ContentTypeEditorController',
     controllerAs: 'ctEditorController',

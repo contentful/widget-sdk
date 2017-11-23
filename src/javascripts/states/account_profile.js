@@ -56,9 +56,9 @@ angular.module('contentful')
         $scope.context = {};
       }],
       template: [
-        workbenchHeader(definition.title),
+        workbenchHeader({title: [definition.title]}),
         h('cf-account-view', { context: 'context' })
-      ].join('')
+      ]
     };
 
     return base(_.extend(definition, defaults));

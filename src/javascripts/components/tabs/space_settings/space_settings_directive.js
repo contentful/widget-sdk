@@ -1,10 +1,11 @@
 angular.module('contentful')
 
 .directive('cfSpaceSettings', ['require', function (require) {
+  var renderString = require('ui/Framework').renderString;
   var templates = require('components/tabs/space_settings/space_settings_templates');
 
   return {
-    template: templates.form(),
+    template: renderString(templates.form()),
     restrict: 'E',
     controller: 'SpaceSettingsController'
   };
