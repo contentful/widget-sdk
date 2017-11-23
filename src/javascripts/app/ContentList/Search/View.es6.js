@@ -59,13 +59,6 @@ export default function render ({
       height: '40px',
       width: '100%',
       position: 'relative'
-    },
-    onKeyDown: (e) => {
-      // Prevent BACKSPACE from navigating back
-      if (Keys.backspace(e)) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
     }
   }, [
     h('div', {

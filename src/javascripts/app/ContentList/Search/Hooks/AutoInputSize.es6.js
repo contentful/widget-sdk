@@ -50,7 +50,7 @@ function getGhost () {
 export function autosizeInput (element) {
   const ghost = getGhost();
   if (!element) {
-    ghost.remove();
+    document.body.removeChild(ghost);
     return;
   }
 
