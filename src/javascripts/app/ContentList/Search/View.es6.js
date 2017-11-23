@@ -472,6 +472,7 @@ function suggestionsBox ({
 }) {
   const suggestions = items.map((field, index) => {
     return h('div.search-next__completion-item', {
+      dataTestId: field.queryKey,
       ref: (el) => {
         if (defaultFocus.suggestionsFocusIndex === index && el) {
           el.focus();
@@ -489,20 +490,29 @@ function suggestionsBox ({
       onClick: () => onSelect(field)
     }, [
       // TODO truncate with ellipses
-      container({flex: '0 0 30%'}, [
+      h('div', {
+        dataTestId: 'label',
+        style: {flex: '0 0 30%'}
+      }, [
         h('.__filter-pill', [ field.name ])
       ]),
 
-      container({
-        color: colors.textLightest,
-        flex: '0 0 30%'
+      h('div', {
+        dataTestId: 'contentType',
+        style: {
+          color: colors.textLightest,
+          flex: '0 0 30%'
+        }
       }, [
         field.contentType ? field.contentType.name : 'All content types'
       ]),
 
-      container({
-        flex: '0 0 30%',
-        color: colors.textLight
+      h('div', {
+        dataTestId: 'description',
+        style: {
+          flex: '0 0 30%',
+          color: colors.textLight
+        }
       }, [ field.description ])
     ]);
   });
