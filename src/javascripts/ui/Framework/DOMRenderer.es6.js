@@ -57,10 +57,7 @@ function asReact (tree) {
   return caseof(tree, [
     [VTree.Element, ({tag, props, children}) => {
       const reactProps = Object.keys(props).reduce((acc, key) => {
-        const value = props[key];
-        if (value !== undefined) {
-          acc[makeReactPropKey(key)] = makeReactPropValue(key, value);
-        }
+        acc[makeReactPropKey(key)] = makeReactPropValue(key, props[key]);
         return acc;
       }, {});
 
