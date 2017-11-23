@@ -17,6 +17,7 @@ angular.module('contentful')
   var K = require('utils/kefir');
   var Kefir = require('libs/kefir');
   var createSearchInput = require('app/ContentList/Search').default;
+  var h = require('ui/Framework').h;
 
   var assetLoader = new PromisedLoader();
 
@@ -26,6 +27,9 @@ angular.module('contentful')
   var lastUISearchState = null;
 
   $scope.context = { ready: false, loading: true };
+  // HACK: This makes sure that component bridge renders
+  // somethings until search UI is initialized.
+  $scope.search = h('div');
 
   this.hasQuery = hasQuery;
 
