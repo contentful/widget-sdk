@@ -32,7 +32,6 @@ const ALPHA_HEADER = {'x-contentful-enable-alpha-feature': 'user_ui_config'};
  */
 export default function create (space, spaceEndpoint$q, publishedCTs, viewMigrator) {
   const membership = space.data.spaceMembership;
-  const canEdit = membership.admin;
   const userId = membership.user.sys.id;
   const getPrivateViewsDefaults = () => Defaults.getPrivateViews(userId);
 
@@ -53,12 +52,12 @@ export default function create (space, spaceEndpoint$q, publishedCTs, viewMigrat
   const api = deepFreeze({
     addOrEditCt,
     entries: {
-      shared: forScope(SHARED_VIEWS, ENTRY_VIEWS_KEY, getEntryViewsDefaults),
-      private: forScope(PRIVATE_VIEWS, ENTRY_VIEWS_KEY, getPrivateViewsDefaults)
+      shared: forScope(SHARED_VIEWS, ENTRY_VIEWS_KEY, getEntryViewsDefaults, membership.admin),
+      private: forScope(PRIVATE_VIEWS, ENTRY_VIEWS_KEY, getPrivateViewsDefaults, true)
     },
     assets: {
-      shared: forScope(SHARED_VIEWS, ASSET_VIEWS_KEY, Defaults.getAssetViews),
-      private: forScope(PRIVATE_VIEWS, ASSET_VIEWS_KEY, getPrivateViewsDefaults)
+      shared: forScope(SHARED_VIEWS, ASSET_VIEWS_KEY, Defaults.getAssetViews, membership.admin),
+      private: forScope(PRIVATE_VIEWS, ASSET_VIEWS_KEY, getPrivateViewsDefaults, true)
     }
   });
 
@@ -73,7 +72,7 @@ export default function create (space, spaceEndpoint$q, publishedCTs, viewMigrat
    * The scoped store gets and saves only the `key` part of the root object.
    * If the scoped value is not set we use `getDefaults()` to return a default.
    */
-  function forScope (type, key, getDefaults) {
+  function forScope (type, key, getDefaults, canEdit) {
     const get = () => state[type][key] === undefined ? getDefaults() : state[type][key];
     const set = val => save(type, update(state[type], key, () => val)).then(get);
 
@@ -185,6 +184,7 @@ export default function create (space, spaceEndpoint$q, publishedCTs, viewMigrat
    */
   function addOrEditCt (ct) {
     const {folder, folderIndex, folderExists} = findCtFolder();
+    const canEdit = membership.admin;
 
     if (folderExists && canEdit) {
       const {viewIndex, viewExists} = findCtViewIndex(folder, ct);

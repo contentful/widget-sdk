@@ -1,24 +1,45 @@
 .view-menu
-  height: 100%
-  padding-top: 10px
+  display: flex
+  flex-direction: column
+  height: calc(100vh - 210px)
+
+.view-menu__folders
+  flex: 1 0 200px
+  overflow-y: auto 
+  padding-top: 10px 
 
 .view-menu__actions
-  position: absolute
-  bottom: 0
-  width: calc(100% - 1.5em)
-  padding-top: 20px
-  padding-right: 1.5em
-  padding-bottom: 20px
-  padding-left: 1.5em
+  flex: 0 1 75px
+  height: 75px
+  max-height: 75px;
   background-color: $colors.element-lightest
-  border-right: 1px solid $colors.element-darkest;
 
   button
-    display: block
+    margin-left: 1.5em
     margin-bottom: 10px
     i
       display: inline-block
       margin-right: 5px
+
+.view-menu__empty
+  display: flex
+  flex-direction: column
+  height: 100%
+
+.view-menu__empty-message
+  display: flex
+  flex-direction: column
+  height: 100%
+
+.view-menu__empty-cta
+  flex: 1
+  position: relative
+
+  button
+    position: absolute
+    bottom: 5px
+    padding-left: 1.5rem
+  
 
 .view-menu .sortable-ghost
   background-color: $colors.element-lightest
@@ -100,7 +121,7 @@
     background-color: $colors.element-mid
   .view-folder__item-title
     color: $colors.text-dark
-    width: 60%
+    width: 100%
     white-space: nowrap
     overflow: hidden
     text-overflow: ellipsis
@@ -113,12 +134,11 @@
       font-weight: bold
 
   .view-folder__actions
-    width: 40%
+    width: 80px
     text-align: right
 
 .view-folder__seperator-wrapper
-  padding-right: 20px;
 
 .view-folder__seperator
-  margin-bottom: 25px;
-  border-bottom: 1px solid $colors.element-dark;
+  margin-bottom: 25px
+  border-bottom: 1px solid $colors.element-dark
