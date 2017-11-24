@@ -30,6 +30,7 @@ angular.module('contentful')
   var deepFreeze = require('utils/Freeze').deepFreeze;
   var ResourceStateManager = require('data/document/ResourceStateManager');
   var DocError = require('data/document/Error').Error;
+  var logger = require('logger');
 
   return {create: create};
 
@@ -38,6 +39,9 @@ angular.module('contentful')
   function create (docConnection, entity, contentType, user, spaceEndpoint) {
     var currentDoc;
     var cleanupTasks = [];
+
+    // We need this to determine and log inconsistencies later
+    var initialEntitySys = _.cloneDeep(entity.data.sys);
 
     // We assume that the permissions only depend on the immutable data
     // like the ID the content type ID and the creator.
@@ -154,6 +158,19 @@ angular.module('contentful')
     docEventsBus.stream.onValue(function (event) {
       var previousVersion = currentSys.version;
       var version = event.doc.version + (event.doc.compressed || 0);
+
+      // ShareJS has some documents that are out of sync with the index
+      // held in the CMA. We want to log these to be able to repair
+      // them.
+      if (version < initialEntitySys.version) {
+        logger.logWarn('Inconsistent ShareJS document version', {
+          data: {
+            sysFromCMA: initialEntitySys,
+            shareJsVersion: version
+          }
+        });
+      }
+
       var nextSys = _.cloneDeep(event.doc.snapshot.sys);
       if (version > previousVersion) {
         nextSys.updatedAt = (new Date()).toISOString();
