@@ -67,6 +67,7 @@ const sysFieldFilters = [
   ['createdAt', 'Date'],
   ['createdBy', 'User', 'Users of this space'],
   ['publishedAt', 'Date'],
+  ['firstPublishedAt', 'Date', 'Date the item was published for the first time'],
   ['publishedBy', 'User', 'Users of this space'],
   ['id', 'Text', '']
 ]
