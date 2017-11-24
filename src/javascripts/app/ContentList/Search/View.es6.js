@@ -402,11 +402,9 @@ function filterValueText ({
 }
 
 function filterValueAssetSize (props) {
-  const sizeInKb = props.value / 1000;
-
   return filterValueText(assign({}, props, {
-    value: sizeInKb > 0 ? sizeInKb : '',
-    onChange: (nextValue) => props.onChange(nextValue * 1000)
+    value: props.value,
+    onChange: (nextValue) => props.onChange(nextValue)
   }));
 }
 

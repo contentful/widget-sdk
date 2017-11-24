@@ -43,6 +43,7 @@ export function getOperatorsByType (type) {
     case 'AssetField':
     case 'Text':
       return [fts];
+    case 'AssetDetailsSize':
     case 'Date':
       return [equality, ...ranges];
     case 'Integer':

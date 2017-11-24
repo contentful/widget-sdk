@@ -49,6 +49,14 @@ describe('app/ContentList/Search/QueryBuilder', function () {
     );
 
     buildQueryWithContentTypesMacro(
+      'filesize field',
+      {
+        searchFilters: [['fields.file.details.size', '', '52']]
+      },
+      { 'fields.file.details.size': 52000 }
+    );
+
+    buildQueryWithContentTypesMacro(
       'searchFilters with contentType specific field',
       {
         searchFilters: [['fields.website', '', '2']],

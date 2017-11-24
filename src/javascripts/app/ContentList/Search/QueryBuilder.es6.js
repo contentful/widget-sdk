@@ -31,6 +31,8 @@ export function buildQuery ({
       query = applyStatus(query, value);
     } else if (fieldInfo && fieldInfo.type === 'Date') {
       query = applyDate(query, [queryKey, operator, value]);
+    } else if (queryKey.indexOf('.size') > -1) {
+      query = applyGenericValue(query, [queryKey, operator, value * 1000]);
     } else {
       query = applyGenericValue(query, [queryKey, operator, value]);
     }
