@@ -53,7 +53,7 @@ export default function SaveViewDialog ({
               ['A view displays a list of entries you searched for. By saving the current view, you will be able to re-use it later.']),
             h('span', ['Name of the view', h('span.modal-dialog__richtext', [' (required)'])]),
             h('input.cfnext-form__input--full-size', {
-              type: 'text', value, onInput, onKeydown, maxLength: `${maxLength}`, style: {marginTop: '5px'}
+              type: 'text', value, onInput, onKeydown, maxlength: `${maxLength}`, style: {marginTop: '5px'}
             }),
             allowViewTypeSelection && h('ul', {style: {marginTop: '20px'}}, [
               renderViewTypeOption({
@@ -73,7 +73,7 @@ export default function SaveViewDialog ({
           h('.modal-dialog__controls', [
             h('button.btn-primary-action', {
               onClick: confirm,
-              disabled: isInvalid
+              disabled: trimmed.length < minLength
             }, [confirmLabel]),
             h('button.btn-secondary-action', {onClick: cancel}, ['Cancel'])
           ])
