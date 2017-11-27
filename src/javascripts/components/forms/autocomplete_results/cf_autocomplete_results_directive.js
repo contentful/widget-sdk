@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('contentful').directive('cfAutocompleteResults', ['keycodes', function (keycodes) {
+angular.module('contentful').directive('cfAutocompleteResults', ['require', function (require) {
+  var keycodes = require('utils/keycodes').default;
   return {
     controller: 'CfAutocompleteResultsController',
     controllerAs: 'resultsController',

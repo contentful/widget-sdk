@@ -17,7 +17,10 @@ describe('ListViewsController', function () {
     scope = this.$inject('$rootScope').$new();
     scope.context = {};
     scope.selection = {clear: sinon.spy()};
-    ListViewPersistor.default = _.constant({ read: _.constant({ from_qs: 'test' }), save: _.noop });
+    ListViewPersistor.default = _.constant({
+      read: sinon.stub().resolves({ from_qs: 'test' }),
+      save: _.noop
+    });
 
     $controller('ListViewsController', {
       $scope: scope,

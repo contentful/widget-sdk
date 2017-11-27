@@ -5,13 +5,12 @@ import {htmlEncode} from 'encoder';
 
 import openRoleSelector from './RoleSelector';
 import openInputDialog from 'app/InputDialog';
-import * as Tracking from 'analytics/events/SearchAndViews';
 
 import accessChecker from 'accessChecker';
 import modalDialog from 'modalDialog';
 
 export default function render (folder, state, actions) {
-  const {canEdit, roleAssignment} = state;
+  const {canEdit, roleAssignment, tracking} = state;
   const {UpdateFolder, DeleteFolder, UpdateView, DeleteView} = actions;
   const views = filter(folder.views, view => isViewVisible(view, roleAssignment));
 
@@ -23,30 +22,36 @@ export default function render (folder, state, actions) {
   }
 
   const isNotDefault = folder.id !== 'default';
+  const draggable = canEdit ? '-draggable' : '';
   const isClosed = state.folderStates[folder.id] === 'closed';
-  const maybeCollapsed = isClosed ? '-collapsed' : '';
+  const collapsed = isClosed ? '-collapsed' : '';
   const currentViewId = getAtPath(state.currentView, ['id']);
+  const active = view => view.id === currentViewId ? '-active' : '';
 
-  return h('.view-folder', {class: isNotDefault ? '-draggable' : ''}, [
-    h('header.view-folder__header', [
+  return h('.view-folder', {class: isNotDefault ? draggable : ''}, [
+    isNotDefault && h('header.view-folder__header', [
       h('div.view-folder__title', [
-        folder.title,
-        canEdit && isNotDefault && h('.view-folder__actions', [
+        `${folder.title} (${folder.views.length})`,
+        canEdit && h('.view-folder__actions', [
           h('i.fa.fa-pencil', {onClick: () => renameFolder(folder, UpdateFolder)}),
           h('i.fa.fa-close', {onClick: () => deleteFolder(folder, DeleteFolder)})
         ])
       ]),
-      isNotDefault && h('i.view-folder__toggle', {
-        class: maybeCollapsed,
+      h('i.view-folder__toggle', {
+        class: collapsed,
         onClick: () => actions.ToggleOpened(folder)
       }, ['▼'])
     ]),
-    h('ul.view-folder__list', {
-      class: maybeCollapsed,
-      ref: el => state.dnd.forViews(el, folder)
-    }, isClosed ? [] : views.map(view => {
+    !isClosed && h('ul.view-folder__list', {
+      class: collapsed,
+      ref: el => state.dnd.forViews(el, folder),
+      style: {
+        minHeight: views.length === 0 ? '10px' : undefined,
+        marginBottom: views.length === 0 ? '0px' : undefined
+      }
+    }, views.map(view => {
       return h('li.view-folder__item', {
-        class: view.id === currentViewId ? '-active' : '',
+        class: [active(view), draggable].join(' '),
         onClick: () => actions.LoadView(view)
       }, [
         h('.view-folder__item-title', [
@@ -54,13 +59,13 @@ export default function render (folder, state, actions) {
         ]),
         canEdit && h('.view-folder__actions', [
           roleAssignment && h('i.fa.fa-eye', {
-            onClick: doNotPropagate(() => editViewRoles(view, roleAssignment.endpoint, UpdateView))
+            onClick: doNotPropagate(() => editViewRoles(view, roleAssignment.endpoint, tracking, UpdateView))
           }),
           h('i.fa.fa-pencil', {
-            onClick: doNotPropagate(() => editViewTitle(view, UpdateView))
+            onClick: doNotPropagate(() => editViewTitle(view, tracking, UpdateView))
           }),
           h('i.fa.fa-close', {
-            onClick: doNotPropagate(() => deleteView(view, DeleteView))
+            onClick: doNotPropagate(() => deleteView(view, tracking, DeleteView))
           })
         ])
       ]);
@@ -72,7 +77,7 @@ function renameFolder (folder, UpdateFolder) {
   openInputDialog({
     title: 'Rename folder',
     confirmLabel: 'Rename folder',
-    message: 'Please provide a new name for your folder:',
+    message: 'New name for the folder',
     input: {value: folder.title, min: 1, max: 32}
   }).promise.then(title => UpdateFolder(assign(folder, {title})));
 }
@@ -89,34 +94,35 @@ function deleteFolder (folder, DeleteFolder) {
   }).promise.then(() => DeleteFolder(folder));
 }
 
-function editViewRoles (view, endpoint, UpdateView) {
+function editViewRoles (view, endpoint, tracking, UpdateView) {
   openRoleSelector(endpoint, view.roles)
     .then(roles => {
       view = assign(view, {roles});
-      Tracking.viewRolesEdited(view);
+      tracking.viewRolesEdited(view);
       UpdateView(view);
     });
 }
 
-function editViewTitle (view, UpdateView) {
+function editViewTitle (view, tracking, UpdateView) {
   openInputDialog({
     title: 'Rename view',
-    message: 'Please provide a new name for your view:',
+    message: 'New name for the view',
+    confirmLabel: 'Rename view',
     input: {value: view.title, min: 1, max: 32}
   }).promise.then(title => {
     view = assign(view, {title});
-    Tracking.viewTitleEdited(view);
+    tracking.viewTitleEdited(view);
     UpdateView(view);
   });
 }
 
-function deleteView (view, DeleteView) {
+function deleteView (view, tracking, DeleteView) {
   modalDialog.openConfirmDeleteDialog({
     title: 'Delete view',
     message: `Do you really want to delete the view
       <span class="modal-dialog__highlight">${htmlEncode(view.title)}</span>?`
   }).promise.then(() => {
-    Tracking.viewDeleted(view);
+    tracking.viewDeleted(view);
     DeleteView(view);
   });
 }

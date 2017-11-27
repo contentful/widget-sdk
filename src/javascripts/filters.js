@@ -20,20 +20,13 @@ filters.filter('isArray', function () {
   return _.isArray;
 });
 
-filters.filter('fileSize', function () {
-  return function (fileSizeInBytes) {
-    var i = -1;
-    var byteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
-    do {
-      fileSizeInBytes = fileSizeInBytes / 1024;
-      i++;
-    } while (fileSizeInBytes > 1024);
+filters.filter('fileSize', ['require', function (require) {
+  return function (fileSizeInByte) {
+    const fileSize = require('fileSize');
 
-    var size = Math.max(fileSizeInBytes, 0.1);
-    var fixed = Math.round(size) < 100 ? 1 : 0;
-    return size.toFixed(fixed) + byteUnits[i];
+    return fileSize(fileSizeInByte).human('si');
   };
-});
+}]);
 
 filters.filter('mimeGroup', ['mimetype', function (mimetype) {
   return function (file) {

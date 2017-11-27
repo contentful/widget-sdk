@@ -30,7 +30,9 @@ angular.module('contentful')
   };
 
   $scope.$watch('context.view.displayedFieldIds', function (displayedFieldIds) {
-    if (!_.includes(displayedFieldIds, $scope.context.view.order.fieldId)) {
+    if (displayedFieldIds &&
+      !_.includes(displayedFieldIds, $scope.context.view.order.fieldId)
+    ) {
       setOrderField(systemFields.getFallbackOrderField(displayedFieldIds));
       $scope.updateEntries();
     }

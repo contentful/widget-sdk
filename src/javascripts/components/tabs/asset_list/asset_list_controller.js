@@ -17,19 +17,21 @@ angular.module('contentful')
   var debounce = require('debounce');
   var Notification = require('notification');
   var getBlankView = require('data/UiConfig/Blanks').getBlankAssetView;
-  var initSavedViewsComponent = require('app/ContentList/SavedViewsComponent').default;
+  var createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar').default;
+
+  var searchController = $controller('AssetSearchController', { $scope: $scope });
 
   $controller('ListViewsController', {
     $scope: $scope,
     getBlankView: getBlankView,
     preserveStateAs: 'assets',
     resetList: function () {
-      $scope.searchController.resetAssets(true);
+      searchController.resetAssets(true);
     }
   });
 
-  $scope.savedViewsComponent = initSavedViewsComponent({
-    scopedUiConfig: spaceContext.uiConfig.assets.shared,
+  $scope.savedViewsSidebar = createSavedViewsSidebar({
+    entityFolders: spaceContext.uiConfig.assets,
     loadView: function (view) {
       $scope.loadView(view);
     },
@@ -43,31 +45,25 @@ angular.module('contentful')
   $scope.shouldHide = accessChecker.shouldHide;
   $scope.shouldDisable = accessChecker.shouldDisable;
   $scope.canUploadMultipleAssets = accessChecker.canUploadMultipleAssets;
-
-  $scope.searchController = $controller('AssetSearchController', {
-    $scope: $scope,
-    getSearchTerm: getSearchTerm
-  });
-
+  $scope.searchController = searchController;
   $scope.selection = createSelection();
   $scope.getAssetDimensions = getAssetDimensions;
-  $scope.paginator = $scope.searchController.paginator;
+  $scope.paginator = searchController.paginator;
 
   var debouncedResetAssets = debounce(function () {
-    $scope.searchController.resetAssets();
+    searchController.resetAssets();
   }, 3000);
 
   $scope.$watch('paginator.getTotal()', debouncedResetAssets);
 
   $scope.$watch(function pageParameters () {
     return {
-      searchTerm: $scope.context.view.searchTerm,
-      page: $scope.searchController.paginator.getPage(),
-      pageLength: $scope.searchController.paginator.getPerPage(),
+      page: searchController.paginator.getPage(),
+      pageLength: searchController.paginator.getPerPage(),
       spaceId: spaceContext.getId()
     };
-  }, function (pageParameters, old, scope) {
-    scope.searchController.resetAssets(pageParameters.page === old.page);
+  }, function (pageParameters, old) {
+    searchController.resetAssets(pageParameters.page === old.page);
   }, true);
 
 
@@ -82,7 +78,7 @@ angular.module('contentful')
    */
   // TODO this code is duplicated in the entry list controller
   $scope.hasNoSearchResults = function () {
-    var hasQuery = !_.isEmpty($scope.context.view.searchTerm);
+    var hasQuery = searchController.hasQuery();
     var hasAssets = $scope.paginator.getTotal() > 0;
     return !hasAssets && hasQuery && !$scope.context.isSearching;
   };
@@ -90,7 +86,7 @@ angular.module('contentful')
 
   // TODO this code is duplicated in the entry list controller
   $scope.showNoAssetsAdvice = function () {
-    var hasQuery = !_.isEmpty($scope.context.view.searchTerm);
+    var hasQuery = searchController.hasQuery();
     var hasAssets = $scope.paginator.getTotal() > 0;
 
     return !hasAssets && !hasQuery && !$scope.context.isSearching;
@@ -141,7 +137,7 @@ angular.module('contentful')
       // TODO Instead of querying the collection endpoint we should
       // add the assets manually
       delay(function () {
-        $scope.searchController.resetAssets().then(function () {
+        searchController.resetAssets().then(function () {
           notification.info('Updated asset list');
         });
       }, 5000);
@@ -178,10 +174,6 @@ angular.module('contentful')
   function processAssetForFile (entity) {
     var locale = TheLocaleStore.getDefaultLocale().internal_code;
     return entity.process(entity.version, locale);
-  }
-
-  function getSearchTerm () {
-    return $scope.context.view.searchTerm;
   }
 
   function getAssetDimensions (asset) {

@@ -1,7 +1,6 @@
 import {h} from 'ui/Framework';
-
 import modalDialog from 'modalDialog';
-import keycodes from 'keycodes';
+import keycodes from 'utils/keycodes';
 
 /**
  * @ngdoc service
@@ -28,7 +27,7 @@ import keycodes from 'keycodes';
  */
 
 export default function open (params = {}) {
-  const input = params.input || {};
+  const {input = {}} = params;
   input.value = input.value || '';
   input.min = input.min || 0;
   input.max = input.max || +Infinity;
@@ -38,8 +37,8 @@ export default function open (params = {}) {
     controller: function ($scope) {
       const {min, max, value} = input;
       const maxlength = isFinite(max) ? `${max}` : '';
-      const onInput = e => render(e.target.value);
       const cancel = () => $scope.dialog.cancel();
+      const onInput = (e) => render(e.target.value);
 
       render(value);
 

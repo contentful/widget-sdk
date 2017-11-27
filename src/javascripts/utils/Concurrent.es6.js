@@ -15,6 +15,13 @@ export const Success = makeCtor('Success');
 export const Failure = makeCtor('Failure');
 
 
+export function sleep (t) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, t);
+  });
+}
+
+
 /**
  * Run a generator function that yields promises and return the final
  * promise.

@@ -1,4 +1,4 @@
-import { mapValues } from 'lodash';
+import { mapValues, memoize } from 'lodash';
 import * as K from 'utils/kefir';
 import { makeMatcher } from 'utils/TaggedValues';
 
@@ -91,4 +91,57 @@ export function makeReducer (handlers) {
   return makeMatcher(mapValues(handlers, (handle) => {
     return (value, state) => handle(state, value);
   }));
+}
+
+
+/**
+ * WARNING -- This method is experimental and represents a temporary
+ * solution. Try to avoid it.
+ *
+ * Combine multiple store components into one with a custom render
+ * function. A _store component_ is a `{store, actions, render}`
+ * triple.
+ *
+ *     const render = ({toggler, subState}) => {
+ *       if (toggler.state === true) {
+ *         return subState.view
+ *       } else {
+ *         return h('button', { onClick: toggler.actions.Toggle() })
+ *       }
+ *     };
+ *
+ *     return combineStoreComponents(render, {
+ *       toggler: togglerComponent,
+ *       subState: storeComponent
+ *     });
+ *
+ * The render function receives the substates in an object. Each
+ * substate has the following properties
+ * - `substate.state` The corresponding components current state
+ * - `substate.actions` The corresponding components bound actions
+ * - `substate.view` The result of calling the corresponding components
+ *   render function with its current state.
+ */
+export function combineStoreComponents (render, components) {
+  const statePropertiesMap = mapValues(components, (c) => {
+    const actions = bindActions(c.store, c.actions);
+
+    return c.store.state$.map((state) => {
+      const memoizedRender = memoize(() => {
+        if (c.render) {
+          return c.render(state, actions);
+        }
+      });
+
+      return {
+        state,
+        actions,
+        // We compute the view lazily
+        get view () { return memoizedRender(); }
+      };
+    });
+  });
+
+  const state$ = K.combinePropertiesObject(statePropertiesMap);
+  return {render, actions: {}, store: {state$}};
 }

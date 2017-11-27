@@ -1,5 +1,5 @@
 import $q from '$q';
-import { cloneDeep, assign, mapValues, omit, values } from 'lodash';
+import { cloneDeep, assign, mapValues, values } from 'lodash';
 
 /**
  * Mock implementation for the 'spaceEndpoint' that simulates a subset
@@ -40,6 +40,7 @@ export default function create () {
     entries: makeEntityEndpoint('Entry'),
     assets: makeEntityEndpoint('Assets'),
     ui_config: makeSingletonEndpoint(),
+    user_ui_config: makeSingletonEndpoint(),
     api_keys: makeGenericEndpoint(),
     preview_api_keys: makeGenericEndpoint(),
     roles: makeGenericEndpoint(),
@@ -52,13 +53,19 @@ export default function create () {
     data = cloneDeep(data);
     const [typePath, id, state] = path;
     if (typePath in endpoints) {
-      return endpoints[typePath].request(method, id, state, data, version);
+      const endpoint = getEndpoint(endpoints, path);
+      return endpoint.request(method, id, state, data, version);
     } else {
       return rejectNotFound();
     }
   }
 
   return {stores, request};
+}
+
+function getEndpoint (endpoints, [typePath, id]) {
+  const isUserUIConfig = typePath === 'ui_config' && id === 'me';
+  return isUserUIConfig ? endpoints.user_ui_config : endpoints[typePath];
 }
 
 function makeEntityEndpoint (type) {
@@ -193,9 +200,9 @@ function putResource (store, id, version, data) {
   } else if (item.sys.version !== version) {
     return rejectVersionMismatch();
   }
-
-  Object.assign(item, omit(data, 'sys'));
-  item.sys.version++;
+  const sys = item.sys;
+  sys.version++;
+  item = store[id] = Object.assign({}, data, {sys});
   return $q.resolve(cloneDeep(item));
 }
 

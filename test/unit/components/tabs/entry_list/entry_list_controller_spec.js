@@ -1,7 +1,21 @@
 import * as sinon from 'helpers/sinon';
 
 describe('Entry List Controller', function () {
-  let scope, spaceContext;
+  let scope, spaceContext, ListQuery;
+
+  const VIEW = {
+    id: 'VIEW_ID',
+    title: 'Derp',
+    searchText: 'search input',
+    searchFilters: [],
+    contentTypeId: 'ctid',
+    contentTypeHidden: false,
+    displayedFieldIds: ['createdAt', 'updatedAt'],
+    order: {
+      fieldId: 'createdAt',
+      direction: 'descending'
+    }
+  };
 
   function createEntries (n) {
     const entries = _.map(new Array(n), function () {
@@ -12,7 +26,7 @@ describe('Entry List Controller', function () {
   }
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', ($provide) => {
       $provide.removeControllers('DisplayedFieldsController');
 
       $provide.value('analytics/Analytics', {
@@ -22,6 +36,23 @@ describe('Entry List Controller', function () {
       $provide.value('TheLocaleStore', {
         resetWithSpace: sinon.stub(),
         getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'})
+      });
+
+      const readStub = this.readStub = sinon.stub();
+      const promise = this.readPersistedViewPromise = new Promise((resolve) => {
+        this.resolveReadPersistedView = resolve;
+      });
+      $provide.value('data/ListViewPersistor', {
+        default: function () {
+          return {
+            save: sinon.stub().resolves({}),
+            read: readStub.returns(promise)
+          };
+        }
+      });
+
+      $provide.value('app/ContentList/Search', {
+        default: _.noop // TODO: Test search ui integration.
       });
     });
 
@@ -44,71 +75,123 @@ describe('Entry List Controller', function () {
 
     $controller('EntryListController', {$scope: scope});
     scope.selection.updateList = sinon.stub();
+
+    ListQuery = this.$inject('ListQuery');
+  });
+
+  describe('initially undefined view', function () {
+    beforeEach(function () {
+      ListQuery.getForEntries = this.getQuery = sinon.stub().resolves({});
+      scope.$apply();
+    });
+
+    it('is undefined', function () {
+      expect(scope.context.view).toBe(undefined);
+    });
+
+    it('does not trigger query', function () {
+      sinon.assert.notCalled(this.getQuery);
+    });
+
+    it('triggers query after loading view', function* () {
+      this.resolveReadPersistedView({});
+      yield this.readPersistedViewPromise;
+      scope.$apply();
+
+      expect(scope.context.view).not.toBe(undefined);
+      sinon.assert.calledOnce(this.getQuery);
+    });
   });
 
   describe('#loadView()', function () {
-    let view;
-
     beforeEach(function () {
-      scope.updateEntries = sinon.stub();
-
-      view = {
-        id: 'foo',
-        title: 'Derp',
-        searchTerm: 'search term',
-        contentTypeId: 'ctid',
-        contentTypeHidden: false,
-        displayedFieldIds: ['createAt', 'updatedAt'],
-        order: {
-          fieldId: 'createdAt',
-          direction: 'descending'
-        }
-      };
-      scope.loadView(view);
+      ListQuery.getForEntries = this.getQuery = sinon.stub().resolves({});
+      scope.loadView(VIEW);
     });
 
     it('sets the view', function () {
-      expect(scope.context.view).toEqual(view);
-      expect(scope.context.view).not.toBe(view);
+      expect(scope.context.view).toEqual(VIEW);
+      expect(scope.context.view).not.toBe(VIEW);
     });
 
     it('resets entries', function () {
       scope.$apply();
-      sinon.assert.calledOnce(scope.updateEntries);
+      sinon.assert.calledOnce(this.getQuery);
+    });
+
+    describe('with `order.fieldId` value not in `displayedFieldIds`', function () {
+      const VIEW_WITH_WRONG_ORDER = Object.assign({}, VIEW, {
+        displayedFieldIds: ['createdAt', 'updatedAt'],
+        order: {
+          fieldId: 'publishedAt', // Not in `displayedFieldIds`
+          direction: 'descending'
+        }
+      });
+
+      it('changes `order.fieldId`', function () {
+        scope.loadView(VIEW_WITH_WRONG_ORDER);
+        scope.$apply();
+        const expected = Object.assign({}, VIEW_WITH_WRONG_ORDER, {
+          order: {
+            fieldId: 'createdAt'
+          }
+        });
+        expect(scope.context.view).toEqual(expected);
+      });
     });
   });
 
-  describe('on search term change', function () {
+  describe('on search change', function () {
     it('page is set to the first one', function () {
+      scope.context.view = {};
       scope.paginator.setPage(1);
       scope.$apply();
-      scope.context.view.searchTerm = 'thing';
+      scope.context.view.searchText = 'thing';
       scope.$apply();
       expect(scope.paginator.getPage()).toBe(0);
     });
   });
 
-  describe('page parameters change trigger entries reset', function () {
+  describe('page parameters change', function () {
     beforeEach(function () {
-      this.$inject('ListQuery').getForEntries = this.getQuery = sinon.stub().resolves({});
+      ListQuery.getForEntries = this.getQuery = sinon.stub().resolves({});
     });
 
-    it('search term', function () {
-      scope.context.view.searchTerm = 'thing';
-      scope.$apply();
-      sinon.assert.calledOnce(this.getQuery);
-    });
-
-    it('page', function () {
+    it('triggers no query on page change if no view is loaded', function () {
       scope.paginator.setPage(1);
-      scope.$digest();
-      sinon.assert.calledOnce(this.getQuery);
+      scope.$apply();
+      sinon.assert.notCalled(this.getQuery);
     });
 
-    it('contentTypeId', function () {
-      scope.context.view.contentTypeId = 'something';
-      scope.$digest();
-      sinon.assert.calledOnce(this.getQuery);
+    describe('triggers query on change', function () {
+      beforeEach(function () {
+        scope.context.view = {};
+        scope.$apply();
+      });
+
+      it('page', function () {
+        scope.paginator.setPage(1);
+        scope.$apply();
+        sinon.assert.calledTwice(this.getQuery);
+      });
+
+      it('`searchText`', function () {
+        scope.context.view.searchText = 'thing';
+        scope.$apply();
+        sinon.assert.calledTwice(this.getQuery);
+      });
+
+      it('`searchFilters`', function () {
+        scope.context.view.searchFilters = ['__status', '', 'published'];
+        scope.$apply();
+        sinon.assert.calledTwice(this.getQuery);
+      });
+
+      it('`contentTypeId`', function () {
+        scope.context.view = { contentTypeId: 'something' };
+        scope.$apply();
+        sinon.assert.calledTwice(this.getQuery);
+      });
     });
   });
 
@@ -116,6 +199,7 @@ describe('Entry List Controller', function () {
     let entries;
 
     beforeEach(function () {
+      scope.context.view = {};
       entries = createEntries(30);
       scope.$apply();
       spaceContext.space.getEntries.resolve(entries);
@@ -253,6 +337,7 @@ describe('Entry List Controller', function () {
     });
 
     it('should cause updateEntries to show an error message', function () {
+      scope.context.view = {};
       scope.updateEntries();
       scope.$apply();
       sinon.assert.called(this.handler);

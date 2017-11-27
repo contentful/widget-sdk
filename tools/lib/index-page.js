@@ -86,6 +86,7 @@ function indexPage (uiVersion, config, resolve, entryScripts) {
       }`
     ]),
     h('body', {
+      tabindex: '0',
       ngApp: 'contentful/app',
       ngCsp: 'no-inline-style;no-unsafe-eval',
       ngController: 'ClientController',

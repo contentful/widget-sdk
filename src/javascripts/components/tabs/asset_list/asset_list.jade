@@ -10,14 +10,12 @@ header.workbench-header
       | Media
       cf-knowledge-base.workbench-header__kb-link(target="asset")
 
-  .workbench-header__search(
-    ng-if="context.ready && !showNoAssetsAdvice()")
-    div(
-      cf-tokenized-search="context.view.searchTerm"
-      search-content-type="assetContentType"
-      placeholder="Search for an asset"
-      cf-on-blur-component="leftSearch($event)"
-      cf-on-blur-component-when="showAutocompletions")
+  .workbench-header__search
+    cf-component-bridge(style="flex: 1; z-index: 1" component="search")
+    a.text-link(
+      style="margin-left: 15px"
+      ng-click="savedViewsSidebar.api.saveCurrentView()"
+    ) Save as view
 
   .workbench-header__actions(
     ng-show="!showNoAssetsAdvice() && !shouldHide('createAsset')")
@@ -39,8 +37,8 @@ header.workbench-header
           | Multiple assets
 
 .workbench-main(ng-hide="showNoAssetsAdvice()")
-  .workbench-main__left-sidebar
-    cf-component-store-bridge(component="savedViewsComponent")
+  .workbench-main__left-sidebar(style="max-height: 100vh; overflow-y: hidden")
+    cf-component-store-bridge(component="savedViewsSidebar")
 
   .workbench-main__right-content
     .search-results__count(ng-show="paginator.getTotal() > 0")
@@ -140,7 +138,7 @@ header.workbench-header
 
     cf-search-results-paginator(paginator="paginator" pages="7")
 
-    +no-search-results("hasNoSearchResults()", "context.view.searchTerm")
+    +no-search-results("hasNoSearchResults()")
 
 .workbench-main.x--content(ng-show="showNoAssetsAdvice()")
   include ./no_assets_advice

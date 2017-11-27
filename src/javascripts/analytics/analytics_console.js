@@ -7,7 +7,7 @@ angular.module('contentful')
  * @name analytics/console
  * @description
  * A small UI component presenting all events being tracked. Can be
- * turned on (not in production) by calling `cfDegub.analytics()` from
+ * turned on (not in production) by calling `cfDebug.analytics()` from
  * the console
  *
  * TODO We should invert the dependencies. Currently the 'Analytics'

@@ -68,7 +68,7 @@ header.workbench-header
           .view-folder__item-title Active
 
   .workbench-main__right-content
-    +no-search-results("!hasQueryResults()", "context.searchTerm", "context.list")
+    +no-search-results("!hasQueryResults()")
     .table(ng-show="hasQueryResults()")
       .table__head
         table

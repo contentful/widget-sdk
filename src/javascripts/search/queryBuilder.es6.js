@@ -1,7 +1,7 @@
 import $q from '$q';
 import { filterToQueryObject } from 'searchQueryAutocompletions';
 import createCachedTokenParser from 'search/cachedParser';
-import {map} from 'lodash';
+import {map, extend} from 'lodash';
 import {assign} from 'utils/Collections';
 
 const parseTokens = createCachedTokenParser();
@@ -10,26 +10,25 @@ const parseTokens = createCachedTokenParser();
  * @ngdoc method
  * @name search/queryBuilder#default
  * @description
- * Build an API query from a query string provided by the user.
- * @param {Client.Space}         space
- * @param {Client.ContentType?}  contentType
- * @param {string}               queryString
+ * Build an API query from a legacy text query (`searchTerm`) provided by the user.
+ * @param {Space} space
+ * @param {ContentType?} contentType
+ * @param {string} textQuery Legacy text query.
  * @returns {Promise<object>}
  */
-export function buildQuery (space, contentType, queryString) {
-  const [filters, textQuery] = parse(queryString);
+export function buildQuery (space, contentType, textQuery) {
+  const {filters, queryText} = parseTextQuery(textQuery);
 
   const queryItems = $q.all(
     filters.map((filter) => filterToQueryObject(filter, contentType, space))
   );
 
-
   return queryItems
   .then((queryItems) => {
-    let queryObject = queryItems.reduce((queryObject, queryItem) => assign(queryObject, queryItem), {});
+    let queryObject = extend.bind(null, {}).apply(null, queryItems);
 
-    if (textQuery.length > 0) {
-      queryObject = assign(queryObject, { query: textQuery });
+    if (queryText.length > 0) {
+      queryObject = assign(queryObject, { query: queryText });
     }
 
     if (contentType) {
@@ -40,12 +39,11 @@ export function buildQuery (space, contentType, queryString) {
   });
 }
 
-
-function parse (string) {
-  const tokens = parseTokens(string);
+export function parseTextQuery (textQuery) {
+  const tokens = parseTokens(textQuery);
   const filters = getFilters(tokens);
-  const textQuery = getTextQuery(tokens);
-  return [filters, textQuery];
+  const queryText = getQueryText(tokens);
+  return {filters, queryText};
 }
 
 
@@ -64,7 +62,7 @@ function getFilters (tokens) {
 }
 
 // Takes all tokens that are queries and joins them with spaces
-function getTextQuery (tokens) {
+function getQueryText (tokens) {
   const queries = tokens.filter((token) => {
     return token.type === 'Query' && token.content.length > 0;
   });

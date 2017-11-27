@@ -18,11 +18,15 @@ const VTree = makeSum({
       'Text node must be constructed with a string'
     );
     return {text};
+  },
+  Component (constructor, args) {
+    return {constructor, args};
   }
 });
 
 export const Element = VTree.Element;
 export const Text = VTree.Text;
+export const Component = VTree.Component;
 
 // Type assertions for element properties
 
@@ -42,7 +46,7 @@ function checkProps (props) {
         typeof value === 'function',
         'Ref handler must be a function'
       );
-    } else if (key === 'disabled' || key === 'checked') {
+    } else if (key === 'disabled' || key === 'checked' || key === 'autofocus') {
       assert(
         typeof value === 'boolean',
         `Element property "${key}" must be a boolean`
