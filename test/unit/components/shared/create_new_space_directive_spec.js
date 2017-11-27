@@ -303,7 +303,8 @@ describe('cfCreateNewSpace directive', function () {
           beforeEach(function () {
             stubs.spaceTemplateCreator.getCreator.returns({
               create: sinon.stub().returns({
-                contentCreated: Promise.resolve()
+                contentCreated: Promise.resolve(),
+                spaceSetup: Promise.reject(new Error('something happened'))
               })
             });
             controller.newSpace.data.name = 'name';
