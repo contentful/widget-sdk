@@ -29,3 +29,7 @@ If you define a state the single view properties (`controller`, `controllerAs`,
 `template`, `templateProvider`) are moved automatically to the `content@` view.
 (This is implemented in the `states/config` module.) If you provide a value for
 `views['content@']` this will be ignored.
+
+The `template` value can either be a string, a VTree constructed with `h` or a
+list of VTrees. In case of the latter two we render the VTree to turn it into a
+string.

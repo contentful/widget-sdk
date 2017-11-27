@@ -15,6 +15,10 @@ angular.module('contentful')
 .provider('states/config', ['$stateProvider', function ($stateProvider) {
   var VIEW_PROPERTIES = ['controller', 'controllerAs', 'template', 'templateProvider'];
 
+  // Is assigned the `h` export from the `ui/Framework` module.
+  // This is necessary because we define a provider and not a factory.
+  var renderString;
+
   // Collection of registered services
   var states = [];
 
@@ -25,7 +29,11 @@ angular.module('contentful')
   };
 
   return {
-    $get: function () { return stateConfig; }
+    $get: ['require', function (require) {
+      renderString = require('ui/Framework').renderString;
+
+      return stateConfig;
+    }]
   };
 
   /*
@@ -55,6 +63,7 @@ angular.module('contentful')
 
   function addChildren (parentName, children) {
     children.forEach(function (state) {
+      state.template = templateToString(state.template);
       state = useContentView(state);
       var children = state.children;
       var name;
@@ -81,6 +90,16 @@ angular.module('contentful')
       return _.omit(state, VIEW_PROPERTIES);
     } else {
       return state;
+    }
+  }
+
+  function templateToString (template) {
+    if (!template || typeof template === 'string') {
+      return template;
+    } else if (Array.isArray(template)) {
+      return template.map(renderString).join('');
+    } else {
+      return renderString(template);
     }
   }
 }]);
