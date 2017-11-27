@@ -21,6 +21,7 @@ describe('app/ContentList/Search/View', function () {
     // TODO: remove after converting datepicker to es6 module.
     SystemJS.set('datepicker', SystemJS.newModule({}));
     SystemJS.set('moment', SystemJS.newModule({}));
+    SystemJS.set('stringUtils', SystemJS.newModule({}));
     SystemJS.set(
       'mimetype',
       SystemJS.newModule({

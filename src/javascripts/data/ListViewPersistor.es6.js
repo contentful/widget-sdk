@@ -29,7 +29,7 @@ export default function create (spaceId, viewMigrator, entityType) {
   return {read, save};
 
   function save (view) {
-    const viewData = serialize(omit(view, ['title']));
+    const viewData = serialize(omitUIConfigOnlyViewProperties(view));
     localStorage.set(viewData);
     $location.search(prepareQueryString(viewData));
     $location.replace();
@@ -38,8 +38,7 @@ export default function create (spaceId, viewMigrator, entityType) {
   function read () {
     const currentQS = $location.search();
     const qs = isEmpty(currentQS) ? getPreviousQS() : currentQS;
-    const q = fromStorageFormat(qs);
-    return q;
+    return fromStorageFormat(qs);
   }
 
   function getPreviousQS () {
@@ -47,7 +46,7 @@ export default function create (spaceId, viewMigrator, entityType) {
   }
 
   function fromStorageFormat (viewData) {
-    const view = unserialize(viewData);
+    const view = omitUIConfigOnlyViewProperties(unserialize(viewData));
     return viewMigrations(view);
   }
 
@@ -80,6 +79,10 @@ export default function create (spaceId, viewMigrator, entityType) {
 
     return $q.resolve(view);
   }
+}
+
+function omitUIConfigOnlyViewProperties (view) {
+  return omit(view, ['title', '_legacySearchTerm']);
 }
 
 function prepareQueryString (viewData) {

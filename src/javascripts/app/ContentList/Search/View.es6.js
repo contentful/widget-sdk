@@ -1,6 +1,7 @@
 /* global requestAnimationFrame */
 import { noop, find, assign } from 'lodash';
 import { match } from 'utils/TaggedValues';
+import { truncate } from 'stringUtils';
 
 import {h} from 'ui/Framework';
 import * as H from 'ui/Framework/Hooks';
@@ -552,7 +553,7 @@ function searchHelpBanner () {
 
 function noSuggestionsMessage ({ searchTerm }) {
   return h('div.search-next__suggestions__no-results', [
-    `There are no filters matching "${searchTerm}".`
+    `There are no filters matching “${truncate(searchTerm.trim(), 25)}”`
   ]);
 }
 

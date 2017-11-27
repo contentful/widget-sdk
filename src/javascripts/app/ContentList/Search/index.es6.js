@@ -73,8 +73,9 @@ export default function create (
     function dispatch (action, payload) {
       store.dispatch(action, payload);
     }
-  } catch (e) {
-    logger.logError(e);
+  } catch (error) {
+    const data = { initState, withAssets };
+    logger.logError('Unexpected search ui error', { error, data });
   }
 }
 

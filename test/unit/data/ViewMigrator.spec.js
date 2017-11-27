@@ -66,7 +66,7 @@ describe('ViewMigrator', function () {
             SPACE, null, SEARCH_TERM).resolves(CONVERTED_SEARCH_TERM);
         });
 
-        testMigrateView(BASE_VIEW, CONVERTED_SEARCH_TERM);
+        testMigrateViewSuccess(BASE_VIEW, CONVERTED_SEARCH_TERM);
       });
 
       describe('on view with a `searchTerm` and `contentTypeId`', function () {
@@ -81,16 +81,64 @@ describe('ViewMigrator', function () {
             SPACE, CONTENT_TYPE, SEARCH_TERM).resolves(CONVERTED_SEARCH_TERM);
         });
 
-        testMigrateView(VIEW_WITH_CT, CONVERTED_SEARCH_TERM);
+        testMigrateViewSuccess(VIEW_WITH_CT, CONVERTED_SEARCH_TERM);
 
         it('calls `ContentTypeRepo#get()`', function* () {
           yield migrateView(VIEW_WITH_CT);
           sinon.assert.calledOnce(this.getCTStub);
         });
       });
+
+      describe('TextQueryConverter.textQueryToUISearch() error', function () {
+        beforeEach(function () {
+          this.convertStub.throws('SOME UNKNOWN MIGRATION ERROR');
+        });
+
+        testMigrateViewOnError(BASE_VIEW);
+      });
+
+      describe('TextQueryConverter.textQueryToUISearch() rejects', function () {
+        beforeEach(function () {
+          this.convertStub.rejects('SOME UNKNOWN MIGRATION ERROR');
+        });
+
+        testMigrateViewOnError(BASE_VIEW);
+      });
     });
 
-    function testMigrateView (view, convertedSearchTerm) {
+    function testMigrateViewSuccess (view, convertedSearchTerm) {
+      testMigrateViewBasics(view);
+
+      it('has a `searchText` as provided by `TextQueryConverter`', function* () {
+        const {searchText} = yield migrateView(view);
+        expect(searchText).toEqual(convertedSearchTerm.searchText);
+      });
+
+      it('has `searchFilters` as provided by `TextQueryConverter`', function* () {
+        const {searchFilters} = yield migrateView(view);
+        expect(searchFilters).toEqual(convertedSearchTerm.searchFilters);
+      });
+    }
+
+    function testMigrateViewOnError (view) {
+      testMigrateViewBasics(view);
+
+      it('returns view with empty search', function* () {
+        const {searchText, searchFilters} = yield migrateView(view);
+        const emptySearch = {
+          searchText: '',
+          searchFilters: []
+        };
+        expect({searchText, searchFilters}).toEqual(emptySearch);
+      });
+
+      it('adds a `_legacySearchTerm` field', function* () {
+        const {_legacySearchTerm} = yield migrateView(view);
+        expect(_legacySearchTerm).toEqual(view.searchTerm);
+      });
+    }
+
+    function testMigrateViewBasics (view) {
       it('does not mutate given view', function* () {
         const viewClone = cloneDeep(view);
         yield migrateView(viewClone);
@@ -105,16 +153,6 @@ describe('ViewMigrator', function () {
       it('deletes the `searchTerm', function* () {
         const {searchTerm} = yield migrateView(view);
         expect(searchTerm).toBeUndefined();
-      });
-
-      it('has a `searchText` as provided by `TextQueryConverter`', function* () {
-        const {searchText} = yield migrateView(view);
-        expect(searchText).toEqual(convertedSearchTerm.searchText);
-      });
-
-      it('has `searchFilters` as provided by `TextQueryConverter`', function* () {
-        const {searchFilters} = yield migrateView(view);
-        expect(searchFilters).toEqual(convertedSearchTerm.searchFilters);
       });
 
       it('preserves search unrelated view properties', function* () {
