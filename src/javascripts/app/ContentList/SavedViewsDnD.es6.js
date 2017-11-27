@@ -59,7 +59,7 @@ export default function create (getFolders, saveFolders) {
 
   function forViews (el, {id}) {
     create(['views', id], el, {
-      draggable: '.-draggable',
+      draggable: 'li',
       group: `views,${viewsGroupId}`,
       onAdd: e => saveFolders(moveViewBetween(getFolders(), [srcFolder(e), id], e)),
       onUpdate: e => saveFolders(moveView(getFolders(), id, e))

@@ -42,10 +42,14 @@ export default function render (folder, state, actions) {
         onClick: () => actions.ToggleOpened(folder)
       }, ['▼'])
     ]),
-    h('ul.view-folder__list', {
+    !isClosed && h('ul.view-folder__list', {
       class: collapsed,
-      ref: el => state.dnd.forViews(el, folder)
-    }, isClosed ? [] : views.map(view => {
+      ref: el => state.dnd.forViews(el, folder),
+      style: {
+        minHeight: views.length === 0 ? '10px' : undefined,
+        marginBottom: views.length === 0 ? '0px' : undefined
+      }
+    }, views.map(view => {
       return h('li.view-folder__item', {
         class: [active(view), draggable].join(' '),
         onClick: () => actions.LoadView(view)
