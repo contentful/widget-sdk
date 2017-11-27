@@ -7,7 +7,7 @@ angular.module('contentful')
  * @name states/settings/roles
  */
 .factory('states/settings/roles', ['require', function (require) {
-  var base = require('states/base');
+  var base = require('states/Base').default;
   var contextHistory = require('contextHistory');
   var crumbFactory = require('navigation/CrumbFactory');
   var $q = require('$q');

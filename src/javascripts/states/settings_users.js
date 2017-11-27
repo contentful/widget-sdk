@@ -7,7 +7,7 @@ angular.module('contentful')
  * @name states/settings/users
  */
 .factory('states/settings/users', ['require', function (require) {
-  var base = require('states/base');
+  var base = require('states/Base').default;
 
   var list = base({
     name: 'list',

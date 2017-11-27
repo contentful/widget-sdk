@@ -1,6 +1,6 @@
 import {assign} from 'lodash';
 import {h} from 'utils/hyperscript';
-import baseState from 'states/base';
+import baseState from 'states/Base';
 import * as contextHistory from 'contextHistory';
 import * as crumbFactory from 'navigation/CrumbFactory';
 import * as Auth from 'Authentication';

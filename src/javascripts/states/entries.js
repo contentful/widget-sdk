@@ -12,7 +12,7 @@ angular.module('contentful')
   var trackVersioning = require('analyticsEvents/versioning');
   var crumbFactory = require('navigation/CrumbFactory');
 
-  var base = require('states/base');
+  var base = require('states/Base').default;
   var loadEditorData = require('app/entity_editor/DataLoader').loadEntry;
   var createEditorController = require('app/entity_editor/EntryController').default;
 
