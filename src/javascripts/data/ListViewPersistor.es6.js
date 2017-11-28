@@ -1,4 +1,4 @@
-import querystring from 'querystring';
+import qs from 'libs/qs';
 import $q from '$q';
 import $location from '$location';
 import TheStore from 'TheStore';
@@ -89,7 +89,7 @@ function prepareQueryString (viewData) {
   const keys = Object.keys(viewData)
     .filter(key => key.charAt(0) !== '_');
 
-  return querystring.stringify(keys.reduce((acc, key) => {
+  return qs.stringify(keys.reduce((acc, key) => {
     acc[key] = viewData[key];
     return acc;
   }, {}));

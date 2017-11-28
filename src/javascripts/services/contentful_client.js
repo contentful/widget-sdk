@@ -10,9 +10,9 @@ angular.module('contentful').factory('contentfulClient', ['require', function (r
    * It's also been modified to make use of the CMA instead, with the X-Contentful-Skip-Transformation header.
   */
 
-  var $http       = require('$http');
-  var $q          = require('$q');
-  var querystring = require('querystring');
+  var $http = require('$http');
+  var $q = require('$q');
+  var qs = require('libs/qs');
 
   var parseableResourceTypes = {
     Asset: Asset,
@@ -146,7 +146,7 @@ angular.module('contentful').factory('contentfulClient', ['require', function (r
   function Query() {}
 
   Query.prototype.toQueryString = function() {
-    return querystring.stringify(this);
+    return qs.stringify(this);
   };
 
   Query.parse = function(object) {
