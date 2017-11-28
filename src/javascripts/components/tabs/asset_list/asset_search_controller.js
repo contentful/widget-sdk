@@ -176,7 +176,7 @@ angular.module('contentful')
     if (_.isEqual(lastUISearchState, initialSearchState)) {
       return;
     }
-
+    lastUISearchState = initialSearchState;
     createSearchInput(
       $scope,
       spaceContext,
@@ -207,8 +207,7 @@ angular.module('contentful')
     var search = getViewSearchState();
     return (
       !_.isEmpty(search.searchText) ||
-      !_.isEmpty(search.searchFilters) ||
-      !_.isEmpty(search.contentTypeId)
+      !_.isEmpty(search.searchFilters)
     );
   }
 

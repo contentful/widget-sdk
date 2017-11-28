@@ -138,7 +138,7 @@ angular.module('contentful')
     if (_.isEqual(lastUISearchState, initialSearchState)) {
       return;
     }
-
+    lastUISearchState = initialSearchState;
     createSearchInput(
       $scope,
       spaceContext,
