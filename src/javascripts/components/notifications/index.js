@@ -16,8 +16,9 @@ angular.module('contentful')
 }])
 
 
-.factory('notifications/bus', [function () {
+.factory('notifications/bus', ['require', function (require) {
   var buses = {};
+  var $rootScope = require('$rootScope')
 
   return function getNotificationBus (name) {
     if (!(name in buses)) {
@@ -63,6 +64,7 @@ angular.module('contentful')
         };
 
         this.message = message;
+        $rootScope.$applyAsync();
       },
 
     };

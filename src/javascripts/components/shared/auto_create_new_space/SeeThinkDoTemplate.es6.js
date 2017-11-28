@@ -195,9 +195,9 @@ function renderChosenProjectStatus () {
         }, [
           h('h2', { style: titleStyle }, ['Dive right in and start building']),
           chosenProjectList([
-            'Get the libraries & tools to develop your project',
-            'Create a new space to start from scratch',
-            'Make your first API call with our examples'
+            'Download a boilerplate in the API section',
+            'Add a blank space from the main menu',
+            'Make your first API call with sample content'
           ])
         ])
       ])
