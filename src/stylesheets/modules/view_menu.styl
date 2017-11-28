@@ -1,12 +1,45 @@
+.view-menu
+  display: flex
+  flex-direction: column
+  height: calc(100vh - 210px)
+
+.view-menu__folders
+  flex: 1 0 200px
+  overflow-y: auto 
+  padding-top: 10px 
+
 .view-menu__actions
-  padding: 20px 8px
+  flex: 0 1 75px
+  height: 75px
+  max-height: 75px;
+  background-color: $colors.element-lightest
 
   button
-    display: block
+    margin-left: 1.5em
     margin-bottom: 10px
     i
       display: inline-block
       margin-right: 5px
+
+.view-menu__empty
+  display: flex
+  flex-direction: column
+  height: 100%
+
+.view-menu__empty-message
+  display: flex
+  flex-direction: column
+  height: 100%
+
+.view-menu__empty-cta
+  flex: 1
+  position: relative
+
+  button
+    position: absolute
+    bottom: 5px
+    padding-left: 1.5rem
+  
 
 .view-menu .sortable-ghost
   background-color: $colors.element-lightest
@@ -36,22 +69,26 @@
 
 .view-folder__empty
   color: $colors.text-light
-  padding: 4px 8px
+  padding: 1.5rem
 
 .view-folder__header
   display: flex
   justify-content: space-between
-  color: $colors.text-mid
+  align-items: start
+  color: $colors.text-dark
   border-top: 1px solid $colors.element-light
-  font-size: 11px
+  font-size: 12px
   font-weight: bold
-  padding: 0 5px
+  padding: 0 1.5rem
   text-transform: uppercase
   letter-spacing: 1px
 
 .view-folder__title,
 .view-folder__toggle
+  max-width: 85%
   padding: 20px 3px
+  word-wrap: break-word
+
 
 .view-folder__toggle
   transition: .15s transform ease-in-out
@@ -65,9 +102,10 @@
   cursor: -webkit-grab
 
 .view-folder__list
+  margin-bottom: 10px
+
   // we need some minimal height so the list can accept dragged items
   min-height: 2px
-  margin-bottom: 10px
 
   &.-collapsed
     margin-bottom: 0
@@ -75,20 +113,19 @@
 .view-folder__item
   display: flex
   justify-content: space-between
-  padding: 6px 10px
+  padding: 8px 1.5rem
   margin: 0
   border: 1px solid transparent
   cursor: pointer
-
+  &:hover
+    background-color: $colors.element-mid
   .view-folder__item-title
     color: $colors.text-dark
-    width: 60%
+    width: 100%
     white-space: nowrap
     overflow: hidden
     text-overflow: ellipsis
 
-  &:hover .view-folder__item-title
-    text-decoration: underline
 
   &.-active
     border-radius: 3px
@@ -97,5 +134,11 @@
       font-weight: bold
 
   .view-folder__actions
-    width: 40%
+    width: 80px
     text-align: right
+
+.view-folder__seperator-wrapper
+
+.view-folder__seperator
+  margin-bottom: 25px
+  border-bottom: 1px solid $colors.element-dark

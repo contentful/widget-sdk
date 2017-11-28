@@ -36,7 +36,7 @@ const PREACT_PROP_KEY_EXCEPTIONS = {
 /**
  * Turns an abstract virtual DOM tree into a concrete Preact tree.
  */
-function asPreact (tree) {
+export function asPreact (tree) {
   return caseof(tree, [
     [VTree.Element, ({tag, props, children}) => {
       // Property keys are kebab-cased
@@ -54,6 +54,9 @@ function asPreact (tree) {
       children = children.map(asPreact);
       return Preact.h(tag, props, children);
     }],
-    [VTree.Text, ({text}) => text]
+    [VTree.Text, ({text}) => text],
+    [VTree.Component, ({constructor, args}) => {
+      return Preact.h(constructor, { args });
+    }]
   ]);
 }

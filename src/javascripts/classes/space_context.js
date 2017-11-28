@@ -37,6 +37,7 @@ angular.module('contentful')
   var OrganizationContext = require('classes/OrganizationContext');
   var MembershipRepo = require('access_control/SpaceMembershipRepository');
   var createUiConfigStore = require('data/UiConfig/Store').default;
+  var createViewMigrator = require('data/ViewMigrator').default;
 
   var spaceContext = {
     /**
@@ -68,7 +69,6 @@ angular.module('contentful')
      */
     resetWithSpace: function (space) {
       var self = this;
-      var isAdmin = space.data.spaceMembership.admin;
 
       self.endpoint = createSpaceEndpoint(
         Config.apiUrl(),
@@ -115,10 +115,15 @@ angular.module('contentful')
         Widgets.setSpace(self.endpoint).then(function (widgets) {
           self.widgets = widgets;
         }),
-        createUiConfigStore(self.endpoint, isAdmin, self.publishedCTs).then(function (api) {
-          self.uiConfig = api;
-        }),
-        self.publishedCTs.refresh()
+        self.publishedCTs.refresh().then(function () {
+          var viewMigrator = createViewMigrator(space, self.publishedCTs);
+          return createUiConfigStore(
+            space, self.endpoint, self.publishedCTs, viewMigrator
+          )
+          .then(function (api) {
+            self.uiConfig = api;
+          });
+        })
       ]).then(function () {
         return self;
       });
@@ -237,6 +242,7 @@ angular.module('contentful')
      */
     entryTitle: function (entry, localeCode, modelValue) {
       var defaultTitle = modelValue ? null : 'Untitled';
+      var title, displayField;
 
       try {
         var contentTypeId = entry.getContentTypeId();
@@ -244,11 +250,12 @@ angular.module('contentful')
         if (!contentType) {
           return defaultTitle;
         }
-        var displayField = contentType.data.displayField;
+        displayField = contentType.data.displayField;
         if (!displayField) {
           return defaultTitle;
         } else {
-          var title = this.getFieldValue(entry, displayField, localeCode);
+          title = this.getFieldValue(entry, displayField, localeCode);
+          // TODO: Display meaningful title in case of non-string displayField.
           if (!title || title.match(/^\s*$/)) {
             return defaultTitle;
           } else {
@@ -256,9 +263,13 @@ angular.module('contentful')
           }
         }
       } catch (error) {
-        // The logic should not be in a try catch block. Instead we should make
-        // sure that we handle undefined values properly.
-        logger.logException(error);
+        // TODO: Don't use try catch. Instead, handle undefined/unexpected values.
+        logger.logWarn('Failed to determine entry title', {
+          error: error,
+          entrySys: _.get(entry, 'data.sys'),
+          entryTitle: title,
+          ctDisplayField: displayField
+        });
         return defaultTitle;
       }
     },
@@ -334,15 +345,22 @@ angular.module('contentful')
      */
     assetTitle: function (asset, localeCode, modelValue) {
       var defaultTitle = modelValue ? null : 'Untitled';
+      var title;
 
       try {
-        var title = this.getFieldValue(asset, 'title', localeCode);
+        title = this.getFieldValue(asset, 'title', localeCode);
         if (!title || title.match(/^\s*$/)) {
           return defaultTitle;
         } else {
           return title;
         }
-      } catch (e) {
+      } catch (error) {
+        // TODO: Don't use try catch. Instead, handle undefined/unexpected values.
+        logger.logWarn('Failed to determine asset title', {
+          error: error,
+          assetSys: _.get(asset, 'data.sys'),
+          assetTitle: title
+        });
         return defaultTitle;
       }
     },

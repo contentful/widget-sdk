@@ -6,92 +6,61 @@ angular.module('contentful')
   var $q = require('$q');
   var ListQuery = require('ListQuery');
   var ReloadNotification = require('ReloadNotification');
+  var Notification = require('notification');
   var createRequestQueue = require('overridingRequestQueue');
   var spaceContext = require('spaceContext');
   var accessChecker = require('accessChecker');
-  var debounce = require('debounce');
   var Tracking = require('analytics/events/SearchAndViews');
+  var K = require('utils/kefir');
+  var Kefir = require('libs/kefir');
+  var createSearchInput = require('app/ContentList/Search').default;
+  var h = require('ui/Framework').h;
 
-  var AUTOTRIGGER_MIN_LEN = 4;
+  var initialized = false;
+  var lastUISearchState = null;
 
-  var searchTerm = null;
-
-  var isResettingTerm = false;
-
-  var debouncedUpdateWithTerm = debounce(updateWithTerm, 200);
-
-  /**
-   * Public API
-   */
+  $scope.context = { ready: false, loading: true };
+  // HACK: This makes sure that component bridge renders
+  // somethings until search UI is initialized.
+  $scope.search = h('div');
 
   // TODO rename this everywhere
-  $scope.updateEntries = resetEntries;
+  $scope.updateEntries = function () {
+    if (isViewLoaded()) {
+      resetEntries();
+    }
+  };
 
   var updateEntries = createRequestQueue(requestEntries, setupEntriesHandler);
 
-  this.resetSearchTerm = resetSearchTerm;
   this.hasQuery = hasQuery;
-
-  /**
-   * Watches: triggering list updates
-   */
 
   // We store the page in a local variable.
   // We need this to determine if a change to 'paginator.getPage()'
-  // comes from us or the user or from us.
-  var page = null;
+  // comes from us or the user.
+  var page = 0;
   $scope.$watch(function () {
     return $scope.paginator.getPage();
   }, function (newPage) {
-    if (page !== newPage) {
+    if (page !== newPage && initialized) {
       page = newPage;
       updateEntries();
     }
   });
 
+  // TODO: Get rid of duplicate code in asset_search_controller.js
 
-  $scope.$watchCollection(function () {
+  $scope.$watch(function () {
     return {
-      value: getViewItem('searchTerm'),
-      view: getViewItem('id')
+      viewId: getViewItem('id'),
+      search: getViewSearchState()
     };
-  }, function (next, prev) {
-    var value = next.value;
-    var viewChanged = next.view !== prev.view;
-    var hasTerm = _.isString(value) && value.length > 0;
-
-    // if view was changed updated immediately
-    if (viewChanged) {
-      updateWithTerm(value);
+  }, function () {
+    if (!isViewLoaded()) {
       return;
     }
-
-    // for initial run or resetting term just set search term w/o list update
-    if (value === prev.value || isResettingTerm) {
-      searchTerm = value;
-      isResettingTerm = false;
-      return;
-    }
-
-    // if term was cleared then update immediately
-    if (!hasTerm) {
-      updateWithTerm(value);
-      return;
-    }
-
-    // use debounced version when user is actively typing
-    // we autotrigger only when query is long enough
-    if (hasTerm && value.length >= AUTOTRIGGER_MIN_LEN) {
-      debouncedUpdateWithTerm(value);
-      return;
-    }
-  });
-
-  $scope.$watch('context.view.contentTypeId', function (value, prev) {
-    if (value !== prev) {
-      resetEntries();
-    }
-  });
+    resetEntries();
+  }, true);
 
   $scope.$watch(function () {
     return {
@@ -113,24 +82,6 @@ angular.module('contentful')
     }
   });
 
-  function resetSearchTerm () {
-    isResettingTerm = true;
-    $scope.context.view.searchTerm = null;
-  }
-
-  function hasQuery () {
-    return (
-      !_.isEmpty(searchTerm) ||
-      !_.isEmpty(getViewItem('contentTypeId')) ||
-      getViewItem('collection')
-    );
-  }
-
-  function updateWithTerm (term) {
-    searchTerm = term;
-    resetEntries();
-  }
-
   // When the user deletes an entry it is removed from the entries
   // list. If that list becomes empty we want to go to the previous
   // page.
@@ -144,24 +95,58 @@ angular.module('contentful')
   function resetEntries () {
     $scope.paginator.setPage(0);
     page = 0;
+    initializeSearchUI();
     return updateEntries();
   }
 
   function requestEntries () {
+    initialized = true;
     $scope.context.loading = true;
     $scope.context.isSearching = true;
+
     return prepareQuery()
       .then(function (query) {
         return spaceContext.space.getEntries(query);
+      }, function (err) {
+        handleEntriesError(err);
+        return $q.reject(err);
       })
-     .then(function (result) {
-       $scope.context.isSearching = false;
-       Tracking.searchPerformed($scope.context.view, result.total);
-       return result;
-     })
-     .catch(function (error) {
-       return $q.reject(error);
-     });
+      .then(function (result) {
+        $scope.context.isSearching = false;
+        Tracking.searchPerformed($scope.context.view, result.total);
+        return result;
+      }, function (err) {
+        handleEntriesError(err);
+        return $q.reject(err);
+      });
+  }
+
+  function onSearchChange (newSearchState) {
+    lastUISearchState = newSearchState;
+    var oldView = _.cloneDeep($scope.context.view);
+    var newView = _.extend(oldView, newSearchState);
+    $scope.loadView(newView);
+  }
+
+  var isSearching$ = K.fromScopeValue($scope, function ($scope) {
+    return $scope.context.isSearching;
+  });
+
+  function initializeSearchUI () {
+    var initialSearchState = getViewSearchState();
+
+    if (_.isEqual(lastUISearchState, initialSearchState)) {
+      return;
+    }
+    lastUISearchState = initialSearchState;
+    createSearchInput(
+      $scope,
+      spaceContext,
+      onSearchChange,
+      isSearching$,
+      initialSearchState,
+      Kefir.fromPromise(spaceContext.users.getAll())
+    );
   }
 
   function setupEntriesHandler (promise) {
@@ -198,13 +183,29 @@ angular.module('contentful')
     $scope.context.loading = false;
   }
 
+  function handleEntriesError (err) {
+    const isInvalidQuery = isInvalidQueryError(err);
+    $scope.context.loading = false;
+    $scope.context.isSearching = false;
+    $scope.context.ready = true;
+
+    // Reset the view only if the UI was not edited yet.
+    if (isInvalidQuery) {
+      if (lastUISearchState === null) {
+        // invalid search query, let's reset the view...
+        $scope.loadView({});
+      }
+      // ...and let it request assets again after notifing a user
+      Notification.error('We detected an invalid search query. Please try again.');
+    }
+  }
+
+  function isInvalidQueryError (err) {
+    return (_.isObject(err) && 'statusCode' in err) && [400, 422].indexOf(err.statusCode) > -1;
+  }
+
   function prepareQuery () {
-    return ListQuery.getForEntries({
-      contentTypeId: getViewItem('contentTypeId'),
-      searchTerm: getViewItem('searchTerm'),
-      order: getViewItem('order'),
-      paginator: $scope.paginator
-    }).then(function (query) {
+    return ListQuery.getForEntries(getQueryOptions()).then(function (query) {
       var collection = getViewItem('collection');
       if (collection && Array.isArray(collection.items)) {
         query['sys.id[in]'] = collection.items.join(',');
@@ -221,6 +222,34 @@ angular.module('contentful')
       $scope.assetCache.setDisplayedFieldIds(fieldIds);
       $scope.assetCache.resolveLinkedEntities($scope.entries);
     }
+  }
+
+  function isViewLoaded () {
+    return !!_.get($scope, ['context', 'view']);
+  }
+
+  function getQueryOptions () {
+    return _.extend(getViewSearchState(), {
+      order: getViewItem('order'),
+      paginator: $scope.paginator
+    });
+  }
+
+  function hasQuery () {
+    var search = getViewSearchState();
+    return (
+      !_.isEmpty(search.searchText) ||
+      !_.isEmpty(search.searchFilters) ||
+      !_.isEmpty(search.contentTypeId)
+    );
+  }
+
+  function getViewSearchState () {
+    return {
+      searchText: getViewItem('searchText'),
+      searchFilters: getViewItem('searchFilters'),
+      contentTypeId: getViewItem('contentTypeId')
+    };
   }
 
   function getViewItem (path) {

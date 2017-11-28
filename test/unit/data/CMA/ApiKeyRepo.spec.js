@@ -34,8 +34,6 @@ describe('data/CMA/ApiKeyRepo', function () {
       key.name = 'NEW NAME';
       const savedKey = yield this.repo.save(key);
       expect(savedKey.name).toBe('NEW NAME');
-      expect(savedKey.accessToken).toBe('DELIVERY_TOKEN');
-      expect(savedKey.preview_api_key.accessToken).toBe('PREVIEW_TOKEN');
 
       const key2 = yield this.repo.get('ID');
       expect(key2.name).toBe('NEW NAME');

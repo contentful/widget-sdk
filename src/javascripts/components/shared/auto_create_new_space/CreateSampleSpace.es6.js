@@ -2,10 +2,11 @@ import client from 'client';
 import $rootScope from '$rootScope';
 import spaceContext from 'spaceContext';
 import modalDialog from 'modalDialog';
+import $state from '$state';
 import { runTask } from 'utils/Concurrent';
 
 import {getCreator} from 'services/SpaceTemplateCreator';
-import {track} from 'analytics/Analytics';
+import {track, updateUserInSegment} from 'analytics/Analytics';
 import {go as gotoState} from 'states/Navigator';
 import {entityActionSuccess} from 'analytics/events/SpaceCreation';
 import {find, noop} from 'lodash';
@@ -21,10 +22,11 @@ import * as TokenStore from 'services/TokenStore';
  *
  * @param {object} org
  * @param {string} templateName
+ * @param {Function} modalTemplate - template used by the modal dialog service
  *
  * @returns Promise<undefined>
  */
-export default function (org, templateName) {
+export default function (org, templateName, modalTemplate = autoCreateSpaceTemplate) {
   /*
    * throws an error synchronously to differentiate it from
    * a rejected promise as a rejected promise stands for
@@ -40,11 +42,33 @@ export default function (org, templateName) {
   }
 
   const scope = $rootScope.$new();
-
   return runTask(function* () {
+    let dialog = null;
+
+    // TODO: Remove after feature-ps-11-2017-project-status
+    // is turned off. It only exists to track clicks and
+    // enable us to have two independent "screens" inside
+    // the modal
+    if (modalTemplate !== autoCreateSpaceTemplate) {
+      scope.onProjectStatusSelect = (elementId) => {
+        track('element:click', {
+          elementId,
+          groupId: 'project_status',
+          fromState: $state.current.name
+        });
+        updateUserInSegment({
+          projectStatus: elementId
+        });
+        // this is used to goto the next screen _in_ the modal itself
+        scope.chosenProjectStatus = elementId;
+        // hacky way to recenter the modal once it's resized
+        setTimeout(_ => dialog._centerOnBackground(), 0);
+      };
+    }
+
     scope.isCreatingSpace = true;
+    dialog = openDialog(scope, templateName, modalTemplate);
     const template = yield* loadTemplate(templateName);
-    const dialog = openDialog(scope, templateName);
 
     try {
       yield* createSpace(org, template.name);
@@ -55,6 +79,7 @@ export default function (org, templateName) {
       scope.isCreatingSpace = false;
     } catch (e) {
       scope.isCreatingSpace = false;
+      scope.spaceCreationFailed = true;
       if (dialog) {
         dialog.cancel();
       }
@@ -125,10 +150,10 @@ function* loadTemplate (name) {
 }
 
 
-function openDialog (scope, templateName) {
+function openDialog (scope, templateName, modalTemplate) {
   return modalDialog.open({
     title: 'Space auto creation',
-    template: autoCreateSpaceTemplate(templateName.toLowerCase()),
+    template: modalTemplate(templateName.toLowerCase()),
     backgroundClose: false,
     persistOnNavigation: true,
     ignoreEsc: true,

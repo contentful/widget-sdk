@@ -7,8 +7,8 @@ describe('search#buildQuery()', function () {
 
     const buildQuery = this.$inject('search/queryBuilder').buildQuery;
     this.space = {};
-    this.buildQuery = function (query) {
-      return buildQuery(this.space, this.contentType, query);
+    this.buildQuery = function (textQuery) {
+      return buildQuery(this.space, this.contentType, textQuery);
     };
 
     this.testFieldQuery = function* (queryString, key, value) {
@@ -20,7 +20,7 @@ describe('search#buildQuery()', function () {
     };
 
     this.testQueryObject = function* (queryString, expectedQuery) {
-      if (this.contentType && 'content_type') {
+      if (this.contentType) {
         _.defaults(expectedQuery, { content_type: this.contentType.getId() });
       }
       const query = yield this.buildQuery(queryString);
@@ -65,7 +65,7 @@ describe('search#buildQuery()', function () {
 
     it('handles default types', function* () {
       yield* this.testQueryObject(
-        'API_NAME_1: VAL_1 API_NAME_2: "VAL 2"',
+        'API_NAME_1: VAL_1 NAME_2: "VAL 2"',
         {
           'fields.API_NAME_1': 'VAL_1',
           'fields.API_NAME_2': 'VAL 2'
@@ -95,6 +95,20 @@ describe('search#buildQuery()', function () {
       yield* this.testFieldQuery(
         'API_NAME_1: VALUE',
         'fields.API_NAME_1.sys.id', 'VALUE'
+      );
+    });
+
+    it('handles multiple mixed filters', function* () {
+      this.contentType.data.fields[0].type = 'Link';
+      this.contentType.data.fields[1].type = 'Text';
+      yield* this.testQueryObject(
+        'status:archived API_NAME_1: "LINK 1" NAME_2:TEXT some search text',
+        {
+          'sys.archivedAt[exists]': 'true',
+          'fields.API_NAME_1.sys.id': 'LINK 1',
+          'fields.API_NAME_2[match]': 'TEXT',
+          'query': 'some search text'
+        }
       );
     });
   });
@@ -127,6 +141,14 @@ describe('search#buildQuery()', function () {
     yield* this.testQueryObject('status: unknown', {});
   });
 
+  // TODO: This behaves buggy, the final status is the sum of them all.
+  xit('parses last "status" only', function* () {
+    yield* this.testQueryObject(
+      'status:changed status: unknown status : draft status:published',
+      {'sys.publishedAt[exists]': 'true'}
+    );
+  });
+
   describe('user system fields', function () {
     beforeEach(function () {
       this.spaceContext.users = {};
@@ -155,7 +177,7 @@ describe('search#buildQuery()', function () {
         );
 
         // Unknown users are ignored
-        yield* this.testQueryObject('author: "Unknown"', {});
+        yield* this.testQueryObject(`${searchKey}: "Unknown"`, {});
       });
     }
   });

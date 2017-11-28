@@ -171,7 +171,6 @@ src/javascripts/markdown_editor/cf_markdown_action_directive.js
 src/javascripts/markdown_editor/link_organizer.js
 src/javascripts/markdown_editor/markdown_special_characters.js
 src/javascripts/utils/encoder.js
-src/javascripts/utils/keycodes.js
 src/javascripts/utils/memoize.js
 src/javascripts/utils/overriding_request_queue.js
 src/javascripts/kaltura_credentials.js

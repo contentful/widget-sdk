@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').directive('cfSearch', ['require', function (require) {
-  var keycodes = require('keycodes');
+  var keycodes = require('utils/keycodes').default;
   var debounce = require('debounce');
   var $timeout = require('$timeout');
   var h = require('utils/hyperscript').h;

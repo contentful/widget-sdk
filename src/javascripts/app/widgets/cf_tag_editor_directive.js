@@ -7,7 +7,7 @@ angular.module('cf.app')
  * @name cfTagEditor
  */
 .directive('cfTagEditor', ['require', function (require) {
-  var KEYCODES = require('keycodes');
+  var KEYCODES = require('utils/keycodes').default;
 
   return {
     restrict: 'E',

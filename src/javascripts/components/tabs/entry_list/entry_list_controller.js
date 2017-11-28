@@ -14,7 +14,7 @@ angular.module('contentful')
   var accessChecker = require('accessChecker');
   var entityStatus = require('entityStatus');
   var getBlankView = require('data/UiConfig/Blanks').getBlankEntryView;
-  var initSavedViewsComponent = require('app/ContentList/SavedViewsComponent').default;
+  var createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar').default;
 
   var searchController = $controller('EntryListSearchController', {$scope: $scope});
   $controller('DisplayedFieldsController', {$scope: $scope});
@@ -27,8 +27,8 @@ angular.module('contentful')
     resetList: _.noop
   });
 
-  $scope.savedViewsComponent = initSavedViewsComponent({
-    scopedUiConfig: spaceContext.uiConfig.entries.shared,
+  $scope.savedViewsSidebar = createSavedViewsSidebar({
+    entityFolders: spaceContext.uiConfig.entries,
     loadView: function (view) {
       $scope.loadView(view);
     },
@@ -79,11 +79,6 @@ angular.module('contentful')
     });
   });
 
-  $scope.selectedContentType = function () {
-    searchController.resetSearchTerm();
-    $scope.resetDisplayFields();
-  };
-
   $scope.displayFieldForFilteredContentType = function () {
     return spaceContext.displayFieldForType($scope.context.view.contentTypeId);
   };
@@ -123,7 +118,7 @@ angular.module('contentful')
   $scope.hasNoSearchResults = function () {
     var hasQuery = searchController.hasQuery();
     var hasEntries = $scope.paginator.getTotal() > 0;
-    var hasCollection = $scope.context.view.collection;
+    var hasCollection = getViewItem('collection');
     return !hasEntries && hasQuery && !hasCollection && !$scope.context.loading;
   };
 
@@ -138,27 +133,8 @@ angular.module('contentful')
    * @return {boolean}
    */
   $scope.isEmptyCollection = function () {
-    return !$scope.paginator.getTotal() && $scope.context.view.collection && !$scope.context.loading;
-  };
-
-
-  /**
-   * @ngdoc method
-   * @name EntryListController#$scope.displaySearch
-   * @description
-   * Returns a string that describes the current search.
-   *
-   * This is displayed to the user when the search was unsuccessful
-   *
-   * @return {string}
-   */
-  $scope.displaySearch = function () {
-    var view = $scope.context.view;
-    if (view.contentTypeId) {
-      return 'Content type "' + view.contentTypeId + '", term: ' + view.searchTerm;
-    } else {
-      return view.searchTerm;
-    }
+    return !$scope.paginator.getTotal() &&
+      getViewItem('collection') && !$scope.context.loading;
   };
 
   /**
@@ -190,5 +166,10 @@ angular.module('contentful')
     }).then(function (response) {
       return response && response.total > 0;
     });
+  }
+
+  function getViewItem (path) {
+    path = _.isString(path) ? path.split('.') : path;
+    return _.get($scope, ['context', 'view'].concat(path));
   }
 }]);

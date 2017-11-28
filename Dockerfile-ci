@@ -1,0 +1,38 @@
+# Builds an image to run test on CI.
+#
+# This image includes all dependencies, dev dependencies and the source
+# code. It also includes a built version of the application.
+#
+# The image exposes an entry command that runs specific tasks like
+# running the tests or creating a distribution. For details see
+# `tools/docker/entry-script.js`.
+#
+# To build this image use `bin/docker-build-test` and to run this image
+# use `bin/docker-run`.
+#
+FROM contentful/user-interface-base:5
+WORKDIR /app
+
+ENV PATH=/app/node_modules/.bin:$PATH \
+    NPM_CONFIG_LOGLEVEL=warn
+
+ARG NPM_TOKEN
+RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+
+# Install dependencies
+COPY package.json npm-shrinkwrap.json ./
+RUN npm install --no-optional
+
+# Install vendored git repos
+COPY vendor ./vendor
+RUN cd /app/vendor/ui-extensions-sdk && \
+      npm install --no-optional --production --quiet && \
+      make && \
+    cd /app/vendor/extensions/core-field-editors && \
+      npm install --unsafe-perm
+
+# Copy source files and build app
+COPY ./ ./
+RUN gulp build/with-styleguide
+
+ENTRYPOINT ["bin/docker-entry"]

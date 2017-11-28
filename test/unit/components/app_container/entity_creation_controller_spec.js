@@ -152,7 +152,7 @@ describe('EntityCreationController', function () {
     });
 
     it('navigates to editor', function () {
-      sinon.assert.calledWith(this.$state.go, 'spaces.detail.content_types.new.home');
+      sinon.assert.calledWith(this.$state.go, 'spaces.detail.content_types.new');
     });
   });
 

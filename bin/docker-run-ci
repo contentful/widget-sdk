@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# Run a one-off container from the `user-interface-ci` image. Mounts
+# the correct columes for everything to work.
+
+set -e
+
+docker run \
+  -t \
+  --rm \
+  -v $(pwd)/output:/app/output \
+  contentful/user-interface-ci \
+  "$@"

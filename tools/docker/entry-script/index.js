@@ -5,6 +5,12 @@ import yargs from 'yargs'
 import serve from './serve'
 import runTravis from './travis'
 
+/**
+ * This module exports the main function for the entry script of the
+ * docker container run on travis and build with `Dockerfile-test`.
+ */
+
+
 export default B.coroutine(main)
 
 function* main (argv) {
@@ -12,7 +18,7 @@ function* main (argv) {
   if (command === 'travis') {
     yield* runTravis(options)
   } else if (command === 'test') {
-    kexec('./bin/docker-test')
+    kexec('./bin/test')
   } else if (command === 'serve') {
     const close = yield* serve()
     process.on('SIGINT', close)

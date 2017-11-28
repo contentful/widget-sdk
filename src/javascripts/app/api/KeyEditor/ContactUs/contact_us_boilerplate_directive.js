@@ -32,6 +32,7 @@ angular.module('contentful')
       function onClick () {
         Analytics.track('element:click', {
           elementId: 'contact_sales_boilerplate',
+          groupId: 'contact_sales',
           fromState: $state.current.name
         });
 

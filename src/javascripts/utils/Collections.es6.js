@@ -131,6 +131,16 @@ export function slice (as, start, end) {
   return shallowFreeze(as.slice(start, end));
 }
 
+export function drop (as, n) {
+  if (n > 0) {
+    return shallowFreeze(as.slice(n));
+  } else if (n < 0) {
+    return shallowFreeze(as.slice(0, n));
+  } else {
+    return as;
+  }
+}
+
 export function unshift (as, a) {
   return shallowFreeze([a, ...as]);
 }

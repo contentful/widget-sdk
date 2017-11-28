@@ -23,9 +23,10 @@
  * Each logging method defines the error type and severity and accepts
  * additional parameters.
  *
- * The `message` argument identifies the error and is used by Bugsnag
- * to group different logged events. It should be a short, descriptive
- * and constant string, that is an invocation of a logging call should
+ * The `message` argument identifies the error and will by default
+ * be used as `metaData.groupingHash` which allows Bugsnag to group
+ * different logged events. It should be a short, descriptive and
+ * constant string, that is an invocation of a logging call should
  * not interpolate the message.
  *
  * The `metaData` is an object where each key corresponds to a [tab in
@@ -77,6 +78,9 @@ angular.module('contentful')
    * properties and circular references.
    */
   function serializeObject (obj) {
+    if (obj instanceof Error) {
+      obj = _.pick(obj, 'name', 'message', 'stack');
+    }
     return JSON.parse(stringifySafe(obj) || '{}', filterInternalProperties);
   }
 

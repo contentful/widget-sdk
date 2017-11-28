@@ -1,15 +1,8 @@
-'use strict';
-
 describe('ListQuery service', function () {
-  let ListQuery;
+  let ListQuery, paginator;
   afterEach(function () {
-    ListQuery = null;
+    ListQuery = paginator = null;
   });
-
-  const OPTS = {
-    order: { direction: 'descending', fieldId: 'updatedAt' },
-    searchTerm: 'test'
-  };
 
   function testQuery (q) {
     expect(q.order).toBe('-sys.updatedAt');
@@ -21,66 +14,70 @@ describe('ListQuery service', function () {
 
   beforeEach(function () {
     module('contentful/test');
+
     ListQuery = this.$inject('ListQuery');
-    _.extend(OPTS, {paginator: this.$inject('Paginator').create()});
+    paginator = this.$inject('Paginator').create();
 
     const spaceContext = this.$inject('mocks/spaceContext').init();
     spaceContext.publishedCTs.fetch.resolves({
-      data: { fields: [] }, getId: _.constant('test')
+      data: { fields: [] }, getId: () => 'test'
     });
   });
 
-  describe('Returns promise of a query', function () {
-    pit('for assets', function () {
-      const assetCt = this.$inject('assetContentType');
-      assetCt.getId = sinon.spy();
+  function assetOpts (more) {
+    return Object.assign({
+      order: { direction: 'descending', fieldId: 'updatedAt' },
+      searchText: 'test',
+      paginator
+    }, more);
+  }
+  function entryOpts (more) {
+    return assetOpts(Object.assign({ contentTypeId: 'TEST_CT_ID' }, more));
+  }
 
-      return ListQuery.getForAssets(OPTS).then(function (q) {
-        testQuery(q);
-        expect(q.content_type).toBeUndefined();
-        sinon.assert.called(assetCt.getId);
-      });
+  describe('Returns promise of a query', function () {
+    it('for assets', function* () {
+      const q = yield ListQuery.getForAssets(assetOpts());
+      testQuery(q);
+      expect(q.content_type).toBeUndefined();
     });
 
-    pit('for entries', function () {
-      return ListQuery.getForEntries(_.extend({ contentTypeId: 'test' }, OPTS))
-      .then(function (q) {
-        testQuery(q);
-        expect(q.content_type).toBe('test');
-      });
+    it('for entries', function* () {
+      const q = yield ListQuery.getForEntries(entryOpts());
+      testQuery(q);
+      expect(q.content_type).toBe('TEST_CT_ID');
     });
   });
 
   describe('special search terms', function () {
-    function queryFor (term) {
-      return ListQuery.getForEntries(_.extend({contentTypeId: 'test'}, OPTS, {searchTerm: term}));
+    function queryFor (search) {
+      return ListQuery.getForEntries(entryOpts(search));
+    }
+    function searchForStatus (status) {
+      return { searchFilters: [['__status', '', status]] };
     }
 
-    pit('for published list', function () {
-      return queryFor('status:published').then(function (q) {
-        expect(q['sys.publishedAt[exists]']).toBe('true');
-      });
+    it('for published list', function* () {
+      const q = yield queryFor(searchForStatus('published'));
+      expect(q['sys.publishedAt[exists]']).toBe('true');
     });
 
-    pit('for changed list', function () {
-      return queryFor('status:changed').then(function (q) {
-        expect(q['sys.archivedAt[exists]']).toBe('false');
-        expect(q.changed).toBe('true');
-      });
+    it('for changed list', function* () {
+      const q = yield queryFor(searchForStatus('changed'));
+      expect(q['sys.archivedAt[exists]']).toBe('false');
+      expect(q.changed).toBe('true');
     });
 
-    pit('for draft list', function () {
-      return queryFor('status:draft').then(function (q) {
-        expect(q['sys.archivedAt[exists]']).toBe('false');
-        expect(q['sys.publishedVersion[exists]']).toBe('false');
-        expect(q.changed).toBe('true');
-      });
+    it('for draft list', function* () {
+      const q = yield queryFor(searchForStatus('draft'));
+      expect(q['sys.archivedAt[exists]']).toBe('false');
+      expect(q['sys.publishedAt[exists]']).toBe('false');
+      expect(q.changed).toBe('true');
     });
 
-    it('for archived list', function () {
-      return queryFor('status:archived').then(function (q) {
-        expect(q['sys.archivedAt[exists]']).toBe('true');
-      });
+    it('for archived list', function* () {
+      const q = yield queryFor(searchForStatus('archived'));
+      expect(q['sys.archivedAt[exists]']).toBe('true');
     });
   });
 });

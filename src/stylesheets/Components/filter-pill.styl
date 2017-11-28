@@ -1,0 +1,181 @@
+@require 'base/colors'
+
+.search__filter-pill
+  transition: margin .1s ease-in-out
+  display: flex
+  line-height: 30px
+  height: 30px
+  margin-top: 3px
+  margin-right: 5px
+  border-radius: 3px
+  &:hover,
+  &:active
+    box-shadow: 0 0 0 1px $colors.text-lightest
+  &:focus
+    box-shadow: 0 0 0 1px $colors.contrast-light
+
+.search__filter-pill-label
+  background-color: $colors.bg-light
+  color: $colors.text-light
+  padding: 0 12px
+  border-radius: 3px 0 0 3px
+  cursor: pointer
+
+.search__select
+  transition: width .1s ease-in-out
+  padding: 0px 25px 2px 10px
+  min-width: 60px
+  max-width: 200px
+  color: $colors.white
+  z-index: 10
+  font-size: inherit
+  background-color: transparent
+  text-overflow: ellipsis
+
+  -webkit-appearance: none
+  -moz-appearance: none
+  appearance: none
+
+  &::-ms-expand
+    display: none
+
+  @-moz-document url-prefix() {
+    select {
+      width: calc(100% + 16px)
+    }
+  }
+
+  &:-moz-focusring
+    color: transparent
+    text-shadow: 0 0 0 $colors.white
+
+
+  &:focus::-ms-value
+    background-color: transparent;
+    color: $colors.white
+
+  option
+    color: $colors.text-dark
+    background-color: $colors.white
+
+.search__select-value
+  display: inline-block
+  position: relative
+  padding-right: 5px
+
+  &:after
+    content:"\f078"
+    font-family:'FontAwesome'
+    position: absolute
+    right: 10px
+    z-index: 5
+    pointer-events: none
+    color: white
+    font-size: 0.7em
+
+  .search__select
+    background-color: $colors.blue-mid
+    margin-bottom: 3px;
+    margin-right: -5px;
+    height: 100%
+    border-radius: 0 3px 3px 0
+
+    &:hover,
+    &:focus,
+    &:active
+      background-image: linear-gradient(to left, $colors.blue-darkest, $colors.blue-mid)
+
+
+.search__select-operator
+  display: flex
+  align-items: center
+  position: relative
+  &::before,
+  &::after
+    content: ''
+    position: absolute
+    top: 0
+    bottom: 0
+    width: 50%
+  &::before
+    left: 0
+    background-color: $colors.bg-light
+  &::after
+    right: 0
+    background-color: $colors.blue-mid
+
+  .search__select
+    position: relative
+    padding: 3px 8px
+    background-color: $colors.white
+    border-radius: 10em
+    z-index: 10
+    color: $colors.blue-darkest
+    border: 1px solid transparent
+    text-align-last: center
+    font-size: 85%
+    &:hover,
+    &:focus,
+    &:active
+      border: 1px solid $colors.blue-darkest
+      cursor: pointer
+
+    &:focus::-ms-value
+      background-color: transparent;
+      color: $colors.blue-darkest
+
+    option
+      color: $colors.blue-darkest
+      background-color: $colors.white
+
+.search__datepicker
+  // HACK: this is a fix for the issue in PIKADAY
+  // which was opened 26 Jul 2015
+  // https://github.com/dbushell/Pikaday/issues/368
+  position: absolute !important
+  top: 27px !important
+  left: -80px !important
+
+.search__input-text
+  position: relative
+  background-color: $colors.blue-mid
+  color: $colors.white
+  max-width: 30ch
+  border-radius: 0 3px 3px 0
+  border-left: 1px solid $colors.blue-mid
+  line-height: 30px
+  height: 30px
+  font-size: inherit
+  color: $colors.white
+  &:hover,
+  &:focus,
+  &:active
+    background-image: linear-gradient(to left, $colors.blue-darkest, $colors.blue-mid)
+
+  .search__input-spacer
+    min-width: 50px
+    max-width: 30ch
+    white-space: nowrap
+    // Add three characters to the left to give enough space
+    // to the rendered value of the input and avoids weird jumping.
+    padding: 0 10px 0 3ch
+    color: transparent
+
+.search__input-reference
+  padding-right: 5px
+  padding-left: 12px
+  cursor: pointer
+  &::placeholder
+    color: rgba($colors.white, 0.3)
+
+.search__input
+  position: absolute
+  left: 0
+  bottom: 0
+  width: 100%
+  height: 100%
+  padding: 0 12px
+  background-color: transparent
+  color: $colors.white
+  line-height: 30px
+  font-size: inherit

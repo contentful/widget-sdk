@@ -1,37 +1,60 @@
-describe('Filter Query String', function () {
-  let TheStore, $location, qs;
-  const key = 'lastFilterQueryString.testEntity.SPACE_ID';
+describe('ListViewPersistor', function () {
+  let TheStore, $location, qs, createPersistor, createViewMigrator;
+  const STORE_KEY = 'lastFilterQueryString.testEntity.SPACE_ID';
 
   beforeEach(function () {
     module('contentful/test');
 
-    const createPersistor = this.$inject('data/ListViewPersistor').default;
+    createPersistor = this.$inject('data/ListViewPersistor').default;
     TheStore = this.$inject('TheStore');
+    createViewMigrator = this.$inject('data/ViewMigrator').default;
     $location = this.$inject('$location');
 
-    qs = createPersistor('SPACE_ID', 'testEntity');
+    qs = createPersistor('SPACE_ID', null, 'testEntity');
     sinon.stub($location, 'search');
   });
 
   describe('#read', function () {
-    it('reads data from query string by default', function () {
+    it('reads data from query string by default', function* () {
       $location.search.returns({ fromSearch: true });
-      expect(qs.read().fromSearch).toBe(true);
+      expect((yield qs.read()).fromSearch).toBe(true);
     });
 
-    it('falls back to data from localStorage', function () {
-      TheStore.set(key, {test: true});
-      expect(qs.read().test).toBe(true);
+    it('falls back to data from localStorage', function* () {
+      TheStore.set(STORE_KEY, {test: true});
+      expect((yield qs.read()).test).toBe(true);
     });
 
-    it('restores nested structure', function () {
+    it('restores nested structure', function* () {
       $location.search.returns({ 'x.y': true });
-      expect(qs.read().x.y).toBe(true);
+      expect((yield qs.read()).x.y).toBe(true);
     });
 
-    it('handles boolean fileds', function () {
+    it('handles boolean fields', function* () {
       $location.search.returns({ contentTypeHidden: 'false' });
-      expect(qs.read().contentTypeHidden).toBe(false);
+      expect((yield qs.read()).contentTypeHidden).toBe(false);
+    });
+
+    describe('does `searchTerm` migration', function () {
+      beforeEach(function () {
+        const space = { getId: sinon.stub().returns('SPACE_ID') };
+        const contentTypes = { get: sinon.stub() };
+        const viewMigrator = createViewMigrator(space, contentTypes);
+        qs = createPersistor('SPACE_ID', viewMigrator, 'testEntity');
+        $location.search.returns({ searchTerm: 'some text' });
+      });
+
+      it('removes `searchTerm`', function* () {
+        expect((yield qs.read()).searchTerm).toBe(undefined);
+      });
+
+      it('adds `searchText`', function* () {
+        expect((yield qs.read()).searchText).toBe('some text');
+      });
+
+      it('adds (empty) `searchFilters`', function* () {
+        expect((yield qs.read()).searchFilters).toEqual([]);
+      });
     });
   });
 
@@ -64,7 +87,7 @@ describe('Filter Query String', function () {
 
     it('puts last QS into the store', function () {
       qs.save({ test: true });
-      expect(TheStore.get(key)).toEqual({test: true});
+      expect(TheStore.get(STORE_KEY)).toEqual({test: true});
     });
   });
 });

@@ -1,0 +1,108 @@
+@require 'base/colors'
+
+.search__next
+  height: 40px
+  position: relative
+
+.search-next__filter-toggle
+  cursor: pointer
+  padding: 0 14px
+
+  font-size: 12px
+  color: $colors.blue-mid
+
+  border-left: 1px solid transparent
+  &.-focus
+    border-bottom-color: $colors.blue-mid
+  &:hover
+    background-color: $colors.element-lightest
+  &.-active
+    border-left-color: $colors.blue-mid
+
+.search-next__pills-wrapper
+  display: flex
+  background: white
+  border: 1px solid transparent
+  border-color: $colors.element-mid
+  height: 40px
+  overflow: hidden;
+
+  &--state-active
+    border-color: $colors.blue-mid
+    height: auto
+    overflow: visible;
+    .search-next__pills-list
+      // FIXME: in the current implementation it is possible
+      // to have --state-active and .is-overflown-y classes
+      // in the same time.
+      // Return to this after we migrate away from hooks.
+      padding: 1px 10px 3px !important
+
+  &.is-overflown-y
+    .search-next__pills-list
+      transition: padding .1s ease-in-out
+      padding: 0px 10px
+
+.search-next__pills-list
+  transition: padding .1s ease-in-out
+  display: flex
+  align-items: stretch
+  flex: 1 1 auto
+  flex-wrap: wrap
+  padding: 1px 10px 3px
+
+.search-next__query-input
+  transition: width .1s ease-in-out
+  flex-grow: 1
+  line-height: 30px
+  height: 30px
+  margin-right: 12px
+  font-size: inherit
+  align-self: center
+  margin-top: 3px;
+
+.search-next__suggestions-header
+  height: 56px
+  padding: 0 20px
+  display: flex
+  align-items: center
+  border-bottom: 1px solid $colors.element-light
+  color: $colors.text-light
+
+.search-next__suggestions__column
+  flex: 0 0 30%
+
+.search-next__suggestions__no-results
+  color: $colors.text-light
+  padding: 15px 20px
+
+
+.search-next__completion-item
+  height: 56px
+  padding: 0 20px
+  display: flex
+  align-items: center
+  cursor: pointer
+  border-bottom: 1px solid $colors.element-light
+  &:last-child
+    border-bottom: 0
+
+  &:focus
+    background-color: $colors.element-mid
+    .__filter-pill
+      background-color: $colors.element-lightest
+
+  &.--selected,
+  &:hover,
+    // TODO use $colors
+    background-color: $colors.element-lightest
+    .__filter-pill
+      box-shadow: 0 0 0 1px $colors.text-lightest
+
+  .__filter-pill
+    display: inline-block
+    background-color: $colors.bg-light
+    color: $colors.text-light
+    padding: 6px 10px 5px
+    line-height: 18px
+    border-radius: 3px

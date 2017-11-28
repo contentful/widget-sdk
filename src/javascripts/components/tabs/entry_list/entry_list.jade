@@ -11,31 +11,21 @@ header.workbench-header
       | Content
       cf-knowledge-base.workbench-header__kb-link(target="entry")
 
-  .workbench-header__search(
-    style="display: flex"
-    ng-if="context.ready && !showNoEntriesAdvice()")
-    div(
-      style="flex-grow: 1; margin-right: 10px"
-      cf-tokenized-search="context.view.searchTerm"
-      search-content-type="getSearchContentType()"
-      placeholder="Search for an entry"
-      cf-on-blur-component="leftSearch($event)"
-      cf-on-blur-component-when="showAutocompletions")
-
-    select.cfnext-select-box(
-      style="cursor: pointer; height: 42px; max-width: 200px;"
-      ng-model="context.view.contentTypeId"
-      ng-change="selectedContentType()"
-      ng-options="ct.id as ct.name group by 'Content types' for ct in contentTypeSelectOptions"
-      data-test-id="search-ct-selector")
-      option(value="") All content types
+  .workbench-header__search
+    cf-component-bridge(style="flex:1; z-index: 1" component="search")
+    a.text-link(
+      style="margin-left: 15px"
+      ng-click="savedViewsSidebar.api.saveCurrentView()"
+    ) Save as view
 
   .workbench-header__actions(ng-if="!showNoEntriesAdvice()")
     +create-entry-button
 
 .workbench-main(ng-hide="showNoEntriesAdvice()")
-  .workbench-main__left-sidebar
-    cf-component-store-bridge(component="savedViewsComponent")
+  .workbench-main__left-sidebar(
+    style="max-height: 100vh; overflow-y: hidden"
+   )
+    cf-component-store-bridge(component="savedViewsSidebar")
 
   .workbench-main__right-content
     .search-results__count(ng-show="hasPage()")
@@ -157,7 +147,7 @@ header.workbench-header
 
     cf-search-results-paginator(paginator="paginator" pages="7" ng-show="hasPage()")
 
-    +no-search-results("hasNoSearchResults()", "displaySearch()")
+    +no-search-results("hasNoSearchResults()")
 
     .advice.advice--row-aligned(ng-show="isEmptyCollection()")
       .advice__frame.advice__frame--no-margin.advice__frame--align-left

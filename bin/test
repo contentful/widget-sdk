@@ -1,6 +1,8 @@
 #!/bin/bash
+#
+# Run all the tests required for CI
 
-set -ve
+set -veo pipefail
 
 tools/bin/validate-config.js config/*.json
 xvfb-run karma start karma-docker.conf.js

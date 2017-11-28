@@ -9,7 +9,7 @@ angular.module('contentful')
  */
 .directive('cfNavSidepanel', ['require', function (require) {
   var $window = require('$window');
-  var keycodes = require('keycodes');
+  var keycodes = require('utils/keycodes').default;
 
   var accessChecker = require('accessChecker');
   var orgRoles = require('services/OrganizationRoles');

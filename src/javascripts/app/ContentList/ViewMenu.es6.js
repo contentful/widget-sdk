@@ -3,34 +3,34 @@ import {h} from 'ui/Framework';
 
 import ViewFolder from './ViewFolder';
 import openInputDialog from 'app/InputDialog';
+import addFolderIcon from 'svg/add-folder';
 
 export default function render (state, actions) {
-  // The default folder is ensured (minimal length is 1):
-  const isEmpty = getAtPath(state, ['folders', 'length']) === 1 &&
-                  getAtPath(state, ['folders', 0, 'views', 'length']) === 0;
+  const {folders, canEdit} = state;
 
-  return h('.view-menu', [
-    isEmpty ? renderEmpty(state) : renderFolders(state, actions),
-    state.canEdit && h('.view-menu__actions', [
-      isEmpty && h('button.text-link', {
-        onClick: () => actions.RestoreDefaultViews()
-      }, [h('i.fa.fa-refresh'), 'Restore default views']),
-      h('button.text-link', {
-        onClick: () => openInputDialog({
-          title: 'Add folder',
-          confirmLabel: 'Add folder',
-          message: 'Please provide a name for your new folder:',
-          input: {min: 1, max: 32}
-        }).promise.then(actions.CreateFolder)
-      }, [h('i.fa.fa-folder'), 'Add folder']),
-      h('button.text-link', {
-        onClick: () => openInputDialog({
-          title: 'Save current view',
-          confirmLabel: 'Save current view',
-          message: 'Please provide a name for the view you’re about to save:',
-          input: {min: 1, max: 32}
-        }).promise.then(actions.SaveCurrentView)
-      }, [h('i.fa.fa-search-plus'), 'Save current view'])
+  // The default folder is ensured (minimal length is 1):
+  const isEmpty = getAtPath(folders, ['length']) === 1 &&
+                  getAtPath(folders, [0, 'views', 'length']) === 0;
+
+  return h('.view-menu-wrapper', [
+    h('.view-menu', [
+      h('.view-menu__folders', [
+        isEmpty ? renderEmpty(state, actions) : renderFolders(state, actions)
+      ]),
+      canEdit && h('.view-menu__actions', [
+        h('div', [h('.view-folder__seperator')]),
+        h('button.text-link', {
+          onClick: () => openInputDialog({
+            title: 'Add folder',
+            confirmLabel: 'Add folder',
+            message: 'Please provide a name for your new folder:',
+            input: {min: 1, max: 32}
+          }).promise.then(actions.CreateFolder)
+        }, [
+          h('i', {style: {marginRight: '5px'}}, [addFolderIcon]),
+          'Add folder'
+        ])
+      ])
     ])
   ]);
 }
@@ -43,17 +43,23 @@ function renderFolders (state, actions) {
   }));
 }
 
-function renderEmpty (state) {
-  return h('.view-folder', [
-    h('header.view-folder__header', [
-      h('div.view-folder__title', ['Views'])
+function renderEmpty (state, actions) {
+  const { canEdit } = state;
+
+  return h('.view-menu__empty', [
+    h('.view-menu__empty-description', {}, [
+      h('.view-folder__empty', state.canEdit ? [
+        h('strong', ['There are no views yet']),
+        h('p', ['A view displays a list of entries you searched for. By saving the a view to this list, you will be able to re-use it later.'])
+      ] : [
+        h('strong', ['There are no views yet']),
+        h('p', ['A view displays a list of entries you searched for. Your administrator has not set up any views yet.'])
+      ])
     ]),
-    h('.view-folder__empty', state.canEdit ? [
-      h('strong', ['No views stored']),
-      h('p', ['Please use one of the options below.'])
-    ] : [
-      h('strong', ['No views available']),
-      h('p', ['Your administrator has not set up any views yet.'])
+    h('.view-menu__empty-cta', [
+      canEdit && h('button.text-link', {
+        onClick: actions.RestoreDefaultViews
+      }, [h('i.fa.fa-refresh', {style: {marginRight: '5px'}}), 'Restore default views'])
     ])
   ]);
 }

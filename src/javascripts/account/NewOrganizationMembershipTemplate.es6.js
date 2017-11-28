@@ -1,4 +1,4 @@
-import {includes, sortBy} from 'lodash';
+import {includes, sortBy, negate} from 'lodash';
 import {h} from 'ui/Framework';
 import {assign} from 'utils/Collections';
 import {match, isTag} from 'utils/TaggedValues';
@@ -79,8 +79,7 @@ export function emailsInput (
       h('textarea', {
         dataTestId: 'organization-membership.user-email',
         autofocus: true,
-        class: 'cfnext-form__input',
-        style: {width: '600px'},
+        class: 'cfnext-form__input org-invitation-emails-field',
         value: emailsInputValue,
         onInput: (evt) => updateEmails(evt.target.value),
         onBlur: validateEmails
@@ -104,96 +103,109 @@ export function emailsInput (
   ]);
 }
 
-export function organizationRole (orgRole, updateOrgRole) {
+export function organizationRole (orgRole, isOwner, updateOrgRole) {
+  const isForbiddenOwnerRole = (role) => !isOwner && role.value === 'owner';
+
   return h('div', [
     h('h3.section-title', ['Organization role']),
-    h('fieldset.cfnext-form__field', orgRoles.map(role => {
-      return h('.cfnext-form-option', [
-        h('label', [
-          h('input', {
-            name: 'organization_membership_role',
-            type: 'radio',
-            id: `organization-membership.org-role.${role.value}`,
-            checked: role.value === orgRole,
-            onChange: (evt) => updateOrgRole(evt.target.checked, role.value)
-          }),
-          ` ${role.name} `,
-          h('span.tooltip-trigger', {style: {position: 'relative'}}, [
-            h('i.fa.fa-question-circle'),
-            h('.tooltip.fade.top.hidden', {
-              style: {
-                width: '200px',
-                bottom: '100%',
-                left: '50%',
-                marginLeft: '-100px'
-              }
-            }, [
-              h('.tooltip-arrow', {style: {left: '50%'}}),
-              h('.tooltip-inner', [role.description])
+    h('fieldset.cfnext-form__field', orgRoles
+      .filter(negate(isForbiddenOwnerRole))
+      .map(role => {
+        return h('.cfnext-form-option', [
+          h('label', [
+            h('input', {
+              name: 'organization_membership_role',
+              type: 'radio',
+              id: `organization-membership.org-role.${role.value}`,
+              checked: role.value === orgRole,
+              onChange: (evt) => updateOrgRole(evt.target.checked, role.value)
+            }),
+            ` ${role.name} `,
+            h('span.tooltip-trigger', {style: {position: 'relative'}}, [
+              h('i.fa.fa-question-circle'),
+              h('.tooltip.fade.top.hidden', {
+                style: {
+                  width: '200px',
+                  bottom: '100%',
+                  left: '50%',
+                  marginLeft: '-100px'
+                }
+              }, [
+                h('.tooltip-arrow', {style: {left: '50%'}}),
+                h('.tooltip-inner', [role.description])
+              ])
             ])
           ])
-        ])
-      ]);
-    }))
+        ]);
+      }))
   ]);
 }
 
 export function accessToSpaces (
+  Loading,
   adminRole,
-  {spaces, orgSpacesCount, spaceMemberships},
+  {spaces, status, spaceMemberships},
   {updateSpaceRole}
 ) {
-  const isLoading = orgSpacesCount !== 0 && orgSpacesCount > spaces.length;
-  const isEmpty = orgSpacesCount === 0;
+  const isLoading = match(status, {
+    [Loading]: () => true,
+    _: () => false
+  });
+  const isEmpty = !isLoading && !spaces.length;
 
-  function isChecked (role) {
+  const isChecked = (role) => {
     return spaceMemberships.hasOwnProperty(role.spaceId) && includes(spaceMemberships[role.spaceId], role.id);
-  }
-
-  function roleCell (role) {
-    return h('span', {
-      style: {margin: '0 2em 0 0', display: 'inline-block'}
+  };
+  const roleCell = (role) => h('span', {
+    style: {margin: '0 2em 0 0', display: 'inline-block'}
+  }, [
+    h('label', {
+      style: {whiteSpace: 'nowrap'}
     }, [
-      h('label', {
-        style: {whiteSpace: 'nowrap'}
-      }, [
-        h('input', {
-          type: 'checkbox',
-          checked: isChecked(role),
-          dataTestId: `organization-membership.space.${role.spaceId}.role.${role.name}`,
-          onChange: (evt) => updateSpaceRole(evt.target.checked, role, spaceMemberships)
-        }),
-        ` ${role.name}`
+      h('input', {
+        type: 'checkbox',
+        checked: isChecked(role),
+        dataTestId: `organization-membership.space.${role.spaceId}.role.${role.name}`,
+        onChange: (evt) => updateSpaceRole(evt.target.checked, role, spaceMemberships)
+      }),
+      ` ${role.name}`
+    ])
+  ]);
+  const spaceRow = (space) => h('tr', [
+    h('td', [space.name]),
+    h('td', [
+      h('p', [
+        roleCell(assign({spaceId: space.id}, adminRole), updateSpaceRole),
+        ...space.roles.map(role => roleCell(role, updateSpaceRole))
       ])
-    ]);
-  }
+    ])
+  ]);
+  const loadingRow = h('tr', [
+    h('td', [
+      h('p.u-separator--small', [
+        h('span.spinner--text-inline'),
+        ' Loading your spaces'
+      ])
+    ])
+  ]);
 
   return h('div', [
     h('h3.section-title', ['Access to spaces']),
     h('p', ['Assign one or multiple roles for each space you want the user to be able to access.']),
     h('table.deprecated-table', [
       h('thead', [
-        h('th', ['Space']),
-        h('th', {
-          colspan: '2'
-        }, ['Roles'])
-      ]),
-      isLoading
-        ? h('p.u-separator--small', [
-          h('span.spinner--text-inline'),
-          ` Loading your spaces: ${spaces.length} out of ${orgSpacesCount} completed.`
+        h('tr', [
+          h('th', ['Space']),
+          h('th', {
+            colspan: '2'
+          }, ['Roles'])
         ])
-        : h('tbody', sortBy(spaces, space => space.createdAt).map(space => { // sort spaces by creation date
-          return h('tr', [
-            h('td', [space.name]),
-            h('td', [
-              h('p', [
-                roleCell(assign({spaceId: space.id}, adminRole), updateSpaceRole),
-                ...space.roles.map(role => roleCell(role, updateSpaceRole))
-              ])
-            ])
-          ]);
-        }))
+      ]),
+      h('tbody',
+        isLoading
+          ? [loadingRow]
+          : sortBy(spaces, space => space.createdAt).map(spaceRow)
+      )
     ]),
 
     isEmpty ? h('p.u-separator--small', ['You don\'t have any spaces.']) : ''

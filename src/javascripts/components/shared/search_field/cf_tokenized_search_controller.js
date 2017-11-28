@@ -12,7 +12,7 @@
 angular.module('contentful')
 .controller('cfTokenizedSearchController', ['$scope', 'require', '$attrs', function ($scope, require, $attrs) {
   var searchQueryHelper = require('searchQueryHelper');
-  var keycodes = require('keycodes');
+  var keycodes = require('utils/keycodes').default;
   var $parse = require('$parse');
   var spaceContext = require('spaceContext');
 

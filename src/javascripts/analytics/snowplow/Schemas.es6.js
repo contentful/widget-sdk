@@ -126,27 +126,27 @@ registerSchema({
 
 registerSchema({
   name: 'view_create',
-  version: '1-0-0'
+  version: '2-0-0'
 });
 
 registerSchema({
   name: 'view_edit',
-  version: '1-0-0'
+  version: '2-0-0'
 });
 
 registerSchema({
   name: 'view_delete',
-  version: '1-0-0'
+  version: '2-0-0'
 });
 
 registerSchema({
   name: 'view_load',
-  version: '1-0-0'
+  version: '2-0-0'
 });
 
 registerSchema({
   name: 'element_click',
-  version: '1-0-0'
+  version: '2-0-0'
 });
 
 function registerSchema (schema) {
