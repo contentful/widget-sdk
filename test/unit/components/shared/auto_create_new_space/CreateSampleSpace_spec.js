@@ -38,7 +38,8 @@ describe('CreateSampleSpace service', function () {
 
     this.templateLoader = {
       create: sinon.stub().returns({
-        contentCreated: Promise.resolve()
+        contentCreated: Promise.resolve(),
+        spaceSetup: Promise.reject(new Error('something wrong happened'))
       })
     };
 
@@ -147,19 +148,12 @@ describe('CreateSampleSpace service', function () {
     });
     it('should reject if template loader create fails', function* () {
       this.templateLoader.create.returns({
-        contentCreated: Promise.reject(new Error('Error during creation'))
+        contentCreated: Promise.reject(new Error('Error during creation')),
+        spaceSetup: Promise.reject(new Error('something wrong happened'))
       });
 
-      yield* this.assertRejection(
-        err => {
-          this.templateLoader = {
-            create: sinon.stub().returns({
-              contentCreated: Promise.reject(err)
-            })
-          };
-        },
-        'Error during creation'
-      );
+      const error = yield this.createSampleSpace(this.getOrg(), 'product catalogue').catch((e) => e);
+      expect(error.message).toBe('Error during creation');
     });
     it('should reject if refresh of published CTs fails', function* () {
       yield* this.assertRejection(

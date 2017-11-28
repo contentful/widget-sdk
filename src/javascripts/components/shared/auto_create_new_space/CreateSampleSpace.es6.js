@@ -125,7 +125,16 @@ function* applyTemplate (spaceContext, templateInfo) {
 
   const loadedTemplate = yield getTemplate(templateInfo);
 
-  yield templateCreator.create(loadedTemplate).contentCreated;
+  const { contentCreated, spaceSetup } = templateCreator.create(loadedTemplate);
+
+  // supress all errors, since dialog will
+  // be closed anyway via `contentCreated` promise
+  // We need to catch all errors, because http requests
+  // are backed by $q, and we have global handlers on
+  // $q errors
+  spaceSetup.catch(() => {});
+
+  yield contentCreated;
 }
 
 
