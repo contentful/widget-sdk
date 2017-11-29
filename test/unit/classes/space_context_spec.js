@@ -152,7 +152,7 @@ describe('spaceContext', function () {
       ]);
       yield this.result;
       expect(
-        this.spaceContext.publishedContentTypes.map((ct) => ct.sys.id)
+        this.spaceContext.publishedContentTypes.map((ct) => ct.getId())
       ).toEqual(['A', 'B']);
     });
 
