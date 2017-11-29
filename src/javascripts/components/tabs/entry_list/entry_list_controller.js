@@ -75,7 +75,7 @@ angular.module('contentful')
     };
   }, function () {
     $scope.accessibleCts = _.filter(spaceContext.publishedContentTypes, function (ct) {
-      return accessChecker.canPerformActionOnEntryOfType('create', ct.getId());
+      return accessChecker.canPerformActionOnEntryOfType('create', ct.sys.id);
     });
   });
 

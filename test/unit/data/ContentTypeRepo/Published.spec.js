@@ -17,7 +17,7 @@ describe('data/ContentTypeRepo/Published', function () {
     this.repo = CTRepo.create(this.space);
 
     const itemIds = this.repo.items$.map((ctList) => {
-      return ctList.map((ct) => ct.sys.id).toArray();
+      return ctList.map((ct) => ct.sys.id);
     });
     this.idValues = K.extractValues(itemIds);
   });

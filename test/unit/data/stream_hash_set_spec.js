@@ -5,8 +5,7 @@ describe('data/StreamHashSet', function () {
     module('contentful/test');
     this.store = this.$inject('data/StreamHashSet').create();
 
-    const itemArrayProp = this.store.items$.map((i) => i.toArray());
-    this.itemValues = K.extractValues(itemArrayProp);
+    this.itemValues = K.extractValues(this.store.items$);
   });
 
   describe('#add()', function () {

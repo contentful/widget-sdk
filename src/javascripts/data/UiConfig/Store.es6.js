@@ -34,6 +34,7 @@ export default function create (space, spaceEndpoint$q, publishedCTs, viewMigrat
   const membership = space.data.spaceMembership;
   const userId = membership.user.sys.id;
   const getPrivateViewsDefaults = () => Defaults.getPrivateViews(userId);
+  const getEntryViewsDefaults = () => Defaults.getEntryViews(K.getValue(publishedCTs.items$));
 
   // TODO: `spaceEndpoint` is implemented with `$q` and other modules rely
   // on it. Wrapping with a native `Promise` for the time being.
@@ -77,12 +78,6 @@ export default function create (space, spaceEndpoint$q, publishedCTs, viewMigrat
     const set = val => save(type, update(state[type], key, () => val)).then(get);
 
     return {get, set, canEdit};
-  }
-
-  function getEntryViewsDefaults () {
-    // TODO do not use wrapped content types
-    const contentTypes = K.getValue(publishedCTs.wrappedItems$).toJS();
-    return Defaults.getEntryViews(contentTypes);
   }
 
   /**

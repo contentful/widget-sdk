@@ -16,8 +16,8 @@ mixin create-entry-button
   div(ng-if="accessibleCts.length === 1")
     +create-entry-button-wrapper(
       large=attributes.large
-      ng-click="entityCreationController.newEntry(accessibleCts[0])")
-      | Add {{accessibleCts[0].getName()}}
+      ng-click="entityCreationController.newEntry(accessibleCts[0].sys.id)")
+      | Add {{accessibleCts[0].name || 'Untitled'}}
   div(ng-if="accessibleCts.length > 1")
     +create-entry-button-wrapper(
       large=attributes.large
@@ -30,9 +30,6 @@ mixin create-entry-button
       aria-label="Add Entry" data-test-id="add-entry-menu")
       ul.context-menu__items
         li(role="menuitem"
-          ng-repeat="contentType in accessibleCts track by contentType.getId()"
-          ng-click="entityCreationController.newEntry(contentType)")
-          | {{contentType.getName()}}
-
-
-
+          ng-repeat="contentType in accessibleCts track by contentType.sys.id"
+          ng-click="entityCreationController.newEntry(contentType.sys.id)")
+          | {{contentType.name || 'Untitled'}}

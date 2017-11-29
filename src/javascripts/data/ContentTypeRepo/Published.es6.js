@@ -1,4 +1,4 @@
-import {cloneDeep, get} from 'lodash';
+import {cloneDeep, get, sortBy} from 'lodash';
 import notification from 'notification';
 import logger from 'logger';
 import $q from '$q';
@@ -22,11 +22,6 @@ import {deepFreeze} from 'utils/Freeze';
  */
 export function create (space) {
   const store = Store.create();
-  const wrappedItems$ = store.items$.map((ctList) => {
-    return ctList.sortBy((ct) => {
-      return ct.data.name && ct.data.name.toLowerCase();
-    });
-  });
 
   // requesting[id] holds a promise for the content type if we are
   // already requesting it.
@@ -35,30 +30,24 @@ export function create (space) {
   return {
     /**
      * @ngdoc property
-     * @name Data.ContentTypeRepo.Published#wrappedItems
-     * @type {Property<List<Client.ContentType>>}
+     * @name Data.ContentTypeRepo.Published#items$
+     * @type {Property<Data.ContentType[]>}
      * @description
-     * TODO this interface is deprecated and only used to set
-     * `spaceContext.publishedContentTypes`.
+     * Property holding an array of data objects of published CTs:
+     * - the items in the array will be deeply frozen to prevent mutation
+     * - the items are sorted by CT name
      */
-    wrappedItems$: wrappedItems$,
+    items$: store.items$.map(cts => sortBy(
+      cts.map(ct => deepFreeze(cloneDeep(ct.data))),
+      ct => ct.name && ct.name.toLowerCase()
+    )),
 
-    /**
-     * @ngdoc property
-     * @name Data.ContentTypeRepo.Published#items
-     * @type {Property<List<Data.ContentType>>}
-     * @description
-     * The items in the list will be deep frozen to prevent mutation.
-     */
-    items$: wrappedItems$.map((ctList) => {
-      return ctList.map((ct) => deepFreeze(cloneDeep(ct.data)));
-    }),
-    get: get,
-    fetch: fetch,
-    publish: publish,
-    unpublish: unpublish,
-    refresh: refresh,
-    refreshBare: refreshBare
+    get,
+    fetch,
+    publish,
+    unpublish,
+    refresh,
+    refreshBare
   };
 
   /**

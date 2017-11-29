@@ -123,7 +123,7 @@ angular.module('contentful')
       }
 
       function initSpaceHomePage () {
-        var hasContentTypes = K.getValue(spaceContext.publishedCTs.items$).size > 0;
+        var hasContentTypes = K.getValue(spaceContext.publishedCTs.items$).length > 0;
         var isActivated = !!spaceContext.getData('activatedAt');
         var showAdvancedSteps = isActivated && hasContentTypes;
 
@@ -137,7 +137,7 @@ angular.module('contentful')
       }
 
       function setOnboardingStepsCompletion () {
-        var hasContentTypes = K.getValue(spaceContext.publishedCTs.items$).size > 0;
+        var hasContentTypes = K.getValue(spaceContext.publishedCTs.items$).length > 0;
 
         if (hasContentTypes) {
           spaceContext.space.getEntries().then(function (entries) {
@@ -182,11 +182,11 @@ angular.module('contentful')
       }
 
       function addEntry () {
-        var contentTypes = K.getValue(spaceContext.publishedCTs.wrappedItems$);
+        var contentTypes = K.getValue(spaceContext.publishedCTs.items$);
 
-        if (contentTypes.size === 1) {
+        if (contentTypes.length === 1) {
           var entityCreationController = $controller('EntityCreationController');
-          entityCreationController.newEntry(contentTypes.get(0));
+          entityCreationController.newEntry(contentTypes[0].sys.id);
         } else {
           $state.go('spaces.detail.entries.list');
         }
