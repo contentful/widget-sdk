@@ -37,10 +37,10 @@ describe('CreateSampleSpace service', function () {
     };
 
     this.templateLoader = {
-      create: sinon.stub().returns({
+      create: sinon.spy(() => ({
         contentCreated: Promise.resolve(),
         spaceSetup: Promise.reject(new Error('something wrong happened'))
-      })
+      }))
     };
 
     this.getCreator = sinon.stub().returns(this.templateLoader);
@@ -147,7 +147,7 @@ describe('CreateSampleSpace service', function () {
       );
     });
     it('should reject if template loader create fails', function* () {
-      this.templateLoader.create.returns({
+      this.templateLoader.create = () => ({
         contentCreated: Promise.reject(new Error('Error during creation')),
         spaceSetup: Promise.reject(new Error('something wrong happened'))
       });
