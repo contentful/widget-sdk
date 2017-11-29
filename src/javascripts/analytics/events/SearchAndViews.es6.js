@@ -1,5 +1,6 @@
 import {extend} from 'lodash';
 import {track as analyticsTrack} from 'analytics/Analytics';
+import stringifySafe from 'stringifySafe';
 
 const PREFIX = 'search:';
 const track = (e, data) => analyticsTrack(PREFIX + e, data);
@@ -69,9 +70,11 @@ function details ({title, roles}) {
   };
 }
 
-function query ({searchTerm, contentTypeId}) {
+function query ({searchText = null, searchFilters = [], contentTypeId = null}) {
   return {
-    search_query: searchTerm || null,
-    content_type_id: contentTypeId || null
+    search_text: searchText,
+    content_type_id: contentTypeId,
+    search_filter_count: searchFilters.length,
+    search_filter_concatenated: stringifySafe(searchFilters)
   };
 }
