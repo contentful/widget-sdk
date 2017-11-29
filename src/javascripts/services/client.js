@@ -27,7 +27,9 @@ angular.module('contentful')
     }, function (res) {
       // @todo most likely we should reject with an Error instance
       return $q.reject({
+        // We duplicate this property because `statusCode` is used througout the code base
         statusCode: parseInt(res.status, 10),
+        status: res.status,
         body: res.data,
         request: req
       });
