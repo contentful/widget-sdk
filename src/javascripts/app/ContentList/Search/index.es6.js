@@ -25,7 +25,7 @@ export default function create (
   withAssets = false
 ) {
   try {
-    const contentTypes = K.getValue(spaceContext.publishedCTs.items$);
+    const contentTypes = spaceContext.publishedCTs.getAllBare();
     // Removes invalid filters before initializing the state.
     const sanitizedFilters = sanitizeSearchFilters(
       initState.searchFilters,

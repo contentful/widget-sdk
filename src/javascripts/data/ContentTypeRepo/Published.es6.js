@@ -4,6 +4,7 @@ import logger from 'logger';
 import $q from '$q';
 import Store from 'data/StreamHashSet';
 import {deepFreeze} from 'utils/Freeze';
+import * as K from 'utils/kefir';
 
 /**
  * @ngdoc type
@@ -23,31 +24,33 @@ import {deepFreeze} from 'utils/Freeze';
 export function create (space) {
   const store = Store.create();
 
+  /**
+   * @ngdoc property
+   * @name Data.ContentTypeRepo.Published#items$
+   * @type {Property<Data.ContentType[]>}
+   * @description
+   * Property holding an array of data objects of published CTs:
+   * - the items in the array will be deeply frozen to prevent mutation
+   * - the items are sorted by CT name
+   */
+  const items$ = store.items$.map(cts => sortBy(
+    cts.map(ct => deepFreeze(cloneDeep(ct.data))),
+    ct => ct.name && ct.name.toLowerCase()
+  ));
+
   // requesting[id] holds a promise for the content type if we are
   // already requesting it.
   const requesting = {};
 
   return {
-    /**
-     * @ngdoc property
-     * @name Data.ContentTypeRepo.Published#items$
-     * @type {Property<Data.ContentType[]>}
-     * @description
-     * Property holding an array of data objects of published CTs:
-     * - the items in the array will be deeply frozen to prevent mutation
-     * - the items are sorted by CT name
-     */
-    items$: store.items$.map(cts => sortBy(
-      cts.map(ct => deepFreeze(cloneDeep(ct.data))),
-      ct => ct.name && ct.name.toLowerCase()
-    )),
-
+    items$,
     get,
     fetch,
     publish,
     unpublish,
     refresh,
-    refreshBare
+    refreshBare,
+    getAllBare: () => K.getValue(items$)
   };
 
   /**

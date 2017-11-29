@@ -10,7 +10,6 @@ angular.module('contentful')
   var WebhookRepository = require('WebhookRepository');
   var CreateSpace = require('services/CreateSpace');
   var caseofEq = require('libs/sum-types').caseofEq;
-  var K = require('utils/kefir');
 
   return {
     template: template(),
@@ -123,7 +122,7 @@ angular.module('contentful')
       }
 
       function initSpaceHomePage () {
-        var hasContentTypes = K.getValue(spaceContext.publishedCTs.items$).length > 0;
+        var hasContentTypes = spaceContext.publishedCTs.getAllBare().length > 0;
         var isActivated = !!spaceContext.getData('activatedAt');
         var showAdvancedSteps = isActivated && hasContentTypes;
 
@@ -137,7 +136,7 @@ angular.module('contentful')
       }
 
       function setOnboardingStepsCompletion () {
-        var hasContentTypes = K.getValue(spaceContext.publishedCTs.items$).length > 0;
+        var hasContentTypes = spaceContext.publishedCTs.getAllBare().length > 0;
 
         if (hasContentTypes) {
           spaceContext.space.getEntries().then(function (entries) {
@@ -182,7 +181,7 @@ angular.module('contentful')
       }
 
       function addEntry () {
-        var contentTypes = K.getValue(spaceContext.publishedCTs.items$);
+        var contentTypes = spaceContext.publishedCTs.getAllBare();
 
         if (contentTypes.length === 1) {
           var entityCreationController = $controller('EntityCreationController');

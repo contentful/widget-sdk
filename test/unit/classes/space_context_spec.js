@@ -1,5 +1,4 @@
 import * as sinon from 'helpers/sinon';
-import * as K from 'utils/kefir';
 import {isObject} from 'lodash';
 import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 
@@ -152,7 +151,7 @@ describe('spaceContext', function () {
       ]);
       yield this.result;
       expect(
-        K.getValue(this.spaceContext.publishedCTs.items$).map((ct) => ct.sys.id)
+        this.spaceContext.publishedCTs.getAllBare().map((ct) => ct.sys.id)
       ).toEqual(['A', 'B']);
     });
 

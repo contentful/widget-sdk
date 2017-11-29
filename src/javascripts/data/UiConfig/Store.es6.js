@@ -3,7 +3,6 @@ import logger from 'logger';
 import {findIndex, get as getPath} from 'lodash';
 import {update, concat} from 'utils/Collections';
 import {deepFreeze} from 'utils/Freeze';
-import * as K from 'utils/kefir';
 import {
   isUIConfigDataMigrated,
   normalizeMigratedUIConfigData,
@@ -34,7 +33,7 @@ export default function create (space, spaceEndpoint$q, publishedCTs, viewMigrat
   const membership = space.data.spaceMembership;
   const userId = membership.user.sys.id;
   const getPrivateViewsDefaults = () => Defaults.getPrivateViews(userId);
-  const getEntryViewsDefaults = () => Defaults.getEntryViews(K.getValue(publishedCTs.items$));
+  const getEntryViewsDefaults = () => Defaults.getEntryViews(publishedCTs.getAllBare());
 
   // TODO: `spaceEndpoint` is implemented with `$q` and other modules rely
   // on it. Wrapping with a native `Promise` for the time being.

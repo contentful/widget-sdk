@@ -75,10 +75,12 @@ angular.module('contentful')
   K.onValueScope($scope, spaceContext.publishedCTs.items$, updateAccessibleCts);
 
   function updateAccessibleCts () {
-    var cts = K.getValue(spaceContext.publishedCTs.items$);
-    $scope.accessibleCts = _.filter(cts, function (ct) {
-      return accessChecker.canPerformActionOnEntryOfType('create', ct.sys.id);
-    });
+    $scope.accessibleCts = _.filter(
+      spaceContext.publishedCTs.getAllBare(),
+      function (ct) {
+        return accessChecker.canPerformActionOnEntryOfType('create', ct.sys.id);
+      }
+    );
   }
 
   $scope.displayFieldForFilteredContentType = function () {

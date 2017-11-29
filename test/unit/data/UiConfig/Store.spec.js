@@ -1,7 +1,6 @@
 import { cloneDeep } from 'lodash';
 
 import * as sinon from 'helpers/sinon';
-import * as K from 'helpers/mocks/kefir';
 import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 
 
@@ -10,14 +9,13 @@ describe('data/UiConfig/Store', function () {
     module('contentful/test');
     const createUiConfigStore = this.$inject('data/UiConfig/Store').default;
     const endpoint = createMockSpaceEndpoint();
-    const contentTypes$ = K.createMockProperty([{sys: {id: 1}, name: 'bar'}]);
 
     this.store = endpoint.stores.ui_config;
 
     this.migrateStub = sinon.stub();
 
     this.create = (isAdmin = true) => {
-      const ctRepo = { items$: contentTypes$ };
+      const ctRepo = { getAllBare: () => [{sys: {id: 1}, name: 'bar'}] };
       const viewMigrator = {
         migrateUIConfigViews: this.migrateStub
       };

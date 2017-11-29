@@ -185,7 +185,7 @@ angular.module('contentful')
   }
 
   function getAllContentTypeIds () {
-    return K.getValue(spaceContext.publishedCTs.items$).map(function (ct) {
+    return spaceContext.publishedCTs.getAllBare().map(function (ct) {
       return ct.sys.id;
     });
   }

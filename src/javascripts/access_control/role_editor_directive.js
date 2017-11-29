@@ -23,7 +23,6 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
   var notification = require('notification');
   var logger = require('logger');
   var accessChecker = require('accessChecker');
-  var K = require('utils/kefir');
 
   // 1. prepare "touch" counter (first touch for role->internal, next for dirty state)
   $scope.context.touched = $scope.context.isNew ? 0 : -1;
@@ -167,7 +166,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
   }
 
   function autofixPolicies () {
-    var cts = K.getValue(spaceContext.publishedCTs.items$);
+    var cts = spaceContext.publishedCTs.getAllBare();
     var locales = TheLocaleStore.getPrivateLocales();
     $scope.autofixed = PolicyBuilder.removeOutdatedRules($scope.internal, cts, locales);
     if ($scope.autofixed) {
