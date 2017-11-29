@@ -268,8 +268,6 @@ export default function ($scope) {
       emailsInputValue,
       emails
     });
-
-    rerender();
   }
 
   /**
