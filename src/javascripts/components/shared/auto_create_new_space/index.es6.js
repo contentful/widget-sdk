@@ -47,7 +47,8 @@ export function init () {
           // if getCurrentVariation throws, auto create the usual way
           const template = variation ? seeThinkDoFeatureModalTemplate : undefined;
 
-          yield createSampleSpace(org, 'product catalogue', template);
+          // swallow space creation errors and treat the space creation as successful
+          yield createSampleSpace(org, 'product catalogue', template).catch(_ => _);
           TheStore.set(getKey(user), true);
           creatingSampleSpace = false;
         }

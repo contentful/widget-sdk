@@ -75,15 +75,11 @@ export default function (org, templateName, modalTemplate = autoCreateSpaceTempl
       yield* applyTemplate(spaceContext, template);
       yield spaceContext.publishedCTs.refresh();
       $rootScope.$broadcast('spaceTemplateCreated');
-
+      // TODO: Handle error when space creation fails
+      // Right now, we just show the green check marking
+      // space creation as successful irrespective
+    } finally {
       scope.isCreatingSpace = false;
-    } catch (e) {
-      scope.isCreatingSpace = false;
-      scope.spaceCreationFailed = true;
-      if (dialog) {
-        dialog.cancel();
-      }
-      throw e;
     }
   });
 }
