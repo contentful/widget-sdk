@@ -21,7 +21,8 @@ RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
 
 # Install dependencies
 COPY package.json npm-shrinkwrap.json ./
-RUN npm install --no-optional
+COPY packages/client/package.json ./packages/client/
+RUN npm install --no-optional --unsafe-perm
 
 # Install vendored git repos
 COPY vendor ./vendor

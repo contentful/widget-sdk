@@ -1,0 +1,7 @@
+language: node_js
+
+node_js:
+  - 6
+
+before_install:
+  - echo $'@contentful:registry=https://registry.npmjs.org/\n//registry.npmjs.org/:_authToken=${NPM_TOKEN}' >> ~/.npmrc

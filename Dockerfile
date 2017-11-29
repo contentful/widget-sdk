@@ -28,7 +28,8 @@ RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
 
 # Install dependencies
 COPY package.json npm-shrinkwrap.json ./
-RUN npm install --no-optional
+COPY packages/client/package.json ./packages/client/
+RUN npm install --no-optional --unsafe-perm
 
 COPY vendor ./vendor
 RUN cd /app/vendor/ui-extensions-sdk && \
