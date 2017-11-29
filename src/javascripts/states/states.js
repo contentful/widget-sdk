@@ -28,6 +28,7 @@ angular.module('contentful')
       require('states/account'),
       require('states/Spaces').default,
       require('states/Home').default,
+      require('states/Deeplink').default,
       {
         name: '_other',
         url: '/*path',
