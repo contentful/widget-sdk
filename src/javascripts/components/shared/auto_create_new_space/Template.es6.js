@@ -52,7 +52,7 @@ export default function (name) {
             h('cf-icon', {
               name: 'checkmark',
               scale: '2',
-              ngShow: '!isCreatingSpace && !autoSpaceCreationFailed'
+              ngShow: '!isCreatingSpace'
             })
           ]),
           h('h2.modal-dialog__plaintext', {
