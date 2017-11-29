@@ -35,6 +35,13 @@ Run unit tests: `karma start`
 
 Run lint: `bin/lint-all` or `bin/lint-file <filename>`
 
+As an alternative, linting could be done on pre-push stage (via husky .git hooks).
+
+To enable this edit your `~/.zshrc` (.bashrc etc) and set 
+
+`export ENABLE_HUSKY_HOOKS="yes please"`.
+
+
 When PR is ready for review, add `Please review` tag in github. Assign one person from the Frontend chapter randomly on smaller PR's, and 2 people on bigger ones. Use your judgement to request review from more people, depending on the scope of changes, and try to avoid big PRs[^1] if possible, splitting them into smaller ones.
 
 [^1]: A PR with > 1000 added lines is considered big.

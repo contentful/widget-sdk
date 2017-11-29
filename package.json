@@ -99,6 +99,7 @@
     "gulp-clean": "^0.3.1",
     "gulp-util": "^3.0.1",
     "html-to-hyperscript": "^0.8.0",
+    "husky": "^0.14.3",
     "karma": "~1.7.0",
     "karma-babel-preprocessor": "^6.0.1",
     "karma-cli": "^1.0.1",
@@ -126,7 +127,8 @@
     "hint": "bin/lint-all",
     "cloc": "cloc --read-lang-def .cloc.def src",
     "clean": "rm -rf node_modules",
-    "publish-styleguide": "./bin/publish-styleguide.sh"
+    "publish-styleguide": "./bin/publish-styleguide.sh",
+    "prepush": "if test \"$ENABLE_HUSKY_HOOKS\" != \"\" ; then npm run hint ; fi "
   },
   "repository": {
     "type": "git",
