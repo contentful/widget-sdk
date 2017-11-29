@@ -43,6 +43,7 @@ export default function ($scope) {
     invalidAddresses: [],
     orgRole: defaultOrgRole,
     spaceMemberships: {},
+    suppressInvitation: false,
     failedOrgInvitations: [],
     successfulOrgInvitations: [],
     status: Loading(),
@@ -237,6 +238,7 @@ export default function ($scope) {
       failedOrgInvitations: [],
       successfulOrgInvitations: [],
       // if re-trying to invite failed users, keep org role and space settings
+      suppressInvitation: emails.length ? state.suppressInvitation : false,
       orgRole: emails.length ? state.orgRole : defaultOrgRole,
       spaceMemberships: emails.length ? state.spaceMemberships : {}
     });
