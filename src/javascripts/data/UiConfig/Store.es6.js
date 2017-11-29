@@ -200,14 +200,14 @@ export default function create (space, spaceEndpoint$q, publishedCTs, viewMigrat
   }
 
   function findCtViewIndex ({views}, ct) {
-    const index = findIndex(views, view => view.contentTypeId === ct.data.sys.id);
+    const index = findIndex(views, view => view.contentTypeId === ct.sys.id);
 
     return {viewIndex: index, viewExists: index > -1};
   }
 
   function updateCtView (folderIndex, viewIndex, ct) {
     const path = [ENTRY_VIEWS_KEY, folderIndex, 'views', viewIndex, 'title'];
-    const updated = update(state[SHARED_VIEWS], path, () => ct.data.name);
+    const updated = update(state[SHARED_VIEWS], path, () => ct.name);
 
     return save(SHARED_VIEWS, updated);
   }
