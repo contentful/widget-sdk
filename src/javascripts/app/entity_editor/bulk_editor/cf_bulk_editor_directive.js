@@ -187,7 +187,7 @@ angular.module('contentful')
   function getAllContentTypeIds () {
     return K.getValue(spaceContext.publishedCTs.items$).map(function (ct) {
       return ct.sys.id;
-    }).toJS();
+    });
   }
 
   function linkEntity (entity) {

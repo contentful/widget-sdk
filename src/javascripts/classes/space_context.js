@@ -103,8 +103,8 @@ angular.module('contentful')
       self.docPool = DocumentPool.create(self.docConnection, self.endpoint);
 
       self.publishedCTs = PublishedCTRepo.create(space);
-      self.publishedCTs.wrappedItems$.onValue(function (cts) {
-        self.publishedContentTypes = cts.toArray();
+      self.publishedCTs.items$.onValue(function (cts) {
+        self.publishedContentTypes = cts;
       });
       self.user = K.getValue(TokenStore.user$);
 

@@ -12,13 +12,12 @@ angular.module('contentful')
     controller: ['$scope', function ($scope) {
       // prepare content type select options
       K.onValueScope($scope, spaceContext.publishedCTs.items$, function (cts) {
-        var ctsInfo = cts.map(function (ct) {
-          return { id: ct.sys.id, name: ct.name };
-        }).unshift({
+        $scope.contentTypes = [{
           id: CONFIG.ALL_CTS,
           name: 'All content types'
-        });
-        $scope.contentTypes = ctsInfo.toArray();
+        }].concat(cts.map(function (ct) {
+          return { id: ct.sys.id, name: ct.name };
+        }));
       });
 
       // when selected action changes...
