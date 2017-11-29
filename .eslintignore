@@ -132,7 +132,6 @@ src/javascripts/directives/tooltip_directive.js
 src/javascripts/directives/cf_custom_logo_directive.js
 src/javascripts/directives/cf_when_disabled.js
 src/javascripts/services/assert.js
-src/javascripts/services/contentful_client.js
 src/javascripts/services/field_factory.js
 src/javascripts/services/fontsdotcom.js
 src/javascripts/services/get.js
