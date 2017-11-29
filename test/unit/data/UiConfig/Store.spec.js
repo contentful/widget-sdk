@@ -1,4 +1,5 @@
 import { cloneDeep } from 'lodash';
+import * as I from 'libs/Immutable';
 
 import * as sinon from 'helpers/sinon';
 import * as K from 'helpers/mocks/kefir';
@@ -10,19 +11,19 @@ describe('data/UiConfig/Store', function () {
     module('contentful/test');
     const createUiConfigStore = this.$inject('data/UiConfig/Store').default;
     const endpoint = createMockSpaceEndpoint();
-    const contentTypes$ = K.createMockProperty([{
+    const contentTypes$ = K.createMockProperty(I.List([{
       data: {
         sys: {id: 1},
         name: 'bar'
       }
-    }]);
+    }]));
 
     this.store = endpoint.stores.ui_config;
 
     this.migrateStub = sinon.stub();
 
     this.create = (isAdmin = true) => {
-      const ctRepo = { items$: contentTypes$ };
+      const ctRepo = { wrappedItems$: contentTypes$ };
       const viewMigrator = {
         migrateUIConfigViews: this.migrateStub
       };

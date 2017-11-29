@@ -36,7 +36,7 @@ angular.module('contentful')
             id: ct.sys.id,
             name: ct.name
           };
-        });
+        }).toArray();
       });
 
       scope.contentTypeName = function (entry) {

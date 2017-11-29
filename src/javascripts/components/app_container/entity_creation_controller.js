@@ -8,16 +8,16 @@ angular.module('contentful')
   var $state = require('$state');
   var spaceContext = require('spaceContext');
 
-  this.newEntry = function (contentTypeId) {
+  this.newEntry = function (contentType) {
     var handler = makeEntityResponseHandler({
       entityType: 'entry',
-      entitySubType: contentTypeId,
+      entitySubType: contentType.getId(),
       stateName: 'spaces.detail.entries.detail',
       stateParam: 'entryId',
       errorMessage: 'Could not create Entry'
     });
 
-    spaceContext.space.createEntry(contentTypeId, {})
+    spaceContext.space.createEntry(contentType.getId(), {})
     .then(_.partial(handler, null), handler);
   };
 

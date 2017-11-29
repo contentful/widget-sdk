@@ -1,6 +1,7 @@
 'use strict';
 
 import * as K from 'helpers/mocks/kefir';
+import * as I from 'libs/Immutable';
 
 describe('cfOnboardingSteps Directive', function () {
   beforeEach(function () {
@@ -29,7 +30,7 @@ describe('cfOnboardingSteps Directive', function () {
       this.compile();
       const spaceContext = this.$inject('spaceContext');
       spaceContext.publishedCTs = {
-        items$: K.createMockProperty([])
+        items$: K.createMockProperty(I.List([]))
       };
       spaceContext.getData = sinon.stub().withArgs('activatedAt').returns(null);
       spaceContext.space = null;
@@ -47,7 +48,7 @@ describe('cfOnboardingSteps Directive', function () {
         this.$state.current.name = 'spaces.detail.home';
         this.spaceContext = this.$inject('spaceContext');
         this.spaceContext.publishedCTs = {
-          items$: K.createMockProperty([])
+          items$: K.createMockProperty(I.List())
         };
         this.spaceContext.getData = sinon.stub().withArgs('activatedAt').returns(null);
         this.spaceContext.space = {};
@@ -60,7 +61,7 @@ describe('cfOnboardingSteps Directive', function () {
       });
 
       it('no entries yet', function () {
-        this.spaceContext.publishedCTs.items$.set([{}]);
+        this.spaceContext.publishedCTs.items$.set(I.List([{}]));
         this.spaceContext.space.getEntries = sinon.stub().resolves([]);
         this.compile();
         this.assertCompletedSteps(2);
@@ -68,7 +69,7 @@ describe('cfOnboardingSteps Directive', function () {
       });
 
       it('content types and entries created', function () {
-        this.spaceContext.publishedCTs.items$.set([{}]);
+        this.spaceContext.publishedCTs.items$.set(I.List([{}]));
         this.spaceContext.space.getEntries = sinon.stub().resolves([{}]);
         this.compile();
         this.assertCompletedSteps(3);
@@ -81,7 +82,7 @@ describe('cfOnboardingSteps Directive', function () {
         this.$state.current.name = 'spaces.detail.home';
         this.spaceContext = this.$inject('spaceContext');
         this.spaceContext.publishedCTs = {items$: K.createMockProperty()};
-        this.spaceContext.publishedCTs.items$.set([{}]);
+        this.spaceContext.publishedCTs.items$.set(I.List([{}]));
         this.spaceContext.getData = sinon.stub();
         this.spaceContext.getData.withArgs('activatedAt').returns('2017-03-03T16:14:00Z');
         this.spaceContext.space = {};
