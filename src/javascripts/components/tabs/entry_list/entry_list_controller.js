@@ -15,6 +15,7 @@ angular.module('contentful')
   var entityStatus = require('entityStatus');
   var getBlankView = require('data/UiConfig/Blanks').getBlankEntryView;
   var createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar').default;
+  var K = require('utils/kefir');
 
   var searchController = $controller('EntryListSearchController', {$scope: $scope});
   $controller('DisplayedFieldsController', {$scope: $scope});
@@ -62,22 +63,23 @@ angular.module('contentful')
     limit: 3
   });
 
-  $scope.hasContentType = spaceContext.publishedContentTypes.length > 0;
+  K.onValueScope($scope, spaceContext.publishedCTs.items$, function (cts) {
+    $scope.hasContentType = cts.length > 0;
+  });
 
   $scope.getSearchContentType = function () {
     return spaceContext.publishedCTs.get(_.get($scope, 'context.view.contentTypeId'));
   };
 
-  $scope.$watchCollection(function () {
-    return {
-      cts: spaceContext.publishedContentTypes,
-      responses: accessChecker.getResponses()
-    };
-  }, function () {
-    $scope.accessibleCts = _.filter(spaceContext.publishedContentTypes, function (ct) {
+  $scope.$watch(accessChecker.getResponses, updateAccessibleCts);
+  K.onValueScope($scope, spaceContext.publishedCTs.items$, updateAccessibleCts);
+
+  function updateAccessibleCts () {
+    var cts = K.getValue(spaceContext.publishedCTs.items$);
+    $scope.accessibleCts = _.filter(cts, function (ct) {
       return accessChecker.canPerformActionOnEntryOfType('create', ct.sys.id);
     });
-  });
+  }
 
   $scope.displayFieldForFilteredContentType = function () {
     return spaceContext.displayFieldForType($scope.context.view.contentTypeId);

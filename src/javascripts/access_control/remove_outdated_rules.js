@@ -74,7 +74,7 @@ angular.module('contentful').factory('PolicyBuilder/removeOutdatedRules', ['requ
     }
 
     function findCt(ctId) {
-      return _.find(contentTypes, {data: {sys: {id: ctId}}});
+      return _.find(contentTypes, {sys: {id: ctId}});
     }
   };
 }]);
