@@ -78,9 +78,6 @@ angular.module('contentful')
    * properties and circular references.
    */
   function serializeObject (obj) {
-    if (obj instanceof Error) {
-      obj = _.pick(obj, 'name', 'message', 'stack');
-    }
     return JSON.parse(stringifySafe(obj) || '{}', filterInternalProperties);
   }
 

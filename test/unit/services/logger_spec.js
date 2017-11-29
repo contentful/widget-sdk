@@ -110,20 +110,9 @@ describe('logger service', function () {
       it('preparses the data property', function () {
         const data = {foo: {bar: {}}};
         data.foo.bar.baz = data;
-        this.logger.logError('error', {data});
+        this.logger.logError('error', {data: data});
         const actual = this.bugsnag.notify.args[0][2];
         expect(actual.data).toEqual({foo: {bar: {baz: '[Circular ~]'}}});
-      });
-
-      it('serializes an Error instance', function () {
-        const error = new Error('SOME ERROR');
-        this.logger.logError('error', {error});
-        const actual = this.bugsnag.notify.args[0][2];
-        expect(actual.error).toEqual({
-          name: 'Error',
-          message: 'SOME ERROR',
-          stack: jasmine.any(String)
-        });
       });
     });
   });
