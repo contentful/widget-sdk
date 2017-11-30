@@ -2,5 +2,3 @@ node_modules
 public
 vendor/ui-extensions-sdk/node_modules
 vendor/extensions/core-field-editors/node_modules
-vendor/slimerjs
-vendor/firefox

@@ -15,9 +15,6 @@ karma-specs.json
 # Install artifacts
 npm-debug.log
 node_modules
-vendor/slimerjs
-vendor/firefox
-
 
 
 # Build artifacts

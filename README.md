@@ -60,11 +60,10 @@ If you run into them you’ll need to run the application in the Lab.
 
 ### Running the tests
 
-You need to have Firefox installed.
+You need to have Chrome installed and CHROME_BIN environment value set to Chrome executable path.
 
 ~~~bash
 $ npm install -g karma-cli gulp-cli
-$ bin/install-slimerjs
 $ gulp prepare-tests
 $ karma start
 ~~~
