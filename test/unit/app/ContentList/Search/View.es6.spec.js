@@ -2,7 +2,7 @@
 import sinon from 'npm:sinon';
 import _ from 'lodash';
 import keycodes from 'utils/keycodes';
-import { contentTypes, keyDown } from './helpers';
+import { contentTypes } from './helpers';
 
 const Components = {
   queryInput: view => view.find('queryInput'),
@@ -141,49 +141,25 @@ describe('app/ContentList/Search/View', function () {
 
     it('emits ShowSuggestions on arrow down', function () {
       const queryInput = Components.queryInput(view);
-
-      queryInput.element.dispatchEvent(
-        keyDown({
-          keyCode: keycodes.DOWN
-        })
-      );
-
+      queryInput.keyDown(keycodes.DOWN);
       sinon.assert.calledOnce(actions.ShowSuggestions);
     });
 
     it('selects the last pill on backspace', function () {
       const queryInput = Components.queryInput(view);
-
-      queryInput.element.dispatchEvent(
-        keyDown({
-          keyCode: keycodes.BACKSPACE
-        })
-      );
-
+      queryInput.keyDown(keycodes.BACKSPACE);
       sinon.assert.calledOnce(actions.SetFocusOnLast);
     });
 
     it('emits HideSuggestions on esc', function () {
       const queryInput = Components.queryInput(view);
-
-      queryInput.element.dispatchEvent(
-        keyDown({
-          keyCode: keycodes.ESC
-        })
-      );
-
+      queryInput.keyDown(keycodes.ESC);
       sinon.assert.calledOnce(actions.HideSuggestions);
     });
 
     it('emits HideSuggestions on enter', function () {
       const queryInput = Components.queryInput(view);
-
-      queryInput.element.dispatchEvent(
-        keyDown({
-          keyCode: keycodes.ENTER
-        })
-      );
-
+      queryInput.keyDown(keycodes.ENTER);
       sinon.assert.calledOnce(actions.HideSuggestions);
     });
   });

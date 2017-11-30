@@ -128,7 +128,6 @@
     "hint": "bin/lint-all",
     "cloc": "cloc --read-lang-def .cloc.def src",
     "clean": "rm -rf node_modules",
-    "publish-styleguide": "./bin/publish-styleguide.sh",
     "prepush": "if test \"$ENABLE_HUSKY_HOOKS\" != \"\" ; then npm run hint ; fi "
   },
   "repository": {

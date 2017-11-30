@@ -83,11 +83,9 @@ See the [Lab Readme][].
 The styleguide is generated automatically when running `gulp serve` and
 is served by gulp at `/styleguide`.
 
+Styleguide is published on both preview and staging.
+
 If you wish to generate it manually, you can run `gulp
 generate-styleguide` and then check `public/styleguide`
-
-If you wish to publish the styleguide, run `npm run publish-styleguide`, which
-will generate the styleguide and publish it to the `gh-pages` branch which will
-make it available as under <http://contentful.github.io/user_interface/>
 
 Don't forget to provide an appropriate commit message outlining the changes.

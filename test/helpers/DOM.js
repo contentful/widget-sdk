@@ -141,12 +141,11 @@ function createElement (container, selector) {
       return getElement();
     },
 
-    // Input controls
+    // Control
     setValue: bindEl(setValue),
     setChecked: bindEl(setCheckbox),
-
-    // Click control
     click: () => getElement().click(),
+    keyDown: bindEl(keyDown),
 
     // Assertions
     assertValue: bindEl(assertValue),
@@ -215,6 +214,43 @@ function getValue (element) {
     throw new Error(`Cannot get value of element ${element.tagName}`);
   }
   return element.value;
+}
+
+
+/**
+ * Trigger a 'keydown' event with the given keycode on an input
+ * element.
+ *
+ * At the moment only input elements are supported. Using this method
+ * on another element will throw an error. We will extend this as we
+ * see fit.
+ *
+ * The keycode must by a number that corresponds to the value of the
+ * events `keyCode` property [1]. In the future we should add support
+ * for providing a `key` string [2] as an argument since these are more
+ * readable.
+ *
+ * [1]: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode
+ * [2]: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
+ */
+function keyDown (element, keyCode) {
+  // TODO extend to textarea, elements with tabindex
+  if (element.tagName !== 'INPUT') {
+    throw new Error(`Cannot trigger keyboard event on element ${element.tagName}`);
+  }
+  if (typeof keyCode !== 'number') {
+    throw new Error('Only numerical `keyCode` arguments are supported for triggering keyboard events');
+  }
+  const event = new KeyboardEvent('keydown', {
+    bubbles: true,
+    keyCode
+  });
+
+  // There is a bug in Chrome that sets the `keyCode` property to 0. We
+  // need to set it ourselves.
+  Object.defineProperty(event, 'keyCode', { value: keyCode });
+
+  element.dispatchEvent(event);
 }
 
 
