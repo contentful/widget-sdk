@@ -65,9 +65,9 @@ export default function wrapWithRetry (requestFn) {
     }
 
     function handleError (err) {
-      if (err.statusCode === RATE_LIMIT_EXCEEDED && call.ttl > 0) {
+      if (err.status === RATE_LIMIT_EXCEEDED && call.ttl > 0) {
         queue.unshift(backOff(call));
-      } else if ([BAD_GATEWAY, SERVICE_UNAVAILABLE, GATEWAY_TIMEOUT].indexOf(err.statusCode) > -1 &&
+      } else if ([BAD_GATEWAY, SERVICE_UNAVAILABLE, GATEWAY_TIMEOUT].indexOf(err.status) > -1 &&
           call.ttl > 0) {
         call.ttl -= 1;
         queue.unshift(call);

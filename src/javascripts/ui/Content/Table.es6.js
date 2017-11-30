@@ -39,17 +39,9 @@ import {partial} from 'lodash';
  * @returns {VNode}
  */
 export function table (head, body) {
-  return h('.table', [
-    h('.table__head', [
-      h('table', [
-        h('thead', [h('tr', head)])
-      ])
-    ]),
-    h('.table__body', [
-      h('table', [
-        h('tbody', body)
-      ])
-    ])
+  return h('table.simple-table', [
+    h('thead', [h('tr', head)]),
+    h('tbody', body)
   ]);
 }
 

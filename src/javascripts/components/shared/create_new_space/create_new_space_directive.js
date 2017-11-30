@@ -179,7 +179,15 @@ angular.module('contentful')
   }
 
   function createTemplate (template, retried) {
-    return controller.templateCreator.create(template)
+    const createTemplatePromises = controller.templateCreator.create(template);
+
+    // we suppress errors, since `contentCreated` will handle them
+    // We need to catch all errors, because http requests
+    // are backed by $q, and we have global handlers on
+    // $q errors
+    createTemplatePromises.spaceSetup.catch(function () {});
+
+    return createTemplatePromises
     .contentCreated
     .catch(function (data) {
       if (!retried) {

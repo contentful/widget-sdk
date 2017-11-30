@@ -6,7 +6,6 @@
   "bin": {},
   "directories": {},
   "dependencies": {
-    "@contentful/client": "^14.1.0",
     "@contentful/hostname-transformer": "^1.2.7",
     "@contentful/mimetype": "^1.0.1",
     "@contentful/validation": "^6.3.1",
@@ -101,6 +100,7 @@
     "gulp-clean": "^0.3.1",
     "gulp-util": "^3.0.1",
     "html-to-hyperscript": "^0.8.0",
+    "husky": "^0.14.3",
     "karma": "~1.7.0",
     "karma-babel-preprocessor": "^6.0.1",
     "karma-cli": "^1.0.1",
@@ -124,10 +124,12 @@
   "scripts": {
     "start": "gulp all serve",
     "test": "xvfb-run karma start --single-run --browsers SlimerJS --reporters dots",
+    "postinstall": "cd packages/client && npm install",
     "hint": "bin/lint-all",
     "cloc": "cloc --read-lang-def .cloc.def src",
     "clean": "rm -rf node_modules",
-    "publish-styleguide": "./bin/publish-styleguide.sh"
+    "publish-styleguide": "./bin/publish-styleguide.sh",
+    "prepush": "if test \"$ENABLE_HUSKY_HOOKS\" != \"\" ; then npm run hint ; fi "
   },
   "repository": {
     "type": "git",

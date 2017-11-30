@@ -1,0 +1,12 @@
+{
+  "globalstrict": true,
+  "node": true,
+  "predef": [
+    "define"
+  ],
+  "quotmark": "single",
+  "strict": true,
+  "trailing": true,
+  "unused": true,
+  "sub": true
+}
