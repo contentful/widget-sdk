@@ -9,7 +9,9 @@
 #
 # To build this image use `bin/docker-build-test` and to run this image
 # use `bin/docker-run`.
-#
+
+# The base image is hosted on Docker hub and built using
+# `tools/docker/base/Dockerfile`.
 FROM contentful/user-interface-base:6
 WORKDIR /app
 
