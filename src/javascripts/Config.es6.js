@@ -1,4 +1,5 @@
 import * as QS from 'libs/qs';
+import TheStore from 'TheStore';
 import {settings} from 'environment';
 
 /**
@@ -27,7 +28,8 @@ import {settings} from 'environment';
  * @returns {string}
  */
 export function apiUrl (path) {
-  const baseUrl = (shouldMockApi() && settings.mockApiUrl) || settings.apiUrl;
+  const isUsingMockApi = TheStore.get('use_mock_api');
+  const baseUrl = isUsingMockApi ? settings.mockApiUrl : settings.apiUrl;
   return baseUrl + ensureLeadingSlash(path);
 }
 
@@ -155,11 +157,4 @@ function ensureLeadingSlash (x = '') {
   } else {
     return '/' + x;
   }
-}
-
-/**
- * TODO: set this via url param
- */
-function shouldMockApi () {
-  return env !== 'production';
 }

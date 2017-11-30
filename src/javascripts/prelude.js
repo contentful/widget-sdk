@@ -71,6 +71,7 @@ angular.module('contentful/app', ['contentful'])
   } else {
     Error.stackTraceLimit = 25;
   }
+  require('Debug').init(window);
   require('Authentication').init();
   require('services/TokenStore').init();
   require('presence').startTracking();
@@ -81,7 +82,6 @@ angular.module('contentful/app', ['contentful'])
   require('states').loadAll();
   require('dialogsInitController').init();
   require('navigation/DocumentTitle').init();
-  require('Debug').init(window);
 }]);
 
 angular.module('contentful')
