@@ -11,6 +11,7 @@ import {go as gotoState} from 'states/Navigator';
 import {entityActionSuccess} from 'analytics/events/SpaceCreation';
 import {find, noop} from 'lodash';
 import {getTemplate, getTemplatesList} from 'spaceTemplateLoader';
+import logger from 'logger';
 
 import autoCreateSpaceTemplate from './Template';
 import * as TokenStore from 'services/TokenStore';
@@ -40,6 +41,9 @@ export default function (org, templateName, modalTemplate = autoCreateSpaceTempl
   if (!templateName) {
     throw new Error('Required param templateName not provided');
   }
+
+  // to measure how long it took to fail
+  const startingMoment = Date.now();
 
   const scope = $rootScope.$new();
   return runTask(function* () {
@@ -78,6 +82,20 @@ export default function (org, templateName, modalTemplate = autoCreateSpaceTempl
       // TODO: Handle error when space creation fails
       // Right now, we just show the green check marking
       // space creation as successful irrespective
+    } catch (e) {
+      // send error to bugsnag, so we can actually evaluate
+      // the impact of failures
+      logger.logException(e, {
+        data: {
+          // which template we were trying to create
+          template: templateName,
+          // how long did it take to end up here
+          runningTime: Date.now() - startingMoment
+        },
+        groupingHash: 'Failed sample space creation'
+      });
+
+      throw e;
     } finally {
       scope.isCreatingSpace = false;
     }
