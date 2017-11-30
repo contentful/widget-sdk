@@ -2,7 +2,6 @@
 
 var Entity = require('./entity');
 var ContentType = require('./content_type');
-var EditingInterface = require('./editing_interface');
 var Entry = require('./entry');
 var Asset = require('./asset');
 var Locale = require('./locale');
@@ -89,7 +88,6 @@ Space.mixinFactoryMethods = function (target, path) {
 
 _.extend(Space.prototype,
   ContentType.factoryMethods,
-  EditingInterface.spaceMethods,
   Entry.factoryMethods,
   Asset.factoryMethods,
   Locale.factoryMethods
