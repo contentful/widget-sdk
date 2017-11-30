@@ -14,8 +14,5 @@ module.exports = {
   Entry: require('./lib/entry'),
   Asset: require('./lib/asset'),
   User: require('./lib/user'),
-  ApiKey: require('./lib/api_key'),
-  PreviewApiKey: require('./lib/preview_api_key'),
-
   Entity: require('./lib/entity'),
 };
