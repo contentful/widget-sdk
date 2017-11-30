@@ -263,7 +263,8 @@ describe('cfNavSidepanel directive', () => {
       expect(this.$scope.sidePanelIsShown).toBe(false);
       sinon.assert.calledWith(Navigator.go, {
         path: ['spaces', 'detail'],
-        params: { spaceId: space.sys.id }
+        params: { spaceId: space.sys.id },
+        options: { reload: true }
       });
     });
   });

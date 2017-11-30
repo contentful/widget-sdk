@@ -79,7 +79,8 @@ angular.module('contentful')
         closeSidePanel();
         Navigator.go({
           path: ['spaces', 'detail'],
-          params: { spaceId: space.sys.id }
+          params: { spaceId: space.sys.id },
+          options: { reload: true }
         });
       };
       $scope.showCreateSpaceModal = function () {
