@@ -314,9 +314,3 @@ export const contentTypes = [
     description: null
   }
 ];
-
-export const keyDown = ({ keyCode }) => {
-  return new KeyboardEvent('keydown', {
-    keyCode
-  });
-};
