@@ -1,4 +1,6 @@
 angular.module('styleguide', [
+  'contentful/environment',
+  'cf.es6',
   'cf.ui',
   'cf.libs',
   'ui.sortable',
@@ -20,6 +22,7 @@ angular.module('styleguide', [
   };
 }])
 
-.run(function (contextMenu) {
-  contextMenu.init();
-});
+.run(['require', function (require) {
+  const $document = require('$document')
+  require('ui/ContextMenuHandler').default($document);
+}]);
