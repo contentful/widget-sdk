@@ -6,7 +6,6 @@ var EditingInterface = require('./editing_interface');
 var Entry = require('./entry');
 var Asset = require('./asset');
 var Locale = require('./locale');
-var User = require('./user');
 var _ = require('lodash-node/modern');
 var createResourceFactoryMethods = require('./resource_factory');
 
@@ -93,8 +92,7 @@ _.extend(Space.prototype,
   EditingInterface.spaceMethods,
   Entry.factoryMethods,
   Asset.factoryMethods,
-  Locale.factoryMethods,
-  User.factoryMethods
+  Locale.factoryMethods
 );
 
 module.exports = Space;

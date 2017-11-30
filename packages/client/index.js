@@ -13,6 +13,5 @@ module.exports = {
   ContentType: require('./lib/content_type'),
   Entry: require('./lib/entry'),
   Asset: require('./lib/asset'),
-  User: require('./lib/user'),
-  Entity: require('./lib/entity'),
+  Entity: require('./lib/entity')
 };
