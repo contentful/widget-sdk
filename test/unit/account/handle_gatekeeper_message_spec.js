@@ -66,6 +66,8 @@ describe('Gatekeeper Message Handler', function () {
       beforeEach(function () {
         this.modalDialog = this.$inject('modalDialog');
         this.modalDialog.open = sinon.stub().returns({promise: Promise.resolve()});
+        this.$state = this.$inject('$state');
+        this.$state.go = sinon.stub();
 
         this.expectModal = function (title, message) {
           sinon.assert.calledOnce(this.modalDialog.open.withArgs({

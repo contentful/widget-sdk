@@ -10,11 +10,13 @@
 # To build this image use `bin/docker-build-test` and to run this image
 # use `bin/docker-run`.
 #
-FROM contentful/user-interface-base:5
+FROM contentful/user-interface-base:6
 WORKDIR /app
 
 ENV PATH=/app/node_modules/.bin:$PATH \
-    NPM_CONFIG_LOGLEVEL=warn
+    NPM_CONFIG_LOGLEVEL=warn \
+    # Used by karma launcher
+    CHROME_BIN=/usr/bin/google-chrome
 
 ARG NPM_TOKEN
 RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc

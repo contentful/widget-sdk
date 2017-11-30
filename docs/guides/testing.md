@@ -13,7 +13,6 @@ test helpers go to the [`test/helpers` service][service:helpers] documentation.
 You can run the tests with
 ~~~bash
 $ npm install -g karma-cli gulp-cli
-$ bin/install-slimerjs
 $ gulp prepare-tests
 $ karma start
 ~~~

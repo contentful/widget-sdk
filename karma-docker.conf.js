@@ -13,6 +13,15 @@ module.exports = function (config) {
     ].concat(base.testFiles),
 
     reporters: ['dots'],
-    singleRun: true
+    singleRun: true,
+
+    // Fix for https://crbug.com/638180: Running as root without --no-sandbox is not supported
+    browsers: ['ChromeHeadlessNoSandbox'],
+    customLaunchers: {
+      ChromeHeadlessNoSandbox: {
+        base: 'ChromeHeadless',
+        flags: ['--no-sandbox']
+      }
+    }
   });
 };

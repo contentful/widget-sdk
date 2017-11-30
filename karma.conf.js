@@ -9,7 +9,6 @@ var express = require('express')
 module.exports = function (config) {
 
   config.plugins.push(
-    require('./tools/lib/karma-firefox-launcher').default,
     // Serve static files from root directory under /base
     // Using the files array is too much overhead for files that are
     // not loaded eagerly
@@ -122,8 +121,7 @@ module.exports = function (config) {
     autoWatch: true,
 
 
-    // See `tools/lib/karma-firefox-launcher.js` for the implementation
-    browsers: ['Firefox'],
+    browsers: ['ChromeHeadless'],
 
 
     // Continuous Integration mode
