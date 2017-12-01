@@ -1,4 +1,4 @@
-import {includes, sortBy, negate} from 'lodash';
+import {includes, negate} from 'lodash';
 import {h} from 'ui/Framework';
 import {assign} from 'utils/Collections';
 import {match, isTag} from 'utils/TaggedValues';
@@ -204,7 +204,7 @@ export function accessToSpaces (
       h('tbody',
         isLoading
           ? [loadingRow]
-          : sortBy(spaces, space => space.createdAt).map(spaceRow)
+          : spaces.map(spaceRow)
       )
     ]),
 
