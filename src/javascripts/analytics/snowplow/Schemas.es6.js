@@ -145,6 +145,11 @@ registerSchema({
 });
 
 registerSchema({
+  name: 'ui_config_migrate',
+  version: '1-0-0'
+});
+
+registerSchema({
   name: 'element_click',
   version: '2-0-0'
 });

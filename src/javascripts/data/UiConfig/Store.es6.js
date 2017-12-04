@@ -9,6 +9,9 @@ import {
   normalizeMigratedUIConfigData,
   prepareUIConfigForStorage
 } from 'data/ViewMigrator';
+import {
+  searchTermsMigrated as trackSearchTermsMigrated
+} from 'analytics/events/SearchAndViews';
 
 const SHARED_VIEWS = 'shared';
 const PRIVATE_VIEWS = 'private';
@@ -34,6 +37,8 @@ export default function create (space, spaceEndpoint$q, publishedCTs, viewMigrat
   const membership = space.data.spaceMembership;
   const userId = membership.user.sys.id;
   const getPrivateViewsDefaults = () => Defaults.getPrivateViews(userId);
+
+  const isMigratedState = {};
 
   // TODO: `spaceEndpoint` is implemented with `$q` and other modules rely
   // on it. Wrapping with a native `Promise` for the time being.
@@ -113,7 +118,9 @@ export default function create (space, spaceEndpoint$q, publishedCTs, viewMigrat
   }
 
   function migrateUIConfig (type, data) {
-    if (isUIConfigDataMigrated(data)) {
+    const isMigrated = isUIConfigDataMigrated(data);
+    isMigratedState[type] = isMigrated;
+    if (isMigrated) {
       const uiConfig = normalizeMigratedUIConfigData(data);
       return setUiConfig(type, uiConfig);
     } else {
@@ -146,7 +153,13 @@ export default function create (space, spaceEndpoint$q, publishedCTs, viewMigrat
       version: getPath(data, ['sys', 'version']),
       data
     }, getEndpointHeaders(type)).then(
-      remoteData => migrateUIConfig(type, remoteData),
+      remoteData => {
+        if (!isMigratedState[type]) {
+          const endpointPath = getEndpointPath(type).join('/');
+          trackSearchTermsMigrated(uiConfig, endpointPath);
+        }
+        return migrateUIConfig(type, remoteData);
+      },
       error => {
         const reject = () => Promise.reject(error);
         logger.logServerWarn(`Could not save ${getEntityName(type)}`, {error});

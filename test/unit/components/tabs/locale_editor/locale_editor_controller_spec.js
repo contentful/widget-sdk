@@ -22,6 +22,7 @@ describe('Locale editor controller', function () {
       $provide.value('analytics/Analytics', self.analytics);
       $provide.value('modalDialog', self.modalDialog);
       $provide.value('navigation/closeState', self.closeStateSpy);
+      $provide.value('analytics/events/SearchAndViews', {});
     });
 
     this.scope = this.$inject('$rootScope').$new();
