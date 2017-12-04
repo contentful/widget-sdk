@@ -2,7 +2,7 @@
   "environment": "staging",
   "authUrl": "//be.flinkly.com",
   "apiUrl": "//api.flinkly.com",
-  "mockApiUrl" : "https://pcfjmbizecazdxcwy.stoplight-proxy.io",
+  "mockApiUrl" : "",
   "otUrl": "//ot.flinkly.com",
   "assetUrl" : "//static.flinkly.com",
   "marketingUrl": "//www.flinkly.com",

@@ -1,10 +1,9 @@
-import {fields as fieldsTemplate} from 'app/ContentModel/Editor/Template';
-
 // TODO rewrite this with new interaction test framework
 describe('Content Type Field Controller', function () {
   beforeEach(module('contentful/test'));
 
   beforeEach(function () {
+    const fieldsTemplate = this.$inject('app/ContentModel/Editor/Template').fields;
     this.ctEditorController = {
       openFieldDialog: sinon.stub()
     };

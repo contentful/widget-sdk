@@ -2,7 +2,7 @@
   "environment": "development",
   "authUrl": "//be.joistio.com:8888",
   "apiUrl": "//api.joistio.com:8888",
-  "mockApiUrl" : "https://pcfjmbizecazdxcwy.stoplight-proxy.io",
+  "mockApiUrl" : "",
   "otUrl": "//ot.joistio.com:8888",
   "assetUrl": "//static.joistio.com:8888",
   "marketingUrl": "//www.joistio.com:8888",
