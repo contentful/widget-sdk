@@ -7,7 +7,7 @@ angular.module('contentful')
  * @name states/settings
  */
 .factory('states/settings', ['require', function (require) {
-  var base = require('states/base');
+  var base = require('states/Base').default;
 
   var space = base({
     name: 'space',
