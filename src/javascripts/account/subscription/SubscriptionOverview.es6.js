@@ -2,9 +2,9 @@ import {h} from 'ui/Framework';
 import {runTask} from 'utils/Concurrent';
 import {
   createEndpoint as createOrgEndpoint,
-  getPlatformSubscriptionPlan
+  getSubscription
 } from 'access_control/OrganizationMembershipRepository';
-import {getPlatformPlanStyle} from 'account/subscription/PlatformPlanStyles';
+import {getBasePlanStyle} from 'account/subscription/SubscriptionPlanStyles';
 import {supportUrl, websiteUrl} from 'Config';
 import {byName as colors} from 'Styles/Colors';
 
@@ -29,14 +29,17 @@ export default function ($scope) {
 
 function* loadStateFromProperties ({orgId}) {
   const endpoint = createOrgEndpoint(orgId);
-  const platformPlan = yield getPlatformSubscriptionPlan(endpoint);
+  const subscription = yield getSubscription(endpoint);
+  const basePlan = subscription.plans.find(({planType}) => planType === 'base');
 
-  // TODO get the data from endpoint(s)
-  const spacePlans = Array(4).fill({});
-  const usersPlan = {};
-  const grandTotal = 12345;
+  const spacePlans = subscription.plans.filter(({planType}) => planType === 'space');
+  const grandTotal = calculateGrandTotal(subscription);
 
-  return {platformPlan, spacePlans, usersPlan, grandTotal};
+  return {basePlan, spacePlans, grandTotal};
+}
+
+function calculateGrandTotal (subscription) {
+  return subscription.plans.reduce((total, plan) => total + parseInt(plan.price, 10), 0);
 }
 
 function render (state) {
@@ -48,7 +51,7 @@ function render (state) {
       ])
     ]),
     h('.workbench-main', [
-      h('.workbench-main__left-sidebar', [renderPlatformPlan(state.platformPlan)]),
+      h('.workbench-main__left-sidebar', [renderBasePlan(state.basePlan)]),
       h('.workbench-main__right-content', {
         style: { padding: '20px 25px' }
       }, [renderSpacesAndUsers(state)]),
@@ -57,38 +60,32 @@ function render (state) {
   ]);
 }
 
-// TODO: 'type' is not served by endpoint, but we need some key to choose icon
+// TODO: 'key' is not served by endpoint, but we need some key to choose icon
 // and style for the pricing plan box
-function renderPlatformPlan ({productName, type = 'team-edition'}) {
-  const platformStyle = getPlatformPlanStyle(type);
+function renderBasePlan ({name, price, key = 'team-edition'}) {
+  const basePlanStyle = getBasePlanStyle(key);
   return h('div', [
     h('h2.pricing-heading', ['Your pricing plan']),
     h(`.pricing-plan.pricing-tile`, [
-      h('.pricing-plan__bar', {style: platformStyle.bar}),
-      platformStyle.icon,
-      h('h3.pricing-heading', [productName])
+      h('.pricing-plan__bar', {style: basePlanStyle.bar}),
+      basePlanStyle.icon,
+      h('h3.pricing-heading', [name]),
+      h('p', [`$${price}`])
     ])
   ]);
 }
 
-function renderSpacesAndUsers ({spacePlans, usersPlan}) {
+function renderSpacesAndUsers ({spacePlans}) {
   return h('div', [
-    h('h2.pricing-heading', ['Your spaces & users']),
-    h('.pricing-tiles-list', [...spacePlans.map(renderSpacePlan), renderUsersPlan(usersPlan)])
+    h('h2.pricing-heading', ['Your spaces']),
+    h('.pricing-tiles-list', [...spacePlans.map(renderSpacePlan)])
   ]);
 }
 
-// TODO: these two functions don't get actual data and design may yet change
-
-function renderSpacePlan ({productName = 'X-Large'}) {
+function renderSpacePlan ({name, price}) {
   return h('.pricing-tile', [
-    h('h3.pricing-heading', [productName])
-  ]);
-}
-
-function renderUsersPlan () {
-  return h('.pricing-tile', [
-    h('h3.pricing-heading', ['Users'])
+    h('h3.pricing-heading', [name]),
+    h('p', [`$${price}`])
   ]);
 }
 
