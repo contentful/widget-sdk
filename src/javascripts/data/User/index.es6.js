@@ -167,6 +167,23 @@ export function isUserOrgCreator (user, org) {
 }
 
 /**
+ * @description returns array of custom roles for the space
+ * These roles are string values, and are good enough for
+ * non-enterprise users, since they can't add new roles
+ *
+ * @param {Object} space
+ * @returns {string[]}
+ */
+export function getUserSpaceRoles (space) {
+  const adminRole = space.spaceMembership.admin ? ['admin'] : [];
+  // we keep everything lower-case, just to avoid possible naming issues
+  const nonAdminRoles = space.spaceMembership.roles.map(
+    ({ name }) => name && name.toLowerCase()
+  );
+  return adminRole.concat(nonAdminRoles);
+}
+
+/**
  * Implemented together since we want the org and space
  * values to always be in sync which is not the case when
  * there are two streams, one for curr space and one for

@@ -70,7 +70,10 @@ export default {
   abstract: true,
   views: {
     'nav-bar@': {
-      template: h('cf-space-nav-bar', {class: 'app-top-bar__child'})
+      template: h('div.app-top-bar__child.app-top-bar__main-nav.app-top-bar__with-right-part', [
+        h('cf-space-nav-bar', {class: 'app-top-bar__child'}),
+        h('cf-authors-help', {class: 'app-top-bar__child'})
+      ])
     }
   },
   children: [newSpace, spaceDetail]
