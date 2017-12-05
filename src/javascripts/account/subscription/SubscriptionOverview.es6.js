@@ -7,6 +7,7 @@ import {
 import {getBasePlanStyle} from 'account/subscription/SubscriptionPlanStyles';
 import {supportUrl, websiteUrl} from 'Config';
 import {byName as colors} from 'Styles/Colors';
+import {groupBy} from 'lodash';
 
 export default function ($scope) {
   $scope.component = h('noscript');
@@ -33,13 +34,18 @@ function* loadStateFromProperties ({orgId}) {
 
   const basePlan = subscription.plans.find(({planType}) => planType === 'base');
   const spacePlans = subscription.plans.filter(({planType}) => planType === 'space');
-  const grandTotal = calculateGrandTotal(subscription);
+  const spacePlansByName = Object.values(groupBy(spacePlans, 'name')).map((spacePlans) => ({
+    count: spacePlans.length,
+    price: calculateTotalPrice(spacePlans),
+    name: spacePlans[0].name
+  }));
+  const grandTotal = calculateTotalPrice(subscription.plans);
 
-  return {basePlan, spacePlans, grandTotal};
+  return {basePlan, spacePlansByName, grandTotal};
 }
 
-function calculateGrandTotal (subscription) {
-  return subscription.plans.reduce((total, plan) => total + parseInt(plan.price, 10), 0);
+function calculateTotalPrice (subscriptionPlans) {
+  return subscriptionPlans.reduce((total, plan) => total + parseInt(plan.price, 10), 0);
 }
 
 function render (state) {
@@ -56,7 +62,7 @@ function render (state) {
       }, [renderBasePlan(state.basePlan)]),
       h('.workbench-main__right-content', {
         style: {padding: '1.2rem 2rem'}
-      }, [renderSpacesAndUsers(state)]),
+      }, [renderSpacePlans(state.spacePlansByName)]),
       h('.workbench-main__sidebar', [renderRightSidebar(state)])
     ])
   ]);
@@ -68,7 +74,9 @@ function renderBasePlan ({name, price, key = 'team-edition'}) {
   const basePlanStyle = getBasePlanStyle(key);
   return h('div', [
     h('h2.pricing-heading', ['Your pricing plan']),
-    h(`.pricing-plan.pricing-tile`, [
+    h(`.pricing-plan.pricing-tile`, {
+      style: {paddingTop: '45px'}
+    }, [
       h('.pricing-plan__bar', {style: basePlanStyle.bar}),
       basePlanStyle.icon,
       h('h3.pricing-heading', [name]),
@@ -77,17 +85,18 @@ function renderBasePlan ({name, price, key = 'team-edition'}) {
   ]);
 }
 
-function renderSpacesAndUsers ({spacePlans}) {
+function renderSpacePlans (spacePlansByName) {
   return h('div', [
     h('h2.pricing-heading', ['Your spaces']),
-    h('.pricing-tiles-list', [...spacePlans.map(renderSpacePlan)])
-  ]);
-}
-
-function renderSpacePlan ({name, price}) {
-  return h('.pricing-tile', [
-    h('h3.pricing-heading', [name]),
-    renderPrice(price)
+    h('.pricing-tiles-list',
+      spacePlansByName.map(({name, price, count}) =>
+        h('.pricing-tile', [
+          h('h3.pricing-heading', [name]),
+          renderPrice(price),
+          h('p', [`${count} ${pluralize(count, 'space')}`])
+        ])
+      )
+    )
   ]);
 }
 
@@ -135,4 +144,18 @@ function renderPrice (value, currency = '$', unit = 'month') {
     ]),
     h('span.pricing-price__unit', [`/${unit}`])
   ]);
+}
+
+/**
+ * Receives amount of items, singular name of item and optionally plural name.
+ * Returns singular or plural name for given amount based on grammar rules.
+ * e.g.
+ * pluralize(2, 'apple') // apples
+ * pluralize(101, 'apple') // apple
+ * pluralize(2, 'person', 'people') // people
+ *
+ * TODO move to string utils
+ */
+function pluralize (amount, singular, plural) {
+  return amount % 10 === 1 ? singular : plural || singular + 's';
 }
