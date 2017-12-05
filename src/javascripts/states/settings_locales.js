@@ -7,7 +7,7 @@ angular.module('contentful')
  * @name states/settings/locales
  */
 .factory('states/settings/locales', ['require', function (require) {
-  var base = require('states/base');
+  var base = require('states/Base').default;
   var contextHistory = require('contextHistory');
   var crumbFactory = require('navigation/CrumbFactory');
 

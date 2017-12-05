@@ -3,7 +3,6 @@
 
 const {createRequestStub} = require('./support');
 
-const Adapter = require('../lib/adapter');
 const Client = require('../lib/client');
 const describeSpaceFactory = require('./space_factory');
 const describeSpaceInstance = require('./space_instance');
@@ -11,8 +10,17 @@ const describeSpaceInstance = require('./space_instance');
 describe('client', function () {
   beforeEach(function () {
     this.request = createRequestStub();
-    var adapter = new Adapter('', this.request.adapterRequest);
-    this.client = new Client(adapter);
+    this.client = new Client({
+      request: ({ method, path, headers, payload }) => {
+        const payloadKey = method === 'GET' ? 'params' : 'data';
+        return this.request.adapterRequest({
+          method,
+          url: path,
+          headers,
+          [payloadKey]: payload
+        });
+      }
+    });
   });
 
   describe('space', function () {

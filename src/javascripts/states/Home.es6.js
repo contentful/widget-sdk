@@ -1,5 +1,5 @@
 import {find} from 'lodash';
-import makeState from 'states/base';
+import makeState from 'states/Base';
 import $state from '$state';
 import {getSpaces} from 'services/TokenStore';
 import TheStore from 'TheStore';

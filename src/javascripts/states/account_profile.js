@@ -6,7 +6,7 @@ angular.module('contentful')
  * @name states/account
  */
 .factory('states/account/profile', ['require', function (require) {
-  var base = require('states/base');
+  var base = require('states/Base').default;
   var h = require('utils/hyperscript').h;
   var workbenchHeader = require('app/Workbench').header;
 

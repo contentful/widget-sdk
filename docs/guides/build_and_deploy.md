@@ -6,14 +6,14 @@ We describe how the User Interface is built and deployed on Travis using Docker.
 The following is an overview of the different steps defined in `.travis.yml`.
 
 ~~~bash
-# Build the 'contentful/user-interface-test' image from 'Dockerfile-test'.
-bin/docker-build
+# Build the 'contentful/user-interface-ci' image from 'Dockerfile-test'.
+bin/docker-build-ci
 
 # Runs karma tests and eslint and validates configuration in a container
-bin/docker-run test
+bin/docker-run-ci test
 
 # Creates Debian package and static files inside './output'
-bin/docker-run travis --branch "${TRAVIS_BRANCH}" --version "${TRAVIS_COMMIT}" --pr "${TRAVIS_PULL_REQUEST}"
+bin/docker-run-ci travis --branch "${TRAVIS_BRANCH}" --version "${TRAVIS_COMMIT}" --pr "${TRAVIS_PULL_REQUEST}"
 
 # Upload './output/archive' to 'pkg.contentful.org'
 # Travis does that, no script needs to be run
@@ -33,40 +33,56 @@ The Docker Image
 ----------------
 
 Testing and creating a deployable distribution happens in a docker container
-based on the `contentful/user-interface-test` image.
+based on the `contentful/user-interface-ci` image.
 
-The image is built by running `bin/docker-build`. It installs all source code
-dependencies (NPM and git submodules) and builds the app using `gulp build`.
-The image contains all fingerprinted assets in the `/app/build` directory. This
-serves as a base to configure the `index.html` file and create the
-distributions.
+The image is built from `Dockerfile-ci` by running `bin/docker-build-ci`. It
+installs all source code dependencies (NPM and git submodules) and builds the
+app using `gulp build`. The image contains all fingerprinted assets in the
+`/app/build` directory. This serves as a base to configure the `index.html` file
+and create the distributions.
 
 To build the image an NPM token is required as a build argument so that the
-image can install prviate NPM packages. The `bin/docker-build` command will
+image can install prviate NPM packages. The `bin/docker-build-ci` command will
 either use the `NPM_TOKEN` environment variable or extract the token from
 `~/.npmrc`.
 
 The entry point of the image (`tools/docker/entry-script`) exposes various
-commands to test, serve, and distribute the application. Run `bin/docker-run
+commands to test, serve, and distribute the application. Run `bin/docker-run-ci
 --help` to see a list of commands.
 
 The user interface image is based on the public
-[`contentful/user-interface-base`][cf-ui-base-image]. This image contains system dependencies like
-the fpm gem and Chrome that are required to build and test the code. The
-image is hosted on the Docker hub.
+[`contentful/user-interface-base`][cf-ui-base-image]. This image contains system
+dependencies like Chrome and the fpm gem that are required to build and test
+the code. The image is hosted on the Docker hub.
 
 [cf-ui-base-image]: https://hub.docker.com/r/contentful/user-interface-base
 
 ### Updating the base image
 If changes to the system dependencies are required the base image
-`contentful/user-interface-base` needs to be updated. To do this create a pull
-request with the changes. After the PR has been approved build the image with
-`make -C tools/docker/base` and push the image to the Docker hub with
+`contentful/user-interface-base` needs to be updated. For this you need to be
+part of the Contentful organization on Docker hub and write access to the
+repository.
+
+To test changes to the base image, make changes to
+`tools/docker/base/Dockerfile`, build the image, and then push the image
+
 ~~~
+docker build tools/docker/base/Dockerfile --tag contentful/user-interface-base:dev
+docker push contentful/user-interface-base:dev
+~~~
+
+After that adjust `Dockerfil-ci` to use the `contentful/user-interface-base:dev`
+image commit your changes and run them on Travis.
+
+If the CI build is successful you must tag the base image with the next version
+`V` and push it again.
+
+~~~
+docker tag contentful/user-interface-base:dev contentful/user-interface-base:V
 docker push contentful/user-interface-base:V
 ~~~
-Here `V` is the next integer version. Now increase the version encoded in
-`tools/docker/base/Makefile`.
+
+Then change `Dockerfil-ci` to use the correct version and commit your changes.
 
 
 Deployment

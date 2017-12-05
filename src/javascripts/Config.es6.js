@@ -1,4 +1,5 @@
 import * as QS from 'libs/qs';
+import TheStore from 'TheStore';
 import {settings} from 'environment';
 
 /**
@@ -20,22 +21,16 @@ import {settings} from 'environment';
  * Given a path return the URL for the CMA.
  *
  * In production returns something like `//api.contentful.com/path`.
+ *
+ * If a flag to mock all requests is set via url param, returns Stoplight url
+ * (this works for quirely only)
  * @param {string} path
  * @returns {string}
  */
 export function apiUrl (path) {
-  return settings.apiUrl + ensureLeadingSlash(path);
-}
-
-/**
- * @ngdoc method
- * @name Config#mockApiUrl
- * Given a path return the URL for a mock CMA endpoint via http://stoplight.io
- * @param {string} path
- * @returns {string}
- */
-export function mockApiUrl (path) {
-  return settings.mockApiUrl + ensureLeadingSlash(path);
+  const isUsingMockApi = TheStore.get('use_mock_api');
+  const baseUrl = isUsingMockApi ? settings.mockApiUrl : settings.apiUrl;
+  return baseUrl + ensureLeadingSlash(path);
 }
 
 /**

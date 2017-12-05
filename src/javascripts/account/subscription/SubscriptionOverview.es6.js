@@ -1,7 +1,7 @@
 import {h} from 'ui/Framework';
 import {runTask} from 'utils/Concurrent';
 import {
-  createMockEndpoint as createOrgEndpoint,
+  createEndpoint as createOrgEndpoint,
   getPlatformSubscriptionPlan
 } from 'access_control/OrganizationMembershipRepository';
 import {getPlatformPlanStyle} from 'account/subscription/PlatformPlanStyles';
