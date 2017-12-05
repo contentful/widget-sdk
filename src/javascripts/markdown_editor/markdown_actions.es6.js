@@ -5,6 +5,8 @@ import LinkOrganizer from 'LinkOrganizer';
 import notification from 'notification';
 import entitySelector from 'entitySelector';
 import { defaults, isEmpty, isObject, get as getAtPath } from 'lodash';
+import {track} from 'analytics/Analytics';
+import $state from '$state';
 
 export function create (editor, localeCode) {
   const advancedActions = {
@@ -111,6 +113,11 @@ export function create (editor, localeCode) {
   }
 
   function openHelp () {
+    track('element:click', {
+      elementId: 'markdown_help_dialog',
+      groupId: 'editors_authors_help',
+      fromState: $state.current.name
+    });
     modalDialog.open({
       template: 'markdown_help_dialog'
     });
