@@ -30,8 +30,8 @@ export default function ($scope) {
 function* loadStateFromProperties ({orgId}) {
   const endpoint = createOrgEndpoint(orgId);
   const subscription = yield getSubscription(endpoint);
-  const basePlan = subscription.plans.find(({planType}) => planType === 'base');
 
+  const basePlan = subscription.plans.find(({planType}) => planType === 'base');
   const spacePlans = subscription.plans.filter(({planType}) => planType === 'space');
   const grandTotal = calculateGrandTotal(subscription);
 
@@ -51,9 +51,11 @@ function render (state) {
       ])
     ]),
     h('.workbench-main', [
-      h('.workbench-main__left-sidebar', [renderBasePlan(state.basePlan)]),
+      h('.workbench-main__left-sidebar', {
+        style: {padding: '1.2rem 0 0 1.5rem'}
+      }, [renderBasePlan(state.basePlan)]),
       h('.workbench-main__right-content', {
-        style: { padding: '20px 25px' }
+        style: {padding: '1.2rem 2rem'}
       }, [renderSpacesAndUsers(state)]),
       h('.workbench-main__sidebar', [renderRightSidebar(state)])
     ])
@@ -70,7 +72,7 @@ function renderBasePlan ({name, price, key = 'team-edition'}) {
       h('.pricing-plan__bar', {style: basePlanStyle.bar}),
       basePlanStyle.icon,
       h('h3.pricing-heading', [name]),
-      h('p', [`$${price}`])
+      renderPrice(price)
     ])
   ]);
 }
@@ -85,7 +87,7 @@ function renderSpacesAndUsers ({spacePlans}) {
 function renderSpacePlan ({name, price}) {
   return h('.pricing-tile', [
     h('h3.pricing-heading', [name]),
-    h('p', [`$${price}`])
+    renderPrice(price)
   ]);
 }
 
@@ -122,5 +124,15 @@ function renderRightSidebar ({grandTotal}) {
     h('p.entity-sidebar__help-text', [
       h('a', {href: '#', style: {color: colors.redDark}}, ['Cancel subscription'])
     ])
+  ]);
+}
+
+function renderPrice (value, currency = '$', unit = 'month') {
+  return h('p.pricing-price', [
+    h('span.pricing-price__value', [
+      h('span.pricing-price__value__currency', [currency]),
+      value.toLocaleString('en-US')
+    ]),
+    h('span.pricing-price__unit', [`/${unit}`])
   ]);
 }
