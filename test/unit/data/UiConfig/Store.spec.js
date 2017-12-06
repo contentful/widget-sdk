@@ -8,7 +8,13 @@ import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 
 describe('data/UiConfig/Store', function () {
   beforeEach(function () {
-    module('contentful/test');
+    module('contentful/test', ($provide) => {
+      this.trackMigrationSpy = sinon.spy();
+      $provide.value('analytics/events/SearchAndViews', {
+        searchTermsMigrated: this.trackMigrationSpy
+      });
+    });
+
     const createUiConfigStore = this.$inject('data/UiConfig/Store').default;
     const endpoint = createMockSpaceEndpoint();
     const contentTypes$ = K.createMockProperty(I.List([{
@@ -158,7 +164,7 @@ describe('data/UiConfig/Store', function () {
     };
 
     beforeEach(function () {
-      this.store.default = INITIAL_DATA;
+      this.store.default = cloneDeep(INITIAL_DATA);
       this.migrateStub.resolves(MIGRATED_DATA);
     });
 
@@ -172,6 +178,34 @@ describe('data/UiConfig/Store', function () {
     it('does not save migration back to store if non-admin user', function* () {
       yield this.create(false);
       expect(this.store.default).toEqual(INITIAL_DATA);
+    });
+
+    describe('migration', function () {
+      it('results in `_migrated` property in payload', function* () {
+        const api = yield this.create();
+        yield api.entries.shared.set('UPDATED ENTRY LIST VIEWS');
+        expect(this.store.default).toEqual({
+          sys: { version: 2 },
+          _migrated: {
+            entryListViews: 'UPDATED ENTRY LIST VIEWS'
+          }
+        });
+      });
+
+      it('is being tracked', function* () {
+        const api = yield this.create();
+        yield api.entries.shared.set(MIGRATED_DATA.entryListViews);
+        sinon.assert.calledOnceWith(
+          this.trackMigrationSpy, MIGRATED_DATA, 'ui_config');
+      });
+
+      it('is not tracked after migration', function* () {
+        const api = yield this.create();
+        yield api.entries.shared.set('DATA 1');
+        this.trackMigrationSpy.reset();
+        yield api.entries.shared.set('DATA 2');
+        sinon.assert.notCalled(this.trackMigrationSpy);
+      });
     });
   });
 });

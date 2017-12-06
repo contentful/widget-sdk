@@ -121,7 +121,7 @@ registerSchema({
 
 registerSchema({
   name: 'search_perform',
-  version: '1-0-0'
+  version: '1-1-0'
 });
 
 registerSchema({
@@ -142,6 +142,11 @@ registerSchema({
 registerSchema({
   name: 'view_load',
   version: '2-0-0'
+});
+
+registerSchema({
+  name: 'ui_config_migrate',
+  version: '1-0-0'
 });
 
 registerSchema({

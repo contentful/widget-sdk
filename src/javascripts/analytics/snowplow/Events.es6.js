@@ -82,6 +82,7 @@ registerEvent('search:view_created', 'view_create', SearchAndViews);
 registerEvent('search:view_edited', 'view_edit', SearchAndViews);
 registerEvent('search:view_deleted', 'view_delete', SearchAndViews);
 registerEvent('search:view_loaded', 'view_load', SearchAndViews);
+registerEvent('search:search_terms_migrated', 'ui_config_migrate', SearchAndViews);
 
 /**
  * Registers an event to be tracked by snowplow.

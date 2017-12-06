@@ -339,6 +339,38 @@ describe('ViewMigrator', function () {
     }
   });
 
+  describe('.getMigrationSuccessCount()', function () {
+    it('returns 0/0 for empty object', function () {
+      const count = ViewMigrator.getMigrationSuccessCount({});
+      expect(count).toEqual({ migratedCount: 0, failedCount: 0 });
+    });
+
+    describe('on uiConfig with failed/successful migration', function () {
+      const UI_CONFIG = {
+        entryListViews: [
+          { views: [
+            {}, {}, { _legacySearchTerm: '' }
+          ]}
+        ],
+        assetListViews: [
+          { views: [
+            {}, {}, { _legacySearchTerm: 'a:b' }, {}, { _legacySearchTerm: '' }
+          ]}
+        ]
+      };
+
+      it('returns correct `migratedCount`', function () {
+        const count = ViewMigrator.getMigrationSuccessCount(UI_CONFIG);
+        expect(count.migratedCount).toBe(5);
+      });
+
+      it('returns correct `failedCount`', function () {
+        const count = ViewMigrator.getMigrationSuccessCount(UI_CONFIG);
+        expect(count.failedCount).toBe(3);
+      });
+    });
+  });
+
   // TODO: Move to test helpers and also replace in `logger_spec.js`.
   function uniqueObject (properties) {
     const o = {};
