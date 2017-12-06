@@ -19,13 +19,6 @@
       var OrganizationRoles = require('services/OrganizationRoles');
       var K = require('utils/kefir');
 
-      // Begin feature flag code - feature-bv-11-2017-show-platform-subscription
-      var LD = require('utils/LaunchDarkly');
-      LD.onFeatureFlag($scope, 'feature-bv-11-2017-show-platform-subscription', function (value) {
-        $scope.showPlatfromSubscription = value;
-      });
-      // End feature flag code - feature-bv-11-2017-show-platform-subscription
-
       var nav = this;
 
       // Prevent unnecesary calls from watchers
@@ -40,6 +33,7 @@
       function updateNav () {
         var orgId = nav.orgId = $stateParams.orgId;
         TokenStore.getOrganization(orgId).then(function (org) {
+          nav.pricingVersion = org.pricingVersion;
           nav.hasOffsiteBackup = hasOffsiteBackup(org);
           nav.hasBillingTab = org.isBillable && OrganizationRoles.isOwner(org);
           nav.hasSettingsTab = OrganizationRoles.isOwner(org);
@@ -61,7 +55,8 @@
         if: 'nav.hasSettingsTab'
       },
       {
-        title: '{{ showPlatfromSubscription ? "Subscription (old)" : "Subscription" }}',
+        if: 'nav.pricingVersion == "pricing_version_1"',
+        title: 'Subscription',
         sref: 'account.organizations.subscription({orgId: nav.orgId})',
         rootSref: 'account.organizations.subscription',
         inheritUrlParams: false,
@@ -69,8 +64,8 @@
         dataViewType: 'subscription'
       },
       {
-        if: 'showPlatfromSubscription',
-        title: 'Subscription (new)',
+        if: 'nav.pricingVersion == "pricing_version_2"',
+        title: 'Subscription',
         sref: 'account.organizations.subscription_new({orgId: nav.orgId})',
         rootSref: 'account.organizations.subscription_new',
         inheritUrlParams: false,
@@ -95,7 +90,8 @@
         dataViewType: 'organization-users'
       },
       {
-        title: '{{ showPlatfromSubscription ? "Spaces (old)" : "Spaces" }}',
+        if: 'nav.pricingVersion == "pricing_version_1"',
+        title: 'Spaces',
         sref: 'account.organizations.spaces({orgId: nav.orgId})',
         rootSref: 'account.organizations.spaces',
         inheritUrlParams: false,
@@ -103,8 +99,8 @@
         dataViewType: 'organization-spaces'
       },
       {
-        if: 'showPlatfromSubscription',
-        title: 'Spaces (new)',
+        if: 'nav.pricingVersion == "pricing_version_2"',
+        title: 'Spaces',
         sref: 'account.organizations.space_plans({orgId: nav.orgId})',
         rootSref: 'account.organizations.space_plans',
         inheritUrlParams: false,
