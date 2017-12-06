@@ -34,7 +34,7 @@ function* loadStateFromProperties ({orgId}) {
 
   const basePlan = subscription.plans.find(({planType}) => planType === 'base');
   const spacePlans = subscription.plans.filter(({planType}) => planType === 'space');
-  const spacePlansByName = Object.values(groupBy(spacePlans, 'name')).map((spacePlans) => ({
+  const spacePlansByName = Object.values(groupBy(spacePlans, 'productRatePlanId')).map((spacePlans) => ({
     count: spacePlans.length,
     price: calculateTotalPrice(spacePlans),
     name: spacePlans[0].name
