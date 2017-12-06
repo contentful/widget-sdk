@@ -64,8 +64,12 @@ angular.module('contentful')
       $scope.closeOrgsDropdown = closeOrgsDropdown;
       $scope.gotoOrgSettings = function () {
         closeSidePanel();
+        var orgSettingsPath = ['account', 'organizations'];
+        var hasNewPricing = $scope.currOrg.pricingVersion === 'pricing_version_2';
+        orgSettingsPath.push(hasNewPricing ? 'subscription_new' : 'subscription');
+
         Navigator.go({
-          path: ['account', 'organizations', 'subscription'],
+          path: orgSettingsPath,
           params: { orgId: $scope.currOrg.sys.id }
         });
       };
