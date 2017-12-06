@@ -1,4 +1,9 @@
 import {h} from 'ui/Framework';
+import {runTask} from 'utils/Concurrent';
+import {
+  createEndpoint as createOrgEndpoint,
+  getSpacePlans
+} from 'access_control/OrganizationMembershipRepository';
 
 export default function ($scope) {
   $scope.component = h('noscript');
@@ -6,7 +11,10 @@ export default function ($scope) {
 
   let state = {orgId: '', spaces: []};
 
-  rerender({orgId: properties.orgId, spaces: loadSpaces(properties.orgId)});
+  runTask(function* () {
+    const nextState = yield* loadStateFromProperties(properties);
+    rerender(nextState);
+  });
 
   function rerender (nextState) {
     $scope.properties.context.ready = true;
@@ -16,14 +24,13 @@ export default function ($scope) {
   }
 }
 
-function loadSpaces () {
-  return Array(4).fill({
-    name: 'MarketingWebsite',
-    plan: 'XL'
-  });
+function* loadStateFromProperties ({orgId}) {
+  const endpoint = createOrgEndpoint(orgId);
+  const spacePlans = yield getSpacePlans(endpoint);
+  return {orgId, spacePlans};
 }
 
-function render ({spaces, orgId}) {
+function render ({spacePlans, orgId}) {
   return h('.workbench', [
     h('.workbench-header__wrapper', [
       h('header.workbench-header', [
@@ -33,13 +40,13 @@ function render ({spaces, orgId}) {
     ]),
     h('.workbench-main', [
       h('.workbench-main__content', {
-      }, [renderSpaces(spaces)]),
+      }, [renderSpacePlans(spacePlans.items)]),
       h('.workbench-main__sidebar', [renderRightSidebar(orgId)])
     ])
   ]);
 }
 
-function renderSpaces (spaces) {
+function renderSpacePlans (spacePlans) {
   return h('.table', [
     h('.table__head', [
       h('table', [
@@ -51,7 +58,7 @@ function renderSpaces (spaces) {
     h('.table__body', [
       h('table', [
         h('tbody',
-          spaces.map(({name, plan}) => h('tr', [h('td', [name]), h('td', [plan])]))
+          spacePlans.map(({space, name}) => h('tr', [h('td', [space.name]), h('td', [name])]))
         )
       ])
     ])
