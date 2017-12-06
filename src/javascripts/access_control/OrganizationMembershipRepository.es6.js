@@ -2,6 +2,7 @@ import {createOrganizationEndpoint} from 'data/Endpoint';
 import * as auth from 'Authentication';
 import {apiUrl} from 'Config';
 import {fetchAll} from 'data/CMA/FetchAll';
+import {omit} from 'lodash';
 
 const BATCH_LIMIT = 100;
 
@@ -72,9 +73,30 @@ export function invite (endpoint, {role, email, suppressInvitation}) {
  *
  * Gets the base platform subscription plan for the org.
  */
-export function getPlatformSubscriptionPlan (endpoint) {
+export function getSubscription (endpoint) {
   return endpoint({
     method: 'GET',
-    path: ['subscription']
+    path: ['subscriptions']
+  }).then((response) => {
+    return parseSubscription(response);
   });
+}
+
+function parseSubscription (rawData) {
+  // TODO use generic link resolver ?
+  const rawSubscription = rawData.items[0];
+  const subscription = omit(rawSubscription, 'plans');
+  const includes = Object.keys(rawData.includes)
+    .reduce((includes, key) => {
+      includes[key] = rawData.includes[key].reduce((hash, item) => {
+        hash[item.sys.id] = item;
+        return hash;
+      }, {});
+      return includes;
+    }, {});
+
+  subscription.plans = rawSubscription.plans
+    .map(({sys}) => includes[sys.linkType][sys.id]);
+
+  return subscription;
 }
