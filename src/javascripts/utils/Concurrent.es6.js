@@ -11,14 +11,44 @@ export * from './Concurrent/MVar';
 
 
 // Constructors for promise results;
-export const Success = makeCtor('Success');
-export const Failure = makeCtor('Failure');
+export const Success = makeCtor('PromiseSuccess');
+export const Failure = makeCtor('PromiseFailure');
 
 
 export function sleep (t) {
   return new Promise((resolve) => {
     setTimeout(resolve, t);
   });
+}
+
+
+/**
+ * Takes a promise and returns a promise with a result based on wether
+ * the promise resolved or rejected.
+ *
+ *     const result = yield tryP(foo())
+ *     const maybeValue = match(result, {
+ *       [Success]: (value) => value
+ *       [Failure]: (error) => {
+ *         logError(error);
+ *         return null;
+ *       }
+ *     })
+ *
+ * This provides a functional alternative for the following code
+ *
+ *     let maybeResult = null;
+ *     try {
+ *       maybeResult = yield foo();
+ *     } catch (e) {
+ *       logError(error);
+ *     }
+ */
+export function tryP (promise) {
+  return promise.then(
+    (result) => Success(result),
+    (error) => Failure(error)
+  );
 }
 
 
