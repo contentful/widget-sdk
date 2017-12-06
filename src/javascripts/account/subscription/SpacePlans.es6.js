@@ -1,15 +1,23 @@
 import {h} from 'ui/Framework';
 import {runTask} from 'utils/Concurrent';
+import {pick} from 'lodash';
 import {
   createEndpoint as createOrgEndpoint,
   getSpacePlans
 } from 'access_control/OrganizationMembershipRepository';
+import {href} from 'states/Navigator';
+import svgPlus from 'svg/plus';
+import {showDialog as showCreateSpaceModal} from 'services/CreateSpace';
+import {canCreateSpaceInOrganization} from 'accessChecker';
 
 export default function ($scope) {
   $scope.component = h('noscript');
   const {properties} = $scope;
 
-  let state = {orgId: '', spaces: []};
+  let state = {};
+  const actions = {
+    addSpace: () => { showCreateSpaceModal(state.orgId); }
+  };
 
   runTask(function* () {
     const nextState = yield* loadStateFromProperties(properties);
@@ -19,18 +27,20 @@ export default function ($scope) {
   function rerender (nextState) {
     $scope.properties.context.ready = true;
     state = nextState;
-    $scope.component = render(state);
+    $scope.component = render(state, actions);
     $scope.$applyAsync();
   }
 }
 
 function* loadStateFromProperties ({orgId}) {
   const endpoint = createOrgEndpoint(orgId);
-  const spacePlans = yield getSpacePlans(endpoint);
-  return {orgId, spacePlans};
+  const {items: spacePlans} = yield getSpacePlans(endpoint);
+  const canCreateSpace = canCreateSpaceInOrganization(orgId);
+
+  return {orgId, spacePlans, canCreateSpace};
 }
 
-function render ({spacePlans, orgId}) {
+function render (state, actions) {
   return h('.workbench', [
     h('.workbench-header__wrapper', [
       h('header.workbench-header', [
@@ -39,14 +49,17 @@ function render ({spacePlans, orgId}) {
       ])
     ]),
     h('.workbench-main', [
-      h('.workbench-main__content', {
-      }, [renderSpacePlans(spacePlans.items)]),
-      h('.workbench-main__sidebar', [renderRightSidebar(orgId)])
+      h('.workbench-main__content', [
+        renderSpacePlans(pick(state, 'spacePlans'))
+      ]),
+      h('.workbench-main__sidebar', [
+        renderRightSidebar(pick(state, 'canCreateSpace', 'spacePlans'), actions)
+      ])
     ])
   ]);
 }
 
-function renderSpacePlans (spacePlans) {
+function renderSpacePlans ({spacePlans}) {
   return h('.table', [
     h('.table__head', [
       h('table', [
@@ -58,16 +71,32 @@ function renderSpacePlans (spacePlans) {
     h('.table__body', [
       h('table', [
         h('tbody',
-          spacePlans.map(({space, name}) => h('tr', [h('td', [space.name]), h('td', [name])]))
+          spacePlans.map(({space, name}) =>
+            h('tr', [
+              h('td', [h('a', {href: getSpaceLink(space.sys.id)}, [space.name])]),
+              h('td', [name])
+            ])
+          )
         )
       ])
     ])
   ]);
 }
 
-function renderRightSidebar (orgId) {
+function renderRightSidebar ({canCreateSpace, spacePlans}, actions) {
   return h('.entity-sidebar', [
     h('h2.entity-sidebar__heading', ['Add space']),
-    h('p.entity-sidebar__help-text', [`Add space to org ${orgId}`])
+    h('p.entity-sidebar__help-text', [`Your organization has ${spacePlans.length} spaces.`]),
+    h('p.entity-sidebar__help-text', [
+      // TODO get rid of cf-icon after svg styles are refactored
+      h('button.btn-action.x--block', {
+        onClick: actions.addSpace,
+        disabled: !canCreateSpace
+      }, [h('cf-icon.btn-icon.inverted', {name: 'plus'}, [svgPlus]), 'Add space'])
+    ])
   ]);
+}
+
+function getSpaceLink (spaceId) {
+  return href({path: ['spaces', 'detail'], params: {spaceId}});
 }
