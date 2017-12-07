@@ -85,6 +85,7 @@ function query ({searchText = null, searchFilters = [], contentTypeId = null}) {
     search_text: searchText,
     content_type_id: contentTypeId,
     search_filter_count: searchFilters.length,
-    search_filter_concatenated: stringifySafe(searchFilters)
+    search_filter_concatenated: stringifySafe(searchFilters),
+    search_query: null // We keep this for compatibility with schemas for now.
   };
 }
