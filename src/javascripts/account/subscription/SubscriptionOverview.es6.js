@@ -115,9 +115,9 @@ function renderRightSidebar ({grandTotal}) {
       'Don’t hesitate to talk to our customer success team.'
     ]),
     h('p.entity-sidebar__help-text.pricing-csm', [
-      h('.pricing-csm__photo'),
-      h('.pricing-csm__photo'),
-      h('.pricing-csm__photo')
+      h('span.pricing-csm__photo'),
+      h('span.pricing-csm__photo'),
+      h('span.pricing-csm__photo')
     ]),
     h('p.entity-sidebar__help-text', [
       h('a', {href: supportUrl}, ['Get in touch with us'])
