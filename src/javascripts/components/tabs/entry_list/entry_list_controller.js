@@ -13,8 +13,19 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var accessChecker = require('accessChecker');
   var entityStatus = require('entityStatus');
+  var renderCreateEntryMenu = require('components/tabs/entry_list/CreateEntryButton/Menu').default;
   var getBlankView = require('data/UiConfig/Blanks').getBlankEntryView;
   var createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar').default;
+  var _ = require('lodash');
+  var LD = require('utils/LaunchDarkly');
+
+  LD.onFeatureFlag(
+    $scope,
+    'feature-at-11-2017-lots-of-cts-ctx-aware-dropdown',
+    function (variation) {
+      $scope.isContextAwareActionEnabled = variation;
+    }
+  );
 
   var searchController = $controller('EntryListSearchController', {$scope: $scope});
   $controller('DisplayedFieldsController', {$scope: $scope});
@@ -68,14 +79,27 @@ angular.module('contentful')
     return spaceContext.publishedCTs.get(_.get($scope, 'context.view.contentTypeId'));
   };
 
+  // TODO: optimise later
   $scope.$watchCollection(function () {
     return {
       cts: spaceContext.publishedContentTypes,
-      responses: accessChecker.getResponses()
+      responses: accessChecker.getResponses(),
+      contentTypeId: _.get($scope, 'context.view.contentTypeId')
     };
-  }, function () {
+  }, function (result) {
     $scope.accessibleCts = _.filter(spaceContext.publishedContentTypes, function (ct) {
       return accessChecker.canPerformActionOnEntryOfType('create', ct.getId());
+    });
+
+    $scope.createEntryMenu = renderCreateEntryMenu({
+      contentTypes: $scope.accessibleCts.map(function (ct) { return ct.data; }),
+      suggestedContentTypeId: result.contentTypeId,
+      onSelect: function (ctId) {
+        // TODO: Clean up after merge of (only do `.newEntry(ctId)`):
+        // https://github.com/contentful/user_interface/pull/2357
+        var contentType = $scope.accessibleCts.find(function (ct) { return ct.data.sys.id === ctId; });
+        return $scope.entityCreationController.newEntry(contentType);
+      }
     });
   });
 

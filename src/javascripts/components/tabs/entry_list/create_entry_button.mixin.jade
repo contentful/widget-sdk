@@ -25,8 +25,12 @@ mixin create-entry-button
       data-test-id="add-entry-menu-trigger")
       cf-icon.btn-dropdown-icon(name="dd-arrow-down")
       | Add entry
+
+
     .context-menu.x--arrow-right(
-      role="menu" cf-context-menu="bottom-right"
+      ng-if="!isContextAwareActionEnabled"
+      role="menu"
+      cf-context-menu="bottom-right"
       aria-label="Add Entry" data-test-id="add-entry-menu")
       ul.context-menu__items
         li(role="menuitem"
@@ -34,5 +38,10 @@ mixin create-entry-button
           ng-click="entityCreationController.newEntry(contentType)")
           | {{contentType.getName()}}
 
-
+    .context-menu.context-menu--redesigned(
+      ng-if="isContextAwareActionEnabled"
+      role="menu"
+      cf-context-menu="bottom-left-0"
+      aria-label="Add Entry" data-test-id="add-entry-menu")
+      cf-component-bridge(component="createEntryMenu")
 
