@@ -38,6 +38,6 @@ RUN cd /app/vendor/ui-extensions-sdk && \
 
 # Copy source files and build app
 COPY ./ ./
-RUN gulp build/with-styleguide
+RUN NODE_ENV=production gulp build/with-styleguide
 
 ENTRYPOINT ["bin/docker-entry"]

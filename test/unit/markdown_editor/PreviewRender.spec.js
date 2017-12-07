@@ -2,7 +2,6 @@
 
 describe('markdown_editor/PreviewRender', function () {
   let treeBuilder, buildTree;
-  const libs = window.cfLibs.markdown;
 
   function getRoot (source, fn) {
     return ((fn || buildTree)(source)).root;
@@ -23,7 +22,7 @@ describe('markdown_editor/PreviewRender', function () {
   beforeEach(function () {
     module('contentful/test');
     treeBuilder = this.$inject('markdown_editor/PreviewRender');
-    buildTree = treeBuilder.default(libs);
+    buildTree = treeBuilder.default();
   });
 
   it('Creates root div node with incremental key for builders', function () {
@@ -32,7 +31,7 @@ describe('markdown_editor/PreviewRender', function () {
     expect(root.type).toBe('div');
     expect(_.isObject(getChildren(root))).toBe(true);
 
-    root = getRoot('__test2__', treeBuilder.default(libs));
+    root = getRoot('__test2__', treeBuilder.default());
     expect(root.key).toBe('root/2');
     expect(root.type).toBe('div');
   });

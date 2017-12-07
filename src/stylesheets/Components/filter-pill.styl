@@ -151,15 +151,16 @@
   &:focus,
   &:active
     background-image: linear-gradient(to left, $colors.blue-darkest, $colors.blue-mid)
-
   .search__input-spacer
     min-width: 50px
     max-width: 30ch
-    white-space: nowrap
-    // Add three characters to the left to give enough space
-    // to the rendered value of the input and avoids weird jumping.
-    padding: 0 10px 0 3ch
-    color: transparent
+
+.search__input-spacer
+  white-space: nowrap
+  // Add three characters to the left to give enough space
+  // to the rendered value of the input and avoids weird jumping.
+  padding: 0 10px 0 3ch
+  color: transparent
 
 .search__input-reference
   padding-right: 5px

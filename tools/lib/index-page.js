@@ -178,7 +178,6 @@ function configMetaTag (uiVersion, config, resolve) {
       uiVersion,
       manifest: {
         'app/kaltura.js': resolve('kaltura.js'),
-        'app/markdown_vendors.js': resolve('markdown_vendors.js'),
         'app/snowplow.js': resolve('snowplow.js')
       }
     })

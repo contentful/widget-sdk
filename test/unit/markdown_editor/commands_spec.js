@@ -2,17 +2,16 @@
 
 describe('markdown_editor/commands', function () {
   let textarea, editor, commands, cm;
-  const CodeMirror = window.cfLibs.markdown.CodeMirror;
 
   beforeEach(function () {
     module('contentful/test');
     const Commands = this.$inject('markdown_editor/commands');
     const Wrapper = this.$inject('markdown_editor/codemirror_wrapper');
+    const CodeMirror = this.$inject('libs/codemirror');
     textarea = document.createElement('textarea');
     document.body.appendChild(textarea);
 
     const cmFactory = sinon.spy(CodeMirror, 'fromTextArea');
-    // editor = MarkdownEditor.createManually(textarea, {}, libs.CodeMirror, libs.marked);
     editor = Wrapper.create(textarea, {}, CodeMirror);
     cm = cmFactory.returnValues[0];
     cmFactory.restore();

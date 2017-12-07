@@ -158,9 +158,17 @@ angular.module('cf.es6')
   function coerceExports (exports) {
     if (exports.__esModule) {
       return exports;
-    } else {
-      return _.assign({default: exports}, exports);
     }
+
+    // We don't use `React.PropTypes` since it's deprecated and warns
+    // when accessing. Unfortunatelly the `assign` below will also
+    // cause the warning. Here we detect if we're dealing with React
+    // exports and if so we remove `PropTypes`.
+    if (exports.Component && 'PropTypes' in exports) {
+      delete exports.PropTypes;
+    }
+
+    return _.assign({default: exports}, exports);
   }
 
   function makeModule () {

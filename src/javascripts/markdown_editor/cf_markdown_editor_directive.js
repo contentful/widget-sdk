@@ -49,9 +49,11 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
       // 2. loading it even after elements are added to DOM works just fine
       LazyLoader.get('embedly');
 
-      MarkdownEditor.create(textarea)
-        .then(initEditor)
-        .catch(function () { scope.hasCrashed = true; });
+      try {
+        initEditor(MarkdownEditor.create(textarea));
+      } catch (e) {
+        scope.hasCrashed = true;
+      }
 
       function initEditor (editorInstance) {
         editor = editorInstance;

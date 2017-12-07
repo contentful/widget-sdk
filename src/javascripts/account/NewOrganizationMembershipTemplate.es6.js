@@ -78,7 +78,7 @@ export function emailsInput (
     h('.cfnext-form__field.input', [
       h('textarea', {
         dataTestId: 'organization-membership.user-email',
-        autofocus: true,
+        autoFocus: true,
         class: 'cfnext-form__input org-invitation-emails-field',
         value: emailsInputValue,
         onInput: (evt) => updateEmails(evt.target.value),
@@ -197,7 +197,7 @@ export function accessToSpaces (
         h('tr', [
           h('th', ['Space']),
           h('th', {
-            colspan: '2'
+            colSpan: '2'
           }, ['Roles'])
         ])
       ]),

@@ -25,17 +25,12 @@ angular.module('cf.app')
         offDisabledStatusChanged();
       });
 
-      scope.isLoading = true;
-
-      Editor.create(widgetApi)
-      .then(function (editor) {
-        scope.editor = editor;
-        scope.$on('$destroy', editor.destroy);
-      }, function () {
+      try {
+        scope.editor = Editor.create(widgetApi);
+        scope.$on('$destroy', scope.editor.destroy);
+      } catch (e) {
         scope.hasCrashed = true;
-      }).finally(function () {
-        scope.isLoading = false;
-      });
+      }
     }
   };
 

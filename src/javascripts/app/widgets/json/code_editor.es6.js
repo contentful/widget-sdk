@@ -15,31 +15,24 @@ import {forEach, pick} from 'lodash';
  * back through the Widget API.
  *
  * @usage[js]
- * CodeEditor.create(widgetApi)
- * .then(function (editor) {
- *   // Add the CodeMirror element to the DOM
- *   editor.attach(jqueryElement)
+ * const editor = CodeEditor.create(widgetApi)
  *
- *   // Two 'Command' instances
- *   editor.undo
- *   editor.redo
+ * // Add the CodeMirror element to the DOM
+ * editor.attach(jqueryElement)
  *
- *   // Boolean indicating if value is valid json
- *   editor.valid
+ * // Two 'Command' instances
+ * editor.undo
+ * editor.redo
  *
- *   // Cleanup
- *   editor.destroy()
- * })
+ * // Boolean indicating if value is valid json
+ * editor.valid
+ *
+ * // Cleanup
+ * editor.destroy()
  */
 export function create (widgetApi) {
-  return Adapter.create()
-  .then(function (adapter) {
-    return fromAdapter(widgetApi, adapter);
-  });
-}
-
-function fromAdapter (widgetApi, editor) {
   const field = widgetApi.field;
+  const editor = Adapter.create();
 
   // Internal state for commands. Has 'undoable' and 'redoable'
   // properties.

@@ -8,7 +8,7 @@ The public API of the framework consists of
 
 The main idea is that a VTree is represented as pure data. It only contains
 information on what to render and not how. That means a VTree is not tied to a
-specific rendering library like Preact.
+specific rendering library like React.
 
 The [`Hyperscript`](./Hyperscript.es6.js) module exports the `h()` function to
 constructor VTrees. It is mainly a convenience wrapper around the constructors
@@ -19,7 +19,7 @@ The [`cfComponentBridge`](./CfComponentBridgeDirective.js) directive gets a
 VTree from the scope and renders it into the DOM whenever it changes. It uses
 the `createMountPoint()` function from the [`DOMRenderer`](./DOMRenderer.es6.js)
 module. This function converts our representation of a VTree into a
-representation that can be understood by Preact and then uses Preact’s
+representation that can be understood by React and then uses React’s
 `render()` function to mount that tree.
 
 The [`StringRenderer`](./StringRenderer.es6.js) exports the `renderToString()`

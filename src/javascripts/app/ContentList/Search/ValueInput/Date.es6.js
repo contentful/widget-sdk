@@ -41,12 +41,12 @@ export default function filterValueDate ({ testId, value, inputRef, onChange, on
       hooks: [DatePickerHook(onChange), H.Ref(el => el && inputRef(el))],
       onKeyDown,
       value: formattedDate,
-      tabindex: '0',
+      tabIndex: '0',
       style: {
         width: getWidth(formattedDate),
         paddingLeft: '10px'
       },
-      readonly: true
+      readOnly: true
     })
   ]);
 }
