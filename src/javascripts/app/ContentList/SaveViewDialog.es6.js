@@ -21,7 +21,7 @@ export default function SaveViewDialog ({
           onClick: select,
           style: {cursor: 'pointer', maxHeight: '50px'}
         }, [
-          h('input', {type: 'radio', checked}),
+          h('input', {type: 'radio', checked, readOnly: true}),
           h('span', {style: {marginLeft: '5px'}}, [
             h('label', label),
             h('p', {style: {marginLeft: '22px', color: colors.textLight}}, [description])
@@ -35,9 +35,9 @@ export default function SaveViewDialog ({
         const confirmLabel = isShared && allowRoleAssignment ? 'Proceed and select roles' : 'Save view';
 
         const confirm = () => !isInvalid && $scope.dialog.confirm({ title: trimmed, isShared });
-        const onInput = e => render(e.target.value, isShared);
+        const onChange = e => render(e.target.value, isShared);
         const cancel = () => $scope.dialog.cancel();
-        const onKeydown = e => e.keyCode === keycodes.ENTER && confirm();
+        const onKeyDown = e => e.keyCode === keycodes.ENTER && confirm();
         const setSaveAsShared = saveAsShared => render(value, saveAsShared);
 
         $scope.component = h('.modal-dialog', [
@@ -53,7 +53,7 @@ export default function SaveViewDialog ({
               ['A view displays a list of entries you searched for. By saving the current view, you will be able to re-use it later.']),
             h('span', ['Name of the view', h('span.modal-dialog__richtext', [' (required)'])]),
             h('input.cfnext-form__input--full-size', {
-              type: 'text', value, onInput, onKeydown, maxlength: `${maxLength}`, style: {marginTop: '5px'}
+              type: 'text', value, onChange, onKeyDown, maxLength: `${maxLength}`, style: {marginTop: '5px'}
             }),
             allowViewTypeSelection && h('ul', {style: {marginTop: '20px'}}, [
               renderViewTypeOption({

@@ -160,3 +160,29 @@ export function prepareUIConfigForStorage (uiConfig) {
   data._migrated = pick(uiConfig, migrationFields);
   return data;
 }
+
+/**
+ * Returns how many views of a given uiConfig were successfully migrated and how
+ * many were not successfully migrated.
+ *
+ * @param {UIConfig} uiConfig
+ * @returns {Object} E.g. { migratedCount: 42, failedCount: 0 }
+ */
+export function getMigrationSuccessCount (uiConfig) {
+  const {entryListViews = [], assetListViews = []} = uiConfig;
+  return reduceCount(entryListViews, reduceCount(assetListViews));
+
+  function reduceCount (folders, count = { migratedCount: 0, failedCount: 0 }) {
+    return folders.reduce((count, folder) => {
+      folder.views.forEach((view) => {
+        const key = hasFailedViewMigration(view) ? 'failedCount' : 'migratedCount';
+        count[key] = count[key] + 1;
+      });
+      return count;
+    }, count);
+  }
+}
+
+function hasFailedViewMigration (view) {
+  return view._legacySearchTerm !== undefined;
+}

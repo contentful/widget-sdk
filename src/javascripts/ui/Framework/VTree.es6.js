@@ -1,5 +1,6 @@
 import {isPlainObject, forEach} from 'lodash';
 import {makeSum} from 'libs/sum-types';
+import React from 'libs/react';
 
 /**
  * This module exports the constructors for the abstract virtual DOM
@@ -36,6 +37,10 @@ function checkProps (props) {
     'Element properties must be a plain object'
   );
   forEach(props, (value, key) => {
+    if (value === undefined) {
+      return;
+    }
+
     if (key === 'style') {
       assert(
         isPlainObject(value),
@@ -46,7 +51,7 @@ function checkProps (props) {
         typeof value === 'function',
         'Ref handler must be a function'
       );
-    } else if (key === 'disabled' || key === 'checked' || key === 'autofocus') {
+    } else if (key === 'disabled' || key === 'checked' || key === 'autoFocus') {
       assert(
         typeof value === 'boolean',
         `Element property "${key}" must be a boolean`
@@ -80,7 +85,7 @@ function checkChildren (children) {
     'Element children must be an array'
   );
   children.forEach((value) => {
-    assert(value instanceof VTree, 'Element child must be a VTree');
+    assert(value instanceof VTree || React.isValidElement(value), 'Element child must be a VTree or a valid React element');
   });
 }
 

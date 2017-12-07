@@ -1,8 +1,8 @@
 /* global requestAnimationFrame */
-import { noop, find, assign } from 'lodash';
+import { noop, assign } from 'lodash';
 import { match } from 'utils/TaggedValues';
 import { truncate } from 'stringUtils';
-
+import * as React from 'libs/react';
 import {h} from 'ui/Framework';
 import * as H from 'ui/Framework/Hooks';
 import {container, hspace} from 'ui/Layout';
@@ -15,9 +15,9 @@ import infoIcon from 'svg/info';
 
 import renderLoader from './Loader';
 import { ValueInput } from './Filters';
-import { autosizeInput } from './Hooks/AutoInputSize';
 import filterValueDate from './ValueInput/Date';
 import filterValueReference from './ValueInput/Reference';
+import Select from './ValueInput/select';
 import { IsOverflownY as IsOverflownYHook } from './Hooks/IsOverflown';
 
 const Keys = {
@@ -55,7 +55,7 @@ export default function render ({
 
   return h('div', {
     hooks: [ H.TrackFocus((value) => actions.SetBoxFocus(value)) ],
-    tabindex: '0',
+    tabIndex: '0',
     style: {
       height: '40px',
       width: '100%',
@@ -67,7 +67,7 @@ export default function render ({
       ? 'search-next__pills-wrapper search-next__pills-wrapper--state-active'
       : 'search-next__pills-wrapper',
       onClick: () => actions.SetFocusOnQueryInput(),
-      onFocusOut: () => actions.ResetFocus(),
+      onBlur: () => actions.ResetFocus(),
       hooks: [IsOverflownYHook()],
       ref: (el) => {
         // HACK: fixes the scroll position after selecting entity
@@ -102,9 +102,9 @@ export default function render ({
         }),
         queryInput({
           isPlaceholderVisible: !hasFilters,
-          value: input,
+          value: input || '',
           onChange: value => actions.SetQueryInput(value),
-          autofocus: !input && !hasFilters,
+          autoFocus: !input && !hasFilters,
           isFocused: defaultFocus.isQueryInputFocused,
           onKeyDown: (e) => {
             const { target } = e;
@@ -186,24 +186,31 @@ function queryInput ({
   value,
   isPlaceholderVisible,
   isFocused,
-  autofocus,
+  autoFocus,
   onChange,
   onKeyDown
 }) {
-  return h('input.input-reset.search-next__query-input', {
-    dataTestId: 'queryInput',
-    hooks: [ H.Ref(autosizeInput) ],
+  const shadowValue = value !== null ? String(value) : '';
+
+  return React.createElement('fieldset', {
+    className: 'search-next__query-input-fieldset'
+  }, React.createElement('input', {
+    className: 'input-reset search-next__query-input',
+    'data-test-id': 'queryInput',
     ref: (el) => {
       if (isFocused && el) {
         requestAnimationFrame(() => el.focus());
       }
     },
-    autofocus,
+    autoFocus,
     value,
     onKeyDown,
-    onInput: (e) => onChange(e.target.value),
+    onChange: (e) => onChange(e.target.value),
     placeholder: isPlaceholderVisible ? 'Type to search for entries' : ''
-  });
+  }),
+    React.createElement('span', {
+      className: 'search__input-spacer'
+    }, [shadowValue.replace(/\s/g, '|')]));
 }
 
 
@@ -257,7 +264,7 @@ function filterPill ({
         requestAnimationFrame(() => el.focus());
       }
     },
-    tabindex: '0',
+    tabIndex: '0',
     onClick: (e) => {
       e.stopPropagation();
     },
@@ -299,7 +306,7 @@ function filterOperator ({ op, operators = [], onChange }) {
   }
 
   return h('.search_select.search__select-operator', [
-    select({
+    React.createElement(Select, {
       testId: '',
       options: operators,
       value: op,
@@ -393,10 +400,10 @@ function filterValueText ({
       dataTestId: testId,
       value,
       ref: inputRef,
-      onInput: (e) => onChange(e.target.value),
+      onChange: (e) => onChange(e.target.value),
       onKeyDown,
       onClick,
-      tabindex: '0'
+      tabIndex: '0'
     }),
     h('span.search__input-spacer', [shadowValue.replace(/\s/g, '|')])
   ]);
@@ -418,7 +425,7 @@ function filterSelect ({
   onKeyDown
 }) {
   return h('.search__select-value', [
-    select({
+    React.createElement(Select, {
       testId,
       options,
       value,
@@ -430,35 +437,6 @@ function filterSelect ({
   );
 }
 
-function getSelectWidth (label) {
-  const width = label.length + 6;
-  return Math.max(7, width) + 'ch';
-}
-
-function select ({
-  testId,
-  options = [],
-  value,
-  inputRef,
-  onChange,
-  onKeyDown
-}) {
-  const [_, label] = find(options, ([v]) => v === value) || ['', ''];
-  const width = getSelectWidth(label);
-
-  return h('select.input-reset.search__select', {
-    title: label,
-    dataTestId: testId,
-    value: value,
-    ref: inputRef,
-    onChange: ({ target: { value } }) => onChange(value),
-    tabindex: '0',
-    onKeyDown,
-    style: {width}
-  }, options.map(([value, label]) => {
-    return h('option', {value}, [label]);
-  }));
-}
 
 // Suggestions
 // -----------
@@ -477,7 +455,7 @@ function suggestionsBox ({
           el.focus();
         }
       },
-      tabindex: '0',
+      tabIndex: '0',
       onKeyDown: (e) => {
         if (Keys.enter(e)) {
           onSelect(field);

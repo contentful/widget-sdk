@@ -225,6 +225,7 @@ export default function ($scope) {
     state = assign(state, {
       suppressInvitation: !state.suppressInvitation
     });
+    rerender();
   }
 
   /**
@@ -273,6 +274,8 @@ export default function ($scope) {
       emailsInputValue,
       emails
     });
+
+    rerender(false);
   }
 
   /**
@@ -285,10 +288,10 @@ export default function ($scope) {
     rerender();
   }
 
-  function rerender () {
+  function rerender (renderAsync = true) {
     $scope.properties.context.ready = true;
     $scope.component = render(state, actions);
-    $scope.$applyAsync();
+    renderAsync ? $scope.$applyAsync() : $scope.$apply();
   }
 
   function denyAccess () {

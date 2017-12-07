@@ -44,7 +44,7 @@ export default function filterValueReference ({
     },
     onChange: e => onChange(e.target.value),
     onKeyDown: e => handleKeyDown(e),
-    tabindex: '0',
+    tabIndex: '0',
     placeholder: 'Click to select'
   });
 }

@@ -1,6 +1,3 @@
-import * as K from 'utils/kefir';
-import LazyLoader from 'LazyLoader';
-import {caseof} from 'libs/sum-types';
 import makePreviewRender from './PreviewRender';
 
 /**
@@ -27,28 +24,13 @@ import makePreviewRender from './PreviewRender';
  * @returns {K.Property<PreviewData>}
  */
 export default function (markdown$) {
-  const previewRenderPromise =
-    LazyLoader.get('markdown')
-    .then(makePreviewRender);
-
   const markdownThrottled$ =
     markdown$
     .throttle(250)
     .map((src) => src || '')
     .skipDuplicates();
 
-  const preview$ =
-    K.promiseProperty(previewRenderPromise)
-    .flatMapLatest((promise) => caseof(promise, [
-      // Libs still loading: No preview avilable
-      [K.PromiseStatus.Pending, () => K.constant({preview: null})],
-      // Loading libs failed: Emit error
-      [K.PromiseStatus.Rejected, () => K.constant({error: true})],
-      // previewRender is available: Create new stream that applies it
-      // to src$.
-      [K.PromiseStatus.Resolved, ({value}) => makePreview$(value)]
-    ]));
-
+  const preview$ = makePreview$(makePreviewRender());
 
   // Given the loaded preview renderer we construct a stream that
   // applies it to the markdown source.
