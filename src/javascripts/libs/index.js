@@ -3,10 +3,23 @@
 require('babel-polyfill');
 require('angular-ui-sortable');
 
+// CodeMirror: JSON field editor component
+require('codemirror/addon/edit/closebrackets');
+require('codemirror/mode/javascript/javascript');
+// CodeMirror: Markdown field editor component
+require('codemirror/mode/markdown/markdown');
+// CodeMirror: HTML highlighting inside Markdown
+require('codemirror/mode/xml/xml');
+require('codemirror/addon/edit/continuelist');
+require('codemirror/addon/mode/overlay');
+
 angular.module('cf.libs', [])
   .constant('libs/color', require('color'))
   .constant('libs/sanitize-html', require('sanitize-html'))
-  .constant('libs/preact', require('preact'))
+  .constant('libs/react', require('react'))
+  .constant('libs/react-dom', require('react-dom'))
+  .constant('create-react-class', require('create-react-class'))
+  .constant('libs/codemirror', require('codemirror'))
   .constant('libs/qs', require('qs'))
   .constant('libs/marked', require('marked-ast')._marked)
   .constant('libs/MarkedAst', require('marked-ast'))

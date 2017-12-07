@@ -315,7 +315,7 @@ function setUserFieldsFilters (users, filters) {
     const filterClone = cloneDeep(filter);
 
     if (filterClone && filterClone.type === 'User') {
-      filterClone.valueInput = ValueInput.Select(usersOptions);
+      filterClone.valueInput = ValueInput.Select([['', 'Any'], ...usersOptions]);
     }
 
     return [filterClone, op, value];

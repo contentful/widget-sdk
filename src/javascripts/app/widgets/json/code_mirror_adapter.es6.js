@@ -1,7 +1,7 @@
-import LazyLoader from 'LazyLoader';
 import {create as createSignal} from 'signal';
 import debounce from 'debounce';
 import $ from 'jquery';
+import CodeMirror from 'libs/codemirror';
 
 /**
  * @ngdoc service
@@ -17,15 +17,13 @@ import $ from 'jquery';
  * libraries.
  *
  * @usage[js]
- * adapter.create()
- * .then(function (editor) {
- *   // The CodeMirror DOM element
- *   editor.attach(jqueryElement)
- *   editor.setValue(object)
- *   editor.undo()
- *   editor.redo()
- *   editor.destroy()
- * })
+ * const editor = adapter.create()
+ * // The CodeMirror DOM element
+ * editor.attach(jqueryElement)
+ * editor.setValue(object)
+ * editor.undo()
+ * editor.redo()
+ * editor.destroy()
  */
 
 const CODE_MIRROR_CONFIG = {
@@ -40,13 +38,6 @@ const CODE_MIRROR_CONFIG = {
 };
 
 export function create () {
-  return LazyLoader.get('markdown')
-  .then(function (libs) {
-    return create_(libs.CodeMirror);
-  });
-}
-
-function create_ (CodeMirror) {
   const stateSignal = createSignal();
   let hasInitialValue = false;
   let currentValue;

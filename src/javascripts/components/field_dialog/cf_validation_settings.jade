@@ -97,6 +97,7 @@ h2.validation-settings__header
     ul.validation-controls__option-list(
       aria-label="Available Content Types"
       ng-controller="ValidationLinkTypeController"
+      ng-class="{'long-list': contentTypes.length > 10}"
     )
       li(ng-repeat="ct in contentTypes")
         label

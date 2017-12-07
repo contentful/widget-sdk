@@ -9,7 +9,9 @@
 #
 # To build this image use `bin/docker-build-test` and to run this image
 # use `bin/docker-run`.
-#
+
+# The base image is hosted on Docker hub and built using
+# `tools/docker/base/Dockerfile`.
 FROM contentful/user-interface-base:6
 WORKDIR /app
 
@@ -36,6 +38,6 @@ RUN cd /app/vendor/ui-extensions-sdk && \
 
 # Copy source files and build app
 COPY ./ ./
-RUN gulp build/with-styleguide
+RUN NODE_ENV=production gulp build/with-styleguide
 
 ENTRYPOINT ["bin/docker-entry"]

@@ -1,7 +1,7 @@
 /* global require module */
 
 require('babel-register');
-var babelOptions = require('./tools/app-babel-options').options;
+var makeBabelOptions = require('./tools/app-babel-options').makeOptions;
 var P = require('path');
 var root = P.resolve() + '/';
 var express = require('express')
@@ -31,7 +31,6 @@ module.exports = function (config) {
     // list of files / patterns to load in the browser
     files: [
       'public/app/vendor.js',
-      'public/app/markdown_vendors.js',
       'public/app/templates.js',
       'public/app/libs.js',
       'public/app/main.css',
@@ -56,7 +55,11 @@ module.exports = function (config) {
     customPreprocessors: {
       babelApp: {
         base: 'babel',
-        options: Object.assign({}, babelOptions, {
+        options: makeBabelOptions({
+          // Keep the transpilation and source map effort low by
+          // targeting only chrome
+          browserTargets: ['last 2 Chrome versions']
+        }, {
           sourceMap: 'inline',
           // Since we strip the '.es6.js' extension from the filename we
           // do not need to match /.es6.js/. This is done by the

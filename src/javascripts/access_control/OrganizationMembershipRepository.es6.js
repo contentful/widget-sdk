@@ -1,16 +1,13 @@
 import {createOrganizationEndpoint} from 'data/Endpoint';
 import * as auth from 'Authentication';
-import {apiUrl, mockApiUrl} from 'Config';
+import {apiUrl} from 'Config';
 import {fetchAll} from 'data/CMA/FetchAll';
+import {omit} from 'lodash';
 
 const BATCH_LIMIT = 100;
 
 export function createEndpoint (orgId) {
   return createOrganizationEndpoint(apiUrl(), orgId, auth);
-}
-
-export function createMockEndpoint (orgId) {
-  return createOrganizationEndpoint(mockApiUrl(), orgId, auth);
 }
 
 export function getAll (endpoint) {
@@ -71,14 +68,45 @@ export function invite (endpoint, {role, email, suppressInvitation}) {
   });
 }
 
+// TODO the methods below should be moved to another place
+
 /**
- * TODO this method should be moved to another place
- *
- * Gets the base platform subscription plan for the org.
+ * Gets the subscription details for the org.
  */
-export function getPlatformSubscriptionPlan (endpoint) {
+export function getSubscription (endpoint) {
   return endpoint({
     method: 'GET',
-    path: ['subscription']
+    path: ['subscriptions']
+  }).then((response) => {
+    return parseSubscription(response);
   });
+}
+
+/**
+ * Gets the space plans for the org with corresponding spaces details
+ */
+export function getSpacePlans (endpoint) {
+  return endpoint({
+    method: 'GET',
+    path: ['plans']
+  });
+}
+
+function parseSubscription (rawData) {
+  // TODO use generic link resolver ?
+  const rawSubscription = rawData.items[0];
+  const subscription = omit(rawSubscription, 'plans');
+  const includes = Object.keys(rawData.includes)
+    .reduce((includes, key) => {
+      includes[key] = rawData.includes[key].reduce((hash, item) => {
+        hash[item.sys.id] = item;
+        return hash;
+      }, {});
+      return includes;
+    }, {});
+
+  subscription.plans = rawSubscription.plans
+    .map(({sys}) => includes[sys.linkType][sys.id]);
+
+  return subscription;
 }

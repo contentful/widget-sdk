@@ -10,7 +10,7 @@ angular.module('contentful')
   var contextHistory = require('contextHistory');
   var crumbFactory = require('navigation/CrumbFactory');
 
-  var base = require('states/base');
+  var base = require('states/Base').default;
   var resolvers = require('states/resolvers');
 
   var list = base({

@@ -1,4 +1,4 @@
-import makeState from 'states/base';
+import makeState from 'states/Base';
 import extensions from 'app/Extensions/Extensions';
 
 export default makeState({

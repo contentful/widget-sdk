@@ -46,7 +46,8 @@ angular.module('contentful')
     'view_created',
     'view_edited',
     'view_deleted',
-    'view_loaded'
+    'view_loaded',
+    'search_terms_migrated'
   ],
   modelling: [
     'field_added',

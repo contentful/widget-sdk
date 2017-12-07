@@ -1,3 +1,0 @@
-[submodule "cajon"]
-	path = vendor/cajon
-	url = git://github.com/requirejs/cajon.git

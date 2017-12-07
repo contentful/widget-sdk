@@ -7,7 +7,7 @@ angular.module('contentful')
  * @name states/assets
  */
 .factory('states/assets', ['require', function (require) {
-  var base = require('states/base');
+  var base = require('states/Base').default;
   var loadEditorData = require('app/entity_editor/DataLoader').loadAsset;
   var createAssetController = require('app/entity_editor/AssetController').default;
 

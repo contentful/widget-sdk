@@ -1,12 +1,13 @@
 import {h} from 'ui/Framework';
 import {runTask} from 'utils/Concurrent';
 import {
-  createMockEndpoint as createOrgEndpoint,
-  getPlatformSubscriptionPlan
+  createEndpoint as createOrgEndpoint,
+  getSubscription
 } from 'access_control/OrganizationMembershipRepository';
-import {getPlatformPlanStyle} from 'account/subscription/PlatformPlanStyles';
+import {getBasePlanStyle} from 'account/subscription/SubscriptionPlanStyles';
 import {supportUrl, websiteUrl} from 'Config';
 import {byName as colors} from 'Styles/Colors';
+import {groupBy} from 'lodash';
 
 export default function ($scope) {
   $scope.component = h('noscript');
@@ -29,14 +30,22 @@ export default function ($scope) {
 
 function* loadStateFromProperties ({orgId}) {
   const endpoint = createOrgEndpoint(orgId);
-  const platformPlan = yield getPlatformSubscriptionPlan(endpoint);
+  const subscription = yield getSubscription(endpoint);
 
-  // TODO get the data from endpoint(s)
-  const spacePlans = Array(4).fill({});
-  const usersPlan = {};
-  const grandTotal = 12345;
+  const basePlan = subscription.plans.find(({planType}) => planType === 'base');
+  const spacePlans = subscription.plans.filter(({planType}) => planType === 'space');
+  const spacePlansByName = Object.values(groupBy(spacePlans, 'productRatePlanId')).map((spacePlans) => ({
+    count: spacePlans.length,
+    price: calculateTotalPrice(spacePlans),
+    name: spacePlans[0].name
+  }));
+  const grandTotal = calculateTotalPrice(subscription.plans);
 
-  return {platformPlan, spacePlans, usersPlan, grandTotal};
+  return {basePlan, spacePlansByName, grandTotal};
+}
+
+function calculateTotalPrice (subscriptionPlans) {
+  return subscriptionPlans.reduce((total, plan) => total + parseInt(plan.price, 10), 0);
 }
 
 function render (state) {
@@ -48,47 +57,46 @@ function render (state) {
       ])
     ]),
     h('.workbench-main', [
-      h('.workbench-main__left-sidebar', [renderPlatformPlan(state.platformPlan)]),
+      h('.workbench-main__left-sidebar', {
+        style: {padding: '1.2rem 0 0 1.5rem'}
+      }, [renderBasePlan(state.basePlan)]),
       h('.workbench-main__right-content', {
-        style: { padding: '20px 25px' }
-      }, [renderSpacesAndUsers(state)]),
+        style: {padding: '1.2rem 2rem'}
+      }, [renderSpacePlans(state.spacePlansByName)]),
       h('.workbench-main__sidebar', [renderRightSidebar(state)])
     ])
   ]);
 }
 
-// TODO: 'type' is not served by endpoint, but we need some key to choose icon
+// TODO: 'key' is not served by endpoint, but we need some key to choose icon
 // and style for the pricing plan box
-function renderPlatformPlan ({productName, type = 'team-edition'}) {
-  const platformStyle = getPlatformPlanStyle(type);
+function renderBasePlan ({name, price, key = 'team-edition'}) {
+  const basePlanStyle = getBasePlanStyle(key);
   return h('div', [
     h('h2.pricing-heading', ['Your pricing plan']),
-    h(`.pricing-plan.pricing-tile`, [
-      h('.pricing-plan__bar', {style: platformStyle.bar}),
-      platformStyle.icon,
-      h('h3.pricing-heading', [productName])
+    h(`.pricing-plan.pricing-tile`, {
+      style: {paddingTop: '45px'}
+    }, [
+      h('.pricing-plan__bar', {style: basePlanStyle.bar}),
+      basePlanStyle.icon,
+      h('h3.pricing-heading', [name]),
+      renderPrice(price)
     ])
   ]);
 }
 
-function renderSpacesAndUsers ({spacePlans, usersPlan}) {
+function renderSpacePlans (spacePlansByName) {
   return h('div', [
-    h('h2.pricing-heading', ['Your spaces & users']),
-    h('.pricing-tiles-list', [...spacePlans.map(renderSpacePlan), renderUsersPlan(usersPlan)])
-  ]);
-}
-
-// TODO: these two functions don't get actual data and design may yet change
-
-function renderSpacePlan ({productName = 'X-Large'}) {
-  return h('.pricing-tile', [
-    h('h3.pricing-heading', [productName])
-  ]);
-}
-
-function renderUsersPlan () {
-  return h('.pricing-tile', [
-    h('h3.pricing-heading', ['Users'])
+    h('h2.pricing-heading', ['Your spaces']),
+    h('.pricing-tiles-list',
+      spacePlansByName.map(({name, price, count}) =>
+        h('.pricing-tile', [
+          h('h3.pricing-heading', [name]),
+          renderPrice(price),
+          h('p', [`${count} ${pluralize(count, 'space')}`])
+        ])
+      )
+    )
   ]);
 }
 
@@ -126,4 +134,28 @@ function renderRightSidebar ({grandTotal}) {
       h('a', {href: '#', style: {color: colors.redDark}}, ['Cancel subscription'])
     ])
   ]);
+}
+
+function renderPrice (value, currency = '$', unit = 'month') {
+  return h('p.pricing-price', [
+    h('span.pricing-price__value', [
+      h('span.pricing-price__value__currency', [currency]),
+      value.toLocaleString('en-US')
+    ]),
+    h('span.pricing-price__unit', [`/${unit}`])
+  ]);
+}
+
+/**
+ * Receives amount of items, singular name of item and optionally plural name.
+ * Returns singular or plural name for given amount based on grammar rules.
+ * e.g.
+ * pluralize(2, 'apple') // apples
+ * pluralize(101, 'apple') // apple
+ * pluralize(2, 'person', 'people') // people
+ *
+ * TODO move to string utils
+ */
+function pluralize (amount, singular, plural) {
+  return amount % 10 === 1 ? singular : plural || singular + 's';
 }

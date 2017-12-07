@@ -8,7 +8,7 @@ angular.module('contentful')
  */
 
 .factory('states/settings/webhooks', ['require', function (require) {
-  var base = require('states/base');
+  var base = require('states/Base').default;
   var contextHistory = require('contextHistory');
   var crumbFactory = require('navigation/CrumbFactory');
 

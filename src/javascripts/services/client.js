@@ -3,13 +3,13 @@
 angular.module('contentful')
 .factory('client', ['require', function (require) {
   var $q = require('$q');
-  var environment = require('environment');
+  var Config = require('Config');
   var Client = require('libs/@contentful/client').Client;
   var auth = require('Authentication');
   var makeRequest = require('data/Request').default;
 
   var baseRequest = makeRequest(auth);
-  var baseUrl = environment.settings.apiUrl;
+  var baseUrl = Config.apiUrl().slice(0, -1); // Remove trailing slash
   var defaultHeaders = {
     'X-Contentful-Skip-Transformation': true,
     'Content-Type': 'application/vnd.contentful.management.v1+json'

@@ -1,7 +1,6 @@
 'use strict';
 
 var _ = require('lodash-node/modern');
-var P = require('../vendor/promiscuous');
 
 module.exports = Request;
 
@@ -22,7 +21,7 @@ function Request (adapter, params) {
 
 
 Request.prototype.send = function send (method) {
-  if (this._params.error) { return P.reject(this._params.error); }
+  if (this._params.error) { return Promise.reject(this._params.error); }
 
   var params = _.pick(this._params, ['path', 'headers', 'payload']);
 
@@ -106,7 +105,7 @@ function joinPath (components) {
 }
 
 function rejectEmpty (response) {
-  if (response) { return response; } else { return P.reject(new Error('Response not available')); }
+  if (response) { return response; } else { return Promise.reject(new Error('Response not available')); }
 }
 
 function identity (response) {

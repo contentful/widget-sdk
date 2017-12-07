@@ -43,6 +43,7 @@ export default function ($scope) {
     invalidAddresses: [],
     orgRole: defaultOrgRole,
     spaceMemberships: {},
+    suppressInvitation: false,
     failedOrgInvitations: [],
     successfulOrgInvitations: [],
     status: Loading(),
@@ -96,6 +97,7 @@ export default function ($scope) {
   });
 
   function* getAllSpacesWithRoles () {
+    const sortByName = (role, previous) => role.name.localeCompare(previous.name);
     const allRoles = yield getAllRoles(orgEndpoint);
     // get a map of roles by spaceId
     const rolesBySpace = allRoles
@@ -113,15 +115,17 @@ export default function ($scope) {
       }, {});
     const allSpaces = yield getAllSpaces(orgEndpoint);
 
-    return allSpaces.map(space => ({
-      id: space.sys.id,
-      createdAt: space.sys.createdAt,
-      name: space.name,
-      roles: rolesBySpace[space.sys.id]
-        ? rolesBySpace[space.sys.id]
-          .sort((role, previous) => role.name.localeCompare(previous.name))
-        : []
-    }));
+    return allSpaces
+      .map(space => ({
+        id: space.sys.id,
+        createdAt: space.sys.createdAt,
+        name: space.name,
+        roles: rolesBySpace[space.sys.id]
+          ? rolesBySpace[space.sys.id]
+            .sort(sortByName)
+          : []
+      }))
+      .sort(sortByName);
   }
 
   function updateSpaceRole (checked, role, spaceMemberships) {
@@ -221,6 +225,7 @@ export default function ($scope) {
     state = assign(state, {
       suppressInvitation: !state.suppressInvitation
     });
+    rerender();
   }
 
   /**
@@ -237,6 +242,7 @@ export default function ($scope) {
       failedOrgInvitations: [],
       successfulOrgInvitations: [],
       // if re-trying to invite failed users, keep org role and space settings
+      suppressInvitation: emails.length ? state.suppressInvitation : false,
       orgRole: emails.length ? state.orgRole : defaultOrgRole,
       spaceMemberships: emails.length ? state.spaceMemberships : {}
     });
@@ -268,6 +274,8 @@ export default function ($scope) {
       emailsInputValue,
       emails
     });
+
+    rerender(false);
   }
 
   /**
@@ -280,10 +288,10 @@ export default function ($scope) {
     rerender();
   }
 
-  function rerender () {
+  function rerender (renderAsync = true) {
     $scope.properties.context.ready = true;
     $scope.component = render(state, actions);
-    $scope.$applyAsync();
+    renderAsync ? $scope.$applyAsync() : $scope.$apply();
   }
 
   function denyAccess () {

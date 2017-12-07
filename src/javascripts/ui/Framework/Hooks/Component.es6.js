@@ -1,13 +1,13 @@
 /* eslint-disable no-restricted-syntax */
-import * as Preact from 'libs/preact';
+import * as React from 'libs/react';
 import { omit, clone, get } from 'lodash';
 import { set } from 'utils/Collections';
 
-import { asPreact } from '../DOMRenderer';
+import { asReact } from '../DOMRenderer';
 import * as VTree from '../VTree';
 
 /**
- * A Preact component that runs hooks.
+ * A React component that runs hooks.
  *
  * Our implementation of `h` translates the following
  *
@@ -23,7 +23,7 @@ import * as VTree from '../VTree';
  * The Hook component is a stateful component that runs hooks that are
  * added or removed from the properties.
  */
-export class Hook extends Preact.Component {
+export class Hook extends React.Component {
   constructor () {
     super();
     this.hooks = {
@@ -55,14 +55,15 @@ export class Hook extends Preact.Component {
     this.applyHooks();
   }
 
-  render ({ args: { tag, props, children } }) {
-    props = omit(props, ['hooks']);
+  render () {
+    const { args: { tag, props, children } } = this.props;
+    const propsWithoutHooks = omit(props, ['hooks']);
     const oldRef = props.ref;
-    props.ref = el => {
+    propsWithoutHooks.ref = el => {
       this.hooks.el = el;
       oldRef && oldRef(el);
     };
-    return asPreact(VTree.Element(tag, props, children));
+    return asReact(VTree.Element(tag, propsWithoutHooks, children));
   }
 
   applyHooks () {

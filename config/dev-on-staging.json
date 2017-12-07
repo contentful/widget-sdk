@@ -2,7 +2,7 @@
   "environment": "development",
   "authUrl": "https://be.flinkly.com",
   "apiUrl": "https://api.flinkly.com",
-  "mockApiUrl" : "https://pcfjmbizecazdxcwy.stoplight-proxy.io",
+  "mockApiUrl" : "",
   "assetUrl": "//localhost:3001",
   "otUrl": "https://ot.flinkly.com",
   "marketingUrl": "https://www.flinkly.com",

@@ -2,7 +2,7 @@
   "environment": "development",
   "authUrl": "https://be.contentful.com",
   "apiUrl": "https://api.contentful.com",
-  "mockApiUrl" : "https://pcfjmbizecazdxcwy.stoplight-proxy.io",
+  "mockApiUrl" : "",
   "assetUrl": "//localhost:3001",
   "otUrl": "https://ot.contentful.com",
   "marketingUrl": "https://www.contentful.com",

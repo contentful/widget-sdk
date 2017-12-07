@@ -1,5 +1,7 @@
 import {extend} from 'lodash';
 import {track as analyticsTrack} from 'analytics/Analytics';
+import stringifySafe from 'stringifySafe';
+import {getMigrationSuccessCount} from 'data/ViewMigrator';
 
 const PREFIX = 'search:';
 const track = (e, data) => analyticsTrack(PREFIX + e, data);
@@ -62,6 +64,15 @@ function viewEdited (viewType, view, changedProperty = null) {
   }
 }
 
+export function searchTermsMigrated (newUIConfig, endpoint) {
+  const { migratedCount, failedCount } = getMigrationSuccessCount(newUIConfig);
+  track(`search_terms_migrated`, {
+    view_count_migrated: migratedCount,
+    view_count_migration_failed: failedCount,
+    endpoint
+  });
+}
+
 function details ({title, roles}) {
   return {
     view_title: title,
@@ -69,9 +80,11 @@ function details ({title, roles}) {
   };
 }
 
-function query ({searchTerm, contentTypeId}) {
+function query ({searchText = null, searchFilters = [], contentTypeId = null}) {
   return {
-    search_query: searchTerm || null,
-    content_type_id: contentTypeId || null
+    search_text: searchText,
+    content_type_id: contentTypeId,
+    search_filter_count: searchFilters.length,
+    search_filter_concatenated: stringifySafe(searchFilters)
   };
 }

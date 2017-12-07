@@ -1,8 +1,7 @@
 'use strict';
 
 describe('CodeMirror wrapper', function () {
-  let textarea, wrapper, cm, focusSpy;
-  const CodeMirror = window.cfLibs.markdown.CodeMirror;
+  let textarea, wrapper, cm, focusSpy, CodeMirror;
 
   function assertHasFocused () { sinon.assert.called(focusSpy); }
   function assertHasNotFocused () { sinon.assert.notCalled(focusSpy); }
@@ -12,6 +11,8 @@ describe('CodeMirror wrapper', function () {
     const Wrapper = this.$inject('markdown_editor/codemirror_wrapper');
     textarea = document.createElement('textarea');
     document.body.appendChild(textarea);
+
+    CodeMirror = this.$inject('libs/codemirror');
 
     const cmFactory = sinon.spy(CodeMirror, 'fromTextArea');
     wrapper = Wrapper.create(textarea, {}, CodeMirror);
@@ -25,7 +26,7 @@ describe('CodeMirror wrapper', function () {
   afterEach(function () {
     wrapper.destroy();
     $(textarea).remove();
-    textarea = wrapper = cm = focusSpy = null;
+    textarea = wrapper = cm = focusSpy = CodeMirror = null;
   });
 
   describe('Wrapper creation', function () {

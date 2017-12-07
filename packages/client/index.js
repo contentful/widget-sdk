@@ -3,7 +3,6 @@
 module.exports = {
   Client: require('./lib/client'),
   resolveQueryLinks: require('./lib/query_link_resolver').resolveQueryLinks,
-  Adapter: require('./lib/adapter.js'),
   QueryLinkResolver: require('./lib/query_link_resolver'),
   IdentityMap: require('./lib/identity_map'),
 

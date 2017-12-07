@@ -2,7 +2,7 @@
   "environment": "production",
   "authUrl" : "//be.contentful.com",
   "apiUrl" : "//api.contentful.com",
-  "mockApiUrl" : "https://pcfjmbizecazdxcwy.stoplight-proxy.io",
+  "mockApiUrl" : "",
   "otUrl" : "//ot.contentful.com",
   "assetUrl" : "//static.contentful.com",
   "marketingUrl" : "//www.contentful.com",
