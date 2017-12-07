@@ -88,11 +88,10 @@ function renderRightSidebar ({canCreateSpace, spacePlans}, actions) {
     h('h2.entity-sidebar__heading', ['Add space']),
     h('p.entity-sidebar__help-text', [`Your organization has ${spacePlans.length} spaces.`]),
     h('p.entity-sidebar__help-text', [
-      // TODO get rid of cf-icon after svg styles are refactored
       h('button.btn-action.x--block', {
         onClick: actions.addSpace,
         disabled: !canCreateSpace
-      }, [h('cf-icon.btn-icon.inverted', {name: 'plus'}, [svgPlus]), 'Add space'])
+      }, [h('.btn-icon.cf-icon.cf-icon--plus.inverted', [svgPlus]), 'Add space'])
     ])
   ]);
 }
