@@ -7,7 +7,7 @@ export function getSubscription (endpoint) {
   return endpoint({
     method: 'GET',
     path: ['subscriptions']
-  }).then((response) => {
+  }, alphaHeader).then((response) => {
     return parseSubscription(response);
   });
 }
@@ -19,8 +19,12 @@ export function getSpacePlans (endpoint) {
   return endpoint({
     method: 'GET',
     path: ['plans']
-  });
+  }, alphaHeader);
 }
+
+const alphaHeader = {
+  'x-contentful-enable-alpha-feature': 'subscriptions-api'
+};
 
 function parseSubscription (rawData) {
   // TODO use generic link resolver ?
