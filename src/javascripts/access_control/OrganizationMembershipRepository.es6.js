@@ -68,10 +68,10 @@ export function invite (endpoint, {role, email, suppressInvitation}) {
   });
 }
 
+// TODO the methods below should be moved to another place
+
 /**
- * TODO this method should be moved to another place
- *
- * Gets the base platform subscription plan for the org.
+ * Gets the subscription details for the org.
  */
 export function getSubscription (endpoint) {
   return endpoint({
@@ -79,6 +79,16 @@ export function getSubscription (endpoint) {
     path: ['subscriptions']
   }).then((response) => {
     return parseSubscription(response);
+  });
+}
+
+/**
+ * Gets the space plans for the org with corresponding spaces details
+ */
+export function getSpacePlans (endpoint) {
+  return endpoint({
+    method: 'GET',
+    path: ['plans']
   });
 }
 
