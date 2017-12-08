@@ -277,4 +277,39 @@ describe('data/User', () => {
       expect(this.utils.isUserOrgCreator.bind(this.utils)).toThrow();
     });
   });
+
+  describe('#getUserSpaceRoles', function () {
+    it('should include "admin" in the array in case of admin', function () {
+      const space = {
+        spaceMembership: {
+          admin: true,
+          roles: []
+        }
+      };
+      const roles = this.utils.getUserSpaceRoles(space);
+      expect(roles).toContain('admin');
+    });
+
+    it('should not include "admin" in the array in case of not admin', function () {
+      const space = {
+        spaceMembership: {
+          admin: false,
+          roles: [{ name: 'Some' }]
+        }
+      };
+      const roles = this.utils.getUserSpaceRoles(space);
+      expect(roles).toEqual(['some']);
+    });
+
+    it('should lowercase roles', function () {
+      const space = {
+        spaceMembership: {
+          admin: false,
+          roles: [{ name: 'SoMe' }]
+        }
+      };
+      const roles = this.utils.getUserSpaceRoles(space);
+      expect(roles).toContain('some');
+    });
+  });
 });

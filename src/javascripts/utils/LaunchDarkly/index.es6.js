@@ -16,7 +16,8 @@ import {
   getUserAgeInDays,
   ownsAtleastOneOrg,
   hasAnOrgWithSpaces,
-  isAutomationTestUser
+  isAutomationTestUser,
+  getUserSpaceRoles
 } from 'data/User';
 
 
@@ -191,6 +192,7 @@ function getVariation (flagName, defaultValue) {
  */
 function buildLDUser (user, currOrg, spacesByOrg, currSpace) {
   const orgId = currOrg.sys.id;
+
   let customData = {
     currentOrgId: orgId,
     currentOrgSubscriptionStatus: currOrg.subscription.status,
@@ -203,12 +205,16 @@ function buildLDUser (user, currOrg, spacesByOrg, currSpace) {
     currentUserIsCurrentOrgCreator: isUserOrgCreator(user, currOrg),
     currentUserSignInCount: user.signInCount,
     isNonPayingUser: isNonPayingUser(user),
+    // by default, if there is no current space, we pass empty array
+    currentUserSpaceRole: [],
     isAutomationTestUser: isAutomationTestUser(user)
   };
 
   if (currSpace) {
+    const roles = getUserSpaceRoles(currSpace);
     customData = assign({}, customData, {
-      currentSpaceId: currSpace.sys.id
+      currentSpaceId: currSpace.sys.id,
+      currentUserSpaceRole: roles
     });
   }
 
