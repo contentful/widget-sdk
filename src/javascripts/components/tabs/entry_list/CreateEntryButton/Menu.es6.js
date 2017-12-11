@@ -32,7 +32,7 @@ export default function render ({
 
 function suggestedContentTypeGroup ({ suggestedContentType, onSelect }) {
   if (!suggestedContentType) {
-    return null;
+    return [];
   }
 
   return [
