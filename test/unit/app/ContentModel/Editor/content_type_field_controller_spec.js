@@ -4,6 +4,7 @@ describe('Content Type Field Controller', function () {
 
   beforeEach(function () {
     const fieldsTemplate = this.$inject('app/ContentModel/Editor/Template').fields;
+    const { renderString } = this.$inject('ui/Framework');
     this.ctEditorController = {
       openFieldDialog: sinon.stub()
     };
@@ -19,7 +20,7 @@ describe('Content Type Field Controller', function () {
     this.context = {isNew: false};
 
     this.createFieldElements = function () {
-      this.fieldElement = this.$compile(fieldsTemplate(), {
+      this.fieldElement = this.$compile(renderString(fieldsTemplate()), {
         contentType: this.contentType,
         publishedFields: [],
         ctEditorController: this.ctEditorController,

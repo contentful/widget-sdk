@@ -1,6 +1,7 @@
 import {h} from 'utils/hyperscript';
 import {simple as simpleWorkbench} from 'app/Workbench';
 import {richtextLayout} from 'modalDialog';
+import pageSettingsIcon from 'svg/page-settings';
 
 export function form () {
   const actions = [
@@ -11,7 +12,11 @@ export function form () {
     h('button.btn-primary-action', {uiCommand: 'save'}, ['Save'])
   ];
 
-  const content = [
+  return simpleWorkbench({
+    title: [ 'Space settings' ],
+    icon: pageSettingsIcon,
+    actions
+  }, [
     h('.cfnext-form__field', [
       h('label', {for: 'space-id'}, ['Space ID:']),
       h('input#space-id.cfnext-form__input--full-size',
@@ -25,9 +30,7 @@ export function form () {
       h('input#space-name.cfnext-form__input--full-size',
         {type: 'text', ngModel: 'model.name'})
     ])
-  ];
-
-  return simpleWorkbench('Space settings', 'page-settings', actions, content);
+  ]);
 }
 
 export function removalConfirmation () {
