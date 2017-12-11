@@ -23,7 +23,7 @@
     "bootstrap": "^3.1.1",
     "browserify": "^13.1.0",
     "browserify-pegjs": "~0.8.0-2",
-    "codemirror": "^5.32.0",
+    "codemirror": "^5.31.0",
     "color": "^2.0.0",
     "create-react-class": "^15.6.2",
     "element-resize-detector": "^1.1.10",
