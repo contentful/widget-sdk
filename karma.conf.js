@@ -83,7 +83,8 @@ module.exports = function (config) {
           plugins: [
             ['transform-es2015-modules-systemjs', {
               systemGlobal: 'SystemTest'
-            }]
+            }],
+            'transform-object-rest-spread'
           ]
         },
         sourceFileName: makeSourceFileName
