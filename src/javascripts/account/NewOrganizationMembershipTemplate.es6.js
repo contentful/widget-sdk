@@ -81,7 +81,7 @@ export function emailsInput (
         autoFocus: true,
         class: 'cfnext-form__input org-invitation-emails-field',
         value: emailsInputValue,
-        onInput: (evt) => updateEmails(evt.target.value),
+        onChange: (evt) => updateEmails(evt.target.value),
         onBlur: validateEmails
       }),
       emails.length > organization.remainingInvitations
