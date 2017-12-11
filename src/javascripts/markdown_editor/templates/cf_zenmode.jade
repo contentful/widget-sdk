@@ -26,11 +26,7 @@
       ng-click="zenApi.toggle()")
       i.fa.fa-arrows-alt
 
-    button.toolbar-button.markdown-side-action(
-      ng-click="actions.asset()"
-      tabindex="-1")
-        i.fa.fa-picture-o
-        |  Insert media
+    cf-markdown-insert-media-action(actions="actions")
 
   button.zenmode-drawer__hide.fa.fa-angle-double-right(
     aria-label="Hide Preview"

@@ -62,3 +62,15 @@ angular.module('contentful').directive('cfMarkdownHeadingAction', function () {
     template: JST['cf_markdown_heading_action']()
   };
 });
+
+angular.module('contentful').directive('cfMarkdownInsertMediaAction', function () {
+  return {
+    restrict: 'E',
+    scope: {
+      actions: '=',
+      isDisabled: '=',
+      mode: '@'
+    },
+    template: JST['cf_markdown_insert_media_action']()
+  };
+});
