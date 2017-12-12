@@ -13,9 +13,20 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var accessChecker = require('accessChecker');
   var entityStatus = require('entityStatus');
+  var renderCreateEntryMenu = require('components/tabs/entry_list/CreateEntryButton/Menu').default;
   var getBlankView = require('data/UiConfig/Blanks').getBlankEntryView;
   var createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar').default;
   var K = require('utils/kefir');
+  var _ = require('lodash');
+  var LD = require('utils/LaunchDarkly');
+
+  LD.onFeatureFlag(
+    $scope,
+    'feature-at-11-2017-lots-of-cts-ctx-aware-dropdown',
+    function (variation) {
+      $scope.isContextAwareActionEnabled = variation;
+    }
+  );
 
   var searchController = $controller('EntryListSearchController', {$scope: $scope});
   $controller('DisplayedFieldsController', {$scope: $scope});
@@ -63,16 +74,17 @@ angular.module('contentful')
     limit: 3
   });
 
-  K.onValueScope($scope, spaceContext.publishedCTs.items$, function (cts) {
-    $scope.hasContentType = cts.length > 0;
-  });
-
   $scope.getSearchContentType = function () {
-    return spaceContext.publishedCTs.get(_.get($scope, 'context.view.contentTypeId'));
+    return spaceContext.publishedCTs.get(getCurrentContentTypeId());
   };
 
   $scope.$watch(accessChecker.getResponses, updateAccessibleCts);
-  K.onValueScope($scope, spaceContext.publishedCTs.items$, updateAccessibleCts);
+  $scope.$watch(getCurrentContentTypeId, updateAccessibleCts);
+
+  K.onValueScope($scope, spaceContext.publishedCTs.items$, function (cts) {
+    $scope.hasContentType = cts.length > 0;
+    updateAccessibleCts();
+  });
 
   function updateAccessibleCts () {
     $scope.accessibleCts = _.filter(
@@ -81,11 +93,23 @@ angular.module('contentful')
         return accessChecker.canPerformActionOnEntryOfType('create', ct.sys.id);
       }
     );
+
+    $scope.createEntryMenu = renderCreateEntryMenu({
+      contentTypes: $scope.accessibleCts,
+      suggestedContentTypeId: getCurrentContentTypeId(),
+      onSelect: function (ctId) {
+        return $scope.entityCreationController.newEntry(ctId);
+      }
+    });
   }
 
   $scope.displayFieldForFilteredContentType = function () {
-    return spaceContext.displayFieldForType($scope.context.view.contentTypeId);
+    return spaceContext.displayFieldForType(getCurrentContentTypeId());
   };
+
+  function getCurrentContentTypeId () {
+    return getViewItem('contentTypeId');
+  }
 
   $scope.hasPage = function () {
     return !!($scope.entries && $scope.entries.length && !$scope.isEmpty);

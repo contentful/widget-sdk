@@ -39,7 +39,8 @@ export function makeOptions ({ browserTargets }, opts) {
     plugins: [
       ['transform-es2015-modules-systemjs', {
         systemGlobal: 'AngularSystem'
-      }]
+      }],
+      'transform-object-rest-spread'
     ],
 
     // Get the SystemJS module ID from the source path

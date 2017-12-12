@@ -2,9 +2,8 @@
 import sinon from 'npm:sinon';
 import _ from 'lodash';
 import keycodes from 'utils/keycodes';
-// import ReactTestUtils from 'npm:react-dom/test-utils';
-
 import { contentTypes } from './helpers';
+import ReactTestUtils from 'libs/react-dom/test-utils';
 
 const Components = {
   queryInput: view => view.find('queryInput'),
@@ -14,7 +13,7 @@ const Components = {
 };
 
 describe('app/ContentList/Search/View', function () {
-  let actions, render, view, ReactTestUtils;
+  let actions, render, view;
   beforeEach(function* () {
     module('contentful/test');
 
@@ -132,7 +131,7 @@ describe('app/ContentList/Search/View', function () {
       view.find('suggestions').assertNonExistent();
     });
 
-    xit('emits ShowSuggestions on arrow down', function () {
+    it('emits ShowSuggestions on arrow down', function () {
       const queryInput = Components.queryInput(view).element;
       ReactTestUtils.Simulate.keyDown(queryInput, {
         keyCode: keycodes.DOWN
@@ -141,7 +140,7 @@ describe('app/ContentList/Search/View', function () {
       sinon.assert.calledOnce(actions.ShowSuggestions);
     });
 
-    xit('selects the last pill on backspace', function () {
+    it('selects the last pill on backspace', function () {
       const queryInput = Components.queryInput(view).element;
 
       ReactTestUtils.Simulate.keyDown(queryInput, {
@@ -151,7 +150,7 @@ describe('app/ContentList/Search/View', function () {
       sinon.assert.calledOnce(actions.SetFocusOnLast);
     });
 
-    xit('emits HideSuggestions on esc', function () {
+    it('emits HideSuggestions on esc', function () {
       const queryInput = Components.queryInput(view).element;
 
       ReactTestUtils.Simulate.keyDown(queryInput, {
@@ -161,7 +160,7 @@ describe('app/ContentList/Search/View', function () {
       sinon.assert.calledOnce(actions.HideSuggestions);
     });
 
-    xit('emits HideSuggestions on enter', function () {
+    it('emits HideSuggestions on enter', function () {
       const queryInput = Components.queryInput(view).element;
 
       ReactTestUtils.Simulate.keyDown(queryInput, {

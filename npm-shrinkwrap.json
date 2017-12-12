@@ -975,7 +975,7 @@
       "version": "1.0.0"
     },
     "codemirror": {
-      "version": "5.32.0"
+      "version": "5.31.0"
     },
     "color": {
       "version": "2.0.0"
@@ -1011,6 +1011,14 @@
     },
     "core-util-is": {
       "version": "1.0.2"
+    },
+    "create-react-class": {
+      "version": "15.6.2",
+      "dependencies": {
+        "object-assign": {
+          "version": "4.1.1"
+        }
+      }
     },
     "css": {
       "version": "2.2.1",
@@ -2566,7 +2574,7 @@
       "version": "1.1.6"
     },
     "react": {
-      "version": "16.1.1",
+      "version": "16.2.0",
       "dependencies": {
         "object-assign": {
           "version": "4.1.1"
@@ -2574,7 +2582,7 @@
       }
     },
     "react-dom": {
-      "version": "16.1.1",
+      "version": "16.2.0",
       "dependencies": {
         "object-assign": {
           "version": "4.1.1"

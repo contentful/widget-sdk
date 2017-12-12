@@ -70,15 +70,16 @@ Markup:
 Styleguide 25.1
 */
 
-cf-icon[name="plus"]
+cf-icon[name="plus"],
+.cf-icon.cf-icon--plus
   circle
     fill: $colors.blue-mid
 
-cf-icon[name="plus"].inverted
-  circle
-    fill: white
-  path
-    stroke: $colors.blue-mid
+  &.inverted
+    circle
+      fill: white
+    path
+      stroke: $colors.blue-mid
 
 
 /**
@@ -108,7 +109,7 @@ cf-icon[name="nav-media"],
 cf-icon[name="nav-settings"],
 cf-icon[name="nav-api"],
 cf-icon[name="nav-user-settings"],
-cf-icon[name="nav-spaces"]
+cf-icon[name="nav-spaces"],
 cf-icon[name="nav-user-organizations"],
 cf-icon[name="nav-user-oauth"],
 cf-icon[name="nav-user-applications"],

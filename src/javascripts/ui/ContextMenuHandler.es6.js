@@ -167,6 +167,11 @@ function getPositioning (position) {
       my: 'left top',
       at: 'left bottom+13'
     },
+    // For context menu without arrow (should become the new standard in the future).
+    'bottom-left-0': {
+      my: 'left top',
+      at: 'left bottom'
+    },
     'left': {
       my: 'right top-10',
       at: 'left top'

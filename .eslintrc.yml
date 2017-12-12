@@ -58,8 +58,6 @@ overrides:
     - ContinueStatement
     - DebuggerStatement
     - EmptyStatement
-    - ExperimentalRestProperty
-    - ExperimentalSpreadProperty
     - ForStatement
     - ForInStatement
     - ForOfStatement

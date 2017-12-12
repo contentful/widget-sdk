@@ -4,6 +4,7 @@ angular.module('contentful').directive('cfUserList', ['require', function (requi
   var popRoleId = require('UserListController/jumpToRole').popRoleId;
   var $timeout = require('$timeout');
   var store = require('TheStore').forKey('userListView');
+  var renderString = require('ui/Framework').renderString;
 
   var VIEW_BY_NAME = 'name';
   var VIEW_BY_ROLE = 'role';
@@ -13,7 +14,7 @@ angular.module('contentful').directive('cfUserList', ['require', function (requi
 
   return {
     restrict: 'E',
-    template: require('access_control/templates/UserList').default(),
+    template: renderString(require('access_control/templates/UserList').default()),
     controller: 'UserListController',
     link: link
   };

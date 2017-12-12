@@ -7,7 +7,7 @@ angular.module('contentful')
  */
 .factory('states/account/organizations', ['require', function (require) {
   var base = require('states/Base').default;
-  var h = require('utils/hyperscript').h;
+  var h = require('ui/Framework').h;
   var workbenchHeader = require('app/Workbench').header;
 
   var newOrg = base({
@@ -22,9 +22,9 @@ angular.module('contentful')
       $scope.context = {};
     }],
     template: [
-      workbenchHeader('Create new organization'),
+      workbenchHeader({ title: [ 'Create new organization' ] }),
       h('cf-account-view', { context: 'context' })
-    ].join('')
+    ]
   });
 
   var edit = organizationsBase({
@@ -85,10 +85,10 @@ angular.module('contentful')
         // uses strict equally to avoid rendering when the flag value is still undefined
         ngIf: 'useNewOrgInvitation === false'
       }, [
-        workbenchHeader('Organization users'),
+        workbenchHeader({ title: [ 'Organization users' ] }),
         h('cf-account-view', { context: 'context' })
       ])
-    ].join(''),
+    ],
     // this is duplicated code, but there's no way
     // we can get around it for now
     onEnter: ['$stateParams', function ($stateParams) {
@@ -150,9 +150,9 @@ angular.module('contentful')
         pathSuffix: ''
       },
       template: [
-        workbenchHeader(definition.title),
+        workbenchHeader({ title: [ definition.title ] }),
         h('cf-account-view', { context: 'context' })
-      ].join(''),
+      ],
       onEnter: ['$stateParams', function ($stateParams) {
         var TheStore = require('TheStore');
         TheStore.set('lastUsedOrg', $stateParams.orgId);
