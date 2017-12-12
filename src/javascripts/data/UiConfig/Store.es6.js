@@ -187,7 +187,8 @@ export default function create (space, spaceEndpoint$q, publishedCTs, viewMigrat
    *
    * @description
    * Adds new content type under the "Content Type" folder or updates its title
-   * if it already exists. This method is called from the content type editor.
+   * if it already exists. This method is called only from the content type
+   * editor. It expects content type data object, not @contentful/client entity.
    */
   function addOrEditCt (ct) {
     const {folder, folderIndex, folderExists} = findCtFolder();
@@ -212,7 +213,10 @@ export default function create (space, spaceEndpoint$q, publishedCTs, viewMigrat
   }
 
   function findCtViewIndex ({views}, ct) {
-    const index = findIndex(views, view => view.contentTypeId === ct.sys.id);
+    const index = findIndex(views, view => {
+      // There are folders containing `null`/`undefined`
+      return view && view.contentTypeId === ct.sys.id;
+    });
 
     return {viewIndex: index, viewExists: index > -1};
   }
