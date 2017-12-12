@@ -209,7 +209,7 @@ export default function create ($scope, contentTypeIds) {
     .then(function () {
       setPristine();
       previewEnvironmentsCache.clearAll();
-      spaceContext.uiConfig.addOrEditCt($scope.contentType);
+      spaceContext.uiConfig.addOrEditCt($scope.contentType.data);
       if (redirect && $scope.context.isNew) {
         return goToDetails($scope.contentType);
       }
