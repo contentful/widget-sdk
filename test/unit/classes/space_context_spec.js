@@ -40,7 +40,6 @@ describe('spaceContext', function () {
       ['space', 'users', 'widgets'].forEach(function (field) {
         expect(sc[field]).toEqual(null);
       });
-      expect(sc.publishedContentTypes).toEqual([]);
     });
   });
 
@@ -143,7 +142,7 @@ describe('spaceContext', function () {
       });
     });
 
-    it('sets #publishedContentTypes from refreshed CT list', function* () {
+    it('updates publishedCTs repo from refreshed CT list', function* () {
       Widgets.setSpace.resolve();
       SPACE.getContentTypes.resolve([]);
 
@@ -152,7 +151,7 @@ describe('spaceContext', function () {
       ]);
       yield this.result;
       expect(
-        this.spaceContext.publishedContentTypes.map((ct) => ct.getId())
+        this.spaceContext.publishedCTs.getAllBare().map((ct) => ct.sys.id)
       ).toEqual(['A', 'B']);
     });
 

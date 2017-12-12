@@ -166,7 +166,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
   }
 
   function autofixPolicies () {
-    var cts = spaceContext.publishedContentTypes;
+    var cts = spaceContext.publishedCTs.getAllBare();
     var locales = TheLocaleStore.getPrivateLocales();
     $scope.autofixed = PolicyBuilder.removeOutdatedRules($scope.internal, cts, locales);
     if ($scope.autofixed) {

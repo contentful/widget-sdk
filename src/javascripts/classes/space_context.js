@@ -10,7 +10,6 @@ angular.module('contentful')
  * This service holds all context related to a space, including
  * contentTypes, users, widgets, and helper methods.
  *
- * @property {Client.ContentType[]} publishedContentTypes
  * @property {Client.Space} space
  * @property {Data.APIClient} cma
  * @property {ACL.SpaceMembershipRepository} memberships
@@ -103,9 +102,6 @@ angular.module('contentful')
       self.docPool = DocumentPool.create(self.docConnection, self.endpoint);
 
       self.publishedCTs = PublishedCTRepo.create(space);
-      self.publishedCTs.wrappedItems$.onValue(function (cts) {
-        self.publishedContentTypes = cts.toArray();
-      });
       self.user = K.getValue(TokenStore.user$);
 
       previewEnvironmentsCache.clearAll();
@@ -391,7 +387,6 @@ angular.module('contentful')
   function resetMembers (spaceContext) {
     spaceContext.uiConfig = null;
     spaceContext.space = null;
-    spaceContext.publishedContentTypes = [];
     spaceContext.users = null;
     spaceContext.widgets = null;
     if (spaceContext.docPool) {

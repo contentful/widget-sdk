@@ -3,7 +3,6 @@ import logger from 'logger';
 import {findIndex, get as getPath} from 'lodash';
 import {update, concat} from 'utils/Collections';
 import {deepFreeze} from 'utils/Freeze';
-import * as K from 'utils/kefir';
 import {
   isUIConfigDataMigrated,
   normalizeMigratedUIConfigData,
@@ -37,6 +36,7 @@ export default function create (space, spaceEndpoint$q, publishedCTs, viewMigrat
   const membership = space.data.spaceMembership;
   const userId = membership.user.sys.id;
   const getPrivateViewsDefaults = () => Defaults.getPrivateViews(userId);
+  const getEntryViewsDefaults = () => Defaults.getEntryViews(publishedCTs.getAllBare());
 
   const isMigratedState = {};
 
@@ -82,12 +82,6 @@ export default function create (space, spaceEndpoint$q, publishedCTs, viewMigrat
     const set = val => save(type, update(state[type], key, () => val)).then(get);
 
     return {get, set, canEdit};
-  }
-
-  function getEntryViewsDefaults () {
-    // TODO do not use wrapped content types
-    const contentTypes = K.getValue(publishedCTs.wrappedItems$).toJS();
-    return Defaults.getEntryViews(contentTypes);
   }
 
   /**
@@ -218,14 +212,14 @@ export default function create (space, spaceEndpoint$q, publishedCTs, viewMigrat
   }
 
   function findCtViewIndex ({views}, ct) {
-    const index = findIndex(views, view => view.contentTypeId === ct.data.sys.id);
+    const index = findIndex(views, view => view.contentTypeId === ct.sys.id);
 
     return {viewIndex: index, viewExists: index > -1};
   }
 
   function updateCtView (folderIndex, viewIndex, ct) {
     const path = [ENTRY_VIEWS_KEY, folderIndex, 'views', viewIndex, 'title'];
-    const updated = update(state[SHARED_VIEWS], path, () => ct.data.name);
+    const updated = update(state[SHARED_VIEWS], path, () => ct.name);
 
     return save(SHARED_VIEWS, updated);
   }

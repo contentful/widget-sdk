@@ -38,7 +38,6 @@
     "gulp-sourcemaps": "^2.4.0",
     "gulp-stylus": "^2.6.0",
     "gulp-uglify": "^2.0.1",
-    "immutable": "^3.8.1",
     "jade": "^1.11.0",
     "jasmine-core": "^2.5.2",
     "jquery": "^3.2.1",

@@ -16,6 +16,7 @@ angular.module('contentful')
   var renderCreateEntryMenu = require('components/tabs/entry_list/CreateEntryButton/Menu').default;
   var getBlankView = require('data/UiConfig/Blanks').getBlankEntryView;
   var createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar').default;
+  var K = require('utils/kefir');
   var _ = require('lodash');
   var LD = require('utils/LaunchDarkly');
 
@@ -73,39 +74,42 @@ angular.module('contentful')
     limit: 3
   });
 
-  $scope.hasContentType = spaceContext.publishedContentTypes.length > 0;
-
   $scope.getSearchContentType = function () {
-    return spaceContext.publishedCTs.get(_.get($scope, 'context.view.contentTypeId'));
+    return spaceContext.publishedCTs.get(getCurrentContentTypeId());
   };
 
-  // TODO: optimise later
-  $scope.$watchCollection(function () {
-    return {
-      cts: spaceContext.publishedContentTypes,
-      responses: accessChecker.getResponses(),
-      contentTypeId: _.get($scope, 'context.view.contentTypeId')
-    };
-  }, function (result) {
-    $scope.accessibleCts = _.filter(spaceContext.publishedContentTypes, function (ct) {
-      return accessChecker.canPerformActionOnEntryOfType('create', ct.getId());
-    });
+  $scope.$watch(accessChecker.getResponses, updateAccessibleCts);
+  $scope.$watch(getCurrentContentTypeId, updateAccessibleCts);
 
-    $scope.createEntryMenu = renderCreateEntryMenu({
-      contentTypes: $scope.accessibleCts.map(function (ct) { return ct.data; }),
-      suggestedContentTypeId: result.contentTypeId,
-      onSelect: function (ctId) {
-        // TODO: Clean up after merge of (only do `.newEntry(ctId)`):
-        // https://github.com/contentful/user_interface/pull/2357
-        var contentType = $scope.accessibleCts.find(function (ct) { return ct.data.sys.id === ctId; });
-        return $scope.entityCreationController.newEntry(contentType);
-      }
-    });
+  K.onValueScope($scope, spaceContext.publishedCTs.items$, function (cts) {
+    $scope.hasContentType = cts.length > 0;
+    updateAccessibleCts();
   });
 
+  function updateAccessibleCts () {
+    $scope.accessibleCts = _.filter(
+      spaceContext.publishedCTs.getAllBare(),
+      function (ct) {
+        return accessChecker.canPerformActionOnEntryOfType('create', ct.sys.id);
+      }
+    );
+
+    $scope.createEntryMenu = renderCreateEntryMenu({
+      contentTypes: $scope.accessibleCts,
+      suggestedContentTypeId: getCurrentContentTypeId(),
+      onSelect: function (ctId) {
+        return $scope.entityCreationController.newEntry(ctId);
+      }
+    });
+  }
+
   $scope.displayFieldForFilteredContentType = function () {
-    return spaceContext.displayFieldForType($scope.context.view.contentTypeId);
+    return spaceContext.displayFieldForType(getCurrentContentTypeId());
   };
+
+  function getCurrentContentTypeId () {
+    return getViewItem('contentTypeId');
+  }
 
   $scope.hasPage = function () {
     return !!($scope.entries && $scope.entries.length && !$scope.isEmpty);

@@ -65,6 +65,7 @@ describe('Asset List Controller', function () {
 
     spaceContext = this.$inject('mocks/spaceContext').init();
     spaceContext.space = space;
+    spaceContext.publishedCTs = {getAllBare: () => []};
 
     const $controller = this.$inject('$controller');
     $controller('AssetListController', {$scope: scope});

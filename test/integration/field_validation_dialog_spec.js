@@ -1,4 +1,4 @@
-'use strict';
+import * as K from 'utils/kefir';
 
 /**
  * Tests the following controller and directives
@@ -420,16 +420,18 @@ xdescribe('validation dialog', function() {
       scope.field.type = 'Link';
       scope.field.linkType = 'Entry';
       scope.spaceContext = {
-        publishedContentTypes: [{
-          getId:   sinon.stub().returns('1'),
-          getName: sinon.stub().returns('CT 1')
-        }, {
-          getId:   sinon.stub().returns('2'),
-          getName: sinon.stub().returns('CT 2')
-        }, {
-          getId:   sinon.stub().returns('3'),
-          getName: sinon.stub().returns('CT 3')
-        }]
+        publishedCTs: {
+          items$: K.createMockProperty([{
+            getId:   sinon.stub().returns('1'),
+            getName: sinon.stub().returns('CT 1')
+          }, {
+            getId:   sinon.stub().returns('2'),
+            getName: sinon.stub().returns('CT 2')
+          }, {
+            getId:   sinon.stub().returns('3'),
+            getName: sinon.stub().returns('CT 3')
+          }])
+        }
       };
       scope.$digest();
       openDialog();

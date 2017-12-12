@@ -24,6 +24,7 @@ describe('bulk editor', function () {
       return $q.resolve(entities);
     };
 
+    this.spaceContext.publishedCTs.getAllBare = () => [];
     this.spaceContext.publishedCTs.fetch = function (id) {
       return $q.resolve(makeContentType(id));
     };

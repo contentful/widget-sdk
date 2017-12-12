@@ -1869,9 +1869,6 @@
     "iconv-lite": {
       "version": "0.4.17"
     },
-    "immutable": {
-      "version": "3.8.1"
-    },
     "indx": {
       "version": "0.2.3"
     },

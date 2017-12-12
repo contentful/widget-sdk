@@ -24,10 +24,10 @@ describe('Remove outdated rules', function () {
   }
 
   function createCt(id, fields) {
-    return {data: {
+    return {
       sys: {id: id},
       fields: fields || []
-    }};
+    };
   }
 
   describe('path constraints with non-existent components', function () {

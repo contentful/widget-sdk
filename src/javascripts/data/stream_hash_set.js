@@ -11,20 +11,19 @@ angular.module('cf.data')
  * the key that is used to store the item. That key can be used to
  * obtain an item with `#get(key)`.
  *
- * The `#items$` property is a Kefir property with `immutable` lists of
+ * The `#items$` property is a Kefir property with flat lists of
  * items as values. The value is updated when ever one of the mutating
  * functions is called.
  */
 .factory('data/StreamHashSet', ['require', function (require) {
   var K = require('utils/kefir');
-  var I = require('libs/Immutable');
 
   return {
     create: create
   };
 
   function create () {
-    var itemsBus = K.createPropertyBus(I.List());
+    var itemsBus = K.createPropertyBus([]);
     var byId = {};
 
     return {
@@ -74,7 +73,7 @@ angular.module('cf.data')
     }
 
     function updateItems () {
-      var items = I.List(_.values(byId));
+      var items = _.values(byId);
       itemsBus.set(items);
     }
   }
