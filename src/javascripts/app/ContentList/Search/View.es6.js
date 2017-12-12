@@ -437,7 +437,6 @@ function filterSelect ({
   );
 }
 
-
 // Suggestions
 // -----------
 function suggestionsBox ({

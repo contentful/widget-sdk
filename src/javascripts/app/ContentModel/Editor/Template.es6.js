@@ -1,8 +1,9 @@
 import {range} from 'lodash';
-import {h} from 'utils/hyperscript';
+import {h} from 'ui/Framework';
 import {vspace, container} from 'ui/Layout';
 import {docsLink} from 'ui/Content';
 import * as Workbench from 'app/Workbench';
+import pageContentTypeIcon from 'svg/page-ct';
 
 /**
  * This module exports the template for the content type editor.
@@ -46,15 +47,12 @@ export default h('div.workbench', [
 
 
 function header () {
-  return Workbench.header(
-    // title
-    '{{contentType.getName()}}',
-    // icon
-    'page-ct',
-    actions(),
-    // After title
-    descriptionAndEdit()
-  );
+  return Workbench.header({
+    title: ['{{contentType.getName()}}'],
+    icon: pageContentTypeIcon,
+    actions: actions(),
+    afterTitle: descriptionAndEdit()
+  });
 
   // TODO Wrap this in conditional instead of having `ngIf` on each
   // item. Does not work because CSS sets margin on each child
@@ -107,7 +105,7 @@ function header () {
         ngIf: 'data.canEdit',
         uiCommand: 'showMetadataDialog'
       }, ['Edit'])
-    ].join('');
+    ];
   }
 }
 

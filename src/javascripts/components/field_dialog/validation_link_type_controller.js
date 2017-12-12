@@ -7,8 +7,11 @@
 angular.module('contentful')
 .controller('ValidationLinkTypeController', ['require', '$scope', function (require, $scope) {
   var spaceContext = require('spaceContext');
+  var K = require('utils/kefir');
 
-  $scope.contentTypes = spaceContext.publishedContentTypes.map(decorateContentType);
+  K.onValueScope($scope, spaceContext.publishedCTs.items$, function (cts) {
+    $scope.contentTypes = cts.map(decorateContentType);
+  });
 
   $scope.update = function () {
     $scope.validation.settings = getSelectedIDs();
@@ -16,11 +19,11 @@ angular.module('contentful')
   };
 
   function decorateContentType (ct) {
-    var id = ct.getId();
+    var id = ct.sys.id;
     return {
       id: id,
       selected: isSelected(id),
-      name: ct.getName()
+      name: ct.name || 'Untitled'
     };
   }
 

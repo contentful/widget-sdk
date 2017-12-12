@@ -87,10 +87,10 @@ angular.module('contentful').directive('cfContextualHelpSidebar', ['require', fu
       }
 
       function getFirstContentType () {
-        if (spaceContext && spaceContext.publishedContentTypes) {
-          var ct = _.sortBy(spaceContext.publishedContentTypes, function (ct) {
-            return ct.data.name.length;
-          })[0].data;
+        if (spaceContext && spaceContext.publishedCTs) {
+          var ct = _.sortBy(spaceContext.publishedCTs.getAllBare(), function (ct) {
+            return ct.name.length;
+          })[0];
 
           return {
             id: ct.sys.id,

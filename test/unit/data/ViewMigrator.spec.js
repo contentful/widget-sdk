@@ -133,8 +133,8 @@ describe('ViewMigrator', function () {
       });
 
       it('adds a `_legacySearchTerm` field', function* () {
-        const {_legacySearchTerm} = yield migrateView(view);
-        expect(_legacySearchTerm).toEqual(view.searchTerm);
+        const {_legacySearchTerm: legacySearchTerm} = yield migrateView(view);
+        expect(legacySearchTerm).toEqual(view.searchTerm);
       });
     }
 

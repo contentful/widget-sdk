@@ -1,18 +1,19 @@
-import {h} from 'utils/hyperscript';
+import {h} from 'ui/Framework';
+import pageSettingsIcon from 'svg/page-settings';
 import * as Workbench from 'app/Workbench';
 
 export default function () {
-  return [
+  return h('div.workbench', [
     header(),
     h('.workbench-main', [
       h('.workbench-main__content', [userList()]),
       h('.workbench-main__sidebar', [sidebar()])
     ])
-  ].join('');
+  ]);
 }
 
 function header () {
-  return Workbench.header('Users ({{ spaceUsersCount || 0 }})', 'page-settings', [
+  const actions = [
     h('button.btn-secondary-action', { cfContextMenuTrigger: true }, [
       h('cf-icon.btn-dropdown-icon', { name: 'dd-arrow-down' }, ['{{ viewLabels[selectedView] }}'])
     ]),
@@ -20,7 +21,13 @@ function header () {
       h('div', { role: 'menuitem', ngClick: 'selectedView = "name"' }, ['{{ viewLabels.name }}']),
       h('div', { role: 'menuitem', ngClick: 'selectedView = "role"' }, ['{{ viewLabels.role }}'])
     ])
-  ]);
+  ];
+
+  return Workbench.header({
+    title: [ 'Users ({{ spaceUsersCount || 0 }})' ],
+    icon: pageSettingsIcon,
+    actions
+  });
 }
 
 function userList () {

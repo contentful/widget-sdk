@@ -1,8 +1,6 @@
 import { cloneDeep } from 'lodash';
-import * as I from 'libs/Immutable';
 
 import * as sinon from 'helpers/sinon';
-import * as K from 'helpers/mocks/kefir';
 import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 
 
@@ -17,19 +15,13 @@ describe('data/UiConfig/Store', function () {
 
     const createUiConfigStore = this.$inject('data/UiConfig/Store').default;
     const endpoint = createMockSpaceEndpoint();
-    const contentTypes$ = K.createMockProperty(I.List([{
-      data: {
-        sys: {id: 1},
-        name: 'bar'
-      }
-    }]));
 
     this.store = endpoint.stores.ui_config;
 
     this.migrateStub = sinon.stub();
 
     this.create = (isAdmin = true) => {
-      const ctRepo = { wrappedItems$: contentTypes$ };
+      const ctRepo = { getAllBare: () => [{sys: {id: 1}, name: 'bar'}] };
       const viewMigrator = {
         migrateUIConfigViews: this.migrateStub
       };
@@ -76,12 +68,7 @@ describe('data/UiConfig/Store', function () {
 
   describe('#addOrEditCt()', function () {
     beforeEach(function () {
-      this.mockCt = {
-        data: {
-          sys: {id: 1},
-          name: 'bar'
-        }
-      };
+      this.mockCt = {sys: {id: 1}, name: 'bar'};
 
       this.withCts = {
         sys: { id: 'default', version: 1 },
@@ -138,7 +125,7 @@ describe('data/UiConfig/Store', function () {
 
     it('edits view title when existing Content Type is changed', function* () {
       this.store.default = cloneDeep(this.withCts);
-      this.mockCt.data.sys.id = 2;
+      this.mockCt.sys.id = 2;
 
       const api = yield this.create();
       yield api.addOrEditCt(this.mockCt);

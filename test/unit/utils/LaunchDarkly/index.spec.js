@@ -140,7 +140,8 @@ describe('LaunchDarkly', function () {
           isNonPayingUser: true,
           isAutomationTestUser: true,
           currentUserIsCurrentOrgCreator: false,
-          currentUserSignInCount: 10
+          currentUserSignInCount: 10,
+          currentUserSpaceRole: []
         });
       });
     });

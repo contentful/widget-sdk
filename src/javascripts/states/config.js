@@ -63,8 +63,14 @@ angular.module('contentful')
 
   function addChildren (parentName, children) {
     children.forEach(function (state) {
-      state.template = templateToString(state.template);
       state = useContentView(state);
+
+      if (state.views) {
+        _.forEach(state.views, function (view) {
+          view.template = templateToString(view.template);
+        });
+      }
+
       var children = state.children;
       var name;
       if (parentName) {

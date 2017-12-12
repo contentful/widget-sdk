@@ -64,7 +64,7 @@ angular.module('contentful').factory('PolicyBuilder/removeOutdatedRules', ['requ
 
     function hasField(ctId, fieldId) {
       var ct = findCt(ctId);
-      var fields = _.get(ct, 'data.fields', []);
+      var fields = _.get(ct, 'fields', []);
       var field = _.find(fields, {apiName: fieldId}) || _.find(fields, {id: fieldId});
       return _.isObject(field);
     }
@@ -74,7 +74,7 @@ angular.module('contentful').factory('PolicyBuilder/removeOutdatedRules', ['requ
     }
 
     function findCt(ctId) {
-      return _.find(contentTypes, {data: {sys: {id: ctId}}});
+      return _.find(contentTypes, {sys: {id: ctId}});
     }
   };
 }]);

@@ -1,14 +1,16 @@
 import {assign} from 'lodash';
-import {h, styledDiv} from 'utils/hyperscript';
+import {h} from 'ui/Framework';
+import {container} from 'ui/Layout';
 import * as Workbench from 'app/Workbench';
 import * as Colors from 'Styles/Colors';
 import {docsLink} from 'ui/Content';
+import pageApiIcon from 'svg/page-apis';
 
 export default function () {
   const title = [
     '{{ context.title | truncate:50 }}{{ context.dirty ? "*" : "" }}',
     h('cf-knowledge-base.workbench-header__kb-link', {target: 'api_key'})
-  ].join('');
+  ];
 
   const actions = [
     h('button.btn-secondary-action', {
@@ -33,15 +35,14 @@ export default function () {
     }, ['Save'])
   ];
   return h('.workbench', [
-    Workbench.header(title, 'page-apis', actions),
+    Workbench.header({ title, actions, icon: pageApiIcon }),
     h('cf-loader', {watchStateChange: 'true'}),
     main()
   ]);
 }
 
 function main () {
-  return h('.workbench-main.x--content', {
-  }, [
+  return h('.workbench-main.x--content', [
     h('.entity-editor__notification', {ngIf: '!apiKeyEditor.data.canEdit', role: 'alert'}, [
       h('p', [
         'You have read-only access to this API key. ',
@@ -60,7 +61,7 @@ function main () {
       }
     }, [
       h('div', keyEditor()),
-      styledDiv({
+      container({
         marginLeft: '4em',
         width: '30em',
         flexShrink: 0
@@ -75,7 +76,7 @@ function main () {
 function keyEditor () {
   return [
     h('h3.section-title', ['Access tokens']),
-    styledDiv({
+    container({
       marginBottom: '1.5em'
     }, [
       'To query and get content using the APIs, client applications ',
@@ -188,7 +189,7 @@ function readonlyInput (value, props) {
 }
 
 function separator () {
-  return styledDiv({
+  return container({
     height: '1px',
     width: '100%',
     backgroundColor: Colors.byName.elementMid,
@@ -215,12 +216,12 @@ function inputWithCopy (valueRef, name, trackingKey, props) {
 
 
 function section (title, description, content) {
-  return styledDiv({
+  return container({
     marginBottom: '2rem'
   }, [
     h4(title),
     description && h('div', description),
-    styledDiv({height: '0.375em'})
+    container({height: '0.375em'})
   ].concat(content));
 }
 
