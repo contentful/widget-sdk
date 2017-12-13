@@ -15,18 +15,17 @@ const DEFAULT_SETTINGS = {
     'WEBDAV', 'CLOUDAPP', 'IMGUR']
 };
 
-let filepicker;
-const loadedScript = loadScript();
+const loadedScript = LazyLoader.get('filepicker').then(setup);
 
 export function makeDropPane (dropPane, options = {}) {
-  return loadedScript.then(function () {
+  return loadedScript.then((filepicker) => {
     options = newSettings(options);
     return filepicker.makeDropPane(dropPane, options);
   });
 }
 
 export function pick (options = {}) {
-  return loadedScript.then(function () {
+  return loadedScript.then((filepicker) => {
     const deferred = $q.defer();
     options = newSettings(options);
     filepicker.pick(
@@ -40,7 +39,7 @@ export function pick (options = {}) {
 }
 
 export function pickMultiple (options = {}) {
-  return loadedScript.then(function () {
+  return loadedScript.then((filepicker) => {
     const deferred = $q.defer();
     options = newSettings(options, MAX_FILES_OPTION);
 
@@ -55,7 +54,7 @@ export function pickMultiple (options = {}) {
 }
 
 export function store (newURL, file) {
-  return loadedScript.then(function () {
+  return loadedScript.then((filepicker) => {
     const deferred = $q.defer();
     filepicker.store(
       {
@@ -86,27 +85,17 @@ function newSettings (...options) {
 }
 
 function makeFPCb (deferred, method) {
-  return function (val) {
+  return (val) => {
     $rootScope.$apply(function () {
       deferred[method](val);
     });
   };
 }
 
-function setup (fp) {
-  filepicker = fp;
+function setup (filepicker) {
   filepicker.setKey(environment.settings.filepicker.api_key);
   if (environment.env === 'development') {
     LazyLoader.get('filepickerDebug');
   }
-}
-
-function loadScript () {
-  return $q(function (resolve, reject) {
-    LazyLoader.get('filepicker')
-    .then(function (fp) {
-      setup(fp);
-      resolve();
-    }, reject);
-  });
+  return filepicker;
 }
