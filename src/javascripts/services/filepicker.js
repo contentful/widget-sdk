@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('contentful').factory('filepicker', ['require', function (require) {
-  var $q          = require('$q');
-  var $rootScope  = require('$rootScope');
-  var LazyLoader  = require('LazyLoader');
+  var $q = require('$q');
+  var $rootScope = require('$rootScope');
+  var LazyLoader = require('LazyLoader');
   var environment = require('environment');
 
   var MULTIPLE_UPLOAD_MAXFILES = 20;
@@ -20,18 +20,18 @@ angular.module('contentful').factory('filepicker', ['require', function (require
       'WEBDAV', 'CLOUDAPP', 'IMGUR']
   };
 
-  function setup(fp) {
+  function setup (fp) {
     filepicker = fp;
     filepicker.setKey(environment.settings.filepicker.api_key);
-    if(environment.env == 'development') {
+    if (environment.env === 'development') {
       LazyLoader.get('filepickerDebug');
     }
   }
 
-  function loadScript() {
-    return $q(function(resolve, reject) {
+  function loadScript () {
+    return $q(function (resolve, reject) {
       LazyLoader.get('filepicker')
-      .then(function(fp) {
+      .then(function (fp) {
         setup(fp);
         resolve();
       }, reject);
@@ -40,7 +40,7 @@ angular.module('contentful').factory('filepicker', ['require', function (require
 
   var loadedScript = loadScript();
 
-  function makeFPCb(deferred, method) {
+  function makeFPCb (deferred, method) {
     return function (val) {
       $rootScope.$apply(function () {
         deferred[method](val);
@@ -51,16 +51,16 @@ angular.module('contentful').factory('filepicker', ['require', function (require
 
   return {
     makeDropPane: function (dropPane, options) {
-      return loadedScript.then(function() {
-        options = _.extend(_.clone(settings), options||{});
+      return loadedScript.then(function () {
+        options = _.extend(_.clone(settings), options || {});
         return filepicker.makeDropPane(dropPane, options);
       });
     },
 
     pick: function (options) {
-      return loadedScript.then(function() {
+      return loadedScript.then(function () {
         var deferred = $q.defer();
-        options = _.extend(_.clone(settings), options||{});
+        options = _.extend(_.clone(settings), options || {});
         filepicker.pick(
           options,
           makeFPCb(deferred, 'resolve'),
@@ -68,14 +68,16 @@ angular.module('contentful').factory('filepicker', ['require', function (require
         );
 
         return deferred.promise;
-
       });
     },
 
     pickMultiple: function (options) {
-      return loadedScript.then(function() {
+      return loadedScript.then(function () {
         var deferred = $q.defer();
-        options = _.extend(_.clone(settings), _.defaults(options||{}, {maxFiles: MULTIPLE_UPLOAD_MAXFILES}));
+        options = _.extend(
+          _.clone(settings),
+          _.defaults(options || {}, {maxFiles: MULTIPLE_UPLOAD_MAXFILES})
+        );
 
         filepicker.pickMultiple(
           options,
@@ -84,13 +86,12 @@ angular.module('contentful').factory('filepicker', ['require', function (require
         );
 
         return deferred.promise;
-
       });
     },
 
 
     store: function (newURL, file) {
-      return loadedScript.then(function() {
+      return loadedScript.then(function () {
         var deferred = $q.defer();
 
         filepicker.store(
@@ -111,9 +112,9 @@ angular.module('contentful').factory('filepicker', ['require', function (require
 
     parseFPFile: function (FPFile) {
       return FPFile ? {
-       upload:      FPFile.url,
-       fileName:    FPFile.filename,
-       contentType: FPFile.mimetype
+        upload: FPFile.url,
+        fileName: FPFile.filename,
+        contentType: FPFile.mimetype
       } : null;
     }
   };
