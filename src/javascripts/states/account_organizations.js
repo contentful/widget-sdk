@@ -53,6 +53,20 @@ angular.module('contentful')
     template: h('cf-subscription-overview', { properties: 'properties' })
   });
 
+  var usage = base({
+    name: 'usage',
+    url: '/:orgId/usage',
+    label: 'Usage',
+    controller: ['$stateParams', '$scope', function ($stateParams, $scope) {
+      $scope.context = {};
+      $scope.properties = {
+        orgId: $stateParams.orgId,
+        context: $scope.context
+      };
+    }],
+    template: h('cf-platform-usage', { properties: 'properties' })
+  });
+
   var usersGatekeeper = organizationsBase({
     name: 'gatekeeper',
     title: 'Organization users',
@@ -175,6 +189,7 @@ angular.module('contentful')
       edit,
       subscription,
       subscriptionNew,
+      usage,
       users,
       spaces,
       spacesNew,
