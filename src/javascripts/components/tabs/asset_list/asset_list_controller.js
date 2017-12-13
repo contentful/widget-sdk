@@ -6,7 +6,7 @@ angular.module('contentful')
   var $q = require('$q');
   var createSelection = require('selection');
   var delay = require('delay');
-  var filepicker = require('filepicker');
+  var Filepicker = require('services/Filepicker');
   var logger = require('logger');
   var notification = require('notification');
   var stringUtils = require('stringUtils');
@@ -114,7 +114,7 @@ angular.module('contentful')
   }
 
   $scope.createMultipleAssets = function () {
-    filepicker.pickMultiple()
+    Filepicker.pickMultiple()
     .then(uploadFPFiles, function (FPError) {
       if (FPError.code !== 101) {
         // TODO Demote this to a warning if we cannot fix this.
@@ -159,7 +159,7 @@ angular.module('contentful')
   }
 
   function createAssetForFile (FPFile) {
-    var file = filepicker.parseFPFile(FPFile);
+    var file = Filepicker.parseFPFile(FPFile);
     var locale = TheLocaleStore.getDefaultLocale().internal_code;
     var data = {
       sys: { type: 'Asset' },

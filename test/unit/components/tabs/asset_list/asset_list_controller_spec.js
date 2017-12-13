@@ -43,7 +43,7 @@ describe('Asset List Controller', function () {
         serverError: stubs.serverError
       });
 
-      $provide.value('filepicker', {
+      $provide.value('services/Filepicker', {
         pickMultiple: stubs.pickMultiple,
         parseFPFile: stubs.parseFPFile
       });

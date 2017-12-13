@@ -3,7 +3,7 @@
 angular.module('contentful')
 .directive('cfFileEditor', ['require', function (require) {
   var aviary = require('aviary');
-  var filepicker = require('filepicker');
+  var Filepicker = require('services/Filepicker');
   var logger = require('logger');
   var modalDialog = require('modalDialog');
   var notification = require('notification');
@@ -48,7 +48,7 @@ angular.module('contentful')
       }
 
       function uploadFile () {
-        filepicker.pick()
+        Filepicker.pick()
         .then(function (FPFile) {
           setFPFile(FPFile);
         }, function (FPError) {
@@ -79,7 +79,7 @@ angular.module('contentful')
 
       function setFPFile (fpFile) {
         aviary.close();
-        var file = scope.file = filepicker.parseFPFile(fpFile);
+        var file = scope.file = Filepicker.parseFPFile(fpFile);
         if (file) {
           return field.setValue(file)
           .then(function () {
