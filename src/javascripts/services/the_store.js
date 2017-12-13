@@ -26,7 +26,7 @@ angular.module('contentful')
     remove: remove,
     has: has,
     forKey: forKey,
-    getPropertyBus: getPropertyBus
+    externalChanges: externalChanges
   };
 
   /**
@@ -104,46 +104,36 @@ angular.module('contentful')
       set: _.partial(set, key),
       remove: _.partial(remove, key),
       has: _.partial(has, key),
-      getPropertyBus: _.partial(getPropertyBus, key)
+      externalChanges: _.partial(externalChanges, key)
     };
   }
 
   /**
    * @ngdoc method
-   * @name TheStore#getPropertyBus
+   * @name TheStore#externalChanges
    * @param {string} key
-   * @returns {utils/kefir.PropertyBus}
+   * @returns {utils/kefir.property}
    * @description
-   * Returns a property bus that tracks current value in storage. Property
-   * updates when stored value has been changed within the context of another
-   * document.
-   * Exposes a kefir property bus.
+   * Returns a stream that emits new values when the storage item is
+   * updated in another window.
    * ~~~js
    * var mystore = TheStore.forKey('mykey')
-   * var myValueBus = mystore.getPropertyBus();
-   * myValueBus.property.onValue((value) => console.log(`Value changed: ${value}`))
+   * var myValue$ = mystore.externalChanges();
+   * myValue$.onValue((value) => console.log(`Value changed: ${value}`))
    * // in another tab on same domain url:
    * TheStore.forKey('mykey').set('hello')
    * // the first tab logs:
    * 'Value changed: hello'
    * ~~~
    */
-  function getPropertyBus (key) {
-    var valueBus = K.createPropertyBus(get(key));
-
-    $window.addEventListener('storage', emitValue);
-
-    valueBus.property.onEnd(function () {
-      $window.removeEventListener('storage', emitValue);
-    });
-
-    return valueBus;
-
-    function emitValue (e) {
-      if (e.key === key) {
-        valueBus.set(e.newValue);
-      }
-    }
+  function externalChanges (key) {
+    return K.fromEvents($window, 'storage')
+      .filter(function (event) {
+        return event.key === key;
+      })
+      .map(function (event) {
+        return event.newValue;
+      });
   }
 }])
 

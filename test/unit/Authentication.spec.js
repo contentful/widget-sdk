@@ -3,7 +3,11 @@ import * as K from 'helpers/mocks/kefir';
 describe('Authentication', function () {
   beforeEach(function () {
     this.$http = sinon.stub();
-    this.window = {location: '', addEventListener: sinon.stub()};
+    this.window = {
+      location: '',
+      addEventListener: sinon.stub(),
+      removeEventListener: sinon.stub()
+    };
 
     module('contentful/test', ($provide) => {
       $provide.value('$http', this.$http);
