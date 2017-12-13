@@ -2,6 +2,7 @@ import $q from '$q';
 import $rootScope from '$rootScope';
 import LazyLoader from 'LazyLoader';
 import environment from 'environment';
+import logger from 'logger';
 
 const MAX_FILES_OPTION = { maxFiles: 20 };
 
@@ -34,7 +35,16 @@ export function pick (options = {}) {
       makeFPCb(deferred, 'reject')
     );
 
-    return deferred.promise;
+    return deferred.promise
+      .catch((fpError) => {
+        // 101 means the user closed the dialog without picking a file
+        if (!isUserClosedDialogError(fpError)) {
+          logger.logWarn('Error while picking file', {
+            error: fpError
+          });
+        }
+        return $q.reject(fpError);
+      });
   });
 }
 
@@ -49,7 +59,14 @@ export function pickMultiple (options = {}) {
       makeFPCb(deferred, 'reject')
     );
 
-    return deferred.promise;
+    return deferred.promise
+      .catch(function (fpError) {
+        if (!isUserClosedDialogError(fpError)) {
+          // TODO Demote this to a warning if we cannot fix this.
+          logger.logError('filepicker.pickMultiple failed', { fpError });
+        }
+        return $q.reject(fpError);
+      });
   });
 }
 
@@ -78,6 +95,10 @@ export function parseFPFile (FPFile) {
     fileName: FPFile.filename,
     contentType: FPFile.mimetype
   } : null;
+}
+
+export function isUserClosedDialogError (fpError) {
+  return fpError && fpError.code === 101;
 }
 
 function newSettings (...options) {

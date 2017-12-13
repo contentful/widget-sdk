@@ -114,15 +114,10 @@ angular.module('contentful')
   }
 
   $scope.createMultipleAssets = function () {
-    Filepicker.pickMultiple()
-    .then(uploadFPFiles, function (FPError) {
-      if (FPError.code !== 101) {
-        // TODO Demote this to a warning if we cannot fix this.
-        logger.logError('filepicker.pickMultiple failed', {
-          fpError: FPError
-        });
+    Filepicker.pickMultiple().then(uploadFPFiles, function (fpError) {
+      if (!Filepicker.isUserClosedDialogError(fpError)) {
         Notification.error(
-          'An error occured while uploading multiple assets. ' +
+          'An error occurred while uploading multiple assets. ' +
           'Please contact support if this problem persists.'
         );
       }

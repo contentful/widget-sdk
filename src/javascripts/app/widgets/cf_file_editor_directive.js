@@ -51,13 +51,7 @@ angular.module('contentful')
         Filepicker.pick()
         .then(function (FPFile) {
           setFPFile(FPFile);
-        }, function (FPError) {
-          // 101 means the user closed the dialog without picking a file
-          if (FPError.code !== 101) {
-            logger.logWarn('Error while picking file', {
-              error: FPError
-            });
-          }
+        }, function () {
           scope.editorContext.validator.run();
         });
       }

@@ -310,7 +310,7 @@ angular.module('contentful').controller('GettyDialogController', ['$scope', 'req
     logger.logError(message, {
       data: data
     });
-    $scope.searchError = 'An error occured and we have been notified. Please try again and contact us if the problem persists.';
+    $scope.searchError = 'An error occurred and we have been notified. Please try again and contact us if the problem persists.';
   }
 
   function noDownloadsAvailable() {
