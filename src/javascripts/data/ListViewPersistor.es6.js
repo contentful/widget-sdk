@@ -86,11 +86,17 @@ function omitUIConfigOnlyViewProperties (view) {
 }
 
 function prepareQueryString (viewData) {
-  const keys = Object.keys(viewData)
-    .filter(key => key.charAt(0) !== '_');
+  const qsObject = Object.keys(viewData)
+    .filter(key => key.charAt(0) !== '_')
+    .reduce((acc, key) => {
+      acc[key] = viewData[key];
+      return acc;
+    }, {});
 
-  return qs.stringify(keys.reduce((acc, key) => {
-    acc[key] = viewData[key];
-    return acc;
-  }, {}));
+  // We use the "repeat" array format option so:
+  // stringify({x: [1, 2]}) // results in: 'x=1&x=2'
+  //
+  // This format is used in entity list query strings
+  // for historical reasons.
+  return qs.stringify(qsObject, {arrayFormat: 'repeat'});
 }

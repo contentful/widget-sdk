@@ -1,4 +1,4 @@
-import * as QS from 'libs/qs';
+import qs from 'libs/qs';
 import TheStore from 'TheStore';
 import {settings} from 'environment';
 
@@ -47,7 +47,7 @@ export function apiUrl (path) {
 export function authUrl (path, params) {
   let base = settings.authUrl + ensureLeadingSlash(path);
   if (params) {
-    base += '?' + QS.stringify(params);
+    base += '?' + qs.stringify(params);
   }
   return base;
 }
@@ -145,7 +145,7 @@ export const launchDarkly = settings.launchDarkly;
 export function toolsUrl (path, params) {
   let base = settings.toolsServiceUrl + ensureLeadingSlash(path.join('/'));
   if (params) {
-    base += '?' + QS.stringify(params);
+    base += '?' + qs.stringify(params);
   }
   return base;
 }
