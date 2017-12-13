@@ -37,12 +37,7 @@ export function pick (options = {}) {
 
     return deferred.promise
       .catch((fpError) => {
-        // 101 means the user closed the dialog without picking a file
-        if (!isUserClosedDialogError(fpError)) {
-          logger.logWarn('Error while picking file', {
-            error: fpError
-          });
-        }
+        handleFailure('pick', fpError);
         return $q.reject(fpError);
       });
   });
@@ -61,10 +56,7 @@ export function pickMultiple (options = {}) {
 
     return deferred.promise
       .catch(function (fpError) {
-        if (!isUserClosedDialogError(fpError)) {
-          // TODO Demote this to a warning if we cannot fix this.
-          logger.logError('filepicker.pickMultiple failed', { fpError });
-        }
+        handleFailure('pickMultiple', fpError);
         return $q.reject(fpError);
       });
   });
@@ -111,6 +103,16 @@ function makeFPCb (deferred, method) {
       deferred[method](val);
     });
   };
+}
+
+function handleFailure (fnName, fpError) {
+  if (!isUserClosedDialogError(fpError)) {
+    logger.logWarn(`filepicker.${fnName}() failed`, {
+      fpError,
+      // Choose this hash so new events still get grouped with old events.
+      groupingHash: 'Error while picking file'
+    });
+  }
 }
 
 function setup (filepicker) {
