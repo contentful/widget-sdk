@@ -1,6 +1,22 @@
 button.toolbar-button.markdown-side-action(
-  ng-click="actions.asset()"
+  ng-if="!isCreateAssetsEnabled || !canUploadMultipleAssets"
+  ng-click="actions.existingAssets()"
   tabindex="-1"
   ng-disabled="isDisabled")
   i.fa.fa-picture-o
   |  Insert media
+
+button.toolbar-button.markdown-insert-media.markdown-side-action(
+  ng-if="isCreateAssetsEnabled && canUploadMultipleAssets"
+  cf-context-menu-trigger
+  tabindex="-1"
+  ng-disabled="isDisabled")
+  i.fa.fa-picture-o
+  |  Insert media&#32;
+  cf-icon(name="dd-arrow-down-disabled")
+.context-menu(cf-context-menu="bottom" ng-hide="isDisabled")
+  ul.context-menu__items
+    li(type="button" ng-click="actions.newAssets()")
+      | Add new media and link
+    li(type="button" ng-click="actions.existingAssets()")
+      | Link existing media

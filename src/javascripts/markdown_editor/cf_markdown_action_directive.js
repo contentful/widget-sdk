@@ -63,7 +63,10 @@ angular.module('contentful').directive('cfMarkdownHeadingAction', function () {
   };
 });
 
-angular.module('contentful').directive('cfMarkdownInsertMediaAction', function () {
+angular.module('contentful').directive('cfMarkdownInsertMediaAction', ['require', function (require) {
+  var LD = require('utils/LaunchDarkly');
+  var accessChecker = require('accessChecker');
+
   return {
     restrict: 'E',
     scope: {
@@ -71,6 +74,17 @@ angular.module('contentful').directive('cfMarkdownInsertMediaAction', function (
       isDisabled: '=',
       mode: '@'
     },
-    template: JST['cf_markdown_insert_media_action']()
+    template: JST['cf_markdown_insert_media_action'](),
+    link: function (scope) {
+      LD.onFeatureFlag(
+        scope,
+        'feature-at-12-2017-markdown-create-assets',
+        function (isCreateAssetsEnabled) {
+          scope.isCreateAssetsEnabled = isCreateAssetsEnabled
+        }
+      );
+      scope.canUploadMultipleAssets = accessChecker.canUploadMultipleAssets;
+
+    }
   };
-});
+}]);

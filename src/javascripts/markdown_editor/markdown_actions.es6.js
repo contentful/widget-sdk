@@ -4,14 +4,16 @@ import specialCharacters from './markdown_special_characters';
 import LinkOrganizer from 'LinkOrganizer';
 import notification from 'notification';
 import entitySelector from 'entitySelector';
-import { defaults, isEmpty, isObject, get as getAtPath } from 'lodash';
+import { defaults, isObject, get as getAtPath } from 'lodash';
 import {track} from 'analytics/Analytics';
 import $state from '$state';
+import * as BulkAssetsCreator from 'services/BulkAssetsCreator';
 
 export function create (editor, localeCode) {
   const advancedActions = {
     link: link,
-    asset: asset,
+    existingAssets: existingAssets,
+    newAssets: newAssets,
     special: special,
     table: table,
     embed: embed,
@@ -37,18 +39,46 @@ export function create (editor, localeCode) {
     });
   }
 
-  function asset () {
+  function existingAssets () {
     entitySelector.openFromField({
       type: 'Array',
       itemLinkType: 'Asset',
       locale: localeCode
     })
-    .then(function (assets) {
-      if (Array.isArray(assets) && !isEmpty(assets)) {
-        const links = assets.map(_makeAssetLink).join(' ');
-        editor.insert(links);
-      }
+    .then(_insertAssetLinks);
+  }
+
+  function newAssets () {
+    // Disable editor and remember cursor position as the user can still
+    // select text (and therefore chagne cursor position) while disabled.
+    const wrapper = editor.getWrapper();
+    wrapper.focus();
+    const cursor = wrapper.getCursor();
+    editor.getWrapper().disable();
+
+    BulkAssetsCreator.open().then((assetObjects) => {
+      BulkAssetsCreator.tryToPublishProcessingAssets(assetObjects)
+      .then((result) => {
+        const { publishedAssets, unpublishableAssets } = result;
+        if (publishedAssets.length && !unpublishableAssets.length) {
+          notification.info((publishedAssets.length === 1
+            ? 'The asset was' : `All ${publishedAssets.length} assets were`) +
+            ' just published');
+        } else if (unpublishableAssets.length) {
+          notification.warn(`Failed to publish ${unpublishableAssets.length === 1
+            ? 'the asset' : `${unpublishableAssets.length} assets`}`);
+        }
+        wrapper.setCursor(cursor);
+        _insertAssetLinks(publishedAssets.map(({data}) => data));
+        wrapper.enable();
+        wrapper.focus();
+      });
     });
+  }
+
+  function _insertAssetLinks (assets) {
+    const links = assets.map(_makeAssetLink).join(' ');
+    editor.insert(links);
   }
 
   function _makeAssetLink (asset) {
