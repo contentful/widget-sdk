@@ -3,21 +3,16 @@
 angular.module('contentful')
 .controller('AssetListController', ['$scope', 'require', function AssetListController ($scope, require) {
   var $controller = require('$controller');
-  var $q = require('$q');
   var createSelection = require('selection');
   var delay = require('delay');
-  var Filepicker = require('services/Filepicker');
-  var logger = require('logger');
   var notification = require('notification');
-  var stringUtils = require('stringUtils');
-  var TheLocaleStore = require('TheLocaleStore');
   var spaceContext = require('spaceContext');
   var accessChecker = require('accessChecker');
   var entityStatus = require('entityStatus');
   var debounce = require('debounce');
-  var Notification = require('notification');
   var getBlankView = require('data/UiConfig/Blanks').getBlankAssetView;
   var createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar').default;
+  var BulkAssetsCreator = require('services/BulkAssetsCreator');
 
   var searchController = $controller('AssetSearchController', { $scope: $scope });
 
@@ -114,62 +109,19 @@ angular.module('contentful')
   }
 
   $scope.createMultipleAssets = function () {
-    Filepicker.pickMultiple().then(uploadFPFiles, function (fpError) {
-      if (!Filepicker.isUserClosedDialogError(fpError)) {
-        Notification.error(
-          'An error occurred while uploading multiple assets. ' +
-          'Please contact support if this problem persists.'
-        );
-      }
-    });
-  };
-
-  function uploadFPFiles (fpFiles) {
-    return $q.all(_.map(fpFiles, createAssetForFile))
-    .finally(function () {
+    BulkAssetsCreator.open().finally(function () {
       // We reload all assets to get the new ones. Unfortunately the
       // CMA is not immediately consistent so we have to wait.
       // TODO Instead of querying the collection endpoint we should
-      // add the assets manually
+      // add the assets manually. This is currently not possible as the
+      // asset's `process` endpoint doesn't give us the final `url`.
       delay(function () {
         searchController.resetAssets().then(function () {
           notification.info('Updated asset list');
         });
       }, 5000);
-    })
-    .then(function (entities) {
-      entities = _.filter(entities);
-      notification.info('Assets uploaded. Processing...');
-      return $q.all(_.map(entities, processAssetForFile)).then(function () {
-        notification.info('Assets processed. Updating...');
-      }).catch(function (err) {
-        notification.warn('Some assets failed to process');
-        return $q.reject(err);
-      });
-    }, function (err) {
-      logger.logServerWarn('Some assets failed to upload', {error: err});
-      notification.error('Some assets failed to upload');
-      return $q.reject(err);
     });
-  }
-
-  function createAssetForFile (FPFile) {
-    var file = Filepicker.parseFPFile(FPFile);
-    var locale = TheLocaleStore.getDefaultLocale().internal_code;
-    var data = {
-      sys: { type: 'Asset' },
-      fields: { file: {}, title: {} }
-    };
-    data.fields.file[locale] = file;
-    data.fields.title[locale] = stringUtils.fileNameToTitle(file.fileName);
-
-    return spaceContext.space.createAsset(data);
-  }
-
-  function processAssetForFile (entity) {
-    var locale = TheLocaleStore.getDefaultLocale().internal_code;
-    return entity.process(entity.version, locale);
-  }
+  };
 
   function getAssetDimensions (asset) {
     var file = getAssetFile(asset);
