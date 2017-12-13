@@ -1,6 +1,7 @@
 import {h} from 'ui/Framework';
 import * as Colors from 'Styles/Colors';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
+import { monospaceFontFamily } from 'Styles';
 
 /**
  * @ngdoc service
@@ -138,7 +139,7 @@ export function codeFragment (children) {
       background: Colors.elementLightest,
       border: `1px solid ${Colors.elementMid}`,
       borderRadius: '2px',
-      fontFamily: '"Menlo", "Andale mono", monospace',
+      fontFamily: monospaceFontFamily,
       fontSize: '13px',
       padding: '3px 5px'
     }
