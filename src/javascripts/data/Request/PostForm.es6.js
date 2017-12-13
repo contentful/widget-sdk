@@ -1,4 +1,4 @@
-import QS from 'libs/qs';
+import qs from 'libs/qs';
 import $http from '$http';
 import {assign} from 'lodash';
 
@@ -15,7 +15,7 @@ import {assign} from 'lodash';
 export default function postForm (url, data, config = {}) {
   config.method = 'POST';
   config.url = url;
-  config.data = QS.stringify(data);
+  config.data = qs.stringify(data);
   const headers = assign({}, config.headers, {
     'Content-Type': 'application/x-www-form-urlencoded'
   });
