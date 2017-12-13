@@ -10,9 +10,9 @@ angular.module('contentful').factory('contentfulClient', ['require', function (r
    * It's also been modified to make use of the CMA instead, with the X-Contentful-Skip-Transformation header.
   */
 
-  var $http       = require('$http');
-  var $q          = require('$q');
-  var querystring = require('querystring');
+  var $http = require('$http');
+  var $q = require('$q');
+  var qs = require('libs/qs');
 
   var parseableResourceTypes = {
     Asset: Asset,
@@ -21,7 +21,7 @@ angular.module('contentful').factory('contentfulClient', ['require', function (r
     Space: Space
   };
 
-  function Client(options) {
+  function Client (options) {
     enforcep(options, 'host');
     enforcep(options, 'accessToken');
     enforcep(options, 'space');
@@ -31,13 +31,13 @@ angular.module('contentful').factory('contentfulClient', ['require', function (r
     });
   }
 
-  Client.prototype.request = function(path, options) {
+  Client.prototype.request = function (path, options) {
     if (!options) options = {};
     if (!options.headers) options.headers = {};
     if (!options.params) options.params = {};
     options.headers['Content-Type'] = 'application/vnd.contentful.delivery.v1+json';
     options.headers['X-Contentful-Skip-Transformation'] = true;
-    options.headers['Authorization'] = 'Bearer ' + this.options.accessToken
+    options.headers['Authorization'] = 'Bearer ' + this.options.accessToken;
 
     options.url = [
       this.options.secure ? 'https' : 'http',
@@ -59,82 +59,82 @@ angular.module('contentful').factory('contentfulClient', ['require', function (r
     });
   };
 
-  Client.prototype.asset = function(id) {
+  Client.prototype.asset = function (id) {
     return this.request('/assets/' + id).then(Asset.parse);
   };
 
-  Client.prototype.assets = function(object) {
+  Client.prototype.assets = function (object) {
     var params = Query.parse(object);
     return this.request('/assets', {params: params})
       .then(_.partial(SearchResult.parse, Asset));
   };
 
-  Client.prototype.contentType = function(id) {
+  Client.prototype.contentType = function (id) {
     return this.request('/content_types/' + id)
       .then(ContentType.parse);
   };
 
-  Client.prototype.contentTypes = function(object) {
+  Client.prototype.contentTypes = function (object) {
     var params = Query.parse(object);
     return this.request('/content_types', {params: params})
       .then(_.partial(SearchResult.parse, ContentType));
   };
 
-  Client.prototype.editingInterface = function(contentTypeId, id) {
-    return this.request('/content_types/'+ contentTypeId +'/editor_interfaces/'+ id);
+  Client.prototype.editingInterface = function (contentTypeId, id) {
+    return this.request('/content_types/' + contentTypeId + '/editor_interfaces/' + id);
   };
 
-  Client.prototype.entry = function(id) {
+  Client.prototype.entry = function (id) {
     return this.request('/entries/' + id)
       .then(Entry.parse);
   };
 
-  Client.prototype.entries = function(object) {
+  Client.prototype.entries = function (object) {
     var params = Query.parse(object);
     return this.request('/entries', {params: params})
       .then(_.partial(SearchResult.parse, Entry));
   };
 
-  Client.prototype.space = function() {
+  Client.prototype.space = function () {
     return this.request('');
   };
 
-  function Asset() {}
+  function Asset () {}
 
-  Asset.parse = function(object) {
+  Asset.parse = function (object) {
     return _.extend(new Asset(), {
       sys: Sys.parse(object.sys),
       fields: object.fields
     });
   };
 
-  function Entry() {}
+  function Entry () {}
 
-  Entry.parse = function(object) {
+  Entry.parse = function (object) {
     return _.extend(new Entry(), {
       sys: Sys.parse(object.sys),
       fields: object.fields
     });
   };
 
-  function ContentType() {}
+  function ContentType () {}
 
-  ContentType.parse = function(object) {
+  ContentType.parse = function (object) {
     return _.extend(new ContentType(), {
       sys: Sys.parse(object.sys),
       fields: object.fields.map(Field.parse)
     }, _.pick(object, ['name', 'displayField']));
   };
 
-  function Field() {}
+  function Field () {}
 
-  Field.parse = function(object) {
+  Field.parse = function (object) {
     return _.extend(new Field(), object);
   };
 
-  function SearchResult() {}
+  function SearchResult () {}
 
-  SearchResult.parse = function(ItemType, object) {
+  SearchResult.parse = function (_ItemType, object) {
     walkMutate(object, isParseableResource, parseResource);
     var items = resolveResponse(object);
     defineProperty(items, 'limit', object.limit);
@@ -143,25 +143,25 @@ angular.module('contentful').factory('contentfulClient', ['require', function (r
     return items;
   };
 
-  function Query() {}
+  function Query () {}
 
-  Query.prototype.toQueryString = function() {
-    return querystring.stringify(this);
+  Query.prototype.toQueryString = function () {
+    return qs.stringify(this);
   };
 
-  Query.parse = function(object) {
+  Query.parse = function (object) {
     return _.extend(new Query(), stringifyArrayValues(object));
   };
 
-  function Space() {}
+  function Space () {}
 
-  Space.parse = function(object) {
+  Space.parse = function (object) {
     return _.extend(new Space(), object);
   };
 
-  function Sys() {}
+  function Sys () {}
 
-  Sys.parse = function(object) {
+  Sys.parse = function (object) {
     return _.extend(
       new Sys(),
       _.pick(object, ['id', 'revision', 'type', 'locale']),
@@ -175,9 +175,9 @@ angular.module('contentful').factory('contentfulClient', ['require', function (r
     );
   };
 
-  function Link() {}
+  function Link () {}
 
-  Link.parse = function(object) {
+  Link.parse = function (object) {
     return _.extend(new Link(), {
       sys: Sys.parse(object.sys)
     });
@@ -189,7 +189,7 @@ angular.module('contentful').factory('contentfulClient', ['require', function (r
     }
   };
 
-  function defineProperty(obj, key, value) {
+  function defineProperty (obj, key, value) {
     if (_.isFunction(Object.defineProperty)) {
       Object.defineProperty(obj, key, { enumerable: false, value: value });
     } else {
@@ -197,50 +197,48 @@ angular.module('contentful').factory('contentfulClient', ['require', function (r
     }
   }
 
-  function exists(value) {
-    /*jshint eqnull:true*/
+  function exists (value) {
+    /* jshint eqnull:true */
     return value != null;
   }
 
-  function truthy(value) {
+  function truthy (value) {
     return (value !== false) && exists(value);
   }
 
-  function compacto(object) {
-    return _.reduce(object, function(compacted, value, key) {
+  function compacto (object) {
+    return _.reduce(object, function (compacted, value, key) {
       if (truthy(value)) compacted[key] = value;
       return compacted;
     }, {});
   }
 
-  function enforcep(object, property) {
-    if (!exists(object[property]))
-      throw new TypeError('Expected property ' + property);
+  function enforcep (object, property) {
+    if (!exists(object[property])) { throw new TypeError('Expected property ' + property); }
   }
 
-  function isParseableResource(object) {
+  function isParseableResource (object) {
     return _.isObject(object) && _.isObject(object.sys) && 'type' in object.sys &&
       object.sys.type in parseableResourceTypes;
   }
 
-  function parseResource(resource) {
+  function parseResource (resource) {
     var Type = parseableResourceTypes[resource.sys.type];
     return Type.parse(resource);
   }
 
-  function stringifyArrayValues(object) {
-    return _.reduce(object, function(object, value, key) {
+  function stringifyArrayValues (object) {
+    return _.reduce(object, function (object, value, key) {
       object[key] = _.isArray(value) ? value.join(',') : value;
       return object;
     }, {});
   }
 
-  function walkMutate(input, pred, mutator) {
-    if (pred(input))
-      return mutator(input);
+  function walkMutate (input, pred, mutator) {
+    if (pred(input)) { return mutator(input); }
 
     if (_.isArray(input) || _.isObject(input)) {
-      _.each(input, function(item, key) {
+      _.each(input, function (item, key) {
         input[key] = walkMutate(item, pred, mutator);
       });
       return input;
@@ -249,25 +247,24 @@ angular.module('contentful').factory('contentfulClient', ['require', function (r
     return input;
   }
 
-  function resolveResponse(response) {
-    walkMutate(response, isLink, function(link) {
+  function resolveResponse (response) {
+    walkMutate(response, isLink, function (link) {
       return getLink(response, link) || link;
     });
     return response.items || [];
   }
 
-  function isLink(object) {
+  function isLink (object) {
     return _.get(object, 'sys.type') === 'Link';
   }
 
-  function getLink(response, link) {
+  function getLink (response, link) {
     var type = link.sys.linkType;
     var id = link.sys.id;
-    var pred = function(resource) {
+    var pred = function (resource) {
       return resource.sys.type === type && resource.sys.id === id;
     };
     return _.find(response.items, pred) ||
       response.includes && _.find(response.includes[type], pred);
   }
-
 }]);
