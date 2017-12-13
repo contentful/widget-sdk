@@ -1,5 +1,9 @@
 import {omit} from 'lodash';
 
+const alphaHeader = {
+  'x-contentful-enable-alpha-feature': 'subscriptions-api'
+};
+
 /**
  * Gets the subscription details for the org.
  */
@@ -7,9 +11,7 @@ export function getSubscription (endpoint) {
   return endpoint({
     method: 'GET',
     path: ['subscriptions']
-  }, alphaHeader).then((response) => {
-    return parseSubscription(response);
-  });
+  }, alphaHeader).then(parseSubscription);
 }
 
 /**
@@ -21,10 +23,6 @@ export function getSpacePlans (endpoint) {
     path: ['plans']
   }, alphaHeader);
 }
-
-const alphaHeader = {
-  'x-contentful-enable-alpha-feature': 'subscriptions-api'
-};
 
 function parseSubscription (rawData) {
   // TODO use generic link resolver ?
