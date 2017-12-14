@@ -105,6 +105,44 @@ describe('Authentication', function () {
       expect(yield this.Auth.getToken()).toBe('NEW TOKEN');
       expect(K.getValue(this.Auth.token$)).toBe('NEW TOKEN');
     });
+
+    describe('on login from gatekeeper', function () {
+      beforeEach(function () {
+        const $location = this.mockService('$location');
+        $location.url.returns('/?login=1');
+      });
+
+      it('revokes and deletes existing token', function* () {
+        this.store.set('STORED_TOKEN');
+        this.Auth.init();
+        expect(this.store.get()).toBe(null);
+        sinon.assert.calledWith(this.$http, sinon.match({
+          method: 'POST',
+          url: '//be.test.com/oauth/revoke',
+          data: 'token=STORED_TOKEN',
+          headers: {
+            'Authorization': 'Bearer STORED_TOKEN'
+          }
+        }));
+      });
+
+      it('gets a new token', function* () {
+        this.store.set('STORED_TOKEN');
+        this.Auth.init();
+        sinon.assert.calledWith(this.$http, sinon.match({
+          method: 'POST',
+          url: '//be.test.com/oauth/token',
+          data:
+            'grant_type=password' +
+            '&client_id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' +
+            '&scope=content_management_manage',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          withCredentials: true
+        }));
+      });
+    });
   });
 
   describe('#logout()', function () {

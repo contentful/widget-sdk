@@ -91,6 +91,9 @@ export const refreshToken = createExclusiveTask(() => {
  * We try to obtain an access token from a previous session from
  * local storage. If no token is stored we call `refreshToken()`.
  *
+ * If we land in the app being redirected from Gatekeeper’s login we
+ * revoke any existing tokens and call `refreshToken()`.
+ *
  * We also set the path when we return from a login page after we were
  * redirected there by the app.
  *
@@ -103,21 +106,32 @@ export function init () {
     loadTokenFromHash();
   }
 
-  const storedToken = tokenStore.get();
-  updateToken(storedToken);
+  const previousToken = tokenStore.get();
+
+  if (previousToken && $location.url() === '/?login=1') {
+    // This path indicates that we are coming from gatekeeper and we have
+    // a new gatekeeper session. In that case we throw away our current
+    // token since it might belong to a different user
+    revokeToken(previousToken);
+    refreshAndRedirect();
+  } else if (!previousToken) {
+    refreshAndRedirect();
+  } else {
+    updateToken(previousToken);
+  }
 
   // Reflect token updates that happened in a different window
   tokenStore.externalChanges().onValue(updateToken);
+}
 
-  if (!storedToken) {
-    // Obtain token for the first time after login
-    refreshToken();
 
-    const afterLoginPath = afterLoginPathStore.get();
-    if (afterLoginPath) {
-      afterLoginPathStore.remove();
-      $location.path(afterLoginPath);
-    }
+function refreshAndRedirect () {
+  refreshToken();
+
+  const afterLoginPath = afterLoginPathStore.get();
+  if (afterLoginPath) {
+    afterLoginPathStore.remove();
+    $location.path(afterLoginPath);
   }
 }
 
@@ -134,13 +148,7 @@ export function logout () {
     const token = yield tokenMVar.take();
     tokenStore.remove();
     try {
-      yield postForm(Config.authUrl('oauth/revoke'), {
-        token: token
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      yield revokeToken(token);
     } finally {
       setLocation(Config.authUrl('logout'));
     }
@@ -171,13 +179,35 @@ export function redirectToLogin () {
   setLocation(Config.authUrl('login'));
 }
 
+
 function updateToken (value) {
+  // We sync the token between windows using the 'storage' event. To
+  // prevent unecessary updates we only update the stored value when it
+  // has changed
+  if (tokenStore.get() !== value) {
+    tokenStore.set(value);
+  }
   tokenBus.set(value);
   tokenMVar.put(value);
 }
 
+
 function setLocation (url) {
   $window.location = url;
+}
+
+
+/**
+ * Sends a request to Gatekeeper to revoke the given token.
+ */
+function revokeToken (token) {
+  return postForm(Config.authUrl('oauth/revoke'), {
+    token
+  }, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
 }
 
 
