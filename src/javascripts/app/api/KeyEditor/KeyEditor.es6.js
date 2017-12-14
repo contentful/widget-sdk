@@ -4,17 +4,19 @@ import {assign} from 'utils/Collections';
 import {container} from 'ui/Layout';
 import {docsLink} from 'ui/Content';
 import renderEnvironmentSelector from './EnvironmentSelector';
+import copyIcon from 'svg/CopyIcon';
+import copyToClipboard from 'utils/DomClipboardCopy';
 
-export default function ({data, initialValue, connect}) {
+export default function ({data, initialValue, connect, trackCopy}) {
   update(initialValue);
 
   function update (model) {
-    const component = renderForm({data, model, update});
+    const component = renderForm({data, model, update, trackCopy});
     connect(model, component);
   }
 }
 
-function renderForm ({data, model, update}) {
+function renderForm ({data, model, update, trackCopy}) {
   return h('div', [
     h('h3.section-title', ['Access tokens']),
 
@@ -40,13 +42,13 @@ function renderForm ({data, model, update}) {
     section(
       'Space ID',
       null,
-      [inputWithCopy(data.spaceId, 'space-id', 'space')]
+      [inputWithCopy({value: data.spaceId, name: 'space-id', track: () => trackCopy('space')})]
     ),
 
     section(
       'Content Delivery API - access token',
       null,
-      [inputWithCopy(data.deliveryToken, 'delivery-token', 'cda')]
+      [inputWithCopy({value: data.deliveryToken, name: 'delivery-token', track: () => trackCopy('cda')})]
     ),
 
     separator(),
@@ -57,11 +59,10 @@ function renderForm ({data, model, update}) {
         'Preview unpublished content using this API (i.e. content with “Draft” status). ',
         docsLink('Read more.', 'content_preview')
       ],
-      [inputWithCopy(data.previewToken, 'preview-token', 'cpa')]
+      [inputWithCopy({value: data.previewToken, name: 'preview-token', track: () => trackCopy('cpa')})]
     ),
 
     data.environmentsEnabled && separator(),
-
     data.environmentsEnabled && section(
       'Environments',
       'Select environments that can be used with this API key. At least one environment has to be selected.',
@@ -87,7 +88,7 @@ function input ({canEdit, model, update, key}) {
   });
 }
 
-function inputWithCopy (value, name, _trackingKey) {
+function inputWithCopy ({value, name, track}) {
   return h('.cfnext-form__input-group--full-size', [
     h('input.cfnext-form__input--full-size', {
       style: {cursor: 'pointer'},
@@ -99,12 +100,16 @@ function inputWithCopy (value, name, _trackingKey) {
         e.target.focus();
         e.target.select();
       }
-    })
-    // TODO copy to clipboard button
-    // h('cf-copy-to-clipboard', {
-    //   ngClick: `track.copy('${_trackingKey}')`,
-    //   text: value
-    // })
+    }),
+    h('.cfnext-form__icon-suffix.copy-to-clipboard.x--input-suffix', {
+      onClick: () => {
+        copyToClipboard(value);
+        track();
+      },
+      style: {cursor: 'pointer', paddingTop: '3px'}
+    }, [
+      copyIcon()
+    ])
   ]);
 }
 

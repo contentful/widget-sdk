@@ -1,9 +1,12 @@
 import {h} from 'ui/Framework';
-import {badge, stateLink} from 'ui/Content';
+import {ihspace} from 'ui/Layout';
+import {badge, stateLink, codeFragment} from 'ui/Content';
 import {byName as Colors} from 'Styles/Colors';
 import {find} from 'lodash';
 import {filter, concat} from 'utils/Collections';
 import infoIcon from 'svg/info';
+import copyIcon from 'svg/CopyIcon';
+import copyToClipboard from 'utils/DomClipboardCopy';
 
 export function makeLink (env) {
   return {
@@ -84,16 +87,18 @@ function renderList ({canEdit, spaceEnvironments, envs, updateEnvs}) {
       ]),
       env.sys.id === 'master' && badge({}, ['Default environment'])
     ]),
-    h('span', {
-      style: {
-        display: 'inline-block',
-        padding: '3px 5px',
-        background: Colors.elementLightest,
-        border: '1px solid ' + Colors.elementDark,
-        fontFamily: 'monospace'
-      }
-    }, [
-      env.sys.id
+    h('div', [
+      codeFragment([env.sys.id]),
+      ihspace('6px'),
+      h('span', {
+        onClick: e => {
+          e.preventDefault(); // is part of <label>, do not toggle
+          copyToClipboard(env.sys.id);
+        },
+        style: {cursor: 'pointer'}
+      }, [
+        copyIcon()
+      ])
     ])
   ])));
 }
