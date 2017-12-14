@@ -345,7 +345,7 @@ function bundleBrowserify (browserify) {
     .pipe(source('libs.js'))
     .pipe(buffer())
     // Add root to source map
-    .pipe(sourceMaps.init({loadMaps: true}))
+    .pipe(sourceMaps.init({loadMaps: true, largeFile: true}))
     .pipe(sourceMaps.write({sourceRoot: '/'}))
     .pipe(dest)
 }
@@ -490,7 +490,7 @@ gulp.task('build/js', ['js', 'templates'], function () {
     'public/app/libs.js',
     'public/app/components.js'
   ])
-    .pipe(sourceMaps.init({ loadMaps: true }))
+    .pipe(sourceMaps.init({ loadMaps: true, largeFile: true }))
     .pipe(concat('app/application.min.js'))
     .pipe(uglify())
     .pipe(changeBase('build'))
