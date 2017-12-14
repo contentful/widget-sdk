@@ -1,10 +1,7 @@
-import {assign, get, constant, find} from 'lodash';
+import {assign, get, inRange, omit} from 'lodash';
 import Command from 'command';
-import marked from 'libs/marked';
 import {truncate} from 'stringUtils';
 import {deepFreeze} from 'utils/Freeze';
-import * as K from 'utils/kefir';
-import * as $sce from '$sce';
 
 import leaveConfirmator from 'navigation/confirmLeaveEditor';
 import spaceContext from 'spaceContext';
@@ -13,131 +10,166 @@ import accessChecker from 'accessChecker';
 import $state from '$state';
 import notification from 'notification';
 import {track} from 'analytics/Analytics';
+import TheStore from 'TheStore';
+import * as LD from 'utils/LaunchDarkly';
+import * as Intercom from 'intercom';
 
-import * as Boilerplate from './BoilerplateCode';
+import initKeyEditor from './KeyEditor';
+import {get as getBoilerplates} from './BoilerplateCode';
+import initBoilerplate from './Boilerplate';
+import renderContactUs from './ContactUs';
+import {makeLink} from './EnvironmentSelector';
 
+const CONTACT_US_BOILERPLATE_FLAG_NAME = 'feature-ps-10-2017-contact-us-boilerplate';
+const ENVIRONMENTS_FLAG_NAME = 'feature-dv-11-2017-environments';
 
-/**
- * Create a controller for the API Key editor template
- *
- * The controller exposes the following properties on
- * `$scope.apiKeyEditor`.
- *
- * - `data.spaceId`
- * - `data.canEdit`
- * - `data.canDelete`
- * - `data.deliveryToken`
- * - `data.previewToken`
- * - `model.name`
- * - `actions.remove`
- * - `actions.save`
- */
-export default function attach ($scope, apiKey) {
-  initBoilerplate($scope);
-  $scope.track = createTracker();
+// Entity representing the default "master" environment
+const MASTER_ENV = {sys: {id: 'master'}, name: 'Master'};
 
-  $scope.apiKeyEditor = $scope.$new();
-  update(apiKey);
+// Keys of the map are properties of API Keys that can be changed.
+// Values of the map are functions producting default model values.
+const CHANGABLE = {name: () => '', description: () => '', environments: () => []};
 
-  function update (apiKey) {
-    $scope.apiKeyEditor.$destroy();
-    $scope.apiKeyEditor = $scope.$new();
-    init($scope.apiKeyEditor, $scope.context, apiKey, update);
-  }
+// Pass $scope and API Key, the editor will get rendered and the
+// following properties are exposed as `$scope.apiKeyEditor`:
+// `canEdit` (bool), `remove` (action), `save` (action)
+export default function attach ($scope, apiKey, spaceEnvironments) {
+  mountBoilerplates($scope, apiKey);
+  mountContactUs($scope);
+  mountKeyEditor($scope, apiKey, [MASTER_ENV].concat(spaceEnvironments));
 }
 
+function mountBoilerplates ($scope, apiKey) {
+  getBoilerplates().then(boilerplates => initBoilerplate({
+    boilerplates,
+    connect: component => {
+      $scope.boilerplateComponent = component;
+      $scope.$applyAsync();
+    },
+    spaceId: spaceContext.getId(),
+    deliveryToken: apiKey.accessToken,
+    track: {
+      select: platform => track('api_key:boilerplate', {action: 'select', platform}),
+      download: platform => track('api_key:boilerplate', {action: 'download', platform})
+    }
+  }));
+}
 
-function initBoilerplate ($scope) {
-  Boilerplate.get()
-  .then((boilerplates) => {
-    $scope.boilerplate = {
-      available: boilerplates,
-      selectedId: boilerplates[0].id
-    };
-
-    $scope.$watchGroup(['apiKeyEditor.data.deliveryToken', 'boilerplate.selectedId'], function ([deliveryToken, selectedId]) {
-      const bp = find(boilerplates, (bp) => bp.id === selectedId);
-      const instructions = $sce.trustAsHtml(marked(bp.instructions));
-      assign($scope.boilerplate, {
-        sourceUrl: bp.sourceUrl(spaceContext.getId(), deliveryToken),
-        platform: bp.platform,
-        instructions: instructions
+function mountContactUs ($scope) {
+  LD.onFeatureFlag($scope, CONTACT_US_BOILERPLATE_FLAG_NAME, isVisible => {
+    $scope.contactUsComponent = null;
+    if (isVisible) {
+      $scope.contactUsComponent = renderContactUs({
+        track: () => track('element:click', {
+          elementId: 'contact_sales_boilerplate',
+          groupId: 'contact_sales',
+          fromState: $state.current.name
+        }),
+        openIntercom: () => Intercom.open()
       });
-    });
+    }
+    $scope.$applyAsync();
   });
 }
 
+function mountKeyEditor ($scope, apiKey, spaceEnvironments) {
+  // TODO: remove this localStorage mock; this property should come from the API
+  const stored = TheStore.get(`tmp.envsFor.${apiKey.sys.id}`);
+  apiKey.environments = Array.isArray(stored) ? stored : undefined;
+  // end of mock implementation
 
-// Re-initialize the api key editor for the given API key.
-// `scope` is the child scope available as `apiKeyEditor` from the
-// template.
-// `stateContext` will be the context object attached to the main scope when
-// initializing the state.
-// `update` is a function that accepts an API key and rerenders the
-// editor with the new key. This will destroy the previous scope.
-function init ($scope, stateContext, apiKey, update) {
+  // This condition depends on the API implementation.
+  // For the time being if `environments` are not present "master" is used.
+  if (!Array.isArray(apiKey.environments) || apiKey.environments.length === 0) {
+    apiKey.environments = [makeLink(MASTER_ENV)];
+  }
+
   const canEdit = accessChecker.canModifyApiKeys();
   const notify = makeNotifier(truncate(apiKey.name, 50));
 
-  stateContext.requestLeaveConfirmation = leaveConfirmator(save);
+  const model = Object.keys(CHANGABLE).reduce((acc, property) => {
+    acc[property] = apiKey[property] || CHANGABLE[property]();
+    return acc;
+  }, {});
 
-  $scope.data = deepFreeze({
-    spaceId: spaceContext.getId(),
-    canEdit: canEdit,
-    deliveryToken: apiKey.accessToken,
-    previewToken: get(apiKey, 'preview_api_key.accessToken')
-  });
-
-  $scope.model = {
-    name: apiKey.name
-  };
-
-  const name$ = K.fromScopeValue($scope, (s) => s.model.name).skipDuplicates();
-  const modified$ = name$.map((name) => name !== apiKey.name).skipDuplicates();
-
-  modified$.onValue((modified) => {
-    stateContext.dirty = modified;
-  });
-
-  name$.onValue((name) => {
-    stateContext.title = name || 'New Api Key';
-  });
-
-
-  $scope.remove = Command.create(remove);
-
-  $scope.save = Command.create(save, {
-    disabled: function () {
-      return (
-        $scope.apiKeyForm.$invalid ||
-        accessChecker.shouldDisable('createApiKey') ||
-        !K.getValue(modified$)
-      );
+  const reinitKeyEditor = (environmentsEnabled = false) => initKeyEditor({
+    data: deepFreeze({
+      spaceId: spaceContext.getId(),
+      canEdit,
+      deliveryToken: apiKey.accessToken,
+      previewToken: get(apiKey, 'preview_api_key.accessToken'),
+      environmentsEnabled,
+      spaceEnvironments
+    }),
+    initialValue: model,
+    connect: (updated, component) => {
+      assign(model, updated);
+      $scope.context.title = model.name || 'New Api Key';
+      $scope.context.dirty = isDirty();
+      $scope.keyEditorComponent = component;
+      $scope.$applyAsync();
     },
-    available: constant($scope.data.canEdit)
+    trackCopy: source => track('api_key:clipboard_copy', {source})
   });
+
+  reinitKeyEditor();
+  LD.onFeatureFlag($scope, ENVIRONMENTS_FLAG_NAME, reinitKeyEditor);
+
+  $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
+  $scope.apiKeyEditor = {
+    canEdit,
+    remove: Command.create(remove),
+    save: Command.create(save, {
+      disabled: isSaveDisabled,
+      available: () => canEdit
+    })
+  };
 
   function remove () {
     return spaceContext.apiKeyRepo.remove(apiKey.sys.id)
-    .then(() => {
-      $state.go('spaces.detail.api.keys.list')
-      .then(() => {
-        notify.deleteSuccess();
-      });
-    }, notify.deleteFail);
+    .then(
+      () => $state.go('spaces.detail.api.keys.list').then(notify.deleteSuccess),
+      notify.deleteFail
+    );
+  }
+
+  function isSaveDisabled () {
+    return (
+      !inRange(model.name.length, 1, 256) ||
+      accessChecker.shouldDisable('createApiKey') ||
+      !$scope.context.dirty ||
+      model.environments.length < 1
+    );
   }
 
   function save () {
-    const name = K.getValue(name$);
-    apiKey.name = name;
+    // TODO: remove this localStorage mock; this property should be accepted by the API
+    TheStore.set(`tmp.envsFor.${apiKey.sys.id}`, model.environments);
+    // it means `environments` shouldn't be omitted here:
+    assign(apiKey, omit(model, ['environments']));
+    // end of mock implementation
+
     return spaceContext.apiKeyRepo.save(apiKey)
-    .then((newKey) => {
+    .then(newKey => {
+      apiKey = newKey;
+      apiKey.environments = model.environments; // TODO faking behavior, should be gone
+      $scope.context.dirty = false;
       notify.saveSuccess();
-      update(newKey);
     }, notify.saveFail);
   }
-}
 
+  function isDirty () {
+    const detailsChanged = ['name', 'description'].some(property => {
+      const entityValue = apiKey[property] || CHANGABLE[property]();
+      return model[property] !== entityValue;
+    });
+
+    const sortedIds = envs => (envs || []).map(env => env.sys.id).sort().join(',');
+    const envsChanged = sortedIds(model.environments) !== sortedIds(apiKey.environments);
+
+    return detailsChanged || envsChanged;
+  }
+}
 
 function makeNotifier (title) {
   return {
@@ -160,23 +192,6 @@ function makeNotifier (title) {
     deleteFail: function (error) {
       notification.error(`“${title}” could not be deleted`);
       logger.logServerWarn('ApiKey could not be deleted', {error: error});
-    }
-  };
-}
-
-
-function createTracker () {
-  return {
-    copy (source) {
-      track('api_key:clipboard_copy', {source});
-    },
-    boilerplate: {
-      select (platform) {
-        track('api_key:boilerplate', {action: 'select', platform});
-      },
-      download (platform) {
-        track('api_key:boilerplate', {action: 'download', platform});
-      }
     }
   };
 }

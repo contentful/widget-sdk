@@ -89,6 +89,7 @@ This list should be updated by new teams using the Launch Darkly integration.
 
 - Product Success (`ps`)
 - Biz Velocity (`bv`)
+- Dev Velocity (`dv`)
 
 ### Creating a feature flag
 
