@@ -14,9 +14,9 @@
 angular.module('contentful')
 .directive('cfCopyToClipboard', ['require', function (require) {
   var h = require('utils/hyperscript').h;
-  var $document = require('$document');
   var $timeout = require('$timeout');
   var userAgent = require('userAgent');
+  var domCopy = require('utils/DomClipboardCopy').default;
 
   var template = h('button', {
     class: [
@@ -43,15 +43,7 @@ angular.module('contentful')
       }
 
       function copyToClipboard () {
-        // create element, copy content and remove it
-        var tmp = $('<input>').attr({
-          type: 'text',
-          value: attrs.text
-        }).appendTo(elem).select();
-
-        $document[0].execCommand('copy', false, null);
-
-        tmp.remove();
+        domCopy(attrs.text);
 
         // show tick for 1.5 seconds
         scope.$apply(function () {

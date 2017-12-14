@@ -1,5 +1,5 @@
 import { h } from 'utils/hyperscript';
-import { triangleDown } from 'Styles/Helpers';
+import { triangleDown } from 'Styles';
 import { extend, omit } from 'lodash';
 
 export default function () {

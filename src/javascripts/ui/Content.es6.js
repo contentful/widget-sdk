@@ -1,6 +1,7 @@
 import {h} from 'ui/Framework';
 import * as Colors from 'Styles/Colors';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
+import { monospaceFontFamily } from 'Styles';
 
 /**
  * @ngdoc service
@@ -56,10 +57,22 @@ export function docsLink (text, target) {
  *
  * @param {VNode[]} content  List of hyperscript nodes
  * @param {string} url
+ * @param {string?} modifier
+ *   An optional string that changes the style of the link. Possible
+ *   values are 'constructive' or 'destructive'
  * @returns {VNode}
  */
-export function linkOpen (content, url) {
-  return h('a.text-link', {
+const AVAILABLE_MODIFIERS = ['', 'constructive', 'destructive'];
+export function linkOpen (content, url, modifier = '') {
+  if (!AVAILABLE_MODIFIERS.includes(modifier)) {
+    throw new TypeError(`Unknown text link modifier ${modifier}`);
+  }
+
+  if (modifier) {
+    modifier = `--${modifier}`;
+  }
+
+  return h(`a.text-link${modifier}`, {
     href: url,
     target: '_blank',
     rel: 'noopener noreferrer'
@@ -92,4 +105,43 @@ export function p (content) {
       color: Colors.byName.textMid
     }
   }, content);
+}
+
+
+/**
+ * A span that styles the content as small, uppercased, spaced letters
+ * with the given color.
+ *
+ * @param {string?} .color
+ */
+export function badge ({
+  color = Colors.textLight
+}, children) {
+  return h('span', {
+    style: {
+      color,
+      fontSize: '11px',
+      fontWeight: '600',
+      letterSpacing: '1px',
+      textTransform: 'uppercase'
+    }
+  }, children);
+}
+
+
+/**
+ * Styles the content as an inline code fragment
+ */
+export function codeFragment (children) {
+  return h('span', {
+    style: {
+      color: Colors.textMid,
+      background: Colors.elementLightest,
+      border: `1px solid ${Colors.elementMid}`,
+      borderRadius: '2px',
+      fontFamily: monospaceFontFamily,
+      fontSize: '13px',
+      padding: '3px 5px'
+    }
+  }, children);
 }

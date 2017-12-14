@@ -35,6 +35,8 @@ Styleguide text-links-pattern
     color: $colors.text-dark
   a&
     text-decoration: underline
+  button&:disabled
+    cursor: not-allowed
 
 .text-link
 .text-link--standard
@@ -43,15 +45,25 @@ a.text-link
 a.text-link--standard
 a.text-link--neutral
   color: $colors.blue-darkest
+  &:disabled
+    color: rgba($colors.blue-darkest, 0.4)
 .text-link--constructive
 a.text-link--constructive
   color: $colors.green-darkest
+  &:disabled
+    color: rgba($colors.green-darkest, 0.4)
 .text-link--destructive
 a.text-link--destructive
   color: $colors.red-darkest
+  &:disabled
+    color: rgba($colors.red-darkest, 0.4)
 .text-link--neutral-emphasis-mid
 a.text-link--neutral-emphasis-mid
   color: $colors.text-mid
+  &:disabled
+    color: rgba($colors.text-mid, 0.4)
 .text-link--neutral-emphasis-low
 a.text-link--neutral-emphasis-low
   color: $colors.text-light
+  &:disabled
+    color: rgba($colors.text-light, 0.4)

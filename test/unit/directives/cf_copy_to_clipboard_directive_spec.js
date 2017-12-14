@@ -17,7 +17,6 @@ describe('cfCopyToClipboard Directive', function () {
 
     module('contentful/test', function ($provide) {
       $provide.value('userAgent', stubs.userAgent);
-      $provide.value('$document', stubs.$document);
     });
 
     this.compileDirective = function () {
@@ -39,11 +38,5 @@ describe('cfCopyToClipboard Directive', function () {
     stubs.userAgent.isSafari.returns(true);
     this.compileDirective();
     expect(this.element.is(':visible')).toBe(false);
-  });
-
-  it('copies text to clipboard', function () {
-    this.compileDirective();
-    this.element.find('button').click();
-    sinon.assert.calledWith(stubs.$document[0].execCommand, 'copy', false, null);
   });
 });

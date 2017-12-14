@@ -1,6 +1,6 @@
 import { h } from 'utils/hyperscript';
-import { byName as colors, genBoxShadow } from 'Styles/Colors';
-import { triangleDown } from 'Styles/Helpers';
+import { genBoxShadow, triangleDown } from 'Styles';
+import { byName as colors } from 'Styles/Colors';
 import { extend } from 'lodash';
 
 const padding = '20px';

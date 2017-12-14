@@ -1,6 +1,7 @@
 import { h } from 'utils/hyperscript';
 import spinner from 'ui/Components/Spinner';
-import { byName, genBoxShadow } from 'Styles/Colors';
+import { byName } from 'Styles/Colors';
+import { genBoxShadow } from 'Styles';
 import {default as backgroundIcon} from 'svg/header-illustration-wide';
 
 export default function () {

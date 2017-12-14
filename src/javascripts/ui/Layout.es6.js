@@ -106,6 +106,33 @@ export function vspace_ (height) {
 
 
 /**
+ * Create a container with a horizontal flex-box layout
+ *
+ *     hbox([
+ *       ...items
+ *     ])
+ *
+ * With additional style properties
+ *
+ *     hbox({
+ *       width: '100px',
+ *     }, [
+ *        ...items
+ *     ])
+ *
+ */
+export function hbox (style, children) {
+  if (arguments.length < 2) {
+    children = style;
+    style = {};
+  }
+  return container(Object.assign({
+    display: 'flex'
+  }, style), children);
+}
+
+
+/**
  * @ngdoc method
  * @name ui/Layout#vspace
  * @description
@@ -123,11 +150,22 @@ export function vspace_ (height) {
  * ])
  * ~~~
  *
- * @param {String} height  CSS value for the top margin
+ * @param {String} width  CSS value for the left margin
  * @returns {VNode}
  */
 export function hspace (width) {
   return container({
+    marginLeft: width
+  });
+}
+
+
+/**
+ * Just like `hspace` but the element has `display: 'inline-block`.
+ */
+export function ihspace (width) {
+  return container({
+    display: 'inline-block',
     marginLeft: width
   });
 }

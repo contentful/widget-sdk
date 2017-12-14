@@ -29,6 +29,32 @@ export function simple ({ title, icon, actions }, content) {
 
 
 /**
+ * @description
+ * Create a workbench layout for a header, content, and sidebar.
+ *
+ * @param {VTree} .header
+ *   Constructed with the `header()` function.
+ * @param {VTree[]} .content
+ * @param {VTree[]} .sidebar
+ * @returns {VTree}
+ */
+export function withSidebar ({ header, sidebar, content }) {
+  return h('.workbench', [
+    header,
+    h('.workbench-main', [
+      h('.workbench-main__content', [content]),
+      h('.workbench-main__sidebar', [
+        h('.entity-sidebar', sidebar)
+      ])
+    ])
+  ]);
+}
+
+
+/**
+ * @ngdoc method
+ * @name app/Workbench#header
+ * @description
  * Create the template for a workbench header.
  *
  * Renders the breadcrumbs, an optional icon, the title, and optional
