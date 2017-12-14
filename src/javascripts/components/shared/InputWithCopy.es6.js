@@ -1,7 +1,7 @@
 import {h} from 'ui/Framework';
-import $document from '$document';
 import {byName as colorByName} from 'Styles/Colors';
 import {noop} from 'lodash';
+import domCopy from 'utils/DomClipboardCopy';
 
 const copied = {};
 
@@ -39,15 +39,7 @@ export default function ({ children, text, onCopy = noop, id = text }, render) {
   }, children.concat(copyButton));
 
   function copy () {
-    const doc = $document[0];
-    const input = doc.createElement('input');
-
-    input.value = text;
-    input.type = 'text';
-    doc.body.appendChild(input);
-    input.select();
-    doc.execCommand('copy', false);
-
+    domCopy(text);
     onCopy(text);
     copied[id] = true;
 

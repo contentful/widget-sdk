@@ -28,7 +28,7 @@ export default function render (folder, state, actions) {
   const currentViewId = getAtPath(state.currentView, ['id']);
   const active = view => view.id === currentViewId ? '-active' : '';
 
-  return h('.view-folder', {class: isNotDefault ? draggable : ''}, [
+  return h('.view-folder', {key: folder.id, class: isNotDefault ? draggable : ''}, [
     isNotDefault && h('header.view-folder__header', [
       h('div.view-folder__title', [
         `${folder.title} (${folder.views.length})`,
@@ -51,6 +51,7 @@ export default function render (folder, state, actions) {
       }
     }, views.map(view => {
       return h('li.view-folder__item', {
+        key: view.id,
         class: [active(view), draggable].join(' '),
         onClick: () => actions.LoadView(view)
       }, [
@@ -128,6 +129,10 @@ function deleteView (view, tracking, DeleteView) {
 }
 
 function isViewVisible (view, roleAssignment) {
+  if (!view) {
+    return false;
+  }
+
   if (!isContentTypeReadable(view.contentTypeId)) {
     return false;
   }

@@ -77,14 +77,3 @@ export function entityStateColor (state) {
     [EntityState.Changed(), constant(byName.blueLight)]
   ]);
 }
-
-
-/**
- * Generate box shadow
- * It returns a string that can be used with
- * the box-shadow CSS property
- */
-
-export function genBoxShadow (x = 0, y = 2, blur = 3, spread = 0) {
-  return `${x}px ${y}px ${blur}px ${spread}px rgba(0, 0, 0, 0.08)`;
-}

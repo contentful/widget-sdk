@@ -22,9 +22,9 @@
     "envId": "588a17a544b03e0b32112a5e"
   },
   "filepicker": {
-    "api_key": "AQGV4TMRPGovR9AIjMi6Az",
-    "policy": "eyJleHBpcnkiOjE1MzQ3NTM0NjIsImNhbGwiOlsicGljayIsInN0b3JlIl19",
-    "signature": "abc143fa9ea5fe44c399343c5c6e44f3b46ca63d751a6be6396a2124edb62af7"
+    "api_key" : "AhHWTqaWRiG08OT14xd5Qz",
+    "signature" : "7d05aaf92295dea900c7b85e3e4aa4b10c95d42c1a0ae449ab8aca554082f188",
+    "policy" : "eyJleHBpcnkiOjE1MzQ3NTcwMjgsImNhbGwiOlsicGljayIsInN0b3JlIl19"
   },
   "aviary": {
     "api_key": "b7fe4d3302834e61b0f65913f156c067"

@@ -31,7 +31,8 @@ angular.module('contentful')
       require('states/settings/roles'),
       require('states/settings/webhooks'),
       require('states/settings/content_preview'),
-      require('states/settings/Extensions').default
+      require('states/settings/Extensions').default,
+      require('app/SpaceSettings/Environments/State').default
     ]
   };
 }]);

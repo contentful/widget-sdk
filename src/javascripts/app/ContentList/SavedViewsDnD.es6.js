@@ -61,7 +61,15 @@ export default function create (getFolders, saveFolders) {
     create(['views', id], el, {
       draggable: 'li',
       group: `views,${viewsGroupId}`,
-      onAdd: e => saveFolders(moveViewBetween(getFolders(), [srcFolder(e), id], e)),
+      onAdd: e => {
+        // HACK: the ugly temporary fix for sortable.js + react
+        // https://github.com/RubaXa/Sortable/issues/986#issuecomment-257030565
+        const { item, from } = e;
+
+        from.appendChild(item);
+
+        saveFolders(moveViewBetween(getFolders(), [srcFolder(e), id], e));
+      },
       onUpdate: e => saveFolders(moveView(getFolders(), id, e))
     });
   }

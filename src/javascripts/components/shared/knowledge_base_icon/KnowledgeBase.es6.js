@@ -24,7 +24,9 @@ const items = {
   contentModellingBasics: 'r/knowledgebase/content-modelling-basics/',
   createOAuthApp: 'developers/docs/references/authentication/#creating-an-oauth-20-application',
   uiExtensions: 'developers/docs/concepts/uiextensions/',
-  uiExtensionsGuide: 'r/knowledgebase/ui-extensions-guide/'
+  uiExtensionsGuide: 'r/knowledgebase/ui-extensions-guide/',
+  // TODO add it once it becomes available
+  spaceEnvironments: 'developers/docs'
 };
 
 export default function ({ target, text = '', inlineText, cssClass }) {
