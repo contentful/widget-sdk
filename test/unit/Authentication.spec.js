@@ -52,6 +52,11 @@ describe('Authentication', function () {
       expect(tokenRef.value).toBe('NEW TOKEN');
     });
 
+    it('stores the new token in local storage', function* () {
+      yield this.Auth.refreshToken();
+      expect(this.store.get()).toBe('NEW TOKEN');
+    });
+
     it('returns new token', function* () {
       const token = yield this.Auth.refreshToken();
       expect(token).toBe('NEW TOKEN');

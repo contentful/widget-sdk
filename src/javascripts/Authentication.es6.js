@@ -2,7 +2,7 @@ import {get} from 'lodash';
 import $location from '$location';
 import $window from '$window';
 import * as K from 'utils/kefir';
-import { createMVar$q, runTask } from 'utils/Concurrent';
+import { createMVar$q, runTask, createExclusiveTask } from 'utils/Concurrent';
 import TheStore from 'TheStore';
 import * as Config from 'Config';
 import postForm from 'data/Request/PostForm';
@@ -54,6 +54,37 @@ export const token$ = tokenBus.property;
 
 /**
  * @description
+ * Request a new token from the OAuth token endpoint.
+ *
+ * If we fail to obtain a new token we redirect to the login page and
+ * never resolve the promise.
+ *
+ * This function is used in the `data/Request/Auth` module and other
+ * modules that make API requests. The function is called whenever a
+ * request returns a 401.
+ *
+ * We use `createExclusiveTask` to make sure that we don’t call this
+ * concurrently.
+ *
+ * @returns {Promise<string>}
+ */
+export const refreshToken = createExclusiveTask(() => {
+  tokenStore.remove();
+  tokenMVar.empty();
+  return fetchNewToken().then((token) => {
+    if (token) {
+      tokenStore.set(token);
+      updateToken(token);
+      return token;
+    } else {
+      redirectToLogin();
+    }
+  });
+}).call;
+
+
+/**
+ * @description
  * Initializes the access token. Must be called before any other
  * function in this module.
  *
@@ -87,39 +118,6 @@ export function init () {
       afterLoginPathStore.remove();
       $location.path(afterLoginPath);
     }
-  }
-}
-
-/**
- * @description
- * Request a new token from the OAuth token endpoint.
- *
- * If we fail to obtain a new token we redirect to the login page and
- * never resolve the promise.
- *
- * This function is used in the `data/Request/Auth` module and other
- * modules that make API requests. The function is called whenever a
- * request returns a 401.
- *
- * @returns {Promise<string>}
- */
-export function refreshToken () {
-  if (tokenMVar.isEmpty()) {
-    // token MVar is empty only when a refresh is already in progress
-    return tokenMVar.read();
-  } else {
-    tokenStore.remove();
-    tokenMVar.empty();
-
-    fetchNewToken().then((token) => {
-      if (token) {
-        tokenStore.set(token);
-        updateToken(token);
-      } else {
-        redirectToLogin();
-      }
-    });
-    return tokenMVar.read();
   }
 }
 
