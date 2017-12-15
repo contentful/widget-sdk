@@ -3,8 +3,6 @@ const {expect, coit} = require('./support');
 const describeEntry = require('./entry');
 const describeAsset = require('./asset');
 const describeContentType = require('./content_type');
-const describeApiKey = require('./api_key');
-const describeEditingInterface = require('./editing_interface');
 const describeLocale = require('./locale');
 
 module.exports = function spaceInstanceDescription (serverSpaceData) {
@@ -30,8 +28,6 @@ module.exports = function spaceInstanceDescription (serverSpaceData) {
     describeEntry();
     describeAsset();
     describeContentType();
-    describeApiKey();
-    describeEditingInterface();
     describeLocale();
 
     coit('#delete', function* () {
