@@ -24,6 +24,32 @@ export function getSpacePlans (endpoint) {
   }, alphaHeader);
 }
 
+/**
+ * @param {object?} params
+ * @param {string?} params.type base, space
+ * @returns {Promise<object>}
+ *
+ */
+export function getSubscriptionPlans (endpoint, params) {
+  return endpoint({
+    method: 'GET',
+    path: ['plans'],
+    query: params
+  }, alphaHeader);
+}
+
+/**
+ * Get platform base plan
+ * @param {object} endpoint a subscription endpoint
+ * @returns {Promise<object>} base subscription object
+ */
+export function getBasePlan (endpoint) {
+  return getSubscriptionPlans(endpoint, {type: 'base'})
+    // although you can only have 1 base plan, the endpoint
+    // still returns a list
+    .then(data => data.items[0]);
+}
+
 function parseSubscription (rawData) {
   // TODO use generic link resolver ?
   const rawSubscription = rawData.items[0];

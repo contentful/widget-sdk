@@ -136,6 +136,7 @@ describe('data/Endpoint', function () {
 
   describeCreateEndpoint('createSpaceEndpoint', 'spaces');
   describeCreateEndpoint('createOrganizationEndpoint', 'organizations');
+  describeCreateEndpoint('createOrganizationEndpoint', 'subscriptions');
 
   function describeCreateEndpoint (methodName, endpointUrl) {
     describe(`.${methodName}()`, function () {

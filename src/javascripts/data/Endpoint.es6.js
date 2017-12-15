@@ -83,6 +83,36 @@ export function createOrganizationEndpoint (baseUrl, organizationId, auth) {
 }
 
 /*
+ * @ngdoc method
+ * @name data/Endpoint.createSubscriptionEndpoint
+ * @description
+ * Return a function that makes requests to an organization resource.
+ * See `.create()` for more information.
+ * Request path will be relative to `${baseUrl}/subscriptions/${organizationId}`.
+ *
+ * @usage[js]
+ * var Endpoint = require('data/Endpoint');
+ * var auth = require('Authorization');
+ * var makeEndpointRequest = Endpoint.createSubscriptionEndpoint('//api.contentful.com', 'ORG_ID', auth);
+ *
+ * var users = makeEndpointRequest({
+ *   method: 'GET',
+ *   path: ['users']
+ * });
+ *
+ * @param {string} baseUrl
+ * @param {string} organizationId
+ * @param {object} auth
+ * @param {function(): Promise<string>} auth.getToken
+ * @param {function(): Promise<string>} auth.refreshToken
+ * @returns {function(): Promise<Object>}
+ */
+export function createSubscriptionEndpoint (baseUrl, subscriptionId, auth) {
+  const subscriptionBaseUrl = joinPath([baseUrl, 'subscriptions', subscriptionId]);
+  return create(subscriptionBaseUrl, auth);
+}
+
+/*
  * @private
  * @description
  * Return a function that makes requests to a resource. This is a base function
