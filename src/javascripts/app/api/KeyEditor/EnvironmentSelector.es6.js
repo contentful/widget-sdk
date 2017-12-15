@@ -62,28 +62,30 @@ function renderList ({canEdit, spaceEnvironments, envs, updateEnvs}) {
     }
   };
 
-  return h('div', spaceEnvironments.map(env => h('label', {
+  return h('div', spaceEnvironments.map(env => h('div', {
     style: {
       display: 'flex',
       alignItems: 'center',
       marginTop: '10px'
     }
   }, [
-    h('input', {
-      type: 'checkbox',
-      style: {marginRight: '10px'},
-      checked: isSelected(env),
-      disabled: !canEdit || spaceEnvironments.length < 2,
-      onChange: () => toggleEnvironmentSelection(env)
-    }),
     h('div', {style: {width: '60%'}}, [
-      h('strong', {
-        style: {
-          display: 'inline-block',
-          marginRight: '20px'
-        }
-      }, [
-        env.name
+      h('label', [
+        h('input', {
+          type: 'checkbox',
+          style: {marginRight: '10px'},
+          checked: isSelected(env),
+          disabled: !canEdit || spaceEnvironments.length < 2,
+          onChange: () => toggleEnvironmentSelection(env)
+        }),
+        h('strong', {
+          style: {
+            display: 'inline-block',
+            marginRight: '20px'
+          }
+        }, [
+          env.name
+        ])
       ]),
       env.sys.id === 'master' && badge({}, ['Default environment'])
     ]),
@@ -91,10 +93,7 @@ function renderList ({canEdit, spaceEnvironments, envs, updateEnvs}) {
       codeFragment([env.sys.id]),
       ihspace('6px'),
       h('span', {
-        onClick: e => {
-          e.preventDefault(); // is part of <label>, do not toggle
-          copyToClipboard(env.sys.id);
-        },
+        onClick: () => copyToClipboard(env.sys.id),
         style: {cursor: 'pointer'}
       }, [
         copyIcon()
