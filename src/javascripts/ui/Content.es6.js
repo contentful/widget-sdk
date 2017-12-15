@@ -94,24 +94,24 @@ export function linkOpen (content, url, modifier = '') {
  * ])
  * ~~~
  *
- * @param {VNode|VNode[]}  content    Node or list of nodes
- * @param {string}         stateName  Any state name accepted by UI Router
- * @param {object?}        params     Route parameters. `$stateParams` are used by default
+ * @param {VNode[]}  content   Array of child nodes
+ * @param {object}   stateRef  Object of `{path: 'x.y', params: {...}}` shape.
+ *                             If `params` are not provided `$stateParams` are used.
  * @returns {VNode}
  */
-export function stateLink (content, stateName, params) {
+export function stateLink (content, {path, params}) {
   return h('a', {
-    href: $state.href(stateName, params),
+    href: $state.href(path, params),
     onClick: e => {
       if (e.shiftKey || e.ctrlKey || e.metaKey) {
         // allow to open in a new tab/window normally
       } else {
         // perform Angular UI router transition only
         e.preventDefault();
-        $state.go(stateName, params);
+        $state.go(path, params);
       }
     }
-  }, Array.isArray(content) ? content : [content]);
+  }, content);
 }
 
 

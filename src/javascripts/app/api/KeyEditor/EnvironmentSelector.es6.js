@@ -45,7 +45,7 @@ function renderHint () {
       }
     }, [
       `You haven't set up any additional environments for this space. Head to the `,
-      stateLink('environment settings', 'spaces.detail.settings.environments'),
+      stateLink(['environment settings'], {path: 'spaces.detail.settings.environments'}),
       ' to learn more.'
     ])
   ]);
@@ -54,7 +54,7 @@ function renderHint () {
 function renderList ({canEdit, spaceEnvironments, envs, updateEnvs}) {
   const isSelected = env => !!find(envs, {sys: {id: env.sys.id}});
 
-  const onChange = env => {
+  const toggleEnvironmentSelection = env => {
     if (isSelected(env)) {
       updateEnvs(filter(envs, cur => cur.sys.id !== env.sys.id));
     } else {
@@ -74,7 +74,7 @@ function renderList ({canEdit, spaceEnvironments, envs, updateEnvs}) {
       style: {marginRight: '10px'},
       checked: isSelected(env),
       disabled: !canEdit || spaceEnvironments.length < 2,
-      onChange: () => onChange(env)
+      onChange: () => toggleEnvironmentSelection(env)
     }),
     h('div', {style: {width: '60%'}}, [
       h('strong', {

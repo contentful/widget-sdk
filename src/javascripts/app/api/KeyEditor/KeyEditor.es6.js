@@ -1,7 +1,7 @@
 import {h} from 'ui/Framework';
 import {byName as Colors} from 'Styles/Colors';
 import {assign} from 'utils/Collections';
-import {container} from 'ui/Layout';
+import {container, vspace} from 'ui/Layout';
 import {docsLink} from 'ui/Content';
 import renderEnvironmentSelector from './EnvironmentSelector';
 import copyIcon from 'svg/CopyIcon';
@@ -20,61 +20,59 @@ function renderForm ({data, model, update, trackCopy}) {
   return h('div', [
     h('h3.section-title', ['Access tokens']),
 
-    container({
-      marginBottom: '1.5em'
-    }, [
+    container({}, [
       'To query and get content using the APIs, client applications ',
       'need to authenticate with both the Space ID and an access token.'
     ]),
 
-    section(
-      'Name',
-      'Can be platform or device specific names (i.e. marketing website, tablet, VR app)',
-      [input({canEdit: data.canEdit, model, key: 'name', update})]
-    ),
+    vspace(5),
 
-    section(
-      'Description',
-      'You can provide an optional description for reference in the future',
-      [input({canEdit: data.canEdit, model, key: 'description', update})]
-    ),
+    section({
+      title: 'Name',
+      description: ['Can be platform or device specific names (i.e. marketing website, tablet, VR app)']
+    }, [
+      input({canEdit: data.canEdit, model, key: 'name', update})
+    ]),
 
-    section(
-      'Space ID',
-      null,
-      [inputWithCopy({value: data.spaceId, name: 'space-id', track: () => trackCopy('space')})]
-    ),
+    section({
+      title: 'Description',
+      description: ['You can provide an optional description for reference in the future']
+    }, [
+      input({canEdit: data.canEdit, model, key: 'description', update})
+    ]),
 
-    section(
-      'Content Delivery API - access token',
-      null,
-      [inputWithCopy({value: data.deliveryToken, name: 'delivery-token', track: () => trackCopy('cda')})]
-    ),
+    section({title: 'Space ID'}, [
+      inputWithCopy({value: data.spaceId, name: 'space-id', track: () => trackCopy('space')})
+    ]),
+
+    section({title: 'Content Delivery API - access token'}, [
+      inputWithCopy({value: data.deliveryToken, name: 'delivery-token', track: () => trackCopy('cda')})
+    ]),
 
     separator(),
 
-    section(
-      'Content Preview API - access token',
-      [
+    section({
+      title: 'Content Preview API - access token',
+      description: [
         'Preview unpublished content using this API (i.e. content with “Draft” status). ',
         docsLink('Read more.', 'content_preview')
-      ],
-      [inputWithCopy({value: data.previewToken, name: 'preview-token', track: () => trackCopy('cpa')})]
-    ),
+      ]
+    }, [
+      inputWithCopy({value: data.previewToken, name: 'preview-token', track: () => trackCopy('cpa')})
+    ]),
 
     data.environmentsEnabled && separator(),
-    data.environmentsEnabled && section(
-      'Environments',
-      'Select environments that can be used with this API key. At least one environment has to be selected.',
-      [
-        renderEnvironmentSelector({
-          canEdit: data.canEdit,
-          spaceEnvironments: data.spaceEnvironments,
-          envs: model.environments,
-          updateEnvs: environments => update(assign(model, {environments}))
-        })
-      ]
-    )
+    data.environmentsEnabled && section({
+      title: 'Environments',
+      description: ['Select the environments this API key should have access to. At least one environment has to be selected.']
+    }, [
+      renderEnvironmentSelector({
+        canEdit: data.canEdit,
+        spaceEnvironments: data.spaceEnvironments,
+        envs: model.environments,
+        updateEnvs: environments => update(assign(model, {environments}))
+      })
+    ])
   ]);
 }
 
@@ -113,12 +111,12 @@ function inputWithCopy ({value, name, track}) {
   ]);
 }
 
-function section (title, description, content) {
-  return h('div', {style: {marginBottom: '2rem'}}, [
+function section ({title, description}, content) {
+  return h('div', [
     h('h4.h-reset', [title]),
-    description && h('div', Array.isArray(description) ? description : [description]),
-    h('div', {style: {height: '0.375em'}})
-  ].concat(content));
+    description && h('div', description),
+    vspace(4)
+  ].concat(content).concat([vspace(5)]));
 }
 
 function separator () {

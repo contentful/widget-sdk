@@ -1,7 +1,8 @@
-import {assign, get, inRange, omit} from 'lodash';
+import {assign, get, inRange, omit, isEqual} from 'lodash';
 import Command from 'command';
 import {truncate} from 'stringUtils';
 import {deepFreeze} from 'utils/Freeze';
+import {concat} from 'utils/Collections';
 
 import leaveConfirmator from 'navigation/confirmLeaveEditor';
 import spaceContext from 'spaceContext';
@@ -25,10 +26,6 @@ const ENVIRONMENTS_FLAG_NAME = 'feature-dv-11-2017-environments';
 
 // Entity representing the default "master" environment
 const MASTER_ENV = {sys: {id: 'master'}, name: 'Master'};
-
-// Keys of the map are properties of API Keys that can be changed.
-// Values of the map are functions producting default model values.
-const CHANGABLE = {name: () => '', description: () => '', environments: () => []};
 
 // Pass $scope and API Key, the editor will get rendered and the
 // following properties are exposed as `$scope.apiKeyEditor`:
@@ -57,7 +54,6 @@ function mountBoilerplates ($scope, apiKey) {
 
 function mountContactUs ($scope) {
   LD.onFeatureFlag($scope, CONTACT_US_BOILERPLATE_FLAG_NAME, isVisible => {
-    $scope.contactUsComponent = null;
     if (isVisible) {
       $scope.contactUsComponent = renderContactUs({
         track: () => track('element:click', {
@@ -67,10 +63,30 @@ function mountContactUs ($scope) {
         }),
         openIntercom: () => Intercom.open()
       });
+    } else {
+      $scope.contactUsComponent = null;
     }
+
     $scope.$applyAsync();
   });
 }
+
+function makeApiKeyModel (apiKey) {
+  return {
+    name: apiKey.name || '',
+    description: apiKey.description || '',
+    environments: concat([], apiKey.environments || [])
+  };
+}
+
+function isApiKeyModelEqual (m1, m2) {
+  const sortedIds = envs => (envs || []).map(env => env.sys.id).sort().join(',');
+  return isEqual(
+    {...m1, environments: sortedIds(m1.environments)},
+    {...m2, environments: sortedIds(m2.environments)}
+  );
+}
+
 
 function mountKeyEditor ($scope, apiKey, spaceEnvironments) {
   // TODO: remove this localStorage mock; this property should come from the API
@@ -86,11 +102,8 @@ function mountKeyEditor ($scope, apiKey, spaceEnvironments) {
 
   const canEdit = accessChecker.canModifyApiKeys();
   const notify = makeNotifier(truncate(apiKey.name, 50));
-
-  const model = Object.keys(CHANGABLE).reduce((acc, property) => {
-    acc[property] = apiKey[property] || CHANGABLE[property]();
-    return acc;
-  }, {});
+  const model = makeApiKeyModel(apiKey);
+  let pristineModel = makeApiKeyModel(apiKey);
 
   const reinitKeyEditor = (environmentsEnabled = false) => initKeyEditor({
     data: deepFreeze({
@@ -105,7 +118,7 @@ function mountKeyEditor ($scope, apiKey, spaceEnvironments) {
     connect: (updated, component) => {
       assign(model, updated);
       $scope.context.title = model.name || 'New Api Key';
-      $scope.context.dirty = isDirty();
+      $scope.context.dirty = !isApiKeyModelEqual(model, pristineModel);
       $scope.keyEditorComponent = component;
       $scope.$applyAsync();
     },
@@ -137,12 +150,16 @@ function mountKeyEditor ($scope, apiKey, spaceEnvironments) {
     return (
       !inRange(model.name.length, 1, 256) ||
       accessChecker.shouldDisable('createApiKey') ||
-      !$scope.context.dirty ||
-      model.environments.length < 1
+      !$scope.context.dirty
     );
   }
 
   function save () {
+    if (model.environments.length < 1) {
+      notify.saveNoEnvironments();
+      return;
+    }
+
     // TODO: remove this localStorage mock; this property should be accepted by the API
     TheStore.set(`tmp.envsFor.${apiKey.sys.id}`, model.environments);
     // it means `environments` shouldn't be omitted here:
@@ -153,21 +170,10 @@ function mountKeyEditor ($scope, apiKey, spaceEnvironments) {
     .then(newKey => {
       apiKey = newKey;
       apiKey.environments = model.environments; // TODO faking behavior, should be gone
+      pristineModel = makeApiKeyModel(apiKey);
       $scope.context.dirty = false;
       notify.saveSuccess();
     }, notify.saveFail);
-  }
-
-  function isDirty () {
-    const detailsChanged = ['name', 'description'].some(property => {
-      const entityValue = apiKey[property] || CHANGABLE[property]();
-      return model[property] !== entityValue;
-    });
-
-    const sortedIds = envs => (envs || []).map(env => env.sys.id).sort().join(',');
-    const envsChanged = sortedIds(model.environments) !== sortedIds(apiKey.environments);
-
-    return detailsChanged || envsChanged;
   }
 }
 
@@ -183,6 +189,10 @@ function makeNotifier (title) {
       if (get(error, 'statusCode') !== 422) {
         logger.logServerWarn('ApiKey could not be saved', {error: error});
       }
+    },
+
+    saveNoEnvironments: function () {
+      notification.error('At least one environment has to be selected.');
     },
 
     deleteSuccess: function () {
