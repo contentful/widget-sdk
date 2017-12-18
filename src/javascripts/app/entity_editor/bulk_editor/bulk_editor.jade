@@ -30,7 +30,7 @@
         cf-bulk-entity-editor(entity-context="ctx" bulk-editor-context="editorContext")
 
     .workbench-main__sidebar
-      .entity-sidebar
+      .entity-sidebar(ng-if="!isContextAwareActionEnabled")
         button.btn-action.x--block(cf-context-menu-trigger)
           cf-icon.btn-icon.inverted(name="plus")
           cf-icon.btn-dropdown-icon(name="dd-arrow-down")
@@ -47,3 +47,15 @@
             data-test-id="add-existing-entry"
             ng-click="actions.addExistingEntries()")
             | Link existing entry
+      .entity-sidebar(ng-if="isContextAwareActionEnabled")
+        cf-create-entry-button(
+          data-test-id="add-entry-menu-trigger"
+          content-types="actions.allowedCTs"
+          suggested-content-type-id=""
+          on-select="actions.addNewEntry"
+          mode="large"
+          text="Create new entry and link")
+        .entity-sidebar__help-text
+          | You can also&#32;
+          a(ng-click="actions.addExistingEntries()")
+            | link an existing entry

@@ -14,6 +14,8 @@ window.addEventListener('unhandledrejection', (ev) => {
 // global variables
 /* eslint-disable import/first */
 import 'npm:angular-mocks';
+import { configure } from 'libs/enzyme';
+import Adapter from 'libs/enzyme-adapter-react-16';
 import './application';
 import './boot';
 import './contentful_mocks';
@@ -38,3 +40,5 @@ import './mocks/widget_api';
 
 import installTestCaseContext from './TestCaseContext';
 installTestCaseContext();
+
+configure({ adapter: new Adapter() });

@@ -62,7 +62,7 @@ export function normalize (elSpec, props, children) {
       // This is a special SVG attribute that needs to be camel cased.
       // <svg view-box=...> is not valid.
       return key;
-    } else if (key === 'autoFocus' || key === 'tabIndex') {
+    } else if (key === 'autoFocus' || key === 'tabIndex' || key === 'className') {
       // These are perfectly valid react props.
       return key;
     } else {

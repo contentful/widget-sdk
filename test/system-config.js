@@ -3,10 +3,23 @@
 // A list of _static_ Angular services from the 'cf.libs' and 'cf.es6' modules
 // that we want to expose in SystemJS
 SystemJS.exposeFromAngular = [
-  'libs/kefir', 'libs/sum-types', 'lodash', 'jquery',
-  'libs/sum-types/caseof-eq', 'libs/react', 'libs/react-dom',
-  'libs/prop-types', 'libs/react-dom/test-utils', 'create-react-class',
-  'libs/color', 'libs/qs', 'environment'
+  'create-react-class',
+  'libs/color',
+  'libs/qs',
+  'environment',
+  'libs/downshift',
+  'libs/kefir',
+  'libs/sum-types',
+  'lodash',
+  'jquery',
+  'libs/react-click-outside',
+  'libs/react-dom/test-utils',
+  'libs/enzyme',
+  'libs/enzyme-adapter-react-16',
+  'libs/sum-types/caseof-eq',
+  'libs/react',
+  'libs/react-dom',
+  'libs/prop-types'
 ];
 
 SystemJS.config({
