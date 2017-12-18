@@ -2,7 +2,7 @@ import {get} from 'lodash';
 import $location from '$location';
 import $window from '$window';
 import * as K from 'utils/kefir';
-import { createMVar$q, runTask } from 'utils/Concurrent';
+import { createMVar$q, runTask, createExclusiveTask } from 'utils/Concurrent';
 import TheStore from 'TheStore';
 import * as Config from 'Config';
 import postForm from 'data/Request/PostForm';
@@ -54,11 +54,45 @@ export const token$ = tokenBus.property;
 
 /**
  * @description
+ * Request a new token from the OAuth token endpoint.
+ *
+ * If we fail to obtain a new token we redirect to the login page and
+ * never resolve the promise.
+ *
+ * This function is used in the `data/Request/Auth` module and other
+ * modules that make API requests. The function is called whenever a
+ * request returns a 401.
+ *
+ * We use `createExclusiveTask` to make sure that we don’t call this
+ * concurrently.
+ *
+ * @returns {Promise<string>}
+ */
+export const refreshToken = createExclusiveTask(() => {
+  tokenStore.remove();
+  tokenMVar.empty();
+  return fetchNewToken().then((token) => {
+    if (token) {
+      tokenStore.set(token);
+      updateToken(token);
+      return token;
+    } else {
+      redirectToLogin();
+    }
+  });
+}).call;
+
+
+/**
+ * @description
  * Initializes the access token. Must be called before any other
  * function in this module.
  *
  * We try to obtain an access token from a previous session from
  * local storage. If no token is stored we call `refreshToken()`.
+ *
+ * If we land in the app being redirected from Gatekeeper’s login we
+ * revoke any existing tokens and call `refreshToken()`.
  *
  * We also set the path when we return from a login page after we were
  * redirected there by the app.
@@ -72,59 +106,32 @@ export function init () {
     loadTokenFromHash();
   }
 
-  const storedToken = tokenStore.get();
-  updateToken(storedToken);
+  const previousToken = tokenStore.get();
 
-  // React to changes made in another tab
-  const storedTokenBus = tokenStore.getPropertyBus();
-
-  storedTokenBus.property.onValue((token) => {
-    tokenMVar.empty();
-    updateToken(token);
-  });
-
-  if (!storedToken) {
-    // Obtain token for the first time after login
-    refreshToken();
-
-    const afterLoginPath = afterLoginPathStore.get();
-    if (afterLoginPath) {
-      afterLoginPathStore.remove();
-      $location.path(afterLoginPath);
-    }
+  if (previousToken && $location.url() === '/?login=1') {
+    // This path indicates that we are coming from gatekeeper and we have
+    // a new gatekeeper session. In that case we throw away our current
+    // token since it might belong to a different user
+    revokeToken(previousToken);
+    refreshAndRedirect();
+  } else if (!previousToken) {
+    refreshAndRedirect();
+  } else {
+    updateToken(previousToken);
   }
+
+  // Reflect token updates that happened in a different window
+  tokenStore.externalChanges().onValue(updateToken);
 }
 
-/**
- * @description
- * Request a new token from the OAuth token endpoint.
- *
- * If we fail to obtain a new token we redirect to the login page and
- * never resolve the promise.
- *
- * This function is used in the `data/Request/Auth` module and other
- * modules that make API requests. The function is called whenever a
- * request returns a 401.
- *
- * @returns {Promise<string>}
- */
-export function refreshToken () {
-  if (tokenMVar.isEmpty()) {
-    // token MVar is empty only when a refresh is already in progress
-    return tokenMVar.read();
-  } else {
-    tokenStore.remove();
-    tokenMVar.empty();
 
-    fetchNewToken().then((token) => {
-      if (token) {
-        tokenStore.set(token);
-        updateToken(token);
-      } else {
-        redirectToLogin();
-      }
-    });
-    return tokenMVar.read();
+function refreshAndRedirect () {
+  refreshToken();
+
+  const afterLoginPath = afterLoginPathStore.get();
+  if (afterLoginPath) {
+    afterLoginPathStore.remove();
+    $location.path(afterLoginPath);
   }
 }
 
@@ -141,13 +148,7 @@ export function logout () {
     const token = yield tokenMVar.take();
     tokenStore.remove();
     try {
-      yield postForm(Config.authUrl('oauth/revoke'), {
-        token: token
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      yield revokeToken(token);
     } finally {
       setLocation(Config.authUrl('logout'));
     }
@@ -178,13 +179,35 @@ export function redirectToLogin () {
   setLocation(Config.authUrl('login'));
 }
 
+
 function updateToken (value) {
+  // We sync the token between windows using the 'storage' event. To
+  // prevent unecessary updates we only update the stored value when it
+  // has changed
+  if (tokenStore.get() !== value) {
+    tokenStore.set(value);
+  }
   tokenBus.set(value);
   tokenMVar.put(value);
 }
 
+
 function setLocation (url) {
   $window.location = url;
+}
+
+
+/**
+ * Sends a request to Gatekeeper to revoke the given token.
+ */
+function revokeToken (token) {
+  return postForm(Config.authUrl('oauth/revoke'), {
+    token
+  }, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
 }
 
 

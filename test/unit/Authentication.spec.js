@@ -3,7 +3,11 @@ import * as K from 'helpers/mocks/kefir';
 describe('Authentication', function () {
   beforeEach(function () {
     this.$http = sinon.stub();
-    this.window = {location: '', addEventListener: sinon.stub()};
+    this.window = {
+      location: '',
+      addEventListener: sinon.stub(),
+      removeEventListener: sinon.stub()
+    };
 
     module('contentful/test', ($provide) => {
       $provide.value('$http', this.$http);
@@ -46,6 +50,11 @@ describe('Authentication', function () {
       expect(tokenRef.value).toBe('STORED_TOKEN');
       yield this.Auth.refreshToken();
       expect(tokenRef.value).toBe('NEW TOKEN');
+    });
+
+    it('stores the new token in local storage', function* () {
+      yield this.Auth.refreshToken();
+      expect(this.store.get()).toBe('NEW TOKEN');
     });
 
     it('returns new token', function* () {
@@ -95,6 +104,44 @@ describe('Authentication', function () {
       this.window.addEventListener.withArgs('storage').yield({key: 'token', newValue: 'NEW TOKEN'});
       expect(yield this.Auth.getToken()).toBe('NEW TOKEN');
       expect(K.getValue(this.Auth.token$)).toBe('NEW TOKEN');
+    });
+
+    describe('on login from gatekeeper', function () {
+      beforeEach(function () {
+        const $location = this.mockService('$location');
+        $location.url.returns('/?login=1');
+      });
+
+      it('revokes and deletes existing token', function* () {
+        this.store.set('STORED_TOKEN');
+        this.Auth.init();
+        expect(this.store.get()).toBe(null);
+        sinon.assert.calledWith(this.$http, sinon.match({
+          method: 'POST',
+          url: '//be.test.com/oauth/revoke',
+          data: 'token=STORED_TOKEN',
+          headers: {
+            'Authorization': 'Bearer STORED_TOKEN'
+          }
+        }));
+      });
+
+      it('gets a new token', function* () {
+        this.store.set('STORED_TOKEN');
+        this.Auth.init();
+        sinon.assert.calledWith(this.$http, sinon.match({
+          method: 'POST',
+          url: '//be.test.com/oauth/token',
+          data:
+            'grant_type=password' +
+            '&client_id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' +
+            '&scope=content_management_manage',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          withCredentials: true
+        }));
+      });
     });
   });
 
