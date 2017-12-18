@@ -156,7 +156,7 @@ function editButton (environment) {
 
 function deleteButton (environment) {
   return h('button.text-link--destructive', {
-    disabled: environment.isMaster || environment.status === 'inProgress',
+    disabled: environment.isMaster,
     onClick: environment.Delete
   }, [ 'Delete' ]);
 }
