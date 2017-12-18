@@ -8,7 +8,7 @@ import logger from 'logger';
  * ui router). This allows you to link to a resource type without knowning
  * the full path of that resource.
  *
- * @param {string} link - one of `api`, `invite`, `users`, `subscription`.
+ * @param {string} link - one of `api`, `invite`, `users`, `subscription`, `org`.
  * @return {Promise<{path:string, params:Object}>} - promise with resolved path and params
  */
 export function resolveLink (link) {
@@ -36,7 +36,8 @@ function resolveParams (link) {
     'api': resolveApi,
     'invite': resolveInviteUser,
     'users': resolveUsers,
-    'subscription': resolveSubscriptions
+    'subscription': resolveSubscriptions,
+    'org': resolveOrganizationInfo
   };
 
   const resolverFn = mappings[link];
@@ -112,6 +113,19 @@ function resolveSubscriptions () {
         orgId,
         // dummy pathsuffix since we don't want to redirect
         // to purchase page
+        pathSuffix: ''
+      }
+    });
+  });
+}
+
+function resolveOrganizationInfo () {
+  return runTask(function* () {
+    const { orgId } = yield* getOrg();
+    return yield* applyOrgAccess(orgId, {
+      path: ['account', 'organizations', 'edit'],
+      params: {
+        orgId,
         pathSuffix: ''
       }
     });

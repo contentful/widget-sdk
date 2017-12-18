@@ -1,4 +1,4 @@
-import {getSpace, getSpaces, getOrganization} from 'services/TokenStore';
+import {getFatSpaces, getOrganizations, getOrganization} from 'services/TokenStore';
 import TheStore from 'TheStore';
 import accessChecker from 'accessChecker';
 import {isOwnerOrAdmin} from 'services/OrganizationRoles';
@@ -9,20 +9,18 @@ import {isOwnerOrAdmin} from 'services/OrganizationRoles';
  * first available space is used
  */
 export function* getSpaceInfo () {
-  try {
-    const spaceId = TheStore.get('lastUsedSpace');
+  const lastUsedId = TheStore.get('lastUsedSpace');
+  const spaces = yield getFatSpaces();
 
-    if (spaceId) {
-      const space = yield getSpace(spaceId);
-      return { space, spaceId };
-    } else {
-      throw new Error('no spaceId from the store');
-    }
-  } catch (e) {
-    const rawSpace = yield getSpaces().then(spaces => spaces[0]);
-    const space = yield getSpace(rawSpace.sys.id);
-    return { space, spaceId: space.data.sys.id };
+  if (spaces.length === 0) {
+    throw new Error('user has no spaces');
   }
+
+  const defaultSpace = spaces[0];
+  const usedSpace = lastUsedId && spaces.find(space => space.data.sys.id === lastUsedId);
+  const space = usedSpace || defaultSpace;
+
+  return { space, spaceId: space.data.sys.id };
 }
 
 /**
@@ -30,23 +28,20 @@ export function* getSpaceInfo () {
  * or organization of the first space
  */
 export function* getOrg () {
-  try {
-    const orgId = TheStore.get('lastUsedOrg');
+  const lastUsedOrgId = TheStore.get('lastUsedOrg');
+  const orgs = yield getOrganizations();
 
-    if (orgId) {
-      // will throw an error if org with such orgId does not exist
-      yield getOrganization(orgId);
-      return { orgId };
-    } else {
-      throw new Error('no orgId in the store');
-    }
-  } catch (e) {
-    const { space } = yield* getSpaceInfo();
+  const usedOrg = lastUsedOrgId && orgs.find(org => org.sys.id === lastUsedOrgId);
 
-    return {
-      orgId: space.getOrganizationId()
-    };
+  if (usedOrg) {
+    return { orgId: lastUsedOrgId };
   }
+
+  const { space } = yield* getSpaceInfo();
+
+  return {
+    orgId: space.getOrganizationId()
+  };
 }
 
 /**

@@ -4,18 +4,16 @@ import {noop} from 'lodash';
 describe('states/deeplink/utils', function () {
   beforeEach(function () {
     this.storeGet = sinon.stub();
-    this.getSpace = sinon.stub();
-    this.getSpaces = sinon.stub();
-    this.getOrganization = sinon.stub();
+    this.getFatSpaces = sinon.stub();
+    this.getOrganizations = sinon.stub();
     module('contentful/test', ($provide) => {
       $provide.value('TheStore', {
         get: this.storeGet,
         forKey: noop
       });
       $provide.value('services/TokenStore', {
-        getSpace: this.getSpace,
-        getSpaces: this.getSpaces,
-        getOrganization: this.getOrganization
+        getFatSpaces: this.getFatSpaces,
+        getOrganizations: this.getOrganizations
       });
     });
 
@@ -25,6 +23,7 @@ describe('states/deeplink/utils', function () {
   describe('#getSpaceInfo', function () {
     it('checks value in the store', function* () {
       this.storeGet.returns('some_id');
+      this.getFatSpaces.returns(Promise.resolve([{ data: { sys: { id: 'some_id' } } }]));
       yield* this.utils.getSpaceInfo();
 
       expect(this.storeGet.calledOnce).toBe(true);
@@ -32,6 +31,7 @@ describe('states/deeplink/utils', function () {
 
     it('returns spaceId from the store', function* () {
       this.storeGet.returns('some_id');
+      this.getFatSpaces.returns(Promise.resolve([{ data: { sys: { id: 'some_id' } } }]));
       const { spaceId } = yield* this.utils.getSpaceInfo();
 
       expect(spaceId).toBe('some_id');
@@ -39,19 +39,14 @@ describe('states/deeplink/utils', function () {
 
     it('returns a new spaceId if we have invalid in the store', function* () {
       this.storeGet.returns('some_id');
-      this.getSpace.onFirstCall().returns(Promise.reject(new Error('Something!!!')));
-      const spaces = [{ something: true, sys: { id: 'new_id' } }];
-      this.getSpaces.returns(Promise.resolve(spaces));
-      this.getSpace.onSecondCall().returns(Promise.resolve({
-        data: { sys: { id: 'new_id' } }
-      }));
+      this.getFatSpaces.returns(Promise.resolve([{ data: { sys: { id: 'new_id' } } }]));
 
       const { spaceId } = yield* this.utils.getSpaceInfo();
       expect(spaceId).toBe('new_id');
     });
 
     it('throws an error if there are no spaces', function* () {
-      this.getSpaces.returns(Promise.resolve([]));
+      this.getFatSpaces.returns(Promise.resolve([]));
       let hasError = false;
 
       try {
@@ -69,6 +64,7 @@ describe('states/deeplink/utils', function () {
   describe('#getOrg', function () {
     it('returns orgId from the store', function* () {
       this.storeGet.returns('some_org_id');
+      this.getOrganizations.returns(Promise.resolve([{ sys: { id: 'some_org_id' } }]));
       const { orgId } = yield* this.utils.getOrg();
 
       expect(orgId).toBe('some_org_id');
@@ -76,10 +72,13 @@ describe('states/deeplink/utils', function () {
 
     it('returns org from the selected space', function* () {
       this.storeGet.returns('some_org_id');
-      this.getSpace.returns(Promise.resolve({
-        getOrganizationId: () => 'some_new_org_id'
-      }));
-      this.getOrganization.returns(Promise.reject(new Error('no org with this id')));
+      this.getOrganizations.returns(Promise.resolve([]));
+      this.getFatSpaces.returns(Promise.resolve([
+        {
+          getOrganizationId: () => 'some_new_org_id',
+          data: { sys: { id: 'some_space_id' } }
+        }
+      ]));
       const { orgId } = yield* this.utils.getOrg();
 
       expect(orgId).toBe('some_new_org_id');
