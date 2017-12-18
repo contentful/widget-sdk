@@ -5,8 +5,7 @@ import {byName as Colors} from 'Styles/Colors';
 import {find} from 'lodash';
 import {filter, concat} from 'utils/Collections';
 import infoIcon from 'svg/info';
-import copyIcon from 'svg/CopyIcon';
-import copyToClipboard from 'utils/DomClipboardCopy';
+import copyButton from 'ui/Components/CopyIconButton';
 
 export function makeLink (env) {
   return {
@@ -92,12 +91,7 @@ function renderList ({canEdit, spaceEnvironments, envs, updateEnvs}) {
     h('div', [
       codeFragment([env.sys.id]),
       ihspace('6px'),
-      h('span', {
-        onClick: () => copyToClipboard(env.sys.id),
-        style: {cursor: 'pointer'}
-      }, [
-        copyIcon()
-      ])
+      h(copyButton, { value: env.sys.id })
     ])
   ])));
 }
