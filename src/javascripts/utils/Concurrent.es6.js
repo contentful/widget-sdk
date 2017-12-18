@@ -118,7 +118,10 @@ function isThenable (obj) {
  */
 export function wrapTask (genFn) {
   return function (...args) {
-    return runTask(genFn, ...args);
+    const self = this;
+    return runTask(function* () {
+      return yield* genFn.call(self, ...args);
+    });
   };
 }
 

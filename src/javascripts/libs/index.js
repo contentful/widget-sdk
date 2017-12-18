@@ -14,6 +14,7 @@ require('codemirror/addon/edit/continuelist');
 require('codemirror/addon/mode/overlay');
 
 angular.module('cf.libs', [])
+  .constant('libs/react-tippy', require('react-tippy'))
   .constant('libs/color', require('color'))
   .constant('libs/sanitize-html', require('sanitize-html'))
   .constant('libs/react', require('react'))
