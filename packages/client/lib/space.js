@@ -2,10 +2,14 @@
 
 var Entity = require('./entity');
 var ContentType = require('./content_type');
+var EditingInterface = require('./editing_interface');
 var Entry = require('./entry');
 var Asset = require('./asset');
+var ApiKey = require('./api_key');
 var Locale = require('./locale');
+var User = require('./user');
 var _ = require('lodash-node/modern');
+var PreviewApiKey = require('./preview_api_key');
 var createResourceFactoryMethods = require('./resource_factory');
 
 var Space = function Space (data, persistenceContext) {
@@ -88,9 +92,13 @@ Space.mixinFactoryMethods = function (target, path) {
 
 _.extend(Space.prototype,
   ContentType.factoryMethods,
+  EditingInterface.spaceMethods,
   Entry.factoryMethods,
   Asset.factoryMethods,
-  Locale.factoryMethods
+  ApiKey.factoryMethods,
+  PreviewApiKey.factoryMethods,
+  Locale.factoryMethods,
+  User.factoryMethods
 );
 
 module.exports = Space;

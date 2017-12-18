@@ -4,9 +4,6 @@ describe('cfOnboardingSteps Directive', function () {
   beforeEach(function () {
     module('contentful/test');
     this.$state = this.$inject('$state');
-
-    this.spaceContext = this.$inject('mocks/spaceContext').init();
-
     this.compile = function () {
       this.element = this.$compile('<cf-onboarding-steps />');
       this.controller = this.element.isolateScope().onboarding;
@@ -28,9 +25,10 @@ describe('cfOnboardingSteps Directive', function () {
     beforeEach(function () {
       this.$state.current.name = 'home';
       this.compile();
-      this.spaceContext.publishedCTs = {getAllBare: () => []};
-      this.spaceContext.getData = sinon.stub().withArgs('activatedAt').returns(null);
-      this.spaceContext.space = null;
+      const spaceContext = this.$inject('spaceContext');
+      spaceContext.publishedCTs = {getAllBare: () => []};
+      spaceContext.getData = sinon.stub().withArgs('activatedAt').returns(null);
+      spaceContext.space = null;
     });
 
     it('only create space button is active', function () {
@@ -43,6 +41,7 @@ describe('cfOnboardingSteps Directive', function () {
     describe('not activated', function () {
       beforeEach(function () {
         this.$state.current.name = 'spaces.detail.home';
+        this.spaceContext = this.$inject('spaceContext');
         this.spaceContext.publishedCTs = {getAllBare: () => []};
         this.spaceContext.getData = sinon.stub().withArgs('activatedAt').returns(null);
         this.spaceContext.space = {};
@@ -74,6 +73,7 @@ describe('cfOnboardingSteps Directive', function () {
     describe('activated', function () {
       beforeEach(function () {
         this.$state.current.name = 'spaces.detail.home';
+        this.spaceContext = this.$inject('spaceContext');
         this.spaceContext.publishedCTs = {getAllBare: () => [{}]};
         this.spaceContext.getData = sinon.stub();
         this.spaceContext.getData.withArgs('activatedAt').returns('2017-03-03T16:14:00Z');
@@ -96,7 +96,7 @@ describe('cfOnboardingSteps Directive', function () {
       });
 
       it('invited users', function () {
-        this.spaceContext.memberships.getAll.resolves([{}, {}]);
+        this.spaceContext.space.getUsers.resolves([{}, {}]);
         this.compile();
         this.assertCompletedSteps(1);
       });
