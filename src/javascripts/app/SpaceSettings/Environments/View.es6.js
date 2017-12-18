@@ -112,7 +112,7 @@ function environmentTable (environments) {
             },
             style: { cursor: 'pointer' }
           }, [
-            copyIcon()
+            copyIcon({ color: Colors.textLightest })
           ])
         ]),
         td([
