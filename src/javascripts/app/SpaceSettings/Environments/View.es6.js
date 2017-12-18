@@ -101,7 +101,7 @@ function environmentTable (environments) {
         td([
           environment.name,
           ihspace('1.2em'),
-          environment.isMaster && badge({}, ['Default environment'])
+          environment.isMaster && badge({ color: Colors.textLight }, ['Default environment'])
         ]),
         td([
           codeFragment([ environment.id ]),
