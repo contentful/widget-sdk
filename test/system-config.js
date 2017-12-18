@@ -5,7 +5,7 @@
 SystemJS.exposeFromAngular = [
   'libs/kefir', 'libs/sum-types', 'lodash', 'jquery',
   'libs/sum-types/caseof-eq', 'libs/react', 'libs/react-dom',
-  'libs/react-dom/test-utils', 'create-react-class',
+  'libs/prop-types', 'libs/react-dom/test-utils', 'create-react-class',
   'libs/color', 'libs/qs', 'environment'
 ];
 
