@@ -15,9 +15,12 @@ import TheLocaleStore from 'TheLocaleStore';
  * as long as processing is not done and once it is done the version will be
  * outdated.
  *
+ * @param {string?} options.locale Locale files will be uploaded for.
  * @returns {Promise<Array<Asset>>}
  */
-export function open () {
+export function open (options = {}) {
+  const locale = options.locale || TheLocaleStore.getDefaultLocale().internal_code;
+
   return Filepicker.pickMultiple().then(uploadFPFiles, (fpError) => {
     if (!Filepicker.isUserClosedDialogError(fpError)) {
       notification.error(
@@ -27,42 +30,40 @@ export function open () {
     }
     return [];
   });
-}
 
-function uploadFPFiles (fpFiles) {
-  return $q.all(fpFiles.map(createAssetForFile)).then((assets) => {
-    assets = assets.filter(identity);
-    notification.info('Assets uploaded. Processing…');
-    return $q.all(assets.map(processAssetForFile)).then(() => {
-      notification.info('Assets processed. Updating…');
-      return assets;
-    }).catch((error) => {
-      notification.warn('Some assets failed to process');
+  function uploadFPFiles (fpFiles) {
+    return $q.all(fpFiles.map(createAssetForFile)).then((assets) => {
+      assets = assets.filter(identity);
+      notification.info('Assets uploaded. Processing…');
+      return $q.all(assets.map(processAssetForFile)).then(() => {
+        notification.info('Assets processed. Updating…');
+        return assets;
+      }).catch((error) => {
+        notification.warn('Some assets failed to process');
+        return $q.reject(error);
+      });
+    }, (error) => {
+      logger.logServerWarn('Some assets failed to upload', { error });
+      notification.error('Some assets failed to upload');
       return $q.reject(error);
     });
-  }, (error) => {
-    logger.logServerWarn('Some assets failed to upload', { error });
-    notification.error('Some assets failed to upload');
-    return $q.reject(error);
-  });
-}
+  }
 
-function createAssetForFile (fpFile) {
-  const file = Filepicker.parseFPFile(fpFile);
-  const locale = TheLocaleStore.getDefaultLocale().internal_code;
-  const data = {
-    sys: { type: 'Asset' },
-    fields: { file: {}, title: {} }
-  };
-  data.fields.file[locale] = file;
-  data.fields.title[locale] = stringUtils.fileNameToTitle(file.fileName);
+  function createAssetForFile (fpFile) {
+    const file = Filepicker.parseFPFile(fpFile);
+    const data = {
+      sys: { type: 'Asset' },
+      fields: { file: {}, title: {} }
+    };
+    data.fields.file[locale] = file;
+    data.fields.title[locale] = stringUtils.fileNameToTitle(file.fileName);
 
-  return spaceContext.space.createAsset(data);
-}
+    return spaceContext.space.createAsset(data);
+  }
 
-function processAssetForFile (asset) {
-  const locale = TheLocaleStore.getDefaultLocale().internal_code;
-  return asset.process(asset.version, locale);
+  function processAssetForFile (asset) {
+    return asset.process(asset.version, locale);
+  }
 }
 
 /**

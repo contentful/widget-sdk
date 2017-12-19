@@ -56,7 +56,7 @@ export function create (editor, localeCode) {
     const cursor = wrapper.getCursor();
     editor.getWrapper().disable();
 
-    BulkAssetsCreator.open().then((assetObjects) => {
+    BulkAssetsCreator.open({ locale: localeCode }).then((assetObjects) => {
       BulkAssetsCreator.tryToPublishProcessingAssets(assetObjects)
       .then((result) => {
         const { publishedAssets, unpublishableAssets } = result;
