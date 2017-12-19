@@ -119,7 +119,9 @@ describe('Authentication', function () {
         sinon.assert.calledWith(this.$http, sinon.match({
           method: 'POST',
           url: '//be.test.com/oauth/revoke',
-          data: 'token=STORED_TOKEN',
+          data:
+            'token=STORED_TOKEN' +
+            '&client_id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
           headers: {
             'Authorization': 'Bearer STORED_TOKEN'
           }
@@ -163,7 +165,9 @@ describe('Authentication', function () {
       sinon.assert.calledWith(this.$http, sinon.match({
         method: 'POST',
         url: '//be.test.com/oauth/revoke',
-        data: 'token=STORED_TOKEN',
+        data:
+          'token=STORED_TOKEN' +
+          '&client_id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
         headers: {
           'Authorization': 'Bearer STORED_TOKEN'
         }
