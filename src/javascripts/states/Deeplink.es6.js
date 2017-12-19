@@ -25,24 +25,28 @@ export default makeState({
   template: createTemplate(),
   loadingText: 'Redirecting...',
   controller: ['$scope', function ($scope) {
-    const { link } = $location.search();
-
-    resolveLink(link).then(({ path, params }) => {
-      if (!path) {
-        $scope.status = 'not_exist';
-        $scope.context = { ready: true };
-      } else {
-        Navigator.go({
-          path,
-          params,
-          options: {
-            location: 'replace'
-          }
-        });
-      }
-    });
+    createController($scope);
   }]
 });
+
+export function createController ($scope) {
+  const { link } = $location.search();
+
+  return resolveLink(link).then(({ path, params }) => {
+    if (!path) {
+      $scope.status = 'not_exist';
+      $scope.context = { ready: true };
+    } else {
+      Navigator.go({
+        path,
+        params,
+        options: {
+          location: 'replace'
+        }
+      });
+    }
+  });
+}
 
 function createTemplate () {
   return h('.workbench', [
