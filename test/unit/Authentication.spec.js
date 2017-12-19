@@ -121,10 +121,7 @@ describe('Authentication', function () {
           url: '//be.test.com/oauth/revoke',
           data:
             'token=STORED_TOKEN' +
-            '&client_id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-          headers: {
-            'Authorization': 'Bearer STORED_TOKEN'
-          }
+            '&client_id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
         }));
       });
 
@@ -167,10 +164,7 @@ describe('Authentication', function () {
         url: '//be.test.com/oauth/revoke',
         data:
           'token=STORED_TOKEN' +
-          '&client_id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-        headers: {
-          'Authorization': 'Bearer STORED_TOKEN'
-        }
+          '&client_id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
       }));
     });
 
