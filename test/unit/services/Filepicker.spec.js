@@ -26,7 +26,7 @@ describe('Filepicker', function () {
       });
     };
 
-    Filepicker = this.$inject('services/Filepicker');
+    Filepicker = this.$inject('realFilepicker');
 
     $rootScope.$apply();
   });
