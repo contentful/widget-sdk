@@ -202,11 +202,8 @@ function setLocation (url) {
  */
 function revokeToken (token) {
   return postForm(Config.authUrl('oauth/revoke'), {
-    token
-  }, {
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
+    token,
+    client_id: OAUTH_CLIENT_ID
   });
 }
 
