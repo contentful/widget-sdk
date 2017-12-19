@@ -228,7 +228,7 @@ function filterPill ({
   onRemoveAttempt = noop
 }) {
   return h('div.search__filter-pill', {
-    dataTestId: testId,
+    'data-test-id': testId,
     ref: (el) => {
       if (isFocused && el) {
         requestAnimationFrame(() => el.focus());
@@ -393,7 +393,7 @@ function suggestionsBox ({
 }) {
   const suggestions = items.map((field, index) => {
     return h('div.search-next__completion-item', {
-      dataTestId: field.queryKey,
+      'data-test-id': field.queryKey,
       ref: (el) => {
         if (defaultFocus.suggestionsFocusIndex === index && el) {
           el.focus();
@@ -412,14 +412,14 @@ function suggestionsBox ({
     }, [
       // TODO truncate with ellipses
       h('div', {
-        dataTestId: 'label',
+        'data-test-id': 'label',
         style: {flex: '0 0 30%'}
       }, [
         h('.__filter-pill', [ field.name ])
       ]),
 
       h('div', {
-        dataTestId: 'contentType',
+        'data-test-id': 'contentType',
         style: {
           color: colors.textLightest,
           flex: '0 0 30%'
@@ -429,7 +429,7 @@ function suggestionsBox ({
       ]),
 
       h('div', {
-        dataTestId: 'description',
+        'data-test-id': 'description',
         style: {
           flex: '0 0 30%',
           color: colors.textLight
@@ -492,7 +492,7 @@ function suggestionsHeader () {
 function suggestionList ({ items, searchTerm }) {
   const hasSuggestions = items.length > 0;
   return h('div', {
-    dataTestId: 'suggestions',
+    'data-test-id': 'suggestions',
     style: {
       zIndex: 1,
       border: `solid ${colors.blueMid}`,

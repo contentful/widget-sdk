@@ -44,11 +44,12 @@ const TextValueInput = createReactClass({
     // in a span that pushes the parent div to grow.
     const shadowValue = value || '';
 
-    return h('fieldset', { className: 'search__input-text' }, [
+    return h('fieldset',
+      { className: 'search__input-text' },
       h('input', {
         className: 'input-reset search__input',
-        dataTestId: testId,
-        value,
+        'data-test-id': testId,
+        value: value !== null ? value : '',
         ref: inputRef,
         onChange: this.handleChange,
         onKeyDown,
@@ -58,7 +59,7 @@ const TextValueInput = createReactClass({
       h('span', { className: 'search__input-spacer' }, [
         shadowValue.replace(/\s/g, '|')
       ])
-    ]);
+    );
   }
 });
 

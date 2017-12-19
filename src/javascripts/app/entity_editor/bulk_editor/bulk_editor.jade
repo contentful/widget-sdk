@@ -49,6 +49,7 @@
             | Link existing entry
       .entity-sidebar(ng-if="isContextAwareActionEnabled")
         cf-create-entry-button(
+          cf-context-menu-trigger
           data-test-id="add-entry-menu-trigger"
           content-types="actions.allowedCTs"
           suggested-content-type-id=""
@@ -57,5 +58,7 @@
           text="Create new entry and link")
         .entity-sidebar__help-text
           | You can also&#32;
-          a(ng-click="actions.addExistingEntries()")
+          a(
+            data-test-id="add-existing-entry"
+            ng-click="actions.addExistingEntries()")
             | link an existing entry
