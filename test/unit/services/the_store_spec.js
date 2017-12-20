@@ -1,5 +1,3 @@
-import * as K from 'utils/kefir';
-
 describe('The Store service', function () {
   beforeEach(function () {
     const addEventListener = sinon.stub();
@@ -214,22 +212,14 @@ describe('The Store service', function () {
       });
     });
 
-    describe('#getProperty', function () {
-      it('sends value on `storage` window event', function () {
-        const propBus = this.TheStore.getPropertyBus('mykey');
+    describe('#externalChanges', function () {
+      it('emits value on `storage` window event', function () {
+        this.TheStore.set('mykey', 'initial');
+        const changes$ = this.TheStore.externalChanges('mykey');
+        const emittedChange = sinon.stub();
+        changes$.onValue(emittedChange);
         this.addEventListener.withArgs('storage').yield({key: 'mykey', newValue: 'newvalue'});
-        expect(K.getValue(propBus.property)).toEqual('newvalue');
-      });
-
-
-      it('unsubscribes and ends the stream on `end`', function () {
-        const propBus = this.TheStore.getPropertyBus('mykey');
-        const listener = sinon.stub();
-        propBus.end();
-        propBus.property.onValue(listener);
-        this.addEventListener.withArgs('storage').yield({key: 'mykey', newValue: 'newvalue'});
-        sinon.assert.notCalled(listener.withArgs('newvalue'));
-        sinon.assert.calledOnce(this.removeEventListener);
+        sinon.assert.calledOnceWith(emittedChange, 'newvalue');
       });
     });
   });

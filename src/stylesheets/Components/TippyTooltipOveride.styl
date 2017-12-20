@@ -1,0 +1,28 @@
+// Here we provide overides for the tooltip styles offered by
+// [`tippy`][1].
+//
+// [1]: https://atomiks.github.io/tippyjs/
+
+.tippy-tooltip
+  font-size: 12px
+  line-height: 16px
+  padding: 7px 10px
+  border-radius: 2px
+  background-color: $colors.contrast-mid
+  // No text cursor for children
+  cursor: default
+
+.tippy-popper
+  // Tippy disables pointer events by default. But we want the element
+  // to be clickable
+  pointer-events: initial
+
+// TODO We should extend this for the other placements. We should also
+// use a mixin for this.
+.tippy-popper[x-placement^=bottom] [x-arrow]
+  border-bottom: 5px solid $colors.contrast-mid
+  border-right: 5px solid transparent
+  border-left: 5px solid transparent
+  top: -5px;
+  margin: 0 9px;
+

@@ -9,6 +9,7 @@ angular.module('contentful')
   var List = require('utils/List');
   var Tracking = require('app/entity_editor/bulk_editor/Tracking');
   var DataLoader = require('app/entity_editor/DataLoader');
+  var LD = require('utils/LaunchDarkly');
 
   return {
     scope: {
@@ -20,6 +21,8 @@ angular.module('contentful')
   };
 
   function link ($scope) {
+    setFeatureFlags($scope);
+
     // This is passed from the EntryEditorController
     var referenceContext = $scope.referenceContext;
 
@@ -115,6 +118,16 @@ angular.module('contentful')
     }
   }
 
+  function setFeatureFlags ($scope) {
+    LD.onFeatureFlag(
+      $scope,
+      'feature-at-11-2017-lots-of-cts-ctx-aware-dropdown',
+      function (variation) {
+        $scope.isContextAwareActionEnabled = variation;
+      }
+    );
+  }
+
   /**
    * Returns the actions for creating new entries and adding existing entries.
    */
@@ -124,14 +137,23 @@ angular.module('contentful')
       itemLinkType: _.get(field, ['items', 'linkType']),
       itemValidations: _.get(field, ['items', 'validations'], [])
     });
+    var allowedCTs = getAllowedCTs(extendedField);
+    var accessibleCTs = allowedCTs.map(function (ct) {
+      return {
+        id: ct.sys.id,
+        name: ct.name
+      };
+    });
 
     return {
-      accessibleCTs: getAccessibleCTs(extendedField),
+      allowedCTs: allowedCTs, // For new "Add entry" button behind feature flag.
+      accessibleCTs: accessibleCTs, // For legacy "Add entry" button.
       addNewEntry: addNewEntry,
       addExistingEntries: addExistingEntries
     };
 
-    function addNewEntry (ctId) {
+    function addNewEntry (ctOrCtId) {
+      var ctId = _.isObject(ctOrCtId) ? ctOrCtId.getId() : ctOrCtId;
       spaceContext.cma.createEntry(ctId, {})
       .then(function (entity) {
         track.addNew();
@@ -151,13 +173,12 @@ angular.module('contentful')
 
 
   /**
-   * Returns a list of {id, name} tuples for content types that the user can add
-   * to this field.
+   * Returns a list of content types that the user can add to this field.
    *
    * This takes into account the content types users can create entries for and
    * the content type validation on the field.
    */
-  function getAccessibleCTs (field) {
+  function getAllowedCTs (field) {
     var itemValidations = _.get(field, ['items', 'validations']);
 
     var contentTypeValidation = _.find(itemValidations, function (validation) {
@@ -172,15 +193,10 @@ angular.module('contentful')
       return spaceContext.publishedCTs.get(ctId);
     });
 
-    var creatableCTs = _.filter(validCTs, function (ct) {
+    return _.filter(validCTs, function (ct) {
       return ct && accessChecker.canPerformActionOnEntryOfType('create', ct.getId());
-    });
-
-    return creatableCTs.map(function (ct) {
-      return {
-        id: ct.data.sys.id,
-        name: ct.getName()
-      };
+    }).map(function (ct) {
+      return ct.data;
     });
   }
 

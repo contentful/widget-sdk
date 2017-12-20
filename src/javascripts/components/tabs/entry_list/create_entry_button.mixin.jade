@@ -14,33 +14,39 @@ mixin create-entry-button-wrapper
 
 mixin create-entry-button
   div(ng-if="accessibleCts.length === 1")
-    +create-entry-button-wrapper(
-      large=attributes.large
-      ng-click="entityCreationController.newEntry(accessibleCts[0].sys.id)")
-      | Add {{accessibleCts[0].name || 'Untitled'}}
+    cf-create-entry-button(
+      ng-if="isContextAwareActionEnabled"
+      data-test-id="add-entry-menu-trigger"
+      content-types="accessibleCts"
+      suggested-content-type-id="context.view.contentTypeId"
+      on-select="entityCreationController.newEntry"
+      mode=attributes.mode
+      position=attributes.position
+      text="Add {{accessibleCts[0].name || 'Untitled'}}")
   div(ng-if="accessibleCts.length > 1")
-    +create-entry-button-wrapper(
-      large=attributes.large
-      cf-context-menu-trigger
-      data-test-id="add-entry-menu-trigger")
-      cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-      | Add entry
-
-
-    .context-menu.x--arrow-right(
-      ng-if="!isContextAwareActionEnabled"
-      role="menu"
-      cf-context-menu="bottom-right"
-      aria-label="Add Entry" data-test-id="add-entry-menu")
-      ul.context-menu__items
-        li(role="menuitem"
+    div(ng-if="!isContextAwareActionEnabled")
+      +create-entry-button-wrapper(
+        large=attributes.large
+        cf-context-menu-trigger
+        data-test-id="add-entry-menu-trigger")
+        cf-icon.btn-dropdown-icon(name="dd-arrow-down")
+        | Add entry
+      .context-menu.x--arrow-right(
+        role="menu"
+        cf-context-menu="bottom-right"
+        aria-label="Add Entry" data-test-id="add-entry-menu")
+        ul.context-menu__items
+          li(role="menuitem"
           ng-repeat="contentType in accessibleCts track by contentType.sys.id"
           ng-click="entityCreationController.newEntry(contentType.sys.id)")
-          | {{contentType.name || 'Untitled'}}
-
-    .context-menu.context-menu--redesigned(
+            | {{contentType.name || 'Untitled'}}
+    cf-create-entry-button(
       ng-if="isContextAwareActionEnabled"
-      role="menu"
-      cf-context-menu="bottom-left-0"
-      aria-label="Add Entry" data-test-id="add-entry-menu")
-      cf-component-bridge(component="createEntryMenu")
+      data-test-id="add-entry-menu-trigger"
+      content-types="accessibleCts"
+      suggested-content-type-id="context.view.contentTypeId"
+      on-select="entityCreationController.newEntry"
+      mode=attributes.mode
+      position=attributes.position
+      cf-context-menu-trigger
+      text="Add entry")

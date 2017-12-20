@@ -1,10 +1,8 @@
 import {h} from 'ui/Framework';
 import {runTask} from 'utils/Concurrent';
-import {
-  createEndpoint as createOrgEndpoint,
-  getSubscription
-} from 'access_control/OrganizationMembershipRepository';
-import {getBasePlanStyle} from 'account/subscription/SubscriptionPlanStyles';
+import {createEndpoint as createOrgEndpoint} from 'access_control/OrganizationMembershipRepository';
+import {getSubscription} from 'account/pricing/PricingDataProvider';
+import {getBasePlanStyle} from 'account/pricing/SubscriptionPlanStyles';
 import {supportUrl, websiteUrl} from 'Config';
 import {byName as colors} from 'Styles/Colors';
 import {groupBy} from 'lodash';

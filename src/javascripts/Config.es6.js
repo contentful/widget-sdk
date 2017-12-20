@@ -105,7 +105,7 @@ export const supportUrl = websiteUrl('support');
  * @ngdoc property
  * @name Config#env
  * @description
- * Environment - e.g. production, staging, development
+ * Environment - e.g. production, staging, development, local-test
  *
  * @returns {string}
  */

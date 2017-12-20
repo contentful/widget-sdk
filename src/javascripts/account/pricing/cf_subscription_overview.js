@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 .directive('cfSubscriptionOverview', ['require', function (require) {
-  var controller = require('account/subscription/SubscriptionOverview').default;
+  var controller = require('account/pricing/SubscriptionOverview').default;
 
   return {
     template: '<cf-component-bridge component="component">',

@@ -1,4 +1,5 @@
 import {omit, kebabCase, mapKeys, isPlainObject} from 'lodash';
+import * as React from 'libs/react';
 import {Hook} from './Hooks/Component';
 import * as VTree from './VTree';
 
@@ -15,6 +16,11 @@ import * as VTree from './VTree';
  * @returns {VNode} children
  */
 export default function h (tag_, props_, children_) {
+  if (typeof tag_ === 'function') {
+    const children = children_ || [];
+    return React.createElement(tag_, props_, children);
+  }
+
   const [tag, props, children] = normalize(tag_, props_, children_);
   if (props.hooks && props.hooks.length) {
     const hooks = props.hooks;
@@ -62,7 +68,7 @@ export function normalize (elSpec, props, children) {
       // This is a special SVG attribute that needs to be camel cased.
       // <svg view-box=...> is not valid.
       return key;
-    } else if (key === 'autoFocus' || key === 'tabIndex') {
+    } else if (key === 'autoFocus' || key === 'tabIndex' || key === 'className') {
       // These are perfectly valid react props.
       return key;
     } else {

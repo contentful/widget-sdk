@@ -14,11 +14,17 @@ require('codemirror/addon/edit/continuelist');
 require('codemirror/addon/mode/overlay');
 
 angular.module('cf.libs', [])
+  .constant('libs/react-tippy', require('react-tippy'))
   .constant('libs/color', require('color'))
   .constant('libs/sanitize-html', require('sanitize-html'))
   .constant('libs/react', require('react'))
+  .constant('libs/prop-types', require('prop-types'))
   .constant('libs/react-dom', require('react-dom'))
   .constant('libs/react-dom/test-utils', require('react-dom/test-utils'))
+  .constant('libs/react-click-outside', require('react-click-outside'))
+  .constant('libs/enzyme', require('enzyme'))
+  .constant('libs/enzyme-adapter-react-16', require('enzyme-adapter-react-16'))
+  .constant('libs/downshift', require('downshift'))
   .constant('create-react-class', require('create-react-class'))
   .constant('libs/codemirror', require('codemirror'))
   .constant('libs/qs', require('qs'))

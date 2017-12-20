@@ -13,7 +13,6 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var accessChecker = require('accessChecker');
   var entityStatus = require('entityStatus');
-  var renderCreateEntryMenu = require('components/tabs/entry_list/CreateEntryButton/Menu').default;
   var getBlankView = require('data/UiConfig/Blanks').getBlankEntryView;
   var createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar').default;
   var K = require('utils/kefir');
@@ -93,14 +92,6 @@ angular.module('contentful')
         return accessChecker.canPerformActionOnEntryOfType('create', ct.sys.id);
       }
     );
-
-    $scope.createEntryMenu = renderCreateEntryMenu({
-      contentTypes: $scope.accessibleCts,
-      suggestedContentTypeId: getCurrentContentTypeId(),
-      onSelect: function (ctId) {
-        return $scope.entityCreationController.newEntry(ctId);
-      }
-    });
   }
 
   $scope.displayFieldForFilteredContentType = function () {

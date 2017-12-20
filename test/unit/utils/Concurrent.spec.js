@@ -83,4 +83,71 @@ describe('utils/Concurrent', function () {
       expect(resultC).toBe('resultC');
     });
   });
+
+  describe('.createExclusiveTask()', function () {
+    it('does not run multiple tasks concurrently', function* () {
+      let callCount = 0;
+      const taskDone = C.createMVar();
+      const task = C.createExclusiveTask(C.wrapTask(function* () {
+        callCount++;
+        yield taskDone.read();
+      }));
+
+      expect(callCount).toBe(0);
+      task.call();
+      task.call();
+      task.call();
+      expect(callCount).toBe(1);
+
+      taskDone.put();
+      yield task.call();
+
+      taskDone.empty();
+      expect(callCount).toBe(1);
+      task.call();
+      task.call();
+      expect(callCount).toBe(2);
+    });
+
+    it('resets the task on errors', function* () {
+      let callCount = 0;
+      const taskDone = C.createMVar();
+      const task = C.createExclusiveTask(C.wrapTask(function* () {
+        callCount++;
+        yield taskDone.read();
+        throw new Error();
+      }));
+
+      expect(callCount).toBe(0);
+      const result = task.call().catch(() => null);
+      task.call();
+      expect(callCount).toBe(1);
+
+      taskDone.put();
+      yield result;
+
+      taskDone.empty();
+      expect(callCount).toBe(1);
+      task.call().catch(() => null);
+      task.call();
+      expect(callCount).toBe(2);
+    });
+
+    it('returns the functions results', function* () {
+      const taskDone = C.createMVar();
+      const task = C.createExclusiveTask(C.wrapTask(function* () {
+        return yield taskDone.read();
+      }));
+
+      const r1 = task.call();
+      const r2 = task.call();
+      expect(r1).toBe(r2);
+
+      const value = {};
+      taskDone.put(value);
+      const results = yield Promise.all([r1, r2]);
+      expect(results[0]).toBe(value);
+      expect(results[1]).toBe(value);
+    });
+  });
 });

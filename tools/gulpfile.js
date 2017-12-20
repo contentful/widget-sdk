@@ -96,6 +96,7 @@ const src = {
     'vendor/fonts.com/*.+(woff|woff2)'
   ],
   vendorStylesheets: assertFilesExist([
+    './node_modules/react-tippy/dist/tippy.css',
     './vendor/ui-extensions-sdk/dist/cf-extension.css',
     './vendor/font-awesome/font-awesome.css',
     // Not sure if we need this

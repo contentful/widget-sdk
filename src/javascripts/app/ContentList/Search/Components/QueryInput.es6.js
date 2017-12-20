@@ -1,0 +1,78 @@
+import { createElement as h } from 'libs/react';
+import PropTypes from 'libs/prop-types';
+import createReactClass from 'create-react-class';
+
+/**
+ * Renders query input in search widget
+ */
+const QueryInput = createReactClass({
+  getInitialState () {
+    return {
+      value: this.props.value
+    };
+  },
+  componentDidUpdate () {
+    if (this.props.isFocused) {
+      this.inputRef.focus();
+    }
+  },
+  componentWillReceiveProps (nextProps) {
+    this.setState(() => ({
+      value: nextProps.value
+    }));
+  },
+  handleChange (e) {
+    const { target: { value } } = e;
+    this.props.onChange(value);
+    this.setState(() => ({
+      value
+    }));
+  },
+  render () {
+    const {
+      isPlaceholderVisible,
+      autoFocus,
+      onKeyDown
+    } = this.props;
+    const { value } = this.state;
+    const placeholder = isPlaceholderVisible ? 'Type to search for entries' : '';
+
+    // Replacing spaces with `|` to make the width of the shadow element equal
+    // the width of the input.
+    const shadowValue = (this.state.value || placeholder).replace(/\s/g, '|');
+
+    // TODO: extract shadow-resize and reuse in TextValueInput
+    return h(
+      'fieldset',
+      {
+        className: 'search-next__query-input-fieldset'
+      },
+      h('input', {
+        className: 'input-reset search-next__query-input',
+        'data-test-id': 'queryInput',
+        ref: (input) => { this.inputRef = input; },
+        autoFocus,
+        value,
+        onKeyDown,
+        onChange: this.handleChange,
+        placeholder
+      }),
+      h(
+        'span',
+        {
+          className: 'search__input-spacer'
+        },
+        shadowValue
+      )
+    );
+  }
+});
+
+QueryInput.propTypes = {
+  isPlaceholderVisible: PropTypes.bool,
+  autoFocus: PropTypes.bool,
+  onKeyDown: PropTypes.func.isRequired,
+  onChange: PropTypes.func.isRequired
+};
+
+export default QueryInput;

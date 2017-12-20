@@ -1,6 +1,21 @@
 // Styles for the redesign of .context-menu
+$context-menu-btn-height = 40px
 // TODO: Update existing styles or create new ones once we want to use them app-wide.
 .context-menu--redesigned
+  position: absolute
+  right: 0;
+  min-width: 250px
+  text-align: left
+
+  &.top
+    bottom: $context-menu-btn-height
+  &.right
+    right: 0
+    left: auto
+  &.left
+    right: auto
+    left: 0
+
   &::before,
   &::after
     display: none;
@@ -9,9 +24,37 @@
     margin-left: 0
     margin-right: 0
 
+.context-menu__list
+    max-height: 400px
+    overflow: auto
 
-.create-entry__menu
-  overflow-y: auto
-  max-height: 50vh
-  text-align: left
+.context-menu__list-item
+  padding: 8px 20px 8px
+  transition: background-color 0.1s ease-in-out
+  cursor: pointer
+
+  &[role="menuitem"]:hover
+  &[role="menuitem"].active
+    background-color: $colors.element-light
+    color: inherit
+
+.context-menu__search-input
+  padding: 10px 50px 10px 20px
+  margin-top: -5px
+  width: 100%
+  height: 40px
+  outline: none
+  border-radius: 0
+
+  &,
+  &:focus
+    border: 0
+    border-bottom: 1px solid $colors.element-light
+
+.context-menu__search-input-icon
+  position: absolute
+  right: 25px
+  top: 15px
+  path
+    fill: $colors.element-light
 

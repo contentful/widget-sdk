@@ -10,9 +10,8 @@ import { container, vspace, ihspace } from 'ui/Layout';
 import * as Workbench from 'app/Workbench';
 import { byName as Colors } from 'Styles/Colors';
 import questionMarkIcon from 'svg/QuestionMarkIcon';
-import copyIcon from 'svg/CopyIcon';
-import copyToClipboard from 'utils/DomClipboardCopy';
 
+import CopyIconButton from 'ui/Components/CopyIconButton';
 
 export default function render (state, actions) {
   return Workbench.withSidebar({
@@ -101,19 +100,12 @@ function environmentTable (environments) {
         td([
           environment.name,
           ihspace('1.2em'),
-          environment.isMaster && badge({}, ['Default environment'])
+          environment.isMaster && badge({ color: Colors.textLight }, ['Default environment'])
         ]),
         td([
           codeFragment([ environment.id ]),
           ihspace('6px'),
-          h('span', {
-            onClick: () => {
-              copyToClipboard(environment.id);
-            },
-            style: { cursor: 'pointer' }
-          }, [
-            copyIcon()
-          ])
+          h(CopyIconButton, { value: environment.id })
         ]),
         td([
           caseofEq(environment.status, [
@@ -164,7 +156,7 @@ function editButton (environment) {
 
 function deleteButton (environment) {
   return h('button.text-link--destructive', {
-    disabled: environment.isMaster || environment.status === 'inProgress',
+    disabled: environment.isMaster,
     onClick: environment.Delete
   }, [ 'Delete' ]);
 }

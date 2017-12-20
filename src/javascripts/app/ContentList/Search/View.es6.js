@@ -1,5 +1,5 @@
 /* global requestAnimationFrame */
-import { noop, assign } from 'lodash';
+import { noop } from 'lodash';
 import { match } from 'utils/TaggedValues';
 import { truncate } from 'stringUtils';
 import * as React from 'libs/react';
@@ -17,7 +17,9 @@ import renderLoader from './Loader';
 import { ValueInput } from './Filters';
 import filterValueDate from './ValueInput/Date';
 import filterValueReference from './ValueInput/Reference';
+import TextValueInput from './ValueInput/Text';
 import Select from './ValueInput/select';
+import QueryInput from './Components/QueryInput';
 import { IsOverflownY as IsOverflownYHook } from './Hooks/IsOverflown';
 
 const Keys = {
@@ -100,7 +102,7 @@ export default function render ({
           onRemove: ({ index }) => actions.RemoveFilter(index),
           onRemoveAttempt: ({ index }) => actions.SetFocusOnPill(index)
         }),
-        queryInput({
+        React.createElement(QueryInput, {
           isPlaceholderVisible: !hasFilters,
           value: input || '',
           onChange: value => actions.SetQueryInput(value),
@@ -182,38 +184,6 @@ export default function render ({
   ]);
 }
 
-function queryInput ({
-  value,
-  isPlaceholderVisible,
-  isFocused,
-  autoFocus,
-  onChange,
-  onKeyDown
-}) {
-  const shadowValue = value !== null ? String(value) : '';
-
-  return React.createElement('fieldset', {
-    className: 'search-next__query-input-fieldset'
-  }, React.createElement('input', {
-    className: 'input-reset search-next__query-input',
-    'data-test-id': 'queryInput',
-    ref: (el) => {
-      if (isFocused && el) {
-        requestAnimationFrame(() => el.focus());
-      }
-    },
-    autoFocus,
-    value,
-    onKeyDown,
-    onChange: (e) => onChange(e.target.value),
-    placeholder: isPlaceholderVisible ? 'Type to search for entries' : ''
-  }),
-    React.createElement('span', {
-      className: 'search__input-spacer'
-    }, [shadowValue.replace(/\s/g, '|')]));
-}
-
-
 function renderPills ({
   filters,
   defaultFocus,
@@ -258,7 +228,7 @@ function filterPill ({
   onRemoveAttempt = noop
 }) {
   return h('div.search__filter-pill', {
-    dataTestId: testId,
+    'data-test-id': testId,
     ref: (el) => {
       if (isFocused && el) {
         requestAnimationFrame(() => el.focus());
@@ -337,7 +307,7 @@ function filterValue ({ valueInput, value, isFocused, onChange, onRemove }) {
 
   const input = match(valueInput, {
     [ValueInput.Text]: () =>
-      filterValueText({
+      React.createElement(TextValueInput, {
         testId: valueTestId,
         value,
         inputRef,
@@ -383,37 +353,12 @@ function filterValue ({ valueInput, value, isFocused, onChange, onRemove }) {
   return input;
 }
 
-function filterValueText ({
-  value,
-  testId,
-  inputRef,
-  onChange = noop,
-  onKeyDown = noop,
-  onClick = noop
-}) {
-  // In order to make the input fuild, we mirror the value of the input
-  // in a span that pushes the parent div to grow.
-  const shadowValue = value !== null ? String(value) : '';
-
-  return h('fieldset.search__input-text', [
-    h('input.input-reset.search__input', {
-      dataTestId: testId,
-      value,
-      ref: inputRef,
-      onChange: (e) => onChange(e.target.value),
-      onKeyDown,
-      onClick,
-      tabIndex: '0'
-    }),
-    h('span.search__input-spacer', [shadowValue.replace(/\s/g, '|')])
-  ]);
-}
-
 function filterValueAssetSize (props) {
-  return filterValueText(assign({}, props, {
+  return React.createElement(TextValueInput, {
+    ...props,
     value: props.value,
     onChange: (nextValue) => props.onChange(nextValue)
-  }));
+  });
 }
 
 function filterSelect ({
@@ -448,7 +393,7 @@ function suggestionsBox ({
 }) {
   const suggestions = items.map((field, index) => {
     return h('div.search-next__completion-item', {
-      dataTestId: field.queryKey,
+      'data-test-id': field.queryKey,
       ref: (el) => {
         if (defaultFocus.suggestionsFocusIndex === index && el) {
           el.focus();
@@ -467,14 +412,14 @@ function suggestionsBox ({
     }, [
       // TODO truncate with ellipses
       h('div', {
-        dataTestId: 'label',
+        'data-test-id': 'label',
         style: {flex: '0 0 30%'}
       }, [
         h('.__filter-pill', [ field.name ])
       ]),
 
       h('div', {
-        dataTestId: 'contentType',
+        'data-test-id': 'contentType',
         style: {
           color: colors.textLightest,
           flex: '0 0 30%'
@@ -484,7 +429,7 @@ function suggestionsBox ({
       ]),
 
       h('div', {
-        dataTestId: 'description',
+        'data-test-id': 'description',
         style: {
           flex: '0 0 30%',
           color: colors.textLight
@@ -547,7 +492,7 @@ function suggestionsHeader () {
 function suggestionList ({ items, searchTerm }) {
   const hasSuggestions = items.length > 0;
   return h('div', {
-    dataTestId: 'suggestions',
+    'data-test-id': 'suggestions',
     style: {
       zIndex: 1,
       border: `solid ${colors.blueMid}`,

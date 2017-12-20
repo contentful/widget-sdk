@@ -1,5 +1,5 @@
 import {h} from 'ui/Framework';
-import * as Colors from 'Styles/Colors';
+import {byName as Colors} from 'Styles/Colors';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import { monospaceFontFamily } from 'Styles';
 
@@ -102,7 +102,7 @@ export function p (content) {
   return h('p', {
     style: {
       lineHeight: '1.5',
-      color: Colors.byName.textMid
+      color: Colors.textMid
     }
   }, content);
 }
@@ -135,13 +135,15 @@ export function badge ({
 export function codeFragment (children) {
   return h('span', {
     style: {
+      display: 'inline-block',
       color: Colors.textMid,
       background: Colors.elementLightest,
       border: `1px solid ${Colors.elementMid}`,
       borderRadius: '2px',
       fontFamily: monospaceFontFamily,
       fontSize: '13px',
-      padding: '3px 5px'
+      lineHeight: '22px',
+      padding: '0px 5px'
     }
   }, children);
 }

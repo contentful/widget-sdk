@@ -1,10 +1,8 @@
 import {h} from 'ui/Framework';
 import {runTask} from 'utils/Concurrent';
 import {pick} from 'lodash';
-import {
-  createEndpoint as createOrgEndpoint,
-  getSpacePlans
-} from 'access_control/OrganizationMembershipRepository';
+import {createEndpoint as createOrgEndpoint} from 'access_control/OrganizationMembershipRepository';
+import {getSpacePlans} from 'account/pricing/PricingDataProvider';
 import {href} from 'states/Navigator';
 import svgPlus from 'svg/plus';
 import {showDialog as showCreateSpaceModal} from 'services/CreateSpace';

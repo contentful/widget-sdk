@@ -141,6 +141,8 @@ function createElement (container, selector) {
       return getElement();
     },
 
+    getDescriptor: bindEl(getDescriptor),
+
     // Control
     setValue: bindEl(setValue),
     setChecked: bindEl(setCheckbox),
@@ -194,6 +196,20 @@ function findOne (element, selector) {
   } else {
     return results[0];
   }
+}
+
+
+/**
+ * Return an element wrapper for the element that describes the given
+ * element.
+ *
+ * The descriptor element is determined by resolving the ID in the
+ * 'aria-describedby' attribute of the given element.
+ */
+function getDescriptor (element) {
+  const source = findOne(element, '[aria-describedby]');
+  const id = source.getAttribute('aria-describedby');
+  return createElement(document.body, `#${id}`);
 }
 
 
