@@ -8,30 +8,52 @@ import SearchIcon from 'svg/search';
 
 const MAX_ITEMS_WITHOUT_SEARCH = 20;
 const SUGGESTION_GROUP_LENGTH = 1;
+const Position = {
+  TOP: 'top',
+  RIGHT: 'right',
+  BOTTOM: 'bottom',
+  LEFT: 'left'
+};
 
 const Menu = createReactClass({
   displayName: 'Menu',
   getDefaultProps () {
     return {
-      suggestedContentTypeId: null,
-      position: 'bottom'
+      suggestedContentTypeId: null
     };
+  },
+  getInitialState () {
+    return {
+      positionY: Position.BOTTOM,
+      positionX: Position.LEFT
+    };
+  },
+  componentDidMount () {
+    const menuTopPosition = this.menu.getBoundingClientRect().top;
+    const menuLeftPosition = this.menu.getBoundingClientRect().left;
+    const maxMenuHeight = 600;
+    const maxMenuWidth = 450;
+
+    this.setState({
+      positionY: menuTopPosition < maxMenuHeight ? Position.BOTTOM : Position.TOP,
+      positionX: menuLeftPosition < maxMenuWidth ? Position.LEFT : Position.RIGHT
+    });
   },
   render () {
     const {
       contentTypes,
       suggestedContentTypeId,
-      onSelect,
-      position
+      onSelect
     } = this.props;
 
     return h(
       'div',
       {
-        className: `create-entry__menu context-menu context-menu--redesigned ${position}`,
+        className: `create-entry__menu context-menu context-menu--redesigned ${this.state.positionX} ${this.state.positionY}`,
         role: 'menu',
         'aria-label': 'Add Entry',
-        'data-test-id': 'add-entry-menu'
+        'data-test-id': 'add-entry-menu',
+        ref: (menu) => { this.menu = menu; }
       },
       h(Downshift, {
         onChange: onSelect,
@@ -165,14 +187,12 @@ export function ListItem ({ contentType, index, isHighlighted, getItemProps, onS
 
 export function SearchInput ({ getInputProps }) {
   return h('div', null,
-    h(
-      'input', {
-        ...getInputProps({ placeholder: 'Search all content types' }),
-        autoFocus: true,
-        className: 'cfnext-form__input--full-size context-menu__search-input',
-        'data-test-id': 'addEntrySearchInput'
-      }
-    ),
+    h('input', {
+      ...getInputProps({ placeholder: 'Search all content types' }),
+      autoFocus: true,
+      className: 'cfnext-form__input--full-size context-menu__search-input',
+      'data-test-id': 'addEntrySearchInput'
+    }),
    h('i', { className: 'context-menu__search-input-icon' }, asReact(SearchIcon))
   );
 }

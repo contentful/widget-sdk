@@ -2,7 +2,18 @@ $cf-links-editor-shadow()
   box-shadow: 0 1.5px 1.5px $colors.element-light
 
 .link-editor
+  $links-gap = 12px
   position: relative;
+
+  // TODO: Remove __new prefix this once feature-at-11-2017-lots-of-cts-add-entry-and-link-reference
+  // is rolled out to everyone
+  &__feature-at-11-2017-lots-of-cts-add-entry-and-link-reference
+    display: flex
+    align-items: baseline
+    margin-top: $links-gap
+
+    .btn-link
+      margin-left: 20px
 
   &__actions
     $cf-links-editor-shadow()
@@ -29,7 +40,6 @@ $cf-links-editor-shadow()
       cursor: -webkit-grabbing
 
   &:not(.x--contains-asset-cards)
-    $links-gap = 12px
 
     .link-editor__links
       > *

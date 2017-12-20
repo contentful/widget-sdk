@@ -21,7 +21,6 @@ mixin create-entry-button
       suggested-content-type-id="context.view.contentTypeId"
       on-select="entityCreationController.newEntry"
       mode=attributes.mode
-      position=attributes.position
       text="Add {{accessibleCts[0].name || 'Untitled'}}")
   div(ng-if="accessibleCts.length > 1")
     div(ng-if="!isContextAwareActionEnabled")
@@ -47,6 +46,5 @@ mixin create-entry-button
       suggested-content-type-id="context.view.contentTypeId"
       on-select="entityCreationController.newEntry"
       mode=attributes.mode
-      position=attributes.position
       cf-context-menu-trigger
       text="Add entry")
