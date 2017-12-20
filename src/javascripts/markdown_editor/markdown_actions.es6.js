@@ -45,7 +45,10 @@ export function create (editor, localeCode) {
       itemLinkType: 'Asset',
       locale: localeCode
     })
-    .then(_insertAssetLinks);
+    .then((assets) => {
+      _insertAssetLinks(assets);
+    })
+    .finally(editor.getWrapper().focus);
   }
 
   function newAssets () {
