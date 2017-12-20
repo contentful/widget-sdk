@@ -38,6 +38,11 @@ const CreateEntryButton = createReactClass({
     });
     this.props.onSelect(item.sys.id);
   },
+  handleClose () {
+    this.setState({
+      isOpen: false
+    });
+  },
   handleClickOutside () {
     this.setState({
       isOpen: false
@@ -64,7 +69,8 @@ const CreateEntryButton = createReactClass({
       !withSingleCT && this.state.isOpen && h(Menu, {
         contentTypes,
         suggestedContentTypeId,
-        onSelect: this.handleSelect
+        onSelect: this.handleSelect,
+        onClose: this.handleClose
       })
     );
   }

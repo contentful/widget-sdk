@@ -13,6 +13,7 @@ SystemJS.exposeFromAngular = [
   'lodash',
   'jquery',
   'libs/react-click-outside',
+  'libs/react-highlight-words',
   'libs/react-dom/test-utils',
   'libs/enzyme',
   'libs/enzyme-adapter-react-16',

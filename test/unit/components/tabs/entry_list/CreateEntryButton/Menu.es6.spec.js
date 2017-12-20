@@ -1,5 +1,6 @@
 import { createElement as h } from 'libs/react';
 import { mount } from 'libs/enzyme';
+import Highlighter from 'libs/react-highlight-words';
 import { noop, range } from 'lodash';
 import Menu, {
   ListItem,
@@ -39,7 +40,14 @@ describe('CreateEntryMenu', () => {
     expect(wrapper.find(SuggestedContentType).exists()).toBeTruthy();
 
     contentTypes.forEach((item) => {
-      expect(wrapper.find(Group).at(1).find('li').filterWhere(n => n.text() === item.name).exists()).toBeTruthy();
+      const group = wrapper.find(Group).at(1);
+      const listItem = group.find(ListItem).filterWhere(n => n.text() === item.name);
+      expect(listItem.exists()).toBeTruthy();
+      expect(listItem.find(Highlighter).props()).toEqual({
+        searchWords: [''],
+        textToHighlight: item.name,
+        highlightClassName: 'context-menu__highlighted-text'
+      });
     });
   });
 
@@ -47,12 +55,19 @@ describe('CreateEntryMenu', () => {
     const unmatchingQuery = contentTypes[2].name;
     const matchingQuery = contentTypes[1].name;
 
-    expect(wrapper.find(ListItem).find('li').filterWhere(n => n.text() === unmatchingQuery)).toBeTruthy();
+    expect(wrapper.find(ListItem).filterWhere(n => n.text() === unmatchingQuery)).toBeTruthy();
 
     wrapper.find('input').simulate('change', { target: { value: matchingQuery } });
 
-    expect(wrapper.find(ListItem).find('li').filterWhere(n => n.text() === unmatchingQuery).length).toEqual(0);
-    expect(wrapper.find(ListItem).find('li').filterWhere(n => n.text() === matchingQuery).length).toEqual(1);
+    expect(wrapper.find(ListItem).filterWhere(n => n.text() === unmatchingQuery).length).toEqual(0);
+    const matchingNode = wrapper.find(ListItem).filterWhere(n => n.text() === matchingQuery);
+
+    expect(matchingNode.length).toEqual(1);
+    expect(matchingNode.find(Highlighter).props()).toEqual({
+      searchWords: [ matchingQuery ],
+      textToHighlight: matchingQuery,
+      highlightClassName: 'context-menu__highlighted-text'
+    });
   });
 
   it('renders "Not found" message if there is no matching search query', () => {
