@@ -19,6 +19,7 @@ SystemJS.exposeFromAngular = [
   'libs/sum-types/caseof-eq',
   'libs/react',
   'libs/react-dom',
+  'libs/react-tippy',
   'libs/prop-types'
 ];
 

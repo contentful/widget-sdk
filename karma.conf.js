@@ -30,6 +30,13 @@ module.exports = function (config) {
 
     // list of files / patterns to load in the browser
     files: [
+      // We include the CSS files so that we can test visibility, etc.
+      // set by CSS.
+      // We also need this to make sure that transition events are
+      // triggered properly.
+      'public/app/vendor.css',
+      'public/app/main.css',
+
       'public/app/vendor.js',
       'public/app/templates.js',
       'public/app/libs.js',
