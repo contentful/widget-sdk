@@ -1,6 +1,10 @@
 // Styles for the redesign of .context-menu
 $context-menu-btn-height = 40px
 // TODO: Update existing styles or create new ones once we want to use them app-wide.
+.x--block .context-menu--redesigned
+  max-width: 100%
+  min-width: 100%
+
 .context-menu--redesigned
   position: absolute
   right: 0;
@@ -25,8 +29,12 @@ $context-menu-btn-height = 40px
     margin-right: 0
 
 .context-menu__list
-    max-height: 400px
-    overflow: auto
+  max-height: 380px
+  overflow: auto
+
+.context-menu__highlighted-text 
+  background-color: transparent
+  font-style: inherit
 
 .context-menu__list-item
   padding: 8px 20px 8px

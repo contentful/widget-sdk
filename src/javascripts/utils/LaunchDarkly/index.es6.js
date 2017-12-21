@@ -6,7 +6,8 @@ import {onValueScope, createPropertyBus} from 'utils/kefir';
 import getChangesObject from 'utils/ShallowObjectDiff';
 import {isOrgPlanEnterprise} from 'data/Org';
 import {getEnabledFlags} from 'utils/LaunchDarkly/EnforceFlags';
-import { createMVar } from 'utils/Concurrent';
+import {createMVar} from 'utils/Concurrent';
+import logger from 'logger';
 
 import {
   getOrgRole,
@@ -24,7 +25,8 @@ import {
 // mvar to wait until LD context is successfully switched
 const LDContextChangeMVar = createMVar();
 
-const UNINIT_VAL = '<UNINITIALIZED>';
+const UNINIT_VAL = undefined;
+
 let client, prevCtx, currCtx;
 
 /**
@@ -59,8 +61,12 @@ export function init () {
  * where context is a combination of current user, org and space data.
  * 2. The promise will resolve with the variation for the provided flag name
  * if it receives a variation from it from LD.
- * 3. The promise will reject if LD did not find any flag with the provided
- * flag name
+ * 3. The promise will resolve with `undefined` if LD did not find a flag
+ * with the provided flag name. An error will be logged, warning you about
+ * possible typo in flag name.
+ * Note: this can also happen in rare cases even if a flag does exist (e.g. LD
+ * service is down) and you should keep it in mind if your default value is not
+ * falsy.
  *
  * @param {String} flagName
  * @returns {Promise<Variation>}
@@ -68,9 +74,10 @@ export function init () {
 export function getCurrentVariation (flagName) {
   return LDContextChangeMVar.read().then(_ => {
     const variation = getVariation(flagName, UNINIT_VAL);
-
     if (variation === UNINIT_VAL) {
-      throw new Error(`Invalid flag ${flagName}`);
+      // LD could not find a flag with given name, log error and return undefined
+      logger.logError(`Invalid flag ${flagName}`);
+      return undefined;
     } else {
       return JSON.parse(variation);
     }
@@ -125,7 +132,7 @@ export function onFeatureFlag ($scope, featureName, handler) {
   onValueScope(
     $scope,
     obs$.property
-      .filter(v => v !== undefined && v !== UNINIT_VAL)
+      .filter(v => v !== undefined)
       .map(v => [JSON.parse(v), getChangesObject(prevCtx, currCtx)]),
     ([variation, changes]) => handler(variation, changes)
   );

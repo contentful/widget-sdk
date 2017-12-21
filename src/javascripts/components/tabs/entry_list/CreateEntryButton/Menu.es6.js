@@ -4,37 +4,67 @@ import PropTypes from 'libs/prop-types';
 import createReactClass from 'create-react-class';
 import { asReact } from 'ui/Framework/DOMRenderer';
 import Downshift from 'libs/downshift';
+import Highlighter from 'libs/react-highlight-words';
 import SearchIcon from 'svg/search';
 
 const MAX_ITEMS_WITHOUT_SEARCH = 20;
 const SUGGESTION_GROUP_LENGTH = 1;
+const Position = {
+  TOP: 'top',
+  RIGHT: 'right',
+  BOTTOM: 'bottom',
+  LEFT: 'left'
+};
 
 const Menu = createReactClass({
   displayName: 'Menu',
   getDefaultProps () {
     return {
       suggestedContentTypeId: null,
-      position: 'bottom'
+      onClose: _.noop
     };
+  },
+  getInitialState () {
+    return {
+      positionY: Position.BOTTOM,
+      positionX: Position.LEFT
+    };
+  },
+  componentDidMount () {
+    const menuTopPosition = this.menu.getBoundingClientRect().top;
+    const menuLeftPosition = this.menu.getBoundingClientRect().left;
+    const maxMenuHeight = 600;
+    const maxMenuWidth = 450;
+
+    this.setState({
+      positionY: menuTopPosition < maxMenuHeight ? Position.BOTTOM : Position.TOP,
+      positionX: menuLeftPosition < maxMenuWidth ? Position.LEFT : Position.RIGHT
+    });
   },
   render () {
     const {
       contentTypes,
       suggestedContentTypeId,
       onSelect,
-      position
+      onClose
     } = this.props;
 
     return h(
       'div',
       {
-        className: `create-entry__menu context-menu context-menu--redesigned ${position}`,
+        className: `create-entry__menu context-menu context-menu--redesigned ${this.state.positionX} ${this.state.positionY}`,
         role: 'menu',
         'aria-label': 'Add Entry',
-        'data-test-id': 'add-entry-menu'
+        'data-test-id': 'add-entry-menu',
+        ref: (menu) => { this.menu = menu; }
       },
       h(Downshift, {
         onChange: onSelect,
+        onStateChange: (changes) => {
+          if (changes.type === Downshift.stateChangeTypes.keyDownEscape) {
+            onClose();
+          }
+        },
         isOpen: true,
         itemToString: ct => _.isEmpty(ct) ? '' : ct.sys.id,
         render: renderMenu({ contentTypes, suggestedContentTypeId, onSelect })
@@ -75,6 +105,7 @@ function renderMenu ({ contentTypes, suggestedContentTypeId, onSelect }) {
               contentTypes: filteredContentTypes,
               getItemProps,
               highlightedIndex,
+              searchTerm: inputValue,
               onSelect
             })
           )
@@ -97,6 +128,7 @@ function renderMenu ({ contentTypes, suggestedContentTypeId, onSelect }) {
                 contentTypes: filteredContentTypes,
                 getItemProps,
                 highlightedIndex,
+                searchTerm: inputValue,
                 suggestionGroupLength: SUGGESTION_GROUP_LENGTH,
                 onSelect
               })
@@ -111,7 +143,8 @@ function renderMenu ({ contentTypes, suggestedContentTypeId, onSelect }) {
 Menu.propTypes = {
   contentTypes: PropTypes.array.isRequired,
   suggestedContentTypeId: PropTypes.string,
-  onSelect: PropTypes.func.isRequired
+  onSelect: PropTypes.func.isRequired,
+  onClose: PropTypes.func
 };
 
 export default Menu;
@@ -138,19 +171,33 @@ export function SuggestedContentType ({ suggestedContentType, getItemProps, high
   ];
 }
 
-function ContentTypeList ({ contentTypes, getItemProps, highlightedIndex, suggestionGroupLength = 0, onSelect }) {
+function ContentTypeList ({
+  contentTypes,
+  getItemProps,
+  highlightedIndex,
+  suggestionGroupLength = 0,
+  searchTerm,
+  onSelect
+}) {
   return contentTypes.map((contentType, index) => h(ListItem, {
     key: contentType.sys.id,
     getItemProps,
     index: index + suggestionGroupLength,
     isHighlighted: highlightedIndex === (index + suggestionGroupLength),
     contentType,
+    searchTerm,
     onSelect
-  })
-  );
+  }));
 }
 
-export function ListItem ({ contentType, index, isHighlighted, getItemProps, onSelect }) {
+export function ListItem ({
+  contentType,
+  index,
+  isHighlighted,
+  getItemProps,
+  onSelect,
+  searchTerm
+}) {
   return h(
     'li', {
       ...getItemProps({ item: contentType, index }),
@@ -159,20 +206,23 @@ export function ListItem ({ contentType, index, isHighlighted, getItemProps, onS
       'data-test-id': 'contentType',
       onClick: () => onSelect(contentType)
     },
-    contentType.name || 'Untitled'
+    h(Highlighter, {
+      searchWords: [searchTerm],
+      textToHighlight: getContentTypeName(contentType),
+      highlightClassName: 'context-menu__highlighted-text'
+    })
+
   );
 }
 
 export function SearchInput ({ getInputProps }) {
   return h('div', null,
-    h(
-      'input', {
-        ...getInputProps({ placeholder: 'Search all content types' }),
-        autoFocus: true,
-        className: 'cfnext-form__input--full-size context-menu__search-input',
-        'data-test-id': 'addEntrySearchInput'
-      }
-    ),
+    h('input', {
+      ...getInputProps({ placeholder: 'Search all content types' }),
+      autoFocus: true,
+      className: 'cfnext-form__input--full-size context-menu__search-input',
+      'data-test-id': 'addEntrySearchInput'
+    }),
    h('i', { className: 'context-menu__search-input-icon' }, asReact(SearchIcon))
   );
 }
@@ -196,10 +246,22 @@ export function Group ({ title, testId, children }) {
 export function NotFoundMessage () {
   return h('div', {style: { padding: '16px 20px 12px' }}, 'No results found');
 }
+
 function getContentTypeById (contentTypes, id) {
   return contentTypes.find(ct => ct.sys.id === id);
 }
 
+function getContentTypeName (contentType) {
+  return contentType.name || 'Untitled';
+}
+
 function getFilteredContentTypesByInputValue (contentTypes, inputValue) {
-  return contentTypes.filter(({ name = 'Untitled' }) => !inputValue || name.toLowerCase().includes(inputValue.toLowerCase()));
+  return contentTypes.filter(
+    (contentType) =>
+      !inputValue ||
+      getContentTypeName(contentType)
+        .toLowerCase()
+        .includes(inputValue.toLowerCase()
+    )
+  );
 }

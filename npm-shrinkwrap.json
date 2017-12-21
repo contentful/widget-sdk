@@ -595,6 +595,9 @@
       "version": "1.1.0"
     },
     "downshift": {
+      "version": "1.22.3"
+    },
+    "downshift": {
       "version": "1.22.5"
     },
     "duplexer2": {
@@ -1379,6 +1382,9 @@
     "has-gulplog": {
       "version": "0.1.0"
     },
+    "highlight-words-core": {
+      "version": "1.1.2"
+    },
     "homedir-polyfill": {
       "version": "1.0.1"
     },
@@ -2101,6 +2107,9 @@
     },
     "react-tippy": {
       "version": "1.2.2"
+    },
+    "react-highlight-words": {
+      "version": "0.10.0"
     },
     "readable-stream": {
       "version": "2.2.2",

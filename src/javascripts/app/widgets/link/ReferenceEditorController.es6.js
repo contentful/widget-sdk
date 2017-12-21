@@ -6,9 +6,10 @@ import entitySelector from 'entitySelector';
 import modalDialog from 'modalDialog';
 import createEntity from 'cfReferenceEditor/createEntity';
 import spaceContext from 'spaceContext';
+import { onFeatureFlag } from 'utils/LaunchDarkly';
 
 import * as State from './State';
-
+import { getAvailableContentTypes } from './utils';
 
 export default function create ($scope, widgetApi) {
   const field = widgetApi.field;
@@ -32,6 +33,13 @@ export default function create ($scope, widgetApi) {
     $scope.config.draggable = !$scope.single && !isDisabled;
   });
 
+  onFeatureFlag(
+    $scope,
+    'feature-at-11-2017-lots-of-cts-add-entry-and-link-reference',
+    function (variation) {
+      $scope.isNewAddAndLinkRefButtonEnabled = variation;
+    }
+  );
 
   $scope.uiSortable.update = function () {
     // let uiSortable update the model, then sync
@@ -44,18 +52,44 @@ export default function create ($scope, widgetApi) {
 
   $scope.helpers = widgetApi.entityHelpers;
 
+  $scope.allowedCTs = [];
+  getAvailableContentTypes(widgetApi.space, field).then(cts => {
+    $scope.allowedCTs = cts;
+  });
+
   $scope.addNew = function (event) {
-    event.preventDefault();
-    createEntity($scope.type, field, widgetApi.space)
-    .then(function (entity) {
-      state.addEntities([entity]);
-      editEntityAction(entity, -1);
-    });
+    if (event.preventDefault) {
+      event.preventDefault();
+
+      createEntity($scope.type, field, widgetApi.space)
+        .then(function (entity) {
+          state.addEntities([entity]);
+          editEntityAction(entity, -1);
+        });
+    } else {
+      // With the new ref button, event is actually the CT id.
+      // TODO: Clean this up once we roll out feature-at-11-2017-lots-of-cts-add-entry-and-link-reference
+      // to everyone.
+      const ctId = event;
+      let newEntityPromise;
+
+      if ($scope.type === 'Entry') {
+        newEntityPromise = widgetApi.space.createEntry(ctId, {});
+      } else {
+        newEntityPromise = widgetApi.space.createAsset({});
+      }
+
+      newEntityPromise
+        .then(entity => {
+          state.addEntities([entity]);
+          editEntityAction(entity, -1);
+        });
+    }
   };
 
   $scope.addExisting = function (event) {
+    event.preventDefault && event.preventDefault();
     const currentSize = $scope.entityModels.length;
-    event.preventDefault();
     entitySelector.openFromField(field, currentSize)
     .then(state.addEntities);
   };

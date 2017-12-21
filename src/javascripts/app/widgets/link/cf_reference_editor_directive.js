@@ -27,6 +27,7 @@ angular.module('cf.app')
 
 .factory('cfReferenceEditor/createEntity', ['require', function (require) {
   var modalDialog = require('modalDialog');
+  var getAvailableContentTypes = require('app/widgets/link/utils').getAvailableContentTypes;
 
   return function createEntity (entityType, field, space) {
     if (entityType === 'Entry') {
@@ -38,7 +39,7 @@ angular.module('cf.app')
     }
 
     function maybeAskAndCreateEntry () {
-      return getAvailableContentTypes()
+      return getAvailableContentTypes(space, field)
       .then(function (cts) {
         if (cts.length === 1) {
           return createEntry(cts[0]);
@@ -47,27 +48,6 @@ angular.module('cf.app')
           .then(createEntry);
         }
       });
-    }
-
-    function getAvailableContentTypes () {
-      return space.getContentTypes({order: 'name', limit: 1000})
-      .then(function (res) {
-        return _.filter(res.items, canCreate(field));
-      });
-    }
-
-    function canCreate (field) {
-      var validations = [].concat(field.validations || [], field.itemValidations || []);
-      var found = _.find(validations, function (v) {
-        return Array.isArray(v.linkContentType) || _.isString(v.linkContentType);
-      });
-      var linkedCts = found && found.linkContentType;
-      linkedCts = _.isString(linkedCts) ? [linkedCts] : linkedCts;
-
-      return function (ct) {
-        var canLink = !linkedCts || linkedCts.indexOf(ct.sys.id) > -1;
-        return !!ct.sys.publishedVersion && canLink;
-      };
     }
 
     function askForContentType (cts) {

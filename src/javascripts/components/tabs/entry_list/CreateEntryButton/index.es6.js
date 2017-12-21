@@ -15,8 +15,7 @@ const CreateEntryButton = createReactClass({
   getDefaultProps () {
     return {
       suggestedContentTypeId: null,
-      mode: modes.NORMAL,
-      position: 'bottom'
+      mode: modes.NORMAL
     };
   },
   getInitialState () {
@@ -39,6 +38,11 @@ const CreateEntryButton = createReactClass({
     });
     this.props.onSelect(item.sys.id);
   },
+  handleClose () {
+    this.setState({
+      isOpen: false
+    });
+  },
   handleClickOutside () {
     this.setState({
       isOpen: false
@@ -49,14 +53,13 @@ const CreateEntryButton = createReactClass({
       contentTypes,
       suggestedContentTypeId,
       mode,
-      position,
       text
     } = this.props;
     const withSingleCT = contentTypes && contentTypes.length === 1;
 
     return h(
       'div',
-      { style: { position: 'relative' } },
+      { style: { position: 'relative' }, className: mode === modes.LARGE ? 'x--block' : '' },
       h(Button, {
         onClick: this.handleClick,
         mode,
@@ -64,10 +67,10 @@ const CreateEntryButton = createReactClass({
         withSingleCT
       }),
       !withSingleCT && this.state.isOpen && h(Menu, {
-        position,
         contentTypes,
         suggestedContentTypeId,
-        onSelect: this.handleSelect
+        onSelect: this.handleSelect,
+        onClose: this.handleClose
       })
     );
   }
@@ -77,7 +80,6 @@ CreateEntryButton.propTypes = {
   contentTypes: PropTypes.array.isRequired,
   suggestedContentTypeId: PropTypes.string,
   mode: PropTypes.string,
-  position: PropTypes.string,
   text: PropTypes.string.isRequired
 };
 

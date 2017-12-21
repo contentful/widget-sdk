@@ -83,11 +83,14 @@ describe('LaunchDarkly', function () {
 
     this.EnforceFlags = {getEnabledFlags: sinon.stub().returns([])};
 
+    this.logger = { logError: sinon.stub() };
+
     module('contentful/test', $provide => {
       $provide.constant('libs/launch-darkly-client', this.LD);
       $provide.value('data/User', userModule);
       $provide.value('utils/ShallowObjectDiff', this.shallowObjectDiff);
       $provide.value('utils/LaunchDarkly/EnforceFlags', this.EnforceFlags);
+      $provide.value('logger', this.logger);
     });
 
     const ld = this.$inject('utils/LaunchDarkly');
@@ -165,13 +168,14 @@ describe('LaunchDarkly', function () {
       expect(yield variationPromise).toEqual('potato');
     });
 
-    it('should return a promise which rejects for non-existing test/feature flag after LD initializes', function* () {
+    it('should return a promise which resolves with undefined and log error for non-existing test/feature flag', function* () {
       this.client.variation.callsFake((_flag, defaultValue) => defaultValue);
       const variationPromise = this.ld.getCurrentVariation('FLAG');
 
       this.client._emit('ready');
-      const error = yield variationPromise.catch((e) => e);
-      expect(error).toEqual(new Error('Invalid flag FLAG'));
+      const variation = yield variationPromise;
+      sinon.assert.calledOnce(this.logger.logError.withArgs('Invalid flag FLAG'));
+      expect(variation).toBeUndefined();
     });
   });
 

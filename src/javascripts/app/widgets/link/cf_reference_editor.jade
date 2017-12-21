@@ -26,7 +26,7 @@ div(ng-show="!isReady")
         actions="model.value.actions"
         config="config")
 
-  .link-editor__actions(ng-if="!isDisabled && (!single || !entityModels.length)")
+  .link-editor__actions(ng-if="!isNewAddAndLinkRefButtonEnabled && !isDisabled && (!single || !entityModels.length)")
     button.btn-action.btn-link.link-editor__link-btn(
       ng-click="addNew($event)"
       type="button")
@@ -37,6 +37,36 @@ div(ng-show="!isReady")
       ng-click="addExisting($event)"
       type="button")
       cf-icon.btn-icon(name="{{ typePlural.toLowerCase() }}")
+      span(ng-if="single")
+        | Link an existing {{ type.toLowerCase() }}
+      span(ng-if="!single")
+        | Link existing {{ typePlural.toLowerCase() }}
+
+
+  .link-editor__feature-at-11-2017-lots-of-cts-add-entry-and-link-reference(ng-if="isNewAddAndLinkRefButtonEnabled && !isDisabled && (!single || !entityModels.length)")
+    cf-create-entry-button(
+      ng-if="type.toLowerCase() === 'entry' && allowedCTs.length > 1"
+      data-test-id="add-and-link-reference-trigger"
+      content-types="allowedCTs"
+      on-select="addNew"
+      text="Create entry and link")
+    cf-create-entry-button(
+      ng-if="type.toLowerCase() === 'entry' && allowedCTs.length == 1"
+      data-test-id="add-and-link-reference-trigger"
+      content-types="allowedCTs"
+      on-select="addNew"
+      text="Create {{allowedCTs[0].name}} and link")
+    
+
+    button.btn-action(
+      ng-if="type.toLowerCase() === 'asset'"
+      ng-click="addNew($event)"
+      type="button")
+      | Create new asset and link
+
+    button.btn-link(
+      ng-click="addExisting($event)"
+      type="button")
       span(ng-if="single")
         | Link an existing {{ type.toLowerCase() }}
       span(ng-if="!single")
