@@ -25,6 +25,7 @@ function renderBoilerplate ({
   const selected = find(boilerplates, {id: selectedId});
 
   return h('div', {
+    dataTestId: 'apiKey.boilerplate',
     style: {
       color: Colors.textMid,
       backgroundColor: Colors.iceMid,
