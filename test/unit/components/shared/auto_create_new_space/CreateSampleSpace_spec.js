@@ -67,7 +67,7 @@ describe('CreateSampleSpace service', function () {
       $provide.value('states/Navigator', {
         go: this.go
       });
-      $provide.value('spaceTemplateLoader', this.spaceTemplateLoader);
+      $provide.value('services/SpaceTemplateLoader', this.spaceTemplateLoader);
       $provide.value('spaceContext', this.spaceContext);
     });
 

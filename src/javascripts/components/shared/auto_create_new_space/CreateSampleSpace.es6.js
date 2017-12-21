@@ -10,9 +10,8 @@ import {track, updateUserInSegment} from 'analytics/Analytics';
 import {go as gotoState} from 'states/Navigator';
 import {entityActionSuccess} from 'analytics/events/SpaceCreation';
 import {find, noop} from 'lodash';
-import {getTemplate, getTemplatesList} from 'spaceTemplateLoader';
+import {getTemplate, getTemplatesList} from 'services/SpaceTemplateLoader';
 import logger from 'logger';
-
 import autoCreateSpaceTemplate from './Template';
 import * as TokenStore from 'services/TokenStore';
 

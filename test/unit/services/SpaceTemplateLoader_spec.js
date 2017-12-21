@@ -510,7 +510,6 @@ describe('Space Template loading service', function () {
       });
     });
 
-    this.$q = this.$inject('$q');
     this.$rootScope = this.$inject('$rootScope');
     this.client = {
       contentTypes: sinon.stub(),
@@ -520,7 +519,7 @@ describe('Space Template loading service', function () {
     };
     this.contentfulClient = this.$inject('contentfulClient');
     this.contentfulClient.newClient.returns(this.client);
-    this.spaceTemplateLoader = this.$inject('spaceTemplateLoader');
+    this.spaceTemplateLoader = this.$inject('services/SpaceTemplateLoader');
   });
 
   afterEach(inject(function ($log) {
@@ -528,14 +527,14 @@ describe('Space Template loading service', function () {
   }));
 
   describe('gets template list from contentful', function () {
-    beforeEach(function () {
+    beforeEach(function* () {
       const self = this;
-      this.client.entries.returns(this.$q.resolve([
+      this.client.entries.returns(Promise.resolve([
         {fields: {id: 3}},
         {fields: {id: 2, order: 1}},
         {fields: {id: 1, order: 0}}
       ]));
-      this.spaceTemplateLoader.getTemplatesList()
+      yield this.spaceTemplateLoader.getTemplatesList()
       .then(function (entries) {
         self.returnedEntries = entries;
       });
@@ -556,7 +555,7 @@ describe('Space Template loading service', function () {
   describe('gets a template from contentful', function () {
     let template, templateInfo;
 
-    beforeEach(function () {
+    beforeEach(function* () {
       templateInfo = {
         templateDeliveryApiKeys: [
           {fields: {name: 'first api key', description: 'first api key desc'}},
@@ -564,12 +563,12 @@ describe('Space Template loading service', function () {
         ]
       };
 
-      this.client.contentTypes.returns(this.$q.resolve(sourceContentTypes));
-      this.client.entries.returns(this.$q.resolve(sourceEntries));
-      this.client.assets.returns(this.$q.resolve(sourceAssets));
-      this.client.editingInterface.returns(this.$q.resolve(sourceEditingInterfaces[0]));
+      this.client.contentTypes.returns(Promise.resolve(sourceContentTypes));
+      this.client.entries.returns(Promise.resolve(sourceEntries));
+      this.client.assets.returns(Promise.resolve(sourceAssets));
+      this.client.editingInterface.returns(Promise.resolve(sourceEditingInterfaces[0]));
 
-      this.spaceTemplateLoader.getTemplate(templateInfo).then(function (_template_) {
+      yield this.spaceTemplateLoader.getTemplate(templateInfo).then(function (_template_) {
         template = _template_;
       });
       this.$rootScope.$digest();
