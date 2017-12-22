@@ -137,6 +137,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
     canUpdateAsset: canUpdateAsset,
     canUpdateEntity: canUpdateEntity,
     canUploadMultipleAssets: canUploadMultipleAssets,
+    canReadApiKeys: canReadApiKeys,
     canModifyApiKeys: canModifyApiKeys,
     canModifyRoles: canModifyRoles,
     canModifyUsers: canModifyUsers,
@@ -337,6 +338,16 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
    */
   function canModifyApiKeys () {
     return _.get(responses, 'createApiKey.can', false);
+  }
+
+  /**
+   * @name accessChecker#canReadApiKeys
+   * @returns {boolean}
+   * @description
+   * Returns true if API Keys can be read.
+   */
+  function canReadApiKeys () {
+    return _.get(responses, 'readApiKey.can', false);
   }
 
   /**
