@@ -1,7 +1,7 @@
 import {h} from 'ui/Framework';
 import {runTask} from 'utils/Concurrent';
 import {createEndpoint as createOrgEndpoint} from 'access_control/OrganizationMembershipRepository';
-import {getSubscription} from 'account/pricing/PricingDataProvider';
+import {getBasePlan, getSpacePlans} from 'account/pricing/PricingDataProvider';
 import {getBasePlanStyle} from 'account/pricing/SubscriptionPlanStyles';
 import {supportUrl, websiteUrl} from 'Config';
 import {byName as colors} from 'Styles/Colors';
@@ -28,16 +28,14 @@ export default function ($scope) {
 
 function* loadStateFromProperties ({orgId}) {
   const endpoint = createOrgEndpoint(orgId);
-  const subscription = yield getSubscription(endpoint);
-
-  const basePlan = subscription.plans.find(({planType}) => planType === 'base');
-  const spacePlans = subscription.plans.filter(({planType}) => planType === 'space');
+  const basePlan = yield getBasePlan(endpoint);
+  const spacePlans = yield getSpacePlans(endpoint);
   const spacePlansByName = Object.values(groupBy(spacePlans, 'productRatePlanId')).map((spacePlans) => ({
     count: spacePlans.length,
     price: calculateTotalPrice(spacePlans),
     name: spacePlans[0].name
   }));
-  const grandTotal = calculateTotalPrice(subscription.plans);
+  const grandTotal = calculateTotalPrice([...spacePlans, basePlan]);
 
   return {basePlan, spacePlansByName, grandTotal};
 }

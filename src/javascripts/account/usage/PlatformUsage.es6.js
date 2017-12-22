@@ -1,7 +1,7 @@
 import * as auth from 'Authentication';
 import {apiUrl} from 'Config';
-import {createOrganizationEndpoint, createSubscriptionEndpoint} from 'data/Endpoint';
-import {getSubscription, getBasePlan} from 'account/pricing/PricingDataProvider';
+import {createOrganizationEndpoint} from 'data/Endpoint';
+import {getBasePlan} from 'account/pricing/PricingDataProvider';
 import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import {createElement as h} from 'libs/react';
@@ -32,9 +32,7 @@ const PlatformUsage = createReactClass({
       return;
     }
 
-    const subscription = yield getSubscription(orgEndpoint);
-    const subscriptionsEndpoint = createSubscriptionEndpoint(apiUrl(), subscription.sys.id, auth);
-    const plan = yield getBasePlan(subscriptionsEndpoint);
+    const plan = yield getBasePlan(orgEndpoint);
 
     this.props.onReady();
     this.setState({
