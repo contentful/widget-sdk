@@ -69,10 +69,11 @@ export function getCreator (spaceContext, itemHandlers, templateName) {
       allPromises.push(editingInterfacesPromise, publishAssetsPromise, createPreviewEnvPromise);
 
       if (creationErrors.length > 0) {
-        throw new Error({
+        const errorMessage = 'Error during space template creation: ' + JSON.stringify({
           errors: creationErrors,
-          template: template
-        });
+          template: templateName
+        }, null, 2);
+        throw new Error(errorMessage);
       }
     });
 
@@ -119,12 +120,7 @@ export function getCreator (spaceContext, itemHandlers, templateName) {
 
   function makeItemErrorHandler (item, actionData) {
     return function (error) {
-      creationErrors.push({
-        error: error,
-        action: actionData.action,
-        entityType: actionData.entity,
-        entityId: getItemId(item)
-      });
+      creationErrors.push(`error ${getErrorMessage(error)} during ${actionData.action} on entityType: ${actionData.entity} on entityId: ${getItemId(item)}`);
       itemHandlers.onItemError(generateItemId(item, actionData), {
         item: item,
         actionData: actionData,
@@ -293,7 +289,9 @@ export function getCreator (spaceContext, itemHandlers, templateName) {
         .then(handlers.success)
         .catch(handlers.error);
     });
-    return Promise.race(promises);
+
+    // if an array is empty, Promise.race() will never resolve
+    return promises.length ? Promise.race(promises) : Promise.resolve();
   }
 
   function createApiKey (apiKey) {
@@ -374,4 +372,29 @@ function setDefaultLocale (entities, locale) {
     });
     return entity;
   });
+}
+
+/**
+ * get readable error message
+ * @param {Object} error - regular error or request error
+ * @return {String} - human-readable error
+ */
+function getErrorMessage (error) {
+  if (!error) {
+    return 'unknown error';
+  }
+
+  if (error.message) {
+    return error.message;
+  }
+
+  if (error.body && error.body.message) {
+    return error.body.message;
+  }
+
+  if (error.status) {
+    return error.status;
+  }
+
+  return 'unknown error';
 }
