@@ -244,7 +244,7 @@ function fetchNewToken () {
 }
 
 function loadTokenFromHash () {
-  const match = $location.hash().match(/access_token=(\w+)/);
+  const match = $location.hash().match(/access_token=([\w-]+)/);
   const token = match && match[1];
   if (token) {
     $location.hash('');
