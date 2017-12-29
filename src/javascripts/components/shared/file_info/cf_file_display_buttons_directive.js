@@ -1,7 +1,9 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfFileDisplayButtons', [function () {
+.directive('cfFileDisplayButtons', ['require', function (require) {
+  var mimetype = require('mimetype');
+
   return {
     restrict: 'E',
     template: JST.cf_file_display_buttons,
@@ -12,7 +14,7 @@ angular.module('contentful')
       function canEditFile () {
         var file = $scope.file;
         var isReady = !$scope.imageIsLoading && file && file.url;
-        return isEditable() && $scope.enableUpload && isReady;
+        return isEditable() && isImage() && $scope.enableUpload && isReady;
       }
 
       function canDeleteFile () {
@@ -23,6 +25,11 @@ angular.module('contentful')
 
       function isEditable () {
         return _.get($scope, 'fieldLocale.access.editable', false);
+      }
+
+      function isImage () {
+        var fileType = _.get($scope, 'file.contentType', '');
+        return mimetype.getGroupLabel({type: fileType}) === 'image';
       }
     }]
   };
