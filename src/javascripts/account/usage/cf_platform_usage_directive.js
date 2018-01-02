@@ -13,8 +13,8 @@ angular.module('contentful')
 
       ReactDOM.render(React.createElement(PlatformUsage, {
         orgId: $scope.properties.orgId,
-        onReady: () => { context.ready = true; },
-        onForbidden: () => { context.forbidden = true; }
+        onReady: function () { context.ready = true; },
+        onForbidden: function () { context.forbidden = true; }
       }), host);
 
       $scope.$on('$destroy', function () {
