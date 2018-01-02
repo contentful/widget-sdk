@@ -131,7 +131,11 @@ function refreshAndRedirect () {
   const afterLoginPath = afterLoginPathStore.get();
   if (afterLoginPath) {
     afterLoginPathStore.remove();
-    $location.path(afterLoginPath);
+    // https://stackoverflow.com/questions/24764330/location-changes-the-parameter-delimiter
+    // $location.path escapes '?' symbol
+    // https://stackoverflow.com/questions/31838484/difference-between-location-path-and-location-url
+    // more on the difference between $location.path/$location.url
+    $location.url(afterLoginPath);
   }
 }
 
@@ -240,7 +244,7 @@ function fetchNewToken () {
 }
 
 function loadTokenFromHash () {
-  const match = $location.hash().match(/access_token=(\w+)/);
+  const match = $location.hash().match(/access_token=([\w-]+)/);
   const token = match && match[1];
   if (token) {
     $location.hash('');
