@@ -176,7 +176,7 @@ function getVariation (flagName, defaultValue) {
  * @description
  * Builds a launch darkly user with custom data to help us
  * target users.
- * Custom data that can be used in targeting users:
+ * Custom attributes that can be used in targeting users:
  * - currentOrgId : current org in the app the user is in the context of
  * - currentOrgSubscriptionStatus : one of free, paid, free_paid, trial
  * - currentOrgPlanIsEnterprise : true if the current org is on an enterprise plan
@@ -188,6 +188,7 @@ function getVariation (flagName, defaultValue) {
  * - currentUserIsCurrentOrgCreator : true if the current org was created by the current user
  * - currentUserSignInCount : count of the number of times the current user has signed in
  * - isNonPayingUser : true if non of the orgs the user belongs to is paying us
+ * - currentUserSpaceRole : list of lower case roles that user has for current space
  * - isAutomationTestUser : true if the current user was created by the automation suite
  *
  * @param {Object} user
