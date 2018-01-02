@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').directive('cfFileDrop', ['require', function (require) {
-  var filepicker   = require('filepicker');
+  var Filepicker   = require('services/Filepicker');
   var logger       = require('logger');
   var notification = require('notification');
 
@@ -43,7 +43,7 @@ angular.module('contentful').directive('cfFileDrop', ['require', function (requi
         }
       });
 
-      filepicker.makeDropPane(elem[0], {
+      Filepicker.makeDropPane(elem[0], {
         multiple: false,
         dragEnter: function() {
           inOutSemaphore++;

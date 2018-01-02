@@ -65,6 +65,8 @@ export function create (textarea, options, CodeMirror) {
    */
   return {
     destroy: destroy,
+    disable: disable,
+    enable: enable,
     attachEvent: attachEvent,
     addKeyShortcuts: addKeyShortcuts,
     setValue: setValue,
@@ -74,6 +76,7 @@ export function create (textarea, options, CodeMirror) {
     restoreCursor: restoreCursor,
     moveToLineEnd: moveToLineEnd,
     usePrimarySelection: usePrimarySelection,
+    focus: focus,
     select: select,
     selectBackwards: selectBackwards,
     extendSelectionBy: extendSelectionBy,
@@ -83,6 +86,8 @@ export function create (textarea, options, CodeMirror) {
     removeFromLineBeginning: removeFromLineBeginning,
     removeSelectedText: removeSelectedText,
     replaceSelectedText: replaceSelectedText,
+    getCursor: getCursor,
+    setCursor: setCursor,
     getSelection: getSelection,
     getLine: getLine,
     isLineEmpty: isLineEmpty,
@@ -105,6 +110,14 @@ export function create (textarea, options, CodeMirror) {
   function destroy () {
     cm.toTextArea();
     unwatchResize();
+  }
+
+  function disable () {
+    cm.setOption('readOnly', 'nocursor');
+  }
+
+  function enable () {
+    cm.setOption('readOnly', false);
   }
 
   function assureHeight () {
@@ -225,6 +238,10 @@ export function create (textarea, options, CodeMirror) {
     cmd('singleSelection');
   }
 
+  function focus () {
+    cm.focus();
+  }
+
   function select (from, to) {
     cm.setSelection(from, to);
     cm.focus();
@@ -306,6 +323,14 @@ export function create (textarea, options, CodeMirror) {
   /**
    *  low-level editor get/check functions
    */
+
+  function getCursor () {
+    return cm.getCursor();
+  }
+
+  function setCursor (cursor) {
+    cm.setCursor(cursor);
+  }
 
   function getSelection () {
     const selections = cm.listSelections();

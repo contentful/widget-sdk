@@ -6,7 +6,7 @@ describe('cfFileEditor Directive', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.removeDirectives('cfFileDrop');
-      $provide.value('filepicker', {
+      $provide.value('services/Filepicker', {
         pick: sinon.stub(),
         parseFPFile: sinon.stub()
       });
@@ -52,7 +52,7 @@ describe('cfFileEditor Directive', function () {
     beforeEach(function () {
       fieldApi.setValue = sinon.stub().resolves();
 
-      const FP = this.$inject('filepicker');
+      const FP = this.$inject('services/Filepicker');
       FP.pick.resolves('FP FILE');
       FP.parseFPFile.returns('FILE DATA');
 
@@ -63,7 +63,7 @@ describe('cfFileEditor Directive', function () {
     });
 
     it('calls filepickers pick', function () {
-      const FP = this.$inject('filepicker');
+      const FP = this.$inject('services/Filepicker');
       sinon.assert.called(FP.pick);
     });
 
@@ -81,7 +81,7 @@ describe('cfFileEditor Directive', function () {
     });
 
     it('runs validations on file picker 101 error', function () {
-      const FP = this.$inject('filepicker');
+      const FP = this.$inject('services/Filepicker');
       FP.pick.rejects({code: 101});
 
       scope.uploadFile();
@@ -95,7 +95,7 @@ describe('cfFileEditor Directive', function () {
       scope.$emit = sinon.stub();
       fieldApi.removeValue = sinon.stub().resolves();
 
-      const FP = this.$inject('filepicker');
+      const FP = this.$inject('services/Filepicker');
       FP.parseFPFile.withArgs(null).returns(null);
 
       scope.deleteFile();
@@ -119,7 +119,7 @@ describe('cfFileEditor Directive', function () {
     beforeEach(function () {
       fieldApi.setValue = sinon.stub().resolves();
 
-      const FP = this.$inject('filepicker');
+      const FP = this.$inject('services/Filepicker');
       FP.pick.resolves('FP FILE');
       FP.parseFPFile.returns('FILE DATA');
 
@@ -143,7 +143,7 @@ describe('cfFileEditor Directive', function () {
     });
 
     it('runs validations on file picker 101 error', function () {
-      const FP = this.$inject('filepicker');
+      const FP = this.$inject('services/Filepicker');
       FP.pick.rejects({code: 101});
 
       scope.uploadFile();

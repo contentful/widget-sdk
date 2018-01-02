@@ -148,7 +148,6 @@ src/javascripts/services/validation_views.js
 src/javascripts/services/moment.js
 src/javascripts/services/editing_interfaces_helpers.js
 src/javascripts/services/features.js
-src/javascripts/services/filepicker.js
 src/javascripts/services/hints.js
 src/javascripts/services/promised_loader.js
 src/javascripts/services/sdk_info_supplier.js

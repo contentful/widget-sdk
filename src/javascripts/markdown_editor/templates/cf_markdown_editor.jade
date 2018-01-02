@@ -39,12 +39,7 @@ div(ng-if="hasCrashed")
         ng-disabled="isDisabled")
           i.fa.fa-arrows-alt
 
-      button.toolbar-button.markdown-side-action(
-        ng-click="actions.asset()"
-        tabindex="-1"
-        ng-disabled="!canEdit()")
-        i.fa.fa-picture-o
-        |  Insert media
+      cf-markdown-insert-media-action(actions="actions" is-disabled="!canEdit()")
 
     .markdown-minor-actions(ng-show="minorActionsShown")
       cf-markdown-action(actions="actions" name="strike"        is-disabled="!canEdit()")

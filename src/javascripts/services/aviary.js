@@ -8,7 +8,7 @@ angular.module('contentful')
   var client = require('client');
   var delay = require('delay');
   var environment = require('environment');
-  var filepicker = require('filepicker');
+  var Filepicker = require('services/Filepicker');
 
   if (!$window.Aviary) {
     angularLoad.loadScript(
@@ -56,7 +56,7 @@ angular.module('contentful')
 
   function onSave (_imageID, newURL) {
     featherEditor.showWaitIndicator();
-    filepicker.store(newURL, file)
+    Filepicker.store(newURL, file)
     .then(function (res) {
       createDeferred.resolve(res);
     })

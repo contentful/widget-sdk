@@ -260,7 +260,7 @@ function revokeButton (revoke, token) {
     style: { textAlign: 'right' }
   }, [
     h('button.text-link--destructive', {
-      cfContextMenuTrigger: '',
+      cfContextMenuTrigger: true,
       dataTestId: `pat.revoke.${token.id}.request`
     }, [ 'Revoke' ]),
     h('.delete-confirm.context-menu.x--arrow-right', {
