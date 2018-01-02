@@ -21,20 +21,6 @@ export function h (elSpec, attrs, children) {
 
 /**
  * @ngdoc method
- * @name utils/hyperscript#styledDiv
- * Creates a 'div' container with the given styles
- *
- * @param {object} style  Map of CSS properties
- * @param {string[]} children  List of children for the container
- * @returns {string}
- */
-export function styledDiv (style, children) {
-  return h('div', {style}, children);
-}
-
-
-/**
- * @ngdoc method
  * @name utils/hyperscript#text
  * Escape a string for use as an HTML text node.
  *

@@ -2,6 +2,7 @@ import {h} from 'ui/Framework';
 import {byName as Colors} from 'Styles/Colors';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import { monospaceFontFamily } from 'Styles';
+import $state from '$state';
 
 /**
  * @ngdoc service
@@ -76,6 +77,40 @@ export function linkOpen (content, url, modifier = '') {
     href: url,
     target: '_blank',
     rel: 'noopener noreferrer'
+  }, content);
+}
+
+
+/**
+ * @ngdoc method
+ * @name ui/Content#stateLink
+ * @description
+ * Create a link to an Angular UI Router state.
+ *
+ * ~~~js
+ * p([
+ *   'Go to ',
+ *   stateLink('Home of some space', 'spaces.detail.home', {spaceId: 'lol'})
+ * ])
+ * ~~~
+ *
+ * @param {VNode[]}  content   Array of child nodes
+ * @param {object}   stateRef  Object of `{path: 'x.y', params: {...}}` shape.
+ *                             If `params` are not provided `$stateParams` are used.
+ * @returns {VNode}
+ */
+export function stateLink (content, {path, params}) {
+  return h('a', {
+    href: $state.href(path, params),
+    onClick: e => {
+      if (e.shiftKey || e.ctrlKey || e.metaKey) {
+        // allow to open in a new tab/window normally
+      } else {
+        // perform Angular UI router transition only
+        e.preventDefault();
+        $state.go(path, params);
+      }
+    }
   }, content);
 }
 

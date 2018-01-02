@@ -1,26 +1,25 @@
+import ReactTestUtils from 'libs/react-dom/test-utils';
+
 describe('app/api/KeyEditor/Controller', function () {
   beforeEach(function () {
     module('contentful/test', ($provide) => {
       $provide.stubLaunchDarkly();
       $provide.value('navigation/closeState', sinon.spy());
-      $provide.value('services/ContactSales', {
-        createContactLink: () => ''
+      $provide.value('app/api/KeyEditor/BoilerplateCode', {
+        get: sinon.stub().resolves([
+          {id: 'BP_ID', instructions: '', sourceUrl: sinon.stub().returns('https://downloadlink')}
+        ])
       });
     });
 
     const attachController = this.$inject('app/api/KeyEditor/Controller').default;
     const template = this.$inject('app/api/KeyEditor/Template').default();
     const { renderString } = this.$inject('ui/Framework');
-    const Boilerplate = this.$inject('app/api/KeyEditor/BoilerplateCode');
     const $compile = this.$inject('$compile');
     const $rootScope = this.$inject('$rootScope');
     const $state = this.$inject('$state');
 
     sinon.stub($state, 'go').resolves();
-
-    sinon.stub(Boilerplate, 'get').resolves([
-      {id: 'BP_ID', instructions: '', sourceUrl: sinon.stub()}
-    ]);
 
     this.accessChecker = this.$inject('accessChecker');
     this.accessChecker.canModifyApiKeys = sinon.stub().returns(true);
@@ -90,7 +89,9 @@ describe('app/api/KeyEditor/Controller', function () {
       });
 
       const editor = this.compile();
-      setValue(editor.input.name, 'NEW NAME');
+
+      editor.input.name.value = 'NEW NAME';
+      ReactTestUtils.Simulate.change(editor.input.name);
       this.$apply();
 
       editor.actions.save().click();
@@ -109,10 +110,5 @@ describe('app/api/KeyEditor/Controller', function () {
 
   function findButton (el, testId) {
     return el.querySelectorAll(`button[data-test-id="${testId}"]`)[0];
-  }
-
-  function setValue (el, value) {
-    el.value = value;
-    el.dispatchEvent(new Event('input', {bubbles: true}));
   }
 });
