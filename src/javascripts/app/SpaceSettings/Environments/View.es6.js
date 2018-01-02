@@ -6,7 +6,7 @@ import { caseofEq } from 'libs/sum-types';
 import { h } from 'ui/Framework';
 import { linkOpen, badge, codeFragment, docsLink } from 'ui/Content';
 import { table, tr, td, th } from 'ui/Content/Table';
-import { container, vspace, ihspace } from 'ui/Layout';
+import { container, hbox, vspace, ihspace } from 'ui/Layout';
 import * as Workbench from 'app/Workbench';
 import { byName as Colors } from 'Styles/Colors';
 import questionMarkIcon from 'svg/QuestionMarkIcon';
@@ -103,9 +103,11 @@ function environmentTable (environments) {
           environment.isMaster && badge({ color: Colors.textLight }, ['Default environment'])
         ]),
         td([
-          codeFragment([ environment.id ]),
-          ihspace('6px'),
-          h(CopyIconButton, { value: environment.id })
+          hbox([
+            codeFragment([ environment.id ]),
+            ihspace('6px'),
+            h(CopyIconButton, { value: environment.id })
+          ])
         ]),
         td([
           caseofEq(environment.status, [

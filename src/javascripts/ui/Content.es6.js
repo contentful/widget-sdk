@@ -178,7 +178,9 @@ export function codeFragment (children) {
       fontFamily: monospaceFontFamily,
       fontSize: '13px',
       lineHeight: '22px',
-      padding: '0px 5px'
+      padding: '0 5px',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis'
     }
   }, children);
 }
