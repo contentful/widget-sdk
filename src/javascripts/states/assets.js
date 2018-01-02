@@ -14,7 +14,7 @@ angular.module('contentful')
   var list = base({
     name: 'list',
     url: '',
-    loadingText: 'Loading media...',
+    loadingText: 'Loading media…',
     template: '<div cf-asset-list class="workbench asset-list entity-list"></div>'
   });
 

@@ -17,7 +17,7 @@ export default makeState({
   name: 'home',
   url: '/',
   template: template(),
-  loadingText: 'Loading...',
+  loadingText: 'Loading…',
   resolve: {
     spaces: function () {
       return getSpaces().then((spaces) => {

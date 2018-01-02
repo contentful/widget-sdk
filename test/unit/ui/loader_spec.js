@@ -33,7 +33,7 @@ describe('cfLoaders', function () {
     };
 
     this.assertIsShownBinding = function (isShownProp, isShown, watchStateChange) {
-      const { scope } = this.compileLoader(isShownProp, isShown, 'Please wait...', watchStateChange);
+      const { scope } = this.compileLoader(isShownProp, isShown, 'Please wait…', watchStateChange);
       const tests = [true, 'WOOP', false];
 
       expect(scope.isShown).toBe(isShown);
@@ -47,7 +47,7 @@ describe('cfLoaders', function () {
 
     this.assertAttrs = function (isShownProp, isShown, loaderMsg, watchStateChange) {
       const { scope } = this.compileLoader(isShownProp, isShown, loaderMsg, watchStateChange);
-      const defaultMsg = 'Please hold on...';
+      const defaultMsg = 'Please hold on…';
 
       expect(scope.isShown).toEqual(isShown);
       expect(scope.loaderMsg).toEqual(loaderMsg || defaultMsg);
@@ -70,7 +70,7 @@ describe('cfLoaders', function () {
     });
 
     it('should update isShown based on the parent property it is bound to', function () {
-      const { scope } = this.compileLoader('isSearching', 'TEST', 'Please wait...');
+      const { scope } = this.compileLoader('isSearching', 'TEST', 'Please wait…');
 
       expect(scope.isShown).toBe('TEST');
       scope.$parent.isSearching = true;

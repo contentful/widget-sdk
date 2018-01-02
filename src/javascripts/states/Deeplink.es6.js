@@ -23,7 +23,7 @@ export default makeState({
   name: 'deeplink',
   url: '/deeplink',
   template: createTemplate(),
-  loadingText: 'Redirecting...',
+  loadingText: 'Redirecting…',
   controller: ['$scope', function ($scope) {
     createController($scope);
   }]
@@ -86,7 +86,7 @@ function createTemplate () {
     h('div', {
       ngShow: '!status'
     }, [
-      'Redirecting...'
+      'Redirecting…'
     ])
   ]);
 }

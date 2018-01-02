@@ -5,7 +5,7 @@ export default makeState({
   name: 'extensions',
   url: '/extensions',
   template: '<cf-component-bridge component="component" />',
-  loadingText: 'Loading Extensions...',
+  loadingText: 'Loading Extensions…',
   controller: ['$scope', function ($scope) {
     extensions($scope);
   }]

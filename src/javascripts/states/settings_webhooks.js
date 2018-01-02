@@ -15,7 +15,7 @@ angular.module('contentful')
   var list = base({
     name: 'list',
     url: '',
-    loadingText: 'Loading Webhooks...',
+    loadingText: 'Loading Webhooks…',
     template: '<cf-webhook-list class="workbench webhook-list" />',
     controller: ['$scope', function ($scope) {
       $scope.context = {};

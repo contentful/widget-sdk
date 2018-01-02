@@ -100,7 +100,7 @@ const usersPropTypes = {
      const {users} = this.state;
 
      if (!users) {
-       return React.createElement('div', {className: 'loader'}, ['Loading...']);
+       return React.createElement('div', {className: 'loader'}, ['Loading…']);
      }
 
      return React.createElement(List, {users});

@@ -13,7 +13,7 @@ angular.module('contentful')
     name: 'space',
     url: '/space',
     label: 'Space settings',
-    loadingText: 'Loading space settings...',
+    loadingText: 'Loading space settings…',
     template: '<cf-space-settings class="workbench space-settings" />',
     controller: ['$scope', function ($scope) {
       $scope.context = {};

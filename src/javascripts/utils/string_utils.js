@@ -179,7 +179,7 @@ angular.module('cf.utils')
     }
     if (str && str.length > length) {
       var endOfStr = str.substr(-endOfStrLength)
-        .replace(/^\./, ''); // Avoid visually awkward “....”.
+        .replace(/^\./, ''); // Avoid visually awkward “….”.
       var beginningOfStr = truncate(str, length - endOfStrLength);
       return beginningOfStr + endOfStr;
     } else {

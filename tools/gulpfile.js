@@ -323,7 +323,7 @@ gulp.task('watchify', function () {
   bundleBrowserify(ui)
 
   ui.on('update', function () {
-    gutil.log('Rebuilding \'user_interface\' bundle...')
+    gutil.log('Rebuilding \'user_interface\' bundle…')
     bundleBrowserify(ui)
     .on('end', function () {
       gutil.log('Rebuilding \'user_interface\' bundle done')
