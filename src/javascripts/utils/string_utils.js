@@ -66,7 +66,7 @@ angular.module('cf.utils')
   }
 
   function fileNameToTitle (str) {
-    return removeExtension(str).replace(/_/g, ' ');
+    return normalizeWhiteSpace(removeExtension(str).replace(/_/g, ' '));
   }
 
   function titleToFileName (str, spacer) {
