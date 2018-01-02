@@ -1,4 +1,4 @@
-import {identity} from 'lodash';
+import {identity, isString} from 'lodash';
 import $q from '$q';
 import $timeout from '$timeout';
 import * as Filepicker from 'services/Filepicker';
@@ -6,7 +6,6 @@ import logger from 'logger';
 import notification from 'notification';
 import stringUtils from 'stringUtils';
 import spaceContext from 'spaceContext';
-import TheLocaleStore from 'TheLocaleStore';
 
 /**
  * Opens filepicker to select media files which will then be uploaded as assets.
@@ -15,12 +14,13 @@ import TheLocaleStore from 'TheLocaleStore';
  * as long as processing is not done and once it is done the version will be
  * outdated.
  *
- * @param {string?} options.locale Locale files will be uploaded for.
+ * @param {string} localeCode Internal locale code files will be uploaded for.
  * @returns {Promise<Array<Asset>>}
  */
-export function open (options = {}) {
-  const locale = options.locale || TheLocaleStore.getDefaultLocale().internal_code;
-
+export function open (localeCode) {
+  if (!isString(localeCode)) {
+    throw new TypeError('locale must be a string');
+  }
   return Filepicker.pickMultiple().then(uploadFPFiles, (fpError) => {
     if (!Filepicker.isUserClosedDialogError(fpError)) {
       notification.error(
@@ -51,18 +51,19 @@ export function open (options = {}) {
 
   function createAssetForFile (fpFile) {
     const file = Filepicker.parseFPFile(fpFile);
+    const title = stringUtils.fileNameToTitle(file.fileName);
     const data = {
       sys: { type: 'Asset' },
-      fields: { file: {}, title: {} }
+      fields: {
+        file: { [localeCode]: file },
+        title: { [localeCode]: title }
+      }
     };
-    data.fields.file[locale] = file;
-    data.fields.title[locale] = stringUtils.fileNameToTitle(file.fileName);
-
     return spaceContext.space.createAsset(data);
   }
 
   function processAssetForFile (asset) {
-    return asset.process(asset.version, locale);
+    return asset.process(asset.version, localeCode);
   }
 }
 

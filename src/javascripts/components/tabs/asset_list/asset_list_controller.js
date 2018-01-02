@@ -13,6 +13,7 @@ angular.module('contentful')
   var getBlankView = require('data/UiConfig/Blanks').getBlankAssetView;
   var createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar').default;
   var BulkAssetsCreator = require('services/BulkAssetsCreator');
+  var TheLocaleStore = require('TheLocaleStore');
 
   var searchController = $controller('AssetSearchController', { $scope: $scope });
 
@@ -109,7 +110,8 @@ angular.module('contentful')
   }
 
   $scope.createMultipleAssets = function () {
-    BulkAssetsCreator.open().finally(function () {
+    var defaultLocaleCode = TheLocaleStore.getDefaultLocale().internal_code;
+    BulkAssetsCreator.open(defaultLocaleCode).finally(function () {
       // We reload all assets to get the new ones. Unfortunately the
       // CMA is not immediately consistent so we have to wait.
       // TODO Instead of querying the collection endpoint we should
