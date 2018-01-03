@@ -1,10 +1,11 @@
 import modalDialog from 'modalDialog';
-import { default as assetUrl } from 'assetUrlFilter';
+import assetUrl from 'assetUrlFilter';
 import specialCharacters from './markdown_special_characters';
 import LinkOrganizer from 'LinkOrganizer';
 import notification from 'notification';
 import entitySelector from 'entitySelector';
-import { defaults, isObject, get as getAtPath } from 'lodash';
+import {defaults, isObject, get} from 'lodash';
+import {fileNameToTitle} from 'stringUtils';
 import {track} from 'analytics/Analytics';
 import $state from '$state';
 import * as BulkAssetsCreator from 'services/BulkAssetsCreator';
@@ -85,11 +86,13 @@ export function create (editor, localeCode) {
   }
 
   function _makeAssetLink (asset) {
-    const title = getAtPath(asset, ['fields', 'title', localeCode]);
-    const file = getAtPath(asset, ['fields', 'file', localeCode]);
+    const file = get(asset, ['fields', 'file', localeCode]);
 
-    if (title && isObject(file) && file.url) {
-      return '![' + title + '](' + assetUrl(file.url) + ')';
+    if (isObject(file) && file.url) {
+      const title = get(asset, ['fields', 'title', localeCode]) ||
+        fileNameToTitle(file.fileName);
+
+      return `![${title}](${assetUrl(file.url)})`;
     } else {
       return '';
     }
