@@ -1,5 +1,9 @@
 import {h, renderString} from 'ui/Framework';
 
+const TEST_ID_LINK_EXISTING = 'markdownEditor.linkExistingAssets';
+const TEST_ID_UPLOAD_AND_LINK = 'markdownEditor.uploadAssetsAndLink';
+const TEST_ID_DROPDOWN = 'markdownEditor.insertMediaDropdownTrigger';
+
 export default [
   SingleActionButton(),
   MultiActionButton(),
@@ -9,7 +13,8 @@ export default [
 function SingleActionButton () {
   return InsertMediaButton({
     ngIf: '!isCreateAssetsEnabled || !canUploadMultipleAssets',
-    ngClick: 'actions.existingAssets()'
+    ngClick: 'actions.existingAssets()',
+    dataTestId: TEST_ID_LINK_EXISTING
   }, [
     Icon(), ' Insert media'
   ]);
@@ -18,7 +23,8 @@ function SingleActionButton () {
 function MultiActionButton () {
   return InsertMediaButton({
     ngIf: 'isCreateAssetsEnabled && canUploadMultipleAssets',
-    cfContextMenuTrigger: true
+    cfContextMenuTrigger: true,
+    dataTestId: TEST_ID_DROPDOWN
   }, [
     Icon(),
     ' Insert media ',
@@ -46,13 +52,15 @@ function ContextMenu () {
     h('ul.context-menu__items', [
       h('li', {
         type: 'button',
-        ngClick: 'actions.newAssets()'
+        ngClick: 'actions.newAssets()',
+        dataTestId: TEST_ID_UPLOAD_AND_LINK
       }, [
         'Add new media and link'
       ]),
       h('li', {
         type: 'button',
-        ngClick: 'actions.existingAssets()'
+        ngClick: 'actions.existingAssets()',
+        dataTestId: TEST_ID_LINK_EXISTING
       }, [
         'Link existing media'
       ])
