@@ -27,6 +27,8 @@ describe('data/document/ResourceStateManager', function () {
       fields: {}
     };
 
+    endpoint.stores.entries['ENTITY_ID'] = entityData;
+
     const entity = {
       data: entityData,
       setDeleted: sinon.stub()
