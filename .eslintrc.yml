@@ -20,8 +20,7 @@ rules:
   no-useless-return: "off"
   no-mixed-operators: "off"
 
-  padded-blocks: [2, "never"] 
-
+  padded-blocks: [2, "never"]
 
   semi: ["error", "always"]
 
@@ -32,6 +31,7 @@ rules:
   eol-last: "error"
   generator-star-spacing: ['error', {before: false, after: true}]
   yield-star-spacing: ['error', {before: false, after: true}]
+  require-yield: off
 
 overrides:
 - files:
@@ -47,7 +47,7 @@ overrides:
     # ES6 specific
     prefer-const: error
     no-var: error
-    
+
     # We disallow everything we do not transpile with babel
     no-restricted-syntax:
     - error
