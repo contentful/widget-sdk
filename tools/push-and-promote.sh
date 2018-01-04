@@ -17,19 +17,10 @@ echo "$(curl -sSL https://contentful-lab-assets.s3.amazonaws.com/estivador.sum)"
 # Put package & image
 ./estivador docker-ecr-login
 
-# Upload infrastructure assets
-# Packages are only produced for main environments
+# Upload built docker image
 ./estivador put-image
-if [[ "$TRAVIS_BRANCH" =~ ^(preview|master|production)$ ]]; then
-  ./estivador put-package --package $(ls output/package/archive/user_interface/pool/*.deb)
-  ./estivador notify-slack
-fi
 
+# Promote built docker image
 ./estivador promote-image
-# Promote infrastructure assets
-if [[ "$TRAVIS_BRANCH" =~ ^(preview|master|production)$ ]]; then
-  ./estivador promote-package
-  ./estivador notify-slack --promotion
-fi
 
 popd

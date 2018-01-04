@@ -17,21 +17,45 @@ env:
     - secure: "RWpHqk1nc4k4qIJ6TgM8ofrwHL2nMkp5kg5B2jevJtW8UlSnzkVuagQN9Req9dTjaMX/ZsB1Pt4CQE5K1W/xQJTKAnbtyQ8fZOXU4kQvOH+TptdwK+oMwjfITktCYuj1c1/aMD0dzkIaPvjX/OwXZPtCRq2s762YXuCyPjx3ERU="
     # JENKINS_TOKEN
     - secure: "eXBRhtfrIBfoszICbvyBmIQxLf+JEp9+OeEh1FGbqWmKWXlDTApyt6+vsOEaD0Akrc4yYdIw+DdP43tFn9VbXzun1AL/RCjDqo6l9yNvCvA5k7rF2w9rAd+ZHKYRMGLvpQ4vfNEuWwiwtjdzLA9VvrDYU/484XuH/1pSpt0rOyw="
+
 before_install:
 # Install latest version of docker. We require at least 1.12
 - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 - sudo apt-get update
 - sudo apt-get -y install docker-ce
+
 install:
 - bin/docker-build-ci
+
 script:
 - bin/docker-run-ci test
+
 after_success:
 # Build the package and static files
+# TRAVIS_BRANCH:
+#   - for push builds, or builds not triggered by a pull request, this is the name of the branch.
+#   - for builds triggered by a pull request this is the name of the branch targeted by the pull request.
+#   - for builds triggered by a tag, this is the same as the name of the tag (TRAVIS_TAG).
+# TRAVIS_COMMIT: The commit that the current build is testing.
+# TRAVIS_PULL_REQUEST: The pull request number if the current job is a pull request, “false” if it’s not a pull request.
+#
+# A pull request build (travis-ci/pr job) uses the merge commit of merging your PR branch HEAD with the HEAD of the branch
+# the PR is opened against. This merge commit is made available transparently by GitHub. This is to check whether your PR
+# when merged won't break things.
+# Note that pull request builds skip the deployment step altogether. (travis-ci/pr job)
+#
+# A push build (travis-ci/push job) builds the latest commit pushed to your branch.
+# travis-ci/push job is what does the deployment of assets.
+#
+# example params received by jobs for PR#2444
+# travis-ci/pr -> master 178f0f7862a0f9b743e0af38479657fc3ef29aab 2444
+# travis-ci/push -> refactor/task-runner 3de3452722bcd82ca484ecc16db550f175f2937e false
 - bin/docker-run-ci travis --branch "${TRAVIS_BRANCH}" --version "${TRAVIS_COMMIT}" --pr "${TRAVIS_PULL_REQUEST}"
+
 before_deploy:
 - docker build -t $DOCKER_IMAGE -f Dockerfile-prod --build-arg CF_VERSION="${TRAVIS_COMMIT}" .
+
 deploy:
   - provider: s3
     access_key_id: AKIAI35UEY5UVV5IT6BQ
@@ -56,7 +80,7 @@ deploy:
     skip_cleanup: true
     on:
       all_branches: true
-  ## Deploy production assets
+  ## Deploy production assets only when the branch that was pushed to is 'production'
   - provider: s3
     access_key_id: AKIAITC7MCJO3VAWCEOA
     secret_access_key:
