@@ -221,14 +221,15 @@ describe('LaunchDarkly', function () {
       expect(this.client.off.args[0][1]).toBe(changeHandler);
     });
 
-    it('should never call the variation handler with undefined', function* () {
+    it('should not filter undefined as the variation', function* () {
       yield this.ready();
       const spy = sinon.spy();
 
       this.client.variation.returns(undefined);
       this.ld.onFeatureFlag(this.$scope, 'feature-flag', spy);
 
-      sinon.assert.notCalled(spy);
+      sinon.assert.calledOnce(spy);
+      sinon.assert.calledWith(spy, undefined);
     });
 
     it('should not attach a change handler until LD is initialized with current context', function* () {

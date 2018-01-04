@@ -1,114 +1,92 @@
-# Feature flags with Launch Darkly
+# Feature flags in the Contentful web app
 
-We use [LaunchDarkly](launch-darkly-app) for feature flags as well as A/B tests. You might also want to read [the document about A/B testing with Launch Darkly][a-b-testing-doc].
+We use [LaunchDarkly][launch-darkly-app] for feature flags as well as [A/B tests][a-b-testing-doc].
 
-## Quickstart
+## Terminology
 
-Create a feature flag via the LaunchDarkly(LD) UI for the environment you are interested in. Then, in the directive where you are running the feature, import `utils/LaunchDarkly` and use the `getFeatureFlag` method to get the feature flag value stream to which you can add a handler. This handler will receive the feature flag values if/as they change.
+- `Feature flag`: A boolean flag in LaunchDarkly
+- `Qualified user`: A qualified user is any user that matches configured targeting rules in LaunchDarkly.
+- `Variation`: Either `true` or `false` for a feature flag
+- `Default rule`: Rule that decides what all users that don't fit any custom targeting rules will receive as their variation for the given flag.
+
+## Creating a feature flag
+
+1. Login to [LaunchDarkly][launch-darkly-app]
+2. Choose the environment you want to create the flag in from the list on the top left corner
+3. Navigate to `Feature Flags` section
+4. Click `New +` button on the top right corner to create a new test
+5. Type in a descriptive human readable name for your test (e.g., `Author Onboarding: Authors Help`)
+6. Type in a value for key which follows the following format: `feature-teamname-mm-yyyy-test-name` (e.g., `feature-ps-12-2017-author-onboarding-help`)
+7. In the `Description` box, enter a link to your feature wiki document
+8. Add tags if you want to help group flags together
+9. Under `What kind of flag is this?` choose `Boolean`
+10. Check the option named `Make this flag available to the client-side (JavaScript) SDK`
+11. Click `Save Flag`
+
+You can then setup your targeting for your feature flag. Please note a few points about targeting.
+
+1. The `Default rule` should always serve `false` for a feature flag
+2. Each targeting rule is effectively an `and` condition. Multiple targeting rules are `or`-ed together
+3. For your flag on `Staging` environment, please make sure you add a rule that serves `false` when `isAutomationTestUser` `is one of` `true` if the integration tests haven't been updated to include your feature.
+
+## Implementing a test
+
+Here's a dummy test using `onABTest` method from our LaunchDarkly integration.
 
 ```js
-// Begin feature flag code - feature-teamname-mm-yy-feature-name
-var K = require('utils/kefir');
-var LD = require('utils/LaunchDarkly');
-var someFeatureFlag$ = LD.getFeatureFlag('feature-teamname-mm-yy-feature-name');
+'use strict'
 
-K.onValueScope($scope, someFeatureFlag$, function (showFeature) {
-    // showFeature has the same value of either true or false for all users at a time
-});
-// End feature flag code - feature-teamname-mm-yy-feature-name
+angular.module('contentful')
+
+.directive('myCfDirective', ['require', function(require) {
+  var template = require('myCfDirectiveTemplate').default
+  var LD = require('utils/LaunchDarkly')
+  var track = require('analytics/Analytics');
+  var flagName = 'feature-ps-12-2017-author-onboarding-help'
+
+  return {
+    template,
+    restrict: 'E',
+    scope: {},
+    controller: ['$scope', function ($scope) {
+      LD.onFeatureFlag($scope, flagName, function (variation, changeInCtx) {
+        if (variation) {
+          // show feature
+        } else {
+          // hide feature
+        }
+      })
+    }]
+  }
+}])
 ```
-The comments in the format shown above are required to aid cleanup once we ship the feature.
 
-### Shorthand to bind feature flag value to scope variable
-
-There is as a shorthand method for the most common scenario: binding value of feature flag to a scope variable:
-
-```js
-// Begin feature flag code - feature-x
-var LD = require('utils/LaunchDarkly');
-LD.setOnScope($scope, 'feature-x', 'featureX') // binds scope variable 'featureX' to value of feature flag 'feature-x'
-// End feature flag code - feature-x
-```
-
-## Environments on Launch Darkly
-
-### `Development`
-Feature flags defined here are served to `app.joistio.com:8888` aka local dev
-
-### `Staging`
-Feature flags defined here are served to `app.flinkly.com` aka `staging`
-
-### `Preview`
-Feature flags defined here are served to `app.quirely.com` aka `preview`
-
-### `Production`
-Feature flags defined here are served to `app.contentful.com` aka `production`
-
-
-## Running a feature flag
-
-The general process for feature flag development is outlined below. Environments in LD are described in the [A/B testing document][a-b-testing-doc].
-
-1. The developer implementing the feature creates the feature flag in the `Development` environment on LD
-2. Once the developer opens a PR and wants the feature to be available on our `staging` environment aka `flinkly`, he/she duplicates it from `Development` to `Staging` environment via the LD UI, setting feature flag to `false`.
-3. The PR is merged to `master` as soon as regression tests are passing. Once it is merged, the developer duplicates it from `Staging` to `Production` environment via the LD UI, setting it to `false`.
-4. To be able to QA a feature on `quirely`, feature flag on `Preview` should be set to `true`.
-5. Automated tests for the new feature are developed in a separate branch and run against Preview environment, when they are ready to be merged to master, the flag on Staging is set to `true`.
-6. When we are ready to release the feature, the flag on production is set to `true`. If we choose to release only to some users, or do an A/B test with percentage rollout, that can be configured via Launch Darkly alone, no redeployment of code needed.
-7. The feature flag code in webapp and the flag itself in LD will be eventually removed when the feature is well tested and we decide to keep it.
+You can also use `LD.getCurrentVariation` to grab the variation for a test. It has different runtime semantics and might even be the better choice for your code. Have a look at [the source of our LaunchDarkly integration][ld-integration] which details the behaviour as well as guarantees provided by each method.
 
 ## Targeting rules
 
-You can target users by their LD properties. The only two user properties are currently:
+The best place to check the attributes available to target users is [in our LD integration][ld-integration] but it will also be maintained in the [FAQ section of our A/B testing guide][a-b-testing-doc-targeting].
 
-| Property name   | Type    | Description                                                                           |
-|-----------------|---------|---------------------------------------------------------------------------------------|
-| key             | String  | `user.sys.id`                                                                         |
-| isNonPayingUser | Boolean | True if any of user's organizations is paying - such users are qualifed for A/B tests |
-
-
-### Adding new user properties
+### Adding new targeting attributes
 
 It is possible to add custom properties to LD. But before doing so, *please discuss it with frontend chapter*! It is important for these reasons:
 
 - Launch Darkly is a third party service that should not consume any sensitive user data as emails, names etc. To make sure that what you are going to send is ok, check it with Andy.
 - If you send a new custom property to Launch Darkly, it will stay there forever and cannot be removed.
 
+## QA
 
-## Naming
+If automated tests exists for your feature, work with a QA engineer to run the right version of the integration suite against your branch.
+If automated tests do not exist for your feature, then in your flag on `Staging` environment on LD, please make sure you add a rule that serve `false` when `isAutomationTestUser` `is one of` `true` so as to not break our automated test suite.
 
-A feature flag should have the following format: `[feature|test]-teamname-mm-yyyy-test-name`.
+To QA manually, you can pass the flag name using a query parameter to our webapp. The parameter is called `ui_enable_flags` and accepts a list of LaunchDarkly test/flag names. Example: `ui_enable_flags=feature-ps-12-2017-author-onboarding-help`
 
-For example, `feature-ps-03-2017-example-space-impact`, where `ps` stands for Product Success team.
+## Running
 
-If it is an [A/B test](a-b-test0ng-doc), it should start with `test`, otherwise with `feature`.
+1. Deploy your code
+2. In the `Production` environment on [LaunchDarkly][launch-darkly-app], navigate to your feature and toggle `Targeting` to `on`
 
-#### Team abbreviations
-
-This list should be updated by new teams using the Launch Darkly integration.
-
-- Product Success (`ps`)
-- Biz Velocity (`bv`)
-- Dev Velocity (`dv`)
-
-### Creating a feature flag
-
-1. Switch to the environment you require in the LD UI
-2. Goto Feature Flags and click New
-3. In the pane that slides in, fill in the details and make sure you select "Make this flag available to the client-side (JavaScript) SDK"
-4. Choose the default bucket split, if applicable
-5. Enable targeting to enable the test
-6. The test should now be available in `user_interface`
-
-![create feature flag](https://cloud.githubusercontent.com/assets/635512/23408313/e12ab360-fdc7-11e6-8b52-4cce064b1b2a.gif)
-
-
-### QA
-
-To manually QA the new feature, it should be turned on for `Staging` in LD.
-
-Automated tests for the developed feature should be in a separate branch and run against `Staging`, tests from `master` should run against `Preview` with the flag turned off. See [Running a feature flag](#running-a-feature-flag) for the description of the whole process
-
-
-[a-b-testing-doc]: /docs/guides/a_b_testing
+[a-b-testing-doc]: ./ab-testing.md
+[a-b-testing-doc-targeting]: ./ab-testing.md#targeting-attributes
 [launch-darkly-app]: https://app.launchdarkly.com
+[ld-integration]: ../../src/javascripts/utils/LaunchDarkly/index.es6.js

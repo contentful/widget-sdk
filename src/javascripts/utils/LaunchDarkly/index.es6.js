@@ -61,9 +61,9 @@ export function init () {
  * where context is a combination of current user, org and space data.
  * 2. The promise will resolve with the variation for the provided flag name
  * if it receives a variation from it from LD.
- * 3. The promise will resolve with `undefined` if LD did not find a flag
- * with the provided flag name. An error will be logged, warning you about
- * possible typo in flag name.
+ * 3. The promise will resolve with `undefined` if LD does not find a flag
+ * with the provided flag name. An error will be logged to bugsnag.
+ *
  * Note: this can also happen in rare cases even if a flag does exist (e.g. LD
  * service is down) and you should keep it in mind if your default value is not
  * falsy.
@@ -77,7 +77,7 @@ export function getCurrentVariation (flagName) {
     if (variation === UNINIT_VAL) {
       // LD could not find a flag with given name, log error and return undefined
       logger.logError(`Invalid flag ${flagName}`);
-      return undefined;
+      return UNINIT_VAL;
     } else {
       return JSON.parse(variation);
     }
@@ -105,7 +105,8 @@ export function getCurrentVariation (flagName) {
  * the current context is updated to reflect values for the current state of the app.
  * State of the app here refers to current user, current org and current space.
  * 3. The handler will always be given changes in context as the second parameter
- * 4. The handler will _never_ be called with undefined as an argument
+ * 4. The handler will be called with `undefined` as the variation if the flag does
+ * not exist in LD or if LD itself is down.
  *
  * @param {Scope} $scope
  * @param {String} flagName
@@ -132,8 +133,7 @@ export function onFeatureFlag ($scope, featureName, handler) {
   onValueScope(
     $scope,
     obs$.property
-      .filter(v => v !== undefined)
-      .map(v => [JSON.parse(v), getChangesObject(prevCtx, currCtx)]),
+      .map(v => [v === undefined ? v : JSON.parse(v), getChangesObject(prevCtx, currCtx)]),
     ([variation, changes]) => handler(variation, changes)
   );
 }
@@ -176,7 +176,7 @@ function getVariation (flagName, defaultValue) {
  * @description
  * Builds a launch darkly user with custom data to help us
  * target users.
- * Custom data that can be used in targeting users:
+ * Custom attributes that can be used in targeting users:
  * - currentOrgId : current org in the app the user is in the context of
  * - currentOrgSubscriptionStatus : one of free, paid, free_paid, trial
  * - currentOrgPlanIsEnterprise : true if the current org is on an enterprise plan
@@ -188,6 +188,7 @@ function getVariation (flagName, defaultValue) {
  * - currentUserIsCurrentOrgCreator : true if the current org was created by the current user
  * - currentUserSignInCount : count of the number of times the current user has signed in
  * - isNonPayingUser : true if non of the orgs the user belongs to is paying us
+ * - currentUserSpaceRole : list of lower case roles that user has for current space
  * - isAutomationTestUser : true if the current user was created by the automation suite
  *
  * @param {Object} user
