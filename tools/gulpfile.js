@@ -488,8 +488,8 @@ gulp.task('build/js', ['js', 'templates'], function () {
   return gulp.src([
     'public/app/templates.js',
     'public/app/vendor.js',
-    'public/app/components.js',
-    'public/app/libs.js'
+    'public/app/libs.js',
+    'public/app/components.js'
   ])
     .pipe(sourceMaps.init({ loadMaps: true, largeFile: true }))
     .pipe(concat('app/application.min.js'))

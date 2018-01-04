@@ -147,7 +147,6 @@ angular.module('contentful')
           execute: function () {}
         };
       }
-      type: 'dynamic'
     ]);
 
     angular.module('cf.es6')
@@ -163,7 +162,7 @@ angular.module('contentful')
    * @param  {Function} run  Function that is run to export the module
    */
   function register (id, deps, run) {
-    registry.push({ id, deps, run, type: 'dynamic' });
+    registry.push([id, deps, run]);
     registerDirectoryAlias(id);
 
     angular.module('cf.es6')
