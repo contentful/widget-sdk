@@ -3,8 +3,9 @@ const alphaHeader = {
 };
 
 /**
+ * @param {object}  endpoint organization endpoint
  * @param {object?} params
- * @param {string?} params.type base, space
+ * @param {string?} params.plan_type base, space
  * @returns {Promise<object>}
  *
  */
@@ -22,7 +23,7 @@ export function getSubscriptionPlans (endpoint, params) {
  * @returns {Promise<object>} base plan object
  */
 export function getBasePlan (endpoint) {
-  return getSubscriptionPlans(endpoint, {type: 'base'})
+  return getSubscriptionPlans(endpoint, {plan_type: 'base'})
     // although you can only have 1 base plan, the endpoint
     // still returns a list
     .then(data => data.items[0]);
@@ -34,6 +35,6 @@ export function getBasePlan (endpoint) {
  * @returns {Promise<object[]>} array of space plans
  */
 export function getSpacePlans (endpoint) {
-  return getSubscriptionPlans(endpoint, {type: 'space'})
+  return getSubscriptionPlans(endpoint, {plan_type: 'space'})
     .then(data => data.items);
 }

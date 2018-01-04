@@ -8,6 +8,7 @@ import {createElement as h} from 'libs/react';
 import {runTask} from 'utils/Concurrent';
 import {isOwnerOrAdmin} from 'services/OrganizationRoles';
 import {getOrganization} from 'services/TokenStore';
+import * as ReloadNotification from 'ReloadNotification';
 
 const PRICE_FORMATS = {
   'FlatFee': '(flat fee)',
@@ -21,20 +22,22 @@ const PlatformUsage = createReactClass({
     };
   },
   componentDidMount: function () {
-    runTask(this.fetchPlan);
+    return runTask(this.fetchPlan);
   },
   fetchPlan: function* () {
-    const org = yield getOrganization(this.props.orgId);
-    const orgEndpoint = createOrganizationEndpoint(apiUrl(), this.props.orgId, auth);
+    const {orgId, onReady, onForbidden} = this.props;
+    const org = yield getOrganization(orgId);
+    const orgEndpoint = createOrganizationEndpoint(apiUrl(), orgId, auth);
 
     if (!isOwnerOrAdmin(org)) {
-      this.props.onForbidden();
+      onForbidden();
       return;
     }
 
-    const plan = yield getBasePlan(orgEndpoint);
+    const plan = yield getBasePlan(orgEndpoint)
+      .catch(ReloadNotification.apiErrorHandler);
 
-    this.props.onReady();
+    onReady();
     this.setState({
       name: plan.productRatePlan.name,
       charges: plan.ratePlanCharges

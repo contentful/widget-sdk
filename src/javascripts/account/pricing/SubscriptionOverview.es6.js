@@ -28,8 +28,10 @@ export default function ($scope) {
 
 function* loadStateFromProperties ({orgId}) {
   const endpoint = createOrgEndpoint(orgId);
-  const basePlan = yield getBasePlan(endpoint);
-  const spacePlans = yield getSpacePlans(endpoint);
+  const [basePlan, spacePlans] = yield Promise.all([
+    getBasePlan(endpoint),
+    getSpacePlans(endpoint)
+  ]);
   const spacePlansByName = Object.values(groupBy(spacePlans, 'productRatePlanId')).map((spacePlans) => ({
     count: spacePlans.length,
     price: calculateTotalPrice(spacePlans),
