@@ -23,6 +23,7 @@ window._ = require('lodash');
 window.libs = [
   ['jquery', window.$],
   ['lodash', window._],
+
   ['libs/qs', require('qs')],
   ['libs/react-tippy', require('react-tippy')],
   ['libs/color', require('color')],

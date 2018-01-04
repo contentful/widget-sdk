@@ -26,7 +26,7 @@
 
   // Load ES6 modules defined in src/javascripts. They are registered in
   // `src/javascripts/prelude.js`.
-  window.AngularSystem.registry.forEach((args) => register(...args));
+  window.AngularSystem.registry.forEach(({ id, deps, run, moduleObj, type }) => register({ id, deps, run, moduleObj, type }));
 
   /**
    * We hook into karma start to make sure that we load all test modules before
@@ -57,8 +57,12 @@
    * If the module ID ends in 'spec' we also register this as a test module that
    * we will load eagerly later.
    */
-  function register (id, deps, run) {
-    SystemJS.register(id, deps, run);
+  function register ({ id, deps, run, moduleObj, type }) {
+    if (type === 'static') {
+      SystemJS.set(id, SystemJS.newModule(moduleObj));
+    } else if (type === 'dynamic') {
+      SystemJS.register(id, deps, run);
+    }
 
     registerDirectoryAlias(id);
 
@@ -71,6 +75,7 @@
    * If module ID matches 'a/b/index.js' then also register as 'a/b'.
    */
   function registerDirectoryAlias (moduleId) {
+    // console.log(new Error('test').stack);
     const path = moduleId.split('/');
     const last = path.pop();
     if (last === 'index') {
