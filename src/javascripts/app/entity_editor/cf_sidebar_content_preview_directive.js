@@ -11,29 +11,28 @@ angular.module('contentful')
     controller: ['$scope', function ($scope) {
       var isAdmin = spaceContext.getData('spaceMembership.admin', false);
 
-      $scope.showDefaultMessage = false;
+      $scope.isAdmin = isAdmin;
+      $scope.isPreviewSetup = false;
 
       contentPreview.getForContentType($scope.entityInfo.contentTypeId)
-      .then(function (environments) {
-        $scope.contentPreviewEnvironments = environments;
+        .then(function (environments) {
+          $scope.contentPreviewEnvironments = environments;
 
-        var selectedEnvironmentId = contentPreview.getSelected($scope.entityInfo.contentTypeId);
-        var selectedEnvironment = _.find(environments, { 'envId': selectedEnvironmentId });
+          var selectedEnvironmentId = contentPreview.getSelected($scope.entityInfo.contentTypeId);
+          var selectedEnvironment = _.find(environments, { 'envId': selectedEnvironmentId });
 
-        $scope.selectedEnvironment = selectedEnvironment || environments[0];
+          $scope.selectedEnvironment = selectedEnvironment || environments[0];
 
-        if (environments.length === 1 && environments[0].example && isAdmin) {
-          $scope.showDefaultMessage = true;
-        }
-
-        K.onValueScope($scope, $scope.otDoc.data$, function (entry) {
-          $scope.contentPreviewEnvironments.forEach(function (environment) {
-            environment.compiledUrl = contentPreview.replaceVariablesInUrl(
-              environment.url, entry, $scope.entityInfo.contentType
-            );
+          K.onValueScope($scope, $scope.otDoc.data$, function (entry) {
+            $scope.contentPreviewEnvironments.forEach(function (environment) {
+              environment.compiledUrl = contentPreview.replaceVariablesInUrl(
+                environment.url, entry, $scope.entityInfo.contentType
+              );
+            });
           });
+
+          $scope.isPreviewSetup = $scope.contentPreviewEnvironments && $scope.contentPreviewEnvironments.length;
         });
-      });
 
       $scope.selectEnvironment = function (environment) {
         $scope.selectedEnvironment = environment;
@@ -41,12 +40,14 @@ angular.module('contentful')
       };
 
       $scope.trackClickedLink = function () {
-        Analytics.track('entry_editor:preview_opened', {
-          envName: $scope.selectedEnvironment.name,
-          envId: $scope.selectedEnvironment.envId,
-          previewUrl: $scope.selectedEnvironment.url,
-          entryId: $scope.entityInfo.id
-        });
+        if ($scope.isPreviewSetup) {
+          Analytics.track('entry_editor:preview_opened', {
+            envName: $scope.selectedEnvironment.name,
+            envId: $scope.selectedEnvironment.envId,
+            previewUrl: $scope.selectedEnvironment.url,
+            entryId: $scope.entityInfo.id
+          });
+        }
       };
     }]
   };
