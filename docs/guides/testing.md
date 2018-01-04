@@ -55,14 +55,13 @@ import * as KM from 'helpers/mocks/kefir';
 import * as K from 'utils/kefir';
 ~~~
 
-The ES6 module `utils/kefir` imports the `libs/kefir` module that is registered
-with `angular.module(...).constant('libs/kefir', ...)`. For this module to be
-available to the test environment it must be registered in
-[`test/system-config.js`][src:test/system-config].
+The ES6 module `utils/kefir` imports the `libs/kefir` module, which is registered
+in `libs/index.js`. Any NPM module that needs to be available within the testing
+context will need to be added to this file in the `window.libs` array.
 
-Unlike ES6 modules defined in the `src/` directory we can not import Angular
-services in test files. To use Angular services that are not defined as ES6
-modules see [“Using Angular”](#using-angular) below.
+If you don't use an Angular context in your tests, it's not possible to import
+Angular services that are not ES6 modules into your test. To use Angular services
+that are not defined as ES6 modules see [“Using Angular”](#using-angular) below.
 
 ### Using NPM packages
 NPM packages can be imported in the tests using the `npm` prefix.

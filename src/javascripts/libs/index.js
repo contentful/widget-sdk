@@ -13,50 +13,56 @@ require('codemirror/mode/xml/xml');
 require('codemirror/addon/edit/continuelist');
 require('codemirror/addon/mode/overlay');
 
-angular.module('cf.libs', [])
-  .constant('libs/react-tippy', require('react-tippy'))
-  .constant('libs/color', require('color'))
-  .constant('libs/sanitize-html', require('sanitize-html'))
-  .constant('libs/react', require('react'))
-  .constant('libs/prop-types', require('prop-types'))
-  .constant('libs/react-dom', require('react-dom'))
-  .constant('libs/react-dom/test-utils', require('react-dom/test-utils'))
-  .constant('libs/react-click-outside', require('react-click-outside'))
-  .constant('libs/react-highlight-words', require('react-highlight-words'))
-  .constant('libs/enzyme', require('enzyme'))
-  .constant('libs/enzyme-adapter-react-16', require('enzyme-adapter-react-16'))
-  .constant('libs/downshift', require('downshift'))
-  .constant('create-react-class', require('create-react-class'))
-  .constant('libs/codemirror', require('codemirror'))
-  .constant('libs/qs', require('qs'))
-  .constant('libs/marked', require('marked-ast')._marked)
-  .constant('libs/MarkedAst', require('marked-ast'))
-  .constant('libs/launch-darkly-client', require('ldclient-js'))
-  .constant('libs/element-resize-detector', require('element-resize-detector'))
-  .constant('libs/sum-types', require('sum-types'))
-  .constant('libs/sum-types/caseof-eq', require('sum-types/caseof-eq'))
-  .constant('libs/editors', require('../../../vendor/extensions/core-field-editors'))
-  .constant('libs/kefir', require('kefir'))
-  .constant('libs/@contentful/client', require('../../../packages/client'))
-  .constant('libs/sharejs', window.sharejs)
-  .constant('libs/flat', require('flat'))
-  .constant('hostnameTransformer', require('@contentful/hostname-transformer'))
-  .constant('mimetype', require('@contentful/mimetype'))
-  .constant('raw/moment', require('moment'))
-  .constant('raw/htmlEncoder', require('node-html-encoder'))
-  .constant('stringifySafe', require('json-stringify-safe'))
-  .constant('searchParser', require('./search.pegjs'))
-  .constant('localesList', require('./locales_list.json'))
-  .constant('fileSize', require('file-size'))
-  .constant('speakingurl', require('speakingurl'))
-  .constant('Cookies', require('js-cookie'))
-  .constant('worf', require('@contentful/worf'))
-  .constant('Pikaday', require('pikaday'))
-  .constant('validation', require('@contentful/validation'))
-  .constant('widgetMap', require('@contentful/widget-map'))
-  .constant('scroll-into-view', require('scroll-into-view'))
-  .constant('libs/Sortable', require('sortablejs'));
-
 // This needs to be called after everything else so we override any
 // previously imported versions of lodash
 window._ = require('lodash');
+
+// This is on window so that `src/javascripts/prelude.js` can
+// pick it up and properly register the libraries during initial
+// invocation.
+window.libs = [
+  ['jquery', window.$],
+  ['lodash', window._],
+  ['libs/qs', require('qs')],
+  ['libs/react-tippy', require('react-tippy')],
+  ['libs/color', require('color')],
+  ['libs/sanitize-html', require('sanitize-html')],
+  ['libs/react', require('react')],
+  ['libs/prop-types', require('prop-types')],
+  ['libs/react-dom', require('react-dom')],
+  ['libs/react-dom/test-utils', require('react-dom/test-utils')],
+  ['libs/react-click-outside', require('react-click-outside')],
+  ['libs/react-highlight-words', require('react-highlight-words')],
+  ['libs/enzyme', require('enzyme')],
+  ['libs/enzyme-adapter-react-16', require('enzyme-adapter-react-16')],
+  ['libs/downshift', require('downshift')],
+  ['create-react-class', require('create-react-class')],
+  ['libs/codemirror', require('codemirror')],
+  ['libs/marked', require('marked-ast')._marked],
+  ['libs/MarkedAst', require('marked-ast')],
+  ['libs/launch-darkly-client', require('ldclient-js')],
+  ['libs/element-resize-detector', require('element-resize-detector')],
+  ['libs/sum-types', require('sum-types')],
+  ['libs/sum-types/caseof-eq', require('sum-types/caseof-eq')],
+  ['libs/editors', require('../../../vendor/extensions/core-field-editors')],
+  ['libs/kefir', require('kefir')],
+  ['libs/@contentful/client', require('../../../packages/client')],
+  ['libs/sharejs', window.sharejs],
+  ['libs/flat', require('flat')],
+  ['hostnameTransformer', require('@contentful/hostname-transformer')],
+  ['mimetype', require('@contentful/mimetype')],
+  ['raw/moment', require('moment')],
+  ['raw/htmlEncoder', require('node-html-encoder')],
+  ['stringifySafe', require('json-stringify-safe')],
+  ['searchParser', require('./search.pegjs')],
+  ['localesList', require('./locales_list.json')],
+  ['fileSize', require('file-size')],
+  ['speakingurl', require('speakingurl')],
+  ['Cookies', require('js-cookie')],
+  ['worf', require('@contentful/worf')],
+  ['Pikaday', require('pikaday')],
+  ['validation', require('@contentful/validation')],
+  ['widgetMap', require('@contentful/widget-map')],
+  ['scroll-into-view', require('scroll-into-view')],
+  ['libs/Sortable', require('sortablejs')]
+];

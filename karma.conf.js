@@ -40,8 +40,8 @@ module.exports = function (config) {
       'public/app/vendor.js',
       'public/app/templates.js',
       'public/app/libs.js',
-      'public/app/main.css',
       'src/javascripts/prelude.js',
+      'public/app/main.css',
       'src/javascripts/**/*.js'
     ].concat(testFiles),
 
