@@ -23,7 +23,7 @@ angular.module('contentful/mocks', [])
   }, mock);
 }])
 
-.config(['$provide', function ($provide) {
+.config(['$provide', '$controllerProvider', function ($provide, $controllerProvider) {
   $provide.value('$exceptionHandler', function (e) {
     throw e;
   });
@@ -45,13 +45,8 @@ angular.module('contentful/mocks', [])
     })
   });
 
-  $provide.provider('realLogger', function (loggerProvider) {
-    return loggerProvider;
-  });
-
-  $provide.provider('realNotification', function (notificationProvider) {
-    return notificationProvider;
-  });
+  $provide.provider('realLogger', provider('logger'));
+  $provide.provider('realFilepicker', provider('services/Filepicker'));
 
   $provide.factory('logger', function () {
     return {
@@ -69,9 +64,14 @@ angular.module('contentful/mocks', [])
       log: sinon.stub()
     };
   });
-}])
 
-.config(['$provide', '$controllerProvider', function ($provide, $controllerProvider) {
+  $provide.value('services/Filepicker', {
+    makeDropPane: sinon.stub(),
+    pick: sinon.stub(),
+    pickMultiple: sinon.stub(),
+    store: sinon.stub()
+  });
+
   $provide.stubDirective = function (name, definition) {
     $provide.factory(name + 'Directive', function () {
       return [_.extend({
@@ -126,4 +126,8 @@ angular.module('contentful/mocks', [])
     });
     return stubs;
   };
+
+  function provider (name) {
+    return [name + 'Provider', _.identity];
+  }
 }]);

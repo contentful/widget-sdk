@@ -62,3 +62,30 @@ angular.module('contentful').directive('cfMarkdownHeadingAction', function () {
     template: JST['cf_markdown_heading_action']()
   };
 });
+
+angular.module('contentful').directive('cfMarkdownInsertMediaAction', ['require', function (require) {
+  var LD = require('utils/LaunchDarkly');
+  var accessChecker = require('accessChecker');
+  var templateString = require('markdown_editor/templates/InsertMediaAction').default
+
+  return {
+    restrict: 'E',
+    scope: {
+      actions: '=',
+      isDisabled: '=',
+      mode: '@'
+    },
+    template: templateString,
+    link: function (scope) {
+      LD.onFeatureFlag(
+        scope,
+        'feature-at-12-2017-markdown-create-assets',
+        function (isCreateAssetsEnabled) {
+          scope.isCreateAssetsEnabled = isCreateAssetsEnabled
+        }
+      );
+      scope.canUploadMultipleAssets = accessChecker.canUploadMultipleAssets;
+
+    }
+  };
+}]);

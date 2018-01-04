@@ -116,6 +116,30 @@ describe('stringUtils service', function () {
     });
   });
 
+  describe('.fileNameToTitle()', function () {
+    let toTitle;
+    beforeEach(function () {
+      toTitle = this.$inject('stringUtils').fileNameToTitle;
+    });
+
+    it('removes the file extension', function () {
+      expect(toTitle('file.jpg')).toBe('file');
+    });
+
+    it('trims spaces', function () {
+      expect(toTitle(' file .jpg')).toBe('file');
+    });
+
+    it('replaces underscores with one space', function () {
+      expect(toTitle('_file_name_.jpg')).toBe('file name');
+      expect(toTitle('file___name.jpg')).toBe('file name');
+    });
+
+    it('replaces underscore even if it is the only character', function () {
+      expect(toTitle('_.jpg')).toBe('');
+    });
+  });
+
   describe('#normalizeWhiteSpace()', function () {
     it('remoes extraneous whitespace', function () {
       expect(this.utils.normalizeWhiteSpace(' a  b   c ')).toEqual('a b c');

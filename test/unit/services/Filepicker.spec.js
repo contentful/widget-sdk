@@ -1,7 +1,7 @@
 'use strict';
 
-describe('Filepicker service', function () {
-  let filepicker;
+describe('Filepicker', function () {
+  let Filepicker;
   let makeDropPaneStub, pickStub, storeStub;
   let $rootScope;
 
@@ -26,25 +26,25 @@ describe('Filepicker service', function () {
       });
     };
 
-    filepicker = this.$inject('filepicker');
+    Filepicker = this.$inject('realFilepicker');
 
     $rootScope.$apply();
   });
 
   afterEach(function () {
-    filepicker = makeDropPaneStub = pickStub = storeStub = $rootScope = null;
+    Filepicker = makeDropPaneStub = pickStub = storeStub = $rootScope = null;
   });
 
-  it('filepicker service exists', function () {
-    expect(filepicker).toBeDefined();
+  it('exists', function () {
+    expect(Filepicker).toBeDefined();
   });
 
-  describe('makeDropPane is called', function () {
+  describe('.makeDropPane()', function () {
     const myDropPane = {drop: 'pane'};
 
     beforeEach(function () {
       this.callMakeDropPane = function (dropPane, opts) {
-        filepicker.makeDropPane(dropPane, opts);
+        Filepicker.makeDropPane(dropPane, opts);
         $rootScope.$apply();
       };
 
@@ -81,12 +81,12 @@ describe('Filepicker service', function () {
     });
   });
 
-  describe('pick is called', function () {
+  describe('.pick()', function () {
     it('returns a file', function () {
       const successStub = sinon.stub();
       const file = {file: 'name'};
       pickStub.callsArgWith(1, file);
-      filepicker.pick().then(successStub).finally(function () {
+      Filepicker.pick().then(successStub).finally(function () {
         $rootScope.$apply();
         sinon.assert.calledWith(successStub, file);
       });
@@ -96,27 +96,27 @@ describe('Filepicker service', function () {
       const errorStub = sinon.stub();
       const error = new Error('fileerror');
       pickStub.callsArgWith(2, error);
-      filepicker.pick().catch(errorStub).finally(function () {
+      Filepicker.pick().catch(errorStub).finally(function () {
         $rootScope.$apply();
         sinon.assert.calledWith(errorStub, error);
       });
     });
 
     it('has no extra option if passed previously', function () {
-      filepicker.makeDropPane({}, {extraoption: 'extra'});
-      filepicker.pick();
+      Filepicker.makeDropPane({}, {extraoption: 'extra'});
+      Filepicker.pick();
       $rootScope.$apply();
       expect(pickStub.args[0][0].extraoption).toBeUndefined();
     });
   });
 
-  describe('store is called', function () {
+  describe('.store()', function () {
     it('returns a file', function () {
       const successStub = sinon.stub();
       const file = {fileName: 'name', mimetype: 'type', details: {size: 'size'}};
       storeStub.callsArgWith(2, file);
 
-      filepicker.store('newurl', file).then(successStub).finally(function () {
+      Filepicker.store('newurl', file).then(successStub).finally(function () {
         sinon.assert.called(successStub);
         expect(successStub.args[0][0]).toEqual({
           url: 'newurl',
@@ -132,14 +132,14 @@ describe('Filepicker service', function () {
       const errorStub = sinon.stub();
       const error = new Error('fileerror');
       storeStub.callsArgWith(3, error);
-      filepicker.store('', {details: {}}).catch(errorStub).finally(function () {
+      Filepicker.store('', {details: {}}).catch(errorStub).finally(function () {
         sinon.assert.calledWith(errorStub, error);
       });
     });
 
     it('has no extra option if passed previously', function () {
-      filepicker.makeDropPane({}, {extraoption: 'extra'});
-      filepicker.store('', {details: {}});
+      Filepicker.makeDropPane({}, {extraoption: 'extra'});
+      Filepicker.store('', {details: {}});
       $rootScope.$apply();
       expect(storeStub.args[0][1].extraoption).toBeUndefined();
     });

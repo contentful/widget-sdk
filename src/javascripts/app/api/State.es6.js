@@ -8,6 +8,7 @@ import * as Auth from 'Authentication';
 import attachEditorController from './KeyEditor/Controller';
 import editorTemplate from './KeyEditor/Template';
 import * as CMATokensPage from './CMATokens/Page';
+import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo';
 
 
 /**
@@ -17,22 +18,21 @@ import * as CMATokensPage from './CMATokens/Page';
  *
  * It consists of
  * - /api/keys            The CDA key list
- * - /api/keys_new        The CDA key editor for a new key
- * - /api/keys/:apiKeyId  The CDA key editor for an existing key
+ * - /api/keys/:apiKeyId  The CDA key editor for a key
  * - /api/cma_keys        The CMA key section
- * - /api/content_model   The content model explorer
+ * - /api/content_model   Redirection for the legacy content model explorer
  */
 
 
 // These properties are common to the key editor state for new and
 // existing keys.
 const apiKeyEditorState = {
-  controller: ['$scope', 'require', 'apiKey', function ($scope, require, apiKey) {
+  controller: ['$scope', 'require', 'apiKey', 'spaceEnvironments', function ($scope, require, apiKey, spaceEnvironments) {
     const $state = require('$state');
     const $stateParams = require('$stateParams');
 
     $state.current.data = $scope.context = {};
-    attachEditorController($scope, apiKey);
+    attachEditorController($scope, apiKey, spaceEnvironments);
 
     contextHistory.set([
       crumbFactory.CDAKeyList(),
@@ -46,6 +46,10 @@ const keyDetail = assign({
   name: 'detail',
   url: '/:apiKeyId',
   resolve: {
+    spaceEnvironments: ['spaceContext', function (spaceContext) {
+      const repo = SpaceEnvironmentRepo.create(null, spaceContext.getId());
+      return repo.getAll();
+    }],
     apiKey: ['$stateParams', 'spaceContext', function ($stateParams, spaceContext) {
       return spaceContext.apiKeyRepo.get($stateParams.apiKeyId);
     }]

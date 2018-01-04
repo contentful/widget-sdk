@@ -1,17 +1,20 @@
 import modalDialog from 'modalDialog';
-import { default as assetUrl } from 'assetUrlFilter';
+import assetUrl from 'assetUrlFilter';
 import specialCharacters from './markdown_special_characters';
 import LinkOrganizer from 'LinkOrganizer';
 import notification from 'notification';
 import entitySelector from 'entitySelector';
-import { defaults, isEmpty, isObject, get as getAtPath } from 'lodash';
+import {defaults, isObject, get} from 'lodash';
+import {fileNameToTitle} from 'stringUtils';
 import {track} from 'analytics/Analytics';
 import $state from '$state';
+import * as BulkAssetsCreator from 'services/BulkAssetsCreator';
 
 export function create (editor, localeCode) {
   const advancedActions = {
     link: link,
-    asset: asset,
+    existingAssets: existingAssets,
+    newAssets: newAssets,
     special: special,
     table: table,
     embed: embed,
@@ -37,26 +40,59 @@ export function create (editor, localeCode) {
     });
   }
 
-  function asset () {
+  function existingAssets () {
     entitySelector.openFromField({
       type: 'Array',
       itemLinkType: 'Asset',
       locale: localeCode
     })
-    .then(function (assets) {
-      if (Array.isArray(assets) && !isEmpty(assets)) {
-        const links = assets.map(_makeAssetLink).join(' ');
-        editor.insert(links);
-      }
+    .then((assets) => {
+      _insertAssetLinks(assets);
+    })
+    .finally(editor.getWrapper().focus);
+  }
+
+  function newAssets () {
+    // Disable editor and remember cursor position as the user can still
+    // select text (and therefore chagne cursor position) while disabled.
+    const wrapper = editor.getWrapper();
+    wrapper.focus();
+    const cursor = wrapper.getCursor();
+    editor.getWrapper().disable();
+
+    BulkAssetsCreator.open(localeCode).then((assetObjects) => {
+      BulkAssetsCreator.tryToPublishProcessingAssets(assetObjects)
+      .then((result) => {
+        const { publishedAssets, unpublishableAssets } = result;
+        if (publishedAssets.length && !unpublishableAssets.length) {
+          notification.info((publishedAssets.length === 1
+            ? 'The asset was' : `All ${publishedAssets.length} assets were`) +
+            ' just published');
+        } else if (unpublishableAssets.length) {
+          notification.warn(`Failed to publish ${unpublishableAssets.length === 1
+            ? 'the asset' : `${unpublishableAssets.length} assets`}`);
+        }
+        wrapper.setCursor(cursor);
+        _insertAssetLinks(publishedAssets.map(({data}) => data));
+        wrapper.enable();
+        wrapper.focus();
+      });
     });
   }
 
-  function _makeAssetLink (asset) {
-    const title = getAtPath(asset, ['fields', 'title', localeCode]);
-    const file = getAtPath(asset, ['fields', 'file', localeCode]);
+  function _insertAssetLinks (assets) {
+    const links = assets.map(_makeAssetLink).join(' ');
+    editor.insert(links);
+  }
 
-    if (title && isObject(file) && file.url) {
-      return '![' + title + '](' + assetUrl(file.url) + ')';
+  function _makeAssetLink (asset) {
+    const file = get(asset, ['fields', 'file', localeCode]);
+
+    if (isObject(file) && file.url) {
+      const title = get(asset, ['fields', 'title', localeCode]) ||
+        fileNameToTitle(file.fileName);
+
+      return `![${title}](${assetUrl(file.url)})`;
     } else {
       return '';
     }
