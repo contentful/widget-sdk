@@ -14,7 +14,7 @@ export default function render ({
   Submit
 }) {
   return h('div', {
-    dataTestId: 'spaceEnvironmentsCreateDialog'
+    dataTestId: 'spaceEnvironmentsEditDialog'
   }, [
     h('header.modal-dialog__header', [
       h('h1', [config.dialogTitle]),
@@ -144,7 +144,7 @@ function dialogActions ({ submitLabel, inProgress, CancelDialog, Submit }) {
       class: inProgress && 'is-loading',
       disabled: inProgress,
       onClick: Submit && (() => Submit()),
-      dataTestId: 'create'
+      dataTestId: 'submit'
     }, [ submitLabel ]),
     hspace('10px'),
     h('button.btn-secondary-action', {

@@ -6,7 +6,7 @@ import { caseofEq } from 'libs/sum-types';
 import { h } from 'ui/Framework';
 import { linkOpen, badge, codeFragment, docsLink } from 'ui/Content';
 import { table, tr, td, th } from 'ui/Content/Table';
-import { container, vspace, ihspace } from 'ui/Layout';
+import { container, hbox, vspace, ihspace } from 'ui/Layout';
 import * as Workbench from 'app/Workbench';
 import { byName as Colors } from 'Styles/Colors';
 import questionMarkIcon from 'svg/QuestionMarkIcon';
@@ -57,17 +57,18 @@ function environmentList ({
     ]);
   } else {
     return h('div', {
-      dataTestId: 'pat.list'
+      dataTestId: 'environmentList',
+      ariaBusy: isLoading ? 'true' : 'false'
     }, [
       container({
         position: 'relative',
         minHeight: '6em'
       }, [
         isLoading &&
-        h('.loading-box--stretched', [
-          h('.loading-box__spinner'),
-          h('.loading-box__message', ['Loading'])
-        ]),
+          h('.loading-box--stretched', [
+            h('.loading-box__spinner'),
+            h('.loading-box__message', ['Loading'])
+          ]),
         environmentTable(environments)
       ])
     ]);
@@ -95,7 +96,8 @@ function environmentTable (environments) {
       th({ style: { width: '9em' } }, ['Actions'])
     ], environments.map((environment) => {
       return tr({
-        key: environment.id
+        key: environment.id,
+        dataTestId: `environment.${environment.id}`
       }, [
         td([
           environment.name,
@@ -103,9 +105,11 @@ function environmentTable (environments) {
           environment.isMaster && badge({ color: Colors.textLight }, ['Default environment'])
         ]),
         td([
-          codeFragment([ environment.id ]),
-          ihspace('6px'),
-          h(CopyIconButton, { value: environment.id })
+          hbox([
+            codeFragment([ environment.id ]),
+            ihspace('6px'),
+            h(CopyIconButton, { value: environment.id })
+          ])
         ]),
         td([
           caseofEq(environment.status, [
@@ -149,6 +153,7 @@ function questionMarkWithTooltip ({ tooltip }) {
 
 function editButton (environment) {
   return h('button.text-link', {
+    dataTestId: 'openEditDialog',
     disabled: environment.isMaster || environment.status !== 'ready',
     onClick: environment.Edit
   }, [ 'Edit' ]);
@@ -156,6 +161,7 @@ function editButton (environment) {
 
 function deleteButton (environment) {
   return h('button.text-link--destructive', {
+    dataTestId: 'openDeleteDialog',
     disabled: environment.isMaster,
     onClick: environment.Delete
   }, [ 'Delete' ]);

@@ -16,6 +16,11 @@ const SetFieldValue = makeCtor('SetFieldValue');
 const Submit = makeCtor('Submit');
 const ReceiveResult = makeCtor('ReceiveResult');
 
+const INVALID_ID_CHARACTER_ERROR_MESSAGE =
+  'Please use only letters, numbers, underscores, and dashes for the ID.';
+const EMPTY_FIELD_ERROR_MESSAGE =
+  'Please fill out this field.';
+
 
 /**
  * Open the create dialog for a space environment.
@@ -174,15 +179,15 @@ const ID_REGEXP = /^[0-9a-zA-Z\-._]{1,64}$/;
 const validations = {
   name: (value) => {
     if (!value || !value.trim()) {
-      return 'Please fill out this field.';
+      return EMPTY_FIELD_ERROR_MESSAGE;
     }
   },
   id: (value) => {
     if (!value || !value.trim()) {
-      return 'Please fill out this field.';
+      return EMPTY_FIELD_ERROR_MESSAGE;
     }
     if (!value.match(ID_REGEXP)) {
-      return 'Invalid characters';
+      return INVALID_ID_CHARACTER_ERROR_MESSAGE;
     }
   }
 };
