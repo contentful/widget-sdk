@@ -16,16 +16,16 @@ angular.module('contentful')
  * This service also stores locale preferences in localStorage.
 */
 .factory('TheLocaleStore', ['require', function (require) {
-  var TheStore = require('TheStore');
+  var getStore = require('utils/TheStore').getStore;
   var create = require('TheLocaleStore/implementation').create;
-  return create(TheStore);
+  return create(getStore);
 }])
 .factory('TheLocaleStore/implementation', [function () {
   return {
     create: create
   };
 
-  function create (TheStore) {
+  function create (getStore) {
     var store = null;
     var defaultLocale = null;
 
@@ -76,7 +76,7 @@ angular.module('contentful')
         defaultLocale = _.find(privateLocales, {default: true}) || privateLocales[0];
 
         var spaceId = defaultLocale.sys.space.sys.id;
-        store = TheStore.forKey('activeLocalesForSpace.' + spaceId);
+        store = getStore().forKey('activeLocalesForSpace.' + spaceId);
 
         var storedLocaleCodes = store.get() || [];
         var storedLocales = _.filter(privateLocales, function (locale) {

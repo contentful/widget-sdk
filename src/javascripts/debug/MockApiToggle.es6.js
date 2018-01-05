@@ -1,12 +1,12 @@
 import $window from '$window';
 import {createElement as h} from 'libs/react';
 import location from '$location';
-import TheStore from 'TheStore';
+import { getStore } from 'utils/TheStore';
 import {omit} from 'lodash';
 import {addNotification} from 'debug/DevNotifications';
 import {settings} from 'environment';
 
-const store = TheStore.forKey('use_mock_api');
+const store = getStore().forKey('use_mock_api');
 
 /**
 * Toggles between using actual API url, or Stoplight proxy, depending on

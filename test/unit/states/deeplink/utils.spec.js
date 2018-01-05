@@ -7,9 +7,13 @@ describe('states/deeplink/utils', function () {
     this.getSpaces = sinon.stub();
     this.getOrganizations = sinon.stub();
     module('contentful/test', ($provide) => {
-      $provide.value('TheStore', {
-        get: this.storeGet,
-        forKey: noop
+      $provide.value('utils/TheStore', {
+        getStore: () => {
+          return {
+            get: this.storeGet,
+            forKey: noop
+          };
+        }
       });
       $provide.value('services/TokenStore', {
         getSpaces: this.getSpaces,

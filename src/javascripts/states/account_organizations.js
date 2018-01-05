@@ -9,6 +9,8 @@ angular.module('contentful')
   var base = require('states/Base').default;
   var h = require('ui/Framework').h;
   var workbenchHeader = require('app/Workbench').header;
+  var getStore = require('utils/TheStore').getStore;
+  var store = getStore();
 
   var newOrg = base({
     name: 'new',
@@ -106,8 +108,7 @@ angular.module('contentful')
     // this is duplicated code, but there's no way
     // we can get around it for now
     onEnter: ['$stateParams', function ($stateParams) {
-      var TheStore = require('TheStore');
-      TheStore.set('lastUsedOrg', $stateParams.orgId);
+      store.set('lastUsedOrg', $stateParams.orgId);
     }]
   });
 
@@ -168,8 +169,7 @@ angular.module('contentful')
         h('cf-account-view', { context: 'context' })
       ],
       onEnter: ['$stateParams', function ($stateParams) {
-        var TheStore = require('TheStore');
-        TheStore.set('lastUsedOrg', $stateParams.orgId);
+        store.set('lastUsedOrg', $stateParams.orgId);
       }]
     };
     return base(_.extend(defaults, definition));

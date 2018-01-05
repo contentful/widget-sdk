@@ -1,4 +1,4 @@
-import TheStore from 'TheStore';
+import { getStore } from 'utils/TheStore';
 import {combine} from 'utils/kefir';
 import {getCurrentVariation} from 'utils/LaunchDarkly';
 import {user$, spacesByOrganization$ as spacesByOrg$} from 'services/TokenStore';
@@ -12,6 +12,8 @@ import {
   ownsAtleastOneOrg,
   getUserAgeInDays
 } from 'data/User';
+
+const store = getStore();
 
 // this flag ensures that we call init function only once per
 // the whole application
@@ -49,7 +51,7 @@ export function init () {
 
           // we swallow all errors, so auto creation modal will always have green mark
           yield createSampleSpace(org, 'product catalogue', template).catch(() => {});
-          TheStore.set(getKey(user), true);
+          store.set(getKey(user), true);
           creatingSampleSpace = false;
         }
       });
@@ -64,7 +66,7 @@ function qualifyUser (user, spacesByOrg) {
 }
 
 function hadSpaceAutoCreated (user) {
-  return TheStore.get(getKey(user));
+  return store.get(getKey(user));
 }
 
 // qualify a user if it was created in the last week

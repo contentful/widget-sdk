@@ -1,5 +1,5 @@
 import * as K from 'utils/kefir';
-import window from 'global:window';
+import window from 'global/window';
 
 /**
  * @ngdoc method
@@ -59,8 +59,10 @@ export function has (storage, key) {
   return get(storage, key) !== null;
 }
 
-function externalChanges (key) {
-  return K.fromEvents(window, 'storage')
+export function externalChanges (storage, key) {
+  const type = storage.type;
+
+  return K.fromEvents(window, type)
     .filter(function (event) {
       return event.key === key;
     })

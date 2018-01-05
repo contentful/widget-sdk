@@ -1,6 +1,6 @@
 import $window from '$window';
 import {createElement as h} from 'libs/react';
-import TheStore from 'TheStore';
+import { getStore } from 'utils/TheStore';
 import {uniq, without, omit} from 'lodash';
 import {addNotification} from 'debug/DevNotifications';
 import location from '$location';
@@ -21,7 +21,7 @@ export function init () {
   displayNotification();
 }
 
-const store = TheStore.forKey('ui_enable_flags');
+const store = getStore().forKey('ui_enable_flags');
 
 /**
  * Returns an array of ui flags enabled via query string param.

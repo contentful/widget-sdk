@@ -11,15 +11,16 @@ describe('Authentication', function () {
 
     module('contentful/test', ($provide) => {
       $provide.value('$http', this.$http);
-      $provide.value('$window', this.window);
+      $provide.constant('global/window', { default: this.window });
+      $provide.constant('$window', this.window);
     });
 
     this.$http.resolves({data: {access_token: 'NEW TOKEN'}});
     this.Auth = this.$inject('Authentication');
     this.$q = this.$inject('$q');
 
-    const TheStore = this.$inject('TheStore');
-    this.store = TheStore.forKey('token');
+    const getStore = this.$inject('utils/TheStore').getStore;
+    this.store = getStore('session').forKey('token');
   });
 
 
@@ -101,7 +102,8 @@ describe('Authentication', function () {
     it('updates token if changed in another tab', function* () {
       this.store.set('STORED_TOKEN');
       this.Auth.init();
-      this.window.addEventListener.withArgs('storage').yield({key: 'token', newValue: 'NEW TOKEN'});
+
+      this.window.addEventListener.withArgs(this.store.type).yield({key: 'token', newValue: 'NEW TOKEN'});
       expect(yield this.Auth.getToken()).toBe('NEW TOKEN');
       expect(K.getValue(this.Auth.token$)).toBe('NEW TOKEN');
     });

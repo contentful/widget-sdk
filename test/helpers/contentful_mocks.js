@@ -17,7 +17,7 @@ angular.module('cf.ui')
  */
 angular.module('contentful/mocks', [])
 
-.decorator('TheStore/localStorageWrapper', ['$delegate', 'mocks/TheStore/localStorageWrapper', function ($delegate, mock) {
+.decorator('utils/TheStore/StorageWrapper', ['$delegate', 'mocks/utils/TheStore/StorageWrapper', function ($delegate, mock) {
   return _.extend({
     _noMock: $delegate
   }, mock);

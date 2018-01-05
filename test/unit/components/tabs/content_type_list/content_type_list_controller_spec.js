@@ -20,7 +20,8 @@ describe('Content Type List Controller', function () {
 
     const $controller = this.$inject('$controller');
     const $rootScope = this.$inject('$rootScope');
-    const TheStore = this.$inject('TheStore');
+    const getStore = this.$inject('utils/TheStore').getStore;
+    const store = getStore();
 
     cfStub = this.$inject('cfStub');
     spaceContext = this.$inject('mocks/spaceContext').init();
@@ -29,7 +30,7 @@ describe('Content Type List Controller', function () {
     scope = $rootScope.$new();
     scope.context = {};
     scope.context.searchTerm = null;
-    TheStore.set = _.noop;
+    store.set = _.noop;
     $controller('ContentTypeListController', {$scope: scope});
     scope.$apply();
   });

@@ -20,7 +20,8 @@ angular.module('contentful')
   var LD = require('utils/LaunchDarkly');
   var K = require('utils/kefir');
   var TokenStore = require('services/TokenStore');
-  var TheStore = require('TheStore');
+  var getStore = require('utils/TheStore').getStore;
+  var store = getStore();
   var $state = require('$state');
   var Analytics = require('analytics/Analytics');
   var infoIcon = require('svg/icon-info').default;
@@ -51,7 +52,7 @@ angular.module('contentful')
 
         $scope.name = user.firstName;
 
-        $scope.needFeedback = !TheStore.get(feedbackKey);
+        $scope.needFeedback = !store.get(feedbackKey);
 
         LD.onFeatureFlag($scope, authorHelpFlag, function (variation) {
           controller.needHelp = variation;
@@ -89,7 +90,7 @@ angular.module('contentful')
           });
           $scope.feedback = type;
           $scope.needFeedback = false;
-          TheStore.set(feedbackKey, true);
+          store.set(feedbackKey, true);
         };
 
         $scope.openLink = function (type) {
@@ -104,11 +105,11 @@ angular.module('contentful')
         // for the first time and have not seen it yet
         function showModal () {
           var isNewUser = user.signInCount === 1;
-          var wasModalShown = TheStore.get(modalKey);
+          var wasModalShown = store.get(modalKey);
 
           if (!wasModalShown && isNewUser) {
             controller.openHelp().then(function () {
-              TheStore.set(modalKey, true);
+              store.set(modalKey, true);
             });
           }
         }

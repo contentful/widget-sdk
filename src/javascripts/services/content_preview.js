@@ -12,7 +12,8 @@ angular.module('contentful')
   var TheLocaleStore = require('TheLocaleStore');
   var spaceContext = require('spaceContext');
   var previewEnvironmentsCache = require('data/previewEnvironmentsCache');
-  var TheStore = require('TheStore');
+  var getStore = require('utils/TheStore').getStore;
+  var store = getStore();
 
   var ENTRY_ID_PATTERN = /\{\s*entry_id\s*\}/g;
   var ENTRY_FIELD_PATTERN = /\{\s*entry_field\.(\w+)\s*\}/g;
@@ -47,7 +48,7 @@ angular.module('contentful')
    * Fetches data from the store each time. Returns undefined if none is available.
   */
   function getSelected (contentTypeId) {
-    var environmentsMap = TheStore.get(STORE_KEY);
+    var environmentsMap = store.get(STORE_KEY);
     return _.get(environmentsMap, contentTypeId);
   }
 
@@ -61,9 +62,9 @@ angular.module('contentful')
    * Sets the provided environment as the last selected one for that content type.
   */
   function setSelected (environment) {
-    var environments = TheStore.get(STORE_KEY) || {};
+    var environments = store.get(STORE_KEY) || {};
     environments[environment.contentType] = environment.envId;
-    TheStore.set(STORE_KEY, environments);
+    store.set(STORE_KEY, environments);
   }
 
 

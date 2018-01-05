@@ -5,12 +5,12 @@ describe('TheLocaleStore', function () {
     return {
       sys: {space: {sys: {id: sid}}},
       code,
+
       internal_code: code,
       contentManagementApi: true
     };
   };
 
-  const makeDefaultLocale = (code, sid) => {
     return _.extend(makeLocale(code, sid), {default: true});
   };
 
@@ -24,7 +24,8 @@ describe('TheLocaleStore', function () {
 
   beforeEach(function* () {
     module('contentful/test');
-    this.theStore = this.$inject('TheStore');
+    const getStore = this.$inject('utils/TheStore').getStore;
+    this.store = getStore();
     this.theLocaleStore = this.$inject('TheLocaleStore');
     yield this.theLocaleStore.reset(makeEndpoint(makeTestLocales()));
   });
@@ -127,18 +128,18 @@ describe('TheLocaleStore', function () {
       const test = sid => {
         return this.theLocaleStore.reset(makeEndpoint(makeTestLocales(sid)))
         .then(() => {
-          const call = this.theStore.forKey.lastCall;
+          const call = this.store.forKey.lastCall;
           expect(call.args[0]).toBe(key(sid));
         });
       };
 
-      sinon.spy(this.theStore, 'forKey');
+      sinon.spy(this.store, 'forKey');
       yield test('sid1');
       yield test('sid2');
     });
 
     it('activates locales form the store', function* () {
-      const persistor = this.theStore.forKey(key('SID'));
+      const persistor = this.store.forKey(key('SID'));
       persistor.set(['save']);
       const locales = makeTestLocales().concat([saved, notSaved]);
       yield this.theLocaleStore.reset(makeEndpoint(locales));
@@ -148,7 +149,7 @@ describe('TheLocaleStore', function () {
     });
 
     it('saves locales to store', function* () {
-      const persistor = this.theStore.forKey(key('SID'));
+      const persistor = this.store.forKey(key('SID'));
       const locales1 = makeTestLocales().concat([saved]);
       yield this.theLocaleStore.reset(makeEndpoint(locales1));
       expect(persistor.get()).toEqual(['en-US']);
@@ -159,7 +160,7 @@ describe('TheLocaleStore', function () {
       const sid2 = 'another';
       const locales2 = makeTestLocales(sid2).concat([makeLocale('de-DE', sid2)]);
       yield this.theLocaleStore.reset(makeEndpoint(locales2));
-      const anotherPersistor = this.theStore.forKey(key(sid2));
+      const anotherPersistor = this.store.forKey(key(sid2));
 
       expect(persistor.get()).toEqual(['en-US', 'save']);
       expect(anotherPersistor.get()).toEqual(['en-US']);

@@ -11,7 +11,8 @@ angular.module('contentful')
   var LD = require('utils/LaunchDarkly');
   var Analytics = require('analytics/Analytics');
   var createSpaceAutomatically = require('components/shared/auto_create_new_space/index').init;
-  var TheStore = require('TheStore');
+  var getStore = require('utils/TheStore').getStore;
+  var store = getStore();
 
   var flagName = 'test-ps-09-2017-entry-sample-space-cli';
   // End test code: test-ps-09-2017-entry-sample-space-cli
@@ -158,11 +159,11 @@ angular.module('contentful')
       }
 
       function hasSpaceCreatedByTest (user) {
-        return TheStore.get('ctfl:' + user.sys.id + ':cliEntrySuccess');
+        return store.get('ctfl:' + user.sys.id + ':cliEntrySuccess');
       }
 
       function hadSpaceAutoCreated (user) {
-        return TheStore.get('ctfl:' + user.sys.id + ':spaceAutoCreated');
+        return store.get('ctfl:' + user.sys.id + ':spaceAutoCreated');
       }
       // End test code: test-ps-09-2017-entry-sample-space-cli
     }]

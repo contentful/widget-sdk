@@ -7,7 +7,7 @@
  * It also holds shared actions.
  */
 import {merge, pick} from 'lodash';
-import TheStore from 'TheStore';
+import { getStore } from 'utils/TheStore';
 import * as events from 'analytics/events/ContextualHelp';
 
 
@@ -30,7 +30,7 @@ let contextualHelpStore = {
 let myBrowserStore;
 
 export function init (userId, state, actions) {
-  myBrowserStore = TheStore.forKey(`${STORE_KEY_PREFIX}:${userId}`);
+  myBrowserStore = getStore().forKey(`${STORE_KEY_PREFIX}:${userId}`);
   contextualHelpStore = merge(
     {},
     contextualHelpStore,

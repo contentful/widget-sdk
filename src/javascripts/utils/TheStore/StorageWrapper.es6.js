@@ -1,3 +1,5 @@
+import window from 'global/window';
+
 export default function StorageWrapper (storageType) {
   const wrapper = {};
   const methods = ['setItem', 'getItem', 'removeItem'];

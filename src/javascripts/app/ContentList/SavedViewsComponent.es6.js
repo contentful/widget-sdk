@@ -9,7 +9,7 @@ import {makeBlankFolder} from 'data/UiConfig/Blanks';
 
 import openRoleSelector from './RoleSelector';
 
-import TheStore from 'TheStore';
+import { getStore } from 'utils/TheStore';
 import notification from 'notification';
 import random from 'random';
 
@@ -25,7 +25,7 @@ const SaveCurrentView = makeCtor('SaveCurrentView');
 const UpdateView = makeCtor('UpdateView');
 const DeleteView = makeCtor('DeleteView');
 
-const folderStatesStore = TheStore.forKey('folderStates');
+const folderStatesStore = getStore().forKey('folderStates');
 
 export default function ({
   scopedFolders,

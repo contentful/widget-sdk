@@ -1,7 +1,7 @@
 import qs from 'libs/qs';
 import $q from '$q';
 import $location from '$location';
-import TheStore from 'TheStore';
+import { getStore } from 'utils/TheStore';
 import {omit, isEmpty, isObject} from 'lodash';
 import {serialize, unserialize} from 'data/ViewSerializer';
 
@@ -24,7 +24,7 @@ import {serialize, unserialize} from 'data/ViewSerializer';
  */
 export default function create (spaceId, viewMigrator, entityType) {
   const key = `lastFilterQueryString.${entityType}.${spaceId}`;
-  const localStorage = TheStore.forKey(key);
+  const localStorage = getStore().forKey(key);
 
   return {read, save};
 

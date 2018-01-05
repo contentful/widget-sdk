@@ -8,11 +8,11 @@ angular.module('contentful')
   var TokenStore = require('services/TokenStore');
   var modalDialog = require('modalDialog');
   var resendActivationEmail = require('activationEmailResender').resend;
-  var TheStore = require('TheStore');
+  var getStore = require('utils/TheStore').getStore;
 
   var HOUR_IN_MS = 1000 * 60 * 60;
   var HOURS_BEFORE_REOPEN_DIALOG = 24;
-  var store = TheStore.forKey('lastActivationEmailResendReminderTimestamp');
+  var store = getStore().forKey('lastActivationEmailResendReminderTimestamp');
 
   return { init: init };
 

@@ -1,5 +1,5 @@
 import { h } from 'utils/hyperscript';
-import TheStore from 'TheStore';
+import { getStore } from 'utils/TheStore';
 import sectionAccess from 'sectionAccess';
 import * as Analytics from 'analytics/Analytics';
 import * as TokenStore from 'services/TokenStore';
@@ -11,6 +11,8 @@ import assets from './assets';
 import api from 'app/api/State';
 import settings from './settings';
 import home from './space_home';
+
+const store = getStore();
 
 // TODO convert JST templates to hyperscript
 /* global JST */
@@ -45,8 +47,8 @@ const spaceDetail = {
 
     if (sectionAccess.hasAccessToAny()) {
       sectionAccess.redirectToFirstAccessible();
-      TheStore.set('lastUsedSpace', space.getId());
-      TheStore.set('lastUsedOrg', space.getOrganizationId());
+      store.set('lastUsedSpace', space.getId());
+      store.set('lastUsedOrg', space.getOrganizationId());
     }
   }],
   templateProvider: ['spaceContext', function (spaceContext) {
