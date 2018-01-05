@@ -1,3 +1,5 @@
+import * as K from 'helpers/mocks/kefir';
+
 describe('app/entity_editor/DataLoader', function () {
   beforeEach(function () {
     module('contentful/test');
@@ -9,6 +11,11 @@ describe('app/entity_editor/DataLoader', function () {
         getEntry: sinon.spy(function (id) {
           return $q.resolve({data: makeEntity(id, 'CTID')});
         }),
+        getEntries: function (query) {
+          const ids = query['sys.id[in]'].split(',');
+          const items = ids.map((id) => ({ data: makeEntity(id, 'CTID') }));
+          return $q.resolve(items);
+        },
         getAsset: sinon.spy(function (id) {
           return $q.resolve({data: makeEntity(id)});
         }),
@@ -33,6 +40,7 @@ describe('app/entity_editor/DataLoader', function () {
     const DataLoader = this.$inject('app/entity_editor/DataLoader');
     this.loadEntry = _.partial(DataLoader.loadEntry, this.spaceContext);
     this.loadAsset = _.partial(DataLoader.loadAsset, this.spaceContext);
+    this.makePrefetchEntryLoader = _.partial(DataLoader.makePrefetchEntryLoader, this.spaceContext);
   });
 
   describe('#loadEntry()', function () {
@@ -166,6 +174,25 @@ describe('app/entity_editor/DataLoader', function () {
         'entityInfo',
         'openDoc'
       ]);
+    });
+  });
+
+  describe('#makePrefetchEntryLoader()', function () {
+    it('returns editor data', function* () {
+      const controls = {};
+      this.spaceContext.widgets.buildRenderable.returns(controls);
+
+      const load = this.makePrefetchEntryLoader(K.constant([]));
+      const editorData = yield load('EID');
+
+      expect(editorData.entity.data.sys.id).toEqual('EID');
+      expect(editorData.contentType.data.sys.id).toEqual('CTID');
+      expect(editorData.fieldControls).toBe(controls);
+      expect(editorData.entityInfo.id).toBe('EID');
+      expect(editorData.entityInfo.type).toBe('Entry');
+      expect(editorData.entityInfo.contentTypeId).toBe('CTID');
+      expect(editorData.entityInfo.contentType.sys.id).toBe('CTID');
+      expect(typeof editorData.openDoc).toBe('function');
     });
   });
 

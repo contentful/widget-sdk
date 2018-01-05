@@ -81,20 +81,18 @@ export function makePrefetchEntryLoader (spaceContext, ids$) {
   });
 
   const loader = makeEntryLoader(spaceContext);
-  loader.getEntity = function getEntity (id) {
-    return cache.get(id)
-      .then((entity) => {
-        if (entity) {
-          return entity;
-        } else {
-          // Fall back to requesting a single entry
-          // The prefetch cache uses the query endpoint to get entries.
-          // Because the CMA is inconsistent newly created entries may
-          // not be available from the query endpoint yet. We try to
-          // get them from the single resource endpoint instead.
-          return spaceContext.space.getEntry(id);
-        }
-      });
+  loader.getEntity = function* getEntity (id) {
+    const entity = yield cache.get(id);
+    if (entity) {
+      return entity;
+    } else {
+      // Fall back to requesting a single entry
+      // The prefetch cache uses the query endpoint to get entries.
+      // Because the CMA is inconsistent newly created entries may
+      // not be available from the query endpoint yet. We try to
+      // get them from the single resource endpoint instead.
+      return yield spaceContext.space.getEntry(id);
+    }
   };
   loader.getFieldControls = memoize(loader.getFieldControls);
 
