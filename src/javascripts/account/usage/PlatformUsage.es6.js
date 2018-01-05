@@ -41,6 +41,8 @@ const PlatformUsage = createReactClass({
     this.setState({
       name: plan.productRatePlan.name,
       charges: plan.ratePlanCharges
+        // we only support tiered charges now
+        .filter(charge => Array.isArray(charge.tiers))
     });
   },
   render: function () {
@@ -61,7 +63,7 @@ PlatformUsage.propTypes = {
 };
 
 function TiersTable ({charge}) {
-  return h('section', null,
+  return h('section', {className: 'u-separator'},
     h('h3', {className: 'section-title'}, charge.name),
     h('table',
       {className: 'deprecated-table'},
