@@ -1,8 +1,8 @@
 import {find, isPlainObject, cloneDeep, memoize} from 'lodash';
+import {runTask} from 'utils/Concurrent';
 import assetEditorInterface from 'data/editingInterfaces/asset';
 import {caseof as caseofEq} from 'libs/sum-types/caseof-eq';
 import {deepFreeze} from 'utils/Freeze';
-import $q from '$q';
 import createPrefetchCache from 'data/CMA/EntityPrefetchCache';
 
 
@@ -112,19 +112,19 @@ export function makePrefetchEntryLoader (spaceContext, ids$) {
  * Loaders are created by `makeEntryLoader()` and `makeAssetLoader()`.
  */
 function loadEditorData (loader, id) {
-  const context = {};
-  return loader.getEntity(id)
-  .then((entity) => {
-    context.entity = entity;
-    return loader.getContentType(entity);
-  }).then((ct) => {
-    context.contentType = ct;
-    return loader.getFieldControls(ct);
-  }).then((controls) => {
-    context.fieldControls = controls;
-    context.entityInfo = makeEntityInfo(context.entity, context.contentType);
-    context.openDoc = loader.getOpenDoc(context.entity, context.contentType);
-    return Object.freeze(context);
+  return runTask(function* () {
+    const entity = yield* loader.getEntity(id);
+    const contentType = yield* loader.getContentType(entity);
+    const fieldControls = yield* loader.getFieldControls(contentType);
+    const entityInfo = makeEntityInfo(entity, contentType);
+    const openDoc = loader.getOpenDoc(entity, contentType);
+    return Object.freeze({
+      entity,
+      contentType,
+      fieldControls,
+      entityInfo,
+      openDoc
+    });
   });
 }
 
@@ -138,15 +138,13 @@ function makeEntryLoader (spaceContext) {
     getEntity (id) {
       return fetchEntity(spaceContext, 'Entry', id);
     },
-    getContentType (entity) {
+    getContentType: function* (entity) {
       const ctId = entity.data.sys.contentType.sys.id;
-      return spaceContext.publishedCTs.fetch(ctId);
+      return yield spaceContext.publishedCTs.fetch(ctId);
     },
-    getFieldControls (contentType) {
-      return spaceContext.editingInterfaces.get(contentType.data)
-      .then((ei) => {
-        return spaceContext.widgets.buildRenderable(ei.controls);
-      });
+    getFieldControls: function* (contentType) {
+      const ei = yield spaceContext.editingInterfaces.get(contentType.data);
+      return spaceContext.widgets.buildRenderable(ei.controls);
     },
     getOpenDoc: makeDocOpener(spaceContext)
   };
@@ -157,10 +155,10 @@ function makeAssetLoader (spaceContext) {
     getEntity (id) {
       return fetchEntity(spaceContext, 'Asset', id);
     },
-    getContentType () {
-      return $q.resolve(null);
+    getContentType: function* () {
+      return null;
     },
-    getFieldControls () {
+    getFieldControls: function* () {
       return spaceContext.widgets.buildRenderable(assetEditorInterface.widgets);
     },
     getOpenDoc: makeDocOpener(spaceContext)
@@ -198,15 +196,14 @@ function makeEntityInfo (entity, contentType) {
 
 // TODO instead of fetching a client entity object we should only fetch
 // the payload
-function fetchEntity (spaceContext, type, id) {
+function* fetchEntity (spaceContext, type, id) {
   const space = spaceContext.space;
-  return caseofEq(type, [
+  const entity = yield caseofEq(type, [
     ['Entry', () => space.getEntry(id)],
     ['Asset', () => space.getAsset(id)]
-  ]).then((entity) => {
-    sanitizeEntityData(entity.data, space.getPrivateLocales());
-    return entity;
-  });
+  ]);
+  sanitizeEntityData(entity.data, space.getPrivateLocales());
+  return entity;
 }
 
 
