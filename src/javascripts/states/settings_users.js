@@ -13,7 +13,7 @@ angular.module('contentful')
     name: 'list',
     url: '',
     label: 'Users',
-    loadingText: 'Loading users...',
+    loadingText: 'Loading users…',
     template: '<cf-user-list class="workbench user-list" />',
     controller: ['$scope', function ($scope) {
       $scope.context = {};

@@ -14,12 +14,12 @@ angular.module('cf.ui')
  * @usage[jade]
  * div
  *   header
- *   cf-loader(is-shown="isLoading", watch-state-change="true", loader-msg="Loading...")
+ *   cf-loader(is-shown="isLoading", watch-state-change="true", loader-msg="Loading…")
  *
  * cf-loader(watch-state-change="true") //- this adds only a state change loader
- * cf-loader(loader-msg="Please wait...")
+ * cf-loader(loader-msg="Please wait…")
  * cf-loader(is-shown="isLoading")
- * cf-loader(is-shown="somePropFromParentScope", loader-msg="Loading xyz...")
+ * cf-loader(is-shown="somePropFromParentScope", loader-msg="Loading xyz…")
  */
 .directive('cfLoader', ['require', function (require) {
   var h = require('utils/hyperscript').h;
@@ -54,7 +54,7 @@ angular.module('cf.ui')
       var $parse = require('$parse');
 
       $scope.watchStateChange = $parse($scope.watchStateChange)();
-      $scope.loaderMsg = $scope.loaderMsg || 'Please hold on...';
+      $scope.loaderMsg = $scope.loaderMsg || 'Please hold on…';
 
       if ($scope.watchStateChange) {
         $rootScope.$on('$stateChangeStart', showLoader);

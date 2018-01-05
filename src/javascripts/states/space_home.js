@@ -15,7 +15,7 @@ angular.module('contentful')
     url: '/home',
     label: 'Space home',
     template: template(),
-    loadingText: 'Loading...',
+    loadingText: 'Loading…',
     controller: ['$scope', function ($scope) {
       $scope.context = {ready: true};
       $scope.context.forbidden = !accessChecker.getSectionVisibility().spaceHome;
