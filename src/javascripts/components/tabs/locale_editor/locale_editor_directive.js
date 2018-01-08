@@ -32,6 +32,7 @@ angular.module('contentful')
 .controller('LocaleEditorController', ['$scope', 'require', function ($scope, require) {
   var controller = this;
   var spaceContext = require('spaceContext');
+  var TheLocaleStore = require('TheLocaleStore');
   var $q = require('$q');
   var modalDialog = require('modalDialog');
   var Command = require('command');
@@ -178,7 +179,7 @@ angular.module('contentful')
   function deleteLocale () {
     return $scope.locale.delete()
     .then(function deletedSuccesfully () {
-      return spaceContext.reloadLocales()
+      return TheLocaleStore.reset(spaceContext.endpoint)
       .then(function () {
         return closeState();
       })
@@ -239,7 +240,8 @@ angular.module('contentful')
   function saveSuccessHandler (response) {
     $scope.localeForm.$setPristine();
     $scope.context.dirty = false;
-    return spaceContext.reloadLocales().then(function () {
+    return TheLocaleStore.reset(spaceContext.endpoint)
+    .then(function () {
       onLoadOrUpdate();
       notify.saveSuccess();
       if ($scope.context.isNew) {
