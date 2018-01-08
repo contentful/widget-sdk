@@ -61,7 +61,6 @@ export function create (spaceEndpoint) {
   }
 
 
-  function get (spaceId, id) {
   /**
    * Create an environment with the given `id` and name and resolves to
    * a tagged value with the result. The promise never rejects, instead

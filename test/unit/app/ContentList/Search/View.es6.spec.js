@@ -40,8 +40,6 @@ describe('app/ContentList/Search/View', function () {
 
     const { default: createMountPoint } = yield system.import('ui/Framework/DOMRenderer');
 
-    // debugger;
-
     actions = _.mapValues(Actions, () => {
       return sinon.spy();
     });

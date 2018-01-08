@@ -241,6 +241,8 @@ this.$apply()
 
 ### Individual methods
 
+#### Angular
+
 *For mocking an entire service, see [the next section](#services).*
 
 If you want to mock only some methods in a dependency of the tested unit, but
@@ -271,7 +273,11 @@ it('should herp', function () {
 });
 ~~~
 
-However, this won't work if `foo` is an ES6 module:
+#### ES6 Modules
+
+##### Within an Angular Context
+
+The above won't work if you're using an ES6 module:
 
 ~~~js
 // Foo.es6.js
@@ -282,33 +288,63 @@ export function () {
 }
 ~~~
 
-All dependencies of ES6 modules are shallow-copied, so the changes that are
-made to `bar` after it was imported in `foo` will not be applied to the
-imported instance. However, if we change the order of imports in the test:
+This is because all ES6 dependencies are shallow-copied, so changes made after
+won't be applied later on.
 
-~~~js
-before(function () {
-  module('contentful/test');
+If you're importing within an Angular context, you can generally stub out the
+module using `$provide.value` or `$provide.constant`:
 
-  this.bar = this.$inject('bar');
-  this.bar.buzz = sinon.stub().returns('herp');
-  this.foo = this.$inject('foo');
+```js
+let myModule;
+
+beforeEach(function () {
+  module('contentful/test', function($provide) {
+    $provide.value('utils/to-stub', myStub);
+    $provide.constant('utils/different-to-stub', myDifferentStub);
+  });
+
+  myModule = this.$inject('utils/myModule').default;
 });
-~~~
+```
 
-Then import statement inside `Foo.es6.js` will be executed after we inject and
-modify `bar`, and receive the modified version.
+##### Outside of an Angular Context
 
-This also means that we currently cannot modify ES6 dependencies on the fly:
+However, if you're testing a utility that doesn't need an Angular instance, it is
+useful to be able to test without relying on Angular to $provide and $inject. If 
+you need to stub out an ES6 module within a test, that does not use an Angular
+context, you can stub it out by creating an isolated system and stubbing the
+necessary modules before importing your module.
 
-~~~js
-// works with a es5 foo, but not with es6 :(
-it('should derp', function () {
-  this.bar.buzz = sinon.stub().returns('derp');
-  expect(this.foo()).toBe('derp');
+```js
+import { createIsolatedSystem } from 'test/helpers/system-js';
+
+let system, stubs, myModule;
+
+beforeEach(function* () {
+  stubs = {
+    stub1: sinon.stub(),
+    stub2: sinon.stub()
+  };
+
+  system = createIsolatedSystem();
+
+  system.set('utils/to-stub', {
+    moduleMethod: stubs.stub1
+  });
+
+  system.set('utils/different-to-stub', {
+    // ... Another stubbed module
+  });
+
+  myModule = yield system.import('utils/myModule');
+
+  // This works like an ES6 import statement,
+  // so be aware of defaults.
 });
-~~~
+```
 
+*Note*: If you need to stub something in an integration test, such as a React
+component, see [UI Acceptance Test](#ui-acceptance-test) below.
 
 ### Services
 
@@ -373,6 +409,35 @@ it('tests my component', function () {
 ~~~
 
 This technique is fairly new and requires extending.
+
+### Within an isolated SystemJS context
+
+If you are testing a stateless component within an isolated context, using the `createIsolatedSystem`
+helper method, you will need to instantiate `this.createUI` with the `createMountPoint` imported from
+your isolated system. If you don't do this, your React components won't test properly and will fail
+during instantiation.
+
+```js
+import { createIsolatedSystem } from 'test/helpers/system-js';
+
+describe('MyComponent', function () {
+  let ui, system;
+
+  beforeEach(function* () {
+    system = createIsolatedSystem();
+
+    system.set('utils/to-stub', {
+      ...
+    });
+
+    const { default: createMountPoint } = yield system.import('ui/Framework/DOMRenderer');
+
+    ui = this.createUI({
+      createMountPoint
+    });
+  });
+});
+```
 
 
 Reporters
