@@ -1,5 +1,5 @@
 import {find, isPlainObject, cloneDeep, memoize} from 'lodash';
-import {runTask} from 'utils/Concurrent';
+import {runTask, wrapTask} from 'utils/Concurrent';
 import assetEditorInterface from 'data/editingInterfaces/asset';
 import {caseof as caseofEq} from 'libs/sum-types/caseof-eq';
 import {deepFreeze} from 'utils/Freeze';
@@ -94,7 +94,6 @@ export function makePrefetchEntryLoader (spaceContext, ids$) {
       return yield spaceContext.space.getEntry(id);
     }
   };
-  loader.getFieldControls = memoize(loader.getFieldControls);
 
   ids$.onValue(cache.set);
 
@@ -113,7 +112,7 @@ function loadEditorData (loader, id) {
   return runTask(function* () {
     const entity = yield* loader.getEntity(id);
     const contentType = yield* loader.getContentType(entity);
-    const fieldControls = yield* loader.getFieldControls(contentType);
+    const fieldControls = yield loader.getFieldControls(contentType);
     const entityInfo = makeEntityInfo(entity, contentType);
     const openDoc = loader.getOpenDoc(entity, contentType);
     return Object.freeze({
@@ -140,10 +139,12 @@ function makeEntryLoader (spaceContext) {
       const ctId = entity.data.sys.contentType.sys.id;
       return yield spaceContext.publishedCTs.fetch(ctId);
     },
-    getFieldControls: function* (contentType) {
+    // We memoize the controls so that we do not fetch them multiple
+    // times for the bulk editor
+    getFieldControls: memoize(wrapTask(function* (contentType) {
       const ei = yield spaceContext.editingInterfaces.get(contentType.data);
       return spaceContext.widgets.buildRenderable(ei.controls);
-    },
+    })),
     getOpenDoc: makeDocOpener(spaceContext)
   };
 }
@@ -156,8 +157,8 @@ function makeAssetLoader (spaceContext) {
     getContentType: function* () {
       return null;
     },
-    getFieldControls: function* () {
-      return spaceContext.widgets.buildRenderable(assetEditorInterface.widgets);
+    getFieldControls: function () {
+      return Promise.resolve(spaceContext.widgets.buildRenderable(assetEditorInterface.widgets));
     },
     getOpenDoc: makeDocOpener(spaceContext)
   };
