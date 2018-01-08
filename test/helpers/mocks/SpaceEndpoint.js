@@ -1,5 +1,6 @@
 import $q from '$q';
-import { cloneDeep, assign, mapValues, values } from 'lodash';
+import { cloneDeep, mapValues, values } from 'lodash';
+import { assign } from 'utils/Collections';
 
 /**
  * Mock implementation for the 'spaceEndpoint' that simulates a subset
@@ -18,15 +19,10 @@ import { cloneDeep, assign, mapValues, values } from 'lodash';
  * that store the entities for the segment. The objects map IDs to the
  * entity data.
  *
- * Currently covered
- * - /api_keys, /preview_api_keys/ roles
- *   - /  GET collection
- *   - /:id  GET, PUT resource
- * - /entries/:id, /assets/:id
- *   - DELETE
- *   - State changes, i.e. PUT and DELETE to /published and /archived
- * - /ui_config
- *   - GET and PUT
+ * Endpoints are implemented for different resources either as generic
+ * collection using `makeGenericEndpoint`, as content entity collections using
+ * `makeEntityEndpoint` or as singleton resources using `makeSingletonEndpoint`.
+ * See the documentation of these methods for further information.
  *
  * TODO Entity stores should provide a better interface to add entities
  * so that we do not need to specifiy the sys properties. E.g.
@@ -51,10 +47,13 @@ export default function create () {
 
   function request ({method, path, data, version}) {
     data = cloneDeep(data);
-    const [typePath, id, state] = path;
+    const [typePath, ...resourcePath] = path;
     if (typePath in endpoints) {
       const endpoint = getEndpoint(endpoints, path);
-      return endpoint.request(method, id, state, data, version);
+      return endpoint.request(method, resourcePath, data, version)
+        // We isolate the data structure from the response handlers so that
+        // changes do not leak into the store
+        .then(cloneDeep);
     } else {
       return rejectNotFound();
     }
@@ -68,50 +67,6 @@ function getEndpoint (endpoints, [typePath, id]) {
   return isUserUIConfig ? endpoints.user_ui_config : endpoints[typePath];
 }
 
-function makeEntityEndpoint (type) {
-  const store = {};
-
-  return {store, request};
-
-  function request (method, id, state, _data, version) {
-    let sys;
-    if (id in store) {
-      sys = store[id].sys;
-    } else {
-      sys = {
-        id: id,
-        type: type,
-        version: version
-      };
-      store[id] = {sys};
-    }
-
-    if (version !== sys.version) {
-      return rejectVersionMismatch();
-    }
-
-    sys.version++;
-
-    if (state === 'published') {
-      if (method === 'PUT') {
-        sys.publishedVersion = version;
-      } else if (method === 'DELETE') {
-        delete sys.publishedVersion;
-      }
-    } else if (state === 'archived') {
-      if (method === 'PUT') {
-        sys.archivedVersion = version;
-      } else if (method === 'DELETE') {
-        delete sys.archivedVersion;
-      }
-    } else if (state === undefined) {
-      if (method === 'DELETE') {
-        sys.deletedVersion = version;
-      }
-    }
-    return $q.resolve({sys});
-  }
-}
 
 /**
  * Create a request handler for a generic Contentful resource collection
@@ -129,29 +84,81 @@ function makeGenericEndpoint () {
 
   return {store, request};
 
-  function request (method, id, _state, data, version) {
+  function request (method, path, data, version) {
+    const [id] = path;
+
     if (method === 'GET') {
       if (id) {
         return getResource(store, id);
       } else {
         return $q.resolve({
-          items: values(cloneDeep(store))
+          items: values(store)
         });
       }
     }
+
     if (method === 'PUT') {
       return putResource(store, id, version, data);
     }
 
     if (method === 'DELETE') {
-      if (id in store) {
-        delete store[id];
-        return $q.resolve();
-      } else {
-        return rejectNotFound();
-      }
+      return deleteResource(store, id, version);
     }
   }
+}
+
+
+/**
+ * Create a {store, request} pair for content entities (content types,
+ * entries, assets).
+ *
+ * The endpoint behaves like a generic resource endpoint. In addition
+ * it has the 'published' and 'archived' paths for resource state
+ * changes.
+ */
+function makeEntityEndpoint (resourceConfig) {
+  const { store, request: baseRequest } = makeGenericEndpoint(resourceConfig);
+
+  return {store, request};
+
+  function request (method, path, data, version) {
+    const [id, state] = path;
+    if (state) {
+      return updateResourceState(store, method, state, id, version);
+    } else {
+      return baseRequest(method, path, data, version);
+    }
+  }
+}
+
+function updateResourceState (store, method, state, id, version) {
+  const resource = store[id];
+
+  if (!resource) {
+    return rejectNotFound();
+  }
+
+  if (version !== resource.sys.version) {
+    return rejectVersionMismatch();
+  }
+
+  resource.sys.version++;
+
+  if (state === 'published') {
+    if (method === 'PUT') {
+      resource.sys.publishedVersion = version;
+    } else if (method === 'DELETE') {
+      delete resource.sys.publishedVersion;
+    }
+  } else if (state === 'archived') {
+    if (method === 'PUT') {
+      resource.sys.archivedVersion = version;
+    } else if (method === 'DELETE') {
+      delete resource.sys.archivedVersion;
+    }
+  }
+
+  return $q.resolve(resource);
 }
 
 /**
@@ -167,7 +174,7 @@ function makeSingletonEndpoint () {
   const store = {};
   return {store, request};
 
-  function request (method, _id, _state, data, version) {
+  function request (method, _path, data, version) {
     if (method === 'GET') {
       return getResource(store, id);
     }
@@ -180,30 +187,70 @@ function makeSingletonEndpoint () {
 
 function getResource (store, id) {
   if (id in store) {
-    return $q.resolve(cloneDeep(store[id]));
+    return $q.resolve(store[id]);
   } else {
     return rejectNotFound();
   }
 }
 
 
+/**
+ * Insert or update a resource in the store and return the updated
+ * resource.
+ *
+ * If a resource with the ID does not yet exist we create it. Otherwise
+ * we update it. In that case we require the `version` to match. We
+ * throw a `VersionMismatch` error otherwise.
+ */
 function putResource (store, id, version, data) {
-  let item = store[id];
-  if (!item) {
-    item = {
+  const resource = store[id];
+  if (resource) {
+    const sys = resource.sys;
+    if (sys.version === version) {
+      sys.version++;
+      const updatedResource = assign(data, { sys });
+      store[id] = updatedResource;
+      return $q.resolve(updatedResource);
+    } else {
+      return rejectVersionMismatch();
+    }
+  } else {
+    const newResource = {
+      ...data,
       sys: {
         id: id,
         version: 1
       }
     };
-    store[id] = item;
-  } else if (item.sys.version !== version) {
+    store[id] = newResource;
+    return $q.resolve(newResource);
+  }
+}
+
+
+/**
+ * Delete a resource from the store and return the deleted resource.
+ *
+ * The returned playload has the `sys.deletedVersion` set.
+ *
+ * If the version does not match we return a `VersionMismatch` error.
+ * If the resource does not exist we return a `NotFound` error.
+ */
+function deleteResource (store, id, version) {
+  const resource = store[id];
+
+  if (!resource) {
+    return rejectNotFound();
+  }
+
+  if (resource.sys.version !== version) {
     return rejectVersionMismatch();
   }
-  const sys = item.sys;
-  sys.version++;
-  item = store[id] = Object.assign({}, data, {sys});
-  return $q.resolve(cloneDeep(item));
+
+  resource.sys.version++;
+  resource.sys.deletedVersion = version;
+  delete store[id];
+  return $q.resolve(resource);
 }
 
 
@@ -216,7 +263,7 @@ function rejectNotFound () {
 }
 
 function rejectResponse (status, message) {
-  return $q.reject(assign(new Error(`${status} ${message}`), {
+  return $q.reject(Object.assign(new Error(`${status} ${message}`), {
     statusCode: status
   }));
 }
