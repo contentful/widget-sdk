@@ -18,21 +18,6 @@ var Space = function Space (data, persistenceContext) {
 
 Space.prototype = Object.create(Entity.prototype);
 
-Space.prototype.getUIConfig = function () {
-  return this.endpoint('ui_config')
-    .rejectEmpty()
-    .get();
-};
-
-Space.prototype.setUIConfig = function (data) {
-  var version = data && data.sys && data.sys.version;
-
-  return this.endpoint('ui_config')
-    .headers({'X-Contentful-Version': version})
-    .rejectEmpty()
-    .payload(data).put();
-};
-
 Space.prototype.getPrivateLocales = function () {
   return _.filter(this.data.locales, function (locale) {
     return locale.contentManagementApi;

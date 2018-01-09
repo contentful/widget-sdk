@@ -53,28 +53,6 @@ module.exports = function spaceInstanceDescription (serverSpaceData) {
       });
     });
 
-    coit('#getUIConfig', function* () {
-      this.request.respond({ui: 'config'});
-      let uiConfig = yield this.space.getUIConfig();
-      expect(uiConfig).to.deep.equal({ui: 'config'});
-      expect(this.request).to.be.calledWith({
-        method: 'GET',
-        url: '/spaces/42/ui_config'
-      });
-    });
-
-    coit('#setUIConfig', function* () {
-      let uiConfig = {ui: 'config', sys: {version: 5}};
-      this.request.respond(uiConfig);
-      yield this.space.setUIConfig(uiConfig);
-      expect(this.request).to.be.calledWith({
-        method: 'PUT',
-        url: '/spaces/42/ui_config',
-        headers: {'X-Contentful-Version': 5},
-        data: uiConfig
-      });
-    });
-
     it('#isOwner(user) is true for creator', function () {
       let creator = {sys: {id: 'creator'}};
       let user = {sys: {id: 'uid'}};
