@@ -70,6 +70,7 @@ const sysFieldFilters = [
   ['updatedBy', 'User', 'The user who last updated an item'],
   ['createdBy', 'User', 'The user who created an item'],
   ['publishedBy', 'User', 'The user who last published an item'],
+  ['version', 'Number', 'An item’s version'],
   ['id', 'Text', 'An item’s unique identifier']
 ]
   .map(([name, type, description, label]) => {
