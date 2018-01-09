@@ -299,22 +299,20 @@ export function getCreator (spaceContext, itemHandlers, templateName) {
     if (handlers.itemWasHandled) {
       return Promise.resolve(handlers.response);
     }
-    return spaceContext.space.createDeliveryApiKey(apiKey)
-      .then(handlers.success)
+    return spaceContext.apiKeyRepo.create(apiKey.name, apiKey.description)
+      .then(res => handlers.success({data: res})) // `handlers` expect Client-style "data" objects
       .catch(handlers.error);
   }
 
   // Create the discovery app environment if there is an API key
   function createPreviewEnvironment (contentTypes) {
     const baseUrl = 'https://discovery.contentful.com/entries/by-content-type/';
-    const getKeys = spaceContext.space.getDeliveryApiKeys();
-    const getContentPreview = contentPreview.getAll();
     const spaceId = spaceContext.space.getId();
 
-    return Promise.all([getKeys, getContentPreview]).then((responses) => {
-      const keys = responses[0];
-      const envs = responses[1];
-
+    return Promise.all([
+      spaceContext.apiKeyRepo.getAll(),
+      contentPreview.getAll()
+    ]).then(([keys, envs]) => {
       function createConfig (ct, token) {
         return {
           contentType: ct.sys.id,
@@ -326,7 +324,7 @@ export function getCreator (spaceContext, itemHandlers, templateName) {
 
       // Create default environment if there is none existing, and an API key is present
       if (keys.length && !Object.keys(envs).length) {
-        const accessToken = keys[0].data.accessToken;
+        const accessToken = keys[0].accessToken;
 
         const env = {
           name: 'Discovery App',
