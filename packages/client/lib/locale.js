@@ -14,18 +14,6 @@ Locale.prototype.serialize = function () {
   return _.omit(this.data, 'default', 'fallback_code', 'internal_code');
 };
 
-Locale.prototype.getName = function () {
-  return this.data.name;
-};
-
-Locale.prototype.getCode = function () {
-  return this.data.code;
-};
-
-Locale.prototype.isDefault = function () {
-  return this.data.default;
-};
-
 var baseFactoryMethods = createResourceFactoryMethods(Locale, 'locales');
 Locale.factoryMethods = {
   getLocales: baseFactoryMethods.getByQuery,

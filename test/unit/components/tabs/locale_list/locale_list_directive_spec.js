@@ -17,10 +17,10 @@ describe('The Locale list directive', function () {
     const locales = [
       {
         getId: sinon.stub().returns(1),
-        getName: sinon.stub().returns('English'),
-        getCode: sinon.stub().returns('en-US'),
-        isDefault: sinon.stub().returns(true),
         data: {
+          name: 'English',
+          code: 'en-US',
+          default: true,
           contentManagementApi: true,
           contentDeliveryApi: true,
           optional: false,
@@ -29,10 +29,10 @@ describe('The Locale list directive', function () {
       },
       {
         getId: sinon.stub().returns(2),
-        getName: sinon.stub(),
-        getCode: sinon.stub(),
-        isDefault: sinon.stub().returns(false),
         data: {
+          name: 'German',
+          code: 'de-DE',
+          default: false,
           contentManagementApi: false,
           contentDeliveryApi: false,
           optional: true,
@@ -41,20 +41,20 @@ describe('The Locale list directive', function () {
       },
       {
         getId: sinon.stub().returns(3),
-        getName: sinon.stub(),
-        getCode: sinon.stub(),
-        isDefault: sinon.stub().returns(false),
         data: {
+          name: 'Polish',
+          code: 'pl-PL',
+          default: false,
           contentManagementApi: true,
           contentDeliveryApi: false
         }
       },
       {
         getId: sinon.stub().returns(4),
-        getName: sinon.stub(),
-        getCode: sinon.stub(),
-        isDefault: sinon.stub().returns(false),
         data: {
+          name: 'Tajik',
+          code: 'tg-TG',
+          default: false,
           contentManagementApi: false,
           contentDeliveryApi: true
         }

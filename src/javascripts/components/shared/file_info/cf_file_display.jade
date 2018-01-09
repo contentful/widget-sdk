@@ -32,4 +32,7 @@
   .cf-file-drop(cf-file-drop ng-show="fieldLocale.access.editable && !file && enableUpload")
     button.btn-secondary-action.upload-button(type="button" ng-click="uploadFile()") Or open file picker
     | &nbsp;
-    button.btn-secondary-action.upload-button(type="button" ng-show="spaceContext.space.hasFeature('gettyImages')" ng-click="uploadFromGetty()") Or pick from getty images
+    button.btn-secondary-action.upload-button(
+      type="button"
+      ng-show="spaceContext.space.data.organization.subscriptionPlan.limits.features.gettyImages"
+      ng-click="uploadFromGetty()") Or pick from getty images

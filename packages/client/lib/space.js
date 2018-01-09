@@ -41,10 +41,6 @@ Space.prototype.getOrganizationId = function () {
   return this.data.organization.sys.id;
 };
 
-Space.prototype.hasFeature = function (featureName) {
-  return !!this.data.organization.subscriptionPlan.limits.features[featureName];
-};
-
 Space.mixinFactoryMethods = function (target, path) {
   var factoryMethods = createResourceFactoryMethods(Space, path);
   _.extend(target, {

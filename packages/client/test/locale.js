@@ -32,10 +32,6 @@ module.exports = function describeLocale () {
       this.request.reset();
     }));
 
-    it('has a name', function () {
-      expect(this.locale.getName()).to.equal('U.S. English');
-    });
-
     it('can be deleted', function () {
       expect(this.locale.canDelete()).to.be.true;
     });

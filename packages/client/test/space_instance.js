@@ -82,23 +82,6 @@ module.exports = function spaceInstanceDescription (serverSpaceData) {
       });
     });
 
-    it('#hasFeature(name)', function () {
-      this.space.data.organization = {
-        subscriptionPlan: {
-          limits: {
-            features: {
-              activeFeature: true,
-              inactiveFeature: false
-            }
-          }
-        }
-      };
-
-      expect(this.space.hasFeature('activeFeature')).to.be.true;
-      expect(this.space.hasFeature('inactiveFeature')).to.be.false;
-      expect(this.space.hasFeature('unkownFeature')).to.be.false;
-    });
-
     describe('#isHibernated()', function () {
       it('is false without enforcements', function () {
         delete this.space.data.enforcements;

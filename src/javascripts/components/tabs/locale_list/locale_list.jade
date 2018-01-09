@@ -46,8 +46,8 @@ header.workbench-header
              ui-sref="{{linkToLocale}}")
             +td.x--large-cell(aria-label="cell-name"
               ui-sref="{{linkToLocale}}")
-              | {{ locale.getName() }} ({{ locale.getCode() }})
-              span.entity-list-badge(ng-if="locale.isDefault()") Default
+              | {{ locale.data.name }} ({{ locale.data.code }})
+              span.entity-list-badge(ng-if="locale.data.default") Default
             +td.x--small-cell(data-test-id="locale-list-fallback-column"
               ui-sref="{{linkToLocale}}")
               | {{ locale.data.fallbackCode ? localeNamesByCode[locale.data.fallbackCode] : 'None' }}

@@ -43,7 +43,7 @@ angular.module('contentful')
 
   function groupLocaleNamesByCode (locales) {
     return _.transform(locales, function (acc, locale) {
-      acc[locale.getCode()] = locale.getName() + ' (' + locale.getCode() + ')';
+      acc[locale.data.code] = locale.data.name + ' (' + locale.data.code + ')';
     }, {});
   }
 
