@@ -32,7 +32,10 @@ export default function ($scope) {
 
 function* loadStateFromProperties ({orgId}) {
   const endpoint = createOrgEndpoint(orgId);
-  const {items: spacePlans} = yield getSpacePlans(endpoint);
+
+  // TODO load spaces from org endpoint and map them to plans
+  // see https://contentful.tpondemand.com/entity/24639
+  const spacePlans = yield getSpacePlans(endpoint);
   const canCreateSpace = canCreateSpaceInOrganization(orgId);
 
   return {orgId, spacePlans, canCreateSpace};
