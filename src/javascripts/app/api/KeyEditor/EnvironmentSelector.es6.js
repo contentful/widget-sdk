@@ -1,5 +1,5 @@
 import {h} from 'ui/Framework';
-import {ihspace} from 'ui/Layout';
+import {ihspace, hbox} from 'ui/Layout';
 import {badge, stateLink, codeFragment} from 'ui/Content';
 import {byName as Colors} from 'Styles/Colors';
 import {find} from 'lodash';
@@ -88,7 +88,7 @@ function renderList ({canEdit, spaceEnvironments, envs, updateEnvs}) {
       ]),
       env.sys.id === 'master' && badge({}, ['Default environment'])
     ]),
-    h('div', [
+    hbox([
       codeFragment([env.sys.id]),
       ihspace('6px'),
       h(copyButton, { value: env.sys.id })
