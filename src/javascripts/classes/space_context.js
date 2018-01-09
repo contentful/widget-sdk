@@ -213,7 +213,7 @@ angular.module('contentful')
         return;
       }
 
-      var defaultLocale = this.space && this.space.getDefaultLocale();
+      var defaultLocale = TheLocaleStore.getDefaultLocale();
       var defaultLocaleCode = defaultLocale && defaultLocale.internal_code;
       var firstLocaleCode = Object.keys(values)[0];
 

@@ -24,19 +24,6 @@ Space.prototype.getPrivateLocales = function () {
   });
 };
 
-Space.prototype.getDefaultLocale = function () {
-  // TODO test
-  if (this._defaultLocale) {
-    return this._defaultLocale;
-  } else {
-    this._defaultLocale = _.find(this.data.locales, function (locale) {
-      return locale['default'];
-    });
-    if (!this._defaultLocale) this._defaultLocale = this.data.locales[0];
-    return this._defaultLocale;
-  }
-};
-
 Space.prototype.isOwner = function (user) {
   return user && this.data.organization.sys.createdBy.sys.id === user.sys.id;
 };

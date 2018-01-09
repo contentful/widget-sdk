@@ -68,9 +68,6 @@ angular.module('contentful')
     function reset (spaceId, locales) {
       currentSpaceId = spaceId;
       privateLocales = locales;
-
-      // @contentful/client caches the default locale, so calling
-      // space.getDefaultLocale() always returns the same locale
       defaultLocale = _.find(privateLocales, {default: true});
 
       var storedLocaleCodes = getStoredActiveLocales();
