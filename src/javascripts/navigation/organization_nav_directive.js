@@ -82,6 +82,15 @@
         if: 'nav.hasBillingTab'
       },
       {
+        if: 'nav.pricingVersion == "pricing_version_2"',
+        title: 'Usage',
+        sref: 'account.organizations.usage({orgId: nav.orgId})',
+        rootSref: 'account.organizations.usage',
+        inheritUrlParams: false,
+        icon: 'nav-organization-billing',
+        dataViewType: 'platform-usage'
+      },
+      {
         title: 'Users',
         sref: 'account.organizations.users.gatekeeper({orgId: nav.orgId})',
         rootSref: 'account.organizations.users',

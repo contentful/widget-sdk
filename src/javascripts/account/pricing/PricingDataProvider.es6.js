@@ -1,44 +1,40 @@
-import {omit} from 'lodash';
-
 const alphaHeader = {
   'x-contentful-enable-alpha-feature': 'subscriptions-api'
 };
 
 /**
- * Gets the subscription details for the org.
+ * @param {object}  endpoint organization endpoint
+ * @param {object?} params
+ * @param {string?} params.plan_type base, space
+ * @returns {Promise<object>}
+ *
  */
-export function getSubscription (endpoint) {
+export function getSubscriptionPlans (endpoint, params) {
   return endpoint({
     method: 'GET',
-    path: ['subscriptions']
-  }, alphaHeader).then(parseSubscription);
+    path: ['plans'],
+    query: params
+  }, alphaHeader);
+}
+
+/**
+ * Get platform base plan
+ * @param {object} endpoint an organization endpoint
+ * @returns {Promise<object>} base plan object
+ */
+export function getBasePlan (endpoint) {
+  return getSubscriptionPlans(endpoint, {plan_type: 'base'})
+    // although you can only have 1 base plan, the endpoint
+    // still returns a list
+    .then(data => data.items[0]);
 }
 
 /**
  * Gets the space plans for the org with corresponding spaces details
+ * @param {object} endpoint an organization endpoint
+ * @returns {Promise<object[]>} array of space plans
  */
 export function getSpacePlans (endpoint) {
-  return endpoint({
-    method: 'GET',
-    path: ['plans']
-  }, alphaHeader);
-}
-
-function parseSubscription (rawData) {
-  // TODO use generic link resolver ?
-  const rawSubscription = rawData.items[0];
-  const subscription = omit(rawSubscription, 'plans');
-  const includes = Object.keys(rawData.includes)
-    .reduce((includes, key) => {
-      includes[key] = rawData.includes[key].reduce((hash, item) => {
-        hash[item.sys.id] = item;
-        return hash;
-      }, {});
-      return includes;
-    }, {});
-
-  subscription.plans = rawSubscription.plans
-    .map(({sys}) => includes[sys.linkType][sys.id]);
-
-  return subscription;
+  return getSubscriptionPlans(endpoint, {plan_type: 'space'})
+    .then(data => data.items);
 }

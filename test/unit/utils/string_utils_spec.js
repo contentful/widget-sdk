@@ -85,7 +85,7 @@ describe('stringUtils service', function () {
       expect(this.utils.truncateMiddle('ab cdefgh xyz', 7, 3)).toEqual('ab…xyz');
     });
 
-    it('removes `.` if they would result in visually awkward “....”', function () {
+    it('removes `.` if they would result in visually awkward “….”', function () {
       expect(this.utils.truncateMiddle('foo.bar.baz', 8, 4)).toEqual('foo…baz');
     });
   });

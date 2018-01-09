@@ -28,7 +28,7 @@ function getLoadingText (stateDefinition) {
   } else if (stateDefinition.label) {
     return `Loading ${stateDefinition.label}...`;
   } else {
-    return 'Please hold on...';
+    return 'Please hold on…';
   }
 }
 

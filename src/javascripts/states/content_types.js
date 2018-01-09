@@ -16,7 +16,7 @@ angular.module('contentful')
   var list = base({
     name: 'list',
     url: '',
-    loadingText: 'Loading content model...',
+    loadingText: 'Loading content model…',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
     }],

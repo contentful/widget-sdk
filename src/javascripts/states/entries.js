@@ -19,14 +19,14 @@ angular.module('contentful')
   var list = base({
     name: 'list',
     url: '',
-    loadingText: 'Loading content...',
+    loadingText: 'Loading content…',
     template: '<div cf-entry-list class="workbench entry-list entity-list"></div>'
   });
 
   var compareWithCurrent = base({
     name: 'withCurrent',
     url: '/:snapshotId',
-    loadingText: 'Loading versions...',
+    loadingText: 'Loading versions…',
     params: {
       snapshotCount: 0,
       source: 'deepLink'
@@ -80,7 +80,7 @@ angular.module('contentful')
     name: 'compare',
     url: '/compare',
     children: [compareWithCurrent],
-    loadingText: 'Loading versions...',
+    loadingText: 'Loading versions…',
     controller: ['require', 'editorData', function (require, editorData) {
       var spaceContext = require('spaceContext');
       var modalDialog = require('modalDialog');

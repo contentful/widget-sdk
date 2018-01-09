@@ -14,7 +14,7 @@ angular.module('contentful')
   var list = base({
     name: 'list',
     url: '',
-    loadingText: 'Loading content preview...',
+    loadingText: 'Loading content preview…',
     template: '<cf-content-preview-list class="workbench entity-list" />',
     controller: ['$scope', 'require', function ($scope, require) {
       var accessChecker = require('accessChecker');
@@ -29,7 +29,7 @@ angular.module('contentful')
   function editorBase (options) {
     var contentPreviewEditorState = base({
       template: '<cf-content-preview-editor class="workbench">',
-      loadingText: 'Loading content preview...',
+      loadingText: 'Loading content preview…',
       controller: ['require', '$scope', 'contentPreview', function (require, $scope, contentPreview) {
         var $state = require('$state');
         var $stateParams = require('$stateParams');

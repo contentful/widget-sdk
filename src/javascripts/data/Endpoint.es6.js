@@ -88,6 +88,7 @@ export function createOrganizationEndpoint (baseUrl, organizationId, auth) {
  * Return a function that makes requests to a resource. This is a base function
  * for `.createSpaceEndpoint()` and `.createOrganizationEndpoint()`, these
  * functions should be used instead when making a request to space or
+ * organization.
  *
  * The request function accepts a configuration object with the
  * following parameters.

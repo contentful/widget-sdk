@@ -82,7 +82,7 @@ const reduce = makeReducer({
     return match(result, {
       [C.Success]: (items) => {
         return assign({}, state, {
-          items: [makeMasterEnvironment(), ...items.map(makeEnvironment)],
+          items: [makeMasterEnvironment(), ...items.map(makeEnvironmentModel)],
           isLoading: false
         });
       },
@@ -126,15 +126,17 @@ export function createComponent (spaceContext) {
 }
 
 
-function makeEnvironment (environment) {
+function makeEnvironmentModel (environment) {
   const status = caseofEq(environment.status.id, [
     ['ready', () => 'ready'],
     ['failed', () => 'failed'],
+    ['queued', () => 'inProgress'],
+    // TODO we should encode all possible values here.
     [otherwise, () => 'inProgress']
   ]);
   return {
     id: environment.sys.id,
-    isMaster: false,
+    isMaster: environment.sys.id === 'master',
     name: environment.name,
     status,
     payload: environment
