@@ -3,7 +3,7 @@
 var EditingInterface = require('./editing_interface');
 var Entity = require('./entity');
 var mixinPublishable = require('./publishable');
-var _ = require('lodash-node/modern');
+var _ = require('lodash');
 var createResourceFactoryMethods = require('./resource_factory');
 
 var ContentType = function ContentType (data, persistenceContext) {

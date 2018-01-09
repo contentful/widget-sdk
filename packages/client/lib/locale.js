@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('lodash-node/modern');
+var _ = require('lodash');
 var Entity = require('./entity');
 var createResourceFactoryMethods = require('./resource_factory');
 

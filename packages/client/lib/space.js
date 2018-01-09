@@ -6,7 +6,7 @@ var EditingInterface = require('./editing_interface');
 var Entry = require('./entry');
 var Asset = require('./asset');
 var Locale = require('./locale');
-var _ = require('lodash-node/modern');
+var _ = require('lodash');
 var createResourceFactoryMethods = require('./resource_factory');
 
 var Space = function Space (data, persistenceContext) {
@@ -32,7 +32,7 @@ Space.prototype.isAdmin = function (user) {
 };
 
 Space.prototype.isHibernated = function () {
-  return _.any(this.data.enforcements, function (enforcement) {
+  return _.some(this.data.enforcements, function (enforcement) {
     return enforcement.reason === 'hibernated';
   });
 };
