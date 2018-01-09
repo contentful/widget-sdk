@@ -2,8 +2,6 @@
 
 module.exports = {
   Client: require('./lib/client'),
-  resolveQueryLinks: require('./lib/query_link_resolver').resolveQueryLinks,
-  QueryLinkResolver: require('./lib/query_link_resolver'),
   IdentityMap: require('./lib/identity_map'),
 
   Request: require('./lib/request'),
