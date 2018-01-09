@@ -166,8 +166,11 @@ angular.module('contentful')
         var hasLocales = spaceContext.getData('locales').length > 1;
         advancedSteps[1].completed = hasLocales;
 
-        spaceContext.space.getUsers().then(function (users) {
-          controller.steps[0].completed = users.length > 1;
+        spaceContext.endpoint({
+          method: 'GET',
+          path: ['users']
+        }).then(function (res) {
+          controller.steps[0].completed = res.items.length > 1;
         });
 
         WebhookRepository.getInstance(spaceContext.space).getAll()

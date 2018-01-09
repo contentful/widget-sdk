@@ -7,7 +7,6 @@ var Entry = require('./entry');
 var Asset = require('./asset');
 var ApiKey = require('./api_key');
 var Locale = require('./locale');
-var User = require('./user');
 var _ = require('lodash-node/modern');
 var PreviewApiKey = require('./preview_api_key');
 var createResourceFactoryMethods = require('./resource_factory');
@@ -97,8 +96,7 @@ _.extend(Space.prototype,
   Asset.factoryMethods,
   ApiKey.factoryMethods,
   PreviewApiKey.factoryMethods,
-  Locale.factoryMethods,
-  User.factoryMethods
+  Locale.factoryMethods
 );
 
 module.exports = Space;
