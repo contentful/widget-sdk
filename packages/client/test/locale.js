@@ -1,4 +1,3 @@
-/* jshint expr: true */
 const co = require('co');
 const {coit, clone} = require('./support');
 const {expect} = require('chai');

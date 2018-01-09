@@ -1,4 +1,3 @@
-/* jshint expr: true */
 const co = require('co');
 const {coit, expect} = require('./support');
 const ContentType = require('../lib/content_type');

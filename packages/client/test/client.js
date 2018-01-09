@@ -1,6 +1,3 @@
-/* jshint expr: true */
-'use strict';
-
 const {createRequestStub} = require('./support');
 
 const Client = require('../lib/client');

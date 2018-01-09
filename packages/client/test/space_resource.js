@@ -12,8 +12,6 @@
  * - `describeVersionedResource`
  */
 
-
-/* jshint expr: true */
 const _ = require('lodash');
 const co = require('co');
 const {coit, clone} = require('./support');

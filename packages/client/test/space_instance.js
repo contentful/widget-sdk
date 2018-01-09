@@ -7,8 +7,6 @@ const describeEditingInterface = require('./editing_interface');
 const describeLocale = require('./locale');
 
 module.exports = function spaceInstanceDescription (serverSpaceData) {
-  /* jshint expr:true */
-
   describe('instance', function () {
     let organization;
     beforeEach(co.wrap(function* () {
