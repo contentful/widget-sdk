@@ -27,7 +27,6 @@ import './matchers';
 import './sinon';
 import './timing-reporter';
 import './mocks/cf_stub';
-import './mocks/client';
 import './mocks/editor_context';
 import './mocks/EditorDataLoader';
 import './mocks/entity_editor_document';

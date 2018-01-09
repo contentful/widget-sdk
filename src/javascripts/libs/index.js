@@ -46,7 +46,7 @@ window.libs = [
   ['libs/sum-types/caseof-eq', require('sum-types/caseof-eq')],
   ['libs/editors', require('../../../vendor/extensions/core-field-editors')],
   ['libs/kefir', require('kefir')],
-  ['libs/@contentful/client', require('../../../packages/client')],
+  ['libs/legacy-client', require('../../../packages/client')],
   ['libs/sharejs', window.sharejs],
   ['libs/flat', require('flat')],
   ['hostnameTransformer', require('@contentful/hostname-transformer')],
