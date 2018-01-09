@@ -106,7 +106,7 @@ function render ({
 }) {
   const confirmable = inputValue === confirmationName;
   return h('div', {
-    dataTestId: 'spaceEnvironmentsCreateDialog'
+    dataTestId: 'spaceEnvironmentsDeleteDialog'
   }, [
     h('header.modal-dialog__header', [
       h('h1', [ 'Delete environment' ]),
@@ -129,6 +129,7 @@ function render ({
           'Type the name of the environment to confirm'
         ]),
         h('input.cfnext-form__input--full-size', {
+          dataTestId: 'confirmName',
           value: inputValue,
           onInput: (ev) => SetInputValue(ev.target.value)
         })

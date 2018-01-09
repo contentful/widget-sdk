@@ -1,6 +1,6 @@
 import $q from '$q';
 import { cloneDeep, mapValues, values } from 'lodash';
-import { assign } from 'utils/Collections';
+import { assign, update } from 'utils/Collections';
 
 /**
  * Mock implementation for the 'spaceEndpoint' that simulates a subset
@@ -40,7 +40,15 @@ export default function create () {
     api_keys: makeGenericEndpoint(),
     preview_api_keys: makeGenericEndpoint(),
     roles: makeGenericEndpoint(),
-    extensions: makeGenericEndpoint()
+    extensions: makeGenericEndpoint(),
+    environments: makeGenericEndpoint({
+      transformNew: (entity) => {
+        return update(entity, ['sys'], (sys) => assign(sys, {
+          type: 'Environment',
+          status: { sys: { id: 'queued' } }
+        }));
+      }
+    })
   };
 
   const stores = mapValues(endpoints, (ep) => ep.store);
@@ -69,6 +77,21 @@ function getEndpoint (endpoints, [typePath, id]) {
 
 
 /**
+ * This object holds the default configuration for resource endpoints.
+ * The configuration can be changed by passing an object to the
+ * endpoint factories.
+ */
+const defaultResourceConfig = {
+  /**
+   * This is called when creating a new resource. It is called with the
+   * user provided data. The result is stored and returned as the
+   * reponse.
+   */
+  transformNew: (data) => data
+};
+
+
+/**
  * Create a request handler for a generic Contentful resource collection
  * endpoint.
  *
@@ -78,8 +101,13 @@ function getEndpoint (endpoints, [typePath, id]) {
  * - POST /
  * - PUT /:id
  * - DELETE /:id
+ *
+ * @param {object} resourceConfig
+ *   Options that overide `defaultResourceConfig`. See that object for
+ *   documentation.
  */
-function makeGenericEndpoint () {
+function makeGenericEndpoint (resourceConfig) {
+  resourceConfig = assign(defaultResourceConfig, resourceConfig);
   const store = {};
 
   return {store, request};
@@ -98,7 +126,7 @@ function makeGenericEndpoint () {
     }
 
     if (method === 'PUT') {
-      return putResource(store, id, version, data);
+      return putResource(resourceConfig, store, id, version, data);
     }
 
     if (method === 'DELETE') {
@@ -162,8 +190,10 @@ function updateResourceState (store, method, state, id, version) {
 }
 
 /**
- * Create a request handler for a generic singleton Contentful resource
+ * Create a {request, store} pair for a generic singleton Contentful resource
  * endpoint.
+ *
+ * The singleton resource is always stored with the ID 'default'.
  *
  * Supports the following paths
  * - GET /
@@ -179,7 +209,7 @@ function makeSingletonEndpoint () {
       return getResource(store, id);
     }
     if (method === 'PUT') {
-      return putResource(store, id, version, data);
+      return putResource(defaultResourceConfig, store, id, version, data);
     }
   }
 }
@@ -202,7 +232,7 @@ function getResource (store, id) {
  * we update it. In that case we require the `version` to match. We
  * throw a `VersionMismatch` error otherwise.
  */
-function putResource (store, id, version, data) {
+function putResource (resourceConfig, store, id, version, data) {
   const resource = store[id];
   if (resource) {
     const sys = resource.sys;
@@ -222,7 +252,7 @@ function putResource (store, id, version, data) {
         version: 1
       }
     };
-    store[id] = newResource;
+    store[id] = resourceConfig.transformNew(newResource);
     return $q.resolve(newResource);
   }
 }

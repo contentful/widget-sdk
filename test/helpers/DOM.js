@@ -1,5 +1,6 @@
 import JQuery from 'jquery';
 import createMountPoint from 'ui/Framework/DOMRenderer';
+import * as ReactTestUtils from 'libs/react-dom/test-utils';
 
 
 /**
@@ -121,6 +122,8 @@ export function setCheckbox (el, value) {
   // TODO explain click
   el.dispatchEvent(new Event('click', {bubbles: true}));
   el.dispatchEvent(new Event('change', {bubbles: true}));
+  ReactTestUtils.Simulate.change(el);
+  ReactTestUtils.Simulate.click(el);
 }
 
 
@@ -221,6 +224,7 @@ function setValue (element, value) {
   element.value = value;
   element.dispatchEvent(new Event('input', {bubbles: true}));
   element.dispatchEvent(new Event('change', {bubbles: true}));
+  ReactTestUtils.Simulate.change(element);
 }
 
 
@@ -257,16 +261,15 @@ function keyDown (element, keyCode) {
   if (typeof keyCode !== 'number') {
     throw new Error('Only numerical `keyCode` arguments are supported for triggering keyboard events');
   }
-  const event = new KeyboardEvent('keydown', {
-    bubbles: true,
-    keyCode
-  });
+  const eventProps = { bubbles: true, keyCode };
+  const event = new KeyboardEvent('keydown', eventProps);
 
   // There is a bug in Chrome that sets the `keyCode` property to 0. We
   // need to set it ourselves.
   Object.defineProperty(event, 'keyCode', { value: keyCode });
-
   element.dispatchEvent(event);
+
+  ReactTestUtils.Simulate.keyDown(eventProps);
 }
 
 

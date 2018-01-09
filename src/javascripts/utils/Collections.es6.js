@@ -93,15 +93,19 @@ export function set (container, path, value) {
  * - If `path` is not an array it is treated as a single key and not split on
  *   dots.
  */
-export function get (container, path) {
+export function get (container, path, fallbackValue) {
   if (!Array.isArray(path)) {
-    return container[path];
+    if (container && path in container) {
+      return container[path];
+    } else {
+      return fallbackValue;
+    }
   }
 
   if (path.length === 0) {
-    return container;
+    return container || fallbackValue;
   } else {
-    return lodash.get(container, path);
+    return lodash.get(container, path, fallbackValue);
   }
 }
 
