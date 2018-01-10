@@ -3,6 +3,7 @@ import { assign, get, set, update } from 'utils/Collections';
 import * as C from 'utils/Concurrent';
 import { match, makeCtor } from 'utils/TaggedValues';
 import { toIdentifier } from 'stringUtils';
+import * as Environment from 'data/CMA/SpaceEnvironmentsRepo';
 
 import logger from 'logger';
 import {open as openDialog} from 'modalDialog';
@@ -16,6 +17,10 @@ const SetFieldValue = makeCtor('SetFieldValue');
 const Submit = makeCtor('Submit');
 const ReceiveResult = makeCtor('ReceiveResult');
 
+const ID_EXISTS_ERROR_MESSAGE =
+  'This ID already exists in your space. Please make sure it’s unique.';
+const NAME_EXISTS_ERROR_MESSAGE =
+  'This ID already exists in your space. Please make sure it’s unique.';
 const INVALID_ID_CHARACTER_ERROR_MESSAGE =
   'Please use only letters, numbers, underscores, and dashes for the ID.';
 const EMPTY_FIELD_ERROR_MESSAGE =
@@ -140,10 +145,10 @@ const reduce = makeReducer({
       state = set(state, 'fields', fieldsWithErrors);
     } else {
       C.runTask(function* () {
-        const result = yield C.tryP(env.setEnvironment({
+        const result = yield env.setEnvironment({
           id: get(state, ['fields', 'id', 'value']),
           name: get(state, ['fields', 'name', 'value'])
-        }));
+        });
         actions.ReceiveResult(result);
       });
       state = set(state, 'inProgress', true);
@@ -153,12 +158,18 @@ const reduce = makeReducer({
   [ReceiveResult] (state, result, _, actions) {
     state = set(state, 'inProgress', false);
     state = match(result, {
-      [C.Success]: () => {
+      [Environment.EnvironmentUpdated]: () => {
         actions.ConfirmDialog();
         return state;
       },
-      [C.Failure]: (error) => {
-        logger.logError(error);
+      [Environment.IdExistsError]: () => {
+        return set(state, ['fields', 'id', 'errors'], [{ message: ID_EXISTS_ERROR_MESSAGE }]);
+      },
+      [Environment.NameExistsError]: () => {
+        return set(state, ['fields', 'name', 'errors'], [{ message: NAME_EXISTS_ERROR_MESSAGE }]);
+      },
+      [Environment.ServerError]: (error) => {
+        logger.logServerError(error);
         return set(state, 'serverFailure', true);
       }
     });

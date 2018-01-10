@@ -47,7 +47,7 @@ const keyDetail = assign({
   url: '/:apiKeyId',
   resolve: {
     spaceEnvironments: ['spaceContext', function (spaceContext) {
-      const repo = SpaceEnvironmentRepo.create(null, spaceContext.getId());
+      const repo = SpaceEnvironmentRepo.create(spaceContext.endpoint);
       return repo.getAll();
     }],
     apiKey: ['$stateParams', 'spaceContext', function ($stateParams, spaceContext) {

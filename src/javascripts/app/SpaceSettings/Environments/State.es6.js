@@ -81,8 +81,8 @@ const reduce = makeReducer({
   [ReceiveResponse]: (state, result) => {
     return match(result, {
       [C.Success]: (items) => {
-        return assign({}, state, {
-          items: [makeMasterEnvironment(), ...items.map(makeEnvironmentModel)],
+        return assign(state, {
+          items: items.map(makeEnvironmentModel),
           isLoading: false
         });
       },
@@ -127,7 +127,7 @@ export function createComponent (spaceContext) {
 
 
 function makeEnvironmentModel (environment) {
-  const status = caseofEq(environment.status.id, [
+  const status = caseofEq(environment.sys.status.sys.id, [
     ['ready', () => 'ready'],
     ['failed', () => 'failed'],
     ['queued', () => 'inProgress'],
@@ -140,14 +140,5 @@ function makeEnvironmentModel (environment) {
     name: environment.name,
     status,
     payload: environment
-  };
-}
-
-function makeMasterEnvironment () {
-  return {
-    id: 'master',
-    isMaster: true,
-    name: 'Master',
-    status: 'ready'
   };
 }
