@@ -1,3 +1,4 @@
+import $window from '$window';
 import {createElement as h} from 'libs/react';
 import location from '$location';
 import TheStore from 'TheStore';
@@ -28,8 +29,13 @@ export function init () {
 
   if (store.get()) {
     addNotification(
-      'Using mock API',
+      h('h5', null, 'Using mock API ', h('a', {href: '#', onClick: disableMockApi}, 'clear')),
       h('a', {href: settings.mockApiUrl}, settings.mockApiUrl)
     );
   }
+}
+
+function disableMockApi () {
+  store.remove();
+  $window.location.reload();
 }
