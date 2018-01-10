@@ -61,15 +61,17 @@ export const ValueInput = {
 };
 
 // The generic filters applicable to all content types
+// TODO: Use "entry" and "asset" instead of "item".
 const sysFieldFilters = [
-  ['updatedAt', 'Date', 'Time the item was last changed'],
-  ['updatedBy', 'User', 'Users of this space'],
-  ['createdAt', 'Date'],
-  ['createdBy', 'User', 'Users of this space'],
-  ['publishedAt', 'Date'],
-  ['firstPublishedAt', 'Date', 'Date the item was published for the first time'],
-  ['publishedBy', 'User', 'Users of this space'],
-  ['id', 'Text', '']
+  ['updatedAt', 'Date', 'Time an item was last changed'],
+  ['createdAt', 'Date', 'Time an item was created'],
+  ['publishedAt', 'Date', 'Time an item was last published'],
+  ['firstPublishedAt', 'Date', 'Date an item was published for the very first time'],
+  ['updatedBy', 'User', 'The user who last updated an item'],
+  ['createdBy', 'User', 'The user who created an item'],
+  ['publishedBy', 'User', 'The user who last published an item'],
+  ['version', 'Number', 'An item’s version'],
+  ['id', 'Text', 'An item’s unique identifier']
 ]
   .map(([name, type, description, label]) => {
     return {
