@@ -1,6 +1,5 @@
 'use strict';
 
-var EditingInterface = require('./editing_interface');
 var Entity = require('./entity');
 var mixinPublishable = require('./publishable');
 var _ = require('lodash');
@@ -120,7 +119,5 @@ ContentType.factoryMethods = {
       .then(this.childResourceFactory(ContentType, 'content_types'));
   }
 };
-
-_.extend(ContentType.prototype, EditingInterface.contentTypeMethods);
 
 module.exports = ContentType;
