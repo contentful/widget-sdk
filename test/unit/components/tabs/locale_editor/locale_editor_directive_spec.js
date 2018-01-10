@@ -19,9 +19,9 @@ describe('Locale Editor Directive', function () {
     spaceContext.space = {};
     _.set(spaceContext, 'space.data.organization.subscriptionPlan.name');
 
-    this.locale = locale('co-DE');
+    this.locale = {data: locale('co-DE')};
 
-    this.element = this.$compile('<cf-locale-editor>', {
+    this.element = this.$compile('<cf-locale-editor />', {
       spaceLocales: [locale('fr'), locale('de'), locale('co-DE')],
       locale: this.locale,
       context: {}
@@ -31,16 +31,12 @@ describe('Locale Editor Directive', function () {
   });
 
   function locale (code) {
-    const id = 'id-for-' + code;
     return {
-      data: {
-        sys: {id: id},
-        default: false,
-        name: 'name for ' + code,
-        code: code,
-        contentDeliveryApi: true
-      },
-      getId: sinon.stub().returns(id)
+      sys: {id: 'id-for-' + code},
+      default: false,
+      name: 'name for ' + code,
+      code: code,
+      contentDeliveryApi: true
     };
   }
 

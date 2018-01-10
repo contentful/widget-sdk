@@ -41,25 +41,25 @@ header.workbench-header
     .table__body
       table
         tbody
-          tr(ng-repeat="locale in locales track by locale.getId()"
-             ng-init="linkToLocale='spaces.detail.settings.locales.detail({ localeId: locale.getId() })'"
+          tr(ng-repeat="locale in locales track by locale.sys.id"
+             ng-init="linkToLocale='spaces.detail.settings.locales.detail({ localeId: locale.sys.id })'"
              ui-sref="{{linkToLocale}}")
             +td.x--large-cell(aria-label="cell-name"
               ui-sref="{{linkToLocale}}")
-              | {{ locale.data.name }} ({{ locale.data.code }})
-              span.entity-list-badge(ng-if="locale.data.default") Default
+              | {{ locale.name }} ({{ locale.code }})
+              span.entity-list-badge(ng-if="locale.default") Default
             +td.x--small-cell(data-test-id="locale-list-fallback-column"
               ui-sref="{{linkToLocale}}")
-              | {{ locale.data.fallbackCode ? localeNamesByCode[locale.data.fallbackCode] : 'None' }}
+              | {{ locale.fallbackCode ? localeNamesByCode[locale.fallbackCode] : 'None' }}
             +td.x--small-cell(data-test-id="locale-list-cda-column"
               ui-sref="{{linkToLocale}}")
-              | {{ locale.data.contentDeliveryApi ? 'Enabled' : 'Disabled' }}
+              | {{ locale.contentDeliveryApi ? 'Enabled' : 'Disabled' }}
             +td.x--small-cell(data-test-id="locale-list-cma-column"
               ui-sref="{{linkToLocale}}")
-              | {{ locale.data.contentManagementApi ? 'Enabled' : 'Disabled' }}
+              | {{ locale.contentManagementApi ? 'Enabled' : 'Disabled' }}
             +td.x--small-cell(data-test-id="locale-list-optional-column"
               ui-sref="{{linkToLocale}}")
-              | {{ locale.data.optional ? 'Can be published empty' : 'Content is required' }}
+              | {{ locale.optional ? 'Can be published empty' : 'Content is required' }}
 
   .advice.locale-list__advice
     .advice__frame.locale-list__advice-frame

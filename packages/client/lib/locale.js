@@ -15,11 +15,6 @@ Locale.prototype.serialize = function () {
 };
 
 var baseFactoryMethods = createResourceFactoryMethods(Locale, 'locales');
-Locale.factoryMethods = {
-  getLocales: baseFactoryMethods.getByQuery,
-  getLocale: baseFactoryMethods.getById,
-  createLocale: baseFactoryMethods.create,
-  newLocale: baseFactoryMethods.new
-};
+Locale.factoryMethods = {newLocale: baseFactoryMethods.new};
 
 module.exports = Locale;

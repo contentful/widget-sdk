@@ -42,7 +42,9 @@ angular.module('contentful')
   };
 
   var resolveSpaceLocales = ['spaceContext', function (spaceContext) {
-    return spaceContext.space.getLocales();
+    // TODO introduce locale repo
+    return spaceContext.endpoint({method: 'GET', path: ['locales']})
+    .then(function (res) { return res.items; });
   }];
 
   var newLocale = _.extend({
@@ -54,6 +56,7 @@ angular.module('contentful')
     resolve: {
       locale: ['spaceContext', function (spaceContext) {
         return spaceContext.space.newLocale({
+          sys: {},
           code: null,
           fallbackCode: null,
           contentDeliveryApi: true,
@@ -72,7 +75,13 @@ angular.module('contentful')
     },
     resolve: {
       locale: ['$stateParams', 'spaceContext', function ($stateParams, spaceContext) {
-        return spaceContext.space.getLocale($stateParams.localeId);
+        // TODO introduce locale repo
+        return spaceContext.endpoint({
+          method: 'GET',
+          path: ['locales', $stateParams.localeId]
+        }).then(function (res) {
+          return spaceContext.space.newLocale(res);
+        });
       }],
       spaceLocales: resolveSpaceLocales
     }
