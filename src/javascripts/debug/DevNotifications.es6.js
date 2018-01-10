@@ -1,7 +1,7 @@
 import {createElement as h} from 'libs/react';
 import ReactDOM from 'libs/react-dom';
 import createReactClass from 'create-react-class';
-import {uniqueId} from 'lodash';
+import {uniqueId, isString} from 'lodash';
 
 const DevNotifications = createReactClass({
   getInitialState: function () {
@@ -23,18 +23,18 @@ const DevNotifications = createReactClass({
     }
     return h('div', {
       className: (isCollapsed ? 'cf-dev-notifications is-collapsed' : 'cf-dev-notifications')
-    }, [
+    },
       h('a', {className: 'btn-toggle-collapsed', href: '#', onClick: this.toggle}),
       ...notifications.map(({title, content, id}) => {
         return h('div', {
           className: 'cf-dev-notification',
           key: id
-        }, [
-          title ? h('h5', null, title) : '',
-          h('div', {dangerouslySetInnerHTML: {__html: content}})
-        ]);
+        },
+          isString(title) ? h('h5', null, title) : title,
+          content
+        );
       })
-    ]);
+    );
   }
 });
 

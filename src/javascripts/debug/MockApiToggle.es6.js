@@ -1,3 +1,4 @@
+import {createElement as h} from 'libs/react';
 import location from '$location';
 import TheStore from 'TheStore';
 import {omit} from 'lodash';
@@ -28,7 +29,7 @@ export function init () {
   if (store.get()) {
     addNotification(
       'Using mock API',
-      `<a href="${settings.mockApiUrl}">${settings.mockApiUrl}</p>`
+      h('a', {href: settings.mockApiUrl}, settings.mockApiUrl)
     );
   }
 }

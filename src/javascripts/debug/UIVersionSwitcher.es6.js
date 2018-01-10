@@ -3,14 +3,14 @@
 * It also displays the version in the UI and provides an easy way to clear it.
 */
 import $window from '$window';
-import $document from '$document';
 import Cookies from 'Cookies';
-import {omit, toPairs} from 'lodash';
+import {omit} from 'lodash';
 import moment from 'moment';
 import {gitRevision} from 'environment';
-import {h} from 'utils/hyperscript';
+import {createElement as h} from 'libs/react';
 import {addNotification} from 'debug/DevNotifications';
 import location from '$location';
+import qs from 'libs/qs';
 
 /**
  * If url param is given, sets `ui_version` cookie and reloads the app with
@@ -24,7 +24,7 @@ export function init () {
   if (uiVersion) {
     setVersionCookie(uiVersion);
     // This will reload the app with new ui version
-    $window.location.search = '?' + toUrlParamsString(omit(urlParams, 'ui_version'));
+    $window.location.search = '?' + qs.stringify(omit(urlParams, 'ui_version'));
   }
   addVersionNotification();
 }
@@ -43,22 +43,22 @@ function addVersionNotification () {
   if (!uiVersion || isTestRun) {
     return;
   }
-
   addNotification('Contentful UI Version:', renderVersionNotification(gitRevision));
-
-  $document.find('[data-cf-ui-version-reload]').on('click', () => {
-    Cookies.remove('ui_version');
-    $window.location.reload();
-  });
 }
 
 function renderVersionNotification (gitRevision) {
-  return h('div', [
-    h('a', {href: `?ui_version=${gitRevision}`}, [gitRevision]),
-    h('a', {href: '#', dataCfUiVersionReload: true, style: {marginLeft: '3px'}}, ['Clear'])
-  ]);
+  return h('div', null,
+    h('a', {href: `?ui_version=${gitRevision}`}, gitRevision),
+    h('a', {
+      href: '#',
+      onClick: removeUiVersion,
+      dataCfUiVersionReload: true,
+      style: {marginLeft: '3px'}
+    }, 'Clear')
+  );
 }
 
-function toUrlParamsString (params) {
-  return toPairs(params).map(([k, v]) => k + '=' + v).join('&');
+function removeUiVersion () {
+  Cookies.remove('ui_version');
+  $window.location.reload();
 }
