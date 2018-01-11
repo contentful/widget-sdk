@@ -41,6 +41,13 @@ describe('TheLocaleStore', function () {
       expect(this.theLocaleStore.getDefaultLocale()).toEqual(this.privateLocales[0]);
     });
 
+    it('falls back to the first locale if no `default` flag is set', function* () {
+      const locales = makeTestLocales();
+      delete locales[0].default;
+      yield this.theLocaleStore.reset(makeEndpoint(locales));
+      expect(this.theLocaleStore.getDefaultLocale()).toEqual(locales[0]);
+    });
+
     it('gets active locale states', function () {
       expect(this.theLocaleStore.isLocaleActive(makeLocale('en-US'))).toBe(true);
       expect(this.theLocaleStore.isLocaleActive(makeLocale('de-DE'))).toBe(false);

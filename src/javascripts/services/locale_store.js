@@ -67,7 +67,7 @@ angular.module('contentful')
       return spaceEndpoint({method: 'GET', path: ['locales']})
       .then(function (res) {
         privateLocales = res.items;
-        defaultLocale = _.find(privateLocales, {default: true});
+        defaultLocale = _.find(privateLocales, {default: true}) || privateLocales[0];
 
         var spaceId = defaultLocale.sys.space.sys.id;
         store = TheStore.forKey('activeLocalesForSpace.' + spaceId);
