@@ -1,8 +1,7 @@
 import * as sinon from 'helpers/sinon';
 
 describe('Space Template creation service', function () {
-  let spaceTemplateCreator, creator, stubs;
-  let spaceContext;
+  let spaceTemplateCreator, creator, stubs, spaceContext;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -17,14 +16,12 @@ describe('Space Template creation service', function () {
       });
       $provide.value('analytics/Analytics', {track: _.noop});
     });
-    inject(function ($injector) {
-      spaceTemplateCreator = $injector.get('services/SpaceTemplateCreator');
-    });
+
+    spaceTemplateCreator = this.$inject('services/SpaceTemplateCreator');
   });
 
   afterEach(function () {
-    spaceTemplateCreator = creator = stubs =
-    spaceContext = null;
+    spaceTemplateCreator = creator = stubs = spaceContext = null;
   });
 
   describe('creates content based on a template', function () {
@@ -62,11 +59,6 @@ describe('Space Template creation service', function () {
           save: sinon.stub()
         },
         space: {
-          data: {
-            locales: [
-              { internal_code: 'de-DE' }
-            ]
-          },
           getId: _.constant('123'),
           getDeliveryApiKeys: () => Promise.resolve([{data: {accessToken: 'mock-token'}}]),
           createContentType: sinon.stub(),
@@ -117,7 +109,9 @@ describe('Space Template creation service', function () {
 
       creator = spaceTemplateCreator.getCreator(
         spaceContext,
-        {onItemSuccess: stubs.progressSuccess, onItemError: stubs.progressError}
+        {onItemSuccess: stubs.progressSuccess, onItemError: stubs.progressError},
+        'Template name',
+        'de-DE'
       );
 
       yield creator.create(template)

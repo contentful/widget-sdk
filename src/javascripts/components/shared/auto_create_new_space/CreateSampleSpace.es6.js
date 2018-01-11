@@ -15,6 +15,8 @@ import logger from 'logger';
 import autoCreateSpaceTemplate from './Template';
 import * as TokenStore from 'services/TokenStore';
 
+const DEFAULT_LOCALE = 'en-US';
+
 /**
  * @description
  * Creates a sample space using the given template in the
@@ -109,7 +111,7 @@ export default function (org, templateName, modalTemplate = autoCreateSpaceTempl
 function* createSpace (org, templateName) {
   const newSpace = yield client.createSpace({
     name: 'Sample project',
-    defaultLocale: 'en-US'
+    defaultLocale: DEFAULT_LOCALE
   }, org.sys.id);
   track('space:create', { templateName: templateName });
   yield TokenStore.refresh();
@@ -133,7 +135,8 @@ function* applyTemplate (spaceContext, templateInfo) {
       onItemSuccess: entityActionSuccess,
       onItemError: noop
     },
-    templateInfo.name
+    templateInfo.name,
+    DEFAULT_LOCALE
   );
 
   const loadedTemplate = yield getTemplate(templateInfo);

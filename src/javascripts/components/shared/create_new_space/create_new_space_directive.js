@@ -215,7 +215,8 @@ angular.module('contentful')
     controller.templateCreator = spaceTemplateCreator.getCreator(
       spaceContext,
       itemHandlers,
-      selectedTemplate.name
+      selectedTemplate.name,
+      controller.newSpace.data.defaultLocale
     );
     return getTemplate(selectedTemplate)
     .then(createTemplate);
