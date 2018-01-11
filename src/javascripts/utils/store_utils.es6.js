@@ -59,10 +59,8 @@ export function has (storage, key) {
   return get(storage, key) !== null;
 }
 
-export function externalChanges (storage, key) {
-  const type = storage.type;
-
-  return K.fromEvents(window, type)
+export function externalChanges (key) {
+  return K.fromEvents(window, 'storage')
     .filter(function (event) {
       return event.key === key;
     })
@@ -94,7 +92,7 @@ export function forKey (storage, key) {
     set: _.partial(set, storage, key),
     remove: _.partial(remove, storage, key),
     has: _.partial(has, storage, key),
-    externalChanges: _.partial(externalChanges, storage, key),
+    externalChanges: _.partial(externalChanges, key),
     type: storage.type
   };
 }
@@ -105,7 +103,7 @@ export function forStorage (storage) {
     set: _.partial(set, storage),
     remove: _.partial(remove, storage),
     has: _.partial(has, storage),
-    externalChanges: _.partial(externalChanges, storage),
+    externalChanges: externalChanges,
     forKey: _.partial(forKey, storage),
     type: storage.type
   };

@@ -103,7 +103,7 @@ describe('Authentication', function () {
       this.store.set('STORED_TOKEN');
       this.Auth.init();
 
-      this.window.addEventListener.withArgs(this.store.type).yield({key: 'token', newValue: 'NEW TOKEN'});
+      this.window.addEventListener.withArgs('storage').yield({key: 'token', newValue: 'NEW TOKEN'});
       expect(yield this.Auth.getToken()).toBe('NEW TOKEN');
       expect(K.getValue(this.Auth.token$)).toBe('NEW TOKEN');
     });

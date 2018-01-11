@@ -123,12 +123,12 @@ describe('utils/TheStore', function () {
       it('emits value on `storage` window event after setting in local/session storage', function () {
         storeUtils.set(storage, 'mykey', 'initial');
 
-        const changes$ = storeUtils.externalChanges(storage, 'mykey');
+        const changes$ = storeUtils.externalChanges('mykey');
         const emittedChange = sinon.stub();
 
         changes$.onValue(emittedChange);
 
-        listeners.addEventListener.withArgs(storage.type).yield({key: 'mykey', newValue: 'newvalue'});
+        listeners.addEventListener.withArgs('storage').yield({key: 'mykey', newValue: 'newvalue'});
         sinon.assert.calledOnceWith(emittedChange, 'newvalue');
       });
     });
