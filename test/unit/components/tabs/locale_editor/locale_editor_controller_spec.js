@@ -32,6 +32,9 @@ describe('Locale editor controller', function () {
       data: {organization: {subscriptionPlan: {name: 'Unlimited'}}}
     };
 
+    this.localeStore = this.$inject('TheLocaleStore');
+    this.localeStore.reset = sinon.stub().resolves();
+
     this.scope = this.$inject('$rootScope').$new();
     this.scope.context = {};
 
@@ -253,7 +256,7 @@ describe('Locale editor controller', function () {
       });
 
       it('reloads locales', function () {
-        sinon.assert.called(this.spaceContext.reloadLocales);
+        sinon.assert.called(this.localeStore.reset);
       });
 
       it('sets form to submitted state', function () {

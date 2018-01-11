@@ -10,6 +10,7 @@ angular.module('contentful')
   var WebhookRepository = require('WebhookRepository');
   var CreateSpace = require('services/CreateSpace');
   var caseofEq = require('libs/sum-types').caseofEq;
+  var TheLocaleStore = require('TheLocaleStore');
 
   return {
     template: template(),
@@ -163,8 +164,7 @@ angular.module('contentful')
       }
 
       function setAdvancedStepsCompletion () {
-        var hasLocales = spaceContext.getData('locales').length > 1;
-        advancedSteps[1].completed = hasLocales;
+        advancedSteps[1].completed = TheLocaleStore.getLocales().length > 1;
 
         spaceContext.endpoint({
           method: 'GET',

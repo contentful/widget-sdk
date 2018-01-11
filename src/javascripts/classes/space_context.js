@@ -55,13 +55,12 @@ angular.module('contentful')
      * @description
      * This method resets a space context with a given space
      *
-     * It also sets the space on the [TheLocaleStore][]
-     * service.
-     *
-     * The returned promise resolves when all the custom extension and
-     * content types for this space have been fetched.
-     *
-     * [TheLocaleStore]: api/contentful/app/service/TheLocaleStore
+     * The returned promise resolves when all additional space
+     * resources have been fetched:
+     * - Extensions
+     * - Content types
+     * - UI Configs (space and user)
+     * - Locales
      *
      * @param {Client.Space} space
      * @returns {Promise<self>}
@@ -105,7 +104,6 @@ angular.module('contentful')
       self.user = K.getValue(TokenStore.user$);
 
       previewEnvironmentsCache.clearAll();
-      TheLocaleStore.reset(space.getId(), space.getPrivateLocales());
 
       return $q.all([
         Widgets.setSpace(self.endpoint).then(function (widgets) {
@@ -119,33 +117,11 @@ angular.module('contentful')
           .then(function (api) {
             self.uiConfig = api;
           });
-        })
+        }),
+        TheLocaleStore.reset(self.endpoint)
       ]).then(function () {
         return self;
       });
-    },
-
-    /**
-     * @ngdoc method
-     * @name spaceContext#reloadLocales
-     * @description
-     * Reload the list of locales for the current space and updates
-     * 'TheLocaleStore' service.
-     *
-     * Currently only called by 'LocaleEditorController'.
-     *
-     * @returns {Promise<void>}
-     */
-    reloadLocales: function () {
-      var self = this;
-      // TODO Do not use 'services/TokenStore'. This service mutates the
-      // 'this.space' object so that '.getPrivateLocales()' returns a
-      // different value. Instead we should get the locales from the
-      // dedicated /locales endpoint.
-      return TokenStore.refresh()
-        .then(function () {
-          TheLocaleStore.reset(self.space.getId(), self.space.getPrivateLocales());
-        });
     },
 
     /**

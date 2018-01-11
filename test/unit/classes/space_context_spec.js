@@ -71,8 +71,7 @@ describe('spaceContext', function () {
       const theLocaleStore = this.$inject('TheLocaleStore');
       sinon.assert.calledOnceWith(
         theLocaleStore.reset,
-        SPACE.getId(),
-        SPACE.getPrivateLocales()
+        this.spaceContext.endpoint
       );
     });
 
@@ -489,32 +488,6 @@ describe('spaceContext', function () {
       this.spaceContext.docPool = {destroy: stubs[1]};
       this.spaceContext.purge();
       stubs.forEach((s) => sinon.assert.calledOnce(s));
-    });
-  });
-
-  describe('#reloadLocales', function () {
-    beforeEach(function () {
-      this.resetWithSpace();
-      this.tokenStore = this.mockService('services/TokenStore');
-      this.tokenStore.refresh.resolves();
-    });
-
-    it('calls tokenStore.refresh()', function () {
-      this.spaceContext.reloadLocales();
-      sinon.assert.calledOnce(this.tokenStore.refresh);
-    });
-
-    it('calls TheLocaleStore.reset()', function () {
-      const localeStore = this.$inject('TheLocaleStore');
-      localeStore.reset.reset();
-      const space = this.spaceContext.space;
-      this.spaceContext.reloadLocales();
-      this.$apply();
-      sinon.assert.calledOnceWith(
-        localeStore.reset,
-        space.getId(),
-        space.getPrivateLocales()
-      );
     });
   });
 
