@@ -50,7 +50,7 @@ export default function create (spaceEndpoint) {
   }
 
 
-  function create (name, description = '') {
+  function create (name, description) {
     return getNewName(name)
     .then((uniqueName) => {
       return spaceEndpoint({
