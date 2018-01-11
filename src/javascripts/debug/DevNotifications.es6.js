@@ -2,6 +2,7 @@ import {createElement as h} from 'libs/react';
 import ReactDOM from 'libs/react-dom';
 import createReactClass from 'create-react-class';
 import {uniqueId, isString} from 'lodash';
+import PropTypes from 'libs/prop-types';
 
 const DevNotifications = createReactClass({
   getInitialState: function () {
@@ -37,6 +38,14 @@ const DevNotifications = createReactClass({
     );
   }
 });
+
+DevNotifications.propTypes = {
+  notifications: PropTypes.arrayOf(PropTypes.shape({
+    title: PropTypes.oneOfType([PropTypes.element, PropTypes.string]).isRequired,
+    content: PropTypes.oneOfType([PropTypes.element, PropTypes.string]).isRequired,
+    id: PropTypes.string.isRequired
+  })).isRequired
+};
 
 let containerElement;
 const notifications = [];
