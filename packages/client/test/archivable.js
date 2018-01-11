@@ -1,4 +1,3 @@
-/* jshint expr: true */
 const {expect} = require('chai');
 const {coit} = require('./support');
 const sinon = require('sinon');

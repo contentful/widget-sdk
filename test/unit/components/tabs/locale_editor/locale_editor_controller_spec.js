@@ -25,13 +25,17 @@ describe('Locale editor controller', function () {
       $provide.value('analytics/events/SearchAndViews', {});
     });
 
+    this.spaceContext = this.$inject('spaceContext');
+    this.spaceContext.reloadLocales = sinon.stub().resolves();
+    this.spaceContext.space = {
+      newLocale: sinon.stub(),
+      data: {organization: {subscriptionPlan: {name: 'Unlimited'}}}
+    };
+
+    this.localeStore = this.$inject('TheLocaleStore');
+    this.localeStore.reset = sinon.stub().resolves();
+
     this.scope = this.$inject('$rootScope').$new();
-
-    const spaceContext = this.$inject('spaceContext');
-    spaceContext.space = {};
-    spaceContext.reloadLocales = sinon.stub().resolves();
-    _.set(spaceContext, 'space.data.organization.subscriptionPlan.name', 'Unlimited');
-
     this.scope.context = {};
 
     this.scope.localeForm = {
@@ -42,7 +46,7 @@ describe('Locale editor controller', function () {
 
     const getIdStub = sinon.stub();
     this.scope.locale = {
-      data: {code: 'en-US'},
+      data: {sys: {id: 'someId'}, code: 'en-US'},
       getName: sinon.stub().returns('localeName'),
       getId: getIdStub.returns('someId'),
       delete: sinon.stub().resolves(),
@@ -63,11 +67,7 @@ describe('Locale editor controller', function () {
   });
 
   function locale (code, name, fallbackCode, ext) {
-    return _.merge({
-      getName: _.constant(name),
-      getCode: _.constant(code),
-      data: {name, code, fallbackCode, contentDeliveryApi: true}
-    }, ext || {});
+    return _.merge({name, code, fallbackCode, contentDeliveryApi: true}, ext || {});
   }
 
   it('sets a locale on the scope', function () {
@@ -106,7 +106,7 @@ describe('Locale editor controller', function () {
     });
 
     it('sets available fallback locales', function () {
-      const noDelivery = locale('fr-FR', 'French', null, {data: {contentDeliveryApi: false}});
+      const noDelivery = locale('fr-FR', 'French', null, {contentDeliveryApi: false});
       this.scope.spaceLocales.push(noDelivery);
       this.scope.locale.data.code = 'de-DE';
       this.$apply();
@@ -164,9 +164,9 @@ describe('Locale editor controller', function () {
       this.$q = this.$inject('$q');
       this.scope.locale.data.code = 'de-DE';
       this.scope.spaceLocales = [
-        locale('en-US', 'English', null, {save: this.$q.resolve()}),
-        locale('de-DE', 'German', 'en-US', {save: this.$q.resolve()}),
-        locale('fr-FR', 'French', 'de-DE', {save: sinon.stub().resolves()})
+        locale('en-US', 'English'),
+        locale('de-DE', 'German', 'en-US'),
+        locale('fr-FR', 'French', 'de-DE')
       ];
       this.init(); // grab another set of space locales
 
@@ -178,6 +178,11 @@ describe('Locale editor controller', function () {
     });
 
     it('asks for a new fallback', function () {
+      const saveStub = sinon.stub().resolves();
+      this.spaceContext.space.newLocale = sinon.stub().callsFake(data => {
+        return {save: saveStub, data};
+      });
+
       this.controller.delete.execute();
       this.$apply();
 
@@ -185,8 +190,10 @@ describe('Locale editor controller', function () {
       const data = this.modalDialog.open.firstCall.args[0].scopeData;
       const codes = data.availableLocales.map((l) => { return l.code; });
       expect(codes).toEqual(['en-US']);
-      expect(this.scope.spaceLocales[2].data.fallbackCode).toEqual('en-US');
-      sinon.assert.calledOnce(this.scope.spaceLocales[2].save);
+
+      const updated = _.extend(this.scope.spaceLocales[2], {fallbackCode: 'en-US'});
+      sinon.assert.calledOnce(this.spaceContext.space.newLocale.withArgs(updated));
+      sinon.assert.calledOnce(saveStub);
       sinon.assert.calledOnce(this.scope.locale.delete);
     });
 
@@ -249,8 +256,7 @@ describe('Locale editor controller', function () {
       });
 
       it('reloads locales', function () {
-        const spaceContext = this.$inject('spaceContext');
-        sinon.assert.called(spaceContext.reloadLocales);
+        sinon.assert.called(this.localeStore.reset);
       });
 
       it('sets form to submitted state', function () {

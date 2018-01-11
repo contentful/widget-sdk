@@ -32,10 +32,10 @@ angular.module('contentful')
   $scope.getPlanLocalesLimit = getPlanLocalesLimit;
   $scope.getSubscriptionPlanName = _.partial(getSubscriptionPlanData, 'name');
 
-  spaceContext.space.getLocales()
-  .then(function (locales) {
-    $scope.locales = locales;
-    $scope.localeNamesByCode = groupLocaleNamesByCode(locales);
+  spaceContext.endpoint({method: 'GET', path: ['locales']})
+  .then(function (res) {
+    $scope.locales = res.items;
+    $scope.localeNamesByCode = groupLocaleNamesByCode(res.items);
     $scope.localesUsageState = getLocalesUsageState();
     $scope.context.ready = true;
   })
@@ -43,7 +43,7 @@ angular.module('contentful')
 
   function groupLocaleNamesByCode (locales) {
     return _.transform(locales, function (acc, locale) {
-      acc[locale.getCode()] = locale.getName() + ' (' + locale.getCode() + ')';
+      acc[locale.code] = locale.name + ' (' + locale.code + ')';
     }, {});
   }
 

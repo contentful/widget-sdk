@@ -86,8 +86,8 @@ describe('cfOnboardingSteps Directive', function () {
             getAll: this.webhooks
           };
         };
-        this.spaceContext.getData.withArgs('locales').returns([{}]);
-        this.spaceContext.space.getUsers = sinon.stub().resolves([{}]);
+        this.spaceContext.endpoint = sinon.stub().resolves({items: []});
+        this.$inject('TheLocaleStore').getLocales = sinon.stub().returns([{}]);
       });
 
       it('no completed steps', function () {
@@ -96,7 +96,7 @@ describe('cfOnboardingSteps Directive', function () {
       });
 
       it('invited users', function () {
-        this.spaceContext.space.getUsers.resolves([{}, {}]);
+        this.spaceContext.endpoint.resolves({items: [{}, {}]});
         this.compile();
         this.assertCompletedSteps(1);
       });
@@ -108,7 +108,7 @@ describe('cfOnboardingSteps Directive', function () {
       });
 
       it('has additional locales', function () {
-        this.spaceContext.getData.withArgs('locales').returns([{}, {}]);
+        this.$inject('TheLocaleStore').getLocales = sinon.stub().returns([{}, {}]);
         this.compile();
         this.assertCompletedSteps(1);
       });

@@ -1,4 +1,3 @@
-/* jshint expr: true */
 const {coit} = require('./support');
 const {expect} = require('chai');
 const describeEntity = require('./entity');

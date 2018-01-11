@@ -1,4 +1,3 @@
-/* jshint expr: true */
 const co = require('co');
 const {coit, expect} = require('./support');
 const ContentType = require('../lib/content_type');
@@ -96,15 +95,15 @@ module.exports = function describeContentType () {
         });
       });
 
-      coit('returns #registerPublished()', function* () {
+      coit('returns #_registerPublished()', function* () {
         this.request.respond(this.contentType.data);
         var published1 = yield this.contentType.publish();
-        var published2 = this.contentType.registerPublished();
+        var published2 = this.contentType._registerPublished();
         expect(published1).to.equal(published2);
       });
 
       coit('unsets deleted flag', function* () {
-        var published = this.contentType.registerPublished();
+        var published = this.contentType._registerPublished();
         published.setDeleted();
         expect(published.isDeleted()).to.equal(true);
 
@@ -154,7 +153,7 @@ module.exports = function describeContentType () {
         this.request.respond(publishedContentTypeData);
         let contentType = yield this.contentType.getPublishedStatus();
         expect(contentType).to.be.instanceOf(ContentType);
-        expect(contentType.isPublishedVersion()).to.be.true;
+        expect(contentType._publishedVersion).to.be.true;
       });
 
       coit('adds published content type to identity map', function* () {
@@ -167,39 +166,39 @@ module.exports = function describeContentType () {
       });
     });
 
-    describe('#registerPublished()', function () {
+    describe('#_registerPublished()', function () {
       it('creates copy', function () {
-        var published = this.contentType.registerPublished();
+        var published = this.contentType._registerPublished();
         expect(published).to.not.equal(this.contentType);
         expect(published.data).to.not.equal(this.contentType.data);
       });
 
       it('always returns same object', function () {
-        var published1 = this.contentType.registerPublished();
-        var published2 = this.contentType.registerPublished();
+        var published1 = this.contentType._registerPublished();
+        var published2 = this.contentType._registerPublished();
         expect(published1).to.equal(published2);
       });
 
       it('updates data of previously published content type', function () {
-        var published = this.contentType.registerPublished();
+        var published = this.contentType._registerPublished();
 
         this.contentType.setVersion(4);
         expect(published.getVersion()).to.not.equal(4);
 
-        this.contentType.registerPublished();
+        this.contentType._registerPublished();
         expect(published.getVersion()).to.equal(4);
       });
 
       it('after deletion returns deleted version', function () {
         var deleted = this.contentType.deletePublished();
-        var published = this.contentType.registerPublished();
+        var published = this.contentType._registerPublished();
         expect(deleted).to.equal(published);
       });
     });
 
     describe('#deletePublished()', function () {
       it('returns published version', function () {
-        var published = this.contentType.registerPublished();
+        var published = this.contentType._registerPublished();
         var deleted = this.contentType.deletePublished();
         expect(deleted).to.equal(published);
       });

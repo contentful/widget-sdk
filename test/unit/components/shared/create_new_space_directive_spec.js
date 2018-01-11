@@ -70,11 +70,8 @@ describe('cfCreateNewSpace directive', function () {
     });
 
     this.spaceContext = this.$inject('mocks/spaceContext').init();
-
     this.spaceContext.getData = sinon.stub();
-    this.spaceContext.space = {
-      createDeliveryApiKey: sinon.stub()
-    };
+    this.spaceContext.apiKeyRepo = {create: sinon.stub()};
 
     stubs.spaceTemplateLoader.getTemplatesList.resolves(true);
 
@@ -254,7 +251,7 @@ describe('cfCreateNewSpace directive', function () {
           stubs.tokenStore.refresh.resolves();
           stubs.client.createSpace.resolves(space);
           stubs.tokenStore.getSpace.resolves(space);
-          this.spaceContext.space.createDeliveryApiKey.resolves();
+          this.spaceContext.apiKeyRepo.create.resolves();
           stubs.spaceTemplateLoader.getTemplate.resolves();
           this.setupDirective();
         });
@@ -294,8 +291,8 @@ describe('cfCreateNewSpace directive', function () {
             sinon.assert.calledWith(stubs.state.go, 'spaces.detail', {spaceId: 'spaceid'});
           });
 
-          it('creates one Delivery API key', function () {
-            sinon.assert.calledOnce(this.spaceContext.space.createDeliveryApiKey);
+          it('creates one API key', function () {
+            sinon.assert.calledOnce(this.spaceContext.apiKeyRepo.create);
           });
         });
 

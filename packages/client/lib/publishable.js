@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('lodash-node/modern');
+var _ = require('lodash');
 var dateStringToIso = require('./utils').dateStringToIso;
 
 module.exports = function mixinPublishable (base) {

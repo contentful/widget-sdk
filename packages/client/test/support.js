@@ -1,6 +1,6 @@
 const co = require('co');
 const sinon = require('sinon');
-const _ = require('lodash-node/modern');
+const _ = require('lodash');
 
 const chai = require('chai');
 chai.use(require('chai-as-promised'));
@@ -9,7 +9,7 @@ chai.use(require('sinon-chai'));
 module.exports = {
   coit: coit,
   createRequestStub: createRequestStub,
-  clone: clone,
+  clone: _.cloneDeep.bind(_),
   expect: chai.expect
 };
 
@@ -27,11 +27,11 @@ function createRequestStub () {
   var request = sinon.spy(function ({payload}) {
     if (!request.responses.length) { throw new Error('No server responses provided'); }
     var {data, error, mirror} = request.responses.shift();
-    if (error) { return Promise.reject(error); } else if (mirror) { return Promise.resolve(clone(payload)); } else { return Promise.resolve(clone(data)); }
+    if (error) { return Promise.reject(error); } else if (mirror) { return Promise.resolve(_.cloneDeep(payload)); } else { return Promise.resolve(_.cloneDeep(data)); }
   });
 
   request.respond = function (response) {
-    if (typeof response === 'undefined') { this.responses.push({mirror: true}); } else { this.responses.push({data: clone(response)}); }
+    if (typeof response === 'undefined') { this.responses.push({mirror: true}); } else { this.responses.push({data: _.cloneDeep(response)}); }
   };
 
   request.throw = function (error) {
@@ -56,9 +56,4 @@ function createRequestStub () {
 
   request.reset();
   return request;
-}
-
-
-function clone (obj) {
-  return _.clone(obj, true);
 }

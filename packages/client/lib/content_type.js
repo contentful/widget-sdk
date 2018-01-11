@@ -1,9 +1,8 @@
 'use strict';
 
-var EditingInterface = require('./editing_interface');
 var Entity = require('./entity');
 var mixinPublishable = require('./publishable');
-var _ = require('lodash-node/modern');
+var _ = require('lodash');
 var createResourceFactoryMethods = require('./resource_factory');
 
 var ContentType = function ContentType (data, persistenceContext) {
@@ -17,20 +16,17 @@ var ContentType = function ContentType (data, persistenceContext) {
 ContentType.prototype = Object.create(Entity.prototype);
 mixinPublishable(ContentType.prototype);
 
-// TODO use this to prevent saving
-ContentType.prototype.isPublishedVersion = function () {
-  return this._publishedVersion;
-};
-
 ContentType.prototype.update = function (data) {
-  if (this._publishedVersion === undefined && data) { this._publishedVersion = !!(data.sys && 'revision' in data.sys); }
+  if (this._publishedVersion === undefined && data) {
+    this._publishedVersion = !!(data.sys && 'revision' in data.sys);
+  }
   Entity.prototype.update.call(this, data);
 };
 
 ContentType.prototype.getIdentity = function () {
   var type = this.getType();
   var id = this.getId();
-  if (this.isPublishedVersion() && type && id) {
+  if (this._publishedVersion && type && id) {
     return '' + type + '.published.' + id;
   } else {
     return Entity.prototype.getIdentity.call(this);
@@ -55,7 +51,7 @@ ContentType.prototype.publish = function (version) {
     .put()
     .then(function (response) {
       self.update(response);
-      return self.registerPublished();
+      return self._registerPublished();
     });
 };
 
@@ -85,7 +81,7 @@ ContentType.prototype.getPublishedStatus = function () {
     });
 };
 
-ContentType.prototype.registerPublished = function () {
+ContentType.prototype._registerPublished = function () {
   var publishedData = _.cloneDeep(this.data);
   publishedData = _.merge(publishedData, {sys: { revision: this.getVersion() }});
 
@@ -96,7 +92,7 @@ ContentType.prototype.registerPublished = function () {
 };
 
 ContentType.prototype.deletePublished = function () {
-  var publishedContentType = this.registerPublished();
+  var publishedContentType = this._registerPublished();
   publishedContentType.setDeleted();
   return publishedContentType;
 };
@@ -123,7 +119,5 @@ ContentType.factoryMethods = {
       .then(this.childResourceFactory(ContentType, 'content_types'));
   }
 };
-
-_.extend(ContentType.prototype, EditingInterface.contentTypeMethods);
 
 module.exports = ContentType;

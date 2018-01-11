@@ -17,11 +17,16 @@ describe('entityEditor/LocalesController', function () {
   });
 
   describe('#deactivate', function () {
-    var locale = {internal_code: 'en'};
+    var locale = {
+      sys: {space: {sys: {id: 'sid'}}},
+      internal_code: 'en',
+      default: true,
+      contentManagementApi: true
+    };
 
-    beforeEach(function () {
+    beforeEach(function* () {
       this.localeStore = this.$inject('TheLocaleStore');
-      this.localeStore.reset('sid', [locale])
+      yield this.localeStore.reset(() => Promise.resolve({items: [locale]}));
 
       this.localeStore.setActiveLocales([locale]);
       this.controller = this.createController();

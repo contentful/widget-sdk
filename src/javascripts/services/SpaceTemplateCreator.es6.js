@@ -5,7 +5,7 @@ import {runTask} from 'utils/Concurrent';
 
 const ASSET_PROCESSING_TIMEOUT = 60000;
 
-export function getCreator (spaceContext, itemHandlers, templateName) {
+export function getCreator (spaceContext, itemHandlers, templateName, selectedLocaleCode) {
   const creationErrors = [];
   const handledItems = {};
   return {
@@ -48,7 +48,7 @@ export function getCreator (spaceContext, itemHandlers, templateName) {
       );
 
       // we need to create assets before proceeding
-      const assets = setDefaultLocale(template.assets, getDefaultLocale(spaceContext));
+      const assets = useSelectedLocale(template.assets, selectedLocaleCode);
       const createdAssets = yield Promise.all(assets.map(createAsset));
 
       // we can process and publish assets in the background,
@@ -56,7 +56,7 @@ export function getCreator (spaceContext, itemHandlers, templateName) {
       const processAssetsPromise = processAssets(createdAssets);
       const publishAssetsPromise = processAssetsPromise.then(publishAssets);
 
-      const entries = setDefaultLocale(template.entries, getDefaultLocale(spaceContext));
+      const entries = useSelectedLocale(template.entries, selectedLocaleCode);
       const createdEntries = yield Promise.all(entries.map(createEntry));
 
       const publishedEntries = yield publishEntries(createdEntries);
@@ -198,15 +198,14 @@ export function getCreator (spaceContext, itemHandlers, templateName) {
           return Promise.resolve();
         }
         const version = _.get(asset, 'data.sys.version');
-        const locale = _.keys(_.get(asset, 'data.fields.file'))[0];
-        return processAsset(asset, version, locale)
+        return processAsset(asset, version)
           .then(handlers.success)
           .catch(handlers.error);
       }
     }));
   }
 
-  function processAsset (asset, version, locale) {
+  function processAsset (asset, version) {
     let destroyDoc;
     return new Promise((resolve, reject) => {
       const processingTimeout = setTimeout(function () {
@@ -225,7 +224,7 @@ export function getCreator (spaceContext, itemHandlers, templateName) {
         .then(function (info) {
           destroyDoc = info.destroy;
           info.doc.on('remoteop', (ops) => remoteOpHandler(ops, { resolve, processingTimeout }));
-          asset.process(version, locale);
+          asset.process(version, selectedLocaleCode);
         }, function (err) {
           clearTimeout(processingTimeout);
           reject(err);
@@ -299,22 +298,20 @@ export function getCreator (spaceContext, itemHandlers, templateName) {
     if (handlers.itemWasHandled) {
       return Promise.resolve(handlers.response);
     }
-    return spaceContext.space.createDeliveryApiKey(apiKey)
-      .then(handlers.success)
+    return spaceContext.apiKeyRepo.create(apiKey.name, apiKey.description)
+      .then(res => handlers.success({data: res})) // `handlers` expect Client-style "data" objects
       .catch(handlers.error);
   }
 
   // Create the discovery app environment if there is an API key
   function createPreviewEnvironment (contentTypes) {
     const baseUrl = 'https://discovery.contentful.com/entries/by-content-type/';
-    const getKeys = spaceContext.space.getDeliveryApiKeys();
-    const getContentPreview = contentPreview.getAll();
     const spaceId = spaceContext.space.getId();
 
-    return Promise.all([getKeys, getContentPreview]).then((responses) => {
-      const keys = responses[0];
-      const envs = responses[1];
-
+    return Promise.all([
+      spaceContext.apiKeyRepo.getAll(),
+      contentPreview.getAll()
+    ]).then(([keys, envs]) => {
       function createConfig (ct, token) {
         return {
           contentType: ct.sys.id,
@@ -326,7 +323,7 @@ export function getCreator (spaceContext, itemHandlers, templateName) {
 
       // Create default environment if there is none existing, and an API key is present
       if (keys.length && !Object.keys(envs).length) {
-        const accessToken = keys[0].data.accessToken;
+        const accessToken = keys[0].accessToken;
 
         const env = {
           name: 'Discovery App',
@@ -350,11 +347,6 @@ export function getCreator (spaceContext, itemHandlers, templateName) {
   }
 }
 
-function getDefaultLocale (spaceContext) {
-  const locales = spaceContext.space.data.locales;
-  return !_.isEmpty(locales) ? locales[0].internal_code : 'en-US';
-}
-
 function generateItemId (item, actionData) {
   return actionData.entity + getItemId(item);
 }
@@ -363,15 +355,12 @@ function getItemId (item) {
   return _.get(item, 'sys.id') || item.name;
 }
 
-function setDefaultLocale (entities, locale) {
-  return _.map(_.clone(entities), function (entity) {
-    entity.fields = _.mapValues(entity.fields, function (field) {
-      const newField = {};
-      newField[locale] = _.values(field)[0];
-      return newField;
-    });
-    return entity;
-  });
+function useSelectedLocale (entities, localeCode) {
+  return entities.map(entity => Object.assign(entity, {
+    fields: _.mapValues(entity.fields, field => {
+      return {[localeCode]: _.values(field)[0]};
+    })
+  }));
 }
 
 /**

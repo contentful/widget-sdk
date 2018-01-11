@@ -16,52 +16,46 @@ describe('The Locale list directive', function () {
 
     const locales = [
       {
-        getId: sinon.stub().returns(1),
-        getName: sinon.stub().returns('English'),
-        getCode: sinon.stub().returns('en-US'),
-        isDefault: sinon.stub().returns(true),
-        data: {
-          contentManagementApi: true,
-          contentDeliveryApi: true,
-          optional: false,
-          fallbackCode: null
-        }
+        sys: {id: 1},
+        name: 'English',
+        code: 'en-US',
+        default: true,
+        contentManagementApi: true,
+        contentDeliveryApi: true,
+        optional: false,
+        fallbackCode: null
       },
       {
-        getId: sinon.stub().returns(2),
-        getName: sinon.stub(),
-        getCode: sinon.stub(),
-        isDefault: sinon.stub().returns(false),
-        data: {
-          contentManagementApi: false,
-          contentDeliveryApi: false,
-          optional: true,
-          fallbackCode: 'en-US'
-        }
+        sys: {id: 2},
+        name: 'German',
+        code: 'de-DE',
+        default: false,
+        contentManagementApi: false,
+        contentDeliveryApi: false,
+        optional: true,
+        fallbackCode: 'en-US'
       },
       {
-        getId: sinon.stub().returns(3),
-        getName: sinon.stub(),
-        getCode: sinon.stub(),
-        isDefault: sinon.stub().returns(false),
-        data: {
-          contentManagementApi: true,
-          contentDeliveryApi: false
-        }
+        sys: {id: 3},
+        name: 'Polish',
+        code: 'pl-PL',
+        default: false,
+        contentManagementApi: true,
+        contentDeliveryApi: false
       },
       {
-        getId: sinon.stub().returns(4),
-        getName: sinon.stub(),
-        getCode: sinon.stub(),
-        isDefault: sinon.stub().returns(false),
-        data: {
-          contentManagementApi: false,
-          contentDeliveryApi: true
-        }
+        sys: {id: 4},
+        name: 'Tajik',
+        code: 'tg-TG',
+        default: false,
+        contentManagementApi: false,
+        contentDeliveryApi: true
       }
     ];
 
-    this.$inject('spaceContext').space = this.space = {
+    const spaceContext = this.$inject('spaceContext');
+
+    spaceContext.space = this.space = {
       data: {
         sys: {createdBy: {sys: {id: ''}}},
         organization: {
@@ -74,9 +68,10 @@ describe('The Locale list directive', function () {
           }
         }
       },
-      getLocales: sinon.stub().returns(this.$q.resolve(locales)),
       getOrganizationId: sinon.stub().returns('id')
     };
+
+    spaceContext.endpoint = sinon.stub().resolves({items: locales});
 
     this.compileElement = function () {
       this.container = this.$compile('<div cf-locale-list />', {context: {}});

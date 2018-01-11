@@ -28,10 +28,6 @@ angular.module('contentful/mocks')
 .factory('mocks/TheLocaleStore', ['$injector', function ($injector) {
   const createBase = $injector.get('TheLocaleStore/implementation').create;
   const TheStore = $injector.get('TheStore');
-  const locales = [
-    {code: 'en', internal_code: 'en-internal', name: 'English', default: true},
-    {code: 'de', internal_code: 'de-internal', name: 'German'}
-  ];
 
   const localeStoreMock = createBase(TheStore);
 
@@ -48,19 +44,26 @@ angular.module('contentful/mocks')
    * @param {Array<API.Locale>} locales
    */
   localeStoreMock.setLocales = function (locales) {
-    locales = locales.map(function (locale) {
-      return _.extend({
-        internal_code: locale.code + '-internal'
-      }, locale);
-    });
+    locales = locales.map(locale => _.extend({
+      sys: {space: {sys: {id: 'SID'}}},
+      internal_code: `${locale.code}-internal`,
+      contentManagementApi: true
+    }, locale));
+
     locales[0].default = true;
-    localeStoreMock.reset('SID', locales);
-    localeStoreMock.setActiveLocales(_.reject(locales, function (locale) {
+
+    const endpoint = () => ({then: handle => handle({items: locales})});
+    localeStoreMock.reset(endpoint);
+
+    localeStoreMock.setActiveLocales(_.reject(locales, locale => {
       return 'active' in locale && !locale.active;
     }));
   };
 
-  localeStoreMock.setLocales(locales);
+  localeStoreMock.setLocales([
+    {code: 'en', name: 'English'},
+    {code: 'de', name: 'German'}
+  ]);
 
   return localeStoreMock;
 }]);
