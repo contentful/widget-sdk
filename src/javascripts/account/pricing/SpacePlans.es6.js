@@ -2,7 +2,7 @@ import {h} from 'ui/Framework';
 import {runTask} from 'utils/Concurrent';
 import {pick} from 'lodash';
 import {createEndpoint as createOrgEndpoint} from 'access_control/OrganizationMembershipRepository';
-import {getSpacePlans} from 'account/pricing/PricingDataProvider';
+import {getSpacesWithPlans} from 'account/pricing/PricingDataProvider';
 import {href} from 'states/Navigator';
 import svgPlus from 'svg/plus';
 import {showDialog as showCreateSpaceModal} from 'services/CreateSpace';
@@ -33,12 +33,10 @@ export default function ($scope) {
 function* loadStateFromProperties ({orgId}) {
   const endpoint = createOrgEndpoint(orgId);
 
-  // TODO load spaces from org endpoint and map them to plans
-  // see https://contentful.tpondemand.com/entity/24639
-  const spacePlans = yield getSpacePlans(endpoint);
+  const spaces = yield getSpacesWithPlans(endpoint);
   const canCreateSpace = canCreateSpaceInOrganization(orgId);
 
-  return {orgId, spacePlans, canCreateSpace};
+  return {orgId, spaces, canCreateSpace};
 }
 
 function render (state, actions) {
@@ -51,16 +49,16 @@ function render (state, actions) {
     ]),
     h('.workbench-main', [
       h('.workbench-main__content', [
-        renderSpacePlans(pick(state, 'spacePlans'))
+        renderSpaces(pick(state, 'spaces'))
       ]),
       h('.workbench-main__sidebar', [
-        renderRightSidebar(pick(state, 'canCreateSpace', 'spacePlans'), actions)
+        renderRightSidebar(pick(state, 'canCreateSpace', 'spaces'), actions)
       ])
     ])
   ]);
 }
 
-function renderSpacePlans ({spacePlans}) {
+function renderSpaces ({spaces}) {
   return h('.table', [
     h('.table__head', [
       h('table', [
@@ -72,10 +70,10 @@ function renderSpacePlans ({spacePlans}) {
     h('.table__body', [
       h('table', [
         h('tbody',
-          spacePlans.map(({space, name}) =>
+          spaces.items.map(({sys, name, plan}) =>
             h('tr', [
-              h('td', [h('a', {href: getSpaceLink(space.sys.id)}, [space.name])]),
-              h('td', [name])
+              h('td', [h('a', {href: getSpaceLink(sys.id)}, [name])]),
+              h('td', [plan ? plan.name : 'Free'])
             ])
           )
         )
@@ -84,10 +82,10 @@ function renderSpacePlans ({spacePlans}) {
   ]);
 }
 
-function renderRightSidebar ({canCreateSpace, spacePlans}, actions) {
+function renderRightSidebar ({canCreateSpace, spaces}, actions) {
   return h('.entity-sidebar', [
     h('h2.entity-sidebar__heading', ['Add space']),
-    h('p.entity-sidebar__help-text', [`Your organization has ${spacePlans.length} spaces.`]),
+    h('p.entity-sidebar__help-text', [`Your organization has ${spaces.items.length} spaces.`]),
     h('p.entity-sidebar__help-text', [
       h('button.btn-action.x--block', {
         onClick: actions.addSpace,
