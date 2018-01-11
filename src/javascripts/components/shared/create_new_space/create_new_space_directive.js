@@ -165,7 +165,10 @@ angular.module('contentful')
     })
     .then(function () {
       if (template.name === 'Blank') {
-        createApiKey();
+        spaceContext.apiKeyRepo.create(
+          'Example Key',
+          'We’ve created an example API key for you to help you get started.'
+        );
         $scope.dialog.confirm();
       } else {
         controller.createTemplateInProgress = true;
@@ -220,15 +223,6 @@ angular.module('contentful')
     );
     return getTemplate(selectedTemplate)
     .then(createTemplate);
-  }
-
-  // Create an API key for blank templates
-  function createApiKey () {
-    var key = {
-      name: 'Example Key',
-      description: 'We’ve created an example API key for you to help you get started.'
-    };
-    return spaceContext.space.createDeliveryApiKey(key);
   }
 
   function handleSpaceCreationFailure (organization, err) {

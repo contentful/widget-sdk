@@ -11,16 +11,7 @@ angular.module('cf.data')
 .factory('data/localeList', ['require', function (require) {
   var localesList = require('localesList');
 
-  return {
-    create: create,
-    fromClientResponse: fromClientResponse
-  };
-
-  function fromClientResponse (locales) {
-    return create(_.map(locales, function (locale) {
-      return _.clone(locale.data);
-    }));
-  }
+  return {create: create};
 
   function create (spaceLocales) {
     return {

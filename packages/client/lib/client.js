@@ -11,10 +11,6 @@ var Client = function Client (adapter) {
 };
 
 Client.prototype = {
-  getTokenLookup: function () {
-    return this.endpoint('token').get();
-  },
-
   getIntegrationToken: function (name) {
     return this.endpoint('integrations', name).get();
   },

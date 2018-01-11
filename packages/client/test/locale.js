@@ -1,18 +1,9 @@
-/* jshint expr: true */
-const co = require('co');
 const {coit, clone} = require('./support');
 const {expect} = require('chai');
-const {
-  describeGetResource,
-  describeCreateResource,
-  describeNewResource
-} = require('./space_resource');
+const {describeNewResource} = require('./space_resource');
 
 module.exports = function describeLocale () {
-  const locale = { singular: 'locale', plural: 'locales' };
-  describeGetResource(locale);
-  describeCreateResource(locale);
-  describeNewResource(locale);
+  describeNewResource({ singular: 'locale', plural: 'locales' });
 
   describe('locale', function () {
     const localeData = Object.freeze({
@@ -26,14 +17,8 @@ module.exports = function describeLocale () {
       })
     });
 
-    beforeEach(co.wrap(function* () {
-      this.request.respond(localeData);
-      this.locale = yield this.space.createLocale(localeData);
-      this.request.reset();
-    }));
-
-    it('has a name', function () {
-      expect(this.locale.getName()).to.equal('U.S. English');
+    beforeEach(function () {
+      this.locale = this.space.newLocale(clone(localeData));
     });
 
     it('can be deleted', function () {

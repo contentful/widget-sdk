@@ -50,13 +50,13 @@ export default function create (spaceEndpoint) {
   }
 
 
-  function create (name) {
+  function create (name, description) {
     return getNewName(name)
     .then((uniqueName) => {
       return spaceEndpoint({
         method: 'POST',
         path: ['api_keys'],
-        data: {name: uniqueName}
+        data: {name: uniqueName, description}
       });
     })
     .then((data) => {

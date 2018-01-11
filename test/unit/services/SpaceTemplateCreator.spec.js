@@ -60,11 +60,9 @@ describe('Space Template creation service', function () {
         },
         space: {
           getId: _.constant('123'),
-          getDeliveryApiKeys: () => Promise.resolve([{data: {accessToken: 'mock-token'}}]),
           createContentType: sinon.stub(),
           createEntry: sinon.stub(),
           createAsset: sinon.stub(),
-          createDeliveryApiKey: sinon.stub(),
           getContentType: function () {
             return Promise.resolve({
               createEditingInterface: spaceContext.createEditingInterface
@@ -80,6 +78,10 @@ describe('Space Template creation service', function () {
               close: sinon.stub()
             }
           }))
+        },
+        apiKeyRepo: {
+          create: sinon.stub().resolves(),
+          getAll: () => Promise.resolve([{accessToken: 'mock-token'}])
         }
       };
 
@@ -104,8 +106,6 @@ describe('Space Template creation service', function () {
       });
       spaceContext.space.createEntry.onThirdCall().returns(Promise.reject(new Error('can not createa an entry')));
       stubs.entryPublish.returns(Promise.resolve());
-
-      spaceContext.space.createDeliveryApiKey.returns(Promise.resolve());
 
       creator = spaceTemplateCreator.getCreator(
         spaceContext,
@@ -175,7 +175,7 @@ describe('Space Template creation service', function () {
     });
 
     it('creates 2 apikeys', function () {
-      expect(spaceContext.space.createDeliveryApiKey.callCount).toBe(2);
+      expect(spaceContext.apiKeyRepo.create.callCount).toBe(2);
     });
 
     it('creates 1 preview environment', function () {
@@ -226,7 +226,6 @@ describe('Space Template creation service', function () {
         spaceContext.space.createContentType = sinon.stub();
         spaceContext.space.createEntry = sinon.stub();
         spaceContext.space.createAsset = sinon.stub();
-        spaceContext.space.createDeliveryApiKey = sinon.stub();
         spaceContext.editingInterfaces.save = sinon.stub().resolves();
 
         spaceContext.space.createContentType.returns(Promise.resolve({sys: {id: 'ct3'}, publish: stubs.ctPublish}));

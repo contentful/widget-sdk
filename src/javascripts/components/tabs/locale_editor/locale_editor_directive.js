@@ -38,7 +38,7 @@ angular.module('contentful')
   var leaveConfirmator = require('navigation/confirmLeaveEditor');
   var $state = require('$state');
   var closeState = require('navigation/closeState');
-  var localeList = require('data/localeList').fromClientResponse($scope.spaceLocales);
+  var localeList = require('data/localeList').create($scope.spaceLocales);
   var notify = require('LocaleEditor/notifications');
 
   var formWasDirty = false;
@@ -67,7 +67,7 @@ angular.module('contentful')
 
   function prepareTitle () {
     var name = getLocaleName();
-    var empty = $scope.locale.getId() ? 'Unnamed locale' : 'New locale';
+    var empty = $scope.locale.data.sys.id ? 'Unnamed locale' : 'New locale';
     return name || empty;
   }
 
@@ -99,7 +99,7 @@ angular.module('contentful')
   controller.delete = Command.create(startDeleteFlow, {
     available: function () {
       return !$scope.context.isNew &&
-             $scope.locale.getId() &&
+             $scope.locale.data.sys.id &&
              !$scope.locale.data.default;
     }
   });
@@ -164,10 +164,11 @@ angular.module('contentful')
 
   function fallbackUpdater (newFallbackCode) {
     return function (locale) {
-      locale = _.find($scope.spaceLocales, {data: {code: locale.code}});
-      if (locale) {
-        locale.data.fallbackCode = newFallbackCode;
-        return locale.save();
+      var localeToUpdate = _.find($scope.spaceLocales, {code: locale.code});
+      if (localeToUpdate) {
+        var data = _.cloneDeep(localeToUpdate);
+        data.fallbackCode = newFallbackCode;
+        return spaceContext.space.newLocale(data).save();
       } else {
         return $q.resolve();
       }

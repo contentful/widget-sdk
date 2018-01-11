@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('lodash-node/modern');
+var _ = require('lodash');
 var Request = require('./request');
 var mixinChildResourceMethods = require('./child_resources');
 var dateStringToIso = require('./utils').dateStringToIso;

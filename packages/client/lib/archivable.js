@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('lodash-node/modern');
+var _ = require('lodash');
 
 module.exports = function mixinPublishable (base) {
   return _.extend(base, {

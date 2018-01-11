@@ -3,13 +3,9 @@ const {expect, coit} = require('./support');
 const describeEntry = require('./entry');
 const describeAsset = require('./asset');
 const describeContentType = require('./content_type');
-const describeApiKey = require('./api_key');
-const describeEditingInterface = require('./editing_interface');
 const describeLocale = require('./locale');
 
 module.exports = function spaceInstanceDescription (serverSpaceData) {
-  /* jshint expr:true */
-
   describe('instance', function () {
     let organization;
     beforeEach(co.wrap(function* () {
@@ -30,8 +26,6 @@ module.exports = function spaceInstanceDescription (serverSpaceData) {
     describeEntry();
     describeAsset();
     describeContentType();
-    describeApiKey();
-    describeEditingInterface();
     describeLocale();
 
     coit('#delete', function* () {
@@ -50,28 +44,6 @@ module.exports = function spaceInstanceDescription (serverSpaceData) {
         method: 'PUT',
         url: '/spaces/42',
         data: this.space.data
-      });
-    });
-
-    coit('#getUIConfig', function* () {
-      this.request.respond({ui: 'config'});
-      let uiConfig = yield this.space.getUIConfig();
-      expect(uiConfig).to.deep.equal({ui: 'config'});
-      expect(this.request).to.be.calledWith({
-        method: 'GET',
-        url: '/spaces/42/ui_config'
-      });
-    });
-
-    coit('#setUIConfig', function* () {
-      let uiConfig = {ui: 'config', sys: {version: 5}};
-      this.request.respond(uiConfig);
-      yield this.space.setUIConfig(uiConfig);
-      expect(this.request).to.be.calledWith({
-        method: 'PUT',
-        url: '/spaces/42/ui_config',
-        headers: {'X-Contentful-Version': 5},
-        data: uiConfig
       });
     });
 
@@ -104,23 +76,6 @@ module.exports = function spaceInstanceDescription (serverSpaceData) {
         };
         expect(this.space.isAdmin(user)).to.be.false;
       });
-    });
-
-    it('#hasFeature(name)', function () {
-      this.space.data.organization = {
-        subscriptionPlan: {
-          limits: {
-            features: {
-              activeFeature: true,
-              inactiveFeature: false
-            }
-          }
-        }
-      };
-
-      expect(this.space.hasFeature('activeFeature')).to.be.true;
-      expect(this.space.hasFeature('inactiveFeature')).to.be.false;
-      expect(this.space.hasFeature('unkownFeature')).to.be.false;
     });
 
     describe('#isHibernated()', function () {

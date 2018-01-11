@@ -87,7 +87,7 @@ describe('cfOnboardingSteps Directive', function () {
           };
         };
         this.spaceContext.getData.withArgs('locales').returns([{}]);
-        this.spaceContext.space.getUsers = sinon.stub().resolves([{}]);
+        this.spaceContext.endpoint = sinon.stub().resolves({items: []});
       });
 
       it('no completed steps', function () {
@@ -96,7 +96,7 @@ describe('cfOnboardingSteps Directive', function () {
       });
 
       it('invited users', function () {
-        this.spaceContext.space.getUsers.resolves([{}, {}]);
+        this.spaceContext.endpoint.resolves({items: [{}, {}]});
         this.compile();
         this.assertCompletedSteps(1);
       });
