@@ -5,7 +5,8 @@ describe('TheLocaleStore', function () {
     return {
       sys: {space: {sys: {id: sid}}},
       code,
-      internal_code: code
+      internal_code: code,
+      contentManagementApi: true
     };
   };
 
@@ -15,7 +16,8 @@ describe('TheLocaleStore', function () {
 
   const makeTestLocales = sid => [
     makeDefaultLocale('en-US', sid),
-    makeLocale('de-DE', sid)
+    makeLocale('de-DE', sid),
+    _.extend(makeLocale('pl-PL', sid), {contentManagementApi: false})
   ];
 
   const makeEndpoint = items => () => Promise.resolve({items});
@@ -29,16 +31,20 @@ describe('TheLocaleStore', function () {
 
   describe('refreshes locales', function () {
     beforeEach(function* () {
-      this.privateLocales = makeTestLocales();
-      yield this.theLocaleStore.reset(makeEndpoint(this.privateLocales));
+      yield this.theLocaleStore.reset(makeEndpoint(makeTestLocales()));
     });
 
-    it('private locales is the supplied array', function () {
-      expect(this.theLocaleStore.getPrivateLocales()).toEqual(this.privateLocales);
+    it('gets all locales', function () {
+      expect(this.theLocaleStore.getLocales()).toEqual(makeTestLocales());
+    });
+
+    it('private locales are those enabled for entity editors (CMA)', function () {
+      const privateLocales = makeTestLocales().filter(l => l.contentManagementApi);
+      expect(this.theLocaleStore.getPrivateLocales()).toEqual(privateLocales);
     });
 
     it('gets default locale', function () {
-      expect(this.theLocaleStore.getDefaultLocale()).toEqual(this.privateLocales[0]);
+      expect(this.theLocaleStore.getDefaultLocale()).toEqual(makeTestLocales()[0]);
     });
 
     it('falls back to the first locale if no `default` flag is set', function* () {
@@ -71,7 +77,8 @@ describe('TheLocaleStore', function () {
       });
 
       it('gets updated active locales', function () {
-        expect(this.theLocaleStore.getActiveLocales()).toEqual(makeTestLocales());
+        const active = makeTestLocales().filter(l => l.contentManagementApi);
+        expect(this.theLocaleStore.getActiveLocales()).toEqual(active);
       });
     });
   });

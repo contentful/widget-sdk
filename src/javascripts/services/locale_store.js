@@ -29,9 +29,11 @@ angular.module('contentful')
     var store = null;
     var defaultLocale = null;
 
-    // Locales fetched from the CMA
+    // All locales fetched from the CMA, including delivery-only locales
+    var locales = [];
+    // Locales that can be used for entity editing
     var privateLocales = [];
-    // List of currently active locales visible in the entry/asset editors.
+    // List of currently active locales in entity editors
     var activeLocales = [];
 
     /**
@@ -44,6 +46,7 @@ angular.module('contentful')
 
     return {
       reset: reset,
+      getLocales: getLocales,
       getDefaultLocale: getDefaultLocale,
       getActiveLocales: getActiveLocales,
       getPrivateLocales: getPrivateLocales,
@@ -66,7 +69,10 @@ angular.module('contentful')
     function reset (spaceEndpoint) {
       return spaceEndpoint({method: 'GET', path: ['locales']})
       .then(function (res) {
-        privateLocales = res.items;
+        locales = res.items;
+        privateLocales = locales.filter(function (locale) {
+          return locale.contentManagementApi;
+        });
         defaultLocale = _.find(privateLocales, {default: true}) || privateLocales[0];
 
         var spaceId = defaultLocale.sys.space.sys.id;
@@ -115,6 +121,18 @@ angular.module('contentful')
      */
     function getActiveLocales () {
       return activeLocales;
+    }
+
+    /**
+     * @ngdoc method
+     * @name TheLocaleStore#getLocales
+     * @description
+     * Returns a list of all locales.
+     *
+     * @returns {Array<API.Locale>}
+     */
+    function getLocales () {
+      return locales;
     }
 
     /**

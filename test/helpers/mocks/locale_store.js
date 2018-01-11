@@ -46,7 +46,8 @@ angular.module('contentful/mocks')
   localeStoreMock.setLocales = function (locales) {
     locales = locales.map(locale => _.extend({
       sys: {space: {sys: {id: 'SID'}}},
-      internal_code: `${locale.code}-internal`
+      internal_code: `${locale.code}-internal`,
+      contentManagementApi: true
     }, locale));
 
     locales[0].default = true;
