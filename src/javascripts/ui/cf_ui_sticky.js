@@ -21,6 +21,7 @@
 angular.module('cf.ui')
 .directive('cfUiSticky', ['require', function (require) {
   var h = require('utils/hyperscript').h;
+  var _ = require('lodash');
 
   return {
     restrict: 'A',

@@ -3,20 +3,30 @@
  * This module sets up the SystemTest.register() where modules defined in the
  * `test/` folder register their presence.
  *
- * It also patches the Karam.start() function to load all test modules.
+ * It also patches the Karma.start() function to load all test modules.
  */
 (function () {
   // Will hold a list of all module IDs that define test cases
   const testModules = [];
 
   // All modules under `test/` will register here.
-  window.SystemTest = {register};
+  window.SystemTest = { register };
+
+  // We explicitly stub out environment here, since it is the only Angular
+  // specific module we need for tests
+  window.AngularSystem.set('environment', {
+    env: 'development',
+    settings: {
+      environment: 'development',
+      disableUpdateCheck: true
+    },
+    manifest: [],
+    gitRevision: null
+  });
 
   // Load ES6 modules defined in src/javascripts. They are registered in
   // `src/javascripts/prelude.js`.
   window.AngularSystem.registry.forEach((args) => register(...args));
-  exposeAngularLibs();
-
 
   /**
    * We hook into karma start to make sure that we load all test modules before
@@ -49,30 +59,12 @@
    */
   function register (id, deps, run) {
     SystemJS.register(id, deps, run);
+
     registerDirectoryAlias(id);
+
     if (id.startsWith('test/unit') || id.startsWith('test/integration')) {
       testModules.push(id);
     }
-  }
-
-
-  /**
-   * Expose static Angular services to SystemJS.
-   *
-   * The service list is configured in `test/system-config.js`
-   */
-  function exposeAngularLibs () {
-    const libInjector = angular.injector(['cf.libs', 'cf.es6', 'contentful/environment']);
-    SystemJS.exposeFromAngular.forEach(function (lib) {
-      SystemJS.register(lib, [], function (export_) {
-        const exports = libInjector.get(lib);
-        export_(Object.assign({default: exports}, exports));
-        return {
-          setters: [],
-          execute: function () {}
-        };
-      });
-    });
   }
 
   /**

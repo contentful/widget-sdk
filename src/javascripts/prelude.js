@@ -21,8 +21,8 @@ angular.module('cf.forms', []);
  * @ngdoc module
  * @name cf.data
  */
-angular.module('cf.data', ['cf.utils', 'cf.libs']);
-angular.module('cf.utils', ['cf.libs']);
+angular.module('cf.data', ['cf.utils', 'cf.es6']);
+angular.module('cf.utils', ['cf.es6']);
 angular.module('cf.es6', []);
 /**
  * @ngdoc module
@@ -40,7 +40,6 @@ angular.module('cf.app', [
 angular.module('contentful', [
   'contentful/environment',
   'cf.es6',
-  'cf.libs',
   'cf.app',
   'cf.ui',
   'cf.forms',
@@ -113,21 +112,59 @@ angular.module('contentful')
 }]);
 
 
-angular.module('cf.es6')
-.constant('jquery', $)
-.constant('lodash', _);
-
-
 (function () {
   var registry = [];
   window.AngularSystem = {
     register: register,
-    registry: registry
+    registry: registry,
+    set: set
   };
 
+  // Load the modules defined in `libs/index.js`
+  window.libs.forEach(function (lib) {
+    set(lib[0], lib[1]);
+  });
+
+  /**
+   * Analagous to angular.module().constant.
+   * Registers the given `moduleObj` as a module
+   * named `id` in SystemJS using a custom `run`
+   * function.
+   *
+   * Sets the module on the `cf.es6` Angular module.
+   * @param {String} id        Name of module
+   * @param {Object} moduleObj Module object
+   */
+  function set (id, moduleObj) {
+    registry.push([
+      id,
+      [],
+      function (export_) {
+        const exports = moduleObj;
+        export_(Object.assign({default: exports}, exports));
+        return {
+          setters: [],
+          execute: function () {}
+        };
+      }
+    ]);
+
+    angular.module('cf.es6')
+      .constant(id, moduleObj);
+  }
+
+  /**
+   * Registers a module dynamically. Analagous
+   * to angular.module().factory.
+   *
+   * @param  {String} id Module name
+   * @param  {Array} deps Dependencies
+   * @param  {Function} run  Function that is run to export the module
+   */
   function register (id, deps, run) {
     registry.push([id, deps, run]);
     registerDirectoryAlias(id);
+
     angular.module('cf.es6')
     .factory(id, ['require', function (require) {
       var mod = makeModule();
@@ -168,7 +205,7 @@ angular.module('cf.es6')
       delete exports.PropTypes;
     }
 
-    return _.assign({default: exports}, exports);
+    return Object.assign({default: exports}, exports);
   }
 
   function makeModule () {
@@ -233,3 +270,5 @@ angular.module('cf.es6')
     }
   }
 })();
+
+window.AngularSystem.set('global:window', window);
