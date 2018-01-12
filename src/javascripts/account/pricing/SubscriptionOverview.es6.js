@@ -12,6 +12,7 @@ import {getOrganization} from 'services/TokenStore';
 import {isOwnerOrAdmin} from 'services/OrganizationRoles';
 import * as ReloadNotification from 'ReloadNotification';
 import {asReact} from 'ui/Framework/DOMRenderer';
+import {href as getStateHref} from 'states/Navigator';
 
 const subscriptionOverviewPropTypes = {
   onReady: PropTypes.func.isRequired,
@@ -24,7 +25,8 @@ const SubscriptionOverview = createReactClass({
     return {
       basePlan: {},
       spacePlansByName: [],
-      grandTotal: 0
+      grandTotal: 0,
+      subscriptionId: null
     };
   },
   componentWillMount: function () {
@@ -54,10 +56,13 @@ const SubscriptionOverview = createReactClass({
     }));
     const grandTotal = calculateTotalPrice([...spacePlans, basePlan]);
 
-    this.setState({basePlan, spacePlansByName, grandTotal});
+    this.setState({basePlan, spacePlansByName, grandTotal, subscriptionId: org.subscription.sys.id});
   },
   render: function () {
-    const {basePlan, spacePlansByName, grandTotal} = this.state;
+    const {orgId} = this.props;
+    const {basePlan, spacePlansByName, grandTotal, subscriptionId} = this.state;
+    const unsubscribeLink = getUnsubscribeLink(orgId, subscriptionId);
+
     return h('div', {className: 'workbench'},
       h('div', {className: 'workbench-header__wrapper'},
         h('header', {className: 'workbench-header'},
@@ -76,7 +81,7 @@ const SubscriptionOverview = createReactClass({
         }, h(SpacePlans, {spacePlansByName})),
         h('div', {
           className: 'workbench-main__sidebar'
-        }, h(RightSidebar, {grandTotal}))
+        }, h(RightSidebar, {grandTotal, unsubscribeLink}))
       )
     );
   }
@@ -117,7 +122,7 @@ function SpacePlans ({spacePlansByName}) {
   );
 }
 
-function RightSidebar ({grandTotal}) {
+function RightSidebar ({grandTotal, unsubscribeLink}) {
   return h('div', {className: 'entity-sidebar'},
     h('h2', {className: 'entity-sidebar__heading'}, 'Grand total'),
     h('p', {className: 'entity-sidebar__help-text'},
@@ -148,7 +153,7 @@ function RightSidebar ({grandTotal}) {
       ' before proceeding.'
     ),
     h('p', {className: 'entity-sidebar__help-text'},
-      h('a', {href: '#', style: {color: colors.redDark}}, 'Cancel subscription')
+      h('a', {href: unsubscribeLink, style: {color: colors.redDark}}, 'Cancel subscription')
     )
   );
 }
@@ -165,6 +170,13 @@ function Price ({value = 0, currency = '$', unit = 'month'}) {
 
 function calculateTotalPrice (subscriptionPlans) {
   return subscriptionPlans.reduce((total, plan) => total + parseInt(plan.price, 10), 0);
+}
+
+function getUnsubscribeLink (orgId, subscriptionId) {
+  return getStateHref({
+    path: ['account', 'organizations', 'subscription'],
+    params: {orgId, pathSuffix: `/${subscriptionId}/cancel`}
+  });
 }
 
 /**
