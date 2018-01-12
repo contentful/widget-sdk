@@ -176,7 +176,7 @@ function oauthSection () {
       ` and represent the user who granted access through this
       application. These tokens have the same rights as the owner of
       the account. You can `,
-      docsLink('learn more about OAuth appliactions in our documentation', 'createOAuthApp'),
+      docsLink('learn more about OAuth applications in our documentation', 'createOAuthApp'),
       '.'
     ])
   ]);
