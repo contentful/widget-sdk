@@ -48,13 +48,13 @@ function displayNotification () {
 }
 
 function renderFlagsListItem (flag) {
-  const clearLink = h('a', {
-    href: '#',
+  const clearBtn = h('button', {
+    className: 'btn-link',
     onClick: () => {
       removeFlag(flag);
       $window.location.reload();
     },
     style: {float: 'right', marginLeft: '3px'}
   }, 'Clear');
-  return h('li', {key: flag}, flag, clearLink);
+  return h('li', {key: flag}, flag, clearBtn);
 }

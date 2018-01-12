@@ -49,8 +49,8 @@ function addVersionNotification () {
 function renderVersionNotification (gitRevision) {
   return h('div', null,
     h('a', {href: `?ui_version=${gitRevision}`}, gitRevision),
-    h('a', {
-      href: '#',
+    h('button', {
+      className: 'btn-link',
       onClick: removeUiVersion,
       dataCfUiVersionReload: true,
       style: {marginLeft: '3px'}

@@ -25,7 +25,7 @@ const DevNotifications = createReactClass({
     return h('div', {
       className: (isCollapsed ? 'cf-dev-notifications is-collapsed' : 'cf-dev-notifications')
     },
-      h('a', {className: 'btn-toggle-collapsed', href: '#', onClick: this.toggle}),
+      h('button', {className: 'btn-link btn-toggle-collapsed', onClick: this.toggle}),
       ...notifications.map(({title, content, id}) => {
         return h('div', {
           className: 'cf-dev-notification',

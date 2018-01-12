@@ -29,7 +29,13 @@ export function init () {
 
   if (store.get()) {
     addNotification(
-      h('h5', null, 'Using mock API ', h('a', {href: '#', onClick: disableMockApi}, 'clear')),
+      h('h5', null, 'Using mock API ',
+        h('button', {
+          className: 'btn-link',
+          style: {display: 'inline'},
+          onClick: disableMockApi
+        }, 'clear')
+      ),
       h('a', {href: settings.mockApiUrl}, settings.mockApiUrl)
     );
   }
