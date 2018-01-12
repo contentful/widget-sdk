@@ -2,13 +2,24 @@
 
 angular.module('contentful')
 .directive('cfSubscriptionOverview', ['require', function (require) {
-  var controller = require('account/pricing/SubscriptionOverview').default;
+  var React = require('libs/react');
+  var ReactDOM = require('libs/react-dom');
+  var SubscriptionOverview = require('account/pricing/SubscriptionOverview').default;
 
   return {
-    template: '<cf-component-bridge component="component">',
-    scope: {
-      properties: '='
-    },
-    controller: ['$scope', controller]
+    link: function ($scope, el) {
+      var host = el[0];
+      var context = $scope.properties.context;
+
+      ReactDOM.render(React.createElement(SubscriptionOverview, {
+        orgId: $scope.properties.orgId,
+        onReady: function () { context.ready = true; $scope.$apply(); },
+        onForbidden: function () { context.forbidden = true; $scope.$apply(); }
+      }), host);
+
+      $scope.$on('$destroy', function () {
+        ReactDOM.unmountComponentAtNode(host);
+      });
+    }
   };
 }]);
