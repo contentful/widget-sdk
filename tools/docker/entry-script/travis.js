@@ -1,114 +1,80 @@
 import * as P from 'path'
 import {FS, writeJSON} from '../../lib/utils'
-import configureIndex_ from '../../lib/index-configure'
-
-// Maps branch names to environment names
-const BRANCH_ENV_MAP = {
-  'production': 'production',
-  'master': 'staging',
-  'preview': 'preview'
-}
-
-// The list of branches that build the current version for the
-// different target environments.
-const MAIN_BRANCHES = Object.keys(BRANCH_ENV_MAP)
+import configureAndWriteIndex from '../../lib/index-configure'
 
 /**
- * Create and configure distribution based on Travis parameters.
+ * For each target environment create a file distribution in `output/files/${env}`.
  *
- * - For each target environment create a file distribution in
- *   `output/files/{env}`.
- * - Create a debian package in `output/packages` if we build the
- *   'master', 'production', or 'preview' branch.
+ * Example:
+ * --------
+ *
+ * For branch as production and pr as false and some commit hash the following files are created:
+ *
+ * output/files/production/index.html (served for request to app.contentful.com)
+ * output/files/production/revision.json (requested by app.contentful.com)
+ * output/files/production/app/<fingerprinted assets from all builds> (contains all assets served by static.contentful.com)
+ * output/files/producton/archive/<commit-hash or branchname>/index-compiled.html (powers ui_version)
+ *
  */
 export default function* runTravis ({branch, pr, version}) {
   console.log(`TRAVIS_BRANCH: ${branch}, TRAVIS_COMMIT: ${version}, TRAVIS_PULL_REQUEST: ${pr}`)
-  const travis = loadTravisEnv(branch, pr)
+
+  // Supported environments
+  const ENV = {
+    production: 'production',
+    staging: 'staging',
+    preview: 'preview',
+    development: 'development'
+  }
+
+  // Maps branch names to environment names
+  const BRANCH_ENV_MAP = {
+    production: ENV.production,
+    master: ENV.staging,
+    preview: ENV.preview
+  }
 
   /**
-   * If it's a travis-ci/pr job (PR build), don't even bother building/moving assets
-   * since deploy hooks are not called for this job.
+   * If pr is 'false, it's the travis-ci/push job. Since only this job does the deploy
+   * we build and move assets to the right locations for it.
+   *
+   * Otherwise it's a travis-ci/pr job (PR build), don't even bother building/moving
+   * assets since deploy hooks are not called for this job.
    *
    * Doc: https://docs.travis-ci.com/user/deployment/#Pull-Requests
+   *
+   * NOTE: .travis.yml tells you what disk location is uploaded to which S3 bucket in its
+   * deploy section.
    */
-  if (travis.isPRMergeCommitBuild) {
-    console.log('Skipping file creation since this is a PR merge commit build')
-    return
-  }
+  if (pr === 'false') {
+    yield* createFileDist(ENV.preview, version, branch, true)
+    yield* createFileDist(ENV.staging, version, branch)
+    yield* createFileDist(ENV.production, version, branch)
+    yield* createFileDist(ENV.development, version, branch)
 
-  yield* createFileDist('preview', version, travis.distBranch, true)
-  yield* createFileDist('staging', version, travis.distBranch)
-  yield* createFileDist('production', version, travis.distBranch)
-  yield* createFileDist('development', version, travis.distBranch)
+    // Do the next bit only for production, master and preview branches
+    if (branch in BRANCH_ENV_MAP) {
+      const env = BRANCH_ENV_MAP[branch]
+      const rootIndexPathForEnv = targetPath(env, 'index.html')
+      const revisionPathForEnv = targetPath(env, 'revision.json')
+      const logMsg = `Creating root index and revision.json files for "${env}"`
 
-  // Do the next bit only for production, master and preview branches
-  if (travis.isMainBranch) {
-    const rootIndexPathForEnv = targetPath(travis.targetEnv, 'index.html')
-    const revisionPathForEnv = targetPath(travis.targetEnv, 'revision.json')
-    const logMsg = `Creating root index and revision.json files for "${travis.targetEnv}"`
+      console.log('-'.repeat(logMsg.length), `\n${logMsg}`)
 
-    console.log('-'.repeat(logMsg.length), `\n${logMsg}`)
-    // This generates output/files/${env}/index.html
-    yield* configureAndWriteIndex(version, travis.targetEnv, rootIndexPathForEnv)
-    // This generates output/files/${env}/revision.json
-    yield* buildAndWriteRevisionJson(version, travis.targetEnv, revisionPathForEnv)
-  }
-}
+      // This generates output/files/${env}/index.html
+      yield* configureAndWriteIndex(version, `config/${env}.json`, rootIndexPathForEnv)
 
-/**
- * Creates information about the build context from Travis environment
- * variables.
- *
- * The returned object has the following properties:
- *
- * - isPRMergeCommitBuild: boolean. True iff we build the merge commit of
- *   our feature branch being merged into the target branch the PR is opened
- *   against. This is true only for travis-ci/pr builds.
- *
- * - targetEnv: string. The name of the environment we want to deploy
- *   to.  Is 'staging' for master branch builds, 'production' for
- *   production branch builds and 'preview' otherwise.
- *
- * - isMainBranch: boolean.  True iff we build the current version of
- *   one of the target environments.
- *
- * - distBranch: string?  Contains the name of the branch if we are
- *   building a branch head.
- */
-function loadTravisEnv (branch, pullRequest) {
-  const isPRMergeCommitBuild = pullRequest !== 'false'
-  const distBranch = isPRMergeCommitBuild ? null : branch
-  const targetEnv = getTravisTargetEnv(branch, isPRMergeCommitBuild)
-  const isMainBranch = !isPRMergeCommitBuild && MAIN_BRANCHES.includes(branch)
-  return {
-    branch,
-    pullRequest,
-    isPRMergeCommitBuild,
-    targetEnv,
-    isMainBranch,
-    distBranch
+      console.log(`Creating revision.json for "${env}" at ${P.relative('', revisionPathForEnv)}`)
+      // This generates output/files/${env}/revision.json
+      yield* buildAndWriteRevisionJson(version, revisionPathForEnv)
+    }
+  } else {
+    console.log('Skipping index compilation and moving of assets as this is a travis-ci/pr job')
   }
 }
-
-function getTravisTargetEnv (branch, isPRMergeCommitBuild) {
-  if (branch === undefined) {
-    return 'development'
-  }
-
-  if (isPRMergeCommitBuild) {
-    return 'preview'
-  }
-
-  if (branch in BRANCH_ENV_MAP) {
-    return BRANCH_ENV_MAP[branch]
-  }
-
-  return 'preview'
-}
-
 
 /*
- * Creates a file distribution of a build.
+ * Creates a file distribution after gulp build.
  *
  * Copies the following files.
  * ~~~
@@ -130,45 +96,46 @@ function getTravisTargetEnv (branch, isPRMergeCommitBuild) {
  * @param {boolean?} includeStyleguide
  */
 function* createFileDist (env, version, branch, includeStyleguide) {
+  console.log(`Creating file distribution for "${env}"`)
+
   // This directory contains all the files needed to run the app.
   // It is populated by `gulp build`.
   const BUILD_SRC = P.resolve('./build')
-
-  console.log(`Creating file distribution for "${env}"`)
-  yield copy(P.join(BUILD_SRC, 'app'), targetPath(env, 'app'))
-
   const commitHashIndexPath = targetPath(env, 'archive', version, 'index-compiled.html')
-  yield* configureAndWriteIndex(version, env, commitHashIndexPath)
+
+  yield copy(P.join(BUILD_SRC, 'app'), targetPath(env, 'app'))
+  yield* configureAndWriteIndex(version, `config/${env}.json`, commitHashIndexPath)
+
   if (branch) {
     const branchIndexPath = targetPath(env, 'archive', branch, 'index-compiled.html')
-    yield* configureAndWriteIndex(version, env, branchIndexPath)
+
+    yield* configureAndWriteIndex(version, `config/${env}.json`, branchIndexPath)
+
     if (includeStyleguide) {
-      const styleguidePath = targetPath(env, 'styleguide', branch)
-      yield copy(P.join(BUILD_SRC, 'styleguide'), styleguidePath)
+      yield copy(P.join(BUILD_SRC, 'styleguide'), targetPath(env, 'styleguide', branch))
     }
   }
 }
 
-function targetPath (env, ...components) {
+/**
+ * Build a path relative to FILE_DIST_DEST
+ *
+ * Example:
+ * --------
+ * targetPath('staging', 'archive', 'COMMIT_HASH', 'index-compiled.html')
+ * =>
+ * /home/<username>/user_interface/output/files/staging/archive/COMMIT_HASH/index-compiled.html
+ */
+function targetPath (...components) {
   // Destination directory for files that are uploaded to S3 buckets
   const FILE_DIST_DEST = P.resolve('./output/files')
 
-  return P.join(FILE_DIST_DEST, env, ...components)
+  return P.join(FILE_DIST_DEST, ...components)
 }
 
 function copy (src, dest) {
-  console.log('%s -> %s', src, dest)
+  console.log('Copying %s -> %s', P.relative('', src), P.relative('', dest))
   return FS.copyAsync(src, dest)
-}
-
-/**
- * Configures index-page.js for the provided commit and environment and writes
- * it to the provided destination path.
- */
-function* configureAndWriteIndex (version, env, dest) {
-  console.log(`Creating index for "${env}" at ${P.relative('', dest)}`)
-  const configPath = `config/${env}.json`
-  yield* configureIndex_(version, configPath, dest)
 }
 
 /**
@@ -178,7 +145,6 @@ function* configureAndWriteIndex (version, env, dest) {
  *
  * Shape: { "revision": "GIT COMMIT HASH OF THE HEAD OF PRODUCTION BRANCH" }
  */
-function* buildAndWriteRevisionJson (version, env, outPath) {
-  console.log(`Creating revision.json for "${env}" at ${P.relative('', outPath)}`)
+function* buildAndWriteRevisionJson (version, outPath) {
   yield writeJSON(outPath, {revision: version})
 }

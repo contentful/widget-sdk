@@ -48,6 +48,8 @@ export default function* configure (revision, configPath, outPath) {
     U.readJSON(configPath)
   ])
 
+  console.log(`Creating compiled index for "${config.environment}" at ${P.relative('', outPath)}`)
+
   validateConfig(config)
 
   const manifestResolved = mapValues(manifest, (path) => URL.resolve(config.assetUrl, path))

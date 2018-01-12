@@ -32,7 +32,8 @@ script:
 - bin/docker-run-ci test
 
 after_success:
-# Build the package and static files
+# Move built packages to the correct directories to prepare 'em for upload to S3
+# and build index files for all configured environments.
 # TRAVIS_BRANCH:
 #   - for push builds, or builds not triggered by a pull request, this is the name of the branch.
 #   - for builds triggered by a pull request this is the name of the branch targeted by the pull request.
