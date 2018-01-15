@@ -1,32 +1,65 @@
-import $document from '$document';
-import {h} from 'utils/hyperscript';
-import {uniqueId} from 'lodash';
+import {createElement as h} from 'libs/react';
+import ReactDOM from 'libs/react-dom';
+import createReactClass from 'create-react-class';
+import {uniqueId, isString} from 'lodash';
+import PropTypes from 'libs/prop-types';
+
+const DevNotifications = createReactClass({
+  getInitialState: function () {
+    return {
+      isCollapsed: false
+    };
+  },
+  toggle: function () {
+    const {isCollapsed} = this.state;
+    this.setState({
+      isCollapsed: !isCollapsed
+    });
+  },
+  render: function () {
+    const {notifications} = this.props;
+    const {isCollapsed} = this.state;
+    if (!notifications.length) {
+      return null;
+    }
+    return h('div', {
+      className: (isCollapsed ? 'cf-dev-notifications is-collapsed' : 'cf-dev-notifications')
+    },
+      h('button', {className: 'btn-link btn-toggle-collapsed', onClick: this.toggle}),
+      ...notifications.map(({title, content, id}) => {
+        return h('div', {
+          className: 'cf-dev-notification',
+          key: id
+        },
+          isString(title) ? h('h5', null, title) : title,
+          content
+        );
+      })
+    );
+  }
+});
+
+DevNotifications.propTypes = {
+  notifications: PropTypes.arrayOf(PropTypes.shape({
+    title: PropTypes.oneOfType([PropTypes.element, PropTypes.string]).isRequired,
+    content: PropTypes.oneOfType([PropTypes.element, PropTypes.string]).isRequired,
+    id: PropTypes.string.isRequired
+  })).isRequired
+};
+
+let containerElement;
+const notifications = [];
 
 /**
- * Appends an empty dev notifications container to body.
- */
-export function init () {
-  $document.find('body').append(h('.cf-dev-notifications', [h('a.btn-toggle-collapsed', {href: '#'})]));
-  const container = $document.find('.cf-dev-notifications');
-  container.find('.btn-toggle-collapsed').on('click', () => { container.toggleClass('is-collapsed'); });
-}
-
-/**
- * Adds a notification with title and html body
- * @returns unique id
+ * Adds a notification with title and body. Both can be react elements or plain
+ * strings.
+ * @param {(ReactElement|string)} title
+ * @param {(ReactElement|string)} content
  */
 export function addNotification (title, content) {
-  const notificationId = uniqueId();
-  const header = h('h5', [title]);
-  const notification = h('.cf-dev-notification', {dataNotificationId: notificationId}, [header, content]);
-  $document.find('.cf-dev-notifications').show().append(notification);
-  return notificationId;
-}
-
-/**
- * Removes a notification with given id.
- */
-export function removeNotification (notificationId) {
-  $document.remove(`.cf-dev-notification[data-notification-id="${notificationId}"]`);
-  // TODO hide container
+  if (!containerElement) {
+    containerElement = document.getElementsByTagName('body')[0].appendChild(document.createElement('div'));
+  }
+  notifications.push({title, content, id: uniqueId()});
+  ReactDOM.render(h(DevNotifications, {notifications}), containerElement);
 }

@@ -1,6 +1,5 @@
 import $window from '$window';
-import $document from '$document';
-import {h} from 'utils/hyperscript';
+import {createElement as h} from 'libs/react';
 import TheStore from 'TheStore';
 import {uniq, without, omit} from 'lodash';
 import {addNotification} from 'debug/DevNotifications';
@@ -44,21 +43,18 @@ function removeFlag (flagName) {
 function displayNotification () {
   const flags = getEnabledFlags();
   if (flags.length) {
-    addNotification('Enabled flags:', h('ul', flags.map(renderFlagsListItem)));
-
-    $document.find('[data-cf-ui-flag-remove]').on('click', (el) => {
-      const flagName = el.target.getAttribute('data-cf-ui-flag-remove');
-      removeFlag(flagName);
-      $window.location.reload();
-    });
+    addNotification('Enabled flags:', h('ul', null, flags.map(renderFlagsListItem)));
   }
 }
 
 function renderFlagsListItem (flag) {
-  const clearLink = h('a', {
-    href: '#',
-    dataCfUiFlagRemove: flag,
+  const clearBtn = h('button', {
+    className: 'btn-link',
+    onClick: () => {
+      removeFlag(flag);
+      $window.location.reload();
+    },
     style: {float: 'right', marginLeft: '3px'}
-  }, ['Clear']);
-  return h('li', [flag, clearLink]);
+  }, 'Clear');
+  return h('li', {key: flag}, flag, clearBtn);
 }
