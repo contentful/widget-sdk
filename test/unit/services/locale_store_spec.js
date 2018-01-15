@@ -11,6 +11,7 @@ describe('TheLocaleStore', function () {
     };
   };
 
+  const makeDefaultLocale = (code, sid) => {
     return _.extend(makeLocale(code, sid), {default: true});
   };
 
@@ -26,6 +27,8 @@ describe('TheLocaleStore', function () {
     module('contentful/test');
     const getStore = this.$inject('utils/TheStore').getStore;
     this.store = getStore();
+
+    this.storageWrapper = this.$inject('utils/TheStore/StorageWrapper');
     this.theLocaleStore = this.$inject('TheLocaleStore');
     yield this.theLocaleStore.reset(makeEndpoint(makeTestLocales()));
   });
@@ -125,17 +128,12 @@ describe('TheLocaleStore', function () {
     const key = sid => `activeLocalesForSpace.${sid}`;
 
     it('gets different stores for different spaces', function* () {
-      const test = sid => {
-        return this.theLocaleStore.reset(makeEndpoint(makeTestLocales(sid)))
-        .then(() => {
-          const call = this.store.forKey.lastCall;
-          expect(call.args[0]).toBe(key(sid));
-        });
-      };
+      yield this.theLocaleStore.reset(makeEndpoint(makeTestLocales('sid1')));
+      expect(this.storageWrapper._store['activeLocalesForSpace.sid1']).toBeDefined();
+      expect(this.storageWrapper._store['activeLocalesForSpace.sid2']).not.toBeDefined();
 
-      sinon.spy(this.store, 'forKey');
-      yield test('sid1');
-      yield test('sid2');
+      yield this.theLocaleStore.reset(makeEndpoint(makeTestLocales('sid2')));
+      expect(this.storageWrapper._store['activeLocalesForSpace.sid2']).toBeDefined();
     });
 
     it('activates locales form the store', function* () {
