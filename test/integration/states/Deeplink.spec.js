@@ -3,7 +3,7 @@ import * as sinon from 'helpers/sinon';
 describe('states/Deeplink', function () {
   beforeEach(function () {
     this.getFromStore = sinon.stub();
-    this.getFatSpaces = sinon.stub();
+    this.getSpaces = sinon.stub();
     this.getOrganization = sinon.stub();
     this.getOrganizations = sinon.stub();
     this.canReadApiKeys = sinon.stub();
@@ -24,7 +24,7 @@ describe('states/Deeplink', function () {
         }
       });
       $provide.value('services/TokenStore', {
-        getFatSpaces: this.getFatSpaces,
+        getSpaces: this.getSpaces,
         getOrganizations: this.getOrganizations,
         getOrganization: this.getOrganization
       });
@@ -63,9 +63,8 @@ describe('states/Deeplink', function () {
     it('should redirect to the general api page if no keys', function* () {
       this.search.returns({ link: 'api' });
       this.store.set('lastUsedSpace', 'test2');
-      this.getFatSpaces.returns(Promise.resolve([
-        { data: { sys: { id: 'test1' } } },
-        { data: { sys: { id: 'test2' } } }
+      this.getSpaces.returns(Promise.resolve([
+        {sys: {id: 'test1'}}, {sys: {id: 'test2'}}
       ]));
       this.canReadApiKeys.returns(true);
       this.apiKeys.returns(Promise.resolve());
@@ -84,7 +83,7 @@ describe('states/Deeplink', function () {
 
     it('should redirect to the last used space', function* () {
       this.search.returns({ link: 'api' });
-      this.getFatSpaces.returns(Promise.resolve([{ data: { sys: { id: 'test' } } }]));
+      this.getSpaces.returns(Promise.resolve([{ sys: { id: 'test' } }]));
       this.canReadApiKeys.returns(true);
       this.apiKeys.returns(Promise.resolve());
       yield this.createController().promise;
@@ -102,7 +101,7 @@ describe('states/Deeplink', function () {
 
     it('should redirect to the first api key page if there are several', function* () {
       this.search.returns({ link: 'api' });
-      this.getFatSpaces.returns(Promise.resolve([{ data: { sys: { id: 'test' } } }]));
+      this.getSpaces.returns(Promise.resolve([{ sys: { id: 'test' } }]));
       this.canReadApiKeys.returns(true);
       const apiKeys = [
         { sys: { id: 'first' } },
@@ -125,7 +124,7 @@ describe('states/Deeplink', function () {
 
     it('should give generic error in case no access', function* () {
       this.search.returns({ link: 'api' });
-      this.getFatSpaces.returns(Promise.resolve([{ data: { sys: { id: 'test' } } }]));
+      this.getSpaces.returns(Promise.resolve([{ data: { sys: { id: 'test' } } }]));
       this.canReadApiKeys.returns(false);
       const { $scope, promise } = this.createController();
       yield promise;
@@ -162,9 +161,10 @@ describe('states/Deeplink', function () {
       this.getOrganizations.returns(Promise.resolve([
         { sys: { id: 'new_org_id' } }
       ]));
-      this.getFatSpaces.returns(Promise.resolve([{
-        data: { sys: { id: 'space_id' } },
-        getOrganizationId: () => 'new_org_id' }]));
+      this.getSpaces.returns(Promise.resolve([{
+        sys: {id: 'space_id'},
+        organization: {sys: {id: 'new_org_id'}}
+      }]));
       this.getOrganization.returns(Promise.resolve());
       this.isOwnerOrAdmin.returns(true);
       yield this.createController().promise;

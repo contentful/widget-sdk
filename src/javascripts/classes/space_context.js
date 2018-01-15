@@ -37,6 +37,7 @@ angular.module('contentful')
   var MembershipRepo = require('access_control/SpaceMembershipRepository');
   var createUiConfigStore = require('data/UiConfig/Store').default;
   var createViewMigrator = require('data/ViewMigrator').default;
+  var client = require('client');
 
   var spaceContext = {
     /**
@@ -51,9 +52,10 @@ angular.module('contentful')
     /**
      * @ngdoc method
      * @name spaceContext#resetWithSpace
-     * @param {Client.Space} space
      * @description
-     * This method resets a space context with a given space
+     * This method resets a space context with a given space.
+     * It requires an API space object. Internally we create
+     * @contentful/client instance.
      *
      * The returned promise resolves when all additional space
      * resources have been fetched:
@@ -62,10 +64,11 @@ angular.module('contentful')
      * - UI Configs (space and user)
      * - Locales
      *
-     * @param {Client.Space} space
+     * @param {API.Space} space
      * @returns {Promise<self>}
      */
     resetWithSpace: function (space) {
+      space = client.newSpace(space);
       var self = this;
 
       self.endpoint = createSpaceEndpoint(

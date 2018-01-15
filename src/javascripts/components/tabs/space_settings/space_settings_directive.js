@@ -23,19 +23,25 @@ angular.module('contentful')
   var ReloadNotification = require('ReloadNotification');
   var templates = require('components/tabs/space_settings/space_settings_templates');
 
+  var space = spaceContext.space.data;
+
   $scope.context.ready = true;
-  $scope.spaceId = spaceContext.space.getId();
-  $scope.model = {name: spaceContext.space.data.name};
+  $scope.spaceId = space.sys.id;
+  $scope.model = {name: space.name};
   $scope.save = Command.create(save, {disabled: isSaveDisabled});
   $scope.openRemovalDialog = Command.create(openRemovalDialog);
 
   function save () {
-    return spaceContext.cma.renameSpace(
-      $scope.model.name,
-      spaceContext.space.getVersion()
-    )
-    .then(TokenStore.refresh)
+    return spaceContext.cma.renameSpace($scope.model.name, space.sys.version)
     .then(function () {
+      TokenStore.refresh();
+      return TokenStore.getSpace(space.sys.id);
+    })
+    .then(function (space) {
+      return spaceContext.resetWithSpace(space);
+    })
+    .then(function () {
+      space = spaceContext.space.data;
       notification.info('Space renamed to ' + $scope.model.name + ' successfully.');
     })
     .catch(handleSaveError);
@@ -63,13 +69,13 @@ angular.module('contentful')
 
   function isSaveDisabled () {
     var input = _.get($scope, 'model.name');
-    var currentName = _.get(spaceContext, 'space.data.name');
+    var currentName = _.get(space, 'name');
 
     return !input || input === currentName;
   }
 
   function openRemovalDialog () {
-    var spaceName = spaceContext.space.data.name;
+    var spaceName = space.name;
     var scope = _.extend($rootScope.$new(), {
       spaceName: spaceName,
       input: {spaceName: ''},

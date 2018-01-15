@@ -118,7 +118,7 @@ function* createSpace (org, templateName) {
   yield gotoState({
     path: ['spaces', 'detail'],
     params: {
-      spaceId: newSpace.getId()
+      spaceId: newSpace.sys.id
     }
   });
 }

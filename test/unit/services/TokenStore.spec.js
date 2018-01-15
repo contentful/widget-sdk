@@ -4,7 +4,7 @@ describe('Token store service', function () {
   beforeEach(function () {
     this.fetchWithAuth = sinon.stub().resolves({
       sys: {createdBy: this.user},
-      spaces: this.rawSpaces
+      spaces: this.spaces
     });
     module('contentful/test', $provide => {
       $provide.value('data/CMA/TokenInfo', {
@@ -12,7 +12,7 @@ describe('Token store service', function () {
       });
     });
 
-    this.rawSpaces = _.map(['a-space', 'b-space', 'c-space'], function (name) {
+    this.spaces = _.map(['a-space', 'b-space', 'c-space'], function (name) {
       return {
         name: name,
         sys: {id: name + '-id'},
@@ -25,14 +25,6 @@ describe('Token store service', function () {
 
     this.client = this.$inject('client');
     this.client.newSpace = sinon.stub();
-
-    this.spaces = _.map(this.rawSpaces, function (raw) {
-      return {
-        data: _.cloneDeep(raw),
-        getId: _.constant(raw.sys.id),
-        update: sinon.stub()
-      };
-    });
 
     this.organizations = [{ sys: { id: 'org1' } }, { sys: { id: 'org2' } }, { sys: { id: 'org3' } }];
     this.user = {
@@ -51,10 +43,9 @@ describe('Token store service', function () {
 
   describe('#refresh()', function () {
     it('fetches token returns promise of token refresh', function* () {
-      this.client.newSpace.returns(this.spaces[0]);
       this.fetchWithAuth.resolves({
         sys: {createdBy: this.user},
-        spaces: [this.rawSpaces[0]]
+        spaces: [this.spaces[0]]
       });
 
       yield this.tokenStore.refresh();
@@ -74,10 +65,9 @@ describe('Token store service', function () {
 
   describe('#getSpace()', function () {
     it('returns promise resolving to requested space', function* () {
-      this.client.newSpace.returns(this.spaces[0]);
-      yield this.refresh(this.rawSpaces[0]);
+      yield this.refresh(this.spaces[0]);
       const space = yield this.tokenStore.getSpace('a-space-id');
-      expect(space).toBe(this.spaces[0]);
+      expect(space).toEqual(this.spaces[0]);
     });
 
     it('returns rejected promise if space cannot be found', function* () {
@@ -89,11 +79,9 @@ describe('Token store service', function () {
 
   describe('#getSpaces()', function () {
     it('returns promise resolving to spaces list', function* () {
-      this.client.newSpace.onFirstCall().returns(this.spaces[0]);
-      this.client.newSpace.onSecondCall().returns(this.spaces[1]);
-      yield this.refresh(this.rawSpaces[0], this.rawSpaces[1]);
+      yield this.refresh(this.spaces[0], this.spaces[1]);
       const spaces = yield this.tokenStore.getSpaces();
-      expect(spaces).toEqual([this.rawSpaces[0], this.rawSpaces[1]]);
+      expect(spaces).toEqual([this.spaces[0], this.spaces[1]]);
     });
   });
 
@@ -115,26 +103,13 @@ describe('Token store service', function () {
     });
   });
 
-  describe('#spaces$', function () {
-    it('is initially empty', function () {
-      K.assertCurrentValue(this.tokenStore.spaces$, null);
-    });
-
-    it('updates spaces when tokenStore is refreshed', function* () {
-      this.client.newSpace.returns(this.spaces[0]);
-      yield this.refresh(this.rawSpaces[0]);
-      K.assertCurrentValue(this.tokenStore.spaces$, [this.spaces[0]]);
-    });
-  });
-
   describe('#spacesByOrganization$', function () {
     it('is initially empty', function () {
       K.assertCurrentValue(this.tokenStore.spacesByOrganization$, null);
     });
 
     it('updates property when tokenStore is refreshed', function* () {
-      this.client.newSpace.returns(this.spaces[0]);
-      yield this.refresh(this.rawSpaces[0]);
+      yield this.refresh(this.spaces[0]);
       K.assertMatchCurrentValue(
         this.tokenStore.spacesByOrganization$,
         sinon.match({testorg: [this.spaces[0]]})

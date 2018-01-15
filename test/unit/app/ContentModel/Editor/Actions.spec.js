@@ -41,9 +41,9 @@ describe('app/ContentModel/Editor/Actions', function () {
 
     this.cfStub = this.$inject('cfStub');
 
-    space = this.cfStub.space('spaceid');
     spaceContext = this.$inject('spaceContext');
-    spaceContext.resetWithSpace(space);
+    spaceContext.resetWithSpace(this.cfStub.space('spaceid').data);
+    space = spaceContext.space;
     spaceContext.uiConfig = {addOrEditCt: () => {}};
     contentType = this.cfStub.contentType(space, 'typeid', 'typename');
 
@@ -400,8 +400,9 @@ describe('app/ContentModel/Editor/Actions', function () {
       });
 
       sinon.stub(spaceContext.space, 'newContentType').callsFake((data) => {
-        const ct = this.cfStub.contentType(space, 'ct-id', 'ct-name');
+        const ct = {data: {sys: {id: 'ct-id'}}, name: 'ct-name'};
         _.extend(ct.data, data);
+        ct.getId = () => 'ct-id';
         ct.save = sinon.stub().resolves(ct);
         ct.publish = sinon.stub().resolves(ct);
         return ct;
