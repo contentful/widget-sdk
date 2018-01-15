@@ -4,7 +4,7 @@ import PropTypes from 'libs/prop-types';
 import {runTask} from 'utils/Concurrent';
 import {createEndpoint as createOrgEndpoint} from 'access_control/OrganizationMembershipRepository';
 import {getSpacesWithPlans} from 'account/pricing/PricingDataProvider';
-import {href} from 'states/Navigator';
+import {go, href} from 'states/Navigator';
 import svgPlus from 'svg/plus';
 import {showDialog as showCreateSpaceModal} from 'services/CreateSpace';
 import {canCreateSpaceInOrganization} from 'accessChecker';
@@ -61,7 +61,7 @@ const SpacePlans = createReactClass({
         )
       ),
       h('div', {className: 'workbench-main'},
-        h('div', {className: 'workbench-main__content'},
+        h('div', {className: 'workbench-main__content', style: {padding: '2rem 3.15rem'}},
           h(SpacesList, {spaces})
         ),
         h('div', {className: 'workbench-main__sidebar'},
@@ -79,28 +79,24 @@ const SpacePlans = createReactClass({
 SpacePlans.propTypes = spacePlansPropTypes;
 
 function SpacesList ({spaces}) {
-  return h('div', {className: 'table'},
-    h('div', {className: 'table__head'},
-      h('table', null,
-        h('thead', null,
-          h('tr', null,
-            h('th', null, 'Name'),
-            h('th', null, 'Plan')
-          )
-        )
+  return h('table', {className: 'deprecated-table x--hoverable'},
+    h('thead', null,
+      h('tr', null,
+        h('th', null, 'Name'),
+        h('th', null, 'Plan')
       )
     ),
-    h('div', {className: 'table__body'},
-      h('table', null,
-        h('tbody', null,
-          spaces.items.map(({sys, name, plan}) =>
-            h('tr', {key: sys.id},
-              h('td', null, h('a', {href: getSpaceLink(sys.id)}, name)),
-              h('td', null, plan ? plan.name : 'Free')
-            )
-          )
-        )
-      )
+    h('tbody', {className: 'clickable'},
+      spaces.items.map(({sys, name, plan}) => {
+        const navState = getSpaceNavState(sys.id);
+        return h('tr', {
+          key: sys.id,
+          onClick: () => go(navState)
+        },
+          h('td', null, h('a', {href: href(navState)}, name)),
+          h('td', null, plan ? plan.name : 'Free')
+        );
+      })
     )
   );
 }
@@ -122,8 +118,12 @@ function RightSidebar ({spaces, canCreateSpace, onCreateSpace}) {
   );
 }
 
-function getSpaceLink (spaceId) {
-  return href({path: ['spaces', 'detail'], params: {spaceId}});
+function getSpaceNavState (spaceId) {
+  return {
+    path: ['spaces', 'detail', 'home'],
+    params: {spaceId},
+    options: { reload: true }
+  };
 }
 
 export default SpacePlans;
