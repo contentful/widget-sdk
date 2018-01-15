@@ -5,14 +5,12 @@ import {runTask} from 'utils/Concurrent';
 import {createEndpoint as createOrgEndpoint} from 'access_control/OrganizationMembershipRepository';
 import {getBasePlan, getSpacePlans} from 'account/pricing/PricingDataProvider';
 import {getBasePlanStyle} from 'account/pricing/SubscriptionPlanStyles';
-import {supportUrl, websiteUrl} from 'Config';
-import {byName as colors} from 'Styles/Colors';
+import {supportUrl} from 'Config';
 import {groupBy, pick} from 'lodash';
 import {getOrganization} from 'services/TokenStore';
 import {isOwnerOrAdmin} from 'services/OrganizationRoles';
 import * as ReloadNotification from 'ReloadNotification';
 import {asReact} from 'ui/Framework/DOMRenderer';
-import {href as getStateHref} from 'states/Navigator';
 
 const subscriptionOverviewPropTypes = {
   onReady: PropTypes.func.isRequired,
@@ -56,12 +54,10 @@ const SubscriptionOverview = createReactClass({
     }));
     const grandTotal = calculateTotalPrice([...spacePlans, basePlan]);
 
-    this.setState({basePlan, spacePlansByName, grandTotal, subscriptionId: org.subscription.sys.id});
+    this.setState({basePlan, spacePlansByName, grandTotal});
   },
   render: function () {
-    const {orgId} = this.props;
-    const {basePlan, spacePlansByName, grandTotal, subscriptionId} = this.state;
-    const unsubscribeLink = getUnsubscribeLink(orgId, subscriptionId);
+    const {basePlan, spacePlansByName, grandTotal} = this.state;
 
     return h('div', {className: 'workbench'},
       h('div', {className: 'workbench-header__wrapper'},
@@ -81,7 +77,7 @@ const SubscriptionOverview = createReactClass({
         }, h(SpacePlans, {spacePlansByName})),
         h('div', {
           className: 'workbench-main__sidebar'
-        }, h(RightSidebar, {grandTotal, unsubscribeLink}))
+        }, h(RightSidebar, {grandTotal}))
       )
     );
   }
@@ -122,7 +118,7 @@ function SpacePlans ({spacePlansByName}) {
   );
 }
 
-function RightSidebar ({grandTotal, unsubscribeLink}) {
+function RightSidebar ({grandTotal}) {
   return h('div', {className: 'entity-sidebar'},
     h('h2', {className: 'entity-sidebar__heading'}, 'Grand total'),
     h('p', {className: 'entity-sidebar__help-text'},
@@ -143,17 +139,6 @@ function RightSidebar ({grandTotal, unsubscribeLink}) {
     ),
     h('p', {className: 'entity-sidebar__help-text'},
       h('a', {href: supportUrl}, 'Get in touch with us')
-    ),
-
-    h('h2', {className: 'entity-sidebar__heading'}, 'Cancel subscription'),
-    h('p', {className: 'entity-sidebar__help-text'},
-      'Cancelling your subscription will delete your organization and all content ' +
-      'associated with it. Make sure to ',
-      h('a', {href: websiteUrl('pricing')}, 'check our pricing plans'),
-      ' before proceeding.'
-    ),
-    h('p', {className: 'entity-sidebar__help-text'},
-      h('a', {href: unsubscribeLink, style: {color: colors.redDark}}, 'Cancel subscription')
     )
   );
 }
@@ -170,13 +155,6 @@ function Price ({value = 0, currency = '$', unit = 'month'}) {
 
 function calculateTotalPrice (subscriptionPlans) {
   return subscriptionPlans.reduce((total, plan) => total + parseInt(plan.price, 10), 0);
-}
-
-function getUnsubscribeLink (orgId, subscriptionId) {
-  return getStateHref({
-    path: ['account', 'organizations', 'subscription'],
-    params: {orgId, pathSuffix: `/${subscriptionId}/cancel`}
-  });
 }
 
 /**
