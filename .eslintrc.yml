@@ -7,11 +7,6 @@ extends:
   - 'standard'
 env:
   browser: true
-globals:
-  angular: false
-  _: false
-  JST: false
-  $: false
 rules:
   indent: "off"
   indent-legacy: [2, 2, { "SwitchCase": 1 }]
@@ -34,8 +29,14 @@ rules:
   require-yield: off
 
 overrides:
-- files:
-  - "*.es6.js"
+- files: [ 'src/javascripts/**/*.js' ]
+  excludedFiles: [ '*.es6.js' ]
+  globals:
+    angular: false
+    _: false
+    JST: false
+    $: false
+- files: [ '*.es6.js' ]
   # Eslint configuration for files ending in .es6.js
   globals:
     setTimeout: false

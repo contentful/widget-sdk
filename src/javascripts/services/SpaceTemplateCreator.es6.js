@@ -2,6 +2,7 @@ import $rootScope from '$rootScope';
 import contentPreview from 'contentPreview';
 import * as Analytics from 'analytics/Analytics';
 import {runTask} from 'utils/Concurrent';
+import * as _ from 'lodash';
 
 const ASSET_PROCESSING_TIMEOUT = 60000;
 
