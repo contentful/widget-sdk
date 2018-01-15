@@ -4,6 +4,7 @@ import assetEditorInterface from 'data/editingInterfaces/asset';
 import {caseof as caseofEq} from 'libs/sum-types/caseof-eq';
 import {deepFreeze} from 'utils/Freeze';
 import createPrefetchCache from 'data/CMA/EntityPrefetchCache';
+import TheLocaleStore from 'TheLocaleStore';
 
 
 /**
@@ -201,7 +202,7 @@ function* fetchEntity (spaceContext, type, id) {
     ['Entry', () => space.getEntry(id)],
     ['Asset', () => space.getAsset(id)]
   ]);
-  sanitizeEntityData(entity.data, space.getPrivateLocales());
+  sanitizeEntityData(entity.data, TheLocaleStore.getPrivateLocales());
   return entity;
 }
 

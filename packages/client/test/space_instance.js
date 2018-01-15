@@ -28,23 +28,9 @@ module.exports = function spaceInstanceDescription (serverSpaceData) {
     describeContentType();
     describeLocale();
 
-    coit('#delete', function* () {
-      this.request.respond(null);
-      yield this.space.delete();
-      expect(this.request).to.be.calledWith({
-        method: 'DELETE',
-        url: '/spaces/42'
-      });
-    });
-
-    coit('#save', function* () {
-      this.request.respond(this.space.data);
-      yield this.space.save();
-      expect(this.request).to.be.calledWith({
-        method: 'PUT',
-        url: '/spaces/42',
-        data: this.space.data
-      });
+    coit('disabled #save and #delete', function () {
+      expect(this.space.save).to.throw();
+      expect(this.space.delete).to.throw();
     });
 
     it('#isOwner(user) is true for creator', function () {

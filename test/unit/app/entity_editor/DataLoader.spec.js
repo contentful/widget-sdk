@@ -18,8 +18,7 @@ describe('app/entity_editor/DataLoader', function () {
         },
         getAsset: sinon.spy(function (id) {
           return $q.resolve({data: makeEntity(id)});
-        }),
-        getPrivateLocales: sinon.stub().returns([])
+        })
       },
       publishedCTs: {
         fetch: function (id) {
@@ -36,6 +35,9 @@ describe('app/entity_editor/DataLoader', function () {
         get: sinon.stub()
       }
     };
+
+    this.localeStore = this.$inject('TheLocaleStore');
+    this.localeStore.getPrivateLocales = sinon.stub().returns([]);
 
     const DataLoader = this.$inject('app/entity_editor/DataLoader');
     this.loadEntry = _.partial(DataLoader.loadEntry, this.spaceContext);
@@ -119,7 +121,7 @@ describe('app/entity_editor/DataLoader', function () {
       });
 
       it('removes unknown locale codes', function* () {
-        this.spaceContext.space.getPrivateLocales.returns([
+        this.localeStore.getPrivateLocales.returns([
           {internal_code: 'l1'},
           {internal_code: 'l2'}
         ]);

@@ -10,15 +10,21 @@ var createResourceFactoryMethods = require('./resource_factory');
 
 var Space = function Space (data, persistenceContext) {
   persistenceContext.setupIdentityMap();
+  delete data.locales; // Do not expose locales
   Entity.call(this, data, persistenceContext);
 };
 
 Space.prototype = Object.create(Entity.prototype);
 
-Space.prototype.getPrivateLocales = function () {
-  return _.filter(this.data.locales, function (locale) {
-    return locale.contentManagementApi;
-  });
+// called by `TokenStore`
+Space.prototype.update = function (data) {
+  delete data.locales; // Do not expose locales
+  return Entity.prototype.update.call(this, data);
+};
+
+Space.prototype.save = Space.prototype.delete = function () {
+  // Disable `save` and `delete` methods, use new CMA client instead
+  throw new Error('Cannot save/delete a space');
 };
 
 Space.prototype.isOwner = function (user) {
@@ -47,9 +53,10 @@ Space.mixinFactoryMethods = function (target, path) {
     getSpaces: factoryMethods.getByQuery,
     newSpace: factoryMethods.new,
     createSpace: function (data, organizationId) {
-      return this.newSpace(data).save({
-        'X-Contentful-Organization': organizationId
-      });
+      return Entity.prototype.save.call(
+        this.newSpace(data),
+        {'X-Contentful-Organization': organizationId}
+      );
     }
   });
 };
