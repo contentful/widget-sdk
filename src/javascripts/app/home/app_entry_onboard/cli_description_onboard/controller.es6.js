@@ -8,7 +8,7 @@ import ModalDialog from 'modalDialog';
 import {assign} from 'utils/Collections';
 import {throttle} from 'lodash';
 import {render as renderTemplate, renderMissingNodeModal} from './template';
-import { getStore } from 'utils/TheStore';
+import { getStore } from 'TheStore';
 
 // We don't want to fetch user's spaces too often
 // and we enable button as soon as any space was added

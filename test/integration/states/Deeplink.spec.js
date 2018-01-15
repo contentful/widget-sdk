@@ -39,7 +39,7 @@ describe('states/Deeplink', function () {
       });
     });
 
-    const getStore = this.$inject('utils/TheStore').getStore;
+    const getStore = this.$inject('TheStore').getStore;
     this.store = getStore();
     this.createDeeplinkController = this.$inject('states/Deeplink').createController;
     this.$rootScope = this.$inject('$rootScope');

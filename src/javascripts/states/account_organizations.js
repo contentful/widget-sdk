@@ -9,7 +9,7 @@ angular.module('contentful')
   var base = require('states/Base').default;
   var h = require('ui/Framework').h;
   var workbenchHeader = require('app/Workbench').header;
-  var getStore = require('utils/TheStore').getStore;
+  var getStore = require('TheStore').getStore;
   var store = getStore();
 
   var newOrg = base({

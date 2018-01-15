@@ -9,13 +9,13 @@
  * Subservices, "localStorageStore" and "cookieStore" implement storage-specific
  * logic. These are NOT intended to be used on their own.
  */
-import StorageStore from 'utils/TheStore/StorageStore';
-import * as CookieStore from 'utils/TheStore/CookieStore';
-import { forStorage } from 'utils/store_utils';
+import ClientStorage from 'TheStore/ClientStorage';
+import * as CookieStore from 'TheStore/CookieStorage';
+import { forStorage } from 'TheStore/Utils';
 
-const LocalStorageStore = StorageStore('local');
-const SessionStorageStore = StorageStore('session');
-const storage = LocalStorageStore.isSupported() ? LocalStorageStore : CookieStore;
+const LocalStorage = ClientStorage('local');
+const SessionStorage = ClientStorage('session');
+const storage = LocalStorage.isSupported() ? LocalStorage : CookieStore;
 
 /**
  * Allows for retrieving a store explicitly, used in cases
@@ -26,8 +26,8 @@ const storage = LocalStorageStore.isSupported() ? LocalStorageStore : CookieStor
  */
 export function getStore (storageType) {
   const validStorageTypes = {
-    local: LocalStorageStore,
-    session: SessionStorageStore,
+    local: LocalStorage,
+    session: SessionStorage,
     cookie: CookieStore
   };
 

@@ -1,5 +1,5 @@
 import qs from 'libs/qs';
-import { getStore } from 'utils/TheStore';
+import { getStore } from 'TheStore';
 import {settings} from 'environment';
 
 /**

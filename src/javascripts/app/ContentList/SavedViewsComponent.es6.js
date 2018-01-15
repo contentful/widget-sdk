@@ -9,7 +9,7 @@ import {makeBlankFolder} from 'data/UiConfig/Blanks';
 
 import openRoleSelector from './RoleSelector';
 
-import { getStore } from 'utils/TheStore';
+import { getStore } from 'TheStore';
 import notification from 'notification';
 import random from 'random';
 

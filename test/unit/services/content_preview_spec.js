@@ -15,7 +15,7 @@ describe('contentPreview', function () {
       $provide.value('TheLocaleStore', {
         getDefaultLocale: _.constant({internal_code: 'en'})
       });
-      $provide.value('utils/TheStore', {
+      $provide.value('TheStore', {
         getStore: () => {
           return storeStubs;
         }
@@ -43,7 +43,7 @@ describe('contentPreview', function () {
 
     this.contentPreview = this.$inject('contentPreview');
 
-    const getStore = this.$inject('utils/TheStore').getStore;
+    const getStore = this.$inject('TheStore').getStore;
     this.store = getStore();
   });
 

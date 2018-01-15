@@ -5,7 +5,7 @@ describe('ListViewPersistor', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    const getStore = this.$inject('utils/TheStore').getStore;
+    const getStore = this.$inject('TheStore').getStore;
 
     store = getStore();
     createPersistor = this.$inject('data/ListViewPersistor').default;

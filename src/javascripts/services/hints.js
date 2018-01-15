@@ -9,7 +9,7 @@
  */
 angular.module('contentful')
 .service('hints', ['require', function (require) {
-  var getStore = require('utils/TheStore');
+  var getStore = require('TheStore');
   var store = getStore();
 
   return {

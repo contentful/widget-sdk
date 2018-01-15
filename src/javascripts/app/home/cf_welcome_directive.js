@@ -11,7 +11,7 @@ angular.module('contentful')
   var LD = require('utils/LaunchDarkly');
   var Analytics = require('analytics/Analytics');
   var createSpaceAutomatically = require('components/shared/auto_create_new_space/index').init;
-  var getStore = require('utils/TheStore').getStore;
+  var getStore = require('TheStore').getStore;
   var store = getStore();
 
   var flagName = 'test-ps-09-2017-entry-sample-space-cli';

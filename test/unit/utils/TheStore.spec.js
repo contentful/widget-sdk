@@ -1,20 +1,20 @@
 /* global window */
 
-import StorageWrapper from 'utils/TheStore/StorageWrapper';
-import { getStore } from 'utils/TheStore';
+import ClientStorageWrapper from 'TheStore/ClientStorageWrapper';
+import { getStore } from 'TheStore';
 
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
-describe('utils/TheStore', function () {
+describe('TheStore', function () {
   describe('#getStore', function () {
     it('should return the default local storage if called with no arguments', function () {
-      expect(getStore().type).toBe('LocalStorageStore');
+      expect(getStore().type).toBe('LocalStorage');
     });
 
     it('should return the specified storage type if requested', function () {
-      expect(getStore('local').type).toBe('LocalStorageStore');
-      expect(getStore('session').type).toBe('SessionStorageStore');
-      expect(getStore('cookie').type).toBe('CookieStore');
+      expect(getStore('local').type).toBe('LocalStorage');
+      expect(getStore('session').type).toBe('SessionStorage');
+      expect(getStore('cookie').type).toBe('CookieStorage');
     });
   });
 
@@ -53,7 +53,7 @@ describe('utils/TheStore', function () {
         }
       });
 
-      storeUtils = yield system.import('utils/store_utils');
+      storeUtils = yield system.import('TheStore/Utils');
     });
 
     describe('#set', function () {
@@ -135,13 +135,13 @@ describe('utils/TheStore', function () {
   });
 
 
-  describe('utils/TheStore/StorageWrapper', function () {
+  describe('TheStore/ClientStorageWrapper', function () {
     let SessionStorageWrapper;
     let LocalStorageWrapper;
 
     beforeEach(function () {
-      SessionStorageWrapper = StorageWrapper('session');
-      LocalStorageWrapper = StorageWrapper('local');
+      SessionStorageWrapper = ClientStorageWrapper('session');
+      LocalStorageWrapper = ClientStorageWrapper('local');
     });
 
     it('exposes a simplified Local/Session Storage API', function () {
@@ -153,12 +153,12 @@ describe('utils/TheStore', function () {
     });
   });
 
-  describe('utils/TheStore/StorageStore', function () {
+  describe('TheStore/StorageStore', function () {
     const stubs = {};
     let system;
-    let StorageStore;
-    let LocalStorageStore;
-    let SessionStorageStore;
+    let ClientStorage;
+    let LocalStorage;
+    let SessionStorage;
 
     beforeEach(function* () {
       stubs.setItem = sinon.stub();
@@ -167,7 +167,7 @@ describe('utils/TheStore', function () {
 
       system = createIsolatedSystem();
 
-      system.set('utils/TheStore/StorageWrapper', {
+      system.set('TheStore/ClientStorageWrapper', {
         default: function () {
           return {
             setItem: stubs.setItem,
@@ -177,72 +177,72 @@ describe('utils/TheStore', function () {
         }
       });
 
-      StorageStore = (yield system.import('utils/TheStore/StorageStore')).default;
+      ClientStorage = (yield system.import('TheStore/ClientStorage')).default;
 
-      LocalStorageStore = StorageStore('local');
-      SessionStorageStore = StorageStore('session');
+      LocalStorage = ClientStorage('local');
+      SessionStorage = ClientStorage('session');
     });
 
     it('proxies its methods directly to the wrapper', function* () {
-      LocalStorageStore.set();
+      LocalStorage.set();
       sinon.assert.calledOnce(stubs.setItem);
 
-      LocalStorageStore.get();
+      LocalStorage.get();
       sinon.assert.calledOnce(stubs.getItem);
 
-      LocalStorageStore.remove();
+      LocalStorage.remove();
       sinon.assert.calledOnce(stubs.removeItem);
 
-      SessionStorageStore.set();
+      SessionStorage.set();
       sinon.assert.calledTwice(stubs.setItem);
 
-      SessionStorageStore.get();
+      SessionStorage.get();
       sinon.assert.calledTwice(stubs.getItem);
 
-      SessionStorageStore.remove();
+      SessionStorage.remove();
       sinon.assert.calledTwice(stubs.removeItem);
     });
 
     describe('#isSupported', function () {
       beforeEach(function () {
-        LocalStorageStore.set = sinon.stub();
-        SessionStorageStore.set = sinon.stub();
+        LocalStorage.set = sinon.stub();
+        SessionStorage.set = sinon.stub();
       });
 
       it('returns true when StorageStore.set does not throw', function () {
-        LocalStorageStore.set.returns(undefined);
-        SessionStorageStore.set.returns(undefined);
+        LocalStorage.set.returns(undefined);
+        SessionStorage.set.returns(undefined);
 
-        expect(LocalStorageStore.isSupported()).toEqual(true);
-        expect(SessionStorageStore.isSupported()).toEqual(true);
+        expect(LocalStorage.isSupported()).toEqual(true);
+        expect(SessionStorage.isSupported()).toEqual(true);
 
-        sinon.assert.calledOnce(LocalStorageStore.set.withArgs('test', {test: true}));
-        sinon.assert.calledOnce(SessionStorageStore.set.withArgs('test', {test: true}));
+        sinon.assert.calledOnce(LocalStorage.set.withArgs('test', {test: true}));
+        sinon.assert.calledOnce(SessionStorage.set.withArgs('test', {test: true}));
       });
 
       it('returns false when StorageStore.set does throw', function () {
-        LocalStorageStore.set.throws('TypeError');
-        SessionStorageStore.set.throws('TypeError');
+        LocalStorage.set.throws('TypeError');
+        SessionStorage.set.throws('TypeError');
 
-        expect(LocalStorageStore.isSupported()).toEqual(false);
-        expect(SessionStorageStore.isSupported()).toEqual(false);
+        expect(LocalStorage.isSupported()).toEqual(false);
+        expect(SessionStorage.isSupported()).toEqual(false);
 
-        sinon.assert.calledOnce(LocalStorageStore.set.withArgs('test', {test: true}));
-        sinon.assert.calledOnce(SessionStorageStore.set.withArgs('test', {test: true}));
+        sinon.assert.calledOnce(LocalStorage.set.withArgs('test', {test: true}));
+        sinon.assert.calledOnce(SessionStorage.set.withArgs('test', {test: true}));
       });
 
       it('removes test key after successful test', function () {
-        LocalStorageStore.remove = sinon.stub();
-        LocalStorageStore.set.returns(undefined);
-        LocalStorageStore.isSupported();
+        LocalStorage.remove = sinon.stub();
+        LocalStorage.set.returns(undefined);
+        LocalStorage.isSupported();
 
-        sinon.assert.calledOnce(LocalStorageStore.set.withArgs('test', {test: true}));
-        sinon.assert.calledOnce(LocalStorageStore.remove.withArgs('test'));
+        sinon.assert.calledOnce(LocalStorage.set.withArgs('test', {test: true}));
+        sinon.assert.calledOnce(LocalStorage.remove.withArgs('test'));
       });
     });
   });
 
-  describe('utils/TheStore/CookieStore', function () {
+  describe('TheStore/CookieStorage', function () {
     const stubs = {};
     const config = {
       default: {
@@ -253,7 +253,7 @@ describe('utils/TheStore', function () {
     };
 
     let system;
-    let CookieStore;
+    let CookieStorage;
 
     function testSecureCookie (method, mode, expected) {
       const stub = stubs[method];
@@ -262,11 +262,11 @@ describe('utils/TheStore', function () {
 
       // This is somewhat duplicated, but it is more clear
       if (method === 'remove') {
-        CookieStore.remove('test');
+        CookieStorage.remove('test');
         sinon.assert.calledOnce(stub.withArgs('test'));
         expect(stub.firstCall.args[1].secure).toEqual(expected);
       } else if (method === 'set') {
-        CookieStore.set('test', 'test');
+        CookieStorage.set('test', 'test');
         sinon.assert.calledOnce(stub.withArgs('test', 'test'));
         expect(stub.firstCall.args[2].secure).toEqual(expected);
       }
@@ -289,25 +289,25 @@ describe('utils/TheStore', function () {
 
       system.set('environment', config);
 
-      CookieStore = yield system.import('utils/TheStore/CookieStore');
+      CookieStorage = yield system.import('TheStore/CookieStorage');
     });
 
     it('exposes an API that proxies to the backing Cookies storage', function () {
       ['set', 'get', 'remove'].forEach((method) => {
-        expect(typeof CookieStore[method]).toEqual('function');
+        expect(typeof CookieStorage[method]).toEqual('function');
       });
     });
 
     it('proxies to the Cookies storage directly', function () {
       ['set', 'get', 'remove'].forEach(method => {
-        CookieStore[method]();
+        CookieStorage[method]();
 
         sinon.assert.calledOnce(stubs[method]);
       });
     });
 
-    it('exposes a type that directly states it is the CookieStore', function () {
-      expect(CookieStore.type).toBe('CookieStore');
+    it('exposes a type that directly states it is the CookieStorage', function () {
+      expect(CookieStorage.type).toBe('CookieStorage');
     });
 
     describe('#set', function () {
@@ -320,7 +320,7 @@ describe('utils/TheStore', function () {
       });
 
       it('expires in distant future', function () {
-        CookieStore.set('test', 'test');
+        CookieStorage.set('test', 'test');
 
         sinon.assert.calledOnce(stubs.set.withArgs('test', 'test'));
         expect(stubs.set.firstCall.args[2].expires).toEqual(365);

@@ -19,7 +19,7 @@ describe('Authentication', function () {
     this.Auth = this.$inject('Authentication');
     this.$q = this.$inject('$q');
 
-    const getStore = this.$inject('utils/TheStore').getStore;
+    const getStore = this.$inject('TheStore').getStore;
     this.store = getStore('session').forKey('token');
   });
 

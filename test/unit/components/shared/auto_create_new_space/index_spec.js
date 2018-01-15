@@ -18,7 +18,7 @@ describe('AutoCreateNewSpace/index', function () {
     module('contentful/test', $provide => {
       $provide.value('services/TokenStore', this.tokenStore);
       $provide.value('components/shared/auto_create_new_space/CreateSampleSpace', this.createSampleSpace);
-      $provide.value('utils/TheStore', {
+      $provide.value('TheStore', {
         getStore: sinon.stub().returns(this.store)
       });
       $provide.value('utils/LaunchDarkly', {

@@ -8,7 +8,7 @@ angular.module('contentful')
   var TokenStore = require('services/TokenStore');
   var modalDialog = require('modalDialog');
   var resendActivationEmail = require('activationEmailResender').resend;
-  var getStore = require('utils/TheStore').getStore;
+  var getStore = require('TheStore').getStore;
 
   var HOUR_IN_MS = 1000 * 60 * 60;
   var HOURS_BEFORE_REOPEN_DIALOG = 24;

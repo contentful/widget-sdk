@@ -11,7 +11,7 @@ import accessChecker from 'accessChecker';
 import $state from '$state';
 import notification from 'notification';
 import {track} from 'analytics/Analytics';
-import { getStore } from 'utils/TheStore';
+import { getStore } from 'TheStore';
 import * as LD from 'utils/LaunchDarkly';
 import * as Intercom from 'intercom';
 

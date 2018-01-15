@@ -1,16 +1,16 @@
-import StorageWrapper from 'utils/TheStore/StorageWrapper';
+import createClientStorageWrapper from 'TheStore/ClientStorageWrapper';
 
-export default function StorageStore (storageType) {
+export default function createClientStorage (storageType) {
   const storageTypeMap = {
-    local: 'LocalStorageStore',
-    session: 'SessionStorageStore'
+    local: 'LocalStorage',
+    session: 'SessionStorage'
   };
 
   if (!_.has(storageTypeMap, storageType)) {
-    throw new Error(`Invalid storage type ${storageType} passed to storageStore`);
+    throw new Error(`Invalid storage type ${storageType} passed to ClientStorage`);
   }
 
-  const storage = StorageWrapper(storageType);
+  const storage = createClientStorageWrapper(storageType);
 
   return {
     get: (key) => storage.getItem(key),

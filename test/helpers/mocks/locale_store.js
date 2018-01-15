@@ -27,7 +27,7 @@
 angular.module('contentful/mocks')
 .factory('mocks/TheLocaleStore', ['$injector', function ($injector) {
   const createBase = $injector.get('TheLocaleStore/implementation').create;
-  const getStore = $injector.get('utils/TheStore').getStore;
+  const getStore = $injector.get('TheStore').getStore;
   const localeStoreMock = createBase(getStore);
 
   /**

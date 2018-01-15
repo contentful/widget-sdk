@@ -17,7 +17,7 @@ angular.module('contentful')
 .directive('cfAppEntryOnboard', ['require', function (require) {
   var h = require('utils/hyperscript').h;
   var K = require('utils/kefir');
-  var getStore = require('utils/TheStore').getStore;
+  var getStore = require('TheStore').getStore;
   var store = getStore();
   var TokenStore = require('services/TokenStore');
   var createSampleSpace = require('components/shared/auto_create_new_space/CreateSampleSpace').default;

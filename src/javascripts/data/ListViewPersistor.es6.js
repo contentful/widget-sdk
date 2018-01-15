@@ -1,7 +1,7 @@
 import qs from 'libs/qs';
 import $q from '$q';
 import $location from '$location';
-import { getStore } from 'utils/TheStore';
+import { getStore } from 'TheStore';
 import {omit, isEmpty, isObject} from 'lodash';
 import {serialize, unserialize} from 'data/ViewSerializer';
 

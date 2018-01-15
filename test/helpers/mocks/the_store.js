@@ -3,7 +3,7 @@
 /**
  * @ngdoc service
  * @module contentful/mocks
- * @name mocks/utils/TheStore/StorageWrapper
+ * @name mocks/TheStore/StorageWrapper
  * @description
  * Provides a service with the same interface as
  * `TheStore/StorageWrapper` but only holds values in memory.
@@ -12,12 +12,14 @@
  * module.
  */
 angular.module('contentful/mocks')
-.factory('mocks/utils/TheStore/StorageWrapper', [function () {
+.factory('mocks/TheStore/ClientStorageWrapper', [function () {
   let localStore = {};
 
   return {
+    _store: localStore,
     default: function () {
       return {
+
         getItem: function (key) {
           return localStore[key];
         },

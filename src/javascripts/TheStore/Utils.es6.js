@@ -1,5 +1,12 @@
 import * as K from 'utils/kefir';
 import window from 'global/window';
+import { partial } from 'lodash';
+
+/*
+  This module provides methods to be exposed by a given storage, as utilities.
+  Each utility, with the exception of `externalChanges` must be given a specific
+  storage (LocalStorage, SessionStorage, CookieStorage) as the first argument.
+ */
 
 /**
  * @ngdoc method
@@ -59,6 +66,13 @@ export function has (storage, key) {
   return get(storage, key) !== null;
 }
 
+/**
+ * Watches the `storage` window method and provides a
+ * Kefir.fromEvents object that will update when the
+ * provided `key` is updated.
+ * @param  {string} key
+ * @return {Kefir stream}
+ */
 export function externalChanges (key) {
   return K.fromEvents(window, 'storage')
     .filter(function (event) {
@@ -69,42 +83,38 @@ export function externalChanges (key) {
     });
 }
 
-
 /**
- * @ngdoc method
- * @name TheStore#forKey
- * @param {string} key
- * @description
- * Returns an object with `get()` and `set()` methods that are
- * parameterized by the `key` argument.
- *
- * ~~~js
- * var mystore = TheStore.forKey('mykey')
- * TheStore.set('mykey', true);
- * assert(mystore.get() === true)
- * mystore.set('Hello')
- * assert(TheStore.get('mykey') === 'Hello')
- * ~~~
+ * Returns a storage-like object that is parameterized by
+ * a given storage and key.
+ * @param  {Storage} storage
+ * @param  {string} key
+ * @return {Object}
  */
 export function forKey (storage, key) {
   return {
-    get: _.partial(get, storage, key),
-    set: _.partial(set, storage, key),
-    remove: _.partial(remove, storage, key),
-    has: _.partial(has, storage, key),
-    externalChanges: _.partial(externalChanges, key),
+    get: partial(get, storage, key),
+    set: partial(set, storage, key),
+    remove: partial(remove, storage, key),
+    has: partial(has, storage, key),
+    externalChanges: partial(externalChanges, key),
     type: storage.type
   };
 }
 
+/**
+ * Returns a storage-like object that is parameterized
+ * by the given storage.
+ * @param  {Storage} storage
+ * @return {Object}
+ */
 export function forStorage (storage) {
   return {
-    get: _.partial(get, storage),
-    set: _.partial(set, storage),
-    remove: _.partial(remove, storage),
-    has: _.partial(has, storage),
+    get: partial(get, storage),
+    set: partial(set, storage),
+    remove: partial(remove, storage),
+    has: partial(has, storage),
     externalChanges: externalChanges,
-    forKey: _.partial(forKey, storage),
+    forKey: partial(forKey, storage),
     type: storage.type
   };
 }

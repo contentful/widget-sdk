@@ -43,7 +43,7 @@ describe('activationEmailResendController', function () {
 
     const controller = this.$inject('activationEmailResendController');
 
-    const getStore = this.$inject('utils/TheStore').getStore;
+    const getStore = this.$inject('TheStore').getStore;
     this.store = getStore().forKey('lastActivationEmailResendReminderTimestamp');
     controller.init();
   });

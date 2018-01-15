@@ -20,7 +20,7 @@ describe('Content Type List Controller', function () {
 
     const $controller = this.$inject('$controller');
     const $rootScope = this.$inject('$rootScope');
-    const getStore = this.$inject('utils/TheStore').getStore;
+    const getStore = this.$inject('TheStore').getStore;
     const store = getStore();
 
     cfStub = this.$inject('cfStub');

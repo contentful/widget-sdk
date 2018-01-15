@@ -20,7 +20,7 @@ angular.module('contentful')
   var LD = require('utils/LaunchDarkly');
   var K = require('utils/kefir');
   var TokenStore = require('services/TokenStore');
-  var getStore = require('utils/TheStore').getStore;
+  var getStore = require('TheStore').getStore;
   var store = getStore();
   var $state = require('$state');
   var Analytics = require('analytics/Analytics');

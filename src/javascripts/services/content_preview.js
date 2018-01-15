@@ -12,7 +12,7 @@ angular.module('contentful')
   var TheLocaleStore = require('TheLocaleStore');
   var spaceContext = require('spaceContext');
   var previewEnvironmentsCache = require('data/previewEnvironmentsCache');
-  var getStore = require('utils/TheStore').getStore;
+  var getStore = require('TheStore').getStore;
   var store = getStore();
 
   var ENTRY_ID_PATTERN = /\{\s*entry_id\s*\}/g;

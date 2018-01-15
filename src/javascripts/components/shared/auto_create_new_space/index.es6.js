@@ -1,4 +1,4 @@
-import { getStore } from 'utils/TheStore';
+import { getStore } from 'TheStore';
 import {combine} from 'utils/kefir';
 import {getCurrentVariation} from 'utils/LaunchDarkly';
 import {user$, spacesByOrganization$ as spacesByOrg$} from 'services/TokenStore';

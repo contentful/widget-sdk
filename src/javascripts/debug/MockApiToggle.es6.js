@@ -1,7 +1,7 @@
 import $window from '$window';
 import {createElement as h} from 'libs/react';
 import location from '$location';
-import { getStore } from 'utils/TheStore';
+import { getStore } from 'TheStore';
 import {omit} from 'lodash';
 import {addNotification} from 'debug/DevNotifications';
 import {settings} from 'environment';

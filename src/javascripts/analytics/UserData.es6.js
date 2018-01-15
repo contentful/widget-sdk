@@ -1,4 +1,4 @@
-import CookieStore from 'utils/TheStore/CookieStore';
+import CookieStorage from 'TheStore/CookieStorage';
 import {pickBy, merge} from 'lodash';
 
 /**
@@ -42,7 +42,7 @@ function getFirstVisitData () {
 
 function parseCookie (cookieName, prop) {
   try {
-    const cookie = CookieStore.get(cookieName);
+    const cookie = CookieStorage.get(cookieName);
     return JSON.parse(cookie)[prop];
   } catch (err) {
     return null;

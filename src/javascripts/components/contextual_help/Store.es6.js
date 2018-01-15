@@ -7,7 +7,7 @@
  * It also holds shared actions.
  */
 import {merge, pick} from 'lodash';
-import { getStore } from 'utils/TheStore';
+import { getStore } from 'TheStore';
 import * as events from 'analytics/events/ContextualHelp';
 
 

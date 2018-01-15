@@ -1,5 +1,5 @@
 import { h } from 'utils/hyperscript';
-import { getStore } from 'utils/TheStore';
+import { getStore } from 'TheStore';
 import sectionAccess from 'sectionAccess';
 import * as Analytics from 'analytics/Analytics';
 import * as TokenStore from 'services/TokenStore';

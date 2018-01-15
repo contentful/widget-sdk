@@ -2,7 +2,7 @@ import {find} from 'lodash';
 import makeState from 'states/Base';
 import $state from '$state';
 import {getSpaces} from 'services/TokenStore';
-import { getStore } from 'utils/TheStore';
+import { getStore } from 'TheStore';
 import template from 'app/home/HomeTemplate';
 
 const store = getStore();
