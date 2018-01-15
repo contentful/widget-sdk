@@ -2,7 +2,6 @@ import {createElement as h} from 'libs/react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import {runTask} from 'utils/Concurrent';
-import {pick} from 'lodash';
 import {createEndpoint as createOrgEndpoint} from 'access_control/OrganizationMembershipRepository';
 import {getSpacesWithPlans} from 'account/pricing/PricingDataProvider';
 import {href} from 'states/Navigator';
@@ -53,6 +52,7 @@ const SpacePlans = createReactClass({
     }
   },
   render: function () {
+    const {spaces, canCreateSpace} = this.state;
     return h('div', {className: 'workbench'},
       h('div', {className: 'workbench-header__wrapper'},
         h('header', {className: 'workbench-header'},
@@ -62,11 +62,12 @@ const SpacePlans = createReactClass({
       ),
       h('div', {className: 'workbench-main'},
         h('div', {className: 'workbench-main__content'},
-          h(SpacesList, pick(this.state, 'spaces'))
+          h(SpacesList, {spaces})
         ),
         h('div', {className: 'workbench-main__sidebar'},
           h(RightSidebar, {
-            ...pick(this.state, 'spaces', 'canCreateSpace'),
+            spaces,
+            canCreateSpace,
             onCreateSpace: this.createSpace
           })
         )
