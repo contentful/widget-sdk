@@ -2,19 +2,35 @@
 
 import ClientStorageWrapper from 'TheStore/ClientStorageWrapper';
 import { getStore } from 'TheStore';
-
 import { createIsolatedSystem } from 'test/helpers/system-js';
+
+import Cookies from 'Cookies';
 
 describe('TheStore', function () {
   describe('#getStore', function () {
     it('should return the default local storage if called with no arguments', function () {
-      expect(getStore().type).toBe('LocalStorage');
+      const local = getStore('local');
+
+      local.set('localKey', 'localValue');
+      expect(window.localStorage.getItem('localKey')).toBe('localValue');
     });
 
-    it('should return the specified storage type if requested', function () {
-      expect(getStore('local').type).toBe('LocalStorage');
-      expect(getStore('session').type).toBe('SessionStorage');
-      expect(getStore('cookie').type).toBe('CookieStorage');
+    it('should return the storage based on given argument', function () {
+      const local = getStore('local');
+      const session = getStore('session');
+      const cookie = getStore('cookie');
+
+      // Test localStorage
+      local.set('localKey', 'localValue');
+      expect(window.localStorage.getItem('localKey')).toBe('localValue');
+
+      // Test sessionStorage
+      session.set('sessionKey', 'sessionValue');
+      expect(window.sessionStorage.getItem('sessionKey')).toBe('sessionValue');
+
+      // Test cookies
+      cookie.set('cookieKey', 'cookieValue');
+      expect(Cookies.get('cookieKey')).toBe('cookieValue');
     });
   });
 

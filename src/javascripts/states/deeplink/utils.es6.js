@@ -1,5 +1,5 @@
 import {getSpaces, getOrganizations, getOrganization} from 'services/TokenStore';
-import { getStore } from 'utils/TheStore';
+import { getStore } from 'TheStore';
 import accessChecker from 'accessChecker';
 import {isOwnerOrAdmin} from 'services/OrganizationRoles';
 

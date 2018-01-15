@@ -1,15 +1,6 @@
 import createClientStorageWrapper from 'TheStore/ClientStorageWrapper';
 
 export default function createClientStorage (storageType) {
-  const storageTypeMap = {
-    local: 'LocalStorage',
-    session: 'SessionStorage'
-  };
-
-  if (!_.has(storageTypeMap, storageType)) {
-    throw new Error(`Invalid storage type ${storageType} passed to ClientStorage`);
-  }
-
   const storage = createClientStorageWrapper(storageType);
 
   return {
@@ -24,7 +15,6 @@ export default function createClientStorage (storageType) {
       } catch (e) {
         return false;
       }
-    },
-    type: storageTypeMap[storageType]
+    }
   };
 }

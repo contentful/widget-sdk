@@ -9,6 +9,8 @@ export default function createClientStorageWrapper (storageType) {
     storage = window.localStorage;
   } else if (storageType === 'session') {
     storage = window.sessionStorage;
+  } else {
+    throw new Error(`Invalid storage type ${storageType} passed to ClientStorageWrapper`);
   }
 
   methods.forEach(method => {

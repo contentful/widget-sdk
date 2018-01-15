@@ -1,6 +1,6 @@
 import * as K from 'utils/kefir';
 import window from 'global/window';
-import { partial } from 'lodash';
+import { partial, isString } from 'lodash';
 
 /*
   This module provides methods to be exposed by a given storage, as utilities.
@@ -18,7 +18,7 @@ import { partial } from 'lodash';
  * Stores the value under the key. Replaces current value, if already set.
  */
 export function set (storage, key, value) {
-  value = _.isString(value) ? value : JSON.stringify(value);
+  value = isString(value) ? value : JSON.stringify(value);
   storage.set(key, value);
 }
 
@@ -96,8 +96,7 @@ export function forKey (storage, key) {
     set: partial(set, storage, key),
     remove: partial(remove, storage, key),
     has: partial(has, storage, key),
-    externalChanges: partial(externalChanges, key),
-    type: storage.type
+    externalChanges: partial(externalChanges, key)
   };
 }
 
@@ -114,7 +113,6 @@ export function forStorage (storage) {
     remove: partial(remove, storage),
     has: partial(has, storage),
     externalChanges: externalChanges,
-    forKey: partial(forKey, storage),
-    type: storage.type
+    forKey: partial(forKey, storage)
   };
 }

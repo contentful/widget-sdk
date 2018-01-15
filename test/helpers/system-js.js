@@ -28,14 +28,14 @@ export function createIsolatedSystem () {
   return {
     [sysSymbol]: isolatedSystem,
     set: function (path, module) {
-      const newModule = this[sysSymbol].newModule(module);
+      const newModule = isolatedSystem.newModule(module);
 
-      this[sysSymbol].delete(path);
+      isolatedSystem.delete(path);
 
-      return this[sysSymbol].set(path, newModule);
+      return isolatedSystem.set(path, newModule);
     },
     import: function (path) {
-      return this[sysSymbol].import(path);
+      return isolatedSystem.import(path);
     }
   };
 }

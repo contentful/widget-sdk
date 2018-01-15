@@ -1,6 +1,8 @@
 import Cookies from 'Cookies';
 import env from 'environment';
 
+import { extend } from 'lodash';
+
 /*
   Provides methods for accessing cookie storage.
  */
@@ -12,7 +14,7 @@ export const get = key => Cookies.get(key);
 export const remove = key => Cookies.remove(key, getBaseAttrs());
 
 export function set (key, value) {
-  const attrs = _.extend({ expires: 365 }, getBaseAttrs());
+  const attrs = extend({ expires: 365 }, getBaseAttrs());
 
   Cookies.set(key, value, attrs);
 }
