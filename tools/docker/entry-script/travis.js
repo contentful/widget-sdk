@@ -43,9 +43,22 @@ export default function* runTravis ({branch, pr, version}) {
   yield* createFileDist('production', version, travis.distBranch)
   yield* createFileDist('development', version, travis.distBranch)
   if (travis.isMainBranch) {
+    const rootIndexPathForEnv = targetPath(travis.targetEnv, 'index.html')
+    const revisionPathForEnv = targetPath(travis.targetEnv, 'revision.json')
+
     yield* configureIndex(version, travis.targetEnv, 'build/index.html')
     yield* createPackageDist(version)
+
+    // new deploy will use these two files and not the package built above
+    yield* configureIndex(version, travis.targetEnv, rootIndexPathForEnv)
+
+    console.log(`Creating revision.json for "${travis.targetEnv}" at ${P.relative('', revisionPathForEnv)}`)
+    yield* buildAndWriteRevisionJson(version, revisionPathForEnv)
   }
+}
+
+function* buildAndWriteRevisionJson (version, outPath) {
+  yield writeJSON(outPath, {revision: version})
 }
 
 
@@ -120,22 +133,22 @@ function getTravisTargetEnv (branch, isMerge) {
  */
 function* createFileDist (env, version, branch, includeStyleguide) {
   console.log(`Creating file distribution for "${env}"`)
-  yield copy(P.join(BUILD_SRC, 'app'), targetPath('app'))
+  yield copy(P.join(BUILD_SRC, 'app'), targetPath(env, 'app'))
 
-  const commitHashIndex = targetPath('archive', version, 'index-compiled.html')
+  const commitHashIndex = targetPath(env, 'archive', version, 'index-compiled.html')
   yield* configureIndex(version, env, commitHashIndex)
   if (branch) {
-    const branchIndexPath = targetPath('archive', branch, 'index-compiled.html')
+    const branchIndexPath = targetPath(env, 'archive', branch, 'index-compiled.html')
     yield* configureIndex(version, env, branchIndexPath)
     if (includeStyleguide) {
-      const styleguidePath = targetPath('styleguide', branch)
+      const styleguidePath = targetPath(env, 'styleguide', branch)
       yield copy(P.join(BUILD_SRC, 'styleguide'), styleguidePath)
     }
   }
+}
 
-  function targetPath (...components) {
-    return P.join(FILE_DIST_DEST, env, ...components)
-  }
+function targetPath (...components) {
+  return P.join(FILE_DIST_DEST, ...components)
 }
 
 /*
