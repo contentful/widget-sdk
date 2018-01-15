@@ -22,7 +22,7 @@ const ID_EXISTS_ERROR_MESSAGE =
 const NAME_EXISTS_ERROR_MESSAGE =
   'This ID already exists in your space. Please make sure it’s unique.';
 const INVALID_ID_CHARACTER_ERROR_MESSAGE =
-  'Please use only letters, numbers, underscores, and dashes for the ID.';
+  'Please use only letters, numbers, underscores, and dashes for the ID, and make sure the first character is a letter.';
 const EMPTY_FIELD_ERROR_MESSAGE =
   'Please fill out this field.';
 
@@ -179,7 +179,7 @@ const reduce = makeReducer({
 
 
 // Regular expression to validate IDs against
-const ID_REGEXP = /^[0-9a-zA-Z\-._]{1,64}$/;
+const ID_REGEXP = /^[a-zA-Z0-9][a-zA-Z0-9-_]{0,63}$/;
 
 
 /**
