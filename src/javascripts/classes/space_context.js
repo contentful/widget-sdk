@@ -121,7 +121,7 @@ angular.module('contentful')
             self.uiConfig = api;
           });
         }),
-        TheLocaleStore.reset(self.endpoint)
+        TheLocaleStore.init(self.endpoint)
       ]).then(function () {
         return self;
       });

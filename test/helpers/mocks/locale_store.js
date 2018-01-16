@@ -52,7 +52,7 @@ angular.module('contentful/mocks')
     locales[0].default = true;
 
     const endpoint = () => ({then: handle => handle({items: locales})});
-    localeStoreMock.reset(endpoint);
+    localeStoreMock.init(endpoint);
 
     localeStoreMock.setActiveLocales(_.reject(locales, locale => {
       return 'active' in locale && !locale.active;

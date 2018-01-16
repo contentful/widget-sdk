@@ -29,6 +29,10 @@ angular.module('contentful')
     var store = null;
     var defaultLocale = null;
 
+    var spaceEndpoint = function () {
+      return Promise.reject(new Error('Call .init(endpoint) first'));
+    };
+
     // All locales fetched from the CMA, including delivery-only locales
     var locales = [];
     // Locales that can be used for entity editing
@@ -45,7 +49,8 @@ angular.module('contentful')
     var codeToActiveLocaleMap = {};
 
     return {
-      reset: reset,
+      init: init,
+      refresh: refresh,
       getLocales: getLocales,
       getDefaultLocale: getDefaultLocale,
       getActiveLocales: getActiveLocales,
@@ -57,16 +62,21 @@ angular.module('contentful')
       deactivateLocale: deactivateLocale
     };
 
+    function init (_spaceEndpoint) {
+      spaceEndpoint = _spaceEndpoint;
+      return refresh();
+    }
+
     /**
      * @ngdoc method
-     * @name TheLocaleStore#reset
+     * @name TheLocaleStore#refresh
      * @description
      * Updates the store's state by getting data from
      * the CMA `/locales` endpoint.
      * @param {Data.Endpoint} spaceEndpoint
      * @returns {Promise<void>}
      */
-    function reset (spaceEndpoint) {
+    function refresh () {
       return spaceEndpoint({method: 'GET', path: ['locales']})
       .then(function (res) {
         locales = res.items;

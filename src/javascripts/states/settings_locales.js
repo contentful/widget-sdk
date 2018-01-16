@@ -10,6 +10,7 @@ angular.module('contentful')
   var base = require('states/Base').default;
   var contextHistory = require('contextHistory');
   var crumbFactory = require('navigation/CrumbFactory');
+  var TheLocaleStore = require('TheLocaleStore');
 
   var list = base({
     name: 'list',
@@ -41,11 +42,11 @@ angular.module('contentful')
     ]
   };
 
-  var resolveSpaceLocales = ['spaceContext', function (spaceContext) {
-    // TODO introduce locale repo
-    return spaceContext.endpoint({method: 'GET', path: ['locales']})
-    .then(function (res) { return res.items; });
-  }];
+  var resolveSpaceLocales = function () {
+    return TheLocaleStore.refresh().then(function () {
+      return TheLocaleStore.getLocales();
+    });
+  };
 
   var newLocale = _.extend({
     name: 'new',
@@ -54,15 +55,15 @@ angular.module('contentful')
       isNew: true
     },
     resolve: {
-      locale: ['spaceContext', function (spaceContext) {
-        return spaceContext.space.newLocale({
+      locale: function () {
+        return {
           sys: {},
           code: null,
           fallbackCode: null,
           contentDeliveryApi: true,
           contentManagementApi: true
-        });
-      }],
+        };
+      },
       spaceLocales: resolveSpaceLocales
     }
   }, localeEditorState);
@@ -74,13 +75,11 @@ angular.module('contentful')
       isNew: false
     },
     resolve: {
-      locale: ['$stateParams', 'spaceContext', function ($stateParams, spaceContext) {
-        // TODO introduce locale repo
-        return spaceContext.endpoint({
-          method: 'GET',
-          path: ['locales', $stateParams.localeId]
-        }).then(function (res) {
-          return spaceContext.space.newLocale(res);
+      locale: ['$stateParams', function ($stateParams) {
+        var id = $stateParams.localeId;
+        return TheLocaleStore.refresh().then(function () {
+          var found = _.find(TheLocaleStore.getLocales(), {sys: {id: id}});
+          return found || Promise.reject(new Error('No locale with ID ' + id + ' found.'));
         });
       }],
       spaceLocales: resolveSpaceLocales

@@ -45,7 +45,7 @@ angular.module('contentful')
   var formWasDirty = false;
   var persistedLocaleCode = null;
 
-  $scope.locales = localeList.prepareLocaleList($scope.locale.data);
+  $scope.locales = localeList.prepareLocaleList($scope.locale);
   onLoadOrUpdate();
 
   $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
@@ -54,26 +54,26 @@ angular.module('contentful')
     $scope.context.dirty = modified;
   });
 
-  $scope.$watch('locale.data.code', function (code) {
+  $scope.$watch('locale.code', function (code) {
     $scope.context.title = prepareTitle();
     clearFallbackIfTheSame(code);
     $scope.fallbackLocales = localeList.prepareFallbackList(code);
   });
 
   function onLoadOrUpdate () {
-    var code = $scope.locale.data.code;
+    var code = $scope.locale.code;
     persistedLocaleCode = code;
     $scope.hasDependantLocales = localeList.hasDependantLocales(code);
   }
 
   function prepareTitle () {
     var name = getLocaleName();
-    var empty = $scope.locale.data.sys.id ? 'Unnamed locale' : 'New locale';
+    var empty = $scope.locale.sys.id ? 'Unnamed locale' : 'New locale';
     return name || empty;
   }
 
   function getLocaleName () {
-    var code = $scope.locale.data.code;
+    var code = $scope.locale.code;
     var locale = findLocale(code);
     return locale && locale.name;
   }
@@ -87,8 +87,8 @@ angular.module('contentful')
   // in this situation we clear the fallback code;
   // it cannot happen in the opposite direction (list is filtered)
   function clearFallbackIfTheSame (code) {
-    if (code && $scope.locale.data.fallbackCode === code) {
-      $scope.locale.data.fallbackCode = null;
+    if (code && $scope.locale.fallbackCode === code) {
+      $scope.locale.fallbackCode = null;
     }
   }
 
@@ -100,8 +100,8 @@ angular.module('contentful')
   controller.delete = Command.create(startDeleteFlow, {
     available: function () {
       return !$scope.context.isNew &&
-             $scope.locale.data.sys.id &&
-             !$scope.locale.data.default;
+             $scope.locale.sys.id &&
+             !$scope.locale.default;
     }
   });
 
@@ -126,7 +126,7 @@ angular.module('contentful')
   }
 
   function maybeOpenFallbackLocaleChangeDialog () {
-    if (localeList.hasDependantLocales($scope.locale.data.code)) {
+    if (localeList.hasDependantLocales($scope.locale.code)) {
       return openFallbackLocaleChangeDialog();
     } else {
       return $q.resolve();
@@ -134,7 +134,7 @@ angular.module('contentful')
   }
 
   function openFallbackLocaleChangeDialog () {
-    var code = $scope.locale.data.code;
+    var code = $scope.locale.code;
     var dependantLocales = localeList.getDependantLocales(code);
 
     return modalDialog.open({
@@ -177,9 +177,9 @@ angular.module('contentful')
   }
 
   function deleteLocale () {
-    return $scope.locale.delete()
+    return spaceContext.space.newLocale($scope.locale).delete()
     .then(function deletedSuccesfully () {
-      return TheLocaleStore.reset(spaceContext.endpoint)
+      return TheLocaleStore.refresh()
       .then(function () {
         return closeState();
       })
@@ -213,7 +213,7 @@ angular.module('contentful')
   controller.save = Command.create(save, {
     disabled: function () {
       var form = $scope.localeForm;
-      return form.$invalid || !form.$dirty || !$scope.locale.data.code;
+      return form.$invalid || !form.$dirty || !$scope.locale.code;
     }
   });
 
@@ -223,12 +223,12 @@ angular.module('contentful')
       return $q.reject();
     }
 
-    $scope.locale.data.name = getLocaleName();
+    $scope.locale.name = getLocaleName();
     lockFormWhileSubmitting();
     return confirmCodeChange()
     .then(function (result) {
       if (result.confirmed) {
-        return $scope.locale.save()
+        return spaceContext.space.newLocale($scope.locale).save()
         .then(saveSuccessHandler)
         .catch(saveErrorHandler);
       } else {
@@ -237,15 +237,18 @@ angular.module('contentful')
     });
   }
 
-  function saveSuccessHandler (response) {
+  function saveSuccessHandler (locale) {
+    $scope.locale = locale.data;
     $scope.localeForm.$setPristine();
     $scope.context.dirty = false;
-    return TheLocaleStore.reset(spaceContext.endpoint)
+    return TheLocaleStore.refresh()
     .then(function () {
       onLoadOrUpdate();
       notify.saveSuccess();
       if ($scope.context.isNew) {
-        return $state.go('spaces.detail.settings.locales.detail', { localeId: response.getId() });
+        return $state.go('spaces.detail.settings.locales.detail', {
+          localeId: $scope.locale.sys.id
+        });
       }
     });
   }
@@ -271,7 +274,7 @@ angular.module('contentful')
   }
 
   function wasLocaleCodeChanged () {
-    return persistedLocaleCode && persistedLocaleCode !== $scope.locale.data.code;
+    return persistedLocaleCode && persistedLocaleCode !== $scope.locale.code;
   }
 
   function lockFormWhileSubmitting () {

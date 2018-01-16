@@ -26,7 +26,7 @@ describe('entityEditor/LocalesController', function () {
 
     beforeEach(function* () {
       this.localeStore = this.$inject('TheLocaleStore');
-      yield this.localeStore.reset(() => Promise.resolve({items: [locale]}));
+      yield this.localeStore.init(() => Promise.resolve({items: [locale]}));
 
       this.localeStore.setActiveLocales([locale]);
       this.controller = this.createController();
