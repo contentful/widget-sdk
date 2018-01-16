@@ -31,7 +31,6 @@ angular.module('contentful')
 */
 .controller('LocaleEditorController', ['$scope', 'require', function ($scope, require) {
   var controller = this;
-  var spaceContext = require('spaceContext');
   var TheLocaleStore = require('TheLocaleStore');
   var $q = require('$q');
   var modalDialog = require('modalDialog');
@@ -169,7 +168,7 @@ angular.module('contentful')
       if (localeToUpdate) {
         var data = _.cloneDeep(localeToUpdate);
         data.fallbackCode = newFallbackCode;
-        return spaceContext.space.newLocale(data).save();
+        return TheLocaleStore.saveLocale(data);
       } else {
         return $q.resolve();
       }
@@ -177,7 +176,8 @@ angular.module('contentful')
   }
 
   function deleteLocale () {
-    return spaceContext.space.newLocale($scope.locale).delete()
+    var sys = $scope.locale.sys;
+    return TheLocaleStore.deleteLocale(sys.id, sys.version)
     .then(function deletedSuccesfully () {
       return TheLocaleStore.refresh()
       .then(function () {
@@ -228,7 +228,7 @@ angular.module('contentful')
     return confirmCodeChange()
     .then(function (result) {
       if (result.confirmed) {
-        return spaceContext.space.newLocale($scope.locale).save()
+        return TheLocaleStore.saveLocale($scope.locale)
         .then(saveSuccessHandler)
         .catch(saveErrorHandler);
       } else {
@@ -238,7 +238,7 @@ angular.module('contentful')
   }
 
   function saveSuccessHandler (locale) {
-    $scope.locale = locale.data;
+    $scope.locale = locale;
     $scope.localeForm.$setPristine();
     $scope.context.dirty = false;
     return TheLocaleStore.refresh()

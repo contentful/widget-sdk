@@ -60,7 +60,9 @@ angular.module('contentful')
       toPublicCode: toPublicCode,
       setActiveLocales: setActiveLocales,
       isLocaleActive: isLocaleActive,
-      deactivateLocale: deactivateLocale
+      deactivateLocale: deactivateLocale,
+      saveLocale: saveLocale,
+      deleteLocale: deleteLocale
     };
 
     function init (_spaceEndpoint) {
@@ -238,6 +240,27 @@ angular.module('contentful')
       });
 
       store.set(_.map(activeLocales, 'code'));
+    }
+
+    function saveLocale (data) {
+      var sys = data.sys;
+      var isNew = !sys || !sys.id;
+      data = _.omit(data, ['sys', 'default', 'internal_code']);
+
+      return spaceEndpoint({
+        method: isNew ? 'POST' : 'PUT',
+        path: ['locales'].concat(isNew ? [] : [sys.id]),
+        data: data,
+        version: isNew ? undefined : sys.version
+      });
+    }
+
+    function deleteLocale (id, version) {
+      return spaceEndpoint({
+        method: 'DELETE',
+        path: ['locales', id],
+        version: version
+      });
     }
   }
 }]);
