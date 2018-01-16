@@ -12,22 +12,12 @@ bin/docker-build-ci
 # Runs karma tests and eslint and validates configuration in a container
 bin/docker-run-ci test
 
-# Creates Debian package and static files inside './output'
+# Creates static files inside './output'
 bin/docker-run-ci travis --branch "${TRAVIS_BRANCH}" --version "${TRAVIS_COMMIT}" --pr "${TRAVIS_PULL_REQUEST}"
 
-# Upload './output/archive' to 'pkg.contentful.org'
+# Upload `./output/files/${env}` to env specific S3 buckets
 # Travis does that, no script needs to be run
-
-# Publish the package
-bin/trigger-packagebot
-
-# Upload './output/files' to 'cf-preview-static-cdnorigin'
-# Travis does that, no script needs to be run
-
-# Trigger a Jenkins build if necessary
-bin/travis-run-jenkins
 ~~~
-
 
 The Docker Image
 ----------------
@@ -52,8 +42,7 @@ commands to test, serve, and distribute the application. Run `bin/docker-run-ci
 
 The user interface image is based on the public
 [`contentful/user-interface-base`][cf-ui-base-image]. This image contains system
-dependencies like Chrome and the fpm gem that are required to build and test
-the code. The image is hosted on the Docker hub.
+dependencies like Chrome. The image is hosted on the Docker hub.
 
 [cf-ui-base-image]: https://hub.docker.com/r/contentful/user-interface-base
 
@@ -96,8 +85,10 @@ host. There are three target environments (“preview”, “staging”, and
 
 The `bin/docker-run travis` command creates distributions containing the
 application files. It builds a file distribution for each environment in
-`output/files/{env}` and creates a Debian package when we deploy an environment
-branch.
+`output/files/{env}`. These artefacts are uploaded to the respective S3
+bucket by travis. From there, chef takes over and copies the `index.html`
+from the S3 bucket for the environment in question. It is then served
+by nginx and assets (js, css, etc) are fetched from S3.
 
 The fingerprinted asset files only depend on the current revision of the
 repository. They are included in the `user-interface` image together with
