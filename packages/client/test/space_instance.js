@@ -2,7 +2,6 @@ const {expect, coit, clone} = require('./support');
 const describeEntry = require('./entry');
 const describeAsset = require('./asset');
 const describeContentType = require('./content_type');
-const describeLocale = require('./locale');
 
 module.exports = function spaceInstanceDescription (serverSpaceData) {
   describe('instance', function () {
@@ -16,7 +15,6 @@ module.exports = function spaceInstanceDescription (serverSpaceData) {
     describeEntry();
     describeAsset();
     describeContentType();
-    describeLocale();
 
     coit('disabled #update, #save and #delete', function () {
       expect(this.space.update).to.throw();

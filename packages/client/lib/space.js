@@ -4,7 +4,6 @@ var Entity = require('./entity');
 var ContentType = require('./content_type');
 var Entry = require('./entry');
 var Asset = require('./asset');
-var Locale = require('./locale');
 var _ = require('lodash');
 var createResourceFactoryMethods = require('./resource_factory');
 
@@ -48,8 +47,7 @@ Space.mixinFactoryMethods = function (target, path) {
 _.extend(Space.prototype,
   ContentType.factoryMethods,
   Entry.factoryMethods,
-  Asset.factoryMethods,
-  Locale.factoryMethods
+  Asset.factoryMethods
 );
 
 module.exports = Space;

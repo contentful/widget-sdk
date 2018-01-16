@@ -202,12 +202,6 @@ module.exports = function describeEntity (names, description) {
       });
     });
 
-    describe('#serialize()', function () {
-      it('returns serialized data', function () {
-        expect(this.entity.serialize()).to.equal(this.entity.data);
-      });
-    });
-
     describe('#getPublishedState', function () {
       coit('sends GET request', function* () {
         this.entity.data.sys.id = 'eid';
