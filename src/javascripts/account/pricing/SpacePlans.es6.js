@@ -1,102 +1,129 @@
-import {h} from 'ui/Framework';
+import {createElement as h} from 'libs/react';
+import createReactClass from 'create-react-class';
+import PropTypes from 'libs/prop-types';
 import {runTask} from 'utils/Concurrent';
-import {pick} from 'lodash';
 import {createEndpoint as createOrgEndpoint} from 'access_control/OrganizationMembershipRepository';
-import {getSpacePlans} from 'account/pricing/PricingDataProvider';
-import {href} from 'states/Navigator';
+import {getSpacesWithPlans} from 'account/pricing/PricingDataProvider';
+import {go, href} from 'states/Navigator';
 import svgPlus from 'svg/plus';
 import {showDialog as showCreateSpaceModal} from 'services/CreateSpace';
 import {canCreateSpaceInOrganization} from 'accessChecker';
+import {getOrganization} from 'services/TokenStore';
+import {isOwnerOrAdmin} from 'services/OrganizationRoles';
+import * as ReloadNotification from 'ReloadNotification';
+import {asReact} from 'ui/Framework/DOMRenderer';
 
-export default function ($scope) {
-  $scope.component = h('noscript');
-  const {properties} = $scope;
+const spacePlansPropTypes = {
+  onReady: PropTypes.func.isRequired,
+  onForbidden: PropTypes.func.isRequired,
+  orgId: PropTypes.string.isRequired
+};
 
-  let state = {};
-  const actions = {
-    addSpace: () => { showCreateSpaceModal(state.orgId); }
-  };
+const SpacePlans = createReactClass({
+  getInitialState: function () {
+    return {
+      spaces: {items: []},
+      canCreateSpace: false
+    };
+  },
+  componentWillMount: function () {
+    runTask(this.fetchData);
+  },
+  fetchData: function* () {
+    const {orgId, onReady, onForbidden} = this.props;
 
-  runTask(function* () {
-    const nextState = yield* loadStateFromProperties(properties);
-    rerender(nextState);
-  });
+    const org = yield getOrganization(orgId);
+    if (!isOwnerOrAdmin(org)) {
+      onForbidden();
+      return;
+    }
 
-  function rerender (nextState) {
-    $scope.properties.context.ready = true;
-    state = nextState;
-    $scope.component = render(state, actions);
-    $scope.$applyAsync();
-  }
-}
+    const endpoint = createOrgEndpoint(orgId);
+    const spaces = yield getSpacesWithPlans(endpoint)
+      .catch(ReloadNotification.apiErrorHandler);
 
-function* loadStateFromProperties ({orgId}) {
-  const endpoint = createOrgEndpoint(orgId);
-
-  // TODO load spaces from org endpoint and map them to plans
-  // see https://contentful.tpondemand.com/entity/24639
-  const spacePlans = yield getSpacePlans(endpoint);
-  const canCreateSpace = canCreateSpaceInOrganization(orgId);
-
-  return {orgId, spacePlans, canCreateSpace};
-}
-
-function render (state, actions) {
-  return h('.workbench', [
-    h('.workbench-header__wrapper', [
-      h('header.workbench-header', [
-        h('.workbench-header__icon', [/* TODO missing icon */]),
-        h('h1.workbench-header__title', ['Spaces'])
-      ])
-    ]),
-    h('.workbench-main', [
-      h('.workbench-main__content', [
-        renderSpacePlans(pick(state, 'spacePlans'))
-      ]),
-      h('.workbench-main__sidebar', [
-        renderRightSidebar(pick(state, 'canCreateSpace', 'spacePlans'), actions)
-      ])
-    ])
-  ]);
-}
-
-function renderSpacePlans ({spacePlans}) {
-  return h('.table', [
-    h('.table__head', [
-      h('table', [
-        h('thead', [
-          h('tr', [h('th', ['Name']), h('th', ['Plan'])])
-        ])
-      ])
-    ]),
-    h('.table__body', [
-      h('table', [
-        h('tbody',
-          spacePlans.map(({space, name}) =>
-            h('tr', [
-              h('td', [h('a', {href: getSpaceLink(space.sys.id)}, [space.name])]),
-              h('td', [name])
-            ])
-          )
+    onReady();
+    const canCreateSpace = canCreateSpaceInOrganization(this.props.orgId);
+    this.setState({spaces, canCreateSpace});
+  },
+  createSpace: function () {
+    if (this.state.canCreateSpace) {
+      showCreateSpaceModal(this.props.orgId);
+    }
+  },
+  render: function () {
+    const {spaces, canCreateSpace} = this.state;
+    return h('div', {className: 'workbench'},
+      h('div', {className: 'workbench-header__wrapper'},
+        h('header', {className: 'workbench-header'},
+          h('div', {className: 'workbench-header__icon'}), /* TODO missing icon */
+          h('h1', {className: 'workbench-header__title'}, 'Spaces')
         )
-      ])
-    ])
-  ]);
+      ),
+      h('div', {className: 'workbench-main'},
+        h('div', {className: 'workbench-main__content', style: {padding: '2rem 3.15rem'}},
+          h(SpacesList, {spaces})
+        ),
+        h('div', {className: 'workbench-main__sidebar'},
+          h(RightSidebar, {
+            spaces,
+            canCreateSpace,
+            onCreateSpace: this.createSpace
+          })
+        )
+      )
+    );
+  }
+});
+
+SpacePlans.propTypes = spacePlansPropTypes;
+
+function SpacesList ({spaces}) {
+  return h('table', {className: 'deprecated-table x--hoverable'},
+    h('thead', null,
+      h('tr', null,
+        h('th', null, 'Name'),
+        h('th', null, 'Plan')
+      )
+    ),
+    h('tbody', {className: 'clickable'},
+      spaces.items.map(({sys, name, plan}) => {
+        const navState = getSpaceNavState(sys.id);
+        return h('tr', {
+          key: sys.id,
+          onClick: () => go(navState)
+        },
+          h('td', null, h('a', {href: href(navState)}, name)),
+          h('td', null, plan ? plan.name : 'Free')
+        );
+      })
+    )
+  );
 }
 
-function renderRightSidebar ({canCreateSpace, spacePlans}, actions) {
-  return h('.entity-sidebar', [
-    h('h2.entity-sidebar__heading', ['Add space']),
-    h('p.entity-sidebar__help-text', [`Your organization has ${spacePlans.length} spaces.`]),
-    h('p.entity-sidebar__help-text', [
-      h('button.btn-action.x--block', {
-        onClick: actions.addSpace,
+function RightSidebar ({spaces, canCreateSpace, onCreateSpace}) {
+  return h('div', {className: 'entity-sidebar'},
+    h('h2', {className: 'entity-sidebar__heading'}, 'Add space'),
+    h('p', {className: 'entity-sidebar__help-text'}, `Your organization has ${spaces.items.length} spaces.`),
+    h('p', {className: 'entity-sidebar__help-text'},
+      h('button', {
+        className: 'btn-action x--block',
+        onClick: onCreateSpace,
         disabled: !canCreateSpace
-      }, [h('.btn-icon.cf-icon.cf-icon--plus.inverted', [svgPlus]), 'Add space'])
-    ])
-  ]);
+      },
+        h('div', {className: 'btn-icon cf-icon cf-icon--plus inverted'}, asReact(svgPlus)),
+        'Add space'
+      )
+    )
+  );
 }
 
-function getSpaceLink (spaceId) {
-  return href({path: ['spaces', 'detail'], params: {spaceId}});
+function getSpaceNavState (spaceId) {
+  return {
+    path: ['spaces', 'detail', 'home'],
+    params: {spaceId},
+    options: { reload: true }
+  };
 }
+
+export default SpacePlans;
