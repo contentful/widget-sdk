@@ -21,14 +21,7 @@ angular.module('contentful')
  *
  * @scope.provides locales
  * @scope.provides fallbackLocales
- *
- *
- * TODO
- * - add persistence layer (repo)
- * - do not use @contetnful/client objects
- * - do not expose the locale instance on the scope
- * - simplify relation with TokenStore
-*/
+ */
 .controller('LocaleEditorController', ['$scope', 'require', function ($scope, require) {
   var controller = this;
   var TheLocaleStore = require('TheLocaleStore');

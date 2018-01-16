@@ -72,8 +72,7 @@ describe('The Locale list directive', function () {
     };
 
     this.localeStore = this.$inject('TheLocaleStore');
-    this.localeStore.refresh = sinon.stub().resolves();
-    this.localeStore.getLocales = sinon.stub().returns(locales);
+    this.localeStore.refresh = sinon.stub().resolves(locales);
 
     this.compileElement = function () {
       this.container = this.$compile('<div cf-locale-list />', {context: {}});

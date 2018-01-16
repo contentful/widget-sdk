@@ -97,6 +97,8 @@ angular.module('contentful')
         });
 
         setActiveLocales(storedLocales);
+
+        return locales;
       });
     }
 

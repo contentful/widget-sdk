@@ -10,7 +10,6 @@ angular.module('contentful')
   var base = require('states/Base').default;
   var contextHistory = require('contextHistory');
   var crumbFactory = require('navigation/CrumbFactory');
-  var TheLocaleStore = require('TheLocaleStore');
 
   var list = base({
     name: 'list',
@@ -42,11 +41,11 @@ angular.module('contentful')
     ]
   };
 
-  var resolveSpaceLocales = function () {
-    return TheLocaleStore.refresh().then(function () {
-      return TheLocaleStore.getLocales();
-    });
-  };
+  // injecting `spaceContext` here to assure `TheLocaleStore.init` was called
+  // TODO drop global `TheLocaleStore` in favour of a space-scoped service
+  var resolveSpaceLocales = ['TheLocaleStore', 'spaceContext', function (TheLocaleStore, _sc) {
+    return TheLocaleStore.refresh();
+  }];
 
   var newLocale = _.extend({
     name: 'new',
@@ -55,6 +54,7 @@ angular.module('contentful')
       isNew: true
     },
     resolve: {
+      spaceLocales: resolveSpaceLocales,
       locale: function () {
         return {
           sys: {},
@@ -63,8 +63,7 @@ angular.module('contentful')
           contentDeliveryApi: true,
           contentManagementApi: true
         };
-      },
-      spaceLocales: resolveSpaceLocales
+      }
     }
   }, localeEditorState);
 
@@ -75,14 +74,17 @@ angular.module('contentful')
       isNew: false
     },
     resolve: {
-      locale: ['$stateParams', function ($stateParams) {
+      spaceLocales: resolveSpaceLocales,
+      locale: ['spaceLocales', '$stateParams', function (spaceLocales, $stateParams) {
         var id = $stateParams.localeId;
-        return TheLocaleStore.refresh().then(function () {
-          var found = _.find(TheLocaleStore.getLocales(), {sys: {id: id}});
-          return found || Promise.reject(new Error('No locale with ID ' + id + ' found.'));
-        });
-      }],
-      spaceLocales: resolveSpaceLocales
+        var found = _.find(spaceLocales, {sys: {id: id}});
+
+        if (found) {
+          return _.cloneDeep(found);
+        } else {
+          return Promise.reject(new Error('No locale with ID ' + id + ' found.'));
+        }
+      }]
     }
   }, localeEditorState);
 

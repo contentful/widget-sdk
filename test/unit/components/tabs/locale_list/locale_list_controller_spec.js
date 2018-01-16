@@ -9,8 +9,7 @@ describe('Locale List Controller', function () {
     this.scope.context = {};
 
     this.localeStore = this.$inject('TheLocaleStore');
-    this.localeStore.refresh = sinon.stub().resolves();
-    this.localeStore.getLocales = sinon.stub().returns([{}]);
+    this.localeStore.refresh = sinon.stub().resolves([{}]);
 
     this.createController = () => {
       this.$inject('$controller')('LocaleListController', {$scope: this.scope});
@@ -25,7 +24,6 @@ describe('Locale List Controller', function () {
 
     it('refreshes and gets locales', function () {
       sinon.assert.calledOnce(this.localeStore.refresh);
-      sinon.assert.calledOnce(this.localeStore.getLocales);
     });
 
     it('places locales on scope', function () {

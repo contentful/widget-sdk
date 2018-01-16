@@ -34,9 +34,9 @@ angular.module('contentful')
   $scope.getSubscriptionPlanName = _.partial(getSubscriptionPlanData, 'name');
 
   TheLocaleStore.refresh()
-  .then(function () {
-    $scope.locales = TheLocaleStore.getLocales();
-    $scope.localeNamesByCode = groupLocaleNamesByCode($scope.locales);
+  .then(function (locales) {
+    $scope.locales = locales;
+    $scope.localeNamesByCode = groupLocaleNamesByCode(locales);
     $scope.localesUsageState = getLocalesUsageState();
     $scope.context.ready = true;
   })
