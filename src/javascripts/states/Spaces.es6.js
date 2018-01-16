@@ -12,6 +12,9 @@ import api from 'app/api/State';
 import settings from './settings';
 import home from './space_home';
 
+// TODO convert JST templates to hyperscript
+/* global JST */
+
 const newSpace = {
   name: 'new',
   url: '_new',
