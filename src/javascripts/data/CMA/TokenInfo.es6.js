@@ -27,6 +27,10 @@ export default function makeFetchWithAuth (auth) {
     }).then((response) => {
       const data = response.data;
       if (data) {
+        // Locales are always fetched from the `/locales` endpoint.
+        // Do not resolve links to locales.
+        delete data.includes.Locale;
+
         // TODO freeze returned object
         return resolveTokenLinks(data);
       } else {

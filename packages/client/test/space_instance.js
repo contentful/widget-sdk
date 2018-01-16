@@ -1,5 +1,4 @@
-const co = require('co');
-const {expect, coit} = require('./support');
+const {expect, coit, clone} = require('./support');
 const describeEntry = require('./entry');
 const describeAsset = require('./asset');
 const describeContentType = require('./content_type');
@@ -7,49 +6,28 @@ const describeLocale = require('./locale');
 
 module.exports = function spaceInstanceDescription (serverSpaceData) {
   describe('instance', function () {
-    let organization;
-    beforeEach(co.wrap(function* () {
-      organization = {
-        sys: {
-          id: 'oid'
-        }
-      };
-
-      this.request.respond(serverSpaceData);
-      this.space = yield this.client.createSpace({name: 'myspace'}, 'myorg');
-      this.request.reset();
-    }));
+    beforeEach(function () {
+      this.space = this.client.newSpace(clone(serverSpaceData));
+    });
 
     /**
-       * Entities
-       */
+     * Entities
+     */
     describeEntry();
     describeAsset();
     describeContentType();
     describeLocale();
 
-    coit('#delete', function* () {
-      this.request.respond(null);
-      yield this.space.delete();
-      expect(this.request).to.be.calledWith({
-        method: 'DELETE',
-        url: '/spaces/42'
-      });
-    });
-
-    coit('#save', function* () {
-      this.request.respond(this.space.data);
-      yield this.space.save();
-      expect(this.request).to.be.calledWith({
-        method: 'PUT',
-        url: '/spaces/42',
-        data: this.space.data
-      });
+    coit('disabled #update, #save and #delete', function () {
+      expect(this.space.update).to.throw();
+      expect(this.space.save).to.throw();
+      expect(this.space.delete).to.throw();
     });
 
     it('#isOwner(user) is true for creator', function () {
       let creator = {sys: {id: 'creator'}};
       let user = {sys: {id: 'uid'}};
+      let organization = {sys: {id: 'oid'}};
       this.space.data.organization = organization;
       organization.sys.createdBy = creator;
       expect(this.space.isOwner(creator)).to.be.true;

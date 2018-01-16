@@ -159,10 +159,7 @@ angular.module('contentful')
       templateName: _.get(template, 'name')
     });
 
-    TokenStore.getSpace(newSpace.getId())
-    .then(function (space) {
-      return $state.go('spaces.detail', {spaceId: space.getId()});
-    })
+    $state.go('spaces.detail', {spaceId: newSpace.sys.id})
     .then(function () {
       if (template.name === 'Blank') {
         spaceContext.apiKeyRepo.create(

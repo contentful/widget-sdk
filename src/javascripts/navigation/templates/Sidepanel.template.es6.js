@@ -227,9 +227,9 @@ function orgSpaces () {
       }
     }, [
       h('p.nav-sidepanel__space-name.u-truncate', {
-        ngRepeat: 'space in spacesByOrg[currOrg.sys.id] track by space.data.sys.id',
-        ngClass: '{"nav-sidepanel__space-name--is-active": currSpace && currSpace.sys.id === space.data.sys.id}',
-        ngClick: 'setAndGotoSpace(space.data)',
+        ngRepeat: 'space in spacesByOrg[currOrg.sys.id] track by space.sys.id',
+        ngClass: '{"nav-sidepanel__space-name--is-active": currSpace && currSpace.sys.id === space.sys.id}',
+        ngClick: 'setAndGotoSpace(space)',
         dataTestId: 'sidepanel-space-link',
         style: {
           color: colors.textMid,
@@ -238,7 +238,7 @@ function orgSpaces () {
           margin: 0,
           transition: 'background-color 0.1s ease-in-out'
         }
-      }, ['{{space.data.name}}']),
+      }, ['{{space.name}}']),
       noSpacesMsg()
     ])
   ]);

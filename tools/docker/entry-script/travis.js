@@ -1,103 +1,80 @@
 import * as P from 'path'
-import * as B from 'bluebird'
-import {includes} from 'lodash'
-
-import {writeJSON, FS, exec} from '../../lib/utils'
-import configureIndex_ from '../../lib/index-configure'
-
-// Maps branch names to environment names
-const BRANCH_ENV_MAP = {
-  'production': 'production',
-  'master': 'staging',
-  'preview': 'preview'
-}
-
-// The list of branches that build the current version for the
-// different target environments.
-const MAIN_BRANCHES = Object.keys(BRANCH_ENV_MAP)
-
-// This directory contains all the files needed to run the app.
-// It is populated by `gulp build`.
-const BUILD_SRC = P.resolve('./build')
-
-
-// Destination directory for files that are uploaded to S3 buckets
-const FILE_DIST_DEST = P.resolve('./output/files')
-
-// Destination directory for debian packages.
-const PKG_DEST = P.resolve('./output/package')
-
+import {FS, writeJSON} from '../../lib/utils'
+import configureAndWriteIndex from '../../lib/index-configure'
 
 /**
- * Create and configure distribution based on Travis parameters.
+ * For each target environment create a file distribution in `output/files/${env}`.
  *
- * - For each target environment create a file distribution in
- *   `output/files/{env}`.
- * - Create a debian package in `output/packages` if we build the
- *   'master', 'production', or 'preview' branch.
+ * Example:
+ * --------
+ *
+ * For branch as production and pr as false and some commit hash the following files are created:
+ *
+ * output/files/production/index.html (served for request to app.contentful.com)
+ * output/files/production/revision.json (requested by app.contentful.com)
+ * output/files/production/app/<fingerprinted assets from all builds> (contains all assets served by static.contentful.com)
+ * output/files/producton/archive/<commit-hash or branchname>/index-compiled.html (powers ui_version)
+ *
  */
 export default function* runTravis ({branch, pr, version}) {
-  const travis = loadTravisEnv(branch, pr)
-  yield* createFileDist('preview', version, travis.distBranch, true)
-  yield* createFileDist('staging', version, travis.distBranch)
-  yield* createFileDist('production', version, travis.distBranch)
-  yield* createFileDist('development', version, travis.distBranch)
-  if (travis.isMainBranch) {
-    yield* configureIndex(version, travis.targetEnv, 'build/index.html')
-    yield* createPackageDist(version)
+  console.log(`TRAVIS_BRANCH: ${branch}, TRAVIS_COMMIT: ${version}, TRAVIS_PULL_REQUEST: ${pr}`)
+
+  // Supported environments
+  const ENV = {
+    production: 'production',
+    staging: 'staging',
+    preview: 'preview',
+    development: 'development'
+  }
+
+  // Maps branch names to environment names
+  const BRANCH_ENV_MAP = {
+    production: ENV.production,
+    master: ENV.staging,
+    preview: ENV.preview
+  }
+
+  /**
+   * If pr is 'false, it's the travis-ci/push job. Since only this job does the deploy
+   * we build and move assets to the right locations for it.
+   *
+   * Otherwise it's a travis-ci/pr job (PR build), don't even bother building/moving
+   * assets since deploy hooks are not called for this job.
+   *
+   * Doc: https://docs.travis-ci.com/user/deployment/#Pull-Requests
+   *
+   * NOTE: .travis.yml tells you what disk location is uploaded to which S3 bucket in its
+   * deploy section.
+   */
+  if (pr === 'false') {
+    yield* createFileDist(ENV.preview, version, branch, true)
+    yield* createFileDist(ENV.staging, version, branch)
+    yield* createFileDist(ENV.production, version, branch)
+    yield* createFileDist(ENV.development, version, branch)
+
+    // Do the next bit only for production, master and preview branches
+    if (branch in BRANCH_ENV_MAP) {
+      const env = BRANCH_ENV_MAP[branch]
+      const rootIndexPathForEnv = targetPath(env, 'index.html')
+      const revisionPathForEnv = targetPath(env, 'revision.json')
+      const logMsg = `Creating root index and revision.json files for "${env}"`
+
+      console.log('-'.repeat(logMsg.length), `\n${logMsg}`)
+
+      // This generates output/files/${env}/index.html
+      yield* configureAndWriteIndex(version, `config/${env}.json`, rootIndexPathForEnv)
+
+      console.log(`Creating revision.json for "${env}" at ${P.relative('', revisionPathForEnv)}`)
+      // This generates output/files/${env}/revision.json
+      yield* buildAndWriteRevisionJson(version, revisionPathForEnv)
+    }
+  } else {
+    console.log('Skipping index compilation and moving of assets as this is a travis-ci/pr job')
   }
 }
-
-
-/**
- * Creates information about the build context from Travis environment
- * variables.
- *
- * The returned object has the following properties
- * - isMerge: boolean. True iff we build the merge commit of a branch
- *   against its PR target.
- * - targetEnv: string. The name of the environment we want to deploy
- *   to.  Is 'staging' for master branch builds, 'production' for
- *   production branch builds and 'preview' otherwise.
- * - isMainBranch: boolean.  True iff we build the current version of
- *   one of the target environments.
- * - distBranch: string?  Contains the name of the branch if we are
- *   building a branch head.
- */
-function loadTravisEnv (branch, pullRequest) {
-  const isMerge = pullRequest !== 'false'
-  const distBranch = isMerge ? null : branch
-  const targetEnv = getTravisTargetEnv(branch, isMerge)
-  const isMainBranch = !isMerge && includes(MAIN_BRANCHES, branch)
-  return {
-    branch,
-    pullRequest,
-    isMerge,
-    targetEnv,
-    isMainBranch,
-    distBranch
-  }
-}
-
-function getTravisTargetEnv (branch, isMerge) {
-  if (branch === undefined) {
-    return 'development'
-  }
-
-  if (isMerge) {
-    return 'preview'
-  }
-
-  if (branch in BRANCH_ENV_MAP) {
-    return BRANCH_ENV_MAP[branch]
-  }
-
-  return 'preview'
-}
-
 
 /*
- * Creates a file distribution of a build.
+ * Creates a file distribution after gulp build.
  *
  * Copies the following files.
  * ~~~
@@ -120,90 +97,54 @@ function getTravisTargetEnv (branch, isMerge) {
  */
 function* createFileDist (env, version, branch, includeStyleguide) {
   console.log(`Creating file distribution for "${env}"`)
-  yield copy(P.join(BUILD_SRC, 'app'), targetPath('app'))
 
-  const commitHashIndex = targetPath('archive', version, 'index-compiled.html')
-  yield* configureIndex(version, env, commitHashIndex)
+  // This directory contains all the files needed to run the app.
+  // It is populated by `gulp build`.
+  const BUILD_SRC = P.resolve('./build')
+  const commitHashIndexPath = targetPath(env, 'archive', version, 'index-compiled.html')
+
+  yield copy(P.join(BUILD_SRC, 'app'), targetPath(env, 'app'))
+  yield* configureAndWriteIndex(version, `config/${env}.json`, commitHashIndexPath)
+
   if (branch) {
-    const branchIndexPath = targetPath('archive', branch, 'index-compiled.html')
-    yield* configureIndex(version, env, branchIndexPath)
+    const branchIndexPath = targetPath(env, 'archive', branch, 'index-compiled.html')
+
+    yield* configureAndWriteIndex(version, `config/${env}.json`, branchIndexPath)
+
     if (includeStyleguide) {
-      const styleguidePath = targetPath('styleguide', branch)
-      yield copy(P.join(BUILD_SRC, 'styleguide'), styleguidePath)
+      yield copy(P.join(BUILD_SRC, 'styleguide'), targetPath(env, 'styleguide', branch))
     }
   }
-
-  function targetPath (...components) {
-    return P.join(FILE_DIST_DEST, env, ...components)
-  }
-}
-
-/*
- * Creates a Debian package from a build.
- *
- * Creates the following files
- * - dest/archive/user_interface/pool/cf-user-interface_0.${date}-g${version}
- * - dest/archive/user_interface/git/${version}
- *
- * The first one is a Debian package that includes the following files
- * and directories
- * - /opt/contentful/cf-user-interface/build/app
- * - /opt/contentful/cf-user-interface/build/index.html
- * - /opt/contentful/cf-user-interface/build/revision.json
- *
- * The second one is a simple text file pointing to the path of the
- * package for this version.
- */
-function* createPackageDist (version) {
-  console.log(`Creating package distribution in ${PKG_DEST}`)
-  const buildRoot = P.resolve('/tmp', 'cf-build')
-  const destBuild = P.join(buildRoot, 'build')
-  const epochSeconds = Math.floor(Date.now() / 1000)
-  const pkgVersion = `0.${epochSeconds}-g${version}`
-  const poolDirRelative = P.join('archive', 'user_interface', 'pool')
-  const poolDir = P.join(PKG_DEST, poolDirRelative)
-  const linkFile = P.join(PKG_DEST, 'archive', 'user_interface', 'git', version)
-  yield FS.mkdirsAsync(buildRoot)
-  yield FS.mkdirsAsync(poolDir)
-  yield FS.mkdirsAsync(P.dirname(linkFile))
-
-  yield copy(BUILD_SRC, destBuild)
-  yield* stripCssFingerprints(P.join(destBuild, 'app'))
-  yield writeJSON(P.join(destBuild, 'revision.json'), {revision: version})
-
-  yield exec(
-    'fpm -t deb -s dir -n cf-user-interface ' +
-    '--prefix /opt/contentful/cf-user-interface ' +
-    `--version ${pkgVersion} -C ${buildRoot}`,
-    {cwd: poolDir}
-  )
-  const packageFiles = yield FS.readdirAsync(poolDir)
-  console.log('Created package', packageFiles[0])
-  yield FS.writeFileAsync(linkFile, P.join(poolDirRelative, packageFiles[0]), 'utf8')
 }
 
 /**
- * Copies the following files:
- * dir/main-abcdef78.css[.map] -> dir/main.css[.map]
- * dir/vendor-abcdef78.css[.map] -> dir/vendor.css[.map]
+ * Build a path relative to FILE_DIST_DEST
+ *
+ * Example:
+ * --------
+ * targetPath('staging', 'archive', 'COMMIT_HASH', 'index-compiled.html')
+ * =>
+ * /home/<username>/user_interface/output/files/staging/archive/COMMIT_HASH/index-compiled.html
  */
-function* stripCssFingerprints (dir) {
-  const FINGERPRINTED_CSS_REGEXP = /(.+)-.{8}(\.css(?:\.map)?)/
-  const files = yield FS.readdirAsync(dir)
-  const cssFiles = files.filter((file) => file.match(FINGERPRINTED_CSS_REGEXP))
-  return B.map(cssFiles, (cssFile) => {
-    const newCssFile = cssFile.replace(FINGERPRINTED_CSS_REGEXP, '$1$2')
-    return copy(P.join(dir, cssFile), P.join(dir, newCssFile))
-  })
+function targetPath (...components) {
+  // Destination directory for files that are uploaded to S3 buckets
+  const FILE_DIST_DEST = P.resolve('./output/files')
+
+  return P.join(FILE_DIST_DEST, ...components)
 }
 
 function copy (src, dest) {
-  console.log('%s -> %s', src, dest)
+  console.log('Copying %s -> %s', P.relative('', src), P.relative('', dest))
   return FS.copyAsync(src, dest)
 }
 
-function* configureIndex (version, env, dest) {
-  console.log(`Creating index for "${env}" at ${P.relative('', dest)}`)
-  const configPath = `config/${env}.json`
-  yield* configureIndex_(version, configPath, dest)
+/**
+ * Builds a revision file that is used by user_interface to prompt
+ * the user if the version of contentful they are looking at is older
+ * that what is live currently.
+ *
+ * Shape: { "revision": "GIT COMMIT HASH OF THE HEAD OF PRODUCTION BRANCH" }
+ */
+function* buildAndWriteRevisionJson (version, outPath) {
+  yield writeJSON(outPath, {revision: version})
 }

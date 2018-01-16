@@ -18,17 +18,17 @@ describe('spaceContext', function () {
         createSpaceEndpoint: () => createMockSpaceEndpoint().request
       });
       $provide.value('data/UiConfig/Store', {default: sinon.stub().resolves({store: true})});
+      $provide.value('client', {newSpace: makeClientSpaceMock});
     });
     this.spaceContext = this.$inject('spaceContext');
-    this.mockService('TheLocaleStore');
+    this.localeStore = this.mockService('TheLocaleStore');
+    this.localeStore.reset.resolves();
 
-    this.resetWithSpace = function (space) {
-      space = space || makeSpaceMock();
-      this.spaceContext.resetWithSpace(space);
+    this.resetWithSpace = function (spaceData) {
+      spaceData = spaceData || {sys: {id: 'spaceid'}, spaceMembership: {}};
+      this.spaceContext.resetWithSpace(spaceData);
       this.$apply();
-      space.getContentTypes.resetHistory();
-      space.getPublishedContentTypes.resetHistory();
-      return space;
+      return this.spaceContext.space;
     };
   });
 
@@ -44,33 +44,25 @@ describe('spaceContext', function () {
   });
 
   describe('#resetWithSpace()', function () {
-    let SPACE, Widgets;
-
     beforeEach(function () {
       const createEditingInterfaces = this.$inject('data/editingInterfaces');
       createEditingInterfaces.returns('EI');
 
-      Widgets = this.$inject('widgets');
-      Widgets.setSpace = sinon.stub().defers();
+      this.Widgets = this.$inject('widgets');
+      this.Widgets.setSpace = sinon.stub().defers();
 
-      SPACE = makeSpaceMock();
-      SPACE.getContentTypes.defers();
-      SPACE.getPublishedContentTypes.defers();
-      this.result = this.spaceContext.resetWithSpace(SPACE);
+      const spaceData = {sys: {id: 'hello'}};
+      this.result = this.spaceContext.resetWithSpace(spaceData);
+      this.space = this.spaceContext.space;
     });
 
-    afterEach(function () {
-      SPACE = Widgets = null;
-    });
-
-    it('sets space on context', function () {
-      expect(this.spaceContext.space).toBe(SPACE);
+    it('sets client space on context', function () {
+      expect(this.spaceContext.space.data.sys.id).toEqual('hello');
     });
 
     it('calls TheLocaleStore.reset()', function () {
-      const theLocaleStore = this.$inject('TheLocaleStore');
       sinon.assert.calledOnceWith(
-        theLocaleStore.reset,
+        this.localeStore.reset,
         this.spaceContext.endpoint
       );
     });
@@ -79,32 +71,30 @@ describe('spaceContext', function () {
       const userCache = {};
       const createUserCache = this.$inject('data/userCache');
       createUserCache.resetHistory().returns(userCache);
-      this.spaceContext.resetWithSpace(SPACE);
+      this.resetWithSpace();
       sinon.assert.calledWithExactly(createUserCache, this.spaceContext.endpoint);
       expect(this.spaceContext.users).toBe(userCache);
     });
 
     it('resets Widgets store', function () {
-      sinon.assert.calledWith(Widgets.setSpace, this.spaceContext.endpoint);
+      sinon.assert.calledWith(this.Widgets.setSpace, this.spaceContext.endpoint);
     });
 
     it('sets the widgets property from the widgets service', function () {
       expect(this.spaceContext.widgets).toBe(null);
-      Widgets.setSpace.resolve('WIDGETS');
+      this.Widgets.setSpace.resolve('WIDGETS');
       this.$apply();
       expect(this.spaceContext.widgets).toBe('WIDGETS');
     });
 
     it('resolves when widgets are set', function () {
-      const done = sinon.stub();
+      const done = sinon.spy();
       this.result.then(done);
 
       this.$apply();
       sinon.assert.notCalled(done);
 
-      Widgets.setSpace.resolve();
-      SPACE.getContentTypes.resolve();
-      SPACE.getPublishedContentTypes.resolve([]);
+      this.Widgets.setSpace.resolve();
       this.$apply();
       sinon.assert.called(done);
     });
@@ -126,15 +116,15 @@ describe('spaceContext', function () {
       });
 
       it('gets built from context `organization` data', function () {
-        SPACE.data.organization = ORGANIZATION;
-        this.spaceContext.resetWithSpace(SPACE);
+        this.space.data.organization = ORGANIZATION;
+        this.spaceContext.resetWithSpace(this.space.data);
 
         sinon.assert.calledOnce(this.Subscription.newFromOrganization);
         expect(this.spaceContext.subscription).toBe(SUBSCRIPTION);
       });
 
       it('is set to `null` if no organization is set on `data`', function () {
-        this.spaceContext.resetWithSpace(SPACE);
+        this.spaceContext.resetWithSpace(this.space.data);
 
         sinon.assert.notCalled(this.Subscription.newFromOrganization);
         expect(this.spaceContext.subscription).toBe(null);
@@ -142,12 +132,7 @@ describe('spaceContext', function () {
     });
 
     it('updates publishedCTs repo from refreshed CT list', function* () {
-      Widgets.setSpace.resolve();
-      SPACE.getContentTypes.resolve([]);
-
-      SPACE.getPublishedContentTypes.resolve([
-        makeCtMock('A'), makeCtMock('B')
-      ]);
+      this.Widgets.setSpace.resolve();
       yield this.result;
       expect(
         this.spaceContext.publishedCTs.getAllBare().map((ct) => ct.sys.id)
@@ -469,7 +454,7 @@ describe('spaceContext', function () {
     });
 
     it('creates on resetSpace', function () {
-      this.spaceContext.resetWithSpace(makeSpaceMock());
+      this.resetWithSpace();
       sinon.assert.calledOnce(this.createConnection);
       sinon.assert.calledOnce(this.createPool.withArgs(this.spaceContext.docConnection));
     });
@@ -478,7 +463,7 @@ describe('spaceContext', function () {
       const stubs = [sinon.stub(), sinon.stub()];
       this.spaceContext.docConnection = {close: stubs[0]};
       this.spaceContext.docPool = {destroy: stubs[1]};
-      this.spaceContext.resetWithSpace(makeSpaceMock());
+      this.resetWithSpace();
       stubs.forEach((s) => sinon.assert.calledOnce(s));
     });
 
@@ -511,19 +496,14 @@ describe('spaceContext', function () {
     };
   }
 
-  function makeSpaceMock () {
+  function makeClientSpaceMock (data) {
     return {
-      data: {
-        sys: {id: 'spaceid'},
-        spaceMembership: {}
-      },
+      data,
       endpoint: sinon.stub().returns({
         get: sinon.stub().rejects()
       }),
-      getId: sinon.stub().returns('SPACE_ID'),
-      getContentTypes: sinon.stub().resolves([]),
-      getPublishedContentTypes: sinon.stub().resolves([]),
-      getPrivateLocales: sinon.stub().returns([{code: 'en'}])
+      getId: sinon.stub().returns(data.sys.id),
+      getPublishedContentTypes: sinon.stub().resolves([makeCtMock('A'), makeCtMock('B')])
     };
   }
 });

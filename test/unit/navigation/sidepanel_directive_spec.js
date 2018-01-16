@@ -49,13 +49,13 @@ describe('cfNavSidepanel directive', () => {
     }];
     this.spacesByOrg = {
       'test-org-id-1': [{
-        data: {name: 'test-space-1-1', sys: {id: 'test-space-id-1-1'}}
+        name: 'test-space-1-1', sys: {id: 'test-space-id-1-1'}
       }],
       'test-org-id-2': [],
       'test-org-id-3': [{
-        data: {name: 'test-space-3-1', sys: {id: 'test-space-id-3-1'}}
+        name: 'test-space-3-1', sys: {id: 'test-space-id-3-1'}
       }, {
-        data: {name: 'test-space-3-2', sys: {id: 'test-space-id-3-2'}}
+        name: 'test-space-3-2', sys: {id: 'test-space-id-3-2'}
       }]
     };
     this.tokenStore = this.$inject('services/TokenStore');
@@ -359,12 +359,12 @@ describe('cfNavSidepanel directive', () => {
 
         const $spaces = this.$spacesContainer.find('.nav-sidepanel__space-name');
 
-        this.spacesByOrg[org.sys.id].forEach((space, i) => expect($($spaces[i]).text()).toBe(space.data.name));
+        this.spacesByOrg[org.sys.id].forEach((space, i) => expect($($spaces[i]).text()).toBe(space.name));
       });
 
       it('marks current space as active', function () {
         const org = this.orgs[2];
-        const space = this.spacesByOrg[org.sys.id][1].data;
+        const space = this.spacesByOrg[org.sys.id][1];
 
         this.$scope.setCurrOrg(org);
         this.$scope.setAndGotoSpace(space);

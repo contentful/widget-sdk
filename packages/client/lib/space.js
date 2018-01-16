@@ -10,15 +10,15 @@ var createResourceFactoryMethods = require('./resource_factory');
 
 var Space = function Space (data, persistenceContext) {
   persistenceContext.setupIdentityMap();
-  Entity.call(this, data, persistenceContext);
+  this.persistenceContext = persistenceContext;
+  this.data = data;
 };
 
 Space.prototype = Object.create(Entity.prototype);
 
-Space.prototype.getPrivateLocales = function () {
-  return _.filter(this.data.locales, function (locale) {
-    return locale.contentManagementApi;
-  });
+Space.prototype.update = Space.prototype.save = Space.prototype.delete = function () {
+  // Disable `update`, `save` and `delete` methods, use new CMA client instead
+  throw new Error('Cannot update/save/delete a space');
 };
 
 Space.prototype.isOwner = function (user) {
@@ -42,16 +42,7 @@ Space.prototype.getOrganizationId = function () {
 
 Space.mixinFactoryMethods = function (target, path) {
   var factoryMethods = createResourceFactoryMethods(Space, path);
-  _.extend(target, {
-    getSpace: factoryMethods.getById,
-    getSpaces: factoryMethods.getByQuery,
-    newSpace: factoryMethods.new,
-    createSpace: function (data, organizationId) {
-      return this.newSpace(data).save({
-        'X-Contentful-Organization': organizationId
-      });
-    }
-  });
+  _.extend(target, {newSpace: factoryMethods.new});
 };
 
 _.extend(Space.prototype,

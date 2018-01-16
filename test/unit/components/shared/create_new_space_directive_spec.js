@@ -1,9 +1,7 @@
 import { createMockProperty } from 'helpers/mocks/kefir';
 
 describe('cfCreateNewSpace directive', function () {
-  let element, $scope, $rootScope, controller;
-  let stubs;
-
+  let element, $scope, $rootScope, controller, stubs;
   afterEach(function () {
     element = $scope = $rootScope = controller = stubs = null;
   });
@@ -37,18 +35,11 @@ describe('cfCreateNewSpace directive', function () {
       },
       tokenStore: {
         refresh: sinon.stub(),
-        getSpace: sinon.stub(),
-        user$: createMockProperty({
-          firstName: 'firstName'
-        }),
-        spaces$: createMockProperty([]),
+        user$: createMockProperty({firstName: 'firstName'}),
         organizations$: createMockProperty([])
       },
-      space: {
-        getId: sinon.stub()
-      },
       state: {
-        go: sinon.stub()
+        go: sinon.stub().resolves()
       },
       dialog: {
         confirm: sinon.stub()
@@ -239,18 +230,10 @@ describe('cfCreateNewSpace directive', function () {
       });
 
       describe('if remote call succeeds', function () {
-        let space;
-        afterEach(function () {
-          space = null;
-        });
-
         beforeEach(function () {
-          space = {getId: stubs.space.getId, data: {name: 'oldspace'}};
-          stubs.space.getId.returns('spaceid');
           stubs.accessChecker.canCreateSpaceInOrganization.returns(true);
           stubs.tokenStore.refresh.resolves();
-          stubs.client.createSpace.resolves(space);
-          stubs.tokenStore.getSpace.resolves(space);
+          stubs.client.createSpace.resolves({sys: {id: 'spaceid'}, name: 'oldspace'});
           this.spaceContext.apiKeyRepo.create.resolves();
           stubs.spaceTemplateLoader.getTemplate.resolves();
           this.setupDirective();
@@ -283,10 +266,6 @@ describe('cfCreateNewSpace directive', function () {
             sinon.assert.called(stubs.tokenStore.refresh);
           });
 
-          it('gets space', function () {
-            sinon.assert.called(stubs.tokenStore.getSpace);
-          });
-
           it('selects space', function () {
             sinon.assert.calledWith(stubs.state.go, 'spaces.detail', {spaceId: 'spaceid'});
           });
@@ -308,13 +287,12 @@ describe('cfCreateNewSpace directive', function () {
             controller.newSpace.useTemplate = true;
             controller.newSpace.selectedTemplate = {name: 'Blog'};
             controller.requestSpaceCreation();
-            sinon.stub($rootScope, '$broadcast');
+            sinon.spy($rootScope, '$broadcast');
             this.$apply();
           });
 
           it('refreshes token', function () {
             sinon.assert.calledOnce(stubs.tokenStore.refresh);
-            sinon.assert.calledOnce(stubs.tokenStore.getSpace);
           });
 
           it('tracks analytics event', function () {

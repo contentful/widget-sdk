@@ -1,4 +1,4 @@
-import {getFatSpaces, getOrganizations, getOrganization} from 'services/TokenStore';
+import {getSpaces, getOrganizations, getOrganization} from 'services/TokenStore';
 import TheStore from 'TheStore';
 import accessChecker from 'accessChecker';
 import {isOwnerOrAdmin} from 'services/OrganizationRoles';
@@ -10,17 +10,17 @@ import {isOwnerOrAdmin} from 'services/OrganizationRoles';
  */
 export function* getSpaceInfo () {
   const lastUsedId = TheStore.get('lastUsedSpace');
-  const spaces = yield getFatSpaces();
+  const spaces = yield getSpaces();
 
   if (spaces.length === 0) {
     throw new Error('user has no spaces');
   }
 
   const defaultSpace = spaces[0];
-  const usedSpace = lastUsedId && spaces.find(space => space.data.sys.id === lastUsedId);
+  const usedSpace = lastUsedId && spaces.find(space => space.sys.id === lastUsedId);
   const space = usedSpace || defaultSpace;
 
-  return { space, spaceId: space.data.sys.id };
+  return { space, spaceId: space.sys.id };
 }
 
 /**
@@ -35,13 +35,10 @@ export function* getOrg () {
 
   if (usedOrg) {
     return { orgId: lastUsedOrgId };
+  } else {
+    const { space } = yield* getSpaceInfo();
+    return { orgId: space.organization.sys.id };
   }
-
-  const { space } = yield* getSpaceInfo();
-
-  return {
-    orgId: space.getOrganizationId()
-  };
 }
 
 /**

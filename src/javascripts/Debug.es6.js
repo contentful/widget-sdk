@@ -1,7 +1,6 @@
 import require from 'require';
 import * as Config from 'Config';
 import {includes, mapValues} from 'lodash';
-import * as DevNotifications from 'debug/DevNotifications';
 import * as UIVersionSwitcher from 'debug/UIVersionSwitcher';
 import * as MockApiToggle from 'debug/MockApiToggle';
 import * as EnforceFlags from 'utils/LaunchDarkly/EnforceFlags';
@@ -32,7 +31,6 @@ const modules = {
 };
 
 function initDevNotifications () {
-  DevNotifications.init();
   UIVersionSwitcher.init();
   MockApiToggle.init();
   EnforceFlags.init();

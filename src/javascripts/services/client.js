@@ -16,7 +16,8 @@ angular.module('contentful')
   };
 
   return _.extend(new Client({request: request}), {
-    request: request
+    request: request,
+    createSpace: createSpace
   });
 
   function request (req) {
@@ -47,5 +48,14 @@ angular.module('contentful')
     req[payloadProperty] = data.payload;
 
     return req;
+  }
+
+  function createSpace (payload, organizationId) {
+    return request({
+      method: 'POST',
+      path: '/spaces',
+      payload: payload,
+      headers: {'X-Contentful-Organization': organizationId}
+    });
   }
 }]);
