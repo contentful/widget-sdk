@@ -28,12 +28,8 @@ describe('CreateSampleSpace service', function () {
       open: sinon.stub().returns(this.dialog)
     };
 
-    this.space = {
-      getId: sinon.stub().returns('space-id')
-    };
-
     this.client = {
-      createSpace: sinon.stub().resolves(this.space)
+      createSpace: sinon.stub().resolves({sys: {id: 'space-id'}})
     };
 
     this.templateLoader = {

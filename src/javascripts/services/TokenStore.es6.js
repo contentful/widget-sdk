@@ -8,15 +8,14 @@
 import $q from '$q';
 import * as K from 'utils/kefir';
 import { createMVar } from 'utils/Concurrent';
-import client from 'client';
 import * as auth from 'Authentication';
 import makeFetchWithAuth from 'data/CMA/TokenInfo';
 import ReloadNotification from 'ReloadNotification';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import presence from 'presence';
 import $window from '$window';
-import { deepFreezeClone } from 'utils/Freeze';
-import { isEqual, groupBy, map, get, find } from 'lodash';
+import { deepFreezeClone, deepFreeze } from 'utils/Freeze';
+import { isEqual, groupBy, map, get, find, cloneDeep } from 'lodash';
 
 // Refresh token info every 5 minutes
 const TOKEN_INFO_REFRESH_INTERVAL = 5 * 60 * 1000;
@@ -45,16 +44,7 @@ export const user$ = userBus.property.skipDuplicates(isEqual);
 
 /**
  * @ngdoc property
- * @name TokenStore#spaces$
- * @type {Property<Api.Spaces>}
- * @description
- * The list of spaces from the token
- */
-export const spaces$ = spacesBus.property;
-
-/**
- * @ngdoc property
- * @name TokenStore#spaces$
+ * @name TokenStore#organizations$
  * @type {Property<Api.Organizations>}
  * @description
  * The list of organizations user is a member of from the token
@@ -68,14 +58,8 @@ export const organizations$ = organizationsBus.property;
  * @description
  * The list of spaces from the token grouped by organization
  */
-export const spacesByOrganization$ = spacesBus.property.map(function (spaces) {
-  if (!spaces) {
-    return null;
-  } else {
-    return groupBy(spaces, function (space) {
-      return space.data.organization.sys.id;
-    });
-  }
+export const spacesByOrganization$ = spacesBus.property.map(spaces => {
+  return spaces ? groupBy(spaces, s => s.organization.sys.id) : null;
 });
 
 export function getTokenLookup () { return tokenInfo; }
@@ -119,12 +103,34 @@ export function refresh () {
       OrganizationRoles.setUser(user);
       userBus.set(user);
       organizationsBus.set(organizations);
-      spacesBus.set(updateSpaces(newTokenInfo.spaces));
+      spacesBus.set(prepareSpaces(newTokenInfo.spaces));
     }, function () {
       ReloadNotification.trigger('The application was unable to authenticate with the server');
     });
   }
   return tokenInfoMVar.read();
+}
+
+function prepareSpaces (spaces) {
+  return cloneDeep(spaces)
+  .map(space => {
+    delete space.locales; // Do not expose token locales
+    return deepFreeze(space);
+  })
+  // Sort by name
+  .sort((a, b) => (a.name || '').localeCompare(b.name));
+}
+
+/**
+ * @ngdoc method
+ * @name TokenStore#getSpaces
+ * @returns {Promise<API.Space>[]>}
+ * @description
+ * This method returns a promise of the list of spaces.
+ * If some calls are in progress, we're waiting until these are done.
+ */
+export function getSpaces () {
+  return tokenInfoMVar.read().then(() => K.getValue(spacesBus.property));
 }
 
 /**
@@ -136,41 +142,11 @@ export function refresh () {
  * This method returns a promise of a single stored space
  * If some calls are in progress, we're waiting until these are done.
  * Promise is rejected if space with a provided ID couldn't be found.
- *
- * TODO only used by the space detail state. Find a better way
  */
 export function getSpace (id) {
-  return tokenInfoMVar.read().then(function () {
-    const space = findSpace(id);
-    return space || $q.reject(new Error('No space with given ID could be found.'));
-  });
-}
-
-/**
- * @ngdoc method
- * @name TokenStore#getSpaces
- * @returns {Promise<API.Space>[]>}
- * @description
- * This method returns a promise of the list of spaces.
- * If some calls are in progress, we're waiting until these are done.
- *
- */
-export function getSpaces () {
-  return tokenInfoMVar.read().then(function () {
-    return K.getValue(spacesBus.property)
-      .map(function (s) { return deepFreezeClone(s.data); });
-  });
-}
-
-/**
- * @name TokenStore#getFatSpaces
- * @returns {Promise<API.Space[]>}
- * @description
- * This method returns a promise with the list of whole space instances.
- */
-export function getFatSpaces () {
-  return tokenInfoMVar.read().then(function () {
-    return K.getValue(spacesBus.property);
+  return getSpaces().then(spaces => {
+    const found = find(spaces, {sys: {id}});
+    return found || Promise.reject(new Error('No space with given ID could be found.'));
   });
 }
 
@@ -212,33 +188,4 @@ export function getOrganizations () {
   return tokenInfoMVar.read().then(function () {
     return deepFreezeClone(K.getValue(organizationsBus.property));
   });
-}
-
-function updateSpaces (rawSpaces) {
-  const updated = rawSpaces.map(updateSpace);
-  updated.sort(sortByName);
-  return updated;
-}
-
-function updateSpace (rawSpace) {
-  const existing = findSpace(rawSpace.sys.id);
-  if (existing) {
-    existing.update(rawSpace);
-    return existing;
-  } else {
-    return client.newSpace(rawSpace);
-  }
-}
-
-function findSpace (id) {
-  const spaces = K.getValue(spacesBus.property);
-  return find(spaces, function (space) {
-    return space.getId() === id;
-  });
-}
-
-function sortByName (a, b) {
-  const nameA = get(a, 'data.name', '');
-  const nameB = get(b, 'data.name', '');
-  return nameA.localeCompare(nameB);
 }

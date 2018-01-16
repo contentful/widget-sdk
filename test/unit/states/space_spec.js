@@ -7,29 +7,16 @@ describe('states/spaces', function () {
   }));
 
   beforeEach(function () {
-    const cfStub = this.$inject('cfStub');
-    this.space = cfStub.space('SPACE');
-    this.space.getPublishedContentTypes = sinon.stub().resolves([]);
-    this.space.getContentTypes = sinon.stub().resolves([]);
-
+    this.spaceData = {sys: {id: 'SPACE'}};
     this.spaceContext = this.$inject('mocks/spaceContext').init();
-    this.spaceContext.resetWithSpace = sinon.spy((space) => {
-      this.spaceContext.space = space;
-      return this.spaceContext;
-    });
-
     this.tokenStore = this.mockService('services/TokenStore');
-    this.tokenStore.getSpace.resolves(this.space);
+    this.tokenStore.getSpace.resolves(this.spaceData);
 
     const states = this.$inject('states');
     const spaceState = this.$inject('states/Spaces').default;
     states.load([spaceState]);
 
-    const $state = this.$inject('$state');
-    this.$state = $state;
-
-    this.widgets = this.$inject('widgets');
-    this.widgets.setSpace = sinon.stub().resolves();
+    this.$state = this.$inject('$state');
   });
 
   it('requests the space from the tokenStore', function () {
@@ -41,6 +28,6 @@ describe('states/spaces', function () {
   it('resets the space context', function () {
     this.$state.go('spaces.detail', {spaceId: 'SPACE'});
     this.$apply();
-    sinon.assert.calledWith(this.spaceContext.resetWithSpace, this.space);
+    sinon.assert.calledWith(this.spaceContext.resetWithSpace, this.spaceData);
   });
 });

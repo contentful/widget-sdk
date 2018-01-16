@@ -78,13 +78,8 @@ angular.module('contentful/mocks')
 
   cfStub.space = function (id, extraData) {
     id = id || 'testSpace';
-    const client = new Client(adapter);
-    let testSpace;
-    client.getSpace(id)
-    .then(function (space) {
-      testSpace = space;
-    });
-    adapter.resolveLast(_.merge({
+
+    return (new Client(adapter)).newSpace(_.merge({
       sys: {
         id: id,
         createdBy: { sys: {id: 123} }
@@ -103,20 +98,14 @@ angular.module('contentful/mocks')
         isAdmin: true
       }
     }, extraData || {}));
-    $rootScope.$apply();
-    return testSpace;
-  };
-
-  cfStub.spaceContext = function (space, contentTypes) {
-    space.getContentTypes = sinon.stub().resolves(contentTypes);
-    spaceContext.resetWithSpace(space);
-    return spaceContext;
   };
 
   cfStub.mockSpaceContext = function () {
-    const space = cfStub.space('test');
+    const spaceData = cfStub.space('test').data;
     const contentTypeData = cfStub.contentTypeData('testType');
-    return cfStub.spaceContext(space, [contentTypeData]);
+    spaceContext.resetWithSpace(spaceData);
+    spaceContext.space.getContentTypes = sinon.stub().resolves([contentTypeData]);
+    return spaceContext;
   };
 
   cfStub.contentTypeData = function (id, fields, extraData) {
@@ -131,18 +120,12 @@ angular.module('contentful/mocks')
   };
 
   cfStub.contentType = function (space, id, name, fields, extraData) {
-    let contentType;
-    space.getContentType(id)
-    .then(function (res) {
-      contentType = res;
-    });
     const data = cfStub.contentTypeData(id, fields, {
       name: name,
       sys: { version: 1 }
     });
-    adapter.resolveLast(_.merge(data, extraData || {}));
-    $rootScope.$apply();
-    return contentType;
+    _.merge(data, extraData || {});
+    return space.newContentType(data);
   };
 
   cfStub.entry = function (space, id, contentTypeId, fields, extraData) {

@@ -1,7 +1,6 @@
 const {createRequestStub} = require('./support');
 
 const Client = require('../lib/client');
-const describeSpaceFactory = require('./space_factory');
 const describeSpaceInstance = require('./space_instance');
 
 describe('client', function () {
@@ -30,13 +29,6 @@ describe('client', function () {
       }
     });
 
-    const serverSpaceList = Object.freeze({
-      sys: { type: 'Array' },
-      total: 123,
-      items: [serverSpaceData]
-    });
-
-    describeSpaceFactory(serverSpaceData, serverSpaceList);
     describeSpaceInstance(serverSpaceData);
   });
 });
