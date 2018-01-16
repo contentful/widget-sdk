@@ -21,7 +21,7 @@ describe('TheLocaleStore', function () {
     _.extend(makeLocale('pl-PL', sid), {contentManagementApi: false})
   ];
 
-  const makeEndpoint = items => () => Promise.resolve({items});
+  const makeEndpoint = items => () => Promise.resolve({items: items});
 
   beforeEach(function* () {
     module('contentful/test');
@@ -29,6 +29,10 @@ describe('TheLocaleStore', function () {
     this.store = getStore();
 
     this.clientStorageWrapper = this.$inject('TheStore/ClientStorageWrapper');
+
+    const fetchAllMock = endpoint => endpoint().then(res => res.items);
+    this.$inject('data/CMA/FetchAll').fetchAll = fetchAllMock;
+
     this.theLocaleStore = this.$inject('TheLocaleStore');
     yield this.theLocaleStore.init(makeEndpoint(makeTestLocales()));
   });

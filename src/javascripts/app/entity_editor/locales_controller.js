@@ -11,7 +11,7 @@ angular.module('contentful')
 .controller('entityEditor/LocalesController', ['require', function (require) {
   var localeStore = require('TheLocaleStore');
   var modalDialog = require('modalDialog');
-  var Command     = require('command');
+  var Command = require('command');
 
   var controller = this;
   var availableLocales = localeStore.getPrivateLocales();
@@ -74,5 +74,4 @@ angular.module('contentful')
       }, locale);
     });
   }
-
 }]);

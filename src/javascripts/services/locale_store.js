@@ -17,6 +17,7 @@ angular.module('contentful')
 */
 .factory('TheLocaleStore', ['require', function (require) {
   var getStore = require('TheStore').getStore;
+  var fetchAll = require('data/CMA/FetchAll').fetchAll;
   var create = require('TheLocaleStore/implementation').create;
   return create(getStore);
 }])
@@ -25,7 +26,7 @@ angular.module('contentful')
     create: create
   };
 
-  function create (getStore) {
+  function create (getStore, fetchAll) {
     var store = null;
     var defaultLocale = null;
 
@@ -77,9 +78,9 @@ angular.module('contentful')
      * @returns {Promise<void>}
      */
     function refresh () {
-      return spaceEndpoint({method: 'GET', path: ['locales']})
-      .then(function (res) {
-        locales = res.items;
+      return fetchAll(spaceEndpoint, ['locales'], 100)
+      .then(function (items) {
+        locales = items;
         privateLocales = locales.filter(function (locale) {
           return locale.contentManagementApi;
         });

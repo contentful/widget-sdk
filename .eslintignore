@@ -36,7 +36,6 @@ test/unit/widgets/builtin_spec.js
 test/unit/widgets/default_spec.js
 test/unit/widgets/deprecations_spec.js
 test/unit/widgets/migrations_spec.js
-test/unit/app/entity_editor/locales_controller_spec.js
 test/unit/app/entity_editor/status_notifications_controller_spec.js
 test/unit/data/content_types_spec.js
 test/unit/data/editing_interfaces/transformer_spec.js
@@ -111,7 +110,6 @@ src/javascripts/app/widgets/video/cf_video_search_result_directive.js
 src/javascripts/components/notifications/cf_notifications_directive.js
 src/javascripts/components/notifications/index.js
 src/javascripts/app/asset_editor/notifications.js
-src/javascripts/app/entity_editor/locales_controller.js
 src/javascripts/classes/kaltura_error_messages.js
 src/javascripts/classes/kaltura_search.js
 src/javascripts/classes/ooyala_error_messages.js
