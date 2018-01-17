@@ -17,7 +17,7 @@ angular.module('contentful')
    * @ngdoc method
    * @name widgets/default#
    * @param {API.ContentType.Field} field
-   * @param {Client.ContentType} contentType
+   * @param {string} displayFieldId
    * @return {string}
    *
    * @description
@@ -31,7 +31,7 @@ angular.module('contentful')
    * - Any field that allows for predefined values: gets changed to a dropdown
    *   in the presence of the 'in' validation
    */
-  return function getDefaultWidgetId (field, contentType) {
+  return function getDefaultWidgetId (field, displayFieldId) {
     var fieldType = fieldFactory.getTypeName(field);
 
     // FIXME We create the editing interface, and thus the widget ids
@@ -44,7 +44,7 @@ angular.module('contentful')
     }
 
     var isTextField = fieldType === 'Text';
-    var isDisplayField = contentType.data.displayField === field.id;
+    var isDisplayField = field.id === displayFieldId;
 
     if (isTextField && isDisplayField) {
       return 'singleLine';
@@ -53,7 +53,7 @@ angular.module('contentful')
     return widgetMap.DEFAULTS[fieldType];
   };
 
-  function hasInValidation(validations) {
+  function hasInValidation (validations) {
     return _.find(validations, function (validation) {
       return 'in' in validation;
     });

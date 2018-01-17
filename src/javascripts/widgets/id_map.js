@@ -8,7 +8,7 @@
  * internal field IDs and locale codes.
  *
  * @usage[js]
- * var map = createIDMap(contentType.data.fields)
+ * var map = createIDMap(contentType.fields)
  *
  * map.field.toPublic[aField.id]  // => aField.apiName
  * map.field.toInternal[aField.apiName]  // => aField.id
@@ -62,4 +62,3 @@ angular.module('contentful')
     }
   }
 }]);
-

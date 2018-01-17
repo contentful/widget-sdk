@@ -35,7 +35,7 @@ angular.module('contentful')
 
   $scope.schema = {
     errors: function (field) {
-      return fieldDecorator.validateInContentType(field, $scope.contentType);
+      return fieldDecorator.validateInContentType(field, $scope.contentType.data);
     },
     buildMessage: buildMessage
   };
