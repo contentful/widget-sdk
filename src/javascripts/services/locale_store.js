@@ -17,7 +17,6 @@ angular.module('contentful')
 */
 .factory('TheLocaleStore', ['require', function (require) {
   var getStore = require('TheStore').getStore;
-  var fetchAll = require('data/CMA/FetchAll').fetchAll;
   var create = require('TheLocaleStore/implementation').create;
   return create(getStore);
 }])
@@ -26,12 +25,14 @@ angular.module('contentful')
     create: create
   };
 
-  function create (getStore, fetchAll) {
+  function create (getStore) {
     var store = null;
     var defaultLocale = null;
 
-    var spaceEndpoint = function () {
-      return Promise.reject(new Error('Call .init(endpoint) first'));
+    var localeRepo = {
+      getAll: function () {
+        return Promise.reject(new Error('Call .init(localeRepo) first'));
+      }
     };
 
     // All locales fetched from the CMA, including delivery-only locales
@@ -60,13 +61,11 @@ angular.module('contentful')
       toPublicCode: toPublicCode,
       setActiveLocales: setActiveLocales,
       isLocaleActive: isLocaleActive,
-      deactivateLocale: deactivateLocale,
-      saveLocale: saveLocale,
-      deleteLocale: deleteLocale
+      deactivateLocale: deactivateLocale
     };
 
-    function init (_spaceEndpoint) {
-      spaceEndpoint = _spaceEndpoint;
+    function init (_localeRepo) {
+      localeRepo = _localeRepo;
       return refresh();
     }
 
@@ -76,13 +75,11 @@ angular.module('contentful')
      * @description
      * Updates the store's state by getting data from
      * the CMA `/locales` endpoint.
-     * @param {Data.Endpoint} spaceEndpoint
-     * @returns {Promise<void>}
+     * @returns {Promise<API.Locale[]>}
      */
     function refresh () {
-      return fetchAll(spaceEndpoint, ['locales'], 100)
-      .then(function (items) {
-        locales = items;
+      return localeRepo.getAll().then(function (_locales) {
+        locales = _locales;
         privateLocales = locales.filter(function (locale) {
           return locale.contentManagementApi;
         });
@@ -242,27 +239,6 @@ angular.module('contentful')
       });
 
       store.set(_.map(activeLocales, 'code'));
-    }
-
-    function saveLocale (data) {
-      var sys = data.sys;
-      var isNew = !sys || !sys.id;
-      data = _.omit(data, ['sys', 'default', 'internal_code']);
-
-      return spaceEndpoint({
-        method: isNew ? 'POST' : 'PUT',
-        path: ['locales'].concat(isNew ? [] : [sys.id]),
-        data: data,
-        version: isNew ? undefined : sys.version
-      });
-    }
-
-    function deleteLocale (id, version) {
-      return spaceEndpoint({
-        method: 'DELETE',
-        path: ['locales', id],
-        version: version
-      });
     }
   }
 }]);

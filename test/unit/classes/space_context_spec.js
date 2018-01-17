@@ -60,10 +60,14 @@ describe('spaceContext', function () {
       expect(this.spaceContext.space.data.sys.id).toEqual('hello');
     });
 
+    it('creates locale repository', function () {
+      expect(typeof this.spaceContext.localeRepo.getAll).toBe('function');
+    });
+
     it('calls TheLocaleStore.init()', function () {
       sinon.assert.calledOnceWith(
         this.localeStore.init,
-        this.spaceContext.endpoint
+        this.spaceContext.localeRepo
       );
     });
 

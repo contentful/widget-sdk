@@ -24,6 +24,7 @@ angular.module('contentful')
  */
 .controller('LocaleEditorController', ['$scope', 'require', function ($scope, require) {
   var controller = this;
+  var spaceContext = require('spaceContext');
   var TheLocaleStore = require('TheLocaleStore');
   var $q = require('$q');
   var modalDialog = require('modalDialog');
@@ -161,7 +162,7 @@ angular.module('contentful')
       if (localeToUpdate) {
         var data = _.cloneDeep(localeToUpdate);
         data.fallbackCode = newFallbackCode;
-        return TheLocaleStore.saveLocale(data);
+        return spaceContext.localeRepo.save(data);
       } else {
         return $q.resolve();
       }
@@ -170,7 +171,7 @@ angular.module('contentful')
 
   function deleteLocale () {
     var sys = $scope.locale.sys;
-    return TheLocaleStore.deleteLocale(sys.id, sys.version)
+    return spaceContext.localeRepo.remove(sys.id, sys.version)
     .then(function deletedSuccesfully () {
       return TheLocaleStore.refresh()
       .then(function () {
@@ -221,7 +222,7 @@ angular.module('contentful')
     return confirmCodeChange()
     .then(function (result) {
       if (result.confirmed) {
-        return TheLocaleStore.saveLocale($scope.locale)
+        return spaceContext.localeRepo.save($scope.locale)
         .then(saveSuccessHandler)
         .catch(saveErrorHandler);
       } else {

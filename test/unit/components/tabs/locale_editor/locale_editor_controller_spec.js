@@ -26,17 +26,17 @@ describe('Locale editor controller', function () {
     });
 
     this.spaceContext = this.$inject('spaceContext');
-
     this.spaceContext.space = {
-      newLocale: sinon.stub().callsFake(() => this.localeStub),
       data: {organization: {subscriptionPlan: {name: 'Unlimited'}}}
+    };
+    this.spaceContext.localeRepo = {
+      save: sinon.stub(),
+      remove: sinon.stub()
     };
 
     this.localeStore = this.$inject('TheLocaleStore');
     this.localeStore.init = sinon.stub().resolves();
     this.localeStore.refresh = sinon.stub().resolves();
-    this.localeStore.deleteLocale = sinon.stub();
-    this.localeStore.saveLocale = sinon.stub();
 
     this.scope = this.$inject('$rootScope').$new();
     this.scope.context = {};
@@ -120,7 +120,7 @@ describe('Locale editor controller', function () {
 
   describe('#delete command succeeds', function () {
     beforeEach(function () {
-      this.localeStore.deleteLocale.resolves();
+      this.spaceContext.localeRepo.remove.resolves();
     });
 
     describe('with confirmation', function () {
@@ -152,7 +152,7 @@ describe('Locale editor controller', function () {
       });
 
       it('does not delete locale', function () {
-        sinon.assert.notCalled(this.localeStore.deleteLocale);
+        sinon.assert.notCalled(this.spaceContext.localeRepo.remove);
       });
 
       it('sets form to submitted state', function () {
@@ -176,7 +176,7 @@ describe('Locale editor controller', function () {
       this.modalDialog.open.returns({
         promise: this.$q.resolve('en-US')
       });
-      this.localeStore.deleteLocale.resolves();
+      this.spaceContext.localeRepo.remove.resolves();
     });
 
     it('asks for a new fallback', function () {
@@ -189,8 +189,8 @@ describe('Locale editor controller', function () {
       expect(codes).toEqual(['en-US']);
 
       const updated = _.extend(this.scope.spaceLocales[2], {fallbackCode: 'en-US'});
-      sinon.assert.calledOnce(this.localeStore.saveLocale.withArgs(updated));
-      sinon.assert.calledOnce(this.localeStore.deleteLocale);
+      sinon.assert.calledOnce(this.spaceContext.localeRepo.save.withArgs(updated));
+      sinon.assert.calledOnce(this.spaceContext.localeRepo.remove);
     });
 
     it('does not ask if there is no dependant locale', function () {
@@ -200,7 +200,7 @@ describe('Locale editor controller', function () {
       this.controller.delete.execute();
       this.$apply();
       sinon.assert.notCalled(this.modalDialog.open);
-      sinon.assert.calledOnce(this.localeStore.deleteLocale);
+      sinon.assert.calledOnce(this.spaceContext.localeRepo.remove);
     });
   });
 
@@ -208,7 +208,7 @@ describe('Locale editor controller', function () {
     const error = { body: { message: 'errorMessage' } };
     beforeEach(function () {
       this.scope.localeForm.$dirty = true;
-      this.localeStore.deleteLocale.rejects(error);
+      this.spaceContext.localeRepo.remove.rejects(error);
       this.modalDialog.openConfirmDialog.resolves({confirmed: true});
       this.controller.delete.execute();
       this.$apply();
@@ -238,7 +238,7 @@ describe('Locale editor controller', function () {
   describe('#save command succeeds', function () {
     describe('with unchanged code', function () {
       beforeEach(function () {
-        this.localeStore.saveLocale.resolves({sys: {id: 'locale-id'}});
+        this.spaceContext.localeRepo.save.resolves({sys: {id: 'locale-id'}});
         this.controller.save.execute();
         this.$apply();
       });
@@ -267,7 +267,7 @@ describe('Locale editor controller', function () {
 
     describe('with changed code', function () {
       beforeEach(function () {
-        this.localeStore.saveLocale.resolves({sys: {id: 'locale-id'}});
+        this.spaceContext.localeRepo.save.resolves({sys: {id: 'locale-id'}});
         this.scope.locale.code = 'en-UK';
       });
 
@@ -279,7 +279,7 @@ describe('Locale editor controller', function () {
         });
 
         it('saves locale', function () {
-          sinon.assert.calledOnce(this.localeStore.saveLocale);
+          sinon.assert.calledOnce(this.spaceContext.localeRepo.save);
         });
 
         it('sets form to submitted state', function () {
@@ -299,7 +299,7 @@ describe('Locale editor controller', function () {
         });
 
         it('does not save locale', function () {
-          sinon.assert.notCalled(this.localeStore.saveLocale);
+          sinon.assert.notCalled(this.spaceContext.localeRepo.save);
         });
 
         it('sets form to submitted state', function () {
@@ -315,7 +315,7 @@ describe('Locale editor controller', function () {
 
   describe('#save command fails', function () {
     beforeEach(function () {
-      this.localeStore.saveLocale.rejects({});
+      this.spaceContext.localeRepo.save.rejects({});
       this.scope.localeForm.$dirty = true;
       this.controller.save.execute();
       this.$apply();

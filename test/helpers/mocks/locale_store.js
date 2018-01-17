@@ -28,9 +28,7 @@ angular.module('contentful/mocks')
 .factory('mocks/TheLocaleStore', ['$injector', function ($injector) {
   const createBase = $injector.get('TheLocaleStore/implementation').create;
   const getStore = $injector.get('TheStore').getStore;
-  const fetchAllMock = endpoint => ({then: handle => handle(endpoint.__getFakeItems())});
-
-  const localeStoreMock = createBase(getStore, fetchAllMock);
+  const localeStoreMock = createBase(getStore);
 
   /**
    * @ngdoc method
@@ -53,8 +51,10 @@ angular.module('contentful/mocks')
 
     locales[0].default = true;
 
-    const endpoint = {__getFakeItems: () => locales};
-    localeStoreMock.init(endpoint);
+    localeStoreMock.init({
+      // simulate promise so it's synchronous no matter what
+      getAll: () => ({then: handle => handle(locales)})
+    });
 
     localeStoreMock.setActiveLocales(_.reject(locales, locale => {
       return 'active' in locale && !locale.active;
