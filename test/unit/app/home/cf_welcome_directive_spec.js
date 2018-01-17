@@ -1,6 +1,6 @@
-import * as K from 'helpers/mocks/kefir';
+import { createElement as h } from 'libs/react';
 
-describe('cfWelcome directive', function () {
+describe('Welcome react component', function () {
   beforeEach(function () {
     this.hourStub = sinon.stub();
 
@@ -23,21 +23,25 @@ describe('cfWelcome directive', function () {
 
     this.tokenStore = this.$inject('services/TokenStore');
 
-    this.compileElement = (isNew) => {
-      this.tokenStore.user$ = K.createMockProperty({
-        firstName: 'Foo',
-        signInCount: isNew ? 1 : 2
-      });
-      const el = this.$compile('<cf-welcome />');
+    const Welcome = this.$inject('app/home/welcome/Welcome').default;
 
-      return el.isolateScope().welcome;
+    this.renderWelcomeElement = (isNew) => {
+      this.ui = this.createUI();
+      this.ui.render(h(Welcome, {
+        user: {
+          firstName: 'Foo',
+          signInCount: isNew ? 1 : 2
+        }
+      }), this.container);
     };
   });
 
   describe('greeting', function () {
     it('says welcome on initial login', function () {
-      const ctrl = this.compileElement(true);
-      expect(ctrl.greeting).toBe('Welcome, Foo.');
+      this.renderWelcomeElement(true);
+      const welcomeElement = this.ui.find('greeting');
+
+      welcomeElement.assertHasText('Welcome, Foo');
     });
 
     it('greets user on subsequent login', function () {
@@ -48,8 +52,9 @@ describe('cfWelcome directive', function () {
 
     function greetsUserBasedOnTimeOfDay (hour, timeOfDay) {
       this.hourStub.returns(hour);
-      const ctrl = this.compileElement(false);
-      expect(ctrl.greeting).toBe(`Good ${timeOfDay}, Foo.`);
+      this.renderWelcomeElement(false);
+      const welcomeElement = this.ui.find('greeting');
+      welcomeElement.assertHasText(`Good ${timeOfDay}, Foo.`);
     }
   });
 });
