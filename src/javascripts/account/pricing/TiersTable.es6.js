@@ -1,4 +1,5 @@
 import {createElement as h} from 'libs/react';
+import PropTypes from 'libs/prop-types';
 
 const PRICE_FORMATS = {
   'FlatFee': '(flat fee)',
@@ -31,3 +32,7 @@ export function TiersTable ({charge}) {
     )
   );
 }
+
+TiersTable.proTypes = {
+  charge: PropTypes.object.isRequired
+};
