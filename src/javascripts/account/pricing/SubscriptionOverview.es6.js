@@ -3,10 +3,10 @@ import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import {runTask} from 'utils/Concurrent';
 import {createEndpoint as createOrgEndpoint} from 'access_control/OrganizationMembershipRepository';
-import {getBasePlan, getSpacePlans} from 'account/pricing/PricingDataProvider';
+import {getBasePlan, getSpacePlans, getEnabledOrgFeatures} from 'account/pricing/PricingDataProvider';
 import {getBasePlanStyle} from 'account/pricing/SubscriptionPlanStyles';
 import {supportUrl} from 'Config';
-import {groupBy, pick} from 'lodash';
+import {groupBy} from 'lodash';
 import {getOrganization} from 'services/TokenStore';
 import {isOwnerOrAdmin} from 'services/OrganizationRoles';
 import * as ReloadNotification from 'ReloadNotification';
@@ -24,7 +24,8 @@ const SubscriptionOverview = createReactClass({
       basePlan: {},
       spacePlansByName: [],
       grandTotal: 0,
-      subscriptionId: null
+      subscriptionId: null,
+      enabledFeatures: []
     };
   },
   componentWillMount: function () {
@@ -40,9 +41,10 @@ const SubscriptionOverview = createReactClass({
     }
 
     const endpoint = createOrgEndpoint(orgId);
-    const [basePlan, spacePlans] = yield Promise.all([
+    const [basePlan, spacePlans, enabledFeatures] = yield Promise.all([
       getBasePlan(endpoint),
-      getSpacePlans(endpoint)
+      getSpacePlans(endpoint),
+      getEnabledOrgFeatures(endpoint)
     ]).catch(ReloadNotification.apiErrorHandler);
 
     onReady();
@@ -54,10 +56,10 @@ const SubscriptionOverview = createReactClass({
     }));
     const grandTotal = calculateTotalPrice([...spacePlans, basePlan]);
 
-    this.setState({basePlan, spacePlansByName, grandTotal});
+    this.setState({basePlan, spacePlansByName, enabledFeatures, grandTotal});
   },
   render: function () {
-    const {basePlan, spacePlansByName, grandTotal} = this.state;
+    const {basePlan, spacePlansByName, enabledFeatures, grandTotal} = this.state;
 
     return h('div', {className: 'workbench'},
       h('div', {className: 'workbench-header__wrapper'},
@@ -70,7 +72,7 @@ const SubscriptionOverview = createReactClass({
         h('div', {
           className: 'workbench-main__left-sidebar',
           style: {padding: '1.2rem 0 0 1.5rem'}
-        }, h(BasePlan, pick(basePlan, 'name', 'price'))),
+        }, h(BasePlan, {basePlan, enabledFeatures})),
         h('div', {
           className: 'workbench-main__right-content',
           style: {padding: '1.2rem 2rem'}
@@ -87,7 +89,8 @@ SubscriptionOverview.propTypes = subscriptionOverviewPropTypes;
 
 // TODO: 'key' is not served by endpoint, but we need some key to choose icon
 // and style for the pricing plan box
-function BasePlan ({name, price, key = 'team-edition'}) {
+function BasePlan ({basePlan, enabledFeatures}) {
+  const {name, price, key = 'team-edition'} = basePlan;
   const basePlanStyle = getBasePlanStyle(key);
   return h('div', null,
     h('h2', {className: 'pricing-heading'}, 'Your pricing plan'),
@@ -98,6 +101,10 @@ function BasePlan ({name, price, key = 'team-edition'}) {
       h('div', {className: 'pricing-plan__bar', style: basePlanStyle.bar}),
       asReact(basePlanStyle.icon),
       h('h3', {className: 'pricing-heading'}, name),
+      h('h3', {className: 'pricing-heading'}, 'Enabled features:'),
+      h('ul', null,
+        enabledFeatures.map(({name}) => h('li', {key: name}, name))
+      ),
       h(Price, {value: price})
     )
   );
@@ -132,7 +139,7 @@ function RightSidebar ({grandTotal}) {
       'Do you need to make changes to your pricing plan or purchase additional spaces? ' +
       'Don’t hesitate to talk to our customer success team.'
     ),
-    h('p', {className: 'entity-sidebar__help-text.pricing-csm'},
+    h('p', {className: 'entity-sidebar__help-text pricing-csm'},
       h('span', {className: 'pricing-csm__photo'}),
       h('span', {className: 'pricing-csm__photo'}),
       h('span', {className: 'pricing-csm__photo'})
