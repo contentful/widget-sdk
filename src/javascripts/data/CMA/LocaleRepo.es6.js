@@ -39,7 +39,7 @@ export default function create (spaceEndpoint) {
 
     const method = isNew ? 'POST' : 'PUT';
     const path = ['locales'].concat(isNew ? [] : [sys.id]);
-    const data = omit(locale, ['sys', 'default', 'internal_code']);
+    const data = omit(locale, ['sys', 'default', 'fallback_code', 'internal_code']);
     const version = isNew ? undefined : sys.version;
 
     return spaceEndpoint({method, path, data, version});
