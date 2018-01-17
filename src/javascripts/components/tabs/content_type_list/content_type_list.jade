@@ -84,24 +84,24 @@ header.workbench-header
         table
           tbody
             tr.entity-list__item(
-              ng-repeat="contentType in visibleContentTypes track by contentType.getId()"
-              ng-init="linkToCt='spaces.detail.content_types.detail.fields({ contentTypeId: contentType.getId() })'"
+              ng-repeat="contentType in visibleContentTypes track by contentType.sys.id"
+              ng-init="linkToCt='spaces.detail.content_types.detail.fields({ contentTypeId: contentType.sys.id })'"
               ui-sref="{{linkToCt}}")
               +td.x--medium-cell(aria-label="cell-display-name"
                 ui-sref="{{linkToCt}}")
-                | {{contentType.getName() || '&nbsp;'}}
+                | {{contentType.name || '&nbsp;'}}
               +td.x--large-cell(aria-label="cell-description"
                 ui-sref="{{linkToCt}}")
-                | {{contentType.data.description || '&nbsp;'}}
+                | {{contentType.description || '&nbsp;'}}
               +td.x--small-cell(aria-label="cell-integer"
                 ui-sref="{{linkToCt}}")
                 | {{numFields(contentType)}}
               +td.x--small-cell(aria-label="cell-date"
                 ui-sref="{{linkToCt}}")
-                date(ng-if="contentType.getUpdatedAt()" datetime="{{contentType.getUpdatedAt()}}" cf-relative-datetime)
+                date(ng-if="contentType.sys.updatedAt" datetime="{{contentType.sys.updatedAt}}" cf-relative-datetime)
               +td.x--small-cell(aria-label="cell-symbol"
                 ui-sref="{{linkToCt}}")
-                span(cf-user link="contentType.getUpdatedBy()" as="updater")
+                span(cf-user link="contentType.sys.updatedBy" as="updater")
                   | {{updater | userNameDisplay:user}}
               +td.entity-status.x--small-cell(aria-label="cell-status"
                 ui-sref="{{linkToCt}}")
