@@ -19,6 +19,7 @@ describe('Space nav bar directive', function () {
     accessChecker.getSectionVisibility = sinon.stub().returns({});
 
     spaceContext.space.isHibernated = sinon.stub().returns(false);
+    spaceContext.organizationContext = {organization: {sys: {id: '123'}}};
 
     compileElement = function () {
       container = $('<cf-space-nav-bar></cf-space-nav-bar>');

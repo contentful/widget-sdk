@@ -70,3 +70,14 @@ function getSpaces (endpoint) {
     path: ['spaces']
   });
 }
+
+/* Gets the space plan for the space with corresponding space id
+ * @param {object} endpoint an organization endpoint
+ * @returns {Promise<object[>} space plan object
+ */
+export function getSingleSpacePlan (endpoint, spaceId) {
+  return getSubscriptionPlans(endpoint, {
+    plan_type: 'space', gatekeeper_key: spaceId
+  })
+    .then(data => data.items[0]);
+}

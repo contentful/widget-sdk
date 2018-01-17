@@ -32,7 +32,8 @@ angular.module('contentful')
       require('states/settings/webhooks'),
       require('states/settings/content_preview'),
       require('states/settings/Extensions').default,
-      require('app/SpaceSettings/Environments/State').default
+      require('app/SpaceSettings/Environments/State').default,
+      require('app/SpaceSettings/Usage/SpaceUsageState').default
     ]
   };
 }]);
