@@ -8,13 +8,15 @@ angular.module('contentful')
  *
  * @description
  * This service holds information about the locales for the current
- * space.
- *
- * It is updated with the space ID and the space locales from the
- * 'spaceContext' service.
+ * space. When space is changed the `init` method should be called
+ * from the `spaceContext`.
  *
  * This service also stores locale preferences in localStorage.
-*/
+ *
+ * TODO convert to ES6
+ * TODO attach it to `spaceContext` instead of being global
+ * TODO figure out the balance between store and repo
+ */
 .factory('TheLocaleStore', ['require', function (require) {
   var getStore = require('TheStore').getStore;
   var create = require('TheLocaleStore/implementation').create;
@@ -64,6 +66,14 @@ angular.module('contentful')
       deactivateLocale: deactivateLocale
     };
 
+    /**
+     * @name TheLocaleStore#init
+     * @description
+     * Sets locale repo for the current space and calls
+     * #refresh().
+     * @param {Data.LocaleRepo} _localeRepo
+     * @returns {Promise<API.Locale[]>}
+     */
     function init (_localeRepo) {
       localeRepo = _localeRepo;
       return refresh();
