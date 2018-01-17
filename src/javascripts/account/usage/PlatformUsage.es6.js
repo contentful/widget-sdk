@@ -9,11 +9,7 @@ import {runTask} from 'utils/Concurrent';
 import {isOwnerOrAdmin} from 'services/OrganizationRoles';
 import {getOrganization} from 'services/TokenStore';
 import * as ReloadNotification from 'ReloadNotification';
-
-const PRICE_FORMATS = {
-  'FlatFee': '(flat fee)',
-  'PerUnit': 'per unit'
-};
+import {TiersTable} from 'account/pricing/TiersTable';
 
 const PlatformUsage = createReactClass({
   getInitialState: function () {
@@ -61,33 +57,6 @@ PlatformUsage.propTypes = {
   onForbidden: PropTypes.func.isRequired,
   orgId: PropTypes.string.isRequired
 };
-
-function TiersTable ({charge}) {
-  return h('section', {className: 'u-separator'},
-    h('h3', {className: 'section-title'}, charge.name),
-    h('table',
-      {className: 'deprecated-table'},
-      h('thead', null,
-        h('tr', null,
-          h('th', null, 'Tier'),
-          h('th', null, 'Start'),
-          h('th', null, 'End'),
-          h('th', null, 'Price'),
-          h('th', null, 'Price format')
-        )
-      ),
-      h('tbody', null,
-        charge.tiers.map(row => h('tr', {key: row.tier},
-          h('td', null, row.tier),
-          h('td', null, row.startingUnit),
-          h('td', null, row.endingUnit),
-          h('td', null, `$${row.price}`),
-          h('td', null, PRICE_FORMATS[row.priceFormat])
-        ))
-      )
-    )
-  );
-}
 
 // TODO: move this to Workbench.es6.js?
 function Workbench ({title, content, sidebar}) {
