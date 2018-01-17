@@ -89,7 +89,7 @@ describe('LaunchDarkly', function () {
       $provide.constant('libs/launch-darkly-client', this.LD);
       $provide.value('data/User', userModule);
       $provide.value('utils/ShallowObjectDiff', this.shallowObjectDiff);
-      $provide.value('utils/LaunchDarkly/EnforceFlags', this.EnforceFlags);
+      $provide.value('debug/EnforceFlags', this.EnforceFlags);
       $provide.value('logger', this.logger);
     });
 

@@ -4,6 +4,7 @@ import TheStore from 'TheStore';
 import {uniq, without, omit} from 'lodash';
 import {addNotification} from 'debug/DevNotifications';
 import location from '$location';
+import Cookies from 'Cookies';
 
 /**
  * Stores enabled ui flags from url in local storage, and shows
@@ -41,6 +42,12 @@ function removeFlag (flagName) {
 }
 
 function displayNotification () {
+  // Do not show the notification for automated end to end tests
+  // b/c it makes some UI elements inaccessible which causes the
+  // tests to fail.
+  if (Cookies.get('cf_test_run')) {
+    return;
+  }
   const flags = getEnabledFlags();
   if (flags.length) {
     addNotification('Enabled flags:', h('ul', null, flags.map(renderFlagsListItem)));

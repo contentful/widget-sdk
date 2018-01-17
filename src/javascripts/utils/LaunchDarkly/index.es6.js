@@ -5,7 +5,7 @@ import {assign, get, isNull, omitBy} from 'lodash';
 import {onValueScope, createPropertyBus} from 'utils/kefir';
 import getChangesObject from 'utils/ShallowObjectDiff';
 import {isOrgPlanEnterprise} from 'data/Org';
-import {getEnabledFlags} from 'utils/LaunchDarkly/EnforceFlags';
+import {getEnabledFlags} from 'debug/EnforceFlags';
 import {createMVar} from 'utils/Concurrent';
 import logger from 'logger';
 

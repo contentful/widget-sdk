@@ -3,7 +3,7 @@ import * as Config from 'Config';
 import {includes, mapValues} from 'lodash';
 import * as UIVersionSwitcher from 'debug/UIVersionSwitcher';
 import * as MockApiToggle from 'debug/MockApiToggle';
-import * as EnforceFlags from 'utils/LaunchDarkly/EnforceFlags';
+import * as EnforceFlags from 'debug/EnforceFlags';
 
 const DEBUG_ENVS = ['development', 'preview', 'staging'];
 
