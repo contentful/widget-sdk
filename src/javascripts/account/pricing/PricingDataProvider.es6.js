@@ -63,6 +63,20 @@ export function getSpacesWithPlans (endpoint) {
   }));
 }
 
+/**
+ * TODO: will be used later in access checker
+ *
+ * Gets the list of enabled features for the org such as offsite backup.
+ * @param {object} endpoint an organization endpoint
+ * @returns {Promise<object[]>} array of features in {name, internal_name}
+ * format.
+ */
+export function getEnabledOrgFeatures (endpoint) {
+  return endpoint({
+    method: 'GET',
+    path: ['features']
+  }, alphaHeader).then(features => features.items);
+}
 
 function getSpaces (endpoint) {
   return endpoint({
