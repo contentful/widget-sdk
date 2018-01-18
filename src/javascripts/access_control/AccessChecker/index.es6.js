@@ -33,6 +33,10 @@ const ACTIONS_FOR_ENTITIES = {
 
 const isInitializedBus = K.createPropertyBus(false);
 
+let authContext;
+let spaceContext;
+let spaceMembership;
+let organization;
 let responses = {};
 let features = {};
 let userQuota = {};
@@ -134,14 +138,19 @@ export function can (action, entityType) {
  * @description
  * Forcibly recollect all permission data
  */
-export function reset () {
-  cache.reset(authorization.spaceContext);
-  policyChecker.setMembership(getSpaceData('spaceMembership'));
+export function reset (context) {
+  authContext = context.authContext;
+  spaceContext = context.spaceContext;
+  spaceMembership = context.spaceMembership;
+  organization = context.organization;
+
+  cache.reset(spaceContext);
+  policyChecker.setMembership(spaceMembership);
   collectResponses();
   collectFeatures();
   collectSectionVisibility();
 
-  isInitializedBus.set(!!authorization.authContext);
+  isInitializedBus.set(!!authContext);
 }
 
 /**
@@ -306,11 +315,11 @@ export function canModifyUsers () {
  * Returns true if space can be created.
  */
 export function canCreateSpace () {
-  if (!authorization.authContext || !canCreateSpaceInAnyOrganization()) {
+  if (!authContext || !canCreateSpaceInAnyOrganization()) {
     return false;
   }
 
-  const response = checkIfCanCreateSpace(authorization.authContext);
+  const response = checkIfCanCreateSpace(authContext);
   if (!response) {
     broadcastEnforcement(getEnforcement('create', 'Space'));
   }
@@ -339,9 +348,8 @@ export function canCreateSpaceInAnyOrganization () {
  * Returns true if space can be created in an organization with a provided ID.
  */
 export function canCreateSpaceInOrganization (organizationId) {
-  if (!authorization.authContext) { return false; }
+  if (!authContext) { return false; }
 
-  const authContext = authorization.authContext;
   if (authContext.hasOrganization(organizationId)) {
     return checkIfCanCreateSpace(authContext.organization(organizationId));
   } else {
@@ -405,15 +413,15 @@ function collectSectionVisibility () {
     asset: !shouldHide('readAsset') || policyChecker.canAccessAssets(),
     apiKey: !shouldHide('readApiKey'),
     settings: !shouldHide('updateSettings'),
-    spaceHome: getSpaceData('spaceMembership.admin', false)
+    spaceHome: get(spaceMembership, 'admin')
   };
 }
 
 function collectFeatures () {
-  features = getSpaceData('organization.subscriptionPlan.limits.features', {});
+  features = get(organization, 'subscriptionPlan.limits.features', {});
   userQuota = {
-    limit: getSpaceData('organization.subscriptionPlan.limits.permanent.organizationMembership', -1),
-    used: getSpaceData('organization.usage.permanent.organizationMembership', 1)
+    limit: get(organization, 'subscriptionPlan.limits.permanent.organizationMembership', -1),
+    used: get(organization, 'usage.permanent.organizationMembership', 1)
   };
 }
 
@@ -427,7 +435,7 @@ function createResponseAttributeGetter (attrName) {
 function getPermissions (action, entity) {
   const response = { shouldHide: false, shouldDisable: false };
 
-  if (!authorization.spaceContext) { return response; }
+  if (!spaceContext) { return response; }
   response.can = cache.getResponse(action, entity);
   if (response.can) { return response; }
 
@@ -467,7 +475,7 @@ function toType (entity) {
 }
 
 function getReasonsDenied (action, entity) {
-  return authorization.spaceContext.reasonsDenied(action, entity);
+  return spaceContext.reasonsDenied(action, entity);
 }
 
 function getContentTypeIdFor (entry) {
@@ -494,14 +502,13 @@ function checkIfCanCreateSpace (context) {
 
 function isAuthor (entity) {
   const author = getAuthorIdFor(entity);
-  const currentUserId = getSpaceData('spaceMembership.user.sys.id');
+  const currentUserId = get(spaceMembership, 'user.sys.id');
 
   return author === currentUserId;
 }
 
 function isSuperUser () {
-  const isSpaceAdmin = getSpaceData('spaceMembership.admin', false);
-  const organization = getSpaceData('organization');
+  const isSpaceAdmin = get(spaceMembership, 'admin');
   const isOrganizationAdmin = OrganizationRoles.isAdmin(organization);
   const isOrganizationOwner = OrganizationRoles.isOwner(organization);
 
@@ -518,6 +525,7 @@ function getSpaceData (path, defaultValue) {
   return require('spaceContext').getData(path, defaultValue);
 }
 
+// TODO remove watcher, call reset explicitly
 $rootScope.$watchCollection(function () {
   return {
     authContext: authorization.authContext,

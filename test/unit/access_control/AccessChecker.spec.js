@@ -9,6 +9,11 @@ describe('Access Checker', function () {
     $rootScope.$apply();
   }
 
+  function changeAuthContext (authContext) {
+    authorization.authContext = authContext;
+    $rootScope.$apply();
+  }
+
   afterEach(function () {
     $rootScope = spaceContext = authorization =
       enforcements = OrganizationRoles = policyChecker =
@@ -39,8 +44,7 @@ describe('Access Checker', function () {
       expect(K.getValue(ac.isInitialized$)).toEqual(false);
       triggerChange();
       expect(K.getValue(ac.isInitialized$)).toEqual(false);
-      authorization.authContext = {};
-      $rootScope.$apply();
+      changeAuthContext({});
       expect(K.getValue(ac.isInitialized$)).toEqual(true);
     });
   });
@@ -347,24 +351,24 @@ describe('Access Checker', function () {
 
     describe('#canCreateSpaceInOrganization', function () {
       it('returns false if there is no authContext', function () {
-        authorization.authContext = null;
+        changeAuthContext(null);
         expect(ac.canCreateSpaceInOrganization('orgid')).toBe(false);
       });
 
       it('returns result of organization authContext "can" call', function () {
         const organizationCanStub = sinon.stub().returns('YES WE CAN');
-        authorization.authContext = makeAuthContext({
+        changeAuthContext(makeAuthContext({
           orgid: organizationCanStub
-        });
+        }));
 
         expect(ac.canCreateSpaceInOrganization('orgid')).toBe('YES WE CAN');
         sinon.assert.calledOnce(organizationCanStub.withArgs('create', 'Space'));
       });
 
       it('returns false and logs if organization authContext throws', function () {
-        authorization.authContext = makeAuthContext({
+        changeAuthContext(makeAuthContext({
           orgid: sinon.stub().throws()
-        });
+        }));
 
         expect(ac.canCreateSpaceInOrganization('orgid')).toBe(false);
         const logger = this.$inject('logger');
@@ -381,19 +385,19 @@ describe('Access Checker', function () {
       });
 
       it('returns true if space can be created in at least on organization', function () {
-        authorization.authContext = makeAuthContext({
+        changeAuthContext(makeAuthContext({
           org1: sinon.stub().returns(false),
           org2: sinon.stub().returns(true)
-        });
+        }));
 
         expect(ac.canCreateSpaceInAnyOrganization()).toBe(true);
       });
 
       it('returns false if space cannot be create in any organization', function () {
-        authorization.authContext = makeAuthContext({
+        changeAuthContext(makeAuthContext({
           org1: sinon.stub().returns(false),
           org2: sinon.stub().returns(false)
-        });
+        }));
 
         expect(ac.canCreateSpaceInAnyOrganization()).toBe(false);
       });
@@ -405,13 +409,13 @@ describe('Access Checker', function () {
       beforeEach(function () {
         organizationCanStub = sinon.stub().returns(false);
         TokenStore.organizations$ = K.createMockProperty([{sys: {id: 'org1'}}]);
-        authorization.authContext = makeAuthContext({
+        changeAuthContext(makeAuthContext({
           org1: organizationCanStub
-        });
+        }));
       });
 
       it('returns false when authContext is not defined', function () {
-        authorization.authContext = null;
+        changeAuthContext(null);
         expect(ac.canCreateSpace()).toBe(false);
       });
 
