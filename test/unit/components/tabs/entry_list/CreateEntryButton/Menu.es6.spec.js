@@ -87,8 +87,11 @@ describe('CreateEntryMenu', () => {
 
 
 function generateContentTypes (max) {
-  return range(max).map(() => ({
-    sys: { id: Math.random().toString(36).substring(7) },
-    name: Math.random().toString(36).substring(10)
-  }));
+  return range(max).map((index) => {
+    const randomString = `${index}${Math.random().toString(36)}`;
+    return {
+      sys: { id: randomString.substring(7) },
+      name: randomString.substring(10)
+    };
+  });
 }
