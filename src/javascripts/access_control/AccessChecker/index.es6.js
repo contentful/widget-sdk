@@ -381,6 +381,10 @@ export function wasForbidden (context) {
   };
 }
 
+export function hasFeature (name) {
+  return get(features, name, false);
+}
+
 function collectResponses () {
   const replacement = {};
 

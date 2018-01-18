@@ -18,6 +18,7 @@
       var TokenStore = require('services/TokenStore');
       var OrganizationRoles = require('services/OrganizationRoles');
       var K = require('utils/kefir');
+      var accessChecker = require('access_control/AccessChecker');
 
       var nav = this;
 
@@ -34,7 +35,7 @@
         var orgId = nav.orgId = $stateParams.orgId;
         TokenStore.getOrganization(orgId).then(function (org) {
           nav.pricingVersion = org.pricingVersion;
-          nav.hasOffsiteBackup = hasOffsiteBackup(org);
+          nav.hasOffsiteBackup = accessChecker.hasFeature('offsiteBackup');
           nav.hasBillingTab = org.isBillable && OrganizationRoles.isOwner(org);
           nav.hasSettingsTab = OrganizationRoles.isOwner(org);
         });
@@ -125,9 +126,5 @@
         if: 'nav.hasOffsiteBackup'
       }
     ]);
-  }
-
-  function hasOffsiteBackup (org) {
-    return _.get(org, 'subscriptionPlan.limits.features.offsiteBackup', false);
   }
 }]);
