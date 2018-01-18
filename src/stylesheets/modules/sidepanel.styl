@@ -1,62 +1,232 @@
-.nav-sidepanel__header
-  background-color: $colors.element-light
+.nav-sidepanel-container
+  z-index: 1000
+  position: absolute
 
-.nav-sidepanel__header:hover
-.nav-sidepanel__header--is-active
-  background-color: $colors.element-mid
-
-.nav-sidepanel__close-btn
-  cf-icon
-    g
-      fill: white
-      transition: opacity 0.1s ease-in-out
-
-.nav-sidepanel__close-btn:hover
-  cf-icon
-    g
-      opacity: .9
-
-.nav-sidepanel__no-spaces
-  cf-icon
-    g
-      fill: $colors.green-dark
-
-.nav-sidepanel--slide-in
+.nav-sidepanel__bg
+  position: absolute
+  top: 0
   left: 0
-  transition: left 0.3s cubic-bezier(0.29, 0.54, 0.07, 0.99)
+  background-color: rgba($colors.contrast-dark, 0.75) // TODO: Check if variable exists
+  height: 100vh
+  width: 100vw
+  z-index: 0
+  transition: all 0.2s ease-in-out // TODO: Check if variable exists
+  visibility: hidden
+  opacity: 0
 
-.nav-sidepanel--slide-out
+  &--is-visible
+    visibility: visible
+    opacity: 1
+
+.nav-sidepanel
+  position: absolute
+  top: 0
+  display: flex
+  flex-direction: column
+  width: 350px
+  height: 100vh
+  background: $colors.element-lightest
+  z-index: 1
+  line-height: 1.5
   left: -395px
   transition: left 0.2s ease-in-out
 
-.nav-sidepanel__org-name:not(.nav-sidepanel__org-name--is-active):hover
-  background-color: $colors.element-lightest
+  &--is-active
+    left: 0
+    transition: left 0.3s cubic-bezier(0.29, 0.54, 0.07, 0.99)
 
-.nav-sidepanel__org-name--is-active
+.nav-sidepanel__header
   background-color: $colors.element-light
+  display: flex
+  align-items: center
+  height: 70px
+  flex-shrink: 0
+  border-bottom: 1px solid $colors.element-dark
+  padding: 0 20px
+  cursor: pointer
+  transition: background-color 0.1s ease-in-out
 
-.nav-sidepanel__space-name:not(.nav-sidepanel__space-name--is-active):hover
-.nav-sidepanel__org-actions-goto-settings:hover
-  background-color: $colors.element-light
+  &:hover,
+  &--is-active
+    background-color: $colors.element-mid
 
-.nav-sidepanel__bg--is-not-visible
-  visibility: hidden
-  opacity: 0
+.nav-sidepanel__org-img
+  flex: 0 0 35px
+  height: 35px
+  background: $colors.element-darkest
+  color: $colors.text-dark
+  font-weight: bold
+  font-size: 0.9em
+  text-align: center
+  line-height: 35px
+  border-radius: 2px
+  margin-bottom: 0
+  margin-right: 15px
 
-.nav-sidepanel__bg--is-visible
-  visibility: visible
-  opacity: 1
+.nav-sidepanel__org-selector-container
+  flex-grow: 2
+  min-width: 0
+  overflow: hidden
 
-.nav-sidepanel__org-list-container--is-not-visible
+.nav-sidepanel__org-selector
+  display: flex
+  flex-direction: column
+
+.nav-sidepanel__org-selector-heading
+  font-weight: bold
+  margin-bottom: 0
+
+.nav-sidepanel__org-selector-current-org
+  color: $colors.text-mid
+  margin-bottom: 0
+  padding-right: 10px
+  white-space: nowrap
+  overflow: hidden
+  text-overflow: ellipsis
+
+.nav-sidepanel__header span
+  $triangle()
+
+.nav-sidepanel__org-list-container
   top: 63px
   opacity: 0
   visibility: hidden
+  background: white
+  flex-direction: column
+  position: absolute
+  width: 90%
+  left: 18px
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08)
+  border: 1px solid $colors.element-mid
+  display: flex
+  transition: all 0.2s ease-in-out
+  cursor: auto
 
-.nav-sidepanel__org-list-container--is-visible
-  top: 66px
-  opacity: 1
-  visiblility: visible
+  &--is-visible
+    top: 66px
+    opacity: 1
+    visibility: visible
 
-.nav-sidepanel__space-name--is-active
-.nav-sidepanel__org-actions-goto-settings--is-active
-  background-color: $colors.element-mid
+.nav-sidepanel__org-list
+  max-height: 184px
+  width: 100%
+  overflow: hidden
+  overflow-y: auto
+  padding-bottom: 6px
+  line-height: 1.5
+
+.nav-sidepanel__org-list-heading
+  font-weight: 600
+  margin-bottom: 0
+  padding: 20px 20px 8px
+  text-transform: uppercase
+  letter-spacing: 1px
+  font-size: 0.9em
+  line-height: 1
+
+.nav-sidepanel__org-name
+  cursor: pointer
+  padding: 8px 20px
+  margin: 0
+  transition: background-color 0.1s ease-in-out
+
+  &:not(.nav-sidepanel__org-name--is-active):hover
+    background-color: $colors.element-lightest
+
+  &--is-active
+    background-color: $colors.element-light
+
+.nav-sidepanel__org-create-cta
+  padding: 14px 20px 20px
+  display: block
+  border-top: 1px solid $colors.element-mid
+
+.nav-sidepanel__spaces-container
+  display: flex
+  flex-direction: column
+  max-height: 100%
+  overflow: hidden
+
+.nav-sidepanel__spaces-header
+  display: flex
+  flex-shrink: 0
+  justify-content: space-between
+  padding: 20px 20px 0
+
+.nav-sidepanel__spaces-header-heading
+  font-weight: bold
+
+.nav-sidepanel__space-list
+  overflow-y: auto
+
+.nav-sidepanel__space-name
+  color: $colors.text-mid
+  cursor: pointer
+  padding: 8px 20px
+  margin: 0
+  transition: background-color 0.1s ease-in-out
+
+  &--is-active
+    background-color: $colors.element-mid
+
+  &:not(.nav-sidepanel__space-name--is-active):hover
+    background-color: $colors.element-light
+
+.nav-sidepanel__no-spaces
+  padding: 20px 20px 28px
+  margin: 0
+  text-align: center;
+
+  svg
+    margin: 20px 0 14px
+    display: inline-block
+
+.nav-sidepanel__no-spaces-heading
+  font-weight: bold
+
+.nav-sidepanel__no-spaces-create-cta
+  width: 44%
+  margin-top: 10px
+  white-space nowrap
+
+.nav-sidepanel__org-actions
+  flex-grow: 1
+  padding: 12px 0
+
+.nav-sidepanel__org-actions-separator-container
+  padding-left: 20px
+  padding-right: 20px
+
+.nav-sidepanel__org-actions-separator
+  margin-bottom: 12px
+  border-bottom: 1px solid $colors.element-dark
+
+.nav-sidepanel__org-actions-goto-settings
+  color: $colors.text-mid
+  cursor: pointer
+  margin: 0
+  padding: 8px 20px
+  transition: background-color 0.1s ease-in-out
+
+  &:hover
+    background-color: $colors.element-light
+
+  &--is-active
+    background-color: $colors.element-mid
+
+.nav-sidepanel__close-btn
+  position: absolute
+  left: 375px
+  top: 27px
+  font-size: 1.7em
+  color: white
+  cursor: pointer
+
+  svg
+    display: block
+    transition: opacity 0.1s ease-in-out
+    g
+      fill: white
+
+  &:hover svg
+    opacity 0.9

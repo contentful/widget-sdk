@@ -178,7 +178,6 @@ function createElement (container, selector) {
 
   function getElement () {
     const el = findOne(container, selector);
-    assertIsVisible(el);
     return el;
   }
 }
@@ -325,6 +324,7 @@ function assertIsVisible (element) {
     const { opacity, visibility } = window.getComputedStyle(el);
     expect(opacity).not.toBe(0, 'Element is not visible. Opacity is 0');
     expect(visibility).not.toBe('hidden', 'Element is not visible. Visibility is \'hidden\'');
+    expect(element.getAttribute('aria-hidden')).not.toBe('true', 'Element is not visible. aria-hidden is \'true\'');
     el = el.parentElement;
   }
 }
@@ -349,7 +349,8 @@ function assertNotVisible (container, selector) {
   while (el) {
     const notRendered = el.getClientRects().length === 0;
     const { opacity, visibility } = window.getComputedStyle(el);
-    if (notRendered || !opacity || visibility === 'hidden') {
+    const ariaHidden = el.getAttribute('aria-hidden') === 'true';
+    if (notRendered || !opacity || visibility === 'hidden' || ariaHidden) {
       return;
     }
     el = el.parentElement;

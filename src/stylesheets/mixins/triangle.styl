@@ -1,0 +1,30 @@
+$triangle($width = 4px, $direction = 'down', $color = $colors.text-dark)
+  directions = {
+    up: {
+      border: $width solid $color
+      border-top-color: transparent
+      border-left-color: transparent
+      border-right-color: transparent
+    },
+    right: {
+      border: $width solid $color
+      border-top-color: transparent
+      border-left-color: transparent
+      border-bottom-color: transparent
+    },
+    down: {
+      border: $width solid $color
+      border-left-color: transparent
+      border-bottom-color: transparent
+      border-right-color: transparent
+    },
+    left: {
+      border: $width solid $color
+      border-top-color: transparent
+      border-right-color: transparent
+      border-bottom-color: transparent
+    }
+  }
+
+  styles = directions[$direction]
+  {styles}
