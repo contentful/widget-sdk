@@ -1,31 +1,25 @@
 import * as K from 'helpers/mocks/kefir';
 
 describe('Access Checker', function () {
-  let $rootScope, spaceContext, authorization, enforcements, OrganizationRoles, TokenStore, policyChecker, ac;
+  let $rootScope, enforcements, OrganizationRoles, TokenStore, policyChecker, ac;
   let getResStub, reasonsDeniedStub;
 
   function triggerChange () {
-    authorization.spaceContext = {reasonsDenied: reasonsDeniedStub};
-    $rootScope.$apply();
+    ac.reset({spaceContext: {reasonsDenied: reasonsDeniedStub}});
   }
 
   function changeAuthContext (authContext) {
-    authorization.authContext = authContext;
-    $rootScope.$apply();
+    ac.reset({authContext});
   }
 
   afterEach(function () {
-    $rootScope = spaceContext = authorization =
-      enforcements = OrganizationRoles = policyChecker =
-      ac = getResStub = reasonsDeniedStub = null;
+    $rootScope = enforcements = OrganizationRoles = policyChecker = ac = getResStub = reasonsDeniedStub = null;
   });
 
   beforeEach(function () {
     module('contentful/test');
 
     $rootScope = this.$inject('$rootScope');
-    spaceContext = this.$inject('spaceContext');
-    authorization = this.$inject('authorization');
     enforcements = this.$inject('access_control/Enforcements');
     OrganizationRoles = this.$inject('services/OrganizationRoles');
     TokenStore = this.$inject('services/TokenStore');
@@ -306,14 +300,13 @@ describe('Access Checker', function () {
 
     describe('#canModifyRoles', function () {
       function changeSpace (hasFeature, isSpaceAdmin) {
-        spaceContext.space = {data: {
+        ac.reset({
           organization: {
             sys: {id: 'orgid'},
             subscriptionPlan: {limits: {features: {customRoles: hasFeature}}}
           },
           spaceMembership: {admin: isSpaceAdmin}
-        }};
-        $rootScope.$apply();
+        });
       }
 
       it('returns true when has feature and is admin of space, false otherwise', function () {
@@ -343,7 +336,7 @@ describe('Access Checker', function () {
         t('unknown', false);
 
         function t (id, expectation) {
-          spaceContext.space.data.organization.sys.id = id;
+          ac.reset({organization: {sys: {id}}});
           expect(ac.canModifyUsers()).toBe(expectation);
         }
       });
@@ -404,14 +397,15 @@ describe('Access Checker', function () {
     });
 
     describe('#canCreateSpace', function () {
-      let organizationCanStub;
+      let organizationCanStub, canStub;
 
       beforeEach(function () {
         organizationCanStub = sinon.stub().returns(false);
+        canStub = sinon.stub().returns(false);
         TokenStore.organizations$ = K.createMockProperty([{sys: {id: 'org1'}}]);
         changeAuthContext(makeAuthContext({
           org1: organizationCanStub
-        }));
+        }, canStub));
       });
 
       it('returns false when authContext is not defined', function () {
@@ -432,22 +426,22 @@ describe('Access Checker', function () {
 
       it('returns true if can create space in some organization and can create space in general', function () {
         organizationCanStub.returns(true);
-        authorization.authContext.can.returns(true);
+        canStub.returns(true);
         expect(ac.canCreateSpace()).toBe(true);
         sinon.assert.calledOnce(organizationCanStub);
       });
 
       it('returns false if can create space in some organization but cannot create spaces in general', function () {
         organizationCanStub.returns(true);
-        authorization.authContext.can.returns(false);
+        canStub.returns(false);
         expect(ac.canCreateSpace()).toBe(false);
         sinon.assert.calledOnce(organizationCanStub);
-        sinon.assert.calledOnce(authorization.authContext.can);
+        sinon.assert.calledOnce(canStub);
       });
 
       it('broadcasts enforcement if found for a general case', function () {
         organizationCanStub.returns(true);
-        authorization.authContext.can.returns(false);
+        canStub.returns(false);
         const reasons = ['REASONS!'];
         reasonsDeniedStub.withArgs('create', 'Space').returns(reasons);
         enforcements.determineEnforcement.withArgs(reasons, 'Space').returns({message: 'MESSAGE'});
@@ -519,7 +513,7 @@ describe('Access Checker', function () {
  *
  * The argument is a map from organization IDs to 'can' functions.
  */
-function makeAuthContext (orgs) {
+function makeAuthContext (orgs, can = sinon.stub()) {
   return {
     organization (id) {
       return {can: orgs[id]};
@@ -527,6 +521,6 @@ function makeAuthContext (orgs) {
     hasOrganization (id) {
       return id in orgs;
     },
-    can: sinon.stub()
+    can
   };
 }

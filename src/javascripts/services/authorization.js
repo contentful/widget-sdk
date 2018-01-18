@@ -1,7 +1,11 @@
 'use strict';
 
 angular.module('contentful')
-.factory('authorization', ['worf', 'logger', function (worf, logger) {
+.factory('authorization', ['require', function (require) {
+  var worf = require('worf');
+  var logger = require('logger');
+  var resetAccessChecker = require('access_control/AccessChecker').reset;
+
   function Authorization () {}
 
   Authorization.prototype = {
@@ -11,6 +15,7 @@ angular.module('contentful')
       this._tokenLookup = tokenLookup;
       try {
         this.authContext = worf(tokenLookup);
+        resetAccessChecker({authContext: this.authContext});
       } catch (exp) {
         logger.logError('Worf initialization exception', {
           data: {
@@ -26,6 +31,7 @@ angular.module('contentful')
       if (space && this.authContext) {
         try {
           this.spaceContext = this.authContext.space(space.getId());
+          resetAccessChecker({spaceContext: this.spaceContext});
         } catch (exp) {
           logger.logError('Worf authContext space exception', exp);
         }

@@ -1,6 +1,5 @@
 import $rootScope from '$rootScope';
 import $q from '$q';
-import authorization from 'authorization';
 import logger from 'logger';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
@@ -139,10 +138,10 @@ export function can (action, entityType) {
  * Forcibly recollect all permission data
  */
 export function reset (context) {
-  authContext = context.authContext;
-  spaceContext = context.spaceContext;
-  spaceMembership = context.spaceMembership;
-  organization = context.organization;
+  if (context.authContext) { authContext = context.authContext; }
+  if (context.spaceContext) { spaceContext = context.spaceContext; }
+  if (context.spaceMembership) { spaceMembership = context.spaceMembership; }
+  if (context.organization) { organization = context.organization; }
 
   cache.reset(spaceContext);
   policyChecker.setMembership(spaceMembership);
@@ -439,7 +438,7 @@ function getPermissions (action, entity) {
   response.can = cache.getResponse(action, entity);
   if (response.can) { return response; }
 
-  const reasons = getReasonsDenied(action, entity);
+  const reasons = spaceContext.reasonsDenied(action, entity);
   response.reasons = (reasons && reasons.length > 0) ? reasons : null;
   response.enforcement = getEnforcement(action, entity);
   response.shouldDisable = !!response.reasons;
@@ -460,7 +459,7 @@ function broadcastEnforcement (enforcement) {
 }
 
 function getEnforcement (action, entity) {
-  const reasonsDenied = getReasonsDenied(action, entity);
+  const reasonsDenied = spaceContext.reasonsDenied(action, entity);
   const entityType = toType(entity);
 
   return determineEnforcement(reasonsDenied, entityType);
@@ -472,10 +471,6 @@ function toType (entity) {
   } else {
     return get(entity, 'sys.type', null);
   }
-}
-
-function getReasonsDenied (action, entity) {
-  return spaceContext.reasonsDenied(action, entity);
 }
 
 function getContentTypeIdFor (entry) {
@@ -519,18 +514,3 @@ function determineEnforcement (reasonsDenied, entityType) {
   // Prevent circular deps
   return require('access_control/Enforcements').determineEnforcement(reasonsDenied, entityType);
 }
-
-function getSpaceData (path, defaultValue) {
-  // Prevent circular deps
-  return require('spaceContext').getData(path, defaultValue);
-}
-
-// TODO remove watcher, call reset explicitly
-$rootScope.$watchCollection(function () {
-  return {
-    authContext: authorization.authContext,
-    spaceContext: authorization.spaceContext,
-    organization: getSpaceData('organization'),
-    spaceMembership: getSpaceData('spaceMembership')
-  };
-}, reset);

@@ -39,6 +39,7 @@ angular.module('contentful')
   var createViewMigrator = require('data/ViewMigrator').default;
   var client = require('client');
   var createLocaleRepo = require('data/CMA/LocaleRepo').default;
+  var resetAccessChecker = require('access_control/AccessChecker').reset;
 
   var spaceContext = {
     /**
@@ -109,6 +110,11 @@ angular.module('contentful')
       self.user = K.getValue(TokenStore.user$);
 
       previewEnvironmentsCache.clearAll();
+
+      resetAccessChecker({
+        organization: organization,
+        spaceMembership: self.getData('spaceMembership')
+      });
 
       return $q.all([
         Widgets.setSpace(self.endpoint).then(function (widgets) {
