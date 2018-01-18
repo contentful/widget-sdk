@@ -51,27 +51,6 @@ describe('Number widgets', function () {
       this.el.setInput('foo');
       sinon.assert.notCalled(this.fieldApi.setValue);
     });
-
-    it('shows warning if input cannot be parsed', function () {
-      expect(this.el.inputEl.attr('aria-invalid')).toEqual('false');
-      expect(this.el.isStatusVisible()).toEqual(false);
-
-      this.el.setInput('6.');
-      expect(this.el.inputEl.attr('aria-invalid')).toEqual('true');
-      expect(this.el.isStatusVisible()).toEqual(true);
-
-      this.el.setInput('asd');
-      expect(this.el.inputEl.attr('aria-invalid')).toEqual('true');
-      expect(this.el.isStatusVisible()).toEqual(true);
-    });
-
-    it('set field invalid when input cannot be parsed', function () {
-      this.el.setInput('6.');
-      expect(this.widgetApi._state.isInvalid).toBe(true);
-
-      this.el.setInput('6');
-      expect(this.widgetApi._state.isInvalid).toBe(false);
-    });
   });
 
   describe('Integer widget', function () {
