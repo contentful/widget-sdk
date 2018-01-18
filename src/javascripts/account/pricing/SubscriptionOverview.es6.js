@@ -3,7 +3,7 @@ import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import {runTask} from 'utils/Concurrent';
 import {createEndpoint as createOrgEndpoint} from 'access_control/OrganizationMembershipRepository';
-import {getBasePlan, getSpacePlans, getEnabledOrgFeatures} from 'account/pricing/PricingDataProvider';
+import {getBasePlan, getSpacePlans} from 'account/pricing/PricingDataProvider';
 import {getBasePlanStyle} from 'account/pricing/SubscriptionPlanStyles';
 import {supportUrl} from 'Config';
 import {groupBy} from 'lodash';
@@ -24,8 +24,7 @@ const SubscriptionOverview = createReactClass({
       basePlan: {},
       spacePlansByName: [],
       grandTotal: 0,
-      subscriptionId: null,
-      enabledFeatures: []
+      subscriptionId: null
     };
   },
   componentWillMount: function () {
@@ -41,10 +40,9 @@ const SubscriptionOverview = createReactClass({
     }
 
     const endpoint = createOrgEndpoint(orgId);
-    const [basePlan, spacePlans, enabledFeatures] = yield Promise.all([
+    const [basePlan, spacePlans] = yield Promise.all([
       getBasePlan(endpoint),
-      getSpacePlans(endpoint),
-      getEnabledOrgFeatures(endpoint)
+      getSpacePlans(endpoint)
     ]).catch(ReloadNotification.apiErrorHandler);
 
     onReady();
@@ -56,10 +54,10 @@ const SubscriptionOverview = createReactClass({
     }));
     const grandTotal = calculateTotalPrice([...spacePlans, basePlan]);
 
-    this.setState({basePlan, spacePlansByName, enabledFeatures, grandTotal});
+    this.setState({basePlan, spacePlansByName, grandTotal});
   },
   render: function () {
-    const {basePlan, spacePlansByName, enabledFeatures, grandTotal} = this.state;
+    const {basePlan, spacePlansByName, grandTotal} = this.state;
 
     return h('div', {className: 'workbench'},
       h('div', {className: 'workbench-header__wrapper'},
@@ -72,7 +70,7 @@ const SubscriptionOverview = createReactClass({
         h('div', {
           className: 'workbench-main__left-sidebar',
           style: {padding: '1.2rem 0 0 1.5rem'}
-        }, h(BasePlan, {basePlan, enabledFeatures})),
+        }, h(BasePlan, basePlan)),
         h('div', {
           className: 'workbench-main__right-content',
           style: {padding: '1.2rem 2rem'}
@@ -89,8 +87,8 @@ SubscriptionOverview.propTypes = subscriptionOverviewPropTypes;
 
 // TODO: 'key' is not served by endpoint, but we need some key to choose icon
 // and style for the pricing plan box
-function BasePlan ({basePlan, enabledFeatures}) {
-  const {name, price, key = 'team-edition'} = basePlan;
+function BasePlan ({name, price, key = 'team-edition', ratePlanCharges = []}) {
+  const enabledFeatures = ratePlanCharges.filter(({unitType}) => unitType === 'feature');
   const basePlanStyle = getBasePlanStyle(key);
   return h('div', null,
     h('h2', {className: 'pricing-heading'}, 'Your pricing plan'),
@@ -103,7 +101,8 @@ function BasePlan ({basePlan, enabledFeatures}) {
       h('h3', {className: 'pricing-heading'}, name),
       h('h3', {className: 'pricing-heading'}, 'Enabled features:'),
       h('ul', null,
-        enabledFeatures.map(({name}) => h('li', {key: name}, name))
+        enabledFeatures.map(({name}) => h('li', {key: name}, name)),
+        !enabledFeatures.length && h('li', null, '(none)')
       ),
       h(Price, {value: price})
     )
@@ -154,7 +153,7 @@ function Price ({value = 0, currency = '$', unit = 'month'}) {
   return h('p', {className: 'pricing-price'},
     h('span', {className: 'pricing-price__value'},
       h('span', {className: 'pricing-price__value__currency'}, currency),
-      value.toLocaleString('en-US')
+      parseInt(value, 10).toLocaleString('en-US')
     ),
     h('span', {className: 'pricing-price__unit'}, `/${unit}`)
   );

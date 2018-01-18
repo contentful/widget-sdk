@@ -64,6 +64,8 @@ export function getSpacesWithPlans (endpoint) {
 }
 
 /**
+ * TODO: will be used later in access checker
+ *
  * Gets the list of enabled features for the org such as offsite backup.
  * @param {object} endpoint an organization endpoint
  * @returns {Promise<object[]>} array of features in {name, internal_name}
