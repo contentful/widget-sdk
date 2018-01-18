@@ -7,7 +7,7 @@
 angular.module('contentful')
 .directive('cfSpaceNavBar', ['require', function (require) {
   var navBar = require('navigation/templates/NavBar').default;
-  var accessChecker = require('accessChecker');
+  var accessChecker = require('access_control/AccessChecker');
   var spaceContext = require('spaceContext');
   var LD = require('utils/LaunchDarkly');
   var TokenStore = require('services/TokenStore');

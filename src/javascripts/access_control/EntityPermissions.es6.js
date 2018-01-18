@@ -1,6 +1,6 @@
 import {partial} from 'lodash';
 // TODO These modules have global state :(
-import accessChecker from 'accessChecker';
+import * as accessChecker from 'access_control/AccessChecker';
 import policyAccessChecker from 'accessChecker/policy';
 
 /**

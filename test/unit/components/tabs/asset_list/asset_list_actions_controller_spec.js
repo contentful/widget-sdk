@@ -58,7 +58,7 @@ describe('Asset List Actions Controller', function () {
     const spaceContext = this.$inject('mocks/spaceContext').init();
     spaceContext.space = {createAsset: stubs.createAsset};
 
-    accessChecker = this.$inject('accessChecker');
+    accessChecker = this.$inject('access_control/AccessChecker');
     accessChecker.canPerformActionOnEntity = sinon.stub();
 
     const $controller = this.$inject('$controller');

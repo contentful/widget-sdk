@@ -7,7 +7,7 @@ import {concat} from 'utils/Collections';
 import leaveConfirmator from 'navigation/confirmLeaveEditor';
 import spaceContext from 'spaceContext';
 import logger from 'logger';
-import accessChecker from 'accessChecker';
+import * as accessChecker from 'access_control/AccessChecker';
 import $state from '$state';
 import notification from 'notification';
 import {track} from 'analytics/Analytics';

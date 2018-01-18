@@ -7,7 +7,7 @@ import {getSpacesWithPlans} from 'account/pricing/PricingDataProvider';
 import {go, href} from 'states/Navigator';
 import svgPlus from 'svg/plus';
 import {showDialog as showCreateSpaceModal} from 'services/CreateSpace';
-import {canCreateSpaceInOrganization} from 'accessChecker';
+import {canCreateSpaceInOrganization} from 'access_control/AccessChecker';
 import {getOrganization} from 'services/TokenStore';
 import {isOwnerOrAdmin} from 'services/OrganizationRoles';
 import * as ReloadNotification from 'ReloadNotification';

@@ -3,7 +3,7 @@
 angular.module('contentful')
 
 .controller('ListActionsController', ['$scope', 'require', 'entityType', function ListActionsController ($scope, require, entityType) {
-  var accessChecker = require('accessChecker');
+  var accessChecker = require('access_control/AccessChecker');
   var batchPerformer = require('batchPerformer');
 
   var collection = entityType === 'Entry' ? 'entries' : 'assets';

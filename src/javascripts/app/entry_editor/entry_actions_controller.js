@@ -7,7 +7,7 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var $state = require('$state');
   var Analytics = require('analytics/Analytics');
-  var accessChecker = require('accessChecker');
+  var accessChecker = require('access_control/AccessChecker');
   var K = require('utils/kefir');
   var Notification = require('app/entity_editor/Notifications').Notification;
 

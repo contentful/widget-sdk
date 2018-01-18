@@ -20,7 +20,7 @@ angular.module('contentful')
   var leaveConfirmator = require('navigation/confirmLeaveEditor');
   var metadataDialog = require('contentTypeEditor/metadataDialog');
   var Command = require('command');
-  var accessChecker = require('accessChecker');
+  var accessChecker = require('access_control/AccessChecker');
   var ctHelpers = require('data/ContentTypes');
   var eiHelpers = require('editingInterfaces/helpers');
   var spaceContext = require('spaceContext');

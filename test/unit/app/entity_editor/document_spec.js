@@ -20,7 +20,7 @@ describe('entityEditor/Document', function () {
       refreshAuth: sinon.stub().resolves()
     };
 
-    this.accessChecker = this.mockService('accessChecker');
+    this.accessChecker = this.mockService('access_control/AccessChecker');
     this.accessChecker.canUpdateEntity.returns(true);
 
     this.connectAndOpen = function (data) {

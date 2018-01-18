@@ -13,7 +13,7 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
   var ReloadNotification = require('ReloadNotification');
   var listHandler = require('UserListHandler').create();
   var createRoleRemover = require('createRoleRemover');
-  var accessChecker = require('accessChecker');
+  var accessChecker = require('access_control/AccessChecker');
   var jumpToRoleMembers = require('UserListController/jumpToRole');
   var spaceContext = require('spaceContext');
   var ADMIN_ROLE_ID = require('access_control/SpaceMembershipRepository').ADMIN_ROLE_ID;

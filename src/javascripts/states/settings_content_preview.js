@@ -17,7 +17,7 @@ angular.module('contentful')
     loadingText: 'Loading content preview…',
     template: '<cf-content-preview-list class="workbench entity-list" />',
     controller: ['$scope', 'require', function ($scope, require) {
-      var accessChecker = require('accessChecker');
+      var accessChecker = require('access_control/AccessChecker');
 
       $scope.context = {};
       if (!accessChecker.getSectionVisibility().settings) {

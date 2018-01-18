@@ -34,7 +34,7 @@ describe('app/ContentModel/Editor/Actions', function () {
     $q = this.$inject('$q');
     logger = this.$inject('logger');
     notification = this.mockService('notification');
-    accessChecker = this.$inject('accessChecker');
+    accessChecker = this.$inject('access_control/AccessChecker');
     accessChecker.canPerformActionOnEntryOfType = sinon.stub().returns(true);
     ReloadNotification = this.$inject('ReloadNotification');
     ReloadNotification.basicErrorHandler = sinon.spy();

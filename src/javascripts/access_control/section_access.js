@@ -10,7 +10,7 @@
  */
 angular.module('contentful')
 .factory('sectionAccess', ['require', function (require) {
-  var accessChecker = require('accessChecker');
+  var accessChecker = require('access_control/AccessChecker');
   var $state = require('$state');
   var $stateParams = require('$stateParams');
   var spaceContext = require('spaceContext');

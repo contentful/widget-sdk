@@ -5,7 +5,7 @@ import modalDialog from 'modalDialog';
 import Command from 'command';
 import spaceContext from 'spaceContext';
 import $state from '$state';
-import accessChecker from 'accessChecker';
+import * as accessChecker from 'access_control/AccessChecker';
 import ReloadNotification from 'ReloadNotification';
 import ctHelpers from 'data/ContentTypes';
 import closeState from 'navigation/closeState';

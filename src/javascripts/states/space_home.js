@@ -7,7 +7,7 @@ angular.module('contentful')
  */
 .factory('states/space_home', ['require', function (require) {
   var base = require('states/Base').default;
-  var accessChecker = require('accessChecker');
+  var accessChecker = require('access_control/AccessChecker');
   var template = require('app/home/HomeTemplate').default;
 
   return base({

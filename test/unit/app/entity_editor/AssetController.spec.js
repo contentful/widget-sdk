@@ -16,7 +16,7 @@ describe('Asset editor controller', function () {
     const createAssetController = this.$inject('app/entity_editor/AssetController').default;
 
     scope = this.$inject('$rootScope').$new();
-    const accessChecker = this.$inject('accessChecker');
+    const accessChecker = this.$inject('access_control/AccessChecker');
     accessChecker.canUpdateAsset = sinon.stub().returns(true);
 
     const cfStub = this.$inject('cfStub');

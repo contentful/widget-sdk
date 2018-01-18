@@ -6,7 +6,7 @@ import {htmlEncode} from 'encoder';
 import openRoleSelector from './RoleSelector';
 import openInputDialog from 'app/InputDialog';
 
-import accessChecker from 'accessChecker';
+import * as accessChecker from 'access_control/AccessChecker';
 import modalDialog from 'modalDialog';
 
 export default function render (folder, state, actions) {
