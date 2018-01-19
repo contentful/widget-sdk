@@ -35,9 +35,11 @@ const tokenMVar = createMVar$q();
 const store = getStore();
 const sessionStore = getStore('session');
 
-const tokenStore = sessionStore.forKey('token');
 const afterLoginPathStore = store.forKey('redirect_after_login');
 
+const tokenStore = Config.env === 'development'
+  ? store.forKey('token')
+  : sessionStore.forKey('token');
 /**
  * @description
  * Get the current token.
