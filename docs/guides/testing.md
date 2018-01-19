@@ -310,7 +310,7 @@ beforeEach(function () {
 ##### Outside of an Angular Context
 
 However, if you're testing a utility that doesn't need an Angular instance, it is
-useful to be able to test without relying on Angular to $provide and $inject. If 
+useful to be able to test without relying on Angular to $provide and $inject. If
 you need to stub out an ES6 module within a test, that does not use an Angular
 context, you can stub it out by creating an isolated system and stubbing the
 necessary modules before importing your module.
@@ -318,25 +318,23 @@ necessary modules before importing your module.
 ```js
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
-let system, stubs, myModule;
-
 beforeEach(function* () {
-  stubs = {
+  this.stubs = {
     stub1: sinon.stub(),
     stub2: sinon.stub()
   };
 
-  system = createIsolatedSystem();
+  this.system = createIsolatedSystem();
 
-  system.set('utils/to-stub', {
+  this.system.set('utils/to-stub', {
     moduleMethod: stubs.stub1
   });
 
-  system.set('utils/different-to-stub', {
+  this.system.set('utils/different-to-stub', {
     // ... Another stubbed module
   });
 
-  myModule = yield system.import('utils/myModule');
+  this.myModule = yield system.import('utils/myModule');
 
   // This works like an ES6 import statement,
   // so be aware of defaults.
@@ -421,18 +419,16 @@ during instantiation.
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
 describe('MyComponent', function () {
-  let ui, system;
-
   beforeEach(function* () {
-    system = createIsolatedSystem();
+    this.system = createIsolatedSystem();
 
-    system.set('utils/to-stub', {
+    this.system.set('utils/to-stub', {
       ...
     });
 
     const { default: createMountPoint } = yield system.import('ui/Framework/DOMRenderer');
 
-    ui = this.createUI({
+    this. ui = this.createUI({
       createMountPoint
     });
   });
