@@ -154,6 +154,36 @@ describe('with params', function () {
 })
 ~~~
 
+#### Avoiding memory leaks
+
+When using local variables to provide setup data to test cases memory leaks are
+introduced. Consider the following test code.
+~~~js
+describe(function () {
+  let foo
+
+  beforeEach(setup)
+
+  function setup () {
+    foo = largeObject
+  }
+
+  // test cases
+})
+~~~
+
+The test runner keeps a reference to all test suites during a test run, even
+after all the test cases in a suite have run. This means that all the transitive
+references of a test suite are never garbage collected. In particular each test
+suite contains a reference to its `beforeEach` hooks. In our example this is the
+`setup` function. `setup` in turn keeps a reference to `foo`. After running on
+test case in that suite we therefore hold a reference to `largeObject` which is
+never collected.
+
+To avoid this problem we may either assign `largeObject` to a context property
+by using `this.foo = largeObject` or add an `afterEach` hook that sets `foo =
+null`.
+
 
 Using Angular
 -------------
