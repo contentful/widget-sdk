@@ -358,9 +358,12 @@ function getItemId (item) {
 
 function useSelectedLocale (entities, localeCode) {
   return entities.map(entity => Object.assign(entity, {
-    fields: _.mapValues(entity.fields, field => {
-      return {[localeCode]: _.values(field)[0]};
-    })
+    fields: _.mapValues(entity.fields, field => ({
+      // content can actually contain more locales, than our default
+      // so we first try to pull content in our locale code, and only
+      // after fallback to the first available value
+      [localeCode]: field[localeCode] || _.values(field)[0]
+    }))
   }));
 }
 
