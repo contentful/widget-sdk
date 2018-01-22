@@ -1,9 +1,9 @@
-/* global SystemJS */
 import sinon from 'npm:sinon';
 import _ from 'lodash';
 import keycodes from 'utils/keycodes';
 import { contentTypes } from './helpers';
 import ReactTestUtils from 'libs/react-dom/test-utils';
+import { createIsolatedSystem } from 'test/helpers/system-js';
 
 const Components = {
   queryInput: view => view.find('queryInput'),
@@ -13,33 +13,32 @@ const Components = {
 };
 
 describe('app/ContentList/Search/View', function () {
-  let actions, render, view;
+  let actions, render, view, system;
   beforeEach(function* () {
-    module('contentful/test');
+    system = createIsolatedSystem();
 
-    SystemJS.set('entitySelector', SystemJS.newModule({}));
+    system.set('entitySelector', {});
 
     // TODO: remove after converting datepicker to es6 module.
-    SystemJS.set('datepicker', SystemJS.newModule({}));
-    SystemJS.set('moment', SystemJS.newModule({}));
-    SystemJS.set('stringUtils', SystemJS.newModule({}));
-    SystemJS.set(
-      'mimetype',
-      SystemJS.newModule({
-        default: {
-          getGroupNames: sinon.stub().returns([])
-        }
-      })
-    );
+    system.set('datepicker', {});
+    system.set('moment', {});
+    system.set('stringUtils', {});
+    system.set('mimetype', {
+      default: {
+        getGroupNames: sinon.stub().returns([])
+      }
+    });
 
-    const { default: searchComponent } = yield SystemJS.import(
+    const { default: searchComponent } = yield system.import(
       'app/ContentList/Search/View'
     );
-    const Filters = yield SystemJS.import('app/ContentList/Search/Filters');
+    const Filters = yield system.import('app/ContentList/Search/Filters');
     this.contentTypeFilter = Filters.contentTypeFilter;
     this.getFiltersFromQueryKey = Filters.getFiltersFromQueryKey;
 
-    const { Actions } = yield SystemJS.import('app/ContentList/Search/State');
+    const { Actions } = yield system.import('app/ContentList/Search/State');
+
+    const { default: createMountPoint } = yield system.import('ui/Framework/DOMRenderer');
 
     actions = _.mapValues(Actions, () => {
       return sinon.spy();
@@ -65,16 +64,14 @@ describe('app/ContentList/Search/View', function () {
       };
 
       const props = _.assign({}, defaultProps, customProps);
-      view = this.createUI();
+      view = this.createUI({
+        createMountPoint
+      });
       view.render(searchComponent(props));
     };
   });
 
   afterEach(function () {
-    SystemJS.delete('entitySelector');
-    SystemJS.delete('datepicker');
-    SystemJS.delete('moment');
-    SystemJS.delete('mimetype');
     document.body.removeAttribute('tabindex');
 
     view.destroy();

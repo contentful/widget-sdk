@@ -270,5 +270,3 @@ angular.module('contentful')
     }
   }
 })();
-
-window.AngularSystem.set('global:window', window);

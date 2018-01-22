@@ -1,5 +1,5 @@
 import JQuery from 'jquery';
-import createMountPoint from 'ui/Framework/DOMRenderer';
+import _createMountPoint from 'ui/Framework/DOMRenderer';
 import * as ReactTestUtils from 'libs/react-dom/test-utils';
 
 
@@ -38,7 +38,7 @@ import * as ReactTestUtils from 'libs/react-dom/test-utils';
  * be removed with `ui.destroy()`.
  *
  */
-export function createUI () {
+export function createUI ({ createMountPoint = _createMountPoint } = {}) {
   const sandbox = document.createElement('div');
   document.body.appendChild(sandbox);
   const view = createView(sandbox);

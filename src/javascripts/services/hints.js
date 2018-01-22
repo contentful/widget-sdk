@@ -9,7 +9,8 @@
  */
 angular.module('contentful')
 .service('hints', ['require', function (require) {
-  var TheStore = require('TheStore');
+  var getStore = require('TheStore').getStore;
+  var store = getStore();
 
   return {
     /**
@@ -19,12 +20,12 @@ angular.module('contentful')
      * @description
      * Checks if a given hint id has been shown before.
     */
-    shouldShow: function(id) {
-      return !TheStore.get('hint-' + id);
+    shouldShow: function (id) {
+      return !store.get('hint-' + id);
     },
 
     setAsSeen: function (id) {
-      return !TheStore.set('hint-' + id, true);
+      return !store.set('hint-' + id, true);
     }
   };
 }]);

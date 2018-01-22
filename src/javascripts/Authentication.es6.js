@@ -3,7 +3,7 @@ import $location from '$location';
 import $window from '$window';
 import * as K from 'utils/kefir';
 import { createMVar$q, runTask, createExclusiveTask } from 'utils/Concurrent';
-import TheStore from 'TheStore';
+import { getStore } from 'TheStore';
 import * as Config from 'Config';
 import postForm from 'data/Request/PostForm';
 
@@ -32,9 +32,14 @@ const TOKEN_SCOPE = 'content_management_manage';
  */
 const tokenMVar = createMVar$q();
 
-const tokenStore = TheStore.forKey('token');
-const afterLoginPathStore = TheStore.forKey('redirect_after_login');
+const store = getStore();
+const sessionStore = getStore('session');
 
+const afterLoginPathStore = store.forKey('redirect_after_login');
+
+const tokenStore = Config.env === 'development'
+  ? store.forKey('token')
+  : sessionStore.forKey('token');
 /**
  * @description
  * Get the current token.

@@ -17,7 +17,8 @@ angular.module('contentful')
 .directive('cfAppEntryOnboard', ['require', function (require) {
   var h = require('utils/hyperscript').h;
   var K = require('utils/kefir');
-  var TheStore = require('TheStore');
+  var getStore = require('TheStore').getStore;
+  var store = getStore();
   var TokenStore = require('services/TokenStore');
   var createSampleSpace = require('components/shared/auto_create_new_space/CreateSampleSpace').default;
   var getFirstOwnedOrgWithoutSpaces = require('data/User/index').getFirstOwnedOrgWithoutSpaces;
@@ -107,7 +108,7 @@ angular.module('contentful')
         // it is not a one-time operation, it actually returns us a stream which
         // will listen until all conditions will be satisfied
         // and in order to avoid code changing, we just pretend space was auto created
-        TheStore.set('ctfl:' + user.sys.id + ':spaceAutoCreated', true);
+        store.set('ctfl:' + user.sys.id + ':spaceAutoCreated', true);
       }
     }]
   };

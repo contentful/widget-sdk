@@ -9,7 +9,7 @@ describe('AutoCreateNewSpace/index', function () {
       organizations$: K.createMockProperty(null)
     };
     this.createSampleSpace = sinon.stub().resolves();
-    this.theStore = {
+    this.store = {
       set: sinon.stub(),
       get: sinon.stub(),
       forKey: sinon.stub()
@@ -18,7 +18,9 @@ describe('AutoCreateNewSpace/index', function () {
     module('contentful/test', $provide => {
       $provide.value('services/TokenStore', this.tokenStore);
       $provide.value('components/shared/auto_create_new_space/CreateSampleSpace', this.createSampleSpace);
-      $provide.value('TheStore', this.theStore);
+      $provide.value('TheStore', {
+        getStore: sinon.stub().returns(this.store)
+      });
       $provide.value('utils/LaunchDarkly', {
         getCurrentVariation: sinon.stub().resolves(false)
       });
@@ -53,7 +55,7 @@ describe('AutoCreateNewSpace/index', function () {
     // set data to qualify user
     this.tokenStore.spacesByOrganization$.set(this.spacesByOrg);
     this.tokenStore.user$.set(this.user);
-    this.theStore.get.returns(false);
+    this.store.get.returns(false);
   });
 
   describe('#init', function () {
@@ -76,7 +78,7 @@ describe('AutoCreateNewSpace/index', function () {
     describe('qualifyUser', function () {
       // specs
       [
-        [ctx => ctx.theStore.get.returns(true), 'space was already auto created for the user'],
+        [ctx => ctx.store.get.returns(true), 'space was already auto created for the user'],
         [ctx => (ctx.user.sys.createdAt = (new Date(2017, 7, 12)).toISOString()), 'user is not recent'],
         [ctx => ctx.tokenStore.spacesByOrganization$.set({orgId: ['spaceId']}), 'the user has an org with spaces'],
         [ctx => {
@@ -97,7 +99,7 @@ describe('AutoCreateNewSpace/index', function () {
     it('should create a sample space when the user is qualified', function () {
       this.tokenStore.spacesByOrganization$.set(this.spacesByOrg);
       this.tokenStore.user$.set(this.user);
-      this.theStore.get.returns(false);
+      this.store.get.returns(false);
       this.init();
       sinon.assert.calledOnce(this.createSampleSpace);
       sinon.assert.calledWithExactly(

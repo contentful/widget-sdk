@@ -11,7 +11,7 @@ import accessChecker from 'accessChecker';
 import $state from '$state';
 import notification from 'notification';
 import {track} from 'analytics/Analytics';
-import TheStore from 'TheStore';
+import { getStore } from 'TheStore';
 import * as LD from 'utils/LaunchDarkly';
 import * as Intercom from 'intercom';
 
@@ -20,6 +20,8 @@ import {get as getBoilerplates} from './BoilerplateCode';
 import initBoilerplate from './Boilerplate';
 import renderContactUs from './ContactUs';
 import {makeLink} from './EnvironmentSelector';
+
+const store = getStore();
 
 const CONTACT_US_BOILERPLATE_FLAG_NAME = 'feature-ps-10-2017-contact-us-boilerplate';
 const ENVIRONMENTS_FLAG_NAME = 'feature-dv-11-2017-environments';
@@ -90,7 +92,7 @@ function isApiKeyModelEqual (m1, m2) {
 
 function mountKeyEditor ($scope, apiKey, spaceEnvironments) {
   // TODO: remove this localStorage mock; this property should come from the API
-  const stored = TheStore.get(`tmp.envsFor.${apiKey.sys.id}`);
+  const stored = store.get(`tmp.envsFor.${apiKey.sys.id}`);
   apiKey.environments = Array.isArray(stored) ? stored : undefined;
   // end of mock implementation
 
@@ -161,7 +163,7 @@ function mountKeyEditor ($scope, apiKey, spaceEnvironments) {
     }
 
     // TODO: remove this localStorage mock; this property should be accepted by the API
-    TheStore.set(`tmp.envsFor.${apiKey.sys.id}`, model.environments);
+    store.set(`tmp.envsFor.${apiKey.sys.id}`, model.environments);
     // it means `environments` shouldn't be omitted here:
     assign(apiKey, omit(model, ['environments']));
     // end of mock implementation

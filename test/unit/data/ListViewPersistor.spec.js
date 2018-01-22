@@ -1,12 +1,14 @@
 describe('ListViewPersistor', function () {
-  let TheStore, $location, qs, createPersistor, createViewMigrator;
+  let store, $location, qs, createPersistor, createViewMigrator;
   const STORE_KEY = 'lastFilterQueryString.testEntity.SPACE_ID';
 
   beforeEach(function () {
     module('contentful/test');
 
+    const getStore = this.$inject('TheStore').getStore;
+
+    store = getStore();
     createPersistor = this.$inject('data/ListViewPersistor').default;
-    TheStore = this.$inject('TheStore');
     createViewMigrator = this.$inject('data/ViewMigrator').default;
     $location = this.$inject('$location');
 
@@ -21,7 +23,7 @@ describe('ListViewPersistor', function () {
     });
 
     it('falls back to data from localStorage', function* () {
-      TheStore.set(STORE_KEY, {test: true});
+      store.set(STORE_KEY, {test: true});
       expect((yield qs.read()).test).toBe(true);
     });
 
@@ -87,7 +89,7 @@ describe('ListViewPersistor', function () {
 
     it('puts last QS into the store', function () {
       qs.save({ test: true });
-      expect(TheStore.get(STORE_KEY)).toEqual({test: true});
+      expect(store.get(STORE_KEY)).toEqual({test: true});
     });
   });
 });

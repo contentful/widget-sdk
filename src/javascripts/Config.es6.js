@@ -1,5 +1,5 @@
 import qs from 'libs/qs';
-import TheStore from 'TheStore';
+import { getStore } from 'TheStore';
 import {settings} from 'environment';
 
 /**
@@ -28,7 +28,7 @@ import {settings} from 'environment';
  * @returns {string}
  */
 export function apiUrl (path) {
-  const isUsingMockApi = TheStore.get('use_mock_api');
+  const isUsingMockApi = getStore().get('use_mock_api');
   const baseUrl = isUsingMockApi ? settings.mockApiUrl : settings.apiUrl;
   return baseUrl + ensureLeadingSlash(path);
 }
