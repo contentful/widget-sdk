@@ -14,10 +14,7 @@ angular.module('contentful')
     url: '/space',
     label: 'Space settings',
     loadingText: 'Loading space settings…',
-    template: '<cf-space-settings class="workbench space-settings" />',
-    controller: ['$scope', function ($scope) {
-      $scope.context = {};
-    }]
+    template: '<cf-space-settings class="workbench space-settings" />'
   });
 
   return {

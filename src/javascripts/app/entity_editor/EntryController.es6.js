@@ -1,4 +1,3 @@
-import $state from '$state';
 import $controller from '$controller';
 
 import {deepFreeze} from 'utils/Freeze';
@@ -48,9 +47,7 @@ import renderStatusNotification from './StatusNotification';
  *   Passed to FormWidgetsController to render field controls
  */
 export default function create ($scope, editorData) {
-  $state.current.data = $scope.context = {
-    ready: true
-  };
+  $scope.context.ready = true;
   $scope.editorData = editorData;
 
 

@@ -41,6 +41,6 @@ export default makeState({
     }
   },
   controller: ['$scope', function ($scope) {
-    $scope.context = {ready: true};
+    $scope.context.ready = true;
   }]
 });

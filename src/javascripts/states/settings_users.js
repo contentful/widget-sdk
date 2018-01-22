@@ -14,10 +14,7 @@ angular.module('contentful')
     url: '',
     label: 'Users',
     loadingText: 'Loading users…',
-    template: '<cf-user-list class="workbench user-list" />',
-    controller: ['$scope', function ($scope) {
-      $scope.context = {};
-    }]
+    template: '<cf-user-list class="workbench user-list" />'
   });
 
   return {

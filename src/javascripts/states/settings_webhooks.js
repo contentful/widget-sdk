@@ -16,10 +16,7 @@ angular.module('contentful')
     name: 'list',
     url: '',
     loadingText: 'Loading Webhooks…',
-    template: '<cf-webhook-list class="workbench webhook-list" />',
-    controller: ['$scope', function ($scope) {
-      $scope.context = {};
-    }]
+    template: '<cf-webhook-list class="workbench webhook-list" />'
   });
 
   var newWebhook = {
@@ -29,10 +26,7 @@ angular.module('contentful')
       isNew: true
     },
     template: '<cf-webhook-editor cf-ui-tab class="workbench webhook-editor" />',
-    controller: ['$scope', 'require', function ($scope, require) {
-      var $state = require('$state');
-
-      $scope.context = $state.current.data;
+    controller: ['$scope', function ($scope) {
       $scope.webhook = { headers: [], topics: ['*.*'] };
 
       contextHistory.set([
@@ -82,8 +76,7 @@ angular.module('contentful')
       }]
     },
     template: '<cf-webhook-editor cf-ui-tab class="workbench webhook-editor" />',
-    controller: ['$scope', '$state', '$stateParams', 'webhook', function ($scope, $state, $stateParams, webhook) {
-      $scope.context = $state.current.data;
+    controller: ['$scope', '$stateParams', 'webhook', function ($scope, $stateParams, webhook) {
       $scope.webhook = webhook;
 
       contextHistory.set([

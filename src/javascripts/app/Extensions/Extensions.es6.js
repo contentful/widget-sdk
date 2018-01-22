@@ -14,7 +14,7 @@ export default function controller ($scope) {
   renderWithScope();
 
   widgets.refresh().then(() => {
-    $scope.context = {ready: true};
+    $scope.context.ready = true;
     renderWithScope();
   });
 
