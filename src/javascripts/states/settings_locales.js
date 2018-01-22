@@ -82,7 +82,7 @@ angular.module('contentful')
         if (found) {
           return _.cloneDeep(found);
         } else {
-          return Promise.reject(new Error('No locale with ID ' + id + ' found.'));
+          throw new Error('No locale with ID ' + id + ' found.');
         }
       }]
     }

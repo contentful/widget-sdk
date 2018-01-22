@@ -33,7 +33,7 @@ angular.module('contentful')
 
     var localeRepo = {
       getAll: function () {
-        return Promise.reject(new Error('Call .init(localeRepo) first'));
+        throw new Error('Call .init(localeRepo) first');
       }
     };
 

@@ -29,7 +29,8 @@ export default function create (spaceEndpoint) {
    * @name localeRepo#save
    * @description
    * Given a locale data object creates or updates
-   * a backend entity. Check `sys.id` to determine.
+   * a backend entity. Checks existence of `sys.id`
+   * to determine what method should be used.
    * @param {API.Locale} locale
    * @returns {Promise<API.Locale>} Promise of an updated entity
    */
@@ -39,8 +40,15 @@ export default function create (spaceEndpoint) {
 
     const method = isNew ? 'POST' : 'PUT';
     const path = ['locales'].concat(isNew ? [] : [sys.id]);
-    const data = omit(locale, ['sys', 'default', 'fallback_code', 'internal_code']);
     const version = isNew ? undefined : sys.version;
+
+    // Sending `defaul`, `fallback_code` or `internal_code`
+    // results in 422:
+    // - defaul locale cannot be changed
+    // - `fallback_code` is now `fallbackCode`
+    // - `internal_code` cannot be changed
+    // - additionally there's no harm in not sending `sys`
+    const data = omit(locale, ['sys', 'default', 'fallback_code', 'internal_code']);
 
     return spaceEndpoint({method, path, data, version});
   }
