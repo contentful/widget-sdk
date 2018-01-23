@@ -22,7 +22,7 @@ describe('spaceContext', function () {
     });
     this.spaceContext = this.$inject('spaceContext');
     this.localeStore = this.mockService('TheLocaleStore');
-    this.localeStore.reset.resolves();
+    this.localeStore.init.resolves();
 
     this.resetWithSpace = function (spaceData) {
       spaceData = spaceData || {sys: {id: 'spaceid'}, spaceMembership: {}};
@@ -60,10 +60,14 @@ describe('spaceContext', function () {
       expect(this.spaceContext.space.data.sys.id).toEqual('hello');
     });
 
-    it('calls TheLocaleStore.reset()', function () {
+    it('creates locale repository', function () {
+      expect(typeof this.spaceContext.localeRepo.getAll).toBe('function');
+    });
+
+    it('calls TheLocaleStore.init()', function () {
       sinon.assert.calledOnceWith(
-        this.localeStore.reset,
-        this.spaceContext.endpoint
+        this.localeStore.init,
+        this.spaceContext.localeRepo
       );
     });
 

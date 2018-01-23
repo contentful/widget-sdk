@@ -38,6 +38,7 @@ angular.module('contentful')
   var createUiConfigStore = require('data/UiConfig/Store').default;
   var createViewMigrator = require('data/ViewMigrator').default;
   var client = require('client');
+  var createLocaleRepo = require('data/CMA/LocaleRepo').default;
 
   var spaceContext = {
     /**
@@ -83,6 +84,7 @@ angular.module('contentful')
       self.users = createUserCache(self.endpoint);
       self.apiKeyRepo = createApiKeyRepo(self.endpoint);
       self.editingInterfaces = createEIRepo(self.endpoint);
+      self.localeRepo = createLocaleRepo(self.endpoint);
       var organization = self.getData('organization') || null;
       self.organizationContext = OrganizationContext.create(organization);
       self.subscription =
@@ -121,7 +123,7 @@ angular.module('contentful')
             self.uiConfig = api;
           });
         }),
-        TheLocaleStore.reset(self.endpoint)
+        TheLocaleStore.init(self.localeRepo)
       ]).then(function () {
         return self;
       });

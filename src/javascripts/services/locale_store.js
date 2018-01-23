@@ -8,13 +8,15 @@ angular.module('contentful')
  *
  * @description
  * This service holds information about the locales for the current
- * space.
- *
- * It is updated with the space ID and the space locales from the
- * 'spaceContext' service.
+ * space. When space is changed the `init` method should be called
+ * from the `spaceContext`.
  *
  * This service also stores locale preferences in localStorage.
-*/
+ *
+ * TODO convert to ES6
+ * TODO attach it to `spaceContext` instead of being global
+ * TODO figure out the balance between store and repo
+ */
 .factory('TheLocaleStore', ['require', function (require) {
   var getStore = require('TheStore').getStore;
   var create = require('TheLocaleStore/implementation').create;
@@ -28,6 +30,12 @@ angular.module('contentful')
   function create (getStore) {
     var store = null;
     var defaultLocale = null;
+
+    var localeRepo = {
+      getAll: function () {
+        throw new Error('Call .init(localeRepo) first');
+      }
+    };
 
     // All locales fetched from the CMA, including delivery-only locales
     var locales = [];
@@ -45,7 +53,8 @@ angular.module('contentful')
     var codeToActiveLocaleMap = {};
 
     return {
-      reset: reset,
+      init: init,
+      refresh: refresh,
       getLocales: getLocales,
       getDefaultLocale: getDefaultLocale,
       getActiveLocales: getActiveLocales,
@@ -58,18 +67,29 @@ angular.module('contentful')
     };
 
     /**
+     * @name TheLocaleStore#init
+     * @description
+     * Sets locale repo for the current space and calls
+     * #refresh().
+     * @param {Data.LocaleRepo} _localeRepo
+     * @returns {Promise<API.Locale[]>}
+     */
+    function init (_localeRepo) {
+      localeRepo = _localeRepo;
+      return refresh();
+    }
+
+    /**
      * @ngdoc method
-     * @name TheLocaleStore#reset
+     * @name TheLocaleStore#refresh
      * @description
      * Updates the store's state by getting data from
      * the CMA `/locales` endpoint.
-     * @param {Data.Endpoint} spaceEndpoint
-     * @returns {Promise<void>}
+     * @returns {Promise<API.Locale[]>}
      */
-    function reset (spaceEndpoint) {
-      return spaceEndpoint({method: 'GET', path: ['locales']})
-      .then(function (res) {
-        locales = res.items;
+    function refresh () {
+      return localeRepo.getAll().then(function (_locales) {
+        locales = _locales;
         privateLocales = locales.filter(function (locale) {
           return locale.contentManagementApi;
         });
@@ -84,6 +104,8 @@ angular.module('contentful')
         });
 
         setActiveLocales(storedLocales);
+
+        return locales;
       });
     }
 

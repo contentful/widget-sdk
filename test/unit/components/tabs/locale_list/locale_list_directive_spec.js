@@ -71,7 +71,8 @@ describe('The Locale list directive', function () {
       getOrganizationId: sinon.stub().returns('id')
     };
 
-    spaceContext.endpoint = sinon.stub().resolves({items: locales});
+    this.localeStore = this.$inject('TheLocaleStore');
+    this.localeStore.refresh = sinon.stub().resolves(locales);
 
     this.compileElement = function () {
       this.container = this.$compile('<div cf-locale-list />', {context: {}});

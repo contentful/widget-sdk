@@ -1,12 +1,12 @@
 .modal-background
   .modal-dialog
     header.modal-dialog__header
-      h1 You're about to delete the <em>{{locale.data.name}} ({{locale.data.code}})</em> content type.
+      h1 You're about to delete the <em>{{locale.name}} ({{locale.code}})</em> content type.
       button.modal-dialog__close(ng-click="dialog.cancel()")
 
     .modal-dialog__content
       .modal-dialog__richtext
-        p This will break any API clients that rely on <code>{{locale.data.code}}</code> existing.
+        p This will break any API clients that rely on <code>{{locale.code}}</code> existing.
         p
           strong Please note that this action is permanent and you cannot undo it.
         p Please type the locale code below to confirm this change:
@@ -15,7 +15,7 @@
     .modal-dialog__controls
       button.btn-caution(
         ng-click="dialog.confirm()"
-        ng-disabled="typedLocaleCode !== locale.data.code")
+        ng-disabled="typedLocaleCode !== locale.code")
         | Delete
       button.btn-secondary-action(ng-click="dialog.cancel()")
         | Don't delete
