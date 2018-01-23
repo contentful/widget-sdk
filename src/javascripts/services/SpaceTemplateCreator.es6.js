@@ -3,10 +3,25 @@ import contentPreview from 'contentPreview';
 import * as Analytics from 'analytics/Analytics';
 import {runTask} from 'utils/Concurrent';
 import * as _ from 'lodash';
+import qs from 'libs/qs';
+import environment from 'environment';
 
 const ASSET_PROCESSING_TIMEOUT = 60000;
 
-export function getCreator (spaceContext, itemHandlers, templateName, selectedLocaleCode) {
+// we specify this space ID to indicate from which space
+// we get template for TEA (the example app). We want to create a specific
+// content preview for it, so we need to distinguish it from other templates.
+// All other templates use discovery app, as a generic tool to preview your
+// content. This is not very reliable, but since we own this repo, we can be
+// sure that this space will remain the same, and also, in case it is invalid,
+// we will create discovery app for TEA
+const TEA_SPACE_ID = '6tm19xfedrx7';
+const TEA_BASE_URL = 'https://the-example-app-nodejs.herokuapp.com';
+
+const DISCOVERY_APP_BASE_URL = 'https://discovery.contentful.com/entries/by-content-type/';
+
+export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLocaleCode) {
+  const templateName = templateInfo.name;
   const creationErrors = [];
   const handledItems = {};
   return {
@@ -65,7 +80,10 @@ export function getCreator (spaceContext, itemHandlers, templateName, selectedLo
       const createPreviewEnvPromise = Promise.all([
         apiKeyPromise,
         publishedEntries
-      ]).then(() => createPreviewEnvironment(template.contentTypes));
+      ]).then(() => templateInfo.spaceId === TEA_SPACE_ID
+        ? runTask(createTEAContentPreview, template.contentTypes)
+        : createPreviewEnvironment(template.contentTypes)
+      );
 
       allPromises.push(editingInterfacesPromise, publishAssetsPromise, createPreviewEnvPromise);
 
@@ -304,9 +322,71 @@ export function getCreator (spaceContext, itemHandlers, templateName, selectedLo
       .catch(handlers.error);
   }
 
+  /**
+   * @description Function to create content preview specifically for TEA (the example app)
+   * This application was built specifically for new contentful users, and has a lot of value
+   * in its content, so it has advanced mapping for preview, to redirect user to exact pages,
+   * where he can see the content (change in the webapp -> see the changes in the TEA preview)
+   */
+  function* createTEAContentPreview (contentTypes) {
+    const baseUrl = TEA_BASE_URL;
+    const spaceId = spaceContext.space.getId();
+
+    // Mapping for specific content types. Some CTs has no "preview",
+    // so we don't set up preview them, thus no confusion created
+    const createConfigFns = {
+      course: courseConfig,
+      category: categoryConfig,
+      lesson: lessonConfig,
+      lessonCopy: lessonContentConfig,
+      lessonImage: lessonContentConfig,
+      lessonCodeSnippets: lessonContentConfig,
+      layoutHighlightedCourse: mainPageConfig
+    };
+
+    const [keys, envs] = yield Promise.all([
+      spaceContext.apiKeyRepo.getAll(),
+      contentPreview.getAll()
+    ]);
+
+    // Create default environment if there is none existing, and an API key is present
+    if (keys.length && !Object.keys(envs).length) {
+      const key = keys[0];
+
+      // we need to have Preview key as well, so the user can switch to preview API
+      // in order to do that, we need to make another cal
+      const resolvedKey = yield spaceContext.apiKeyRepo.get(key.sys.id);
+
+      const {
+        accessToken: cdaToken,
+        preview_api_key: {
+          accessToken: cpaToken
+        }
+      } = resolvedKey;
+
+      const env = {
+        name: 'The example app integration',
+        description: 'To see how entries look like in real web app, we linked your space to the example app',
+        configs: contentTypes
+          .map(function (ct) {
+            const fn = createConfigFns[ct.sys.id];
+            return fn && fn({ ct, baseUrl, spaceId, cdaToken, cpaToken });
+          })
+          // remove all content types without a preview
+          .filter(Boolean)
+      };
+      const createdContentPreview = yield contentPreview.create(env);
+      Analytics.track('content_preview:created', {
+        name: createdContentPreview.name,
+        id: createdContentPreview.sys.id,
+        isDiscoveryApp: true
+      });
+    }
+  }
+
   // Create the discovery app environment if there is an API key
   function createPreviewEnvironment (contentTypes) {
-    const baseUrl = 'https://discovery.contentful.com/entries/by-content-type/';
+    const baseUrl = DISCOVERY_APP_BASE_URL;
     const spaceId = spaceContext.space.getId();
 
     return Promise.all([
@@ -346,6 +426,49 @@ export function getCreator (spaceContext, itemHandlers, templateName, selectedLo
       }
     });
   }
+}
+
+function mainPageConfig (params) {
+  return makeTEAConfig(params);
+}
+
+function courseConfig (params) {
+  return makeTEAConfig(params, '/courses/{entry_field.slug}');
+}
+
+function categoryConfig (params) {
+  return makeTEAConfig(params, '/courses/categories/{entry_field.slug}');
+}
+
+function lessonConfig (params) {
+  const $ref1 = '{references.current.course:fields.slug}';
+  return makeTEAConfig(params, `/courses/${$ref1}/lessons/{entry_field.slug}`);
+}
+
+function lessonContentConfig (params) {
+  const $ref1 = '{references.lesson.course:fields.slug}';
+  const $ref2 = '{references.current.lesson:fields.slug}';
+  return makeTEAConfig(params, `/courses/${$ref1}/lessons/${$ref2}`);
+}
+
+function makeTEAConfig (params, url = '') {
+  return {
+    contentType: params.ct.sys.id,
+    url: makeTEAUrl(params, url),
+    enabled: true,
+    example: true
+  };
+}
+
+function makeTEAUrl (params, url = '') {
+  const queryParams = environment.env === 'production' ? {
+    space_id: params.spaceId,
+    delivery_token: params.cdaToken,
+    preview_token: params.cpaToken,
+    enable_editorial_features: 'enabled'
+  } : {};
+  const queryString = qs.stringify(queryParams);
+  return `${params.baseUrl}${url}${queryString ? '?' : ''}${queryString}`;
 }
 
 function generateItemId (item, actionData) {

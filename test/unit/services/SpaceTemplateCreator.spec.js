@@ -110,7 +110,7 @@ describe('Space Template creation service', function () {
       creator = spaceTemplateCreator.getCreator(
         spaceContext,
         {onItemSuccess: stubs.progressSuccess, onItemError: stubs.progressError},
-        'Template name',
+        {name: 'Template name'},
         'de-DE'
       );
 
