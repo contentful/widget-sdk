@@ -95,8 +95,7 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
   function reload () {
     return userListHandler.reset()
     .then(onResetResponse, accessChecker.wasForbidden($scope.context))
-    .catch(ReloadNotification.basicErrorHandler)
-    .finally(accessChecker.reset);
+    .catch(ReloadNotification.basicErrorHandler);
   }
 
   function onResetResponse () {

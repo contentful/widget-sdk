@@ -5,11 +5,11 @@ describe('Access Checker', function () {
   let getResStub, reasonsDeniedStub;
 
   function triggerChange () {
-    ac.reset({spaceContext: {reasonsDenied: reasonsDeniedStub}});
+    changeAuthContext(null);
   }
 
   function changeAuthContext (authContext) {
-    ac.reset({authContext});
+    ac.setAuthContext({authContext, spaceAuthContext: {reasonsDenied: reasonsDeniedStub}});
   }
 
   afterEach(function () {
@@ -36,7 +36,7 @@ describe('Access Checker', function () {
   describe('Initialization', function () {
     it('sets isInitialized$ to true when authContext is set', function () {
       expect(K.getValue(ac.isInitialized$)).toEqual(false);
-      triggerChange();
+      changeAuthContext(null);
       expect(K.getValue(ac.isInitialized$)).toEqual(false);
       changeAuthContext({});
       expect(K.getValue(ac.isInitialized$)).toEqual(true);
@@ -300,7 +300,7 @@ describe('Access Checker', function () {
 
     describe('#canModifyRoles', function () {
       function changeSpace (hasFeature, isSpaceAdmin) {
-        ac.reset({
+        ac.setSpace({
           organization: {
             sys: {id: 'orgid'},
             subscriptionPlan: {limits: {features: {customRoles: hasFeature}}}
@@ -336,7 +336,7 @@ describe('Access Checker', function () {
         t('unknown', false);
 
         function t (id, expectation) {
-          ac.reset({organization: {sys: {id}}});
+          ac.setSpace({organization: {sys: {id}}});
           expect(ac.canModifyUsers()).toBe(expectation);
         }
       });

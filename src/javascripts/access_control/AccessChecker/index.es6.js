@@ -11,7 +11,6 @@ import {get, some, includes, forEach, isString} from 'lodash';
 import require from 'require';
 
 /**
- * @ngdoc service
  * @name accessChecker
  *
  * @description
@@ -33,8 +32,8 @@ const ACTIONS_FOR_ENTITIES = {
 const isInitializedBus = K.createPropertyBus(false);
 
 let authContext;
-let spaceContext;
-let spaceMembership;
+let spaceAuthContext;
+let space;
 let organization;
 let responses = {};
 let features = {};
@@ -44,7 +43,6 @@ let sectionVisibility = {};
 export const isInitialized$ = isInitializedBus.property.skipDuplicates();
 
 /**
- * @ngdoc method
  * @name accessChecker#shouldHide
  * @param {string} actionName
  * @returns {boolean}
@@ -56,7 +54,6 @@ export const isInitialized$ = isInitializedBus.property.skipDuplicates();
 export const shouldHide = createResponseAttributeGetter('shouldHide');
 
 /**
- * @ngdoc method
  * @name accessChecker#shouldDisable
  * @param {string} actionName
  * @returns {boolean}
@@ -68,7 +65,6 @@ export const shouldHide = createResponseAttributeGetter('shouldHide');
 export const shouldDisable = createResponseAttributeGetter('shouldDisable');
 
 /**
- * @ngdoc method
  * @name accessChecker#getResponses
  * @returns {object}
  * @description
@@ -77,7 +73,6 @@ export const shouldDisable = createResponseAttributeGetter('shouldDisable');
 export const getResponses = () => responses;
 
 /**
- * @ngdoc method
  * @name accessChecker#getResponseByActionName
  * @returns {object}
  * @description
@@ -86,7 +81,6 @@ export const getResponses = () => responses;
 export const getResponseByActionName = (action) => responses[action];
 
 /**
- * @ngdoc method
  * @name accessChecker#getSectionVisibility
  * @returns {object}
  * @description
@@ -95,7 +89,6 @@ export const getResponseByActionName = (action) => responses[action];
 export const getSectionVisibility = () => sectionVisibility;
 
 /**
- * @ngdoc method
  * @name accessChecker#getUserQuota
  * @returns {object}
  * @description
@@ -114,7 +107,6 @@ export const getUserQuota = () => userQuota;
 export const canEditFieldLocale = policyChecker.canEditFieldLocale;
 
 /**
- * @ngdoc method
  * @name accessChecker#can
  * @param {string} action
  * @param {string} entityType
@@ -132,28 +124,43 @@ export function can (action, entityType) {
 }
 
 /**
- * @ngdoc method
- * @name accessChecker#reset
+ * @name accessChecker#setAuthContext
  * @description
- * Forcibly recollect all permission data
+ * Set new auth context and forcibly recollect all permission data
+ *
+ * @param {object} context - object containig two properties:
+ *        {object?} authContext,
+ *        {object?} spaceAuthToken
  */
-export function reset (context) {
-  if (context.authContext) { authContext = context.authContext; }
-  if (context.spaceContext) { spaceContext = context.spaceContext; }
-  if (context.spaceMembership) { spaceMembership = context.spaceMembership; }
-  if (context.organization) { organization = context.organization; }
+export function setAuthContext (context) {
+  authContext = context.authContext;
+  spaceAuthContext = context.spaceAuthContext;
+  cache.reset(spaceAuthContext);
 
-  cache.reset(spaceContext);
-  policyChecker.setMembership(spaceMembership);
   collectResponses();
-  collectFeatures();
   collectSectionVisibility();
 
   isInitializedBus.set(!!authContext);
 }
 
 /**
- * @ngdoc method
+ * @name accessChecker#setSpace
+ * @description
+ * Set new space data and forcibly recollect all permission data
+ *
+ * @param {object} newSpace - space data object
+ */
+export function setSpace (newSpace) {
+  space = newSpace;
+  organization = space.organization;
+  policyChecker.setMembership(get(space, 'spaceMembership'));
+
+  collectResponses();
+  collectSectionVisibility();
+  collectFeatures();
+}
+
+/**
  * @name accessChecker#canPerformActionOnEntryOfType
  * @param {string} action
  * @param {string} ctId
@@ -178,7 +185,6 @@ export function canPerformActionOnEntryOfType (action, ctId) {
 }
 
 /**
- * @ngdoc method
  * @name accessChecker#canPerformActionOnEntity
  * @param {string} action
  * @param {API.Entry|API.Asset|string} entity
@@ -193,7 +199,6 @@ export function canPerformActionOnEntity (action, entity) {
 }
 
 /**
- * @ngdoc method
  * @name accessChecker#canUpdateEntry
  * @param {Client.Entry} entry
  * @returns {boolean}
@@ -210,7 +215,6 @@ export function canUpdateEntry (entry) {
 }
 
 /**
- * @ngdoc method
  * @name accessChecker#canUpdateAsset
  * @param {Client.Asset} asset
  * @returns {boolean}
@@ -227,7 +231,6 @@ export function canUpdateAsset (asset) {
 
 
 /**
- * @ngdoc method
  * @name accessChecker#canUpdateEntity
  * @param {Client.Entity} entity
  * @returns {boolean}
@@ -249,7 +252,6 @@ export function canUpdateEntity (entity) {
 }
 
 /**
- * @ngdoc method
  * @name accessChecker#canUploadMultipleAssets
  * @returns {boolean}
  * @description
@@ -264,7 +266,6 @@ export function canUploadMultipleAssets () {
 }
 
 /**
- * @ngdoc method
  * @name accessChecker#canModifyApiKeys
  * @returns {boolean}
  * @description
@@ -285,7 +286,6 @@ export function canReadApiKeys () {
 }
 
 /**
- * @ngdoc method
  * @name accessChecker#canModifyRoles
  * @returns {boolean}
  * @description
@@ -296,7 +296,6 @@ export function canModifyRoles () {
 }
 
 /**
- * @ngdoc method
  * @name accessChecker#canModifyUsers
  * @returns {boolean}
  * @description
@@ -307,7 +306,6 @@ export function canModifyUsers () {
 }
 
 /**
- * @ngdoc method
  * @name accessChecker#canCreateSpace
  * @returns {boolean}
  * @description
@@ -327,7 +325,6 @@ export function canCreateSpace () {
 }
 
 /**
- * @ngdoc method
  * @name accessChecker#canCreateSpaceInAnyOrganization
  * @returns {boolean}
  * @description
@@ -339,7 +336,6 @@ export function canCreateSpaceInAnyOrganization () {
 }
 
 /**
- * @ngdoc method
  * @name accessChecker#canCreateSpaceInOrganization
  * @param {string} organizationId
  * @returns {boolean}
@@ -358,7 +354,6 @@ export function canCreateSpaceInOrganization (organizationId) {
 
 
 /**
- * @ngdoc method
  * @name accessChecker#canCreateOrganization
  * @returns {boolean}
  * @description
@@ -369,7 +364,6 @@ export function canCreateOrganization () {
 }
 
 /**
- * @ngdoc method
  * @name accessChecker#wasForbidden
  * @param {object} context
  * @returns {function}
@@ -412,7 +406,7 @@ function collectSectionVisibility () {
     asset: !shouldHide('readAsset') || policyChecker.canAccessAssets(),
     apiKey: !shouldHide('readApiKey'),
     settings: !shouldHide('updateSettings'),
-    spaceHome: get(spaceMembership, 'admin')
+    spaceHome: get(space, 'spaceMembership.admin')
   };
 }
 
@@ -434,11 +428,11 @@ function createResponseAttributeGetter (attrName) {
 function getPermissions (action, entity) {
   const response = { shouldHide: false, shouldDisable: false };
 
-  if (!spaceContext) { return response; }
+  if (!spaceAuthContext) { return response; }
   response.can = cache.getResponse(action, entity);
   if (response.can) { return response; }
 
-  const reasons = spaceContext.reasonsDenied(action, entity);
+  const reasons = spaceAuthContext.reasonsDenied(action, entity);
   response.reasons = (reasons && reasons.length > 0) ? reasons : null;
   response.enforcement = getEnforcement(action, entity);
   response.shouldDisable = !!response.reasons;
@@ -459,7 +453,7 @@ function broadcastEnforcement (enforcement) {
 }
 
 function getEnforcement (action, entity) {
-  const reasonsDenied = spaceContext.reasonsDenied(action, entity);
+  const reasonsDenied = spaceAuthContext.reasonsDenied(action, entity);
   const entityType = toType(entity);
 
   return determineEnforcement(reasonsDenied, entityType);
@@ -497,13 +491,13 @@ function checkIfCanCreateSpace (context) {
 
 function isAuthor (entity) {
   const author = getAuthorIdFor(entity);
-  const currentUserId = get(spaceMembership, 'user.sys.id');
+  const currentUserId = get(space, 'spaceMembership.user.sys.id');
 
   return author === currentUserId;
 }
 
 function isSuperUser () {
-  const isSpaceAdmin = get(spaceMembership, 'admin');
+  const isSpaceAdmin = get(space, 'spaceMembership.admin');
   const isOrganizationAdmin = OrganizationRoles.isAdmin(organization);
   const isOrganizationOwner = OrganizationRoles.isOwner(organization);
 

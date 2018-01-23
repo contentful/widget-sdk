@@ -3,14 +3,18 @@
 describe('Authorization service', function () {
   var authorization;
   var worfStub;
+  var accessChecker;
+
   beforeEach(function () {
     worfStub = sinon.stub();
+    accessChecker = {setAuthContext: sinon.stub()};
+
     module('contentful/test', function ($provide) {
       $provide.constant('worf', worfStub);
+      $provide.value('access_control/AccessChecker', accessChecker)
     });
-    inject(function (_authorization_) {
-      authorization = _authorization_;
-    });
+
+    authorization = this.$inject('authorization');
   });
 
   it('creates an instance', function () {

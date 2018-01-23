@@ -4,7 +4,7 @@ angular.module('contentful')
 .factory('authorization', ['require', function (require) {
   var worf = require('worf');
   var logger = require('logger');
-  var resetAccessChecker = require('access_control/AccessChecker').reset;
+  var accessChecker = require('access_control/AccessChecker');
 
   function Authorization () {}
 
@@ -15,7 +15,6 @@ angular.module('contentful')
       this._tokenLookup = tokenLookup;
       try {
         this.authContext = worf(tokenLookup);
-        resetAccessChecker({authContext: this.authContext});
       } catch (exp) {
         logger.logError('Worf initialization exception', {
           data: {
@@ -31,13 +30,16 @@ angular.module('contentful')
       if (space && this.authContext) {
         try {
           this.spaceContext = this.authContext.space(space.getId());
-          resetAccessChecker({spaceContext: this.spaceContext});
         } catch (exp) {
           logger.logError('Worf authContext space exception', exp);
         }
       } else {
         this.spaceContext = null;
       }
+      accessChecker.setAuthContext({
+        authContext: this.authContext,
+        spaceAuthContext: this.spaceContext
+      });
     },
     isUpdated: function (tokenLookup, space) {
       return this._tokenLookup && this._space &&
