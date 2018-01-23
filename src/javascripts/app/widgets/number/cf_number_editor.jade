@@ -1,5 +1,5 @@
 input.entry-editor__input(
-  type="number"
+  type="{{isNumberTypeEnabled ? 'number' : 'text'}}"
   aria-invalid="{{hasErrors || !!parseWarning}}"
   ng-attr-min="{{isNumberTypeEnabled ? min : undefined}}"
   ng-attr-max="{{isNumberTypeEnabled ? max : undefined}}"
