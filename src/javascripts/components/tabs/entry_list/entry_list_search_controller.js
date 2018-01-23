@@ -9,7 +9,7 @@ angular.module('contentful')
   var Notification = require('notification');
   var createRequestQueue = require('overridingRequestQueue');
   var spaceContext = require('spaceContext');
-  var accessChecker = require('accessChecker');
+  var accessChecker = require('access_control/AccessChecker');
   var Tracking = require('analytics/events/SearchAndViews');
   var K = require('utils/kefir');
   var Kefir = require('libs/kefir');

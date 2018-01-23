@@ -109,10 +109,6 @@ Entity.prototype = {
     }
   },
 
-  serialize: function () {
-    return this.data;
-  },
-
   save: function (headers) {
     headers = headers || {};
 
@@ -130,7 +126,7 @@ Entity.prototype = {
     var self = this;
     return endpoint
       .headers(headers)
-      .payload(this.serialize())
+      .payload(this.data)
       .send(method)
       .then(function (response) {
         self.update(response);

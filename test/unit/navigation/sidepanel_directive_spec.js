@@ -28,7 +28,7 @@ describe('cfNavSidepanel directive', () => {
     module('contentful/test', function ($provide) {
       $provide.value('services/CreateSpace', CreateSpace);
       $provide.value('states/Navigator', Navigator);
-      $provide.value('accessChecker', accessChecker);
+      $provide.value('access_control/AccessChecker', accessChecker);
       $provide.value('services/OrganizationRoles', OrganizationRoles);
     });
 

@@ -3,7 +3,6 @@ const {coit, expect} = require('./support');
 const ContentType = require('../lib/content_type');
 const describeEntity = require('./entity');
 const {
-  describeGetResource,
   describeCreateResource,
   describeNewResource,
   describeVersionedResource
@@ -17,7 +16,6 @@ const {
  */
 module.exports = function describeContentType () {
   const contentType = { singular: 'content_type', plural: 'content_types' };
-  describeGetResource(contentType);
   describeCreateResource(contentType);
   describeNewResource(contentType);
   describeVersionedResource(contentType);

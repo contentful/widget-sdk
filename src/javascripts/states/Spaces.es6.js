@@ -21,7 +21,7 @@ const newSpace = {
   name: 'new',
   url: '_new',
   template: JST.cf_create_space_advice(),
-  controller: ['$scope', 'accessChecker', function ($scope, accessChecker) {
+  controller: ['$scope', 'access_control/AccessChecker', function ($scope, accessChecker) {
     $scope.canCreateSpace = accessChecker.canCreateSpace;
   }]
 };

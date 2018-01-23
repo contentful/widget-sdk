@@ -7,7 +7,7 @@ angular.module('contentful')
   var delay = require('delay');
   var notification = require('notification');
   var spaceContext = require('spaceContext');
-  var accessChecker = require('accessChecker');
+  var accessChecker = require('access_control/AccessChecker');
   var entityStatus = require('entityStatus');
   var debounce = require('debounce');
   var getBlankView = require('data/UiConfig/Blanks').getBlankAssetView;

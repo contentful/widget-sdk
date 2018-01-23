@@ -28,7 +28,7 @@ describe('states/Deeplink', function () {
         getOrganizations: this.getOrganizations,
         getOrganization: this.getOrganization
       });
-      $provide.value('accessChecker', {
+      $provide.value('access_control/AccessChecker', {
         canReadApiKeys: this.canReadApiKeys
       });
       $provide.value('services/OrganizationRoles', {

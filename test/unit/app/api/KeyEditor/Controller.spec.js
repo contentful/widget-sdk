@@ -21,7 +21,7 @@ describe('app/api/KeyEditor/Controller', function () {
 
     sinon.stub($state, 'go').resolves();
 
-    this.accessChecker = this.$inject('accessChecker');
+    this.accessChecker = this.$inject('access_control/AccessChecker');
     this.accessChecker.canModifyApiKeys = sinon.stub().returns(true);
 
     this.spaceContext = this.$inject('mocks/spaceContext').init();

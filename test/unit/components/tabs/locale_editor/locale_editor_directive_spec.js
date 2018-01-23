@@ -19,7 +19,7 @@ describe('Locale Editor Directive', function () {
     spaceContext.space = {};
     _.set(spaceContext, 'space.data.organization.subscriptionPlan.name');
 
-    this.locale = {data: locale('co-DE')};
+    this.locale = locale('co-DE');
 
     this.element = this.$compile('<cf-locale-editor />', {
       spaceLocales: [locale('fr'), locale('de'), locale('co-DE')],
@@ -41,7 +41,7 @@ describe('Locale Editor Directive', function () {
   }
 
   it('has a headline based on locale code', function () {
-    this.scope.locale.data.code = 'de';
+    this.scope.locale.code = 'de';
     this.$apply();
     expect(this.element.find('.workbench-header h1').text()).toMatch('German');
   });
@@ -67,7 +67,7 @@ describe('Locale Editor Directive', function () {
   });
 
   it('hides fallbacks if locale is the default one', function () {
-    this.locale.data.default = true;
+    this.locale.default = true;
     this.$apply();
     expect(this.element.find('select').length).toBe(1);
   });

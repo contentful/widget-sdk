@@ -41,10 +41,10 @@ angular.module('contentful')
     ]
   };
 
-  var resolveSpaceLocales = ['spaceContext', function (spaceContext) {
-    // TODO introduce locale repo
-    return spaceContext.endpoint({method: 'GET', path: ['locales']})
-    .then(function (res) { return res.items; });
+  // injecting `spaceContext` here to assure `TheLocaleStore.init` was called
+  // TODO drop global `TheLocaleStore` in favour of a space-scoped service
+  var resolveSpaceLocales = ['TheLocaleStore', 'spaceContext', function (TheLocaleStore, _sc) {
+    return TheLocaleStore.refresh();
   }];
 
   var newLocale = _.extend({
@@ -54,16 +54,16 @@ angular.module('contentful')
       isNew: true
     },
     resolve: {
-      locale: ['spaceContext', function (spaceContext) {
-        return spaceContext.space.newLocale({
+      spaceLocales: resolveSpaceLocales,
+      locale: function () {
+        return {
           sys: {},
           code: null,
           fallbackCode: null,
           contentDeliveryApi: true,
           contentManagementApi: true
-        });
-      }],
-      spaceLocales: resolveSpaceLocales
+        };
+      }
     }
   }, localeEditorState);
 
@@ -74,16 +74,17 @@ angular.module('contentful')
       isNew: false
     },
     resolve: {
-      locale: ['$stateParams', 'spaceContext', function ($stateParams, spaceContext) {
-        // TODO introduce locale repo
-        return spaceContext.endpoint({
-          method: 'GET',
-          path: ['locales', $stateParams.localeId]
-        }).then(function (res) {
-          return spaceContext.space.newLocale(res);
-        });
-      }],
-      spaceLocales: resolveSpaceLocales
+      spaceLocales: resolveSpaceLocales,
+      locale: ['spaceLocales', '$stateParams', function (spaceLocales, $stateParams) {
+        var id = $stateParams.localeId;
+        var found = _.find(spaceLocales, {sys: {id: id}});
+
+        if (found) {
+          return _.cloneDeep(found);
+        } else {
+          throw new Error('No locale with ID ' + id + ' found.');
+        }
+      }]
     }
   }, localeEditorState);
 

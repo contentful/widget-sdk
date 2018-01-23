@@ -46,16 +46,18 @@ angular.module('contentful')
   var dialog = $scope.dialog;
 
   var validations = require('validationDecorator');
-  var field = require('fieldDecorator');
+  var fieldDecorator = require('fieldDecorator');
   var trackCustomWidgets = require('analyticsEvents/customWidgets');
   var fieldFactory = require('fieldFactory');
   var Widgets = require('widgets');
 
-  $scope.decoratedField = field.decorate($scope.field, $scope.contentType);
+  var contentTypeData = $scope.contentType.data;
+
+  $scope.decoratedField = fieldDecorator.decorate($scope.field, contentTypeData);
 
   $scope.validations = validations.decorateFieldValidations($scope.field);
 
-  $scope.currentTitleField = getTitleField($scope.contentType);
+  $scope.currentTitleField = getTitleField();
 
   var widget = $scope.widget;
   var initialWidgetId = widget.widgetId;
@@ -88,7 +90,7 @@ angular.module('contentful')
       return;
     }
 
-    field.update($scope.decoratedField, $scope.field, $scope.contentType);
+    fieldDecorator.update($scope.decoratedField, $scope.field, contentTypeData);
     validations.updateField($scope.field, $scope.validations);
 
     var params = $scope.widgetSettings.params;
@@ -118,14 +120,14 @@ angular.module('contentful')
     return true;
   }
 
-  function getTitleField (ct) {
-    var fieldId = ct.data.displayField;
+  function getTitleField () {
+    var fieldId = contentTypeData.displayField;
     if (!fieldId || fieldId === $scope.field.id) {
       return null;
     }
 
-    var titleField = _.find(ct.data.fields, {id: fieldId});
-    return field.getDisplayName(titleField);
+    var titleField = _.find(contentTypeData.fields, {id: fieldId});
+    return fieldDecorator.getDisplayName(titleField);
   }
 }])
 
@@ -137,7 +139,7 @@ angular.module('contentful')
 
   $scope.schema = {
     errors: function (decoratedField) {
-      return fieldDecorator.validateInContentType(decoratedField, $scope.contentType);
+      return fieldDecorator.validateInContentType(decoratedField, $scope.contentType.data);
     },
     buildMessage: buildMessage
   };
@@ -204,7 +206,7 @@ angular.module('contentful')
   var Widgets = require('widgets');
   var getDefaultWidgetId = require('widgets/default');
 
-  $scope.defaultWidgetId = getDefaultWidgetId($scope.field, $scope.contentType);
+  $scope.defaultWidgetId = getDefaultWidgetId($scope.field, $scope.contentType.data.displayField);
   $scope.widgetParams = $scope.widgetSettings.params;
   $scope.$watch('widgetParams', updateOptionsAndParams, true);
   $scope.$watch('widget.id', updateOptionsAndParams);

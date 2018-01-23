@@ -8,10 +8,8 @@ angular.module('contentful')
 .controller('ContentTypeFieldController', ['$scope', 'require', function ($scope, require) {
   var controller = this;
   var fieldFactory = require('fieldFactory');
-  var Field = require('fieldDecorator');
+  var isTitleType = require('fieldDecorator').isTitleType;
   var dialogs = require('ContentTypeFieldController/dialogs');
-
-  var isTitleType = Field.isTitleType($scope.field.type);
 
   $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);
   $scope.iconId = fieldFactory.getIconId($scope.field) + '-small';
@@ -93,7 +91,7 @@ angular.module('contentful')
     var isTitle = $scope.fieldIsTitle;
     var disabled = $scope.field.disabled;
     var omitted = $scope.field.omitted;
-    $scope.fieldCanBeTitle = isTitleType && !isTitle && !disabled && !omitted;
+    $scope.fieldCanBeTitle = isTitleType($scope.field.type) && !isTitle && !disabled && !omitted;
   });
 }])
 

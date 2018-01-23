@@ -7,10 +7,10 @@
     .modal-dialog__content
       .modal-dialog__richtext
         p
-          | You're about to change {{persistedLocaleName}} to {{locale.data.name}},
+          | You're about to change {{persistedLocaleName}} to {{locale.name}},
           | which might break localisation in your apps. If you're using the locale
           | code <code>{{persistedLocaleCode}}</code> in your API clients, make sure
-          | you update it to <code>{{locale.data.code}}</code>. You can revert these
+          | you update it to <code>{{locale.code}}</code>. You can revert these
           | changes afterwards. Please type the old locale code below:
         input.cfnext-form__input(ng-model="typedLocaleCode")
 

@@ -15,7 +15,7 @@ describe('Space nav bar directive', function () {
       widgets: {getCustom: _.constant([])}
     });
     scope = this.$inject('$rootScope').$new();
-    accessChecker = this.$inject('accessChecker');
+    accessChecker = this.$inject('access_control/AccessChecker');
     accessChecker.getSectionVisibility = sinon.stub().returns({});
 
     spaceContext.space.isHibernated = sinon.stub().returns(false);

@@ -7,7 +7,7 @@
     .modal-dialog__content
       .modal-dialog__richtext
         p
-          | <strong>{{ locale.data.name }}</strong> is used as fallback
+          | <strong>{{ locale.name }}</strong> is used as fallback
           | for {{ dependantLocaleNames }}. After deleting it, the affected
           | locales will fallback to:
 
@@ -18,6 +18,6 @@
 
     .modal-dialog__controls
       button.btn-primary-action(ng-click="dialog.confirm(model.newFallbackCode)")
-        | OK, delete {{ locale.data.name }} and update affected locales
+        | OK, delete {{ locale.name }} and update affected locales
       button.btn-secondary-action(ng-click="dialog.cancel()")
         | Don't delete

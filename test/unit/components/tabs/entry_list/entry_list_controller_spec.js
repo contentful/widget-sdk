@@ -69,7 +69,6 @@ describe('Entry List Controller', function () {
     spaceContext.publishedCTs.fetch.resolves(ct);
 
     spaceContext.space.getEntries.defers();
-    spaceContext.space.getContentTypes.resolves([ct]);
 
     const $controller = this.$inject('$controller');
 

@@ -1,6 +1,6 @@
 import {getSpaces, getOrganizations, getOrganization} from 'services/TokenStore';
 import { getStore } from 'TheStore';
-import accessChecker from 'accessChecker';
+import * as accessChecker from 'access_control/AccessChecker';
 import {isOwnerOrAdmin} from 'services/OrganizationRoles';
 
 const store = getStore();

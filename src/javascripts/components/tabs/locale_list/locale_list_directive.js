@@ -13,6 +13,7 @@ angular.module('contentful')
   var ReloadNotification = require('ReloadNotification');
   var spaceContext = require('spaceContext');
   var TheAccountView = require('TheAccountView');
+  var TheLocaleStore = require('TheLocaleStore');
 
   var STATES = {
     NO_MULTIPLE_LOCALES: 1,
@@ -32,10 +33,10 @@ angular.module('contentful')
   $scope.getPlanLocalesLimit = getPlanLocalesLimit;
   $scope.getSubscriptionPlanName = _.partial(getSubscriptionPlanData, 'name');
 
-  spaceContext.endpoint({method: 'GET', path: ['locales']})
-  .then(function (res) {
-    $scope.locales = res.items;
-    $scope.localeNamesByCode = groupLocaleNamesByCode(res.items);
+  TheLocaleStore.refresh()
+  .then(function (locales) {
+    $scope.locales = locales;
+    $scope.localeNamesByCode = groupLocaleNamesByCode(locales);
     $scope.localesUsageState = getLocalesUsageState();
     $scope.context.ready = true;
   })

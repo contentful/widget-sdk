@@ -14,7 +14,7 @@ describe('entityEditor/StateController', function () {
     this.scope.editorContext = this.$inject('mocks/entityEditor/Context').create();
     this.scope.entityInfo = {};
 
-    this.$inject('accessChecker').canPerformActionOnEntity = sinon.stub().returns(true);
+    this.$inject('access_control/AccessChecker').canPerformActionOnEntity = sinon.stub().returns(true);
 
     const warnings = this.$inject('entityEditor/publicationWarnings');
     warnings.create = sinon.stub().returns({

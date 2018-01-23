@@ -8,7 +8,7 @@ describe('The ApiKey list directive', function () {
       $provide.removeDirectives('relative', 'cfKnowledgeBase');
     });
 
-    accessChecker = this.$inject('accessChecker');
+    accessChecker = this.$inject('access_control/AccessChecker');
     accessChecker.shouldDisable = sinon.stub().returns(false);
 
     const spaceContext = this.$inject('mocks/spaceContext').init();
