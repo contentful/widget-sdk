@@ -32,19 +32,24 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
   function updateList () {
     $scope.context.isSearching = true;
 
-    // TODO Do not use client instances
-    spaceContext.space.getContentTypes({order: 'name', limit: 1000})
-      .then(function (contentTypes) {
+    spaceContext.endpoint({
+      method: 'GET',
+      path: ['content_types'],
+      query: {order: 'name', limit: 1000}
+    })
+      .then(function (res) {
+        var contentTypes = res.items;
+
         // Some legacy content types do not have a name. If it is
         // missing we set it to 'Untitled' so we can display
         // something in the UI. Note that the API requires new
         // Content Types to have a name.
         _.forEach(contentTypes, function (ct) {
-          ctHelpers.assureName(ct.data);
+          ctHelpers.assureName(ct);
         });
 
         contentTypes.sort(function (a, b) {
-          return a.getName().localeCompare(b.getName());
+          return (a.name || '').localeCompare(b.name);
         });
 
         var sectionVisibility = accessChecker.getSectionVisibility();
@@ -52,7 +57,7 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
         $scope.context.forbidden = !sectionVisibility.contentType;
         $scope.context.ready = true;
         $scope.empty = contentTypes.length === 0;
-        $scope.visibleContentTypes = _.filter(contentTypes, shouldBeVisible);
+        $scope.visibleContentTypes = contentTypes.filter(isOnSelectedList).filter(matchesSearchTerm);
       }, accessChecker.wasForbidden($scope.context))
       .then(function (res) {
         $scope.context.isSearching = false;
@@ -65,16 +70,12 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
       });
   }
 
-  function shouldBeVisible (contentType) {
+  function isOnSelectedList (ct) {
     switch ($scope.context.list) {
-      case 'changed':
-        return matchesSearchTerm(contentType) && contentType.hasUnpublishedChanges();
-      case 'active':
-        return matchesSearchTerm(contentType) && contentType.isPublished();
-      case 'draft':
-        return matchesSearchTerm(contentType) && !contentType.isPublished();
-      default:
-        return matchesSearchTerm(contentType) && !contentType.isDeleted();
+      case 'changed': return isPublishedAndUpdated(ct);
+      case 'active': return isPublished(ct);
+      case 'draft': return isNotPublished(ct);
+      default: return true;
     }
   }
 
@@ -89,11 +90,11 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
       notification.warn('Invalid search term');
     }
 
-    return searchTermRe ? searchTermRe.test(contentType.getName()) : true;
+    return searchTermRe ? searchTermRe.test(contentType.name) : true;
   }
 
   $scope.numFields = function (contentType) {
-    return _.size(contentType.data.fields);
+    return _.size(contentType.fields);
   };
 
   $scope.hasQuery = function () {
@@ -116,20 +117,31 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
     return !_.isEmpty($scope.visibleContentTypes);
   };
 
-  function getStatus (contentType, statusType) {
+  function getStatus (ct, statusType) {
     var status = {
       'class': 'entity-status--published',
       label: 'active'
     };
 
-    if (contentType.getPublishedAt()) {
-      if (contentType.hasUnpublishedChanges()) {
-        return 'updated';
-      } else {
-        return status[statusType];
-      }
+    if (isPublishedAndUpdated(ct)) {
+      return 'updated';
+    } else if (isPublished(ct)) {
+      return status[statusType];
     } else {
       return 'draft';
     }
+  }
+
+  // TODO extract the following methods
+  function isPublished (entity) {
+    return !!entity.sys.publishedVersion;
+  }
+
+  function isNotPublished (entity) {
+    return !isPublished(entity);
+  }
+
+  function isPublishedAndUpdated (entity) {
+    return isPublished(entity) && entity.sys.version > entity.sys.publishedVersion + 1;
   }
 }]);

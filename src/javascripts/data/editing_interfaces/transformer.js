@@ -129,7 +129,7 @@ angular.module('cf.data')
     // make sure to set the default if it retrieves one from the
     // server.
     var fieldId = field.apiName || field.id;
-    var widgetId = getDefaultWidgetId(field, {data: contentType});
+    var widgetId = getDefaultWidgetId(field, contentType.displayField);
     return {
       fieldId: fieldId,
       field: field,

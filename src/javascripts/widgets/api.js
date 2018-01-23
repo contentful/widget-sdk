@@ -24,7 +24,7 @@ angular.module('contentful')
    * @param {object} spaceMembership
    * @param {Array<API.ContentType.Field>} fields
    * @param {API.Entry} entryData
-   * @param {API.ContentType.Data} contentTypeData
+   * @param {API.ContentType} contentTypeData
    * @param {API.ContentType.Field} current.field
    *   The field the widget is attached to.
    * @param {API.Locale} current.locale
@@ -159,7 +159,7 @@ angular.module('contentful')
    * @param {API.Entry} entryData
    * The raw data for the entry.
    *
-   * @param {API.ContentType.Data} contentTypeData
+   * @param {API.ContentType} contentTypeData
    * Content type data with internal ids transformed to public ids
    * and displayField property added.
    *

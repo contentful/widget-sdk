@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 .factory('fieldDecorator', ['require', function (require) {
-  var schemas     = require('validation').schemas;
+  var schemas = require('validation').schemas;
   var fieldSchema = schemas.ContentType.atItems(['fields']);
 
   var fieldProperties = [
@@ -13,7 +13,7 @@ angular.module('contentful')
 
   return {
     decorate: decorate,
-    update:   update,
+    update: update,
     validate: validate,
     validateInContentType: validateInContentType,
     getDisplayName: getDisplayFieldName,
@@ -22,12 +22,13 @@ angular.module('contentful')
 
 
   function decorate (field, contentType) {
-    var isTitle = (contentType.data.displayField === field.id);
+    var isTitle = contentType.displayField === field.id;
+
     return _.extend(_.pick(field, fieldProperties), {
       displayName: getDisplayFieldName(field),
       isTitle: isTitle,
       canBeTitle: isTitleType(field.type),
-      canBeLocalized: isLocalizable(field.type),
+      canBeLocalized: true,
       apiName: field.apiName || field.id
     });
   }
@@ -38,11 +39,13 @@ angular.module('contentful')
 
   function update (decoratedField, field, contentType) {
     _.extend(field, extract(decoratedField));
+
     var isTitle = decoratedField.isTitle;
-    if (isTitle)
-      contentType.data.displayField = field.id;
-    else if (contentType.data.displayField === field.id && !isTitle)
-      contentType.data.displayField = null;
+    if (isTitle) {
+      contentType.displayField = field.id;
+    } else if (contentType.displayField === field.id && !isTitle) {
+      contentType.displayField = null;
+    }
   }
 
   /**
@@ -64,28 +67,18 @@ angular.module('contentful')
   }
 
   function isApiNameUnique (field, contentType) {
-    var otherFields = _.reject(contentType.data.fields, {id: field.id});
+    var otherFields = _.reject(contentType.fields, {id: field.id});
     var apiNames = _.map(otherFields, 'apiName');
-    return (apiNames.indexOf(field.apiName) === -1);
+    return apiNames.indexOf(field.apiName) < 0;
   }
 
   function isTitleType (fieldType) {
     return fieldType === 'Symbol' || fieldType === 'Text';
   }
 
-  function isLocalizable() {
-    // @todo specify localizable content types
-    /* var localizableTypes = [];
-    return _.includes(localizableTypes, fieldType); */
-    return true;
-  }
-
   function getDisplayFieldName (field) {
     if (_.isEmpty(field.name)) {
-      if ( _.isEmpty(field.id))
-        return 'Untitled field';
-      else
-        return 'ID: ' + field.id;
+      return _.isEmpty(field.id) ? 'Untitled field' : ('ID: ' + field.id);
     } else {
       return field.name;
     }

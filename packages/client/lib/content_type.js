@@ -109,7 +109,6 @@ ContentType.prototype.getName = function () {
 
 var factoryMethods = createResourceFactoryMethods(ContentType, 'content_types');
 ContentType.factoryMethods = {
-  getContentTypes: factoryMethods.getByQuery,
   getContentType: factoryMethods.getById,
   newContentType: factoryMethods.new,
   createContentType: factoryMethods.create,
