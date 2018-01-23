@@ -22,7 +22,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
   var leaveConfirmator = require('navigation/confirmLeaveEditor');
   var notification = require('notification');
   var logger = require('logger');
-  var accessChecker = require('accessChecker');
+  var accessChecker = require('access_control/AccessChecker');
 
   // 1. prepare "touch" counter (first touch for role->internal, next for dirty state)
   $scope.context.touched = $scope.context.isNew ? 0 : -1;

@@ -49,7 +49,7 @@ describe('cfCreateNewSpace directive', function () {
     module('contentful/test', function ($provide) {
       $provide.value('services/SpaceTemplateLoader', stubs.spaceTemplateLoader);
       $provide.value('services/SpaceTemplateCreator', stubs.spaceTemplateCreator);
-      $provide.value('accessChecker', stubs.accessChecker);
+      $provide.value('access_control/AccessChecker', stubs.accessChecker);
       $provide.value('analytics/Analytics', stubs.analytics);
       $provide.value('logger', stubs.logger);
       $provide.value('client', stubs.client);

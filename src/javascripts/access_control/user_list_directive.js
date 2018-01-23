@@ -51,7 +51,7 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
   var ReloadNotification = require('ReloadNotification');
   var spaceContext = require('spaceContext');
   var userListHandler = require('UserListHandler').create();
-  var accessChecker = require('accessChecker');
+  var accessChecker = require('access_control/AccessChecker');
   var TokenStore = require('services/TokenStore');
   var UserListActions = require('access_control/UserListActions');
 

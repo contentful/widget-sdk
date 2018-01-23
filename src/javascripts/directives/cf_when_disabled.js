@@ -2,7 +2,7 @@
 
 angular.module('contentful').directive('cfWhenDisabled', ['require', function (require) {
 
-  var accessChecker = require('accessChecker');
+  var accessChecker = require('access_control/AccessChecker');
 
   function makePropGetter(elem){
     return function getCssProperty(name) {

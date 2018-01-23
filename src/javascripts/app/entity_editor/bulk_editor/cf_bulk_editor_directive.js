@@ -2,7 +2,7 @@ angular.module('contentful')
 
 .directive('cfBulkEditor', ['require', function (require) {
   var K = require('utils/kefir');
-  var accessChecker = require('accessChecker');
+  var accessChecker = require('access_control/AccessChecker');
   var spaceContext = require('spaceContext');
   var entitySelector = require('entitySelector');
   var deepFreeze = require('utils/Freeze').deepFreeze;

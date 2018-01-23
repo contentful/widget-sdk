@@ -20,7 +20,7 @@ describe('Section Access', function () {
     module('contentful/test');
 
     sectionAccess = this.$inject('sectionAccess');
-    accessChecker = this.$inject('accessChecker');
+    accessChecker = this.$inject('access_control/AccessChecker');
     $state = this.$inject('$state');
     $stateParams = this.$inject('$stateParams');
     spaceContext = this.$inject('spaceContext');

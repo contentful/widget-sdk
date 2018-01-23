@@ -5,7 +5,7 @@ import * as C from 'utils/Concurrent';
 import { bindActions, createStore, makeReducer } from 'ui/Framework/Store';
 import * as LD from 'utils/LaunchDarkly';
 
-import accessChecker from 'accessChecker';
+import * as accessChecker from 'access_control/AccessChecker';
 import $state from '$state';
 
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo';

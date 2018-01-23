@@ -11,7 +11,7 @@ angular.module('contentful')
   var $window = require('$window');
   var keycodes = require('utils/keycodes').default;
 
-  var accessChecker = require('accessChecker');
+  var accessChecker = require('access_control/AccessChecker');
   var orgRoles = require('services/OrganizationRoles');
   var TokenStore = require('services/TokenStore');
   var spacesByOrg$ = TokenStore.spacesByOrganization$;

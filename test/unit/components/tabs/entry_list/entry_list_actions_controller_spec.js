@@ -59,7 +59,7 @@ describe('Entry List Actions Controller', function () {
     const spaceContext = this.$inject('mocks/spaceContext').init();
     spaceContext.space = {createEntry: stubs.createEntry};
 
-    accessChecker = this.$inject('accessChecker');
+    accessChecker = this.$inject('access_control/AccessChecker');
     accessChecker.shouldHide = sinon.stub().returns(false);
     accessChecker.shouldDisable = sinon.stub().returns(false);
     accessChecker.canPerformActionOnEntity = sinon.stub();

@@ -314,7 +314,7 @@ angular.module('contentful')
   }
 
   function getWarningTemplate (widgetId, message) {
-    var accessChecker = require('accessChecker');
+    var accessChecker = require('access_control/AccessChecker');
     return JST.editor_control_warning({
       label: widgetId,
       message: message,

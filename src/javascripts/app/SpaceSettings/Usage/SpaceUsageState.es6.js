@@ -1,4 +1,4 @@
-import accessChecker from 'accessChecker';
+import accessChecker from 'access_control/AccessChecker';
 
 export default {
   name: 'usage',

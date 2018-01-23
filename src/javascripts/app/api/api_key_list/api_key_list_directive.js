@@ -13,7 +13,7 @@ angular.module('contentful')
 .controller('ApiKeyListController', ['$scope', 'require', function ($scope, require) {
   var ReloadNotification = require('ReloadNotification');
   var spaceContext = require('spaceContext');
-  var accessChecker = require('accessChecker');
+  var accessChecker = require('access_control/AccessChecker');
   var Command = require('command');
   var TheAccountView = require('TheAccountView');
   var $state = require('$state');

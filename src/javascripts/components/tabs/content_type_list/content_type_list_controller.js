@@ -3,7 +3,7 @@
 angular.module('contentful').controller('ContentTypeListController', ['$scope', 'require', function ($scope, require) {
   var notification = require('notification');
   var spaceContext = require('spaceContext');
-  var accessChecker = require('accessChecker');
+  var accessChecker = require('access_control/AccessChecker');
   var ctHelpers = require('data/ContentTypes');
   var createViewPersistor = require('data/ListViewPersistor').default;
 

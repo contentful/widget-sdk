@@ -25,7 +25,7 @@ describe('Access Checker', function () {
     OrganizationRoles = this.$inject('services/OrganizationRoles');
     TokenStore = this.$inject('services/TokenStore');
     policyChecker = this.$inject('accessChecker/policy');
-    ac = this.$inject('accessChecker');
+    ac = this.$inject('access_control/AccessChecker');
 
     const responseCache = this.$inject('accessChecker/responseCache');
     responseCache.getResponse = getResStub = sinon.stub().returns(false);

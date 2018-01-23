@@ -3,7 +3,7 @@
 angular.module('contentful')
 
 .controller('EntryListActionsController', ['$scope', 'require', function EntryListActionsController ($scope, require) {
-  var accessChecker = require('accessChecker');
+  var accessChecker = require('access_control/AccessChecker');
   var $controller = require('$controller');
 
   var listActionsController = $controller('ListActionsController', {

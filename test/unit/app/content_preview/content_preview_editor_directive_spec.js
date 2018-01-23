@@ -10,7 +10,7 @@ describe('cfContentPreviewEditor directive', function () {
       warn: sinon.stub().returns()
     };
     module('contentful/test', function ($provide) {
-      $provide.value('accessChecker', {wasForbidden: sinon.stub().returns(false)});
+      $provide.value('access_control/AccessChecker', {wasForbidden: sinon.stub().returns(false)});
       $provide.value('notification', notification);
     });
     spaceContext = this.$inject('mocks/spaceContext').init();

@@ -65,7 +65,7 @@ angular.module('contentful').directive('cfMarkdownHeadingAction', function () {
 
 angular.module('contentful').directive('cfMarkdownInsertMediaAction', ['require', function (require) {
   var LD = require('utils/LaunchDarkly');
-  var accessChecker = require('accessChecker');
+  var accessChecker = require('access_control/AccessChecker');
   var templateString = require('markdown_editor/templates/InsertMediaAction').default
 
   return {

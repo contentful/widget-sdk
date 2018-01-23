@@ -11,7 +11,7 @@ angular.module('contentful')
   var Paginator = require('Paginator');
   var createSelection = require('selection');
   var spaceContext = require('spaceContext');
-  var accessChecker = require('accessChecker');
+  var accessChecker = require('access_control/AccessChecker');
   var entityStatus = require('entityStatus');
   var getBlankView = require('data/UiConfig/Blanks').getBlankEntryView;
   var createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar').default;

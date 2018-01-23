@@ -24,7 +24,7 @@ angular.module('contentful')
   var DocLoad = require('data/sharejs/Connection').DocLoad;
   var caseof = require('libs/sum-types').caseof;
   var Reverter = require('entityEditor/Document/Reverter');
-  var accessChecker = require('accessChecker');
+  var accessChecker = require('access_control/AccessChecker');
   var Status = require('data/Document/Status');
   var Permissions = require('access_control/EntityPermissions');
   var deepFreeze = require('utils/Freeze').deepFreeze;

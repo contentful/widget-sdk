@@ -21,7 +21,7 @@ angular.module('contentful')
   var getTemplatesList = spaceTemplateLoader.getTemplatesList;
   var getTemplate = spaceTemplateLoader.getTemplate;
   var spaceTemplateCreator = require('services/SpaceTemplateCreator');
-  var accessChecker = require('accessChecker');
+  var accessChecker = require('access_control/AccessChecker');
   var TokenStore = require('services/TokenStore');
   var K = require('utils/kefir');
   var enforcements = require('enforcements');
