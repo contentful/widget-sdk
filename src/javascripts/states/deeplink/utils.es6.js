@@ -1,7 +1,9 @@
 import {getSpaces, getOrganizations, getOrganization} from 'services/TokenStore';
-import TheStore from 'TheStore';
+import { getStore } from 'TheStore';
 import accessChecker from 'accessChecker';
 import {isOwnerOrAdmin} from 'services/OrganizationRoles';
+
+const store = getStore();
 
 /**
  * @description get current space info
@@ -9,7 +11,7 @@ import {isOwnerOrAdmin} from 'services/OrganizationRoles';
  * first available space is used
  */
 export function* getSpaceInfo () {
-  const lastUsedId = TheStore.get('lastUsedSpace');
+  const lastUsedId = store.get('lastUsedSpace');
   const spaces = yield getSpaces();
 
   if (spaces.length === 0) {
@@ -28,7 +30,7 @@ export function* getSpaceInfo () {
  * or organization of the first space
  */
 export function* getOrg () {
-  const lastUsedOrgId = TheStore.get('lastUsedOrg');
+  const lastUsedOrgId = store.get('lastUsedOrg');
   const orgs = yield getOrganizations();
 
   const usedOrg = lastUsedOrgId && orgs.find(org => org.sys.id === lastUsedOrgId);

@@ -1,12 +1,24 @@
 'use strict';
 
 describe('contentPreview', function () {
+  const storeStubs = {};
+
   let spaceContext;
 
   beforeEach(function () {
+    storeStubs.get = sinon.stub();
+    storeStubs.set = sinon.stub();
+    storeStubs.remove = sinon.stub();
+    storeStubs.forKey = sinon.stub();
+
     module('contentful/test', function ($provide) {
       $provide.value('TheLocaleStore', {
         getDefaultLocale: _.constant({internal_code: 'en'})
+      });
+      $provide.value('TheStore', {
+        getStore: () => {
+          return storeStubs;
+        }
       });
     });
 
@@ -30,7 +42,9 @@ describe('contentPreview', function () {
     spaceContext.getId = _.constant('space01');
 
     this.contentPreview = this.$inject('contentPreview');
-    this.TheStore = this.$inject('TheStore');
+
+    const getStore = this.$inject('TheStore').getStore;
+    this.store = getStore();
   });
 
   afterEach(function () {
@@ -296,8 +310,7 @@ describe('contentPreview', function () {
 
   describe('#getSelected', function () {
     beforeEach(function () {
-      this.TheStore.get = sinon.stub();
-      this.TheStore.get.withArgs('selectedPreviewEnvsForSpace.space01')
+      storeStubs.get.withArgs('selectedPreviewEnvsForSpace.space01')
       .returns({'ct1': 'env1'});
     });
 
@@ -313,11 +326,25 @@ describe('contentPreview', function () {
   });
 
   describe('#setSelected', function () {
-    it('updates store value', function () {
-      const environment = {
-        contentType: 'ct1',
-        envId: 'env1'
+    const environment = {
+      contentType: 'ct1',
+      envId: 'env1'
+    };
+
+    beforeEach(function () {
+      const storage = {};
+
+      // Analogous to the actual backing storage
+      storeStubs.get = function (key) {
+        return storage[key];
       };
+
+      storeStubs.set = function (key, value) {
+        storage[key] = value;
+      };
+    });
+
+    it('updates store value', function () {
       this.contentPreview.setSelected(environment);
       expect(this.contentPreview.getSelected('ct1')).toBe('env1');
     });

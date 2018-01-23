@@ -21,7 +21,8 @@
       disableUpdateCheck: true
     },
     manifest: [],
-    gitRevision: null
+    gitRevision: null,
+    stubbed: true
   });
 
   // Load ES6 modules defined in src/javascripts. They are registered in

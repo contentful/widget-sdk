@@ -32,8 +32,8 @@ function setupContext (ctx) {
     registerTeardown (fn) {
       ctx._teardown.push(fn);
     },
-    createUI () {
-      const ui = createUI();
+    createUI (parameters) {
+      const ui = createUI(parameters);
       this.registerTeardown(() => ui.destroy());
       return ui;
     }

@@ -6,7 +6,7 @@ import {createEndpoint as createOrgEndpoint} from 'access_control/OrganizationMe
 import {getBasePlan, getSpacePlans} from 'account/pricing/PricingDataProvider';
 import {getBasePlanStyle} from 'account/pricing/SubscriptionPlanStyles';
 import {supportUrl} from 'Config';
-import {groupBy, pick} from 'lodash';
+import {groupBy} from 'lodash';
 import {getOrganization} from 'services/TokenStore';
 import {isOwnerOrAdmin} from 'services/OrganizationRoles';
 import * as ReloadNotification from 'ReloadNotification';
@@ -70,7 +70,7 @@ const SubscriptionOverview = createReactClass({
         h('div', {
           className: 'workbench-main__left-sidebar',
           style: {padding: '1.2rem 0 0 1.5rem'}
-        }, h(BasePlan, pick(basePlan, 'name', 'price'))),
+        }, h(BasePlan, basePlan)),
         h('div', {
           className: 'workbench-main__right-content',
           style: {padding: '1.2rem 2rem'}
@@ -87,7 +87,8 @@ SubscriptionOverview.propTypes = subscriptionOverviewPropTypes;
 
 // TODO: 'key' is not served by endpoint, but we need some key to choose icon
 // and style for the pricing plan box
-function BasePlan ({name, price, key = 'team-edition'}) {
+function BasePlan ({name, price, key = 'team-edition', ratePlanCharges = []}) {
+  const enabledFeatures = ratePlanCharges.filter(({unitType}) => unitType === 'feature');
   const basePlanStyle = getBasePlanStyle(key);
   return h('div', null,
     h('h2', {className: 'pricing-heading'}, 'Your pricing plan'),
@@ -98,6 +99,11 @@ function BasePlan ({name, price, key = 'team-edition'}) {
       h('div', {className: 'pricing-plan__bar', style: basePlanStyle.bar}),
       asReact(basePlanStyle.icon),
       h('h3', {className: 'pricing-heading'}, name),
+      h('h3', {className: 'pricing-heading'}, 'Enabled features:'),
+      h('ul', null,
+        enabledFeatures.map(({name}) => h('li', {key: name}, name)),
+        !enabledFeatures.length && h('li', null, '(none)')
+      ),
       h(Price, {value: price})
     )
   );
@@ -132,7 +138,7 @@ function RightSidebar ({grandTotal}) {
       'Do you need to make changes to your pricing plan or purchase additional spaces? ' +
       'Don’t hesitate to talk to our customer success team.'
     ),
-    h('p', {className: 'entity-sidebar__help-text.pricing-csm'},
+    h('p', {className: 'entity-sidebar__help-text pricing-csm'},
       h('span', {className: 'pricing-csm__photo'}),
       h('span', {className: 'pricing-csm__photo'}),
       h('span', {className: 'pricing-csm__photo'})
@@ -147,7 +153,7 @@ function Price ({value = 0, currency = '$', unit = 'month'}) {
   return h('p', {className: 'pricing-price'},
     h('span', {className: 'pricing-price__value'},
       h('span', {className: 'pricing-price__value__currency'}, currency),
-      value.toLocaleString('en-US')
+      parseInt(value, 10).toLocaleString('en-US')
     ),
     h('span', {className: 'pricing-price__unit'}, `/${unit}`)
   );

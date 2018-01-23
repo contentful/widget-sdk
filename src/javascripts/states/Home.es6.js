@@ -2,8 +2,10 @@ import {find} from 'lodash';
 import makeState from 'states/Base';
 import $state from '$state';
 import {getSpaces} from 'services/TokenStore';
-import TheStore from 'TheStore';
+import { getStore } from 'TheStore';
 import template from 'app/home/HomeTemplate';
+
+const store = getStore();
 
 /**
  * @ngdoc service
@@ -28,12 +30,12 @@ export default makeState({
       });
 
       function getLastUsedSpace (spaces) {
-        const spaceId = TheStore.get('lastUsedSpace');
+        const spaceId = store.get('lastUsedSpace');
         return spaceId && find(spaces, (space) => space.sys.id === spaceId);
       }
 
       function getLastUsedOrgSpace (spaces) {
-        const orgId = TheStore.get('lastUsedOrg');
+        const orgId = store.get('lastUsedOrg');
         return orgId && find(spaces, (space) => space.organization.sys.id === orgId);
       }
     }

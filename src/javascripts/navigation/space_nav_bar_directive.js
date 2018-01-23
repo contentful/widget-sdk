@@ -10,6 +10,7 @@ angular.module('contentful')
   var accessChecker = require('accessChecker');
   var spaceContext = require('spaceContext');
   var LD = require('utils/LaunchDarkly');
+  var TokenStore = require('services/TokenStore');
 
   return {
     template: template(),
@@ -22,6 +23,11 @@ angular.module('contentful')
       var controller = this;
       LD.onFeatureFlag($scope, 'feature-dv-11-2017-environments', function (environmentsEnabled) {
         controller.environmentsEnabled = environmentsEnabled;
+      });
+
+      var orgId = spaceContext.organizationContext.organization.sys.id;
+      TokenStore.getOrganization(orgId).then(function (org) {
+        controller.usageEnabled = org.pricingVersion === 'pricing_version_2';
       });
 
       this.canNavigateTo = function (section) {
@@ -113,6 +119,11 @@ angular.module('contentful')
             if: 'nav.environmentsEnabled',
             sref: 'spaces.detail.settings.environments',
             title: 'Environments'
+          },
+          {
+            if: 'nav.usageEnabled',
+            sref: 'spaces.detail.settings.usage',
+            title: 'Usage'
           }
         ]
       }
