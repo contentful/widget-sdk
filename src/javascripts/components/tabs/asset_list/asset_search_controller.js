@@ -177,15 +177,15 @@ angular.module('contentful')
       return;
     }
     lastUISearchState = initialSearchState;
-    createSearchInput(
-      $scope,
-      spaceContext,
-      onSearchChange,
-      isSearching$,
-      initialSearchState,
-      Kefir.fromPromise(spaceContext.users.getAll()),
-      withAssets
-    );
+    createSearchInput({
+      $scope: $scope,
+      contentTypes: spaceContext.publishedCTs.getAllBare(),
+      onsSearchChange: onSearchChange,
+      isSearching$: isSearching$,
+      initState: initialSearchState,
+      users$: Kefir.fromPromise(spaceContext.users.getAll()),
+      withAssets: withAssets
+    });
   }
 
   function prepareQuery () {

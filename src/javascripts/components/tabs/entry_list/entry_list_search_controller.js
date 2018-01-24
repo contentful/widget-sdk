@@ -139,14 +139,14 @@ angular.module('contentful')
       return;
     }
     lastUISearchState = initialSearchState;
-    createSearchInput(
-      $scope,
-      spaceContext,
-      onSearchChange,
-      isSearching$,
-      initialSearchState,
-      Kefir.fromPromise(spaceContext.users.getAll())
-    );
+    createSearchInput({
+      $scope: $scope,
+      contentTypes: spaceContext.publishedCTs.getAllBare(),
+      onSearchChange: onSearchChange,
+      isSearching$: isSearching$,
+      initState: initialSearchState,
+      users$: Kefir.fromPromise(spaceContext.users.getAll())
+    });
   }
 
   function setupEntriesHandler (promise) {
