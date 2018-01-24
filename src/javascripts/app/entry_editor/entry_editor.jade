@@ -22,10 +22,16 @@ div.entry-editor.workbench
         div(role="menuitem" ui-command="actions.duplicate")
           | Duplicate
         div(role="menuitem"
+          ng-if="!isConfirmationFeatureEnabled"
           ui-command-state="state.delete"
           cf-context-menu-trigger)
           | Delete
         +entity-delete-confirm-menu
+        div(role="menuitem"
+          ng-if="isConfirmationFeatureEnabled"
+          data-test-id="trigger-delete-modal"
+          ui-command="state.delete")
+          | Delete
         hr
         div(role="menuitem" ui-command="actions.toggleDisabledFields")
           | {{command.label()}}

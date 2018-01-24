@@ -15,17 +15,16 @@ import {
   sanitizeSearchFilters
 } from './Filters';
 
-export default function create (
+export default function create ({
   $scope,
-  spaceContext,
+  contentTypes = [],
   onSearchChange,
   isSearching$,
   initState = {},
   users$,
   withAssets = false
-) {
+}) {
   try {
-    const contentTypes = spaceContext.publishedCTs.getAllBare();
     // Removes invalid filters before initializing the state.
     const sanitizedFilters = sanitizeSearchFilters(
       initState.searchFilters,
@@ -58,11 +57,13 @@ export default function create (
       }
     );
 
-    const unsubscribeFromSearchStore = K.onValueScope($scope, store.state$, state => {
-      window._state = state;
-
-      $scope.search = renderSearch(mapStateToProps(state, actions));
-    });
+    const unsubscribeFromSearchStore = K.onValueScope(
+      $scope,
+      store.state$,
+      state => {
+        $scope.search = renderSearch(mapStateToProps(state, actions));
+      }
+    );
 
     $scope.unsubscribeSearch = () => {
       unsubscribeSearchWidget();

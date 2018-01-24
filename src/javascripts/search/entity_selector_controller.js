@@ -36,12 +36,24 @@ angular.module('contentful')
   var Paginator = require('Paginator');
   var createQueue = require('overridingRequestQueue');
   var EntityHelpers = require('EntityHelpers');
+  var K = require('utils/kefir');
+  var Kefir = require('libs/kefir');
+  var LD = require('utils/LaunchDarkly');
+  var createSearchInput = require('app/ContentList/Search').default;
 
+  var NEW_SEARCH_FLAG_NAME = 'feature-at-01-2018-entity-selector-new-search';
   var MIN_SEARCH_TRIGGERING_LEN = 1;
   var MODES = {AVAILABLE: 1, SELECTED: 2};
 
   var config = $scope.config;
   var itemsById = {};
+
+  LD.onFeatureFlag($scope, NEW_SEARCH_FLAG_NAME, function (isEnabled) {
+    $scope.isNewSearchEnabled = isEnabled;
+    if (isEnabled) {
+      initializeSearchUI();
+    }
+  });
 
   var load = createQueue(fetch, function (resultPromise) {
     resultPromise.then(handleResponse);
@@ -55,7 +67,7 @@ angular.module('contentful')
     return entity.sys.id;
   });
 
-  _.extend($scope, MODES, {
+  _.assign($scope, MODES, {
     spaceContext: spaceContext,
     view: {mode: MODES.AVAILABLE},
     paginator: Paginator.create(),
@@ -84,6 +96,48 @@ angular.module('contentful')
     }
   }
 
+  function initializeSearchUI () {
+    var withAssets = config.entityType === 'Asset';
+    var initialSearchState = {};
+    if ($scope.singleContentType) {
+      initialSearchState.contentTypeId = $scope.singleContentType.getId();
+    }
+    var isSearching$ = K.fromScopeValue($scope, function ($scope) {
+      return $scope.isLoading;
+    });
+    var contentTypes = getValidContentTypes(
+      $scope.config.linkedContentTypeIds,
+      spaceContext.publishedCTs.getAllBare()
+    );
+
+    createSearchInput({
+      $scope: $scope,
+      contentTypes: contentTypes,
+      onSearchChange: onSearchChange,
+      isSearching$: isSearching$,
+      initState: initialSearchState,
+      users$: Kefir.fromPromise(spaceContext.users.getAll()),
+      withAssets: withAssets
+    });
+
+    function getValidContentTypes (linkedContentTypeIds, contentTypes) {
+      var acceptsOnlySpecificContentType = linkedContentTypeIds.length > 0;
+
+      if (acceptsOnlySpecificContentType) {
+        contentTypes = contentTypes.filter(function (ct) {
+          return linkedContentTypeIds.indexOf(ct.sys.id) > -1;
+        });
+      }
+
+      return contentTypes;
+    }
+  }
+
+  function onSearchChange (newSearchState) {
+    _.assign($scope.view, newSearchState);
+    resetAndLoad();
+  }
+
   function fetch () {
     $scope.isLoading = true;
     return config.fetch(getParams());
@@ -91,16 +145,29 @@ angular.module('contentful')
 
   function getParams () {
     var params = {
-      searchTerm: $scope.view.searchTerm,
       order: getOrder(),
       paginator: $scope.paginator
     };
+    if ($scope.isNewSearchEnabled) {
+      _.assign(params, getSearch());
+    } else {
+      params.searchTerm = $scope.view.searchTerm;
+    }
 
     if (config.entityType === 'Entry' && $scope.singleContentType) {
       params.contentTypeId = $scope.singleContentType.getId();
     }
 
     return params;
+  }
+
+  function getSearch () {
+    var view = $scope.view || {};
+    return {
+      searchText: view.searchText || '',
+      searchFilters: view.searchFilters || [],
+      contentTypeId: view.contentTypeId
+    };
   }
 
   function getOrder () {
@@ -172,6 +239,7 @@ angular.module('contentful')
 
   function handleResponse (res) {
     $scope.paginator.setTotal(res.total);
+    $scope.items = [];
     $scope.items.push.apply($scope.items, getItemsToAdd(res));
 
     $timeout(function () {
@@ -192,7 +260,6 @@ angular.module('contentful')
   }
 
   function resetAndLoad () {
-    $scope.items = [];
     itemsById = {};
     $scope.paginator.setTotal(0);
     $scope.paginator.setPage(0);

@@ -130,14 +130,17 @@ const assetsFieldFilters = [
  * to contstruct the available options to select from.
  */
 export function contentTypeFilter (contentTypes) {
+  let valueInputSelect = [...contentTypes.map(ct => [ct.sys.id, ct.name])];
+
+  if (contentTypes.length > 1) {
+    valueInputSelect = [['', 'Any'], ...valueInputSelect];
+  }
+
   return {
     name: 'Content type',
     queryKey: 'content_type',
     operators: [equalityOperator],
-    valueInput: ValueInput.Select([
-      ['', 'Any'],
-      ...contentTypes.map(ct => [ct.sys.id, ct.name])
-    ])
+    valueInput: ValueInput.Select(valueInputSelect)
   };
 }
 

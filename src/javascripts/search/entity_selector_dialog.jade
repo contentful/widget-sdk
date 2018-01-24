@@ -37,12 +37,15 @@ mixin single-list-item
             | Hide {{ labels.selected }} ({{ selected.length }})
 
       .entity-selector__search(
-        ng-if="supportsAdvancedSearch"
+        ng-if="supportsAdvancedSearch && !isNewSearchEnabled"
         cf-tokenized-search="view.searchTerm"
         search-content-type="singleContentType"
         placeholder="{{ getSearchPlaceholder() }}"
         cf-on-blur-component="leftSearch($event)"
         cf-on-blur-component-when="showAutocompletions")
+
+      .entity-selector__search(ng-if="supportsAdvancedSearch && isNewSearchEnabled")
+        cf-component-bridge(component="search")
 
       .entity-selector__search(ng-if="!supportsAdvancedSearch")
         input.cfnext-form__input--full-size(
@@ -65,8 +68,6 @@ mixin single-list-item
           ng-repeat="entity in items track by entity.sys.id"
           ng-class="{'x--selected': selectedIds[entity.sys.id],'entity-selector__last-item': $last && paginator.atLast()}")
           +single-list-item
-
-        .loading(ng-if="isLoading")
 
       .entity-selector__item-list(
         ng-if="view.mode === SELECTED"

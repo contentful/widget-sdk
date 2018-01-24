@@ -50,6 +50,8 @@ export default function render ({
   const hasSpinner = isSearching || isTyping;
   const hasFilters = filters.length > 0;
   const defaultFocus = focus;
+  const placeholder = hasFilters
+    ? '' : 'Type to search for ' + (withAssets ? 'assets' : 'entries');
 
   if (!hasLoaded) {
     return renderLoader();
@@ -103,7 +105,7 @@ export default function render ({
           onRemoveAttempt: ({ index }) => actions.SetFocusOnPill(index)
         }),
         React.createElement(QueryInput, {
-          isPlaceholderVisible: !hasFilters,
+          placeholder,
           value: input || '',
           onChange: value => actions.SetQueryInput(value),
           autoFocus: !input && !hasFilters,

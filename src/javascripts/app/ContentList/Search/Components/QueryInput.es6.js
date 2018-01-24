@@ -30,16 +30,15 @@ const QueryInput = createReactClass({
   },
   render () {
     const {
-      isPlaceholderVisible,
+      placeholder,
       autoFocus,
       onKeyDown
     } = this.props;
     const { value } = this.state;
-    const placeholder = isPlaceholderVisible ? 'Type to search for entries' : '';
 
     // Replacing spaces with `|` to make the width of the shadow element equal
     // the width of the input.
-    const shadowValue = (this.state.value || placeholder).replace(/\s/g, '|');
+    const shadowValue = (this.state.value || placeholder || '').replace(/\s/g, '|');
 
     // TODO: extract shadow-resize and reuse in TextValueInput
     return h(
@@ -69,7 +68,7 @@ const QueryInput = createReactClass({
 });
 
 QueryInput.propTypes = {
-  isPlaceholderVisible: PropTypes.bool,
+  placeholder: PropTypes.string,
   autoFocus: PropTypes.bool,
   onKeyDown: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired
