@@ -10,12 +10,9 @@
         ul
           li(ng-repeat="item in unpublishedRefs")
             | <strong>{{ item.fieldName }}</strong> — {{ item.count }} unpublished {{ item.type }}
-        p
-          | That’s fine — but please keep in mind that these {{ linkedEntityTypes }}
-          | won’t show up in the Delivery API response (until they are published, of course).
 
     .modal-dialog__controls
       button.btn-primary-action(ng-click="dialog.confirm()")
         | Got it, publish anyway
       button.btn-secondary-action(ng-click="dialog.cancel()")
-        | Back to the editor
+        | Cancel

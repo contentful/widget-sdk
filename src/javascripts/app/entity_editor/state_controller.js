@@ -10,6 +10,8 @@ angular.module('contentful')
   var trackVersioning = require('analyticsEvents/versioning');
   var K = require('utils/kefir');
   var N = require('app/entity_editor/Notifications');
+  var LD = require('utils/LaunchDarkly');
+  var modalDialog = require('modalDialog');
   var Notification = N.Notification;
   var SumTypes = require('libs/sum-types');
   var caseof = SumTypes.caseofEq;
@@ -29,10 +31,18 @@ angular.module('contentful')
     controller.inProgress = inProgress;
   });
 
+  LD.onFeatureFlag(
+    $scope,
+    'feature-at-01-2018-incoming-links-confirmation-in-entry-editor',
+    function (isEnabled) {
+      $scope.isConfirmationFeatureEnabled = isEnabled;
+    }
+  );
+
   var noop = Command.create(function () {});
 
   var archive = Command.create(function () {
-    return applyAction(Action.Archive());
+    return applyActionWithConfirmation(Action.Archive());
   }, {
     disabled: checkDisallowed(Action.Archive())
   }, {
@@ -53,7 +63,7 @@ angular.module('contentful')
 
 
   var unpublish = Command.create(function () {
-    return applyAction(Action.Unpublish());
+    return applyActionWithConfirmation(Action.Unpublish());
   }, {
     disabled: checkDisallowed(Action.Unpublish())
   }, {
@@ -146,23 +156,25 @@ angular.module('contentful')
     });
   }
 
-  controller.delete = Command.create(function () {
-    return applyAction(Action.Delete())
-    .then(function () {
-      return closeState();
-    });
-  }, {
-    disabled: function () {
-      var canDelete = permissions.can('delete');
-      var canMoveToDraft = caseof(controller.current, [
-        ['archived', _.constant(permissions.can('unarchive'))],
-        ['changes', 'published', _.constant(permissions.can('unpublish'))],
-        [otherwise, _.constant(true)]
-      ]);
+  controller.delete = Command.create(
+    function () {
+      return applyActionWithConfirmation(Action.Delete()).then(function () {
+        return closeState();
+      });
+    },
+    {
+      disabled: function () {
+        var canDelete = permissions.can('delete');
+        var canMoveToDraft = caseof(controller.current, [
+          ['archived', _.constant(permissions.can('unarchive'))],
+          ['changes', 'published', _.constant(permissions.can('unpublish'))],
+          [otherwise, _.constant(true)]
+        ]);
 
-      return isDeleted || !canDelete || !canMoveToDraft;
+        return isDeleted || !canDelete || !canMoveToDraft;
+      }
     }
-  });
+  );
 
   controller.revertToPrevious = Command.create(function () {
     reverter.revert()
@@ -201,10 +213,32 @@ angular.module('contentful')
     });
   }
 
+  function applyActionWithConfirmation (action) {
+    return showConfirmationMessage({ action: action })
+      .then(function () {
+        return applyAction(action);
+      });
+  }
+
   // TODO Move these checks into the document resource manager
   function checkDisallowed (action) {
     return function () {
       return isDeleted || !permissions.can(action);
     };
+  }
+
+  function showConfirmationMessage (props) {
+    if (!$scope.isConfirmationFeatureEnabled) {
+      return $q.resolve();
+    }
+
+    return modalDialog.open({
+      template: '<cf-change-state-confirmation-dialog class="modal-background"/>',
+      backgroundClose: true,
+      scopeData: {
+        action: props.action,
+        entityInfo: $scope.entityInfo
+      }
+    }).promise;
   }
 }]);
