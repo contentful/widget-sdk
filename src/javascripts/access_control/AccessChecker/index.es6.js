@@ -6,7 +6,7 @@ import * as OrganizationRoles from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
 import * as K from 'utils/kefir';
 import * as policyChecker from './PolicyChecker';
-import cache from 'accessChecker/responseCache';
+import * as cache from './ResponseCache';
 import {capitalize, capitalizeFirst} from 'stringUtils';
 import {get, some, includes, forEach, isString} from 'lodash';
 import require from 'require';

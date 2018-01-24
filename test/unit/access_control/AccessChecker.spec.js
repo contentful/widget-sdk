@@ -27,7 +27,7 @@ describe('Access Checker', function () {
     policyChecker = this.$inject('access_control/AccessChecker/PolicyChecker');
     ac = this.$inject('access_control/AccessChecker');
 
-    const responseCache = this.$inject('accessChecker/responseCache');
+    const responseCache = this.$inject('access_control/AccessChecker/ResponseCache');
     responseCache.getResponse = getResStub = sinon.stub().returns(false);
 
     reasonsDeniedStub = sinon.stub().returns([]);
