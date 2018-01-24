@@ -56,7 +56,6 @@ angular.module('contentful')
         var entry = editorData.entity;
         var contentType = editorData.contentType;
 
-        $state.current.data = $scope.context = {};
         $scope.widgets = _.filter(editorData.fieldControls.form, function (widget) {
           return !_.get(widget, 'field.disabled') || $scope.preferences.showDisabledFields;
         });

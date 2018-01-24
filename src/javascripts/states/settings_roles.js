@@ -16,10 +16,7 @@ angular.module('contentful')
     name: 'list',
     url: '',
     loadingText: 'Loading roles…',
-    template: '<cf-role-list class="workbench role-list" />',
-    controller: ['$scope', function ($scope) {
-      $scope.context = {};
-    }]
+    template: '<cf-role-list class="workbench role-list" />'
   });
 
   var newRole = {
@@ -41,8 +38,7 @@ angular.module('contentful')
       }]
     },
     template: '<cf-role-editor class="workbench role-editor" />',
-    controller: ['$scope', '$state', 'baseRole', 'emptyRole', function ($scope, $state, baseRole, emptyRole) {
-      $scope.context = $state.current.data;
+    controller: ['$scope', 'baseRole', 'emptyRole', function ($scope, baseRole, emptyRole) {
       $scope.baseRole = baseRole;
       $scope.role = emptyRole;
 
@@ -68,12 +64,7 @@ angular.module('contentful')
     onEnter: ['spaceContext', function (spaceContext) {
       spaceContext.publishedCTs.refresh();
     }],
-    controller: ['$scope', 'require', 'role', function ($scope, require, role) {
-      var $state = require('$state');
-      var $stateParams = require('$stateParams');
-
-
-      $scope.context = $state.current.data;
+    controller: ['$scope', '$stateParams', 'role', function ($scope, $stateParams, role) {
       $scope.role = role;
 
       contextHistory.set([

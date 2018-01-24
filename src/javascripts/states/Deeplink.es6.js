@@ -35,7 +35,7 @@ export function createController ($scope) {
   return resolveLink(link).then(({ path, params }) => {
     if (!path) {
       $scope.status = 'not_exist';
-      $scope.context = { ready: true };
+      $scope.context.ready = true;
     } else {
       Navigator.go({
         path,

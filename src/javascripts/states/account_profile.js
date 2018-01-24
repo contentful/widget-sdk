@@ -52,9 +52,6 @@ angular.module('contentful')
       params: {
         pathSuffix: ''
       },
-      controller: ['$scope', function ($scope) {
-        $scope.context = {};
-      }],
       template: [
         workbenchHeader({title: [definition.title]}),
         h('cf-account-view', { context: 'context' })

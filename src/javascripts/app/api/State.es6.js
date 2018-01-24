@@ -27,11 +27,7 @@ import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo';
 // These properties are common to the key editor state for new and
 // existing keys.
 const apiKeyEditorState = {
-  controller: ['$scope', 'require', 'apiKey', 'spaceEnvironments', function ($scope, require, apiKey, spaceEnvironments) {
-    const $state = require('$state');
-    const $stateParams = require('$stateParams');
-
-    $state.current.data = $scope.context = {};
+  controller: ['$scope', '$stateParams', 'apiKey', 'spaceEnvironments', function ($scope, $stateParams, apiKey, spaceEnvironments) {
     attachEditorController($scope, apiKey, spaceEnvironments);
 
     contextHistory.set([
@@ -97,9 +93,6 @@ function cdaKeyList () {
   return baseState({
     name: 'list',
     url: '/',
-    controller: ['$scope', function ($scope) {
-      $scope.context = {};
-    }],
     template: h('cf-api-key-list.workbench')
   });
 }

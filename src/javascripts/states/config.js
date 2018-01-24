@@ -63,6 +63,7 @@ angular.module('contentful')
 
   function addChildren (parentName, children) {
     children.forEach(function (state) {
+      state = provideScopeContext(state);
       state = useContentView(state);
 
       if (state.views) {
@@ -97,6 +98,39 @@ angular.module('contentful')
     } else {
       return state;
     }
+  }
+
+  function provideScopeContext (state) {
+    if (!state.controller) {
+      state.controller = [function () {}];
+    }
+
+    if (typeof state.controller === 'function') {
+      state.controller = [state.controller];
+    }
+
+    if (!Array.isArray(state.controller)) {
+      throw new Error('controller must to be one of: undefined, function, array.');
+    }
+
+    var injectables = state.controller.slice(0, state.controller.length - 1);
+    var controllerFn = state.controller[state.controller.length - 1];
+
+    state.controller = ['$scope', '$state']
+      .concat(injectables)
+      .concat([function ($scope, $state) {
+        var args = Array.prototype.slice.call(arguments).slice(2);
+        $state.current.data = $state.current.data || {};
+        Object.defineProperty($scope, 'context', {
+          configurable: false,
+          enumerable: true,
+          writable: false,
+          value: $state.current.data
+        });
+        return controllerFn.apply(this, args);
+      }]);
+
+    return state;
   }
 
   function templateToString (template) {

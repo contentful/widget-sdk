@@ -17,9 +17,6 @@ angular.module('contentful')
     name: 'list',
     url: '',
     loadingText: 'Loading content model…',
-    controller: ['$scope', function ($scope) {
-      $scope.context = {};
-    }],
     template: '<div cf-content-type-list class="workbench entity-list"></div>'
   });
 
@@ -101,12 +98,8 @@ angular.module('contentful')
       redirectTo: '.fields',
       children: [ fields, preview ],
       controller: [
-        '$scope', 'require', 'contentType', 'editingInterface', 'publishedContentType',
-        function ($scope, require, contentType, editingInterface, publishedContentType) {
-          var $state = require('$state');
-          var $stateParams = require('$stateParams');
-
-          $scope.context = $state.current.data;
+        '$scope', '$stateParams', 'contentType', 'editingInterface', 'publishedContentType',
+        function ($scope, $stateParams, contentType, editingInterface, publishedContentType) {
           $scope.contentType = contentType;
           $scope.editingInterface = editingInterface;
           $scope.publishedContentType = publishedContentType;
