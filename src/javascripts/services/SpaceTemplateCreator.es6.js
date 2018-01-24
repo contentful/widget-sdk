@@ -15,8 +15,40 @@ const ASSET_PROCESSING_TIMEOUT = 60000;
 // content. This is not very reliable, but since we own this repo, we can be
 // sure that this space will remain the same, and also, in case it is invalid,
 // we will create discovery app for TEA
-const TEA_SPACE_ID = '6tm19xfedrx7';
-const TEA_BASE_URL = 'https://the-example-app-nodejs.herokuapp.com';
+const TEA_SPACE_ID = 'qz0n5cdakyl9';
+
+// we want to create several content previews for TEA, one for each platform
+// however, we will wait only for one, namely node.js
+const TEA_CONTENT_PREVIEWS = [
+  {
+    name: 'Node.js platform example',
+    description: 'The example app, implemented in Node.js',
+    baseUrl: 'https://the-example-app-nodejs.herokuapp.com',
+    // we want to have Node.js as a first preview, so it will be selected
+    // by default, so preview will be opened in Node.js platform
+    wait: true
+  },
+  {
+    name: '.NET platform example',
+    description: 'The example app, implemented in .NET',
+    baseUrl: 'https://the-example-app-csharp.herokuapp.com'
+  },
+  {
+    name: 'Ruby platform example',
+    description: 'The example app, implemented in Ruby using Sinatra',
+    baseUrl: 'https://the-example-app-rb.herokuapp.com'
+  },
+  {
+    name: 'PHP platform example',
+    description: 'The example app, implemented in PHP',
+    baseUrl: 'https://the-example-app-php.herokuapp.com'
+  },
+  {
+    name: 'Python platform example',
+    description: 'The example app, implemented in Python using Flask',
+    baseUrl: 'https://the-example-app-py.herokuapp.com/'
+  }
+];
 
 const DISCOVERY_APP_BASE_URL = 'https://discovery.contentful.com/entries/by-content-type/';
 
@@ -58,6 +90,7 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
       // we can proceed without publishing interfaces, creating is enough
       // publishing can be finished in the background
       yield publishContentTypes(createdContentTypes);
+
       // editing interfaces should be called after publishing only
       const editingInterfacesPromise = Promise.all(
         template.editingInterfaces.map(createEditingInterface)
@@ -329,7 +362,6 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
    * where he can see the content (change in the webapp -> see the changes in the TEA preview)
    */
   function* createTEAContentPreview (contentTypes) {
-    const baseUrl = TEA_BASE_URL;
     const spaceId = spaceContext.space.getId();
 
     // Mapping for specific content types. Some CTs has no "preview",
@@ -364,9 +396,31 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
         }
       } = resolvedKey;
 
+      const promises = [];
+
+      const waitedPromise = TEA_CONTENT_PREVIEWS.reduce((promise, params) => {
+        if (params.wait) {
+          // we want to create this content preview first
+          return promise.then(() => createContentPreview(params, {cdaToken, cpaToken}));
+        }
+
+        promise.then(() => {
+          // we don't want to return this promise, so other requests will be
+          // executed in parallel
+          promises.push(createContentPreview(params, {cdaToken, cpaToken}));
+        });
+
+        return promise;
+      }, Promise.resolve());
+
+      yield waitedPromise;
+      yield Promise.all(promises);
+    }
+
+    function createContentPreview ({ name, description, baseUrl }, { cdaToken, cpaToken }) {
       const contentPreviewConfig = {
-        name: 'The example app integration',
-        description: 'To see how entries look like in real web app, we linked your space to the example app',
+        name,
+        description,
         configs: contentTypes
           .map(function (ct) {
             const fn = createConfigFns[ct.sys.id];
@@ -375,11 +429,13 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
           // remove all content types without a preview
           .filter(Boolean)
       };
-      const createdContentPreview = yield contentPreview.create(contentPreviewConfig);
-      Analytics.track('content_preview:created', {
-        name: createdContentPreview.name,
-        id: createdContentPreview.sys.id,
-        isDiscoveryApp: true
+
+      return contentPreview.create(contentPreviewConfig).then(function (createdContentPreview) {
+        Analytics.track('content_preview:created', {
+          name: createdContentPreview.name,
+          id: createdContentPreview.sys.id,
+          isDiscoveryApp: false
+        });
       });
     }
   }
