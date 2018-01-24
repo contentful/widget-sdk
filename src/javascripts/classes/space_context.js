@@ -38,6 +38,7 @@ angular.module('contentful')
   var createUiConfigStore = require('data/UiConfig/Store').default;
   var createViewMigrator = require('data/ViewMigrator').default;
   var client = require('client');
+  var Resources = require('services/ResourceService').default;
   var createLocaleRepo = require('data/CMA/LocaleRepo').default;
   var accessChecker = require('access_control/AccessChecker');
 
@@ -90,8 +91,8 @@ angular.module('contentful')
       self.localeRepo = createLocaleRepo(self.endpoint);
       var organization = self.getData('organization') || null;
       self.organizationContext = OrganizationContext.create(organization);
-      self.subscription =
-        organization && Subscription.newFromOrganization(organization);
+      self.subscription = organization && Subscription.newFromOrganization(organization);
+      self.resources = Resources(self.endpoint, organization);
 
       // TODO: publicly accessible docConnection is
       // used only in a process of creating space out
