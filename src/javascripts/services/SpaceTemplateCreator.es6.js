@@ -36,7 +36,7 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
    * are created, entries are created (and one entry is published).
    *
    * spaceSetup - resolves when _everything_ (API keys, assets are processed and
-   * published, editing interfaces are created, preview env with discovery app)
+   * published, editing interfaces are created, content preview with discovery app/TEA)
    * is processed
    *
    * Each created item will call the custom success/error handlers and
@@ -77,15 +77,15 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
 
       const publishedEntries = yield publishEntries(createdEntries);
 
-      const createPreviewEnvPromise = Promise.all([
+      const createContentPreviewPromise = Promise.all([
         apiKeyPromise,
         publishedEntries
       ]).then(() => templateInfo.spaceId === TEA_SPACE_ID
         ? runTask(createTEAContentPreview, template.contentTypes)
-        : createPreviewEnvironment(template.contentTypes)
+        : createContentPreview(template.contentTypes)
       );
 
-      allPromises.push(editingInterfacesPromise, publishAssetsPromise, createPreviewEnvPromise);
+      allPromises.push(editingInterfacesPromise, publishAssetsPromise, createContentPreviewPromise);
 
       if (creationErrors.length > 0) {
         const errorMessage = 'Error during space template creation: ' + JSON.stringify({
@@ -344,13 +344,13 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
       layoutHighlightedCourse: mainPageConfig
     };
 
-    const [keys, envs] = yield Promise.all([
+    const [keys, contentPreviews] = yield Promise.all([
       spaceContext.apiKeyRepo.getAll(),
       contentPreview.getAll()
     ]);
 
-    // Create default environment if there is none existing, and an API key is present
-    if (keys.length && !Object.keys(envs).length) {
+    // Create default content preview if there is none existing, and an API key is present
+    if (keys.length && !Object.keys(contentPreviews).length) {
       const key = keys[0];
 
       // we need to have Preview key as well, so the user can switch to preview API
@@ -364,7 +364,7 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
         }
       } = resolvedKey;
 
-      const env = {
+      const contentPreviewConfig = {
         name: 'The example app integration',
         description: 'To see how entries look like in real web app, we linked your space to the example app',
         configs: contentTypes
@@ -375,7 +375,7 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
           // remove all content types without a preview
           .filter(Boolean)
       };
-      const createdContentPreview = yield contentPreview.create(env);
+      const createdContentPreview = yield contentPreview.create(contentPreviewConfig);
       Analytics.track('content_preview:created', {
         name: createdContentPreview.name,
         id: createdContentPreview.sys.id,
@@ -384,15 +384,15 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
     }
   }
 
-  // Create the discovery app environment if there is an API key
-  function createPreviewEnvironment (contentTypes) {
+  // Create the discovery app content preview if there is an API key
+  function createContentPreview (contentTypes) {
     const baseUrl = DISCOVERY_APP_BASE_URL;
     const spaceId = spaceContext.space.getId();
 
     return Promise.all([
       spaceContext.apiKeyRepo.getAll(),
       contentPreview.getAll()
-    ]).then(([keys, envs]) => {
+    ]).then(([keys, contentPreviews]) => {
       function createConfig (ct, token) {
         return {
           contentType: ct.sys.id,
@@ -402,21 +402,21 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
         };
       }
 
-      // Create default environment if there is none existing, and an API key is present
-      if (keys.length && !Object.keys(envs).length) {
+      // Create default content preview if there is none existing, and an API key is present
+      if (keys.length && !Object.keys(contentPreviews).length) {
         const accessToken = keys[0].accessToken;
 
-        const env = {
+        const contentPreviewConfig = {
           name: 'Discovery App',
           description: 'To help you get started, we\'ve added our own Discovery App to preview content.',
           configs: contentTypes.map(function (ct) {
             return createConfig(ct, accessToken);
           })
         };
-        return contentPreview.create(env).then(function (env) {
+        return contentPreview.create(contentPreviewConfig).then(function (createdContentPreview) {
           Analytics.track('content_preview:created', {
-            name: env.name,
-            id: env.sys.id,
+            name: createdContentPreview.name,
+            id: createdContentPreview.sys.id,
             isDiscoveryApp: true
           });
         });
