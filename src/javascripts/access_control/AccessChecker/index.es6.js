@@ -1,14 +1,20 @@
-import $rootScope from '$rootScope';
-import $q from '$q';
 import logger from 'logger';
-import * as OrganizationRoles from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
 import * as K from 'utils/kefir';
 import * as policyChecker from './PolicyChecker';
 import * as cache from './ResponseCache';
+import {create as createGKPermissionChecker} from './GKPermissionChecker';
+import {
+  broadcastEnforcement,
+  toType,
+  getContentTypeIdFor,
+  isAuthor
+} from './Utils';
 import {capitalize, capitalizeFirst} from 'stringUtils';
-import {get, some, includes, forEach, isString} from 'lodash';
+import {get, some, forEach} from 'lodash';
 import require from 'require';
+
+export {wasForbidden} from './Utils';
 
 /**
  * @name accessChecker
@@ -34,13 +40,21 @@ const isInitializedBus = K.createPropertyBus(false);
 let authContext;
 let spaceAuthContext;
 let space;
-let organization;
+let gkPermissionChecker;
 let responses = {};
-let features = {};
-let userQuota = {};
 let sectionVisibility = {};
 
 export const isInitialized$ = isInitializedBus.property.skipDuplicates();
+
+K.onValue(isInitialized$, function (value) {
+  if (value) {
+    cache.reset(spaceAuthContext);
+    policyChecker.setMembership(get(space, 'spaceMembership'));
+    gkPermissionChecker = createGKPermissionChecker(space);
+    collectResponses();
+    collectSectionVisibility();
+  }
+});
 
 /**
  * @name accessChecker#shouldHide
@@ -88,14 +102,6 @@ export const getResponseByActionName = (action) => responses[action];
  */
 export const getSectionVisibility = () => sectionVisibility;
 
-/**
- * @name accessChecker#getUserQuota
- * @returns {object}
- * @description
- * Returns user quota information.
- */
-export const getUserQuota = () => userQuota;
-
 
 /**
  * @name accessChecker#canEditFieldLocale
@@ -105,6 +111,25 @@ export const getUserQuota = () => userQuota;
  * @returns {boolean}
  */
 export const canEditFieldLocale = policyChecker.canEditFieldLocale;
+
+/**
+ * Methods exported from GKPermissionChecker instance
+ */
+export const {getUserQuota, hasFeature, canModifyRoles, canModifyUsers, canCreateOrganization} = [
+  'getUserQuota',
+  'hasFeature',
+  'canModifyRoles',
+  'canModifyUsers',
+  'canCreateOrganization',
+].reduce((hash, name) => {
+  hash[name] = function (...args) {
+    if (gkPermissionChecker) {
+      return gkPermissionChecker[name].apply(gkPermissionChecker, args);
+    }
+  };
+  return hash;
+}, {});
+
 
 /**
  * @name accessChecker#can
@@ -135,12 +160,7 @@ export function can (action, entityType) {
 export function setAuthContext (context) {
   authContext = context.authContext;
   spaceAuthContext = context.spaceAuthContext;
-  cache.reset(spaceAuthContext);
-
-  collectResponses();
-  collectSectionVisibility();
-
-  isInitializedBus.set(!!authContext);
+  isInitializedBus.set(!!(authContext && spaceAuthContext && space));
 }
 
 /**
@@ -152,12 +172,7 @@ export function setAuthContext (context) {
  */
 export function setSpace (newSpace) {
   space = newSpace;
-  organization = space.organization;
-  policyChecker.setMembership(get(space, 'spaceMembership'));
-
-  collectResponses();
-  collectSectionVisibility();
-  collectFeatures();
+  isInitializedBus.set(!!(authContext && spaceAuthContext && space));
 }
 
 /**
@@ -284,27 +299,6 @@ export function canModifyApiKeys () {
 export function canReadApiKeys () {
   return get(responses, 'readApiKey.can', false);
 }
-
-/**
- * @name accessChecker#canModifyRoles
- * @returns {boolean}
- * @description
- * Returns true if Roles can be modified.
- */
-export function canModifyRoles () {
-  return isSuperUser() && get(features, 'customRoles', false);
-}
-
-/**
- * @name accessChecker#canModifyUsers
- * @returns {boolean}
- * @description
- * Returns true if Users can be modified.
- */
-export function canModifyUsers () {
-  return isSuperUser();
-}
-
 /**
  * @name accessChecker#canCreateSpace
  * @returns {boolean}
@@ -352,40 +346,6 @@ export function canCreateSpaceInOrganization (organizationId) {
   }
 }
 
-
-/**
- * @name accessChecker#canCreateOrganization
- * @returns {boolean}
- * @description
- * Returns true if current user can create a new organization.
- */
-export function canCreateOrganization () {
-  return get(K.getValue(TokenStore.user$), 'canCreateOrganization', false);
-}
-
-/**
- * @name accessChecker#wasForbidden
- * @param {object} context
- * @returns {function}
- * @description
- * Returns function that will check a status code of response.
- * If it's 403/4, it'll set "forbidden" key on a provided context object.
- */
-export function wasForbidden (context) {
-  return function (res) {
-    if (includes([403, 404], parseInt(get(res, 'statusCode'), 10))) {
-      context.forbidden = true;
-      return $q.resolve(context);
-    } else {
-      return $q.reject(res);
-    }
-  };
-}
-
-export function hasFeature (name) {
-  return get(features, name, false);
-}
-
 function collectResponses () {
   const replacement = {};
 
@@ -407,14 +367,6 @@ function collectSectionVisibility () {
     apiKey: !shouldHide('readApiKey'),
     settings: !shouldHide('updateSettings'),
     spaceHome: get(space, 'spaceMembership.admin')
-  };
-}
-
-function collectFeatures () {
-  features = get(organization, 'subscriptionPlan.limits.features', {});
-  userQuota = {
-    limit: get(organization, 'subscriptionPlan.limits.permanent.organizationMembership', -1),
-    used: get(organization, 'usage.permanent.organizationMembership', 1)
   };
 }
 
@@ -442,37 +394,11 @@ function getPermissions (action, entity) {
   return response;
 }
 
-function broadcastEnforcement (enforcement) {
-  if (enforcement) {
-    $rootScope.$broadcast('persistentNotification', {
-      message: enforcement.message,
-      actionMessage: enforcement.actionMessage,
-      action: enforcement.action
-    });
-  }
-}
-
 function getEnforcement (action, entity) {
   const reasonsDenied = spaceAuthContext.reasonsDenied(action, entity);
   const entityType = toType(entity);
 
   return determineEnforcement(reasonsDenied, entityType);
-}
-
-function toType (entity) {
-  if (isString(entity)) {
-    return entity;
-  } else {
-    return get(entity, 'sys.type', null);
-  }
-}
-
-function getContentTypeIdFor (entry) {
-  return get(entry, 'data.sys.contentType.sys.id');
-}
-
-function getAuthorIdFor (entry) {
-  return get(entry, 'data.sys.createdBy.sys.id');
 }
 
 function canPerformActionOnType (action, type) {
@@ -487,21 +413,6 @@ function checkIfCanCreateSpace (context) {
     logger.logError('Worf exception - can create new space?', e);
   }
   return response;
-}
-
-function isAuthor (entity) {
-  const author = getAuthorIdFor(entity);
-  const currentUserId = get(space, 'spaceMembership.user.sys.id');
-
-  return author === currentUserId;
-}
-
-function isSuperUser () {
-  const isSpaceAdmin = get(space, 'spaceMembership.admin');
-  const isOrganizationAdmin = OrganizationRoles.isAdmin(organization);
-  const isOrganizationOwner = OrganizationRoles.isOwner(organization);
-
-  return isSpaceAdmin || isOrganizationAdmin || isOrganizationOwner;
 }
 
 function determineEnforcement (reasonsDenied, entityType) {

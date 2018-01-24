@@ -10,6 +10,7 @@ describe('Access Checker', function () {
 
   function changeAuthContext (authContext) {
     ac.setAuthContext({authContext, spaceAuthContext: {reasonsDenied: reasonsDeniedStub}});
+    ac.setSpace({});
   }
 
   afterEach(function () {
