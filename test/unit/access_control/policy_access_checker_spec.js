@@ -5,7 +5,7 @@ describe('Policy Access Checker', function () {
 
   beforeEach(function () {
     module('contentful/test');
-    pac = this.$inject('accessChecker/policy');
+    pac = this.$inject('access_control/AccessChecker/PolicyChecker');
   });
 
   const roles = {

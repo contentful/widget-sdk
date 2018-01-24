@@ -24,7 +24,7 @@ describe('Access Checker', function () {
     enforcements = this.$inject('enforcements');
     OrganizationRoles = this.$inject('services/OrganizationRoles');
     TokenStore = this.$inject('services/TokenStore');
-    policyChecker = this.$inject('accessChecker/policy');
+    policyChecker = this.$inject('access_control/AccessChecker/PolicyChecker');
     ac = this.$inject('access_control/AccessChecker');
 
     const responseCache = this.$inject('accessChecker/responseCache');

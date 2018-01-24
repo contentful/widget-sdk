@@ -655,7 +655,7 @@ describe('entityEditor/Document', function () {
       it('delegates to "policyAccessChecker"', function () {
         this.accessChecker.canUpdateEntry.returns(true);
 
-        const pac = this.mockService('accessChecker/policy');
+        const pac = this.mockService('access_control/AccessChecker/PolicyChecker');
 
         pac.canEditFieldLocale.returns(true);
         expect(this.doc.permissions.canEditFieldLocale('FIELD', 'LOCALE')).toBe(true);

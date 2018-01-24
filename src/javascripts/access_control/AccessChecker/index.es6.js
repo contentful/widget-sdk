@@ -5,7 +5,7 @@ import logger from 'logger';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
 import * as K from 'utils/kefir';
-import policyChecker from 'accessChecker/policy';
+import * as policyChecker from './PolicyChecker';
 import cache from 'accessChecker/responseCache';
 import {capitalize, capitalizeFirst} from 'stringUtils';
 import {get, some, includes, forEach, isString} from 'lodash';
