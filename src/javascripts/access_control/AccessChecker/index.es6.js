@@ -100,6 +100,16 @@ export const getSectionVisibility = () => sectionVisibility;
  */
 export const getUserQuota = () => userQuota;
 
+
+/**
+ * @name accessChecker#canEditFieldLocale
+ * @param {string} contentTypeId
+ * @param {object} field
+ * @param {object} locale
+ * @returns {boolean}
+ */
+export const canEditFieldLocale = policyChecker.canEditFieldLocale;
+
 /**
  * @ngdoc method
  * @name accessChecker#can
