@@ -270,7 +270,11 @@ angular.module('contentful')
   }
 
   function handleUsageWarning (usage) {
-    var enforcement = enforcements.determineEnforcement('usageExceeded');
+    var enforcement = enforcements.determineEnforcement(
+      spaceContext.organization,
+      ['usageExceeded'],
+      'space'
+    );
     $rootScope.$broadcast('persistentNotification', {
       message: enforcement.message,
       actionMessage: enforcement.actionMessage,

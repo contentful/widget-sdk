@@ -3,19 +3,14 @@
 describe('Enforcements service', function () {
   let enforcements;
   let organizationMock;
-  let spaceContext;
   let OrganizationRoles;
 
   beforeEach(function () {
     module('contentful/test');
 
-    const cfStub = this.$inject('cfStub');
     enforcements = this.$inject('access_control/Enforcements');
-    spaceContext = this.$inject('spaceContext');
     OrganizationRoles = this.$inject('services/OrganizationRoles');
     OrganizationRoles.setUser({ sys: {id: 123} });
-
-    _.extend(spaceContext, cfStub.mockSpaceContext());
 
     organizationMock = {
       usage: {
@@ -27,6 +22,9 @@ describe('Enforcements service', function () {
           assetBandwidth: 0,
           contentDeliveryApiRequest: 0
         }
+      },
+      subscription: {
+        additional_usage_allowed: false
       },
       subscriptionPlan: {
         limits: {
@@ -44,61 +42,59 @@ describe('Enforcements service', function () {
   });
 
   describe('determines enforcements', function () {
-    describe('with a space context', function () {
-      it('returns null for no reasons', function () {
-        expect(enforcements.determineEnforcement()).toBeNull();
+    it('returns null for no reasons', function () {
+      expect(enforcements.determineEnforcement(organizationMock)).toBeNull();
+    });
+
+    it('returns null for unexistent reasons', function () {
+      expect(enforcements.determineEnforcement(organizationMock, ['randomReason'])).toBeNull();
+    });
+
+    describe('returns maintenance message', function () {
+      let enforcement;
+      beforeEach(function () {
+        enforcement = enforcements.determineEnforcement(organizationMock, ['systemMaintenance']);
       });
 
-      it('returns null for unexistent reasons', function () {
-        expect(enforcements.determineEnforcement('randomReason')).toBeNull();
+      it('has an error', function () {
+        expect(enforcement.message).toBeDefined();
+      });
+    });
+
+    describe('returns maintenance message with multiple reasons', function () {
+      let enforcement;
+      beforeEach(function () {
+        enforcement = enforcements.determineEnforcement(organizationMock, ['systemMaintenance', 'subscriptionUnsettled']);
       });
 
-      describe('returns maintenance message', function () {
-        let enforcement;
-        beforeEach(function () {
-          enforcement = enforcements.determineEnforcement(['systemMaintenance']);
-        });
-
-        it('has an error', function () {
-          expect(enforcement.message).toBeDefined();
-        });
+      it('has an error', function () {
+        expect(enforcement.message).toBeDefined();
       });
 
-      describe('returns maintenance message with multiple reasons', function () {
-        let enforcement;
-        beforeEach(function () {
-          enforcement = enforcements.determineEnforcement(['systemMaintenance', 'subscriptionUnsettled']);
-        });
+      it('error matches reason', function () {
+        expect(enforcement.message).toMatch(/system/gi);
+      });
+    });
 
-        it('has an error', function () {
-          expect(enforcement.message).toBeDefined();
-        });
-
-        it('error matches reason', function () {
-          expect(enforcement.message).toMatch(/system/gi);
-        });
+    describe('returns period usage exceeded', function () {
+      let enforcement;
+      beforeEach(function () {
+        enforcement = enforcements.determineEnforcement(organizationMock, ['periodUsageExceeded']);
       });
 
-      describe('returns period usage exceeded', function () {
-        let enforcement;
-        beforeEach(function () {
-          enforcement = enforcements.determineEnforcement(['periodUsageExceeded']);
-        });
+      it('has an error', function () {
+        expect(enforcement.message).toBeDefined();
+      });
+    });
 
-        it('has an error', function () {
-          expect(enforcement.message).toBeDefined();
-        });
+    describe('returns usage exceeded', function () {
+      let enforcement;
+      beforeEach(function () {
+        enforcement = enforcements.determineEnforcement(organizationMock, ['usageExceeded'], 'ApiKey');
       });
 
-      describe('returns usage exceeded', function () {
-        let enforcement;
-        beforeEach(function () {
-          enforcement = enforcements.determineEnforcement(['usageExceeded'], 'ApiKey');
-        });
-
-        it('has an error', function () {
-          expect(enforcement.message).toBeDefined();
-        });
+      it('has an error', function () {
+        expect(enforcement.message).toBeDefined();
       });
     });
   });
@@ -107,65 +103,46 @@ describe('Enforcements service', function () {
     describe('with space context', function () {
       beforeEach(function () {
         organizationMock.usage.period.assetBandwidth = 5;
-        spaceContext.organizationContext.organization = organizationMock;
       });
 
       it('has an error when user is an owner', function () {
         sinon.stub(OrganizationRoles, 'isOwner').returns(true);
-        expect(enforcements.getPeriodUsage().message).toBeDefined();
+        expect(enforcements.getPeriodUsage(organizationMock).message).toBeDefined();
       });
 
       it('has no error when user is not an owner', function () {
         sinon.stub(OrganizationRoles, 'isOwner').returns(false);
-        expect(enforcements.getPeriodUsage()).toBeUndefined();
+        expect(enforcements.getPeriodUsage(organizationMock)).toBeUndefined();
       });
 
       it('has no error when subscription has additional usage enabled', function () {
         sinon.stub(OrganizationRoles, 'isOwner').returns(true);
-        sinon.stub(spaceContext.subscription, 'isAdditionalUsageAllowed').returns(true);
-        expect(enforcements.getPeriodUsage()).toBeUndefined();
+        organizationMock.subscription.additional_usage_allowed = true;
+        expect(enforcements.getPeriodUsage(organizationMock)).toBeUndefined();
       });
     });
   });
 
   describe('gets no period usage', function () {
-    describe('with space context', function () {
-      let enforcement;
-      beforeEach(function () {
-        spaceContext.space.data.organization = organizationMock;
-        enforcement = enforcements.getPeriodUsage();
-      });
-
-
-      it('has an error', function () {
-        expect(enforcement).toBeFalsy();
-      });
+    it('has an error', function () {
+      expect(enforcements.getPeriodUsage(organizationMock)).toBeFalsy();
     });
   });
 
   describe('computes metrics usage', function () {
-    beforeEach(function () {
-      spaceContext.organizationContext.organization = organizationMock;
-    });
-
-    it('if no space exists returns no message', function () {
-      delete spaceContext.space;
-      expect(enforcements.computeUsage()).toBeUndefined();
-    });
-
     it('for no exceeded usage metric returns no message', function () {
-      expect(enforcements.computeUsage()).toBeUndefined();
+      expect(enforcements.computeUsageForOrganization(organizationMock)).toBeUndefined();
     });
 
     it('for exceeded usage metric returns message', function () {
       organizationMock.usage.period.assetBandwidth = 5;
-      expect(enforcements.computeUsage()).toMatch('Bandwidth');
+      expect(enforcements.computeUsageForOrganization(organizationMock)).toMatch('Bandwidth');
     });
 
     it('for exceeded usage metric with filter returns message', function () {
       organizationMock.usage.permanent.entry = 5;
       organizationMock.usage.permanent.user = 5;
-      expect(enforcements.computeUsage('user')).toMatch('Users');
+      expect(enforcements.computeUsageForOrganization(organizationMock, 'user')).toMatch('Users');
     });
   });
 });

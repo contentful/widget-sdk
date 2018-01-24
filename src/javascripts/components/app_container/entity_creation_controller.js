@@ -42,7 +42,8 @@ angular.module('contentful')
   };
 
   this.newLocale = function () {
-    var usage = enforcements.computeUsage('locale');
+    var organization = spaceContext.organization;
+    var usage = enforcements.computeUsageForOrganization(organization, 'locale');
     if (usage) {
       return notification.error(usage);
     }
@@ -58,7 +59,10 @@ angular.module('contentful')
       } else {
         if (_.get(err, 'body.details.reasons')) {
           var enforcement = enforcements.determineEnforcement(
-            err.body.details.reasons, params.entityType);
+            spaceContext.organization,
+            err.body.details.reasons,
+            params.entityType
+          );
           if (enforcement) {
             params.errorMessage = enforcement.tooltip || enforcement.message;
           }

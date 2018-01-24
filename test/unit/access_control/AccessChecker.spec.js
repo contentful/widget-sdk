@@ -2,7 +2,7 @@ import * as K from 'helpers/mocks/kefir';
 
 describe('Access Checker', function () {
   let $rootScope, enforcements, OrganizationRoles, TokenStore, policyChecker, ac;
-  let getResStub, reasonsDeniedStub;
+  let getResStub, reasonsDeniedStub, mockSpace;
 
   function triggerChange () {
     changeAuthContext(null);
@@ -10,7 +10,7 @@ describe('Access Checker', function () {
 
   function changeAuthContext (authContext) {
     ac.setAuthContext({authContext, spaceAuthContext: {reasonsDenied: reasonsDeniedStub}});
-    ac.setSpace({});
+    ac.setSpace(mockSpace);
   }
 
   afterEach(function () {
@@ -32,6 +32,8 @@ describe('Access Checker', function () {
 
     reasonsDeniedStub = sinon.stub().returns([]);
     enforcements.determineEnforcement = sinon.stub().returns(undefined);
+
+    mockSpace = {organization: {}};
   });
 
   describe('Initialization', function () {
@@ -93,7 +95,11 @@ describe('Access Checker', function () {
       it('should broadcast enforcement if found', function () {
         const reasons = ['DENIED!'];
         reasonsDeniedStub.withArgs('read', 'Entry').returns(reasons);
-        enforcements.determineEnforcement.withArgs(reasons, 'Entry').returns({message: 'ENFORCEMENT MSG'});
+        enforcements.determineEnforcement.withArgs(
+          mockSpace.organization,
+          reasons,
+          'Entry'
+        ).returns({message: 'ENFORCEMENT MSG'});
         sinon.spy($rootScope, '$broadcast');
         triggerChange();
         sinon.assert.calledOnce($rootScope.$broadcast);
@@ -189,7 +195,11 @@ describe('Access Checker', function () {
         reasonsDeniedStub.withArgs('update', entity.data).returns(reasons);
         getResStub.withArgs('update', entity.data).returns(false);
         ac.canPerformActionOnEntity('update', entity);
-        sinon.assert.calledOnce(enforcements.determineEnforcement.withArgs(reasons, entity.data.sys.type));
+        sinon.assert.calledOnce(enforcements.determineEnforcement.withArgs(
+          mockSpace.organization,
+          reasons,
+          entity.data.sys.type
+        ));
       });
     });
 
@@ -445,7 +455,11 @@ describe('Access Checker', function () {
         canStub.returns(false);
         const reasons = ['REASONS!'];
         reasonsDeniedStub.withArgs('create', 'Space').returns(reasons);
-        enforcements.determineEnforcement.withArgs(reasons, 'Space').returns({message: 'MESSAGE'});
+        enforcements.determineEnforcement.withArgs(
+          mockSpace.organization,
+          reasons,
+          'Space'
+        ).returns({message: 'MESSAGE'});
         sinon.spy($rootScope, '$broadcast');
         expect(ac.canCreateSpace()).toBe(false);
         sinon.assert.calledOnce($rootScope.$broadcast);

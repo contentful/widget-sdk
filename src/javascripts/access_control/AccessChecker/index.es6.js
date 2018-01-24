@@ -12,9 +12,10 @@ import {
 } from './Utils';
 import {capitalize, capitalizeFirst} from 'stringUtils';
 import {get, some, forEach} from 'lodash';
-import require from 'require';
+import * as Enforcements from 'access_control/Enforcements';
 
 export {wasForbidden} from './Utils';
+
 
 /**
  * @name accessChecker
@@ -120,7 +121,7 @@ export const {getUserQuota, hasFeature, canModifyRoles, canModifyUsers, canCreat
   'hasFeature',
   'canModifyRoles',
   'canModifyUsers',
-  'canCreateOrganization',
+  'canCreateOrganization'
 ].reduce((hash, name) => {
   hash[name] = function (...args) {
     if (gkPermissionChecker) {
@@ -416,6 +417,6 @@ function checkIfCanCreateSpace (context) {
 }
 
 function determineEnforcement (reasonsDenied, entityType) {
-  // Prevent circular deps
-  return require('access_control/Enforcements').determineEnforcement(reasonsDenied, entityType);
+  const org = get(space, 'organization');
+  return Enforcements.determineEnforcement(org, reasonsDenied, entityType);
 }

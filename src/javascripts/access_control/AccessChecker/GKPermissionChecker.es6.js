@@ -39,7 +39,7 @@ export function create (space) {
     canModifyUsers,
     canCreateOrganization,
     isSuperUser
-  }
+  };
 
   /**
    * @name accessChecker#canCreateOrganization

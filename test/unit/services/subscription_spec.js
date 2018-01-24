@@ -125,20 +125,6 @@ describe('Subscription', function () {
           expect(subscription.getTrialHoursLeft()).toBe(0);
         });
       });
-
-      describe('.isAdditionalUsageAllowed()', function () {
-        it('returns `true` when flag additional_usage_allowed is true', function () {
-          ORGANIZATION.subscription.additional_usage_allowed = true;
-          const subscription = this.newFromOrganization(ORGANIZATION);
-          expect(subscription.isAdditionalUsageAllowed()).toBe(true);
-        });
-
-        it('returns `false` when flag additional_usage_allowed is false', function () {
-          ORGANIZATION.subscription.additional_usage_allowed = false;
-          const subscription = this.newFromOrganization(ORGANIZATION);
-          expect(subscription.isAdditionalUsageAllowed()).toBe(false);
-        });
-      });
     });
   });
 
