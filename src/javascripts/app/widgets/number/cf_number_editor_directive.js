@@ -2,8 +2,9 @@
 
 angular.module('contentful')
 .directive('cfNumberEditor', ['require', function (require) {
-  var InputUpdater = require('ui/inputUpdater');
+  var LD = require('utils/LaunchDarkly');
   var parseNumber = require('cfNumberEditor/parseNumber');
+  var InputUpdater = require('ui/inputUpdater');
   var debounce = require('debounce');
 
   return {
@@ -27,6 +28,19 @@ angular.module('contentful')
         scope.hasErrors = errors && errors.length > 0;
       });
 
+      var range = getRangeFromField(field);
+
+      LD.onFeatureFlag(
+        scope,
+        'feature-at-01-2018-input-type-number',
+        function (isNumberTypeEnabled) {
+          scope.isNumberTypeEnabled = isNumberTypeEnabled;
+        }
+      );
+      scope.min = range.min;
+      scope.max = range.max;
+      scope.step = field.type === 'Integer' ? 1 : 'any';
+
       // remove attached handlers when element is evicted from dom
       scope.$on('$destroy', detachOnValueChangedHandler);
       scope.$on('$destroy', detachOnFieldDisabledHandler);
@@ -35,7 +49,7 @@ angular.module('contentful')
       scope.$watch(function () {
         return $inputEl.val();
       }, function (val) {
-        var parseResult = parseNumber(val.trim(), field.type);
+        var parseResult = parseNumber(val, field.type);
 
         scope.parseWarning = parseResult.warning;
         field.setInvalid(!parseResult.isValid);
@@ -56,6 +70,13 @@ angular.module('contentful')
       }
     }
   };
+
+  function getRangeFromField (field) {
+    var validation = _.find(field.validations, function (validation) {
+      return validation.range;
+    });
+    return _.get(validation, 'range', {});
+  }
 }])
 /**
  * @ngdoc service
@@ -72,15 +93,15 @@ angular.module('contentful')
    * @param {string} type       Type to parse given string as
    * @return {object}
    */
-  return function (viewValue, type) {
+  return function (value, type) {
     // This has saner semantics than parseFloat.
     // For values with chars in 'em, it gives
     // us NaN unlike parseFloat
-    var floatVal = +viewValue;
-    var hasDot = (/\./g).test(viewValue);
-    var hasFractional = (/\.\d+/g).test(viewValue);
+    var floatVal = +value;
+    var hasDot = (/\./g).test(value);
+    var hasFractional = (/\.\d+/g).test(value);
 
-    if (_.isEmpty(viewValue)) {
+    if (_.isEmpty(value)) {
       return {
         isValid: true,
         warning: '',
@@ -92,12 +113,12 @@ angular.module('contentful')
       return {
         isValid: false,
         warning: 'Unrecognized Number',
-        value: viewValue
+        value: value
       };
     }
 
     if (type === 'Integer' && hasDot) {
-      var intVal = parseInt(viewValue, 10);
+      var intVal = parseInt(value, 10);
 
       return {
         isValid: false,
