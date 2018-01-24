@@ -148,16 +148,14 @@ describe('Space Template loading service', function () {
           'sys': {
             'id': '1C0dHUP04kAgYwm0G2WiQE',
             'revision': 1,
-            'type': 'Link',
-            'linkType': 'Asset',
+            'type': 'Asset',
             'locale': 'en-US',
             'createdAt': '2014-12-04T11:36:53.762Z',
             'updatedAt': '2014-12-04T11:36:54.708Z',
             'space': {
               'sys': {
                 'id': '4o9zrkqge2wv',
-                'type': 'Link',
-                'linkType': 'Space'
+                'type': 'Asset'
               }
             }
           },
@@ -250,8 +248,7 @@ describe('Space Template loading service', function () {
           'sys': {
             'id': '5o4iPgRgYMmaGac8SckKCc',
             'revision': 0,
-            'type': 'Link',
-            'linkType': 'Asset',
+            'type': 'Asset',
             'locale': 'en-US',
             'createdAt': '2014-12-04T11:36:53.850Z',
             'updatedAt': '2014-12-04T11:36:54.718Z',
@@ -318,8 +315,7 @@ describe('Space Template loading service', function () {
             'sys': {
               'id': '1GdRqUQ0V2yCU2Ee00eoq6',
               'revision': 0,
-              'type': 'Link',
-              'linkType': 'Asset',
+              'type': 'Asset',
               'locale': 'en-US',
               'createdAt': '2014-12-04T11:36:53.827Z',
               'updatedAt': '2014-12-04T11:36:55.028Z',

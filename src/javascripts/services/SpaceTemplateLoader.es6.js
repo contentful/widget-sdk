@@ -38,9 +38,9 @@ function getSpaceClient (templateInfo) {
   }
 
   spaceClients[spaceId] = contentfulClient.newClient({
-    host: contentfulConfig.apiUrl,
+    host: contentfulConfig.cdaApiUrl,
     space: spaceId,
-    accessToken: contentfulConfig.spaceTemplatesUserReadOnlyToken
+    accessToken: templateInfo.spaceApiKey
   });
   return spaceClients[spaceId];
 }
@@ -57,9 +57,9 @@ function getClientParams (space, accessToken, previewAccessToken) {
 
 function getSpaceContents (spaceClient) {
   return Promise.all([
-    spaceClient.contentTypes(),
-    spaceClient.entries(),
-    spaceClient.assets()
+    spaceClient.contentTypes({ locale: '*' }),
+    spaceClient.entries({ locale: '*' }),
+    spaceClient.assets({ locale: '*' })
   ])
   .then(([contentTypes, entries, assets]) => ({ contentTypes, entries, assets }))
   .then(getEditingInterfaces(spaceClient));
@@ -208,8 +208,8 @@ function parseAssetLink (field) {
   return {
     sys: {
       id: _.get(field, 'sys.id'),
-      type: _.get(field, 'sys.type'),
-      linkType: _.get(field, 'sys.linkType')
+      type: 'Link',
+      linkType: _.get(field, 'sys.type')
     }
   };
 }
