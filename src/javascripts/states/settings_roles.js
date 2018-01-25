@@ -10,7 +10,7 @@ angular.module('contentful')
   var base = require('states/Base').default;
   var contextHistory = require('contextHistory');
   var crumbFactory = require('navigation/CrumbFactory');
-  var $q = require('$q');
+  var RoleRepository = require('RoleRepository');
 
   var list = base({
     name: 'list',
@@ -25,22 +25,19 @@ angular.module('contentful')
     params: {
       baseRoleId: null
     },
-    data: {
-      isNew: true
-    },
     resolve: {
-      baseRole: ['RoleRepository', 'spaceContext', '$stateParams', function (RoleRepository, spaceContext, $stateParams) {
-        if (!$stateParams.baseRoleId) { return $q.when(null); }
-        return RoleRepository.getInstance(spaceContext.space).get($stateParams.baseRoleId);
+      roleRepo: ['spaceContext', function (spaceContext) {
+        return RoleRepository.getInstance(spaceContext.space);
       }],
-      emptyRole: ['RoleRepository', function (RoleRepository) {
-        return $q.when(RoleRepository.getEmpty());
+      baseRole: ['roleRepo', '$stateParams', function (roleRepo, $stateParams) {
+        return $stateParams.baseRoleId ? roleRepo.get($stateParams.baseRoleId) : null;
       }]
     },
     template: '<cf-role-editor class="workbench role-editor" />',
-    controller: ['$scope', 'baseRole', 'emptyRole', function ($scope, baseRole, emptyRole) {
+    controller: ['$scope', 'baseRole', function ($scope, baseRole) {
+      $scope.context.isNew = true;
       $scope.baseRole = baseRole;
-      $scope.role = emptyRole;
+      $scope.role = RoleRepository.getEmpty();
 
       contextHistory.set([
         crumbFactory.RoleList(),
@@ -52,19 +49,15 @@ angular.module('contentful')
   var detail = {
     name: 'detail',
     url: '/:roleId',
-    data: {
-      isNew: false
-    },
     resolve: {
       role: ['RoleRepository', 'spaceContext', '$stateParams', function (RoleRepository, spaceContext, $stateParams) {
         return RoleRepository.getInstance(spaceContext.space).get($stateParams.roleId);
       }]
     },
     template: '<cf-role-editor class="workbench role-editor" />',
-    onEnter: ['spaceContext', function (spaceContext) {
+    controller: ['$scope', '$stateParams', 'spaceContext', 'role', function ($scope, $stateParams, spaceContext, role) {
       spaceContext.publishedCTs.refresh();
-    }],
-    controller: ['$scope', '$stateParams', 'role', function ($scope, $stateParams, role) {
+      $scope.context.isNew = false;
       $scope.role = role;
 
       contextHistory.set([

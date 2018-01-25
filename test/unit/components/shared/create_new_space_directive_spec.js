@@ -53,7 +53,7 @@ describe('cfCreateNewSpace directive', function () {
       $provide.value('analytics/Analytics', stubs.analytics);
       $provide.value('logger', stubs.logger);
       $provide.value('client', stubs.client);
-      $provide.value('enforcements', stubs.enforcements);
+      $provide.value('access_control/Enforcements', stubs.enforcements);
       $provide.value('services/TokenStore', stubs.tokenStore);
       $provide.value('$state', stubs.state);
       $provide.removeDirectives('cfIcon');

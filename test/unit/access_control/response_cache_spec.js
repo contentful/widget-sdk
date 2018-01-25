@@ -8,7 +8,7 @@ describe('Response Cache', function () {
 
   beforeEach(function () {
     module('contentful/test');
-    cache = this.$inject('accessChecker/responseCache');
+    cache = this.$inject('access_control/AccessChecker/ResponseCache');
     canStub = sinon.stub().returns(true);
     cache.reset({can: canStub});
   });

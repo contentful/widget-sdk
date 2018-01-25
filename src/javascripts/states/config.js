@@ -120,13 +120,13 @@ angular.module('contentful')
       .concat(injectables)
       .concat([function ($scope, $state) {
         var args = Array.prototype.slice.call(arguments).slice(2);
-        $state.current.data = $state.current.data || {};
         Object.defineProperty($scope, 'context', {
           configurable: false,
           enumerable: true,
           writable: false,
-          value: $state.current.data
+          value: {}
         });
+        $state.current.data = $scope.context;
         return controllerFn.apply(this, args);
       }]);
 

@@ -21,13 +21,13 @@ describe('Access Checker', function () {
     $rootScope = this.$inject('$rootScope');
     spaceContext = this.$inject('spaceContext');
     authorization = this.$inject('authorization');
-    enforcements = this.$inject('enforcements');
+    enforcements = this.$inject('access_control/Enforcements');
     OrganizationRoles = this.$inject('services/OrganizationRoles');
     TokenStore = this.$inject('services/TokenStore');
-    policyChecker = this.$inject('accessChecker/policy');
+    policyChecker = this.$inject('access_control/AccessChecker/PolicyChecker');
     ac = this.$inject('access_control/AccessChecker');
 
-    const responseCache = this.$inject('accessChecker/responseCache');
+    const responseCache = this.$inject('access_control/AccessChecker/ResponseCache');
     responseCache.getResponse = getResStub = sinon.stub().returns(false);
 
     reasonsDeniedStub = sinon.stub().returns([]);

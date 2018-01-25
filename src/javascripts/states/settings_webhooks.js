@@ -22,11 +22,9 @@ angular.module('contentful')
   var newWebhook = {
     name: 'new',
     url: '/new',
-    data: {
-      isNew: true
-    },
     template: '<cf-webhook-editor cf-ui-tab class="workbench webhook-editor" />',
     controller: ['$scope', function ($scope) {
+      $scope.context.isNew = true;
       $scope.webhook = { headers: [], topics: ['*.*'] };
 
       contextHistory.set([
@@ -67,9 +65,6 @@ angular.module('contentful')
   var detail = {
     name: 'detail',
     url: '/:webhookId',
-    data: {
-      isNew: false
-    },
     resolve: {
       webhook: ['WebhookRepository', 'spaceContext', '$stateParams', function (WebhookRepository, spaceContext, $stateParams) {
         return WebhookRepository.getInstance(spaceContext.space).get($stateParams.webhookId);
@@ -77,6 +72,7 @@ angular.module('contentful')
     },
     template: '<cf-webhook-editor cf-ui-tab class="workbench webhook-editor" />',
     controller: ['$scope', '$stateParams', 'webhook', function ($scope, $stateParams, webhook) {
+      $scope.context.isNew = false;
       $scope.webhook = webhook;
 
       contextHistory.set([

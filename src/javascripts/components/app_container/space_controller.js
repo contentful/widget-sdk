@@ -5,7 +5,7 @@ angular.module('contentful')
   var $controller = require('$controller');
   var $rootScope = require('$rootScope');
   var authorization = require('authorization');
-  var enforcements = require('enforcements');
+  var enforcements = require('access_control/Enforcements');
   var spaceContext = require('spaceContext');
   var TokenStore = require('services/TokenStore');
 
