@@ -17,7 +17,7 @@ angular.module('contentful')
 
       render();
       LD.onFeatureFlag($scope, flagName, function (flag) {
-        controller.isVisible = flag;
+        controller.isVisible = Intercom.isEnabled() && flag;
         render();
       });
 

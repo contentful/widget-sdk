@@ -18,6 +18,7 @@ angular.module('contentful')
   var fontsDotCom = require('fontsDotCom');
   var CreateSpace = require('services/CreateSpace');
   var refreshNavState = require('navigation/NavState').makeStateRefresher($state, spaceContext);
+  var Intercom = require('intercom');
 
   // TODO remove this eventually. All components should access it as a service
   $scope.spaceContext = spaceContext;
@@ -74,6 +75,7 @@ angular.module('contentful')
       Analytics.enable(user);
       fontsDotCom.enable();
     } else {
+      Intercom.disable();
       logger.disable();
       Analytics.disable();
     }
