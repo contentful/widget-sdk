@@ -45,9 +45,7 @@ let gkPermissionChecker;
 let responses = {};
 let sectionVisibility = {};
 
-export const isInitialized$ = isInitializedBus.property.skipDuplicates();
-
-K.onValue(isInitialized$, function (value) {
+K.onValue(isInitializedBus.property, function (value) {
   if (value) {
     cache.reset(spaceAuthContext);
     policyChecker.setMembership(get(space, 'spaceMembership'));
@@ -56,6 +54,8 @@ K.onValue(isInitialized$, function (value) {
     collectSectionVisibility();
   }
 });
+
+export const isInitialized$ = isInitializedBus.property.skipDuplicates();
 
 /**
  * @name accessChecker#shouldHide
@@ -390,6 +390,7 @@ function getPermissions (action, entity) {
   response.enforcement = getEnforcement(action, entity);
   response.shouldDisable = !!response.reasons;
   response.shouldHide = !response.shouldDisable;
+
   broadcastEnforcement(response.enforcement);
 
   return response;
