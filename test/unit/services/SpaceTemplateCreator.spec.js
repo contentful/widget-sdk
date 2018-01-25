@@ -33,10 +33,7 @@ describe('Space Template creation service', function () {
         contentTypes: [
           {sys: {id: 'ct1'}, publish: stubs.ctPublish},
           {sys: {id: 'ct2'}, publish: stubs.ctPublish},
-          {sys: {id: 'ct3'}, publish: stubs.ctPublish}],
-        editingInterfaces: [
-          {contentType: {sys: {id: 'ct1'}}, data: {sys: {id: 'ei1', version: 3}}},
-          {contentType: {sys: {id: 'ct2'}}, data: {sys: {id: 'ei2', version: 5}}}
+          {sys: {id: 'ct3'}, publish: stubs.ctPublish}
         ],
         assets: [
           {sys: {id: 'a1'}, fields: {file: {'en-US': 'val'}}, process: stubs.assetProcess, publish: stubs.assetPublish},
@@ -55,9 +52,6 @@ describe('Space Template creation service', function () {
       };
 
       spaceContext = {
-        editingInterfaces: {
-          save: sinon.stub()
-        },
         space: {
           getId: _.constant('123'),
           createContentType: sinon.stub(),
@@ -90,9 +84,6 @@ describe('Space Template creation service', function () {
       });
       spaceContext.space.createContentType.onThirdCall().returns(Promise.reject(new Error('can not create a content type')));
       stubs.ctPublish.returns(Promise.resolve());
-
-      spaceContext.editingInterfaces.save.returns(Promise.resolve());
-      spaceContext.editingInterfaces.save.onSecondCall().returns(Promise.reject(new Error('can not save an editing interface')));
 
       _.times(2, function (n) {
         spaceContext.space.createAsset.onCall(n).returns(Promise.resolve(template.assets[n]));
@@ -130,10 +121,6 @@ describe('Space Template creation service', function () {
 
     it('publishes 2 content types', function () {
       expect(stubs.ctPublish.callCount).toBe(2);
-    });
-
-    it('attempts to create 2 editing interface', function () {
-      expect(spaceContext.editingInterfaces.save.callCount).toBe(2);
     });
 
     it('attempts to create 3 assets', function () {
@@ -186,11 +173,11 @@ describe('Space Template creation service', function () {
     });
 
     it('updates success progress 17 times', function () {
-      expect(stubs.progressSuccess.callCount).toBe(17);
+      expect(stubs.progressSuccess.callCount).toBe(16);
     });
 
     it('updates error progress 4 times', function () {
-      expect(stubs.progressError.callCount).toBe(4);
+      expect(stubs.progressError.callCount).toBe(3);
     });
 
     it('rejects promise because some have failed', function () {
@@ -203,10 +190,7 @@ describe('Space Template creation service', function () {
           contentTypes: [
             {sys: {id: 'ct1'}, publish: stubs.ctPublish},
             {sys: {id: 'ct2'}, publish: stubs.ctPublish},
-            {sys: {id: 'ct3'}, publish: stubs.ctPublish}],
-          editingInterfaces: [
-            {contentType: {sys: {id: 'ct1'}}, data: {sys: {id: 'ei1', version: 3}}},
-            {contentType: {sys: {id: 'ct2'}}, data: {sys: {id: 'ei2', version: 5}}}
+            {sys: {id: 'ct3'}, publish: stubs.ctPublish}
           ],
           assets: [
             {sys: {id: 'a1'}, fields: {file: {'en-US': 'val'}}, process: stubs.assetProcess, publish: stubs.assetPublish},
@@ -226,7 +210,6 @@ describe('Space Template creation service', function () {
         spaceContext.space.createContentType = sinon.stub();
         spaceContext.space.createEntry = sinon.stub();
         spaceContext.space.createAsset = sinon.stub();
-        spaceContext.editingInterfaces.save = sinon.stub().resolves();
 
         spaceContext.space.createContentType.returns(Promise.resolve({sys: {id: 'ct3'}, publish: stubs.ctPublish}));
         stubs.ctPublish.returns(Promise.resolve());
@@ -255,10 +238,6 @@ describe('Space Template creation service', function () {
         expect(stubs.ctPublish.callCount).toBe(3);
       });
 
-      it('creates 1 editing interface', function () {
-        expect(spaceContext.editingInterfaces.save.callCount).toBe(1);
-      });
-
       it('creates 1 asset', function () {
         expect(spaceContext.space.createAsset.callCount).toBe(1);
       });
@@ -280,11 +259,11 @@ describe('Space Template creation service', function () {
       });
 
       it('updates success progress 25 times in total', function () {
-        expect(stubs.progressSuccess.callCount).toBe(25);
+        expect(stubs.progressSuccess.callCount).toBe(23);
       });
 
       it('updates error progress 4 times in total', function () {
-        expect(stubs.progressError.callCount).toBe(4);
+        expect(stubs.progressError.callCount).toBe(3);
       });
 
       it('rejects promise because some have failed', function () {

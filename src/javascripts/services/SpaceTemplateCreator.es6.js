@@ -92,11 +92,6 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
       // publishing can be finished in the background
       yield publishContentTypes(createdContentTypes);
 
-      // editing interfaces should be called after publishing only
-      const editingInterfacesPromise = Promise.all(
-        template.editingInterfaces.map(createEditingInterface)
-      );
-
       // we need to create assets before proceeding
       const assets = useSelectedLocale(template.assets, selectedLocaleCode);
       const createdAssets = yield Promise.all(assets.map(createAsset));
@@ -119,7 +114,7 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
         : createContentPreview(template.contentTypes)
       );
 
-      allPromises.push(editingInterfacesPromise, publishAssetsPromise, createContentPreviewPromise);
+      allPromises.push(publishAssetsPromise, createContentPreviewPromise);
 
       if (creationErrors.length > 0) {
         const errorMessage = 'Error during space template creation: ' + JSON.stringify({
@@ -218,19 +213,6 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
           .catch(handlers.error);
       }
     }));
-  }
-
-  function createEditingInterface (editingInterface) {
-    const handlers = makeHandlers(editingInterface, 'create', 'EditingInterface');
-    if (handlers.itemWasHandled) {
-      return Promise.resolve(handlers.response);
-    }
-    const repo = spaceContext.editingInterfaces;
-    // The content type has a default editor interface with version 1.
-    editingInterface.data.sys.version = 1;
-    return repo
-      .save(editingInterface.contentType, editingInterface.data)
-      .then(handlers.success, handlers.error);
   }
 
   function createAsset (asset) {

@@ -81,33 +81,14 @@ function getSpaceContents (spaceClient) {
     spaceClient.entries({ locale: '*' }),
     spaceClient.assets({ locale: '*' })
   ])
-  .then(([contentTypes, entries, assets]) => ({ contentTypes, entries, assets }))
-  .then(getEditingInterfaces(spaceClient));
-}
-
-function getEditingInterfaces (spaceClient) {
-  return function (spaceContents) {
-    return Promise.all(spaceContents.contentTypes.map(function (contentType) {
-      return spaceClient.editingInterface(contentType.sys.id, 'default')
-        .then(function (data) {
-          return {
-            contentType: contentType,
-            data: data
-          };
-        }, () => null);
-    })).then(function (editingInterfaces) {
-      spaceContents.editingInterfaces = editingInterfaces.filter(Boolean);
-      return spaceContents;
-    });
-  };
+  .then(([contentTypes, entries, assets]) => ({ contentTypes, entries, assets }));
 }
 
 function parseSpaceContents (contents) {
   return {
     contentTypes: parseContentTypes(contents.contentTypes),
     entries: sortEntries(parseEntries(contents.entries)),
-    assets: parseAssets(contents.assets),
-    editingInterfaces: contents.editingInterfaces
+    assets: parseAssets(contents.assets)
   };
 }
 

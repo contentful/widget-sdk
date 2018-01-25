@@ -599,10 +599,6 @@ describe('Space Template loading service', function () {
       expect(template.assets).toBeDefined();
     });
 
-    it('template has editing interfaces', function () {
-      expect(template.editingInterfaces).toBeDefined();
-    });
-
     it('first content type is formatted correctly', function () {
       expect(template.contentTypes[0]).toEqualObj({
         'sys': {
@@ -822,11 +818,6 @@ describe('Space Template loading service', function () {
 
     it('has the second api key', function () {
       expect(template.apiKeys[1]).toEqualObj({name: 'second api key', description: 'second api key desc'});
-    });
-
-    it('editing interface is formatted correctly', function () {
-      expect(template.editingInterfaces[0].data).toEqualObj(sourceEditingInterfaces[0]);
-      expect(template.editingInterfaces[0].contentType).toEqualObj(sourceContentTypes[0]);
     });
   });
 });
