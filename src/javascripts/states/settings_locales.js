@@ -18,21 +18,24 @@ angular.module('contentful')
     template: '<div cf-locale-list class="workbench locale-list entity-list"></div>'
   });
 
-  var localeEditorState = {
-    template: '<cf-locale-editor class="workbench" />',
-    controller: [
-      '$scope', '$stateParams', 'locale', 'spaceLocales',
-      function ($scope, $stateParams, locale, spaceLocales) {
-        $scope.locale = locale;
-        $scope.spaceLocales = spaceLocales;
+  function localeEditorState (options, isNew) {
+    return _.extend({
+      template: '<cf-locale-editor class="workbench" />',
+      controller: [
+        '$scope', '$stateParams', 'locale', 'spaceLocales',
+        function ($scope, $stateParams, locale, spaceLocales) {
+          $scope.context.isNew = isNew;
+          $scope.locale = locale;
+          $scope.spaceLocales = spaceLocales;
 
-        contextHistory.set([
-          crumbFactory.LocaleList(),
-          crumbFactory.Locale($stateParams.localeId, $scope.context)
-        ]);
-      }
-    ]
-  };
+          contextHistory.set([
+            crumbFactory.LocaleList(),
+            crumbFactory.Locale($stateParams.localeId, $scope.context)
+          ]);
+        }
+      ]
+    }, options);
+  }
 
   // injecting `spaceContext` here to assure `TheLocaleStore.init` was called
   // TODO drop global `TheLocaleStore` in favour of a space-scoped service
@@ -40,12 +43,9 @@ angular.module('contentful')
     return TheLocaleStore.refresh();
   }];
 
-  var newLocale = _.extend({
+  var newLocale = localeEditorState({
     name: 'new',
     url: '_new',
-    data: {
-      isNew: true
-    },
     resolve: {
       spaceLocales: resolveSpaceLocales,
       locale: function () {
@@ -58,14 +58,11 @@ angular.module('contentful')
         };
       }
     }
-  }, localeEditorState);
+  }, true);
 
-  var detail = _.extend({
+  var detail = localeEditorState({
     name: 'detail',
     url: '/:localeId',
-    data: {
-      isNew: false
-    },
     resolve: {
       spaceLocales: resolveSpaceLocales,
       locale: ['spaceLocales', '$stateParams', function (spaceLocales, $stateParams) {
@@ -79,7 +76,7 @@ angular.module('contentful')
         }
       }]
     }
-  }, localeEditorState);
+  }, false);
 
   return {
     name: 'locales',

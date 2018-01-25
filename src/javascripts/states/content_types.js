@@ -39,9 +39,6 @@ angular.module('contentful')
   var newState = editorBase({
     name: 'new',
     url: '_new',
-    data: {
-      isNew: true
-    },
     resolve: {
       contentType: ['spaceContext', function (spaceContext) {
         return spaceContext.space.newContentType({sys: {type: 'ContentType'}, fields: []});
@@ -51,14 +48,11 @@ angular.module('contentful')
         return null;
       }]
     }
-  });
+  }, true);
 
   var detail = editorBase({
     name: 'detail',
     url: '/:contentTypeId',
-    data: {
-      isNew: false
-    },
     resolve: {
       contentType: ['require', '$stateParams', 'spaceContext', function (require, $stateParams, spaceContext) {
         var space = spaceContext.space;
@@ -84,7 +78,7 @@ angular.module('contentful')
       }],
       editingInterface: resolvers.editingInterface
     }
-  });
+  }, false);
 
   return {
     name: 'content_types',
@@ -93,13 +87,14 @@ angular.module('contentful')
     children: [list, newState, detail]
   };
 
-  function editorBase (options) {
+  function editorBase (options, isNew) {
     return _.extend({
       redirectTo: '.fields',
       children: [ fields, preview ],
       controller: [
         '$scope', '$stateParams', 'contentType', 'editingInterface', 'publishedContentType',
         function ($scope, $stateParams, contentType, editingInterface, publishedContentType) {
+          $scope.context.isNew = isNew;
           $scope.contentType = contentType;
           $scope.editingInterface = editingInterface;
           $scope.publishedContentType = publishedContentType;

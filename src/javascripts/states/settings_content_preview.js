@@ -22,11 +22,12 @@ angular.module('contentful')
     }]
   });
 
-  function editorBase (options) {
+  function editorBase (options, isNew) {
     var contentPreviewEditorState = base({
       template: '<cf-content-preview-editor class="workbench">',
       loadingText: 'Loading content preview…',
       controller: ['$scope', '$stateParams', 'contentPreview', function ($scope, $stateParams, contentPreview) {
+        $scope.context.isNew = isNew;
         $scope.contentPreview = contentPreview;
 
         contextHistory.set([
@@ -41,19 +42,13 @@ angular.module('contentful')
 
   var newContentPreview = editorBase({
     name: 'new',
-    url: '/new',
-    data: {
-      isNew: true
-    }
-  });
+    url: '/new'
+  }, true);
 
   var detail = editorBase({
     name: 'detail',
-    url: '/:contentPreviewId',
-    data: {
-      isNew: false
-    }
-  });
+    url: '/:contentPreviewId'
+  }, false);
 
   return {
     name: 'content_preview',
