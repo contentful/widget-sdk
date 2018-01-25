@@ -24,7 +24,7 @@ angular.module('contentful')
   var accessChecker = require('access_control/AccessChecker');
   var TokenStore = require('services/TokenStore');
   var K = require('utils/kefir');
-  var enforcements = require('enforcements');
+  var enforcements = require('access_control/Enforcements');
   var $state = require('$state');
   var logger = require('logger');
   var Analytics = require('analytics/Analytics');

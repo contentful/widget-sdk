@@ -8,7 +8,7 @@ describe('Space Controller', function () {
       $provide.value('authorization', self.authorizationMock);
 
       self.enforcementsMock = {getPeriodUsage: sinon.stub()};
-      $provide.value('enforcements', self.enforcementsMock);
+      $provide.value('access_control/Enforcements', self.enforcementsMock);
 
       self.analyticsMock = {track: sinon.stub()};
       $provide.value('analytics/Analytics', self.analyticsMock);

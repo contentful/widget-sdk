@@ -16,7 +16,7 @@ describe('EntityCreationController', function () {
         'track'
       ]);
 
-      $provide.value('enforcements', {
+      $provide.value('access_control/Enforcements', {
         getPeriodUsage: stubs.periodUsage,
         computeUsage: stubs.computeUsage,
         determineEnforcement: stubs.enforcement,

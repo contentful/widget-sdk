@@ -4,7 +4,7 @@ angular.module('contentful')
 .controller('EntityCreationController', ['require', function EntityCreationController (require) {
   var notification = require('notification');
   var logger = require('logger');
-  var enforcements = require('enforcements');
+  var enforcements = require('access_control/Enforcements');
   var $state = require('$state');
   var spaceContext = require('spaceContext');
 

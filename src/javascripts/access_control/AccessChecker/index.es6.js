@@ -506,7 +506,7 @@ function isSuperUser () {
 
 function determineEnforcement (reasonsDenied, entityType) {
   // Prevent circular deps
-  return require('enforcements').determineEnforcement(reasonsDenied, entityType);
+  return require('access_control/Enforcements').determineEnforcement(reasonsDenied, entityType);
 }
 
 function getSpaceData (path, defaultValue) {

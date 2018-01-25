@@ -1,17 +1,16 @@
 'use strict';
 
 describe('Enforcements service', function () {
-
-  var enforcements;
-  var organizationMock;
-  var spaceContext;
-  var OrganizationRoles;
+  let enforcements;
+  let organizationMock;
+  let spaceContext;
+  let OrganizationRoles;
 
   beforeEach(function () {
     module('contentful/test');
 
-    var cfStub = this.$inject('cfStub');
-    enforcements = this.$inject('enforcements');
+    const cfStub = this.$inject('cfStub');
+    enforcements = this.$inject('access_control/Enforcements');
     spaceContext = this.$inject('spaceContext');
     OrganizationRoles = this.$inject('services/OrganizationRoles');
     OrganizationRoles.setUser({ sys: {id: 123} });
@@ -45,9 +44,7 @@ describe('Enforcements service', function () {
   });
 
   describe('determines enforcements', function () {
-
-    describe('with a space context', function() {
-
+    describe('with a space context', function () {
       it('returns null for no reasons', function () {
         expect(enforcements.determineEnforcement()).toBeNull();
       });
@@ -57,7 +54,7 @@ describe('Enforcements service', function () {
       });
 
       describe('returns maintenance message', function () {
-        var enforcement;
+        let enforcement;
         beforeEach(function () {
           enforcement = enforcements.determineEnforcement(['systemMaintenance']);
         });
@@ -65,11 +62,10 @@ describe('Enforcements service', function () {
         it('has an error', function () {
           expect(enforcement.message).toBeDefined();
         });
-
       });
 
       describe('returns maintenance message with multiple reasons', function () {
-        var enforcement;
+        let enforcement;
         beforeEach(function () {
           enforcement = enforcements.determineEnforcement(['systemMaintenance', 'subscriptionUnsettled']);
         });
@@ -81,11 +77,10 @@ describe('Enforcements service', function () {
         it('error matches reason', function () {
           expect(enforcement.message).toMatch(/system/gi);
         });
-
       });
 
       describe('returns period usage exceeded', function () {
-        var enforcement;
+        let enforcement;
         beforeEach(function () {
           enforcement = enforcements.determineEnforcement(['periodUsageExceeded']);
         });
@@ -93,11 +88,10 @@ describe('Enforcements service', function () {
         it('has an error', function () {
           expect(enforcement.message).toBeDefined();
         });
-
       });
 
       describe('returns usage exceeded', function () {
-        var enforcement;
+        let enforcement;
         beforeEach(function () {
           enforcement = enforcements.determineEnforcement(['usageExceeded'], 'ApiKey');
         });
@@ -105,17 +99,12 @@ describe('Enforcements service', function () {
         it('has an error', function () {
           expect(enforcement.message).toBeDefined();
         });
-
       });
-
     });
   });
 
   describe('gets period usage', function () {
-
-    describe('with space context', function() {
-
-      var enforcement;
+    describe('with space context', function () {
       beforeEach(function () {
         organizationMock.usage.period.assetBandwidth = 5;
         spaceContext.organizationContext.organization = organizationMock;
@@ -140,10 +129,8 @@ describe('Enforcements service', function () {
   });
 
   describe('gets no period usage', function () {
-
-    describe('with space context', function() {
-
-      var enforcement;
+    describe('with space context', function () {
+      let enforcement;
       beforeEach(function () {
         spaceContext.space.data.organization = organizationMock;
         enforcement = enforcements.getPeriodUsage();
@@ -161,7 +148,7 @@ describe('Enforcements service', function () {
       spaceContext.organizationContext.organization = organizationMock;
     });
 
-    it('if no space exists returns no message', function() {
+    it('if no space exists returns no message', function () {
       delete spaceContext.space;
       expect(enforcements.computeUsage()).toBeUndefined();
     });
@@ -181,6 +168,4 @@ describe('Enforcements service', function () {
       expect(enforcements.computeUsage('user')).toMatch('Users');
     });
   });
-
-
 });
