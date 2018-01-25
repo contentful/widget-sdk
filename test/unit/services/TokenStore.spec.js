@@ -20,6 +20,14 @@ describe('Token store service', function () {
       };
     });
 
+    this.fetchWithAuth = sinon.stub().resolves({
+      sys: {createdBy: this.user},
+      spaces: this.rawSpaces
+    });
+    this.$inject('data/CMA/TokenInfo').default = () => {
+      return this.fetchWithAuth;
+    };
+
     this.tokenStore = this.$inject('services/TokenStore');
     this.OrganizationRoles = this.$inject('services/OrganizationRoles');
 

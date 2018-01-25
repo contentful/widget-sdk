@@ -6,16 +6,8 @@ angular.module('contentful')
   var h = require('utils/hyperscript').h;
   var moment = require('moment');
   var K = require('utils/kefir');
-  var TokenStore = require('services/TokenStore');
-  // Begin test code: test-ps-09-2017-entry-sample-space-cli
   var LD = require('utils/LaunchDarkly');
-  var Analytics = require('analytics/Analytics');
-  var createSpaceAutomatically = require('components/shared/auto_create_new_space/index').init;
-  var getStore = require('TheStore').getStore;
-  var store = getStore();
-
-  var flagName = 'test-ps-09-2017-entry-sample-space-cli';
-  // End test code: test-ps-09-2017-entry-sample-space-cli
+  var tokenStore = require('services/TokenStore');
 
   var contactUsFlagName = 'feature-ps-10-2017-contact-us-space-home';
 
@@ -25,46 +17,16 @@ angular.module('contentful')
     '.'
   ]);
 
-  var welcomeTemplate = [
-    h('section.home-section', [
-      h('h2.home-section__heading', ['{{welcome.greeting}}']),
-      h('p', {ngIf: 'welcome.user.signInCount === 1 && !welcome.hasContactUs'}, [
-        'Looks like you\'re new here. Learn more about Contentful from the resources below.'
-      ]),
-      h('p', {ngIf: 'welcome.user.signInCount > 1 && !welcome.hasContactUs'}, [
-        'What will you build today?'
-      ]),
-      scrollToDeveloperResources,
-      h('cf-icon.home__welcome-image', {
-        name: 'home-welcome',
-        ngIf: '!welcome.hasContactUs'
-      }),
-      h('div', [
-        h('cf-contact-us-space-home')
-      ])
-    ])
-  ];
-
-  var template = h('div', [
-    h('div', {
-      ngIf: '!welcome.onboardNeeded'
-    }, welcomeTemplate.concat(h('cf-onboarding-steps'))),
-    // Begin test code: test-ps-09-2017-entry-sample-space-cli
-    h('div', {
-      ngIf: 'welcome.onboardNeeded'
-    }, [
-      h('div', {
-        ngIf: 'welcome.hasContactUs'
-      }, welcomeTemplate.concat([
-        h('cf-app-entry-onboard', {
-          short: 'true'
-        })
-      ])),
-      h('cf-app-entry-onboard', {
-        ngIf: '!welcome.hasContactUs'
-      })
-    ])
-    // End test code: test-ps-09-2017-entry-sample-space-cli
+  var template = h('section.home-section', [
+    h('h2.home-section__heading', ['{{welcome.greeting}}']),
+    h('p', {ngIf: 'welcome.user.signInCount === 1'}, [
+      'Looks like you\'re new here. Learn more about Contentful from the resources below.'
+    ]),
+    h('p', {ngIf: 'welcome.user.signInCount > 1'}, [
+      'What will you build today?'
+    ]),
+    scrollToDeveloperResources,
+    h('cf-icon.home__welcome-image', {name: 'home-welcome'})
   ]);
 
   return {
@@ -80,30 +42,8 @@ angular.module('contentful')
         $scope.$applyAsync();
       });
 
-      // Begin test code: test-ps-09-2017-entry-sample-space-cli
-      // we call handler only once to avoid hiding of the onboarding
-      // widget after user will have a space and will be disqualified
-      LD.onABTest($scope, flagName, _.once(function (flag) {
-        var user = K.getValue(TokenStore.user$);
-        var wasAutoSpaceAlreadyCreated = hadSpaceAutoCreated(user);
-        var spaceCreatedByTest = hasSpaceCreatedByTest(user);
-
-        if (wasAutoSpaceAlreadyCreated || spaceCreatedByTest) {
-          return;
-        }
-
-        if (flag !== true) {
-          createSpaceAutomatically();
-        }
-
-        if (flag !== null) {
-          setOnboardNecessityFlag(flag);
-        }
-      }));
-      // End test code: test-ps-09-2017-entry-sample-space-cli
-
       // Fetch user and set greeting
-      K.onValueScope($scope, TokenStore.user$, function (user) {
+      K.onValueScope($scope, tokenStore.user$, function (user) {
         controller.user = user;
         controller.greeting = getGreeting(user);
       });
@@ -140,32 +80,6 @@ angular.module('contentful')
           return 'evening';
         }
       }
-
-      // Begin test code: test-ps-09-2017-entry-sample-space-cli
-      // we check that there are no spaces for this user
-      // and the flag is true
-      function setOnboardNecessityFlag (flag) {
-        trackExperiment(flag);
-        controller.onboardNeeded = flag;
-      }
-
-      function trackExperiment (variation) {
-        Analytics.track('experiment:start', {
-          experiment: {
-            id: flagName,
-            variation: variation
-          }
-        });
-      }
-
-      function hasSpaceCreatedByTest (user) {
-        return store.get('ctfl:' + user.sys.id + ':cliEntrySuccess');
-      }
-
-      function hadSpaceAutoCreated (user) {
-        return store.get('ctfl:' + user.sys.id + ':spaceAutoCreated');
-      }
-      // End test code: test-ps-09-2017-entry-sample-space-cli
     }]
   };
 }]);
