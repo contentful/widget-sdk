@@ -182,7 +182,7 @@ angular.module('contentful')
     createSearchInput({
       $scope: $scope,
       contentTypes: spaceContext.publishedCTs.getAllBare(),
-      onsSearchChange: onSearchChange,
+      onSearchChange: onSearchChange,
       isSearching$: isSearching$,
       initState: initialSearchState,
       users$: Kefir.fromPromise(spaceContext.users.getAll()),
