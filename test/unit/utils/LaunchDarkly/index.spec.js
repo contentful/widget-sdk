@@ -35,7 +35,8 @@ describe('LaunchDarkly', function () {
       role: 'owner',
       subscription: {status: 'free'},
       sys: {id: 1},
-      subscriptionPlan: { name: 'Best Enterprise 2017' }
+      subscriptionPlan: { name: 'Best Enterprise 2017' },
+      pricingVersion: `pricing_version_1`
     };
 
     this.user = {
@@ -136,6 +137,7 @@ describe('LaunchDarkly', function () {
           currentOrgSubscriptionStatus: this.org.subscription.status,
           currentOrgPlanIsEnterprise: true,
           currentOrgHasSpace: false,
+          currentOrgPricingVersion: `pricing_version_1`,
           currentUserOrgRole: 'org role',
           currentUserHasAtleastOneSpace: false,
           currentUserOwnsAtleastOneOrg: true,

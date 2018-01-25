@@ -169,6 +169,7 @@ Custom attributes that can be used in targeting users:
 - `currentOrgSubscriptionStatus` : one of free, paid, free_paid, trial
 - `currentOrgPlanIsEnterprise` : true if the current org is on an enterprise plan
 - `currentOrgHasSpace` : true if the current org has a space
+- `currentOrgPricingVersion`: the current organization pricing version, currently either `pricing_version_1` or `pricing_version_2`
 - `currentUserOrgRole` : user's role in current org
 - `currentUserHasAtleastOneSpace` : true if the user has atleast one space in all the orgs he/she is a member of
 - `currentUserOwnsAtleastOneOrg` : true if the user is the owner of atleast one org

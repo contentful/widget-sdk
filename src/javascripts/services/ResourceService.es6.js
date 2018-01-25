@@ -95,7 +95,7 @@ export default function createResourceService (type, id) {
       });
     },
     canCreate: function (resourceType) {
-      return this.get(resourceType).then(resourceMaximumLimitReached);
+      return this.get(resourceType).then(resource => !resourceMaximumLimitReached(resource));
     },
     messagesFor: function (resourceType) {
       return this.get(resourceType).then(generateMessage);
