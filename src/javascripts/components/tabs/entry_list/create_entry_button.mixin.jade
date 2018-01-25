@@ -1,21 +1,6 @@
-mixin create-entry-button-wrapper
-  if attributes.large
-    button.btn-action--large(
-      ng-disabled="shouldDisable('createEntry')"
-      cf-when-disabled="createEntry")&attributes(attributes)
-      cf-icon.btn-icon.inverted(name="plus")
-      block
-  else
-    button.btn-action.u-truncate(
-      ng-disabled="shouldDisable('createEntry')"
-      cf-when-disabled="createEntry")&attributes(attributes)
-      cf-icon.btn-icon.inverted(name="plus")
-      block
-
 mixin create-entry-button
   div(ng-if="accessibleCts.length === 1")
     cf-create-entry-button(
-      ng-if="isContextAwareActionEnabled"
       data-test-id="add-entry-menu-trigger"
       content-types="accessibleCts"
       suggested-content-type-id="context.view.contentTypeId"
@@ -23,24 +8,7 @@ mixin create-entry-button
       mode=attributes.mode
       text="Add {{accessibleCts[0].name || 'Untitled'}}")
   div(ng-if="accessibleCts.length > 1")
-    div(ng-if="!isContextAwareActionEnabled")
-      +create-entry-button-wrapper(
-        large=attributes.large
-        cf-context-menu-trigger
-        data-test-id="add-entry-menu-trigger")
-        cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-        | Add entry
-      .context-menu.x--arrow-right(
-        role="menu"
-        cf-context-menu="bottom-right"
-        aria-label="Add Entry" data-test-id="add-entry-menu")
-        ul.context-menu__items
-          li(role="menuitem"
-          ng-repeat="contentType in accessibleCts track by contentType.sys.id"
-          ng-click="entityCreationController.newEntry(contentType.sys.id)")
-            | {{contentType.name || 'Untitled'}}
     cf-create-entry-button(
-      ng-if="isContextAwareActionEnabled"
       data-test-id="add-entry-menu-trigger"
       content-types="accessibleCts"
       suggested-content-type-id="context.view.contentTypeId"

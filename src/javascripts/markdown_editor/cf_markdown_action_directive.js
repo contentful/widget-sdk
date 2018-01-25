@@ -77,15 +77,7 @@ angular.module('contentful').directive('cfMarkdownInsertMediaAction', ['require'
     },
     template: templateString,
     link: function (scope) {
-      LD.onFeatureFlag(
-        scope,
-        'feature-at-12-2017-markdown-create-assets',
-        function (isCreateAssetsEnabled) {
-          scope.isCreateAssetsEnabled = isCreateAssetsEnabled
-        }
-      );
       scope.canUploadMultipleAssets = accessChecker.canUploadMultipleAssets;
-
     }
   };
 }]);
