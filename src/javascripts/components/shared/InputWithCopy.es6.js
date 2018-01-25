@@ -1,10 +1,11 @@
 import {h} from 'ui/Framework';
+import {noop} from 'lodash';
 import {byName as colorByName} from 'Styles/Colors';
 import domCopy from 'utils/DomClipboardCopy';
 
 const copied = {};
 
-export default function ({ children, text, onCopy, id = text }, render) {
+export default function ({ children, text, onCopy = noop, id = text }, render) {
   const copyButton = h(`button.contextual-help__copy-button.fa.${copied[id] ? 'fa-check' : 'fa-copy'}`, {
     style: {
       height: '30px',

@@ -8,7 +8,7 @@ import * as Config from 'Config';
 import postForm from 'data/Request/PostForm';
 
 /**
- * @module
+ * @name Authentication
  * @description
  * This module manages the global access token string.
  *

@@ -7,7 +7,7 @@ angular.module('contentful')
   var moment = require('moment');
   var K = require('utils/kefir');
   var LD = require('utils/LaunchDarkly');
-  var tokenStore = require('services/TokenStore');
+  var TokenStore = require('services/TokenStore');
 
   var contactUsFlagName = 'feature-ps-10-2017-contact-us-space-home';
 
@@ -19,14 +19,20 @@ angular.module('contentful')
 
   var template = h('section.home-section', [
     h('h2.home-section__heading', ['{{welcome.greeting}}']),
-    h('p', {ngIf: 'welcome.user.signInCount === 1'}, [
+    h('p', {ngIf: 'welcome.user.signInCount === 1 && !welcome.hasContactUs'}, [
       'Looks like you\'re new here. Learn more about Contentful from the resources below.'
     ]),
-    h('p', {ngIf: 'welcome.user.signInCount > 1'}, [
+    h('p', {ngIf: 'welcome.user.signInCount > 1 && !welcome.hasContactUs'}, [
       'What will you build today?'
     ]),
     scrollToDeveloperResources,
-    h('cf-icon.home__welcome-image', {name: 'home-welcome'})
+    h('cf-icon.home__welcome-image', {
+      name: 'home-welcome',
+      ngIf: '!welcome.hasContactUs'
+    }),
+    h('div', [
+      h('cf-contact-us-space-home')
+    ])
   ]);
 
   return {
@@ -43,7 +49,7 @@ angular.module('contentful')
       });
 
       // Fetch user and set greeting
-      K.onValueScope($scope, tokenStore.user$, function (user) {
+      K.onValueScope($scope, TokenStore.user$, function (user) {
         controller.user = user;
         controller.greeting = getGreeting(user);
       });

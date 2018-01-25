@@ -1,7 +1,25 @@
 import { h } from 'utils/hyperscript';
 import spinner from 'ui/Components/Spinner';
 
-export default function () {
+// function to show correct type of the project
+// in the title of the modal
+function getTemplateTitle (name) {
+  if (name === 'blog') {
+    return 'blog';
+  }
+
+  if (name === 'photo gallery') {
+    return 'gallery';
+  }
+
+  if (name === 'product catalogue') {
+    return 'e-commerce';
+  }
+
+  return '';
+}
+
+export default function (name) {
   return h('.auto-create-space-modal.modal-background', [
     h('.modal-dialog', {
       style: {
@@ -42,7 +60,7 @@ export default function () {
               fontWeight: 'bold',
               marginTop: 0
             }
-          }, ['We’re preparing your sample e-commerce project']),
+          }, [`We’re preparing your sample ${getTemplateTitle(name)} project`]),
           h('p.modal-dialog__plaintext', ['Here’s what you can do with it'])
         ]),
         h('.auto-create-space-modal__overview', {
