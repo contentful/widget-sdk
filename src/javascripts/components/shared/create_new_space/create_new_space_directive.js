@@ -2,14 +2,15 @@
 
 angular.module('contentful')
 
-.directive('cfCreateNewSpace', function () {
+.directive('cfCreateNewSpace', ['require', function (require) {
+  var template = require('components/shared/create_new_space/Template').default;
   return {
     restrict: 'E',
-    template: JST['create_new_space_directive'](),
+    template: template(),
     controller: 'createSpaceController',
     controllerAs: 'createSpace'
   };
-});
+}]);
 
 angular.module('contentful')
 .controller('createSpaceController', ['$scope', 'require', '$element', function ($scope, require, $element) {
