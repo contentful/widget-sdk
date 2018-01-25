@@ -1,7 +1,10 @@
 import { getCurrentVariation } from 'utils/LaunchDarkly';
-// import { getUsage, getLimit } from 'enforcements';
+import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/Endpoint';
+import { getUsage, getLimit } from 'enforcements';
+import { apiUrl } from 'Config';
+import * as auth from 'Authentication';
 
-import { get, map, partialRight, merge } from 'lodash';
+import { map, partialRight } from 'lodash';
 
 /*
 {
@@ -53,12 +56,14 @@ import { get, map, partialRight, merge } from 'lodash';
 }
  */
 
-const flagName = 'resource-based-access-control';
+const flagName = 'feature-bv-2018-01-resources-api';
 
 // Organization is passed here to deal with circular dependencies
 //
 // It won't be necessary when the feature flag is removed.
-export default function createResourceService (endpoint, organization) {
+export default function createResourceService (type, id) {
+  const endpoint = createEndpoint(type, id);
+
   return {
     get: function (resourceType) {
       return getCurrentVariation(flagName).then(flagValue => {
@@ -68,8 +73,8 @@ export default function createResourceService (endpoint, organization) {
             path: [ 'resources', resourceType ]
           });
         } else {
-          const limit = getLegacyLimit(organization, resourceType);
-          const usage = getLegacyUsage(organization, resourceType);
+          const limit = getLimit(resourceType);
+          const usage = getUsage(resourceType);
 
           return createResourceFromTokenData(resourceType, limit, usage);
         }
@@ -101,6 +106,12 @@ export default function createResourceService (endpoint, organization) {
   };
 }
 
+function createEndpoint (type, id) {
+  const endpointFactory = type === 'space' ? createSpaceEndpoint : createOrganizationEndpoint;
+
+  return endpointFactory(apiUrl(), id, auth);
+}
+
 function createResourceFromTokenData (resourceType, limit, usage) {
   return {
     items: [
@@ -117,20 +128,6 @@ function createResourceFromTokenData (resourceType, limit, usage) {
       }
     ]
   };
-}
-
-function getLegacyUsage (organization, resourceType) {
-  return get(merge(
-    organization.usage.permanent,
-    organization.usage.period
-  ), resourceType);
-}
-
-function getLegacyLimit (organization, resourceType) {
-  return get(merge(
-    organization.subscriptionPlan.limits.permanent,
-    organization.subscriptionPlan.limits.period
-  ), resourceType);
 }
 
 function resourceMaximumLimitReached (resource) {
