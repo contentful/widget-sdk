@@ -39,11 +39,9 @@ angular.module('cf.app')
   $scope.versionPicker = require('SnapshotComparatorController/versionPicker').create();
   $scope.snapshotCount = $stateParams.snapshotCount;
 
-  _.extend($scope.context, {
-    ready: true,
-    title: spaceContext.entryTitle($scope.entry),
-    requestLeaveConfirmation: trackVersioning.trackableConfirmator(save)
-  });
+  $scope.context.ready = true;
+  $scope.context.title = spaceContext.entryTitle($scope.entry);
+  $scope.context.requestLeaveConfirmation = trackVersioning.trackableConfirmator(save);
 
   $scope.editorContext = {
     validator: Validator.createNoop(),

@@ -22,6 +22,7 @@ describe('app/Extensions', function () {
 
     this.init = function () {
       const $el = this.$compileWith('<cf-component-bridge component="component" />', ($scope) => {
+        $scope.context = {};
         Extensions($scope);
       });
       $el.appendTo('body');

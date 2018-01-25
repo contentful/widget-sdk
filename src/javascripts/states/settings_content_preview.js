@@ -18,11 +18,7 @@ angular.module('contentful')
     template: '<cf-content-preview-list class="workbench entity-list" />',
     controller: ['$scope', 'require', function ($scope, require) {
       var accessChecker = require('access_control/AccessChecker');
-
-      $scope.context = {};
-      if (!accessChecker.getSectionVisibility().settings) {
-        $scope.context.forbidden = true;
-      }
+      $scope.context.forbidden = !accessChecker.getSectionVisibility().settings;
     }]
   });
 
@@ -30,11 +26,7 @@ angular.module('contentful')
     var contentPreviewEditorState = base({
       template: '<cf-content-preview-editor class="workbench">',
       loadingText: 'Loading content preview…',
-      controller: ['require', '$scope', 'contentPreview', function (require, $scope, contentPreview) {
-        var $state = require('$state');
-        var $stateParams = require('$stateParams');
-
-        $scope.context = $state.current.data;
+      controller: ['$scope', '$stateParams', 'contentPreview', function ($scope, $stateParams, contentPreview) {
         $scope.contentPreview = contentPreview;
 
         contextHistory.set([

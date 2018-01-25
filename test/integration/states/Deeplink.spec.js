@@ -46,6 +46,7 @@ describe('states/Deeplink', function () {
 
     this.createController = function () {
       const $scope = this.$rootScope.$new();
+      $scope.context = {};
       const promise = this.createDeeplinkController($scope);
 
       return { $scope, promise };

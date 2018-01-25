@@ -13,9 +13,6 @@ angular.module('contentful')
     name: 'account',
     url: '/account',
     abstract: true,
-    controller: ['$scope', function ($scope) {
-      $scope.context = {};
-    }],
     views: { 'nav-bar': { template: navBar() } },
     children: [
       require('states/account/organizations'),

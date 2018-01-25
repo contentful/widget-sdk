@@ -17,7 +17,7 @@ angular.module('contentful')
     template: template(),
     loadingText: 'Loading…',
     controller: ['$scope', function ($scope) {
-      $scope.context = {ready: true};
+      $scope.context.ready = true;
       $scope.context.forbidden = !accessChecker.getSectionVisibility().spaceHome;
     }]
   });

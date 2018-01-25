@@ -19,7 +19,9 @@ angular.module('contentful')
   var initialized = false;
   var lastUISearchState = null;
 
-  $scope.context = { ready: false, loading: true };
+  $scope.context.ready = false;
+  $scope.context.loading = true;
+
   // HACK: This makes sure that component bridge renders
   // somethings until search UI is initialized.
   $scope.search = h('div');

@@ -1,4 +1,3 @@
-import $state from '$state';
 import $controller from '$controller';
 
 import * as K from 'utils/kefir';
@@ -20,7 +19,6 @@ import installTracking from './Tracking';
 import renderStatusNotification from './StatusNotification';
 
 export default function create ($scope, editorData) {
-  $state.current.data = $scope.context = {};
   $scope.editorData = editorData;
 
   // add list view as parent if it's a deep link to the media/asset

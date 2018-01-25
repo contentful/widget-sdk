@@ -15,21 +15,14 @@ angular.module('contentful')
     name: 'list',
     url: '',
     loadingText: 'Loading Locales…',
-    controller: ['$scope', function ($scope) {
-      $scope.context = {};
-    }],
     template: '<div cf-locale-list class="workbench locale-list entity-list"></div>'
   });
 
   var localeEditorState = {
     template: '<cf-locale-editor class="workbench" />',
     controller: [
-      '$scope', 'require', 'locale', 'spaceLocales',
-      function ($scope, require, locale, spaceLocales) {
-        var $state = require('$state');
-        var $stateParams = require('$stateParams');
-
-        $scope.context = $state.current.data;
+      '$scope', '$stateParams', 'locale', 'spaceLocales',
+      function ($scope, $stateParams, locale, spaceLocales) {
         $scope.locale = locale;
         $scope.spaceLocales = spaceLocales;
 

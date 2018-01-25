@@ -20,9 +20,6 @@ angular.module('contentful')
       // Override org navbar from paremt state
       'nav-bar@': { template: '' }
     },
-    controller: ['$scope', function ($scope) {
-      $scope.context = {};
-    }],
     template: [
       workbenchHeader({ title: [ 'Create new organization' ] }),
       h('cf-account-view', { context: 'context' })
@@ -46,7 +43,6 @@ angular.module('contentful')
     url: '/:orgId/subscription',
     label: 'Subscription',
     controller: ['$stateParams', '$scope', function ($stateParams, $scope) {
-      $scope.context = {};
       $scope.properties = {
         orgId: $stateParams.orgId,
         context: $scope.context
@@ -60,7 +56,6 @@ angular.module('contentful')
     url: '/:orgId/usage',
     label: 'Usage',
     controller: ['$stateParams', '$scope', function ($stateParams, $scope) {
-      $scope.context = {};
       $scope.properties = {
         orgId: $stateParams.orgId,
         context: $scope.context
@@ -87,8 +82,6 @@ angular.module('contentful')
         $scope.useNewOrgInvitation = value;
       });
       // End feature flag code - feature-bv-09-2017-invite-to-org
-
-      $scope.context = {};
 
       $scope.properties = {
         orgId: $stateParams.orgId,
@@ -134,7 +127,6 @@ angular.module('contentful')
     label: 'Organization spaces',
     url: '/:orgId/space_plans',
     controller: ['$stateParams', '$scope', function ($stateParams, $scope) {
-      $scope.context = {};
       $scope.properties = {
         orgId: $stateParams.orgId,
         context: $scope.context
@@ -158,9 +150,6 @@ angular.module('contentful')
   function organizationsBase (definition) {
     var defaults = {
       label: 'Organizations & Billing',
-      controller: ['$scope', function ($scope) {
-        $scope.context = {};
-      }],
       params: {
         pathSuffix: ''
       },
