@@ -1,6 +1,6 @@
 import PolicyBuilder from 'PolicyBuilder';
 import CONFIG from 'PolicyBuilder/CONFIG';
-import {get, forEach, isString, filter, union, includes, some} from 'lodash';
+import {get, isString, identity} from 'lodash';
 
 const policies = {
   entry: {
@@ -17,11 +17,9 @@ export const canAccessEntries = () => policies.entry.allowed.flat.length > 0;
 export const canAccessAssets = () => policies.asset.allowed.length > 0;
 
 export function setMembership (membership) {
-  const internals = get(membership, 'roles', []).map(function (role) {
-    return role && PolicyBuilder.toInternal(role);
-  }).filter(function (internal) {
-    return !!internal;
-  });
+  const internals = get(membership, 'roles', [])
+    .map((role) => role && PolicyBuilder.toInternal(role))
+    .filter(identity);
 
   isAdmin = get(membership, 'admin', false);
   fieldAccessCache = {};
@@ -81,16 +79,14 @@ export function canUpdateOwnAssets () {
 }
 
 function reduceInternals (internals, path) {
-  return internals.reduce(function (acc, internal) {
-    return acc.concat(get(internal, path, []));
-  }, []);
+  return internals.reduce((acc, internal) => acc.concat(get(internal, path, [])), []);
 }
 
 function groupByContentType (collectionName) {
   const collection = policies.entry[collectionName];
   collection.byContentType = {};
 
-  forEach(collection.flat, function (p) {
+  collection.flat.forEach((p) => {
     if (isString(p.contentType)) {
       collection.byContentType[p.contentType] = collection.byContentType[p.contentType] || [];
       collection.byContentType[p.contentType].push(p);
@@ -102,9 +98,7 @@ function groupByEntityId (type, collectionName) {
   const collection = policies[type][collectionName];
 
 
-  collection.byId = collection.flat.filter(function (p) {
-    return isString(p.entityId);
-  });
+  collection.byId = collection.flat.filter((p) => isString(p.entityId));
 }
 
 function getCached (ctId, fieldId, localeCode) {
@@ -130,7 +124,7 @@ function performCheck (c1, c2, fn) {
 }
 
 function withoutPathRules (c) {
-  return filter(c, function (p) { return !p.isPath; });
+  return c.filter((p) => !p.isPath);
 }
 
 function getAllowed (contentTypeId) {
@@ -146,7 +140,7 @@ function getCollection (name, contentTypeId) {
   const ctSpecificItems = ctGroups[contentTypeId] || [];
   const generalItems = ctGroups[CONFIG.ALL_CTS] || [];
 
-  return union(ctSpecificItems, generalItems);
+  return [...ctSpecificItems, ...generalItems];
 }
 
 function getAllowedEntries () {
@@ -158,21 +152,19 @@ function getDeniedEntries () {
 }
 
 function anyUserUpdatePoliciesOnly (c) {
-  return filter(updatePoliciesOnly(c), function (p) { return p.scope !== 'user'; });
+  return updatePoliciesOnly(c).filter((p) => p.scope !== 'user');
 }
 
 function currentUserUpdatePoliciesOnly (c) {
-  return filter(updatePoliciesOnly(c), function (p) { return p.scope === 'user'; });
+  return updatePoliciesOnly(c).filter((p) => p.scope === 'user');
 }
 
 function updatePoliciesOnly (collection) {
-  return filter(collection, function (p) {
-    return includes(['update', 'all'], p.action);
-  });
+  return collection.filter((p) => ['update', 'all'].includes(p.action));
 }
 
 function checkPolicyCollectionForPath (collection, fieldId, localeCode) {
-  return some(updatePoliciesOnly(collection), function (p) {
+  return updatePoliciesOnly(collection).some((p) => {
     const noPath = !isString(p.field) && !isString(p.locale);
     const fieldOnlyPathMatched = matchField(p.field) && !isString(p.locale);
     const localeOnlyPathMatched = !isString(p.field) && matchLocale(p.locale);
@@ -182,10 +174,10 @@ function checkPolicyCollectionForPath (collection, fieldId, localeCode) {
   });
 
   function matchField (field) {
-    return includes([CONFIG.ALL_FIELDS, fieldId], field);
+    return [CONFIG.ALL_FIELDS, fieldId].includes(field);
   }
 
   function matchLocale (locale) {
-    return includes([CONFIG.ALL_LOCALES, localeCode], locale);
+    return [CONFIG.ALL_LOCALES, localeCode].includes(locale);
   }
 }
