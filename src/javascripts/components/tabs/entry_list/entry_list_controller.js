@@ -17,15 +17,6 @@ angular.module('contentful')
   var createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar').default;
   var K = require('utils/kefir');
   var _ = require('lodash');
-  var LD = require('utils/LaunchDarkly');
-
-  LD.onFeatureFlag(
-    $scope,
-    'feature-at-11-2017-lots-of-cts-ctx-aware-dropdown',
-    function (variation) {
-      $scope.isContextAwareActionEnabled = variation;
-    }
-  );
 
   var searchController = $controller('EntryListSearchController', {$scope: $scope});
   $controller('DisplayedFieldsController', {$scope: $scope});

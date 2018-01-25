@@ -9,7 +9,6 @@ angular.module('contentful')
   var List = require('utils/List');
   var Tracking = require('app/entity_editor/bulk_editor/Tracking');
   var DataLoader = require('app/entity_editor/DataLoader');
-  var LD = require('utils/LaunchDarkly');
 
   return {
     scope: {
@@ -21,8 +20,6 @@ angular.module('contentful')
   };
 
   function link ($scope) {
-    setFeatureFlags($scope);
-
     // This is passed from the EntryEditorController
     var referenceContext = $scope.referenceContext;
 
@@ -116,16 +113,6 @@ angular.module('contentful')
       }
       nextFocusIndex = null;
     }
-  }
-
-  function setFeatureFlags ($scope) {
-    LD.onFeatureFlag(
-      $scope,
-      'feature-at-11-2017-lots-of-cts-ctx-aware-dropdown',
-      function (variation) {
-        $scope.isContextAwareActionEnabled = variation;
-      }
-    );
   }
 
   /**

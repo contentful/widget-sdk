@@ -12,7 +12,7 @@ export default [
 
 function SingleActionButton () {
   return InsertMediaButton({
-    ngIf: '!isCreateAssetsEnabled || !canUploadMultipleAssets',
+    ngIf: '!canUploadMultipleAssets',
     ngClick: 'actions.existingAssets()',
     dataTestId: TEST_ID_LINK_EXISTING
   }, [
@@ -22,7 +22,7 @@ function SingleActionButton () {
 
 function MultiActionButton () {
   return InsertMediaButton({
-    ngIf: 'isCreateAssetsEnabled && canUploadMultipleAssets',
+    ngIf: 'canUploadMultipleAssets',
     cfContextMenuTrigger: true,
     dataTestId: TEST_ID_DROPDOWN
   }, [
