@@ -654,16 +654,14 @@ describe('entityEditor/Document', function () {
 
       it('delegates to "policyAccessChecker"', function () {
         this.accessChecker.canUpdateEntry.returns(true);
+        this.accessChecker.canEditFieldLocale.returns(true);
 
-        const pac = this.mockService('accessChecker/policy');
-
-        pac.canEditFieldLocale.returns(true);
         expect(this.doc.permissions.canEditFieldLocale('FIELD', 'LOCALE')).toBe(true);
 
-        pac.canEditFieldLocale.returns(false);
+        this.accessChecker.canEditFieldLocale.returns(false);
         expect(this.doc.permissions.canEditFieldLocale('FIELD', 'LOCALE')).toBe(false);
 
-        const args = pac.canEditFieldLocale.args[0];
+        const args = this.accessChecker.canEditFieldLocale.args[0];
         const [ctId, {apiName}, {code}] = args;
         expect(ctId).toBe('CT_ID');
         expect(apiName).toBe('FIELD');

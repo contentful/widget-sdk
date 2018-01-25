@@ -5,8 +5,8 @@ import logger from 'logger';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
 import * as K from 'utils/kefir';
-import policyChecker from 'accessChecker/policy';
-import cache from 'accessChecker/responseCache';
+import * as policyChecker from './PolicyChecker';
+import * as cache from './ResponseCache';
 import {capitalize, capitalizeFirst} from 'stringUtils';
 import {get, some, includes, forEach, isString} from 'lodash';
 import require from 'require';
@@ -99,6 +99,16 @@ export const getSectionVisibility = () => sectionVisibility;
  * Returns user quota information.
  */
 export const getUserQuota = () => userQuota;
+
+
+/**
+ * @name accessChecker#canEditFieldLocale
+ * @param {string} contentTypeId
+ * @param {object} field
+ * @param {object} locale
+ * @returns {boolean}
+ */
+export const canEditFieldLocale = policyChecker.canEditFieldLocale;
 
 /**
  * @ngdoc method

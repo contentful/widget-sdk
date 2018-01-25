@@ -1,7 +1,6 @@
 import {partial} from 'lodash';
-// TODO These modules have global state :(
+// TODO This module has global state :(
 import * as accessChecker from 'access_control/AccessChecker';
-import policyAccessChecker from 'accessChecker/policy';
 
 /**
  * @ngdoc service
@@ -72,7 +71,7 @@ function canEditFieldLocale (entitySys, fieldId, localeCode) {
   const field = {apiName: fieldId};
   const locale = {code: localeCode};
   if (field) {
-    return policyAccessChecker.canEditFieldLocale(ctId, field, locale);
+    return accessChecker.canEditFieldLocale(ctId, field, locale);
   } else {
     return false;
   }
