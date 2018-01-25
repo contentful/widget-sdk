@@ -398,89 +398,90 @@ angular.module('contentful')
     var entry = params.entry;
     var defaultLocale = params.defaultLocale;
     var references = url.match(REFERENCES_PATTERN);
-    if (references) {
-      var promiseChain = Promise.resolve({
-        // current is an id of the initial entry, which we edit
-        // after iterating over references, new values will be added
-        // to this object
-        current: entry.sys.id,
-        // we store all resolved values here, to replace in the url
-        values: []
-      });
 
-      // we pop values from the array each step, so length of the array
-      // goes down with each step
-      while (references.length !== 0) {
-        // IIFE to keep `reference` and `valuePath` in closure - we need to
-        // get the value immediately, but it will be executed only after promise
-        // resolving
-        // after rewriting to ES6 we can just use `let`
-        (function () {
-          var referenceWithBraces = references.pop();
-          // remove first and the last curly braces, and split access parts
-          var wholeReference = referenceWithBraces.replace(/(^\{|\}$)/g, '').split(':');
-          // reference is like `references.current.lesson`. It will get all entries which
-          // this entry is linked to, choose the first, and assign it's value to the third
-          // param (so `lesson` will have a new value, which is picked by valuePath)
-          var reference = wholeReference[0];
-          // valuePath shows how to get value we need in the url. Default value is `sys.id`.
-          // value will be always taken in default locale
-          var valuePath = wholeReference[1];
-
-          // each "previous" reference get's resolved objects from all other references,
-          // so we need to chain them.
-          // this can be rewritten to generators afer switching to es6
-          promiseChain = promiseChain.then(function (params) {
-            var elements = reference.split('.');
-            // since the structure is `references.current.lesson`, we need to get
-            // the first element to get current ID
-            var entryId = params[elements[1]];
-
-            return spaceContext.cma.getEntries({
-              // we are interested only in entries, where current entry is linked to it
-              links_to_entry: entryId
-            }).then(function (entries) {
-              // this element could not exist, which is fine. we will receive an error,
-              // which we handle in the `catch` clause
-              var element = entries.items[0];
-              // we need to resolve value, which we'll insert into URL after resolving all references
-              // by default it is `sys.id`, but we use slugs in TEA
-              var path = getValuePath({ defaultLocale: defaultLocale, valuePath: valuePath });
-              var slugValue = _.get(element, path);
-              // we still need actual ID, since we can resolve entries with linked entities by this ID
-              var elementId = _.get(element, ['sys', 'id']);
-
-              var newParams = {};
-              // since the structure is `references.current.lesson`, we need to get
-              // the last element to assign it to a variable
-              newParams[elements[2]] = elementId;
-              // we need to add this value to the end. Because we are popping references as well,
-              // we'll end up with having first resolved reference as a last element
-              newParams.values = params.values.concat(slugValue);
-
-              return _.extend({}, params, newParams);
-            });
-          });
-        })();
-      }
-
-      return promiseChain.then(function (params) {
-        return url.replace(REFERENCES_PATTERN, function () {
-          return params.values.pop();
-        });
-      }).catch(function () {
-        // in case of failure, some references were not possible to resolve
-        // so we can not create full URL, and in this case we just redirect
-        // to the main page
-        var baseUrl = url.match(/^https?:\/\/.+?\//);
-
-        if (baseUrl) {
-          return baseUrl[0];
-        }
-      });
-    } else {
+    if (!references) {
       return Promise.resolve(url);
     }
+
+    var promiseChain = Promise.resolve({
+      // current is an id of the initial entry, which we edit
+      // after iterating over references, new values will be added
+      // to this object
+      current: entry.sys.id,
+      // we store all resolved values here, to replace in the url
+      values: []
+    });
+
+    // we pop values from the array each step, so length of the array
+    // goes down with each step
+    while (references.length !== 0) {
+      // IIFE to keep `reference` and `valuePath` in closure - we need to
+      // get the value immediately, but it will be executed only after promise
+      // resolving
+      // after rewriting to ES6 we can just use `let`
+      (function () {
+        var referenceWithBraces = references.pop();
+        // remove first and the last curly braces, and split access parts
+        var wholeReference = referenceWithBraces.replace(/(^\{|\}$)/g, '').split(':');
+        // reference is like `references.current.lesson`. It will get all entries which
+        // this entry is linked to, choose the first, and assign it's value to the third
+        // param (so `lesson` will have a new value, which is picked by valuePath)
+        var reference = wholeReference[0];
+        // valuePath shows how to get value we need in the url. Default value is `sys.id`.
+        // value will be always taken in default locale
+        var valuePath = wholeReference[1];
+
+        // each "previous" reference get's resolved objects from all other references,
+        // so we need to chain them.
+        // this can be rewritten to generators afer switching to es6
+        promiseChain = promiseChain.then(function (params) {
+          var elements = reference.split('.');
+          // since the structure is `references.current.lesson`, we need to get
+          // the first element to get current ID
+          var entryId = params[elements[1]];
+
+          return spaceContext.cma.getEntries({
+            // we are interested only in entries, where current entry is linked to it
+            links_to_entry: entryId
+          }).then(function (entries) {
+            // this element could not exist, which is fine. we will receive an error,
+            // which we handle in the `catch` clause
+            var element = entries.items[0];
+            // we need to resolve value, which we'll insert into URL after resolving all references
+            // by default it is `sys.id`, but we use slugs in TEA
+            var path = getValuePath({ defaultLocale: defaultLocale, valuePath: valuePath });
+            var slugValue = _.get(element, path);
+            // we still need actual ID, since we can resolve entries with linked entities by this ID
+            var elementId = _.get(element, ['sys', 'id']);
+
+            var newParams = {};
+            // since the structure is `references.current.lesson`, we need to get
+            // the last element to assign it to a variable
+            newParams[elements[2]] = elementId;
+            // we need to add this value to the end. Because we are popping references as well,
+            // we'll end up with having first resolved reference as a last element
+            newParams.values = params.values.concat(slugValue);
+
+            return _.extend({}, params, newParams);
+          });
+        });
+      })();
+    }
+
+    return promiseChain.then(function (params) {
+      return url.replace(REFERENCES_PATTERN, function () {
+        return params.values.pop();
+      });
+    }).catch(function () {
+      // in case of failure, some references were not possible to resolve
+      // so we can not create full URL, and in this case we just redirect
+      // to the main page
+      var baseUrl = url.match(/^https?:\/\/.+?\//);
+
+      if (baseUrl) {
+        return baseUrl[0];
+      }
+    });
   }
 
   /**

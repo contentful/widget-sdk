@@ -17,17 +17,18 @@ const ASSET_PROCESSING_TIMEOUT = 60000;
 // we will create discovery app for TEA
 const TEA_SPACE_ID = 'qz0n5cdakyl9';
 
+// we want to have this content preview as the first option for TEA space
+// it means that this content preview is guaranteed to be created first,
+// and in the list of content previews it will be on the first place
+const TEA_MAIN_CONTENT_PREVIEW = {
+  name: 'Node.js platform example',
+  description: 'The example app, implemented in Node.js',
+  baseUrl: 'https://the-example-app-nodejs.herokuapp.com'
+};
+
 // we want to create several content previews for TEA, one for each platform
-// however, we will wait only for one, namely node.js
+// combining with main content preview will make code less readable
 const TEA_CONTENT_PREVIEWS = [
-  {
-    name: 'Node.js platform example',
-    description: 'The example app, implemented in Node.js',
-    baseUrl: 'https://the-example-app-nodejs.herokuapp.com',
-    // we want to have Node.js as a first preview, so it will be selected
-    // by default, so preview will be opened in Node.js platform
-    wait: true
-  },
   {
     name: '.NET platform example',
     description: 'The example app, implemented in .NET',
@@ -396,25 +397,13 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
         }
       } = resolvedKey;
 
-      const promises = [];
+      // we want to wait until the main content preview is created
+      yield createContentPreview(TEA_MAIN_CONTENT_PREVIEW, {cdaToken, cpaToken});
 
-      const waitedPromise = TEA_CONTENT_PREVIEWS.reduce((promise, params) => {
-        if (params.wait) {
-          // we want to create this content preview first
-          return promise.then(() => createContentPreview(params, {cdaToken, cpaToken}));
-        }
-
-        promise.then(() => {
-          // we don't want to return this promise, so other requests will be
-          // executed in parallel
-          promises.push(createContentPreview(params, {cdaToken, cpaToken}));
-        });
-
-        return promise;
-      }, Promise.resolve());
-
-      yield waitedPromise;
-      yield Promise.all(promises);
+      // we set up all other content previews
+      yield Promise.all(TEA_CONTENT_PREVIEWS.map(params =>
+        createContentPreview(params, {cdaToken, cpaToken})
+      ));
     }
 
     function createContentPreview ({ name, description, baseUrl }, { cdaToken, cpaToken }) {
@@ -422,7 +411,7 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
         name,
         description,
         configs: contentTypes
-          .map(function (ct) {
+          .map(ct => {
             const fn = createConfigFns[ct.sys.id];
             return fn && fn({ ct, baseUrl, spaceId, cdaToken, cpaToken });
           })
@@ -430,7 +419,7 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
           .filter(Boolean)
       };
 
-      return contentPreview.create(contentPreviewConfig).then(function (createdContentPreview) {
+      return contentPreview.create(contentPreviewConfig).then(createdContentPreview => {
         Analytics.track('content_preview:created', {
           name: createdContentPreview.name,
           id: createdContentPreview.sys.id,
@@ -465,11 +454,9 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
         const contentPreviewConfig = {
           name: 'Discovery App',
           description: 'To help you get started, we\'ve added our own Discovery App to preview content.',
-          configs: contentTypes.map(function (ct) {
-            return createConfig(ct, accessToken);
-          })
+          configs: contentTypes.map(ct => createConfig(ct, accessToken))
         };
-        return contentPreview.create(contentPreviewConfig).then(function (createdContentPreview) {
+        return contentPreview.create(contentPreviewConfig).then((createdContentPreview) => {
           Analytics.track('content_preview:created', {
             name: createdContentPreview.name,
             id: createdContentPreview.sys.id,
