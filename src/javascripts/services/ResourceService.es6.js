@@ -4,8 +4,6 @@ import { getUsage, getLimit } from 'enforcements';
 import { apiUrl } from 'Config';
 import * as auth from 'Authentication';
 
-import { map, partialRight } from 'lodash';
-
 /*
 {
   "total": 1,
@@ -58,14 +56,15 @@ import { map, partialRight } from 'lodash';
 
 const flagName = 'feature-bv-2018-01-resources-api';
 
-// Organization is passed here to deal with circular dependencies
-//
-// It won't be necessary when the feature flag is removed.
-export default function createResourceService (type, id) {
+export default function createResourceService (id, type = 'space') {
   const endpoint = createEndpoint(type, id);
 
   return {
     get: function (resourceType) {
+      if (!resourceType) {
+        throw new Error('resourceType not supplied to ResourceService.get');
+      }
+
       return getCurrentVariation(flagName).then(flagValue => {
         if (flagValue === true) {
           return endpoint({
@@ -101,7 +100,11 @@ export default function createResourceService (type, id) {
       return this.get(resourceType).then(generateMessage);
     },
     messages: function () {
-      return this.getAll().then(partialRight(generateMessage, map));
+      return this.getAll().then(resources => resources.reduce((memo, resource) => {
+        memo[resource.sys.id] = generateMessage(resource);
+
+        return memo;
+      }, {}));
     }
   };
 }
@@ -130,15 +133,27 @@ function createResourceFromTokenData (resourceType, limit, usage) {
   };
 }
 
+function getResourceLimits (resource) {
+  if (!resource.parent && !resource.limits) {
+    return null;
+  }
+
+  if (resource.limits) {
+    return resource.limits;
+  } else if (resource.parent) {
+    return getResourceLimits(resource.parent);
+  }
+}
+
 function resourceMaximumLimitReached (resource) {
-  const limitMaximum = resource.limits.maximum;
+  const limitMaximum = getResourceLimits(resource).maximum;
   const usage = resource.usage;
 
   return usage >= limitMaximum;
 }
 
 function resourceIncludedLimitReached (resource) {
-  const limitIncluded = resource.limits.maximum;
+  const limitIncluded = getResourceLimits(resource).included;
   const usage = resource.usage;
 
   return usage >= limitIncluded;
