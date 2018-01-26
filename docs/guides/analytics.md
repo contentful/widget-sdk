@@ -178,7 +178,7 @@ yet).
 | paywall             | closed                                | <code>userCanUpgradePlan: bool</code>
 | paywall             | upgrade_clicked                       | <code>userCanUpgradePlan: bool</code>
 | content_type        | create                                | <code>actionData: obj<br>response: obj</code>
-| entry               | create                                | <code>actionData: obj<br>response: obj</code>
+| entry               | create                                | <code>actionData: obj<br>response: obj, eventOrigin: string</code>
 | asset               | create                                | <code>actionData: obj<br>response: obj</code>
 | api_key             | create                                | <code>actionData: obj<br>response: obj</code>
 | api                 | boilerplate                           | <code>platform: string<br>action: select|download|github</code>
