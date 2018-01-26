@@ -1,7 +1,7 @@
 import {get as getAtPath, snakeCase} from 'lodash';
 import {getSchema as fetchSchema} from './Schemas';
 
-import EntityAction from './transformers/SpaceEntityAction';
+import EntityAction from './transformers/EntityAction';
 import Generic from './transformers/Generic';
 import SpaceCreate from './transformers/SpaceCreate';
 import createExperimentTransformer from './transformers/Experiment';
