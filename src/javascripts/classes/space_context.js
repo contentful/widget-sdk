@@ -97,8 +97,9 @@ angular.module('contentful')
 
       self.docConnection = ShareJSConnection.create(
         Config.otUrl,
+        Auth,
         space.getId(),
-        Auth
+        'master'
       );
 
       self.memberships = MembershipRepo.create(self.endpoint);
