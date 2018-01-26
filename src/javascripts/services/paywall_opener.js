@@ -16,6 +16,8 @@ angular.module('contentful')
   var intercom = require('intercom');
   var Analytics = require('analytics/Analytics');
   var TheAccountView = require('TheAccountView');
+  var Config = require('Config');
+  var $window = require('$window');
 
   var paywallIsOpen = false;
 
@@ -52,12 +54,20 @@ angular.module('contentful')
       });
     }
 
+    function openSupport () {
+      if (intercom.isEnabled()) {
+        intercom.open();
+      } else {
+        $window.open(Config.supportUrl);
+      }
+    }
+
     function loadScopeData () {
       var organizationId = _.get(organization, 'sys.id');
       var scope = {
         offerToSetUpPayment: options.offerPlanUpgrade,
         setUpPayment: newUpgradeAction(),
-        openIntercom: intercom.open
+        openSupport: openSupport
       };
 
       if (options.offerPlanUpgrade) {
