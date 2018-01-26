@@ -27,17 +27,24 @@ describe('analytics/events/SpaceCreation#entityActionSuccess()', function () {
 
   describeTrackingOf({
     event: 'entry:create',
-    entityData: newEntityData('create', 'entry')
+    entityData: newEntityData('create', 'entry'),
+    tracksOrigin: true
   });
 });
 
-function describeTrackingOf ({ event, entityData }) {
-  describe(`tracking of \`${event}\``, function () {
-    it('tracks provided entity data', function () {
+function describeTrackingOf ({ event, entityData, tracksOrigin = false }) {
+  const withOrigin = tracksOrigin ? ' (with `event_origin`)' : '';
+
+  describe(`tracking of \`${event}\`${withOrigin}`, function () {
+    it('tracks provided entity data$', function () {
       this.SpaceCreation.entityActionSuccess('ct123', entityData);
 
+      const actualEntityData = tracksOrigin
+        ? Object.assign({ eventOrigin: 'space-creation' }, entityData)
+        : entityData;
+
       sinon.assert.calledWith(
-        this.analytics.track, event, entityData);
+        this.analytics.track, event, actualEntityData);
     });
 
     it('tracks template if provided', function () {
@@ -47,6 +54,9 @@ function describeTrackingOf ({ event, entityData }) {
         'ct123', entityData, template);
 
       const actualEntityData = _.extend({ template }, entityData);
+      if (tracksOrigin) {
+        actualEntityData.eventOrigin = 'example-space-creation';
+      }
 
       sinon.assert.calledWith(
         this.analytics.track, event, actualEntityData
