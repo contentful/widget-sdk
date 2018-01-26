@@ -19,6 +19,8 @@ angular.module('contentful')
   var EntityState = require('data/CMA/EntityState');
   var State = EntityState.State;
   var Action = EntityState.Action;
+  var Analytics = require('analytics/Analytics');
+  var spaceContext = require('spaceContext');
 
   var permissions = otDoc.permissions;
   var reverter = otDoc.reverter;
@@ -120,11 +122,7 @@ angular.module('contentful')
 
     controller.currentLabel = getStateLabel(state);
 
-    if (state === State.Published()) {
-      controller.hidePrimary = true;
-    } else {
-      controller.hidePrimary = false;
-    }
+    controller.hidePrimary = state === State.Published();
   });
 
   $scope.$watch(function () {
@@ -143,9 +141,26 @@ angular.module('contentful')
     return publicationWarnings.show()
     .then(function () {
       if (validator.run()) {
-        return applyAction(Action.Publish())
-        .then(function (data) {
-          trackVersioning.publishedRestored(data);
+        var contentType;
+        var entityInfo = $scope.entityInfo;
+        if (entityInfo.type === 'Entry') {
+          contentType = spaceContext.publishedCTs.get(entityInfo.contentTypeId);
+        }
+        var action = Action.Publish();
+        return applyAction(action)
+        .then(function (entity) {
+          if (contentType) {
+            Analytics.track('entry:publish', {
+              eventOrigin: (
+                $scope.bulkEditorContext
+                  ? 'bulk-editor'
+                  : 'entry-editor'
+              ),
+              contentType: contentType,
+              response: { data: entity }
+            });
+          }
+          trackVersioning.publishedRestored(entity);
         }, function (error) {
           validator.setApiResponseErrors(error);
         });

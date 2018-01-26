@@ -19,7 +19,7 @@ header.workbench-header
     ) Save as view
 
   .workbench-header__actions(ng-if="!showNoEntriesAdvice()")
-    +create-entry-button
+    +create-entry-button()
 
 .workbench-main(ng-hide="showNoEntriesAdvice()")
   .workbench-main__left-sidebar(

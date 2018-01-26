@@ -16,25 +16,6 @@ angular.module('contentful')
     currentFields = fields;
   });
 
-  controller.duplicate = Command.create(function () {
-    return spaceContext.space.createEntry(
-      entityInfo.contentTypeId,
-      {fields: currentFields}
-    )
-    .then(function (entry) {
-      // X.detail -> X.detail with altered entryId param
-      $state.go('^.detail', {
-        entryId: entry.getId(),
-        addToContext: false
-      });
-    })
-    .catch(function () {
-      notify(Notification.Error('duplicate'));
-    });
-  }, {
-    disabled: function () { return !canCreateEntry(); }
-  });
-
   controller.toggleDisabledFields = Command.create(function () {
     var show = !preferences.showDisabledFields;
     preferences.showDisabledFields = show;
@@ -50,32 +31,80 @@ angular.module('contentful')
     }
   });
 
-  controller.add = Command.create(function () {
-    var contentTypeId = entityInfo.contentTypeId;
-    Analytics.track('entry_editor:created_with_same_ct', {
-      contentTypeId: contentTypeId,
-      entryId: entityInfo.id
-    });
+  // Command options for the #add and #duplicate actions
+  var options = {
+    disabled: function () {
+      return !canCreateEntry;
+    }
+  };
 
-    return spaceContext.space.createEntry(contentTypeId, {})
-    .then(function (entry) {
-      // TODO Create a service that works like $state.go but cancels
-      // anythings if the state has changed in the meantime
-      // X.detail -> X.detail with altered entryId param
-      $state.go('^.detail', {
-        entryId: entry.getId(),
-        addToContext: false
+  controller.add = Command.create(
+    function () {
+      var contentType = getContentType(entityInfo);
+      Analytics.track('entry_editor:created_with_same_ct', {
+        contentTypeId: contentType.id,
+        entryId: entityInfo.id
       });
-    });
-    // TODO error handler
-  }, {
-    disabled: function () { return !canCreateEntry(); }
-  }, {
-    name: function () { return entityInfo.contentType.name; }
-  });
+      return spaceContext.space.createEntry(contentType.id, {})
+      .then(goToEntryDetailWithTracking(contentType.type))
+      .catch(function () { notify(Notification.Error('add')); });
+    },
+    options,
+    { name: function () { return entityInfo.contentType.name; } }
+  );
 
+  controller.duplicate = Command.create(
+    function () {
+      var contentType = getContentType(entityInfo);
+      return spaceContext.space.createEntry(contentType.id, {
+        fields: currentFields
+      })
+      .then(goToEntryDetailWithTracking(contentType.type, { duplicate: true }))
+      .catch(function () { notify(Notification.Error('duplicate')); });
+    },
+    options
+  );
+
+  function goToEntryDetailWithTracking (contentType, options) {
+    var eventOrigin = options && options.duplicate
+      ? 'entry-editor__duplicate'
+      : 'entry-editor';
+    return function (entry) {
+      trackEntryCreation(eventOrigin, contentType, entry);
+      goToEntryDetail(entry);
+    };
+  }
+
+  function getContentType (entityInfo) {
+    var contentTypeId = entityInfo.contentTypeId;
+    return {
+      id: contentTypeId,
+      type: spaceContext.publishedCTs.get(contentTypeId)
+    };
+  }
+
+  function trackEntryCreation (eventOrigin, contentType, response) {
+    Analytics.track('entry:create', {
+      eventOrigin: eventOrigin,
+      contentType: contentType,
+      response: response
+    });
+  }
+
+  function goToEntryDetail (entry) {
+    // TODO: Create a service that works like $state.go, but cancels
+    // if the state has changed in the meantime
+    // X.detail -> X.detail with altered entryId param
+    $state.go('^.detail', {
+      entryId: entry.getId(),
+      addToContext: false
+    });
+  }
 
   function canCreateEntry () {
-    return accessChecker.canPerformActionOnEntryOfType('create', entityInfo.contentTypeId);
+    return accessChecker.canPerformActionOnEntryOfType(
+      'create',
+      entityInfo.contentTypeId
+    );
   }
 }]);

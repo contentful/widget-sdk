@@ -1,4 +1,4 @@
-import {snakeCase, extend, omitBy, isUndefined, includes} from 'lodash';
+import {snakeCase, omitBy, isUndefined, includes} from 'lodash';
 import {track} from 'analytics/Analytics';
 
 const EVENTS_TO_SEND = [
@@ -23,7 +23,7 @@ export function entityActionSuccess (_entityId, entityData, templateName) {
         ? TEMPLATED_CREATION_EVENT_ORIGIN
         : EMPTY_CREATION_EVENT_ORIGIN;
     }
-    track(eventName, omitBy(extend(data, entityData), isUndefined));
+    track(eventName, omitBy({ ...data, ...entityData }, isUndefined));
   }
 }
 

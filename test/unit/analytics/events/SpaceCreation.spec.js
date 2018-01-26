@@ -40,7 +40,7 @@ function describeTrackingOf ({ event, entityData, tracksOrigin = false }) {
       this.SpaceCreation.entityActionSuccess('ct123', entityData);
 
       const actualEntityData = tracksOrigin
-        ? Object.assign({ eventOrigin: 'space-creation' }, entityData)
+        ? { ...entityData, eventOrigin: 'space-creation' }
         : entityData;
 
       sinon.assert.calledWith(
@@ -53,7 +53,7 @@ function describeTrackingOf ({ event, entityData, tracksOrigin = false }) {
       this.SpaceCreation.entityActionSuccess(
         'ct123', entityData, template);
 
-      const actualEntityData = _.extend({ template }, entityData);
+      const actualEntityData = { template, ...entityData };
       if (tracksOrigin) {
         actualEntityData.eventOrigin = 'example-space-creation';
       }

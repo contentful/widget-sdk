@@ -7,6 +7,7 @@ import modalDialog from 'modalDialog';
 import createEntity from 'cfReferenceEditor/createEntity';
 import spaceContext from 'spaceContext';
 import { onFeatureFlag } from 'utils/LaunchDarkly';
+import { track } from 'analytics/Analytics';
 
 import * as State from './State';
 import { getAvailableContentTypes } from './utils';
@@ -60,21 +61,38 @@ export default function create ($scope, widgetApi) {
   $scope.addNew = function (event) {
     if (event.preventDefault) {
       event.preventDefault();
-
+      const contentType = spaceContext.publishedCTs.get($scope.type);
       createEntity($scope.type, field, widgetApi.space)
         .then(function (entity) {
+          if ($scope.type === 'Entry') {
+            track('entry:create', {
+              eventOrigin: 'reference-editor',
+              contentType: contentType,
+              response: { data: entity }
+            });
+          }
           state.addEntities([entity]);
           editEntityAction(entity, -1);
         });
     } else {
-      // With the new ref button, event is actually the CT id.
-      // TODO: Clean this up once we roll out feature-at-11-2017-lots-of-cts-add-entry-and-link-reference
-      // to everyone.
-      const ctId = event;
       let newEntityPromise;
 
       if ($scope.type === 'Entry') {
-        newEntityPromise = widgetApi.space.createEntry(ctId, {});
+        // With the new ref button, event is actually the CT id.
+        // TODO: Clean this up once we roll out feature-at-11-2017-lots-of-cts-add-entry-and-link-reference
+        // to everyone.
+        const contentTypeId = event;
+        const contentType = spaceContext.publishedCTs.get(contentTypeId);
+
+        newEntityPromise = widgetApi.space.createEntry(contentTypeId, {})
+          .then((entry) => {
+            track('entry:create', {
+              eventOrigin: 'reference-editor',
+              contentType: contentType,
+              response: { data: entry }
+            });
+            return entry;
+          });
       } else {
         newEntityPromise = widgetApi.space.createAsset({});
       }

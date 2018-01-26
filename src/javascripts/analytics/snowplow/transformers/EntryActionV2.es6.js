@@ -1,24 +1,48 @@
 import EntityAction from './EntityAction';
+import { upperFirst } from 'lodash';
 
 export default function (eventName, eventData) {
-  const data = EntityAction(eventName, eventData);
-  data.data = Object.assign(data.data || {}, getData(eventData));
-  return data;
+  const [downcaseEntity, action] = eventName.split(':');
+  const entity = upperFirst(downcaseEntity);
+  const fullEventData = Object.assign(
+    {},
+    eventData,
+    { actionData: { entity, action } }
+  );
+  const trackingData = EntityAction(eventName, fullEventData);
+  Object.assign(trackingData.data, getData(eventData));
+  return trackingData;
 }
 
 function getData (eventData) {
   const data = getBaseData(eventData);
-  if (eventData.eventOrigin) {
-    data['event_origin'] = eventData.eventOrigin;
+  const { contentType, eventOrigin } = eventData;
+
+  if (eventOrigin) {
+    data['event_origin'] = eventOrigin;
   }
-  // TODO:danwe Add `number_of_reference_fields` field.
+  if (contentType) {
+    data['entry_ct_entry_reference_fields_count'] =
+      countEntryReferenceFields(contentType);
+  }
   return data;
+}
+
+function countEntryReferenceFields (contentType) {
+  return contentType.data.fields.filter(({ items = {}, ...field }) =>
+    isEntryReferenceField(field) ||
+    (field.type === 'Array' && isEntryReferenceField(items))
+  ).length;
+}
+
+function isEntryReferenceField ({ type, linkType }) {
+  return type === 'Link' && linkType === 'Entry';
 }
 
 function getBaseData (eventData) {
   return {
-    'executing_user_id': eventData.userId,
-    'organization_id': eventData.organizationId,
-    'space_id': eventData.spaceId
+    executing_user_id: eventData.userId,
+    organization_id: eventData.organizationId,
+    space_id: eventData.spaceId
   };
 }
