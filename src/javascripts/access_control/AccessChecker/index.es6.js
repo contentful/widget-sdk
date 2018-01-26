@@ -113,24 +113,11 @@ export const getSectionVisibility = () => sectionVisibility;
  */
 export const canEditFieldLocale = policyChecker.canEditFieldLocale;
 
-/**
- * Methods exported from GKPermissionChecker instance
- */
-export const {getUserQuota, hasFeature, canModifyRoles, canModifyUsers, canCreateOrganization} = [
-  'getUserQuota',
-  'hasFeature',
-  'canModifyRoles',
-  'canModifyUsers',
-  'canCreateOrganization'
-].reduce((hash, name) => {
-  hash[name] = function (...args) {
-    if (gkPermissionChecker) {
-      return gkPermissionChecker[name].apply(gkPermissionChecker, args);
-    }
-  };
-  return hash;
-}, {});
-
+export const getUserQuota = wrapGKMethod('getUserQuota');
+export const hasFeature = wrapGKMethod('hasFeature');
+export const canModifyRoles = wrapGKMethod('canModifyRoles');
+export const canModifyUsers = wrapGKMethod('canModifyUsers');
+export const canCreateOrganization = wrapGKMethod('canCreateOrganization');
 
 /**
  * @name accessChecker#can
@@ -420,4 +407,16 @@ function checkIfCanCreateSpace (context) {
 function determineEnforcement (reasonsDenied, entityType) {
   const org = get(space, 'organization');
   return Enforcements.determineEnforcement(org, reasonsDenied, entityType);
+}
+
+// Creates a function that invokes named method on gkPermissionChecker if it's
+// initialized.
+// Usage:
+// export const getUserQuota = wrapGKMethod('getUserQuota');
+function wrapGKMethod (name) {
+  return function (...args) {
+    if (gkPermissionChecker) {
+      return gkPermissionChecker[name].apply(gkPermissionChecker, args);
+    }
+  };
 }
