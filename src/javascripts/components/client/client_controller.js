@@ -75,9 +75,11 @@ angular.module('contentful')
       Analytics.enable(user);
       fontsDotCom.enable();
     } else {
-      Intercom.disable();
       logger.disable();
       Analytics.disable();
+      // Intercom is enabled by default, but because it is loaded by Segment,
+      // it will only be available when Analytics/Segment is.
+      Intercom.disable();
     }
   }
 
