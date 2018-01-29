@@ -71,15 +71,7 @@ angular.module('contentful')
         }
         var hoursLeft = trialEndMoment.diff(moment(), 'hours');
         return Math.max(hoursLeft, 0);
-      },
-      /**
-       * @ngdoc method
-       * @name Subscription#isAdditionalUsageAllowed
-       * @returns {boolean}
-       * @description
-       * Returns whether this additional usage has been enabled
-       */
-      isAdditionalUsageAllowed: _.constant(org.subscription.additional_usage_allowed)
+      }
     };
   }
 

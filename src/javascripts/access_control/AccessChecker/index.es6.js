@@ -1,18 +1,23 @@
-import $rootScope from '$rootScope';
-import $q from '$q';
-import authorization from 'authorization';
 import logger from 'logger';
-import * as OrganizationRoles from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
 import * as K from 'utils/kefir';
 import * as policyChecker from './PolicyChecker';
 import * as cache from './ResponseCache';
+import {create as createGKPermissionChecker} from './GKPermissionChecker';
+import {
+  broadcastEnforcement,
+  toType,
+  getContentTypeIdFor,
+  isAuthor
+} from './Utils';
 import {capitalize, capitalizeFirst} from 'stringUtils';
-import {get, some, includes, forEach, isString} from 'lodash';
-import require from 'require';
+import {get, some, forEach} from 'lodash';
+import * as Enforcements from 'access_control/Enforcements';
+
+export {wasForbidden} from './Utils';
+
 
 /**
- * @ngdoc service
  * @name accessChecker
  *
  * @description
@@ -33,15 +38,17 @@ const ACTIONS_FOR_ENTITIES = {
 
 const isInitializedBus = K.createPropertyBus(false);
 
+let authContext;
+let spaceAuthContext;
+let space;
+let organization;
+let gkPermissionChecker;
 let responses = {};
-let features = {};
-let userQuota = {};
 let sectionVisibility = {};
 
 export const isInitialized$ = isInitializedBus.property.skipDuplicates();
 
 /**
- * @ngdoc method
  * @name accessChecker#shouldHide
  * @param {string} actionName
  * @returns {boolean}
@@ -53,7 +60,6 @@ export const isInitialized$ = isInitializedBus.property.skipDuplicates();
 export const shouldHide = createResponseAttributeGetter('shouldHide');
 
 /**
- * @ngdoc method
  * @name accessChecker#shouldDisable
  * @param {string} actionName
  * @returns {boolean}
@@ -65,7 +71,6 @@ export const shouldHide = createResponseAttributeGetter('shouldHide');
 export const shouldDisable = createResponseAttributeGetter('shouldDisable');
 
 /**
- * @ngdoc method
  * @name accessChecker#getResponses
  * @returns {object}
  * @description
@@ -74,7 +79,6 @@ export const shouldDisable = createResponseAttributeGetter('shouldDisable');
 export const getResponses = () => responses;
 
 /**
- * @ngdoc method
  * @name accessChecker#getResponseByActionName
  * @returns {object}
  * @description
@@ -83,22 +87,12 @@ export const getResponses = () => responses;
 export const getResponseByActionName = (action) => responses[action];
 
 /**
- * @ngdoc method
  * @name accessChecker#getSectionVisibility
  * @returns {object}
  * @description
  * Returns section visibility information.
  */
 export const getSectionVisibility = () => sectionVisibility;
-
-/**
- * @ngdoc method
- * @name accessChecker#getUserQuota
- * @returns {object}
- * @description
- * Returns user quota information.
- */
-export const getUserQuota = () => userQuota;
 
 
 /**
@@ -110,8 +104,13 @@ export const getUserQuota = () => userQuota;
  */
 export const canEditFieldLocale = policyChecker.canEditFieldLocale;
 
+export const getUserQuota = wrapGKMethod('getUserQuota');
+export const hasFeature = wrapGKMethod('hasFeature');
+export const canModifyRoles = wrapGKMethod('canModifyRoles');
+export const canModifyUsers = wrapGKMethod('canModifyUsers');
+export const canCreateOrganization = wrapGKMethod('canCreateOrganization');
+
 /**
- * @ngdoc method
  * @name accessChecker#can
  * @param {string} action
  * @param {string} entityType
@@ -129,23 +128,64 @@ export function can (action, entityType) {
 }
 
 /**
- * @ngdoc method
- * @name accessChecker#reset
+ * @name accessChecker#setAuthContext
  * @description
- * Forcibly recollect all permission data
+ * Set new auth context and forcibly recollect all permission data
+ *
+ * @param {object} context - object containig two properties:
+ *        {object?} authContext,
+ *        {object?} spaceAuthToken
  */
-export function reset () {
-  cache.reset(authorization.spaceContext);
-  policyChecker.setMembership(getSpaceData('spaceMembership'));
-  collectResponses();
-  collectFeatures();
-  collectSectionVisibility();
-
-  isInitializedBus.set(!!authorization.authContext);
+export function setAuthContext (context) {
+  setContext({...context, space, organization});
 }
 
 /**
- * @ngdoc method
+ * @name accessChecker#setSpace
+ * @description
+ * Set new space data and forcibly recollect all permission data
+ *
+ * @param {object} newSpace - space data object
+ */
+export function setSpace (newSpace) {
+  setContext({
+    space: newSpace,
+    organization: get(newSpace, 'organization'),
+    authContext,
+    spaceAuthContext
+  });
+}
+
+export function setOrganization (newOrganization) {
+  setContext({
+    space: null,
+    organization: newOrganization,
+    authContext,
+    spaceAuthContext
+  });
+}
+
+function setContext (context) {
+  authContext = context.authContext;
+  spaceAuthContext = context.spaceAuthContext;
+  space = context.space;
+  organization = context.organization;
+
+  cache.reset(spaceAuthContext);
+  policyChecker.setMembership(get(space, 'spaceMembership'));
+  gkPermissionChecker = createGKPermissionChecker({space, organization});
+  collectResponses();
+  collectSectionVisibility();
+
+  // Access checker is initialized when at least an auth context is set.
+  // _Note:_ If `can...()` method is called on uninitialized access checker,
+  // it will return false rather than throw an error. It will also return false
+  // on org and space specific methods e.g. `canCreateContentType()` if space
+  // and organization are not set.
+  isInitializedBus.set(!!authContext);
+}
+
+/**
  * @name accessChecker#canPerformActionOnEntryOfType
  * @param {string} action
  * @param {string} ctId
@@ -170,7 +210,6 @@ export function canPerformActionOnEntryOfType (action, ctId) {
 }
 
 /**
- * @ngdoc method
  * @name accessChecker#canPerformActionOnEntity
  * @param {string} action
  * @param {API.Entry|API.Asset|string} entity
@@ -185,7 +224,6 @@ export function canPerformActionOnEntity (action, entity) {
 }
 
 /**
- * @ngdoc method
  * @name accessChecker#canUpdateEntry
  * @param {Client.Entry} entry
  * @returns {boolean}
@@ -202,7 +240,6 @@ export function canUpdateEntry (entry) {
 }
 
 /**
- * @ngdoc method
  * @name accessChecker#canUpdateAsset
  * @param {Client.Asset} asset
  * @returns {boolean}
@@ -219,7 +256,6 @@ export function canUpdateAsset (asset) {
 
 
 /**
- * @ngdoc method
  * @name accessChecker#canUpdateEntity
  * @param {Client.Entity} entity
  * @returns {boolean}
@@ -241,7 +277,6 @@ export function canUpdateEntity (entity) {
 }
 
 /**
- * @ngdoc method
  * @name accessChecker#canUploadMultipleAssets
  * @returns {boolean}
  * @description
@@ -256,7 +291,6 @@ export function canUploadMultipleAssets () {
 }
 
 /**
- * @ngdoc method
  * @name accessChecker#canModifyApiKeys
  * @returns {boolean}
  * @description
@@ -275,42 +309,18 @@ export function canModifyApiKeys () {
 export function canReadApiKeys () {
   return get(responses, 'readApiKey.can', false);
 }
-
 /**
- * @ngdoc method
- * @name accessChecker#canModifyRoles
- * @returns {boolean}
- * @description
- * Returns true if Roles can be modified.
- */
-export function canModifyRoles () {
-  return isSuperUser() && get(features, 'customRoles', false);
-}
-
-/**
- * @ngdoc method
- * @name accessChecker#canModifyUsers
- * @returns {boolean}
- * @description
- * Returns true if Users can be modified.
- */
-export function canModifyUsers () {
-  return isSuperUser();
-}
-
-/**
- * @ngdoc method
  * @name accessChecker#canCreateSpace
  * @returns {boolean}
  * @description
  * Returns true if space can be created.
  */
 export function canCreateSpace () {
-  if (!authorization.authContext || !canCreateSpaceInAnyOrganization()) {
+  if (!authContext || !canCreateSpaceInAnyOrganization()) {
     return false;
   }
 
-  const response = checkIfCanCreateSpace(authorization.authContext);
+  const response = checkIfCanCreateSpace(authContext);
   if (!response) {
     broadcastEnforcement(getEnforcement('create', 'Space'));
   }
@@ -319,7 +329,6 @@ export function canCreateSpace () {
 }
 
 /**
- * @ngdoc method
  * @name accessChecker#canCreateSpaceInAnyOrganization
  * @returns {boolean}
  * @description
@@ -331,7 +340,6 @@ export function canCreateSpaceInAnyOrganization () {
 }
 
 /**
- * @ngdoc method
  * @name accessChecker#canCreateSpaceInOrganization
  * @param {string} organizationId
  * @returns {boolean}
@@ -339,46 +347,13 @@ export function canCreateSpaceInAnyOrganization () {
  * Returns true if space can be created in an organization with a provided ID.
  */
 export function canCreateSpaceInOrganization (organizationId) {
-  if (!authorization.authContext) { return false; }
+  if (!authContext) { return false; }
 
-  const authContext = authorization.authContext;
   if (authContext.hasOrganization(organizationId)) {
     return checkIfCanCreateSpace(authContext.organization(organizationId));
   } else {
     return false;
   }
-}
-
-
-/**
- * @ngdoc method
- * @name accessChecker#canCreateOrganization
- * @returns {boolean}
- * @description
- * Returns true if current user can create a new organization.
- */
-export function canCreateOrganization () {
-  return get(K.getValue(TokenStore.user$), 'canCreateOrganization', false);
-}
-
-/**
- * @ngdoc method
- * @name accessChecker#wasForbidden
- * @param {object} context
- * @returns {function}
- * @description
- * Returns function that will check a status code of response.
- * If it's 403/4, it'll set "forbidden" key on a provided context object.
- */
-export function wasForbidden (context) {
-  return function (res) {
-    if (includes([403, 404], parseInt(get(res, 'statusCode'), 10))) {
-      context.forbidden = true;
-      return $q.resolve(context);
-    } else {
-      return $q.reject(res);
-    }
-  };
 }
 
 function collectResponses () {
@@ -401,15 +376,7 @@ function collectSectionVisibility () {
     asset: !shouldHide('readAsset') || policyChecker.canAccessAssets(),
     apiKey: !shouldHide('readApiKey'),
     settings: !shouldHide('updateSettings'),
-    spaceHome: getSpaceData('spaceMembership.admin', false)
-  };
-}
-
-function collectFeatures () {
-  features = getSpaceData('organization.subscriptionPlan.limits.features', {});
-  userQuota = {
-    limit: getSpaceData('organization.subscriptionPlan.limits.permanent.organizationMembership', -1),
-    used: getSpaceData('organization.usage.permanent.organizationMembership', 1)
+    spaceHome: get(space, 'spaceMembership.admin')
   };
 }
 
@@ -423,55 +390,26 @@ function createResponseAttributeGetter (attrName) {
 function getPermissions (action, entity) {
   const response = { shouldHide: false, shouldDisable: false };
 
-  if (!authorization.spaceContext) { return response; }
+  if (!spaceAuthContext) { return response; }
   response.can = cache.getResponse(action, entity);
   if (response.can) { return response; }
 
-  const reasons = getReasonsDenied(action, entity);
+  const reasons = spaceAuthContext.reasonsDenied(action, entity);
   response.reasons = (reasons && reasons.length > 0) ? reasons : null;
   response.enforcement = getEnforcement(action, entity);
   response.shouldDisable = !!response.reasons;
   response.shouldHide = !response.shouldDisable;
+
   broadcastEnforcement(response.enforcement);
 
   return response;
 }
 
-function broadcastEnforcement (enforcement) {
-  if (enforcement) {
-    $rootScope.$broadcast('persistentNotification', {
-      message: enforcement.message,
-      actionMessage: enforcement.actionMessage,
-      action: enforcement.action
-    });
-  }
-}
-
 function getEnforcement (action, entity) {
-  const reasonsDenied = getReasonsDenied(action, entity);
+  const reasonsDenied = spaceAuthContext.reasonsDenied(action, entity);
   const entityType = toType(entity);
 
   return determineEnforcement(reasonsDenied, entityType);
-}
-
-function toType (entity) {
-  if (isString(entity)) {
-    return entity;
-  } else {
-    return get(entity, 'sys.type', null);
-  }
-}
-
-function getReasonsDenied (action, entity) {
-  return authorization.spaceContext.reasonsDenied(action, entity);
-}
-
-function getContentTypeIdFor (entry) {
-  return get(entry, 'data.sys.contentType.sys.id');
-}
-
-function getAuthorIdFor (entry) {
-  return get(entry, 'data.sys.createdBy.sys.id');
 }
 
 function canPerformActionOnType (action, type) {
@@ -488,37 +426,19 @@ function checkIfCanCreateSpace (context) {
   return response;
 }
 
-function isAuthor (entity) {
-  const author = getAuthorIdFor(entity);
-  const currentUserId = getSpaceData('spaceMembership.user.sys.id');
-
-  return author === currentUserId;
-}
-
-function isSuperUser () {
-  const isSpaceAdmin = getSpaceData('spaceMembership.admin', false);
-  const organization = getSpaceData('organization');
-  const isOrganizationAdmin = OrganizationRoles.isAdmin(organization);
-  const isOrganizationOwner = OrganizationRoles.isOwner(organization);
-
-  return isSpaceAdmin || isOrganizationAdmin || isOrganizationOwner;
-}
-
 function determineEnforcement (reasonsDenied, entityType) {
-  // Prevent circular deps
-  return require('access_control/Enforcements').determineEnforcement(reasonsDenied, entityType);
+  const org = get(space, 'organization');
+  return Enforcements.determineEnforcement(org, reasonsDenied, entityType);
 }
 
-function getSpaceData (path, defaultValue) {
-  // Prevent circular deps
-  return require('spaceContext').getData(path, defaultValue);
-}
-
-$rootScope.$watchCollection(function () {
-  return {
-    authContext: authorization.authContext,
-    spaceContext: authorization.spaceContext,
-    organization: getSpaceData('organization'),
-    spaceMembership: getSpaceData('spaceMembership')
+// Creates a function that invokes named method on gkPermissionChecker if it's
+// initialized.
+// Usage:
+// export const getUserQuota = wrapGKMethod('getUserQuota');
+function wrapGKMethod (name) {
+  return function (...args) {
+    if (gkPermissionChecker) {
+      return gkPermissionChecker[name].apply(gkPermissionChecker, args);
+    }
   };
-}, reset);
+}

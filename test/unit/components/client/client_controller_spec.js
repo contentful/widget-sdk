@@ -225,6 +225,8 @@ describe('Client Controller', function () {
         };
 
         this.analytics = this.$inject('analytics/Analytics');
+        this.intercom = this.$inject('intercom');
+        this.intercom.disable = sinon.stub();
       });
 
       it('sets analytics user data and enables tracking', function () {
@@ -239,6 +241,7 @@ describe('Client Controller', function () {
         this.prepare();
         sinon.assert.notCalled(this.analytics.enable);
         sinon.assert.called(this.analytics.disable);
+        sinon.assert.called(this.intercom.disable);
         sinon.assert.called(logger.disable);
       });
     });

@@ -1,7 +1,11 @@
 'use strict';
 
 angular.module('contentful')
-.factory('authorization', ['worf', 'logger', function (worf, logger) {
+.factory('authorization', ['require', function (require) {
+  var worf = require('worf');
+  var logger = require('logger');
+  var accessChecker = require('access_control/AccessChecker');
+
   function Authorization () {}
 
   Authorization.prototype = {
@@ -32,6 +36,10 @@ angular.module('contentful')
       } else {
         this.spaceContext = null;
       }
+      accessChecker.setAuthContext({
+        authContext: this.authContext,
+        spaceAuthContext: this.spaceContext
+      });
     },
     isUpdated: function (tokenLookup, space) {
       return this._tokenLookup && this._space &&

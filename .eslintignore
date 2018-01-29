@@ -26,7 +26,6 @@ test/unit/services/revision_spec.js
 test/unit/services/validation_views_spec.js
 test/unit/services/authorization_spec.js
 test/unit/services/editing_interfaces_helpers_spec.js
-test/unit/services/enforcements_spec.js
 test/unit/services/features_spec.js
 test/unit/services/promised_loader_spec.js
 test/unit/services/reload_notification_spec.js

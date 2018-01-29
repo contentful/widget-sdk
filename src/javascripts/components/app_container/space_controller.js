@@ -16,7 +16,7 @@ angular.module('contentful')
     return authorization.isUpdated(TokenStore.getTokenLookup(), spaceContext.space);
   }, function () {
     if (TokenStore.getTokenLookup()) {
-      var enforcement = enforcements.getPeriodUsage();
+      var enforcement = enforcements.getPeriodUsage(spaceContext.organization);
       if (enforcement) {
         $rootScope.$broadcast('persistentNotification', {
           message: enforcement.message,
