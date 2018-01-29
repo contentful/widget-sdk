@@ -95,8 +95,10 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
   function reload () {
     return userListHandler.reset()
     .then(onResetResponse, accessChecker.wasForbidden($scope.context))
-    .catch(ReloadNotification.basicErrorHandler)
-    .finally(accessChecker.reset);
+    // Refresh token in case the changes affected current user.
+    // TODO - handle this in the user action
+    .finally(TokenStore.refresh())
+    .catch(ReloadNotification.basicErrorHandler);
   }
 
   function onResetResponse () {

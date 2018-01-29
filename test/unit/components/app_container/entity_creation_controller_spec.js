@@ -11,16 +11,13 @@ describe('EntityCreationController', function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'computeUsage',
-        'setSpaceContext',
         'enforcement',
         'track'
       ]);
 
       $provide.value('access_control/Enforcements', {
-        getPeriodUsage: stubs.periodUsage,
-        computeUsage: stubs.computeUsage,
-        determineEnforcement: stubs.enforcement,
-        setSpaceContext: stubs.setSpaceContext
+        computeUsageForOrganization: stubs.computeUsage,
+        determineEnforcement: stubs.enforcement
       });
     });
 
@@ -70,7 +67,7 @@ describe('EntityCreationController', function () {
       });
 
       it('determines enforcements', function () {
-        sinon.assert.calledWith(stubs.enforcement, [], 'entry');
+        sinon.assert.calledWith(stubs.enforcement, this.spaceContext.space.organization, [], 'entry');
       });
 
       it('notifies of the error', function () {
@@ -122,7 +119,7 @@ describe('EntityCreationController', function () {
       });
 
       it('determines enforcements', function () {
-        sinon.assert.calledWith(stubs.enforcement, [], 'asset');
+        sinon.assert.calledWith(stubs.enforcement, this.spaceContext.space.organization, [], 'asset');
       });
 
       it('notifies of the error', function () {
@@ -163,7 +160,7 @@ describe('EntityCreationController', function () {
     });
 
     it('computes the locale usage', function () {
-      sinon.assert.calledWith(stubs.computeUsage, 'locale');
+      sinon.assert.calledWith(stubs.computeUsage, this.spaceContext.space.organization, 'locale');
     });
 
     it('navigates to editor', function () {

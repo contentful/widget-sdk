@@ -39,6 +39,7 @@ angular.module('contentful')
   var createViewMigrator = require('data/ViewMigrator').default;
   var client = require('client');
   var createLocaleRepo = require('data/CMA/LocaleRepo').default;
+  var accessChecker = require('access_control/AccessChecker');
 
   var spaceContext = {
     /**
@@ -69,6 +70,8 @@ angular.module('contentful')
      * @returns {Promise<self>}
      */
     resetWithSpace: function (space) {
+      accessChecker.setSpace(space);
+
       space = client.newSpace(space);
       var self = this;
 
