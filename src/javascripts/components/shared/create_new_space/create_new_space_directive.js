@@ -32,6 +32,7 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var spaceTemplateEvents = require('analytics/events/SpaceCreation');
   var createOrgEndpoint = require('access_control/OrganizationMembershipRepository').createEndpoint;
+  var createResourceService = require('services/ResourceService').default;
   var getSpaceRatePlans = require('account/pricing/PricingDataProvider').getSpaceRatePlans;
 
   K.onValueScope($scope, TokenStore.organizations$, function (organizations) {
@@ -255,28 +256,34 @@ angular.module('contentful')
   function handleSpaceCreationFailure (organization, err) {
     controller.createSpaceInProgress = false;
 
-    var errors = _.get(err, 'body.details.errors');
-    var usage = enforcements.computeUsageForOrganization(organization, 'space');
-    var fieldErrors = [
-      {name: 'length', path: 'name', message: 'Space name is too long'},
-      {name: 'invalid', path: 'default_locale', message: 'Invalid locale'}
-    ];
+    var orgId = organization.getId();
+    var resources = createResourceService(orgId, 'organization');
 
-    if (usage) {
-      handleUsageWarning(usage);
-      return;
-    }
+    resources.canCreate('space').then(function (canCreate) {
+      var errors = _.get(err, 'body.details.errors');
+      var fieldErrors = [
+        {name: 'length', path: 'name', message: 'Space name is too long'},
+        {name: 'invalid', path: 'default_locale', message: 'Invalid locale'}
+      ];
 
-    _.forEach(fieldErrors, function (e) {
-      if (hasErrorOnField(errors, e.path, e.name)) {
-        showFieldError(e.path, e.message);
+      if (!canCreate) {
+        resources.messagesFor('space').then(function (errorObj) {
+          handleUsageWarning(errorObj.error);
+        });
+        return;
+      }
+
+      _.forEach(fieldErrors, function (e) {
+        if (hasErrorOnField(errors, e.path, e.name)) {
+          showFieldError(e.path, e.message);
+        }
+      });
+
+      if (!errors || !errors.length) {
+        showFormError('Could not create Space. If the problem persists please get in contact with us.');
+        logger.logServerWarn('Could not create Space', {error: err});
       }
     });
-
-    if (!errors || !errors.length) {
-      showFormError('Could not create Space. If the problem persists please get in contact with us.');
-      logger.logServerWarn('Could not create Space', {error: err});
-    }
   }
 
   // Form validations

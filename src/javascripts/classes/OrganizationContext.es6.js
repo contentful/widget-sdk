@@ -37,6 +37,10 @@ export function create (organization) {
   );
 
   return {
+    getId: function () {
+      return organization.sys.id;
+    },
+
     /**
      * @ngdoc property
      * @name OrganizationContext#getAllUsers
