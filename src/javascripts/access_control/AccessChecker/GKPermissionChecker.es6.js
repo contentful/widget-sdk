@@ -3,8 +3,7 @@ import * as TokenStore from 'services/TokenStore';
 import * as K from 'utils/kefir';
 import {get} from 'lodash';
 
-export function create (space) {
-  const organization = get(space, 'organization');
+export function create ({space, organization}) {
   const features = get(organization, 'subscriptionPlan.limits.features', {});
   const userQuota = {
     limit: get(organization, 'subscriptionPlan.limits.permanent.organizationMembership', -1),

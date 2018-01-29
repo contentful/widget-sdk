@@ -41,19 +41,10 @@ const isInitializedBus = K.createPropertyBus(false);
 let authContext;
 let spaceAuthContext;
 let space;
+let organization;
 let gkPermissionChecker;
 let responses = {};
 let sectionVisibility = {};
-
-K.onValue(isInitializedBus.property, function (value) {
-  if (value) {
-    cache.reset(spaceAuthContext);
-    policyChecker.setMembership(get(space, 'spaceMembership'));
-    gkPermissionChecker = createGKPermissionChecker(space);
-    collectResponses();
-    collectSectionVisibility();
-  }
-});
 
 export const isInitialized$ = isInitializedBus.property.skipDuplicates();
 
@@ -146,9 +137,7 @@ export function can (action, entityType) {
  *        {object?} spaceAuthToken
  */
 export function setAuthContext (context) {
-  authContext = context.authContext;
-  spaceAuthContext = context.spaceAuthContext;
-  isInitializedBus.set(!!(authContext && spaceAuthContext && space));
+  setContext({...context, space, organization});
 }
 
 /**
@@ -159,8 +148,41 @@ export function setAuthContext (context) {
  * @param {object} newSpace - space data object
  */
 export function setSpace (newSpace) {
-  space = newSpace;
-  isInitializedBus.set(!!(authContext && spaceAuthContext && space));
+  setContext({
+    space: newSpace,
+    organization: get(newSpace, 'organization'),
+    authContext,
+    spaceAuthContext
+  });
+}
+
+export function setOrganization (newOrganization) {
+  setContext({
+    space: null,
+    organization: newOrganization,
+    authContext,
+    spaceAuthContext
+  });
+}
+
+function setContext (context) {
+  authContext = context.authContext;
+  spaceAuthContext = context.spaceAuthContext;
+  space = context.space;
+  organization = context.organization;
+
+  cache.reset(spaceAuthContext);
+  policyChecker.setMembership(get(space, 'spaceMembership'));
+  gkPermissionChecker = createGKPermissionChecker({space, organization});
+  collectResponses();
+  collectSectionVisibility();
+
+  // Access checker is initialized when at least an auth context is set.
+  // _Note:_ If `can...()` method is called on uninitialized access checker,
+  // it will return false rather than throw an error. It will also return false
+  // on org and space specific methods e.g. `canCreateContentType()` if space
+  // and organization are not set.
+  isInitializedBus.set(!!authContext);
 }
 
 /**

@@ -46,23 +46,20 @@ describe('Access Checker', function () {
 
   describe('Initialization', function () {
     it('sets isInitialized$ to false when authContext is null', function () {
+      ac.setOrganization(null);
+      ac.setAuthContext({authContext: null});
+      expect(K.getValue(ac.isInitialized$)).toEqual(false);
+
+      ac.setOrganization({});
+      expect(K.getValue(ac.isInitialized$)).toEqual(false);
+
       ac.setSpace(mockSpace);
-      ac.setAuthContext({authContext: null, spaceAuthContext: mockSpaceAuthContext});
       expect(K.getValue(ac.isInitialized$)).toEqual(false);
     });
-
-    it('sets isInitialized$ to false when spaceAuthContext is null', function () {
-      ac.setSpace(mockSpace);
-      ac.setAuthContext({authContext: {}, spaceAuthContext: null});
-      expect(K.getValue(ac.isInitialized$)).toEqual(false);
+    it('sets isInitialized$ to true when authContext is set', function () {
+      ac.setAuthContext({authContext: {}});
+      expect(K.getValue(ac.isInitialized$)).toEqual(true);
     });
-
-    it('sets isInitialized$ to false when space is null', function () {
-      ac.setSpace(null);
-      ac.setAuthContext({authContext: {}, spaceAuthContext: mockSpaceAuthContext});
-      expect(K.getValue(ac.isInitialized$)).toEqual(false);
-    });
-
     it('sets isInitialized$ to true when authContext, spaceAuthContext and space are set', function () {
       ac.setSpace(mockSpace);
       ac.setAuthContext({authContext: {}, spaceAuthContext: mockSpaceAuthContext});

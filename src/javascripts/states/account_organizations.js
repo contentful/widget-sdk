@@ -157,7 +157,12 @@ angular.module('contentful')
         workbenchHeader({ title: [ definition.title ] }),
         h('cf-account-view', { context: 'context' })
       ],
-      onEnter: ['$stateParams', function ($stateParams) {
+      onEnter: ['$stateParams', 'require', function ($stateParams, require) {
+        var accessChecker = require('access_control/AccessChecker');
+        var TokenStore = require('services/TokenStore');
+        TokenStore.getOrganization($stateParams.orgId).then(function (org) {
+          accessChecker.setOrganization(org);
+        });
         store.set('lastUsedOrg', $stateParams.orgId);
       }]
     };
