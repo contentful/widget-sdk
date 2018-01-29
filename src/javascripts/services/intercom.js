@@ -22,14 +22,25 @@
 
 angular.module('contentful').factory('intercom', ['require', function (require) {
   var $window = require('$window');
+  var isDisabled = false;
 
   var intercom = {
     isLoaded: isLoaded,
+    isEnabled: isEnabled,
+    disable: disable,
     open: openIntercom
   };
 
   function isLoaded () {
     return !!$window.Intercom;
+  }
+
+  function isEnabled () {
+    return !isDisabled;
+  }
+
+  function disable () {
+    isDisabled = true;
   }
 
   function openIntercom () {

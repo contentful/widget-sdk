@@ -18,6 +18,7 @@ angular.module('contentful')
   var fontsDotCom = require('fontsDotCom');
   var CreateSpace = require('services/CreateSpace');
   var refreshNavState = require('navigation/NavState').makeStateRefresher($state, spaceContext);
+  var Intercom = require('intercom');
 
   // TODO remove this eventually. All components should access it as a service
   $scope.spaceContext = spaceContext;
@@ -76,6 +77,9 @@ angular.module('contentful')
     } else {
       logger.disable();
       Analytics.disable();
+      // Intercom is enabled by default, but because it is loaded by Segment,
+      // it will only be available when Analytics/Segment is.
+      Intercom.disable();
     }
   }
 

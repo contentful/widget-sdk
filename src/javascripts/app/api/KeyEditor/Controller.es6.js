@@ -55,8 +55,8 @@ function mountBoilerplates ($scope, apiKey) {
 }
 
 function mountContactUs ($scope) {
-  LD.onFeatureFlag($scope, CONTACT_US_BOILERPLATE_FLAG_NAME, isVisible => {
-    if (isVisible) {
+  LD.onFeatureFlag($scope, CONTACT_US_BOILERPLATE_FLAG_NAME, flag => {
+    if (flag && Intercom.isEnabled()) {
       $scope.contactUsComponent = renderContactUs({
         track: () => track('element:click', {
           elementId: 'contact_sales_boilerplate',
