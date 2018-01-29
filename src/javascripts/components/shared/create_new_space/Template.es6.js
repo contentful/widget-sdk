@@ -1,4 +1,5 @@
 import {h} from 'utils/hyperscript';
+import spinner from 'ui/Components/Spinner';
 
 export default function () {
   return h('div.create-new-space-dialog.modal-dialog', [
@@ -158,11 +159,23 @@ function renderTemplateToggle () {
 
 function renderSpaceTemplates () {
   return h('div.modal-dialog__slice.create-new-space__templates', {
-    ngClass: "{'open': createSpace.newSpace.useTemplate && createSpace.templates.length}"
+    ngClass: "{'open': createSpace.newSpace.useTemplate && createSpace.templates.length, 'close': !createSpace.newSpace.useTemplate}"
   }, [
     h('cf-icon', {name: 'arrow-up'}),
     h('div.create-new-space__templates__inner', [
-      h('div', [
+      h('div', {
+        ngShow: '!createSpace.templates || !createSpace.templates.length',
+        style: {
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }
+      }, [
+        spinner({diameter: '32px', style: {display: 'block'}})
+      ]),
+      h('div', {
+        ngShow: 'createSpace.templates && createSpace.templates.length'
+      }, [
         h('div.create-new-space__templates__nav', [
           h('a.create-new-space__templates__navitem', {
             ngRepeat: 'template in createSpace.templates',
