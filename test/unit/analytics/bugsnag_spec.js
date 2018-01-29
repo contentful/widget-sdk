@@ -44,13 +44,14 @@ describe('bugsnag', function () {
   it('adds user information', function () {
     this.bugsnag.enable({
       sys: {id: 'UID'},
-      firstName: 'FIRST NAME',
-      lastName: 'LAST NAME'
+      organizationMemberships: [
+        {organization: {sys: {id: 'foo'}}},
+        {organization: {sys: {id: 'bar'}}}
+      ]
     });
     this.$apply();
     expect(this.BugsnagStub.user.id).toEqual('UID');
-    expect(this.BugsnagStub.user.firstName).toEqual('FIRST NAME');
-    expect(this.BugsnagStub.user.lastName).toEqual('LAST NAME');
+    expect(this.BugsnagStub.user.organizations).toEqual('foo, bar');
   });
 
   it('enabling after disabling does not send notifications', function () {
