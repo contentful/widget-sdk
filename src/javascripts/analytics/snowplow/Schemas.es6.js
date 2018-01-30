@@ -40,6 +40,11 @@ registerSchema({
 });
 
 registerSchema({
+  name: 'entry_publish',
+  version: '2-0-0'
+});
+
+registerSchema({
   name: 'asset_create',
   version: '1-0-0'
 });

@@ -58,6 +58,7 @@ registerActionEvent('experiment:interaction', createExperimentTransformer('inter
 
 registerActionEvent('content_type:create', EntityAction);
 registerActionEvent('entry:create', EntryActionV2);
+registerActionEvent('entry:publish', EntryActionV2);
 registerActionEvent('api_key:create', EntityAction);
 registerActionEvent('asset:create', EntityAction);
 
