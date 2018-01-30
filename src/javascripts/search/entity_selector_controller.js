@@ -270,7 +270,11 @@ angular.module('contentful')
   }
 
   function loadMore () {
-    if (!$scope.isLoading && !$scope.paginator.isAtLast()) {
+    // we can specify in the config that loading more is not needed
+    // for example, if we fetch everything during the first call
+    if (!$scope.config.noPagination &&
+        !$scope.isLoading &&
+        !$scope.paginator.isAtLast()) {
       $scope.paginator.next();
       load();
     }
