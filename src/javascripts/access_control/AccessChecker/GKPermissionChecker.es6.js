@@ -84,14 +84,15 @@ export function create ({space, organization}) {
 
     // Begin feature flag code - feature-bv-2018-01-features-api
     return require('utils/LaunchDarkly').getCurrentVariation('feature-bv-2018-01-features-api').then((useFeaturesApi) => {
-      if (!useFeaturesApi) {
+      if (useFeaturesApi || organization.pricingVersion === 'pricing_version_2') {
+        // Get enabled features from API if feature flag is on, or if token
+        // doesn't have features because of new pricing version.
+        return getEnabledOrgFeatures(orgEndpoint)
+          .then((items) => items.map((feature) => feature['internal_name']));
+      } else {
         // Get enabled features from token if feature flag is off
         const features = get(organization, 'subscriptionPlan.limits.features', {});
         return Promise.resolve(features);
-      } else {
-        // Get enabled features from API if feature flag is on
-        return getEnabledOrgFeatures(orgEndpoint)
-          .then((items) => items.map((feature) => feature['internal_name']));
       }
     });
     // End feature flag code - feature-bv-2018-01-features-api
