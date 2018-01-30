@@ -153,7 +153,7 @@ export default function create ($scope, contentTypeIds) {
    * @type {Command}
    */
   controller.cancel = Command.create(function () {
-    return $state.go('spaces.detail.content_types.list');
+    return $state.go('^.^.list');
   }, {
     available: function () {
       return $scope.context.isNew;
@@ -249,7 +249,7 @@ export default function create ($scope, contentTypeIds) {
   }
 
   function goToDetails (contentType) {
-    return $state.go('spaces.detail.content_types.detail.fields', {
+    return $state.go('^.^.detail.fields', {
       contentTypeId: contentType.getId()
     });
   }

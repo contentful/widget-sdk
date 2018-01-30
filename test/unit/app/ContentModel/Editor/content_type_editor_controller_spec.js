@@ -268,7 +268,7 @@ describe('ContentTypeEditor Controller', function () {
       $state.go = sinon.stub();
       openCreateDialog.rejects();
       createContentType();
-      sinon.assert.calledWithExactly($state.go, 'spaces.detail.content_types.list');
+      sinon.assert.calledWithExactly($state.go, '^.^.list');
     });
   });
 

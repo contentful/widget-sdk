@@ -2,7 +2,9 @@ import * as sinon from 'helpers/sinon';
 
 describe('The ContentType list directive', function () {
   it('filters content types by name', function () {
-    module('contentful/test');
+    module('contentful/test', function ($provide) {
+      $provide.value('$state', {current: {}, href: () => {}});
+    });
 
     const contentTypes = [
       {sys: {id: 1}, name: 'A'},
