@@ -49,7 +49,7 @@ export function create ({space, organization}) {
   }
 
   function hasFeature (name) {
-    return collectFeatures().then((features) => get(features, name, false));
+    return collectFeatures().then((features) => features.indexOf(name) >= 0);
   }
 
   /**
@@ -94,7 +94,8 @@ function loadOrgFeatures (organization) {
         });
     } else {
       // Get enabled features from token if feature flag is off
-      const features = get(organization, 'subscriptionPlan.limits.features', {});
+      const featuresHash = get(organization, 'subscriptionPlan.limits.features', {});
+      const features = Object.keys(featuresHash).filter((key) => featuresHash[key]);
       return Promise.resolve(features);
     }
   });
