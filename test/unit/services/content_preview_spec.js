@@ -57,7 +57,7 @@ describe('contentPreview', function () {
       sys: { id: id },
       configurations: [
         {
-          url: 'https://www.test.com/{entry_id}/{entry_field.title}/{entry_field.slug }',
+          url: 'https://www.test.com/{entry_id}/{entry_field.title}/{entry_field.slug}',
           contentType: 'ct-1',
           enabled: true
         },
@@ -68,17 +68,17 @@ describe('contentPreview', function () {
         },
         // for testing references:
         {
-          url: 'https://www.test.com/{references.current.example}',
+          url: 'https://www.test.com/{entry.linkedBy.sys.id}',
           contentType: 'ct-3',
           enabled: true
         },
         {
-          url: 'https://www.test.com/{references.current.example:fields.slug}',
+          url: 'https://www.test.com/{entry.linkedBy.fields.slug}',
           contentType: 'ct-4',
           enabled: true
         },
         {
-          url: 'https://www.test.com/{references.example.variable:fields.name}/some/{references.current.example:fields.slug}',
+          url: 'https://www.test.com/{entry.linkedBy.linkedBy.fields.name}/some/{entry.linkedBy.fields.slug}',
           contentType: 'ct-5',
           enabled: true
         }
@@ -301,7 +301,7 @@ describe('contentPreview', function () {
     });
 
     it('calls for entries with linked current entry', function* () {
-      spaceContext.cma.getEntries = sinon.spy();
+      spaceContext.cma.getEntries = sinon.stub().resolves();
       yield this.contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[2].url,
         makeEntry('entry-3').data,
