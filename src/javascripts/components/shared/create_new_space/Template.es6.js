@@ -49,7 +49,8 @@ function renderCreateSpaceForm () {
     h('div.create-new-space__fieldset', [
       renderOrgSelect(),
       renderSpaceNameInput(),
-      renderLanguageSelect()
+      renderLanguageSelect(),
+      renderRatePlanSelect()
     ]),
     h('div.cfnext-form__field', {
       ngShow: 'createSpace.newSpace.errors.form'
@@ -111,6 +112,24 @@ function renderLanguageSelect () {
       ariaInvalid: '{{!!createSpace.newSpace.errors.fields.default_locale}}'
     }),
     renderErrorLabel('createSpace.newSpace.errors.fields.default_locale')
+  ]);
+}
+
+function renderRatePlanSelect () {
+  return h('div.cfnext-form__field', {
+    ngIf: 'createSpace.spaceRatePlans'
+  }, [
+    h('label', [
+      h('strong', ['Rate Plan'])
+    ]),
+    h('select.cfnext-select-box', {
+      dataTestId: 'select-locale',
+      ngModel: 'createSpace.newSpace.data.productRatePlanId',
+      ngOptions: 'opt.sys.id as opt.name for opt in createSpace.spaceRatePlans',
+      ngDisabled: 'createSpace.createSpaceInProgress',
+      ariaInvalid: '{{!!createSpace.newSpace.errors.fields.space_rate_plan}}'
+    }),
+    renderErrorLabel('createSpace.newSpace.errors.fields.space_rate_plan')
   ]);
 }
 

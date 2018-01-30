@@ -31,6 +31,8 @@ angular.module('contentful')
   var Analytics = require('analytics/Analytics');
   var spaceContext = require('spaceContext');
   var spaceTemplateEvents = require('analytics/events/SpaceCreation');
+  var createOrgEndpoint = require('access_control/OrganizationMembershipRepository').createEndpoint;
+  var getSpaceRatePlans = require('account/pricing/PricingDataProvider').getSpaceRatePlans;
 
   K.onValueScope($scope, TokenStore.organizations$, function (organizations) {
     controller.organizations = organizations;
@@ -83,6 +85,24 @@ angular.module('contentful')
       $element.animate({scrollTop: $element.scrollTop() + 260}, 'linear');
     }
   });
+
+  // Populate space rate plans for selected org, if it is on v2 pricing.
+  $scope.$watch(function () {
+    return controller.newSpace.organization;
+  }, function (organization) {
+    if (!organization || organization.pricingVersion !== 'pricing_version_2') {
+      delete controller.spaceRatePlans;
+      delete controller.newSpace.data.productRatePlanId;
+      return;
+    }
+    controller.spaceRatePlans = [];
+    const endpoint = createOrgEndpoint(organization.sys.id);
+    getSpaceRatePlans(endpoint).then(function (items) {
+      controller.spaceRatePlans = items;
+      controller.newSpace.data.productRatePlanId = _.get(items[0], 'sys.id');
+    });
+  });
+
 
   // Switch space template
   controller.selectTemplate = function (template) {
@@ -139,6 +159,12 @@ angular.module('contentful')
     // See above for more info
     if (!organization) {
       return showFormError('You don’t have permission to create a space');
+    }
+
+    // This might happen when the dropdown was not populated due to server error
+    // or timeout
+    if (organization.pricingVersion === 'pricing_version_2' && !data.productRatePlanId) {
+      return showFormError('You must select a rate plan.');
     }
 
     Analytics.track('space:template_selected', {
