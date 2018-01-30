@@ -15,10 +15,6 @@ import {
 
 const store = getStore();
 
-// this flag ensures that we call init function only once per
-// the whole application
-let wasInitAlreadyCalled = false;
-
 /**
  * @description
  * Auto creates a space using the product catalogue template
@@ -26,11 +22,6 @@ let wasInitAlreadyCalled = false;
  * It is hooked up in the run block in application prelude.
  */
 export function init () {
-  if (wasInitAlreadyCalled === true) {
-    return;
-  }
-
-  wasInitAlreadyCalled = true;
   let creatingSampleSpace = false;
 
   combine([user$, spacesByOrg$])
