@@ -169,7 +169,7 @@ describe('entityCreator', function () {
     });
 
     it('computes the locale usage', function () {
-      sinon.assert.calledWith(stubs.resourceService._canCreate, 'locale');
+      sinon.assert.calledWith(stubs.resourceService._canCreate, 'locales');
     });
 
     it('navigates to editor', function () {

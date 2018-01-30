@@ -58,13 +58,41 @@ import { merge } from 'lodash';
 
 const flagName = 'feature-bv-2018-01-resources-api';
 
-export default function createResourceService (id, type = 'space') {
-  const endpoint = createEndpoint(type, id);
+/*
+  The resourceTypeMap is necessary for bridging between pricing
+  Version 1 (legacy) and Version 2. Once the feature flag is
+  removed this can most likely also be removed or refactored.
+ */
+const resourceTypeMap = {
+  spaces: 'spaces',
+  spaceMemberships: 'space_memberships',
+  contentTypes: 'content_types',
+  entries: 'entries',
+  assets: 'assets',
+  environments: 'environments',
+  organizationMemberships: 'organization_memberships',
+  roles: 'roles',
+  locales: 'locales',
+  apiKeys: 'api_keys',
+  webhookDefinitions: 'webhook_definitions',
+  records: 'records',
+  apiRequests: 'api_requests'
+};
+
+export default function createResourceService (id) {
+  // TODO: migrate this to use OrganizationEndpoint and SpaceEndpoint
+  // once the OrganizationEndpoint is ready
+  // NOTE: Also unskip the test in the spec related to this functionality
+  const endpoint = createEndpoint('space', id);
 
   return {
     get: function (resourceType) {
       if (!resourceType) {
         throw new Error('resourceType not supplied to ResourceService.get');
+      }
+
+      if (!resourceTypeMap[resourceType]) {
+        throw new Error('Invalid resourceType supplied to ResourceService.get');
       }
 
       return getCurrentVariation(flagName).then(flagValue => {

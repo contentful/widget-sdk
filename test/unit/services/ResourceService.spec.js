@@ -145,7 +145,8 @@ describe('ResourceService', function () {
     expect(this.stubs.createOrganizationEndpoint.calledOnce).toBe(false);
   });
 
-  it('should optionally allow instantiation using the "organization" type parameter value', function () {
+  // Skipped until we support separate organization and space endpoint usage
+  xit('should optionally allow instantiation using the "organization" type parameter value', function () {
     this.spies.createSpaceEndpoint.reset();
 
     this.createResourceService('1234', 'organization');
@@ -290,7 +291,7 @@ describe('ResourceService', function () {
 
   describe('#messagesFor', function () {
     it('should return a promise-like object', function () {
-      expect(this.isPromiseLike(this.ResourceService.messagesFor('locale'))).toBe(true);
+      expect(this.isPromiseLike(this.ResourceService.messagesFor('locales'))).toBe(true);
     });
 
     it('should return an object that contains `warning` and `error` keys', function* () {

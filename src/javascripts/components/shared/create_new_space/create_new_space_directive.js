@@ -259,7 +259,7 @@ angular.module('contentful')
     var orgId = organization.sys.id;
     var resources = createResourceService(orgId, 'organization');
 
-    resources.canCreate('space').then(function (canCreate) {
+    resources.canCreate('spaces').then(function (canCreate) {
       var errors = _.get(err, 'body.details.errors');
       var fieldErrors = [
         {name: 'length', path: 'name', message: 'Space name is too long'},
