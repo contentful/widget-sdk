@@ -26,45 +26,33 @@ angular.module('contentful')
     ]
   });
 
-  var edit = organizationsBase({
+  var edit = gatekeeperBase({
     name: 'edit',
     title: 'Organization information',
     url: '/:orgId/edit{pathSuffix:PathSuffix}'
   });
 
-  var subscription = organizationsBase({
+  var subscription = gatekeeperBase({
     name: 'subscription',
     title: 'Subscription',
     url: '/:orgId/z_subscription{pathSuffix:PathSuffix}'
   });
 
-  var subscriptionNew = base({
+  var subscriptionNew = reactBase({
     name: 'subscription_new',
     url: '/:orgId/subscription',
     label: 'Subscription',
-    controller: ['$stateParams', '$scope', function ($stateParams, $scope) {
-      $scope.properties = {
-        orgId: $stateParams.orgId,
-        context: $scope.context
-      };
-    }],
-    template: h('cf-subscription-overview', { properties: 'properties' })
+    componentName: 'cf-subscription-overview'
   });
 
-  var usage = base({
+  var usage = reactBase({
     name: 'usage',
     url: '/:orgId/usage',
     label: 'Usage',
-    controller: ['$stateParams', '$scope', function ($stateParams, $scope) {
-      $scope.properties = {
-        orgId: $stateParams.orgId,
-        context: $scope.context
-      };
-    }],
-    template: h('cf-platform-usage', { properties: 'properties' })
+    componentName: 'cf-platform-usage'
   });
 
-  var usersGatekeeper = organizationsBase({
+  var usersGatekeeper = gatekeeperBase({
     name: 'gatekeeper',
     title: 'Organization users',
     url: '{pathSuffix:PathSuffix}'
@@ -116,34 +104,53 @@ angular.module('contentful')
     ]
   });
 
-  var spaces = organizationsBase({
+  var spaces = gatekeeperBase({
     name: 'spaces',
     title: 'Organization spaces',
     url: '/:orgId/spaces{pathSuffix:PathSuffix}'
   });
 
-  var offsitebackup = organizationsBase({
+  var offsitebackup = gatekeeperBase({
     name: 'offsitebackup',
     title: 'Offsite backup',
     url: '/:orgId/offsite_backup/edit{pathSuffix:PathSuffix}'
   });
 
-  var billing = organizationsBase({
+  var billing = gatekeeperBase({
     name: 'billing',
     title: 'Billing',
     url: '/:orgId/z_billing{pathSuffix:PathSuffix}'
   });
 
-  function organizationsBase (definition) {
+  function gatekeeperBase (definition) {
     var defaults = {
-      label: 'Organizations & Billing',
       params: {
         pathSuffix: ''
       },
       template: [
         workbenchHeader({ title: [ definition.title ] }),
         h('cf-account-view', { context: 'context' })
-      ],
+      ]
+    };
+    return organizationsBase(_.extend(defaults, definition));
+  }
+
+  function reactBase (definition) {
+    var defaults = {
+      controller: ['$stateParams', '$scope', function ($stateParams, $scope) {
+        $scope.properties = {
+          orgId: $stateParams.orgId,
+          context: $scope.context
+        };
+      }],
+      template: h(definition.componentName, { properties: 'properties' })
+    };
+    return organizationsBase(_.extend(defaults, definition));
+  }
+
+  function organizationsBase (definition) {
+    var defaults = {
+      label: 'Organizations & Billing',
       onEnter: ['$stateParams', 'require', function ($stateParams, require) {
         var accessChecker = require('access_control/AccessChecker');
         var TokenStore = require('services/TokenStore');
