@@ -3,7 +3,7 @@ div
     | Preview
   .entity-sidebar__preview
     a.btn-secondary-action.x--block(
-      aria-disabled="{{!isPreviewSetup}}",
+      aria-disabled="{{!isPreviewSetup || !selectedEnvironment.compiledUrl}}",
       ng-class="{disabled: !isPreviewSetup}"
       ng-click="trackClickedLink()"
       ng-href="{{selectedEnvironment.compiledUrl}}"
