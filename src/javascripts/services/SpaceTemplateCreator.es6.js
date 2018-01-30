@@ -23,7 +23,10 @@ const TEA_SPACE_ID = 'qz0n5cdakyl9';
 const TEA_MAIN_CONTENT_PREVIEW = {
   name: 'Node.js platform example',
   description: 'The example app, implemented in Node.js',
-  baseUrl: 'https://the-example-app-nodejs.herokuapp.com'
+  baseUrl: {
+    prod: 'https://the-example-app-nodejs.contentful.com',
+    staging: 'https://the-example-app-nodejs.flinkly.com'
+  }
 };
 
 // we want to create several content previews for TEA, one for each platform
@@ -32,22 +35,34 @@ const TEA_CONTENT_PREVIEWS = [
   {
     name: '.NET platform example',
     description: 'The example app, implemented in .NET',
-    baseUrl: 'https://the-example-app-csharp.herokuapp.com'
+    baseUrl: {
+      prod: 'https://the-example-app-csharp.contentful.com',
+      staging: 'https://the-example-app-csharp.flinkly.com'
+    }
   },
   {
     name: 'Ruby platform example',
     description: 'The example app, implemented in Ruby using Sinatra',
-    baseUrl: 'https://the-example-app-rb.herokuapp.com'
+    baseUrl: {
+      prod: 'https://the-example-app-rb.contentful.com',
+      staging: 'https://the-example-app-rb.flinkly.com'
+    }
   },
   {
     name: 'PHP platform example',
     description: 'The example app, implemented in PHP',
-    baseUrl: 'https://the-example-app-php.herokuapp.com'
+    baseUrl: {
+      prod: 'https://the-example-app-php.contentful.com',
+      staging: 'https://the-example-app-php.flinkly.com'
+    }
   },
   {
     name: 'Python platform example',
     description: 'The example app, implemented in Python using Flask',
-    baseUrl: 'https://the-example-app-py.herokuapp.com/'
+    baseUrl: {
+      prod: 'https://the-example-app-py.herokuappcontentfulcom/',
+      staging: 'https://the-example-app-py.herokuappflinklycom/'
+    }
   }
 ];
 
@@ -395,7 +410,8 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
         configs: contentTypes
           .map(ct => {
             const fn = createConfigFns[ct.sys.id];
-            return fn && fn({ ct, baseUrl, spaceId, cdaToken, cpaToken });
+            const url = environment.env === 'production' ? baseUrl.prod : baseUrl.staging;
+            return fn && fn({ ct, baseUrl: url, spaceId, cdaToken, cpaToken });
           })
           // remove all content types without a preview
           .filter(Boolean)
@@ -486,12 +502,12 @@ function makeTEAConfig (params, url = '') {
 }
 
 function makeTEAUrl (params, url = '') {
-  const queryParams = environment.env === 'production' ? {
+  const queryParams = {
     space_id: params.spaceId,
     delivery_token: params.cdaToken,
     preview_token: params.cpaToken,
     enable_editorial_features: 'enabled'
-  } : {};
+  };
   const queryString = qs.stringify(queryParams);
   return `${params.baseUrl}${url}${queryString ? '?' : ''}${queryString}`;
 }
