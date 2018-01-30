@@ -25,7 +25,15 @@ function* resolveReferences_ ({url, entry, defaultLocale}) {
   const PLACEHOLDER_PATTERN = /\{.*?\}/g;
 
   /*
-   * This does the following:
+   * `linkedBy` denotes the entry that links to the current entry; the first incoming link to this entry.
+   * `linkedBy` basically forms a linked list where the deeper you go in the list, the higher up you
+   * traverse in terms of incoming links.
+   * For example: Consider we have two entries A & B. A links to B. Therefore B has an incoming link from A.
+   * In our case below, in terms of semantics, A.linkedBy === B. If B had an incoming link from Z then
+   * B.linkedBy === Z. In other words A.linkedBy.linkedBy === Z.
+   *
+   * The bit of code underneath lets us know how many levels of incoming links we need to resolve. It works
+   * as noted below.
    *
    * Given url is "http://abc.com/{entry.linkedBy.linkedBy.fields.slug}/{entry.linkedBy.sys.id}/{entry.fields.slug}"
    *
