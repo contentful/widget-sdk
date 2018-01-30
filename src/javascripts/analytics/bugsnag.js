@@ -107,8 +107,6 @@ angular.module('contentful')
     if (userId) {
       bugsnag.user = {
         id: userId,
-        firstName: _.get(user, 'firstName'),
-        lastName: _.get(user, 'lastName'),
         adminLink: getAdminLink(user),
         organizations: getOrganizations(user)
       };
@@ -116,10 +114,9 @@ angular.module('contentful')
   }
 
   function getOrganizations (user) {
-    var organizationNames = _.map(user.organizationMemberships, function (m) {
-      return m.organization.name;
-    });
-    return organizationNames.join(', ');
+    return user.organizationMemberships.map(function (membership) {
+      return membership.organization.sys.id;
+    }).join(', ');
   }
 
   function getAdminLink (user) {
