@@ -14,7 +14,7 @@ angular.module('contentful')
   var previewEnvironmentsCache = require('data/previewEnvironmentsCache');
   var getStore = require('TheStore').getStore;
   var store = getStore();
-  var runTask = require('utils/Concurrent').runTask;
+  var resolveReferences = require('services/ContentPreviewHelper').resolveReferences;
 
   var ENTRY_ID_PATTERN = /\{\s*entry_id\s*\}/g;
   var ENTRY_FIELD_PATTERN = /\{\s*entry_field\.(\w+)\s*\}/g;
@@ -32,7 +32,6 @@ angular.module('contentful')
   //
   // This functionality is primarily needed for rich preview expirience for TEA (the example app):
   // https://contentful.atlassian.net/wiki/spaces/PROD/pages/204079331/The+example+app+-+Documentation+of+functionality
-  var REFERENCES_PATTERN = /{references\.([a-z]+?\.[a-z]+?):?(\.?\w+?)*\}/g;
   var MAX_PREVIEW_ENVIRONMENTS = 25;
   var STORE_KEY = 'selectedPreviewEnvsForSpace.' + spaceContext.getId();
 
@@ -374,113 +373,7 @@ angular.module('contentful')
       return _.toString(fieldValue) || match;
     });
 
-    return runTask(resolveReferences, { url: processedUrl, entry: entry, defaultLocale: defaultLocale });
-  }
-
-  /**
-   * @description
-   *
-   * This function takes a preview url with placeholders, resolves incoming
-   * references if needed and returns a compiled/interpolated url.
-   * The workings are explained by inline comments.
-   *
-   * @param {Object} params
-   * @param {string} params.url
-   * @param {API.Entry} params.entry
-   * @param {string} params.defaultLocale
-   * @returns {Promise<string>} - url with resolved references (if any)
-   */
-
-  function* resolveReferences ({url, entry, defaultLocale}) {
-    // Pattern that denotes usage of incoming links
-    var REFERENCES_PATTERN = /linkedBy/g;
-    // Pattern to strip out the placeholders from the url
-    var PLACEHOLDER_PATTERN = /\{.*?\}/g;
-
-    /*
-     * This does the following:
-     *
-     * Given url is "http://abc.com/{entry.linkedBy.linkedBy.fields.slug}/{entry.linkedBy.sys.id}/{entry.fields.slug}"
-     *
-     * We first get an array of placeholders:
-     * ['{entry.linkedBy.linkedBy.fields.slug}', '{entry.linkedBy.sys.id}', '{entry.fields.slug}']
-     *
-     * Then, we count occurence of REFERENCES_PATTERN in each placeholder:
-     * [2, 1, 0]
-     *
-     * Finally, we take the max of the count and then proceed to resolve `count` level
-     * of incoming links to current entry.
-     */
-    var numberOfIncomingLinksToResolve = Math.max.apply(
-      Math,
-      url.match(PLACEHOLDER_PATTERN).map(m => (m.match(REFERENCES_PATTERN) || []).length)
-    );
-
-    if (numberOfIncomingLinksToResolve < 1) {
-      return Promise.resolve(url);
-    }
-
-    // This object is what is used in the final interpolation
-    // It also handles locales by converting entry.fields.slug to entry.fields[defaultLocale].slug
-    var dataToInterpolate = createInterpolationDataObject(entry, defaultLocale);
-    var currentEntry = dataToInterpolate;
-
-    for (var i = 0; i < numberOfIncomingLinksToResolve; i++) {
-      var linkedByEntries = yield spaceContext.cma.getEntries({
-        // get the incoming links for the current entry
-        links_to_entry: currentEntry.sys.id
-      });
-      var firstLinkedByEntry = _.get(linkedByEntries, 'items[0]', undefined);
-
-      // fail early if there are no incoming links to the entry in questions
-      if (!firstLinkedByEntry) {
-        return url.match(/^https?:\/\/.+?\//)[0];
-      } else {
-        // add the incoming link to the current entry
-        currentEntry.linkedBy = createInterpolationDataObject(firstLinkedByEntry, defaultLocale);
-        // make current entry the first incoming one we resolved to and continue the process
-        currentEntry = currentEntry.linkedBy;
-      }
-    }
-
-    // Interpolate the placeholders with the actual data from the data object we just built
-    return url.replace(/\{entry\.(.+?)\}/g, function (_match, path) {
-      return _.get(dataToInterpolate, path || '', path + '_ NOT_FOUND');
-    });
-  }
-
-  /**
-   * @description
-   *
-   * Create an object that mimics the shape of an entry but has
-   * defaultLocale data only and a linkedBy property which holds
-   * the first incoming link to the top level entry.
-   *
-   * @param {API.entry} entry
-   * @param {string} defaultLocale
-   * @returns {Object}
-   */
-  function createInterpolationDataObject (entry, defaultLocale) {
-    var entryFields = _.reduce(entry.fields, function (acc, fieldData, fieldName) {
-      acc[fieldName] = fieldData[defaultLocale];
-      return acc;
-    }, {});
-
-    return Object.defineProperties({}, {
-      fields: {
-        enumerable: true,
-        value: entryFields
-      },
-      sys: {
-        enumerable: true,
-        value: entry.sys
-      },
-      linkedBy: {
-        enumerable: true,
-        value: null,
-        writable: true
-      }
-    });
+    return resolveReferences({ url: processedUrl, entry: entry, defaultLocale: defaultLocale });
   }
 
   /**
