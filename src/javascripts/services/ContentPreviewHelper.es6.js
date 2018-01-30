@@ -40,7 +40,7 @@ function* resolveReferences_ ({url, entry, defaultLocale}) {
    */
   const numberOfIncomingLinksToResolve = Math.max.apply(
     Math,
-    url.match(PLACEHOLDER_PATTERN).map(m => (m.match(REFERENCES_PATTERN) || []).length)
+    (url.match(PLACEHOLDER_PATTERN) || []).map(m => (m.match(REFERENCES_PATTERN) || []).length)
   );
 
   if (numberOfIncomingLinksToResolve < 1) {
