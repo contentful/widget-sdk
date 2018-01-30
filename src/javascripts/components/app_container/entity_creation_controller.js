@@ -37,10 +37,6 @@ angular.module('contentful')
     .then(_.partial(handler, null), handler);
   };
 
-  this.newContentType = function () {
-    $state.go('spaces.detail.content_types.new');
-  };
-
   this.newLocale = function () {
     var organization = spaceContext.organization;
     var usage = enforcements.computeUsageForOrganization(organization, 'locale');

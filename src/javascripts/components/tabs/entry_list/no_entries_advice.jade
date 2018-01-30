@@ -9,7 +9,7 @@ include ./create_entry_button.mixin.jade
   .empty-state__action
     button.btn-action--large(
       type="button"
-      ng-click="entityCreationController.newContentType()"
+      ng-click="newContentType()"
       ng-hide="shouldHide('createContentType')"
       ng-disabled="shouldDisable('createContentType')"
       cf-when-disabled="createContentType")

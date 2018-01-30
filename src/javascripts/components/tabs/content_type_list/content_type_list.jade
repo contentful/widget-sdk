@@ -18,7 +18,7 @@ header.workbench-header
 
   .workbench-header__actions(ng-hide="!hasContentTypes()")
     button.btn-action(
-      ng-click="entityCreationController.newContentType()"
+      ng-click="newContentType()"
       ng-hide="shouldHide('createContentType')"
       ng-disabled="shouldDisable('createContentType')"
       cf-when-disabled="createContentType")
@@ -35,7 +35,7 @@ header.workbench-header
     .empty-state__action
       button.btn-action--large(
         type="button"
-        ng-click="entityCreationController.newContentType()"
+        ng-click="newContentType()"
         ng-hide="shouldHide('createContentType')"
         ng-disabled="shouldDisable('createContentType')"
         cf-when-disabled="createContentType")

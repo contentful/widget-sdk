@@ -6,6 +6,7 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
   var accessChecker = require('access_control/AccessChecker');
   var ctHelpers = require('data/ContentTypes');
   var createViewPersistor = require('data/ListViewPersistor').default;
+  var $state = require('$state');
 
   var viewPersistor = createViewPersistor(
     spaceContext.getId(), null, 'contentTypes');
@@ -16,6 +17,10 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
 
   $scope.shouldHide = accessChecker.shouldHide;
   $scope.shouldDisable = accessChecker.shouldDisable;
+
+  $scope.newContentType = function () {
+    $state.go('^.new');
+  };
 
   $scope.$watchGroup(['context.list', 'context.searchTerm'], function (args) {
     if (args[0] || args[1]) {
