@@ -121,7 +121,7 @@ angular.module('contentful')
     });
 
     function getValidContentTypes (linkedContentTypeIds, contentTypes) {
-      var acceptsOnlySpecificContentType = linkedContentTypeIds.length > 0;
+      var acceptsOnlySpecificContentType = linkedContentTypeIds && linkedContentTypeIds.length > 0;
 
       if (acceptsOnlySpecificContentType) {
         contentTypes = contentTypes.filter(function (ct) {
@@ -164,7 +164,10 @@ angular.module('contentful')
   function getSearch () {
     var view = $scope.view || {};
     return {
-      searchText: view.searchText || '',
+      // if we have old interface and searchText is stored inside
+      // `view.searchTerm`, we won't perform any search at all
+      // unless we provide this value as `searchText`
+      searchText: view.searchText || view.searchTerm || '',
       searchFilters: view.searchFilters || [],
       contentTypeId: view.contentTypeId
     };
