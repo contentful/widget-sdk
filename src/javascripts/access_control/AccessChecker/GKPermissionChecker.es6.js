@@ -2,7 +2,7 @@ import logger from 'logger';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
 import * as K from 'utils/kefir';
-import {get} from 'lodash';
+import {get, camelCase} from 'lodash';
 import {createEndpoint as createOrgEndpoint} from 'access_control/OrganizationMembershipRepository';
 import {getEnabledOrgFeatures} from 'account/pricing/PricingDataProvider';
 // TODO prevent circular ref
@@ -88,7 +88,7 @@ export function create ({space, organization}) {
         // Get enabled features from API if feature flag is on, or if token
         // doesn't have features because of new pricing version.
         return getEnabledOrgFeatures(orgEndpoint)
-          .then((items) => items.map((feature) => feature['internal_name']));
+          .then((items) => items.map((feature) => camelCase(feature['internal_name'])));
       } else {
         // Get enabled features from token if feature flag is off
         const features = get(organization, 'subscriptionPlan.limits.features', {});
