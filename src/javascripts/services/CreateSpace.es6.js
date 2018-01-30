@@ -10,11 +10,9 @@ import modalDialog from 'modalDialog';
 export function showDialog (organizationId) {
   modalDialog.open({
     title: 'Space templates',
-    template: 'create_new_space_dialog',
+    template: '<cf-create-new-space class="modal-background"></cf-create-new-space>',
     backgroundClose: false,
     persistOnNavigation: true,
-    scopeData: {
-      organizationId: organizationId
-    }
+    scopeData: {organizationId}
   });
 }
