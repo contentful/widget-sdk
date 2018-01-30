@@ -354,7 +354,8 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
   }
 
   /**
-   * @description Function to create content preview specifically for TEA (the example app)
+   * @description
+   * Function to create content preview specifically for TEA (the example app)
    * This application was built specifically for new contentful users, and has a lot of value
    * in its content, so it has advanced mapping for preview, to redirect user to exact pages,
    * where he can see the content (change in the webapp -> see the changes in the TEA preview)
@@ -474,21 +475,24 @@ function mainPageConfig (params) {
 }
 
 function courseConfig (params) {
-  return makeTEAConfig(params, '/courses/{entry_field.slug}');
+  return makeTEAConfig(params, '/courses/{entry.fields.slug}');
 }
 
 function categoryConfig (params) {
-  return makeTEAConfig(params, '/courses/categories/{entry_field.slug}');
+  return makeTEAConfig(params, '/courses/categories/{entry.fields.slug}');
 }
 
 function lessonConfig (params) {
-  const $ref1 = '{references.current.course:fields.slug}';
-  return makeTEAConfig(params, `/courses/${$ref1}/lessons/{entry_field.slug}`);
+  const $ref1 = '{entry.linkedBy.fields.slug}';
+  // const $ref1 = '{references.current.course:fields.slug}';
+  return makeTEAConfig(params, `/courses/${$ref1}/lessons/{entry.fields.slug}`);
 }
 
 function lessonContentConfig (params) {
-  const $ref1 = '{references.lesson.course:fields.slug}';
-  const $ref2 = '{references.current.lesson:fields.slug}';
+  // const $ref1 = '{references.lesson.course:fields.slug}';
+  const $ref1 = '{entry.linkedBy.linkedBy.fields.slug}';
+  // const $ref2 = '{references.current.lesson:fields.slug}';
+  const $ref2 = '{entry.linkedBy.fields.slug}';
   return makeTEAConfig(params, `/courses/${$ref1}/lessons/${$ref2}`);
 }
 

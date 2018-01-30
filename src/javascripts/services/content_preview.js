@@ -14,6 +14,7 @@ angular.module('contentful')
   var previewEnvironmentsCache = require('data/previewEnvironmentsCache');
   var getStore = require('TheStore').getStore;
   var store = getStore();
+  var runTask = require('utils/Concurrent').runTask;
 
   var ENTRY_ID_PATTERN = /\{\s*entry_id\s*\}/g;
   var ENTRY_FIELD_PATTERN = /\{\s*entry_field\.(\w+)\s*\}/g;
@@ -373,141 +374,113 @@ angular.module('contentful')
       return _.toString(fieldValue) || match;
     });
 
-    return resolveReferences({ url: processedUrl, entry: entry, defaultLocale: defaultLocale });
+    return runTask(resolveReferences, { url: processedUrl, entry: entry, defaultLocale: defaultLocale });
   }
 
   /**
-   * @description function to resolve all references in content preview url
-   * all references are resolved one-by-one, starting from the last (the most "right")
-   * they are named, and you can use already resolved references in deeper. By default
-   * you start with `current` entry. As an example:
+   * @description
    *
-   *                `lesson` was resolved before                         `lesson` - new var
-   * `/course/${references.lesson.course:fields.slug}/lessons/${references.current.lesson:fields.slug}`
+   * This function takes a preview url with placeholders, resolves incoming
+   * references if needed and returns a compiled/interpolated url.
+   * The workings are explained by inline comments.
    *
-   * By default, it will resolve to `sys.id` value of the reference. However, you can provide
-   * `:fields.slug` appendix, which will go and grab the value (in default locale) of the referenced entry
    * @param {Object} params
    * @param {string} params.url
    * @param {API.Entry} params.entry
    * @param {string} params.defaultLocale
    * @returns {Promise<string>} - url with resolved references (if any)
    */
-  function resolveReferences (params) {
-    var url = params.url;
-    var entry = params.entry;
-    var defaultLocale = params.defaultLocale;
-    var references = url.match(REFERENCES_PATTERN);
 
-    if (!references) {
+  function* resolveReferences ({url, entry, defaultLocale}) {
+    // Pattern that denotes usage of incoming links
+    var REFERENCES_PATTERN = /linkedBy/g;
+    // Pattern to strip out the placeholders from the url
+    var PLACEHOLDER_PATTERN = /\{.*?\}/g;
+
+    /*
+     * This does the following:
+     *
+     * Given url is "http://abc.com/{entry.linkedBy.linkedBy.fields.slug}/{entry.linkedBy.sys.id}/{entry.fields.slug}"
+     *
+     * We first get an array of placeholders:
+     * ['{entry.linkedBy.linkedBy.fields.slug}', '{entry.linkedBy.sys.id}', '{entry.fields.slug}']
+     *
+     * Then, we count occurence of REFERENCES_PATTERN in each placeholder:
+     * [2, 1, 0]
+     *
+     * Finally, we take the max of the count and then proceed to resolve `count` level
+     * of incoming links to current entry.
+     */
+    var numberOfIncomingLinksToResolve = Math.max.apply(
+      Math,
+      url.match(PLACEHOLDER_PATTERN).map(m => (m.match(REFERENCES_PATTERN) || []).length)
+    );
+
+    if (numberOfIncomingLinksToResolve < 1) {
       return Promise.resolve(url);
     }
 
-    var promiseChain = Promise.resolve({
-      // current is an id of the initial entry, which we edit
-      // after iterating over references, new values will be added
-      // to this object
-      current: entry.sys.id,
-      // we store all resolved values here, to replace in the url
-      values: []
-    });
+    // This object is what is used in the final interpolation
+    // It also handles locales by converting entry.fields.slug to entry.fields[defaultLocale].slug
+    var dataToInterpolate = createInterpolationDataObject(entry, defaultLocale);
+    var currentEntry = dataToInterpolate;
 
-    // we pop values from the array each step, so length of the array
-    // goes down with each step
-    while (references.length !== 0) {
-      // IIFE to keep `reference` and `valuePath` in closure - we need to
-      // get the value immediately, but it will be executed only after promise
-      // resolving
-      // after rewriting to ES6 we can just use `let`
-      (function () {
-        var referenceWithBraces = references.pop();
-        // remove first and the last curly braces, and split access parts
-        var wholeReference = referenceWithBraces.replace(/(^\{|\}$)/g, '').split(':');
-        // reference is like `references.current.lesson`. It will get all entries which
-        // this entry is linked to, choose the first, and assign it's value to the third
-        // param (so `lesson` will have a new value, which is picked by valuePath)
-        var reference = wholeReference[0];
-        // valuePath shows how to get value we need in the url. Default value is `sys.id`.
-        // value will be always taken in default locale
-        var valuePath = wholeReference[1];
+    for (var i = 0; i < numberOfIncomingLinksToResolve; i++) {
+      var linkedByEntries = yield spaceContext.cma.getEntries({
+        // get the incoming links for the current entry
+        links_to_entry: currentEntry.sys.id
+      });
+      var firstLinkedByEntry = _.get(linkedByEntries, 'items[0]', undefined);
 
-        // each "previous" reference get's resolved objects from all other references,
-        // so we need to chain them.
-        // this can be rewritten to generators afer switching to es6
-        promiseChain = promiseChain.then(function (params) {
-          var elements = reference.split('.');
-          // since the structure is `references.current.lesson`, we need to get
-          // the first element to get current ID
-          var entryId = params[elements[1]];
-
-          return spaceContext.cma.getEntries({
-            // we are interested only in entries, where current entry is linked to it
-            links_to_entry: entryId
-          }).then(function (entries) {
-            // this element could not exist, which is fine. we will receive an error,
-            // which we handle in the `catch` clause
-            var element = entries.items[0];
-            // we need to resolve value, which we'll insert into URL after resolving all references
-            // by default it is `sys.id`, but we use slugs in TEA
-            var path = getValuePath({ defaultLocale: defaultLocale, valuePath: valuePath });
-            var slugValue = _.get(element, path);
-            // we still need actual ID, since we can resolve entries with linked entities by this ID
-            var elementId = _.get(element, ['sys', 'id']);
-
-            var newParams = {};
-            // since the structure is `references.current.lesson`, we need to get
-            // the last element to assign it to a variable
-            newParams[elements[2]] = elementId;
-            // we need to add this value to the end. Because we are popping references as well,
-            // we'll end up with having first resolved reference as a last element
-            newParams.values = params.values.concat(slugValue);
-
-            return _.extend({}, params, newParams);
-          });
-        });
-      })();
+      // fail early if there are no incoming links to the entry in questions
+      if (!firstLinkedByEntry) {
+        return url.match(/^https?:\/\/.+?\//)[0];
+      } else {
+        // add the incoming link to the current entry
+        currentEntry.linkedBy = createInterpolationDataObject(firstLinkedByEntry, defaultLocale);
+        // make current entry the first incoming one we resolved to and continue the process
+        currentEntry = currentEntry.linkedBy;
+      }
     }
 
-    return promiseChain.then(function (params) {
-      return url.replace(REFERENCES_PATTERN, function () {
-        return params.values.pop();
-      });
-    }).catch(function () {
-      // in case of failure, some references were not possible to resolve
-      // so we can not create full URL, and in this case we just redirect
-      // to the main page
-      var baseUrl = url.match(/^https?:\/\/.+?\//);
-
-      if (baseUrl) {
-        return baseUrl[0];
-      }
+    // Interpolate the placeholders with the actual data from the data object we just built
+    return url.replace(/\{entry\.(.+?)\}/g, function (_match, path) {
+      return _.get(dataToInterpolate, path || '', path + '_ NOT_FOUND');
     });
   }
 
   /**
-   * @description fn to retrieve value, which will be resolved and put into URL
-   * by default it returns `sys.id` path, but in case we want to resolve some fields,
-   * default locale's value will be retrieved
-   * @param {Object} params
-   * @param {string|undefined} params.valuePath - selector to get value
-   * @param {string} params.defaultLocale
-   * @returns {string[]} - selector to get value from entry
+   * @description
+   *
+   * Create an object that mimics the shape of an entry but has
+   * defaultLocale data only and a linkedBy property which holds
+   * the first incoming link to the top level entry.
+   *
+   * @param {API.entry} entry
+   * @param {string} defaultLocale
+   * @returns {Object}
    */
-  function getValuePath (params) {
-    var valuePath = params.valuePath;
-    var defaultLocale = params.defaultLocale;
+  function createInterpolationDataObject (entry, defaultLocale) {
+    var entryFields = _.reduce(entry.fields, function (acc, fieldData, fieldName) {
+      acc[fieldName] = fieldData[defaultLocale];
+      return acc;
+    }, {});
 
-    if (!valuePath) {
-      return ['sys', 'id'];
-    }
-
-    var path = valuePath.split('.');
-
-    if (path[0] === 'fields') {
-      path.push(defaultLocale);
-    }
-
-    return path;
+    return Object.defineProperties({}, {
+      fields: {
+        enumerable: true,
+        value: entryFields
+      },
+      sys: {
+        enumerable: true,
+        value: entry.sys
+      },
+      linkedBy: {
+        enumerable: true,
+        value: null,
+        writable: true
+      }
+    });
   }
 
   /**
