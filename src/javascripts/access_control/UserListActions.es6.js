@@ -110,7 +110,11 @@ export function create (spaceContext, userListHandler, TokenStore) {
       multiple: true,
       min: 1,
       max: Infinity,
-      labels: labels
+      labels: labels,
+      // since in `fetchUsers` we download all existing users
+      // for the current query, there is no need to fetch more
+      // after we reach bottom of the page
+      noPagination: true
     })
     .then(function (result) {
       return openDialog(UserSpaceInvitationDialog(), controller);
