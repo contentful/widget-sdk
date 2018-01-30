@@ -25,6 +25,9 @@ describe('app/ContentModel/Editor/Actions', function () {
     const self = this;
     module('contentful/test', function ($provide) {
       $provide.value('navigation/closeState', self.closeSpy = sinon.spy());
+      $provide.value('utils/LaunchDarkly', {
+        getCurrentVariation: sinon.stub().resolves(false)
+      });
     });
 
     this.$state = this.$inject('$state');

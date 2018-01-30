@@ -5,7 +5,8 @@ import * as K from 'utils/kefir';
 import {get} from 'lodash';
 import {createEndpoint as createOrgEndpoint} from 'access_control/OrganizationMembershipRepository';
 import {getEnabledOrgFeatures} from 'account/pricing/PricingDataProvider';
-import * as LD from 'utils/LaunchDarkly';
+// TODO prevent circular ref
+import require from 'require';
 
 export function create ({space, organization}) {
   let features = [];
@@ -19,7 +20,14 @@ export function create ({space, organization}) {
 
   const isReadyBus = K.createPropertyBus(false);
 
-  collectFeatures();
+  collectFeatures().then((f) => {
+    features = f;
+    isReadyBus.set(true);
+  }).catch((err) => {
+    logger.logError(`Could not fetch org features for ${organization.sys.id}`, err);
+  }).finally(() => {
+    isReadyBus.end();
+  });
 
   return {
     isReady$: isReadyBus.property.skipDuplicates(),
@@ -70,26 +78,20 @@ export function create ({space, organization}) {
   }
 
   function collectFeatures () {
-    features = [];
-    isReadyBus.set(false);
-
-    if (!organization) { return; }
+    if (!organization) {
+      return Promise.resolve([]);
+    }
 
     // Begin feature flag code - feature-bv-2018-01-features-api
-    LD.getCurrentVariation('feature-bv-2018-01-features-api').then((flag) => {
-      if (!flag) {
+    return require('utils/LaunchDarkly').getCurrentVariation('feature-bv-2018-01-features-api').then((useFeaturesApi) => {
+      if (!useFeaturesApi) {
         // Get enabled features from token if feature flag is off
-        features = get(organization, 'subscriptionPlan.limits.features', {});
-        isReadyBus.set(true);
+        const features = get(organization, 'subscriptionPlan.limits.features', {});
+        return Promise.resolve(features);
       } else {
         // Get enabled features from API if feature flag is on
-        getEnabledOrgFeatures(orgEndpoint)
-          .then((items) => {
-            features = items.map((feature) => feature['internal_name']);
-            isReadyBus.set(true);
-          }).catch((err) => {
-            logger.logError(`Could not fetch org features for ${organization.sys.id}`, err);
-          });
+        return getEnabledOrgFeatures(orgEndpoint)
+          .then((items) => items.map((feature) => feature['internal_name']));
       }
     });
     // End feature flag code - feature-bv-2018-01-features-api

@@ -2,7 +2,7 @@ import * as K from 'helpers/mocks/kefir';
 
 describe('Access Checker', function () {
   let enforcements, OrganizationRoles, TokenStore, policyChecker, ac;
-  let getResStub, reasonsDeniedStub, broadcastStub, mockSpace, mockSpaceAuthContext;
+  let getResStub, reasonsDeniedStub, broadcastStub, mockSpace, mockSpaceAuthContext, mockOrgEndpoint;
 
   function init () {
     ac.setAuthContext({authContext: {}, spaceAuthContext: mockSpaceAuthContext});
@@ -22,7 +22,12 @@ describe('Access Checker', function () {
   });
 
   beforeEach(function () {
-    module('contentful/test');
+    module('contentful/test', ($provide) => {
+      $provide.value('access_control/OrganizationMembershipRepository', {createEndpoint: () => mockOrgEndpoint});
+      $provide.value('utils/LaunchDarkly', {
+        getCurrentVariation: sinon.stub().resolves(false)
+      });
+    });
 
     enforcements = this.$inject('access_control/Enforcements');
     OrganizationRoles = this.$inject('services/OrganizationRoles');
@@ -38,8 +43,9 @@ describe('Access Checker', function () {
     reasonsDeniedStub = sinon.stub().returns([]);
     enforcements.determineEnforcement = sinon.stub().returns(undefined);
 
-    mockSpace = {organization: {}};
+    mockSpace = {organization: {sys: {}}};
     mockSpaceAuthContext = {reasonsDenied: reasonsDeniedStub};
+    mockOrgEndpoint = sinon.stub();
 
     ac = this.$inject('access_control/AccessChecker');
   });
@@ -50,7 +56,7 @@ describe('Access Checker', function () {
       ac.setAuthContext({authContext: null});
       expect(K.getValue(ac.isInitialized$)).toEqual(false);
 
-      ac.setOrganization({});
+      ac.setOrganization({sys: {}});
       expect(K.getValue(ac.isInitialized$)).toEqual(false);
 
       ac.setSpace(mockSpace);
@@ -337,14 +343,14 @@ describe('Access Checker', function () {
         });
       }
 
-      it('returns true when has feature and is admin of space, false otherwise', function () {
+      it('returns true when has feature and is admin of space, false otherwise', function* () {
         OrganizationRoles.setUser({organizationMemberships: []});
         changeSpace(false, true);
-        expect(ac.canModifyRoles()).toBe(false);
+        expect(yield ac.canModifyRoles()).toBe(false);
         changeSpace(true, false);
-        expect(ac.canModifyRoles()).toBe(false);
+        expect(yield ac.canModifyRoles()).toBe(false);
         changeSpace(true, true);
-        expect(ac.canModifyRoles()).toBe(true);
+        expect(yield ac.canModifyRoles()).toBe(true);
       });
 
       it('returns true when has feature, is not admin of space but is admin or owner of organization', function () {
