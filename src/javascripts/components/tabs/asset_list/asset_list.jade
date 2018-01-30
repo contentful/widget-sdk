@@ -31,7 +31,7 @@ header.workbench-header
       role="menu" cf-context-menu
       aria-label="Add Assets" data-test-id="add-asset-menu")
       ul.context-menu__items
-        li(role="menuitem" ng-click="entityCreationController.newAsset()")
+        li(role="menuitem" ng-click="newAsset()")
           | Single asset
         li(role="menuitem" ng-click="createMultipleAssets()" ng-show="canUploadMultipleAssets()")
           | Multiple assets

@@ -18,6 +18,7 @@ angular.module('contentful')
   var K = require('utils/kefir');
   var _ = require('lodash');
   var $state = require('$state');
+  var entityCreator = require('entityCreator');
 
   var searchController = $controller('EntryListSearchController', {$scope: $scope});
   $controller('DisplayedFieldsController', {$scope: $scope});
@@ -67,6 +68,12 @@ angular.module('contentful')
 
   $scope.newContentType = function () {
     $state.go('^.^.content_types.new');
+  };
+
+  $scope.newEntry = function (contentTypeId) {
+    entityCreator.newEntry(contentTypeId).then(function (entry) {
+      $state.go('^.detail', {entryId: entry.getId()});
+    });
   };
 
   $scope.getSearchContentType = function () {

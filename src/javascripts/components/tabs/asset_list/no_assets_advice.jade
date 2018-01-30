@@ -18,7 +18,7 @@
       role="menu" cf-context-menu
       aria-label="Create Asset" data-test-id="create-asset-menu")
       ul.context-menu__items
-        li(role="menuitem" ng-click="entityCreationController.newAsset()")
+        li(role="menuitem" ng-click="newAsset()")
           | Single asset
         li(role="menuitem" ng-click="createMultipleAssets()" ng-show="canUploadMultipleAssets()")
           | Multiple assets
