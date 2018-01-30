@@ -9,7 +9,7 @@ header.workbench-header
 
   .workbench-header__actions
     button.btn-action.add-entity(
-      ng-click="entityCreationController.newLocale()"
+      ng-click="newLocale()"
       ng-show="localesUsageState === ONE_LOCALE_USED || localesUsageState === MORE_THAN_ONE_LOCALE_USED")
       cf-icon.btn-icon.inverted(name="plus")
       | Add Locale

@@ -37,15 +37,6 @@ angular.module('contentful')
     .then(_.partial(handler, null), handler);
   };
 
-  this.newLocale = function () {
-    var organization = spaceContext.organization;
-    var usage = enforcements.computeUsageForOrganization(organization, 'locale');
-    if (usage) {
-      return notification.error(usage);
-    }
-    $state.go('spaces.detail.settings.locales.new');
-  };
-
   function makeEntityResponseHandler (params) {
     return function entityResponseHandler (err, entity) {
       var stateParams = {};

@@ -14,6 +14,9 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var TheAccountView = require('TheAccountView');
   var TheLocaleStore = require('TheLocaleStore');
+  var notification = require('notification');
+  var enforcements = require('access_control/Enforcements');
+  var $state = require('$state');
 
   var STATES = {
     NO_MULTIPLE_LOCALES: 1,
@@ -32,6 +35,7 @@ angular.module('contentful')
   $scope.localesUsageState = getLocalesUsageState();
   $scope.getPlanLocalesLimit = getPlanLocalesLimit;
   $scope.getSubscriptionPlanName = _.partial(getSubscriptionPlanData, 'name');
+  $scope.newLocale = newLocale;
 
   TheLocaleStore.refresh()
   .then(function (locales) {
@@ -62,6 +66,17 @@ angular.module('contentful')
       return STATES.LOCALES_LIMIT_REACHED;
     } else {
       return STATES.UNKNOWN;
+    }
+  }
+
+  function newLocale () {
+    var organization = spaceContext.organization;
+    var usage = enforcements.computeUsageForOrganization(organization, 'locale');
+
+    if (usage) {
+      return notification.error(usage);
+    } else {
+      $state.go('^.new');
     }
   }
 
