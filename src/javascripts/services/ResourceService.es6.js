@@ -1,8 +1,10 @@
 import { getCurrentVariation } from 'utils/LaunchDarkly';
 import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/Endpoint';
-import { getUsage, getLimit } from 'enforcements';
 import { apiUrl } from 'Config';
 import * as auth from 'Authentication';
+import spaceContext from 'spaceContext';
+
+import { merge } from 'lodash';
 
 /*
 {
@@ -72,8 +74,8 @@ export default function createResourceService (id, type = 'space') {
             path: [ 'resources', resourceType ]
           });
         } else {
-          const limit = getLimit(resourceType);
-          const usage = getUsage(resourceType);
+          const limit = getLegacyLimit(resourceType);
+          const usage = getLegacyUsage(resourceType);
 
           return createResourceFromTokenData(resourceType, limit, usage);
         }
@@ -131,6 +133,26 @@ function createResourceFromTokenData (resourceType, limit, usage) {
       }
     ]
   };
+}
+
+function getLegacyLimit (resourceType) {
+  const organization = spaceContext.organizationContext.organization;
+  const allLimits = merge(
+    organization.subscriptionPlan.limits.permanent,
+    organization.subscriptionPlan.limits.period
+  );
+
+  return allLimits[resourceType];
+}
+
+function getLegacyUsage (resourceType) {
+  const organization = spaceContext.organizationContext.organization;
+  const allUsages = merge(
+    organization.usage.permanent,
+    organization.usage.period
+  );
+
+  return allUsages[resourceType];
 }
 
 function getResourceLimits (resource) {

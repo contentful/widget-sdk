@@ -3,7 +3,6 @@ import ReactTestUtils from 'libs/react-dom/test-utils';
 describe('app/api/KeyEditor/Controller', function () {
   beforeEach(function () {
     module('contentful/test', ($provide) => {
-      $provide.stubLaunchDarkly();
       $provide.value('navigation/closeState', sinon.spy());
       $provide.value('app/api/KeyEditor/BoilerplateCode', {
         get: sinon.stub().resolves([

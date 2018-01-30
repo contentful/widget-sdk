@@ -256,7 +256,7 @@ angular.module('contentful')
   function handleSpaceCreationFailure (organization, err) {
     controller.createSpaceInProgress = false;
 
-    var orgId = organization.getId();
+    var orgId = organization.sys.id;
     var resources = createResourceService(orgId, 'organization');
 
     resources.canCreate('space').then(function (canCreate) {

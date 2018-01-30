@@ -94,7 +94,7 @@ describe('LaunchDarkly', function () {
       $provide.value('logger', this.logger);
     });
 
-    const ld = this.$inject('utils/LaunchDarkly');
+    const ld = this.$inject('utils/LaunchDarkly')._noMock;
 
     this.ld = ld;
     this.ld.init();

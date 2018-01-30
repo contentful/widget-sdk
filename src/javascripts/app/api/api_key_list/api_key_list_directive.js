@@ -68,7 +68,7 @@ angular.module('contentful')
   .then(function (apiKeys) {
     $scope.apiKeys = apiKeys;
 
-    return resources.canCreate('api_keys');
+    return resources.canCreate('apiKeys');
   })
   .then(function (canCreate) {
     $scope.context.ready = true;

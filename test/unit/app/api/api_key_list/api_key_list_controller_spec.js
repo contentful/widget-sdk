@@ -1,5 +1,3 @@
-'use strict';
-
 // TODO merge this with directive tests
 describe('API Key List Controller', function () {
   beforeEach(function () {
@@ -8,12 +6,30 @@ describe('API Key List Controller', function () {
     this.scope = this.$inject('$rootScope').$new();
     this.scope.context = {};
 
-    this.getApiKeys = sinon.stub();
+    this.usage = {
+      apiKeys: 0
+    };
+    this.limits = {
+      apiKeys: 2
+    };
+
+    this.getApiKeys = sinon.stub().resolves();
     this.spaceContext = _.extend(this.$inject('spaceContext'), {
       getData: _.constant(2),
-      space: {getOrganizationId: _.constant(1)},
+      space: {getOrganizationId: _.constant(1), getId: _.constant('1234')},
       apiKeyRepo: {getAll: this.getApiKeys},
-      organizationContext: {organization: {}}
+      organizationContext: {
+        organization: {
+          subscriptionPlan: {
+            limits: {
+              permanent: this.limits
+            }
+          },
+          usage: {
+            permanent: this.usage
+          }
+        }
+      }
     });
 
     this.create = () => {
@@ -28,6 +44,7 @@ describe('API Key List Controller', function () {
     it('is true', function () {
       this.getApiKeys.resolves([]);
       this.create();
+
       expect(this.scope.empty).toBeTruthy();
     });
 
@@ -40,13 +57,13 @@ describe('API Key List Controller', function () {
 
   describe('has reached the API keys limit', function () {
     it('under keys limit', function () {
-      this.getApiKeys.resolves([{}]);
+      this.usage.apiKeys = 0;
       this.create();
       expect(this.scope.reachedLimit).toBeFalsy();
     });
 
     it('reached the limit', function () {
-      this.getApiKeys.resolves([{}, {}]);
+      this.usage.apiKeys = 2;
       this.create();
       expect(this.scope.reachedLimit).toBeTruthy();
     });

@@ -30,8 +30,15 @@ describe('cfCreateNewSpace directive', function () {
       client: {
         createSpace: sinon.stub()
       },
-      enforcements: {
-        computeUsageForOrganization: sinon.stub()
+      resourceService: {
+        _canCreate: sinon.stub().resolves(true),
+        _messagesFor: sinon.stub().resolves({ error: '', warning: '' }),
+        default: () => {
+          return {
+            canCreate: stubs.resourceService._canCreate,
+            messagesFor: stubs.resourceService._messagesFor
+          };
+        }
       },
       tokenStore: {
         refresh: sinon.stub(),
@@ -53,11 +60,10 @@ describe('cfCreateNewSpace directive', function () {
       $provide.value('analytics/Analytics', stubs.analytics);
       $provide.value('logger', stubs.logger);
       $provide.value('client', stubs.client);
-      $provide.value('access_control/Enforcements', stubs.enforcements);
       $provide.value('services/TokenStore', stubs.tokenStore);
+      $provide.value('services/ResourceService', stubs.resourceService);
       $provide.value('$state', stubs.state);
       $provide.removeDirectives('cfIcon');
-      $provide.stubLaunchDarkly();
     });
 
     this.spaceContext = this.$inject('mocks/spaceContext').init();
@@ -179,8 +185,8 @@ describe('cfCreateNewSpace directive', function () {
           expect(stubs.client.createSpace.args[0][1]).toEqual('orgid');
         });
 
-        it('computes usage', function () {
-          sinon.assert.called(stubs.enforcements.computeUsageForOrganization);
+        it('asks if it can create a new space', function () {
+          sinon.assert.called(stubs.resourceService._canCreate);
         });
 
         it('displays and logs error', function () {
@@ -220,8 +226,8 @@ describe('cfCreateNewSpace directive', function () {
           expect(stubs.client.createSpace.args[0][1]).toEqual('orgid');
         });
 
-        it('computes usage', function () {
-          sinon.assert.called(stubs.enforcements.computeUsageForOrganization);
+        it('asks if it can create a new space', function () {
+          sinon.assert.called(stubs.resourceService._canCreate);
         });
 
         it('shows field length error', function () {

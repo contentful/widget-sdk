@@ -1,7 +1,7 @@
 import { createIsolatedSystem } from 'test/helpers/system-js';
 import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 
-import { set, values } from 'lodash';
+import { get, set, values } from 'lodash';
 
 describe('ResourceService', function () {
   beforeEach(function* () {
@@ -79,22 +79,50 @@ describe('ResourceService', function () {
       createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
     });
 
-    this.usages = {};
-    this.limits = {};
-    this.stubs.getUsage = sinon.stub().callsFake((resourceType) => {
-      return this.usages[resourceType];
-    });
-    this.stubs.getLimit = sinon.stub().callsFake((resourceType) => {
-      return this.limits[resourceType];
-    });
+    this.called = {};
 
-    system.set('enforcements', {
-      getUsage: this.stubs.getUsage,
-      getLimit: this.stubs.getLimit
-    });
+    const usages = {};
+    const limits = {};
+    const handler = {
+      get: (target, name) => {
+        if (name === 'called') {
+          return target.called;
+        }
+
+        const current = get(target, 'called') || 0;
+
+        set(target, 'called', current + 1);
+
+        return target[name];
+      }
+    };
+
+    this.usages = new Proxy(usages, handler);
+    this.limits = new Proxy(limits, handler);
 
     system.set('Authentication', {
 
+    });
+
+    const mockedSpaceContext = {
+      organizationContext: {
+        organization: {
+          subscriptionPlan: {
+            limits: {
+              permanent: this.limits,
+              period: {}
+            }
+          },
+          usage: {
+            permanent: this.usages,
+            period: {}
+          }
+        }
+      }
+    };
+
+    system.set('spaceContext', {
+      default: mockedSpaceContext
     });
 
     system.set('utils/LaunchDarkly', {
@@ -152,12 +180,13 @@ describe('ResourceService', function () {
       expect(this.spies.spaceEndpoint.calledOnce).toBe(true);
     });
 
-    it('should return data from the token, via enforcements, if the feature flag is false', function* () {
+    it('should return data from the token, via spaceContext, if the feature flag is false', function* () {
       this.flags['feature-bv-2018-01-resources-api'] = false;
 
       yield this.ResourceService.get('entries');
-      expect(this.stubs.getUsage.calledOnce).toBe(true);
-      expect(this.stubs.getLimit.calledOnce).toBe(true);
+
+      expect(this.usages.called).toBe(1);
+      expect(this.limits.called).toBe(1);
     });
 
     it('should return an item that looks like a Resource regardless of the feature flag', function* () {

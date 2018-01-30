@@ -72,6 +72,27 @@ angular.module('contentful/mocks', [])
     store: sinon.stub()
   });
 
+  $provide.decorator('utils/LaunchDarkly', [
+    '$delegate',
+    'mocks/utils/LaunchDarkly',
+    function ($delegate, mock) {
+      const apiNames = [ 'init', 'onABTest', 'onFeatureFlag', 'getCurrentVariation' ];
+      const api = {};
+
+      apiNames.forEach(function (method) {
+        if (mock[method]) {
+          api[method] = mock[method];
+        } else {
+          api[method] = sinon.stub();
+        }
+      });
+
+      return _.extend({
+        _noMock: $delegate
+      }, api);
+    }
+  ]);
+
   $provide.stubDirective = function (name, definition) {
     $provide.factory(name + 'Directive', function () {
       return [_.extend({
@@ -79,17 +100,6 @@ angular.module('contentful/mocks', [])
         restrict: 'A',
         priority: 0
       }, definition)];
-    });
-  };
-
-  $provide.stubLaunchDarkly = function () {
-    $provide.factory('utils/LaunchDarkly', function () {
-      return {
-        init: sinon.stub(),
-        onABTest: sinon.stub(),
-        onFeatureFlag: sinon.stub(),
-        getCurrentVariation: sinon.stub()
-      };
     });
   };
 
