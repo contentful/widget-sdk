@@ -87,7 +87,7 @@ function loadOrgFeatures (organization) {
       // doesn't have features because of new pricing version.
       const orgEndpoint = createOrgEndpoint(organization.sys.id);
       return getEnabledOrgFeatures(orgEndpoint)
-        .then((items) => items.map((feature) => camelCase(feature['internal_name'])))
+        .then((items) => items.map(({internalName}) => camelCase(internalName)))
         .catch((err) => {
           logger.logError(`Could not fetch org features for ${organization.sys.id}`, err);
           return [];
