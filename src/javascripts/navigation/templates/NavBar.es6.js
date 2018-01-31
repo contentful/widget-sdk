@@ -84,6 +84,10 @@ function navbarDropdown (data, tabIndex = 0) {
 }
 
 function navbarDropdownItem (data) {
+  if (data.separator) {
+    return h('div', {style: {fontWeight: 'bold'}}, [data.label]);
+  }
+
   const attrs = {
     role: 'menuitem',
     uiSrefActive: `{ "selected": "${data.rootSref || data.sref}" }`,
@@ -92,6 +96,9 @@ function navbarDropdownItem (data) {
   };
   if (data.if) {
     attrs.ngIf = data.if;
+  }
+  if (data.reload) {
+    attrs.uiSrefOpts = '{ reload: true }';
   }
 
   return h('a.context-menu__item', attrs, [data.title]);

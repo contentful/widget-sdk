@@ -1,6 +1,7 @@
 import * as $q from '$q';
 import makeRequest from 'data/Request';
 import { extend, filter, get } from 'lodash';
+import shouldUseEnvEndpoint from './shouldUseEnvEndpoint';
 
 /**
  * @module
@@ -45,11 +46,13 @@ import { extend, filter, get } from 'lodash';
  * @param {object} auth
  * @param {function(): Promise<string>} auth.getToken
  * @param {function(): Promise<string>} auth.refreshToken
+ * @param {string?} envId  if provided will call environment-scoped
+ *                         endpoints for applicable entities
  * @returns {function(): Promise<Object>}
  */
-export function createSpaceEndpoint (baseUrl, spaceId, auth) {
+export function createSpaceEndpoint (baseUrl, spaceId, auth, envId) {
   const spaceBaseUrl = joinPath([baseUrl, 'spaces', spaceId]);
-  return create(spaceBaseUrl, auth);
+  return create(spaceBaseUrl, auth, envId);
 }
 
 /*
@@ -130,13 +133,16 @@ export function createOrganizationEndpoint (baseUrl, organizationId, auth) {
  * @param {object} auth
  * @param {function(): Promise<string>} auth.getToken
  * @param {function(): Promise<string>} auth.refreshToken
+ * @param {string?} envId  if provided will call environment-scoped
+ *                         endpoints for applicable entities
  * @returns {function(): Promise<Object>}
  */
-export function create (baseUrl, auth) {
+export function create (baseUrl, auth, envId) {
   const baseRequest = makeRequest(auth);
 
   return function request (config, headers) {
-    const url = joinPath([baseUrl].concat(config.path));
+    const url = joinPath([baseUrl].concat(maybePrependWithEnv(config.path)));
+
     const req = {
       method: config.method,
       url: url,
@@ -171,6 +177,14 @@ export function create (baseUrl, auth) {
       headers['X-Contentful-Version'] = version;
     }
     return headers;
+  }
+
+  function maybePrependWithEnv (path) {
+    if (envId && shouldUseEnvEndpoint(path)) {
+      return ['environments', envId].concat(path);
+    } else {
+      return path;
+    }
   }
 }
 
