@@ -16,7 +16,8 @@
     "previewApiUrl" : "preview.contentful.com",
     "space" : "l1ay9bp8gv68",
     "spaceTemplatesUserReadOnlyToken" : "8adea107285afc11819019618341f5b98e5808c84b957cba9ede1e57c6026475",
-    "accessToken" : "0c783036ae7540a10db86150e1cb564c8c0bad53482794604f227dc199e6dde1"
+    "accessToken" : "0c783036ae7540a10db86150e1cb564c8c0bad53482794604f227dc199e6dde1",
+    "TEASpaceId": "qz0n5cdakyl9"
   },
   "launchDarkly": {
     "envId": "588a047044b03e0b3211298d"
