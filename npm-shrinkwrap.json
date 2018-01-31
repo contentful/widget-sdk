@@ -595,9 +595,6 @@
       "version": "1.1.0"
     },
     "downshift": {
-      "version": "1.22.3"
-    },
-    "downshift": {
       "version": "1.22.5"
     },
     "duplexer2": {
@@ -1931,7 +1928,7 @@
       "version": "1.0.1"
     },
     "moment": {
-      "version": "2.11.2"
+      "version": "2.19.3"
     },
     "ms": {
       "version": "0.7.1"
@@ -2105,11 +2102,11 @@
         }
       }
     },
-    "react-tippy": {
-      "version": "1.2.2"
-    },
     "react-highlight-words": {
       "version": "0.10.0"
+    },
+    "react-tippy": {
+      "version": "1.2.2"
     },
     "readable-stream": {
       "version": "2.2.2",
