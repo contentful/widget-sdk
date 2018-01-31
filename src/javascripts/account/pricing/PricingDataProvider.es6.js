@@ -87,11 +87,23 @@ function getSpaces (endpoint) {
 
 /* Gets the space plan for the space with corresponding space id
  * @param {object} endpoint an organization endpoint
- * @returns {Promise<object[>} space plan object
+ * @returns {Promise<object>} space plan object
  */
 export function getSingleSpacePlan (endpoint, spaceId) {
   return getSubscriptionPlans(endpoint, {
     plan_type: 'space', gatekeeper_key: spaceId
   })
     .then(data => data.items[0]);
+}
+
+/* Gets collection of space product rate plans.
+ * @param {object} endpoint an organization endpoint
+ * @returns {Promise<object[]>} product rate plans
+ */
+export function getSpaceRatePlans (endpoint) {
+  return endpoint({
+    method: 'GET',
+    path: ['product_rate_plans'],
+    query: {'plan_type': 'space'}
+  }, alphaHeader).then((data) => data.items);
 }
