@@ -527,9 +527,9 @@ describe('Space Template loading service', function () {
     beforeEach(function* () {
       const self = this;
       this.client.entries.returns(Promise.resolve([
-        {fields: {id: 3}},
-        {fields: {id: 2, order: 1}},
-        {fields: {id: 1, order: 0}}
+        {fields: {id: 3, spaceId: 3}},
+        {fields: {id: 2, spaceId: 2, order: 1}},
+        {fields: {id: 1, spaceId: 1, order: 0}}
       ]));
       yield this.spaceTemplateLoader.getTemplatesList()
       .then(function (entries) {

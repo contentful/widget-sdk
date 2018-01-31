@@ -4,69 +4,19 @@ import * as Analytics from 'analytics/Analytics';
 import {runTask} from 'utils/Concurrent';
 import * as _ from 'lodash';
 import qs from 'libs/qs';
-import environment from 'environment';
+import * as environment from 'environment';
+import {TEA_MAIN_CONTENT_PREVIEW, TEA_CONTENT_PREVIEWS, DISCOVERY_APP_BASE_URL} from './contentPreviewConfig';
 
 const ASSET_PROCESSING_TIMEOUT = 60000;
 
-// we specify this space ID to indicate from which space
+// we specify this space name to indicate from which space
 // we get template for TEA (the example app). We want to create a specific
 // content preview for it, so we need to distinguish it from other templates.
 // All other templates use discovery app, as a generic tool to preview your
 // content. This is not very reliable, but since we own this repo, we can be
 // sure that this space will remain the same, and also, in case it is invalid,
 // we will create discovery app for TEA
-const TEA_SPACE_ID = 'qz0n5cdakyl9';
-
-// we want to have this content preview as the first option for TEA space
-// it means that this content preview is guaranteed to be created first,
-// and in the list of content previews it will be on the first place
-const TEA_MAIN_CONTENT_PREVIEW = {
-  name: 'Node.js platform example',
-  description: 'The example app, implemented in Node.js',
-  baseUrl: {
-    prod: 'https://the-example-app-nodejs.contentful.com',
-    staging: 'https://the-example-app-nodejs.flinkly.com'
-  }
-};
-
-// we want to create several content previews for TEA, one for each platform
-// combining with main content preview will make code less readable
-const TEA_CONTENT_PREVIEWS = [
-  {
-    name: '.NET platform example',
-    description: 'The example app, implemented in .NET',
-    baseUrl: {
-      prod: 'https://the-example-app-csharp.contentful.com',
-      staging: 'https://the-example-app-csharp.flinkly.com'
-    }
-  },
-  {
-    name: 'Ruby platform example',
-    description: 'The example app, implemented in Ruby using Sinatra',
-    baseUrl: {
-      prod: 'https://the-example-app-rb.contentful.com',
-      staging: 'https://the-example-app-rb.flinkly.com'
-    }
-  },
-  {
-    name: 'PHP platform example',
-    description: 'The example app, implemented in PHP',
-    baseUrl: {
-      prod: 'https://the-example-app-php.contentful.com',
-      staging: 'https://the-example-app-php.flinkly.com'
-    }
-  },
-  {
-    name: 'Python platform example',
-    description: 'The example app, implemented in Python using Flask',
-    baseUrl: {
-      prod: 'https://the-example-app-py.herokuappcontentfulcom/',
-      staging: 'https://the-example-app-py.herokuappflinklycom/'
-    }
-  }
-];
-
-const DISCOVERY_APP_BASE_URL = 'https://discovery.contentful.com/entries/by-content-type/';
+const TEA_SPACE_ID = environment.settings.contentful.TEASpaceId;
 
 export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLocaleCode) {
   const templateName = templateInfo.name;
@@ -484,14 +434,11 @@ function categoryConfig (params) {
 
 function lessonConfig (params) {
   const $ref1 = '{entry.linkedBy.fields.slug}';
-  // const $ref1 = '{references.current.course:fields.slug}';
   return makeTEAConfig(params, `/courses/${$ref1}/lessons/{entry.fields.slug}`);
 }
 
 function lessonContentConfig (params) {
-  // const $ref1 = '{references.lesson.course:fields.slug}';
   const $ref1 = '{entry.linkedBy.linkedBy.fields.slug}';
-  // const $ref2 = '{references.current.lesson:fields.slug}';
   const $ref2 = '{entry.linkedBy.fields.slug}';
   return makeTEAConfig(params, `/courses/${$ref1}/lessons/${$ref2}`);
 }

@@ -28,7 +28,7 @@ export function getTemplatesList () {
         // if this feature is disabled, hide the example space
         // template from the example spaces list show in the
         // space creation modal
-        return template.fields.spaceId !== 'qz0n5cdakyl9';
+        return template.fields.spaceId !== contentfulConfig.TEASpaceId;
       }
     });
   });
