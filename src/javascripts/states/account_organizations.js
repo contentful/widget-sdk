@@ -17,7 +17,7 @@ angular.module('contentful')
     url: '/new',
     label: 'Create new organization',
     views: {
-      // Override org navbar from paremt state
+      // Override organization navbar from the parent state
       'nav-bar@': { template: '' }
     },
     template: [

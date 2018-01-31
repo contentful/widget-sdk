@@ -31,11 +31,7 @@ angular.module('contentful')
       });
 
       this.canNavigateTo = function (section) {
-        if (!spaceContext.space || spaceContext.space.isHibernated()) {
-          return false;
-        } else {
-          return accessChecker.getSectionVisibility()[section];
-        }
+        return spaceContext.space && accessChecker.getSectionVisibility()[section];
       };
     }]
   };

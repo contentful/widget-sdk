@@ -2,8 +2,6 @@ import { h } from 'utils/hyperscript';
 import { getStore } from 'TheStore';
 import sectionAccess from 'sectionAccess';
 import * as Analytics from 'analytics/Analytics';
-import * as TokenStore from 'services/TokenStore';
-import spaceContext from 'spaceContext';
 
 import contentTypes from './contentTypes';
 import entries from './entries';
@@ -26,39 +24,46 @@ const newSpace = {
   }]
 };
 
+const hibernation = {
+  name: 'hibernation',
+  url: '/hibernation',
+  views: {
+    'nav-bar@': {template: '<div />'},
+    'content@': {template: JST.cf_space_hibernation_advice()}
+  }
+};
 
 const spaceDetail = {
   name: 'detail',
   url: '/:spaceId',
   resolve: {
-    spaceContext: ['$stateParams', function ($stateParams) {
-      return TokenStore.getSpace($stateParams.spaceId)
-      .then(function (space) {
-        return spaceContext.resetWithSpace(space);
-      });
+    spaceData: ['services/TokenStore', '$stateParams', function (TokenStore, $stateParams) {
+      return TokenStore.getSpace($stateParams.spaceId);
+    }],
+    spaceContext: ['spaceContext', 'spaceData', function (spaceContext, spaceData) {
+      return spaceContext.resetWithSpace(spaceData);
     }]
   },
-  onEnter: ['spaceContext', function (spaceContext) {
-    Analytics.trackSpaceChange(spaceContext.space);
+  onEnter: ['spaceData', function (spaceData) {
+    Analytics.trackSpaceChange({data: spaceData});
   }],
-  controller: ['$scope', 'spaceContext', function ($scope, spaceContext) {
-    const space = spaceContext.space;
-    $scope.label = space.data.name;
+  template: JST.cf_no_section_available(),
+  controller: ['$scope', '$state', 'spaceData', function ($scope, $state, spaceData) {
+    const isHibernated = (spaceData.enforcements || []).some(e => e.reason === 'hibernated');
+    const accessibleSref = sectionAccess.getFirstAccessibleSref();
 
-    if (sectionAccess.hasAccessToAny()) {
-      sectionAccess.redirectToFirstAccessible();
-      store.set('lastUsedSpace', space.getId());
-      store.set('lastUsedOrg', space.getOrganizationId());
-    }
-  }],
-  templateProvider: ['spaceContext', function (spaceContext) {
-    if (spaceContext.space.isHibernated()) {
-      return JST.cf_space_hibernation_advice();
-    } else if (!sectionAccess.hasAccessToAny()) {
-      return JST.cf_no_section_available();
+    if (isHibernated) {
+      $state.go('.hibernation');
+    } else if (accessibleSref) {
+      store.set('lastUsedSpace', spaceData.sys.id);
+      store.set('lastUsedOrg', spaceData.organization.sys.id);
+      $state.go(accessibleSref);
+    } else {
+      $scope.noSectionAvailable = true;
     }
   }],
   children: [
+    hibernation,
     contentTypes,
     entries,
     assets,
