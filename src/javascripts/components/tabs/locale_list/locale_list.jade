@@ -42,7 +42,7 @@ header.workbench-header
       table
         tbody
           tr(ng-repeat="locale in locales track by locale.sys.id"
-             ng-init="linkToLocale='spaces.detail.settings.locales.detail({ localeId: locale.sys.id })'"
+             ng-init="linkToLocale='^.detail({ localeId: locale.sys.id })'"
              ui-sref="{{linkToLocale}}")
             +td.x--large-cell(aria-label="cell-name"
               ui-sref="{{linkToLocale}}")

@@ -4,6 +4,7 @@ describe('The Locale list directive', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.removeDirectives('relative');
+      $provide.value('$state', {current: '', href: () => {}});
     });
 
     this.mockService('TheAccountView', {

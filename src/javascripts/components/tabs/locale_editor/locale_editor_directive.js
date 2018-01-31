@@ -240,7 +240,7 @@ angular.module('contentful')
       onLoadOrUpdate();
       notify.saveSuccess();
       if ($scope.context.isNew) {
-        return $state.go('spaces.detail.settings.locales.detail', {
+        return $state.go('^.detail', {
           localeId: $scope.locale.sys.id
         });
       }
