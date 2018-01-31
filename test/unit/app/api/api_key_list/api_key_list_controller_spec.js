@@ -7,10 +7,10 @@ describe('API Key List Controller', function () {
     this.scope.context = {};
 
     this.usage = {
-      apiKeys: 0
+      apiKey: 0
     };
     this.limits = {
-      apiKeys: 2
+      apiKey: 2
     };
 
     this.getApiKeys = sinon.stub().resolves();
@@ -57,13 +57,13 @@ describe('API Key List Controller', function () {
 
   describe('has reached the API keys limit', function () {
     it('under keys limit', function () {
-      this.usage.apiKeys = 0;
+      this.usage.apiKey = 0;
       this.create();
       expect(this.scope.reachedLimit).toBeFalsy();
     });
 
     it('reached the limit', function () {
-      this.usage.apiKeys = 2;
+      this.usage.apiKey = 2;
       this.create();
       expect(this.scope.reachedLimit).toBeTruthy();
     });

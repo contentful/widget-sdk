@@ -15,20 +15,10 @@ describe('entityCreator', function () {
         'track'
       ]);
 
-      stubs.resourceService = {
-        _canCreate: sinon.stub().resolves(true),
-        default: function () {
-          return {
-            canCreate: stubs.resourceService._canCreate
-          };
-        }
-      };
-
       $provide.value('access_control/Enforcements', {
+        computeUsageForOrganization: stubs.computeUsage,
         determineEnforcement: stubs.enforcement
       });
-
-      $provide.value('services/ResourceService', stubs.resourceService);
     });
 
     const cfStub = this.$inject('cfStub');
@@ -38,9 +28,6 @@ describe('entityCreator', function () {
 
     this.spaceContext = this.$inject('spaceContext');
     this.spaceContext.space = cfStub.space('test');
-
-    this.$state = this.$inject('$state');
-    this.$state.go = sinon.stub();
 
     this.entityCreator = this.$inject('entityCreator');
   });
@@ -83,20 +70,6 @@ describe('entityCreator', function () {
         sinon.assert.called(this.notification.error);
       });
     });
-
-    describe('creation suceeds', function () {
-      beforeEach(function () {
-        createStub.returns(this.$q.resolve({ getId: sinon.stub().returns('someEntryId') }));
-        this.entityCreationController.newEntry(contentType);
-        this.$apply();
-      });
-
-      it('navigates to editor', function () {
-        sinon.assert.calledWith(this.$state.go, 'spaces.detail.entries.detail', {
-          entryId: 'someEntryId'
-        });
-      });
-    });
   });
 
   describe('creates an asset', function () {
@@ -134,46 +107,6 @@ describe('entityCreator', function () {
       it('notifies of the error', function () {
         sinon.assert.called(this.notification.error);
       });
-    });
-
-    describe('creation suceeds', function () {
-      beforeEach(inject(function (cfStub) {
-        createStub.returns(this.$q.resolve(cfStub.asset(this.spaceContext.space, 'someAssetId')));
-        this.entityCreationController.newAsset();
-        this.$apply();
-      }));
-
-      it('navigates to editor', function () {
-        sinon.assert.calledWith(this.$state.go, 'spaces.detail.assets.detail', {
-          assetId: 'someAssetId'
-        });
-      });
-    });
-  });
-
-  describe('creates a content type', function () {
-    beforeEach(function () {
-      this.entityCreationController.newContentType();
-      this.$apply();
-    });
-
-    it('navigates to editor', function () {
-      sinon.assert.calledWith(this.$state.go, 'spaces.detail.content_types.new');
-    });
-  });
-
-  describe('opens editor for new locale', function () {
-    beforeEach(function () {
-      this.entityCreationController.newLocale();
-      this.$apply();
-    });
-
-    it('computes the locale usage', function () {
-      sinon.assert.calledWith(stubs.resourceService._canCreate, 'locales');
-    });
-
-    it('navigates to editor', function () {
-      sinon.assert.calledWith(this.$state.go, 'spaces.detail.settings.locales.new');
     });
   });
 });

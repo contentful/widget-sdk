@@ -184,21 +184,20 @@ describe('ResourceService', function () {
     });
 
     it('should return a successful Promise if supplied with valid arguments', function* () {
-      yield this.ResourceService.get('entries');
+      yield this.ResourceService.get('entry');
     });
-
 
     it('should return data from the endpoint if the feature flag is true', function* () {
       this.flags['feature-bv-2018-01-resources-api'] = true;
 
-      yield this.ResourceService.get('entries');
+      yield this.ResourceService.get('entry');
       expect(this.spies.spaceEndpoint.calledOnce).toBe(true);
     });
 
     it('should return data from the token, via spaceContext, if the feature flag is false', function* () {
       this.flags['feature-bv-2018-01-resources-api'] = false;
 
-      yield this.ResourceService.get('entries');
+      yield this.ResourceService.get('entry');
 
       expect(this.usages.called).toBeTruthy();
       expect(this.limits.called).toBeTruthy();
@@ -206,9 +205,10 @@ describe('ResourceService', function () {
 
     it('should return an item that looks like a Resource regardless of the feature flag', function* () {
       let locales;
+
       this.flags['feature-bv-2018-01-resources-api'] = true;
 
-      locales = yield this.ResourceService.get('locales');
+      locales = yield this.ResourceService.get('locale');
       expect(locales.usage).toBeDefined();
       expect(locales.limits.included).toBeDefined();
       expect(locales.limits.maximum).toBeDefined();
@@ -216,10 +216,10 @@ describe('ResourceService', function () {
       this.flags['feature-bv-2018-01-resources-api'] = false;
 
       // Setup the "token" limit and usage
-      this.usages['locales'] = 2;
-      this.limits['locales'] = 10;
+      this.usages['locale'] = 2;
+      this.limits['locale'] = 10;
 
-      locales = yield this.ResourceService.get('locales');
+      locales = yield this.ResourceService.get('locale');
       expect(locales.usage).toBeDefined();
       expect(locales.limits.included).toBeDefined();
       expect(locales.limits.maximum).toBeDefined();
@@ -284,11 +284,11 @@ describe('ResourceService', function () {
 
   describe('#canCreate', function () {
     it('should return a promise-like object', function () {
-      expect(this.isPromiseLike(this.ResourceService.canCreate('locales'))).toBe(true);
+      expect(this.isPromiseLike(this.ResourceService.canCreate('locale'))).toBe(true);
     });
 
     it('should return true if the maximum limit is not reached', function* () {
-      const status = yield this.ResourceService.canCreate('entries');
+      const status = yield this.ResourceService.canCreate('entry');
       expect(status).toBe(true);
     });
 
@@ -298,18 +298,18 @@ describe('ResourceService', function () {
         included: 2000
       }], [2500]));
 
-      const status = yield this.ResourceService.canCreate('entries');
+      const status = yield this.ResourceService.canCreate('entry');
       expect(status).toBe(false);
     });
   });
 
   describe('#messagesFor', function () {
     it('should return a promise-like object', function () {
-      expect(this.isPromiseLike(this.ResourceService.messagesFor('locales'))).toBe(true);
+      expect(this.isPromiseLike(this.ResourceService.messagesFor('locale'))).toBe(true);
     });
 
     it('should return an object that contains `warning` and `error` keys', function* () {
-      const messages = yield this.ResourceService.messagesFor('entries');
+      const messages = yield this.ResourceService.messagesFor('entry');
       expect(Object.keys(messages)).toContain('warning');
       expect(Object.keys(messages)).toContain('error');
     });
@@ -320,9 +320,9 @@ describe('ResourceService', function () {
         included: 2000
       }], [2100]));
 
-      const messages = yield this.ResourceService.messagesFor('entries');
+      const messages = yield this.ResourceService.messagesFor('entry');
       expect(messages.warning).toBeDefined();
-      expect(messages.error).not.toBeDefined();
+      expect(messages.error).toBe('');
     });
 
     it('should return an error if the maximum limit is reached', function* () {
@@ -331,8 +331,8 @@ describe('ResourceService', function () {
         included: 2000
       }], [2500]));
 
-      const messages = yield this.ResourceService.messagesFor('entries');
-      expect(messages.warning).toBeDefined();
+      const messages = yield this.ResourceService.messagesFor('entry');
+      expect(messages.warning).toBe('');
       expect(messages.error).toBeDefined();
     });
   });
@@ -387,12 +387,12 @@ describe('ResourceService', function () {
       expect(messages.entries.error).toBeDefined();
 
       // Locales
-      expect(messages.locales.warning).not.toBeDefined();
-      expect(messages.locales.error).not.toBeDefined();
+      expect(messages.locales.warning).toBe('');
+      expect(messages.locales.error).toBe('');
 
       // Content Types
       expect(messages.content_types.warning).toBeDefined();
-      expect(messages.content_types.error).not.toBeDefined();
+      expect(messages.content_types.error).toBe('');
     });
   });
 });

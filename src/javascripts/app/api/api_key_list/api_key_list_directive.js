@@ -18,6 +18,7 @@ angular.module('contentful')
   var TheAccountView = require('TheAccountView');
   var $state = require('$state');
   var notification = require('notification');
+  var ResourceUtils = require('utils/ResourceUtils');
   var createResourceService = require('services/ResourceService').default;
 
   var resources = createResourceService(spaceContext.getId());
@@ -67,12 +68,16 @@ angular.module('contentful')
   spaceContext.apiKeyRepo.getAll()
   .then(function (apiKeys) {
     $scope.apiKeys = apiKeys;
-
-    return resources.canCreate('apiKeys');
-  })
-  .then(function (canCreate) {
-    $scope.context.ready = true;
     $scope.empty = _.isEmpty($scope.apiKeys);
+
+    return resources.get('apiKey');
+  })
+  .then(function (resource) {
+    var canCreate = ResourceUtils.canCreate(resource);
+    var limits = ResourceUtils.getResourceLimits(resource);
+
+    $scope.context.ready = true;
+    $scope.limit = limits.maximum;
     $scope.reachedLimit = !canCreate;
   }, accessChecker.wasForbidden($scope.context))
   .catch(ReloadNotification.apiErrorHandler);

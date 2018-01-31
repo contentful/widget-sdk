@@ -1,4 +1,5 @@
 import { getCurrentVariation } from 'utils/LaunchDarkly';
+import { canCreate, generateMessage } from 'utils/ResourceUtils';
 import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/Endpoint';
 import { apiUrl } from 'Config';
 import * as auth from 'Authentication';
@@ -66,19 +67,19 @@ const flagName = 'feature-bv-2018-01-resources-api';
   removed this can most likely also be removed or refactored.
  */
 const resourceTypeMap = {
-  spaces: 'spaces',
-  spaceMemberships: 'space_memberships',
-  contentTypes: 'content_types',
-  entries: 'entries',
-  assets: 'assets',
-  environments: 'environments',
-  organizationMemberships: 'organization_memberships',
-  roles: 'roles',
-  locales: 'locales',
-  apiKeys: 'api_keys',
-  webhookDefinitions: 'webhook_definitions',
-  records: 'records',
-  apiRequests: 'api_requests'
+  space: 'spaces',
+  spaceMembership: 'space_memberships',
+  contentType: 'content_types',
+  entry: 'entries',
+  asset: 'assets',
+  environment: 'environments',
+  organizationMembership: 'organization_memberships',
+  role: 'roles',
+  locale: 'locales',
+  apiKey: 'api_keys',
+  webhookDefinition: 'webhook_definitions',
+  record: 'records',
+  apiRequest: 'api_requests'
 };
 
 export default function createResourceService (id) {
@@ -103,9 +104,11 @@ export default function createResourceService (id) {
         return resolve(getCurrentVariation(flagName));
       }).then(flagValue => {
         if (flagValue === true) {
+          const apiResourceType = resourceTypeMap[resourceType];
+
           return endpoint({
             method: 'GET',
-            path: [ 'resources', resourceType ]
+            path: [ 'resources', apiResourceType ]
           });
         } else {
           const limit = getLegacyLimit(resourceType);
@@ -130,7 +133,7 @@ export default function createResourceService (id) {
       });
     },
     canCreate: function (resourceType) {
-      return this.get(resourceType).then(resource => !resourceMaximumLimitReached(resource));
+      return this.get(resourceType).then(canCreate);
     },
     messagesFor: function (resourceType) {
       return this.get(resourceType).then(generateMessage);
@@ -187,50 +190,4 @@ function getLegacyUsage (resourceType) {
   );
 
   return allUsages[resourceType];
-}
-
-function getResourceLimits (resource) {
-  if (!resource.parent && !resource.limits) {
-    return null;
-  }
-
-  if (resource.limits) {
-    return resource.limits;
-  } else if (resource.parent) {
-    return getResourceLimits(resource.parent);
-  }
-}
-
-function resourceMaximumLimitReached (resource) {
-  const limitMaximum = getResourceLimits(resource).maximum;
-  const usage = resource.usage;
-
-  return usage >= limitMaximum;
-}
-
-function resourceIncludedLimitReached (resource) {
-  const limitIncluded = getResourceLimits(resource).included;
-  const usage = resource.usage;
-
-  return usage >= limitIncluded;
-}
-
-function generateMessage (resource) {
-  const resourceName = resource.name;
-
-  let warning;
-  let error;
-
-  if (resourceIncludedLimitReached(resource)) {
-    warning = `You are near the limit of your ${resourceName} resource.`;
-  }
-
-  if (resourceMaximumLimitReached(resource)) {
-    error = `You have exceeded your ${resourceName} usage.`;
-  }
-
-  return {
-    warning,
-    error
-  };
 }
