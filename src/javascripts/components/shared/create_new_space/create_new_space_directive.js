@@ -96,10 +96,14 @@ angular.module('contentful')
       return;
     }
     controller.spaceRatePlans = [];
-    const endpoint = createOrgEndpoint(organization.sys.id);
+    var endpoint = createOrgEndpoint(organization.sys.id);
     getSpaceRatePlans(endpoint).then(function (items) {
-      controller.spaceRatePlans = items;
-      controller.newSpace.data.productRatePlanId = _.get(items[0], 'sys.id');
+      var noRatePlan = {name: '', id: null};
+      items = items.map(function (item) {
+        return {id: item.sys.id, name: item.name + ' ($' + item.price + ')'};
+      });
+      controller.spaceRatePlans = _.concat([noRatePlan], items);
+      controller.newSpace.data.productRatePlanId = null;
     });
   });
 
@@ -113,11 +117,6 @@ angular.module('contentful')
 
   // Request space creation
   controller.requestSpaceCreation = function () {
-    if (!validate(controller.newSpace.data)) {
-      return;
-    }
-
-    controller.createSpaceInProgress = true;
     if (controller.newSpace.useTemplate) {
       createNewSpace(controller.newSpace.selectedTemplate);
     } else {
@@ -148,12 +147,12 @@ angular.module('contentful')
   }
 
   function createNewSpace (template) {
-    if (!template) {
-      template = {name: 'Blank'};
-    }
-
     var data = controller.newSpace.data;
     var organization = controller.newSpace.organization;
+
+    if (!validate(data)) {
+      return;
+    }
 
     // TODO This may happen due to 'writableOrganizations' being empty.
     // See above for more info
@@ -161,11 +160,15 @@ angular.module('contentful')
       return showFormError('You don’t have permission to create a space');
     }
 
-    // This might happen when the dropdown was not populated due to server error
-    // or timeout
     if (organization.pricingVersion === 'pricing_version_2' && !data.productRatePlanId) {
       return showFormError('You must select a rate plan.');
     }
+
+    if (!template) {
+      template = {name: 'Blank'};
+    }
+
+    controller.createSpaceInProgress = true;
 
     Analytics.track('space:template_selected', {
       templateName: template.name

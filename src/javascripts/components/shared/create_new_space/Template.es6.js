@@ -125,7 +125,7 @@ function renderRatePlanSelect () {
     h('select.cfnext-select-box', {
       dataTestId: 'select-locale',
       ngModel: 'createSpace.newSpace.data.productRatePlanId',
-      ngOptions: 'opt.sys.id as opt.name for opt in createSpace.spaceRatePlans',
+      ngOptions: 'opt.id as opt.name for opt in createSpace.spaceRatePlans',
       ngDisabled: 'createSpace.createSpaceInProgress',
       ariaInvalid: '{{!!createSpace.newSpace.errors.fields.space_rate_plan}}'
     }),
