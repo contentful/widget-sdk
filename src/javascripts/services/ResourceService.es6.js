@@ -4,7 +4,8 @@ import { apiUrl } from 'Config';
 import * as auth from 'Authentication';
 import spaceContext from 'spaceContext';
 
-import { merge } from 'lodash';
+import $q from '$q';
+import { assign } from 'lodash';
 
 /*
 {
@@ -60,7 +61,8 @@ const flagName = 'feature-bv-2018-01-resources-api';
 
 /*
   The resourceTypeMap is necessary for bridging between pricing
-  Version 1 (legacy) and Version 2. Once the feature flag is
+  Version 1 (legacy) and Version 2, as well as making it easier to
+  notice an incorrect key given for legacy. Once the feature flag is
   removed this can most likely also be removed or refactored.
  */
 const resourceTypeMap = {
@@ -81,21 +83,25 @@ const resourceTypeMap = {
 
 export default function createResourceService (id) {
   // TODO: migrate this to use OrganizationEndpoint and SpaceEndpoint
-  // once the OrganizationEndpoint is ready
+  // once the OrganizationEndpoint is ready. Currently the Space endpoint
+  // for resources (/space/:space_id/resources) handles all.
+  //
   // NOTE: Also unskip the test in the spec related to this functionality
   const endpoint = createEndpoint('space', id);
 
   return {
     get: function (resourceType) {
-      if (!resourceType) {
-        throw new Error('resourceType not supplied to ResourceService.get');
-      }
+      return $q(function (resolve, reject) {
+        if (!resourceType) {
+          return reject(new Error('resourceType not supplied to ResourceService.get'));
+        }
 
-      if (!resourceTypeMap[resourceType]) {
-        throw new Error('Invalid resourceType supplied to ResourceService.get');
-      }
+        if (!resourceTypeMap[resourceType]) {
+          return reject(new Error('Invalid resourceType supplied to ResourceService.get'));
+        }
 
-      return getCurrentVariation(flagName).then(flagValue => {
+        return resolve(getCurrentVariation(flagName));
+      }).then(flagValue => {
         if (flagValue === true) {
           return endpoint({
             method: 'GET',
@@ -165,7 +171,7 @@ function createResourceFromTokenData (resourceType, limit, usage) {
 
 function getLegacyLimit (resourceType) {
   const organization = spaceContext.organizationContext.organization;
-  const allLimits = merge(
+  const allLimits = assign({},
     organization.subscriptionPlan.limits.permanent,
     organization.subscriptionPlan.limits.period
   );
@@ -175,7 +181,7 @@ function getLegacyLimit (resourceType) {
 
 function getLegacyUsage (resourceType) {
   const organization = spaceContext.organizationContext.organization;
-  const allUsages = merge(
+  const allUsages = assign({},
     organization.usage.permanent,
     organization.usage.period
   );

@@ -165,12 +165,26 @@ describe('ResourceService', function () {
   });
 
   describe('#get', function () {
-    it('should throw if a resource type is not supplied', function () {
-      expect(this.ResourceService.get).toThrow();
+    it('should return a failed Promise if not supplied with any arguments', function* () {
+      try {
+        yield this.ResourceService.get();
+      } catch (e) {
+        expect(e).toBeDefined();
+        expect(e instanceof Error).toBe(true);
+      }
     });
 
-    it('should return a promise-like object if called with a resource type', function () {
-      expect(this.isPromiseLike(this.ResourceService.get('entries'))).toBe(true);
+    it('should return a failed Promise if not supplied with a valid resourceType', function* () {
+      try {
+        yield this.ResourceService.get('foobar');
+      } catch (e) {
+        expect(e).toBeDefined();
+        expect(e instanceof Error).toBe(true);
+      }
+    });
+
+    it('should return a successful Promise if supplied with valid arguments', function* () {
+      yield this.ResourceService.get('entries');
     });
 
 
@@ -186,8 +200,8 @@ describe('ResourceService', function () {
 
       yield this.ResourceService.get('entries');
 
-      expect(this.usages.called).toBe(1);
-      expect(this.limits.called).toBe(1);
+      expect(this.usages.called).toBeTruthy();
+      expect(this.limits.called).toBeTruthy();
     });
 
     it('should return an item that looks like a Resource regardless of the feature flag', function* () {
