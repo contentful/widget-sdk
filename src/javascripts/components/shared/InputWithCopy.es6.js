@@ -1,6 +1,6 @@
 import {h} from 'ui/Framework';
-import {byName as colorByName} from 'Styles/Colors';
 import {noop} from 'lodash';
+import {byName as colorByName} from 'Styles/Colors';
 import domCopy from 'utils/DomClipboardCopy';
 
 const copied = {};

@@ -2,14 +2,15 @@
 
 angular.module('contentful')
 
-.directive('cfCreateNewSpace', function () {
+.directive('cfCreateNewSpace', ['require', function (require) {
+  var template = require('components/shared/create_new_space/Template').default;
   return {
     restrict: 'E',
-    template: JST['create_new_space_directive'](),
+    template: template(),
     controller: 'createSpaceController',
     controllerAs: 'createSpace'
   };
-});
+}]);
 
 angular.module('contentful')
 .controller('createSpaceController', ['$scope', 'require', '$element', function ($scope, require, $element) {
@@ -30,6 +31,8 @@ angular.module('contentful')
   var Analytics = require('analytics/Analytics');
   var spaceContext = require('spaceContext');
   var spaceTemplateEvents = require('analytics/events/SpaceCreation');
+  var createOrgEndpoint = require('access_control/OrganizationMembershipRepository').createEndpoint;
+  var getSpaceRatePlans = require('account/pricing/PricingDataProvider').getSpaceRatePlans;
 
   K.onValueScope($scope, TokenStore.organizations$, function (organizations) {
     controller.organizations = organizations;
@@ -83,6 +86,28 @@ angular.module('contentful')
     }
   });
 
+  // Populate space rate plans for selected org, if it is on v2 pricing.
+  $scope.$watch(function () {
+    return controller.newSpace.organization;
+  }, function (organization) {
+    if (!organization || organization.pricingVersion !== 'pricing_version_2') {
+      delete controller.spaceRatePlans;
+      delete controller.newSpace.data.productRatePlanId;
+      return;
+    }
+    controller.spaceRatePlans = [];
+    var endpoint = createOrgEndpoint(organization.sys.id);
+    getSpaceRatePlans(endpoint).then(function (items) {
+      var noRatePlan = {name: '', id: null};
+      items = items.map(function (item) {
+        return {id: item.sys.id, name: item.name + ' ($' + item.price + ')'};
+      });
+      controller.spaceRatePlans = _.concat([noRatePlan], items);
+      controller.newSpace.data.productRatePlanId = null;
+    });
+  });
+
+
   // Switch space template
   controller.selectTemplate = function (template) {
     if (!controller.createSpaceInProgress) {
@@ -92,11 +117,6 @@ angular.module('contentful')
 
   // Request space creation
   controller.requestSpaceCreation = function () {
-    if (!validate(controller.newSpace.data)) {
-      return;
-    }
-
-    controller.createSpaceInProgress = true;
     if (controller.newSpace.useTemplate) {
       createNewSpace(controller.newSpace.selectedTemplate);
     } else {
@@ -127,18 +147,28 @@ angular.module('contentful')
   }
 
   function createNewSpace (template) {
-    if (!template) {
-      template = {name: 'Blank'};
-    }
-
     var data = controller.newSpace.data;
     var organization = controller.newSpace.organization;
+
+    if (!validate(data)) {
+      return;
+    }
 
     // TODO This may happen due to 'writableOrganizations' being empty.
     // See above for more info
     if (!organization) {
       return showFormError('You don’t have permission to create a space');
     }
+
+    if (organization.pricingVersion === 'pricing_version_2' && !data.productRatePlanId) {
+      return showFormError('You must select a rate plan.');
+    }
+
+    if (!template) {
+      template = {name: 'Blank'};
+    }
+
+    controller.createSpaceInProgress = true;
 
     Analytics.track('space:template_selected', {
       templateName: template.name
