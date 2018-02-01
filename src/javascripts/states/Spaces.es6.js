@@ -10,6 +10,9 @@ import api from 'app/api/State';
 import settings from './settings';
 import home from './space_home';
 
+import locales from 'states/settings/locales';
+import extensions from 'states/settings/Extensions';
+
 const store = getStore();
 
 // TODO convert JST templates to hyperscript
@@ -68,7 +71,13 @@ const spaceEnvironment = {
     contentTypes,
     entries,
     assets,
-    api
+    api,
+    {
+      name: 'settings',
+      url: '/settings',
+      abstract: true,
+      children: [locales, extensions]
+    }
   ]
 };
 
