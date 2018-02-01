@@ -528,16 +528,12 @@ describe('Space Template loading service', function () {
 
   describe('gets template list from contentful', function () {
     beforeEach(function* () {
-      const self = this;
       this.client.entries.returns(Promise.resolve([
         {fields: {id: 3}},
         {fields: {id: 2, order: 1}},
         {fields: {id: 1, order: 0}}
       ]));
-      yield this.spaceTemplateLoader.getTemplatesList()
-      .then(function (entries) {
-        self.returnedEntries = entries;
-      });
+      this.returnedEntries = yield this.spaceTemplateLoader.getTemplatesList();
       this.$rootScope.$digest();
     });
 
