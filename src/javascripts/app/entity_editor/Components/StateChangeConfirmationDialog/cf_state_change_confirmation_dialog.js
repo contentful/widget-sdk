@@ -1,22 +1,17 @@
-angular.module('contentful').directive('cfChangeStateConfirmationDialog', [
+angular.module('contentful').directive('cfStateChangeConfirmationDialog', [
   'require',
   function (require) {
     var _ = require('lodash');
     var React = require('libs/react');
     var ReactDOM = require('libs/react-dom');
-
-    var Dialog = require('app/entity_editor/ChangeStateConfirmationDialog/Component').default;
-    var constants = require('app/entity_editor/ChangeStateConfirmationDialog/Component/constants');
-    var fetchLinksToEntity = require('app/entity_editor/ChangeStateConfirmationDialog/fetchLinksToEntity').default;
+    var Dialog = require('app/entity_editor/Components/StateChangeConfirmationDialog').default;
 
     return {
       link: function link ($scope, elem) {
         var entityInfo = $scope.entityInfo;
         var defaultProps = {
-          links: [],
           entityInfo: entityInfo,
           action: $scope.action,
-          requestState: constants.RequestState.PENDING,
           onConfirm: function () {
             $scope.dialog.confirm();
           },
@@ -24,21 +19,6 @@ angular.module('contentful').directive('cfChangeStateConfirmationDialog', [
             $scope.dialog.cancel();
           }
         };
-
-        fetchLinksToEntity(entityInfo.id, entityInfo.type).then(
-          function (links) {
-            render({
-              links: links,
-              requestState: constants.RequestState.SUCCESS
-            });
-          },
-          function () {
-            render({
-              links: [],
-              requestState: constants.RequestState.ERROR
-            });
-          }
-        );
 
         function render (props) {
           ReactDOM.render(

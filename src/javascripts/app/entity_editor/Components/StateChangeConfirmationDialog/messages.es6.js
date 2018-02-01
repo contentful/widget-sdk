@@ -1,8 +1,5 @@
 import { Action } from 'data/CMA/EntityActions';
-import { template as loDashTemplate } from 'lodash';
-import { EntityType, NumberOfLinks } from './constants';
-
-export const template = (message, args) => loDashTemplate(message)(args);
+import { EntityType, NumberOfLinks } from '../constants';
 
 export default {
   [Action.Unpublish()]: {

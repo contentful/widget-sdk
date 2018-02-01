@@ -233,7 +233,7 @@ angular.module('contentful')
     }
 
     return modalDialog.open({
-      template: '<cf-change-state-confirmation-dialog class="modal-background"/>',
+      template: '<cf-state-change-confirmation-dialog class="modal-background"/>',
       backgroundClose: true,
       scopeData: {
         action: props.action,

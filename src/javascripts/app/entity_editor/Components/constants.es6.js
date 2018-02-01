@@ -1,9 +1,3 @@
-export const RequestState = {
-  PENDING: 'pending',
-  SUCCESS: 'success',
-  ERROR: 'error'
-};
-
 export const EntityType = {
   ENTRY: 'Entry',
   ASSET: 'Asset'
