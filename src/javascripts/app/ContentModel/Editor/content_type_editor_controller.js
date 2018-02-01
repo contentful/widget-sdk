@@ -82,6 +82,7 @@ angular.module('contentful')
   if ($scope.context.isNew) {
     metadataDialog.openCreateDialog(contentTypeIds)
     .then(applyContentTypeMetadata(true), function () {
+      // X.detail.fields -> X.list
       $state.go('^.^.list');
     });
   }

@@ -50,6 +50,7 @@ angular.module('contentful')
 
   $scope.newAsset = function () {
     entityCreator.newAsset().then(function (asset) {
+      // X.list -> X.detail
       $state.go('^.detail', {assetId: asset.getId()});
     });
   };

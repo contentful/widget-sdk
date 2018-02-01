@@ -19,6 +19,7 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
   $scope.shouldDisable = accessChecker.shouldDisable;
 
   $scope.newContentType = function () {
+    // X.list -> X.new
     $state.go('^.new');
   };
 

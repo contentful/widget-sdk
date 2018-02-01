@@ -76,6 +76,7 @@ angular.module('contentful')
     if (usage) {
       return notification.error(usage);
     } else {
+      // X.list -> X.new
       $state.go('^.new');
     }
   }

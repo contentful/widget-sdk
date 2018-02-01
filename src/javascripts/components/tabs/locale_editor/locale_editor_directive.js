@@ -191,6 +191,7 @@ angular.module('contentful')
    * @type {Command}
    */
   controller.cancel = Command.create(function cancel () {
+    // X.detail -> X.list
     return $state.go('^.list');
   }, {
     available: function () {

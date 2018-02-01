@@ -67,11 +67,13 @@ angular.module('contentful')
   });
 
   $scope.newContentType = function () {
+    // X.entries.list -> X.content_types.new
     $state.go('^.^.content_types.new');
   };
 
   $scope.newEntry = function (contentTypeId) {
     entityCreator.newEntry(contentTypeId).then(function (entry) {
+      // X.list -> X.detail
       $state.go('^.detail', {entryId: entry.getId()});
     });
   };
