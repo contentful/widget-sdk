@@ -108,7 +108,7 @@ angular.module('contentful')
         Config.otUrl,
         Auth,
         space.getId(),
-        'master'
+        environmentId || 'master'
       );
 
       self.memberships = MembershipRepo.create(self.endpoint);
