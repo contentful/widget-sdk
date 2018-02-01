@@ -62,7 +62,7 @@ describe('data/sharejs/Connection', function () {
     };
 
     this.create = this.$inject('data/sharejs/Connection').create;
-    this.connection = this.create('//HOST', 'SPACE', this.auth);
+    this.connection = this.create('//HOST', this.auth, 'SPACE', 'ENV');
   });
 
   afterEach(function () {
@@ -74,7 +74,9 @@ describe('data/sharejs/Connection', function () {
       sinon.assert.calledWith(
         this.sharejs.Connection,
         '//HOST/spaces/SPACE/channel',
-        this.auth.getToken
+        this.auth.getToken,
+        'SPACE',
+        'ENV'
       );
     });
 

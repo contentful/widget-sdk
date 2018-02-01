@@ -22,7 +22,7 @@ export const DocLoad = DocLoader.DocLoad;
  * @param {Authorization} auth
  * @returns Connection
  */
-export function create (baseUrl, spaceId, auth) {
+export function create (baseUrl, auth, spaceId, environmentId) {
   /**
    * `connection.state` may be
    * - 'connecting': The connection is being established
@@ -32,7 +32,7 @@ export function create (baseUrl, spaceId, auth) {
    * - 'stopped': The connection is closed, and will not reconnect.
    * (From ShareJS client docs)
    */
-  const connection = createBaseConnection(baseUrl, spaceId, auth.getToken);
+  const connection = createBaseConnection(baseUrl, auth.getToken, spaceId, environmentId);
 
   const events = getEventStream(connection);
 
@@ -183,9 +183,9 @@ function getEventStream (connection) {
   return eventBus.stream;
 }
 
-function createBaseConnection (baseUrl, spaceId, getToken) {
+function createBaseConnection (baseUrl, getToken, spaceId, environmentId) {
   const url = baseUrl + '/spaces/' + spaceId + '/channel';
-  const connection = new ShareJS.Connection(url, getToken);
+  const connection = new ShareJS.Connection(url, getToken, spaceId, environmentId);
 
   // I’m not sure why we do this
   connection.socket.send = function (message) {
