@@ -51,10 +51,6 @@ function* resolveReferences_ ({url, entry, defaultLocale}) {
     (url.match(PLACEHOLDER_PATTERN) || []).map(m => (m.match(REFERENCES_PATTERN) || []).length)
   );
 
-  if (numberOfIncomingLinksToResolve < 1) {
-    return Promise.resolve(url);
-  }
-
   // This object is what is used in the final interpolation
   // It also handles locales by converting entry.fields.slug to entry.fields[defaultLocale].slug
   const dataToInterpolate = createInterpolationDataObject(entry, defaultLocale);
