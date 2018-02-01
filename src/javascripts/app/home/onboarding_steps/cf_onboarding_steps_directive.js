@@ -3,7 +3,6 @@
 angular.module('contentful')
 .directive('cfOnboardingSteps', ['require', function (require) {
   var $state = require('$state');
-  var $controller = require('$controller');
   var Analytics = require('analytics/Analytics');
   var template = require('app/home/onboarding_steps/OnboardingStepsTemplate').default;
   var spaceContext = require('spaceContext');
@@ -11,6 +10,7 @@ angular.module('contentful')
   var CreateSpace = require('services/CreateSpace');
   var caseofEq = require('libs/sum-types').caseofEq;
   var TheLocaleStore = require('TheLocaleStore');
+  var entityCreator = require('entityCreator');
 
   return {
     template: template(),
@@ -187,8 +187,10 @@ angular.module('contentful')
         var contentTypes = spaceContext.publishedCTs.getAllBare();
 
         if (contentTypes.length === 1) {
-          var entityCreationController = $controller('EntityCreationController');
-          entityCreationController.newEntry(contentTypes[0].sys.id);
+          entityCreator.newEntry(contentTypes[0].sys.id)
+          .then(function (entry) {
+            $state.go('spaces.detail.entries.detail', {entryId: entry.getId()});
+          });
         } else {
           $state.go('spaces.detail.entries.list');
         }

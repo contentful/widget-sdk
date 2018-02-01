@@ -122,7 +122,7 @@ header.workbench-header
         table
           tbody
             tr.x--multiline(ng-repeat="entry in entries track by entry.getId()"
-              ng-init="linkToEntry = 'spaces.detail.entries.detail({ entryId: entry.getId() })'"
+              ng-init="linkToEntry = '^.detail({ entryId: entry.getId() })'"
               ng-class="{'x--highlight': selection.isSelected(entry)}"
               ui-sref="{{linkToEntry}}")
               td.x--large-cell.td__checkbox-cell(aria-label="cell-display-name")

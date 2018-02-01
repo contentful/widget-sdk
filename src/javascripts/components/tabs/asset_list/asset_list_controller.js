@@ -14,6 +14,8 @@ angular.module('contentful')
   var createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar').default;
   var BulkAssetsCreator = require('services/BulkAssetsCreator');
   var TheLocaleStore = require('TheLocaleStore');
+  var entityCreator = require('entityCreator');
+  var $state = require('$state');
 
   var searchController = $controller('AssetSearchController', { $scope: $scope });
 
@@ -45,6 +47,13 @@ angular.module('contentful')
   $scope.selection = createSelection();
   $scope.getAssetDimensions = getAssetDimensions;
   $scope.paginator = searchController.paginator;
+
+  $scope.newAsset = function () {
+    entityCreator.newAsset().then(function (asset) {
+      // X.list -> X.detail
+      $state.go('^.detail', {assetId: asset.getId()});
+    });
+  };
 
   var debouncedResetAssets = debounce(function () {
     searchController.resetAssets();

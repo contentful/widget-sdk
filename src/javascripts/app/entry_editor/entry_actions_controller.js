@@ -22,7 +22,8 @@ angular.module('contentful')
       {fields: currentFields}
     )
     .then(function (entry) {
-      $state.go('spaces.detail.entries.detail', {
+      // X.detail -> X.detail with altered entryId param
+      $state.go('^.detail', {
         entryId: entry.getId(),
         addToContext: false
       });
@@ -60,7 +61,8 @@ angular.module('contentful')
     .then(function (entry) {
       // TODO Create a service that works like $state.go but cancels
       // anythings if the state has changed in the meantime
-      $state.go('spaces.detail.entries.detail', {
+      // X.detail -> X.detail with altered entryId param
+      $state.go('^.detail', {
         entryId: entry.getId(),
         addToContext: false
       });
