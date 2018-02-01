@@ -48,9 +48,10 @@ export default function spaceNavTemplate (useSpaceEnv) {
       icon: 'nav-settings',
       title: 'Space settings',
       children: [
-        {
+        useSpaceEnv && {
           separator: true,
-          label: 'Environment settings'
+          label: 'Environment settings',
+          tooltip: 'These settings apply only to the environment you’ve currently selected.'
         },
         {
           if: 'nav.canNavigateTo("settings")',
@@ -65,9 +66,10 @@ export default function spaceNavTemplate (useSpaceEnv) {
           dataViewType: 'spaces-settings-extensions',
           title: 'Extensions'
         },
-        {
+        useSpaceEnv && {
           separator: true,
-          label: 'Space settings'
+          label: 'Space settings',
+          tooltip: 'These settings apply to the space and all its environments.'
         },
         {
           if: 'nav.canNavigateTo("settings")',
@@ -101,15 +103,15 @@ export default function spaceNavTemplate (useSpaceEnv) {
         },
         {
           if: 'nav.canNavigateTo("apiKey")',
-          sref: 'spaces.detail.api.home',
+          sref: 'spaces.detail.api.keys.list',
           rootSref: 'spaces.detail.api',
-          dataViewType: 'api-home',
+          dataViewType: 'spaces-settings-api',
           title: 'API keys',
           reload: useSpaceEnv
         },
         {
           if: 'nav.canNavigateTo("settings")',
-          sref: '.settings.webhooks.list',
+          sref: 'spaces.detail.settings.webhooks.list',
           rootSref: 'spaces.detail.settings.webhooks',
           dataViewType: 'spaces-settings-webhooks',
           title: 'Webhooks',

@@ -3,6 +3,20 @@
   user-select: none
   display: flex
 
+  &__separator:not(:first-child)
+    margin-top: 15px
+    border-top: 1px solid $colors.element-mid
+    padding-top: 15px
+
+  &__separator:hover
+    background: white
+    color: inherit
+    cursor: auto
+
+  .tooltip-inner
+    white-space: pre-wrap
+    width: 200px
+
 .nav-bar__list
   height: inherit
   display: flex

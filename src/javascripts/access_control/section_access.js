@@ -17,7 +17,7 @@ angular.module('contentful')
     ['entry', '.entries.list'],
     ['contentType', '.content_types.list'],
     ['asset', '.assets.list'],
-    ['apiKey', '.api.home'],
+    ['apiKey', '.api.keys.list'],
     ['settings', '.settings.users.list']
   ];
 
