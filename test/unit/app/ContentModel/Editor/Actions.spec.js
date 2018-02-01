@@ -192,7 +192,7 @@ describe('app/ContentModel/Editor/Actions', function () {
 
   it('when cancelling navigates back to list', function () {
     controller.cancel.execute();
-    sinon.assert.calledWith(this.$state.go, 'spaces.detail.content_types.list');
+    sinon.assert.calledWith(this.$state.go, '^.^.list');
   });
 
   describe('#save command', function () {
@@ -332,7 +332,7 @@ describe('app/ContentModel/Editor/Actions', function () {
       yield controller.save.execute();
       sinon.assert.calledWith(
         this.$state.go,
-        'spaces.detail.content_types.detail.fields',
+        '^.^.detail.fields',
         sinon.match({contentTypeId: 'typeid'})
       );
     });

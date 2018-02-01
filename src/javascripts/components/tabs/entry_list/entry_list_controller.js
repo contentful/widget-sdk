@@ -17,6 +17,8 @@ angular.module('contentful')
   var createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar').default;
   var K = require('utils/kefir');
   var _ = require('lodash');
+  var $state = require('$state');
+  var entityCreator = require('entityCreator');
 
   var searchController = $controller('EntryListSearchController', {$scope: $scope});
   $controller('DisplayedFieldsController', {$scope: $scope});
@@ -63,6 +65,18 @@ angular.module('contentful')
     entityType: 'Asset',
     limit: 3
   });
+
+  $scope.newContentType = function () {
+    // X.entries.list -> X.content_types.new
+    $state.go('^.^.content_types.new');
+  };
+
+  $scope.newEntry = function (contentTypeId) {
+    entityCreator.newEntry(contentTypeId).then(function (entry) {
+      // X.list -> X.detail
+      $state.go('^.detail', {entryId: entry.getId()});
+    });
+  };
 
   $scope.getSearchContentType = function () {
     return spaceContext.publishedCTs.get(getCurrentContentTypeId());

@@ -31,7 +31,7 @@ header.workbench-header
       role="menu" cf-context-menu
       aria-label="Add Assets" data-test-id="add-asset-menu")
       ul.context-menu__items
-        li(role="menuitem" ng-click="entityCreationController.newAsset()")
+        li(role="menuitem" ng-click="newAsset()")
           | Single asset
         li(role="menuitem" ng-click="createMultipleAssets()" ng-show="canUploadMultipleAssets()")
           | Multiple assets
@@ -104,7 +104,7 @@ header.workbench-header
         table
           tbody
             tr(ng-repeat="asset in assets track by asset.getId()"
-                ng-init="file=getAssetFile(asset);linkToAsset='spaces.detail.assets.detail({ assetId: asset.getId() })'"
+                ng-init="file=getAssetFile(asset);linkToAsset='^.detail({ assetId: asset.getId() })'"
                 ui-sref="{{linkToAsset}}"
                 ng-class="{'x--highlight': selection.isSelected(asset)}")
               td.td__checkbox-cell.x--image-cell(style="cursor: pointer" aria-label="cell-preview")

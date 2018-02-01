@@ -1,6 +1,6 @@
 'use strict';
 
-describe('EntityCreationController', function () {
+describe('entityCreator', function () {
   let stubs;
 
   afterEach(function () {
@@ -22,7 +22,6 @@ describe('EntityCreationController', function () {
     });
 
     const cfStub = this.$inject('cfStub');
-    const $controller = this.$inject('$controller');
 
     this.notification = this.mockService('notification');
     this.$q = this.$inject('$q');
@@ -30,10 +29,7 @@ describe('EntityCreationController', function () {
     this.spaceContext = this.$inject('spaceContext');
     this.spaceContext.space = cfStub.space('test');
 
-    this.$state = this.$inject('$state');
-    this.$state.go = sinon.stub();
-
-    this.entityCreationController = $controller('EntityCreationController');
+    this.entityCreator = this.$inject('entityCreator');
   });
 
   describe('creates an entry', function () {
@@ -49,7 +45,7 @@ describe('EntityCreationController', function () {
     });
 
     it('calls the space create method', function () {
-      this.entityCreationController.newEntry(contentType);
+      this.entityCreator.newEntry(contentType);
       sinon.assert.called(createStub);
     });
 
@@ -62,7 +58,7 @@ describe('EntityCreationController', function () {
             }
           }
         }));
-        this.entityCreationController.newEntry(contentType);
+        this.entityCreator.newEntry(contentType);
         this.$apply();
       });
 
@@ -72,20 +68,6 @@ describe('EntityCreationController', function () {
 
       it('notifies of the error', function () {
         sinon.assert.called(this.notification.error);
-      });
-    });
-
-    describe('creation suceeds', function () {
-      beforeEach(function () {
-        createStub.returns(this.$q.resolve({ getId: sinon.stub().returns('someEntryId') }));
-        this.entityCreationController.newEntry(contentType);
-        this.$apply();
-      });
-
-      it('navigates to editor', function () {
-        sinon.assert.calledWith(this.$state.go, 'spaces.detail.entries.detail', {
-          entryId: 'someEntryId'
-        });
       });
     });
   });
@@ -101,7 +83,7 @@ describe('EntityCreationController', function () {
     });
 
     it('calls the space create method', function () {
-      this.entityCreationController.newAsset();
+      this.entityCreator.newAsset();
       sinon.assert.called(createStub);
     });
 
@@ -114,7 +96,7 @@ describe('EntityCreationController', function () {
             }
           }
         }));
-        this.entityCreationController.newAsset();
+        this.entityCreator.newAsset();
         this.$apply();
       });
 
@@ -125,46 +107,6 @@ describe('EntityCreationController', function () {
       it('notifies of the error', function () {
         sinon.assert.called(this.notification.error);
       });
-    });
-
-    describe('creation suceeds', function () {
-      beforeEach(inject(function (cfStub) {
-        createStub.returns(this.$q.resolve(cfStub.asset(this.spaceContext.space, 'someAssetId')));
-        this.entityCreationController.newAsset();
-        this.$apply();
-      }));
-
-      it('navigates to editor', function () {
-        sinon.assert.calledWith(this.$state.go, 'spaces.detail.assets.detail', {
-          assetId: 'someAssetId'
-        });
-      });
-    });
-  });
-
-  describe('creates a content type', function () {
-    beforeEach(function () {
-      this.entityCreationController.newContentType();
-      this.$apply();
-    });
-
-    it('navigates to editor', function () {
-      sinon.assert.calledWith(this.$state.go, 'spaces.detail.content_types.new');
-    });
-  });
-
-  describe('opens editor for new locale', function () {
-    beforeEach(function () {
-      stubs.computeUsage.returns(null);
-      this.entityCreationController.newLocale();
-    });
-
-    it('computes the locale usage', function () {
-      sinon.assert.calledWith(stubs.computeUsage, this.spaceContext.space.organization, 'locale');
-    });
-
-    it('navigates to editor', function () {
-      sinon.assert.calledWith(this.$state.go, 'spaces.detail.settings.locales.new');
     });
   });
 });
