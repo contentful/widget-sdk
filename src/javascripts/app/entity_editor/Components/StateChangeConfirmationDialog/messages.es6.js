@@ -1,8 +1,5 @@
 import { Action } from 'data/CMA/EntityActions';
-import { template as loDashTemplate } from 'lodash';
-import { EntityType, NumberOfLinks } from './constants';
-
-export const template = (message, args) => loDashTemplate(message)(args);
+import { EntityType, NumberOfLinks } from '../constants';
 
 export default {
   [Action.Unpublish()]: {
@@ -53,7 +50,7 @@ export default {
         confirm: 'Yes, delete entry'
       },
       [NumberOfLinks.ONE]: {
-        title: 'Delete entry',
+        title: 'This entry is linked in another entry',
         body:
           'There is one other entry that links to this entry. If you delete it, your app(s) might break.',
         confirm: 'Delete entry anyway'
@@ -72,7 +69,7 @@ export default {
         confirm: 'Yes, delete asset'
       },
       [NumberOfLinks.ONE]: {
-        title: 'Delete asset',
+        title: 'This asset is linked in an entry',
         body:
           'There is one entry that links to this asset. If you delete it, your app(s) might break.',
         confirm: 'Delete asset anyway'
@@ -93,7 +90,7 @@ export default {
         confirm: 'Yes, archive entry'
       },
       [NumberOfLinks.ONE]: {
-        title: 'Archive entry',
+        title: 'This entry is linked in another entry',
         body:
           'There is one other entry that links to this entry. If you archive it, your app(s) might break.',
         confirm: 'Archive entry anyway'
@@ -112,7 +109,7 @@ export default {
         confirm: 'Yes, archive asset'
       },
       [NumberOfLinks.ONE]: {
-        title: 'Archive asset',
+        title: 'This asset is linked in an entry',
         body:
           'There is one entry that links to this asset. If you archive it, your app(s) might break.',
         confirm: 'Archive asset anyway'
