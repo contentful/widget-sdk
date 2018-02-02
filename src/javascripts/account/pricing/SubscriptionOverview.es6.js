@@ -3,14 +3,12 @@ import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import {runTask} from 'utils/Concurrent';
 import {createEndpoint as createOrgEndpoint} from 'access_control/OrganizationMembershipRepository';
-import {getBasePlan, getSpacePlans} from 'account/pricing/PricingDataProvider';
-import {getBasePlanStyle} from 'account/pricing/SubscriptionPlanStyles';
+import {getPlansWithSpaces} from 'account/pricing/PricingDataProvider';
 import {supportUrl} from 'Config';
-import {groupBy} from 'lodash';
 import {getOrganization} from 'services/TokenStore';
 import {isOwnerOrAdmin} from 'services/OrganizationRoles';
 import * as ReloadNotification from 'ReloadNotification';
-import {asReact} from 'ui/Framework/DOMRenderer';
+import {go, href} from 'states/Navigator';
 
 const subscriptionOverviewPropTypes = {
   onReady: PropTypes.func.isRequired,
@@ -22,7 +20,7 @@ const SubscriptionOverview = createReactClass({
   getInitialState: function () {
     return {
       basePlan: {},
-      spacePlansByName: [],
+      spacePlans: [],
       grandTotal: 0,
       subscriptionId: null
     };
@@ -40,24 +38,19 @@ const SubscriptionOverview = createReactClass({
     }
 
     const endpoint = createOrgEndpoint(orgId);
-    const [basePlan, spacePlans] = yield Promise.all([
-      getBasePlan(endpoint),
-      getSpacePlans(endpoint)
-    ]).catch(ReloadNotification.apiErrorHandler);
+    const plans = yield getPlansWithSpaces(endpoint).catch(ReloadNotification.apiErrorHandler);
 
     onReady();
 
-    const spacePlansByName = Object.values(groupBy(spacePlans, 'productRatePlanId')).map((spacePlans) => ({
-      count: spacePlans.length,
-      price: calculateTotalPrice(spacePlans),
-      name: spacePlans[0].name
-    }));
-    const grandTotal = calculateTotalPrice([...spacePlans, basePlan]);
+    const basePlan = plans.items.find(({planType}) => planType === 'base');
+    const spacePlans = plans.items.filter(({planType}) => planType === 'space');
 
-    this.setState({basePlan, spacePlansByName, grandTotal});
+    const grandTotal = calculateTotalPrice(spacePlans);
+
+    this.setState({basePlan, spacePlans, grandTotal});
   },
   render: function () {
-    const {basePlan, spacePlansByName, grandTotal} = this.state;
+    const {basePlan, spacePlans, grandTotal} = this.state;
 
     return h('div', {className: 'workbench'},
       h('div', {className: 'workbench-header__wrapper'},
@@ -74,7 +67,7 @@ const SubscriptionOverview = createReactClass({
         h('div', {
           className: 'workbench-main__right-content',
           style: {padding: '1.2rem 2rem'}
-        }, h(SpacePlans, {spacePlansByName})),
+        }, h(SpacePlans, {spacePlans})),
         h('div', {
           className: 'workbench-main__sidebar'
         }, h(RightSidebar, {grandTotal}))
@@ -85,41 +78,41 @@ const SubscriptionOverview = createReactClass({
 
 SubscriptionOverview.propTypes = subscriptionOverviewPropTypes;
 
-// TODO: 'key' is not served by endpoint, but we need some key to choose icon
-// and style for the pricing plan box
-function BasePlan ({name, price, key = 'team-edition', ratePlanCharges = []}) {
+function BasePlan ({name, ratePlanCharges = []}) {
   const enabledFeatures = ratePlanCharges.filter(({unitType}) => unitType === 'feature');
-  const basePlanStyle = getBasePlanStyle(key);
   return h('div', null,
     h('h2', {className: 'pricing-heading'}, 'Your pricing plan'),
     h('div', {
       className: 'pricing-plan pricing-tile',
       style: {paddingTop: '45px'}
     },
-      h('div', {className: 'pricing-plan__bar', style: basePlanStyle.bar}),
-      asReact(basePlanStyle.icon),
+      h('div', {className: 'pricing-plan__bar'}),
       h('h3', {className: 'pricing-heading'}, name),
       h('h3', {className: 'pricing-heading'}, 'Enabled features:'),
       h('ul', null,
         enabledFeatures.map(({name}) => h('li', {key: name}, name)),
         !enabledFeatures.length && h('li', null, '(none)')
-      ),
-      h(Price, {value: price})
+      )
     )
   );
 }
 
-function SpacePlans ({spacePlansByName}) {
+function SpacePlans ({spacePlans}) {
   return h('div', null,
     h('h2', {className: 'pricing-heading'}, 'Your spaces'),
     h('div', {className: 'pricing-tiles-list'},
-      spacePlansByName.map(({name, price, count}) =>
-        h('div', {className: 'pricing-tile', key: name},
+      spacePlans.map(({name, price, space}) => {
+        const navState = getSpaceNavState(space.sys.id);
+        return h('div', {
+          className: 'pricing-tile',
+          key: space.sys.id,
+          onClick: () => go(navState)
+        },
+          h('h3', {className: 'pricing-heading'}, h('a', {href: href(navState)}, space.name)),
           h('h3', {className: 'pricing-heading'}, name),
-          h(Price, {value: price}),
-          h('p', null, `${count} ${pluralize(count, 'space')}`)
-        )
-      )
+          h(Price, {value: price})
+        );
+      })
     )
   );
 }
@@ -163,18 +156,12 @@ function calculateTotalPrice (subscriptionPlans) {
   return subscriptionPlans.reduce((total, plan) => total + parseInt(plan.price, 10), 0);
 }
 
-/**
- * Receives amount of items, singular name of item and optionally plural name.
- * Returns singular or plural name for given amount based on grammar rules.
- * e.g.
- * pluralize(2, 'apple') // apples
- * pluralize(101, 'apple') // apple
- * pluralize(2, 'person', 'people') // people
- *
- * TODO move to string utils
- */
-function pluralize (amount, singular, plural) {
-  return amount % 10 === 1 ? singular : plural || singular + 's';
+function getSpaceNavState (spaceId) {
+  return {
+    path: ['spaces', 'detail', 'home'],
+    params: {spaceId},
+    options: { reload: true }
+  };
 }
 
 export default SubscriptionOverview;

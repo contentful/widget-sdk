@@ -33,22 +33,22 @@ export function getBasePlan (endpoint) {
 }
 
 /**
- * Gets all space plans of the org with the associated spaces. It is assumed
- * that there are no space plans without a space attached.
+ * Gets all subscription plans (base and space) of the org with the associated
+ * spaces for space plans.
  * @param {object} endpoint an organization endpoint
- * @returns {Promise<object[]>} array of space plans with space data attached
+ * @returns {Promise<object[]>} array of subscription plans
  */
-export function getSpacePlansWithSpaces (endpoint, params) {
+export function getPlansWithSpaces (endpoint, params = {}) {
   // Note: it loads paginated data from the `plans` endpoint, but all spaces
   // are loaded at once to map plans to spaces.
   return Promise.all([
     getAllSpaces(endpoint),
-    getSubscriptionPlans(endpoint, {plan_type: 'space', ...params})
+    getSubscriptionPlans(endpoint, params)
   ]).then(([spaces, plans]) => ({
     ...omit(plans, 'items'),
     items: plans.items.map((plan) => ({
       ...plan,
-      space: spaces.items.find(({sys}) => sys.id === plan.gatekeeperKey)
+      space: plan.gatekeeperKey && spaces.find(({sys}) => sys.id === plan.gatekeeperKey)
     }))
   }));
 }
