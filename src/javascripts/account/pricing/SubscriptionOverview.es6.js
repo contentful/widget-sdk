@@ -8,7 +8,11 @@ import {supportUrl} from 'Config';
 import {getOrganization} from 'services/TokenStore';
 import {isOwnerOrAdmin} from 'services/OrganizationRoles';
 import * as ReloadNotification from 'ReloadNotification';
-import {go, href} from 'states/Navigator';
+import {href} from 'states/Navigator';
+import {showDialog as showCreateSpaceModal} from 'services/CreateSpace';
+import {canCreateSpaceInOrganization} from 'access_control/AccessChecker';
+import svgPlus from 'svg/plus';
+import {asReact} from 'ui/Framework/DOMRenderer';
 
 const subscriptionOverviewPropTypes = {
   onReady: PropTypes.func.isRequired,
@@ -21,8 +25,7 @@ const SubscriptionOverview = createReactClass({
     return {
       basePlan: {},
       spacePlans: [],
-      grandTotal: 0,
-      subscriptionId: null
+      canCreateSpace: false
     };
   },
   componentWillMount: function () {
@@ -44,13 +47,18 @@ const SubscriptionOverview = createReactClass({
 
     const basePlan = plans.items.find(({planType}) => planType === 'base');
     const spacePlans = plans.items.filter(({planType}) => planType === 'space');
+    const canCreateSpace = canCreateSpaceInOrganization(orgId);
 
-    const grandTotal = calculateTotalPrice(spacePlans);
-
-    this.setState({basePlan, spacePlans, grandTotal});
+    this.setState({basePlan, spacePlans, canCreateSpace});
+  },
+  createSpace: function () {
+    if (this.state.canCreateSpace) {
+      showCreateSpaceModal(this.props.orgId);
+    }
   },
   render: function () {
-    const {basePlan, spacePlans, grandTotal} = this.state;
+    const {basePlan, spacePlans, canCreateSpace} = this.state;
+    const {orgId} = this.props;
 
     return h('div', {className: 'workbench'},
       h('div', {className: 'workbench-header__wrapper'},
@@ -61,16 +69,20 @@ const SubscriptionOverview = createReactClass({
       ),
       h('div', {className: 'workbench-main'},
         h('div', {
-          className: 'workbench-main__left-sidebar',
-          style: {padding: '1.2rem 0 0 1.5rem'}
-        }, h(BasePlan, basePlan)),
-        h('div', {
-          className: 'workbench-main__right-content',
+          className: 'workbench-main__content',
           style: {padding: '1.2rem 2rem'}
-        }, h(SpacePlans, {spacePlans})),
+        },
+          h(BasePlan, {basePlan, orgId}),
+          h(SpacePlans, {spacePlans})
+        ),
         h('div', {
           className: 'workbench-main__sidebar'
-        }, h(RightSidebar, {grandTotal}))
+        },
+          h(RightSidebar, {
+            canCreateSpace,
+            onCreateSpace: this.createSpace
+          })
+        )
       )
     );
   }
@@ -78,63 +90,63 @@ const SubscriptionOverview = createReactClass({
 
 SubscriptionOverview.propTypes = subscriptionOverviewPropTypes;
 
-function BasePlan ({name, ratePlanCharges = []}) {
+function BasePlan ({basePlan, orgId}) {
+  const {name, ratePlanCharges = []} = basePlan;
   const enabledFeatures = ratePlanCharges.filter(({unitType}) => unitType === 'feature');
   return h('div', null,
-    h('h2', {className: 'pricing-heading'}, 'Your pricing plan'),
-    h('div', {
-      className: 'pricing-plan pricing-tile',
-      style: {paddingTop: '45px'}
-    },
-      h('div', {className: 'pricing-plan__bar'}),
-      h('h3', {className: 'pricing-heading'}, name),
-      h('h3', {className: 'pricing-heading'}, 'Enabled features:'),
-      h('ul', null,
-        enabledFeatures.map(({name}) => h('li', {key: name}, name)),
-        !enabledFeatures.length && h('li', null, '(none)')
-      )
+    h('h2', null, name, ' ', h('a', {href: href(getOrgUsageNavState(orgId))}, 'See usage')),
+    h('p', null,
+      'Enabled features: ',
+      enabledFeatures.map(({name}) => h('span', {key: name}, name)),
+      !enabledFeatures.length && '(none)'
     )
   );
 }
 
 function SpacePlans ({spacePlans}) {
-  return h('div', null,
-    h('h2', {className: 'pricing-heading'}, 'Your spaces'),
-    h('div', {className: 'pricing-tiles-list'},
+  const grandTotal = calculateTotalPrice(spacePlans);
+  return h('table', {className: 'deprecated-table x--hoverable'},
+    h('thead', null,
+      h('tr', null,
+        h('th', null, 'Space'),
+        h('th', null, 'Type'),
+        h('th', null)
+      )
+    ),
+    h('tbody', {className: 'clickable'},
       spacePlans.map(({name, price, space}) => {
-        const navState = getSpaceNavState(space.sys.id);
-        return h('div', {
-          className: 'pricing-tile',
-          key: space.sys.id,
-          onClick: () => go(navState)
+        return h('tr', {
+          key: space.sys.id
         },
-          h('h3', {className: 'pricing-heading'}, h('a', {href: href(navState)}, space.name)),
-          h('h3', {className: 'pricing-heading'}, name),
-          h(Price, {value: price})
+          h('td', null, space.name),
+          h('td', null, name, h('br'), h(Price, {value: price})),
+          h('td', null, h('a', {href: href(getSpaceNavState(space.sys.id))}, 'Go to space'))
         );
-      })
+      }),
+      h('tr', null,
+        h('td', null, 'Total'),
+        h('td', null, h(Price, {value: grandTotal, unit: 'mo'}))
+      )
     )
   );
 }
 
-function RightSidebar ({grandTotal}) {
+function RightSidebar ({onCreateSpace, canCreateSpace}) {
   return h('div', {className: 'entity-sidebar'},
-    h('h2', {className: 'entity-sidebar__heading'}, 'Grand total'),
     h('p', {className: 'entity-sidebar__help-text'},
-      'Your grand total amounts to ',
-      h('b', null, `$${grandTotal}`),
-      ' / month.'
+      h('button', {
+        className: 'btn-action x--block',
+        onClick: onCreateSpace,
+        disabled: !canCreateSpace
+      },
+        h('div', {className: 'btn-icon cf-icon cf-icon--plus inverted'}, asReact(svgPlus)),
+        'Add a new space'
+      )
     ),
-
     h('h2', {className: 'entity-sidebar__heading'}, 'Need help?'),
     h('p', {className: 'entity-sidebar__help-text'},
       'Do you need to make changes to your pricing plan or purchase additional spaces? ' +
       'Don’t hesitate to talk to our customer success team.'
-    ),
-    h('p', {className: 'entity-sidebar__help-text pricing-csm'},
-      h('span', {className: 'pricing-csm__photo'}),
-      h('span', {className: 'pricing-csm__photo'}),
-      h('span', {className: 'pricing-csm__photo'})
     ),
     h('p', {className: 'entity-sidebar__help-text'},
       h('a', {href: supportUrl}, 'Get in touch with us')
@@ -142,14 +154,10 @@ function RightSidebar ({grandTotal}) {
   );
 }
 
-function Price ({value = 0, currency = '$', unit = 'month'}) {
-  return h('p', {className: 'pricing-price'},
-    h('span', {className: 'pricing-price__value'},
-      h('span', {className: 'pricing-price__value__currency'}, currency),
-      parseInt(value, 10).toLocaleString('en-US')
-    ),
-    h('span', {className: 'pricing-price__unit'}, `/${unit}`)
-  );
+function Price ({value = 0, currency = '$', unit = null}) {
+  const valueStr = parseInt(value, 10).toLocaleString('en-US');
+  const unitStr = unit && ` /${unit}`;
+  return h('span', null, [currency, valueStr, unitStr].join(''));
 }
 
 function calculateTotalPrice (subscriptionPlans) {
@@ -160,6 +168,14 @@ function getSpaceNavState (spaceId) {
   return {
     path: ['spaces', 'detail', 'home'],
     params: {spaceId},
+    options: { reload: true }
+  };
+}
+
+function getOrgUsageNavState (orgId) {
+  return {
+    path: ['account', 'organizations', 'usage'],
+    params: {orgId},
     options: { reload: true }
   };
 }
