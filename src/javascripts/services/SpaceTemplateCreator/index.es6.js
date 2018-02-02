@@ -3,10 +3,23 @@ import contentPreview from 'contentPreview';
 import * as Analytics from 'analytics/Analytics';
 import {runTask} from 'utils/Concurrent';
 import * as _ from 'lodash';
+import qs from 'libs/qs';
+import * as environment from 'environment';
+import {TEA_MAIN_CONTENT_PREVIEW, TEA_CONTENT_PREVIEWS, DISCOVERY_APP_BASE_URL} from './contentPreviewConfig';
 
 const ASSET_PROCESSING_TIMEOUT = 60000;
 
-export function getCreator (spaceContext, itemHandlers, templateName, selectedLocaleCode) {
+// we specify this space name to indicate from which space
+// we get template for TEA (the example app). We want to create a specific
+// content preview for it, so we need to distinguish it from other templates.
+// All other templates use discovery app, as a generic tool to preview your
+// content. This is not very reliable, but since we own this repo, we can be
+// sure that this space will remain the same, and also, in case it is invalid,
+// we will create discovery app for TEA
+const TEA_SPACE_ID = environment.settings.contentful.TEASpaceId;
+
+export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLocaleCode) {
+  const templateName = templateInfo.name;
   const creationErrors = [];
   const handledItems = {};
   return {
@@ -21,7 +34,7 @@ export function getCreator (spaceContext, itemHandlers, templateName, selectedLo
    * are created, entries are created (and one entry is published).
    *
    * spaceSetup - resolves when _everything_ (API keys, assets are processed and
-   * published, editing interfaces are created, preview env with discovery app)
+   * published, editing interfaces are created, content preview with discovery app/TEA)
    * is processed
    *
    * Each created item will call the custom success/error handlers and
@@ -43,10 +56,6 @@ export function getCreator (spaceContext, itemHandlers, templateName, selectedLo
       // we can proceed without publishing interfaces, creating is enough
       // publishing can be finished in the background
       yield publishContentTypes(createdContentTypes);
-      // editing interfaces should be called after publishing only
-      const editingInterfacesPromise = Promise.all(
-        template.editingInterfaces.map(createEditingInterface)
-      );
 
       // we need to create assets before proceeding
       const assets = useSelectedLocale(template.assets, selectedLocaleCode);
@@ -62,12 +71,15 @@ export function getCreator (spaceContext, itemHandlers, templateName, selectedLo
 
       const publishedEntries = yield publishEntries(createdEntries);
 
-      const createPreviewEnvPromise = Promise.all([
+      const createContentPreviewPromise = Promise.all([
         apiKeyPromise,
         publishedEntries
-      ]).then(() => createPreviewEnvironment(template.contentTypes));
+      ]).then(() => templateInfo.spaceId === TEA_SPACE_ID
+        ? runTask(createTEAContentPreview, template.contentTypes)
+        : createContentPreview(template.contentTypes)
+      );
 
-      allPromises.push(editingInterfacesPromise, publishAssetsPromise, createPreviewEnvPromise);
+      allPromises.push(publishAssetsPromise, createContentPreviewPromise);
 
       if (creationErrors.length > 0) {
         const errorMessage = 'Error during space template creation: ' + JSON.stringify({
@@ -166,19 +178,6 @@ export function getCreator (spaceContext, itemHandlers, templateName, selectedLo
           .catch(handlers.error);
       }
     }));
-  }
-
-  function createEditingInterface (editingInterface) {
-    const handlers = makeHandlers(editingInterface, 'create', 'EditingInterface');
-    if (handlers.itemWasHandled) {
-      return Promise.resolve(handlers.response);
-    }
-    const repo = spaceContext.editingInterfaces;
-    // The content type has a default editor interface with version 1.
-    editingInterface.data.sys.version = 1;
-    return repo
-      .save(editingInterface.contentType, editingInterface.data)
-      .then(handlers.success, handlers.error);
   }
 
   function createAsset (asset) {
@@ -304,15 +303,90 @@ export function getCreator (spaceContext, itemHandlers, templateName, selectedLo
       .catch(handlers.error);
   }
 
-  // Create the discovery app environment if there is an API key
-  function createPreviewEnvironment (contentTypes) {
-    const baseUrl = 'https://discovery.contentful.com/entries/by-content-type/';
+  /**
+   * @description
+   * Function to create content preview specifically for TEA (the example app)
+   * This application was built specifically for new contentful users, and has a lot of value
+   * in its content, so it has advanced mapping for preview, to redirect user to exact pages,
+   * where he can see the content (change in the webapp -> see the changes in the TEA preview)
+   */
+  function* createTEAContentPreview (contentTypes) {
+    const spaceId = spaceContext.space.getId();
+
+    // Mapping for specific content types. Some CTs has no "preview",
+    // so we don't set up preview them, thus no confusion created
+    const createConfigFns = {
+      course: courseConfig,
+      category: categoryConfig,
+      lesson: lessonConfig,
+      lessonCopy: lessonContentConfig,
+      lessonImage: lessonContentConfig,
+      lessonCodeSnippets: lessonContentConfig,
+      layoutHighlightedCourse: mainPageConfig
+    };
+
+    const [keys, contentPreviews] = yield Promise.all([
+      spaceContext.apiKeyRepo.getAll(),
+      contentPreview.getAll()
+    ]);
+
+    // Create default content preview if there is none existing, and an API key is present
+    if (keys.length && !Object.keys(contentPreviews).length) {
+      const key = keys[0];
+
+      // we need to have Preview key as well, so the user can switch to preview API
+      // in order to do that, we need to make another cal
+      const resolvedKey = yield spaceContext.apiKeyRepo.get(key.sys.id);
+
+      const {
+        accessToken: cdaToken,
+        preview_api_key: {
+          accessToken: cpaToken
+        }
+      } = resolvedKey;
+
+      // we want to wait until the main content preview is created
+      yield createContentPreview(TEA_MAIN_CONTENT_PREVIEW, {cdaToken, cpaToken});
+
+      // we set up all other content previews
+      yield Promise.all(TEA_CONTENT_PREVIEWS.map(params =>
+        createContentPreview(params, {cdaToken, cpaToken})
+      ));
+    }
+
+    function createContentPreview ({ name, description, baseUrl }, { cdaToken, cpaToken }) {
+      const contentPreviewConfig = {
+        name,
+        description,
+        configs: contentTypes
+          .map(ct => {
+            const fn = createConfigFns[ct.sys.id];
+            const url = environment.env === 'production' ? baseUrl.prod : baseUrl.staging;
+            return fn && fn({ ct, baseUrl: url, spaceId, cdaToken, cpaToken });
+          })
+          // remove all content types without a preview
+          .filter(Boolean)
+      };
+
+      return contentPreview.create(contentPreviewConfig).then(createdContentPreview => {
+        Analytics.track('content_preview:created', {
+          name: createdContentPreview.name,
+          id: createdContentPreview.sys.id,
+          isDiscoveryApp: false
+        });
+      });
+    }
+  }
+
+  // Create the discovery app content preview if there is an API key
+  function createContentPreview (contentTypes) {
+    const baseUrl = DISCOVERY_APP_BASE_URL;
     const spaceId = spaceContext.space.getId();
 
     return Promise.all([
       spaceContext.apiKeyRepo.getAll(),
       contentPreview.getAll()
-    ]).then(([keys, envs]) => {
+    ]).then(([keys, contentPreviews]) => {
       function createConfig (ct, token) {
         return {
           contentType: ct.sys.id,
@@ -322,21 +396,19 @@ export function getCreator (spaceContext, itemHandlers, templateName, selectedLo
         };
       }
 
-      // Create default environment if there is none existing, and an API key is present
-      if (keys.length && !Object.keys(envs).length) {
+      // Create default content preview if there is none existing, and an API key is present
+      if (keys.length && !Object.keys(contentPreviews).length) {
         const accessToken = keys[0].accessToken;
 
-        const env = {
+        const contentPreviewConfig = {
           name: 'Discovery App',
           description: 'To help you get started, we\'ve added our own Discovery App to preview content.',
-          configs: contentTypes.map(function (ct) {
-            return createConfig(ct, accessToken);
-          })
+          configs: contentTypes.map(ct => createConfig(ct, accessToken))
         };
-        return contentPreview.create(env).then(function (env) {
+        return contentPreview.create(contentPreviewConfig).then((createdContentPreview) => {
           Analytics.track('content_preview:created', {
-            name: env.name,
-            id: env.sys.id,
+            name: createdContentPreview.name,
+            id: createdContentPreview.sys.id,
             isDiscoveryApp: true
           });
         });
@@ -346,6 +418,49 @@ export function getCreator (spaceContext, itemHandlers, templateName, selectedLo
       }
     });
   }
+}
+
+function mainPageConfig (params) {
+  return makeTEAConfig(params);
+}
+
+function courseConfig (params) {
+  return makeTEAConfig(params, '/courses/{entry.fields.slug}');
+}
+
+function categoryConfig (params) {
+  return makeTEAConfig(params, '/courses/categories/{entry.fields.slug}');
+}
+
+function lessonConfig (params) {
+  const $ref1 = '{entry.linkedBy.fields.slug}';
+  return makeTEAConfig(params, `/courses/${$ref1}/lessons/{entry.fields.slug}`);
+}
+
+function lessonContentConfig (params) {
+  const $ref1 = '{entry.linkedBy.linkedBy.fields.slug}';
+  const $ref2 = '{entry.linkedBy.fields.slug}';
+  return makeTEAConfig(params, `/courses/${$ref1}/lessons/${$ref2}`);
+}
+
+function makeTEAConfig (params, url = '') {
+  return {
+    contentType: params.ct.sys.id,
+    url: makeTEAUrl(params, url),
+    enabled: true,
+    example: true
+  };
+}
+
+function makeTEAUrl (params, url = '') {
+  const queryParams = {
+    space_id: params.spaceId,
+    delivery_token: params.cdaToken,
+    preview_token: params.cpaToken,
+    enable_editorial_features: 'enabled'
+  };
+  const queryString = qs.stringify(queryParams);
+  return `${params.baseUrl}${url}${queryString ? '?' : ''}${queryString}`;
 }
 
 function generateItemId (item, actionData) {

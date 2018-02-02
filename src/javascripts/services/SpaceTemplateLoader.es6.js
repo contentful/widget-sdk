@@ -1,5 +1,7 @@
+import {getCurrentVariation} from 'utils/LaunchDarkly';
 import contentfulClient from 'contentfulClient';
 import * as environment from 'environment';
+import {runTask} from 'utils/Concurrent';
 import logger from 'logger';
 import _ from 'lodash';
 
@@ -9,11 +11,27 @@ let client;
 const spaceClients = {};
 
 export function getTemplatesList () {
-  if (!client) client = getSpaceTemplatesClient();
-  return client.entries({'content_type': contentfulConfig.spaceTemplateEntryContentTypeId})
-    .then(entries => _.sortBy(entries, entry => {
-      return _.isFinite(entry.fields.order) ? entry.fields.order : 99;
-    }));
+  return runTask(function* () {
+    if (!client) client = getSpaceTemplatesClient();
+    const fetchTemplatesPromise = client.entries({'content_type': contentfulConfig.spaceTemplateEntryContentTypeId});
+    const tesFeatureFlagPromise = getCurrentVariation('feature-ps-01-2018-tes-in-webapp-as-example-space');
+    const [templates, tesInWebAppFeatureFlag] = yield Promise.all([fetchTemplatesPromise, tesFeatureFlagPromise]);
+
+    const orderedTemplates = _.sortBy(templates,
+      template => _.isFinite(template.fields.order) ? template.fields.order : 99
+    );
+
+    return orderedTemplates.filter(template => {
+      if (tesInWebAppFeatureFlag) {
+        return true;
+      } else {
+        // if this feature is disabled, hide the example space
+        // template from the example spaces list show in the
+        // space creation modal
+        return template.fields.spaceId !== contentfulConfig.TEASpaceId;
+      }
+    });
+  });
 }
 
 export function getTemplate (templateInfo) {
@@ -38,9 +56,9 @@ function getSpaceClient (templateInfo) {
   }
 
   spaceClients[spaceId] = contentfulClient.newClient({
-    host: contentfulConfig.apiUrl,
+    host: contentfulConfig.cdaApiUrl,
     space: spaceId,
-    accessToken: contentfulConfig.spaceTemplatesUserReadOnlyToken
+    accessToken: templateInfo.spaceApiKey
   });
   return spaceClients[spaceId];
 }
@@ -57,37 +75,20 @@ function getClientParams (space, accessToken, previewAccessToken) {
 
 function getSpaceContents (spaceClient) {
   return Promise.all([
-    spaceClient.contentTypes(),
-    spaceClient.entries(),
-    spaceClient.assets()
+    // we rely on having locales later, but CDA calls by default
+    // return only one locale, so we add parameter to fetch all of them
+    spaceClient.contentTypes({ locale: '*' }),
+    spaceClient.entries({ locale: '*' }),
+    spaceClient.assets({ locale: '*' })
   ])
-  .then(([contentTypes, entries, assets]) => ({ contentTypes, entries, assets }))
-  .then(getEditingInterfaces(spaceClient));
-}
-
-function getEditingInterfaces (spaceClient) {
-  return function (spaceContents) {
-    return Promise.all(spaceContents.contentTypes.map(function (contentType) {
-      return spaceClient.editingInterface(contentType.sys.id, 'default')
-        .then(function (data) {
-          return {
-            contentType: contentType,
-            data: data
-          };
-        }, () => null);
-    })).then(function (editingInterfaces) {
-      spaceContents.editingInterfaces = editingInterfaces.filter(Boolean);
-      return spaceContents;
-    });
-  };
+  .then(([contentTypes, entries, assets]) => ({ contentTypes, entries, assets }));
 }
 
 function parseSpaceContents (contents) {
   return {
     contentTypes: parseContentTypes(contents.contentTypes),
     entries: sortEntries(parseEntries(contents.entries)),
-    assets: parseAssets(contents.assets),
-    editingInterfaces: contents.editingInterfaces
+    assets: parseAssets(contents.assets)
   };
 }
 
@@ -208,8 +209,8 @@ function parseAssetLink (field) {
   return {
     sys: {
       id: _.get(field, 'sys.id'),
-      type: _.get(field, 'sys.type'),
-      linkType: _.get(field, 'sys.linkType')
+      type: 'Link',
+      linkType: _.get(field, 'sys.type')
     }
   };
 }

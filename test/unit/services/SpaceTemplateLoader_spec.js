@@ -148,16 +148,14 @@ describe('Space Template loading service', function () {
           'sys': {
             'id': '1C0dHUP04kAgYwm0G2WiQE',
             'revision': 1,
-            'type': 'Link',
-            'linkType': 'Asset',
+            'type': 'Asset',
             'locale': 'en-US',
             'createdAt': '2014-12-04T11:36:53.762Z',
             'updatedAt': '2014-12-04T11:36:54.708Z',
             'space': {
               'sys': {
                 'id': '4o9zrkqge2wv',
-                'type': 'Link',
-                'linkType': 'Space'
+                'type': 'Asset'
               }
             }
           },
@@ -250,8 +248,7 @@ describe('Space Template loading service', function () {
           'sys': {
             'id': '5o4iPgRgYMmaGac8SckKCc',
             'revision': 0,
-            'type': 'Link',
-            'linkType': 'Asset',
+            'type': 'Asset',
             'locale': 'en-US',
             'createdAt': '2014-12-04T11:36:53.850Z',
             'updatedAt': '2014-12-04T11:36:54.718Z',
@@ -318,8 +315,7 @@ describe('Space Template loading service', function () {
             'sys': {
               'id': '1GdRqUQ0V2yCU2Ee00eoq6',
               'revision': 0,
-              'type': 'Link',
-              'linkType': 'Asset',
+              'type': 'Asset',
               'locale': 'en-US',
               'createdAt': '2014-12-04T11:36:53.827Z',
               'updatedAt': '2014-12-04T11:36:55.028Z',
@@ -508,6 +504,7 @@ describe('Space Template loading service', function () {
       $provide.value('contentfulClient', {
         newClient: sinon.stub()
       });
+      $provide.stubLaunchDarkly();
     });
 
     this.$rootScope = this.$inject('$rootScope');
@@ -530,9 +527,9 @@ describe('Space Template loading service', function () {
     beforeEach(function* () {
       const self = this;
       this.client.entries.returns(Promise.resolve([
-        {fields: {id: 3}},
-        {fields: {id: 2, order: 1}},
-        {fields: {id: 1, order: 0}}
+        {fields: {id: 3, spaceId: 3}},
+        {fields: {id: 2, spaceId: 2, order: 1}},
+        {fields: {id: 1, spaceId: 1, order: 0}}
       ]));
       yield this.spaceTemplateLoader.getTemplatesList()
       .then(function (entries) {
@@ -600,10 +597,6 @@ describe('Space Template loading service', function () {
 
     it('template has assets', function () {
       expect(template.assets).toBeDefined();
-    });
-
-    it('template has editing interfaces', function () {
-      expect(template.editingInterfaces).toBeDefined();
     });
 
     it('first content type is formatted correctly', function () {
@@ -825,11 +818,6 @@ describe('Space Template loading service', function () {
 
     it('has the second api key', function () {
       expect(template.apiKeys[1]).toEqualObj({name: 'second api key', description: 'second api key desc'});
-    });
-
-    it('editing interface is formatted correctly', function () {
-      expect(template.editingInterfaces[0].data).toEqualObj(sourceEditingInterfaces[0]);
-      expect(template.editingInterfaces[0].contentType).toEqualObj(sourceContentTypes[0]);
     });
   });
 });

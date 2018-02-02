@@ -14,9 +14,24 @@ angular.module('contentful')
   var previewEnvironmentsCache = require('data/previewEnvironmentsCache');
   var getStore = require('TheStore').getStore;
   var store = getStore();
+  var resolveReferences = require('services/ContentPreviewHelper').resolveReferences;
 
   var ENTRY_ID_PATTERN = /\{\s*entry_id\s*\}/g;
   var ENTRY_FIELD_PATTERN = /\{\s*entry_field\.(\w+)\s*\}/g;
+
+  // this pattern is used for references resolving. It means that you can get entries,
+  // which link the current one, and use it in the url.
+  // the example syntax is:
+  // `/course/{references.current.course}/lessons/{entry_id}`
+  //
+  // the replacer will find all entities which have current entry as a linked one,
+  // pick the first, and insert `sys.id` value instead of `{references.current.course}`.
+  // Also you can use several references, and the third argument (`course` in our case)
+  // stores it's value, and you can use it in every reference on the left:
+  // `/learning/{references.course.path}/courses/{references.current.course}/lessons/{entry_id}`
+  //
+  // This functionality is primarily needed for rich preview expirience for TEA (the example app):
+  // https://contentful.atlassian.net/wiki/spaces/PROD/pages/204079331/The+example+app+-+Documentation+of+functionality
   var MAX_PREVIEW_ENVIRONMENTS = 25;
   var STORE_KEY = 'selectedPreviewEnvsForSpace.' + spaceContext.getId();
 
@@ -336,7 +351,7 @@ angular.module('contentful')
    * @param {string} urlTemplate
    * @param {API.Entry} entry
    * @param {API.ContentType} contentType
-   * @returns {string} url
+   * @returns {Promise<string>} url
    *
    * @description
    * Returns the compiled URL with the entry data.
@@ -345,7 +360,7 @@ angular.module('contentful')
   */
   function replaceVariablesInUrl (urlTemplate, entry, contentType) {
     var defaultLocale = TheLocaleStore.getDefaultLocale().internal_code;
-    return urlTemplate
+    var processedUrl = urlTemplate
     .replace(ENTRY_ID_PATTERN, entry.sys.id)
     .replace(ENTRY_FIELD_PATTERN, function (match, fieldId) {
       var internalId = _.get(
@@ -357,6 +372,8 @@ angular.module('contentful')
       var fieldValue = _.get(entry, ['fields', internalId, defaultLocale]);
       return _.toString(fieldValue) || match;
     });
+
+    return resolveReferences({ url: processedUrl, entry: entry, defaultLocale: defaultLocale });
   }
 
   /**

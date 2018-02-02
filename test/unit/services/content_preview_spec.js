@@ -57,13 +57,29 @@ describe('contentPreview', function () {
       sys: { id: id },
       configurations: [
         {
-          url: 'https://www.test.com/{entry_id}/{entry_field.title}/{entry_field.slug }',
+          url: 'https://www.test.com/{entry_id}/{entry_field.title}/{entry_field.slug}',
           contentType: 'ct-1',
           enabled: true
         },
         {
           url: 'https://www.test.com/{entry_field.invalid}',
           contentType: 'ct-2',
+          enabled: true
+        },
+        // for testing references:
+        {
+          url: 'https://www.test.com/{entry.linkedBy.sys.id}',
+          contentType: 'ct-3',
+          enabled: true
+        },
+        {
+          url: 'https://www.test.com/{entry.linkedBy.fields.slug}',
+          contentType: 'ct-4',
+          enabled: true
+        },
+        {
+          url: 'https://www.test.com/{entry.linkedBy.linkedBy.fields.name}/some/{entry.linkedBy.fields.slug}',
+          contentType: 'ct-5',
           enabled: true
         }
       ]
@@ -266,8 +282,8 @@ describe('contentPreview', function () {
 
 
   describe('#replaceVariablesInUrl', function () {
-    it('replaces variables in URL', function () {
-      this.compiledUrl = this.contentPreview.replaceVariablesInUrl(
+    it('replaces variables in URL', function* () {
+      this.compiledUrl = yield this.contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[0].url,
         makeEntry('entry-1').data,
         makeCt('ct-1')
@@ -275,13 +291,99 @@ describe('contentPreview', function () {
       expect(this.compiledUrl).toBe('https://www.test.com/entry-1/Title/my-slug');
     });
 
-    it('does not replace invalid field tokens', function () {
-      this.compiledUrl = this.contentPreview.replaceVariablesInUrl(
+    it('does not replace invalid field tokens', function* () {
+      this.compiledUrl = yield this.contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[1].url,
         makeEntry('entry-1').data,
         makeCt('ct-1')
       );
       expect(this.compiledUrl).toBe('https://www.test.com/{entry_field.invalid}');
+    });
+
+    it('calls for entries with linked current entry', function* () {
+      spaceContext.cma.getEntries = sinon.stub().resolves();
+      yield this.contentPreview.replaceVariablesInUrl(
+        makeEnv('foo').configurations[2].url,
+        makeEntry('entry-3').data,
+        makeCt('ct-3')
+      );
+
+      expect(spaceContext.cma.getEntries.calledWith({
+        links_to_entry: 'entry-3'
+      })).toBe(true);
+    });
+
+    it('replaces referenced value in URL', function* () {
+      spaceContext.cma.getEntries = () => Promise.resolve({
+        items: [{
+          sys: { id: 'some' }
+        }]
+      });
+
+      this.compiledUrl = yield this.contentPreview.replaceVariablesInUrl(
+        makeEnv('foo').configurations[2].url,
+        makeEntry('entry-3').data,
+        makeCt('ct-3')
+      );
+
+      expect(this.compiledUrl).toBe('https://www.test.com/some');
+    });
+
+    it('replaces referenced value in URL with fields path', function* () {
+      spaceContext.cma.getEntries = () => Promise.resolve({
+        items: [{
+          sys: { id: 'some' },
+          fields: { slug: { 'en': 'new-value' } }
+        }]
+      });
+
+      this.compiledUrl = yield this.contentPreview.replaceVariablesInUrl(
+        makeEnv('foo').configurations[3].url,
+        makeEntry('entry-4').data,
+        makeCt('ct-4')
+      );
+
+      expect(this.compiledUrl).toBe('https://www.test.com/new-value');
+    });
+
+    it('replaces several referenced values in URL', function* () {
+      spaceContext.cma.getEntries = sinon.stub();
+      spaceContext.cma.getEntries.withArgs({
+        links_to_entry: 'entry-5'
+      }).returns(Promise.resolve({
+        items: [{
+          sys: { id: 'second_reference_id' },
+          fields: { slug: { en: 'second_reference_value' } }
+        }]
+      }));
+
+      spaceContext.cma.getEntries.withArgs({
+        links_to_entry: 'second_reference_id'
+      }).returns(Promise.resolve({
+        items: [{
+          sys: { id: 'first_reference_id' },
+          fields: { name: { en: 'first_reference_value' } }
+        }]
+      }));
+
+      this.compiledUrl = yield this.contentPreview.replaceVariablesInUrl(
+        makeEnv('foo').configurations[4].url,
+        makeEntry('entry-5').data,
+        makeCt('ct-5')
+      );
+
+      expect(this.compiledUrl).toBe('https://www.test.com/first_reference_value/some/second_reference_value');
+    });
+
+    it('returns baseURL in case some reference does not exist', function* () {
+      spaceContext.cma.getEntries = () => Promise.resolve({});
+      this.compiledUrl = yield this.contentPreview.replaceVariablesInUrl(
+        makeEnv('foo').configurations[2].url,
+        makeEntry('entry-3').data,
+        makeCt('ct-3')
+      );
+
+      expect(this.compiledUrl).toBe('https://www.test.com/');
     });
   });
 

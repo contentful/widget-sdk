@@ -25,9 +25,15 @@ angular.module('contentful')
 
           K.onValueScope($scope, $scope.otDoc.data$, function (entry) {
             $scope.contentPreviewEnvironments.forEach(function (environment) {
-              environment.compiledUrl = contentPreview.replaceVariablesInUrl(
+              // this function is asynchronous only because url may contain some
+              // references to other entries, where the current one is linked, and
+              // their resolution will take time. if you don't have any, then this
+              // function will behave in a synchronous way, just returning `Promise.resolve(url)`
+              contentPreview.replaceVariablesInUrl(
                 environment.url, entry, $scope.entityInfo.contentType
-              );
+              ).then(function (url) {
+                environment.compiledUrl = url;
+              });
             });
           });
 
