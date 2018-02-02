@@ -66,11 +66,11 @@ describe('states/Deeplink', function () {
     it('should redirect to the general api page if no keys', function* () {
       this.search.returns({ link: 'api' });
       this.store.set('lastUsedSpace', 'test2');
-      this.getSpaces.returns(Promise.resolve([
+      this.getSpaces.resolves([
         {sys: {id: 'test1'}}, {sys: {id: 'test2'}}
-      ]));
+      ]);
       this.canReadApiKeys.returns(true);
-      this.apiKeys.returns(Promise.resolve());
+      this.apiKeys.resolves();
       yield this.createController().promise;
 
       expect(this.navigate.calledWith({
@@ -86,9 +86,9 @@ describe('states/Deeplink', function () {
 
     it('should redirect to the last used space', function* () {
       this.search.returns({ link: 'api' });
-      this.getSpaces.returns(Promise.resolve([{ sys: { id: 'test' } }]));
+      this.getSpaces.resolves([{ sys: { id: 'test' } }]);
       this.canReadApiKeys.returns(true);
-      this.apiKeys.returns(Promise.resolve());
+      this.apiKeys.resolves();
       yield this.createController().promise;
 
       expect(this.navigate.calledWith({
@@ -104,13 +104,13 @@ describe('states/Deeplink', function () {
 
     it('should redirect to the first api key page if there are several', function* () {
       this.search.returns({ link: 'api' });
-      this.getSpaces.returns(Promise.resolve([{ sys: { id: 'test' } }]));
+      this.getSpaces.resolves([{ sys: { id: 'test' } }]);
       this.canReadApiKeys.returns(true);
       const apiKeys = [
         { sys: { id: 'first' } },
         { sys: { id: 'second' } }
       ];
-      this.apiKeys.returns(Promise.resolve(apiKeys));
+      this.apiKeys.resolves(apiKeys);
       yield this.createController().promise;
 
       expect(this.navigate.calledWith({
@@ -127,7 +127,7 @@ describe('states/Deeplink', function () {
 
     it('should give generic error in case no access', function* () {
       this.search.returns({ link: 'api' });
-      this.getSpaces.returns(Promise.resolve([{ data: { sys: { id: 'test' } } }]));
+      this.getSpaces.resolves([{ data: { sys: { id: 'test' } } }]);
       this.canReadApiKeys.returns(false);
       const { $scope, promise } = this.createController();
       yield promise;
@@ -140,10 +140,10 @@ describe('states/Deeplink', function () {
     it('should redirect to invite users page', function* () {
       this.search.returns({ link: 'invite' });
       this.store.set('lastUsedOrg', 'some');
-      this.getOrganizations.returns(Promise.resolve([
+      this.getOrganizations.resolves([
         { sys: { id: 'some' } }
-      ]));
-      this.getOrganization.returns(Promise.resolve());
+      ]);
+      this.getOrganization.resolves();
       this.isOwnerOrAdmin.returns(true);
       yield this.createController().promise;
 
@@ -161,14 +161,14 @@ describe('states/Deeplink', function () {
     it('should pick org of the first space in case expired lastUsedOrg', function* () {
       this.search.returns({ link: 'invite' });
       this.store.set('lastUsedOrg', 'some_obsolete_value');
-      this.getOrganizations.returns(Promise.resolve([
+      this.getOrganizations.resolves([
         { sys: { id: 'new_org_id' } }
-      ]));
-      this.getSpaces.returns(Promise.resolve([{
+      ]);
+      this.getSpaces.resolves([{
         sys: {id: 'space_id'},
         organization: {sys: {id: 'new_org_id'}}
-      }]));
-      this.getOrganization.returns(Promise.resolve());
+      }]);
+      this.getOrganization.resolves();
       this.isOwnerOrAdmin.returns(true);
       yield this.createController().promise;
 
@@ -186,10 +186,10 @@ describe('states/Deeplink', function () {
     it('should give generic error in case no access', function* () {
       this.search.returns({ link: 'invite' });
       this.store.set('lastUsedOrg', 'some');
-      this.getOrganizations.returns(Promise.resolve([
+      this.getOrganizations.resolves([
         { sys: { id: 'some' } }
-      ]));
-      this.getOrganization.returns(Promise.resolve());
+      ]);
+      this.getOrganization.resolves();
       this.isOwnerOrAdmin.returns(false);
       const { $scope, promise } = this.createController();
       yield promise;
@@ -202,10 +202,10 @@ describe('states/Deeplink', function () {
     it('should redirect to users list page', function* () {
       this.search.returns({ link: 'users' });
       this.store.set('lastUsedOrg', 'some');
-      this.getOrganizations.returns(Promise.resolve([
+      this.getOrganizations.resolves([
         { sys: { id: 'some' } }
-      ]));
-      this.getOrganization.returns(Promise.resolve());
+      ]);
+      this.getOrganization.resolves();
       this.isOwnerOrAdmin.returns(true);
       yield this.createController().promise;
 
@@ -224,10 +224,10 @@ describe('states/Deeplink', function () {
     it('should give generic error in case no access', function* () {
       this.search.returns({ link: 'users' });
       this.store.set('lastUsedOrg', 'some');
-      this.getOrganizations.returns(Promise.resolve([
+      this.getOrganizations.resolves([
         { sys: { id: 'some' } }
-      ]));
-      this.getOrganization.returns(Promise.resolve());
+      ]);
+      this.getOrganization.resolves();
       this.isOwnerOrAdmin.returns(false);
       const { $scope, promise } = this.createController();
       yield promise;
@@ -240,10 +240,10 @@ describe('states/Deeplink', function () {
     it('should redirect to subscription page', function* () {
       this.search.returns({ link: 'subscription' });
       this.store.set('lastUsedOrg', 'some');
-      this.getOrganizations.returns(Promise.resolve([
+      this.getOrganizations.resolves([
         { sys: { id: 'some' } }
-      ]));
-      this.getOrganization.returns(Promise.resolve());
+      ]);
+      this.getOrganization.resolves();
       this.isOwnerOrAdmin.returns(true);
       yield this.createController().promise;
 
@@ -262,10 +262,10 @@ describe('states/Deeplink', function () {
     it('should give generic error in case no access', function* () {
       this.search.returns({ link: 'subscription' });
       this.store.set('lastUsedOrg', 'some');
-      this.getOrganizations.returns(Promise.resolve([
+      this.getOrganizations.resolves([
         { sys: { id: 'some' } }
-      ]));
-      this.getOrganization.returns(Promise.resolve());
+      ]);
+      this.getOrganization.resolves();
       this.isOwnerOrAdmin.returns(false);
       const { $scope, promise } = this.createController();
       yield promise;
@@ -278,10 +278,10 @@ describe('states/Deeplink', function () {
     it('should redirect to org info page', function* () {
       this.search.returns({ link: 'org' });
       this.store.set('lastUsedOrg', 'some');
-      this.getOrganizations.returns(Promise.resolve([
+      this.getOrganizations.resolves([
         { sys: { id: 'some' } }
-      ]));
-      this.getOrganization.returns(Promise.resolve());
+      ]);
+      this.getOrganization.resolves();
       this.isOwnerOrAdmin.returns(true);
       yield this.createController().promise;
 
@@ -300,10 +300,10 @@ describe('states/Deeplink', function () {
     it('should give generic error in case no access', function* () {
       this.search.returns({ link: 'org' });
       this.store.set('lastUsedOrg', 'some');
-      this.getOrganizations.returns(Promise.resolve([
+      this.getOrganizations.resolves([
         { sys: { id: 'some' } }
-      ]));
-      this.getOrganization.returns(Promise.resolve());
+      ]);
+      this.getOrganization.resolves();
       this.isOwnerOrAdmin.returns(false);
       const { $scope, promise } = this.createController();
       yield promise;
