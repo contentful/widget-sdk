@@ -117,11 +117,7 @@ export default function createResourceService (id) {
           return createResourceFromTokenData(resourceType, limit, usage);
         }
       }).then(function (raw) {
-        if (raw.items.length === 0) {
-          throw new Error(`Resource ${resourceType} does not exist for this space.`);
-        }
-
-        return raw.items[0];
+        return raw;
       });
     },
     getAll: function () {
@@ -156,19 +152,15 @@ function createEndpoint (type, id) {
 
 function createResourceFromTokenData (resourceType, limit, usage) {
   return {
-    items: [
-      {
-        usage,
-        limits: {
-          included: limit,
-          maximum: limit
-        },
-        sys: {
-          id: resourceType,
-          type: 'SpaceResource'
-        }
-      }
-    ]
+    usage,
+    limits: {
+      included: limit,
+      maximum: limit
+    },
+    sys: {
+      id: resourceType,
+      type: 'SpaceResource'
+    }
   };
 }
 

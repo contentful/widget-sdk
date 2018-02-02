@@ -56,14 +56,32 @@ describe('ResourceService', function () {
     const mockedEndpoint = createMockSpaceEndpoint();
     this.resourceStore = mockedEndpoint.stores.resources;
 
-    set(this.resourceStore, 'entries', this.createResources(['entries'], [{
-      maximum: 2500,
-      included: 2000
-    }], [400]));
-    set(this.resourceStore, 'locales', this.createResources(['locales'], [{
-      maximum: 10,
-      included: 5
-    }], [2]));
+    // Reached no limit
+    set(this.resourceStore, 'locales', this.createResource(
+      'locales',
+      {
+        maximum: 10,
+        included: 5
+      }, 2
+    ));
+
+    // Reached included
+    set(this.resourceStore, 'content_types', this.createResource(
+      'content_types',
+      {
+        maximum: 20,
+        included: 10
+      }, 14
+    ));
+
+    // Reached max
+    set(this.resourceStore, 'entries', this.createResource(
+      'entries',
+      {
+        maximum: 2500,
+        included: 2000
+      }, 2500
+    ));
 
     // Spying on both the endpoint creation and the actual endpoint
     // calls are important.
@@ -227,37 +245,6 @@ describe('ResourceService', function () {
   });
 
   describe('#getAll', function () {
-    beforeEach(function () {
-      /*
-        The way this (setting items for getAll) is handled is a little bit funky,
-        due to the way that the mocked spaceEndpoint logic works. It doesn't do
-        any kind of special logic when returning values, just either returning from
-        the store if given a specific path id (e.g. [ 'resources', 'entries' ]), or
-        returning all values in the store if given no specific path id (e.g. [ 'resources' ]).
-
-        This should be changed in the future but it's outside of the scope of the
-        work that initially created these tests.
-       */
-
-      delete this.resourceStore.entries;
-      delete this.resourceStore.locales;
-
-      set(this.resourceStore, 'entries', this.createResource(
-        'entries',
-        {
-          maximum: 2500,
-          included: 2000
-        }, 2500
-      ));
-      set(this.resourceStore, 'locales', this.createResource(
-        'locales',
-        {
-          maximum: 10,
-          included: 5
-        }, 2
-      ));
-    });
-
     it('should return a promise-like object', function () {
       expect(this.isPromiseLike(this.ResourceService.getAll())).toBe(true);
     });
@@ -278,7 +265,7 @@ describe('ResourceService', function () {
       const resources = yield this.ResourceService.getAll();
 
       expect(Array.isArray(resources)).toBe(true);
-      expect(resources.length).toBe(2);
+      expect(resources.length).toBe(3);
     });
   });
 
@@ -288,16 +275,16 @@ describe('ResourceService', function () {
     });
 
     it('should return true if the maximum limit is not reached', function* () {
-      const status = yield this.ResourceService.canCreate('entry');
+      let status;
+
+      status = yield this.ResourceService.canCreate('contentType');
+      expect(status).toBe(true);
+
+      status = yield this.ResourceService.canCreate('locale');
       expect(status).toBe(true);
     });
 
     it('should return false if the maximum limit is reached', function* () {
-      set(this.resourceStore, 'entries', this.createResources(['entries'], [{
-        maximum: 2500,
-        included: 2000
-      }], [2500]));
-
       const status = yield this.ResourceService.canCreate('entry');
       expect(status).toBe(false);
     });
@@ -309,28 +296,18 @@ describe('ResourceService', function () {
     });
 
     it('should return an object that contains `warning` and `error` keys', function* () {
-      const messages = yield this.ResourceService.messagesFor('entry');
+      const messages = yield this.ResourceService.messagesFor('locale');
       expect(Object.keys(messages)).toContain('warning');
       expect(Object.keys(messages)).toContain('error');
     });
 
     it('should return a warning if the included limit is, but the maximum limit is not, reached', function* () {
-      set(this.resourceStore, 'entries', this.createResources(['entries'], [{
-        maximum: 2500,
-        included: 2000
-      }], [2100]));
-
-      const messages = yield this.ResourceService.messagesFor('entry');
+      const messages = yield this.ResourceService.messagesFor('contentType');
       expect(messages.warning).toBeDefined();
       expect(messages.error).toBe('');
     });
 
     it('should return an error if the maximum limit is reached', function* () {
-      set(this.resourceStore, 'entries', this.createResources(['entries'], [{
-        maximum: 2500,
-        included: 2000
-      }], [2500]));
-
       const messages = yield this.ResourceService.messagesFor('entry');
       expect(messages.warning).toBe('');
       expect(messages.error).toBeDefined();
@@ -338,34 +315,6 @@ describe('ResourceService', function () {
   });
 
   describe('#messages', function () {
-    beforeEach(function () {
-      // See #getAll for explanation of this logic
-      delete this.resourceStore.entries;
-      delete this.resourceStore.locales;
-
-      set(this.resourceStore, 'entries', this.createResource(
-        'entries',
-        {
-          maximum: 2500,
-          included: 2000
-        }, 2500
-      ));
-      set(this.resourceStore, 'locales', this.createResource(
-        'locales',
-        {
-          maximum: 10,
-          included: 5
-        }, 2
-      ));
-      set(this.resourceStore, 'content_types', this.createResource(
-        'content_types',
-        {
-          maximum: 20,
-          included: 10
-        }, 14
-      ));
-    });
-
     it('should return a promise-like object', function () {
       expect(this.isPromiseLike(this.ResourceService.messages())).toBe(true);
     });
