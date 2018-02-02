@@ -35,7 +35,7 @@ const PlatformUsage = createReactClass({
 
     onReady();
     this.setState({
-      name: plan.productRatePlan.name,
+      name: plan.name,
       charges: plan.ratePlanCharges
         // we only support tiered charges now
         .filter(charge => Array.isArray(charge.tiers))
