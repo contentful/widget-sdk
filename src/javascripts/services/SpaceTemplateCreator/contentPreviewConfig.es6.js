@@ -8,8 +8,8 @@ export const DISCOVERY_APP_BASE_URL = 'https://discovery.contentful.com/entries/
 // it means that this content preview is guaranteed to be created first,
 // and in the list of content previews it will be on the first place
 export const TEA_MAIN_CONTENT_PREVIEW = {
-  name: 'Node.js platform example',
-  description: 'The example app, implemented in Node.js',
+  name: 'The Node.js example app',
+  description: 'The preview setup for an example app built using Node.js',
   baseUrl: {
     prod: 'https://the-example-app-nodejs.contentful.com',
     staging: 'https://the-example-app-nodejs.flinkly.com'
@@ -20,32 +20,32 @@ export const TEA_MAIN_CONTENT_PREVIEW = {
 // combining with main content preview will make code less readable
 export const TEA_CONTENT_PREVIEWS = [
   {
-    name: '.NET platform example',
-    description: 'The example app, implemented in .NET',
+    name: 'The .NET example app',
+    description: 'The preview setup for an example app built using .NET',
     baseUrl: {
       prod: 'https://the-example-app-csharp.contentful.com',
       staging: 'https://the-example-app-csharp.flinkly.com'
     }
   },
   {
-    name: 'Ruby platform example',
-    description: 'The example app, implemented in Ruby using Sinatra',
+    name: 'The Ruby example app',
+    description: 'The preview setup for an example app built using Ruby and Sinatra',
     baseUrl: {
       prod: 'https://the-example-app-rb.contentful.com',
       staging: 'https://the-example-app-rb.flinkly.com'
     }
   },
   {
-    name: 'PHP platform example',
-    description: 'The example app, implemented in PHP',
+    name: 'The PHP example app',
+    description: 'The preview setup for an example app built using PHP',
     baseUrl: {
       prod: 'https://the-example-app-php.contentful.com',
       staging: 'https://the-example-app-php.flinkly.com'
     }
   },
   {
-    name: 'Python platform example',
-    description: 'The example app, implemented in Python using Flask',
+    name: 'The Python example app',
+    description: 'The preview setup for an example app built using Python and Flash',
     baseUrl: {
       prod: 'https://the-example-app-py.contentful.com',
       staging: 'https://the-example-app-py.flinkly.com'
