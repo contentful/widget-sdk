@@ -19,6 +19,8 @@ describe(PATH, function () {
       );
     });
 
+    const transformer = this.$inject(PATH).default;
+
     this.transform = (eventData) => {
       this.EntityActionStub.withArgs(
         'entry:create',
@@ -30,7 +32,6 @@ describe(PATH, function () {
           }
         }
       ).returns(BASE_EVENT);
-      const transformer = this.$inject(PATH).default;
       return transformer('entry:create', eventData);
     };
   });
@@ -55,8 +56,15 @@ describe(PATH, function () {
     });
   });
 
+  it('adds the eventOrigin to the tracking data', function () {
+    const transformed = this.transform(
+      { response: { data: { sys: { id: 'ENTRY_ID' } } } }
+    );
+    expect(transformed.data.entry_id).toEqual('ENTRY_ID');
+  });
+
   describe('when there is an eventOrigin', function () {
-    it('adds the eventOrigin to the tracking data', function () {
+    it('adds the `event_origin` to the tracking data', function () {
       const transformed = this.transform({ eventOrigin: 'entry-editor' });
       expect(transformed.data.event_origin).toEqual('entry-editor');
     });

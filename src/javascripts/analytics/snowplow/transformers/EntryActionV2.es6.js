@@ -1,14 +1,10 @@
 import EntityAction from './EntityAction';
-import { upperFirst } from 'lodash';
+import { get, upperFirst } from 'lodash';
 
 export default function (eventName, eventData) {
   const [downcaseEntity, action] = eventName.split(':');
   const entity = upperFirst(downcaseEntity);
-  const fullEventData = Object.assign(
-    {},
-    eventData,
-    { actionData: { entity, action } }
-  );
+  const fullEventData = { ...eventData, actionData: { entity, action } };
   const trackingData = EntityAction(eventName, fullEventData);
   Object.assign(trackingData.data, getData(eventData));
   return trackingData;
@@ -17,7 +13,11 @@ export default function (eventName, eventData) {
 function getData (eventData) {
   const data = getBaseData(eventData);
   const { contentType, eventOrigin } = eventData;
+  const entryId = get(eventData, 'response.data.sys.id');
 
+  if (entryId) {
+    data['entry_id'] = entryId;
+  }
   if (eventOrigin) {
     data['event_origin'] = eventOrigin;
   }
