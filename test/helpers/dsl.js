@@ -27,7 +27,8 @@ function createHookFactory (defineHook) {
       .then(() => {
         const result = runner.call(this);
         if (isGenerator(result)) {
-          return runGenerator(result);
+          const $apply = this.$apply.bind(this);
+          return runGenerator(result, $apply);
         }
       })
       .then(done, done.fail);
