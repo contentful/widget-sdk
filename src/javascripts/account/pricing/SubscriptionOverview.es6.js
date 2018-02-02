@@ -13,6 +13,7 @@ import {showDialog as showCreateSpaceModal} from 'services/CreateSpace';
 import {canCreateSpaceInOrganization} from 'access_control/AccessChecker';
 import svgPlus from 'svg/plus';
 import {asReact} from 'ui/Framework/DOMRenderer';
+import moment from 'moment';
 
 const subscriptionOverviewPropTypes = {
   onReady: PropTypes.func.isRequired,
@@ -73,7 +74,7 @@ const SubscriptionOverview = createReactClass({
           style: {padding: '1.2rem 2rem'}
         },
           h(BasePlan, {basePlan, orgId}),
-          h(SpacePlans, {spacePlans})
+          h(SpacePlans, {spacePlans, orgId})
         ),
         h('div', {
           className: 'workbench-main__sidebar'
@@ -91,41 +92,75 @@ const SubscriptionOverview = createReactClass({
 SubscriptionOverview.propTypes = subscriptionOverviewPropTypes;
 
 function BasePlan ({basePlan, orgId}) {
-  const {name, ratePlanCharges = []} = basePlan;
-  const enabledFeatures = ratePlanCharges.filter(({unitType}) => unitType === 'feature');
+  const enabledFeatures = getEnabledFeatures(basePlan);
   return h('div', null,
-    h('h2', null, name, ' ', h('a', {href: href(getOrgUsageNavState(orgId))}, 'See usage')),
-    h('p', null,
-      'Enabled features: ',
-      enabledFeatures.map(({name}) => h('span', {key: name}, name)),
-      !enabledFeatures.length && '(none)'
-    )
+    h('h2', null,
+      basePlan.name, '  ',
+      h('a', {
+        href: href(getOrgUsageNavState(orgId)),
+        style: {
+          verticalAlign: 'super',
+          fontSize: '0.7em',
+          fontWeight: 'normal',
+          textDecoration: 'underline',
+          marginLeft: '0.8em'
+        }
+      }, 'See usage')
+    ),
+    h('p', null, enabledFeatures.length ? enabledFeatures.map(({name}) => name) : 'No features on platform')
   );
 }
 
-function SpacePlans ({spacePlans}) {
+function SpacePlans ({spacePlans, orgId}) {
   const grandTotal = calculateTotalPrice(spacePlans);
+  const actionLinkStyle = {padding: '0 15px'};
   return h('table', {className: 'deprecated-table x--hoverable'},
     h('thead', null,
       h('tr', null,
-        h('th', null, 'Space'),
+        h('th', {style: {width: '40%'}}, 'Space name'),
         h('th', null, 'Type'),
+        h('th', null, 'Created by'),
+        h('th', null, 'Created on'),
         h('th', null)
       )
     ),
     h('tbody', {className: 'clickable'},
-      spacePlans.map(({name, price, space}) => {
+      spacePlans.map((plan) => {
+        const {name, price, space} = plan;
+        const enabledFeatures = getEnabledFeatures(plan);
+        const createdBy = space.sys.createdBy;
         return h('tr', {
           key: space.sys.id
         },
-          h('td', null, space.name),
-          h('td', null, name, h('br'), h(Price, {value: price})),
-          h('td', null, h('a', {href: href(getSpaceNavState(space.sys.id))}, 'Go to space'))
+          h('td', null,
+            h('h3', null, space.name),
+            h('p', null, enabledFeatures.length ? enabledFeatures.map(({name}) => name) : 'No features on space')
+          ),
+          h('td', null,
+            h('h3', null, name),
+            h(Price, {value: price})
+          ),
+          // TODO: user link is invalid, org membership id is required
+          h('td', null, h('a', {href: href(getUserNavState(createdBy.sys.id))}, createdBy.sys.id)),
+          h('td', null, moment.utc(space.sys.createdAt).format('DD. MMMM YYYY')),
+          h('td', {style: {textAlign: 'right'}},
+            h('a', {href: href(getSpaceNavState(space.sys.id)), style: actionLinkStyle}, 'Go to space'),
+            // TODO link to space usage details
+            h('a', {href: href(getOrgUsageNavState(orgId)), style: actionLinkStyle}, 'Usage')
+          )
         );
-      }),
+      })
+    ),
+    h('tfoot', null,
       h('tr', null,
         h('td', null, 'Total'),
-        h('td', null, h(Price, {value: grandTotal, unit: 'mo'}))
+        h('td', null, h(Price, {value: grandTotal, unit: 'mo'})),
+        h('td', null),
+        h('td', null),
+        // TODO link to invoices
+        h('td', {style: {textAlign: 'right'}},
+          h('a', {href: '#', style: actionLinkStyle}, 'Invoices')
+        )
       )
     )
   );
@@ -164,6 +199,10 @@ function calculateTotalPrice (subscriptionPlans) {
   return subscriptionPlans.reduce((total, plan) => total + parseInt(plan.price, 10), 0);
 }
 
+function getEnabledFeatures ({ratePlanCharges = []}) {
+  return ratePlanCharges.filter(({unitType}) => unitType === 'feature');
+}
+
 function getSpaceNavState (spaceId) {
   return {
     path: ['spaces', 'detail', 'home'],
@@ -172,9 +211,17 @@ function getSpaceNavState (spaceId) {
   };
 }
 
+function getUserNavState (orgMembershipId) {
+  return {
+    path: ['account', 'user', 'home'],
+    params: {pathSuffix: orgMembershipId},
+    options: { reload: true }
+  };
+}
+
 function getOrgUsageNavState (orgId) {
   return {
-    path: ['account', 'organizations', 'usage'],
+    path: ['account', 'organizations', 'organization_memberships'],
     params: {orgId},
     options: { reload: true }
   };
