@@ -109,6 +109,11 @@ angular.module('contentful')
 
       self.docPool = DocumentPool.create(self.docConnection, self.endpoint);
 
+      /**
+       * ContentTypeRepo with all CTs on the space already fetched which allows safe
+       * usage of `spaceContext.publishedCTs.get(...)` (instead of `.fetch(...)`).
+       * @type {data/ContentTypeRepo/Published}
+       */
       self.publishedCTs = PublishedCTRepo.create(space);
       self.user = K.getValue(TokenStore.user$);
 
