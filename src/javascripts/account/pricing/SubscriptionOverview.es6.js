@@ -119,7 +119,6 @@ function SpacePlans ({spacePlans, orgId}) {
       h('tr', null,
         h('th', {style: {width: '40%'}}, 'Space name'),
         h('th', null, 'Type'),
-        h('th', null, 'Created by'),
         h('th', null, 'Created on'),
         h('th', null)
       )
@@ -128,7 +127,6 @@ function SpacePlans ({spacePlans, orgId}) {
       spacePlans.map((plan) => {
         const {name, price, space} = plan;
         const enabledFeatures = getEnabledFeatures(plan);
-        const createdBy = space.sys.createdBy;
         return h('tr', {
           key: space.sys.id
         },
@@ -140,8 +138,6 @@ function SpacePlans ({spacePlans, orgId}) {
             h('h3', null, name),
             h(Price, {value: price})
           ),
-          // TODO: user link is invalid, org membership id is required
-          h('td', null, h('a', {href: href(getUserNavState(createdBy.sys.id))}, createdBy.sys.id)),
           h('td', null, moment.utc(space.sys.createdAt).format('DD. MMMM YYYY')),
           h('td', {style: {textAlign: 'right'}},
             h('a', {href: href(getSpaceNavState(space.sys.id)), style: actionLinkStyle}, 'Go to space'),
@@ -156,10 +152,9 @@ function SpacePlans ({spacePlans, orgId}) {
         h('td', null, 'Total'),
         h('td', null, h(Price, {value: grandTotal, unit: 'mo'})),
         h('td', null),
-        h('td', null),
         // TODO link to invoices
         h('td', {style: {textAlign: 'right'}},
-          h('a', {href: '#', style: actionLinkStyle}, 'Invoices')
+          h('a', {href: href(getInvoiceNavState(orgId)), style: actionLinkStyle}, 'Invoices')
         )
       )
     )
@@ -211,17 +206,17 @@ function getSpaceNavState (spaceId) {
   };
 }
 
-function getUserNavState (orgMembershipId) {
+function getOrgUsageNavState (orgId) {
   return {
-    path: ['account', 'user', 'home'],
-    params: {pathSuffix: orgMembershipId},
+    path: ['account', 'organizations', 'usage'],
+    params: {orgId},
     options: { reload: true }
   };
 }
 
-function getOrgUsageNavState (orgId) {
+function getInvoiceNavState (orgId) {
   return {
-    path: ['account', 'organizations', 'organization_memberships'],
+    path: ['account', 'organizations', 'billing'],
     params: {orgId},
     options: { reload: true }
   };
