@@ -135,7 +135,7 @@ function* applyTemplate (spaceContext, templateInfo) {
       onItemSuccess: entityActionSuccess,
       onItemError: noop
     },
-    templateInfo.name,
+    templateInfo,
     DEFAULT_LOCALE
   );
 

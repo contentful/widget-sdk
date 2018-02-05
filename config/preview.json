@@ -16,7 +16,8 @@
     "accessToken" : "0c783036ae7540a10db86150e1cb564c8c0bad53482794604f227dc199e6dde1",
     "spaceTemplateEntryContentTypeId" : "17WjnjeALEOeSyuiMI4QOW",
     "previewAccessToken" : "2fcfe1abd171477eabd73e64088fe1c1eb2578ac0158332902a1d8e5279356e4",
-    "apiUrl" : "api.contentful.com"
+    "apiUrl" : "api.contentful.com",
+    "TEASpaceId": "qz0n5cdakyl9"
   },
   "launchDarkly":{
     "envId": "58ad6cfe5d8af80964c3e7db"

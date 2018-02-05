@@ -27,7 +27,7 @@ describe('states/deeplink/utils', function () {
   describe('#getSpaceInfo', function () {
     it('checks value in the store', function* () {
       this.storeGet.returns('some_id');
-      this.getSpaces.returns(Promise.resolve([{ sys: { id: 'some_id' } }]));
+      this.getSpaces.resolves([{ sys: { id: 'some_id' } }]);
       yield* this.utils.getSpaceInfo();
 
       expect(this.storeGet.calledOnce).toBe(true);
@@ -35,7 +35,7 @@ describe('states/deeplink/utils', function () {
 
     it('returns spaceId from the store', function* () {
       this.storeGet.returns('some_id');
-      this.getSpaces.returns(Promise.resolve([{ sys: { id: 'some_id' } }]));
+      this.getSpaces.resolves([{ sys: { id: 'some_id' } }]);
       const { spaceId } = yield* this.utils.getSpaceInfo();
 
       expect(spaceId).toBe('some_id');
@@ -43,14 +43,14 @@ describe('states/deeplink/utils', function () {
 
     it('returns a new spaceId if we have invalid in the store', function* () {
       this.storeGet.returns('some_id');
-      this.getSpaces.returns(Promise.resolve([{ sys: { id: 'new_id' } }]));
+      this.getSpaces.resolves([{ sys: { id: 'new_id' } }]);
 
       const { spaceId } = yield* this.utils.getSpaceInfo();
       expect(spaceId).toBe('new_id');
     });
 
     it('throws an error if there are no spaces', function* () {
-      this.getSpaces.returns(Promise.resolve([]));
+      this.getSpaces.resolves([]);
       let hasError = false;
 
       try {
@@ -68,7 +68,7 @@ describe('states/deeplink/utils', function () {
   describe('#getOrg', function () {
     it('returns orgId from the store', function* () {
       this.storeGet.returns('some_org_id');
-      this.getOrganizations.returns(Promise.resolve([{ sys: { id: 'some_org_id' } }]));
+      this.getOrganizations.resolves([{ sys: { id: 'some_org_id' } }]);
       const { orgId } = yield* this.utils.getOrg();
 
       expect(orgId).toBe('some_org_id');
@@ -76,13 +76,13 @@ describe('states/deeplink/utils', function () {
 
     it('returns org from the selected space', function* () {
       this.storeGet.returns('some_org_id');
-      this.getOrganizations.returns(Promise.resolve([]));
-      this.getSpaces.returns(Promise.resolve([
+      this.getOrganizations.resolves([]);
+      this.getSpaces.resolves([
         {
           organization: {sys: {id: 'some_new_org_id'}},
           sys: {id: 'some_space_id'}
         }
-      ]));
+      ]);
       const { orgId } = yield* this.utils.getOrg();
 
       expect(orgId).toBe('some_new_org_id');
