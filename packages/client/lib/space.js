@@ -29,12 +29,6 @@ Space.prototype.isAdmin = function (user) {
   return user && user.sys.id === membership.user.sys.id && membership.admin === true;
 };
 
-Space.prototype.isHibernated = function () {
-  return _.some(this.data.enforcements, function (enforcement) {
-    return enforcement.reason === 'hibernated';
-  });
-};
-
 Space.prototype.getOrganizationId = function () {
   return this.data.organization.sys.id;
 };
