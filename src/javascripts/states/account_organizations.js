@@ -17,7 +17,7 @@ angular.module('contentful')
     url: '/new',
     label: 'Create new organization',
     views: {
-      // Override org navbar from paremt state
+      // Override organization navbar from the parent state
       'nav-bar@': { template: '' }
     },
     template: [
@@ -122,19 +122,6 @@ angular.module('contentful')
     url: '/:orgId/spaces{pathSuffix:PathSuffix}'
   });
 
-  var spacesNew = base({
-    name: 'space_plans',
-    label: 'Organization spaces',
-    url: '/:orgId/space_plans',
-    controller: ['$stateParams', '$scope', function ($stateParams, $scope) {
-      $scope.properties = {
-        orgId: $stateParams.orgId,
-        context: $scope.context
-      };
-    }],
-    template: h('cf-space-plans', { properties: 'properties' })
-  });
-
   var offsitebackup = organizationsBase({
     name: 'offsitebackup',
     title: 'Offsite backup',
@@ -186,7 +173,6 @@ angular.module('contentful')
       usage,
       users,
       spaces,
-      spacesNew,
       offsitebackup,
       billing
     ]

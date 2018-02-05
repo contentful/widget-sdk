@@ -10,15 +10,11 @@ describe('Space nav bar directive', function () {
     });
 
     const $compile = this.$inject('$compile');
-    spaceContext = this.mockService('spaceContext', {
-      space: { isHibernated: sinon.stub().returns(false) },
-      widgets: {getCustom: _.constant([])}
-    });
+    spaceContext = this.mockService('spaceContext', {space: {}});
     scope = this.$inject('$rootScope').$new();
     accessChecker = this.$inject('access_control/AccessChecker');
     accessChecker.getSectionVisibility = sinon.stub().returns({});
 
-    spaceContext.space.isHibernated = sinon.stub().returns(false);
     spaceContext.organizationContext = {organization: {sys: {id: '123'}}};
 
     compileElement = function () {
@@ -31,23 +27,6 @@ describe('Space nav bar directive', function () {
   afterEach(function () {
     container.remove();
     container = scope = accessChecker = compileElement = null;
-  });
-
-  describe('hide navigation when space is hibernated', function () {
-    beforeEach(function () {
-      accessChecker.getSectionVisibility.returns({ contentType: true });
-    });
-
-    it('items shown if space is defined and not hibernated', function () {
-      compileElement();
-      expect(container.find('li.nav-bar__list-item > a.nav-bar__link').length).toBeGreaterThan(0);
-    });
-
-    it('items not shown if space is defined but hibernated', function () {
-      spaceContext.space.isHibernated.returns(true);
-      compileElement();
-      expect(container.find('li.nav-bar__list-item > a.nav-bar__link').length).toBe(0);
-    });
   });
 
   function makeNavbarItemTest (key, viewType) {

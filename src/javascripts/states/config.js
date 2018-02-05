@@ -13,7 +13,7 @@ angular.module('contentful')
  * [service:states]: api/contentful/app/service/states
  */
 .provider('states/config', ['$stateProvider', function ($stateProvider) {
-  var VIEW_PROPERTIES = ['controller', 'controllerAs', 'template', 'templateProvider'];
+  var VIEW_PROPERTIES = ['controller', 'controllerAs', 'template'];
 
   // Is assigned the `h` export from the `ui/Framework` module.
   // This is necessary because we define a provider and not a factory.
@@ -63,14 +63,12 @@ angular.module('contentful')
 
   function addChildren (parentName, children) {
     children.forEach(function (state) {
-      state = provideScopeContext(state);
       state = useContentView(state);
 
-      if (state.views) {
-        _.forEach(state.views, function (view) {
-          view.template = templateToString(view.template);
-        });
-      }
+      _.forEach(state.views, function (view) {
+        provideScopeContext(view);
+        view.template = templateToString(view.template);
+      });
 
       var children = state.children;
       var name;
@@ -92,7 +90,7 @@ angular.module('contentful')
   function useContentView (state) {
     state.views = state.views || {};
     var contentView = _.pick(state, VIEW_PROPERTIES);
-    if (contentView.template || contentView.templateProvider) {
+    if (contentView.template || contentView.controller) {
       state.views['content@'] = contentView;
       return _.omit(state, VIEW_PROPERTIES);
     } else {
@@ -100,23 +98,23 @@ angular.module('contentful')
     }
   }
 
-  function provideScopeContext (state) {
-    if (!state.controller) {
-      state.controller = [function () {}];
+  function provideScopeContext (view) {
+    if (!view.controller) {
+      view.controller = [function () {}];
     }
 
-    if (typeof state.controller === 'function') {
-      state.controller = [state.controller];
+    if (typeof view.controller === 'function') {
+      view.controller = [view.controller];
     }
 
-    if (!Array.isArray(state.controller)) {
+    if (!Array.isArray(view.controller)) {
       throw new Error('controller must to be one of: undefined, function, array.');
     }
 
-    var injectables = state.controller.slice(0, state.controller.length - 1);
-    var controllerFn = state.controller[state.controller.length - 1];
+    var injectables = view.controller.slice(0, view.controller.length - 1);
+    var controllerFn = view.controller[view.controller.length - 1];
 
-    state.controller = ['$scope', '$state']
+    view.controller = ['$scope', '$state']
       .concat(injectables)
       .concat([function ($scope, $state) {
         var args = Array.prototype.slice.call(arguments).slice(2);
@@ -129,8 +127,6 @@ angular.module('contentful')
         $state.current.data = $scope.context;
         return controllerFn.apply(this, args);
       }]);
-
-    return state;
   }
 
   function templateToString (template) {

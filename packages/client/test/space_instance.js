@@ -53,22 +53,5 @@ module.exports = function spaceInstanceDescription (serverSpaceData) {
         expect(this.space.isAdmin(user)).to.be.false;
       });
     });
-
-    describe('#isHibernated()', function () {
-      it('is false without enforcements', function () {
-        delete this.space.data.enforcements;
-        expect(this.space.isHibernated()).to.be.false;
-      });
-
-      it('is true without matching enforcements', function () {
-        this.space.data.enforcements = [{reason: 'unknown'}];
-        expect(this.space.isHibernated()).to.be.false;
-      });
-
-      it('is true with hibernated enforcement', function () {
-        this.space.data.enforcements = [{reason: 'hibernated'}];
-        expect(this.space.isHibernated()).to.be.true;
-      });
-    });
   });
 };

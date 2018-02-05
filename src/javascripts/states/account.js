@@ -13,7 +13,7 @@ angular.module('contentful')
     name: 'account',
     url: '/account',
     abstract: true,
-    views: { 'nav-bar': { template: navBar() } },
+    views: { 'nav-bar@': { template: navBar() } },
     children: [
       require('states/account/organizations'),
       require('states/account/profile')
