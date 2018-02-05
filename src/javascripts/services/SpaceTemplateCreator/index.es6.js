@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import qs from 'libs/qs';
 import * as environment from 'environment';
 import {TEA_MAIN_CONTENT_PREVIEW, TEA_CONTENT_PREVIEWS, DISCOVERY_APP_BASE_URL} from './contentPreviewConfig';
+import TheLocaleStore from 'TheLocaleStore';
 
 const ASSET_PROCESSING_TIMEOUT = 60000;
 
@@ -49,6 +50,24 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
     const allPromises = [];
 
     const contentCreated = runTask(function* () {
+      const filteredLocales = template.space.locales.filter((locale) => locale.code !== selectedLocaleCode);
+      const localesPromise = Promise.all(
+        filteredLocales.map(
+          locale => spaceContext.localeRepo.save(Object.assign({}, locale, { default: false }))
+        )
+      );
+      const contentLocales = _.uniq([selectedLocaleCode].concat(filteredLocales.map(locale => locale.code)));
+
+      // we set all locales as active, so they will be preselected in entry editor
+      // we need to wait until new locales are created
+      localesPromise
+        // we need to refresh our locale store, so that app is aware of new locales
+        .then(TheLocaleStore.refresh)
+        .then(() => {
+          // it expects array of objects, so we have to wrap codes in object
+          TheLocaleStore.setActiveLocales(contentLocales.map(code => ({ internal_code: code })));
+        });
+
       const createdContentTypes = yield Promise.all(template.contentTypes.map(createContentType));
       // we can create API key as soon as space is created
       // and it is okay to do it in the background
@@ -57,8 +76,11 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
       // publishing can be finished in the background
       yield publishContentTypes(createdContentTypes);
 
+      // we need to wait locales before creating assets
+      yield localesPromise;
+
       // we need to create assets before proceeding
-      const assets = useSelectedLocale(template.assets, selectedLocaleCode);
+      const assets = useSelectedLocales(template.assets, [selectedLocaleCode]);
       const createdAssets = yield Promise.all(assets.map(createAsset));
 
       // we can process and publish assets in the background,
@@ -66,7 +88,7 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
       const processAssetsPromise = processAssets(createdAssets);
       const publishAssetsPromise = processAssetsPromise.then(publishAssets);
 
-      const entries = useSelectedLocale(template.entries, selectedLocaleCode);
+      const entries = useSelectedLocales(template.entries, contentLocales);
       const createdEntries = yield Promise.all(entries.map(createEntry));
 
       const publishedEntries = yield publishEntries(createdEntries);
@@ -471,14 +493,18 @@ function getItemId (item) {
   return _.get(item, 'sys.id') || item.name;
 }
 
-function useSelectedLocale (entities, localeCode) {
+function useSelectedLocales (entities, localeCodes) {
   return entities.map(entity => Object.assign(entity, {
-    fields: _.mapValues(entity.fields, field => ({
-      // content can actually contain more locales, than our default
-      // so we first try to pull content in our locale code, and only
-      // after fallback to the first available value
-      [localeCode]: field[localeCode] || _.values(field)[0]
-    }))
+    fields: _.mapValues(entity.fields, field => {
+      const values = _.values(field);
+      return localeCodes.reduce((hash, localeCode) => {
+        // content can actually contain more locales, than our default
+        // so we first try to pull content in our locale code, and only
+        // after fallback to the first available value
+        hash[localeCode] = field[localeCode] || values[0];
+        return hash;
+      }, {});
+    })
   }));
 }
 
