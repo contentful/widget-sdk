@@ -109,15 +109,6 @@
         dataViewType: 'organization-spaces'
       },
       {
-        if: 'nav.pricingVersion == "pricing_version_2"',
-        title: 'Spaces',
-        sref: 'account.organizations.space_plans({orgId: nav.orgId})',
-        rootSref: 'account.organizations.space_plans',
-        inheritUrlParams: false,
-        icon: 'nav-spaces',
-        dataViewType: 'space-plans'
-      },
-      {
         title: 'Offsite backup',
         sref: 'account.organizations.offsitebackup({orgId: nav.orgId})',
         rootSref: 'account.organizations.offsitebackup',

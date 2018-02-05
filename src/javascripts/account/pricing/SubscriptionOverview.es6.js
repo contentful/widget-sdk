@@ -3,14 +3,17 @@ import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import {runTask} from 'utils/Concurrent';
 import {createEndpoint as createOrgEndpoint} from 'access_control/OrganizationMembershipRepository';
-import {getBasePlan, getSpacePlans} from 'account/pricing/PricingDataProvider';
-import {getBasePlanStyle} from 'account/pricing/SubscriptionPlanStyles';
+import {getPlansWithSpaces} from 'account/pricing/PricingDataProvider';
 import {supportUrl} from 'Config';
-import {groupBy} from 'lodash';
 import {getOrganization} from 'services/TokenStore';
 import {isOwnerOrAdmin} from 'services/OrganizationRoles';
 import * as ReloadNotification from 'ReloadNotification';
+import {href} from 'states/Navigator';
+import {showDialog as showCreateSpaceModal} from 'services/CreateSpace';
+import {canCreateSpaceInOrganization} from 'access_control/AccessChecker';
+import svgPlus from 'svg/plus';
 import {asReact} from 'ui/Framework/DOMRenderer';
+import moment from 'moment';
 
 const subscriptionOverviewPropTypes = {
   onReady: PropTypes.func.isRequired,
@@ -22,9 +25,8 @@ const SubscriptionOverview = createReactClass({
   getInitialState: function () {
     return {
       basePlan: {},
-      spacePlansByName: [],
-      grandTotal: 0,
-      subscriptionId: null
+      spacePlans: [],
+      canCreateSpace: false
     };
   },
   componentWillMount: function () {
@@ -40,24 +42,26 @@ const SubscriptionOverview = createReactClass({
     }
 
     const endpoint = createOrgEndpoint(orgId);
-    const [basePlan, spacePlans] = yield Promise.all([
-      getBasePlan(endpoint),
-      getSpacePlans(endpoint)
-    ]).catch(ReloadNotification.apiErrorHandler);
+    const plans = yield getPlansWithSpaces(endpoint).catch(ReloadNotification.apiErrorHandler);
 
     onReady();
 
-    const spacePlansByName = Object.values(groupBy(spacePlans, 'productRatePlanId')).map((spacePlans) => ({
-      count: spacePlans.length,
-      price: calculateTotalPrice(spacePlans),
-      name: spacePlans[0].name
-    }));
-    const grandTotal = calculateTotalPrice([...spacePlans, basePlan]);
+    const basePlan = plans.items.find(({planType}) => planType === 'base');
+    const spacePlans = plans.items
+      .filter(({planType}) => planType === 'space')
+      .sort((plan1, plan2) => plan1.space.name.localeCompare(plan2.space.name));
+    const canCreateSpace = canCreateSpaceInOrganization(orgId);
 
-    this.setState({basePlan, spacePlansByName, grandTotal});
+    this.setState({basePlan, spacePlans, canCreateSpace});
+  },
+  createSpace: function () {
+    if (this.state.canCreateSpace) {
+      showCreateSpaceModal(this.props.orgId);
+    }
   },
   render: function () {
-    const {basePlan, spacePlansByName, grandTotal} = this.state;
+    const {basePlan, spacePlans, canCreateSpace} = this.state;
+    const {orgId} = this.props;
 
     return h('div', {className: 'workbench'},
       h('div', {className: 'workbench-header__wrapper'},
@@ -68,16 +72,20 @@ const SubscriptionOverview = createReactClass({
       ),
       h('div', {className: 'workbench-main'},
         h('div', {
-          className: 'workbench-main__left-sidebar',
-          style: {padding: '1.2rem 0 0 1.5rem'}
-        }, h(BasePlan, basePlan)),
-        h('div', {
-          className: 'workbench-main__right-content',
+          className: 'workbench-main__content',
           style: {padding: '1.2rem 2rem'}
-        }, h(SpacePlans, {spacePlansByName})),
+        },
+          h(BasePlan, {basePlan, orgId}),
+          h(SpacePlans, {spacePlans, orgId})
+        ),
         h('div', {
           className: 'workbench-main__sidebar'
-        }, h(RightSidebar, {grandTotal}))
+        },
+          h(RightSidebar, {
+            canCreateSpace,
+            onCreateSpace: this.createSpace
+          })
+        )
       )
     );
   }
@@ -85,63 +93,94 @@ const SubscriptionOverview = createReactClass({
 
 SubscriptionOverview.propTypes = subscriptionOverviewPropTypes;
 
-// TODO: 'key' is not served by endpoint, but we need some key to choose icon
-// and style for the pricing plan box
-function BasePlan ({name, price, key = 'team-edition', ratePlanCharges = []}) {
-  const enabledFeatures = ratePlanCharges.filter(({unitType}) => unitType === 'feature');
-  const basePlanStyle = getBasePlanStyle(key);
+function BasePlan ({basePlan, orgId}) {
+  const enabledFeatures = getEnabledFeatures(basePlan);
   return h('div', null,
-    h('h2', {className: 'pricing-heading'}, 'Your pricing plan'),
-    h('div', {
-      className: 'pricing-plan pricing-tile',
-      style: {paddingTop: '45px'}
-    },
-      h('div', {className: 'pricing-plan__bar', style: basePlanStyle.bar}),
-      asReact(basePlanStyle.icon),
-      h('h3', {className: 'pricing-heading'}, name),
-      h('h3', {className: 'pricing-heading'}, 'Enabled features:'),
-      h('ul', null,
-        enabledFeatures.map(({name}) => h('li', {key: name}, name)),
-        !enabledFeatures.length && h('li', null, '(none)')
-      ),
-      h(Price, {value: price})
-    )
+    h('h2', null,
+      basePlan.name, '  ',
+      h('a', {
+        href: href(getOrgUsageNavState(orgId)),
+        style: {
+          fontSize: '0.8em',
+          fontWeight: 'normal',
+          textDecoration: 'underline',
+          marginLeft: '0.8em'
+        }
+      }, 'See usage')
+    ),
+    h('p', null, enabledFeatures.length ? enabledFeatures.map(({name}) => name) : 'No features on platform')
   );
 }
 
-function SpacePlans ({spacePlansByName}) {
-  return h('div', null,
-    h('h2', {className: 'pricing-heading'}, 'Your spaces'),
-    h('div', {className: 'pricing-tiles-list'},
-      spacePlansByName.map(({name, price, count}) =>
-        h('div', {className: 'pricing-tile', key: name},
-          h('h3', {className: 'pricing-heading'}, name),
-          h(Price, {value: price}),
-          h('p', null, `${count} ${pluralize(count, 'space')}`)
+function SpacePlans ({spacePlans, orgId}) {
+  const grandTotal = calculateTotalPrice(spacePlans);
+  const actionLinkStyle = {padding: '0 15px'};
+  return h('table', {className: 'deprecated-table x--hoverable'},
+    h('thead', null,
+      h('tr', null,
+        h('th', {style: {width: '40%'}},
+          'Space name ',
+          h('i', {className: 'fa fa-caret-up'})
+        ),
+        h('th', null, 'Type'),
+        h('th', null, 'Created on'),
+        h('th', null)
+      )
+    ),
+    h('tbody', {className: 'clickable'},
+      spacePlans.map((plan) => {
+        const {name, price, space} = plan;
+        const enabledFeatures = getEnabledFeatures(plan);
+        return h('tr', {
+          key: space.sys.id
+        },
+          h('td', null,
+            h('h3', null, space.name),
+            h('p', null, enabledFeatures.length ? enabledFeatures.map(({name}) => name) : 'No features on space')
+          ),
+          h('td', null,
+            h('h3', null, name),
+            h(Price, {value: price})
+          ),
+          h('td', null, moment.utc(space.sys.createdAt).format('DD. MMMM YYYY')),
+          h('td', {style: {textAlign: 'right'}},
+            h('a', {href: href(getSpaceNavState(space.sys.id)), style: actionLinkStyle}, 'Go to space'),
+            // TODO link to space usage details
+            h('a', {href: href(getOrgUsageNavState(orgId)), style: actionLinkStyle}, 'Usage')
+          )
+        );
+      })
+    ),
+    h('tfoot', null,
+      h('tr', null,
+        h('td', null, 'Total'),
+        h('td', null, h(Price, {value: grandTotal, unit: 'mo'})),
+        h('td', null),
+        // TODO link to invoices
+        h('td', {style: {textAlign: 'right'}},
+          h('a', {href: href(getInvoiceNavState(orgId)), style: actionLinkStyle}, 'Invoices')
         )
       )
     )
   );
 }
 
-function RightSidebar ({grandTotal}) {
+function RightSidebar ({onCreateSpace, canCreateSpace}) {
   return h('div', {className: 'entity-sidebar'},
-    h('h2', {className: 'entity-sidebar__heading'}, 'Grand total'),
     h('p', {className: 'entity-sidebar__help-text'},
-      'Your grand total amounts to ',
-      h('b', null, `$${grandTotal}`),
-      ' / month.'
+      h('button', {
+        className: 'btn-action x--block',
+        onClick: onCreateSpace,
+        disabled: !canCreateSpace
+      },
+        h('div', {className: 'btn-icon cf-icon cf-icon--plus inverted'}, asReact(svgPlus)),
+        'Add a new space'
+      )
     ),
-
     h('h2', {className: 'entity-sidebar__heading'}, 'Need help?'),
     h('p', {className: 'entity-sidebar__help-text'},
       'Do you need to make changes to your pricing plan or purchase additional spaces? ' +
       'Don’t hesitate to talk to our customer success team.'
-    ),
-    h('p', {className: 'entity-sidebar__help-text pricing-csm'},
-      h('span', {className: 'pricing-csm__photo'}),
-      h('span', {className: 'pricing-csm__photo'}),
-      h('span', {className: 'pricing-csm__photo'})
     ),
     h('p', {className: 'entity-sidebar__help-text'},
       h('a', {href: supportUrl}, 'Get in touch with us')
@@ -149,32 +188,42 @@ function RightSidebar ({grandTotal}) {
   );
 }
 
-function Price ({value = 0, currency = '$', unit = 'month'}) {
-  return h('p', {className: 'pricing-price'},
-    h('span', {className: 'pricing-price__value'},
-      h('span', {className: 'pricing-price__value__currency'}, currency),
-      parseInt(value, 10).toLocaleString('en-US')
-    ),
-    h('span', {className: 'pricing-price__unit'}, `/${unit}`)
-  );
+function Price ({value = 0, currency = '$', unit = null}) {
+  const valueStr = parseInt(value, 10).toLocaleString('en-US');
+  const unitStr = unit && ` /${unit}`;
+  return h('span', null, [currency, valueStr, unitStr].join(''));
 }
 
 function calculateTotalPrice (subscriptionPlans) {
   return subscriptionPlans.reduce((total, plan) => total + parseInt(plan.price, 10), 0);
 }
 
-/**
- * Receives amount of items, singular name of item and optionally plural name.
- * Returns singular or plural name for given amount based on grammar rules.
- * e.g.
- * pluralize(2, 'apple') // apples
- * pluralize(101, 'apple') // apple
- * pluralize(2, 'person', 'people') // people
- *
- * TODO move to string utils
- */
-function pluralize (amount, singular, plural) {
-  return amount % 10 === 1 ? singular : plural || singular + 's';
+function getEnabledFeatures ({ratePlanCharges = []}) {
+  return ratePlanCharges.filter(({unitType}) => unitType === 'feature');
+}
+
+function getSpaceNavState (spaceId) {
+  return {
+    path: ['spaces', 'detail', 'home'],
+    params: {spaceId},
+    options: { reload: true }
+  };
+}
+
+function getOrgUsageNavState (orgId) {
+  return {
+    path: ['account', 'organizations', 'usage'],
+    params: {orgId},
+    options: { reload: true }
+  };
+}
+
+function getInvoiceNavState (orgId) {
+  return {
+    path: ['account', 'organizations', 'billing'],
+    params: {orgId},
+    options: { reload: true }
+  };
 }
 
 export default SubscriptionOverview;
