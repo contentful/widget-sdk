@@ -47,7 +47,9 @@ const SubscriptionOverview = createReactClass({
     onReady();
 
     const basePlan = plans.items.find(({planType}) => planType === 'base');
-    const spacePlans = plans.items.filter(({planType}) => planType === 'space');
+    const spacePlans = plans.items
+      .filter(({planType}) => planType === 'space')
+      .sort((plan1, plan2) => plan1.space.name.localeCompare(plan2.space.name));
     const canCreateSpace = canCreateSpaceInOrganization(orgId);
 
     this.setState({basePlan, spacePlans, canCreateSpace});
@@ -99,8 +101,7 @@ function BasePlan ({basePlan, orgId}) {
       h('a', {
         href: href(getOrgUsageNavState(orgId)),
         style: {
-          verticalAlign: 'super',
-          fontSize: '0.7em',
+          fontSize: '0.8em',
           fontWeight: 'normal',
           textDecoration: 'underline',
           marginLeft: '0.8em'
@@ -117,7 +118,10 @@ function SpacePlans ({spacePlans, orgId}) {
   return h('table', {className: 'deprecated-table x--hoverable'},
     h('thead', null,
       h('tr', null,
-        h('th', {style: {width: '40%'}}, 'Space name'),
+        h('th', {style: {width: '40%'}},
+          'Space name ',
+          h('i', {className: 'fa fa-caret-up'})
+        ),
         h('th', null, 'Type'),
         h('th', null, 'Created on'),
         h('th', null)
