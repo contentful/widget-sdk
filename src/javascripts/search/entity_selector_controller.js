@@ -102,7 +102,7 @@ angular.module('contentful')
       initialSearchState.contentTypeId = $scope.singleContentType.getId();
     }
     var isSearching$ = K.fromScopeValue($scope, function ($scope) {
-      return $scope.isLoading;
+      return $scope.isLoading && !$scope.isLoadingMore;
     });
     var accessibleContentType = getAccessibleCTs(spaceContext.publishedCTs, initialSearchState.contentTypeId);
     var contentTypes = getValidContentTypes($scope.config.linkedContentTypeIds, accessibleContentType);
@@ -242,6 +242,7 @@ angular.module('contentful')
     $scope.items.push.apply($scope.items, getItemsToAdd(res));
     $timeout(function () {
       $scope.isLoading = false;
+      $scope.isLoadingMore = false;
     });
   }
 
