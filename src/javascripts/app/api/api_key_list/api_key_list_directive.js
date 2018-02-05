@@ -18,12 +18,14 @@ angular.module('contentful')
   var TheAccountView = require('TheAccountView');
   var $state = require('$state');
   var notification = require('notification');
+  var ResourceUtils = require('utils/ResourceUtils');
+  var createResourceService = require('services/ResourceService').default;
+
+  var resources = createResourceService(spaceContext.getId());
 
   var disableCreateApiKey = accessChecker.shouldDisable('createApiKey');
 
   $scope.showCreateApiKey = !accessChecker.shouldHide('createApiKey');
-
-  $scope.limit = spaceContext.getData('organization.subscriptionPlan.limits.permanent.apiKey', {});
 
   $scope.context.ready = false;
 
@@ -65,10 +67,18 @@ angular.module('contentful')
 
   spaceContext.apiKeyRepo.getAll()
   .then(function (apiKeys) {
-    $scope.context.ready = true;
     $scope.apiKeys = apiKeys;
-    $scope.empty = _.isEmpty(apiKeys);
-    $scope.reachedLimit = $scope.apiKeys.length >= $scope.limit;
+    $scope.empty = _.isEmpty($scope.apiKeys);
+
+    return resources.get('apiKey');
+  })
+  .then(function (resource) {
+    var canCreate = ResourceUtils.canCreate(resource);
+    var limits = ResourceUtils.getResourceLimits(resource);
+
+    $scope.context.ready = true;
+    $scope.limit = limits.maximum;
+    $scope.reachedLimit = !canCreate;
   }, accessChecker.wasForbidden($scope.context))
   .catch(ReloadNotification.apiErrorHandler);
 }]);
