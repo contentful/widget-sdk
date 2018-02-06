@@ -51,8 +51,19 @@ import shouldUseEnvEndpoint from './shouldUseEnvEndpoint';
  * @returns {function(): Promise<Object>}
  */
 export function createSpaceEndpoint (baseUrl, spaceId, auth, envId) {
-  const spaceBaseUrl = joinPath([baseUrl, 'spaces', spaceId]);
-  return create(spaceBaseUrl, auth, envId);
+  return create(withBaseUrl, auth);
+
+  function withBaseUrl (path) {
+    return joinPath([baseUrl, 'spaces', spaceId].concat(maybePrefixWithEnv(path)));
+  }
+
+  function maybePrefixWithEnv (path) {
+    if (envId && shouldUseEnvEndpoint(path)) {
+      return ['environments', envId].concat(path);
+    } else {
+      return path;
+    }
+  }
 }
 
 /*
@@ -129,19 +140,23 @@ export function createOrganizationEndpoint (baseUrl, organizationId, auth) {
  *   path: ['organization', 'ORG_ID', 'users']
  * });
  *
- * @param {string} baseUrl
+ * @param {string|function} baseUrl  can be a string - will be used as is
+ *                                   can be a function of path to full URL
  * @param {object} auth
  * @param {function(): Promise<string>} auth.getToken
  * @param {function(): Promise<string>} auth.refreshToken
- * @param {string?} envId  if provided will call environment-scoped
- *                         endpoints for applicable entities
  * @returns {function(): Promise<Object>}
  */
-export function create (baseUrl, auth, envId) {
+export function create (baseUrl, auth) {
   const baseRequest = makeRequest(auth);
+  let withBaseUrl = baseUrl;
+
+  if (typeof baseUrl === 'string') {
+    withBaseUrl = path => joinPath([baseUrl].concat(path));
+  }
 
   return function request (config, headers) {
-    const url = joinPath([baseUrl].concat(maybePrependWithEnv(config.path)));
+    const url = withBaseUrl(config.path);
 
     const req = {
       method: config.method,
@@ -177,14 +192,6 @@ export function create (baseUrl, auth, envId) {
       headers['X-Contentful-Version'] = version;
     }
     return headers;
-  }
-
-  function maybePrependWithEnv (path) {
-    if (envId && shouldUseEnvEndpoint(path)) {
-      return ['environments', envId].concat(path);
-    } else {
-      return path;
-    }
   }
 }
 
