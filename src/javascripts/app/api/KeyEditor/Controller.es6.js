@@ -1,4 +1,4 @@
-import {assign, get, inRange, omit, isEqual} from 'lodash';
+import {assign, get, inRange, isEqual} from 'lodash';
 import Command from 'command';
 import {truncate} from 'stringUtils';
 import {deepFreeze} from 'utils/Freeze';
@@ -11,7 +11,6 @@ import * as accessChecker from 'access_control/AccessChecker';
 import $state from '$state';
 import notification from 'notification';
 import {track} from 'analytics/Analytics';
-import { getStore } from 'TheStore';
 import * as LD from 'utils/LaunchDarkly';
 import * as Intercom from 'intercom';
 
@@ -19,15 +18,9 @@ import initKeyEditor from './KeyEditor';
 import {get as getBoilerplates} from './BoilerplateCode';
 import initBoilerplate from './Boilerplate';
 import renderContactUs from './ContactUs';
-import {makeLink} from './EnvironmentSelector';
-
-const store = getStore();
 
 const CONTACT_US_BOILERPLATE_FLAG_NAME = 'feature-ps-10-2017-contact-us-boilerplate';
 const ENVIRONMENTS_FLAG_NAME = 'feature-dv-11-2017-environments';
-
-// Entity representing the default "master" environment
-const MASTER_ENV = {sys: {id: 'master'}, name: 'Master'};
 
 // Pass $scope and API Key, the editor will get rendered and the
 // following properties are exposed as `$scope.apiKeyEditor`:
@@ -35,7 +28,7 @@ const MASTER_ENV = {sys: {id: 'master'}, name: 'Master'};
 export default function attach ($scope, apiKey, spaceEnvironments) {
   mountBoilerplates($scope, apiKey);
   mountContactUs($scope);
-  mountKeyEditor($scope, apiKey, [MASTER_ENV].concat(spaceEnvironments));
+  mountKeyEditor($scope, apiKey, spaceEnvironments);
 }
 
 function mountBoilerplates ($scope, apiKey) {
@@ -91,15 +84,9 @@ function isApiKeyModelEqual (m1, m2) {
 
 
 function mountKeyEditor ($scope, apiKey, spaceEnvironments) {
-  // TODO: remove this localStorage mock; this property should come from the API
-  const stored = store.get(`tmp.envsFor.${apiKey.sys.id}`);
-  apiKey.environments = Array.isArray(stored) ? stored : undefined;
-  // end of mock implementation
-
-  // This condition depends on the API implementation.
-  // For the time being if `environments` are not present "master" is used.
+  // `environments` key is present only if there are environments other than master enabled
   if (!Array.isArray(apiKey.environments) || apiKey.environments.length === 0) {
-    apiKey.environments = [makeLink(MASTER_ENV)];
+    apiKey.environments = [{sys: {id: 'master', type: 'Link', linkType: 'Environment'}}];
   }
 
   const canEdit = accessChecker.canModifyApiKeys();
@@ -162,16 +149,16 @@ function mountKeyEditor ($scope, apiKey, spaceEnvironments) {
       return;
     }
 
-    // TODO: remove this localStorage mock; this property should be accepted by the API
-    store.set(`tmp.envsFor.${apiKey.sys.id}`, model.environments);
-    // it means `environments` shouldn't be omitted here:
-    assign(apiKey, omit(model, ['environments']));
-    // end of mock implementation
+    const toPersist = Object.assign({}, apiKey, model);
+    // no need to send `environments` over the wire if in default state
+    // TODO remove when space environments go public
+    if (toPersist.environments.length === 1 && toPersist.environments[0].sys.id === 'master') {
+      delete toPersist.environments;
+    }
 
-    return spaceContext.apiKeyRepo.save(apiKey)
+    return spaceContext.apiKeyRepo.save(toPersist)
     .then(newKey => {
       apiKey = newKey;
-      apiKey.environments = model.environments; // TODO faking behavior, should be gone
       pristineModel = makeApiKeyModel(apiKey);
       $scope.context.dirty = false;
       notify.saveSuccess();

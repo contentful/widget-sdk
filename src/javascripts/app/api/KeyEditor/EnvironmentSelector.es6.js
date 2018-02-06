@@ -7,7 +7,7 @@ import {filter, concat} from 'utils/Collections';
 import infoIcon from 'svg/info';
 import copyButton from 'ui/Components/CopyIconButton';
 
-export function makeLink (env) {
+function makeLink (env) {
   return {
     sys: {
       type: 'Link',
