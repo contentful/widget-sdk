@@ -141,8 +141,7 @@ function SpacePlans ({spacePlans, orgId}) {
         if (space) {
           createdAt = moment.utc(space.sys.createdAt).format('DD. MMMM YYYY');
           spaceLink = h('a', {href: href(getSpaceNavState(space.sys.id)), style: actionLinkStyle}, 'Go to space');
-          // TODO link to space usage details
-          usageLink = h('a', {href: href(getOrgUsageNavState(orgId)), style: actionLinkStyle}, 'Usage');
+          usageLink = h('a', {href: href(getSpaceUsageNavState(space.sys.id)), style: actionLinkStyle}, 'Usage');
         }
 
         return h('tr', {
@@ -223,6 +222,14 @@ function getOrgUsageNavState (orgId) {
   return {
     path: ['account', 'organizations', 'usage'],
     params: {orgId},
+    options: { reload: true }
+  };
+}
+
+function getSpaceUsageNavState (spaceId) {
+  return {
+    path: ['spaces', 'detail', 'settings', 'usage'],
+    params: {spaceId},
     options: { reload: true }
   };
 }
