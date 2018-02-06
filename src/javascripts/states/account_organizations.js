@@ -76,27 +76,13 @@ angular.module('contentful')
     title: 'Organization users',
     url: '/new',
     controller: ['$stateParams', '$scope', function ($stateParams, $scope) {
-      // Begin feature flag code - feature-bv-09-2017-invite-to-org
-      var LD = require('utils/LaunchDarkly');
-      LD.onFeatureFlag($scope, 'feature-bv-09-2017-invite-to-org', function (value) {
-        $scope.useNewOrgInvitation = value;
-      });
-      // End feature flag code - feature-bv-09-2017-invite-to-org
-
       $scope.properties = {
         orgId: $stateParams.orgId,
         context: $scope.context
       };
     }],
     template: [
-      h('cf-new-organization-membership', { ngIf: 'useNewOrgInvitation', properties: 'properties' }),
-      h('div', {
-        // uses strict equally to avoid rendering when the flag value is still undefined
-        ngIf: 'useNewOrgInvitation === false'
-      }, [
-        workbenchHeader({ title: [ 'Organization users' ] }),
-        h('cf-account-view', { context: 'context' })
-      ])
+      h('cf-new-organization-membership', { properties: 'properties' })
     ],
     // this is duplicated code, but there's no way
     // we can get around it for now
