@@ -14,36 +14,36 @@ cf-loader(watch-state-change="true")
         h3 Role details
         .cfnext-form__field
           label(for="opt_name") Name
-          input.cfnext-form__input--full-size(id="opt_name" ng-model="internal.name" ng-disabled="!canModifyRoles()")
+          input.cfnext-form__input--full-size(id="opt_name" ng-model="internal.name" ng-disabled="!canModifyRoles")
         .cfnext-form__field
           label(for="opt_description") Description
-          textarea.cfnext-form__input--full-size(id="opt_description" ng-model="internal.description" ng-disabled="!canModifyRoles()")
+          textarea.cfnext-form__input--full-size(id="opt_description" ng-model="internal.description" ng-disabled="!canModifyRoles")
         cf-translator-locale-selector(
           ng-if="showTranslator"
           policies="internal")
       .role-details__section(ng-if="internal.uiCompatible")
         h3 Content
-        cf-rule-list(rules="internal.entries" entity="entry" is-disabled="!canModifyRoles()")
+        cf-rule-list(rules="internal.entries" entity="entry" is-disabled="!canModifyRoles")
 
       .role-details__section(ng-if="internal.uiCompatible")
         h3 Media
-        cf-rule-list(rules="internal.assets" entity="asset" is-disabled="!canModifyRoles()")
+        cf-rule-list(rules="internal.assets" entity="asset" is-disabled="!canModifyRoles")
 
       .role-details__section(ng-if="!internal.uiCompatible")
         h3 Policies
         p
           span The policy for this role cannot be represented visually.
-          span(ng-if="canModifyRoles()")
+          span(ng-if="canModifyRoles")
             |  You can continue to edit the JSON directly,
             | or <a href="" ng-click="resetPolicies()">clear the policy</a>
             | to define policy rules visually.
         .cfnext-form-option
-          textarea.cfnext-form__input--full-size(ng-model="internal.policyString" rows="10" ng-disabled="!canModifyRoles()")
+          textarea.cfnext-form__input--full-size(ng-model="internal.policyString" rows="10" ng-disabled="!canModifyRoles")
 
       .role-details__section
         h3 Content model
         .cfnext-form-option
-          input(id="opt_content_types_access" type="checkbox" ng-model="internal.contentModel.manage" ng-disabled="!canModifyRoles()")
+          input(id="opt_content_types_access" type="checkbox" ng-model="internal.contentModel.manage" ng-disabled="!canModifyRoles")
           label(for="opt_content_types_access")
             | Can modify content types
             |  <em>(the content type builder is only shown to users who have this permission)</em>.
@@ -54,14 +54,14 @@ cf-loader(watch-state-change="true")
           input(
             id="opt_api_keys_view" type="checkbox"
             ng-model="internal.contentDelivery.read"
-            ng-disabled="!canModifyRoles() || internal.contentDelivery.manage")
+            ng-disabled="!canModifyRoles || internal.contentDelivery.manage")
           label(for="opt_api_keys_view")
             | Can access existing API keys for this space.
         .cfnext-form-option
           input(
             id="opt_space_settings_edit" type="checkbox"
             ng-model="internal.contentDelivery.manage"
-            ng-disabled="!canModifyRoles()"
+            ng-disabled="!canModifyRoles"
             ng-change="internal.contentDelivery.read = internal.contentDelivery.manage ? true : internal.contentDelivery.read")
           label(for="opt_space_settings_edit")
             | Can create and update API keys for this space.
@@ -69,13 +69,13 @@ cf-loader(watch-state-change="true")
       .role-details__section
         h3 Space settings
         .cfnext-form-option
-          input(id="opt_space_settings_access" type="checkbox" ng-model="internal.settings.manage" ng-disabled="!canModifyRoles()")
+          input(id="opt_space_settings_access" type="checkbox" ng-model="internal.settings.manage" ng-disabled="!canModifyRoles")
           label(for="opt_space_settings_access")
             | Can modify space settings. This permission allows users to modify locales, webhooks, the space name, and logo image.
             |  It does <strong>not</strong> grant permission to update users roles or delete the space.
 
   .workbench-main__sidebar
-    .entity-sidebar(ng-if="!canModifyRoles()")
+    .entity-sidebar(ng-if="!canModifyRoles")
       //- Save button for the 'Translator' role
       .entity-sidebar__state-select
         button.btn-action-select__action(
@@ -84,12 +84,12 @@ cf-loader(watch-state-change="true")
           ui-command="save")
           | Save changes
       +custom-roles-plan-info
-    .entity-sidebar(ng-if="canModifyRoles()")
+    .entity-sidebar(ng-if="canModifyRoles")
       .entity-sidebar__state-select
         .btn-action-select
           button.btn-action-select__action(type="button" ui-command="save")
             | Save changes
-          button.btn-action-select__selector(cf-context-menu-trigger ng-if="role.sys.id && canModifyRoles()")
+          button.btn-action-select__selector(cf-context-menu-trigger ng-if="role.sys.id && canModifyRoles")
             cf-icon.btn-action-select__icon(name="dd-arrow-down")
           .context-menu.x--arrow-right(cf-context-menu="bottom-right")
             a(role="menuitem" href="" ng-click="duplicateRole()") Duplicate

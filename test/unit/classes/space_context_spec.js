@@ -9,11 +9,13 @@ describe('spaceContext', function () {
     };
     this.organization = {sys: {id: 'ORG_ID'}};
     this.OrganizationContext = { create: sinon.stub().returns({organization: this.organization}) };
+    this.AccessChecker = {setSpace: sinon.stub()};
     module('contentful/test', ($provide) => {
       $provide.value('data/userCache', sinon.stub());
       $provide.value('data/editingInterfaces', sinon.stub());
       $provide.value('Subscription', this.Subscription);
       $provide.value('classes/OrganizationContext', this.OrganizationContext);
+      $provide.value('access_control/AccessChecker', this.AccessChecker);
       $provide.value('data/Endpoint', {
         createSpaceEndpoint: () => createMockSpaceEndpoint().request
       });
@@ -68,6 +70,13 @@ describe('spaceContext', function () {
       sinon.assert.calledOnceWith(
         this.localeStore.init,
         this.spaceContext.localeRepo
+      );
+    });
+
+    it('calls AccessChecker.setSpace with space data', function () {
+      sinon.assert.calledOnceWith(
+        this.AccessChecker.setSpace,
+        this.space.data
       );
     });
 

@@ -74,6 +74,8 @@ describe('The Locale list directive', function () {
 
     this.localeStore = this.$inject('TheLocaleStore');
     this.localeStore.refresh = sinon.stub().resolves(locales);
+    this.accessChecker = this.$inject('access_control/AccessChecker');
+    this.accessChecker.hasFeature = sinon.stub().resolves();
 
     this.compileElement = function () {
       this.container = this.$compile('<div cf-locale-list />', {context: {}});
@@ -92,7 +94,7 @@ describe('The Locale list directive', function () {
   it('the tab header add button is shown', function () {
     this.space.data.organization.usage.permanent.locale = 1;
     this.space.data.organization.subscriptionPlan.limits.permanent.locale = 10;
-    this.space.data.organization.subscriptionPlan.limits.features.multipleLocales = true;
+    this.accessChecker.hasFeature.resolves(true);
     this.compileElement();
     expect(this.container.find('button.add-entity')).not.toBeNgHidden();
   });
