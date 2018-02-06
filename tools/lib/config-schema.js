@@ -34,7 +34,6 @@ export default strictObject(Object.assign({
   environment: {type: 'string'},
   main_domain: hostSchema,
   contentful: strictObject({
-    spaceTemplatesUserReadOnlyToken: hex(64),
     spaceTemplateEntryContentTypeId: alnum(21),
     cdaApiUrl: subdomainHostSchema,
     apiUrl: subdomainHostSchema,
