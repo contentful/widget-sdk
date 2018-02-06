@@ -16,13 +16,18 @@ export function getAll (endpoint) {
   });
 }
 
-export function getUsers (endpoint, {limit}) {
+/**
+ * Get organization's users from endpoint
+ * @param {function} endpoint - organization endpoint
+ * @param {object?} query
+ * @param {string|Number?} query.limit
+ * @param {string?} query.user_ids - comma-separated list of user ids
+ */
+export function getUsers (endpoint, query) {
   return endpoint({
     method: 'GET',
     path: ['users'],
-    query: {
-      limit
-    }
+    query
   });
 }
 
