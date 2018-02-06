@@ -80,7 +80,7 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
       yield localesPromise;
 
       // we need to create assets before proceeding
-      const assets = useSelectedLocales(template.assets, [selectedLocaleCode]);
+      const assets = useSelectedLocales(template.assets, contentLocales, selectedLocaleCode);
       const createdAssets = yield Promise.all(assets.map(createAsset));
 
       // we can process and publish assets in the background,
@@ -88,7 +88,7 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
       const processAssetsPromise = processAssets(createdAssets);
       const publishAssetsPromise = processAssetsPromise.then(publishAssets);
 
-      const entries = useSelectedLocales(template.entries, contentLocales);
+      const entries = useSelectedLocales(template.entries, contentLocales, selectedLocaleCode);
       const createdEntries = yield Promise.all(entries.map(createEntry));
 
       const publishedEntries = yield publishEntries(createdEntries);
@@ -493,15 +493,26 @@ function getItemId (item) {
   return _.get(item, 'sys.id') || item.name;
 }
 
-function useSelectedLocales (entities, localeCodes) {
+function useSelectedLocales (entities, localeCodes, defaultLocaleCode) {
   return entities.map(entity => Object.assign(entity, {
     fields: _.mapValues(entity.fields, field => {
       const values = _.values(field);
       return localeCodes.reduce((hash, localeCode) => {
         // content can actually contain more locales, than our default
-        // so we first try to pull content in our locale code, and only
-        // after fallback to the first available value
-        hash[localeCode] = field[localeCode] || values[0];
+        // so we first try to pull content in our locale code
+        let value = field[localeCode];
+
+        // we ensure that default locale has at least some value
+        // skipping other locales is fine
+        if (localeCode === defaultLocaleCode && !value) {
+          value = values[0];
+        }
+
+        // we don't want to set additional locales, if they have no values
+        if (value) {
+          hash[localeCode] = value;
+        }
+
         return hash;
       }, {});
     })
