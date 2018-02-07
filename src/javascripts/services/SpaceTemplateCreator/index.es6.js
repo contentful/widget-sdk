@@ -58,15 +58,18 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
       );
       const contentLocales = _.uniq([selectedLocaleCode].concat(filteredLocales.map(locale => locale.code)));
 
-      // we set all locales as active, so they will be preselected in entry editor
-      // we need to wait until new locales are created
-      localesPromise
-        // we need to refresh our locale store, so that app is aware of new locales
-        .then(TheLocaleStore.refresh)
-        .then(() => {
-          // it expects array of objects, so we have to wrap codes in object
-          TheLocaleStore.setActiveLocales(contentLocales.map(code => ({ internal_code: code })));
-        });
+      // no need to refresh locales, if there are no additional (default locale is loaded already)
+      if (filteredLocales.length) {
+        // we set all locales as active, so they will be preselected in entry editor
+        // we need to wait until new locales are created
+        localesPromise
+          // we need to refresh our locale store, so that app is aware of new locales
+          .then(TheLocaleStore.refresh)
+          .then(() => {
+            // it expects array of objects, so we have to wrap codes in object
+            TheLocaleStore.setActiveLocales(contentLocales.map(code => ({ internal_code: code })));
+          });
+      }
 
       const createdContentTypes = yield Promise.all(template.contentTypes.map(createContentType));
       // we can create API key as soon as space is created

@@ -511,7 +511,8 @@ describe('Space Template loading service', function () {
       contentTypes: sinon.stub(),
       entries: sinon.stub(),
       assets: sinon.stub(),
-      editingInterface: sinon.stub()
+      editingInterface: sinon.stub(),
+      space: sinon.stub()
     };
     this.contentfulClient = this.$inject('contentfulClient');
     this.contentfulClient.newClient.returns(this.client);

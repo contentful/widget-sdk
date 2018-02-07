@@ -48,7 +48,10 @@ describe('Space Template creation service', function () {
         apiKeys: [
           {sys: {id: 'ak1'}},
           {sys: {id: 'ak2'}}
-        ]
+        ],
+        space: {
+          locales: []
+        }
       };
 
       spaceContext = {
@@ -205,7 +208,10 @@ describe('Space Template creation service', function () {
           apiKeys: [
             {sys: {id: 'ak1'}},
             {sys: {id: 'ak2'}}
-          ]
+          ],
+          space: {
+            locales: []
+          }
         };
         spaceContext.space.createContentType = sinon.stub();
         spaceContext.space.createEntry = sinon.stub();
