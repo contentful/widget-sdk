@@ -499,6 +499,13 @@ describe('Space Template loading service', function () {
     }
   ];
 
+  const spaceData = {
+    locales: [{
+      default: true,
+      code: 'en-US'
+    }]
+  };
+
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.value('contentfulClient', {
@@ -559,6 +566,7 @@ describe('Space Template loading service', function () {
       this.client.contentTypes.returns(Promise.resolve(sourceContentTypes));
       this.client.entries.returns(Promise.resolve(sourceEntries));
       this.client.assets.returns(Promise.resolve(sourceAssets));
+      this.client.space.returns(Promise.resolve(spaceData));
       this.client.editingInterface.returns(Promise.resolve(sourceEditingInterfaces[0]));
 
       yield this.spaceTemplateLoader.getTemplate(templateInfo).then(function (_template_) {
@@ -577,6 +585,10 @@ describe('Space Template loading service', function () {
 
     it('gets assets', function () {
       sinon.assert.called(this.client.assets);
+    });
+
+    it('gets space', function () {
+      sinon.assert.called(this.client.space);
     });
 
     it('returns a template', function () {
@@ -814,6 +826,10 @@ describe('Space Template loading service', function () {
 
     it('has the second api key', function () {
       expect(template.apiKeys[1]).toEqualObj({name: 'second api key', description: 'second api key desc'});
+    });
+
+    it('template has space info', function () {
+      expect(template.space).toBeDefined();
     });
   });
 });
