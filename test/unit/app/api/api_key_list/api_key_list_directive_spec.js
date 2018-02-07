@@ -1,7 +1,7 @@
 'use strict';
 
 describe('The ApiKey list directive', function () {
-  let container, sidebar, accessChecker;
+  let container, sidebar, accessChecker, LD, ResourceService;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -10,6 +10,18 @@ describe('The ApiKey list directive', function () {
 
     accessChecker = this.$inject('access_control/AccessChecker');
     accessChecker.shouldDisable = sinon.stub().returns(false);
+    LD = this.$inject('utils/LaunchDarkly');
+    LD.getCurrentVariation = sinon.stub().resolves(false);
+    ResourceService = this.$inject('services/ResourceService');
+    ResourceService.default = sinon.stub().returns({
+      get: sinon.stub().resolves({
+        usage: 0,
+        limits: {
+          included: 10,
+          maximum: 10
+        }
+      })
+    });
 
     const spaceContext = this.$inject('mocks/spaceContext').init();
     spaceContext.apiKeyRepo.getAll = sinon.stub().resolves([
@@ -22,6 +34,7 @@ describe('The ApiKey list directive', function () {
         context: {}
       });
       sidebar = container.find('.entity-sidebar');
+      this.$inject('$rootScope').$apply();
     };
   });
 

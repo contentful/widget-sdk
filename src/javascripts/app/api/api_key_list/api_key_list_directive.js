@@ -20,6 +20,8 @@ angular.module('contentful')
   var notification = require('notification');
   var ResourceUtils = require('utils/ResourceUtils');
   var createResourceService = require('services/ResourceService').default;
+  var $q = require('$q');
+  var getCurrentVariation = require('utils/LaunchDarkly').getCurrentVariation;
 
   var resources = createResourceService(spaceContext.getId());
 
@@ -65,20 +67,27 @@ angular.module('contentful')
     });
   }
 
-  spaceContext.apiKeyRepo.getAll()
-  .then(function (apiKeys) {
-    $scope.apiKeys = apiKeys;
-    $scope.empty = _.isEmpty($scope.apiKeys);
+  var flagName = 'feature-bv-2018-01-resources-api';
 
-    return resources.get('apiKey');
+  $q.all({
+    apiKeys: spaceContext.apiKeyRepo.getAll(),
+    resource: resources.get('apiKey'),
+    flagValue: getCurrentVariation(flagName)
   })
-  .then(function (resource) {
-    var canCreate = ResourceUtils.canCreate(resource);
-    var limits = ResourceUtils.getResourceLimits(resource);
+    .then(function (result) {
+      $scope.apiKeys = result.apiKeys;
+      $scope.empty = _.isEmpty($scope.apiKeys);
 
-    $scope.context.ready = true;
-    $scope.limit = limits.maximum;
-    $scope.reachedLimit = !canCreate;
-  }, accessChecker.wasForbidden($scope.context))
-  .catch(ReloadNotification.apiErrorHandler);
+      var canCreate = ResourceUtils.canCreate(result.resource);
+      var limits = ResourceUtils.getResourceLimits(result.resource);
+
+      $scope.context.ready = true;
+      $scope.limit = limits.maximum;
+      $scope.usage = result.resource.usage;
+      $scope.reachedLimit = !canCreate;
+      // TODO: remove after feature-bv-2018-01-resources-api is gone
+      // resourceContext will come as `sys.type` in the Resources API.
+      $scope.resourceContext = result.flagValue ? 'space' : 'organization';
+    })
+    .catch(ReloadNotification.apiErrorHandler);
 }]);

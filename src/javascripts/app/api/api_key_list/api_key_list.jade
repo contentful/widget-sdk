@@ -39,9 +39,9 @@ cf-api-key-nav
         | Add API keys
       div(ng-if="!empty")
         p(ng-if="!reachedLimit")
-          | Your space is using {{apiKeys.length}} out of {{limit}} API keys.
+          | Your {{resourceContext}} is using {{usage}} out of {{limit}} API keys.
         p(ng-if="reachedLimit")
-          | Your space is using <span class="api-key-list__reached-limit">{{apiKeys.length}} out of {{limit}}</span> API keys.&#32;
+          | Your {{resourceContext}} is using <span class="api-key-list__reached-limit">{{usage}} out of {{limit}}</span> API keys.&#32;
           span(ng-if="subscriptionState")
             | If you want to create additional keys, you need to either delete an existing one or&#32;
             | <a class="entity-sidebar__link" ui-sref="{{subscriptionState}}">upgrade your account</a>.
