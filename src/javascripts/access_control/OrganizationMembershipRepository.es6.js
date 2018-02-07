@@ -20,8 +20,8 @@ export function getAll (endpoint) {
  * Get organization's users from endpoint
  * @param {function} endpoint - organization endpoint
  * @param {object?} query
- * @param {string|Number?} query.limit
- * @param {string?} query.user_ids - comma-separated list of user ids
+ * @param {string|number?} query["limit"]
+ * @param {string?} query["sys.id"] - comma-separated list of user ids
  */
 export function getUsers (endpoint, query) {
   return endpoint({

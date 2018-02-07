@@ -63,7 +63,7 @@ export function getPlansWithSpaces (endpoint, params = {}) {
         .filter(identity);
 
       return getUsers(endpoint, {
-        'user_ids': userIds.join(',')
+        'sys.id': userIds.join(',')
       }).then((users) => [plans, users.items]);
     })
 

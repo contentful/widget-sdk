@@ -75,7 +75,7 @@ describe('account/pricing/PricingDataProvider', function () {
 
     it('passes user ids to users endpoint', function* () {
       yield this.getPlansWithSpaces();
-      sinon.assert.calledWith(this.endpoint, {method: 'GET', path: ['users'], query: {'user_ids': 'user1,user2'}});
+      sinon.assert.calledWith(this.endpoint, {method: 'GET', path: ['users'], query: {'sys.id': 'user1,user2'}});
     });
   });
 });
