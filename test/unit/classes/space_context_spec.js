@@ -62,6 +62,12 @@ describe('spaceContext', function () {
       expect(this.spaceContext.space.data.sys.id).toEqual('hello');
     });
 
+    it('creates environment aware space context', function () {
+      expect(this.spaceContext.space.environment).toBeUndefined();
+      this.spaceContext.resetWithSpace({sys: {id: 'withenv'}}, 'envid');
+      expect(this.spaceContext.space.environment.sys.id).toEqual('envid');
+    });
+
     it('creates locale repository', function () {
       expect(typeof this.spaceContext.localeRepo.getAll).toBe('function');
     });
@@ -516,7 +522,10 @@ describe('spaceContext', function () {
         get: sinon.stub().rejects()
       }),
       getId: sinon.stub().returns(data.sys.id),
-      getPublishedContentTypes: sinon.stub().resolves([makeCtMock('A'), makeCtMock('B')])
+      getPublishedContentTypes: sinon.stub().resolves([makeCtMock('A'), makeCtMock('B')]),
+      makeEnvironment: sinon.stub().callsFake(envId => {
+        return {...makeClientSpaceMock(data), environment: {sys: {id: envId}}};
+      })
     };
   }
 });

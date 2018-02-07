@@ -95,11 +95,11 @@ export function linkOpen (content, url, modifier = '') {
  * ~~~
  *
  * @param {VNode[]}  content   Array of child nodes
- * @param {object}   stateRef  Object of `{path: 'x.y', params: {...}}` shape.
+ * @param {object}   stateRef  Object of `{path: 'x.y', params: {...}, options: {...}}` shape.
  *                             If `params` are not provided `$stateParams` are used.
  * @returns {VNode}
  */
-export function stateLink (content, {path, params}) {
+export function stateLink (content, {path, params, options}) {
   return h('a', {
     href: $state.href(path, params),
     onClick: e => {
@@ -108,7 +108,7 @@ export function stateLink (content, {path, params}) {
       } else {
         // perform Angular UI router transition only
         e.preventDefault();
-        $state.go(path, params);
+        $state.go(path, params, options);
       }
     }
   }, content);

@@ -6,6 +6,7 @@ describe('app/SpaceSettings/Environments', function () {
 
     const { createComponent } = this.$inject('app/SpaceSettings/Environments/State');
     const spaceContext = this.$inject('mocks/spaceContext').init();
+    this.$inject('$state').href = () => 'href';
 
     this.container = DOM.createView($('<div class=client>').get(0));
     $(this.container.element).appendTo('body');

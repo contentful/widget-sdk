@@ -80,9 +80,14 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
       function goBackToPreviousPage () {
         var crumbs = $scope.crumbs;
         var link = crumbs[crumbs.length - 2].link;
+        var state = link.state;
+
+        if ($state.includes('spaces.detail.environment')) {
+          state = state.replace('spaces.detail', 'spaces.detail.environment');
+        }
 
         track(analyticsData.clickedOn.BACK);
-        $state.go(link.state, link.params || {});
+        $state.go(state, link.params || {});
         dismissHints();
       }
 

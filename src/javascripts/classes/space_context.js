@@ -40,6 +40,7 @@ angular.module('contentful')
   var client = require('client');
   var createLocaleRepo = require('data/CMA/LocaleRepo').default;
   var accessChecker = require('access_control/AccessChecker');
+  var shouldUseEnvEndpoint = require('data/shouldUseEnvEndpoint').default;
 
   var spaceContext = {
     /**
@@ -66,19 +67,25 @@ angular.module('contentful')
      * - UI Configs (space and user)
      * - Locales
      *
-     * @param {API.Space} space
+     * @param {API.Space} spaceData
+     * @param {string?} environmentId if provided will create environment-aware spaceContext
      * @returns {Promise<self>}
      */
-    resetWithSpace: function (space) {
-      accessChecker.setSpace(space);
-
-      space = client.newSpace(space);
+    resetWithSpace: function (spaceData, environmentId) {
       var self = this;
+      accessChecker.setSpace(spaceData);
+
+      // `space` is @contentful/client.Space instance!
+      var space = client.newSpace(spaceData);
+      if (environmentId) {
+        space = space.makeEnvironment(environmentId, shouldUseEnvEndpoint);
+      }
 
       self.endpoint = createSpaceEndpoint(
         Config.apiUrl(),
         space.getId(),
-        Auth
+        Auth,
+        environmentId
       );
 
       resetMembers(self);
@@ -101,7 +108,7 @@ angular.module('contentful')
         Config.otUrl,
         Auth,
         space.getId(),
-        'master'
+        environmentId || 'master'
       );
 
       self.memberships = MembershipRepo.create(self.endpoint);

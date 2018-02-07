@@ -4,7 +4,7 @@ import pageSettingsIcon from 'svg/page-settings';
 import { caseofEq } from 'libs/sum-types';
 
 import { h } from 'ui/Framework';
-import { linkOpen, badge, codeFragment, docsLink } from 'ui/Content';
+import { linkOpen, badge, codeFragment, docsLink, stateLink } from 'ui/Content';
 import { table, tr, td, th } from 'ui/Content/Table';
 import { container, hbox, vspace, ihspace } from 'ui/Layout';
 import * as Workbench from 'app/Workbench';
@@ -129,6 +129,12 @@ function environmentTable (environments) {
           ])
         ]),
         td([
+          environment.status === 'ready' && stateLink(['Open'], {
+            path: 'spaces.detail.environment',
+            params: {environmentId: environment.id},
+            options: {reload: true}
+          }),
+          environment.status === 'ready' && ihspace('1.2em'),
           editButton(environment),
           ihspace('1.2em'),
           deleteButton(environment)

@@ -206,7 +206,7 @@ angular.module('contentful')
             var params = { apiKeyId: keys[0].sys.id };
             $state.go(name, params);
           } else {
-            $state.go('spaces.detail.api.home');
+            $state.go('spaces.detail.api.keys.list');
           }
         });
       }
