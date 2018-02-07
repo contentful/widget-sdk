@@ -50,7 +50,9 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
     const allPromises = [];
 
     const contentCreated = runTask(function* () {
-      const filteredLocales = template.space.locales.filter((locale) => locale.code !== selectedLocaleCode);
+      const filteredLocales = template.space.locales.filter(
+        locale => locale.code !== selectedLocaleCode
+      );
       const localesPromise = Promise.all(
         filteredLocales.map(
           locale => spaceContext.localeRepo.save(Object.assign({}, locale, { default: false }))
@@ -496,27 +498,40 @@ function getItemId (item) {
   return _.get(item, 'sys.id') || item.name;
 }
 
+/**
+ * @description processes entities (assets/entries) to keep content only
+ * in needed locales. If there is no content in locale, and won't be added.
+ * In case of default locale some value will be provded.
+ * @param {object} entities - assets/entries from space to clone
+ * @param {string[]} localeCodes - list of locales to keep content in
+ * @param {string} defaultLocaleCode - default locale
+ * @returns {object} - assets/entries with content only in needed locales
+ */
 function useSelectedLocales (entities, localeCodes, defaultLocaleCode) {
   return entities.map(entity => Object.assign(entity, {
     fields: _.mapValues(entity.fields, field => {
-      const values = _.values(field);
-      return localeCodes.reduce((hash, localeCode) => {
+      const fieldValuesForAllLocales = Object.values(field);
+      return localeCodes.reduce((newEntityFields, localeCode) => {
         // content can actually contain more locales, than our default
         // so we first try to pull content in our locale code
+        const hasValue = field.hasOwnProperty(localeCode);
+        const isDefaultLocale = localeCode === defaultLocaleCode;
         let value = field[localeCode];
 
         // we ensure that default locale has at least some value
         // skipping other locales is fine
-        if (localeCode === defaultLocaleCode && !value) {
-          value = values[0];
+        if (isDefaultLocale && !hasValue) {
+          value = fieldValuesForAllLocales[0];
         }
 
         // we don't want to set additional locales, if they have no values
-        if (value) {
-          hash[localeCode] = value;
+        if (hasValue || isDefaultLocale) {
+          return Object.assign({}, newEntityFields, {
+            [localeCode]: value
+          });
+        } else {
+          return newEntityFields;
         }
-
-        return hash;
       }, {});
     })
   }));
