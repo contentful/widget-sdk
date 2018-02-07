@@ -1,9 +1,9 @@
-import { getCurrentVariation } from 'utils/LaunchDarkly';
+import { getSpace, getOrganization } from 'services/TokenStore';
 import { canCreate, generateMessage } from 'utils/ResourceUtils';
+import { runTask } from 'utils/Concurrent';
 import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/Endpoint';
 import { apiUrl } from 'Config';
 import * as auth from 'Authentication';
-import spaceContext from 'spaceContext';
 
 import $q from '$q';
 import { assign } from 'lodash';
@@ -58,8 +58,6 @@ import { assign } from 'lodash';
 }
  */
 
-const flagName = 'feature-bv-2018-01-resources-api';
-
 /*
   The resourceTypeMap is necessary for bridging between pricing
   Version 1 (legacy) and Version 2, as well as making it easier to
@@ -82,43 +80,37 @@ const resourceTypeMap = {
   apiRequest: 'api_requests'
 };
 
-export default function createResourceService (id) {
-  // TODO: migrate this to use OrganizationEndpoint and SpaceEndpoint
-  // once the OrganizationEndpoint is ready. Currently the Space endpoint
-  // for resources (/space/:space_id/resources) handles all.
-  //
-  // NOTE: Also unskip the test in the spec related to this functionality
-  const endpoint = createEndpoint('space', id);
+export default function createResourceService (id, type = 'space') {
+  const endpoint = createEndpoint(id, type);
 
   return {
     get: function (resourceType) {
-      return $q(function (resolve, reject) {
+      return $q.resolve(runTask(function* () {
         if (!resourceType) {
-          return reject(new Error('resourceType not supplied to ResourceService.get'));
+          throw new Error('resourceType not supplied to ResourceService.get');
         }
 
         if (!resourceTypeMap[resourceType]) {
-          return reject(new Error('Invalid resourceType supplied to ResourceService.get'));
+          throw new Error('Invalid resourceType supplied to ResourceService.get');
         }
 
-        return resolve(getCurrentVariation(flagName));
-      }).then(flagValue => {
-        if (flagValue === true) {
+        const organization = yield getTokenOrganization(id, type);
+        const pricingVersion = organization.pricingVersion;
+
+        if (pricingVersion === 'pricing_version_2') {
           const apiResourceType = resourceTypeMap[resourceType];
 
-          return endpoint({
+          return yield endpoint({
             method: 'GET',
             path: [ 'resources', apiResourceType ]
           });
         } else {
-          const limit = getLegacyLimit(resourceType);
-          const usage = getLegacyUsage(resourceType);
+          const limit = getLegacyLimit(resourceType, organization);
+          const usage = getLegacyUsage(resourceType, organization);
 
           return createResourceFromTokenData(resourceType, limit, usage);
         }
-      }).then(function (raw) {
-        return raw;
-      });
+      }));
     },
     getAll: function () {
       return endpoint({
@@ -144,7 +136,7 @@ export default function createResourceService (id) {
   };
 }
 
-function createEndpoint (type, id) {
+function createEndpoint (id, type) {
   const endpointFactory = type === 'space' ? createSpaceEndpoint : createOrganizationEndpoint;
 
   return endpointFactory(apiUrl(), id, auth);
@@ -164,8 +156,21 @@ function createResourceFromTokenData (resourceType, limit, usage) {
   };
 }
 
-function getLegacyLimit (resourceType) {
-  const organization = spaceContext.organizationContext.organization;
+function getTokenOrganization (id, type) {
+  let promise;
+
+  if (type === 'space') {
+    promise = getSpace(id).then(space => {
+      return space.organization;
+    });
+  } else if (type === 'organization') {
+    promise = getOrganization(id);
+  }
+
+  return promise;
+}
+
+function getLegacyLimit (resourceType, organization) {
   const allLimits = assign({},
     organization.subscriptionPlan.limits.permanent,
     organization.subscriptionPlan.limits.period
@@ -174,8 +179,7 @@ function getLegacyLimit (resourceType) {
   return allLimits[resourceType];
 }
 
-function getLegacyUsage (resourceType) {
-  const organization = spaceContext.organizationContext.organization;
+function getLegacyUsage (resourceType, organization) {
   const allUsages = assign({},
     organization.usage.permanent,
     organization.usage.period
