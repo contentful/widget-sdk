@@ -9,7 +9,6 @@
   "main_domain": "contentful.com",
   "toolsServiceUrl": "https://tools.contentful.com",
   "contentful": {
-    "spaceTemplatesUserReadOnlyToken" : "8adea107285afc11819019618341f5b98e5808c84b957cba9ede1e57c6026475",
     "spaceTemplateEntryContentTypeId" : "17WjnjeALEOeSyuiMI4QOW",
     "cdaApiUrl" : "cdn.contentful.com",
     "apiUrl" : "api.contentful.com",
