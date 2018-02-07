@@ -137,6 +137,22 @@ describe('data/Endpoint', function () {
   describeCreateEndpoint('createSpaceEndpoint', 'spaces');
   describeCreateEndpoint('createOrganizationEndpoint', 'organizations');
 
+  describe('.createSpaceEndpoint()', function () {
+    it('is aware of environment', function () {
+      const test = (envId, expected) => {
+        const auth = {getToken: sinon.stub().resolves('TOKEN')};
+        this.$http.expectGET(expected).respond();
+        const spaceEndpoint = this.Endpoint.createSpaceEndpoint(baseUrl, 'sid', auth, envId);
+        spaceEndpoint({method: 'GET', path: 'content_types'});
+        this.$timeout.flush();
+        this.$http.flush();
+      };
+
+      test(undefined, '//test.io/spaces/sid/content_types');
+      test('eid', '//test.io/spaces/sid/environments/eid/content_types');
+    });
+  });
+
   function describeCreateEndpoint (methodName, endpointUrl) {
     describe(`.${methodName}()`, function () {
       beforeEach(function () {

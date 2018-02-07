@@ -147,12 +147,6 @@ $context-menu-arrow-bottom()
     &.x--manual
       margin-top: 13px
 
-    &.x--top-bar
-      &:after
-        border-bottom-color: $colors.ice-mid
-      &:before
-        border-bottom-color: $context-menu-top-bar--border
-
   // Right aligned top or bottom arrow
   &.x--arrow-right
     &:after
@@ -170,29 +164,6 @@ $context-menu-arrow-bottom()
     &:before
       left: 28px
       right: auto
-
-/**
-Top Bar Context Menu
-
-Different colors for use in the top bar
-
-Markup:
-.context-menu.context-menu.x--arrow-up.x--top-bar.styleguide-noabsolute
-  ul.context-menu__items
-    li Item 1
-    li Item 2
-    li.pseudo-class-hover Hovered
-
-Styleguide 11.1
-*/
-
-$context-menu-top-bar()
-  background-color: $colors.ice-mid
-  margin-top: 13px
-  border-color: $context-menu-top-bar--border
-
-.context-menu.x--top-bar
-  $context-menu-top-bar()
 
 .entity-sidebar
   .context-menu

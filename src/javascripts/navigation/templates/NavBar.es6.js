@@ -1,5 +1,6 @@
 import {h} from 'utils/hyperscript';
 import {isBoolean} from 'lodash';
+import {byName as Colors} from 'Styles/Colors';
 
 /**
  * @ngdoc method
@@ -73,17 +74,35 @@ function navbarDropdown (data, tabIndex = 0) {
         }
       })
     ]),
-    h('div.context-menu.x--top-bar', {
+    h('div.context-menu', {
       role: 'menu',
       cfContextMenu: true,
       dataTestId: 'navbar-dropdown-menu'
     }, [
-      h('ul.context-menu__items', data.children.map(navbarDropdownItem))
+      h('div.context-menu__items', data.children.filter(x => x).map(navbarDropdownItem))
     ])
   ].join('');
 }
 
 function navbarDropdownItem (data) {
+  if (data.separator) {
+    return h('.nav-bar__separator', [
+      h('span', {
+        style: {
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+          fontSize: '.85em',
+          letterSpacing: '1px'
+        }
+      }, [data.label]),
+      data.tooltip && h('i.fa.fa-question-circle', {
+        style: {marginLeft: '10px', color: Colors.elementMid, cursor: 'pointer'},
+        tooltip: data.tooltip,
+        tooltipPlacement: 'bottom'
+      })
+    ]);
+  }
+
   const attrs = {
     role: 'menuitem',
     uiSrefActive: `{ "selected": "${data.rootSref || data.sref}" }`,
@@ -92,6 +111,9 @@ function navbarDropdownItem (data) {
   };
   if (data.if) {
     attrs.ngIf = data.if;
+  }
+  if (data.reload) {
+    attrs.uiSrefOpts = '{ reload: true }';
   }
 
   return h('a.context-menu__item', attrs, [data.title]);

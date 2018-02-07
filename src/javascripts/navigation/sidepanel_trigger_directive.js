@@ -13,6 +13,7 @@ angular.module('contentful')
   var NavStates = require('navigation/NavState').NavStates;
   var navState$ = require('navigation/NavState').navState$;
   var template = require('navigation/templates/SidepanelTrigger.template').default();
+  var spaceContext = require('spaceContext');
 
   return {
     restrict: 'E',
@@ -23,7 +24,9 @@ angular.module('contentful')
       K.onValueScope($scope, navState$, function (navState) {
         caseof(navState, [
           [NavStates.Space, function () {
-            $scope.title = navState.space.name;
+            var envId = _.get(spaceContext, ['space', 'environment', 'sys', 'id']);
+            var envLabel = envId ? (' (env: ' + envId + ')') : '';
+            $scope.title = navState.space.name + envLabel;
             $scope.subtitle = 'in ' + navState.org.name;
           }],
           [NavStates.OrgSettings, function () {

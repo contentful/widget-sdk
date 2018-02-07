@@ -53,7 +53,6 @@ describe('Space nav bar directive', function () {
     return returnVal;
   }
 
-  makeNavbarItemTest('apiKey', 'api-home');
   makeNavbarItemTest('contentType', 'content-type-list');
   makeNavbarItemTest('settings', 'space-settings');
 });

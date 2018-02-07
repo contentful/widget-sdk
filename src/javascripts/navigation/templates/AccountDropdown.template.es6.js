@@ -28,7 +28,7 @@ export default function () {
         })
       })
     ]),
-    h('div.context-menu.x--top-bar.x--arrow-right', {
+    h('div.context-menu.x--arrow-right', {
       role: 'menu',
       cfContextMenu: 'bottom-right-fit',
       ariaLabel: 'Account Menu',

@@ -10,6 +10,9 @@ import api from 'app/api/State';
 import settings from './settings';
 import home from './space_home';
 
+import locales from 'states/settings/locales';
+import extensions from 'states/settings/Extensions';
+
 const store = getStore();
 
 // TODO convert JST templates to hyperscript
@@ -33,13 +36,56 @@ const hibernation = {
   }
 };
 
+const resolveSpaceData = ['services/TokenStore', '$stateParams', function (TokenStore, $stateParams) {
+  return TokenStore.getSpace($stateParams.spaceId);
+}];
+
+const spaceEnvironment = {
+  name: 'environment',
+  url: '/environments/:environmentId',
+  resolve: {
+    spaceData: resolveSpaceData,
+    spaceContext: ['spaceContext', 'spaceData', '$stateParams', function (spaceContext, spaceData, $stateParams) {
+      return spaceContext.resetWithSpace(spaceData, $stateParams.environmentId);
+    }]
+  },
+  views: {
+    'nav-bar@': {
+      template: h('cf-space-env-nav-bar', {class: 'app-top-bar__child'})
+    },
+    'content@': {
+      template: '<div />',
+      controller: ['spaceData', '$state', function (spaceData, $state) {
+        if (!spaceData.spaceMembership.admin) {
+          $state.go('spaces.detail', null, {reload: true});
+        } else if (isHibernated(spaceData)) {
+          $state.go('spaces.detail.hibernation', null, {reload: true});
+        } else {
+          storeCurrentIds(spaceData);
+          $state.go('.entries.list');
+        }
+      }]
+    }
+  },
+  children: [
+    contentTypes,
+    entries,
+    assets,
+    api,
+    {
+      name: 'settings',
+      url: '/settings',
+      abstract: true,
+      children: [locales, extensions]
+    }
+  ]
+};
+
 const spaceDetail = {
   name: 'detail',
   url: '/:spaceId',
   resolve: {
-    spaceData: ['services/TokenStore', '$stateParams', function (TokenStore, $stateParams) {
-      return TokenStore.getSpace($stateParams.spaceId);
-    }],
+    spaceData: resolveSpaceData,
     spaceContext: ['spaceContext', 'spaceData', function (spaceContext, spaceData) {
       return spaceContext.resetWithSpace(spaceData);
     }]
@@ -49,14 +95,12 @@ const spaceDetail = {
   }],
   template: JST.cf_no_section_available(),
   controller: ['$scope', '$state', 'spaceData', function ($scope, $state, spaceData) {
-    const isHibernated = (spaceData.enforcements || []).some(e => e.reason === 'hibernated');
     const accessibleSref = sectionAccess.getFirstAccessibleSref();
 
-    if (isHibernated) {
+    if (isHibernated(spaceData)) {
       $state.go('.hibernation');
     } else if (accessibleSref) {
-      store.set('lastUsedSpace', spaceData.sys.id);
-      store.set('lastUsedOrg', spaceData.organization.sys.id);
+      storeCurrentIds(spaceData);
       $state.go(accessibleSref);
     } else {
       $scope.noSectionAvailable = true;
@@ -69,10 +113,19 @@ const spaceDetail = {
     assets,
     api,
     settings,
-    home
+    home,
+    spaceEnvironment
   ]
 };
 
+function isHibernated (space) {
+  return (space.enforcements || []).some(e => e.reason === 'hibernated');
+}
+
+function storeCurrentIds (space) {
+  store.set('lastUsedSpace', space.sys.id);
+  store.set('lastUsedOrg', space.organization.sys.id);
+}
 
 export default {
   name: 'spaces',

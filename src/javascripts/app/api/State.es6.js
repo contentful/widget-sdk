@@ -52,6 +52,11 @@ const keyDetail = assign({
   }
 }, apiKeyEditorState);
 
+const cdaKeyList = baseState({
+  name: 'list',
+  url: '',
+  template: h('cf-api-key-list.workbench')
+});
 
 export default {
   name: 'api',
@@ -61,14 +66,10 @@ export default {
     spaceContext.apiKeyRepo.refresh();
   }],
   children: [{
-    name: 'home',
-    url: '',
-    redirectTo: 'spaces.detail.api.keys.list'
-  }, {
     name: 'keys',
     abstract: true,
     url: '/keys',
-    children: [cdaKeyList(), keyDetail]
+    children: [cdaKeyList, keyDetail]
   }, {
     // Legacy path
     name: 'cma_keys',
@@ -87,12 +88,3 @@ export default {
     redirectTo: 'spaces.detail.content_types.list'
   }]
 };
-
-
-function cdaKeyList () {
-  return baseState({
-    name: 'list',
-    url: '/',
-    template: h('cf-api-key-list.workbench')
-  });
-}
