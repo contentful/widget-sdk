@@ -56,12 +56,12 @@ export default function* runTravis ({branch, pr, version}) {
     if (branch in BRANCH_ENV_MAP) {
       const env = BRANCH_ENV_MAP[branch]
 
-      yield* setupIndexAndRevision(env, version)
+      yield* createIndexAndRevision(env, version)
 
       // Deploy to preview environment whenever we deploy to staging
       // to keep both envs in sync
       if (env === ENV.staging) {
-        yield* setupIndexAndRevision(ENV.preview, version)
+        yield* createIndexAndRevision(ENV.preview, version)
       }
     }
   } else {
@@ -77,7 +77,7 @@ export default function* runTravis ({branch, pr, version}) {
  * @param env {string} env - Target environment. One of production, staging, preview, development
  * @param version {string} version - Git commit hash of the commit that's being built
  */
-function* setupIndexAndRevision (env, version) {
+function* createIndexAndRevision (env, version) {
   const rootIndexPathForEnv = targetPath(env, 'index.html')
   const revisionPathForEnv = targetPath(env, 'revision.json')
   const logMsg = `Creating root index and revision.json files for "${env}"`
