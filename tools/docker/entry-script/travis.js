@@ -55,22 +55,41 @@ export default function* runTravis ({branch, pr, version}) {
     // Do the next bit only for production, master and preview branches
     if (branch in BRANCH_ENV_MAP) {
       const env = BRANCH_ENV_MAP[branch]
-      const rootIndexPathForEnv = targetPath(env, 'index.html')
-      const revisionPathForEnv = targetPath(env, 'revision.json')
-      const logMsg = `Creating root index and revision.json files for "${env}"`
 
-      console.log('-'.repeat(logMsg.length), `\n${logMsg}`)
+      yield* createIndexAndRevision(env, version)
 
-      // This generates output/files/${env}/index.html
-      yield* configureAndWriteIndex(version, `config/${env}.json`, rootIndexPathForEnv)
-
-      console.log(`Creating revision.json for "${env}" at ${P.relative('', revisionPathForEnv)}`)
-      // This generates output/files/${env}/revision.json
-      yield* buildAndWriteRevisionJson(version, revisionPathForEnv)
+      // Deploy to preview environment whenever we deploy to staging
+      // to keep both envs in sync
+      if (env === ENV.staging) {
+        yield* createIndexAndRevision(ENV.preview, version)
+      }
     }
   } else {
     console.log('Skipping index compilation and moving of assets as this is a travis-ci/pr job')
   }
+}
+
+/**
+ * @description
+ * This method generates the root index.html and revision.json files
+ * for given environment and user_interface commit hash (version)
+ *
+ * @param env {string} env - Target environment. One of production, staging, preview, development
+ * @param version {string} version - Git commit hash of the commit that's being built
+ */
+function* createIndexAndRevision (env, version) {
+  const rootIndexPathForEnv = targetPath(env, 'index.html')
+  const revisionPathForEnv = targetPath(env, 'revision.json')
+  const logMsg = `Creating root index and revision.json files for "${env}"`
+
+  console.log('-'.repeat(logMsg.length), `\n${logMsg}`)
+
+  // This generates output/files/${env}/index.html
+  yield* configureAndWriteIndex(version, `config/${env}.json`, rootIndexPathForEnv)
+
+  console.log(`Creating revision.json for "${env}" at ${P.relative('', revisionPathForEnv)}`)
+  // This generates output/files/${env}/revision.json
+  yield* buildAndWriteRevisionJson(version, revisionPathForEnv)
 }
 
 /*
