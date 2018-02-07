@@ -504,7 +504,6 @@ describe('Space Template loading service', function () {
       $provide.value('contentfulClient', {
         newClient: sinon.stub()
       });
-      $provide.stubLaunchDarkly();
     });
 
     this.$rootScope = this.$inject('$rootScope');

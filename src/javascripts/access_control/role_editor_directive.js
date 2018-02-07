@@ -24,6 +24,10 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
   var logger = require('logger');
   var accessChecker = require('access_control/AccessChecker');
 
+  checkIfCanModifyRoles().then(function (value) {
+    $scope.canModifyRoles = value;
+  });
+
   // 1. prepare "touch" counter (first touch for role->internal, next for dirty state)
   $scope.context.touched = $scope.context.isNew ? 0 : -1;
 
@@ -61,7 +65,6 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
   });
 
   $scope.duplicateRole = duplicateRole;
-  $scope.canModifyRoles = canModifyRoles;
   $scope.resetPolicies = resetPolicies;
 
   // check if we should show the 'translator' role
@@ -92,11 +95,11 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
     }
   }
 
-  function canModifyRoles () {
+  function checkIfCanModifyRoles () {
     var subscription = spaceContext.subscription;
     var trialLockdown = subscription &&
       subscription.isTrial() && subscription.hasTrialEnded();
-    return accessChecker.canModifyRoles() && !trialLockdown;
+    if (trialLockdown) { return Promise.resolve(false); } else { return accessChecker.canModifyRoles(); }
   }
 
   function resetPolicies () {

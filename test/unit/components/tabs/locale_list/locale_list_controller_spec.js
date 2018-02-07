@@ -5,6 +5,7 @@ describe('Locale List Controller', function () {
     module('contentful/test');
     this.scope = this.$inject('$rootScope').$new();
     this.apiErrorHandler = this.$inject('ReloadNotification').apiErrorHandler;
+    this.$inject('access_control/AccessChecker').hasFeature = sinon.stub().resolves(true);
 
     this.scope.context = {};
 

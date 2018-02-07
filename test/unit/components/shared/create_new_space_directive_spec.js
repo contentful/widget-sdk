@@ -30,8 +30,15 @@ describe('cfCreateNewSpace directive', function () {
       client: {
         createSpace: sinon.stub()
       },
-      enforcements: {
-        computeUsageForOrganization: sinon.stub()
+      resourceService: {
+        _canCreate: sinon.stub().resolves(true),
+        _messagesFor: sinon.stub().resolves({ error: '', warning: '' }),
+        default: () => {
+          return {
+            canCreate: stubs.resourceService._canCreate,
+            messagesFor: stubs.resourceService._messagesFor
+          };
+        }
       },
       tokenStore: {
         refresh: sinon.stub(),
@@ -53,11 +60,10 @@ describe('cfCreateNewSpace directive', function () {
       $provide.value('analytics/Analytics', stubs.analytics);
       $provide.value('logger', stubs.logger);
       $provide.value('client', stubs.client);
-      $provide.value('access_control/Enforcements', stubs.enforcements);
       $provide.value('services/TokenStore', stubs.tokenStore);
+      $provide.value('services/ResourceService', stubs.resourceService);
       $provide.value('$state', stubs.state);
       $provide.removeDirectives('cfIcon');
-      $provide.stubLaunchDarkly();
     });
 
     this.spaceContext = this.$inject('mocks/spaceContext').init();
@@ -133,6 +139,15 @@ describe('cfCreateNewSpace directive', function () {
       stubs.tokenStore.organizations$.set(this.orgs);
     });
 
+    it('asks if the space limits have been reached', function () {
+      stubs.accessChecker.canCreateSpaceInOrganization.returns(true);
+      this.setupDirective();
+      controller.requestSpaceCreation();
+      $rootScope.$digest();
+
+      sinon.assert.called(stubs.resourceService._canCreate);
+    });
+
     it('checks for creation permission', function () {
       stubs.accessChecker.canCreateSpaceInOrganization.returns(false);
       this.setupDirective();
@@ -179,10 +194,6 @@ describe('cfCreateNewSpace directive', function () {
           expect(stubs.client.createSpace.args[0][1]).toEqual('orgid');
         });
 
-        it('computes usage', function () {
-          sinon.assert.called(stubs.enforcements.computeUsageForOrganization);
-        });
-
         it('displays and logs error', function () {
           const error = 'Could not create Space. If the problem persists please get in contact with us.';
           expect(controller.newSpace.errors.form).toEqual(error);
@@ -220,10 +231,6 @@ describe('cfCreateNewSpace directive', function () {
           expect(stubs.client.createSpace.args[0][1]).toEqual('orgid');
         });
 
-        it('computes usage', function () {
-          sinon.assert.called(stubs.enforcements.computeUsageForOrganization);
-        });
-
         it('shows field length error', function () {
           expect(controller.newSpace.errors.fields.name).toEqual('Space name is too long');
         });
@@ -246,8 +253,13 @@ describe('cfCreateNewSpace directive', function () {
             controller.requestSpaceCreation();
             $rootScope.$digest();
           });
+
           it('checks for creation permission', function () {
             sinon.assert.calledWith(stubs.accessChecker.canCreateSpaceInOrganization, 'orgid');
+          });
+
+          it('asks if it can create a new space', function () {
+            sinon.assert.called(stubs.resourceService._canCreate);
           });
 
           it('calls client lib with org name', function () {

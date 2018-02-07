@@ -48,7 +48,8 @@ export default function create () {
           status: { sys: { id: 'queued' } }
         }));
       }
-    })
+    }),
+    resources: makeGenericEndpoint()
   };
 
   const stores = mapValues(endpoints, (ep) => ep.store);
@@ -56,6 +57,7 @@ export default function create () {
   function request ({method, path, data, version}) {
     data = cloneDeep(data);
     const [typePath, ...resourcePath] = path;
+
     if (typePath in endpoints) {
       const endpoint = getEndpoint(endpoints, path);
       return endpoint.request(method, resourcePath, data, version)

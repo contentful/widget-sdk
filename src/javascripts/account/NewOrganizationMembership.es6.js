@@ -333,6 +333,9 @@ export default function ($scope) {
    * organization users endpoint to get the `total` value.
    * This is a workaround for the token 15min cache that won't let
    * us get an updated number after an invitation request
+   *
+   * TODO: Migrate this to use ResourceService, once the feature
+   * flag is removed.
    */
   function* getOrgInfo () {
     const org = yield getOrganization(orgId);

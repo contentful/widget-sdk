@@ -17,6 +17,7 @@ angular.module('contentful')
   var notification = require('notification');
   var enforcements = require('access_control/Enforcements');
   var $state = require('$state');
+  var accessChecker = require('access_control/AccessChecker');
 
   var STATES = {
     NO_MULTIPLE_LOCALES: 1,
@@ -32,7 +33,6 @@ angular.module('contentful')
 
   $scope.locales = [];
   $scope.localeNamesByCode = {};
-  $scope.localesUsageState = getLocalesUsageState();
   $scope.getPlanLocalesLimit = getPlanLocalesLimit;
   $scope.getSubscriptionPlanName = _.partial(getSubscriptionPlanData, 'name');
   $scope.newLocale = newLocale;
@@ -41,8 +41,10 @@ angular.module('contentful')
   .then(function (locales) {
     $scope.locales = locales;
     $scope.localeNamesByCode = groupLocaleNamesByCode(locales);
-    $scope.localesUsageState = getLocalesUsageState();
     $scope.context.ready = true;
+    getLocalesUsageState().then(function (value) {
+      $scope.localesUsageState = value;
+    });
   })
   .catch(ReloadNotification.apiErrorHandler);
 
@@ -54,19 +56,22 @@ angular.module('contentful')
 
   function getLocalesUsageState () {
     var len = $scope.locales.length;
-    var belowLimit = getPlanLocalesUsage() < getPlanLocalesLimit();
 
-    if (!hasMultipleLocales()) {
-      return STATES.NO_MULTIPLE_LOCALES;
-    } else if (belowLimit && len <= 1) {
-      return STATES.ONE_LOCALE_USED;
-    } else if (belowLimit && len > 1) {
-      return STATES.MORE_THAN_ONE_LOCALE_USED;
-    } else if (!belowLimit) {
-      return STATES.LOCALES_LIMIT_REACHED;
-    } else {
-      return STATES.UNKNOWN;
-    }
+    return hasMultipleLocales().then(function (value) {
+      if (!value) {
+        return STATES.NO_MULTIPLE_LOCALES;
+      }
+      var belowLimit = getPlanLocalesUsage() < getPlanLocalesLimit();
+      if (belowLimit && len <= 1) {
+        return STATES.ONE_LOCALE_USED;
+      } else if (belowLimit && len > 1) {
+        return STATES.MORE_THAN_ONE_LOCALE_USED;
+      } else if (!belowLimit) {
+        return STATES.LOCALES_LIMIT_REACHED;
+      } else {
+        return STATES.UNKNOWN;
+      }
+    });
   }
 
   function newLocale () {
@@ -90,7 +95,7 @@ angular.module('contentful')
   }
 
   function hasMultipleLocales () {
-    return !!getSubscriptionPlanData(['limits', 'features', 'multipleLocales']);
+    return accessChecker.hasFeature('multipleLocales');
   }
 
   function getSubscriptionPlanData (path) {

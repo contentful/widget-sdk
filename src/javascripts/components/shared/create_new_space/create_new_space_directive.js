@@ -32,6 +32,7 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var spaceTemplateEvents = require('analytics/events/SpaceCreation');
   var createOrgEndpoint = require('access_control/OrganizationMembershipRepository').createEndpoint;
+  var createResourceService = require('services/ResourceService').default;
   var getSpaceRatePlans = require('account/pricing/PricingDataProvider').getSpaceRatePlans;
 
   K.onValueScope($scope, TokenStore.organizations$, function (organizations) {
@@ -117,11 +118,32 @@ angular.module('contentful')
 
   // Request space creation
   controller.requestSpaceCreation = function () {
-    if (controller.newSpace.useTemplate) {
-      createNewSpace(controller.newSpace.selectedTemplate);
-    } else {
-      createNewSpace();
+    var organization = controller.newSpace.organization;
+
+    // TODO This may happen due to 'writableOrganizations' being empty.
+    // See above for more info
+    if (!organization) {
+      return showFormError('You don’t have permission to create a space');
     }
+
+    var resources = createResourceService(organization.sys.id, 'organization');
+
+    // First check that there are resources available
+    // to create the space
+    resources.canCreate('space').then(function (canCreate) {
+      if (canCreate) {
+        // Resources are available. Attempt to create a new space
+        if (controller.newSpace.useTemplate) {
+          createNewSpace(controller.newSpace.selectedTemplate);
+        } else {
+          createNewSpace();
+        }
+      } else {
+        resources.messagesFor('space').then(function (errorObj) {
+          handleUsageWarning(errorObj.error);
+        });
+      }
+    });
   };
 
   function setupTemplates (templates) {
@@ -154,12 +176,6 @@ angular.module('contentful')
       return;
     }
 
-    // TODO This may happen due to 'writableOrganizations' being empty.
-    // See above for more info
-    if (!organization) {
-      return showFormError('You don’t have permission to create a space');
-    }
-
     if (organization.pricingVersion === 'pricing_version_2' && !data.productRatePlanId) {
       return showFormError('You must select a rate plan.');
     }
@@ -173,14 +189,34 @@ angular.module('contentful')
     Analytics.track('space:template_selected', {
       templateName: template.name
     });
-    // Create space
+
     client.createSpace(data, organization.sys.id)
     .then(function (newSpace) {
+      // Create space
       TokenStore.refresh()
       .then(_.partial(handleSpaceCreation, newSpace, template));
     })
     .catch(function (error) {
-      handleSpaceCreationFailure(organization, error);
+      var errors = _.get(error, 'body.details.errors');
+      var fieldErrors = [
+        {name: 'length', path: 'name', message: 'Space name is too long'},
+        {name: 'invalid', path: 'default_locale', message: 'Invalid locale'}
+      ];
+
+      // If there aren't explicit errors from the response,
+      // this means that something went wrong.
+      if (!errors || !errors.length) {
+        showFormError('Could not create Space. If the problem persists please get in contact with us.');
+        logger.logServerWarn('Could not create Space', {error: error});
+
+        return;
+      }
+
+      _.forEach(fieldErrors, function (e) {
+        if (hasErrorOnField(errors, e.path, e.name)) {
+          showFieldError(e.path, e.message);
+        }
+      });
     });
   }
 
@@ -250,33 +286,6 @@ angular.module('contentful')
     );
     return getTemplate(selectedTemplate)
     .then(createTemplate);
-  }
-
-  function handleSpaceCreationFailure (organization, err) {
-    controller.createSpaceInProgress = false;
-
-    var errors = _.get(err, 'body.details.errors');
-    var usage = enforcements.computeUsageForOrganization(organization, 'space');
-    var fieldErrors = [
-      {name: 'length', path: 'name', message: 'Space name is too long'},
-      {name: 'invalid', path: 'default_locale', message: 'Invalid locale'}
-    ];
-
-    if (usage) {
-      handleUsageWarning(usage);
-      return;
-    }
-
-    _.forEach(fieldErrors, function (e) {
-      if (hasErrorOnField(errors, e.path, e.name)) {
-        showFieldError(e.path, e.message);
-      }
-    });
-
-    if (!errors || !errors.length) {
-      showFormError('Could not create Space. If the problem persists please get in contact with us.');
-      logger.logServerWarn('Could not create Space', {error: err});
-    }
   }
 
   // Form validations

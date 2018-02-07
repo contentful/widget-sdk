@@ -48,6 +48,8 @@ process.env['PATH'] += ':./node_modules/.bin'
 
 const CSS_COMMENT_RE = /\/\*[^*]*\*+([^/*][^*]*\*+)*\//g
 
+const BROWSER_TARGET = ['last 2 versions', 'ie >= 10']
+
 const src = {
   templates: 'src/javascripts/**/*.jade',
   // All Angular modules except 'cf.lib'
@@ -70,9 +72,25 @@ const src = {
       'node_modules/angular-ui-sortable/dist/sortable.js',
       'node_modules/angular-ui-router/release/angular-ui-router.js',
       'node_modules/bootstrap/js/tooltip.js',
-      'node_modules/browserchannel/dist/bcsocket-uncompressed.js',
-      'vendor/sharejs/webclient/share.uncompressed.js',
-      'vendor/sharejs/webclient/json.uncompressed.js'
+      'node_modules/browserchannel/dist/bcsocket-uncompressed.js'
+    ]).concat([
+       // Generated from the files below during the buold
+      'public/app/sharejs.js'
+    ]),
+    sharejs: assertFilesExist([
+      'vendor/sharejs/lib/client/web-prelude.js',
+      'vendor/sharejs/lib/client/microevent.js',
+      'vendor/sharejs/lib/types/helpers.js',
+      'vendor/sharejs/lib/types/text.js',
+      'vendor/sharejs/lib/types/text-api.js',
+      'vendor/sharejs/lib/client/doc.js',
+      'vendor/sharejs/lib/client/connection.js',
+      'vendor/sharejs/lib/client/index.js',
+      'vendor/sharejs/lib/client/textarea.js',
+
+      'vendor/sharejs/lib/types/web-prelude.js',
+      'vendor/sharejs/lib/types/json.js',
+      'vendor/sharejs/lib/types/json-api.js'
     ]),
     kaltura: assertFilesExist([
       'vendor/kaltura-16-01-2014/webtoolkit.md5.js',
@@ -177,13 +195,40 @@ gulp.task('js/vendor', [
   'js/vendor/snowplow'
 ])
 
-gulp.task('js/vendor/main', function () {
+gulp.task('js/vendor/main', ['js/vendor/sharejs'], function () {
   // Use `base: '.'` for correct source map paths
   return gulp.src(src.vendorScripts.main, {base: '.'})
     .pipe(sourceMaps.init())
     .pipe(concat('vendor.js'))
     .pipe(sourceMaps.write({sourceRoot: '/'}))
     .pipe(gulp.dest('./public/app'))
+})
+
+gulp.task('js/vendor/sharejs', function () {
+  return S.pipe([
+    gulp.src(src.vendorScripts.sharejs),
+    babel({
+      babelrc: false,
+      presets: [
+        ['env', {
+          'targets': {
+            'browsers': BROWSER_TARGET
+          },
+          'loose': true,
+          'debug': true,
+          'modules': false
+        }]
+      ],
+      plugins: [
+        'transform-object-rest-spread'
+      ]
+    }),
+    concat('sharejs.js'),
+    mapFileContents(function (contents) {
+      return `(function() { var WEB=true; ${contents}; }).call(this);`
+    }),
+    gulp.dest('./public/app/')
+  ])
 })
 
 gulp.task('js/vendor/snowplow', function () {
@@ -212,7 +257,7 @@ gulp.task('js/app', function () {
     ]),
     sourceMaps.init(),
     babel(makeBabelOptions({
-      browserTargets: ['last 2 versions', 'ie >= 10']
+      browserTargets: BROWSER_TARGET
     })),
     concat('components.js'),
     sourceMaps.write({sourceRoot: '/'}),

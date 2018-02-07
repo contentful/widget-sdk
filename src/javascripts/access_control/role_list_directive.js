@@ -18,10 +18,13 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
   var spaceContext = require('spaceContext');
   var ADMIN_ROLE_ID = require('access_control/SpaceMembershipRepository').ADMIN_ROLE_ID;
 
+  checkIfCanModifyRoles().then(function (value) {
+    $scope.canModifyRoles = value;
+  });
+
   $scope.duplicateRole = duplicateRole;
   $scope.jumpToRoleMembers = jumpToRoleMembers;
   $scope.jumpToAdminRoleMembers = jumpToAdminRoleMembers;
-  $scope.canModifyRoles = canModifyRoles;
 
   reload().catch(ReloadNotification.basicErrorHandler);
 
@@ -29,11 +32,11 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
     jumpToRoleMembers(ADMIN_ROLE_ID);
   }
 
-  function canModifyRoles () {
+  function checkIfCanModifyRoles () {
     var subscription = spaceContext.subscription;
     var trialLockdown = subscription &&
       subscription.isTrial() && subscription.hasTrialEnded();
-    return accessChecker.canModifyRoles() && !trialLockdown;
+    if (trialLockdown) { return Promise.resolve(false); } else { return accessChecker.canModifyRoles(); }
   }
 
   function duplicateRole (role) {

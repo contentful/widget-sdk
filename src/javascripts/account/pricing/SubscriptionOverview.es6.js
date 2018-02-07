@@ -14,6 +14,7 @@ import {canCreateSpaceInOrganization} from 'access_control/AccessChecker';
 import svgPlus from 'svg/plus';
 import {asReact} from 'ui/Framework/DOMRenderer';
 import moment from 'moment';
+import {get} from 'lodash';
 
 const subscriptionOverviewPropTypes = {
   onReady: PropTypes.func.isRequired,
@@ -49,7 +50,10 @@ const SubscriptionOverview = createReactClass({
     const basePlan = plans.items.find(({planType}) => planType === 'base');
     const spacePlans = plans.items
       .filter(({planType}) => planType === 'space')
-      .sort((plan1, plan2) => plan1.space.name.localeCompare(plan2.space.name));
+      .sort((plan1, plan2) => {
+        const [name1, name2] = [plan1, plan2].map((plan) => get(plan, 'space.name', ''));
+        return name1.localeCompare(name2);
+      });
     const canCreateSpace = canCreateSpaceInOrganization(orgId);
 
     this.setState({basePlan, spacePlans, canCreateSpace});
@@ -129,25 +133,30 @@ function SpacePlans ({spacePlans, orgId}) {
     ),
     h('tbody', {className: 'clickable'},
       spacePlans.map((plan) => {
-        const {name, price, space} = plan;
+        const {name, price, sys, space} = plan;
         const enabledFeatures = getEnabledFeatures(plan);
+        let createdAt = '';
+        let spaceLink = '';
+        let usageLink = '';
+        if (space) {
+          createdAt = moment.utc(space.sys.createdAt).format('DD. MMMM YYYY');
+          spaceLink = h('a', {href: href(getSpaceNavState(space.sys.id)), style: actionLinkStyle}, 'Go to space');
+          usageLink = h('a', {href: href(getSpaceUsageNavState(space.sys.id)), style: actionLinkStyle}, 'Usage');
+        }
+
         return h('tr', {
-          key: space.sys.id
+          key: sys.id
         },
           h('td', null,
-            h('h3', null, space.name),
+            h('h3', null, get(space, 'name', '—')),
             h('p', null, enabledFeatures.length ? enabledFeatures.map(({name}) => name) : 'No features on space')
           ),
           h('td', null,
             h('h3', null, name),
             h(Price, {value: price})
           ),
-          h('td', null, moment.utc(space.sys.createdAt).format('DD. MMMM YYYY')),
-          h('td', {style: {textAlign: 'right'}},
-            h('a', {href: href(getSpaceNavState(space.sys.id)), style: actionLinkStyle}, 'Go to space'),
-            // TODO link to space usage details
-            h('a', {href: href(getOrgUsageNavState(orgId)), style: actionLinkStyle}, 'Usage')
-          )
+          h('td', null, createdAt),
+          h('td', {style: {textAlign: 'right'}}, spaceLink, usageLink)
         );
       })
     ),
@@ -156,7 +165,6 @@ function SpacePlans ({spacePlans, orgId}) {
         h('td', null, 'Total'),
         h('td', null, h(Price, {value: grandTotal, unit: 'mo'})),
         h('td', null),
-        // TODO link to invoices
         h('td', {style: {textAlign: 'right'}},
           h('a', {href: href(getInvoiceNavState(orgId)), style: actionLinkStyle}, 'Invoices')
         )
@@ -214,6 +222,14 @@ function getOrgUsageNavState (orgId) {
   return {
     path: ['account', 'organizations', 'usage'],
     params: {orgId},
+    options: { reload: true }
+  };
+}
+
+function getSpaceUsageNavState (spaceId) {
+  return {
+    path: ['spaces', 'detail', 'settings', 'usage'],
+    params: {spaceId},
     options: { reload: true }
   };
 }

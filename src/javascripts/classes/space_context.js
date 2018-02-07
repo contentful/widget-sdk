@@ -90,8 +90,7 @@ angular.module('contentful')
       self.localeRepo = createLocaleRepo(self.endpoint);
       var organization = self.getData('organization') || null;
       self.organizationContext = OrganizationContext.create(organization);
-      self.subscription =
-        organization && Subscription.newFromOrganization(organization);
+      self.subscription = organization && Subscription.newFromOrganization(organization);
 
       // TODO: publicly accessible docConnection is
       // used only in a process of creating space out

@@ -16,7 +16,6 @@ describe('cfWelcome directive', function () {
           name: 'home'
         }
       });
-      $provide.stubLaunchDarkly();
       $provide.value('services/ContactSales', {
         createContactLink: () => ''
       });

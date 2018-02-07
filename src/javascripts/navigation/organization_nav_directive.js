@@ -35,7 +35,9 @@
         var orgId = nav.orgId = $stateParams.orgId;
         TokenStore.getOrganization(orgId).then(function (org) {
           nav.pricingVersion = org.pricingVersion;
-          nav.hasOffsiteBackup = accessChecker.hasFeature('offsiteBackup');
+          accessChecker.hasFeature('offsiteBackup').then(function (value) {
+            nav.hasOffsiteBackup = value;
+          });
           nav.hasBillingTab = org.isBillable && OrganizationRoles.isOwner(org);
           nav.hasSettingsTab = OrganizationRoles.isOwner(org);
         });
