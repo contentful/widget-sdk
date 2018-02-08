@@ -1,4 +1,5 @@
 import { getCurrentVariation } from 'utils/LaunchDarkly';
+import $q from '$q';
 
 const flagName = 'feature-bv-2018-01-resources-api';
 
@@ -62,7 +63,7 @@ export function getResourceLimits (resource) {
  */
 export function useLegacy (organization) {
   if (organization.pricingVersion === 'pricing_version_2') {
-    return Promise.resolve(false);
+    return $q.resolve(false);
   } else {
     return getCurrentVariation(flagName).then(flagValue => {
       return !flagValue;

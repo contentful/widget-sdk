@@ -94,8 +94,8 @@ describe('ResourceService', function () {
     this.resourceStore = mockedEndpoint.stores.resources;
 
     // Reached no limit
-    set(this.resourceStore, 'locales', this.createResource(
-      'locales',
+    set(this.resourceStore, 'locale', this.createResource(
+      'locale',
       {
         maximum: 10,
         included: 5
@@ -103,8 +103,8 @@ describe('ResourceService', function () {
     ));
 
     // Reached included
-    set(this.resourceStore, 'content_types', this.createResource(
-      'content_types',
+    set(this.resourceStore, 'content_type', this.createResource(
+      'content_type',
       {
         maximum: 20,
         included: 10
@@ -112,8 +112,8 @@ describe('ResourceService', function () {
     ));
 
     // Reached max
-    set(this.resourceStore, 'entries', this.createResource(
-      'entries',
+    set(this.resourceStore, 'entry', this.createResource(
+      'entry',
       {
         maximum: 2500,
         included: 2000
@@ -190,15 +190,6 @@ describe('ResourceService', function () {
     it('should return a failed Promise if not supplied with any arguments', function* () {
       try {
         yield this.ResourceService.get();
-      } catch (e) {
-        expect(e).toBeDefined();
-        expect(e instanceof Error).toBe(true);
-      }
-    });
-
-    it('should return a failed Promise if not supplied with a valid resourceType', function* () {
-      try {
-        yield this.ResourceService.get('foobar');
       } catch (e) {
         expect(e).toBeDefined();
         expect(e instanceof Error).toBe(true);
@@ -343,16 +334,16 @@ describe('ResourceService', function () {
       const messages = yield this.ResourceService.messages();
 
       // Entries
-      expect(messages.entries.warning).toBeDefined();
-      expect(messages.entries.error).toBeDefined();
+      expect(messages.entry.warning).toBeDefined();
+      expect(messages.entry.error).toBeDefined();
 
       // Locales
-      expect(messages.locales.warning).toBe('');
-      expect(messages.locales.error).toBe('');
+      expect(messages.locale.warning).toBe('');
+      expect(messages.locale.error).toBe('');
 
       // Content Types
-      expect(messages.content_types.warning).toBeDefined();
-      expect(messages.content_types.error).toBe('');
+      expect(messages.contentType.warning).toBeDefined();
+      expect(messages.contentType.error).toBe('');
     });
   });
 });
