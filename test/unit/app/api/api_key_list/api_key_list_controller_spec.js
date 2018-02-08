@@ -1,17 +1,31 @@
 // TODO merge this with directive tests
 describe('API Key List Controller', function () {
   beforeEach(function () {
-    module('contentful/test');
+    module('contentful/test', ($provide) => {
+      // TODO: truly mock this somewhere
+      $provide.value('services/ResourceService', {
+        default: () => {
+          return {
+            get: sinon.stub().resolves(this.resource)
+          };
+        }
+      });
+    });
+
+    this.resource = {
+      usage: 0,
+      limits: {
+        included: 5,
+        maximum: 10
+      },
+      sys: {
+        id: 'api_keys',
+        type: 'SpaceResource'
+      }
+    };
 
     this.scope = this.$inject('$rootScope').$new();
     this.scope.context = {};
-
-    this.usage = {
-      apiKey: 0
-    };
-    this.limits = {
-      apiKey: 2
-    };
 
     this.getApiKeys = sinon.stub().resolves();
     this.spaceContext = _.extend(this.$inject('spaceContext'), {
@@ -22,11 +36,11 @@ describe('API Key List Controller', function () {
         organization: {
           subscriptionPlan: {
             limits: {
-              permanent: this.limits
+              permanent: this.resource.limits.maximum
             }
           },
           usage: {
-            permanent: this.usage
+            permanent: this.resource.usage
           }
         }
       }
@@ -57,13 +71,13 @@ describe('API Key List Controller', function () {
 
   describe('has reached the API keys limit', function () {
     it('under keys limit', function () {
-      this.usage.apiKey = 0;
+      this.resource.usage = 0;
       this.create();
       expect(this.scope.reachedLimit).toBeFalsy();
     });
 
     it('reached the limit', function () {
-      this.usage.apiKey = 2;
+      this.resource.usage = 10;
       this.create();
       expect(this.scope.reachedLimit).toBeTruthy();
     });

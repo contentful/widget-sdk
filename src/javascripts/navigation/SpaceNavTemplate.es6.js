@@ -158,7 +158,7 @@ export default function spaceNavTemplate (useSpaceEnv) {
       dataViewType: 'space-settings',
       rootSref: makeRef('settings'),
       icon: 'nav-settings',
-      title: 'Settings',
+      title: useSpaceEnv ? 'Settings' : 'Space settings',
       children: useSpaceEnv ? envSettingsDropdown : masterSettingsDropdown
     }
   ]);

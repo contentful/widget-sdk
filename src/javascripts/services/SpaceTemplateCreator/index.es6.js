@@ -457,7 +457,7 @@ function makeTEAUrl (params, url = '') {
     space_id: params.spaceId,
     delivery_token: params.cdaToken,
     preview_token: params.cpaToken,
-    enable_editorial_features: 'enabled'
+    editorial_features: 'enabled'
   };
   const queryString = qs.stringify(queryParams);
   return `${params.baseUrl}${url}${queryString ? '?' : ''}${queryString}`;

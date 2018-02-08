@@ -39,11 +39,48 @@ describe('ResourceService', function () {
       };
     };
 
+    this.called = {};
+
+    const usages = {};
+    const limits = {};
+    const handler = {
+      get: (target, name) => {
+        if (name === 'called') {
+          return target.called;
+        }
+
+        const current = get(target, 'called') || 0;
+
+        set(target, 'called', current + 1);
+
+        return target[name];
+      }
+    };
+
+    this.usages = new Proxy(usages, handler);
+    this.limits = new Proxy(limits, handler);
+
+    this.mocks = {
+      organization: {
+        subscriptionPlan: {
+          limits: {
+            permanent: this.limits,
+            period: {}
+          }
+        },
+        usage: {
+          permanent: this.usages,
+          period: {}
+        },
+        pricingVersion: 'pricing_version_2'
+      }
+    };
+    this.mocks.space = {
+      organization: this.mocks.organization
+    };
+
     this.spies = {};
     this.stubs = {};
-    this.flags = {
-      'feature-bv-2018-01-resources-api': true
-    };
 
     this.isPromiseLike = function (object) {
       return typeof object.then === 'function' &&
@@ -97,56 +134,13 @@ describe('ResourceService', function () {
       createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
     });
 
-    this.called = {};
-
-    const usages = {};
-    const limits = {};
-    const handler = {
-      get: (target, name) => {
-        if (name === 'called') {
-          return target.called;
-        }
-
-        const current = get(target, 'called') || 0;
-
-        set(target, 'called', current + 1);
-
-        return target[name];
-      }
-    };
-
-    this.usages = new Proxy(usages, handler);
-    this.limits = new Proxy(limits, handler);
-
     system.set('Authentication', {
 
     });
 
-    const mockedSpaceContext = {
-      organizationContext: {
-        organization: {
-          subscriptionPlan: {
-            limits: {
-              permanent: this.limits,
-              period: {}
-            }
-          },
-          usage: {
-            permanent: this.usages,
-            period: {}
-          }
-        }
-      }
-    };
-
-    system.set('spaceContext', {
-      default: mockedSpaceContext
-    });
-
-    system.set('utils/LaunchDarkly', {
-      getCurrentVariation: flagName => {
-        return Promise.resolve(this.flags[flagName]);
-      }
+    system.set('services/TokenStore', {
+      getSpace: sinon.stub().resolves(this.mocks.space),
+      getOrganization: sinon.stub().resolves(this.mocks.organization)
     });
 
     this.createResourceService = (yield system.import('services/ResourceService')).default;
@@ -164,7 +158,7 @@ describe('ResourceService', function () {
   });
 
   // Skipped until we support separate organization and space endpoint usage
-  xit('should optionally allow instantiation using the "organization" type parameter value', function () {
+  it('should optionally allow instantiation using the "organization" type parameter value', function () {
     this.spies.createSpaceEndpoint.reset();
 
     this.createResourceService('1234', 'organization');
@@ -205,15 +199,15 @@ describe('ResourceService', function () {
       yield this.ResourceService.get('entry');
     });
 
-    it('should return data from the endpoint if the feature flag is true', function* () {
-      this.flags['feature-bv-2018-01-resources-api'] = true;
+    it('should return data from the endpoint if the pricing version is "pricing_version_2"', function* () {
+      this.mocks.organization.pricingVersion = 'pricing_version_2';
 
       yield this.ResourceService.get('entry');
-      expect(this.spies.spaceEndpoint.calledOnce).toBe(true);
+      expect(this.spies.spaceEndpoint.called).toBe(true);
     });
 
-    it('should return data from the token, via spaceContext, if the feature flag is false', function* () {
-      this.flags['feature-bv-2018-01-resources-api'] = false;
+    it('should return data from the token, via TokenStore, if the pricing version is "pricing_version_1"', function* () {
+      this.mocks.organization.pricingVersion = 'pricing_version_1';
 
       yield this.ResourceService.get('entry');
 
@@ -224,14 +218,14 @@ describe('ResourceService', function () {
     it('should return an item that looks like a Resource regardless of the feature flag', function* () {
       let locales;
 
-      this.flags['feature-bv-2018-01-resources-api'] = true;
+      this.mocks.organization.pricingVersion = 'pricing_version_2';
 
       locales = yield this.ResourceService.get('locale');
       expect(locales.usage).toBeDefined();
       expect(locales.limits.included).toBeDefined();
       expect(locales.limits.maximum).toBeDefined();
 
-      this.flags['feature-bv-2018-01-resources-api'] = false;
+      this.mocks.organization.pricingVersion = 'pricing_version_1';
 
       // Setup the "token" limit and usage
       this.usages['locale'] = 2;
@@ -249,13 +243,13 @@ describe('ResourceService', function () {
       expect(this.isPromiseLike(this.ResourceService.getAll())).toBe(true);
     });
 
-    it('should always return data via the endpoint, regardless of the feature flag', function* () {
-      this.flags['feature-bv-2018-01-resources-api'] = true;
+    it('should always return data via the endpoint, regardless of the pricing version', function* () {
+      this.mocks.organization.pricingVersion = 'pricing_version_2';
 
       yield this.ResourceService.getAll();
       expect(this.spies.spaceEndpoint.calledOnce).toBe(true);
 
-      this.flags['feature-bv-2018-01-resources-api'] = false;
+      this.mocks.organization.pricingVersion = 'pricing_version_1';
 
       yield this.ResourceService.getAll();
       expect(this.spies.spaceEndpoint.calledTwice).toBe(true);
