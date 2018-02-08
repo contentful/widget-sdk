@@ -1,4 +1,4 @@
-import {omit, get, identity} from 'lodash';
+import {get, identity, uniq} from 'lodash';
 import {getAllSpaces, getUsers} from 'access_control/OrganizationMembershipRepository';
 
 const alphaHeader = {
@@ -48,7 +48,7 @@ export function getPlansWithSpaces (endpoint, params = {}) {
   ])
     // Map spaces to space plans
     .then(([plans, spaces]) => ({
-      ...omit(plans, 'items'),
+      plans,
       items: plans.items.map((plan) => ({
         ...plan,
         space: plan.gatekeeperKey && spaces.find(({sys}) => sys.id === plan.gatekeeperKey)
@@ -58,9 +58,9 @@ export function getPlansWithSpaces (endpoint, params = {}) {
     // Load `createdBy` users for all spaces
     // Note: only max. 46 users can be fetched with query string limitation of 1024 chars
     .then((plans) => {
-      const userIds = plans.items
-        .map(({space}) => get(space, 'sys.createdBy.sys.id'))
-        .filter(identity);
+      const userIds = uniq(
+        plans.items.map(({space}) => get(space, 'sys.createdBy.sys.id'))
+      ).filter(identity);
 
       return getUsers(endpoint, {
         'sys.id': userIds.join(',')
@@ -69,13 +69,13 @@ export function getPlansWithSpaces (endpoint, params = {}) {
 
     // Map users to spaces
     .then(([plans, users]) => ({
-      ...omit(plans, 'items'),
+      ...plans,
       items: plans.items.map((plan) => ({
         ...plan,
         space: plan.space && {
-          ...omit(plan.space, 'sys'),
+          ...plan.space,
           sys: {
-            ...omit(plan.space.sys, 'createdBy'),
+            ...plan.space.sys,
             createdBy: users.find(({sys}) => sys.id === plan.space.sys.createdBy.sys.id)
           }
         }

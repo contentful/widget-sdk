@@ -11,12 +11,14 @@ describe('account/pricing/PricingDataProvider', function () {
       this.spacePlansData = {items: [
         {sys: {id: 'plan1'}, gatekeeperKey: 'space1'},
         {sys: {id: 'plan2'}, gatekeeperKey: 'space2'},
-        {sys: {id: 'plan3'}}
+        {sys: {id: 'plan3'}, gatekeeperKey: 'space3'},
+        {sys: {id: 'plan4'}}
       ]};
       this.spacesData = {items: [
         {sys: {id: 'space1', createdBy: {sys: {id: 'user1'}}}},
         {sys: {id: 'space2', createdBy: {sys: {id: 'user2'}}}},
-        {sys: {id: 'space3', createdBy: {sys: {id: 'user3'}}}}
+        {sys: {id: 'space3', createdBy: {sys: {id: 'user1'}}}},
+        {sys: {id: 'free_space', createdBy: {sys: {id: 'free_space_user'}}}}
       ]};
       this.usersData = {items: [{sys: {id: 'user1'}, email: 'user1@foo.com'}]};
 
@@ -46,10 +48,11 @@ describe('account/pricing/PricingDataProvider', function () {
     it('parses response data and sets spaces and users', function* () {
       const plans = yield this.getPlansWithSpaces();
 
-      expect(plans.items.length).toBe(3);
+      expect(plans.items.length).toBe(4);
       this.expectSpacePlan(plans.items[0], 'plan1', 'space1', 'user1@foo.com');
       this.expectSpacePlan(plans.items[1], 'plan2', 'space2', null);
-      this.expectSpacePlan(plans.items[2], 'plan3', null, null);
+      this.expectSpacePlan(plans.items[2], 'plan3', 'space3', 'user1@foo.com');
+      this.expectSpacePlan(plans.items[3], 'plan4', null, null);
     });
 
     it('fetches all spaces', function* () {
@@ -73,7 +76,7 @@ describe('account/pricing/PricingDataProvider', function () {
       sinon.assert.calledWith(fetchAll, this.endpoint, ['spaces']);
     });
 
-    it('passes user ids to users endpoint', function* () {
+    it('passes unique user ids to users endpoint', function* () {
       yield this.getPlansWithSpaces();
       sinon.assert.calledWith(this.endpoint, {method: 'GET', path: ['users'], query: {'sys.id': 'user1,user2'}});
     });
