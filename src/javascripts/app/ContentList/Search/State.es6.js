@@ -1,4 +1,4 @@
-import { makeCtor } from 'utils/TaggedValues';
+import { makeCtor, match } from 'utils/TaggedValues';
 import * as Store from 'ui/Framework/Store';
 import { assign, update, set, push } from 'utils/Collections';
 import { createSlot, sleep } from 'utils/Concurrent';
@@ -6,7 +6,9 @@ import { createSlot, sleep } from 'utils/Concurrent';
 import {
   getMatchingFilters,
   isFieldFilterApplicableToContentType,
-  getContentTypeById } from './Filters';
+  getContentTypeById,
+  buildFilterFieldByQueryKey,
+  ValueInput } from './Filters';
 
 const CONTENT_TYPE_ALL = '';
 
@@ -309,13 +311,35 @@ export function makeReducer (dispatch, submitSearch) {
     return state;
   }
 
+  function tryGetValue (filterField) {
+    let value;
+    match(filterField.valueInput, {
+      [ValueInput.Select]: (options) => {
+        if (options.length === 1) {
+          value = options[0][1];
+        }
+      },
+      _: () => {
+        value = undefined;
+      }
+    });
+
+    return value;
+  }
+
   function selectFilterSuggestion (state, filter) {
+    let contentType;
     if (filter.contentType) {
       state = setContentType(state, filter.contentType.id);
+      contentType = getContentTypeById(state.contentTypes, filter.contentType.id);
     }
 
+    const filterField = buildFilterFieldByQueryKey(contentType, filter.queryKey, state.withAssets);
+
+    const value = tryGetValue(filterField);
+
     state = update(state, ['filters'], filters => {
-      return push(filters, [filter.queryKey, filter.operators[0][0], null]);
+      return push(filters, [filter.queryKey, filter.operators[0][0], value]);
     });
     state = setInput(state, '');
     state = setFocusOnLastValue(state);

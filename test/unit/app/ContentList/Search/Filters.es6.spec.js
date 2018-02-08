@@ -1,6 +1,6 @@
 import { contentTypes } from './helpers';
 
-describe('app/ContentList/Search/QueryBuilder', function () {
+describe('app/ContentList/Search/Filters', function () {
   let Filters;
   beforeEach(function () {
     module('contentful/test');
@@ -103,6 +103,8 @@ describe('app/ContentList/Search/QueryBuilder', function () {
           'fields.twitter',
           'fields.email',
           'fields.phone',
+          'fields.symbol1',
+          'fields.symbol2',
           'fields.productName',
           'fields.slug',
           'fields.productDescription',
@@ -142,7 +144,9 @@ describe('app/ContentList/Search/QueryBuilder', function () {
           'fields.website',
           'fields.twitter',
           'fields.email',
-          'fields.phone'
+          'fields.phone',
+          'fields.symbol1',
+          'fields.symbol2'
         ]
       );
 
