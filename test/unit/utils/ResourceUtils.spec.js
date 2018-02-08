@@ -22,14 +22,14 @@ describe('ResourceUtils', function () {
 
     this.resources = {
       entries: {
-        notReachedAnyLimit: createResource('entries', { maximum: 10, included: 5 }, 2),
-        reachedIncludedLimit: createResource('entries', { maximum: 10, included: 5 }, 7),
-        reachedMaxLimit: createResource('entries', { maximum: 10, included: 5 }, 10)
+        notReachedAnyLimit: createResource('entry', { maximum: 10, included: 5 }, 2),
+        reachedIncludedLimit: createResource('entry', { maximum: 10, included: 5 }, 7),
+        reachedMaxLimit: createResource('entry', { maximum: 10, included: 5 }, 10)
       },
       apiKeys: {
-        notReachedAnyLimit: createResource('api_keys', { maximum: 100, included: 50 }, 20),
-        reachedIncludedLimit: createResource('api_keys', { maximum: 100, included: 50 }, 70),
-        reachedMaxLimit: createResource('api_keys', { maximum: 100, included: 50 }, 100)
+        notReachedAnyLimit: createResource('api_key', { maximum: 100, included: 50 }, 20),
+        reachedIncludedLimit: createResource('api_key', { maximum: 100, included: 50 }, 70),
+        reachedMaxLimit: createResource('api_key', { maximum: 100, included: 50 }, 100)
       }
     };
 
@@ -168,7 +168,8 @@ describe('ResourceUtils', function () {
   });
 
   describe('#useLegacy', function () {
-    it('should return false if given a pricing V2 organization regardless of feature flag', function* () {
+    // TODO: Unskip this when the feature flag is used for version 1 orgs
+    xit('should return false if given a pricing V2 organization regardless of feature flag', function* () {
       this.flags['feature-bv-2018-01-resources-api'] = false;
       expect(yield this.ResourceUtils.useLegacy(this.organization)).toBe(false);
 
@@ -176,16 +177,33 @@ describe('ResourceUtils', function () {
       expect(yield this.ResourceUtils.useLegacy(this.organization)).toBe(false);
     });
 
-    it('should return false if given a pricing V1 organization but the feature flag is enabled', function* () {
+    xit('should return false if given a pricing V1 organization but the feature flag is enabled', function* () {
       this.organization.pricingVersion = this.pricingVersions.pricingVersion1;
       this.flags['feature-bv-2018-01-resources-api'] = true;
       expect(yield this.ResourceUtils.useLegacy(this.organization)).toBe(false);
     });
 
-    it('should return true if given a pricing V1 organization and the feature flag is not enabled', function* () {
+    xit('should return true if given a pricing V1 organization and the feature flag is not enabled', function* () {
       this.organization.pricingVersion = this.pricingVersions.pricingVersion1;
       this.flags['feature-bv-2018-01-resources-api'] = false;
       expect(yield this.ResourceUtils.useLegacy(this.organization)).toBe(true);
+    });
+
+    it('should return true if the feature flag is false', function* () {
+      this.flags['feature-bv-2018-01-resources-api'] = false;
+      expect(yield this.ResourceUtils.useLegacy(this.organization)).toBe(true);
+    });
+
+    it('should return true if the feature flag is true but the org is version 1', function* () {
+      this.flags['feature-bv-2018-01-resources-api'] = true;
+      this.organization.pricingVersion = this.pricingVersions.pricingVersion1;
+      expect(yield this.ResourceUtils.useLegacy(this.organization)).toBe(true);
+    });
+
+    it('should return false if the feature flag is true and the org is version 2', function* () {
+      this.flags['feature-bv-2018-01-resources-api'] = true;
+      this.organization.pricingVersion = this.pricingVersions.pricingVersion2;
+      expect(yield this.ResourceUtils.useLegacy(this.organization)).toBe(false);
     });
   });
 });

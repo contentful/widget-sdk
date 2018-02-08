@@ -40,6 +40,8 @@ export default function createResourceService (id, type = 'space') {
       return endpoint({
         method: 'GET',
         path: [ 'resources' ]
+      }, {
+        'x-contentful-enable-alpha-feature': 'subscriptions-api'
       }).then(function (raw) {
         return raw.items;
       });

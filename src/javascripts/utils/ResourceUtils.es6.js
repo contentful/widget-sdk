@@ -1,5 +1,4 @@
 import { getCurrentVariation } from 'utils/LaunchDarkly';
-import $q from '$q';
 
 const flagName = 'feature-bv-2018-01-resources-api';
 
@@ -60,15 +59,22 @@ export function getResourceLimits (resource) {
   If the pricing version is not, we determine if we should use
   legacy based on the feature flag. If the feature flag is
   enabled, we don't use legacy, otherwise we do.
+
+  This should be modified once the Organization Resources endpoint
+  exists to only have the feature flag deal with Version 1 orgs.
  */
 export function useLegacy (organization) {
-  if (organization.pricingVersion === 'pricing_version_2') {
-    return $q.resolve(false);
-  } else {
-    return getCurrentVariation(flagName).then(flagValue => {
-      return !flagValue;
-    });
-  }
+  return getCurrentVariation(flagName).then(flagValue => {
+    if (flagValue === false) {
+      return true;
+    }
+
+    if (organization.pricingVersion === 'pricing_version_2') {
+      return false;
+    }
+
+    return true;
+  });
 }
 
 function resourceIncludedLimitReached (resource) {

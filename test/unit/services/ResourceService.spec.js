@@ -200,16 +200,12 @@ describe('ResourceService', function () {
       yield this.ResourceService.get('entry');
     });
 
-    it('should return data from the endpoint if the pricing version is "pricing_version_2", regardless of the feature flag', function* () {
+    it('should return data from the endpoint if the pricing version is "pricing_version_2" and the feature flag is true', function* () {
       this.mocks.organization.pricingVersion = 'pricing_version_2';
+      this.flags['feature-bv-2018-01-resources-api'] = true;
 
       yield this.ResourceService.get('entry');
       expect(this.spies.spaceEndpoint.calledOnce).toBe(true);
-
-      this.flags['feature-bv-2018-01-resources-api'] = false;
-
-      yield this.ResourceService.get('entry');
-      expect(this.spies.spaceEndpoint.calledTwice).toBe(true);
     });
 
     it('should return data from the token, via TokenStore, if the pricing version is "pricing_version_1" and the feature flag is false', function* () {
