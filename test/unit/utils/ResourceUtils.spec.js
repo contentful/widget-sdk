@@ -1,7 +1,7 @@
-import { canCreate, generateMessage, getResourceLimits } from 'utils/ResourceUtils';
+import { createIsolatedSystem } from 'test/helpers/system-js';
 
 describe('ResourceUtils', function () {
-  beforeEach(function () {
+  beforeEach(function* () {
     function createResource (type, limits, usage) {
       const { maximum, included } = limits;
 
@@ -32,16 +32,48 @@ describe('ResourceUtils', function () {
         reachedMaxLimit: createResource('api_keys', { maximum: 100, included: 50 }, 100)
       }
     };
+
+    this.pricingVersions = {
+      pricingVersion1: 'pricing_version_1',
+      pricingVersion2: 'pricing_version_2'
+    };
+
+    this.organization = {
+      subscriptionPlan: {
+        limits: {
+          permanent: {},
+          period: {}
+        }
+      },
+      usage: {
+        permanent: {},
+        period: {}
+      },
+      pricingVersion: this.pricingVersions.pricingVersion2
+    };
+
+    this.flags = {
+      'feature-bv-2018-01-resources-api': null
+    };
+
+    const system = createIsolatedSystem();
+    system.set('utils/LaunchDarkly', {
+      getCurrentVariation: (flagName) => {
+        return Promise.resolve(this.flags[flagName]);
+      }
+    });
+
+    this.ResourceUtils = yield system.import('utils/ResourceUtils');
   });
 
   describe('#canCreate', function () {
     it('should return true if the maximum limit is not reached', function () {
-      expect(canCreate(this.resources.entries.notReachedAnyLimit)).toBe(true);
-      expect(canCreate(this.resources.entries.reachedIncludedLimit)).toBe(true);
+      expect(this.ResourceUtils.canCreate(this.resources.entries.notReachedAnyLimit)).toBe(true);
+      expect(this.ResourceUtils.canCreate(this.resources.entries.reachedIncludedLimit)).toBe(true);
     });
 
     it('should return false if the maximum limit is reached', function () {
-      expect(canCreate(this.resources.entries.reachedMaxLimit)).toBe(false);
+      expect(this.ResourceUtils.canCreate(this.resources.entries.reachedMaxLimit)).toBe(false);
     });
   });
 
@@ -49,7 +81,7 @@ describe('ResourceUtils', function () {
     it('should always return an object with warning and error keys when given a resource', function () {
       Object.keys(this.resources.entries).forEach(i => {
         const resource = this.resources.entries[i];
-        const message = generateMessage(resource);
+        const message = this.ResourceUtils.generateMessage(resource);
 
         expect(message.warning).toBeDefined();
         expect(message.error).toBeDefined();
@@ -57,21 +89,21 @@ describe('ResourceUtils', function () {
     });
 
     it('should return no warning or error if you have not reached any limit', function () {
-      const message = generateMessage(this.resources.entries.notReachedAnyLimit);
+      const message = this.ResourceUtils.generateMessage(this.resources.entries.notReachedAnyLimit);
 
       expect(message.warning).toBe('');
       expect(message.error).toBe('');
     });
 
     it('should return a warning about nearing your limit if the included limit is reached', function () {
-      const message = generateMessage(this.resources.entries.reachedIncludedLimit);
+      const message = this.ResourceUtils.generateMessage(this.resources.entries.reachedIncludedLimit);
 
       expect(message.warning).toBe('You are near the limit of your Entries usage.');
       expect(message.error).toBe('');
     });
 
     it('should return an error if you reach your maximum limit', function () {
-      const message = generateMessage(this.resources.entries.reachedMaxLimit);
+      const message = this.ResourceUtils.generateMessage(this.resources.entries.reachedMaxLimit);
 
       expect(message.warning).toBe('');
       expect(message.error).toBe('You have exceeded your Entries usage.');
@@ -80,12 +112,12 @@ describe('ResourceUtils', function () {
     it('should provide a human readable warning or error for a name with spaces', function () {
       let message;
 
-      message = generateMessage(this.resources.apiKeys.reachedIncludedLimit);
+      message = this.ResourceUtils.generateMessage(this.resources.apiKeys.reachedIncludedLimit);
 
       expect(message.warning).toBe('You are near the limit of your API Keys usage.');
       expect(message.error).toBe('');
 
-      message = generateMessage(this.resources.apiKeys.reachedMaxLimit);
+      message = this.ResourceUtils.generateMessage(this.resources.apiKeys.reachedMaxLimit);
 
       expect(message.warning).toBe('');
       expect(message.error).toBe('You have exceeded your API Keys usage.');
@@ -94,14 +126,14 @@ describe('ResourceUtils', function () {
 
   describe('#getResourceLimits', function () {
     it('returns an object with the included and maximum limits given a resource', function () {
-      const limits = getResourceLimits(this.resources.entries.notReachedAnyLimit);
+      const limits = this.ResourceUtils.getResourceLimits(this.resources.entries.notReachedAnyLimit);
 
       expect(limits.included).toBeDefined();
       expect(limits.maximum).toBeDefined();
     });
 
     it('returns the included and maximum limits from the resource', function () {
-      const limits = getResourceLimits(this.resources.entries.reachedIncludedLimit);
+      const limits = this.ResourceUtils.getResourceLimits(this.resources.entries.reachedIncludedLimit);
 
       expect(limits.included).toBe(5);
       expect(limits.maximum).toBe(10);
@@ -128,10 +160,32 @@ describe('ResourceUtils', function () {
         }
       };
 
-      const limits = getResourceLimits(resource);
+      const limits = this.ResourceUtils.getResourceLimits(resource);
 
       expect(limits.included).toBe(500);
       expect(limits.maximum).toBe(1000);
+    });
+  });
+
+  describe('#useLegacy', function () {
+    it('should return false if given a pricing V2 organization regardless of feature flag', function* () {
+      this.flags['feature-bv-2018-01-resources-api'] = false;
+      expect(yield this.ResourceUtils.useLegacy(this.organization)).toBe(false);
+
+      this.flags['feature-bv-2018-01-resources-api'] = true;
+      expect(yield this.ResourceUtils.useLegacy(this.organization)).toBe(false);
+    });
+
+    it('should return false if given a pricing V1 organization but the feature flag is enabled', function* () {
+      this.organization.pricingVersion = this.pricingVersions.pricingVersion1;
+      this.flags['feature-bv-2018-01-resources-api'] = true;
+      expect(yield this.ResourceUtils.useLegacy(this.organization)).toBe(false);
+    });
+
+    it('should return true if given a pricing V1 organization and the feature flag is not enabled', function* () {
+      this.organization.pricingVersion = this.pricingVersions.pricingVersion1;
+      this.flags['feature-bv-2018-01-resources-api'] = false;
+      expect(yield this.ResourceUtils.useLegacy(this.organization)).toBe(true);
     });
   });
 });

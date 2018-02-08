@@ -1,5 +1,5 @@
 import { getSpace, getOrganization } from 'services/TokenStore';
-import { canCreate, generateMessage } from 'utils/ResourceUtils';
+import { canCreate, generateMessage, useLegacy } from 'utils/ResourceUtils';
 import { runTask } from 'utils/Concurrent';
 import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/Endpoint';
 import { apiUrl } from 'Config';
@@ -95,20 +95,20 @@ export default function createResourceService (id, type = 'space') {
         }
 
         const organization = yield getTokenOrganization(id, type);
-        const pricingVersion = organization.pricingVersion;
+        const legacy = yield useLegacy(organization);
 
-        if (pricingVersion === 'pricing_version_2') {
+        if (legacy) {
+          const limit = getLegacyLimit(resourceType, organization);
+          const usage = getLegacyUsage(resourceType, organization);
+
+          return createResourceFromTokenData(resourceType, limit, usage);
+        } else {
           const apiResourceType = resourceTypeMap[resourceType];
 
           return yield endpoint({
             method: 'GET',
             path: [ 'resources', apiResourceType ]
           });
-        } else {
-          const limit = getLegacyLimit(resourceType, organization);
-          const usage = getLegacyUsage(resourceType, organization);
-
-          return createResourceFromTokenData(resourceType, limit, usage);
         }
       }));
     },

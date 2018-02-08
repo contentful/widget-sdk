@@ -1,3 +1,7 @@
+import { getCurrentVariation } from 'utils/LaunchDarkly';
+
+const flagName = 'feature-bv-2018-01-resources-api';
+
 const resourceHumanNameMap = {
   api_keys: 'API Keys',
   assets: 'Assets',
@@ -45,6 +49,24 @@ export function getResourceLimits (resource) {
     return resource.limits;
   } else if (resource.parent) {
     return getResourceLimits(resource.parent);
+  }
+}
+
+/*
+  If the organization pricing version is `pricing_version_2`,
+  we do not use legacy.
+
+  If the pricing version is not, we determine if we should use
+  legacy based on the feature flag. If the feature flag is
+  enabled, we don't use legacy, otherwise we do.
+ */
+export function useLegacy (organization) {
+  if (organization.pricingVersion === 'pricing_version_2') {
+    return Promise.resolve(false);
+  } else {
+    return getCurrentVariation(flagName).then(flagValue => {
+      return !flagValue;
+    });
   }
 }
 
