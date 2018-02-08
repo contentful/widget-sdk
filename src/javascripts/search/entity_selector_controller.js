@@ -40,6 +40,7 @@ angular.module('contentful')
   var Kefir = require('libs/kefir');
   var LD = require('utils/LaunchDarkly');
   var createSearchInput = require('app/ContentList/Search').default;
+  var getAccessibleCTs = require('data/ContentTypeRepo/accessibleCTs').default;
 
   var NEW_SEARCH_FLAG_NAME = 'feature-at-01-2018-entity-selector-new-search';
   var MIN_SEARCH_TRIGGERING_LEN = 1;
@@ -105,10 +106,8 @@ angular.module('contentful')
     var isSearching$ = K.fromScopeValue($scope, function ($scope) {
       return $scope.isLoading;
     });
-    var contentTypes = getValidContentTypes(
-      $scope.config.linkedContentTypeIds,
-      spaceContext.publishedCTs.getAllBare()
-    );
+    var accessibleContentType = getAccessibleCTs(spaceContext.publishedCTs, initialSearchState.contentTypeId);
+    var contentTypes = getValidContentTypes($scope.config.linkedContentTypeIds, accessibleContentType);
 
     createSearchInput({
       $scope: $scope,

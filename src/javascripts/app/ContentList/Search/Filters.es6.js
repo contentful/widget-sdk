@@ -132,7 +132,7 @@ const assetsFieldFilters = [
 export function contentTypeFilter (contentTypes) {
   let valueInputSelect = [...contentTypes.map(ct => [ct.sys.id, ct.name])];
 
-  if (contentTypes.length > 1) {
+  if (contentTypes.length !== 1) {
     valueInputSelect = [['', 'Any'], ...valueInputSelect];
   }
 

@@ -36,6 +36,17 @@ const ACTIONS_FOR_ENTITIES = {
   settings: ['update', 'read']
 };
 
+export const Actions = {
+  CREATE: 'create',
+  READ: 'read',
+  UPDATE: 'update',
+  DELETE: 'delete',
+  PUBLISH: 'publish',
+  UNPUBLISH: 'unpublish',
+  ARCHIVE: 'archive',
+  UNARCHIVE: 'unarchive'
+};
+
 const isInitializedBus = K.createPropertyBus(false);
 
 let authContext;
