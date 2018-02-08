@@ -1,4 +1,4 @@
-import {partial, countBy, filter} from 'lodash';
+import { partial, countBy, filter } from 'lodash';
 import * as K from 'utils/kefir';
 import * as List from 'utils/List';
 
@@ -19,16 +19,24 @@ import {
 
 const FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN =
   'feature-at-11-2017-lots-of-cts-add-entry-and-link-reference';
+const INLINE_REFERENCE_FEATURE_FLAG =
+  'feature-at-02-2018-inline-reference-field';
 
 export default function create ($scope, widgetApi) {
   const field = widgetApi.field;
   const isDisabled$ = widgetApi.fieldProperties.isDisabled$;
-  const state = State.create(field, widgetApi.fieldProperties.value$, widgetApi.space, $scope.type, $scope.single);
+  const state = State.create(
+    field,
+    widgetApi.fieldProperties.value$,
+    widgetApi.space,
+    $scope.type,
+    $scope.single
+  );
   const useBulkEditor =
-    widgetApi.settings.bulkEditing &&
-    widgetApi._internal.editReferences;
+    widgetApi.settings.bulkEditing && widgetApi._internal.editReferences;
 
-  $scope.typePlural = {Entry: 'entries', Asset: 'assets'}[$scope.type];
+  $scope.renderInline = true;
+  $scope.typePlural = { Entry: 'entries', Asset: 'assets' }[$scope.type];
   $scope.isAssetCard = is('Asset', 'card');
 
   // Passed to cfEntityLink and cfAssetCard directive
@@ -48,12 +56,18 @@ export default function create ($scope, widgetApi) {
     }
   );
 
+  onFeatureFlag($scope, INLINE_REFERENCE_FEATURE_FLAG, function (variation) {
+    $scope.isInlineReferenceEnabled = variation;
+  });
+
   $scope.uiSortable.update = function () {
     // let uiSortable update the model, then sync
     $scope.$applyAsync(function () {
-      state.setIds($scope.entityModels.map(function (model) {
-        return model.value.id;
-      }));
+      state.setIds(
+        $scope.entityModels.map(function (model) {
+          return model.value.id;
+        })
+      );
     });
   };
 
@@ -108,13 +122,15 @@ export default function create ($scope, widgetApi) {
   $scope.addExisting = function (event) {
     event.preventDefault && event.preventDefault();
     const currentSize = $scope.entityModels.length;
-    entitySelector.openFromField(field, currentSize)
-    .then(state.addEntities);
+    entitySelector.openFromField(field, currentSize).then(state.addEntities);
   };
 
   // Property that holds the items that are rendered with the
   // 'cfEntityLink' directive.
-  const entityModels$ = K.combine([state.entities$, isDisabled$], function (entities, isDisabled) {
+  const entityModels$ = K.combine([state.entities$, isDisabled$], function (
+    entities,
+    isDisabled
+  ) {
     // entities is a list of [id, entityData] pairs
     if (entities) {
       return entities.map(([id, entity], index) => {
@@ -127,7 +143,7 @@ export default function create ($scope, widgetApi) {
     if (models) {
       // We could just use models but for performance reasons we use
       // a keyed list.
-      $scope.entityModels = List.makeKeyed(models, (model) => model.hash);
+      $scope.entityModels = List.makeKeyed(models, model => model.hash);
       $scope.isReady = true;
     }
   });
@@ -169,7 +185,10 @@ export default function create ($scope, widgetApi) {
       fieldName: field.name + ' (' + field.locale + ')',
       count: references.length,
       linked: $scope.type,
-      type: (references.length > 1 ? $scope.typePlural : $scope.type).toLowerCase()
+      type: (references.length > 1
+        ? $scope.typePlural
+        : $scope.type
+      ).toLowerCase()
     };
   }
 
@@ -179,7 +198,10 @@ export default function create ($scope, widgetApi) {
     });
 
     const counts = countBy(unpublishedRefs, 'linked');
-    const linkedEntityTypes = [counts.Entry > 0 && 'entries', counts.Asset > 0 && 'assets'];
+    const linkedEntityTypes = [
+      counts.Entry > 0 && 'entries',
+      counts.Asset > 0 && 'assets'
+    ];
 
     return modalDialog.open({
       template: 'unpublished_references_warning',
@@ -193,10 +215,12 @@ export default function create ($scope, widgetApi) {
   // Build an object that is passed to the 'cfEntityLink' directive
   function buildEntityModel (id, entity, index, isDisabled) {
     const version = entity ? entity.sys.version : '';
-    const contentTypeId = entity && entity.sys.contentType && entity.sys.contentType.sys.id;
+    const contentTypeId =
+      entity && entity.sys.contentType && entity.sys.contentType.sys.id;
     const hash = [id, version, isDisabled, contentTypeId].join('!');
 
-    const contentType = contentTypeId && spaceContext.publishedCTs.fetch(contentTypeId);
+    const contentType =
+      contentTypeId && spaceContext.publishedCTs.fetch(contentTypeId);
 
     return {
       id: id,
@@ -206,15 +230,15 @@ export default function create ($scope, widgetApi) {
       actions: {
         edit: prepareEditAction(entity, index, isDisabled),
         remove: prepareRemoveAction(index, isDisabled)
-      }
+      },
+      refCtxt: widgetApi._internal.createReferenceContext(index)
     };
   }
 
   function prepareEditAction (entity, index, isDisabled) {
     const entryId = widgetApi.entry.getSys().id;
-    const linksParentEntry = entity &&
-      entity.sys.type === 'Entry' &&
-      entity.sys.id === entryId;
+    const linksParentEntry =
+      entity && entity.sys.type === 'Entry' && entity.sys.id === entryId;
 
     if (entity && !isDisabled && !linksParentEntry && useBulkEditor) {
       return function () {
@@ -229,7 +253,11 @@ export default function create ($scope, widgetApi) {
     if (useBulkEditor) {
       return widgetApi._internal.editReferences(index, state.refreshEntities);
     } else {
-      return widgetApi.state.goToEditor(entity);
+      if ($scope.isInlineReferenceEnabled) {
+        $scope.refCtxt = widgetApi._internal.createReferenceContext(index);
+      } else {
+        return widgetApi.state.goToEditor(entity);
+      }
     }
   }
 

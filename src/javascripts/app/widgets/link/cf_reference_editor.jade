@@ -11,7 +11,7 @@ div(ng-show="!isReady")
     li.link-editor__link(ng-repeat="model in entityModels track by model.key")
 
       cf-entity-link(
-        ng-if="!isAssetCard"
+        ng-if="!isAssetCard && !isInlineReferenceEnabled"
         entity="model.value.entity"
         content-type="model.value.contentType"
         entity-helpers="helpers"
@@ -26,6 +26,14 @@ div(ng-show="!isReady")
         actions="model.value.actions"
         config="config")
 
+      .inline-reference-editor(
+        ng-if="!isAssetCard"
+        style="min-height: 100px; margin-top: 10px;")
+          cf-bulk-editor(
+            ng-if="(refCtxt || model.value.refCtxt) && renderInline"
+            reference-context="(refCtxt || model.value.refCtxt)"
+            render-inline="renderInline"
+          )
   .link-editor__actions(ng-if="!isNewAddAndLinkRefButtonEnabled && !isDisabled && (!single || !entityModels.length)")
     button.btn-action.btn-link.link-editor__link-btn(
       ng-click="addNew($event)"

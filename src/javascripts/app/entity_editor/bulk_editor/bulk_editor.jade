@@ -1,5 +1,5 @@
 .workbench
-  header.workbench-header
+  header.workbench-header(ng-if="!renderInline")
     .breadcrumbs-widget
       .breadcrumbs-container
         cf-icon.btn.btn__back(
@@ -29,7 +29,7 @@
         data-entity-id="{{ctx.id}}")
         cf-bulk-entity-editor(entity-context="ctx" bulk-editor-context="editorContext")
 
-    .workbench-main__sidebar
+    .workbench-main__sidebar(ng-if="!renderInline")
       .entity-sidebar
         cf-create-entry-button(
           cf-context-menu-trigger

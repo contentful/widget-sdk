@@ -64,6 +64,12 @@ angular.module('contentful')
     };
   }
 
+  if ($scope.editorContext.createReferenceContext) {
+    this._internal.createReferenceContext = function (index, cb) {
+      return $scope.editorContext.createReferenceContext(ctField.id, $scope.locale.internal_code, index, cb);
+    };
+  }
+
   this.entry = {
     // TODO only used by slug and reference editor; we should
     // remove it and only offer a property interface

@@ -13,7 +13,8 @@ angular.module('contentful')
 
   return {
     scope: {
-      referenceContext: '='
+      referenceContext: '=',
+      renderInline: '='
     },
     restrict: 'E',
     template: JST.bulk_editor(),
@@ -43,7 +44,15 @@ angular.module('contentful')
     // Property<string>
     // List of IDs for the linked entries
     var ids$ = referenceContext.links$.map(function (links) {
-      return links.map(_.property('sys.id')).filter(_.isString);
+      let ids = [];
+
+      if (Array.isArray(links)) {
+        ids = links.map(_.property('sys.id'));
+      } else {
+        ids = [_.get(links, 'sys.id')];
+      }
+
+      return ids.filter(_.isString);
     });
 
     // Each of these contexts is passed to a cfBulkEntityEditor
