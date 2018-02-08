@@ -41,17 +41,28 @@ describe('bugsnag', function () {
     sinon.assert.calledOnce(this.LazyLoader.get);
   });
 
-  it('adds user information', function () {
-    this.bugsnag.enable({
-      sys: {id: 'UID'},
-      organizationMemberships: [
-        {organization: {sys: {id: 'foo'}}},
-        {organization: {sys: {id: 'bar'}}}
-      ]
+  describe('user information', function () {
+    it('is added for user without organizations', function () {
+      this.bugsnag.enable({
+        sys: {id: 'USER_ID'}
+      });
+      this.$apply();
+      expect(this.BugsnagStub.user.id).toEqual('USER_ID');
+      expect(this.BugsnagStub.user.organizations).toEqual('');
     });
-    this.$apply();
-    expect(this.BugsnagStub.user.id).toEqual('UID');
-    expect(this.BugsnagStub.user.organizations).toEqual('foo, bar');
+
+    it('is added for user with organizations', function () {
+      this.bugsnag.enable({
+        sys: {id: 'UID'},
+        organizationMemberships: [
+          {organization: {sys: {id: 'foo'}}},
+          {organization: {sys: {id: 'bar'}}}
+        ]
+      });
+      this.$apply();
+      expect(this.BugsnagStub.user.id).toEqual('UID');
+      expect(this.BugsnagStub.user.organizations).toEqual('foo, bar');
+    });
   });
 
   it('enabling after disabling does not send notifications', function () {
