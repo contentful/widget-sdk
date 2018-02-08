@@ -1,5 +1,5 @@
-import {get, identity, uniq} from 'lodash';
-import {getAllSpaces, getUsers} from 'access_control/OrganizationMembershipRepository';
+import {get} from 'lodash';
+import {getAllSpaces, getUsersByIds} from 'access_control/OrganizationMembershipRepository';
 
 const alphaHeader = {
   'x-contentful-enable-alpha-feature': 'subscriptions-api'
@@ -56,15 +56,9 @@ export function getPlansWithSpaces (endpoint, params = {}) {
     }))
 
     // Load `createdBy` users for all spaces
-    // Note: only max. 46 users can be fetched with query string limitation of 1024 chars
     .then((plans) => {
-      const userIds = uniq(
-        plans.items.map(({space}) => get(space, 'sys.createdBy.sys.id'))
-      ).filter(identity);
-
-      return getUsers(endpoint, {
-        'sys.id': userIds.join(',')
-      }).then((users) => [plans, users.items]);
+      const userIds = plans.items.map(({space}) => get(space, 'sys.createdBy.sys.id'));
+      return getUsersByIds(endpoint, userIds).then((users) => [plans, users]);
     })
 
     // Map users to spaces

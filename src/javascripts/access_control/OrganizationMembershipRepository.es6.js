@@ -2,8 +2,10 @@ import {createOrganizationEndpoint} from 'data/Endpoint';
 import * as auth from 'Authentication';
 import {apiUrl} from 'Config';
 import {fetchAll} from 'data/CMA/FetchAll';
+import {uniq, identity, chunk, flatten} from 'lodash';
 
 const BATCH_LIMIT = 100;
+const USER_IDS_BATCH_LIMIT = 44;
 
 export function createEndpoint (orgId) {
   return createOrganizationEndpoint(apiUrl(), orgId, auth);
@@ -20,8 +22,6 @@ export function getAll (endpoint) {
  * Get organization's users from endpoint
  * @param {function} endpoint - organization endpoint
  * @param {object?} query
- * @param {string|number?} query["limit"]
- * @param {string?} query["sys.id"] - comma-separated list of user ids
  */
 export function getUsers (endpoint, query) {
   return endpoint({
@@ -29,6 +29,23 @@ export function getUsers (endpoint, query) {
     path: ['users'],
     query
   });
+}
+
+/**
+ * Get organization's users with given ids from endpoint
+ * @param {function} endpoint - organization endpoint
+ * @param {Array<string>} params.userIds - array of user ids
+ * @returns {Array<object>}
+ */
+export function getUsersByIds (endpoint, userIds) {
+  // Split into batches because of query string limitation of 1024 chars
+  const batches = chunk(uniq(userIds).filter(identity), USER_IDS_BATCH_LIMIT);
+  return Promise.all(batches.map((ids) => getUsers(
+    endpoint,
+    {'sys.id': ids.join(',')}
+  )))
+    .then((responces) => responces.map(({items}) => items))
+    .then(flatten);
 }
 
 /**
