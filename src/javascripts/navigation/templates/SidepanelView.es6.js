@@ -190,7 +190,7 @@ function renderNoSpacesMsg ({spacesByCurrentOrg, currOrg, canCreateSpaceInCurrOr
       (canCreateSpaceInCurrOrg && h('button.btn-action.nav-sidepanel__no-spaces-create-cta', {
         dataTestId: 'sidepanel-create-space-btn',
         onClick: () => showCreateSpaceModal(currOrg.sys.id)
-      }, ['Create Space']))
+      }, ['Create space']))
     ]);
   }
 }
