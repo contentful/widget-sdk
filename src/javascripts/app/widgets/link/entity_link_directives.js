@@ -82,8 +82,19 @@ angular.module('cf.app')
   var data = $scope.entity;
   $scope.config = _.assign({}, $scope.config || {});
   $scope.actions = $scope.actions || {};
-  $scope.onClick = function () {
-    $scope.actions.trackEdit();
+  $scope.onClick = function ($event) {
+    var slidingEntryEditor = $scope.actions.slideinEdit;
+
+    if (slidingEntryEditor) {
+      // This will prevent navigating to the entry page
+      // when clicking the ref link and open it inline instead.
+      // This will still allow users to navigate to entry page
+      // with right click + open in a new tab.
+      $event.preventDefault();
+      $scope.actions.slideinEdit();
+    } else {
+      $scope.actions.trackEdit();
+    }
   };
 
   if ($scope.config.largeImage) {

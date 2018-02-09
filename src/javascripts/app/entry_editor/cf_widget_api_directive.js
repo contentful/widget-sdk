@@ -73,6 +73,10 @@ angular.module('contentful')
     };
   }
 
+  if ($scope.editorContext.toggleSlideinEditor) {
+    this._internal.toggleSlideinEditor = $scope.editorContext.toggleSlideinEditor;
+  }
+
   this.entry = {
     // TODO only used by slug and reference editor; we should
     // remove it and only offer a property interface

@@ -64,8 +64,17 @@ angular.module('cf.ui')
         $rootScope.$on('$stateChangeError', hideLoader);
       }
 
-      function showLoader () {
-        $scope.isShown = true;
+      function showLoader (_event, _toState, toParams, _fromState, fromParams) {
+        toParams = toParams || {};
+        fromParams = fromParams || {};
+        // Do not show a spinner when navigating from/to slide in
+        // entry editor. This will refresh the parent/child entries
+        // without showing the spinner.
+        // TODO: Remove this once "feature-at-03-2018-sliding-entry-editor"
+        // experiment is over.
+        if (!toParams.inlineEntryId && !fromParams.inlineEntryId) {
+          $scope.isShown = true;
+        }
       }
 
       function hideLoader () {

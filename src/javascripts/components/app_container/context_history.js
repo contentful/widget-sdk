@@ -3,6 +3,7 @@
 angular.module('contentful')
 .factory('contextHistory', ['require', function (require) {
   var K = require('utils/kefir');
+  var _ = require('lodash');
 
   var history = [];
   var crumbBus = K.createPropertyBus(history);
