@@ -206,4 +206,28 @@ describe('ResourceUtils', function () {
       expect(yield this.ResourceUtils.useLegacy(this.organization)).toBe(false);
     });
   });
+
+  describe('#isLegacyOrganization', function () {
+    it('should return true if the organization uses pricing version 1', function () {
+      const organization = {
+        pricingVersion: 'pricing_version_1',
+        sys: {
+          id: 'legacy_org'
+        }
+      };
+
+      expect(this.ResourceUtils.isLegacyOrganization(organization)).toBe(true);
+    });
+
+    it('should return false if the organization uses pricing version 2', function () {
+      const organization = {
+        pricingVersion: 'pricing_version_2',
+        sys: {
+          id: 'legacy_org'
+        }
+      };
+
+      expect(this.ResourceUtils.isLegacyOrganization(organization)).toBe(false);
+    });
+  });
 });

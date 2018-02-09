@@ -69,12 +69,29 @@ export function useLegacy (organization) {
       return true;
     }
 
-    if (organization.pricingVersion === 'pricing_version_2') {
-      return false;
+    if (isLegacyOrganization(organization)) {
+      return true;
     }
 
-    return true;
+    return false;
   });
+}
+
+/*
+  Determine if an organization is legacy based on the
+  pricing version.
+
+  Used in cases where the fact that the organization
+  is legacy matters irrespective of the feature flag.
+ */
+export function isLegacyOrganization (organization) {
+  const pricingVersion = organization.pricingVersion;
+
+  if (pricingVersion === 'pricing_version_2') {
+    return false;
+  }
+
+  return true;
 }
 
 function resourceIncludedLimitReached (resource) {

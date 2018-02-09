@@ -32,6 +32,8 @@ export default function createResourceService (id, type = 'space') {
           return yield endpoint({
             method: 'GET',
             path: [ 'resources', apiResourceType ]
+          }, {
+            'x-contentful-enable-alpha-feature': 'subscriptions-api'
           });
         }
       }));
