@@ -14,7 +14,7 @@ import {canCreateSpaceInOrganization} from 'access_control/AccessChecker';
 import svgPlus from 'svg/plus';
 import {asReact} from 'ui/Framework/DOMRenderer';
 import moment from 'moment';
-import {get} from 'lodash';
+import {get, isString} from 'lodash';
 
 const subscriptionOverviewPropTypes = {
   onReady: PropTypes.func.isRequired,
@@ -127,6 +127,7 @@ function SpacePlans ({spacePlans, orgId}) {
           h('i', {className: 'fa fa-caret-up'})
         ),
         h('th', null, 'Type'),
+        h('th', null, 'Created by'),
         h('th', null, 'Created on'),
         h('th', null)
       )
@@ -135,10 +136,12 @@ function SpacePlans ({spacePlans, orgId}) {
       spacePlans.map((plan) => {
         const {name, price, sys, space} = plan;
         const enabledFeatures = getEnabledFeatures(plan);
+        let createdBy = '';
         let createdAt = '';
         let spaceLink = '';
         let usageLink = '';
         if (space) {
+          createdBy = getUserName(space.sys.createdBy || {});
           createdAt = moment.utc(space.sys.createdAt).format('DD. MMMM YYYY');
           spaceLink = h('a', {href: href(getSpaceNavState(space.sys.id)), style: actionLinkStyle}, 'Go to space');
           usageLink = h('a', {href: href(getSpaceUsageNavState(space.sys.id)), style: actionLinkStyle}, 'Usage');
@@ -155,6 +158,7 @@ function SpacePlans ({spacePlans, orgId}) {
             h('h3', null, name),
             h(Price, {value: price})
           ),
+          h('td', null, createdBy),
           h('td', null, createdAt),
           h('td', {style: {textAlign: 'right'}}, spaceLink, usageLink)
         );
@@ -240,6 +244,11 @@ function getInvoiceNavState (orgId) {
     params: {orgId},
     options: { reload: true }
   };
+}
+
+function getUserName ({firstName, lastName, email}) {
+  const name = (firstName || lastName) ? `${firstName} ${lastName}` : email;
+  return isString(name) ? name.trim() : '';
 }
 
 export default SubscriptionOverview;
