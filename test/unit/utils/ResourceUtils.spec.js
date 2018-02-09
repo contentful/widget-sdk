@@ -24,12 +24,14 @@ describe('ResourceUtils', function () {
       entries: {
         notReachedAnyLimit: createResource('entry', { maximum: 10, included: 5 }, 2),
         reachedIncludedLimit: createResource('entry', { maximum: 10, included: 5 }, 7),
-        reachedMaxLimit: createResource('entry', { maximum: 10, included: 5 }, 10)
+        reachedMaxLimit: createResource('entry', { maximum: 10, included: 5 }, 10),
+        overMaxLimit: createResource('entry', { maximum: 10, included: 5 }, 15)
       },
       apiKeys: {
         notReachedAnyLimit: createResource('api_key', { maximum: 100, included: 50 }, 20),
         reachedIncludedLimit: createResource('api_key', { maximum: 100, included: 50 }, 70),
-        reachedMaxLimit: createResource('api_key', { maximum: 100, included: 50 }, 100)
+        reachedMaxLimit: createResource('api_key', { maximum: 100, included: 50 }, 100),
+        overMaxLimit: createResource('api_key', { maximum: 100, included: 50 }, 150)
       }
     };
 
@@ -75,12 +77,24 @@ describe('ResourceUtils', function () {
     it('should return false if the maximum limit is reached', function () {
       expect(this.ResourceUtils.canCreate(this.resources.entries.reachedMaxLimit)).toBe(false);
     });
+
+    it('should return false if you go over the max limit', function () {
+      expect(this.ResourceUtils.canCreate(this.resources.entries.overMaxLimit)).toBe(false);
+    });
   });
 
   describe('#generateMessage', function () {
     it('should always return an object with warning and error keys when given a resource', function () {
       Object.keys(this.resources.entries).forEach(i => {
         const resource = this.resources.entries[i];
+        const message = this.ResourceUtils.generateMessage(resource);
+
+        expect(message.warning).toBeDefined();
+        expect(message.error).toBeDefined();
+      });
+
+      Object.keys(this.resources.apiKeys).forEach(i => {
+        const resource = this.resources.apiKeys[i];
         const message = this.ResourceUtils.generateMessage(resource);
 
         expect(message.warning).toBeDefined();
@@ -104,6 +118,13 @@ describe('ResourceUtils', function () {
 
     it('should return an error if you reach your maximum limit', function () {
       const message = this.ResourceUtils.generateMessage(this.resources.entries.reachedMaxLimit);
+
+      expect(message.warning).toBe('');
+      expect(message.error).toBe('You have exceeded your Entries usage.');
+    });
+
+    it('should return an error if you, somehow, go over your maximum limit', function () {
+      const message = this.ResourceUtils.generateMessage(this.resources.entries.overMaxLimit);
 
       expect(message.warning).toBe('');
       expect(message.error).toBe('You have exceeded your Entries usage.');
