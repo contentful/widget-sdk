@@ -18,6 +18,18 @@ angular.module('contentful')
   var enforcements = require('access_control/Enforcements');
   var $state = require('$state');
   var accessChecker = require('access_control/AccessChecker');
+  var ResourceUtils = require('utils/ResourceUtils');
+  var $q = require('$q');
+
+  var ResourceService = require('services/ResourceService').default;
+
+  var organization = spaceContext.organizationContext.organization;
+  var resources = ResourceService(spaceContext.getId());
+  var resource;
+
+  ResourceUtils.useLegacy(organization).then(function (legacy) {
+    $scope.showSidebar = !legacy;
+  });
 
   var STATES = {
     NO_MULTIPLE_LOCALES: 1,
@@ -36,13 +48,15 @@ angular.module('contentful')
   $scope.getPlanLocalesLimit = getPlanLocalesLimit;
   $scope.getSubscriptionPlanName = _.partial(getSubscriptionPlanData, 'name');
   $scope.newLocale = newLocale;
+  $scope.showSidebar = false;
 
   TheLocaleStore.refresh()
   .then(function (locales) {
     $scope.locales = locales;
     $scope.localeNamesByCode = groupLocaleNamesByCode(locales);
-    $scope.context.ready = true;
-    getLocalesUsageState().then(function (value) {
+    // console.log('LocaleStore refreshed');
+    return getLocalesUsageState().then(function (value) {
+      // console.log('LocaleUsageState called');
       $scope.localesUsageState = value;
     });
   })
@@ -57,20 +71,46 @@ angular.module('contentful')
   function getLocalesUsageState () {
     var len = $scope.locales.length;
 
-    return hasMultipleLocales().then(function (value) {
-      if (!value) {
+    // console.log('getLocalesUsageState 1');
+
+    return $q.resolve(function () {
+      // console.log('getLocalesUsageState 2');
+      if (ResourceUtils.isLegacyOrganization(organization)) {
+        return hasMultipleLocales();
+      } else {
+        // For newer orgs, you can create multiple locales
+        // by default. The amount you can create is denoted
+        // by the limits
+        return true;
+      }
+    }).then(function (canCreateMultiple) {
+      if (!canCreateMultiple) {
         return STATES.NO_MULTIPLE_LOCALES;
       }
-      var belowLimit = getPlanLocalesUsage() < getPlanLocalesLimit();
-      if (belowLimit && len <= 1) {
+
+      return $q.all({
+        usage: getPlanLocalesUsage(),
+        limits: getPlanLocalesLimit()
+      });
+    }).then(function (usageLimits) {
+      $scope.usage = usageLimits.usage;
+      $scope.limit = usageLimits.limits.maximum;
+
+      var reachedLimit = $scope.usage >= $scope.limit;
+
+      if (!reachedLimit && len <= 1) {
         return STATES.ONE_LOCALE_USED;
-      } else if (belowLimit && len > 1) {
+      } else if (!reachedLimit && len > 1) {
         return STATES.MORE_THAN_ONE_LOCALE_USED;
-      } else if (!belowLimit) {
+      } else if (reachedLimit) {
         return STATES.LOCALES_LIMIT_REACHED;
       } else {
         return STATES.UNKNOWN;
       }
+    }).then(function (state) {
+      $scope.context.ready = true;
+
+      return state;
     });
   }
 
@@ -86,12 +126,26 @@ angular.module('contentful')
     }
   }
 
+  function getPlanResource () {
+    if (resource) {
+      return $q.resolve(resource);
+    }
+
+    resource = resources.get('locale');
+
+    return resource;
+  }
+
   function getPlanLocalesUsage () {
-    return spaceContext.getData(['organization', 'usage', 'permanent', 'locale']);
+    return getPlanResource().then(function (resource) {
+      return resource.usage;
+    });
   }
 
   function getPlanLocalesLimit () {
-    return getSubscriptionPlanData(['limits', 'permanent', 'locale']);
+    return getPlanResource().then(function (resource) {
+      return ResourceUtils.getResourceLimits(resource);
+    });
   }
 
   function hasMultipleLocales () {

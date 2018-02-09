@@ -1,6 +1,6 @@
 'use strict';
 
-describe('The Locale list directive', function () {
+fdescribe('The Locale list directive', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.removeDirectives('relative');
@@ -54,23 +54,36 @@ describe('The Locale list directive', function () {
       }
     ];
 
+    this.organization = {
+      usage: {
+        permanent: {}
+      },
+      subscriptionPlan: {
+        limits: {
+          features: {},
+          permanent: {}
+        }
+      }
+    };
+
     const spaceContext = this.$inject('spaceContext');
+
+    spaceContext.organizationContext = {
+      organization: this.organization
+    };
 
     spaceContext.space = this.space = {
       data: {
-        sys: {createdBy: {sys: {id: ''}}},
-        organization: {
-          usage: {permanent: {}},
-          subscriptionPlan: {
-            limits: {
-              features: {},
-              permanent: {}
-            }
-          }
-        }
+        sys: {createdBy: {sys: {id: '1234'}}},
+        organization: this.organization
       },
+      getId: sinon.stub().returns('1234'),
       getOrganizationId: sinon.stub().returns('id')
     };
+
+    this.$rootScope = this.$inject('$rootScope');
+    this.$scope = this.$rootScope.$new();
+    this.$scope.context = {};
 
     this.localeStore = this.$inject('TheLocaleStore');
     this.localeStore.refresh = sinon.stub().resolves(locales);
@@ -78,7 +91,9 @@ describe('The Locale list directive', function () {
     this.accessChecker.hasFeature = sinon.stub().resolves();
 
     this.compileElement = function () {
-      this.container = this.$compile('<div cf-locale-list />', {context: {}});
+      this.container = this.$compile('<div cf-locale-list />', {
+        $scope: this.$scope
+      });
     };
   });
 
@@ -91,11 +106,36 @@ describe('The Locale list directive', function () {
     expect(this.container.find('button.add-entity')).toBeNgHidden();
   });
 
-  it('the tab header add button is shown', function () {
-    this.space.data.organization.usage.permanent.locale = 1;
-    this.space.data.organization.subscriptionPlan.limits.permanent.locale = 10;
+  fit('the tab header add button is shown', function () {
+    this.organization.usage.permanent.locale = 1;
+    this.organization.subscriptionPlan.limits.permanent.locale = 10;
     this.accessChecker.hasFeature.resolves(true);
     this.compileElement();
+    this.$flush();
+    this.$apply();
+    this.$rootScope.$digest();
+    this.$scope.$apply();
+    debugger;
+
+    // yield new Promise((resolve, reject) => {
+    //   const start = Date.now();
+
+    //   const test = () => {
+    //     if (this.$scope.context.ready) {
+    //       return resolve();
+    //     }
+
+    //     if (Date.now() - start >= 20000) {
+    //       return reject(new Error('Controller was not ready in time'));
+    //     }
+
+    //     setTimeout(test, 500);
+    //   };
+
+    //   test();
+    // });
+
+
     expect(this.container.find('button.add-entity')).not.toBeNgHidden();
   });
 
