@@ -29,14 +29,17 @@ angular.module('contentful')
    * @ngdoc method
    * @name TheAccountView#getSubscriptionState
    * @description
-   * Returns the state path for the account/subscription view if the user has
-   * permission to access it otherwise returns undefined.
+   * Returns the state object for the account/subscription view if the user has
+   * permission to access it otherwise returns null.
    */
   function getSubscriptionState () {
     var org = getGoToOrganizationsOrganization();
-    // TODO use a navigator reference
-    if (org) {
-      return 'account.organizations.subscription({ orgId: \'' + org.sys.id + '\' })';
+    if (!org) {
+      return null;
+    } else if (org.pricingVersion === 'pricing_version_2') {
+      return getOrganizationRef('subscription_new');
+    } else {
+      return getOrganizationRef('subscription');
     }
   }
 

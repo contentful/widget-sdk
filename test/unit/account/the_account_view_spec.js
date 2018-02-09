@@ -131,15 +131,30 @@ describe('TheAccountView service', function () {
       this.setOrganizationForCurrentSpace({subscriptionState: 'active', sys: {id: 'ORG_0'}});
     });
 
-    it('returns path if user has permission', function () {
+    it('returns state object if user has permission', function () {
       this.OrganizationRoles.isOwnerOrAdmin.returns(true);
-      const path = 'account.organizations.subscription({ orgId: \'ORG_0\' })';
-      expect(this.view.getSubscriptionState()).toBe(path);
+      const sref = {
+        path: ['account', 'organizations', 'subscription'],
+        params: { orgId: 'ORG_0' },
+        options: { reload: true }
+      };
+      expect(this.view.getSubscriptionState()).toEqual(sref);
     });
 
-    it('returns undefined if user does not have permission to access path', function () {
+    it('returns null if user does not have permission to access path', function () {
       this.OrganizationRoles.isOwnerOrAdmin.returns(false);
-      expect(this.view.getSubscriptionState()).toBe(undefined);
+      expect(this.view.getSubscriptionState()).toBe(null);
+    });
+
+    it('has path to new subscription page if org has v2 pricing', function () {
+      this.setOrganizationForCurrentSpace({ sys: { id: 'ORG_ID' }, pricingVersion: 'pricing_version_2' });
+      this.OrganizationRoles.isOwnerOrAdmin.returns(true);
+      const sref = {
+        path: ['account', 'organizations', 'subscription_new'],
+        params: { orgId: 'ORG_ID' },
+        options: { reload: true }
+      };
+      expect(this.view.getSubscriptionState()).toEqual(sref);
     });
   });
 
