@@ -29,12 +29,12 @@ angular.module('contentful')
    * @ngdoc method
    * @name TheAccountView#getSubscriptionState
    * @description
-   * Returns the state object for the account/subscription view if the user has
-   * permission to access it otherwise returns null.
+   * Returns the state object for the current space's org account/subscription
+   * view if the user has permission to access it otherwise returns null.
    */
   function getSubscriptionState () {
-    var org = getGoToOrganizationsOrganization();
-    if (!org) {
+    var org = spaceContext.getData('organization');
+    if (!org || !OrganizationRoles.isOwnerOrAdmin(org)) {
       return null;
     } else if (org.pricingVersion === 'pricing_version_2') {
       return getOrganizationRef('subscription_new');

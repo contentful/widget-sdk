@@ -130,7 +130,7 @@ describe('TheAccountView service', function () {
     });
   }
 
-  describe('getSubScriptionState()', function () {
+  describe('getSubscriptionState()', function () {
     beforeEach(function () {
       this.setOrganizationForCurrentSpace({subscriptionState: 'active', sys: {id: 'ORG_0'}});
     });
@@ -147,6 +147,12 @@ describe('TheAccountView service', function () {
 
     it('returns null if user does not have permission to access path', function () {
       this.OrganizationRoles.isOwnerOrAdmin.returns(false);
+      expect(this.view.getSubscriptionState()).toBe(null);
+    });
+
+    it('returns null if no org in space context', function () {
+      this.setOrganizationForCurrentSpace(null);
+      this.OrganizationRoles.isOwnerOrAdmin.returns(true);
       expect(this.view.getSubscriptionState()).toBe(null);
     });
 
