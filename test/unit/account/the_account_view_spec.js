@@ -100,16 +100,20 @@ describe('TheAccountView service', function () {
     });
   });
 
-  describeGoToMethod('goToSubscription', 'subscription');
+  const pricingV1Org = { sys: { id: 'ORG_ID' } };
+  const pricingV2Org = { sys: { id: 'ORG_ID' }, pricingVersion: 'pricing_version_2' };
 
-  describeGoToMethod('goToUsers', 'users.gatekeeper');
+  describeGoToMethod('goToSubscription', 'subscription', pricingV1Org, 'pricing v1 org');
+  describeGoToMethod('goToSubscription', 'subscription_new', pricingV2Org, 'pricing v2 org');
 
-  function describeGoToMethod (name, subpage) {
-    describe(`.${name}()`, function () {
+  describeGoToMethod('goToUsers', 'users.gatekeeper', pricingV1Org);
+
+  function describeGoToMethod (name, subpage, org, comment = '') {
+    describe(`.${name}()${comment && ', ' + comment}`, function () {
       const RETURN_VALUE = {};
 
       beforeEach(function () {
-        this.setOrganizationForCurrentSpace({ sys: { id: 'ORG_ID' } });
+        this.setOrganizationForCurrentSpace(org);
         this.OrganizationRoles.isOwnerOrAdmin.returns(true);
         this.go.returns(RETURN_VALUE);
         this.returnValue = this.view[name]();
@@ -117,7 +121,7 @@ describe('TheAccountView service', function () {
 
       it(`calls $state.go('${subpage}')`, function () {
         sinon.assert.calledOnce(this.go);
-        sinon.assert.calledWithExactly(this.go, `account.organizations.${subpage}`, { orgId: 'ORG_ID' }, { reload: true });
+        sinon.assert.calledWithExactly(this.go, `account.organizations.${subpage}`, { orgId: org.sys.id }, { reload: true });
       });
 
       it('returns .goToOrganizations() returned promise', function () {

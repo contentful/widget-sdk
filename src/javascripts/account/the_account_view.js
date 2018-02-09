@@ -51,7 +51,14 @@ angular.module('contentful')
    * organization's subscription page.
    */
   function goToSubscription () {
-    return goToOrganizations('subscription');
+    var org = getGoToOrganizationsOrganization();
+    if (!org) {
+      return $q.reject();
+    } else if (org.pricingVersion === 'pricing_version_2') {
+      return goToOrganizations('subscription_new');
+    } else {
+      return goToOrganizations('subscription');
+    }
   }
 
   /**
