@@ -61,8 +61,6 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
     jumpToRoleMembers(ADMIN_ROLE_ID);
   }
 
-
-
   function duplicateRole (role) {
     $state.go('spaces.detail.settings.roles.new', {baseRoleId: role.sys.id});
   }
