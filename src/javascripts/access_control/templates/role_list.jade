@@ -43,6 +43,10 @@ header.workbench-header
       h2.entity-sidebar__heading
         | Create new role
       p
+        | Your {{resourceContext}} is using {{usage}} out of {{limit}} available custom roles.
+      p(ng-if="reachedLimit")
+        | You have reached the limit of custom roles for this {{resourceContext}}.
+      p(ng-if="!reachedLimit")
         | Select one of the predefined role templates or create one from the scratch.
-      button.btn-primary-action(ui-sref="spaces.detail.settings.roles.new")
+      button.btn-primary-action(ng-disabled="reachedLimit" ui-sref="spaces.detail.settings.roles.new")
         | Create new role
