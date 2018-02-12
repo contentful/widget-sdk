@@ -65,6 +65,9 @@ describe('Extension SDK', function () {
         access: {
           disabled: false
         },
+        doc: {
+          valueProperty: K.createMockProperty(null)
+        },
         errors$: K.createMockProperty(null)
       },
       fieldController: {

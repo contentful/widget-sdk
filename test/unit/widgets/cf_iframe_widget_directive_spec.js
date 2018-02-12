@@ -1,5 +1,6 @@
 import * as K from 'helpers/mocks/kefir';
 
+// TODO:xxx Fix tests!
 describe('cfIframeWidget directive', function () {
   let widgetAPI;
 
@@ -38,6 +39,9 @@ describe('cfIframeWidget directive', function () {
       fieldLocale: {
         access: {
           disabled: true
+        },
+        doc: {
+          valueProperty: K.createMockProperty(null)
         },
         errors$: K.createMockProperty(),
         setActive: sinon.spy()
@@ -100,8 +104,6 @@ describe('cfIframeWidget directive', function () {
     it('sends field value change for each locale', function () {
       const fieldFactory = this.$inject('fieldFactory');
       fieldFactory.getLocaleCodes = sinon.stub().returns(['LOC A', 'LOC B', 'LOC C']);
-
-      widgetAPI.sendFieldValueChange = sinon.stub();
 
       this.otDoc.setValueAt(['fields', 'FIELD'], {
         'LOC A': 'VAL A',
