@@ -101,8 +101,6 @@ describe('cfIframeWidget directive', function () {
       const fieldFactory = this.$inject('fieldFactory');
       fieldFactory.getLocaleCodes = sinon.stub().returns(['LOC A', 'LOC B', 'LOC C']);
 
-      widgetAPI.sendFieldValueChange = sinon.stub();
-
       this.otDoc.setValueAt(['fields', 'FIELD'], {
         'LOC A': 'VAL A',
         'LOC B': 'VAL B'
