@@ -484,11 +484,20 @@ function makeTEAConfig (params, url = '') {
 }
 
 function makeTEAUrl (params, url = '') {
+  // this parameters are TEA specific. You can read more about it in the wiki:
+  // https://contentful.atlassian.net/wiki/spaces/PROD/pages/204079331/The+example+app+-+Documentation+of+functionality
   const queryParams = {
+    // next params allow to use user's space as a source for the app itself
+    // so his changes will be refleced on the app's content
     space_id: params.spaceId,
     delivery_token: params.cdaToken,
     preview_token: params.cpaToken,
-    editorial_features: 'enabled'
+    // user will be able to go back to the webapp from TEA using links
+    // without this flag, there will be no links in UI of TEA
+    editorial_features: 'enabled',
+    // we want to have faster feedback for the user ater his changes
+    // CPA reacts to changes in ~5 seconds, CDA in more than 10
+    api: 'cpa'
   };
   const queryString = qs.stringify(queryParams);
   return `${params.baseUrl}${url}${queryString ? '?' : ''}${queryString}`;
