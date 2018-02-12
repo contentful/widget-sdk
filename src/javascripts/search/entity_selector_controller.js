@@ -56,9 +56,7 @@ angular.module('contentful')
     }
   });
 
-  var load = createQueue(fetch, function (resultPromise) {
-    resultPromise.then(handleResponse);
-  });
+  var load = createQueue(fetch);
 
   // Returns a promise for the content type of the given entry.
   // We cache this by the entry id
@@ -104,7 +102,7 @@ angular.module('contentful')
       initialSearchState.contentTypeId = $scope.singleContentType.getId();
     }
     var isSearching$ = K.fromScopeValue($scope, function ($scope) {
-      return $scope.isLoading;
+      return $scope.isLoading && !$scope.isLoadingMore;
     });
     var accessibleContentType = getAccessibleCTs(spaceContext.publishedCTs, initialSearchState.contentTypeId);
     var contentTypes = getValidContentTypes($scope.config.linkedContentTypeIds, accessibleContentType);
@@ -241,17 +239,16 @@ angular.module('contentful')
 
   function handleResponse (res) {
     $scope.paginator.setTotal(res.total);
-    $scope.items = [];
     $scope.items.push.apply($scope.items, getItemsToAdd(res));
-
     $timeout(function () {
       $scope.isLoading = false;
+      $scope.isLoadingMore = false;
     });
   }
 
   function getItemsToAdd (res) {
-    // @TODO - does backend ever return duplicate items for any query?
-    // If no, we should remove this
+    // The api could theoretically return some of the entities returned already if
+    // new entities were created in the meantime.
     return _.transform(res.items, function (acc, item) {
       var id = _.get(item, 'sys.id');
       if (id && !itemsById[id]) {
@@ -262,10 +259,14 @@ angular.module('contentful')
   }
 
   function resetAndLoad () {
-    itemsById = {};
-    $scope.paginator.setTotal(0);
-    $scope.paginator.setPage(0);
-    load();
+    $scope.isLoading = true;
+    load().then(function (response) {
+      $scope.items = [];
+      itemsById = {};
+      $scope.paginator.setTotal(0);
+      $scope.paginator.setPage(0);
+      handleResponse(response);
+    });
   }
 
   function loadMore () {
@@ -274,8 +275,9 @@ angular.module('contentful')
     if (!$scope.config.noPagination &&
         !$scope.isLoading &&
         !$scope.paginator.isAtLast()) {
+      $scope.isLoadingMore = true;
       $scope.paginator.next();
-      load();
+      load().then(handleResponse);
     }
   }
 
