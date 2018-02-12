@@ -1,5 +1,5 @@
-import {omit} from 'lodash';
-import {getAllSpaces} from 'access_control/OrganizationMembershipRepository';
+import {get} from 'lodash';
+import {getAllSpaces, getUsersByIds} from 'access_control/OrganizationMembershipRepository';
 
 const alphaHeader = {
   'x-contentful-enable-alpha-feature': 'subscriptions-api'
@@ -34,23 +34,47 @@ export function getBasePlan (endpoint) {
 
 /**
  * Gets all subscription plans (base and space) of the org with the associated
- * spaces for space plans.
+ * spaces for space plans, and user data for each space's `createdBy` field.
  * @param {object} endpoint an organization endpoint
- * @returns {Promise<object[]>} array of subscription plans
+ * @returns {Promise<object[]>} array of subscription plans w. spaces & users
  */
 export function getPlansWithSpaces (endpoint, params = {}) {
   // Note: it loads paginated data from the `plans` endpoint, but all spaces
   // are loaded at once to map plans to spaces.
+
   return Promise.all([
-    getAllSpaces(endpoint),
-    getSubscriptionPlans(endpoint, params)
-  ]).then(([spaces, plans]) => ({
-    ...omit(plans, 'items'),
-    items: plans.items.map((plan) => ({
-      ...plan,
-      space: plan.gatekeeperKey && spaces.find(({sys}) => sys.id === plan.gatekeeperKey)
+    getSubscriptionPlans(endpoint, params),
+    getAllSpaces(endpoint)
+  ])
+    // Map spaces to space plans
+    .then(([plans, spaces]) => ({
+      plans,
+      items: plans.items.map((plan) => ({
+        ...plan,
+        space: plan.gatekeeperKey && spaces.find(({sys}) => sys.id === plan.gatekeeperKey)
+      }))
     }))
-  }));
+
+    // Load `createdBy` users for all spaces
+    .then((plans) => {
+      const userIds = plans.items.map(({space}) => get(space, 'sys.createdBy.sys.id'));
+      return getUsersByIds(endpoint, userIds).then((users) => [plans, users]);
+    })
+
+    // Map users to spaces
+    .then(([plans, users]) => ({
+      ...plans,
+      items: plans.items.map((plan) => ({
+        ...plan,
+        space: plan.space && {
+          ...plan.space,
+          sys: {
+            ...plan.space.sys,
+            createdBy: users.find(({sys}) => sys.id === plan.space.sys.createdBy.sys.id)
+          }
+        }
+      }))
+    }));
 }
 
 /**
