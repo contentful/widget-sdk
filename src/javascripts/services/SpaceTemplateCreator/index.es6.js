@@ -85,7 +85,11 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
       yield localesPromise;
 
       // we need to create assets before proceeding
-      const assets = useSelectedLocales(template.assets, contentLocales, selectedLocaleCode);
+      // we create assets only for default locale. It is a conscious decision, otherwise
+      // it will complicate logic (and possibly time) for processing images, since we need
+      // to increment version of asset, therefore we can't parallelize it.
+      // all example spaces contain assets only for default locale
+      const assets = useSelectedLocales(template.assets, [selectedLocaleCode], selectedLocaleCode);
       const createdAssets = yield Promise.all(assets.map(createAsset));
 
       // we can process and publish assets in the background,
