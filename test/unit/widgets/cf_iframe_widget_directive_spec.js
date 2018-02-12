@@ -1,6 +1,5 @@
 import * as K from 'helpers/mocks/kefir';
 
-// TODO:xxx Fix tests!
 describe('cfIframeWidget directive', function () {
   let widgetAPI;
 
@@ -39,9 +38,6 @@ describe('cfIframeWidget directive', function () {
       fieldLocale: {
         access: {
           disabled: true
-        },
-        doc: {
-          valueProperty: K.createMockProperty(null)
         },
         errors$: K.createMockProperty(),
         setActive: sinon.spy()

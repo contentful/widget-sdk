@@ -65,9 +65,6 @@ describe('Extension SDK', function () {
         access: {
           disabled: false
         },
-        doc: {
-          valueProperty: K.createMockProperty(null)
-        },
         errors$: K.createMockProperty(null)
       },
       fieldController: {
@@ -359,6 +356,15 @@ describe('Extension SDK', function () {
         this.setDocValueAt(['fields', 'f2-internal', 'de'], 'VAL de');
         yield api.nextTick();
         expect(api.entry.fields.f2.getValue('de')).toEqual('VAL de');
+      });
+
+      it('returns updated value when entire doc is replaced', function* (api) {
+        this.setDocValueAt([], {
+          sys: {id: 'f2-internal', type: 'Entry'},
+          fields: {'f2-internal': {'en-internal': 'VAL'}}
+        });
+        yield api.nextTick();
+        expect(api.entry.fields.f2.getValue()).toEqual('VAL');
       });
     });
 

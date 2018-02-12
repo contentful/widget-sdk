@@ -42,6 +42,7 @@ angular.module('contentful')
       var WidgetAPI = require('widgets/API');
       var Widgets = require('widgets');
       var K = require('utils/kefir');
+      var PathUtils = require('utils/Path');
 
       var doc = scope.docImpl || scope.otDoc;
       var descriptor = Widgets.get(scope.widget.widgetId);
@@ -128,16 +129,12 @@ angular.module('contentful')
       });
 
       var fieldChanges = doc.changes.filter(function (path) {
-        return path[0] === 'fields';
+        return PathUtils.isAffecting(path, ['fields']);
       });
 
-      // TODO: Is this still necessary with the observer below?
       K.onValueScope(scope, fieldChanges, function (path) {
         updateWidgetValue(path[1], path[2]);
       });
-
-      // Updates the field also on api changes e.g. `api.space.updateEntry()`
-      K.onValueScope(scope, scope.fieldLocale.doc.valueProperty, updateWidgetValue);
 
       // Send a message when the disabled status of the field changes
       scope.$watch(isEditingDisabled, function (isDisabled) {
@@ -181,7 +178,6 @@ angular.module('contentful')
         // We might receive changes from other uses on fields that we
         // do not yet know about. We silently ignore them.
         if (!field) {
-          console.log('IGNORED')
           return;
         }
 
