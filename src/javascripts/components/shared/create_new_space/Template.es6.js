@@ -100,7 +100,9 @@ function renderSpaceNameInput () {
 }
 
 function renderLanguageSelect () {
-  return h('div.cfnext-form__field', [
+  return h('div.cfnext-form__field', {
+    ngIf: 'createSpace.newSpace.useTemplate === false'
+  }, [
     h('label', [
       h('strong', ['Language'])
     ]),
