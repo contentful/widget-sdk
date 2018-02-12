@@ -101,7 +101,7 @@ function renderSpaceNameInput () {
 
 function renderLanguageSelect () {
   return h('div.cfnext-form__field', {
-    ngIf: 'createSpace.newSpace.useTemplate === false'
+    ngStyle: '{ visibility: createSpace.newSpace.useTemplate === false ? "visible" : "hidden" }'
   }, [
     h('label', [
       h('strong', ['Language'])
