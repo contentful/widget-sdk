@@ -94,8 +94,8 @@ describe('ResourceService', function () {
     this.resourceStore = mockedEndpoint.stores.resources;
 
     // Reached no limit
-    set(this.resourceStore, 'locales', this.createResource(
-      'locales',
+    set(this.resourceStore, 'locale', this.createResource(
+      'locale',
       {
         maximum: 10,
         included: 5
@@ -103,8 +103,8 @@ describe('ResourceService', function () {
     ));
 
     // Reached included
-    set(this.resourceStore, 'content_types', this.createResource(
-      'content_types',
+    set(this.resourceStore, 'content_type', this.createResource(
+      'content_type',
       {
         maximum: 20,
         included: 10
@@ -112,8 +112,8 @@ describe('ResourceService', function () {
     ));
 
     // Reached max
-    set(this.resourceStore, 'entries', this.createResource(
-      'entries',
+    set(this.resourceStore, 'entry', this.createResource(
+      'entry',
       {
         maximum: 2500,
         included: 2000
@@ -141,6 +141,16 @@ describe('ResourceService', function () {
     system.set('services/TokenStore', {
       getSpace: sinon.stub().resolves(this.mocks.space),
       getOrganization: sinon.stub().resolves(this.mocks.organization)
+    });
+
+    this.flags = {
+      'feature-bv-2018-01-resources-api': true
+    };
+
+    system.set('utils/LaunchDarkly', {
+      getCurrentVariation: (flagName) => {
+        return Promise.resolve(this.flags[flagName]);
+      }
     });
 
     this.createResourceService = (yield system.import('services/ResourceService')).default;
@@ -186,28 +196,21 @@ describe('ResourceService', function () {
       }
     });
 
-    it('should return a failed Promise if not supplied with a valid resourceType', function* () {
-      try {
-        yield this.ResourceService.get('foobar');
-      } catch (e) {
-        expect(e).toBeDefined();
-        expect(e instanceof Error).toBe(true);
-      }
-    });
-
     it('should return a successful Promise if supplied with valid arguments', function* () {
       yield this.ResourceService.get('entry');
     });
 
-    it('should return data from the endpoint if the pricing version is "pricing_version_2"', function* () {
+    it('should return data from the endpoint if the pricing version is "pricing_version_2" and the feature flag is true', function* () {
       this.mocks.organization.pricingVersion = 'pricing_version_2';
+      this.flags['feature-bv-2018-01-resources-api'] = true;
 
       yield this.ResourceService.get('entry');
-      expect(this.spies.spaceEndpoint.called).toBe(true);
+      expect(this.spies.spaceEndpoint.calledOnce).toBe(true);
     });
 
-    it('should return data from the token, via TokenStore, if the pricing version is "pricing_version_1"', function* () {
+    it('should return data from the token, via TokenStore, if the pricing version is "pricing_version_1" and the feature flag is false', function* () {
       this.mocks.organization.pricingVersion = 'pricing_version_1';
+      this.flags['feature-bv-2018-01-resources-api'] = false;
 
       yield this.ResourceService.get('entry');
 
@@ -215,7 +218,7 @@ describe('ResourceService', function () {
       expect(this.limits.called).toBeTruthy();
     });
 
-    it('should return an item that looks like a Resource regardless of the feature flag', function* () {
+    it('should return an item that looks like a Resource regardless', function* () {
       let locales;
 
       this.mocks.organization.pricingVersion = 'pricing_version_2';
@@ -226,6 +229,7 @@ describe('ResourceService', function () {
       expect(locales.limits.maximum).toBeDefined();
 
       this.mocks.organization.pricingVersion = 'pricing_version_1';
+      this.flags['feature-bv-2018-01-resources-api'] = false;
 
       // Setup the "token" limit and usage
       this.usages['locale'] = 2;
@@ -243,7 +247,7 @@ describe('ResourceService', function () {
       expect(this.isPromiseLike(this.ResourceService.getAll())).toBe(true);
     });
 
-    it('should always return data via the endpoint, regardless of the pricing version', function* () {
+    it('should always return data via the endpoint, regardless of the pricing version & feature flag', function* () {
       this.mocks.organization.pricingVersion = 'pricing_version_2';
 
       yield this.ResourceService.getAll();
@@ -326,16 +330,16 @@ describe('ResourceService', function () {
       const messages = yield this.ResourceService.messages();
 
       // Entries
-      expect(messages.entries.warning).toBeDefined();
-      expect(messages.entries.error).toBeDefined();
+      expect(messages.entry.warning).toBeDefined();
+      expect(messages.entry.error).toBeDefined();
 
       // Locales
-      expect(messages.locales.warning).toBe('');
-      expect(messages.locales.error).toBe('');
+      expect(messages.locale.warning).toBe('');
+      expect(messages.locale.error).toBe('');
 
       // Content Types
-      expect(messages.content_types.warning).toBeDefined();
-      expect(messages.content_types.error).toBe('');
+      expect(messages.contentType.warning).toBeDefined();
+      expect(messages.contentType.error).toBe('');
     });
   });
 });
