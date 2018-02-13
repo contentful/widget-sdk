@@ -12,6 +12,54 @@ describe('Locale List Controller', function () {
     this.localeStore = this.$inject('TheLocaleStore');
     this.localeStore.refresh = sinon.stub().resolves([{}]);
 
+    this.organization = {
+      usage: {
+        permanent: {
+          locale: 1
+        }
+      },
+      subscriptionPlan: {
+        limits: {
+          features: {},
+          permanent: {
+            locale: 1
+          }
+        }
+      },
+      sys: {
+        id: 'org_1234'
+      }
+    };
+
+    this.space = {
+      sys: {
+        id: 'space_1234',
+        createdBy: {
+          sys: {
+            id: '1234'
+          }
+        }
+      },
+      organization: this.organization
+    };
+
+    this.mockService('services/TokenStore', {
+      getSpace: sinon.stub().resolves(this.space),
+      getOrganization: sinon.stub().resolves(this.organization)
+    });
+
+    const spaceContext = this.$inject('spaceContext');
+
+    spaceContext.organizationContext = {
+      organization: this.organization
+    };
+
+    spaceContext.space = {
+      data: this.space,
+      getId: sinon.stub().returns(this.space.sys.id),
+      getOrganizationId: sinon.stub().returns(this.organization.sys.id)
+    };
+
     this.createController = () => {
       this.$inject('$controller')('LocaleListController', {$scope: this.scope});
       this.$apply();

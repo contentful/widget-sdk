@@ -54,9 +54,7 @@ angular.module('contentful')
   .then(function (locales) {
     $scope.locales = locales;
     $scope.localeNamesByCode = groupLocaleNamesByCode(locales);
-    // console.log('LocaleStore refreshed');
     return getLocalesUsageState().then(function (value) {
-      // console.log('LocaleUsageState called');
       $scope.localesUsageState = value;
     });
   })
@@ -71,10 +69,7 @@ angular.module('contentful')
   function getLocalesUsageState () {
     var len = $scope.locales.length;
 
-    // console.log('getLocalesUsageState 1');
-
-    return $q.resolve(function () {
-      // console.log('getLocalesUsageState 2');
+    return $q.resolve().then(function () {
       if (ResourceUtils.isLegacyOrganization(organization)) {
         return hasMultipleLocales();
       } else {
@@ -84,17 +79,18 @@ angular.module('contentful')
         return true;
       }
     }).then(function (canCreateMultiple) {
-      if (!canCreateMultiple) {
-        return STATES.NO_MULTIPLE_LOCALES;
-      }
-
       return $q.all({
+        canCreateMultiple: canCreateMultiple,
         usage: getPlanLocalesUsage(),
         limits: getPlanLocalesLimit()
       });
-    }).then(function (usageLimits) {
-      $scope.usage = usageLimits.usage;
-      $scope.limit = usageLimits.limits.maximum;
+    }).then(function (result) {
+      if (!result.canCreateMultiple) {
+        return STATES.NO_MULTIPLE_LOCALES;
+      }
+
+      $scope.usage = result.usage;
+      $scope.limit = result.limits.maximum;
 
       var reachedLimit = $scope.usage >= $scope.limit;
 
@@ -128,7 +124,7 @@ angular.module('contentful')
 
   function getPlanResource () {
     if (resource) {
-      return $q.resolve(resource);
+      return resource;
     }
 
     resource = resources.get('locale');
