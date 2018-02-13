@@ -25,6 +25,59 @@ mixin content-preview-sidebar
           |  They will be replaced with the corresponding values when the preview is opened in the entry editor.
         p
           code.content-preview-sidebar__token
+            | {entry}
+          span
+            |  : an object containing all the properties and their values for the entry
+
+        p
+          | You can get the value of any property, for example:
+
+        p
+          code.content-preview-sidebar__token
+            | {entry.sys.id}
+          span
+            |  : <code>id</code> of the current entry
+
+        p
+          code.content-preview-sidebar__token
+            | {entry.fields.slug}
+          span
+            |  : the default locale value of the <code>slug</code> field for the current entry
+
+        h2.entity-sidebar__heading
+          | Linked entries
+
+        p
+          | Additionally, you can query
+          =" "
+          a(href="https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/search-parameters/links-to-entry", target="_blank", rel="noopener noreferrer")
+            | incoming links to entry
+          |  by using the <em>{entry.linkedBy}</em> property (the first entry in response will be used):
+
+        p
+          code.content-preview-sidebar__token
+            | {entry.linkedBy.sys.id}
+          span
+            |  : <code>id</code> of the entry, which references current entry (which is open in the editor)
+
+        p
+          |  It also supports walking up in the incoming links graph as shown below:
+
+        p
+          code.content-preview-sidebar__token
+            | {entry.linkedBy.linkedBy.fields.slug}
+          span
+            |  : value of the <code>slug</code> field for the entry, which references entry from the previous example
+
+        h2.entity-sidebar__heading
+          | Legacy tokens
+
+        p
+          | These tokens are deprecated, since their functionality is covered by <em>{entry.sys.id}</em>
+          |  and <em>{entry.fields.slug}</em>.
+
+        p
+          code.content-preview-sidebar__token
             | {entry_id}
           span
             |  : Entry ID
