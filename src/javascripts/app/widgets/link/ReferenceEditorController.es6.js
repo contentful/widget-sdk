@@ -32,13 +32,13 @@ export default function create ($scope, widgetApi) {
     $scope.type,
     $scope.single
   );
-  const useBulkEditor =
+  $scope.useBulkEditor =
     widgetApi.settings.bulkEditing && widgetApi._internal.editReferences;
 
-  $scope.renderInline = true;
   $scope.typePlural = { Entry: 'entries', Asset: 'assets' }[$scope.type];
   $scope.isAssetCard = is('Asset', 'card');
-
+  $scope.useInlineEditor = shouldOpenInline();
+  
   // Passed to cfEntityLink and cfAssetCard directive
   $scope.config = {
     showDetails: is('Entry', 'card'),
@@ -58,6 +58,7 @@ export default function create ($scope, widgetApi) {
 
   onFeatureFlag($scope, INLINE_REFERENCE_FEATURE_FLAG, function (variation) {
     $scope.isInlineReferenceEnabled = variation;
+    $scope.useInlineEditor = shouldOpenInline();
   });
 
   $scope.uiSortable.update = function () {
@@ -221,6 +222,7 @@ export default function create ($scope, widgetApi) {
 
     const contentType =
       contentTypeId && spaceContext.publishedCTs.fetch(contentTypeId);
+    const refCtxt = widgetApi._internal.createReferenceContext ? widgetApi._internal.createReferenceContext(index, state.refreshEntities) : null;
 
     return {
       id: id,
@@ -231,7 +233,7 @@ export default function create ($scope, widgetApi) {
         edit: prepareEditAction(entity, index, isDisabled),
         remove: prepareRemoveAction(index, isDisabled)
       },
-      refCtxt: widgetApi._internal.createReferenceContext(index)
+      refCtxt: refCtxt
     };
   }
 
@@ -240,7 +242,7 @@ export default function create ($scope, widgetApi) {
     const linksParentEntry =
       entity && entity.sys.type === 'Entry' && entity.sys.id === entryId;
 
-    if (entity && !isDisabled && !linksParentEntry && useBulkEditor) {
+    if (entity && !isDisabled && !linksParentEntry && $scope.useBulkEditor) {
       return function () {
         widgetApi._internal.editReferences(index, state.refreshEntities);
       };
@@ -250,15 +252,21 @@ export default function create ($scope, widgetApi) {
   }
 
   function editEntityAction (entity, index) {
-    if (useBulkEditor) {
+    if ($scope.useBulkEditor) {
       return widgetApi._internal.editReferences(index, state.refreshEntities);
-    } else {
-      if ($scope.isInlineReferenceEnabled) {
-        $scope.refCtxt = widgetApi._internal.createReferenceContext(index);
-      } else {
-        return widgetApi.state.goToEditor(entity);
-      }
+    } else if (!$scope.useInlineEditor) {
+      return widgetApi.state.goToEditor(entity);
     }
+  }
+
+  function shouldOpenInline () {
+    // TODO: Check for settings in local storage per user:ct:field_name
+    const featureEnabledForField = true;
+    const featureIsEnabled = $scope.isInlineReferenceEnabled;
+    const isAsset = $scope.isAssetCard;
+    const isOneToOne = $scope.single;
+
+    return featureIsEnabled && featureEnabledForField && !isAsset && isOneToOne && !$scope.useBulkEditor;
   }
 
   function prepareRemoveAction (index, isDisabled) {
