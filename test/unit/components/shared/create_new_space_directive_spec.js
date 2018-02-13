@@ -139,13 +139,35 @@ describe('cfCreateNewSpace directive', function () {
       stubs.tokenStore.organizations$.set(this.orgs);
     });
 
-    it('asks if the space limits have been reached', function () {
-      stubs.accessChecker.canCreateSpaceInOrganization.returns(true);
-      this.setupDirective();
-      controller.requestSpaceCreation();
-      $rootScope.$digest();
+    describe('in a legacy organization', function () {
+      it('asks if the space limits have been reached', function () {
+        stubs.accessChecker.canCreateSpaceInOrganization.returns(true);
+        this.setupDirective();
+        controller.requestSpaceCreation();
+        $rootScope.$digest();
 
-      sinon.assert.called(stubs.resourceService._canCreate);
+        sinon.assert.called(stubs.resourceService._canCreate);
+      });
+    });
+
+    describe('in a non-legacy organization', function () {
+      it('does not ask if the space limits have been reached', function () {
+        stubs.tokenStore.organizations$.set([
+          {
+            sys: {
+              id: 'orgid'
+            },
+            pricingVersion: 'pricing_version_2'
+          }
+        ]);
+
+        stubs.accessChecker.canCreateSpaceInOrganization.returns(true);
+        this.setupDirective();
+        controller.requestSpaceCreation();
+        $rootScope.$digest();
+
+        sinon.assert.notCalled(stubs.resourceService._canCreate);
+      });
     });
 
     it('checks for creation permission', function () {
