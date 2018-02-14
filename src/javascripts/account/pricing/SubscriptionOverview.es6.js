@@ -15,6 +15,8 @@ import svgPlus from 'svg/plus';
 import {asReact} from 'ui/Framework/DOMRenderer';
 import moment from 'moment';
 import {get, isString} from 'lodash';
+import {supportUrl} from 'Config';
+import $location from '$location';
 
 const subscriptionOverviewPropTypes = {
   onReady: PropTypes.func.isRequired,
@@ -63,7 +65,14 @@ const SubscriptionOverview = createReactClass({
       showCreateSpaceModal(this.props.orgId);
     }
   },
-  openIntercom: () => Intercom.open(),
+  contactUs: function () {
+    // Open intercom if it's possible, otherwise go to support page.
+    if (Intercom.isEnabled()) {
+      Intercom.open();
+    } else {
+      $location.url(supportUrl);
+    }
+  },
   render: function () {
     const {basePlan, spacePlans, canCreateSpace} = this.state;
     const {orgId} = this.props;
@@ -89,7 +98,7 @@ const SubscriptionOverview = createReactClass({
           h(RightSidebar, {
             canCreateSpace,
             onCreateSpace: this.createSpace,
-            onContactUs: this.openIntercom
+            onContactUs: this.contactUs
           })
         )
       )
