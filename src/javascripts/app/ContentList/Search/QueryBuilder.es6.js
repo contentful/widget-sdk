@@ -141,7 +141,7 @@ function applyStatus (query, status) {
     return assign(query, {
       'sys.archivedAt[exists]': 'true'
     });
-  } else if (status === '' || status === null) {
+  } else if (status === '' || status === null || status === undefined) {
     return query;
   } else {
     throw new Error(`Unknown status value ${status}`);

@@ -114,7 +114,8 @@ angular.module('contentful')
   }
 
   function getOrganizations (user) {
-    return user.organizationMemberships.map(function (membership) {
+    var organizationMemberships = user.organizationMemberships || [];
+    return organizationMemberships.map(function (membership) {
       return membership.organization.sys.id;
     }).join(', ');
   }

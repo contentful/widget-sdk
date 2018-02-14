@@ -34,6 +34,7 @@ angular.module('contentful')
   var createOrgEndpoint = require('access_control/OrganizationMembershipRepository').createEndpoint;
   var createResourceService = require('services/ResourceService').default;
   var getSpaceRatePlans = require('account/pricing/PricingDataProvider').getSpaceRatePlans;
+  var ResourceUtils = require('utils/ResourceUtils');
 
   K.onValueScope($scope, TokenStore.organizations$, function (organizations) {
     controller.organizations = organizations;
@@ -128,22 +129,25 @@ angular.module('contentful')
 
     var resources = createResourceService(organization.sys.id, 'organization');
 
-    // First check that there are resources available
-    // to create the space
-    resources.canCreate('space').then(function (canCreate) {
-      if (canCreate) {
-        // Resources are available. Attempt to create a new space
-        if (controller.newSpace.useTemplate) {
-          createNewSpace(controller.newSpace.selectedTemplate);
-        } else {
+    if (ResourceUtils.isLegacyOrganization(organization)) {
+      // First check that there are resources available
+      // to create the space
+      resources.canCreate('space').then(function (canCreate) {
+        if (canCreate) {
+          // Resources are available. Attempt to create a new space
           createNewSpace();
+        } else {
+          resources.messagesFor('space').then(function (errorObj) {
+            handleUsageWarning(errorObj.error);
+          });
         }
-      } else {
-        resources.messagesFor('space').then(function (errorObj) {
-          handleUsageWarning(errorObj.error);
-        });
-      }
-    });
+      });
+    } else {
+      // We allow a user to create a new space within the organization
+      // if it's pricing V2, because there are no limits (they must
+      // choose a rate plan).
+      createNewSpace();
+    }
   };
 
   function setupTemplates (templates) {
@@ -168,9 +172,10 @@ angular.module('contentful')
     return hasSpaceName;
   }
 
-  function createNewSpace (template) {
+  function createNewSpace () {
     var data = controller.newSpace.data;
     var organization = controller.newSpace.organization;
+    var template = null;
 
     if (!validate(data)) {
       return;
@@ -180,7 +185,9 @@ angular.module('contentful')
       return showFormError('You must select a rate plan.');
     }
 
-    if (!template) {
+    if (controller.newSpace.useTemplate) {
+      template = controller.newSpace.selectedTemplate;
+    } else {
       template = {name: 'Blank'};
     }
 

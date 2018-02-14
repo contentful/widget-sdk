@@ -39,64 +39,6 @@ describe('ResourceService', function () {
       };
     };
 
-    this.spies = {};
-    this.stubs = {};
-    this.flags = {
-      'feature-bv-2018-01-resources-api': true
-    };
-
-    this.isPromiseLike = function (object) {
-      return typeof object.then === 'function' &&
-        typeof object.catch === 'function' &&
-        typeof object.finally === 'function';
-    };
-
-    const system = createIsolatedSystem();
-
-    const mockedEndpoint = createMockSpaceEndpoint();
-    this.resourceStore = mockedEndpoint.stores.resources;
-
-    // Reached no limit
-    set(this.resourceStore, 'locales', this.createResource(
-      'locales',
-      {
-        maximum: 10,
-        included: 5
-      }, 2
-    ));
-
-    // Reached included
-    set(this.resourceStore, 'content_types', this.createResource(
-      'content_types',
-      {
-        maximum: 20,
-        included: 10
-      }, 14
-    ));
-
-    // Reached max
-    set(this.resourceStore, 'entries', this.createResource(
-      'entries',
-      {
-        maximum: 2500,
-        included: 2000
-      }, 2500
-    ));
-
-    // Spying on both the endpoint creation and the actual endpoint
-    // calls are important.
-    this.spies.spaceEndpoint = sinon.spy(mockedEndpoint.request);
-    const createSpaceEndpoint = () => {
-      return this.spies.spaceEndpoint;
-    };
-
-    this.spies.createSpaceEndpoint = sinon.spy(createSpaceEndpoint);
-    this.stubs.createOrganizationEndpoint = sinon.stub();
-    system.set('data/Endpoint', {
-      createSpaceEndpoint: this.spies.createSpaceEndpoint,
-      createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
-    });
-
     this.called = {};
 
     const usages = {};
@@ -118,33 +60,95 @@ describe('ResourceService', function () {
     this.usages = new Proxy(usages, handler);
     this.limits = new Proxy(limits, handler);
 
+    this.mocks = {
+      organization: {
+        subscriptionPlan: {
+          limits: {
+            permanent: this.limits,
+            period: {}
+          }
+        },
+        usage: {
+          permanent: this.usages,
+          period: {}
+        },
+        pricingVersion: 'pricing_version_2'
+      }
+    };
+    this.mocks.space = {
+      organization: this.mocks.organization
+    };
+
+    this.spies = {};
+    this.stubs = {};
+
+    this.isPromiseLike = function (object) {
+      return typeof object.then === 'function' &&
+        typeof object.catch === 'function' &&
+        typeof object.finally === 'function';
+    };
+
+    const system = createIsolatedSystem();
+
+    const mockedEndpoint = createMockSpaceEndpoint();
+    this.resourceStore = mockedEndpoint.stores.resources;
+
+    // Reached no limit
+    set(this.resourceStore, 'locale', this.createResource(
+      'locale',
+      {
+        maximum: 10,
+        included: 5
+      }, 2
+    ));
+
+    // Reached included
+    set(this.resourceStore, 'content_type', this.createResource(
+      'content_type',
+      {
+        maximum: 20,
+        included: 10
+      }, 14
+    ));
+
+    // Reached max
+    set(this.resourceStore, 'entry', this.createResource(
+      'entry',
+      {
+        maximum: 2500,
+        included: 2000
+      }, 2500
+    ));
+
+    // Spying on both the endpoint creation and the actual endpoint
+    // calls are important.
+    this.spies.spaceEndpoint = sinon.spy(mockedEndpoint.request);
+    const createSpaceEndpoint = () => {
+      return this.spies.spaceEndpoint;
+    };
+
+    this.spies.createSpaceEndpoint = sinon.spy(createSpaceEndpoint);
+    this.stubs.createOrganizationEndpoint = sinon.stub();
+    system.set('data/Endpoint', {
+      createSpaceEndpoint: this.spies.createSpaceEndpoint,
+      createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
+    });
+
     system.set('Authentication', {
 
     });
 
-    const mockedSpaceContext = {
-      organizationContext: {
-        organization: {
-          subscriptionPlan: {
-            limits: {
-              permanent: this.limits,
-              period: {}
-            }
-          },
-          usage: {
-            permanent: this.usages,
-            period: {}
-          }
-        }
-      }
-    };
-
-    system.set('spaceContext', {
-      default: mockedSpaceContext
+    system.set('services/TokenStore', {
+      getSpace: sinon.stub().resolves(this.mocks.space),
+      getOrganization: sinon.stub().resolves(this.mocks.organization)
     });
 
+    this.flags = {
+      'feature-bv-2018-01-resources-api': true
+    };
+
     system.set('utils/LaunchDarkly', {
-      getCurrentVariation: flagName => {
+      getCurrentVariation: (flagName) => {
         return Promise.resolve(this.flags[flagName]);
       }
     });
@@ -164,7 +168,7 @@ describe('ResourceService', function () {
   });
 
   // Skipped until we support separate organization and space endpoint usage
-  xit('should optionally allow instantiation using the "organization" type parameter value', function () {
+  it('should optionally allow instantiation using the "organization" type parameter value', function () {
     this.spies.createSpaceEndpoint.reset();
 
     this.createResourceService('1234', 'organization');
@@ -192,27 +196,20 @@ describe('ResourceService', function () {
       }
     });
 
-    it('should return a failed Promise if not supplied with a valid resourceType', function* () {
-      try {
-        yield this.ResourceService.get('foobar');
-      } catch (e) {
-        expect(e).toBeDefined();
-        expect(e instanceof Error).toBe(true);
-      }
-    });
-
     it('should return a successful Promise if supplied with valid arguments', function* () {
       yield this.ResourceService.get('entry');
     });
 
-    it('should return data from the endpoint if the feature flag is true', function* () {
+    it('should return data from the endpoint if the pricing version is "pricing_version_2" and the feature flag is true', function* () {
+      this.mocks.organization.pricingVersion = 'pricing_version_2';
       this.flags['feature-bv-2018-01-resources-api'] = true;
 
       yield this.ResourceService.get('entry');
       expect(this.spies.spaceEndpoint.calledOnce).toBe(true);
     });
 
-    it('should return data from the token, via spaceContext, if the feature flag is false', function* () {
+    it('should return data from the token, via TokenStore, if the pricing version is "pricing_version_1" and the feature flag is false', function* () {
+      this.mocks.organization.pricingVersion = 'pricing_version_1';
       this.flags['feature-bv-2018-01-resources-api'] = false;
 
       yield this.ResourceService.get('entry');
@@ -221,16 +218,17 @@ describe('ResourceService', function () {
       expect(this.limits.called).toBeTruthy();
     });
 
-    it('should return an item that looks like a Resource regardless of the feature flag', function* () {
+    it('should return an item that looks like a Resource regardless', function* () {
       let locales;
 
-      this.flags['feature-bv-2018-01-resources-api'] = true;
+      this.mocks.organization.pricingVersion = 'pricing_version_2';
 
       locales = yield this.ResourceService.get('locale');
       expect(locales.usage).toBeDefined();
       expect(locales.limits.included).toBeDefined();
       expect(locales.limits.maximum).toBeDefined();
 
+      this.mocks.organization.pricingVersion = 'pricing_version_1';
       this.flags['feature-bv-2018-01-resources-api'] = false;
 
       // Setup the "token" limit and usage
@@ -249,13 +247,13 @@ describe('ResourceService', function () {
       expect(this.isPromiseLike(this.ResourceService.getAll())).toBe(true);
     });
 
-    it('should always return data via the endpoint, regardless of the feature flag', function* () {
-      this.flags['feature-bv-2018-01-resources-api'] = true;
+    it('should always return data via the endpoint, regardless of the pricing version & feature flag', function* () {
+      this.mocks.organization.pricingVersion = 'pricing_version_2';
 
       yield this.ResourceService.getAll();
       expect(this.spies.spaceEndpoint.calledOnce).toBe(true);
 
-      this.flags['feature-bv-2018-01-resources-api'] = false;
+      this.mocks.organization.pricingVersion = 'pricing_version_1';
 
       yield this.ResourceService.getAll();
       expect(this.spies.spaceEndpoint.calledTwice).toBe(true);
@@ -332,16 +330,16 @@ describe('ResourceService', function () {
       const messages = yield this.ResourceService.messages();
 
       // Entries
-      expect(messages.entries.warning).toBeDefined();
-      expect(messages.entries.error).toBeDefined();
+      expect(messages.entry.warning).toBeDefined();
+      expect(messages.entry.error).toBeDefined();
 
       // Locales
-      expect(messages.locales.warning).toBe('');
-      expect(messages.locales.error).toBe('');
+      expect(messages.locale.warning).toBe('');
+      expect(messages.locale.error).toBe('');
 
       // Content Types
-      expect(messages.content_types.warning).toBeDefined();
-      expect(messages.content_types.error).toBe('');
+      expect(messages.contentType.warning).toBeDefined();
+      expect(messages.contentType.error).toBe('');
     });
   });
 });

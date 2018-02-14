@@ -67,6 +67,7 @@ describe('Entry List Controller', function () {
       data: {fields: [{id: 'fieldId'}], sys: {id: 1}}
     };
     spaceContext.publishedCTs.fetch.resolves(ct);
+    spaceContext.publishedCTs.getAllBare.returns([]);
 
     spaceContext.space.getEntries.defers();
 

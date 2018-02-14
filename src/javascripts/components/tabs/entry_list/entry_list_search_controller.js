@@ -15,6 +15,7 @@ angular.module('contentful')
   var Kefir = require('libs/kefir');
   var createSearchInput = require('app/ContentList/Search').default;
   var h = require('ui/Framework').h;
+  var getAccessibleCTs = require('data/ContentTypeRepo/accessibleCTs').default;
 
   var initialized = false;
   var lastUISearchState = null;
@@ -136,14 +137,16 @@ angular.module('contentful')
 
   function initializeSearchUI () {
     var initialSearchState = getViewSearchState();
+    var contentTypes = getAccessibleCTs(spaceContext.publishedCTs, initialSearchState.contentTypeId);
 
     if (_.isEqual(lastUISearchState, initialSearchState)) {
       return;
     }
+
     lastUISearchState = initialSearchState;
     createSearchInput({
       $scope: $scope,
-      contentTypes: spaceContext.publishedCTs.getAllBare(),
+      contentTypes: contentTypes,
       onSearchChange: onSearchChange,
       isSearching$: isSearching$,
       initState: initialSearchState,

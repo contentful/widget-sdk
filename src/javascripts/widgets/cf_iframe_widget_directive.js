@@ -42,6 +42,7 @@ angular.module('contentful')
       var WidgetAPI = require('widgets/API');
       var Widgets = require('widgets');
       var K = require('utils/kefir');
+      var PathUtils = require('utils/Path');
 
       var doc = scope.docImpl || scope.otDoc;
       var descriptor = Widgets.get(scope.widget.widgetId);
@@ -128,7 +129,7 @@ angular.module('contentful')
       });
 
       var fieldChanges = doc.changes.filter(function (path) {
-        return path[0] === 'fields';
+        return PathUtils.isAffecting(path, ['fields']);
       });
 
       K.onValueScope(scope, fieldChanges, function (path) {

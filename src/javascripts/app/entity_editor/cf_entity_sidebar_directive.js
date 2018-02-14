@@ -22,6 +22,7 @@ angular.module('contentful')
  */
 .directive('cfEntitySidebar', ['require', function (require) {
   var K = require('utils/kefir');
+  var spaceContext = require('spaceContext');
 
   return {
     restrict: 'E',
@@ -29,7 +30,8 @@ angular.module('contentful')
     template: JST.cf_entity_sidebar(),
     controller: ['$scope', function ($scope) {
       $scope.data = {
-        isEntry: $scope.entityInfo.type === 'Entry'
+        isEntry: $scope.entityInfo.type === 'Entry',
+        isMasterEnvironment: spaceContext.getEnvironmentId() === 'master'
       };
 
       // We make sure that we do not leak entity instances from the

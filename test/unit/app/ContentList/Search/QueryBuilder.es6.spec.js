@@ -172,6 +172,14 @@ describe('app/ContentList/Search/QueryBuilder', function () {
       },
       {}
     );
+
+    buildQueryWithContentTypesMacro(
+      'status undefined value',
+      {
+        searchFilters: [['__status', '', undefined]]
+      },
+      {}
+    );
   });
 
   describe('date conversion', () => {

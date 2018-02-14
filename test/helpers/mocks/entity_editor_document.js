@@ -144,10 +144,16 @@ angular.module('contentful/mocks')
     }
 
     function setValueAt (path, value) {
-      const data = _.cloneDeep(currentData);
-      _.set(data, path, value);
-      data$.set(data);
-      return $q.resolve(value);
+      if (!path.length) {
+        // If no path is specified, replace entire data object
+        data$.set(_.cloneDeep(value));
+        return $q.resolve(value);
+      } else {
+        const data = _.cloneDeep(currentData);
+        _.set(data, path, value);
+        data$.set(data);
+        return $q.resolve(value);
+      }
     }
   }
 }]);
