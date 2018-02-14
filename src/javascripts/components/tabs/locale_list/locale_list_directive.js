@@ -46,7 +46,7 @@ angular.module('contentful')
   $scope.locales = [];
   $scope.localeNamesByCode = {};
   $scope.getPlanLocalesLimit = getPlanLocalesLimit;
-  $scope.getSubscriptionPlanName = _.partial(getSubscriptionPlanData, 'name');
+  $scope.subscriptionPlanName = getSubscriptionPlanData('name');
   $scope.newLocale = newLocale;
   $scope.showSidebar = false;
 
@@ -128,6 +128,7 @@ angular.module('contentful')
     }
 
     resource = resources.get('locale');
+
 
     return resource;
   }

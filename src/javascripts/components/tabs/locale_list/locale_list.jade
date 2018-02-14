@@ -77,7 +77,7 @@ header.workbench-header
 
         div(ng-if="localesUsageState === LOCALES_LIMIT_REACHED")
           h1.advice__title You have reached the organization locales limit
-          p.advice__description Your current subscription plan <strong>({{ getSubscriptionPlanName() }})</strong> enables a maximum of {{ getPlanLocalesLimit() }} locales per organization
+          p.advice__description Your current subscription plan <strong>({{ subscriptionPlanName }})</strong> enables a maximum of {{ limit }} locales per organization
           p.advice__description(ng-if="accountUpgradeState")
             | Please <a ui-sref="{{ accountUpgradeState }}">upgrade</a> if you need more locales or delete some of the existing ones
           p.advice__description(ng-if="!accountUpgradeState")
@@ -85,7 +85,7 @@ header.workbench-header
 
         div(ng-if="localesUsageState === NO_MULTIPLE_LOCALES")
           h1.advice__title Your plan does not include multiple locales
-          p.advice__description Your current subscription plan <strong>({{ getSubscriptionPlanName() }})</strong> does not support localizing content
+          p.advice__description Your current subscription plan <strong>({{ subscriptionPlanName }})</strong> does not support localizing content
           p.advice__description(ng-if="accountUpgradeState")
             | Please <a cf-sref="{{ accountUpgradeState }}">upgrade</a>&#32;
             | to a plan that includes locales to benefit from this feature
@@ -102,7 +102,7 @@ header.workbench-header
       p.entity-sidebar__text-profile(ng-if="localesUsageState === LOCALES_LIMIT_REACHED")
         | You've reached the space locales limit. Please <a cf-sref="{{ accountUpgradeState }}">upgrade</a> if you need more locales, or delete some of the existing ones.
       p
-        button.btn-action.x--block(
+        button.btn-action.add-entity.x--block(
           ng-click="newLocale()"
           ng-disabled="localesUsageState === LOCALES_LIMIT_REACHED"
         )
