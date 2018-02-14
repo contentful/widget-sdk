@@ -1,11 +1,13 @@
-describe('Entity Action transformer', function () {
+const PATH = 'analytics/snowplow/transformers/EntityAction';
+
+describe(PATH, function () {
   beforeEach(function () {
     module('contentful/test');
-    this.transformer = this.$inject('analytics/snowplow/transformers/SpaceEntityAction').default;
+    this.transform = this.$inject(PATH).default;
   });
 
   it('transforms `content_type_create`', function () {
-    const entityData = {
+    const eventData = {
       actionData: {
         entity: 'ContentType',
         action: 'create'
@@ -18,7 +20,7 @@ describe('Entity Action transformer', function () {
       organizationId: 'o1'
     };
 
-    const transformed = this.transformer('e1', entityData);
+    const transformed = this.transform('e1', eventData);
     expect(transformed.data).toEqual({});
     expect(transformed.contexts).toEqual([{
       schema: 'iglu:com.contentful/content_type/jsonschema/1-0-0',
@@ -34,7 +36,7 @@ describe('Entity Action transformer', function () {
   });
 
   it('adds additional fields for `entry_create`', function () {
-    const entityData = {
+    const eventData = {
       actionData: {entity: 'Entry', action: 'create'},
       response: {data: {
         sys: {
@@ -48,7 +50,7 @@ describe('Entity Action transformer', function () {
       spaceId: 's1',
       organizationId: 'o1'
     };
-    const transformed = this.transformer('e1', entityData);
+    const transformed = this.transform('e1', eventData);
     expect(transformed.contexts[0].data.revision).toBe(0);
     expect(transformed.contexts[0].data.content_type_id).toBe('ct2');
   });

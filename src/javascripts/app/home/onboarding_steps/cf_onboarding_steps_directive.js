@@ -187,8 +187,15 @@ angular.module('contentful')
         var contentTypes = spaceContext.publishedCTs.getAllBare();
 
         if (contentTypes.length === 1) {
-          entityCreator.newEntry(contentTypes[0].sys.id)
+          var contentTypeId = contentTypes[0].sys.id;
+          var contentType = spaceContext.publishedCTs.get(contentTypeId);
+          entityCreator.newEntry(contentTypeId)
           .then(function (entry) {
+            Analytics.track('entry:create', {
+              eventOrigin: 'onboarding',
+              contentType: contentType,
+              response: entry
+            });
             $state.go('spaces.detail.entries.detail', {entryId: entry.getId()});
           });
         } else {

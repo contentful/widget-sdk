@@ -15,7 +15,7 @@ describe('cfOnboardingSteps Directive', function () {
     };
 
     this.assertActiveButton = function (cta) {
-      const selector = 'button:contains("' + cta + '")';
+      const selector = `button:contains("${cta}")`;
       const button = this.element.find(selector).get(0);
       expect(button.disabled).toBe(false);
     };

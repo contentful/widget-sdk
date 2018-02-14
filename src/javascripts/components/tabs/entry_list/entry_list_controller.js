@@ -15,6 +15,7 @@ angular.module('contentful')
   var entityStatus = require('entityStatus');
   var getBlankView = require('data/UiConfig/Blanks').getBlankEntryView;
   var createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar').default;
+  var Analytics = require('analytics/Analytics');
   var K = require('utils/kefir');
   var _ = require('lodash');
   var $state = require('$state');
@@ -72,7 +73,14 @@ angular.module('contentful')
   };
 
   $scope.newEntry = function (contentTypeId) {
+    var contentType = spaceContext.publishedCTs.get(contentTypeId);
     entityCreator.newEntry(contentTypeId).then(function (entry) {
+      var eventOriginFlag = $scope.showNoEntriesAdvice() ? '--empty' : '';
+      Analytics.track('entry:create', {
+        eventOrigin: 'content-list' + eventOriginFlag,
+        contentType: contentType,
+        response: entry
+      });
       // X.list -> X.detail
       $state.go('^.detail', {entryId: entry.getId()});
     });
@@ -120,6 +128,8 @@ angular.module('contentful')
    *
    * TODO this code is duplicated in the asset list controller
    *
+   * TODO:xxx Rename!
+   *
    * @return {boolean}
    */
   $scope.showNoEntriesAdvice = function () {
@@ -128,7 +138,6 @@ angular.module('contentful')
 
     return !hasEntries && !hasQuery && !$scope.context.loading;
   };
-
 
   /**
    * @ngdoc method
