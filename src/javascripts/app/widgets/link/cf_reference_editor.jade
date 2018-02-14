@@ -9,9 +9,10 @@ div(ng-show="!isReady")
   ng-class="{'x--contains-asset-cards': isAssetCard}")
   ol.link-editor__links(cf-ui-sortable ng-model="entityModels")
     li.link-editor__link(ng-repeat="model in entityModels track by model.key")
-
+      
+      // We don't know why model.value.refCtxt === null...
       cf-entity-link(
-        ng-if="useBulkEditor || (!isAssetCard && !isInlineReferenceEnabled && !useInlineEditor)"
+        ng-if="useBulkEditor || model.value.refCtxt === null || (!isAssetCard && !isInlineReferenceEnabled && !useInlineEditor)"
         entity="model.value.entity"
         content-type="model.value.contentType"
         entity-helpers="helpers"
@@ -19,7 +20,7 @@ div(ng-show="!isReady")
         config="config")
 
       .inline-reference-editor(
-        ng-if="isInlineReferenceEnabled && useInlineEditor"
+        ng-if="isInlineReferenceEnabled && useInlineEditor && model.value.refCtxt !== null"
         style="min-height: 100px; margin-top: 10px;")
           cf-bulk-editor(
             reference-context="model.value.refCtxt"

@@ -115,8 +115,8 @@ export default function create ($scope, editorData) {
     $scope.title = truncate(title, 50);
   });
 
-  editorContext.editReferences = function (ctxConfig) {
-    $scope.referenceContext = createReferenceContext(ctxConfig);
+  editorContext.editReferences = function (field, locale, index, cb) {
+    $scope.referenceContext = createReferenceContext(field, locale, index, cb);
   };
 
   editorContext.createReferenceContext = createReferenceContext;

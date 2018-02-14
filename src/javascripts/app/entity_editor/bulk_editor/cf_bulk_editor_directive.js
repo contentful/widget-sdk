@@ -82,6 +82,7 @@ angular.module('contentful')
     var loadEditorData = DataLoader.makePrefetchEntryLoader(spaceContext, ids$);
     // Passed to cfBulkEntityEditor directive
     $scope.editorContext = {
+      isBulkEditor: true,
       editorSettings: referenceContext.editorSettings,
       scrollTarget$: scrollTargetBus.stream,
       initializedEditor: function () {

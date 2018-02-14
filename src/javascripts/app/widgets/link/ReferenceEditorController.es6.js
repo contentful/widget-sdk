@@ -32,13 +32,13 @@ export default function create ($scope, widgetApi) {
     $scope.type,
     $scope.single
   );
-  $scope.useBulkEditor =
-    widgetApi.settings.bulkEditing && widgetApi._internal.editReferences;
 
+  $scope.useBulkEditor =
+    widgetApi.settings.bulkEditing && !!widgetApi._internal.editReferences;
   $scope.typePlural = { Entry: 'entries', Asset: 'assets' }[$scope.type];
   $scope.isAssetCard = is('Asset', 'card');
   $scope.useInlineEditor = shouldOpenInline();
-  
+
   // Passed to cfEntityLink and cfAssetCard directive
   $scope.config = {
     showDetails: is('Entry', 'card'),
