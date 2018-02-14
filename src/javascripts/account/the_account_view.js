@@ -53,7 +53,7 @@ angular.module('contentful')
   function goToSubscription () {
     var org = getGoToOrganizationsOrganization();
     if (!org) {
-      return $q.reject();
+      return $q.reject('Cannot go to subscription - no suitable organization');
     } else if (org.pricingVersion === 'pricing_version_2') {
       return goToOrganizations('subscription_new');
     } else {
@@ -85,7 +85,7 @@ angular.module('contentful')
     if (ref) {
       return Navigator.go(ref);
     } else {
-      return $q.reject();
+      return $q.reject(new Error('Cannot go to organization page: ' + subpage));
     }
   }
 

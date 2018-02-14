@@ -131,22 +131,22 @@ describe('TheAccountView service', function () {
   }
 
   describe('getSubscriptionState()', function () {
-    beforeEach(function () {
-      this.setOrganizationForCurrentSpace({subscriptionState: 'active', sys: {id: 'ORG_0'}});
-    });
-
-    it('returns state object if user has permission', function () {
+    it('returns state object for v1 org if user has permission', function () {
+      this.setOrganizationForCurrentSpace(pricingV1Org);
       this.OrganizationRoles.isOwnerOrAdmin.returns(true);
       const sref = {
         path: ['account', 'organizations', 'subscription'],
-        params: { orgId: 'ORG_0' },
+        params: { orgId: 'ORG_ID' },
         options: { reload: true }
       };
       expect(this.view.getSubscriptionState()).toEqual(sref);
     });
 
-    it('returns null if user does not have permission to access path', function () {
+    it('returns null for v1 and v2 orgs if user does not have access permission', function () {
       this.OrganizationRoles.isOwnerOrAdmin.returns(false);
+      this.setOrganizationForCurrentSpace(pricingV1Org);
+      expect(this.view.getSubscriptionState()).toBe(null);
+      this.setOrganizationForCurrentSpace(pricingV2Org);
       expect(this.view.getSubscriptionState()).toBe(null);
     });
 
@@ -156,8 +156,8 @@ describe('TheAccountView service', function () {
       expect(this.view.getSubscriptionState()).toBe(null);
     });
 
-    it('has path to new subscription page if org has v2 pricing', function () {
-      this.setOrganizationForCurrentSpace({ sys: { id: 'ORG_ID' }, pricingVersion: 'pricing_version_2' });
+    it('has path to new subscription page for v2 org', function () {
+      this.setOrganizationForCurrentSpace(pricingV2Org);
       this.OrganizationRoles.isOwnerOrAdmin.returns(true);
       const sref = {
         path: ['account', 'organizations', 'subscription_new'],
