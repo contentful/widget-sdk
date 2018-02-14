@@ -156,6 +156,19 @@ angular.module('contentful')
     },
 
     /**
+     * @name spaceContext#getEnvironmentId
+     * @description
+     * Returns the current environment ID, defaulting to `master`.
+     * Returns `undefined` if no space is set.
+     * @returns string
+     */
+    getEnvironmentId: function () {
+      if (this.space) {
+        return _.get(this, ['space', 'environment', 'sys', 'id'], 'master');
+      }
+    },
+
+    /**
      * @ngdoc method
      * @name spaceContext#getData
      * @param {string} path

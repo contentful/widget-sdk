@@ -163,6 +163,23 @@ describe('spaceContext', function () {
     });
   });
 
+  describe('#getEnvironmentId()', function () {
+    it('defaults to master if a space is set', function () {
+      this.spaceContext.resetWithSpace({sys: {id: 'spaceid'}});
+      expect(this.spaceContext.getEnvironmentId()).toBe('master');
+    });
+
+    it('returns non-default environment ID', function () {
+      this.spaceContext.resetWithSpace({sys: {id: 'spaceid'}}, 'staging');
+      expect(this.spaceContext.getEnvironmentId()).toBe('staging');
+    });
+
+    it('returns undefined if a space is not set', function () {
+      this.spaceContext.purge();
+      expect(this.spaceContext.getEnvironmentId()).toBeUndefined();
+    });
+  });
+
   describe('#getData() ', function () {
     beforeEach(function () {
       this.space = this.resetWithSpace();

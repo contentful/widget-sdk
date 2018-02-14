@@ -116,25 +116,33 @@ angular.module('contentful')
     }]
   });
 
-  var detail = base({
-    name: 'detail',
-    url: '/:entryId',
-    children: [compare],
-    params: { addToContext: true },
-    resolve: {
-      editorData: ['$stateParams', 'spaceContext', function ($stateParams, spaceContext) {
-        return loadEditorData(spaceContext, $stateParams.entryId);
-      }]
-    },
-    controller: ['$scope', 'editorData', createEditorController],
-    template: JST.entry_editor()
-  });
-
-
   return {
-    name: 'entries',
-    url: '/entries',
-    abstract: true,
-    children: [list, detail]
+    withSnapshots: entriesBaseState(true),
+    withoutSnapshots: entriesBaseState(false)
   };
+
+  function entriesBaseState (withSnapshots) {
+    return {
+      name: 'entries',
+      url: '/entries',
+      abstract: true,
+      children: [list, detail(withSnapshots)]
+    };
+  }
+
+  function detail (withSnapshots) {
+    return base({
+      name: 'detail',
+      url: '/:entryId',
+      children: withSnapshots ? [compare] : [],
+      params: { addToContext: true },
+      resolve: {
+        editorData: ['$stateParams', 'spaceContext', function ($stateParams, spaceContext) {
+          return loadEditorData(spaceContext, $stateParams.entryId);
+        }]
+      },
+      controller: ['$scope', 'editorData', createEditorController],
+      template: JST.entry_editor()
+    });
+  }
 }]);

@@ -69,7 +69,7 @@ const spaceEnvironment = {
   },
   children: [
     contentTypes,
-    entries,
+    entries.withoutSnapshots,
     assets,
     api,
     {
@@ -109,7 +109,7 @@ const spaceDetail = {
   children: [
     hibernation,
     contentTypes,
-    entries,
+    entries.withSnapshots,
     assets,
     api,
     settings,
