@@ -21,12 +21,11 @@ angular.module('contentful')
   var ResourceUtils = require('utils/ResourceUtils');
   var createResourceService = require('services/ResourceService').default;
   var $q = require('$q');
-  var getCurrentVariation = require('utils/LaunchDarkly').getCurrentVariation;
 
+  var organization = spaceContext.organizationContext.organization;
   var resources = createResourceService(spaceContext.getId());
 
   var disableCreateApiKey = accessChecker.shouldDisable('createApiKey');
-
   $scope.showCreateApiKey = !accessChecker.shouldHide('createApiKey');
 
   $scope.context.ready = false;
@@ -67,27 +66,22 @@ angular.module('contentful')
     });
   }
 
-  var flagName = 'feature-bv-2018-01-resources-api';
-
   $q.all({
     apiKeys: spaceContext.apiKeyRepo.getAll(),
     resource: resources.get('apiKey'),
-    flagValue: getCurrentVariation(flagName)
-  })
-    .then(function (result) {
-      $scope.apiKeys = result.apiKeys;
-      $scope.empty = _.isEmpty($scope.apiKeys);
+    legacy: ResourceUtils.useLegacy(organization)
+  }).then(function (result) {
+    $scope.apiKeys = result.apiKeys;
+    $scope.empty = _.isEmpty($scope.apiKeys);
 
-      var canCreate = ResourceUtils.canCreate(result.resource);
-      var limits = ResourceUtils.getResourceLimits(result.resource);
+    var canCreate = ResourceUtils.canCreate(result.resource);
+    var limits = ResourceUtils.getResourceLimits(result.resource);
 
-      $scope.context.ready = true;
-      $scope.limit = limits.maximum;
-      $scope.usage = result.resource.usage;
-      $scope.reachedLimit = !canCreate;
-      // TODO: remove after feature-bv-2018-01-resources-api is gone
-      // resourceContext will come as `sys.type` in the Resources API.
-      $scope.resourceContext = result.flagValue ? 'space' : 'organization';
-    })
-    .catch(ReloadNotification.apiErrorHandler);
+    $scope.legacy = result.legacy;
+    $scope.limit = limits.maximum;
+    $scope.usage = result.resource.usage;
+    $scope.reachedLimit = !canCreate;
+
+    $scope.context.ready = true;
+  }).catch(ReloadNotification.apiErrorHandler);
 }]);

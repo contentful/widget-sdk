@@ -38,10 +38,12 @@ cf-api-key-nav
       h2.entity-sidebar__heading(ng-if="!empty && showCreateApiKey")
         | Add API keys
       div(ng-if="!empty")
-        p(ng-if="!reachedLimit")
-          | Your {{resourceContext}} is using {{usage}} out of {{limit}} API keys.
+        p(ng-if="!reachedLimit && legacy")
+          | Your organization is using {{usage}} out of {{limit}} API Keys.
+        p(ng-if="!reachedLimit && !legacy")
+          | Your space is using {{usage}} API Keys.
         p(ng-if="reachedLimit")
-          | Your {{resourceContext}} is using <span class="api-key-list__reached-limit">{{usage}} out of {{limit}}</span> API keys.&#32;
+          | Your organization is using <span class="api-key-list__reached-limit">{{usage}} out of {{limit}}</span> API keys.&#32;
           span(ng-if="subscriptionState")
             | If you want to create additional keys, you need to either delete an existing one or&#32;
             | <a class="entity-sidebar__link" ui-sref="{{subscriptionState}}">upgrade your account</a>.
@@ -51,7 +53,7 @@ cf-api-key-nav
           ui-command="createApiKey")
           div
             cf-icon.btn-icon.inverted(name="plus")
-            | Add API key
+            | Add API Key
 
       h2.entity-sidebar__heading
         | Hint from our staff
