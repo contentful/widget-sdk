@@ -144,7 +144,7 @@ export function create (baseUrl, auth, spaceId, environmentId) {
   }
 
   function getDocWrapperForEntity (entity) {
-    const key = entityMetadataToKey(entity.data.sys);
+    const key = entityMetadataToKey(environmentId, entity.data.sys);
     let docWrapper = docWrappers[key];
 
     if (!docWrapper) {
@@ -238,12 +238,12 @@ function createDocWrapper (connection, key) {
   };
 }
 
-function entityMetadataToKey (sys) {
+function entityMetadataToKey (environmentId, sys) {
   const typeSegment = caseofEq(sys.type, [
     ['Entry', () => 'entry'],
     ['Asset', () => 'asset']
   ]);
-  return [sys.space.sys.id, typeSegment, sys.id].join('!');
+  return [sys.space.sys.id, environmentId, typeSegment, sys.id].join('!');
 }
 
 /**
