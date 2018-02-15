@@ -17,6 +17,7 @@ angular.module('contentful')
   var TokenStore = require('services/TokenStore');
   var K = require('utils/kefir');
   var Navigator = require('states/Navigator');
+  var isLegacyOrganization = require('utils/ResourceUtils').isLegacyOrganization;
 
   return {
     getSubscriptionState: getSubscriptionState,
@@ -36,10 +37,10 @@ angular.module('contentful')
     var org = spaceContext.getData('organization');
     if (!org || !OrganizationRoles.isOwnerOrAdmin(org)) {
       return null;
-    } else if (org.pricingVersion === 'pricing_version_2') {
-      return getOrganizationRef('subscription_new');
-    } else {
+    } else if (isLegacyOrganization(org)) {
       return getOrganizationRef('subscription');
+    } else {
+      return getOrganizationRef('subscription_new');
     }
   }
 
@@ -54,10 +55,10 @@ angular.module('contentful')
     var org = getGoToOrganizationsOrganization();
     if (!org) {
       return $q.reject('Cannot go to subscription - no suitable organization');
-    } else if (org.pricingVersion === 'pricing_version_2') {
-      return goToOrganizations('subscription_new');
-    } else {
+    } else if (isLegacyOrganization(org)) {
       return goToOrganizations('subscription');
+    } else {
+      return goToOrganizations('subscription_new');
     }
   }
 
