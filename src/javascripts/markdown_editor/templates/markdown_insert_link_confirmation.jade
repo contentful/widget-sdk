@@ -1,0 +1,25 @@
+.modal-background
+  .modal-dialog.insert-link-dialog
+    header.modal-dialog__header
+      h1 Link {{ number === 1 ? 'asset with missing file' : 'assets with missing files' }} for locale ({{ locale }})
+      button.modal-dialog__close(ng-click="dialog.cancel()")
+    div.modal-dialog__content
+      p
+        | The {{ number === 1 ? 'asset you tried to link has no file' : number + ' assets you tried to link have no files' }}
+        | in this field's respective locale ({{ locale }}).<br>
+        | Do you want to link to the
+        | {{ number === 1 ? 'file in its fallback locale' : 'files in their fallback locales' }} instead?
+      ul.markdown-insert-confirmation__list(style="margin-left: 1.4em")
+        li.markdown-insert-confirmation__list-element(ng-repeat="line in text")
+          | {{ line.start }}
+          =" "
+          a(ui-sref="{{line.link}}", target="_blank", rel="noopener") {{ line.linkTitle }}
+          |  {{ line.end }}
+
+    .modal-dialog__controls
+      button.btn-primary-action.modal-dialog__controls-confirm(
+        ng-click="dialog.confirm(model)"
+        type="button") Yes, link to the above fallback{{ number === 1 ? '' : 's' }}
+      button.btn-secondary-action(
+        ng-click="dialog.cancel()"
+        type="button") Cancel
