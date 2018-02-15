@@ -15,13 +15,13 @@ header.workbench-header
       | Add Locale
     p.add-entity__advice(ng-show="localesUsageState === LOCALES_LIMIT_REACHED")
       | Your plan supports up to {{ getPlanLocalesLimit() }} locales.&#32;
-      a(ng-if="accountUpgradeState" ui-sref="{{accountUpgradeState}}")
+      a(ng-if="accountUpgradeState" cf-sref="{{accountUpgradeState}}")
         | Upgrade for more
       span(ng-if="!accountUpgradeState")
         | Ask your organization owner to upgrade your plan.
     p.add-entity__advice(ng-show="localesUsageState === NO_MULTIPLE_LOCALES")
       | Your plan does not include multiple locales.&#32;
-      a(ng-if="accountUpgradeState" ui-sref="{{accountUpgradeState}}")
+      a(ng-if="accountUpgradeState" cf-sref="{{accountUpgradeState}}")
         | Upgrade for more
       span(ng-if="!accountUpgradeState")
         | Ask your organization owner to upgrade your plan.
@@ -78,7 +78,7 @@ header.workbench-header
         h1.advice__title You have reached the organization locales limit
         p.advice__description Your current subscription plan <strong>({{ getSubscriptionPlanName() }})</strong> enables a maximum of {{ getPlanLocalesLimit() }} locales per organization
         p.advice__description(ng-if="accountUpgradeState")
-          | Please <a ui-sref="{{ accountUpgradeState }}">upgrade</a> if you need more locales or delete some of the existing ones
+          | Please <a cf-sref="{{ accountUpgradeState }}">upgrade</a> if you need more locales or delete some of the existing ones
         p.advice__description(ng-if="!accountUpgradeState")
           | Please ask your organization owner to upgrade if you need more locales or delete some of the existing ones
 
@@ -86,7 +86,7 @@ header.workbench-header
         h1.advice__title Your plan does not include multiple locales
         p.advice__description Your current subscription plan <strong>({{ getSubscriptionPlanName() }})</strong> does not support localizing content
         p.advice__description(ng-if="accountUpgradeState")
-          | Please <a ui-sref="{{ accountUpgradeState }}">upgrade</a>&#32;
+          | Please <a cf-sref="{{ accountUpgradeState }}">upgrade</a>&#32;
           | to a plan that includes locales to benefit from this feature
         p.advice__description(ng-if="!accountUpgradeState")
           | Please ask your organization owner to upgrade to a plan&#32;

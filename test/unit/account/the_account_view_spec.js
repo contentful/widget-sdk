@@ -100,16 +100,20 @@ describe('TheAccountView service', function () {
     });
   });
 
-  describeGoToMethod('goToSubscription', 'subscription');
+  const pricingV1Org = { sys: { id: 'ORG_ID' } };
+  const pricingV2Org = { sys: { id: 'ORG_ID' }, pricingVersion: 'pricing_version_2' };
 
-  describeGoToMethod('goToUsers', 'users.gatekeeper');
+  describeGoToMethod('goToSubscription', 'subscription', pricingV1Org, 'pricing v1 org');
+  describeGoToMethod('goToSubscription', 'subscription_new', pricingV2Org, 'pricing v2 org');
 
-  function describeGoToMethod (name, subpage) {
-    describe(`.${name}()`, function () {
+  describeGoToMethod('goToUsers', 'users.gatekeeper', pricingV1Org);
+
+  function describeGoToMethod (name, subpage, org, comment = '') {
+    describe(`.${name}()${comment && ', ' + comment}`, function () {
       const RETURN_VALUE = {};
 
       beforeEach(function () {
-        this.setOrganizationForCurrentSpace({ sys: { id: 'ORG_ID' } });
+        this.setOrganizationForCurrentSpace(org);
         this.OrganizationRoles.isOwnerOrAdmin.returns(true);
         this.go.returns(RETURN_VALUE);
         this.returnValue = this.view[name]();
@@ -117,7 +121,7 @@ describe('TheAccountView service', function () {
 
       it(`calls $state.go('${subpage}')`, function () {
         sinon.assert.calledOnce(this.go);
-        sinon.assert.calledWithExactly(this.go, `account.organizations.${subpage}`, { orgId: 'ORG_ID' }, { reload: true });
+        sinon.assert.calledWithExactly(this.go, `account.organizations.${subpage}`, { orgId: org.sys.id }, { reload: true });
       });
 
       it('returns .goToOrganizations() returned promise', function () {
@@ -126,20 +130,41 @@ describe('TheAccountView service', function () {
     });
   }
 
-  describe('getSubScriptionState()', function () {
-    beforeEach(function () {
-      this.setOrganizationForCurrentSpace({subscriptionState: 'active', sys: {id: 'ORG_0'}});
-    });
-
-    it('returns path if user has permission', function () {
+  describe('getSubscriptionState()', function () {
+    it('returns state object for v1 org if user has permission', function () {
+      this.setOrganizationForCurrentSpace(pricingV1Org);
       this.OrganizationRoles.isOwnerOrAdmin.returns(true);
-      const path = 'account.organizations.subscription({ orgId: \'ORG_0\' })';
-      expect(this.view.getSubscriptionState()).toBe(path);
+      const sref = {
+        path: ['account', 'organizations', 'subscription'],
+        params: { orgId: 'ORG_ID' },
+        options: { reload: true }
+      };
+      expect(this.view.getSubscriptionState()).toEqual(sref);
     });
 
-    it('returns undefined if user does not have permission to access path', function () {
+    it('returns null for v1 and v2 orgs if user does not have access permission', function () {
       this.OrganizationRoles.isOwnerOrAdmin.returns(false);
-      expect(this.view.getSubscriptionState()).toBe(undefined);
+      this.setOrganizationForCurrentSpace(pricingV1Org);
+      expect(this.view.getSubscriptionState()).toBe(null);
+      this.setOrganizationForCurrentSpace(pricingV2Org);
+      expect(this.view.getSubscriptionState()).toBe(null);
+    });
+
+    it('returns null if no org in space context', function () {
+      this.setOrganizationForCurrentSpace(null);
+      this.OrganizationRoles.isOwnerOrAdmin.returns(true);
+      expect(this.view.getSubscriptionState()).toBe(null);
+    });
+
+    it('has path to new subscription page for v2 org', function () {
+      this.setOrganizationForCurrentSpace(pricingV2Org);
+      this.OrganizationRoles.isOwnerOrAdmin.returns(true);
+      const sref = {
+        path: ['account', 'organizations', 'subscription_new'],
+        params: { orgId: 'ORG_ID' },
+        options: { reload: true }
+      };
+      expect(this.view.getSubscriptionState()).toEqual(sref);
     });
   });
 
