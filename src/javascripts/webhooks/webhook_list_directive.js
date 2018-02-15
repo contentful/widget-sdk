@@ -11,16 +11,28 @@ angular.module('contentful')
 })
 
 .controller('WebhookListController', ['$scope', 'require', function ($scope, require) {
-
-  var spaceContext       = require('spaceContext');
-  var webhookRepo        = require('WebhookRepository').getInstance(spaceContext.space);
+  var spaceContext = require('spaceContext');
+  var webhookRepo = require('WebhookRepository').getInstance(spaceContext.space);
   var ReloadNotification = require('ReloadNotification');
+  var ResourceUtils = require('utils/ResourceUtils');
+  var createResourceService = require('services/ResourceService').default;
+
+  var organization = spaceContext.organizationContext.organization;
+  var resources = createResourceService(spaceContext.getId());
+
+  ResourceUtils.useLegacy(organization).then(function (legacy) {
+    $scope.showSidebar = !legacy;
+  });
+
+  resources.get('webhookDefinition').then(function (resource) {
+    $scope.usage = resource.usage;
+  });
 
   $scope.limit = 20;
 
   reload().catch(ReloadNotification.basicErrorHandler);
 
-  function reload() {
+  function reload () {
     return webhookRepo.getAll().then(function (items) {
       $scope.webhooks = items;
       $scope.context.ready = true;
