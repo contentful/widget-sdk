@@ -42,7 +42,10 @@ export function generateMessage (resource) {
 
 export function getResourceLimits (resource) {
   if (!resource.parent && !resource.limits) {
-    return null;
+    return {
+      included: null,
+      maximum: null
+    };
   }
 
   if (resource.limits) {

@@ -187,6 +187,19 @@ describe('ResourceUtils', function () {
       expect(limits.included).toBe(500);
       expect(limits.maximum).toBe(1000);
     });
+
+    it('returns a limits object even given a resource with a null limits key', function () {
+      const resource = {
+        name: 'Foo Resource',
+        kind: 'permanent',
+        usage: 7,
+        limits: null
+      };
+
+      const limits = this.ResourceUtils.getResourceLimits(resource);
+      expect(limits.included).toBe(null);
+      expect(limits.maximum).toBe(null);
+    });
   });
 
   describe('#useLegacy', function () {
