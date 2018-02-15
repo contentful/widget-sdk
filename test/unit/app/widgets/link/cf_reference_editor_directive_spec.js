@@ -1,6 +1,6 @@
 import $q from '$q';
 
-xdescribe('cfReferenceEditorDirective', function () {
+describe('cfReferenceEditorDirective', function () {
   const template = '<cf-reference-editor type="{{ type }}" variant="{{ variant }}" single="single" />';
   const link1 = {sys: {type: 'Link', linkType: 'Entry', id: 'testid1'}};
   const link2 = {sys: {type: 'Link', linkType: 'Entry', id: 'testid2'}};

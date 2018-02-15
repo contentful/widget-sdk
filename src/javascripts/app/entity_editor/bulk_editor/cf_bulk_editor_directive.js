@@ -14,7 +14,8 @@ angular.module('contentful')
   return {
     scope: {
       referenceContext: '=',
-      renderInline: '='
+      renderInline: '=',
+      onRemove: '='
     },
     restrict: 'E',
     template: JST.bulk_editor(),
@@ -44,7 +45,7 @@ angular.module('contentful')
     // Property<string>
     // List of IDs for the linked entries
     var ids$ = referenceContext.links$.map(function (links) {
-      let ids = [];
+      var ids = [];
 
       if (Array.isArray(links)) {
         ids = links.map(_.property('sys.id'));

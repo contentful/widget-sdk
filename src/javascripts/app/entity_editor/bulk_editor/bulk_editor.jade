@@ -27,7 +27,11 @@
       div(style="position: relative"
         ng-repeat="ctx in entityContexts track by ctx.key"
         data-entity-id="{{ctx.id}}")
-        cf-bulk-entity-editor(entity-context="ctx" bulk-editor-context="editorContext")
+        cf-bulk-entity-editor(
+          entity-context="ctx"
+          bulk-editor-context="editorContext"
+          on-remove="onRemove"
+        )
 
     .workbench-main__sidebar(ng-if="!renderInline")
       .entity-sidebar

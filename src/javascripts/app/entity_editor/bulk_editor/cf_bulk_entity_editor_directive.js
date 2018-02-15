@@ -39,7 +39,8 @@ angular.module('contentful')
     restrict: 'E',
     scope: {
       entityContext: '<',
-      bulkEditorContext: '<'
+      bulkEditorContext: '<',
+      onRemove: '='
     },
     template: JST.bulk_entity_editor(),
     link: function ($scope, $el) {
@@ -135,7 +136,11 @@ angular.module('contentful')
       $scope.actions = {
         unlink: function () {
           trackAction.unlink();
-          entityContext.remove();
+          if ($scope.onRemove()) {
+            $scope.onRemove();
+          } else {
+            entityContext.remove();
+          }
         },
         toggleExpansion: function () {
           data.expanded = !data.expanded;

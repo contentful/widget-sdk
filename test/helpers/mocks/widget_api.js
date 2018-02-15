@@ -38,6 +38,9 @@ angular.module('contentful/mocks')
       settings: {
         helpText: ''
       },
+      _internal: {
+        createReferenceContext: sinon.stub()
+      },
       locales: {
         default: 'en-US',
         available: ['en-US']

@@ -25,6 +25,7 @@ div(ng-show="!isReady")
           cf-bulk-editor(
             reference-context="model.value.refCtxt"
             render-inline="true"
+            on-remove="model.value.actions.remove"
           )
 
       cf-asset-card(
