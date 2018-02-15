@@ -25,7 +25,7 @@ include ./create_entry_button.mixin.jade
   .empty-state__description
     | Your content is made up of entries.  Get started by creating your first entry.
   .empty-state__action
-    +create-entry-button(large=true)
+    +create-entry-button()
   .empty-state__note-box(ng-if="hasArchivedEntries")
     | You can look up old entries in the
     | <a ng-click="loadView({searchTerm: 'status:archived'})">archive</a>.

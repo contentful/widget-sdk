@@ -78,7 +78,7 @@
       ui-command="locales.changeActive")
       | Change
 
-  div(ng-if="data.isEntry")
+  div(ng-if="data.isEntry && data.isMasterEnvironment")
     h2.entity-sidebar__heading Versions
     cf-snapshot-sidebar-list
 
