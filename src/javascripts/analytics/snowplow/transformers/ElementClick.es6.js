@@ -24,10 +24,10 @@ export default function (_, eventData) {
       return {
         schema: getSchema('content_preview').path,
         data: omitBy({
-          previewName,
-          previewId,
-          contentTypeName,
-          contentTypeId
+          preview_name: previewName,
+          preview_id: previewId,
+          content_type_name: contentTypeName,
+          content_type_id: contentTypeId
         }, isEmpty)
       };
     })(_, eventData);
