@@ -58,6 +58,7 @@ div(ng-show="!isReady")
       text="Create {{allowedCTs[0].name}} and link")
 
     button.btn-action(
+      data-test-id="add-and-link-reference-trigger"
       ng-if="type === 'Asset'"
       ng-click="isNewAddAndLinkRefButtonEnabled ? addNewAsset() : addNew($event)"
       type="button")
