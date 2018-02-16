@@ -16,13 +16,13 @@ angular.module('contentful')
   var TokenStore = require('services/TokenStore');
   var spacesByOrg$ = TokenStore.spacesByOrganization$;
   var orgs$ = TokenStore.organizations$;
-  var showCreateSpaceModal = require('services/CreateSpace').showDialog;
+  var CreateSpace = require('services/CreateSpace');
   var K = require('utils/kefir');
   var NavStates = require('navigation/NavState').NavStates;
   var navState$ = require('navigation/NavState').navState$;
   var Navigator = require('states/Navigator');
   var assign = require('utils/Collections').assign;
-  var renderSidepanel = require('navigation/templates/SidepanelView').default;
+  var renderSidepanel = require('navigation/Sidepanel/SidepanelView').default;
 
   return {
     restrict: 'E',
@@ -48,17 +48,20 @@ angular.module('contentful')
         viewingOrgSettings: false,
         spacesByOrg: null,
         currOrg: null,
-        currSpace: null,
+        currentSpaceId: null,
+        currentEnvId: null,
         orgs: null,
-        setAndGotoSpace: setAndGotoSpace,
+        goToSpace: goToSpace,
         canCreateSpaceInCurrOrg: false,
-        showCreateSpaceModal: showCreateSpaceModalTest,
+        showCreateSpaceModal: showCreateSpaceModal,
         openOrgsDropdown: openOrgsDropdown,
         setCurrOrg: setCurrOrg,
         orgDropdownIsShown: false,
         closeOrgsDropdown: closeOrgsDropdown,
         canCreateOrg: false,
-        createNewOrg: createNewOrg
+        createNewOrg: createNewOrg,
+        openedSpaceId: null,
+        setOpenedSpaceId: setOpenedSpaceId
       };
 
       function render () {
@@ -86,7 +89,10 @@ angular.module('contentful')
       K.onValueScope($scope, navState$.combine(accessChecker.isInitialized$), function (values) {
         if (values[1]) {
           navState = values[0];
-          state = assign(state, {currSpace: navState.space});
+          state = assign(state, {
+            currentSpaceId: _.get(navState, ['space', 'sys', 'id']),
+            currentEnvId: _.get(navState, ['env', 'sys', 'id'])
+          });
           setCurrOrg(navState.org || _.get(state, 'orgs[0]'));
           render();
         }
@@ -114,18 +120,21 @@ angular.module('contentful')
         });
       }
 
-      function setAndGotoSpace (space) {
+      function goToSpace (spaceId, envId) {
         closeSidePanel();
         Navigator.go({
-          path: ['spaces', 'detail'],
-          params: { spaceId: space.sys.id },
+          path: ['spaces', 'detail'].concat(envId ? ['environment'] : []),
+          params: {
+            spaceId: spaceId,
+            environmentId: envId
+          },
           options: { reload: true }
         });
       }
 
-      function showCreateSpaceModalTest () {
+      function showCreateSpaceModal () {
         closeSidePanel();
-        showCreateSpaceModal(state.currOrg.sys.id);
+        CreateSpace.showDialog(state.currOrg.sys.id);
       }
 
       function handleEsc (ev) {
@@ -148,7 +157,6 @@ angular.module('contentful')
         }
       }
 
-
       function closeOrgsDropdown () {
         state = assign(state, {orgDropdownIsShown: false});
         render();
@@ -157,6 +165,11 @@ angular.module('contentful')
       function setCurrOrg (org) {
         state = assign(state, {currOrg: org});
         refreshPermissions(navState, org);
+        render();
+      }
+
+      function setOpenedSpaceId (spaceId) {
+        state = assign(state, {openedSpaceId: spaceId});
         render();
       }
 

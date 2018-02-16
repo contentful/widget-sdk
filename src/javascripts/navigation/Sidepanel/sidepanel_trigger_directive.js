@@ -12,7 +12,7 @@ angular.module('contentful')
   var caseof = require('libs/sum-types').caseof;
   var NavStates = require('navigation/NavState').NavStates;
   var navState$ = require('navigation/NavState').navState$;
-  var template = require('navigation/templates/SidepanelTrigger.template').default();
+  var template = require('navigation/Sidepanel/SidepanelTrigger.template').default();
   var spaceContext = require('spaceContext');
 
   return {

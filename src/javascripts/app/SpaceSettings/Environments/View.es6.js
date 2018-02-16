@@ -52,7 +52,7 @@ function environmentList ({
 
   if (loadingError) {
     return h('.note-box--warning', [
-      `The list of tokens failed to load, try refreshing the page. If
+      `The list of environments failed to load, try refreshing the page. If
       the problem persists `, linkOpen(['contact support'], Config.supportUrl)
     ]);
   } else {

@@ -50,13 +50,13 @@ describe('cfNavSidepanel directive', () => {
     }];
     this.spacesByOrg = {
       'test-org-id-1': [{
-        name: 'test-space-1-1', sys: {id: 'test-space-id-1-1'}
+        name: 'test-space-1-1', sys: {id: 'test-space-id-1-1'}, spaceMembership: {admin: false}
       }],
       'test-org-id-2': [],
       'test-org-id-3': [{
-        name: 'test-space-3-1', sys: {id: 'test-space-id-3-1'}
+        name: 'test-space-3-1', sys: {id: 'test-space-id-3-1'}, spaceMembership: {admin: false}
       }, {
-        name: 'test-space-3-2', sys: {id: 'test-space-id-3-2'}
+        name: 'test-space-3-2', sys: {id: 'test-space-id-3-2'}, spaceMembership: {admin: false}
       }]
     };
     this.tokenStore = this.$inject('services/TokenStore');
@@ -162,7 +162,7 @@ describe('cfNavSidepanel directive', () => {
 
     sinon.assert.calledWith(Navigator.go, {
       path: ['spaces', 'detail'],
-      params: { spaceId: 'test-space-id-1-1' },
+      params: { spaceId: 'test-space-id-1-1', environmentId: undefined },
       options: { reload: true }
     });
   });
