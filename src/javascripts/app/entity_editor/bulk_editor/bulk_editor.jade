@@ -1,4 +1,7 @@
 .workbench
+  // TODO: This is for inline reference editing
+  // BETA release. Remove this once we are done with
+  // the experiment.
   header.workbench-header(ng-if="!renderInline")
     .breadcrumbs-widget
       .breadcrumbs-container
@@ -30,7 +33,6 @@
         cf-bulk-entity-editor(
           entity-context="ctx"
           bulk-editor-context="editorContext"
-          on-remove="onRemove"
         )
 
     .workbench-main__sidebar(ng-if="!renderInline")

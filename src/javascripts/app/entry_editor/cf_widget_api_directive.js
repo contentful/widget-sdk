@@ -64,6 +64,9 @@ angular.module('contentful')
     };
   }
 
+  // TODO: This is used to create multiple reference contexts
+  // to be able to open multiple instances of the bulk editor
+  // simultaneously.
   if ($scope.editorContext.createReferenceContext) {
     this._internal.createReferenceContext = function (index, cb) {
       return $scope.editorContext.createReferenceContext(ctField.id, $scope.locale.internal_code, index, cb);

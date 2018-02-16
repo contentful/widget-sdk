@@ -1,4 +1,4 @@
-import { partial, countBy, filter } from 'lodash';
+import { partial, countBy, filter, get } from 'lodash';
 import * as K from 'utils/kefir';
 import * as List from 'utils/List';
 
@@ -11,11 +11,11 @@ import { track } from 'analytics/Analytics';
 import { onEntryCreate as trackEntryCreate } from 'analytics/events/ReferenceEditor';
 
 import * as State from './State';
-import { getAvailableContentTypes } from './utils';
 import {
   canPerformActionOnEntryOfType,
   Action
 } from 'access_control/AccessChecker';
+import { canLinkToContentType } from './utils';
 
 const FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN =
   'feature-at-11-2017-lots-of-cts-add-entry-and-link-reference';
@@ -33,11 +33,11 @@ export default function create ($scope, widgetApi) {
     $scope.single
   );
 
-  $scope.useBulkEditor =
+  const useBulkEditor =
     widgetApi.settings.bulkEditing && !!widgetApi._internal.editReferences;
   $scope.typePlural = { Entry: 'entries', Asset: 'assets' }[$scope.type];
   $scope.isAssetCard = is('Asset', 'card');
-  $scope.useInlineEditor = shouldOpenInline();
+  $scope.referenceType = {};
 
   // Passed to cfEntityLink and cfAssetCard directive
   $scope.config = {
@@ -56,30 +56,48 @@ export default function create ($scope, widgetApi) {
     }
   );
 
-  onFeatureFlag($scope, INLINE_REFERENCE_FEATURE_FLAG, function (variation) {
-    $scope.isInlineReferenceEnabled = variation;
-    $scope.useInlineEditor = shouldOpenInline();
+   // TODO: This is for inline reference editing
+  // BETA release. Remove this once we are done with
+  // the experiment.
+  onFeatureFlag($scope, INLINE_REFERENCE_FEATURE_FLAG, function (isEnabled) {
+    const featureEnabledForField = true;
+    const isAsset = $scope.isAssetCard;
+    const isOneToOne = $scope.single;
+
+    if (isAsset) {
+      $scope.referenceType = { asset: true };
+    } else if (widgetApi._internal.createReferenceContext && isEnabled && featureEnabledForField && isOneToOne) {
+      $scope.referenceType = { inline: true };
+    } else {
+      $scope.referenceType = { link: true };
+    }
   });
 
   $scope.uiSortable.update = function () {
     // let uiSortable update the model, then sync
     $scope.$applyAsync(function () {
-      state.setIds(
-        $scope.entityModels.map(function (model) {
-          return model.value.id;
-        })
-      );
+      const entityModelIds = $scope.entityModels.map(function (model) {
+        return model.value.id;
+      });
+
+      state.setIds(entityModelIds);
     });
   };
 
   $scope.helpers = widgetApi.entityHelpers;
 
   $scope.allowedCTs = [];
-  getAvailableContentTypes(widgetApi.space, field).then(contentTypes => {
-    $scope.allowedCTs = contentTypes.filter(contentType =>
-      canPerformActionOnEntryOfType(Action.CREATE, contentType.sys.id)
-    );
-  });
+
+  K.onValueScope($scope, spaceContext.publishedCTs.items$, () => updateAccessibleCts());
+
+  function updateAccessibleCts () {
+    $scope.allowedCTs = spaceContext.publishedCTs
+      .getAllBare()
+      .filter(contentType => {
+        return canPerformActionOnEntryOfType(Action.CREATE, contentType.sys.id);
+      })
+      .filter(canLinkToContentType);
+  }
 
   // TODO: Legacy code to be removed with FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN
   $scope.addNew = function (event) {
@@ -216,13 +234,22 @@ export default function create ($scope, widgetApi) {
   // Build an object that is passed to the 'cfEntityLink' directive
   function buildEntityModel (id, entity, index, isDisabled) {
     const version = entity ? entity.sys.version : '';
-    const contentTypeId =
-      entity && entity.sys.contentType && entity.sys.contentType.sys.id;
+    const contentTypeId = get(entity, 'sys.contentType.sys.id');
     const hash = [id, version, isDisabled, contentTypeId].join('!');
 
     const contentType =
       contentTypeId && spaceContext.publishedCTs.fetch(contentTypeId);
-    const refCtxt = widgetApi._internal.createReferenceContext ? widgetApi._internal.createReferenceContext(index, state.refreshEntities) : null;
+    let refCtxt = widgetApi._internal.createReferenceContext ? widgetApi._internal.createReferenceContext(index, state.refreshEntities) : null;
+
+    // This is passed down to the bulk entity editor actions
+    // to be able to unlink an entry when the bulk editor is
+    // rendered inline.
+    if (refCtxt) {
+      refCtxt = {
+        ...refCtxt,
+        remove: prepareRemoveAction(index, isDisabled)
+      };
+    }
 
     return {
       id: id,
@@ -233,6 +260,9 @@ export default function create ($scope, widgetApi) {
         edit: prepareEditAction(entity, index, isDisabled),
         remove: prepareRemoveAction(index, isDisabled)
       },
+      // TODO: This is used to create multiple reference contexts
+      // to be able to open multiple instances of the bulk editor
+      // simultaneously. This will be null if it is a nested reference.
       refCtxt: refCtxt
     };
   }
@@ -242,7 +272,7 @@ export default function create ($scope, widgetApi) {
     const linksParentEntry =
       entity && entity.sys.type === 'Entry' && entity.sys.id === entryId;
 
-    if (entity && !isDisabled && !linksParentEntry && $scope.useBulkEditor) {
+    if (entity && !isDisabled && !linksParentEntry && useBulkEditor) {
       return function () {
         widgetApi._internal.editReferences(index, state.refreshEntities);
       };
@@ -252,21 +282,11 @@ export default function create ($scope, widgetApi) {
   }
 
   function editEntityAction (entity, index) {
-    if ($scope.useBulkEditor) {
+    if (useBulkEditor) {
       return widgetApi._internal.editReferences(index, state.refreshEntities);
-    } else if (!$scope.useInlineEditor) {
+    } else if (!$scope.referenceType.inline) {
       return widgetApi.state.goToEditor(entity);
     }
-  }
-
-  function shouldOpenInline () {
-    // TODO: Check for settings in local storage per user:ct:field_name
-    const featureEnabledForField = true;
-    const featureIsEnabled = $scope.isInlineReferenceEnabled;
-    const isAsset = $scope.isAssetCard;
-    const isOneToOne = $scope.single;
-
-    return featureIsEnabled && featureEnabledForField && !isAsset && isOneToOne && !$scope.useBulkEditor;
   }
 
   function prepareRemoveAction (index, isDisabled) {
