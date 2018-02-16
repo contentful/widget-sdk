@@ -31,14 +31,20 @@ describe('EntitySelectorController', function () {
     };
   });
 
-  function entity (id) {
-    return {sys: {id: id}};
-  }
+  const entity = (id) => ({ sys: { id } });
+  const E1 = entity('e1');
+  const E2 = entity('e2');
+  const E3 = entity('e3');
 
   it('sets view modes', function () {
     this.createController({entityType: 'Asset'});
-    expect(this.scope.AVAILABLE).toBe(1);
-    expect(this.scope.SELECTED).toBe(2);
+    expect(this.scope.AVAILABLE).not.toBeUndefined();
+    expect(this.scope.SELECTED).not.toBeUndefined();
+    expect(this.scope.AVAILABLE).not.toBe(this.scope.SELECTED);
+  });
+
+  it('sets "available" view mode initially', function () {
+    this.createController({entityType: 'Asset'});
     expect(this.scope.view.mode).toBe(this.scope.AVAILABLE);
   });
 
@@ -125,16 +131,13 @@ describe('EntitySelectorController', function () {
     });
 
     it('removes duplicates from the fetched page', function () {
-      const entities = [entity('e1'), entity('e2')];
+      this.fetch.resolves({ items: [ E1, E2 ] });
+      this.createController({ noPagination: false });
 
-      this.fetch.resolves({total: 2, items: [entities[0]]});
-      this.createController();
-      expect(this.scope.items).toEqual([entities[0]]);
+      this.fetch.resolves({ items: [ E2, E3 ] });
+      this.loadMore();
 
-      this.fetch.resolves({total: 2, items: entities});
-      this.scope.$broadcast('forceSearch');
-      this.$apply();
-      expect(this.scope.items).toEqual(entities);
+      expect(this.scope.items).toEqual([ E1, E2, E3 ]);
     });
   });
 
@@ -170,35 +173,40 @@ describe('EntitySelectorController', function () {
 
   describe('selection', function () {
     beforeEach(function () {
-      this.e1 = entity('e1');
-      this.e3 = entity('e3');
-      this.fetch.resolves({items: [this.e1, entity('e2'), this.e3]});
+      this.fetch.resolves({ items: [ E1, E2, E3 ] });
     });
 
     it('closes dialog with single entity', function () {
-      this.createController({multiple: false});
+      this.createController({ multiple: false });
       const confirm = sinon.spy();
-      this.scope.dialog = {confirm: confirm};
-      this.scope.toggleSelection(this.e1);
-      sinon.assert.calledOnce(confirm.withArgs([this.e1]));
+      this.scope.dialog = { confirm: confirm };
+      this.scope.toggleSelection(E1);
+      sinon.assert.calledOnce(confirm.withArgs([ E1 ]));
     });
 
     it('selects multiple entities', function () {
-      this.createController({multiple: true});
-      this.scope.toggleSelection(this.e1);
-      this.scope.toggleSelection(this.e3);
-      expect(this.scope.selected).toEqual([this.e1, this.e3]);
-      expect(this.scope.selectedIds).toEqual({e1: true, e3: true});
+      this.createController({ multiple: true });
+      this.scope.toggleSelection(E1);
+      this.scope.toggleSelection(E3);
+      expectSelected(this.scope, [ E1, E3 ]);
     });
 
     it('deselects if entity is already selected', function () {
       this.createController({multiple: true});
-      this.scope.toggleSelection(this.e1);
-      expect(this.scope.selected).toEqual([this.e1]);
-      expect(this.scope.selectedIds).toEqual({e1: true});
-      this.scope.toggleSelection(this.e1);
-      expect(this.scope.selected).toEqual([]);
-      expect(this.scope.selectedIds).toEqual({});
+      this.scope.toggleSelection(E1);
+      expectSelected(this.scope, [ E1 ]);
+      this.scope.toggleSelection(E1);
+      expectSelected(this.scope, []);
     });
+
+    function expectSelected (scope, selected) {
+      expect(scope.selected).toEqual(selected);
+      const selectedIds = selected.reduce(
+        (obj, val) => {
+          obj[val.sys.id] = true;
+          return obj;
+        }, {});
+      expect(scope.selectedIds).toEqual(selectedIds);
+    }
   });
 });
