@@ -1,5 +1,7 @@
+/* eslint-disable react/prop-types */
+// TODO: add prop-types
 import { asReact } from 'ui/Framework/DOMRenderer';
-import { createElement as h } from 'libs/react';
+import React from 'libs/react';
 import enhanceWithClickOutside from 'libs/react-click-outside';
 import PropTypes from 'libs/prop-types';
 import createReactClass from 'create-react-class';
@@ -12,6 +14,13 @@ export const modes = {
 };
 
 const CreateEntryButton = createReactClass({
+  propTypes: {
+    contentTypes: PropTypes.array.isRequired,
+    suggestedContentTypeId: PropTypes.string,
+    onSelect: PropTypes.func.isRequired,
+    mode: PropTypes.string,
+    text: PropTypes.string.isRequired
+  },
   getDefaultProps () {
     return {
       suggestedContentTypeId: null,
@@ -49,50 +58,47 @@ const CreateEntryButton = createReactClass({
     });
   },
   render () {
-    const {
-      contentTypes,
-      suggestedContentTypeId,
-      mode,
-      text
-    } = this.props;
+    const { contentTypes, suggestedContentTypeId, mode, text } = this.props;
     const withSingleCT = contentTypes && contentTypes.length === 1;
 
-    return h(
-      'div',
-      { style: { position: 'relative' }, className: mode === modes.LARGE ? 'x--block' : '' },
-      h(Button, {
-        onClick: this.handleClick,
-        mode,
-        text,
-        withSingleCT
-      }),
-      !withSingleCT && this.state.isOpen && h(Menu, {
-        contentTypes,
-        suggestedContentTypeId,
-        onSelect: this.handleSelect,
-        onClose: this.handleClose
-      })
+    return (
+      <div
+        style={{ position: 'relative' }}
+        className={mode === modes.LARGE ? 'x--block' : ''}
+      >
+        <Button
+          onClick={this.handleClick}
+          mode={mode}
+          text={text}
+          withSingleCT
+        />
+        {!withSingleCT &&
+          this.state.isOpen && (
+            <Menu
+              contentTypes={contentTypes}
+              suggestedContentTypeId={suggestedContentTypeId}
+              onSelect={this.handleSelect}
+              onClose={this.handleClose}
+            />
+          )}
+      </div>
     );
   }
 });
-
-CreateEntryButton.propTypes = {
-  contentTypes: PropTypes.array.isRequired,
-  suggestedContentTypeId: PropTypes.string,
-  mode: PropTypes.string,
-  text: PropTypes.string.isRequired
-};
 
 export default enhanceWithClickOutside(CreateEntryButton);
 
 export function Button ({ onClick, mode, text, withSingleCT }) {
   const className = mode === modes.LARGE ? 'x--block' : '';
 
-  return h(
-    'button',
-    { className: `btn-action u-truncate ${className}`, onClick },
-    h('cf-icon', { class: 'btn-icon inverted', name: 'plus' }),
-    text,
-    !withSingleCT && h('cf-icon', { class: 'btn-dropdown-icon', name: 'dd-arrow-down' }, asReact(DropDownIcon))
+  return (
+    <button className={`btn-action u-truncate ${className}`} onClick={onClick}>
+      <cf-icon class="btn-icon inverted" name="plus" />
+      {text}
+      {!withSingleCT &&
+        <cf-icon class="btn-dropdown-icon" name="dd-arrow-down">
+          {asReact(DropDownIcon)}
+        </cf-icon>}
+    </button>
   );
 }

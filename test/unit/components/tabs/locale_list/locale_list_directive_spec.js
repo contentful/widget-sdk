@@ -8,7 +8,7 @@ describe('The Locale list directive', function () {
     });
 
     this.mockService('TheAccountView', {
-      getSubscriptionState: sinon.stub().returns('stateref')
+      getSubscriptionState: sinon.stub().returns({path: ['stateref']})
     });
 
     this.container = null;

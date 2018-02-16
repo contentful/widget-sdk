@@ -9,6 +9,12 @@ import { EntityType, getNumberOfLinks } from '../constants';
 import messages from './messages';
 
 const SidebarIncomingLinks = createReactClass({
+  propTypes: {
+    entityInfo: PropTypes.shape({
+      id: PropTypes.string,
+      type: PropTypes.oneOf([EntityType.ASSET, EntityType.ENTRY])
+    })
+  },
   render () {
     const { entityInfo } = this.props;
 
@@ -46,12 +52,5 @@ function getMessages ({ entityInfo, links }) {
   const numberOfLinks = getNumberOfLinks(links);
   return messages[entityInfo.type][numberOfLinks];
 }
-
-SidebarIncomingLinks.propTypes = {
-  entityInfo: PropTypes.shape({
-    id: PropTypes.string,
-    type: PropTypes.oneOf([EntityType.ASSET, EntityType.ENTRY])
-  })
-};
 
 export default SidebarIncomingLinks;
