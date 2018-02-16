@@ -130,6 +130,16 @@ describe('EntitySelectorController', function () {
       expect(this.scope.paginator.getTotal()).toBe(123);
     });
 
+    it('does not remove currentlt displayed entities', function () {
+      this.createController();
+      this.scope.items = [ E1 ];
+
+      this.fetch.resolves({ items: [ E2 ] });
+      this.loadMore();
+
+      expect(this.scope.items).toEqual([ E1, E2 ]);
+    });
+
     it('removes duplicates from the fetched page', function () {
       this.fetch.resolves({ items: [ E1, E2 ] });
       this.createController({ noPagination: false });
@@ -202,10 +212,10 @@ describe('EntitySelectorController', function () {
     function expectSelected (scope, selected) {
       expect(scope.selected).toEqual(selected);
       const selectedIds = selected.reduce(
-        (obj, val) => {
-          obj[val.sys.id] = true;
-          return obj;
-        }, {});
+        (obj, val) => ({
+          ...obj,
+          [val.sys.id]: true
+        }), {});
       expect(scope.selectedIds).toEqual(selectedIds);
     }
   });
