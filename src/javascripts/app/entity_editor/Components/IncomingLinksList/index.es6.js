@@ -4,7 +4,10 @@ import PropTypes from 'libs/prop-types';
 import { template } from '../template';
 
 const IncomingLinksList = createReactClass({
-  displayName: 'IncomingLinksList',
+  propTypes: {
+    links: PropTypes.array.isRequired,
+    message: PropTypes.string.isRequired
+  },
   render () {
     const { links, message } = this.props;
     return h(
@@ -46,10 +49,5 @@ const IncomingLinksList = createReactClass({
     );
   }
 });
-
-IncomingLinksList.propTypes = {
-  links: PropTypes.array.isRequired,
-  message: PropTypes.string.isRequired
-};
 
 export default IncomingLinksList;

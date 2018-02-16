@@ -1,4 +1,6 @@
 /* global requestAnimationFrame */
+/* eslint-disable react/prop-types */
+// TODO: add prop-types
 import { noop } from 'lodash';
 import { match } from 'utils/TaggedValues';
 import { truncate } from 'stringUtils';

@@ -17,7 +17,12 @@ const Position = {
 };
 
 const Menu = createReactClass({
-  displayName: 'Menu',
+  propTypes: {
+    contentTypes: PropTypes.array.isRequired,
+    suggestedContentTypeId: PropTypes.string,
+    onSelect: PropTypes.func.isRequired,
+    onClose: PropTypes.func
+  },
   getDefaultProps () {
     return {
       suggestedContentTypeId: null,
@@ -139,13 +144,6 @@ function renderMenu ({ contentTypes, suggestedContentTypeId, onSelect }) {
     );
   };
 }
-
-Menu.propTypes = {
-  contentTypes: PropTypes.array.isRequired,
-  suggestedContentTypeId: PropTypes.string,
-  onSelect: PropTypes.func.isRequired,
-  onClose: PropTypes.func
-};
 
 export default Menu;
 

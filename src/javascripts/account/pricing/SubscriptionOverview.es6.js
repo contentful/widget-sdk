@@ -18,13 +18,12 @@ import {get, isString} from 'lodash';
 import {supportUrl} from 'Config';
 import $location from '$location';
 
-const subscriptionOverviewPropTypes = {
-  onReady: PropTypes.func.isRequired,
-  onForbidden: PropTypes.func.isRequired,
-  orgId: PropTypes.string.isRequired
-};
-
 const SubscriptionOverview = createReactClass({
+  propTypes: {
+    onReady: PropTypes.func.isRequired,
+    onForbidden: PropTypes.func.isRequired,
+    orgId: PropTypes.string.isRequired
+  },
   getInitialState: function () {
     return {
       basePlan: {},
@@ -105,8 +104,6 @@ const SubscriptionOverview = createReactClass({
     );
   }
 });
-
-SubscriptionOverview.propTypes = subscriptionOverviewPropTypes;
 
 function BasePlan ({basePlan, orgId}) {
   const enabledFeatures = getEnabledFeatures(basePlan);

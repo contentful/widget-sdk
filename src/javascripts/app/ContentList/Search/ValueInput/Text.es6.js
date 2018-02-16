@@ -8,6 +8,14 @@ import createReactClass from 'create-react-class';
  * Renders text input in filter pill
  */
 const TextValueInput = createReactClass({
+  propTypes: {
+    testId: PropTypes.any,
+    inputRef: PropTypes.func,
+    value: PropTypes.string,
+    onKeyDown: PropTypes.func,
+    onChange: PropTypes.func,
+    onClick: PropTypes.func
+  },
   getDefaultProps () {
     return {
       onChange: noop,
@@ -62,13 +70,5 @@ const TextValueInput = createReactClass({
     );
   }
 });
-
-TextValueInput.propTypes = {
-  testId: PropTypes.any,
-  inputRef: PropTypes.func,
-  onKeyDown: PropTypes.func,
-  onChange: PropTypes.func,
-  onClick: PropTypes.func
-};
 
 export default TextValueInput;

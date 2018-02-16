@@ -9,7 +9,11 @@ export const RequestState = {
 };
 
 const FetchLinksToEntity = createReactClass({
-  displayName: 'FetchLinksToEntity',
+  propTypes: {
+    id: PropTypes.string.isRequired,
+    type: PropTypes.oneOf([EntityType.ASSET, EntityType.ENTRY]).isRequired,
+    render: PropTypes.func.isRequired
+  },
   getInitialState () {
     return {
       links: [],
@@ -44,11 +48,5 @@ const FetchLinksToEntity = createReactClass({
     return this.props.render(this.state);
   }
 });
-
-FetchLinksToEntity.propTypes = {
-  id: PropTypes.string.isRequired,
-  type: PropTypes.oneOf([EntityType.ASSET, EntityType.ENTRY]).isRequired,
-  render: PropTypes.func.isRequired
-};
 
 export default FetchLinksToEntity;

@@ -6,6 +6,14 @@ import createReactClass from 'create-react-class';
  * Renders query input in search widget
  */
 const QueryInput = createReactClass({
+  propTypes: {
+    placeholder: PropTypes.string,
+    autoFocus: PropTypes.bool,
+    isFocused: PropTypes.bool,
+    value: PropTypes.string,
+    onKeyDown: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired
+  },
   getInitialState () {
     return {
       value: this.props.value
@@ -66,12 +74,5 @@ const QueryInput = createReactClass({
     );
   }
 });
-
-QueryInput.propTypes = {
-  placeholder: PropTypes.string,
-  autoFocus: PropTypes.bool,
-  onKeyDown: PropTypes.func.isRequired,
-  onChange: PropTypes.func.isRequired
-};
 
 export default QueryInput;

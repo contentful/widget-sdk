@@ -8,15 +8,14 @@ import $ from 'jquery';
 import ContactUs from '../contactUs';
 // End test code: feature-ps-10-2017-contact-us-space-home
 
-const propTypes = {
-  hasContactUs: PropTypes.bool,
-  user: PropTypes.shape({
-    firstName: PropTypes.string.isRequired,
-    signInCount: PropTypes.number.isRequired
-  }).isRequired
-};
-
 const Welcome = createReactClass({
+  propTypes: {
+    hasContactUs: PropTypes.bool,
+    user: PropTypes.shape({
+      firstName: PropTypes.string.isRequired,
+      signInCount: PropTypes.number.isRequired
+    }).isRequired
+  },
   scrollToDeveloperResources () {
     $('cf-developer-resources').get(0).scrollIntoView(
       {block: 'start', behavior: 'smooth'}
@@ -45,8 +44,6 @@ const Welcome = createReactClass({
     );
   }
 });
-
-Welcome.propTypes = propTypes;
 
 export default Welcome;
 

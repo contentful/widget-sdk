@@ -5,9 +5,12 @@ root: true
 extends:
   - 'eslint:recommended'
   - 'standard'
+  - 'plugin:react/recommended'
+
 env:
   browser: true
 rules:
+  react/display-name: "off"
   indent: "off"
   indent-legacy: [2, 2, { "SwitchCase": 1 }]
   no-template-curly-in-string: "off"
@@ -72,14 +75,3 @@ overrides:
     - TaggedTemplateExpression
     - UpdateExpression
     - WithStatement
-    - JSXIdentifier
-    - JSXNamespacedName
-    - JSXMemberExpression
-    - JSXEmptyExpression
-    - JSXExpressionContainer
-    - JSXElement
-    - JSXClosingElement
-    - JSXOpeningElement
-    - JSXAttribute
-    - JSXSpreadAttribute
-    - JSXText
