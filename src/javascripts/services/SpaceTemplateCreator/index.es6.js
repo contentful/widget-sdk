@@ -495,7 +495,7 @@ function makeTEAUrl (params, url = '') {
     // user will be able to go back to the webapp from TEA using links
     // without this flag, there will be no links in UI of TEA
     editorial_features: 'enabled',
-    // we want to have faster feedback for the user ater his changes
+    // we want to have faster feedback for the user after his changes
     // CPA reacts to changes in ~5 seconds, CDA in more than 10
     api: 'cpa'
   };
