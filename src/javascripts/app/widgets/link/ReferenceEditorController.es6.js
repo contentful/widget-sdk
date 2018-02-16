@@ -16,6 +16,7 @@ import {
   Action
 } from 'access_control/AccessChecker';
 import { canLinkToContentType } from './utils';
+import { getStore } from 'TheStore';
 
 const FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN =
   'feature-at-11-2017-lots-of-cts-add-entry-and-link-reference';
@@ -23,8 +24,12 @@ const INLINE_REFERENCE_FEATURE_FLAG =
   'feature-at-02-2018-inline-reference-field';
 
 export default function create ($scope, widgetApi) {
-  const field = widgetApi.field;
-  const isDisabled$ = widgetApi.fieldProperties.isDisabled$;
+  const store = getStore();
+  const {
+    field,
+    fieldProperties: { isDisabled$ },
+    contentType: { sys: { id: contentTypeId } }
+  } = widgetApi;
   const state = State.create(
     field,
     widgetApi.fieldProperties.value$,
@@ -38,6 +43,10 @@ export default function create ($scope, widgetApi) {
   $scope.typePlural = { Entry: 'entries', Asset: 'assets' }[$scope.type];
   $scope.isAssetCard = is('Asset', 'card');
   $scope.referenceType = {};
+  $scope.$on(
+    'ct-expand-state:toggle',
+    (_event, [...args]) => handleInlineReferenceEditorToggle(...args)
+  );
 
   // Passed to cfEntityLink and cfAssetCard directive
   $scope.config = {
@@ -60,7 +69,13 @@ export default function create ($scope, widgetApi) {
   // BETA release. Remove this once we are done with
   // the experiment.
   onFeatureFlag($scope, INLINE_REFERENCE_FEATURE_FLAG, function (isEnabled) {
-    const featureEnabledForField = true;
+    const ctExpandedStoreKey = [
+      spaceContext.user.sys.id,
+      contentTypeId,
+      field.name,
+      field.locale
+    ].join(':');
+    const featureEnabledForField = store.get(ctExpandedStoreKey);
     const isAsset = $scope.isAssetCard;
     const isOneToOne = $scope.single;
 
@@ -114,6 +129,10 @@ export default function create ($scope, widgetApi) {
 
   $scope.addNewEntry = function (contentTypeId) {
     const contentType = spaceContext.publishedCTs.get(contentTypeId);
+    if ($scope.referenceType.inline) {
+      // necessary to prompt loading state
+      $scope.isReady = false;
+    }
     return widgetApi.space
       .createEntry(contentTypeId, {})
       .then(makeNewEntityHandler(contentType))
@@ -125,6 +144,9 @@ export default function create ($scope, widgetApi) {
 
   function makeNewEntityHandler (contentType) {
     return function (entity) {
+      if ($scope.referenceType.inline) {
+        $scope.isReady = true;
+      }
       if (entity.sys.type === 'Entry') {
         track('entry:create', {
           eventOrigin: 'reference-editor',
@@ -184,6 +206,18 @@ export default function create ($scope, widgetApi) {
 
   function hasUnpublishedReferences () {
     return getUnpublishedReferences().length > 0;
+  }
+
+  function handleInlineReferenceEditorToggle (name, locale, shouldEditInline) {
+    if (name !== field.name || locale !== field.locale) {
+      return;
+    }
+    if (shouldEditInline) {
+      $scope.referenceType = { inline: true };
+      return;
+    }
+    const type = $scope.isAssetCard ? 'asset' : 'link';
+    $scope.referenceType = { [type]: true };
   }
 
   function getUnpublishedReferences () {

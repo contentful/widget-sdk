@@ -1,4 +1,7 @@
-.loading-box--full-screen(ng-if="loading" style="height: 5rem")
+.div(
+  ng-if="loading"
+  ng-class="renderInline ? 'loading-box' : 'loading-box--full-screen'"
+  style="height: 5rem")
   .loading-box__spinner
   .loading-box__message
     | Loading entry

@@ -46,7 +46,8 @@ angular.module('contentful/mocks')
         available: ['en-US']
       },
       contentType: {
-        displayField: ''
+        displayField: '',
+        sys: { id: 'content-type-id' }
       },
       entry: {
         getSys: sinon.stub().returns(entrySys),
