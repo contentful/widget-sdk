@@ -97,7 +97,7 @@ describe('CreateSampleSpace service', function () {
       sinon.assert.calledOnce(this.spaceTemplateLoader.getTemplatesList);
       sinon.assert.calledOnce(this.modalDialog.open);
       sinon.assert.calledWithExactly(this.client.createSpace, {
-        name: 'Sample project',
+        name: 'The example project',
         defaultLocale: 'en-US'
       }, 'owned-org');
       sinon.assert.calledOnce(this.tokenStore.refresh);
