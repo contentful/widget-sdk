@@ -28,15 +28,7 @@ export {wasForbidden} from './Utils';
  * that may change a state of user's permissions.
  */
 
-const ACTIONS_FOR_ENTITIES = {
-  contentType: ['create', 'read', 'update', 'delete', 'publish', 'unpublish'],
-  entry: ['create', 'read', 'update', 'delete', 'publish', 'unpublish', 'archive', 'unarchive'],
-  asset: ['create', 'read', 'update', 'delete', 'publish', 'unpublish', 'archive', 'unarchive'],
-  apiKey: ['create', 'read'],
-  settings: ['update', 'read']
-};
-
-export const Actions = {
+export const Action = {
   CREATE: 'create',
   READ: 'read',
   UPDATE: 'update',
@@ -45,6 +37,39 @@ export const Actions = {
   UNPUBLISH: 'unpublish',
   ARCHIVE: 'archive',
   UNARCHIVE: 'unarchive'
+};
+
+const ACTIONS_FOR_ENTITIES = {
+  contentType: [
+    Action.CREATE,
+    Action.READ,
+    Action.UPDATE,
+    Action.DELETE,
+    Action.PUBLISH,
+    Action.UNPUBLISH
+  ],
+  entry: [
+    Action.CREATE,
+    Action.READ,
+    Action.UPDATE,
+    Action.DELETE,
+    Action.PUBLISH,
+    Action.UNPUBLISH,
+    Action.ARCHIVE,
+    Action.UNARCHIVE
+  ],
+  asset: [
+    Action.CREATE,
+    Action.READ,
+    Action.UPDATE,
+    Action.DELETE,
+    Action.PUBLISH,
+    Action.UNPUBLISH,
+    Action.ARCHIVE,
+    Action.UNARCHIVE
+  ],
+  apiKey: [Action.CREATE, Action.READ],
+  settings: [Action.UPDATE, Action.READ]
 };
 
 const isInitializedBus = K.createPropertyBus(false);
