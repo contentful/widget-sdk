@@ -8,7 +8,7 @@ describe('data/ContentTypeRepo/accessibleCTs', function () {
     this.system = createIsolatedSystem();
     this.system.set('access_control/AccessChecker', {
       canPerformActionOnEntryOfType: (_, id) => accessibleCTsIds.indexOf(id) > -1,
-      Actions: {
+      Action: {
         READ: 'read'
       }
     });

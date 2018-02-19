@@ -11,6 +11,10 @@ import { track } from 'analytics/Analytics';
 
 import * as State from './State';
 import { getAvailableContentTypes } from './utils';
+import {
+  canPerformActionOnEntryOfType,
+  Action
+} from 'access_control/AccessChecker';
 
 const FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN =
   'feature-at-11-2017-lots-of-cts-add-entry-and-link-reference';
@@ -55,8 +59,10 @@ export default function create ($scope, widgetApi) {
   $scope.helpers = widgetApi.entityHelpers;
 
   $scope.allowedCTs = [];
-  getAvailableContentTypes(widgetApi.space, field).then(cts => {
-    $scope.allowedCTs = cts;
+  getAvailableContentTypes(widgetApi.space, field).then(contentTypes => {
+    $scope.allowedCTs = contentTypes.filter(contentType =>
+      canPerformActionOnEntryOfType(Action.CREATE, contentType.sys.id)
+    );
   });
 
   // TODO: Legacy code to be removed with FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN
