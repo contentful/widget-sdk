@@ -36,6 +36,8 @@ angular.module('contentful')
   var getSpaceRatePlans = require('account/pricing/PricingDataProvider').getSpaceRatePlans;
   var ResourceUtils = require('utils/ResourceUtils');
 
+  var DEFAULT_LOCALE = 'en-US';
+
   K.onValueScope($scope, TokenStore.organizations$, function (organizations) {
     controller.organizations = organizations;
   });
@@ -46,7 +48,7 @@ angular.module('contentful')
   // Set new space defaults
   controller.newSpace = {
     data: {
-      defaultLocale: 'en-US'
+      defaultLocale: DEFAULT_LOCALE
     },
     useTemplate: false,
     errors: {fields: {}}
@@ -197,7 +199,15 @@ angular.module('contentful')
       templateName: template.name
     });
 
-    client.createSpace(data, organization.sys.id)
+    // if we use a template, we want to use DEFAULT_LOCALE
+    var selectedLocale = controller.newSpace.useTemplate === true
+      ? DEFAULT_LOCALE
+      : data.defaultLocale;
+    var dataWithUpdatedLocale = Object.assign({}, data, {
+      defaultLocale: selectedLocale
+    });
+
+    client.createSpace(dataWithUpdatedLocale, organization.sys.id)
     .then(function (newSpace) {
       // Create space
       TokenStore.refresh()
@@ -284,12 +294,15 @@ angular.module('contentful')
     };
 
     var selectedTemplate = controller.newSpace.selectedTemplate;
+    var selectedLocale = controller.newSpace.useTemplate === true
+      ? DEFAULT_LOCALE
+      : controller.newSpace.data.defaultLocale;
 
     controller.templateCreator = spaceTemplateCreator.getCreator(
       spaceContext,
       itemHandlers,
       selectedTemplate,
-      controller.newSpace.data.defaultLocale
+      selectedLocale
     );
     return getTemplate(selectedTemplate)
     .then(createTemplate);
