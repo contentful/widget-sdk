@@ -23,6 +23,9 @@ angular.module('contentful')
   var Navigator = require('states/Navigator');
   var assign = require('utils/Collections').assign;
   var renderSidepanel = require('navigation/Sidepanel/SidepanelView').default;
+  var LD = require('utils/LaunchDarkly');
+
+  var ENVIRONMENTS_FLAG_NAME = 'feature-dv-11-2017-environments';
 
   return {
     restrict: 'E',
@@ -61,7 +64,8 @@ angular.module('contentful')
         canCreateOrg: false,
         createNewOrg: createNewOrg,
         openedSpaceId: null,
-        setOpenedSpaceId: setOpenedSpaceId
+        setOpenedSpaceId: setOpenedSpaceId,
+        environmentsEnabled: false
       };
 
       function render () {
@@ -96,6 +100,11 @@ angular.module('contentful')
           setCurrOrg(navState.org || _.get(state, 'orgs[0]'));
           render();
         }
+      });
+
+      LD.onFeatureFlag($scope, ENVIRONMENTS_FLAG_NAME, function (isEnabled) {
+        state = assign(state, {environmentsEnabled: isEnabled});
+        render();
       });
 
       $scope.closeSidePanel = closeSidePanel;

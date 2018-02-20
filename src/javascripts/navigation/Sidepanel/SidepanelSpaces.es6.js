@@ -31,13 +31,14 @@ function renderSpaceList (props) {
     currentEnvId,
     goToSpace,
     openedSpaceId,
-    setOpenedSpaceId
+    setOpenedSpaceId,
+    environmentsEnabled
   } = props;
 
   return h('ul.nav-sidepanel__space-list', spaces.map((space, index) => {
     const isCurrSpace = space.sys.id === currentSpaceId;
 
-    if (space.spaceMembership.admin) {
+    if (environmentsEnabled && space.spaceMembership.admin) {
       return h(SpaceWithEnvironments, {
         index,
         key: space.sys.id,
