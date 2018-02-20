@@ -79,16 +79,20 @@ function getSpaceContents (spaceClient) {
     // return only one locale, so we add parameter to fetch all of them
     spaceClient.contentTypes({ locale: '*' }),
     spaceClient.entries({ locale: '*' }),
-    spaceClient.assets({ locale: '*' })
+    spaceClient.assets({ locale: '*' }),
+    // we need to fetch space for list of locales
+    // so we can copy content in all corresponding locales
+    spaceClient.space()
   ])
-  .then(([contentTypes, entries, assets]) => ({ contentTypes, entries, assets }));
+  .then(([contentTypes, entries, assets, space]) => ({ contentTypes, entries, assets, space }));
 }
 
 function parseSpaceContents (contents) {
   return {
     contentTypes: parseContentTypes(contents.contentTypes),
     entries: sortEntries(parseEntries(contents.entries)),
-    assets: parseAssets(contents.assets)
+    assets: parseAssets(contents.assets),
+    space: contents.space
   };
 }
 

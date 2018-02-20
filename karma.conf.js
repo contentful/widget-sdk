@@ -87,6 +87,7 @@ module.exports = function (config) {
           babelrc: false,
           sourceMap: 'inline',
           ignore: ['test/prelude.js', 'test/system-config.js'],
+          presets: ['react'],
           plugins: [
             ['transform-es2015-modules-systemjs', {
               systemGlobal: 'SystemTest'

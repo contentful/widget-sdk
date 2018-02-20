@@ -9,13 +9,13 @@ const SVGS = {
   'home-welcome': HomeWelcomeIcon
 };
 
-const propTypes = {
-  name: PropTypes.string.isRequired,
-  scale: PropTypes.oneOf([PropTypes.string, PropTypes.number]),
-  height: PropTypes.oneOf([PropTypes.string, PropTypes.number])
-};
-
 const Icon = createReactClass({
+  propTypes: {
+    className: PropTypes.string,
+    name: PropTypes.string.isRequired,
+    scale: PropTypes.oneOf([PropTypes.string, PropTypes.number]),
+    height: PropTypes.oneOf([PropTypes.string, PropTypes.number])
+  },
   getInitialState () {
     return {
       Icon: SVGS[this.props.name]
@@ -49,7 +49,5 @@ const Icon = createReactClass({
     return h('div', {className, ref: node => { this.container = node; }}, asReact(Icon));
   }
 });
-
-Icon.propTypes = propTypes;
 
 export default Icon;

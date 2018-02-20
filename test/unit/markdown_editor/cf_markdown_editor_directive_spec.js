@@ -2,7 +2,12 @@
 
 describe('cfMarkdownEditor', function () {
   beforeEach(function () {
-    module('contentful/test');
+    module('contentful/test', $provide => {
+      $provide.value('TheLocaleStore', {
+        getDefaultLocale: () => ({ code: 'some random locale' }),
+        getLocales: () => [{ code: 'en-US' }]
+      });
+    });
 
     this.widgetApi = this.$inject('mocks/widgetApi').create();
     this.widgetApi.field.getValue.returns('test');

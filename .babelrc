@@ -3,7 +3,7 @@
     "targets": {
       "node": "current"
     }
-  }]],
+  }], "react"],
   "plugins": [
     "transform-object-rest-spread"
   ]

@@ -9,6 +9,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
   var notification = require('notification');
   var throttle = require('throttle');
   var K = require('utils/kefir');
+  var LocaleStore = require('TheLocaleStore');
 
   return {
     restrict: 'E',
@@ -57,7 +58,13 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
 
       function initEditor (editorInstance) {
         editor = editorInstance;
-        scope.actions = actions.create(editor, field.locale);
+        var defaultLocale = LocaleStore.getDefaultLocale();
+
+        var locales = LocaleStore.getLocales();
+        var locale = locales.find(function (locale) {
+          return locale.code === field.locale;
+        });
+        scope.actions = actions.create(editor, locale, defaultLocale.code);
         scope.history = editor.history;
 
         var preview$ = makePreview(field.value$);

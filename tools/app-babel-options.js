@@ -34,7 +34,7 @@ export function makeOptions ({ browserTargets }, opts) {
         // TODO we want to use 'useBuiltIns': 'entry' to reduce bundle size,
         // but first we heed to pipe `libs/index` through babel.
         'useBuiltIns': false
-      }]
+      }], 'react'
     ],
     plugins: [
       ['transform-es2015-modules-systemjs', {

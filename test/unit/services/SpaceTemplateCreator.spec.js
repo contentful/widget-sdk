@@ -7,7 +7,7 @@ describe('Space Template creation service', function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'ctPublish', 'assetPublish', 'assetProcess', 'entryPublish', 'progressSuccess', 'progressError',
-        'success', 'error', 'retrySuccess', 'getContentPreview', 'createContentPreview'
+        'success', 'error', 'retrySuccess', 'getContentPreview', 'createContentPreview', 'refreshLocaleStore', 'setActiveLocales'
       ]);
 
       $provide.value('contentPreview', {
@@ -15,6 +15,11 @@ describe('Space Template creation service', function () {
         create: stubs.createContentPreview
       });
       $provide.value('analytics/Analytics', {track: _.noop});
+
+      $provide.value('TheLocaleStore', {
+        refresh: stubs.refreshLocaleStore,
+        setActiveLocales: stubs.setActiveLocales
+      });
     });
 
     spaceTemplateCreator = this.$inject('services/SpaceTemplateCreator');
@@ -48,7 +53,12 @@ describe('Space Template creation service', function () {
         apiKeys: [
           {sys: {id: 'ak1'}},
           {sys: {id: 'ak2'}}
-        ]
+        ],
+        space: {
+          locales: [{
+            code: 'en-US'
+          }]
+        }
       };
 
       spaceContext = {
@@ -76,6 +86,9 @@ describe('Space Template creation service', function () {
         apiKeyRepo: {
           create: sinon.stub().resolves(),
           getAll: () => Promise.resolve([{accessToken: 'mock-token'}])
+        },
+        localeRepo: {
+          save: sinon.stub()
         }
       };
 
@@ -97,6 +110,7 @@ describe('Space Template creation service', function () {
       });
       spaceContext.space.createEntry.onThirdCall().returns(Promise.reject(new Error('can not createa an entry')));
       stubs.entryPublish.returns(Promise.resolve());
+      spaceContext.localeRepo.save.returns(Promise.resolve());
 
       creator = spaceTemplateCreator.getCreator(
         spaceContext,
@@ -172,6 +186,14 @@ describe('Space Template creation service', function () {
       expect(env.configs.length).toBe(3);
     });
 
+    it('refreshes the locale store', function () {
+      sinon.assert.calledOnce(stubs.refreshLocaleStore);
+    });
+
+    it('set active locales', function () {
+      sinon.assert.calledOnce(stubs.refreshLocaleStore);
+    });
+
     it('updates success progress 17 times', function () {
       expect(stubs.progressSuccess.callCount).toBe(16);
     });
@@ -205,7 +227,10 @@ describe('Space Template creation service', function () {
           apiKeys: [
             {sys: {id: 'ak1'}},
             {sys: {id: 'ak2'}}
-          ]
+          ],
+          space: {
+            locales: []
+          }
         };
         spaceContext.space.createContentType = sinon.stub();
         spaceContext.space.createEntry = sinon.stub();
