@@ -34,7 +34,6 @@ angular.module('contentful')
   var K = require('utils/kefir');
   var Navigator = require('states/Navigator');
   var caseof = require('libs/sum-types').caseof;
-  var get = require('lodash');
 
   return {
     restrict: 'E',
