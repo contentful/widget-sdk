@@ -18,7 +18,6 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
   var jumpToRoleMembers = require('UserListController/jumpToRole');
   var spaceContext = require('spaceContext');
   var ADMIN_ROLE_ID = require('access_control/SpaceMembershipRepository').ADMIN_ROLE_ID;
-  var createResourceService = require('services/ResourceService').default;
   var ResourceUtils = require('utils/ResourceUtils');
 
   var org = spaceContext.organizationContext.organization;
@@ -32,18 +31,13 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
 
   $q.all({
     canModifyRoles: accessChecker.canModifyRoles(),
-    resource: createResourceService(spaceContext.getId()).get('role'),
     useLegacy: ResourceUtils.useLegacy(org)
   }).then(function (result) {
     var subscription = spaceContext.subscription;
     var isTrial = subscription.isTrial();
     var trialLockdown = isTrial && subscription.hasTrialEnded();
-    var canCreate = ResourceUtils.canCreate(result.resource);
 
-    $scope.resourceContext = result.useLegacy ? 'organization' : 'space';
-    $scope.usage = result.resource.usage;
-    $scope.limit = result.resource.limits.maximum;
-    $scope.reachedLimit = !canCreate;
+    $scope.legacy = result.useLegacy;
     $scope.canModifyRoles = !trialLockdown && result.canModifyRoles;
   });
 
@@ -75,5 +69,8 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
     $scope.memberships = listHandler.getMembershipCounts();
     $scope.removeRole = createRoleRemover(listHandler, reload);
     $scope.context.ready = true;
+    $scope.usage = data.rolesResource.usage;
+    $scope.limit = data.rolesResource.limits.maximum;
+    $scope.reachedLimit = !ResourceUtils.canCreate(data.rolesResource);
   }
 }]);

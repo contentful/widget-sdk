@@ -42,10 +42,12 @@ header.workbench-header
     .entity-sidebar(ng-if="canModifyRoles")
       h2.entity-sidebar__heading
         | Create new role
-      p
-        | Your {{resourceContext}} is using {{usage}} out of {{limit}} available custom roles.
+      p(ng-if="legacy")
+        | Your organization is using {{usage}} out of {{limit}} available custom roles.
+      p(ng-if="!legacy")
+        | Your space has <span ng-pluralize count="usage" when="{1: '1 role', other: '$ roles'}"></span>
       p(ng-if="reachedLimit")
-        | You have reached the limit of custom roles for this {{resourceContext}}.
+        | You have reached the limit of custom roles for this organization.
       p(ng-if="!reachedLimit")
         | Select one of the predefined role templates or create one from the scratch.
       button.btn-primary-action(ng-disabled="reachedLimit" ui-sref="spaces.detail.settings.roles.new")

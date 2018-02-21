@@ -29,8 +29,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
   $q.all({
     canModifyRoles: accessChecker.canModifyRoles(),
     hasFeature: accessChecker.hasFeature('customRoles'),
-    resource: createResourceService(spaceContext.getId()).get('role'),
-    useLegacy: ResourceUtils.useLegacy(spaceContext.organizationContext.organization)
+    resource: createResourceService(spaceContext.getId()).get('role')
   }).then(function (result) {
     var isNew = $scope.context.isNew;
     var canModifyRoles = result.canModifyRoles;
@@ -42,8 +41,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
       notification.error('Your plan does not include Custom Roles.');
       canModifyRoles = false;
     } else if (isNew && !ResourceUtils.canCreate(result.resource)) {
-      var context = result.useLegacy ? 'organization' : 'space';
-      notification.error(`Your ${context} has reached the limit for custom roles.`);
+      notification.error('Your organization has reached the limit for custom roles.');
       canModifyRoles = false;
     } else if (trialLockdown) {
       canModifyRoles = false;
