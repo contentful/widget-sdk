@@ -42,7 +42,10 @@ export function generateMessage (resource) {
 
 export function getResourceLimits (resource) {
   if (!resource.parent && !resource.limits) {
-    return null;
+    return {
+      included: null,
+      maximum: null
+    };
   }
 
   if (resource.limits) {
@@ -98,12 +101,12 @@ function resourceIncludedLimitReached (resource) {
   const limitIncluded = getResourceLimits(resource).included;
   const usage = resource.usage;
 
-  return usage >= limitIncluded;
+  return Boolean(limitIncluded && usage >= limitIncluded);
 }
 
 function resourceMaximumLimitReached (resource) {
   const limitMaximum = getResourceLimits(resource).maximum;
   const usage = resource.usage;
 
-  return usage >= limitMaximum;
+  return Boolean(limitMaximum && usage >= limitMaximum);
 }
