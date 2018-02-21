@@ -96,7 +96,7 @@ export default function create ($scope, widgetApi) {
       .filter(contentType => {
         return canPerformActionOnEntryOfType(Action.CREATE, contentType.sys.id);
       })
-      .filter(canLinkToContentType);
+      .filter((ct) => canLinkToContentType(field, ct));
   }
 
   // TODO: Legacy code to be removed with FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN
