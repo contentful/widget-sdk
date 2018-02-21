@@ -159,6 +159,14 @@ registerSchema({
   version: '2-0-0'
 });
 
+// Objects following this schema is meant to be passed as context
+// to other events like element:click hence it has no counterpart
+// in snowplow/Events.es6.js and no transformer
+registerSchema({
+  name: 'content_preview',
+  version: '1-0-0'
+});
+
 function registerSchema (schema) {
   _schemas[schema.name] = schema;
   _schemas[schema.name].path = buildPath(schema);

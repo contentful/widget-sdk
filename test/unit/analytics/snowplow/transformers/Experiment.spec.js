@@ -14,6 +14,9 @@ describe('Experiment transformer', function () {
       spaceId: 'space',
       userId: 'user'
     };
+    this.experimentTransformer = function (action) {
+      return experimentTransformer(action)(null, this.data);
+    };
     this.transformedData = experimentTransformer('action')(null, this.data);
   });
 
@@ -26,15 +29,28 @@ describe('Experiment transformer', function () {
       expect(Array.isArray(this.transformedData.contexts)).toBe(true);
       expect(this.transformedData.contexts.length).toBe(1);
     });
-    it('should contain an experiment object', function () {
+    it('should contain an experiment object without interaction context', function () {
       const experiment = this.transformedData.contexts[0];
 
       expect(typeof experiment.schema).toBe('string');
       expect(experiment.data).toEqual({
         experiment_id: this.data.experiment.id,
         variation: this.data.experiment.variation,
-        interaction_context: this.data.experiment.interaction_context,
         action: 'action',
+        executing_user_id: this.data.userId,
+        organization_id: this.data.organizationId,
+        space_id: this.data.spaceId
+      });
+    });
+    it('should contain an experiment object with interaction context', function () {
+      const experiment = this.experimentTransformer('interaction').contexts[0];
+
+      expect(typeof experiment.schema).toBe('string');
+      expect(experiment.data).toEqual({
+        experiment_id: this.data.experiment.id,
+        variation: this.data.experiment.variation,
+        interaction_context: this.data.experiment.interaction_context,
+        action: 'interaction',
         executing_user_id: this.data.userId,
         organization_id: this.data.organizationId,
         space_id: this.data.spaceId
