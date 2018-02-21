@@ -21,6 +21,10 @@ require('./tools/tasks/templates');
 
 const gulp = require('gulp');
 
+// we need to add this line in order to run binaries installed via npm locally
+// right now we use only for `tools/tasks/styleguide`, to generate our styleguide
+// Probably we can just call `npx`, after we move to node@8+
+// about npx & npm – https://github.com/npm/npm/releases/tag/v5.2.0
 process.env['PATH'] += ':./node_modules/.bin';
 
 // Gulp does not produce stack traces when logging errors.
