@@ -14,7 +14,7 @@ export default function (action) {
           action
         }, function (_, key) {
           // exclude interaction_context for any actions except 'interaction'
-          return key === 'interaction__context' && action !== 'interaction';
+          return key === 'interaction_context' && action !== 'interaction';
         })
       };
     })(_, data);
