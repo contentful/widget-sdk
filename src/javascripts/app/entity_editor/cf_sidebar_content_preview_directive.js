@@ -4,6 +4,8 @@ angular.module('contentful')
   var contentPreview = require('contentPreview');
   var Analytics = require('analytics/Analytics');
   var spaceContext = require('spaceContext');
+  var $state = require('$state');
+
   return {
     restrict: 'E',
     scope: true,
@@ -47,11 +49,25 @@ angular.module('contentful')
 
       $scope.trackClickedLink = function () {
         if ($scope.isPreviewSetup) {
-          Analytics.track('entry_editor:preview_opened', {
-            envName: $scope.selectedEnvironment.name,
-            envId: $scope.selectedEnvironment.envId,
-            previewUrl: $scope.selectedEnvironment.url,
-            entryId: $scope.entityInfo.id
+          var contentTypeId = $scope.selectedEnvironment.contentType;
+          var contentTypeName = _.get(
+            spaceContext.publishedCTs.get(contentTypeId),
+            'data.name',
+            '<UNPUBLISHED CONTENT TYPE>'
+          );
+          var toState = $scope.selectedEnvironment.compiledUrl.replace(/\?.*$/, '');
+
+          Analytics.track('element:click', {
+            elementId: 'openContentPreviewBtn',
+            groupId: 'entryEditor:contentPreview',
+            fromState: $state.current.name,
+            toState: toState,
+            contentPreview: {
+              previewName: $scope.selectedEnvironment.name,
+              previewId: $scope.selectedEnvironment.envId,
+              contentTypeName: contentTypeName,
+              contentTypeId: contentTypeId
+            }
           });
         }
       };
