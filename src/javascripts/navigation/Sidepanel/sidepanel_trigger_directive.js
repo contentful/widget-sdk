@@ -39,28 +39,36 @@ angular.module('contentful')
         if (navState) {
           caseof(navState, [
             [NavStates.Space, function () {
-              $scope.title = navState.space.name;
+              var space = navState.space;
+              $scope.title = space.name;
               $scope.subtitle = navState.org.name;
 
-              if (environmentsEnabled) {
-                $scope.env = navState.env ? navState.env.sys.id : 'master';
+              if (environmentsEnabled && space.spaceMembership.admin) {
+                var env = navState.env;
+                $scope.env = env ? env.sys.id : 'master';
+              } else {
+                $scope.env = undefined;
               }
             }],
             [NavStates.OrgSettings, function () {
               $scope.title = 'Organization settings';
               $scope.subtitle = navState.org.name;
+              $scope.env = undefined;
             }],
             [NavStates.NewOrg, function () {
               $scope.title = 'Create new organization';
               $scope.subtitle = undefined;
+              $scope.env = undefined;
             }],
             [NavStates.UserProfile, function () {
               $scope.title = 'User profile';
               $scope.subtitle = undefined;
+              $scope.env = undefined;
             }],
             [NavStates.Default, function () {
               $scope.title = 'Welcome to Contentful';
               $scope.subtitle = undefined;
+              $scope.env = undefined;
             }]
           ]);
         }
