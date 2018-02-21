@@ -1,11 +1,11 @@
-import * as B from 'bluebird'
-import * as P from 'path'
-import * as CP from 'child_process'
+import * as B from 'bluebird';
+import * as P from 'path';
+import * as CP from 'child_process';
 
 
-export const FS = B.promisifyAll(require('fs-extra'))
+export const FS = B.promisifyAll(require('fs-extra'));
 
-export const mkdirp = FS.mkdirsAsync.bind(FS)
+export const mkdirp = FS.mkdirsAsync.bind(FS);
 
 
 /**
@@ -13,7 +13,7 @@ export const mkdirp = FS.mkdirsAsync.bind(FS)
  */
 export function readJSON (path) {
   return FS.readFileAsync(path, 'utf8')
-  .then(JSON.parse)
+  .then(JSON.parse);
 }
 
 
@@ -23,8 +23,8 @@ export function readJSON (path) {
 export function readMergeJSON (paths) {
   return B.all(paths.map(readJSON))
   .then((manifests) => {
-    return Object.assign({}, ...manifests)
-  })
+    return Object.assign({}, ...manifests);
+  });
 }
 
 
@@ -34,9 +34,9 @@ export function readMergeJSON (paths) {
 export function writeJSON (path, obj) {
   return mkdirp(P.dirname(path))
   .then(() => {
-    const content = JSON.stringify(obj)
-    return FS.writeFileAsync(path, content, 'utf8')
-  })
+    const content = JSON.stringify(obj);
+    return FS.writeFileAsync(path, content, 'utf8');
+  });
 }
 
 
@@ -47,12 +47,12 @@ export function exec (cmd, opts) {
   return new B.Promise(function (resolve, reject) {
     CP.exec(cmd, opts, function (error, stdout, stderr) {
       if (error) {
-        error.stderr = stderr
-        error.stdout = stdout
-        reject(error)
+        error.stderr = stderr;
+        error.stdout = stdout;
+        reject(error);
       } else {
-        resolve(stdout)
+        resolve(stdout);
       }
-    })
-  })
+    });
+  });
 }
