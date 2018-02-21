@@ -59,6 +59,7 @@
     "proxyquire": "^1.7.11",
     "qs": "^6.3.0",
     "react": "^16.2.0",
+    "react-animate-height": "^0.10.9",
     "react-dom": "^16.2.0",
     "react-highlight-words": "^0.10.0",
     "react-tippy": "^1.2.2",

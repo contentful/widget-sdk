@@ -115,13 +115,10 @@ function formField ({ label, labelHint, field, input, hint, SetFieldValue }) {
 
 function displayServerError ({ inProgress, CancelDialog, Submit }) {
   return h('div', [
-    h('.note-box--warning', {
-      role: 'alert',
-      dataTestId: 'pat.create.tokenGenerationFailed'
-    }, [
+    h('.note-box--warning', {role: 'alert'}, [
       h('h3', [ 'Whoops! something went wrong' ]),
       h('p', [
-        `The creation of the token has failed, probably due to a
+        `The creation of the environment has failed, probably due to a
         connection error. Please retry or `,
         linkOpen(['contact support'], Config.supportUrl),
         ' if the problem persists.'
