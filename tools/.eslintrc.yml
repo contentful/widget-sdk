@@ -1,14 +1,6 @@
-parserOptions:
-  ecmaVersion: 6
-  sourceType: 'module'
 env:
   node: true
   es6: true
 rules:
-  # ES6 specific
-  prefer-const: error
-  no-var: error
   # eslint:recommended overrides
   no-console: off
-
-  semi: ["error", "never"]

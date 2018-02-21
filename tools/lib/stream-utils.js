@@ -1,16 +1,16 @@
-import * as through from 'through2'
-import * as Stream from 'stream'
+import * as through from 'through2';
+import * as Stream from 'stream';
 
 export function map (fn) {
   return through.obj(function (value, _, push) {
     try {
-      value = fn(value)
+      value = fn(value);
     } catch (error) {
-      this.emit('error', error)
-      return
+      this.emit('error', error);
+      return;
     }
-    push(null, value)
-  })
+    push(null, value);
+  });
 }
 
 /**
@@ -19,11 +19,11 @@ export function map (fn) {
  * Also forwards errors to the result stream.
  */
 export function pipe (streams) {
-  const [first, ...rest] = streams
+  const [first, ...rest] = streams;
   return rest.reduce((piped, stream) => {
-    piped.on('error', (e) => stream.emit('error', e))
-    return piped.pipe(stream)
-  }, first)
+    piped.on('error', (e) => stream.emit('error', e));
+    return piped.pipe(stream);
+  }, first);
 }
 
 
@@ -32,52 +32,52 @@ export function pipe (streams) {
  * emitted before the second stream, etc.
  */
 export function join (streams) {
-  let current
+  let current;
 
   const out = new Stream.Readable({
     objectMode: true,
     read: read
-  })
+  });
 
-  readNextStream()
+  readNextStream();
 
-  return out
+  return out;
 
   function read () {
-    current.resume()
+    current.resume();
   }
 
   function emitReadable () {
-    out.emit('readable')
+    out.emit('readable');
   }
 
   function pushData (data) {
-    const resume = out.push(data)
+    const resume = out.push(data);
     if (!resume) {
-      current.pause()
+      current.pause();
     }
   }
 
   function emitError (err) {
-    out.emit('error', err)
+    out.emit('error', err);
   }
 
   function readNextStream () {
     if (current) {
-      current.removeListener('readable', emitReadable)
-      current.removeListener('data', pushData)
-      current.removeListener('end', readNextStream)
-      current.removeListener('error', emitError)
+      current.removeListener('readable', emitReadable);
+      current.removeListener('data', pushData);
+      current.removeListener('end', readNextStream);
+      current.removeListener('error', emitError);
     }
 
-    current = streams.shift()
+    current = streams.shift();
     if (current) {
-      current.on('readable', emitReadable)
-      current.on('data', pushData)
-      current.on('end', readNextStream)
-      current.on('error', emitError)
+      current.on('readable', emitReadable);
+      current.on('data', pushData);
+      current.on('end', readNextStream);
+      current.on('error', emitError);
     } else {
-      out.push(null)
+      out.push(null);
     }
   }
 }
