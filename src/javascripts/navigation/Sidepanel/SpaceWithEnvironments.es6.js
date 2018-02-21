@@ -7,6 +7,28 @@ import folderIcon from 'svg/folder';
 import environmentIcon from 'svg/environment';
 import client from 'client';
 
+function EnvironmentList ({environments, isCurrSpace, currentEnvId, goToSpace, space}) {
+  return e('ul', null, (environments || []).map(env => {
+    const envId = env.sys.id;
+    const environmentClassNames = `
+      nav-sidepanel__environments-list-item
+      ${isCurrSpace && envId === currentEnvId ? 'nav-sidepanel__environments-list-item--is-active' : ''}
+    `;
+
+    return e('li', {
+      key: envId,
+      className: environmentClassNames,
+      onClick: e => {
+        e.stopPropagation();
+        goToSpace(space.sys.id, envId);
+      }
+    }, ...[
+      asReact(environmentIcon),
+      env.name
+    ]);
+  }));
+}
+
 export default createReactClass({
   displayName: 'SpaceWithEnvironments',
   propTypes: {
@@ -84,27 +106,17 @@ export default createReactClass({
         e('span', {className: 'nav-sidepanel__space-name u-truncate'}, space.name),
         e('span', {className: this.state.loading ? 'nav-sidepanel__space-spinner' : 'nav-sidepanel__space-open-indicator'})
       ]),
-      e(AnimateHeight, {height: isOpened ? 'auto' : '0'}, ...[
-        e('ul', null, (this.state.environments || []).map(env => {
-          const envId = env.sys.id;
-          const environmentClassNames = `
-            nav-sidepanel__environments-list-item
-            ${isCurrSpace && envId === currentEnvId ? 'nav-sidepanel__environments-list-item--is-active' : ''}
-          `;
-
-          return e('li', {
-            key: envId,
-            className: environmentClassNames,
-            onClick: e => {
-              e.stopPropagation();
-              goToSpace(space.sys.id, envId);
-            }
-          }, ...[
-            asReact(environmentIcon),
-            env.name
-          ]);
-        }))
-      ])
+      e(
+        AnimateHeight,
+        {height: isOpened ? 'auto' : '0'},
+        e(EnvironmentList, {
+          environments: this.state.environments,
+          goToSpace,
+          isCurrSpace,
+          currentEnvId,
+          space
+        })
+      )
     ]);
   }
 });

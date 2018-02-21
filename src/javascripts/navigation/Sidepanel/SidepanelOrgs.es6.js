@@ -38,19 +38,23 @@ function renderOrgListDropdown ({orgs, setCurrOrg, orgDropdownIsShown, currOrg, 
     ariaHidden: orgDropdownIsShown ? '' : 'true',
     dataTestId: 'sidepanel-org-list'
   }, [
-    h('.nav-sidepanel__org-list', [
-      h('p.nav-sidepanel__org-list-heading', ['Organizations'])
-    ].concat((orgs || []).map((org, index) => {
-      return h('p', {
-        className: `nav-sidepanel__org-name u-truncate ${currOrg.sys.id === org.sys.id ? 'nav-sidepanel__org-name--is-active' : ''}`,
-        onClick: () => setCurrOrg(org),
-        dataTestId: `sidepanel-org-link-${index}`,
-        dataTestGroupId: 'sidepanel-org-link'
-      }, [org.name]);
-    }))),
+    renderOrganizations({orgs, currOrg, setCurrOrg}),
     canCreateOrg && h('a.text-link.nav-sidepanel__org-create-cta', {
       onClick: createNewOrg,
       dataTestId: 'sidepanel-create-org-link'
     }, ['+ Create organization'])
   ]);
+}
+
+function renderOrganizations ({orgs, currOrg, setCurrOrg}) {
+  return h('.nav-sidepanel__org-list', [
+    h('p.nav-sidepanel__org-list-heading', ['Organizations'])
+  ].concat((orgs || []).map((org, index) => {
+    return h('p', {
+      className: `nav-sidepanel__org-name u-truncate ${currOrg.sys.id === org.sys.id ? 'nav-sidepanel__org-name--is-active' : ''}`,
+      onClick: () => setCurrOrg(org),
+      dataTestId: `sidepanel-org-link-${index}`,
+      dataTestGroupId: 'sidepanel-org-link'
+    }, [org.name]);
+  })));
 }
