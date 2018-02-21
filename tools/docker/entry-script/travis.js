@@ -1,6 +1,6 @@
-import * as P from 'path'
-import {FS, writeJSON} from '../../lib/utils'
-import configureAndWriteIndex from '../../lib/index-configure'
+import * as P from 'path';
+import {FS, writeJSON} from '../../lib/utils';
+import configureAndWriteIndex from '../../lib/index-configure';
 
 /**
  * For each target environment create a file distribution in `output/files/${env}`.
@@ -17,7 +17,7 @@ import configureAndWriteIndex from '../../lib/index-configure'
  *
  */
 export default function* runTravis ({branch, pr, version}) {
-  console.log(`TRAVIS_BRANCH: ${branch}, TRAVIS_COMMIT: ${version}, TRAVIS_PULL_REQUEST: ${pr}`)
+  console.log(`TRAVIS_BRANCH: ${branch}, TRAVIS_COMMIT: ${version}, TRAVIS_PULL_REQUEST: ${pr}`);
 
   // Supported environments
   const ENV = {
@@ -25,14 +25,14 @@ export default function* runTravis ({branch, pr, version}) {
     staging: 'staging',
     preview: 'preview',
     development: 'development'
-  }
+  };
 
   // Maps branch names to environment names
   const BRANCH_ENV_MAP = {
     production: ENV.production,
     master: ENV.staging,
     preview: ENV.preview
-  }
+  };
 
   /**
    * If pr is 'false, it's the travis-ci/push job. Since only this job does the deploy
@@ -47,25 +47,25 @@ export default function* runTravis ({branch, pr, version}) {
    * deploy section.
    */
   if (pr === 'false') {
-    yield* createFileDist(ENV.preview, version, branch, true)
-    yield* createFileDist(ENV.staging, version, branch)
-    yield* createFileDist(ENV.production, version, branch)
-    yield* createFileDist(ENV.development, version, branch)
+    yield* createFileDist(ENV.preview, version, branch, true);
+    yield* createFileDist(ENV.staging, version, branch);
+    yield* createFileDist(ENV.production, version, branch);
+    yield* createFileDist(ENV.development, version, branch);
 
     // Do the next bit only for production, master and preview branches
     if (branch in BRANCH_ENV_MAP) {
-      const env = BRANCH_ENV_MAP[branch]
+      const env = BRANCH_ENV_MAP[branch];
 
-      yield* createIndexAndRevision(env, version)
+      yield* createIndexAndRevision(env, version);
 
       // Deploy to preview environment whenever we deploy to staging
       // to keep both envs in sync
       if (env === ENV.staging) {
-        yield* createIndexAndRevision(ENV.preview, version)
+        yield* createIndexAndRevision(ENV.preview, version);
       }
     }
   } else {
-    console.log('Skipping index compilation and moving of assets as this is a travis-ci/pr job')
+    console.log('Skipping index compilation and moving of assets as this is a travis-ci/pr job');
   }
 }
 
@@ -78,18 +78,18 @@ export default function* runTravis ({branch, pr, version}) {
  * @param version {string} version - Git commit hash of the commit that's being built
  */
 function* createIndexAndRevision (env, version) {
-  const rootIndexPathForEnv = targetPath(env, 'index.html')
-  const revisionPathForEnv = targetPath(env, 'revision.json')
-  const logMsg = `Creating root index and revision.json files for "${env}"`
+  const rootIndexPathForEnv = targetPath(env, 'index.html');
+  const revisionPathForEnv = targetPath(env, 'revision.json');
+  const logMsg = `Creating root index and revision.json files for "${env}"`;
 
-  console.log('-'.repeat(logMsg.length), `\n${logMsg}`)
+  console.log('-'.repeat(logMsg.length), `\n${logMsg}`);
 
   // This generates output/files/${env}/index.html
-  yield* configureAndWriteIndex(version, `config/${env}.json`, rootIndexPathForEnv)
+  yield* configureAndWriteIndex(version, `config/${env}.json`, rootIndexPathForEnv);
 
-  console.log(`Creating revision.json for "${env}" at ${P.relative('', revisionPathForEnv)}`)
+  console.log(`Creating revision.json for "${env}" at ${P.relative('', revisionPathForEnv)}`);
   // This generates output/files/${env}/revision.json
-  yield* buildAndWriteRevisionJson(version, revisionPathForEnv)
+  yield* buildAndWriteRevisionJson(version, revisionPathForEnv);
 }
 
 /*
@@ -115,23 +115,23 @@ function* createIndexAndRevision (env, version) {
  * @param {boolean?} includeStyleguide
  */
 function* createFileDist (env, version, branch, includeStyleguide) {
-  console.log(`Creating file distribution for "${env}"`)
+  console.log(`Creating file distribution for "${env}"`);
 
   // This directory contains all the files needed to run the app.
   // It is populated by `gulp build`.
-  const BUILD_SRC = P.resolve('./build')
-  const commitHashIndexPath = targetPath(env, 'archive', version, 'index-compiled.html')
+  const BUILD_SRC = P.resolve('./build');
+  const commitHashIndexPath = targetPath(env, 'archive', version, 'index-compiled.html');
 
-  yield copy(P.join(BUILD_SRC, 'app'), targetPath(env, 'app'))
-  yield* configureAndWriteIndex(version, `config/${env}.json`, commitHashIndexPath)
+  yield copy(P.join(BUILD_SRC, 'app'), targetPath(env, 'app'));
+  yield* configureAndWriteIndex(version, `config/${env}.json`, commitHashIndexPath);
 
   if (branch) {
-    const branchIndexPath = targetPath(env, 'archive', branch, 'index-compiled.html')
+    const branchIndexPath = targetPath(env, 'archive', branch, 'index-compiled.html');
 
-    yield* configureAndWriteIndex(version, `config/${env}.json`, branchIndexPath)
+    yield* configureAndWriteIndex(version, `config/${env}.json`, branchIndexPath);
 
     if (includeStyleguide) {
-      yield copy(P.join(BUILD_SRC, 'styleguide'), targetPath(env, 'styleguide', branch))
+      yield copy(P.join(BUILD_SRC, 'styleguide'), targetPath(env, 'styleguide', branch));
     }
   }
 }
@@ -147,14 +147,14 @@ function* createFileDist (env, version, branch, includeStyleguide) {
  */
 function targetPath (...components) {
   // Destination directory for files that are uploaded to S3 buckets
-  const FILE_DIST_DEST = P.resolve('./output/files')
+  const FILE_DIST_DEST = P.resolve('./output/files');
 
-  return P.join(FILE_DIST_DEST, ...components)
+  return P.join(FILE_DIST_DEST, ...components);
 }
 
 function copy (src, dest) {
-  console.log('Copying %s -> %s', P.relative('', src), P.relative('', dest))
-  return FS.copyAsync(src, dest)
+  console.log('Copying %s -> %s', P.relative('', src), P.relative('', dest));
+  return FS.copyAsync(src, dest);
 }
 
 /**
@@ -165,5 +165,5 @@ function copy (src, dest) {
  * Shape: { "revision": "GIT COMMIT HASH OF THE HEAD OF PRODUCTION BRANCH" }
  */
 function* buildAndWriteRevisionJson (version, outPath) {
-  yield writeJSON(outPath, {revision: version})
+  yield writeJSON(outPath, {revision: version});
 }
