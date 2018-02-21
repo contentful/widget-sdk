@@ -1,8 +1,10 @@
 import {h} from 'ui/Framework';
 import closeIcon from 'svg/close';
+import settingsIcon from 'svg/settings';
 import scaleSvg from 'utils/ScaleSvg';
 import SidepanelOrgs from './SidepanelOrgs';
 import SidepanelSpaces from './SidepanelSpaces';
+import {byName as colors} from 'Styles/Colors';
 
 export default function (props) {
   const {sidePanelIsShown, orgDropdownIsShown, closeOrgsDropdown, closeSidePanel, currOrg} = props;
@@ -46,13 +48,22 @@ function renderOrgActions (gotoOrgSettings, viewingOrgSettings) {
     h('div.nav-sidepanel__org-actions-separator-container', [
       h('div.nav-sidepanel__org-actions-separator')
     ]),
-    h('p', {
+    h('div', {
       className: `nav-sidepanel__org-actions-goto-settings ${viewingOrgSettings ? 'nav-sidepanel__org-actions-goto-settings--is-active' : ''}`,
       onClick: gotoOrgSettings,
-      dataTestId: 'sidepanel-org-actions-settings'
+      dataTestId: 'sidepanel-org-actions-settings',
+      style: {display: 'flex'}
     }, [
-      h('i.fa.fa-cog'),
-      ' Organization settings'
+      h('div', {
+        style: {
+          paddingTop: '2px',
+          color: colors.elementDark,
+          fill: 'currentColor'
+        }
+      }, [settingsIcon]),
+      h('div', {
+        style: {marginLeft: '7px'}
+      }, ['Organization settings'])
     ])
   ]);
 }
