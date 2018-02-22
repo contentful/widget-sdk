@@ -8,6 +8,7 @@ import createEntity from 'cfReferenceEditor/createEntity';
 import spaceContext from 'spaceContext';
 import { onFeatureFlag } from 'utils/LaunchDarkly';
 import { track } from 'analytics/Analytics';
+import { onEntryCreate as trackEntryCreate } from 'analytics/events/ReferenceEditor';
 
 import * as State from './State';
 import { getAvailableContentTypes } from './utils';
@@ -74,13 +75,19 @@ export default function create ($scope, widgetApi) {
   };
 
   $scope.addNewAsset = function () {
-    return widgetApi.space.createAsset({}).then(makeNewEntityHandler());
+    return widgetApi.space.createAsset({})
+      .then(makeNewEntityHandler());
   };
 
   $scope.addNewEntry = function (contentTypeId) {
     const contentType = spaceContext.publishedCTs.get(contentTypeId);
-    return widgetApi.space.createEntry(contentTypeId, {})
-      .then(makeNewEntityHandler(contentType));
+    return widgetApi.space
+      .createEntry(contentTypeId, {})
+      .then(makeNewEntityHandler(contentType))
+      .then(entry => {
+        trackEntryCreate({ contentType });
+        return entry;
+      });
   };
 
   function makeNewEntityHandler (contentType) {
