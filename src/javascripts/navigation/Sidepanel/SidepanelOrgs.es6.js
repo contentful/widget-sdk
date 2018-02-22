@@ -28,7 +28,8 @@ function renderOrganizationSelector ({currOrg, openOrgsDropdown, orgDropdownIsSh
           title: currOrg.name
         }, [currOrg.name])
       ])
-    ])
+    ]),
+    h('span') // chevron
   ]);
 }
 
