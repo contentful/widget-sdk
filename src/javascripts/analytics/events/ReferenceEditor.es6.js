@@ -24,9 +24,10 @@ function getPayload ({ contentType }) {
 
 function getWidgetsCount (contentTypeInfo, locales) {
   const { fieldsCount, localizedFieldsCount } = contentTypeInfo;
-
+  const unlocalizedFieldsCount = fieldsCount - localizedFieldsCount;
   return (
-    fieldsCount - localizedFieldsCount + localizedFieldsCount * locales.length
+    unlocalizedFieldsCount * Math.min(locales.length, 1) +
+    localizedFieldsCount * locales.length
   );
 }
 
