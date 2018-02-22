@@ -15,6 +15,7 @@ import {get, isString} from 'lodash';
 import {supportUrl} from 'Config';
 import $location from '$location';
 import Workbench from 'app/WorkbenchReact';
+import {joinAnd} from 'stringUtils';
 
 const SubscriptionOverview = createReactClass({
   propTypes: {
@@ -53,6 +54,7 @@ const SubscriptionOverview = createReactClass({
         const [name1, name2] = [plan1, plan2].map((plan) => get(plan, 'space.name', ''));
         return name1.localeCompare(name2);
       });
+    // TODO add user fees
     const grandTotal = calculateTotalPrice(spacePlans);
 
     this.setState({basePlan, spacePlans, grandTotal});
@@ -77,7 +79,7 @@ const SubscriptionOverview = createReactClass({
       content: h('div', {
         style: {padding: '0 2rem'}
       },
-          h(BasePlan, {basePlan, orgId}),
+          h(BasePlan, {basePlan}),
           h(SpacePlans, {
             spacePlans,
             onCreateSpace: this.createSpace
@@ -92,85 +94,90 @@ const SubscriptionOverview = createReactClass({
   }
 });
 
-function BasePlan ({basePlan, orgId}) {
-  const enabledFeatures = getEnabledFeatures(basePlan);
+function BasePlan ({basePlan}) {
+  const enabledFeaturesNames = getEnabledFeatures(basePlan).map(({name}) => name);
 
   return h('div', null,
-    h('h2', null,
-      basePlan.name, '  ',
-      h('a', {
-        href: href(getOrgUsageNavState(orgId)),
-        style: {
-          fontSize: '0.8em',
-          fontWeight: 'normal',
-          textDecoration: 'underline',
-          marginLeft: '0.8em'
-        }
-      }, 'See usage')
-    ),
-    h('p', null, enabledFeatures.length ? enabledFeatures.map(({name}) => name) : 'No features on platform')
+    h('h2', null, 'Platform'),
+    h('p', null,
+      h('b', null, basePlan.name),
+      enabledFeaturesNames.length ? ` – includes ${joinAnd(enabledFeaturesNames)}` : null
+    )
   );
 }
 
 function SpacePlans ({spacePlans, onCreateSpace}) {
-  const actionLinkStyle = {padding: '0 15px'};
-
   if (!spacePlans.length) {
-    return h('p', null,
-      'Your organization doesn\'t have any spaces. ',
-      h('button', {
-        className: 'btn-link',
-        onClick: onCreateSpace
-      }, 'Add space')
+    return h('div', null,
+      h('h2', null, 'Spaces'),
+      h('p', null,
+        'Your organization doesn\'t have any spaces. ',
+        h('button', {
+          className: 'btn-link',
+          onClick: onCreateSpace
+        }, 'Add space')
+      )
     );
   } else {
-    return h('table', {className: 'deprecated-table x--hoverable'},
-      h('thead', null,
-        h('tr', null,
-          h('th', {style: {width: '40%'}},
-            'Space name ',
-            h('i', {className: 'fa fa-caret-up'})
-          ),
-          h('th', null, 'Type'),
-          h('th', null, 'Created by'),
-          h('th', null, 'Created on'),
-          h('th', null)
-        )
-      ),
-      h('tbody', {className: 'clickable'},
-        spacePlans.map((plan) => {
-          const {name, price, sys, space} = plan;
-          const enabledFeatures = getEnabledFeatures(plan);
-          let createdBy = '';
-          let createdAt = '';
-          let spaceLink = '';
-          let usageLink = '';
-          if (space) {
-            createdBy = getUserName(space.sys.createdBy || {});
-            createdAt = moment.utc(space.sys.createdAt).format('DD. MMMM YYYY');
-            spaceLink = h('a', {href: href(getSpaceNavState(space.sys.id)), style: actionLinkStyle}, 'Go to space');
-            usageLink = h('a', {href: href(getSpaceUsageNavState(space.sys.id)), style: actionLinkStyle}, 'Usage');
-          }
+    const spacesTotal = calculateTotalPrice(spacePlans);
 
-          return h('tr', {
-            key: sys.id
-          },
-            h('td', null,
-              h('h3', null, get(space, 'name', '—')),
-              h('p', null, enabledFeatures.length ? enabledFeatures.map(({name}) => name) : 'No features on space')
-            ),
-            h('td', null,
-              h('h3', null, name),
-              h(Price, {value: price})
-            ),
-            h('td', null, createdBy),
-            h('td', null, createdAt),
-            h('td', {style: {textAlign: 'right'}}, spaceLink, usageLink)
-          );
-        })
+    return h('div', null,
+      h('h2', null, 'Spaces'),
+      h('p', null,
+        'The total for your ',
+        h('b', null, `${spacePlans.length} spaces`),
+        ' is ',
+        h(Price, {value: spacesTotal, style: {fontWeight: 'bold'}}),
+        ' per month.'
+        // TODO show available free spaces
+      ),
+      h('table', {className: 'deprecated-table x--hoverable'},
+        h('thead', null,
+          h('tr', null,
+            h('th', {style: {width: '40%'}}, 'Name'),
+            h('th', null, 'Space type / price'),
+            h('th', null, 'Created by'),
+            h('th', null, 'Created on'),
+            h('th', {style: {width: '1%'}}, 'Actions')
+          )
+        ),
+        h('tbody', {className: 'clickable'}, spacePlans.map(
+          (plan) => h(SpacePlanRow, {plan, key: plan.sys.id})
+        ))
       )
     );
   }
+}
+
+function SpacePlanRow ({plan}) {
+  const actionLinkStyle = {padding: '0 20px 0 0', whiteSpace: 'nowrap'};
+  const {name, price, space} = plan;
+  const enabledFeatures = getEnabledFeatures(plan);
+  let createdBy = '';
+  let createdAt = '';
+  let spaceLink = '';
+  let usageLink = '';
+
+  if (space) {
+    createdBy = getUserName(space.sys.createdBy || {});
+    createdAt = moment.utc(space.sys.createdAt).format('DD/MM/YYYY');
+    spaceLink = h('a', {href: href(getSpaceNavState(space.sys.id)), style: actionLinkStyle}, 'Go to space');
+    usageLink = h('a', {href: href(getSpaceUsageNavState(space.sys.id)), style: actionLinkStyle}, 'Usage');
+  }
+
+  return h('tr', null,
+    h('td', null,
+      h('h3', null, get(space, 'name', '—')),
+      h('p', null, enabledFeatures.length ? enabledFeatures.map(({name}) => name) : 'No features on space')
+    ),
+    h('td', null,
+      h('h3', null, name),
+      h(Price, {value: price, unit: 'month'})
+    ),
+    h('td', null, createdBy),
+    h('td', null, createdAt),
+    h('td', null, spaceLink, usageLink)
+  );
 }
 
 function RightSidebar ({grandTotal, orgId, onContactUs}) {
@@ -212,14 +219,6 @@ function getSpaceNavState (spaceId) {
   return {
     path: ['spaces', 'detail', 'home'],
     params: {spaceId},
-    options: { reload: true }
-  };
-}
-
-function getOrgUsageNavState (orgId) {
-  return {
-    path: ['account', 'organizations', 'usage'],
-    params: {orgId},
     options: { reload: true }
   };
 }
