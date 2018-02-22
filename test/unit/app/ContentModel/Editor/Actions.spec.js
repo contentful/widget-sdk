@@ -255,8 +255,7 @@ describe('app/ContentModel/Editor/Actions', function () {
             id: 'typeid',
             type: 'ContentType',
             version: 1
-          },
-          displayField: undefined
+          }
         });
 
         // Second argument is the editor interface
