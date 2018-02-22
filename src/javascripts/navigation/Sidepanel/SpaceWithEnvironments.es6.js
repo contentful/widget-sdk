@@ -24,7 +24,7 @@ function EnvironmentList ({environments, isCurrSpace, currentEnvId, goToSpace, s
       }
     }, ...[
       asReact(environmentIcon),
-      env.name
+      envId
     ]);
   }));
 }
