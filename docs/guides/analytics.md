@@ -187,3 +187,5 @@ yet).
 | experiment          | interaction                           | <code>id: string<br />variation: bool<br />interaction_context: string</code>
 | element             | click                                 | <code>elementId: string<br />fromState: string<br />toState: string?</code>
 | personal_access_token | action                              | <code>action: string<br>patId: string</code>
+| reference_editor | create_entry                              | <code>locales_count: number<br />localized_fields_count: number<br />fields_count: number <br/>widgets_count: number<br></code>
+| reference_editor | edit_entry                              | <code>locales_count: number<br />localized_fields_count: number<br />fields_count: number <br/>widgets_count: number<br></code>

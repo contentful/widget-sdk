@@ -34,7 +34,8 @@ export default function () {
     h('a.entity-link__content', {
       dataTestId: 'entity-link-content',
       ngIf: 'stateRef',
-      cfSref: 'stateRef'
+      cfSref: 'stateRef',
+      ngClick: 'onClick()'
     }, [content()]),
     h('.entity-link__content', {
       dataTestId: 'entity-link-content',
