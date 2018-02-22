@@ -10,6 +10,7 @@ import {isOwnerOrAdmin} from 'services/OrganizationRoles';
 import {getOrganization} from 'services/TokenStore';
 import * as ReloadNotification from 'ReloadNotification';
 import {TiersTable} from 'account/pricing/TiersTable';
+import Workbench from 'app/WorkbenchReact';
 
 const PlatformUsage = createReactClass({
   propTypes: {
@@ -52,38 +53,10 @@ const PlatformUsage = createReactClass({
       content: h('div', {style: {padding: '2rem 3.15rem'}},
         h('h2', {style: {margin: '0 0 1em'}}, this.state.name),
         this.state.charges.map(charge => h(TiersTable, {key: charge.sys.id, charge}))
-      )
+      ),
+      sidebar: h('div', null, '')
     });
   }
 });
-
-// TODO: move this to Workbench.es6.js?
-function Workbench ({title, content, sidebar}) {
-  return h('div', {
-    className: 'workbench'
-  },
-    h('div', {
-      className: 'workbench-header__wrapper'
-    },
-      h('header', {
-        className: 'workbench-header'
-      },
-        h('h1', {
-          className: 'workbench-header__title'
-        }, title)
-      )
-    ),
-    h('div', {
-      className: 'workbench-main'
-    },
-      h('div', {
-        className: 'workbench-main__content'
-      }, content),
-      h('div', {
-        className: 'workbench-main__sidebar'
-      }, sidebar)
-    )
-  );
-}
 
 export default PlatformUsage;
