@@ -25,7 +25,8 @@ angular.module('contentful')
   var ResourceService = require('services/ResourceService').default;
 
   var organization = spaceContext.organizationContext.organization;
-  var isOwner = require('services/OrganizationRoles').isOwner(organization);
+  var canUpgrade = require('services/OrganizationRoles').isOwnerOrAdmin(organization);
+
   var resources = ResourceService(spaceContext.getId());
   var resource;
 
@@ -44,7 +45,7 @@ angular.module('contentful')
   _.extend($scope, STATES);
 
   $scope.accountUpgradeState = TheAccountView.getSubscriptionState();
-  $scope.isOwner = isOwner;
+  $scope.canUpgrade = canUpgrade;
 
   $scope.locales = [];
   $scope.localeNamesByCode = {};

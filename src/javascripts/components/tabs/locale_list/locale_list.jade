@@ -98,13 +98,18 @@ header.workbench-header
       h2.entity-sidebar__heading
         | Add Locale
       p.entity-sidebar__text-profile
-        | You are using {{usage}} out of {{limit}} locales in your space.
+        | You are using {{usage}} out of {{limit}}&#32;
+        span(ng-if="limit === 1")
+          | locale
+        span(ng-if="limit > 1")
+          | locales
+        | &#32;in your space.
       p.entity-sidebar__text-profile(ng-if="localesUsageState === LOCALES_LIMIT_REACHED")
         | You've reached the space locales limit.&#32;
-        span(ng-if="isOwner")
+        span(ng-if="canUpgrade")
           | <a cf-sref="{{ accountUpgradeState }}">Upgrade</a> to add more locales
-        span(ng-if="!isOwner")
-          | Contact the owner of this organization to upgrade the space
+        span(ng-if="!canUpgrade")
+          | Contact the admin or owner of this space to upgrade the space
 
         span(ng-if="limit === 1")
           | .
