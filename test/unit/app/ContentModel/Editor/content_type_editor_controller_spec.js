@@ -93,12 +93,12 @@ describe('ContentTypeEditor Controller', function () {
       });
     });
 
-    describe('tries to select title field when current is deleted', function () {
+    describe('tries to select title field when there is not one', function () {
       it('clears "displayField" property when no field was found', function () {
         const data = scope.contentType.data;
-        data.fields.push({id: 1, type: 'Text'});
+        data.fields.push({id: 'field1', type: 'Text'});
         scope.$digest();
-        expect(data.displayField).toEqual(1);
+        expect(data.displayField).toEqual('field1');
         data.fields.pop();
         scope.$digest();
         expect(data.displayField).toBeUndefined();
@@ -106,14 +106,14 @@ describe('ContentTypeEditor Controller', function () {
 
       it('gets the next one when available', function () {
         const data = scope.contentType.data;
-        data.fields.push({id: 1, type: 'Text'});
+        data.fields.push({id: 'field1', type: 'Text'});
         scope.$digest();
-        expect(data.displayField).toEqual(1);
-        data.fields.push({id: 1.5, type: 'Text', disabled: true});
-        data.fields.push({id: 2, type: 'Symbol'});
+        expect(data.displayField).toEqual('field1');
+        data.fields.push({id: 'field2', type: 'Text', disabled: true});
+        data.fields.push({id: 'field3', type: 'Symbol'});
         data.fields.shift();
         scope.$digest();
-        expect(data.displayField).toEqual(2);
+        expect(data.displayField).toEqual('field3');
       });
     });
 
