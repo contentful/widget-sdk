@@ -110,10 +110,10 @@ export default function (org, templateName, modalTemplate = autoCreateSpaceTempl
  */
 function* createSpace (org, templateName) {
   const newSpace = yield client.createSpace({
-    name: 'Sample project',
+    name: 'The example project',
     defaultLocale: DEFAULT_LOCALE
   }, org.sys.id);
-  track('space:create', { templateName: templateName });
+  track('space:create', { templateName });
   yield TokenStore.refresh();
   yield gotoState({
     path: ['spaces', 'detail'],

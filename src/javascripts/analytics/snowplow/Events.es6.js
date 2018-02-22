@@ -1,7 +1,8 @@
 import {get as getAtPath, snakeCase} from 'lodash';
 import {getSchema as fetchSchema} from './Schemas';
 
-import EntityAction from './transformers/SpaceEntityAction';
+import EntityAction from './transformers/EntityAction';
+import EntryActionV2 from './transformers/EntryActionV2';
 import Generic from './transformers/Generic';
 import SpaceCreate from './transformers/SpaceCreate';
 import createExperimentTransformer from './transformers/Experiment';
@@ -56,7 +57,8 @@ registerActionEvent('experiment:start', createExperimentTransformer('start'));
 registerActionEvent('experiment:interaction', createExperimentTransformer('interaction'));
 
 registerActionEvent('content_type:create', EntityAction);
-registerActionEvent('entry:create', EntityAction);
+registerActionEvent('entry:create', EntryActionV2);
+registerActionEvent('entry:publish', EntryActionV2);
 registerActionEvent('api_key:create', EntityAction);
 registerActionEvent('asset:create', EntityAction);
 

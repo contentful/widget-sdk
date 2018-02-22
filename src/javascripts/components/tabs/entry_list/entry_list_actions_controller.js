@@ -5,6 +5,8 @@ angular.module('contentful')
 .controller('EntryListActionsController', ['$scope', 'require', function EntryListActionsController ($scope, require) {
   var accessChecker = require('access_control/AccessChecker');
   var $controller = require('$controller');
+  var spaceContext = require('spaceContext');
+  var Analytics = require('analytics/Analytics');
 
   var listActionsController = $controller('ListActionsController', {
     $scope: $scope,
@@ -14,13 +16,29 @@ angular.module('contentful')
   $scope.showDuplicate = showDuplicate;
   $scope.duplicateSelected = duplicate;
 
+  var controller = this;
+  var publish = $scope.publishSelected;
+  $scope.publishSelected = function () {
+    const contentTypes = getContentTypes();
+    publish.apply(controller, arguments)
+    .then(function (results) {
+      results.succeeded.forEach(
+        entryEventTracker('publish', 'content-list', contentTypes)
+      );
+    });
+  };
+
   function showDuplicate () {
     return !accessChecker.shouldHide('createEntry') && !accessChecker.shouldDisable('createEntry');
   }
 
   function duplicate () {
+    const contentTypes = getContentTypes();
     listActionsController.duplicate().then(function (results) {
       var succeeded = results.succeeded;
+      succeeded.forEach(
+        entryEventTracker('create', 'content-list__duplicate', contentTypes)
+      );
       $scope.entries.unshift.apply($scope.entries, succeeded);
       $scope.paginator.setTotal(function (total) {
         return total + succeeded.length;
@@ -31,5 +49,30 @@ angular.module('contentful')
       // has sorted entries on the page by.
       // Calling updateEntries would alleviate this problem.
     });
+  }
+
+  // Returns an object having signature { [entryId]: [contentType] }.
+  function getContentTypes () {
+    return $scope.selection.getSelected().reduce(
+      function (contentTypes, entry) {
+        const contentTypeId = entry.data.sys.contentType.sys.id;
+        contentTypes[contentTypeId] = spaceContext.publishedCTs.get(
+          contentTypeId
+        );
+        return contentTypes;
+      },
+      {}
+    );
+  }
+
+  function entryEventTracker (action, origin, contentTypes) {
+    return function (entry) {
+      var event = 'entry:' + action; // entry:create, entry:publish
+      Analytics.track(event, {
+        eventOrigin: origin,
+        contentType: contentTypes[entry.data.sys.contentType.sys.id],
+        response: entry
+      });
+    };
   }
 }]);

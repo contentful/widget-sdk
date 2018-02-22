@@ -13,6 +13,10 @@ import scaleSvg from 'utils/ScaleSvg';
 import {asReact} from 'ui/Framework/DOMRenderer';
 
 const SpaceUsage = createReactClass({
+  propTypes: {
+    orgId: PropTypes.string.isRequired,
+    spaceId: PropTypes.string.isRequired
+  },
   getInitialState: function () {
     return {
       name: '',
@@ -54,11 +58,6 @@ const SpaceUsage = createReactClass({
     });
   }
 });
-
-SpaceUsage.propTypes = {
-  orgId: PropTypes.string.isRequired,
-  spaceId: PropTypes.string.isRequired
-};
 
 // TODO: move this to Workbench.es6.js?
 function Workbench ({title, icon, content, sidebar}) {

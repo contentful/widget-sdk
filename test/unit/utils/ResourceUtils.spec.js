@@ -27,12 +27,13 @@ describe('ResourceUtils', function () {
         reachedMaxLimit: createResource('entry', { maximum: 10, included: 5 }, 10),
         overMaxLimit: createResource('entry', { maximum: 10, included: 5 }, 15)
       },
-      apiKeys: {
-        notReachedAnyLimit: createResource('api_key', { maximum: 100, included: 50 }, 20),
-        reachedIncludedLimit: createResource('api_key', { maximum: 100, included: 50 }, 70),
-        reachedMaxLimit: createResource('api_key', { maximum: 100, included: 50 }, 100),
-        overMaxLimit: createResource('api_key', { maximum: 100, included: 50 }, 150)
-      }
+      contentTypes: {
+        notReachedAnyLimit: createResource('content_type', { maximum: 20, included: 10 }, 2),
+        reachedIncludedLimit: createResource('content_type', { maximum: 20, included: 10 }, 15),
+        reachedMaxLimit: createResource('content_type', { maximum: 20, included: 10 }, 20),
+        overMaxLimit: createResource('content_type', { maximum: 20, included: 10 }, 25)
+      },
+      apiKeys: createResource('locale', { maximum: null, included: null }, 2)
     };
 
     this.pricingVersions = {
@@ -81,6 +82,10 @@ describe('ResourceUtils', function () {
     it('should return false if you go over the max limit', function () {
       expect(this.ResourceUtils.canCreate(this.resources.entries.overMaxLimit)).toBe(false);
     });
+
+    it('should return true if you inquire about a resource without a max limit', function () {
+      expect(this.ResourceUtils.canCreate(this.resources.apiKeys)).toBe(true);
+    });
   });
 
   describe('#generateMessage', function () {
@@ -93,13 +98,9 @@ describe('ResourceUtils', function () {
         expect(message.error).toBeDefined();
       });
 
-      Object.keys(this.resources.apiKeys).forEach(i => {
-        const resource = this.resources.apiKeys[i];
-        const message = this.ResourceUtils.generateMessage(resource);
-
-        expect(message.warning).toBeDefined();
-        expect(message.error).toBeDefined();
-      });
+      const message = this.ResourceUtils.generateMessage(this.resources.apiKeys);
+      expect(message.warning).toBeDefined();
+      expect(message.error).toBeDefined();
     });
 
     it('should return no warning or error if you have not reached any limit', function () {
@@ -133,15 +134,15 @@ describe('ResourceUtils', function () {
     it('should provide a human readable warning or error for a name with spaces', function () {
       let message;
 
-      message = this.ResourceUtils.generateMessage(this.resources.apiKeys.reachedIncludedLimit);
+      message = this.ResourceUtils.generateMessage(this.resources.contentTypes.reachedIncludedLimit);
 
-      expect(message.warning).toBe('You are near the limit of your API Keys usage.');
+      expect(message.warning).toBe('You are near the limit of your Content Types usage.');
       expect(message.error).toBe('');
 
-      message = this.ResourceUtils.generateMessage(this.resources.apiKeys.reachedMaxLimit);
+      message = this.ResourceUtils.generateMessage(this.resources.contentTypes.reachedMaxLimit);
 
       expect(message.warning).toBe('');
-      expect(message.error).toBe('You have exceeded your API Keys usage.');
+      expect(message.error).toBe('You have exceeded your Content Types usage.');
     });
   });
 
@@ -185,6 +186,19 @@ describe('ResourceUtils', function () {
 
       expect(limits.included).toBe(500);
       expect(limits.maximum).toBe(1000);
+    });
+
+    it('returns a limits object even given a resource with a null limits key', function () {
+      const resource = {
+        name: 'Foo Resource',
+        kind: 'permanent',
+        usage: 7,
+        limits: null
+      };
+
+      const limits = this.ResourceUtils.getResourceLimits(resource);
+      expect(limits.included).toBe(null);
+      expect(limits.maximum).toBe(null);
     });
   });
 

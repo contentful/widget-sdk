@@ -1,8 +1,8 @@
-import * as P from 'path'
+import * as P from 'path';
 
 
 // Module IDs are relative to this path
-const basePath = P.resolve('src', 'javascripts')
+const basePath = P.resolve('src', 'javascripts');
 
 /**
  * Return an babel options object used to compile files
@@ -34,7 +34,7 @@ export function makeOptions ({ browserTargets }, opts) {
         // TODO we want to use 'useBuiltIns': 'entry' to reduce bundle size,
         // but first we heed to pipe `libs/index` through babel.
         'useBuiltIns': false
-      }]
+      }], 'react'
     ],
     plugins: [
       ['transform-es2015-modules-systemjs', {
@@ -46,14 +46,14 @@ export function makeOptions ({ browserTargets }, opts) {
     // Get the SystemJS module ID from the source path
     // src/javascripts/a/b/x.es6.js -> a/b/x
     getModuleId: function (path) {
-      const absPath = P.resolve(path)
+      const absPath = P.resolve(path);
       if (absPath.startsWith(basePath)) {
         return absPath
           .replace(/\.es6$/, '')
-          .replace(basePath + '/', '')
+          .replace(basePath + '/', '');
       } else {
-        return path
+        return path;
       }
     }
-  }, opts)
+  }, opts);
 }

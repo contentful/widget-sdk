@@ -1,6 +1,6 @@
 import {
   canPerformActionOnEntryOfType,
-  Actions
+  Action
 } from 'access_control/AccessChecker';
 
 export default function getAccessibleCTs (publishedCTs, selectedCtId) {
@@ -15,7 +15,7 @@ function accessibleOrSelected (selectedCtId, ct) {
 }
 
 function isAccessible (ct) {
-  return canPerformActionOnEntryOfType(Actions.READ, ct.sys.id);
+  return canPerformActionOnEntryOfType(Action.READ, ct.sys.id);
 }
 
 function isSelected (selectedCtId, ct) {

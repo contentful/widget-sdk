@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {camelCase} from 'lodash';
 import * as React from 'libs/react';
 import * as ReactDOM from 'libs/react-dom';

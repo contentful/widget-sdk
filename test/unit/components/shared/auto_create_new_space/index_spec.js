@@ -105,7 +105,7 @@ describe('AutoCreateNewSpace/index', function () {
       sinon.assert.calledWithExactly(
         this.createSampleSpace,
         this.user.organizationMemberships[0].organization,
-        'product catalogue',
+        'the example app',
         undefined
       );
     });

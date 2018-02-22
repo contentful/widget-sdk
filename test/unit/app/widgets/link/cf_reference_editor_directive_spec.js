@@ -7,8 +7,18 @@ describe('cfReferenceEditorDirective', function () {
 
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    this.analytics = { track: sinon.spy() };
+
+    this.spaceContext = {
+      publishedCTs: {
+        get: sinon.stub()
+      }
+    };
+
+    module('contentful/test', ($provide) => {
       $provide.removeDirectives('cfEntityLink', 'cfAssetCard');
+      $provide.value('analytics/Analytics', this.analytics);
+      $provide.value('spaceContext', this.spaceContext);
     });
 
     this.widgetApi = this.$inject('mocks/widgetApi').create();
@@ -141,7 +151,7 @@ describe('cfReferenceEditorDirective', function () {
     });
   });
 
-  describe('creating entity', function () {
+  describe('cfReferenceEditor/createEntity()', function () {
     const createdEntity = {};
 
     beforeEach(function () {
@@ -149,52 +159,48 @@ describe('cfReferenceEditorDirective', function () {
       this.space = this.widgetApi.space;
     });
 
-    pit('creates an asset', function () {
+    it('creates an asset', function* () {
       this.space.createAsset.resolves(createdEntity);
 
-      return this.create('Asset', {}, this.space)
-      .then(function (entity) {
-        expect(entity).toBe(createdEntity);
-        sinon.assert.calledOnce(this.space.createAsset.withArgs({}));
-      }.bind(this));
+      const asset = yield this.create('Asset', {}, this.space);
+
+      expect(asset).toBe(createdEntity);
+      sinon.assert.calledOnce(this.space.createAsset.withArgs({}));
     });
 
     describe('creating an entry', function () {
       const ct1 = {sys: {id: 'ctid', publishedVersion: 123}};
       const ct2 = {sys: {id: 'ctid2', publishedVersion: 666}};
 
-      pit('creates an entry if there is only one CT', function () {
+      it('creates an entry if there is only one CT', function* () {
         this.space.createEntry.resolves(createdEntity);
         this.space.getContentTypes.resolves({items: [ct1]});
 
-        return this.create('Entry', {}, this.space)
-        .then(function (entity) {
-          expect(entity).toBe(createdEntity);
-          sinon.assert.calledOnce(this.space.createEntry.withArgs('ctid', {}));
-        }.bind(this));
+        const entry = yield this.create('Entry', {}, this.space);
+
+        expect(entry).toBe(createdEntity);
+        sinon.assert.calledOnce(this.space.createEntry.withArgs('ctid', {}));
       });
 
-      pit('filters out content types to adhere to single link field validation', function () {
+      it('filters out content types to adhere to single link field validation', function* () {
         this.space.getContentTypes.resolves({items: [ct1, ct2]});
         const field = {validations: [{linkContentType: ['ctid']}]};
 
-        return this.create('Entry', field, this.space)
-        .then(function () {
-          sinon.assert.calledOnce(this.space.createEntry.withArgs('ctid', {}));
-        }.bind(this));
+        yield this.create('Entry', field, this.space);
+
+        sinon.assert.calledOnce(this.space.createEntry.withArgs('ctid', {}));
       });
 
-      pit('filters out content types to adhere to multiple link field validation', function () {
+      it('filters out content types to adhere to multiple link field validation', function* () {
         this.space.getContentTypes.resolves({items: [ct1, ct2]});
         const field = {itemValidations: [{linkContentType: ['ctid2']}]};
 
-        return this.create('Entry', field, this.space)
-        .then(function () {
-          sinon.assert.calledOnce(this.space.createEntry.withArgs('ctid2', {}));
-        }.bind(this));
+        yield this.create('Entry', field, this.space);
+
+        sinon.assert.calledOnce(this.space.createEntry.withArgs('ctid2', {}));
       });
 
-      pit('allows user to choose which CT should be used', function () {
+      it('allows user to choose which CT should be used', function* () {
         this.space.createEntry.resolves(createdEntity);
         this.space.getContentTypes.resolves({items: [ct1, ct2]});
 
@@ -203,28 +209,72 @@ describe('cfReferenceEditorDirective', function () {
           return {promise: $q.resolve(ct1)};
         };
 
-        return this.create('Entry', {}, this.space)
-        .then(function (entity) {
-          expect(entity).toBe(createdEntity);
-          sinon.assert.calledOnce(this.space.createEntry.withArgs('ctid', {}));
-        }.bind(this));
+        const entry = yield this.create('Entry', {}, this.space);
+
+        expect(entry).toBe(createdEntity);
+        sinon.assert.calledOnce(this.space.createEntry.withArgs('ctid', {}));
       });
     });
+  });
 
-    it('adds link and redirects to entity editor after creation', function () {
-      const id = 'assetid';
-      const asset = {sys: {id, type: 'Asset'}};
+  describe('adding a new asset', function () {
+    const ASSET = { sys: { id: 'assetid', type: 'Asset' } };
 
+    beforeEach(function* () {
       this.field.setValue([]);
-      this.space.createAsset.resolves(asset);
+      this.widgetApi.space.createAsset.withArgs({}).resolves(ASSET);
+      this.scope = this.init({type: 'Asset'});
+      yield this.scope.addNewAsset();
+    });
 
-      const scope = this.init({type: 'Asset'});
-      scope.addNew({preventDefault: _.noop});
-      this.$apply();
+    it('adds link', function* () {
+      expect(this.scope.entityModels.length).toBe(1);
+      expect(this.scope.entityModels[0].value.id).toBe(ASSET.sys.id);
+    });
 
-      expect(scope.entityModels.length).toBe(1);
-      expect(scope.entityModels[0].value.id).toBe(id);
-      sinon.assert.calledOnce(this.widgetApi.state.goToEditor.withArgs(asset));
+    it('redirects to entity editor after creation', function () {
+      sinon.assert.calledOnceWith(this.widgetApi.state.goToEditor, ASSET);
+    });
+
+    it('does not call analytics.track()', function () {
+      sinon.assert.notCalled(this.analytics.track);
+    });
+  });
+
+  describe('adding a new entry', function () {
+    const ENTRY = { sys: { id: 'entryid', type: 'Entry' } };
+    const CT_ID = 'CONTENT_TYPE_ID';
+    const CLIENT_CT = { data: { sys: { id: CT_ID } } };
+
+    beforeEach(function* () {
+      this.field.setValue([]);
+      this.spaceContext.publishedCTs.get.withArgs(CT_ID).returns(CLIENT_CT);
+      this.widgetApi.space.createEntry.withArgs(CT_ID, {}).resolves(ENTRY);
+      this.scope = this.init({type: 'Entry'});
+      yield this.scope.addNewEntry(CT_ID);
+      this.scope.$digest();
+    });
+
+    it('adds link', function () {
+      expect(this.scope.entityModels.length).toBe(1);
+      expect(this.scope.entityModels[0].value.id).toBe(ENTRY.sys.id);
+    });
+
+    it('redirects to entity editor after creation', function* () {
+      sinon.assert.calledOnceWith(this.widgetApi.state.goToEditor, ENTRY);
+    });
+
+    it('tracks `entry:create` event', function* () {
+      sinon.assert.calledOnce(this.analytics.track);
+      sinon.assert.calledWithExactly(
+        this.analytics.track,
+        'entry:create',
+        {
+          eventOrigin: 'reference-editor',
+          contentType: CLIENT_CT,
+          response: { data: ENTRY }
+        }
+      );
     });
   });
 

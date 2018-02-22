@@ -10,6 +10,24 @@ describe('Entry List Actions Controller', function () {
   });
 
   beforeEach(function () {
+    const duplicateOrPublishResults = {
+      succeeded: [
+        'foo',
+        'bar'
+      ].map((prefix) => ({
+        data: {
+          sys: {
+            id: prefix,
+            contentType: {
+              sys: {
+                id: `${prefix}-ct-id`
+              }
+            }
+          }
+        }
+      }))
+    };
+
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'track',
@@ -49,6 +67,7 @@ describe('Entry List Actions Controller', function () {
     stubs.action4.returns(action4.promise);
 
     scope = this.$inject('$rootScope').$new();
+
     scope.paginator = this.$inject('Paginator').create();
     scope.selection = {
       size: stubs.size,
@@ -64,18 +83,50 @@ describe('Entry List Actions Controller', function () {
     accessChecker.shouldDisable = sinon.stub().returns(false);
     accessChecker.canPerformActionOnEntity = sinon.stub();
 
+    scope.publishSelected = sinon.stub().returns(
+      $q.resolve(duplicateOrPublishResults)
+    );
+
+    // Several of the tests below are coupled with ListActionsController and
+    // rely upon its implementation (via batchPerformer instance methods)
+    // internally. The stub below allows us to do so while mocking the return
+    // value of `batchPerformer.create(config).duplicate`.
+    const batchPerformer = this.$inject('batchPerformer');
+    const { create } = batchPerformer;
+    sinon.stub(batchPerformer, 'create').callsFake((...args) => {
+      const { duplicate, ...performer } = create(...args);
+      return {
+        ...performer,
+        duplicate: (...args) => {
+          duplicate(...args);
+          return Promise.resolve(duplicateOrPublishResults);
+        }
+      };
+    });
+
     const $controller = this.$inject('$controller');
-    $controller('EntryListActionsController', {$scope: scope});
+    $controller('EntryListActionsController', { $scope: scope });
   });
 
   function makeEntity (action, stub) {
-    const entity = {data: {sys: {id: 'entityid'}}};
+    const entity = {
+      data: {
+        sys: {
+          id: 'entity-id',
+          contentType: {
+            sys: {
+              id: 'content-type-id'
+            }
+          }
+        }
+      }
+    };
     entity[action] = stub;
     return entity;
   }
 
   function makePerformTests (action, extraSpecs) {
-    describe(action + ' selected entries', function () {
+    describe(`${action} selected entries`, function () {
       beforeEach(function () {
         stubs.size.returns(2);
         const entities = [
@@ -91,23 +142,23 @@ describe('Entry List Actions Controller', function () {
         stubs.getSelected.returns(entities);
         stubs.timeout.callsArg(0);
 
-        scope[action + 'Selected']();
+        scope[`${action}Selected`]();
         scope.$digest();
       });
 
-      it('calls ' + action + ' on first selected entry', function () {
+      it(`calls ${action} on first selected entry`, function () {
         sinon.assert.called(stubs.action1);
       });
 
-      it('calls ' + action + ' on second selected entry', function () {
+      it(`calls ${action} on second selected entry`, function () {
         sinon.assert.called(stubs.action2);
       });
 
-      it('calls ' + action + ' on third selected entry', function () {
+      it(`calls ${action} on third selected entry`, function () {
         sinon.assert.called(stubs.action3);
       });
 
-      it('calls ' + action + ' on fourth selected entry', function () {
+      it(`calls ${action} on fourth selected entry`, function () {
         sinon.assert.called(stubs.action4);
       });
 
@@ -150,14 +201,54 @@ describe('Entry List Actions Controller', function () {
   describe('duplicates selected entries', function () {
     beforeEach(function () {
       stubs.size.returns(2);
-      stubs.action1.returns({type: 'Entry', contentType: {sys: {id: 'foo'}}});
-      stubs.action2.returns({type: 'Entry', contentType: {sys: {id: 'bar'}}});
+      stubs.action1.returns({
+        type: 'Entry',
+        contentType: {
+          sys: {
+            id: 'foo',
+            contentType: {
+              sys: { id: 'foo-ct-id' }
+            }
+          }
+        }
+      });
+      stubs.action2.returns({
+        type: 'Entry',
+        contentType: {
+          sys: {
+            id: 'bar',
+            contentType: {
+              sys: { id: 'bar-ct-id' }
+            }
+          }
+        }
+      });
       stubs.createEntry.withArgs('foo').resolves({});
       stubs.createEntry.withArgs('bar').rejects(new Error('boom'));
       scope.entries = [];
       stubs.getSelected.returns([
-        { getSys: stubs.action1, data: {sys: {}} },
-        { getSys: stubs.action2, data: {sys: {}} }
+        {
+          getSys: stubs.action1,
+          data: {
+            sys: {
+              id: 'foo',
+              contentType: {
+                sys: { id: 'foo-ct-id' }
+              }
+            }
+          }
+        },
+        {
+          getSys: stubs.action2,
+          data: {
+            sys: {
+              id: 'bar',
+              contentType: {
+                sys: { id: 'bar-ct-id' }
+              }
+            }
+          }
+        }
       ]);
 
       scope.duplicateSelected();
@@ -197,7 +288,7 @@ describe('Entry List Actions Controller', function () {
     });
 
     it('increases paginator value', function () {
-      expect(scope.paginator.getTotal()).toBe(1);
+      expect(scope.paginator.getTotal()).toBe(2);
     });
   });
 

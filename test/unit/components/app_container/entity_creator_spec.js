@@ -36,7 +36,13 @@ describe('entityCreator', function () {
     let createStub;
     let contentType;
     beforeEach(inject(function (cfStub) {
-      createStub = sinon.stub(this.spaceContext.space, 'createEntry').returns(this.$q.defer().promise);
+      this.entity = { getId: sinon.stub() };
+      createStub = sinon.stub(
+        this.spaceContext.space,
+        'createEntry'
+      ).returns(
+        this.$q.resolve(this.entity)
+      );
       contentType = cfStub.contentType(this.spaceContext.space, 'thing', 'Thing');
     }));
 

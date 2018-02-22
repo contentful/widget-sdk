@@ -36,7 +36,12 @@ registerSchema({
 
 registerSchema({
   name: 'entry_create',
-  version: '1-0-0'
+  version: '2-0-0'
+});
+
+registerSchema({
+  name: 'entry_publish',
+  version: '2-0-0'
 });
 
 registerSchema({
@@ -152,6 +157,14 @@ registerSchema({
 registerSchema({
   name: 'element_click',
   version: '2-0-0'
+});
+
+// Objects following this schema is meant to be passed as context
+// to other events like element:click hence it has no counterpart
+// in snowplow/Events.es6.js and no transformer
+registerSchema({
+  name: 'content_preview',
+  version: '1-0-0'
 });
 
 function registerSchema (schema) {

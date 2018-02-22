@@ -421,23 +421,47 @@ describe('Extension SDK', function () {
   });
 
   describe('#space methods', function () {
-    // TODO firefox does not yet support for (const x in y)
-    /* eslint prefer-const: off */
+    beforeEach(function () {
+      const spaceContext = this.$inject('spaceContext');
+      spaceContext.publishedCTs = {
+        get: sinon.stub()
+      };
+      this.args = {
+        sys: {
+          contentType: {
+            sys: { id: 'foo' }
+          }
+        }
+      };
+    });
+
     it('delegates to API client and responds with data', function* (api) {
-      for (let method of Object.keys(api.space)) {
-        this.apiClient[method] = sinon.stub().resolves('DATA');
-        const response = yield api.space[method]('X', 'Y');
+      const { args } = this;
+      for (const method of Object.keys(api.space)) {
+        const data = { sys: { type: 'bar' } };
+        this.apiClient[method] = sinon.stub().withArgs(args).resolves(data);
+        const response = yield api.space[method](args);
         sinon.assert.calledOnce(this.apiClient[method]);
-        sinon.assert.calledWithExactly(this.apiClient[method], 'X', 'Y');
-        expect(response).toEqual('DATA');
+        sinon.assert.calledWithExactly(this.apiClient[method], args);
+        expect(response).toEqual(data);
       }
     });
 
     it('delegates to API and throws error', function* (api) {
-      for (let method of Object.keys(api.space)) {
-        this.apiClient[method] = sinon.stub().rejects({code: 'CODE', body: 'BODY'});
-        const error = yield api.space[method]('X', 'Y').catch((e) => e);
-        expect(error).toEqual({code: 'CODE', data: 'BODY', message: 'Request failed'});
+      const { args } = this;
+      for (const method of Object.keys(api.space)) {
+        this.apiClient[method] = sinon.stub().withArgs(args).rejects({
+          code: 'CODE',
+          body: 'BODY'
+        });
+        const error = yield api.space[method](args).catch((e) => e);
+        sinon.assert.calledOnce(this.apiClient[method]);
+        sinon.assert.calledWithExactly(this.apiClient[method], args);
+        expect(error).toEqual({
+          code: 'CODE',
+          data: 'BODY',
+          message: 'Request failed'
+        });
       }
     });
 
@@ -445,7 +469,7 @@ describe('Extension SDK', function () {
       const widgetApiMethods = Object.keys(api.space);
       const ApiClient = this.$inject('data/ApiClient');
       const cma = new ApiClient();
-      for (let method of widgetApiMethods) {
+      for (const method of widgetApiMethods) {
         expect(typeof cma[method]).toBe('function');
       }
     });
@@ -466,7 +490,7 @@ describe('Extension SDK', function () {
     });
 
     it('delegates to entity selector call', function* (api) {
-      for (let [method, entityType, multiple] of methods) {
+      for (const [method, entityType, multiple] of methods) {
         const result = yield api.dialogs[method]({test: true});
         expect(result).toBe(null);
         sinon.assert.calledWithMatch(this.openStub, {
@@ -477,21 +501,21 @@ describe('Extension SDK', function () {
 
     it('resolves with result of single selection', function* (api) {
       this.openStub.resolves({result: true});
-      for (let [method] of methods.slice(0, 2)) {
+      for (const [method] of methods.slice(0, 2)) {
         expect(yield api.dialogs[method]()).toEqual({result: true});
       }
     });
 
     it('resolves with result of multi selection', function* (api) {
       this.openStub.resolves([{i: 1}, {i: 2}]);
-      for (let [method] of methods.slice(2)) {
+      for (const [method] of methods.slice(2)) {
         expect(yield api.dialogs[method]()).toEqual([{i: 1}, {i: 2}]);
       }
     });
 
     it('rejects if an error occurred', function* (api) {
       this.openStub.rejects(new Error('boom!'));
-      for (let [method] of methods) {
+      for (const [method] of methods) {
         const err = yield api.dialogs[method]().catch(_.identity);
         expect(err.message).toBe('boom!');
       }

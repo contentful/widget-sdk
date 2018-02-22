@@ -12,7 +12,19 @@ import IncomingLinksListError from '../IncomingLinksList/Error';
 import messages from './messages';
 
 const StateChangeConfirmation = createReactClass({
-  displayName: 'StateChangeConfirmation',
+  propTypes: {
+    onCancel: PropTypes.func.isRequired,
+    onConfirm: PropTypes.func.isRequired,
+    action: PropTypes.oneOf([
+      Action.Unpublish(),
+      Action.Delete(),
+      Action.Archive()
+    ]).isRequired,
+    entityInfo: PropTypes.shape({
+      id: PropTypes.string,
+      type: PropTypes.oneOf([EntityType.ASSET, EntityType.ENTRY])
+    })
+  },
   render () {
     const { action, entityInfo, onConfirm, onCancel } = this.props;
 
@@ -70,19 +82,5 @@ function getMessages ({ action, entityInfo, links }) {
   const numberOfLinks = getNumberOfLinks(links);
   return messages[action][entityInfo.type][numberOfLinks];
 }
-
-StateChangeConfirmation.propTypes = {
-  onCancel: PropTypes.func.isRequired,
-  onConfirm: PropTypes.func.isRequired,
-  action: PropTypes.oneOf([
-    Action.Unpublish(),
-    Action.Delete(),
-    Action.Archive()
-  ]).isRequired,
-  entityInfo: PropTypes.shape({
-    id: PropTypes.string,
-    type: PropTypes.oneOf([EntityType.ASSET, EntityType.ENTRY])
-  })
-};
 
 export default StateChangeConfirmation;

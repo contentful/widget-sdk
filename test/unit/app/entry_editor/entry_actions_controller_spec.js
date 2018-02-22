@@ -10,63 +10,124 @@ describe('Entry Actions Controller', function () {
     this.notify = sinon.stub();
     this.fields$ = K.createMockProperty({});
 
+    this.analytics = this.$inject('analytics/Analytics');
+    this.analytics.track = sinon.stub();
+
     const $controller = this.$inject('$controller');
     const spaceContext = this.$inject('mocks/spaceContext').init();
     this.createEntry = sinon.stub();
     spaceContext.space.createEntry = this.createEntry;
 
+    this.entityInfo = {
+      id: 'EID',
+      contentTypeId: 'CID'
+    };
+
     this.controller = $controller('EntryActionsController', {
       $scope: this.scope,
       notify: this.notify,
       fields$: this.fields$,
-      entityInfo: {
-        id: 'EID',
-        contentTypeId: 'CID'
-      },
+      entityInfo: this.entityInfo,
       preferences: {}
     });
+
+    spaceContext.publishedCTs = {
+      get: sinon.stub().withArgs(this.entityInfo).returns({
+        data: { name: 'foo' }
+      })
+    };
   });
 
-  describe('#duplicate command', function () {
-    describe('fails with an error', function () {
-      beforeEach(function () {
-        this.createEntry.rejects();
-        this.controller.duplicate.execute();
-        this.$apply();
-      });
-
-      it('calls action', function () {
-        sinon.assert.calledWith(this.createEntry, 'CID');
-      });
-
-      it('sends notification', function () {
-        sinon.assert.calledWith(
-          this.notify,
-          sinon.match({action: 'duplicate'})
-        );
-      });
+  describe('#add and #duplicate', function () {
+    beforeEach(function () {
+      this.$state.go = sinon.stub();
     });
 
-    describe('succeeds', function () {
+    ['add', 'duplicate'].forEach(itCreatesTheEntryWithReportingAndErrors);
+
+    function itCreatesTheEntryWithReportingAndErrors (action) {
+      let executeActionAndApplyScope;
+      const response = { getId: _.constant('NEW ID') };
+
       beforeEach(function () {
-        this.createEntry.resolves({
-          getId: _.constant('NEW ID')
-        });
-        this.$state.go = sinon.stub();
-        this.controller.duplicate.execute();
-        this.$apply();
+        executeActionAndApplyScope = () => {
+          this.controller[action].execute();
+          this.$apply();
+        };
       });
 
-      it('calls action', function () {
-        sinon.assert.calledWith(this.createEntry, 'CID');
-      });
+      describe(`#${action}`, function () {
+        if (action === 'add') {
+          it('tracks the entry_editor:created_with_same_ct event', function () {
+            this.createEntry.resolves(response);
+            executeActionAndApplyScope();
+            const { contentTypeId, id: entryId } = this.entityInfo;
+            sinon.assert.calledWithExactly(
+              this.analytics.track,
+              'entry_editor:created_with_same_ct',
+              { contentTypeId, entryId }
+            );
+          });
+        }
 
-      it('opens the editor', function () {
-        sinon.assert.calledWith(this.$state.go, '^.detail', {
-          entryId: 'NEW ID',
-          addToContext: false
+        describe('on success', function () {
+          beforeEach(function () {
+            this.createEntry.resolves(response);
+            executeActionAndApplyScope();
+          });
+
+          itCallsTheAction();
+
+          it('tracks the event', function () {
+            sinon.assert.calledWithExactly(
+              this.analytics.track,
+              'entry:create',
+              {
+                eventOrigin: (
+                  action === 'add'
+                    ? 'entry-editor'
+                    : 'entry-editor__duplicate'
+                ),
+                contentType: { data: { name: 'foo' } },
+                response: response
+              }
+            );
+          });
+
+          it('opens the editor', function () {
+            sinon.assert.calledWith(
+              this.$state.go,
+              '^.detail',
+              {
+                entryId: 'NEW ID',
+                addToContext: false
+              }
+            );
+          });
         });
+
+        describe('on error', function () {
+          beforeEach(function () {
+            this.createEntry.rejects();
+            executeActionAndApplyScope();
+          });
+
+          itCallsTheAction();
+
+          it('sends the error notification', function () {
+            sinon.assert.calledWith(
+              this.notify,
+              sinon.match({ action })
+            );
+          });
+        });
+
+        function itCallsTheAction () {
+          it('calls the action', function () {
+            sinon.assert.calledWith(this.createEntry, 'CID');
+          });
+        }
       });
-    });
+    }
   });
 });

@@ -1,14 +1,14 @@
-import {h, doctype} from './hyperscript'
-import {create as createResolver} from './manifest-resolver'
+import {h, doctype} from './hyperscript';
+import {create as createResolver} from './manifest-resolver';
 
 const DEV_ENTRY_SCRIPTS = [
   'vendor.js',
   'templates.js',
   'libs.js',
   'components.js'
-]
+];
 
-const DEFAULT_ENTRY_SCRIPTS = ['application.min.js']
+const DEFAULT_ENTRY_SCRIPTS = ['application.min.js'];
 
 
 /**
@@ -35,8 +35,8 @@ const DEFAULT_ENTRY_SCRIPTS = ['application.min.js']
  * @param {function} manifest
  */
 export function render (uiVersion, config, manifest) {
-  const resolve = createResolver(manifest, '/app')
-  return renderPage(uiVersion, config, resolve, DEFAULT_ENTRY_SCRIPTS)
+  const resolve = createResolver(manifest, '/app');
+  return renderPage(uiVersion, config, resolve, DEFAULT_ENTRY_SCRIPTS);
 }
 
 
@@ -55,12 +55,12 @@ export function render (uiVersion, config, manifest) {
  *   separate scripts are loaded. (See `DEV_ENTRY_SCRIPTS` above).
  */
 export function renderDev (config) {
-  const resolve = (path) => `/app/${path}`
-  return renderPage(null, config, resolve, DEV_ENTRY_SCRIPTS)
+  const resolve = (path) => `/app/${path}`;
+  return renderPage(null, config, resolve, DEV_ENTRY_SCRIPTS);
 }
 
 function renderPage (...args) {
-  return doctype + indexPage(...args)
+  return doctype + indexPage(...args);
 }
 
 function indexPage (uiVersion, config, resolve, entryScripts) {
@@ -101,7 +101,7 @@ function indexPage (uiVersion, config, resolve, entryScripts) {
     ].concat(
       entryScripts.map((src) => scriptTag(resolve(src)))
     ))
-  ])
+  ]);
 }
 
 /**
@@ -148,7 +148,7 @@ function appLoader () {
     }, [
       'Loading Contentful…'
     ])
-  ])
+  ]);
 }
 
 /**
@@ -167,7 +167,7 @@ function loaderSegment (path, delay, color) {
       transformOrigin: '30px 30px',
       animationDelay: delay
     }
-  })
+  });
 }
 
 function configMetaTag (uiVersion, config, resolve) {
@@ -181,7 +181,7 @@ function configMetaTag (uiVersion, config, resolve) {
         'app/snowplow.js': resolve('snowplow.js')
       }
     })
-  })
+  });
 }
 
 function stylesheet (href) {
@@ -190,7 +190,7 @@ function stylesheet (href) {
     media: 'all',
     rel: 'stylesheet',
     type: 'text/css'
-  })
+  });
 }
 
 function iconLink (rel, href) {
@@ -198,9 +198,9 @@ function iconLink (rel, href) {
     href: href,
     rel: rel,
     type: 'image/png'
-  })
+  });
 }
 
 function scriptTag (src) {
-  return h('script', {src, type: 'text/javascript'})
+  return h('script', {src, type: 'text/javascript'});
 }

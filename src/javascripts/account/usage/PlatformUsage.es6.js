@@ -12,6 +12,11 @@ import * as ReloadNotification from 'ReloadNotification';
 import {TiersTable} from 'account/pricing/TiersTable';
 
 const PlatformUsage = createReactClass({
+  propTypes: {
+    onReady: PropTypes.func.isRequired,
+    onForbidden: PropTypes.func.isRequired,
+    orgId: PropTypes.string.isRequired
+  },
   getInitialState: function () {
     return {
       charges: []
@@ -51,12 +56,6 @@ const PlatformUsage = createReactClass({
     });
   }
 });
-
-PlatformUsage.propTypes = {
-  onReady: PropTypes.func.isRequired,
-  onForbidden: PropTypes.func.isRequired,
-  orgId: PropTypes.string.isRequired
-};
 
 // TODO: move this to Workbench.es6.js?
 function Workbench ({title, content, sidebar}) {

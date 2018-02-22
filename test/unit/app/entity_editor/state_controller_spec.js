@@ -8,11 +8,12 @@ describe('entityEditor/StateController', function () {
       $provide.value('navigation/closeState', closeStateSpy);
     });
 
-
     this.rootScope = this.$inject('$rootScope');
     this.scope = this.rootScope.$new();
     this.scope.editorContext = this.$inject('mocks/entityEditor/Context').create();
     this.scope.entityInfo = {};
+
+    this.spaceContext = this.$inject('spaceContext');
 
     this.$inject('access_control/AccessChecker').canPerformActionOnEntity = sinon.stub().returns(true);
 
@@ -21,6 +22,9 @@ describe('entityEditor/StateController', function () {
       register: this.registerWarningSpy = sinon.spy(),
       show: this.showWarningsStub = sinon.stub().resolves()
     });
+
+    this.analytics = this.$inject('analytics/Analytics');
+    this.analytics.track = sinon.stub();
 
     const N = this.$inject('app/entity_editor/Notifications');
     this.Notification = N.Notification;
@@ -43,13 +47,14 @@ describe('entityEditor/StateController', function () {
 
     this.spaceEndpoint = sinon.stub();
     const Document = this.$inject('mocks/entityEditor/Document');
-    this.doc = Document.create({
+    this.entity = {
       sys: {
         id: 'EID',
         type: 'Entry',
         version: 42
       }
-    }, this.spaceEndpoint);
+    };
+    this.doc = Document.create(this.entity, this.spaceEndpoint);
     this.spaceEndpoint.resolves(this.doc.getData());
 
     this.validator = this.scope.editorContext.validator;
@@ -192,10 +197,77 @@ describe('entityEditor/StateController', function () {
         this.assertSuccessNotification('publish');
       });
 
-      it('calls runs validator', function () {
+      it('runs the validator', function () {
         this.controller.primary.execute();
         this.$apply();
         sinon.assert.calledOnce(this.validator.run);
+      });
+
+      describe('when the entity is an entry', function () {
+        beforeEach(function () {
+          const contentTypeId = 'foo';
+          this.scope.entityInfo = {
+            type: 'Entry',
+            contentTypeId: contentTypeId
+          };
+          this.spaceContext.publishedCTs = {
+            get: sinon.stub().withArgs(contentTypeId).returns({
+              data: { name: 'foo' }
+            })
+          };
+        });
+
+        describe('when we are in the bulk editor', function () {
+          beforeEach(function () {
+            this.scope.bulkEditorContext = {};
+          });
+
+          itTracksThePublishEventWithOrigin('bulk-editor');
+        });
+
+        describe('when we are in the entry editor', function () {
+          beforeEach(function () {
+            delete this.scope.bulkEditorContext;
+          });
+
+          itTracksThePublishEventWithOrigin('entry-editor');
+        });
+
+        function itTracksThePublishEventWithOrigin (eventOrigin) {
+          it('tracks the publish event', function () {
+            this.controller.primary.execute();
+            this.$apply();
+            sinon.assert.calledWithExactly(
+              this.analytics.track,
+              'entry:publish',
+              {
+                eventOrigin: eventOrigin,
+                contentType: { data: { name: 'foo' } },
+                response: { data: this.entity }
+              }
+            );
+          });
+        }
+      });
+
+      describe('when the entity is not an entry', function () {
+        beforeEach(function () {
+          const contentTypeId = 'foo';
+          this.scope.entityInfo = {
+            type: 'Asset',
+            contentTypeId: contentTypeId
+          };
+          this.spaceContext.publishedCTs = {
+            get: sinon.stub()
+          };
+        });
+
+        it('does not track the publish event', function () {
+          this.controller.primary.execute();
+          this.$apply();
+          sinon.assert.notCalled(this.spaceContext.publishedCTs.get);
+          sinon.assert.notCalled(this.analytics.track);
+        });
       });
 
       it('sends notification if validation failed', function () {

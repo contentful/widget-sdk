@@ -32,7 +32,7 @@ We call Snowplow's `identify` method when we obtain user information.
 
 When we call `analytics.track` we also check if the event name has been mapped
 to a registered Snowplow schema. If so, we transform the data into Snowplow's
-structure and track the the event.
+structure and track the event.
 
 ## Tracking in Snowplow
 Snowplow requires much more structured data than Segment. Whilst every tracking
@@ -178,7 +178,7 @@ yet).
 | paywall             | closed                                | <code>userCanUpgradePlan: bool</code>
 | paywall             | upgrade_clicked                       | <code>userCanUpgradePlan: bool</code>
 | content_type        | create                                | <code>actionData: obj<br>response: obj</code>
-| entry               | create                                | <code>actionData: obj<br>response: obj</code>
+| entry               | create                                | <code>actionData: obj<br>response: obj, eventOrigin: string</code>
 | asset               | create                                | <code>actionData: obj<br>response: obj</code>
 | api_key             | create                                | <code>actionData: obj<br>response: obj</code>
 | api                 | boilerplate                           | <code>platform: string<br>action: select|download|github</code>

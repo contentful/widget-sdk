@@ -15,6 +15,8 @@ angular.module('contentful')
   var createIDMap = require('widgets/IDMap');
   var $q = require('$q');
   var entitySelector = require('entitySelector');
+  var Analytics = require('analytics/Analytics');
+  var spaceContext = require('spaceContext');
 
   /**
    * @ngdoc method
@@ -207,7 +209,24 @@ angular.module('contentful')
   function createHandlers (apiClient, iframe) {
     return {
       callSpaceMethod: function (methodName, args) {
+        var contentType;
+        var entryAction;
+        var matchData = methodName.match(/^(create|publish)Entry$/);
+        if (matchData) {
+          entryAction = matchData[1];
+          contentType = getContentType(entryAction, args[0]);
+        }
         return apiClient[methodName].apply(apiClient, args)
+        .then(function (entity) {
+          if (_.get(entity, ['sys', 'type']) === 'Entry' && entryAction) {
+            Analytics.track('entry:' + entryAction, {
+              eventOrigin: 'ui-extension',
+              contentType: contentType,
+              response: { data: entity }
+            });
+          }
+          return entity;
+        })
         .catch(function (err) {
           return $q.reject({
             message: 'Request failed',
@@ -229,6 +248,19 @@ angular.module('contentful')
         }
       }
     };
+  }
+
+  function getContentType (entryAction, arg) {
+    return spaceContext.publishedCTs.get(
+      getContentTypeId(entryAction, arg)
+    );
+  }
+
+  function getContentTypeId (entryAction, arg) {
+    switch (entryAction) {
+      case 'create': return arg;
+      case 'publish': return arg.sys.contentType.sys.id;
+    }
   }
 
   function buildUser (spaceMembership) {

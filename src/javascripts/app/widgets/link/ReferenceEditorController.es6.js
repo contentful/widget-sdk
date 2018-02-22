@@ -7,9 +7,17 @@ import modalDialog from 'modalDialog';
 import createEntity from 'cfReferenceEditor/createEntity';
 import spaceContext from 'spaceContext';
 import { onFeatureFlag } from 'utils/LaunchDarkly';
+import { track } from 'analytics/Analytics';
 
 import * as State from './State';
 import { getAvailableContentTypes } from './utils';
+import {
+  canPerformActionOnEntryOfType,
+  Action
+} from 'access_control/AccessChecker';
+
+const FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN =
+  'feature-at-11-2017-lots-of-cts-add-entry-and-link-reference';
 
 export default function create ($scope, widgetApi) {
   const field = widgetApi.field;
@@ -33,11 +41,9 @@ export default function create ($scope, widgetApi) {
     $scope.config.draggable = !$scope.single && !isDisabled;
   });
 
-  onFeatureFlag(
-    $scope,
-    'feature-at-11-2017-lots-of-cts-add-entry-and-link-reference',
-    function (variation) {
-      $scope.isNewAddAndLinkRefButtonEnabled = variation;
+  onFeatureFlag($scope, FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN,
+    (isEnabled) => {
+      $scope.isNewAddAndLinkRefButtonEnabled = isEnabled;
     }
   );
 
@@ -53,39 +59,44 @@ export default function create ($scope, widgetApi) {
   $scope.helpers = widgetApi.entityHelpers;
 
   $scope.allowedCTs = [];
-  getAvailableContentTypes(widgetApi.space, field).then(cts => {
-    $scope.allowedCTs = cts;
+  getAvailableContentTypes(widgetApi.space, field).then(contentTypes => {
+    $scope.allowedCTs = contentTypes.filter(contentType =>
+      canPerformActionOnEntryOfType(Action.CREATE, contentType.sys.id)
+    );
   });
 
+  // TODO: Legacy code to be removed with FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN
   $scope.addNew = function (event) {
-    if (event.preventDefault) {
-      event.preventDefault();
-
-      createEntity($scope.type, field, widgetApi.space)
-        .then(function (entity) {
-          state.addEntities([entity]);
-          editEntityAction(entity, -1);
-        });
-    } else {
-      // With the new ref button, event is actually the CT id.
-      // TODO: Clean this up once we roll out feature-at-11-2017-lots-of-cts-add-entry-and-link-reference
-      // to everyone.
-      const ctId = event;
-      let newEntityPromise;
-
-      if ($scope.type === 'Entry') {
-        newEntityPromise = widgetApi.space.createEntry(ctId, {});
-      } else {
-        newEntityPromise = widgetApi.space.createAsset({});
-      }
-
-      newEntityPromise
-        .then(entity => {
-          state.addEntities([entity]);
-          editEntityAction(entity, -1);
-        });
-    }
+    event.preventDefault();
+    const contentType = spaceContext.publishedCTs.get($scope.type);
+    return createEntity($scope.type, field, widgetApi.space)
+      .then(makeNewEntityHandler(contentType));
   };
+
+  $scope.addNewAsset = function () {
+    return widgetApi.space.createAsset({}).then(makeNewEntityHandler());
+  };
+
+  $scope.addNewEntry = function (contentTypeId) {
+    const contentType = spaceContext.publishedCTs.get(contentTypeId);
+    return widgetApi.space.createEntry(contentTypeId, {})
+      .then(makeNewEntityHandler(contentType));
+  };
+
+  function makeNewEntityHandler (contentType) {
+    return function (entity) {
+      if (entity.sys.type === 'Entry') {
+        track('entry:create', {
+          eventOrigin: 'reference-editor',
+          contentType: contentType,
+          response: { data: entity }
+        });
+      }
+      state.addEntities([entity]);
+      editEntityAction(entity, -1);
+      return entity;
+    };
+  }
 
   $scope.addExisting = function (event) {
     event.preventDefault && event.preventDefault();

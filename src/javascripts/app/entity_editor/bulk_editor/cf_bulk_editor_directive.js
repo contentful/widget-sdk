@@ -9,6 +9,7 @@ angular.module('contentful')
   var List = require('utils/List');
   var Tracking = require('app/entity_editor/bulk_editor/Tracking');
   var DataLoader = require('app/entity_editor/DataLoader');
+  var Analytics = require('analytics/Analytics');
 
   return {
     scope: {
@@ -140,11 +141,18 @@ angular.module('contentful')
     };
 
     function addNewEntry (ctOrCtId) {
-      var ctId = _.isObject(ctOrCtId) ? ctOrCtId.getId() : ctOrCtId;
-      spaceContext.cma.createEntry(ctId, {})
-      .then(function (entity) {
+      var contentType = _.isObject(ctOrCtId)
+        ? ctOrCtId
+        : spaceContext.publishedCTs.get(ctOrCtId);
+      spaceContext.cma.createEntry(contentType.getId(), {})
+      .then(function (entry) {
+        Analytics.track('entry:create', {
+          eventOrigin: 'bulk-editor',
+          contentType: contentType,
+          response: { data: entry }
+        });
         track.addNew();
-        addLinks([linkEntity(entity)]);
+        addLinks([linkEntity(entry)]);
       });
     }
 

@@ -131,7 +131,7 @@ describe('data/sharejs/Connection', function () {
         sinon.match.instanceOf(DocLoad.Pending)
       );
       sinon.assert.calledOnce(this.baseConnection.open);
-      sinon.assert.calledWith(this.baseConnection.open, 'SPACE!entry!ENTITY');
+      sinon.assert.calledWith(this.baseConnection.open, 'SPACE!ENV!entry!ENTITY');
     });
 
     it('opens a documented when is ok', function () {
@@ -141,7 +141,7 @@ describe('data/sharejs/Connection', function () {
         sinon.match.instanceOf(DocLoad.Pending)
       );
       sinon.assert.calledOnce(this.baseConnection.open);
-      sinon.assert.calledWith(this.baseConnection.open, 'SPACE!entry!ENTITY');
+      sinon.assert.calledWith(this.baseConnection.open, 'SPACE!ENV!entry!ENTITY');
     });
 
     it('does not reopen when moving from hanshaking to ok', function () {

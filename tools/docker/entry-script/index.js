@@ -1,9 +1,9 @@
-import * as B from 'bluebird'
-import kexec from 'kexec'
-import yargs from 'yargs'
+import * as B from 'bluebird';
+import kexec from 'kexec';
+import yargs from 'yargs';
 
-import serve from './serve'
-import runTravis from './travis'
+import serve from './serve';
+import runTravis from './travis';
 
 /**
  * This module exports the main function for the entry script of the
@@ -11,19 +11,19 @@ import runTravis from './travis'
  */
 
 
-export default B.coroutine(main)
+export default B.coroutine(main);
 
 function* main (argv) {
-  const {command, options} = parseArgs(argv)
+  const {command, options} = parseArgs(argv);
   if (command === 'travis') {
-    yield* runTravis(options)
+    yield* runTravis(options);
   } else if (command === 'test') {
-    kexec('./bin/test')
+    kexec('./bin/test');
   } else if (command === 'serve') {
-    const close = yield* serve()
-    process.on('SIGINT', close)
+    const close = yield* serve();
+    process.on('SIGINT', close);
   } else {
-    throw new Error(`Unknown command "${command}"`)
+    throw new Error(`Unknown command "${command}"`);
   }
 }
 
@@ -32,14 +32,14 @@ const TRAVIS_DESC =
   'Create a configured distribution from Travis parameters.\n' +
   'The configuration is determined from the travis branch and loaded from ' +
   'the \'config\' directory. This command creates the files distribution for ' +
-  'the preview environment and the Debian package for deployment in /app/output'
+  'the preview environment and the Debian package for deployment in /app/output';
 
 const SERVE_DESC =
   'Serves application files on localhost:3001.\n' +
-  'The application uses the development configuration for the joistio.com domain.'
+  'The application uses the development configuration for the joistio.com domain.';
 
 const TEST_DESC =
-  'Run the karma test suite.'
+  'Run the karma test suite.';
 
 function parseArgs (argv) {
   const args = yargs(argv)
@@ -81,12 +81,12 @@ function parseArgs (argv) {
           requiresArg: true,
           required: true
         }
-      })
+      });
     })
-    .argv
+    .argv;
 
   return {
     command: args._.shift(),
     options: args
-  }
+  };
 }
