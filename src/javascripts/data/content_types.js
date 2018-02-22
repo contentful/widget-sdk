@@ -40,14 +40,22 @@ angular.module('cf.data')
    * @description
    * Mutate the Content Type data so that the 'displayField' property
    * points to a valid display field.
-   *
-   * If the display field was set before and valid, it is retained.
-   * Otherwise the first suitable field is used.
-   *
-   * @param {API.ContentType} data
+   * @param {API.ContentType} ctData
    */
-  function assureDisplayField (contentTypeData) {
-    contentTypeData.displayField = getDisplayField(contentTypeData);
+  function assureDisplayField (ctData) {
+    var validDisplayField = getDisplayField(ctData);
+
+    if (typeof validDisplayField === 'string') {
+      // If the display field was set before and is valid, it is retained.
+      // Otherwise the first valid field is used.
+      ctData.displayField = validDisplayField;
+    } else if (typeof ctData.displayField === 'string') {
+      // If there was no valid display field found but the content type
+      // defines one - set it to `undefined`.
+      // If the content type defines one that is not a string (e.g. `null`)
+      // we don't do anything so the editor won't enter dirty state.
+      ctData.displayField = undefined;
+    }
   }
 
   /**
