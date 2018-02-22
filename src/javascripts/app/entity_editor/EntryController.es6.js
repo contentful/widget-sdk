@@ -50,7 +50,6 @@ export default function create ($scope, editorData) {
   $scope.context.ready = true;
   $scope.editorData = editorData;
 
-
   // add list as parent state only if it's a deep link
   if (contextHistory.isEmpty()) {
     contextHistory.add(crumbFactory.EntryList());
@@ -117,6 +116,12 @@ export default function create ($scope, editorData) {
   });
 
   editorContext.editReferences = function (field, locale, index, cb) {
+    $scope.referenceContext = createReferenceContext(field, locale, index, cb);
+  };
+
+  editorContext.createReferenceContext = createReferenceContext;
+
+  function createReferenceContext (field, locale, index, cb) {
     // The links$ property should end when the editor is closed
     const lifeline = K.createBus();
     const links$ = K.endWith(
@@ -125,7 +130,7 @@ export default function create ($scope, editorData) {
     ).map((links) => links || []);
 
     notifications.clearSeen();
-    $scope.referenceContext = {
+    return {
       links$: links$,
       focusIndex: index,
       editorSettings: deepFreeze(cloneDeep($scope.preferences)),
@@ -146,7 +151,7 @@ export default function create ($scope, editorData) {
         }
       }
     };
-  };
+  }
 
   $scope.$on('scroll-editor', function (_ev, scrollTop) {
     contextHistory.extendCurrent({scroll: scrollTop});
@@ -165,7 +170,6 @@ export default function create ($scope, editorData) {
   K.onValueScope($scope, $scope.otDoc.state.isDirty$, function (isDirty) {
     $scope.context.dirty = isDirty;
   });
-
 
   // Building the form
   $controller('FormWidgetsController', {

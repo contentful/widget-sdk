@@ -66,6 +66,16 @@ div.entity-editor__field-group(
         span(ng-if="fieldLocale.isRequired") &#32;(required)
         span(ng-if="locales.length > 1")
           | &#32;&ndash; {{locale.name}}
+        div.inline-toggle(
+          ng-if="data.canRenderInline"
+          ng-click="methods.toggleLocaleFieldExpansion(locale)")
+          cf-icon(name="text-fields")
+          span.text-link
+            | {{ methods.isLocaleFieldExpanded(locale) ? 'Disable' : 'Enable' }} inline editing
+          span.banner(
+            tooltip-placement="bottom"
+            tooltip="Inline editing is an experimental feature. Use it with caution.")
+            | Beta
       +field-permission-info
 
     div.entity-editor__control-group

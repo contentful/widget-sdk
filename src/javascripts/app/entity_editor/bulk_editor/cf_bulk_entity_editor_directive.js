@@ -38,6 +38,7 @@ angular.module('contentful')
   return {
     restrict: 'E',
     scope: {
+      renderInline: '=',
       entityContext: '<',
       bulkEditorContext: '<'
     },
@@ -58,7 +59,12 @@ angular.module('contentful')
 
       var data = $scope.data = {
         expanded: true,
-        stateRef: Navigator.makeEntityRef({sys: {id: entityContext.id, type: 'Entry'}})
+        stateRef: Navigator.makeEntityRef({
+          sys: {
+            id: entityContext.id,
+            type: 'Entry'
+          }
+        })
       };
 
 

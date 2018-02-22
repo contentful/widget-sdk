@@ -1,4 +1,5 @@
 import $q from '$q';
+import * as K from 'helpers/mocks/kefir';
 
 describe('cfReferenceEditorDirective', function () {
   const template = '<cf-reference-editor type="{{ type }}" variant="{{ variant }}" single="single" />';
@@ -11,7 +12,9 @@ describe('cfReferenceEditorDirective', function () {
 
     this.spaceContext = {
       publishedCTs: {
-        get: sinon.stub()
+        get: sinon.stub(),
+        items$: K.createMockProperty([]),
+        getAllBare: sinon.stub().returns([])
       }
     };
 
