@@ -10,9 +10,6 @@ import {isOwnerOrAdmin} from 'services/OrganizationRoles';
 import * as ReloadNotification from 'ReloadNotification';
 import {href} from 'states/Navigator';
 import {showDialog as showCreateSpaceModal} from 'services/CreateSpace';
-import {canCreateSpaceInOrganization} from 'access_control/AccessChecker';
-import svgPlus from 'svg/plus';
-import {asReact} from 'ui/Framework/DOMRenderer';
 import moment from 'moment';
 import {get, isString} from 'lodash';
 import {supportUrl} from 'Config';
@@ -29,7 +26,7 @@ const SubscriptionOverview = createReactClass({
     return {
       basePlan: {},
       spacePlans: [],
-      canCreateSpace: false
+      grandTotal: 0
     };
   },
   componentWillMount: function () {
@@ -56,14 +53,12 @@ const SubscriptionOverview = createReactClass({
         const [name1, name2] = [plan1, plan2].map((plan) => get(plan, 'space.name', ''));
         return name1.localeCompare(name2);
       });
-    const canCreateSpace = canCreateSpaceInOrganization(orgId);
+    const grandTotal = calculateTotalPrice(spacePlans);
 
-    this.setState({basePlan, spacePlans, canCreateSpace});
+    this.setState({basePlan, spacePlans, grandTotal});
   },
   createSpace: function () {
-    if (this.state.canCreateSpace) {
-      showCreateSpaceModal(this.props.orgId);
-    }
+    showCreateSpaceModal(this.props.orgId);
   },
   contactUs: function () {
     // Open intercom if it's possible, otherwise go to support page.
@@ -74,7 +69,7 @@ const SubscriptionOverview = createReactClass({
     }
   },
   render: function () {
-    const {basePlan, spacePlans, canCreateSpace} = this.state;
+    const {basePlan, spacePlans, grandTotal} = this.state;
     const {orgId} = this.props;
 
     return h(Workbench, {
@@ -83,11 +78,14 @@ const SubscriptionOverview = createReactClass({
         style: {padding: '0 2rem'}
       },
           h(BasePlan, {basePlan, orgId}),
-          h(SpacePlans, {spacePlans, orgId})
+          h(SpacePlans, {
+            spacePlans,
+            onCreateSpace: this.createSpace
+          })
         ),
       sidebar: h(RightSidebar, {
-        canCreateSpace,
-        onCreateSpace: this.createSpace,
+        orgId,
+        grandTotal,
         onContactUs: this.contactUs
       })
     });
@@ -96,6 +94,7 @@ const SubscriptionOverview = createReactClass({
 
 function BasePlan ({basePlan, orgId}) {
   const enabledFeatures = getEnabledFeatures(basePlan);
+
   return h('div', null,
     h('h2', null,
       basePlan.name, '  ',
@@ -113,83 +112,81 @@ function BasePlan ({basePlan, orgId}) {
   );
 }
 
-function SpacePlans ({spacePlans, orgId}) {
-  const grandTotal = calculateTotalPrice(spacePlans);
+function SpacePlans ({spacePlans, onCreateSpace}) {
   const actionLinkStyle = {padding: '0 15px'};
-  return h('table', {className: 'deprecated-table x--hoverable'},
-    h('thead', null,
-      h('tr', null,
-        h('th', {style: {width: '40%'}},
-          'Space name ',
-          h('i', {className: 'fa fa-caret-up'})
-        ),
-        h('th', null, 'Type'),
-        h('th', null, 'Created by'),
-        h('th', null, 'Created on'),
-        h('th', null)
-      )
-    ),
-    h('tbody', {className: 'clickable'},
-      spacePlans.map((plan) => {
-        const {name, price, sys, space} = plan;
-        const enabledFeatures = getEnabledFeatures(plan);
-        let createdBy = '';
-        let createdAt = '';
-        let spaceLink = '';
-        let usageLink = '';
-        if (space) {
-          createdBy = getUserName(space.sys.createdBy || {});
-          createdAt = moment.utc(space.sys.createdAt).format('DD. MMMM YYYY');
-          spaceLink = h('a', {href: href(getSpaceNavState(space.sys.id)), style: actionLinkStyle}, 'Go to space');
-          usageLink = h('a', {href: href(getSpaceUsageNavState(space.sys.id)), style: actionLinkStyle}, 'Usage');
-        }
 
-        return h('tr', {
-          key: sys.id
-        },
-          h('td', null,
-            h('h3', null, get(space, 'name', '—')),
-            h('p', null, enabledFeatures.length ? enabledFeatures.map(({name}) => name) : 'No features on space')
+  if (!spacePlans.length) {
+    return h('p', null,
+      'Your organization doesn\'t have any spaces. ',
+      h('button', {
+        className: 'btn-link',
+        onClick: onCreateSpace
+      }, 'Add space')
+    );
+  } else {
+    return h('table', {className: 'deprecated-table x--hoverable'},
+      h('thead', null,
+        h('tr', null,
+          h('th', {style: {width: '40%'}},
+            'Space name ',
+            h('i', {className: 'fa fa-caret-up'})
           ),
-          h('td', null,
-            h('h3', null, name),
-            h(Price, {value: price})
-          ),
-          h('td', null, createdBy),
-          h('td', null, createdAt),
-          h('td', {style: {textAlign: 'right'}}, spaceLink, usageLink)
-        );
-      })
-    ),
-    h('tfoot', null,
-      h('tr', null,
-        h('td', null, 'Total'),
-        h('td', null, h(Price, {value: grandTotal, unit: 'mo'})),
-        h('td', null),
-        h('td', {style: {textAlign: 'right'}},
-          h('a', {href: href(getInvoiceNavState(orgId)), style: actionLinkStyle}, 'Invoices')
+          h('th', null, 'Type'),
+          h('th', null, 'Created by'),
+          h('th', null, 'Created on'),
+          h('th', null)
         )
+      ),
+      h('tbody', {className: 'clickable'},
+        spacePlans.map((plan) => {
+          const {name, price, sys, space} = plan;
+          const enabledFeatures = getEnabledFeatures(plan);
+          let createdBy = '';
+          let createdAt = '';
+          let spaceLink = '';
+          let usageLink = '';
+          if (space) {
+            createdBy = getUserName(space.sys.createdBy || {});
+            createdAt = moment.utc(space.sys.createdAt).format('DD. MMMM YYYY');
+            spaceLink = h('a', {href: href(getSpaceNavState(space.sys.id)), style: actionLinkStyle}, 'Go to space');
+            usageLink = h('a', {href: href(getSpaceUsageNavState(space.sys.id)), style: actionLinkStyle}, 'Usage');
+          }
+
+          return h('tr', {
+            key: sys.id
+          },
+            h('td', null,
+              h('h3', null, get(space, 'name', '—')),
+              h('p', null, enabledFeatures.length ? enabledFeatures.map(({name}) => name) : 'No features on space')
+            ),
+            h('td', null,
+              h('h3', null, name),
+              h(Price, {value: price})
+            ),
+            h('td', null, createdBy),
+            h('td', null, createdAt),
+            h('td', {style: {textAlign: 'right'}}, spaceLink, usageLink)
+          );
+        })
       )
-    )
-  );
+    );
+  }
 }
 
-function RightSidebar ({onCreateSpace, canCreateSpace, onContactUs}) {
+function RightSidebar ({grandTotal, orgId, onContactUs}) {
   return h('div', {className: 'entity-sidebar'},
+    h('h2', {className: 'entity-sidebar__heading'}, 'Grand total'),
     h('p', {className: 'entity-sidebar__help-text'},
-      h('button', {
-        className: 'btn-action x--block',
-        onClick: onCreateSpace,
-        disabled: !canCreateSpace
-      },
-        h('div', {className: 'btn-icon cf-icon cf-icon--plus inverted'}, asReact(svgPlus)),
-        'Add a new space'
-      )
+      'Your grand total is ',
+      h(Price, {value: grandTotal, style: {fontWeight: 'bold'}}),
+      ' per month.'
+    ),
+    h('p', {className: 'entity-sidebar__help-text'},
+      h('a', {href: href(getInvoiceNavState(orgId))}, 'View invoices')
     ),
     h('h2', {className: 'entity-sidebar__heading'}, 'Need help?'),
     h('p', {className: 'entity-sidebar__help-text'},
-      'Do you need to make changes to your pricing plan or purchase additional spaces? ' +
-      'Don’t hesitate to talk to our customer success team.'
+      'Do you need to up- or downgrade? Don’t hesitate to talk to our customer success team.'
     ),
     h('p', {className: 'entity-sidebar__help-text'},
       h('button', {className: 'btn-link', onClick: onContactUs}, 'Get in touch with us')
@@ -197,10 +194,10 @@ function RightSidebar ({onCreateSpace, canCreateSpace, onContactUs}) {
   );
 }
 
-function Price ({value = 0, currency = '$', unit = null}) {
+function Price ({value = 0, currency = '$', unit = null, style = null}) {
   const valueStr = parseInt(value, 10).toLocaleString('en-US');
   const unitStr = unit && ` /${unit}`;
-  return h('span', null, [currency, valueStr, unitStr].join(''));
+  return h('span', {style}, [currency, valueStr, unitStr].join(''));
 }
 
 function calculateTotalPrice (subscriptionPlans) {
