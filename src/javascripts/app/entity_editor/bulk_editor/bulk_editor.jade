@@ -1,5 +1,8 @@
 .workbench
-  header.workbench-header
+  // TODO: This is for inline reference editing
+  // BETA release. Remove this once we are done with
+  // the experiment.
+  header.workbench-header(ng-if="!renderInline")
     .breadcrumbs-widget
       .breadcrumbs-container
         cf-icon.btn.btn__back(
@@ -15,21 +18,28 @@
          | Close
 
   .workbench-main
-
-    .workbench-main__content(ng-show="!data.loaded" style="padding-top: 0")
+    .workbench-main__content(
+      ng-show="!data.loaded && !renderInline"
+      style="padding-top: 0")
       .loading-box--stretched
         .loading-box__spinner
         .loading-box__message
           | Loading entries
 
-    .workbench-main__content(ng-show="data.loaded" style="padding-top: 0")
+    .workbench-main__content(
+      ng-show="data.loaded || renderInline"
+      style="padding-top: 0")
       // Safari and Edge need a relative container for dropdowns to work:
       div(style="position: relative"
         ng-repeat="ctx in entityContexts track by ctx.key"
         data-entity-id="{{ctx.id}}")
-        cf-bulk-entity-editor(entity-context="ctx" bulk-editor-context="editorContext")
+        cf-bulk-entity-editor(
+          render-inline="renderInline"
+          entity-context="ctx"
+          bulk-editor-context="editorContext"
+        )
 
-    .workbench-main__sidebar
+    .workbench-main__sidebar(ng-if="!renderInline")
       .entity-sidebar
         cf-create-entry-button(
           cf-context-menu-trigger
