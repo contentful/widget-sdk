@@ -1,4 +1,4 @@
-fdescribe('The ApiKey list directive', function () {
+describe('The ApiKey list directive', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.removeDirectives('relative', 'cfKnowledgeBase');
@@ -54,10 +54,12 @@ fdescribe('The ApiKey list directive', function () {
   });
 
   it('should have a usage and limits in v1 orgs', function () {
-    this.setUsageLimit(1, 2);
+    // sets usage to null since the view is using apiKeys.length
+    // to show the number of keys
+    this.setUsageLimit(null, 5);
     this.setup();
 
-    expect(this.sidebar.find('> div > p').text()).toBe('Your organization is using 1 out of 2 API Keys.');
+    expect(this.sidebar.find('> div > p').text()).toEqual('Your space is using 2 out of 5 API Keys.');
   });
 
   it('should have only usage in v2 orgs', function () {
@@ -76,6 +78,9 @@ fdescribe('The ApiKey list directive', function () {
     this.setup();
 
     expect(this.sidebar.find('> div > p').text()).toBe('Your space is using 1 API Key.');
+    this.setUsageLimit(2, 3);
+    this.setup();
+    expect(this.sidebar.find('> div > p').text()).toBe('Your space is using 2 API Keys.');
   });
 
   it('should disable the button if the limit is reached for v1 orgs', function () {

@@ -61,8 +61,8 @@ angular.module('contentful')
     return spaceContext.apiKeyRepo.create(spaceName)
     .then(function (apiKey) {
       return $state.go('spaces.detail.api.keys.detail', {apiKeyId: apiKey.sys.id});
-    }, function () {
-      notification.error('Unable to create API key');
+    }, function (err) {
+      notification.error(err.data.message);
     });
   }
 
