@@ -1,4 +1,4 @@
-describe('The ApiKey list directive', function () {
+fdescribe('The ApiKey list directive', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.removeDirectives('relative', 'cfKnowledgeBase');
@@ -67,6 +67,15 @@ describe('The ApiKey list directive', function () {
     this.setup();
 
     expect(this.sidebar.find('> div > p').text()).toBe('Your space is using 2 API Keys.');
+  });
+
+  it('should have have proper pluralization', function () {
+    this.LD.getCurrentVariation.resolves(true);
+    this.organization.pricingVersion = 'pricing_version_2';
+    this.setUsageLimit(1, 3);
+    this.setup();
+
+    expect(this.sidebar.find('> div > p').text()).toBe('Your space is using 1 API Key.');
   });
 
   it('should disable the button if the limit is reached for v1 orgs', function () {
