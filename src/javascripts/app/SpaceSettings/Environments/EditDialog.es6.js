@@ -2,7 +2,6 @@ import { mapValues } from 'lodash';
 import { assign, get, set, update } from 'utils/Collections';
 import * as C from 'utils/Concurrent';
 import { match, makeCtor } from 'utils/TaggedValues';
-import { toIdentifier } from 'stringUtils';
 import * as Environment from 'data/CMA/SpaceEnvironmentsRepo';
 
 import logger from 'logger';
@@ -18,8 +17,6 @@ const Submit = makeCtor('Submit');
 const ReceiveResult = makeCtor('ReceiveResult');
 
 const ID_EXISTS_ERROR_MESSAGE =
-  'This ID already exists in your space. Please make sure it’s unique.';
-const NAME_EXISTS_ERROR_MESSAGE =
   'This ID already exists in your space. Please make sure it’s unique.';
 const INVALID_ID_CHARACTER_ERROR_MESSAGE =
   'Please use only letters, numbers, underscores, and dashes for the ID, and make sure the first character is a letter.';
@@ -39,56 +36,10 @@ const EMPTY_FIELD_ERROR_MESSAGE =
 export function openCreateDialog (createEnvironment) {
   const initialState = {
     fields: {
-      name: { name: 'name', errors: [] },
-      id: { name: 'id', errors: [], touched: false }
-    },
-    config: {
-      showIdField: true,
-      dialogTitle: 'Add environment',
-      submitLabel: 'Add environment'
+      id: { name: 'id', errors: [] }
     }
   };
 
-  const context = {
-    setEnvironment: createEnvironment
-  };
-
-  return openBaseDialog(initialState, context);
-}
-
-
-/**
- * Open the edit dialog for a space environment.
- *
- * The argument is a function that updates the environment (see
- * `data/CMA/SpaceEnvironmentRepo`) and the current environment data.
- *
- * It returns a promise that resolves with a boolean that is true if
- * the environment was updated.
- */
-export function openEditDialog (updateEnvironment, initialEnvironment) {
-  const initialState = {
-    fields: {
-      name: { name: 'name', errors: [], value: initialEnvironment.name }
-    },
-    config: {
-      showIdField: false,
-      dialogTitle: 'Edit environment',
-      submitLabel: 'Save changes'
-    }
-  };
-
-  const context = {
-    setEnvironment: ({ name }) => {
-      return updateEnvironment(assign(initialEnvironment, { name }));
-    }
-  };
-
-  return openBaseDialog(initialState, context);
-}
-
-
-function openBaseDialog (initialState, context) {
   return openDialog({
     template: renderString(h('.modal-background', [
       h('.modal-dialog', { style: { width: '32em' } }, [
@@ -96,7 +47,7 @@ function openBaseDialog (initialState, context) {
       ])
     ])),
     controller: ($scope) => {
-      $scope.component = createComponent(initialState, context, (value) => {
+      $scope.component = createComponent(initialState, {createEnvironment}, (value) => {
         $scope.dialog.confirm(value);
       });
     },
@@ -127,28 +78,17 @@ function createComponent (initialState, context, closeDialog) {
 
 const reduce = makeReducer({
   [SetFieldValue] (state, { name, value }) {
-    state = set(state, ['fields', name, 'value'], value);
-    state = set(state, ['fields', name, 'touched'], true);
-
-    // If the user changes the name and they did not touch the ID yet
-    // we provide an auto-generated id for the
-    if (name === 'name' && get(state, ['fields', 'id', 'touched']) === false) {
-      state = set(state, ['fields', 'id', 'value'], toIdentifier(value));
-    }
-
-    return state;
+    return set(state, ['fields', name, 'value'], value);
   },
-  [Submit] (state, _, env, actions) {
+  [Submit] (state, _, context, actions) {
     state = update(state, 'fields', clearErrors);
     const fieldsWithErrors = validate(state.fields);
     if (fieldsWithErrors) {
       state = set(state, 'fields', fieldsWithErrors);
     } else {
       C.runTask(function* () {
-        const result = yield env.setEnvironment({
-          id: get(state, ['fields', 'id', 'value']),
-          name: get(state, ['fields', 'name', 'value'])
-        });
+        const id = get(state, ['fields', 'id', 'value']);
+        const result = yield context.createEnvironment({id, name: id});
         actions.ReceiveResult(result);
       });
       state = set(state, 'inProgress', true);
@@ -164,9 +104,6 @@ const reduce = makeReducer({
       },
       [Environment.IdExistsError]: () => {
         return set(state, ['fields', 'id', 'errors'], [{ message: ID_EXISTS_ERROR_MESSAGE }]);
-      },
-      [Environment.NameExistsError]: () => {
-        return set(state, ['fields', 'name', 'errors'], [{ message: NAME_EXISTS_ERROR_MESSAGE }]);
       },
       [Environment.ServerError]: (error) => {
         logger.logServerError(error);
@@ -188,11 +125,6 @@ const ID_REGEXP = /^[a-zA-Z0-9][a-zA-Z0-9-_]{0,63}$/;
  * value is invalid.
  */
 const validations = {
-  name: (value) => {
-    if (!value || !value.trim()) {
-      return EMPTY_FIELD_ERROR_MESSAGE;
-    }
-  },
   id: (value) => {
     if (!value || !value.trim()) {
       return EMPTY_FIELD_ERROR_MESSAGE;

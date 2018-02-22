@@ -90,9 +90,8 @@ function environmentTable (environments) {
 
   return table(
     [
-      th({ style: { width: '35%' } }, ['Name']),
-      th({ style: { width: '25%' } }, ['ID']),
-      th({ style: { width: '25%' } }, ['Status']),
+      th({ style: { width: '50%' } }, ['ID']),
+      th({ style: { width: '30%' } }, ['Status']),
       th({ style: { width: '9em' } }, ['Actions'])
     ], environments.map((environment) => {
       return tr({
@@ -100,15 +99,12 @@ function environmentTable (environments) {
         dataTestId: `environment.${environment.id}`
       }, [
         td([
-          environment.name,
-          ihspace('1.2em'),
-          environment.isMaster && badge({ color: Colors.textLight }, ['Default environment'])
-        ]),
-        td([
           hbox([
             codeFragment([ environment.id ]),
             ihspace('6px'),
-            h(CopyIconButton, { value: environment.id })
+            h(CopyIconButton, { value: environment.id }),
+            ihspace('1.2em'),
+            environment.isMaster && badge({ color: Colors.textLight }, ['Default environment'])
           ])
         ]),
         td([
@@ -129,8 +125,6 @@ function environmentTable (environments) {
           ])
         ]),
         td([
-          editButton(environment),
-          ihspace('1.2em'),
           deleteButton(environment)
         ])
       ]);
@@ -150,14 +144,6 @@ function questionMarkWithTooltip ({ tooltip }) {
   ]);
 }
 
-
-function editButton (environment) {
-  return h('button.text-link', {
-    dataTestId: 'openEditDialog',
-    disabled: environment.isMaster || environment.status !== 'ready',
-    onClick: environment.Edit
-  }, [ 'Edit' ]);
-}
 
 function deleteButton (environment) {
   return h('button.text-link--destructive', {
