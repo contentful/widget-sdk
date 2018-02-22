@@ -38,6 +38,7 @@ window.libs = [
   ['libs/react-dom/test-utils', require('react-dom/test-utils')],
   ['libs/react-click-outside', require('react-click-outside')],
   ['libs/react-highlight-words', require('react-highlight-words')],
+  ['libs/react-animate-height', require('react-animate-height')],
   ['libs/enzyme', require('enzyme')],
   ['libs/enzyme-adapter-react-16', require('enzyme-adapter-react-16')],
   ['libs/downshift', require('downshift')],
