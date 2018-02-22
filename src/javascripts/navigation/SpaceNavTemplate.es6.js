@@ -118,7 +118,8 @@ export default function spaceNavTemplate (useSpaceEnv) {
     dropdownItems.keys,
     dropdownItems.webhooks,
     dropdownItems.extensions,
-    dropdownItems.previews
+    dropdownItems.previews,
+    dropdownItems.usage
   ];
 
   return navBar([

@@ -21,7 +21,7 @@ angular.module('contentful')
   var $rootScope = require('$rootScope');
   var moment = require('moment');
   var K = require('utils/kefir');
-  var validateEvent = require('analytics/validateEvent');
+  var validateEvent = require('analytics/Validator').validateEvent;
   var logger = require('logger');
   var buildSnowplowEvent = require('analytics/snowplow/Snowplow').buildUnstructEventData;
   var getSnowplowSchema = require('analytics/snowplow/Events').getSchema;

@@ -38,6 +38,9 @@ registerGenericEvent('learn:language_selected');
 registerGenericEvent('learn:resource_selected');
 registerGenericEvent('learn:step_clicked');
 
+registerGenericEvent(`reference_editor:create_entry`);
+registerGenericEvent(`reference_editor:edit_entry`);
+
 registerBulkEditorEvent('bulk_editor:action');
 registerBulkEditorEvent('bulk_editor:add');
 registerBulkEditorEvent('bulk_editor:close');

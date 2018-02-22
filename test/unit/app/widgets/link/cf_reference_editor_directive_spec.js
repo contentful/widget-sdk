@@ -244,7 +244,7 @@ describe('cfReferenceEditorDirective', function () {
   describe('adding a new entry', function () {
     const ENTRY = { sys: { id: 'entryid', type: 'Entry' } };
     const CT_ID = 'CONTENT_TYPE_ID';
-    const CLIENT_CT = { data: { sys: { id: CT_ID } } };
+    const CLIENT_CT = { data: { sys: { id: CT_ID }, fields: [{}, {localized: true}] } };
 
     beforeEach(function* () {
       this.field.setValue([]);
@@ -265,7 +265,8 @@ describe('cfReferenceEditorDirective', function () {
     });
 
     it('tracks `entry:create` event', function* () {
-      sinon.assert.calledOnce(this.analytics.track);
+      sinon.assert.calledTwice(this.analytics.track);
+
       sinon.assert.calledWithExactly(
         this.analytics.track,
         'entry:create',
@@ -273,6 +274,17 @@ describe('cfReferenceEditorDirective', function () {
           eventOrigin: 'reference-editor',
           contentType: CLIENT_CT,
           response: { data: ENTRY }
+        }
+      );
+
+      sinon.assert.calledWithExactly(
+        this.analytics.track,
+        'reference_editor:create_entry',
+        {
+          locales_count: 0,
+          localized_fields_count: 1,
+          fields_count: 2,
+          widgets_count: 1
         }
       );
     });

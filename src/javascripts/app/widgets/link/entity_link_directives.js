@@ -71,10 +71,16 @@ angular.module('cf.app')
   var makeEntityRef = require('states/Navigator').makeEntityRef;
   var EntityState = require('data/CMA/EntityState');
   var entityStateColor = require('Styles/Colors').entityStateColor;
+  var trackEntryEdit = require('analytics/events/ReferenceEditor').onEntryEdit;
 
   var data = $scope.entity;
   $scope.config = _.assign({}, $scope.config || {});
   $scope.actions = $scope.actions || {};
+  $scope.onClick = function () {
+    $scope.contentType.then(function (contentType) {
+      trackEntryEdit({ contentType: contentType });
+    });
+  };
 
   if ($scope.config.largeImage) {
     $scope.config.imageSize = 270;
