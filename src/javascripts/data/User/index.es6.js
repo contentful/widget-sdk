@@ -74,7 +74,7 @@ export function isNonPayingUser (user) {
   }
 
   return !organizationMemberships.reduce((acc, {organization}) => {
-    const {subscription: {status: orgStatus}} = organization;
+    const orgStatus = get(organization, 'subscription.status');
     const isOrgConverted = includes(convertedStatuses, orgStatus);
 
     return acc || isOrgConverted;
