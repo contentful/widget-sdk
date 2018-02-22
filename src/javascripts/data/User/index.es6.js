@@ -74,6 +74,11 @@ export function isNonPayingUser (user) {
   }
 
   return !organizationMemberships.reduce((acc, {organization}) => {
+    // For now, we treat all V2 orgs as "paid"
+    if (organization.pricingVersion === 'pricing_version_2') {
+      return true;
+    }
+
     const orgStatus = get(organization, 'subscription.status');
     const isOrgConverted = includes(convertedStatuses, orgStatus);
 
