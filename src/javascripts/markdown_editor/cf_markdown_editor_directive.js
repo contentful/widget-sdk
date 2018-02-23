@@ -51,7 +51,10 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
       LazyLoader.get('embedly');
 
       try {
-        initEditor(MarkdownEditor.create(textarea));
+        var mdEditor = MarkdownEditor.create(textarea, {
+          direction: isHebrew(field.locale) ? 'rtl' : 'ltr'
+        });
+        initEditor(mdEditor);
       } catch (e) {
         scope.hasCrashed = true;
       }
@@ -80,6 +83,13 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
         scope.$on('$destroy', editor.destroy);
         scope.$on('$destroy', detachValueHandler);
         scope.$on('$destroy', detachStateHandler);
+      }
+
+      function isHebrew (locale) {
+        return _.includes([
+          'he',
+          'he-IL'
+        ], locale);
       }
 
       function handleEditorChange (value) {

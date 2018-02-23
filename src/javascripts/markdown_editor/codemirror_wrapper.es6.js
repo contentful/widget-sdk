@@ -4,8 +4,8 @@ import {transform} from 'lodash';
 import {observeResize} from 'ui/ResizeDetector';
 import * as K from 'utils/kefir';
 
-export function create (textarea, options, CodeMirror) {
-  options = options || {};
+export function create (textarea, options = {}, CodeMirror) {
+  const { direction, fixedHeight, height } = options;
 
   // Set to true if `setValue()` has been called. This is to prevent
   // undoing the initial content.
@@ -14,7 +14,7 @@ export function create (textarea, options, CodeMirror) {
   const LF = '\n';
 
   const EDITOR_SIZE = {
-    min: options.height || 300,
+    min: height || 300,
     max: 500,
     shift: 50
   };
@@ -22,6 +22,7 @@ export function create (textarea, options, CodeMirror) {
   // TODO We should call `new CodeMirror()` instead of using the
   // textarea.
   const cm = CodeMirror.fromTextArea(textarea, {
+    direction,
     mode: 'markdown',
     lineNumbers: false,
     undoDepth: 200,
@@ -39,7 +40,7 @@ export function create (textarea, options, CodeMirror) {
 
   cm.setSize('100%', EDITOR_SIZE.min);
 
-  if (!options.fixedHeight) {
+  if (!fixedHeight) {
     cm.on('change', throttle(assureHeight, 150));
   }
 
