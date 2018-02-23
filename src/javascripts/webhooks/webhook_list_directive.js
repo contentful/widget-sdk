@@ -32,7 +32,6 @@ angular.module('contentful')
     reload().catch(ReloadNotification.basicErrorHandler);
   });
 
-
   function reload () {
     return webhookRepo.getAll().then(function (items) {
       // Currently, for Version 1 organizations, the usage comes

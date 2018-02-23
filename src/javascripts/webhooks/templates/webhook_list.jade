@@ -7,11 +7,11 @@ header.workbench-header
 
   .workbench-header__actions(ng-if="!showSidebar")
     button.btn-action.add-entity(
-      ng-show="webhooks.length < limit"
+      ng-if="webhooks.length < limit"
       ui-sref="spaces.detail.settings.webhooks.new")
       cf-icon.btn-icon.inverted(name="plus")
       | Add webhook
-    .workbench-header__actions-text(ng-show="webhooks.length >= limit")
+    .workbench-header__actions-text(ng-if="webhooks.length >= limit")
       | You can't create more than {{ limit }} webhooks.
 
 .workbench-main
@@ -29,7 +29,8 @@ header.workbench-header
       .table__body
         table
           tbody
-            tr(ng-repeat="webhook in webhooks track by webhook.sys.id"
+            tr(ng-if="webhooks.length"
+              ng-repeat="webhook in webhooks track by webhook.sys.id"
               ng-init="entityNavState = 'spaces.detail.settings.webhooks.detail({ webhookId: webhook.sys.id })'"
               ui-sref="{{ entityNavState }}")
               +td.x--large-cell(aria-label="cell-wh-name"
@@ -47,7 +48,7 @@ header.workbench-header
               +td.x--medium-cell(aria-label="cell-actions"
                 ui-sref="{{ entityNavState }}")
                 span.text-link--standard View details
-            tr(ng-show="webhooks.length < 1")
+            tr(ng-if="webhooks.length < 1")
               td(colspan="5")
                 a No webhooks yet!
 
