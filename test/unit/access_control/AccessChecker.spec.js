@@ -23,7 +23,7 @@ describe('Access Checker', function () {
 
   beforeEach(function () {
     module('contentful/test', ($provide) => {
-      $provide.value('access_control/OrganizationMembershipRepository', {createEndpoint: () => mockOrgEndpoint});
+      $provide.value('data/EndpointFactory', {createOrganizationEndpoint: () => mockOrgEndpoint});
       $provide.value('utils/LaunchDarkly', {
         getCurrentVariation: sinon.stub().resolves(false)
       });
