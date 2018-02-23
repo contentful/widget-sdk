@@ -73,8 +73,26 @@ export function isNonPayingUser (user) {
     return false;
   }
 
+  // TODO: Modify this to look at the organization payment status
+  // instead of `subscription.status` directly. See below.
   return !organizationMemberships.reduce((acc, {organization}) => {
-    const {subscription: {status: orgStatus}} = organization;
+    // For now, we treat all V2 orgs as "paid"
+    //
+    // This logic is not truly accurate for V2 orgs, because in
+    // the public release there will be organizations that are
+    // not paid. However, until the public release, the only orgs
+    // that will exist are V1->V2 org upgrades, which will always
+    // be paid.
+    //
+    // This logic will change in the future once the payment status
+    // of an organization can be determined on an organization level
+    // without looking directly at the subscription, which will happen
+    // before the initial public V2 release.
+    if (organization.pricingVersion === 'pricing_version_2') {
+      return true;
+    }
+
+    const orgStatus = get(organization, 'subscription.status');
     const isOrgConverted = includes(convertedStatuses, orgStatus);
 
     return acc || isOrgConverted;

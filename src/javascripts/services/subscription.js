@@ -10,6 +10,7 @@
 angular.module('contentful')
 .factory('Subscription', ['require', function (require) {
   var moment = require('moment');
+  var get = require('lodash').get;
 
   return {
     /**
@@ -43,7 +44,7 @@ angular.module('contentful')
        * @description
        * Returns whether the subscription is a “Starter” or “Hacker” plan.
        */
-      isLimitedFree: _.constant(org.subscription.status === 'free'),
+      isLimitedFree: _.constant(get(org, 'subscription.status') === 'free'),
       /**
        * @ngdoc method
        * @name Subscription#isTrial
@@ -51,7 +52,7 @@ angular.module('contentful')
        * @description
        * Returns whether this is a trial subscription.
        */
-      isTrial: _.constant(org.subscription.status === 'trial'),
+      isTrial: _.constant(get(org, 'subscription.status') === 'trial'),
       /**
        * @ngdoc method
        * @name Subscription#hasTrialEnded
