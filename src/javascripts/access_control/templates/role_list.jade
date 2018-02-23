@@ -31,23 +31,34 @@ header.workbench-header
       .context-menu(role="menu" cf-context-menu="bottom-right" aria-label="Role Actions")
         ul.context-menu__items
           li(role="menuitem" ui-sref="spaces.detail.settings.roles.detail({roleId: role.sys.id })") Open role
-          li(ng-if="canModifyRoles" role="menuitem" ng-click="duplicateRole(role)") Duplicate
-          li(ng-if="canModifyRoles" role="menuitem" ng-click="removeRole(role)") Delete permanently
-          li.role-list__action--disabled(ng-if="!canModifyRoles") Duplicate
-          li.role-list__action--disabled(ng-if="!canModifyRoles") Delete permanently
+          li(ng-if="hasFeatureEnabled" role="menuitem" ng-click="duplicateRole(role)") Duplicate
+          li(ng-if="hasFeatureEnabled" role="menuitem" ng-click="removeRole(role)") Delete permanently
+          li.role-list__action--disabled(ng-if="!hasFeatureEnabled") Duplicate
+          li.role-list__action--disabled(ng-if="!hasFeatureEnabled") Delete permanently
 
   .workbench-main__sidebar
-    .entity-sidebar(ng-if="!canModifyRoles")
+    .entity-sidebar(ng-if="!hasFeatureEnabled")
       +custom-roles-plan-info
-    .entity-sidebar(ng-if="canModifyRoles")
+    .entity-sidebar(ng-if="hasFeatureEnabled")
       h2.entity-sidebar__heading
         | Create new role
       p(ng-if="legacy")
-        | Your organization is using {{usage}} out of {{limit}} available custom roles.
+        | Your organization is using {{usage}} out of {{limit}} available roles.
       p(ng-if="!legacy")
-        | Your space has <span ng-pluralize count="usage" when="{1: '1 role', other: '$ roles'}"></span>
+        | Your space is using {{usage}} out of {{limit}} available roles.
       p(ng-if="reachedLimit")
-        | You have reached the limit of custom roles for this organization.
+        span(ng-if="legacy")
+          | You've reached the organization role limit.&#32;
+        span(ng-if="!legacy")
+          | You've reached the space role limit.&#32;
+        span(ng-if="canUpgrade")
+          | <a cf-sref="{{ accountUpgradeState }}">Upgrade</a> to add more locales
+        span(ng-if="!canUpgrade")
+          | Contact the admin or owner of this space to upgrade the space
+        span(ng-if="limit === 1")
+          | .
+        span(ng-if="limit > 1")
+          | , or delete an existing locale.
       p(ng-if="!reachedLimit")
         | Select one of the predefined role templates or create one from the scratch.
       button.btn-primary-action(ng-disabled="reachedLimit" ui-sref="spaces.detail.settings.roles.new")

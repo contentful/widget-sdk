@@ -26,28 +26,29 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
   var createResourceService = require('services/ResourceService').default;
   var ResourceUtils = require('utils/ResourceUtils');
 
+  var org = spaceContext.organizationContext.organization;
+
   $q.all({
-    canModifyRoles: accessChecker.canModifyRoles(),
     hasFeature: accessChecker.hasFeature('customRoles'),
-    resource: createResourceService(spaceContext.getId()).get('role')
+    resource: createResourceService(spaceContext.getId()).get('role'),
+    useLegacy: ResourceUtils.useLegacy(org)
   }).then(function (result) {
     var isNew = $scope.context.isNew;
-    var canModifyRoles = result.canModifyRoles;
     var subscription = spaceContext.subscription;
     var isTrial = subscription && subscription.isTrial();
     var trialLockdown = isTrial && subscription.hasTrialEnded();
 
-    if (!result.hasFeature) {
+    if (result.useLegacy && !result.hasFeature) {
       notification.error('Your plan does not include Custom Roles.');
-      canModifyRoles = false;
+      $scope.canModifyRoles = false;
     } else if (isNew && !ResourceUtils.canCreate(result.resource)) {
       notification.error('Your organization has reached the limit for custom roles.');
-      canModifyRoles = false;
+      $scope.canModifyRoles = false;
     } else if (trialLockdown) {
-      canModifyRoles = false;
+      $scope.canModifyRoles = false;
+    } else {
+      $scope.canModifyRoles = true;
     }
-
-    $scope.canModifyRoles = canModifyRoles;
   });
 
   // 1. prepare "touch" counter (first touch for role->internal, next for dirty state)

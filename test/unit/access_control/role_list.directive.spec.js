@@ -43,6 +43,9 @@ describe('Role List Controller', function () {
       getMembershipCounts: sinon.stub().returns({})
     });
 
+    this.OrganizationRoles = this.$inject('services/OrganizationRoles');
+    this.OrganizationRoles.isOwnerOrAdmin = sinon.stub().returns(false);
+
     this.organization = {
       usage: {
         permanent: {
@@ -99,9 +102,15 @@ describe('Role List Controller', function () {
       this.$inject('$controller')('RoleListController', {$scope: this.scope});
       this.$apply();
     };
+
+    this.setLimit = (usage, limit) => {
+      this.rolesResource.usage = usage;
+      this.rolesResource.limits.maximum = limit;
+    };
   });
 
-  describe('refreshing roles', function () {
+
+  describe('loading roles', function () {
     beforeEach(function () {
       this.createController();
     });
@@ -120,7 +129,44 @@ describe('Role List Controller', function () {
     });
   });
 
-  describe('refreshing locales fails', function () {
+  describe('reaching the limit', function () {
+    it('flags as true if limit has been reached', function () {
+      this.setLimit(5, 5);
+      this.createController();
+
+      expect(this.scope.reachedLimit).toBe(true);
+    });
+
+    it('flags as false if limit has not been reached', function () {
+      this.setLimit(1, 5);
+      this.createController();
+      expect(this.scope.reachedLimit).toBe(false);
+    });
+
+    it('flags if the user can upgrade the plan', function () {
+      this.OrganizationRoles.isOwnerOrAdmin.returns(true);
+      this.createController();
+      expect(this.scope.canUpgrade).toBe(true);
+    });
+
+    it('flags if the user cannot upgrade the plan', function () {
+      this.createController();
+      expect(this.scope.canUpgrade).toBe(false);
+    });
+  });
+
+  describe('duplicate role', function () {
+    it('duplicates a role', function () {
+      this.createController();
+      const $state = this.$inject('$state');
+      $state.go = sinon.spy();
+      const role = {sys: {id: 'foobar'}};
+      this.scope.duplicateRole(role);
+      sinon.assert.calledWith($state.go, 'spaces.detail.settings.roles.new', {baseRoleId: 'foobar'});
+    });
+  });
+
+  describe('reset fails', function () {
     beforeEach(function () {
       this.reset.rejects({statusCode: 500});
       this.createController();

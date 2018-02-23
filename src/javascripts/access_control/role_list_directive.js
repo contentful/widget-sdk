@@ -19,18 +19,13 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
   var spaceContext = require('spaceContext');
   var ADMIN_ROLE_ID = require('access_control/SpaceMembershipRepository').ADMIN_ROLE_ID;
   var ResourceUtils = require('utils/ResourceUtils');
+  var TheAccountView = require('TheAccountView');
+  var isOwnerOrAdmin = require('services/OrganizationRoles').isOwnerOrAdmin;
 
   var org = spaceContext.organizationContext.organization;
 
-  function checkIfCanModifyRoles () {
-    var subscription = spaceContext.subscription;
-    var trialLockdown = subscription &&
-    subscription.isTrial() && subscription.hasTrialEnded();
-    if (trialLockdown) { return Promise.resolve(false); } else { return accessChecker.canModifyRoles(); }
-  }
-
   $q.all({
-    canModifyRoles: accessChecker.canModifyRoles(),
+    hasFeatureEnabled: accessChecker.canModifyRoles(),
     useLegacy: ResourceUtils.useLegacy(org)
   }).then(function (result) {
     var subscription = spaceContext.subscription;
@@ -38,16 +33,15 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
     var trialLockdown = isTrial && subscription.hasTrialEnded();
 
     $scope.legacy = result.useLegacy;
-    $scope.canModifyRoles = !trialLockdown && result.canModifyRoles;
-  });
-
-  checkIfCanModifyRoles().then(function (value) {
-    $scope.canModifyRoles = value;
+    // all v2 spaces have custom roles enabled
+    $scope.hasFeatureEnabled = !result.legacy || (!trialLockdown && result.hasFeatureEnabled);
   });
 
   $scope.duplicateRole = duplicateRole;
   $scope.jumpToRoleMembers = jumpToRoleMembers;
   $scope.jumpToAdminRoleMembers = jumpToAdminRoleMembers;
+  $scope.accountUpgradeState = TheAccountView.getSubscriptionState();
+  $scope.canUpgrade = isOwnerOrAdmin(org);
 
   reload().catch(ReloadNotification.basicErrorHandler);
 
