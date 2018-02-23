@@ -10,6 +10,7 @@ import {isOwnerOrAdmin} from 'services/OrganizationRoles';
 import * as ReloadNotification from 'ReloadNotification';
 import {href} from 'states/Navigator';
 import {showDialog as showCreateSpaceModal} from 'services/CreateSpace';
+import {openDeleteSpaceDialog} from 'services/DeleteSpace';
 import moment from 'moment';
 import {get, isString} from 'lodash';
 import {supportUrl} from 'Config';
@@ -62,6 +63,12 @@ const SubscriptionOverview = createReactClass({
   createSpace: function () {
     showCreateSpaceModal(this.props.orgId);
   },
+  deleteSpace: function (space) {
+    openDeleteSpaceDialog({
+      space,
+      onSuccess: () => { runTask(this.fetchData); }
+    });
+  },
   contactUs: function () {
     // Open intercom if it's possible, otherwise go to support page.
     if (Intercom.isEnabled()) {
@@ -82,7 +89,8 @@ const SubscriptionOverview = createReactClass({
           h(BasePlan, {basePlan}),
           h(SpacePlans, {
             spacePlans,
-            onCreateSpace: this.createSpace
+            onCreateSpace: this.createSpace,
+            onDeleteSpace: this.deleteSpace
           })
         ),
       sidebar: h(RightSidebar, {
@@ -106,7 +114,7 @@ function BasePlan ({basePlan}) {
   );
 }
 
-function SpacePlans ({spacePlans, onCreateSpace}) {
+function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace}) {
   if (!spacePlans.length) {
     return h('div', null,
       h('h2', null, 'Spaces'),
@@ -142,27 +150,39 @@ function SpacePlans ({spacePlans, onCreateSpace}) {
           )
         ),
         h('tbody', {className: 'clickable'}, spacePlans.map(
-          (plan) => h(SpacePlanRow, {plan, key: plan.sys.id})
+          (plan) => h(SpacePlanRow, {plan, key: plan.sys.id, onDeleteSpace})
         ))
       )
     );
   }
 }
 
-function SpacePlanRow ({plan}) {
-  const actionLinkStyle = {padding: '0 20px 0 0', whiteSpace: 'nowrap'};
+function SpacePlanRow ({plan, onDeleteSpace}) {
+  const actionLinkStyle = {padding: '0 20px 0 0', display: 'inline'};
   const {name, price, space} = plan;
   const enabledFeatures = getEnabledFeatures(plan);
   let createdBy = '';
   let createdAt = '';
   let spaceLink = '';
   let usageLink = '';
+  let deleteLink = '';
 
   if (space) {
     createdBy = getUserName(space.sys.createdBy || {});
     createdAt = moment.utc(space.sys.createdAt).format('DD/MM/YYYY');
-    spaceLink = h('a', {href: href(getSpaceNavState(space.sys.id)), style: actionLinkStyle}, 'Go to space');
-    usageLink = h('a', {href: href(getSpaceUsageNavState(space.sys.id)), style: actionLinkStyle}, 'Usage');
+    spaceLink = h('a', {
+      href: href(getSpaceNavState(space.sys.id)),
+      style: actionLinkStyle
+    }, 'Go to space');
+    usageLink = h('a', {
+      href: href(getSpaceUsageNavState(space.sys.id)),
+      style: actionLinkStyle
+    }, 'Usage');
+    deleteLink = h('button', {
+      className: 'btn-link',
+      style: actionLinkStyle,
+      onClick: () => onDeleteSpace(space)
+    }, 'Delete');
   }
 
   return h('tr', null,
@@ -176,7 +196,7 @@ function SpacePlanRow ({plan}) {
     ),
     h('td', null, createdBy),
     h('td', null, createdAt),
-    h('td', null, spaceLink, usageLink)
+    h('td', {style: {whiteSpace: 'nowrap'}}, spaceLink, usageLink, deleteLink)
   );
 }
 
