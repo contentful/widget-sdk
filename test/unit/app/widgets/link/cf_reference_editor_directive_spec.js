@@ -1,4 +1,5 @@
 import $q from '$q';
+import * as K from 'helpers/mocks/kefir';
 
 describe('cfReferenceEditorDirective', function () {
   const template = '<cf-reference-editor type="{{ type }}" variant="{{ variant }}" single="single" />';
@@ -11,7 +12,9 @@ describe('cfReferenceEditorDirective', function () {
 
     this.spaceContext = {
       publishedCTs: {
-        get: sinon.stub()
+        get: sinon.stub(),
+        items$: K.createMockProperty([]),
+        getAllBare: sinon.stub().returns([])
       }
     };
 
@@ -244,7 +247,7 @@ describe('cfReferenceEditorDirective', function () {
   describe('adding a new entry', function () {
     const ENTRY = { sys: { id: 'entryid', type: 'Entry' } };
     const CT_ID = 'CONTENT_TYPE_ID';
-    const CLIENT_CT = { data: { sys: { id: CT_ID } } };
+    const CLIENT_CT = { data: { sys: { id: CT_ID }, fields: [{}, {localized: true}] } };
 
     beforeEach(function* () {
       this.field.setValue([]);
@@ -260,19 +263,31 @@ describe('cfReferenceEditorDirective', function () {
       expect(this.scope.entityModels[0].value.id).toBe(ENTRY.sys.id);
     });
 
-    it('redirects to entity editor after creation', function* () {
+    it('redirects to entity editor after creation', function () {
       sinon.assert.calledOnceWith(this.widgetApi.state.goToEditor, ENTRY);
     });
 
-    it('tracks `entry:create` event', function* () {
-      sinon.assert.calledOnce(this.analytics.track);
+    it('tracks `entry:create` event', function () {
       sinon.assert.calledWithExactly(
         this.analytics.track,
         'entry:create',
         {
           eventOrigin: 'reference-editor',
           contentType: CLIENT_CT,
-          response: { data: ENTRY }
+          response: {data: ENTRY}
+        }
+      );
+    });
+
+    it('tracks `reference_editor:create_entry` event', function () {
+      sinon.assert.calledWithExactly(
+        this.analytics.track,
+        'reference_editor:create_entry',
+        {
+          locales_count: 0,
+          localized_fields_count: 1,
+          fields_count: 2,
+          widgets_count: 0
         }
       );
     });

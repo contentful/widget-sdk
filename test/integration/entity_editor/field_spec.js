@@ -37,6 +37,23 @@ describe('entity editor field integration', function () {
       settings: {}
     };
 
+    const spaceContext = this.mockService('spaceContext', {
+      entryTitle (entry) {
+        return `TITLE ${entry.data.sys.id}`;
+      }
+    });
+
+    spaceContext.space = {
+      getEntries (query) {
+        const ids = query['sys.id[in]'].split(',');
+        return $q.resolve(ids.map((id) => {
+          return {data: {sys: {id: id, type: 'Entry'}}};
+        }));
+      }
+    };
+
+    spaceContext.user = { sys: { id: 'user-id-from-space-context' } };
+
     const editorContext = this.$inject('mocks/entityEditor/Context').create();
     this.focus = editorContext.focus;
 
@@ -251,21 +268,6 @@ describe('entity editor field integration', function () {
     });
 
     it('shows link for duplicate errors', function () {
-      const spaceContext = this.mockService('spaceContext', {
-        entryTitle (entry) {
-          return `TITLE ${entry.data.sys.id}`;
-        }
-      });
-
-      spaceContext.space = {
-        getEntries (query) {
-          const ids = query['sys.id[in]'].split(',');
-          return $q.resolve(ids.map((id) => {
-            return {data: {sys: {id: id, type: 'Entry'}}};
-          }));
-        }
-      };
-
       const view = DOM.createView(this.compile().get(0));
 
       this.validator.errors$.set([{

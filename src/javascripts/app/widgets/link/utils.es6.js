@@ -7,17 +7,24 @@ export function getAvailableContentTypes (space, field) {
     });
 }
 
+export function canLinkToContentType (field, ct) {
+  const contentTypes = getValidContentTypesForField(field);
+  return !contentTypes || contentTypes.indexOf(ct.sys.id) > -1;
+}
 
 function canCreate (field) {
+  return function (ct) {
+    return !!ct.sys.publishedVersion && canLinkToContentType(field, ct);
+  };
+}
+
+function getValidContentTypesForField (field) {
   const validations = [].concat(field.validations || [], field.itemValidations || []);
   const found = find(validations, function (v) {
     return Array.isArray(v.linkContentType) || isString(v.linkContentType);
   });
-  let linkedCts = found && found.linkContentType;
-  linkedCts = isString(linkedCts) ? [linkedCts] : linkedCts;
+  let contentTypes = found && found.linkContentType;
+  contentTypes = isString(contentTypes) ? [contentTypes] : contentTypes;
 
-  return function (ct) {
-    const canLink = !linkedCts || linkedCts.indexOf(ct.sys.id) > -1;
-    return !!ct.sys.publishedVersion && canLink;
-  };
+  return contentTypes;
 }

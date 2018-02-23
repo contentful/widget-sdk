@@ -17,6 +17,7 @@ import moment from 'moment';
 import {get, isString} from 'lodash';
 import {supportUrl} from 'Config';
 import $location from '$location';
+import Workbench from 'app/WorkbenchReact';
 
 const SubscriptionOverview = createReactClass({
   propTypes: {
@@ -76,32 +77,20 @@ const SubscriptionOverview = createReactClass({
     const {basePlan, spacePlans, canCreateSpace} = this.state;
     const {orgId} = this.props;
 
-    return h('div', {className: 'workbench'},
-      h('div', {className: 'workbench-header__wrapper'},
-        h('header', {className: 'workbench-header'},
-          h('div', {className: 'workbench-header__icon'}), /* TODO missing icon */
-          h('h1', {className: 'workbench-header__title'}, 'Subscription')
-        )
-      ),
-      h('div', {className: 'workbench-main'},
-        h('div', {
-          className: 'workbench-main__content',
-          style: {padding: '1.2rem 2rem'}
-        },
+    return h(Workbench, {
+      title: 'Subscription',
+      content: h('div', {
+        style: {padding: '0 2rem'}
+      },
           h(BasePlan, {basePlan, orgId}),
           h(SpacePlans, {spacePlans, orgId})
         ),
-        h('div', {
-          className: 'workbench-main__sidebar'
-        },
-          h(RightSidebar, {
-            canCreateSpace,
-            onCreateSpace: this.createSpace,
-            onContactUs: this.contactUs
-          })
-        )
-      )
-    );
+      sidebar: h(RightSidebar, {
+        canCreateSpace,
+        onCreateSpace: this.createSpace,
+        onContactUs: this.contactUs
+      })
+    });
   }
 });
 
