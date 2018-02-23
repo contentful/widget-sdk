@@ -278,19 +278,6 @@ describe('cfReferenceEditorDirective', function () {
         }
       );
     });
-
-    it('tracks `reference_editor:create_entry` event', function () {
-      sinon.assert.calledWithExactly(
-        this.analytics.track,
-        'reference_editor:create_entry',
-        {
-          locales_count: 0,
-          localized_fields_count: 1,
-          fields_count: 2,
-          widgets_count: 0
-        }
-      );
-    });
   });
 
   describe('publication warning - unpublished references', function () {

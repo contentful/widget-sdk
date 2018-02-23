@@ -40,6 +40,7 @@ registerGenericEvent('learn:step_clicked');
 
 registerGenericEvent(`reference_editor:create_entry`);
 registerGenericEvent(`reference_editor:edit_entry`);
+registerGenericEvent(`reference_editor:toggle_inline_bulk_editor`);
 
 registerBulkEditorEvent('bulk_editor:action');
 registerBulkEditorEvent('bulk_editor:add');
