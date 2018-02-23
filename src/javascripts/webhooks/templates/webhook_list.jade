@@ -52,16 +52,19 @@ header.workbench-header
                 a No webhooks yet!
 
   .workbench-main__sidebar(ng-if="showSidebar")
+    //- This will only show for Version 2 organizations, for now
     .entity-sidebar
       h2.entity-sidebar__heading
         | Add Webhooks
       div
-        p(ng-if="usage <= 0")
-          | Your space isn't using any webhooks.
-        p(ng-if="usage === 1")
-          | Your space is using 1 webhook.
-        p(ng-if="usage > 1")
-          | Your space is using {{usage}} webhooks.
+        p
+          | Your space&#32;
+          span(ng-if="usage <= 0")
+            | isn't using any webhooks.
+          span(ng-if="usage === 1")
+            | is using 1 webhook.
+          span(ng-if="usage > 1")
+            | is using {{usage}} webhooks.
         p
           button.btn-action.add-entity.x--block(
             ui-sref="spaces.detail.settings.webhooks.new"

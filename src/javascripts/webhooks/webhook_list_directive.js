@@ -26,14 +26,24 @@ angular.module('contentful')
 
   resources.get('webhookDefinition').then(function (resource) {
     $scope.usage = resource.usage;
+    $scope.limit = ResourceUtils.getResourceLimits(resource).maximum;
+
+    // Get the usage and limits first, then load the Webhook Definitions
+    reload().catch(ReloadNotification.basicErrorHandler);
   });
 
-  $scope.limit = 20;
-
-  reload().catch(ReloadNotification.basicErrorHandler);
 
   function reload () {
     return webhookRepo.getAll().then(function (items) {
+      // Currently, for Version 1 organizations, the usage comes
+      // from the token, but this is unreliable as the token is
+      // cached. We instead look at the length of the webhooks to
+      // show its usage.
+
+      if (ResourceUtils.isLegacyOrganization(organization)) {
+        $scope.usage = items.length;
+      }
+
       $scope.webhooks = items;
       $scope.context.ready = true;
     });
