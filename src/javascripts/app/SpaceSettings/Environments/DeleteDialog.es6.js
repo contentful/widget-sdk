@@ -1,7 +1,6 @@
 import { text } from 'utils/hyperscript';
 import { assign } from 'utils/Collections';
 import { makeCtor } from 'utils/TaggedValues';
-import { truncate } from 'stringUtils';
 
 import { bindActions, createStore, makeReducer } from 'ui/Framework/Store';
 import { h, renderString } from 'ui/Framework';
@@ -31,9 +30,8 @@ const reduce = makeReducer({
     runDelete(environment.id)
       .then(
         () => {
-          const name = text(truncate(environment.name, 30));
           Notification.info(
-            `The environment “${name}” has been successfully deleted.`
+            `The environment “${text(environment.id)}” has been successfully deleted.`
           );
           closeDialog(true);
         },
@@ -73,7 +71,7 @@ export function openDeleteDialog (runDelete, environment) {
 function createComponent (runDelete, environment, closeDialog) {
   const context = { runDelete, environment, closeDialog };
   const initialState = {
-    confirmationName: environment.name,
+    confirmationId: environment.id,
     inputValue: ''
   };
 
@@ -99,12 +97,12 @@ function createComponent (runDelete, environment, closeDialog) {
 function render ({
   inputValue,
   inProgress,
-  confirmationName,
+  confirmationId,
   TriggerDelete,
   CancelDialog,
   SetInputValue
 }) {
-  const confirmable = inputValue === confirmationName;
+  const confirmable = inputValue === confirmationId;
   return h('div', {
     dataTestId: 'spaceEnvironmentsDeleteDialog'
   }, [
@@ -119,17 +117,17 @@ function render ({
     }, [
       h('p', [
         `You are about to delete the environment `,
-        h('strong', [ confirmationName ]),
+        h('strong', [ confirmationId ]),
         `. All of the environment data, including the environment
         itself, will be deleted. This operation cannot be undone.`
       ]),
       vspace(5),
       h('.cfnext-form__field', [
         h('label', {style: { fontWeight: '600' }}, [
-          'Type the name of the environment to confirm'
+          'Type the ID of the environment to confirm'
         ]),
         h('input.cfnext-form__input--full-size', {
-          dataTestId: 'confirmName',
+          dataTestId: 'confirmId',
           value: inputValue,
           onInput: (ev) => SetInputValue(ev.target.value)
         })

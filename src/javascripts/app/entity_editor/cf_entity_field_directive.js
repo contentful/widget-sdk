@@ -24,8 +24,14 @@ angular.module('cf.app')
  * @scope.requires {entityEditor/Context} editorContext
  */
 .directive('cfEntityField', ['require', function (require) {
+  var INLINE_REFERENCE_FEATURE_FLAG =
+    'feature-at-02-2018-inline-reference-field';
+
   var TheLocaleStore = require('TheLocaleStore');
   var K = require('utils/kefir');
+  var getStore = require('TheStore').getStore;
+  var spaceContext = require('spaceContext');
+  var LD = require('utils/LaunchDarkly');
 
   return {
     restrict: 'E',
@@ -38,6 +44,7 @@ angular.module('cf.app')
 
       var widget = $scope.widget;
       var field = widget.field;
+      var store = getStore();
 
       // All data that is read by the template
       var templateData = {
@@ -74,6 +81,54 @@ angular.module('cf.app')
       K.onValueScope($scope, $scope.editorContext.focus.field$, function (focusedField) {
         templateData.fieldHasFocus = focusedField === field.id;
       });
+
+      LD.onFeatureFlag($scope, INLINE_REFERENCE_FEATURE_FLAG, function (isEnabled) {
+        $scope.data.canRenderInline = isEnabled && canRenderInline();
+      });
+
+      $scope.data.expandedStates = $scope.locales.reduce(
+        function (expandedStates, locale) {
+          expandedStates[locale.code] = isLocaleFieldExpanded(locale);
+          return expandedStates;
+        },
+        {}
+      );
+      $scope.methods = {
+        isLocaleFieldExpanded: isLocaleFieldExpanded,
+        toggleLocaleFieldExpansion: toggleLocaleFieldExpansion
+      };
+
+      function canRenderInline () {
+        return field.type === 'Link' && field.linkType === 'Entry' &&
+          $scope.editorContext.createReferenceContext; // i.e., is not nested
+      }
+
+      function toggleLocaleFieldExpansion (locale) {
+        var ctExpandedStoreKey = getCTExpandedStoreKey(locale);
+        var newVal = !isLocaleFieldExpanded(locale);
+        var localeCode = locale.code;
+        $scope.data.expandedStates[localeCode] = newVal;
+        $scope.$broadcast('ct-expand-state:toggle', [
+          field.name,
+          localeCode,
+          newVal
+        ]);
+        store.set(ctExpandedStoreKey, newVal);
+      }
+
+      function isLocaleFieldExpanded (locale) {
+        var ctExpandedStoreKey = getCTExpandedStoreKey(locale);
+        return $scope.data.canRenderInline && store.get(ctExpandedStoreKey);
+      }
+
+      function getCTExpandedStoreKey (locale) {
+        return [
+          spaceContext.user.sys.id,
+          $scope.editorContext.entityInfo.contentTypeId,
+          field.name,
+          locale.code
+        ].join(':');
+      }
 
       function updateErrorStatus () {
         var hasSchemaErrors = $scope.editorContext.validator.hasFieldError(field.id);

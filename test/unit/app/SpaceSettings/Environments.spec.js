@@ -19,14 +19,13 @@ describe('app/SpaceSettings/Environments', function () {
 
     // Adds an environment to the store that backs the space endpoint
     // mock.
-    this.putEnvironment = ({ id, name, status }) => {
+    this.putEnvironment = ({ id, status }) => {
       const envStore = spaceContext._mockEndpoint.stores.environments;
       envStore[id] = {
         sys: {
           id,
           status: { sys: { id: status } }
-        },
-        name
+        }
       };
     };
   });
@@ -36,16 +35,16 @@ describe('app/SpaceSettings/Environments', function () {
   });
 
   it('lists all environments with status', function* () {
-    this.putEnvironment({ id: 'e1', name: 'E1', status: 'ready' });
-    this.putEnvironment({ id: 'e2', name: 'E2', status: 'queued' });
-    this.putEnvironment({ id: 'e3', name: 'E3', status: 'failed' });
+    this.putEnvironment({ id: 'e1', status: 'ready' });
+    this.putEnvironment({ id: 'e2', status: 'queued' });
+    this.putEnvironment({ id: 'e3', status: 'failed' });
     this.init();
 
-    this.container.find('environmentList', 'environment.e1').assertHasText('E1');
+    this.container.find('environmentList', 'environment.e1').assertHasText('e1');
     this.container.find('environmentList', 'environment.e1').assertHasText('Ready');
-    this.container.find('environmentList', 'environment.e2').assertHasText('E2');
+    this.container.find('environmentList', 'environment.e2').assertHasText('e2');
     this.container.find('environmentList', 'environment.e2').assertHasText('In progress');
-    this.container.find('environmentList', 'environment.e3').assertHasText('E3');
+    this.container.find('environmentList', 'environment.e3').assertHasText('e3');
     this.container.find('environmentList', 'environment.e3').assertHasText('Failed');
   });
 
@@ -54,32 +53,19 @@ describe('app/SpaceSettings/Environments', function () {
 
     this.container.find('openCreateDialog').click();
     this.$flush();
-    this.container.find('spaceEnvironmentsEditDialog', 'field.name').setValue('ENV_NAME');
+    this.container.find('spaceEnvironmentsEditDialog', 'field.id').setValue('env_id');
     this.container.find('spaceEnvironmentsEditDialog', 'submit').click();
     this.$flush();
-    this.container.find('environmentList', 'environment.envName').assertHasText('ENV_NAME');
-  });
-
-  it('edits an environment', function* () {
-    this.putEnvironment({ id: 'e1', name: 'NAME INITIAL', status: 'ready' });
-    this.init();
-
-    this.container.find('environment.e1').assertHasText('NAME INITIAL');
-    this.container.find('environment.e1', 'openEditDialog').click();
-    this.$flush();
-    this.container.find('spaceEnvironmentsEditDialog', 'field.name').setValue('NAME CHANGED');
-    this.container.find('spaceEnvironmentsEditDialog', 'submit').click();
-    this.$flush();
-    this.container.find('environment.e1').assertHasText('NAME CHANGED');
+    this.container.find('environmentList', 'environment.env_id').assertHasText('env_id');
   });
 
   it('deletes an environment', function* () {
-    this.putEnvironment({ id: 'e1', name: 'E1', status: 'ready' });
+    this.putEnvironment({ id: 'e1', status: 'ready' });
     this.init();
 
     this.container.find('environment.e1', 'openDeleteDialog').click();
     this.$flush();
-    this.container.find('spaceEnvironmentsDeleteDialog', 'confirmName').setValue('E1');
+    this.container.find('spaceEnvironmentsDeleteDialog', 'confirmId').setValue('e1');
     this.container.find('spaceEnvironmentsDeleteDialog', 'delete').click();
     this.$flush();
     this.container.find('environment.e1').assertNonExistent();
