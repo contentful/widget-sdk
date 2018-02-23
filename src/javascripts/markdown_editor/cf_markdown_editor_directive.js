@@ -23,10 +23,12 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
       var currentMode = 'md';
       var editor = null;
       var childEditor = null;
+      var direction = isHebrew(field.locale) ? 'rtl' : 'ltr';
 
       // @todo find a better way of hiding header in Zen Mode
       var editorHeader = el.closest('.workbench-main').siblings('.workbench-header').first();
 
+      scope.direction = direction;
       scope.preview = {};
       scope.setMode = setMode;
       scope.inMode = inMode;
@@ -52,7 +54,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
 
       try {
         var mdEditor = MarkdownEditor.create(textarea, {
-          direction: isHebrew(field.locale) ? 'rtl' : 'ltr'
+          direction: direction
         });
         initEditor(mdEditor);
       } catch (e) {

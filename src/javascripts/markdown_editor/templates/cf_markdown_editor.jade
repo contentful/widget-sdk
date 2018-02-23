@@ -63,7 +63,10 @@ div(ng-if="hasCrashed")
     .markdown-preview(
       ng-show="inMode('preview')"
       ng-click="setMode('md')")
-      cf-markdown-preview(preview="preview" is-disabled="zen || inMode('md')")
+      cf-markdown-preview(
+        direction="direction"
+        preview="preview"
+        is-disabled="zen || inMode('md')")
 
   .markdown-help
     cf-icon(name="markdown")
