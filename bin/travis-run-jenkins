@@ -31,16 +31,14 @@ if [[ "$TRAVIS_BRANCH" =~ ^(preview|production)$ ]]; then
 fi
 
 if [[ "$TRAVIS_BRANCH" = "master" ]]; then
-  JENKINS_DOMAIN="contentful.org"
   JOB="staging-custom-ui-version"
 else
-  JENKINS_DOMAIN="quirely.com"
-  JOB="User%20Interface%20Pull%20Request"
+  JOB="smoke-test"
 fi
 
 AUTH="cf-ci:$JENKINS_PASSWORD"
-QUERY="token=$JENKINS_TOKEN&Git_Commit_Hash=$TRAVIS_COMMIT"
-URL="https://jenkins.$JENKINS_DOMAIN/job/$JOB/buildWithParameters?$QUERY"
+QUERY="token=$JENKINS_TOKEN&ui_version=$TRAVIS_COMMIT"
+URL="https://jenkins.contentful.org/job/$JOB/buildWithParameters?$QUERY"
 
 echo "POST $URL"
 curl -X POST -i -u "$AUTH" --header "$JENKINS_CRUMB" --url "$URL"
