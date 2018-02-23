@@ -15,7 +15,9 @@ export function openDeleteSpaceDialog ({space, onSuccess}) {
     spaceName: spaceName,
     input: {spaceName: ''},
     remove: Command.create(
-      () => remove(space).then(onSuccess),
+      () => remove(space)
+        .then(() => { scope.dialog.confirm(); })
+        .then(onSuccess),
       {disabled: () => scope.input.spaceName !== spaceName}
     )
   });

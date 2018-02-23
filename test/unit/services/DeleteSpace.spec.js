@@ -4,21 +4,22 @@ describe('DeleteSpace', function () {
   beforeEach(function () {
     this.space = {sys: {id: 'SPACE_ID'}, name: 'Space name'};
     this.onSuccess = sinon.stub();
-    this.modalDialog = {open: sinon.stub(), richtextLayout: () => 'TEMPLATE'};
+
     this.createEndpoint = sinon.stub();
     this.TokenStore = {refresh: sinon.stub()};
     this.notification = {info: sinon.stub()};
     this.ReloadNotification = {basicErrorHandler: sinon.stub()};
 
     module('contentful/test', ($provide) => {
-      $provide.value('modalDialog', this.modalDialog);
       $provide.value('data/EndpointFactory', {createSpaceEndpoint: this.createEndpoint});
       $provide.value('services/TokenStore', this.TokenStore);
       $provide.value('notification', this.notification);
       $provide.value('ReloadNotification', this.ReloadNotification);
     });
 
-    this.modalDialog.open.returns({promise: this.resolve()});
+    this.modalDialog = this.$inject('modalDialog');
+    this.modalDialog.richtextLayout = () => 'TEMPLATE';
+    sinon.spy(this.modalDialog, 'open');
     this.endpoint = sinon.stub().resolves();
     this.createEndpoint.returns(this.endpoint);
     this.openDeleteSpaceDialog = this.$inject('services/DeleteSpace').openDeleteSpaceDialog;
@@ -67,5 +68,12 @@ describe('DeleteSpace', function () {
     this.endpoint.rejects();
     yield this.dialogScope.remove.execute();
     sinon.assert.calledOnce(this.ReloadNotification.basicErrorHandler);
+  });
+
+  it('closes the dialog on success', function* () {
+    this.setSpaceNameInput('Space name');
+    sinon.spy(this.dialogScope.dialog, 'confirm');
+    yield this.dialogScope.remove.execute();
+    sinon.assert.calledOnce(this.dialogScope.dialog.confirm);
   });
 });
