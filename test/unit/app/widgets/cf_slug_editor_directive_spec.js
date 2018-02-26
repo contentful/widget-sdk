@@ -4,6 +4,8 @@ describe('SlugEditor directive', function () {
   beforeEach(function () {
     module('contentful/test');
     const MockApi = this.$inject('mocks/widgetApi');
+    this.accessChecker = this.$inject('access_control/AccessChecker');
+    this.accessChecker.canEditFieldLocale = sinon.stub().returns(true);
 
     this.cfWidgetApi = MockApi.create({
       field: {
@@ -92,6 +94,15 @@ describe('SlugEditor directive', function () {
           expect($inputEl.val()).toMatch(/^untitled-entry/);
           this.title.onValueChanged.withArgs(this.cfWidgetApi.locales.default).yield('A title');
           expect($inputEl.val()).toEqual('a-title');
+        });
+
+        it('does not generate a slug using title value if user has no right to edit field', function () {
+          this.cfWidgetApi.field.locale = 'hi';
+          this.accessChecker.canEditFieldLocale = sinon.stub().returns(false);
+          const $inputEl = this.compileElement().find('input');
+
+          this.title.onValueChanged.withArgs(this.cfWidgetApi.locales.default).yield('A title');
+          expect($inputEl.val()).toMatch(/^untitled-entry/);
         });
       });
     });
