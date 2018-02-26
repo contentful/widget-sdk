@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+import React from 'libs/react';
 import {h} from 'ui/Framework';
 import {byName as Colors} from 'Styles/Colors';
 import {assign} from 'utils/Collections';
@@ -6,6 +8,7 @@ import {docsLink} from 'ui/Content';
 import renderEnvironmentSelector from './EnvironmentSelector';
 import copyIcon from 'svg/CopyIcon';
 import copyToClipboard from 'utils/DomClipboardCopy';
+import TextInput from './TextInput';
 
 export default function ({data, initialValue, connect, trackCopy}) {
   update(initialValue);
@@ -76,14 +79,17 @@ function renderForm ({data, model, update, trackCopy}) {
   ]);
 }
 
-function input ({canEdit, model, update, key}) {
-  return h('input.cfnext-form__input--full-size', {
-    type: 'text',
-    name: key,
-    value: model[key],
-    onChange: e => update(assign(model, {[key]: e.target.value})),
-    disabled: !canEdit
-  });
+function input ({ canEdit, model, update, key }) {
+  return (
+    <TextInput
+      className="cfnext-form__input--full-size"
+      type="text"
+      name={key}
+      value={model[key]}
+      onChange={e => update(assign(model, { [key]: e.target.value }))}
+      disabled={!canEdit}
+    />
+  );
 }
 
 function inputWithCopy ({value, name, track}) {
