@@ -73,7 +73,7 @@ div.entity-editor__field-group(
           span.text-link
             | {{ methods.isLocaleFieldExpanded(locale) ? 'Disable' : 'Enable' }} inline editing
           span.banner(
-            tooltip-placement="bottom"
+            tooltip-placement="{{ data.tooltipPlacement }}"
             tooltip="Inline editing is an experimental feature. Use it with caution.")
             | Beta
       +field-permission-info
