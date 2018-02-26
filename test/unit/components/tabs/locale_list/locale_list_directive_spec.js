@@ -1,35 +1,24 @@
-import createMockSpaceEndpoint from 'test/helpers/mocks/SpaceEndpoint';
-
 describe('The Locale list directive', function () {
   beforeEach(function () {
     this.flags = {
       'feature-bv-2018-01-resources-api': false
     };
 
-    module('contentful/test', ($provide) => {
-      $provide.removeDirectives('relative');
-      $provide.value('$state', {current: '', href: () => {}});
-      $provide.value('utils/LaunchDarkly', {
-        getCurrentVariation: sinon.stub().callsFake((flagName) => {
-          return Promise.resolve(this.flags[flagName]);
-        })
-      });
-    });
-
-    this.organization = {
-      usage: {
-        permanent: {
-          locale: 1
-        }
-      },
-      subscriptionPlan: {
-        limits: {
-          features: {},
-          permanent: {
-            locale: 2
+    this.spaceUser = {
+      organizationMemberships: [
+        {
+          role: 'owner',
+          organization: {
+            sys: {
+              id: 'org_1234'
+            }
           }
         }
-      },
+      ]
+    };
+
+    this.organization = {
+      pricingVersion: 'pricing_version_1',
       sys: {
         id: 'org_1234'
       }
@@ -47,28 +36,43 @@ describe('The Locale list directive', function () {
       organization: this.organization
     };
 
-    const endpoint = createMockSpaceEndpoint();
-    endpoint.stores.resources.locale = {
+    this.resource = {
       usage: 0,
       limits: {
-        maximum: 0,
-        included: 0
-      },
-      sys: {
-        id: 'locale',
-        type: 'SpaceResource'
+        included: 0,
+        maximum: 0
       }
     };
 
-    this.setUsageLimits = (usage, limit) => {
-      this.organization.usage.permanent.locale = usage;
-      endpoint.stores.resources.locale.usage = usage;
+    module('contentful/test', ($provide) => {
+      $provide.removeDirectives('relative');
+      $provide.value('$state', {current: '', href: () => {}});
+      $provide.value('utils/LaunchDarkly', {
+        getCurrentVariation: sinon.stub().callsFake((flagName) => {
+          return Promise.resolve(this.flags[flagName]);
+        })
+      });
+      $provide.value('services/ResourceService', {
+        default: () => {
+          return {
+            get: sinon.stub().resolves(this.resource)
+          };
+        }
+      });
+    });
 
-      this.organization.subscriptionPlan.limits.permanent.locale = limit;
-      endpoint.stores.resources.locale.limits = {
-        maximum: limit,
-        included: limit
-      };
+    const OrganizationRoles = this.$inject('services/OrganizationRoles');
+    OrganizationRoles.setUser(this.spaceUser);
+
+    this.setUsageLimits = (usage, limit) => {
+      this.resource.usage = usage;
+      this.resource.limits.included = limit;
+      this.resource.limits.maximum = limit;
+    };
+
+    this.setRole = role => {
+      this.spaceUser.organizationMemberships[0].role = role;
+      OrganizationRoles.setUser(this.spaceUser);
     };
 
     this.mockService('services/TokenStore', {
@@ -78,12 +82,6 @@ describe('The Locale list directive', function () {
 
     this.mockService('TheAccountView', {
       getSubscriptionState: sinon.stub().returns({path: ['stateref']})
-    });
-
-    this.mockService('data/Endpoint', {
-      createSpaceEndpoint: sinon.stub().callsFake(() => {
-        return endpoint.request;
-      })
     });
 
     this.container = null;
@@ -129,6 +127,8 @@ describe('The Locale list directive', function () {
       }
     ];
 
+    // Set the user
+
     const spaceContext = this.$inject('spaceContext');
 
     spaceContext.organizationContext = {
@@ -137,8 +137,8 @@ describe('The Locale list directive', function () {
 
     spaceContext.space = {
       data: this.space,
-      getId: sinon.stub().returns('1234'),
-      getOrganizationId: sinon.stub().returns('id')
+      user: this.spaceUser,
+      getId: sinon.stub().returns('space_1234')
     };
 
     this.$scope = {
@@ -171,7 +171,6 @@ describe('The Locale list directive', function () {
     this.compileElement();
 
     yield this.$q.resolve();
-    // yield new Promise(resolve => setTimeout(resolve, 16));
 
     expect(this.container.find('.workbench-header__actions button.add-entity')).not.toBeNgHidden();
   });
@@ -207,11 +206,105 @@ describe('The Locale list directive', function () {
     this.setUsageLimits(10, 10);
     this.compileElement();
 
-    // I couldn't figure out a way to handle this.
-    // TODO: Don't use setTimeout and promise
-    yield new Promise(resolve => setTimeout(resolve, 200));
+    yield this.$q.resolve();
 
     expect(this.container.find('.workbench-main__sidebar button.add-entity').attr('disabled')).toBe('disabled');
+  });
+
+  describe('the UX', function () {
+    beforeEach(function () {
+      this.organization.pricingVersion = 'pricing_version_2';
+      this.flags['feature-bv-2018-01-resources-api'] = true;
+      this.accessChecker.hasFeature.resolves(true);
+    });
+
+    describe('with limit of 1', function () {
+      beforeEach(function* () {
+        // You will always be at the limit with 1 locale, as a space
+        // is always created with a default locale
+        this.setUsageLimits(1, 1);
+        this.compileElement();
+
+        yield this.$q.resolve();
+
+        this.sidebar = this.container.find('.workbench-main__sidebar > .entity-sidebar');
+      });
+
+      it('should show singular "locale"', function () {
+        const text = this.sidebar.find('> p.entity-sidebar__text-profile').eq(0).text();
+
+        expect(text).toBe('You are using 1 out of 1 locale in your space.');
+      });
+    });
+
+    describe('with a limit over 1', function () {
+      beforeEach(function* () {
+        this.setUsageLimits(1, 3);
+        this.compileElement();
+
+        yield this.$q.resolve();
+
+        this.sidebar = this.container.find('.workbench-main__sidebar > .entity-sidebar');
+      });
+
+      it('should show plural "locales"', function () {
+        const text = this.sidebar.find('> p.entity-sidebar__text-profile').eq(0).text();
+
+        expect(text).toBe('You are using 1 out of 3 locales in your space.');
+      });
+    });
+
+    describe('when hitting your limit', function () {
+      beforeEach(function () {
+        this.setUsageLimits(3, 3);
+      });
+
+      it('should not ask you to delete a locale if you only have one available', function* () {
+        this.setUsageLimits(1, 1);
+
+        this.setRole('owner');
+        this.compileElement();
+        yield this.$q.resolve();
+
+        const sidebar = this.container.find('.workbench-main__sidebar > .entity-sidebar');
+        const text = sidebar.find('> p.entity-sidebar__text-profile').eq(1).text();
+
+        expect(text).toBe("You've reached the space locales limit. Upgrade to add more locales.");
+      });
+
+      it('should tell you to upgrade if you are an org admin', function* () {
+        this.setRole('admin');
+        this.compileElement();
+        yield this.$q.resolve();
+
+        const sidebar = this.container.find('.workbench-main__sidebar > .entity-sidebar');
+        const text = sidebar.find('> p.entity-sidebar__text-profile').eq(1).text();
+
+        expect(text).toBe("You've reached the space locales limit. Upgrade to add more locales, or delete an existing locale.");
+      });
+
+      it('should tell you to upgrade if you are an org owner', function* () {
+        this.setRole('owner');
+        this.compileElement();
+        yield this.$q.resolve();
+
+        const sidebar = this.container.find('.workbench-main__sidebar > .entity-sidebar');
+        const text = sidebar.find('> p.entity-sidebar__text-profile').eq(1).text();
+
+        expect(text).toBe("You've reached the space locales limit. Upgrade to add more locales, or delete an existing locale.");
+      });
+
+      it('should tell you to contact the admin if you are not org admin/owner', function* () {
+        this.setRole('editor');
+        this.compileElement();
+        yield this.$q.resolve();
+
+        const sidebar = this.container.find('.workbench-main__sidebar > .entity-sidebar');
+        const text = sidebar.find('> p.entity-sidebar__text-profile').eq(1).text();
+
+        expect(text).toBe("You've reached the space locales limit. Contact the admin or owner of this space to upgrade the space, or delete an existing locale.");
+      });
+    });
   });
 
   describe('list of locales', function () {
