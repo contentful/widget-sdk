@@ -9,8 +9,9 @@ angular.module('contentful')
   var template = require('navigation/SpaceNavTemplate').default;
   var spaceContext = require('spaceContext');
   var TokenStore = require('services/TokenStore');
+  var accessChecker = require('access_control/AccessChecker');
 
-  return function (useSpaceEnv, canAccessSection) {
+  return function (useSpaceEnv) {
     return {
       template: template(useSpaceEnv),
       restrict: 'E',
@@ -21,6 +22,7 @@ angular.module('contentful')
         var orgId = spaceContext.organizationContext.organization.sys.id;
 
         controller.spaceId = $stateParams.spaceId;
+        controller.envId = $stateParams.environmentId;
         controller.canNavigateTo = canNavigateTo;
 
         TokenStore.getOrganization(orgId).then(function (org) {
@@ -28,31 +30,25 @@ angular.module('contentful')
         });
 
         function canNavigateTo (section) {
+          var sectionAvailable = accessChecker.getSectionVisibility()[section];
           var enforcements = spaceContext.getData('enforcements') || [];
           var isHibernated = enforcements.some(function (e) {
             return e.reason === 'hibernated';
           });
 
-          return spaceContext.space && !isHibernated && canAccessSection(section);
+          return spaceContext.space && !isHibernated && sectionAvailable;
         }
       }]
     };
   };
 }])
 
-.directive('cfSpaceNavBar', ['require', function (require) {
-  var makeNavBar = require('makeNavBar');
-  var accessChecker = require('access_control/AccessChecker');
-
-  return makeNavBar(false, function (section) {
-    return accessChecker.getSectionVisibility()[section];
-  });
+.directive('cfSpaceNavBar', ['makeNavBar', function (makeNavBar) {
+  return makeNavBar(false);
 }])
 
 .directive('cfSpaceEnvNavBar', ['makeNavBar', function (makeNavBar) {
-  return makeNavBar(true, function (section) {
-    return section !== 'spaceHome';
-  });
+  return makeNavBar(true);
 }])
 
 .directive('cfSpaceNavBarWrapped', ['require', function (require) {

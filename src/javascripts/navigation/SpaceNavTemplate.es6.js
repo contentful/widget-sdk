@@ -123,9 +123,16 @@ export default function spaceNavTemplate (useSpaceEnv) {
 
   return navBar([
     {
-      if: 'nav.canNavigateTo("spaceHome")',
+      if: 'nav.canNavigateTo("spaceHome") && !nav.envId',
       sref: 'spaces.detail.home',
       dataViewType: 'space-home',
+      icon: 'nav-home',
+      title: 'Space home'
+    },
+    {
+      disabled: true,
+      tooltip: 'The space home is only available in the master environment.',
+      if: 'nav.canNavigateTo("spaceHome") && nav.envId',
       icon: 'nav-home',
       title: 'Space home'
     },
