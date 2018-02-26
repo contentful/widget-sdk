@@ -29,6 +29,7 @@ angular.module('contentful')
   var moment = require('moment');
   var debounce = require('debounce');
   var InputUpdater = require('ui/inputUpdater');
+  var accessChecker = require('access_control/AccessChecker');
 
   return {
     restrict: 'E',
@@ -87,7 +88,8 @@ angular.module('contentful')
 
         if (field.locale !== locales.default) {
           var detachDefaultLocaleTitleChangeHandler = titleField.onValueChanged(locales.default, function (titleValue) {
-            if (!titleField.getValue(field.locale)) {
+            var canEditField = accessChecker.canEditFieldLocale(contentType.sys.id, field.id, field.locale);
+            if (!titleField.getValue(field.locale) && canEditField) {
               setTitle(titleValue);
             }
           });

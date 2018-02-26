@@ -98,9 +98,19 @@ header.workbench-header
       h2.entity-sidebar__heading
         | Add Locale
       p.entity-sidebar__text-profile
-        | You are using {{usage}} out of {{limit}} locales in your space.
+        | You are using {{usage}} out of {{limit}}&#32;
+        ng-pluralize(count="limit" when="{'1': 'locale', 'other': 'locales'}")
+        | &#32;in your space.
       p.entity-sidebar__text-profile(ng-if="localesUsageState === LOCALES_LIMIT_REACHED")
-        | You've reached the space locales limit. Please <a cf-sref="{{ accountUpgradeState }}">upgrade</a> if you need more locales, or delete some of the existing ones.
+        | You've reached the space locales limit.&#32;
+        span(ng-if="canUpgrade")
+          | <a cf-sref="{{ accountUpgradeState }}">Upgrade</a> to add more locales
+        span(ng-if="!canUpgrade")
+          | Contact the admin or owner of this space to upgrade the space
+        span(ng-if="limit === 1")
+          | .
+        span(ng-if="limit > 1")
+          | , or delete an existing locale.
       p
         button.btn-action.add-entity.x--block(
           ng-click="newLocale()"
