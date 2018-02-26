@@ -16,8 +16,8 @@ export function onEntryEdit ({ contentType }) {
   });
 }
 
-export function onInlineBulkToggle ({ toggleState }) {
-  track('reference_editor:toggle_inline_bulk_editor', {
+export function onToggleInlineEditor ({ toggleState }) {
+  track('reference_editor:toggle_inline_editor', {
     ...getLocalesInfo(),
     ...getToggleState(toggleState)
   });
@@ -28,7 +28,7 @@ function getToggleState (value) {
 }
 
 function isFeatureEnabled (value) {
-  return { inline_bulk_feature_enabled: value };
+  return { inline_editing_toggled_on: value };
 }
 
 function getLocalesInfo () {

@@ -69,7 +69,7 @@ export default function create ($scope, widgetApi) {
   // BETA release. Remove this once we are done with
   // the experiment.
   onFeatureFlag($scope, INLINE_REFERENCE_FEATURE_FLAG, function (isEnabled) {
-    $scope.isInlineReferenceFeatureEnabled = isEnabled;
+    $scope.isInlineEditingEnabled = isEnabled;
     const ctExpandedStoreKey = [
       spaceContext.user.sys.id,
       contentTypeId,
@@ -79,7 +79,6 @@ export default function create ($scope, widgetApi) {
     const featureEnabledForField = store.get(ctExpandedStoreKey);
     const isAsset = $scope.isAssetCard;
     const isOneToOne = $scope.single;
-
 
     if (isAsset) {
       $scope.referenceType = { asset: true };
@@ -139,7 +138,7 @@ export default function create ($scope, widgetApi) {
       .createEntry(contentTypeId, {})
       .then(makeNewEntityHandler(contentType))
       .then(entry => {
-        if ($scope.single && $scope.isInlineReferenceFeatureEnabled) {
+        if ($scope.single && $scope.isInlineEditingEnabled) {
           trackEntryCreate({ contentType });
         }
         return entry;

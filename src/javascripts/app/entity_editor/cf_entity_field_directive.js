@@ -32,7 +32,7 @@ angular.module('cf.app')
   var getStore = require('TheStore').getStore;
   var spaceContext = require('spaceContext');
   var LD = require('utils/LaunchDarkly');
-  var trackInlineBulkEditorToggle = require('analytics/events/ReferenceEditor').onInlineBulkToggle;
+  var trackInlineEditorToggle = require('analytics/events/ReferenceEditor').onToggleInlineEditor;
 
   return {
     restrict: 'E',
@@ -116,7 +116,7 @@ angular.module('cf.app')
         ]);
         store.set(ctExpandedStoreKey, newVal);
 
-        trackInlineBulkEditorToggle({
+        trackInlineEditorToggle({
           contentType: $scope.editorData.contentType,
           toggleState: newVal
         });
