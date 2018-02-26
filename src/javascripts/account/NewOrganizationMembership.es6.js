@@ -1,4 +1,4 @@
-import {omit, pick, negate, trim, sortedUniq, get as getAtPath} from 'lodash';
+import {omit, pick, negate, trim, sortedUniq, get as getAtPath, isNumber} from 'lodash';
 import {h} from 'ui/Framework';
 import {assign} from 'utils/Collections';
 import {getOrganization} from 'services/TokenStore';
@@ -21,6 +21,7 @@ import {
   errorMessage,
   successMessage
 } from 'account/NewOrganizationMembershipTemplate';
+import {isLegacyOrganization} from 'utils/ResourceUtils';
 
 const adminRole = {
   name: 'Admin',
@@ -184,12 +185,14 @@ export default function ($scope) {
       organization
     } = state;
 
-    if (
-      emails.length &&
+    let isInputValid = emails.length &&
       emails.length <= maxNumberOfEmails &&
-      emails.length <= organization.remainingInvitations &&
-      !invalidAddresses.length
-    ) {
+      !invalidAddresses.length;
+    if (isInputValid && isNumber(organization.remainingInvitations)) {
+      isInputValid = emails.length <= organization.remainingInvitations;
+    }
+
+    if (isInputValid) {
       runTask(function* () {
         yield invite({
           emails,
@@ -340,17 +343,25 @@ export default function ($scope) {
    */
   function* getOrgInfo () {
     const org = yield getOrganization(orgId);
-    const membershipLimit = getAtPath(org, 'subscriptionPlan.limits.permanent.organizationMembership');
-    const spaceLimit = getAtPath(org, 'subscriptionPlan.limits.permanent.space');
     const users = yield getUsers(orgEndpoint, {limit: 0});
+    const isLegacyOrg = isLegacyOrganization(org);
     const membershipsCount = users.total;
+    let membershipLimit;
+    let spaceLimit;
+    let remainingInvitations;
+    if (isLegacyOrg) {
+      membershipLimit = getAtPath(org, 'subscriptionPlan.limits.permanent.organizationMembership');
+      spaceLimit = getAtPath(org, 'subscriptionPlan.limits.permanent.space');
+      remainingInvitations = membershipLimit - membershipsCount;
+    }
 
     return assign(state.organization, {
+      isLegacyOrg,
       membershipLimit,
       membershipsCount,
+      remainingInvitations,
       spaceLimit,
-      hasSsoEnabled: org.hasSsoEnabled,
-      remainingInvitations: membershipLimit - membershipsCount
+      hasSsoEnabled: org.hasSsoEnabled
     });
   }
 }

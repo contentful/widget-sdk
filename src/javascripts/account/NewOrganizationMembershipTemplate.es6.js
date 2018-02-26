@@ -1,4 +1,4 @@
-import {includes, negate} from 'lodash';
+import {includes, negate, isNumber, isArray} from 'lodash';
 import {h} from 'ui/Framework';
 import {assign} from 'utils/Collections';
 import {match, isTag} from 'utils/TaggedValues';
@@ -35,9 +35,16 @@ export function sidebar ({
     _: () => true
   });
 
+  let usersCountMsg;
+  if (organization.isLegacyOrg) {
+    usersCountMsg = `Your organization is using ${organization.membershipsCount} out of ${organization.membershipLimit} users.`;
+  } else {
+    usersCountMsg = `Your organization has ${organization.membershipsCount} users.`;
+  }
+
   return h('.workbench-main__entity-sidebar', [
     h('.entity-sidebar', [
-      h('p', [`Your organization is using ${organization.membershipsCount} out of ${organization.membershipLimit} users.`]),
+      h('p', [usersCountMsg]),
       h('button.cfnext-btn-primary-action.x--block', {
         type: 'submit',
         disabled: isDisabled
@@ -72,6 +79,8 @@ export function emailsInput (
   updateEmails,
   validateEmails
 }) {
+  const errors = emailInputErrors({organization, emails, invalidAddresses, maxNumberOfEmails, status, Invalid});
+
   return h('div', [
     h('h3.section-title', ['Select users']),
     h('p', ['Add multiple users by filling in a comma-separated list of email addresses. You can add a maximum of 100 users at a time.']),
@@ -84,23 +93,35 @@ export function emailsInput (
         onChange: (evt) => updateEmails(evt.target.value),
         onBlur: validateEmails
       }),
-      emails.length > organization.remainingInvitations
-        ? h('.cfnext-form__field-error', [`
-          You are trying to add ${emails.length} users but you only have ${organization.remainingInvitations}
-          more available under your plan. Please remove ${emails.length - organization.remainingInvitations} users to proceed.
-          You can upgrade your plan if you need to add more users.
-        `]) : '',
-      emails.length > maxNumberOfEmails
-        ? h('.cfnext-form__field-error', ['Please fill in no more than 100 email addresses.']) : '',
-      invalidAddresses.length
-        ? h('.cfnext-form__field-error', [
-          h('p', ['The following email addresses are not valid:']),
-          h('', [invalidAddresses.join(', ')])
-        ]) : '',
-      !emails.length && isTag(status, Invalid)
-        ? h('.cfnext-form__field-error', ['Please fill in at least one email address.']) : ''
+      ...errors
     ])
   ]);
+}
+
+function emailInputErrors ({organization, emails, invalidAddresses, maxNumberOfEmails, status, Invalid}) {
+  const errors = [];
+  const remainingInvitations = organization.remainingInvitations;
+  const isInvitationLimitExceeded = isNumber(remainingInvitations) && emails.length > remainingInvitations;
+
+  if (isInvitationLimitExceeded) {
+    errors.push(`
+      You are trying to add ${emails.length} users but you only have ${remainingInvitations}
+      more available under your plan. Please remove ${emails.length - remainingInvitations} users to proceed.
+      You can upgrade your plan if you need to add more users.
+    `);
+  }
+  if (emails.length > maxNumberOfEmails) {
+    errors.push(`Please fill in no more than ${maxNumberOfEmails} email addresses.`);
+  }
+  if (invalidAddresses.length) {
+    errors.push([
+      h('p', ['The following email addresses are not valid:']), h('', [invalidAddresses.join(', ')])
+    ]);
+  }
+  if (!emails.length && isTag(status, Invalid)) {
+    errors.push('Please fill in at least one email address.');
+  }
+  return errors.map((message) => h('.cfnext-form__field-error', isArray(message) ? message : [message]));
 }
 
 export function organizationRole (orgRole, isOwner, updateOrgRole) {
