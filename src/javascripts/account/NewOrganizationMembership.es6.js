@@ -1,4 +1,4 @@
-import {omit, pick, negate, trim, sortedUniq, get as getAtPath, isNumber} from 'lodash';
+import {omit, pick, negate, trim, sortedUniq} from 'lodash';
 import {h} from 'ui/Framework';
 import {assign} from 'utils/Collections';
 import {getOrganization} from 'services/TokenStore';
@@ -21,7 +21,7 @@ import {
   errorMessage,
   successMessage
 } from 'account/NewOrganizationMembershipTemplate';
-import {isLegacyOrganization} from 'utils/ResourceUtils';
+import {isLegacyOrganization, getLegacyLimit} from 'utils/ResourceUtils';
 
 const adminRole = {
   name: 'Admin',
@@ -87,6 +87,7 @@ export default function ($scope) {
     // 1st step - get org and user info and render page without the spaces grid
     const organization = yield* getOrgInfo();
     state = assign(state, {organization, isOwner: isOwner(org)});
+
     rerender();
 
     // 2nd step - load all space roles
@@ -188,8 +189,9 @@ export default function ($scope) {
     let isInputValid = emails.length &&
       emails.length <= maxNumberOfEmails &&
       !invalidAddresses.length;
-    if (isInputValid && isNumber(organization.remainingInvitations)) {
-      isInputValid = emails.length <= organization.remainingInvitations;
+    if (isInputValid && organization.membershipLimit) {
+      const {membershipUsage, membershipLimit} = organization;
+      isInputValid = emails.length <= membershipLimit - membershipUsage;
     }
 
     if (isInputValid) {
@@ -343,24 +345,21 @@ export default function ($scope) {
    */
   function* getOrgInfo () {
     const org = yield getOrganization(orgId);
-    const users = yield getUsers(orgEndpoint, {limit: 0});
-    const isLegacyOrg = isLegacyOrganization(org);
-    const membershipsCount = users.total;
+
     let membershipLimit;
-    let spaceLimit;
-    let remainingInvitations;
-    if (isLegacyOrg) {
-      membershipLimit = getAtPath(org, 'subscriptionPlan.limits.permanent.organizationMembership');
-      spaceLimit = getAtPath(org, 'subscriptionPlan.limits.permanent.space');
-      remainingInvitations = membershipLimit - membershipsCount;
+    if (isLegacyOrganization(org)) {
+      membershipLimit = getLegacyLimit('organizationMembership', org);
     }
 
+    // We cannot rely on usage data from organization (token) since the cache
+    // is not invalidated on user creation.
+    // We should use resources API later when it's available for org memberships.
+    const users = yield getUsers(orgEndpoint, {limit: 0});
+    const membershipUsage = users.total;
+
     return assign(state.organization, {
-      isLegacyOrg,
+      membershipUsage,
       membershipLimit,
-      membershipsCount,
-      remainingInvitations,
-      spaceLimit,
       hasSsoEnabled: org.hasSsoEnabled
     });
   }

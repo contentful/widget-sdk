@@ -1,4 +1,4 @@
-import {includes, negate, isNumber, isArray} from 'lodash';
+import {includes, negate, isArray} from 'lodash';
 import {h} from 'ui/Framework';
 import {assign} from 'utils/Collections';
 import {match, isTag} from 'utils/TaggedValues';
@@ -35,12 +35,10 @@ export function sidebar ({
     _: () => true
   });
 
-  let usersCountMsg;
-  if (organization.isLegacyOrg) {
-    usersCountMsg = `Your organization is using ${organization.membershipsCount} out of ${organization.membershipLimit} users.`;
-  } else {
-    usersCountMsg = `Your organization has ${organization.membershipsCount} users.`;
-  }
+  const {membershipUsage, membershipLimit} = organization;
+  const usersCountMsg = membershipLimit
+    ? `Your organization is using ${membershipUsage} out of ${membershipLimit} users.`
+    : `Your organization is using ${membershipUsage} users.`;
 
   return h('.workbench-main__entity-sidebar', [
     h('.entity-sidebar', [
@@ -100,15 +98,16 @@ export function emailsInput (
 
 function emailInputErrors ({organization, emails, invalidAddresses, maxNumberOfEmails, status, Invalid}) {
   const errors = [];
-  const remainingInvitations = organization.remainingInvitations;
-  const isInvitationLimitExceeded = isNumber(remainingInvitations) && emails.length > remainingInvitations;
+  if (organization.membershipLimit) {
+    const remainingInvitations = organization.membershipLimit - organization.membershipUsage;
 
-  if (isInvitationLimitExceeded) {
-    errors.push(`
-      You are trying to add ${emails.length} users but you only have ${remainingInvitations}
-      more available under your plan. Please remove ${emails.length - remainingInvitations} users to proceed.
-      You can upgrade your plan if you need to add more users.
-    `);
+    if (emails.length > remainingInvitations) {
+      errors.push(`
+        You are trying to add ${emails.length} users but you only have ${remainingInvitations}
+        more available under your plan. Please remove ${emails.length - remainingInvitations} users to proceed.
+        You can upgrade your plan if you need to add more users.
+      `);
+    }
   }
   if (emails.length > maxNumberOfEmails) {
     errors.push(`Please fill in no more than ${maxNumberOfEmails} email addresses.`);
