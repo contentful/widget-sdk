@@ -33,6 +33,12 @@ describe('Subscription', function () {
           ORGANIZATION.subscription.status = 'free';
         });
 
+        it('returns `false` if there is no subscription', function () {
+          delete ORGANIZATION.subscription;
+          const subscription = this.newFromOrganization(ORGANIZATION);
+          expect(subscription.isLimitedFree()).toBe(false);
+        });
+
         it('returns `false` for trial subscription', function () {
           ORGANIZATION.subscription.status = 'trial';
           const subscription = this.newFromOrganization(ORGANIZATION);
@@ -57,6 +63,12 @@ describe('Subscription', function () {
           ORGANIZATION.subscription.status = 'trial';
           const subscription = this.newFromOrganization(ORGANIZATION);
           expect(subscription.isTrial()).toBe(true);
+        });
+
+        it('returns `false` if there is no subscription', function () {
+          delete ORGANIZATION.subscription;
+          const subscription = this.newFromOrganization(ORGANIZATION);
+          expect(subscription.isLimitedFree()).toBe(false);
         });
 
         it('returns `false` for limited free subscription', function () {

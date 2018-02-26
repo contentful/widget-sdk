@@ -17,6 +17,7 @@ angular.module('contentful')
   var TokenStore = require('services/TokenStore');
   var K = require('utils/kefir');
   var Navigator = require('states/Navigator');
+  var isLegacyOrganization = require('utils/ResourceUtils').isLegacyOrganization;
 
   return {
     getSubscriptionState: getSubscriptionState,
@@ -29,14 +30,17 @@ angular.module('contentful')
    * @ngdoc method
    * @name TheAccountView#getSubscriptionState
    * @description
-   * Returns the state path for the account/subscription view if the user has
-   * permission to access it otherwise returns undefined.
+   * Returns the state object for the current space's org account/subscription
+   * view if the user has permission to access it otherwise returns null.
    */
   function getSubscriptionState () {
-    var org = getGoToOrganizationsOrganization();
-    // TODO use a navigator reference
-    if (org) {
-      return 'account.organizations.subscription({ orgId: \'' + org.sys.id + '\' })';
+    var org = spaceContext.getData('organization');
+    if (!org || !OrganizationRoles.isOwnerOrAdmin(org)) {
+      return null;
+    } else if (isLegacyOrganization(org)) {
+      return getOrganizationRef('subscription');
+    } else {
+      return getOrganizationRef('subscription_new');
     }
   }
 
@@ -48,7 +52,14 @@ angular.module('contentful')
    * organization's subscription page.
    */
   function goToSubscription () {
-    return goToOrganizations('subscription');
+    var org = getGoToOrganizationsOrganization();
+    if (!org) {
+      return $q.reject('Cannot go to subscription - no suitable organization');
+    } else if (isLegacyOrganization(org)) {
+      return goToOrganizations('subscription');
+    } else {
+      return goToOrganizations('subscription_new');
+    }
   }
 
   /**
@@ -75,7 +86,7 @@ angular.module('contentful')
     if (ref) {
       return Navigator.go(ref);
     } else {
-      return $q.reject();
+      return $q.reject(new Error('Cannot go to organization page: ' + subpage));
     }
   }
 

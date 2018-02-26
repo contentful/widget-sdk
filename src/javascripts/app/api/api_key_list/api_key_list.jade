@@ -46,7 +46,7 @@ cf-api-key-nav
           | Your space is using <span class="api-key-list__reached-limit">{{apiKeys.length}} out of {{limit}}</span> API keys.&#32;
           span(ng-if="subscriptionState")
             | If you want to create additional keys, you need to either delete an existing one or&#32;
-            | <a class="entity-sidebar__link" ui-sref="{{subscriptionState}}">upgrade your account</a>.
+            | <a class="entity-sidebar__link" cf-sref="{{subscriptionState}}">upgrade your account</a>.
           span(ng-if="!subscriptionState")
             | If you want to create additional keys, you need to either delete an existing one or contact the owner of your organization to upgrade the account.
         button.btn-action.x--block(

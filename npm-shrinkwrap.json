@@ -35,6 +35,10 @@
         }
       }
     },
+    "@types/react": {
+      "version": "16.0.37",
+      "optional": true
+    },
     "Base64": {
       "version": "1.0.0"
     },
@@ -470,6 +474,9 @@
     },
     "clap": {
       "version": "1.2.0"
+    },
+    "classnames": {
+      "version": "2.2.5"
     },
     "cliui": {
       "version": "2.1.0"
@@ -2093,6 +2100,9 @@
           "version": "4.1.1"
         }
       }
+    },
+    "react-animate-height": {
+      "version": "0.10.9"
     },
     "react-dom": {
       "version": "16.2.0",

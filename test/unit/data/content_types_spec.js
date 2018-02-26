@@ -64,6 +64,18 @@ describe('data/ContentTypes', function () {
       this.assureDisplayField(ct);
       expect(ct.displayField).toEqual('SECOND ID');
     });
+
+    it('retains null as value if no applicable field was found', function () {
+      var ct = {
+        displayField: null,
+        fields: [{
+          id: 'fieldid',
+          type: 'non-displayable'
+        }]
+      };
+      this.assureDisplayField(ct);
+      expect(ct.displayField).toEqual(null);
+    });
   });
 
   describe('#assureName', function () {

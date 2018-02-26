@@ -179,6 +179,18 @@ describe('data/User', () => {
       this.checkIfUserIsNonpaying('paid', false);
       this.checkIfUserIsNonpaying('free_paid', false);
     });
+
+    it('should return false if the user has a V2 org', function () {
+      const isNonPayingUser = this.utils.isNonPayingUser({
+        organizationMemberships: [{
+          organization: {
+            pricingVersion: 'pricing_version_2'
+          }
+        }]
+      });
+
+      expect(isNonPayingUser).toBe(false);
+    });
   });
 
   describe('#hasAnOrgWithSpaces', function () {

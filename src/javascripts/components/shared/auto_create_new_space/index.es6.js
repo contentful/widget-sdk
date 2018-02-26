@@ -41,7 +41,7 @@ export function init () {
           const template = variation ? seeThinkDoFeatureModalTemplate : undefined;
 
           // we swallow all errors, so auto creation modal will always have green mark
-          yield createSampleSpace(org, 'product catalogue', template).catch(() => {});
+          yield createSampleSpace(org, 'the example app', template).catch(() => {});
           store.set(getKey(user), true);
           creatingSampleSpace = false;
         }

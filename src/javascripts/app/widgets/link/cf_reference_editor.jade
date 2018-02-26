@@ -9,17 +9,28 @@ div(ng-show="!isReady")
   ng-class="{'x--contains-asset-cards': isAssetCard}")
   ol.link-editor__links(cf-ui-sortable ng-model="entityModels")
     li.link-editor__link(ng-repeat="model in entityModels track by model.key")
-
+      
       cf-entity-link(
-        ng-if="!isAssetCard"
+        ng-if="referenceType.link"
         entity="model.value.entity"
         content-type="model.value.contentType"
         entity-helpers="helpers"
         actions="model.value.actions"
         config="config")
 
+      // TODO: This is for inline reference editing
+      // BETA release. Remove this once we are done with
+      // the experiment.
+      .inline-reference-editor(
+        ng-if="referenceType.inline"
+        style="min-height: 100px; margin-top: 10px;")
+          cf-bulk-editor(
+            reference-context="model.value.refCtxt"
+            render-inline="true"
+          )
+
       cf-asset-card(
-        ng-if="isAssetCard"
+        ng-if="referenceType.asset"
         is-disabled="isDisabled"
         entity="model.value.entity"
         entity-helpers="helpers"
@@ -58,6 +69,7 @@ div(ng-show="!isReady")
       text="Create {{allowedCTs[0].name}} and link")
 
     button.btn-action(
+      data-test-id="add-and-link-reference-trigger"
       ng-if="type === 'Asset'"
       ng-click="isNewAddAndLinkRefButtonEnabled ? addNewAsset() : addNew($event)"
       type="button")

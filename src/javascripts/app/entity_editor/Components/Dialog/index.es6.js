@@ -1,8 +1,12 @@
 import { createElement as h } from 'libs/react';
+import PropTypes from 'libs/prop-types';
 import createReactClass from 'create-react-class';
 
 const Dialog = createReactClass({
-  displayName: 'Dialog',
+  propTypes: {
+    testId: PropTypes.string,
+    children: PropTypes.node
+  },
   render () {
     return h(
       'div',
@@ -16,7 +20,9 @@ const Dialog = createReactClass({
 });
 
 const Header = createReactClass({
-  displayName: 'Header',
+  propTypes: {
+    children: PropTypes.node
+  },
   render () {
     return h(
       'header',
@@ -30,7 +36,9 @@ const Header = createReactClass({
 });
 
 const Body = createReactClass({
-  displayName: 'Body',
+  propTypes: {
+    children: PropTypes.node
+  },
   render () {
     return h(
       'div',
@@ -48,7 +56,9 @@ const Body = createReactClass({
 });
 
 const Controls = createReactClass({
-  displayName: 'Controls',
+  propTypes: {
+    children: PropTypes.node
+  },
   render () {
     return h(
       'div',
@@ -61,7 +71,6 @@ const Controls = createReactClass({
   }
 });
 
-Dialog.propTypes = {};
 Dialog.Header = Header;
 Dialog.Body = Body;
 Dialog.Controls = Controls;

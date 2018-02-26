@@ -5,30 +5,30 @@
  * check these files use `tools/bin/validate-config.js`.
  */
 
-const domainPattern = '\\w[\\w-]*'
+const domainPattern = '\\w[\\w-]*';
 
 const subdomainHostSchema = {
   type: 'string',
   // Matches `sub.main.tld:1234` where the host part is optional
   pattern: `^(${domainPattern}\\.){2}(${domainPattern})(:\\d{2,4})?$`
-}
+};
 
 const hostSchema = {
   type: 'string',
   // Matches `main.tld:1234` where the host part is optional
   pattern: `^(${domainPattern}\\.)(${domainPattern})(:\\d{2,4})?$`
-}
+};
 
 // Matches protocol relative URLs, e.g. '//example.com'.
 const urlSchema = {
   type: 'string',
   format: 'uri-reference'
-}
+};
 
 // For each item 'x' we require a property 'xUrl' that has a URL format.
 const URL_KEYS = [
   'auth', 'api', 'ot', 'asset', 'marketing', 'toolsService', 'mockApi'
-]
+];
 
 export default strictObject(Object.assign({
   environment: {type: 'string'},
@@ -45,15 +45,15 @@ export default strictObject(Object.assign({
   })
 }, hosts(), integrations()), {
   clientId: hex(64)
-})
+});
 
 
 function hosts () {
-  const props = {}
+  const props = {};
   for (const key of URL_KEYS) {
-    props[key + 'Url'] = urlSchema
+    props[key + 'Url'] = urlSchema;
   }
-  return props
+  return props;
 }
 
 
@@ -85,7 +85,7 @@ function integrations () {
       app_id: {type: 'string'},
       buffer_size: {type: 'number'}
     })
-  }
+  };
 }
 
 function strictObject (props, optional) {
@@ -94,7 +94,7 @@ function strictObject (props, optional) {
     additionalProperties: false,
     required: Object.keys(props),
     properties: Object.assign(props, optional)
-  }
+  };
 }
 
 
@@ -102,7 +102,7 @@ function alnum (length) {
   return {
     type: 'string',
     pattern: `^[a-zA-Z0-9]{${length}}`
-  }
+  };
 }
 
 
@@ -110,5 +110,5 @@ function hex (length) {
   return {
     type: 'string',
     pattern: `^[0-9a-f]{${length}}$`
-  }
+  };
 }

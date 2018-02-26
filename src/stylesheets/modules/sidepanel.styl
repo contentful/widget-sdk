@@ -1,3 +1,5 @@
+@require '../mixins/spinner'
+
 .nav-sidepanel-container
   z-index: 1000
   position: absolute
@@ -155,22 +157,81 @@
 
 .nav-sidepanel__spaces-header-heading
   font-weight: bold
+  margin-bottom: 6px
 
 .nav-sidepanel__space-list
   overflow-y: auto
-
-.nav-sidepanel__space-name
   color: $colors.text-mid
+
+.nav-sidepanel__space-icon svg
+  margin: 0 8px 0 20px
+  fill: $colors.text-lightest
+
+.nav-sidepanel__space-list-item
   cursor: pointer
-  padding: 8px 20px
   margin: 0
   transition: background-color 0.1s ease-in-out
+  padding: 8px 0
+
+  &:not(.nav-sidepanel__space-list-item--is-active):hover
+    background-color: $colors.element-light
 
   &--is-active
     background-color: $colors.element-mid
 
-  &:not(.nav-sidepanel__space-name--is-active):hover
+  &--is-open
     background-color: $colors.element-light
+
+    .nav-sidepanel__space-open-indicator
+      $triangle($color: $colors.text-lightest)
+      left: 0
+
+.nav-sidepanel__space-title
+  display: flex
+  align-items: center
+
+.nav-sidepanel__space-name
+  flex: 1 0 0
+  user-select: none
+
+.nav-sidepanel__space-open-indicator
+  margin-right: 20px
+  $triangle($direction: 'right', $color: $colors.text-lightest)
+  position: relative
+  left: 2px // for optical adjustment
+
+.nav-sidepanel__space-spinner
+  position: relative
+  margin-right: 20px
+  $spinner-base()
+  +$spinner-active(black, 14px, 2px)
+    display: block
+
+.nav-sidepanel__environments-list-item
+  margin: 0
+  padding: 4px 0 4px 40px
+  transition: background-color 0.1s ease-in-out
+  display: flex
+  align-items: center
+
+  svg
+    fill: $colors.text-lightest
+    margin-right: 8px
+
+  &:hover
+    background-color: $colors.element-mid
+
+  &--is-active
+    background-color: $colors.element-mid
+
+    svg
+      fill: $colors.orange-mid
+
+    &:first-child svg
+      fill: $colors.green-darkest
+
+  &:first-child
+    margin-top: 8px
 
 .nav-sidepanel__no-spaces
   padding: 20px 20px 28px

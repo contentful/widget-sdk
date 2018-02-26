@@ -137,7 +137,6 @@ function makeEnvironmentModel (environment) {
   return {
     id: environment.sys.id,
     isMaster: environment.sys.id === 'master',
-    name: environment.name,
     status,
     payload: environment
   };

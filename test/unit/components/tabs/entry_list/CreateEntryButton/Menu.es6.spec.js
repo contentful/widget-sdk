@@ -1,4 +1,4 @@
-import { createElement as h } from 'libs/react';
+import React from 'libs/react';
 import { mount } from 'libs/enzyme';
 import Highlighter from 'libs/react-highlight-words';
 import { noop, range } from 'lodash';
@@ -21,7 +21,7 @@ describe('CreateEntryMenu', () => {
       position: 'bottom',
       onSelect: noop
     };
-    wrapper = mount(h(Menu, props));
+    wrapper = mount(<Menu {...props} />);
   });
 
   afterEach(() => {

@@ -8,7 +8,6 @@ export default function render ({
   serverFailure,
   fields,
   inProgress,
-  config,
   SetFieldValue,
   CancelDialog,
   Submit
@@ -17,7 +16,7 @@ export default function render ({
     dataTestId: 'spaceEnvironmentsEditDialog'
   }, [
     h('header.modal-dialog__header', [
-      h('h1', [config.dialogTitle]),
+      h('h1', ['Add environment']),
       h('button.modal-dialog__close', {
         onClick: () => CancelDialog()
       })
@@ -30,7 +29,6 @@ export default function render ({
         : form({
           fields,
           inProgress,
-          config,
           Submit,
           SetFieldValue,
           CancelDialog
@@ -43,10 +41,6 @@ export default function render ({
 function form ({
   inProgress,
   fields,
-  config: {
-    submitLabel,
-    showIdField
-  },
   Submit,
   SetFieldValue,
   CancelDialog
@@ -58,18 +52,6 @@ function form ({
     }
   }, [
     formField({
-      label: 'Name',
-      labelHint: '(required)',
-      field: fields.name,
-      input: {
-        dataTestId: 'field.name',
-        type: 'text',
-        maxLength: '40'
-      },
-      hint: [ 'How the environment is referred to in the web app.' ],
-      SetFieldValue
-    }),
-    showIdField && formField({
       label: 'ID',
       labelHint: '(required)',
       field: fields.id,
@@ -83,7 +65,7 @@ function form ({
     }),
 
     dialogActions({
-      submitLabel,
+      submitLabel: 'Add environment',
       inProgress,
       CancelDialog
     })
@@ -115,13 +97,10 @@ function formField ({ label, labelHint, field, input, hint, SetFieldValue }) {
 
 function displayServerError ({ inProgress, CancelDialog, Submit }) {
   return h('div', [
-    h('.note-box--warning', {
-      role: 'alert',
-      dataTestId: 'pat.create.tokenGenerationFailed'
-    }, [
+    h('.note-box--warning', {role: 'alert'}, [
       h('h3', [ 'Whoops! something went wrong' ]),
       h('p', [
-        `The creation of the token has failed, probably due to a
+        `The creation of the environment has failed, probably due to a
         connection error. Please retry or `,
         linkOpen(['contact support'], Config.supportUrl),
         ' if the problem persists.'

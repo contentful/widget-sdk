@@ -186,7 +186,7 @@ function renderChosenProjectStatus () {
               'Check out the source code ',
               h('a', {
                 target: '_blank',
-                href: 'https://github.com/contentful?utf8=%E2%9C%93&q=product-catalogue&type=&language='
+                href: 'https://github.com/contentful?utf8=%E2%9C%93&q=the-example-app&type=&language='
               }, ['on GitHub'])
             ])
           ])
@@ -198,7 +198,7 @@ function renderChosenProjectStatus () {
           chosenProjectList([
             'Download a boilerplate in the API section',
             'Add a blank space from the main menu',
-            'Make your first API call with sample content'
+            'Make your first API call to fetch your content'
           ])
         ])
       ])

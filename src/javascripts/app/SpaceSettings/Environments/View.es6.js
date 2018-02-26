@@ -4,7 +4,7 @@ import pageSettingsIcon from 'svg/page-settings';
 import { caseofEq } from 'libs/sum-types';
 
 import { h } from 'ui/Framework';
-import { linkOpen, badge, codeFragment, docsLink, stateLink } from 'ui/Content';
+import { linkOpen, badge, codeFragment, docsLink } from 'ui/Content';
 import { table, tr, td, th } from 'ui/Content/Table';
 import { container, hbox, vspace, ihspace } from 'ui/Layout';
 import * as Workbench from 'app/Workbench';
@@ -52,7 +52,7 @@ function environmentList ({
 
   if (loadingError) {
     return h('.note-box--warning', [
-      `The list of tokens failed to load, try refreshing the page. If
+      `The list of environments failed to load, try refreshing the page. If
       the problem persists `, linkOpen(['contact support'], Config.supportUrl)
     ]);
   } else {
@@ -90,9 +90,8 @@ function environmentTable (environments) {
 
   return table(
     [
-      th({ style: { width: '35%' } }, ['Name']),
-      th({ style: { width: '25%' } }, ['ID']),
-      th({ style: { width: '25%' } }, ['Status']),
+      th({ style: { width: '50%' } }, ['ID']),
+      th({ style: { width: '30%' } }, ['Status']),
       th({ style: { width: '9em' } }, ['Actions'])
     ], environments.map((environment) => {
       return tr({
@@ -100,15 +99,12 @@ function environmentTable (environments) {
         dataTestId: `environment.${environment.id}`
       }, [
         td([
-          environment.name,
-          ihspace('1.2em'),
-          environment.isMaster && badge({ color: Colors.textLight }, ['Default environment'])
-        ]),
-        td([
           hbox([
             codeFragment([ environment.id ]),
             ihspace('6px'),
-            h(CopyIconButton, { value: environment.id })
+            h(CopyIconButton, { value: environment.id }),
+            ihspace('1.2em'),
+            environment.isMaster && badge({ color: Colors.textLight }, ['Default environment'])
           ])
         ]),
         td([
@@ -129,14 +125,6 @@ function environmentTable (environments) {
           ])
         ]),
         td([
-          environment.status === 'ready' && stateLink(['Open'], {
-            path: 'spaces.detail.environment',
-            params: {environmentId: environment.id},
-            options: {reload: true}
-          }),
-          environment.status === 'ready' && ihspace('1.2em'),
-          editButton(environment),
-          ihspace('1.2em'),
           deleteButton(environment)
         ])
       ]);
@@ -156,14 +144,6 @@ function questionMarkWithTooltip ({ tooltip }) {
   ]);
 }
 
-
-function editButton (environment) {
-  return h('button.text-link', {
-    dataTestId: 'openEditDialog',
-    disabled: environment.isMaster || environment.status !== 'ready',
-    onClick: environment.Edit
-  }, [ 'Edit' ]);
-}
 
 function deleteButton (environment) {
   return h('button.text-link--destructive', {

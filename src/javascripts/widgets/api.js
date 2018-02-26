@@ -218,7 +218,7 @@ angular.module('contentful')
         }
         return apiClient[methodName].apply(apiClient, args)
         .then(function (entity) {
-          if (entity.sys.type === 'Entry' && entryAction) {
+          if (_.get(entity, ['sys', 'type']) === 'Entry' && entryAction) {
             Analytics.track('entry:' + entryAction, {
               eventOrigin: 'ui-extension',
               contentType: contentType,

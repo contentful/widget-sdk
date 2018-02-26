@@ -4,7 +4,7 @@ import PropTypes from 'libs/prop-types';
 import {runTask} from 'utils/Concurrent';
 import {createEndpoint as createOrgEndpoint} from 'access_control/OrganizationMembershipRepository';
 import {getPlansWithSpaces} from 'account/pricing/PricingDataProvider';
-import {supportUrl} from 'Config';
+import * as Intercom from 'intercom';
 import {getOrganization} from 'services/TokenStore';
 import {isOwnerOrAdmin} from 'services/OrganizationRoles';
 import * as ReloadNotification from 'ReloadNotification';
@@ -15,14 +15,16 @@ import svgPlus from 'svg/plus';
 import {asReact} from 'ui/Framework/DOMRenderer';
 import moment from 'moment';
 import {get, isString} from 'lodash';
-
-const subscriptionOverviewPropTypes = {
-  onReady: PropTypes.func.isRequired,
-  onForbidden: PropTypes.func.isRequired,
-  orgId: PropTypes.string.isRequired
-};
+import {supportUrl} from 'Config';
+import $location from '$location';
+import Workbench from 'app/WorkbenchReact';
 
 const SubscriptionOverview = createReactClass({
+  propTypes: {
+    onReady: PropTypes.func.isRequired,
+    onForbidden: PropTypes.func.isRequired,
+    orgId: PropTypes.string.isRequired
+  },
   getInitialState: function () {
     return {
       basePlan: {},
@@ -63,39 +65,34 @@ const SubscriptionOverview = createReactClass({
       showCreateSpaceModal(this.props.orgId);
     }
   },
+  contactUs: function () {
+    // Open intercom if it's possible, otherwise go to support page.
+    if (Intercom.isEnabled()) {
+      Intercom.open();
+    } else {
+      $location.url(supportUrl);
+    }
+  },
   render: function () {
     const {basePlan, spacePlans, canCreateSpace} = this.state;
     const {orgId} = this.props;
 
-    return h('div', {className: 'workbench'},
-      h('div', {className: 'workbench-header__wrapper'},
-        h('header', {className: 'workbench-header'},
-          h('div', {className: 'workbench-header__icon'}), /* TODO missing icon */
-          h('h1', {className: 'workbench-header__title'}, 'Subscription')
-        )
-      ),
-      h('div', {className: 'workbench-main'},
-        h('div', {
-          className: 'workbench-main__content',
-          style: {padding: '1.2rem 2rem'}
-        },
+    return h(Workbench, {
+      title: 'Subscription',
+      content: h('div', {
+        style: {padding: '0 2rem'}
+      },
           h(BasePlan, {basePlan, orgId}),
           h(SpacePlans, {spacePlans, orgId})
         ),
-        h('div', {
-          className: 'workbench-main__sidebar'
-        },
-          h(RightSidebar, {
-            canCreateSpace,
-            onCreateSpace: this.createSpace
-          })
-        )
-      )
-    );
+      sidebar: h(RightSidebar, {
+        canCreateSpace,
+        onCreateSpace: this.createSpace,
+        onContactUs: this.contactUs
+      })
+    });
   }
 });
-
-SubscriptionOverview.propTypes = subscriptionOverviewPropTypes;
 
 function BasePlan ({basePlan, orgId}) {
   const enabledFeatures = getEnabledFeatures(basePlan);
@@ -177,7 +174,7 @@ function SpacePlans ({spacePlans, orgId}) {
   );
 }
 
-function RightSidebar ({onCreateSpace, canCreateSpace}) {
+function RightSidebar ({onCreateSpace, canCreateSpace, onContactUs}) {
   return h('div', {className: 'entity-sidebar'},
     h('p', {className: 'entity-sidebar__help-text'},
       h('button', {
@@ -195,7 +192,7 @@ function RightSidebar ({onCreateSpace, canCreateSpace}) {
       'Don’t hesitate to talk to our customer success team.'
     ),
     h('p', {className: 'entity-sidebar__help-text'},
-      h('a', {href: supportUrl}, 'Get in touch with us')
+      h('button', {className: 'btn-link', onClick: onContactUs}, 'Get in touch with us')
     )
   );
 }

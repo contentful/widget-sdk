@@ -12,7 +12,8 @@ describe('shouldUseEnvEndpoint', function () {
       ['assets', 'aid'],
       'ui_config',
       ['ui_config', '/me'],
-      'extensions'
+      'extensions',
+      'locales'
     ].forEach(path => {
       expect(shouldUseEnvEndpoint(path)).toBe(true);
     });
