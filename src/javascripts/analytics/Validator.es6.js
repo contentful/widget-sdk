@@ -51,7 +51,7 @@ export const validEvents = {
   // https://contentful.atlassian.net/wiki/display/PROD/Bulk+references+editor+-+Tracking+specs
   bulk_editor: ['add', 'open', 'close', 'status', 'action'],
   content_type: ['create'],
-  entry: ['create'],
+  entry: ['create', 'publish'],
   asset: ['create'],
   api_key: ['create', 'clipboard_copy', 'boilerplate'],
   invite_user: ['learn', 'create_space'],

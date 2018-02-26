@@ -94,6 +94,7 @@ export function track (eventName, data) {
  * @name analytics/snowplow/Snowplow#buildUnstructEventData
  * @param {string} eventName
  * @param {object} data
+ * @returns {object[]|undefined}
  *
  * @description
  * Builds an unstructured event for Snowplow. All our current events that reach
