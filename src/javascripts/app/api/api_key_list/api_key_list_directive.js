@@ -20,11 +20,12 @@ angular.module('contentful')
   var notification = require('notification');
   var ResourceUtils = require('utils/ResourceUtils');
   var createResourceService = require('services/ResourceService').default;
+  var $q = require('$q');
 
+  var organization = spaceContext.organizationContext.organization;
   var resources = createResourceService(spaceContext.getId());
 
   var disableCreateApiKey = accessChecker.shouldDisable('createApiKey');
-
   $scope.showCreateApiKey = !accessChecker.shouldHide('createApiKey');
 
   $scope.context.ready = false;
@@ -60,25 +61,27 @@ angular.module('contentful')
     return spaceContext.apiKeyRepo.create(spaceName)
     .then(function (apiKey) {
       return $state.go('spaces.detail.api.keys.detail', {apiKeyId: apiKey.sys.id});
-    }, function () {
-      notification.error('Unable to create API key');
+    }, function (err) {
+      notification.error(err.data.message);
     });
   }
 
-  spaceContext.apiKeyRepo.getAll()
-  .then(function (apiKeys) {
-    $scope.apiKeys = apiKeys;
+  $q.all({
+    apiKeys: spaceContext.apiKeyRepo.getAll(),
+    resource: resources.get('apiKey'),
+    legacy: ResourceUtils.useLegacy(organization)
+  }).then(function (result) {
+    $scope.apiKeys = result.apiKeys;
     $scope.empty = _.isEmpty($scope.apiKeys);
 
-    return resources.get('apiKey');
-  })
-  .then(function (resource) {
-    var canCreate = ResourceUtils.canCreate(resource);
-    var limits = ResourceUtils.getResourceLimits(resource);
+    var canCreate = ResourceUtils.canCreate(result.resource);
+    var limits = ResourceUtils.getResourceLimits(result.resource);
+
+    $scope.legacy = result.legacy;
+    $scope.limit = limits.maximum;
+    $scope.usage = result.resource.usage;
+    $scope.reachedLimit = !canCreate;
 
     $scope.context.ready = true;
-    $scope.limit = limits.maximum;
-    $scope.reachedLimit = !canCreate;
-  }, accessChecker.wasForbidden($scope.context))
-  .catch(ReloadNotification.apiErrorHandler);
+  }).catch(ReloadNotification.apiErrorHandler);
 }]);
