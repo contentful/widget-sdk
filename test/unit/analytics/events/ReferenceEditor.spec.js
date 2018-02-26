@@ -83,7 +83,8 @@ describe('ReferenceEditor', function () {
         'reference_editor:toggle_inline_editor',
         {
           locales_count: 1,
-          toggle_state: false
+          toggle_state: false,
+          widgets_count: 2
         }
       );
     });

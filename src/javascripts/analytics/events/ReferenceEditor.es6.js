@@ -16,10 +16,12 @@ export function onEntryEdit ({ contentType }) {
   });
 }
 
-export function onToggleInlineEditor ({ toggleState }) {
+export function onToggleInlineEditor ({ contentType, toggleState }) {
+  const { widgets_count: widgetsCount } = getContentTypeInfo(contentType);
   track('reference_editor:toggle_inline_editor', {
     ...getLocalesInfo(),
-    ...getToggleState(toggleState)
+    ...getToggleState(toggleState),
+    widgets_count: widgetsCount
   });
 }
 
