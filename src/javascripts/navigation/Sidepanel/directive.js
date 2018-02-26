@@ -175,6 +175,11 @@ angular.module('contentful')
       }
 
       function setCurrOrg (org) {
+        // Collapse environment list if changing organization
+        if (_.get(state, ['currOrg', 'sys', 'id']) !== _.get(org, ['sys', 'id'])) {
+          state = assign(state, {openedSpaceId: null});
+        }
+
         state = assign(state, {currOrg: org});
         refreshPermissions(navState, org);
         render();
