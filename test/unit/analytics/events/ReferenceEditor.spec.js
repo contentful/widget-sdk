@@ -82,9 +82,11 @@ describe('ReferenceEditor', function () {
         this.analytics.track,
         'reference_editor:toggle_inline_editor',
         {
+          fields_count: 2,
           locales_count: 1,
-          toggle_state: false,
-          widgets_count: 2
+          localized_fields_count: 1,
+          widgets_count: 2,
+          toggle_state: false
         }
       );
     });

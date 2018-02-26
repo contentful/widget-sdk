@@ -17,11 +17,10 @@ export function onEntryEdit ({ contentType }) {
 }
 
 export function onToggleInlineEditor ({ contentType, toggleState }) {
-  const { widgets_count: widgetsCount } = getContentTypeInfo(contentType);
   track('reference_editor:toggle_inline_editor', {
     ...getLocalesInfo(),
     ...getToggleState(toggleState),
-    widgets_count: widgetsCount
+    ...getContentTypeInfo(contentType)
   });
 }
 
