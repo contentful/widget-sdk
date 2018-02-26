@@ -8,7 +8,6 @@ angular.module('contentful')
 .factory('makeNavBar', ['require', function (require) {
   var template = require('navigation/SpaceNavTemplate').default;
   var spaceContext = require('spaceContext');
-  var LD = require('utils/LaunchDarkly');
   var TokenStore = require('services/TokenStore');
 
   return function (useSpaceEnv, canAccessSection) {
@@ -17,16 +16,12 @@ angular.module('contentful')
       restrict: 'E',
       scope: {},
       controllerAs: 'nav',
-      controller: ['$stateParams', '$scope', function ($stateParams, $scope) {
+      controller: ['$stateParams', function ($stateParams) {
         var controller = this;
         var orgId = spaceContext.organizationContext.organization.sys.id;
 
         controller.spaceId = $stateParams.spaceId;
         controller.canNavigateTo = canNavigateTo;
-
-        LD.onFeatureFlag($scope, 'feature-dv-11-2017-environments', function (environmentsEnabled) {
-          controller.environmentsEnabled = environmentsEnabled;
-        });
 
         TokenStore.getOrganization(orgId).then(function (org) {
           controller.usageEnabled = org.pricingVersion === 'pricing_version_2';
@@ -58,4 +53,29 @@ angular.module('contentful')
   return makeNavBar(true, function (section) {
     return section !== 'spaceHome';
   });
+}])
+
+.directive('cfSpaceNavBarWrapped', ['require', function (require) {
+  var LD = require('utils/LaunchDarkly');
+  var spaceContext = require('spaceContext');
+
+  return {
+    scope: {},
+    restrict: 'E',
+    controller: ['$scope', function ($scope) {
+      $scope.$watch(function () {
+        return !!spaceContext.getData(['spaceMembership', 'admin']);
+      }, function (isAdmin) {
+        $scope.isAdmin = isAdmin;
+      });
+
+      LD.onFeatureFlag($scope, 'feature-dv-11-2017-environments', function (environmentsEnabled) {
+        $scope.environmentsEnabled = environmentsEnabled;
+      });
+    }],
+    template: [
+      '<cf-space-env-nav-bar ng-if=" isAdmin &&  environmentsEnabled" />',
+      '<cf-space-nav-bar     ng-if="!isAdmin || !environmentsEnabled" />'
+    ].join('')
+  };
 }]);
