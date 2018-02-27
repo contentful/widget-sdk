@@ -54,7 +54,7 @@
     "moment": "^2.19.3",
     "nib": "^1.0.3",
     "node-html-encoder": "0.0.2",
-    "pegjs": "^0.8.0",
+    "pegjs": "^0.10.0",
     "pikaday": "^1.4.0",
     "pluralize": "^7.0.0",
     "promise": "^6.0.1",
