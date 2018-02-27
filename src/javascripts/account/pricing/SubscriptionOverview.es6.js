@@ -5,8 +5,8 @@ import {runTask} from 'utils/Concurrent';
 import {createOrganizationEndpoint} from 'data/EndpointFactory';
 import {getPlansWithSpaces} from 'account/pricing/PricingDataProvider';
 import * as Intercom from 'intercom';
-import {getOrganization} from 'services/TokenStore';
-import {isOwnerOrAdmin} from 'services/OrganizationRoles';
+import {getSpaces, getOrganization} from 'services/TokenStore';
+import {isOwnerOrAdmin, isOwner} from 'services/OrganizationRoles';
 import * as ReloadNotification from 'ReloadNotification';
 import {href} from 'states/Navigator';
 import {showDialog as showCreateSpaceModal} from 'services/CreateSpace';
@@ -16,6 +16,7 @@ import {get, isString} from 'lodash';
 import {supportUrl} from 'Config';
 import $location from '$location';
 import Workbench from 'app/WorkbenchReact';
+import Tooltip from 'ui/Components/Tooltip';
 import {joinAnd} from 'stringUtils';
 
 const SubscriptionOverview = createReactClass({
@@ -37,14 +38,15 @@ const SubscriptionOverview = createReactClass({
   fetchData: function* () {
     const {orgId, onReady, onForbidden} = this.props;
 
-    const org = yield getOrganization(orgId);
-    if (!isOwnerOrAdmin(org)) {
+    const organization = yield getOrganization(orgId);
+    if (!isOwnerOrAdmin(organization)) {
       onForbidden();
       return;
     }
 
     const endpoint = createOrganizationEndpoint(orgId);
     const plans = yield getPlansWithSpaces(endpoint).catch(ReloadNotification.apiErrorHandler);
+    const accessibleSpaces = yield getSpaces(); // spaces that current user has access to
 
     onReady();
 
@@ -54,11 +56,19 @@ const SubscriptionOverview = createReactClass({
       .sort((plan1, plan2) => {
         const [name1, name2] = [plan1, plan2].map((plan) => get(plan, 'space.name', ''));
         return name1.localeCompare(name2);
+      })
+      // Set space.isAccessible to check if current user can go to space details.
+      .map((plan) => {
+        if (plan.space) {
+          plan.space.isAccessible = !!accessibleSpaces.find((space) => space.sys.id === plan.space.sys.id);
+        }
+        return plan;
       });
-    // TODO add user fees
-    const grandTotal = calculateTotalPrice(spacePlans);
 
-    this.setState({basePlan, spacePlans, grandTotal});
+    // TODO add user fees
+    const grandTotal = calculateTotalPrice(plans.items);
+
+    this.setState({basePlan, spacePlans, grandTotal, organization});
   },
   createSpace: function () {
     showCreateSpaceModal(this.props.orgId);
@@ -78,7 +88,7 @@ const SubscriptionOverview = createReactClass({
     }
   },
   render: function () {
-    const {basePlan, spacePlans, grandTotal} = this.state;
+    const {basePlan, spacePlans, grandTotal, organization} = this.state;
     const {orgId} = this.props;
 
     return h(Workbench, {
@@ -90,7 +100,8 @@ const SubscriptionOverview = createReactClass({
           h(SpacePlans, {
             spacePlans,
             onCreateSpace: this.createSpace,
-            onDeleteSpace: this.deleteSpace
+            onDeleteSpace: this.deleteSpace,
+            isOrgOwner: isOwner(organization)
           })
         ),
       sidebar: h(RightSidebar, {
@@ -114,7 +125,7 @@ function BasePlan ({basePlan}) {
   );
 }
 
-function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace}) {
+function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
   if (!spacePlans.length) {
     return h('div', null,
       h('h2', null, 'Spaces'),
@@ -150,15 +161,20 @@ function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace}) {
           )
         ),
         h('tbody', {className: 'clickable'}, spacePlans.map(
-          (plan) => h(SpacePlanRow, {plan, key: plan.sys.id, onDeleteSpace})
+          (plan) => h(SpacePlanRow, {
+            key: plan.sys.id,
+            plan,
+            onDeleteSpace,
+            isOrgOwner
+          })
         ))
       )
     );
   }
 }
 
-function SpacePlanRow ({plan, onDeleteSpace}) {
-  const actionLinkStyle = {padding: '0 20px 0 0', display: 'inline'};
+function SpacePlanRow ({plan, onDeleteSpace, isOrgOwner}) {
+  const actionLinkStyle = {padding: '0 10px 0 0', display: 'inline'};
   const {name, price, space} = plan;
   const enabledFeatures = getEnabledFeatures(plan);
   let createdBy = '';
@@ -170,16 +186,35 @@ function SpacePlanRow ({plan, onDeleteSpace}) {
   if (space) {
     createdBy = getUserName(space.sys.createdBy || {});
     createdAt = moment.utc(space.sys.createdAt).format('DD/MM/YYYY');
-    spaceLink = h('a', {
-      href: href(getSpaceNavState(space.sys.id)),
-      style: actionLinkStyle
-    }, 'Go to space');
+    if (space.isAccessible) {
+      spaceLink = h('a', {
+        className: 'text-link',
+        href: href(getSpaceNavState(space.sys.id)),
+        style: actionLinkStyle
+      }, 'Go to space');
+    } else {
+      spaceLink = h(Tooltip, {
+        element: h('button', {
+          className: 'text-link',
+          disabled: true
+        }, 'Go to space'),
+        tooltip: h('div', {style: {whiteSpace: 'normal'}},
+          'You don’t have access to this space. But since you’re an organization ',
+          `${isOrgOwner ? 'owner' : 'admin'} you can grant yourself access by going to `,
+          h('i', null, 'users'),
+          ' and adding yourself to the space.'
+        ),
+        options: {width: 400},
+        style: actionLinkStyle
+      });
+    }
     usageLink = h('a', {
+      className: 'text-link',
       href: href(getSpaceUsageNavState(space.sys.id)),
       style: actionLinkStyle
     }, 'Usage');
     deleteLink = h('button', {
-      className: 'btn-link',
+      className: 'text-link text-link--destructive',
       style: actionLinkStyle,
       onClick: () => onDeleteSpace(space)
     }, 'Delete');
@@ -209,7 +244,10 @@ function RightSidebar ({grandTotal, orgId, onContactUs}) {
       ' per month.'
     ),
     h('p', {className: 'entity-sidebar__help-text'},
-      h('a', {href: href(getInvoiceNavState(orgId))}, 'View invoices')
+      h('a', {
+        className: 'text-link',
+        href: href(getInvoiceNavState(orgId))
+      }, 'View invoices')
     ),
     h('div', {className: 'note-box--info'},
       h('p', null,
@@ -224,7 +262,7 @@ function RightSidebar ({grandTotal, orgId, onContactUs}) {
       'success team.'
     ),
     h('p', {className: 'entity-sidebar__help-text'},
-      h('button', {className: 'btn-link', onClick: onContactUs},
+      h('button', {className: 'text-link', onClick: onContactUs},
         'Get in touch with us'
       )
     )

@@ -151,7 +151,7 @@ export function organizationRole (orgRole, isOwner, updateOrgRole) {
                   marginLeft: '-100px'
                 }
               }, [
-                h('.tooltip-arrow', {style: {left: '50%'}}),
+                h('.tooltip-arrow'),
                 h('.tooltip-inner', [role.description])
               ])
             ])
