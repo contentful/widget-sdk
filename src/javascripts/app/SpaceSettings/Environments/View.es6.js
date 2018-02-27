@@ -4,7 +4,7 @@ import pageSettingsIcon from 'svg/page-settings';
 import { caseofEq } from 'libs/sum-types';
 
 import { h } from 'ui/Framework';
-import { linkOpen, badge, codeFragment, docsLink } from 'ui/Content';
+import { linkOpen, badge, codeFragment } from 'ui/Content';
 import { table, tr, td, th } from 'ui/Content/Table';
 import { container, hbox, vspace, ihspace } from 'ui/Layout';
 import * as Workbench from 'app/Workbench';
@@ -172,7 +172,12 @@ function sidebar ({ OpenCreateDialog }) {
       h('ul', [
         h('li', [
           'Read more in the ',
-          docsLink('space environments documentation', 'spaceEnvironments'), '.'
+          h('a', {
+            href: 'http://ctf-doc-app-branch-environments.netlify.com/developers/docs/concepts/domain-model/',
+            target: '_blank',
+            rel: 'noopener'
+          }, ['Contentful domain model']),
+          ' document.'
         ])
       ])
     ])
