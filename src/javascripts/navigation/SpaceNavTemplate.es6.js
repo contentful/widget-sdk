@@ -1,8 +1,8 @@
 import navBar from 'navigation/templates/NavBar';
 
-export default function spaceNavTemplate (useSpaceEnv) {
+export default function spaceNavTemplate (useSpaceEnv, isMaster) {
   const makeRef = (spaceRef) => {
-    if (useSpaceEnv) {
+    if (useSpaceEnv && !isMaster) {
       return `spaces.detail.environment.${spaceRef}`;
     } else {
       return `spaces.detail.${spaceRef}`;
@@ -122,17 +122,16 @@ export default function spaceNavTemplate (useSpaceEnv) {
   ];
 
   return navBar([
-    {
-      if: 'nav.canNavigateTo("spaceHome") && !nav.envId',
+    isMaster ? {
+      if: 'nav.canNavigateTo("spaceHome")',
       sref: 'spaces.detail.home',
       dataViewType: 'space-home',
       icon: 'nav-home',
       title: 'Space home'
-    },
-    {
+    } : {
       disabled: true,
       tooltip: 'The space home is only available in the master environment.',
-      if: 'nav.canNavigateTo("spaceHome") && nav.envId',
+      if: 'nav.canNavigateTo("spaceHome")',
       icon: 'nav-home',
       title: 'Space home'
     },

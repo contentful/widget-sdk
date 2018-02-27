@@ -11,9 +11,9 @@ angular.module('contentful')
   var TokenStore = require('services/TokenStore');
   var accessChecker = require('access_control/AccessChecker');
 
-  return function (useSpaceEnv) {
+  return function (useSpaceEnv, isMaster) {
     return {
-      template: template(useSpaceEnv),
+      template: template(useSpaceEnv, isMaster),
       restrict: 'E',
       scope: {},
       controllerAs: 'nav',
@@ -22,7 +22,6 @@ angular.module('contentful')
         var orgId = spaceContext.organizationContext.organization.sys.id;
 
         controller.spaceId = $stateParams.spaceId;
-        controller.envId = $stateParams.environmentId;
         controller.canNavigateTo = canNavigateTo;
 
         TokenStore.getOrganization(orgId).then(function (org) {
@@ -51,6 +50,10 @@ angular.module('contentful')
   return makeNavBar(true);
 }])
 
+.directive('cfSpaceMasterNavBar', ['makeNavBar', function (makeNavBar) {
+  return makeNavBar(true, true);
+}])
+
 .directive('cfSpaceNavBarWrapped', ['require', function (require) {
   var LD = require('utils/LaunchDarkly');
   var spaceContext = require('spaceContext');
@@ -68,10 +71,17 @@ angular.module('contentful')
       LD.onFeatureFlag($scope, 'feature-dv-11-2017-environments', function (environmentsEnabled) {
         $scope.environmentsEnabled = environmentsEnabled;
       });
+
+      $scope.$watch(function () {
+        return spaceContext.getEnvironmentId();
+      }, function (envId) {
+        $scope.isMaster = envId === 'master';
+      });
     }],
     template: [
-      '<cf-space-env-nav-bar ng-if=" isAdmin &&  environmentsEnabled" />',
-      '<cf-space-nav-bar     ng-if="!isAdmin || !environmentsEnabled" />'
+      '<cf-space-master-nav-bar ng-if=" isAdmin &&  environmentsEnabled &&  isMaster" />',
+      '<cf-space-env-nav-bar    ng-if=" isAdmin &&  environmentsEnabled && !isMaster" />',
+      '<cf-space-nav-bar        ng-if="!isAdmin || !environmentsEnabled             " />'
     ].join('')
   };
 }]);
