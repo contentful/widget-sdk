@@ -47,7 +47,7 @@ export default function spaceNavTemplate (useSpaceEnv) {
       reload: useSpaceEnv
     },
     environments: {
-      if: 'nav.environmentsEnabled && nav.canNavigateTo("settings")',
+      if: 'nav.canNavigateTo("settings")',
       sref: 'spaces.detail.settings.environments',
       dataViewType: 'spaces-settings-environments',
       title: 'Environments',
@@ -109,12 +109,11 @@ export default function spaceNavTemplate (useSpaceEnv) {
     dropdownItems.usage
   ];
 
-  const masterSettingsDropdown = [
+  const spaceSettingsDropdown = [
     dropdownItems.settings,
     dropdownItems.locales,
     dropdownItems.users,
     dropdownItems.roles,
-    dropdownItems.environments,
     dropdownItems.keys,
     dropdownItems.webhooks,
     dropdownItems.extensions,
@@ -124,9 +123,16 @@ export default function spaceNavTemplate (useSpaceEnv) {
 
   return navBar([
     {
-      if: 'nav.canNavigateTo("spaceHome")',
+      if: 'nav.canNavigateTo("spaceHome") && !nav.envId',
       sref: 'spaces.detail.home',
       dataViewType: 'space-home',
+      icon: 'nav-home',
+      title: 'Space home'
+    },
+    {
+      disabled: true,
+      tooltip: 'The space home is only available in the master environment.',
+      if: 'nav.canNavigateTo("spaceHome") && nav.envId',
       icon: 'nav-home',
       title: 'Space home'
     },
@@ -160,7 +166,7 @@ export default function spaceNavTemplate (useSpaceEnv) {
       rootSref: makeRef('settings'),
       icon: 'nav-settings',
       title: useSpaceEnv ? 'Settings' : 'Space settings',
-      children: useSpaceEnv ? envSettingsDropdown : masterSettingsDropdown
+      children: useSpaceEnv ? envSettingsDropdown : spaceSettingsDropdown
     }
   ]);
 }
