@@ -11,7 +11,7 @@ import $state from '$state';
 import * as BulkAssetsCreator from 'services/BulkAssetsCreator';
 
 export function create (editor, locale, defaultLocaleCode) {
-  const localeCode = locale.code;
+  const localeCode = locale.internal_code;
   const fallbackCode = locale.fallbackCode;
   const advancedActions = {
     link: link,
