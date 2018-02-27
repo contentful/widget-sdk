@@ -122,7 +122,7 @@ export default function spaceNavTemplate (useSpaceEnv, isMaster) {
   ];
 
   return navBar([
-    isMaster ? {
+    (!useSpaceEnv || isMaster) ? {
       if: 'nav.canNavigateTo("spaceHome")',
       sref: 'spaces.detail.home',
       dataViewType: 'space-home',
