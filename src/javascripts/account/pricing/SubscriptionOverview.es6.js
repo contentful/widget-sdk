@@ -211,12 +211,22 @@ function RightSidebar ({grandTotal, orgId, onContactUs}) {
     h('p', {className: 'entity-sidebar__help-text'},
       h('a', {href: href(getInvoiceNavState(orgId))}, 'View invoices')
     ),
+    h('div', {className: 'note-box--info'},
+      h('p', null,
+        'Note that the monthly invoice amount might deviate from the total shown ' +
+        'above. This happens when you hit overages or make changes to your ' +
+        'subscription during a billing cycle.'
+      )
+    ),
     h('h2', {className: 'entity-sidebar__heading'}, 'Need help?'),
     h('p', {className: 'entity-sidebar__help-text'},
-      'Do you need to up- or downgrade? Don’t hesitate to talk to our customer success team.'
+      'Do you need to up- or downgrade? Don’t hesitate to talk to our customer ' +
+      'success team.'
     ),
     h('p', {className: 'entity-sidebar__help-text'},
-      h('button', {className: 'btn-link', onClick: onContactUs}, 'Get in touch with us')
+      h('button', {className: 'btn-link', onClick: onContactUs},
+        'Get in touch with us'
+      )
     )
   );
 }
@@ -228,7 +238,10 @@ function Price ({value = 0, currency = '$', unit = null, style = null}) {
 }
 
 function calculateTotalPrice (subscriptionPlans) {
-  return subscriptionPlans.reduce((total, plan) => total + parseInt(plan.price, 10), 0);
+  return subscriptionPlans.reduce(
+    (total, plan) => total + parseInt(plan.price, 10),
+    0
+  );
 }
 
 function getEnabledFeatures ({ratePlanCharges = []}) {
