@@ -19,11 +19,14 @@ angular.module('contentful')
   var $state = require('$state');
   var accessChecker = require('access_control/AccessChecker');
   var ResourceUtils = require('utils/ResourceUtils');
+
   var $q = require('$q');
 
   var ResourceService = require('services/ResourceService').default;
 
   var organization = spaceContext.organizationContext.organization;
+  var canUpgrade = require('services/OrganizationRoles').isOwnerOrAdmin(organization);
+
   var resources = ResourceService(spaceContext.getId());
   var resource;
 
@@ -42,6 +45,7 @@ angular.module('contentful')
   _.extend($scope, STATES);
 
   $scope.accountUpgradeState = TheAccountView.getSubscriptionState();
+  $scope.canUpgrade = canUpgrade;
 
   $scope.locales = [];
   $scope.localeNamesByCode = {};
@@ -54,8 +58,9 @@ angular.module('contentful')
   .then(function (locales) {
     $scope.locales = locales;
     $scope.localeNamesByCode = groupLocaleNamesByCode(locales);
-    return getLocalesUsageState().then(function (value) {
-      $scope.localesUsageState = value;
+
+    return getLocalesUsageState().then(function (state) {
+      $scope.localesUsageState = state;
     });
   })
   .catch(ReloadNotification.apiErrorHandler);

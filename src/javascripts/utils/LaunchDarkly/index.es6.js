@@ -205,7 +205,7 @@ function buildLDUser (user, currOrg, spacesByOrg, currSpace) {
 
   let customData = {
     currentOrgId: orgId,
-    currentOrgSubscriptionStatus: currOrg.subscription.status,
+    currentOrgSubscriptionStatus: get(currOrg, 'subscription.status'),
     currentOrgPlanIsEnterprise: isOrgPlanEnterprise(currOrg),
     currentOrgHasSpace: !!get(spacesByOrg[orgId], 'length', 0),
     currentOrgPricingVersion: currOrg.pricingVersion,

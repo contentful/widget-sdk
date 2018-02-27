@@ -32,6 +32,7 @@ angular.module('cf.app')
   var getStore = require('TheStore').getStore;
   var spaceContext = require('spaceContext');
   var LD = require('utils/LaunchDarkly');
+  var trackInlineEditorToggle = require('analytics/events/ReferenceEditor').onToggleInlineEditor;
 
   return {
     restrict: 'E',
@@ -114,6 +115,11 @@ angular.module('cf.app')
           newVal
         ]);
         store.set(ctExpandedStoreKey, newVal);
+
+        trackInlineEditorToggle({
+          contentType: $scope.editorData.contentType,
+          toggleState: newVal
+        });
       }
 
       function isLocaleFieldExpanded (locale) {
