@@ -31,7 +31,7 @@ angular.module('contentful')
   var Analytics = require('analytics/Analytics');
   var spaceContext = require('spaceContext');
   var spaceTemplateEvents = require('analytics/events/SpaceCreation');
-  var createOrgEndpoint = require('access_control/OrganizationMembershipRepository').createEndpoint;
+  var createOrgEndpoint = require('data/EndpointFactory').createOrganizationEndpoint;
   var createResourceService = require('services/ResourceService').default;
   var getSpaceRatePlans = require('account/pricing/PricingDataProvider').getSpaceRatePlans;
   var ResourceUtils = require('utils/ResourceUtils');

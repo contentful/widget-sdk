@@ -3,7 +3,7 @@ import * as OrganizationRoles from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
 import * as K from 'utils/kefir';
 import {get, camelCase} from 'lodash';
-import {createEndpoint as createOrgEndpoint} from 'access_control/OrganizationMembershipRepository';
+import {createOrganizationEndpoint} from 'data/EndpointFactory';
 import {getEnabledOrgFeatures} from 'account/pricing/PricingDataProvider';
 // TODO prevent circular ref
 import require from 'require';
@@ -85,7 +85,7 @@ function loadOrgFeatures (organization) {
     if (useFeaturesApi || organization.pricingVersion === 'pricing_version_2') {
       // Get enabled features from API if feature flag is on, or if token
       // doesn't have features because of new pricing version.
-      const orgEndpoint = createOrgEndpoint(organization.sys.id);
+      const orgEndpoint = createOrganizationEndpoint(organization.sys.id);
       return getEnabledOrgFeatures(orgEndpoint)
         .then((items) => items.map(({internalName}) => camelCase(internalName)))
         .catch((err) => {
