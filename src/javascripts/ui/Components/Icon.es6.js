@@ -9,13 +9,15 @@ import QuestionMarkIcon from 'svg/QuestionMarkIcon';
 import SubscriptionIcon from 'svg/subscription';
 import PageMediaIcon from 'svg/page-media';
 import ContentStructureGraphIcon from 'svg/content-structure-graph';
+import TeaScreenshotIcon from 'svg/tea-screenshot';
 
 const SVGS = {
   'home-welcome': HomeWelcomeIcon,
   'page-media': PageMediaIcon,
   'question-mark': QuestionMarkIcon(),
   'subscription': SubscriptionIcon,
-  'content-structure-graph': ContentStructureGraphIcon
+  'content-structure-graph': ContentStructureGraphIcon,
+  'tea-screenshot': TeaScreenshotIcon
 };
 
 const Icon = createReactClass({
