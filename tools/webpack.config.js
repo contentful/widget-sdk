@@ -6,7 +6,7 @@
  * everything, and use SystemJS to register ES6 dependencies.
  */
 
-const { optimize, NamedChunksPlugin, NamedModulesPlugin, DefinePlugin, ProvidePlugin } = require('webpack');
+const { DefinePlugin } = require('webpack');
 
 const globSync = require('glob').sync;
 const P = require('path');
@@ -20,11 +20,10 @@ module.exports = ({ dev } = {}) => ({
   entry: {
     'public/app/components.js':
       [
-        './src/javascripts/prelude.js',
-        './src/javascripts/system.js'
+        './src/javascripts/prelude.js'
       ]
         .concat(globSync('./src/javascripts/**/*.js', {
-          ignore: ['./src/javascripts/libs/*.js', './src/javascripts/prelude.js', './src/javascripts/system.js']
+          ignore: ['./src/javascripts/libs/*.js', './src/javascripts/prelude.js']
         })),
     'public/app/libs.js': './src/javascripts/libs',
     'public/app/vendor.js': [
@@ -47,7 +46,7 @@ module.exports = ({ dev } = {}) => ({
   },
   output: {
     filename: '[name]',
-    path: __dirname,
+    path: P.resolve(__dirname, '..'),
     publicPath: '/app/'
   },
   module: {
@@ -59,12 +58,13 @@ module.exports = ({ dev } = {}) => ({
         use: {
           loader: 'babel-loader',
           options: {
+            babelrc: false,
             moduleIds: true,
             presets: [['@babel/preset-env', {
               targets: {
                 browsers: ['last 2 versions', 'ie >= 10']
               }
-            }]],
+            }], '@babel/preset-react'],
             plugins: [
               ['@babel/plugin-transform-modules-systemjs', {
                 systemGlobal: 'AngularSystem'
@@ -100,11 +100,12 @@ module.exports = ({ dev } = {}) => ({
         use: {
           loader: 'babel-loader',
           options: {
+            babelrc: false,
             presets: [['@babel/preset-env', {
               targets: {
                 browsers: ['last 2 versions', 'ie >= 10']
               }
-            }]],
+            }], '@babel/preset-react'],
             plugins: [
               [require('@babel/plugin-proposal-object-rest-spread'), { useBuiltIns: true }]
             ]
@@ -156,6 +157,7 @@ module.exports = ({ dev } = {}) => ({
     new DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production')
     })
+
     // we minify all JS files after concatenation in `build/js` gulp task
     // so we don't need to uglify it here
     // new UglifyJsPlugin({ sourceMap: true })

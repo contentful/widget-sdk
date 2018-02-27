@@ -10,7 +10,7 @@ gulp.task('serve', function () {
 
   const appSrc = [ 'src/javascripts/**/*.js' ];
   const patternTaskMap = [
-    [appSrc, ['js/app']],
+    [appSrc, ['js:watch']],
     [TEMPLATES_SRC, ['templates']],
     [STYLESHEETS_SRC, ['stylesheets/app']]
   ];
