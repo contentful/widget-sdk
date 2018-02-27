@@ -3,14 +3,19 @@ import PropTypes from 'libs/prop-types';
 import createReactClass from 'create-react-class';
 import { asReact } from 'ui/Framework/DOMRenderer';
 import $ from 'jquery';
+
 import HomeWelcomeIcon from 'svg/home-welcome';
 import QuestionMarkIcon from 'svg/QuestionMarkIcon';
 import SubscriptionIcon from 'svg/subscription';
+import PageMediaIcon from 'svg/page-media';
+import ContentStructureGraphIcon from 'svg/content-structure-graph';
 
 const SVGS = {
   'home-welcome': HomeWelcomeIcon,
+  'page-media': PageMediaIcon,
   'question-mark': QuestionMarkIcon(),
-  'subscription': SubscriptionIcon
+  'subscription': SubscriptionIcon,
+  'content-structure-graph': ContentStructureGraphIcon
 };
 
 const Icon = createReactClass({
