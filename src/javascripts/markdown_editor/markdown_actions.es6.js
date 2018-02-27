@@ -11,17 +11,20 @@ import $state from '$state';
 import * as BulkAssetsCreator from 'services/BulkAssetsCreator';
 
 export function create (editor, locale, defaultLocaleCode) {
-  const localeCode = locale.internal_code;
-  const fallbackCode = locale.fallbackCode;
+  const {
+    fallbackCode,
+    internal_code: localeCode
+  } = locale;
+
   const advancedActions = {
-    link: link,
-    existingAssets: existingAssets,
-    newAssets: newAssets,
-    special: special,
-    table: table,
-    embed: embed,
-    organizeLinks: organizeLinks,
-    openHelp: openHelp
+    link,
+    existingAssets,
+    newAssets,
+    special,
+    table,
+    embed,
+    organizeLinks,
+    openHelp
   };
 
   return defaults(advancedActions, editor.actions);
