@@ -119,7 +119,7 @@ const SubscriptionOverview = createReactClass({
 function BasePlan ({basePlan}) {
   const enabledFeaturesNames = getEnabledFeatures(basePlan).map(({name}) => name);
 
-  return h('div', null,
+  return h('div', {style: {marginBottom: '3em'}},
     h('h2', null, 'Platform'),
     h('p', null,
       h('b', null, basePlan.name),
@@ -155,14 +155,14 @@ function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
         ' per month.'
         // TODO show available free spaces
       ),
-      h('table', {className: 'deprecated-table x--hoverable'},
+      h('table', {className: 'simple-table'},
         h('thead', null,
           h('tr', null,
-            h('th', {style: {width: '40%'}}, 'Name'),
-            h('th', null, 'Space type / price'),
-            h('th', null, 'Created by'),
-            h('th', null, 'Created on'),
-            h('th', {style: {width: '1%'}}, 'Actions')
+            h('th', {style: {width: '35%'}}, 'Name'),
+            h('th', {style: {width: '25%'}}, 'Space type / price'),
+            h('th', {style: {width: '10%'}}, 'Created by'),
+            h('th', {style: {width: '10%'}}, 'Created on'),
+            h('th', {style: {width: '20%'}}, 'Actions')
           )
         ),
         h('tbody', {className: 'clickable'}, spacePlans.map(
@@ -204,9 +204,9 @@ function SpacePlanRow ({plan, onDeleteSpace, isOrgOwner}) {
   }, asReact(QuestionMarkIcon({color: colors.textLight})));
 
   return h('tr', null,
-    h('td', null, h('h3', null, get(space, 'name', '—'))),
+    h('td', null, h('h3', {style: {margin: 0}}, get(space, 'name', '—'))),
     h('td', null,
-      h('h3', null,
+      h('h3', {style: {marginTop: 0}},
         plan.name,
         h(Tooltip, {
           element: questionMarkIcon,
@@ -219,7 +219,7 @@ function SpacePlanRow ({plan, onDeleteSpace, isOrgOwner}) {
     ),
     h('td', null, createdBy),
     h('td', null, createdAt),
-    h('td', {style: {whiteSpace: 'nowrap'}}, ...actionLinks)
+    h('td', null, ...actionLinks)
   );
 }
 
@@ -258,7 +258,7 @@ function RightSidebar ({grandTotal, orgId, onContactUs}) {
 }
 
 function getSpaceActionLinks (space, isOrgOwner, onDeleteSpace) {
-  const actionLinkStyle = {padding: '0 10px 0 0', display: 'inline'};
+  const actionLinkStyle = {padding: '0 10px 0 0', display: 'inline', whiteSpace: 'nowrap'};
 
   let spaceLink = '';
   if (space.isAccessible) {
