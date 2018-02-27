@@ -95,7 +95,7 @@ angular.module('contentful')
           navState = values[0];
           state = assign(state, {
             currentSpaceId: _.get(navState, ['space', 'sys', 'id']),
-            currentEnvId: _.get(navState, ['env', 'sys', 'id'])
+            currentEnvId: _.get(navState, ['env', 'sys', 'id'], 'master')
           });
           setCurrOrg(navState.org || _.get(state, 'orgs[0]'));
           render();
@@ -130,9 +130,12 @@ angular.module('contentful')
       }
 
       function goToSpace (spaceId, envId) {
+        envId = envId === 'master' ? undefined : envId;
+        var path = ['spaces', 'detail'].concat(envId ? ['environment'] : []);
+
         closeSidePanel();
         Navigator.go({
-          path: ['spaces', 'detail'].concat(envId ? ['environment'] : []),
+          path: path,
           params: {
             spaceId: spaceId,
             environmentId: envId
@@ -172,6 +175,11 @@ angular.module('contentful')
       }
 
       function setCurrOrg (org) {
+        // Collapse environment list if changing organization
+        if (_.get(state, ['currOrg', 'sys', 'id']) !== _.get(org, ['sys', 'id'])) {
+          state = assign(state, {openedSpaceId: null});
+        }
+
         state = assign(state, {currOrg: org});
         refreshPermissions(navState, org);
         render();

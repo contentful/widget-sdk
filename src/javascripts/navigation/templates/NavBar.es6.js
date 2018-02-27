@@ -37,7 +37,16 @@ export default function (listItems = []) {
   return h('nav.nav-bar', [
     h('ul.nav-bar__list', listItems.map(function (data, index) {
       const html = data.children ? navbarDropdown(data, index) : navbarItem(data, index);
-      const attrs = data.if ? { ngIf: data.if } : {};
+      const attrs = {};
+
+      if (data.if) {
+        attrs.ngIf = data.if;
+      }
+      if (data.tooltip) {
+        attrs.tooltip = data.tooltip;
+        attrs.tooltipPlacement = 'bottom';
+      }
+
       return h('li.app-top-bar__action.nav-bar__list-item', attrs, [html]);
     }))
   ]);
@@ -45,7 +54,9 @@ export default function (listItems = []) {
 
 function navbarItem (data, tabIndex = 0) {
   const inheritUrlParams = isBoolean(data.inheritUrlParams) ? data.inheritUrlParams : true;
-  return h('a.nav-bar__link', {
+  const tag = `a.nav-bar__link${data.disabled ? '.is-disabled' : ''}`;
+
+  return h(tag, data.disabled ? {} : {
     uiSrefActive: `{ "is-active": "${data.rootSref || data.sref}" }`,
     uiSref: data.sref,
     uiSrefOpts: `{ inherit: ${inheritUrlParams} }`,

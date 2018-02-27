@@ -50,9 +50,6 @@ const spaceEnvironment = {
     }]
   },
   views: {
-    'nav-bar@': {
-      template: h('cf-space-env-nav-bar', {class: 'app-top-bar__child'})
-    },
     'content@': {
       template: '<div />',
       controller: ['spaceData', '$state', function (spaceData, $state) {
@@ -134,7 +131,7 @@ export default {
   views: {
     'nav-bar@': {
       template: h('div.app-top-bar__child.app-top-bar__main-nav.app-top-bar__with-right-part', [
-        h('cf-space-nav-bar', {class: 'app-top-bar__child'}),
+        h('cf-space-nav-bar-wrapped', {class: 'app-top-bar__child'}),
         h('cf-authors-help', {class: 'app-top-bar__child'})
       ])
     }
