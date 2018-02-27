@@ -5,7 +5,7 @@ const createWebpackConfig = require('../webpack.config');
 let compiler;
 let cb;
 
-gulp.task('js:watch', function (newCb) {
+gulp.task('js:watch', ['js/vendor/sharejs', 'js/vendor/kaltura'], function (newCb) {
   cb = newCb;
   if (!compiler) {
     compiler = webpack(createWebpackConfig({ dev: true }));
@@ -28,7 +28,7 @@ gulp.task('js:watch', function (newCb) {
   }
 });
 
-gulp.task('js', function (cb) {
+gulp.task('js', ['js/vendor/sharejs', 'js/vendor/kaltura'], function (cb) {
   const compiler = webpack(createWebpackConfig({ dev: false }));
   compiler.run(function (err) {
     if (err) {

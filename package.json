@@ -139,7 +139,6 @@
     "systemjs": "^0.20.4",
     "watchify": "^3.7.0",
     "webpack": "^3.11.0",
-    "webpack-concat-plugin": "^2.4.2",
     "yargs": "^4.2.0"
   },
   "scripts": {
