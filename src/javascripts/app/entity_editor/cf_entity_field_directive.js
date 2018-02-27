@@ -49,9 +49,10 @@ angular.module('cf.app')
       // All data that is read by the template
       var templateData = {
         field: field,
+        tooltipPlacement: $scope.$first ? 'bottom' : 'top',
         helpText: widget.settings.helpText || widget.defaultHelpText,
         hasInitialFocus: $scope.editorContext.hasInitialFocus &&
-          $scope.$index === 0 &&
+          $scope.$first &&
           widget.isFocusable,
         showHelpText: !widget.rendersHelpText
       };
