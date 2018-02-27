@@ -113,7 +113,10 @@ const PreviewUsingExampleAppStep = createReactClass({
       <Step {...propsForStep}>
         <div>
           <div>
-            <p>You can preview the two sample courses using the example app that is connected to this space. The app is available for multiple platforms such as JavaScript, Java, .NET and more.</p>
+            <p>
+              You can preview the two sample courses using the example app that is connected to this
+              space. The app is available for multiple platforms such as JavaScript, Java, .NET and more.
+            </p>
           </div>
           <button className='btn-action' onClick={e => this.primaryCtaOnClick(e)}>
             Preview content
@@ -149,7 +152,10 @@ const CreateEntryStep = createReactClass({
       <Step {...propsForStep}>
         <div>
           <div>
-            <p>To test it yourself, add a new copy module to a lesson. You’ll notice that a second language is enabled - so you can practice your German along the way!</p>
+            <p>
+              To test it yourself, add a new copy module to a lesson. You’ll notice that a
+              second language is enabled - so you can practice your German along the way!
+            </p>
             <p>You can see your changes immediately using the “Open preview” button.</p>
           </div>
           <button className='btn-action' onClick={e => this.primaryCtaOnClick(e)}>
