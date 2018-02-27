@@ -23,8 +23,21 @@ function EnvironmentList ({environments, isCurrSpace, currentEnvId, goToSpace, s
         goToSpace(space.sys.id, envId);
       }
     }, ...[
-      asReact(environmentIcon),
-      envId
+      e('a', {
+        href: `/spaces/${space.sys.id}${envId === 'master' ? '' : `/environments/${envId}`}`,
+        onClick: e => {
+          if (e.shiftKey || e.ctrlKey || e.metaKey) {
+            // allow to open in a new tab/window normally
+            e.stopPropagation();
+          } else {
+            // parent `li` click handler will navigate
+            e.preventDefault();
+          }
+        }
+      }, ...[
+        asReact(environmentIcon),
+        envId
+      ])
     ]);
   }));
 }
