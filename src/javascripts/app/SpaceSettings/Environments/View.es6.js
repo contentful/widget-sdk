@@ -19,10 +19,7 @@ export default function render (state, actions) {
       title: [ 'Environments' ],
       icon: pageSettingsIcon
     }),
-    sidebar: sidebar(assign(actions, {
-      planLimit: state.planLimit,
-      usedEnvironments: state.items ? state.items.length : 0
-    })),
+    sidebar: sidebar(actions),
     content: container({
       padding: '0em 1em'
     }, [ environmentList(state, actions) ])
@@ -154,19 +151,13 @@ function deleteButton (environment) {
 }
 
 
-function sidebar ({ planLimit, usedEnvironments, OpenCreateDialog }) {
+function sidebar ({ OpenCreateDialog }) {
   return [
     h('h2.entity-sidebar__heading', [
       'Add environment'
     ]),
-    h('.entity-sidebar__text-profile', [
-      h('p', [
-        `This space has ${usedEnvironments} out of ${planLimit} environments.`
-      ])
-    ]),
     h('button.btn-action.x--block', {
       dataTestId: 'openCreateDialog',
-      disabled: usedEnvironments >= planLimit,
       onClick: () => OpenCreateDialog()
     }, [ 'Add environment' ]),
     vspace(5),
