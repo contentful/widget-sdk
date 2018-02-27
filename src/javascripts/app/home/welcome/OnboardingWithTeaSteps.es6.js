@@ -152,7 +152,7 @@ const CreateEntryStep = createReactClass({
           </button>
         </div>
         <div>
-          <img src='/app/images/editor-screenshot.png' />
+          <Icon name='content-graph-highlight' />
         </div>
       </Step>
     );
