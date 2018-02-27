@@ -72,13 +72,15 @@ function environmentList ({
   }
 }
 
-const IN_PROGRESS_TOOLTIP =
-  `This environment is currently being created, it will take a couple
-  of minutes. You can leave this page as it’s happening in the
-  background.`;
-const FAILED_TOOLTIP =
-  `Something went wrong with the creation this environment. Try to
-  delete it and create it again, if that doesn’t work contact support.`;
+const IN_PROGRESS_TOOLTIP = [
+  'This environment is currently being created, it will take a couple ',
+  'of minutes. You can leave this page as it’s happening in the background.'
+].join('');
+
+const FAILED_TOOLTIP = [
+  'Something went wrong with the creation this environment. Try to ',
+  'delete it and create it again, if that doesn’t work contact support.'
+].join('');
 
 function environmentTable (environments) {
   if (environments.length === 0) {
