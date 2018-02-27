@@ -12,7 +12,7 @@ const Tooltip = createReactClass({
     })
   },
   render () {
-    const {element, tooltip, style, options} = this.props;
+    const {element, tooltip, style, options = {}} = this.props;
     let tooltipStyle = {};
     if (options.width) {
       tooltipStyle = {

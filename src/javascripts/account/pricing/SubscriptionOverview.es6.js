@@ -18,6 +18,9 @@ import $location from '$location';
 import Workbench from 'app/WorkbenchReact';
 import Tooltip from 'ui/Components/Tooltip';
 import {joinAnd} from 'stringUtils';
+import {byName as colors} from 'Styles/Colors';
+import QuestionMarkIcon from 'svg/QuestionMarkIcon';
+import {asReact} from 'ui/Framework/DOMRenderer';
 
 const SubscriptionOverview = createReactClass({
   propTypes: {
@@ -120,7 +123,9 @@ function BasePlan ({basePlan}) {
     h('h2', null, 'Platform'),
     h('p', null,
       h('b', null, basePlan.name),
-      enabledFeaturesNames.length ? ` – includes ${joinAnd(enabledFeaturesNames)}` : null
+      enabledFeaturesNames.length
+        ? ` – includes ${joinAnd(enabledFeaturesNames)}.`
+        : ' – doesn’t include any additional features.'
     )
   );
 }
@@ -174,64 +179,47 @@ function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
 }
 
 function SpacePlanRow ({plan, onDeleteSpace, isOrgOwner}) {
-  const actionLinkStyle = {padding: '0 10px 0 0', display: 'inline'};
-  const {name, price, space} = plan;
+  const space = plan.space;
   const enabledFeatures = getEnabledFeatures(plan);
+  let actionLinks = [];
   let createdBy = '';
   let createdAt = '';
-  let spaceLink = '';
-  let usageLink = '';
-  let deleteLink = '';
 
   if (space) {
     createdBy = getUserName(space.sys.createdBy || {});
     createdAt = moment.utc(space.sys.createdAt).format('DD/MM/YYYY');
-    if (space.isAccessible) {
-      spaceLink = h('a', {
-        className: 'text-link',
-        href: href(getSpaceNavState(space.sys.id)),
-        style: actionLinkStyle
-      }, 'Go to space');
-    } else {
-      spaceLink = h(Tooltip, {
-        element: h('button', {
-          className: 'text-link',
-          disabled: true
-        }, 'Go to space'),
-        tooltip: h('div', {style: {whiteSpace: 'normal'}},
-          'You don’t have access to this space. But since you’re an organization ',
-          `${isOrgOwner ? 'owner' : 'admin'} you can grant yourself access by going to `,
-          h('i', null, 'users'),
-          ' and adding yourself to the space.'
-        ),
-        options: {width: 400},
-        style: actionLinkStyle
-      });
-    }
-    usageLink = h('a', {
-      className: 'text-link',
-      href: href(getSpaceUsageNavState(space.sys.id)),
-      style: actionLinkStyle
-    }, 'Usage');
-    deleteLink = h('button', {
-      className: 'text-link text-link--destructive',
-      style: actionLinkStyle,
-      onClick: () => onDeleteSpace(space)
-    }, 'Delete');
+    actionLinks = getSpaceActionLinks(space, isOrgOwner, onDeleteSpace);
   }
 
+  const featuresTooltip = enabledFeatures.length
+  ? 'This space type includes ' + joinAnd(enabledFeatures.map(({name}) => name))
+  : 'This space type doesn’t include any additional features';
+
+  const questionMarkIcon = h('span', {
+    style: {
+      position: 'relative',
+      bottom: '0.125em',
+      paddingLeft: '0.2em'
+    }
+  }, asReact(QuestionMarkIcon({color: colors.textLight})));
+
   return h('tr', null,
+    h('td', null, h('h3', null, get(space, 'name', '—'))),
     h('td', null,
-      h('h3', null, get(space, 'name', '—')),
-      h('p', null, enabledFeatures.length ? enabledFeatures.map(({name}) => name) : 'No features on space')
-    ),
-    h('td', null,
-      h('h3', null, name),
-      h(Price, {value: price, unit: 'month'})
+      h('h3', null,
+        plan.name,
+        h(Tooltip, {
+          element: questionMarkIcon,
+          tooltip: featuresTooltip,
+          options: {width: 200},
+          style: {display: 'inline'}
+        })
+      ),
+      h(Price, {value: plan.price, unit: 'month'})
     ),
     h('td', null, createdBy),
     h('td', null, createdAt),
-    h('td', {style: {whiteSpace: 'nowrap'}}, spaceLink, usageLink, deleteLink)
+    h('td', {style: {whiteSpace: 'nowrap'}}, ...actionLinks)
   );
 }
 
@@ -267,6 +255,46 @@ function RightSidebar ({grandTotal, orgId, onContactUs}) {
       )
     )
   );
+}
+
+function getSpaceActionLinks (space, isOrgOwner, onDeleteSpace) {
+  const actionLinkStyle = {padding: '0 10px 0 0', display: 'inline'};
+
+  let spaceLink = '';
+  if (space.isAccessible) {
+    spaceLink = h('a', {
+      className: 'text-link',
+      href: href(getSpaceNavState(space.sys.id)),
+      style: actionLinkStyle
+    }, 'Go to space');
+  } else {
+    spaceLink = h(Tooltip, {
+      element: h('button', {
+        className: 'text-link',
+        disabled: true
+      }, 'Go to space'),
+      tooltip: h('div', {style: {whiteSpace: 'normal'}},
+        'You don’t have access to this space. But since you’re an organization ',
+        `${isOrgOwner ? 'owner' : 'admin'} you can grant yourself access by going to `,
+        h('i', null, 'users'),
+        ' and adding yourself to the space.'
+      ),
+      options: {width: 400},
+      style: actionLinkStyle
+    });
+  }
+  const usageLink = h('a', {
+    className: 'text-link',
+    href: href(getSpaceUsageNavState(space.sys.id)),
+    style: actionLinkStyle
+  }, 'Usage');
+  const deleteLink = h('button', {
+    className: 'text-link text-link--destructive',
+    style: actionLinkStyle,
+    onClick: () => onDeleteSpace(space)
+  }, 'Delete');
+
+  return [spaceLink, usageLink, deleteLink];
 }
 
 function Price ({value = 0, currency = '$', unit = null, style = null}) {
