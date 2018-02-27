@@ -10,7 +10,8 @@ import SubscriptionIcon from 'svg/subscription';
 import PageMediaIcon from 'svg/page-media';
 import ContentStructureGraphIcon from 'svg/content-structure-graph';
 import TeaScreenshotIcon from 'svg/tea-screenshot';
-import ContentGraphHighlight from 'svg/content-graph-highlight';
+import ContentGraphHighlightIcon from 'svg/content-graph-highlight';
+import CheckmarkDoneIcon from 'svg/icon-checkmark-done';
 
 const SVGS = {
   'home-welcome': HomeWelcomeIcon,
@@ -19,7 +20,8 @@ const SVGS = {
   'subscription': SubscriptionIcon,
   'content-structure-graph': ContentStructureGraphIcon,
   'tea-screenshot': TeaScreenshotIcon,
-  'content-graph-highlight': ContentGraphHighlight
+  'content-graph-highlight': ContentGraphHighlightIcon,
+  'icon-checkmark-done': CheckmarkDoneIcon
 };
 
 const Icon = createReactClass({

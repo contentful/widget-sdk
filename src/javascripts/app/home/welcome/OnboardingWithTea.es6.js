@@ -2,15 +2,16 @@ import React from 'libs/react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import Steps from './OnboardingWithTeaSteps';
-import { go } from 'states/Navigator';
-import Analytics from 'analytics/Analytics';
 
 const OnboardingWithTea = createReactClass({
+  propTypes: {
+    orgId: PropTypes.string.isRequired
+  },
   render () {
     return (
       <section className='home-section tea-onboarding'>
         <Header progress={1} />
-        <Steps />
+        <Steps orgId={this.props.orgId} />
       </section>
     );
   }
