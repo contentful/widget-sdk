@@ -21,7 +21,7 @@ describe('cfNavSidepanel directive', function () {
   };
 
   const Navigator = {
-    go: sinon.stub()
+    go: sinon.stub().resolves()
   };
 
   beforeEach(function () {
@@ -104,6 +104,7 @@ describe('cfNavSidepanel directive', function () {
     accessChecker.canCreateOrganization.reset();
     OrganizationRoles.isOwnerOrAdmin.reset();
     Navigator.go.reset();
+    Navigator.go.resolves();
     navState$.set(new NavStates.Default());
   });
 

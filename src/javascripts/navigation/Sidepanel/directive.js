@@ -141,6 +141,11 @@ angular.module('contentful')
             environmentId: envId
           },
           options: { reload: true }
+        }).then(_.identity, function (err) {
+          // Collapse environment list if navigation failed
+          // e.g. when environment was deleted
+          setOpenedSpaceId(null);
+          throw err;
         });
       }
 

@@ -4,7 +4,7 @@ import pageSettingsIcon from 'svg/page-settings';
 import { caseofEq } from 'libs/sum-types';
 
 import { h } from 'ui/Framework';
-import { linkOpen, badge, codeFragment, docsLink } from 'ui/Content';
+import { linkOpen, badge, codeFragment } from 'ui/Content';
 import { table, tr, td, th } from 'ui/Content/Table';
 import { container, hbox, vspace, ihspace } from 'ui/Layout';
 import * as Workbench from 'app/Workbench';
@@ -19,10 +19,7 @@ export default function render (state, actions) {
       title: [ 'Environments' ],
       icon: pageSettingsIcon
     }),
-    sidebar: sidebar(assign(actions, {
-      planLimit: state.planLimit,
-      usedEnvironments: state.items ? state.items.length : 0
-    })),
+    sidebar: sidebar(actions),
     content: container({
       padding: '0em 1em'
     }, [ environmentList(state, actions) ])
@@ -75,13 +72,15 @@ function environmentList ({
   }
 }
 
-const IN_PROGRESS_TOOLTIP =
-  `This environment is currently being created, it will take a couple
-  of minutes. You can leave this page as it’s happening in the
-  background.`;
-const FAILED_TOOLTIP =
-  `Something went wrong with the creation this environment. Try to
-  delete it and create it again, if that doesn’t work contact support.`;
+const IN_PROGRESS_TOOLTIP = [
+  'This environment is currently being created, it will take a couple ',
+  'of minutes. You can leave this page as it’s happening in the background.'
+].join('');
+
+const FAILED_TOOLTIP = [
+  'Something went wrong with the creation this environment. Try to ',
+  'delete it and create it again, if that doesn’t work contact support.'
+].join('');
 
 function environmentTable (environments) {
   if (environments.length === 0) {
@@ -154,19 +153,13 @@ function deleteButton (environment) {
 }
 
 
-function sidebar ({ planLimit, usedEnvironments, OpenCreateDialog }) {
+function sidebar ({ OpenCreateDialog }) {
   return [
     h('h2.entity-sidebar__heading', [
       'Add environment'
     ]),
-    h('.entity-sidebar__text-profile', [
-      h('p', [
-        `This space has ${usedEnvironments} out of ${planLimit} environments.`
-      ])
-    ]),
     h('button.btn-action.x--block', {
       dataTestId: 'openCreateDialog',
-      disabled: usedEnvironments >= planLimit,
       onClick: () => OpenCreateDialog()
     }, [ 'Add environment' ]),
     vspace(5),
@@ -181,7 +174,12 @@ function sidebar ({ planLimit, usedEnvironments, OpenCreateDialog }) {
       h('ul', [
         h('li', [
           'Read more in the ',
-          docsLink('space environments documentation', 'spaceEnvironments'), '.'
+          h('a', {
+            href: 'http://ctf-doc-app-branch-environments.netlify.com/developers/docs/concepts/domain-model/',
+            target: '_blank',
+            rel: 'noopener'
+          }, ['Contentful domain model']),
+          ' document.'
         ])
       ])
     ])
