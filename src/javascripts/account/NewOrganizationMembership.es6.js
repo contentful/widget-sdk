@@ -1,4 +1,4 @@
-import {omit, pick, negate, trim, sortedUniq, get as getAtPath} from 'lodash';
+import {omit, pick, negate, trim, sortedUniq} from 'lodash';
 import {h} from 'ui/Framework';
 import {assign} from 'utils/Collections';
 import {getOrganization} from 'services/TokenStore';
@@ -21,6 +21,7 @@ import {
   errorMessage,
   successMessage
 } from 'account/NewOrganizationMembershipTemplate';
+import {isLegacyOrganization, getLegacyLimit} from 'utils/ResourceUtils';
 
 const adminRole = {
   name: 'Admin',
@@ -86,6 +87,7 @@ export default function ($scope) {
     // 1st step - get org and user info and render page without the spaces grid
     const organization = yield* getOrgInfo();
     state = assign(state, {organization, isOwner: isOwner(org)});
+
     rerender();
 
     // 2nd step - load all space roles
@@ -184,12 +186,15 @@ export default function ($scope) {
       organization
     } = state;
 
-    if (
-      emails.length &&
+    let isInputValid = emails.length &&
       emails.length <= maxNumberOfEmails &&
-      emails.length <= organization.remainingInvitations &&
-      !invalidAddresses.length
-    ) {
+      !invalidAddresses.length;
+    if (isInputValid && organization.membershipLimit) {
+      const {membershipUsage, membershipLimit} = organization;
+      isInputValid = emails.length <= membershipLimit - membershipUsage;
+    }
+
+    if (isInputValid) {
       runTask(function* () {
         yield invite({
           emails,
@@ -340,17 +345,22 @@ export default function ($scope) {
    */
   function* getOrgInfo () {
     const org = yield getOrganization(orgId);
-    const membershipLimit = getAtPath(org, 'subscriptionPlan.limits.permanent.organizationMembership');
-    const spaceLimit = getAtPath(org, 'subscriptionPlan.limits.permanent.space');
+
+    let membershipLimit;
+    if (isLegacyOrganization(org)) {
+      membershipLimit = getLegacyLimit('organizationMembership', org);
+    }
+
+    // We cannot rely on usage data from organization (token) since the cache
+    // is not invalidated on user creation.
+    // We should use resources API later when it's available for org memberships.
     const users = yield getUsers(orgEndpoint, {limit: 0});
-    const membershipsCount = users.total;
+    const membershipUsage = users.total;
 
     return assign(state.organization, {
+      membershipUsage,
       membershipLimit,
-      membershipsCount,
-      spaceLimit,
-      hasSsoEnabled: org.hasSsoEnabled,
-      remainingInvitations: membershipLimit - membershipsCount
+      hasSsoEnabled: org.hasSsoEnabled
     });
   }
 }

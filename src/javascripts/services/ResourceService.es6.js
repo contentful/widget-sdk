@@ -1,10 +1,10 @@
 import { getSpace, getOrganization } from 'services/TokenStore';
-import { canCreate, generateMessage, useLegacy } from 'utils/ResourceUtils';
+import { canCreate, generateMessage, useLegacy, getLegacyLimit, getLegacyUsage } from 'utils/ResourceUtils';
 import { runTask } from 'utils/Concurrent';
 import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/Endpoint';
 
 import $q from '$q';
-import { assign, snakeCase, camelCase } from 'lodash';
+import { snakeCase, camelCase } from 'lodash';
 
 export default function createResourceService (id, type = 'space') {
   const endpoint = createEndpoint(id, type);
@@ -96,22 +96,4 @@ function getTokenOrganization (id, type) {
   }
 
   return promise;
-}
-
-function getLegacyLimit (resourceType, organization) {
-  const allLimits = assign({},
-    organization.subscriptionPlan.limits.permanent,
-    organization.subscriptionPlan.limits.period
-  );
-
-  return allLimits[resourceType];
-}
-
-function getLegacyUsage (resourceType, organization) {
-  const allUsages = assign({},
-    organization.usage.permanent,
-    organization.usage.period
-  );
-
-  return allUsages[resourceType];
 }
