@@ -1,7 +1,7 @@
-import * as through from 'through2';
-import * as Stream from 'stream';
+const through = require('through2');
+const Stream = require('stream');
 
-export function map (fn) {
+module.exports.map = function map (fn) {
   return through.obj(function (value, _, push) {
     try {
       value = fn(value);
@@ -11,27 +11,26 @@ export function map (fn) {
     }
     push(null, value);
   });
-}
+};
 
 /**
  * Pipe an array of stream.
  *
  * Also forwards errors to the result stream.
  */
-export function pipe (streams) {
+module.exports.pipe = function pipe (streams) {
   const [first, ...rest] = streams;
   return rest.reduce((piped, stream) => {
     piped.on('error', (e) => stream.emit('error', e));
     return piped.pipe(stream);
   }, first);
-}
-
+};
 
 /**
  * Join a list of stream so that all data from the first stream is
  * emitted before the second stream, etc.
  */
-export function join (streams) {
+module.exports.join = function join (streams) {
   let current;
 
   const out = new Stream.Readable({
@@ -80,4 +79,4 @@ export function join (streams) {
       out.push(null);
     }
   }
-}
+};

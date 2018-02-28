@@ -1,6 +1,6 @@
-import * as URL from 'url';
+const URL = require('url');
 
-export function create (manifest, base) {
+module.exports.create = function create (manifest, base) {
   return function resolve (url) {
     const urlObj = URL.parse(URL.resolve(base + '/', url));
     if (urlObj.protocol) {
@@ -14,4 +14,4 @@ export function create (manifest, base) {
     urlObj.pathname = URL.resolve('/', fingerprinted);
     return URL.format(urlObj);
   };
-}
+};
