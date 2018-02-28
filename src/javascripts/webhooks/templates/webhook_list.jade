@@ -5,47 +5,76 @@ header.workbench-header
   cf-icon.workbench-header__icon(name="page-settings", scale="0.75")
   h1.workbench-header__title Webhooks ({{ webhooks.length || 0 }})
 
-  .workbench-header__actions
+  .workbench-header__actions(ng-if="!showSidebar")
     button.btn-action.add-entity(
-      ng-show="webhooks.length < limit"
+      ng-if="webhooks.length < limit"
       ui-sref="spaces.detail.settings.webhooks.new")
       cf-icon.btn-icon.inverted(name="plus")
       | Add webhook
-    .workbench-header__actions-text(ng-show="webhooks.length >= limit")
+    .workbench-header__actions-text(ng-if="webhooks.length >= limit")
       | You can't create more than {{ limit }} webhooks.
 
-.workbench-main.x--content
-  .table
-    .table__head
-      table
-        thead
-          tr
-            th(aria-label="cell-wh-name").x--large-cell Webhook name
-            th(aria-label="cell-url").x--large-cell URL
-            th(aria-label="cell-health").x--small-cell % of successful calls
-            th(aria-label="cell-http-basic").x--small-cell Using HTTP Basic Auth?
-            th(aria-label="cell-actions").x--medium-cell Actions
-    .table__body
-      table
-        tbody
-          tr(ng-repeat="webhook in webhooks track by webhook.sys.id"
-            ng-init="entityNavState = 'spaces.detail.settings.webhooks.detail({ webhookId: webhook.sys.id })'"
-            ui-sref="{{ entityNavState }}")
-            +td.x--large-cell(aria-label="cell-wh-name"
+.workbench-main
+  .workbench-main__content
+    .table
+      .table__head
+        table
+          thead
+            tr
+              th(aria-label="cell-wh-name").x--large-cell Webhook name
+              th(aria-label="cell-url").x--large-cell URL
+              th(aria-label="cell-health").x--small-cell % of successful calls
+              th(aria-label="cell-http-basic").x--small-cell Using HTTP Basic Auth?
+              th(aria-label="cell-actions").x--medium-cell Actions
+      .table__body
+        table
+          tbody
+            tr(ng-if="webhooks.length"
+              ng-repeat="webhook in webhooks track by webhook.sys.id"
+              ng-init="entityNavState = 'spaces.detail.settings.webhooks.detail({ webhookId: webhook.sys.id })'"
               ui-sref="{{ entityNavState }}")
-              | {{ webhook.name }}
-            +td.x--large-cell(aria-label="cell-url"
-              ui-sref="{{ entityNavState }}")
-              | {{ webhook.url }}
-            +td.x--small-cell(aria-label="cell-health"
-              ui-sref="{{ entityNavState }}")
-              cf-webhook-health(webhook-id="webhook.sys.id")
-            +td.x--small-cell(aria-label="cell-http-basic"
-              ui-sref="{{ entityNavState }}")
-              | {{ webhook.httpBasicUsername ? 'yes' : 'no' }}
-            +td.x--medium-cell(aria-label="cell-actions"
-              ui-sref="{{ entityNavState }}")
-              span.text-link--standard View details
-          tr(ng-show="webhooks.length < 1")
-            td(colspan="5")
-              a No webhooks yet!
+              +td.x--large-cell(aria-label="cell-wh-name"
+                ui-sref="{{ entityNavState }}")
+                | {{ webhook.name }}
+              +td.x--large-cell(aria-label="cell-url"
+                ui-sref="{{ entityNavState }}")
+                | {{ webhook.url }}
+              +td.x--small-cell(aria-label="cell-health"
+                ui-sref="{{ entityNavState }}")
+                cf-webhook-health(webhook-id="webhook.sys.id")
+              +td.x--small-cell(aria-label="cell-http-basic"
+                ui-sref="{{ entityNavState }}")
+                | {{ webhook.httpBasicUsername ? 'yes' : 'no' }}
+              +td.x--medium-cell(aria-label="cell-actions"
+                ui-sref="{{ entityNavState }}")
+                span.text-link--standard View details
+            tr(ng-if="webhooks.length < 1")
+              td(colspan="5")
+                a No webhooks yet!
+
+  .workbench-main__sidebar(ng-if="showSidebar")
+    //- This will only show for Version 2 organizations, for now
+    .entity-sidebar
+      h2.entity-sidebar__heading
+        | Add Webhooks
+      div
+        p
+          | Your space&#32;
+          span(ng-if="usage <= 0")
+            | isn't using any webhooks.
+          span(ng-if="usage === 1")
+            | is using 1 webhook.
+          span(ng-if="usage > 1")
+            | is using {{usage}} webhooks.
+        p
+          button.btn-action.add-entity.x--block(
+            ui-sref="spaces.detail.settings.webhooks.new"
+          )
+            cf-icon.btn-icon.inverted(name="plus")
+            | Add Webhook
+
+      h2.entity-sidebar__heading
+        | Documentation
+      div
+        p
+          | Webhooks extend integration possibilities by notifying you, another person, or system, when resources have changed by calling a pre-configured HTTP endpoint.

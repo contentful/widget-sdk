@@ -11,17 +11,38 @@ angular.module('contentful')
 })
 
 .controller('WebhookListController', ['$scope', 'require', function ($scope, require) {
-
-  var spaceContext       = require('spaceContext');
-  var webhookRepo        = require('WebhookRepository').getInstance(spaceContext.space);
+  var spaceContext = require('spaceContext');
+  var webhookRepo = require('WebhookRepository').getInstance(spaceContext.space);
   var ReloadNotification = require('ReloadNotification');
+  var ResourceUtils = require('utils/ResourceUtils');
+  var createResourceService = require('services/ResourceService').default;
 
-  $scope.limit = 20;
+  var organization = spaceContext.organizationContext.organization;
+  var resources = createResourceService(spaceContext.getId());
 
-  reload().catch(ReloadNotification.basicErrorHandler);
+  ResourceUtils.useLegacy(organization).then(function (legacy) {
+    $scope.showSidebar = !legacy;
+  });
 
-  function reload() {
+  resources.get('webhookDefinition').then(function (resource) {
+    $scope.usage = resource.usage;
+    $scope.limit = ResourceUtils.getResourceLimits(resource).maximum;
+
+    // Get the usage and limits first, then load the Webhook Definitions
+    reload().catch(ReloadNotification.basicErrorHandler);
+  });
+
+  function reload () {
     return webhookRepo.getAll().then(function (items) {
+      // Currently, for Version 1 organizations, the usage comes
+      // from the token, but this is unreliable as the token is
+      // cached. We instead look at the length of the webhooks to
+      // show its usage.
+
+      if (ResourceUtils.isLegacyOrganization(organization)) {
+        $scope.usage = items.length;
+      }
+
       $scope.webhooks = items;
       $scope.context.ready = true;
     });
