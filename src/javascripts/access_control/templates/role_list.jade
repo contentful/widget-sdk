@@ -42,19 +42,26 @@ header.workbench-header
     .entity-sidebar(ng-if="hasFeatureEnabled")
       h2.entity-sidebar__heading
         | Create new role
-      p(ng-if="legacy")
-        | Your organization is using {{usage}} out of {{limit}} available roles.
-      p(ng-if="!legacy")
-        | Your space is using {{usage}} out of {{limit}} available roles.
-      p(ng-if="reachedLimit")
+      p
+        | Your&#32;
         span(ng-if="legacy")
-          | You've reached the organization role limit.&#32;
+          | organization
         span(ng-if="!legacy")
-          | You've reached the space role limit.&#32;
+          | space
+        | &#32;is using {{usage}} out of {{limit}} available roles.
+
+      p(ng-if="reachedLimit")
+        | You've reached your&#32;
+        span(ng-if="legacy")
+          | organization
+        span(ng-if="!legacy")
+          | space
+        | &#32;role limit.
+
         span(ng-if="canUpgrade")
           | <a cf-sref="{{ accountUpgradeState }}">Upgrade</a> to add more locales
         span(ng-if="!canUpgrade")
-          | Contact the admin or owner of this space to upgrade the space
+          | Contact the admin or owner of this organization to upgrade the organization
         span(ng-if="limit === 1")
           | .
         span(ng-if="limit > 1")

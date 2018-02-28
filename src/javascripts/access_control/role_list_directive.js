@@ -33,17 +33,22 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
     var trialLockdown = isTrial && subscription.hasTrialEnded();
 
     $scope.legacy = result.useLegacy;
-    // all v2 spaces have custom roles enabled
-    $scope.hasFeatureEnabled = !result.legacy || (!trialLockdown && result.hasFeatureEnabled);
-  });
+
+    // For now, all V2 orgs do not support this feature, as the custom roles feature
+    // isn't available on the space level yet. This will be supported in an upcoming
+    // sprint.
+    if (!$scope.legacy) {
+      $scope.hasFeatureEnabled = false;
+    } else {
+      $scope.hasFeatureEnabled = !trialLockdown && result.hasFeatureEnabled;
+    }
+  }).then(reload).catch(ReloadNotification.basicErrorHandler);
 
   $scope.duplicateRole = duplicateRole;
   $scope.jumpToRoleMembers = jumpToRoleMembers;
   $scope.jumpToAdminRoleMembers = jumpToAdminRoleMembers;
   $scope.accountUpgradeState = TheAccountView.getSubscriptionState();
   $scope.canUpgrade = isOwnerOrAdmin(org);
-
-  reload().catch(ReloadNotification.basicErrorHandler);
 
   function jumpToAdminRoleMembers () {
     jumpToRoleMembers(ADMIN_ROLE_ID);
