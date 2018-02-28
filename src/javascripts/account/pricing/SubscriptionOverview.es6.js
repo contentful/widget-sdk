@@ -96,6 +96,7 @@ const SubscriptionOverview = createReactClass({
 
     return h(Workbench, {
       title: 'Subscription',
+      icon: 'subscription',
       content: h('div', {
         style: {padding: '0 2rem'}
       },

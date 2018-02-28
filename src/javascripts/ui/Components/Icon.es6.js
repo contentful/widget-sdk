@@ -5,10 +5,12 @@ import { asReact } from 'ui/Framework/DOMRenderer';
 import $ from 'jquery';
 import HomeWelcomeIcon from 'svg/home-welcome';
 import QuestionMarkIcon from 'svg/QuestionMarkIcon';
+import SubscriptionIcon from 'svg/subscription';
 
 const SVGS = {
   'home-welcome': HomeWelcomeIcon,
-  'question-mark': QuestionMarkIcon()
+  'question-mark': QuestionMarkIcon(),
+  'subscription': SubscriptionIcon
 };
 
 const Icon = createReactClass({
