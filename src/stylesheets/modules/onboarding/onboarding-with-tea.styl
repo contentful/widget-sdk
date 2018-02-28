@@ -1,0 +1,95 @@
+add-padding()
+  padding: 24px
+
+add-bottom-border()
+  border-bottom: 1px solid $colors.element-mid
+
+remove-top-and-bottom-margin()
+  margin-top: 0
+  margin-bottom: 0
+
+.tea-onboarding
+  padding: 0
+
+.tea-onboarding__header
+  padding: 20px 24px
+  add-bottom-border()
+
+.tea-onboarding__heading
+  line-height: 1.5em
+  remove-top-and-bottom-margin()
+
+.tea-onboarding__step
+  display: flex
+  flex-direction: column
+
+.tea-onboarding__step-header
+  display: flex
+  flex-direction: row
+  align-items: baseline
+  add-padding()
+  add-bottom-border()
+
+.tea-onboarding__step-heading
+  flex-grow: 2
+  remove-top-and-bottom-margin()
+
+.tea-onboarding__step-toggle
+  color: blue
+
+.tea-onboarding__step-header-icon
+  svg
+    height: 20px
+    width: 24px
+    position: relative
+    top: 4px
+  margin-right: 12px
+
+.tea-onboarding__step-body
+  background-color: $colors.element-lightest
+  color: $colors.text-mid
+  display: none
+  padding: 24px 60px
+  add-bottom-border()
+  > div:first-child
+    width: 60%
+    display: flex
+    flex-direction: column
+
+.tea-onboarding__step-description
+  flex-grow: 2
+  width: 85%
+
+.tea-onboarding__step-cta
+  align-self: end
+
+.tea-onboarding__step-body--expanded
+  display: flex
+
+.tea-onboarding__step-graphic
+  margin-left: 10px
+
+.tea-onboarding__split-steps
+  display: flex
+
+.tea-onboarding__split-step
+  flex-basis: 50%
+
+.tea-onboarding__split-step-header
+  display: flex
+  flex-direction: row
+  align-items: baseline
+  add-padding()
+  padding-bottom: 0
+
+.tea-onboarding__split-step:first-child
+  border-right: 1px solid $colors.element-mid
+
+.tea-onboarding__split-step-body
+  display: block
+  color: $colors.text-mid
+  padding: 12px 60px 24px
+
+.tea-onboarding__split-step-cta
+  display: block
+  margin-top: 24px

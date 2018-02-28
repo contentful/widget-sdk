@@ -71,7 +71,7 @@ export default h('svg', {
           fill: '#536171'
         }, [`Copy`]),
         h('tspan', {
-          x: '56.216',
+          x: '60.216',
           y: '14',
           fill: '#A9B9C0'
         }, [`module`])
@@ -98,7 +98,7 @@ export default h('svg', {
           fill: '#536171'
         }, [`Image`]),
         h('tspan', {
-          x: '62.67',
+          x: '66.67',
           y: '14',
           fill: '#A9B9C0'
         }, [`module`])
@@ -125,7 +125,7 @@ export default h('svg', {
           fill: '#536171'
         }, [`Code snippet`]),
         h('tspan', {
-          x: '109.066',
+          x: '113.066',
           y: '14',
           fill: '#A9B9C0'
         }, [`module`])

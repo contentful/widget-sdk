@@ -1,7 +1,7 @@
 import React from 'libs/react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
-import Steps from './OnboardingWithTeaSteps';
+import TEASteps from './OnboardingWithTeaSteps';
 
 const OnboardingWithTea = createReactClass({
   propTypes: {
@@ -11,7 +11,7 @@ const OnboardingWithTea = createReactClass({
     return (
       <section className='home-section tea-onboarding'>
         <Header progress={1} />
-        <Steps orgId={this.props.orgId} />
+        <TEASteps orgId={this.props.orgId} />
       </section>
     );
   }
@@ -23,8 +23,8 @@ const Header = createReactClass({
   },
   render () {
     return (
-      <div>
-        <h2 className='home-section__heading'>Let’s get started</h2>
+      <div className='tea-onboarding__header'>
+        <h2 className='tea-onboarding__heading'>Let’s get started</h2>
         <Progress count={this.props.progress} />
       </div>
     );

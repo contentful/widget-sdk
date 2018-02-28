@@ -12,6 +12,12 @@ import ContentStructureGraphIcon from 'svg/content-structure-graph';
 import TeaScreenshotIcon from 'svg/tea-screenshot';
 import ContentGraphHighlightIcon from 'svg/content-graph-highlight';
 import CheckmarkDoneIcon from 'svg/icon-checkmark-done';
+import PageCTIcon from 'svg/page-ct';
+import PageAPISIcon from 'svg/page-apis';
+import PageContentIcon from 'svg/page-content';
+import UserIcon from 'svg/icon-users';
+import GithubIcon from 'svg/icon-github';
+import AddUserIcon from 'svg/onboarding-add-user';
 
 const SVGS = {
   'home-welcome': HomeWelcomeIcon,
@@ -21,7 +27,13 @@ const SVGS = {
   'content-structure-graph': ContentStructureGraphIcon,
   'tea-screenshot': TeaScreenshotIcon,
   'content-graph-highlight': ContentGraphHighlightIcon,
-  'icon-checkmark-done': CheckmarkDoneIcon
+  'icon-checkmark-done': CheckmarkDoneIcon,
+  'page-ct': PageCTIcon,
+  'page-apis': PageAPISIcon,
+  'page-content': PageContentIcon,
+  'icon-users': UserIcon,
+  'icon-github': GithubIcon,
+  'onboarding-add-user': AddUserIcon
 };
 
 const Icon = createReactClass({
