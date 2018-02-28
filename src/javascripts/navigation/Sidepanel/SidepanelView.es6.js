@@ -51,19 +51,12 @@ function renderOrgActions (gotoOrgSettings, viewingOrgSettings) {
     h('div', {
       className: `nav-sidepanel__org-actions-goto-settings ${viewingOrgSettings ? 'nav-sidepanel__org-actions-goto-settings--is-active' : ''}`,
       onClick: gotoOrgSettings,
-      dataTestId: 'sidepanel-org-actions-settings',
-      style: {display: 'flex'}
+      dataTestId: 'sidepanel-org-actions-settings'
     }, [
-      h('div', {
-        style: {
-          paddingTop: '2px',
-          color: colors.elementDark,
-          fill: 'currentColor'
-        }
-      }, [settingsIcon]),
-      h('div', {
-        style: {marginLeft: '7px'}
-      }, ['Organization settings'])
+      h('.nav-sidepanel__org-title', [
+        h('.nav-sidepanel__org-icon', [settingsIcon]),
+        h('span', ['Organization settings'])
+      ])
     ])
   ]);
 }
