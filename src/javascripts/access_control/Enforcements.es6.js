@@ -4,11 +4,12 @@ import trackPersistentNotification from 'analyticsEvents/persistentNotification'
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import {go} from 'states/Navigator';
 import {merge, findKey, forEach, get} from 'lodash';
+import require from 'require';
 
 const USAGE_METRICS = {
   apiKey: 'API keys',
   asset: 'Assets',
-  contentType: 'Content Types',
+  contentType: 'Content Model',
   entry: 'Entries',
   locale: 'Locales',
   spaceMembership: 'Space Memberships',
@@ -46,7 +47,7 @@ export function determineEnforcement (organization, reasons, entityType) {
     },
     {
       label: 'usageExceeded',
-      message: '<strong>Over usage limits.</strong> You have exceeded the usage limits for your plan. Please upgrade to proceed with content creation & delivery.',
+      message: `<strong>Over usage limits.</strong> ${getMetricMessage(entityType)}. Please upgrade to proceed with content creation & delivery.`,
       tooltip: getMetricMessage,
       actionMessage: upgradeActionMessage('Upgrade'),
       action: upgradeAction
@@ -82,8 +83,14 @@ export function determineEnforcement (organization, reasons, entityType) {
 
   function upgradeAction () {
     trackPersistentNotification.action('Quota Increase');
+    // using require to avoid circular dependency :(
+    const isLegacyOrganization = require('utils/ResourceUtils').isLegacyOrganization;
+    const subscriptionState = isLegacyOrganization(organization)
+      ? 'subscription'
+      : 'subscription_new';
+
     go({
-      path: ['account', 'organizations', 'subscription'],
+      path: ['account', 'organizations', subscriptionState],
       params: { orgId: organization.sys.id }
     });
   }

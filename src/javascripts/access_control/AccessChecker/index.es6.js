@@ -6,12 +6,13 @@ import * as cache from './ResponseCache';
 import {create as createGKPermissionChecker} from './GKPermissionChecker';
 import {
   broadcastEnforcement,
+  resetEnforcements,
   toType,
   getContentTypeIdFor,
   isAuthor
 } from './Utils';
 import {capitalize, capitalizeFirst} from 'stringUtils';
-import {get, some, forEach} from 'lodash';
+import {get, some, forEach, values} from 'lodash';
 import * as Enforcements from 'access_control/Enforcements';
 
 export {wasForbidden} from './Utils';
@@ -212,6 +213,16 @@ function setContext (context) {
   gkPermissionChecker = createGKPermissionChecker({space, organization});
   collectResponses();
   collectSectionVisibility();
+
+  const hasReasonsDenied = value => value.reasons && value.reasons.length;
+  const denied = values(responses).filter(hasReasonsDenied);
+
+  resetEnforcements();
+
+  if (denied.length) {
+    // show the yellow notification bar if space has reached a limit
+    denied.forEach(value => broadcastEnforcement(value.enforcement));
+  }
 
   // Access checker is initialized when at least an auth context is set.
   // _Note:_ If `can...()` method is called on uninitialized access checker,
@@ -435,8 +446,6 @@ function getPermissions (action, entity) {
   response.enforcement = getEnforcement(action, entity);
   response.shouldDisable = !!response.reasons;
   response.shouldHide = !response.shouldDisable;
-
-  broadcastEnforcement(response.enforcement);
 
   return response;
 }

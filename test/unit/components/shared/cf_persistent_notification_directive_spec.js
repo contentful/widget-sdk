@@ -68,6 +68,20 @@ describe('cfPersistentNotification Directive', function () {
     });
   });
 
+  describe('reset', function () {
+    beforeEach(function () {
+      $rootScope.$broadcast('persistentNotification', {
+        message: 'foo'
+      });
+    });
+
+    it('hides the notification', function () {
+      $rootScope.$broadcast('resetPersistentNotification');
+      scope.$digest();
+      expect($body().length).toBe(0);
+    });
+  });
+
   describe('concurrent notifications handling', function () {
     const PARAMS_1 = { message: 'FIRST MESSAGE' };
     const PARAMS_2 = { message: 'some message 2' };
@@ -85,6 +99,12 @@ describe('cfPersistentNotification Directive', function () {
 
     it('shows the first message and ignores resets', function () {
       expect($message().text()).toBe(PARAMS_1.message);
+    });
+
+    it('dismisses all notifications', function () {
+      $rootScope.$broadcast('resetPersistentNotification');
+      scope.$digest();
+      expect($body().length).toBe(0);
     });
 
     it('logs concurrent broadcasted notification params', function () {
