@@ -100,10 +100,7 @@ export function createComponent (spaceContext) {
   };
 
   const initialState = {
-    items: [],
-    // TODO Limits for space environments are not implemented in the
-    // backend yet. We hardcode it for now.
-    planLimit: 6
+    items: []
   };
 
   const store = createStore(

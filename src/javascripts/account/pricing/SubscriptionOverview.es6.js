@@ -2,7 +2,7 @@ import {createElement as h} from 'libs/react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import {runTask} from 'utils/Concurrent';
-import {createEndpoint as createOrgEndpoint} from 'access_control/OrganizationMembershipRepository';
+import {createOrganizationEndpoint} from 'data/EndpointFactory';
 import {getPlansWithSpaces} from 'account/pricing/PricingDataProvider';
 import * as Intercom from 'intercom';
 import {getOrganization} from 'services/TokenStore';
@@ -44,7 +44,7 @@ const SubscriptionOverview = createReactClass({
       return;
     }
 
-    const endpoint = createOrgEndpoint(orgId);
+    const endpoint = createOrganizationEndpoint(orgId);
     const plans = yield getPlansWithSpaces(endpoint).catch(ReloadNotification.apiErrorHandler);
 
     onReady();

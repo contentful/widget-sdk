@@ -71,6 +71,7 @@ function renderForm ({data, model, update, trackCopy}) {
     }, [
       renderEnvironmentSelector({
         canEdit: data.canEdit,
+        isAdmin: data.isAdmin,
         spaceEnvironments: data.spaceEnvironments,
         envs: model.environments,
         updateEnvs: environments => update(assign(model, {environments}))

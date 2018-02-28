@@ -20,7 +20,7 @@ function makeLink (env) {
 export default function (props) {
   return h('div', [
     renderList(props),
-    props.spaceEnvironments.length < 2 && renderHint()
+    props.isAdmin && props.spaceEnvironments.length < 2 && renderHint()
   ]);
 }
 

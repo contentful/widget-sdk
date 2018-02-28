@@ -1,8 +1,8 @@
 import navBar from 'navigation/templates/NavBar';
 
-export default function spaceNavTemplate (useSpaceEnv) {
+export default function spaceNavTemplate (useSpaceEnv, isMaster) {
   const makeRef = (spaceRef) => {
-    if (useSpaceEnv) {
+    if (useSpaceEnv && !isMaster) {
       return `spaces.detail.environment.${spaceRef}`;
     } else {
       return `spaces.detail.${spaceRef}`;
@@ -47,7 +47,7 @@ export default function spaceNavTemplate (useSpaceEnv) {
       reload: useSpaceEnv
     },
     environments: {
-      if: 'nav.environmentsEnabled && nav.canNavigateTo("settings")',
+      if: 'nav.canNavigateTo("settings")',
       sref: 'spaces.detail.settings.environments',
       dataViewType: 'spaces-settings-environments',
       title: 'Environments',
@@ -109,12 +109,11 @@ export default function spaceNavTemplate (useSpaceEnv) {
     dropdownItems.usage
   ];
 
-  const masterSettingsDropdown = [
+  const spaceSettingsDropdown = [
     dropdownItems.settings,
     dropdownItems.locales,
     dropdownItems.users,
     dropdownItems.roles,
-    dropdownItems.environments,
     dropdownItems.keys,
     dropdownItems.webhooks,
     dropdownItems.extensions,
@@ -123,10 +122,16 @@ export default function spaceNavTemplate (useSpaceEnv) {
   ];
 
   return navBar([
-    {
+    (!useSpaceEnv || isMaster) ? {
       if: 'nav.canNavigateTo("spaceHome")',
       sref: 'spaces.detail.home',
       dataViewType: 'space-home',
+      icon: 'nav-home',
+      title: 'Space home'
+    } : {
+      disabled: true,
+      tooltip: 'The space home is only available in the master environment.',
+      if: 'nav.canNavigateTo("spaceHome")',
       icon: 'nav-home',
       title: 'Space home'
     },
@@ -160,7 +165,7 @@ export default function spaceNavTemplate (useSpaceEnv) {
       rootSref: makeRef('settings'),
       icon: 'nav-settings',
       title: useSpaceEnv ? 'Settings' : 'Space settings',
-      children: useSpaceEnv ? envSettingsDropdown : masterSettingsDropdown
+      children: useSpaceEnv ? envSettingsDropdown : spaceSettingsDropdown
     }
   ]);
 }

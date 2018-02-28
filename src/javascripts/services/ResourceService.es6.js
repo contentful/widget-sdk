@@ -2,8 +2,6 @@ import { getSpace, getOrganization } from 'services/TokenStore';
 import { canCreate, generateMessage, useLegacy } from 'utils/ResourceUtils';
 import { runTask } from 'utils/Concurrent';
 import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/Endpoint';
-import { apiUrl } from 'Config';
-import * as auth from 'Authentication';
 
 import $q from '$q';
 import { assign, snakeCase, camelCase } from 'lodash';
@@ -69,7 +67,7 @@ export default function createResourceService (id, type = 'space') {
 function createEndpoint (id, type) {
   const endpointFactory = type === 'space' ? createSpaceEndpoint : createOrganizationEndpoint;
 
-  return endpointFactory(apiUrl(), id, auth);
+  return endpointFactory(id);
 }
 
 function createResourceFromTokenData (resourceType, limit, usage) {

@@ -120,10 +120,16 @@ cf-icon[name="nav-organization-billing"]
   path
     fill: white
     transition: all 0.1s ease-in-out
+
   a:hover &,
   .is-active &
     path
       fill: $colors.blue-mid
+
+  .is-disabled:hover &,
+  .is-disabled &
+    path
+      fill: $colors.text-light
 
 
 /**

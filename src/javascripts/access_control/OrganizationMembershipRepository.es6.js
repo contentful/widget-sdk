@@ -1,15 +1,8 @@
-import {createOrganizationEndpoint} from 'data/Endpoint';
-import * as auth from 'Authentication';
-import {apiUrl} from 'Config';
 import {fetchAll} from 'data/CMA/FetchAll';
 import {uniq, identity, chunk, flatten} from 'lodash';
 
 const BATCH_LIMIT = 100;
 const USER_IDS_BATCH_LIMIT = 44;
-
-export function createEndpoint (orgId) {
-  return createOrganizationEndpoint(apiUrl(), orgId, auth);
-}
 
 export function getAll (endpoint) {
   return endpoint({
