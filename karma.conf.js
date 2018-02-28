@@ -1,6 +1,5 @@
 /* global require module */
 
-require('babel-register');
 var makeBabelOptions = require('./tools/app-babel-options').makeOptions;
 var P = require('path');
 var root = P.resolve() + '/';

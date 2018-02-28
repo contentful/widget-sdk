@@ -1,6 +1,19 @@
 'use strict';
 
-require('babel-register');
+// this is needed for `svg` task. As soon as we move to webpack and
+// use `svg-loader`, it should become unnecessary
+// TODO: remove after migration to webpack
+require('babel-register')({
+  // this configuration is valid only for gulp tasks
+  // so if it will be in `.babelrc`, it can create
+  // confusion
+  'presets': [['env', {
+    'targets': {
+      'node': 'current'
+    }
+  }]]
+});
+
 require('babel-polyfill');
 
 require('./tools/tasks/build/build');
