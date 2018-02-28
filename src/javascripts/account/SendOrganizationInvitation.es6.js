@@ -2,10 +2,8 @@ import * as K from 'utils/kefir';
 import {get, entries} from 'lodash';
 import {runTask} from 'utils/Concurrent';
 import {create as createSpaceRepo} from 'access_control/SpaceMembershipRepository';
-import {createEndpoint as createOrgEndpoint, invite as inviteToOrg} from 'access_control/OrganizationMembershipRepository';
-import {createSpaceEndpoint} from 'data/Endpoint';
-import * as auth from 'Authentication';
-import {apiUrl} from 'Config';
+import {createOrganizationEndpoint, createSpaceEndpoint} from 'data/EndpointFactory';
+import {invite as inviteToOrg} from 'access_control/OrganizationMembershipRepository';
 
 const progressBus = K.createStreamBus();
 
@@ -34,7 +32,7 @@ export const progress$ = progressBus.stream;
  * @returns {Promise}
  */
 export function invite ({emails, orgRole, spaceMemberships, suppressInvitation, orgId}) {
-  const orgEndpoint = createOrgEndpoint(orgId);
+  const orgEndpoint = createOrganizationEndpoint(orgId);
 
   // If the org invitation succeeds (or if it fails with 422 [taken]),
   // invite the user to all selected spaces with the respective roles.
@@ -59,7 +57,7 @@ export function invite ({emails, orgRole, spaceMemberships, suppressInvitation, 
 function inviteToSpaces (email, spaceMemberships) {
   const memberships = entries(spaceMemberships);
   const invitations = memberships.map(([spaceId, roles]) => runTask(function* () {
-    const spaceEndpoint = createSpaceEndpoint(apiUrl(), spaceId, auth);
+    const spaceEndpoint = createSpaceEndpoint(spaceId);
     const inviteToSpace = createSpaceRepo(spaceEndpoint).invite;
     try {
       yield inviteToSpace(email, roles);
