@@ -38,7 +38,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
     var isTrial = subscription && subscription.isTrial();
     var trialLockdown = isTrial && subscription.hasTrialEnded();
 
-    if (result.useLegacy && !result.hasFeature) {
+    if (!result.hasFeature) {
       notification.error('Your plan does not include Custom Roles.');
       $scope.canModifyRoles = false;
     } else if (isNew && !ResourceUtils.canCreate(result.resource)) {

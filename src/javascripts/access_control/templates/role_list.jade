@@ -51,21 +51,23 @@ header.workbench-header
         | &#32;is using {{usage}} out of {{limit}} available roles.
 
       p(ng-if="reachedLimit")
-        | You've reached your&#32;
-        span(ng-if="legacy")
-          | organization
-        span(ng-if="!legacy")
-          | space
-        | &#32;role limit.
+        span
+          | You've reached the&#32;
+          span(ng-if="legacy")
+            | organization
+          span(ng-if="!legacy")
+            | space
+          | &#32;role limit.&#32;
 
-        span(ng-if="canUpgrade")
-          | <a cf-sref="{{ accountUpgradeState }}">Upgrade</a> to add more locales
-        span(ng-if="!canUpgrade")
-          | Contact the admin or owner of this organization to upgrade the organization
-        span(ng-if="limit === 1")
-          | .
-        span(ng-if="limit > 1")
-          | , or delete an existing locale.
+        span
+          span(ng-if="canUpgrade")
+            | <a cf-sref="{{ accountUpgradeState }}">Upgrade</a> to add more locales
+          span(ng-if="!canUpgrade")
+            | Contact the admin of this organization to upgrade the organization
+          span(ng-if="limit === 1")
+            | .
+          span(ng-if="limit > 1")
+            | , or delete an existing locale.
       p(ng-if="!reachedLimit")
         | Select one of the predefined role templates or create one from the scratch.
       button.btn-primary-action(ng-disabled="reachedLimit" ui-sref="spaces.detail.settings.roles.new")
