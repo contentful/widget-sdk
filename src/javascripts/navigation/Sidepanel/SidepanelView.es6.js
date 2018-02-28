@@ -4,7 +4,6 @@ import settingsIcon from 'svg/settings';
 import scaleSvg from 'utils/ScaleSvg';
 import SidepanelOrgs from './SidepanelOrgs';
 import SidepanelSpaces from './SidepanelSpaces';
-import {byName as colors} from 'Styles/Colors';
 
 export default function (props) {
   const {sidePanelIsShown, orgDropdownIsShown, closeOrgsDropdown, closeSidePanel, currOrg} = props;
