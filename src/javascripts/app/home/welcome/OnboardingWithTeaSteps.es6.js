@@ -3,7 +3,12 @@ import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import Icon from 'ui/Components/Icon';
 import {findKey} from 'lodash';
-import {go} from 'states/Navigator';
+import {href, go} from 'states/Navigator';
+import spaceContext from 'spaceContext';
+import {runTask} from 'utils/Concurrent';
+import entityCreator from 'entityCreator';
+import {env} from 'Config';
+import qs from 'libs/qs';
 
 const VIEW_SAMPLE_CONTENT = 'viewSampleContent';
 const PREVIEW_USING_EXAMPLE_APP = 'previewUsingExampleApp';
@@ -11,48 +16,48 @@ const CREATE_ENTRY = 'createEntry';
 const GET_REPO = 'getRepo';
 const INVITE_DEV = 'inviteDev';
 
+export const STEPS_KEYS = {
+  VIEW_SAMPLE_CONTENT, PREVIEW_USING_EXAMPLE_APP, CREATE_ENTRY, GET_REPO, INVITE_DEV
+};
+
 const TEASteps = createReactClass({
   propTypes: {
-    orgId: PropTypes.string.isRequired
-  },
-  getInitialState () {
-    return {
-      [VIEW_SAMPLE_CONTENT]: { isDone: false },
-      [PREVIEW_USING_EXAMPLE_APP]: { isDone: false },
-      [CREATE_ENTRY]: { isDone: false },
-      [GET_REPO]: { isDone: false },
-      [INVITE_DEV]: { isDone: false }
-    };
+    orgId: PropTypes.string.isRequired,
+    state: PropTypes.object.isRequired,
+    actions: PropTypes.object.isRequired
   },
   markAsDone (step) {
-    this.setState({
-      [step]: { isDone: true }
-    });
+    const action = this.props.actions[step];
+
+    action && action();
   },
   render () {
-    const stepToExpand = findKey(this.state, ({isDone}) => !isDone);
+    const { state } = this.props;
+    const stepToExpand = findKey(state, ({isDone}) => !isDone);
 
     return (
       <div className='tea-onboarding__steps'>
         <ViewSampleContentStep
           isExpanded={stepToExpand === VIEW_SAMPLE_CONTENT}
-          {...this.state[VIEW_SAMPLE_CONTENT]}
+          {...state[VIEW_SAMPLE_CONTENT]}
           markAsDone={_ => this.markAsDone(VIEW_SAMPLE_CONTENT)} />
         <PreviewUsingExampleAppStep
           isExpanded={stepToExpand === PREVIEW_USING_EXAMPLE_APP}
-          {...this.state[PREVIEW_USING_EXAMPLE_APP]}
+          {...state[PREVIEW_USING_EXAMPLE_APP]}
           markAsDone={_ => this.markAsDone(PREVIEW_USING_EXAMPLE_APP)} />
         <CreateEntryStep
           isExpanded={stepToExpand === CREATE_ENTRY}
-          {...this.state[CREATE_ENTRY]}
+          {...state[CREATE_ENTRY]}
           markAsDone={_ => this.markAsDone(CREATE_ENTRY)} />
         <GetRepoOrInviteDevStep
-          getRepo={{...this.state[GET_REPO], markAsDone: _ => this.markAsDone(GET_REPO)}}
-          inviteDev={{...this.state[INVITE_DEV], markAsDone: _ => this.markAsDone(INVITE_DEV), orgId: this.props.orgId}} />
+          getRepo={{...state[GET_REPO], markAsDone: _ => this.markAsDone(GET_REPO)}}
+          inviteDev={{...state[INVITE_DEV], markAsDone: _ => this.markAsDone(INVITE_DEV), orgId: this.props.orgId}} />
       </div>
     );
   }
 });
+
+const VIEW_CONTENT_TYPE_ID = 'course';
 
 const ViewSampleContentStep = createReactClass({
   propTypes: {
@@ -61,7 +66,6 @@ const ViewSampleContentStep = createReactClass({
     isDone: PropTypes.bool.isRequired
   },
   primaryCtaOnClick () {
-    console.log(`Step ${VIEW_SAMPLE_CONTENT} done`);
     this.props.markAsDone();
   },
   render () {
@@ -73,6 +77,9 @@ const ViewSampleContentStep = createReactClass({
       isDone
     };
 
+    const baseLink = href({ path: ['spaces', 'detail', 'entries', 'list'], params: { spaceId: spaceContext.space.getId() } });
+    const linkWithQuery = `${baseLink}?contentTypeId=${VIEW_CONTENT_TYPE_ID}`;
+
     return (
       <Step {...propsForStep}>
         <div>
@@ -80,9 +87,9 @@ const ViewSampleContentStep = createReactClass({
             <p>This example space shows best practices on how to structure your content and integrate your website and app with Contentful.</p>
             <p>Have a look at the two courses composing this example.</p>
           </div>
-          <button className='btn-action tea-onboarding__step-cta' onClick={e => this.primaryCtaOnClick(e)}>
+          <a target={'_blank'} rel={'noopener'} href={linkWithQuery} className='btn-action tea-onboarding__step-cta' onClick={e => this.primaryCtaOnClick(e)}>
             View content
-          </button>
+          </a>
         </div>
         <div>
           <p className='tea-onboarding__step-graphic-description'>Here’s how this content is nested:</p>
@@ -99,9 +106,53 @@ const PreviewUsingExampleAppStep = createReactClass({
     isExpanded: PropTypes.bool.isRequired,
     isDone: PropTypes.bool.isRequired
   },
+  getInitialState () {
+    return {
+      cdaToken: null,
+      cpaToken: null
+    };
+  },
   primaryCtaOnClick () {
-    console.log(`Step ${PREVIEW_USING_EXAMPLE_APP} done`);
     this.props.markAsDone();
+  },
+  componentDidMount () {
+    const self = this;
+    runTask(function* () {
+      const keys = yield spaceContext.apiKeyRepo.getAll();
+      const key = keys[0];
+      self.setState({
+        cdaToken: key.accessToken
+      });
+      const keyWithPreview = yield spaceContext.apiKeyRepo.get(keys[0].sys.id);
+      self.setState({
+        cpaToken: keyWithPreview.preview_api_key.accessToken
+      });
+    });
+  },
+  getPreviewUrl () {
+    const { cdaToken, cpaToken } = this.state;
+    // we can retrieve this URL from content preview or construct it by ourselves
+    // there is no direct links to /courses, so it means we'll need to modify some
+    // content preview (in the middle). So it is easier just to construct by ourselves
+    // TODO: add params and env
+
+    const queryParams = {
+      // next params allow to use user's space as a source for the app itself
+      // so his changes will be refleced on the app's content
+      space_id: spaceContext.space.getId(),
+      delivery_token: cdaToken,
+      preview_token: cpaToken,
+      // user will be able to go back to the webapp from TEA using links
+      // without this flag, there will be no links in UI of TEA
+      editorial_features: 'enabled',
+      // we want to have faster feedback for the user after his changes
+      // CPA reacts to changes in ~5 seconds, CDA in more than 10
+      api: 'cpa'
+    };
+    const queryString = qs.stringify(queryParams);
+
+    const domain = env === 'production' ? 'contentful' : 'flinkly';
+    return `https://the-example-app-nodejs.${domain}.com/courses${queryString ? '?' : ''}${queryString}`;
   },
   render () {
     const {isDone, isExpanded} = this.props;
@@ -112,6 +163,8 @@ const PreviewUsingExampleAppStep = createReactClass({
       isDone
     };
 
+    const url = this.getPreviewUrl();
+
     return (
       <Step {...propsForStep}>
         <div>
@@ -121,9 +174,15 @@ const PreviewUsingExampleAppStep = createReactClass({
               space. The app is available for multiple platforms such as JavaScript, Java, .NET and more.
             </p>
           </div>
-          <button className='btn-action tea-onboarding__step-cta' onClick={e => this.primaryCtaOnClick(e)}>
+          <a
+            href={url}
+            target={'_blank'}
+            rel={'noopener'}
+            className='btn-action tea-onboarding__step-cta'
+            onClick={e => this.primaryCtaOnClick(e)}
+          >
             Preview content
-          </button>
+          </a>
         </div>
         <div>
           <Icon className='tea-onboarding__step-graphic' name='tea-screenshot' />
@@ -139,11 +198,73 @@ const CreateEntryStep = createReactClass({
     isExpanded: PropTypes.bool.isRequired,
     isDone: PropTypes.bool.isRequired
   },
+  getInitialState () {
+    return {
+      isLoading: false
+    };
+  },
+  findLesson (lessons) {
+    const lesson = lessons.find(lesson => {
+      const matchSlug = lesson.fields.slug['en-US'] === 'serve-localized-content';
+      const matchTitle = lesson.fields.title['en-US'] === 'Serve localized content';
+      return matchSlug || matchTitle;
+    });
+
+    if (lesson) {
+      return lesson;
+    } else {
+      return lessons[0];
+    }
+  },
+  createNewLessonCopy () {
+    const contentType = 'lessonCopy';
+    return entityCreator.newEntry(contentType);
+  },
+  processNewEntry () {
+    const self = this;
+    self.setState({
+      isLoading: true
+    });
+    return runTask(function* () {
+      // get all lesson entries
+      const lessons = yield spaceContext.cma.getEntries({
+        content_type: 'lesson'
+      });
+      // find a lesson where we want to add new module
+      const lesson = self.findLesson(lessons.items);
+
+      // create new lesson copy entry
+      const newEntry = yield self.createNewLessonCopy();
+      const newEntryId = newEntry.getId();
+      const newLinkedModule = {
+        sys: {
+          id: newEntryId,
+          linkType: 'Entry',
+          type: 'Link'
+        }
+      };
+
+      lesson.fields.modules['en-US'].push(newLinkedModule);
+
+      yield spaceContext.cma.updateEntry(lesson);
+
+      go({
+        path: ['spaces', 'detail', 'entries', 'detail'],
+        params: {
+          entryId: newEntryId
+        }
+      });
+    }).then(() => {
+      self.setState({
+        isLoading: false
+      });
+    });
+  },
   primaryCtaOnClick () {
-    console.log(`Step ${CREATE_ENTRY} done`);
-    this.props.markAsDone();
+    this.processNewEntry().then(this.props.markAsDone);
   },
   render () {
+    const {isLoading} = this.state;
     const {isDone, isExpanded} = this.props;
     const propsForStep = {
       headerCopy: 'Create your first entry',
@@ -162,7 +283,7 @@ const CreateEntryStep = createReactClass({
             </p>
             <p>You can see your changes immediately using the “Open preview” button.</p>
           </div>
-          <button className='btn-action tea-onboarding__step-cta' onClick={e => this.primaryCtaOnClick(e)}>
+          <button className={`btn-action tea-onboarding__step-cta ${isLoading ? 'is-loading' : ''}`} onClick={e => this.primaryCtaOnClick(e)}>
             Create entry
           </button>
         </div>
@@ -243,10 +364,6 @@ const InviteADevStep = createReactClass({
   handleClick (e) {
     e.preventDefault();
     this.props.markAsDone();
-    go({
-      path: ['account', 'organizations', 'users', 'new'],
-      params: { orgId: this.props.orgId }
-    });
   },
   render () {
     const props = {
@@ -255,10 +372,15 @@ const InviteADevStep = createReactClass({
       isDone: this.props.isDone
     };
 
+    const inviteLink = href({
+      path: ['account', 'organizations', 'users', 'new'],
+      params: { orgId: this.props.orgId }
+    });
+
     return (
       <SplitStep {...props}>
         <p>Need some help setting up your project? Invite a developer to get started.</p>
-        <a className='tea-onboarding__split-step-cta' onClick={this.handleClick}>
+        <a href={inviteLink} className='tea-onboarding__split-step-cta' onClick={this.handleClick}>
           Invite user
         </a>
       </SplitStep>
@@ -312,13 +434,16 @@ const Step = createReactClass({
       isExpanded: nextProps.isExpanded
     });
   },
+  toggle () {
+    this.setState({ isExpanded: !this.state.isExpanded });
+  },
   render () {
     const {isExpanded} = this.state;
     const {isDone, headerIcon, headerCopy, children} = this.props;
 
     return (
       <div className='tea-onboarding__step'>
-        <div className='tea-onboarding__step-header'>
+        <div className='tea-onboarding__step-header' onClick={this.toggle}>
           {
             isDone
             ? <Icon name='icon-checkmark-done' className='tea-onboarding__step-header-icon' key='complete-step'/>

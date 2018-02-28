@@ -182,4 +182,4 @@ export default h('svg', {
       d: 'M29 40v74h16'
     })
   ])
-])
+]);
