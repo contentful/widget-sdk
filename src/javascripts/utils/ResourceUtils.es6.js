@@ -1,4 +1,5 @@
 import { getCurrentVariation } from 'utils/LaunchDarkly';
+import { assign } from 'lodash';
 
 const flagName = 'feature-bv-2018-01-resources-api';
 
@@ -95,6 +96,37 @@ export function isLegacyOrganization (organization) {
   }
 
   return true;
+}
+
+/**
+ * Get resource limits data from token data for organization.
+ * This is used for legacy organizations instead or resource API.
+ *
+ * @param {Object} organization
+ * @param {string} resourceType
+ */
+export function getLegacyLimit (resourceType, organization) {
+  const allLimits = assign({},
+    organization.subscriptionPlan.limits.permanent,
+    organization.subscriptionPlan.limits.period
+  );
+
+  return allLimits[resourceType];
+}
+/**
+ * Get resource usage data from token data for organization.
+ * This is used for legacy organizations instead or resource API.
+ *
+ * @param {Object} organization
+ * @param {string} resourceType
+ */
+export function getLegacyUsage (resourceType, organization) {
+  const allUsages = assign({},
+    organization.usage.permanent,
+    organization.usage.period
+  );
+
+  return allUsages[resourceType];
 }
 
 function resourceIncludedLimitReached (resource) {
