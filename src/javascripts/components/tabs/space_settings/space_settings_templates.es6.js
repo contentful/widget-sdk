@@ -1,6 +1,5 @@
 import {h} from 'utils/hyperscript';
 import {simple as simpleWorkbench} from 'app/Workbench';
-import {richtextLayout} from 'modalDialog';
 import pageSettingsIcon from 'svg/page-settings';
 
 export function form () {
@@ -31,28 +30,4 @@ export function form () {
         {type: 'text', ngModel: 'model.name'})
     ])
   ]);
-}
-
-export function removalConfirmation () {
-  const content = [
-    h('p', [
-      'You are about to remove space ',
-      h('span.modal-dialog__highlight', {ngBind: 'spaceName'}), '.'
-    ]),
-    h('p', [
-      h('strong', [
-        `All space contents and the space itself will be removed.
-         This operation cannot be undone.`
-      ])
-    ]),
-    h('p', ['To confirm, type the name of the space in the field below:']),
-    h('input.cfnext-form__input--full-size', {ngModel: 'input.spaceName'})
-  ];
-
-  const controls = [
-    h('button.btn-caution', {uiCommand: 'remove'}, ['Remove']),
-    h('button.btn-secondary-action', {ngClick: 'dialog.cancel()'}, ['Don’t remove'])
-  ];
-
-  return richtextLayout('Remove space', content, controls);
 }

@@ -5,19 +5,24 @@ import {runTask} from 'utils/Concurrent';
 import {createOrganizationEndpoint} from 'data/EndpointFactory';
 import {getPlansWithSpaces} from 'account/pricing/PricingDataProvider';
 import * as Intercom from 'intercom';
-import {getOrganization} from 'services/TokenStore';
-import {isOwnerOrAdmin} from 'services/OrganizationRoles';
+import {getSpaces, getOrganization} from 'services/TokenStore';
+import {isOwnerOrAdmin, isOwner} from 'services/OrganizationRoles';
 import * as ReloadNotification from 'ReloadNotification';
 import {href} from 'states/Navigator';
 import {showDialog as showCreateSpaceModal} from 'services/CreateSpace';
-import {canCreateSpaceInOrganization} from 'access_control/AccessChecker';
-import svgPlus from 'svg/plus';
-import {asReact} from 'ui/Framework/DOMRenderer';
+import {openDeleteSpaceDialog} from 'services/DeleteSpace';
 import moment from 'moment';
 import {get, isString} from 'lodash';
 import {supportUrl} from 'Config';
 import $location from '$location';
 import Workbench from 'app/WorkbenchReact';
+import Tooltip from 'ui/Components/Tooltip';
+import {joinAnd} from 'stringUtils';
+import {byName as colors} from 'Styles/Colors';
+import QuestionMarkIcon from 'svg/QuestionMarkIcon';
+import BubbleIcon from 'svg/bubble';
+import InvoiceIcon from 'svg/invoice';
+import {asReact} from 'ui/Framework/DOMRenderer';
 
 const SubscriptionOverview = createReactClass({
   propTypes: {
@@ -29,7 +34,7 @@ const SubscriptionOverview = createReactClass({
     return {
       basePlan: {},
       spacePlans: [],
-      canCreateSpace: false
+      grandTotal: 0
     };
   },
   componentWillMount: function () {
@@ -38,14 +43,15 @@ const SubscriptionOverview = createReactClass({
   fetchData: function* () {
     const {orgId, onReady, onForbidden} = this.props;
 
-    const org = yield getOrganization(orgId);
-    if (!isOwnerOrAdmin(org)) {
+    const organization = yield getOrganization(orgId);
+    if (!isOwnerOrAdmin(organization)) {
       onForbidden();
       return;
     }
 
     const endpoint = createOrganizationEndpoint(orgId);
     const plans = yield getPlansWithSpaces(endpoint).catch(ReloadNotification.apiErrorHandler);
+    const accessibleSpaces = yield getSpaces(); // spaces that current user has access to
 
     onReady();
 
@@ -55,15 +61,28 @@ const SubscriptionOverview = createReactClass({
       .sort((plan1, plan2) => {
         const [name1, name2] = [plan1, plan2].map((plan) => get(plan, 'space.name', ''));
         return name1.localeCompare(name2);
+      })
+      // Set space.isAccessible to check if current user can go to space details.
+      .map((plan) => {
+        if (plan.space) {
+          plan.space.isAccessible = !!accessibleSpaces.find((space) => space.sys.id === plan.space.sys.id);
+        }
+        return plan;
       });
-    const canCreateSpace = canCreateSpaceInOrganization(orgId);
 
-    this.setState({basePlan, spacePlans, canCreateSpace});
+    // TODO add user fees
+    const grandTotal = calculateTotalPrice(plans.items);
+
+    this.setState({basePlan, spacePlans, grandTotal, organization});
   },
   createSpace: function () {
-    if (this.state.canCreateSpace) {
-      showCreateSpaceModal(this.props.orgId);
-    }
+    showCreateSpaceModal(this.props.orgId);
+  },
+  deleteSpace: function (space) {
+    openDeleteSpaceDialog({
+      space,
+      onSuccess: () => { runTask(this.fetchData); }
+    });
   },
   contactUs: function () {
     // Open intercom if it's possible, otherwise go to support page.
@@ -74,137 +93,227 @@ const SubscriptionOverview = createReactClass({
     }
   },
   render: function () {
-    const {basePlan, spacePlans, canCreateSpace} = this.state;
+    const {basePlan, spacePlans, grandTotal, organization} = this.state;
     const {orgId} = this.props;
 
     return h(Workbench, {
       title: 'Subscription',
+      icon: 'subscription',
       content: h('div', {
         style: {padding: '0 2rem'}
       },
-          h(BasePlan, {basePlan, orgId}),
-          h(SpacePlans, {spacePlans, orgId})
+          h(BasePlan, {basePlan}),
+          h(SpacePlans, {
+            spacePlans,
+            onCreateSpace: this.createSpace,
+            onDeleteSpace: this.deleteSpace,
+            isOrgOwner: isOwner(organization)
+          })
         ),
       sidebar: h(RightSidebar, {
-        canCreateSpace,
-        onCreateSpace: this.createSpace,
+        orgId,
+        grandTotal,
         onContactUs: this.contactUs
       })
     });
   }
 });
 
-function BasePlan ({basePlan, orgId}) {
-  const enabledFeatures = getEnabledFeatures(basePlan);
-  return h('div', null,
-    h('h2', null,
-      basePlan.name, '  ',
-      h('a', {
-        href: href(getOrgUsageNavState(orgId)),
-        style: {
-          fontSize: '0.8em',
-          fontWeight: 'normal',
-          textDecoration: 'underline',
-          marginLeft: '0.8em'
-        }
-      }, 'See usage')
-    ),
-    h('p', null, enabledFeatures.length ? enabledFeatures.map(({name}) => name) : 'No features on platform')
-  );
-}
+function BasePlan ({basePlan}) {
+  const enabledFeaturesNames = getEnabledFeatures(basePlan).map(({name}) => name);
 
-function SpacePlans ({spacePlans, orgId}) {
-  const grandTotal = calculateTotalPrice(spacePlans);
-  const actionLinkStyle = {padding: '0 15px'};
-  return h('table', {className: 'deprecated-table x--hoverable'},
-    h('thead', null,
-      h('tr', null,
-        h('th', {style: {width: '40%'}},
-          'Space name ',
-          h('i', {className: 'fa fa-caret-up'})
-        ),
-        h('th', null, 'Type'),
-        h('th', null, 'Created by'),
-        h('th', null, 'Created on'),
-        h('th', null)
-      )
-    ),
-    h('tbody', {className: 'clickable'},
-      spacePlans.map((plan) => {
-        const {name, price, sys, space} = plan;
-        const enabledFeatures = getEnabledFeatures(plan);
-        let createdBy = '';
-        let createdAt = '';
-        let spaceLink = '';
-        let usageLink = '';
-        if (space) {
-          createdBy = getUserName(space.sys.createdBy || {});
-          createdAt = moment.utc(space.sys.createdAt).format('DD. MMMM YYYY');
-          spaceLink = h('a', {href: href(getSpaceNavState(space.sys.id)), style: actionLinkStyle}, 'Go to space');
-          usageLink = h('a', {href: href(getSpaceUsageNavState(space.sys.id)), style: actionLinkStyle}, 'Usage');
-        }
-
-        return h('tr', {
-          key: sys.id
-        },
-          h('td', null,
-            h('h3', null, get(space, 'name', '—')),
-            h('p', null, enabledFeatures.length ? enabledFeatures.map(({name}) => name) : 'No features on space')
-          ),
-          h('td', null,
-            h('h3', null, name),
-            h(Price, {value: price})
-          ),
-          h('td', null, createdBy),
-          h('td', null, createdAt),
-          h('td', {style: {textAlign: 'right'}}, spaceLink, usageLink)
-        );
-      })
-    ),
-    h('tfoot', null,
-      h('tr', null,
-        h('td', null, 'Total'),
-        h('td', null, h(Price, {value: grandTotal, unit: 'mo'})),
-        h('td', null),
-        h('td', {style: {textAlign: 'right'}},
-          h('a', {href: href(getInvoiceNavState(orgId)), style: actionLinkStyle}, 'Invoices')
-        )
-      )
+  return h('div', {style: {marginBottom: '3em'}},
+    h('h2', null, 'Platform'),
+    h('p', null,
+      h('b', null, basePlan.name),
+      enabledFeaturesNames.length
+        ? ` – includes ${joinAnd(enabledFeaturesNames)}.`
+        : ' – doesn’t include any additional features.'
     )
   );
 }
 
-function RightSidebar ({onCreateSpace, canCreateSpace, onContactUs}) {
+function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
+  if (!spacePlans.length) {
+    return h('div', null,
+      h('h2', null, 'Spaces'),
+      h('p', null,
+        'Your organization doesn\'t have any spaces. ',
+        h('button', {
+          className: 'btn-link',
+          onClick: onCreateSpace
+        }, 'Add space')
+      )
+    );
+  } else {
+    const spacesTotal = calculateTotalPrice(spacePlans);
+
+    return h('div', null,
+      h('h2', null, 'Spaces'),
+      h('p', null,
+        'The total for your ',
+        h('b', null, `${spacePlans.length} spaces`),
+        ' is ',
+        h(Price, {value: spacesTotal, style: {fontWeight: 'bold'}}),
+        ' per month.'
+        // TODO show available free spaces
+      ),
+      h('table', {className: 'simple-table'},
+        h('thead', null,
+          h('tr', null,
+            h('th', {style: {width: '35%'}}, 'Name'),
+            h('th', {style: {width: '25%'}}, 'Space type / price'),
+            h('th', {style: {width: '10%'}}, 'Created by'),
+            h('th', {style: {width: '10%'}}, 'Created on'),
+            h('th', {style: {width: '20%'}}, 'Actions')
+          )
+        ),
+        h('tbody', {className: 'clickable'}, spacePlans.map(
+          (plan) => h(SpacePlanRow, {
+            key: plan.sys.id,
+            plan,
+            onDeleteSpace,
+            isOrgOwner
+          })
+        ))
+      )
+    );
+  }
+}
+
+function SpacePlanRow ({plan, onDeleteSpace, isOrgOwner}) {
+  const space = plan.space;
+  const enabledFeatures = getEnabledFeatures(plan);
+  let actionLinks = [];
+  let createdBy = '';
+  let createdAt = '';
+
+  if (space) {
+    createdBy = getUserName(space.sys.createdBy || {});
+    createdAt = moment.utc(space.sys.createdAt).format('DD/MM/YYYY');
+    actionLinks = getSpaceActionLinks(space, isOrgOwner, onDeleteSpace);
+  }
+
+  const featuresTooltip = enabledFeatures.length
+  ? 'This space type includes ' + joinAnd(enabledFeatures.map(({name}) => name))
+  : 'This space type doesn’t include any additional features';
+
+  const questionMarkIcon = h('span', {
+    style: {
+      position: 'relative',
+      bottom: '0.125em',
+      paddingLeft: '0.2em'
+    }
+  }, asReact(QuestionMarkIcon({color: colors.textLight})));
+
+  return h('tr', null,
+    h('td', null, h('h3', {style: {margin: 0}}, get(space, 'name', '—'))),
+    h('td', null,
+      h('h3', {style: {marginTop: 0}},
+        plan.name,
+        h(Tooltip, {
+          element: questionMarkIcon,
+          tooltip: featuresTooltip,
+          options: {width: 200},
+          style: {display: 'inline'}
+        })
+      ),
+      h(Price, {value: plan.price, unit: 'month'})
+    ),
+    h('td', null, createdBy),
+    h('td', null, createdAt),
+    h('td', null, ...actionLinks)
+  );
+}
+
+function RightSidebar ({grandTotal, orgId, onContactUs}) {
+  // TODO - add these styles to stylesheets
+  const iconStyle = {fill: colors.blueDarkest, paddingRight: '6px', position: 'relative', bottom: '-0.125em'};
+
   return h('div', {className: 'entity-sidebar'},
+    h('h2', {className: 'entity-sidebar__heading'}, 'Grand total'),
     h('p', {className: 'entity-sidebar__help-text'},
-      h('button', {
-        className: 'btn-action x--block',
-        onClick: onCreateSpace,
-        disabled: !canCreateSpace
-      },
-        h('div', {className: 'btn-icon cf-icon cf-icon--plus inverted'}, asReact(svgPlus)),
-        'Add a new space'
+      'Your grand total is ',
+      h(Price, {value: grandTotal, style: {fontWeight: 'bold'}}),
+      ' per month.'
+    ),
+    h('p', {className: 'entity-sidebar__help-text'},
+      h('span', {style: iconStyle}, asReact(InvoiceIcon)),
+      h('a', {
+        className: 'text-link',
+        href: href(getInvoiceNavState(orgId))
+      }, 'View invoices')
+    ),
+    h('div', {className: 'note-box--info'},
+      h('p', null,
+        'Note that the monthly invoice amount might deviate from the total shown ' +
+        'above. This happens when you hit overages or make changes to your ' +
+        'subscription during a billing cycle.'
       )
     ),
     h('h2', {className: 'entity-sidebar__heading'}, 'Need help?'),
     h('p', {className: 'entity-sidebar__help-text'},
-      'Do you need to make changes to your pricing plan or purchase additional spaces? ' +
-      'Don’t hesitate to talk to our customer success team.'
+      'Do you need to up- or downgrade? Don’t hesitate to talk to our customer ' +
+      'success team.'
     ),
     h('p', {className: 'entity-sidebar__help-text'},
-      h('button', {className: 'btn-link', onClick: onContactUs}, 'Get in touch with us')
+      h('span', {style: iconStyle}, asReact(BubbleIcon)),
+      h('button', {className: 'text-link', onClick: onContactUs}, 'Get in touch with us')
     )
   );
 }
 
-function Price ({value = 0, currency = '$', unit = null}) {
+function getSpaceActionLinks (space, isOrgOwner, onDeleteSpace) {
+  const actionLinkStyle = {padding: '0 10px 0 0', display: 'inline', whiteSpace: 'nowrap'};
+
+  let spaceLink = '';
+  if (space.isAccessible) {
+    spaceLink = h('a', {
+      className: 'text-link',
+      href: href(getSpaceNavState(space.sys.id)),
+      style: actionLinkStyle
+    }, 'Go to space');
+  } else {
+    spaceLink = h(Tooltip, {
+      element: h('button', {
+        className: 'text-link',
+        disabled: true
+      }, 'Go to space'),
+      tooltip: h('div', {style: {whiteSpace: 'normal'}},
+        'You don’t have access to this space. But since you’re an organization ',
+        `${isOrgOwner ? 'owner' : 'admin'} you can grant yourself access by going to `,
+        h('i', null, 'users'),
+        ' and adding yourself to the space.'
+      ),
+      options: {width: 400},
+      style: actionLinkStyle
+    });
+  }
+  const usageLink = h('a', {
+    className: 'text-link',
+    href: href(getSpaceUsageNavState(space.sys.id)),
+    style: actionLinkStyle
+  }, 'Usage');
+  const deleteLink = h('button', {
+    className: 'text-link text-link--destructive',
+    style: actionLinkStyle,
+    onClick: () => onDeleteSpace(space)
+  }, 'Delete');
+
+  return [spaceLink, usageLink, deleteLink];
+}
+
+function Price ({value = 0, currency = '$', unit = null, style = null}) {
   const valueStr = parseInt(value, 10).toLocaleString('en-US');
   const unitStr = unit && ` /${unit}`;
-  return h('span', null, [currency, valueStr, unitStr].join(''));
+  return h('span', {style}, [currency, valueStr, unitStr].join(''));
 }
 
 function calculateTotalPrice (subscriptionPlans) {
-  return subscriptionPlans.reduce((total, plan) => total + parseInt(plan.price, 10), 0);
+  return subscriptionPlans.reduce(
+    (total, plan) => total + parseInt(plan.price, 10),
+    0
+  );
 }
 
 function getEnabledFeatures ({ratePlanCharges = []}) {
@@ -215,14 +324,6 @@ function getSpaceNavState (spaceId) {
   return {
     path: ['spaces', 'detail', 'home'],
     params: {spaceId},
-    options: { reload: true }
-  };
-}
-
-function getOrgUsageNavState (orgId) {
-  return {
-    path: ['account', 'organizations', 'usage'],
-    params: {orgId},
     options: { reload: true }
   };
 }
