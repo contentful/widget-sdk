@@ -20,6 +20,8 @@ import Tooltip from 'ui/Components/Tooltip';
 import {joinAnd} from 'stringUtils';
 import {byName as colors} from 'Styles/Colors';
 import QuestionMarkIcon from 'svg/QuestionMarkIcon';
+import BubbleIcon from 'svg/bubble';
+import InvoiceIcon from 'svg/invoice';
 import {asReact} from 'ui/Framework/DOMRenderer';
 
 const SubscriptionOverview = createReactClass({
@@ -225,6 +227,9 @@ function SpacePlanRow ({plan, onDeleteSpace, isOrgOwner}) {
 }
 
 function RightSidebar ({grandTotal, orgId, onContactUs}) {
+  // TODO - add these styles to stylesheets
+  const iconStyle = {fill: colors.blueDarkest, paddingRight: '6px', position: 'relative', bottom: '-0.125em'};
+
   return h('div', {className: 'entity-sidebar'},
     h('h2', {className: 'entity-sidebar__heading'}, 'Grand total'),
     h('p', {className: 'entity-sidebar__help-text'},
@@ -233,6 +238,7 @@ function RightSidebar ({grandTotal, orgId, onContactUs}) {
       ' per month.'
     ),
     h('p', {className: 'entity-sidebar__help-text'},
+      h('span', {style: iconStyle}, asReact(InvoiceIcon)),
       h('a', {
         className: 'text-link',
         href: href(getInvoiceNavState(orgId))
@@ -251,9 +257,8 @@ function RightSidebar ({grandTotal, orgId, onContactUs}) {
       'success team.'
     ),
     h('p', {className: 'entity-sidebar__help-text'},
-      h('button', {className: 'text-link', onClick: onContactUs},
-        'Get in touch with us'
-      )
+      h('span', {style: iconStyle}, asReact(BubbleIcon)),
+      h('button', {className: 'text-link', onClick: onContactUs}, 'Get in touch with us')
     )
   );
 }
