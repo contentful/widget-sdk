@@ -325,9 +325,10 @@ const Step = createReactClass({
             : <Icon name={headerIcon} className='tea-onboarding__step-header-icon' key='incomplete-step'/>
           }
           <h3 className='tea-onboarding__step-heading'>{headerCopy}</h3>
-          <span className='tea-onboarding__step-toggle'>
-            Hide details <i className={isExpanded ? 'arrow-down' : 'arrow-right'} />
-          </span>
+          <div className='tea-onboarding__step-toggle'>
+            <span>{isExpanded ? 'Hide' : 'See'} details</span>
+            <span className={`arrow ${isExpanded ? 'toggle' : ''}`}></span>
+          </div>
         </div>
         <div className={`tea-onboarding__step-body ${isExpanded ? 'tea-onboarding__step-body--expanded' : ''}`}>
           {children}
