@@ -45,9 +45,6 @@ function boolToNumber (value) {
 
 
 const OnboardingWithTea = createReactClass({
-  propTypes: {
-    orgId: PropTypes.string.isRequired
-  },
   getInitialState () {
     const constants = getProgressConstants();
     const state = {
@@ -156,7 +153,6 @@ const OnboardingWithTea = createReactClass({
   render () {
     const progress = this.countProgress();
     const stepsProps = {
-      orgId: this.props.orgId,
       state: this.state,
       actions: {
         [STEPS_KEYS.VIEW_SAMPLE_CONTENT]: this.viewContent,

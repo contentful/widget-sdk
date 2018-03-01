@@ -21,7 +21,6 @@ export const STEPS_KEYS = {
 
 const TEASteps = createReactClass({
   propTypes: {
-    orgId: PropTypes.string.isRequired,
     state: PropTypes.object.isRequired,
     actions: PropTypes.object.isRequired,
     toggleExpanding: PropTypes.func.isRequired
@@ -53,7 +52,7 @@ const TEASteps = createReactClass({
           markAsDone={_ => this.markAsDone(CREATE_ENTRY)} />
         <GetRepoOrInviteDevStep
           getRepo={{...state[GET_REPO], markAsDone: _ => this.markAsDone(GET_REPO)}}
-          inviteDev={{...state[INVITE_DEV], markAsDone: _ => this.markAsDone(INVITE_DEV), orgId: this.props.orgId}} />
+          inviteDev={{...state[INVITE_DEV], markAsDone: _ => this.markAsDone(INVITE_DEV)}} />
       </div>
     );
   }
@@ -126,13 +125,16 @@ const PreviewUsingExampleAppStep = createReactClass({
     runTask(function* () {
       const keys = yield spaceContext.apiKeyRepo.getAll();
       const key = keys[0];
-      self.setState({
-        cdaToken: key.accessToken
-      });
-      const keyWithPreview = yield spaceContext.apiKeyRepo.get(keys[0].sys.id);
-      self.setState({
-        cpaToken: keyWithPreview.preview_api_key.accessToken
-      });
+      // there might be no keys - it was not created yet, or user explicitly removed them
+      if (key) {
+        self.setState({
+          cdaToken: key.accessToken
+        });
+        const keyWithPreview = yield spaceContext.apiKeyRepo.get(keys[0].sys.id);
+        self.setState({
+          cpaToken: keyWithPreview.preview_api_key.accessToken
+        });
+      }
     });
   },
   getPreviewUrl () {
@@ -307,11 +309,6 @@ const CreateEntryStep = createReactClass({
   }
 });
 
-/*
-orgId={this.props.orgId}
-          getRepo={{...this.state[GET_REPO], markAsDone: _ => this.markAsDone(GET_REPO)}}
-          inviteDev={{...this.state[INVITE_DEV], markAsDone: _ => this.markAsDone(INVITE_DEV)}}
-*/
 const GetRepoOrInviteDevStep = createReactClass({
   propTypes: {
     getRepo: PropTypes.shape({
@@ -320,8 +317,7 @@ const GetRepoOrInviteDevStep = createReactClass({
     }),
     inviteDev: PropTypes.shape({
       isDone: PropTypes.bool.isRequired,
-      markAsDone: PropTypes.func.isRequired,
-      orgId: PropTypes.string.isRequired
+      markAsDone: PropTypes.func.isRequired
     })
   },
   render () {
@@ -369,8 +365,7 @@ const GetRepoForExampleAppStep = createReactClass({
 const InviteADevStep = createReactClass({
   propTypes: {
     isDone: PropTypes.bool.isRequired,
-    markAsDone: PropTypes.func.isRequired,
-    orgId: PropTypes.string.isRequired
+    markAsDone: PropTypes.func.isRequired
   },
   handleClick (e) {
     e.preventDefault();
@@ -383,17 +378,27 @@ const InviteADevStep = createReactClass({
       isDone: this.props.isDone
     };
 
+    let orgId;
+
+    try {
+      orgId = spaceContext.space.getOrganizationId();
+    } catch (e) {
+      // we just won't render the link
+    }
+
     const inviteLink = href({
       path: ['account', 'organizations', 'users', 'new'],
-      params: { orgId: this.props.orgId }
+      params: { orgId }
     });
 
     return (
       <SplitStep {...props}>
         <p>Need some help setting up your project? Invite a developer to get started.</p>
-        <a href={inviteLink} className='tea-onboarding__split-step-cta' onClick={this.handleClick}>
-          Invite user
-        </a>
+        {orgId &&
+          <a href={inviteLink} className='tea-onboarding__split-step-cta' onClick={this.handleClick}>
+            Invite user
+          </a>
+        }
       </SplitStep>
     );
   }
