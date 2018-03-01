@@ -7,6 +7,7 @@ angular.module('contentful')
   var RoleRepository = require('RoleRepository');
   var SpaceMembershipRepository = require('access_control/SpaceMembershipRepository');
   var fetchAll = require('data/CMA/FetchAll').fetchAll;
+  var createResourceService = require('services/ResourceService').default;
 
   var ADMIN_ROLE_ID = SpaceMembershipRepository.ADMIN_ROLE_ID;
   var ADMIN_ROLE_NAME = 'Administrator';
@@ -42,6 +43,7 @@ angular.module('contentful')
       return $q.all({
         memberships: spaceContext.memberships.getAll(),
         roles: RoleRepository.getInstance(spaceContext.space).getAll(),
+        rolesResource: createResourceService(spaceContext.getId()).get('role'),
         users: getAllUsers()
       }).then(processData);
     }

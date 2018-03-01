@@ -23,9 +23,32 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
   var notification = require('notification');
   var logger = require('logger');
   var accessChecker = require('access_control/AccessChecker');
+  var createResourceService = require('services/ResourceService').default;
+  var ResourceUtils = require('utils/ResourceUtils');
 
-  checkIfCanModifyRoles().then(function (value) {
-    $scope.canModifyRoles = value;
+  var org = spaceContext.organizationContext.organization;
+
+  $q.all({
+    hasFeature: accessChecker.hasFeature('customRoles'),
+    resource: createResourceService(spaceContext.getId()).get('role'),
+    useLegacy: ResourceUtils.useLegacy(org)
+  }).then(function (result) {
+    var isNew = $scope.context.isNew;
+    var subscription = spaceContext.subscription;
+    var isTrial = subscription && subscription.isTrial();
+    var trialLockdown = isTrial && subscription.hasTrialEnded();
+
+    if (!result.hasFeature) {
+      notification.error('Your plan does not include Custom Roles.');
+      $scope.canModifyRoles = false;
+    } else if (isNew && !ResourceUtils.canCreate(result.resource)) {
+      notification.error('Your organization has reached the limit for custom roles.');
+      $scope.canModifyRoles = false;
+    } else if (trialLockdown) {
+      $scope.canModifyRoles = false;
+    } else {
+      $scope.canModifyRoles = true;
+    }
   });
 
   // 1. prepare "touch" counter (first touch for role->internal, next for dirty state)
@@ -95,13 +118,6 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
     }
   }
 
-  function checkIfCanModifyRoles () {
-    var subscription = spaceContext.subscription;
-    var trialLockdown = subscription &&
-      subscription.isTrial() && subscription.hasTrialEnded();
-    if (trialLockdown) { return Promise.resolve(false); } else { return accessChecker.canModifyRoles(); }
-  }
-
   function resetPolicies () {
     _.extend($scope.internal, {
       entries: {allowed: [], denied: []},
@@ -138,7 +154,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
     var errors = _.get(res, 'body.details.errors', []);
 
     if (_.includes([403, 404], parseInt(_.get(res, 'statusCode'), 10))) {
-      notification.error('Your plan does not include Custom Roles.');
+      notification.error('You have exceeded your plan limits for Custom Roles.');
       return $q.reject();
     }
 

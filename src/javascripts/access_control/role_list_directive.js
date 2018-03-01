@@ -10,6 +10,7 @@ angular.module('contentful').directive('cfRoleList', function () {
 
 angular.module('contentful').controller('RoleListController', ['$scope', 'require', function ($scope, require) {
   var $state = require('$state');
+  var $q = require('$q');
   var ReloadNotification = require('ReloadNotification');
   var listHandler = require('UserListHandler').create();
   var createRoleRemover = require('createRoleRemover');
@@ -17,26 +18,40 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
   var jumpToRoleMembers = require('UserListController/jumpToRole');
   var spaceContext = require('spaceContext');
   var ADMIN_ROLE_ID = require('access_control/SpaceMembershipRepository').ADMIN_ROLE_ID;
+  var ResourceUtils = require('utils/ResourceUtils');
+  var TheAccountView = require('TheAccountView');
+  var isOwnerOrAdmin = require('services/OrganizationRoles').isOwnerOrAdmin;
 
-  checkIfCanModifyRoles().then(function (value) {
-    $scope.canModifyRoles = value;
-  });
+  var org = spaceContext.organizationContext.organization;
+
+  $q.all({
+    hasFeatureEnabled: accessChecker.canModifyRoles(),
+    useLegacy: ResourceUtils.useLegacy(org)
+  }).then(function (result) {
+    var subscription = spaceContext.subscription;
+    var isTrial = subscription.isTrial();
+    var trialLockdown = isTrial && subscription.hasTrialEnded();
+
+    $scope.legacy = result.useLegacy;
+
+    // For now, all V2 orgs do not support this feature, as the custom roles feature
+    // isn't available on the space level yet. This will be supported in an upcoming
+    // sprint.
+    if (!$scope.legacy) {
+      $scope.hasFeatureEnabled = false;
+    } else {
+      $scope.hasFeatureEnabled = !trialLockdown && result.hasFeatureEnabled;
+    }
+  }).then(reload).catch(ReloadNotification.basicErrorHandler);
 
   $scope.duplicateRole = duplicateRole;
   $scope.jumpToRoleMembers = jumpToRoleMembers;
   $scope.jumpToAdminRoleMembers = jumpToAdminRoleMembers;
-
-  reload().catch(ReloadNotification.basicErrorHandler);
+  $scope.accountUpgradeState = TheAccountView.getSubscriptionState();
+  $scope.canUpgrade = isOwnerOrAdmin(org);
 
   function jumpToAdminRoleMembers () {
     jumpToRoleMembers(ADMIN_ROLE_ID);
-  }
-
-  function checkIfCanModifyRoles () {
-    var subscription = spaceContext.subscription;
-    var trialLockdown = subscription &&
-      subscription.isTrial() && subscription.hasTrialEnded();
-    if (trialLockdown) { return Promise.resolve(false); } else { return accessChecker.canModifyRoles(); }
   }
 
   function duplicateRole (role) {
@@ -53,5 +68,8 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
     $scope.memberships = listHandler.getMembershipCounts();
     $scope.removeRole = createRoleRemover(listHandler, reload);
     $scope.context.ready = true;
+    $scope.usage = data.rolesResource.usage;
+    $scope.limit = data.rolesResource.limits.maximum;
+    $scope.reachedLimit = !ResourceUtils.canCreate(data.rolesResource);
   }
 }]);
