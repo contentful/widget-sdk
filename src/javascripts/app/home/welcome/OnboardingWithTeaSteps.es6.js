@@ -355,7 +355,7 @@ const GetRepoForExampleAppStep = createReactClass({
       <SplitStep {...props}>
         <p>Want to see the code? Find your preferred platform and clone the repository.</p>
         <a className='tea-onboarding__split-step-cta'
-           href='https://github.com/contentful?utf8=%E2%9C%93&q=the-example-app&type=&language='
+           href='https://github.com/contentful?utf8=%E2%9C%93&q=%22the-example-app%22&type=&language='
            target='_blank'
            rel='noopener noreferrer'
            onClick={this.handleClick}>
