@@ -1,6 +1,8 @@
 // List of path prefixes that should be used with
 // environment endpoints if in the environment context.
+// Useful: https://gist.github.com/benben/69099d38b31f276434b0b5eb78a9eda3
 const PREFIXES = [
+  'public',
   'content_types',
   'entries',
   'assets',
