@@ -1,5 +1,3 @@
-import * as sinon from 'helpers/sinon';
-
 fdescribe('data/ContentPreview', function () {
   beforeEach(function () {
     this.environment = {
@@ -33,7 +31,7 @@ fdescribe('data/ContentPreview', function () {
         }
       })).toEqual(false);
     });
-    fit('should return true if there is atleast one content preview that uses an example app from the TEA suite', function () {
+    it('should return true if there is atleast one content preview that uses an example app from the TEA suite', function () {
       expect(this.hasTEAContentPreviews({
         test: {
           configurations: [
@@ -42,18 +40,22 @@ fdescribe('data/ContentPreview', function () {
           ]
         }
       })).toEqual(true);
+    });
+  });
 
-      this.environment = {
-        env: 'staging'
-      }
-      this.$apply();
-      expect(this.hasTEAContentPreviews({
-        test: {
-          configurations: [
-            { url: 'http://the-example-app-nodejs.flinkly.com' }
-          ]
+  describe('#hasHighlightedCourseCT', function () {
+    it('should return false when there are no content types with id `layoutHighlightedCourse`', function () {
+      expect(this.hasHighlightedCourseCT([])).toEqual(false);
+      expect(this.hasHighlightedCourseCT([{
+        sys: {
+          id: 1
         }
-      })).toEqual(true);
+      }])).toEqual(false);
+    });
+    it('should return true when there is a content type with the id `layoutHighlightedCourse`', function () {
+      expect(this.hasHighlightedCourseCT([{
+        sys: {id: 'layoutHighlightedCourse'}
+      }])).toEqual(true);
     });
   });
 });
