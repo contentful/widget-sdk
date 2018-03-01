@@ -67,10 +67,12 @@ describe('fetchLinks', function () {
 
       expect(result).toEqual([
         {
+          id: 'entity-id',
           title: 'title-0',
           url: 'href-0'
         },
         {
+          id: 'entity-id',
           title: 'title-1',
           url: 'href-1'
         }

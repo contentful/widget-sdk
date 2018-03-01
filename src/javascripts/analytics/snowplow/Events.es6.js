@@ -42,6 +42,12 @@ registerGenericEvent(`reference_editor:create_entry`);
 registerGenericEvent(`reference_editor:edit_entry`);
 registerGenericEvent(`reference_editor:toggle_inline_editor`);
 
+registerGenericEvent('incoming_links:dialog_open');
+registerGenericEvent('incoming_links:dialog_confirm');
+registerGenericEvent('incoming_links:dialog_link_click');
+registerGenericEvent('incoming_links:sidebar_link_click');
+registerGenericEvent('incoming_links:query');
+
 registerBulkEditorEvent('bulk_editor:action');
 registerBulkEditorEvent('bulk_editor:add');
 registerBulkEditorEvent('bulk_editor:close');

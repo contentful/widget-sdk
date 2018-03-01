@@ -13,26 +13,37 @@ describe('FetchLinksToEntity', function () {
     type: EntityType.ENTRY
   };
 
-  function* importModule ({ fetchLinksStub }) {
+  beforeEach(function () {
+    this.onFetchLinks = sinon.stub();
     const system = createIsolatedSystem();
-    system.set('app/entity_editor/Components/FetchLinksToEntity/fetchLinks', {
-      default: fetchLinksStub
+    system.set('analytics/events/IncomingLinks', {
+      onFetchLinks: this.onFetchLinks
     });
+    this.system = system;
+    this.importModule = function* ({ fetchLinksStub }) {
+      system.set('app/entity_editor/Components/FetchLinksToEntity/fetchLinks', {
+        default: fetchLinksStub
+      });
 
-    const { default: FetchLinksToEntity } = yield system.import(
-      'app/entity_editor/Components/FetchLinksToEntity'
-    );
+      const { default: FetchLinksToEntity } = yield system.import(
+        'app/entity_editor/Components/FetchLinksToEntity'
+      );
 
-    return FetchLinksToEntity;
-  }
+      return FetchLinksToEntity;
+    };
+  });
+
+  afterEach(function () {
+    delete this.system;
+  });
 
   function render (Component, props) {
     return mount(h(Component, _.extend({}, defaultProps, props)));
   }
 
   it('passes pending state on initial render', function* () {
-    const fetchLinksStub = sinon.stub().returns(Promise.resolve());
-    const Component = yield* importModule({ fetchLinksStub });
+    const fetchLinksStub = sinon.stub().returns(Promise.resolve([]));
+    const Component = yield* this.importModule({ fetchLinksStub });
 
     const renderFunc = sinon.stub().returns(null);
     render(Component, { render: renderFunc });
@@ -47,7 +58,7 @@ describe('FetchLinksToEntity', function () {
       .withArgs(defaultProps.id, defaultProps.type)
       .returns(Promise.resolve(links));
 
-    const Component = yield* importModule({ fetchLinksStub });
+    const Component = yield* this.importModule({ fetchLinksStub });
 
     const renderFunc = sinon.stub().returns(null);
     render(Component, { render: renderFunc });
@@ -57,6 +68,14 @@ describe('FetchLinksToEntity', function () {
       links,
       requestState: 'success'
     });
+    sinon.assert.calledWithExactly(
+      this.onFetchLinks,
+      {
+        entityId: 'entry-id',
+        entityType: EntityType.ENTRY,
+        incomingLinksCount: 2
+      }
+    );
   });
 
   it('passes error state and empty links if api fails to return data', function* () {
@@ -64,7 +83,8 @@ describe('FetchLinksToEntity', function () {
       .stub()
       .withArgs(defaultProps.id, defaultProps.type)
       .returns(Promise.reject(new Error()));
-    const Component = yield* importModule({ fetchLinksStub });
+
+    const Component = yield* this.importModule({ fetchLinksStub });
 
     const renderFunc = sinon.stub().returns(null);
     render(Component, { render: renderFunc });
