@@ -166,6 +166,7 @@ If that is not the case, please contact QA to get email of the user with failing
 <span id="targeting-attributes"></span>
 Custom attributes that can be used in targeting users:
 - `currentOrgId` : current org in the app the user is in the context of
+- `currentSpaceId` : id of the current space if the user is in the context of a space
 - `currentOrgSubscriptionStatus` : one of free, paid, free_paid, trial
 - `currentOrgPlanIsEnterprise` : true if the current org is on an enterprise plan
 - `currentOrgHasSpace` : true if the current org has a space
@@ -179,6 +180,7 @@ Custom attributes that can be used in targeting users:
 - `isNonPayingUser` : true if non of the orgs the user belongs to is paying us
 - `currentUserSpaceRole` : list of lower case roles that user has for current space
 - `isAutomationTestUser` : true if the current user was created by the automation suite
+- `isExampleSpace` : true if the current space is identified as an example space (heuristics used are available in the fn used in code)
 
 #### What are existing team name abbreviations?
 - `ps` : Team Product Success

@@ -9,6 +9,7 @@ import {getEnabledFlags} from 'debug/EnforceFlags';
 import {createMVar} from 'utils/Concurrent';
 import logger from 'logger';
 
+import {isExampleSpace} from 'data/ContentPreview';
 import {
   getOrgRole,
   isUserOrgCreator,
@@ -190,8 +191,10 @@ function getVariation (flagName, defaultValue) {
  * - currentUserIsCurrentOrgCreator : true if the current org was created by the current user
  * - currentUserSignInCount : count of the number of times the current user has signed in
  * - isNonPayingUser : true if non of the orgs the user belongs to is paying us
+ * - currentSpaceId : id of the space the user is in
  * - currentUserSpaceRole : list of lower case roles that user has for current space
  * - isAutomationTestUser : true if the current user was created by the automation suite
+ * - isExampleSpace : true if the current space is identified as an example space. Look into the function for it for the logic
  *
  * @param {Object} user
  * @param {Object} currOrg
@@ -200,7 +203,7 @@ function getVariation (flagName, defaultValue) {
  *
  * @returns {Object} customData
  */
-function buildLDUser (user, currOrg, spacesByOrg, currSpace) {
+function buildLDUser (user, currOrg, spacesByOrg, currSpace, contentPreviews, publishedCTs) {
   const orgId = currOrg.sys.id;
 
   let customData = {
@@ -219,7 +222,8 @@ function buildLDUser (user, currOrg, spacesByOrg, currSpace) {
     isNonPayingUser: isNonPayingUser(user),
     // by default, if there is no current space, we pass empty array
     currentUserSpaceRole: [],
-    isAutomationTestUser: isAutomationTestUser(user)
+    isAutomationTestUser: isAutomationTestUser(user),
+    isExampleSpace: isExampleSpace(contentPreviews, publishedCTs)
   };
 
   if (currSpace) {
@@ -262,8 +266,8 @@ function setCurrCtx (user) {
  * @param {Array} arr - An array containing a contentful user, current org
  * a map of spaces by org id and an optional current space
  */
-function changeUserContext ([user, currOrg, spacesByOrg, currSpace]) {
-  const ldUser = buildLDUser(user, currOrg, spacesByOrg, currSpace);
+function changeUserContext ([user, currOrg, spacesByOrg, currSpace, contentPreviews, publishedCTs]) {
+  const ldUser = buildLDUser(user, currOrg, spacesByOrg, currSpace, contentPreviews, publishedCTs);
   setCurrCtx(ldUser);
   // FIXME We need to handle the case where the LD service is not
   // available. Unfortunately LD does not pass error information to the

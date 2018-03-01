@@ -3,6 +3,7 @@ import $rootScope from '$rootScope';
 import $stateParams from '$stateParams';
 import spaceContext from 'spaceContext';
 
+import { contentPreviewsBus$ } from 'contentPreview';
 import {isEqual, find, get, includes} from 'lodash';
 import {organizations$, user$, spacesByOrganization$} from 'services/TokenStore';
 
@@ -17,10 +18,17 @@ import {
  * @description
  * A stream combining user, current org, current space and spaces grouped by org id
  */
-export const userDataBus$ = combine(
-  [user$, getCurrentOrgAndSpaceStream(), spacesByOrganization$],
-  (user, [org, space], spacesByOrg) => [user, org, spacesByOrg, space])
-  .filter(([user, org, spacesByOrg]) => user && user.email && org && spacesByOrg) // space is a Maybe
+export const userDataBus$ =
+  combine(
+    [
+      user$,
+      getCurrentOrgSpaceAndPublishedCTsBus(),
+      spacesByOrganization$,
+      contentPreviewsBus$
+    ],
+    (user, [org, space, publishedCTs], spacesByOrg, contentPreviews) => [user, org, spacesByOrg, space, contentPreviews, publishedCTs]
+  )
+  .filter(([user, org, spacesByOrg]) => user && user.email && org && spacesByOrg) // space is a Maybe and so is contentPreviews
   .skipDuplicates(isEqual)
   .toProperty();
 
@@ -207,24 +215,29 @@ export function getUserSpaceRoles (space) {
  * there are two streams, one for curr space and one for
  * the curr org.
  */
-function getCurrentOrgAndSpaceStream () {
-  const currOrgAndSpaceBus = createPropertyBus([]);
-  const currOrgAndSpaceUpdater = updateCurrOrgAndSpace(currOrgAndSpaceBus);
+function getCurrentOrgSpaceAndPublishedCTsBus () {
+  const currOrgSpaceAndPublishedCTsBus = createPropertyBus([]);
+  const currOrgSpaceAndPublishedCTsUpdater = updateCurrOrgSpaceAndPublishedCTs(currOrgSpaceAndPublishedCTsBus);
 
-  onValue(organizations$.filter(orgs => orgs && orgs.length), currOrgAndSpaceUpdater);
-  $rootScope.$on('$stateChangeSuccess', currOrgAndSpaceUpdater);
+  // emit when orgs stream emits
+  onValue(organizations$.filter(orgs => orgs && orgs.length), currOrgSpaceAndPublishedCTsUpdater);
+  // emit when ever state changes (for e.g., space was changed)
+  $rootScope.$on('$stateChangeSuccess', currOrgSpaceAndPublishedCTsUpdater);
+  // emit when publishedCTs.items$ emits
+  onValue(spaceContext.publishedCTs.items$, currOrgSpaceAndPublishedCTsUpdater);
 
-  return currOrgAndSpaceBus.property;
+  return currOrgSpaceAndPublishedCTsBus.property;
 }
 
-function updateCurrOrgAndSpace (bus) {
+function updateCurrOrgSpaceAndPublishedCTs (bus) {
   return _ => {
     const orgId = $stateParams.orgId;
     const orgs = getValue(organizations$);
     const org = getCurrOrg(orgs, orgId);
     const space = getCurrSpace();
+    const publishedCTs = getValue(spaceContext.publishedCTs.items$);
 
-    bus.set([org, space]);
+    bus.set([org, space, publishedCTs]);
   };
 }
 
