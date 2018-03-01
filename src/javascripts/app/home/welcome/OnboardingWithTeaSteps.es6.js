@@ -2,7 +2,6 @@ import React from 'libs/react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import Icon from 'ui/Components/Icon';
-import {findKey} from 'lodash';
 import {href, go} from 'states/Navigator';
 import spaceContext from 'spaceContext';
 import {runTask} from 'utils/Concurrent';
@@ -24,7 +23,8 @@ const TEASteps = createReactClass({
   propTypes: {
     orgId: PropTypes.string.isRequired,
     state: PropTypes.object.isRequired,
-    actions: PropTypes.object.isRequired
+    actions: PropTypes.object.isRequired,
+    toggleExpanding: PropTypes.func.isRequired
   },
   markAsDone (step) {
     const action = this.props.actions[step];
@@ -32,22 +32,24 @@ const TEASteps = createReactClass({
     action && action();
   },
   render () {
-    const { state } = this.props;
-    const stepToExpand = findKey(state, ({isDone}) => !isDone);
+    const { state, toggleExpanding } = this.props;
 
     return (
       <div className='tea-onboarding__steps'>
         <ViewSampleContentStep
-          isExpanded={stepToExpand === VIEW_SAMPLE_CONTENT}
+          isExpanded={state.expanded === VIEW_SAMPLE_CONTENT}
+          onToggle={toggleExpanding}
           {...state[VIEW_SAMPLE_CONTENT]}
           markAsDone={_ => this.markAsDone(VIEW_SAMPLE_CONTENT)} />
         <PreviewUsingExampleAppStep
-          isExpanded={stepToExpand === PREVIEW_USING_EXAMPLE_APP}
+          isExpanded={state.expanded === PREVIEW_USING_EXAMPLE_APP}
           {...state[PREVIEW_USING_EXAMPLE_APP]}
+          onToggle={toggleExpanding}
           markAsDone={_ => this.markAsDone(PREVIEW_USING_EXAMPLE_APP)} />
         <CreateEntryStep
-          isExpanded={stepToExpand === CREATE_ENTRY}
+          isExpanded={state.expanded === CREATE_ENTRY}
           {...state[CREATE_ENTRY]}
+          onToggle={toggleExpanding}
           markAsDone={_ => this.markAsDone(CREATE_ENTRY)} />
         <GetRepoOrInviteDevStep
           getRepo={{...state[GET_REPO], markAsDone: _ => this.markAsDone(GET_REPO)}}
@@ -63,18 +65,21 @@ const ViewSampleContentStep = createReactClass({
   propTypes: {
     markAsDone: PropTypes.func.isRequired,
     isExpanded: PropTypes.bool.isRequired,
-    isDone: PropTypes.bool.isRequired
+    isDone: PropTypes.bool.isRequired,
+    onToggle: PropTypes.func.isRequired
   },
   primaryCtaOnClick () {
     this.props.markAsDone();
   },
   render () {
-    const {isDone, isExpanded} = this.props;
+    const {isDone, isExpanded, onToggle} = this.props;
     const propsForStep = {
       headerCopy: 'View the sample content',
       headerIcon: 'page-ct',
       isExpanded,
-      isDone
+      isDone,
+      stepKey: VIEW_SAMPLE_CONTENT,
+      onToggle
     };
 
     const baseLink = href({ path: ['spaces', 'detail', 'entries', 'list'], params: { spaceId: spaceContext.space.getId() } });
@@ -104,7 +109,8 @@ const PreviewUsingExampleAppStep = createReactClass({
   propTypes: {
     markAsDone: PropTypes.func.isRequired,
     isExpanded: PropTypes.bool.isRequired,
-    isDone: PropTypes.bool.isRequired
+    isDone: PropTypes.bool.isRequired,
+    onToggle: PropTypes.func.isRequired
   },
   getInitialState () {
     return {
@@ -155,12 +161,14 @@ const PreviewUsingExampleAppStep = createReactClass({
     return `https://the-example-app-nodejs.${domain}.com/courses${queryString ? '?' : ''}${queryString}`;
   },
   render () {
-    const {isDone, isExpanded} = this.props;
+    const {isDone, isExpanded, onToggle} = this.props;
     const propsForStep = {
       headerCopy: 'Preview using the example app',
       headerIcon: 'page-apis',
       isExpanded,
-      isDone
+      isDone,
+      onToggle,
+      stepKey: PREVIEW_USING_EXAMPLE_APP
     };
 
     const url = this.getPreviewUrl();
@@ -196,7 +204,8 @@ const CreateEntryStep = createReactClass({
   propTypes: {
     markAsDone: PropTypes.func.isRequired,
     isExpanded: PropTypes.bool.isRequired,
-    isDone: PropTypes.bool.isRequired
+    isDone: PropTypes.bool.isRequired,
+    onToggle: PropTypes.func.isRequired
   },
   getInitialState () {
     return {
@@ -265,12 +274,14 @@ const CreateEntryStep = createReactClass({
   },
   render () {
     const {isLoading} = this.state;
-    const {isDone, isExpanded} = this.props;
+    const {isDone, isExpanded, onToggle} = this.props;
     const propsForStep = {
       headerCopy: 'Create your first entry',
       headerIcon: 'page-content',
       isExpanded,
-      isDone
+      isDone,
+      onToggle,
+      stepKey: CREATE_ENTRY
     };
 
     return (
@@ -422,24 +433,16 @@ const Step = createReactClass({
     headerIcon: PropTypes.string.isRequired,
     isExpanded: PropTypes.bool.isRequired,
     isDone: PropTypes.bool.isRequired,
-    children: PropTypes.array.isRequired
-  },
-  getInitialState () {
-    return {
-      isExpanded: this.props.isExpanded
-    };
-  },
-  componentWillReceiveProps (nextProps) {
-    this.setState({
-      isExpanded: nextProps.isExpanded
-    });
+    children: PropTypes.array.isRequired,
+    onToggle: PropTypes.func.isRequired,
+    stepKey: PropTypes.string.isRequired
   },
   toggle () {
-    this.setState({ isExpanded: !this.state.isExpanded });
+    const { onToggle, stepKey } = this.props;
+    onToggle && onToggle(stepKey);
   },
   render () {
-    const {isExpanded} = this.state;
-    const {isDone, headerIcon, headerCopy, children} = this.props;
+    const {isDone, headerIcon, headerCopy, children, isExpanded} = this.props;
 
     return (
       <div className='tea-onboarding__step'>

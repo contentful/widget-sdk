@@ -6,6 +6,7 @@ import { getStore } from 'TheStore';
 import spaceContext from 'spaceContext';
 import {track} from 'analytics/Analytics';
 import $state from '$state';
+import {findKey, omit} from 'lodash';
 
 const GROUP_ID = 'tea_onboarding_steps';
 
@@ -49,12 +50,17 @@ const OnboardingWithTea = createReactClass({
   },
   getInitialState () {
     const constants = getProgressConstants();
-    return {
+    const state = {
       [STEPS_KEYS.VIEW_SAMPLE_CONTENT]: { isDone: store.get(constants.viewContent) || false },
       [STEPS_KEYS.PREVIEW_USING_EXAMPLE_APP]: { isDone: store.get(constants.viewPreview) || false },
       [STEPS_KEYS.CREATE_ENTRY]: { isDone: store.get(constants.createEntry) || false },
       [STEPS_KEYS.GET_REPO]: { isDone: store.get(constants.viewGithub) || false },
       [STEPS_KEYS.INVITE_DEV]: { isDone: false }
+    };
+    const stepToExpand = this.getOpenQuestion(state);
+    return {
+      expanded: stepToExpand,
+      ...state
     };
   },
   componentDidMount () {
@@ -65,6 +71,21 @@ const OnboardingWithTea = createReactClass({
       this.setState({
         [STEPS_KEYS.INVITE_DEV]: { isDone: res.items.length > 1 }
       });
+    });
+  },
+  getOpenQuestion (state) {
+    return findKey(state, ({isDone}) => !isDone);
+  },
+  markAsDone (newState) {
+    const steps = omit({
+      ...this.state,
+      ...newState
+    }, 'expanded');
+    const stepToExpand = this.getOpenQuestion(steps);
+
+    this.setState({
+      ...newState,
+      expanded: stepToExpand
     });
   },
   countProgress () {
@@ -85,7 +106,7 @@ const OnboardingWithTea = createReactClass({
       fromState: $state.current.name
     });
     store.set(constants.viewContent, true);
-    this.setState({
+    this.markAsDone({
       [STEPS_KEYS.VIEW_SAMPLE_CONTENT]: { isDone: true }
     });
   },
@@ -97,7 +118,7 @@ const OnboardingWithTea = createReactClass({
       fromState: $state.current.name
     });
     store.set(constants.viewPreview, true);
-    this.setState({
+    this.markAsDone({
       [STEPS_KEYS.PREVIEW_USING_EXAMPLE_APP]: { isDone: true }
     });
   },
@@ -109,7 +130,7 @@ const OnboardingWithTea = createReactClass({
       fromState: $state.current.name
     });
     store.set(constants.createEntry, true);
-    this.setState({
+    this.markAsDone({
       [STEPS_KEYS.CREATE_ENTRY]: { isDone: true }
     });
   },
@@ -125,6 +146,13 @@ const OnboardingWithTea = createReactClass({
       [STEPS_KEYS.GET_REPO]: { isDone: true }
     });
   },
+  toggleExpanding (key) {
+    const { expanded } = this.state;
+    this.setState({
+      // if we toggle currently open one, just close it
+      expanded: key === expanded ? null : key
+    });
+  },
   render () {
     const progress = this.countProgress();
     const stepsProps = {
@@ -135,7 +163,8 @@ const OnboardingWithTea = createReactClass({
         [STEPS_KEYS.PREVIEW_USING_EXAMPLE_APP]: this.viewPreview,
         [STEPS_KEYS.CREATE_ENTRY]: this.createEntry,
         [STEPS_KEYS.GET_REPO]: this.getRepo
-      }
+      },
+      toggleExpanding: this.toggleExpanding
     };
     return (
       <section className='home-section tea-onboarding'>
