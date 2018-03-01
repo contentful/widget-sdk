@@ -129,7 +129,7 @@ describe('ResourceService', function () {
 
     this.spies.createSpaceEndpoint = sinon.spy(createSpaceEndpoint);
     this.stubs.createOrganizationEndpoint = sinon.stub();
-    system.set('data/Endpoint', {
+    system.set('data/EndpointFactory', {
       createSpaceEndpoint: this.spies.createSpaceEndpoint,
       createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
     });

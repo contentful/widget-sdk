@@ -4,10 +4,10 @@ describe('shouldUseEnvEndpoint', function () {
   it('returns true when should use env endpoint for various input formats', function () {
     [
       'content_types',
-      'content_types/public',
+      'public/content_types',
       '/content_types',
       ['', 'content_types', 'ctid'],
-      ['content_types/public', 'ctid'],
+      ['content_types', 'ctid', 'published'],
       'entries',
       ['assets', 'aid'],
       'ui_config',

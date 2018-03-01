@@ -1,7 +1,7 @@
 import { getSpace, getOrganization } from 'services/TokenStore';
 import { canCreate, generateMessage, useLegacy, getLegacyLimit, getLegacyUsage } from 'utils/ResourceUtils';
 import { runTask } from 'utils/Concurrent';
-import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/Endpoint';
+import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/EndpointFactory';
 
 import $q from '$q';
 import { snakeCase, camelCase } from 'lodash';
