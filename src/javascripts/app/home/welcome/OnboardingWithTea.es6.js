@@ -6,7 +6,7 @@ import { getStore } from 'TheStore';
 import spaceContext from 'spaceContext';
 import {track} from 'analytics/Analytics';
 import $state from '$state';
-import {findKey, omit} from 'lodash';
+import {findKey, omit, times} from 'lodash';
 
 const GROUP_ID = 'tea_onboarding_steps';
 
@@ -196,10 +196,19 @@ const Progress = createReactClass({
   },
   render () {
     const { count, total } = this.props;
+    const pills = times(total, index => {
+      const activeClass = index >= count ? '' : 'tea-onboarding__pill-active';
+      return (
+        <div key={index} className={`tea-onboarding__pill ${activeClass}`} />
+      );
+    });
     return (
-      <span>
+      <div className={'tea-onboarding__progress'}>
+        <div className={'tea-onboarding__pills'}>
+          {pills}
+        </div>
         {`${count}/${total} steps completed`}
-      </span>
+      </div>
     );
   }
 });

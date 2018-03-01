@@ -11,6 +11,25 @@ remove-top-and-bottom-margin()
 .tea-onboarding
   padding: 0
 
+.tea-onboarding
+  &__progress
+    font-weight: 700
+
+  &__pills
+    display: inline-block
+    margin-right: 10px
+
+  &__pill
+    display: inline-block
+    border-radius: 100%
+    width: 10px
+    height: 10px
+    background: $colors.light-gray
+    margin-right: 2px
+
+    &-active
+      background: $colors.green-dark
+
 .tea-onboarding__header
   padding: 20px 24px
   display: flex
