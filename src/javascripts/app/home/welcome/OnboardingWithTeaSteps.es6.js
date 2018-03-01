@@ -373,7 +373,7 @@ const InviteADevStep = createReactClass({
   },
   render () {
     const props = {
-      headerCopy: 'Invite a developer',
+      headerCopy: 'Invite a developer to this space',
       headerIcon: 'onboarding-add-user',
       isDone: this.props.isDone
     };
