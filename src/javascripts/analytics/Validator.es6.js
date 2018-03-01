@@ -57,7 +57,7 @@ export const validEvents = {
   invite_user: ['learn', 'create_space'],
   personal_access_token: ['action'],
   element: ['click'],
-  reference_editor: ['create_entry', 'edit_entry']
+  reference_editor: ['create_entry', 'edit_entry', 'toggle_inline_editor']
 };
 
 export const validateEvent = (eventName) => {

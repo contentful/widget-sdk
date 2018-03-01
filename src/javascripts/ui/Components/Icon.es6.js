@@ -4,14 +4,19 @@ import createReactClass from 'create-react-class';
 import { asReact } from 'ui/Framework/DOMRenderer';
 import $ from 'jquery';
 import HomeWelcomeIcon from 'svg/home-welcome';
+import QuestionMarkIcon from 'svg/QuestionMarkIcon';
+import SubscriptionIcon from 'svg/subscription';
 
 const SVGS = {
-  'home-welcome': HomeWelcomeIcon
+  'home-welcome': HomeWelcomeIcon,
+  'question-mark': QuestionMarkIcon(),
+  'subscription': SubscriptionIcon
 };
 
 const Icon = createReactClass({
   propTypes: {
     className: PropTypes.string,
+    style: PropTypes.object,
     name: PropTypes.string.isRequired,
     scale: PropTypes.oneOf([PropTypes.string, PropTypes.number]),
     height: PropTypes.oneOf([PropTypes.string, PropTypes.number])
@@ -44,9 +49,9 @@ const Icon = createReactClass({
     }
   },
   render () {
-    const { className } = this.props;
+    const { className, style } = this.props;
     const { Icon } = this.state;
-    return h('div', {className, ref: node => { this.container = node; }}, asReact(Icon));
+    return h('div', {className, style, ref: node => { this.container = node; }}, asReact(Icon));
   }
 });
 
