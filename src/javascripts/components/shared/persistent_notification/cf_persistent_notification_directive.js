@@ -37,10 +37,16 @@ angular.module('contentful')
     // TODO: Introduce a service with full control over a notification's
     //  lifecycle instead of abusing broadcast.
     scope.$on('persistentNotification', function (_ev, params) {
+      dismissed = false;
       if (!notificationsOfCycle.length) {
         $timeout(updateNotificationForCycle, 0);
       }
       notificationsOfCycle.push(params);
+    });
+
+    scope.$on('resetPersistentNotification', function () {
+      dismissed = true;
+      resetNotification();
     });
 
     function updateNotificationForCycle () {
