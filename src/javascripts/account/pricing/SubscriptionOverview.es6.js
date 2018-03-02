@@ -170,7 +170,7 @@ function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
         ),
         h('tbody', {className: 'clickable'}, spacePlans.map(
           (plan) => h(SpacePlanRow, {
-            key: plan.sys.id,
+            key: plan.sys.id || (plan.space && plan.space.sys.id),
             plan,
             onDeleteSpace,
             isOrgOwner
