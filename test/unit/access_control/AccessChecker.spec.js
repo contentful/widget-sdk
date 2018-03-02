@@ -2,7 +2,7 @@ import * as K from 'helpers/mocks/kefir';
 
 describe('Access Checker', function () {
   let enforcements, OrganizationRoles, TokenStore, policyChecker, ac;
-  let getResStub, reasonsDeniedStub, broadcastStub, mockSpace, mockSpaceAuthContext, mockOrgEndpoint;
+  let getResStub, reasonsDeniedStub, broadcastStub, resetEnforcements, mockSpace, mockSpaceAuthContext, mockOrgEndpoint;
 
   function init () {
     ac.setAuthContext({authContext: {}, spaceAuthContext: mockSpaceAuthContext});
@@ -36,6 +36,7 @@ describe('Access Checker', function () {
 
     const acUtils = this.$inject('access_control/AccessChecker/Utils');
     acUtils.broadcastEnforcement = broadcastStub = sinon.stub();
+    acUtils.resetEnforcements = resetEnforcements = sinon.stub();
 
     const responseCache = this.$inject('access_control/AccessChecker/ResponseCache');
     responseCache.getResponse = getResStub = sinon.stub().returns(false);
@@ -117,6 +118,10 @@ describe('Access Checker', function () {
         expect(response.shouldHide).toBe(true);
         expect(response.shouldDisable).toBe(false);
         expect(response.reasons).toBe(null);
+      });
+
+      it('should reset the persistent notification', function () {
+        sinon.assert.called(resetEnforcements);
       });
 
       it('should broadcast enforcement if found', function () {

@@ -40,6 +40,13 @@ export function broadcastEnforcement (enforcement) {
   }
 }
 
+/**
+ * Remove all persistent notifications
+*/
+export function resetEnforcements () {
+  $rootScope.$broadcast('resetPersistentNotification');
+}
+
 export function toType (entity) {
   if (isString(entity)) {
     return entity;
