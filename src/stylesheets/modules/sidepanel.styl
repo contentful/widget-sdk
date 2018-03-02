@@ -143,6 +143,23 @@
   display: block
   border-top: 1px solid $colors.element-mid
 
+.nav-sidepanel__space-title,
+.nav-sidepanel__org-title
+  display: flex
+  align-items: center
+
+.nav-sidepanel__space-icon,
+.nav-sidepanel__org-icon
+  display: flex
+  align-items: center
+
+  svg
+    margin-right: 8px
+    fill: $colors.text-lightest
+
+.nav-sidepanel__space-icon svg
+  margin-left: 20px
+
 .nav-sidepanel__spaces-container
   display: flex
   flex-direction: column
@@ -163,10 +180,6 @@
   overflow-y: auto
   color: $colors.text-mid
 
-.nav-sidepanel__space-icon svg
-  margin: 0 8px 0 20px
-  fill: $colors.text-lightest
-
 .nav-sidepanel__space-list-item
   cursor: pointer
   margin: 0
@@ -185,10 +198,6 @@
     .nav-sidepanel__space-open-indicator
       $triangle($color: $colors.text-lightest)
       left: 0
-
-.nav-sidepanel__space-title
-  display: flex
-  align-items: center
 
 .nav-sidepanel__space-name
   flex: 1 0 0
