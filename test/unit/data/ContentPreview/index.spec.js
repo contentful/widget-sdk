@@ -3,20 +3,18 @@ describe('data/ContentPreview', function () {
     this.environment = {
       env: 'production'
     };
-    module('contentful/test', $provide => {
-      $provide.value('Config', this.environment);
-    });
-    const {
-      hasTEAContentPreviews,
-      hasHighlightedCourseCT,
-      isExampleSpace
-    } = this.$inject('data/ContentPreview');
-    this.hasTEAContentPreviews = hasTEAContentPreviews;
-    this.hasHighlightedCourseCT = hasHighlightedCourseCT;
-    this.isExampleSpace = isExampleSpace;
   });
 
   describe('#hasTEAContentPreviews', function () {
+    beforeEach(function () {
+      module('contentful/test', $provide => {
+        $provide.value('Config', this.environment);
+      });
+      this.hasTEAContentPreviews = function (...args) {
+        const {hasTEAContentPreviews} = this.$inject('data/ContentPreview');
+        return hasTEAContentPreviews(...args);
+      };
+    });
     it('should return false if there are no content previews', function () {
       expect(this.hasTEAContentPreviews()).toEqual(false);
       expect(this.hasTEAContentPreviews({})).toEqual(false);
@@ -31,7 +29,8 @@ describe('data/ContentPreview', function () {
         }
       })).toEqual(false);
     });
-    it('should return true if there is atleast one content preview that uses an example app from the TEA suite', function () {
+    it('should return true on prod if there is atleast one content preview that uses an example app from the TEA suite', function () {
+      // default env is production as set in top level beforeEach
       expect(this.hasTEAContentPreviews({
         test: {
           configurations: [
@@ -41,9 +40,29 @@ describe('data/ContentPreview', function () {
         }
       })).toEqual(true);
     });
+    it('should return true on staging if there is atleast one content preview that uses an example app from the TEA suite', function () {
+      this.environment.env = 'staging';
+      expect(this.hasTEAContentPreviews({
+        test: {
+          configurations: [
+            { url: 'https://google.com' },
+            { url: 'http://the-example-app-nodejs.flinkly.com' }
+          ]
+        }
+      })).toEqual(true);
+    });
   });
 
   describe('#hasHighlightedCourseCT', function () {
+    beforeEach(function () {
+      module('contentful/test', $provide => {
+        $provide.value('Config', this.environment);
+      });
+      this.hasHighlightedCourseCT = function (...args) {
+        const {hasHighlightedCourseCT} = this.$inject('data/ContentPreview');
+        return hasHighlightedCourseCT(...args);
+      };
+    });
     it('should return false when there are no content types with id `layoutHighlightedCourse`', function () {
       expect(this.hasHighlightedCourseCT([])).toEqual(false);
       expect(this.hasHighlightedCourseCT([{
