@@ -1,4 +1,4 @@
-fdescribe('data/ContentPreview', function () {
+describe('data/ContentPreview', function () {
   beforeEach(function () {
     this.environment = {
       env: 'production'
