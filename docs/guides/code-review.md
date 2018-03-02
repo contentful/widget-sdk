@@ -33,7 +33,7 @@ Ready for review checklist:
 
 Run unit tests: `karma start`
 
-Run lint: `bin/lint-all` or `bin/lint-file <filename>`
+Run lint: `npm run hint` or `npm run hint -- --fix`
 
 As an alternative, linting could be done on pre-push stage (via husky .git hooks).
 

@@ -133,7 +133,7 @@
     "start": "gulp all serve",
     "test": "karma start --single-run --reporters dots",
     "postinstall": "cd packages/client && npm install",
-    "hint": "bin/lint-all",
+    "hint": "eslint src test bin tools",
     "cloc": "cloc --read-lang-def .cloc.def src",
     "clean": "rm -rf node_modules",
     "prepush": "if test \"$ENABLE_HUSKY_HOOKS\" != \"\" ; then npm run hint ; fi "
