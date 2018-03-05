@@ -11,7 +11,7 @@ export default function template () {
   return h('div', [
     h('.loading-box', {
       style: { height: '10em', border: '0' },
-      ngIf: 'onboarding.isExampleSpace === "loading"'
+      ngIf: 'onboarding.isContentPreviewsLoading'
     }, [
       h('.loading-box__spinner'),
       h('.loading-box__message', [
@@ -19,10 +19,10 @@ export default function template () {
       ])
     ]),
     h('cf-onboarding-with-tea', {
-      ngIf: 'onboarding.isExampleSpace === true'
+      ngIf: 'onboarding.isExampleSpace === true && !onboarding.isContentPreviewsLoading'
     }),
     h('div', {
-      ngIf: '!onboarding.isExampleSpace'
+      ngIf: '!onboarding.isExampleSpace && !onboarding.isContentPreviewsLoading'
     }, [regularSteps])
   ]);
   // End test code: test-ps-02-2018-tea-onboarding-steps

@@ -9,6 +9,7 @@
 angular.module('contentful')
 .factory('contentPreview', ['require', function (require) {
   var $q = require('$q');
+  var $rootScope = require('$rootScope');
   var TheLocaleStore = require('TheLocaleStore');
   var spaceContext = require('spaceContext');
   var previewEnvironmentsCache = require('data/previewEnvironmentsCache');
@@ -40,7 +41,8 @@ angular.module('contentful')
   // polling doesn't really cause unnecessary api calls.
   // Duplicates are skipped.
   var K = require('utils/kefir');
-  var contentPreviewsBus$ = K.withInterval(5000, function (emitter) {
+
+  var contentPreviewsBus$ = K.withInterval(2500, function (emitter) {
     var emitValue = emitter.value.bind(emitter);
     var emitError = emitter.error.bind(emitter);
 
@@ -49,8 +51,12 @@ angular.module('contentful')
     } catch (e) {
       emitError(e);
     }
-  }).skipDuplicates(_.isEqual).toProperty();
+  }).skipDuplicates(_.isEqual).toProperty(_ => {});
 
+  // we need to download content previews again after finishing with space template creation
+  $rootScope.$on('spaceTemplateCreated', function () {
+    previewEnvironmentsCache.clearAll();
+  });
 
   return {
     getAll: getAll,

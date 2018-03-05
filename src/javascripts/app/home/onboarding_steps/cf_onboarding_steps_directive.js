@@ -13,6 +13,8 @@ angular.module('contentful')
   var entityCreator = require('entityCreator');
   // Begin test code: test-ps-02-2018-tea-onboarding-steps
   var LD = require('utils/LaunchDarkly');
+  var K = require('utils/kefir');
+  var contentPreviewsBus$ = require('contentPreview').contentPreviewsBus$;
   var isExampleSpaceFlagName = 'test-ps-02-2018-tea-onboarding-steps';
   // End test code: test-ps-02-2018-tea-onboarding-steps
 
@@ -24,10 +26,45 @@ angular.module('contentful')
       var controller = this;
 
       // Begin test code: test-ps-02-2018-tea-onboarding-steps
-      controller.isExampleSpace = 'loading';
-      LD.onABTest($scope, isExampleSpaceFlagName, function (flag) {
-        controller.isExampleSpace = flag;
-      });
+      if (spaceContext.space) {
+        controller.isExampleSpace = 'loading';
+        controller.isContentPreviewsLoading = true;
+
+        // we convert property to a stream in order to get the next, not current value
+        var previewBusPromise = new Promise(function (resolve) {
+          K.onValueScope($scope, contentPreviewsBus$.changes(), resolve);
+        });
+        var sleepPromise = new Promise(function (resolve) {
+          // we wait for 3000ms since content previews are being polled every 2500ms,
+          // and request should take 500ms at most
+          setTimeout(resolve, 3000);
+        });
+
+        Promise.race([
+          // this value might be resolved before we run this code, and later we skip duplicates
+          // so it means it will never resolve this promise in our controller
+          // next promise handles exactly that situation
+          previewBusPromise,
+          // content previews are updated every 2.5 seconds, so this promise is needed
+          // to indicate that we've loaded before this controller
+          sleepPromise
+        ]).then(function () {
+          // after this value is updated, LD sends new info to its servers
+          // and then LD flag value is updated. So we need to wait some time
+          // empirically, 200ms is enough for 3G - this is a dirty hack
+          setTimeout(function () {
+            controller.isContentPreviewsLoading = false;
+            $scope.$apply();
+          }, 200);
+        });
+
+        LD.onABTest($scope, isExampleSpaceFlagName, function (flag) {
+          controller.isExampleSpace = flag;
+        });
+      } else {
+        controller.isExampleSpace = false;
+        controller.isContentPreviewsLoading = false;
+      }
       // End test code: test-ps-02-2018-tea-onboarding-steps
 
       var firstSteps = [
