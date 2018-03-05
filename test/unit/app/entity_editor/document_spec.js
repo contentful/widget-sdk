@@ -55,7 +55,13 @@ describe('entityEditor/Document', function () {
           version: 8,
           contentType: {
             sys: this.contentType.data.sys
+          },
+          space: {
+            sys: {
+              id: 'SPACE_ID'
+            }
           }
+
         },
         fields: {
           a: {
