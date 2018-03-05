@@ -24,7 +24,6 @@ describe('Asset List Controller', function () {
         'then',
         'logError',
         'pickMultiple',
-        'parseFPFile',
         'warn',
         'info',
         'serverError',
@@ -43,9 +42,8 @@ describe('Asset List Controller', function () {
         serverError: stubs.serverError
       });
 
-      $provide.value('services/Filepicker', {
-        pickMultiple: stubs.pickMultiple,
-        parseFPFile: stubs.parseFPFile
+      $provide.value('services/Filestack', {
+        pickMultiple: stubs.pickMultiple
       });
 
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
@@ -340,16 +338,13 @@ describe('Asset List Controller', function () {
   });
 
   describe('creating multiple assets', function () {
-    let files, entity;
     beforeEach(function () {
-      files = [{}, {}];
+      const files = [{fileName: 'x.jpg'}, {fileName: 'y.png'}];
       scope.searchController.resetAssets = sinon.stub().resolves();
       spaceContext.space.createAsset = sinon.stub();
       stubs.pickMultiple.returns($q.resolve(files));
       stubs.getVersion.returns(2);
-      stubs.parseFPFile.returns({fileName: 'file_name.jpg'});
-      entity = {process: stubs.process, getVersion: stubs.getVersion, publish: stubs.publish};
-
+      const entity = {process: stubs.process, getVersion: stubs.getVersion, publish: stubs.publish};
 
       spaceContext.space.createAsset
         .onCall(0).returns($q.resolve(entity))
@@ -367,7 +362,7 @@ describe('Asset List Controller', function () {
       this.$apply();
     });
 
-    it('filepicker is called', function () {
+    it('Filestack.pickMultiple is called', function () {
       sinon.assert.calledOnce(stubs.pickMultiple);
     });
 

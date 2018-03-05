@@ -25,7 +25,7 @@ angular.module('contentful/test', ['contentful', 'contentful/mocks'])
   $provide.constant('environment', {
     settings: {
       launchDarkly: { envId: 'launch-darkly-test-id' },
-      filepicker: {},
+      filestack: {},
       aviary: {},
       google: {},
       contentful: {},

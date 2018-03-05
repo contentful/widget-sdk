@@ -62,9 +62,9 @@ function integrations () {
     launchDarkly: strictObject({
       envId: alnumExact(24)
     }),
-    filepicker: strictObject({
-      api_key: alnumExact(22),
-      policy: filepickerPolicy(),
+    filestack: strictObject({
+      apiKey: alnumExact(22),
+      policy: filestackPolicy(),
       signature: alnumExact(64)
     }),
     aviary: strictObject({
@@ -106,7 +106,7 @@ function alnumExact (length) {
 }
 
 
-function filepickerPolicy () {
+function filestackPolicy () {
   return {
     type: 'string',
     pattern: `^[a-zA-Z0-9=]{1,256}$`

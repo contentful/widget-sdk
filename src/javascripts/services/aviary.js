@@ -8,14 +8,13 @@ angular.module('contentful')
   var client = require('client');
   var delay = require('delay');
   var environment = require('environment');
-  var Filepicker = require('services/Filepicker');
 
   if (!$window.Aviary) {
     angularLoad.loadScript(
       'https://dme0ih8comzn4.cloudfront.net/imaging/v1/editor.js');
   }
 
-  var featherEditor, file, createDeferred, onClose;
+  var featherEditor, createDeferred, onClose;
 
   function createEditor () {
     var initDeferred = $q.defer();
@@ -56,19 +55,7 @@ angular.module('contentful')
 
   function onSave (_imageID, newURL) {
     featherEditor.showWaitIndicator();
-    Filepicker.store(newURL, file)
-    .then(function (res) {
-      createDeferred.resolve(res);
-    })
-    .catch(function (err) {
-      createDeferred.reject({
-        message: 'There has been a problem saving the file',
-        error: {
-          obj: err,
-          type: 'filepicker'
-        }
-      });
-    });
+    createDeferred.resolve(newURL);
   }
 
   function onError (error) {
@@ -97,8 +84,6 @@ angular.module('contentful')
       createDeferred = $q.defer();
       $q.all([getIntegrationToken(), createEditor()]).then(function (results) {
         var aviaryToken = results[0];
-        file = params.file;
-        delete params.file;
         onClose = params.onClose;
         delete params.onClose;
         params.encryptionMethod = 'sha1';

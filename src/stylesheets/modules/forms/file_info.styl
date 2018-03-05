@@ -23,7 +23,7 @@
 
   .file-preview,
   .file-metadata,
-  .cf-file-drop,
+  .file-selector,
   .file-progress,
   .no-file
     background-color: $gray-lightest
@@ -46,6 +46,22 @@
     th
       text-align: left
       padding-right: 1em
+
+  .file-selector
+    .__filestack-drop-pane-mount
+      position: absolute
+      top: 0
+      bottom: 0
+      left: 0
+      right: 0
+      z-index: 1
+    .file-selector-btn-wrapper
+      position: absolute
+      bottom: 20px
+      left: 0
+      right: 0
+      z-index: 2
+      text-align: center
 
   .title-overlay
     opacity: 0
