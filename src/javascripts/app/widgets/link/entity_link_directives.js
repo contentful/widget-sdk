@@ -85,7 +85,7 @@ angular.module('cf.app')
   $scope.config = _.assign({}, $scope.config || {});
   $scope.actions = $scope.actions || {};
   $scope.onClick = function () {
-    if ($scope.isInlineEditingEnabled) {
+    if ($scope.isInlineEditingEnabled && data.sys.type === 'Entry') {
       trackEntryEdit({
         contentType: spaceContext.publishedCTs.get(
           data.sys.contentType.sys.id
