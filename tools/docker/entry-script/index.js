@@ -1,9 +1,9 @@
-import * as B from 'bluebird';
-import kexec from 'kexec';
-import yargs from 'yargs';
+const B = require('bluebird');
+const kexec = require('kexec');
+const yargs = require('yargs');
 
-import serve from './serve';
-import runTravis from './travis';
+const serve = require('./serve');
+const runTravis = require('./travis');
 
 /**
  * This module exports the main function for the entry script of the
@@ -11,7 +11,7 @@ import runTravis from './travis';
  */
 
 
-export default B.coroutine(main);
+module.exports = B.coroutine(main);
 
 function* main (argv) {
   const {command, options} = parseArgs(argv);

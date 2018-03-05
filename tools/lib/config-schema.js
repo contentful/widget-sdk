@@ -30,7 +30,7 @@ const URL_KEYS = [
   'auth', 'api', 'ot', 'asset', 'marketing', 'toolsService', 'mockApi'
 ];
 
-export default strictObject(Object.assign({
+module.exports = strictObject(Object.assign({
   environment: {type: 'string'},
   main_domain: hostSchema,
   contentful: strictObject({

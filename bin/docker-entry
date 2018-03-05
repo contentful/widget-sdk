@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-require('babel-polyfill')
-require('babel-register')
+require('babel-polyfill');
 
-var run = require('../tools/docker/entry-script').default
-run(process.argv.slice(2)).done()
+var run = require('../tools/docker/entry-script');
+run(process.argv.slice(2)).done();

@@ -1,11 +1,11 @@
-import {
+const {
   isPlainObject,
   flatten,
   filter,
   kebabCase,
   isString,
   isNumber
-} from 'lodash';
+} = require('lodash');
 
 const TAG_RE = /^[^#.]+/;
 const ID_OR_CLASS_RE = /([#.][^#.]+)/g;
@@ -27,7 +27,7 @@ const VOID_ELEMENTS = [
   'source'
 ];
 
-export const doctype = '<!doctype html>';
+module.exports.doctype = '<!doctype html>';
 
 /**
  * @ngdoc service
@@ -40,7 +40,7 @@ export const doctype = '<!doctype html>';
  * Usage is described in the guide:
  * docs/guides/hyperscript.md
  */
-export function h (elSpec, attrs, children) {
+module.exports.h = function h (elSpec, attrs, children) {
   if (!children && !isPlainObject(attrs)) {
     children = attrs;
     attrs = undefined;
@@ -57,7 +57,7 @@ export function h (elSpec, attrs, children) {
   attrs = rewriteStyles(attrs);
 
   return createHTMLString(tag, attrs, children);
-}
+};
 
 function parseElSpec (elSpec) {
   elSpec = elSpec.trim();

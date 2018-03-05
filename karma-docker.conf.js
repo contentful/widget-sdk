@@ -1,7 +1,5 @@
 /* global require module */
 
-require('babel-register');
-
 var base = require('./karma.conf.js');
 
 module.exports = function (config) {

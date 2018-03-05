@@ -1,8 +1,7 @@
-#!/usr/bin/env babel-node
-
-import * as B from 'bluebird';
-import * as U from '../lib/utils';
-import {validate as validateConfig} from '../lib/config-validator';
+#!/usr/bin/env node
+const B = require('bluebird');
+const U = require('../lib/utils');
+const {validate: validateConfig} = require('../lib/config-validator');
 
 B.coroutine(validateFiles)(process.argv.slice(2))
 .done();
