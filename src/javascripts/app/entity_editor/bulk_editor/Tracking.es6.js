@@ -1,4 +1,4 @@
-import {partial, size, assign} from 'lodash';
+import {partial, size, assign, noop} from 'lodash';
 import * as Analytics from 'analytics/Analytics';
 import * as K from 'utils/kefir';
 import {stateName, State} from 'data/CMA/EntityState';
@@ -85,3 +85,17 @@ export function create (parentEntryId, links$) {
     }, options));
   }
 }
+
+export const createNoop = () => ({
+  open: noop,
+  close: noop,
+  addExisting: noop,
+  addNew: noop,
+  changeStatus: noop,
+  edited: noop,
+  actions: () => ({
+    unlink: noop,
+    navigate: noop,
+    setExpansion: noop
+  })
+});

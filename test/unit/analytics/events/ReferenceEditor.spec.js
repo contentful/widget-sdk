@@ -31,7 +31,7 @@ describe('ReferenceEditor', function () {
 
       this.referenceEditorEvents.onEntryCreate({
         contentType,
-        isInlineEditingEnabled: false
+        isInlineEditingFeatureFlagEnabled: false
       });
 
       sinon.assert.calledWith(
@@ -42,7 +42,9 @@ describe('ReferenceEditor', function () {
           locales_count: 1,
           localized_fields_count: 1,
           widgets_count: 2,
-          inline_editing_toggled_on: false
+          is_inline_editing_feature_flag_enabled: false,
+          is_inline_editing_enabled_for_field: false,
+          version: 2
         }
       );
     });
@@ -62,7 +64,9 @@ describe('ReferenceEditor', function () {
           fields_count: 2,
           locales_count: 1,
           localized_fields_count: 1,
-          widgets_count: 2
+          is_inline_editing_feature_flag_enabled: false,
+          widgets_count: 2,
+          version: 2
         }
       );
     });

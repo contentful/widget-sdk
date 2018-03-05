@@ -8,7 +8,7 @@ import createEntity from 'cfReferenceEditor/createEntity';
 import spaceContext from 'spaceContext';
 import { onFeatureFlag } from 'utils/LaunchDarkly';
 import { track } from 'analytics/Analytics';
-import { onEntryCreate as trackEntryCreate } from 'analytics/events/ReferenceEditor';
+import { onEntryCreate as trackEntryCreate, onEntryEdit as trackEntryEdit } from 'analytics/events/ReferenceEditor';
 
 import * as State from './State';
 import {
@@ -70,15 +70,9 @@ export default function create ($scope, widgetApi) {
   // the experiment.
   onFeatureFlag($scope, INLINE_REFERENCE_FEATURE_FLAG, function (isEnabled) {
     $scope.isInlineEditingEnabled = isEnabled;
-    const ctExpandedStoreKey = [
-      spaceContext.user.sys.id,
-      contentTypeId,
-      field.name,
-      field.locale
-    ].join(':');
-    const featureEnabledForField = store.get(ctExpandedStoreKey);
+    const featureEnabledForField = isInlineEditingEnabledForField();
     const isAsset = $scope.isAssetCard;
-    const isOneToOne = $scope.single;
+    const isOneToOne = !!$scope.single;
 
     if (isAsset) {
       $scope.referenceType = { asset: true };
@@ -88,6 +82,16 @@ export default function create ($scope, widgetApi) {
       $scope.referenceType = { link: true };
     }
   });
+
+  function isInlineEditingEnabledForField () {
+    const ctExpandedStoreKey = [
+      spaceContext.user.sys.id,
+      contentTypeId,
+      field.name,
+      field.locale
+    ].join(':');
+    return store.get(ctExpandedStoreKey);
+  }
 
   $scope.uiSortable.update = function () {
     // let uiSortable update the model, then sync
@@ -134,12 +138,17 @@ export default function create ($scope, widgetApi) {
       // necessary to prompt loading state
       $scope.isReady = false;
     }
+
     return widgetApi.space
       .createEntry(contentTypeId, {})
       .then(makeNewEntityHandler(contentType))
       .then(entry => {
-        if ($scope.single && $scope.isInlineEditingEnabled) {
-          trackEntryCreate({ contentType });
+        if ($scope.single) {
+          trackEntryCreate({
+            contentType,
+            isInlineEditingFeatureFlagEnabled: $scope.isInlineEditingEnabled,
+            isInlineEditingEnabledForField: isInlineEditingEnabledForField()
+          });
         }
         return entry;
       });
@@ -295,7 +304,8 @@ export default function create ($scope, widgetApi) {
       hash: hash,
       actions: {
         edit: prepareEditAction(entity, index, isDisabled),
-        remove: prepareRemoveAction(index, isDisabled)
+        remove: prepareRemoveAction(index, isDisabled),
+        trackEdit: () => trackEdit(entity)
       },
       // TODO: This is used to create multiple reference contexts
       // to be able to open multiple instances of the bulk editor
@@ -311,10 +321,22 @@ export default function create ($scope, widgetApi) {
 
     if (entity && !isDisabled && !linksParentEntry && useBulkEditor) {
       return function () {
+        trackEdit(entity);
         widgetApi._internal.editReferences(index, state.refreshEntities);
       };
     } else {
       return null;
+    }
+  }
+
+  function trackEdit (entity) {
+    if (entity.sys.type === 'Entry' && !!$scope.single) {
+      trackEntryEdit({
+        contentType: spaceContext.publishedCTs.get(
+          entity.sys.contentType.sys.id
+        ),
+        isInlineEditingFeatureFlagEnabled: $scope.isInlineEditingEnabled
+      });
     }
   }
 

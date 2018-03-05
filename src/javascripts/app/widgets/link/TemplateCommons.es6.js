@@ -76,7 +76,8 @@ export function actions (actionClass) {
     h(`a.${actionClass}`, {
       dataTestId: 'entity-edit',
       ngIf: 'stateRef',
-      cfSref: 'stateRef'
+      cfSref: 'stateRef',
+      ngClick: 'onClick()'
     }, [h('cf-icon', {name: 'edit'})]),
     h(`a.${actionClass}`, {
       dataTestId: 'asset-download',
