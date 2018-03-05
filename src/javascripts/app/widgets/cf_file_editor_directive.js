@@ -5,7 +5,6 @@ angular.module('contentful')
   var aviary = require('aviary');
   var Filepicker = require('services/Filepicker');
   var logger = require('logger');
-  var modalDialog = require('modalDialog');
   var notification = require('notification');
   var stringUtils = require('stringUtils');
 
@@ -23,7 +22,6 @@ angular.module('contentful')
       scope.showMeta = false;
 
       scope.$on('cfFileDropped', fileEventHandler);
-      scope.$on('gettyFileAuthorized', fileEventHandler);
       scope.$on('fileProcessingFailed', deleteFile);
 
       var removeUpdateListener = field.onValueChanged(function (file) {
@@ -35,7 +33,6 @@ angular.module('contentful')
 
       scope.toggleMeta = toggleMeta;
       scope.uploadFile = uploadFile;
-      scope.uploadFromGetty = uploadFromGetty;
       scope.editFile = editFile;
       scope.deleteFile = deleteFile;
 
@@ -53,13 +50,6 @@ angular.module('contentful')
           setFPFile(FPFile);
         }, function () {
           scope.editorContext.validator.run();
-        });
-      }
-
-      function uploadFromGetty () {
-        modalDialog.open({
-          scope: scope,
-          template: 'getty_dialog'
         });
       }
 

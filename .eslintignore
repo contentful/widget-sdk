@@ -59,7 +59,6 @@ src/javascripts/components/shared/developers/cf_cma_links_directive.js
 src/javascripts/components/shared/file_drop/cf_file_drop_directive.js
 src/javascripts/components/shared/file_info/cf_file_display_metadata_directive.js
 src/javascripts/components/shared/file_info/cf_file_display_directive.js
-src/javascripts/components/shared/getty_dialog/getty_dialog_controller.js
 src/javascripts/components/shared/validation_error_display/cf_error_list_directive.js
 src/javascripts/components/shared/validation_error_display/cf_error_messages_directive.js
 src/javascripts/components/shared/validation_error_display/cf_error_path_directive.js
@@ -130,7 +129,6 @@ src/javascripts/services/assert.js
 src/javascripts/services/field_factory.js
 src/javascripts/services/fontsdotcom.js
 src/javascripts/services/get.js
-src/javascripts/services/getty_images.js
 src/javascripts/services/kaltura_widget_loader.js
 src/javascripts/services/lodash_timing.js
 src/javascripts/services/merge_sort.js
