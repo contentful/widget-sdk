@@ -181,7 +181,7 @@ const PreviewUsingExampleAppStep = createReactClass({
           <div className='tea-onboarding__step-description'>
             <p>
               You can preview the two sample courses using the example app that is connected to this
-              space. The app is available for multiple platforms such as JavaScript, Java, .NET and more.
+              space. The app is available for multiple platforms such as JavaScript, Ruby, .NET and more.
             </p>
           </div>
           <a
