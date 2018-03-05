@@ -60,7 +60,7 @@ function renderSpaceList (props) {
       ariaSelected: isCurrSpace ? 'true' : 'false'
     }, [
       h('.nav-sidepanel__space-title', [
-        h('span.nav-sidepanel__space-icon', [folderIcon]),
+        h('div.nav-sidepanel__space-icon', [folderIcon]),
         h('span', {
           className: `u-truncate nav-sidepanel__space-name ${isCurrSpace ? 'nav-sidepanel__space-name--is-active' : ''}`
         }, [space.name])

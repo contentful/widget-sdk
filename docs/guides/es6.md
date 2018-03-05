@@ -31,16 +31,13 @@ less correct code but it will be more portable without using polyfills.
 Linting
 -------
 
-We have to different ESLint configurations `src/javascripts/.eslint-es5.yml` and
-`src/javascripts/.eslint-es6.yml` for ES5 and ES6 files, repectively.
+We have to different ESLint configurations for ES5 and ES6 files defined in `./eslintrc.yml`.
 
 The ES6 configuration excludes ES6 syntax that is not transformed through the
 [`no-restricted-syntax` rule][no-restricted-syntax-rule]. If you add a Babel
 plugin make sure to also update the ESLint configuration.
 
-We use two shell scripts `bin/lint-all` and `bin/lint-file` to lint against the
-appropriate configuraiton. You can use the latter to integrate ESLint into your
-code editor or IDE.
+We use `npm run hint` to lint the whole application manually. You can integrate eslint with your IDE. [Integration List](https://eslint.org/docs/user-guide/integrations#editors)
 
 [no-restricted-syntax-rule]: http://eslint.org/docs/rules/no-restricted-syntax
 

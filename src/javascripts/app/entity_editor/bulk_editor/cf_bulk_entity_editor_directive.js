@@ -31,6 +31,7 @@ angular.module('contentful')
 .directive('cfBulkEntityEditor', ['require', function (require) {
   var $q = require('$q');
   var $controller = require('$controller');
+  var $timeout = require('$timeout');
   var K = require('utils/kefir');
   var Navigator = require('states/Navigator');
   var caseof = require('libs/sum-types').caseof;
@@ -70,8 +71,10 @@ angular.module('contentful')
 
       K.onValueScope($scope, bulkEditorContext.scrollTarget$, function (key) {
         if (key === entityContext.key) {
-          $scope.$el.find('input').eq(0).focus();
-          $scope.el.scrollIntoView({behavior: 'smooth', block: 'start'});
+          $timeout(function () {
+            $scope.$el.find('input').eq(0).focus();
+            $scope.el.scrollIntoView({behavior: 'smooth', block: 'start'});
+          });
         }
       });
 
