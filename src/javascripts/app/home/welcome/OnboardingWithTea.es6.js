@@ -178,7 +178,7 @@ const Header = createReactClass({
   render () {
     return (
       <div className='tea-onboarding__header'>
-        <h2 className='tea-onboarding__heading'>Welcome to your space home</h2>
+        <h3 className='tea-onboarding__heading'>Welcome to your space home</h3>
         <Progress count={this.props.progress} total={4} />
       </div>
     );

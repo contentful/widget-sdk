@@ -88,15 +88,15 @@ const ViewSampleContentStep = createReactClass({
       <Step {...propsForStep}>
         <div>
           <div className='tea-onboarding__step-description'>
-            <p>This example space shows best practices on how to structure your content and integrate your website and app with Contentful.</p>
-            <p>Have a look at the two courses composing this example.</p>
+            <p>This example space shows best practices on how to structure your content and integrate your website or app with Contentful.</p>
+            <p>Let’s view the content available, starting with two sample courses.</p>
           </div>
           <a target={'_blank'} rel={'noopener'} href={linkWithQuery} className='btn-action tea-onboarding__step-cta' onClick={e => this.primaryCtaOnClick(e)}>
             View content
           </a>
         </div>
         <div>
-          <p className='tea-onboarding__step-graphic-description'>Here’s how this content is nested:</p>
+          <p className='tea-onboarding__step-graphic-description'>Here’s how the content is nested.</p>
           <Icon className='tea-onboarding__step-graphic' name='content-structure-graph' />
         </div>
       </Step>
@@ -189,8 +189,7 @@ const PreviewUsingExampleAppStep = createReactClass({
             target={'_blank'}
             rel={'noopener'}
             className='btn-action tea-onboarding__step-cta'
-            onClick={e => this.primaryCtaOnClick(e)}
-          >
+            onClick={e => this.primaryCtaOnClick(e)}>
             Preview content
           </a>
         </div>
@@ -291,10 +290,10 @@ const CreateEntryStep = createReactClass({
         <div>
           <div className='tea-onboarding__step-description'>
             <p>
-              To test it yourself, add a new copy module to a lesson. You’ll notice that a
-              second language is enabled - so you can practice your German along the way!
+              Try it yourself. Create a new entry in the “Serve localized content” lesson.
+              You’ll notice that a second language is enabled - so you can practice your German along the way!
             </p>
-            <p>You can see your changes immediately using the “Open preview” button.</p>
+            <p>To see changes immediately use the “Open preview” button.</p>
           </div>
           <button className={`btn-action tea-onboarding__step-cta ${isLoading ? 'is-loading' : ''}`} onClick={e => this.primaryCtaOnClick(e)}>
             Create entry
@@ -373,7 +372,7 @@ const InviteADevStep = createReactClass({
   },
   render () {
     const props = {
-      headerCopy: 'Invite a developer to this space',
+      headerCopy: 'Invite a developer',
       headerIcon: 'onboarding-add-user',
       isDone: this.props.isDone
     };
@@ -422,7 +421,7 @@ const SplitStep = createReactClass({
             ? <Icon name='icon-checkmark-done' className='tea-onboarding__step-header-icon' key='complete-step' />
             : <Icon name={headerIcon} className='tea-onboarding__step-header-icon' key='incomplete-step' />
           }
-          <h3>{headerCopy}</h3>
+          <h4>{headerCopy}</h4>
         </div>
         <div className='tea-onboarding__split-step-body'>
           {children}
@@ -457,7 +456,7 @@ const Step = createReactClass({
             ? <Icon name='icon-checkmark-done' className='tea-onboarding__step-header-icon' key='complete-step'/>
             : <Icon name={headerIcon} className='tea-onboarding__step-header-icon' key='incomplete-step'/>
           }
-          <h3 className='tea-onboarding__step-heading'>{headerCopy}</h3>
+          <h4 className='tea-onboarding__step-heading'>{headerCopy}</h4>
           <div className='tea-onboarding__step-toggle'>
             <span>{isExpanded ? 'Hide' : 'See'} details</span>
             <span className={`arrow ${isExpanded ? 'toggle' : ''}`}></span>
