@@ -51,7 +51,7 @@ angular.module('contentful')
     } catch (e) {
       emitError(e);
     }
-  }).skipDuplicates(_.isEqual).toProperty(_ => {});
+  }).skipDuplicates(_.isEqual).toProperty(function () {});
 
   // we need to download content previews again after finishing with space template creation
   $rootScope.$on('spaceTemplateCreated', function () {
