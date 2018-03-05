@@ -1,7 +1,7 @@
 import * as sinon from 'helpers/sinon';
 import * as K from 'helpers/mocks/kefir';
 
-xdescribe('data/User', () => {
+describe('data/User', () => {
   beforeEach(function () {
     this.tokenStore = {
       organizations$: K.createMockProperty(null),
@@ -65,7 +65,6 @@ xdescribe('data/User', () => {
           publishedCTs = []
         } = params;
 
-        this.tokenStore.user$.set(user);
         this.tokenStore.organizations$.set(orgs);
         this.tokenStore.spacesByOrganization$.set(spacesByOrg);
         this.spaceContext.organizationContext.organization = org;
@@ -73,6 +72,7 @@ xdescribe('data/User', () => {
         this.$stateParams.orgId = orgId;
         this.spaceContext.publishedCTs.items$.set(publishedCTs);
         this.$rootScope.$broadcast('$stateChangeSuccess', null, {orgId});
+        this.tokenStore.user$.set(user);
         this.$apply();
       };
     });
@@ -93,13 +93,13 @@ xdescribe('data/User', () => {
       sinon.assert.calledOnce(this.spy);
       sinon.assert.calledWithExactly(
         this.spy,
-        [user, org, {}, this.spaceContext.space.data, null, null]
+        [user, org, {}, this.spaceContext.space.data, {}, []]
       );
 
       this.spy.reset();
       this.set({org: null, space: {fields: [], sys: {id: 'space-1'}}});
       sinon.assert.calledOnce(this.spy);
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data, null, null]);
+      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data, {}, []]);
     });
     it('should emit a value only when the user is valid and the org and spacesByOrg are not falsy', function () {
       const orgs = [{name: '1', sys: {id: 1}}, {name: '2', sys: {id: 2}}];
@@ -120,7 +120,7 @@ xdescribe('data/User', () => {
       // all valid valus, hence spy must be called
       this.set({user, orgs, spacesByOrg: {}, orgId: 1});
       sinon.assert.calledOnce(this.spy);
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, {}, null, null]);
+      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, {}, {}, []]);
     });
     it('should skip duplicates', function () {
       const setter = this.set.bind(this, {

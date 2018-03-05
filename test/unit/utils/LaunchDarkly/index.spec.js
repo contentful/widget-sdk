@@ -3,7 +3,7 @@ import * as sinon from 'helpers/sinon';
 import moment from 'npm:moment';
 import { update, push } from 'utils/Collections';
 
-xdescribe('LaunchDarkly', function () {
+describe('LaunchDarkly', function () {
   beforeEach(function () {
     const $apply = this.$apply.bind(this);
 
@@ -146,7 +146,8 @@ xdescribe('LaunchDarkly', function () {
           isAutomationTestUser: true,
           currentUserIsCurrentOrgCreator: false,
           currentUserSignInCount: 10,
-          currentUserSpaceRole: []
+          currentUserSpaceRole: [],
+          isExampleSpace: false
         });
       });
     });
@@ -224,11 +225,11 @@ xdescribe('LaunchDarkly', function () {
     });
 
     it('should not filter undefined as the variation', function* () {
-      yield this.ready();
       const spy = sinon.spy();
-
-      this.client.variation.returns(undefined);
       this.ld.onFeatureFlag(this.$scope, 'feature-flag', spy);
+      this.client.variation.returns(undefined);
+      yield this.ready();
+
 
       sinon.assert.calledOnce(spy);
       sinon.assert.calledWith(spy, undefined);
