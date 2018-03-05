@@ -22,7 +22,6 @@ import {
   getUserSpaceRoles
 } from 'data/User';
 
-
 // mvar to wait until LD context is successfully switched
 const LDContextChangeMVar = createMVar();
 
@@ -116,7 +115,10 @@ export function getCurrentVariation (flagName) {
  * argument.
  */
 export function onFeatureFlag ($scope, featureName, handler) {
-  const obs$ = createPropertyBus();
+  // we always start property bus with some value. However, in this situation
+  // we don't want to do that - we want to emit only the first actual value
+  const INITIAL_PROPERTY_VALUE = '$$__INITIAL_PROPERTY_VALUE';
+  const obs$ = createPropertyBus(INITIAL_PROPERTY_VALUE);
   const setVariation = getVariationSetter(featureName, obs$);
 
   LDContextChangeMVar.read().then(_ => {
@@ -134,6 +136,7 @@ export function onFeatureFlag ($scope, featureName, handler) {
   onValueScope(
     $scope,
     obs$.property
+      .filter(v => v !== INITIAL_PROPERTY_VALUE)
       .map(v => [v === undefined ? v : JSON.parse(v), getChangesObject(prevCtx, currCtx)]),
     ([variation, changes]) => handler(variation, changes)
   );
