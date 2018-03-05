@@ -6,23 +6,20 @@
  * everything, and use SystemJS to register ES6 dependencies.
  */
 
-const { DefinePlugin } = require('webpack');
-
+const webpack = require('webpack');
 const globSync = require('glob').sync;
 const P = require('path');
 
 // Module IDs are relative to this path
 const basePath = P.resolve('src', 'javascripts');
 
-module.exports = ({ dev } = {}) => ({
+module.exports = ({ dev = false } = {}) => ({
   entry: {
-    'public/app/components.js':
-      [
-        './src/javascripts/prelude.js'
-      ]
-        .concat(globSync('./src/javascripts/**/*.js', {
-          ignore: ['./src/javascripts/libs/*.js', './src/javascripts/prelude.js']
-        })),
+    'public/app/components.js': ['./src/javascripts/prelude.js'].concat(
+      globSync('./src/javascripts/**/*.js', {
+        ignore: ['./src/javascripts/libs/*.js', './src/javascripts/prelude.js']
+      })
+    ),
     'public/app/libs.js': './src/javascripts/libs',
     'public/app/vendor.js': [
       './vendor/jquery-shim.js',
@@ -59,16 +56,28 @@ module.exports = ({ dev } = {}) => ({
           options: {
             babelrc: false,
             moduleIds: true,
-            presets: [['@babel/preset-env', {
-              targets: {
-                browsers: ['last 2 versions', 'ie >= 10']
-              }
-            }], '@babel/preset-react'],
+            presets: [
+              [
+                '@babel/preset-env',
+                {
+                  targets: {
+                    browsers: ['last 2 versions', 'ie >= 10']
+                  }
+                }
+              ],
+              '@babel/preset-react'
+            ],
             plugins: [
-              ['@babel/plugin-transform-modules-systemjs', {
-                systemGlobal: 'AngularSystem'
-              }],
-              [require('@babel/plugin-proposal-object-rest-spread'), { useBuiltIns: true }]
+              [
+                '@babel/plugin-transform-modules-systemjs',
+                {
+                  systemGlobal: 'AngularSystem'
+                }
+              ],
+              [
+                require('@babel/plugin-proposal-object-rest-spread'),
+                { useBuiltIns: true }
+              ]
             ],
             // Get the SystemJS module ID from the source path
             // src/javascripts/a/b/x.es6.js -> a/b/x
@@ -100,13 +109,22 @@ module.exports = ({ dev } = {}) => ({
           loader: 'babel-loader',
           options: {
             babelrc: false,
-            presets: [['@babel/preset-env', {
-              targets: {
-                browsers: ['last 2 versions', 'ie >= 10']
-              }
-            }], '@babel/preset-react'],
+            presets: [
+              [
+                '@babel/preset-env',
+                {
+                  targets: {
+                    browsers: ['last 2 versions', 'ie >= 10']
+                  }
+                }
+              ],
+              '@babel/preset-react'
+            ],
             plugins: [
-              [require('@babel/plugin-proposal-object-rest-spread'), { useBuiltIns: true }]
+              [
+                require('@babel/plugin-proposal-object-rest-spread'),
+                { useBuiltIns: true }
+              ]
             ]
           }
         }
@@ -128,16 +146,23 @@ module.exports = ({ dev } = {}) => ({
     //   jQuery: 'jquery',
     //   'window.jQuery': 'jquery'
     // })
-  ].concat(dev ? [] : [
-    // a lot of libraries rely on this env variable in order to cut warnings,
-    // development features, etc. e.g. for react: https://reactjs.org/docs/optimizing-performance.html#webpack
-    new DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('production')
-    })
-
-    // we minify all JS files after concatenation in `build/js` gulp task
-    // so we don't need to uglify it here
-    // new UglifyJsPlugin({ sourceMap: true })
-  ]),
-  devtool: dev ? 'eval-source-map' : 'source-map'
+  ].concat(
+    dev
+      ? []
+      : [
+          // a lot of libraries rely on this env variable in order to cut warnings,
+          // development features, etc. e.g. for react: https://reactjs.org/docs/optimizing-performance.html#webpack
+          new webpack.DefinePlugin({
+            'process.env.NODE_ENV': JSON.stringify('production')
+          })
+          // we minify all JS files after concatenation in `build/js` gulp task
+          // so we don't need to uglify it here
+          // new UglifyJsPlugin({ sourceMap: true })
+        ]
+  ),
+  devtool: dev ? 'eval-source-map' : 'source-map',
+  stats: {
+    // Set the maximum number of modules to be shown
+    maxModules: 1
+  }
 });

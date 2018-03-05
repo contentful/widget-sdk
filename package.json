@@ -139,6 +139,8 @@
     "systemjs": "^0.20.4",
     "watchify": "^3.7.0",
     "webpack": "^3.11.0",
+    "webpack-bundle-analyzer": "^2.11.1",
+    "webpack-merge": "^4.1.2",
     "yargs": "^4.2.0"
   },
   "scripts": {
@@ -148,7 +150,8 @@
     "hint": "eslint src test bin tools",
     "cloc": "cloc --read-lang-def .cloc.def src",
     "clean": "rm -rf node_modules",
-    "prepush": "if test \"$ENABLE_HUSKY_HOOKS\" != \"\" ; then npm run hint ; fi "
+    "prepush": "if test \"$ENABLE_HUSKY_HOOKS\" != \"\" ; then npm run hint ; fi ",
+    "bundle-analyzer": "webpack --config ./tools/webpack.analyzer.config.js"
   },
   "repository": {
     "type": "git",
