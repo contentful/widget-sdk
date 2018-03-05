@@ -2,7 +2,14 @@
 
 describe('cfOnboardingSteps Directive', function () {
   beforeEach(function () {
-    module('contentful/test');
+    module('contentful/test', $provide => {
+      $provide.value('utils/LaunchDarkly', {
+        // Begin test code: test-ps-02-2018-tea-onboarding-steps
+        // eslint-disable-next-line no-unused-vars
+        onFeatureFlag: (scope, flagName, handler) => handler(false)
+        // End test code: test-ps-02-2018-tea-onboarding-steps
+      });
+    });
     this.$state = this.$inject('$state');
     this.compile = function () {
       this.element = this.$compile('<cf-onboarding-steps />');

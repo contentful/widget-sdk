@@ -6,11 +6,11 @@ describe('cfReferenceEditorDirective', function () {
   const link1 = {sys: {type: 'Link', linkType: 'Entry', id: 'testid1'}};
   const link2 = {sys: {type: 'Link', linkType: 'Entry', id: 'testid2'}};
 
-
   beforeEach(function () {
     this.analytics = { track: sinon.spy() };
 
     this.spaceContext = {
+      getId: () => 'some id',
       publishedCTs: {
         get: sinon.stub(),
         items$: K.createMockProperty([]),

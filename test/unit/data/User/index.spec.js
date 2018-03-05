@@ -9,7 +9,14 @@ describe('data/User', () => {
       spacesByOrganization$: K.createMockProperty(null)
     };
 
+    this.contentPreview = {
+      contentPreviewsBus$: K.createMockProperty(null)
+    };
+
     this.spaceContext = {
+      publishedCTs: {
+        items$: K.createMockProperty(null)
+      },
       organizationContext: {
         organization: {}
       },
@@ -34,6 +41,7 @@ describe('data/User', () => {
       $provide.value('services/TokenStore', this.tokenStore);
       $provide.value('spaceContext', this.spaceContext);
       $provide.value('$stateParams', this.$stateParams);
+      $provide.value('contentPreview', this.contentPreview);
     });
 
     this.moment = this.$inject('moment');
@@ -66,7 +74,7 @@ describe('data/User', () => {
         this.$apply();
       };
     });
-    it('should emit [user, org, spacesByOrg, space] where space is optional', function () {
+    it('should emit [user, org, spacesByOrg, space, publishedCTs, contentPreviews] where space is optional', function () {
       const user = {email: 'a@b.c'};
       const orgs = [{name: '1', sys: {id: 1}}, {name: '2', sys: {id: 2}}];
       const org = {name: 'some org', sys: {id: 'some-org-1'}};
@@ -76,20 +84,20 @@ describe('data/User', () => {
       this.set({user, orgs, spacesByOrg: {}, org: null, orgId: 1});
       sinon.assert.calledOnce(this.spy);
 
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data]);
+      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data, null, null]);
 
       this.spy.reset();
       this.set({org});
       sinon.assert.calledOnce(this.spy);
       sinon.assert.calledWithExactly(
         this.spy,
-        [user, org, {}, this.spaceContext.space.data]
+        [user, org, {}, this.spaceContext.space.data, null, null]
       );
 
       this.spy.reset();
       this.set({org: null, space: {fields: [], sys: {id: 'space-1'}}});
       sinon.assert.calledOnce(this.spy);
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data]);
+      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data, null, null]);
     });
     it('should emit a value only when the user is valid and the org and spacesByOrg are not falsy', function () {
       const orgs = [{name: '1', sys: {id: 1}}, {name: '2', sys: {id: 2}}];
@@ -110,7 +118,7 @@ describe('data/User', () => {
       // all valid valus, hence spy must be called
       this.set({user, orgs, spacesByOrg: {}, orgId: 1});
       sinon.assert.calledOnce(this.spy);
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, {}]);
+      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, {}, null, null]);
     });
     it('should skip duplicates', function () {
       const setter = this.set.bind(this, {
