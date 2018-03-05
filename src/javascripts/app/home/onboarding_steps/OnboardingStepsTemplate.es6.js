@@ -1,11 +1,31 @@
 import {h} from 'utils/hyperscript';
 
 export default function template () {
-  return h('section.home-section.x--onboarding-steps', [
+  const regularSteps = h('section.home-section.x--onboarding-steps', [
     heading(),
     description(),
     steps()
   ]);
+
+  // Begin test code: test-ps-02-2018-tea-onboarding-steps
+  return h('div', [
+    h('.loading-box', {
+      style: { height: '10em', border: '0' },
+      ngIf: 'onboarding.isExampleSpace === "loading"'
+    }, [
+      h('.loading-box__spinner'),
+      h('.loading-box__message', [
+        'Initializing steps...'
+      ])
+    ]),
+    h('cf-onboarding-with-tea', {
+      ngIf: 'onboarding.isExampleSpace === true'
+    }),
+    h('div', {
+      ngIf: '!onboarding.isExampleSpace'
+    }, [regularSteps])
+  ]);
+  // End test code: test-ps-02-2018-tea-onboarding-steps
 }
 
 function heading () {

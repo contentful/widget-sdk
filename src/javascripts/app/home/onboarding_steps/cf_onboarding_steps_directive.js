@@ -11,6 +11,10 @@ angular.module('contentful')
   var caseofEq = require('libs/sum-types').caseofEq;
   var TheLocaleStore = require('TheLocaleStore');
   var entityCreator = require('entityCreator');
+  // Begin test code: test-ps-02-2018-tea-onboarding-steps
+  var LD = require('utils/LaunchDarkly');
+  var isExampleSpaceFlagName = 'test-ps-02-2018-tea-onboarding-steps';
+  // End test code: test-ps-02-2018-tea-onboarding-steps
 
   return {
     template: template(),
@@ -18,6 +22,13 @@ angular.module('contentful')
     scope: {},
     controller: ['$scope', function ($scope) {
       var controller = this;
+
+      // Begin test code: test-ps-02-2018-tea-onboarding-steps
+      controller.isExampleSpace = 'loading';
+      LD.onABTest($scope, isExampleSpaceFlagName, function (flag) {
+        controller.isExampleSpace = flag;
+      });
+      // End test code: test-ps-02-2018-tea-onboarding-steps
 
       var firstSteps = [
         {
