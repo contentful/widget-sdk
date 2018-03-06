@@ -103,6 +103,10 @@ const OnboardingWithTea = createReactClass({
       fromState: $state.current.name
     });
     store.set(constants.viewContent, true);
+    const spaceId = spaceContext.getId();
+    // hack to pre-select course contentType filter in entry list
+    const contentKey = `lastFilterQueryString.entries.${spaceId}`;
+    store.set(contentKey, { contentTypeId: 'course' });
     this.markAsDone({
       [STEPS_KEYS.VIEW_SAMPLE_CONTENT]: { isDone: true }
     });

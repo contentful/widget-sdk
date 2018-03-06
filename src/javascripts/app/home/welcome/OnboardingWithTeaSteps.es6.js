@@ -67,8 +67,13 @@ const ViewSampleContentStep = createReactClass({
     isDone: PropTypes.bool.isRequired,
     onToggle: PropTypes.func.isRequired
   },
-  primaryCtaOnClick () {
+  primaryCtaOnClick (e, urlParams) {
+    e.preventDefault();
     this.props.markAsDone();
+    // we do that for 2 reasons:
+    // 1. angular ui-router prevents all callbacks on links with no `target="_blank"`
+    // 2. we can't pass initial search parameters to entries list route :(
+    go(urlParams);
   },
   render () {
     const {isDone, isExpanded, onToggle} = this.props;
@@ -81,7 +86,8 @@ const ViewSampleContentStep = createReactClass({
       onToggle
     };
 
-    const baseLink = href({ path: ['spaces', 'detail', 'entries', 'list'], params: { spaceId: spaceContext.space.getId() } });
+    const urlParams = { path: ['spaces', 'detail', 'entries', 'list'], params: { spaceId: spaceContext.space.getId() } };
+    const baseLink = href(urlParams);
     const linkWithQuery = `${baseLink}?contentTypeId=${VIEW_CONTENT_TYPE_ID}`;
 
     return (
@@ -91,7 +97,13 @@ const ViewSampleContentStep = createReactClass({
             <p>This example space shows best practices on how to structure your content and integrate your website or app with Contentful.</p>
             <p>Let’s view the content available, starting with two sample courses.</p>
           </div>
-          <a target={'_blank'} rel={'noopener'} href={linkWithQuery} className='btn-action tea-onboarding__step-cta' onClick={e => this.primaryCtaOnClick(e)}>
+          <a
+            target={'_blank'}
+            rel={'noopener'}
+            href={linkWithQuery}
+            className='btn-action tea-onboarding__step-cta'
+            onClick={e => this.primaryCtaOnClick(e, urlParams)}
+          >
             View content
           </a>
         </div>
@@ -366,8 +378,11 @@ const InviteADevStep = createReactClass({
     isDone: PropTypes.bool.isRequired,
     markAsDone: PropTypes.func.isRequired
   },
-  handleClick (e) {
+  handleClick (e, urlParams) {
     e.preventDefault();
+    // we redirect user directly in order to be able to handle
+    // this callback - otherwise ui-router will prevent its execution
+    go(urlParams);
     this.props.markAsDone();
   },
   render () {
@@ -385,16 +400,23 @@ const InviteADevStep = createReactClass({
       // we just won't render the link
     }
 
-    const inviteLink = href({
+    const urlParams = {
       path: ['account', 'organizations', 'users', 'new'],
       params: { orgId }
-    });
+    };
+    const inviteLink = href(urlParams);
 
     return (
       <SplitStep {...props}>
         <p>Need some help setting up your project? Invite a developer to get started.</p>
         {orgId &&
-          <a href={inviteLink} className='tea-onboarding__split-step-cta' onClick={this.handleClick}>
+          <a
+            href={inviteLink}
+            target={'_blank'}
+            rel={'noopener noreferrer'}
+            className='tea-onboarding__split-step-cta'
+            onClick={e => this.handleClick(e, urlParams)}
+          >
             Invite user
           </a>
         }
