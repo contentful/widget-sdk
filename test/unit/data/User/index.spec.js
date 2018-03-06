@@ -171,6 +171,16 @@ describe('data/User', () => {
     });
   });
 
+  describe('#getUserCreationDateUnixTimestamp', function () {
+    it('should return the user creation date as a unix timestamp', function () {
+      const creationDate = this.moment();
+
+      expect(this.utils.getUserCreationDateUnixTimestamp({
+        sys: { createdAt: creationDate.toISOString() }
+      })).toBe(creationDate.unix());
+    });
+  });
+
   describe('#isNonPayingUser', function () {
     beforeEach(function () {
       this.checkIfUserIsNonpaying = function (subscriptionStatus, valToAssert) {

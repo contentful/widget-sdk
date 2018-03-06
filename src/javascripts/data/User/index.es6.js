@@ -52,7 +52,7 @@ export function getOrgRole (user, orgId) {
  * @description
  * Get the user's age in days (age = now - createdAt in days)
  *
- * @param {Date} createdAt - user createdAt data
+ * @param {object} user
  * @returns {Number} user age
  */
 export function getUserAgeInDays (user) {
@@ -60,6 +60,18 @@ export function getUserAgeInDays (user) {
   const now = moment();
 
   return now.diff(creationDate, 'days');
+}
+
+/**
+ * @description
+ * Get the user's creation date as a unix timestamp
+ *
+ * @param  {object} user
+ *
+ * @returns {Number} unix timestamp
+ */
+export function getUserCreationDateUnixTimestamp (user) {
+  return moment(user.sys.createdAt).unix();
 }
 
 /**
