@@ -77,7 +77,8 @@ describe('LaunchDarkly', function () {
       hasAnOrgWithSpaces: sinon.stub().returns(false),
       ownsAtleastOneOrg: sinon.stub().returns(true),
       isAutomationTestUser: sinon.stub().returns(true),
-      isUserOrgCreator: sinon.stub().returns(false)
+      isUserOrgCreator: sinon.stub().returns(false),
+      getUserCreationDateUnixTimestamp: sinon.stub().returns(1234567890)
     };
 
     this.shallowObjectDiff = {default: sinon.stub().returns({})};
@@ -139,6 +140,7 @@ describe('LaunchDarkly', function () {
           currentOrgHasSpace: false,
           currentOrgPricingVersion: `pricing_version_1`,
           currentUserOrgRole: 'org role',
+          currentUserCreationDate: 1234567890,
           currentUserHasAtleastOneSpace: false,
           currentUserOwnsAtleastOneOrg: true,
           currentUserAge: 7,
