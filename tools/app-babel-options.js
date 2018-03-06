@@ -1,5 +1,4 @@
-import * as P from 'path';
-
+const P = require('path');
 
 // Module IDs are relative to this path
 const basePath = P.resolve('src', 'javascripts');
@@ -17,7 +16,7 @@ const basePath = P.resolve('src', 'javascripts');
  *   Additional options to be merged into the base options.
  * @returns {object}
  */
-export function makeOptions ({ browserTargets }, opts) {
+module.exports.makeOptions = function makeOptions ({ browserTargets }, opts) {
   return Object.assign({
     moduleIds: true,
     only: /\.es6\.js$/,
@@ -56,4 +55,4 @@ export function makeOptions ({ browserTargets }, opts) {
       }
     }
   }, opts);
-}
+};

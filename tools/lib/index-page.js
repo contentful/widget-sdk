@@ -1,5 +1,5 @@
-import {h, doctype} from './hyperscript';
-import {create as createResolver} from './manifest-resolver';
+const {h, doctype} = require('./hyperscript');
+const {create: createResolver} = require('./manifest-resolver');
 
 const DEV_ENTRY_SCRIPTS = [
   'vendor.js',
@@ -34,11 +34,10 @@ const DEFAULT_ENTRY_SCRIPTS = ['application.min.js'];
  * @param {object} config
  * @param {function} manifest
  */
-export function render (uiVersion, config, manifest) {
+module.exports.render = function render (uiVersion, config, manifest) {
   const resolve = createResolver(manifest, '/app');
   return renderPage(uiVersion, config, resolve, DEFAULT_ENTRY_SCRIPTS);
-}
-
+};
 
 /**
  * @usage
@@ -54,10 +53,10 @@ export function render (uiVersion, config, manifest) {
  * - Instead of the '/app/application.min.js' main script multiple
  *   separate scripts are loaded. (See `DEV_ENTRY_SCRIPTS` above).
  */
-export function renderDev (config) {
+module.exports.renderDev = function renderDev (config) {
   const resolve = (path) => `/app/${path}`;
   return renderPage(null, config, resolve, DEV_ENTRY_SCRIPTS);
-}
+};
 
 function renderPage (...args) {
   return doctype + indexPage(...args);

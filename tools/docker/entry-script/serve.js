@@ -1,9 +1,9 @@
-import * as B from 'bluebird';
-import * as P from 'path';
-import {createServer} from 'http';
-import express from 'express';
-import {render as renderIndex} from '../../lib/index-page';
-import {readJSON, readMergeJSON} from '../../lib/utils';
+const B = require('bluebird');
+const P = require('path');
+const {createServer} = require('http');
+const express = require('express');
+const {render: renderIndex} = require('../../lib/index-page');
+const {readJSON, readMergeJSON} = require('../../lib/utils');
 
 // TODO unify with index configurator
 const MANIFEST_PATHS = [
@@ -17,7 +17,7 @@ const MANIFEST_PATHS = [
  *
  * The application is configured with config/development.json.
  */
-export default function* serve () {
+module.exports = function* serve () {
   const assetsDir = P.resolve('build', 'app');
   const configPath = P.resolve('config', 'development.json');
   const [manifest, config] = yield B.all([
@@ -47,4 +47,4 @@ export default function* serve () {
   const {address, port} = server.address();
   console.log(`Serving Contentful Web App at ${address}:${port}`);
   return () => server.close();
-}
+};

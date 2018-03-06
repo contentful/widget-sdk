@@ -1,4 +1,4 @@
-#!/usr/bin/env babel-node
+#!/usr/bin/env node
 
 // Convert SVG files to hyperscript modules and write them to
 // 'src/javascripts/svg'
@@ -6,42 +6,42 @@
 // Usage: bin/add-svg <PATH...>
 
 
-const SVGO = require('svgo')
-const P = require('path')
-const {htmlToHs} = require('./jade-to-h')
-const {FS} = require('../tools/lib/utils')
-const co = require('co')
+const SVGO = require('svgo');
+const P = require('path');
+const {htmlToHs} = require('./jade-to-h');
+const {FS} = require('../tools/lib/utils');
+const co = require('co');
 
 const svgo = new SVGO({
   plugins: ['removeTitle']
-})
+});
 
-const outDir = P.join('src', 'javascripts', 'svg')
+const outDir = P.join('src', 'javascripts', 'svg');
 
 if (!module.parent) {
-  const srcs = process.argv.slice(2)
+  const srcs = process.argv.slice(2);
   Promise.all(srcs.map(co.wrap(function* (src) {
-    const baseName = P.basename(src, '.svg')
-    const outPath = P.join(outDir, baseName + '.es6.js')
-    console.log(`Writing ${outPath}`)
+    const baseName = P.basename(src, '.svg');
+    const outPath = P.join(outDir, baseName + '.es6.js');
+    console.log(`Writing ${outPath}`);
 
-    const svg = yield FS.readFileAsync(src, 'utf8')
-    const optimized = yield svgOptimize(svg)
+    const svg = yield FS.readFileAsync(src, 'utf8');
+    const optimized = yield svgOptimize(svg);
 
-    const hs = htmlToHs(optimized)
-    const hsModule = `import {h} from 'ui/Framework';\n\nexport default ${hs}`
-    yield FS.writeFileAsync(outPath, hsModule)
-  })))
+    const hs = htmlToHs(optimized);
+    const hsModule = `import {h} from 'ui/Framework';\n\nexport default ${hs}`;
+    yield FS.writeFileAsync(outPath, hsModule);
+  })));
 }
 
 function svgOptimize (data) {
   return new Promise((resolve, reject) => {
     svgo.optimize(data, ({error, data}) => {
       if (error) {
-        reject(error)
+        reject(error);
       } else {
-        resolve(data)
+        resolve(data);
       }
-    })
-  })
+    });
+  });
 }

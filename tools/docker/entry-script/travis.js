@@ -1,6 +1,6 @@
-import * as P from 'path';
-import {FS, writeJSON} from '../../lib/utils';
-import configureAndWriteIndex from '../../lib/index-configure';
+const P = require('path');
+const {FS, writeJSON} = require('../../lib/utils');
+const configureAndWriteIndex = require('../../lib/index-configure');
 
 /**
  * For each target environment create a file distribution in `output/files/${env}`.
@@ -16,7 +16,7 @@ import configureAndWriteIndex from '../../lib/index-configure';
  * output/files/producton/archive/<commit-hash or branchname>/index-compiled.html (powers ui_version)
  *
  */
-export default function* runTravis ({branch, pr, version}) {
+module.exports = function* runTravis ({branch, pr, version}) {
   console.log(`TRAVIS_BRANCH: ${branch}, TRAVIS_COMMIT: ${version}, TRAVIS_PULL_REQUEST: ${pr}`);
 
   // Supported environments
@@ -67,7 +67,7 @@ export default function* runTravis ({branch, pr, version}) {
   } else {
     console.log('Skipping index compilation and moving of assets as this is a travis-ci/pr job');
   }
-}
+};
 
 /**
  * @description

@@ -1,13 +1,13 @@
-import * as P from 'path';
-import {denodeify} from 'promise';
-import {watch} from 'chokidar';
-import {debounce, values} from 'lodash';
-import anymatch from 'anymatch';
-import express from 'express';
-import runSequence from 'run-sequence';
-import {readJSON} from './utils';
+const P = require('path');
+const {denodeify} = require('promise');
+const {watch} = require('chokidar');
+const {debounce, values} = require('lodash');
+const anymatch = require('anymatch');
+const express = require('express');
+const runSequence = require('run-sequence');
+const {readJSON} = require('./utils');
 
-import * as IndexPage from './index-page';
+const IndexPage = require('./index-page');
 
 const runSequenceP = denodeify(runSequence);
 
@@ -24,7 +24,7 @@ const runSequenceP = denodeify(runSequence);
  *   'task' is the name of a gulp task to be run when any of the files matched
  *   by the pattern changes.
  */
-export function serveWatch (configName, watchFiles, patternTasks) {
+module.exports.serveWatch = function serveWatch (configName, watchFiles, patternTasks) {
   const buildList = createPromiseList();
   let watcher;
   if (watchFiles) {
@@ -61,8 +61,7 @@ export function serveWatch (configName, watchFiles, patternTasks) {
   });
 
   createServer(configName, buildList.resolve);
-}
-
+};
 
 /**
  * Create a server to serve the application files.

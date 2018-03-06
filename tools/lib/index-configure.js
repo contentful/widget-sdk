@@ -1,21 +1,23 @@
-#!/usr/bin/env babel-node
+#!/usr/bin/env node
 
-import * as P from 'path';
-import * as B from 'bluebird';
-import * as URL from 'url';
-import {mapValues} from 'lodash';
-import * as U from './utils';
-import {render as renderIndexPage} from './index-page';
-import {validate as validateConfig} from './config-validator';
+const P = require('path');
+const B = require('bluebird');
+const URL = require('url');
+const {mapValues} = require('lodash');
+const U = require('./utils');
+const {render: renderIndexPage} = require('./index-page');
+const {validate: validateConfig} = require('./config-validator');
 
 const FS = B.promisifyAll(require('fs'));
 
 
-export const MANIFEST_PATHS = [
+const MANIFEST_PATHS = [
   'build/static-manifest.json',
   'build/styles-manifest.json',
   'build/app-manifest.json'
 ];
+
+module.exports.MANIFEST_PATHS = MANIFEST_PATHS;
 
 
 /**
@@ -42,7 +44,7 @@ export const MANIFEST_PATHS = [
  * @return {string}
  */
 
-export default function* configure (revision, configPath, outPath) {
+module.exports = function* configure (revision, configPath, outPath) {
   const [manifest, config] = yield B.all([
     U.readMergeJSON(MANIFEST_PATHS),
     U.readJSON(configPath)
@@ -57,4 +59,4 @@ export default function* configure (revision, configPath, outPath) {
   yield U.mkdirp(P.dirname(outPath));
   yield FS.writeFileAsync(outPath, indexPage, 'utf8');
   return config.environment;
-}
+};
