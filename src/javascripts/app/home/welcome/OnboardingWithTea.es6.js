@@ -147,6 +147,12 @@ const OnboardingWithTea = createReactClass({
       [STEPS_KEYS.GET_REPO]: { isDone: true }
     });
   },
+  inviteDev () {
+    const orgId = spaceContext.space.getOrganizationId();
+    const spaceId = spaceContext.space.getId();
+    const inviteTrackingKey = `ctfl:${orgId}:progressTEA:inviteDevTracking`;
+    store.set(inviteTrackingKey, { spaceId });
+  },
   toggleExpanding (key) {
     const { expanded } = this.state;
     this.setState({
@@ -162,7 +168,8 @@ const OnboardingWithTea = createReactClass({
         [STEPS_KEYS.VIEW_SAMPLE_CONTENT]: this.viewContent,
         [STEPS_KEYS.PREVIEW_USING_EXAMPLE_APP]: this.viewPreview,
         [STEPS_KEYS.CREATE_ENTRY]: this.createEntry,
-        [STEPS_KEYS.GET_REPO]: this.getRepo
+        [STEPS_KEYS.GET_REPO]: this.getRepo,
+        [STEPS_KEYS.INVITE_DEV]: this.inviteDev
       },
       toggleExpanding: this.toggleExpanding
     };

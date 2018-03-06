@@ -382,8 +382,8 @@ const InviteADevStep = createReactClass({
     e.preventDefault();
     // we redirect user directly in order to be able to handle
     // this callback - otherwise ui-router will prevent its execution
-    go(urlParams);
     this.props.markAsDone();
+    go(urlParams);
   },
   render () {
     const props = {
