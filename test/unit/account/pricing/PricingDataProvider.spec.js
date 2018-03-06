@@ -34,7 +34,7 @@ describe('account/pricing/PricingDataProvider', function () {
           expect(plan.space).toBeDefined();
           expect(plan.space.sys.id).toBe(spaceId);
           if (email) {
-            expect(plan.space.sys.createdBy.email).toBeDefined();
+            expect(plan.space.sys.createdBy).toBeDefined();
             expect(plan.space.sys.createdBy.email).toBe(email);
           } else {
             expect(plan.space.sys.createdBy).toBeUndefined();
@@ -48,11 +48,12 @@ describe('account/pricing/PricingDataProvider', function () {
     it('parses response data and sets spaces and users', function* () {
       const plans = yield this.getPlansWithSpaces();
 
-      expect(plans.items.length).toBe(4);
+      expect(plans.items.length).toBe(5);
       this.expectSpacePlan(plans.items[0], 'plan1', 'space1', 'user1@foo.com');
       this.expectSpacePlan(plans.items[1], 'plan2', 'space2', null);
       this.expectSpacePlan(plans.items[2], 'plan3', 'space3', 'user1@foo.com');
       this.expectSpacePlan(plans.items[3], 'plan4', null, null);
+      this.expectSpacePlan(plans.items[4], 'free-space-plan-1', 'free_space', null);
     });
 
     it('fetches all spaces', function* () {
@@ -78,7 +79,7 @@ describe('account/pricing/PricingDataProvider', function () {
 
     it('passes unique user ids to users endpoint', function* () {
       yield this.getPlansWithSpaces();
-      sinon.assert.calledWith(this.endpoint, {method: 'GET', path: ['users'], query: {'sys.id': 'user1,user2'}});
+      sinon.assert.calledWith(this.endpoint, {method: 'GET', path: ['users'], query: {'sys.id': 'user1,user2,free_space_user'}});
     });
   });
 });
