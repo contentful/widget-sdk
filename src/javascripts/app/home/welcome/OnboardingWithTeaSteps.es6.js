@@ -108,7 +108,7 @@ const ViewSampleContentStep = createReactClass({
           </a>
         </div>
         <div>
-          <p className='tea-onboarding__step-graphic-description'>Here’s how the content is nested.</p>
+          <p className='tea-onboarding__step-graphic-description'>Here’s how the content is nested:</p>
           <Icon className='tea-onboarding__step-graphic' name='content-structure-graph' />
         </div>
       </Step>
@@ -289,7 +289,7 @@ const CreateEntryStep = createReactClass({
     const {isLoading} = this.state;
     const {isDone, isExpanded, onToggle} = this.props;
     const propsForStep = {
-      headerCopy: 'Create your first entry',
+      headerCopy: 'Create your first entry & preview it',
       headerIcon: 'page-content',
       isExpanded,
       isDone,
@@ -353,14 +353,14 @@ const GetRepoForExampleAppStep = createReactClass({
   },
   render () {
     const props = {
-      headerCopy: 'Get repository for the example app',
+      headerCopy: 'Clone the example app',
       headerIcon: 'icon-github',
       isDone: this.props.isDone
     };
 
     return (
       <SplitStep {...props}>
-        <p>Want to see the code? Find your preferred platform and clone the repository.</p>
+        <p>Run the app locally with custom content for your preferred platform.</p>
         <a className='tea-onboarding__split-step-cta'
            href='https://github.com/contentful?utf8=%E2%9C%93&q=%22the-example-app%22&type=&language='
            target='_blank'
@@ -387,7 +387,7 @@ const InviteADevStep = createReactClass({
   },
   render () {
     const props = {
-      headerCopy: 'Invite a developer',
+      headerCopy: 'Invite a developer to this space',
       headerIcon: 'onboarding-add-user',
       isDone: this.props.isDone
     };
