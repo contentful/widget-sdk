@@ -1,11 +1,35 @@
 import {h} from 'utils/hyperscript';
 
 export default function template () {
-  return h('section.home-section.x--onboarding-steps', [
+  const nonTeaOnboardingSteps = h('section.home-section.x--onboarding-steps', [
     heading(),
     description(),
     steps()
   ]);
+
+  // Begin test code: test-ps-02-2018-tea-onboarding-steps
+  return h('div', [
+    h('.loader__container', {
+      style: {
+        height: '5em',
+        borderRadius: 0,
+        backgroundColor: '#fff'
+      },
+      ngIf: 'onboarding.isContentPreviewsLoading'
+    }, [
+      h('.loading-box__spinner'),
+      h('.loader_message', [
+        'Initializing steps...'
+      ])
+    ]),
+    h('cf-onboarding-with-tea', {
+      ngIf: 'onboarding.isExampleSpace === true && !onboarding.isContentPreviewsLoading'
+    }),
+    h('div', {
+      ngIf: '!onboarding.isExampleSpace && !onboarding.isContentPreviewsLoading'
+    }, [nonTeaOnboardingSteps])
+  ]);
+  // End test code: test-ps-02-2018-tea-onboarding-steps
 }
 
 function heading () {

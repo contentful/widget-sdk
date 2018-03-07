@@ -9,6 +9,7 @@
 angular.module('contentful')
 .factory('contentPreview', ['require', function (require) {
   var $q = require('$q');
+  var $rootScope = require('$rootScope');
   var TheLocaleStore = require('TheLocaleStore');
   var spaceContext = require('spaceContext');
   var previewEnvironmentsCache = require('data/previewEnvironmentsCache');
@@ -35,6 +36,28 @@ angular.module('contentful')
   var MAX_PREVIEW_ENVIRONMENTS = 25;
   var STORE_KEY = 'selectedPreviewEnvsForSpace.' + spaceContext.getId();
 
+  // build a bus that emits content previews object keyed by content preview id
+  // every 2.5 seconds. This is ok for now since we cache content previews and hence
+  // polling doesn't really cause unnecessary api calls.
+  // Duplicates are skipped.
+  var K = require('utils/kefir');
+
+  var contentPreviewsBus$ = K.withInterval(2500, function (emitter) {
+    var emitValue = emitter.value.bind(emitter);
+    var emitError = emitter.error.bind(emitter);
+
+    try {
+      getAll().then(emitValue, emitError);
+    } catch (e) {
+      emitError(e);
+    }
+  }).skipDuplicates(_.isEqual).toProperty(function () {});
+
+  // we need to download content previews again after finishing with space template creation
+  $rootScope.$on('spaceTemplateCreated', function () {
+    previewEnvironmentsCache.clearAll();
+  });
+
   return {
     getAll: getAll,
     get: get,
@@ -49,7 +72,8 @@ angular.module('contentful')
     replaceVariablesInUrl: replaceVariablesInUrl,
     urlFormatIsValid: urlFormatIsValid,
     getSelected: getSelected,
-    setSelected: setSelected
+    setSelected: setSelected,
+    contentPreviewsBus$: contentPreviewsBus$
   };
 
   /**

@@ -6,7 +6,7 @@ describe('AutoCreateNewSpace/index', function () {
     this.tokenStore = {
       user$: K.createMockProperty(null),
       spacesByOrganization$: K.createMockProperty(null),
-      organizations$: K.createMockProperty(null)
+      organizations$: K.createMockProperty([])
     };
     this.createSampleSpace = sinon.stub().resolves();
     this.store = {
@@ -60,6 +60,7 @@ describe('AutoCreateNewSpace/index', function () {
 
   describe('#init', function () {
     it('should be a noop when user is falsy', function () {
+      this.tokenStore.organizations$.set([{sys: {id: 'org'}}]);
       this.tokenStore.spacesByOrganization$.set({
         'org': ['space']
       });

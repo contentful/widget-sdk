@@ -1,4 +1,4 @@
-import {omit, pick, negate, trim, sortedUniq} from 'lodash';
+import {omit, pick, negate, trim, sortedUniq, isObject} from 'lodash';
 import {h} from 'ui/Framework';
 import {assign} from 'utils/Collections';
 import {getOrganization} from 'services/TokenStore';
@@ -22,6 +22,14 @@ import {
   successMessage
 } from 'account/NewOrganizationMembershipTemplate';
 import {isLegacyOrganization, getLegacyLimit} from 'utils/ResourceUtils';
+
+// Begin test code: test-ps-02-2018-tea-onboarding-steps
+import {track} from 'analytics/Analytics';
+import $state from '$state';
+import { getStore } from 'TheStore';
+const GROUP_ID = 'tea_onboarding_steps';
+const store = getStore('local');
+// End test code: test-ps-02-2018-tea-onboarding-steps
 
 const adminRole = {
   name: 'Admin',
@@ -204,6 +212,24 @@ export default function ($scope) {
           orgId
         });
         const organization = yield* getOrgInfo(orgId);
+
+        // Begin test code: test-ps-02-2018-tea-onboarding-steps
+        const inviteTrackingKey = `ctfl:${orgId}:progressTEA:inviteDevTracking`;
+
+        const pendingInvitesForTEA = store.get(inviteTrackingKey);
+
+        if (isObject(pendingInvitesForTEA)) {
+          track('element:click', {
+            elementId: 'invite_users',
+            groupId: GROUP_ID,
+            fromState: $state.current.name,
+            spaceId: pendingInvitesForTEA.spaceId,
+            organizationId: orgId
+          });
+
+          store.remove(inviteTrackingKey);
+        }
+        // End test code: test-ps-02-2018-tea-onboarding-steps
 
         state = assign(state, {
           status: failedOrgInvitations.length ? Failure() : Success(),

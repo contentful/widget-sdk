@@ -42,7 +42,18 @@ angular.module('contentful')
   var accessChecker = require('access_control/AccessChecker');
   var shouldUseEnvEndpoint = require('data/shouldUseEnvEndpoint').default;
 
+  var publishedCTsBus$ = K.createPropertyBus([]);
+
   var spaceContext = {
+    /**
+     * @description
+     * A property containing data on the published CTs in the current space.
+     * It is updated in resetWithSpace method once we know we are in the context
+     * of a space.
+     */
+    publishedCTs: {
+      items$: publishedCTsBus$.property
+    },
     /**
      * @ngdoc method
      * @name spaceContext#purge
@@ -120,7 +131,12 @@ angular.module('contentful')
        * usage of `spaceContext.publishedCTs.get(...)` (instead of `.fetch(...)`).
        * @type {data/ContentTypeRepo/Published}
        */
-      self.publishedCTs = PublishedCTRepo.create(space);
+      var publishedCTsForSpace = PublishedCTRepo.create(space);
+      K.onValue(publishedCTsForSpace.items$, function (items) {
+        publishedCTsBus$.set(items);
+      });
+      _.assign(self.publishedCTs, _.omit(publishedCTsForSpace, 'items$'));
+
       self.user = K.getValue(TokenStore.user$);
 
       previewEnvironmentsCache.clearAll();

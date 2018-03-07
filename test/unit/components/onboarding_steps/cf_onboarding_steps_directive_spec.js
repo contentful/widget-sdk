@@ -1,12 +1,30 @@
 'use strict';
 
+import * as K from 'test/helpers/mocks/kefir';
+
 describe('cfOnboardingSteps Directive', function () {
   beforeEach(function () {
-    module('contentful/test');
+    this.previews$ = K.createMockProperty([]);
+    module('contentful/test', $provide => {
+      $provide.value('utils/LaunchDarkly', {
+        // Begin test code: test-ps-02-2018-tea-onboarding-steps
+        // eslint-disable-next-line no-unused-vars
+        onABTest: (scope, flagName, handler) => handler(false)
+        // End test code: test-ps-02-2018-tea-onboarding-steps
+      });
+      $provide.value('contentPreview', {
+        contentPreviewsBus$: this.previews$
+      });
+    });
     this.$state = this.$inject('$state');
     this.compile = function () {
       this.element = this.$compile('<cf-onboarding-steps />');
       this.controller = this.element.isolateScope().onboarding;
+      // Begin test code: test-ps-02-2018-tea-onboarding-steps
+      // manually set loading content previews to false
+      this.controller.isContentPreviewsLoading = false;
+      this.$apply();
+      // End test code: test-ps-02-2018-tea-onboarding-steps
     };
 
     this.assertCompletedSteps = function (num) {
