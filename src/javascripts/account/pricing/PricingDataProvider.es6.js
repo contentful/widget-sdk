@@ -1,4 +1,4 @@
-import {get} from 'lodash';
+import {get, uniqueId} from 'lodash';
 import {getAllSpaces, getUsersByIds} from 'access_control/OrganizationMembershipRepository';
 
 const alphaHeader = {
@@ -6,9 +6,11 @@ const alphaHeader = {
 };
 
 /**
- * @param {object}  endpoint organization endpoint
- * @param {object?} params
- * @param {string?} params.plan_type base, space
+ * Load all subscription plans (space and base) from organization endpoint.
+ * Note: this collection endpoint doesn't have pagination.
+ *
+ * @param {object}  endpoint - organization endpoint
+ * @param {string?} params.plan_type - 'base' or 'space'
  * @returns {Promise<object>}
  *
  */
@@ -34,26 +36,40 @@ export function getBasePlan (endpoint) {
 
 /**
  * Gets all subscription plans (base and space) of the org with the associated
- * spaces for space plans, and user data for each space's `createdBy` field.
+ * spaces for space plans, free spaces, and linked user data for each space's
+ * `createdBy` field.
  * @param {object} endpoint an organization endpoint
  * @returns {Promise<object[]>} array of subscription plans w. spaces & users
  */
-export function getPlansWithSpaces (endpoint, params = {}) {
-  // Note: it loads paginated data from the `plans` endpoint, but all spaces
-  // are loaded at once to map plans to spaces.
-
+export function getPlansWithSpaces (endpoint) {
   return Promise.all([
-    getSubscriptionPlans(endpoint, params),
+    getSubscriptionPlans(endpoint),
     getAllSpaces(endpoint)
   ])
-    // Map spaces to space plans
-    .then(([plans, spaces]) => ({
-      plans,
-      items: plans.items.map((plan) => ({
-        ...plan,
-        space: plan.gatekeeperKey && spaces.find(({sys}) => sys.id === plan.gatekeeperKey)
-      }))
-    }))
+    // Map spaces to space plans, create 'free plan' objects for spaces w/o plans
+    .then(([plans, spaces]) => {
+      const freeSpaces = spaces.filter(
+        (space) => !plans.items.find(({gatekeeperKey}) => space.sys.id === gatekeeperKey)
+      );
+      return {
+        plans,
+        items: [
+          // Space plans from the endpoint
+          ...plans.items.map((plan) => ({
+            ...plan,
+            space: plan.gatekeeperKey && spaces.find(({sys}) => sys.id === plan.gatekeeperKey)
+          })),
+          // 'Free plan' objects for spaces w/o a space plan
+          ...freeSpaces.map((space) => ({
+            sys: {id: uniqueId('free-space-plan-')},
+            gatekeeperKey: space.sys.id,
+            planType: 'space',
+            name: 'Free',
+            space
+          }))
+        ]
+      };
+    })
 
     // Load `createdBy` users for all spaces
     .then((plans) => {
