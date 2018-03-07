@@ -63,8 +63,8 @@ function integrations () {
       envId: alnum(24)
     }),
     filepicker: strictObject({
-      api_key: alnum(22),
-      policy: alnum(60),
+      api_key: alnum(32),
+      policy: alnum(256),
       signature: alnum(64)
     }),
     aviary: strictObject({
