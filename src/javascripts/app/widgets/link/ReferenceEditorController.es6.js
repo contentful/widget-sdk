@@ -315,13 +315,8 @@ export default function create ($scope, widgetApi) {
   }
 
   function prepareEditAction (entity, index, isDisabled) {
-    const entryId = widgetApi.entry.getSys().id;
-    const linksParentEntry =
-      entity && entity.sys.type === 'Entry' && entity.sys.id === entryId;
-
-    if (entity && !isDisabled && !linksParentEntry && useBulkEditor) {
+    if (entity && !isDisabled && !isCurrentEntry(entity) && useBulkEditor) {
       return function () {
-        trackEdit(entity);
         widgetApi._internal.editReferences(index, state.refreshEntities);
       };
     } else {
@@ -330,7 +325,8 @@ export default function create ($scope, widgetApi) {
   }
 
   function trackEdit (entity) {
-    if (entity.sys.type === 'Entry' && !!$scope.single) {
+    // only track for 1:1 entry references that will open in a new entry editor.
+    if (entity.sys.type === 'Entry' && !!$scope.single && !isCurrentEntry(entity)) {
       trackEntryEdit({
         contentType: spaceContext.publishedCTs.get(
           entity.sys.contentType.sys.id
@@ -350,5 +346,9 @@ export default function create ($scope, widgetApi) {
 
   function prepareRemoveAction (index, isDisabled) {
     return isDisabled ? null : partial(state.removeAt, index);
+  }
+
+  function isCurrentEntry (entity) {
+    return entity.sys.id === widgetApi.entry.getSys().id;
   }
 }
