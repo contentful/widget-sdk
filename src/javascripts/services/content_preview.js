@@ -37,7 +37,7 @@ angular.module('contentful')
   var STORE_KEY = 'selectedPreviewEnvsForSpace.' + spaceContext.getId();
 
   // build a bus that emits content previews object keyed by content preview id
-  // every 5 seconds. This is ok for now since we cache content previews and hence
+  // every 2.5 seconds. This is ok for now since we cache content previews and hence
   // polling doesn't really cause unnecessary api calls.
   // Duplicates are skipped.
   var K = require('utils/kefir');

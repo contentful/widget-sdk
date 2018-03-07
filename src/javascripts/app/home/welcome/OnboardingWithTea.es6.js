@@ -22,16 +22,16 @@ function getProgressConstants () {
   const spaceId = spaceContext.getId();
 
   return {
-    viewContent: createProgressConstant({ id: spaceId, text: STEPS_KEYS.VIEW_SAMPLE_CONTENT }),
-    viewPreview: createProgressConstant({ id: spaceId, text: STEPS_KEYS.PREVIEW_USING_EXAMPLE_APP }),
-    createEntry: createProgressConstant({ id: spaceId, text: STEPS_KEYS.CREATE_ENTRY }),
-    viewGithub: createProgressConstant({ id: spaceId, text: STEPS_KEYS.GET_REPO })
+    viewContent: createProgressConstant({ spaceId, text: STEPS_KEYS.VIEW_SAMPLE_CONTENT }),
+    viewPreview: createProgressConstant({ spaceId, text: STEPS_KEYS.PREVIEW_USING_EXAMPLE_APP }),
+    createEntry: createProgressConstant({ spaceId, text: STEPS_KEYS.CREATE_ENTRY }),
+    viewGithub: createProgressConstant({ spaceId, text: STEPS_KEYS.GET_REPO })
   };
 }
 
 // function to generate progress names in unified way
-function createProgressConstant ({ id, text }) {
-  return `ctfl:${id}:progressTEA:${text}`;
+function createProgressConstant ({ spaceId, text }) {
+  return `ctfl:${spaceId}:progressTEA:${text}`;
 }
 
 /**

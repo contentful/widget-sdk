@@ -1,4 +1,4 @@
-import {omit, pick, negate, trim, sortedUniq} from 'lodash';
+import {omit, pick, negate, trim, sortedUniq, isObject} from 'lodash';
 import {h} from 'ui/Framework';
 import {assign} from 'utils/Collections';
 import {getOrganization} from 'services/TokenStore';
@@ -218,7 +218,7 @@ export default function ($scope) {
 
         const pendingInvitesForTEA = store.get(inviteTrackingKey);
 
-        if (pendingInvitesForTEA && typeof pendingInvitesForTEA === 'object') {
+        if (isObject(pendingInvitesForTEA)) {
           track('element:click', {
             elementId: 'invite_users',
             groupId: GROUP_ID,

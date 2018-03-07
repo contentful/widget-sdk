@@ -342,8 +342,6 @@ const GetRepoOrInviteDevStep = createReactClass({
 });
 
 const GetRepoForExampleAppStep = createReactClass({
-  // TODO: Handle click for view on github so that we can track things before opening
-  // a new tab
   propTypes: {
     isDone: PropTypes.bool.isRequired,
     markAsDone: PropTypes.func.isRequired

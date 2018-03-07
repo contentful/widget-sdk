@@ -1,7 +1,7 @@
 import {h} from 'utils/hyperscript';
 
 export default function template () {
-  const regularSteps = h('section.home-section.x--onboarding-steps', [
+  const nonTeaOnboardingSteps = h('section.home-section.x--onboarding-steps', [
     heading(),
     description(),
     steps()
@@ -9,12 +9,16 @@ export default function template () {
 
   // Begin test code: test-ps-02-2018-tea-onboarding-steps
   return h('div', [
-    h('.loading-box', {
-      style: { height: '10em', border: '0' },
+    h('.loader__container', {
+      style: {
+        height: '5em',
+        borderRadius: 0,
+        backgroundColor: '#fff'
+      },
       ngIf: 'onboarding.isContentPreviewsLoading'
     }, [
       h('.loading-box__spinner'),
-      h('.loading-box__message', [
+      h('.loader_message', [
         'Initializing steps...'
       ])
     ]),
@@ -23,7 +27,7 @@ export default function template () {
     }),
     h('div', {
       ngIf: '!onboarding.isExampleSpace && !onboarding.isContentPreviewsLoading'
-    }, [regularSteps])
+    }, [nonTeaOnboardingSteps])
   ]);
   // End test code: test-ps-02-2018-tea-onboarding-steps
 }
