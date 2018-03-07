@@ -60,6 +60,15 @@ angular.module('contentful')
 
         LD.onABTest($scope, isExampleSpaceFlagName, function (flag) {
           controller.isExampleSpace = flag;
+          // if user is not qualified, we don't send this value
+          if (flag !== null) {
+            Analytics.track('experiment:start', {
+              experiment: {
+                id: isExampleSpaceFlagName,
+                variation: flag
+              }
+            });
+          }
         });
       } else {
         controller.isExampleSpace = false;
