@@ -21,10 +21,10 @@
   "launchDarkly": {
     "envId": "588a047044b03e0b3211298e"
   },
-  "filepicker" : {
-    "api_key" : "AW97bQuu4Ru3nYEbxcyFZz",
-    "policy" : "eyJleHBpcnkiOjE1MzQ3NTcxODMsImNhbGwiOlsicGljayIsInN0b3JlIl19",
-    "signature" : "b4d43a677785bdb83f7b663afd9537d6f99880feb555da4b9215bc94f114f1b9"
+  "filepicker": {
+    "api_key": "AW97bQuu4Ru3nYEbxcyFZz",
+    "policy": "eyJjYWxsIjpbInBpY2siLCJyZWFkIiwic3RhdCIsInN0b3JlIiwiY29udmVydCIsImV4aWYiXSwiZXhwaXJ5IjoyMjEyNjYwODAwfQ==",
+    "signature": "de04bdf5a9ff607346aca16233b2637c955dca7900fc039161034f52d065d578"
   },
   "aviary" : {
     "api_key" : "b7fe4d3302834e61b0f65913f156c067"

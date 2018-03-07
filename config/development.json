@@ -23,8 +23,8 @@
   },
   "filepicker": {
     "api_key": "AQGV4TMRPGovR9AIjMi6Az",
-    "policy": "eyJleHBpcnkiOjE1MzQ3NTM0NjIsImNhbGwiOlsicGljayIsInN0b3JlIl19",
-    "signature": "abc143fa9ea5fe44c399343c5c6e44f3b46ca63d751a6be6396a2124edb62af7"
+    "policy": "eyJjYWxsIjpbInBpY2siLCJyZWFkIiwic3RhdCIsInN0b3JlIiwiY29udmVydCIsImV4aWYiXSwiZXhwaXJ5IjoyMjEyNjYwODAwfQ==",
+    "signature": "a134af7d6801b50cc4106eb2ac315347f06ed51d031334b3b040a17b3dd59ed1"
   },
   "aviary": {
     "api_key": "b7fe4d3302834e61b0f65913f156c067"

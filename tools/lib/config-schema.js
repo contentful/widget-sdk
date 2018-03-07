@@ -34,14 +34,14 @@ module.exports = strictObject(Object.assign({
   environment: {type: 'string'},
   main_domain: hostSchema,
   contentful: strictObject({
-    spaceTemplateEntryContentTypeId: alnum(21),
+    spaceTemplateEntryContentTypeId: alnumExact(22),
     cdaApiUrl: subdomainHostSchema,
     apiUrl: subdomainHostSchema,
     previewApiUrl: subdomainHostSchema,
     accessToken: hex(64),
-    space: alnum(12),
+    space: alnumExact(12),
     previewAccessToken: hex(64),
-    TEASpaceId: alnum(12)
+    TEASpaceId: alnumExact(12)
   })
 }, hosts(), integrations()), {
   clientId: hex(64)
@@ -60,12 +60,12 @@ function hosts () {
 function integrations () {
   return {
     launchDarkly: strictObject({
-      envId: alnum(24)
+      envId: alnumExact(24)
     }),
     filepicker: strictObject({
-      api_key: alnum(22),
-      policy: alnum(60),
-      signature: alnum(64)
+      api_key: alnumExact(22),
+      policy: filepickerPolicy(),
+      signature: alnumExact(64)
     }),
     aviary: strictObject({
       api_key: hex(32)
@@ -74,12 +74,12 @@ function integrations () {
       api_key: hex(32)
     }),
     google: strictObject({
-      maps_api_key: alnum(39)
+      maps_api_key: alnumExact(39)
     }),
     fonts_dot_com: strictObject({
       project_id: {type: 'string', format: 'uuid'}
     }),
-    segment_io: alnum(10),
+    segment_io: alnumExact(10),
     snowplow: strictObject({
       collector_endpoint: {type: 'string'},
       app_id: {type: 'string'},
@@ -98,10 +98,18 @@ function strictObject (props, optional) {
 }
 
 
-function alnum (length) {
+function alnumExact (length) {
   return {
     type: 'string',
-    pattern: `^[a-zA-Z0-9]{${length}}`
+    pattern: `^[a-zA-Z0-9]{${length}}$`
+  };
+}
+
+
+function filepickerPolicy () {
+  return {
+    type: 'string',
+    pattern: `^[a-zA-Z0-9=]{1,256}$`
   };
 }
 
