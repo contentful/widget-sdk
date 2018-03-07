@@ -311,7 +311,7 @@ function Price ({value = 0, currency = '$', unit = null, style = null}) {
 
 function calculateTotalPrice (subscriptionPlans) {
   return subscriptionPlans.reduce(
-    (total, plan) => total + parseInt(plan.price, 10),
+    (total, plan) => total + (parseInt(plan.price, 10) || 0),
     0
   );
 }

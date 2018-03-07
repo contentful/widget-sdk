@@ -65,7 +65,6 @@ export function getPlansWithSpaces (endpoint) {
             gatekeeperKey: space.sys.id,
             planType: 'space',
             name: 'Free',
-            price: 0,
             space
           }))
         ]
