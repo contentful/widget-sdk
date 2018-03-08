@@ -18,6 +18,7 @@ import PageContentIcon from 'svg/page-content';
 import UserIcon from 'svg/icon-users';
 import GithubIcon from 'svg/icon-github';
 import AddUserIcon from 'svg/onboarding-add-user';
+import PageSettings from 'svg/page-settings';
 
 const SVGS = {
   'home-welcome': HomeWelcomeIcon,
@@ -33,7 +34,8 @@ const SVGS = {
   'page-content': PageContentIcon,
   'icon-users': UserIcon,
   'icon-github': GithubIcon,
-  'onboarding-add-user': AddUserIcon
+  'onboarding-add-user': AddUserIcon,
+  'page-settings': PageSettings
 };
 
 const Icon = createReactClass({
