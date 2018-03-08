@@ -21,8 +21,7 @@ const IncomingLinksList = createReactClass({
       IncomingLinksOrigin.SIDEBAR
     ]).isRequired,
     onComponentMount: PropTypes.func,
-    onClick: PropTypes.func,
-    sessionId: PropTypes.string
+    onClick: PropTypes.func
   },
   componentDidMount () {
     if (this.props.onComponentMount) {

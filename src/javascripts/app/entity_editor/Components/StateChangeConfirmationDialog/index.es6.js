@@ -33,38 +33,43 @@ const StateChangeConfirmation = createReactClass({
         EntityType.ENTRY
       ])
     }),
-    sessionId: PropTypes.string.isRequired
+    dialogSessionId: PropTypes.string.isRequired
   },
   handleClick ({ linkEntityId, incomingLinksCount }) {
+    const { dialogSessionId, action: dialogAction } = this.props;
     trackIncomingLinkClick({
       linkEntityId,
       origin: IncomingLinksOrigin.DIALOG,
       entityId: this.props.entityInfo.id,
       entityType: this.props.entityInfo.type,
-      incomingLinksCount
+      incomingLinksCount,
+      dialogAction,
+      dialogSessionId
     });
   },
   handleConfirm (incomingLinksCount) {
-    this.props.onConfirm();
-    const { sessionId, entityInfo } = this.props;
+    const { action, dialogSessionId, entityInfo, onConfirm } = this.props;
+    onConfirm();
     trackDialogConfirm({
-      sessionId,
       entityId: entityInfo.id,
       entityType: entityInfo.type,
+      dialogAction: action,
+      dialogSessionId,
       incomingLinksCount
     });
   },
   handleDialogOpen (incomingLinksCount) {
-    const { sessionId, entityInfo } = this.props;
+    const { action, dialogSessionId, entityInfo } = this.props;
     trackDialogOpen({
-      sessionId,
       entityId: entityInfo.id,
       entityType: entityInfo.type,
+      dialogAction: action,
+      dialogSessionId,
       incomingLinksCount
     });
   },
   render () {
-    const { action, entityInfo, onCancel, sessionId } = this.props;
+    const { action, entityInfo, onCancel } = this.props;
 
     return (
       <FetchLinksToEntity
@@ -95,9 +100,8 @@ const StateChangeConfirmation = createReactClass({
                       entityType={entityInfo.type}
                       links={links}
                       message={body}
-                      sessionId={sessionId}
                       onClick={this.handleClick}
-                      onComponentMount={function () {
+                      onComponentMount={() => {
                         this.handleDialogOpen(links.length);
                       }}
                     />
@@ -113,7 +117,7 @@ const StateChangeConfirmation = createReactClass({
                     <button
                       className="btn-caution"
                       data-test-id="confirm"
-                      onClick={function () {
+                      onClick={() => {
                         this.handleConfirm(links.length);
                       }}>
                       {confirm}

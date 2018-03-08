@@ -11,7 +11,8 @@ export function onIncomingLinkClick ({
   incomingLinksCount,
   origin,
   linkEntityId,
-  sessionId
+  dialogAction,
+  dialogSessionId
 }) {
   const defaults = {
     entity_id: entityId,
@@ -19,9 +20,16 @@ export function onIncomingLinkClick ({
     link_entity_id: linkEntityId,
     incoming_links_count: incomingLinksCount
   };
-  const options = origin === Origin.DIALOG && sessionId
-    ? { ...defaults, dialog_session_id: sessionId }
-    : defaults;
+  let options;
+  if (origin === Origin.DIALOG) {
+    options = {
+      ...defaults,
+      dialog_action: dialogAction,
+      dialog_session_id: dialogSessionId
+    };
+  } else {
+    options = defaults;
+  }
   track(
     // incoming_links:dialog_link_click
     // incoming_links:sidebar_link_click
@@ -54,7 +62,8 @@ function trackDialogEvent (type, {
   entityId,
   entityType,
   incomingLinksCount,
-  sessionId
+  dialogAction,
+  dialogSessionId
 }) {
   track(
     // incoming_links:dialog_open
@@ -63,7 +72,8 @@ function trackDialogEvent (type, {
     {
       entity_id: entityId,
       entity_type: entityType,
-      dialog_session_id: sessionId,
+      dialog_action: dialogAction,
+      dialog_session_id: dialogSessionId,
       incoming_links_count: incomingLinksCount
     }
   );

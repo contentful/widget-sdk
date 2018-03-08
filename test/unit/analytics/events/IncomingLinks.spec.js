@@ -49,7 +49,8 @@ describe('IncomingLinks', function () {
           entityId: 'foo',
           entityType: 'bar',
           linkEntityId: 'baz',
-          sessionId: 'quux',
+          dialogAction: 'publish',
+          dialogSessionId: 'quux',
           incomingLinksCount: 19
         });
 
@@ -60,6 +61,7 @@ describe('IncomingLinks', function () {
             entity_id: 'foo',
             entity_type: 'bar',
             link_entity_id: 'baz',
+            dialog_action: 'publish',
             dialog_session_id: 'quux',
             incoming_links_count: 19
           }
@@ -73,7 +75,8 @@ describe('IncomingLinks', function () {
       this.incomingLinksEvents.onDialogOpen({
         entityId: 'foo',
         entityType: 'bar',
-        sessionId: 'baz',
+        dialogAction: 'publish',
+        dialogSessionId: 'baz',
         incomingLinksCount: 19
       });
 
@@ -83,6 +86,7 @@ describe('IncomingLinks', function () {
         {
           entity_id: 'foo',
           entity_type: 'bar',
+          dialog_action: 'publish',
           dialog_session_id: 'baz',
           incoming_links_count: 19
         }
@@ -95,7 +99,8 @@ describe('IncomingLinks', function () {
       this.incomingLinksEvents.onDialogConfirm({
         entityId: 'foo',
         entityType: 'bar',
-        sessionId: 'baz',
+        dialogAction: 'publish',
+        dialogSessionId: 'baz',
         incomingLinksCount: 19
       });
 
@@ -105,6 +110,7 @@ describe('IncomingLinks', function () {
         {
           entity_id: 'foo',
           entity_type: 'bar',
+          dialog_action: 'publish',
           dialog_session_id: 'baz',
           incoming_links_count: 19
         }

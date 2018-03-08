@@ -26,7 +26,7 @@ describe('StateChangeConfirmationDialog', function () {
       id: 'entry-id-257',
       type: EntityType.ENTRY
     },
-    sessionId: 'foo'
+    dialogSessionId: 'foo'
   };
 
   beforeEach(function () {
@@ -35,6 +35,7 @@ describe('StateChangeConfirmationDialog', function () {
     system.set('analytics/events/IncomingLinks', {
       onFetchLinks: sinon.stub(),
       onDialogOpen: sinon.stub(),
+      onDialogConfirm: sinon.stub(),
       onIncomingLinkClick: sinon.stub(),
       Origin: {
         DIALOG: 'dialog',
