@@ -150,12 +150,18 @@ angular.module('contentful')
         return applyAction(action)
         .then(function (entity) {
           if (contentType) {
+            var eventOrigin = 'entry-editor';
+
+            if ($scope.bulkEditorContext) {
+              eventOrigin = 'bulk-editor';
+            }
+
+            if ($scope.renderInline) {
+              eventOrigin = 'inline-reference-editor';
+            }
+
             Analytics.track('entry:publish', {
-              eventOrigin: (
-                $scope.bulkEditorContext
-                  ? 'bulk-editor'
-                  : 'entry-editor'
-              ),
+              eventOrigin: eventOrigin,
               contentType: contentType,
               response: { data: entity }
             });

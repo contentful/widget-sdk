@@ -1,18 +1,22 @@
 import { track } from 'analytics/Analytics';
 import localeStore from 'TheLocaleStore';
 
-export function onEntryCreate ({ contentType, isInlineEditingEnabled }) {
+export function onEntryCreate ({ contentType, isInlineEditingFeatureFlagEnabled = false, isInlineEditingEnabledForField = false }) {
   track('reference_editor:create_entry', {
     ...getLocalesInfo(),
     ...getContentTypeInfo(contentType),
-    ...isFeatureEnabled(isInlineEditingEnabled)
+    ..._isInlineEditingFeatureFlagEnabled(isInlineEditingFeatureFlagEnabled),
+    ..._isInlineEditingEnabledForField(isInlineEditingEnabledForField),
+    version: 2
   });
 }
 
-export function onEntryEdit ({ contentType }) {
+export function onEntryEdit ({ contentType, isInlineEditingFeatureFlagEnabled = false }) {
   track('reference_editor:edit_entry', {
     ...getLocalesInfo(),
-    ...getContentTypeInfo(contentType)
+    ...getContentTypeInfo(contentType),
+    ..._isInlineEditingFeatureFlagEnabled(isInlineEditingFeatureFlagEnabled),
+    version: 2
   });
 }
 
@@ -28,8 +32,12 @@ function getToggleState (value) {
   return { toggle_state: value };
 }
 
-function isFeatureEnabled (value) {
-  return { inline_editing_toggled_on: value };
+function _isInlineEditingFeatureFlagEnabled (value) {
+  return { is_inline_editing_feature_flag_enabled: value };
+}
+
+function _isInlineEditingEnabledForField (value) {
+  return { is_inline_editing_enabled_for_field: value };
 }
 
 function getLocalesInfo () {

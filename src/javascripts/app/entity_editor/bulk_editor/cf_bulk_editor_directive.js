@@ -38,6 +38,12 @@ angular.module('contentful')
       referenceContext.links$
     );
 
+    // This ignores tracking when bulk editor is rendered
+    // inline.
+    if ($scope.renderInline) {
+      track = Tracking.createNoop();
+    }
+
     track.open();
     $scope.$on('$destroy', track.close);
 
@@ -92,7 +98,7 @@ angular.module('contentful')
     $scope.actions = makeActions(referenceContext.field, function (links) {
       nextFocusIndex = -1;
       links.forEach(referenceContext.add);
-    }, referenceContext.links$, track);
+    }, referenceContext.links$, track, $scope.renderInline);
 
 
     function removeByKey (key) {
@@ -121,7 +127,7 @@ angular.module('contentful')
   /**
    * Returns the actions for creating new entries and adding existing entries.
    */
-  function makeActions (field, addLinks, links$, track) {
+  function makeActions (field, addLinks, links$, track, isInline) {
     // TODO necessary for entitySelector change it
     var extendedField = _.extend({}, field, {
       itemLinkType: _.get(field, ['items', 'linkType']),
@@ -149,7 +155,7 @@ angular.module('contentful')
       spaceContext.cma.createEntry(contentType.getId(), {})
       .then(function (entry) {
         Analytics.track('entry:create', {
-          eventOrigin: 'bulk-editor',
+          eventOrigin: isInline ? 'inline-reference-editor' : 'bulk-editor',
           contentType: contentType,
           response: { data: entry }
         });
