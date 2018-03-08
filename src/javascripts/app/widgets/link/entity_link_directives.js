@@ -71,8 +71,6 @@ angular.module('cf.app')
   var makeEntityRef = require('states/Navigator').makeEntityRef;
   var EntityState = require('data/CMA/EntityState');
   var entityStateColor = require('Styles/Colors').entityStateColor;
-  var spaceContext = require('spaceContext');
-  var trackEntryEdit = require('analytics/events/ReferenceEditor').onEntryEdit;
   var LD = require('utils/LaunchDarkly');
 
   var INLINE_REFERENCE_FEATURE_FLAG = 'feature-at-02-2018-inline-reference-field';
@@ -85,13 +83,7 @@ angular.module('cf.app')
   $scope.config = _.assign({}, $scope.config || {});
   $scope.actions = $scope.actions || {};
   $scope.onClick = function () {
-    if ($scope.isInlineEditingEnabled) {
-      trackEntryEdit({
-        contentType: spaceContext.publishedCTs.get(
-          data.sys.contentType.sys.id
-        )
-      });
-    }
+    $scope.actions.trackEdit();
   };
 
   if ($scope.config.largeImage) {
