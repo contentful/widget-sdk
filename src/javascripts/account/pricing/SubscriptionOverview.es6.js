@@ -170,7 +170,7 @@ function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
         ),
         h('tbody', {className: 'clickable'}, spacePlans.map(
           (plan) => h(SpacePlanRow, {
-            key: plan.sys.id,
+            key: plan.sys.id || (plan.space && plan.space.sys.id),
             plan,
             onDeleteSpace,
             isOrgOwner
@@ -311,7 +311,7 @@ function Price ({value = 0, currency = '$', unit = null, style = null}) {
 
 function calculateTotalPrice (subscriptionPlans) {
   return subscriptionPlans.reduce(
-    (total, plan) => total + parseInt(plan.price, 10),
+    (total, plan) => total + (parseInt(plan.price, 10) || 0),
     0
   );
 }

@@ -4,6 +4,10 @@ import * as sinon from 'helpers/sinon';
 describe('TheAccountView service', function () {
   beforeEach(function () {
     this.spaceContext = {
+      publishedCTs: {
+        items$: K.createMockProperty(null)
+      },
+      getId: sinon.stub(),
       getData: sinon.stub()
     };
     this.setOrganizationForCurrentSpace = function (org) {
@@ -17,6 +21,9 @@ describe('TheAccountView service', function () {
     module('contentful/test', ($provide) => {
       $provide.value('spaceContext', this.spaceContext);
       $provide.value('services/OrganizationRoles', this.OrganizationRoles);
+      $provide.value('contentPreview', {
+        contentPreviewsBus$: K.createMockProperty(null)
+      });
     });
 
     this.TokenStore = this.mockService('services/TokenStore', {

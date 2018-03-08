@@ -77,7 +77,8 @@ describe('LaunchDarkly', function () {
       hasAnOrgWithSpaces: sinon.stub().returns(false),
       ownsAtleastOneOrg: sinon.stub().returns(true),
       isAutomationTestUser: sinon.stub().returns(true),
-      isUserOrgCreator: sinon.stub().returns(false)
+      isUserOrgCreator: sinon.stub().returns(false),
+      getUserCreationDateUnixTimestamp: sinon.stub().returns(1234567890)
     };
 
     this.shallowObjectDiff = {default: sinon.stub().returns({})};
@@ -139,6 +140,7 @@ describe('LaunchDarkly', function () {
           currentOrgHasSpace: false,
           currentOrgPricingVersion: `pricing_version_1`,
           currentUserOrgRole: 'org role',
+          currentUserCreationDate: 1234567890,
           currentUserHasAtleastOneSpace: false,
           currentUserOwnsAtleastOneOrg: true,
           currentUserAge: 7,
@@ -146,7 +148,8 @@ describe('LaunchDarkly', function () {
           isAutomationTestUser: true,
           currentUserIsCurrentOrgCreator: false,
           currentUserSignInCount: 10,
-          currentUserSpaceRole: []
+          currentUserSpaceRole: [],
+          isExampleSpace: false
         });
       });
     });
@@ -224,11 +227,11 @@ describe('LaunchDarkly', function () {
     });
 
     it('should not filter undefined as the variation', function* () {
-      yield this.ready();
       const spy = sinon.spy();
-
-      this.client.variation.returns(undefined);
       this.ld.onFeatureFlag(this.$scope, 'feature-flag', spy);
+      this.client.variation.returns(undefined);
+      yield this.ready();
+
 
       sinon.assert.calledOnce(spy);
       sinon.assert.calledWith(spy, undefined);

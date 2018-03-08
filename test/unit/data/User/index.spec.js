@@ -9,7 +9,14 @@ describe('data/User', () => {
       spacesByOrganization$: K.createMockProperty(null)
     };
 
+    this.contentPreview = {
+      contentPreviewsBus$: K.createMockProperty({})
+    };
+
     this.spaceContext = {
+      publishedCTs: {
+        items$: K.createMockProperty([])
+      },
       organizationContext: {
         organization: {}
       },
@@ -34,6 +41,7 @@ describe('data/User', () => {
       $provide.value('services/TokenStore', this.tokenStore);
       $provide.value('spaceContext', this.spaceContext);
       $provide.value('$stateParams', this.$stateParams);
+      $provide.value('contentPreview', this.contentPreview);
     });
 
     this.moment = this.$inject('moment');
@@ -53,43 +61,45 @@ describe('data/User', () => {
           spacesByOrg = K.getValue(this.tokenStore.spacesByOrganization$),
           org = this.spaceContext.organizationContext.organization,
           orgId,
-          space = this.spaceContext.space.data
+          space = this.spaceContext.space.data,
+          publishedCTs = []
         } = params;
 
-        this.tokenStore.user$.set(user);
         this.tokenStore.organizations$.set(orgs);
         this.tokenStore.spacesByOrganization$.set(spacesByOrg);
         this.spaceContext.organizationContext.organization = org;
         this.spaceContext.space.data = space;
         this.$stateParams.orgId = orgId;
+        this.spaceContext.publishedCTs.items$.set(publishedCTs);
         this.$rootScope.$broadcast('$stateChangeSuccess', null, {orgId});
+        this.tokenStore.user$.set(user);
         this.$apply();
       };
     });
-    it('should emit [user, org, spacesByOrg, space] where space is optional', function () {
+    it('should emit [user, org, spacesByOrg, space, contentPreviews, publishedCTs] where space, contentPreviews and publishedCTs are optional', function () {
       const user = {email: 'a@b.c'};
       const orgs = [{name: '1', sys: {id: 1}}, {name: '2', sys: {id: 2}}];
       const org = {name: 'some org', sys: {id: 'some-org-1'}};
 
       sinon.assert.notCalled(this.spy);
 
-      this.set({user, orgs, spacesByOrg: {}, org: null, orgId: 1});
+      this.set({user, orgs, spacesByOrg: {}, org: null, orgId: 1, publishedCTs: []});
       sinon.assert.calledOnce(this.spy);
 
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data]);
+      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data, {}, []]);
 
       this.spy.reset();
       this.set({org});
       sinon.assert.calledOnce(this.spy);
       sinon.assert.calledWithExactly(
         this.spy,
-        [user, org, {}, this.spaceContext.space.data]
+        [user, org, {}, this.spaceContext.space.data, {}, []]
       );
 
       this.spy.reset();
       this.set({org: null, space: {fields: [], sys: {id: 'space-1'}}});
       sinon.assert.calledOnce(this.spy);
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data]);
+      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data, {}, []]);
     });
     it('should emit a value only when the user is valid and the org and spacesByOrg are not falsy', function () {
       const orgs = [{name: '1', sys: {id: 1}}, {name: '2', sys: {id: 2}}];
@@ -110,14 +120,15 @@ describe('data/User', () => {
       // all valid valus, hence spy must be called
       this.set({user, orgs, spacesByOrg: {}, orgId: 1});
       sinon.assert.calledOnce(this.spy);
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, {}]);
+      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, {}, {}, []]);
     });
     it('should skip duplicates', function () {
       const setter = this.set.bind(this, {
         user: {email: 'a@b.c'},
         org: {name: 'org-1', sys: {id: 1}},
         spacesByOrg: {},
-        space: {name: 'space-1', sys: {id: 'space-1'}}
+        space: {name: 'space-1', sys: {id: 'space-1'}},
+        publishedCTs: []
       });
       setter();
       sinon.assert.calledOnce(this.spy);
@@ -157,6 +168,16 @@ describe('data/User', () => {
     });
     it('should return null if the operation throws', function () {
       expect(Number.isNaN(this.utils.getUserAgeInDays({sys: {createdAt: 'some wrong date'}}))).toBe(true);
+    });
+  });
+
+  describe('#getUserCreationDateUnixTimestamp', function () {
+    it('should return the user creation date as a unix timestamp', function () {
+      const creationDate = this.moment();
+
+      expect(this.utils.getUserCreationDateUnixTimestamp({
+        sys: { createdAt: creationDate.toISOString() }
+      })).toBe(creationDate.unix());
     });
   });
 

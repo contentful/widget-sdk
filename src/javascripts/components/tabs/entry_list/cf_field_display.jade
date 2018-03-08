@@ -23,7 +23,7 @@ ng-switch(on="displayType(field)")
     | {{displayBool(dataForField(entry, field))}}
   span(ng-switch-when="Location")
     | {{displayLocation(dataForField(entry, field))}}
-  span(ng-switch-when="Entry" class="linked-entries")
+  span.linked-entries(ng-switch-when="Entry")
     | {{dataForLinkedEntry(entry, field)}}
 
   div.file-preview(ng-switch-when="Asset" class="linked-assets")
@@ -38,11 +38,11 @@ ng-switch(on="displayType(field)")
         div.file-preview(ng-if="isAssetArray(entry, field)")
           cf-thumbnail(file="entity" size="30" fit="thumb" focus="faces")
 
-      li(ng-if="isEntryArray(entry, field) && countArrayHiddenItems(entry, field)")
-        | + {{countArrayHiddenItems(entry, field)}} more items
+      li.linked-entries__more(ng-if="isEntryArray(entry, field) && countArrayHiddenItems(entry, field)")
+        | +{{countArrayHiddenItems(entry, field)}} more
 
-      li.asset-count(ng-if="isAssetArray(entry, field) && countArrayHiddenItems(entry, field)")
-        | +{{countArrayHiddenItems(entry, field)}}
+      li.linked-assets__more(ng-if="isAssetArray(entry, field) && countArrayHiddenItems(entry, field)")
+        | +{{countArrayHiddenItems(entry, field)}} more
 
       //- If it's another kind of array, just display the data
       li(ng-if="!isEntryArray(entry, field) && !isAssetArray(entry, field)")
