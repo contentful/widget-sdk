@@ -4,7 +4,7 @@ import PropTypes from 'libs/prop-types';
 import TEASteps, { STEPS_KEYS } from './OnboardingWithTeaSteps';
 import { getStore } from 'TheStore';
 import spaceContext from 'spaceContext';
-import {track} from 'analytics/Analytics';
+import {track, updateUserInSegment} from 'analytics/Analytics';
 import $state from '$state';
 import {findKey, omit, times} from 'lodash';
 
@@ -102,6 +102,10 @@ const OnboardingWithTea = createReactClass({
       groupId: GROUP_ID,
       fromState: $state.current.name
     });
+    // track in intercom
+    updateUserInSegment({
+      teaOnboardingViewedContent: true
+    });
     store.set(constants.viewContent, true);
     const spaceId = spaceContext.getId();
     // hack to pre-select course contentType filter in entry list
@@ -118,6 +122,10 @@ const OnboardingWithTea = createReactClass({
       groupId: GROUP_ID,
       fromState: $state.current.name
     });
+    // track in intercom
+    updateUserInSegment({
+      teaOnboardingViewedPreview: true
+    });
     store.set(constants.viewPreview, true);
     this.markAsDone({
       [STEPS_KEYS.PREVIEW_USING_EXAMPLE_APP]: { isDone: true }
@@ -130,6 +138,10 @@ const OnboardingWithTea = createReactClass({
       groupId: GROUP_ID,
       fromState: $state.current.name
     });
+    // track in intercom
+    updateUserInSegment({
+      teaOnboardingCreatedEntry: true
+    });
     store.set(constants.createEntry, true);
     this.markAsDone({
       [STEPS_KEYS.CREATE_ENTRY]: { isDone: true }
@@ -141,6 +153,10 @@ const OnboardingWithTea = createReactClass({
       elementId: 'get_repo',
       groupId: GROUP_ID,
       fromState: $state.current.name
+    });
+    // track in intercom
+    updateUserInSegment({
+      teaOnboardingGotRepo: true
     });
     store.set(constants.viewGithub, true);
     this.setState({
