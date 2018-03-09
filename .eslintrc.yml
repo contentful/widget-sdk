@@ -45,7 +45,7 @@ overrides:
     setTimeout: false
     Promise: false
   parserOptions:
-    ecmaVersion: 6
+    ecmaVersion: 2017
     sourceType: module
   rules:
     # ES6 specific
