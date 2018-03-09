@@ -55,23 +55,15 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
       );
       const localesPromise = Promise.all(
         filteredLocales.map(
-          locale => spaceContext.localeRepo.save(Object.assign({}, locale, { default: false }))
+          locale => {
+            // we create the default locale automatically, so we mark all other locales as non-default
+            const saveLocalePromise = spaceContext.localeRepo.save({ ...locale, default: false });
+            // we ingore errors. there might be different reasons why it is happening
+            // like pricing, too many locales already, etc
+            return saveLocalePromise.catch(() => null);
+          }
         )
       );
-      const contentLocales = _.uniq([selectedLocaleCode].concat(filteredLocales.map(locale => locale.code)));
-
-      // no need to refresh locales, if there are no additional (default locale is loaded already)
-      if (filteredLocales.length) {
-        // we set all locales as active, so they will be preselected in entry editor
-        // we need to wait until new locales are created
-        localesPromise
-          // we need to refresh our locale store, so that app is aware of new locales
-          .then(TheLocaleStore.refresh)
-          .then(() => {
-            // it expects array of objects, so we have to wrap codes in object
-            TheLocaleStore.setActiveLocales(contentLocales.map(code => ({ internal_code: code })));
-          });
-      }
 
       const createdContentTypes = yield Promise.all(template.contentTypes.map(createContentType));
       // we can create API key as soon as space is created
@@ -80,9 +72,6 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
       // we can proceed without publishing interfaces, creating is enough
       // publishing can be finished in the background
       yield publishContentTypes(createdContentTypes);
-
-      // we need to wait locales before creating assets
-      yield localesPromise;
 
       // we need to create assets before proceeding
       // we create assets only for default locale. It is a conscious decision, otherwise
@@ -96,6 +85,26 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
       // we still can link them inside entries
       const processAssetsPromise = processAssets(createdAssets);
       const publishAssetsPromise = processAssetsPromise.then(publishAssets);
+
+      // we need to wait for locales before creating entries
+      const createdLocales = yield localesPromise;
+      // some locales might fail during creation, we need to filter them out
+      const successfullyCreatedLocales = createdLocales.filter(Boolean);
+      const successfullyCreatedLocaleCodes = successfullyCreatedLocales.map(locale => locale.code);
+      // we need to combine default locale and all successfully created
+      const contentLocales = [selectedLocaleCode, ...successfullyCreatedLocaleCodes];
+
+      // no need to refresh locales, if there are no additional (default locale is loaded already)
+      if (successfullyCreatedLocales.length) {
+        // we set all locales as active, so they will be preselected in entry editor
+        Promise.resolve()
+          // we need to refresh our locale store, so that the app is aware of new locales
+          .then(TheLocaleStore.refresh)
+          .then(() => {
+            // it expects array of objects, so we have to wrap codes in object
+            TheLocaleStore.setActiveLocales(contentLocales.map(code => ({ internal_code: code })));
+          });
+      }
 
       const entries = useSelectedLocales(template.entries, contentLocales, selectedLocaleCode);
       const createdEntries = yield Promise.all(entries.map(createEntry));
