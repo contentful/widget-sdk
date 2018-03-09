@@ -20,7 +20,7 @@ angular.module('contentful').factory('navigation/closeState', ['require', functi
   function goToPreviousEntity () {
     var entity = contextHistory.getLast();
 
-    return $state.go(entity.link.state, entity.link.params, {reload: true});
+    return $state.go(entity.link.state, entity.link.params);
   }
 
   // TODO(mudit): Confirm that no where in the app is contextHistory empty
