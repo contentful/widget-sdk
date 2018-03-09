@@ -29,8 +29,7 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
     useLegacy: ResourceUtils.useLegacy(org)
   }).then(function (result) {
     var subscription = spaceContext.subscription;
-    var isTrial = subscription.isTrial();
-    var trialLockdown = isTrial && subscription.hasTrialEnded();
+    var trialLockdown = subscription.isTrial() && subscription.hasTrialEnded();
 
     $scope.legacy = result.useLegacy;
 

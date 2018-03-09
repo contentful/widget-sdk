@@ -4,7 +4,7 @@ import * as TokenStore from 'services/TokenStore';
 import * as K from 'utils/kefir';
 import {get, camelCase} from 'lodash';
 import {createOrganizationEndpoint} from 'data/EndpointFactory';
-import {getEnabledOrgFeatures} from 'account/pricing/PricingDataProvider';
+import {getEnabledFeatures} from 'account/pricing/PricingDataProvider';
 // TODO prevent circular ref
 import require from 'require';
 
@@ -86,7 +86,7 @@ function loadOrgFeatures (organization) {
       // Get enabled features from API if feature flag is on, or if token
       // doesn't have features because of new pricing version.
       const orgEndpoint = createOrganizationEndpoint(organization.sys.id);
-      return getEnabledOrgFeatures(orgEndpoint)
+      return getEnabledFeatures(orgEndpoint)
         .then((items) => items.map(({internalName}) => camelCase(internalName)))
         .catch((err) => {
           logger.logError(`Could not fetch org features for ${organization.sys.id}`, err);

@@ -99,10 +99,17 @@ export function getPlansWithSpaces (endpoint) {
  * @returns {Promise<object[]>} array of features in {name, internal_name}
  * format.
  */
-export function getEnabledOrgFeatures (endpoint) {
+export function getEnabledFeatures (endpoint) {
   return endpoint({
     method: 'GET',
     path: ['features']
+  }, alphaHeader).then(features => features.items);
+}
+
+export function getFeature (endpoint, featureName) {
+  return endpoint({
+    method: 'GET',
+    path: [ 'features', featureName ]
   }, alphaHeader).then(features => features.items);
 }
 
