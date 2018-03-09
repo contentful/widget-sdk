@@ -4,7 +4,7 @@ import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { getSpace, getOrganization } from 'services/TokenStore';
 import { getEnabledFeatures, getFeature } from 'account/pricing/PricingDataProvider';
 
-import { get, camelCase } from 'lodash';
+import { get, snakeCase } from 'lodash';
 
 const flagName = 'feature-bv-2018-01-features-api';
 
@@ -17,12 +17,11 @@ export default function createFeatureService (id, type = 'space') {
       const legacy = await useLegacy(organization);
 
       if (legacy) {
-        return legacyGetAllFeatures(organization).then(features => {
-          return features.filter(feature => feature.id === featureId);
-        });
+        const legacyFeatures = legacyGetAllFeatures(organization);
+
+        return legacyFeatures.filter(feature => feature.sys.id === featureId)[0];
       } else {
         return getFeature(endpoint, featureId)
-          .then(featureTransform)
           .catch(() => {
           // The featureId isn't an available or valid feature
             return undefined;
@@ -38,21 +37,23 @@ export default function createFeatureService (id, type = 'space') {
         // Look at the Token
         return legacyGetAllFeatures(organization);
       } else {
-        return getEnabledFeatures(endpoint).then(features => features.map(featureTransform));
+        return getEnabledFeatures(endpoint);
       }
     }
   };
 }
 
-function featureTransform (feature) {
-  feature.id = camelCase(feature.id);
-
-  return feature;
-}
-
 function legacyGetAllFeatures (organization) {
   const featuresHash = get(organization, 'subscriptionPlan.limits.features', {});
-  const features = Object.keys(featuresHash).filter((key) => featuresHash[key]);
+  const features = Object.keys(featuresHash).map(featureId => {
+    return {
+      enabled: featuresHash[featureId],
+      sys: {
+        type: 'Feature',
+        id: snakeCase(featureId)
+      }
+    };
+  });
 
   return features;
 }

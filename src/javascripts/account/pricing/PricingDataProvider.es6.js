@@ -110,7 +110,7 @@ export function getFeature (endpoint, featureName) {
   return endpoint({
     method: 'GET',
     path: [ 'features', featureName ]
-  }, alphaHeader).then(features => features.items);
+  }, alphaHeader);
 }
 
 /* Gets the space plan for the space with corresponding space id
