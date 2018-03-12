@@ -101,14 +101,19 @@ export default createReactClass({
     } = this.props;
 
     const isOpened = this.isOpened();
-    const classNames = `
+    const containerClassNames = `
       nav-sidepanel__space-list-item
       ${isCurrSpace ? 'nav-sidepanel__space-list-item--is-active' : ''}
       ${isOpened ? 'nav-sidepanel__space-list-item--is-open' : ''}
     `;
 
+    const spaceNameClassNames = `
+      nav-sidepanel__space-name u-truncate
+      ${isCurrSpace ? 'nav-sidepanel__space-name--is-active' : ''}
+    `;
+
     return e('li', {
-      className: classNames,
+      className: containerClassNames,
       onClick: () => this.toggleEnvironmentList(),
       'data-test-id': `sidepanel-space-link-${index}`,
       'data-test-group-id': 'sidepanel-space-link',
@@ -116,7 +121,7 @@ export default createReactClass({
     }, ...[
       e('div', {className: 'nav-sidepanel__space-title'}, ...[
         e('div', {className: 'nav-sidepanel__space-icon'}, asReact(folderIcon)),
-        e('span', {className: 'nav-sidepanel__space-name u-truncate'}, space.name),
+        e('span', {className: spaceNameClassNames}, space.name),
         e('span', {className: this.state.loading ? 'nav-sidepanel__space-spinner' : 'nav-sidepanel__space-open-indicator'})
       ]),
       e(

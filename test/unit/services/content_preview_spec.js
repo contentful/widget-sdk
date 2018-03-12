@@ -39,7 +39,7 @@ describe('contentPreview', function () {
       put: sinon.stub(),
       delete: sinon.stub()
     };
-    spaceContext.getId = _.constant('space01');
+    spaceContext.getId = sinon.stub().returns('space01');
 
     this.contentPreview = this.$inject('contentPreview');
 
@@ -413,7 +413,7 @@ describe('contentPreview', function () {
   describe('#getSelected', function () {
     beforeEach(function () {
       storeStubs.get.withArgs('selectedPreviewEnvsForSpace.space01')
-      .returns({'ct1': 'env1'});
+      .returns('env1');
     });
 
     it('returns environment id', function () {
@@ -422,6 +422,7 @@ describe('contentPreview', function () {
     });
 
     it('returns undefined if not found', function () {
+      spaceContext.getId.returns('space02');
       const selectedEnvironmentId = this.contentPreview.getSelected('ct2');
       expect(selectedEnvironmentId).toBeUndefined();
     });
