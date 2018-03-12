@@ -10,14 +10,19 @@ import { flushPromises } from './helpers';
 describe('FetchLinksToEntity', function () {
   const defaultProps = {
     id: 'entry-id',
-    type: EntityType.ENTRY
+    type: EntityType.ENTRY,
+    origin: 'sidebar'
   };
 
   beforeEach(function () {
     this.onFetchLinks = sinon.stub();
     const system = createIsolatedSystem();
     system.set('analytics/events/IncomingLinks', {
-      onFetchLinks: this.onFetchLinks
+      onFetchLinks: this.onFetchLinks,
+      Origin: {
+        DIALOG: 'dialog',
+        SIDEBAR: 'sidebar'
+      }
     });
     this.system = system;
     this.importModule = function* ({ fetchLinksStub }) {

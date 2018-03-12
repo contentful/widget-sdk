@@ -38,6 +38,7 @@ const SidebarIncomingLinks = createReactClass({
     return (
       <FetchLinksToEntity
         {...entityInfo}
+        origin={IncomingLinksOrigin.SIDEBAR}
         render={({ links, requestState }) => (
           <div data-test-id="sidebar-incoming-links-section">
             <h2 className="entity-sidebar__heading">Links</h2>

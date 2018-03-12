@@ -74,6 +74,7 @@ const StateChangeConfirmation = createReactClass({
     return (
       <FetchLinksToEntity
         {...entityInfo}
+        origin={IncomingLinksOrigin.DIALOG}
         render={({ links, requestState }) => {
           const { title, body, confirm } = getMessages({
             action,

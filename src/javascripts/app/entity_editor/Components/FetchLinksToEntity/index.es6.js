@@ -2,7 +2,10 @@ import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import { EntityType } from '../constants';
 import fetchLinks from 'app/entity_editor/Components/FetchLinksToEntity/fetchLinks';
-import { onFetchLinks as trackFetchLinks } from 'analytics/events/IncomingLinks';
+import {
+  onFetchLinks as trackFetchLinks,
+  Origin as IncomingLinksOrigin
+} from 'analytics/events/IncomingLinks';
 
 export const RequestState = {
   PENDING: 'pending',
@@ -17,6 +20,10 @@ const FetchLinksToEntity = createReactClass({
       EntityType.ASSET,
       EntityType.ENTRY
     ]).isRequired,
+    origin: PropTypes.oneOf([
+      IncomingLinksOrigin.DIALOG,
+      IncomingLinksOrigin.SIDEBAR
+    ]),
     render: PropTypes.func.isRequired
   },
   getInitialState () {
@@ -40,11 +47,13 @@ const FetchLinksToEntity = createReactClass({
           links,
           requestState: RequestState.SUCCESS
         }));
-        trackFetchLinks({
-          entityId: this.props.id,
-          entityType: this.props.type,
-          incomingLinksCount: links.length
-        });
+        if (this.props.origin === IncomingLinksOrigin.SIDEBAR) {
+          trackFetchLinks({
+            entityId: this.props.id,
+            entityType: this.props.type,
+            incomingLinksCount: links.length
+          });
+        }
       },
       () => {
         this.setState(() => ({
