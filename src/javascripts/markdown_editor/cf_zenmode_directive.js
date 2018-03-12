@@ -7,6 +7,7 @@ angular.module('contentful').directive('cfZenmode', ['require', function (requir
   var keycodes = require('utils/keycodes').default;
   var modalDialog = require('modalDialog');
   var win = $($window);
+  var LocaleStore = require('TheLocaleStore');
 
   // This is persisted accross Zen Mode instances
   var initialShowPreview = true;
@@ -49,7 +50,15 @@ angular.module('contentful').directive('cfZenmode', ['require', function (requir
 
       function initEditor (editorInstance) {
         editor = editorInstance;
-        scope.actions = actions.create(editor, scope.zenApi.getLocale());
+        var defaultLocale = LocaleStore.getDefaultLocale();
+
+        var locales = LocaleStore.getLocales();
+        var fieldLocaleCode = scope.zenApi.getLocale();
+        var locale = locales.find(function (locale) {
+          return locale.code === fieldLocaleCode;
+        });
+
+        scope.actions = actions.create(editor, locale, defaultLocale.code);
         scope.history = editor.history;
 
         scope.zenApi.registerChild(editorInstance);
