@@ -13,11 +13,13 @@ describe('cfZenmode', function () {
         restoreCursor: sinon.stub()
       };
     },
-    getLocale: _.constant('en-US')
+    getLocale: _.constant('en')
   };
 
   beforeEach(function () {
-    module('contentful/test');
+    module('contentful/test', $provide => {
+      $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
+    });
 
     const scopeProps = { zenApi: apiMock, preview: {} };
     const elem = this.$compile('<cf-zenmode zen-api="zenApi" />', scopeProps);
