@@ -24,6 +24,7 @@ export default (id, type) => {
   return spaceContext.cma.getEntries(payload).then(({ items }) => {
     return Promise.all(
       items.map(entry => {
+        const { id } = entry.sys;
         return entityHelpers.entityTitle(entry).then(title => ({
           id,
           title,

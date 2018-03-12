@@ -46,7 +46,10 @@ describe('fetchLinks', function () {
   function itCallsApiAndProcessEntity (type) {
     return function* () {
       const id = 'entity-id';
-      const items = [{ id: 1 }, { id: 2 }];
+      const items = [
+        { sys: { id: 'entity-id-0' } },
+        { sys: { id: 'entity-id-1' } }
+      ];
 
       this.spaceContext.cma.getEntries
         .withArgs({
@@ -67,12 +70,12 @@ describe('fetchLinks', function () {
 
       expect(result).toEqual([
         {
-          id: 'entity-id',
+          id: 'entity-id-0',
           title: 'title-0',
           url: 'href-0'
         },
         {
-          id: 'entity-id',
+          id: 'entity-id-1',
           title: 'title-1',
           url: 'href-1'
         }
