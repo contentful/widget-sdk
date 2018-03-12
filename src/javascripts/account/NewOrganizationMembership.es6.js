@@ -24,7 +24,7 @@ import {
 import {isLegacyOrganization, getLegacyLimit} from 'utils/ResourceUtils';
 
 // Begin test code: test-ps-02-2018-tea-onboarding-steps
-import {track} from 'analytics/Analytics';
+import {track, updateUserInSegment} from 'analytics/Analytics';
 import $state from '$state';
 import { getStore } from 'TheStore';
 const GROUP_ID = 'tea_onboarding_steps';
@@ -225,6 +225,11 @@ export default function ($scope) {
             fromState: $state.current.name,
             spaceId: pendingInvitesForTEA.spaceId,
             organizationId: orgId
+          });
+
+          // track in intercom
+          updateUserInSegment({
+            teaOnboardingInvitedUsers: true
           });
 
           store.remove(inviteTrackingKey);
