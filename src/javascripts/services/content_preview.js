@@ -34,7 +34,6 @@ angular.module('contentful')
   // This functionality is primarily needed for rich preview expirience for TEA (the example app):
   // https://contentful.atlassian.net/wiki/spaces/PROD/pages/204079331/The+example+app+-+Documentation+of+functionality
   var MAX_PREVIEW_ENVIRONMENTS = 25;
-  var STORE_KEY = 'selectedPreviewEnvsForSpace.' + spaceContext.getId();
 
   // build a bus that emits content previews object keyed by content preview id
   // every 2.5 seconds. This is ok for now since we cache content previews and hence
@@ -77,18 +76,28 @@ angular.module('contentful')
   };
 
   /**
+   * @name contentPreview#getStoreKey
+   * @returns {string}
+   *
+   * @description
+   * Returns key for localstorage which is tied to current space
+  */
+  function getStoreKey () {
+    return 'selectedPreviewEnvsForSpace.' + spaceContext.getId();
+  }
+
+  /**
    * @ngdoc method
    * @name contentPreview#getSelected
-   * @param {string} contentTypeId
    * @returns {string|undefined}
    *
    * @description
-   * Returns the ID for the last selected environment for the provided content type.
+   * Returns the ID for the last selected environment for currently active space.
    * Fetches data from the store each time. Returns undefined if none is available.
   */
-  function getSelected (contentTypeId) {
-    var environmentsMap = store.get(STORE_KEY);
-    return _.get(environmentsMap, contentTypeId);
+  function getSelected () {
+    const storeKey = getStoreKey();
+    return store.get(storeKey);
   }
 
   /**
@@ -98,12 +107,11 @@ angular.module('contentful')
    * @returns undefined
    *
    * @description
-   * Sets the provided environment as the last selected one for that content type.
+   * Sets the provided environment as the last selected one for currently active space.
   */
   function setSelected (environment) {
-    var environments = store.get(STORE_KEY) || {};
-    environments[environment.contentType] = environment.envId;
-    store.set(STORE_KEY, environments);
+    const storeKey = getStoreKey();
+    store.set(storeKey, environment.envId);
   }
 
 
