@@ -20,11 +20,17 @@ export function onEntryEdit ({ contentType, isInlineEditingFeatureFlagEnabled = 
   });
 }
 
+/**
+ * @param {object|null} .contentType
+ * @param {boolean} .toggleState
+ * @returns {object}
+ */
 export function onToggleInlineEditor ({ contentType, toggleState }) {
   track('reference_editor:toggle_inline_editor', {
     ...getLocalesInfo(),
     ...getToggleState(toggleState),
-    ...getContentTypeInfo(contentType)
+    ...getContentTypeInfo(contentType),
+    version: 2
   });
 }
 
@@ -67,7 +73,7 @@ function getWidgetsCount (contentTypeInfo, locales) {
 }
 
 function getFieldsInfo (contentType) {
-  const fields = contentType.data.fields;
+  const fields = contentType ? contentType.data.fields : [];
   return {
     localizedFieldsCount: fields.filter(field => field.localized).length,
     fieldsCount: fields.length

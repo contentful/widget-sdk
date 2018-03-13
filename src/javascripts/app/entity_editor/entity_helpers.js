@@ -15,7 +15,8 @@ angular.module('cf.app')
   var assetUrlFilter = require('$filter')('assetUrl');
 
   return {
-    newForLocale: newForLocale
+    newForLocale: newForLocale,
+    contentTypeFieldLinkCtIds: contentTypeFieldLinkCtIds
   };
 
   function newForLocale (locale) {
@@ -89,5 +90,25 @@ angular.module('cf.app')
     } else {
       return $q.reject();
     }
+  }
+
+  /**
+   * Returns a list of content type IDs if a given content type field has a
+   * validation restricting the allowed referencs to a set of content types.
+   * Returns an empty array if there is no such restriction for the field.
+   * @param {object} field
+   * @returns {Array<string>}
+   */
+  function contentTypeFieldLinkCtIds (field) {
+    if (!_.isObject(field)) {
+      throw new Error('expects a content type field');
+    }
+    var validations = (field.type === 'Array' ? field.items : field).validations;
+
+    var contentTypeValidation = _.find(validations, function (validation) {
+      return !!validation.linkContentType;
+    });
+
+    return contentTypeValidation ? contentTypeValidation.linkContentType : [];
   }
 }]);
