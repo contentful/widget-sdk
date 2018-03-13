@@ -37,7 +37,8 @@ else
 fi
 
 AUTH="cf-ci:$JENKINS_PASSWORD"
-QUERY="token=$JENKINS_TOKEN&ui_version=$TRAVIS_COMMIT"
+CAUSE="Triggered+by+Travis+build+%23$TRAVIS_BUILD_ID+within+commit+$TRAVIS_COMMIT"
+QUERY="token=$JENKINS_TOKEN&ui_version=$TRAVIS_COMMIT&cause=$CAUSE"
 URL="https://jenkins.contentful.org/job/$JOB/buildWithParameters?$QUERY"
 
 echo "POST $URL"
