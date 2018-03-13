@@ -1,0 +1,297 @@
+import { createIsolatedSystem } from 'test/helpers/system-js';
+import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
+import { set } from 'lodash';
+
+describe('Feature Service', function () {
+  beforeEach(function* () {
+    this.flags = {
+      'feature-bv-2018-01-features-api': false
+    };
+
+    this.mocks = {
+      legacyOrganization: null,
+      organization: {
+        subscriptionPlan: {
+          limits: {
+            features: {
+              customRoles: false,
+              multipleLocales: false
+            }
+          }
+        }
+      }
+    };
+
+    this.mocks.space = {
+      organization: this.mocks.organization
+    };
+
+    this.stubs = {};
+    this.spies = {};
+
+    const system = createIsolatedSystem();
+
+    system.set('utils/LaunchDarkly', {
+      getCurrentVariation: (flagName) => {
+        return Promise.resolve(this.flags[flagName]);
+      }
+    });
+
+    system.set('utils/ResourceUtils', {
+      isLegacyOrganization: () => {
+        return this.mocks.legacyOrganization;
+      }
+    });
+
+    // Spying on both the endpoint creation and the actual endpoint
+    // calls are important.
+    const mockedEndpoint = createMockSpaceEndpoint();
+
+    set(mockedEndpoint.stores.features, 'custom_roles', {
+      enabled: true,
+      name: 'Custom Roles',
+      sys: {
+        id: 'custom_roles',
+        type: 'Feature'
+      }
+    });
+    set(mockedEndpoint.stores.features, 'multiple_locales', {
+      enabled: true,
+      name: 'Multiple Locales',
+      sys: {
+        id: 'multiple_locales',
+        type: 'Feature'
+      }
+    });
+    set(mockedEndpoint.stores.features, 'sso', {
+      enabled: false,
+      name: 'Single Sign-On',
+      sys: {
+        id: 'sso',
+        type: 'Feature'
+      }
+    });
+
+    this.spies.spaceEndpoint = sinon.spy(mockedEndpoint.request);
+    const createSpaceEndpoint = () => {
+      return this.spies.spaceEndpoint;
+    };
+
+    this.spies.createSpaceEndpoint = sinon.spy(createSpaceEndpoint);
+    this.stubs.createOrganizationEndpoint = sinon.stub();
+
+    system.set('data/EndpointFactory', {
+      createSpaceEndpoint: this.spies.createSpaceEndpoint,
+      createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
+    });
+
+    system.set('services/TokenStore', {
+      getSpace: sinon.stub().resolves(this.mocks.space),
+      getOrganization: sinon.stub().resolves(this.mocks.organization)
+    });
+
+    this.createFeatureService = (yield system.import('services/FeatureService')).default;
+  });
+
+  it('should use the space endpoint by default during instantiation', function () {
+    this.createFeatureService('1234');
+
+    expect(this.spies.createSpaceEndpoint.called).toBe(true);
+    expect(this.stubs.createOrganizationEndpoint.called).toBe(false);
+  });
+
+  it('should also allow instantiating with the organization type', function () {
+    this.createFeatureService('1234', 'organization');
+
+    expect(this.spies.createSpaceEndpoint.called).toBe(false);
+    expect(this.stubs.createOrganizationEndpoint.called).toBe(true);
+  });
+
+  it('should return the proper definition on instantiation', function () {
+    const FeatureService = this.createFeatureService('1234');
+
+    expect(Object.keys(FeatureService).length).toBe(2);
+    expect(FeatureService.get).toBeDefined();
+    expect(FeatureService.getAll).toBeDefined();
+  });
+
+  describe('#get', function () {
+    beforeEach(function () {
+      this.FeatureService = this.createFeatureService('1234');
+    });
+
+    it('should return a Feature from the token if legacy and the feature flag is off', function* () {
+      this.flags['feature-bv-2018-01-features-api'] = false;
+      this.mocks.legacyOrganization = true;
+
+      const feature = yield this.FeatureService.get('customRoles');
+
+      expect(feature).toEqual({
+        enabled: false,
+        sys: {
+          type: 'Feature',
+          id: 'custom_roles'
+        }
+      });
+    });
+
+    it('should return a Feature from the endpoint if legacy and the feature flag is on', function* () {
+      this.flags['feature-bv-2018-01-features-api'] = true;
+      this.mocks.legacyOrganization = true;
+
+      const feature = yield this.FeatureService.get('customRoles');
+
+      expect(feature).toEqual({
+        enabled: true,
+        name: 'Custom Roles',
+        sys: {
+          type: 'Feature',
+          id: 'custom_roles'
+        }
+      });
+    });
+
+    it('should return a Feature from the endpoint if not legacy', function* () {
+      let feature;
+
+      this.mocks.legacyOrganization = false;
+
+      feature = yield this.FeatureService.get('customRoles');
+
+      expect(feature).toEqual({
+        enabled: true,
+        name: 'Custom Roles',
+        sys: {
+          id: 'custom_roles',
+          type: 'Feature'
+        }
+      });
+
+      feature = yield this.FeatureService.get('sso');
+
+      expect(feature).toEqual({
+        enabled: false,
+        name: 'Single Sign-On',
+        sys: {
+          id: 'sso',
+          type: 'Feature'
+        }
+      });
+    });
+
+    it('should return undefined if the Feature is not found', function* () {
+      let feature;
+
+      this.mocks.legacyOrganization = true;
+      feature = yield this.FeatureService.get('missing');
+
+      expect(feature).toBeUndefined();
+
+      this.flags['feature-bv-2018-01-features-api'] = true;
+      feature = yield this.FeatureService.get('missing2');
+
+      expect(feature).toBeUndefined();
+
+      this.mocks.legacyOrganization = false;
+      feature = yield this.FeatureService.get('missing3');
+
+      expect(feature).toBeUndefined();
+    });
+  });
+
+  describe('#getAll', function () {
+    beforeEach(function () {
+      this.FeatureService = this.createFeatureService('1234');
+    });
+
+    it('should return all Features from the token if legacy and the feature flag is off', function* () {
+      this.mocks.legacyOrganization = true;
+
+      const features = yield this.FeatureService.getAll();
+      expect(features.length).toBe(2);
+      expect(features).toEqual([
+        {
+          enabled: false,
+          sys: {
+            id: 'custom_roles',
+            type: 'Feature'
+          }
+        },
+        {
+          enabled: false,
+          sys: {
+            id: 'multiple_locales',
+            type: 'Feature'
+          }
+        }
+      ]);
+    });
+
+    it('should return all Features from the endpoint if legacy and the feature flag is on', function* () {
+      this.mocks.legacyOrganization = true;
+      this.flags['feature-bv-2018-01-features-api'] = true;
+
+      const features = yield this.FeatureService.getAll();
+      expect(features.length).toBe(3);
+      expect(features).toEqual([
+        {
+          enabled: true,
+          name: 'Custom Roles',
+          sys: {
+            id: 'custom_roles',
+            type: 'Feature'
+          }
+        },
+        {
+          enabled: true,
+          name: 'Multiple Locales',
+          sys: {
+            id: 'multiple_locales',
+            type: 'Feature'
+          }
+        },
+        {
+          enabled: false,
+          name: 'Single Sign-On',
+          sys: {
+            id: 'sso',
+            type: 'Feature'
+          }
+        }
+      ]);
+    });
+
+    it('should return all Features from the endpoint if not legacy', function* () {
+      this.mocks.legacyOrganization = false;
+
+      const features = yield this.FeatureService.getAll();
+      expect(features.length).toBe(3);
+      expect(features).toEqual([
+        {
+          enabled: true,
+          name: 'Custom Roles',
+          sys: {
+            id: 'custom_roles',
+            type: 'Feature'
+          }
+        },
+        {
+          enabled: true,
+          name: 'Multiple Locales',
+          sys: {
+            id: 'multiple_locales',
+            type: 'Feature'
+          }
+        },
+        {
+          enabled: false,
+          name: 'Single Sign-On',
+          sys: {
+            id: 'sso',
+            type: 'Feature'
+          }
+        }
+      ]);
+    });
+  });
+});

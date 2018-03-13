@@ -15,13 +15,14 @@ export default function createFeatureService (id, type = 'space') {
     async get (featureId) {
       const organization = await getTokenOrganization(id, type);
       const legacy = await useLegacy(organization);
+      const apiFeatureId = snakeCase(featureId);
 
       if (legacy) {
         const legacyFeatures = legacyGetAllFeatures(organization);
 
-        return legacyFeatures.filter(feature => feature.sys.id === featureId)[0];
+        return legacyFeatures.filter(feature => feature.sys.id === apiFeatureId)[0];
       } else {
-        return getFeature(endpoint, featureId)
+        return getFeature(endpoint, apiFeatureId)
           .catch(() => {
           // The featureId isn't an available or valid feature
             return undefined;
@@ -75,15 +76,9 @@ async function getTokenOrganization (id, type) {
 }
 
 async function useLegacy (organization) {
-  return getCurrentVariation(flagName).then(flagValue => {
-    if (flagValue === false) {
-      return true;
-    }
-
-    if (isLegacyOrganization(organization)) {
-      return true;
-    }
-
+  if (isLegacyOrganization(organization)) {
+    return getCurrentVariation(flagName).then(flagValue => !flagValue);
+  } else {
     return false;
-  });
+  }
 }
