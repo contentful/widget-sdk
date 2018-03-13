@@ -203,8 +203,7 @@ describe('ResourceUtils', function () {
   });
 
   describe('#useLegacy', function () {
-    // TODO: Unskip this when the feature flag is used for version 1 orgs
-    xit('should return false if given a pricing V2 organization regardless of feature flag', function* () {
+    it('should return false if given a pricing V2 organization regardless of feature flag', function* () {
       this.flags['feature-bv-2018-01-resources-api'] = false;
       expect(yield this.ResourceUtils.useLegacy(this.organization)).toBe(false);
 
@@ -212,33 +211,16 @@ describe('ResourceUtils', function () {
       expect(yield this.ResourceUtils.useLegacy(this.organization)).toBe(false);
     });
 
-    xit('should return false if given a pricing V1 organization but the feature flag is enabled', function* () {
+    it('should return false if given a pricing V1 organization but the feature flag is enabled', function* () {
       this.organization.pricingVersion = this.pricingVersions.pricingVersion1;
       this.flags['feature-bv-2018-01-resources-api'] = true;
       expect(yield this.ResourceUtils.useLegacy(this.organization)).toBe(false);
     });
 
-    xit('should return true if given a pricing V1 organization and the feature flag is not enabled', function* () {
+    it('should return true if given a pricing V1 organization and the feature flag is not enabled', function* () {
       this.organization.pricingVersion = this.pricingVersions.pricingVersion1;
       this.flags['feature-bv-2018-01-resources-api'] = false;
       expect(yield this.ResourceUtils.useLegacy(this.organization)).toBe(true);
-    });
-
-    it('should return true if the feature flag is false', function* () {
-      this.flags['feature-bv-2018-01-resources-api'] = false;
-      expect(yield this.ResourceUtils.useLegacy(this.organization)).toBe(true);
-    });
-
-    it('should return true if the feature flag is true but the org is version 1', function* () {
-      this.flags['feature-bv-2018-01-resources-api'] = true;
-      this.organization.pricingVersion = this.pricingVersions.pricingVersion1;
-      expect(yield this.ResourceUtils.useLegacy(this.organization)).toBe(true);
-    });
-
-    it('should return false if the feature flag is true and the org is version 2', function* () {
-      this.flags['feature-bv-2018-01-resources-api'] = true;
-      this.organization.pricingVersion = this.pricingVersions.pricingVersion2;
-      expect(yield this.ResourceUtils.useLegacy(this.organization)).toBe(false);
     });
   });
 
