@@ -1,51 +1,69 @@
-import { createElement as h } from 'libs/react';
+import React from 'libs/react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import { template } from '../template';
+import {
+  Origin as IncomingLinksOrigin
+} from 'analytics/events/IncomingLinks';
 
 const IncomingLinksList = createReactClass({
   propTypes: {
-    links: PropTypes.array.isRequired,
-    message: PropTypes.string.isRequired
+    links: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        title: PropTypes.string,
+        url: PropTypes.string.isRequired
+      }).isRequired
+    ).isRequired,
+    message: PropTypes.string.isRequired,
+    origin: PropTypes.oneOf([
+      IncomingLinksOrigin.DIALOG,
+      IncomingLinksOrigin.SIDEBAR
+    ]).isRequired,
+    onComponentMount: PropTypes.func,
+    onClick: PropTypes.func
+  },
+  componentDidMount () {
+    if (this.props.onComponentMount) {
+      this.props.onComponentMount();
+    }
+  },
+  handleClick (linkEntityId) {
+    if (this.props.onClick) {
+      this.props.onClick({
+        linkEntityId,
+        incomingLinksCount: this.props.links.length
+      });
+    }
   },
   render () {
     const { links, message } = this.props;
-    return h(
-      'div',
-      {
-        'data-test-id': 'links'
-      },
-      h(
-        'p',
-        { className: 'incoming-links__message' },
-        template(message, { numberOfLinks: links.length })
-      ),
-      h(
-        'ul',
-        { className: 'incoming-links__list' },
-        links.map(link => {
-          const title = link.title || 'Untitled';
-          return h(
-            'li',
-            {
-              key: link.url,
-              className: 'incoming-links__item'
-            },
-            h(
-              'a',
-              {
-                'data-test-id': 'link',
-                className: 'incoming-links__link',
-                href: link.url,
-                target: '_blank',
-                rel: 'noopener',
-                title
-              },
-              title
-            )
-          );
-        })
-      )
+    return (
+      <div data-test-id="links">
+        <p className="incoming-links__message">
+          {template(message, { numberOfLinks: links.length })}
+        </p>
+        <ul className="incoming-links__list">
+          {
+            links.map(({ id, url, ...link }) => {
+              const title = link.title || 'Untitled';
+              return (
+                <li key={url} className="incoming-links__item">
+                  <a className="incoming-links__link"
+                    href={url}
+                    target="_blank"
+                    rel="noopener"
+                    title={title}
+                    data-test-id="link"
+                    onClick={() => this.handleClick(id)}>
+                    {title}
+                  </a>
+                </li>
+              );
+            })
+          }
+        </ul>
+      </div>
     );
   }
 });

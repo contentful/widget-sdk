@@ -1,10 +1,16 @@
-import { createElement as h } from 'libs/react';
+import React from 'libs/react';
 import PropTypes from 'libs/prop-types';
 import createReactClass from 'create-react-class';
 import { Action } from 'data/CMA/EntityActions';
 import Dialog from '../Dialog';
 import { EntityType, getNumberOfLinks } from '../constants';
 import FetchLinksToEntity, { RequestState } from '../FetchLinksToEntity';
+import {
+  onDialogOpen as trackDialogOpen,
+  onDialogConfirm as trackDialogConfirm,
+  onIncomingLinkClick as trackIncomingLinkClick,
+  Origin as IncomingLinksOrigin
+} from 'analytics/events/IncomingLinks';
 
 import Loader from './Loader';
 import IncomingLinksList from '../IncomingLinksList';
@@ -22,59 +28,114 @@ const StateChangeConfirmation = createReactClass({
     ]).isRequired,
     entityInfo: PropTypes.shape({
       id: PropTypes.string,
-      type: PropTypes.oneOf([EntityType.ASSET, EntityType.ENTRY])
-    })
+      type: PropTypes.oneOf([
+        EntityType.ASSET,
+        EntityType.ENTRY
+      ])
+    }),
+    dialogSessionId: PropTypes.string.isRequired
+  },
+  handleClick ({ linkEntityId, incomingLinksCount }) {
+    const { dialogSessionId, action: dialogAction } = this.props;
+    trackIncomingLinkClick({
+      linkEntityId,
+      origin: IncomingLinksOrigin.DIALOG,
+      entityId: this.props.entityInfo.id,
+      entityType: this.props.entityInfo.type,
+      incomingLinksCount,
+      dialogAction,
+      dialogSessionId
+    });
+  },
+  handleConfirm (incomingLinksCount) {
+    const { action, dialogSessionId, entityInfo, onConfirm } = this.props;
+    onConfirm();
+    trackDialogConfirm({
+      entityId: entityInfo.id,
+      entityType: entityInfo.type,
+      dialogAction: action,
+      dialogSessionId,
+      incomingLinksCount
+    });
+  },
+  handleDialogOpen (incomingLinksCount) {
+    const { action, dialogSessionId, entityInfo } = this.props;
+    trackDialogOpen({
+      entityId: entityInfo.id,
+      entityType: entityInfo.type,
+      dialogAction: action,
+      dialogSessionId,
+      incomingLinksCount
+    });
   },
   render () {
-    const { action, entityInfo, onConfirm, onCancel } = this.props;
+    const { action, entityInfo, onCancel } = this.props;
 
-    return h(FetchLinksToEntity, {
-      id: entityInfo.id,
-      type: entityInfo.type,
-      render: ({ links, requestState }) => {
-        const actionMessages = getMessages({ action, entityInfo, links });
+    return (
+      <FetchLinksToEntity
+        {...entityInfo}
+        origin={IncomingLinksOrigin.DIALOG}
+        render={({ links, requestState }) => {
+          const { title, body, confirm } = getMessages({
+            action,
+            entityInfo,
+            links
+          });
 
-        return h(
-          Dialog,
-          {
-            testId: 'state-change-confirmation-dialog'
-          },
-          requestState !== RequestState.PENDING &&
-            h(Dialog.Header, null, actionMessages.title),
-          h(
-            Dialog.Body,
-            null,
-            requestState === RequestState.PENDING && h(Loader),
-            requestState === RequestState.SUCCESS &&
-              h(IncomingLinksList, { links, message: actionMessages.body }),
-            requestState === RequestState.ERROR && h(IncomingLinksListError)
-          ),
-          requestState !== RequestState.PENDING &&
-            h(
-              Dialog.Controls,
-              null,
-              h(
-                'button',
+          return (
+            <Dialog testId="state-change-confirmation-dialog">
+              {
+                requestState !== RequestState.PENDING &&
+                  <Dialog.Header>{title}</Dialog.Header>
+              }
+              <Dialog.Body>
                 {
-                  className: 'btn-caution',
-                  'data-test-id': 'confirm',
-                  onClick: onConfirm
-                },
-                actionMessages.confirm
-              ),
-              h(
-                'button',
+                  requestState === RequestState.PENDING &&
+                    <Loader />
+                }
                 {
-                  className: 'btn-secondary-action',
-                  'data-test-id': 'cancel',
-                  onClick: onCancel
-                },
-                'Cancel'
-              )
-            )
-        );
-      }
-    });
+                  requestState === RequestState.SUCCESS &&
+                    <IncomingLinksList
+                      origin={IncomingLinksOrigin.DIALOG}
+                      entityId={entityInfo.id}
+                      entityType={entityInfo.type}
+                      links={links}
+                      message={body}
+                      onClick={this.handleClick}
+                      onComponentMount={() => {
+                        this.handleDialogOpen(links.length);
+                      }}
+                    />
+                }
+                {
+                  requestState === RequestState.ERROR &&
+                    <IncomingLinksListError />
+                }
+              </Dialog.Body>
+              {
+                requestState !== RequestState.PENDING &&
+                  <Dialog.Controls>
+                    <button
+                      className="btn-caution"
+                      data-test-id="confirm"
+                      onClick={() => {
+                        this.handleConfirm(links.length);
+                      }}>
+                      {confirm}
+                    </button>
+                    <button
+                      className="btn-secondary-action"
+                      data-test-id="cancel"
+                      onClick={onCancel}>
+                      Cancel
+                    </button>
+                  </Dialog.Controls>
+              }
+            </Dialog>
+          );
+        }}
+      />
+    );
   }
 });
 
