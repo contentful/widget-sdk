@@ -6,9 +6,9 @@ describe('cfFileEditor Directive', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.removeDirectives('cfFileDrop');
-      $provide.value('services/Filepicker', {
-        pick: sinon.stub(),
-        parseFPFile: sinon.stub()
+      $provide.value('services/Filestack', {
+        makeDropPane: sinon.stub(),
+        pick: sinon.stub()
       });
     });
 
@@ -43,28 +43,22 @@ describe('cfFileEditor Directive', function () {
     scope = fieldApi = null;
   });
 
-  it('toggles meta info', function () {
-    scope.toggleMeta();
-    expect(scope.showMeta).toBeTruthy();
-  });
-
-  describe('scope.uploadFile()', function () {
+  describe('scope.selectFile()', function () {
     beforeEach(function () {
       fieldApi.setValue = sinon.stub().resolves();
 
-      const FP = this.$inject('services/Filepicker');
-      FP.pick.resolves('FP FILE');
-      FP.parseFPFile.returns('FILE DATA');
+      const Filestack = this.$inject('services/Filestack');
+      Filestack.pick.resolves('FILE DATA');
 
       scope.$emit = sinon.stub();
 
-      scope.uploadFile();
+      scope.selectFile();
       this.$apply();
     });
 
-    it('calls filepickers pick', function () {
-      const FP = this.$inject('services/Filepicker');
-      sinon.assert.called(FP.pick);
+    it('calls Filestack.pick', function () {
+      const Filestack = this.$inject('services/Filestack');
+      sinon.assert.called(Filestack.pick);
     });
 
     it('sets the file on the field API', function () {
@@ -80,11 +74,11 @@ describe('cfFileEditor Directive', function () {
       sinon.assert.calledWith(scope.$emit, 'fileUploaded', 'FILE DATA', scope.locale);
     });
 
-    it('runs validations on file picker 101 error', function () {
-      const FP = this.$inject('services/Filepicker');
-      FP.pick.rejects({code: 101});
+    it('runs validations on file upload errors', function () {
+      const Filestack = this.$inject('services/Filestack');
+      Filestack.pick.rejects(new Error());
 
-      scope.uploadFile();
+      scope.selectFile();
       this.$apply();
       sinon.assert.calledOnce(scope.editorContext.validator.run);
     });
@@ -94,9 +88,6 @@ describe('cfFileEditor Directive', function () {
     beforeEach(function () {
       scope.$emit = sinon.stub();
       fieldApi.removeValue = sinon.stub().resolves();
-
-      const FP = this.$inject('services/Filepicker');
-      FP.parseFPFile.withArgs(null).returns(null);
 
       scope.deleteFile();
       this.$apply();
@@ -112,43 +103,6 @@ describe('cfFileEditor Directive', function () {
 
     it('it does not emit "fileUploaded" event', function () {
       sinon.assert.notCalled(scope.$emit);
-    });
-  });
-
-  describe('on "cfFileDropped" event', function () {
-    beforeEach(function () {
-      fieldApi.setValue = sinon.stub().resolves();
-
-      const FP = this.$inject('services/Filepicker');
-      FP.pick.resolves('FP FILE');
-      FP.parseFPFile.returns('FILE DATA');
-
-      scope.$emit = sinon.stub();
-
-      scope.$broadcast('cfFileDropped', 'FP FILE');
-      this.$apply();
-    });
-
-    it('sets the file on the field API', function () {
-      sinon.assert.calledOnce(fieldApi.setValue);
-      sinon.assert.calledWithExactly(fieldApi.setValue, 'FILE DATA');
-    });
-
-    it('sets "scope.file"', function () {
-      expect(scope.file).toEqual('FILE DATA');
-    });
-
-    it('emits fileUploaded event', function () {
-      sinon.assert.calledWith(scope.$emit, 'fileUploaded', 'FILE DATA', scope.locale);
-    });
-
-    it('runs validations on file picker 101 error', function () {
-      const FP = this.$inject('services/Filepicker');
-      FP.pick.rejects({code: 101});
-
-      scope.uploadFile();
-      this.$apply();
-      sinon.assert.calledOnce(scope.editorContext.validator.run);
     });
   });
 

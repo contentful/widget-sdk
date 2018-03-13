@@ -120,12 +120,9 @@ angular.module('contentful')
       globalObject: 'embedly',
       setup: setupEmbedly
     },
-    filepicker: {
-      url: 'https://api.filepicker.io/v2/filepicker.js',
-      globalObject: 'filepicker'
-    },
-    filepickerDebug: {
-      url: 'https://api.filepicker.io/v1/filepicker_debug.js'
+    filestack: {
+      url: 'https://static.filestackapi.com/v3/filestack-0.11.1.js',
+      globalObject: 'filestack'
     },
     kaltura: {
       url: AssetResolver.resolve('app/kaltura.js'),

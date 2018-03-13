@@ -21,8 +21,8 @@
   "launchDarkly": {
     "envId": "588a17a544b03e0b32112a5e"
   },
-  "filepicker": {
-    "api_key": "AhHWTqaWRiG08OT14xd5Qz",
+  "filestack": {
+    "apiKey": "AhHWTqaWRiG08OT14xd5Qz",
     "policy": "eyJjYWxsIjpbInBpY2siLCJyZWFkIiwic3RhdCIsInN0b3JlIiwiY29udmVydCIsImV4aWYiXSwiZXhwaXJ5IjoyMjEyNjYwODAwfQ==",
     "signature": "9c530ac9496000c478a5309321ea1b749740e998a0e28eed96222ba43f7376cc"
   },

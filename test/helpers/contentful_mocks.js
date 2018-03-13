@@ -45,8 +45,7 @@ angular.module('contentful/mocks', [])
     })
   });
 
-  $provide.provider('realLogger', provider('logger'));
-  $provide.provider('realFilepicker', provider('services/Filepicker'));
+  $provide.provider('realLogger', ['loggerProvider', _.identity]);
 
   $provide.factory('logger', function () {
     return {
@@ -65,7 +64,7 @@ angular.module('contentful/mocks', [])
     };
   });
 
-  $provide.value('services/Filepicker', {
+  $provide.value('services/Filestack', {
     makeDropPane: sinon.stub(),
     pick: sinon.stub(),
     pickMultiple: sinon.stub(),
@@ -136,8 +135,4 @@ angular.module('contentful/mocks', [])
     });
     return stubs;
   };
-
-  function provider (name) {
-    return [name + 'Provider', _.identity];
-  }
 }]);

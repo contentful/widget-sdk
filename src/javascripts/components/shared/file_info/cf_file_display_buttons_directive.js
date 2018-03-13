@@ -14,7 +14,7 @@ angular.module('contentful')
       function canEditFile () {
         var file = $scope.file;
         var isReady = !$scope.imageIsLoading && file && file.url;
-        return isEditable() && isImage() && $scope.enableUpload && isReady;
+        return isEditable() && isImage() && isReady;
       }
 
       function canDeleteFile () {

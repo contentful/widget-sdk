@@ -20,14 +20,12 @@
 
   .file-metadata(cf-file-display-metadata ng-show="showMeta")
 
-  .title-overlay(ng-hide="file || enableUpload")
-    | {{title}}
-  .no-file.center.vcenter(ng-hide="file || enableUpload")
-    | Asset has no file
   .no-file.center.vcenter(ng-show="!file && fieldLocale.access.denied")
     | You don't have a permission to edit this field.
 
   cf-file-display-buttons
 
-  .cf-file-drop(cf-file-drop ng-show="fieldLocale.access.editable && !file && enableUpload")
-    button.btn-secondary-action.upload-button(type="button" ng-click="uploadFile()") Or open file picker
+  .file-selector(ng-show="!file && fieldLocale.access.editable")
+    .__filestack-drop-pane-mount
+    .file-selector-btn-wrapper
+      button.btn-secondary-action(type="button" ng-click="selectFile()") Or open file selector
