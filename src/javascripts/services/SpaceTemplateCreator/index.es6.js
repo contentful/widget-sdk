@@ -83,16 +83,18 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
       if (template.editorInterfaces) {
         const editorInterfacesPromise = Promise.all(
           template.editorInterfaces.map(editorInterface => {
-            const contentType = publishedCTs.find(
-              contentType => {
-                const editorInterfaceId = _.get(editorInterface, 'sys.contentType.sys.id');
-                const contentTypeId = _.get(contentType, 'data.sys.id');
+            // function to validate matching content type and editor interface
+            const validateCT = contentType => {
+              const editorInterfaceId = _.get(editorInterface, 'sys.contentType.sys.id');
+              const contentTypeId = _.get(contentType, 'data.sys.id');
 
-                // we need to ensure that they are truthy
-                return editorInterfaceId && editorInterfaceId === contentTypeId;
-              }
-            );
+              // we need to ensure that ids are truthy
+              return editorInterfaceId && editorInterfaceId === contentTypeId;
+            };
 
+            const contentType = publishedCTs.find(validateCT);
+
+            // if we don't return a promise, `Promise.all` resolves it automatically
             if (contentType) {
               return createEditingInterface(contentType.data, editorInterface);
             }
