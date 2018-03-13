@@ -28,9 +28,11 @@ angular.module('cf.app')
     'feature-at-02-2018-inline-reference-field';
 
   var TheLocaleStore = require('TheLocaleStore');
+  var $q = require('$q');
   var K = require('utils/kefir');
   var getStore = require('TheStore').getStore;
   var spaceContext = require('spaceContext');
+  var EntityHelpers = require('EntityHelpers');
   var LD = require('utils/LaunchDarkly');
   var trackInlineEditorToggle = require('analytics/events/ReferenceEditor').onToggleInlineEditor;
 
@@ -109,6 +111,14 @@ angular.module('cf.app')
         var ctExpandedStoreKey = getCTExpandedStoreKey(locale);
         var newVal = !isLocaleFieldExpanded(locale);
         var localeCode = locale.code;
+
+        getFieldOrLinkCt(localeCode).then(function (linkContentType) {
+          trackInlineEditorToggle({
+            contentType: linkContentType,
+            toggleState: newVal
+          });
+        });
+
         $scope.data.expandedStates[localeCode] = newVal;
         $scope.$broadcast('ct-expand-state:toggle', [
           field.name,
@@ -116,11 +126,6 @@ angular.module('cf.app')
           newVal
         ]);
         store.set(ctExpandedStoreKey, newVal);
-
-        trackInlineEditorToggle({
-          contentType: $scope.editorData.contentType,
-          toggleState: newVal
-        });
       }
 
       function isLocaleFieldExpanded (locale) {
@@ -132,9 +137,24 @@ angular.module('cf.app')
         return [
           spaceContext.user.sys.id,
           $scope.editorContext.entityInfo.contentTypeId,
-          field.name,
+          field.name, // Should actually be field.id
           locale.code
         ].join(':');
+      }
+
+      function getFieldOrLinkCt (localeCode) {
+        var validIds = EntityHelpers.contentTypeFieldLinkCtIds(field);
+        if (validIds.length === 1) {
+          return spaceContext.publishedCTs.fetch(validIds[0]);
+        }
+        var linkedEntry = $scope.fields[field.apiName].getValue(localeCode);
+        if (linkedEntry) {
+          return spaceContext.space.getEntry(linkedEntry.sys.id).then(function (entry) {
+            var contentTypeId = entry.data.sys.contentType.sys.id;
+            return spaceContext.publishedCTs.get(contentTypeId);
+          });
+        }
+        return $q.resolve(null);
       }
 
       function updateErrorStatus () {

@@ -22,12 +22,13 @@ describe('ReferenceEditor', function () {
     );
 
     this.referenceEditorEvents = referenceEditorEvents;
+
+    this.TheLocaleStore.getActiveLocales.returns([{}]);
   });
 
   describe('onEntryCreate', function () {
     it('tracks entry create', function () {
       const contentType = getMockContentType();
-      this.TheLocaleStore.getActiveLocales.returns([{}]);
 
       this.referenceEditorEvents.onEntryCreate({
         contentType,
@@ -53,7 +54,6 @@ describe('ReferenceEditor', function () {
   describe('onEntryEdit', function () {
     it('tracks entry edit', function () {
       const contentType = getMockContentType();
-      this.TheLocaleStore.getActiveLocales.returns([{}]);
 
       this.referenceEditorEvents.onEntryEdit({ contentType });
 
@@ -73,9 +73,8 @@ describe('ReferenceEditor', function () {
   });
 
   describe('onToggleInlineEditor', function () {
-    it('tracks inline bulk editor toggle ', function () {
+    it('tracks inline editor toggle ', function () {
       const contentType = getMockContentType();
-      this.TheLocaleStore.getActiveLocales.returns([{}]);
 
       this.referenceEditorEvents.onToggleInlineEditor({
         contentType,
@@ -90,7 +89,30 @@ describe('ReferenceEditor', function () {
           locales_count: 1,
           localized_fields_count: 1,
           widgets_count: 2,
-          toggle_state: false
+          toggle_state: false,
+          version: 2
+        }
+      );
+    });
+
+    it('tracks inline editor toggle without content type', function () {
+      const contentType = null;
+
+      this.referenceEditorEvents.onToggleInlineEditor({
+        contentType,
+        toggleState: true
+      });
+
+      sinon.assert.calledWith(
+        this.analytics.track,
+        'reference_editor:toggle_inline_editor',
+        {
+          fields_count: 0,
+          locales_count: 1,
+          localized_fields_count: 0,
+          widgets_count: 0,
+          toggle_state: true,
+          version: 2
         }
       );
     });
