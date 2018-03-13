@@ -1,4 +1,4 @@
-import { createElement as h } from 'libs/react';
+import React from 'libs/react';
 import PropTypes from 'libs/prop-types';
 import createReactClass from 'create-react-class';
 
@@ -8,13 +8,10 @@ const Dialog = createReactClass({
     children: PropTypes.node
   },
   render () {
-    return h(
-      'div',
-      {
-        className: 'modal-dialog',
-        'data-test-id': this.props.testId
-      },
-      this.props.children
+    return (
+      <div className="modal-dialog" data-test-id={this.props.testId}>
+        {this.props.children}
+      </div>
     );
   }
 });
@@ -24,13 +21,10 @@ const Header = createReactClass({
     children: PropTypes.node
   },
   render () {
-    return h(
-      'header',
-      {
-        className: 'modal-dialog__header',
-        'data-test-id': 'header'
-      },
-      h('h1', {}, this.props.children)
+    return (
+      <header className="modal-dialog__header" data-test-id="header">
+        <h1>{this.props.children}</h1>
+      </header>
     );
   }
 });
@@ -40,17 +34,12 @@ const Body = createReactClass({
     children: PropTypes.node
   },
   render () {
-    return h(
-      'div',
-      { className: 'modal-dialog__content' },
-      h(
-        'div',
-        {
-          className: 'modal-dialog__richtext',
-          'data-test-id': 'content'
-        },
-        this.props.children
-      )
+    return (
+      <div className="modal-dialog__content">
+        <div className="modal-dalog__richtext" data-test-id="content">
+          {this.props.children}
+        </div>
+      </div>
     );
   }
 });
@@ -60,13 +49,10 @@ const Controls = createReactClass({
     children: PropTypes.node
   },
   render () {
-    return h(
-      'div',
-      {
-        className: 'modal-dialog__controls',
-        'data-test-id': 'controls'
-      },
-      this.props.children
+    return (
+      <div className="modal-dialog__controls" data-test-id="controls">
+        {this.props.children}
+      </div>
     );
   }
 });
