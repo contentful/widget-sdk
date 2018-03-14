@@ -17,7 +17,7 @@ import {
   canPerformActionOnEntryOfType,
   Action
 } from 'access_control/AccessChecker';
-import { canLinkToContentType } from './utils';
+import { canLinkToContentType, getInlineEditingStoreKey } from './utils';
 import { getStore } from 'TheStore';
 
 const FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN =
@@ -92,13 +92,12 @@ export default function create ($scope, widgetApi) {
   });
 
   function isInlineEditingEnabledForField () {
-    const ctExpandedStoreKey = [
-      'inlineRefEditing',
+    const ctExpandedStoreKey = getInlineEditingStoreKey(
       spaceContext.user.sys.id,
       contentTypeId,
       field.id,
       field.locale
-    ].join('.');
+    );
     return store.get(ctExpandedStoreKey);
   }
 
