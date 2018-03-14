@@ -1,6 +1,7 @@
 import React from 'libs/react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
+import enhanceWithClickOutside from 'libs/react-click-outside';
 
 const ContextMenu = createReactClass({
   propTypes: {
@@ -14,32 +15,14 @@ const ContextMenu = createReactClass({
     };
   },
 
-  componentWillUnmount () {
-    this.unbindCloseHandler();
-  },
-
-  bindCloseHandler () {
-    document.body.addEventListener('click', this.close);
-  },
-
-  unbindCloseHandler () {
-    document.body.removeEventListener('click', this.close);
-  },
-
-  toggle () {
-    this.setState({isOpen: !this.state.isOpen}, () => {
-      this.state.isOpen
-        ? this.bindCloseHandler()
-        : this.unbindCloseHandler();
+  handleClickOutside () {
+    this.setState({
+      isOpen: false
     });
   },
 
-  close (evt) {
-    // return if the click is on the menu
-    if (this.menuElement.contains(evt.target)) return;
-
-    this.unbindCloseHandler();
-    this.setState({isOpen: false});
+  toggle () {
+    this.setState({isOpen: !this.state.isOpen});
   },
 
   render () {
@@ -79,4 +62,4 @@ const ContextMenu = createReactClass({
   }
 });
 
-export default ContextMenu;
+export default enhanceWithClickOutside(ContextMenu);
