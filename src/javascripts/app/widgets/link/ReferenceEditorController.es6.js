@@ -93,11 +93,12 @@ export default function create ($scope, widgetApi) {
 
   function isInlineEditingEnabledForField () {
     const ctExpandedStoreKey = [
+      'inlineRefEditing',
       spaceContext.user.sys.id,
       contentTypeId,
-      field.name,
+      field.id,
       field.locale
-    ].join(':');
+    ].join('.');
     return store.get(ctExpandedStoreKey);
   }
 
@@ -228,11 +229,11 @@ export default function create ($scope, widgetApi) {
     return getUnpublishedReferences().length > 0;
   }
 
-  function handleInlineReferenceEditorToggle (name, locale, shouldEditInline) {
-    if (name !== field.name || locale !== field.locale) {
+  function handleInlineReferenceEditorToggle (id, locale, enableInlineEditing) {
+    if (id !== field.id || locale !== field.locale) {
       return;
     }
-    if (shouldEditInline) {
+    if (enableInlineEditing) {
       $scope.referenceType = { inline: true };
       return;
     }

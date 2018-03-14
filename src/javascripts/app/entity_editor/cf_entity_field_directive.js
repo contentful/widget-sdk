@@ -121,7 +121,7 @@ angular.module('cf.app')
 
         $scope.data.expandedStates[localeCode] = newVal;
         $scope.$broadcast('ct-expand-state:toggle', [
-          field.name,
+          field.apiName,
           localeCode,
           newVal
         ]);
@@ -135,11 +135,12 @@ angular.module('cf.app')
 
       function getCTExpandedStoreKey (locale) {
         return [
+          'inlineRefEditing',
           spaceContext.user.sys.id,
           $scope.editorContext.entityInfo.contentTypeId,
-          field.name, // Should actually be field.id
+          field.apiName, // Should be .id wich is not available via widgetApi though.
           locale.code
-        ].join(':');
+        ].join('.');
       }
 
       function getFieldOrLinkCt (localeCode) {

@@ -30,7 +30,7 @@ export function onToggleInlineEditor ({ contentType, toggleState }) {
     ...getLocalesInfo(),
     ...getToggleState(toggleState),
     ...getContentTypeInfo(contentType),
-    version: 2
+    version: 3
   });
 }
 
