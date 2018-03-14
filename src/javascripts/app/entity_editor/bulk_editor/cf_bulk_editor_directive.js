@@ -117,7 +117,7 @@ angular.module('contentful')
         ? $scope.entityContexts.length + nextFocusIndex
         : nextFocusIndex;
       var focusContext = $scope.entityContexts[focusIndex];
-      if (focusContext) {
+      if (focusContext && !$scope.renderInline) {
         scrollTargetBus.emit(focusContext.key);
       }
       nextFocusIndex = null;
