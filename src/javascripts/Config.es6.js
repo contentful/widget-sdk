@@ -1,6 +1,7 @@
 import qs from 'libs/qs';
 import { getStore } from 'TheStore';
 import {settings} from 'environment';
+import { sample } from 'lodash';
 
 /**
  * @ngdoc service
@@ -88,7 +89,7 @@ export function accountUrl (path) {
  * @param {string} path
  * @returns {string}
  */
-export const otUrl = settings.otUrl;
+export const otUrl = sample(settings.otUrl);
 
 /**
  * @ngdoc property

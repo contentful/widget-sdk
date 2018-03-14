@@ -3,7 +3,7 @@
   "authUrl" : "//be.contentful.com",
   "apiUrl" : "//api.contentful.com",
   "mockApiUrl" : "",
-  "otUrl" : "//ot.contentful.com",
+  "otUrl" : ["//ot1.contentful.com", "//ot2.contentful.com", "//ot3.contentful.com", "//ot4.contentful.com", "//ot5.contentful.com", "//ot6.contentful.com", "//ot7.contentful.com", "//ot8.contentful.com"],
   "assetUrl" : "//static.contentful.com",
   "marketingUrl" : "//www.contentful.com",
   "main_domain" : "contentful.com",

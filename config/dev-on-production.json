@@ -4,7 +4,7 @@
   "apiUrl": "https://api.contentful.com",
   "mockApiUrl" : "",
   "assetUrl": "//localhost:3001",
-  "otUrl": "https://ot.contentful.com",
+  "otUrl": ["https://ot1.contentful.com", "https://ot2.contentful.com", "https://ot3.contentful.com", "https://ot4.contentful.com", "https://ot5.contentful.com", "https://ot6.contentful.com", "https://ot7.contentful.com", "https://ot8.contentful.com"],
   "marketingUrl": "https://www.contentful.com",
   "main_domain": "contentful.com",
   "toolsServiceUrl": "https://tools.contentful.com",

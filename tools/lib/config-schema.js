@@ -25,9 +25,14 @@ const urlSchema = {
   format: 'uri-reference'
 };
 
+const urlsArraySchema = {
+  type: 'array',
+  items: urlSchema
+};
+
 // For each item 'x' we require a property 'xUrl' that has a URL format.
 const URL_KEYS = [
-  'auth', 'api', 'ot', 'asset', 'marketing', 'toolsService', 'mockApi'
+  'auth', 'api', 'asset', 'marketing', 'toolsService', 'mockApi'
 ];
 
 module.exports = strictObject(Object.assign({
@@ -47,12 +52,13 @@ module.exports = strictObject(Object.assign({
   clientId: hex(64)
 });
 
-
 function hosts () {
   const props = {};
   for (const key of URL_KEYS) {
     props[key + 'Url'] = urlSchema;
   }
+  props['otUrl'] = urlsArraySchema;
+
   return props;
 }
 
