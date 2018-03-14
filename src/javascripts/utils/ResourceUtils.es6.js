@@ -129,14 +129,14 @@ export function getLegacyUsage (resourceType, organization) {
   return allUsages[resourceType];
 }
 
-function resourceIncludedLimitReached (resource) {
+export function resourceIncludedLimitReached (resource) {
   const limitIncluded = getResourceLimits(resource).included;
   const usage = resource.usage;
 
   return Boolean(limitIncluded && usage >= limitIncluded);
 }
 
-function resourceMaximumLimitReached (resource) {
+export function resourceMaximumLimitReached (resource) {
   const limitMaximum = getResourceLimits(resource).maximum;
   const usage = resource.usage;
 

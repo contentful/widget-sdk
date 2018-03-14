@@ -1,35 +1,71 @@
-.resource-list__item
-  border: 1px solid $colors.element-mid
-  box-shadow: 0px 1px 2px 0px hsla(black, 0.1)
-  display: block
-  margin: 0 auto 16px
-  display: flex
-  flex-direction: column
-  height: 60px
-  justify-content: space-between
+.resource-list
+  margin: 40px
 
-.resource-list__item__content
-  display: flex
-  align-items: center
-  height: 60px;
-  padding: 0 20px;
+  &__highlights
+    display: flex
+    flex-direction: row
+    justify-content: space-between
+    flex-wrap: wrap
 
-.resource-list__item__title
-  margin: 0
-  flex-grow: 1
+  &__item
+    border: 1px solid $colors.element-mid
+    box-shadow: 0px 1px 2px 0px hsla(black, 0.1)
+    display: block
+    margin: 0 0 16px
+    display: flex
+    flex-direction: column
+    height: 60px
+    justify-content: space-between
 
-.resource-list__item__usage
-  text-align: right
+    &__column
+      display: flex
+      flex-grow: 1
+      align-items: center
 
-.resource-list__item__icon
-  margin-right: 10px
-  margin-bottom -3px
+    &__content
+      display: flex
+      align-items: center
+      height: 60px;
+      padding: 0 20px;
 
-.progress-bar
-  width: 100%
+    &__title
+      margin: 0
 
-.progress-bar__current
-  display: block
-  background: $colors.green-light
-  height: 2px
-  position relative
+    &__description
+      font-size: $base-font-size
+      color: $colors.text-light
+      margin-left: 10px
+      font-weight: normal
+
+    &__icon
+      margin-right: 10px
+      margin-bottom -3px
+
+    &--highlight
+      height: auto
+      flex-grow: 1
+      flex-basis: 0
+      margin-right: 20px
+      position: relative
+      &:last-child
+        margin-right: 0
+      .resource-list__item__content
+        height: 100px
+      .resource-list__item__usage
+        font-size: 40px
+        line-height: 1
+        font-weight: bold
+        display: block
+      .resource-list__item__menu
+        position: absolute
+        right: 20px
+        top: 15px;
+
+// the following showld be global/common
+.btn-actions-nav
+  font-size: .6em;
+  letter-spacing: 0.18em
+
+  &[disabled]
+    color: $colors.light-gray
+    cursor: default

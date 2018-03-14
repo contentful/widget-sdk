@@ -4,8 +4,17 @@ import PropTypes from 'libs/prop-types';
 import * as ReloadNotification from 'ReloadNotification';
 import Workbench from 'app/WorkbenchReact';
 import Icon from 'ui/Components/Icon';
+import ContextMenu from 'ui/Components/ContextMenu';
 import createResourceService from 'services/ResourceService';
+import {go} from 'states/Navigator';
+import {resourceMaximumLimitReached} from 'utils/ResourceUtils';
+import {supportUrl} from 'Config';
+import * as Intercom from 'intercom';
 import {byName as colors} from 'Styles/Colors';
+
+import {highlightedResources, resourcesByPriority} from './SpaceUsageConfig';
+import {ProgressBar} from './ProgressBar';
+
 
 const iconsMap = {
   api_key: 'page-apis',
@@ -19,50 +28,37 @@ const iconsMap = {
   environment: 'page-settings'
 };
 
-const ProgressBar = ({current, maximum}) => {
-  const percentual = 100 / maximum * current;
-  const width = `${Math.min(percentual, 100)}%`;
-  const getColor = (percentual) => {
-    if (percentual >= 100) {
-      return colors.redLight;
-    } else if (percentual > 75) {
-      return colors.orangeLight;
-    }
-    return colors.greenLight;
-  };
-
-  return (
-    <div className="progress-bar">
-      <span
-        className="progress-bar__current"
-        style={{width, backgroundColor: getColor(percentual)}}
-      ></span>
-    </div>
-  );
-};
-ProgressBar.propTypes = {
-  current: PropTypes.number.isRequired,
-  maximum: PropTypes.number.isRequired
+const getIcon = (id) => {
+  return iconsMap[id] || 'page-settings';
 };
 
-const ResourceUsage = ({resource}) => {
-  const getIcon = (id) => {
-    return iconsMap[id] || 'page-settings';
-  };
+const ResourceUsage = ({resource, name, description, path}) => {
+  const menuItems = [];
+  path && menuItems.push({
+    label: 'Go to page',
+    action: () => go({path})
+  });
 
   return (
     <div className="resource-list__item">
       <div className="resource-list__item__content">
-        <Icon
-          className="resource-list__item__icon"
-          name={getIcon(resource.sys.id)}
-          scale="0.5"
-        />
-        <h3 className="resource-list__item__title">{resource.name}</h3>
+        <div className="resource-list__item__column">
+          <Icon
+            className="resource-list__item__icon"
+            name={getIcon(resource.sys.id)}
+            scale={0.5}
+            />
+          <h3 className="resource-list__item__title">
+            {name}
+            {description && <small className="resource-list__item__description"> {description}</small>}
+          </h3>
+        </div>
+
         <span className="resource-list__item__usage">
           {resource.usage}
           {resource.limits.maximum && ` out of ${resource.limits.maximum}`}
         </span>
+        <ContextMenu items={menuItems} />
       </div>
       {resource.limits.maximum &&
         <ProgressBar current={resource.usage} maximum={resource.limits.maximum} />
@@ -71,7 +67,138 @@ const ResourceUsage = ({resource}) => {
   );
 };
 ResourceUsage.propTypes = {
-  resource: PropTypes.object.isRequired
+  resource: PropTypes.object.isRequired,
+  name: PropTypes.string.isRequired,
+  description: PropTypes.string,
+  path: PropTypes.array
+};
+
+const ResourceUsageHighlight = ({resource, name, path}) => {
+  const menuItems = [];
+  path && menuItems.push({
+    label: 'Go to page',
+    action: () => go({path})
+  });
+
+  return (
+    <div className="resource-list__item resource-list__item--highlight">
+      <div className="resource-list__item__content">
+        <Icon
+          className="resource-list__item__icon"
+          name={getIcon(resource.sys.id)}
+        />
+        <div>
+          <span className="resource-list__item__usage">{resource.usage}</span>
+          <span className="resource-list__item__title">{name}</span>
+        </div>
+        <div className="resource-list__item__menu">
+          <ContextMenu items={menuItems} />
+        </div>
+      </div>
+    </div>
+  );
+};
+ResourceUsageHighlight.propTypes = {
+  resource: PropTypes.object.isRequired,
+  name: PropTypes.string.isRequired,
+  path: PropTypes.array
+};
+
+const ResourceUsageList = ({resources}) => {
+  const findById = id => resources.find(item => item.sys.id === id);
+
+  return (
+    resources && resources.length
+    ? <div className="resource-list">
+      <section className="resource-list__highlights">
+        {highlightedResources.map(item =>
+          <ResourceUsageHighlight
+            key={item.id}
+            resource={findById(item.id)}
+            {...item}
+          />
+        )}
+      </section>
+      {resourcesByPriority.map(item =>
+        <ResourceUsage
+          key={item.id}
+          resource={findById(item.id)}
+          {...item}
+        />
+      )}
+    </div>
+    : ''
+  );
+};
+ResourceUsageList.propTypes = {
+  resources: PropTypes.arrayOf(PropTypes.object)
+};
+
+const SpaceUsageSidebar = ({resources}) => {
+  const limitsReached = resources
+    .filter(resourceMaximumLimitReached)
+    .map(resource => {
+      return [...highlightedResources, ...resourcesByPriority]
+        .find(item => item.id === resource.sys.id)
+        .name;
+    });
+
+  const contactUs = () => {
+    // Open intercom if it's possible, otherwise go to support page.
+    if (Intercom.isEnabled()) {
+      Intercom.open();
+    } else {
+      window.open(supportUrl);
+    }
+  };
+
+  return (
+    <div className="entity-sidebar">
+      <p>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://www.contentful.com/developers/docs/technical-limits/"
+        >Technical limits apply</a>
+      </p>
+
+      {limitsReached.length
+        ? <p className="note-box--info">
+            You have reached the limit for
+            {limitsReached.length > 2
+              ? ' a few of your space resources. '
+              : ` ${limitsReached.join(' and ')}. `
+            }
+            Consider upgrading your space plan.
+          </p>
+        : ''
+      }
+
+      <h3 className="entity-sidebar__heading">Need help?</h3>
+      <p className="entity-sidebar__help-text">
+        {`Do you need help to up- or downgrade?
+        Don't hesitate to our customer success team.`}
+      </p>
+      <p>
+        <Icon
+          name="bubble"
+          style={{
+            fill: colors.blueDarkest,
+            paddingRight: '6px',
+            position: 'relative',
+            bottom: '-0.125em'
+          }}
+        />
+        <button
+          onClick={contactUs}
+          className="text-link"
+        >Get in touch with us</button>
+      </p>
+    </div>
+  );
+};
+SpaceUsageSidebar.propTypes = {
+  resources: PropTypes.arrayOf(PropTypes.object)
 };
 
 const SpaceUsage = createReactClass({
@@ -101,20 +228,8 @@ const SpaceUsage = createReactClass({
     return (
       <Workbench
         title="Usage"
-        icon="subscription"
-        content={
-          <div style={{padding: '2rem 3.15rem'}}>
-            {resources.map(resource => <ResourceUsage resource={resource} key={resource.sys.id} />)}
-          </div>
-        }
-        sidebar={
-          <div className="entity-sidebar">
-            <p><a href="">Fair usage limits apply</a></p>
-
-            <h3 className="entity-sidebar__heading">Need help?</h3>
-            <p>{'Do you need help to up- or downgrade? Don\'t hesitate to talk to one of our customer success team'}</p>
-          </div>
-        }
+        content={<ResourceUsageList resources={resources} />}
+        sidebar={<SpaceUsageSidebar resources={resources} />}
       />
     );
   }
