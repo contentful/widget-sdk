@@ -35,6 +35,10 @@ angular.module('contentful')
   {
     from: 'newMarkdown',
     to: 'markdown'
+  },
+  {
+    from: 'kalturaMultiVideoEditor',
+    to: 'listInput'
   }
 ])
 
