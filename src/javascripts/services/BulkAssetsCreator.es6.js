@@ -1,14 +1,14 @@
 import {identity, isString} from 'lodash';
 import $q from '$q';
 import $timeout from '$timeout';
-import * as Filepicker from 'services/Filepicker';
+import * as Filestack from 'services/Filestack';
 import logger from 'logger';
 import notification from 'notification';
 import stringUtils from 'stringUtils';
 import spaceContext from 'spaceContext';
 
 /**
- * Opens filepicker to select media files which will then be uploaded as assets.
+ * Opens file selector to select files which will then be uploaded as assets.
  * The resolved assets will still be in processing once `open()` resolves. Any
  * remote action triggered on these instances will fail as they are invalid
  * as long as processing is not done and once it is done the version will be
@@ -21,18 +21,18 @@ export function open (localeCode) {
   if (!isString(localeCode)) {
     throw new TypeError('locale must be a string');
   }
-  return Filepicker.pickMultiple().then(uploadFPFiles, (fpError) => {
-    if (!Filepicker.isUserClosedDialogError(fpError)) {
-      notification.error(
-        'An error occurred while uploading multiple assets. ' +
-        'Please contact support if this problem persists.'
-      );
-    }
+
+  return Filestack.pickMultiple().then(createAssetsForFiles, () => {
+    notification.error(
+      'An error occurred while uploading multiple assets. ' +
+      'Please contact support if this problem persists.'
+    );
+
     return [];
   });
 
-  function uploadFPFiles (fpFiles) {
-    return $q.all(fpFiles.map(createAssetForFile)).then((assets) => {
+  function createAssetsForFiles (files) {
+    return $q.all(files.map(createAssetForFile)).then((assets) => {
       assets = assets.filter(identity);
       notification.info('Assets uploaded. Processing…');
       return $q.all(assets.map(processAssetForFile)).then(() => {
@@ -49,8 +49,7 @@ export function open (localeCode) {
     });
   }
 
-  function createAssetForFile (fpFile) {
-    const file = Filepicker.parseFPFile(fpFile);
+  function createAssetForFile (file) {
     const title = stringUtils.fileNameToTitle(file.fileName);
     const data = {
       sys: { type: 'Asset' },

@@ -49,7 +49,6 @@ test/unit/webhooks/webhook_health_directive_spec.js
 test/unit/webhooks/webhook_repository_spec.js
 test/helpers/deep_diff.js
 test/integration/field_validation_dialog_spec.js
-src/javascripts/components/shared/file_drop/cf_file_drop_directive.js
 src/javascripts/components/shared/file_info/cf_file_display_metadata_directive.js
 src/javascripts/components/shared/file_info/cf_file_display_directive.js
 src/javascripts/components/shared/validation_error_display/cf_error_list_directive.js

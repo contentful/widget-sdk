@@ -6,14 +6,19 @@
     i.fa.fa-download
   button.btn-secondary-action(type="button"
     aria-label="Show file information" tooltip="Show file information"
-    ng-click="toggleMeta()"
+    ng-click="showMeta = !showMeta"
     ng-show="file")
     i.fa.fa-info-circle
   button.btn-secondary-action(type="button"
-    aria-label="Edit file" tooltip="Edit file"
-    ng-click="editFile()"
+    aria-label="Edit file" tooltip="Edit image"
+    ng-click="editWithFilestack()"
     ng-show="canEditFile()")
-    i.fa.fa-pencil-square-o
+    i.fa.fa-crop
+  button.btn-secondary-action(type="button"
+    aria-label="Edit file" tooltip="Open Adobe Creative Editor"
+    ng-click="editWithAviary()"
+    ng-show="canEditFile()")
+    i.fa.fa-paint-brush
   button.btn-secondary-action(type="button"
     aria-label="Delete file" tooltip="Delete file"
     ng-click="deleteFile()"
