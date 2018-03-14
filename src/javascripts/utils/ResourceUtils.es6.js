@@ -1,5 +1,6 @@
 import { getCurrentVariation } from 'utils/LaunchDarkly';
 import { assign } from 'lodash';
+import $q from '$q';
 
 const flagName = 'feature-bv-2018-01-resources-api';
 
@@ -68,7 +69,7 @@ export function useLegacy (organization) {
   if (isLegacyOrganization(organization)) {
     return getCurrentVariation(flagName).then(flagValue => !flagValue);
   } else {
-    return Promise.resolve(false);
+    return $q.resolve(false);
   }
 }
 

@@ -118,7 +118,6 @@ describe('The Webhook Definition list directive', function () {
 
     // Newer organization
     this.organization.pricingVersion = 'pricing_version_2';
-    this.LD.getCurrentVariation.resolves(true);
     this.compile();
 
     expect(this.container.find('.entity-sidebar').length).toBe(1);
@@ -159,7 +158,6 @@ describe('The Webhook Definition list directive', function () {
   describe('Version 2 organizations', function () {
     beforeEach(function () {
       this.organization.pricingVersion = 'pricing_version_2';
-      this.LD.getCurrentVariation.resolves(true);
     });
 
     it('should show an "empty" message when there are no webhooks', function () {
