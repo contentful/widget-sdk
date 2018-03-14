@@ -8,7 +8,6 @@ angular.module('contentful')
 .factory('widgets', ['require', function (require) {
   var $q = require('$q');
   var fieldFactory = require('fieldFactory');
-  var checks = require('widgets/checks');
   var WidgetStore = require('widgets/store');
   var deepFreeze = require('utils/Freeze').deepFreeze;
 
@@ -138,8 +137,7 @@ angular.module('contentful')
           options: optionsForWidget(widget.id)
         });
       });
-    })
-    .then(checks.markMisconfigured);
+    });
   }
 
   function typesForField (field) {

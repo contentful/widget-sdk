@@ -27,7 +27,6 @@ test/unit/services/editing_interfaces_helpers_spec.js
 test/unit/services/features_spec.js
 test/unit/services/promised_loader_spec.js
 test/unit/services/reload_notification_spec.js
-test/unit/widgets/checks_spec.js
 test/unit/widgets/builtin_spec.js
 test/unit/widgets/migrations_spec.js
 test/unit/data/content_types_spec.js
@@ -133,7 +132,6 @@ src/javascripts/navigation/confirm_leave_editor.js
 src/javascripts/navigation/close_state.js
 src/javascripts/ui/cf_ui_tab.js
 src/javascripts/widgets/id_map.js
-src/javascripts/widgets/checks.js
 src/javascripts/widgets/migrations.js
 src/javascripts/data/content_types.js
 src/javascripts/data/editing_interfaces/transformer.js
