@@ -19,6 +19,7 @@ import UserIcon from 'svg/icon-users';
 import GithubIcon from 'svg/icon-github';
 import AddUserIcon from 'svg/onboarding-add-user';
 import PageSettings from 'svg/page-settings';
+import Bubble from 'svg/bubble';
 
 const SVGS = {
   'home-welcome': HomeWelcomeIcon,
@@ -35,7 +36,8 @@ const SVGS = {
   'icon-users': UserIcon,
   'icon-github': GithubIcon,
   'onboarding-add-user': AddUserIcon,
-  'page-settings': PageSettings
+  'page-settings': PageSettings,
+  'bubble': Bubble
 };
 
 const Icon = createReactClass({
@@ -43,8 +45,8 @@ const Icon = createReactClass({
     className: PropTypes.string,
     style: PropTypes.object,
     name: PropTypes.string.isRequired,
-    scale: PropTypes.oneOf([PropTypes.string, PropTypes.number]),
-    height: PropTypes.oneOf([PropTypes.string, PropTypes.number])
+    scale: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    height: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
   },
   getInitialState () {
     return {
@@ -76,7 +78,7 @@ const Icon = createReactClass({
   render () {
     const { className, style } = this.props;
     const { Icon } = this.state;
-    return h('div', {className, style, ref: node => { this.container = node; }}, asReact(Icon));
+    return h('span', {className, style, ref: node => { this.container = node; }}, asReact(Icon));
   }
 });
 
