@@ -9,7 +9,6 @@ angular.module('contentful')
   var $q = require('$q');
   var fieldFactory = require('fieldFactory');
   var checks = require('widgets/checks');
-  var deprecations = require('widgets/deprecations');
   var WidgetStore = require('widgets/store');
   var deepFreeze = require('utils/Freeze').deepFreeze;
 
@@ -128,17 +127,9 @@ angular.module('contentful')
    * method always gets the latest custom widgets from the widgets endpoint.
    *
    * @param {API.ContentType.Field} field
-   *
-   * @param {string} currentWidgetId
-   * If the current widget is deprecated, do not remove it from the
-   * list of available widgets.
-   *
-   * @param {boolean} preview
-   * Include preview widgets.
-   *
    * @return {Promise<Array<Widget.Descriptor>>}
    */
-  function getAvailable (field, currentWidgetId, preview) {
+  function getAvailable (field) {
     return refreshWidgetCache()
     .then(typesForField.bind(null, field))
     .then(function (widgets) {
@@ -148,7 +139,6 @@ angular.module('contentful')
         });
       });
     })
-    .then(deprecations.createFilter(currentWidgetId, field, preview))
     .then(checks.markMisconfigured);
   }
 
