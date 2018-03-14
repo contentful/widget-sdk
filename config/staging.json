@@ -3,7 +3,7 @@
   "authUrl": "//be.flinkly.com",
   "apiUrl": "//api.flinkly.com",
   "mockApiUrl" : "",
-  "otUrl": "//ot.flinkly.com",
+  "otUrl": ["https://ot.flinkly.com", "https://ot1.flinkly.com", "https://ot2.flinkly.com", "https://ot3.flinkly.com", "https://ot4.flinkly.com"],
   "assetUrl" : "//static.flinkly.com",
   "marketingUrl": "//www.flinkly.com",
   "main_domain" : "flinkly.com",

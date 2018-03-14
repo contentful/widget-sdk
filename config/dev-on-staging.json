@@ -4,7 +4,7 @@
   "apiUrl": "https://api.flinkly.com",
   "mockApiUrl" : "",
   "assetUrl": "//localhost:3001",
-  "otUrl": "https://ot.flinkly.com",
+  "otUrl": ["https://ot.flinkly.com", "https://ot1.flinkly.com", "https://ot2.flinkly.com", "https://ot3.flinkly.com", "https://ot4.flinkly.com"],
   "marketingUrl": "https://www.flinkly.com",
   "main_domain": "flinkly.com",
   "toolsServiceUrl": "https://tools.flinkly.com",
