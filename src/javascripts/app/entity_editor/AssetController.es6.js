@@ -1,4 +1,5 @@
 import $controller from '$controller';
+import closeState from 'navigation/closeState';
 
 import * as K from 'utils/kefir';
 import {truncate, fileNameToTitle} from 'stringUtils';
@@ -57,6 +58,10 @@ export default function create ($scope, editorData) {
   );
 
   editorContext.focus = Focus.create();
+
+  editorContext.closeSlideinEditor = function () {
+    closeState();
+  };
 
   $scope.state = $controller('entityEditor/StateController', {
     $scope: $scope,

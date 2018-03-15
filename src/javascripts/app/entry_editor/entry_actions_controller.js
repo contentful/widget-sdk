@@ -95,7 +95,9 @@ angular.module('contentful')
     // TODO: Create a service that works like $state.go, but cancels
     // if the state has changed in the meantime
     // X.detail -> X.detail with altered entryId param
-    $state.go('^.detail', {
+    // We need the full state name to make sure it's accessible
+    // from nested routes (slidein entry editor).
+    $state.go('spaces.detail.entries.detail', {
       entryId: entry.getId(),
       addToContext: false
     });

@@ -97,7 +97,7 @@ describe('Entry Actions Controller', function () {
           it('opens the editor', function () {
             sinon.assert.calledWith(
               this.$state.go,
-              '^.detail',
+              'spaces.detail.entries.detail',
               {
                 entryId: 'NEW ID',
                 addToContext: false

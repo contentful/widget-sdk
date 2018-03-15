@@ -78,8 +78,9 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
       }
 
       function goBackToPreviousPage () {
-        var crumbs = $scope.crumbs;
-        var link = crumbs[crumbs.length - 2].link;
+        contextHistory.pop();
+
+        var link = contextHistory.getLast().link;
         var state = link.state;
 
         if ($state.includes('spaces.detail.environment')) {
@@ -113,7 +114,7 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
 
       function handleAncestorLinkClick (e) {
         trackAncestorLinkClick(e);
-        toggleAncestorList(e);
+        toggleAncestorList();
       }
 
       function closeAncestorListIfVisible (e) {
@@ -141,7 +142,7 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
         $scope.crumbs = crumbs;
         $scope.shouldHide = crumbs.length <= 1;
         $scope.shouldShowBack = crumbs.length >= 2;
-        $scope.shouldShowHierarchy = crumbs.length > 2;
+        $scope.shouldShowHierarchy = crumbs.length > 2 && !$state.params.inlineEntryId;
       });
     }]
   };

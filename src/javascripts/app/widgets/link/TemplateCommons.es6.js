@@ -65,6 +65,7 @@ export function titleText () {
  * 'entity-remove' actions.
  *
  * @param {string} actionClass  Class to apply to each action button
+ *
  */
 export function actions (actionClass) {
   return [
@@ -75,16 +76,17 @@ export function actions (actionClass) {
     }, [h('cf-icon', {name: 'edit'})]),
     h(`a.${actionClass}`, {
       dataTestId: 'entity-edit',
-      ngIf: 'stateRef',
+      ngIf: 'stateRef || actions.slideinEdit',
       cfSref: 'stateRef',
-      ngClick: 'onClick()'
+      ngClick: 'onClick($event)'
     }, [h('cf-icon', {name: 'edit'})]),
     h(`a.${actionClass}`, {
       dataTestId: 'asset-download',
       ngIf: '!missing && downloadUrl',
       ngHref: '{{downloadUrl}}',
       target: '_blank',
-      rel: 'noopener noreferrer'
+      rel: 'noopener noreferrer',
+      ngClick: 'onClick($event)'
     }, [h('cf-icon', {name: 'download'})]),
     h(`button.${actionClass}`, {
       dataTestId: 'entity-remove',

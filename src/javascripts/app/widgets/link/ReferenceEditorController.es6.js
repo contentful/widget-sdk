@@ -10,6 +10,8 @@ import { onFeatureFlag } from 'utils/LaunchDarkly';
 import { track } from 'analytics/Analytics';
 import { onEntryCreate as trackEntryCreate, onEntryEdit as trackEntryEdit } from 'analytics/events/ReferenceEditor';
 
+import $state from '$state';
+
 import * as State from './State';
 import {
   canPerformActionOnEntryOfType,
@@ -22,6 +24,8 @@ const FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN =
   'feature-at-11-2017-lots-of-cts-add-entry-and-link-reference';
 const INLINE_REFERENCE_FEATURE_FLAG =
   'feature-at-02-2018-inline-reference-field';
+const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
+  'feature-at-03-2018-sliding-entry-editor';
 
 export default function create ($scope, widgetApi) {
   const store = getStore();
@@ -81,6 +85,10 @@ export default function create ($scope, widgetApi) {
     } else {
       $scope.referenceType = { link: true };
     }
+  });
+
+  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, function (isEnabled) {
+    $scope.isSlideinEntryEditorEnabled = isEnabled;
   });
 
   function isInlineEditingEnabledForField () {
@@ -282,10 +290,11 @@ export default function create ($scope, widgetApi) {
     const version = entity ? entity.sys.version : '';
     const contentTypeId = get(entity, 'sys.contentType.sys.id');
     const hash = [id, version, isDisabled, contentTypeId].join('!');
-
     const contentType =
       contentTypeId && spaceContext.publishedCTs.fetch(contentTypeId);
     let refCtxt = widgetApi._internal.createReferenceContext ? widgetApi._internal.createReferenceContext(index, state.refreshEntities) : null;
+    const entityIsAvailable = entity !== undefined;
+
 
     // This is passed down to the bulk entity editor actions
     // to be able to unlink an entry when the bulk editor is
@@ -297,21 +306,48 @@ export default function create ($scope, widgetApi) {
       };
     }
 
-    return {
-      id: id,
-      entity: entity,
+    const entityModel = {
+      id,
+      entity,
       contentType,
-      hash: hash,
+      hash,
       actions: {
         edit: prepareEditAction(entity, index, isDisabled),
         remove: prepareRemoveAction(index, isDisabled),
-        trackEdit: () => trackEdit(entity)
+        trackEdit: () => trackEdit(entity),
+        inlineEdit: function () {
+          $state.go('.workbenchDetail', { inlineEntryId: entity.sys.id }, { reload: false, inherit: true, notify: true });
+        }
       },
       // TODO: This is used to create multiple reference contexts
       // to be able to open multiple instances of the bulk editor
       // simultaneously. This will be null if it is a nested reference.
       refCtxt: refCtxt
     };
+
+    // Disable entry editor layer actions for refs
+    // - use bulk editor
+    // - when inside the bulk editor itself.
+    // - rendered inside an entry editor layer.
+    if ($scope.isSlideinEntryEditorEnabled && !useBulkEditor && refCtxt !== null && !$state.params.inlineEntryId && entityIsAvailable) {
+      // This will render a placeholder stack div with a transition
+      // and remove it when inline entry editor is rendered
+      entityModel.actions.slideinEdit = function () {
+        widgetApi._internal.toggleSlideinEditor();
+        const nextStateName = entity.sys.type === 'Asset' ? '.slideinAssetDetail' : '.slideinEditorDetail';
+        $state
+          .go(
+            nextStateName,
+            { inlineEntryId: entity.sys.id },
+            { reload: false, inherit: true, notify: true }
+          )
+          .then(() => {
+            widgetApi._internal.toggleSlideinEditor();
+          });
+      };
+    }
+
+    return entityModel;
   }
 
   function prepareEditAction (entity, index, isDisabled) {

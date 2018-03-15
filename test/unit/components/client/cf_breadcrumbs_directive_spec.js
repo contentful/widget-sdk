@@ -1,14 +1,13 @@
 import {constant, range} from 'lodash';
 import * as sinon from 'helpers/sinon';
-import * as KefirMock from 'helpers/mocks/kefir';
 import * as DOM from 'helpers/DOM';
 
 describe('cfBreadcrumbsDirective spec', function () {
   beforeEach(function () {
     module('contentful/test');
-    const crumbs$ = KefirMock.createMockProperty([]);
+
+    const contextHistory = this.$inject('contextHistory');
     this.$state = this.mockService('$state');
-    this.mockService('contextHistory', { crumbs$ });
 
     const el = this.$compile('<cf-breadcrumbs />');
     this.view = DOM.createView(el.get(0));
@@ -29,7 +28,7 @@ describe('cfBreadcrumbsDirective spec', function () {
         };
       });
 
-      crumbs$.set(crumbs);
+      contextHistory.set(crumbs);
       this.$flush();
     };
   });
