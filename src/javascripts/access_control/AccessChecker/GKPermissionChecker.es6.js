@@ -1,20 +1,24 @@
-import logger from 'logger';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
 import * as K from 'utils/kefir';
-import {get, camelCase} from 'lodash';
-import {createOrganizationEndpoint} from 'data/EndpointFactory';
-import {getEnabledFeatures} from 'account/pricing/PricingDataProvider';
-// TODO prevent circular ref
+import {get} from 'lodash';
+
 import require from 'require';
+// TODO prevent circular ref
 
 export function create ({space, organization}) {
-  let features;
+  const createFeatureService = require('services/FeatureService').default;
   const userQuota = {
     // TODO get from limits/usage endpoint
     limit: get(organization, 'subscriptionPlan.limits.permanent.organizationMembership', -1),
     used: get(organization, 'usage.permanent.organizationMembership', 1)
   };
+
+  if (!space) {
+    return;
+  }
+
+  const FeatureService = createFeatureService(space.sys.id);
 
   return {
     getUserQuota: () => userQuota,
@@ -25,7 +29,6 @@ export function create ({space, organization}) {
      * Returns true if Users can be modified.
      */
     canModifyUsers: () => isSuperUser(),
-    hasFeature,
     canModifyRoles,
     canCreateOrganization,
     isSuperUser
@@ -48,10 +51,6 @@ export function create ({space, organization}) {
     return isSpaceAdmin || isOrganizationAdmin || isOrganizationOwner;
   }
 
-  function hasFeature (name) {
-    return collectFeatures().then((features) => features.indexOf(name) >= 0);
-  }
-
   /**
    * @name accessChecker#canModifyRoles
    * @returns {boolean}
@@ -62,42 +61,7 @@ export function create ({space, organization}) {
     if (!isSuperUser()) {
       return Promise.resolve(false);
     } else {
-      return hasFeature('customRoles');
+      return FeatureService.get('customRoles').then(feature => feature.enabled);
     }
   }
-
-  function collectFeatures () {
-    if (features) {
-      return Promise.resolve(features);
-    } else {
-      return loadOrgFeatures(organization).then((f) => { features = f; return features; });
-    }
-  }
-}
-
-function loadOrgFeatures (organization) {
-  if (!organization) {
-    return Promise.resolve([]);
-  }
-
-  // Begin feature flag code - feature-bv-2018-01-features-api
-  return require('utils/LaunchDarkly').getCurrentVariation('feature-bv-2018-01-features-api').then((useFeaturesApi) => {
-    if (useFeaturesApi || organization.pricingVersion === 'pricing_version_2') {
-      // Get enabled features from API if feature flag is on, or if token
-      // doesn't have features because of new pricing version.
-      const orgEndpoint = createOrganizationEndpoint(organization.sys.id);
-      return getEnabledFeatures(orgEndpoint)
-        .then((items) => items.map(({internalName}) => camelCase(internalName)))
-        .catch((err) => {
-          logger.logError(`Could not fetch org features for ${organization.sys.id}`, err);
-          return [];
-        });
-    } else {
-      // Get enabled features from token if feature flag is off
-      const featuresHash = get(organization, 'subscriptionPlan.limits.features', {});
-      const features = Object.keys(featuresHash).filter((key) => featuresHash[key]);
-      return Promise.resolve(features);
-    }
-  });
-  // End feature flag code - feature-bv-2018-01-features-api
 }

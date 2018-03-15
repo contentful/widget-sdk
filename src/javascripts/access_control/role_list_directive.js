@@ -21,26 +21,19 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
   var ResourceUtils = require('utils/ResourceUtils');
   var TheAccountView = require('TheAccountView');
   var isOwnerOrAdmin = require('services/OrganizationRoles').isOwnerOrAdmin;
+  var AccessChecker = require('access_control/AccessChecker');
 
   var org = spaceContext.organizationContext.organization;
 
   $q.all({
-    hasFeatureEnabled: accessChecker.canModifyRoles(),
+    canModifyRoles: AccessChecker.canModifyRoles(),
     useLegacy: ResourceUtils.useLegacy(org)
   }).then(function (result) {
     var subscription = spaceContext.subscription;
     var trialLockdown = subscription.isTrial() && subscription.hasTrialEnded();
 
     $scope.legacy = result.useLegacy;
-
-    // For now, all V2 orgs do not support this feature, as the custom roles feature
-    // isn't available on the space level yet. This will be supported in an upcoming
-    // sprint.
-    if (!$scope.legacy) {
-      $scope.hasFeatureEnabled = false;
-    } else {
-      $scope.hasFeatureEnabled = !trialLockdown && result.hasFeatureEnabled;
-    }
+    $scope.hasFeatureEnabled = !trialLockdown && result.canModifyRoles;
   }).then(reload).catch(ReloadNotification.basicErrorHandler);
 
   $scope.duplicateRole = duplicateRole;
@@ -68,7 +61,7 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
     $scope.removeRole = createRoleRemover(listHandler, reload);
     $scope.context.ready = true;
     $scope.usage = data.rolesResource.usage;
-    $scope.limit = data.rolesResource.limits.maximum;
+    $scope.limit = ResourceUtils.getResourceLimits(data.rolesResource).maximum;
     $scope.reachedLimit = !ResourceUtils.canCreate(data.rolesResource);
   }
 }]);
