@@ -10,7 +10,7 @@ describe('Account Dropdown Controller', function () {
       $provide.value('$window', stubs.window);
     });
 
-    this.stubs.analytics = {track: sinon.stub()};
+    this.stubs.analytics = {track: sinon.stub(), disable: sinon.stub()};
     this.stubs.authentication = {logout: sinon.stub()};
     this.stubs.window = {
       open: sinon.stub(),
@@ -29,8 +29,9 @@ describe('Account Dropdown Controller', function () {
       this.scope.logout();
     });
 
-    it('tracks analytics event', function () {
+    it('tracks the logout and then disables tracking', function () {
       sinon.assert.called(this.stubs.analytics.track);
+      sinon.assert.called(this.stubs.analytics.disable);
     });
 
     it('logs out through authentication', function () {
