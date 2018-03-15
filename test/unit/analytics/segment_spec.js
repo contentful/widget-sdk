@@ -11,7 +11,8 @@ describe('Segment service', function () {
     this.analytics = {
       track: sinon.stub(),
       page: sinon.stub(),
-      identify: sinon.stub()
+      identify: sinon.stub(),
+      user: sinon.stub().returns({traits: sinon.stub()})
     };
 
     const resolve = this.$inject('$q').resolve;

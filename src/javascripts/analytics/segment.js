@@ -91,8 +91,12 @@ angular.module('contentful')
    * @description
    * Stops sending analytical events and
    * blocks next calls to `enable`.
+   * Removes all user traits.
    */
   function disable () {
+    buffer.call(function (analytics) {
+      analytics.user().traits({});
+    });
     buffer.disable();
     isDisabled = true;
   }
