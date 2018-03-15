@@ -35,6 +35,7 @@ angular.module('cf.app')
   var EntityHelpers = require('EntityHelpers');
   var LD = require('utils/LaunchDarkly');
   var trackInlineEditorToggle = require('analytics/events/ReferenceEditor').onToggleInlineEditor;
+  var getInlineEditingStoreKey = require('app/widgets/link/utils').getInlineEditingStoreKey;
 
   return {
     restrict: 'E',
@@ -92,7 +93,7 @@ angular.module('cf.app')
 
       $scope.data.expandedStates = $scope.locales.reduce(
         function (expandedStates, locale) {
-          expandedStates[locale.code] = isLocaleFieldExpanded(locale);
+          expandedStates[locale.code] = isLocaleFieldExpanded(locale.code);
           return expandedStates;
         },
         {}
@@ -108,9 +109,9 @@ angular.module('cf.app')
       }
 
       function toggleLocaleFieldExpansion (locale) {
-        var ctExpandedStoreKey = getCTExpandedStoreKey(locale);
-        var newVal = !isLocaleFieldExpanded(locale);
         var localeCode = locale.code;
+        var ctExpandedStoreKey = getLocaleFieldExpandedStoreKey(localeCode);
+        var newVal = !isLocaleFieldExpanded(localeCode);
 
         getFieldOrLinkCt(localeCode).then(function (linkContentType) {
           trackInlineEditorToggle({
@@ -121,25 +122,25 @@ angular.module('cf.app')
 
         $scope.data.expandedStates[localeCode] = newVal;
         $scope.$broadcast('ct-expand-state:toggle', [
-          field.name,
+          field.apiName,
           localeCode,
           newVal
         ]);
         store.set(ctExpandedStoreKey, newVal);
       }
 
-      function isLocaleFieldExpanded (locale) {
-        var ctExpandedStoreKey = getCTExpandedStoreKey(locale);
+      function isLocaleFieldExpanded (localeCode) {
+        var ctExpandedStoreKey = getLocaleFieldExpandedStoreKey(localeCode);
         return $scope.data.canRenderInline && store.get(ctExpandedStoreKey);
       }
 
-      function getCTExpandedStoreKey (locale) {
-        return [
+      function getLocaleFieldExpandedStoreKey (localeCode) {
+        return getInlineEditingStoreKey(
           spaceContext.user.sys.id,
           $scope.editorContext.entityInfo.contentTypeId,
-          field.name, // Should actually be field.id
-          locale.code
-        ].join(':');
+          field.apiName,
+          localeCode
+        );
       }
 
       function getFieldOrLinkCt (localeCode) {

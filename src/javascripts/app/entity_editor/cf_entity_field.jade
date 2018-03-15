@@ -71,7 +71,7 @@ div.entity-editor__field-group(
           ng-click="methods.toggleLocaleFieldExpansion(locale)")
           cf-icon(name="text-fields")
           span.text-link
-            | {{ methods.isLocaleFieldExpanded(locale) ? 'Disable' : 'Enable' }} inline editing
+            | {{ methods.isLocaleFieldExpanded(locale.code) ? 'Disable' : 'Enable' }} inline editing
           span.banner(
             tooltip-placement="{{ data.tooltipPlacement }}"
             tooltip="Inline editing is an experimental feature. Use it with caution.")

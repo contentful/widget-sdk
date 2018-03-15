@@ -17,7 +17,7 @@ import {
   canPerformActionOnEntryOfType,
   Action
 } from 'access_control/AccessChecker';
-import { canLinkToContentType } from './utils';
+import { canLinkToContentType, getInlineEditingStoreKey } from './utils';
 import { getStore } from 'TheStore';
 
 const FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN =
@@ -92,12 +92,12 @@ export default function create ($scope, widgetApi) {
   });
 
   function isInlineEditingEnabledForField () {
-    const ctExpandedStoreKey = [
+    const ctExpandedStoreKey = getInlineEditingStoreKey(
       spaceContext.user.sys.id,
       contentTypeId,
-      field.name,
+      field.id,
       field.locale
-    ].join(':');
+    );
     return store.get(ctExpandedStoreKey);
   }
 
@@ -228,11 +228,11 @@ export default function create ($scope, widgetApi) {
     return getUnpublishedReferences().length > 0;
   }
 
-  function handleInlineReferenceEditorToggle (name, locale, shouldEditInline) {
-    if (name !== field.name || locale !== field.locale) {
+  function handleInlineReferenceEditorToggle (id, locale, enableInlineEditing) {
+    if (id !== field.id || locale !== field.locale) {
       return;
     }
-    if (shouldEditInline) {
+    if (enableInlineEditing) {
       $scope.referenceType = { inline: true };
       return;
     }
