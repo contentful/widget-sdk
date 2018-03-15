@@ -83,7 +83,7 @@ function compareBtn () {
     role: 'button',
     ariaDisabled: '{{!selectedId}}',
     dataTestId: 'compare-versions',
-    uiSref: '.compare.withCurrent({snapshotId: selectedId})',
+    uiSref: 'spaces.detail.entries.detail.compare.withCurrent({entryId: entityInfo.id, snapshotId: selectedId})',
     ngDisabled: '!selectedId'
   }, ['Compare with current version']);
 }

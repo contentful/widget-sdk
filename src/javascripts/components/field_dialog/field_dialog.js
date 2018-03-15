@@ -74,8 +74,7 @@ angular.module('contentful')
    * @name FieldDialogController#availableWidgets
    * @type {Widgets.Descriptor[]}
    */
-  var currentWidgetId = widget.widgetId;
-  Widgets.getAvailable($scope.field, currentWidgetId)
+  Widgets.getAvailable($scope.field)
   .then(function (available) {
     $scope.availableWidgets = available;
   });

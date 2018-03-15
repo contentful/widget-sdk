@@ -7,14 +7,12 @@ angular.module('contentful')
  * @description
  * Add states to the application and initialize them.
  *
- * This is aproxy for the 'ui.router' module. The service is only used
+ * This is a proxy for the 'ui.router' module. The service is only used
  * by the root [`states` service][service:states]
  *
  * [service:states]: api/contentful/app/service/states
  */
 .provider('states/config', ['$stateProvider', function ($stateProvider) {
-  var VIEW_PROPERTIES = ['controller', 'controllerAs', 'template'];
-
   // Is assigned the `h` export from the `ui/Framework` module.
   // This is necessary because we define a provider and not a factory.
   var renderString;
@@ -88,6 +86,7 @@ angular.module('contentful')
   }
 
   function useContentView (state) {
+    var VIEW_PROPERTIES = ['controller', 'controllerAs', 'template'];
     state.views = state.views || {};
     var contentView = _.pick(state, VIEW_PROPERTIES);
     if (contentView.template || contentView.controller) {
@@ -118,12 +117,7 @@ angular.module('contentful')
       .concat(injectables)
       .concat([function ($scope, $state) {
         var args = Array.prototype.slice.call(arguments).slice(2);
-        Object.defineProperty($scope, 'context', {
-          configurable: false,
-          enumerable: true,
-          writable: false,
-          value: {}
-        });
+        $scope.context = {};
         $state.current.data = $scope.context;
         return controllerFn.apply(this, args);
       }]);

@@ -90,7 +90,7 @@ describe('ReferenceEditor', function () {
           localized_fields_count: 1,
           widgets_count: 2,
           toggle_state: false,
-          version: 2
+          version: 3
         }
       );
     });
@@ -112,7 +112,7 @@ describe('ReferenceEditor', function () {
           localized_fields_count: 0,
           widgets_count: 0,
           toggle_state: true,
-          version: 2
+          version: 3
         }
       );
     });

@@ -23,6 +23,7 @@ angular.module('cf.app')
   var spaceContext = require('spaceContext');
   var $location = require('$location');
   var updateNavState = require('navigation/NavState').updateNavState;
+  var _ = require('lodash');
 
   // Result of confirmation dialog
   var navigationConfirmed = false;

@@ -1,4 +1,5 @@
 import $controller from '$controller';
+import closeState from 'navigation/closeState';
 
 import {deepFreeze} from 'utils/Freeze';
 import * as K from 'utils/kefir';
@@ -120,6 +121,16 @@ export default function create ($scope, editorData) {
   };
 
   editorContext.createReferenceContext = createReferenceContext;
+
+  // This will only be available if feature-at-03-2018-sliding-entry-editor
+  // is not enabled.
+  editorContext.toggleSlideinEditor = function () {
+    $scope.inlineEditor = !$scope.inlineEditor;
+  };
+
+  editorContext.closeSlideinEditor = function () {
+    closeState();
+  };
 
   function createReferenceContext (field, locale, index, cb) {
     // The links$ property should end when the editor is closed

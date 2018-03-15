@@ -33,9 +33,9 @@ export default function () {
 
     h('a.entity-link__content', {
       dataTestId: 'entity-link-content',
-      ngIf: 'stateRef',
+      ngIf: 'stateRef || actions.slideinEdit',
       cfSref: 'stateRef',
-      ngClick: 'onClick()'
+      ngClick: 'onClick($event)'
     }, [content()]),
     h('.entity-link__content', {
       dataTestId: 'entity-link-content',
