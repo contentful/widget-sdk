@@ -6,6 +6,7 @@ angular.module('contentful')
   var Filestack = require('services/Filestack');
   var notification = require('notification');
   var stringUtils = require('stringUtils');
+  var modalDialog = require('modalDialog');
 
   var dropPaneMountCount = 0;
 
@@ -63,6 +64,19 @@ angular.module('contentful')
       }
 
       function editWithAviary () {
+        modalDialog.openConfirmDialog({
+          title: 'Adobe Creative Editor is deprecated',
+          message: 'Adobe Creative Editor will be discontinued soon. You can still use it but we suggest to use the "Edit image" option.',
+          confirmLabel: 'I want to use Adobe Creative Editor',
+          cancelLabel: 'I\'ll use the new editor'
+        }).then(function (result) {
+          if (result.confirmed) {
+            openAviary();
+          }
+        });
+      }
+
+      function openAviary () {
         var imageUrl = getImageUrl();
         if (!imageUrl) {
           notification.error('The image editor has failed to load.');
