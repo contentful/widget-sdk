@@ -188,8 +188,8 @@ yet).
 | element             | click                                 | <code>elementId: string<br />fromState: string<br />toState: string?</code>
 | personal_access_token | action                              | <code>action: string<br>patId: string</code>
 | reference_editor    | create_entry                          | <code>locales_count: number<br />localized_fields_count: number<br />fields_count: number <br/>widgets_count: number<br>inline_editing_toggled_on:boolean</code>
-| reference_editor    | edit_entry                            | <code>locales_count: number<br />localized_fields_count: number<br />fields_count: number <br/>widgets_count: number<br></code>
-| reference_editor    | toggle_inline_editor                  | <code>toggle_state: boolean<br></code>
+| reference_editor    | edit_entry                            | <code>locales_count: number<br />localized_fields_count: number<br />fields_count: number <br/>widgets_count: number</code>
+| reference_editor    | toggle_inline_editor                  | <code>toggle_state: boolean<br>locales_count: number<br />localized_fields_count: number<br />fields_count: number <br/>widgets_count: number<br/>selector: string</code>
 | incoming_links      | dialog_open                           | <code>entry_id: string<br />incoming_links_count: number<br />dialog_session_id: string</code>
 | incoming_links      | dialog_confirm                        | <code>entry_id: string<br />incoming_links_count: number<br />dialog_session_id: string</code>
 | incoming_links      | dialog_link_click                     | <code>entry_id: string<br />incoming_links_count: number<br />link_entity_id: string<br />dialog_session_id: string</code>

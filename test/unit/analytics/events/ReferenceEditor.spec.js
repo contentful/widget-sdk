@@ -78,7 +78,8 @@ describe('ReferenceEditor', function () {
 
       this.referenceEditorEvents.onToggleInlineEditor({
         contentType,
-        toggleState: false
+        toggleState: false,
+        selector: 'FIELD_ID.LOCALE'
       });
 
       sinon.assert.calledWith(
@@ -90,7 +91,8 @@ describe('ReferenceEditor', function () {
           localized_fields_count: 1,
           widgets_count: 2,
           toggle_state: false,
-          version: 3
+          selector: 'FIELD_ID.LOCALE',
+          version: 4
         }
       );
     });
@@ -100,7 +102,8 @@ describe('ReferenceEditor', function () {
 
       this.referenceEditorEvents.onToggleInlineEditor({
         contentType,
-        toggleState: true
+        toggleState: true,
+        selector: 'FIELD_ID.LOCALE'
       });
 
       sinon.assert.calledWith(
@@ -112,7 +115,8 @@ describe('ReferenceEditor', function () {
           localized_fields_count: 0,
           widgets_count: 0,
           toggle_state: true,
-          version: 3
+          selector: 'FIELD_ID.LOCALE',
+          version: 4
         }
       );
     });

@@ -23,14 +23,16 @@ export function onEntryEdit ({ contentType, isInlineEditingFeatureFlagEnabled = 
 /**
  * @param {object|null} .contentType
  * @param {boolean} .toggleState
+ * @param {string} .selector
  * @returns {object}
  */
-export function onToggleInlineEditor ({ contentType, toggleState }) {
+export function onToggleInlineEditor ({ contentType, toggleState, selector }) {
   track('reference_editor:toggle_inline_editor', {
     ...getLocalesInfo(),
     ...getToggleState(toggleState),
     ...getContentTypeInfo(contentType),
-    version: 3
+    selector,
+    version: 4
   });
 }
 
