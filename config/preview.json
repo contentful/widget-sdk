@@ -3,7 +3,7 @@
   "authUrl" : "//be.quirely.com",
   "apiUrl" : "//api.quirely.com",
   "mockApiUrl" : "https://pcfjmbizecazdxcwy.stoplight-proxy.io",
-  "otUrl" : ["//ot1.quierly.com", "//ot2.quierly.com", "//ot3.quierly.com", "//ot4.quierly.com", "//ot5.quierly.com", "//ot6.quierly.com", "//ot7.quierly.com", "//ot8.quierly.com"],
+  "otUrl" : ["//ot1.quirely.com", "//ot2.quirely.com", "//ot3.quirely.com", "//ot4.quirely.com", "//ot5.quirely.com", "//ot6.quirely.com", "//ot7.quirely.com", "//ot8.quirely.com"],
   "assetUrl" : "//static.quirely.com",
   "marketingUrl" : "//www.quirely.com",
   "main_domain" : "quirely.com",
