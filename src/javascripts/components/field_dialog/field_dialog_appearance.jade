@@ -22,17 +22,6 @@ div(
       position-relative-to=".field-dialog__widget-item[data-current-widget-index=\"{{selectedWidgetIndex}}\"]"
       reposition-when-scrolls=".field-dialog__widget-list")
 
-    p.field-dialog__widget-warning(ng-show="widget.misconfigured")
-      i.fa.fa-exclamation-triangle
-      | The &ldquo;{{ widget.name }}&rdquo; widget is not properly configured.
-      | Editor features may not work as expected.
-
-    p.field-dialog__widget-warning(ng-show="widget.deprecation")
-      i.fa.fa-exclamation-triangle
-      | The &ldquo;{{ widget.name }}&rdquo; widget is deprecated.
-      | Please use the &ldquo;{{ widget.deprecation.alternative }}&rdquo;
-      | widget instead.
-
     .div(ng-repeat="option in widgetOptions track by option.param")
       div(ng-switch="option.type")
         div.cfnext-form__field(ng-switch-when="Text")

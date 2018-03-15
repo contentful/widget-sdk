@@ -46,13 +46,6 @@ describe('widgets', function () {
 
   describe('#getAvailable()', function () {
     beforeEach(function () {
-      // Disable checking if a widget is misconfigured since this
-      // involves API requests.
-      const widgetChecks = this.$inject('widgets/checks');
-      widgetChecks.markMisconfigured = function (widgets) {
-        return widgets;
-      };
-
       this.setupWidgets();
     });
 
