@@ -160,8 +160,6 @@ angular.module('contentful')
 
     analytics.load = _.noop;
 
-    analytics.reset();
-
     return LazyLoader.get('segment');
   }
 }]);
