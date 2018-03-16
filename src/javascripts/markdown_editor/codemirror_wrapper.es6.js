@@ -4,8 +4,8 @@ import {transform} from 'lodash';
 import {observeResize} from 'ui/ResizeDetector';
 import * as K from 'utils/kefir';
 
-export function create (textarea, options = {}, CodeMirror) {
-  const { direction, fixedHeight, height } = options;
+export function create (textarea, options, CodeMirror) {
+  const { direction, fixedHeight, height } = options || {};
 
   // Set to true if `setValue()` has been called. This is to prevent
   // undoing the initial content.

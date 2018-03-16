@@ -36,6 +36,7 @@ angular.module('cf.app')
   var LD = require('utils/LaunchDarkly');
   var trackInlineEditorToggle = require('analytics/events/ReferenceEditor').onToggleInlineEditor;
   var getInlineEditingStoreKey = require('app/widgets/link/utils').getInlineEditingStoreKey;
+  var isRtlLang = require('libs/rtl-detect').isRtlLang;
 
   return {
     restrict: 'E',
@@ -99,6 +100,7 @@ angular.module('cf.app')
         {}
       );
       $scope.methods = {
+        isRtlLang: isRtlLang,
         isLocaleFieldExpanded: isLocaleFieldExpanded,
         toggleLocaleFieldExpansion: toggleLocaleFieldExpansion
       };

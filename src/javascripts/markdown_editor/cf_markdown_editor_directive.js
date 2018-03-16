@@ -10,6 +10,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
   var throttle = require('throttle');
   var K = require('utils/kefir');
   var LocaleStore = require('TheLocaleStore');
+  var getLangDir = require('libs/rtl-detect').getLangDir;
 
   return {
     restrict: 'E',
@@ -23,7 +24,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
       var currentMode = 'md';
       var editor = null;
       var childEditor = null;
-      var direction = isHebrew(field.locale) ? 'rtl' : 'ltr';
+      var direction = getLangDir(field.locale);
 
       // @todo find a better way of hiding header in Zen Mode
       var editorHeader = el.closest('.workbench-main').siblings('.workbench-header').first();
@@ -85,13 +86,6 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
         scope.$on('$destroy', editor.destroy);
         scope.$on('$destroy', detachValueHandler);
         scope.$on('$destroy', detachStateHandler);
-      }
-
-      function isHebrew (locale) {
-        return _.includes([
-          'he',
-          'he-IL'
-        ], locale);
       }
 
       function handleEditorChange (value) {
