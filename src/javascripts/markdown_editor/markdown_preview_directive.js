@@ -8,12 +8,11 @@ angular.module('contentful')
   return {
     restrict: 'E',
     scope: {
-      direction: '=',
       preview: '=',
       isDisabled: '='
     },
     template: [
-      '<div ng-show="!preview.hasCrashed" class="markdown-preview-mounting-point" style="direction: {{ direction }}"></div>',
+      '<div ng-show="!preview.hasCrashed" class="markdown-preview-mounting-point"></div>',
       '<div ng-show="preview.hasCrashed || renderHasCrashed" class="markdown-preview-crashed">',
       '<i class="fa fa-warning"></i> ',
       'We cannot render the preview. ',
