@@ -7,5 +7,6 @@ select.cfnext-select-box(
   ng-disabled="isDisabled"
   ng-model="data.selected"
   ng-required="required"
+  ng-class="{ 'x--directed': isDirected }"
   ng-options="o.value as o.value for o in options")
   option(value="") Choose a value
