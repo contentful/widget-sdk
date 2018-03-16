@@ -116,7 +116,8 @@ angular.module('cf.app')
         getFieldOrLinkCt(localeCode).then(function (linkContentType) {
           trackInlineEditorToggle({
             contentType: linkContentType,
-            toggleState: newVal
+            toggleState: newVal,
+            selector: field.id + '.' + localeCode
           });
         });
 
