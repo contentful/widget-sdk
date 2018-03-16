@@ -11,7 +11,7 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
   var $parse = require('$parse');
   var $state = require('$state');
   var Analytics = require('analytics/Analytics');
-  var contextHistory = require('contextHistory');
+  var contextHistory = require('navigation/ContextHistory').default;
   var documentTitle = require('navigation/DocumentTitle');
   var K = require('utils/kefir');
 

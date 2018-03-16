@@ -31,7 +31,7 @@ describe('Entry Editor Controller', function () {
       return scope;
     };
 
-    const contextHistory = this.$inject('contextHistory');
+    const contextHistory = this.$inject('navigation/ContextHistory').default;
     contextHistory.set([{}]);
 
     this.spaceContext = _.extend(this.$inject('spaceContext'), {

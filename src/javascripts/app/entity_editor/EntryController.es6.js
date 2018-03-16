@@ -9,7 +9,7 @@ import {cloneDeep, find, constant} from 'lodash';
 import spaceContext from 'spaceContext';
 import notifications from 'notification';
 import localeStore from 'TheLocaleStore';
-import contextHistory from 'contextHistory';
+import contextHistory from 'navigation/ContextHistory';
 
 import DataFields from 'EntityEditor/DataFields';
 import ContentTypes from 'data/ContentTypes';

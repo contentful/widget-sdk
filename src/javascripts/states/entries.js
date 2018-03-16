@@ -7,7 +7,7 @@ angular.module('contentful')
  * @name states/entries
  */
 .factory('states/entries', ['require', function (require) {
-  var contextHistory = require('contextHistory');
+  var contextHistory = require('navigation/ContextHistory').default;
   var $state = require('$state');
   var trackVersioning = require('analyticsEvents/versioning');
   var crumbFactory = require('navigation/CrumbFactory');

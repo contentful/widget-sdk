@@ -8,7 +8,7 @@ import {get, find, constant} from 'lodash';
 import spaceContext from 'spaceContext';
 import notification from 'notification';
 import localeStore from 'TheLocaleStore';
-import contextHistory from 'contextHistory';
+import contextHistory from 'navigation/ContextHistory';
 
 import * as crumbFactory from 'navigation/CrumbFactory';
 
