@@ -16,7 +16,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
   var notification = require('notification');
   var throttle = require('throttle');
   var LocaleStore = require('TheLocaleStore');
-  var isRtlLang = require('libs/rtl-detect').isRtlLang;
+  var isRtlLocale = require('utils/locales').isRtlLocale;
   var K = require('utils/kefir');
   var LD = require('utils/LaunchDarkly');
 
@@ -80,7 +80,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
       });
 
       LD.onFeatureFlag(scope, RTL_SUPPORT_FEATURE_FLAG, function (isEnabled) {
-        if (isEnabled && isRtlLang(field.locale)) {
+        if (isEnabled && isRtlLocale(field.locale)) {
           scope.isReady = false;
           scope.direction = EDITOR_DIRECTIONS.RTL;
           if (editor) {

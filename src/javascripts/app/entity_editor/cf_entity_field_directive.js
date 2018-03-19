@@ -38,7 +38,7 @@ angular.module('cf.app')
   var LD = require('utils/LaunchDarkly');
   var trackInlineEditorToggle = require('analytics/events/ReferenceEditor').onToggleInlineEditor;
   var getInlineEditingStoreKey = require('app/widgets/link/utils').getInlineEditingStoreKey;
-  var isRtlLang = require('libs/rtl-detect').isRtlLang;
+  var isRtlLocale = require('utils/locales').isRtlLocale;
 
   return {
     restrict: 'E',
@@ -110,7 +110,7 @@ angular.module('cf.app')
 
       LD.onFeatureFlag($scope, RTL_SUPPORT_FEATURE_FLAG, function (isEnabled) {
         if (isEnabled) {
-          $scope.methods.shouldDisplayRtl = isRtlLang;
+          $scope.methods.shouldDisplayRtl = isRtlLocale;
         }
       });
 
