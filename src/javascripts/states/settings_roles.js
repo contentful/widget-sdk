@@ -8,8 +8,8 @@ angular.module('contentful')
  */
 .factory('states/settings/roles', ['require', function (require) {
   var base = require('states/Base').default;
-  var contextHistory = require('navigation/ContextHistory').default;
-  var crumbFactory = require('navigation/CrumbFactory');
+  var contextHistory = require('navigation/Breadcrumbs/History').default;
+  var crumbFactory = require('navigation/Breadcrumbs/Factory');
   var RoleRepository = require('RoleRepository');
 
   var list = base({

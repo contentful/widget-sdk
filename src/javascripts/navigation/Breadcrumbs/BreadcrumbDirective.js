@@ -11,7 +11,7 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
   var $parse = require('$parse');
   var $state = require('$state');
   var Analytics = require('analytics/Analytics');
-  var contextHistory = require('navigation/ContextHistory').default;
+  var contextHistory = require('navigation/Breadcrumbs/History').default;
   var documentTitle = require('navigation/DocumentTitle');
   var K = require('utils/kefir');
 
@@ -23,7 +23,7 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
   var hintDismissBtnSelector = '[aria-label="ui-hint-dismiss-btn"]';
 
   var renderString = require('ui/Framework').renderString;
-  var template = require('app/Breadcrumbs').template;
+  var template = require('navigation/Breadcrumbs/Template').template;
 
   var analyticsData = {
     clickedOn: {

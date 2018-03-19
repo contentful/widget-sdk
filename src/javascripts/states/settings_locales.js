@@ -8,8 +8,8 @@ angular.module('contentful')
  */
 .factory('states/settings/locales', ['require', function (require) {
   var base = require('states/Base').default;
-  var contextHistory = require('navigation/ContextHistory').default;
-  var crumbFactory = require('navigation/CrumbFactory');
+  var contextHistory = require('navigation/Breadcrumbs/History').default;
+  var crumbFactory = require('navigation/Breadcrumbs/Factory');
 
   var list = base({
     name: 'list',

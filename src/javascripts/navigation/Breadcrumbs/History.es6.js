@@ -2,7 +2,7 @@ import * as K from 'utils/kefir';
 import { last, findIndex } from 'lodash';
 
 /**
- * This module exports a singleton 'contextHistory' stack that records
+ * This module exports a singleton 'breadcrumbsHistory' stack that records
  * navigation states, called `crumbs`.
  *
  * A crumb is added to the history when a new state is entered
@@ -12,10 +12,10 @@ import { last, findIndex } from 'lodash';
  *
  * The `navigation/closeState` service also uses the context history to go back.
  */
-export default createContextHistory();
+export default createBreadcrumbsHistory();
 
 // This is only exported for testing purposes
-export function createContextHistory () {
+export function createBreadcrumbsHistory () {
   let history = [];
   const crumbBus = K.createPropertyBus(history);
 

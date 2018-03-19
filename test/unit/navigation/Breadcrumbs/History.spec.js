@@ -1,11 +1,11 @@
-import { createContextHistory } from 'navigation/ContextHistory';
+import { createBreadcrumbsHistory } from 'navigation/Breadcrumbs/History';
 import * as K from 'utils/kefir';
 
-describe('navigation/ContextHistory', function () {
+describe('navigation/Breadcrumbs/History', function () {
   const e = id => { return {id: id}; };
 
   beforeEach(function () {
-    this.ctx = createContextHistory();
+    this.ctx = createBreadcrumbsHistory();
     this.assertCrumbCount = count => expect(K.getValue(this.ctx.crumbs$).length).toBe(count);
   });
 
