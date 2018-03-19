@@ -129,7 +129,6 @@ src/javascripts/services/zone_offsets.js
 src/javascripts/forms/errors.js
 src/javascripts/forms/validation.js
 src/javascripts/navigation/confirm_leave_editor.js
-src/javascripts/navigation/close_state.js
 src/javascripts/ui/cf_ui_tab.js
 src/javascripts/widgets/id_map.js
 src/javascripts/widgets/migrations.js
