@@ -74,16 +74,6 @@ angular.module('contentful')
           docConnection.refreshAuth()
             .catch(function () { errorBus.emit(DocError.SetValueForbidden(path)); });
         }
-        logger.logWarn('ShareJS value update error', {
-          data: {
-            error: error,
-            entity: {
-              id: entity.data.sys.id,
-              spaceId: entity.data.sys.space.sys.id,
-              type: entity.data.sys.type
-            }
-          }
-        });
       };
     }
 
