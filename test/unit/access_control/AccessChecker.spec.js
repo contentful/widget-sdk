@@ -2,7 +2,7 @@ import * as K from 'helpers/mocks/kefir';
 
 describe('Access Checker', function () {
   let enforcements, OrganizationRoles, TokenStore, policyChecker, ac;
-  let getResStub, reasonsDeniedStub, broadcastStub, resetEnforcements, mockSpace, mockSpaceAuthContext, mockOrgEndpoint, mockSpaceEndpoint;
+  let getResStub, reasonsDeniedStub, broadcastStub, resetEnforcements, mockSpace, mockSpaceAuthContext, mockOrgEndpoint, mockSpaceEndpoint, feature;
 
   function init () {
     ac.setAuthContext({authContext: {}, spaceAuthContext: mockSpaceAuthContext});
@@ -18,7 +18,7 @@ describe('Access Checker', function () {
   }
 
   afterEach(function () {
-    enforcements = OrganizationRoles = policyChecker = ac = getResStub = reasonsDeniedStub = broadcastStub = mockSpaceEndpoint = null;
+    enforcements = OrganizationRoles = policyChecker = ac = getResStub = reasonsDeniedStub = broadcastStub = mockSpaceEndpoint = feature = null;
   });
 
   beforeEach(function () {
@@ -26,6 +26,15 @@ describe('Access Checker', function () {
       $provide.value('data/EndpointFactory', {createOrganizationEndpoint: () => mockOrgEndpoint, createSpaceEndpoint: () => mockSpaceEndpoint});
       $provide.value('utils/LaunchDarkly', {
         getCurrentVariation: sinon.stub().resolves(false)
+      });
+      $provide.value('services/FeatureService', {
+        default: () => {
+          return {
+            get: () => {
+              return Promise.resolve(feature);
+            }
+          };
+        }
       });
     });
 
@@ -48,6 +57,14 @@ describe('Access Checker', function () {
     mockSpaceAuthContext = {reasonsDenied: reasonsDeniedStub};
     mockOrgEndpoint = sinon.stub();
     mockSpaceEndpoint = sinon.stub();
+
+    feature = {
+      enabled: true,
+      sys: {
+        type: 'SpaceFeature',
+        id: 'customRoles'
+      }
+    };
 
     ac = this.$inject('access_control/AccessChecker');
   });
@@ -350,6 +367,8 @@ describe('Access Checker', function () {
           },
           spaceMembership: {admin: isSpaceAdmin}
         });
+
+        feature.enabled = hasFeature;
       }
 
       it('returns true when has feature and is admin of space, false otherwise', function* () {

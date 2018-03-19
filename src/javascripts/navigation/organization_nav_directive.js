@@ -18,10 +18,8 @@
       var TokenStore = require('services/TokenStore');
       var OrganizationRoles = require('services/OrganizationRoles');
       var K = require('utils/kefir');
-      var accessChecker = require('access_control/AccessChecker');
 
       var createFeatureService = require('services/FeatureService').default;
-
       var nav = this;
 
       // Prevent unnecesary calls from watchers

@@ -226,7 +226,7 @@ describe('The Locale list directive', function () {
     beforeEach(function () {
       this.organization.pricingVersion = 'pricing_version_2';
       this.flags['feature-bv-2018-01-resources-api'] = true;
-      });
+    });
 
     describe('with limit of 1', function () {
       beforeEach(function* () {

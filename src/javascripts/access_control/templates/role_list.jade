@@ -71,6 +71,6 @@ header.workbench-header
           span(ng-if="limit > 1")
             | , or delete an existing role.
       p(ng-if="!reachedLimit")
-        | Select one of the predefined role templates or create one from the scratch.
+        | Edit one of your existing roles or create one from the scratch.
       button.btn-primary-action(ng-disabled="reachedLimit" ui-sref="spaces.detail.settings.roles.new")
         | Create new role
