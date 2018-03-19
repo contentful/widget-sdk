@@ -26,6 +26,8 @@ angular.module('cf.app')
 .directive('cfEntityField', ['require', function (require) {
   var INLINE_REFERENCE_FEATURE_FLAG =
     'feature-at-02-2018-inline-reference-field';
+  var RTL_SUPPORT_FEATURE_FLAG =
+    'feature-at-03-2018-rtl-support';
 
   var TheLocaleStore = require('TheLocaleStore');
   var $q = require('$q');
@@ -99,11 +101,24 @@ angular.module('cf.app')
         },
         {}
       );
+
       $scope.methods = {
-        isRtlLang: isRtlLang,
+        shouldDisplayRtl: shouldDisplayRtl,
         isLocaleFieldExpanded: isLocaleFieldExpanded,
         toggleLocaleFieldExpansion: toggleLocaleFieldExpansion
       };
+
+      LD.onFeatureFlag($scope, RTL_SUPPORT_FEATURE_FLAG, function (isEnabled) {
+        if (isEnabled) {
+          $scope.methods.shouldDisplayRtl = isRtlLang;
+        }
+      });
+
+      function shouldDisplayRtl () {
+        // By default, all entity fields should be displayed as LTR unless the
+        // RTL support feature flag is enabled.
+        return false;
+      }
 
       function canRenderInline () {
         return field.type === 'Link' && field.linkType === 'Entry' &&

@@ -1,6 +1,13 @@
 'use strict';
 
 angular.module('contentful').directive('cfMarkdownEditor', ['require', function (require) {
+  var RTL_SUPPORT_FEATURE_FLAG =
+    'feature-at-03-2018-rtl-support';
+  var EDITOR_DIRECTIONS = {
+    LTR: 'ltr',
+    RTL: 'rtl'
+  };
+
   var $timeout = require('$timeout');
   var LazyLoader = require('LazyLoader');
   var MarkdownEditor = require('markdown_editor/markdown_editor');
@@ -8,9 +15,10 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
   var makePreview = require('markdown_editor/PreviewGenerator').default;
   var notification = require('notification');
   var throttle = require('throttle');
-  var K = require('utils/kefir');
   var LocaleStore = require('TheLocaleStore');
-  var getLangDir = require('libs/rtl-detect').getLangDir;
+  var isRtlLang = require('libs/rtl-detect').isRtlLang;
+  var K = require('utils/kefir');
+  var LD = require('utils/LaunchDarkly');
 
   return {
     restrict: 'E',
@@ -24,16 +32,18 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
       var currentMode = 'md';
       var editor = null;
       var childEditor = null;
-      var direction = getLangDir(field.locale);
 
       // @todo find a better way of hiding header in Zen Mode
       var editorHeader = el.closest('.workbench-main').siblings('.workbench-header').first();
 
-      scope.direction = direction;
       scope.preview = {};
       scope.setMode = setMode;
       scope.inMode = inMode;
       scope.canEdit = canEdit;
+
+      // By default, the markdown editor should be displayed as LTR unless the
+      // RTL support feature flag is enabled.
+      scope.direction = EDITOR_DIRECTIONS.LTR;
 
       var constraints = _(field.validations).map('size').filter().first() || {};
 
@@ -48,22 +58,50 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
         toggle: toggleZenMode
       };
 
+      initEditorOrRenderError();
+
       // No need to handle response:
       // 1. embedly integration is optional
       // 2. loading it even after elements are added to DOM works just fine
       LazyLoader.get('embedly');
 
-      try {
-        var mdEditor = MarkdownEditor.create(textarea, {
-          direction: direction
+      var editorDestructors = [
+        field.onValueChanged(handleFieldChange),
+        field.onIsDisabledChanged(handleStateChange)
+      ];
+
+      scope.$on('$destroy', function () {
+        if (editor) {
+          editor.destroy();
+        }
+        editorDestructors.forEach(function (destructor) {
+          destructor();
         });
-        initEditor(mdEditor);
-      } catch (e) {
-        scope.hasCrashed = true;
+      });
+
+      LD.onFeatureFlag(scope, RTL_SUPPORT_FEATURE_FLAG, function (isEnabled) {
+        if (isEnabled && isRtlLang(field.locale)) {
+          scope.isReady = false;
+          scope.direction = EDITOR_DIRECTIONS.RTL;
+          if (editor) {
+            editor.destroy();
+          }
+          initEditorOrRenderError();
+        }
+      });
+
+      function initEditorOrRenderError () {
+        try {
+          initEditor();
+        } catch (e) {
+          scope.hasCrashed = true;
+        }
       }
 
-      function initEditor (editorInstance) {
-        editor = editorInstance;
+      function initEditor () {
+        editor = MarkdownEditor.create(textarea, {
+          direction: scope.direction
+        });
         var defaultLocale = LocaleStore.getDefaultLocale();
 
         var locales = LocaleStore.getLocales();
@@ -78,14 +116,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
 
         editor.events.onChange(throttle(handleEditorChange, 200, {leading: false}));
 
-        var detachValueHandler = field.onValueChanged(handleFieldChange);
-        var detachStateHandler = field.onIsDisabledChanged(handleStateChange);
-
         scope.isReady = true;
-
-        scope.$on('$destroy', editor.destroy);
-        scope.$on('$destroy', detachValueHandler);
-        scope.$on('$destroy', detachStateHandler);
       }
 
       function handleEditorChange (value) {
