@@ -63,7 +63,6 @@ describe('The ApiKey list directive', function () {
   });
 
   it('should have only usage in v2 orgs', function () {
-    this.LD.getCurrentVariation.resolves(true);
     this.organization.pricingVersion = 'pricing_version_2';
     this.setUsageLimit(2, 3);
     this.setup();
@@ -72,7 +71,6 @@ describe('The ApiKey list directive', function () {
   });
 
   it('should have have proper pluralization', function () {
-    this.LD.getCurrentVariation.resolves(true);
     this.organization.pricingVersion = 'pricing_version_2';
     this.setUsageLimit(1, 3);
     this.setup();

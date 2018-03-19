@@ -78,11 +78,16 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
       }
 
       function goBackToPreviousPage () {
+        // TODO This code is duplicated in `navigation/closeState`.
+        // Maybe the context history is a better place for the shared
+        // code.
         contextHistory.pop();
 
         var link = contextHistory.getLast().link;
         var state = link.state;
 
+        // TODO The `contextHistory` should take care of setting the
+        // correct state when a crumb is added.
         if ($state.includes('spaces.detail.environment')) {
           state = state.replace('spaces.detail', 'spaces.detail.environment');
         }
