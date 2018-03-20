@@ -16,7 +16,7 @@ angular.module('cf.app')
 .factory('navigation/stateChangeHandlers', ['require', function (require) {
   var $rootScope = require('$rootScope');
   var $state = require('$state');
-  var contextHistory = require('contextHistory');
+  var contextHistory = require('navigation/Breadcrumbs/History').default;
   var logger = require('logger');
   var modalDialog = require('modalDialog');
   var Analytics = require('analytics/Analytics');

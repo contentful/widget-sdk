@@ -1,8 +1,8 @@
 import {assign} from 'lodash';
 import {h} from 'utils/hyperscript';
 import baseState from 'states/Base';
-import * as contextHistory from 'contextHistory';
-import * as crumbFactory from 'navigation/CrumbFactory';
+import contextHistory from 'navigation/Breadcrumbs/History';
+import * as crumbFactory from 'navigation/Breadcrumbs/Factory';
 import * as Auth from 'Authentication';
 
 import attachEditorController from './KeyEditor/Controller';

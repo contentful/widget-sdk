@@ -8,9 +8,9 @@ import {get, find, constant} from 'lodash';
 import spaceContext from 'spaceContext';
 import notification from 'notification';
 import localeStore from 'TheLocaleStore';
-import contextHistory from 'contextHistory';
+import contextHistory from 'navigation/Breadcrumbs/History';
 
-import * as crumbFactory from 'navigation/CrumbFactory';
+import * as crumbFactory from 'navigation/Breadcrumbs/Factory';
 
 import * as Validator from './Validator';
 import * as Focus from './Focus';

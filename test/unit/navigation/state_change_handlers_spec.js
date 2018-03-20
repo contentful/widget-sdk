@@ -25,10 +25,13 @@ describe('navigation/stateChangeHandlers', function () {
       $provide.value('$state', this.state);
       $provide.value('spaceContext', this.spaceContext);
       $provide.value('services/TokenStore', this.tokenStore);
-      $provide.value('contextHistory');
       $provide.value('logger', {});
       $provide.value('modalDialog', { closeAll: modalCloseStub });
-      $provide.value('contextHistory', {purge: sinon.stub()});
+      $provide.value('navigation/Breadcrumbs/History', {
+        default: {
+          purge: sinon.stub()
+        }
+      });
     });
 
     $rootScope = this.$inject('$rootScope');

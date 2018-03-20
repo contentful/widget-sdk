@@ -4,7 +4,7 @@ angular.module('contentful').factory('navigation/closeState', ['require', functi
   var $q = require('$q');
   var $state = require('$state');
   var $location = require('$location');
-  var contextHistory = require('contextHistory');
+  var contextHistory = require('navigation/Breadcrumbs/History').default;
   var stateChangeHandlers = require('navigation/stateChangeHandlers');
 
   return closeState;
