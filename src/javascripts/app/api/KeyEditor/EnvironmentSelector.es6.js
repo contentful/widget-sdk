@@ -1,5 +1,5 @@
 import {h} from 'ui/Framework';
-import {ihspace, hbox} from 'ui/Layout';
+import {ihspace} from 'ui/Layout';
 import {badge, stateLink, codeFragment} from 'ui/Content';
 import {byName as Colors} from 'Styles/Colors';
 import {find} from 'lodash';
@@ -68,30 +68,24 @@ function renderList ({canEdit, spaceEnvironments, envs, updateEnvs}) {
       marginTop: '10px'
     }
   }, [
-    h('div', {style: {width: '60%'}}, [
-      h('label', [
-        h('input', {
-          type: 'checkbox',
-          style: {marginRight: '10px'},
-          checked: isSelected(env),
-          disabled: !canEdit || spaceEnvironments.length < 2,
-          onChange: () => toggleEnvironmentSelection(env)
-        }),
-        h('strong', {
-          style: {
-            display: 'inline-block',
-            marginRight: '20px'
-          }
-        }, [
-          env.name
-        ])
-      ]),
-      env.sys.id === 'master' && badge({}, ['Default environment'])
-    ]),
-    hbox([
+    h('label', {
+      style: {
+        display: 'flex',
+        alignItems: 'baseline'
+      }
+    }, [
+      h('input', {
+        type: 'checkbox',
+        style: {marginRight: '10px'},
+        checked: isSelected(env),
+        disabled: !canEdit || spaceEnvironments.length < 2,
+        onChange: () => toggleEnvironmentSelection(env)
+      }),
       codeFragment([env.sys.id]),
       ihspace('6px'),
-      h(copyButton, { value: env.sys.id })
+      h(copyButton, { value: env.sys.id }),
+      ihspace('2em'),
+      env.sys.id === 'master' && badge({}, ['Default environment'])
     ])
   ])));
 }
