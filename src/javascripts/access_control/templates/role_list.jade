@@ -3,21 +3,22 @@ include ./roles_and_permissions_mixins.jade
 header.workbench-header
   cf-breadcrumbs
   cf-icon.workbench-header__icon(name="page-settings", scale="0.75")
-  h1.workbench-header__title Roles ({{ (roles.length || 0) + 1 }})
+  h1.workbench-header__title Roles
 
 .workbench-main
   .workbench-main__content
-    .role-list__item
+    .role-list__item.disabled
       .role-list__link.admin-role
         h3
           | Administrator
           small (built-in)
-        p Members of this role have full access to everything in this space. This is a built-in role and can't be deleted.
+        p Members of this role have full access to everything in this space. This role is automatically part of your space and does not count against your Role limit.
       .role-list__member-count
-        a(href="" ng-click="jumpToAdminRoleMembers()")
-          | {{ memberships.admin || 0 }} members
+        span
+          | {{ countAdmin }}&#32;
+          span(ng-pluralize count="countAdmin" when="{1: 'member', other: 'members'}")
       button.role-list__actions.role-list__actions--disabled.btn-inline
-        | &bullet;&bullet;&bullet;
+        | &#32;
 
     .role-list__item(ng-repeat="role in roles track by role.sys.id")
       a.role-list__link(href="" ui-sref="spaces.detail.settings.roles.detail({roleId: role.sys.id })")
@@ -25,12 +26,13 @@ header.workbench-header
         p(ng-if="role.description") {{ role.description }}
       .role-list__member-count
         a(href="" ng-click="jumpToRoleMembers(role.sys.id)")
-          | {{ memberships[role.sys.id] || 0 }} members
+          | {{ role.count }}&#32;
+          span(ng-pluralize count="role.count" when="{1: 'member', other: 'members'}")
       button.role-list__actions.btn-inline(type="button" aria-label="Actions" cf-context-menu-trigger)
         | &bullet;&bullet;&bullet;
       .context-menu(role="menu" cf-context-menu="bottom-right" aria-label="Role Actions")
         ul.context-menu__items
-          li(role="menuitem" ui-sref="spaces.detail.settings.roles.detail({roleId: role.sys.id })") Open role
+          li(role="menuitem" ui-sref="spaces.detail.settings.roles.detail({roleId: role.sys.id })") Edit role
           li(ng-if="hasFeatureEnabled" role="menuitem" ng-click="duplicateRole(role)") Duplicate
           li(ng-if="hasFeatureEnabled" role="menuitem" ng-click="removeRole(role)") Delete permanently
           li.role-list__action--disabled(ng-if="!hasFeatureEnabled") Duplicate
@@ -72,5 +74,5 @@ header.workbench-header
             | , or delete an existing role.
       p(ng-if="!reachedLimit")
         | Edit one of your existing roles or create one from the scratch.
-      button.btn-primary-action(ng-disabled="reachedLimit" ui-sref="spaces.detail.settings.roles.new")
+      button.btn-primary-action.x--block(ng-disabled="reachedLimit" ui-sref="spaces.detail.settings.roles.new")
         | Create new role

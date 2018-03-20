@@ -56,8 +56,14 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
   }
 
   function onResetResponse (data) {
-    $scope.roles = _.sortBy(data.roles, 'name');
     $scope.memberships = listHandler.getMembershipCounts();
+    $scope.countAdmin = $scope.memberships.admin || 0;
+
+    $scope.roles = _.sortBy(data.roles, 'name').map(function (role) {
+      role.count = $scope.memberships[role.sys.id] || 0;
+
+      return role;
+    });
     $scope.removeRole = createRoleRemover(listHandler, reload);
     $scope.context.ready = true;
     $scope.usage = data.rolesResource.usage;
