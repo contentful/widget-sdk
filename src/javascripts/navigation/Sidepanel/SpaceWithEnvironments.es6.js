@@ -35,7 +35,7 @@ function EnvironmentList ({environments, isCurrSpace, currentEnvId, goToSpace, s
           }
         }
       }, ...[
-        asReact(environmentIcon),
+        asReact(environmentIcon({ display: 'inline' })),
         envId
       ])
     ]);

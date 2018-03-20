@@ -16,9 +16,13 @@ $app-top-bar__action-color()
       background-color: $colors.contrast-dark
 
   &__sidepanel-trigger
+    height: 100%
     box-shadow: inset -1px 0 2px 0 rgba(0, 0, 0, 0.4), inset -2px 0 5px 0 rgba(0, 0, 0, 0.35)
     &:hover
       box-shadow: inset -1px 0 2px 0 rgba(0, 0, 0, 0.9), inset -2px 0 5px 0 rgba(0, 0, 0, 0.75)
+    > *
+      flex-shrink: 0
+      flex-grow: 0
 
   &__account-menu-trigger
     box-shadow: inset 1px 0 2px 0 rgba(0, 0, 0, 0.4), inset 2px 0 5px 0 rgba(0, 0, 0, 0.35)
@@ -27,26 +31,6 @@ $app-top-bar__action-color()
 
   &__with-right-part
     justify-content: space-between
-
-  &__logo
-    display: flex
-    justify-content: center
-    align-items: center
-    padding: 0 1em
-
-  &__logo-element,
-  &__logo-element-old
-    flex: 1 0 auto
-    width: 21px
-    height: 24px
-
-  &__logo-element-old
-    background-image: url('/app/svg/logo-label.svg')
-    background-size: 21px 24px
-
-  &__logo-text
-    $app-top-bar__action-color()
-    padding-left: 1em
 
   &__child
     height: 100%
