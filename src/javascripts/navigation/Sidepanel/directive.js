@@ -107,9 +107,6 @@ angular.module('contentful')
         render();
       });
 
-      $scope.closeSidePanel = closeSidePanel;
-      $scope.closeOrgsDropdown = closeOrgsDropdown;
-
       function gotoOrgSettings () {
         closeSidePanel();
         var orgSettingsPath = ['account', 'organizations'];
