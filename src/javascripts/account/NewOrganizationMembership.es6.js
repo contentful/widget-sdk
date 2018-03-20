@@ -1,4 +1,4 @@
-import {omit, pick, negate, trim, sortedUniq, isObject} from 'lodash';
+import {omit, pick, negate, trim, sortedUniq, isObject, get} from 'lodash';
 import {h} from 'ui/Framework';
 import {assign} from 'utils/Collections';
 import {getOrganization} from 'services/TokenStore';
@@ -21,7 +21,7 @@ import {
   errorMessage,
   successMessage
 } from 'account/NewOrganizationMembershipTemplate';
-import {isLegacyOrganization, getLegacyLimit} from 'utils/ResourceUtils';
+import createResourceService from 'services/ResourceService';
 
 // Begin test code: test-ps-02-2018-tea-onboarding-steps
 import {track, updateUserInSegment} from 'analytics/Analytics';
@@ -369,18 +369,14 @@ export default function ($scope) {
    * Gets org info from the token and makes a request to
    * organization users endpoint to get the `total` value.
    * This is a workaround for the token 15min cache that won't let
-   * us get an updated number after an invitation request
-   *
-   * TODO: Migrate this to use ResourceService, once the feature
-   * flag is removed.
+   * us get an updated number after an invitation request.
    */
   function* getOrgInfo () {
     const org = yield getOrganization(orgId);
 
-    let membershipLimit;
-    if (isLegacyOrganization(org)) {
-      membershipLimit = getLegacyLimit('organizationMembership', org);
-    }
+    const resourceService = createResourceService(orgId, 'organization');
+    const resources = yield resourceService.get('organization_membership');
+    const membershipLimit = get(resources, 'limits.maximum');
 
     // We cannot rely on usage data from organization (token) since the cache
     // is not invalidated on user creation.

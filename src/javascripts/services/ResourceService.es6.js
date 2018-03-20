@@ -30,6 +30,13 @@ export default function createResourceService (id, type = 'space') {
         throw new Error('resourceType not supplied to ResourceService.get');
       }
 
+      // Remove this after BE part is done
+      // https://contentful.tpondemand.com/entity/28109-create-resourcesresourcetype-endpoint-on-org-level
+      if (type === 'organization') {
+        const all = yield getAll() || [];
+        return all.find(({sys}) => sys.id === resourceType);
+      }
+
       const organization = yield getTokenOrganization(id, type);
       const legacy = yield useLegacy(organization);
 
