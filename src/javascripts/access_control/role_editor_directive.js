@@ -19,17 +19,19 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
   var listHandler = require('UserListHandler').create();
   var createRoleRemover = require('createRoleRemover');
   var PolicyBuilder = require('PolicyBuilder');
+  var TheAccountView = require('TheAccountView');
   var leaveConfirmator = require('navigation/confirmLeaveEditor');
   var notification = require('notification');
   var logger = require('logger');
-  var accessChecker = require('access_control/AccessChecker');
+  var createFeatureService = require('services/FeatureService').default;
   var createResourceService = require('services/ResourceService').default;
   var ResourceUtils = require('utils/ResourceUtils');
 
   var org = spaceContext.organizationContext.organization;
+  var FeatureService = createFeatureService(spaceContext.getId());
 
   $q.all({
-    hasFeature: accessChecker.hasFeature('customRoles'),
+    feature: FeatureService.get('customRoles'),
     resource: createResourceService(spaceContext.getId()).get('role'),
     useLegacy: ResourceUtils.useLegacy(org)
   }).then(function (result) {
@@ -38,7 +40,9 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
     var isTrial = subscription && subscription.isTrial();
     var trialLockdown = isTrial && subscription.hasTrialEnded();
 
-    if (!result.hasFeature) {
+    $scope.legacy = result.useLegacy;
+
+    if (!result.feature.enabled) {
       notification.error('Your plan does not include Custom Roles.');
       $scope.canModifyRoles = false;
     } else if (isNew && !ResourceUtils.canCreate(result.resource)) {
@@ -53,6 +57,8 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
 
   // 1. prepare "touch" counter (first touch for role->internal, next for dirty state)
   $scope.context.touched = $scope.context.isNew ? 0 : -1;
+
+  $scope.accountUpgradeState = TheAccountView.getSubscriptionState();
 
   // 2. prepare role object based on duplication target
   if ($scope.baseRole) {

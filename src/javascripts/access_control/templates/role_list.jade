@@ -38,7 +38,7 @@ header.workbench-header
 
   .workbench-main__sidebar
     .entity-sidebar(ng-if="!hasFeatureEnabled")
-      +custom-roles-plan-info
+      +custom-roles-plan-info(legacy, accountUpgradeState)
     .entity-sidebar(ng-if="hasFeatureEnabled")
       h2.entity-sidebar__heading
         | Create new role
@@ -52,23 +52,25 @@ header.workbench-header
 
       p(ng-if="reachedLimit")
         span
-          | You've reached the&#32;
+          | You've reached the role limit for this&#32;
           span(ng-if="legacy")
             | organization
           span(ng-if="!legacy")
             | space
-          | &#32;role limit.&#32;
+          | .&#32;
 
         span
           span(ng-if="canUpgrade")
-            | <a cf-sref="{{ accountUpgradeState }}">Upgrade</a> to add more locales
-          span(ng-if="!canUpgrade")
+            | <a cf-sref="{{ accountUpgradeState }}">Upgrade</a> to add more roles
+          span(ng-if="!canUpgrade && legacy")
             | Contact the admin of this organization to upgrade the organization
+          span(ng-if="!canUpgrade && !legacy")
+            | Contact the admin of this space to upgrade the space
           span(ng-if="limit === 1")
             | .
           span(ng-if="limit > 1")
-            | , or delete an existing locale.
+            | , or delete an existing role.
       p(ng-if="!reachedLimit")
-        | Select one of the predefined role templates or create one from the scratch.
+        | Edit one of your existing roles or create one from the scratch.
       button.btn-primary-action(ng-disabled="reachedLimit" ui-sref="spaces.detail.settings.roles.new")
         | Create new role

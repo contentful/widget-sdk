@@ -17,18 +17,20 @@ angular.module('contentful')
   var notification = require('notification');
   var enforcements = require('access_control/Enforcements');
   var $state = require('$state');
-  var accessChecker = require('access_control/AccessChecker');
   var ResourceUtils = require('utils/ResourceUtils');
 
   var $q = require('$q');
 
   var ResourceService = require('services/ResourceService').default;
+  var createFeatureService = require('services/FeatureService').default;
 
   var organization = spaceContext.organizationContext.organization;
   var canUpgrade = require('services/OrganizationRoles').isOwnerOrAdmin(organization);
 
   var resources = ResourceService(spaceContext.getId());
   var resource;
+
+  var FeatureService = createFeatureService(spaceContext.getId());
 
   ResourceUtils.useLegacy(organization).then(function (legacy) {
     $scope.showSidebar = !legacy;
@@ -151,7 +153,9 @@ angular.module('contentful')
   }
 
   function hasMultipleLocales () {
-    return accessChecker.hasFeature('multipleLocales');
+    return FeatureService.get('multipleLocales').then(function (feature) {
+      return feature.enabled;
+    });
   }
 
   function getSubscriptionPlanData (path) {

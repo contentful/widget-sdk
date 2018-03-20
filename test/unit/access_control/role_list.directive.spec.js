@@ -42,6 +42,10 @@ describe('Role List Directive', function () {
       rolesResource: this.rolesResource
     });
 
+    this.mockService('TheAccountView', {
+      getSubscriptionState: sinon.stub().returns({path: ['stateref']})
+    });
+
     const UserListHandler = this.$inject('UserListHandler');
 
     UserListHandler.create = sinon.stub().returns({
@@ -131,87 +135,121 @@ describe('Role List Directive', function () {
   });
 
   describe('the UX', function () {
-    describe('for Version 1 organization', function () {
-      beforeEach(function () {
+    describe('for a user that cannot modify roles', function () {
+      it('should not show the Add Role button', function () {
+        this.canModifyRoles.resolves(false);
+
         this.toggleLegacy(true);
-      });
+        this.compileElement();
 
-      describe('for a user that cannot modify roles', function () {
-        it('should not show the Add Role button', function () {
-          this.canModifyRoles.resolves(false);
-          this.compileElement();
+        expect(this.container.find('.entity-sidebar button').length).toBe(0);
 
-          expect(this.container.find('.entity-sidebar button').length).toBe(0);
-        });
-      });
+        this.toggleLegacy(false);
+        this.compileElement();
 
-      describe('for a user that can modify roles', function () {
-        it('should show the Add Role button', function () {
-          this.canModifyRoles.resolves(true);
-          this.compileElement();
-
-          expect(this.container.find('.entity-sidebar button').length).toBe(1);
-        });
-
-        it('should show the usage and limits', function () {
-          this.setUsageLimits(1, 3);
-          this.compileElement();
-
-          const text = this.container.find('.entity-sidebar > p').eq(0).text();
-
-          expect(text).toBe('Your organization is using 1 out of 3 available roles.');
-        });
-
-        describe('when hitting the limit', function () {
-          beforeEach(function () {
-            this.setUsageLimits(3, 3);
-          });
-
-          it('should show an upgrade button if the user is an org admin/owner', function () {
-            this.OrganizationRoles.isOwnerOrAdmin.returns(true);
-            this.compileElement();
-
-            const text = this.container.find('.entity-sidebar > p:eq(1) > span').eq(1).text();
-
-            expect(text).toBe('Upgrade to add more locales, or delete an existing locale.');
-          });
-
-          it('should tell the user to contact the org admin/owner if only a member', function () {
-            this.OrganizationRoles.isOwnerOrAdmin.returns(false);
-            this.compileElement();
-
-            const text = this.container.find('.entity-sidebar > p:eq(1) > span').eq(1).text();
-
-            expect(text).toBe('Contact the admin of this organization to upgrade the organization, or delete an existing locale.');
-          });
-
-          it('should not tell the user to delete an existing role if the limit is one', function () {
-            this.setUsageLimits(1, 1);
-            this.compileElement();
-
-            const text = this.container.find('.entity-sidebar > p:eq(1) > span').eq(1).text();
-
-            expect(text).toBe('Contact the admin of this organization to upgrade the organization.');
-          });
-        });
+        expect(this.container.find('.entity-sidebar button').length).toBe(0);
       });
     });
 
-    describe('Version 2 organization', function () {
-      beforeEach(function () {
+    describe('for a user that can modify roles', function () {
+      it('should show the Add Role button', function () {
+        this.canModifyRoles.resolves(true);
+
+        this.toggleLegacy(true);
+        this.compileElement();
+
+        expect(this.container.find('.entity-sidebar button').length).toBe(1);
+
         this.toggleLegacy(false);
+        this.compileElement();
+
+        expect(this.container.find('.entity-sidebar button').length).toBe(1);
       });
 
-      it('should not show the Add Role button regardless of ability to modify roles', function () {
-        // If user cannot modify
-        this.canModifyRoles.resolves(false);
-        this.compileElement();
-        expect(this.container.find('.entity-sidebar button').length).toBe(0);
+      it('should show the usage and limits', function () {
+        let text;
 
-        // If user can modify
-        this.canModifyRoles.resolves(true);
+        this.setUsageLimits(1, 3);
+
+        this.toggleLegacy(true);
         this.compileElement();
-        expect(this.container.find('.entity-sidebar button').length).toBe(0);
+
+        text = this.container.find('.entity-sidebar > p').eq(0).text();
+
+        expect(text).toBe('Your organization is using 1 out of 3 available roles.');
+
+        this.toggleLegacy(false);
+        this.compileElement();
+
+        text = this.container.find('.entity-sidebar > p').eq(0).text();
+
+        expect(text).toBe('Your space is using 1 out of 3 available roles.');
+      });
+
+      describe('when hitting the limit', function () {
+        beforeEach(function () {
+          this.setUsageLimits(3, 3);
+        });
+
+        it('should show an upgrade button if the user is an org admin/owner', function () {
+          let text;
+
+          this.OrganizationRoles.isOwnerOrAdmin.returns(true);
+
+          this.toggleLegacy(true);
+          this.compileElement();
+
+          text = this.container.find('.entity-sidebar > p:eq(1) > span').eq(1).text();
+
+          expect(text).toBe('Upgrade to add more roles, or delete an existing role.');
+
+          this.toggleLegacy(false);
+          this.compileElement();
+
+          text = this.container.find('.entity-sidebar > p:eq(1) > span').eq(1).text();
+
+          expect(text).toBe('Upgrade to add more roles, or delete an existing role.');
+        });
+
+        it('should tell the user to contact the org admin/owner if only a member', function () {
+          let text;
+
+          this.OrganizationRoles.isOwnerOrAdmin.returns(false);
+
+          this.toggleLegacy(true);
+          this.compileElement();
+
+          text = this.container.find('.entity-sidebar > p:eq(1) > span').eq(1).text();
+
+          expect(text).toBe('Contact the admin of this organization to upgrade the organization, or delete an existing role.');
+
+          this.toggleLegacy(false);
+          this.compileElement();
+
+          text = this.container.find('.entity-sidebar > p:eq(1) > span').eq(1).text();
+
+          expect(text).toBe('Contact the admin of this space to upgrade the space, or delete an existing role.');
+        });
+
+        it('should not tell the user to delete an existing role if the limit is one', function () {
+          let text;
+
+          this.setUsageLimits(1, 1);
+
+          this.toggleLegacy(true);
+          this.compileElement();
+
+          text = this.container.find('.entity-sidebar > p:eq(1) > span').eq(1).text();
+
+          expect(text).toBe('Contact the admin of this organization to upgrade the organization.');
+
+          this.toggleLegacy(false);
+          this.compileElement();
+
+          text = this.container.find('.entity-sidebar > p:eq(1) > span').eq(1).text();
+
+          expect(text).toBe('Contact the admin of this space to upgrade the space.');
+        });
       });
     });
   });

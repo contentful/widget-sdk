@@ -1,9 +1,19 @@
-mixin custom-roles-plan-info
-    h2.entity-sidebar__heading
-        | Customise your roles
+mixin custom-roles-plan-info(isLegacy, accountUpgradeState)
+  h2.entity-sidebar__heading
+      | Customize your roles
+  if legacy
     p
-        | With our Enterprise Plans it is possible to fully customize the roles within your space.
-        | These custom roles can define granular permissions on entries, content types, and fields.
-        | To learn more about what’s possible check out
-        |  <a target="_blank" rel="noopener noreferrer" href="https://www.contentful.com/r/knowledgebase/roles-and-permissions/">this guide</a> or
-        |  <a target="_blank" rel="noopener noreferrer" href="https://www.contentful.com/contact/sales/">get in touch</a> with our Enterprise team.
+      | With our Enterprise Plans it is possible to fully customize the roles within your space.
+      | These custom roles can define granular permissions on entries, content types, and fields.
+      | To learn more about what’s possible check out
+      |  <a target="_blank" rel="noopener noreferrer" href="https://www.contentful.com/r/knowledgebase/roles-and-permissions/">this guide</a> or
+      |  <a target="_blank" rel="noopener noreferrer" href="https://www.contentful.com/contact/sales/">get in touch</a> with our Enterprise team.
+  else
+    p
+      | With our more advanced spaces it's possible to fully edit and customize the roles within your space.
+    p
+      | These Custom Roles can be defined to have granular permissions on entries, content types, fields, and more.
+    p
+      | To learn more about what's possible, check out&#32;
+      | <a target="_blank" rel="noopener noreferrer" href="https://www.contentful.com/r/knowledgebase/roles-and-permissions/">our guide to Roles and Permissions</a> or
+      | <a cf-sref="accountUpgradeState">upgrade your space</a>.
