@@ -11,9 +11,9 @@ angular.module('contentful')
   var sidepanelTrigger = require('navigation/Sidepanel/Trigger').default;
   return {
     restrict: 'E',
-    template: '<cf-component-bridge component=component>',
+    template: '<cf-component-bridge component=sidepanelComponent>',
     controller: ['$scope', function ($scope) {
-      $scope.component = sidepanelTrigger();
+      $scope.sidepanelComponent = sidepanelTrigger();
     }]
   };
 }]);

@@ -16,7 +16,7 @@ import render from './View';
 export default {
   name: 'environments',
   url: '/environments',
-  template: '<cf-component-store-bridge ng-if="component" component="component" />',
+  template: '<cf-component-store-bridge ng-if="environmentComponent" component="environmentComponent" />',
   controller: ['$scope', 'spaceContext', function ($scope, spaceContext) {
     const hasAccess = accessChecker.can('update', 'settings');
     if (!hasAccess) {
@@ -26,7 +26,7 @@ export default {
     LD.getCurrentVariation('feature-dv-11-2017-environments')
       .then((environmentsEnabled) => {
         if (environmentsEnabled) {
-          $scope.component = createComponent(spaceContext);
+          $scope.environmentComponent = createComponent(spaceContext);
         } else {
           $state.go('spaces.detail');
         }
