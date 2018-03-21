@@ -12,6 +12,7 @@ angular.module('contentful')
   return {
     restrict: 'E',
     template: '<cf-component-bridge component=sidepanelComponent>',
+    scope: {},
     controller: ['$scope', function ($scope) {
       $scope.sidepanelComponent = sidepanelTrigger();
     }]

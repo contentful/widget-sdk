@@ -6,11 +6,11 @@ export default function () {
       role: 'banner'
     }),
     h('cf-nav-sidepanel', {
-      isShown: '$parent.sidepanelIsShown'
+      isShown: 'sidePanelIsShown'
     }),
     h('div.app-top-bar', [
       h('cf-nav-sidepanel-trigger', {
-        ngClick: '$parent.sidepanelIsShown = !$parent.sidepanelIsShown'
+        ngClick: 'toggleSidePanel()'
       }),
       h('div.app-top-bar__child.app-top-bar__main-nav', {
         uiView: 'nav-bar'
