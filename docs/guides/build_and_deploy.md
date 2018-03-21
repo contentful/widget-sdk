@@ -77,7 +77,7 @@ Then change `Dockerfil-ci` to use the correct version and commit your changes.
 Deployment
 ----------
 
-The app is deployed as a set of fingerprinted asset files (indepedent of the
+The app is deployed as a set of fingerprinted asset files (independent of the
 environment they run in) and an `index.html` file which serves as the entry
 point for the web application and is configured for a specific environment and
 host. There are three target environments (“preview”, “staging”, and

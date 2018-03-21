@@ -29,10 +29,9 @@ function* main (argv) {
 
 
 const TRAVIS_DESC =
-  'Create a configured distribution from Travis parameters.\n' +
-  'The configuration is determined from the travis branch and loaded from ' +
-  'the \'config\' directory. This command creates the files distribution for ' +
-  'the preview environment and the Debian package for deployment in /app/output';
+  'Create configured file distribution for all environments from Travis parameters.\n' +
+  'For each of the three environments production, staging, and preview a file\n' +
+  'distribution is created in `./output/files/${env}`.';
 
 const SERVE_DESC =
   'Serves application files on localhost:3001.\n' +
