@@ -44,6 +44,8 @@ describe('The Locale list directive', function () {
       }
     };
 
+    this.featureEnabled = true;
+
     module('contentful/test', ($provide) => {
       $provide.removeDirectives('relative');
       $provide.value('$state', {current: '', href: () => {}});
@@ -56,6 +58,20 @@ describe('The Locale list directive', function () {
         default: () => {
           return {
             get: sinon.stub().resolves(this.resource)
+          };
+        }
+      });
+
+      $provide.value('services/FeatureService', {
+        default: () => {
+          return {
+            get: sinon.stub().resolves({
+              enabled: this.featureEnabled,
+              sys: {
+                id: 'multiple_locales',
+                type: 'SpaceFeature'
+              }
+            })
           };
         }
       });
@@ -148,8 +164,6 @@ describe('The Locale list directive', function () {
     this.$rootScope = this.$inject('$rootScope');
     this.localeStore = this.$inject('TheLocaleStore');
     this.localeStore.refresh = sinon.stub().resolves(locales);
-    this.accessChecker = this.$inject('access_control/AccessChecker');
-    this.accessChecker.hasFeature = sinon.stub().resolves();
 
     this.compileElement = function () {
       this.container = this.$compile('<div cf-locale-list />', this.$scope);
@@ -161,13 +175,13 @@ describe('The Locale list directive', function () {
   });
 
   it('the tab header add button is not shown', function () {
+    this.featureEnabled = false;
     this.compileElement();
     expect(this.container.find('.workbench-header__actions button.add-entity')).toBeNgHidden();
   });
 
   it('the tab header add button is shown if you are not at your locale limit', function* () {
     this.setUsageLimits(1, 10);
-    this.accessChecker.hasFeature.resolves(true);
     this.compileElement();
 
     yield this.$q.resolve();
@@ -177,7 +191,6 @@ describe('The Locale list directive', function () {
 
   it('should show the sidebar if organization is pricing version 2', function* () {
     this.organization.pricingVersion = 'pricing_version_2';
-    this.accessChecker.hasFeature.resolves(true);
     this.flags['feature-bv-2018-01-resources-api'] = true;
 
     this.compileElement();
@@ -190,7 +203,6 @@ describe('The Locale list directive', function () {
 
   it('should not show the sidebar if organization is pricing version 1', function* () {
     this.organization.pricingVersion = 'pricing_version_1';
-    this.accessChecker.hasFeature.resolves(true);
     this.compileElement();
 
     yield this.$q.resolve();
@@ -201,7 +213,6 @@ describe('The Locale list directive', function () {
   it('should disable the button in the sidebar if the limit is reached', function* () {
     this.organization.pricingVersion = 'pricing_version_2';
     this.flags['feature-bv-2018-01-resources-api'] = true;
-    this.accessChecker.hasFeature.resolves(true);
 
     this.setUsageLimits(10, 10);
     this.compileElement();
@@ -215,7 +226,6 @@ describe('The Locale list directive', function () {
     beforeEach(function () {
       this.organization.pricingVersion = 'pricing_version_2';
       this.flags['feature-bv-2018-01-resources-api'] = true;
-      this.accessChecker.hasFeature.resolves(true);
     });
 
     describe('with limit of 1', function () {

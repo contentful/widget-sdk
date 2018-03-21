@@ -18,8 +18,8 @@
       var TokenStore = require('services/TokenStore');
       var OrganizationRoles = require('services/OrganizationRoles');
       var K = require('utils/kefir');
-      var accessChecker = require('access_control/AccessChecker');
 
+      var createFeatureService = require('services/FeatureService').default;
       var nav = this;
 
       // Prevent unnecesary calls from watchers
@@ -34,9 +34,12 @@
       function updateNav () {
         var orgId = nav.orgId = $stateParams.orgId;
         TokenStore.getOrganization(orgId).then(function (org) {
+          var FeatureService = createFeatureService(orgId, 'organization');
+
           nav.pricingVersion = org.pricingVersion;
-          accessChecker.hasFeature('offsiteBackup').then(function (value) {
-            nav.hasOffsiteBackup = value;
+
+          FeatureService.get('offsiteBackup').then(function (feature) {
+            nav.hasOffsiteBackup = feature.enabled;
           });
           nav.hasBillingTab = org.isBillable && OrganizationRoles.isOwner(org);
           nav.hasSettingsTab = OrganizationRoles.isOwner(org);

@@ -9,11 +9,11 @@ import {cloneDeep, find, constant} from 'lodash';
 import spaceContext from 'spaceContext';
 import notifications from 'notification';
 import localeStore from 'TheLocaleStore';
-import contextHistory from 'contextHistory';
+import contextHistory from 'navigation/Breadcrumbs/History';
 
 import DataFields from 'EntityEditor/DataFields';
 import ContentTypes from 'data/ContentTypes';
-import * as crumbFactory from 'navigation/CrumbFactory';
+import * as crumbFactory from 'navigation/Breadcrumbs/Factory';
 
 import * as Validator from './Validator';
 import * as Focus from './Focus';

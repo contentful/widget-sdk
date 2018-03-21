@@ -133,6 +133,35 @@ export function hbox (style, children) {
 
 
 /**
+ * Create a container with a vertical flex-box layout
+ *
+ *     vbox([
+ *       ...items
+ *     ])
+ *
+ * With additional style properties
+ *
+ *     vbox({
+ *       height: '100px',
+ *     }, [
+ *        ...items
+ *     ])
+ *
+ */
+export function vbox (style, children) {
+  if (arguments.length < 2) {
+    children = style;
+    style = {};
+  }
+  return container({
+    display: 'flex',
+    flexDirection: 'column',
+    ...style
+  }, children);
+}
+
+
+/**
  * @ngdoc method
  * @name ui/Layout#vspace
  * @description

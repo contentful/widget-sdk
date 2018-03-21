@@ -7,8 +7,8 @@ angular.module('contentful')
  * @name states/contentTypes
  */
 .factory('states/contentTypes', ['require', function (require) {
-  var contextHistory = require('contextHistory');
-  var crumbFactory = require('navigation/CrumbFactory');
+  var contextHistory = require('navigation/Breadcrumbs/History').default;
+  var crumbFactory = require('navigation/Breadcrumbs/Factory');
 
   var base = require('states/Base').default;
   var resolvers = require('states/resolvers');

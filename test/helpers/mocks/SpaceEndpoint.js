@@ -49,7 +49,8 @@ export default function create () {
         }));
       }
     }),
-    resources: makeGenericEndpoint()
+    resources: makeGenericEndpoint(),
+    features: makeGenericEndpoint()
   };
 
   const stores = mapValues(endpoints, (ep) => ep.store);

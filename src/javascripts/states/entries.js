@@ -7,10 +7,10 @@ angular.module('contentful')
  * @name states/entries
  */
 .factory('states/entries', ['require', function (require) {
-  var contextHistory = require('contextHistory');
   var $state = require('$state');
   var trackVersioning = require('analyticsEvents/versioning');
-  var crumbFactory = require('navigation/CrumbFactory');
+  var contextHistory = require('navigation/Breadcrumbs/History').default;
+  var crumbFactory = require('navigation/Breadcrumbs/Factory');
   var h = require('ui/Framework').h;
 
   var base = require('states/Base').default;

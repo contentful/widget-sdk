@@ -3,7 +3,7 @@ import {deepFreeze} from 'utils/Freeze';
 
 /**
  * @ngdoc service
- * @name navigation/CrumbFactory
+ * @name navigation/Breadcrumbs/Factory
  * @description
  * Exports breadcrumb object factories.
  *
