@@ -9,26 +9,24 @@ header.workbench-header
   .workbench-main__content
     .role-list__item.disabled
       .role-list__link.admin-role
-        h3
-          | Administrator
-          small (built-in)
-        p Members of this role have full access to everything in this space. This role is automatically part of your space and does not count against your Role limit.
+        h3 Administrator
+        p Members of this role have full access to everything in this space.
+          span(ng-if="hasFeatureEnabled") This role is automatically part of your space and does not count against your role limit.
       .role-list__member-count
-        span
+        a(href="" ng-click="jumpToAdminRoleMembers()")
           | {{ countAdmin }}&#32;
           span(ng-pluralize count="countAdmin" when="{1: 'member', other: 'members'}")
-      button.role-list__actions.role-list__actions--disabled.btn-inline
-        | &#32;
+      button.role-list__actions.role-list__actions--disabled.btn-inline(ng-if="hasFeatureEnabled")
 
     .role-list__item(ng-repeat="role in roles track by role.sys.id")
-      a.role-list__link(href="" ui-sref="spaces.detail.settings.roles.detail({roleId: role.sys.id })")
+      .role-list__link(href="" ui-sref="spaces.detail.settings.roles.detail({roleId: role.sys.id })")
         h3 {{ role.name }}
         p(ng-if="role.description") {{ role.description }}
       .role-list__member-count
         a(href="" ng-click="jumpToRoleMembers(role.sys.id)")
           | {{ role.count }}&#32;
           span(ng-pluralize count="role.count" when="{1: 'member', other: 'members'}")
-      button.role-list__actions.btn-inline(type="button" aria-label="Actions" cf-context-menu-trigger)
+      button.role-list__actions.btn-inline(type="button" aria-label="Actions" ng-if="hasFeatureEnabled" cf-context-menu-trigger)
         | &bullet;&bullet;&bullet;
       .context-menu(role="menu" cf-context-menu="bottom-right" aria-label="Role Actions")
         ul.context-menu__items
