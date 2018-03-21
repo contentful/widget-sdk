@@ -63,7 +63,7 @@ function renderContent ({ navState, environmentsEnabled }) {
     ]],
     [NavStates.NewOrg, () => [ stateTitle('create new organization') ]],
     [NavStates.UserProfile, () => [ stateTitle('User profile') ]],
-    [NavStates.Default, () => [ stateTitle('Welcom to Contentful') ]]
+    [NavStates.Default, () => [ stateTitle('Welcome to Contentful') ]]
   ]);
 }
 
