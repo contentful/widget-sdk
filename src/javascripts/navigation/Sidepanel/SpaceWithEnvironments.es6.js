@@ -117,7 +117,7 @@ export default createReactClass({
       onClick: () => this.toggleEnvironmentList(),
       'data-test-id': `sidepanel-space-link-${index}`,
       'data-test-group-id': 'sidepanel-space-link',
-      'aria-selected': isOpened ? 'true' : 'false'
+      'aria-selected': isCurrSpace ? 'true' : 'false'
     }, ...[
       e('div', {className: 'nav-sidepanel__space-title'}, ...[
         e('div', {className: 'nav-sidepanel__space-icon'}, asReact(folderIcon)),
