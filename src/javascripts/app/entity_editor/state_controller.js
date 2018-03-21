@@ -10,7 +10,6 @@ angular.module('contentful')
   var trackVersioning = require('analyticsEvents/versioning');
   var K = require('utils/kefir');
   var N = require('app/entity_editor/Notifications');
-  var LD = require('utils/LaunchDarkly');
   var modalDialog = require('modalDialog');
   var Notification = N.Notification;
   var SumTypes = require('libs/sum-types');
@@ -32,14 +31,6 @@ angular.module('contentful')
   K.onValueScope($scope, docStateManager.inProgress$, function (inProgress) {
     controller.inProgress = inProgress;
   });
-
-  LD.onFeatureFlag(
-    $scope,
-    'feature-at-01-2018-incoming-links-confirmation-in-entry-editor',
-    function (isEnabled) {
-      $scope.isConfirmationFeatureEnabled = isEnabled;
-    }
-  );
 
   var noop = Command.create(function () {});
 
@@ -249,10 +240,6 @@ angular.module('contentful')
   }
 
   function showConfirmationMessage (props) {
-    if (!$scope.isConfirmationFeatureEnabled) {
-      return $q.resolve();
-    }
-
     return modalDialog.open({
       template: '<cf-state-change-confirmation-dialog class="modal-background"/>',
       backgroundClose: true,

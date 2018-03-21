@@ -9,14 +9,8 @@ div.asset-editor.workbench
       cf-knowledge-base.workbench-header__kb-link(target="asset")
 
     .workbench-header__actions
-      button.btn-secondary-action(
-        ng-if="!isConfirmationFeatureEnabled"
-        ui-command-state="state.delete"
-        cf-context-menu-trigger)
-        | Delete
       +entity-delete-confirm-menu
       button.btn-secondary-action(
-        ng-if="isConfirmationFeatureEnabled"
         data-test-id="trigger-delete-modal"
         ui-command="state.delete")
         | Delete 

@@ -2,7 +2,6 @@
 
 angular.module('contentful')
 .directive('cfNumberEditor', ['require', function (require) {
-  var LD = require('utils/LaunchDarkly');
   var parseNumber = require('cfNumberEditor/parseNumber');
   var InputUpdater = require('ui/inputUpdater');
   var debounce = require('debounce');
@@ -30,13 +29,6 @@ angular.module('contentful')
 
       var range = getRangeFromField(field);
 
-      LD.onFeatureFlag(
-        scope,
-        'feature-at-01-2018-input-type-number',
-        function (isNumberTypeEnabled) {
-          scope.isNumberTypeEnabled = isNumberTypeEnabled;
-        }
-      );
       scope.min = range.min;
       scope.max = range.max;
       scope.step = field.type === 'Integer' ? 1 : 'any';

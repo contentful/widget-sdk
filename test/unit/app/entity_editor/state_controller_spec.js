@@ -1,4 +1,5 @@
 'use strict';
+import $q from '$q';
 
 describe('entityEditor/StateController', function () {
   beforeEach(function () {
@@ -6,6 +7,7 @@ describe('entityEditor/StateController', function () {
 
     module('contentful/test', function ($provide) {
       $provide.value('navigation/closeState', closeStateSpy);
+      $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
 
     this.rootScope = this.$inject('$rootScope');
@@ -16,6 +18,10 @@ describe('entityEditor/StateController', function () {
     this.spaceContext = this.$inject('spaceContext');
 
     this.$inject('access_control/AccessChecker').canPerformActionOnEntity = sinon.stub().returns(true);
+
+    const dialogDefer = $q.defer();
+    this.$inject('modalDialog').open = sinon.stub().returns({ promise: dialogDefer.promise });
+    dialogDefer.resolve();
 
     const warnings = this.$inject('entityEditor/publicationWarnings');
     warnings.create = sinon.stub().returns({
@@ -69,6 +75,17 @@ describe('entityEditor/StateController', function () {
   });
 
   describe('#delete command execution', function () {
+    beforeEach(function () {
+      this.scope.entityInfo = {
+        id: 'abc',
+        type: 'Entry'
+      };
+
+      this.spaceContext.cma = {
+        getEntries: sinon.stub().resolves({ items: [] })
+      };
+    });
+
     it('makes delete request', function () {
       this.controller.delete.execute();
       this.$apply();
