@@ -182,27 +182,19 @@ angular.module('contentful')
   /**
    * @ngdoc method
    * @name widgets#filterOptions
-   * @param {Widget.Option[]} options
+   * @description
+   * Exclude options that are not applicable.
+   * @param {Widget} widget
    * @param {object} params
    */
-  function filterOptions (widgetOptions, settings) {
-    settings = _.isObject(settings) ? settings : {};
-    return _.filter(widgetOptions || [], shouldOptionBeVisible);
-
-    function shouldOptionBeVisible (option) {
-      var dependencies = option.dependsOnEvery || option.dependsOnAny;
-      var everyOrSome = option.dependsOnEvery ? 'every' : 'some';
-
-      if (!_.isObject(dependencies) || !_.keys(dependencies).length) {
-        return true;
-      }
-
-      return _[everyOrSome](dependencies, areMet);
-    }
-
-    function areMet (acceptedValues, paramName) {
-      acceptedValues = _.isArray(acceptedValues) ? acceptedValues : [acceptedValues];
-      return _.includes(acceptedValues, settings[paramName]);
+  function filterOptions (widget, params) {
+    // Filter out AM/PM selector if date picker mode does not include time
+    if (widget.id === 'datePicker') {
+      return (widget.options || []).filter(function (option) {
+        return option.param !== 'ampm' || ['time', 'timeZ'].includes(params.format);
+      });
+    } else {
+      return [].concat(widget.options || []);
     }
   }
 

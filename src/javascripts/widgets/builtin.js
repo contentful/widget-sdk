@@ -148,10 +148,7 @@ angular.module('contentful')
           '12': 'AM/PM',
           '24': '24 Hour'
         },
-        default: '24',
-        dependsOnAny: {
-          format: ['time', 'timeZ']
-        }
+        default: '24'
       }
     ]
   });
