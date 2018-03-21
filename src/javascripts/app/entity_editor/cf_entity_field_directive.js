@@ -103,22 +103,18 @@ angular.module('cf.app')
       );
 
       $scope.methods = {
-        shouldDisplayRtl: shouldDisplayRtl,
+        shouldDisplayRtl: _.constant(false),
         isLocaleFieldExpanded: isLocaleFieldExpanded,
         toggleLocaleFieldExpansion: toggleLocaleFieldExpansion
       };
 
       LD.onFeatureFlag($scope, RTL_SUPPORT_FEATURE_FLAG, function (isEnabled) {
+        // By default, all entity fields should be displayed as LTR unless the
+        // RTL support feature flag is enabled.
         if (isEnabled) {
           $scope.methods.shouldDisplayRtl = isRtlLocale;
         }
       });
-
-      function shouldDisplayRtl () {
-        // By default, all entity fields should be displayed as LTR unless the
-        // RTL support feature flag is enabled.
-        return false;
-      }
 
       function canRenderInline () {
         return field.type === 'Link' && field.linkType === 'Entry' &&
