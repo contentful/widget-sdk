@@ -5,6 +5,7 @@
 
 .user-list__actions,
 .role-list__actions
+  min-width: 25px
   font-size: 0.6em
   letter-spacing: 0.18em
   &--disabled
@@ -26,7 +27,15 @@
   p
     margin-bottom: 0
   &:first-child
-    margin-top: -15px
+    margin-top: -19px
+
+  &.disabled
+    background: $colors.element-lightest
+    user-select: none
+    cursor: default
+
+    > .role-list__member-count
+      color: $colors.text-lightest
 
 .role-list__link
   width: 70%
