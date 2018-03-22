@@ -2222,6 +2222,9 @@
         }
       }
     },
+    "rtl-detect": {
+      "version": "1.0.2"
+    },
     "run-sequence": {
       "version": "1.0.2",
       "dependencies": {

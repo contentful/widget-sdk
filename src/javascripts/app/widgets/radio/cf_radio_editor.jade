@@ -10,7 +10,7 @@ mixin clear-button
 
 div.radio-editor__options(
   ng-if="!misconfigured"
-  ng-class="{'x--vertical': !horizontalLayout, 'x--disabled': isDisabled}")
+  ng-class="{ 'x--vertical': !horizontalLayout, 'x--disabled': isDisabled, 'x--directed': isDirected }")
   label.radio-editor__option(
     ng-repeat="option in options")
     input.radio-editor__input(type="radio"

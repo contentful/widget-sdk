@@ -1,4 +1,5 @@
-.snapshot-comparator__presenter
+.snapshot-comparator__presenter(
+  ng-class="{ 'x--dir-rtl': methods.shouldDisplayRtl(locale.code) }")
   div(ng-if="hasValue && isCustom")
     cf-widget-renderer(cf-widget-api)
 
@@ -6,7 +7,7 @@
     ng-if="hasValue && !isCustom"
     ng-switch="type")
 
-    div(ng-switch-when="Symbol")
+    div.x--directed(ng-switch-when="Symbol")
       | {{ value }}
 
     div(ng-switch-when="Integer")
@@ -15,7 +16,7 @@
     div(ng-switch-when="Number")
       | {{ value }}
 
-    div(ng-switch-when="Text")
+    div.x--directed(ng-switch-when="Text")
       cf-snapshot-presenter-markdown
 
     div(ng-switch-when="Boolean")
@@ -25,7 +26,7 @@
     div(ng-switch-when="Date")
       cf-snapshot-presenter-date
 
-    div(ng-switch-when="Array<Symbol>")
+    div.x--directed(ng-switch-when="Array<Symbol>")
       ul.symbol-array-preview
         li(ng-repeat="item in value track by $index") {{ item }}
 

@@ -12,7 +12,7 @@ angular.module('contentful')
       isDisabled: '='
     },
     template: [
-      '<div ng-show="!preview.hasCrashed" class="markdown-preview-mounting-point"></div>',
+      '<div ng-show="!preview.hasCrashed" class="markdown-preview-mounting-point x--directed"></div>',
       '<div ng-show="preview.hasCrashed || renderHasCrashed" class="markdown-preview-crashed">',
       '<i class="fa fa-warning"></i> ',
       'We cannot render the preview. ',

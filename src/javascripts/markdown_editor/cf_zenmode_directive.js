@@ -17,13 +17,18 @@ angular.module('contentful').directive('cfZenmode', ['require', function (requir
     template: JST['cf_zenmode'](),
     scope: {
       zenApi: '=',
-      preview: '='
+      preview: '=',
+      direction: '='
     },
     link: function (scope, el) {
       var textarea = el.find('textarea').get(0);
       var preview = el.find('.markdown-preview').first();
       var editor = null;
-      var opts = { height: '100%', fixedHeight: true };
+      var opts = {
+        height: '100%',
+        fixedHeight: true,
+        direction: scope.direction
+      };
       var containers = {
         editor: el.find('.zenmode-editor').first(),
         preview: el.find('.zenmode-preview').first()

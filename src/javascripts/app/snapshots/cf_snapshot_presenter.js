@@ -11,7 +11,13 @@ angular.module('cf.app')
  * implement logic needed for specific field
  * types (if the type is complex enough).
  */
-.directive('cfSnapshotPresenter', [function () {
+.directive('cfSnapshotPresenter', ['require', function (require) {
+  var RTL_SUPPORT_FEATURE_FLAG =
+    'feature-at-03-2018-rtl-support';
+
+  var LD = require('utils/LaunchDarkly');
+  var isRtlLocale = require('utils/locales').isRtlLocale;
+
   return {
     restrict: 'E',
     template: JST.cf_snapshot_presenter(),
@@ -22,6 +28,17 @@ angular.module('cf.app')
       $scope.hasValue = !isEmpty($scope.value);
       $scope.isCustom = ($scope.widget.template || '').indexOf('cf-iframe-widget') > -1;
       $scope.linkType = _.get(field, 'linkType', _.get(field, 'items.linkType'));
+      $scope.methods = {
+        shouldDisplayRtl: _.constant(false)
+      };
+
+      LD.onFeatureFlag($scope, RTL_SUPPORT_FEATURE_FLAG, function (isEnabled) {
+        // By default, all entity fields should be displayed as LTR unless the
+        // RTL support feature flag is enabled.
+        if (isEnabled) {
+          $scope.methods.shouldDisplayRtl = isRtlLocale;
+        }
+      });
     }]
   };
 

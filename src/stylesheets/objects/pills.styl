@@ -57,14 +57,22 @@ Styleguide: pills.draggable
   display: flex
   flex-wrap: wrap
 
+  > .sortable-placeholder
+    border: 1px dashed $colors.element-mid
+
   > *
     margin-bottom: $rhythm(0.5)
     margin-right: 1rem
     &:last-child
       margin-right: 0
 
-  > .sortable-placeholder
-    border: 1px dashed $colors.element-mid
+.x--dir-rtl
+  .pill-list.x--directed
+    > *
+      margin-right: 0
+      margin-left: 1rem
+      &:last-child
+        margin-left: 0
 
 $pill-loading()
   $spinner-base()
@@ -72,7 +80,7 @@ $pill-loading()
     +$spinner-active($colors.text-light, 14px, 1px)
       display: inline-block
       margin-left: 10px
-      
+
 $pill-item()
   $pill-loading()
   $text-truncate()
@@ -95,7 +103,7 @@ $pill-item()
 .pill-item
   $pill-item()
 
-  &--success, 
+  &--success,
   &--warning,
   &.is-loading
     display: flex

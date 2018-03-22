@@ -80,6 +80,7 @@ div.entity-editor__field-group(
 
     div.entity-editor__control-group
       cf-widget-renderer.entity-editor__control(
+        ng-class="{ 'x--dir-rtl': methods.shouldDisplayRtl(locale.code) }"
         cf-focus-ot-input="data.hasInitialFocus"
         cf-widget-api)
       +editor-field-collaborators
