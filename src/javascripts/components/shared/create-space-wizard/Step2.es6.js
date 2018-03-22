@@ -2,6 +2,7 @@ import {createElement as h} from 'libs/react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import {get} from 'lodash';
+import TemplateSelector from './TemplateSelector';
 
 const Step2 = createReactClass({
   propTypes: {
@@ -11,9 +12,8 @@ const Step2 = createReactClass({
   },
   getInitialState: function () {
     const state = {
-      templates: [],
       name: '',
-      selectedTemplate: null,
+      template: null,
       touched: false
     };
     state.validation = validateState(state);
@@ -53,6 +53,7 @@ const Step2 = createReactClass({
         }),
         showValidationError && h('p', {className: 'cfnext-form__field-error'}, validation.name)
       ),
+      h(TemplateSelector, {onChange: this.setTemplate}),
       h('button', {
         className: 'button btn-action',
         disabled: Object.keys(validation).length,
@@ -64,13 +65,16 @@ const Step2 = createReactClass({
     this.setState(Object.assign(this.state, {name, touched: true}));
     this.validate();
   },
+  setTemplate: function (template) {
+    this.setState(Object.assign(this.state, {template, touched: true}));
+  },
   submit: function () {
     this.validate();
-    const {validation, name, selectedTemplate} = this.state;
+    const {validation, name, template} = this.state;
     if (Object.keys(validation).length) {
       return;
     }
-    this.props.submit({spaceName: name, template: selectedTemplate});
+    this.props.submit({spaceName: name, template});
   },
   validate: function () {
     this.setState(

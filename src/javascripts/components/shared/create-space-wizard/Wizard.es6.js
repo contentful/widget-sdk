@@ -43,12 +43,12 @@ const Wizard = createReactClass({
           currentStep: step,
           navigate: (step) => this.setState(Object.assign(this.state, {step}))
         }),
-        h('button', {className: 'create-space-wizard-dialog__close modal-dialog__close',
+        h('button', {
+          className: 'create-space-wizard-dialog__close modal-dialog__close',
           onClick: cancel
         })
       ),
       h('div', {className: 'modal-dialog__content'},
-
         h('div', {style: {display: step === '1' ? 'block' : 'none'}},
           h(Step1, {
             orgId,
@@ -71,6 +71,9 @@ const Wizard = createReactClass({
     this.setState(Object.assign(this.state, {spaceRatePlan, step: '2'}));
   },
   submitStep2: async function ({spaceName, template}) {
+    // eslint-disable-next-line no-console
+    console.log(template);
+
     const state = Object.assign(this.state, {spaceName, template});
     const spaceData = makeSpaceData(state);
     let newSpace;
