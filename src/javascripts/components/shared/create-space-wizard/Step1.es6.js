@@ -2,6 +2,8 @@ import {createElement as h} from 'libs/react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import {get} from 'lodash';
+import {createOrganizationEndpoint} from 'data/EndpointFactory';
+import {getSpaceRatePlans} from 'account/pricing/PricingDataProvider';
 
 const Step1 = createReactClass({
   propTypes: {
@@ -10,13 +12,16 @@ const Step1 = createReactClass({
   },
   getInitialState: function () {
     return {
-      spaceRatePlans: [
-        {sys: {id: 'small'}, name: 'Small space'},
-        {sys: {id: 'medium'}, name: 'Medium space'},
-        {sys: {id: 'large'}, name: 'Large space'}
-      ],
+      spaceRatePlans: [],
       selectedPlan: null
     };
+  },
+  componentWillMount: async function () {
+    const {orgId} = this.props;
+    const endpoint = createOrganizationEndpoint(orgId);
+
+    const spaceRatePlans = await getSpaceRatePlans(endpoint);
+    this.setState({spaceRatePlans, selectedPlan: null});
   },
   render: function () {
     const {spaceRatePlans} = this.state;

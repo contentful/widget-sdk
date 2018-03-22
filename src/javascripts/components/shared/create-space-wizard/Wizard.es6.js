@@ -3,17 +3,27 @@ import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import Step1 from './Step1';
 import Step2 from './Step2';
+import {get} from 'lodash';
+import client from 'client';
+import * as TokenStore from 'services/TokenStore';
+import notification from 'notification';
+import logger from 'logger';
 
 const Wizard = createReactClass({
   propTypes: {
     orgId: PropTypes.string.isRequired,
     cancel: PropTypes.func.isRequired,
-    confirm: PropTypes.func.isRequired
+    onSpaceCreated: PropTypes.func.isRequired
   },
   getInitialState: function () {
     return {
       step: '1',
-      spaceData: {}
+      spaceData: {
+        defaultLocale: 'en-US',
+        productRatePlanId: null,
+        name: ''
+      },
+      template: null
     };
   },
   render: function () {
@@ -40,18 +50,31 @@ const Wizard = createReactClass({
     );
   },
   submitStep1: function ({spacePlan}) {
-    const spaceData = Object.assign(this.state.spaceData, {spacePlan});
-    this.setState({
-      spaceData,
-      step: '2'
+    const spaceData = Object.assign(this.state.spaceData, {
+      productRatePlanId: get(spacePlan, 'sys.id')
     });
+    if (spaceData.productRatePlanId) {
+      this.setState({
+        spaceData,
+        template: null,
+        step: '2'
+      });
+    }
   },
-  submitStep2: function ({spaceName, template}) {
-    const spaceData = Object.assign(this.state.spaceData, {spaceName, template});
-    // eslint-disable-next-line no-console
-    console.log(spaceData);
+  submitStep2: async function ({spaceName, template}) {
+    const spaceData = Object.assign(this.state.spaceData, {
+      name: spaceName
+    });
 
-    this.props.confirm();
+    const newSpace = await createNewSpace({
+      data: spaceData,
+      orgId: this.props.orgId,
+      template
+    });
+
+    if (newSpace) {
+      this.props.onSpaceCreated(newSpace);
+    }
   }
 });
 
@@ -70,5 +93,21 @@ function Navigation ({steps, gotoStep}) {
     )
   );
 }
+
+async function createNewSpace ({data, orgId}) {
+  let newSpace;
+  try {
+    newSpace = await client.createSpace(data, orgId);
+  } catch (error) {
+    // const errors = get(error, 'body.details.errors');
+    notification.error('Could not create Space. If the problem persists please get in contact with us.');
+    logger.logServerWarn('Could not create Space', {error: error});
+  }
+  if (newSpace) {
+    await TokenStore.refresh();
+  }
+  return newSpace;
+}
+
 
 export default Wizard;
