@@ -18,49 +18,61 @@ const Wizard = createReactClass({
   getInitialState: function () {
     return {
       step: '1',
-      formData: {
-        spaceRatePlan: null,
-        name: '',
-        template: null
-      },
+      organization: {},
+      spaceRatePlan: {},
+      spaceName: '',
+      template: null,
       serverValidationErrors: null
     };
   },
+  componentWillMount: async function () {
+    const organization = await TokenStore.getOrganization(this.props.orgId);
+    this.setState(Object.assign(this.state, {organization}));
+  },
   render: function () {
     const {orgId, cancel} = this.props;
-    const {step, formData, serverValidationErrors} = this.state;
+    const {step, organization, spaceRatePlan, serverValidationErrors} = this.state;
 
-    return h('div', {className: 'create-new-space-dialog modal-dialog'},
-      h('div', {className: 'modal-dialog__header create-new-space-dialog__header'},
-        h('button', {className: 'create-new-space-dialog__close modal-dialog__close',
-          onClick: cancel
-        })
-      ),
-      h('div', {className: 'create-new-space-dialog__content modal-dialog__content'},
+    return h('div', {className: 'modal-dialog'},
+      h('div', {className: 'modal-dialog__header', style: {padding: 0}},
         h(Navigation, {
           steps: [
-            {id: '1', label: 'Select space type', isEnabled: true},
-            {id: '2', label: 'Create space', isEnabled: !!formData.spaceRatePlan}
+            {id: '1', label: 'Space type', isEnabled: true},
+            {id: '2', label: 'Space details', isEnabled: !!spaceRatePlan}
           ],
           currentStep: step,
           navigate: (step) => this.setState(Object.assign(this.state, {step}))
         }),
+        h('button', {className: 'create-space-wizard-dialog__close modal-dialog__close',
+          onClick: cancel
+        })
+      ),
+      h('div', {className: 'modal-dialog__content'},
+
         h('div', {style: {display: step === '1' ? 'block' : 'none'}},
-          h(Step1, {orgId, submit: this.submitStep1})
+          h(Step1, {
+            orgId,
+            organization,
+            submit: this.submitStep1
+          })
         ),
         h('div', {style: {display: step === '2' ? 'block' : 'none'}},
-          h(Step2, {orgId, serverValidationErrors, submit: this.submitStep2})
+          h(Step2, {
+            orgId,
+            spaceRatePlan: spaceRatePlan,
+            serverValidationErrors,
+            submit: this.submitStep2
+          })
         )
       )
     );
   },
   submitStep1: function ({spaceRatePlan}) {
-    const formData = Object.assign(this.state.formData, {spaceRatePlan});
-    this.setState(Object.assign(this.state, {formData, step: '2'}));
+    this.setState(Object.assign(this.state, {spaceRatePlan, step: '2'}));
   },
-  submitStep2: async function ({name, template}) {
-    const formData = Object.assign(this.state.formData, {name, template});
-    const spaceData = makeSpaceData(formData);
+  submitStep2: async function ({spaceName, template}) {
+    const state = Object.assign(this.state, {spaceName, template});
+    const spaceData = makeSpaceData(state);
     let newSpace;
 
     try {
@@ -86,11 +98,11 @@ const Wizard = createReactClass({
   }
 });
 
-function makeSpaceData ({spaceRatePlan, name}) {
+function makeSpaceData ({spaceRatePlan, spaceName}) {
   return {
     defaultLocale: 'en-US',
     productRatePlanId: get(spaceRatePlan, 'sys.id'),
-    name
+    name: spaceName
   };
 }
 

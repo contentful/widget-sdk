@@ -135,15 +135,37 @@
         display: block
 
 // Close button
-.create-new-space-dialog__close.modal-dialog__close
+
+$close-button-small()
   border: 1px solid $colors.element-mid
-  transform: none
-  background-color: transparent
+  transform: none;
   border-top-right-radius: 2px
   background-color: $colors.element-lightest
-  margin-left: auto
   &:hover
     background-color: $colors.element-light
   &:after
     font-size: 2em
     line-height: 1em
+
+.create-new-space-dialog__close.modal-dialog__close
+  $close-button-small()
+  margin-left: auto
+
+.create-space-wizard-dialog__close.modal-dialog__close
+  $close-button-small()
+  position: absolute
+  top: 0
+  right: 0
+
+// V2 pricing wizard
+.create-space-wizard-dialog
+  &__heading
+    line-height: 1.3em
+    text-align: center
+  &__subheading
+    font-size: 1.05em
+    line-height: 1.3em
+    color: $colors.text-mid
+    text-align: center
+    margin-bottom: 1.3em
+

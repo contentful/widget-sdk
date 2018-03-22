@@ -8,6 +8,7 @@ import {getSpaceRatePlans} from 'account/pricing/PricingDataProvider';
 const Step1 = createReactClass({
   propTypes: {
     orgId: PropTypes.string.isRequired,
+    organization: PropTypes.object.isRequired,
     submit: PropTypes.func.isRequired
   },
   getInitialState: function () {
@@ -24,9 +25,14 @@ const Step1 = createReactClass({
     this.setState({spaceRatePlans, selectedPlan: null});
   },
   render: function () {
+    const {organization} = this.props;
     const {spaceRatePlans, selectedPlan} = this.state;
 
     return h('div', null,
+      h('h2', {className: 'create-space-wizard-dialog__heading'}, 'Choose the space type'),
+      h('p', {className: 'create-space-wizard-dialog__subheading'},
+        `You are creating this space for organization ${organization.name}.`
+      ),
       h('fieldset', {className: 'cfnext-form__fieldset'},
         spaceRatePlans.map((plan) => h('div', {
           key: plan.sys.id,
@@ -44,23 +50,14 @@ const Step1 = createReactClass({
             htmlFor: `space-rate-plan--${plan.sys.id}`
           }, `${plan.name} ($${plan.price})`)
         ))
-      ),
-      h('button', {
-        className: 'button btn-action',
-        disabled: !selectedPlan,
-        onClick: this.submit
-      }, 'SELECT PLAN')
+      )
     );
   },
-  selectPlan: function (plan) {
-    const {spaceRatePlans} = this.state;
-    this.setState({spaceRatePlans, selectedPlan: plan});
-  },
-  submit: function () {
-    const {submit} = this.props;
-    const {selectedPlan} = this.state;
+  selectPlan: function (selectedPlan) {
+    this.setState(Object.assign(this.state, {selectedPlan}));
+
     if (selectedPlan) {
-      submit({spaceRatePlan: selectedPlan});
+      this.props.submit({spaceRatePlan: selectedPlan});
     }
   }
 });
