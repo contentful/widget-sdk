@@ -231,7 +231,7 @@ angular.module('contentful')
     if (widget) {
       var params = $scope.widgetParams;
       Widgets.applyDefaults(widget.id, params);
-      $scope.widgetOptions = Widgets.filterOptions(widget.options, params);
+      $scope.widgetOptions = Widgets.filterOptions(widget, params);
     }
   }
 }]);

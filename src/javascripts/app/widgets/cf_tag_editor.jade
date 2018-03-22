@@ -1,10 +1,10 @@
-input.tag-editor__input.entry-editor__input(
+input.tag-editor__input.entry-editor__input.x--directed(
   ng-if="!isDisabled"
   type="text"
   placeholder="Type the value and hit enter"
   ng-keypress="addItem($event)")
 
-ul.tag-editor__pills.pill-list(
+ul.tag-editor__pills.pill-list.x--directed(
   ng-class="{'x--disabled': isDisabled, 'x--empty': isEmpty}")
   li.pill-item(
     ng-repeat="item in items track by $index")

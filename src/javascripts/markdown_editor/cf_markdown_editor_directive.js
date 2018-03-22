@@ -1,6 +1,13 @@
 'use strict';
 
 angular.module('contentful').directive('cfMarkdownEditor', ['require', function (require) {
+  var RTL_SUPPORT_FEATURE_FLAG =
+    'feature-at-03-2018-rtl-support';
+  var EDITOR_DIRECTIONS = {
+    LTR: 'ltr',
+    RTL: 'rtl'
+  };
+
   var $timeout = require('$timeout');
   var LazyLoader = require('LazyLoader');
   var MarkdownEditor = require('markdown_editor/markdown_editor');
@@ -8,8 +15,10 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
   var makePreview = require('markdown_editor/PreviewGenerator').default;
   var notification = require('notification');
   var throttle = require('throttle');
-  var K = require('utils/kefir');
   var LocaleStore = require('TheLocaleStore');
+  var isRtlLocale = require('utils/locales').isRtlLocale;
+  var K = require('utils/kefir');
+  var LD = require('utils/LaunchDarkly');
 
   return {
     restrict: 'E',
@@ -32,6 +41,10 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
       scope.inMode = inMode;
       scope.canEdit = canEdit;
 
+      // By default, the markdown editor should be displayed as LTR unless the
+      // RTL support feature flag is enabled.
+      scope.direction = EDITOR_DIRECTIONS.LTR;
+
       var constraints = _(field.validations).map('size').filter().first() || {};
 
       scope.constraints = constraints;
@@ -45,19 +58,37 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
         toggle: toggleZenMode
       };
 
+      initEditorOrRenderError();
+
       // No need to handle response:
       // 1. embedly integration is optional
       // 2. loading it even after elements are added to DOM works just fine
       LazyLoader.get('embedly');
 
-      try {
-        initEditor(MarkdownEditor.create(textarea));
-      } catch (e) {
-        scope.hasCrashed = true;
+      LD.onFeatureFlag(scope, RTL_SUPPORT_FEATURE_FLAG, function (isEnabled) {
+        if (isEnabled && isRtlLocale(field.locale)) {
+          scope.isReady = false;
+          scope.direction = EDITOR_DIRECTIONS.RTL;
+          initEditorOrRenderError();
+        }
+      });
+
+      function initEditorOrRenderError () {
+        try {
+          initEditor();
+        } catch (e) {
+          scope.hasCrashed = true;
+        }
       }
 
-      function initEditor (editorInstance) {
-        editor = editorInstance;
+      function initEditor () {
+        var isReinit = !!editor;
+        if (isReinit) {
+          editor.destroy();
+        }
+        editor = MarkdownEditor.create(textarea, {
+          direction: scope.direction
+        });
         var defaultLocale = LocaleStore.getDefaultLocale();
 
         var locales = LocaleStore.getLocales();
@@ -72,14 +103,21 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
 
         editor.events.onChange(throttle(handleEditorChange, 200, {leading: false}));
 
-        var detachValueHandler = field.onValueChanged(handleFieldChange);
-        var detachStateHandler = field.onIsDisabledChanged(handleStateChange);
-
         scope.isReady = true;
 
-        scope.$on('$destroy', editor.destroy);
-        scope.$on('$destroy', detachValueHandler);
-        scope.$on('$destroy', detachStateHandler);
+        if (!isReinit) {
+          setupDestructorJobs();
+        }
+      }
+
+      function setupDestructorJobs () {
+        var detachValueHandler = field.onValueChanged(handleFieldChange);
+        var detachStateHandler = field.onIsDisabledChanged(handleStateChange);
+        scope.$on('$destroy', function () {
+          detachValueHandler();
+          detachStateHandler();
+          editor.destroy();
+        });
       }
 
       function handleEditorChange (value) {

@@ -173,72 +173,21 @@ describe('widgets', function () {
     });
   });
 
-  describe('#filterOptions(opts, params)', function () {
-    let filtered, options;
+  describe('#filterOptions(widget, params)', function () {
+    it('Hides date picker AM/PM option if in date-only mode', function () {
+      const datePicker = {
+        id: 'datePicker',
+        options: [{param: 'format'}, {param: 'ampm'}]
+      };
+      this.setupWidgets({datePicker});
 
-    beforeEach(function () {
-      options = [
-        {param: 'x', default: 0},
-        {param: 'y', default: 0}
-      ];
-      this.setupWidgets({
-        test: {options: options}
-      });
-    });
+      const t1 = widgets.filterOptions(datePicker, {format: 'dateonly'});
+      expect(t1.length).toBe(1);
+      expect(t1[0].param).toBe('format');
 
-    function feedTest (pairs) {
-      pairs.forEach(function (pair) {
-        const params = _.isObject(pair[0]) ? pair[0] : {x: pair[0]};
-        filtered = widgets.filterOptions(options, params);
-        expect(filtered.length).toEqual(pair[1]);
-      });
-    }
-
-    it('returns all options when no dependencies specified', function () {
-      feedTest([[1, 2]]);
-    });
-
-    it('removes option if no dependencies are met (one acceptable value)', function () {
-      options[1].dependsOnAny = {x: 'test'};
-      feedTest([[2, 1], [null, 1], ['test', 2]]);
-    });
-
-    it('removes option if no dependencies are met (multiple acceptable values)', function () {
-      options[1].dependsOnAny = {x: [1, 3, 8]};
-      feedTest([[2, 1], ['test', 1], [null, 1], [1, 2], [3, 2], [8, 2]]);
-    });
-
-    it('removes option if no dependencies are met (depending on multiple params)', function () {
-      const deps = {};
-      options.push({param: 'z', default: 0, dependsOnAny: deps});
-      deps.x = [1000, 'test'];
-      deps.y = 'hello';
-
-      feedTest([
-        [{x: 1000, y: 'foo'}, 3],
-        [{x: 'test', y: 'foo'}, 3],
-        [{x: 'bar', y: 'hello'}, 3],
-        [{x: 1000, y: 'hello'}, 3],
-        [{x: 'test', y: 'hello'}, 3],
-        [{x: -1, y: -1}, 2],
-        [{x: null, y: -1}, 2],
-        [{x: -1, y: null}, 2],
-        [{x: null, y: null}, 2]
-      ]);
-    });
-
-    it('removes option if some of dependencies are not met', function () {
-      const deps = {};
-      options.push({param: 'z', default: 0, dependsOnEvery: deps});
-      deps.x = 42;
-      deps.y = 'hello';
-
-      feedTest([
-        [{x: 42, y: 'hello'}, 3],
-        [{x: 42, y: 'hi!'}, 2],
-        [{x: -1, y: 'hello'}, 2],
-        [{x: null, y: -1}, 2]
-      ]);
+      const t2 = widgets.filterOptions(datePicker, {format: 'timeZ'});
+      expect(t2.length).toBe(2);
+      expect(t2[1].param).toBe('ampm');
     });
   });
 

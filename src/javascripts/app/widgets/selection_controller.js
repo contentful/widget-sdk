@@ -22,6 +22,7 @@ angular.module('contentful')
     // in child scopes.
     scope.data = {};
     scope.fieldId = field.id;
+    scope.isDirected = _.includes(['Text', 'Symbol'], field.type);
 
     scope.clear = function clear (e) {
       e.preventDefault();

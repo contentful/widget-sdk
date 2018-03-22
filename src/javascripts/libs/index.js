@@ -55,6 +55,7 @@ window.libs = [
   ['libs/legacy-client', require('../../../packages/client')],
   ['libs/sharejs', window.sharejs],
   ['libs/flat', require('flat')],
+  ['libs/rtl-detect', require('rtl-detect')],
   ['hostnameTransformer', require('@contentful/hostname-transformer')],
   ['mimetype', require('@contentful/mimetype')],
   ['raw/moment', require('moment')],

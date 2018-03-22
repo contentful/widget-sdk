@@ -2,7 +2,7 @@ include ./field_editor.mixins.jade
 
 +predefined-values-warning(ng-if="misconfigured")
 
-div.checkbox-editor__options(
+div.checkbox-editor__options.x--directed(
   ng-if="!misconfigured"
   ng-class="isDisabled && 'x--disabled'")
   label.checkbox-editor__option(

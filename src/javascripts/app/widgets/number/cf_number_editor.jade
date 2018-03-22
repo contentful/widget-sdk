@@ -1,9 +1,9 @@
 input.entry-editor__input(
-  type="{{isNumberTypeEnabled ? 'number' : 'text'}}"
+  type="number"
   aria-invalid="{{hasErrors || !!parseWarning}}"
-  ng-attr-min="{{isNumberTypeEnabled ? min : undefined}}"
-  ng-attr-max="{{isNumberTypeEnabled ? max : undefined}}"
-  ng-attr-step="{{isNumberTypeEnabled ? step : undefined}}"
+  ng-attr-min="{{min}}"
+  ng-attr-max="{{max}}"
+  ng-attr-step="{{step}}"
   ng-disabled="isDisabled")
 .cfnext-form__field-error(
   role="status"

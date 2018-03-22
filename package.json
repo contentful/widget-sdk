@@ -63,6 +63,7 @@
     "react-dom": "^16.2.0",
     "react-highlight-words": "^0.10.0",
     "react-tippy": "^1.2.2",
+    "rtl-detect": "^1.0.2",
     "run-sequence": "~1.0.2",
     "sanitize-html": "^1.14.1",
     "scroll-into-view": "^1.9.0",
