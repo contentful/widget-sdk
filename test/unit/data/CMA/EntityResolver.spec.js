@@ -44,16 +44,16 @@ describe('data/CMA/EntityResolver', function () {
     sinon.assert.calledOnce(this.getEntries);
   });
 
-  it('splits queries for more than 200 ids', function* () {
-    const ids = _.range(201);
+  it('splits queries for more than 50 ids', function* () {
+    const ids = _.range(51);
     const results = yield this.store.load(ids);
     expect(results.map(([id, _]) => id)).toEqual(ids);
     sinon.assert.calledTwice(this.getEntries);
   });
 
-  it('passes limit of 200 to query', function* () {
+  it('passes limit of 50 to query', function* () {
     yield this.store.load(['a', 'b', 'c']);
-    sinon.assert.calledWith(this.getEntries, sinon.match.has('limit', 200));
+    sinon.assert.calledWith(this.getEntries, sinon.match.has('limit', 50));
   });
 
   it('does not fetch manually added entities', function* () {

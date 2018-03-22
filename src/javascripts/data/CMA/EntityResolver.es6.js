@@ -10,7 +10,7 @@ import {caseof} from 'libs/sum-types/caseof-eq';
 import $q from '$q';
 import {chunk, uniq, flatten} from 'lodash';
 
-const MAX_IN_IDS = 200;
+const MAX_IN_IDS = 50;
 
 /**
  * @ngdoc method
