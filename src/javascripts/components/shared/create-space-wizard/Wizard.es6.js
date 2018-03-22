@@ -18,17 +18,17 @@ const Wizard = createReactClass({
   getInitialState: function () {
     return {
       step: '1',
-      spaceData: {
-        defaultLocale: 'en-US',
-        productRatePlanId: null,
-        name: ''
+      formData: {
+        spaceRatePlan: null,
+        name: '',
+        template: null
       },
-      template: null
+      serverValidationErrors: null
     };
   },
   render: function () {
     const {orgId, cancel} = this.props;
-    const {step, spaceData} = this.state;
+    const {step, formData, serverValidationErrors} = this.state;
 
     return h('div', {className: 'create-new-space-dialog modal-dialog'},
       h('div', {className: 'modal-dialog__header create-new-space-dialog__header'},
@@ -39,75 +39,89 @@ const Wizard = createReactClass({
       h('div', {className: 'create-new-space-dialog__content modal-dialog__content'},
         h(Navigation, {
           steps: [
-            {id: '1', label: 'Select space type', isSelected: step === '1', isEnabled: true},
-            {id: '2', label: 'Create space', isSelected: step === '2', isEnabled: !!spaceData.spacePlan}
+            {id: '1', label: 'Select space type', isEnabled: true},
+            {id: '2', label: 'Create space', isEnabled: !!formData.spaceRatePlan}
           ],
-          gotoStep: (step) => this.setState({step})
+          currentStep: step,
+          navigate: (step) => this.setState(Object.assign(this.state, {step}))
         }),
-        step === '1' && h(Step1, {orgId, submit: this.submitStep1}),
-        step === '2' && h(Step2, {orgId, submit: this.submitStep2})
+        h('div', {style: {display: step === '1' ? 'block' : 'none'}},
+          h(Step1, {orgId, submit: this.submitStep1})
+        ),
+        h('div', {style: {display: step === '2' ? 'block' : 'none'}},
+          h(Step2, {orgId, serverValidationErrors, submit: this.submitStep2})
+        )
       )
     );
   },
-  submitStep1: function ({spacePlan}) {
-    const spaceData = Object.assign(this.state.spaceData, {
-      productRatePlanId: get(spacePlan, 'sys.id')
-    });
-    if (spaceData.productRatePlanId) {
-      this.setState({
-        spaceData,
-        template: null,
-        step: '2'
-      });
+  submitStep1: function ({spaceRatePlan}) {
+    const formData = Object.assign(this.state.formData, {spaceRatePlan});
+    this.setState(Object.assign(this.state, {formData, step: '2'}));
+  },
+  submitStep2: async function ({name, template}) {
+    const formData = Object.assign(this.state.formData, {name, template});
+    const spaceData = makeSpaceData(formData);
+    let newSpace;
+
+    try {
+      newSpace = await client.createSpace(spaceData, this.props.orgId);
+    } catch (error) {
+      this.handleError(error);
+    }
+    if (newSpace) {
+      await TokenStore.refresh();
+      this.props.onSpaceCreated(newSpace);
     }
   },
-  submitStep2: async function ({spaceName, template}) {
-    const spaceData = Object.assign(this.state.spaceData, {
-      name: spaceName
-    });
+  handleError: function (error) {
+    logger.logServerWarn('Could not create Space', {error});
 
-    const newSpace = await createNewSpace({
-      data: spaceData,
-      orgId: this.props.orgId,
-      template
-    });
-
-    if (newSpace) {
-      this.props.onSpaceCreated(newSpace);
+    const serverValidationErrors = getFieldErrors(error);
+    if (Object.keys(serverValidationErrors).length) {
+      this.setState(Object.assign(this.state, {serverValidationErrors}));
+    } else {
+      notification.error('Could not create Space. If the problem persists please get in contact with us.');
+      this.props.cancel();
     }
   }
 });
 
-function Navigation ({steps, gotoStep}) {
+function makeSpaceData ({spaceRatePlan, name}) {
+  return {
+    defaultLocale: 'en-US',
+    productRatePlanId: get(spaceRatePlan, 'sys.id'),
+    name
+  };
+}
+
+function getFieldErrors (error) {
+  const errors = get(error, 'body.details.errors') || [];
+
+  return errors.reduce((acc, err) => {
+    let message;
+    if (err.path === 'name' && err.name === 'length') {
+      message = 'Space name is too long';
+    } else {
+      message = `Value "${err.value}" is invalid`;
+    }
+    acc[err.path] = message;
+    return acc;
+  }, {});
+}
+
+function Navigation ({steps, currentStep, navigate}) {
   return h('ul', {className: 'tab-list'},
-    steps.map(({id, label, isSelected, isEnabled}) => h('li', {
+    steps.map(({id, label, isEnabled}) => h('li', {
       key: id,
       role: 'tab',
-      'aria-selected': isSelected
+      'aria-selected': id === currentStep
     },
-        h('button', {
-          onClick: () => gotoStep(id),
-          disabled: !isEnabled
-        }, label)
-      )
-    )
+      h('button', {
+        onClick: () => navigate(id),
+        disabled: !isEnabled
+      }, label)
+    ))
   );
 }
-
-async function createNewSpace ({data, orgId}) {
-  let newSpace;
-  try {
-    newSpace = await client.createSpace(data, orgId);
-  } catch (error) {
-    // const errors = get(error, 'body.details.errors');
-    notification.error('Could not create Space. If the problem persists please get in contact with us.');
-    logger.logServerWarn('Could not create Space', {error: error});
-  }
-  if (newSpace) {
-    await TokenStore.refresh();
-  }
-  return newSpace;
-}
-
 
 export default Wizard;

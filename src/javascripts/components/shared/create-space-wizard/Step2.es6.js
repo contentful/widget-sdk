@@ -5,17 +5,29 @@ import PropTypes from 'libs/prop-types';
 const Step2 = createReactClass({
   propTypes: {
     orgId: PropTypes.string.isRequired,
-    submit: PropTypes.func.isRequired
+    submit: PropTypes.func.isRequired,
+    serverValidationErrors: PropTypes.object
   },
   getInitialState: function () {
-    return {
+    const state = {
       templates: [],
-      spaceName: '',
-      selectedTemplate: null
+      name: '',
+      selectedTemplate: null,
+      touched: false
     };
+    state.validation = validateState(state);
+    return state;
+  },
+  componentWillReceiveProps: function ({serverValidationErrors}) {
+    if (serverValidationErrors !== this.props.serverValidationErrors) {
+      this.setState(Object.assign(this.state, {
+        validation: serverValidationErrors
+      }));
+    }
   },
   render: function () {
-    const {spaceName} = this.state;
+    const {name, validation, touched} = this.state;
+    const showValidationError = touched && !!validation.name;
 
     return h('div', null,
       h('div', {className: 'cfnext-form__field'},
@@ -24,26 +36,46 @@ const Step2 = createReactClass({
           type: 'text',
           className: 'cfnext-form__input',
           placeholder: 'Space name',
-          name: 'space-name',
-          value: spaceName,
-          onChange: (e) => this.setSpaceName(e.target.value)
-        })
+          name: 'name',
+          required: '',
+          value: name,
+          onChange: (e) => this.setName(e.target.value),
+          'aria-invalid': showValidationError
+        }),
+        showValidationError && h('p', {className: 'cfnext-form__field-error'}, validation.name)
       ),
       h('button', {
         className: 'button btn-action',
+        disabled: Object.keys(validation).length,
         onClick: this.submit
       }, 'CREATE SPACE')
     );
   },
-  setSpaceName: function (spaceName) {
-    const {templates} = this.state;
-    this.setState({templates, spaceName});
+  setName: function (name) {
+    this.setState(Object.assign(this.state, {name, touched: true}));
+    this.validate();
   },
   submit: function () {
-    const {submit} = this.props;
-    const {spaceName, selectedTemplate} = this.state;
-    submit({spaceName, template: selectedTemplate});
+    this.validate();
+    const {validation, name, selectedTemplate} = this.state;
+    if (Object.keys(validation).length) {
+      return;
+    }
+    this.props.submit({name, template: selectedTemplate});
+  },
+  validate: function () {
+    this.setState(
+      Object.assign(this.state, {validation: validateState(this.state)})
+    );
   }
 });
+
+function validateState ({name}) {
+  const validation = {};
+  if (!name) {
+    validation.name = 'Name is required';
+  }
+  return validation;
+}
 
 export default Step2;

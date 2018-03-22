@@ -24,7 +24,7 @@ const Step1 = createReactClass({
     this.setState({spaceRatePlans, selectedPlan: null});
   },
   render: function () {
-    const {spaceRatePlans} = this.state;
+    const {spaceRatePlans, selectedPlan} = this.state;
 
     return h('div', null,
       h('fieldset', {className: 'cfnext-form__fieldset'},
@@ -35,16 +35,19 @@ const Step1 = createReactClass({
           h('input', {
             id: `space-rate-plan--${plan.sys.id}`,
             type: 'radio',
-            name: 'space-rate-plan',
+            name: 'productRatePlanId',
             value: plan.sys.id,
-            checked: get(this.state.selectedPlan, 'sys.id') === plan.sys.id,
+            checked: get(selectedPlan, 'sys.id') === plan.sys.id,
             onChange: () => this.selectPlan(plan)
           }),
-          h('label', {htmlFor: `space-rate-plan--${plan.sys.id}`}, plan.name)
+          h('label', {
+            htmlFor: `space-rate-plan--${plan.sys.id}`
+          }, `${plan.name} ($${plan.price})`)
         ))
       ),
       h('button', {
         className: 'button btn-action',
+        disabled: !selectedPlan,
         onClick: this.submit
       }, 'SELECT PLAN')
     );
@@ -56,7 +59,9 @@ const Step1 = createReactClass({
   submit: function () {
     const {submit} = this.props;
     const {selectedPlan} = this.state;
-    submit({spacePlan: selectedPlan});
+    if (selectedPlan) {
+      submit({spaceRatePlan: selectedPlan});
+    }
   }
 });
 
