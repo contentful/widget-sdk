@@ -65,27 +65,10 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
       // 2. loading it even after elements are added to DOM works just fine
       LazyLoader.get('embedly');
 
-      var editorDestructors = [
-        field.onValueChanged(handleFieldChange),
-        field.onIsDisabledChanged(handleStateChange)
-      ];
-
-      scope.$on('$destroy', function () {
-        if (editor) {
-          editor.destroy();
-        }
-        editorDestructors.forEach(function (destructor) {
-          destructor();
-        });
-      });
-
       LD.onFeatureFlag(scope, RTL_SUPPORT_FEATURE_FLAG, function (isEnabled) {
         if (isEnabled && isRtlLocale(field.locale)) {
           scope.isReady = false;
           scope.direction = EDITOR_DIRECTIONS.RTL;
-          if (editor) {
-            editor.destroy();
-          }
           initEditorOrRenderError();
         }
       });
@@ -99,6 +82,10 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
       }
 
       function initEditor () {
+        var isReinit = !!editor;
+        if (isReinit) {
+          editor.destroy();
+        }
         editor = MarkdownEditor.create(textarea, {
           direction: scope.direction
         });
@@ -117,6 +104,20 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
         editor.events.onChange(throttle(handleEditorChange, 200, {leading: false}));
 
         scope.isReady = true;
+
+        if (!isReinit) {
+          setupDestructorJobs();
+        }
+      }
+
+      function setupDestructorJobs () {
+        var detachValueHandler = field.onValueChanged(handleFieldChange);
+        var detachStateHandler = field.onIsDisabledChanged(handleStateChange);
+        scope.$on('$destroy', function () {
+          detachValueHandler();
+          detachStateHandler();
+          editor.destroy();
+        });
       }
 
       function handleEditorChange (value) {
