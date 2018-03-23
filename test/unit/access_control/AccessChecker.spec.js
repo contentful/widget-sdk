@@ -381,6 +381,19 @@ describe('Access Checker', function () {
         expect(yield ac.canModifyRoles()).toBe(true);
       });
 
+      it('should handle a null or undefined feature', function* () {
+        OrganizationRoles.setUser({organizationMemberships: []});
+        changeSpace(false, true); // User is space admin
+
+        // Set the feature to null
+        feature = null;
+        expect(yield ac.canModifyRoles()).toBe(false);
+
+        // Set the feature to undefined
+        feature = undefined;
+        expect(yield ac.canModifyRoles()).toBe(false);
+      });
+
       it('returns true when has feature, is not admin of space but is admin or owner of organization', function () {
         const user = {organizationMemberships: [
           {organization: {sys: {id: 'org1id'}}, role: 'admin'},
