@@ -24,8 +24,8 @@ const Wizard = createReactClass({
   getInitialState: function () {
     return {
       step: '1',
-      organization: {},
-      spaceRatePlan: {},
+      organization: null,
+      spaceRatePlan: null,
       spaceName: '',
       template: null,
       serverValidationErrors: null
@@ -55,14 +55,14 @@ const Wizard = createReactClass({
         })
       ),
       h('div', {className: 'modal-dialog__content'},
-        h('div', {style: {display: step === '1' ? 'block' : 'none'}},
+        organization && h('div', {style: {display: step === '1' ? 'block' : 'none'}},
           h(Step1, {
             orgId,
             organization,
             submit: this.submitStep1
           })
         ),
-        h('div', {style: {display: step === '2' ? 'block' : 'none'}},
+        spaceRatePlan && h('div', {style: {display: step === '2' ? 'block' : 'none'}},
           h(Step2, {
             orgId,
             spaceRatePlan: spaceRatePlan,
