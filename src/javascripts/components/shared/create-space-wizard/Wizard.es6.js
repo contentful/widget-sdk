@@ -39,7 +39,12 @@ const Wizard = createReactClass({
     const {orgId, cancel} = this.props;
     const {step, organization, spaceRatePlan, serverValidationErrors} = this.state;
 
-    return h('div', {className: 'modal-dialog'},
+    return h('div', {
+      className: 'modal-dialog',
+      style: {
+        width: '750px'
+      }
+    },
       h('div', {className: 'modal-dialog__header', style: {padding: 0}},
         h(Navigation, {
           steps: [
