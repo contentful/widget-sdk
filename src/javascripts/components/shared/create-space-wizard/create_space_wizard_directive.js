@@ -6,6 +6,7 @@ angular.module('contentful')
   var ReactDOM = require('libs/react-dom');
   var Wizard = require('components/shared/create-space-wizard/Wizard').default;
   var $state = require('$state');
+  var $rootScope = require('$rootScope');
 
   return {
     link: function ($scope, el) {
@@ -17,6 +18,10 @@ angular.module('contentful')
         onSpaceCreated: function (newSpace) {
           $scope.dialog.confirm();
           $state.go('spaces.detail', {spaceId: newSpace.sys.id});
+        },
+        onTemplateCreated: function () {
+          // Picked up by the learn page which then refreshes itself
+          $rootScope.$broadcast('spaceTemplateCreated');
         }
       }), host);
 

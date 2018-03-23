@@ -3,17 +3,23 @@ import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import Step1 from './Step1';
 import Step2 from './Step2';
-import {get} from 'lodash';
+import {get, noop} from 'lodash';
 import client from 'client';
 import * as TokenStore from 'services/TokenStore';
 import notification from 'notification';
 import logger from 'logger';
+import {getTemplate} from 'services/SpaceTemplateLoader';
+import {getCreator as getTemplateCreator} from 'services/SpaceTemplateCreator';
+import spaceContext from 'spaceContext';
+
+const DEFAULT_LOCALE = 'en-US';
 
 const Wizard = createReactClass({
   propTypes: {
     orgId: PropTypes.string.isRequired,
     cancel: PropTypes.func.isRequired,
-    onSpaceCreated: PropTypes.func.isRequired
+    onSpaceCreated: PropTypes.func.isRequired,
+    onTemplateCreated: PropTypes.func.isRequired
   },
   getInitialState: function () {
     return {
@@ -71,9 +77,6 @@ const Wizard = createReactClass({
     this.setState(Object.assign(this.state, {spaceRatePlan, step: '2'}));
   },
   submitStep2: async function ({spaceName, template}) {
-    // eslint-disable-next-line no-console
-    console.log(template);
-
     const state = Object.assign(this.state, {spaceName, template});
     const spaceData = makeSpaceData(state);
     let newSpace;
@@ -86,6 +89,12 @@ const Wizard = createReactClass({
     if (newSpace) {
       await TokenStore.refresh();
       this.props.onSpaceCreated(newSpace);
+
+      if (template) {
+        await createTemplate(template);
+        await spaceContext.publishedCTs.refresh();
+        this.props.onTemplateCreated();
+      }
     }
   },
   handleError: function (error) {
@@ -103,10 +112,39 @@ const Wizard = createReactClass({
 
 function makeSpaceData ({spaceRatePlan, spaceName}) {
   return {
-    defaultLocale: 'en-US',
+    defaultLocale: DEFAULT_LOCALE,
     productRatePlanId: get(spaceRatePlan, 'sys.id'),
     name: spaceName
   };
+}
+
+function createTemplate (templateInfo) {
+  const templateCreator = getTemplateCreator(
+    spaceContext,
+    // TODO add analytics tracking
+    {onItemSuccess: noop, onItemError: noop},
+    templateInfo,
+    DEFAULT_LOCALE
+  );
+
+  return getTemplate(templateInfo)
+    .then((templateData) => tryCreateTemplate(templateCreator, templateData));
+}
+
+function tryCreateTemplate (templateCreator, templateData, retried) {
+  const {spaceSetup, contentCreated} = templateCreator.create(templateData);
+
+  // we suppress errors, since `contentCreated` will handle them
+  // We need to catch all errors, because http requests
+  // are backed by $q, and we have global handlers on
+  // $q errors
+  spaceSetup.catch(noop);
+
+  return contentCreated.catch((data) => {
+    if (!retried) {
+      return tryCreateTemplate(templateCreator, data.template, true);
+    }
+  });
 }
 
 function getFieldErrors (error) {
