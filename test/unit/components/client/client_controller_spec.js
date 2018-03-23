@@ -97,10 +97,12 @@ describe('Client Controller', function () {
       });
       this.modalDialog = this.$inject('modalDialog');
       this.modalDialog.open = sinon.stub().returns({promise: this.$inject('$q').when()});
+      this.spaceContext = this.$inject('spaceContext');
+      this.spaceContext.organization = {sys: {}};
     });
 
-    it('opens dialog', function () {
-      scope.showCreateSpaceDialog();
+    it('opens dialog', async function () {
+      await scope.showCreateSpaceDialog();
       sinon.assert.called(this.modalDialog.open);
     });
   });
