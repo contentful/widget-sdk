@@ -25,6 +25,7 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
 
   var org = spaceContext.organizationContext.organization;
 
+  $scope.loading = true;
   $q.all({
     canModifyRoles: AccessChecker.canModifyRoles(),
     useLegacy: ResourceUtils.useLegacy(org)
@@ -34,6 +35,7 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
 
     $scope.legacy = result.useLegacy;
     $scope.hasFeatureEnabled = !trialLockdown && result.canModifyRoles;
+    $scope.loading = false;
   }).then(reload).catch(ReloadNotification.basicErrorHandler);
 
   $scope.duplicateRole = duplicateRole;

@@ -37,9 +37,9 @@ header.workbench-header
           li.role-list__action--disabled(ng-if="!hasFeatureEnabled") Delete permanently
 
   .workbench-main__sidebar
-    .entity-sidebar(ng-if="!hasFeatureEnabled")
+    .entity-sidebar(ng-if="!loading && !hasFeatureEnabled")
       +custom-roles-plan-info(legacy, accountUpgradeState)
-    .entity-sidebar(ng-if="hasFeatureEnabled")
+    .entity-sidebar(ng-if="!loading && hasFeatureEnabled")
       h2.entity-sidebar__heading
         | Create new role
       p
