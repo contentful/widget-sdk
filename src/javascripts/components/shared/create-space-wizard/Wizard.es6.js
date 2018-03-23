@@ -23,7 +23,7 @@ const Wizard = createReactClass({
   },
   getInitialState: function () {
     return {
-      step: '1',
+      step: 'step1',
       organization: null,
       spaceRatePlan: null,
       spaceName: '',
@@ -43,8 +43,8 @@ const Wizard = createReactClass({
       h('div', {className: 'modal-dialog__header', style: {padding: 0}},
         h(Navigation, {
           steps: [
-            {id: '1', label: 'Space type', isEnabled: true},
-            {id: '2', label: 'Space details', isEnabled: !!spaceRatePlan}
+            {id: 'step1', label: 'Space type', isEnabled: true},
+            {id: 'step2', label: 'Space details', isEnabled: !!spaceRatePlan}
           ],
           currentStep: step,
           navigate: (step) => this.setState(Object.assign(this.state, {step}))
@@ -55,31 +55,36 @@ const Wizard = createReactClass({
         })
       ),
       h('div', {className: 'modal-dialog__content'},
-        organization && h('div', {style: {display: step === '1' ? 'block' : 'none'}},
+        organization && h('div', {style: {display: step === 'step1' ? 'block' : 'none'}},
           h(Step1, {
             orgId,
             organization,
             submit: this.submitStep1
           })
         ),
-        spaceRatePlan && h('div', {style: {display: step === '2' ? 'block' : 'none'}},
+        spaceRatePlan && h('div', {style: {display: step === 'step2' ? 'block' : 'none'}},
           h(Step2, {
             orgId,
             spaceRatePlan: spaceRatePlan,
             serverValidationErrors,
             submit: this.submitStep2
           })
+        ),
+        h('div', {style: {display: step === 'waiting' ? 'block' : 'none'}},
+          'Hang tight...'
         )
       )
     );
   },
   submitStep1: function ({spaceRatePlan}) {
-    this.setState(Object.assign(this.state, {spaceRatePlan, step: '2'}));
+    this.setState(Object.assign(this.state, {spaceRatePlan, step: 'step2'}));
   },
   submitStep2: async function ({spaceName, template}) {
     const state = Object.assign(this.state, {spaceName, template});
     const spaceData = makeSpaceData(state);
     let newSpace;
+
+    this.setState(Object.assign(this.state, {step: 'waiting'}));
 
     try {
       newSpace = await client.createSpace(spaceData, this.props.orgId);
@@ -102,7 +107,7 @@ const Wizard = createReactClass({
 
     const serverValidationErrors = getFieldErrors(error);
     if (Object.keys(serverValidationErrors).length) {
-      this.setState(Object.assign(this.state, {serverValidationErrors}));
+      this.setState(Object.assign(this.state, {step: 'step2', serverValidationErrors}));
     } else {
       notification.error('Could not create Space. If the problem persists please get in contact with us.');
       this.props.cancel();
