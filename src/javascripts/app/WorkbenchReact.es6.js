@@ -8,14 +8,16 @@ const Workbench = createReactClass({
     title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
     content: PropTypes.element.isRequired,
     sidebar: PropTypes.element,
-    icon: PropTypes.string
+    icon: PropTypes.string,
+    testId: PropTypes.string
   },
   render () {
-    const {title, content, sidebar, icon} = this.props;
+    const {title, content, sidebar, icon, testId} = this.props;
 
 
     return h('div', {
-      className: 'workbench'
+      className: 'workbench',
+      'data-test-id': testId
     },
       h('div', {
         className: 'workbench-header__wrapper'
