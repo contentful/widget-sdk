@@ -53,7 +53,7 @@ const Step2 = createReactClass({
         }),
         showValidationError && h('p', {className: 'cfnext-form__field-error'}, validation.name)
       ),
-      h(TemplateSelector, {onChange: this.setTemplate}),
+      h(TemplateSelector, {onSelect: this.setTemplate}),
       h('button', {
         className: 'button btn-action',
         disabled: Object.keys(validation).length,

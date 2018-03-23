@@ -2,20 +2,23 @@ import {createElement as h} from 'libs/react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import {get} from 'lodash';
+import {getTemplatesList} from 'services/SpaceTemplateLoader';
 
 const TemplateSelector = createReactClass({
   propTypes: {
-    onChange: PropTypes.func.isRequired
+    onSelect: PropTypes.func.isRequired
   },
   getInitialState: function () {
     return {
-      templates: [
-        {sys: {id: 'foo'}, name: 'some template', descriptionV2: 'some text'},
-        {sys: {id: 'bar'}, name: 'another template', descriptionV2: 'hello'}
-      ],
+      templates: [],
       useTemplate: false,
       selectedTemplate: null
     };
+  },
+  componentWillMount: async function () {
+    const templatesList = await getTemplatesList();
+    const templates = parseTemplates(templatesList);
+    this.setState(Object.assign(this.state, {templates}));
   },
   render: function () {
     const {templates, useTemplate, selectedTemplate} = this.state;
@@ -61,9 +64,9 @@ const TemplateSelector = createReactClass({
         h('div', {className: 'create-new-space__templates__inner'},
           h('div', {className: 'create-new-space__templates__nav'},
             templates.map((template) => {
-              const isSelected = get(selectedTemplate, 'sys.id') === template.sys.id;
+              const isSelected = get(selectedTemplate, 'id') === template.id;
               return h('a', {
-                key: template.sys.id,
+                key: template.id,
                 className: `create-new-space__templates__navitem ${isSelected && 'selected'}`,
                 onClick: () => this.selectTemplate(template)
               },
@@ -87,18 +90,22 @@ const TemplateSelector = createReactClass({
   },
   hideTemplates: function () {
     this.setState(Object.assign(this.state, {useTemplate: false, selectedTemplate: null}));
-    this.props.onChange(null);
+    this.props.onSelect(null);
   },
   showTemplates: function () {
     const {templates} = this.state;
     const selectedTemplate = templates[0];
     this.setState(Object.assign(this.state, {useTemplate: true, selectedTemplate}));
-    this.props.onChange(selectedTemplate);
+    this.props.onSelect(selectedTemplate);
   },
   selectTemplate: function (template) {
     this.setState(Object.assign(this.state, {selectedTemplate: template}));
-    this.props.onChange(template);
+    this.props.onSelect(template);
   }
 });
+
+function parseTemplates (templates = []) {
+  return templates.map(({fields, sys}) => ({...fields, id: sys.id}));
+}
 
 export default TemplateSelector;
