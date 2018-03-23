@@ -99,6 +99,7 @@ const SubscriptionOverview = createReactClass({
     return h(Workbench, {
       title: 'Subscription',
       icon: 'subscription',
+      testId: 'subscription-page',
       content: h('div', {
         style: {padding: '0 2rem'}
       },
@@ -124,7 +125,9 @@ function BasePlan ({basePlan}) {
 
   return h('div', {style: {marginBottom: '3em'}},
     h('h2', null, 'Platform'),
-    h('p', null,
+    h('p', {
+      'data-test-id': 'subscription-page.base-plan-details'
+    },
       h('b', null, basePlan.name),
       enabledFeaturesNames.length
         ? ` – includes ${joinAnd(enabledFeaturesNames)}.`
@@ -135,7 +138,9 @@ function BasePlan ({basePlan}) {
 
 function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
   if (!spacePlans.length) {
-    return h('div', null,
+    return h('div', {
+      'data-test-id': 'subscription-page.no-spaces'
+    },
       h('h2', null, 'Spaces'),
       h('p', null,
         'Your organization doesn\'t have any spaces. ',
@@ -150,7 +155,9 @@ function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
 
     return h('div', null,
       h('h2', null, 'Spaces'),
-      h('p', null,
+      h('p', {
+        'data-test-id': 'subscription-page.spaces-total'
+      },
         'The total for your ',
         h('b', null, `${spacePlans.length} spaces`),
         ' is ',
@@ -158,7 +165,10 @@ function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
         ' per month.'
         // TODO show available free spaces
       ),
-      h('table', {className: 'simple-table'},
+      h('table', {
+        className: 'simple-table',
+        'data-test-id': 'subscription-page.spaces-list'
+      },
         h('thead', null,
           h('tr', null,
             h('th', {style: {width: '35%'}}, 'Name'),
@@ -207,8 +217,12 @@ function SpacePlanRow ({plan, onDeleteSpace, isOrgOwner}) {
   }, asReact(QuestionMarkIcon({color: colors.textLight})));
 
   return h('tr', null,
-    h('td', null, h('h3', {style: {margin: 0}}, get(space, 'name', '—'))),
-    h('td', null,
+    h('td', {
+      'data-test-id': 'subscription-page.spaces-list.space-name'
+    }, h('h3', {style: {margin: 0}}, get(space, 'name', '—'))),
+    h('td', {
+      'data-test-id': 'subscription-page.spaces-list.space-plan'
+    },
       h('h3', {style: {marginTop: 0}},
         plan.name,
         h(Tooltip, {
@@ -230,9 +244,15 @@ function RightSidebar ({grandTotal, orgId, onContactUs}) {
   // TODO - add these styles to stylesheets
   const iconStyle = {fill: colors.blueDarkest, paddingRight: '6px', position: 'relative', bottom: '-0.125em'};
 
-  return h('div', {className: 'entity-sidebar'},
+  return h('div', {
+    className: 'entity-sidebar',
+    'data-test-id': 'subscription-page.sidebar'
+  },
     h('h2', {className: 'entity-sidebar__heading'}, 'Grand total'),
-    h('p', {className: 'entity-sidebar__help-text'},
+    h('p', {
+      className: 'entity-sidebar__help-text',
+      'data-test-id': 'subscription-page.sidebar.grand-total'
+    },
       'Your grand total is ',
       h(Price, {value: grandTotal, style: {fontWeight: 'bold'}}),
       ' per month.'
@@ -241,7 +261,8 @@ function RightSidebar ({grandTotal, orgId, onContactUs}) {
       h('span', {style: iconStyle}, asReact(InvoiceIcon)),
       h('a', {
         className: 'text-link',
-        href: href(getInvoiceNavState(orgId))
+        href: href(getInvoiceNavState(orgId)),
+        'data-test-id': 'subscription-page.sidebar.invoice-link'
       }, 'View invoices')
     ),
     h('div', {className: 'note-box--info'},
@@ -258,7 +279,11 @@ function RightSidebar ({grandTotal, orgId, onContactUs}) {
     ),
     h('p', {className: 'entity-sidebar__help-text'},
       h('span', {style: iconStyle}, asReact(BubbleIcon)),
-      h('button', {className: 'text-link', onClick: onContactUs}, 'Get in touch with us')
+      h('button', {
+        className: 'text-link',
+        onClick: onContactUs,
+        'data-test-id': 'subscription-page.sidebar.contact-link'
+      }, 'Get in touch with us')
     )
   );
 }
@@ -271,13 +296,15 @@ function getSpaceActionLinks (space, isOrgOwner, onDeleteSpace) {
     spaceLink = h('a', {
       className: 'text-link',
       href: href(getSpaceNavState(space.sys.id)),
-      style: actionLinkStyle
+      style: actionLinkStyle,
+      'data-test-id': 'subscription-page.spaces-list.space-link'
     }, 'Go to space');
   } else {
     spaceLink = h(Tooltip, {
       element: h('button', {
         className: 'text-link',
-        disabled: true
+        disabled: true,
+        'data-test-id': 'subscription-page.spaces-list.space-link'
       }, 'Go to space'),
       tooltip: h('div', {style: {whiteSpace: 'normal'}},
         'You don’t have access to this space. But since you’re an organization ',
@@ -292,12 +319,14 @@ function getSpaceActionLinks (space, isOrgOwner, onDeleteSpace) {
   const usageLink = h('a', {
     className: 'text-link',
     href: href(getSpaceUsageNavState(space.sys.id)),
-    style: actionLinkStyle
+    style: actionLinkStyle,
+    'data-test-id': 'subscription-page.spaces-list.space-usage-link'
   }, 'Usage');
   const deleteLink = h('button', {
     className: 'text-link text-link--destructive',
     style: actionLinkStyle,
-    onClick: () => onDeleteSpace(space)
+    onClick: () => onDeleteSpace(space),
+    'data-test-id': 'subscription-page.spaces-list.delete-space-link'
   }, 'Delete');
 
   return [spaceLink, usageLink, deleteLink];
