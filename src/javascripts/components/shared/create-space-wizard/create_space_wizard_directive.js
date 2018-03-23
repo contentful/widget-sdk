@@ -22,6 +22,9 @@ angular.module('contentful')
         onTemplateCreated: function () {
           // Picked up by the learn page which then refreshes itself
           $rootScope.$broadcast('spaceTemplateCreated');
+        },
+        onDimensionsChange: function () {
+          $scope.dialog.reposition();
         }
       }), host);
 

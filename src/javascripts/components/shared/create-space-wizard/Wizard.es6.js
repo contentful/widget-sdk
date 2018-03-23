@@ -21,7 +21,9 @@ export default createReactClass({
     cancel: PropTypes.func.isRequired,
     confirm: PropTypes.func.isRequired,
     onSpaceCreated: PropTypes.func.isRequired,
-    onTemplateCreated: PropTypes.func.isRequired
+    onTemplateCreated: PropTypes.func.isRequired,
+    // call back to Angular directive to readjust modal position
+    onDimensionsChange: PropTypes.func
   },
   getInitialState: function () {
     return {
@@ -55,7 +57,7 @@ export default createReactClass({
     this.setState({...this.state, data: {...this.state.data, organization}});
   },
   render: function () {
-    const {cancel, confirm} = this.props;
+    const {cancel, confirm, onDimensionsChange} = this.props;
     const {currentStepId, isFormSubmitted, isSpaceCreated, isContentCreated, data} = this.state;
 
     if (isSpaceCreated) {
@@ -98,7 +100,12 @@ export default createReactClass({
               key: `step-${id}`,
               className: `create-space-wizard__step ${isCurrent ? 'create-space-wizard__step--current' : ''}`
             },
-              isEnabled(data) && h(component, {...data, isFormSubmitted, submit: this.submitStep}));
+              isEnabled(data) && h(component, {
+                ...data,
+                isFormSubmitted,
+                onDimensionsChange,
+                submit: this.submitStep
+              }));
           })
         )
       );
@@ -106,6 +113,11 @@ export default createReactClass({
   },
   navigate (stepId) {
     return () => this.setState({...this.state, currentStepId: stepId});
+  },
+  componentDidUpdate: function (_prevProps, prevState) {
+    if (prevState.currentStepId !== this.state.currentStepId) {
+      this.props.onDimensionsChange();
+    }
   },
   submitStep: function (data) {
     const {currentStepId} = this.state;
