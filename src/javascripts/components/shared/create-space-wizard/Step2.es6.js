@@ -54,11 +54,13 @@ const Step2 = createReactClass({
         showValidationError && h('p', {className: 'cfnext-form__field-error'}, validation.name)
       ),
       h(TemplateSelector, {onSelect: this.setTemplate}),
-      h('button', {
-        className: 'button btn-action',
-        disabled: Object.keys(validation).length,
-        onClick: this.submit
-      }, 'Create the space')
+      h('div', {style: {textAlign: 'center', margin: '1.2em 0'}},
+        h('button', {
+          className: 'button btn-action',
+          disabled: Object.keys(validation).length,
+          onClick: this.submit
+        }, 'Create the space')
+      )
     );
   },
   setName: function (name) {

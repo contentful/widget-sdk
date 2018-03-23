@@ -15,8 +15,8 @@ angular.module('contentful')
       ReactDOM.render(React.createElement(Wizard, {
         orgId: $scope.organizationId,
         cancel: function () { $scope.dialog.cancel(); },
+        confirm: function () { $scope.dialog.confirm(); },
         onSpaceCreated: function (newSpace) {
-          $scope.dialog.confirm();
           $state.go('spaces.detail', {spaceId: newSpace.sys.id});
         },
         onTemplateCreated: function () {

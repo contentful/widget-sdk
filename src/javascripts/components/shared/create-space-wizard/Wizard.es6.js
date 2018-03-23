@@ -3,6 +3,7 @@ import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import Step1 from './Step1';
 import Step2 from './Step2';
+import Progress from './Progress';
 import {get, noop} from 'lodash';
 import client from 'client';
 import * as TokenStore from 'services/TokenStore';
@@ -18,6 +19,7 @@ const Wizard = createReactClass({
   propTypes: {
     orgId: PropTypes.string.isRequired,
     cancel: PropTypes.func.isRequired,
+    confirm: PropTypes.func.isRequired,
     onSpaceCreated: PropTypes.func.isRequired,
     onTemplateCreated: PropTypes.func.isRequired
   },
@@ -36,7 +38,7 @@ const Wizard = createReactClass({
     this.setState(Object.assign(this.state, {organization}));
   },
   render: function () {
-    const {orgId, cancel} = this.props;
+    const {orgId, cancel, confirm} = this.props;
     const {step, organization, spaceRatePlan, serverValidationErrors} = this.state;
 
     return h('div', {
@@ -45,7 +47,10 @@ const Wizard = createReactClass({
         width: '750px'
       }
     },
-      h('div', {className: 'modal-dialog__header', style: {padding: 0}},
+      !this.isFormSubmitted() && h('div', {
+        className: 'modal-dialog__header',
+        style: {padding: 0}
+      },
         h(Navigation, {
           steps: [
             {id: 'step1', label: 'Space type', isEnabled: true},
@@ -75,11 +80,14 @@ const Wizard = createReactClass({
             submit: this.submitStep2
           })
         ),
-        h('div', {style: {display: step === 'waiting' ? 'block' : 'none'}},
-          'Hang tight...'
+        h('div', {style: {display: this.isFormSubmitted() ? 'block' : 'none'}},
+          h(Progress, {done: step === 'done', confirm})
         )
       )
     );
+  },
+  isFormSubmitted: function () {
+    return ['waiting', 'done'].indexOf(this.state.step) >= 0;
   },
   submitStep1: function ({spaceRatePlan}) {
     this.setState(Object.assign(this.state, {spaceRatePlan, step: 'step2'}));
@@ -105,6 +113,8 @@ const Wizard = createReactClass({
         await spaceContext.publishedCTs.refresh();
         this.props.onTemplateCreated();
       }
+
+      this.setState(Object.assign(this.state, {step: 'done'}));
     }
   },
   handleError: function (error) {
