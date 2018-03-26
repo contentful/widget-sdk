@@ -1,9 +1,9 @@
 import {createElement as h} from 'libs/react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
-import Step1 from './Step1';
-import Step2 from './Step2';
-import Progress from './Progress';
+import SpacePlanSelector from './SpacePlanSelector';
+import SpaceDetails from './SpaceDetails';
+import ProgressScreen from './ProgressScreen';
 import {get, noop} from 'lodash';
 import client from 'client';
 import * as TokenStore from 'services/TokenStore';
@@ -15,7 +15,7 @@ import spaceContext from 'spaceContext';
 
 const DEFAULT_LOCALE = 'en-US';
 
-const Wizard = createReactClass({
+export default createReactClass({
   propTypes: {
     orgId: PropTypes.string.isRequired,
     cancel: PropTypes.func.isRequired,
@@ -25,94 +25,126 @@ const Wizard = createReactClass({
   },
   getInitialState: function () {
     return {
-      step: 'step1',
-      organization: null,
-      spaceRatePlan: null,
-      spaceName: '',
-      template: null,
-      serverValidationErrors: null
+      currentStepId: 0,
+      isFormSubmitted: false,
+      isSpaceCreated: false,
+      isContentCreated: false,
+      data: {
+        organization: null,
+        spaceRatePlan: null,
+        spaceName: '',
+        template: null,
+        serverValidationErrors: null
+      }
     };
   },
+  steps: [
+    {
+      label: 'Space type',
+      isEnabled: (data) => !!data.organization,
+      component: SpacePlanSelector
+    },
+    {
+      label: 'Space details',
+      isEnabled: (data) => !!data.spaceRatePlan,
+      component: SpaceDetails
+    }
+  ],
   componentWillMount: async function () {
     const organization = await TokenStore.getOrganization(this.props.orgId);
-    this.setState(Object.assign(this.state, {organization}));
+    this.setState({...this.state, data: {...this.state.data, organization}});
   },
   render: function () {
     const {cancel, confirm} = this.props;
-    const {step, organization, spaceRatePlan, serverValidationErrors} = this.state;
+    const {currentStepId, isFormSubmitted, isSpaceCreated, isContentCreated, data} = this.state;
 
-    return h('div', {
-      className: 'modal-dialog',
-      style: {
-        width: '750px'
-      }
-    },
-      !this.isFormSubmitted() && h('div', {
-        className: 'modal-dialog__header',
-        style: {padding: 0}
+    if (isSpaceCreated) {
+      return h('div', {
+        className: 'modal-dialog',
+        style: {
+          width: '750px'
+        }
       },
-        h(Navigation, {
-          steps: [
-            {id: 'step1', label: 'Space type', isEnabled: true},
-            {id: 'step2', label: 'Space details', isEnabled: !!spaceRatePlan}
-          ],
-          currentStep: step,
-          navigate: (step) => this.setState(Object.assign(this.state, {step}))
-        }),
-        h('button', {
-          className: 'create-space-wizard-dialog__close modal-dialog__close',
-          onClick: cancel
-        })
-      ),
-      h('div', {className: 'modal-dialog__content'},
-        organization && h('div', {style: {display: step === 'step1' ? 'block' : 'none'}},
-          h(Step1, {
-            organization,
-            submit: this.submitStep1
-          })
-        ),
-        spaceRatePlan && h('div', {style: {display: step === 'step2' ? 'block' : 'none'}},
-          h(Step2, {
-            spaceRatePlan: spaceRatePlan,
-            serverValidationErrors,
-            submit: this.submitStep2
-          })
-        ),
-        h('div', {style: {display: this.isFormSubmitted() ? 'block' : 'none'}},
-          h(Progress, {done: step === 'done', confirm})
+        h('div', {className: 'modal-dialog__content'},
+          h(ProgressScreen, {done: isContentCreated, confirm})
         )
-      )
-    );
+      );
+    } else {
+      const navigation = h('ul', {className: 'tab-list'},
+        this.steps.map(({label, isEnabled}, id) => h('li', {
+          key: `nav-${id}`,
+          role: 'tab',
+          'aria-selected': id === currentStepId
+        },
+          h('button', {
+            onClick: this.navigate(id),
+            disabled: !isEnabled(data)
+          }, label)
+        ))
+      );
+      const closeButton = h('button', {
+        className: 'create-space-wizard__close modal-dialog__close',
+        onClick: cancel
+      });
+      return h('div', {className: 'modal-dialog', style: {width: '750px'}},
+        h('div', {className: 'modal-dialog__header', style: {padding: 0}},
+          navigation,
+          closeButton
+        ),
+        h('div', {className: 'modal-dialog__content'},
+          this.steps.map(({isEnabled, component}, id) => {
+            const isCurrent = id === currentStepId;
+            return h('div', {
+              key: `step-${id}`,
+              className: `create-space-wizard__step ${isCurrent ? 'create-space-wizard__step--current' : ''}`
+            },
+              isEnabled(data) && h(component, {...data, isFormSubmitted, submit: this.submitStep}));
+          })
+        )
+      );
+    }
   },
-  isFormSubmitted: function () {
-    return ['waiting', 'done'].indexOf(this.state.step) >= 0;
+  navigate (stepId) {
+    return () => this.setState({...this.state, currentStepId: stepId});
   },
-  submitStep1: function ({spaceRatePlan}) {
-    this.setState(Object.assign(this.state, {spaceRatePlan, step: 'step2'}));
+  submitStep: function (data) {
+    const {currentStepId} = this.state;
+    this.setState({
+      ...this.state,
+      data: Object.assign(this.state.data, data),
+      currentStepId: currentStepId + 1,
+      serverValidationErrors: null
+    });
+    if (currentStepId === this.steps.length - 1) {
+      this.createSpace();
+    }
   },
-  submitStep2: async function ({spaceName, template}) {
-    const state = Object.assign(this.state, {spaceName, template});
-    const spaceData = makeSpaceData(state);
+  createSpace: async function () {
+    const {orgId, onSpaceCreated, onTemplateCreated} = this.props;
+    const spaceData = makeSpaceData(this.state.data);
     let newSpace;
 
-    this.setState(Object.assign(this.state, {step: 'waiting'}));
+    this.setState({...this.state, isFormSubmitted: true});
 
     try {
-      newSpace = await client.createSpace(spaceData, this.props.orgId);
+      newSpace = await client.createSpace(spaceData, orgId);
     } catch (error) {
       this.handleError(error);
     }
     if (newSpace) {
-      await TokenStore.refresh();
-      this.props.onSpaceCreated(newSpace);
+      this.setState({...this.state, isSpaceCreated: true});
 
+      await TokenStore.refresh();
+      onSpaceCreated(newSpace);
+
+      const {template} = this.state.data;
       if (template) {
         await createTemplate(template);
         await spaceContext.publishedCTs.refresh();
-        this.props.onTemplateCreated();
+        onTemplateCreated();
       }
 
-      this.setState(Object.assign(this.state, {step: 'done'}));
+      this.setState({...this.state, isContentCreated: true});
     }
   },
   handleError: function (error) {
@@ -120,7 +152,7 @@ const Wizard = createReactClass({
 
     const serverValidationErrors = getFieldErrors(error);
     if (Object.keys(serverValidationErrors).length) {
-      this.setState(Object.assign(this.state, {step: 'step2', serverValidationErrors}));
+      this.setState({...this.state, serverValidationErrors, currentStepId: 1});
     } else {
       notification.error('Could not create Space. If the problem persists please get in contact with us.');
       this.props.cancel();
@@ -136,7 +168,7 @@ function makeSpaceData ({spaceRatePlan, spaceName}) {
   };
 }
 
-function createTemplate (templateInfo) {
+async function createTemplate (templateInfo) {
   const templateCreator = getTemplateCreator(
     spaceContext,
     // TODO add analytics tracking
@@ -145,24 +177,24 @@ function createTemplate (templateInfo) {
     DEFAULT_LOCALE
   );
 
-  return getTemplate(templateInfo)
-    .then((templateData) => tryCreateTemplate(templateCreator, templateData));
+  const templateData = await getTemplate(templateInfo);
+  return tryCreateTemplate(templateCreator, templateData);
 }
 
-function tryCreateTemplate (templateCreator, templateData, retried) {
+async function tryCreateTemplate (templateCreator, templateData, retried) {
   const {spaceSetup, contentCreated} = templateCreator.create(templateData);
 
-  // we suppress errors, since `contentCreated` will handle them
-  // We need to catch all errors, because http requests
-  // are backed by $q, and we have global handlers on
-  // $q errors
-  spaceSetup.catch(noop);
-
-  return contentCreated.catch((data) => {
+  try {
+    await Promise.all([
+      // we suppress errors, since `contentCreated` will handle them
+      spaceSetup.catch(noop),
+      contentCreated
+    ]);
+  } catch (err) {
     if (!retried) {
-      return tryCreateTemplate(templateCreator, data.template, true);
+      await tryCreateTemplate(templateCreator, err.template, true);
     }
-  });
+  }
 }
 
 function getFieldErrors (error) {
@@ -179,20 +211,3 @@ function getFieldErrors (error) {
     return acc;
   }, {});
 }
-
-function Navigation ({steps, currentStep, navigate}) {
-  return h('ul', {className: 'tab-list'},
-    steps.map(({id, label, isEnabled}) => h('li', {
-      key: id,
-      role: 'tab',
-      'aria-selected': id === currentStep
-    },
-      h('button', {
-        onClick: () => navigate(id),
-        disabled: !isEnabled
-      }, label)
-    ))
-  );
-}
-
-export default Wizard;

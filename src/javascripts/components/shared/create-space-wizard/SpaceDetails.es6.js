@@ -4,11 +4,12 @@ import PropTypes from 'libs/prop-types';
 import {get} from 'lodash';
 import TemplateSelector from './TemplateSelector';
 
-const Step2 = createReactClass({
+export default createReactClass({
   propTypes: {
     submit: PropTypes.func.isRequired,
     spaceRatePlan: PropTypes.object.isRequired,
-    serverValidationErrors: PropTypes.object
+    serverValidationErrors: PropTypes.object,
+    isFormSubmitted: PropTypes.bool
   },
   getInitialState: function () {
     const state = {
@@ -21,13 +22,11 @@ const Step2 = createReactClass({
   },
   componentWillReceiveProps: function ({serverValidationErrors}) {
     if (serverValidationErrors !== this.props.serverValidationErrors) {
-      this.setState(Object.assign(this.state, {
-        validation: serverValidationErrors
-      }));
+      this.setState({...this.state, validation: serverValidationErrors});
     }
   },
   render: function () {
-    const {spaceRatePlan} = this.props;
+    const {spaceRatePlan, isFormSubmitted} = this.props;
     const {name, validation, touched} = this.state;
     const showValidationError = touched && !!validation.name;
 
@@ -56,32 +55,29 @@ const Step2 = createReactClass({
       h(TemplateSelector, {onSelect: this.setTemplate}),
       h('div', {style: {textAlign: 'center', margin: '1.2em 0'}},
         h('button', {
-          className: 'button btn-action',
-          disabled: Object.keys(validation).length,
+          className: `button btn-action ${isFormSubmitted ? 'is-loading' : ''}`,
+          disabled: isFormSubmitted || Object.keys(validation).length,
           onClick: this.submit
         }, 'Create the space')
       )
     );
   },
   setName: function (name) {
-    this.setState(Object.assign(this.state, {name, touched: true}));
-    this.validate();
+    const state = {...this.state, name, touched: true};
+    state.validation = validateState(state);
+    this.setState(state);
   },
   setTemplate: function (template) {
-    this.setState(Object.assign(this.state, {template, touched: true}));
+    this.setState({...this.state, template, touched: true});
   },
   submit: function () {
-    this.validate();
-    const {validation, name, template} = this.state;
-    if (Object.keys(validation).length) {
-      return;
+    const validation = validateState(this.state);
+    this.setState({...this.state, validation});
+
+    if (!Object.keys(validation).length) {
+      const {name, template} = this.state;
+      this.props.submit({spaceName: name, template});
     }
-    this.props.submit({spaceName: name, template});
-  },
-  validate: function () {
-    this.setState(
-      Object.assign(this.state, {validation: validateState(this.state)})
-    );
   }
 });
 
@@ -97,5 +93,3 @@ function shortenPlanName (name = '') {
   const shortName = get(/^\s*Space Plan[\s-]*(\w*)\s*$/.exec(name), 1);
   return (shortName || name).toLowerCase();
 }
-
-export default Step2;

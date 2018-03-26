@@ -4,7 +4,7 @@ import PropTypes from 'libs/prop-types';
 import {get} from 'lodash';
 import {getTemplatesList} from 'services/SpaceTemplateLoader';
 
-const TemplateSelector = createReactClass({
+export default createReactClass({
   propTypes: {
     onSelect: PropTypes.func.isRequired
   },
@@ -32,7 +32,7 @@ const TemplateSelector = createReactClass({
             name: 'useTemplate',
             value: 'false',
             checked: !useTemplate,
-            onChange: () => this.hideTemplates()
+            onChange: this.hideTemplates
           }),
           h('label', {htmlFor: 'newspace-template-none'},
             h('strong', null, 'Create an empty space.'),
@@ -48,7 +48,7 @@ const TemplateSelector = createReactClass({
             name: 'useTemplate',
             value: 'true',
             checked: useTemplate,
-            onChange: () => this.showTemplates()
+            onChange: this.showTemplates
           }),
           h('label', {htmlFor: 'newspace-template-usetemplate'},
             h('strong', null, 'Create an example space.'),
@@ -68,7 +68,7 @@ const TemplateSelector = createReactClass({
               return h('a', {
                 key: template.id,
                 className: `create-new-space__templates__navitem ${isSelected && 'selected'}`,
-                onClick: () => this.selectTemplate(template)
+                onClick: this.selectTemplate(template)
               },
                 // TODO show template.svgicon
                 template.name
@@ -99,13 +99,13 @@ const TemplateSelector = createReactClass({
     this.props.onSelect(selectedTemplate);
   },
   selectTemplate: function (template) {
-    this.setState(Object.assign(this.state, {selectedTemplate: template}));
-    this.props.onSelect(template);
+    return () => {
+      this.setState(Object.assign(this.state, {selectedTemplate: template}));
+      this.props.onSelect(template);
+    };
   }
 });
 
 function parseTemplates (templates = []) {
   return templates.map(({fields, sys}) => ({...fields, id: sys.id}));
 }
-
-export default TemplateSelector;

@@ -151,14 +151,14 @@ $close-button-small()
   $close-button-small()
   margin-left: auto
 
-.create-space-wizard-dialog__close.modal-dialog__close
+.create-space-wizard__close.modal-dialog__close
   $close-button-small()
   position: absolute
   top: 0
   right: 0
 
 // V2 pricing wizard
-.create-space-wizard-dialog
+.create-space-wizard
   &__heading
     line-height: 1.3em
     text-align: center
@@ -168,4 +168,7 @@ $close-button-small()
     color: $colors.text-mid
     text-align: center
     margin-bottom: 1.3em
-
+  &__step
+    display: none
+    &--current
+      display: block

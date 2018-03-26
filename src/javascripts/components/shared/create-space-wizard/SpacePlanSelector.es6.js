@@ -5,7 +5,7 @@ import {get} from 'lodash';
 import {createOrganizationEndpoint} from 'data/EndpointFactory';
 import {getSpaceRatePlans} from 'account/pricing/PricingDataProvider';
 
-const Step1 = createReactClass({
+export default createReactClass({
   propTypes: {
     organization: PropTypes.object.isRequired,
     submit: PropTypes.func.isRequired
@@ -43,7 +43,7 @@ const Step1 = createReactClass({
             name: 'productRatePlanId',
             value: plan.sys.id,
             checked: get(selectedPlan, 'sys.id') === plan.sys.id,
-            onChange: () => this.selectPlan(plan)
+            onChange: this.selectPlan(plan)
           }),
           h('label', {
             htmlFor: `space-rate-plan--${plan.sys.id}`
@@ -53,12 +53,12 @@ const Step1 = createReactClass({
     );
   },
   selectPlan: function (selectedPlan) {
-    this.setState(Object.assign(this.state, {selectedPlan}));
+    return () => {
+      this.setState({...this.state, selectedPlan});
 
-    if (selectedPlan) {
-      this.props.submit({spaceRatePlan: selectedPlan});
-    }
+      if (selectedPlan) {
+        this.props.submit({spaceRatePlan: selectedPlan});
+      }
+    };
   }
 });
-
-export default Step1;

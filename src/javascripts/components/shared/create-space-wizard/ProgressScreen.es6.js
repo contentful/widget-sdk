@@ -8,31 +8,33 @@ import ContentIcon from 'svg/page-content';
 import MediaIcon from 'svg/page-media';
 import APIsIcon from 'svg/page-apis';
 
-const Progress = createReactClass({
+const infoItems = [
+  {
+    icon: ContentTypeIcon,
+    title: 'Content model',
+    description: 'The content model is comprised of content types, they work like a stencil which defines the structure of entries. We’re creating a few different content types for you to see how it works.'
+  }, {
+    icon: ContentIcon,
+    title: 'Content',
+    description: 'Your content is made up of entries. The space will include a couple of entries based on the content types mentioned above.'
+  }, {
+    icon: MediaIcon,
+    title: 'Media',
+    description: 'Your media consists of assets, which are external files, from images or videos to documents. Your entries will have a few assets to complement them.'
+  }, {
+    icon: APIsIcon,
+    title: 'API keys',
+    description: 'An API key is the token that you’ll use to retrieve your content. We created a few API keys so that you can get started fetching your content right away.'
+  }
+];
+
+export default createReactClass({
   propTypes: {
     done: PropTypes.bool.isRequired,
     confirm: PropTypes.func.isRequired
   },
   render: function () {
     const {done, confirm} = this.props;
-    const infoItems = [
-      {
-        icon: ContentTypeIcon,
-        title: 'Content model',
-        description: 'The content model is comprised of content types, they work like a stencil which defines the structure of entries. We’re creating a few different content types for you to see how it works.'
-      }, {
-        icon: ContentIcon,
-        title: 'Content',
-        description: 'Your content is made up of entries. The space will include a couple of entries based on the content types mentioned above.'
-      }, {
-        icon: MediaIcon,
-        title: 'Media',
-        description: 'Your media consists of assets, which are external files, from images or videos to documents. Your entries will have a few assets to complement them.'
-      }, {
-        icon: APIsIcon,
-        title: 'API keys',
-        description: 'An API key is the token that you’ll use to retrieve your content. We created a few API keys so that you can get started fetching your content right away.'
-      }];
 
     return h('div', null,
       h('div', {className: 'modal-dialog__content'},
@@ -70,5 +72,3 @@ const Progress = createReactClass({
     );
   }
 });
-
-export default Progress;
