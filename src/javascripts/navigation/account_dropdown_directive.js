@@ -16,6 +16,7 @@ angular.module('contentful')
   var Config = require('Config');
   var Analytics = require('analytics/Analytics');
   var intercom = require('intercom');
+  var $state = require('$state');
 
   $scope.userProfileRef = {
     path: ['account', 'profile', 'user'],
@@ -23,9 +24,16 @@ angular.module('contentful')
   };
 
   $scope.supportUrl = Config.supportUrl;
-  $scope.openIntercom = intercom.open;
   $scope.isIntercomLoaded = intercom.isLoaded;
   $scope.logout = logout;
+  $scope.talkToUsClicked = function () {
+    Analytics.track('element:click', {
+      elementId: 'contact_sales_dropdown',
+      groupId: 'contact_sales',
+      fromState: $state.current.name
+    });
+    intercom.open();
+  };
 
   function logout () {
     Analytics.track('global:logout_clicked');
