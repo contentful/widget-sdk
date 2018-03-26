@@ -87,26 +87,6 @@ describe('Client Controller', function () {
     });
   });
 
-  describe('shows create space dialog', function () {
-    beforeEach(function () {
-      this.$inject('services/OrganizationRoles').setUser({
-        organizationMemberships: [
-          {organization: {sys: {id: 'abc'}}},
-          {organization: {sys: {id: 'def'}}}
-        ]
-      });
-      this.modalDialog = this.$inject('modalDialog');
-      this.modalDialog.open = sinon.stub().returns({promise: this.$inject('$q').when()});
-      this.spaceContext = this.$inject('spaceContext');
-      this.spaceContext.organization = {sys: {}};
-    });
-
-    it('opens dialog', async function () {
-      await scope.showCreateSpaceDialog();
-      sinon.assert.called(this.modalDialog.open);
-    });
-  });
-
   describe('initializes client', function () {
     beforeEach(function () {
       this.user = {sys: {}};

@@ -22,25 +22,16 @@ angular.module('contentful')
   var getTemplatesList = spaceTemplateLoader.getTemplatesList;
   var getTemplate = spaceTemplateLoader.getTemplate;
   var spaceTemplateCreator = require('services/SpaceTemplateCreator');
-  var accessChecker = require('access_control/AccessChecker');
   var TokenStore = require('services/TokenStore');
-  var K = require('utils/kefir');
   var enforcements = require('access_control/Enforcements');
   var $state = require('$state');
   var logger = require('logger');
   var Analytics = require('analytics/Analytics');
   var spaceContext = require('spaceContext');
   var spaceTemplateEvents = require('analytics/events/SpaceCreation');
-  var createOrgEndpoint = require('data/EndpointFactory').createOrganizationEndpoint;
   var createResourceService = require('services/ResourceService').default;
-  var getSpaceRatePlans = require('account/pricing/PricingDataProvider').getSpaceRatePlans;
-  var ResourceUtils = require('utils/ResourceUtils');
 
   var DEFAULT_LOCALE = 'en-US';
-
-  K.onValueScope($scope, TokenStore.organizations$, function (organizations) {
-    controller.organizations = organizations;
-  });
 
   // Keep track of the view state
   controller.viewState = 'createSpaceForm';
@@ -54,17 +45,7 @@ angular.module('contentful')
     errors: {fields: {}}
   };
 
-  // TODO This list should be empty. The create space dialog should not
-  // be opened when the user has no writable organizations. But there
-  // is a bug https://contentful.tpondemand.com/entity/18031
-  controller.writableOrganizations = _.filter(controller.organizations, function (org) {
-    return org && org.sys ? accessChecker.canCreateSpaceInOrganization(org.sys.id) : false;
-  });
-
-  controller.newSpace.organization = (
-    _.find(controller.writableOrganizations, ['sys.id', $scope.organizationId]) ||
-    _.first(controller.writableOrganizations)
-  );
+  controller.newSpace.organization = $scope.organization;
 
   // Load the list of space templates
   controller.templates = [];
@@ -90,28 +71,6 @@ angular.module('contentful')
     }
   });
 
-  // Populate space rate plans for selected org, if it is on v2 pricing.
-  $scope.$watch(function () {
-    return controller.newSpace.organization;
-  }, function (organization) {
-    if (!organization || organization.pricingVersion !== 'pricing_version_2') {
-      delete controller.spaceRatePlans;
-      delete controller.newSpace.data.productRatePlanId;
-      return;
-    }
-    controller.spaceRatePlans = [];
-    var endpoint = createOrgEndpoint(organization.sys.id);
-    getSpaceRatePlans(endpoint).then(function (items) {
-      var noRatePlan = {name: '', id: null};
-      items = items.map(function (item) {
-        return {id: item.sys.id, name: item.name + ' ($' + item.price + ')'};
-      });
-      controller.spaceRatePlans = _.concat([noRatePlan], items);
-      controller.newSpace.data.productRatePlanId = null;
-    });
-  });
-
-
   // Switch space template
   controller.selectTemplate = function (template) {
     if (!controller.createSpaceInProgress) {
@@ -123,33 +82,20 @@ angular.module('contentful')
   controller.requestSpaceCreation = function () {
     var organization = controller.newSpace.organization;
 
-    // TODO This may happen due to 'writableOrganizations' being empty.
-    // See above for more info
-    if (!organization) {
-      return showFormError('You don’t have permission to create a space');
-    }
-
     var resources = createResourceService(organization.sys.id, 'organization');
 
-    if (ResourceUtils.isLegacyOrganization(organization)) {
-      // First check that there are resources available
-      // to create the space
-      resources.canCreate('space').then(function (canCreate) {
-        if (canCreate) {
-          // Resources are available. Attempt to create a new space
-          createNewSpace();
-        } else {
-          resources.messagesFor('space').then(function (errorObj) {
-            handleUsageWarning(errorObj.error);
-          });
-        }
-      });
-    } else {
-      // We allow a user to create a new space within the organization
-      // if it's pricing V2, because there are no limits (they must
-      // choose a rate plan).
-      createNewSpace();
-    }
+    // First check that there are resources available
+    // to create the space
+    resources.canCreate('space').then(function (canCreate) {
+      if (canCreate) {
+        // Resources are available. Attempt to create a new space
+        createNewSpace();
+      } else {
+        resources.messagesFor('space').then(function (errorObj) {
+          handleUsageWarning(errorObj.error);
+        });
+      }
+    });
   };
 
   function setupTemplates (templates) {
