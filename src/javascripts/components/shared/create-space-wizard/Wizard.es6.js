@@ -104,6 +104,7 @@ export default createReactClass({
                 ...data,
                 isFormSubmitted,
                 onDimensionsChange,
+                cancel,
                 submit: this.submitStep
               }));
           })

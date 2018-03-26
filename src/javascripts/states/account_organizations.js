@@ -40,9 +40,15 @@ angular.module('contentful')
 
   var subscriptionNew = reactBase({
     name: 'subscription_new',
-    url: '/:orgId/subscription',
+    url: '/:orgId/subscription_overview',
     label: 'Subscription',
     componentName: 'cf-subscription-overview'
+  });
+
+  var subscriptionBilling = gatekeeperBase({
+    name: 'subscription_billing',
+    title: 'Subscription',
+    url: '/:orgId/subscription{pathSuffix:PathSuffix}'
   });
 
   var usage = reactBase({
@@ -163,6 +169,7 @@ angular.module('contentful')
       edit,
       subscription,
       subscriptionNew,
+      subscriptionBilling,
       usage,
       users,
       spaces,
