@@ -33,6 +33,7 @@ function resolveParams (link) {
   // we map links from `link` queryParameter to resolve fn
   // keys are quoted, so we can use special symbols later
   const mappings = {
+    'home': resolveHome,
     'api': resolveApi,
     'invite': resolveInviteUser,
     'users': resolveUsers,
@@ -47,6 +48,22 @@ function resolveParams (link) {
   } else {
     return Promise.reject(new Error('path does not exist'));
   }
+}
+
+// resolve Home page
+// always redirects directly to the home screen
+// if you just redirect to `/`, you might end up on the
+// content screen, this deeplink route solves it
+function resolveHome () {
+  return runTask(function* () {
+    const { space, spaceId } = yield* getSpaceInfo();
+    yield spaceContext.resetWithSpace(space);
+
+    return {
+      path: ['spaces', 'detail', 'home'],
+      params: { spaceId }
+    };
+  });
 }
 
 // resolve API page
