@@ -43,7 +43,7 @@ export default function () {
         uiSref: 'account.profile.user'
       }, {
         text: 'Talk to us',
-        ngClick: 'openIntercom()',
+        ngClick: 'talkToUsClicked()',
         dataTestId: 'nav.account.intercom',
         ngIf: 'isIntercomLoaded()'
       }, {
