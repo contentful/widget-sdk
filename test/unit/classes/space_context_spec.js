@@ -10,6 +10,8 @@ describe('spaceContext', function () {
     this.organization = {sys: {id: 'ORG_ID'}};
     this.OrganizationContext = { create: sinon.stub().returns({organization: this.organization}) };
     this.AccessChecker = {setSpace: sinon.stub()};
+    this.mockSpaceEndpoint = createMockSpaceEndpoint();
+
     module('contentful/test', ($provide) => {
       $provide.value('data/userCache', sinon.stub());
       $provide.value('data/editingInterfaces', sinon.stub());
@@ -17,7 +19,7 @@ describe('spaceContext', function () {
       $provide.value('classes/OrganizationContext', this.OrganizationContext);
       $provide.value('access_control/AccessChecker', this.AccessChecker);
       $provide.value('data/Endpoint', {
-        createSpaceEndpoint: () => createMockSpaceEndpoint().request
+        createSpaceEndpoint: () => this.mockSpaceEndpoint.request
       });
       $provide.value('data/UiConfig/Store', {default: sinon.stub().resolves({store: true})});
       $provide.value('client', {newSpace: makeClientSpaceMock});
@@ -32,6 +34,9 @@ describe('spaceContext', function () {
       this.$apply();
       return this.spaceContext.space;
     };
+
+    const LD = this.$inject('utils/LaunchDarkly');
+    LD._setFlag('feature-dv-11-2017-environments', true);
   });
 
   describe('#purge', function () {
@@ -160,6 +165,16 @@ describe('spaceContext', function () {
 
     it('inits organization context', function () {
       expect(this.spaceContext.organizationContext.organization).toEqual(this.organization);
+    });
+
+    it('set `environments` property if environments are enabled', function* () {
+      Object.assign(this.mockSpaceEndpoint.stores.environments, {
+        master: 'master',
+        other: 'other'
+      });
+      this.Widgets.setSpace.resolve();
+      yield this.result;
+      expect(this.spaceContext.environments).toEqual(['master', 'other']);
     });
   });
 

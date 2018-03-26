@@ -41,6 +41,8 @@ angular.module('contentful')
   var createLocaleRepo = require('data/CMA/LocaleRepo').default;
   var accessChecker = require('access_control/AccessChecker');
   var shouldUseEnvEndpoint = require('data/shouldUseEnvEndpoint').default;
+  var createEnvironmentsRepo = require('data/CMA/SpaceEnvironmentsRepo').create;
+  var deepFreeze = require('utils/Freeze').deepFreeze;
 
   var publishedCTsBus$ = K.createPropertyBus([]);
 
@@ -153,6 +155,9 @@ angular.module('contentful')
           .then(function (api) {
             self.uiConfig = api;
           });
+        }),
+        maybeFetchEnvironments(self.endpoint).then(function (environments) {
+          self.environments = deepFreeze(environments);
         }),
         TheLocaleStore.init(self.localeRepo)
       ]).then(function () {
@@ -453,5 +458,16 @@ angular.module('contentful')
     if (field) {
       return spaceContext.getFieldValue(entity, field.id, localeCode);
     }
+  }
+
+  function maybeFetchEnvironments (spaceEndpoint) {
+    // FIXME This prevents a circular dependency
+    var LD = require('utils/LaunchDarkly');
+    return LD.getCurrentVariation('feature-dv-11-2017-environments')
+      .then(function (environmentsEnabled) {
+        if (environmentsEnabled) {
+          return createEnvironmentsRepo(spaceEndpoint).getAll();
+        }
+      });
   }
 }]);
