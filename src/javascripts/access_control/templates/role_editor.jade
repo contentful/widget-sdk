@@ -75,7 +75,7 @@ cf-loader(watch-state-change="true")
             |  It does <strong>not</strong> grant permission to update users roles or delete the space.
 
   .workbench-main__sidebar
-    .entity-sidebar(ng-if="!canModifyRoles")
+    .entity-sidebar(ng-if="!loading && !canModifyRoles")
       //- Save button for the 'Translator' role
       .entity-sidebar__state-select
         button.btn-action-select__action(
