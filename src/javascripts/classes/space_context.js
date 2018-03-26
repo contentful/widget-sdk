@@ -185,7 +185,6 @@ angular.module('contentful')
      */
     getEnvironmentId: function () {
       if (this.space) {
-        debugger;
         return _.get(this, ['space', 'environment', 'sys', 'id'], 'master');
       }
     },

@@ -58,7 +58,7 @@ angular.module('contentful')
   $scope.showSidebar = false;
   $scope.insideNonMasterEnv = false;
 
-  if (EnvironmentUtils.isInsideEnv(spaceContext) && !EnvironmentUtils.isInsideMasterEnv(spaceContext)) {
+  if (!EnvironmentUtils.isInsideMasterEnv(spaceContext)) {
     $scope.insideNonMasterEnv = true;
   }
 
