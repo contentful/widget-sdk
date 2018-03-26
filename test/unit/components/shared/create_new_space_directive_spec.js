@@ -104,7 +104,7 @@ describe('cfCreateNewSpace directive', function () {
     });
 
     it('with only writable orgs', function () {
-      expect(controller.writableOrganizations).toEqual([this.org]);
+      expect(controller.writableOrganizations.map((o) => o.sys.id)).toEqual(['orgid']);
     });
   });
 
@@ -124,12 +124,12 @@ describe('cfCreateNewSpace directive', function () {
 
     it('preselects the first organization', function () {
       this.setupDirective();
-      expect(controller.newSpace.organization).toBe(this.org);
+      expect(controller.newSpace.organization.sys.id).toBe('orgid');
     });
 
     it('preselects the organization with matching id', function () {
       this.setupDirective('orgid2');
-      expect(controller.newSpace.organization).toBe(this.org2);
+      expect(controller.newSpace.organization.sys.id).toBe('orgid2');
     });
   });
 

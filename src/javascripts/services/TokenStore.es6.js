@@ -14,23 +14,19 @@ import ReloadNotification from 'ReloadNotification';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import presence from 'presence';
 import $window from '$window';
-import { deepFreezeClone, deepFreeze } from 'utils/Freeze';
-import { isEqual, groupBy, map, get, find, cloneDeep } from 'lodash';
+import { deepFreezeClone } from 'utils/Freeze';
+import { isEqual, groupBy, get, find } from 'lodash';
 
 // Refresh token info every 5 minutes
 const TOKEN_INFO_REFRESH_INTERVAL = 5 * 60 * 1000;
 
 const fetchInfo = makeFetchWithAuth(auth);
 
-const userBus = K.createPropertyBus(null);
-const spacesBus = K.createPropertyBus(null);
-const organizationsBus = K.createPropertyBus([]);
+const tokenBus = K.createPropertyBus();
+const token$ = tokenBus.property;
 
-// Variable storing the token data, so that it can be accessed synchronously.
-// @todo - remove it and use promise
-let tokenInfo = null;
-
-// MVar that holds the token data
+// MVar that holds the token data. An empty MVar indicates that we are
+// currently fetching the token.
 const tokenInfoMVar = createMVar(null);
 
 /**
@@ -40,7 +36,7 @@ const tokenInfoMVar = createMVar(null);
  * @description
  * The current user object from the token
  */
-export const user$ = userBus.property.skipDuplicates(isEqual);
+export const user$ = token$.map(userFromToken).skipDuplicates(isEqual);
 
 /**
  * @ngdoc property
@@ -49,7 +45,7 @@ export const user$ = userBus.property.skipDuplicates(isEqual);
  * @description
  * The list of organizations user is a member of from the token
  */
-export const organizations$ = organizationsBus.property;
+export const organizations$ = token$.map(organizationsFromToken);
 
 /**
  * @ngdoc property
@@ -58,11 +54,12 @@ export const organizations$ = organizationsBus.property;
  * @description
  * The list of spaces from the token grouped by organization
  */
-export const spacesByOrganization$ = spacesBus.property.map(spaces => {
+export const spacesByOrganization$ = token$.map(token => {
+  const spaces = spacesFromToken(token);
   return spaces ? groupBy(spaces, s => s.organization.sys.id) : null;
 });
 
-export function getTokenLookup () { return tokenInfo; }
+export function getTokenLookup () { return K.getValue(token$); }
 
 /**
  * Start refreshing the token data every five minutes and every time
@@ -82,6 +79,42 @@ export function init () {
   };
 }
 
+
+function userFromToken (token) {
+  if (token) {
+    return token.sys.createdBy;
+  } else {
+    return null;
+  }
+}
+
+function organizationsFromToken (token) {
+  const user = userFromToken(token);
+  if (user) {
+    return deepFreezeClone(
+      user.organizationMemberships
+        .map((membership) => membership.organization)
+    );
+  } else {
+    return [];
+  }
+}
+
+function spacesFromToken (token) {
+  if (token) {
+    return token.spaces
+    .map(space => {
+      delete space.locales; // Do not expose token locales
+      return deepFreezeClone(space);
+    })
+    // Sort by name
+    .sort((a, b) => (a.name || '').localeCompare(b.name));
+  } else {
+    return null;
+  }
+}
+
+
 /**
  * @ngdoc method
  * @name TokenStore#refresh
@@ -95,30 +128,15 @@ export function init () {
 export function refresh () {
   if (!tokenInfoMVar.isEmpty()) {
     tokenInfoMVar.empty();
-    fetchInfo().then(function (newTokenInfo) {
-      tokenInfo = newTokenInfo;
-      tokenInfoMVar.put(newTokenInfo);
-      const user = newTokenInfo.sys.createdBy;
-      const organizations = map(user.organizationMemberships, 'organization');
-      OrganizationRoles.setUser(user);
-      userBus.set(user);
-      organizationsBus.set(organizations);
-      spacesBus.set(prepareSpaces(newTokenInfo.spaces));
+    fetchInfo().then(function (token) {
+      tokenBus.set(token);
+      tokenInfoMVar.put(token);
+      OrganizationRoles.setUser(userFromToken(token));
     }, function () {
       ReloadNotification.trigger('The application was unable to authenticate with the server');
     });
   }
   return tokenInfoMVar.read();
-}
-
-function prepareSpaces (spaces) {
-  return cloneDeep(spaces)
-  .map(space => {
-    delete space.locales; // Do not expose token locales
-    return deepFreeze(space);
-  })
-  // Sort by name
-  .sort((a, b) => (a.name || '').localeCompare(b.name));
 }
 
 /**
@@ -130,7 +148,7 @@ function prepareSpaces (spaces) {
  * If some calls are in progress, we're waiting until these are done.
  */
 export function getSpaces () {
-  return tokenInfoMVar.read().then(() => K.getValue(spacesBus.property));
+  return tokenInfoMVar.read().then(spacesFromToken);
 }
 
 /**
@@ -151,7 +169,8 @@ export function getSpace (id) {
 }
 
 export function getDomains () {
-  const domains = get(tokenInfo, 'domains', []);
+  const token = K.getValue(token$);
+  const domains = get(token, 'domains', []);
   return domains.reduce(function (map, value) {
     map[value.name] = value.domain;
     return map;
@@ -185,7 +204,5 @@ export function getOrganization (id) {
  *
  */
 export function getOrganizations () {
-  return tokenInfoMVar.read().then(function () {
-    return deepFreezeClone(K.getValue(organizationsBus.property));
-  });
+  return tokenInfoMVar.read().then(organizationsFromToken);
 }

@@ -39,7 +39,7 @@ angular.module('contentful')
   var DEFAULT_LOCALE = 'en-US';
 
   K.onValueScope($scope, TokenStore.organizations$, function (organizations) {
-    controller.organizations = organizations;
+    controller.organizations = _.cloneDeep(organizations);
   });
 
   // Keep track of the view state
