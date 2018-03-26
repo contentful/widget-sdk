@@ -7,7 +7,6 @@ import {getSpaceRatePlans} from 'account/pricing/PricingDataProvider';
 
 const Step1 = createReactClass({
   propTypes: {
-    orgId: PropTypes.string.isRequired,
     organization: PropTypes.object.isRequired,
     submit: PropTypes.func.isRequired
   },
@@ -18,7 +17,7 @@ const Step1 = createReactClass({
     };
   },
   componentWillMount: async function () {
-    const {orgId} = this.props;
+    const orgId = this.props.organization.sys.id;
     const endpoint = createOrganizationEndpoint(orgId);
 
     const spaceRatePlans = await getSpaceRatePlans(endpoint);

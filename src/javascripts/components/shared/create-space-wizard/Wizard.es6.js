@@ -38,7 +38,7 @@ const Wizard = createReactClass({
     this.setState(Object.assign(this.state, {organization}));
   },
   render: function () {
-    const {orgId, cancel, confirm} = this.props;
+    const {cancel, confirm} = this.props;
     const {step, organization, spaceRatePlan, serverValidationErrors} = this.state;
 
     return h('div', {
@@ -67,14 +67,12 @@ const Wizard = createReactClass({
       h('div', {className: 'modal-dialog__content'},
         organization && h('div', {style: {display: step === 'step1' ? 'block' : 'none'}},
           h(Step1, {
-            orgId,
             organization,
             submit: this.submitStep1
           })
         ),
         spaceRatePlan && h('div', {style: {display: step === 'step2' ? 'block' : 'none'}},
           h(Step2, {
-            orgId,
             spaceRatePlan: spaceRatePlan,
             serverValidationErrors,
             submit: this.submitStep2
