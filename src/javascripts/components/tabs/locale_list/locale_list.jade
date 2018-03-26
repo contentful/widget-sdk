@@ -97,10 +97,14 @@ header.workbench-header
     .entity-sidebar
       h2.entity-sidebar__heading
         | Add Locale
-      p.entity-sidebar__text-profile
+      p.entity-sidebar__text-profile(ng-if="!insideNonMasterEnv")
         | You are using {{usage}} out of {{limit}}&#32;
         ng-pluralize(count="limit" when="{'1': 'locale', 'other': 'locales'}")
         | &#32;in your space.
+      p.entity-sidebar__text-profile(ng-if="insideNonMasterEnv")
+        | You are using {{usage}}&#32;
+        ng-pluralize(count="usage" when="{'1': 'locale', 'other': 'locales'}")
+        | &#32;in your environment.
       p.entity-sidebar__text-profile(ng-if="localesUsageState === LOCALES_LIMIT_REACHED")
         | You've reached the space locales limit.&#32;
         span(ng-if="canUpgrade")
