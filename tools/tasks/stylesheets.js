@@ -15,7 +15,8 @@ const VENDOR_STYLESHEETS_SRC = assertFilesExist([
   './vendor/jquery-ui/jquery-ui.css',
   './node_modules/codemirror/lib/codemirror.css',
   // Add angular styles since we are disabling inline-styles in ngCsp
-  './node_modules/angular/angular-csp.css'
+  './node_modules/angular/angular-csp.css',
+  './node_modules/@contentful/ui-component-library/dist/styles.css'
 ]);
 
 gulp.task('stylesheets', [

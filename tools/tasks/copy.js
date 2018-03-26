@@ -2,7 +2,8 @@ const gulp = require('gulp');
 
 const STATIC_SRC = [
   'vendor/font-awesome/*.+(eot|svg|ttf|woff)',
-  'vendor/fonts.com/*.+(woff|woff2)'
+  'vendor/fonts.com/*.+(woff|woff2)',
+  'node_modules/@contentful/ui-component-library/dist/*.+(woff|woff2)'
 ];
 const IMAGES_SRC = [
   'src/images/**/*',
