@@ -30,6 +30,8 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
   var org = spaceContext.organizationContext.organization;
   var FeatureService = createFeatureService(spaceContext.getId());
 
+  $scope.loading = true;
+
   $q.all({
     feature: FeatureService.get('customRoles'),
     resource: createResourceService(spaceContext.getId()).get('role'),
@@ -53,6 +55,8 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
     } else {
       $scope.canModifyRoles = true;
     }
+
+    $scope.loading = false;
   });
 
   // 1. prepare "touch" counter (first touch for role->internal, next for dirty state)
