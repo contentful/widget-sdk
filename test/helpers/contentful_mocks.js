@@ -1,4 +1,4 @@
-'use strict';
+import createLaunchDarklyMock from './mocks/LaunchDarkly';
 
 angular.module('cf.ui')
 // We do not load the file containing the icons. Therefore we need to
@@ -71,26 +71,12 @@ angular.module('contentful/mocks', [])
     store: sinon.stub()
   });
 
-  $provide.decorator('utils/LaunchDarkly', [
-    '$delegate',
-    'mocks/utils/LaunchDarkly',
-    function ($delegate, mock) {
-      const apiNames = [ 'init', 'onABTest', 'onFeatureFlag', 'getCurrentVariation' ];
-      const api = {};
-
-      apiNames.forEach(function (method) {
-        if (mock[method]) {
-          api[method] = mock[method];
-        } else {
-          api[method] = sinon.stub();
-        }
-      });
-
-      return _.extend({
-        _noMock: $delegate
-      }, api);
-    }
-  ]);
+  $provide.decorator('utils/LaunchDarkly', ['$delegate', function ($delegate) {
+    return {
+      ...createLaunchDarklyMock(),
+      _noMock: $delegate
+    };
+  }]);
 
   $provide.stubDirective = function (name, definition) {
     $provide.factory(name + 'Directive', function () {

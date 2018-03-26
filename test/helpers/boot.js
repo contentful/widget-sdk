@@ -30,7 +30,6 @@ import './mocks/cf_stub';
 import './mocks/editor_context';
 import './mocks/EditorDataLoader';
 import './mocks/entity_editor_document';
-import './mocks/LaunchDarkly';
 import './mocks/locale_store';
 import './mocks/ot_doc';
 import './mocks/space_context';
