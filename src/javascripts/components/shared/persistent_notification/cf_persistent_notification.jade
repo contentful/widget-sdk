@@ -1,4 +1,4 @@
-.persistent-notification(ng-if="persistentNotification")
+.persistent-notification(ng-if="persistentNotification && (message || actionMessage)")
   .persistent-notification__message(
     ng-show="message"
     ng-bind-html="message"

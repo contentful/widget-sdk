@@ -93,8 +93,9 @@ describe('Enforcements service', function () {
         enforcement = enforcements.determineEnforcement(organizationMock, ['usageExceeded'], 'ApiKey');
       });
 
-      it('has an error', function () {
-        expect(enforcement.message).toBeDefined();
+      it('has a tooltip but no message', function () {
+        expect(enforcement.tooltip).toBeDefined();
+        expect(enforcement.message).toBeUndefined();
       });
     });
   });
