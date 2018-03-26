@@ -1,25 +1,18 @@
+// TODO: Allow the flag values to be modified during the tests
+
 import $q from '$q';
 
-export default function createLaunchDarklyMock () {
-  const flags = {};
+const FLAGS = {
+  'feature-bv-2018-01-resources-api': false
+};
 
-  return {
-    init: sinon.spy(),
+angular.module('contentful/mocks')
+.factory('mocks/utils/LaunchDarkly', [function () {
+  const api = {};
 
-    getCurrentVariation (flag) {
-      // We need to use `$q` because otherwise the tests do not execute
-      // correctly.
-      return $q.resolve(flags[flag]);
-    },
-
-    // TODO implement when needed
-    onFeatureFlag: sinon.spy(),
-    onABTest: sinon.spy(),
-
-    // This does not exist on the actual client it is there for the
-    // tests to control the client behavior.
-    _setFlag (flag, value) {
-      flags[flag] = value;
-    }
+  api.getCurrentVariation = function (flagName) {
+    return $q.resolve(FLAGS[flagName]);
   };
-}
+
+  return api;
+}]);
