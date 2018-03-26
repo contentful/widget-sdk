@@ -11,10 +11,15 @@ describe('CreateSpace', function () {
     this.getOrganization.withArgs('v1').resolves(this.v1Org);
     this.getOrganization.withArgs('v2').resolves(this.v2Org);
 
+    this.accessChecker = {
+      canCreateSpaceInOrganization: sinon.stub().returns(true)
+    };
+
     module('contentful/test', ($provide) => {
       $provide.value('services/TokenStore', {getOrganization: this.getOrganization});
       $provide.value('spaceContext', this.spaceContext);
       $provide.value('utils/LaunchDarkly', {});
+      $provide.value('access_control/AccessChecker', this.accessChecker);
     });
     this.modalDialog = this.$inject('modalDialog');
     this.modalDialog.open = sinon.stub().returns({promise: this.resolve()});
@@ -22,18 +27,18 @@ describe('CreateSpace', function () {
   });
 
   describe('#showDialog', function () {
-    it('opens old dialog with v1 org', function* () {
+    it('opens old dialog with v1 org id', function* () {
       yield this.CreateSpace.showDialog('v1');
       const modalArgs = this.modalDialog.open.firstCall.args[0];
-      expect(modalArgs.scopeData.organizationId).toBe('v1');
+      expect(modalArgs.scopeData.organization).toBe(this.v1Org);
       expect(modalArgs.template).toContain('cf-create-new-space');
       sinon.assert.calledOnce(this.modalDialog.open);
     });
 
-    it('opens wizard with v2 org ID', function* () {
+    it('opens wizard with v2 org id', function* () {
       yield this.CreateSpace.showDialog('v2');
       const modalArgs = this.modalDialog.open.firstCall.args[0];
-      expect(modalArgs.scopeData.organizationId).toBe('v2');
+      expect(modalArgs.scopeData.organization).toBe(this.v2Org);
       expect(modalArgs.template).toContain('cf-create-space-wizard');
       sinon.assert.calledOnce(this.modalDialog.open);
     });
@@ -42,7 +47,13 @@ describe('CreateSpace', function () {
       this.spaceContext.organization = {sys: {id: 'SPACE_ORG'}, pricingVersion: 'pricing_version_1'};
       yield this.CreateSpace.showDialog();
       const modalArgs = this.modalDialog.open.firstCall.args[0];
-      expect(modalArgs.scopeData.organizationId).toBe('SPACE_ORG');
+      expect(modalArgs.scopeData.organization).toBe(this.spaceContext.organization);
+    });
+
+    it('checks for creation permission', function* () {
+      this.accessChecker.canCreateSpaceInOrganization.returns(false);
+      yield this.CreateSpace.showDialog('v1');
+      sinon.assert.calledWith(this.accessChecker.canCreateSpaceInOrganization, 'v1');
     });
   });
 });
