@@ -10,50 +10,12 @@ export default function createResourceService (id, type = 'space') {
   const endpoint = createEndpoint(id, type);
 
   return {
-    get: function (resourceType) {
-      return $q.resolve(runTask(function* () {
-        if (!resourceType) {
-          throw new Error('resourceType not supplied to ResourceService.get');
-        }
-
-        const organization = yield getTokenOrganization(id, type);
-        const legacy = yield useLegacy(organization);
-
-        if (legacy) {
-          const limit = getLegacyLimit(resourceType, organization);
-          const usage = getLegacyUsage(resourceType, organization);
-
-          return createResourceFromTokenData(resourceType, limit, usage);
-        } else {
-          const apiResourceType = snakeCase(resourceType);
-
-          return yield endpoint({
-            method: 'GET',
-            path: [ 'resources', apiResourceType ]
-          }, {
-            'x-contentful-enable-alpha-feature': 'subscriptions-api'
-          });
-        }
-      }));
-    },
-    getAll: function () {
-      return endpoint({
-        method: 'GET',
-        path: [ 'resources' ]
-      }, {
-        'x-contentful-enable-alpha-feature': 'subscriptions-api'
-      }).then(function (raw) {
-        return raw.items;
-      });
-    },
-    canCreate: function (resourceType) {
-      return this.get(resourceType).then(canCreate);
-    },
-    messagesFor: function (resourceType) {
-      return this.get(resourceType).then(generateMessage);
-    },
+    get,
+    getAll,
+    canCreate: (resourceType) => get(resourceType).then(canCreate),
+    messagesFor: (resourceType) => get(resourceType).then(generateMessage),
     messages: function () {
-      return this.getAll().then(resources => resources.reduce((memo, resource) => {
+      return getAll().then(resources => resources.reduce((memo, resource) => {
         const resourceType = camelCase(resource.sys.id);
 
         memo[resourceType] = generateMessage(resource);
@@ -62,6 +24,42 @@ export default function createResourceService (id, type = 'space') {
       }, {}));
     }
   };
+  function get (resourceType) {
+    return $q.resolve(runTask(function* () {
+      if (!resourceType) {
+        throw new Error('resourceType not supplied to ResourceService.get');
+      }
+
+      const organization = yield getTokenOrganization(id, type);
+      const legacy = yield useLegacy(organization);
+
+      if (legacy) {
+        const limit = getLegacyLimit(resourceType, organization);
+        const usage = getLegacyUsage(resourceType, organization);
+
+        return createResourceFromTokenData(resourceType, limit, usage);
+      } else {
+        const apiResourceType = snakeCase(resourceType);
+
+        return yield endpoint({
+          method: 'GET',
+          path: [ 'resources', apiResourceType ]
+        }, {
+          'x-contentful-enable-alpha-feature': 'subscriptions-api'
+        });
+      }
+    }));
+  }
+  function getAll () {
+    return endpoint({
+      method: 'GET',
+      path: [ 'resources' ]
+    }, {
+      'x-contentful-enable-alpha-feature': 'subscriptions-api'
+    }).then(function (raw) {
+      return raw.items;
+    });
+  }
 }
 
 function createEndpoint (id, type) {
