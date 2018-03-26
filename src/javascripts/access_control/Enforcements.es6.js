@@ -47,10 +47,7 @@ export function determineEnforcement (organization, reasons, entityType) {
     },
     {
       label: 'usageExceeded',
-      message: `<strong>Over usage limits.</strong> ${getMetricMessage(entityType)}. Please upgrade to proceed with content creation & delivery.`,
-      tooltip: getMetricMessage,
-      actionMessage: upgradeActionMessage('Upgrade'),
-      action: upgradeAction
+      tooltip: getMetricMessage
     },
     {
       label: 'accessTokenScope',
