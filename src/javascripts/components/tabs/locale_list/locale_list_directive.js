@@ -56,10 +56,10 @@ angular.module('contentful')
   $scope.subscriptionPlanName = getSubscriptionPlanData('name');
   $scope.newLocale = newLocale;
   $scope.showSidebar = false;
-  $scope.insideNonMasterEnv = false;
+  $scope.insideMasterEnv = true;
 
   if (!EnvironmentUtils.isInsideMasterEnv(spaceContext)) {
-    $scope.insideNonMasterEnv = true;
+    $scope.insideMasterEnv = false;
   }
 
   TheLocaleStore.refresh()
