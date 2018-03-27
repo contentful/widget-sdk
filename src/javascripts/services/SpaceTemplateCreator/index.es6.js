@@ -7,6 +7,7 @@ import qs from 'libs/qs';
 import * as environment from 'environment';
 import {TEA_MAIN_CONTENT_PREVIEW, TEA_CONTENT_PREVIEWS, DISCOVERY_APP_BASE_URL} from './contentPreviewConfig';
 import TheLocaleStore from 'TheLocaleStore';
+import {enrichTemplate} from './enrichTemplate';
 
 const ASSET_PROCESSING_TIMEOUT = 60000;
 
@@ -46,8 +47,14 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
    * any errors happened, we reject the whole promise. However, we will still
    * create an example space with everything what is possible.
    */
-  function create (template) {
+  function create (rawTemplate) {
     const allPromises = [];
+
+    // we use CDA for getting template values, and therefore some values can't be obtained:
+    // 1. description of content types
+    // 2. fields' validations of content types
+    // 3. editing interfaces (appearance - e.g. slug editor or url editor)
+    const template = enrichTemplate(templateInfo, rawTemplate);
 
     const contentCreated = runTask(function* () {
       const filteredLocales = template.space.locales.filter(
@@ -71,7 +78,31 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
       const apiKeyPromise = Promise.all(template.apiKeys.map(createApiKey));
       // we can proceed without publishing interfaces, creating is enough
       // publishing can be finished in the background
-      yield publishContentTypes(createdContentTypes);
+      const publishedCTs = yield publishContentTypes(createdContentTypes);
+
+      if (template.editorInterfaces) {
+        const editorInterfacesPromise = Promise.all(
+          template.editorInterfaces.map(editorInterface => {
+            // function to validate matching content type and editor interface
+            const validateCT = contentType => {
+              const editorInterfaceId = _.get(editorInterface, 'sys.contentType.sys.id');
+              const contentTypeId = _.get(contentType, 'data.sys.id');
+
+              // we need to ensure that ids are truthy
+              return editorInterfaceId && editorInterfaceId === contentTypeId;
+            };
+
+            const contentType = publishedCTs.find(validateCT);
+
+            // if we don't return a promise, `Promise.all` resolves it automatically
+            if (contentType) {
+              return createEditingInterface(contentType.data, editorInterface);
+            }
+          })
+        );
+
+        allPromises.push(editorInterfacesPromise);
+      }
 
       // we need to create assets before proceeding
       // we create assets only for default locale. It is a conscious decision, otherwise
@@ -194,6 +225,20 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
       response: getHandledItemResponse(item, data)
     };
   }
+
+  function createEditingInterface (contentType, editingInterface) {
+    const handlers = makeHandlers(editingInterface, 'create', 'EditingInterface');
+    if (handlers.itemWasHandled) {
+      return Promise.resolve(handlers.response);
+    }
+    const repo = spaceContext.editingInterfaces;
+    // The content type has a default editor interface with version 1.
+    editingInterface.sys.version = 1;
+    return repo.save(contentType, editingInterface)
+      .then(handlers.success)
+      .catch(handlers.error);
+  }
+
 
   function createContentType (contentType) {
     const handlers = makeHandlers(contentType, 'create', 'ContentType');

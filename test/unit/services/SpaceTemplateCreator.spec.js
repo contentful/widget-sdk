@@ -1,13 +1,13 @@
 import * as sinon from 'helpers/sinon';
 
 describe('Space Template creation service', function () {
-  let spaceTemplateCreator, creator, stubs, spaceContext;
+  let spaceTemplateCreator, creator, stubs, spaceContext, enrichTemplate;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'ctPublish', 'assetPublish', 'assetProcess', 'entryPublish', 'progressSuccess', 'progressError',
-        'success', 'error', 'retrySuccess', 'getContentPreview', 'createContentPreview', 'refreshLocaleStore', 'setActiveLocales'
+        'ctPublish', 'assetPublish', 'assetProcess', 'entryPublish', 'progressSuccess', 'progressError', 'success', 'error',
+        'retrySuccess', 'getContentPreview', 'createContentPreview', 'refreshLocaleStore', 'setActiveLocales'
       ]);
 
       $provide.value('contentPreview', {
@@ -15,6 +15,11 @@ describe('Space Template creation service', function () {
         create: stubs.createContentPreview
       });
       $provide.value('analytics/Analytics', {track: _.noop});
+      $provide.value('services/SpaceTemplateCreator/enrichTemplate', {
+        // we don't care about template info, because we describe enrichTemplate
+        // function by ourselves
+        enrichTemplate: (_templateInfo, template) => enrichTemplate(template)
+      });
 
       $provide.value('TheLocaleStore', {
         refresh: stubs.refreshLocaleStore,
@@ -32,6 +37,24 @@ describe('Space Template creation service', function () {
   describe('creates content based on a template', function () {
     let template;
     beforeEach(function* () {
+      // we enrich template with 2 editor interfaces
+      // but only 1 matches the content type we publish
+      enrichTemplate = template => ({
+        ...template,
+        editorInterfaces: [{
+          sys: {
+            contentType: {
+              sys: { id: 'ct1' }
+            }
+          }
+        }, {
+          sys: {
+            contentType: {
+              sys: { id: 'unexisting_ct' }
+            }
+          }
+        }]
+      });
       stubs.getContentPreview.returns(Promise.resolve([]));
       stubs.createContentPreview.returns(Promise.resolve({sys: {id: 1}, name: 'test'}));
       template = {
@@ -89,14 +112,19 @@ describe('Space Template creation service', function () {
         },
         localeRepo: {
           save: sinon.stub()
+        },
+        editingInterfaces: {
+          save: sinon.stub()
         }
       };
+
+      spaceContext.editingInterfaces.save.returns(Promise.resolve());
 
       _.times(2, function (n) {
         spaceContext.space.createContentType.onCall(n).returns(Promise.resolve(template.contentTypes[n]));
       });
       spaceContext.space.createContentType.onThirdCall().returns(Promise.reject(new Error('can not create a content type')));
-      stubs.ctPublish.returns(Promise.resolve());
+      stubs.ctPublish.returns(Promise.resolve({ data: { sys: { id: 'ct1' } } }));
 
       _.times(2, function (n) {
         spaceContext.space.createAsset.onCall(n).returns(Promise.resolve(template.assets[n]));
@@ -135,6 +163,10 @@ describe('Space Template creation service', function () {
 
     it('publishes 2 content types', function () {
       expect(stubs.ctPublish.callCount).toBe(2);
+    });
+
+    it('creates 1 editor interface', function () {
+      expect(spaceContext.editingInterfaces.save.callCount).toBe(1);
     });
 
     it('attempts to create 3 assets', function () {
@@ -195,7 +227,7 @@ describe('Space Template creation service', function () {
     });
 
     it('updates success progress 17 times', function () {
-      expect(stubs.progressSuccess.callCount).toBe(16);
+      expect(stubs.progressSuccess.callCount).toBe(17);
     });
 
     it('updates error progress 4 times', function () {
@@ -283,8 +315,8 @@ describe('Space Template creation service', function () {
         expect(stubs.entryPublish.callCount).toBe(3);
       });
 
-      it('updates success progress 25 times in total', function () {
-        expect(stubs.progressSuccess.callCount).toBe(23);
+      it('updates success progress 24 times in total', function () {
+        expect(stubs.progressSuccess.callCount).toBe(24);
       });
 
       it('updates error progress 4 times in total', function () {
