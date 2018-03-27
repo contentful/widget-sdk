@@ -1,12 +1,11 @@
 /* eslint-disable react/prop-types */
 // TODO: add prop-types
-import { asReact } from 'ui/Framework/DOMRenderer';
 import React from 'libs/react';
 import enhanceWithClickOutside from 'libs/react-click-outside';
 import PropTypes from 'libs/prop-types';
 import createReactClass from 'create-react-class';
+import { Icon } from '@contentful/ui-component-library';
 import Menu from './Menu';
-import DropDownIcon from 'svg/dd-arrow-down';
 
 export const modes = {
   NORMAL: 'normal',
@@ -70,7 +69,7 @@ const CreateEntryButton = createReactClass({
           onClick={this.handleClick}
           mode={mode}
           text={text}
-          withSingleCT
+          withSingleCT={withSingleCT}
         />
         {!withSingleCT &&
           this.state.isOpen && (
@@ -93,12 +92,11 @@ export function Button ({ onClick, mode, text, withSingleCT }) {
 
   return (
     <button className={`btn-action u-truncate ${className}`} onClick={onClick}>
-      <cf-icon class="btn-icon inverted" name="plus" />
+      <Icon icon="MdAddCircle" size="small" color="white" extraClassNames="btn-icon-left" />
       {text}
       {!withSingleCT &&
-        <cf-icon class="btn-dropdown-icon" name="dd-arrow-down">
-          {asReact(DropDownIcon)}
-        </cf-icon>}
+        <Icon icon="MdKeyboardArrowDown" size="small" color="white" extraClassNames="btn-dropdown-icon" />
+      }
     </button>
   );
 }

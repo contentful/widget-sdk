@@ -16,6 +16,9 @@
         }
       }
     },
+    "@contentful/ui-component-library": {
+      "version": "0.0.1-beta8"
+    },
     "@contentful/validation": {
       "version": "6.3.1",
       "dependencies": {

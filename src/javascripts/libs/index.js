@@ -28,6 +28,7 @@ window.libs = [
 
   ['jquery', window.$],
   ['lodash', window._],
+  ['@contentful/ui-component-library', require('@contentful/ui-component-library')],
   ['libs/qs', require('qs')],
   ['libs/react-tippy', require('react-tippy')],
   ['libs/color', require('color')],

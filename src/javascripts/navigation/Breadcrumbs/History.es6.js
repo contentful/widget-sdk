@@ -32,7 +32,10 @@ export function createBreadcrumbsHistory () {
 
   function extendCurrent (props) {
     const current = last(history);
-    Object.assign(current, props);
+    // Object.assign will throw in case `current` is not an object
+    if (current) {
+      Object.assign(current, props);
+    }
     crumbBus.set(history);
   }
 
