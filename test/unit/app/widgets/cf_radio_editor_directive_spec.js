@@ -40,7 +40,7 @@ describe('cfRadioEditor Directive', function () {
 
   it('selects the initial value', function () {
     fieldApi.validations = [{in: ['initial']}];
-    fieldApi.onValueChanged.yields('initial');
+    this.widgetApi.fieldProperties.value$.set('initial');
     const element = this.compile();
     expect(element.find('input:checked').next()[0].firstChild.nodeValue).toEqual('initial');
   });
@@ -56,7 +56,7 @@ describe('cfRadioEditor Directive', function () {
     const element = this.compile();
     expect(element.find('input:checked').length).toBe(0);
 
-    fieldApi.onValueChanged.yield('value');
+    this.widgetApi.fieldProperties.value$.set('value');
     this.$apply();
     expect(element.find('input:checked').next()[0].firstChild.nodeValue).toEqual('value');
   });

@@ -10,13 +10,8 @@ describe('cfMarkdownEditor', function () {
     });
 
     this.widgetApi = this.$inject('mocks/widgetApi').create();
-    this.widgetApi.field.getValue.returns('test');
+    this.widgetApi.fieldProperties.value$.set('test');
     this.fieldStubs = this.widgetApi.field;
-
-    this.notifyChange = function () {
-      const notifyFn = this.fieldStubs.onValueChanged.firstCall.args[0];
-      notifyFn(this.fieldStubs.getValue());
-    }.bind(this);
 
     const elem = this.$compile('<cf-markdown-editor />', {}, {
       cfWidgetApi: {field: this.fieldStubs}
@@ -29,9 +24,6 @@ describe('cfMarkdownEditor', function () {
 
     // can get CodeMirror instance from DOM node now:
     this.editor = elem.find('.CodeMirror').get(0).CodeMirror;
-
-    // populate initial field value
-    this.notifyChange();
   });
 
   it('Marks editor as ready when MD vendors are loaded', function () {
@@ -67,8 +59,7 @@ describe('cfMarkdownEditor', function () {
     });
 
     it('Does set editor content if field value is changed', function () {
-      this.fieldStubs.getValue.returns('AAA');
-      this.notifyChange();
+      this.widgetApi.fieldProperties.value$.set('AAA');
       sinon.assert.calledOnce(this.editor.setValue.withArgs('AAA'));
       expect(this.editor.getValue()).toBe('AAA');
     });
@@ -112,12 +103,10 @@ describe('cfMarkdownEditor', function () {
       sinon.assert.calledWith(this.editorMock.setContent, 'test');
     });
 
-    it('Allows to sync child content to parent\'s field', function () {
+    it('#syncToParent calls field.setValue()', function () {
+      this.fieldStubs.setValue.reset();
       this.scope.zenApi.syncToParent('ZEN CONTENT');
-      // should not set editor's value immediately:
-      expect(this.editor.getValue()).toBe('test');
-      // only field value changes:
-      sinon.assert.calledOnce(this.fieldStubs.setValue.withArgs('ZEN CONTENT'));
+      sinon.assert.called(this.fieldStubs.setValue.withArgs('ZEN CONTENT'));
     });
 
     it('Syncs field value to parent editor when leaving Zen Mode', function () {
@@ -125,7 +114,6 @@ describe('cfMarkdownEditor', function () {
       this.scope.zen = true;
       this.scope.zenApi.syncToParent('ZEN CONTENT');
       // wire field set value with getter:
-      this.fieldStubs.getValue.returns(this.fieldStubs.setValue.lastCall.args[0]);
       this.scope.zenApi.toggle();
       sinon.assert.calledOnce(this.editor.setValue.withArgs('ZEN CONTENT'));
     });
