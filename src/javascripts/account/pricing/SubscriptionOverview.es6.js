@@ -123,8 +123,10 @@ const SubscriptionOverview = createReactClass({
 function BasePlan ({basePlan}) {
   const enabledFeaturesNames = getEnabledFeatures(basePlan).map(({name}) => name);
 
-  return h('div', {style: {marginBottom: '3em'}},
-    h('h2', null, 'Platform'),
+  return h('div', {style: {margin: '1em 0 3em'}},
+    h('h2', {
+      className: 'section-title'
+    }, null, 'Platform'),
     h('p', {
       'data-test-id': 'subscription-page.base-plan-details'
     },
@@ -141,7 +143,9 @@ function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
     return h('div', {
       'data-test-id': 'subscription-page.no-spaces'
     },
-      h('h2', null, 'Spaces'),
+      h('h2', {
+        className: 'section-title'
+      }, null, 'Spaces'),
       h('p', null,
         'Your organization doesn\'t have any spaces. ',
         h('button', {
@@ -154,10 +158,13 @@ function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
     const spacesTotal = calculateTotalPrice(spacePlans);
 
     return h('div', null,
-      h('h2', null, 'Spaces'),
+      h('h2', {
+        className: 'section-title'
+      }, null, 'Spaces'),
       h('p', {
+        style: {marginBottom: '2em'},
         'data-test-id': 'subscription-page.spaces-total'
-      },
+      }, null,
         'The total for your ',
         h('b', null, `${spacePlans.length} spaces`),
         ' is ',
@@ -171,11 +178,11 @@ function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
       },
         h('thead', null,
           h('tr', null,
-            h('th', {style: {width: '35%'}}, 'Name'),
-            h('th', {style: {width: '25%'}}, 'Space type / price'),
+            h('th', {style: {width: '25%'}}, 'Name'),
+            h('th', {style: {width: '30%'}}, 'Space type / price'),
             h('th', {style: {width: '10%'}}, 'Created by'),
             h('th', {style: {width: '10%'}}, 'Created on'),
-            h('th', {style: {width: '20%'}}, 'Actions')
+            h('th', {style: {width: '25%'}}, 'Actions')
           )
         ),
         h('tbody', {className: 'clickable'}, spacePlans.map(
@@ -211,27 +218,27 @@ function SpacePlanRow ({plan, onDeleteSpace, isOrgOwner}) {
   const questionMarkIcon = h('span', {
     style: {
       position: 'relative',
-      bottom: '0.125em',
-      paddingLeft: '0.2em'
+      bottom: '1px'
     }
   }, asReact(QuestionMarkIcon({color: colors.textLight})));
 
   return h('tr', null,
     h('td', {
       'data-test-id': 'subscription-page.spaces-list.space-name'
-    }, h('h3', {style: {margin: 0}}, get(space, 'name', '—'))),
+    }, h('strong', {style: {margin: 0}}, get(space, 'name', '—'))),
     h('td', {
       'data-test-id': 'subscription-page.spaces-list.space-plan'
     },
-      h('h3', {style: {marginTop: 0}},
-        plan.name,
-        h(Tooltip, {
-          element: questionMarkIcon,
-          tooltip: featuresTooltip,
-          options: {width: 200},
-          style: {display: 'inline'}
-        })
+      h('strong', {style: {marginTop: 0}},
+        plan.name
       ),
+      h(Tooltip, {
+        element: questionMarkIcon,
+        tooltip: featuresTooltip,
+        options: {width: 200},
+        style: {display: 'inline', marginLeft: '6px'}
+      }),
+      h('br'),
       h(Price, {value: plan.price, unit: 'month'})
     ),
     h('td', null, createdBy),
@@ -250,14 +257,15 @@ function RightSidebar ({grandTotal, orgId, onContactUs}) {
   },
     h('h2', {className: 'entity-sidebar__heading'}, 'Grand total'),
     h('p', {
-      className: 'entity-sidebar__help-text',
       'data-test-id': 'subscription-page.sidebar.grand-total'
     },
       'Your grand total is ',
       h(Price, {value: grandTotal, style: {fontWeight: 'bold'}}),
       ' per month.'
     ),
-    h('p', {className: 'entity-sidebar__help-text'},
+    h('p', {
+      style: {marginBottom: '28px'}
+    },
       h('span', {style: iconStyle}, asReact(InvoiceIcon)),
       h('a', {
         className: 'text-link',
@@ -273,10 +281,8 @@ function RightSidebar ({grandTotal, orgId, onContactUs}) {
       )
     ),
     h('h2', {className: 'entity-sidebar__heading'}, 'Need help?'),
-    h('p', {className: 'entity-sidebar__help-text'},
-      'Do you need to up- or downgrade? Don’t hesitate to talk to our customer ' +
-      'success team.'
-    ),
+    h('p', null,
+      'Do you need to up- or downgrade your spaces? Don’t hesitate to talk to our customer success team.'),
     h('p', {className: 'entity-sidebar__help-text'},
       h('span', {style: iconStyle}, asReact(BubbleIcon)),
       h('button', {
