@@ -18,7 +18,9 @@ export const resourceHumanNameMap = {
   asset_bandwidth: 'Asset Bandwidth',
   organization_membership: 'Users',
   environment: 'Environments',
-  record: 'Records'
+  record: 'Records',
+  api_request: 'API Requests',
+  free_space: 'Free Spaces'
 };
 
 export const canCreate = resource => !resourceMaximumLimitReached(resource);

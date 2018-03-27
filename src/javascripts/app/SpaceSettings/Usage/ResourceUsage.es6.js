@@ -38,6 +38,7 @@ export const ResourceUsage = ({resource, description}) => {
 
         <span className="resource-list__item__usage">
           {resource.usage}
+          {resource.unitOfMeasure && ` ${resource.unitOfMeasure}`}
           {resource.limits.maximum && ` out of ${resource.limits.maximum}`}
         </span>
       </div>
