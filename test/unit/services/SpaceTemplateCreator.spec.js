@@ -110,7 +110,7 @@ describe('Space Template creation service', function () {
       });
       spaceContext.space.createEntry.onThirdCall().returns(Promise.reject(new Error('can not createa an entry')));
       stubs.entryPublish.returns(Promise.resolve());
-      spaceContext.localeRepo.save.returns(Promise.resolve());
+      spaceContext.localeRepo.save.returns(Promise.resolve({code: 'something'}));
 
       creator = spaceTemplateCreator.getCreator(
         spaceContext,
