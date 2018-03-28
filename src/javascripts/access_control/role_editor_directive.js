@@ -44,15 +44,18 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
 
     $scope.legacy = result.useLegacy;
 
-    if (!result.feature.enabled) {
-      notification.error('Your plan does not include Custom Roles.');
+    if (!result.feature || !result.feature.enabled) {
+      $scope.hasCustomRolesFeature = false;
       $scope.canModifyRoles = false;
     } else if (isNew && !ResourceUtils.canCreate(result.resource)) {
       notification.error('Your organization has reached the limit for custom roles.');
+      $scope.hasCustomRolesFeature = true;
       $scope.canModifyRoles = false;
     } else if (trialLockdown) {
+      $scope.hasCustomRolesFeature = false;
       $scope.canModifyRoles = false;
     } else {
+      $scope.hasCustomRolesFeature = true;
       $scope.canModifyRoles = true;
     }
 
