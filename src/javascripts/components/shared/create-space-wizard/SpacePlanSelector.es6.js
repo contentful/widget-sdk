@@ -4,14 +4,19 @@ import PropTypes from 'libs/prop-types';
 import {get} from 'lodash';
 import {createOrganizationEndpoint} from 'data/EndpointFactory';
 import {getSpaceRatePlans} from 'account/pricing/PricingDataProvider';
+import createResourceService from 'services/ResourceService';
 import {isOwner} from 'services/OrganizationRoles';
 import {go} from 'states/Navigator';
+import Tooltip from 'ui/Components/Tooltip';
+import {byName as colors} from 'Styles/Colors';
+import QuestionMarkIcon from 'svg/QuestionMarkIcon';
+import {asReact} from 'ui/Framework/DOMRenderer';
 
 export default createReactClass({
   propTypes: {
     organization: PropTypes.object.isRequired,
     submit: PropTypes.func.isRequired,
-    onDimensionsChange: PropTypes.func
+    onDimensionsChange: PropTypes.func,
     cancel: PropTypes.func.isRequired
   },
   getInitialState: function () {
@@ -21,16 +26,23 @@ export default createReactClass({
     };
   },
   componentWillMount: async function () {
-    const orgId = this.props.organization.sys.id;
-    const endpoint = createOrganizationEndpoint(orgId);
+    const {organization} = this.props;
 
-    const spaceRatePlans = await getSpaceRatePlans(endpoint);
-    this.setState({spaceRatePlans, selectedPlan: null});
+    const spaceRatePlans = await getFormattedSpacePlans(organization);
+
+    const resourceService = createResourceService(organization.sys.id, 'organization');
+    const freeSpacesResource = await resourceService.get('free_space');
+
+    this.setState({
+      spaceRatePlans,
+      selectedPlan: null,
+      freeSpacesLimit: get(freeSpacesResource, 'limits.maximum')
+    });
     setTimeout(this.props.onDimensionsChange, 0);
   },
   render: function () {
     const {organization} = this.props;
-    const {spaceRatePlans, selectedPlan} = this.state;
+    const {spaceRatePlans, selectedPlan, freeSpacesLimit} = this.state;
 
     return h('div', null,
       h('h2', {className: 'create-space-wizard-dialog__heading'}, 'Choose the space type'),
@@ -38,22 +50,12 @@ export default createReactClass({
         `You are creating this space for organization ${organization.name}.`
       ),
       h('fieldset', {className: 'cfnext-form__fieldset'},
-        spaceRatePlans.map((plan) => h('div', {
-          key: plan.sys.id,
-          className: 'cfnext-form-option'
-        },
-          h('input', {
-            id: `space-rate-plan--${plan.sys.id}`,
-            type: 'radio',
-            name: 'productRatePlanId',
-            value: plan.sys.id,
-            checked: get(selectedPlan, 'sys.id') === plan.sys.id,
-            onChange: this.selectPlan(plan)
-          }),
-          h('label', {
-            htmlFor: `space-rate-plan--${plan.sys.id}`
-          }, `${plan.name} ($${plan.price})`)
-        ))
+        spaceRatePlans.map((plan) => renderSpacePlan({
+          plan,
+          freeSpacesLimit,
+          isSelected: get(selectedPlan, 'sys.id') === plan.sys.id,
+          onSelect: this.selectPlan(plan)
+        }))
       ),
       billingInfo({organization, goToBilling: this.goToBilling})
     );
@@ -79,6 +81,52 @@ export default createReactClass({
   }
 });
 
+function renderSpacePlan ({plan, isSelected, freeSpacesLimit, onSelect}) {
+  return h('div', {
+    key: plan.sys.id,
+    className: 'cfnext-form-option'
+  },
+    h('input', {
+      id: `space-rate-plan--${plan.sys.id}`,
+      type: 'radio',
+      name: 'productRatePlanId',
+      value: plan.sys.id,
+      checked: isSelected,
+      disabled: plan.disabled,
+      onChange: onSelect
+    }),
+    h('label', {
+      htmlFor: `space-rate-plan--${plan.sys.id}`,
+      style: plan.disabled ? {textDecoration: 'line-through'} : null
+    },
+      `${plan.name} ($${plan.price})`,
+      (plan.isFree && plan.disabled) &&
+        renderHelpTooltip(
+          `You can create up to ${freeSpacesLimit} free spaces for your organization.
+           If you delete a free space, another one can be created.`
+        )
+    )
+  );
+}
+
+// TODO share it with SubscriptionOverview
+function renderHelpTooltip (text) {
+  const questionMarkIcon = h('span', {
+    style: {
+      position: 'relative',
+      bottom: '0.125em',
+      paddingLeft: '0.2em'
+    }
+  }, asReact(QuestionMarkIcon({color: colors.textLight})));
+
+  return h(Tooltip, {
+    element: questionMarkIcon,
+    tooltip: text,
+    options: {width: 200},
+    style: {display: 'inline'}
+  });
+}
+
 function billingInfo ({organization, goToBilling}) {
   const hasSubscription = !!organization.isBillable;
   if (hasSubscription) {
@@ -100,4 +148,27 @@ function billingInfo ({organization, goToBilling}) {
     }
     return h('div', {className: 'note-box--info'}, h('p', null, ...content));
   }
+}
+
+async function getFormattedSpacePlans (organization) {
+  const endpoint = createOrganizationEndpoint(organization.sys.id);
+  const spaceRatePlans = await getSpaceRatePlans(endpoint);
+
+  spaceRatePlans.forEach((plan) => {
+    plan.isFree = plan.productPlanType === 'free_space';
+    plan.disabled = !plan.isFree && !organization.isBillable;
+  });
+
+  // If free space plan is not available, show it as disabled
+  if (!spaceRatePlans.find(({isFree}) => isFree)) {
+    spaceRatePlans.unshift({
+      sys: {id: 'free'},
+      name: 'Free',
+      price: 0,
+      isFree: true,
+      disabled: true
+    });
+  }
+
+  return spaceRatePlans;
 }
