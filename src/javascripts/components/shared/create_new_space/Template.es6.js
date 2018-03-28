@@ -29,10 +29,7 @@ function renderCreateSpaceDialog () {
         `{{createSpace.isOnboarding ? "${headers.onboarding}" : "${headers.default}"}}`
       ]),
       h('p.create-new-space-dialog__subheading', [
-        'A space is a place where you keep all the content related to a single project.'
-      ]),
-      h('p.create-new-space-dialog__subheading', [
-        'You are creating this space for organization {{createSpace.newSpace.organization.name}}.'
+        'A space is a place where you keep all the content related to a single project. <br> You are creating this space for the organization <em>{{createSpace.newSpace.organization.name}}</em>.'
       ]),
       renderCreateSpaceForm(),
       renderSpaceTemplates()
