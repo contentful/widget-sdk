@@ -20,6 +20,17 @@ const ASSET_PROCESSING_TIMEOUT = 60000;
 // we will create discovery app for TEA
 const TEA_SPACE_ID = environment.settings.contentful.TEASpaceId;
 
+/**
+ * @description
+ * Returns a creator that populates a space with content from the chosen space template.
+ *
+ * @param {object} spaceContext
+ * @param {object} itemHandlers
+ * @param {object} templateInfo
+ * @param {string} selectedLocaleCode
+ *
+ * @return {function}
+ */
 export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLocaleCode) {
   const templateName = templateInfo.name;
   const creationErrors = [];
