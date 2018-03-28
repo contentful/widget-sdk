@@ -2,11 +2,11 @@
   position: absolute
   left: 50%
   transform: translateX(-50%)
-  z-index: 2
   min-width: 28em
   max-width: 40em
   cursor: pointer
   color: $colors.white
+  z-index: 2
 
 .app-notification
   display: flex
@@ -36,7 +36,8 @@
 
   &.ng-hide
     display: flex !important
-    transform: translateY(-100%)
+    transform: translateY(-10%)
+    opacity: 0
 
   > p
     flex: 1 1 auto
