@@ -8,7 +8,8 @@ import {getSpaceRatePlans} from 'account/pricing/PricingDataProvider';
 export default createReactClass({
   propTypes: {
     organization: PropTypes.object.isRequired,
-    submit: PropTypes.func.isRequired
+    submit: PropTypes.func.isRequired,
+    onDimensionsChange: PropTypes.func
   },
   getInitialState: function () {
     return {
@@ -22,6 +23,7 @@ export default createReactClass({
 
     const spaceRatePlans = await getSpaceRatePlans(endpoint);
     this.setState({spaceRatePlans, selectedPlan: null});
+    setTimeout(this.props.onDimensionsChange, 0);
   },
   render: function () {
     const {organization} = this.props;

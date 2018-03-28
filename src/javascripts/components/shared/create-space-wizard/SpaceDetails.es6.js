@@ -9,7 +9,8 @@ export default createReactClass({
     submit: PropTypes.func.isRequired,
     spaceRatePlan: PropTypes.object.isRequired,
     serverValidationErrors: PropTypes.object,
-    isFormSubmitted: PropTypes.bool
+    isFormSubmitted: PropTypes.bool,
+    onDimensionsChange: PropTypes.func
   },
   getInitialState: function () {
     const state = {
@@ -26,7 +27,7 @@ export default createReactClass({
     }
   },
   render: function () {
-    const {spaceRatePlan, isFormSubmitted} = this.props;
+    const {spaceRatePlan, isFormSubmitted, onDimensionsChange} = this.props;
     const {name, validation, touched} = this.state;
     const showValidationError = touched && !!validation.name;
 
@@ -52,7 +53,7 @@ export default createReactClass({
         }),
         showValidationError && h('p', {className: 'cfnext-form__field-error'}, validation.name)
       ),
-      h(TemplateSelector, {onSelect: this.setTemplate}),
+      h(TemplateSelector, {onSelect: this.setTemplate, onDimensionsChange}),
       h('div', {style: {textAlign: 'center', margin: '1.2em 0'}},
         h('button', {
           className: `button btn-action ${isFormSubmitted ? 'is-loading' : ''}`,

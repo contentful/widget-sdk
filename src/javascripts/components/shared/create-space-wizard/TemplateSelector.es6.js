@@ -6,7 +6,8 @@ import {getTemplatesList} from 'services/SpaceTemplateLoader';
 
 export default createReactClass({
   propTypes: {
-    onSelect: PropTypes.func.isRequired
+    onSelect: PropTypes.func.isRequired,
+    onDimensionsChange: PropTypes.func
   },
   getInitialState: function () {
     return {
@@ -91,18 +92,23 @@ export default createReactClass({
   hideTemplates: function () {
     this.setState(Object.assign(this.state, {useTemplate: false, selectedTemplate: null}));
     this.props.onSelect(null);
+    this.dimensionsChange();
   },
   showTemplates: function () {
     const {templates} = this.state;
     const selectedTemplate = templates[0];
     this.setState(Object.assign(this.state, {useTemplate: true, selectedTemplate}));
     this.props.onSelect(selectedTemplate);
+    this.dimensionsChange();
   },
   selectTemplate: function (template) {
     return () => {
       this.setState(Object.assign(this.state, {selectedTemplate: template}));
       this.props.onSelect(template);
     };
+  },
+  dimensionsChange: function () {
+    setTimeout(this.props.onDimensionsChange, 250); // animation timeout
   }
 });
 
