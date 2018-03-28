@@ -33,6 +33,7 @@ const OrganizationResourceUsageList = ({resources}) => {
       <ResourceUsage
         resource={byId['api_request']}
         showOverages={true}
+        shortenIncluded={true}
       />
       <ResourceUsage
         resource={byId['asset_bandwidth']}

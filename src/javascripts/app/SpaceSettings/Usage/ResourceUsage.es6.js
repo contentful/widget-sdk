@@ -3,6 +3,8 @@ import PropTypes from 'libs/prop-types';
 import {ProgressBar} from './ProgressBar';
 import Icon from 'ui/Components/Icon';
 import {resourceIncludedLimitReached, resourceHumanNameMap} from 'utils/ResourceUtils';
+import {shorten} from 'utils/NumberUtils';
+import {isNumber} from 'lodash';
 
 const iconsMap = {
   api_key: 'page-apis',
@@ -23,13 +25,29 @@ const getIcon = (id) => {
 export const ResourceUsage = ({
   resource,
   description,
-  showOverages
+  showOverages,
+  shortenIncluded
 }) => {
-  const withUOM = (value) => {
+  // 1000 => 1,000
+  const localize = (value) => {
+    return isNumber(value)
+      ? value.toLocaleString()
+      : value;
+  };
+  // 1 => "1 GB"
+  const maybeAppendUOM = (value) => {
     return resource.unitOfMeasure
       ? `${value} ${resource.unitOfMeasure}`
       : value;
   };
+  // 1000 => "1K"
+  const maybeShorten = (value) => {
+    return shortenIncluded
+      ? shorten(value)
+      : value;
+  };
+  const maybeShortenWithUOM = (value) => maybeAppendUOM(maybeShorten(value));
+
 
   return (
     <div className="resource-list__item">
@@ -47,13 +65,13 @@ export const ResourceUsage = ({
         </div>
 
         <span className="resource-list__item__usage">
-          {withUOM(resource.usage)}
-          {resource.limits.maximum && ` out of ${withUOM(resource.limits.maximum)}`}
+          {maybeAppendUOM(localize(resource.usage))}
+          {resource.limits.maximum && ` out of ${maybeAppendUOM(localize(resource.limits.maximum))}`}
           {showOverages
             ? resourceIncludedLimitReached(resource)
-              ? ` (${withUOM(resource.limits.included)} free +
-                ${withUOM(resource.usage - resource.limits.included)} paid)`
-              : ` out of ${withUOM(resource.limits.included)} included`
+              ? ` (${maybeShortenWithUOM(resource.limits.included)} free +
+                  ${maybeAppendUOM(localize(resource.usage - resource.limits.included))} paid)`
+              : ` out of ${maybeShortenWithUOM(resource.limits.included)} included`
             : ''
           }
         </span>
@@ -67,7 +85,8 @@ export const ResourceUsage = ({
 ResourceUsage.propTypes = {
   resource: PropTypes.object.isRequired,
   description: PropTypes.string,
-  showOverages: PropTypes.bool
+  showOverages: PropTypes.bool,
+  shortenIncluded: PropTypes.bool
 };
 
 export const ResourceUsageHighlight = ({resource}) => {
