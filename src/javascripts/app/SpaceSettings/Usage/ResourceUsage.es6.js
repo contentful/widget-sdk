@@ -2,7 +2,7 @@ import React from 'libs/react';
 import PropTypes from 'libs/prop-types';
 import {ProgressBar} from './ProgressBar';
 import Icon from 'ui/Components/Icon';
-import {resourceHumanNameMap} from 'utils/ResourceUtils';
+import {resourceIncludedLimitReached, resourceHumanNameMap} from 'utils/ResourceUtils';
 
 const iconsMap = {
   api_key: 'page-apis',
@@ -20,7 +20,17 @@ const getIcon = (id) => {
   return iconsMap[id] || 'page-settings';
 };
 
-export const ResourceUsage = ({resource, description}) => {
+export const ResourceUsage = ({
+  resource,
+  description,
+  showOverages
+}) => {
+  const withUOM = (value) => {
+    return resource.unitOfMeasure
+      ? `${value} ${resource.unitOfMeasure}`
+      : value;
+  };
+
   return (
     <div className="resource-list__item">
       <div className="resource-list__item__content">
@@ -37,9 +47,15 @@ export const ResourceUsage = ({resource, description}) => {
         </div>
 
         <span className="resource-list__item__usage">
-          {resource.usage}
-          {resource.unitOfMeasure && ` ${resource.unitOfMeasure}`}
-          {resource.limits.maximum && ` out of ${resource.limits.maximum}`}
+          {withUOM(resource.usage)}
+          {resource.limits.maximum && ` out of ${withUOM(resource.limits.maximum)}`}
+          {showOverages
+            ? resourceIncludedLimitReached(resource)
+              ? ` (${withUOM(resource.limits.included)} free +
+                ${withUOM(resource.usage - resource.limits.included)} paid)`
+              : ` out of ${withUOM(resource.limits.included)} included`
+            : ''
+          }
         </span>
       </div>
       {resource.limits.maximum &&
@@ -50,7 +66,8 @@ export const ResourceUsage = ({resource, description}) => {
 };
 ResourceUsage.propTypes = {
   resource: PropTypes.object.isRequired,
-  description: PropTypes.string
+  description: PropTypes.string,
+  showOverages: PropTypes.bool
 };
 
 export const ResourceUsageHighlight = ({resource}) => {

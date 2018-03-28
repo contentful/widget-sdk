@@ -22,13 +22,22 @@ const OrganizationResourceUsageList = ({resources}) => {
 
   return (
     <div className="resource-list">
-      <ResourceUsage resource={byId['organization_membership']} />
+      <ResourceUsage
+        resource={byId['organization_membership']}
+        showOverages={true}
+      />
       <div className="resource-list__title">
         <h3 className="section-title">Current billing period</h3>
-        <p><strong>{startDate} - {endDate}</strong> ({daysLeft} days remaining)</p>
+        <p>{startDate} – {endDate} ({daysLeft} days remaining)</p>
       </div>
-      <ResourceUsage resource={byId['api_request']} />
-      <ResourceUsage resource={byId['asset_bandwidth']} />
+      <ResourceUsage
+        resource={byId['api_request']}
+        showOverages={true}
+      />
+      <ResourceUsage
+        resource={byId['asset_bandwidth']}
+        showOverages={true}
+      />
     </div>
   );
 };
