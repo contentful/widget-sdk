@@ -29,6 +29,7 @@ angular.module('contentful')
   var moment = require('moment');
   var debounce = require('debounce');
   var InputUpdater = require('ui/inputUpdater');
+  var K = require('utils/kefir');
 
   return {
     restrict: 'E',
@@ -62,8 +63,27 @@ angular.module('contentful')
 
       var debouncedPerformDuplicityCheck = debounce(performDuplicityCheck, 500);
 
+      var disabledBus = K.createStreamBus();
+      var titleBus = K.createStreamBus();
+
+      // we need to update slug values from title only after
+      // field becomes not disabled (sharejs connected)
+      var titleUpdate$ = K.combine([disabledBus.stream, titleBus.stream])
+        .filter(function filterDisabled (values) {
+          var disabled = values[0];
+          return disabled === false;
+        });
+
+      K.onValueScope(scope, titleUpdate$, function (values) {
+        var title = values[1];
+        var val = makeSlug(title);
+        updateInput(val);
+        field.setValue(val);
+      });
+
       var detachOnFieldDisabledHandler = field.onIsDisabledChanged(function (disabledStatus) {
         scope.isDisabled = disabledStatus;
+        disabledBus.emit(disabledStatus);
       });
 
       var offSchemaErrorsChanged = field.onSchemaErrorsChanged(function (errors) {
@@ -96,12 +116,8 @@ angular.module('contentful')
       }
 
       function setTitle (title) {
-        if (isTracking() && !scope.isDisabled) {
-          var val = makeSlug(title);
-          if (!scope.isDisabled) {
-            updateInput(val);
-            field.setValue(val);
-          }
+        if (isTracking()) {
+          titleBus.emit(title);
         }
         trackingTitle = title;
       }
