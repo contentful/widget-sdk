@@ -7,7 +7,7 @@ import {getOrganization} from 'services/TokenStore';
  * Possible app states for navigation (as shown in sidepanel)
  */
 export const NavStates = makeSum({
-  Space: ['space', 'environment', 'organization', 'availableEnvironments'],
+  Space: ['space', 'env', 'org', 'availableEnvironments'],
   OrgSettings: ['org'],
   UserProfile: [],
   NewOrg: [],

@@ -46,14 +46,14 @@ export default function () {
 
 function renderContent ({ navState }) {
   return caseof(navState, [
-    [NavStates.Space, ({ space, environment, organization, availableEnvironments }) => {
+    [NavStates.Space, ({ space, env, org, availableEnvironments }) => {
       const showEnvironments =
         space.spaceMembership.admin &&
         availableEnvironments && availableEnvironments.length > 1;
       return [
-        organizationName(organization.name),
+        organizationName(org.name),
         stateTitle(space.name),
-        showEnvironments && environmentLabel(environment)
+        showEnvironments && environmentLabel(env)
       ];
     }],
     [NavStates.OrgSettings, ({ org }) => [
