@@ -50,14 +50,15 @@ export default createReactClass({
         `You are creating this space for organization ${organization.name}.`
       ),
       h('fieldset', {className: 'cfnext-form__fieldset'},
-        spaceRatePlans.map((plan) => renderSpacePlan({
+        spaceRatePlans.map((plan) => h(SpacePlan, {
+          key: plan.sys.id,
           plan,
           freeSpacesLimit,
           isSelected: get(selectedPlan, 'sys.id') === plan.sys.id,
           onSelect: this.selectPlan(plan)
         }))
       ),
-      billingInfo({organization, goToBilling: this.goToBilling})
+      h(BillingInfo, {organization, goToBilling: this.goToBilling})
     );
   },
   selectPlan: function (selectedPlan) {
@@ -81,7 +82,7 @@ export default createReactClass({
   }
 });
 
-function renderSpacePlan ({plan, isSelected, freeSpacesLimit, onSelect}) {
+function SpacePlan ({plan, isSelected, freeSpacesLimit, onSelect}) {
   return h('div', {
     key: plan.sys.id,
     className: 'cfnext-form-option'
@@ -101,7 +102,7 @@ function renderSpacePlan ({plan, isSelected, freeSpacesLimit, onSelect}) {
     },
       `${plan.name} ($${plan.price})`,
       (plan.isFree && plan.disabled) &&
-        renderHelpTooltip(
+        h(HelpTooltip, null,
           `You can create up to ${freeSpacesLimit} free spaces for your organization.
            If you delete a free space, another one can be created.`
         )
@@ -110,7 +111,7 @@ function renderSpacePlan ({plan, isSelected, freeSpacesLimit, onSelect}) {
 }
 
 // TODO share it with SubscriptionOverview
-function renderHelpTooltip (text) {
+function HelpTooltip ({children}) {
   const questionMarkIcon = h('span', {
     style: {
       position: 'relative',
@@ -121,13 +122,13 @@ function renderHelpTooltip (text) {
 
   return h(Tooltip, {
     element: questionMarkIcon,
-    tooltip: text,
+    tooltip: children,
     options: {width: 200},
     style: {display: 'inline'}
   });
 }
 
-function billingInfo ({organization, goToBilling}) {
+function BillingInfo ({organization, goToBilling}) {
   const hasSubscription = !!organization.isBillable;
   if (hasSubscription) {
     return '';
@@ -152,22 +153,23 @@ function billingInfo ({organization, goToBilling}) {
 
 async function getFormattedSpacePlans (organization) {
   const endpoint = createOrganizationEndpoint(organization.sys.id);
-  const spaceRatePlans = await getSpaceRatePlans(endpoint);
+  let spaceRatePlans = await getSpaceRatePlans(endpoint);
 
-  spaceRatePlans.forEach((plan) => {
-    plan.isFree = plan.productPlanType === 'free_space';
-    plan.disabled = !plan.isFree && !organization.isBillable;
-  });
+  spaceRatePlans = spaceRatePlans.map((plan) => ({
+    ...plan,
+    isFree: plan.productPlanType === 'free_space',
+    disabled: !plan.isFree && !organization.isBillable
+  }));
 
   // If free space plan is not available, show it as disabled
   if (!spaceRatePlans.find(({isFree}) => isFree)) {
-    spaceRatePlans.unshift({
+    spaceRatePlans = [{
       sys: {id: 'free'},
       name: 'Free',
       price: 0,
       isFree: true,
       disabled: true
-    });
+    }, ...spaceRatePlans];
   }
 
   return spaceRatePlans;
