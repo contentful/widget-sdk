@@ -29,7 +29,6 @@ globals:
   beforeEach: false
   afterEach: false
   it: false
-  pit: false
   expect: false
   spyOn: false
   fail: false

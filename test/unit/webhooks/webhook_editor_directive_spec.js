@@ -275,7 +275,7 @@ describe('Webhook Editor directive', function () {
       expect(this.args.scopeData.webhook.sys.id).toBe('whid');
     });
 
-    pit('calls repository with a webhook object, shows message and redirects to list', function () {
+    it('calls repository with a webhook object, shows message and redirects to list', function () {
       this.repo.remove.resolves();
 
       return this.args.scopeData.remove.execute().then(function () {
@@ -286,7 +286,7 @@ describe('Webhook Editor directive', function () {
       }.bind(this));
     });
 
-    pit('shows notification when repository call fails', function () {
+    it('shows notification when repository call fails', function () {
       var ReloadNotification = this.$inject('ReloadNotification');
       ReloadNotification.basicErrorHandler = sinon.spy();
       this.repo.remove.rejects();

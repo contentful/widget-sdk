@@ -47,7 +47,7 @@ describe('data/editingInterfaces', function () {
           });
         });
 
-        pit('returns editing interface with widgets', function () {
+        it('returns editing interface with widgets', function () {
           return editingInterfaces.get(contentType)
           .then(function (ei) {
             expect(ei.controls.length).toEqual(1);
@@ -55,7 +55,7 @@ describe('data/editingInterfaces', function () {
         });
       });
 
-      pit('resolves with the default interface if a 404 is returned', function () {
+      it('resolves with the default interface if a 404 is returned', function () {
         const getDefaultWidget = this.$inject('widgets/default');
         getDefaultWidget.returns('DEFAULT');
 
@@ -86,7 +86,7 @@ describe('data/editingInterfaces', function () {
         sinon.assert.notCalled(spaceEndpoint);
       });
 
-      pit('resolves with the default interface', function () {
+      it('resolves with the default interface', function () {
         const getDefaultWidget = this.$inject('widgets/default');
         getDefaultWidget.returns('DEFAULT');
 

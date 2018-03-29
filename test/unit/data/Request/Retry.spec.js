@@ -37,7 +37,7 @@ describe('data/Request/Retry', function () {
     this.sandbox.restore();
   });
 
-  pit('executes a request', function () {
+  it('executes a request', function () {
     const promise = this.push();
     const res = {};
     this.requestStub.resolves(res);
@@ -133,7 +133,7 @@ describe('data/Request/Retry', function () {
     this.expectCallCount(6);
   });
 
-  pit('resolves when the request is eventually successful', function () {
+  it('resolves when the request is eventually successful', function () {
     this.requestStub.rejects({status: 502});
     const promise = this.push();
     const res = {};
@@ -147,7 +147,7 @@ describe('data/Request/Retry', function () {
     });
   });
 
-  pit('rejects when all retries fail', function () {
+  it('rejects when all retries fail', function () {
     const onSuccess = sinon.stub();
     const onError = sinon.stub();
 

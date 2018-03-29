@@ -117,7 +117,7 @@ describe('Batch performer service', function () {
   }
 
   function itCallsCompleteListener (action) {
-    pit('calls complete listener', function () {
+    it('calls complete listener', function () {
       return this.performer[action]().then(function () {
         sinon.assert.calledOnce(this.onComplete);
       }.bind(this));
@@ -125,7 +125,7 @@ describe('Batch performer service', function () {
   }
 
   function itResolvesWithResult (action) {
-    pit('resolves with an object containing successful and failed call arrays', function () {
+    it('resolves with an object containing successful and failed call arrays', function () {
       this.actionStubs[1].rejects('boom');
       return this.performer[action]().then(function (results) {
         expect(results.succeeded.length).toBe(2);
@@ -135,7 +135,7 @@ describe('Batch performer service', function () {
   }
 
   function itNotifiesAboutResult (action) {
-    pit('notifies about results of the operation', function () {
+    it('notifies about results of the operation', function () {
       const isEntry = this.entityType === 'Entry';
       this.actionStubs[1].rejects('boom!');
 
@@ -149,7 +149,7 @@ describe('Batch performer service', function () {
   }
 
   function itTracksAnalytics (action) {
-    pit('creates analytics event', function () {
+    it('creates analytics event', function () {
       return this.performer[action]().then(() => {
         sinon.assert.calledOnce(this.analytics.track.withArgs('search:bulk_action_performed'));
       });
@@ -169,7 +169,7 @@ describe('Batch performer service', function () {
   }
 
   function itCallsDeleteListener () {
-    pit('fires delete listener for successful calls', function () {
+    it('fires delete listener for successful calls', function () {
       return this.performer.delete().then(function () {
         sinon.assert.calledOnce(this.onDelete.withArgs(this.entities[0]));
         sinon.assert.calledOnce(this.onDelete.withArgs(this.entities[1]));

@@ -7,7 +7,7 @@ describe('overridingRequestQueue', function () {
     this.$q = this.$inject('$q');
   });
 
-  pit('handles single request', function () {
+  it('handles single request', function () {
     var d = sinon.stub().resolves();
     var request = this.createQueue(function () { return d(); });
 
@@ -37,7 +37,7 @@ describe('overridingRequestQueue', function () {
     expect(request()).not.toBe(promise);
   });
 
-  pit('resolves with a result of the last call', function () {
+  it('resolves with a result of the last call', function () {
     var requestFn = sinon.stub();
     requestFn.onFirstCall().returns(this.$q.resolve('this result value will be lost'));
     requestFn.onSecondCall().returns(this.$q.resolve(true));
@@ -51,7 +51,7 @@ describe('overridingRequestQueue', function () {
     });
   });
 
-  pit('rejects if call ends up with an error', function () {
+  it('rejects if call ends up with an error', function () {
     var requestFn = sinon.stub();
     requestFn.onFirstCall().returns(this.$q.reject('boom'));
     requestFn.onSecondCall().returns(this.$q.reject('kaboom'));
@@ -68,7 +68,7 @@ describe('overridingRequestQueue', function () {
     });
   });
 
-  pit('allows to define request as required', function () {
+  it('allows to define request as required', function () {
     var $timeout = this.$inject('$timeout');
     var spy = sinon.stub().resolves();
     var wasCalled = false;

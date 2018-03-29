@@ -6,10 +6,6 @@ _.extend(window, createDsl(window.jasmine.getEnv()));
 
 function createDsl (jasmineDsl) {
   return {
-    pit: createCoroutineTestFactory(jasmineDsl.it),
-    fpit: createCoroutineTestFactory(jasmineDsl.fit),
-    xpit: createCoroutineTestFactory(jasmineDsl.xit),
-
     it: createCoroutineTestFactory(jasmineDsl.it),
     fit: createCoroutineTestFactory(jasmineDsl.fit),
     xit: createCoroutineTestFactory(jasmineDsl.xit),
@@ -42,8 +38,10 @@ function isThenable (obj) {
        typeof obj.catch === 'function';
 }
 
+// We need to guard against mocking of timing functions
 const setInterval = window.setInterval;
 const clearInterval = window.clearInterval;
+
 function createCoroutineTestFactory (testFactory) {
   return function (desc, runner, before) {
     if (!runner) {
@@ -65,10 +63,11 @@ function createCoroutineTestFactory (testFactory) {
             return runGenerator(result, $apply);
           }
 
-          // allow async/await
+          // allow async/await/returning promise
           if (isThenable(result)) {
             // we need to resolve $apply constantly, so $q-based promises
-            // are resolved
+            // are resolved; see below `runGenerator` function comments
+            // for more details - reasons here are the same
             runApply = setInterval($apply, 10);
             return result;
           }
@@ -94,7 +93,6 @@ function isGenerator (g) {
  * will not be called until the next digest cycle. During testing we
  * must trigger digest cycles explicitly by calling `$apply`.
  */
-// We need to guard against mocking of timing functions
 function runGenerator (gen, $apply) {
   return runTask(function* () {
     const runApply = setInterval($apply, 10);
