@@ -11,16 +11,11 @@ import environmentIcon from 'svg/environment';
 import hamburger from 'svg/hamburger';
 
 import { navState$, NavStates } from 'navigation/NavState';
-import * as LD from 'utils/LaunchDarkly';
 
 const Trigger = createReactClass({
   componentWillMount () {
     this.offNavState = navState$.onValue((navState) => {
       this.setState({ navState });
-    });
-    LD.getCurrentVariation('feature-dv-11-2017-environments')
-    .then((environmentsEnabled) => {
-      this.setState({ environmentsEnabled });
     });
   },
   componentWillUnmount () {
@@ -49,14 +44,18 @@ export default function () {
   return h(Trigger);
 }
 
-function renderContent ({ navState, environmentsEnabled }) {
+function renderContent ({ navState }) {
   return caseof(navState, [
-    [NavStates.Space, ({ space, env, org }) => [
-      organizationName(org.name),
-      stateTitle(space.name),
-      environmentsEnabled && space.spaceMembership.admin &&
-        environmentLabel(env)
-    ]],
+    [NavStates.Space, ({ space, env, org, availableEnvironments }) => {
+      const showEnvironments =
+        space.spaceMembership.admin &&
+        availableEnvironments && availableEnvironments.length > 1;
+      return [
+        organizationName(org.name),
+        stateTitle(space.name),
+        showEnvironments && environmentLabel(env)
+      ];
+    }],
     [NavStates.OrgSettings, ({ org }) => [
       organizationName(org.name),
       stateTitle('Organization settings')

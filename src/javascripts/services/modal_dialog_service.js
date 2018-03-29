@@ -120,8 +120,17 @@ angular.module('contentful').factory('modalDialog', ['require', function (requir
       }, this));
     },
 
+    reposition: function () {
+      if (this.domElement) {
+        var elem = this.domElement.children('.modal-dialog');
+        var topOffset = Math.max(($window.innerHeight - elem.height()) / 2, 0);
+        elem.css({ top: topOffset + 'px' });
+      }
+    },
+
     _centerOnBackground: function () {
       var elem = this.domElement.children('.modal-dialog');
+      var reposition = this.reposition.bind(this);
       var debouncedReposition = debounce(reposition, 50);
       var destroyed = false;
 
@@ -137,11 +146,6 @@ angular.module('contentful').factory('modalDialog', ['require', function (requir
         $($window).off('resize', debouncedReposition);
         repositionOff();
       });
-
-      function reposition () {
-        var topOffset = Math.max(($window.innerHeight - elem.height()) / 2, 0);
-        elem.css({ top: topOffset + 'px' });
-      }
     },
 
     _closeOnBackground: function (ev) {

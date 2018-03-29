@@ -18,6 +18,7 @@ angular.module('contentful')
   var enforcements = require('access_control/Enforcements');
   var $state = require('$state');
   var ResourceUtils = require('utils/ResourceUtils');
+  var EnvironmentUtils = require('utils/EnvironmentUtils');
 
   var $q = require('$q');
 
@@ -55,6 +56,11 @@ angular.module('contentful')
   $scope.subscriptionPlanName = getSubscriptionPlanData('name');
   $scope.newLocale = newLocale;
   $scope.showSidebar = false;
+  $scope.insideMasterEnv = true;
+
+  if (!EnvironmentUtils.isInsideMasterEnv(spaceContext)) {
+    $scope.insideMasterEnv = false;
+  }
 
   TheLocaleStore.refresh()
   .then(function (locales) {
@@ -99,7 +105,9 @@ angular.module('contentful')
       $scope.usage = result.usage;
       $scope.limit = result.limits.maximum;
 
-      var reachedLimit = $scope.usage >= $scope.limit;
+      // You shouldn't reach a limit inside of any non-master environment
+      // This is to protect us in case of Resource API inconsistencies
+      var reachedLimit = $scope.usage >= $scope.limit && !$scope.insideNonMasterEnv;
 
       if (!reachedLimit && len <= 1) {
         return STATES.ONE_LOCALE_USED;
