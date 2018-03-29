@@ -6,9 +6,9 @@ _.extend(window, createDsl(window.jasmine.getEnv()));
 
 function createDsl (jasmineDsl) {
   return {
-    pit: createPromiseTestFactory(jasmineDsl.it),
-    fpit: createPromiseTestFactory(jasmineDsl.fit),
-    xpit: createPromiseTestFactory(jasmineDsl.xit),
+    pit: createCoroutineTestFactory(jasmineDsl.it),
+    fpit: createCoroutineTestFactory(jasmineDsl.fit),
+    xpit: createCoroutineTestFactory(jasmineDsl.xit),
 
     it: createCoroutineTestFactory(jasmineDsl.it),
     fit: createCoroutineTestFactory(jasmineDsl.fit),
@@ -36,44 +36,14 @@ function createHookFactory (defineHook) {
   };
 }
 
-
-// TODO deprecate this and use coroutines
-function createPromiseTestFactory (specFactory) {
-  return function (desc, run) {
-    const spec = specFactory(desc, function (done) {
-      const promise = run.call(this);
-
-      if (!isThenable(promise)) {
-        throw new TypeError('Promise test cases must return promise');
-      }
-
-      promise
-      .catch(function (err) {
-        addException(spec, err);
-      })
-      .finally(done);
-      this.$apply();
-    });
-    return spec;
-  };
-}
-
-function addException (spec, err) {
-  spec.addExpectationResult(false, {
-    matcherName: '',
-    passed: false,
-    expected: '',
-    actual: '',
-    error: err
-  });
-}
-
 function isThenable (obj) {
   return obj &&
        typeof obj.then === 'function' &&
        typeof obj.catch === 'function';
 }
 
+const setInterval = window.setInterval;
+const clearInterval = window.clearInterval;
 function createCoroutineTestFactory (testFactory) {
   return function (desc, runner, before) {
     if (!runner) {
@@ -82,6 +52,7 @@ function createCoroutineTestFactory (testFactory) {
 
     return testFactory(desc, function (done) {
       const $apply = this.$apply.bind(this);
+      let runApply;
       before = before || _.noop;
       const setup = this.setup || (() => Promise.resolve());
       return Promise.resolve(before.call(this))
@@ -93,8 +64,17 @@ function createCoroutineTestFactory (testFactory) {
           if (isGenerator(result)) {
             return runGenerator(result, $apply);
           }
+
+          // allow async/await
+          if (isThenable(result)) {
+            // we need to resolve $apply constantly, so $q-based promises
+            // are resolved
+            runApply = setInterval($apply, 10);
+            return result;
+          }
         })
-        .then(done, done.fail);
+        .then(done, done.fail)
+        .finally(() => clearInterval(runApply));
     });
   };
 }
@@ -115,8 +95,6 @@ function isGenerator (g) {
  * must trigger digest cycles explicitly by calling `$apply`.
  */
 // We need to guard against mocking of timing functions
-const setInterval = window.setInterval;
-const clearInterval = window.clearInterval;
 function runGenerator (gen, $apply) {
   return runTask(function* () {
     const runApply = setInterval($apply, 10);
