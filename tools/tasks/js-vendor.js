@@ -32,6 +32,8 @@ const KALTURA_VENDOR_SRC = assertFilesExist([
   'vendor/kaltura-16-01-2014/KalturaClient.js'
 ]);
 
+gulp.task('js/vendor', ['js/vendor/sharejs', 'js/vendor/kaltura']);
+
 gulp.task('js/vendor/sharejs', function () {
   return S.pipe([
     gulp.src(SHAREJS_VENDOR_SRC),

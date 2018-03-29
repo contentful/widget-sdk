@@ -2,34 +2,25 @@ const gulp = require('gulp');
 const webpack = require('webpack');
 const createWebpackConfig = require('../webpack.config');
 
-let compiler;
-let cb;
+gulp.task('js:watch', ['js/vendor'], watch);
 
-gulp.task('js:watch', ['js/vendor/sharejs', 'js/vendor/kaltura'], watch);
+gulp.task('js', ['js/vendor'], build);
 
-gulp.task('js', ['js/vendor/sharejs', 'js/vendor/kaltura'], build);
-
-function watch (newCb) {
-  cb = newCb;
-  if (!compiler) {
-    const config = createWebpackConfig({ dev: true });
-    compiler = webpack(config);
-    compiler.watch(
-      {
-        aggregateTimeout: 300,
-        poll: 1000
-      },
-      (err, stats) => {
-        if (cb) {
-          cb();
-          cb = null;
-          handleCompileResults(err, stats, config);
-        } else {
-          handleCompileResults(err, stats, config);
-        }
-      }
-    );
-  }
+function watch (done) {
+  // we don't wait until JS is bundles to not to block
+  // other tasks which `serve` task might have
+  done();
+  const config = createWebpackConfig({ dev: true });
+  const compiler = webpack(config);
+  compiler.watch(
+    {
+      aggregateTimeout: 300,
+      poll: 1000
+    },
+    (err, stats) => {
+      handleCompileResults(err, stats, config);
+    }
+  );
 }
 
 function build (cb) {
