@@ -32,6 +32,7 @@ angular.module('contentful')
   var createResourceService = require('services/ResourceService').default;
 
   var DEFAULT_LOCALE = 'en-US';
+  var DEFAULT_ERROR_MESSAGE = 'Could not create Space. If the problem persists please get in contact with us.';
 
   // Keep track of the view state
   controller.viewState = 'createSpaceForm';
@@ -95,6 +96,9 @@ angular.module('contentful')
           handleUsageWarning(errorObj.error);
         });
       }
+    }).catch(function (error) {
+      showFormError(DEFAULT_ERROR_MESSAGE);
+      logger.logServerWarn('Could not fetch permissions', {error: error});
     });
   };
 
@@ -169,7 +173,7 @@ angular.module('contentful')
       // If there aren't explicit errors from the response,
       // this means that something went wrong.
       if (!errors || !errors.length) {
-        showFormError('Could not create Space. If the problem persists please get in contact with us.');
+        showFormError(DEFAULT_ERROR_MESSAGE);
         logger.logServerWarn('Could not create Space', {error: error});
 
         return;
