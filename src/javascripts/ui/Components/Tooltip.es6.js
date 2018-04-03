@@ -7,12 +7,13 @@ const Tooltip = createReactClass({
     element: PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
     tooltip: PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
     style: PropTypes.object,
+    className: PropTypes.string,
     options: PropTypes.shape({
       width: PropTypes.number
     })
   },
   render () {
-    const {element, tooltip, style, options = {}} = this.props;
+    const {element, tooltip, className = '', style = {}, options = {}} = this.props;
     let tooltipStyle = {};
     if (options.width) {
       tooltipStyle = {
@@ -22,8 +23,8 @@ const Tooltip = createReactClass({
       };
     }
     return h('div', {
-      className: 'tooltip-trigger',
-      style: Object.assign({position: 'relative'}, style)
+      className: `tooltip-trigger ${className}`,
+      style: style
     },
       element,
       h('div', {

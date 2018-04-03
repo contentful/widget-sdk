@@ -7,10 +7,7 @@ import {getSpaceRatePlans} from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import {isOwner} from 'services/OrganizationRoles';
 import {go} from 'states/Navigator';
-import Tooltip from 'ui/Components/Tooltip';
-import {byName as colors} from 'Styles/Colors';
-import QuestionMarkIcon from 'svg/QuestionMarkIcon';
-import {asReact} from 'ui/Framework/DOMRenderer';
+import HelpIcon from 'ui/Components/HelpIcon';
 
 export default createReactClass({
   propTypes: {
@@ -102,30 +99,12 @@ function SpacePlan ({plan, isSelected, freeSpacesLimit, onSelect}) {
     },
       `${plan.name} ($${plan.price})`,
       (plan.isFree && plan.disabled) &&
-        h(HelpTooltip, null,
+        h(HelpIcon, {tooltipWidth: 400},
           `You can create up to ${freeSpacesLimit} free spaces for your organization.
            If you delete a free space, another one can be created.`
         )
     )
   );
-}
-
-// TODO share it with SubscriptionOverview
-function HelpTooltip ({children}) {
-  const questionMarkIcon = h('span', {
-    style: {
-      position: 'relative',
-      bottom: '0.125em',
-      paddingLeft: '0.2em'
-    }
-  }, asReact(QuestionMarkIcon({color: colors.textLight})));
-
-  return h(Tooltip, {
-    element: questionMarkIcon,
-    tooltip: children,
-    options: {width: 200},
-    style: {display: 'inline'}
-  });
 }
 
 function BillingInfo ({organization, goToBilling}) {
