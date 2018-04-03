@@ -9,9 +9,7 @@
 const webpack = require('webpack');
 const globSync = require('glob').sync;
 const P = require('path');
-
-// Module IDs are relative to this path
-const basePath = P.resolve('src', 'javascripts');
+const { createBabelOptions } = require('./app-babel-options');
 
 module.exports = ({ dev = false } = {}) => ({
   entry: {
@@ -53,45 +51,7 @@ module.exports = ({ dev = false } = {}) => ({
         exclude: /(node_modules|vendor|packages)/,
         use: {
           loader: 'babel-loader',
-          options: {
-            babelrc: false,
-            moduleIds: true,
-            presets: [
-              [
-                '@babel/preset-env',
-                {
-                  targets: {
-                    browsers: ['last 2 versions', 'ie >= 10']
-                  }
-                }
-              ],
-              '@babel/preset-react'
-            ],
-            plugins: [
-              [
-                '@babel/plugin-transform-modules-systemjs',
-                {
-                  systemGlobal: 'AngularSystem'
-                }
-              ],
-              [
-                require('@babel/plugin-proposal-object-rest-spread'),
-                { useBuiltIns: true }
-              ]
-            ],
-            // Get the SystemJS module ID from the source path
-            // src/javascripts/a/b/x.es6.js -> a/b/x
-            getModuleId: function (path) {
-              const absPath = P.resolve(path);
-              if (absPath.startsWith(basePath)) {
-                return absPath
-                  .replace(/\.es6$/, '')
-                  .replace(basePath + '/', '');
-              } else {
-                return path;
-              }
-            }
-          }
+          options: createBabelOptions()
         }
       },
       {
@@ -107,26 +67,12 @@ module.exports = ({ dev = false } = {}) => ({
         exclude: /(node_modules|vendor|packages)/,
         use: {
           loader: 'babel-loader',
-          options: {
-            babelrc: false,
-            presets: [
-              [
-                '@babel/preset-env',
-                {
-                  targets: {
-                    browsers: ['last 2 versions', 'ie >= 10']
-                  }
-                }
-              ],
-              '@babel/preset-react'
-            ],
-            plugins: [
-              [
-                require('@babel/plugin-proposal-object-rest-spread'),
-                { useBuiltIns: true }
-              ]
-            ]
-          }
+          options: createBabelOptions({
+            moduleIds: false,
+            getModuleId: undefined,
+            // we don't need SystemJS plugin for regular es5 files
+            plugins: ['transform-object-rest-spread']
+          })
         }
       },
       {
