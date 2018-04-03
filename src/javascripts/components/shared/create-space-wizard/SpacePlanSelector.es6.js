@@ -9,7 +9,7 @@ import {isOwner} from 'services/OrganizationRoles';
 import {go} from 'states/Navigator';
 import HelpIcon from 'ui/Components/HelpIcon';
 
-export default createReactClass({
+const SpacePlanSelector = createReactClass({
   propTypes: {
     organization: PropTypes.object.isRequired,
     submit: PropTypes.func.isRequired,
@@ -153,3 +153,5 @@ async function getFormattedSpacePlans (organization) {
 
   return spaceRatePlans;
 }
+
+export default SpacePlanSelector;

@@ -6,7 +6,7 @@ import {byName as colors} from 'Styles/Colors';
 import QuestionMarkIcon from 'svg/QuestionMarkIcon';
 import {asReact} from 'ui/Framework/DOMRenderer';
 
-export default createReactClass({
+const HelpIcon = createReactClass({
   propTypes: {
     children: PropTypes.oneOfType([
       PropTypes.string,
@@ -28,3 +28,5 @@ export default createReactClass({
     />;
   }
 });
+
+export default HelpIcon;

@@ -15,7 +15,7 @@ import spaceContext from 'spaceContext';
 
 const DEFAULT_LOCALE = 'en-US';
 
-export default createReactClass({
+const Wizard = createReactClass({
   propTypes: {
     orgId: PropTypes.string.isRequired,
     cancel: PropTypes.func.isRequired,
@@ -224,3 +224,5 @@ function getFieldErrors (error) {
     return acc;
   }, {});
 }
+
+export default Wizard;
