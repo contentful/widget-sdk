@@ -28,7 +28,7 @@ const infoItems = [
   }
 ];
 
-export default createReactClass({
+const ProgressScreen = createReactClass({
   propTypes: {
     done: PropTypes.bool.isRequired,
     confirm: PropTypes.func.isRequired
@@ -72,3 +72,5 @@ export default createReactClass({
     );
   }
 });
+
+export default ProgressScreen;
