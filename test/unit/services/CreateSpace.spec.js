@@ -38,7 +38,7 @@ describe('CreateSpace', function () {
     it('opens wizard with v2 org id', function* () {
       yield this.CreateSpace.showDialog('v2');
       const modalArgs = this.modalDialog.open.firstCall.args[0];
-      expect(modalArgs.scopeData.organization).toBe(this.v2Org);
+      expect(modalArgs.scopeData.organization.sys.id).toBe(this.v2Org.sys.id);
       expect(modalArgs.template).toContain('cf-create-space-wizard');
       sinon.assert.calledOnce(this.modalDialog.open);
     });

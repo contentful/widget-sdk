@@ -17,7 +17,13 @@ const DEFAULT_LOCALE = 'en-US';
 
 const Wizard = createReactClass({
   propTypes: {
-    organization: PropTypes.object.isRequired,
+    organization: PropTypes.shape({
+      sys: PropTypes.shape({
+        id: PropTypes.string.isRequired
+      }).isRequired,
+      name: PropTypes.string.isRequired,
+      isBillable: PropTypes.bool
+    }).isRequired,
     cancel: PropTypes.func.isRequired,
     confirm: PropTypes.func.isRequired,
     onSpaceCreated: PropTypes.func.isRequired,

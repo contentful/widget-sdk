@@ -44,7 +44,13 @@ export async function showDialog (organizationId) {
       template: '<cf-create-space-wizard class="modal-background"></cf-create-space-wizard>',
       backgroundClose: false,
       persistOnNavigation: true,
-      scopeData: {organization}
+      scopeData: {
+        organization: {
+          sys: organization.sys,
+          name: organization.name,
+          isBillable: organization.isBillable
+        }
+      }
     });
   }
 }
