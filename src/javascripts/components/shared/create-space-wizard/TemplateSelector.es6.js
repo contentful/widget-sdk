@@ -4,7 +4,7 @@ import PropTypes from 'libs/prop-types';
 import {get} from 'lodash';
 import {getTemplatesList} from 'services/SpaceTemplateLoader';
 
-export default createReactClass({
+const TemplateSelector = createReactClass({
   propTypes: {
     onSelect: PropTypes.func.isRequired,
     onDimensionsChange: PropTypes.func
@@ -115,3 +115,5 @@ export default createReactClass({
 function parseTemplates (templates = []) {
   return templates.map(({fields, sys}) => ({...fields, id: sys.id}));
 }
+
+export default TemplateSelector;

@@ -17,9 +17,9 @@ import {supportUrl} from 'Config';
 import $location from '$location';
 import Workbench from 'app/WorkbenchReact';
 import Tooltip from 'ui/Components/Tooltip';
+import HelpIcon from 'ui/Components/HelpIcon';
 import {joinAnd} from 'stringUtils';
 import {byName as colors} from 'Styles/Colors';
-import QuestionMarkIcon from 'svg/QuestionMarkIcon';
 import BubbleIcon from 'svg/bubble';
 import InvoiceIcon from 'svg/invoice';
 import {asReact} from 'ui/Framework/DOMRenderer';
@@ -215,13 +215,6 @@ function SpacePlanRow ({plan, onDeleteSpace, isOrgOwner}) {
   ? 'This space type includes ' + joinAnd(enabledFeatures.map(({name}) => name))
   : 'This space type doesn’t include any additional features';
 
-  const questionMarkIcon = h('span', {
-    style: {
-      position: 'relative',
-      bottom: '1px'
-    }
-  }, asReact(QuestionMarkIcon({color: colors.textLight})));
-
   return h('tr', null,
     h('td', {
       'data-test-id': 'subscription-page.spaces-list.space-name'
@@ -232,12 +225,7 @@ function SpacePlanRow ({plan, onDeleteSpace, isOrgOwner}) {
       h('strong', {style: {marginTop: 0}},
         plan.name
       ),
-      h(Tooltip, {
-        element: questionMarkIcon,
-        tooltip: featuresTooltip,
-        options: {width: 200},
-        style: {display: 'inline', marginLeft: '6px'}
-      }),
+      h(HelpIcon, null, featuresTooltip),
       h('br'),
       h(Price, {value: plan.price, unit: 'month'})
     ),

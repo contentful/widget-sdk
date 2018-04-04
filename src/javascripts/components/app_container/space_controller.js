@@ -8,6 +8,11 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var TokenStore = require('services/TokenStore');
 
+  $scope.sidePanelIsShown = false;
+  $scope.toggleSidePanel = function () {
+    $scope.sidePanelIsShown = !$scope.sidePanelIsShown;
+  };
+
   $scope.$watch(function () {
     return authorization.isUpdated(TokenStore.getTokenLookup(), spaceContext.space);
   }, function () {

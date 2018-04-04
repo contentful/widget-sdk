@@ -4,7 +4,7 @@ import PropTypes from 'libs/prop-types';
 import {get} from 'lodash';
 import TemplateSelector from './TemplateSelector';
 
-export default createReactClass({
+const SpaceDetails = createReactClass({
   propTypes: {
     submit: PropTypes.func.isRequired,
     spaceRatePlan: PropTypes.object.isRequired,
@@ -94,3 +94,5 @@ function shortenPlanName (name = '') {
   const shortName = get(/^\s*Space Plan[\s-]*(\w*)\s*$/.exec(name), 1);
   return (shortName || name).toLowerCase();
 }
+
+export default SpaceDetails;
