@@ -134,11 +134,14 @@ async function getFormattedSpacePlans (organization) {
   const endpoint = createOrganizationEndpoint(organization.sys.id);
   let spaceRatePlans = await getSpaceRatePlans(endpoint);
 
-  spaceRatePlans = spaceRatePlans.map((plan) => ({
-    ...plan,
-    isFree: plan.productPlanType === 'free_space',
-    disabled: !plan.isFree && !organization.isBillable
-  }));
+  spaceRatePlans = spaceRatePlans.map((plan) => {
+    const isFree = (plan.productPlanType === 'free_space');
+    return {
+      ...plan,
+      isFree,
+      disabled: !isFree && !organization.isBillable
+    };
+  });
 
   // If free space plan is not available, show it as disabled
   if (!spaceRatePlans.find(({isFree}) => isFree)) {
