@@ -16,7 +16,7 @@ const HelpIcon = createReactClass({
   },
   render: function () {
     const {children, tooltipWidth} = this.props;
-    const questionMarkIcon = <span>
+    const questionMarkIcon = <span className="help-icon__img">
       {asReact(QuestionMarkIcon({color: colors.textLight}))}
     </span>;
 

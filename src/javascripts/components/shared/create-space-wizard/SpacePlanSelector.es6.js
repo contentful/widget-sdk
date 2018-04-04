@@ -1,7 +1,7 @@
 import React from 'libs/react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
-import {get} from 'lodash';
+import {get, kebabCase, isNumber} from 'lodash';
 import {createOrganizationEndpoint} from 'data/EndpointFactory';
 import {getSpaceRatePlans} from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
@@ -33,42 +33,42 @@ const SpacePlanSelector = createReactClass({
     this.setState({
       spaceRatePlans,
       selectedPlan: null,
-      freeSpacesLimit: get(freeSpacesResource, 'limits.maximum')
+      freeSpacesLimit: get(freeSpacesResource, 'limits.maximum'),
+      freeSpacesUsage: get(freeSpacesResource, 'usage')
     });
     setTimeout(this.props.onDimensionsChange, 0);
   },
   render: function () {
     const {organization} = this.props;
-    const {spaceRatePlans, selectedPlan, freeSpacesLimit} = this.state;
+    const {spaceRatePlans, selectedPlan, freeSpacesLimit, freeSpacesUsage} = this.state;
 
     return (
       <div>
-        <h2 className="create-space-wizard-dialog__heading">
+        <h2 className="create-space-wizard__heading">
           Choose the space type
         </h2>
-        <p className="create-space-wizard-dialog__subheading">
+        <p className="create-space-wizard__subheading">
           You are creating this space for organization {organization.name}.
         </p>
-        <fieldset className="cfnext-form__fieldset">
+        <div className="space-plans-list">
           {spaceRatePlans.map((plan) => <SpacePlanItem
             key={plan.sys.id}
             plan={plan}
             freeSpacesLimit={freeSpacesLimit}
+            freeSpacesUsage={freeSpacesUsage}
             isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
-            onSelect={this.selectPlan(plan)} />)}
-        </fieldset>
+            onSelect={this.selectPlan} />)}
+        </div>
         <BillingInfo organization={organization} goToBilling={this.goToBilling} />
       </div>
     );
   },
   selectPlan: function (selectedPlan) {
-    return () => {
-      this.setState({...this.state, selectedPlan});
+    this.setState({...this.state, selectedPlan});
 
-      if (selectedPlan) {
-        this.props.submit({spaceRatePlan: selectedPlan});
-      }
-    };
+    if (selectedPlan) {
+      this.props.submit({spaceRatePlan: selectedPlan});
+    }
   },
   goToBilling: function () {
     const {organization, cancel} = this.props;
@@ -87,30 +87,36 @@ const SpacePlanItem = createReactClass({
     plan: PropTypes.object.isRequired,
     isSelected: PropTypes.bool.isRequired,
     freeSpacesLimit: PropTypes.number.isRequired,
+    freeSpacesUsage: PropTypes.number.isRequired,
     onSelect: PropTypes.func.isRequired
   },
   render: function () {
-    const {plan, isSelected, freeSpacesLimit, onSelect} = this.props;
+    const {plan, isSelected, freeSpacesLimit, freeSpacesUsage, onSelect} = this.props;
+    const classNames = ['space-plans-list__item'];
+    classNames.push(`space-plans-list__item--${kebabCase(plan.name)}`);
+    if (isSelected) { classNames.push('space-plans-list__item--selected'); }
+    if (plan.disabled) { classNames.push('space-plans-list__item--disabled'); }
 
     return (
-      <div key={plan.sys.id} className="cfnext-form-option">
-        <input
-          id={`space-rate-plan--${plan.sys.id}`}
-          type="radio"
-          name="productRatePlanId"
-          value={plan.sys.id}
-          checked={isSelected}
-          disabled={plan.disabled}
-          onChange={onSelect} />
-        <label
-          htmlFor={`space-rate-plan--${plan.sys.id}`}
-          style={plan.disabled ? {textDecoration: 'line-through'} : null}>
-          {`${plan.name} ($${plan.price})`}
-          {(plan.isFree && plan.disabled) && <HelpIcon tooltipWidth={400}>
-            {`You can create up to ${freeSpacesLimit} free spaces for your organization.
-             If you delete a free space, another one can be created.`}
+      <div
+        key={plan.sys.id}
+        className={classNames.join(' ')}
+        onClick={() => !plan.disabled && onSelect(plan)}>
+
+        <div className="space-plans-list__item__heading">
+          <strong>{plan.name}</strong>
+          {(plan.price > 0) && ` - $${plan.price} / month`}
+          {plan.isFree && ` - ${freeSpacesUsage}/${freeSpacesLimit} used`}
+          {plan.isFree && <HelpIcon tooltipWidth={400}>
+            You can create up to {freeSpacesLimit} free spaces for your organization.
+            If you delete a free space, another one can be created.
           </HelpIcon>}
-        </label>
+        </div>
+        <ul className="space-plans-list__item__features">
+          {plan.includedResources.map(({name, units}) => <li key={name}>
+            {units} {name}
+          </li>)}
+        </ul>
       </div>
     );
   }
@@ -152,15 +158,23 @@ const BillingInfo = createReactClass({
   }
 });
 
+const RESOURCE_ORDER = ['Environments', 'Roles', 'Locales', 'Content types', 'Records'];
+
 async function getFormattedSpacePlans (organization) {
   const endpoint = createOrganizationEndpoint(organization.sys.id);
   let spaceRatePlans = await getSpaceRatePlans(endpoint);
 
   spaceRatePlans = spaceRatePlans.map((plan) => {
     const isFree = (plan.productPlanType === 'free_space');
+    const includedResources = plan.productRatePlanCharges
+      .filter(({unitType, tiers}) => unitType === 'limit' && isNumber(get(tiers, '[0].endingUnit')))
+      .map((limit) => ({name: limit.name, units: limit.tiers[0].endingUnit}))
+      .sort((first, second) => RESOURCE_ORDER.indexOf(first.name) > RESOURCE_ORDER.indexOf(second.name));
+
     return {
       ...plan,
       isFree,
+      includedResources,
       disabled: !isFree && !organization.isBillable
     };
   });
@@ -172,7 +186,8 @@ async function getFormattedSpacePlans (organization) {
       name: 'Free',
       price: 0,
       isFree: true,
-      disabled: true
+      disabled: true,
+      includedResources: [] // TODO this should be fetched from backend
     }, ...spaceRatePlans];
   }
 

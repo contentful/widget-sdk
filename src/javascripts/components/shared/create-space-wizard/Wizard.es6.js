@@ -47,12 +47,12 @@ const Wizard = createReactClass({
   },
   steps: [
     {
-      label: 'Space type',
+      label: '1. Space type',
       isEnabled: () => true,
       component: SpacePlanSelector
     },
     {
-      label: 'Space details',
+      label: '2. Space details',
       isEnabled: (data) => !!data.spaceRatePlan,
       component: SpaceDetails
     }
@@ -95,8 +95,8 @@ const Wizard = createReactClass({
       };
 
       return (
-        <div className="modal-dialog" style={{width: '750px'}}>
-          <div className="modal-dialog__header" style={{padding: 0}}>
+        <div className="modal-dialog create-space-wizard" style={{width: '750px'}}>
+          <div className="modal-dialog__header create-space-wizard__navigation" style={{padding: 0}}>
             {navigation}
             {closeButton}
           </div>

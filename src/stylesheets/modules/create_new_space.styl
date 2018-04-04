@@ -172,3 +172,79 @@ $close-button-small()
     display: none
     &--current
       display: block
+  &__navigation
+    justify-content: center
+  &__centered-block
+    width: 420px
+    margin: 0 auto
+
+.space-plans-list
+  $item-label($color, $border-color = null)
+    &:before
+      background-color: $color
+      box-shadow: 0px 0px 0px 1px $border-color ? $border-color : darken($color, 25%)
+
+  display: flex
+  flex-direction: column
+  &__item
+    height: 73px
+    border-radius: 2px 2px 0 0
+    border: 1px solid $colors.element-mid
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.08)
+    background-color: #fff
+    margin: 12px 0
+    padding: 15px 30px
+    line-height: 1.5em;
+    display: flex
+    flex-direction: column
+    position: relative
+    cursor: pointer
+    $item-label($colors.element-light, $colors.element-mid)
+    &:hover
+      border: 1px solid $colors.element-darkest
+      box-shadow: 0 3px 3px 0 rgba(0,0,0,0.08)
+    &--selected
+      border: 1px solid $colors.element-darkest
+      background-color: $colors.element-light
+    &:before
+      content: ''
+      width: 10px
+      height: 100%
+      position: absolute
+      top: 0
+      left: 0
+      border-radius: 2px 0 0 2px;
+    &--micro
+      $item-label($colors.orange-light)
+    &--small
+      $item-label($colors.green-light)
+    &--medium
+      $item-label($colors.blue-light)
+    &--large
+      $item-label($colors.red-light)
+    &--disabled
+      cursor: not-allowed
+      &:after
+        content: ''
+        position: absolute
+        background-color: rgba(255,255,255,0.4)
+        top: 0
+        left: 0
+        right: 0
+        bottom: 0
+        z-index: 0
+      .help-icon
+        z-index: 1
+        &__img
+          opacity: 0.6
+
+    &__features
+      display: flex
+      flex-direction: row
+      & > li
+        margin: 0 20px
+        &:first-child
+          margin-left: 0
+        &:last-child
+          margin-right: 0
+

@@ -1,7 +1,6 @@
 import React from 'libs/react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
-import {get} from 'lodash';
 import TemplateSelector from './TemplateSelector';
 
 const SpaceDetails = createReactClass({
@@ -33,14 +32,14 @@ const SpaceDetails = createReactClass({
 
     return (
       <div>
-        <h2 className="create-space-wizard-dialog__heading">
+        <h2 className="create-space-wizard__heading">
           Choose a name
         </h2>
-        <p className="create-space-wizard-dialog__subheading">
-          You are about to create a {shortenPlanName(spaceRatePlan.name)} space
+        <p className="create-space-wizard__subheading">
+          You are about to create a {spaceRatePlan.name.toLowerCase()} space
           for ${spaceRatePlan.price}/month.
         </p>
-        <div className="cfnext-form__field">
+        <div className="cfnext-form__field create-space-wizard__centered-block">
           <label htmlor="space-name">
             Space name
             <span className="cfnext-form__label-hint">(required)</span>
@@ -99,11 +98,6 @@ function validateState ({name}) {
     validation.name = 'Name is required';
   }
   return validation;
-}
-
-function shortenPlanName (name = '') {
-  const shortName = get(/^\s*Space Plan[\s-]*(\w*)\s*$/.exec(name), 1);
-  return (shortName || name).toLowerCase();
 }
 
 export default SpaceDetails;
