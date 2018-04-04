@@ -1,4 +1,4 @@
-import {createElement as h} from 'libs/react';
+import React from 'libs/react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import {asReact} from 'ui/Framework/DOMRenderer';
@@ -36,39 +36,43 @@ const ProgressScreen = createReactClass({
   render: function () {
     const {done, confirm} = this.props;
 
-    return h('div', null,
-      h('div', {className: 'modal-dialog__content'},
-        h('div', {className: 'create-new-space__templates__status'},
-          !done && h('div', {className: 'spinner'}),
-          done && h('div', {style: {transform: 'scale(2)'}}, asReact(CheckmarkIcon))
-        ),
-        h('h2', {className: 'create-space-wizard-dialog__heading'},
-          'Hang on, we’re preparing your space'
-        ),
-        h('p', {className: 'create-new-space-dialog__subheading'},
-          'In the meantime, let us quickly explain the kind of things you’ll find in your space'
-        ),
-        h('div', {className: 'create-new-space__templates__entities'},
-          infoItems.map(({icon, title, description}) => h('div', {
-            key: title,
-            className: 'create-new-space__templates__entity'
-          },
-            h('div', null, asReact(icon)),
-            h('div', {className: 'create-new-space__templates__entity__description'},
-              h('h3', null, title),
-              h('p', null, description)
-            )
-          ))
-        )
-      ),
-      h('div', {style: {textAlign: 'center'}},
-        h('button', {
-          className: 'btn-action',
-          'data-test-id': 'get-started',
-          disabled: !done,
-          onClick: confirm
-        }, 'Get started')
-      )
+    return (
+      <div>
+        <div className="modal-dialog__content">
+          <div className="create-new-space__templates__status">
+            {!done && <div className="spinner" />}
+            {done && <div style={{transform: 'scale(2)'}}>
+              {asReact(CheckmarkIcon)}
+            </div>}
+          </div>
+          <h2 className="create-space-wizard-dialog__heading">
+            Hang on, we’re preparing your space
+          </h2>
+          <p className="create-new-space-dialog__subheading">
+            In the meantime, let us quickly explain the kind of things you’ll find in your space
+          </p>
+          <div className="create-new-space__templates__entities">
+            {infoItems.map(({icon, title, description}) => (
+              <div key={title} className="create-new-space__templates__entity">
+                <div>{asReact(icon)}</div>
+                <div className="create-new-space__templates__entity__description">
+                  <h3>{title}</h3>
+                  <p>{description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{textAlign: 'center'}}>
+          <button
+            className="btn-action"
+            data-test-id="get-started"
+            disabled={!done}
+            onClick={confirm}>
+            Get started
+          </button>
+        </div>
+      </div>
     );
   }
 });
