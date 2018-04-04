@@ -3,9 +3,10 @@ const { assertFilesExist, mapFileContents } = require('./helpers');
 const S = require('../lib/stream-utils');
 const babel = require('gulp-babel');
 const concat = require('gulp-concat');
+const { supportedBrowsers } = require('../app-babel-options');
 
-const BROWSER_TARGET = ['last 2 versions', 'ie >= 10'];
-
+// all these files will be processed and concatenated into 1
+// /public/app/sharejs.js
 const SHAREJS_VENDOR_SRC = assertFilesExist([
   'vendor/sharejs/lib/client/web-prelude.js',
   'vendor/sharejs/lib/client/microevent.js',
@@ -22,6 +23,8 @@ const SHAREJS_VENDOR_SRC = assertFilesExist([
   'vendor/sharejs/lib/types/json-api.js'
 ]);
 
+// all these files will be processed and concatenated into 1
+// /public/app/kaltura.js
 const KALTURA_VENDOR_SRC = assertFilesExist([
   'vendor/kaltura-16-01-2014/webtoolkit.md5.js',
   'vendor/kaltura-16-01-2014/ox.ajast.js',
@@ -42,7 +45,7 @@ gulp.task('js/vendor/sharejs', function () {
       presets: [
         ['env', {
           'targets': {
-            'browsers': BROWSER_TARGET
+            'browsers': supportedBrowsers
           },
           'loose': true,
           'debug': true,
