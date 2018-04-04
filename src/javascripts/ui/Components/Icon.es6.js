@@ -19,6 +19,7 @@ import UserIcon from 'svg/icon-users';
 import GithubIcon from 'svg/icon-github';
 import AddUserIcon from 'svg/onboarding-add-user';
 import PageSettings from 'svg/page-settings';
+import PageUsage from 'svg/page-usage';
 import Bubble from 'svg/bubble';
 
 const SVGS = {
@@ -37,6 +38,7 @@ const SVGS = {
   'icon-github': GithubIcon,
   'onboarding-add-user': AddUserIcon,
   'page-settings': PageSettings,
+  'page-usage': PageUsage,
   'bubble': Bubble
 };
 

@@ -40,7 +40,8 @@ const SpaceUsage = createReactClass({
     const {resources} = this.state;
     return (
       <Workbench
-        title="Usage"
+        title="Space usage"
+        icon="page-usage"
         testId="space.usage"
         content={<ResourceUsageList resources={resources} />}
         sidebar={<SpaceUsageSidebar resources={resources} />}

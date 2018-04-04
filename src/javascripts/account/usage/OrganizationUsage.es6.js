@@ -80,6 +80,8 @@ const OrganizationUsage = createReactClass({
     const {resources} = this.state;
     return (
       <Workbench
+        icon="page-usage"
+        testId="organization.usage"
         title="Usage"
         content={<OrganizationResourceUsageList resources={resources} />}
       />
