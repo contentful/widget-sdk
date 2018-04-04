@@ -13,6 +13,10 @@ describe('NumberUtils', function () {
       shorten = this.NumberUtils.shorten;
     });
 
+    afterEach(function () {
+      shorten = null;
+    });
+
     it('does not change numbers lower than 1000', function () {
       expect(shorten(999)).toEqual(999);
     });
