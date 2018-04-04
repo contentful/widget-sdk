@@ -1,4 +1,5 @@
 import {createElement as h, Fragment} from 'react';
+import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import {runTask} from 'utils/Concurrent';
@@ -104,7 +105,12 @@ const SubscriptionOverview = createReactClass({
       content: h('div', {
         style: {padding: '0 2rem'}
       },
+        h('div', {
+          className: 'header'
+        },
           h(BasePlan, {basePlan}),
+          h(UsersForPlan, {basePlan}),
+        ),
           h(SpacePlans, {
             spacePlans,
             onCreateSpace: this.createSpace,
@@ -123,22 +129,31 @@ const SubscriptionOverview = createReactClass({
   }
 });
 
+function UsersForPlan ({basePlan}) {
+  return <div className='users'>
+    <h2 className='section-title'>Users</h2>
+    <p>
+      Testing
+    </p>
+  </div>;
+}
+
 function BasePlan ({basePlan}) {
   const enabledFeaturesNames = getEnabledFeatures(basePlan).map(({name}) => name);
 
-  return h('div', {style: {margin: '1em 0 3em'}},
-    h('h2', {
-      className: 'section-title'
-    }, null, 'Platform'),
-    h('p', {
-      'data-test-id': 'subscription-page.base-plan-details'
-    },
-      h('b', null, basePlan.name),
-      enabledFeaturesNames.length
-        ? ` – includes ${joinAnd(enabledFeaturesNames)}.`
-        : ' – doesn’t include any additional features.'
-    )
-  );
+  return <div className='platform'}>
+    <h2 className='section-title'>Platform</h2>
+    <p data-test-id='subscription-page.base-plan-details'>
+      <b>
+        {basePlan.name}
+      </b>
+      {
+        enabledFeaturesNames.length
+          ? ` – includes ${joinAnd(enabledFeaturesNames)}.`
+          : ' – doesn’t include any additional features.'
+      }
+    </p>
+  </div>;
 }
 
 function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
