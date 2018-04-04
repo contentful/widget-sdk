@@ -46,4 +46,32 @@ describe('NumberUtils', function () {
       expect(shorten(2500000)).toEqual('2.5M');
     });
   });
+
+  describe('shortenStorageUnit', function () {
+    let shortenStorageUnit;
+
+    beforeEach(function () {
+      shortenStorageUnit = this.NumberUtils.shortenStorageUnit;
+    });
+
+    it('does not break if number is 0', function () {
+      expect(shortenStorageUnit(0, 'MB')).toEqual('0 MB');
+    });
+
+    it('transforms numbers lower than 0.99 into smaller units', function () {
+      expect(shortenStorageUnit(0.01, 'TB')).toEqual('10 GB');
+      expect(shortenStorageUnit(0.0025, 'TB')).toEqual('2.5 GB');
+      expect(shortenStorageUnit(0.615, 'TB')).toEqual('615 GB');
+    });
+
+    it('does not transform numbers greater than 0.99 and smaller than 1000', function () {
+      expect(shortenStorageUnit(1.01, 'TB')).toEqual('1.01 TB');
+      expect(shortenStorageUnit(999, 'GB')).toEqual('999 GB');
+    });
+
+    it('transforms numbers bigger than 999 into bigger units', function () {
+      expect(shortenStorageUnit(1000, 'GB')).toEqual('1 TB');
+      expect(shortenStorageUnit(25729, 'MB')).toEqual('25.73 GB');
+    });
+  });
 });
