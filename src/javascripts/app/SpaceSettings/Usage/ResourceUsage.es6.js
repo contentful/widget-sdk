@@ -7,7 +7,6 @@ import {shorten, shortenStorageUnit} from 'utils/NumberUtils';
 export const ResourceUsage = ({
   resource,
   description,
-  showOverages,
   shortenIncluded
 }) => {
   const {usage, limits, unitOfMeasure} = resource;
@@ -35,13 +34,14 @@ export const ResourceUsage = ({
 
         <span className="resource-list__item__usage">
           {toResourceFormat(usage)}
-          {limits.maximum && ` out of ${toResourceFormat(limits.maximum)}`}
-          {showOverages
-            ? resourceIncludedLimitReached(resource)
-              ? ` (${toResourceFormat(limits.included)} free +
-                  ${toResourceFormat(usage - limits.included)} paid)`
-              : ` out of ${toResourceFormat(limits.included, shortenIncluded)} included`
-            : ''
+          {limits.maximum
+            ? ` out of ${toResourceFormat(limits.maximum)}`
+            : limits.included
+              ? resourceIncludedLimitReached(resource)
+                ? ` (${toResourceFormat(limits.included)} free +
+                    ${toResourceFormat(usage - limits.included)} paid)`
+                : ` out of ${toResourceFormat(limits.included, shortenIncluded)} included`
+              : ''
           }
         </span>
       </div>
@@ -54,7 +54,6 @@ export const ResourceUsage = ({
 ResourceUsage.propTypes = {
   resource: PropTypes.object.isRequired,
   description: PropTypes.string,
-  showOverages: PropTypes.bool,
   shortenIncluded: PropTypes.bool
 };
 

@@ -24,7 +24,6 @@ const OrganizationResourceUsageList = ({resources}) => {
     <div className="resource-list">
       <ResourceUsage
         resource={byId['organization_membership']}
-        showOverages={true}
       />
       <div className="resource-list__title">
         <h3 className="section-title">Current billing period</h3>
@@ -32,12 +31,10 @@ const OrganizationResourceUsageList = ({resources}) => {
       </div>
       <ResourceUsage
         resource={byId['api_request']}
-        showOverages={true}
         shortenIncluded={true}
       />
       <ResourceUsage
         resource={byId['asset_bandwidth']}
-        showOverages={true}
       />
     </div>
   );
