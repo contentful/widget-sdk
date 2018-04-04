@@ -1,4 +1,4 @@
-import {createElement as h} from 'libs/react';
+import React from 'libs/react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import SpacePlanSelector from './SpacePlanSelector';
@@ -62,33 +62,28 @@ const Wizard = createReactClass({
     const {currentStepId, isFormSubmitted, isSpaceCreated, isContentCreated, data} = this.state;
 
     if (isSpaceCreated) {
-      return h('div', {
-        className: 'modal-dialog',
-        style: {
-          width: '750px'
-        }
-      },
-        h('div', {className: 'modal-dialog__content'},
-          h(ProgressScreen, {done: isContentCreated, confirm})
-        )
+      return (
+        <div className="modal-dialog" style={{width: '750px'}}>
+          <div className="modal-dialog__content">
+            <ProgressScreen done={isContentCreated} confirm={confirm} />
+          </div>
+        </div>
       );
     } else {
-      const navigation = h('ul', {className: 'tab-list'},
-        this.steps.map(({label, isEnabled}, id) => h('li', {
-          key: `nav-${id}`,
-          role: 'tab',
-          'aria-selected': id === currentStepId
-        },
-          h('button', {
-            onClick: this.navigate(id),
-            disabled: !isEnabled(data)
-          }, label)
-        ))
+      const navigation = (
+        <ul className="tab-list">
+          {this.steps.map(({label, isEnabled}, id) => (
+            <li key={id} role="tab" aria-selected={id === currentStepId}>
+              <button onClick={this.navigate(id)} disabled={!isEnabled(data)}>
+                {label}
+              </button>
+            </li>
+          ))}
+        </ul>
       );
-      const closeButton = h('button', {
-        className: 'create-space-wizard__close modal-dialog__close',
-        onClick: cancel
-      });
+      const closeButton = <button
+        className="create-space-wizard__close modal-dialog__close"
+        onClick={cancel} />;
 
       const stepProps = {
         ...data,
@@ -99,22 +94,27 @@ const Wizard = createReactClass({
         submit: this.submitStep
       };
 
-      return h('div', {className: 'modal-dialog', style: {width: '750px'}},
-        h('div', {className: 'modal-dialog__header', style: {padding: 0}},
-          navigation,
-          closeButton
-        ),
-        h('div', {className: 'modal-dialog__content'},
-          this.steps.map(({isEnabled, component}, id) => {
-            const isCurrent = id === currentStepId;
-            return h('div', {
-              key: `step-${id}`,
-              className: `create-space-wizard__step ${isCurrent ? 'create-space-wizard__step--current' : ''}`
-            },
-              isEnabled(stepProps) && h(component, stepProps)
-            );
-          })
-        )
+      return (
+        <div className="modal-dialog" style={{width: '750px'}}>
+          <div className="modal-dialog__header" style={{padding: 0}}>
+            {navigation}
+            {closeButton}
+          </div>
+          <div className="modal-dialog__content">
+            {this.steps.map(({isEnabled, component}, id) => {
+              const isCurrent = (id === currentStepId);
+              const classNames = ['create-space-wizard__step'];
+              if (isCurrent) { classNames.push('create-space-wizard__step--current'); }
+              return (
+                <div
+                  key={id}
+                  className={classNames.join(' ')}>
+                  {isEnabled(stepProps) && React.createElement(component, stepProps)}
+                </div>
+              );
+            })}
+          </div>
+        </div>
       );
     }
   },
