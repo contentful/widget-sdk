@@ -54,6 +54,10 @@ describe('NumberUtils', function () {
       shortenStorageUnit = this.NumberUtils.shortenStorageUnit;
     });
 
+    afterEach(function () {
+      shortenStorageUnit = null;
+    });
+
     it('does not break if number is 0', function () {
       expect(shortenStorageUnit(0, 'MB')).toEqual('0 MB');
     });
