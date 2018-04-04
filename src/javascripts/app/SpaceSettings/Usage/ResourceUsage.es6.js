@@ -1,7 +1,7 @@
 import React from 'libs/react';
 import PropTypes from 'libs/prop-types';
 import {ProgressBar} from './ProgressBar';
-import {resourceIncludedLimitReached, resourceHumanNameMap} from 'utils/ResourceUtils';
+import {getResourceLimits, resourceIncludedLimitReached, resourceHumanNameMap} from 'utils/ResourceUtils';
 import {shorten, shortenStorageUnit} from 'utils/NumberUtils';
 
 export const ResourceUsage = ({
@@ -9,7 +9,8 @@ export const ResourceUsage = ({
   description,
   shortenIncluded
 }) => {
-  const {usage, limits, unitOfMeasure} = resource;
+  const {usage, unitOfMeasure} = resource;
+  const limits = getResourceLimits(resource);
 
   // (1000) => "1 GB"
   // (1000, true) => "1k"
@@ -21,6 +22,11 @@ export const ResourceUsage = ({
         ? shorten(value, true)
         : value.toLocaleString('en-US');
   };
+
+  // do not render if maximum is zero (i.e. roles in free spaces)
+  if (limits.maximum === 0) {
+    return null;
+  }
 
   return (
     <div className="resource-list__item">
