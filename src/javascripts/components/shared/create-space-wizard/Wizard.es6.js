@@ -17,7 +17,13 @@ const DEFAULT_LOCALE = 'en-US';
 
 const Wizard = createReactClass({
   propTypes: {
-    orgId: PropTypes.string.isRequired,
+    organization: PropTypes.shape({
+      sys: PropTypes.shape({
+        id: PropTypes.string.isRequired
+      }).isRequired,
+      name: PropTypes.string.isRequired,
+      isBillable: PropTypes.bool
+    }).isRequired,
     cancel: PropTypes.func.isRequired,
     confirm: PropTypes.func.isRequired,
     onSpaceCreated: PropTypes.func.isRequired,
@@ -32,7 +38,6 @@ const Wizard = createReactClass({
       isSpaceCreated: false,
       isContentCreated: false,
       data: {
-        organization: null,
         spaceRatePlan: null,
         spaceName: '',
         template: null,
@@ -43,7 +48,7 @@ const Wizard = createReactClass({
   steps: [
     {
       label: 'Space type',
-      isEnabled: (data) => !!data.organization,
+      isEnabled: () => true,
       component: SpacePlanSelector
     },
     {
@@ -52,12 +57,8 @@ const Wizard = createReactClass({
       component: SpaceDetails
     }
   ],
-  componentWillMount: async function () {
-    const organization = await TokenStore.getOrganization(this.props.orgId);
-    this.setState({...this.state, data: {...this.state.data, organization}});
-  },
   render: function () {
-    const {cancel, confirm, onDimensionsChange} = this.props;
+    const {organization, cancel, confirm, onDimensionsChange} = this.props;
     const {currentStepId, isFormSubmitted, isSpaceCreated, isContentCreated, data} = this.state;
 
     if (isSpaceCreated) {
@@ -88,6 +89,16 @@ const Wizard = createReactClass({
         className: 'create-space-wizard__close modal-dialog__close',
         onClick: cancel
       });
+
+      const stepProps = {
+        ...data,
+        organization,
+        isFormSubmitted,
+        onDimensionsChange,
+        cancel,
+        submit: this.submitStep
+      };
+
       return h('div', {className: 'modal-dialog', style: {width: '750px'}},
         h('div', {className: 'modal-dialog__header', style: {padding: 0}},
           navigation,
@@ -100,13 +111,8 @@ const Wizard = createReactClass({
               key: `step-${id}`,
               className: `create-space-wizard__step ${isCurrent ? 'create-space-wizard__step--current' : ''}`
             },
-              isEnabled(data) && h(component, {
-                ...data,
-                isFormSubmitted,
-                onDimensionsChange,
-                cancel,
-                submit: this.submitStep
-              }));
+              isEnabled(stepProps) && h(component, stepProps)
+            );
           })
         )
       );
@@ -133,14 +139,14 @@ const Wizard = createReactClass({
     }
   },
   createSpace: async function () {
-    const {orgId, onSpaceCreated, onTemplateCreated} = this.props;
+    const {organization, onSpaceCreated, onTemplateCreated} = this.props;
     const spaceData = makeSpaceData(this.state.data);
     let newSpace;
 
     this.setState({...this.state, isFormSubmitted: true});
 
     try {
-      newSpace = await client.createSpace(spaceData, orgId);
+      newSpace = await client.createSpace(spaceData, organization.sys.id);
     } catch (error) {
       this.handleError(error);
     }
