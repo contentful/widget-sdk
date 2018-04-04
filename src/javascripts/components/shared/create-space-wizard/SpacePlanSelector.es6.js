@@ -5,6 +5,7 @@ import {get, kebabCase, isNumber} from 'lodash';
 import {createOrganizationEndpoint} from 'data/EndpointFactory';
 import {getSpaceRatePlans} from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
+import {canCreate} from 'utils/ResourceUtils';
 import {isOwner} from 'services/OrganizationRoles';
 import {go} from 'states/Navigator';
 import HelpIcon from 'ui/Components/HelpIcon';
@@ -25,10 +26,10 @@ const SpacePlanSelector = createReactClass({
   componentWillMount: async function () {
     const {organization} = this.props;
 
-    const spaceRatePlans = await getFormattedSpacePlans(organization);
-
     const resourceService = createResourceService(organization.sys.id, 'organization');
     const freeSpacesResource = await resourceService.get('free_space');
+
+    const spaceRatePlans = await getFormattedSpacePlans(organization, freeSpacesResource);
 
     this.setState({
       spaceRatePlans,
@@ -160,11 +161,11 @@ const BillingInfo = createReactClass({
 
 const RESOURCE_ORDER = ['Environments', 'Roles', 'Locales', 'Content types', 'Records'];
 
-async function getFormattedSpacePlans (organization) {
+async function getFormattedSpacePlans (organization, freeSpacesResource) {
   const endpoint = createOrganizationEndpoint(organization.sys.id);
-  let spaceRatePlans = await getSpaceRatePlans(endpoint);
+  const spaceRatePlans = await getSpaceRatePlans(endpoint);
 
-  spaceRatePlans = spaceRatePlans.map((plan) => {
+  return spaceRatePlans.map((plan) => {
     const isFree = (plan.productPlanType === 'free_space');
     const includedResources = plan.productRatePlanCharges
       .filter(({unitType, tiers}) => unitType === 'limit' && isNumber(get(tiers, '[0].endingUnit')))
@@ -175,23 +176,9 @@ async function getFormattedSpacePlans (organization) {
       ...plan,
       isFree,
       includedResources,
-      disabled: !isFree && !organization.isBillable
+      disabled: isFree ? !canCreate(freeSpacesResource) : !organization.isBillable
     };
   });
-
-  // If free space plan is not available, show it as disabled
-  if (!spaceRatePlans.find(({isFree}) => isFree)) {
-    spaceRatePlans = [{
-      sys: {id: 'free'},
-      name: 'Free',
-      price: 0,
-      isFree: true,
-      disabled: true,
-      includedResources: [] // TODO this should be fetched from backend
-    }, ...spaceRatePlans];
-  }
-
-  return spaceRatePlans;
 }
 
 export default SpacePlanSelector;
