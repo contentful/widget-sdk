@@ -39,7 +39,12 @@ export function shorten (number) {
 export function shortenStorageUnit (value, uom) {
   const units = ['PB', 'TB', 'GB', 'MB', 'KB', 'B'];
   const reduce = (number, counter = 0) => {
-    if (number <= 0) {
+    const currentUnitIndex = units.indexOf(uom) + counter;
+    if (
+      number <= 0 ||
+      currentUnitIndex === 0 ||
+      currentUnitIndex === units.length - 1
+    ) {
       return {number, counter};
     }
 
@@ -52,7 +57,8 @@ export function shortenStorageUnit (value, uom) {
     }
   };
   const {number, counter} = reduce(value);
-  const newUOM = units[units.indexOf(uom) + counter];
+  const newIndex = units.indexOf(uom) + counter;
+  const newUOM = units[newIndex];
 
   return `${formatFloat(number)} ${newUOM}`;
 }

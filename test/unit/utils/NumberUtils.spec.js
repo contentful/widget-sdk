@@ -77,5 +77,13 @@ describe('NumberUtils', function () {
       expect(shortenStorageUnit(1000, 'GB')).toEqual('1 TB');
       expect(shortenStorageUnit(25729, 'MB')).toEqual('25.73 GB');
     });
+
+    it('does not transform if there no bigger unit', function () {
+      expect(shortenStorageUnit(10000, 'PB')).toEqual('10000 PB');
+    });
+
+    it('does not transform if there is no smaller unit', function () {
+      expect(shortenStorageUnit(0.01, 'B')).toEqual('0.01 B');
+    });
   });
 });
