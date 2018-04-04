@@ -29,7 +29,7 @@ function renderCreateSpaceDialog () {
         `{{createSpace.isOnboarding ? "${headers.onboarding}" : "${headers.default}"}}`
       ]),
       h('p.create-new-space-dialog__subheading', [
-        'A space is a place where you keep all the content related to a single project.'
+        'A space is a place where you keep all the content related to a single project. <br> You are creating this space for the organization <em>{{createSpace.newSpace.organization.name}}</em>.'
       ]),
       renderCreateSpaceForm(),
       renderSpaceTemplates()
@@ -47,7 +47,6 @@ function renderCreateSpaceDialog () {
 function renderCreateSpaceForm () {
   return h('div.create-new-space__form', [
     h('div.create-new-space__fieldset', [
-      renderOrgSelect(),
       renderSpaceNameInput(),
       renderLanguageSelect(),
       renderRatePlanSelect()
@@ -58,24 +57,6 @@ function renderCreateSpaceForm () {
       h('div.cfnext-form__field-error', ['{{createSpace.newSpace.errors.form}}'])
     ]),
     renderTemplateToggle()
-  ]);
-}
-
-function renderOrgSelect () {
-  return h('div.cfnext-form__field', {
-    ngHide: 'createSpace.writableOrganizations.length === 1'
-  }, [
-    h('label', [
-      h('strong', ['Organization'])
-    ]),
-    h('select.cfnext-select-box', {
-      dataTestId: 'select-organization',
-      ngModel: 'createSpace.newSpace.organization',
-      ngOptions: 'opt as opt.name for opt in createSpace.writableOrganizations',
-      ngDisabled: 'createSpace.createSpaceInProgress',
-      ariaInvalid: '{{!!createSpace.newSpace.errors.fields.organization}}'
-    }),
-    renderErrorLabel('createSpace.newSpace.errors.fields.organization')
   ]);
 }
 

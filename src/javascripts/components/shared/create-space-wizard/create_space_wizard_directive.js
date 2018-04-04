@@ -13,7 +13,7 @@ angular.module('contentful')
       var host = el[0];
 
       ReactDOM.render(React.createElement(Wizard, {
-        orgId: $scope.organizationId,
+        organization: $scope.organization,
         cancel: function () { $scope.dialog.cancel(); },
         confirm: function () { $scope.dialog.confirm(); },
         onSpaceCreated: function (newSpace) {
