@@ -26,7 +26,7 @@ const TemplateSelector = createReactClass({
 
     return (
       <div>
-        <div className="cfnext-form__field create-new-space__form__radios">
+        <div className="cfnext-form__field create-new-space__form__radios create-space-wizard__centered-block">
           <div className="cfnext-form-option create-new-space__form__option">
             <input
               id="newspace-template-none"

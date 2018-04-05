@@ -9,14 +9,14 @@ import {asReact} from 'ui/Framework/DOMRenderer';
 const HelpIcon = createReactClass({
   propTypes: {
     children: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.element
+      PropTypes.arrayOf(PropTypes.node),
+      PropTypes.node
     ]).isRequired,
     tooltipWidth: PropTypes.number
   },
   render: function () {
-    const {children, tooltipWidth = {}} = this.props;
-    const questionMarkIcon = <span>
+    const {children, tooltipWidth} = this.props;
+    const questionMarkIcon = <span className="help-icon__img">
       {asReact(QuestionMarkIcon({color: colors.textLight}))}
     </span>;
 

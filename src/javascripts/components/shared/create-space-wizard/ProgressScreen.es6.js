@@ -38,30 +38,28 @@ const ProgressScreen = createReactClass({
 
     return (
       <div>
-        <div className="modal-dialog__content">
-          <div className="create-new-space__templates__status">
-            {!done && <div className="spinner" />}
-            {done && <div style={{transform: 'scale(2)'}}>
-              {asReact(CheckmarkIcon)}
-            </div>}
-          </div>
-          <h2 className="create-space-wizard-dialog__heading">
-            Hang on, we’re preparing your space
-          </h2>
-          <p className="create-new-space-dialog__subheading">
-            In the meantime, let us quickly explain the kind of things you’ll find in your space
-          </p>
-          <div className="create-new-space__templates__entities">
-            {infoItems.map(({icon, title, description}) => (
-              <div key={title} className="create-new-space__templates__entity">
-                <div>{asReact(icon)}</div>
-                <div className="create-new-space__templates__entity__description">
-                  <h3>{title}</h3>
-                  <p>{description}</p>
-                </div>
+        <div className="create-new-space__templates__status">
+          {!done && <div className="spinner" />}
+          {done && <div style={{transform: 'scale(2)'}}>
+            {asReact(CheckmarkIcon)}
+          </div>}
+        </div>
+        <h2 className="create-space-wizard__heading">
+          Hang on, we’re preparing your space
+        </h2>
+        <p className="create-space-wizard__subheading">
+          In the meantime, let us quickly explain the kind of things you’ll find in your space
+        </p>
+        <div className="create-new-space__templates__entities">
+          {infoItems.map(({icon, title, description}) => (
+            <div key={title} className="create-new-space__templates__entity">
+              <div>{asReact(icon)}</div>
+              <div className="create-new-space__templates__entity__description">
+                <h3>{title}</h3>
+                <p>{description}</p>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
         <div style={{textAlign: 'center'}}>
           <button
