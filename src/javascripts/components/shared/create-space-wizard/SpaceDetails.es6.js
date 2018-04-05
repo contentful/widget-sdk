@@ -22,7 +22,7 @@ const SpaceDetails = createReactClass({
   },
   componentWillReceiveProps: function ({serverValidationErrors}) {
     if (serverValidationErrors !== this.props.serverValidationErrors) {
-      this.setState({...this.state, validation: serverValidationErrors});
+      this.setState({validation: serverValidationErrors});
     }
   },
   render: function () {
@@ -74,16 +74,16 @@ const SpaceDetails = createReactClass({
     );
   },
   setName: function (name) {
-    const state = {...this.state, name, touched: true};
+    const state = {name, touched: true};
     state.validation = validateState(state);
     this.setState(state);
   },
   setTemplate: function (template) {
-    this.setState({...this.state, template, touched: true});
+    this.setState({template, touched: true});
   },
   submit: function () {
     const validation = validateState(this.state);
-    this.setState({...this.state, validation});
+    this.setState({validation});
 
     if (!Object.keys(validation).length) {
       const {name, template} = this.state;

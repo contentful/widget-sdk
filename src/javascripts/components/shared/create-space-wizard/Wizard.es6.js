@@ -119,7 +119,7 @@ const Wizard = createReactClass({
     }
   },
   navigate (stepId) {
-    return () => this.setState({...this.state, currentStepId: stepId});
+    return () => this.setState({currentStepId: stepId});
   },
   componentDidUpdate: function (_prevProps, prevState) {
     if (prevState.currentStepId !== this.state.currentStepId) {
@@ -129,7 +129,6 @@ const Wizard = createReactClass({
   submitStep: function (data) {
     const {currentStepId} = this.state;
     this.setState({
-      ...this.state,
       data: Object.assign(this.state.data, data),
       currentStepId: currentStepId + 1,
       serverValidationErrors: null
@@ -143,7 +142,7 @@ const Wizard = createReactClass({
     const spaceData = makeSpaceData(this.state.data);
     let newSpace;
 
-    this.setState({...this.state, isFormSubmitted: true});
+    this.setState({isFormSubmitted: true});
 
     try {
       newSpace = await client.createSpace(spaceData, organization.sys.id);
@@ -151,7 +150,7 @@ const Wizard = createReactClass({
       this.handleError(error);
     }
     if (newSpace) {
-      this.setState({...this.state, isSpaceCreated: true});
+      this.setState({isSpaceCreated: true});
 
       await TokenStore.refresh();
       onSpaceCreated(newSpace);
@@ -163,7 +162,7 @@ const Wizard = createReactClass({
         onTemplateCreated();
       }
 
-      this.setState({...this.state, isContentCreated: true});
+      this.setState({isContentCreated: true});
     }
   },
   handleError: function (error) {
@@ -171,7 +170,7 @@ const Wizard = createReactClass({
 
     const serverValidationErrors = getFieldErrors(error);
     if (Object.keys(serverValidationErrors).length) {
-      this.setState({...this.state, serverValidationErrors, currentStepId: 1});
+      this.setState({serverValidationErrors, currentStepId: 1});
     } else {
       notification.error('Could not create Space. If the problem persists please get in contact with us.');
       this.props.cancel();

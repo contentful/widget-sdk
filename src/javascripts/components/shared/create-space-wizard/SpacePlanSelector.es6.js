@@ -65,7 +65,7 @@ const SpacePlanSelector = createReactClass({
     );
   },
   selectPlan: function (selectedPlan) {
-    this.setState({...this.state, selectedPlan});
+    this.setState({selectedPlan});
 
     if (selectedPlan) {
       this.props.submit({spaceRatePlan: selectedPlan});
