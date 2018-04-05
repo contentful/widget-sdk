@@ -1,8 +1,8 @@
-import {createElement as h, Fragment} from 'react';
-import React from 'react';
+import React, {createElement as h, Fragment} from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import {runTask} from 'utils/Concurrent';
+import createResourceService from 'services/ResourceService';
 import {createOrganizationEndpoint} from 'data/EndpointFactory';
 import {getPlansWithSpaces, calculateTotalPrice} from 'account/pricing/PricingDataProvider';
 import * as Intercom from 'intercom';
@@ -36,7 +36,8 @@ const SubscriptionOverview = createReactClass({
       organization: {},
       basePlan: {},
       spacePlans: [],
-      grandTotal: 0
+      grandTotal: 0,
+      usersMeta: {}
     };
   },
   componentWillMount: function () {
@@ -45,7 +46,9 @@ const SubscriptionOverview = createReactClass({
   fetchData: function* () {
     const {orgId, onReady, onForbidden} = this.props;
 
+    const resources = createResourceService(orgId, 'organization');
     const organization = yield getOrganization(orgId);
+
     if (!isOwnerOrAdmin(organization)) {
       onForbidden();
       return;
@@ -54,6 +57,10 @@ const SubscriptionOverview = createReactClass({
     const endpoint = createOrganizationEndpoint(orgId);
     const plans = yield getPlansWithSpaces(endpoint).catch(ReloadNotification.apiErrorHandler);
     const accessibleSpaces = yield getSpaces(); // spaces that current user has access to
+
+    if (!plans) {
+      return;
+    }
 
     onReady();
 
@@ -72,10 +79,18 @@ const SubscriptionOverview = createReactClass({
         return plan;
       });
 
-    // TODO add user fees
-    const grandTotal = calculateTotalPrice(plans.items);
+    const membershipsResource = yield resources.get('organization_membership');
+    const numMemberships = membershipsResource.usage;
 
-    this.setState({basePlan, spacePlans, grandTotal, organization});
+    const grandTotal = calculateTotalPrice({
+      allPlans: plans.items,
+      basePlan,
+      numMemberships
+    });
+
+    const usersMeta = calcUsersMeta({ basePlan, numMemberships });
+
+    this.setState({basePlan, spacePlans, grandTotal, usersMeta, organization});
   },
   createSpace: function () {
     showCreateSpaceModal(this.props.orgId);
@@ -95,7 +110,7 @@ const SubscriptionOverview = createReactClass({
     }
   },
   render: function () {
-    const {basePlan, spacePlans, grandTotal, organization} = this.state;
+    const {basePlan, spacePlans, grandTotal, usersMeta, organization} = this.state;
     const {orgId} = this.props;
 
     return h(Workbench, {
@@ -109,7 +124,7 @@ const SubscriptionOverview = createReactClass({
           className: 'header'
         },
           h(BasePlan, {basePlan}),
-          h(UsersForPlan, {basePlan}),
+          h(UsersForPlan, { usersMeta })
         ),
           h(SpacePlans, {
             spacePlans,
@@ -129,19 +144,25 @@ const SubscriptionOverview = createReactClass({
   }
 });
 
-function UsersForPlan ({basePlan}) {
+function UsersForPlan ({ usersMeta }) { // eslint-disable-line
+  const { numFreeUsers, numPaidUsers, cost } = usersMeta;
+  const numTotalUsers = numFreeUsers + numPaidUsers;
+
   return <div className='users'>
     <h2 className='section-title'>Users</h2>
     <p>
-      Testing
+      Your organization has <b>{numTotalUsers} users</b>.
+      { numPaidUsers > 0 &&
+        <span>&#32;You are exceeding the limit of {numFreeUsers} free users by {numPaidUsers} users. That is <b>${cost}</b> per month.</span>
+      }
     </p>
   </div>;
 }
 
-function BasePlan ({basePlan}) {
+function BasePlan ({basePlan}) { // eslint-disable-line
   const enabledFeaturesNames = getEnabledFeatures(basePlan).map(({name}) => name);
 
-  return <div className='platform'}>
+  return <div className='platform'>
     <h2 className='section-title'>Platform</h2>
     <p data-test-id='subscription-page.base-plan-details'>
       <b>
@@ -173,7 +194,7 @@ function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
       )
     );
   } else {
-    const spacesTotal = calculateTotalPrice(spacePlans);
+    const spacesTotal = calculatePlansCost({ plans: spacePlans });
 
     return h('div', null,
       h('h2', {
@@ -388,6 +409,71 @@ function Price ({value = 0, currency = '$', unit = null, style = null}) {
   const valueStr = parseInt(value, 10).toLocaleString('en-US');
   const unitStr = unit && ` /${unit}`;
   return h('span', {style}, [currency, valueStr, unitStr].join(''));
+}
+
+function calculateTotalPrice ({ allPlans, basePlan, numMemberships }) {
+  const plansCost = calculatePlansCost({ plans: allPlans });
+  const usersCost = calculateUsersCost({ basePlan, numMemberships });
+
+  return plansCost + usersCost;
+}
+
+function calculatePlansCost ({ plans }) {
+  return plans.reduce(
+    (total, plan) => total + (parseInt(plan.price, 10) || 0),
+    0
+  );
+}
+
+function getUsersTiers (basePlan) {
+  // shortform of Base rate plan charges
+  const baseRPCs = basePlan.ratePlanCharges;
+  const usersRPC = baseRPCs.find(rpc => rpc.name === 'Users');
+  const tiers = usersRPC.tiers;
+
+  return tiers;
+}
+
+function calculateUsersCost ({ basePlan, numMemberships }) {
+  const tiers = getUsersTiers(basePlan);
+
+  return tiers.reduce((memo, tier) => {
+    const { startingUnit, endingUnit, price, priceFormat } = tier;
+
+    // The free tier currently has a startingUnit of 0, but the other tiers have a
+    // non-zero based startingUnit (e.g. 11).
+    const normalizedStartingUnit = startingUnit > 0 ? startingUnit - 1 : startingUnit;
+
+    if (endingUnit && numMemberships > endingUnit) {
+      if (priceFormat === 'FlatFee') {
+        return memo + price;
+      } else {
+        return memo + price * (endingUnit - normalizedStartingUnit);
+      }
+    } else if (numMemberships >= startingUnit) {
+      if (priceFormat === 'FlatFee') {
+        return memo + price;
+      } else {
+        return memo + price * (numMemberships - normalizedStartingUnit);
+      }
+    } else {
+      return memo;
+    }
+  }, 0);
+}
+
+function calcUsersMeta ({ basePlan, numMemberships }) {
+  const tiers = getUsersTiers(basePlan);
+
+  // Should only be one free tier
+  // We can currently assume that the free tier is first in precendence
+  const freeTier = tiers.find(tier => tier.price === 0);
+  const freeTierUsers = freeTier.endingUnit - freeTier.startingUnit;
+  const numFreeUsers = numMemberships > freeTierUsers ? freeTierUsers : numMemberships;
+  const numPaidUsers = numMemberships > freeTierUsers ? (numMemberships - freeTierUsers) : 0;
+  const cost = calculateUsersCost({ basePlan, numMemberships });
+
+  return { numFreeUsers, numPaidUsers, cost };
 }
 
 function getEnabledFeatures ({ratePlanCharges = []}) {
