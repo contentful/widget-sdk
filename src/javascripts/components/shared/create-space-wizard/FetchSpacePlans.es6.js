@@ -9,12 +9,14 @@ import {get, isNumber} from 'lodash';
 const FetchSpacePlans = createReactClass({
   propTypes: {
     organization: PropTypes.object.isRequired,
-    render: PropTypes.func.isRequired
+    renderProgress: PropTypes.func.isRequired,
+    renderData: PropTypes.func.isRequired
   },
   getInitialState () {
     return {
       spaceRatePlans: [],
-      freeSpacesResource: {limits: {}}
+      freeSpacesResource: {limits: {}},
+      isLoading: true
     };
   },
   componentDidMount () {
@@ -26,7 +28,8 @@ const FetchSpacePlans = createReactClass({
     }
   },
   render () {
-    return this.props.render(this.state);
+    const {renderProgress, renderData} = this.props;
+    return this.state.isLoading ? renderProgress() : renderData(this.state);
   },
   async fetch ({organization}) {
     const resourceService = createResourceService(organization.sys.id, 'organization');
@@ -43,7 +46,7 @@ const FetchSpacePlans = createReactClass({
       return {...plan, isFree, includedResources, disabled};
     });
 
-    this.setState({spaceRatePlans, freeSpacesResource});
+    this.setState({spaceRatePlans, freeSpacesResource, isLoading: false});
   }
 });
 

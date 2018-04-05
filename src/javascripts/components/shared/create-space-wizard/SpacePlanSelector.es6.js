@@ -7,6 +7,8 @@ import {get, kebabCase} from 'lodash';
 import {isOwner} from 'services/OrganizationRoles';
 import {go} from 'states/Navigator';
 import HelpIcon from 'ui/Components/HelpIcon';
+import spinner from 'ui/Components/Spinner';
+import {asReact} from 'ui/Framework/DOMRenderer';
 
 const SpacePlanSelector = createReactClass({
   propTypes: {
@@ -24,7 +26,10 @@ const SpacePlanSelector = createReactClass({
 
     return <FetchSpacePlans
       organization={organization}
-      render={({spaceRatePlans, freeSpacesResource}) => {
+      renderProgress={() => <div className="loader__container">
+        {asReact(spinner({diameter: '40px'}))}
+      </div>}
+      renderData={({spaceRatePlans, freeSpacesResource}) => {
         setTimeout(onDimensionsChange, 0); // reposition dialog after dom is updated
 
         return (
