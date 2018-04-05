@@ -89,7 +89,7 @@ cf-loader(watch-state-change="true")
       p
         | This role can't be customized because your plan does not include custom roles.
       +custom-roles-plan-info(legacy, accountUpgradeState)
-    .entity-sidebar(ng-if="canModifyRoles")
+    .entity-sidebar(ng-if="hasCustomRolesFeature && canModifyRoles")
       .entity-sidebar__state-select
         .btn-action-select
           button.btn-action-select__action(type="button" ui-command="save")
