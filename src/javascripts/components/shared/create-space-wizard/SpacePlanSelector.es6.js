@@ -1,6 +1,7 @@
 import React from 'libs/react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
+import classnames from 'classnames';
 import {get, kebabCase, isNumber} from 'lodash';
 import {createOrganizationEndpoint} from 'data/EndpointFactory';
 import {getSpaceRatePlans} from 'account/pricing/PricingDataProvider';
@@ -93,15 +94,18 @@ const SpacePlanItem = createReactClass({
   },
   render: function () {
     const {plan, isSelected, freeSpacesLimit, freeSpacesUsage, onSelect} = this.props;
-    const classNames = ['space-plans-list__item'];
-    classNames.push(`space-plans-list__item--${kebabCase(plan.name)}`);
-    if (isSelected) { classNames.push('space-plans-list__item--selected'); }
-    if (plan.disabled) { classNames.push('space-plans-list__item--disabled'); }
 
     return (
       <div
         key={plan.sys.id}
-        className={classNames.join(' ')}
+        className={classnames(
+          'space-plans-list__item',
+          `space-plans-list__item--${kebabCase(plan.name)}`,
+          {
+            'space-plans-list__item--selected': isSelected,
+            'space-plans-list__item--disabled': plan.disabled
+          }
+        )}
         onClick={() => !plan.disabled && onSelect(plan)}>
 
         <div className="space-plans-list__item__heading">

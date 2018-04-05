@@ -1,6 +1,7 @@
 import React from 'libs/react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
+import classnames from 'classnames';
 import SpacePlanSelector from './SpacePlanSelector';
 import SpaceDetails from './SpaceDetails';
 import ProgressScreen from './ProgressScreen';
@@ -103,12 +104,12 @@ const Wizard = createReactClass({
           <div className="modal-dialog__content">
             {this.steps.map(({isEnabled, component}, id) => {
               const isCurrent = (id === currentStepId);
-              const classNames = ['create-space-wizard__step'];
-              if (isCurrent) { classNames.push('create-space-wizard__step--current'); }
               return (
                 <div
                   key={id}
-                  className={classNames.join(' ')}>
+                  className={classnames('create-space-wizard__step', {
+                    'create-space-wizard__step--current': isCurrent
+                  })}>
                   {isEnabled(stepProps) && React.createElement(component, stepProps)}
                 </div>
               );

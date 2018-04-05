@@ -44,6 +44,7 @@ window.libs = [
   ['libs/enzyme-adapter-react-16', require('enzyme-adapter-react-16')],
   ['libs/downshift', require('downshift')],
   ['create-react-class', require('create-react-class')],
+  ['classnames', require('classnames')],
   ['libs/codemirror', require('codemirror')],
   ['libs/marked', require('marked-ast')._marked],
   ['libs/MarkedAst', require('marked-ast')],
