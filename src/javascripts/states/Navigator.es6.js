@@ -49,6 +49,11 @@ export function go (state) {
  * @returns {string}
  */
 export function href (state) {
+  if (!state) {
+    state = {
+      path: []
+    };
+  }
   return $state.href(state.path.join('.'), state.params);
 }
 
