@@ -1,32 +1,29 @@
 import React from 'libs/react';
 import PropTypes from 'libs/prop-types';
 
-import {highlightedResources, resourcesByPriority} from './SpaceUsageConfig';
+import {keyBy, property} from 'lodash';
 import {ResourceUsageHighlight, ResourceUsage} from './ResourceUsage';
 
 const ResourceUsageList = ({resources}) => {
-  const findById = id => resources.find(item => item.sys.id === id);
+  if (!resources.length) return null;
 
-  if (!resources || !resources.length) return null;
+  const byId = keyBy(resources, property('sys.id'));
 
   return (
     <div className="resource-list">
       <section className="resource-list__highlights">
-        {highlightedResources.map(item =>
-          <ResourceUsageHighlight
-            key={item.id}
-            resource={findById(item.id)}
-            {...item}
-          />
-        )}
+        <ResourceUsageHighlight resource={byId['entry']} />
+        <ResourceUsageHighlight resource={byId['asset']} />
+        <ResourceUsageHighlight resource={byId['space_membership']} />
+        <ResourceUsageHighlight resource={byId['environment']} />
       </section>
-      {resourcesByPriority.map(item =>
-        <ResourceUsage
-          key={item.id}
-          resource={findById(item.id)}
-          {...item}
-        />
-      )}
+
+      <ResourceUsage resource={byId['content_type']} />
+      <ResourceUsage resource={byId['locale']} />
+      <ResourceUsage resource={byId['role']} />
+      <ResourceUsage resource={byId['record']} description="Entries + Media" />
+      <ResourceUsage resource={byId['api_key']} />
+      <ResourceUsage resource={byId['webhook_definition']} />
     </div>
   );
 };

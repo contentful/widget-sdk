@@ -4,21 +4,23 @@ import $q from '$q';
 
 const flagName = 'feature-bv-2018-01-resources-api';
 
-const resourceHumanNameMap = {
+export const resourceHumanNameMap = {
   api_key: 'API Keys',
   asset: 'Assets',
   content_type: 'Content Types',
   entry: 'Entries',
   locale: 'Locales',
-  space_membership: 'Space Memberships',
+  space_membership: 'Users',
   role: 'Roles',
   space: 'Spaces',
   user: 'Users',
-  webhook_definition: 'Webhook Definitions',
+  webhook_definition: 'Webhooks',
   asset_bandwidth: 'Asset Bandwidth',
-  organization_membership: 'Organization Memberships',
+  organization_membership: 'Users',
   environment: 'Environments',
-  record: 'Records'
+  record: 'Records',
+  api_request: 'API Requests',
+  free_space: 'Free Spaces'
 };
 
 export const canCreate = resource => !resourceMaximumLimitReached(resource);
