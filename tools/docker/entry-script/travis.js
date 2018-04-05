@@ -20,6 +20,8 @@ const configureAndWriteIndex = require('../../lib/index-configure');
  *
  */
 module.exports = function* runTravis ({branch, pr, version}) {
+  console.log(`TRAVIS_BRANCH: ${branch}, TRAVIS_COMMIT: ${version}, TRAVIS_PULL_REQUEST: ${pr}`);
+
   // If `pr` is not 'false' this is the `travis-ci/pr` job. Since we don’t
   // deploy anything for this job we skip the build.
   //
@@ -29,11 +31,11 @@ module.exports = function* runTravis ({branch, pr, version}) {
   // [1] https://docs.travis-ci.com/user/deployment/#Pull-Requests
   if (pr !== 'false') {
     console.log('This is a pull request build. Skipping building distribution');
+    return;
   }
 
   // If `pr` is 'false, it's the `travis-ci/push` job. We deploy for
   // this job so we build the app.
-  console.log(`TRAVIS_BRANCH: ${branch}, TRAVIS_COMMIT: ${version}`);
 
   // Supported environments
   const ENV = {
@@ -51,7 +53,6 @@ module.exports = function* runTravis ({branch, pr, version}) {
   yield* createFileDist(ENV.preview, version, branch, { includeStyleguide: true });
   yield* createFileDist(ENV.staging, version, branch);
   yield* createFileDist(ENV.production, version, branch);
-  yield* createFileDist(ENV.development, version, branch);
 
   // Do the next bit only for production, master and preview branches
   if (branch in BRANCH_ENV_MAP) {
@@ -72,7 +73,7 @@ module.exports = function* runTravis ({branch, pr, version}) {
  * This method generates the root index.html and revision.json files
  * for given environment and user_interface commit hash (version)
  *
- * @param env {string} env - Target environment. One of production, staging, preview, development
+ * @param env {string} env - Target environment. One of production, staging, preview
  * @param version {string} version - Git commit hash of the commit that's being built
  */
 function* createIndexAndRevision (env, version) {
