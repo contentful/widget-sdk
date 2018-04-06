@@ -19,6 +19,7 @@ import $location from '$location';
 import Workbench from 'app/WorkbenchReact';
 import Tooltip from 'ui/Components/Tooltip';
 import HelpIcon from 'ui/Components/HelpIcon';
+import pluralize from 'pluralize';
 import {joinAnd} from 'stringUtils';
 import {byName as colors} from 'Styles/Colors';
 import BubbleIcon from 'svg/bubble';
@@ -144,6 +145,12 @@ const SubscriptionOverview = createReactClass({
   }
 });
 
+function Pluralized ({ text, count }) {
+  const pluralizedText = pluralize(text, count, true);
+
+  return <span>{pluralizedText}</span>;
+}
+
 function UsersForPlan ({ usersMeta }) { // eslint-disable-line
   const { numFreeUsers, numPaidUsers, cost } = usersMeta;
   const numTotalUsers = numFreeUsers + numPaidUsers;
@@ -151,9 +158,9 @@ function UsersForPlan ({ usersMeta }) { // eslint-disable-line
   return <div className='users'>
     <h2 className='section-title'>Users</h2>
     <p>
-      Your organization has <b>{numTotalUsers} users</b>.
+      Your organization has <b><Pluralized text="user" count={numTotalUsers} /></b>.
       { numPaidUsers > 0 &&
-        <span>&#32;You are exceeding the limit of {numFreeUsers} free users by {numPaidUsers} users. That is <b>${cost}</b> per month.</span>
+        <span>&#32;You are exceeding the limit of <Pluralized text="free user" count={numFreeUsers} /> by <Pluralized text="user" count={numPaidUsers} />. That is <b>${cost}</b> per month.</span>
       }
     </p>
   </div>;
