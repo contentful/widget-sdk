@@ -5,17 +5,7 @@ import {getSpaceRatePlans} from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import {canCreate} from 'utils/ResourceUtils';
 import {get, isNumber} from 'lodash';
-import {makeSum} from 'libs/sum-types';
-
-
-// TODO: extract common functionality with
-// app/entity_editor/Components/FetchLinksToEntity
-
-export const RequestState = makeSum({
-  Pending: [],
-  Success: [],
-  Error: ['error']
-});
+import RequestState from 'utils/RequestState';
 
 const FetchSpacePlans = createReactClass({
   propTypes: {

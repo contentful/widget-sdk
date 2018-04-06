@@ -2,13 +2,14 @@ import React from 'libs/react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import classnames from 'classnames';
-import {default as FetchSpacePlans, RequestState} from './FetchSpacePlans';
+import FetchSpacePlans from './FetchSpacePlans';
 import {get, kebabCase} from 'lodash';
 import {isOwner} from 'services/OrganizationRoles';
 import {go} from 'states/Navigator';
 import HelpIcon from 'ui/Components/HelpIcon';
 import spinner from 'ui/Components/Spinner';
 import {asReact} from 'ui/Framework/DOMRenderer';
+import RequestState from 'utils/RequestState';
 import {caseof} from 'libs/sum-types';
 
 const SpacePlanSelector = createReactClass({
