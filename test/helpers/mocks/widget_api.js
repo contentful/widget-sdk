@@ -55,7 +55,9 @@ angular.module('contentful/mocks')
       },
       fieldProperties: fieldProperties,
       field: {
-        onValueChanged: sinon.stub().returns(_.noop).yields(undefined),
+        onValueChanged: sinon.spy(function (cb) {
+          return K.onValue(fieldProperties.value$, cb);
+        }),
         onIsDisabledChanged: function (cb) {
           return K.onValue(fieldProperties.isDisabled$, cb);
         },
@@ -65,10 +67,11 @@ angular.module('contentful/mocks')
         setInvalid: sinon.spy(function (isInvalid) {
           state.isInvalid = isInvalid;
         }),
-        getValue: sinon.stub(),
+        getValue: sinon.spy(function () {
+          return K.getValue(fieldProperties.value$);
+        }),
         setValue: sinon.spy(function (value) {
           fieldProperties.value$.set(value);
-          this.getValue.returns(value);
           return $q.resolve();
         }),
         removeValue: sinon.stub(),

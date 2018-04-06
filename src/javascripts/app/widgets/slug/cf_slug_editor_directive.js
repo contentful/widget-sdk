@@ -29,7 +29,7 @@ angular.module('contentful')
   var moment = require('moment');
   var debounce = require('debounce');
   var InputUpdater = require('ui/inputUpdater');
-  var accessChecker = require('access_control/AccessChecker');
+  var K = require('utils/kefir');
 
   return {
     restrict: 'E',
@@ -63,8 +63,27 @@ angular.module('contentful')
 
       var debouncedPerformDuplicityCheck = debounce(performDuplicityCheck, 500);
 
+      var disabledBus = K.createStreamBus();
+      var titleBus = K.createStreamBus();
+
+      // we need to update slug values from title only after
+      // field becomes not disabled (sharejs connected)
+      var titleUpdate$ = K.combine([disabledBus.stream, titleBus.stream])
+        .filter(function filterDisabled (values) {
+          var disabled = values[0];
+          return disabled === false;
+        });
+
+      K.onValueScope(scope, titleUpdate$, function (values) {
+        var title = values[1];
+        var val = makeSlug(title);
+        updateInput(val);
+        field.setValue(val);
+      });
+
       var detachOnFieldDisabledHandler = field.onIsDisabledChanged(function (disabledStatus) {
         scope.isDisabled = disabledStatus;
+        disabledBus.emit(disabledStatus);
       });
 
       var offSchemaErrorsChanged = field.onSchemaErrorsChanged(function (errors) {
@@ -88,8 +107,7 @@ angular.module('contentful')
 
         if (field.locale !== locales.default) {
           var detachDefaultLocaleTitleChangeHandler = titleField.onValueChanged(locales.default, function (titleValue) {
-            var canEditField = accessChecker.canEditFieldLocale(contentType.sys.id, field.id, field.locale);
-            if (!titleField.getValue(field.locale) && canEditField) {
+            if (!titleField.getValue(field.locale)) {
               setTitle(titleValue);
             }
           });
@@ -99,9 +117,7 @@ angular.module('contentful')
 
       function setTitle (title) {
         if (isTracking()) {
-          var val = makeSlug(title);
-          updateInput(val);
-          field.setValue(val);
+          titleBus.emit(title);
         }
         trackingTitle = title;
       }
@@ -133,7 +149,9 @@ angular.module('contentful')
         return $inputEl.val();
       }, function (val) {
         updateStateFromSlug(val);
-        field.setValue(val);
+        if (!scope.isDisabled) {
+          field.setValue(val);
+        }
       });
 
       $inputEl.on('input change', debounce(function () {
