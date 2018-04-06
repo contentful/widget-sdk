@@ -4,8 +4,11 @@ import PropTypes from 'libs/prop-types';
 
 const Tooltip = createReactClass({
   propTypes: {
-    element: PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
-    tooltip: PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
+    element: PropTypes.node.isRequired,
+    tooltip: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.node),
+      PropTypes.node
+    ]).isRequired,
     style: PropTypes.object,
     className: PropTypes.string,
     options: PropTypes.shape({

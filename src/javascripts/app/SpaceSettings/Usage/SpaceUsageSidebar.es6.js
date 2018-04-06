@@ -4,20 +4,16 @@ import PropTypes from 'libs/prop-types';
 
 import * as Intercom from 'intercom';
 import {byName as colors} from 'Styles/Colors';
-import {highlightedResources, resourcesByPriority} from './SpaceUsageConfig';
 
 import Icon from 'ui/Components/Icon';
-import {resourceMaximumLimitReached} from 'utils/ResourceUtils';
+import {resourceMaximumLimitReached, resourceHumanNameMap} from 'utils/ResourceUtils';
 import {supportUrl} from 'Config';
 
+// Return a list with the names of the resources that reached the limit
 const getLimitsReachedResources = (resources) => {
   return resources
     .filter(resourceMaximumLimitReached)
-    .map(resource => {
-      return [...highlightedResources, ...resourcesByPriority]
-        .find(item => item.id === resource.sys.id)
-        .name;
-    });
+    .map(resource => resourceHumanNameMap[resource.sys.id]);
 };
 
 const SpaceUsageSidebar = createReactClass({

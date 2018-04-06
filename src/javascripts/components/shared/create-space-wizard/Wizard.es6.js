@@ -1,6 +1,7 @@
 import React from 'libs/react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
+import classnames from 'classnames';
 import SpacePlanSelector from './SpacePlanSelector';
 import SpaceDetails from './SpaceDetails';
 import ProgressScreen from './ProgressScreen';
@@ -47,12 +48,12 @@ const Wizard = createReactClass({
   },
   steps: [
     {
-      label: 'Space type',
+      label: '1. Space type',
       isEnabled: () => true,
       component: SpacePlanSelector
     },
     {
-      label: 'Space details',
+      label: '2. Space details',
       isEnabled: (data) => !!data.spaceRatePlan,
       component: SpaceDetails
     }
@@ -95,20 +96,20 @@ const Wizard = createReactClass({
       };
 
       return (
-        <div className="modal-dialog" style={{width: '750px'}}>
-          <div className="modal-dialog__header" style={{padding: 0}}>
+        <div className="modal-dialog create-space-wizard" style={{width: '750px'}}>
+          <div className="modal-dialog__header create-space-wizard__navigation" style={{padding: 0}}>
             {navigation}
             {closeButton}
           </div>
           <div className="modal-dialog__content">
             {this.steps.map(({isEnabled, component}, id) => {
               const isCurrent = (id === currentStepId);
-              const classNames = ['create-space-wizard__step'];
-              if (isCurrent) { classNames.push('create-space-wizard__step--current'); }
               return (
                 <div
                   key={id}
-                  className={classNames.join(' ')}>
+                  className={classnames('create-space-wizard__step', {
+                    'create-space-wizard__step--current': isCurrent
+                  })}>
                   {isEnabled(stepProps) && React.createElement(component, stepProps)}
                 </div>
               );
@@ -119,7 +120,7 @@ const Wizard = createReactClass({
     }
   },
   navigate (stepId) {
-    return () => this.setState({...this.state, currentStepId: stepId});
+    return () => this.setState({currentStepId: stepId});
   },
   componentDidUpdate: function (_prevProps, prevState) {
     if (prevState.currentStepId !== this.state.currentStepId) {
@@ -129,7 +130,6 @@ const Wizard = createReactClass({
   submitStep: function (data) {
     const {currentStepId} = this.state;
     this.setState({
-      ...this.state,
       data: Object.assign(this.state.data, data),
       currentStepId: currentStepId + 1,
       serverValidationErrors: null
@@ -143,7 +143,7 @@ const Wizard = createReactClass({
     const spaceData = makeSpaceData(this.state.data);
     let newSpace;
 
-    this.setState({...this.state, isFormSubmitted: true});
+    this.setState({isFormSubmitted: true});
 
     try {
       newSpace = await client.createSpace(spaceData, organization.sys.id);
@@ -151,7 +151,7 @@ const Wizard = createReactClass({
       this.handleError(error);
     }
     if (newSpace) {
-      this.setState({...this.state, isSpaceCreated: true});
+      this.setState({isSpaceCreated: true});
 
       await TokenStore.refresh();
       onSpaceCreated(newSpace);
@@ -163,7 +163,7 @@ const Wizard = createReactClass({
         onTemplateCreated();
       }
 
-      this.setState({...this.state, isContentCreated: true});
+      this.setState({isContentCreated: true});
     }
   },
   handleError: function (error) {
@@ -171,7 +171,7 @@ const Wizard = createReactClass({
 
     const serverValidationErrors = getFieldErrors(error);
     if (Object.keys(serverValidationErrors).length) {
-      this.setState({...this.state, serverValidationErrors, currentStepId: 1});
+      this.setState({serverValidationErrors, currentStepId: 1});
     } else {
       notification.error('Could not create Space. If the problem persists please get in contact with us.');
       this.props.cancel();

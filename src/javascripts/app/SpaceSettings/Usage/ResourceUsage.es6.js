@@ -1,94 +1,80 @@
 import React from 'libs/react';
 import PropTypes from 'libs/prop-types';
 import {ProgressBar} from './ProgressBar';
-import ContextMenu from 'ui/Components/ContextMenu';
-import Icon from 'ui/Components/Icon';
-import {go} from 'states/Navigator';
+import {getResourceLimits, resourceIncludedLimitReached, resourceHumanNameMap} from 'utils/ResourceUtils';
+import {shorten, shortenStorageUnit} from 'utils/NumberUtils';
 
-const iconsMap = {
-  api_key: 'page-apis',
-  space_membership: 'page-settings',
-  content_type: 'page-ct',
-  entry: 'page-content',
-  asset: 'page-media',
-  role: 'page-settings',
-  locale: 'page-settings',
-  webhook_definition: 'page-settings',
-  environment: 'page-settings'
-};
+export const ResourceUsage = ({
+  resource,
+  description,
+  shortenIncluded
+}) => {
+  const {usage, unitOfMeasure} = resource;
+  const limits = getResourceLimits(resource);
 
-const getIcon = (id) => {
-  return iconsMap[id] || 'page-settings';
-};
+  // (1000) => "1 GB"
+  // (1000, true) => "1k"
+  // (1000) => "1,000"
+  const toResourceFormat = (value, abbreviate) => {
+    return unitOfMeasure
+      ? shortenStorageUnit(value, unitOfMeasure)
+      : abbreviate
+        ? shorten(value, true)
+        : value.toLocaleString('en-US');
+  };
 
-export const ResourceUsage = ({resource, name, description, path}) => {
-  const menuItems = [];
-  path && menuItems.push({
-    label: 'Go to page',
-    action: () => go({path})
-  });
+  // do not render if maximum is zero (i.e. roles in free spaces)
+  if (limits.maximum === 0) {
+    return null;
+  }
 
   return (
     <div className="resource-list__item">
       <div className="resource-list__item__content">
         <div className="resource-list__item__column">
-          <Icon
-            className="resource-list__item__icon"
-            name={getIcon(resource.sys.id)}
-            scale={0.5}
-            />
           <h3 className="resource-list__item__title">
-            {name}
+            {resourceHumanNameMap[resource.sys.id]}
             {description && <small className="resource-list__item__description"> {description}</small>}
           </h3>
         </div>
 
         <span className="resource-list__item__usage">
-          {resource.usage}
-          {resource.limits.maximum && ` out of ${resource.limits.maximum}`}
+          {toResourceFormat(usage)}
+          {limits.maximum
+            ? ` out of ${toResourceFormat(limits.maximum)}`
+            : limits.included
+              ? resourceIncludedLimitReached(resource)
+                ? ` (${toResourceFormat(limits.included)} free +
+                    ${toResourceFormat(usage - limits.included)} paid)`
+                : ` out of ${toResourceFormat(limits.included, shortenIncluded)} included`
+              : ''
+          }
         </span>
-        <ContextMenu items={menuItems} />
       </div>
-      {resource.limits.maximum &&
-        <ProgressBar current={resource.usage} maximum={resource.limits.maximum} />
+      {limits.maximum &&
+        <ProgressBar current={usage} maximum={limits.maximum} />
       }
     </div>
   );
 };
 ResourceUsage.propTypes = {
   resource: PropTypes.object.isRequired,
-  name: PropTypes.string.isRequired,
   description: PropTypes.string,
-  path: PropTypes.array
+  shortenIncluded: PropTypes.bool
 };
 
-export const ResourceUsageHighlight = ({resource, name, path}) => {
-  const menuItems = [];
-  path && menuItems.push({
-    label: 'Go to page',
-    action: () => go({path})
-  });
-
+export const ResourceUsageHighlight = ({resource}) => {
   return (
     <div className="resource-list__item resource-list__item--highlight">
       <div className="resource-list__item__content">
-        <Icon
-          className="resource-list__item__icon"
-          name={getIcon(resource.sys.id)}
-        />
         <div>
           <span className="resource-list__item__usage">{resource.usage}</span>
-          <span className="resource-list__item__title">{name}</span>
-        </div>
-        <div className="resource-list__item__menu">
-          <ContextMenu items={menuItems} />
+          <span className="resource-list__item__title">{resourceHumanNameMap[resource.sys.id]}</span>
         </div>
       </div>
     </div>
   );
 };
 ResourceUsageHighlight.propTypes = {
-  resource: PropTypes.object.isRequired,
-  name: PropTypes.string.isRequired,
-  path: PropTypes.array
+  resource: PropTypes.object.isRequired
 };

@@ -16,4 +16,5 @@ mixin custom-roles-plan-info(isLegacy, accountUpgradeState)
     p
       | To learn more about what's possible, check out&#32;
       | <a target="_blank" rel="noopener noreferrer" href="https://www.contentful.com/r/knowledgebase/roles-and-permissions/">our guide to Roles and Permissions</a> or
-      | <a cf-sref="accountUpgradeState">upgrade your space</a>.
+      | <a ng-if="canUpgrade" cf-sref="accountUpgradeState">upgrade your space.</a>
+      | <span ng-if="!canUpgrade">contact the admin of this space to upgrade the space.</span>
