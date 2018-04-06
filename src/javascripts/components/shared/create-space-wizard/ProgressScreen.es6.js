@@ -31,9 +31,10 @@ const infoItems = [
 const ProgressScreen = createReactClass({
   propTypes: {
     done: PropTypes.bool.isRequired,
-    confirm: PropTypes.func.isRequired
+    confirm: PropTypes.func.isRequired,
+    onDimensionsChange: PropTypes.func.isRequired
   },
-  render: function () {
+  render () {
     const {done, confirm} = this.props;
 
     return (
@@ -72,6 +73,9 @@ const ProgressScreen = createReactClass({
         </div>
       </div>
     );
+  },
+  componentDidMount () {
+    this.props.onDimensionsChange();
   }
 });
 

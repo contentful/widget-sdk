@@ -16,7 +16,7 @@ const SpacePlanSelector = createReactClass({
   propTypes: {
     organization: PropTypes.object.isRequired,
     submit: PropTypes.func.isRequired,
-    onDimensionsChange: PropTypes.func,
+    onDimensionsChange: PropTypes.func.isRequired,
     cancel: PropTypes.func.isRequired
   },
   getInitialState () {
@@ -65,6 +65,12 @@ const SpacePlanSelector = createReactClass({
         ]);
       }}
     </FetchSpacePlans>;
+  },
+  componentDidMount () {
+    this.props.onDimensionsChange();
+  },
+  componentDidUpdate () {
+    this.props.onDimensionsChange();
   },
   selectPlan (selectedPlan) {
     this.setState({selectedPlan});

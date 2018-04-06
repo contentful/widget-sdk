@@ -51,7 +51,9 @@ const TemplateSelector = createReactClass({
             <div>
               <TemplatesToggle
                 isShowingTemplates={isShowingTemplates}
-                onChange={(value) => this.selectTemplate(value && get(templates, '[0]'))}
+                onChange={(value) => {
+                  this.selectTemplate(value ? get(templates, '[0]') : null);
+                }}
               />
               <div className={templatesListClassName}>
                 <TemplatesList
@@ -71,13 +73,19 @@ const TemplateSelector = createReactClass({
       </FetchTemplates>
     );
   },
+  componentDidMount () {
+    this.props.onDimensionsChange();
+  },
+  componentDidUpdate (_prevProps, prevState) {
+    if (this.state.isShowingTemplates !== prevState.isShowingTemplates) {
+      // animation timeout
+      setTimeout(this.props.onDimensionsChange, 250);
+    }
+  },
   selectTemplate (selectedTemplate) {
     this.props.onSelect(selectedTemplate);
 
     const isShowingTemplates = !!selectedTemplate;
-    if (isShowingTemplates !== this.state.isShowingTemplates) {
-      setTimeout(this.props.onDimensionsChange, 250); // animation timeout
-    }
     this.setState({selectedTemplate, isShowingTemplates});
   }
 });
@@ -129,7 +137,7 @@ const TemplatesToggle = createReactClass({
 const TemplatesList = createReactClass({
   propTypes: {
     templates: PropTypes.array.isRequired,
-    selectedTemplate: PropTypes.object.isRequired,
+    selectedTemplate: PropTypes.object,
     onSelect: PropTypes.func.isRequired
   },
   render () {
