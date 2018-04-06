@@ -60,7 +60,14 @@ const Wizard = createReactClass({
   ],
   render () {
     const {organization, cancel, confirm, onDimensionsChange} = this.props;
-    const {currentStepId, isFormSubmitted, isSpaceCreated, isContentCreated, data} = this.state;
+    const {
+      currentStepId,
+      isFormSubmitted,
+      isSpaceCreated,
+      isContentCreated,
+      data,
+      serverValidationErrors
+    } = this.state;
 
     if (isSpaceCreated) {
       return (
@@ -94,6 +101,7 @@ const Wizard = createReactClass({
         ...data,
         organization,
         isFormSubmitted,
+        serverValidationErrors,
         onDimensionsChange,
         cancel,
         submit: this.submitStep
