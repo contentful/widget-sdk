@@ -11,11 +11,15 @@ import environmentIcon from 'svg/environment';
 import hamburger from 'svg/hamburger';
 
 import { navState$, NavStates } from 'navigation/NavState';
+import * as TokenStore from 'services/TokenStore';
 
 const Trigger = createReactClass({
   componentWillMount () {
     this.offNavState = navState$.onValue((navState) => {
       this.setState({ navState });
+    });
+    this.offOrganizations = TokenStore.organizations$.onValue((organizations) => {
+      this.setState({ showOrganization: organizations.length > 1 });
     });
   },
   componentWillUnmount () {
@@ -44,20 +48,20 @@ export default function () {
   return h(Trigger);
 }
 
-function renderContent ({ navState }) {
+function renderContent ({ navState, showOrganization }) {
   return caseof(navState, [
     [NavStates.Space, ({ space, env, org, availableEnvironments }) => {
       const showEnvironments =
         space.spaceMembership.admin &&
         availableEnvironments && availableEnvironments.length > 1;
       return [
-        organizationName(org.name),
+        showOrganization && organizationName(org.name),
         stateTitle(space.name),
         showEnvironments && environmentLabel(env)
       ];
     }],
     [NavStates.OrgSettings, ({ org }) => [
-      organizationName(org.name),
+      showOrganization && organizationName(org.name),
       stateTitle('Organization settings')
     ]],
     [NavStates.NewOrg, () => [ stateTitle('create new organization') ]],
