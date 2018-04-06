@@ -5,18 +5,29 @@ import {getSpaceRatePlans} from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import {canCreate} from 'utils/ResourceUtils';
 import {get, isNumber} from 'lodash';
+import {makeSum} from 'libs/sum-types';
+
+
+// TODO: extract common functionality with
+// app/entity_editor/Components/FetchLinksToEntity
+
+export const RequestState = makeSum({
+  Pending: [],
+  Success: [],
+  Error: ['error']
+});
 
 const FetchSpacePlans = createReactClass({
   propTypes: {
     organization: PropTypes.object.isRequired,
-    renderProgress: PropTypes.func.isRequired,
-    renderData: PropTypes.func.isRequired
+    // children is a rendering function
+    children: PropTypes.func.isRequired
   },
   getInitialState () {
     return {
       spaceRatePlans: [],
       freeSpacesResource: {limits: {}},
-      isLoading: true
+      requestState: RequestState.Pending()
     };
   },
   componentDidMount () {
@@ -28,25 +39,38 @@ const FetchSpacePlans = createReactClass({
     }
   },
   render () {
-    const {renderProgress, renderData} = this.props;
-    return this.state.isLoading ? renderProgress() : renderData(this.state);
+    return this.props.children(this.state);
   },
   async fetch ({organization}) {
-    const resourceService = createResourceService(organization.sys.id, 'organization');
-    const freeSpacesResource = await resourceService.get('free_space');
+    try {
+      const endpoint = createOrganizationEndpoint(organization.sys.id);
+      const resourceService = createResourceService(organization.sys.id, 'organization');
 
-    const endpoint = createOrganizationEndpoint(organization.sys.id);
-    const rawSpacePlans = await getSpaceRatePlans(endpoint);
+      const [freeSpacesResource, rawSpacePlans] = await Promise.all([
+        resourceService.get('free_space'),
+        getSpaceRatePlans(endpoint)
+      ]);
 
-    const spaceRatePlans = rawSpacePlans.map((plan) => {
-      const isFree = (plan.productPlanType === 'free_space');
-      const includedResources = getIncludedResources(plan.productRatePlanCharges);
-      const disabled = isFree ? !canCreate(freeSpacesResource) : !organization.isBillable;
+      const spaceRatePlans = rawSpacePlans.map((plan) => {
+        const isFree = (plan.productPlanType === 'free_space');
+        const includedResources = getIncludedResources(plan.productRatePlanCharges);
+        const disabled = isFree ? !canCreate(freeSpacesResource) : !organization.isBillable;
 
-      return {...plan, isFree, includedResources, disabled};
-    });
+        return {...plan, isFree, includedResources, disabled};
+      });
 
-    this.setState({spaceRatePlans, freeSpacesResource, isLoading: false});
+      this.setState({
+        spaceRatePlans,
+        freeSpacesResource,
+        requestState: RequestState.Success()
+      });
+    } catch (error) {
+      this.setState({
+        spaceRatePlans: [],
+        freeSpacesResource: {limits: {}},
+        requestState: RequestState.Error(error)
+      });
+    }
   }
 });
 
