@@ -19,7 +19,7 @@ describe('navigation/confirmLeaveEditor', function () {
     this.dialog.remove();
   });
 
-  pit('confirms leave when "Save" is clicked', function () {
+  it('confirms leave when "Save" is clicked', function () {
     const confirmation = this.confirm();
     this.$apply();
     this.dialog.find('button[ui-command="actions.save"]').click();
@@ -38,7 +38,7 @@ describe('navigation/confirmLeaveEditor', function () {
     sinon.assert.calledOnce(this.save);
   });
 
-  pit('saves and confirms leave when "Enter" is pressed', function () {
+  it('saves and confirms leave when "Enter" is pressed', function () {
     const confirmation = this.confirm();
     this.$apply();
     this.dialog.trigger(_.extend($.Event('keyup'), {
@@ -52,7 +52,7 @@ describe('navigation/confirmLeaveEditor', function () {
     });
   });
 
-  pit('cancels leave when save action is rejected', function () {
+  it('cancels leave when save action is rejected', function () {
     const confirmation = this.confirm();
     this.save.rejects('ERROR');
     this.$apply();
@@ -66,7 +66,7 @@ describe('navigation/confirmLeaveEditor', function () {
     });
   });
 
-  pit('confirms leave when "Discard" is clicked', function () {
+  it('confirms leave when "Discard" is clicked', function () {
     const confirmation = this.confirm();
     this.$apply();
     this.dialog.find('button[ui-command="actions.discard"]').click();
@@ -77,7 +77,7 @@ describe('navigation/confirmLeaveEditor', function () {
     });
   });
 
-  pit('cancels leave when "Cancel" icon is clicked', function () {
+  it('cancels leave when "Cancel" icon is clicked', function () {
     const confirmation = this.confirm();
     this.$apply();
     this.dialog.find('button[ui-command="actions.cancel"]').click();

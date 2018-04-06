@@ -46,13 +46,13 @@ describe('Client', function () {
       expect(this.call(1).data).toBe('TEST2');
     });
 
-    pit('resolves with response data', function () {
+    it('resolves with response data', function () {
       return this.client.request({path: ''}).then(function (res) {
         expect(res).toBe('RESPONSE DATA');
       });
     });
 
-    pit('rejects with status code, data and request for errors', function () {
+    it('rejects with status code, data and request for errors', function () {
       this.baseRequest.rejects({status: '777', data: 'OMG ERROR'});
 
       return this.client.request({path: 'error'}).then(_.noop, function (err) {

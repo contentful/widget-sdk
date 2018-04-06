@@ -216,7 +216,7 @@ describe('app/ContentModel/Editor/Actions', function () {
       scope.contentType.publish = sinon.stub().returns(this.when(scope.contentType));
     });
 
-    pit('resets form and state context to pristine state', function () {
+    it('resets form and state context to pristine state', function () {
       scope.context.dirty = true;
       return controller.save.execute()
       .then(function () {
@@ -225,7 +225,7 @@ describe('app/ContentModel/Editor/Actions', function () {
       });
     });
 
-    pit('saves and publishes content type', function () {
+    it('saves and publishes content type', function () {
       return controller.save.execute()
       .then(function () {
         const ct = scope.contentType;
@@ -234,7 +234,7 @@ describe('app/ContentModel/Editor/Actions', function () {
       });
     });
 
-    pit('saves editing interface', function () {
+    it('saves editing interface', function () {
       spaceContext.editingInterfaces.get = sinon.stub().resolves({
         sys: { version: 10 },
         controls: []
@@ -278,7 +278,7 @@ describe('app/ContentModel/Editor/Actions', function () {
         scope.validationResult = {errors: []};
       });
 
-      pit('does not save entities', function () {
+      it('does not save entities', function () {
         return controller.save.execute()
         .catch(function () {
           sinon.assert.notCalled(spaceContext.editingInterfaces.save);
@@ -286,7 +286,7 @@ describe('app/ContentModel/Editor/Actions', function () {
         });
       });
 
-      pit('shows error message', function () {
+      it('shows error message', function () {
         return controller.save.execute()
         .catch(function () {
           sinon.assert.called(notification.error);
@@ -299,28 +299,28 @@ describe('app/ContentModel/Editor/Actions', function () {
         scope.contentType.save.returns(this.reject('err'));
       });
 
-      pit('rejects promise', function () {
+      it('rejects promise', function () {
         return controller.save.execute()
         .catch(function (err) {
           expect(err).toBe('err');
         });
       });
 
-      pit('does not publish content type', function () {
+      it('does not publish content type', function () {
         return controller.save.execute()
         .catch(function () {
           sinon.assert.notCalled(scope.contentType.publish);
         });
       });
 
-      pit('shows error message', function () {
+      it('shows error message', function () {
         return controller.save.execute()
         .catch(function () {
           sinon.assert.called(notification.error);
         });
       });
 
-      pit('does not reset form', function () {
+      it('does not reset form', function () {
         return controller.save.execute()
         .catch(function () {
           expect(scope.contentTypeForm.$pristine).toBe(false);
@@ -422,14 +422,14 @@ describe('app/ContentModel/Editor/Actions', function () {
       });
     });
 
-    pit('creates new content types type with a provided name', function () {
+    it('creates new content types type with a provided name', function () {
       return controller.duplicate.execute().then(function () {
         sinon.assert.calledOnce(spaceContext.space.newContentType);
         expect(spaceContext.space.newContentType.firstCall.args[0].name).toBe('test');
       });
     });
 
-    pit('saves a duplicate with the same field IDs and display field', function () {
+    it('saves a duplicate with the same field IDs and display field', function () {
       contentType.data.displayField = 'field-id-2-disp';
       contentType.data.fields = [{id: 'field-id-1'}, {id: 'field-id-2-disp'}];
 
@@ -444,13 +444,13 @@ describe('app/ContentModel/Editor/Actions', function () {
       });
     });
 
-    pit('publishes content type duplicate', function () {
+    it('publishes content type duplicate', function () {
       return controller.duplicate.execute().then(function () {
         sinon.assert.calledOnce(getCreatedCt().publish);
       });
     });
 
-    pit('synchronizes controls in the new EI', function () {
+    it('synchronizes controls in the new EI', function () {
       contentType.data.fields = [{id: 'xyz'}, {id: 'boom'}];
       scope.editingInterface.controls = [
         {widgetId: 'margarita-making-widget'},

@@ -28,7 +28,7 @@ describe('data/userCache', function () {
       sinon.assert.calledOnce(fetchAll);
     });
 
-    pit('it maps users by id', function () {
+    it('it maps users by id', function () {
       const userResponse = [makeUser('0'), makeUser('1')];
       fetchAll.resolves(userResponse);
       return userCache.getAll()
@@ -57,7 +57,7 @@ describe('data/userCache', function () {
       sinon.assert.calledOnce(fetchAll);
     });
 
-    pit('it gets users by id', function () {
+    it('it gets users by id', function () {
       const userResponse = [makeUser('0'), makeUser('1')];
       fetchAll.resolves(userResponse);
       return userCache.get('1')
@@ -66,7 +66,7 @@ describe('data/userCache', function () {
       });
     });
 
-    pit('resuses response from call to "#getAll()"', function () {
+    it('resuses response from call to "#getAll()"', function () {
       const userResponse = [makeUser('0'), makeUser('1')];
       fetchAll.resolves(userResponse);
       return userCache.getAll()
