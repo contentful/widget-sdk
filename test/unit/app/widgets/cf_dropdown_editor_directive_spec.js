@@ -40,7 +40,7 @@ describe('cfDropdownEditor Directive', function () {
 
   it('selects the initial value', function () {
     fieldApi.validations = [{in: ['initial']}];
-    fieldApi.onValueChanged.yields('initial');
+    this.widgetApi.fieldProperties.value$.set('initial');
     const element = this.compile();
     expect(element.find('option:selected').text()).toEqual('initial');
   });
@@ -50,7 +50,7 @@ describe('cfDropdownEditor Directive', function () {
     const element = this.compile();
     expect(element.find('option:selected').text()).toEqual('Choose a value');
 
-    fieldApi.onValueChanged.yield(undefined);
+    this.widgetApi.fieldProperties.value$.set(undefined);
     this.$apply();
     expect(element.find('option:selected').text()).toEqual('Choose a value');
   });
@@ -60,7 +60,7 @@ describe('cfDropdownEditor Directive', function () {
     const element = this.compile();
     expect(element.find('option:selected').text()).toEqual('Choose a value');
 
-    fieldApi.onValueChanged.yield('value');
+    this.widgetApi.fieldProperties.value$.set('value');
     this.$apply();
     expect(element.find('option:selected').text()).toEqual('value');
   });
