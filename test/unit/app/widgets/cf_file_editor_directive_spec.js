@@ -123,20 +123,18 @@ describe('cfFileEditor Directive', function () {
     });
   });
 
-  it('shows progress bar when image is loading', function () {
+  it('shows spinner when image is loading', function () {
     this.fieldApi.onValueChanged.yield({
       url: '//images.contentful.com',
       contentType: 'image/png'
     });
 
     this.$apply();
-    const loader = this.el.find('[data-test-id="image-loading"]');
-    expect(loader.attr('aria-busy')).toBe('true');
+    const loader = this.el.find('.file-progress:first');
     expect(loader.is(':visible')).toBe(true);
 
     this.el.find('img').trigger('load');
     this.$apply();
-    expect(loader.attr('aria-busy')).toBe('false');
     expect(loader.is(':visible')).toBe(false);
   });
 });

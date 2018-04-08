@@ -2,20 +2,15 @@
   img(aviary-editor-preview)
 
   .file-preview(ng-show="file && !!file.url")
-    cf-thumbnail.vcenter(file="file" height="250")
+    cf-thumbnail(file="file" height="250")
 
-  .file-progress.progress.center(
-    data-test-id="image-loading"
-    ng-show="imageIsLoading"
-    role="progressbar"
-    aria-live="polite"
-    aria-busy="{{imageIsLoading}}")
-    p Loading…
-    .cf-progress-bar.gold(cf-progress-bar percentage="100")
+  .file-progress.loading-box--stretched(ng-show="imageIsLoading")
+    .loading-box__spinner
+    | Loading…
 
-  .file-progress.progress.center(ng-show="file && !!file.upload")
-    p Processing…
-    .cf-progress-bar.green(cf-progress-bar percentage="100")
+  .file-progress.loading-box--stretched(ng-show="file && !!file.upload")
+    .loading-box__spinner
+    | Processing…
 
   .file-metadata(ng-show="showMeta")
     table
@@ -32,7 +27,7 @@
         th Width<br>Height
         td {{file.details.image.width}}&thinsp;px<br>{{file.details.image.height}}&thinsp;px
 
-  .no-file.center.vcenter(ng-show="!file && fieldLocale.access.denied")
+  .no-file(ng-show="!file && fieldLocale.access.denied")
     | You don't have a permission to edit this field.
 
   .file-buttons
