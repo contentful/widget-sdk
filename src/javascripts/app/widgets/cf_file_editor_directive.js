@@ -11,9 +11,10 @@ angular.module('contentful')
 
   var dropPaneMountCount = 0;
 
-  // TODO use isolated scope.
-  // This is not possible right now because the widget depends on a
-  // few helper methods from the scope.
+  // TODO use isolated scope for this editor.
+  // Ideally everything we do in here should be possible via `widgetApi`.
+  // Right now we rely on parent scope properties like:
+  // `editorData`, `editorContext`, `fieldLocale`, `locale`, `otDoc`
   return {
     restrict: 'E',
     require: '^cfWidgetApi',
@@ -34,10 +35,10 @@ angular.module('contentful')
 
       var removeUpdateListener = field.onValueChanged(function (file) {
         scope.file = file;
+        validate();
       });
-
       scope.$on('$destroy', removeUpdateListener);
-      scope.$on('fileProcessingFailed', deleteFile);
+
       scope.$on('imageLoadState', function (_e, state) {
         scope.imageIsLoading = state === 'loading';
       });
@@ -131,12 +132,37 @@ angular.module('contentful')
         if (file) {
           return field.setValue(file)
           .then(function () {
-            scope.$emit('fileUploaded', file, scope.locale);
+            maybeSetTitleOnDoc();
+            process();
             validate();
           }, validate);
         } else {
           return field.removeValue().then(validate, validate);
         }
+      }
+
+      function maybeSetTitleOnDoc () {
+        const path = ['fields', 'title', scope.locale.internal_code];
+        const fileName = stringUtils.fileNameToTitle(scope.file.fileName);
+        if (!scope.otDoc.getValueAt(path)) {
+          scope.otDoc.setValueAt(path, fileName);
+        }
+      }
+
+      function process () {
+        scope.editorData.entity.process(scope.otDoc.getVersion(), scope.locale.internal_code)
+        .catch(function (err) {
+          deleteFile();
+
+          const errors = _.get(err, ['body', 'details', 'errors'], []);
+          const invalidContentTypeErr = _.find(errors, {name: 'invalidContentType'});
+
+          if (invalidContentTypeErr) {
+            notification.error(invalidContentTypeErr.details);
+          } else {
+            notification.error('There has been a problem processing the Asset.');
+          }
+        });
       }
 
       function validate () {

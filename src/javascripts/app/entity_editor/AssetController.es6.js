@@ -2,11 +2,9 @@ import $controller from '$controller';
 import closeState from 'navigation/closeState';
 
 import * as K from 'utils/kefir';
-import {truncate, fileNameToTitle} from 'stringUtils';
-import {get, find, constant} from 'lodash';
+import {truncate} from 'stringUtils';
 
 import spaceContext from 'spaceContext';
-import notification from 'notification';
 import localeStore from 'TheLocaleStore';
 import contextHistory from 'navigation/Breadcrumbs/History';
 
@@ -74,7 +72,7 @@ export default function create ($scope, editorData) {
 
   K.onValueScope($scope, $scope.otDoc.valuePropertyAt([]), function (data) {
     const title = spaceContext.assetTitle({
-      getContentTypeId: constant(),
+      getContentTypeId: () => {},
       data: data
     });
     $scope.context.title = title;
@@ -90,32 +88,4 @@ export default function create ($scope, editorData) {
     $scope: $scope,
     controls: editorData.fieldControls.form
   });
-
-  // File uploads
-  $scope.$on('fileUploaded', function (_event, file, locale) {
-    setTitleOnDoc(file, locale.internal_code);
-    editorData.entity.process($scope.otDoc.getVersion(), locale.internal_code)
-    .catch(function (err) {
-      // this event is handled in a child directive (cfFileEditor)
-      // we need to broadcast it down the element tree
-      $scope.$broadcast('fileProcessingFailed');
-
-      const errors = get(err, ['body', 'details', 'errors'], []);
-      const invalidContentTypeErr = find(errors, {name: 'invalidContentType'});
-
-      if (invalidContentTypeErr) {
-        notification.error(invalidContentTypeErr.details);
-      } else {
-        notification.error('There has been a problem processing the Asset.');
-      }
-    });
-  });
-
-  function setTitleOnDoc (file, localeCode) {
-    const path = ['fields', 'title', localeCode];
-    const fileName = fileNameToTitle(file.fileName);
-    if (!$scope.otDoc.getValueAt(path)) {
-      $scope.otDoc.setValueAt(path, fileName);
-    }
-  }
 }

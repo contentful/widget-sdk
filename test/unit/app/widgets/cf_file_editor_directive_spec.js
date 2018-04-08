@@ -1,14 +1,12 @@
 'use strict';
 
 describe('cfFileEditor Directive', function () {
-  let scope, fieldApi;
-
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.removeDirectives('cfFileDrop');
       $provide.value('services/Filestack', {
         makeDropPane: sinon.stub(),
-        pick: sinon.stub()
+        pick: sinon.stub().resolves({fileName: 'x.jpg'})
       });
     });
 
@@ -16,98 +14,117 @@ describe('cfFileEditor Directive', function () {
     const tokenStore = this.$inject('services/TokenStore');
     tokenStore.getDomains = sinon.stub().returns({});
 
-    const widgetApi = this.$inject('mocks/widgetApi').create();
-    fieldApi = widgetApi.field;
+    const cfWidgetApi = this.$inject('mocks/widgetApi').create();
+    this.fieldApi = cfWidgetApi.field;
+    this.fieldApi.setValue = sinon.stub().resolves();
+    this.fieldApi.removeValue = sinon.stub().resolves();
 
     const editorContext = this.$inject('mocks/entityEditor/Context').create();
 
     this.el = this.$compile('<cf-file-editor />', {
+      editorData: {entity: {process: sinon.stub().resolves()}},
       editorContext: editorContext,
       fieldLocale: {access: {editable: true}},
-      fieldData: {
-        fileName: 'file.jpg',
-        fileType: 'image/jpeg'
+      locale: {internal_code: 'en-US'},
+      otDoc: {
+        getVersion: sinon.stub().returns(123),
+        getValueAt: sinon.stub(),
+        setValueAt: sinon.stub()
       }
-    }, {
-      cfWidgetApi: widgetApi
-    });
-    this.el.appendTo('body');
-    scope = this.el.scope();
+    }, {cfWidgetApi});
 
-    scope.$apply();
+    this.el.appendTo('body');
+    this.scope = this.el.scope();
+
+    this.scope.$apply();
   });
 
   afterEach(function () {
     this.el.remove();
-    scope.$destroy();
-    scope = fieldApi = null;
+    this.scope.$destroy();
   });
 
   describe('scope.selectFile()', function () {
     beforeEach(function () {
-      fieldApi.setValue = sinon.stub().resolves();
-
-      const Filestack = this.$inject('services/Filestack');
-      Filestack.pick.resolves('FILE DATA');
-
-      scope.$emit = sinon.stub();
-
-      scope.selectFile();
+      this.Filestack = this.$inject('services/Filestack');
+      this.scope.selectFile();
       this.$apply();
     });
 
     it('calls Filestack.pick', function () {
-      const Filestack = this.$inject('services/Filestack');
-      sinon.assert.called(Filestack.pick);
+      sinon.assert.called(this.Filestack.pick);
     });
 
     it('sets the file on the field API', function () {
-      sinon.assert.calledOnce(fieldApi.setValue);
-      sinon.assert.calledWithExactly(fieldApi.setValue, 'FILE DATA');
+      sinon.assert.calledOnce(this.fieldApi.setValue);
+      sinon.assert.calledWithExactly(this.fieldApi.setValue, {fileName: 'x.jpg'});
     });
 
-    it('sets "scope.file"', function () {
-      expect(scope.file).toEqual('FILE DATA');
+    it('sets "scope.file" and validates', function () {
+      expect(this.scope.file).toEqual({fileName: 'x.jpg'});
+      sinon.assert.called(this.scope.editorContext.validator.run);
     });
 
-    it('emits fileUploaded event', function () {
-      sinon.assert.calledWith(scope.$emit, 'fileUploaded', 'FILE DATA', scope.locale);
+    it('processes and validates asset', function () {
+      sinon.assert.calledWith(this.scope.editorData.entity.process, 123, 'en-US');
+      sinon.assert.called(this.scope.editorContext.validator.run);
+    });
+
+    it('sets the document title if it is not yet present', function () {
+      sinon.assert.calledWith(this.scope.otDoc.setValueAt, ['fields', 'title', 'en-US'], 'x');
+    });
+
+    it('does not set the document title if it present', function () {
+      this.scope.otDoc.getValueAt = sinon.stub();
+      this.scope.otDoc.getValueAt.withArgs(['fields', 'title', 'en-US']).returns('title');
+      this.scope.selectFile();
+      this.$apply();
+      // called once in the intial run
+      sinon.assert.calledOnce(this.scope.otDoc.setValueAt);
     });
 
     it('runs validations on file upload errors', function () {
-      const Filestack = this.$inject('services/Filestack');
-      Filestack.pick.rejects(new Error());
-
-      scope.selectFile();
+      this.Filestack.pick.rejects(new Error());
+      this.scope.selectFile();
       this.$apply();
-      sinon.assert.calledOnce(scope.editorContext.validator.run);
+      // 1. set value, 2. catch error
+      sinon.assert.calledTwice(this.scope.editorContext.validator.run);
+    });
+
+    it('removes value and shows error when asset processing fails', function () {
+      const notification = this.$inject('notification');
+      notification.error = sinon.stub();
+      this.scope.editorData.entity.process = sinon.stub().rejects();
+      this.scope.selectFile();
+      this.$apply();
+      // both called once in the second run
+      sinon.assert.calledOnce(this.fieldApi.removeValue);
+      sinon.assert.calledOnce(notification.error);
     });
   });
 
   describe('scope.deleteFile()', function () {
     beforeEach(function () {
-      scope.$emit = sinon.stub();
-      fieldApi.removeValue = sinon.stub().resolves();
-
-      scope.deleteFile();
+      this.fieldApi.removeValue = sinon.stub().resolves();
+      this.scope.deleteFile();
       this.$apply();
     });
 
     it('removes the value from the field API', function () {
-      sinon.assert.calledOnce(fieldApi.removeValue);
+      sinon.assert.calledOnce(this.fieldApi.removeValue);
     });
 
     it('sets "scope.file" to "null"', function () {
-      expect(scope.file).toBe(null);
+      expect(this.scope.file).toBe(null);
     });
 
-    it('it does not emit "fileUploaded" event', function () {
-      sinon.assert.notCalled(scope.$emit);
+    it('it does not process asset', function () {
+      sinon.assert.notCalled(this.scope.editorData.entity.process);
     });
   });
 
   it('shows progress bar when image is loading', function () {
-    fieldApi.onValueChanged.yield({
+    this.fieldApi.onValueChanged.yield({
       url: '//images.contentful.com',
       contentType: 'image/png'
     });
