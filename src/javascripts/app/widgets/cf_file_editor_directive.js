@@ -7,6 +7,7 @@ angular.module('contentful')
   var notification = require('notification');
   var stringUtils = require('stringUtils');
   var modalDialog = require('modalDialog');
+  var mimetype = require('mimetype');
 
   var dropPaneMountCount = 0;
 
@@ -16,7 +17,7 @@ angular.module('contentful')
   return {
     restrict: 'E',
     require: '^cfWidgetApi',
-    template: JST.cf_file_display(),
+    template: JST.cf_file_editor(),
     link: function (scope, elem, _attrs, widgetApi) {
       var field = widgetApi.field;
       var deleteFile = setFile.bind(null, null);
@@ -44,6 +45,7 @@ angular.module('contentful')
       scope.selectFile = selectFile;
       scope.editWithFilestack = editWithFilestack;
       scope.editWithAviary = editWithAviary;
+      scope.canEditFile = canEditFile;
       scope.deleteFile = deleteFile;
 
       function selectFile () {
@@ -76,6 +78,14 @@ angular.module('contentful')
         });
       }
 
+      function canEditFile () {
+        var isEditable = _.get(scope, 'fieldLocale.access.editable', false);
+        var fileType = _.get(scope, 'file.contentType', '');
+        var isImage = mimetype.getGroupLabel({type: fileType}) === 'image';
+        var isReady = !scope.imageIsLoading && _.get(scope, 'file.url');
+        return isEditable && isImage && isReady;
+      }
+
       function openAviary () {
         var imageUrl = getImageUrl();
         if (!imageUrl) {
@@ -83,21 +93,14 @@ angular.module('contentful')
           return;
         }
 
-        scope.loadingEditor = true;
-        var preview = elem.find('[aviary-editor-preview]').get(0);
+        var preview = elem[0].querySelectorAll('[aviary-editor-preview]')[0];
         preview.src = '';
 
         preview.onload = function () {
           aviary.createEditor({
             image: preview,
             url: imageUrl,
-            onClose: function (params) {
-              if (params && !params.saveWasClicked) {
-                scope.$apply(function () {
-                  scope.loadingEditor = false;
-                });
-              }
-            }
+            onClose: _.noop
           }).then(function (aviaryUrl) {
             return Filestack.store(aviaryUrl);
           }).then(function (filestackUrl) {
@@ -107,11 +110,9 @@ angular.module('contentful')
               contentType: scope.file.contentType
             });
           }).then(function () {
-            scope.loadingEditor = false;
             aviary.close();
           }, function (err) {
             notification.error(err.message || 'An error occurred while editing an asset.');
-            scope.loadingEditor = false;
             aviary.close();
           });
         };
@@ -120,7 +121,7 @@ angular.module('contentful')
       }
 
       function getImageUrl () {
-        var img = elem.find('.thumbnail').get(0);
+        var img = elem[0].querySelectorAll('.thumbnail')[0];
         return img ? stringUtils.removeQueryString(img.src) : null;
       }
 
