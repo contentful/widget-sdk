@@ -25,14 +25,14 @@ const Wizard = createReactClass({
       name: PropTypes.string.isRequired,
       isBillable: PropTypes.bool
     }).isRequired,
-    cancel: PropTypes.func.isRequired,
-    confirm: PropTypes.func.isRequired,
+    onCancel: PropTypes.func.isRequired,
+    onConfirm: PropTypes.func.isRequired,
     onSpaceCreated: PropTypes.func.isRequired,
     onTemplateCreated: PropTypes.func.isRequired,
     // call back to Angular directive to readjust modal position
     onDimensionsChange: PropTypes.func
   },
-  getInitialState: function () {
+  getInitialState () {
     return {
       currentStepId: 0,
       isFormSubmitted: false,
@@ -58,15 +58,26 @@ const Wizard = createReactClass({
       component: SpaceDetails
     }
   ],
-  render: function () {
-    const {organization, cancel, confirm, onDimensionsChange} = this.props;
-    const {currentStepId, isFormSubmitted, isSpaceCreated, isContentCreated, data} = this.state;
+  render () {
+    const {organization, onCancel, onConfirm, onDimensionsChange} = this.props;
+    const {
+      currentStepId,
+      isFormSubmitted,
+      isSpaceCreated,
+      isContentCreated,
+      data,
+      serverValidationErrors
+    } = this.state;
 
     if (isSpaceCreated) {
       return (
         <div className="modal-dialog" style={{width: '750px'}}>
           <div className="modal-dialog__content">
-            <ProgressScreen done={isContentCreated} confirm={confirm} />
+            <ProgressScreen
+              done={isContentCreated}
+              onConfirm={onConfirm}
+              onDimensionsChange={onDimensionsChange}
+            />
           </div>
         </div>
       );
@@ -84,15 +95,16 @@ const Wizard = createReactClass({
       );
       const closeButton = <button
         className="create-space-wizard__close modal-dialog__close"
-        onClick={cancel} />;
+        onClick={onCancel} />;
 
       const stepProps = {
         ...data,
         organization,
         isFormSubmitted,
+        serverValidationErrors,
         onDimensionsChange,
-        cancel,
-        submit: this.submitStep
+        onCancel,
+        onSubmit: this.submitStep
       };
 
       return (
@@ -122,25 +134,24 @@ const Wizard = createReactClass({
   navigate (stepId) {
     return () => this.setState({currentStepId: stepId});
   },
-  componentDidUpdate: function (_prevProps, prevState) {
-    if (prevState.currentStepId !== this.state.currentStepId) {
-      this.props.onDimensionsChange();
+  submitStep (stepData) {
+    let {currentStepId, data} = this.state;
+    data = Object.assign(data, stepData);
+
+    if (currentStepId === this.steps.length - 1) {
+      this.createSpace(data);
+    } else {
+      currentStepId = currentStepId + 1;
     }
-  },
-  submitStep: function (data) {
-    const {currentStepId} = this.state;
     this.setState({
-      data: Object.assign(this.state.data, data),
-      currentStepId: currentStepId + 1,
+      data,
+      currentStepId,
       serverValidationErrors: null
     });
-    if (currentStepId === this.steps.length - 1) {
-      this.createSpace();
-    }
   },
-  createSpace: async function () {
+  async createSpace (data) {
     const {organization, onSpaceCreated, onTemplateCreated} = this.props;
-    const spaceData = makeSpaceData(this.state.data);
+    const spaceData = makeSpaceData(data);
     let newSpace;
 
     this.setState({isFormSubmitted: true});
@@ -151,22 +162,24 @@ const Wizard = createReactClass({
       this.handleError(error);
     }
     if (newSpace) {
-      this.setState({isSpaceCreated: true});
-
       await TokenStore.refresh();
       onSpaceCreated(newSpace);
 
       const {template} = this.state.data;
       if (template) {
+        this.setState({isSpaceCreated: true});
+
         await createTemplate(template);
         await spaceContext.publishedCTs.refresh();
-        onTemplateCreated();
-      }
 
-      this.setState({isContentCreated: true});
+        onTemplateCreated();
+        this.setState({isContentCreated: true});
+      } else {
+        this.props.onConfirm();
+      }
     }
   },
-  handleError: function (error) {
+  handleError (error) {
     logger.logServerWarn('Could not create Space', {error});
 
     const serverValidationErrors = getFieldErrors(error);
@@ -174,7 +187,7 @@ const Wizard = createReactClass({
       this.setState({serverValidationErrors, currentStepId: 1});
     } else {
       notification.error('Could not create Space. If the problem persists please get in contact with us.');
-      this.props.cancel();
+      this.props.onCancel();
     }
   }
 });

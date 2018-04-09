@@ -7,6 +7,7 @@ angular.module('contentful')
   var Wizard = require('components/shared/create-space-wizard/Wizard').default;
   var $state = require('$state');
   var $rootScope = require('$rootScope');
+  var debounce = require('lodash').debounce;
 
   return {
     link: function ($scope, el) {
@@ -14,8 +15,8 @@ angular.module('contentful')
 
       ReactDOM.render(React.createElement(Wizard, {
         organization: $scope.organization,
-        cancel: function () { $scope.dialog.cancel(); },
-        confirm: function () { $scope.dialog.confirm(); },
+        onCancel: function () { $scope.dialog.cancel(); },
+        onConfirm: function () { $scope.dialog.confirm(); },
         onSpaceCreated: function (newSpace) {
           $state.go('spaces.detail', {spaceId: newSpace.sys.id});
         },
@@ -23,9 +24,9 @@ angular.module('contentful')
           // Picked up by the learn page which then refreshes itself
           $rootScope.$broadcast('spaceTemplateCreated');
         },
-        onDimensionsChange: function () {
+        onDimensionsChange: debounce(function () {
           $scope.dialog.reposition();
-        }
+        }, 100)
       }), host);
 
       $scope.$on('$destroy', function () {
