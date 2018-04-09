@@ -270,7 +270,7 @@ function RightSidebar ({grandTotal, orgId, onContactUs}) {
     ),
     h('h2', {className: 'entity-sidebar__heading'}, 'Need help?'),
     h('p', null,
-      'Do you need to up- or downgrade your spaces? Don’t hesitate to talk to our customer success team.'),
+      'Do you need to up or downgrade your spaces? Don’t hesitate to talk to our customer success team.'),
     h('p', {className: 'entity-sidebar__help-text'},
       h('span', {style: iconStyle}, asReact(BubbleIcon)),
       h('button', {
