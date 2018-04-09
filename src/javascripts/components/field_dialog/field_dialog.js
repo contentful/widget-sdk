@@ -76,7 +76,17 @@ angular.module('contentful')
    */
   Widgets.getAvailable($scope.field)
   .then(function (available) {
-    $scope.availableWidgets = available;
+    if (Array.isArray(available)) {
+      $scope.availableWidgets = available.filter(function (widget) {
+        // TODO: Eliminate Kaltura! For the time being we hide Kaltura editor unless it's selected
+        // Wiki: https://contentful.atlassian.net/wiki/spaces/PROD/pages/373981381/Phasing+out+Kaltura+and+Ooyala+Q2+2018
+        // For more context ask Jakub or Frederik
+        return widget.id !== 'kalturaEditor' || $scope.widget.widgetId === 'kalturaEditor';
+      });
+    } else {
+      // TODO: this is all that should be in this handler
+      $scope.availableWidgets = available;
+    }
   });
 
 
