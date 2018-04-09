@@ -116,7 +116,8 @@ const Wizard = createReactClass({
         onDimensionsChange,
         onCancel,
         onNavigate: this.navigate,
-        onSubmit: this.submitStep
+        onChange: this.setStateData,
+        onSubmit: this.goToNextStep
       };
 
       return (
@@ -146,24 +147,24 @@ const Wizard = createReactClass({
   navigate (stepId) {
     this.setState({currentStepId: stepId});
   },
-  submitStep (stepData) {
-    let {currentStepId, data} = this.state;
-    data = Object.assign(data, stepData);
-
-    if (isLastStep(currentStepId)) {
-      this.createSpace(data);
-    } else {
-      currentStepId = getNextStep(currentStepId);
-    }
+  setStateData (stepData) {
     this.setState({
-      data,
-      currentStepId,
+      data: {...this.state.data, ...stepData},
       serverValidationErrors: null
     });
   },
-  async createSpace (data) {
+  goToNextStep () {
+    const {currentStepId} = this.state;
+
+    if (isLastStep(currentStepId)) {
+      this.createSpace();
+    } else {
+      this.setState({currentStepId: getNextStep(currentStepId)});
+    }
+  },
+  async createSpace () {
     const {organization, onSpaceCreated, onTemplateCreated} = this.props;
-    const spaceData = makeSpaceData(data);
+    const spaceData = makeSpaceData(this.state.data);
     let newSpace;
 
     this.setState({isFormSubmitted: true});

@@ -14,6 +14,7 @@ import {RequestState, formatPrice} from './WizardUtils';
 const SpacePlanSelector = createReactClass({
   propTypes: {
     organization: PropTypes.object.isRequired,
+    onChange: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
     onDimensionsChange: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired
@@ -64,7 +65,8 @@ const SpacePlanSelector = createReactClass({
     this.setState({selectedPlan});
 
     if (selectedPlan) {
-      this.props.onSubmit({spaceRatePlan: selectedPlan});
+      this.props.onChange({spaceRatePlan: selectedPlan});
+      this.props.onSubmit();
     }
   },
   goToBilling () {

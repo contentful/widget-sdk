@@ -6,6 +6,7 @@ import {Steps, formatPrice} from './WizardUtils';
 
 const SpaceDetails = createReactClass({
   propTypes: {
+    onChange: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
     spaceRatePlan: PropTypes.object.isRequired,
     serverValidationErrors: PropTypes.object,
@@ -85,9 +86,11 @@ const SpaceDetails = createReactClass({
   setName: function (name) {
     const state = {name, touched: true};
     state.validation = validateState(state);
+    this.props.onChange({spaceName: name});
     this.setState(state);
   },
   setTemplate: function (template) {
+    this.props.onChange({template});
     this.setState({template, touched: true});
   },
   submit: function () {
@@ -95,8 +98,7 @@ const SpaceDetails = createReactClass({
     this.setState({validation});
 
     if (!Object.keys(validation).length) {
-      const {name, template} = this.state;
-      this.props.onSubmit({spaceName: name, template});
+      this.props.onSubmit();
     }
   }
 });
