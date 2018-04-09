@@ -1,7 +1,12 @@
 import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
-import RequestState from 'utils/RequestState';
 import {getTemplatesList} from 'services/SpaceTemplateLoader';
+
+export const RequestState = {
+  PENDING: 'pending',
+  SUCCESS: 'success',
+  ERROR: 'error'
+};
 
 const FetchTemplates = createReactClass({
   propTypes: {
@@ -11,7 +16,7 @@ const FetchTemplates = createReactClass({
   getInitialState () {
     return {
       templates: [],
-      requestState: RequestState.Pending()
+      requestState: RequestState.PENDING
     };
   },
   componentDidMount () {
@@ -25,12 +30,14 @@ const FetchTemplates = createReactClass({
       const templatesList = await getTemplatesList();
       this.setState({
         templates: parseTemplates(templatesList),
-        requestState: RequestState.Success()
+        requestState: RequestState.SUCCESS,
+        error: null
       });
     } catch (error) {
       this.setState({
         templates: [],
-        requestState: RequestState.Error(error)
+        requestState: RequestState.ERROR,
+        error
       });
     }
   }

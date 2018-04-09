@@ -5,19 +5,26 @@ import {getSpaceRatePlans} from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import {canCreate} from 'utils/ResourceUtils';
 import {get, isNumber} from 'lodash';
-import RequestState from 'utils/RequestState';
+
+export const RequestState = {
+  PENDING: 'pending',
+  SUCCESS: 'success',
+  ERROR: 'error'
+};
 
 const FetchSpacePlans = createReactClass({
   propTypes: {
     organization: PropTypes.object.isRequired,
+    onUpdate: PropTypes.func,
     // children is a rendering function
     children: PropTypes.func.isRequired
   },
   getInitialState () {
     return {
+      error: null,
       spaceRatePlans: [],
       freeSpacesResource: {limits: {}},
-      requestState: RequestState.Pending()
+      requestState: RequestState.PENDING
     };
   },
   componentDidMount () {
@@ -52,15 +59,20 @@ const FetchSpacePlans = createReactClass({
       this.setState({
         spaceRatePlans,
         freeSpacesResource,
-        requestState: RequestState.Success()
+        requestState: RequestState.SUCCESS,
+        error: null
       });
     } catch (error) {
       this.setState({
         spaceRatePlans: [],
         freeSpacesResource: {limits: {}},
-        requestState: RequestState.Error(error)
+        requestState: RequestState.ERROR,
+        error
       });
     }
+  },
+  componentDidUpdate (...args) {
+    if (this.props.onUpdate) { this.props.onUpdate(...args); }
   }
 });
 

@@ -2,15 +2,13 @@ import React from 'libs/react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import classnames from 'classnames';
-import FetchSpacePlans from './FetchSpacePlans';
+import FetchSpacePlans, {RequestState} from './FetchSpacePlans';
 import {get, kebabCase} from 'lodash';
 import {isOwner} from 'services/OrganizationRoles';
 import {go} from 'states/Navigator';
 import HelpIcon from 'ui/Components/HelpIcon';
 import spinner from 'ui/Components/Spinner';
 import {asReact} from 'ui/Framework/DOMRenderer';
-import RequestState from 'utils/RequestState';
-import {caseof} from 'libs/sum-types';
 
 const SpacePlanSelector = createReactClass({
   propTypes: {
@@ -26,50 +24,39 @@ const SpacePlanSelector = createReactClass({
     const {organization, onDimensionsChange} = this.props;
     const {selectedPlan} = this.state;
 
-    return <FetchSpacePlans organization={organization}>
-      {({requestState, spaceRatePlans, freeSpacesResource}) => {
-        setTimeout(onDimensionsChange, 0); // reposition dialog after dom is updated
-
-        return caseof(requestState, [
-          [RequestState.Pending, () => (
-            <div className="loader__container">
-              {asReact(spinner({diameter: '40px'}))}
+    return <FetchSpacePlans organization={organization} onUpdate={onDimensionsChange}>
+      {({requestState, spaceRatePlans, freeSpacesResource}) => (
+        <div>
+          {requestState === RequestState.PENDING && <div className="loader__container">
+            {asReact(spinner({diameter: '40px'}))}
+          </div>}
+          {requestState === RequestState.SUCCESS && <div>
+            <h2 className="create-space-wizard__heading">
+              Choose the space type
+            </h2>
+            <p className="create-space-wizard__subheading">
+              You are creating this space for organization {organization.name}.
+            </p>
+            <div className="space-plans-list">
+              {spaceRatePlans.map((plan) => <SpacePlanItem
+                key={plan.sys.id}
+                plan={plan}
+                freeSpacesResource={freeSpacesResource}
+                isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
+                onSelect={this.selectPlan} />)}
             </div>
-          )],
-          [RequestState.Success, () => (
-            <div>
-              <h2 className="create-space-wizard__heading">
-                Choose the space type
-              </h2>
-              <p className="create-space-wizard__subheading">
-                You are creating this space for organization {organization.name}.
-              </p>
-              <div className="space-plans-list">
-                {spaceRatePlans.map((plan) => <SpacePlanItem
-                  key={plan.sys.id}
-                  plan={plan}
-                  freeSpacesResource={freeSpacesResource}
-                  isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
-                  onSelect={this.selectPlan} />)}
-              </div>
-              {!organization.isBillable && <BillingInfo
-                canSetupBilling={isOwner(organization)}
-                goToBilling={this.goToBilling} />}
-            </div>
-          )],
-          [RequestState.Error, () => (
-            <div className="note-box--warning">
-              <p>Could not fetch space plans.</p>
-            </div>
-          )]
-        ]);
-      }}
+            {!organization.isBillable && <BillingInfo
+              canSetupBilling={isOwner(organization)}
+              goToBilling={this.goToBilling} />}
+          </div>}
+          {requestState === RequestState.ERROR && <div className="note-box--warning">
+            <p>Could not fetch space plans.</p>
+          </div>}
+        </div>
+      )}
     </FetchSpacePlans>;
   },
   componentDidMount () {
-    this.props.onDimensionsChange();
-  },
-  componentDidUpdate () {
     this.props.onDimensionsChange();
   },
   selectPlan (selectedPlan) {

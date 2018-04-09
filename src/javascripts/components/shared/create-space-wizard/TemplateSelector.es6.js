@@ -3,9 +3,7 @@ import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import classnames from 'classnames';
 import {get} from 'lodash';
-import FetchTemplates from './FetchTemplates';
-import RequestState from 'utils/RequestState';
-import {caseof} from 'libs/sum-types';
+import FetchTemplates, {RequestState} from './FetchTemplates';
 import spinner from 'ui/Components/Spinner';
 import {asReact} from 'ui/Framework/DOMRenderer';
 
@@ -33,9 +31,9 @@ const TemplateSelector = createReactClass({
 
     return (
       <FetchTemplates>
-        {({requestState, templates}) => caseof(requestState, [
-          [RequestState.Pending, () => (
-            <div>
+        {({requestState, templates}) => (
+          <div>
+            {requestState === RequestState.PENDING && <div>
               <TemplatesToggle
                 isShowingTemplates={isShowingTemplates}
                 onChange={(value) => this.setState({isShowingTemplates: value})}
@@ -45,10 +43,8 @@ const TemplateSelector = createReactClass({
                   {asReact(spinner({diameter: '40px'}))}
                 </div>
               </div>
-            </div>
-          )],
-          [RequestState.Success, () => (
-            <div>
+            </div>}
+            {requestState === RequestState.SUCCESS && <div>
               <TemplatesToggle
                 isShowingTemplates={isShowingTemplates}
                 onChange={(value) => {
@@ -62,14 +58,12 @@ const TemplateSelector = createReactClass({
                   onSelect={this.selectTemplate}
                 />
               </div>
-            </div>
-          )],
-          [RequestState.Error, () => (
-            <div className="note-box--warning">
+            </div>}
+            {requestState === RequestState.ERROR && <div className="note-box--warning">
               <p>Could not fetch space templates.</p>
-            </div>
-          )]
-        ])}
+            </div>}
+          </div>
+        )}
       </FetchTemplates>
     );
   },

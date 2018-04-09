@@ -7,6 +7,7 @@ angular.module('contentful')
   var Wizard = require('components/shared/create-space-wizard/Wizard').default;
   var $state = require('$state');
   var $rootScope = require('$rootScope');
+  var debounce = require('lodash').debounce;
 
   return {
     link: function ($scope, el) {
@@ -23,9 +24,9 @@ angular.module('contentful')
           // Picked up by the learn page which then refreshes itself
           $rootScope.$broadcast('spaceTemplateCreated');
         },
-        onDimensionsChange: function () {
+        onDimensionsChange: debounce(function () {
           $scope.dialog.reposition();
-        }
+        }, 100)
       }), host);
 
       $scope.$on('$destroy', function () {
