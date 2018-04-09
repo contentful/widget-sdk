@@ -2,6 +2,7 @@
 
 angular.module('contentful')
 .directive('cfFileEditor', ['require', function (require) {
+  var _ = require('lodash');
   var aviary = require('aviary');
   var Filestack = require('services/Filestack');
   var notification = require('notification');
