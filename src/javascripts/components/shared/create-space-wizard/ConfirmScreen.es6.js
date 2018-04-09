@@ -43,21 +43,23 @@ const ConfirmScreen = createReactClass({
               </p>
               <p>
                 You are about to purchase a {spaceRatePlan.name.toLowerCase()} space
-                for ${formatPrice(spaceRatePlan.price)} / month for the organization {organization.name}.
-                {requestState === RequestState.SUCCESS &&
-                  ` This will bring up the total of your organization’s subscription to $${formatPrice(totalPrice + spaceRatePlan.price)} / month `
-                }
+                for <strong>${formatPrice(spaceRatePlan.price)} / month</strong> for the
+                organization <em>{organization.name}</em>.
+                {requestState === RequestState.SUCCESS && <span>
+                  {' '}
+                  This will bring up the total of your organization’s subscription
+                  to <strong>${formatPrice(totalPrice + spaceRatePlan.price)} / month.</strong>
+                </span>}
+                {' '}
                 (<a
                   className="text-link"
                   href="#"
                   onClick={() => onNavigate(0)}>
                   change space type
                 </a>).
-                The space’s name will be {spaceName}, and
-                {template
-                  ? ` we'll fill it with example content for ${template.name} `
-                  : ' we won’t fill it with example content '
-                }
+                The space’s name will be <em>{spaceName}</em>, and we
+                {template ? ` will ` : ' won’t '}
+                fill it with example content
                 (<a
                   className="text-link"
                   href="#"
