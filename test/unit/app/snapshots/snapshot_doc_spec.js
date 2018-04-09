@@ -46,7 +46,7 @@ describe('SnapshotComparatorController/snapshotDoc', function () {
   });
 
   describe('mutating methods', function () {
-    pit('resolves, but does nothing', function () {
+    it('resolves, but does nothing', function () {
       const $q = this.$inject('$q');
       const path = ['fields', 'field2', 'de-DE'];
 

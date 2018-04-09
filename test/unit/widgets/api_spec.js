@@ -165,7 +165,7 @@ describe('widgets/API', function () {
         this.handler = api.channel.handlers.openDialog;
       });
 
-      pit('rejects if dialog type is unknown', function () {
+      it('rejects if dialog type is unknown', function () {
         return this.handler('xxx', {}).catch((err) => {
           expect(err instanceof Error).toBe(true);
           expect(err.message).toBe('Unknown dialog type.');

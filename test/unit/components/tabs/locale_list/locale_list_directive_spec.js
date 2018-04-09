@@ -239,32 +239,6 @@ describe('The Locale list directive', function () {
       this.flags['feature-bv-2018-01-resources-api'] = true;
     });
 
-    describe('inside of a non-master environment', function () {
-      beforeEach(function () {
-        this.environment.sys.id = 'dev';
-      });
-
-      it('should show only the usage copy', function* () {
-        let text;
-
-        this.setUsageLimits(1, 3);
-        this.compileElement();
-
-        yield this.$q.resolve();
-
-        text = this.getSidebar().find('> p.entity-sidebar__text-profile').eq(0).text();
-        expect(text).toBe('You are using 1 locale in your environment.');
-
-        this.setUsageLimits(3, 3);
-        this.compileElement();
-
-        yield this.$q.resolve();
-
-        text = this.getSidebar().find('> p.entity-sidebar__text-profile').eq(0).text();
-        expect(text).toBe('You are using 3 locales in your environment.');
-      });
-    });
-
     describe('with limit of 1', function () {
       beforeEach(function* () {
         // You will always be at the limit with 1 locale, as a space

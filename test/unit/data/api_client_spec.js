@@ -38,7 +38,7 @@ describe('data/ApiClient', function () {
       $http.resolves({data: 'DATA'});
     });
 
-    pit('getContentType(id)', function () {
+    it('getContentType(id)', function () {
       return this.client.getContentType('ID')
       .then(assertRequestResponse('DATA', {
         method: 'GET',
@@ -46,7 +46,7 @@ describe('data/ApiClient', function () {
       }));
     });
 
-    pit('getEntry(id)', function () {
+    it('getEntry(id)', function () {
       return this.client.getEntry('ID')
       .then(assertRequestResponse('DATA', {
         method: 'GET',
@@ -54,7 +54,7 @@ describe('data/ApiClient', function () {
       }));
     });
 
-    pit('getEntrySnapshot(entryId, snapshotId)', function () {
+    it('getEntrySnapshot(entryId, snapshotId)', function () {
       return this.client.getEntrySnapshot('EID', 'SID')
       .then(assertRequestResponse('DATA', {
         method: 'GET',
@@ -62,7 +62,7 @@ describe('data/ApiClient', function () {
       }));
     });
 
-    pit('getAsset(id)', function () {
+    it('getAsset(id)', function () {
       return this.client.getAsset('ID')
       .then(assertRequestResponse('DATA', {
         method: 'GET',
@@ -70,7 +70,7 @@ describe('data/ApiClient', function () {
       }));
     });
 
-    pit('createEntry(ctId, data)', function () {
+    it('createEntry(ctId, data)', function () {
       const entry = {'fields': 'MY FIELDS'};
       return this.client.createEntry('CTID', entry)
       .then(assertRequestResponse('DATA', {
@@ -81,7 +81,7 @@ describe('data/ApiClient', function () {
       }));
     });
 
-    pit('#deleteSpace()', function () {
+    it('#deleteSpace()', function () {
       return this.client.deleteSpace()
       .then(assertRequestResponse(undefined, {
         method: 'DELETE',
@@ -89,7 +89,7 @@ describe('data/ApiClient', function () {
       }));
     });
 
-    pit('#renameSpace(newName, version)', function () {
+    it('#renameSpace(newName, version)', function () {
       return this.client.renameSpace('NEW NAME!!!', 2)
       .then(assertRequestResponse('DATA', {
         method: 'PUT',
@@ -105,7 +105,7 @@ describe('data/ApiClient', function () {
       $http.resolves({data: 'DATA'});
     });
 
-    pit('getContentTypes(query)', function () {
+    it('getContentTypes(query)', function () {
       return this.client.getContentTypes('QUERY')
       .then(assertRequestResponse('DATA', {
         method: 'GET',
@@ -114,7 +114,7 @@ describe('data/ApiClient', function () {
       }));
     });
 
-    pit('getEntries(query)', function () {
+    it('getEntries(query)', function () {
       return this.client.getEntries('QUERY')
       .then(assertRequestResponse('DATA', {
         method: 'GET',
@@ -123,7 +123,7 @@ describe('data/ApiClient', function () {
       }));
     });
 
-    pit('getEntrySnapshots(entryId, query)', function () {
+    it('getEntrySnapshots(entryId, query)', function () {
       return this.client.getEntrySnapshots('EID', 'QUERY')
       .then(assertRequestResponse('DATA', {
         method: 'GET',
@@ -132,7 +132,7 @@ describe('data/ApiClient', function () {
       }));
     });
 
-    pit('getAssets(query)', function () {
+    it('getAssets(query)', function () {
       return this.client.getAssets('QUERY')
       .then(assertRequestResponse('DATA', {
         method: 'GET',
@@ -141,7 +141,7 @@ describe('data/ApiClient', function () {
       }));
     });
 
-    pit('getPublishedAssets(query)', function () {
+    it('getPublishedAssets(query)', function () {
       return this.client.getPublishedAssets('QUERY')
       .then(assertRequestResponse('DATA', {
         method: 'GET',
@@ -150,7 +150,7 @@ describe('data/ApiClient', function () {
       }));
     });
 
-    pit('getPublishedEntries(query)', function () {
+    it('getPublishedEntries(query)', function () {
       return this.client.getPublishedEntries('QUERY')
       .then(assertRequestResponse('DATA', {
         method: 'GET',
@@ -159,7 +159,7 @@ describe('data/ApiClient', function () {
       }));
     });
 
-    pit('deleteExtension(id)', function () {
+    it('deleteExtension(id)', function () {
       return this.client.deleteExtension('ID')
       .then(assertRequestResponse(undefined, {
         method: 'DELETE',

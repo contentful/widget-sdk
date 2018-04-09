@@ -457,22 +457,22 @@ describe('spaceContext', function () {
           .withArgs(ASSET_LINK_IT.sys.id).rejects();
       });
 
-      pit('resolves a promise with an image file', function () {
+      it('resolves a promise with an image file', function () {
         return this.spaceContext.entryImage(this.entry)
         .then((file) => expect(file).toBe(this.file));
       });
 
-      pit('resolves a promise with an image file for given locale', function () {
+      it('resolves a promise with an image file for given locale', function () {
         return this.spaceContext.entryImage(this.entry, 'xx')
         .then((file) => expect(file).toBe(this.file));
       });
 
-      pit('resolves a promise with default locale`s image if unknown locale', function () {
+      it('resolves a promise with default locale`s image if unknown locale', function () {
         return this.spaceContext.entryImage(this.entry, 'foo')
         .then((file) => expect(file).toBe(this.file));
       });
 
-      pit('resolves a promise with null if no linked asset field in CT', function () {
+      it('resolves a promise with null if no linked asset field in CT', function () {
         _.remove(this.fields, function (field) {
           return field.type === 'Link';
         });
@@ -480,14 +480,14 @@ describe('spaceContext', function () {
         .then((file) => expect(file).toBe(null));
       });
 
-      pit('resolves a promise with null if linked asset is not an image', function () {
+      it('resolves a promise with null if linked asset is not an image', function () {
         delete this.file.details.image;
 
         return this.spaceContext.entryImage(this.entry)
         .then((file) => expect(file).toBe(null));
       });
 
-      pit('resolves a promise with null if dead link for given locale', function () {
+      it('resolves a promise with null if dead link for given locale', function () {
         // TODO: We might want to refine this edge case's behavior and try to load
         //       another locale's image then.
         return this.spaceContext.entryImage(this.entry, 'it')

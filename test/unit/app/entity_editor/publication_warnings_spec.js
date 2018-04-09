@@ -46,13 +46,13 @@ describe('Publication warnings', function () {
       ];
     });
 
-    pit('resolves if no warning was provided', function () {
+    it('resolves if no warning was provided', function () {
       return this.warnings.show().then(_.noop, () => {
         expect().fail('Should resolve');
       });
     });
 
-    pit('calls warning functions when predicate returns true', function () {
+    it('calls warning functions when predicate returns true', function () {
       this.warnings.register({shouldShow: Y, warnFn: this.stubs[0]});
       this.warnings.register({shouldShow: N, warnFn: this.stubs[1]});
 
@@ -62,7 +62,7 @@ describe('Publication warnings', function () {
       });
     });
 
-    pit('calls warnings functions in priority order', function () {
+    it('calls warnings functions in priority order', function () {
       this.warnings.register({shouldShow: Y, warnFn: this.stubs[0], priority: 10});
       this.warnings.register({shouldShow: Y, warnFn: this.stubs[1], priority: 100});
 
@@ -71,7 +71,7 @@ describe('Publication warnings', function () {
       });
     });
 
-    pit('merges warnings in the same group', function () {
+    it('merges warnings in the same group', function () {
       this.warnings.register({shouldShow: Y, group: 'x', warnFn: this.stubs[0]});
       this.warnings.register({shouldShow: Y, group: 'x', warnFn: this.stubs[1], priority: 2});
       this.warnings.register({shouldShow: Y, warnFn: this.stubs[2]});
@@ -84,7 +84,7 @@ describe('Publication warnings', function () {
       });
     });
 
-    pit('does not call merged warning function if none of predicates return true', function () {
+    it('does not call merged warning function if none of predicates return true', function () {
       this.warnings.register({shouldShow: N, group: 'x', warnFn: this.stubs[0]});
       this.warnings.register({shouldShow: N, group: 'x', warnFn: this.stubs[0]});
 
@@ -93,7 +93,7 @@ describe('Publication warnings', function () {
       });
     });
 
-    pit('calls merged warning function with an array of warning items', function () {
+    it('calls merged warning function with an array of warning items', function () {
       this.warnings.register({shouldShow: N, group: 'x'});
       this.warnings.register({shouldShow: Y, group: 'x', getData: _.constant('latter'), priority: -1});
       this.warnings.register({shouldShow: Y, group: 'x', getData: _.constant('former'), warnFn: this.stubs[0]});

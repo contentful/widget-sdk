@@ -73,7 +73,7 @@ describe('entityEditor/Document/StringField', function () {
       test('date', new Date());
 
       function test (type, value) {
-        pit(`rejects when setting the value to: ${type}`, function () {
+        it(`rejects when setting the value to: ${type}`, function () {
           return this.setAt(value).then(_.noop, function (err) {
             expect(err.message).toBe('Invalid string field value.');
           });

@@ -36,7 +36,7 @@ describe('widgets', function () {
       sinon.assert.calledWithExactly(this.storeGetMap);
     });
 
-    pit('returns the service when the store has fetched the widgets', function () {
+    it('returns the service when the store has fetched the widgets', function () {
       return widgets.setSpace()
       .then(function (widgets_) {
         expect(widgets).toBe(widgets_);

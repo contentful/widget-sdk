@@ -371,14 +371,14 @@ describe('Access Checker', function () {
         feature.enabled = hasFeature;
       }
 
-      it('returns true when has feature and is admin of space, false otherwise', function* () {
+      it('returns true when has feature and is admin of space, false otherwise', async function () {
         OrganizationRoles.setUser({organizationMemberships: []});
         changeSpace(false, true);
-        expect(yield ac.canModifyRoles()).toBe(false);
+        expect(await ac.canModifyRoles()).toBe(false);
         changeSpace(true, false);
-        expect(yield ac.canModifyRoles()).toBe(false);
+        expect(await ac.canModifyRoles()).toBe(false);
         changeSpace(true, true);
-        expect(yield ac.canModifyRoles()).toBe(true);
+        expect(await ac.canModifyRoles()).toBe(true);
       });
 
       it('should handle a null or undefined feature', function* () {
@@ -561,7 +561,7 @@ describe('Access Checker', function () {
         });
       });
 
-      pit('returns resolved promise with context if was forbidden', function () {
+      it('returns resolved promise with context if was forbidden', function () {
         const ctx = {};
         const cb1 = ac.wasForbidden(ctx);
 
@@ -571,7 +571,7 @@ describe('Access Checker', function () {
         });
       });
 
-      pit('returns rejected promise with response if was not forbidden', function () {
+      it('returns rejected promise with response if was not forbidden', function () {
         const cb = ac.wasForbidden({});
         const res = {statusCode: 400};
 
