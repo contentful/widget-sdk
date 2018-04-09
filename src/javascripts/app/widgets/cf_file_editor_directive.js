@@ -8,6 +8,7 @@ angular.module('contentful')
   var notification = require('notification');
   var stringUtils = require('stringUtils');
   var modalDialog = require('modalDialog');
+  var openInputDialog = require('app/InputDialog').default;
   var mimetype = require('mimetype');
 
   var dropPaneMountCount = 0;
@@ -45,7 +46,9 @@ angular.module('contentful')
       });
 
       scope.selectFile = selectFile;
-      scope.editWithFilestack = editWithFilestack;
+      scope.rotateOrMirror = rotateOrMirror;
+      scope.cropWithFilestack = cropWithFilestack;
+      scope.cropCustomAspectRatio = cropCustomAspectRatio;
       scope.editWithAviary = editWithAviary;
       scope.canEditFile = canEditFile;
       scope.deleteFile = deleteFile;
@@ -56,10 +59,31 @@ angular.module('contentful')
         });
       }
 
-      function editWithFilestack () {
+      function rotateOrMirror (mode) {
         var imageUrl = getImageUrl();
         if (imageUrl) {
-          Filestack.editFile(imageUrl).then(setFile, function () {
+          scope.imageIsLoading = true;
+          Filestack.rotateOrMirrorImage(mode, imageUrl).then(function (filestackUrl) {
+            return setFile({
+              upload: filestackUrl,
+              fileName: scope.file.fileName,
+              contentType: scope.file.contentType
+            });
+          }, function () {
+            scope.imageIsLoading = false;
+            notification.error('An error occurred while editing an asset.');
+          });
+        } else {
+          notification.error('An error occurred while editing an asset.');
+        }
+      }
+
+      function cropWithFilestack (mode) {
+        var imageUrl = getImageUrl();
+        if (imageUrl) {
+          var img = scope.file.details.image;
+          mode = mode === 'original' ? (img.width / img.height) : mode;
+          Filestack.cropImage(mode, imageUrl).then(setFile, function () {
             notification.error('An error occurred while editing an asset.');
           });
         } else {
@@ -67,12 +91,36 @@ angular.module('contentful')
         }
       }
 
+      function cropCustomAspectRatio () {
+        var img = scope.file.details.image;
+        openInputDialog({
+          input: {
+            value: '' + img.width + ':' + img.height,
+            regex: /^[1-9][0-9]{0,3}:[1-9][0-9]{0,3}$/
+          },
+          title: 'Please provide desired aspect ratio',
+          message: [
+            'Expected format is <code>{width}:{height}</code>. ',
+            'Both <code>{width}</code> and <code>height</code> should be numbers between 1 and 9999. ',
+            'The form is prepopulated with the aspect ratio of your image.'
+          ].join(''),
+          confirmLabel: 'Crop with provided aspect ratio'
+        }).promise.then(function (ratio) {
+          var dim = ratio.split(':');
+          cropWithFilestack(parseInt(dim[0], 10) / parseInt(dim[1], 10));
+        });
+      }
+
       function editWithAviary () {
         modalDialog.openConfirmDialog({
           title: 'Adobe Creative Editor is deprecated',
-          message: 'Adobe Creative Editor will be discontinued soon. You can still use it but we suggest to use the "Edit image" option.',
+          message: [
+            'Adobe Creative Editor will be discontinued by Adobe soon. It\'s still possible to use ',
+            'it but we suggest you to utilize new file editor options provided. You can rotate, ',
+            'mirror, crop (with and without maintaining aspect ratio) and circle images using them.'
+          ].join(''),
           confirmLabel: 'I want to use Adobe Creative Editor',
-          cancelLabel: 'I\'ll use the new editor'
+          cancelLabel: 'I\'ll use the new options'
         }).then(function (result) {
           if (result.confirmed) {
             openAviary();
