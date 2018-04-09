@@ -26,7 +26,7 @@ const SpaceDetails = createReactClass({
     }
   },
   render: function () {
-    const {spaceRatePlan, isFormSubmitted, onDimensionsChange} = this.props;
+    const {spaceRatePlan, onDimensionsChange} = this.props;
     const {name, validation, touched} = this.state;
     const showValidationError = touched && !!validation.name;
 
@@ -64,8 +64,8 @@ const SpaceDetails = createReactClass({
         />
         <div style={{textAlign: 'center', margin: '1.2em 0'}}>
           <button
-            className={`button btn-action ${isFormSubmitted ? 'is-loading' : ''}`}
-            disabled={isFormSubmitted || Object.keys(validation).length}
+            className="button btn-action"
+            disabled={Object.keys(validation).length}
             onClick={this.submit}>
             Create the space
           </button>

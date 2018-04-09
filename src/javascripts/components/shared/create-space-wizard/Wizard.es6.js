@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import SpacePlanSelector from './SpacePlanSelector';
 import SpaceDetails from './SpaceDetails';
+import ConfirmScreen from './ConfirmScreen';
 import ProgressScreen from './ProgressScreen';
 import {get, noop} from 'lodash';
 import client from 'client';
@@ -56,6 +57,11 @@ const Wizard = createReactClass({
       label: '2. Space details',
       isEnabled: (data) => !!data.spaceRatePlan,
       component: SpaceDetails
+    },
+    {
+      label: '3. Confirmation',
+      isEnabled: (data) => !!(data.spaceRatePlan && data.spaceName),
+      component: ConfirmScreen
     }
   ],
   render () {
