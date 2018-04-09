@@ -47,15 +47,12 @@ test/unit/webhooks/webhook_health_directive_spec.js
 test/unit/webhooks/webhook_repository_spec.js
 test/helpers/deep_diff.js
 test/integration/field_validation_dialog_spec.js
-src/javascripts/components/shared/file_info/cf_file_display_metadata_directive.js
-src/javascripts/components/shared/file_info/cf_file_display_directive.js
 src/javascripts/components/shared/validation_error_display/cf_error_list_directive.js
 src/javascripts/components/shared/validation_error_display/cf_error_messages_directive.js
 src/javascripts/components/shared/validation_error_display/cf_error_path_directive.js
 src/javascripts/components/shared/validation_error_display/error_path_controller.js
 src/javascripts/components/shared/accordion_controller.js
 src/javascripts/components/shared/cf_dropdown_toggle_directive.js
-src/javascripts/components/shared/cf_progress_bar_directive.js
 src/javascripts/components/shared/data_size_scale_controller.js
 src/javascripts/components/shared/endless_container_directive.js
 src/javascripts/components/shared/view_state_controller.js

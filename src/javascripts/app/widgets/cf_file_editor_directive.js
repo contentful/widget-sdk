@@ -2,21 +2,24 @@
 
 angular.module('contentful')
 .directive('cfFileEditor', ['require', function (require) {
+  var _ = require('lodash');
   var aviary = require('aviary');
   var Filestack = require('services/Filestack');
   var notification = require('notification');
   var stringUtils = require('stringUtils');
   var modalDialog = require('modalDialog');
+  var mimetype = require('mimetype');
 
   var dropPaneMountCount = 0;
 
-  // TODO use isolated scope.
-  // This is not possible right now because the widget depends on a
-  // few helper methods from the scope.
+  // TODO use isolated scope for this editor.
+  // Ideally everything we do in here should be possible via `widgetApi`.
+  // Right now we rely on parent scope properties like:
+  // `editorData`, `editorContext`, `fieldLocale`, `locale`, `otDoc`
   return {
     restrict: 'E',
     require: '^cfWidgetApi',
-    template: JST.cf_file_display(),
+    template: JST.cf_file_editor(),
     link: function (scope, elem, _attrs, widgetApi) {
       var field = widgetApi.field;
       var deleteFile = setFile.bind(null, null);
@@ -33,10 +36,10 @@ angular.module('contentful')
 
       var removeUpdateListener = field.onValueChanged(function (file) {
         scope.file = file;
+        validate();
       });
-
       scope.$on('$destroy', removeUpdateListener);
-      scope.$on('fileProcessingFailed', deleteFile);
+
       scope.$on('imageLoadState', function (_e, state) {
         scope.imageIsLoading = state === 'loading';
       });
@@ -44,6 +47,7 @@ angular.module('contentful')
       scope.selectFile = selectFile;
       scope.editWithFilestack = editWithFilestack;
       scope.editWithAviary = editWithAviary;
+      scope.canEditFile = canEditFile;
       scope.deleteFile = deleteFile;
 
       function selectFile () {
@@ -76,6 +80,14 @@ angular.module('contentful')
         });
       }
 
+      function canEditFile () {
+        var isEditable = _.get(scope, 'fieldLocale.access.editable', false);
+        var fileType = _.get(scope, 'file.contentType', '');
+        var isImage = mimetype.getGroupLabel({type: fileType}) === 'image';
+        var isReady = !scope.imageIsLoading && _.get(scope, 'file.url');
+        return isEditable && isImage && isReady;
+      }
+
       function openAviary () {
         var imageUrl = getImageUrl();
         if (!imageUrl) {
@@ -83,21 +95,14 @@ angular.module('contentful')
           return;
         }
 
-        scope.loadingEditor = true;
-        var preview = elem.find('[aviary-editor-preview]').get(0);
+        var preview = elem[0].querySelectorAll('[aviary-editor-preview]')[0];
         preview.src = '';
 
         preview.onload = function () {
           aviary.createEditor({
             image: preview,
             url: imageUrl,
-            onClose: function (params) {
-              if (params && !params.saveWasClicked) {
-                scope.$apply(function () {
-                  scope.loadingEditor = false;
-                });
-              }
-            }
+            onClose: _.noop
           }).then(function (aviaryUrl) {
             return Filestack.store(aviaryUrl);
           }).then(function (filestackUrl) {
@@ -107,11 +112,9 @@ angular.module('contentful')
               contentType: scope.file.contentType
             });
           }).then(function () {
-            scope.loadingEditor = false;
             aviary.close();
           }, function (err) {
             notification.error(err.message || 'An error occurred while editing an asset.');
-            scope.loadingEditor = false;
             aviary.close();
           });
         };
@@ -120,7 +123,7 @@ angular.module('contentful')
       }
 
       function getImageUrl () {
-        var img = elem.find('.thumbnail').get(0);
+        var img = elem[0].querySelectorAll('.thumbnail')[0];
         return img ? stringUtils.removeQueryString(img.src) : null;
       }
 
@@ -130,12 +133,37 @@ angular.module('contentful')
         if (file) {
           return field.setValue(file)
           .then(function () {
-            scope.$emit('fileUploaded', file, scope.locale);
+            maybeSetTitleOnDoc();
+            process();
             validate();
           }, validate);
         } else {
           return field.removeValue().then(validate, validate);
         }
+      }
+
+      function maybeSetTitleOnDoc () {
+        const path = ['fields', 'title', scope.locale.internal_code];
+        const fileName = stringUtils.fileNameToTitle(scope.file.fileName);
+        if (!scope.otDoc.getValueAt(path)) {
+          scope.otDoc.setValueAt(path, fileName);
+        }
+      }
+
+      function process () {
+        scope.editorData.entity.process(scope.otDoc.getVersion(), scope.locale.internal_code)
+        .catch(function (err) {
+          deleteFile();
+
+          const errors = _.get(err, ['body', 'details', 'errors'], []);
+          const invalidContentTypeErr = _.find(errors, {name: 'invalidContentType'});
+
+          if (invalidContentTypeErr) {
+            notification.error(invalidContentTypeErr.details);
+          } else {
+            notification.error('There has been a problem processing the Asset.');
+          }
+        });
       }
 
       function validate () {
