@@ -22,9 +22,13 @@ function createHookFactory (defineHook) {
       Promise.resolve()
       .then(() => {
         const result = runner.call(this);
+        const $apply = this.$apply.bind(this);
         if (isGenerator(result)) {
-          const $apply = this.$apply.bind(this);
           return runGenerator(result, $apply);
+        }
+
+        if (isThenable(result)) {
+          return runPromise(result, $apply);
         }
       })
       .then(done, done.fail);
@@ -38,10 +42,6 @@ function isThenable (obj) {
        typeof obj.catch === 'function';
 }
 
-// We need to guard against mocking of timing functions
-const setInterval = window.setInterval;
-const clearInterval = window.clearInterval;
-
 function createCoroutineTestFactory (testFactory) {
   return function (desc, runner, before) {
     if (!runner) {
@@ -50,7 +50,6 @@ function createCoroutineTestFactory (testFactory) {
 
     return testFactory(desc, function (done) {
       const $apply = this.$apply.bind(this);
-      let runApply;
       before = before || _.noop;
       const setup = this.setup || (() => Promise.resolve());
       return Promise.resolve(before.call(this))
@@ -65,21 +64,36 @@ function createCoroutineTestFactory (testFactory) {
 
           // allow async/await/returning promise
           if (isThenable(result)) {
-            // we need to resolve $apply constantly, so $q-based promises
-            // are resolved; see below `runGenerator` function comments
-            // for more details - reasons here are the same
-            runApply = setInterval($apply, 10);
-            return result;
+            return runPromise(result, $apply);
           }
         })
-        .then(done, done.fail)
-        .finally(() => clearInterval(runApply));
+        .then(done, done.fail);
     });
   };
 }
 
 function isGenerator (g) {
   return g && typeof g.next === 'function' && typeof g.throw === 'function';
+}
+
+// We need to guard against mocking of timing functions
+const setInterval = window.setInterval;
+const clearInterval = window.clearInterval;
+
+/**
+ * Continiously calls `$apply()` so that handlers of Angular promises
+ * are called. After promise is resolved/rejected, removes interval.
+ *
+ * The reason behind this is that if we attach a revole or reject
+ * handler to an Angular promise that is already settled the handlers
+ * will not be called until the next digest cycle. During testing we
+ * must trigger digest cycles explicitly by calling `$apply`.
+ */
+function runPromise (promise, $apply) {
+  const runApply = setInterval($apply, 10);
+  promise.finally(() => clearInterval(runApply));
+
+  return promise;
 }
 
 
