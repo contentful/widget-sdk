@@ -4,6 +4,7 @@ import PropTypes from 'libs/prop-types';
 import FetchSubscriptionPrice, {RequestState} from './FetchSubscriptionPrice';
 import spinner from 'ui/Components/Spinner';
 import {asReact} from 'ui/Framework/DOMRenderer';
+import Steps from './Steps';
 
 const ConfirmScreen = createReactClass({
   propTypes: {
@@ -54,7 +55,7 @@ const ConfirmScreen = createReactClass({
                 (<a
                   className="text-link"
                   href="#"
-                  onClick={() => onNavigate(0)}>
+                  onClick={() => onNavigate(Steps.SpaceType)}>
                   change space type
                 </a>).
                 The space’s name will be <em>{spaceName}</em>, and we
@@ -63,7 +64,7 @@ const ConfirmScreen = createReactClass({
                 (<a
                   className="text-link"
                   href="#"
-                  onClick={() => onNavigate(1)}>
+                  onClick={() => onNavigate(Steps.SpaceDetails)}>
                   change space details
                 </a>).
               </p>

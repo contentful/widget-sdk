@@ -2,6 +2,7 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import TemplateSelector from './TemplateSelector';
+import Steps from './Steps';
 
 const SpaceDetails = createReactClass({
   propTypes: {
@@ -42,7 +43,7 @@ const SpaceDetails = createReactClass({
           <a
             className="text-link"
             href="#"
-            onClick={() => onNavigate(0)}>
+            onClick={() => onNavigate(Steps.SpaceType)}>
             Go back
           </a>{' '}
           to change your selection.
@@ -75,7 +76,7 @@ const SpaceDetails = createReactClass({
             className="button btn-action"
             disabled={Object.keys(validation).length}
             onClick={this.submit}>
-            Create the space
+            Proceed to confirmation
           </button>
         </div>
       </div>

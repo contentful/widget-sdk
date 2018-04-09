@@ -2,6 +2,7 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import Steps from './Steps';
 import SpacePlanSelector from './SpacePlanSelector';
 import SpaceDetails from './SpaceDetails';
 import ConfirmScreen from './ConfirmScreen';
@@ -16,6 +17,27 @@ import {getCreator as getTemplateCreator} from 'services/SpaceTemplateCreator';
 import spaceContext from 'spaceContext';
 
 const DEFAULT_LOCALE = 'en-US';
+
+const WizardSteps = [
+  {
+    id: Steps.SpaceType,
+    label: '1. Space type',
+    isEnabled: () => true,
+    component: SpacePlanSelector
+  },
+  {
+    id: Steps.SpaceDetails,
+    label: '2. Space details',
+    isEnabled: (props) => !!props.spaceRatePlan,
+    component: SpaceDetails
+  },
+  {
+    id: Steps.Confirmation,
+    label: '3. Confirmation',
+    isEnabled: (props) => !!(props.spaceRatePlan && props.spaceName),
+    component: ConfirmScreen
+  }
+];
 
 const Wizard = createReactClass({
   propTypes: {
@@ -35,7 +57,7 @@ const Wizard = createReactClass({
   },
   getInitialState () {
     return {
-      currentStepId: 0,
+      currentStepId: Steps.SpaceType,
       isFormSubmitted: false,
       isSpaceCreated: false,
       isContentCreated: false,
@@ -47,23 +69,6 @@ const Wizard = createReactClass({
       }
     };
   },
-  steps: [
-    {
-      label: '1. Space type',
-      isEnabled: () => true,
-      component: SpacePlanSelector
-    },
-    {
-      label: '2. Space details',
-      isEnabled: (data) => !!data.spaceRatePlan,
-      component: SpaceDetails
-    },
-    {
-      label: '3. Confirmation',
-      isEnabled: (data) => !!(data.spaceRatePlan && data.spaceName),
-      component: ConfirmScreen
-    }
-  ],
   render () {
     const {organization, onCancel, onConfirm, onDimensionsChange} = this.props;
     const {
@@ -90,7 +95,7 @@ const Wizard = createReactClass({
     } else {
       const navigation = (
         <ul className="tab-list">
-          {this.steps.map(({label, isEnabled}, id) => (
+          {WizardSteps.map(({id, label, isEnabled}) => (
             <li key={id} role="tab" aria-selected={id === currentStepId}>
               <button onClick={() => this.navigate(id)} disabled={!isEnabled(data)}>
                 {label}
@@ -121,18 +126,18 @@ const Wizard = createReactClass({
             {closeButton}
           </div>
           <div className="modal-dialog__content">
-            {this.steps.map(({isEnabled, component}, id) => {
-              const isCurrent = (id === currentStepId);
-              return (
-                <div
-                  key={id}
-                  className={classnames('create-space-wizard__step', {
-                    'create-space-wizard__step--current': isCurrent
-                  })}>
-                  {isEnabled(stepProps) && React.createElement(component, stepProps)}
-                </div>
-              );
-            })}
+            {WizardSteps.map(({id, isEnabled, component}) => (
+              <div
+                key={id}
+                className={classnames(
+                  'create-space-wizard__step',
+                  {
+                    'create-space-wizard__step--current': id === currentStepId
+                  }
+                )}>
+                {isEnabled(stepProps) && React.createElement(component, stepProps)}
+              </div>
+            ))}
           </div>
         </div>
       );
@@ -145,10 +150,10 @@ const Wizard = createReactClass({
     let {currentStepId, data} = this.state;
     data = Object.assign(data, stepData);
 
-    if (currentStepId === this.steps.length - 1) {
+    if (isLastStep(currentStepId)) {
       this.createSpace(data);
     } else {
-      currentStepId = currentStepId + 1;
+      currentStepId = getNextStep(currentStepId);
     }
     this.setState({
       data,
@@ -198,6 +203,19 @@ const Wizard = createReactClass({
     }
   }
 });
+
+function isLastStep (stepId) {
+  return WizardSteps[WizardSteps.length - 1].id === stepId;
+}
+
+function getNextStep (stepId) {
+  if (isLastStep(stepId)) {
+    return stepId;
+  } else {
+    const index = WizardSteps.findIndex(({id}) => id === stepId);
+    return WizardSteps[index + 1].id;
+  }
+}
 
 function makeSpaceData ({spaceRatePlan, spaceName}) {
   return {
