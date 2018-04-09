@@ -5,7 +5,7 @@ import TemplateSelector from './TemplateSelector';
 
 const SpaceDetails = createReactClass({
   propTypes: {
-    submit: PropTypes.func.isRequired,
+    onSubmit: PropTypes.func.isRequired,
     spaceRatePlan: PropTypes.object.isRequired,
     serverValidationErrors: PropTypes.object,
     isFormSubmitted: PropTypes.bool,
@@ -87,7 +87,7 @@ const SpaceDetails = createReactClass({
 
     if (!Object.keys(validation).length) {
       const {name, template} = this.state;
-      this.props.submit({spaceName: name, template});
+      this.props.onSubmit({spaceName: name, template});
     }
   }
 });

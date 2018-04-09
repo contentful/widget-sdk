@@ -31,11 +31,11 @@ const infoItems = [
 const ProgressScreen = createReactClass({
   propTypes: {
     done: PropTypes.bool.isRequired,
-    confirm: PropTypes.func.isRequired,
+    onConfirm: PropTypes.func.isRequired,
     onDimensionsChange: PropTypes.func.isRequired
   },
   render () {
-    const {done, confirm} = this.props;
+    const {done, onConfirm} = this.props;
 
     return (
       <div>
@@ -67,7 +67,7 @@ const ProgressScreen = createReactClass({
             className="btn-action"
             data-test-id="get-started"
             disabled={!done}
-            onClick={confirm}>
+            onClick={onConfirm}>
             Get started
           </button>
         </div>

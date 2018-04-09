@@ -25,8 +25,8 @@ const Wizard = createReactClass({
       name: PropTypes.string.isRequired,
       isBillable: PropTypes.bool
     }).isRequired,
-    cancel: PropTypes.func.isRequired,
-    confirm: PropTypes.func.isRequired,
+    onCancel: PropTypes.func.isRequired,
+    onConfirm: PropTypes.func.isRequired,
     onSpaceCreated: PropTypes.func.isRequired,
     onTemplateCreated: PropTypes.func.isRequired,
     // call back to Angular directive to readjust modal position
@@ -59,7 +59,7 @@ const Wizard = createReactClass({
     }
   ],
   render () {
-    const {organization, cancel, confirm, onDimensionsChange} = this.props;
+    const {organization, onCancel, onConfirm, onDimensionsChange} = this.props;
     const {
       currentStepId,
       isFormSubmitted,
@@ -75,7 +75,7 @@ const Wizard = createReactClass({
           <div className="modal-dialog__content">
             <ProgressScreen
               done={isContentCreated}
-              confirm={confirm}
+              onConfirm={onConfirm}
               onDimensionsChange={onDimensionsChange}
             />
           </div>
@@ -95,7 +95,7 @@ const Wizard = createReactClass({
       );
       const closeButton = <button
         className="create-space-wizard__close modal-dialog__close"
-        onClick={cancel} />;
+        onClick={onCancel} />;
 
       const stepProps = {
         ...data,
@@ -103,8 +103,8 @@ const Wizard = createReactClass({
         isFormSubmitted,
         serverValidationErrors,
         onDimensionsChange,
-        cancel,
-        submit: this.submitStep
+        onCancel,
+        onSubmit: this.submitStep
       };
 
       return (
@@ -175,7 +175,7 @@ const Wizard = createReactClass({
         onTemplateCreated();
         this.setState({isContentCreated: true});
       } else {
-        this.props.confirm();
+        this.props.onConfirm();
       }
     }
   },
@@ -187,7 +187,7 @@ const Wizard = createReactClass({
       this.setState({serverValidationErrors, currentStepId: 1});
     } else {
       notification.error('Could not create Space. If the problem persists please get in contact with us.');
-      this.props.cancel();
+      this.props.onCancel();
     }
   }
 });

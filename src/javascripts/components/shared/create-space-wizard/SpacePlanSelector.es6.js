@@ -15,9 +15,9 @@ import {caseof} from 'libs/sum-types';
 const SpacePlanSelector = createReactClass({
   propTypes: {
     organization: PropTypes.object.isRequired,
-    submit: PropTypes.func.isRequired,
+    onSubmit: PropTypes.func.isRequired,
     onDimensionsChange: PropTypes.func.isRequired,
-    cancel: PropTypes.func.isRequired
+    onCancel: PropTypes.func.isRequired
   },
   getInitialState () {
     return {selectedPlan: null};
@@ -76,18 +76,18 @@ const SpacePlanSelector = createReactClass({
     this.setState({selectedPlan});
 
     if (selectedPlan) {
-      this.props.submit({spaceRatePlan: selectedPlan});
+      this.props.onSubmit({spaceRatePlan: selectedPlan});
     }
   },
   goToBilling () {
-    const {organization, cancel} = this.props;
+    const {organization, onCancel} = this.props;
     const orgId = organization.sys.id;
     go({
       path: ['account', 'organizations', 'subscription_billing'],
       params: {orgId, pathSuffix: '/billing_address'},
       options: {reload: true}
     });
-    cancel();
+    onCancel();
   }
 });
 
