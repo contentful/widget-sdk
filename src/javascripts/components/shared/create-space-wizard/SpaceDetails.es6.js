@@ -86,7 +86,7 @@ const SpaceDetails = createReactClass({
   setName: function (name) {
     const state = {name, touched: true};
     state.validation = validateState(state);
-    this.props.onChange({spaceName: name});
+    this.props.onChange({spaceName: name.trim()});
     this.setState(state);
   },
   setTemplate: function (template) {
@@ -103,9 +103,9 @@ const SpaceDetails = createReactClass({
   }
 });
 
-function validateState ({name}) {
+function validateState ({name = ''}) {
   const validation = {};
-  if (!name) {
+  if (!name.trim()) {
     validation.name = 'Name is required';
   }
   return validation;
