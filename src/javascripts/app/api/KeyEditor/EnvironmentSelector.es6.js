@@ -81,11 +81,11 @@ function renderList ({canEdit, spaceEnvironments, envs, updateEnvs}) {
         disabled: !canEdit || spaceEnvironments.length < 2,
         onChange: () => toggleEnvironmentSelection(env)
       }),
-      codeFragment([env.sys.id]),
-      ihspace('6px'),
-      h(copyButton, { value: env.sys.id }),
-      ihspace('2em'),
-      env.sys.id === 'master' && badge({}, ['Default environment'])
-    ])
+      codeFragment([env.sys.id])
+    ]),
+    ihspace('6px'),
+    h(copyButton, { value: env.sys.id }),
+    ihspace('2em'),
+    env.sys.id === 'master' && badge({}, ['Default environment'])
   ])));
 }

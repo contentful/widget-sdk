@@ -2,85 +2,79 @@ import React from 'libs/react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import classnames from 'classnames';
-import {get, kebabCase, isNumber} from 'lodash';
-import {createOrganizationEndpoint} from 'data/EndpointFactory';
-import {getSpaceRatePlans} from 'account/pricing/PricingDataProvider';
-import createResourceService from 'services/ResourceService';
-import {canCreate} from 'utils/ResourceUtils';
+import FetchSpacePlans, {RequestState} from './FetchSpacePlans';
+import {get, kebabCase} from 'lodash';
 import {isOwner} from 'services/OrganizationRoles';
 import {go} from 'states/Navigator';
 import HelpIcon from 'ui/Components/HelpIcon';
+import spinner from 'ui/Components/Spinner';
+import {asReact} from 'ui/Framework/DOMRenderer';
 
 const SpacePlanSelector = createReactClass({
   propTypes: {
     organization: PropTypes.object.isRequired,
-    submit: PropTypes.func.isRequired,
-    onDimensionsChange: PropTypes.func,
-    cancel: PropTypes.func.isRequired
+    onSubmit: PropTypes.func.isRequired,
+    onDimensionsChange: PropTypes.func.isRequired,
+    onCancel: PropTypes.func.isRequired
   },
-  getInitialState: function () {
-    return {
-      spaceRatePlans: [],
-      selectedPlan: null
-    };
+  getInitialState () {
+    return {selectedPlan: null};
   },
-  componentWillMount: async function () {
-    const {organization} = this.props;
+  render () {
+    const {organization, onDimensionsChange} = this.props;
+    const {selectedPlan} = this.state;
 
-    const resourceService = createResourceService(organization.sys.id, 'organization');
-    const freeSpacesResource = await resourceService.get('free_space');
-
-    const spaceRatePlans = await getFormattedSpacePlans(organization, freeSpacesResource);
-
-    this.setState({
-      spaceRatePlans,
-      selectedPlan: null,
-      freeSpacesLimit: get(freeSpacesResource, 'limits.maximum'),
-      freeSpacesUsage: get(freeSpacesResource, 'usage')
-    });
-    setTimeout(this.props.onDimensionsChange, 0);
-  },
-  render: function () {
-    const {organization} = this.props;
-    const {spaceRatePlans, selectedPlan, freeSpacesLimit, freeSpacesUsage} = this.state;
-
-    return (
-      <div>
-        <h2 className="create-space-wizard__heading">
-          Choose the space type
-        </h2>
-        <p className="create-space-wizard__subheading">
-          You are creating this space for organization {organization.name}.
-        </p>
-        <div className="space-plans-list">
-          {spaceRatePlans.map((plan) => <SpacePlanItem
-            key={plan.sys.id}
-            plan={plan}
-            freeSpacesLimit={freeSpacesLimit}
-            freeSpacesUsage={freeSpacesUsage}
-            isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
-            onSelect={this.selectPlan} />)}
+    return <FetchSpacePlans organization={organization} onUpdate={onDimensionsChange}>
+      {({requestState, spaceRatePlans, freeSpacesResource}) => (
+        <div>
+          {requestState === RequestState.PENDING && <div className="loader__container">
+            {asReact(spinner({diameter: '40px'}))}
+          </div>}
+          {requestState === RequestState.SUCCESS && <div>
+            <h2 className="create-space-wizard__heading">
+              Choose the space type
+            </h2>
+            <p className="create-space-wizard__subheading">
+              You are creating this space for organization {organization.name}.
+            </p>
+            <div className="space-plans-list">
+              {spaceRatePlans.map((plan) => <SpacePlanItem
+                key={plan.sys.id}
+                plan={plan}
+                freeSpacesResource={freeSpacesResource}
+                isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
+                onSelect={this.selectPlan} />)}
+            </div>
+            {!organization.isBillable && <BillingInfo
+              canSetupBilling={isOwner(organization)}
+              goToBilling={this.goToBilling} />}
+          </div>}
+          {requestState === RequestState.ERROR && <div className="note-box--warning">
+            <p>Could not fetch space plans.</p>
+          </div>}
         </div>
-        <BillingInfo organization={organization} goToBilling={this.goToBilling} />
-      </div>
-    );
+      )}
+    </FetchSpacePlans>;
   },
-  selectPlan: function (selectedPlan) {
+  componentDidMount () {
+    this.props.onDimensionsChange();
+  },
+  selectPlan (selectedPlan) {
     this.setState({selectedPlan});
 
     if (selectedPlan) {
-      this.props.submit({spaceRatePlan: selectedPlan});
+      this.props.onSubmit({spaceRatePlan: selectedPlan});
     }
   },
-  goToBilling: function () {
-    const {organization, cancel} = this.props;
+  goToBilling () {
+    const {organization, onCancel} = this.props;
     const orgId = organization.sys.id;
     go({
       path: ['account', 'organizations', 'subscription_billing'],
       params: {orgId, pathSuffix: '/billing_address'},
       options: {reload: true}
     });
-    cancel();
+    onCancel();
   }
 });
 
@@ -88,12 +82,13 @@ const SpacePlanItem = createReactClass({
   propTypes: {
     plan: PropTypes.object.isRequired,
     isSelected: PropTypes.bool.isRequired,
-    freeSpacesLimit: PropTypes.number.isRequired,
-    freeSpacesUsage: PropTypes.number.isRequired,
+    freeSpacesResource: PropTypes.object.isRequired,
     onSelect: PropTypes.func.isRequired
   },
   render: function () {
-    const {plan, isSelected, freeSpacesLimit, freeSpacesUsage, onSelect} = this.props;
+    const {plan, isSelected, freeSpacesResource, onSelect} = this.props;
+    const freeSpacesUsage = freeSpacesResource.usage;
+    const freeSpacesLimit = freeSpacesResource.limits.maximum;
 
     return (
       <div
@@ -129,60 +124,29 @@ const SpacePlanItem = createReactClass({
 
 const BillingInfo = createReactClass({
   propTypes: {
-    organization: PropTypes.object.isRequired,
+    canSetupBilling: PropTypes.bool.isRequired,
     goToBilling: PropTypes.func.isRequired
   },
   render: function () {
-    const {organization, goToBilling} = this.props;
-    const hasSubscription = !!organization.isBillable;
+    const {canSetupBilling, goToBilling} = this.props;
 
-    if (hasSubscription) {
-      return '';
+    const content = [
+      'You need to provide us with your billing address and credit card details before creating a paid space. '
+    ];
+
+    if (canSetupBilling) {
+      const billingLink = (
+        <button className="btn-link" style={{display: 'inline'}} onClick={goToBilling}>
+          organization settings
+        </button>
+      );
+      content.push('Head to the ', billingLink, ' to add these details for the organization.');
     } else {
-      const canSetupBilling = isOwner(organization);
-      const content = [
-        'You need to provide us with your billing address and credit card details before creating a paid space. '
-      ];
-
-      if (canSetupBilling) {
-        const billingLink = (
-          <button
-            className="btn-link"
-            style={{display: 'inline'}}
-            onClick={goToBilling}>
-            organization settings
-          </button>
-        );
-        content.push('Head to the ', billingLink, ' to add these details for the organization.');
-      } else {
-        content.push('Please contact your organization’s owner.');
-      }
-
-      return <div className="note-box--info"><p>{content}</p></div>;
+      content.push('Please contact your organization’s owner.');
     }
+
+    return <div className="note-box--info"><p>{content}</p></div>;
   }
 });
-
-const RESOURCE_ORDER = ['Environments', 'Roles', 'Locales', 'Content types', 'Records'];
-
-async function getFormattedSpacePlans (organization, freeSpacesResource) {
-  const endpoint = createOrganizationEndpoint(organization.sys.id);
-  const spaceRatePlans = await getSpaceRatePlans(endpoint);
-
-  return spaceRatePlans.map((plan) => {
-    const isFree = (plan.productPlanType === 'free_space');
-    const includedResources = plan.productRatePlanCharges
-      .filter(({unitType, tiers}) => unitType === 'limit' && isNumber(get(tiers, '[0].endingUnit')))
-      .map((limit) => ({name: limit.name, units: limit.tiers[0].endingUnit}))
-      .sort((first, second) => RESOURCE_ORDER.indexOf(first.name) > RESOURCE_ORDER.indexOf(second.name));
-
-    return {
-      ...plan,
-      isFree,
-      includedResources,
-      disabled: isFree ? !canCreate(freeSpacesResource) : !organization.isBillable
-    };
-  });
-}
 
 export default SpacePlanSelector;
