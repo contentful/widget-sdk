@@ -216,8 +216,14 @@ export default function create ($scope, widgetApi) {
     getData: getWarningData
   });
 
-  $scope.$on('$destroy', function () {
+  const unlistenStateChangeSuccess = $scope.$on(
+    '$stateChangeSuccess',
+    () => state.refreshEntities()
+  );
+
+  $scope.$on('$destroy', () => {
     unregisterPublicationWarning();
+    unlistenStateChangeSuccess();
   });
 
   function is (type, style) {
