@@ -1,10 +1,10 @@
 import React from 'libs/react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
-import FetchSubscriptionPrice, {RequestState} from './FetchSubscriptionPrice';
+import FetchSubscriptionPrice from './FetchSubscriptionPrice';
 import spinner from 'ui/Components/Spinner';
 import {asReact} from 'ui/Framework/DOMRenderer';
-import Steps from './Steps';
+import {Steps, RequestState, formatPrice} from './WizardUtils';
 
 const ConfirmScreen = createReactClass({
   propTypes: {
@@ -44,12 +44,12 @@ const ConfirmScreen = createReactClass({
               </p>
               <p>
                 You are about to purchase a {spaceRatePlan.name.toLowerCase()} space
-                for <strong>${formatPrice(spaceRatePlan.price)} / month</strong> for the
+                for <strong>{formatPrice(spaceRatePlan.price)} / month</strong> for the
                 organization <em>{organization.name}</em>.
                 {requestState === RequestState.SUCCESS && <span>
                   {' '}
                   This will bring up the total of your organization’s subscription
-                  to <strong>${formatPrice(totalPrice + spaceRatePlan.price)} / month.</strong>
+                  to <strong>{formatPrice(totalPrice + spaceRatePlan.price)} / month.</strong>
                 </span>}
                 {' '}
                 (<a
@@ -86,9 +86,5 @@ const ConfirmScreen = createReactClass({
     this.props.onDimensionsChange();
   }
 });
-
-function formatPrice (value) {
-  return parseInt(value, 10).toLocaleString('en-US');
-}
 
 export default ConfirmScreen;

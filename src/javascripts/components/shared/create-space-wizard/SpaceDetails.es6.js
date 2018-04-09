@@ -2,7 +2,7 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import TemplateSelector from './TemplateSelector';
-import Steps from './Steps';
+import {Steps, formatPrice} from './WizardUtils';
 
 const SpaceDetails = createReactClass({
   propTypes: {
@@ -39,7 +39,7 @@ const SpaceDetails = createReactClass({
         </h2>
         <p className="create-space-wizard__subheading">
           You are about to create a {spaceRatePlan.name.toLowerCase()} space
-          for ${spaceRatePlan.price}/month.<br/>
+          for {formatPrice(spaceRatePlan.price)}/month.<br/>
           <a
             className="text-link"
             href="#"
@@ -74,7 +74,7 @@ const SpaceDetails = createReactClass({
         <div style={{textAlign: 'center', margin: '1.2em 0'}}>
           <button
             className="button btn-action"
-            disabled={Object.keys(validation).length}
+            disabled={Object.keys(validation).length > 0}
             onClick={this.submit}>
             Proceed to confirmation
           </button>

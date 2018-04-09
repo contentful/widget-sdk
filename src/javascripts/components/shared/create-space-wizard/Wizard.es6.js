@@ -2,7 +2,7 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import Steps from './Steps';
+import {Steps} from './WizardUtils';
 import SpacePlanSelector from './SpacePlanSelector';
 import SpaceDetails from './SpaceDetails';
 import ConfirmScreen from './ConfirmScreen';

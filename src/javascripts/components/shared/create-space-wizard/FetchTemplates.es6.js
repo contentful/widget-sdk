@@ -1,12 +1,7 @@
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import {getTemplatesList} from 'services/SpaceTemplateLoader';
-
-export const RequestState = {
-  PENDING: 'pending',
-  SUCCESS: 'success',
-  ERROR: 'error'
-};
+import {RequestState} from './WizardUtils';
 
 const FetchTemplates = createReactClass({
   propTypes: {

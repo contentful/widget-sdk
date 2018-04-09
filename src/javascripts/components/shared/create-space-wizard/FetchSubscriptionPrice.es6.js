@@ -2,12 +2,7 @@ import createReactClass from 'create-react-class';
 import PropTypes from 'libs/prop-types';
 import {createOrganizationEndpoint} from 'data/EndpointFactory';
 import {getSubscriptionPlans, calculateTotalPrice} from 'account/pricing/PricingDataProvider';
-
-export const RequestState = {
-  PENDING: 'pending',
-  SUCCESS: 'success',
-  ERROR: 'error'
-};
+import {RequestState} from './WizardUtils';
 
 const FetchSubscriptionPrice = createReactClass({
   propTypes: {
