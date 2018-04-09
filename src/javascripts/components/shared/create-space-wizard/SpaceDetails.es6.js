@@ -9,6 +9,7 @@ const SpaceDetails = createReactClass({
     spaceRatePlan: PropTypes.object.isRequired,
     serverValidationErrors: PropTypes.object,
     isFormSubmitted: PropTypes.bool,
+    onNavigate: PropTypes.func.isRequired,
     onDimensionsChange: PropTypes.func
   },
   getInitialState: function () {
@@ -26,7 +27,7 @@ const SpaceDetails = createReactClass({
     }
   },
   render: function () {
-    const {spaceRatePlan, onDimensionsChange} = this.props;
+    const {spaceRatePlan, onDimensionsChange, onNavigate} = this.props;
     const {name, validation, touched} = this.state;
     const showValidationError = touched && !!validation.name;
 
@@ -37,7 +38,14 @@ const SpaceDetails = createReactClass({
         </h2>
         <p className="create-space-wizard__subheading">
           You are about to create a {spaceRatePlan.name.toLowerCase()} space
-          for ${spaceRatePlan.price}/month.
+          for ${spaceRatePlan.price}/month.<br/>
+          <a
+            className="text-link"
+            href="#"
+            onClick={() => onNavigate(0)}>
+            Go back
+          </a>{' '}
+          to change your selection.
         </p>
         <div className="cfnext-form__field create-space-wizard__centered-block">
           <label htmlor="space-name">

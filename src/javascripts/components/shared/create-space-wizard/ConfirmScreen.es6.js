@@ -10,6 +10,7 @@ const ConfirmScreen = createReactClass({
     organization: PropTypes.object.isRequired,
     isFormSubmitted: PropTypes.bool,
     onSubmit: PropTypes.func.isRequired,
+    onNavigate: PropTypes.func.isRequired,
     onDimensionsChange: PropTypes.func.isRequired
   },
   render () {
@@ -19,7 +20,8 @@ const ConfirmScreen = createReactClass({
       template,
       organization,
       isFormSubmitted,
-      onSubmit
+      onSubmit,
+      onNavigate
     } = this.props;
 
     return (
@@ -33,11 +35,23 @@ const ConfirmScreen = createReactClass({
         <p>
           You are about to purchase a {spaceRatePlan.name.toLowerCase()} space
           for ${spaceRatePlan.price} / month for the organization {organization.name}.
+          (<a
+            className="text-link"
+            href="#"
+            onClick={() => onNavigate(0)}>
+            change space type
+          </a>).
           The space’s name will be {spaceName}, and
           {template
-            ? ` we'll fill it with example content for ${template.name}.`
-            : ' we won’t fill it with example content.'
+            ? ` we'll fill it with example content for ${template.name} `
+            : ' we won’t fill it with example content '
           }
+          (<a
+            className="text-link"
+            href="#"
+            onClick={() => onNavigate(1)}>
+            change space details
+          </a>).
         </p>
         <div style={{textAlign: 'center', margin: '1.2em 0'}}>
           <button

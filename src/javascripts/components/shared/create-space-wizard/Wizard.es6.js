@@ -92,7 +92,7 @@ const Wizard = createReactClass({
         <ul className="tab-list">
           {this.steps.map(({label, isEnabled}, id) => (
             <li key={id} role="tab" aria-selected={id === currentStepId}>
-              <button onClick={this.navigate(id)} disabled={!isEnabled(data)}>
+              <button onClick={() => this.navigate(id)} disabled={!isEnabled(data)}>
                 {label}
               </button>
             </li>
@@ -110,6 +110,7 @@ const Wizard = createReactClass({
         serverValidationErrors,
         onDimensionsChange,
         onCancel,
+        onNavigate: this.navigate,
         onSubmit: this.submitStep
       };
 
@@ -138,7 +139,7 @@ const Wizard = createReactClass({
     }
   },
   navigate (stepId) {
-    return () => this.setState({currentStepId: stepId});
+    this.setState({currentStepId: stepId});
   },
   submitStep (stepData) {
     let {currentStepId, data} = this.state;
