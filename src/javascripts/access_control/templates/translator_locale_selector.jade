@@ -5,6 +5,6 @@
     ng-model="translator.localeCode"
     ng-options="l.code as l.name for l in translator.locales"
     ng-change="translator.updateLocale()")
-  .cfnext-form__hint--normal-text
+  .cfnext-form__hint--normal-text(ng-if="!hasFeatureEnabled")
     .advice__note
       | For this built-in role, you can only specify the locale users with this role can edit.

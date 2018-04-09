@@ -38,11 +38,21 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
     $scope.loading = false;
   }).then(reload).catch(ReloadNotification.basicErrorHandler);
 
+  $scope.isTranslator = isTranslator;
   $scope.duplicateRole = duplicateRole;
   $scope.jumpToRoleMembers = jumpToRoleMembers;
   $scope.jumpToAdminRoleMembers = jumpToAdminRoleMembers;
   $scope.accountUpgradeState = TheAccountView.getSubscriptionState();
   $scope.canUpgrade = isOwnerOrAdmin(org);
+
+
+  function isTranslator (role) {
+    return /^Translator/.test(role.name);
+  }
+
+  function hasTranslator (roles) {
+    return roles && roles.some(isTranslator);
+  }
 
   function jumpToAdminRoleMembers () {
     jumpToRoleMembers(ADMIN_ROLE_ID);
@@ -66,6 +76,7 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
 
       return role;
     });
+    $scope.hasTranslator = hasTranslator($scope.roles);
     $scope.removeRole = createRoleRemover(listHandler, reload);
     $scope.context.ready = true;
     $scope.usage = data.rolesResource.usage;
