@@ -135,3 +135,15 @@ export function getSpaceRatePlans (endpoint) {
     query: {'plan_type': 'space'}
   }, alphaHeader).then((data) => data.items);
 }
+
+/**
+ * Receives an array of subscription plans and calculates the grand total
+ * @param {object[]} subscriptionPlans
+ * @returns {number}
+ */
+export function calculateTotalPrice (subscriptionPlans) {
+  return subscriptionPlans.reduce(
+    (total, plan) => total + (parseInt(plan.price, 10) || 0),
+    0
+  );
+}
