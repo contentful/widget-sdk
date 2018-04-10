@@ -17,7 +17,7 @@
       }
     },
     "@contentful/ui-component-library": {
-      "version": "0.0.1-beta8"
+      "version": "1.0.3"
     },
     "@contentful/validation": {
       "version": "6.3.1",
@@ -605,7 +605,7 @@
       "version": "1.1.0"
     },
     "downshift": {
-      "version": "1.22.5"
+      "version": "1.31.2"
     },
     "duplexer2": {
       "version": "0.0.2",

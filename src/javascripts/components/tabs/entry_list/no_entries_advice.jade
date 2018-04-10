@@ -1,5 +1,3 @@
-include ./create_entry_button.mixin.jade
-
 .empty-state(ng-hide="hasContentType")
   cf-icon(name="empty-content" class="empty-state__icon")
   .empty-state__title
@@ -25,7 +23,10 @@ include ./create_entry_button.mixin.jade
   .empty-state__description
     | Your content is made up of entries.  Get started by creating your first entry.
   .empty-state__action
-    +create-entry-button()
+    cf-create-entry-button(
+      content-types="accessibleCts"
+      suggested-content-type-id="context.view.contentTypeId"
+      on-select="newEntry")
   .empty-state__note-box(ng-if="hasArchivedEntries")
     | You can look up old entries in the
     | <a ng-click="loadView({searchTerm: 'status:archived'})">archive</a>.
