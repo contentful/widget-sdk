@@ -133,22 +133,22 @@ const BillingInfo = createReactClass({
   render: function () {
     const {canSetupBilling, goToBilling} = this.props;
 
-    const content = [
-      'You need to provide us with your billing address and credit card details before creating a paid space. '
-    ];
-
-    if (canSetupBilling) {
-      const billingLink = (
-        <button className="btn-link" style={{display: 'inline'}} onClick={goToBilling}>
-          organization settings
-        </button>
-      );
-      content.push('Head to the ', billingLink, ' to add these details for the organization.');
-    } else {
-      content.push('Please contact your organization’s owner.');
-    }
-
-    return <div className="note-box--info"><p>{content}</p></div>;
+    return (
+      <div className="note-box--info">
+        <p>
+          You need to provide us with your billing address and credit card details before creating a paid space.
+          {' '}
+          {canSetupBilling && <React.Fragment>
+            Head to the{' '}
+            <button className="btn-link" style={{display: 'inline'}} onClick={goToBilling}>
+              organization settings
+            </button>
+            {' '}to add these details for the organization.
+          </React.Fragment>}
+          {!canSetupBilling && 'Please contact your organization’s owner.'}
+        </p>
+      </div>
+    );
   }
 });
 
