@@ -2,11 +2,12 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import FetchSpacePlans from './FetchSpacePlans';
+import FetchSpacePlans, {ResourceTypes} from './FetchSpacePlans';
 import {get, kebabCase} from 'lodash';
 import {isOwner} from 'services/OrganizationRoles';
 import {go} from 'states/Navigator';
 import HelpIcon from 'ui/Components/HelpIcon';
+import Tooltip from 'ui/Components/Tooltip';
 import spinner from 'ui/Components/Spinner';
 import {asReact} from 'ui/Framework/DOMRenderer';
 import {RequestState, formatPrice} from './WizardUtils';
@@ -116,14 +117,35 @@ const SpacePlanItem = createReactClass({
           </HelpIcon>}
         </div>
         <ul className="space-plans-list__item__features">
-          {plan.includedResources.map(({name, units}) => <li key={name}>
-            {units} {name}
-          </li>)}
+          {plan.includedResources.map(({type, units}) => {
+            const tooltip = getTooltip(type, units);
+            return <li key={type}>
+              {units + ' '}
+              {tooltip && <Tooltip style={{display: 'inline'}} tooltip={tooltip}>
+                <em className="x--underline">{type}</em>
+              </Tooltip>}
+              {!tooltip && type}
+            </li>;
+          })}
         </ul>
       </div>
     );
   }
 });
+
+const ResourceTooltips = {
+  [ResourceTypes.Environments]: (units) => `This space type includes ${units} sandbox
+      environments additional to the master environment, which allow you to create and
+      maintain multiple versions of the space-specific data, and make changes to them
+      in isolation.`,
+  [ResourceTypes.Roles]: (units) => `This space type includes the following ${units}
+      user roles additional to the admin role`,
+  [ResourceTypes.Records]: () => 'Records are entries and assets combined.'
+};
+
+function getTooltip (type, units) {
+  return ResourceTooltips[type] && ResourceTooltips[type](units);
+}
 
 const BillingInfo = createReactClass({
   propTypes: {
@@ -140,7 +162,7 @@ const BillingInfo = createReactClass({
           {' '}
           {canSetupBilling && <React.Fragment>
             Head to the{' '}
-            <button className="btn-link" style={{display: 'inline'}} onClick={goToBilling}>
+            <button className="btn-link text-link" style={{display: 'inline'}} onClick={goToBilling}>
               organization settings
             </button>
             {' '}to add these details for the organization.
