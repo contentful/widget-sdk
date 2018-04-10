@@ -21,10 +21,10 @@ describe('translatorLocaleSelector directive', function () {
         ]
       }
     };
-    this.compile = function () {
+    this.compile = function (hasFeatureEnabled = false) {
       this.element = this.$compile(
-        '<cf-translator-locale-selector policies="internal"/>',
-        {internal: this.internalRoleRepesentation}
+        '<cf-translator-locale-selector policies="internal" has-feature-enabled="hasFeatureEnabled"/>',
+        {internal: this.internalRoleRepesentation, hasFeatureEnabled}
       );
     };
   });
@@ -43,6 +43,16 @@ describe('translatorLocaleSelector directive', function () {
       this.compile();
       const selected = this.element.find('option[selected="selected"]')[0];
       expect(selected.innerHTML).toBe('German (de)');
+    });
+
+    it('shows a message if custom roles feature is not enabled', function () {
+      this.compile();
+      expect(this.element.find('.advice__note').length).toBe(1);
+    });
+
+    it('does not show a message if custom roles feature is enabled', function () {
+      this.compile(true);
+      expect(this.element.find('.advice__note').length).toBe(0);
     });
 
     it('preselect all locales', function () {
