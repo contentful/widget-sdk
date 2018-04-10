@@ -2,13 +2,6 @@
 
 angular.module('contentful')
 
-.config(['$provide', function ($provide) {
-  $provide.constant('notification/CLEAR_TIMEOUT_MS', 6000);
-
-  // This should be aligned with the hide/show transform time in the stylesheet.
-  $provide.constant('notification/TRANSFORM_TIMEOUT_MS', 200);
-}])
-
 .factory('notification', ['require', function (require) {
   var getNotificationBus = require('notifications/bus');
   var setupClearMessageHooks = require('notifications/clearMessageHooks');
@@ -24,11 +17,8 @@ angular.module('contentful')
 
 
 .factory('notifications/bus', ['require', function (require) {
-  var CLEAR_TIMEOUT_MS = require('notification/CLEAR_TIMEOUT_MS');
-  var TRANSFORM_TIMEOUT_MS = require('notification/TRANSFORM_TIMEOUT_MS');
-
   var buses = {};
-  var $timeout = require('$timeout');
+  var $rootScope = require('$rootScope')
 
   return function getNotificationBus (name) {
     if (!(name in buses)) {
@@ -53,23 +43,6 @@ angular.module('contentful')
         this._notify(body, 'info');
       },
 
-      markAsSeen: function () {
-        var self = this;
-        this.message.hidden = true;
-        window.clearTimeout(this._seenTimeout);
-        $timeout(function () {
-          window.setTimeout(
-            function () {
-              // The message needs to be cleared asynchronously to ensure the
-              // UI transform and message clear events are not executed in
-              // immediate sequence.
-              self.clear();
-            },
-            TRANSFORM_TIMEOUT_MS
-          );
-        });
-      },
-
       clear: function () {
         this.message = null;
       },
@@ -78,32 +51,20 @@ angular.module('contentful')
         var timestamp = this.message && this.message.timestamp;
         var elapsed = _.now() - timestamp;
         if (timestamp && elapsed > 1 * 1000) {
-          this.markAsSeen();
+          this.clear();
         }
       },
 
       _notify: function (body, severity) {
-        var self = this;
-
-        this.message = {
+        var message = {
           body: body,
-          hidden: true,
           severity: severity,
+          seen: false,
           timestamp: _.now()
         };
 
-        this._seenTimeout = window.setTimeout(
-          function () {
-            self.markAsSeen();
-          },
-          CLEAR_TIMEOUT_MS
-        );
-
-        $timeout(function () {
-          // The message needs to be unhidden asynchronously to ensure the
-          // UI transform occurs on the initial appearance of the element.
-          self.message.hidden = false;
-        });
+        this.message = message;
+        $rootScope.$applyAsync();
       },
 
     };

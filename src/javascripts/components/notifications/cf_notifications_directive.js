@@ -9,25 +9,25 @@ angular.module('contentful').directive('cfNotifications', function() {
       var notification = require('notification');
       var $timeout = require('$timeout');
 
-      $scope.markAsSeen = function () {
-        notification.markAsSeen();
-      };
-
-      $scope.$watch(function () {
-        return !notification.message || notification.message.hidden;
-      }, setHidden);
-
       $scope.$watch(function () {
         return notification.message;
       }, setMessage);
 
-      function setHidden (hidden) {
-        $scope.hidden = hidden;
+      function setMessage(message) {
+        if ($scope.message) {
+          $scope.message = null;
+          $timeout(function () {
+            $scope.message = message;
+          });
+        } else {
+          $scope.message = message;
+        }
       }
 
-      function setMessage (message) {
-        $scope.message = message;
-      }
+      $scope.clear = function () {
+        notification.clear();
+      };
     }]
   };
 });
+
