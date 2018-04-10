@@ -1,6 +1,6 @@
-import React from 'libs/react';
+import React from 'react';
 import createReactClass from 'create-react-class';
-import PropTypes from 'libs/prop-types';
+import PropTypes from 'prop-types';
 import * as ReloadNotification from 'ReloadNotification';
 import createResourceService from 'services/ResourceService';
 import moment from 'moment';

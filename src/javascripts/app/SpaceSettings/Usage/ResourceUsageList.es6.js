@@ -1,5 +1,5 @@
-import React from 'libs/react';
-import PropTypes from 'libs/prop-types';
+import React from 'react';
+import PropTypes from 'prop-types';
 
 import {keyBy, property} from 'lodash';
 import {ResourceUsageHighlight, ResourceUsage} from './ResourceUsage';

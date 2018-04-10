@@ -1,5 +1,5 @@
 import createReactClass from 'create-react-class';
-import PropTypes from 'libs/prop-types';
+import PropTypes from 'prop-types';
 import { EntityType } from '../constants';
 import fetchLinks from 'app/entity_editor/Components/FetchLinksToEntity/fetchLinks';
 import {

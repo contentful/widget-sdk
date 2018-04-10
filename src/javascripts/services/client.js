@@ -4,7 +4,7 @@ angular.module('contentful')
 .factory('client', ['require', function (require) {
   var $q = require('$q');
   var Config = require('Config');
-  var Client = require('libs/legacy-client');
+  var Client = require('legacy-client');
   var auth = require('Authentication');
   var makeRequest = require('data/Request').default;
 

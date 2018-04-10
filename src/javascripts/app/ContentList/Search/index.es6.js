@@ -1,6 +1,6 @@
 /* global window */
 import { assign } from 'lodash';
-import * as Kefir from 'libs/kefir';
+import * as Kefir from 'kefir';
 import * as K from 'utils/kefir';
 import { createStore, bindActions } from 'ui/Framework/Store';
 import logger from 'logger';

@@ -88,7 +88,7 @@ describe('LaunchDarkly', function () {
     this.logger = { logError: sinon.stub() };
 
     module('contentful/test', $provide => {
-      $provide.constant('libs/launch-darkly-client', this.LD);
+      $provide.constant('launch-darkly-client', this.LD);
       $provide.value('data/User', userModule);
       $provide.value('utils/ShallowObjectDiff', this.shallowObjectDiff);
       $provide.value('debug/EnforceFlags', this.EnforceFlags);

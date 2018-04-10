@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import * as React from 'libs/react';
-import PropTypes from 'libs/prop-types';
+import * as React from 'react';
+import PropTypes from 'prop-types';
 
 export default function Group ({ title, testId = 'group', children }) {
   return (

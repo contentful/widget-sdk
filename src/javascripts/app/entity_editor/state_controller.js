@@ -12,7 +12,7 @@ angular.module('contentful')
   var N = require('app/entity_editor/Notifications');
   var modalDialog = require('modalDialog');
   var Notification = N.Notification;
-  var SumTypes = require('libs/sum-types');
+  var SumTypes = require('sum-types');
   var caseof = SumTypes.caseofEq;
   var otherwise = SumTypes.otherwise;
   var EntityState = require('data/CMA/EntityState');

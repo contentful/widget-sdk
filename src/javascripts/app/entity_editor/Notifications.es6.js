@@ -31,7 +31,7 @@
  * - `reponse.data.sys.id`
  * - `reponse.data.details.errors`
  */
-import {makeSum, caseof} from 'libs/sum-types';
+import {makeSum, caseof} from 'sum-types';
 import Notifier from 'notification';
 import {get as getAtPath, first, template as _makeTemplate, assign} from 'lodash';
 

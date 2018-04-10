@@ -1,6 +1,6 @@
-import {createElement as h} from 'libs/react';
+import {createElement as h} from 'react';
 import createReactClass from 'create-react-class';
-import PropTypes from 'libs/prop-types';
+import PropTypes from 'prop-types';
 import {runTask} from 'utils/Concurrent';
 import {createOrganizationEndpoint} from 'data/EndpointFactory';
 import {getPlansWithSpaces} from 'account/pricing/PricingDataProvider';

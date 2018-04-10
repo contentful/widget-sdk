@@ -3,7 +3,7 @@
 angular.module('contentful').directive('cfContextualHelpSidebar', ['require', function (require) {
   var $document = require('$document');
   var $state = require('$state');
-  var SumTypes = require('libs/sum-types');
+  var SumTypes = require('sum-types');
   var caseof = SumTypes.caseofEq;
   var otherwise = SumTypes.otherwise;
   var ContextualSidebarStore = require('components/contextual_help/Store');

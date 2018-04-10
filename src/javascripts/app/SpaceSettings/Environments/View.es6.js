@@ -1,7 +1,7 @@
 import * as Config from 'Config';
 import { assign } from 'utils/Collections';
 import pageSettingsIcon from 'svg/page-settings';
-import { caseofEq } from 'libs/sum-types';
+import { caseofEq } from 'sum-types';
 
 import { h } from 'ui/Framework';
 import { linkOpen, badge, codeFragment } from 'ui/Content';

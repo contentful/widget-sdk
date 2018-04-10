@@ -45,10 +45,18 @@ export const TEA_CONTENT_PREVIEWS = [
   },
   {
     name: 'The Python example app',
-    description: 'The preview setup for an example app built using Python and Flash',
+    description: 'The preview setup for an example app built using Python and Flask',
     baseUrl: {
       prod: 'https://the-example-app-py.contentful.com',
       staging: 'https://the-example-app-py.flinkly.com'
+    }
+  },
+  {
+    name: 'The Java example app',
+    description: 'The preview setup for an example app built using Java',
+    baseUrl: {
+      prod: 'https://the-example-app-java.contentful.com',
+      staging: 'https://the-example-app-java.flinkly.com'
     }
   }
 ];

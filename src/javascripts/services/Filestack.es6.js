@@ -97,14 +97,36 @@ export function pickMultiple () {
   });
 }
 
-export function editFile (imageUrl) {
-  return ensureScript()
-  .then(filestack => filestack.cropFiles([imageUrl], pickOptions()))
-  .then(handleOneUploaded);
-}
-
 export function store (imageUrl) {
   return ensureScript()
   .then(filestack => filestack.storeURL(imageUrl))
   .then(result => result.url);
+}
+
+export function cropImage (mode, imageUrl) {
+  const transformations = {crop: false, circle: false, rotate: false};
+  if (typeof mode === 'number') {
+    transformations.crop = {aspectRatio: mode};
+  } else if (mode === 'circle') {
+    transformations.circle = true;
+  } else {
+    transformations.crop = true;
+  }
+
+  return ensureScript()
+  .then(filestack => filestack.cropFiles([imageUrl], pickOptions({transformations})))
+  .then(handleOneUploaded);
+}
+
+export function rotateOrMirrorImage (mode, imageUrl) {
+  const options = {
+    '90cw': {rotate: {deg: 90}},
+    '90ccw': {rotate: {deg: 90 * 3}},
+    flip: {flip: true},
+    flop: {flop: true}
+  }[mode];
+
+  return ensureScript()
+  .then(filestack => filestack.transform(imageUrl, options))
+  .then(store);
 }

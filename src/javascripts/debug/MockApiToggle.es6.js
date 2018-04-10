@@ -1,5 +1,5 @@
 import $window from '$window';
-import {createElement as h} from 'libs/react';
+import {createElement as h} from 'react';
 import location from '$location';
 import { getStore } from 'TheStore';
 import {omit} from 'lodash';

@@ -8,7 +8,7 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var WebhookRepository = require('WebhookRepository');
   var CreateSpace = require('services/CreateSpace');
-  var caseofEq = require('libs/sum-types').caseofEq;
+  var caseofEq = require('sum-types').caseofEq;
   var TheLocaleStore = require('TheLocaleStore');
   var entityCreator = require('entityCreator');
   // Begin test code: test-ps-02-2018-tea-onboarding-steps

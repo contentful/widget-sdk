@@ -1,5 +1,5 @@
 import createReactClass from 'create-react-class';
-import PropTypes from 'libs/prop-types';
+import PropTypes from 'prop-types';
 import {getTemplatesList} from 'services/SpaceTemplateLoader';
 
 export const RequestState = {

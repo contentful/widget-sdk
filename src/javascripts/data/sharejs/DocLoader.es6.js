@@ -1,5 +1,5 @@
 import * as K from 'utils/kefir';
-import {caseof, makeSum} from 'libs/sum-types';
+import {caseof, makeSum} from 'sum-types';
 import {constant} from 'lodash';
 
 /**

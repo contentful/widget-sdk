@@ -1,7 +1,7 @@
-import React from 'libs/react';
-import PropTypes from 'libs/prop-types';
+import React from 'react';
+import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
-import enhanceWithClickOutside from 'libs/react-click-outside';
+import enhanceWithClickOutside from 'react-click-outside';
 import cn from 'classnames';
 import Menu from './Menu';
 import { Icon, TextLink } from '@contentful/ui-component-library';

@@ -12,7 +12,7 @@ angular.module('contentful').factory('contentfulClient', ['require', function (r
 
   var $http = require('$http');
   var $q = require('$q');
-  var qs = require('libs/qs');
+  var qs = require('qs');
 
   var parseableResourceTypes = {
     Asset: Asset,

@@ -1,5 +1,5 @@
-import React from 'libs/react';
-import PropTypes from 'libs/prop-types';
+import React from 'react';
+import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
 import { Action } from 'data/CMA/EntityActions';
 import Dialog from '../Dialog';

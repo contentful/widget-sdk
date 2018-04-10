@@ -18,7 +18,7 @@ describe('cfJsonEditor directive', function () {
       historySize: sinon.stub().returns({})
     };
 
-    this.$inject('libs/codemirror').default = sinon.stub().returns(cmEditor);
+    this.$inject('codemirror').default = sinon.stub().returns(cmEditor);
 
     this.widgetApi = this.$inject('mocks/widgetApi').create();
     fieldApi = this.widgetApi.field;

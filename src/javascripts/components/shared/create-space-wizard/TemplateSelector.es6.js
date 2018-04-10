@@ -1,6 +1,6 @@
-import React from 'libs/react';
+import React from 'react';
 import createReactClass from 'create-react-class';
-import PropTypes from 'libs/prop-types';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import {get} from 'lodash';
 import FetchTemplates, {RequestState} from './FetchTemplates';

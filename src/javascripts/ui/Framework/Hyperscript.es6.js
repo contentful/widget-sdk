@@ -1,5 +1,5 @@
 import {omit, kebabCase, mapKeys, isPlainObject} from 'lodash';
-import * as React from 'libs/react';
+import * as React from 'react';
 import {Hook} from './Hooks/Component';
 import * as VTree from './VTree';
 

@@ -2,7 +2,7 @@ import sinon from 'npm:sinon';
 import _ from 'lodash';
 import keycodes from 'utils/keycodes';
 import { contentTypes } from './helpers';
-import ReactTestUtils from 'libs/react-dom/test-utils';
+import ReactTestUtils from 'react-dom/test-utils';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
 const Components = {

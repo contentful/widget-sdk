@@ -1,5 +1,5 @@
 import $window from '$window';
-import {createElement as h} from 'libs/react';
+import {createElement as h} from 'react';
 import { getStore } from 'TheStore';
 import {uniq, without, omit} from 'lodash';
 import {addNotification} from 'debug/DevNotifications';

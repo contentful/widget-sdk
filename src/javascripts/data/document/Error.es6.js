@@ -1,4 +1,4 @@
-import {makeSum} from 'libs/sum-types';
+import {makeSum} from 'sum-types';
 
 
 /**

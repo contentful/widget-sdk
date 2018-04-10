@@ -1,5 +1,5 @@
 import * as K from 'utils/kefir';
-import {caseof} from 'libs/sum-types';
+import {caseof} from 'sum-types';
 
 import {trigger as showReloadModal} from 'ReloadNotification';
 import {Error} from 'data/document/Error';

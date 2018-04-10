@@ -1,6 +1,6 @@
 import {isPlainObject, forEach} from 'lodash';
-import {makeSum} from 'libs/sum-types';
-import React from 'libs/react';
+import {makeSum} from 'sum-types';
+import React from 'react';
 
 /**
  * This module exports the constructors for the abstract virtual DOM

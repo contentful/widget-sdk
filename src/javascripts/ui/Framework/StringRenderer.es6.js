@@ -1,6 +1,6 @@
 import {kebabCase, mapValues} from 'lodash';
 import * as VTree from './VTree';
-import {caseof} from 'libs/sum-types';
+import {caseof} from 'sum-types';
 
 /**
  * Render a virtual DOM tree into an HTML string.

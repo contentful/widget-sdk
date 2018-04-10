@@ -37,7 +37,7 @@ angular.module('contentful')
   var createQueue = require('overridingRequestQueue');
   var EntityHelpers = require('EntityHelpers');
   var K = require('utils/kefir');
-  var Kefir = require('libs/kefir');
+  var Kefir = require('kefir');
   var LD = require('utils/LaunchDarkly');
   var createSearchInput = require('app/ContentList/Search').default;
   var getAccessibleCTs = require('data/ContentTypeRepo/accessibleCTs').default;
