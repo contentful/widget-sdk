@@ -11,7 +11,8 @@
   &__content.modal-dialog__content
     padding: 0 30px 30px 30px
   &__heading
-    line-height: 1.3em
+    line-height: 1.2em
+    margin: 0 0 8px
   &__subheading
     font-size: 1.05em
     line-height: 1.3em
@@ -163,11 +164,10 @@ $close-button-small()
     line-height: 1.3em
     text-align: center
   &__subheading
-    font-size: 1.05em
-    line-height: 1.3em
+    line-height: 1.5em
     color: $colors.text-mid
     text-align: center
-    margin-bottom: 1.3em
+    margin-bottom: 28px
   &__step
     display: none
     &--current
@@ -179,10 +179,17 @@ $close-button-small()
     margin: 0 auto
 
 .space-plans-list
+  &__item__heading
+    font-size: 17px
+    line-height: 1.2
+
+    .help-icon__img svg path
+      fill: $colors.element-mid
+
   $item-label($color, $border-color = null)
     &:before
       background-color: $color
-      box-shadow: 0px 0px 0px 1px $border-color ? $border-color : darken($color, 25%)
+      border: 1px solid $border-color
 
   display: flex
   flex-direction: column
@@ -192,17 +199,19 @@ $close-button-small()
     border: 1px solid $colors.element-mid
     box-shadow: 0 1px 3px 0 rgba(0,0,0,0.08)
     background-color: #fff
-    margin: 12px 0
-    padding: 15px 30px
-    line-height: 1.5em;
+    margin-bottom: 10px
+    padding: 14px 30px
+    line-height: 1.5em
     display: flex
     flex-direction: column
     position: relative
     cursor: pointer
-    $item-label($colors.element-light, $colors.element-mid)
-    &:hover
+    transition: all ease-in-out .1s
+    $item-label($colors.element-light, $colors.element-dark)
+    &:not(.space-plans-list__item--disabled):hover
       border: 1px solid $colors.element-darkest
       box-shadow: 0 3px 3px 0 rgba(0,0,0,0.08)
+      transform: translateY(-2px)
     &--selected
       border: 1px solid $colors.element-darkest
       background-color: $colors.element-light
@@ -211,38 +220,32 @@ $close-button-small()
       width: 10px
       height: 100%
       position: absolute
-      top: 0
-      left: 0
+      top: -1px
+      left: -1px
       border-radius: 2px 0 0 2px;
     &--micro
-      $item-label($colors.orange-light)
+      $item-label($colors.orange-light, $colors.orange-mid)
     &--small
-      $item-label($colors.green-light)
+      $item-label($colors.green-light, $colors.green-mid)
     &--medium
-      $item-label($colors.blue-light)
+      $item-label($colors.blue-light, $colors.blue-mid)
     &--large
-      $item-label($colors.red-light)
+      $item-label($colors.red-light, $colors.red-mid)
     &--disabled
       cursor: not-allowed
-      &:after
-        content: ''
-        position: absolute
-        background-color: rgba(255,255,255,0.4)
-        top: 0
-        left: 0
-        right: 0
-        bottom: 0
-        z-index: 0
-      .help-icon
-        z-index: 1
-        &__img
-          opacity: 0.6
+      opacity: .5
+
+    &__heading
+      font-size: 17px
+      line-height: 1.2
 
     &__features
+      color: $colors.text-mid
       display: flex
       flex-direction: row
+      margin-top: 4px
       & > li
-        margin: 0 20px
+        margin: 0 10px
         &:first-child
           margin-left: 0
         &:last-child
