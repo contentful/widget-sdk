@@ -50,7 +50,7 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
     return /^Translator/.test(role.name);
   }
 
-  function hasTranslator (roles) {
+  function hasAnyTranslatorRole (roles) {
     return roles && roles.some(isTranslator);
   }
 
@@ -76,7 +76,7 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
 
       return role;
     });
-    $scope.hasTranslator = hasTranslator($scope.roles);
+    $scope.hasAnyTranslatorRole = hasAnyTranslatorRole($scope.roles);
     $scope.removeRole = createRoleRemover(listHandler, reload);
     $scope.context.ready = true;
     $scope.usage = data.rolesResource.usage;
