@@ -1,37 +1,82 @@
-import { createElement as h } from 'libs/react';
-import CreateEntryButton, { Button as TriggerButton } from 'components/tabs/entry_list/CreateEntryButton';
-import Menu from 'components/tabs/entry_list/CreateEntryButton/Menu';
-import { mount } from 'libs/enzyme';
+import React from 'react';
+import _ from 'lodash';
+import sinon from 'npm:sinon';
+import CreateEntryButton from 'components/CreateEntryButton';
+
+import { mount } from 'enzyme';
+
+const sel = id => `[data-test-id="${id}"]`;
+
+const findCta = wrapper => wrapper.find(sel('cta'));
+const findMenu = wrapper => wrapper.find(sel('add-entry-menu'));
+const findDropdownIcon = wrapper => wrapper.find(sel('dropdown-icon'));
 
 describe('CreateEntryButton', () => {
-  let wrapper;
+  describe('with multiple content types', () => {
+    let wrapper;
 
-  beforeEach(() => {
-    const props = {
-      contentTypes: [],
-      text: 'Add entry'
-    };
-    wrapper = mount(h(CreateEntryButton, props));
+    beforeEach(() => {
+      const props = {
+        contentTypes: [
+          { name: 'name-1', sys: { id: '1' } },
+          { name: 'name-2', sys: { id: '2' } }
+        ],
+        onSelect: _.noop,
+        text: 'Add entry'
+      };
+      wrapper = mount(<CreateEntryButton {...props} />);
+    });
+
+    afterEach(() => {
+      wrapper = null;
+    });
+
+    it('renders the trigger button', () => {
+      expect(findCta(wrapper).length).toEqual(1);
+      expect(findMenu(wrapper).length).toEqual(0);
+    });
+
+    it('opens menu after click on btn', () => {
+      findCta(wrapper).simulate('click');
+      expect(findMenu(wrapper).length).toEqual(1);
+    });
+
+    it('hides menu after second click on btn', () => {
+      findCta(wrapper).simulate('click');
+      expect(findMenu(wrapper).length).toEqual(1);
+      findCta(wrapper).simulate('click');
+      expect(findMenu(wrapper).length).toEqual(0);
+    });
   });
 
-  afterEach(() => {
-    wrapper = null;
-  });
+  describe('with single content type', () => {
+    let wrapper, onSelect;
 
-  it('renders the trigger button', () => {
-    expect(wrapper.find(TriggerButton).length).toEqual(1);
-    expect(wrapper.find(Menu).length).toEqual(0);
-  });
+    beforeEach(() => {
+      onSelect = sinon.spy();
+      const props = {
+        contentTypes: [{ name: 'name-1', sys: { id: '1' } }],
+        onSelect,
+        text: 'Add entry'
+      };
+      wrapper = mount(<CreateEntryButton {...props} />);
+    });
 
-  it('opens menu after click on btn', () => {
-    wrapper.find(TriggerButton).simulate('click');
-    expect(wrapper.find(Menu).length).toEqual(1);
-  });
+    afterEach(() => {
+      wrapper = null;
+      onSelect = null;
+    });
 
-  it('hides menu after second click on btn', () => {
-    wrapper.find(TriggerButton).simulate('click');
-    expect(wrapper.find(Menu).length).toEqual(1);
-    wrapper.find(TriggerButton).simulate('click');
-    expect(wrapper.find(Menu).length).toEqual(0);
+    it('renders the trigger button', () => {
+      expect(findCta(wrapper).length).toEqual(1);
+      expect(findDropdownIcon(wrapper).length).toEqual(0);
+      expect(findCta(wrapper).text()).toEqual('Add entry');
+      expect(findMenu(wrapper).length).toEqual(0);
+    });
+
+    it('emits onSelect after clicking on cta', () => {
+      findCta(wrapper).simulate('click');
+      sinon.assert.calledWith(onSelect, '1');
+    });
   });
 });

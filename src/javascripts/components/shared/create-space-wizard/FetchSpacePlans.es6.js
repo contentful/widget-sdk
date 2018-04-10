@@ -1,16 +1,11 @@
 import createReactClass from 'create-react-class';
-import PropTypes from 'libs/prop-types';
+import PropTypes from 'prop-types';
 import {createOrganizationEndpoint} from 'data/EndpointFactory';
 import {getSpaceRatePlans} from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import {canCreate} from 'utils/ResourceUtils';
 import {get, isNumber} from 'lodash';
-
-export const RequestState = {
-  PENDING: 'pending',
-  SUCCESS: 'success',
-  ERROR: 'error'
-};
+import {RequestState} from './WizardUtils';
 
 const FetchSpacePlans = createReactClass({
   propTypes: {

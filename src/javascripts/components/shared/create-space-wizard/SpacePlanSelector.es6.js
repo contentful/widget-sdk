@@ -1,18 +1,20 @@
-import React from 'libs/react';
+import React from 'react';
 import createReactClass from 'create-react-class';
-import PropTypes from 'libs/prop-types';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import FetchSpacePlans, {RequestState} from './FetchSpacePlans';
+import FetchSpacePlans from './FetchSpacePlans';
 import {get, kebabCase} from 'lodash';
 import {isOwner} from 'services/OrganizationRoles';
 import {go} from 'states/Navigator';
 import HelpIcon from 'ui/Components/HelpIcon';
 import spinner from 'ui/Components/Spinner';
 import {asReact} from 'ui/Framework/DOMRenderer';
+import {RequestState, formatPrice} from './WizardUtils';
 
 const SpacePlanSelector = createReactClass({
   propTypes: {
     organization: PropTypes.object.isRequired,
+    onChange: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
     onDimensionsChange: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired
@@ -63,7 +65,8 @@ const SpacePlanSelector = createReactClass({
     this.setState({selectedPlan});
 
     if (selectedPlan) {
-      this.props.onSubmit({spaceRatePlan: selectedPlan});
+      this.props.onChange({spaceRatePlan: selectedPlan});
+      this.props.onSubmit();
     }
   },
   goToBilling () {
@@ -105,7 +108,7 @@ const SpacePlanItem = createReactClass({
 
         <div className="space-plans-list__item__heading">
           <strong>{plan.name}</strong>
-          {(plan.price > 0) && ` - $${plan.price} / month`}
+          {(plan.price > 0) && ` - ${formatPrice(plan.price)} / month`}
           {plan.isFree && ` - ${freeSpacesUsage}/${freeSpacesLimit} used`}
           {plan.isFree && <HelpIcon tooltipWidth={400}>
             You can create up to {freeSpacesLimit} free spaces for your organization.

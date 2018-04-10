@@ -39,24 +39,6 @@ filters.filter('mimeGroup', ['mimetype', function (mimetype) {
   };
 }]);
 
-filters.filter('isFileMissing', function () {
-  return function (file) {
-    return !!file;
-  };
-});
-
-filters.filter('isFileProcessing', function () {
-  return function (file) {
-    return file && !!file.upload;
-  };
-});
-
-filters.filter('isFileReady', function () {
-  return function (file) {
-    return file && !!file.url;
-  };
-});
-
 filters.filter('fileType', ['mimetype', function (mimetype) {
   return function (file) {
     if (file) {

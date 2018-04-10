@@ -7,7 +7,7 @@ describe('markdown_editor/commands', function () {
     module('contentful/test');
     const Commands = this.$inject('markdown_editor/commands');
     const Wrapper = this.$inject('markdown_editor/codemirror_wrapper');
-    const CodeMirror = this.$inject('libs/codemirror');
+    const CodeMirror = this.$inject('codemirror');
     textarea = document.createElement('textarea');
     document.body.appendChild(textarea);
 

@@ -1,14 +1,17 @@
-import React from 'libs/react';
+import React from 'react';
 import createReactClass from 'create-react-class';
-import PropTypes from 'libs/prop-types';
+import PropTypes from 'prop-types';
 import TemplateSelector from './TemplateSelector';
+import {Steps, formatPrice} from './WizardUtils';
 
 const SpaceDetails = createReactClass({
   propTypes: {
+    onChange: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
     spaceRatePlan: PropTypes.object.isRequired,
     serverValidationErrors: PropTypes.object,
     isFormSubmitted: PropTypes.bool,
+    onNavigate: PropTypes.func.isRequired,
     onDimensionsChange: PropTypes.func
   },
   getInitialState: function () {
@@ -26,7 +29,7 @@ const SpaceDetails = createReactClass({
     }
   },
   render: function () {
-    const {spaceRatePlan, isFormSubmitted, onDimensionsChange} = this.props;
+    const {spaceRatePlan, onDimensionsChange, onNavigate} = this.props;
     const {name, validation, touched} = this.state;
     const showValidationError = touched && !!validation.name;
 
@@ -37,7 +40,14 @@ const SpaceDetails = createReactClass({
         </h2>
         <p className="create-space-wizard__subheading">
           You are about to create a {spaceRatePlan.name.toLowerCase()} space
-          for ${spaceRatePlan.price}/month.
+          for {formatPrice(spaceRatePlan.price)}/month.<br/>
+          <a
+            className="text-link"
+            href="#"
+            onClick={() => onNavigate(Steps.SpaceType)}>
+            Go back
+          </a>{' '}
+          to change your selection.
         </p>
         <div className="cfnext-form__field create-space-wizard__centered-block">
           <label htmlor="space-name">
@@ -64,10 +74,10 @@ const SpaceDetails = createReactClass({
         />
         <div style={{textAlign: 'center', margin: '1.2em 0'}}>
           <button
-            className={`button btn-action ${isFormSubmitted ? 'is-loading' : ''}`}
-            disabled={isFormSubmitted || Object.keys(validation).length}
+            className="button btn-action"
+            disabled={Object.keys(validation).length > 0}
             onClick={this.submit}>
-            Create the space
+            Proceed to confirmation
           </button>
         </div>
       </div>
@@ -76,9 +86,11 @@ const SpaceDetails = createReactClass({
   setName: function (name) {
     const state = {name, touched: true};
     state.validation = validateState(state);
+    this.props.onChange({spaceName: name.trim()});
     this.setState(state);
   },
   setTemplate: function (template) {
+    this.props.onChange({template});
     this.setState({template, touched: true});
   },
   submit: function () {
@@ -86,15 +98,14 @@ const SpaceDetails = createReactClass({
     this.setState({validation});
 
     if (!Object.keys(validation).length) {
-      const {name, template} = this.state;
-      this.props.onSubmit({spaceName: name, template});
+      this.props.onSubmit();
     }
   }
 });
 
-function validateState ({name}) {
+function validateState ({name = ''}) {
   const validation = {};
-  if (!name) {
+  if (!name.trim()) {
     validation.name = 'Name is required';
   }
   return validation;

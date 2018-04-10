@@ -2,21 +2,25 @@
 
 angular.module('contentful')
 .directive('cfFileEditor', ['require', function (require) {
+  var _ = require('lodash');
   var aviary = require('aviary');
   var Filestack = require('services/Filestack');
   var notification = require('notification');
   var stringUtils = require('stringUtils');
   var modalDialog = require('modalDialog');
+  var openInputDialog = require('app/InputDialog').default;
+  var mimetype = require('mimetype');
 
   var dropPaneMountCount = 0;
 
-  // TODO use isolated scope.
-  // This is not possible right now because the widget depends on a
-  // few helper methods from the scope.
+  // TODO use isolated scope for this editor.
+  // Ideally everything we do in here should be possible via `widgetApi`.
+  // Right now we rely on parent scope properties like:
+  // `editorData`, `editorContext`, `fieldLocale`, `locale`, `otDoc`
   return {
     restrict: 'E',
     require: '^cfWidgetApi',
-    template: JST.cf_file_display(),
+    template: JST.cf_file_editor(),
     link: function (scope, elem, _attrs, widgetApi) {
       var field = widgetApi.field;
       var deleteFile = setFile.bind(null, null);
@@ -33,17 +37,20 @@ angular.module('contentful')
 
       var removeUpdateListener = field.onValueChanged(function (file) {
         scope.file = file;
+        validate();
       });
-
       scope.$on('$destroy', removeUpdateListener);
-      scope.$on('fileProcessingFailed', deleteFile);
+
       scope.$on('imageLoadState', function (_e, state) {
         scope.imageIsLoading = state === 'loading';
       });
 
       scope.selectFile = selectFile;
-      scope.editWithFilestack = editWithFilestack;
+      scope.rotateOrMirror = rotateOrMirror;
+      scope.cropWithFilestack = cropWithFilestack;
+      scope.cropCustomAspectRatio = cropCustomAspectRatio;
       scope.editWithAviary = editWithAviary;
+      scope.canEditFile = canEditFile;
       scope.deleteFile = deleteFile;
 
       function selectFile () {
@@ -52,10 +59,31 @@ angular.module('contentful')
         });
       }
 
-      function editWithFilestack () {
+      function rotateOrMirror (mode) {
         var imageUrl = getImageUrl();
         if (imageUrl) {
-          Filestack.editFile(imageUrl).then(setFile, function () {
+          scope.imageIsLoading = true;
+          Filestack.rotateOrMirrorImage(mode, imageUrl).then(function (filestackUrl) {
+            return setFile({
+              upload: filestackUrl,
+              fileName: scope.file.fileName,
+              contentType: scope.file.contentType
+            });
+          }, function () {
+            scope.imageIsLoading = false;
+            notification.error('An error occurred while editing an asset.');
+          });
+        } else {
+          notification.error('An error occurred while editing an asset.');
+        }
+      }
+
+      function cropWithFilestack (mode) {
+        var imageUrl = getImageUrl();
+        if (imageUrl) {
+          var img = scope.file.details.image;
+          mode = mode === 'original' ? (img.width / img.height) : mode;
+          Filestack.cropImage(mode, imageUrl).then(setFile, function () {
             notification.error('An error occurred while editing an asset.');
           });
         } else {
@@ -63,17 +91,49 @@ angular.module('contentful')
         }
       }
 
+      function cropCustomAspectRatio () {
+        var img = scope.file.details.image;
+        openInputDialog({
+          input: {
+            value: '' + img.width + ':' + img.height,
+            regex: /^[1-9][0-9]{0,3}:[1-9][0-9]{0,3}$/
+          },
+          title: 'Please provide desired aspect ratio',
+          message: [
+            'Expected format is <code>{width}:{height}</code>. ',
+            'Both <code>{width}</code> and <code>height</code> should be numbers between 1 and 9999. ',
+            'The form is prepopulated with the aspect ratio of your image.'
+          ].join(''),
+          confirmLabel: 'Crop with provided aspect ratio'
+        }).promise.then(function (ratio) {
+          var dim = ratio.split(':');
+          cropWithFilestack(parseInt(dim[0], 10) / parseInt(dim[1], 10));
+        });
+      }
+
       function editWithAviary () {
         modalDialog.openConfirmDialog({
           title: 'Adobe Creative Editor is deprecated',
-          message: 'Adobe Creative Editor will be discontinued soon. You can still use it but we suggest to use the "Edit image" option.',
+          message: [
+            'Adobe Creative Editor will be discontinued by Adobe soon. It\'s still possible to use ',
+            'it but we suggest you to utilize new file editor options provided. You can rotate, ',
+            'mirror, crop (with and without maintaining aspect ratio) and circle images using them.'
+          ].join(''),
           confirmLabel: 'I want to use Adobe Creative Editor',
-          cancelLabel: 'I\'ll use the new editor'
+          cancelLabel: 'I\'ll use the new options'
         }).then(function (result) {
           if (result.confirmed) {
             openAviary();
           }
         });
+      }
+
+      function canEditFile () {
+        var isEditable = _.get(scope, 'fieldLocale.access.editable', false);
+        var fileType = _.get(scope, 'file.contentType', '');
+        var isImage = mimetype.getGroupLabel({type: fileType}) === 'image';
+        var isReady = !scope.imageIsLoading && _.get(scope, 'file.url');
+        return isEditable && isImage && isReady;
       }
 
       function openAviary () {
@@ -83,21 +143,14 @@ angular.module('contentful')
           return;
         }
 
-        scope.loadingEditor = true;
-        var preview = elem.find('[aviary-editor-preview]').get(0);
+        var preview = elem[0].querySelectorAll('[aviary-editor-preview]')[0];
         preview.src = '';
 
         preview.onload = function () {
           aviary.createEditor({
             image: preview,
             url: imageUrl,
-            onClose: function (params) {
-              if (params && !params.saveWasClicked) {
-                scope.$apply(function () {
-                  scope.loadingEditor = false;
-                });
-              }
-            }
+            onClose: _.noop
           }).then(function (aviaryUrl) {
             return Filestack.store(aviaryUrl);
           }).then(function (filestackUrl) {
@@ -107,11 +160,9 @@ angular.module('contentful')
               contentType: scope.file.contentType
             });
           }).then(function () {
-            scope.loadingEditor = false;
             aviary.close();
           }, function (err) {
             notification.error(err.message || 'An error occurred while editing an asset.');
-            scope.loadingEditor = false;
             aviary.close();
           });
         };
@@ -120,7 +171,7 @@ angular.module('contentful')
       }
 
       function getImageUrl () {
-        var img = elem.find('.thumbnail').get(0);
+        var img = elem[0].querySelectorAll('.thumbnail')[0];
         return img ? stringUtils.removeQueryString(img.src) : null;
       }
 
@@ -130,12 +181,37 @@ angular.module('contentful')
         if (file) {
           return field.setValue(file)
           .then(function () {
-            scope.$emit('fileUploaded', file, scope.locale);
+            maybeSetTitleOnDoc();
+            process();
             validate();
           }, validate);
         } else {
           return field.removeValue().then(validate, validate);
         }
+      }
+
+      function maybeSetTitleOnDoc () {
+        const path = ['fields', 'title', scope.locale.internal_code];
+        const fileName = stringUtils.fileNameToTitle(scope.file.fileName);
+        if (!scope.otDoc.getValueAt(path)) {
+          scope.otDoc.setValueAt(path, fileName);
+        }
+      }
+
+      function process () {
+        scope.editorData.entity.process(scope.otDoc.getVersion(), scope.locale.internal_code)
+        .catch(function (err) {
+          deleteFile();
+
+          const errors = _.get(err, ['body', 'details', 'errors'], []);
+          const invalidContentTypeErr = _.find(errors, {name: 'invalidContentType'});
+
+          if (invalidContentTypeErr) {
+            notification.error(invalidContentTypeErr.details);
+          } else {
+            notification.error('There has been a problem processing the Asset.');
+          }
+        });
       }
 
       function validate () {

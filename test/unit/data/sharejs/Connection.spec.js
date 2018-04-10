@@ -29,7 +29,7 @@ describe('data/sharejs/Connection', function () {
     };
 
     module('contentful/test', ($provide) => {
-      $provide.constant('libs/sharejs', this.sharejs);
+      $provide.constant('sharejs', this.sharejs);
     });
 
     const OtDoc = this.$inject('mocks/OtDoc');

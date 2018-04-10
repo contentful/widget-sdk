@@ -1,21 +1,9 @@
 .file-info
   position: relative
   height: 250px
-  .center
-    text-align: center
-  .vcenter
-    line-height: 248px
-    p
-      line-height: normal
-      display: inline-block
-  .loading
-    $stretch()
-    width: auto
-    height: auto
   cf-thumbnail
     $stretch()
   .thumbnail
-    vertical-align: middle
     cursor: pointer
 
   [aviary-editor-preview]
@@ -29,16 +17,21 @@
     background-color: $gray-lightest
     border: 1px solid $gray
     border-radius: 3px
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1) inset
+    overflow: hidden
     $stretch()
 
-  .file-preview
-    border-radius: 3px 3px 3px 3px
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1) inset
+  .file-preview,
+  .no-file
     text-align: center
-    overflow: hidden
+
+  .file-preview
     .icon
       font-size: 100px
       line-height: 250px
+
+  .no-file
+    line-height: 250px
 
   .file-metadata
     background-color: rgba(255, 255, 255, 0.8)
@@ -63,26 +56,6 @@
       z-index: 2
       text-align: center
 
-  .title-overlay
-    opacity: 0
-    position: absolute
-    top: 15px
-    left: 10px
-    font-size: 20px
-
-  .drag-me,
-  .drop-me,
-  .progress
-    font-size: 25px
-  .drop-me
-    background-color: $gray-light
-  .drag-me,
-  .progress
-    line-height: 200px
-  .progress
-    .cf-progress-bar
-      margin: -70px 180px 0px
-
   .file-buttons
     $stretch(false, 10px, 10px, 10px)
     opacity: 0
@@ -91,9 +64,6 @@
     > *
       margin-right: 0.5rem
 
-
 .file-info:hover
   .file-buttons
     opacity: 1
-  .title-overlay
-    opacity: 0.8

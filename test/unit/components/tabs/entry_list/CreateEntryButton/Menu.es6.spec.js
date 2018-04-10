@@ -1,14 +1,9 @@
-import React from 'libs/react';
-import { mount } from 'libs/enzyme';
-import Highlighter from 'libs/react-highlight-words';
+import React from 'react';
+import { mount } from 'enzyme';
 import { noop, range } from 'lodash';
-import Menu, {
-  ListItem,
-  SearchInput,
-  Group,
-  NotFoundMessage,
-  SuggestedContentType
-} from 'components/tabs/entry_list/CreateEntryButton/Menu';
+import Menu from 'components/CreateEntryButton/Menu';
+
+const sel = id => `[data-test-id="${id}"]`;
 
 describe('CreateEntryMenu', () => {
   const contentTypes = generateContentTypes(23);
@@ -18,7 +13,6 @@ describe('CreateEntryMenu', () => {
     const props = {
       contentTypes,
       suggestedContentTypeId: contentTypes[0].sys.id,
-      position: 'bottom',
       onSelect: noop
     };
     wrapper = mount(<Menu {...props} />);
@@ -30,24 +24,23 @@ describe('CreateEntryMenu', () => {
 
   it('renders search input only if more than 20 items are passed', () => {
     wrapper.setProps({ contentTypes: generateContentTypes(13) });
-    expect(wrapper.find(SearchInput).exists()).toBeFalsy();
+    expect(wrapper.find(sel('addEntrySearchInput')).exists()).toBeFalsy();
     wrapper.setProps({ contentTypes });
-    expect(wrapper.find(SearchInput).exists()).toBeTruthy();
+    expect(wrapper.find(sel('addEntrySearchInput')).exists()).toBeTruthy();
   });
 
   it('renders two groups when there is a suggested content type and no search query', () => {
-    expect(wrapper.find(Group).length).toEqual(2);
-    expect(wrapper.find(SuggestedContentType).exists()).toBeTruthy();
+    expect(wrapper.find(sel('group-suggested')).length).toEqual(1);
+    expect(wrapper.find(sel('group-all')).length).toEqual(1);
 
-    contentTypes.forEach((item) => {
-      const group = wrapper.find(Group).at(1);
-      const listItem = group.find(ListItem).filterWhere(n => n.text() === item.name);
+    contentTypes.forEach(item => {
+      const listItem = wrapper
+        .find(sel('contentType'))
+        .filterWhere(n => n.text() === item.name);
       expect(listItem.exists()).toBeTruthy();
-      expect(listItem.find(Highlighter).props()).toEqual({
-        searchWords: [''],
-        textToHighlight: item.name,
-        highlightClassName: 'context-menu__highlighted-text'
-      });
+      expect(listItem.find('.context-menu__highlighted-text').length).toEqual(
+        0
+      );
     });
   });
 
@@ -55,39 +48,52 @@ describe('CreateEntryMenu', () => {
     const unmatchingQuery = contentTypes[2].name;
     const matchingQuery = contentTypes[1].name;
 
-    expect(wrapper.find(ListItem).filterWhere(n => n.text() === unmatchingQuery)).toBeTruthy();
+    expect(
+      wrapper
+        .find(sel('contentType'))
+        .filterWhere(n => n.text() === unmatchingQuery)
+    ).toBeTruthy();
 
-    wrapper.find('input').simulate('change', { target: { value: matchingQuery } });
+    wrapper
+      .find(sel('addEntrySearchInput'))
+      .simulate('change', { target: { value: matchingQuery } });
 
-    expect(wrapper.find(ListItem).filterWhere(n => n.text() === unmatchingQuery).length).toEqual(0);
-    const matchingNode = wrapper.find(ListItem).filterWhere(n => n.text() === matchingQuery);
+    expect(
+      wrapper
+        .find(sel('contentType'))
+        .filterWhere(n => n.text() === unmatchingQuery).length
+    ).toEqual(0);
+    const matchingNode = wrapper
+      .find(sel('contentType'))
+      .filterWhere(n => n.text() === matchingQuery);
 
     expect(matchingNode.length).toEqual(1);
-    expect(matchingNode.find(Highlighter).props()).toEqual({
-      searchWords: [ matchingQuery ],
-      textToHighlight: matchingQuery,
-      highlightClassName: 'context-menu__highlighted-text'
-    });
+    expect(matchingNode.find('.context-menu__highlighted-text').text()).toEqual(
+      matchingQuery
+    );
   });
 
   it('renders "Not found" message if there is no matching search query', () => {
-    wrapper.find('input').simulate('change', { target: { value: 'Some random value' } });
-    expect(wrapper.find(SuggestedContentType).exists()).toBeFalsy();
-    expect(wrapper.find(Group).length).toEqual(0);
-    expect(wrapper.find(NotFoundMessage).exists()).toBeTruthy();
+    wrapper
+      .find(sel('addEntrySearchInput'))
+      .simulate('change', { target: { value: 'Some random value' } });
+    expect(wrapper.find(sel('group-suggested')).exists()).toBeFalsy();
+    expect(wrapper.find(sel('group')).length).toEqual(0);
+    expect(wrapper.find(sel('no-results')).exists()).toBeTruthy();
   });
 
   it('does not render suggested content type if there is a search query', () => {
     const matchingQuery = contentTypes[0].name;
-    expect(wrapper.find(SuggestedContentType).exists()).toBeTruthy();
-    wrapper.find('input').simulate('change', { target: { value: matchingQuery } });
-    expect(wrapper.find(SuggestedContentType).exists()).toBeFalsy();
+    expect(wrapper.find(sel('group-suggested')).exists()).toBeTruthy();
+    wrapper
+      .find(sel('addEntrySearchInput'))
+      .simulate('change', { target: { value: matchingQuery } });
+    expect(wrapper.find(sel('group-suggested')).exists()).toBeFalsy();
   });
 });
 
-
 function generateContentTypes (max) {
-  return range(max).map((index) => {
+  return range(max).map(index => {
     const randomString = `${index}${Math.random().toString(36)}`;
     return {
       sys: { id: randomString.substring(7) },

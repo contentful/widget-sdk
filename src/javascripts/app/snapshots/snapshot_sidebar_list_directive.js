@@ -16,7 +16,7 @@ angular.module('cf.app')
  */
 .directive('cfSnapshotSidebarList', ['require', function (require) {
   var K = require('utils/kefir');
-  var caseof = require('libs/sum-types').caseof;
+  var caseof = require('sum-types').caseof;
   var spaceContext = require('spaceContext');
   var snapshotDecorator = require('app/snapshots/helpers/SnapshotDecorator');
   var snapshotStatus = require('app/snapshots/helpers/SnapshotStatus');

@@ -1,7 +1,7 @@
-import React from 'libs/react';
+import React from 'react';
 import createReactClass from 'create-react-class';
-import PropTypes from 'libs/prop-types';
-import enhanceWithClickOutside from 'libs/react-click-outside';
+import PropTypes from 'prop-types';
+import enhanceWithClickOutside from 'react-click-outside';
 
 const ContextMenu = createReactClass({
   propTypes: {

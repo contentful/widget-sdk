@@ -11,7 +11,7 @@ describe('utils/locales', function () {
       ]
     });
 
-    system.set('libs/rtl-detect', {
+    system.set('rtl-detect', {
       isRtlLang: code => [
         'hr-BA',
         'he-IL'

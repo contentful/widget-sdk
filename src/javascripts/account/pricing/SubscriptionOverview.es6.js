@@ -1,9 +1,9 @@
-import {createElement as h} from 'libs/react';
+import {createElement as h} from 'react';
 import createReactClass from 'create-react-class';
-import PropTypes from 'libs/prop-types';
+import PropTypes from 'prop-types';
 import {runTask} from 'utils/Concurrent';
 import {createOrganizationEndpoint} from 'data/EndpointFactory';
-import {getPlansWithSpaces} from 'account/pricing/PricingDataProvider';
+import {getPlansWithSpaces, calculateTotalPrice} from 'account/pricing/PricingDataProvider';
 import * as Intercom from 'intercom';
 import {getSpaces, getOrganization} from 'services/TokenStore';
 import {isOwnerOrAdmin, isOwner} from 'services/OrganizationRoles';
@@ -285,7 +285,16 @@ function RightSidebar ({grandTotal, orgId, onContactUs}) {
 function getSpaceActionLinks (space, isOrgOwner, onDeleteSpace) {
   const actionLinkStyle = {padding: '0 10px 0 0', display: 'inline', whiteSpace: 'nowrap'};
 
+  const tooltip = h('div', {style: {whiteSpace: 'normal'}},
+    'You don’t have access to this space. But since you’re an organization ',
+    `${isOrgOwner ? 'owner' : 'admin'} you can grant yourself access by going to `,
+    h('i', null, 'users'),
+    ' and adding yourself to the space.'
+  );
+
   let spaceLink = '';
+  let usageLink = '';
+
   if (space.isAccessible) {
     spaceLink = h('a', {
       className: 'text-link',
@@ -293,6 +302,12 @@ function getSpaceActionLinks (space, isOrgOwner, onDeleteSpace) {
       style: actionLinkStyle,
       'data-test-id': 'subscription-page.spaces-list.space-link'
     }, 'Go to space');
+    usageLink = h('a', {
+      className: 'text-link',
+      href: href(getSpaceUsageNavState(space.sys.id)),
+      style: actionLinkStyle,
+      'data-test-id': 'subscription-page.spaces-list.space-usage-link'
+    }, 'Usage');
   } else {
     spaceLink = h(Tooltip, {
       element: h('button', {
@@ -300,22 +315,21 @@ function getSpaceActionLinks (space, isOrgOwner, onDeleteSpace) {
         disabled: true,
         'data-test-id': 'subscription-page.spaces-list.space-link'
       }, 'Go to space'),
-      tooltip: h('div', {style: {whiteSpace: 'normal'}},
-        'You don’t have access to this space. But since you’re an organization ',
-        `${isOrgOwner ? 'owner' : 'admin'} you can grant yourself access by going to `,
-        h('i', null, 'users'),
-        ' and adding yourself to the space.'
-      ),
+      tooltip: tooltip,
       options: {width: 400},
       style: actionLinkStyle
     });
+    usageLink = h(Tooltip, {
+      element: h('button', {
+        className: 'text-link',
+        disabled: true,
+        'data-test-id': 'subscription-page.spaces-list.usage-link'
+      }, 'Usage'),
+      tooltip: tooltip,
+      options: {width: 280},
+      style: actionLinkStyle
+    });
   }
-  const usageLink = h('a', {
-    className: 'text-link',
-    href: href(getSpaceUsageNavState(space.sys.id)),
-    style: actionLinkStyle,
-    'data-test-id': 'subscription-page.spaces-list.space-usage-link'
-  }, 'Usage');
   const deleteLink = h('button', {
     className: 'text-link text-link--destructive',
     style: actionLinkStyle,
@@ -330,13 +344,6 @@ function Price ({value = 0, currency = '$', unit = null, style = null}) {
   const valueStr = parseInt(value, 10).toLocaleString('en-US');
   const unitStr = unit && ` /${unit}`;
   return h('span', {style}, [currency, valueStr, unitStr].join(''));
-}
-
-function calculateTotalPrice (subscriptionPlans) {
-  return subscriptionPlans.reduce(
-    (total, plan) => total + (parseInt(plan.price, 10) || 0),
-    0
-  );
 }
 
 function getEnabledFeatures ({ratePlanCharges = []}) {

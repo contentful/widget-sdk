@@ -37,7 +37,7 @@ angular.module('contentful/mocks', [])
     return $delegate;
   }]);
 
-  $provide.constant('libs/sharejs', {
+  $provide.constant('sharejs', {
     Connection: sinon.stub().returns({
       socket: {},
       emit: _.noop,

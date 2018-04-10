@@ -12,7 +12,7 @@ describe('CodeMirror wrapper', function () {
     textarea = document.createElement('textarea');
     document.body.appendChild(textarea);
 
-    CodeMirror = this.$inject('libs/codemirror');
+    CodeMirror = this.$inject('codemirror');
 
     const cmFactory = sinon.spy(CodeMirror, 'fromTextArea');
     wrapper = Wrapper.create(textarea, {}, CodeMirror);

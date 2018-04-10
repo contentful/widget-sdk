@@ -1,6 +1,6 @@
-import {createElement as h} from 'libs/react';
+import {createElement as h} from 'react';
 import createReactClass from 'create-react-class';
-import PropTypes from 'libs/prop-types';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 import Icon from 'ui/Components/Icon';
 import $ from 'jquery';

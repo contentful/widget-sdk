@@ -1,4 +1,4 @@
-import ReactTestUtils from 'libs/react-dom/test-utils';
+import ReactTestUtils from 'react-dom/test-utils';
 
 describe('app/api/KeyEditor/Controller', function () {
   beforeEach(function () {

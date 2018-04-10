@@ -2,7 +2,7 @@ import {h} from 'ui/Framework';
 import {find, omit} from 'lodash';
 import {byName as Colors} from 'Styles/Colors';
 import {assign} from 'utils/Collections';
-import marked from 'libs/marked';
+import marked from 'marked';
 
 export default function (props) {
   selectBoilerplate(props.boilerplates[0].id);

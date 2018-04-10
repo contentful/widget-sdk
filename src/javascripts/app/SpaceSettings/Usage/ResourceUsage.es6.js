@@ -1,5 +1,5 @@
-import React from 'libs/react';
-import PropTypes from 'libs/prop-types';
+import React from 'react';
+import PropTypes from 'prop-types';
 import {ProgressBar} from './ProgressBar';
 import {getResourceLimits, resourceIncludedLimitReached, resourceHumanNameMap} from 'utils/ResourceUtils';
 import {shorten, shortenStorageUnit} from 'utils/NumberUtils';
@@ -7,7 +7,7 @@ import {shorten, shortenStorageUnit} from 'utils/NumberUtils';
 export const ResourceUsage = ({
   resource,
   description,
-  shortenIncluded
+  abbreviateLimit
 }) => {
   const {usage, unitOfMeasure} = resource;
   const limits = getResourceLimits(resource);
@@ -41,12 +41,12 @@ export const ResourceUsage = ({
         <span className="resource-list__item__usage">
           {toResourceFormat(usage)}
           {limits.maximum
-            ? ` out of ${toResourceFormat(limits.maximum)}`
+            ? ` out of ${toResourceFormat(limits.maximum, abbreviateLimit)}`
             : limits.included
               ? resourceIncludedLimitReached(resource)
                 ? ` (${toResourceFormat(limits.included)} free +
                     ${toResourceFormat(usage - limits.included)} paid)`
-                : ` out of ${toResourceFormat(limits.included, shortenIncluded)} included`
+                : ` out of ${toResourceFormat(limits.included, abbreviateLimit)} included`
               : ''
           }
         </span>
@@ -60,7 +60,7 @@ export const ResourceUsage = ({
 ResourceUsage.propTypes = {
   resource: PropTypes.object.isRequired,
   description: PropTypes.string,
-  shortenIncluded: PropTypes.bool
+  abbreviateLimit: PropTypes.bool
 };
 
 export const ResourceUsageHighlight = ({resource}) => {

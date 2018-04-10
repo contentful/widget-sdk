@@ -2,7 +2,7 @@ import $timeout from '$timeout';
 import * as Wrapper from 'markdown_editor/codemirror_wrapper';
 import * as Commands from 'markdown_editor/commands';
 import { isFunction } from 'lodash';
-import * as CodeMirror from 'libs/codemirror';
+import * as CodeMirror from 'codemirror';
 
 export function create (textarea, options) {
   const editor = Wrapper.create(textarea, options, CodeMirror);

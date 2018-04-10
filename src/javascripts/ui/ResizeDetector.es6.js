@@ -1,5 +1,5 @@
 import * as K from 'utils/kefir';
-import makeDetector from 'libs/element-resize-detector';
+import makeDetector from 'element-resize-detector';
 
 /**
  * Create a stream that emits an event whenever the size of the element changes.

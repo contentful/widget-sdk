@@ -1,4 +1,4 @@
-import LD from 'libs/launch-darkly-client';
+import LD from 'launch-darkly-client';
 
 import {launchDarkly as config} from 'Config';
 import {assign, get, isNull, omitBy} from 'lodash';

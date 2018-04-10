@@ -284,13 +284,5 @@ angular.module('contentful')
     template: '<cf-kaltura-editor></cf-kaltura-editor>'
   });
 
-  registerWidget('kalturaMultiVideoEditor', {
-    fieldTypes: ['Symbols'],
-    name: 'Kaltura (multiple videos)',
-    icon: 'video-preview',
-    rendersHelpText: true,
-    template: '<cf-kaltura-multi-video-editor />'
-  });
-
   return _widgets;
 }]);

@@ -418,11 +418,12 @@ Styleguide 4.7
 .btn-link
   $button-reset();
   display: block
-  color: $colors.blue-mid
+  color: $colors.blue-dark
   transition: all ease-in-out .1s
+  text-decoration: underline
 
   &:not(:disabled):hover
-    color: $colors.blue-darkest
+    color: $colors.text-dark
     background-color: transparent
 
   &:disabled, &--disabled
@@ -431,6 +432,21 @@ Styleguide 4.7
 
   &:active, &--active
     box-shadow: none
+
+  &__icon
+    display: inline-block
+    vertical-align: top
+    margin-right: 0.4em
+    > svg
+      width: 18px
+      height: 18px
+      fill: $colors.blue-dark
+    /*
+    Partial Reference that transpiles to .btn-link:hover .btn-link__icon
+    */  
+    ^[0]:hover &
+      > svg
+        fill: $colors.text-dark
 
 /*
 Buttons with icons
@@ -463,9 +479,7 @@ $btn-icon()
   $btn-icon()
 
 .btn-icon-left
-  $btn-icon
-  vertical-align: top
-  margin-right: 0.4em
+  
 
 
 $button--large-popout-icon()

@@ -1,6 +1,6 @@
-import * as Kefir from 'libs/kefir';
+import * as Kefir from 'kefir';
 import {noop, zipObject} from 'lodash';
-import {makeSum} from 'libs/sum-types';
+import {makeSum} from 'sum-types';
 
 /**
  * @ngdoc service
@@ -9,7 +9,7 @@ import {makeSum} from 'libs/sum-types';
  * Exports all functions from the 'kefir' node module plus additional
  * helpers.
  */
-export * from 'libs/kefir';
+export * from 'kefir';
 
 
 export const PromiseStatus = makeSum({

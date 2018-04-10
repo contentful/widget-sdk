@@ -3,8 +3,8 @@
 angular.module('contentful')
 
 .directive('cfOnboardingWithTea', ['require', function (require) {
-  var React = require('libs/react');
-  var ReactDOM = require('libs/react-dom');
+  var React = require('react');
+  var ReactDOM = require('react-dom');
   var OnboardingWithTea = require('app/home/welcome/OnboardingWithTea').default;
 
   return {

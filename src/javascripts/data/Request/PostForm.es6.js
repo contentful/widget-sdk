@@ -1,4 +1,4 @@
-import qs from 'libs/qs';
+import qs from 'qs';
 import $http from '$http';
 import {assign} from 'lodash';
 

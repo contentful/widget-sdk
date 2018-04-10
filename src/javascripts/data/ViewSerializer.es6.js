@@ -1,4 +1,4 @@
-import flatten from 'libs/flat';
+import flatten from 'flat';
 import {omitBy} from 'lodash';
 
 /**

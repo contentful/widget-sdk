@@ -1,6 +1,6 @@
 import createReactClass from 'create-react-class';
-import { createElement as h } from 'libs/react';
-import PropTypes from 'libs/prop-types';
+import { createElement as h } from 'react';
+import PropTypes from 'prop-types';
 
 const Tooltip = createReactClass({
   propTypes: {

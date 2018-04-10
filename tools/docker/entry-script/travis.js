@@ -41,7 +41,8 @@ module.exports = function* runTravis ({branch, pr, version}) {
   const ENV = {
     production: 'production',
     staging: 'staging',
-    preview: 'preview'
+    preview: 'preview',
+    development: 'development'
   };
 
   // Maps branch names to environment names
@@ -50,6 +51,7 @@ module.exports = function* runTravis ({branch, pr, version}) {
     master: ENV.staging
   };
 
+  yield* createFileDist(ENV.development, version, branch);
   yield* createFileDist(ENV.preview, version, branch, { includeStyleguide: true });
   yield* createFileDist(ENV.staging, version, branch);
   yield* createFileDist(ENV.production, version, branch);

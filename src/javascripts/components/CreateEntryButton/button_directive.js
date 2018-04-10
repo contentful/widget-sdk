@@ -1,9 +1,9 @@
 angular.module('contentful')
 .directive('cfCreateEntryButton', ['require', function (require) {
   var _ = require('lodash');
-  var React = require('libs/react');
-  var ReactDOM = require('libs/react-dom');
-  var Menu = require('components/tabs/entry_list/CreateEntryButton').default;
+  var React = require('react');
+  var ReactDOM = require('react-dom');
+  var Menu = require('components/CreateEntryButton').default;
 
   return {
     link: function ($scope, elem, attr) {
@@ -11,8 +11,8 @@ angular.module('contentful')
         return {
           contentTypes: _.get($scope, attr.contentTypes, []),
           suggestedContentTypeId: _.get($scope, attr.suggestedContentTypeId),
-          mode: attr.mode,
-          position: attr.position,
+          size: attr.size,
+          style: attr.style,
           text: attr.text
         };
       }, function (props) {

@@ -4,7 +4,7 @@
 import { noop } from 'lodash';
 import { match } from 'utils/TaggedValues';
 import { truncate } from 'stringUtils';
-import * as React from 'libs/react';
+import * as React from 'react';
 import {h} from 'ui/Framework';
 import * as H from 'ui/Framework/Hooks';
 import {container, hspace} from 'ui/Layout';

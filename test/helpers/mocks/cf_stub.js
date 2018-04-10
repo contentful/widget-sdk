@@ -51,7 +51,7 @@ angular.module('contentful/mocks')
 .factory('cfStub', function ($injector) {
   const $rootScope = $injector.get('$rootScope');
   const spaceContext = $injector.get('spaceContext');
-  const Client = $injector.get('libs/legacy-client');
+  const Client = $injector.get('legacy-client');
   const Adapter = $injector.get('TestingAdapter');
 
   const adapter = new Adapter();

@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React from 'libs/react';
+import React from 'react';
 import {h} from 'ui/Framework';
 import {byName as Colors} from 'Styles/Colors';
 import {assign} from 'utils/Collections';

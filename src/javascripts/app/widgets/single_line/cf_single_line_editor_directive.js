@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 .directive('cfSingleLineEditor', ['require', function (require) {
-  var Editors = require('libs/editors');
+  var Editors = require('editors');
 
   return {
     scope: {},

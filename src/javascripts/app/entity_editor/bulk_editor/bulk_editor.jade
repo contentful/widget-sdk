@@ -41,17 +41,23 @@
 
     .workbench-main__sidebar(ng-if="!renderInline")
       .entity-sidebar
-        cf-create-entry-button(
-          cf-context-menu-trigger
-          data-test-id="add-entry-menu-trigger"
-          content-types="actions.allowedCTs"
-          suggested-content-type-id=""
-          on-select="actions.addNewEntry"
-          mode="large"
-          text="Create new entry and link")
+        h2.entity-sidebar__heading
+          | Entries
+        .entity-sidebar__help-text(ng-if="data.linkCount > 1")
+          | There are {{ data.linkCount }} linked entries in <em>{{ referenceContext.field.name }}</em>.
+        .entity-sidebar__help-text(ng-if="data.linkCount == 1")
+          | There is 1 linked entry in <em>{{ referenceContext.field.name }}</em>.
         .entity-sidebar__help-text
-          | You can also&#32;
-          a(
+          cf-create-entry-button(
+            content-types="actions.allowedCTs"
+            on-select="actions.addNewEntry"
+            style="link"
+            text="Create new entry and link")
+        .entity-sidebar__help-text
+          button.btn-link(
             data-test-id="add-existing-entry"
-            ng-click="actions.addExistingEntries()")
-            | link an existing entry
+            ng-click="actions.addExistingEntries()"
+            type="button")
+            cf-icon.btn-link__icon(name="link")
+            span
+              | Link an existing entry

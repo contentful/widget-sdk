@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import { createElement as h } from 'libs/react';
-import { mount } from 'libs/enzyme';
+import { createElement as h } from 'react';
+import { mount } from 'enzyme';
 import sinon from 'npm:sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 import {

@@ -2,7 +2,7 @@
 
 angular.module('cf.app')
 .directive('cfMultiLineEditor', ['require', function (require) {
-  var createTextarea = require('libs/editors').textarea;
+  var createTextarea = require('editors').textarea;
 
   return {
     restrict: 'E',

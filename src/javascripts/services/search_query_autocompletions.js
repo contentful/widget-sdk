@@ -30,8 +30,8 @@ angular.module('contentful')
   var mimetype = require('mimetype');
   var assetContentType = require('assetContentType');
   var moment = require('moment');
-  var caseofEq = require('libs/sum-types').caseofEq;
-  var otherwise = require('libs/sum-types').otherwise;
+  var caseofEq = require('sum-types').caseofEq;
+  var otherwise = require('sum-types').otherwise;
 
   // Require on demand to avoid circular dependency error in `spaceContext`.
   var requireSpaceContext = _.once(function () { return require('spaceContext'); });

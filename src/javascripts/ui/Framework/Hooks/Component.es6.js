@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-syntax, react/prop-types */
-import * as React from 'libs/react';
+import * as React from 'react';
 import { omit, clone, get } from 'lodash';
 import { set } from 'utils/Collections';
 

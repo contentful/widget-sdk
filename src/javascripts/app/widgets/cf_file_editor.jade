@@ -1,0 +1,85 @@
+.file-info
+  img(aviary-editor-preview)
+
+  .file-preview(ng-show="file && !!file.url")
+    cf-thumbnail(file="file" height="250")
+
+  .file-progress.loading-box--stretched(ng-show="imageIsLoading")
+    .loading-box__spinner
+    | Loading…
+
+  .file-progress.loading-box--stretched(ng-show="file && !!file.upload")
+    .loading-box__spinner
+    | Processing…
+
+  .file-metadata(ng-show="showMeta")
+    table
+      tr
+        th Filename
+        td {{file.fileName}}
+      tr
+        th Type
+        td(title="{{file.contentType}}") {{file | mimeGroup}}
+      tr(ng-show="file.details.size")
+        th Size
+        td(title="{{file.details.size}} Bytes") {{file.details.size | fileSize}}
+      tr(ng-show="file.details.image")
+        th Width<br>Height
+        td {{file.details.image.width}}&thinsp;px<br>{{file.details.image.height}}&thinsp;px
+
+  .no-file(ng-show="!file && fieldLocale.access.denied")
+    | You don't have a permission to edit this field.
+
+  .file-buttons
+    a.btn-secondary-action(type="button"
+      aria-label="Download file" tooltip="Download file"
+      href="{{file.url | assetUrl}}" target="_blank" rel="noopener noreferrer"
+      ng-show="file && !!file.url")
+      i.fa.fa-download
+    button.btn-secondary-action(type="button"
+      aria-label="Show file information" tooltip="Show file information"
+      ng-click="showMeta = !showMeta"
+      ng-show="file")
+      i.fa.fa-info-circle
+
+    button.btn-secondary-action(type="button"
+      aria-label="Rotate or mirror image" tooltip="Rotate or mirror image"
+      cf-context-menu-trigger
+      ng-show="canEditFile()")
+      i.fa.fa-undo
+    .context-menu(cf-context-menu)
+      div(role="menuitem" ng-click="rotateOrMirror('90cw')") Rotate 90° clockwise
+      div(role="menuitem" ng-click="rotateOrMirror('90ccw')") Rotate 90° counterclockwise
+      div(role="menuitem" ng-click="rotateOrMirror('flip')") Mirror vertically
+      div(role="menuitem" ng-click="rotateOrMirror('flop')") Mirror horizontally
+
+    button.btn-secondary-action(type="button"
+      aria-label="Crop image" tooltip="Crop image"
+      cf-context-menu-trigger
+      ng-show="canEditFile()")
+      i.fa.fa-crop
+    .context-menu(cf-context-menu)
+      div(role="menuitem" ng-click="cropWithFilestack(null)") No aspect ratio
+      div(role="menuitem" ng-click="cropWithFilestack('original')") Original aspect ratio
+      div(role="menuitem" ng-click="cropWithFilestack(1)") Square
+      div(role="menuitem" ng-click="cropWithFilestack('circle')") Circle (converts to PNG)
+      div(role="menuitem" ng-click="cropWithFilestack(4/3)") 4:3
+      div(role="menuitem" ng-click="cropWithFilestack(3/2)") 3:2
+      div(role="menuitem" ng-click="cropWithFilestack(16/9)") 16:9
+      div(role="menuitem" ng-click="cropCustomAspectRatio()") Custom aspect ratio
+
+    button.btn-secondary-action(type="button"
+      aria-label="Edit file" tooltip="Open Adobe Creative Editor (deprecated)"
+      ng-click="editWithAviary()"
+      ng-show="canEditFile()")
+      i.fa.fa-paint-brush
+    button.btn-secondary-action(type="button"
+      aria-label="Delete file" tooltip="Delete file"
+      ng-click="deleteFile()"
+      ng-show="fieldLocale.access.editable && file && (file.url || file.upload)")
+      i.fa.fa-trash
+
+  .file-selector(ng-show="!file && fieldLocale.access.editable")
+    .__filestack-drop-pane-mount
+    .file-selector-btn-wrapper
+      button.btn-secondary-action(type="button" ng-click="selectFile()") Or open file selector

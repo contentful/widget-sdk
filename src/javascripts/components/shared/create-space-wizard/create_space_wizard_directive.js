@@ -2,8 +2,8 @@
 
 angular.module('contentful')
 .directive('cfCreateSpaceWizard', ['require', function (require) {
-  var React = require('libs/react');
-  var ReactDOM = require('libs/react-dom');
+  var React = require('react');
+  var ReactDOM = require('react-dom');
   var Wizard = require('components/shared/create-space-wizard/Wizard').default;
   var $state = require('$state');
   var $rootScope = require('$rootScope');

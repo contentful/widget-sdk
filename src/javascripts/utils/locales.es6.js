@@ -1,4 +1,4 @@
-import { isRtlLang } from 'libs/rtl-detect';
+import { isRtlLang } from 'rtl-detect';
 import localesList from 'localesList';
 
 const locales = localesList.map(({ code }) => code);

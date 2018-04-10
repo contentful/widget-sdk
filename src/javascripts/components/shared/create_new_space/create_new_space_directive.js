@@ -145,9 +145,7 @@ angular.module('contentful')
 
     controller.createSpaceInProgress = true;
 
-    Analytics.track('space:template_selected', {
-      templateName: template.name
-    });
+    Analytics.track('space:template_selected', {templateName: template.name});
 
     // if we use a template, we want to use DEFAULT_LOCALE
     var selectedLocale = controller.newSpace.useTemplate === true
@@ -161,7 +159,7 @@ angular.module('contentful')
     .then(function (newSpace) {
       // Create space
       TokenStore.refresh()
-      .then(_.partial(handleSpaceCreation, newSpace, template));
+        .then(_.partial(handleSpaceCreation, newSpace, template));
     })
     .catch(function (error) {
       var errors = _.get(error, 'body.details.errors');
@@ -188,29 +186,34 @@ angular.module('contentful')
   }
 
   function handleSpaceCreation (newSpace, template) {
-    Analytics.track('space:create', {
-      templateName: _.get(template, 'name')
-    });
+    var templateName = _.get(template, 'name');
 
     $state.go('spaces.detail', {spaceId: newSpace.sys.id})
-    .then(function () {
-      if (template.name === 'Blank') {
-        spaceContext.apiKeyRepo.create(
-          'Example Key',
-          'We’ve created an example API key for you to help you get started.'
-        );
-        $scope.dialog.confirm();
-      } else {
-        controller.createTemplateInProgress = true;
-        controller.viewState = 'creatingTemplate';
-        return loadSelectedTemplate();
-      }
-    })
-    .finally(function () {
-      // Just show the success message whatever happens
-      controller.createTemplateInProgress = false;
-      controller.createSpaceInProgress = false;
-    });
+      .then(function () {
+        var spaceCreateEventData =
+            templateName === 'Blank'
+            ? {templateName: templateName}
+            : {templateName: templateName, entityAutomationScope: {scope: 'space_template'}};
+
+        Analytics.track('space:create', spaceCreateEventData);
+
+        if (templateName === 'Blank') {
+          spaceContext.apiKeyRepo.create(
+            'Example Key',
+            'We’ve created an example API key for you to help you get started.'
+          );
+          $scope.dialog.confirm();
+        } else {
+          controller.createTemplateInProgress = true;
+          controller.viewState = 'creatingTemplate';
+          return loadSelectedTemplate();
+        }
+      })
+      .finally(function () {
+        // Just show the success message whatever happens
+        controller.createTemplateInProgress = false;
+        controller.createSpaceInProgress = false;
+      });
   }
 
   function createTemplate (template, retried) {
@@ -239,7 +242,16 @@ angular.module('contentful')
   function loadSelectedTemplate () {
     var itemHandlers = {
       // no need to show status of individual items
-      onItemSuccess: spaceTemplateEvents.entityActionSuccess,
+      onItemSuccess: function (entityId, entityData, templateName) {
+        spaceTemplateEvents.entityActionSuccess(
+          entityId,
+          Object.assign(
+            {},
+            entityData,
+            {entityAutomationScope: {scope: 'space_template'}}
+          ),
+          templateName);
+      },
       onItemError: _.noop
     };
 
