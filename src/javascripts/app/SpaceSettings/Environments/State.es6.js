@@ -1,6 +1,6 @@
 import { assign } from 'utils/Collections';
 import { match, makeCtor } from 'utils/TaggedValues';
-import { caseofEq, otherwise } from 'libs/sum-types';
+import { caseofEq, otherwise } from 'sum-types';
 import * as C from 'utils/Concurrent';
 import { bindActions, createStore, makeReducer } from 'ui/Framework/Store';
 import * as LD from 'utils/LaunchDarkly';

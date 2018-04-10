@@ -1,9 +1,9 @@
-import React from 'libs/react';
+import React from 'react';
 import _ from 'lodash';
 import sinon from 'npm:sinon';
 import CreateEntryButton from 'components/CreateEntryButton';
 
-import { mount } from 'libs/enzyme';
+import { mount } from 'enzyme';
 
 const sel = id => `[data-test-id="${id}"]`;
 

@@ -12,7 +12,7 @@ angular.module('contentful')
   var accessChecker = require('access_control/AccessChecker');
   var Tracking = require('analytics/events/SearchAndViews');
   var K = require('utils/kefir');
-  var Kefir = require('libs/kefir');
+  var Kefir = require('kefir');
   var createSearchInput = require('app/ContentList/Search').default;
   var h = require('ui/Framework').h;
   var getAccessibleCTs = require('data/ContentTypeRepo/accessibleCTs').default;

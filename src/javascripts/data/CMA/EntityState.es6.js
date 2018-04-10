@@ -1,4 +1,4 @@
-import {caseof} from 'libs/sum-types/caseof-eq';
+import {caseof} from 'sum-types/caseof-eq';
 import {constant} from 'lodash';
 import * as $q from '$q';
 import {

@@ -1,4 +1,4 @@
-import { createElement as h } from 'libs/react';
+import { createElement as h } from 'react';
 import * as sinon from 'test/helpers/sinon';
 import { sleep } from 'utils/Concurrent';
 

@@ -1,6 +1,6 @@
 import {h as h_, renderString} from 'ui/Framework';
 import {constant} from 'lodash';
-import {caseofEq} from 'libs/sum-types';
+import {caseofEq} from 'sum-types';
 
 /**
  * @description

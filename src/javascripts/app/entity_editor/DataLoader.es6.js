@@ -1,7 +1,7 @@
 import {find, isPlainObject, cloneDeep, memoize} from 'lodash';
 import {runTask, wrapTask} from 'utils/Concurrent';
 import assetEditorInterface from 'data/editingInterfaces/asset';
-import {caseof as caseofEq} from 'libs/sum-types/caseof-eq';
+import {caseof as caseofEq} from 'sum-types/caseof-eq';
 import {deepFreeze} from 'utils/Freeze';
 import createPrefetchCache from 'data/CMA/EntityPrefetchCache';
 import TheLocaleStore from 'TheLocaleStore';

@@ -34,7 +34,7 @@ angular.module('contentful')
   var $timeout = require('$timeout');
   var K = require('utils/kefir');
   var Navigator = require('states/Navigator');
-  var caseof = require('libs/sum-types').caseof;
+  var caseof = require('sum-types').caseof;
 
   return {
     restrict: 'E',

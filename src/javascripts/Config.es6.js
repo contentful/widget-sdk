@@ -1,4 +1,4 @@
-import qs from 'libs/qs';
+import qs from 'qs';
 import { getStore } from 'TheStore';
 import {settings} from 'environment';
 import { sample } from 'lodash';

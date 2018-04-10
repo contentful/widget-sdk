@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 import {camelCase} from 'lodash';
-import * as React from 'libs/react';
-import * as ReactDOM from 'libs/react-dom';
-import {caseof} from 'libs/sum-types';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import {caseof} from 'sum-types';
 import * as VTree from './VTree';
 
 /**

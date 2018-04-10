@@ -1,4 +1,4 @@
-import {makeSum} from 'libs/sum-types';
+import {makeSum} from 'sum-types';
 import {startsWith} from 'lodash';
 import * as K from 'utils/kefir';
 import {getOrganization} from 'services/TokenStore';

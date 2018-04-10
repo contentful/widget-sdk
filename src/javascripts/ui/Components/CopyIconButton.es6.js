@@ -1,6 +1,6 @@
-import * as Tippy from 'libs/react-tippy';
-import { createElement as h } from 'libs/react';
-import PropTypes from 'libs/prop-types';
+import * as Tippy from 'react-tippy';
+import { createElement as h } from 'react';
+import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
 
 import copyToClipboard from 'utils/DomClipboardCopy';

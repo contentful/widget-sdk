@@ -2,7 +2,7 @@ import { h } from 'ui/Framework';
 import { container, hspace, hbox, vbox } from 'ui/Layout';
 import { asReact } from 'ui/Framework/DOMRenderer';
 import createReactClass from 'create-react-class';
-import { caseof } from 'libs/sum-types';
+import { caseof } from 'sum-types';
 
 import { byName as colors } from 'Styles/Colors';
 import { oneLineTruncate } from 'Styles';

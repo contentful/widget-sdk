@@ -1,7 +1,7 @@
 import {create as createSignal} from 'signal';
 import debounce from 'debounce';
 import $ from 'jquery';
-import CodeMirror from 'libs/codemirror';
+import CodeMirror from 'codemirror';
 
 /**
  * @ngdoc service

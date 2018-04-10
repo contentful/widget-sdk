@@ -1,4 +1,4 @@
-import { createElement as h } from 'libs/react';
+import { createElement as h } from 'react';
 
 describe('Welcome react component', function () {
   beforeEach(function () {

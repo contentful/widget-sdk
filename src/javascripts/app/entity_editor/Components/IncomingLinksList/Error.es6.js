@@ -1,4 +1,4 @@
-import { createElement as h } from 'libs/react';
+import { createElement as h } from 'react';
 import createReactClass from 'create-react-class';
 
 const Error = createReactClass({

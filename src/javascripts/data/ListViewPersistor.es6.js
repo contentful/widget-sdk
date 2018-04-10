@@ -1,4 +1,4 @@
-import qs from 'libs/qs';
+import qs from 'qs';
 import $q from '$q';
 import $location from '$location';
 import { getStore } from 'TheStore';

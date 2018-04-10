@@ -1,13 +1,13 @@
-import React from 'libs/react';
+import React from 'react';
 import createReactClass from 'create-react-class';
-import PropTypes from 'libs/prop-types';
+import PropTypes from 'prop-types';
 import Icon from 'ui/Components/Icon';
 import {href, go} from 'states/Navigator';
 import spaceContext from 'spaceContext';
 import {runTask} from 'utils/Concurrent';
 import entityCreator from 'entityCreator';
 import {env} from 'Config';
-import qs from 'libs/qs';
+import qs from 'qs';
 
 const VIEW_SAMPLE_CONTENT = 'viewSampleContent';
 const PREVIEW_USING_EXAMPLE_APP = 'previewUsingExampleApp';

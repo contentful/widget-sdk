@@ -1,5 +1,5 @@
-import React from 'libs/react';
-import PropTypes from 'libs/prop-types';
+import React from 'react';
+import PropTypes from 'prop-types';
 import {ProgressBar} from './ProgressBar';
 import {getResourceLimits, resourceIncludedLimitReached, resourceHumanNameMap} from 'utils/ResourceUtils';
 import {shorten, shortenStorageUnit} from 'utils/NumberUtils';

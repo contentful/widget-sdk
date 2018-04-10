@@ -1,6 +1,6 @@
 import {constant} from 'lodash';
-import ShareJS from 'libs/sharejs';
-import {caseof, caseofEq} from 'libs/sum-types';
+import ShareJS from 'sharejs';
+import {caseof, caseofEq} from 'sum-types';
 import * as K from 'utils/kefir';
 import $q from '$q';
 import * as DocLoader from 'data/sharejs/DocLoader';

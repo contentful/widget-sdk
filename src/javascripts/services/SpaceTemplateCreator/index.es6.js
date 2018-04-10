@@ -3,7 +3,7 @@ import contentPreview from 'contentPreview';
 import * as Analytics from 'analytics/Analytics';
 import {runTask} from 'utils/Concurrent';
 import * as _ from 'lodash';
-import qs from 'libs/qs';
+import qs from 'qs';
 import * as environment from 'environment';
 import {TEA_MAIN_CONTENT_PREVIEW, TEA_CONTENT_PREVIEWS, DISCOVERY_APP_BASE_URL} from './contentPreviewConfig';
 import TheLocaleStore from 'TheLocaleStore';

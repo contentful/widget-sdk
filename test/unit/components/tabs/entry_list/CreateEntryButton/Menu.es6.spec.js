@@ -1,5 +1,5 @@
-import React from 'libs/react';
-import { mount } from 'libs/enzyme';
+import React from 'react';
+import { mount } from 'enzyme';
 import { noop, range } from 'lodash';
 import Menu from 'components/CreateEntryButton/Menu';
 

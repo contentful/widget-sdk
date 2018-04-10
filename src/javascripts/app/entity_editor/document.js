@@ -22,7 +22,7 @@ angular.module('contentful')
   var StringField = require('entityEditor/Document/StringField');
   var PathUtils = require('utils/Path');
   var DocLoad = require('data/sharejs/Connection').DocLoad;
-  var caseof = require('libs/sum-types').caseof;
+  var caseof = require('sum-types').caseof;
   var Reverter = require('entityEditor/Document/Reverter');
   var accessChecker = require('access_control/AccessChecker');
   var Status = require('data/Document/Status');

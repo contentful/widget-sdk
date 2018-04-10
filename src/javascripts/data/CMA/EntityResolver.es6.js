@@ -6,7 +6,7 @@
 *
 * Used by the cfReferenceEditor and cfSnapshotPresentLink directives.
 */
-import {caseof} from 'libs/sum-types/caseof-eq';
+import {caseof} from 'sum-types/caseof-eq';
 import $q from '$q';
 import {chunk, uniq, flatten} from 'lodash';
 

@@ -1,6 +1,6 @@
 import {find, get as getAtPath, set as setAtPath} from 'lodash';
 import {map, filter, assign, findMap, insertAt, move} from 'utils/Collections';
-import {create as createStortable} from 'libs/Sortable';
+import {create as createStortable} from 'Sortable';
 
 import random from 'random';
 

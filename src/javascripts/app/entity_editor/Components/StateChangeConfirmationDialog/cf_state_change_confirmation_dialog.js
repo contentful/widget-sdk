@@ -2,8 +2,8 @@ angular.module('contentful').directive('cfStateChangeConfirmationDialog', [
   'require',
   function (require) {
     var _ = require('lodash');
-    var React = require('libs/react');
-    var ReactDOM = require('libs/react-dom');
+    var React = require('react');
+    var ReactDOM = require('react-dom');
     var random = require('random');
     var Dialog = require('app/entity_editor/Components/StateChangeConfirmationDialog').default;
 

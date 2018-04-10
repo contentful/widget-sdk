@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import * as React from 'libs/react';
-import PropTypes from 'libs/prop-types';
+import * as React from 'react';
+import PropTypes from 'prop-types';
 import { Icon } from '@contentful/ui-component-library';
 
 export default function SearchInput ({ getInputProps }) {

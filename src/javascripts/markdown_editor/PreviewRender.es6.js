@@ -1,9 +1,9 @@
 import {cloneDeep, extend, isString, isObject, isArray, isNull, includes} from 'lodash';
 import {htmlDecode} from 'encoder';
 import {getDomains} from 'services/TokenStore';
-import MarkedAst from 'libs/MarkedAst';
-import sanitize from 'libs/sanitize-html';
-import * as React from 'libs/react';
+import MarkedAst from 'MarkedAst';
+import sanitize from 'sanitize-html';
+import * as React from 'react';
 
 let currentId = 1;
 

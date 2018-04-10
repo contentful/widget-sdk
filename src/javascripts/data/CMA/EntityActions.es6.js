@@ -1,5 +1,5 @@
 import {constant, compact} from 'lodash';
-import {caseof} from 'libs/sum-types/caseof-eq';
+import {caseof} from 'sum-types/caseof-eq';
 
 /**
  * @ngdoc service

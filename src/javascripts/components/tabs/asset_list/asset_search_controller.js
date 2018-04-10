@@ -15,7 +15,7 @@ angular.module('contentful')
   var Tracking = require('analytics/events/SearchAndViews');
   var Notification = require('notification');
   var K = require('utils/kefir');
-  var Kefir = require('libs/kefir');
+  var Kefir = require('kefir');
   var createSearchInput = require('app/ContentList/Search').default;
   var h = require('ui/Framework').h;
 

@@ -1,8 +1,8 @@
-import {createElement as h} from 'libs/react';
-import ReactDOM from 'libs/react-dom';
+import {createElement as h} from 'react';
+import ReactDOM from 'react-dom';
 import createReactClass from 'create-react-class';
 import {uniqueId, isString} from 'lodash';
-import PropTypes from 'libs/prop-types';
+import PropTypes from 'prop-types';
 
 const DevNotifications = createReactClass({
   propTypes: {

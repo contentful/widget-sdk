@@ -7,10 +7,10 @@ import Cookies from 'Cookies';
 import {omit} from 'lodash';
 import moment from 'moment';
 import {gitRevision} from 'environment';
-import {createElement as h} from 'libs/react';
+import {createElement as h} from 'react';
 import {addNotification} from 'debug/DevNotifications';
 import location from '$location';
-import qs from 'libs/qs';
+import qs from 'qs';
 
 /**
  * If url param is given, sets `ui_version` cookie and reloads the app with

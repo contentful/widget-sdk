@@ -1,8 +1,8 @@
-import {createElement as e} from 'libs/react';
+import {createElement as e} from 'react';
 import createReactClass from 'create-react-class';
-import PropTypes from 'libs/prop-types';
+import PropTypes from 'prop-types';
 import {asReact} from 'ui/Framework/DOMRenderer';
-import AnimateHeight from 'libs/react-animate-height';
+import AnimateHeight from 'react-animate-height';
 import folderIcon from 'svg/folder';
 import environmentIcon from 'svg/environment';
 import client from 'client';

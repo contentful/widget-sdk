@@ -1,7 +1,7 @@
 import {includes} from 'lodash';
 import {unshift, assign, update, set} from 'utils/Collections';
 import * as K from 'utils/kefir';
-import {caseof} from 'libs/sum-types';
+import {caseof} from 'sum-types';
 import {makeCtor} from 'utils/TaggedValues';
 
 import {h} from 'ui/Framework';

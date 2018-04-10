@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 // TODO: add prop-types
-import React from 'libs/react';
+import React from 'react';
 import createReactClass from 'create-react-class';
 import { find } from 'lodash';
 
