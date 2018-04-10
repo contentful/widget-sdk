@@ -24,7 +24,7 @@ const SpaceDetails = createReactClass({
     return state;
   },
   componentWillReceiveProps: function ({serverValidationErrors}) {
-    if (serverValidationErrors !== this.props.serverValidationErrors) {
+    if (serverValidationErrors && serverValidationErrors !== this.props.serverValidationErrors) {
       this.setState({validation: serverValidationErrors});
     }
   },

@@ -150,6 +150,7 @@ const Wizard = createReactClass({
   setStateData (stepData) {
     this.setState({
       data: {...this.state.data, ...stepData},
+      isFormSubmitted: false,
       serverValidationErrors: null
     });
   },
