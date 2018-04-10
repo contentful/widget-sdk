@@ -75,11 +75,11 @@ const FetchSpacePlans = createReactClass({
 });
 
 export const ResourceTypes = {
-  'Environments': 'Environments',
-  'Roles': 'Roles',
-  'Locales': 'Locales',
-  'ContentTypes': 'Content types',
-  'Records': 'Records'
+  Environments: 'Environments',
+  Roles: 'Roles',
+  Locales: 'Locales',
+  ContentTypes: 'Content types',
+  Records: 'Records'
 };
 
 function getIncludedResources (charges) {

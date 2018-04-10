@@ -3,12 +3,13 @@ import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import FetchSpacePlans, {ResourceTypes} from './FetchSpacePlans';
-import {get, kebabCase} from 'lodash';
+import {get, kebabCase, template} from 'lodash';
 import {isOwner} from 'services/OrganizationRoles';
 import {go} from 'states/Navigator';
 import HelpIcon from 'ui/Components/HelpIcon';
 import Tooltip from 'ui/Components/Tooltip';
 import spinner from 'ui/Components/Spinner';
+import {TextLink} from '@contentful/ui-component-library';
 import {asReact} from 'ui/Framework/DOMRenderer';
 import {RequestState, formatPrice} from './WizardUtils';
 
@@ -134,17 +135,17 @@ const SpacePlanItem = createReactClass({
 });
 
 const ResourceTooltips = {
-  [ResourceTypes.Environments]: (units) => `This space type includes ${units} sandbox
+  [ResourceTypes.Environments]: `This space type includes <%= units %> sandbox
       environments additional to the master environment, which allow you to create and
       maintain multiple versions of the space-specific data, and make changes to them
       in isolation.`,
-  [ResourceTypes.Roles]: (units) => `This space type includes ${units} user roles
+  [ResourceTypes.Roles]: `This space type includes <%= units %> user roles
       additional to the admin role`,
-  [ResourceTypes.Records]: () => 'Records are entries and assets combined.'
+  [ResourceTypes.Records]: 'Records are entries and assets combined.'
 };
 
 function getTooltip (type, units) {
-  return ResourceTooltips[type] && ResourceTooltips[type](units);
+  return ResourceTooltips[type] && template(ResourceTooltips[type])({units});
 }
 
 const BillingInfo = createReactClass({
@@ -162,9 +163,7 @@ const BillingInfo = createReactClass({
           {' '}
           {canSetupBilling && <React.Fragment>
             Head to the{' '}
-            <button className="btn-link text-link" style={{display: 'inline'}} onClick={goToBilling}>
-              organization settings
-            </button>
+            <TextLink onClick={goToBilling}>organization settings</TextLink>
             {' '}to add these details for the organization.
           </React.Fragment>}
           {!canSetupBilling && 'Please contact your organization’s owner.'}
