@@ -151,7 +151,12 @@ function Pluralized ({ text, count }) {
   return <span>{pluralizedText}</span>;
 }
 
-function UsersForPlan ({ usersMeta }) { // eslint-disable-line
+Pluralized.propTypes = {
+  text: PropTypes.string.isRequired,
+  count: PropTypes.number.isRequired
+};
+
+function UsersForPlan ({ usersMeta }) {
   const { numFreeUsers, numPaidUsers, cost } = usersMeta;
   const numTotalUsers = numFreeUsers + numPaidUsers;
 
@@ -166,7 +171,11 @@ function UsersForPlan ({ usersMeta }) { // eslint-disable-line
   </div>;
 }
 
-function BasePlan ({basePlan}) { // eslint-disable-line
+UsersForPlan.propTypes = {
+  usersMeta: PropTypes.object.isRequired
+};
+
+function BasePlan ({basePlan}) {
   const enabledFeaturesNames = getEnabledFeatures(basePlan).map(({name}) => name);
 
   return <div className='platform'>
@@ -183,6 +192,10 @@ function BasePlan ({basePlan}) { // eslint-disable-line
     </p>
   </div>;
 }
+
+BasePlan.propTypes = {
+  basePlan: PropTypes.object.isRequired
+};
 
 function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
   if (!spacePlans.length) {
