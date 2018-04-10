@@ -41,11 +41,33 @@
       ng-click="showMeta = !showMeta"
       ng-show="file")
       i.fa.fa-info-circle
+
     button.btn-secondary-action(type="button"
-      aria-label="Edit file" tooltip="Edit image"
-      ng-click="editWithFilestack()"
+      aria-label="Rotate or mirror image" tooltip="Rotate or mirror image"
+      cf-context-menu-trigger
+      ng-show="canEditFile()")
+      i.fa.fa-undo
+    .context-menu(cf-context-menu)
+      div(role="menuitem" ng-click="rotateOrMirror('90cw')") Rotate 90° clockwise
+      div(role="menuitem" ng-click="rotateOrMirror('90ccw')") Rotate 90° counterclockwise
+      div(role="menuitem" ng-click="rotateOrMirror('flip')") Mirror vertically
+      div(role="menuitem" ng-click="rotateOrMirror('flop')") Mirror horizontally
+
+    button.btn-secondary-action(type="button"
+      aria-label="Crop image" tooltip="Crop image"
+      cf-context-menu-trigger
       ng-show="canEditFile()")
       i.fa.fa-crop
+    .context-menu(cf-context-menu)
+      div(role="menuitem" ng-click="cropWithFilestack(null)") No aspect ratio
+      div(role="menuitem" ng-click="cropWithFilestack('original')") Original aspect ratio
+      div(role="menuitem" ng-click="cropWithFilestack(1)") Square
+      div(role="menuitem" ng-click="cropWithFilestack('circle')") Circle (converts to PNG)
+      div(role="menuitem" ng-click="cropWithFilestack(4/3)") 4:3
+      div(role="menuitem" ng-click="cropWithFilestack(3/2)") 3:2
+      div(role="menuitem" ng-click="cropWithFilestack(16/9)") 16:9
+      div(role="menuitem" ng-click="cropCustomAspectRatio()") Custom aspect ratio
+
     button.btn-secondary-action(type="button"
       aria-label="Edit file" tooltip="Open Adobe Creative Editor (deprecated)"
       ng-click="editWithAviary()"
