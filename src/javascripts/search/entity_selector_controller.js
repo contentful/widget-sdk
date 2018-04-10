@@ -249,13 +249,18 @@ angular.module('contentful')
   function getItemsToAdd (res) {
     // The api could theoretically return some of the entities returned already if
     // new entities were created in the meantime.
-    return _.transform(res.items, function (acc, item) {
+    return res.items.reduce(function (items, item) {
       var id = _.get(item, 'sys.id');
-      if (id && !itemsById[id]) {
+      if (id && !itemsById[id] && !isAssetWithoutFile(item)) {
         itemsById[id] = item;
-        acc.push(item);
+        return items.concat(item);
       }
+      return items;
     }, []);
+  }
+
+  function isAssetWithoutFile (item) {
+    return _.get(item, 'sys.type') === 'Asset' && !_.get(item, 'fields.file');
   }
 
   function resetAndLoad () {

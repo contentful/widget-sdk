@@ -149,6 +149,28 @@ describe('EntitySelectorController', function () {
 
       expect(this.scope.items).toEqual([ E1, E2, E3 ]);
     });
+
+    it('omits assets without associated files', function () {
+      const assetWithoutFile = {
+        fields: {},
+        sys: { id: 'assetWithoutFile', type: 'Asset' }
+      };
+      const assetWithFile = {
+        fields: { file: {} },
+        sys: { id: 'assetWithoutFile', type: 'Asset' }
+      };
+      this.fetch.resolves({
+        items: [
+          E1,
+          E2,
+          assetWithoutFile,
+          assetWithFile,
+          E3
+        ]
+      });
+      this.createController();
+      expect(this.scope.items).toEqual([ E1, E2, assetWithFile, E3 ]);
+    });
   });
 
   describe('single content type link', function () {
