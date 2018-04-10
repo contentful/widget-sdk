@@ -1,5 +1,5 @@
 import createReactClass from 'create-react-class';
-import PropTypes from 'libs/prop-types';
+import PropTypes from 'prop-types';
 import {createOrganizationEndpoint} from 'data/EndpointFactory';
 import {getSubscriptionPlans, calculateTotalPrice} from 'account/pricing/PricingDataProvider';
 import {RequestState} from './WizardUtils';
