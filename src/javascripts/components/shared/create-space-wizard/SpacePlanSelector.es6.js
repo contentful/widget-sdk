@@ -138,8 +138,8 @@ const ResourceTooltips = {
       environments additional to the master environment, which allow you to create and
       maintain multiple versions of the space-specific data, and make changes to them
       in isolation.`,
-  [ResourceTypes.Roles]: (units) => `This space type includes the following ${units}
-      user roles additional to the admin role`,
+  [ResourceTypes.Roles]: (units) => `This space type includes ${units} user roles
+      additional to the admin role`,
   [ResourceTypes.Records]: () => 'Records are entries and assets combined.'
 };
 
