@@ -310,25 +310,23 @@ function getSpaceActionLinks (space, isOrgOwner, onDeleteSpace) {
     }, 'Usage');
   } else {
     spaceLink = h(Tooltip, {
-      element: h('button', {
-        className: 'text-link',
-        disabled: true,
-        'data-test-id': 'subscription-page.spaces-list.space-link'
-      }, 'Go to space'),
       tooltip: tooltip,
       options: {width: 400},
       style: actionLinkStyle
-    });
+    }, h('button', {
+      className: 'text-link',
+      disabled: true,
+      'data-test-id': 'subscription-page.spaces-list.space-link'
+    }, 'Go to space'));
     usageLink = h(Tooltip, {
-      element: h('button', {
-        className: 'text-link',
-        disabled: true,
-        'data-test-id': 'subscription-page.spaces-list.usage-link'
-      }, 'Usage'),
       tooltip: tooltip,
       options: {width: 280},
       style: actionLinkStyle
-    });
+    }, h('button', {
+      className: 'text-link',
+      disabled: true,
+      'data-test-id': 'subscription-page.spaces-list.usage-link'
+    }, 'Usage'));
   }
   const deleteLink = h('button', {
     className: 'text-link text-link--destructive',
