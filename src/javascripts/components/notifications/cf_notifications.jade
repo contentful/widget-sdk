@@ -1,6 +1,12 @@
 .app-notification--anchor(ng-show="message")
-  .app-notification(ng-show="message" class="x--{{message.severity}}" ng-click="clear()")
-    p(role="alert" aria-hidden="{{!message}}" data-alert-severity="{{message.severity}}")
+  .app-notification(
+    ng-show="!hidden"
+    ng-class="message ? 'x--' + message.severity : ''"
+    ng-click="markAsSeen()")
+    p(
+      role="alert"
+      aria-hidden="{{!message}}"
+      data-alert-severity="{{message.severity}}")
       | {{message.body}}
     span.app-notification__dismiss
       | Dismiss
