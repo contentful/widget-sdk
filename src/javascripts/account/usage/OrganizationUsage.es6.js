@@ -31,7 +31,7 @@ const OrganizationResourceUsageList = ({resources}) => {
       </div>
       <ResourceUsage
         resource={byId['api_request']}
-        shortenIncluded={true}
+        abbreviateLimit={true}
       />
       <ResourceUsage
         resource={byId['asset_bandwidth']}
