@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {createOrganizationEndpoint} from 'data/EndpointFactory';
 import {getSubscriptionPlans, calculateTotalPrice} from 'account/pricing/PricingDataProvider';
 import {RequestState} from './WizardUtils';
+import logger from 'logger';
 
 const FetchSubscriptionPrice = createReactClass({
   propTypes: {
@@ -33,6 +34,8 @@ const FetchSubscriptionPrice = createReactClass({
         error: null
       });
     } catch (error) {
+      logger.logError(error);
+
       this.setState({
         totalPrice: 0,
         requestState: RequestState.ERROR,

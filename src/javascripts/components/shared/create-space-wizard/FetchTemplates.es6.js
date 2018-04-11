@@ -2,6 +2,7 @@ import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import {getTemplatesList} from 'services/SpaceTemplateLoader';
 import {RequestState} from './WizardUtils';
+import logger from 'logger';
 
 const FetchTemplates = createReactClass({
   propTypes: {
@@ -29,6 +30,8 @@ const FetchTemplates = createReactClass({
         error: null
       });
     } catch (error) {
+      logger.logError(error);
+
       this.setState({
         templates: [],
         requestState: RequestState.ERROR,

@@ -2,12 +2,14 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import FetchSpacePlans from './FetchSpacePlans';
-import {get, kebabCase} from 'lodash';
+import FetchSpacePlans, {ResourceTypes} from './FetchSpacePlans';
+import {get, kebabCase, template} from 'lodash';
 import {isOwner} from 'services/OrganizationRoles';
 import {go} from 'states/Navigator';
 import HelpIcon from 'ui/Components/HelpIcon';
+import Tooltip from 'ui/Components/Tooltip';
 import spinner from 'ui/Components/Spinner';
+import {TextLink} from '@contentful/ui-component-library';
 import {asReact} from 'ui/Framework/DOMRenderer';
 import {RequestState, formatPrice} from './WizardUtils';
 
@@ -116,14 +118,35 @@ const SpacePlanItem = createReactClass({
           </HelpIcon>}
         </div>
         <ul className="space-plans-list__item__features">
-          {plan.includedResources.map(({name, units}) => <li key={name}>
-            {units} {name}
-          </li>)}
+          {plan.includedResources.map(({type, units}) => {
+            const tooltip = getTooltip(type, units);
+            return <li key={type}>
+              {units + ' '}
+              {tooltip && <Tooltip style={{display: 'inline'}} tooltip={tooltip}>
+                <em className="x--underline">{type}</em>
+              </Tooltip>}
+              {!tooltip && type}
+            </li>;
+          })}
         </ul>
       </div>
     );
   }
 });
+
+const ResourceTooltips = {
+  [ResourceTypes.Environments]: `This space type includes <%= units %> sandbox
+      environments additional to the master environment, which allow you to create and
+      maintain multiple versions of the space-specific data, and make changes to them
+      in isolation.`,
+  [ResourceTypes.Roles]: `This space type includes <%= units %> user roles
+      additional to the admin role`,
+  [ResourceTypes.Records]: 'Records are entries and assets combined.'
+};
+
+function getTooltip (type, units) {
+  return ResourceTooltips[type] && template(ResourceTooltips[type])({units});
+}
 
 const BillingInfo = createReactClass({
   propTypes: {
@@ -133,22 +156,20 @@ const BillingInfo = createReactClass({
   render: function () {
     const {canSetupBilling, goToBilling} = this.props;
 
-    const content = [
-      'You need to provide us with your billing address and credit card details before creating a paid space. '
-    ];
-
-    if (canSetupBilling) {
-      const billingLink = (
-        <button className="btn-link" style={{display: 'inline'}} onClick={goToBilling}>
-          organization settings
-        </button>
-      );
-      content.push('Head to the ', billingLink, ' to add these details for the organization.');
-    } else {
-      content.push('Please contact your organization’s owner.');
-    }
-
-    return <div className="note-box--info"><p>{content}</p></div>;
+    return (
+      <div className="note-box--info">
+        <p>
+          You need to provide us with your billing address and credit card details before creating a paid space.
+          {' '}
+          {canSetupBilling && <React.Fragment>
+            Head to the{' '}
+            <TextLink onClick={goToBilling}>organization settings</TextLink>
+            {' '}to add these details for the organization.
+          </React.Fragment>}
+          {!canSetupBilling && 'Please contact your organization’s owner.'}
+        </p>
+      </div>
+    );
   }
 });
 

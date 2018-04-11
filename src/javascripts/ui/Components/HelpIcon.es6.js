@@ -21,11 +21,11 @@ const HelpIcon = createReactClass({
     </span>;
 
     return <Tooltip
-      element={questionMarkIcon}
       tooltip={children}
       options={{width: tooltipWidth || 200}}
-      className="help-icon"
-    />;
+      className="help-icon">
+      {questionMarkIcon}
+    </Tooltip>;
   }
 });
 
