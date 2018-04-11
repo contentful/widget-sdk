@@ -168,12 +168,21 @@ $close-button-small()
     color: $colors.text-mid
     text-align: center
     margin-bottom: 28px
+    font-size: 1.1em
+  &__info
+    line-height: 1.5em
+    margin-bottom: 30px
   &__step
     display: none
     &--current
       display: block
   &__navigation
+    $tab-list()
+    width: 100%
     justify-content: center
+    [role=tab][aria-disabled="true"]
+      opacity: .3
+      cursor: not-allowed
   &__centered-block
     width: 420px
     margin: 0 auto
@@ -234,7 +243,7 @@ $close-button-small()
       $item-label($colors.red-light, $colors.red-mid)
     &--disabled
       cursor: not-allowed
-      opacity: .5
+      opacity: .3
 
     &__heading
       font-size: 17px

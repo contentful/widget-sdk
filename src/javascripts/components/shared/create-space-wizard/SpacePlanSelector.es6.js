@@ -39,7 +39,7 @@ const SpacePlanSelector = createReactClass({
               Choose the space type
             </h2>
             <p className="create-space-wizard__subheading">
-              You are creating this space for the organization <em>{organization.name}</em>.
+              You are creating this space for the organization <em>{organization.name}</em>.<br/>
             </p>
             <div className="space-plans-list">
               {spaceRatePlans.map((plan) => <SpacePlanItem

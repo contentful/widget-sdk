@@ -42,7 +42,7 @@ const ConfirmScreen = createReactClass({
               <p className="create-space-wizard__subheading">
                 Make sure everything is in order before creating the space.
               </p>
-              <p>
+              <p className="create-space-wizard__info">
                 You are about to purchase a {spaceRatePlan.name.toLowerCase()} space
                 for <strong>{formatPrice(spaceRatePlan.price)} / month</strong> for the
                 organization <em>{organization.name}</em>.
@@ -70,7 +70,7 @@ const ConfirmScreen = createReactClass({
               </p>
               <div style={{textAlign: 'center', margin: '1.2em 0'}}>
                 <button
-                  className={`button btn-action ${isFormSubmitted ? 'is-loading' : ''}`}
+                  className={`button btn-primary-action ${isFormSubmitted ? 'is-loading' : ''}`}
                   disabled={isFormSubmitted}
                   onClick={onSubmit}>
                   Confirm and create space

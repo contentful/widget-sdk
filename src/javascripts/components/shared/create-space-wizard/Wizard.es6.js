@@ -94,12 +94,15 @@ const Wizard = createReactClass({
       );
     } else {
       const navigation = (
-        <ul className="tab-list">
+        <ul className="create-space-wizard__navigation">
           {WizardSteps.map(({id, label, isEnabled}) => (
-            <li key={id} role="tab" aria-selected={id === currentStepId}>
-              <button onClick={() => this.navigate(id)} disabled={!isEnabled(data)}>
-                {label}
-              </button>
+            <li
+              key={id}
+              role="tab"
+              aria-selected={id === currentStepId}
+              aria-disabled={!isEnabled(data)}
+              onClick={() => isEnabled(data) && this.navigate(id)}>
+              {label}
             </li>
           ))}
         </ul>
@@ -122,7 +125,7 @@ const Wizard = createReactClass({
 
       return (
         <div className="modal-dialog create-space-wizard" style={{width: '750px'}}>
-          <div className="modal-dialog__header create-space-wizard__navigation" style={{padding: 0}}>
+          <div className="modal-dialog__header" style={{padding: 0}}>
             {navigation}
             {closeButton}
           </div>

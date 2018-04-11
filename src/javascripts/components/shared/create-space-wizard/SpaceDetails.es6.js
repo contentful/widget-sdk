@@ -74,7 +74,7 @@ const SpaceDetails = createReactClass({
         />
         <div style={{textAlign: 'center', margin: '1.2em 0'}}>
           <button
-            className="button btn-action"
+            className="button btn-primary-action"
             disabled={Object.keys(validation).length > 0}
             onClick={this.submit}>
             Proceed to confirmation
