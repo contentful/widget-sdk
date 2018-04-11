@@ -13,6 +13,7 @@ import {TextLink} from '@contentful/ui-component-library';
 import {asReact} from 'ui/Framework/DOMRenderer';
 import Icon from 'ui/Components/Icon';
 import {RequestState, formatPrice} from './WizardUtils';
+import pluralize from 'pluralize';
 
 const SpacePlanSelector = createReactClass({
   propTypes: {
@@ -123,14 +124,14 @@ const SpacePlanItem = createReactClass({
           </HelpIcon>}
         </div>
         <ul className="space-plans-list__item__features">
-          {plan.includedResources.map(({type, units}) => {
-            const tooltip = getTooltip(type, units);
+          {plan.includedResources.map(({type, number}) => {
+            const tooltip = getTooltip(type, number);
             return <li key={type}>
-              {units + ' '}
+              {number + ' '}
               {tooltip && <Tooltip style={{display: 'inline'}} tooltip={tooltip}>
-                <em className="x--underline">{type}</em>
+                <em className="x--underline">{pluralize(type, number)}</em>
               </Tooltip>}
-              {!tooltip && type}
+              {!tooltip && pluralize(type, number)}
             </li>;
           })}
         </ul>
@@ -141,17 +142,23 @@ const SpacePlanItem = createReactClass({
 });
 
 const ResourceTooltips = {
-  [ResourceTypes.Environments]: `This space type includes <%= units %> sandbox
-      environments additional to the master environment, which allow you to create and
+  [ResourceTypes.Environments]: `This space type includes <%= number %>
+      <%= units %> additional to the master environment, which allow you to create and
       maintain multiple versions of the space-specific data, and make changes to them
       in isolation.`,
-  [ResourceTypes.Roles]: `This space type includes <%= units %> user roles
+  [ResourceTypes.Roles]: `This space type includes <%= number %> <%= units %>
       additional to the admin role`,
   [ResourceTypes.Records]: 'Records are entries and assets combined.'
 };
+const ResourceUnitNames = {
+  [ResourceTypes.Environments]: 'sandbox environment',
+  [ResourceTypes.Roles]: 'user role'
+};
 
-function getTooltip (type, units) {
-  return ResourceTooltips[type] && template(ResourceTooltips[type])({units});
+function getTooltip (type, number) {
+  const unitName = ResourceUnitNames[type];
+  const units = unitName && pluralize(unitName, number);
+  return ResourceTooltips[type] && template(ResourceTooltips[type])({number, units});
 }
 
 const BillingInfo = createReactClass({
