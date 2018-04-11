@@ -62,12 +62,12 @@ describe('NumberUtils', function () {
       shortenStorageUnit = null;
     });
 
-    it('does not break if number is 0', function () {
-      expect(shortenStorageUnit(0, 'MB')).toEqual('0 MB');
+    it('supports 0 as a number', function () {
+      expect(shortenStorageUnit(0, 'MB')).toEqual('0 B');
     });
 
     it('transforms numbers lower than 0.99 into smaller units', function () {
-      expect(shortenStorageUnit(0.01, 'TB')).toEqual('10 GB');
+      expect(shortenStorageUnit(0.01, 'PB')).toEqual('10 TB');
       expect(shortenStorageUnit(0.0025, 'TB')).toEqual('2.5 GB');
       expect(shortenStorageUnit(0.615, 'TB')).toEqual('615 GB');
     });
@@ -78,7 +78,7 @@ describe('NumberUtils', function () {
     });
 
     it('transforms numbers bigger than 999 into bigger units', function () {
-      expect(shortenStorageUnit(1000, 'GB')).toEqual('1 TB');
+      expect(shortenStorageUnit(1000, 'B')).toEqual('1 KB');
       expect(shortenStorageUnit(25729, 'MB')).toEqual('25.73 GB');
     });
 

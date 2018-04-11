@@ -37,28 +37,28 @@ export function shorten (number) {
  * @returns {String}
  */
 export function shortenStorageUnit (value, uom) {
-  const units = ['PB', 'TB', 'GB', 'MB', 'KB', 'B'];
-  const reduce = (number, counter = 0) => {
-    const currentUnitIndex = units.indexOf(uom) + counter;
-    if (
-      number <= 0 ||
-      currentUnitIndex === 0 ||
-      currentUnitIndex === units.length - 1
-    ) {
-      return {number, counter};
-    }
+  if (value <= 0) {
+    return '0 B';
+  }
 
-    if (number < 0.99) {
-      return reduce(number * 1000, counter + 1);
-    } else if (number >= 1000) {
-      return reduce(number / 1000, counter - 1);
+  const units = ['PB', 'TB', 'GB', 'MB', 'KB', 'B'];
+
+  const getBigger = (unit) => units[units.indexOf(unit) - 1];
+  const getSmaller = (unit) => units[units.indexOf(unit) + 1];
+  const isBiggestUnit = (unit) => units.indexOf(unit) === 0;
+  const isSmallestUnit = (unit) => units.indexOf(unit) === units.length - 1;
+
+  const reduce = (number, unit) => {
+    if (number < 0.99 && !isSmallestUnit(unit)) {
+      return reduce(number * 1000, getSmaller(unit));
+    } else if (number >= 1000 && !isBiggestUnit(unit)) {
+      return reduce(number / 1000, getBigger(unit));
     } else {
-      return {number, counter};
+      return {number, unit};
     }
   };
-  const {number, counter} = reduce(value);
-  const newIndex = units.indexOf(uom) + counter;
-  const newUOM = units[newIndex];
 
-  return `${formatFloat(number)} ${newUOM}`;
+  const {number, unit} = reduce(value, uom);
+
+  return `${formatFloat(number)} ${unit}`;
 }
