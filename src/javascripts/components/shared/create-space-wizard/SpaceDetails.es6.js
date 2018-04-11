@@ -61,6 +61,7 @@ const SpaceDetails = createReactClass({
             name="name"
             required=""
             value={name}
+            autoFocus
             onChange={(e) => this.setName(e.target.value)}
             aria-invalid={showValidationError}
             style={{width: '400px'}} />

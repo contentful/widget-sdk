@@ -48,8 +48,8 @@ const ConfirmScreen = createReactClass({
                 organization <em>{organization.name}</em>.
                 {requestState === RequestState.SUCCESS && <span>
                   {' '}
-                  This will bring up the total of your organization’s subscription
-                  to <strong>{formatPrice(totalPrice + spaceRatePlan.price)} / month.</strong>
+                  This will increase your organization’s subscription
+                  to <strong>{formatPrice(totalPrice + spaceRatePlan.price)} / month</strong>
                 </span>}
                 {' '}
                 (<a
@@ -58,9 +58,9 @@ const ConfirmScreen = createReactClass({
                   onClick={() => onNavigate(Steps.SpaceType)}>
                   change space type
                 </a>).
-                The space’s name will be <em>{spaceName}</em>, and we
-                {template ? ` will ` : ' won’t '}
-                fill it with example content
+                The space’s name will be <em>{spaceName}</em>
+                {template && ', and we will fill it with example content'}
+                {' '}
                 (<a
                   className="text-link"
                   href="#"
