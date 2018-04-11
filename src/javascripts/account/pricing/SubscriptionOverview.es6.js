@@ -1,4 +1,4 @@
-import {createElement as h} from 'react';
+import {createElement as h, Fragment} from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import {runTask} from 'utils/Concurrent';
@@ -32,6 +32,7 @@ const SubscriptionOverview = createReactClass({
   },
   getInitialState: function () {
     return {
+      organization: {},
       basePlan: {},
       spacePlans: [],
       grandTotal: 0
@@ -115,6 +116,7 @@ const SubscriptionOverview = createReactClass({
         orgId,
         grandTotal,
         isOrgOwner: isOwner(organization),
+        isOrgBillable: organization.isBillable,
         onContactUs: this.contactUs
       })
     });
@@ -236,7 +238,7 @@ function SpacePlanRow ({plan, onDeleteSpace, isOrgOwner}) {
   );
 }
 
-function RightSidebar ({grandTotal, orgId, isOrgOwner, onContactUs}) {
+function RightSidebar ({grandTotal, orgId, isOrgOwner, isOrgBillable, onContactUs}) {
   // TODO - add these styles to stylesheets
   const iconStyle = {fill: colors.blueDarkest, paddingRight: '6px', position: 'relative', bottom: '-0.125em'};
 
@@ -244,34 +246,62 @@ function RightSidebar ({grandTotal, orgId, isOrgOwner, onContactUs}) {
     className: 'entity-sidebar',
     'data-test-id': 'subscription-page.sidebar'
   },
-    h('h2', {className: 'entity-sidebar__heading'}, 'Grand total'),
-    h('p', {
-      'data-test-id': 'subscription-page.sidebar.grand-total'
-    },
-      'Your grand total is ',
-      h(Price, {value: grandTotal, style: {fontWeight: 'bold'}}),
-      ' per month.'
+    isOrgBillable && h(Fragment, null,
+      h('h2', {className: 'entity-sidebar__heading'}, 'Grand total'),
+      h('p', {
+        'data-test-id': 'subscription-page.sidebar.grand-total'
+      },
+        'Your grand total is ',
+        h(Price, {value: grandTotal, style: {fontWeight: 'bold'}}),
+        ' per month.'
+      ),
+      isOrgOwner && h('p', {
+        style: {marginBottom: '28px'}
+      },
+        h('span', {style: iconStyle}, asReact(InvoiceIcon)),
+        h('a', {
+          className: 'text-link',
+          href: href(getInvoiceNavState(orgId)),
+          'data-test-id': 'subscription-page.sidebar.invoice-link'
+        }, 'View invoices')
+      ),
+      h('div', {className: 'note-box--info'},
+        h('p', null,
+          'Note that the monthly invoice amount might deviate from the total shown ' +
+          'above. This happens when you hit overages or make changes to your ' +
+          'subscription during a billing cycle.'
+        ),
+        h('p', null,
+        h('span', {style: iconStyle}, asReact(InvoiceIcon)),
+        h('a', {
+          className: 'text-link',
+          href: href(getInvoiceNavState(orgId)),
+          'data-test-id': 'subscription-page.sidebar.invoice-link'
+        }, 'View invoices')
+      )
+      )
     ),
-    isOrgOwner && h('p', {
-      style: {marginBottom: '28px'}
-    },
-      h('span', {style: iconStyle}, asReact(InvoiceIcon)),
-      h('a', {
-        className: 'text-link',
-        href: href(getInvoiceNavState(orgId)),
-        'data-test-id': 'subscription-page.sidebar.invoice-link'
-      }, 'View invoices')
-    ),
-    h('div', {className: 'note-box--info'},
+    !isOrgBillable && isOrgOwner && h(Fragment, null,
+      h('h2', {className: 'entity-sidebar__heading'}, 'Your payment details'),
       h('p', null,
-        'Note that the monthly invoice amount might deviate from the total shown ' +
-        'above. This happens when you hit overages or make changes to your ' +
-        'subscription during a billing cycle.'
+        'You need to provide us with your billing address and credit card details before ' +
+        'creating paid spaces or adding users beyond the free limit.'
+      ),
+      h('p', null,
+        h('span', {style: iconStyle}, asReact(InvoiceIcon)),
+        h('a', {
+          className: 'text-link',
+          href: href(getPaymentNavState(orgId)),
+          'data-test-id': 'subscription-page.sidebar.add-payment-link'
+        }, 'Enter payment details')
       )
     ),
     h('h2', {className: 'entity-sidebar__heading'}, 'Need help?'),
     h('p', null,
-      'Do you need to upgrade or downgrade your spaces? Don’t hesitate to talk to our customer success team.'),
+      isOrgBillable && 'Do you need to upgrade or downgrade your spaces? ',
+      !isOrgBillable && 'Do you have any questions about our pricing? ',
+      'Don’t hesitate to talk to our customer success team.'
+    ),
     h('p', {className: 'entity-sidebar__help-text'},
       h('span', {style: iconStyle}, asReact(BubbleIcon)),
       h('button', {
@@ -372,6 +402,14 @@ function getInvoiceNavState (orgId) {
     path: ['account', 'organizations', 'billing'],
     params: {orgId},
     options: { reload: true }
+  };
+}
+
+function getPaymentNavState (orgId) {
+  return {
+    path: ['account', 'organizations', 'subscription_billing'],
+    params: {orgId, pathSuffix: '/billing_address'},
+    options: {reload: true}
   };
 }
 
