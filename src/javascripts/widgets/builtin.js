@@ -1,7 +1,7 @@
 'use strict';
 angular.module('contentful')
 .factory('widgets/builtin', [function () {
-  var _widgets = {};
+  var widgets = [];
 
   var COMMON_OPTIONS = [
     {
@@ -12,13 +12,12 @@ angular.module('contentful')
     }
   ];
 
-
   function registerWidget (id, desc) {
-    _widgets[id] = _.extend({}, desc, {
-      id: id,
-      options: COMMON_OPTIONS.concat(desc.options || [])
-    });
+    desc.id = id;
+    desc.options = COMMON_OPTIONS.concat(desc.options || []);
+    widgets.push(desc);
   }
+
   /**
    * @ngdoc type
    * @name Widget.Descriptor
@@ -284,5 +283,5 @@ angular.module('contentful')
     template: '<cf-kaltura-editor></cf-kaltura-editor>'
   });
 
-  return _widgets;
+  return widgets;
 }]);

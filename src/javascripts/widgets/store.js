@@ -3,7 +3,7 @@
 angular.module('contentful')
 
 .factory('widgets/store', ['require', function (require) {
-  var builtin = _.values(require('widgets/builtin'));
+  var builtin = require('widgets/builtin');
   var fieldFactory = require('fieldFactory');
 
   var EXTENSION_PROPS = ['name', 'src', 'srcdoc', 'sidebar'];

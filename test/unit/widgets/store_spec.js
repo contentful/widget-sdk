@@ -4,7 +4,7 @@ describe('widgets/store', function () {
   beforeEach(function () {
     module('contentful/test');
     this.createStore = this.$inject('widgets/store');
-    this.builtins = _.values(this.$inject('widgets/builtin'));
+    this.builtins = this.$inject('widgets/builtin');
   });
 
   describe('#refresh()', function () {

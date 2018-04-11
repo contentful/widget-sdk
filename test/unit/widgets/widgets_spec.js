@@ -9,7 +9,7 @@ describe('widgets', function () {
     function testAvailableForFieldType (fieldType) {
       describe(`for field type "${fieldType}"`, function () {
         beforeEach(function () {
-          this.available = this.widgets.getAvailable({type: fieldType}, _.values(this.builtins));
+          this.available = this.widgets.getAvailable({type: fieldType}, this.builtins);
         });
 
         it('returns at least one widget', function () {
@@ -22,7 +22,7 @@ describe('widgets', function () {
 
         it('has options property from builtin descriptor', function () {
           this.available.forEach(w => {
-            const builtin = this.builtins[w.id];
+            const builtin = _.find(this.builtins, {id: w.id});
             expect(w.options).toEqual(builtin.options);
           });
         });
@@ -45,7 +45,7 @@ describe('widgets', function () {
     testAvailableForFieldType('Object');
 
     it('rejects promise if field type has no widget', function () {
-      const available = this.widgets.getAvailable({type: 'unsupportedtype'}, _.values(this.builtins));
+      const available = this.widgets.getAvailable({type: 'unsupportedtype'}, this.builtins);
       expect(available).toEqual([]);
     });
   });
