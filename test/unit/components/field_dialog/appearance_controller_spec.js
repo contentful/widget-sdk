@@ -1,10 +1,8 @@
 'use strict';
 
 describe('FieldDialogAppearanceController', function () {
-
-  beforeEach(module('contentful/test'));
-
   beforeEach(function () {
+    module('contentful/test');
     var $controller = this.$inject('$controller');
     this.scope = this.$inject('$rootScope').$new();
 
@@ -28,7 +26,6 @@ describe('FieldDialogAppearanceController', function () {
   });
 
   describe('#selectWidget()', function () {
-
     beforeEach(function () {
       expect(this.scope.selectedWidgetIndex).toEqual(0);
     });
@@ -52,14 +49,15 @@ describe('FieldDialogAppearanceController', function () {
     });
 
     it('applies the default parameters', function () {
-      var Widgets = this.$inject('widgets');
-      Widgets.applyDefaults = sinon.stub();
+      const widgets = this.$inject('widgets');
+      widgets.applyDefaults = sinon.stub();
       this.scope.selectWidget(1);
       this.$apply();
-      sinon.assert.calledOnce(Widgets.applyDefaults);
+      sinon.assert.calledOnce(widgets.applyDefaults);
       sinon.assert.calledWith(
-        Widgets.applyDefaults,
-        this.scope.widget.id, this.scope.widgetParams
+        widgets.applyDefaults,
+        this.scope.availableWidgets[1],
+        this.scope.widgetParams
       );
     });
   });

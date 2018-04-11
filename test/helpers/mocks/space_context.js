@@ -28,7 +28,7 @@ angular.module('contentful/mocks')
 .factory('mocks/spaceContext', ['require', function (require) {
   const cfStub = require('cfStub');
   const createEIRepo = require('data/editingInterfaces');
-  const Widgets = require('widgets');
+  const createWidgetStore = require('widgets/store');
   const MockDocument = require('mocks/entityEditor/Document');
   const createApiKeyRepo = require('data/CMA/ApiKeyRepo').default;
   const CMAClient = require('data/ApiClient');
@@ -73,8 +73,7 @@ angular.module('contentful/mocks')
         usage: {}
       }
     };
-    Widgets.setSpace(spaceContext.endpoint);
-    spaceContext.widgets = Widgets;
+    spaceContext.widgets = createWidgetStore(spaceContext.endpoint);
     spaceContext.uiConfig = createUiConfigMock();
 
     return spaceContext;

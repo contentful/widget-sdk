@@ -40,12 +40,11 @@ angular.module('contentful')
       var $iframe = element.find('iframe');
       var iframe = $iframe.get(0);
       var WidgetAPI = require('widgets/API');
-      var Widgets = require('widgets');
       var K = require('utils/kefir');
       var PathUtils = require('utils/Path');
 
       var doc = scope.docImpl || scope.otDoc;
-      var descriptor = Widgets.get(scope.widget.widgetId);
+      var descriptor = _.find(spaceContext.widgets.getAll(), {id: scope.widget.widgetId});
       var entityInfo = scope.entityInfo;
 
       var fields = entityInfo.contentType.fields;

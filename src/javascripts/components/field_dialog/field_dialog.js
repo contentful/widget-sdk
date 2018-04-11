@@ -50,6 +50,7 @@ angular.module('contentful')
   var trackCustomWidgets = require('analyticsEvents/customWidgets');
   var fieldFactory = require('fieldFactory');
   var Widgets = require('widgets');
+  var spaceContext = require('spaceContext');
 
   var contentTypeData = $scope.contentType.data;
 
@@ -74,21 +75,27 @@ angular.module('contentful')
    * @name FieldDialogController#availableWidgets
    * @type {Widgets.Descriptor[]}
    */
-  Widgets.getAvailable($scope.field)
-  .then(function (available) {
+  var cachedAvailable = Widgets.getAvailable($scope.field, spaceContext.widgets.getAll());
+  $scope.availableWidgets = filterAvailable(cachedAvailable);
+  spaceContext.widgets.refresh()
+  .then(function (widgets) {
+    var refreshedAvailable = Widgets.getAvailable($scope.field, widgets);
+    $scope.availableWidgets = filterAvailable(refreshedAvailable);
+  });
+
+  function filterAvailable (available) {
     if (Array.isArray(available)) {
-      $scope.availableWidgets = available.filter(function (widget) {
+      return available.filter(function (widget) {
         // TODO: Eliminate Kaltura! For the time being we hide Kaltura editor unless it's selected
         // Wiki: https://contentful.atlassian.net/wiki/spaces/PROD/pages/373981381/Phasing+out+Kaltura+and+Ooyala+Q2+2018
         // For more context ask Jakub or Frederik
         return widget.id !== 'kalturaEditor' || $scope.widget.widgetId === 'kalturaEditor';
       });
     } else {
-      // TODO: this is all that should be in this handler
-      $scope.availableWidgets = available;
+      // TODO: this function should be identity when TODO above is tackled
+      return available;
     }
-  });
-
+  }
 
   $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);
   $scope.iconId = fieldFactory.getIconId($scope.field) + '-small';
@@ -104,10 +111,11 @@ angular.module('contentful')
 
     var params = $scope.widgetSettings.params;
     var widgetId = $scope.widgetSettings.id;
+    var descriptor = _.find($scope.availableWidgets, {id: widgetId});
     _.extend(widget, {
       widgetId: widgetId,
       fieldId: $scope.field.apiName,
-      settings: Widgets.filteredParams(widgetId, params)
+      settings: Widgets.filteredParams(descriptor, params)
     });
 
     if (widgetId !== initialWidgetId) {
@@ -238,9 +246,12 @@ angular.module('contentful')
 
   function updateOptionsAndParams () {
     var widget = $scope.widget;
-    if (widget) {
+    // Initially `$scope.widget` contains a control from the parent scope.
+    // `$scope.selectWidget` alters it with actual widget descriptor.
+    // Widget descriptors don't have `field` property.
+    if (widget && !widget.field) {
       var params = $scope.widgetParams;
-      Widgets.applyDefaults(widget.id, params);
+      Widgets.applyDefaults(widget, params);
       $scope.widgetOptions = Widgets.filterOptions(widget, params);
     }
   }

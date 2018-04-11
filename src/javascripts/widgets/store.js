@@ -2,89 +2,60 @@
 
 angular.module('contentful')
 
-/**
- * @ngdoc service
- * @name widgets/store
- *
- * @usage[js]
- * const Store = require('widgets/store')
- * const store = Store.create(spaceEndpoint)
- * store.getMap()
- * .then((map) => { ... })
- *
- * @description
- * Store custom and builtin widget implementations for the current
- * space.
- *
- * This service gets the latest custom widgets from the server every time.
- */
 .factory('widgets/store', ['require', function (require) {
-  var builtin = require('widgets/builtin');
+  var builtin = _.values(require('widgets/builtin'));
   var fieldFactory = require('fieldFactory');
 
-  var extensionProperties = [
-    'name', 'src', 'srcdoc', 'sidebar', 'options'
-  ];
+  var EXTENSION_PROPS = ['name', 'src', 'srcdoc', 'sidebar'];
 
-  return {
-    create: create
-  };
-
-  function create (spaceEndpoint) {
-    if (!spaceEndpoint) {
-      throw new TypeError('Space is not set');
-    }
+  return function create (spaceEndpoint) {
+    var cache = [];
 
     return {
-      getMap: getMap
+      refresh: function () {
+        return getExtensions(spaceEndpoint)
+        .then(function (extensions) {
+          cache = prepareList(extensions);
+          return cache;
+        });
+      },
+      getAll: function () {
+        return cache;
+      }
     };
+  };
 
-    function getMap () {
-      return getExtensions(spaceEndpoint)
-      .then(function (widgets) {
-        return _.extend({}, builtin, widgets);
-      });
-    }
+  function prepareList (extensions) {
+    // Extension and built-in widget IDs may clash :(
+    // Extensions used to "override" built-in widgets.
+    // It's far from ideal but we retain this behavior for now.
+    // TODO figure out what to do?
+    var extensionIds = extensions.map(function (e) { return e.id; });
+    var filteredBuiltins = builtin.filter(function (b) {
+      return !extensionIds.includes(b.id);
+    });
+
+    return [].concat(filteredBuiltins).concat(extensions);
   }
 
   function getExtensions (spaceEndpoint) {
     return spaceEndpoint({
       method: 'GET',
       path: ['extensions']
-    }).then(function (response) {
-      return createExtensionsMap(response.items);
+    }).then(function (res) {
+      return res.items.map(buildExtensionWidget);
     }, function () {
-      return {};
+      return [];
     });
   }
 
-  /**
-   * Takes a list of extensions returned by the server and builds
-   * widget descriptors to be used by the entry editor.
-   *
-   * @param {API.Extension[]} extensions
-   * @returns {Map<string, Widget.Descriptor}
-   */
-  function createExtensionsMap (extension) {
-    return _.transform(extension, function (byId, data) {
-      var widget = buildExtensionWidget(data);
-      byId[widget.id] = widget;
-    }, {});
-  }
-
-  /**
-   * @param {API.Widget} data
-   * @returns {Extension.Descriptor}
-   */
   function buildExtensionWidget (data) {
-    // For backwards compatibility we still look at data.widget. This
-    // should be remoed
-    var extension = data.extension || data.widget;
-    var fieldTypes = _.map(extension.fieldTypes, fieldFactory.getTypeName);
-    return _.extend(_.pick(extension, extensionProperties), {
+    var fieldTypes = _.map(data.extension.fieldTypes, fieldFactory.getTypeName);
+    return _.extend(_.pick(data.extension, EXTENSION_PROPS), {
       id: data.sys.id,
       fieldTypes: fieldTypes,
       template: '<cf-iframe-widget>',
+      options: [],
       custom: true
     });
   }
