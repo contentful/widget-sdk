@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import {runTask} from 'utils/Concurrent';
 import createResourceService from 'services/ResourceService';
 import {createOrganizationEndpoint} from 'data/EndpointFactory';
-import {getPlansWithSpaces, calculateTotalPrice} from 'account/pricing/PricingDataProvider';
+import {getPlansWithSpaces} from 'account/pricing/PricingDataProvider';
 import * as Intercom from 'intercom';
 import {getSpaces, getOrganization} from 'services/TokenStore';
 import {isOwnerOrAdmin, isOwner} from 'services/OrganizationRoles';
@@ -25,6 +25,7 @@ import {byName as colors} from 'Styles/Colors';
 import BubbleIcon from 'svg/bubble';
 import InvoiceIcon from 'svg/invoice';
 import {asReact} from 'ui/Framework/DOMRenderer';
+import { calculatePlansCost, calcUsersMeta, calculateTotalPrice, getEnabledFeatures } from 'utils/SubscriptionUtils';
 
 const SubscriptionOverview = createReactClass({
   propTypes: {
@@ -429,75 +430,6 @@ function Price ({value = 0, currency = '$', unit = null, style = null}) {
   const valueStr = parseInt(value, 10).toLocaleString('en-US');
   const unitStr = unit && ` /${unit}`;
   return h('span', {style}, [currency, valueStr, unitStr].join(''));
-}
-
-function calculateTotalPrice ({ allPlans, basePlan, numMemberships }) {
-  const plansCost = calculatePlansCost({ plans: allPlans });
-  const usersCost = calculateUsersCost({ basePlan, numMemberships });
-
-  return plansCost + usersCost;
-}
-
-function calculatePlansCost ({ plans }) {
-  return plans.reduce(
-    (total, plan) => total + (parseInt(plan.price, 10) || 0),
-    0
-  );
-}
-
-function getUsersTiers (basePlan) {
-  // shortform of Base rate plan charges
-  const baseRPCs = basePlan.ratePlanCharges;
-  const usersRPC = baseRPCs.find(rpc => rpc.name === 'Users');
-  const tiers = usersRPC.tiers;
-
-  return tiers;
-}
-
-function calculateUsersCost ({ basePlan, numMemberships }) {
-  const tiers = getUsersTiers(basePlan);
-
-  return tiers.reduce((memo, tier) => {
-    const { startingUnit, endingUnit, price, priceFormat } = tier;
-
-    // The free tier currently has a startingUnit of 0, but the other tiers have a
-    // non-zero based startingUnit (e.g. 11).
-    const normalizedStartingUnit = startingUnit > 0 ? startingUnit - 1 : startingUnit;
-
-    if (endingUnit && numMemberships > endingUnit) {
-      if (priceFormat === 'FlatFee') {
-        return memo + price;
-      } else {
-        return memo + price * (endingUnit - normalizedStartingUnit);
-      }
-    } else if (numMemberships >= startingUnit) {
-      if (priceFormat === 'FlatFee') {
-        return memo + price;
-      } else {
-        return memo + price * (numMemberships - normalizedStartingUnit);
-      }
-    } else {
-      return memo;
-    }
-  }, 0);
-}
-
-function calcUsersMeta ({ basePlan, numMemberships }) {
-  const tiers = getUsersTiers(basePlan);
-
-  // Should only be one free tier
-  // We can currently assume that the free tier is first in precendence
-  const freeTier = tiers.find(tier => tier.price === 0);
-  const freeTierUsers = freeTier.endingUnit - freeTier.startingUnit;
-  const numFreeUsers = numMemberships > freeTierUsers ? freeTierUsers : numMemberships;
-  const numPaidUsers = numMemberships > freeTierUsers ? (numMemberships - freeTierUsers) : 0;
-  const cost = calculateUsersCost({ basePlan, numMemberships });
-
-  return { numFreeUsers, numPaidUsers, cost };
-}
-
-function getEnabledFeatures ({ratePlanCharges = []}) {
-  return ratePlanCharges.filter(({unitType}) => unitType === 'feature');
 }
 
 function getSpaceNavState (spaceId) {
