@@ -85,7 +85,7 @@ export const ResourceTypes = {
 function getIncludedResources (charges) {
   return Object.values(ResourceTypes).map((value) => ({
     type: value,
-    units: get(charges.find(({name}) => name === value), 'tiers[0].endingUnit')
+    number: get(charges.find(({name}) => name === value), 'tiers[0].endingUnit')
   }));
 }
 

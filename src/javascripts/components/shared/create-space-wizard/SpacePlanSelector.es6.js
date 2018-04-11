@@ -11,7 +11,9 @@ import Tooltip from 'ui/Components/Tooltip';
 import spinner from 'ui/Components/Spinner';
 import {TextLink} from '@contentful/ui-component-library';
 import {asReact} from 'ui/Framework/DOMRenderer';
+import Icon from 'ui/Components/Icon';
 import {RequestState, formatPrice} from './WizardUtils';
+import pluralize from 'pluralize';
 
 const SpacePlanSelector = createReactClass({
   propTypes: {
@@ -35,11 +37,14 @@ const SpacePlanSelector = createReactClass({
             {asReact(spinner({diameter: '40px'}))}
           </div>}
           {requestState === RequestState.SUCCESS && <div>
+            {!organization.isBillable && <BillingInfo
+              canSetupBilling={isOwner(organization)}
+              goToBilling={this.goToBilling} />}
             <h2 className="create-space-wizard__heading">
               Choose the space type
             </h2>
             <p className="create-space-wizard__subheading">
-              You are creating this space for organization {organization.name}.
+              You are creating this space for the organization <em>{organization.name}</em>.<br/>
             </p>
             <div className="space-plans-list">
               {spaceRatePlans.map((plan) => <SpacePlanItem
@@ -49,9 +54,6 @@ const SpacePlanSelector = createReactClass({
                 isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
                 onSelect={this.selectPlan} />)}
             </div>
-            {!organization.isBillable && <BillingInfo
-              canSetupBilling={isOwner(organization)}
-              goToBilling={this.goToBilling} />}
           </div>}
           {requestState === RequestState.ERROR && <div className="note-box--warning">
             <p>Could not fetch space plans.</p>
@@ -109,8 +111,12 @@ const SpacePlanItem = createReactClass({
         onClick={() => !plan.disabled && onSelect(plan)}>
 
         <div className="space-plans-list__item__heading">
-          <strong>{plan.name}</strong>
-          {(plan.price > 0) && ` - ${formatPrice(plan.price)} / month`}
+          <strong data-test-id="space-plan-name">{plan.name}</strong>
+          {(plan.price > 0) && <React.Fragment>
+            {' - '}
+            <span data-test-id="space-plan-price">{formatPrice(plan.price)}</span>
+            {' / month'}
+          </React.Fragment>}
           {plan.isFree && ` - ${freeSpacesUsage}/${freeSpacesLimit} used`}
           {plan.isFree && <HelpIcon tooltipWidth={400}>
             You can create up to {freeSpacesLimit} free spaces for your organization.
@@ -118,34 +124,41 @@ const SpacePlanItem = createReactClass({
           </HelpIcon>}
         </div>
         <ul className="space-plans-list__item__features">
-          {plan.includedResources.map(({type, units}) => {
-            const tooltip = getTooltip(type, units);
+          {plan.includedResources.map(({type, number}) => {
+            const tooltip = getTooltip(type, number);
             return <li key={type}>
-              {units + ' '}
+              {number + ' '}
               {tooltip && <Tooltip style={{display: 'inline'}} tooltip={tooltip}>
-                <em className="x--underline">{type}</em>
+                <em className="x--underline">{pluralize(type, number)}</em>
               </Tooltip>}
-              {!tooltip && type}
+              {!tooltip && pluralize(type, number)}
             </li>;
           })}
         </ul>
+        <Icon className="space-plans-list__item__chevron" name="dd-arrow-down"/>
       </div>
     );
   }
 });
 
 const ResourceTooltips = {
-  [ResourceTypes.Environments]: `This space type includes <%= units %> sandbox
-      environments additional to the master environment, which allow you to create and
+  [ResourceTypes.Environments]: `This space type includes <%= number %>
+      <%= units %> additional to the master environment, which allow you to create and
       maintain multiple versions of the space-specific data, and make changes to them
       in isolation.`,
-  [ResourceTypes.Roles]: `This space type includes <%= units %> user roles
+  [ResourceTypes.Roles]: `This space type includes <%= number %> <%= units %>
       additional to the admin role`,
   [ResourceTypes.Records]: 'Records are entries and assets combined.'
 };
+const ResourceUnitNames = {
+  [ResourceTypes.Environments]: 'sandbox environment',
+  [ResourceTypes.Roles]: 'user role'
+};
 
-function getTooltip (type, units) {
-  return ResourceTooltips[type] && template(ResourceTooltips[type])({units});
+function getTooltip (type, number) {
+  const unitName = ResourceUnitNames[type];
+  const units = unitName && pluralize(unitName, number);
+  return ResourceTooltips[type] && template(ResourceTooltips[type])({number, units});
 }
 
 const BillingInfo = createReactClass({
@@ -157,17 +170,14 @@ const BillingInfo = createReactClass({
     const {canSetupBilling, goToBilling} = this.props;
 
     return (
-      <div className="note-box--info">
-        <p>
-          You need to provide us with your billing address and credit card details before creating a paid space.
-          {' '}
-          {canSetupBilling && <React.Fragment>
-            Head to the{' '}
-            <TextLink onClick={goToBilling}>organization settings</TextLink>
-            {' '}to add these details for the organization.
-          </React.Fragment>}
-          {!canSetupBilling && 'Please contact your organization’s owner.'}
-        </p>
+      <div className="note-box--info create-space-wizard__info">
+        {canSetupBilling && <p>
+          <TextLink onClick={goToBilling}>Add payment details</TextLink>{' '}
+          for the organization before creating a paid space.
+        </p>}
+        {!canSetupBilling && <p>
+          The owner of this organization needs to add payment details so you can create paid spaces.
+        </p>}
       </div>
     );
   }
