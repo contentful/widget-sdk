@@ -114,6 +114,7 @@ const SubscriptionOverview = createReactClass({
       sidebar: h(RightSidebar, {
         orgId,
         grandTotal,
+        isOrgOwner: isOwner(organization),
         onContactUs: this.contactUs
       })
     });
@@ -235,7 +236,7 @@ function SpacePlanRow ({plan, onDeleteSpace, isOrgOwner}) {
   );
 }
 
-function RightSidebar ({grandTotal, orgId, onContactUs}) {
+function RightSidebar ({grandTotal, orgId, isOrgOwner, onContactUs}) {
   // TODO - add these styles to stylesheets
   const iconStyle = {fill: colors.blueDarkest, paddingRight: '6px', position: 'relative', bottom: '-0.125em'};
 
@@ -251,7 +252,7 @@ function RightSidebar ({grandTotal, orgId, onContactUs}) {
       h(Price, {value: grandTotal, style: {fontWeight: 'bold'}}),
       ' per month.'
     ),
-    h('p', {
+    isOrgOwner && h('p', {
       style: {marginBottom: '28px'}
     },
       h('span', {style: iconStyle}, asReact(InvoiceIcon)),
