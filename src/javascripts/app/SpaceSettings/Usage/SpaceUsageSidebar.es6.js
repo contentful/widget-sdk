@@ -56,7 +56,7 @@ const SpaceUsageSidebar = createReactClass({
 
         <h3 className="entity-sidebar__heading">Need help?</h3>
         <p className="entity-sidebar__help-text">
-          {`Do you need help to up- or downgrade?
+          {`Do you need help to upgrade or downgrade?
           Don't hesitate to talk to our customer success team.`}
         </p>
         <p>
