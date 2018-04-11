@@ -11,6 +11,7 @@ import Tooltip from 'ui/Components/Tooltip';
 import spinner from 'ui/Components/Spinner';
 import {TextLink} from '@contentful/ui-component-library';
 import {asReact} from 'ui/Framework/DOMRenderer';
+import Icon from 'ui/Components/Icon';
 import {RequestState, formatPrice} from './WizardUtils';
 
 const SpacePlanSelector = createReactClass({
@@ -129,6 +130,7 @@ const SpacePlanItem = createReactClass({
             </li>;
           })}
         </ul>
+        <Icon className="space-plans-list__item__chevron" name="dd-arrow-down"/>
       </div>
     );
   }

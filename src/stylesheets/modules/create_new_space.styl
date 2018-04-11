@@ -216,15 +216,14 @@ $close-button-small()
     position: relative
     cursor: pointer
     transition: all ease-in-out .1s
-    $item-label($colors.element-light, $colors.element-dark)
-    &:not(.space-plans-list__item--disabled):hover
+    $item-label($colors.text-lightest, $colors.text-light)
+    &:not(&--disabled):hover
       border: 1px solid $colors.element-darkest
       box-shadow: 0 3px 3px 0 rgba(0,0,0,0.08)
       transform: translateY(-2px)
       z-index: 1
     &--selected
-      border: 1px solid $colors.element-darkest
-      background-color: $colors.element-light
+      border: 1px solid $colors.blue-dark
     &:before
       content: ''
       width: 10px
@@ -260,4 +259,10 @@ $close-button-small()
           margin-left: 0
         &:last-child
           margin-right: 0
+    &__chevron
+      transform: rotate(-90deg)
+      position: absolute
+      right: 30px
+      top: 50%
+      height: 0
 
