@@ -75,5 +75,4 @@ angular.module('contentful')
       return control;
     }
   };
-
 }]);

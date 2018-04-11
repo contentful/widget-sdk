@@ -1,16 +1,14 @@
-'use strict';
-
 describe('FieldDialogAppearanceController', function () {
   beforeEach(function () {
     module('contentful/test');
-    var $controller = this.$inject('$controller');
+    const $controller = this.$inject('$controller');
     this.scope = this.$inject('$rootScope').$new();
 
     _.extend(this.scope, {
       field: { type: 'Number' },
       widgetSettings: {
         id: 'numberEditor',
-        params: {},
+        params: {}
       },
       contentType: {
         data: {}
@@ -39,7 +37,7 @@ describe('FieldDialogAppearanceController', function () {
     });
 
     it('it updates the widget options', function () {
-      var widgetOptions = [{param: 'myparam'}];
+      const widgetOptions = [{param: 'myparam'}];
       this.scope.availableWidgets[1].options = widgetOptions;
 
       expect(this.scope.widgetOptions).not.toEqual(widgetOptions);
