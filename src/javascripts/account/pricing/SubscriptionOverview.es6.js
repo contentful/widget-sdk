@@ -3,7 +3,7 @@ import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import {runTask} from 'utils/Concurrent';
 import {createOrganizationEndpoint} from 'data/EndpointFactory';
-import {getPlansWithSpaces} from 'account/pricing/PricingDataProvider';
+import {getPlansWithSpaces, calculateTotalPrice} from 'account/pricing/PricingDataProvider';
 import * as Intercom from 'intercom';
 import {getSpaces, getOrganization} from 'services/TokenStore';
 import {isOwnerOrAdmin, isOwner} from 'services/OrganizationRoles';
@@ -270,7 +270,7 @@ function RightSidebar ({grandTotal, orgId, onContactUs}) {
     ),
     h('h2', {className: 'entity-sidebar__heading'}, 'Need help?'),
     h('p', null,
-      'Do you need to up- or downgrade your spaces? Don’t hesitate to talk to our customer success team.'),
+      'Do you need to upgrade or downgrade your spaces? Don’t hesitate to talk to our customer success team.'),
     h('p', {className: 'entity-sidebar__help-text'},
       h('span', {style: iconStyle}, asReact(BubbleIcon)),
       h('button', {
@@ -344,13 +344,6 @@ function Price ({value = 0, currency = '$', unit = null, style = null}) {
   const valueStr = parseInt(value, 10).toLocaleString('en-US');
   const unitStr = unit && ` /${unit}`;
   return h('span', {style}, [currency, valueStr, unitStr].join(''));
-}
-
-function calculateTotalPrice (subscriptionPlans) {
-  return subscriptionPlans.reduce(
-    (total, plan) => total + (parseInt(plan.price, 10) || 0),
-    0
-  );
 }
 
 function getEnabledFeatures ({ratePlanCharges = []}) {

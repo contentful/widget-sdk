@@ -8,7 +8,8 @@ angular.module('contentful')
     controller: 'translatorLocaleSelectorController',
     controllerAs: 'translator',
     scope: {
-      policies: '='
+      policies: '=',
+      hasFeatureEnabled: '='
     }
   };
 })

@@ -1,7 +1,7 @@
 import { createMockProperty } from 'helpers/mocks/kefir';
 
 describe('cfCreateNewSpace directive', function () {
-  let element, $scope, $rootScope, controller, stubs;
+  let element, $scope, $rootScope, controller, stubs, $q;
   afterEach(function () {
     element = $scope = $rootScope = controller = stubs = null;
   });
@@ -71,6 +71,7 @@ describe('cfCreateNewSpace directive', function () {
     stubs.spaceTemplateLoader.getTemplatesList.resolves(true);
 
     $rootScope = this.$inject('$rootScope');
+    $q = this.$inject('$q');
 
     this.setupDirective = function (organization) {
       element = this.$compile('<cf-create-new-space>', {
@@ -218,8 +219,8 @@ describe('cfCreateNewSpace directive', function () {
         beforeEach(function () {
           stubs.spaceTemplateCreator.getCreator.returns({
             create: sinon.stub().returns({
-              contentCreated: Promise.resolve(),
-              spaceSetup: Promise.reject(new Error('something happened'))
+              contentCreated: $q.resolve(),
+              spaceSetup: $q.reject(new Error('something happened'))
             })
           });
           controller.newSpace.data.name = 'name';
@@ -238,7 +239,7 @@ describe('cfCreateNewSpace directive', function () {
           sinon.assert.calledWith(
             stubs.analytics.track,
             'space:create',
-            {templateName: 'Blog'}
+            {templateName: 'Blog', entityAutomationScope: {scope: 'space_template'}}
           );
         });
 

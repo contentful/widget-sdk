@@ -118,10 +118,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
   });
 
   function showTranslator () {
-    var organization = spaceContext.organizationContext.organization;
-    var subscriptionHasAdvancedRoles = _.get(organization, 'subscriptionPlan.limits.features.advancedRoles');
-    var nameStartsWithTranslator = /^Translator/.test($scope.role.name);
-    return subscriptionHasAdvancedRoles && nameStartsWithTranslator;
+    return /^Translator/.test($scope.role.name);
   }
 
 

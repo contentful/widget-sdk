@@ -113,13 +113,18 @@ function* createSpace (org, templateName) {
     name: 'The example project',
     defaultLocale: DEFAULT_LOCALE
   }, org.sys.id);
-  track('space:create', { templateName });
+
   yield TokenStore.refresh();
   yield gotoState({
     path: ['spaces', 'detail'],
     params: {
       spaceId: newSpace.sys.id
     }
+  });
+  track('space:create', {
+    templateName,
+    // mark space as an auto created space
+    entityAutomationScope: { scope: 'auto_create' }
   });
 }
 
@@ -132,7 +137,12 @@ function* applyTemplate (spaceContext, templateInfo) {
   const templateCreator = getCreator(
     spaceContext,
     {
-      onItemSuccess: entityActionSuccess,
+      onItemSuccess: (entityId, entityData, templateName) => {
+        entityActionSuccess(entityId, {
+          ...entityData,
+          entityAutomationScope: {scope: 'auto_create'}
+        }, templateName);
+      },
       onItemError: noop
     },
     templateInfo,

@@ -1,16 +1,18 @@
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
-import {getTemplatesList} from 'services/SpaceTemplateLoader';
+import {createOrganizationEndpoint} from 'data/EndpointFactory';
+import {getSubscriptionPlans, calculateTotalPrice} from 'account/pricing/PricingDataProvider';
 import {RequestState} from './WizardUtils';
 
-const FetchTemplates = createReactClass({
+const FetchSubscriptionPrice = createReactClass({
   propTypes: {
+    organizationId: PropTypes.string.isRequired,
     // children is a rendering function
     children: PropTypes.func.isRequired
   },
   getInitialState () {
     return {
-      templates: [],
+      totalPrice: 0,
       requestState: RequestState.PENDING
     };
   },
@@ -22,15 +24,17 @@ const FetchTemplates = createReactClass({
   },
   async fetch () {
     try {
-      const templatesList = await getTemplatesList();
+      const endpoint = createOrganizationEndpoint(this.props.organizationId);
+      const plans = await getSubscriptionPlans(endpoint);
+      const totalPrice = calculateTotalPrice(plans.items);
       this.setState({
-        templates: parseTemplates(templatesList),
+        totalPrice,
         requestState: RequestState.SUCCESS,
         error: null
       });
     } catch (error) {
       this.setState({
-        templates: [],
+        totalPrice: 0,
         requestState: RequestState.ERROR,
         error
       });
@@ -38,8 +42,4 @@ const FetchTemplates = createReactClass({
   }
 });
 
-function parseTemplates (templates = []) {
-  return templates.map(({fields, sys}) => ({...fields, id: sys.id}));
-}
-
-export default FetchTemplates;
+export default FetchSubscriptionPrice;

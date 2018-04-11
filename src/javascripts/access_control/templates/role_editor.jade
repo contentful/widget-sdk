@@ -20,7 +20,9 @@ cf-loader(watch-state-change="true")
           textarea.cfnext-form__input--full-size(id="opt_description" ng-model="internal.description" ng-disabled="!canModifyRoles")
         cf-translator-locale-selector(
           ng-if="showTranslator"
-          policies="internal")
+          policies="internal"
+          has-feature-enabled="hasCustomRolesFeature"
+        )
       .role-details__section(ng-if="internal.uiCompatible")
         h3 Content
         cf-rule-list(rules="internal.entries" entity="entry" is-disabled="!canModifyRoles")
@@ -75,7 +77,9 @@ cf-loader(watch-state-change="true")
             |  It does <strong>not</strong> grant permission to update users roles or delete the space.
 
   .workbench-main__sidebar
-    .entity-sidebar(ng-if="!loading && !canModifyRoles")
+    .entity-sidebar(ng-if="!loading && !hasCustomRolesFeature && !canModifyRoles")
+      h2.entity-sidebar__heading
+        | Role
       //- Save button for the 'Translator' role
       .entity-sidebar__state-select
         button.btn-action-select__action(
@@ -83,10 +87,7 @@ cf-loader(watch-state-change="true")
           type="button"
           ui-command="save")
           | Save changes
-    .entity-sidebar(ng-if="!hasCustomRolesFeature && !canModifyRoles")
-      h2.entity-sidebar__heading
-        | Role
-      p
+      p(ng-if="!showTranslator")
         | This role can't be customized because your plan does not include custom roles.
       +custom-roles-plan-info(legacy, accountUpgradeState)
     .entity-sidebar(ng-if="hasCustomRolesFeature && canModifyRoles")
