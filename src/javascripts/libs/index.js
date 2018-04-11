@@ -67,6 +67,7 @@ window.libs = [
   ['searchParser', require('./search.pegjs')],
   ['localesList', require('./locales_list.json')],
   ['fileSize', require('file-size')],
+  ['pluralize', require('pluralize')],
   ['speakingurl', require('speakingurl')],
   ['Cookies', require('js-cookie')],
   ['worf', require('@contentful/worf')],

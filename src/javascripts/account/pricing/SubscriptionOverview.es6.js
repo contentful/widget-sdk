@@ -1,9 +1,10 @@
-import {createElement as h, Fragment} from 'react';
+import React, {createElement as h, Fragment} from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import {runTask} from 'utils/Concurrent';
+import createResourceService from 'services/ResourceService';
 import {createOrganizationEndpoint} from 'data/EndpointFactory';
-import {getPlansWithSpaces, calculateTotalPrice} from 'account/pricing/PricingDataProvider';
+import {getPlansWithSpaces} from 'account/pricing/PricingDataProvider';
 import * as Intercom from 'intercom';
 import {getSpaces, getOrganization} from 'services/TokenStore';
 import {isOwnerOrAdmin, isOwner} from 'services/OrganizationRoles';
@@ -18,11 +19,13 @@ import $location from '$location';
 import Workbench from 'app/WorkbenchReact';
 import Tooltip from 'ui/Components/Tooltip';
 import HelpIcon from 'ui/Components/HelpIcon';
+import pluralize from 'pluralize';
 import {joinAnd} from 'stringUtils';
 import {byName as colors} from 'Styles/Colors';
 import BubbleIcon from 'svg/bubble';
 import InvoiceIcon from 'svg/invoice';
 import {asReact} from 'ui/Framework/DOMRenderer';
+import { calculatePlansCost, calcUsersMeta, calculateTotalPrice, getEnabledFeatures } from 'utils/SubscriptionUtils';
 
 const SubscriptionOverview = createReactClass({
   propTypes: {
@@ -35,7 +38,8 @@ const SubscriptionOverview = createReactClass({
       organization: {},
       basePlan: {},
       spacePlans: [],
-      grandTotal: 0
+      grandTotal: 0,
+      usersMeta: {}
     };
   },
   componentWillMount: function () {
@@ -44,7 +48,9 @@ const SubscriptionOverview = createReactClass({
   fetchData: function* () {
     const {orgId, onReady, onForbidden} = this.props;
 
+    const resources = createResourceService(orgId, 'organization');
     const organization = yield getOrganization(orgId);
+
     if (!isOwnerOrAdmin(organization)) {
       onForbidden();
       return;
@@ -53,6 +59,10 @@ const SubscriptionOverview = createReactClass({
     const endpoint = createOrganizationEndpoint(orgId);
     const plans = yield getPlansWithSpaces(endpoint).catch(ReloadNotification.apiErrorHandler);
     const accessibleSpaces = yield getSpaces(); // spaces that current user has access to
+
+    if (!plans) {
+      return;
+    }
 
     onReady();
 
@@ -71,10 +81,18 @@ const SubscriptionOverview = createReactClass({
         return plan;
       });
 
-    // TODO add user fees
-    const grandTotal = calculateTotalPrice(plans.items);
+    const membershipsResource = yield resources.get('organization_membership');
+    const numMemberships = membershipsResource.usage;
 
-    this.setState({basePlan, spacePlans, grandTotal, organization});
+    const grandTotal = calculateTotalPrice({
+      allPlans: plans.items,
+      basePlan,
+      numMemberships
+    });
+
+    const usersMeta = calcUsersMeta({ basePlan, numMemberships });
+
+    this.setState({basePlan, spacePlans, grandTotal, usersMeta, organization});
   },
   createSpace: function () {
     showCreateSpaceModal(this.props.orgId);
@@ -94,7 +112,7 @@ const SubscriptionOverview = createReactClass({
     }
   },
   render: function () {
-    const {basePlan, spacePlans, grandTotal, organization} = this.state;
+    const {basePlan, spacePlans, grandTotal, usersMeta, organization} = this.state;
     const {orgId} = this.props;
 
     return h(Workbench, {
@@ -104,7 +122,12 @@ const SubscriptionOverview = createReactClass({
       content: h('div', {
         style: {padding: '0 2rem'}
       },
+        h('div', {
+          className: 'header'
+        },
           h(BasePlan, {basePlan}),
+          h(UsersForPlan, { usersMeta })
+        ),
           h(SpacePlans, {
             spacePlans,
             onCreateSpace: this.createSpace,
@@ -123,23 +146,57 @@ const SubscriptionOverview = createReactClass({
   }
 });
 
+function Pluralized ({ text, count }) {
+  const pluralizedText = pluralize(text, count, true);
+
+  return <span>{pluralizedText}</span>;
+}
+
+Pluralized.propTypes = {
+  text: PropTypes.string.isRequired,
+  count: PropTypes.number.isRequired
+};
+
+function UsersForPlan ({ usersMeta }) {
+  const { numFree, numPaid, cost } = usersMeta;
+  const numTotal = numFree + numPaid;
+
+  return <div className='users'>
+    <h2 className='section-title'>Users</h2>
+    <p>
+      Your organization has <b><Pluralized text="user" count={numTotal} /></b>.
+      { numPaid > 0 &&
+        <span>&#32;You are exceeding the limit of <Pluralized text="free user" count={numFree} /> by <Pluralized text="user" count={numPaid} />. That is <b>${cost}</b> per month.</span>
+      }
+    </p>
+  </div>;
+}
+
+UsersForPlan.propTypes = {
+  usersMeta: PropTypes.object.isRequired
+};
+
 function BasePlan ({basePlan}) {
   const enabledFeaturesNames = getEnabledFeatures(basePlan).map(({name}) => name);
 
-  return h('div', {style: {margin: '1em 0 3em'}},
-    h('h2', {
-      className: 'section-title'
-    }, null, 'Platform'),
-    h('p', {
-      'data-test-id': 'subscription-page.base-plan-details'
-    },
-      h('b', null, basePlan.name),
-      enabledFeaturesNames.length
-        ? ` – includes ${joinAnd(enabledFeaturesNames)}.`
-        : ' – doesn’t include any additional features.'
-    )
-  );
+  return <div className='platform'>
+    <h2 className='section-title'>Platform</h2>
+    <p data-test-id='subscription-page.base-plan-details'>
+      <b>
+        {basePlan.name}
+      </b>
+      {
+        enabledFeaturesNames.length
+          ? ` – includes ${joinAnd(enabledFeaturesNames)}.`
+          : ' – doesn’t include any additional features.'
+      }
+    </p>
+  </div>;
 }
+
+BasePlan.propTypes = {
+  basePlan: PropTypes.object.isRequired
+};
 
 function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
   if (!spacePlans.length) {
@@ -158,7 +215,7 @@ function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
       )
     );
   } else {
-    const spacesTotal = calculateTotalPrice(spacePlans);
+    const spacesTotal = calculatePlansCost({ plans: spacePlans });
 
     return h('div', null,
       h('h2', {
@@ -373,10 +430,6 @@ function Price ({value = 0, currency = '$', unit = null, style = null}) {
   const valueStr = parseInt(value, 10).toLocaleString('en-US');
   const unitStr = unit && ` /${unit}`;
   return h('span', {style}, [currency, valueStr, unitStr].join(''));
-}
-
-function getEnabledFeatures ({ratePlanCharges = []}) {
-  return ratePlanCharges.filter(({unitType}) => unitType === 'feature');
 }
 
 function getSpaceNavState (spaceId) {
