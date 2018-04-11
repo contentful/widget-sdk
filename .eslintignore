@@ -4,7 +4,6 @@
 test/unit/app/widgets/cf_video_player_directive_spec.js
 test/unit/components/forms/cf_field_alert_directive_spec.js
 test/unit/components/shared/data_size_scale_controller_spec.js
-test/unit/components/shared/accordion_controller_spec.js
 test/unit/components/shared/cf_validation_error_display_spec.js
 test/unit/components/field_dialog/appearance_controller_spec.js
 test/unit/forms/cf_null_empty_input_spec.js
@@ -51,7 +50,6 @@ src/javascripts/components/shared/validation_error_display/cf_error_list_directi
 src/javascripts/components/shared/validation_error_display/cf_error_messages_directive.js
 src/javascripts/components/shared/validation_error_display/cf_error_path_directive.js
 src/javascripts/components/shared/validation_error_display/error_path_controller.js
-src/javascripts/components/shared/accordion_controller.js
 src/javascripts/components/shared/cf_dropdown_toggle_directive.js
 src/javascripts/components/shared/data_size_scale_controller.js
 src/javascripts/components/shared/endless_container_directive.js
