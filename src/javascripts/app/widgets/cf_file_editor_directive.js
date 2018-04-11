@@ -112,20 +112,16 @@ angular.module('contentful')
       }
 
       function editWithAviary () {
-        modalDialog.openConfirmDialog({
+        modalDialog.openConfirmDeleteDialog({
           title: 'Adobe Creative Editor is deprecated',
           message: [
             'Adobe Creative Editor will be discontinued by Adobe soon. It\'s still possible to use ',
             'it but we suggest you to utilize new file editor options provided. You can rotate, ',
             'mirror, crop (with and without maintaining aspect ratio) and circle images using them.'
           ].join(''),
-          confirmLabel: 'I want to use Adobe Creative Editor',
-          cancelLabel: 'I\'ll use the new options'
-        }).then(function (result) {
-          if (result.confirmed) {
-            openAviary();
-          }
-        });
+          confirmLabel: 'I still want to use Adobe Creative Editor',
+          cancelLabel: 'Cancel'
+        }).promise.then(openAviary);
       }
 
       function canEditFile () {
