@@ -1,3 +1,9 @@
+/**
+ * Calculates the cost for the given numMemberships for a given basePlan.
+ * @param  {Object} options.basePlan       The base plan object
+ * @param  {Number} options.numMemberships Number of users
+ * @return {Number}                        The cost for this many users for this base plan
+ */
 export function calculateUsersCost ({ basePlan, numMemberships }) {
   const tiers = getUsersTiers(basePlan);
 
@@ -26,6 +32,12 @@ export function calculateUsersCost ({ basePlan, numMemberships }) {
   }, 0);
 }
 
+/**
+ * Calculates the number of free and paid users, plus the cost of all the users.
+ * @param  {Object} options.basePlan
+ * @param  {Number} options.numMemberships
+ * @return {Object}                        The number of free & paid users plus the total
+ */
 export function calcUsersMeta ({ basePlan, numMemberships }) {
   const tiers = getUsersTiers(basePlan);
 
@@ -39,6 +51,12 @@ export function calcUsersMeta ({ basePlan, numMemberships }) {
   return { numFree, numPaid, cost };
 }
 
+/**
+ * Calculates the total price for all plans and users
+ * @param  {Array} options.allPlans       All plan objects
+ * @param  {Number} options.numMemberships Number of memberships
+ * @return {Number}                        Total cost
+ */
 export function calculateTotalPrice ({ allPlans, numMemberships }) {
   const basePlan = getBasePlan(allPlans);
 
@@ -48,12 +66,24 @@ export function calculateTotalPrice ({ allPlans, numMemberships }) {
   return plansCost + usersCost;
 }
 
+/**
+ * Gets all enabled features for a given plan
+ * @param  {Array}  options.ratePlanCharges Rate plan charges for this plan
+ * @return {Array}                         Rate plan charges that are features
+ */
 export function getEnabledFeatures ({ratePlanCharges = []}) {
   return ratePlanCharges.filter(({unitType}) => unitType === 'feature');
 }
 
+/**
+ * Calculates the cost of the given plans
+ * @param  {Array} options.plans
+ * @return {Number}               Total cost
+ */
 export function calculatePlansCost ({ plans }) {
-  return plans.reduce((total, plan) => total + (parseInt(plan.price, 10) || 0), 0);
+  return plans.reduce((total, plan) => {
+    return total + (parseInt(plan.price, 10) || 0);
+  }, 0);
 }
 
 function getBasePlan (allPlans) {
