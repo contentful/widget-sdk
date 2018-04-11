@@ -48,7 +48,8 @@ angular.module('contentful')
   var subscriptionBilling = gatekeeperBase({
     name: 'subscription_billing',
     title: 'Subscription',
-    url: '/:orgId/subscription{pathSuffix:PathSuffix}'
+    url: '/:orgId/subscription{pathSuffix:PathSuffix}',
+    hideHeader: true
   });
 
   var usage = reactBase({
@@ -120,8 +121,8 @@ angular.module('contentful')
         pathSuffix: ''
       },
       template: [
-        workbenchHeader({ title: [ definition.title ] }),
-        h('cf-account-view', { context: 'context' })
+        !definition.hideHeader && workbenchHeader({ title: [ definition.title ] }),
+        h('cf-account-view', { context: 'context', hideHeader: definition.hideHeader ? 'true' : 'false' })
       ]
     };
     return organizationsBase(_.extend(defaults, definition));
