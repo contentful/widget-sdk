@@ -57,6 +57,7 @@ const SpaceDetails = createReactClass({
           <input
             type="text"
             className="cfnext-form__input"
+            data-test-id="space-name"
             placeholder="Space name"
             name="name"
             required=""
@@ -76,6 +77,7 @@ const SpaceDetails = createReactClass({
         <div style={{textAlign: 'center', margin: '1.2em 0'}}>
           <button
             className="button btn-primary-action"
+            data-test-id="space-details-confirm"
             disabled={Object.keys(validation).length > 0}
             onClick={this.submit}>
             Proceed to confirmation

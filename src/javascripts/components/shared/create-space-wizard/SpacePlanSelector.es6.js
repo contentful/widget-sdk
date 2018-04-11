@@ -110,8 +110,12 @@ const SpacePlanItem = createReactClass({
         onClick={() => !plan.disabled && onSelect(plan)}>
 
         <div className="space-plans-list__item__heading">
-          <strong>{plan.name}</strong>
-          {(plan.price > 0) && ` - ${formatPrice(plan.price)} / month`}
+          <strong data-test-id="space-plan-name">{plan.name}</strong>
+          {(plan.price > 0) && <React.Fragment>
+            {' - '}
+            <span data-test-id="space-plan-price">{formatPrice(plan.price)}</span>
+            {' / month'}
+          </React.Fragment>}
           {plan.isFree && ` - ${freeSpacesUsage}/${freeSpacesLimit} used`}
           {plan.isFree && <HelpIcon tooltipWidth={400}>
             You can create up to {freeSpacesLimit} free spaces for your organization.

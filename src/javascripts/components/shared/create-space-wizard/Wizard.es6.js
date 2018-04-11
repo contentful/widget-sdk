@@ -98,6 +98,7 @@ const Wizard = createReactClass({
           {WizardSteps.map(({id, label, isEnabled}) => (
             <li
               key={id}
+              data-test-id={`wizard-nav-${id}`}
               role="tab"
               aria-selected={id === currentStepId}
               aria-disabled={!isEnabled(data)}

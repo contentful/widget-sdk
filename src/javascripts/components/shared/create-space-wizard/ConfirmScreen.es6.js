@@ -72,6 +72,7 @@ const ConfirmScreen = createReactClass({
                 <button
                   className={`button btn-primary-action ${isFormSubmitted ? 'is-loading' : ''}`}
                   disabled={isFormSubmitted}
+                  data-test-id="space-create-confirm"
                   onClick={onSubmit}>
                   Confirm and create space
                 </button>

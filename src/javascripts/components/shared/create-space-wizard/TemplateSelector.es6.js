@@ -147,6 +147,7 @@ const TemplatesList = createReactClass({
               <a
                 key={template.id}
                 className={`create-new-space__templates__navitem ${isSelected && 'selected'}`}
+                data-test-id={`space-template-template.id`}
                 onClick={() => onSelect(template)}>
                 {template.name}
               </a>

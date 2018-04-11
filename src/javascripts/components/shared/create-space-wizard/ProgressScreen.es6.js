@@ -39,7 +39,7 @@ const ProgressScreen = createReactClass({
 
     return (
       <div>
-        <div className="create-new-space__templates__status">
+        <div className="create-new-space__templates__status" data-test-id="create-space-progress">
           {!done && <div className="spinner" />}
           {done && <div style={{transform: 'scale(2)'}}>
             {asReact(CheckmarkIcon)}
