@@ -32,14 +32,16 @@ export function calcUsersMeta ({ basePlan, numMemberships }) {
   // Should only be one free tier
   const freeTier = tiers.find(tier => tier.price === 0);
   const freeTierUsers = freeTier.endingUnit - freeTier.startingUnit;
-  const numFreeUsers = numMemberships > freeTierUsers ? freeTierUsers : numMemberships;
-  const numPaidUsers = numMemberships > freeTierUsers ? (numMemberships - freeTierUsers) : 0;
+  const numFree = numMemberships > freeTierUsers ? freeTierUsers : numMemberships;
+  const numPaid = numMemberships > freeTierUsers ? (numMemberships - freeTierUsers) : 0;
   const cost = calculateUsersCost({ basePlan, numMemberships });
 
-  return { numFreeUsers, numPaidUsers, cost };
+  return { numFree, numPaid, cost };
 }
 
-export function calculateTotalPrice ({ allPlans, basePlan, numMemberships }) {
+export function calculateTotalPrice ({ allPlans, numMemberships }) {
+  const basePlan = getBasePlan(allPlans);
+
   const plansCost = calculatePlansCost({ plans: allPlans });
   const usersCost = calculateUsersCost({ basePlan, numMemberships });
 
@@ -51,10 +53,11 @@ export function getEnabledFeatures ({ratePlanCharges = []}) {
 }
 
 export function calculatePlansCost ({ plans }) {
-  return plans.reduce(
-    (total, plan) => total + (parseInt(plan.price, 10) || 0),
-    0
-  );
+  return plans.reduce((total, plan) => total + (parseInt(plan.price, 10) || 0), 0);
+}
+
+function getBasePlan (allPlans) {
+  return allPlans.find(plan => plan.planType === 'base');
 }
 
 function getUsersTiers (basePlan) {

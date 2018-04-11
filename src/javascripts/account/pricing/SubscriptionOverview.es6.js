@@ -158,15 +158,15 @@ Pluralized.propTypes = {
 };
 
 function UsersForPlan ({ usersMeta }) {
-  const { numFreeUsers, numPaidUsers, cost } = usersMeta;
-  const numTotalUsers = numFreeUsers + numPaidUsers;
+  const { numFree, numPaid, cost } = usersMeta;
+  const numTotal = numFree + numPaid;
 
   return <div className='users'>
     <h2 className='section-title'>Users</h2>
     <p>
-      Your organization has <b><Pluralized text="user" count={numTotalUsers} /></b>.
-      { numPaidUsers > 0 &&
-        <span>&#32;You are exceeding the limit of <Pluralized text="free user" count={numFreeUsers} /> by <Pluralized text="user" count={numPaidUsers} />. That is <b>${cost}</b> per month.</span>
+      Your organization has <b><Pluralized text="user" count={numTotal} /></b>.
+      { numPaid > 0 &&
+        <span>&#32;You are exceeding the limit of <Pluralized text="free user" count={numFree} /> by <Pluralized text="user" count={numPaid} />. That is <b>${cost}</b> per month.</span>
       }
     </p>
   </div>;
