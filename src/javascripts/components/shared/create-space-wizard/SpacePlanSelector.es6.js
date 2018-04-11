@@ -35,6 +35,9 @@ const SpacePlanSelector = createReactClass({
             {asReact(spinner({diameter: '40px'}))}
           </div>}
           {requestState === RequestState.SUCCESS && <div>
+            {!organization.isBillable && <BillingInfo
+              canSetupBilling={isOwner(organization)}
+              goToBilling={this.goToBilling} />}
             <h2 className="create-space-wizard__heading">
               Choose the space type
             </h2>
@@ -49,9 +52,6 @@ const SpacePlanSelector = createReactClass({
                 isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
                 onSelect={this.selectPlan} />)}
             </div>
-            {!organization.isBillable && <BillingInfo
-              canSetupBilling={isOwner(organization)}
-              goToBilling={this.goToBilling} />}
           </div>}
           {requestState === RequestState.ERROR && <div className="note-box--warning">
             <p>Could not fetch space plans.</p>
@@ -157,17 +157,14 @@ const BillingInfo = createReactClass({
     const {canSetupBilling, goToBilling} = this.props;
 
     return (
-      <div className="note-box--info">
-        <p>
-          You need to provide us with your billing address and credit card details before creating a paid space.
-          {' '}
-          {canSetupBilling && <React.Fragment>
-            Head to the{' '}
-            <TextLink onClick={goToBilling}>organization settings</TextLink>
-            {' '}to add these details for the organization.
-          </React.Fragment>}
-          {!canSetupBilling && 'Please contact your organization’s owner.'}
-        </p>
+      <div className="note-box--info create-space-wizard__info">
+        {canSetupBilling && <p>
+          <TextLink onClick={goToBilling}>Add payment details</TextLink>{' '}
+          for the organization before creating a paid space.
+        </p>}
+        {!canSetupBilling && <p>
+          The owner of this organization needs to add payment details so you can create paid spaces.
+        </p>}
       </div>
     );
   }
