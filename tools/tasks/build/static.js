@@ -13,7 +13,6 @@ gulp.task('build/static', [
 ], function () {
   const files = glob.sync('public/app/**/*.!(js|css)');
   files.push('public/app/kaltura.js');
-  files.push('public/app/snowplow.js');
 
   return gulp.src(files, {base: 'public'})
     .pipe(changeBase('build'))

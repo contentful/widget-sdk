@@ -175,10 +175,7 @@ function configMetaTag (uiVersion, config, resolve) {
     content: JSON.stringify({
       config,
       uiVersion,
-      manifest: {
-        'app/kaltura.js': resolve('kaltura.js'),
-        'app/snowplow.js': resolve('snowplow.js')
-      }
+      manifest: {'app/kaltura.js': resolve('kaltura.js')}
     })
   });
 }

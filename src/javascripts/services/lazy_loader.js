@@ -143,7 +143,9 @@ angular.module('contentful')
       globalObject: 'analytics'
     },
     snowplow: {
-      url: AssetResolver.resolve('app/snowplow.js'),
+      // This is a special CDN version prepared for us by Snowplow.
+      // It's less likely to be marked as tracking script by ad blockers.
+      url: 'https://d3unofs9w5amk7.cloudfront.net/Sp4yK8ZCFcVrSMi44LjI.js',
       globalObject: 'Snowplow'
     },
     walkMeStaging: {
