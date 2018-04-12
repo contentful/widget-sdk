@@ -53,11 +53,11 @@ const TemplateSelector = createReactClass({
                 }}
               />
               <div className={templatesListClassName}>
-                <TemplatesList
+                {selectedTemplate && <TemplatesList
                   templates={templates}
                   selectedTemplate={selectedTemplate}
                   onSelect={this.selectTemplate}
-                />
+                />}
               </div>
             </div>}
             {requestState === RequestState.ERROR && <div className="note-box--warning">
