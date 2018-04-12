@@ -50,8 +50,7 @@ angular.module('contentful/environment')
   return {
     env: env,
     settings: settings,
-    gitRevision: injected.uiVersion,
-    manifest: injected.manifest || {}
+    gitRevision: injected.uiVersion
   };
 
   function extractInjectedConfig () {

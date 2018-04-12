@@ -20,7 +20,6 @@
       environment: 'development',
       disableUpdateCheck: true
     },
-    manifest: [],
     gitRevision: null,
     stubbed: true
   });

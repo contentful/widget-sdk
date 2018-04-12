@@ -37,10 +37,6 @@ angular.module('contentful/test', ['contentful', 'contentful/mocks'])
       marketingUrl: '//www.test.com',
       main_domain: 'test.com'
     },
-    manifest: {
-      'app/kaltura.js': 'x',
-      'app/snowplow.js': 'x'
-    },
     env: 'unittest'
   });
 }]);
