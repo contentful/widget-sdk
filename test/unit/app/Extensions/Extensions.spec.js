@@ -65,6 +65,7 @@ describe('app/Extensions', function () {
         });
 
         it('refreshes widget list', function () {
+          // (1) initial refresh (2) refresh after deletion
           sinon.assert.calledTwice(this.spaceContext.widgets.refresh);
         });
       });

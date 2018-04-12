@@ -115,7 +115,7 @@ angular.module('contentful')
     _.extend(widget, {
       widgetId: widgetId,
       fieldId: $scope.field.apiName,
-      settings: Widgets.filteredParams(descriptor, params)
+      settings: Widgets.filterParams(descriptor, params)
     });
 
     if (widgetId !== initialWidgetId) {
@@ -250,8 +250,7 @@ angular.module('contentful')
     // `$scope.selectWidget` alters it with actual widget descriptor.
     // Widget descriptors don't have `field` property.
     if (widget && !widget.field) {
-      var params = $scope.widgetParams;
-      Widgets.applyDefaults(widget, params);
+      var params = Widgets.applyDefaults(widget, $scope.widgetParams);
       $scope.widgetOptions = Widgets.filterOptions(widget, params);
     }
   }

@@ -50,32 +50,32 @@ describe('widgets', function () {
     });
   });
 
-  describe('#filteredParams()', function () {
+  describe('#filterParams()', function () {
     beforeEach(function () {
       this.descriptor = {options: [{param: 'foo'}]};
     });
 
     it('removes unknown parameters', function () {
       const params = {unknown: true};
-      const filtered = this.widgets.filteredParams(this.descriptor, params);
+      const filtered = this.widgets.filterParams(this.descriptor, params);
       expect(filtered).toEqual({});
     });
 
     it('retains known parameters', function () {
       const params = {foo: true, unknown: true};
-      const filtered = this.widgets.filteredParams(this.descriptor, params);
+      const filtered = this.widgets.filterParams(this.descriptor, params);
       expect(filtered).toEqual({foo: true});
     });
 
     it('removes undefined parameters', function () {
       const params = {foo: undefined};
-      const filtered = this.widgets.filteredParams(this.descriptor, params);
+      const filtered = this.widgets.filterParams(this.descriptor, params);
       expect(filtered).toEqual({});
     });
 
     it('returns empty object if widget.options is undefined', function () {
       const params = {foo: undefined};
-      const filtered = this.widgets.filteredParams({}, params);
+      const filtered = this.widgets.filterParams({}, params);
       expect(filtered).toEqual({});
     });
   });
@@ -90,14 +90,12 @@ describe('widgets', function () {
     });
 
     it('sets missing parameters to default value', function () {
-      const params = {};
-      this.widgets.applyDefaults(this.descriptor, params);
+      const params = this.widgets.applyDefaults(this.descriptor, {});
       expect(params.x).toEqual('DEFAULT');
     });
 
     it('does not overwrite existing params', function () {
-      const params = {x: 'VALUE'};
-      this.widgets.applyDefaults(this.descriptor, params);
+      const params = this.widgets.applyDefaults(this.descriptor, {x: 'VALUE'});
       expect(params.x).toEqual('VALUE');
     });
   });

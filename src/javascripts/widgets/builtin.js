@@ -12,10 +12,10 @@ angular.module('contentful')
     }
   ];
 
-  function registerWidget (id, desc) {
-    desc.id = id;
-    desc.options = COMMON_OPTIONS.concat(desc.options || []);
-    widgets.push(desc);
+  function registerWidget (id, widgetDescriptor) {
+    widgetDescriptor.id = id;
+    widgetDescriptor.options = COMMON_OPTIONS.concat(widgetDescriptor.options || []);
+    widgets.push(widgetDescriptor);
   }
 
   /**

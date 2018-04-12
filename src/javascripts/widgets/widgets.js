@@ -62,7 +62,7 @@ angular.module('contentful')
     buildRenderable: buildRenderable,
     filterOptions: filterOptions,
     applyDefaults: applyDefaults,
-    filteredParams: filteredParams
+    filterParams: filterParams
   };
 
   /**
@@ -85,21 +85,22 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
-   * @name widgets#filteredParams
+   * @name widgets#filterParams
    * @description
    * Returns a copy of the `params` object that includes only keys that
-   * are applicable to the widget.
+   * are applicable to the widget (as defined in `descriptor`).
    *
    * @param {Widget} descriptor
    * @param {object} params
    * @returns {object}
    */
-  function filteredParams (descriptor, params) {
-    return _.transform(descriptor.options, function (filtered, option) {
+  function filterParams (descriptor, params) {
+    return (descriptor.options || []).reduce(function (filtered, option) {
       var param = params[option.param];
-      if (!_.isUndefined(param)) {
+      if (typeof param !== 'undefined') {
         filtered[option.param] = param;
       }
+      return filtered;
     }, {});
   }
 
@@ -113,13 +114,14 @@ angular.module('contentful')
    * @param {object} params
    */
   function filterOptions (descriptor, params) {
+    var options = descriptor.options || [];
     // Filter out AM/PM selector if date picker mode does not include time
     if (descriptor.id === 'datePicker') {
-      return descriptor.options.filter(function (option) {
+      return options.filter(function (option) {
         return option.param !== 'ampm' || ['time', 'timeZ'].includes(params.format);
       });
     } else {
-      return [].concat(descriptor.options);
+      return [].concat(options);
     }
   }
 
@@ -127,17 +129,22 @@ angular.module('contentful')
    * @ngdoc method
    * @name widgets#applyDefaults
    * @description
-   * Sets each widget paramter to its default value if it is not set yet.
+   * Creates a copy of params provided and sets each widget paramter
+   * to its default value if it is not set yet.
    *
    * @param {Widget} descriptor
    * @param {object} params
+   * @return {object}
    */
   function applyDefaults (descriptor, params) {
-    return _.forEach(descriptor.options, function (option) {
+    var cloned = _.isPlainObject(params) ? _.cloneDeep(params) : {};
+
+    return (descriptor.options || []).reduce(function (params, option) {
       if ('default' in option && !(option.param in params)) {
         params[option.param] = option.default;
       }
-    });
+      return params;
+    }, cloned);
   }
 
   /**
@@ -182,12 +189,8 @@ angular.module('contentful')
       return renderable;
     }
 
-    var settings = _.cloneDeep(control.settings);
-    settings = _.isPlainObject(settings) ? settings : {};
-    applyDefaults(descriptor, settings);
-
     _.extend(renderable, {
-      settings: settings,
+      settings: applyDefaults(descriptor, control.settings),
       template: descriptor.template,
       rendersHelpText: descriptor.rendersHelpText,
       defaultHelpText: descriptor.defaultHelpText,
