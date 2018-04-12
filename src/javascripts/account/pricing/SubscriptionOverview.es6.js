@@ -125,8 +125,8 @@ const SubscriptionOverview = createReactClass({
         h('div', {
           className: 'header'
         },
-          h(BasePlan, {basePlan}),
-          h(UsersForPlan, { usersMeta })
+          h(BasePlan, { basePlan, orgId }),
+          h(UsersForPlan, { usersMeta, orgId })
         ),
           h(SpacePlans, {
             spacePlans,
@@ -157,26 +157,33 @@ Pluralized.propTypes = {
   count: PropTypes.number.isRequired
 };
 
-function UsersForPlan ({ usersMeta }) {
+function UsersForPlan ({ usersMeta, orgId }) {
   const { numFree, numPaid, cost } = usersMeta;
   const numTotal = numFree + numPaid;
 
   return <div className='users'>
     <h2 className='section-title'>Users</h2>
     <p>
-      Your organization has <b><Pluralized text="user" count={numTotal} /></b>.
+      <span>Your organization has <b><Pluralized text="user" count={numTotal} /></b>.&#32;</span>
       { numPaid > 0 &&
-        <span>&#32;You are exceeding the limit of <Pluralized text="free user" count={numFree} /> by <Pluralized text="user" count={numPaid} />. That is <b>${cost}</b> per month.</span>
+        <span>You are exceeding the limit of <Pluralized text="free user" count={numFree} /> by <Pluralized text="user" count={numPaid} />. That is <b>${cost}</b> per month.&#32;</span>
       }
+      <a
+        className='text-link'
+        href={href(getOrgMembershipsNavState(orgId))}
+        data-test-id='subscription-page.org-memberships-link'>
+        Manage users
+      </a>
     </p>
   </div>;
 }
 
 UsersForPlan.propTypes = {
-  usersMeta: PropTypes.object.isRequired
+  usersMeta: PropTypes.object.isRequired,
+  orgId: PropTypes.string.isRequired
 };
 
-function BasePlan ({basePlan}) {
+function BasePlan ({ basePlan, orgId }) {
   const enabledFeaturesNames = getEnabledFeatures(basePlan).map(({name}) => name);
 
   return <div className='platform'>
@@ -187,15 +194,22 @@ function BasePlan ({basePlan}) {
       </b>
       {
         enabledFeaturesNames.length
-          ? ` – includes ${joinAnd(enabledFeaturesNames)}.`
-          : ' – doesn’t include any additional features.'
+          ? ` – includes ${joinAnd(enabledFeaturesNames)}. `
+          : ' – doesn’t include any additional features. '
       }
+      <a
+        className='text-link'
+        href={href(getOrgUsageNavState(orgId))}
+        data-test-id='subscription-page.org-usage-link'>
+        View usage
+      </a>
     </p>
   </div>;
 }
 
 BasePlan.propTypes = {
-  basePlan: PropTypes.object.isRequired
+  basePlan: PropTypes.object.isRequired,
+  orgId: PropTypes.string.isRequired
 };
 
 function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
@@ -444,6 +458,22 @@ function getSpaceUsageNavState (spaceId) {
   return {
     path: ['spaces', 'detail', 'settings', 'usage'],
     params: {spaceId},
+    options: { reload: true }
+  };
+}
+
+function getOrgUsageNavState (orgId) {
+  return {
+    path: ['account', 'organizations', 'usage'],
+    params: { orgId },
+    options: { reload: true }
+  };
+}
+
+function getOrgMembershipsNavState (orgId) {
+  return {
+    path: ['account', 'organizations', 'users'],
+    params: { orgId },
     options: { reload: true }
   };
 }
