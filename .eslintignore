@@ -93,7 +93,6 @@ src/javascripts/directives/cf_select_all_input.js
 src/javascripts/directives/tooltip_directive.js
 src/javascripts/directives/cf_when_disabled.js
 src/javascripts/services/field_factory.js
-src/javascripts/services/get.js
 src/javascripts/services/kaltura_widget_loader.js
 src/javascripts/services/lodash_timing.js
 src/javascripts/services/ooyala_client.js
