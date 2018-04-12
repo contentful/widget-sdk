@@ -261,6 +261,8 @@ function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
 function SpacePlanRow ({plan, onDeleteSpace, isOrgOwner}) {
   const space = plan.space;
   const enabledFeatures = getEnabledFeatures(plan);
+  const hasAnyFeatures = enabledFeatures.length > 0;
+
   let actionLinks = [];
   let createdBy = '';
   let createdAt = '';
@@ -271,29 +273,27 @@ function SpacePlanRow ({plan, onDeleteSpace, isOrgOwner}) {
     actionLinks = getSpaceActionLinks(space, isOrgOwner, onDeleteSpace);
   }
 
-  const featuresTooltip = enabledFeatures.length
-  ? 'This space type includes ' + joinAnd(enabledFeatures.map(({name}) => name))
-  : 'This space type doesn’t include any additional features';
-
-  return h('tr', null,
-    h('td', {
-      'data-test-id': 'subscription-page.spaces-list.space-name'
-    }, h('strong', {style: {margin: 0}}, get(space, 'name', '—'))),
-    h('td', {
-      'data-test-id': 'subscription-page.spaces-list.space-plan'
-    },
-      h('strong', {style: {marginTop: 0}},
-        plan.name
-      ),
-      h(HelpIcon, null, featuresTooltip),
-      h('br'),
-      h(Price, {value: plan.price, unit: 'month'})
-    ),
-    h('td', null, createdBy),
-    h('td', null, createdAt),
-    h('td', null, ...actionLinks)
-  );
+  return <tr>
+    <td><strong>{get(space, 'name', '-')}</strong></td>
+    <td>
+      <strong>{plan.name}</strong>
+      { hasAnyFeatures &&
+        <HelpIcon>This space includes {joinAnd(enabledFeatures.map(({name}) => name))}</HelpIcon>
+      }
+      <br />
+      <Price value={plan.price} unit='month' />
+    </td>
+    <td>{createdBy}</td>
+    <td>{createdAt}</td>
+    <td>{actionLinks.map(actionLink => actionLink)}</td>
+  </tr>;
 }
+
+SpacePlanRow.propTypes = {
+  plan: PropTypes.object.isRequired,
+  onDeleteSpace: PropTypes.func.isRequired,
+  isOrgOwner: PropTypes.bool.isRequired
+};
 
 function RightSidebar ({grandTotal, orgId, isOrgOwner, isOrgBillable, onContactUs}) {
   // TODO - add these styles to stylesheets
