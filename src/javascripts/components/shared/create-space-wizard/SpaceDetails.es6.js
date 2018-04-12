@@ -24,7 +24,7 @@ const SpaceDetails = createReactClass({
     return state;
   },
   componentWillReceiveProps: function ({serverValidationErrors}) {
-    if (serverValidationErrors !== this.props.serverValidationErrors) {
+    if (serverValidationErrors && serverValidationErrors !== this.props.serverValidationErrors) {
       this.setState({validation: serverValidationErrors});
     }
   },
@@ -57,10 +57,12 @@ const SpaceDetails = createReactClass({
           <input
             type="text"
             className="cfnext-form__input"
+            data-test-id="space-name"
             placeholder="Space name"
             name="name"
             required=""
             value={name}
+            autoFocus
             onChange={(e) => this.setName(e.target.value)}
             aria-invalid={showValidationError}
             style={{width: '400px'}} />
@@ -74,7 +76,8 @@ const SpaceDetails = createReactClass({
         />
         <div style={{textAlign: 'center', margin: '1.2em 0'}}>
           <button
-            className="button btn-action"
+            className="button btn-primary-action"
+            data-test-id="space-details-confirm"
             disabled={Object.keys(validation).length > 0}
             onClick={this.submit}>
             Proceed to confirmation

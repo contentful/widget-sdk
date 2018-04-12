@@ -15,7 +15,8 @@
 
 import {
   constant, noop, isEmpty,
-  assign, get as getAtPath
+  assign, get as getAtPath,
+  isEqual
 } from 'lodash';
 import * as K from 'utils/kefir';
 import * as Path from 'utils/Path';
@@ -206,7 +207,7 @@ export function createBase (buildMessage, schema, doc) {
       return Path.isPrefix(['fields', fieldId, localeCode], error.path);
     });
     const otherErrors = K.getValue(errors$).filter((error) => {
-      return !Path.isPrefix(['fields', fieldId, localeCode], error.path);
+      return !Path.isPrefix(['fields', fieldId, localeCode], error.path) && !isEqual(['fields', fieldId], error.path);
     });
     const newErrors = fieldErrors.concat(otherErrors);
     errorsBus.set(newErrors);

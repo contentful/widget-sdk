@@ -4,8 +4,9 @@ import {createOrganizationEndpoint} from 'data/EndpointFactory';
 import {getSpaceRatePlans} from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import {canCreate} from 'utils/ResourceUtils';
-import {get, isNumber} from 'lodash';
+import {get} from 'lodash';
 import {RequestState} from './WizardUtils';
+import logger from 'logger';
 
 const FetchSpacePlans = createReactClass({
   propTypes: {
@@ -58,6 +59,8 @@ const FetchSpacePlans = createReactClass({
         error: null
       });
     } catch (error) {
+      logger.logError(error);
+
       this.setState({
         spaceRatePlans: [],
         freeSpacesResource: {limits: {}},
@@ -71,19 +74,19 @@ const FetchSpacePlans = createReactClass({
   }
 });
 
-const RESOURCE_ORDER = ['Environments', 'Roles', 'Locales', 'Content types', 'Records'];
+export const ResourceTypes = {
+  Environments: 'Environments',
+  Roles: 'Roles',
+  Locales: 'Locales',
+  ContentTypes: 'Content types',
+  Records: 'Records'
+};
 
-function getIncludedResources (productRatePlanCharges) {
-  return productRatePlanCharges
-    .filter(({unitType, tiers}) => (
-      unitType === 'limit' && isNumber(get(tiers, '[0].endingUnit'))
-    ))
-    .map(({name, tiers}) => ({
-      name, units: tiers[0].endingUnit
-    }))
-    .sort((first, second) => (
-      RESOURCE_ORDER.indexOf(first.name) > RESOURCE_ORDER.indexOf(second.name)
-    ));
+function getIncludedResources (charges) {
+  return Object.values(ResourceTypes).map((value) => ({
+    type: value,
+    number: get(charges.find(({name}) => name === value), 'tiers[0].endingUnit')
+  }));
 }
 
 export default FetchSpacePlans;

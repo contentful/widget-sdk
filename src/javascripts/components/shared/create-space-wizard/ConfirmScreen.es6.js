@@ -42,14 +42,14 @@ const ConfirmScreen = createReactClass({
               <p className="create-space-wizard__subheading">
                 Make sure everything is in order before creating the space.
               </p>
-              <p>
+              <p className="create-space-wizard__info">
                 You are about to purchase a {spaceRatePlan.name.toLowerCase()} space
                 for <strong>{formatPrice(spaceRatePlan.price)} / month</strong> for the
                 organization <em>{organization.name}</em>.
                 {requestState === RequestState.SUCCESS && <span>
                   {' '}
-                  This will bring up the total of your organization’s subscription
-                  to <strong>{formatPrice(totalPrice + spaceRatePlan.price)} / month.</strong>
+                  This will increase your organization’s subscription
+                  to <strong>{formatPrice(totalPrice + spaceRatePlan.price)} / month</strong>
                 </span>}
                 {' '}
                 (<a
@@ -58,9 +58,9 @@ const ConfirmScreen = createReactClass({
                   onClick={() => onNavigate(Steps.SpaceType)}>
                   change space type
                 </a>).
-                The space’s name will be <em>{spaceName}</em>, and we
-                {template ? ` will ` : ' won’t '}
-                fill it with example content
+                The space’s name will be <em>{spaceName}</em>
+                {template && ', and we will fill it with example content'}
+                {' '}
                 (<a
                   className="text-link"
                   href="#"
@@ -70,8 +70,9 @@ const ConfirmScreen = createReactClass({
               </p>
               <div style={{textAlign: 'center', margin: '1.2em 0'}}>
                 <button
-                  className={`button btn-action ${isFormSubmitted ? 'is-loading' : ''}`}
+                  className={`button btn-primary-action ${isFormSubmitted ? 'is-loading' : ''}`}
                   disabled={isFormSubmitted}
+                  data-test-id="space-create-confirm"
                   onClick={onSubmit}>
                   Confirm and create space
                 </button>

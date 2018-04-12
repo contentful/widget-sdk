@@ -56,6 +56,7 @@
     "node-html-encoder": "0.0.2",
     "pegjs": "^0.8.0",
     "pikaday": "^1.4.0",
+    "pluralize": "^7.0.0",
     "promise": "^6.0.1",
     "prop-types": "^15.6.0",
     "proxyquire": "^1.7.11",

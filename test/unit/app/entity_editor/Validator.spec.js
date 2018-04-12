@@ -75,5 +75,23 @@ describe('app/entity_editor/Validator', function () {
 
       expect(this.getErrorIds()).toEqual(['THIS AFTER', 'OTHER BEFORE']);
     });
+
+    it('removes the entire field-errors', function () {
+      // Initial errors
+      this.schemaErrors.returns([
+        {id: 'THIS BEFORE', path: ['fields', 'FID-1']},
+        {id: 'OTHER BEFORE', path: ['fields', 'FID-2', 'LOCALE']}
+      ]);
+      this.validator.run();
+      expect(this.getErrorIds()).toEqual(['THIS BEFORE', 'OTHER BEFORE']);
+
+      // New errors. Validate only specified field
+      this.schemaErrors.returns([
+        {id: 'OTHER AFTER', path: ['fields', 'FID-2', 'LOCALE']}
+      ]);
+      this.validator.validateFieldLocale('FID-1', 'LOCALE');
+
+      expect(this.getErrorIds()).toEqual(['OTHER BEFORE']);
+    });
   });
 });
