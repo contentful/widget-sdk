@@ -224,7 +224,11 @@ function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
         "Your organization doesn't have any spaces. "
       }
       { hasSpacePlans &&
-        <span>The total for your <b><Pluralized text="space" count={numSpaces} /></b> is <b><Price value={totalCost} /></b> per month.&#32;</span>
+        <span>Your organization has <b><Pluralized text="space" count={numSpaces} /></b>.&#32;</span>
+      }
+      {
+        totalCost > 0 &&
+          <span>The total for your spaces is <b><Price value={totalCost} /></b> per month.&#32;</span>
       }
       <a className='text-link' onClick={onCreateSpace}>Add Space</a>
     </p>
