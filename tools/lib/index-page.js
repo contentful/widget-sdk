@@ -88,8 +88,7 @@ function indexPage (uiVersion, config, resolve, entryScripts) {
       tabindex: '0',
       ngApp: 'contentful/app',
       ngCsp: 'no-inline-style;no-unsafe-eval',
-      ngController: 'ClientController',
-      ngInit: 'initClient()'
+      ngController: 'ClientController'
     }, [
       h('.client', [
         h('cf-app-container.app-container.ng-hide', {ngShow: 'user', cfRolesForWalkMe: ''}),
