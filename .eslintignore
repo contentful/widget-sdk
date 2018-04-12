@@ -12,7 +12,6 @@ test/unit/forms/field_errors_spec.js
 test/unit/forms/form_directives_spec.js
 test/unit/forms/ng_model_spec.js
 test/unit/forms/ng_no_form_spec.js
-test/unit/services/assert_spec.js
 test/unit/services/contentful_client_spec.js
 test/unit/services/exception_handler_spec.js
 test/unit/services/field_factory_spec.js
@@ -93,7 +92,6 @@ src/javascripts/directives/cf_relative_datetime.js
 src/javascripts/directives/cf_select_all_input.js
 src/javascripts/directives/tooltip_directive.js
 src/javascripts/directives/cf_when_disabled.js
-src/javascripts/services/assert.js
 src/javascripts/services/field_factory.js
 src/javascripts/services/get.js
 src/javascripts/services/kaltura_widget_loader.js

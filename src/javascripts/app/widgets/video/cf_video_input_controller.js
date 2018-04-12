@@ -3,12 +3,9 @@
 angular.module('contentful').controller('cfVideoInputController', ['$attrs', '$scope', 'require', function($attrs, $scope, require){
   var controller = this;
 
-  var assert                  = require('assert');
   var debounce                = require('debounce');
   var modalDialog             = require('modalDialog');
   var debouncedFetchAssetInfo = debounce(fetchAssetInfo, 750);
-
-  assert.defined($attrs.assetLookup, 'Video Input Directive needs a callback to lookup details about the given asset id');
 
   $scope.videoInput = {
     isLoading: false,
