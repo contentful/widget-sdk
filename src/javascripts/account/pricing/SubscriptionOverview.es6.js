@@ -64,8 +64,6 @@ const SubscriptionOverview = createReactClass({
       return;
     }
 
-    onReady();
-
     const basePlan = plans.items.find(({planType}) => planType === 'base');
     const spacePlans = plans.items
       .filter(({planType}) => planType === 'space')
@@ -93,6 +91,8 @@ const SubscriptionOverview = createReactClass({
     const usersMeta = calcUsersMeta({ basePlan, numMemberships });
 
     this.setState({basePlan, spacePlans, grandTotal, usersMeta, organization});
+
+    onReady();
   },
   createSpace: function () {
     showCreateSpaceModal(this.props.orgId);
