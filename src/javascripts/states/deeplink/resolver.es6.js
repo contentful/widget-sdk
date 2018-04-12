@@ -2,6 +2,7 @@ import spaceContext from 'spaceContext';
 import {runTask} from 'utils/Concurrent';
 import {getSpaceInfo, getOrg, checkSpaceApiAccess, checkOrgAccess} from './utils';
 import logger from 'logger';
+import {isLegacyOrganization} from 'utils/ResourceUtils';
 
 /**
  * @description Given a string identifier we return a state reference (for our
@@ -123,9 +124,12 @@ function resolveUsers () {
 
 function resolveSubscriptions () {
   return runTask(function* () {
-    const { orgId } = yield* getOrg();
+    const { orgId, org } = yield* getOrg();
+
+    const hasNewPricing = !isLegacyOrganization(org);
+
     return yield* applyOrgAccess(orgId, {
-      path: ['account', 'organizations', 'subscription'],
+      path: ['account', 'organizations', hasNewPricing ? 'subscription_new' : 'subscription'],
       params: {
         orgId,
         // dummy pathsuffix since we don't want to redirect

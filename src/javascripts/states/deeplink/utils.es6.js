@@ -36,10 +36,10 @@ export function* getOrg () {
   const usedOrg = lastUsedOrgId && orgs.find(org => org.sys.id === lastUsedOrgId);
 
   if (usedOrg) {
-    return { orgId: lastUsedOrgId };
+    return { orgId: lastUsedOrgId, org: usedOrg };
   } else {
     const { space } = yield* getSpaceInfo();
-    return { orgId: space.organization.sys.id };
+    return { orgId: space.organization.sys.id, org: space.organization };
   }
 }
 

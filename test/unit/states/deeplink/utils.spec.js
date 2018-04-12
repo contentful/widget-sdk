@@ -67,25 +67,30 @@ describe('states/deeplink/utils', function () {
 
   describe('#getOrg', function () {
     it('returns orgId from the store', function* () {
-      this.storeGet.returns('some_org_id');
-      this.getOrganizations.resolves([{ sys: { id: 'some_org_id' } }]);
-      const { orgId } = yield* this.utils.getOrg();
+      const returnedOrg = { sys: { id: 'some_org_id' }, pricing: 'old' };
+      this.storeGet.returns(returnedOrg.sys.id);
 
-      expect(orgId).toBe('some_org_id');
+      this.getOrganizations.resolves([returnedOrg]);
+      const { orgId, org } = yield* this.utils.getOrg();
+
+      expect(orgId).toBe(returnedOrg.sys.id);
+      expect(org).toBe(returnedOrg);
     });
 
     it('returns org from the selected space', function* () {
+      const spaceOrg = {sys: {id: 'some_new_org_id'}};
       this.storeGet.returns('some_org_id');
       this.getOrganizations.resolves([]);
       this.getSpaces.resolves([
         {
-          organization: {sys: {id: 'some_new_org_id'}},
+          organization: spaceOrg,
           sys: {id: 'some_space_id'}
         }
       ]);
-      const { orgId } = yield* this.utils.getOrg();
+      const { orgId, org } = yield* this.utils.getOrg();
 
-      expect(orgId).toBe('some_new_org_id');
+      expect(orgId).toBe(spaceOrg.sys.id);
+      expect(org).toBe(spaceOrg);
     });
   });
 });
