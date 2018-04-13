@@ -13,10 +13,11 @@ const OrganizationResourceUsageList = ({resources}) => {
   if (!resources.length) return null;
 
   const formatDate = date => moment(date).format('DD MMMM');
+
   const byId = keyBy(resources, property('sys.id'));
   const {start, end} = byId['api_request'].period;
-  const now = new Date();
-  const daysLeft = moment(end).diff(now, 'days');
+  const nowNormalized = moment.utc(new Date().toDateString(), 'ddd MMM DD YYYY');
+  const daysLeft = moment(end).diff(nowNormalized, 'days');
   const startDate = formatDate(start);
   const endDate = formatDate(end);
 
