@@ -15,7 +15,8 @@ angular.module('contentful')
     template: template(),
     restrict: 'E',
     scope: {
-      context: '='
+      context: '=',
+      hideHeader: '='
     },
     link: function (scope, elem) {
       var iframe = elem.find('iframe');
@@ -59,12 +60,12 @@ angular.module('contentful')
     return h('div', {
       style: {
         position: 'absolute',
-        top: '70px',
         left: 0,
         right: 0,
         bottom: 0,
         background: 'white'
-      }
+      },
+      ngStyle: "{top: hideHeader ? '0' : '70px'}"
     }, [
       h('iframe', { width: '100%', height: '100%', id: 'accountViewFrame' })
     ]);
