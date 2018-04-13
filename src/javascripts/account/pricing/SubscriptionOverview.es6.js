@@ -64,8 +64,6 @@ const SubscriptionOverview = createReactClass({
       return;
     }
 
-    onReady();
-
     const basePlan = plans.items.find(({planType}) => planType === 'base');
     const spacePlans = plans.items
       .filter(({planType}) => planType === 'space')
@@ -93,6 +91,8 @@ const SubscriptionOverview = createReactClass({
     const usersMeta = calcUsersMeta({ basePlan, numMemberships });
 
     this.setState({basePlan, spacePlans, grandTotal, usersMeta, organization});
+
+    onReady();
   },
   createSpace: function () {
     showCreateSpaceModal(this.props.orgId);
@@ -125,8 +125,8 @@ const SubscriptionOverview = createReactClass({
         h('div', {
           className: 'header'
         },
-          h(BasePlan, {basePlan}),
-          h(UsersForPlan, { usersMeta })
+          h(BasePlan, { basePlan, orgId }),
+          h(UsersForPlan, { usersMeta, orgId })
         ),
           h(SpacePlans, {
             spacePlans,
@@ -157,26 +157,33 @@ Pluralized.propTypes = {
   count: PropTypes.number.isRequired
 };
 
-function UsersForPlan ({ usersMeta }) {
+function UsersForPlan ({ usersMeta, orgId }) {
   const { numFree, numPaid, cost } = usersMeta;
   const numTotal = numFree + numPaid;
 
   return <div className='users'>
     <h2 className='section-title'>Users</h2>
     <p>
-      Your organization has <b><Pluralized text="user" count={numTotal} /></b>.
+      <span>Your organization has <b><Pluralized text="user" count={numTotal} /></b>.&#32;</span>
       { numPaid > 0 &&
-        <span>&#32;You are exceeding the limit of <Pluralized text="free user" count={numFree} /> by <Pluralized text="user" count={numPaid} />. That is <b>${cost}</b> per month.</span>
+        <span>You are exceeding the limit of <Pluralized text="free user" count={numFree} /> by <Pluralized text="user" count={numPaid} />. That is <b>${cost}</b> per month.&#32;</span>
       }
+      <a
+        className='text-link'
+        href={href(getOrgMembershipsNavState(orgId))}
+        data-test-id='subscription-page.org-memberships-link'>
+        Manage users
+      </a>
     </p>
   </div>;
 }
 
 UsersForPlan.propTypes = {
-  usersMeta: PropTypes.object.isRequired
+  usersMeta: PropTypes.object.isRequired,
+  orgId: PropTypes.string.isRequired
 };
 
-function BasePlan ({basePlan}) {
+function BasePlan ({ basePlan, orgId }) {
   const enabledFeaturesNames = getEnabledFeatures(basePlan).map(({name}) => name);
 
   return <div className='platform'>
@@ -187,80 +194,83 @@ function BasePlan ({basePlan}) {
       </b>
       {
         enabledFeaturesNames.length
-          ? ` – includes ${joinAnd(enabledFeaturesNames)}.`
-          : ' – doesn’t include any additional features.'
+          ? ` – includes ${joinAnd(enabledFeaturesNames)}. `
+          : ' – doesn’t include any additional features. '
       }
+      <a
+        className='text-link'
+        href={href(getOrgUsageNavState(orgId))}
+        data-test-id='subscription-page.org-usage-link'>
+        View usage
+      </a>
     </p>
   </div>;
 }
 
 BasePlan.propTypes = {
-  basePlan: PropTypes.object.isRequired
+  basePlan: PropTypes.object.isRequired,
+  orgId: PropTypes.string.isRequired
 };
 
 function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
-  if (!spacePlans.length) {
-    return h('div', {
-      'data-test-id': 'subscription-page.no-spaces'
-    },
-      h('h2', {
-        className: 'section-title'
-      }, null, 'Spaces'),
-      h('p', null,
-        'Your organization doesn\'t have any spaces. ',
-        h('button', {
-          className: 'btn-link',
-          onClick: onCreateSpace
-        }, 'Add space')
-      )
-    );
-  } else {
-    const spacesTotal = calculatePlansCost({ plans: spacePlans });
+  const numSpaces = spacePlans.length;
+  const hasSpacePlans = numSpaces > 0;
+  const totalCost = calculatePlansCost({ plans: spacePlans });
 
-    return h('div', null,
-      h('h2', {
-        className: 'section-title'
-      }, null, 'Spaces'),
-      h('p', {
-        style: {marginBottom: '2em'},
-        'data-test-id': 'subscription-page.spaces-total'
-      }, null,
-        'The total for your ',
-        h('b', null, `${spacePlans.length} spaces`),
-        ' is ',
-        h(Price, {value: spacesTotal, style: {fontWeight: 'bold'}}),
-        ' per month.'
-        // TODO show available free spaces
-      ),
-      h('table', {
-        className: 'simple-table',
-        'data-test-id': 'subscription-page.spaces-list'
-      },
-        h('thead', null,
-          h('tr', null,
-            h('th', {style: {width: '25%'}}, 'Name'),
-            h('th', {style: {width: '30%'}}, 'Space type / price'),
-            h('th', {style: {width: '10%'}}, 'Created by'),
-            h('th', {style: {width: '10%'}}, 'Created on'),
-            h('th', {style: {width: '25%'}}, 'Actions')
-          )
-        ),
-        h('tbody', {className: 'clickable'}, spacePlans.map(
-          (plan) => h(SpacePlanRow, {
-            key: plan.sys.id || (plan.space && plan.space.sys.id),
-            plan,
-            onDeleteSpace,
-            isOrgOwner
-          })
-        ))
-      )
-    );
-  }
+  return <div>
+    <h2 className='section-title'>Spaces</h2>
+    <p style={{ marginBottom: '1.5em' }}>
+      { !hasSpacePlans &&
+        "Your organization doesn't have any spaces. "
+      }
+      { hasSpacePlans &&
+        <span>Your organization has <b><Pluralized text="space" count={numSpaces} /></b>.&#32;</span>
+      }
+      {
+        totalCost > 0 &&
+          <span>The total for your spaces is <b><Price value={totalCost} /></b> per month.&#32;</span>
+      }
+      <a className='text-link' onClick={onCreateSpace}>Add Space</a>
+    </p>
+
+    { hasSpacePlans &&
+      <table className='simple-table'>
+        <thead>
+          <tr>
+            <th style={{width: '25%'}}>Name</th>
+            <th style={{width: '30%'}}>Space type / price</th>
+            <th style={{width: '10%'}}>Created by</th>
+            <th style={{width: '10%'}}>Created on</th>
+            <th style={{width: '25%'}}>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          { spacePlans.map(plan => {
+            return <SpacePlanRow
+              key={plan.sys.id || plan.space && plan.space.sys.id}
+              plan={plan}
+              onDeleteSpace={onDeleteSpace}
+              isOrgOwner={isOrgOwner}
+            />;
+          })}
+        </tbody>
+      </table>
+    }
+  </div>;
 }
+
+SpacePlans.propTypes = {
+  spacePlans: PropTypes.array.isRequired,
+  onCreateSpace: PropTypes.func.isRequired,
+  onDeleteSpace: PropTypes.func.isRequired,
+  isOrgOwner: PropTypes.bool.isRequired
+};
 
 function SpacePlanRow ({plan, onDeleteSpace, isOrgOwner}) {
   const space = plan.space;
   const enabledFeatures = getEnabledFeatures(plan);
+  const hasAnyFeatures = enabledFeatures.length > 0;
+
   let actionLinks = [];
   let createdBy = '';
   let createdAt = '';
@@ -271,29 +281,27 @@ function SpacePlanRow ({plan, onDeleteSpace, isOrgOwner}) {
     actionLinks = getSpaceActionLinks(space, isOrgOwner, onDeleteSpace);
   }
 
-  const featuresTooltip = enabledFeatures.length
-  ? 'This space type includes ' + joinAnd(enabledFeatures.map(({name}) => name))
-  : 'This space type doesn’t include any additional features';
-
-  return h('tr', null,
-    h('td', {
-      'data-test-id': 'subscription-page.spaces-list.space-name'
-    }, h('strong', {style: {margin: 0}}, get(space, 'name', '—'))),
-    h('td', {
-      'data-test-id': 'subscription-page.spaces-list.space-plan'
-    },
-      h('strong', {style: {marginTop: 0}},
-        plan.name
-      ),
-      h(HelpIcon, null, featuresTooltip),
-      h('br'),
-      h(Price, {value: plan.price, unit: 'month'})
-    ),
-    h('td', null, createdBy),
-    h('td', null, createdAt),
-    h('td', null, ...actionLinks)
-  );
+  return <tr>
+    <td><strong>{get(space, 'name', '-')}</strong></td>
+    <td>
+      <strong>{plan.name}</strong>
+      { hasAnyFeatures &&
+        <HelpIcon>This space includes {joinAnd(enabledFeatures.map(({name}) => name))}</HelpIcon>
+      }
+      <br />
+      <Price value={plan.price} unit='month' />
+    </td>
+    <td>{createdBy}</td>
+    <td>{createdAt}</td>
+    <td>{actionLinks.map(actionLink => actionLink)}</td>
+  </tr>;
 }
+
+SpacePlanRow.propTypes = {
+  plan: PropTypes.object.isRequired,
+  onDeleteSpace: PropTypes.func.isRequired,
+  isOrgOwner: PropTypes.bool.isRequired
+};
 
 function RightSidebar ({grandTotal, orgId, isOrgOwner, isOrgBillable, onContactUs}) {
   // TODO - add these styles to stylesheets
@@ -444,6 +452,22 @@ function getSpaceUsageNavState (spaceId) {
   return {
     path: ['spaces', 'detail', 'settings', 'usage'],
     params: {spaceId},
+    options: { reload: true }
+  };
+}
+
+function getOrgUsageNavState (orgId) {
+  return {
+    path: ['account', 'organizations', 'usage'],
+    params: { orgId },
+    options: { reload: true }
+  };
+}
+
+function getOrgMembershipsNavState (orgId) {
+  return {
+    path: ['account', 'organizations', 'users'],
+    params: { orgId },
     options: { reload: true }
   };
 }

@@ -217,11 +217,12 @@ $close-button-small()
     cursor: pointer
     transition: all ease-in-out .1s
     $item-label($colors.text-lightest, $colors.text-light)
+    &:hover
+      z-index: 1
     &:not(&--disabled):hover
       border: 1px solid $colors.element-darkest
       box-shadow: 0 3px 3px 0 rgba(0,0,0,0.08)
       transform: translateY(-2px)
-      z-index: 1
     &--selected
       border: 1px solid $colors.blue-dark
     &:before
@@ -241,15 +242,19 @@ $close-button-small()
     &--large
       $item-label($colors.red-light, $colors.red-mid)
     &--disabled
+      $opacity = 0.3
       cursor: not-allowed
-      opacity: .3
+      border-color: 1px solid rgba($colors.element-mid, $opacity)
+      &, & em, & strong
+        color: rgba($colors.text-dark, $opacity)
+      &:before
+        opacity: $opacity
 
     &__heading
       font-size: 17px
       line-height: 1.2
 
     &__features
-      color: $colors.text-mid
       display: flex
       flex-direction: row
       margin-top: 4px
@@ -259,6 +264,8 @@ $close-button-small()
           margin-left: 0
         &:last-child
           margin-right: 0
+    &:not(&--disabled) &__features
+      color: $colors.text-mid
     &__chevron
       transform: rotate(-90deg)
       position: absolute

@@ -66,10 +66,6 @@ const KALTURA_VENDOR_SRC = assertFilesExist([
   'vendor/kaltura-16-01-2014/KalturaClient.js'
 ]);
 
-const SNOWPLOW_VENDOR_SRC = assertFilesExist([
-  'vendor/snowplow/sp-2.6.2.js'
-]);
-
 gulp.task('js', [
   'js/external-bundle',
   'js/app',
@@ -78,8 +74,7 @@ gulp.task('js', [
 
 gulp.task('js/vendor', [
   'js/vendor/main',
-  'js/vendor/kaltura',
-  'js/vendor/snowplow'
+  'js/vendor/kaltura'
 ]);
 
 gulp.task('js/vendor/main', ['js/vendor/sharejs'], function () {
@@ -116,12 +111,6 @@ gulp.task('js/vendor/sharejs', function () {
     }),
     gulp.dest('./public/app/')
   ]);
-});
-
-gulp.task('js/vendor/snowplow', function () {
-  return gulp.src(SNOWPLOW_VENDOR_SRC)
-    .pipe(concat('snowplow.js'))
-    .pipe(gulp.dest('./public/app'));
 });
 
 gulp.task('js/vendor/kaltura', function () {
