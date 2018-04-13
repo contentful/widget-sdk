@@ -13,8 +13,8 @@ angular.module('contentful')
 
       ReactDOM.render(React.createElement(SubscriptionOverview, {
         orgId: $scope.properties.orgId,
-        onReady: function () { context.ready = true; $scope.$apply(); },
-        onForbidden: function () { context.forbidden = true; $scope.$apply(); }
+        onReady: function () { context.ready = true; $scope.$applyAsync(); },
+        onForbidden: function () { context.forbidden = true; $scope.$applyAsync(); }
       }), host);
 
       $scope.$on('$destroy', function () {
