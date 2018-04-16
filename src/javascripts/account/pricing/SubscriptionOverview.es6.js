@@ -1,4 +1,4 @@
-import React, {createElement as h, Fragment} from 'react';
+import React, {Fragment} from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import {runTask} from 'utils/Concurrent';
@@ -480,8 +480,18 @@ function getSpaceActionLinks (space, isOrgOwner, onDeleteSpace) {
 function Price ({value = 0, currency = '$', unit = null, style = null}) {
   const valueStr = parseInt(value, 10).toLocaleString('en-US');
   const unitStr = unit && ` /${unit}`;
-  return h('span', {style}, [currency, valueStr, unitStr].join(''));
+
+  const priceStr = [currency, valueStr, unitStr].join('');
+
+  return <span style={style}>{priceStr}</span>;
 }
+
+Price.propTypes = {
+  value: PropTypes.number.isRequired,
+  currency: PropTypes.string.isRequired,
+  unit: PropTypes.string,
+  style: PropTypes.object
+};
 
 function getSpaceNavState (spaceId) {
   return {
