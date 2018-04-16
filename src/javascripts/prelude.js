@@ -73,7 +73,6 @@ angular.module('contentful/app', ['contentful'])
   require('Debug').init(window);
   require('Authentication').init();
   require('services/TokenStore').init();
-  require('presence').startTracking();
   require('utils/LaunchDarkly').init();
   require('navigation/stateChangeHandlers').setup();
   require('ui/ContextMenuHandler').default($document);

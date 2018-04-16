@@ -69,7 +69,7 @@ angular.module('contentful')
   }
 
   function getIntegrationToken () {
-    return client.getIntegrationToken('aviary');
+    return client.request({method: 'GET', path: '/integrations/aviary'});
   }
 
   return {

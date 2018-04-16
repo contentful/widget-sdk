@@ -11,10 +11,6 @@ var Client = function Client (adapter) {
 };
 
 Client.prototype = {
-  getIntegrationToken: function (name) {
-    return this.endpoint('integrations', name).get();
-  },
-
   endpoint: function () {
     return this.persistenceContext.endpoint().paths(arguments);
   }

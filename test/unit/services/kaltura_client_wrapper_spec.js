@@ -85,12 +85,6 @@ describe('Kaltura Client Wrapper', function () {
   });
 
   describe('#entry', function () {
-    describe('when the organization id has not been set', function () {
-      it('raises an exception', function () {
-        expect(function () { kalturaClientWrapper.entry(1); }).toThrow();
-      });
-    });
-
     describe('when the organizationId has been set', function () {
       beforeEach(function () {
         kalturaClientWrapper.setOrganizationId('org-123');
@@ -111,12 +105,6 @@ describe('Kaltura Client Wrapper', function () {
   });
 
   describe('#list', function () {
-    describe('when the organization id has not been set', function () {
-      it('raises an exception', function () {
-        expect(function () { kalturaClientWrapper.list('filter', 'pager'); }).toThrow();
-      });
-    });
-
     describe('when the organizationId has been set', function () {
       beforeEach(function () {
         kalturaClientWrapper.setOrganizationId('org-123');

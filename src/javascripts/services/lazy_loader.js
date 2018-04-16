@@ -94,7 +94,6 @@ angular.module('contentful')
 }])
 
 .factory('LazyLoader/resources', ['require', function (require) {
-  var AssetResolver = require('AssetResolver');
   var environment = require('environment');
   var Config = require('Config');
 
@@ -125,7 +124,7 @@ angular.module('contentful')
       globalObject: 'filestack'
     },
     kaltura: {
-      url: AssetResolver.resolve('app/kaltura.js'),
+      url: ['development', 'unittest'].includes(environment.env) ? '/app/kaltura.js' : ('//static.' + Config.domain + '/app/kaltura.js'),
       globalObject: 'KalturaClient'
     },
     googleMaps: {

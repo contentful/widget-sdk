@@ -15,7 +15,6 @@ angular.module('contentful/environment')
   var injected = extractInjectedConfig();
 
   /**
-   *
    * @ngdoc property
    * @name environment#env
    * @type {string}
@@ -27,31 +26,10 @@ angular.module('contentful/environment')
    *
    * The tests also use the `unittest` value.
    */
-  var env = injected.config.environment;
-  var isDev = env === 'development';
-
-  var settings = _.extend({
-    /**
-     * @ngdoc property
-     * @name environment#settings.disableUpdateCheck.
-     * @type {boolean}
-     * @description
-     * If not set, query the API for the currently available version of the app
-     * and display a notification if a newer version is available.
-     *
-     * It defaults to `false` and is set to `true` in the development
-     * environment.
-     *
-     * Used in 'ClientController'.
-     */
-    disableUpdateCheck: isDev
-  }, injected.config);
-
   return {
-    env: env,
-    settings: settings,
-    gitRevision: injected.uiVersion,
-    manifest: injected.manifest || {}
+    env: injected.config.environment,
+    settings: injected.config,
+    gitRevision: injected.uiVersion
   };
 
   function extractInjectedConfig () {

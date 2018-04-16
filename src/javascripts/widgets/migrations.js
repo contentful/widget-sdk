@@ -39,6 +39,10 @@ angular.module('contentful')
   {
     from: 'kalturaMultiVideoEditor',
     to: 'listInput'
+  },
+  {
+    from: 'ooyalaMultiAssetEditor',
+    to: 'listInput'
   }
 ])
 

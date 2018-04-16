@@ -267,14 +267,6 @@ angular.module('contentful')
     template: '<cf-ooyala-editor></cf-ooyala-editor>'
   });
 
-  registerWidget('ooyalaMultiAssetEditor', {
-    fieldTypes: ['Symbols'],
-    name: 'Ooyala (multiple assets)',
-    icon: 'video-preview',
-    rendersHelpText: true,
-    template: '<cf-ooyala-multi-video-editor />'
-  });
-
   registerWidget('kalturaEditor', {
     fieldTypes: ['Symbol'],
     name: 'Kaltura',

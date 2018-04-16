@@ -1,7 +1,6 @@
 'use strict';
 
 angular.module('contentful').factory('ooyalaClient', ['require', function (require){
-  var assert              = require('assert');
   var OoyalaErrorMessages = require('OoyalaErrorMessages');
   var client              = require('client');
   var $q                  = require('$q');
@@ -24,8 +23,6 @@ angular.module('contentful').factory('ooyalaClient', ['require', function (requi
     },
 
     request: function(method, path, payload) {
-      assert.defined(this.organizationId, 'Ooyala Client needs the current organization id');
-
       return client.request({
         method   : method,
         path     : path,

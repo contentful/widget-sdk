@@ -1,5 +1,4 @@
 const B = require('bluebird');
-const P = require('path');
 const CP = require('child_process');
 
 const FS = B.promisifyAll(require('fs-extra'));
@@ -25,16 +24,6 @@ module.exports.readMergeJSON = function readMergeJSON (paths) {
   });
 };
 
-/**
- * Stringify and write a JSON object to a file.
- */
-module.exports.writeJSON = function writeJSON (path, obj) {
-  return mkdirp(P.dirname(path))
-  .then(() => {
-    const content = JSON.stringify(obj);
-    return FS.writeFileAsync(path, content, 'utf8');
-  });
-};
 
 /**
  * Run a command and get the contents of `stdout`.
