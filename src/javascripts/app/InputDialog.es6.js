@@ -38,7 +38,7 @@ export default function open (params = {}) {
       const {min, max, regex, value} = input;
       const maxLength = isFinite(max) ? `${max}` : '';
       const onChange = e => render(e.target.value);
-      const cancel = () => $scope.dialog.cancel();
+      const cancel = () => $scope.dialog.cancel({cancelled: true});
 
       render(value);
 
