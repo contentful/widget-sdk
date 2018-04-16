@@ -10,7 +10,7 @@ describe('data/document/ResourceStateManager', function () {
     this.State = State;
 
     const DocLoad = this.$inject('data/sharejs/Connection').DocLoad;
-    const Doc = this.$inject('entityEditor/Document');
+    const Doc = this.$inject('app/entity_editor/Document');
 
     const endpoint = createMockSpaceEndpoint();
     this.spaceEndpoint = sinon.spy(endpoint.request);

@@ -7,7 +7,7 @@ angular.module('cf.app')
  * @name SnapshotComparatorController/snapshotDoc
  * @description
  * Given the entry data, it returns a fake
- * instance of "entityEditor/Document".
+ * instance of 'app/entity_editor/Document'.
  *
  * Values at paths are created from the
  * data provided, but all mutating methods

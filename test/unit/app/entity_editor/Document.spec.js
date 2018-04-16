@@ -66,7 +66,7 @@ describe('entityEditor/Document', function () {
     };
 
     this.createDoc = (type = 'Entry') => {
-      const Doc = this.$inject('entityEditor/Document');
+      const Doc = this.$inject('app/entity_editor/Document');
 
       this.entity.data.sys.type = type;
 
