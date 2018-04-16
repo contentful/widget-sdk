@@ -10,9 +10,6 @@ import api from 'app/api/State';
 import settings from './settings';
 import home from './space_home';
 
-import locales from 'states/settings/locales';
-import extensions from 'states/settings/Extensions';
-
 const store = getStore();
 
 // TODO convert JST templates to hyperscript
@@ -69,12 +66,10 @@ const spaceEnvironment = {
     entries.withoutSnapshots,
     assets,
     api,
-    {
-      name: 'settings',
-      url: '/settings',
-      abstract: true,
-      children: [locales, extensions]
-    }
+    // Some of the settings states are not children of environments
+    // conceptually. However, we want to prevent users going to space
+    // settings and switching to the master environment in the process.
+    settings
   ]
 };
 

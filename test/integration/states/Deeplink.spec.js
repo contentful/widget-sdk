@@ -37,6 +37,9 @@ describe('states/Deeplink', function () {
       $provide.value('states/Navigator', {
         go: this.navigate
       });
+      $provide.value('utils/LaunchDarkly', {
+        getCurrentVariation: () => Promise.resolve(false)
+      });
     });
 
     const getStore = this.$inject('TheStore').getStore;
