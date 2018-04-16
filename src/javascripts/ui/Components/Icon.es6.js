@@ -22,6 +22,7 @@ import PageSettings from 'svg/page-settings';
 import PageUsage from 'svg/page-usage';
 import Bubble from 'svg/bubble';
 import ArrowDown from 'svg/dd-arrow-down';
+import InvoiceIcon from 'svg/invoice';
 
 const SVGS = {
   'home-welcome': HomeWelcomeIcon,
@@ -41,7 +42,8 @@ const SVGS = {
   'page-settings': PageSettings,
   'page-usage': PageUsage,
   'bubble': Bubble,
-  'dd-arrow-down': ArrowDown
+  'dd-arrow-down': ArrowDown,
+  'invoice': InvoiceIcon
 };
 
 const Icon = createReactClass({
