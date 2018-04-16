@@ -16,7 +16,8 @@ import moment from 'moment';
 import {get, isString} from 'lodash';
 import {supportUrl} from 'Config';
 import $location from '$location';
-import Workbench from 'app/WorkbenchReact';
+
+import Workbench from 'ui/Components/Workbench/JSX';
 import Tooltip from 'ui/Components/Tooltip';
 import HelpIcon from 'ui/Components/HelpIcon';
 import pluralize from 'pluralize';
@@ -33,6 +34,7 @@ const SubscriptionOverview = createReactClass({
     onForbidden: PropTypes.func.isRequired,
     orgId: PropTypes.string.isRequired
   },
+
   getInitialState: function () {
     return {
       organization: {},
@@ -42,9 +44,11 @@ const SubscriptionOverview = createReactClass({
       usersMeta: {}
     };
   },
+
   componentWillMount: function () {
     runTask(this.fetchData);
   },
+
   fetchData: function* () {
     const {orgId, onReady, onForbidden} = this.props;
 
@@ -81,28 +85,29 @@ const SubscriptionOverview = createReactClass({
 
     const membershipsResource = yield resources.get('organization_membership');
     const numMemberships = membershipsResource.usage;
-
+    const usersMeta = calcUsersMeta({ basePlan, numMemberships });
     const grandTotal = calculateTotalPrice({
       allPlans: plans.items,
       basePlan,
       numMemberships
     });
 
-    const usersMeta = calcUsersMeta({ basePlan, numMemberships });
-
     this.setState({basePlan, spacePlans, grandTotal, usersMeta, organization});
 
     onReady();
   },
+
   createSpace: function () {
     showCreateSpaceModal(this.props.orgId);
   },
+
   deleteSpace: function (space) {
     openDeleteSpaceDialog({
       space,
       onSuccess: () => { runTask(this.fetchData); }
     });
   },
+
   contactUs: function () {
     // Open intercom if it's possible, otherwise go to support page.
     if (Intercom.isEnabled()) {
@@ -115,34 +120,37 @@ const SubscriptionOverview = createReactClass({
     const {basePlan, spacePlans, grandTotal, usersMeta, organization} = this.state;
     const {orgId} = this.props;
 
-    return h(Workbench, {
-      title: 'Subscription',
-      icon: 'subscription',
-      testId: 'subscription-page',
-      content: h('div', {
-        style: {padding: '0 2rem'}
-      },
-        h('div', {
-          className: 'header'
-        },
-          h(BasePlan, { basePlan, orgId }),
-          h(UsersForPlan, { usersMeta, orgId })
-        ),
-          h(SpacePlans, {
-            spacePlans,
-            onCreateSpace: this.createSpace,
-            onDeleteSpace: this.deleteSpace,
-            isOrgOwner: isOwner(organization)
-          })
-        ),
-      sidebar: h(RightSidebar, {
-        orgId,
-        grandTotal,
-        isOrgOwner: isOwner(organization),
-        isOrgBillable: organization.isBillable,
-        onContactUs: this.contactUs
-      })
-    });
+    return (
+      <Workbench
+        title='Subscription'
+        icon='subscription'
+        testId='subscription-page'
+      >
+        <Workbench.Content>
+          <div style={{padding: '0px 2rem'}}>
+            <div className='header'>
+              <BasePlan basePlan={basePlan} orgId={orgId} />
+              <UsersForPlan usersMeta={usersMeta} orgId={orgId} />
+            </div>
+            <SpacePlans
+              spacePlans={spacePlans}
+              onCreateSpace={this.createSpace}
+              onDeleteSpace={this.deleteSpace}
+              isOrgOwner={isOwner(organization)}
+            />
+          </div>
+        </Workbench.Content>
+        <Workbench.Sidebar>
+          <RightSidebar
+            orgId={orgId}
+            grandTotal={grandTotal}
+            isOrgOwner={isOwner(organization)}
+            isOrgBillable={organization.isBillable}
+            onContactUs={this.contactUs}
+          />
+        </Workbench.Sidebar>
+      </Workbench>
+    );
   }
 });
 
