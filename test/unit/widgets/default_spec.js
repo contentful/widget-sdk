@@ -95,12 +95,12 @@ describe('widgets/default', function () {
     _.forEach(fieldFactory.types, function (typeDescriptor) {
       let field = fieldFactory.createTypeInfo(typeDescriptor);
       let widgetId = getDefault(field, 'displayfieldid');
-      expect(widgetId in builtins).toBe(true);
+      expect(typeof _.find(builtins, {id: widgetId})).toBe('object');
 
       if (typeDescriptor.hasListVariant) {
         field = fieldFactory.createTypeInfo(typeDescriptor, true);
         widgetId = getDefault(field, 'displayfieldid');
-        expect(widgetId in builtins).toBe(true);
+        expect(typeof _.find(builtins, {id: widgetId})).toBe('object');
       }
     });
   });

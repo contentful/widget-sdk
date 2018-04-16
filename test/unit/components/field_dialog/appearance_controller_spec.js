@@ -1,18 +1,14 @@
-'use strict';
-
 describe('FieldDialogAppearanceController', function () {
-
-  beforeEach(module('contentful/test'));
-
   beforeEach(function () {
-    var $controller = this.$inject('$controller');
+    module('contentful/test');
+    const $controller = this.$inject('$controller');
     this.scope = this.$inject('$rootScope').$new();
 
     _.extend(this.scope, {
       field: { type: 'Number' },
       widgetSettings: {
         id: 'numberEditor',
-        params: {},
+        params: {}
       },
       contentType: {
         data: {}
@@ -28,7 +24,6 @@ describe('FieldDialogAppearanceController', function () {
   });
 
   describe('#selectWidget()', function () {
-
     beforeEach(function () {
       expect(this.scope.selectedWidgetIndex).toEqual(0);
     });
@@ -42,7 +37,7 @@ describe('FieldDialogAppearanceController', function () {
     });
 
     it('it updates the widget options', function () {
-      var widgetOptions = [{param: 'myparam'}];
+      const widgetOptions = [{param: 'myparam'}];
       this.scope.availableWidgets[1].options = widgetOptions;
 
       expect(this.scope.widgetOptions).not.toEqual(widgetOptions);
@@ -52,14 +47,15 @@ describe('FieldDialogAppearanceController', function () {
     });
 
     it('applies the default parameters', function () {
-      var Widgets = this.$inject('widgets');
-      Widgets.applyDefaults = sinon.stub();
+      const widgets = this.$inject('widgets');
+      widgets.applyDefaults = sinon.stub();
       this.scope.selectWidget(1);
       this.$apply();
-      sinon.assert.calledOnce(Widgets.applyDefaults);
+      sinon.assert.calledOnce(widgets.applyDefaults);
       sinon.assert.calledWith(
-        Widgets.applyDefaults,
-        this.scope.widget.id, this.scope.widgetParams
+        widgets.applyDefaults,
+        this.scope.availableWidgets[1],
+        this.scope.widgetParams
       );
     });
   });

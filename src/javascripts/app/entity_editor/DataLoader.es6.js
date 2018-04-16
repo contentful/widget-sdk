@@ -5,6 +5,7 @@ import {caseof as caseofEq} from 'sum-types/caseof-eq';
 import {deepFreeze} from 'utils/Freeze';
 import createPrefetchCache from 'data/CMA/EntityPrefetchCache';
 import TheLocaleStore from 'TheLocaleStore';
+import Widgets from 'widgets';
 
 
 /**
@@ -144,7 +145,7 @@ function makeEntryLoader (spaceContext) {
     // times for the bulk editor
     getFieldControls: memoize(wrapTask(function* (contentType) {
       const ei = yield spaceContext.editingInterfaces.get(contentType.data);
-      return spaceContext.widgets.buildRenderable(ei.controls);
+      return Widgets.buildRenderable(ei.controls, spaceContext.widgets.getAll());
     })),
     getOpenDoc: makeDocOpener(spaceContext)
   };
@@ -159,7 +160,11 @@ function makeAssetLoader (spaceContext) {
       return null;
     },
     getFieldControls: function () {
-      return Promise.resolve(spaceContext.widgets.buildRenderable(assetEditorInterface.widgets));
+      const renderable = Widgets.buildRenderable(
+        assetEditorInterface.widgets,
+        spaceContext.widgets.getAll()
+      );
+      return Promise.resolve(renderable);
     },
     getOpenDoc: makeDocOpener(spaceContext)
   };

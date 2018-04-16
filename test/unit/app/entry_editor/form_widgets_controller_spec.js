@@ -4,6 +4,7 @@ describe('FormWidgetsController#widgets', function () {
   beforeEach(function () {
     module('contentful/test');
 
+    this.$inject('mocks/spaceContext').init();
     this.scope = this.$inject('$rootScope').$new();
 
     this.scope.editorContext = this.$inject('mocks/entityEditor/Context').create();

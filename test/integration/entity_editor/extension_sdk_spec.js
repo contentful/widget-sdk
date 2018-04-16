@@ -6,14 +6,7 @@ describe('Extension SDK', function () {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
 
-    const widgets = this.$inject('widgets');
-    widgets.get = sinon.stub().returns({
-      srcdoc:
-        '<!doctype html>' +
-        '<script src="/base/vendor/ui-extensions-sdk/dist/cf-extension-api.js"></script>'
-    });
-
-    const spaceContext = this.$inject('spaceContext');
+    const spaceContext = this.$inject('mocks/spaceContext').init();
     spaceContext.space = { data: {
       sys: {},
       spaceMembership: {
@@ -27,6 +20,15 @@ describe('Extension SDK', function () {
 
     this.apiClient = {};
     spaceContext.cma = this.apiClient;
+
+    spaceContext.widgets.getAll = sinon.stub().returns([
+      {
+        id: 'testWidget',
+        srcdoc:
+          '<!doctype html>' +
+          '<script src="/base/vendor/ui-extensions-sdk/dist/cf-extension-api.js"></script>'
+      }
+    ]);
 
     this.container = $('<div>').appendTo('body');
 
@@ -49,6 +51,7 @@ describe('Extension SDK', function () {
 
     this.scope = {
       widget: {
+        widgetId: 'testWidget',
         field: field
       },
       entityInfo: {
