@@ -3,12 +3,10 @@
 angular.module('contentful')
 .directive('cfFileEditor', ['require', function (require) {
   var _ = require('lodash');
-  var aviary = require('aviary');
   var Filestack = require('services/Filestack');
   var ImageOperations = require('app/widgets/ImageOperations');
   var notification = require('notification');
   var stringUtils = require('stringUtils');
-  var modalDialog = require('modalDialog');
   var mimetype = require('mimetype');
 
   var dropPaneMountCount = 0;
@@ -70,25 +68,6 @@ angular.module('contentful')
         ImageOperations.crop(mode, scope.file).then(setFile, notifyEditError);
       };
 
-      function notifyEditError (err) {
-        if (!err || !err.cancelled) {
-          notification.error('An error occurred while editing your asset.');
-        }
-      }
-
-      scope.editWithAviary = function editWithAviary () {
-        modalDialog.openConfirmDeleteDialog({
-          title: 'Adobe Creative Editor is deprecated',
-          message: [
-            'Adobe Creative Editor will be discontinued by Adobe soon. It\'s still possible to use ',
-            'it but we suggest you to utilize new file editor options provided. You can rotate, ',
-            'mirror, crop (with and without maintaining aspect ratio) and circle images using them.'
-          ].join(''),
-          confirmLabel: 'I still want to use Adobe Creative Editor',
-          cancelLabel: 'Cancel'
-        }).promise.then(openAviary);
-      };
-
       scope.canEditFile = function canEditFile () {
         var isEditable = _.get(scope, 'fieldLocale.access.editable', false);
         var fileType = _.get(scope, 'file.contentType', '');
@@ -97,39 +76,10 @@ angular.module('contentful')
         return isEditable && isImage && isReady;
       };
 
-      function openAviary () {
-        var img = elem[0].querySelectorAll('.thumbnail')[0];
-        var imageUrl = img ? stringUtils.removeQueryString(img.src) : null;
-        if (!imageUrl) {
-          notification.error('The image editor has failed to load.');
-          return;
+      function notifyEditError (err) {
+        if (!err || !err.cancelled) {
+          notification.error('An error occurred while editing your asset.');
         }
-
-        var preview = elem[0].querySelectorAll('[aviary-editor-preview]')[0];
-        preview.src = '';
-
-        preview.onload = function () {
-          aviary.createEditor({
-            image: preview,
-            url: imageUrl,
-            onClose: _.noop
-          }).then(function (aviaryUrl) {
-            return Filestack.store(aviaryUrl);
-          }).then(function (filestackUrl) {
-            return setFile({
-              upload: filestackUrl,
-              fileName: scope.file.fileName,
-              contentType: scope.file.contentType
-            });
-          }).then(function () {
-            aviary.close();
-          }, function (err) {
-            notification.error(err.message || 'An error occurred while editing your asset.');
-            aviary.close();
-          });
-        };
-
-        preview.src = imageUrl;
       }
 
       function setUpload (uploadUrl) {
