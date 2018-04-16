@@ -74,7 +74,6 @@ export default function create (doc, fieldId, localeCode) {
     removeAt: removeAt,
     push: bindToPath('pushValueAt'),
     insert: bindToPath('insertValueAt'),
-    move: bindToPath('moveValueAt'),
     value$: value$,
     valueProperty: valueProperty,
     collaborators: doc.collaboratorsFor(fieldId, localeCode),

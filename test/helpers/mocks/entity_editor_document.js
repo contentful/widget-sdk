@@ -77,7 +77,6 @@ angular.module('contentful/mocks')
       }),
       insertValueAt: sinon.spy(insertValueAt),
       pushValueAt: sinon.spy(pushValueAt),
-      moveValueAt: sinon.spy(moveValueAt),
 
       // TODO should emit when calling setters
       changes: K.createMockStream(),
@@ -133,14 +132,6 @@ angular.module('contentful/mocks')
       list.push(val);
       setValueAt(path, list);
       return $q.resolve(val);
-    }
-
-    function moveValueAt (path, from, to) {
-      const list = getValueAt(path);
-      const [val] = list.splice(from, 1);
-      list.splice(to, 0, val);
-      setValueAt(path, list);
-      return $q.resolve();
     }
 
     function setValueAt (path, value) {

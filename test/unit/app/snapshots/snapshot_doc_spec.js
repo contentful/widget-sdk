@@ -13,8 +13,7 @@ describe('SnapshotComparatorController/snapshotDoc', function () {
     'setValueAt',
     'removeValueAt',
     'insertValueAt',
-    'pushValueAt',
-    'moveValueAt'
+    'pushValueAt'
   ];
 
   beforeEach(function () {

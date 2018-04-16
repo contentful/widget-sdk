@@ -438,7 +438,6 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
     removeValueAt: removeValueAt,
     insertValueAt: insertValueAt,
     pushValueAt: pushValueAt,
-    moveValueAt: moveValueAt,
 
     changes: changes,
     localFieldChanges$: localFieldChangesBus.stream,
@@ -570,13 +569,6 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
     const pos = current ? current.length : 0;
     maybeEmitLocalChange(path);
     return insertValueAt(path, pos, value);
-  }
-
-  function moveValueAt (path, from, to) {
-    return $q.denodeify(function (cb) {
-      maybeEmitLocalChange(path);
-      currentDoc.moveAt(path, from, to, cb);
-    });
   }
 
   function setDoc (doc) {
