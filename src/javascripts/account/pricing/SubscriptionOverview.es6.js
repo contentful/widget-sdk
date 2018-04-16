@@ -100,10 +100,12 @@ const SubscriptionOverview = createReactClass({
   },
 
   deleteSpace: function (space) {
-    openDeleteSpaceDialog({
-      space,
-      onSuccess: () => { runTask(this.fetchData); }
-    });
+    return () => {
+      openDeleteSpaceDialog({
+        space,
+        onSuccess: () => { runTask(this.fetchData); }
+      });
+    };
   },
 
   contactUs: function () {
@@ -394,58 +396,83 @@ RightSidebar.propTypes = {
   onContactUs: PropTypes.func.isRequired
 };
 
+function createLinkFromMeta (meta) {
+  const text = meta.text ? meta.text : '';
+  let link = React.createElement(meta.tag, meta.props, text);
+
+  if (meta.tooltipProps) {
+    link = React.createElement(Tooltip, meta.tooltipProps, link);
+  }
+
+  return link;
+}
+
 function getSpaceActionLinks (space, isOrgOwner, onDeleteSpace) {
   const actionLinkStyle = {padding: '0 10px 0 0', display: 'inline', whiteSpace: 'nowrap'};
-
-  const tooltip = h('div', {style: {whiteSpace: 'normal'}},
-    'You don’t have access to this space. But since you’re an organization ',
-    `${isOrgOwner ? 'owner' : 'admin'} you can grant yourself access by going to `,
-    h('i', null, 'users'),
-    ' and adding yourself to the space.'
+  const tooltip = (
+    <div style={{whiteSpace: 'normal'}}>
+      You don&apos;t have access to this space. But since you&apos;re an organization {isOrgOwner ? 'owner' : 'admin'} you can grand yourself access by going to <i>users</i> and adding yourself to the space.
+    </div>
   );
 
-  let spaceLink = '';
-  let usageLink = '';
-
-  if (space.isAccessible) {
-    spaceLink = h('a', {
+  const spaceLinkMeta = {
+    text: 'Go to space',
+    props: {
       className: 'text-link',
-      href: href(getSpaceNavState(space.sys.id)),
       style: actionLinkStyle,
       'data-test-id': 'subscription-page.spaces-list.space-link'
-    }, 'Go to space');
-    usageLink = h('a', {
+    }
+  };
+
+  const usageLinkMeta = {
+    text: 'Usage',
+    props: {
       className: 'text-link',
-      href: href(getSpaceUsageNavState(space.sys.id)),
       style: actionLinkStyle,
       'data-test-id': 'subscription-page.spaces-list.space-usage-link'
-    }, 'Usage');
+    }
+  };
+
+  if (space.isAccessible) {
+    spaceLinkMeta.tag = 'a';
+    spaceLinkMeta.props.href = href(getSpaceNavState(space.sys.id));
+
+    usageLinkMeta.tag = 'a';
+    usageLinkMeta.props.href = href(getSpaceUsageNavState(space.sys.id));
   } else {
-    spaceLink = h(Tooltip, {
-      tooltip: tooltip,
-      options: {width: 400},
+    spaceLinkMeta.tag = 'button';
+    spaceLinkMeta.props.disabled = true;
+    spaceLinkMeta.tooltipProps = {
+      tooltip,
+      options: {
+        width: 400
+      },
       style: actionLinkStyle
-    }, h('button', {
-      className: 'text-link',
-      disabled: true,
-      'data-test-id': 'subscription-page.spaces-list.space-link'
-    }, 'Go to space'));
-    usageLink = h(Tooltip, {
-      tooltip: tooltip,
-      options: {width: 280},
+    };
+
+    usageLinkMeta.tag = 'button';
+    usageLinkMeta.props.disabled = true;
+    usageLinkMeta.tooltipProps = {
+      tooltip,
+      options: {
+        width: 280
+      },
       style: actionLinkStyle
-    }, h('button', {
-      className: 'text-link',
-      disabled: true,
-      'data-test-id': 'subscription-page.spaces-list.usage-link'
-    }, 'Usage'));
+    };
   }
-  const deleteLink = h('button', {
-    className: 'text-link text-link--destructive',
-    style: actionLinkStyle,
-    onClick: () => onDeleteSpace(space),
-    'data-test-id': 'subscription-page.spaces-list.delete-space-link'
-  }, 'Delete');
+
+  const spaceLink = createLinkFromMeta(spaceLinkMeta);
+  const usageLink = createLinkFromMeta(usageLinkMeta);
+  const deleteLink = (
+    <button
+      className='text-link text-link--destructive'
+      style={actionLinkStyle}
+      onClick={onDeleteSpace(space)}
+      data-test-id='subscription-page.spaces-list.delete-space-link'
+    >
+      Delete
+    </button>
+  );
 
   return [spaceLink, usageLink, deleteLink];
 }
