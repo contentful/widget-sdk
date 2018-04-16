@@ -337,7 +337,7 @@ describe('entityEditor/Document', function () {
       this.otDoc = this.connectAndOpen({a: [0, 1, 2], sys: {}});
     });
 
-    itRejectsWithoutDocument('insertValueAt');
+    itRejectsWithoutDocument('pushValueAt');
 
     itEmitsLocalFieldChange((doc, path) => {
       return doc.pushValueAt(path);
@@ -354,6 +354,12 @@ describe('entityEditor/Document', function () {
       this.doc.pushValueAt(['a'], 'X');
       this.$apply();
       expect(this.otDoc.snapshot.a).toEqual(['X']);
+    });
+
+    handlesForbidden(function () {
+      this.otDoc.insertAt = sinon.stub().yields('forbidden');
+    }, function () {
+      this.doc.pushValueAt(['a'], 'X');
     });
   });
 

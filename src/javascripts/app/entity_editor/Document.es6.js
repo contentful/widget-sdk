@@ -67,16 +67,6 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
   const errorBus = K.createBus();
   cleanupTasks.push(errorBus.end);
 
-  function makeDocErrorHandler (path) {
-    return function (error) {
-      if (error === 'forbidden') {
-        docConnection.refreshAuth()
-          .catch(() => {
-            errorBus.emit(DocError.SetValueForbidden(path));
-          });
-      }
-    };
-  }
 
   /**
    * @ngdoc property
@@ -520,36 +510,37 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
   }
 
   function setValueAt (path, value) {
-    return withRawDoc((doc) => {
+    return withRawDoc(path, (doc) => {
       maybeEmitLocalChange(path);
-      if (path.length === 3 && StringField.is(path[1], contentType)) {
-        return StringField.setAt(doc, path, value);
-      } else {
-        return ShareJS.setDeep(doc, path, value);
-      }
-    }, makeDocErrorHandler(path));
+      return setValueAtRaw(doc, path, value);
+    });
+  }
+
+  function setValueAtRaw (doc, path, value) {
+    if (path.length === 3 && StringField.is(path[1], contentType)) {
+      return StringField.setAt(doc, path, value);
+    } else {
+      return ShareJS.setDeep(doc, path, value);
+    }
   }
 
   function removeValueAt (path) {
-    return withRawDoc((doc) => {
+    return withRawDoc(path, (doc) => {
       maybeEmitLocalChange(path);
       return ShareJS.remove(doc, path);
-    }, makeDocErrorHandler(path));
+    });
   }
 
   function insertValueAt (path, i, x) {
-    return withRawDoc((doc) => {
+    return withRawDoc(path, (doc) => {
       if (getValueAt(path)) {
         maybeEmitLocalChange(path);
         return $q.denodeify((cb) => {
           doc.insertAt(path, i, x, cb);
-        }).catch((err) => {
-          makeDocErrorHandler(path)(err);
-          return $q.reject(err);
         });
       } else if (i === 0) {
         maybeEmitLocalChange(path);
-        return setValueAt(path, [x]);
+        return setValueAtRaw(doc, path, [x]);
       } else {
         return $q.reject(new Error(`Cannot insert index ${i} into empty container`));
       }
@@ -559,7 +550,6 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
   function pushValueAt (path, value) {
     const current = getValueAt(path);
     const pos = current ? current.length : 0;
-    maybeEmitLocalChange(path);
     return insertValueAt(path, pos, value);
   }
 
@@ -590,19 +580,19 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
     docEventsBus.emit({ doc, name: 'open' });
   }
 
-  function withRawDoc (cb, errorListener) {
-    let result;
+  function withRawDoc (path, cb) {
     if (currentDoc) {
-      result = cb(currentDoc);
+      return cb(currentDoc)
+        .catch((error) => {
+          if (error === 'forbidden') {
+            docConnection.refreshAuth()
+              .catch(function () { errorBus.emit(DocError.SetValueForbidden(path)); });
+          }
+          return $q.reject(error);
+        });
     } else {
-      result = $q.reject(new Error('ShareJS document is not connected'));
+      return $q.reject(new Error('ShareJS document is not connected'));
     }
-    return result.catch((error) => {
-      if (errorListener) {
-        errorListener(error);
-      }
-      return $q.reject(error);
-    });
   }
 
 
