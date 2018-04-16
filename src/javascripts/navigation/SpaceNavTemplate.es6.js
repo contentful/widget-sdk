@@ -25,61 +25,55 @@ export default function spaceNavTemplate (useSpaceEnv, isMaster) {
     },
     settings: {
       if: 'nav.canNavigateTo("settings")',
-      sref: 'spaces.detail.settings.space',
+      sref: makeRef('settings.space'),
       dataViewType: 'spaces-settings-space',
-      title: 'General settings',
-      reload: useSpaceEnv
+      title: 'General settings'
     },
     users: {
       if: 'nav.canNavigateTo("settings")',
-      sref: 'spaces.detail.settings.users.list',
-      rootSref: 'spaces.detail.settings.users',
+      sref: makeRef('settings.users.list'),
+      rootSref: makeRef('settings.users'),
       dataViewType: 'spaces-settings-users',
-      title: 'Users',
-      reload: useSpaceEnv
+      title: 'Users'
     },
     roles: {
       if: 'nav.canNavigateTo("settings")',
-      sref: 'spaces.detail.settings.roles.list',
+      sref: makeRef('settings.roles.list'),
+      rootSref: makeRef('settings.roles'),
       dataViewType: 'spaces-settings-roles',
-      title: 'Roles & permissions',
-      rootSref: 'spaces.detail.settings.roles',
-      reload: useSpaceEnv
+      title: 'Roles & permissions'
     },
     environments: {
       if: 'nav.canNavigateTo("settings")',
-      sref: 'spaces.detail.settings.environments',
+      sref: makeRef('settings.environments'),
       dataViewType: 'spaces-settings-environments',
-      title: 'Environments',
-      reload: useSpaceEnv
+      title: 'Environments'
     },
     keys: {
       if: 'nav.canNavigateTo("apiKey")',
-      sref: 'spaces.detail.api.keys.list',
-      rootSref: 'spaces.detail.api',
+      sref: makeRef('api.keys.list'),
+      rootSref: makeRef('api'),
       dataViewType: 'spaces-settings-api',
-      title: 'API keys',
-      reload: useSpaceEnv
+      title: 'API keys'
     },
     webhooks: {
       if: 'nav.canNavigateTo("settings")',
-      sref: 'spaces.detail.settings.webhooks.list',
-      rootSref: 'spaces.detail.settings.webhooks',
+      sref: makeRef('settings.webhooks.list'),
+      rootSref: makeRef('settings.webhooks'),
       dataViewType: 'spaces-settings-webhooks',
-      title: 'Webhooks',
-      reload: useSpaceEnv
+      title: 'Webhooks'
     },
     previews: {
       if: 'nav.canNavigateTo("settings")',
-      sref: 'spaces.detail.settings.content_preview.list',
-      rootSref: 'spaces.detail.settings.content_preview',
+      sref: makeRef('settings.content_preview.list'),
+      rootSref: makeRef('settings.content_preview'),
       dataViewType: 'spaces-settings-content-preview',
       title: 'Content preview',
       reload: useSpaceEnv
     },
     usage: {
       if: 'nav.usageEnabled && nav.canNavigateTo("settings")',
-      sref: 'spaces.detail.settings.usage',
+      sref: makeRef('settings.usage'),
       dataViewType: 'spaces-settings-usage',
       title: 'Usage',
       reload: useSpaceEnv
