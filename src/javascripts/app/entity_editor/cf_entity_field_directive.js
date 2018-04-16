@@ -57,7 +57,7 @@ angular.module('cf.app')
       var templateData = {
         field: field,
         tooltipPlacement: $scope.$first ? 'bottom' : 'top',
-        helpText: widget.settings.helpText || widget.defaultHelpText,
+        helpText: _.get(widget, ['settings', 'helpText']) || widget.defaultHelpText,
         hasInitialFocus: $scope.editorContext.hasInitialFocus &&
           $scope.$first &&
           widget.isFocusable,

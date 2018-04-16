@@ -137,7 +137,7 @@ angular.module('contentful')
    * @return {object}
    */
   function applyDefaults (descriptor, params) {
-    var cloned = _.isPlainObject(params) ? _.cloneDeep(params) : {};
+    var cloned = _.isObject(params) ? _.cloneDeep(params) : {};
 
     return (descriptor.options || []).reduce(function (params, option) {
       if ('default' in option && !(option.param in params)) {
@@ -176,7 +176,8 @@ angular.module('contentful')
       // it so that it is always defined.
       fieldId: control.fieldId,
       widgetId: control.widgetId,
-      field: field
+      field: field,
+      settings: {}
     };
 
     var descriptor = _.find(widgets, {id: id});
