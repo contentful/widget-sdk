@@ -7,12 +7,9 @@ describe('app/Extensions', function () {
 
     const Extensions = this.$inject('app/Extensions/Extensions').default;
 
-    this.spaceContext = this.$inject('spaceContext');
+    this.spaceContext = this.$inject('mocks/spaceContext').init();
     this.spaceContext.cma = {deleteExtension: sinon.stub()};
-
-    this.widgets = this.$inject('widgets');
-    this.widgets.getCustom = sinon.stub();
-    this.widgets.refresh = sinon.stub().resolves();
+    this.spaceContext.widgets = {getAll: sinon.stub(), refresh: sinon.stub().resolves([])};
 
     this.notification = this.$inject('notification');
     this.notification.info = sinon.stub();
@@ -39,9 +36,10 @@ describe('app/Extensions', function () {
 
   describe('custom extensions exist', function () {
     beforeEach(function () {
-      this.widgets.getCustom.returns([
-        {id: 'test', name: 'Widget 1', fieldTypes: ['Number']},
-        {id: 'test2', name: 'Widget 2', fieldTypes: ['Symbol', 'Text']}
+      this.spaceContext.widgets.getAll.returns([
+        {id: 'builtin', name: 'Builtin', fieldTypes: ['Boolean']},
+        {custom: true, id: 'test', name: 'Widget 1', fieldTypes: ['Number']},
+        {custom: true, id: 'test2', name: 'Widget 2', fieldTypes: ['Symbol', 'Text']}
       ]);
     });
 
@@ -67,7 +65,8 @@ describe('app/Extensions', function () {
         });
 
         it('refreshes widget list', function () {
-          sinon.assert.calledTwice(this.widgets.refresh);
+          // (1) initial refresh (2) refresh after deletion
+          sinon.assert.calledTwice(this.spaceContext.widgets.refresh);
         });
       });
 
@@ -84,7 +83,7 @@ describe('app/Extensions', function () {
 
   describe('no custom widgets', function () {
     it('shows empty message', function () {
-      this.widgets.getCustom.returns([]);
+      this.spaceContext.widgets.getAll.returns([]);
       this.init();
       this.container.find('extensions.empty').assertIsVisible();
     });

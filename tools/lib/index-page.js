@@ -67,7 +67,7 @@ function indexPage (uiVersion, config, resolve, entryScripts) {
     h('head', [
       h('meta', {charset: 'UTF-8'}),
       h('meta', {httpEquiv: 'x-ua-compatible', content: 'ID=edge'}),
-      configMetaTag(uiVersion, config, resolve),
+      configMetaTag(uiVersion, config),
       h('title', ['Contentful']),
       stylesheet(resolve('vendor.css')),
       stylesheet(resolve('main.css')),
@@ -88,8 +88,7 @@ function indexPage (uiVersion, config, resolve, entryScripts) {
       tabindex: '0',
       ngApp: 'contentful/app',
       ngCsp: 'no-inline-style;no-unsafe-eval',
-      ngController: 'ClientController',
-      ngInit: 'initClient()'
+      ngController: 'ClientController'
     }, [
       h('.client', [
         h('cf-app-container.app-container.ng-hide', {ngShow: 'user', cfRolesForWalkMe: ''}),
@@ -169,14 +168,10 @@ function loaderSegment (path, delay, color) {
   });
 }
 
-function configMetaTag (uiVersion, config, resolve) {
+function configMetaTag (uiVersion, config) {
   return h('meta', {
     name: 'external-config',
-    content: JSON.stringify({
-      config,
-      uiVersion,
-      manifest: {'app/kaltura.js': resolve('kaltura.js')}
-    })
+    content: JSON.stringify({uiVersion, config})
   });
 }
 

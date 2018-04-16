@@ -2,7 +2,9 @@ import * as K from 'helpers/mocks/kefir';
 
 describe('app/entity_editor/DataLoader', function () {
   beforeEach(function () {
-    module('contentful/test');
+    module('contentful/test', function ($provide) {
+      $provide.value('widgets', {buildRenderable: sinon.stub().returns({})});
+    });
     const $q = this.$inject('$q');
 
     // TODO use space context mock
@@ -29,7 +31,7 @@ describe('app/entity_editor/DataLoader', function () {
         get: sinon.stub().resolves({})
       },
       widgets: {
-        buildRenderable: sinon.stub()
+        getAll: sinon.stub().returns([])
       },
       docPool: {
         get: sinon.stub()
@@ -68,16 +70,18 @@ describe('app/entity_editor/DataLoader', function () {
     it('builds field controls from editor interface', function* () {
       const ei = { controls: 'CONTROLS' };
       this.spaceContext.editingInterfaces.get.resolves(ei);
+      this.spaceContext.widgets.getAll.returns('WIDGETS');
       yield this.loadEntry('EID');
       sinon.assert.calledWith(
-        this.spaceContext.widgets.buildRenderable,
-        'CONTROLS'
+        this.$inject('widgets').buildRenderable,
+        'CONTROLS',
+        'WIDGETS'
       );
     });
 
     it('adds the entry’s field controls to the context', function* () {
       const controls = {};
-      this.spaceContext.widgets.buildRenderable.returns(controls);
+      this.$inject('widgets').buildRenderable.returns(controls);
       const editorData = yield this.loadEntry('EID');
       expect(editorData.fieldControls).toBe(controls);
     });
@@ -162,7 +166,7 @@ describe('app/entity_editor/DataLoader', function () {
       const assetEditorInterface = this.$inject('data/editingInterfaces/asset');
       yield this.loadAsset('EID');
       sinon.assert.calledWith(
-        this.spaceContext.widgets.buildRenderable,
+        this.$inject('widgets').buildRenderable,
         assetEditorInterface.widgets
       );
     });
@@ -182,7 +186,7 @@ describe('app/entity_editor/DataLoader', function () {
   describe('#makePrefetchEntryLoader()', function () {
     it('returns editor data', function* () {
       const controls = {};
-      this.spaceContext.widgets.buildRenderable.returns(controls);
+      this.$inject('widgets').buildRenderable = sinon.stub().returns(controls);
 
       const load = this.makePrefetchEntryLoader(K.constant([]));
       const editorData = yield load('EID');

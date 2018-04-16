@@ -1,5 +1,5 @@
 const P = require('path');
-const {FS, writeJSON} = require('../../lib/utils');
+const {FS} = require('../../lib/utils');
 const configureAndWriteIndex = require('../../lib/index-configure');
 
 /**
@@ -12,12 +12,10 @@ const configureAndWriteIndex = require('../../lib/index-configure');
  * output/files/staging/archive/${branch}/index-compiled.html (configured for staging)
  *
  * If we build the `production` or the `staging` branch we also create
- * main index and revision files that are uploaded as the main
- * `index.html` and thus trigger a deployment.
+ * main index file that is uploaded as the main `index.html` and thus
+ * trigger a deployment.
  *
  * output/files/staging/index.html (served for request to app.flinkly.com)
- * output/files/staging/revision.json (requested by app.flinkly.com)
- *
  */
 module.exports = function* runTravis ({branch, pr, version}) {
   console.log(`TRAVIS_BRANCH: ${branch}, TRAVIS_COMMIT: ${version}, TRAVIS_PULL_REQUEST: ${pr}`);
@@ -60,39 +58,32 @@ module.exports = function* runTravis ({branch, pr, version}) {
   if (branch in BRANCH_ENV_MAP) {
     const env = BRANCH_ENV_MAP[branch];
 
-    yield* createIndexAndRevision(env, version);
+    yield* createIndex(env, version);
 
     // Deploy to preview environment whenever we deploy to staging
     // to keep both envs in sync
     if (env === ENV.staging) {
-      yield* createIndexAndRevision(ENV.preview, version);
+      yield* createIndex(ENV.preview, version);
     }
   }
 };
 
 /**
  * @description
- * This method generates the root index.html and revision.json files
- * for given environment and user_interface commit hash (version)
+ * This method generates the root index.html file for given environment
+ * and user_interface commit hash.
  *
  * @param env {string} env - Target environment. One of production, staging, preview
  * @param version {string} version - Git commit hash of the commit that's being built
  */
-function* createIndexAndRevision (env, version) {
+function* createIndex (env, version) {
   const rootIndexPathForEnv = targetPath(env, 'index.html');
-  const revisionPathForEnv = targetPath(env, 'revision.json');
-  const logMsg = `Creating root index and revision.json files for "${env}"`;
+  const logMsg = `Creating root index file for "${env}"`;
 
   console.log('-'.repeat(logMsg.length), `\n${logMsg}`);
 
   // This generates output/files/${env}/index.html
   yield* configureAndWriteIndex(version, `config/${env}.json`, rootIndexPathForEnv);
-
-  console.log(`Creating revision.json for "${env}" at ${P.relative('', revisionPathForEnv)}`);
-  // This generates output/files/${env}/revision.json. This file is
-  // used by the the user if the version of contentful they are looking
-  // at is older that what is live currently.
-  yield writeJSON(revisionPathForEnv, { revision: version });
 }
 
 

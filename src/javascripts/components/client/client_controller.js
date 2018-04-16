@@ -2,7 +2,6 @@
 
 angular.module('contentful')
 .controller('ClientController', ['$scope', 'require', function ClientController ($scope, require) {
-  var $rootScope = require('$rootScope');
   var $state = require('$state');
   var K = require('utils/kefir');
   var features = require('features');
@@ -11,10 +10,6 @@ angular.module('contentful')
   var TokenStore = require('services/TokenStore');
   var Analytics = require('analytics/Analytics');
   var authorization = require('authorization');
-  var presence = require('presence');
-  var revision = require('revision');
-  var ReloadNotification = require('ReloadNotification');
-  var environment = require('environment');
   var fontsDotCom = require('fontsDotCom');
   var CreateSpace = require('services/CreateSpace');
   var refreshNavState = require('navigation/NavState').makeStateRefresher($state, spaceContext);
@@ -43,17 +38,7 @@ angular.module('contentful')
 
   K.onValueScope($scope, TokenStore.user$, handleUser);
 
-  $scope.initClient = initClient;
   $scope.showCreateSpaceDialog = CreateSpace.showDialog;
-
-  function initClient () {
-    setTimeout(newVersionCheck, 5000);
-    setInterval(function () {
-      if (presence.isActive()) {
-        newVersionCheck();
-      }
-    }, 5 * 60 * 1000);
-  }
 
   function spaceAndTokenWatchHandler (collection) {
     if (collection.tokenLookup) {
@@ -81,20 +66,5 @@ angular.module('contentful')
       // it will only be available when Analytics/Segment is.
       Intercom.disable();
     }
-  }
-
-  function newVersionCheck () {
-    if (environment.settings.disableUpdateCheck) {
-      return;
-    }
-    revision.hasNewVersion().then(function (hasNewVersion) {
-      if (hasNewVersion) {
-        $rootScope.$broadcast('persistentNotification', {
-          message: 'A new application version is available. Please reload to get a new version of the application',
-          action: ReloadNotification.triggerImmediateReload,
-          actionMessage: 'Reload'
-        });
-      }
-    });
   }
 }]);

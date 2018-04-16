@@ -39,6 +39,10 @@ angular.module('contentful')
   {
     from: 'kalturaMultiVideoEditor',
     to: 'listInput'
+  },
+  {
+    from: 'ooyalaMultiAssetEditor',
+    to: 'listInput'
   }
 ])
 
@@ -75,5 +79,4 @@ angular.module('contentful')
       return control;
     }
   };
-
 }]);

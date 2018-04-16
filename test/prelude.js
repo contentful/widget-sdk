@@ -8,6 +8,7 @@
 (function () {
   // Will hold a list of all module IDs that define test cases
   const testModules = [];
+  const env = 'development';
 
   // All modules under `test/` will register here.
   window.SystemTest = { register };
@@ -15,12 +16,8 @@
   // We explicitly stub out environment here, since it is the only Angular
   // specific module we need for tests
   window.AngularSystem.set('environment', {
-    env: 'development',
-    settings: {
-      environment: 'development',
-      disableUpdateCheck: true
-    },
-    manifest: [],
+    env: env,
+    settings: {environment: env},
     gitRevision: null,
     stubbed: true
   });

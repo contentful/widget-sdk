@@ -1,6 +1,4 @@
-'use strict';
-
-describe('widgets/migrations', function() {
+describe('widgets/migrations', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.value('widgets/migrations/data', []);
@@ -11,7 +9,7 @@ describe('widgets/migrations', function() {
   });
 
   it('migrates widget regardless of type', function () {
-    var control = {
+    const control = {
       fieldId: 'FID',
       widgetId: 'oldWidget',
       field: {}
@@ -22,12 +20,12 @@ describe('widgets/migrations', function() {
       to: 'newWidget'
     });
 
-    var migrated = this.migrate(control);
+    const migrated = this.migrate(control);
     expect(migrated.widgetId).toEqual('newWidget');
   });
 
   it('migrates widget if field type matches', function () {
-    var control = {
+    const control = {
       fieldId: 'FID',
       widgetId: 'oldWidget',
       field: {apiName: 'apiName', type: 'ft1'}
@@ -39,12 +37,12 @@ describe('widgets/migrations', function() {
       fieldTypes: ['ft1', 'ft2']
     });
 
-    var migrated = this.migrate(control);
+    const migrated = this.migrate(control);
     expect(migrated.widgetId).toEqual('newWidget');
   });
 
   it('does not migrate widget if field type does not match', function () {
-    var control = {
+    const control = {
       fieldId: 'FID',
       widgetId: 'oldWidget',
       field: {apiName: 'apiName', type: 'ft1'}
@@ -56,7 +54,7 @@ describe('widgets/migrations', function() {
       fieldTypes: ['ft2']
     });
 
-    var migrated = this.migrate(control);
+    const migrated = this.migrate(control);
     expect(migrated.widgetId).toEqual('oldWidget');
   });
 });

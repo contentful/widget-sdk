@@ -3,7 +3,6 @@
 angular.module('contentful').factory('kalturaClientWrapper', ['require', function (require) {
   var $window              = require('$window');
   var $q                   = require('$q');
-  var assert               = require('assert');
   var KalturaErrorMessages = require('KalturaErrorMessages');
   var kalturaCredentials   = require('kalturaCredentials');
 
@@ -104,7 +103,6 @@ angular.module('contentful').factory('kalturaClientWrapper', ['require', functio
 
     _setupKalturaEnvironment: function() {
       var that = this, deferred = $q.defer();
-      assert.defined(this._organizationId, 'Kaltura Client Wrapper needs the current organization id');
 
       kalturaCredentials.get(this._organizationId)
       .then(function(response){

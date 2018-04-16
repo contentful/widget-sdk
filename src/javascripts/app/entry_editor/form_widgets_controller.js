@@ -40,7 +40,7 @@ angular.module('contentful')
   $scope.$watch('preferences.showDisabledFields', updateWidgets);
   K.onValueScope($scope, validator.errors$, updateWidgets);
 
-  // Executed only once when 'widgets' is not undefined.
+  // Executed only once when `$scope.widgets` is not undefined.
   $scope.$watch('::widgets', function (widgets) {
     _.forEach(widgets, function (widget) {
       trackCustomWidgets.rendered(widget, $scope.contentType, $scope.entry);

@@ -27,16 +27,6 @@ describe('Ooyala Client', function () {
   });
 
   describe('#request', function () {
-    describe('when no organization id has been set', function () {
-      it('raises an exception', function () {
-        const request = function () {
-          ooyalaClient.request('bla', 'ble', 'bli');
-        };
-
-        expect(request).toThrow();
-      });
-    });
-
     describe('when the organization id has been set', function () {
       beforeEach(function () {
         ooyalaClient.setOrganizationId('ORG-ID');

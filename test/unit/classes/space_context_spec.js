@@ -23,6 +23,7 @@ describe('spaceContext', function () {
       });
       $provide.value('data/UiConfig/Store', {default: sinon.stub().resolves({store: true})});
       $provide.value('client', {newSpace: makeClientSpaceMock});
+      $provide.value('widgets/store', sinon.stub().returns({refresh: sinon.stub().resolves([])}));
     });
     this.spaceContext = this.$inject('spaceContext');
     this.localeStore = this.mockService('TheLocaleStore');
@@ -54,9 +55,6 @@ describe('spaceContext', function () {
     beforeEach(function () {
       const createEditingInterfaces = this.$inject('data/editingInterfaces');
       createEditingInterfaces.returns('EI');
-
-      this.Widgets = this.$inject('widgets');
-      this.Widgets.setSpace = sinon.stub().defers();
 
       const spaceData = {sys: {id: 'hello'}};
       this.result = this.spaceContext.resetWithSpace(spaceData);
@@ -100,27 +98,9 @@ describe('spaceContext', function () {
       expect(this.spaceContext.users).toBe(userCache);
     });
 
-    it('resets Widgets store', function () {
-      sinon.assert.calledWith(this.Widgets.setSpace, this.spaceContext.endpoint);
-    });
-
-    it('sets the widgets property from the widgets service', function () {
-      expect(this.spaceContext.widgets).toBe(null);
-      this.Widgets.setSpace.resolve('WIDGETS');
-      this.$apply();
-      expect(this.spaceContext.widgets).toBe('WIDGETS');
-    });
-
-    it('resolves when widgets are set', function () {
-      const done = sinon.spy();
-      this.result.then(done);
-
-      this.$apply();
-      sinon.assert.notCalled(done);
-
-      this.Widgets.setSpace.resolve();
-      this.$apply();
-      sinon.assert.called(done);
+    it('creates and refreshes widget store', function () {
+      sinon.assert.calledWith(this.$inject('widgets/store'), this.spaceContext.endpoint);
+      sinon.assert.calledOnce(this.spaceContext.widgets.refresh);
     });
 
     it('sets #editingInterfaces', function () {
@@ -156,7 +136,6 @@ describe('spaceContext', function () {
     });
 
     it('updates publishedCTs repo from refreshed CT list', function* () {
-      this.Widgets.setSpace.resolve();
       yield this.result;
       expect(
         this.spaceContext.publishedCTs.getAllBare().map((ct) => ct.sys.id)
@@ -172,7 +151,6 @@ describe('spaceContext', function () {
         master: 'master',
         other: 'other'
       });
-      this.Widgets.setSpace.resolve();
       yield this.result;
       expect(this.spaceContext.environments).toEqual(['master', 'other']);
     });

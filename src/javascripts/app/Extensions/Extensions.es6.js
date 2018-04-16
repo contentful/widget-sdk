@@ -1,6 +1,5 @@
 import {h} from 'ui/Framework';
 import {table, tr, td, th} from 'ui/Content/Table';
-import widgets from 'widgets';
 import {container} from 'ui/Layout';
 import notification from 'notification';
 import spaceContext from 'spaceContext';
@@ -13,13 +12,13 @@ import scaleSvg from 'utils/ScaleSvg';
 export default function controller ($scope) {
   renderWithScope();
 
-  widgets.refresh().then(() => {
+  spaceContext.widgets.refresh().then(() => {
     $scope.context.ready = true;
     renderWithScope();
   });
 
   function renderWithScope () {
-    $scope.extensions = widgets.getCustom();
+    $scope.extensions = spaceContext.widgets.getAll().filter(e => e.custom);
     $scope.component = render($scope.extensions, deleteExtension);
   }
 
@@ -27,7 +26,7 @@ export default function controller ($scope) {
     spaceContext.cma.deleteExtension(id)
     .then(function () {
       notification.info('Extension successfully deleted');
-      widgets.refresh().then(renderWithScope);
+      spaceContext.widgets.refresh().then(renderWithScope);
     })
     .catch(function () {
       notification.error('Error deleting extension');

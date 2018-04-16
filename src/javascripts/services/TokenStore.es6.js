@@ -12,7 +12,6 @@ import * as auth from 'Authentication';
 import makeFetchWithAuth from 'data/CMA/TokenInfo';
 import ReloadNotification from 'ReloadNotification';
 import * as OrganizationRoles from 'services/OrganizationRoles';
-import presence from 'presence';
 import $window from '$window';
 import { deepFreezeClone, deepFreeze } from 'utils/Freeze';
 import { isEqual, groupBy, map, get, find, cloneDeep } from 'lodash';
@@ -70,11 +69,7 @@ export function getTokenLookup () { return tokenInfo; }
  */
 export function init () {
   const offToken = K.onValue(auth.token$, refresh);
-  const refreshInterval = $window.setInterval(function () {
-    if (presence.isActive()) {
-      refresh();
-    }
-  }, TOKEN_INFO_REFRESH_INTERVAL);
+  const refreshInterval = $window.setInterval(refresh, TOKEN_INFO_REFRESH_INTERVAL);
 
   return function deinit () {
     $window.clearInterval(refreshInterval);

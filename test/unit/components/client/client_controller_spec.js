@@ -90,92 +90,12 @@ describe('Client Controller', function () {
   describe('initializes client', function () {
     beforeEach(function () {
       this.user = {sys: {}};
-
-      const Revision = this.$inject('revision');
-      this.hasNewVersion = Revision.hasNewVersion = sinon.stub().resolves(true);
-      this.clock = sinon.useFakeTimers();
-      scope.initClient();
       this.tokenStore.user$.set(this.user);
-
       scope.$digest();
-    });
-
-    afterEach(function () {
-      this.clock.restore();
     });
 
     it('sets user', function () {
       expect(scope.user).toEqual(this.user);
-    });
-
-    describe('new version check', function () {
-      const A_SECOND = 1000;
-      const A_MINUTE = 60 * A_SECOND;
-
-      beforeEach(function () {
-        const env = this.$inject('environment');
-        env.settings.disableUpdateCheck = false;
-      });
-
-      it('is run five seconds after loading', function () {
-        sinon.assert.notCalled(this.hasNewVersion);
-        this.clock.tick(5 * A_SECOND);
-        this.$apply();
-        sinon.assert.calledOnce(this.hasNewVersion);
-      });
-
-      it('is run five minutes after loading', function () {
-        this.clock.tick(5 * A_SECOND);
-        this.$apply();
-        this.hasNewVersion.resetHistory();
-        this.clock.tick(5 * A_MINUTE);
-        this.$apply();
-        sinon.assert.calledOnce(this.hasNewVersion);
-      });
-
-      it('is not run five minutes after loading if user is inactive', function () {
-        const presence = this.$inject('presence');
-        presence.isActive = sinon.stub().returns(false);
-
-        this.clock.tick(5 * A_SECOND);
-        this.$apply();
-        this.hasNewVersion.resetHistory();
-        this.clock.tick(5 * A_MINUTE);
-        this.$apply();
-        sinon.assert.notCalled(this.hasNewVersion);
-      });
-
-      it('broadcasts notification only if there is a new version', function () {
-        const $rootScope = this.$inject('$rootScope');
-        const onNotification = sinon.stub();
-        $rootScope.$on('persistentNotification', onNotification);
-
-        this.hasNewVersion.resolves(false);
-        this.clock.tick(5 * A_MINUTE);
-        this.$apply();
-        sinon.assert.called(this.hasNewVersion);
-        sinon.assert.notCalled(onNotification);
-
-        this.hasNewVersion.resolves(true);
-        this.clock.tick(5 * A_MINUTE);
-        this.$apply();
-        sinon.assert.called(this.hasNewVersion);
-        sinon.assert.called(onNotification);
-      });
-    });
-
-
-    describe('presence timeout is fired', function () {
-      beforeEach(function () {
-        this.presence = this.$inject('presence');
-        this.presence.isActive = sinon.stub().returns(true);
-      });
-
-      it('checks for presence', function () {
-        sinon.assert.notCalled(this.presence.isActive);
-        this.clock.tick(50 * 60 * 1000);
-        sinon.assert.called(this.presence.isActive);
-      });
     });
   });
 

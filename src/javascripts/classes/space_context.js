@@ -18,7 +18,7 @@ angular.module('contentful')
   var $q = require('$q');
   var TheLocaleStore = require('TheLocaleStore');
   var createUserCache = require('data/userCache');
-  var Widgets = require('widgets');
+  var createWidgetStore = require('widgets/store');
   var createSpaceEndpoint = require('data/Endpoint').createSpaceEndpoint;
   var Config = require('Config');
   var createEIRepo = require('data/editingInterfaces');
@@ -105,6 +105,7 @@ angular.module('contentful')
       self.space = space;
       self.cma = new ApiClient(self.endpoint);
       self.users = createUserCache(self.endpoint);
+      self.widgets = createWidgetStore(self.endpoint);
       self.apiKeyRepo = createApiKeyRepo(self.endpoint);
       self.editingInterfaces = createEIRepo(self.endpoint);
       self.localeRepo = createLocaleRepo(self.endpoint);
@@ -144,9 +145,7 @@ angular.module('contentful')
       previewEnvironmentsCache.clearAll();
 
       return $q.all([
-        Widgets.setSpace(self.endpoint).then(function (widgets) {
-          self.widgets = widgets;
-        }),
+        self.widgets.refresh(),
         self.publishedCTs.refresh().then(function () {
           var viewMigrator = createViewMigrator(space, self.publishedCTs);
           return createUiConfigStore(
