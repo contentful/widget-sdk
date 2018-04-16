@@ -1,10 +1,12 @@
 import {get} from 'lodash';
 import * as Filestack from 'services/Filestack';
 import openInputDialog from 'app/InputDialog';
+import * as TokenStore from 'services/TokenStore';
+import * as HostnameTransformer from 'hostnameTransformer';
 
 const ratio = file => `${file.details.image.width}:${file.details.image.height}`;
 const ratioNumber = file => file.details.image.width / file.details.image.height;
-const url = (file, qs) => `https:${file.url}${qs ? ('?' + qs) : ''}`;
+const url = (file, qs) => `https:${externalImageUrl(file.url)}${qs ? ('?' + qs) : ''}`;
 
 const NUMBER_REGEX = /^[1-9][0-9]{0,3}$/;
 const RATIO_REGEX = /^[1-9][0-9]{0,3}:[1-9][0-9]{0,3}$/;
@@ -117,4 +119,17 @@ function isValidImage (file = {}) {
   const img = get(file, ['details', 'image']) || {};
   const hasDimensions = typeof img.width === 'number' && typeof img.height === 'number';
   return typeof file.url === 'string' && hasDimensions;
+}
+
+// Normalizes image URL to internal Contentful Images API URL.
+// Transforms to external domain configured for oganization.
+function externalImageUrl (url) {
+  const domains = TokenStore.getDomains();
+  const internalUrl = HostnameTransformer.toInternal(url, domains);
+
+  // Enforce use of images domain
+  return HostnameTransformer.toExternal(internalUrl, {
+    assets: domains.images,
+    images: domains.images
+  });
 }
