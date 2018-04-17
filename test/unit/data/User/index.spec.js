@@ -13,6 +13,14 @@ describe('data/User', () => {
       contentPreviewsBus$: K.createMockProperty({})
     };
 
+    this.endpointFactory = {
+      createOrganizationEndpoint: () => {}
+    };
+
+    this.pricingDataProvider = {
+      getSubscriptionPlans: () => Promise.resolve(this.plans)
+    };
+
     this.spaceContext = {
       publishedCTs: {
         items$: K.createMockProperty([])
@@ -42,6 +50,8 @@ describe('data/User', () => {
       $provide.value('spaceContext', this.spaceContext);
       $provide.value('$stateParams', this.$stateParams);
       $provide.value('contentPreview', this.contentPreview);
+      $provide.value('account/pricing/PricingDataProvider', this.pricingDataProvider);
+      $provide.value('data/EndpointFactory', this.endpointFactory);
     });
 
     this.moment = this.$inject('moment');
@@ -75,67 +85,101 @@ describe('data/User', () => {
         this.tokenStore.user$.set(user);
         this.$apply();
       };
+
+      this.wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+      this.waitNextTick = this.wait.bind(this, 0);
     });
-    it('should emit [user, org, spacesByOrg, space, contentPreviews, publishedCTs] where space, contentPreviews and publishedCTs are optional', function () {
-      const user = {email: 'a@b.c'};
+    it('should emit [user, org, spacesByOrg, space, contentPreviews, publishedCTs, pricing] where space, contentPreviews and publishedCTs are optional', async function () {
       const orgs = [{name: '1', sys: {id: 1}}, {name: '2', sys: {id: 2}}];
+      const user = {email: 'a@b.c', organizationMemberships: []};
       const org = {name: 'some org', sys: {id: 'some-org-1'}};
 
       sinon.assert.notCalled(this.spy);
 
       this.set({user, orgs, spacesByOrg: {}, org: null, orgId: 1, publishedCTs: []});
+      await this.waitNextTick();
       sinon.assert.calledOnce(this.spy);
-
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data, {}, []]);
+      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data, {}, [], []]);
 
       this.spy.reset();
       this.set({org});
+      await this.waitNextTick();
       sinon.assert.calledOnce(this.spy);
       sinon.assert.calledWithExactly(
         this.spy,
-        [user, org, {}, this.spaceContext.space.data, {}, []]
+        [user, org, {}, this.spaceContext.space.data, {}, [], []]
       );
 
       this.spy.reset();
       this.set({org: null, space: {fields: [], sys: {id: 'space-1'}}});
+      await this.waitNextTick();
       sinon.assert.calledOnce(this.spy);
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data, {}, []]);
+      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data, {}, [], []]);
     });
-    it('should emit a value only when the user is valid and the org and spacesByOrg are not falsy', function () {
+    it('should emit a value only when the user is valid and the org and spacesByOrg are not falsy', async function () {
       const orgs = [{name: '1', sys: {id: 1}}, {name: '2', sys: {id: 2}}];
-      const user = {email: 'a@b'};
+      const user = {email: 'a@b', organizationMemberships: []};
 
       // invalid user
       this.set({user: null});
+      await this.waitNextTick();
       sinon.assert.notCalled(this.spy);
 
       // valid user but org is falsy since org prop init val is null
       this.set({user});
+      await this.waitNextTick();
       sinon.assert.notCalled(this.spy);
 
       // spaces by org map is null
       this.set({user, orgs, spacesByOrg: null, orgId: 1});
+      await this.waitNextTick();
       sinon.assert.notCalled(this.spy);
 
       // all valid valus, hence spy must be called
       this.set({user, orgs, spacesByOrg: {}, orgId: 1});
+      await this.waitNextTick();
       sinon.assert.calledOnce(this.spy);
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, {}, {}, []]);
+      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, {}, {}, [], []]);
     });
-    it('should skip duplicates', function () {
+    it('should skip duplicates', async function () {
       const setter = this.set.bind(this, {
-        user: {email: 'a@b.c'},
+        user: {email: 'a@b.c', organizationMemberships: []},
         org: {name: 'org-1', sys: {id: 1}},
         spacesByOrg: {},
         space: {name: 'space-1', sys: {id: 'space-1'}},
         publishedCTs: []
       });
       setter();
+      await this.waitNextTick();
       sinon.assert.calledOnce(this.spy);
       setter();
+      await this.waitNextTick();
       sinon.assert.calledOnce(this.spy);
       this.set({space: null});
+      await this.waitNextTick();
       sinon.assert.calledTwice(this.spy);
+    });
+    it('should emit correct pricing object', async function () {
+      const v1org = {name: '1', sys: {id: 1}};
+      const v2org = {name: '2', pricingVersion: 'pricing_version_2', sys: {id: 2}};
+      this.plans = [{ sys: {id: 'space_plan_id'} }];
+      const orgs = [v1org, v2org];
+      const organizationMemberships = orgs.map(organization => ({ organization }));
+      const user = {email: 'a@b', organizationMemberships};
+      this.set({user, orgs, spacesByOrg: {}, orgId: 1});
+
+      await this.waitNextTick();
+
+      const pricing = [{
+        version: 'v1',
+        organization: v1org
+      }, {
+        version: 'v2',
+        organization: v2org,
+        plans: this.plans
+      }];
+
+      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, {}, {}, [], pricing]);
     });
   });
 
@@ -184,33 +228,63 @@ describe('data/User', () => {
   describe('#isNonPayingUser', function () {
     beforeEach(function () {
       this.checkIfUserIsNonpaying = function (subscriptionStatus, valToAssert) {
-        const isNonPayingUser = this.utils.isNonPayingUser({
-          organizationMemberships: [{
-            organization: {subscription: {status: subscriptionStatus}}
-          }]
-        });
+        const isNonPayingUser = this.utils.isNonPayingUser([{
+          version: 'v1',
+          organization: {subscription: {status: subscriptionStatus}}
+        }]);
 
         expect(isNonPayingUser).toBe(valToAssert);
       };
     });
 
-    it('should return true if any org a user belongs to is paying us and false otherwise', function () {
+    it('should return true if any org a user belongs to is paying us and false otherwise in v1', function () {
       this.checkIfUserIsNonpaying('free', true);
       this.checkIfUserIsNonpaying('trial', true);
       this.checkIfUserIsNonpaying('paid', false);
       this.checkIfUserIsNonpaying('free_paid', false);
     });
 
-    it('should return false if the user has a V2 org', function () {
-      const isNonPayingUser = this.utils.isNonPayingUser({
-        organizationMemberships: [{
-          organization: {
-            pricingVersion: 'pricing_version_2'
-          }
-        }]
-      });
+    it('should return true if user has v2 org without any plans', function () {
+      const isNonPayingUser = this.utils.isNonPayingUser([
+        { version: 'v2', plans: {items: []} }
+      ]);
+
+      expect(isNonPayingUser).toBe(true);
+    });
+
+    it('should return false if user has v2 org with plans', function () {
+      const isNonPayingUser = this.utils.isNonPayingUser([
+        { version: 'v2', plans: {items: [{ sys: { id: 'a' } }]} }
+      ]);
 
       expect(isNonPayingUser).toBe(false);
+    });
+
+    it('should return false if v1 org is paying and v2 is not', function () {
+      const isNonPayingUser = this.utils.isNonPayingUser([
+        { version: 'v1', organization: {subscription: {status: 'paid'}} },
+        { version: 'v2', plans: {items: []} }
+      ]);
+
+      expect(isNonPayingUser).toBe(false);
+    });
+
+    it('should return false if v1 org is not paying and v2 is paying', function () {
+      const isNonPayingUser = this.utils.isNonPayingUser([
+        { version: 'v1', organization: {subscription: {status: 'free'}} },
+        { version: 'v2', plans: {items: [{ sys: { id: 'some' } }]} }
+      ]);
+
+      expect(isNonPayingUser).toBe(false);
+    });
+
+    it('should return true if v1 and v2 orgs are not paying', function () {
+      const isNonPayingUser = this.utils.isNonPayingUser([
+        { version: 'v1', organization: {subscription: {status: 'free'}} },
+        { version: 'v2', plans: {items: []} }
+      ]);
+
+      expect(isNonPayingUser).toBe(true);
     });
   });
 
