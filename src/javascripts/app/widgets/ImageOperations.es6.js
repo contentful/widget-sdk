@@ -40,7 +40,7 @@ const RESIZE_MODES = {
     title: 'Please provide desired dimensions',
     message: `
       Expected format is <code>{width}:{height}</code>.
-      Both <code>{width}</code> and <code>height</code> should be numbers between 1 and 9999.
+      Both <code>{width}</code> and <code>{height}</code> should be numbers between 1 and 9999.
       Your image will be scaled without maintaining the original aspect ratio.
       The form is prepopulated with current dimensions of your image.
     `,
@@ -103,7 +103,7 @@ function cropWithCustomAspectRatio (file) {
     title: 'Please provide desired aspect ratio',
     message: `
       Expected format is <code>{width}:{height}</code>.
-      Both <code>{width}</code> and <code>height</code> should be numbers between 1 and 9999.
+      Both <code>{width}</code> and <code>{height}</code> should be numbers between 1 and 9999.
       The form is prepopulated with the aspect ratio of your image.
     `,
     confirmLabel: 'Crop with provided aspect ratio'
