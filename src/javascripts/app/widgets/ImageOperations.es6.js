@@ -1,10 +1,12 @@
 import {get} from 'lodash';
 import * as Filestack from 'services/Filestack';
 import openInputDialog from 'app/InputDialog';
+import * as TokenStore from 'services/TokenStore';
+import * as HostnameTransformer from 'hostnameTransformer';
 
 const ratio = file => `${file.details.image.width}:${file.details.image.height}`;
 const ratioNumber = file => file.details.image.width / file.details.image.height;
-const url = (file, qs) => `https:${file.url}${qs ? ('?' + qs) : ''}`;
+const url = (file, qs) => `https:${externalImageUrl(file.url)}${qs ? ('?' + qs) : ''}`;
 
 const NUMBER_REGEX = /^[1-9][0-9]{0,3}$/;
 const RATIO_REGEX = /^[1-9][0-9]{0,3}:[1-9][0-9]{0,3}$/;
@@ -38,7 +40,7 @@ const RESIZE_MODES = {
     title: 'Please provide desired dimensions',
     message: `
       Expected format is <code>{width}:{height}</code>.
-      Both <code>{width}</code> and <code>height</code> should be numbers between 1 and 9999.
+      Both <code>{width}</code> and <code>{height}</code> should be numbers between 1 and 9999.
       Your image will be scaled without maintaining the original aspect ratio.
       The form is prepopulated with current dimensions of your image.
     `,
@@ -101,7 +103,7 @@ function cropWithCustomAspectRatio (file) {
     title: 'Please provide desired aspect ratio',
     message: `
       Expected format is <code>{width}:{height}</code>.
-      Both <code>{width}</code> and <code>height</code> should be numbers between 1 and 9999.
+      Both <code>{width}</code> and <code>{height}</code> should be numbers between 1 and 9999.
       The form is prepopulated with the aspect ratio of your image.
     `,
     confirmLabel: 'Crop with provided aspect ratio'
@@ -117,4 +119,17 @@ function isValidImage (file = {}) {
   const img = get(file, ['details', 'image']) || {};
   const hasDimensions = typeof img.width === 'number' && typeof img.height === 'number';
   return typeof file.url === 'string' && hasDimensions;
+}
+
+// Normalizes image URL to internal Contentful Images API URL.
+// Transforms to external domain configured for oganization.
+function externalImageUrl (url) {
+  const domains = TokenStore.getDomains();
+  const internalUrl = HostnameTransformer.toInternal(url, domains);
+
+  // Enforce use of images domain
+  return HostnameTransformer.toExternal(internalUrl, {
+    assets: domains.images,
+    images: domains.images
+  });
 }
