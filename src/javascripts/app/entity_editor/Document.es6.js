@@ -10,7 +10,7 @@
  * be synced across these implementations
  */
 
-import * as _ from 'lodash';
+import { get, memoize, cloneDeep } from 'lodash';
 import $q from '$q';
 import * as K from 'utils/kefir';
 import { deepFreeze } from 'utils/Freeze';
@@ -40,7 +40,7 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
   const cleanupTasks = [];
 
   // We need this to determine and log inconsistencies later
-  const initialEntitySys = _.cloneDeep(entity.data.sys);
+  const initialEntitySys = cloneDeep(entity.data.sys);
 
   // We assume that the permissions only depend on the immutable data
   // like the ID the content type ID and the creator.
@@ -71,7 +71,9 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
     return function (error) {
       if (error === 'forbidden') {
         docConnection.refreshAuth()
-          .catch(function () { errorBus.emit(DocError.SetValueForbidden(path)); });
+          .catch(() => {
+            errorBus.emit(DocError.SetValueForbidden(path));
+          });
       }
     };
   }
@@ -83,7 +85,7 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
    * A boolean property that holds true if the document has
    * changes unacknowledged by the server.
    */
-  const isSaving$ = K.sampleBy(docEventsBus.stream, function () {
+  const isSaving$ = K.sampleBy(docEventsBus.stream, () => {
     return !!(currentDoc && (currentDoc.inflightOp || currentDoc.pendingOp));
   });
 
@@ -100,9 +102,9 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
    * @type {Property<string[]>}
    */
   const changes = docEventsBus.stream
-  .flatten(function (event) {
+  .flatten((event) => {
     if (event.name === 'change') {
-      const paths = _.map(event.data, _.property('p'));
+      const paths = (event.data || []).map((error) => error.p);
       return [PathUtils.findCommonPrefix(paths)];
     } else if (event.name === 'open') {
       // Emit the path of length zero
@@ -122,7 +124,7 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
   // change stream. Subsequent handlers will access the snapshot on
   // we need to make sure that we present them with the normalized
   // version.
-  changes.onValue(function (changePath) {
+  changes.onValue((changePath) => {
     if (PathUtils.isPrefix(changePath, ['fields']) && currentDoc) {
       const locales = TheLocaleStore.getPrivateLocales();
       Normalizer.normalize({
@@ -150,11 +152,11 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
   const sysProperty = sysBus.property;
 
   let currentSys;
-  K.onValue(sysProperty, function (sys) {
+  K.onValue(sysProperty, (sys) => {
     currentSys = sys;
   });
 
-  docEventsBus.stream.onValue(function (event) {
+  docEventsBus.stream.onValue((event) => {
     const previousVersion = currentSys.version;
     const version = event.doc.version + (event.doc.compressed || 0);
 
@@ -170,7 +172,7 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
       });
     }
 
-    const nextSys = _.cloneDeep(event.doc.snapshot.sys);
+    const nextSys = cloneDeep(event.doc.snapshot.sys);
     if (version > previousVersion) {
       nextSys.updatedAt = (new Date()).toISOString();
     } else {
@@ -182,7 +184,7 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
 
 
   // Holds true if the user is allowed to edit the entity
-  const isEditable$ = sysProperty.map(function (sys) {
+  const isEditable$ = sysProperty.map((sys) => {
     return !sys.archivedVersion && !sys.deletedVersion && permissions.can('update');
   }).skipDuplicates();
   const docLoader = docConnection.getDocLoader(entity, isEditable$);
@@ -201,7 +203,7 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
    *
    * @type {Property<boolean>}
    */
-  const isDirty$ = sysProperty.map(function (sys) {
+  const isDirty$ = sysProperty.map((sys) => {
     return sys.publishedVersion
       ? sys.version > sys.publishedVersion + 1
       : true;
@@ -222,27 +224,21 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
    * @param {string[]} path
    * @returns {Property<any>}
    */
-  const memoizedValuePropertyAt = _.memoize(valuePropertyAt, function (path) {
-    return path.join('!');
-  });
+  const memoizedValuePropertyAt = memoize(valuePropertyAt, (path) => path.join('!'));
 
   function valuePropertyAt (valuePath) {
-    return changes.filter(function (changePath) {
+    return changes.filter((changePath) => {
       return PathUtils.isAffecting(changePath, valuePath);
     })
-    .toProperty(_.constant(undefined))
-    .map(function () {
-      return getValueAt(valuePath);
-    });
+      .toProperty(() => undefined)
+      .map(() => getValueAt(valuePath));
   }
 
   // Property<ShareJS.Document?>
-  const doc$ = docLoader.doc.map(function (doc) {
+  const doc$ = docLoader.doc.map((doc) => {
     return caseof(doc, [
-      [DocLoad.Doc, function (d) {
-        return d.doc;
-      }],
-      [null, _.constant(null)]
+      [DocLoad.Doc, (d) => d.doc],
+      [null, () => null]
     ]);
   }).skipDuplicates();
 
@@ -260,18 +256,16 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
    * - If the document is in read-only mode this is true
    * - If the document is unloaded later this is true
    */
-  const pending$ = docLoader.doc.map(function (d) {
+  const pending$ = docLoader.doc.map((d) => {
     return caseof(d, [
-      [DocLoad.Pending, _.constant(true)],
-      [null, _.constant(false)]
+      [DocLoad.Pending, () => true],
+      [null, () => false]
     ]);
   }).skipDuplicates();
 
   const loaded$ = K.holdWhen(
-    pending$.map(function (x) {
-      return !x;
-    }),
-    _.identity
+    pending$.map((x) => !x),
+    (x) => x
   );
 
 
@@ -281,14 +275,14 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
   // Property<string?>
   // Is `null` if there is no error and the error code otherwise.
   // Known error codes are 'forbidden' and 'disconnected'.
-  const docLoadError$ = docLoader.doc.map(function (doc) {
+  const docLoadError$ = docLoader.doc.map((doc) => {
     return caseof(doc, [
-      [DocLoad.Error, function (e) { return e.error; }],
-      [null, _.constant(null)]
+      [DocLoad.Error, (e) => e.error],
+      [null, () => null]
     ]);
   });
 
-  docLoadError$.onValue(function (error) {
+  docLoadError$.onValue((error) => {
     if (error === 'forbidden') {
       errorBus.emit(DocError.OpenForbidden());
     }
@@ -320,9 +314,7 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
   const presence = PresenceHub.create(user.sys.id, docEventsBus.stream, shout);
   cleanupTasks.push(presence.destroy);
 
-  const version$ = sysProperty.map(function (sys) {
-    return sys.version;
-  });
+  const version$ = sysProperty.map((sys) => sys.version);
   const reverter = Reverter.create(getValueAt([]), version$, setFields);
 
 
@@ -333,9 +325,10 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
    * @description
    * Is true if the document is connected
    */
-  const isConnected$ = doc$.map(function (doc) {
-    return !!doc;
-  }).skipDuplicates();
+  const isConnected$ =
+    doc$
+    .map((doc) => !!doc)
+    .skipDuplicates();
 
 
   /**
@@ -353,12 +346,13 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
    *
    * @type {Property<boolean>}
    */
-  const canEdit$ = K.combineProperties([isEditable$, isConnected$], function (isEditable, isConnected) {
-    return isEditable && isConnected;
-  });
+  const canEdit$ = K.combineProperties(
+    [isEditable$, isConnected$],
+    (isEditable, isConnected) => isEditable && isConnected
+  );
 
 
-  cleanupTasks.push(function () {
+  cleanupTasks.push(() => {
     forgetCurrentDoc();
     docLoader.destroy();
   });
@@ -389,7 +383,7 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
   // The entity instance is unique for the ID. Other views will share
   // the same instance and not necessarily load the data. This is why
   // we need to make sure that we keep it up date.
-  data$.onValue(function (data) {
+  data$.onValue((data) => {
     entity.data = data;
     if (data.sys.deletedVersion) {
       entity.setDeleted();
@@ -413,38 +407,38 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
 
 
   return {
-    destroy: destroy,
-    getVersion: getVersion,
+    destroy,
+    getVersion,
 
     state: {
       // Used by Entry/Asset editor controller
-      isSaving$: isSaving$,
+      isSaving$,
       // Used by 'cfFocusOtInput' directive and 'FieldLocaleController'
-      isConnected$: isConnected$,
+      isConnected$,
       // Used by Entry/Asset editor controller
-      isDirty$: isDirty$,
+      isDirty$,
 
-      canEdit$: canEdit$,
+      canEdit$,
 
-      loaded$: loaded$,
+      loaded$,
 
       error$: errorBus.stream
     },
 
-    status$: status$,
+    status$,
 
-    getValueAt: getValueAt,
-    setValueAt: setValueAt,
-    removeValueAt: removeValueAt,
-    insertValueAt: insertValueAt,
-    pushValueAt: pushValueAt,
+    getValueAt,
+    setValueAt,
+    removeValueAt,
+    insertValueAt,
+    pushValueAt,
 
-    changes: changes,
+    changes,
     localFieldChanges$: localFieldChangesBus.stream,
 
     valuePropertyAt: memoizedValuePropertyAt,
-    sysProperty: sysProperty,
-    data$: data$,
+    sysProperty,
+    data$,
 
     // TODO only expose presence
     collaboratorsFor: presence.collaboratorsFor,
@@ -460,7 +454,7 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
      * `reverter.revert()` to revert to the initial data of the
      * document.
      */
-    reverter: reverter,
+    reverter,
 
     /**
      * @ngdoc method
@@ -488,9 +482,9 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
      * @param {string} localeCode
      * @returns {boolean}
      */
-    permissions: permissions,
+    permissions,
 
-    resourceState: resourceState
+    resourceState
   };
 
 
@@ -500,15 +494,13 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
   function getData () {
     const data = {
       fields: getValueAt(['fields']),
-      sys: _.cloneDeep(currentSys)
+      sys: cloneDeep(currentSys)
     };
     return deepFreeze(data);
   }
 
   function destroy () {
-    cleanupTasks.forEach(function (task) {
-      task();
-    });
+    cleanupTasks.forEach((task) => task());
   }
 
   function shout (args) {
@@ -519,16 +511,16 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
 
   function getValueAt (path) {
     if (currentDoc) {
-      return _.cloneDeep(ShareJS.peek(currentDoc, path));
+      return cloneDeep(ShareJS.peek(currentDoc, path));
     } else if (Array.isArray(path) && path.length === 0) {
-      return _.cloneDeep(entity.data);
+      return cloneDeep(entity.data);
     } else {
-      return _.cloneDeep(_.get(entity.data, path));
+      return cloneDeep(get(entity.data, path));
     }
   }
 
   function setValueAt (path, value) {
-    return withRawDoc(function (doc) {
+    return withRawDoc((doc) => {
       maybeEmitLocalChange(path);
       if (path.length === 3 && StringField.is(path[1], contentType)) {
         return StringField.setAt(doc, path, value);
@@ -539,19 +531,19 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
   }
 
   function removeValueAt (path) {
-    return withRawDoc(function (doc) {
+    return withRawDoc((doc) => {
       maybeEmitLocalChange(path);
       return ShareJS.remove(doc, path);
     }, makeDocErrorHandler(path));
   }
 
   function insertValueAt (path, i, x) {
-    return withRawDoc(function (doc) {
+    return withRawDoc((doc) => {
       if (getValueAt(path)) {
         maybeEmitLocalChange(path);
-        return $q.denodeify(function (cb) {
+        return $q.denodeify((cb) => {
           doc.insertAt(path, i, x, cb);
-        }).catch(function (err) {
+        }).catch((err) => {
           makeDocErrorHandler(path)(err);
           return $q.reject(err);
         });
@@ -559,7 +551,7 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
         maybeEmitLocalChange(path);
         return setValueAt(path, [x]);
       } else {
-        return $q.reject(new Error('Cannot insert index ' + i + 'into empty container'));
+        return $q.reject(new Error(`Cannot insert index ${i} into empty container`));
       }
     });
   }
@@ -593,9 +585,9 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
     doc._originalEmit = doc.emit;
     doc.emit = function (name, data) {
       this._originalEmit.apply(this, arguments);
-      docEventsBus.emit({doc: doc, name: name, data: data});
+      docEventsBus.emit({ doc, name, data });
     };
-    docEventsBus.emit({doc: doc, name: 'open'});
+    docEventsBus.emit({ doc, name: 'open' });
   }
 
   function withRawDoc (cb, errorListener) {
@@ -605,7 +597,7 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
     } else {
       result = $q.reject(new Error('ShareJS document is not connected'));
     }
-    return result.catch(function (error) {
+    return result.catch((error) => {
       if (errorListener) {
         errorListener(error);
       }
