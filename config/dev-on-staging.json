@@ -26,9 +26,6 @@
     "policy": "eyJjYWxsIjpbInBpY2siLCJyZWFkIiwic3RhdCIsInN0b3JlIiwiY29udmVydCIsImV4aWYiXSwiZXhwaXJ5IjoyMjEyNjYwODAwfQ==",
     "signature": "9c530ac9496000c478a5309321ea1b749740e998a0e28eed96222ba43f7376cc"
   },
-  "aviary": {
-    "api_key": "b7fe4d3302834e61b0f65913f156c067"
-  },
   "embedly": {
     "api_key": "5aba1269adbf42919bd1dd3308b84652"
   },
