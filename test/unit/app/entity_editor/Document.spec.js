@@ -197,8 +197,13 @@ describe('entityEditor/Document', function () {
     });
   });
 
+
   describe('#setValueAt()', function () {
     itRejectsWithoutDocument('setValueAt');
+
+    itEmitsLocalFieldChange((doc, path) => {
+      return doc.setValueAt(path, true);
+    });
 
     it('sets deep value', function () {
       this.connectAndOpen();
@@ -265,6 +270,10 @@ describe('entityEditor/Document', function () {
   describe('#removeValueAt()', function () {
     itRejectsWithoutDocument('removeValueAt');
 
+    itEmitsLocalFieldChange((doc, path) => {
+      return doc.removeValueAt(path);
+    });
+
     it('delegates to ShareJS document', function () {
       const doc = this.connectAndOpen();
       doc.removeAt = sinon.stub();
@@ -303,6 +312,10 @@ describe('entityEditor/Document', function () {
       this.otDoc = this.connectAndOpen({a: [0, 1, 2], sys: {}});
     });
 
+    itEmitsLocalFieldChange((doc, path) => {
+      return doc.insertValueAt(path, 0, 'a');
+    });
+
     itRejectsWithoutDocument('insertValueAt');
 
     it('inserts value into ShareJS document', function () {
@@ -325,6 +338,10 @@ describe('entityEditor/Document', function () {
     });
 
     itRejectsWithoutDocument('insertValueAt');
+
+    itEmitsLocalFieldChange((doc, path) => {
+      return doc.pushValueAt(path);
+    });
 
     it('pushes value into ShareJS document', function () {
       this.doc.pushValueAt(['a'], 'X');
@@ -733,6 +750,35 @@ describe('entityEditor/Document', function () {
         this.$apply();
         expect(errors[0].constructor.name).toBe('SetValueForbidden');
       });
+    });
+  }
+
+  function itEmitsLocalFieldChange (runSetter) {
+    it('emits local field change for fields', async function () {
+      const otDoc = this.connectAndOpen();
+      const localFieldChange = sinon.spy();
+      this.doc.localFieldChanges$.onValue(localFieldChange);
+      await runSetter(this.doc, ['fields', 'A', 'B']);
+      sinon.assert.calledOnce(localFieldChange.withArgs(['A', 'B']));
+
+      otDoc.removeAt(['fields']);
+      await runSetter(this.doc, ['fields', 'A', 'B', 'C']);
+      sinon.assert.calledTwice(localFieldChange.withArgs(['A', 'B']));
+
+      localFieldChange.reset();
+      runSetter(this.doc, ['other', 'A', 'B', 'C']);
+    });
+
+    it('does not emit local field change for other paths', async function () {
+      const otDoc = this.connectAndOpen();
+      const localFieldChange = sinon.spy();
+      this.doc.localFieldChanges$.onValue(localFieldChange);
+
+      await runSetter(this.doc, ['fields', 'A']);
+      otDoc.removeAt(['fields']);
+      await runSetter(this.doc, ['fields']);
+      await runSetter(this.doc, ['other']);
+      sinon.assert.notCalled(localFieldChange);
     });
   }
 });
