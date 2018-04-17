@@ -73,9 +73,6 @@ function integrations () {
       policy: filestackPolicy(),
       signature: alnumExact(64)
     }),
-    aviary: strictObject({
-      api_key: hex(32)
-    }),
     embedly: strictObject({
       api_key: hex(32)
     }),

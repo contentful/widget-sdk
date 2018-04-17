@@ -1,6 +1,4 @@
 .file-info
-  img(aviary-editor-preview)
-
   .file-preview(ng-show="file && !!file.url")
     cf-thumbnail(file="file" height="250")
 
@@ -36,6 +34,7 @@
       href="{{file.url | assetUrl}}" target="_blank" rel="noopener noreferrer"
       ng-show="file && !!file.url")
       i.fa.fa-download
+
     button.btn-secondary-action(type="button"
       aria-label="Show file information" tooltip="Show file information"
       ng-click="showMeta = !showMeta"
@@ -78,11 +77,6 @@
       div(role="menuitem" ng-click="crop(16/9)") 16:9
       div(role="menuitem" ng-click="crop('custom')") Custom aspect ratio
 
-    button.btn-secondary-action(type="button"
-      aria-label="Edit file" tooltip="Open Adobe Creative Editor (deprecated)"
-      ng-click="editWithAviary()"
-      ng-show="canEditFile()")
-      i.fa.fa-paint-brush
     button.btn-secondary-action(type="button"
       aria-label="Delete file" tooltip="Delete file"
       ng-click="deleteFile()"
