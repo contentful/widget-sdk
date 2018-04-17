@@ -63,8 +63,6 @@ overrides:
     - DebuggerStatement
     - EmptyStatement
     - ForStatement
-    - ForInStatement
-    - ForOfStatement
     - LabeledStatement
     - MetaProperty
     - MethodDefinition
