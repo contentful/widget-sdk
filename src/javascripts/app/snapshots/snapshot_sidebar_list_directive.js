@@ -10,7 +10,7 @@ angular.module('cf.app')
  * Directive that renders a list of entry snapshots for comparison
  *
  * @scope.requires {object} otDoc
- *   An instance of 'entityEditor/Document'
+ *   An instance of 'app/entity_editor/Document'
  * @scope.requires {object} entityInfo
  *   As provided by the entry/asset editor controller
  */

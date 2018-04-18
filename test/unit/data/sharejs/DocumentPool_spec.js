@@ -4,7 +4,7 @@ describe('DocumentPool', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    const Document = this.$inject('entityEditor/Document');
+    const Document = this.$inject('app/entity_editor/Document');
     this.doc = {
       destroy: sinon.stub(),
       state: {

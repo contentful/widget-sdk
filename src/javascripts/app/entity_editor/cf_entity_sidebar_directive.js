@@ -14,7 +14,7 @@ angular.module('contentful')
  * @scope.requires {object} state
  *   An instance of 'entityEditor/StateController'
  * @scope.requires {object} otDoc
- *   An instance of 'entityEditor/Document'
+ *   An instance of 'app/entity_editor/Document'
  * @scope.requires {object} entityInfo
  *   As provided by the entry/asset editor controller
  * @scope.requires {object} sidebarControls

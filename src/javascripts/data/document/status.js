@@ -5,9 +5,9 @@ angular.module('contentful')
  * @name data/Document/Status
  * @description
  * Internal factory for the 'status$' property of
- * 'entityEditor/Document'. See the documentation there.
+ * 'app/entity_editor/Document'. See the documentation there.
  *
- * Tested in the 'entityEditor/Document' tests.
+ * Tested in the 'app/entity_editor/Document' tests.
  */
 .factory('data/Document/Status', ['require', function (require) {
   var K = require('utils/kefir');

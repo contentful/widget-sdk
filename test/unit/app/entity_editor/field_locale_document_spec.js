@@ -23,7 +23,6 @@ describe('entityEditor/FieldLocaleDocument', function () {
 
       testMethodDelegate('push', 'pushValueAt', ['VAL']);
       testMethodDelegate('insert', 'insertValueAt', [1, 'VAL']);
-      testMethodDelegate('move', 'moveValueAt', [1, 0]);
     });
 
     function testMethodDelegate (method, target, args = []) {
