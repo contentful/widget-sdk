@@ -2,12 +2,19 @@ import * as sinon from 'helpers/sinon';
 
 describe('CreateSpace', function () {
   beforeEach(function () {
-    this.spaceContext = {};
+    this.defaultOrg = {sys: {id: 'defaultorg'}, pricingVersion: 'pricing_version_1'};
+
+    this.TheStore = {
+      getStore: () => ({
+        get: () => this.defaultOrg.sys.id
+      })
+    };
 
     this.v1Org = {sys: {id: 'v1'}, pricingVersion: 'pricing_version_1'};
     this.v2Org = {sys: {id: 'v2'}, pricingVersion: 'pricing_version_2'};
 
     this.getOrganization = sinon.stub().rejects();
+    this.getOrganization.withArgs('defaultorg').resolves(this.defaultOrg);
     this.getOrganization.withArgs('v1').resolves(this.v1Org);
     this.getOrganization.withArgs('v2').resolves(this.v2Org);
 
@@ -17,7 +24,7 @@ describe('CreateSpace', function () {
 
     module('contentful/test', ($provide) => {
       $provide.value('services/TokenStore', {getOrganization: this.getOrganization});
-      $provide.value('spaceContext', this.spaceContext);
+      $provide.value('TheStore', this.TheStore);
       $provide.value('utils/LaunchDarkly', {});
       $provide.value('access_control/AccessChecker', this.accessChecker);
     });
@@ -44,10 +51,9 @@ describe('CreateSpace', function () {
     });
 
     it('takes org id from space context if not passed explicitly', function* () {
-      this.spaceContext.organization = {sys: {id: 'SPACE_ORG'}, pricingVersion: 'pricing_version_1'};
       yield this.CreateSpace.showDialog();
       const modalArgs = this.modalDialog.open.firstCall.args[0];
-      expect(modalArgs.scopeData.organization).toBe(this.spaceContext.organization);
+      expect(modalArgs.scopeData.organization).toBe(this.defaultOrg);
     });
 
     it('checks for creation permission', function* () {
