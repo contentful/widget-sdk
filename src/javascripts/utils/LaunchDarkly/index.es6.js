@@ -281,53 +281,61 @@ function changeUserContext ([user, currOrg, spacesByOrg, currSpace, contentPrevi
   if (client) {
     LDContextChangeMVar.empty();
 
-    // the following code tracks how long does it take to identify client with new data
-    // the problem is that if we call `getCurrentVariation`, we can be stuck for some time
-    // this code allows us to track in the bugsnag, in case we wait for more than 1 second
-    let clientIdentified = false;
-    const startingTime = Date.now();
-
-    // we track for 1, 5, 15, 30, 60 seconds and report if we were not able to identify.
-    // the reason to do so – we _might_ not even reach callback, so reporting from only there
-    // won't give us numbers
-    // we track on so many intervals because otherwise user can close/refresh the page and we
-    // won't know that they were waiting for quite a time
-    [1000, 5000, 15000, 30000, 60000].forEach(ms => {
-      sleep(ms).then(() => {
-        if (!clientIdentified) {
-          // send error to bugsnag, so we can actually evaluate
-          // the impact of failures
-          logger.logException(new Error('LaunchDarkly client.identify takes too long'), {
-            data: {
-              message: `client was not identified in ${ms} ms`
-            },
-            groupingHash: 'LaunchDarkly client identification'
-          });
-        }
+    logSlowResponse('LD:client.identify', cb => {
+      client.identify(ldUser, null, () => {
+        cb();
+        LDContextChangeMVar.put();
       });
     });
+  } else {
+    client = LD.initialize(config.envId, ldUser);
+    logSlowResponse('LD.initialize', (cb) => {
+      client.on('ready', _ => {
+        cb();
+        LDContextChangeMVar.put();
+      });
+    });
+  }
+}
 
-    client.identify(ldUser, null, () => {
-      // log everything which is above 1 second
-      // while it technically covered above, but it is also good to capture exact numbers
-      // one second is chosen purely empirically – LD supposed to work fast
-      const passedTime = Date.now() - startingTime;
-      if (passedTime > 1000) {
-        logger.logException(new Error('LaunchDarkly client.identify takes too long'), {
+function logSlowResponse (method, fn) {
+  // the following code tracks how long does it take to identify client with new data
+  // the problem is that if we call `getCurrentVariation`, we can be stuck for some time
+  // this code allows us to track in the bugsnag, in case we wait for more than 1 second
+  let clientIdentified = false;
+  const startingTime = Date.now();
+
+  // we track for 1, 5, 15, 30, 60 seconds and report if we were not able to identify.
+  // the reason to do so – we _might_ not even reach callback, so reporting from only there
+  // won't give us numbers
+  // we track on so many intervals because otherwise user can close/refresh the page and we
+  // won't know that they were waiting for quite a time
+  [1000, 5000, 15000, 30000, 60000].forEach(ms => {
+    sleep(ms).then(() => {
+      if (!clientIdentified) {
+        // send error to bugsnag, so we can actually evaluate
+        // the impact of failures
+        logger.logException(new Error(`LaunchDarkly ${method} takes too long`), {
           data: {
-            message: `client was identified in ${passedTime} ms`
+            message: `${method} was not finished in ${ms} ms`
           },
           groupingHash: 'LaunchDarkly client identification'
         });
       }
+    });
+  });
 
-      clientIdentified = true;
-      LDContextChangeMVar.put();
-    });
-  } else {
-    client = LD.initialize(config.envId, ldUser);
-    client.on('ready', _ => {
-      LDContextChangeMVar.put();
-    });
-  }
+  fn(() => {
+    const passedTime = Date.now() - startingTime;
+    if (passedTime > 1000) {
+      logger.logException(new Error(`LaunchDarkly ${method} takes too long`), {
+        data: {
+          message: `${method} was finished in ${passedTime} ms`
+        },
+        groupingHash: 'LaunchDarkly client identification'
+      });
+    }
+
+    clientIdentified = true;
+  });
 }
