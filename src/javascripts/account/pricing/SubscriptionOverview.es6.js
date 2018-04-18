@@ -25,6 +25,7 @@ import pluralize from 'pluralize';
 import {joinAnd} from 'stringUtils';
 import {byName as colors} from 'Styles/Colors';
 import { calculatePlansCost, calcUsersMeta, calculateTotalPrice, getEnabledFeatures } from 'utils/SubscriptionUtils';
+import { TextLink } from '@contentful/ui-component-library';
 
 const SubscriptionOverview = createReactClass({
   propTypes: {
@@ -396,73 +397,44 @@ RightSidebar.propTypes = {
   onContactUs: PropTypes.func.isRequired
 };
 
-function createLinkFromMeta (meta) {
-  const text = meta.text ? meta.text : '';
-  let link = React.createElement(meta.tag, meta.props, text);
-
-  if (meta.tooltipProps) {
-    link = React.createElement(Tooltip, meta.tooltipProps, link);
-  }
-
-  return link;
-}
-
 function getSpaceActionLinks (space, isOrgOwner, onDeleteSpace) {
-  const actionLinkStyle = {padding: '0 10px 0 0', display: 'inline', whiteSpace: 'nowrap'};
+  const actionLinkStyle = {
+    margin: '0 10px 0 0',
+    display: 'inline',
+    whiteSpace: 'nowrap'
+  };
   const tooltip = (
     <div style={{whiteSpace: 'normal'}}>
-      You don&apos;t have access to this space. But since you&apos;re an organization {isOrgOwner ? 'owner' : 'admin'} you can grand yourself access by going to <i>users</i> and adding yourself to the space.
+      You don&apos;t have access to this space. But since you&apos;re an organization {isOrgOwner ? 'owner' : 'admin'} you can grant yourself access by going to <i>users</i> and adding yourself to the space.
     </div>
   );
 
-  const spaceLinkMeta = {
-    text: 'Go to space',
-    props: {
-      className: 'text-link',
-      style: actionLinkStyle,
-      'data-test-id': 'subscription-page.spaces-list.space-link'
-    }
-  };
+  let spaceLink = (
+    <TextLink
+      extraClassNames='text-link'
+      href={space.isAccessible && href(getSpaceNavState(space.sys.id))}
+      disabled={!space.isAccessible}
+      style={actionLinkStyle}
+    >
+      Go to space
+    </TextLink>
+  );
+  let usageLink = (
+    <TextLink
+      extraClassNames='text-link'
+      href={space.isAccessible && href(getSpaceUsageNavState(space.sys.id))}
+      disabled={!space.isAccessible}
+      style={actionLinkStyle}
+    >
+      Usage
+    </TextLink>
+  );
 
-  const usageLinkMeta = {
-    text: 'Usage',
-    props: {
-      className: 'text-link',
-      style: actionLinkStyle,
-      'data-test-id': 'subscription-page.spaces-list.space-usage-link'
-    }
-  };
-
-  if (space.isAccessible) {
-    spaceLinkMeta.tag = 'a';
-    spaceLinkMeta.props.href = href(getSpaceNavState(space.sys.id));
-
-    usageLinkMeta.tag = 'a';
-    usageLinkMeta.props.href = href(getSpaceUsageNavState(space.sys.id));
-  } else {
-    spaceLinkMeta.tag = 'button';
-    spaceLinkMeta.props.disabled = true;
-    spaceLinkMeta.tooltipProps = {
-      tooltip,
-      options: {
-        width: 400
-      },
-      style: actionLinkStyle
-    };
-
-    usageLinkMeta.tag = 'button';
-    usageLinkMeta.props.disabled = true;
-    usageLinkMeta.tooltipProps = {
-      tooltip,
-      options: {
-        width: 280
-      },
-      style: actionLinkStyle
-    };
+  if (!space.isAccessible) {
+    spaceLink = <Tooltip tooltip={tooltip} style={actionLinkStyle}>{spaceLink}</Tooltip>;
+    usageLink = <Tooltip tooltip={tooltip} style={actionLinkStyle}>{usageLink}</Tooltip>;
   }
 
-  const spaceLink = createLinkFromMeta(spaceLinkMeta);
-  const usageLink = createLinkFromMeta(usageLinkMeta);
   const deleteLink = (
     <button
       className='text-link text-link--destructive'
