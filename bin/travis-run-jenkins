@@ -15,26 +15,33 @@
 
 set -e
 
+echo "------------------------------------"
+echo "| Jenkins trigger script in Travis |"
+echo "------------------------------------"
+echo ""
+
 # abort if tests failed
-if [[ "$TRAVIS_TEST_RESULT" != "0" ]]; then exit 0; fi
+if [[ "$TRAVIS_TEST_RESULT" != "0" ]]; then
+	echo "Skipping due to tests failure."
+	exit 0;
+fi
 
 # abort if testing a merge commit
 if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then
-  echo "Skipping integration tests for PR"
+  echo "Skipping integration tests for PR build."
   exit 0;
 fi
 
 # abort if not a feature branch
 if [[ "$TRAVIS_BRANCH" =~ ^(preview|production)$ ]]; then
-  echo "Skipping integration tests for $TRAVIS_BRANCH branch builds"
+  echo "Skipping integration tests for $TRAVIS_BRANCH branch builds."
   exit 0;
 fi
 
-if [[ "$TRAVIS_BRANCH" = "master" ]]; then
-  JOB="staging-custom-ui-version"
-else
-  JOB="smoke-test"
-fi
+
+JOB="staging-custom-ui-version"
+
+echo "Running ${JOB} for ${TRAVIS_BRANCH}."
 
 AUTH="cf-ci:$JENKINS_PASSWORD"
 CAUSE="Triggered+by+Travis+build+%23$TRAVIS_BUILD_ID+within+commit+$TRAVIS_COMMIT"
