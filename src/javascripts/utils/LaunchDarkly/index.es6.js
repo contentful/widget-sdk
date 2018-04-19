@@ -281,24 +281,30 @@ function changeUserContext ([user, currOrg, spacesByOrg, currSpace, contentPrevi
   if (client) {
     LDContextChangeMVar.empty();
 
-    logSlowResponse('LD:client.identify', cb => {
-      client.identify(ldUser, null, () => {
-        cb();
-        LDContextChangeMVar.put();
-      });
+    const logSlowResponse = startLogging('LD:client.identify');
+    client.identify(ldUser, null, () => {
+      logSlowResponse();
+      LDContextChangeMVar.put();
     });
   } else {
     client = LD.initialize(config.envId, ldUser);
-    logSlowResponse('LD.initialize', (cb) => {
-      client.on('ready', _ => {
-        cb();
-        LDContextChangeMVar.put();
-      });
+    const logSlowResponse = startLogging('LD:client.identify');
+    client.on('ready', _ => {
+      logSlowResponse();
+      LDContextChangeMVar.put();
     });
   }
 }
 
-function logSlowResponse (method, fn) {
+/**
+ * @description we depend on LD, and we want to keep logging it's slow responses to track
+ * how healthy it is
+ * @param {string} method – LD method to write in the bugsnag. Essentially, there is no
+ * diference between `initialize` and `identify`, but just for separation we mark them
+ * @returns {function} – function which stops logging and emits bugsnag error if
+ * it takes more than 1 second
+ */
+function startLogging (method) {
   // the following code tracks how long does it take to identify client with new data
   // the problem is that if we call `getCurrentVariation`, we can be stuck for some time
   // this code allows us to track in the bugsnag, in case we wait for more than 1 second
@@ -317,7 +323,8 @@ function logSlowResponse (method, fn) {
         // the impact of failures
         logger.logException(new Error(`LaunchDarkly ${method} takes too long`), {
           data: {
-            message: `${method} was not finished in ${ms} ms`
+            message: `${method} was not finished in ${ms} ms`,
+            time: ms
           },
           groupingHash: 'LaunchDarkly client identification'
         });
@@ -325,17 +332,18 @@ function logSlowResponse (method, fn) {
     });
   });
 
-  fn(() => {
+  return () => {
     const passedTime = Date.now() - startingTime;
     if (passedTime > 1000) {
       logger.logException(new Error(`LaunchDarkly ${method} takes too long`), {
         data: {
-          message: `${method} was finished in ${passedTime} ms`
+          message: `${method} was finished in ${passedTime} ms`,
+          time: passedTime
         },
         groupingHash: 'LaunchDarkly client identification'
       });
     }
 
     clientIdentified = true;
-  });
+  };
 }
