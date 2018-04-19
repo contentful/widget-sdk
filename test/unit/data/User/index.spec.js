@@ -64,7 +64,7 @@ describe('data/User', () => {
       this.spy = sinon.spy();
       this.utils.userDataBus$.onValue(this.spy);
 
-      this.set = function (params) {
+      this.set = async function (params) {
         const {
           user = K.getValue(this.tokenStore.user$),
           orgs = K.getValue(this.tokenStore.organizations$),
@@ -83,80 +83,78 @@ describe('data/User', () => {
         this.spaceContext.publishedCTs.items$.set(publishedCTs);
         this.$rootScope.$broadcast('$stateChangeSuccess', null, {orgId});
         this.tokenStore.user$.set(user);
-        this.$apply();
+        // we need to wait next tick, so all promises will be resolved
+        // we resolve mocked functions immediately, so they are executed as microtasks
+        // and results will be available at the next tick
+        await new Promise(resolve => setTimeout(resolve, 0));
       };
-
-      this.wait = ms => new Promise(resolve => setTimeout(resolve, ms));
-      this.waitNextTick = this.wait.bind(this, 0);
     });
     it('should emit [user, org, spacesByOrg, space, contentPreviews, publishedCTs, pricing] where space, contentPreviews and publishedCTs are optional', async function () {
       const orgs = [{name: '1', sys: {id: 1}}, {name: '2', sys: {id: 2}}];
-      const user = {email: 'a@b.c', organizationMemberships: []};
+      const user = {email: 'a@b.c', organizationMemberships: [{ organization: orgs[0] }]};
       const org = {name: 'some org', sys: {id: 'some-org-1'}};
 
       sinon.assert.notCalled(this.spy);
 
-      this.set({user, orgs, spacesByOrg: {}, org: null, orgId: 1, publishedCTs: []});
-      await this.waitNextTick();
+      const pricing = [{ version: 'v1', organization: orgs[0] }];
+      await this.set({user, orgs, spacesByOrg: {}, org: null, orgId: 1, publishedCTs: []});
       sinon.assert.calledOnce(this.spy);
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data, {}, [], []]);
+      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data, {}, [], pricing]);
 
       this.spy.reset();
-      this.set({org});
-      await this.waitNextTick();
+      await this.set({org});
       sinon.assert.calledOnce(this.spy);
       sinon.assert.calledWithExactly(
         this.spy,
-        [user, org, {}, this.spaceContext.space.data, {}, [], []]
+        [user, org, {}, this.spaceContext.space.data, {}, [], pricing]
       );
 
       this.spy.reset();
-      this.set({org: null, space: {fields: [], sys: {id: 'space-1'}}});
-      await this.waitNextTick();
+      await this.set({org: null, space: {fields: [], sys: {id: 'space-1'}}});
       sinon.assert.calledOnce(this.spy);
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data, {}, [], []]);
+      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data, {}, [], pricing]);
     });
     it('should emit a value only when the user is valid and the org and spacesByOrg are not falsy', async function () {
       const orgs = [{name: '1', sys: {id: 1}}, {name: '2', sys: {id: 2}}];
-      const user = {email: 'a@b', organizationMemberships: []};
+      const user = {email: 'a@b', organizationMemberships: [{ organization: orgs[1] }]};
+      const pricing = [{ version: 'v1', organization: orgs[1] }];
 
       // invalid user
-      this.set({user: null});
-      await this.waitNextTick();
+      await this.set({user: null});
       sinon.assert.notCalled(this.spy);
 
       // valid user but org is falsy since org prop init val is null
-      this.set({user});
-      await this.waitNextTick();
+      await this.set({user});
+
       sinon.assert.notCalled(this.spy);
 
       // spaces by org map is null
-      this.set({user, orgs, spacesByOrg: null, orgId: 1});
-      await this.waitNextTick();
+      await this.set({user, orgs, spacesByOrg: null, orgId: 1});
+
       sinon.assert.notCalled(this.spy);
 
       // all valid valus, hence spy must be called
-      this.set({user, orgs, spacesByOrg: {}, orgId: 1});
-      await this.waitNextTick();
+      await this.set({user, orgs, spacesByOrg: {}, orgId: 1});
+
       sinon.assert.calledOnce(this.spy);
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, {}, {}, [], []]);
+      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, {}, {}, [], pricing]);
     });
     it('should skip duplicates', async function () {
       const setter = this.set.bind(this, {
-        user: {email: 'a@b.c', organizationMemberships: []},
+        user: {email: 'a@b.c', organizationMemberships: [{ organization: { sys: { id: 'some' } } }]},
         org: {name: 'org-1', sys: {id: 1}},
         spacesByOrg: {},
         space: {name: 'space-1', sys: {id: 'space-1'}},
         publishedCTs: []
       });
-      setter();
-      await this.waitNextTick();
+      await setter();
+
       sinon.assert.calledOnce(this.spy);
-      setter();
-      await this.waitNextTick();
+      await setter();
+
       sinon.assert.calledOnce(this.spy);
-      this.set({space: null});
-      await this.waitNextTick();
+      await this.set({space: null});
+
       sinon.assert.calledTwice(this.spy);
     });
     it('should emit correct pricing object', async function () {
@@ -166,9 +164,7 @@ describe('data/User', () => {
       const orgs = [v1org, v2org];
       const organizationMemberships = orgs.map(organization => ({ organization }));
       const user = {email: 'a@b', organizationMemberships};
-      this.set({user, orgs, spacesByOrg: {}, orgId: 1});
-
-      await this.waitNextTick();
+      await this.set({user, orgs, spacesByOrg: {}, orgId: 1});
 
       const pricing = [{
         version: 'v1',
@@ -180,6 +176,13 @@ describe('data/User', () => {
       }];
 
       sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, {}, {}, [], pricing]);
+    });
+    it('should not emit actions if no pricing data', async function () {
+      const orgs = [{name: '1', sys: {id: 1}}, {name: '2', sys: {id: 2}}];
+      const user = {email: 'a@b', organizationMemberships: []};
+      await this.set({user, orgs, spacesByOrg: {}, orgId: 1});
+
+      sinon.assert.notCalled(this.spy);
     });
   });
 

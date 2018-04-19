@@ -4,7 +4,7 @@ import $stateParams from '$stateParams';
 import spaceContext from 'spaceContext';
 
 import { contentPreviewsBus$ } from 'contentPreview';
-import {isEqual, find, get, includes} from 'lodash';
+import {isEqual, find, get} from 'lodash';
 import {organizations$, user$, spacesByOrganization$} from 'services/TokenStore';
 
 import {
@@ -23,7 +23,7 @@ import {getSubscriptionPlans} from 'account/pricing/PricingDataProvider';
 // so that you can read from it and decide qualification criteria
 const pricing$ = user$
   .filter(user => user && user.organizationMemberships)
-  .flatMap((user) => {
+  .flatMap(user => {
     const pricingPromise = user.organizationMemberships
       .map(({ organization }) => {
         // we better use `utils/ResourceUtils`, but we'd have to break circular references
@@ -60,7 +60,10 @@ export const userDataBus$ =
     ],
     (user, [org, space, publishedCTs], spacesByOrg, contentPreviews, pricing) => [user, org, spacesByOrg, space, contentPreviews, publishedCTs, pricing]
   )
-  .filter(([user, org, spacesByOrg]) => user && user.email && org && spacesByOrg) // space is a Maybe and so is contentPreviews
+  // space is a Maybe and so is contentPreviews
+  .filter(([user, org, spacesByOrg, _space, _contentPreviews, _publishedCTs, pricing]) =>
+    user && user.email && org && spacesByOrg && pricing && pricing.length > 0
+  )
   .skipDuplicates(isEqual)
   .toProperty();
 
@@ -111,7 +114,6 @@ export function getUserCreationDateUnixTimestamp (user) {
  * Given a pricing array, this returns true if none of the orgs that the user
  * belongs to is a paying org.
  * Return true if the user belongs to NO paying orgs
- * A qualified user doesn't belong to a paying/converted org
  * Supports both v1/v2 pricing
  *
  * @param {Object} pricing
@@ -127,7 +129,7 @@ export function isNonPayingUser (pricing) {
     }
 
     const orgStatus = get(organization, 'subscription.status');
-    return includes(convertedStatuses, orgStatus);
+    return convertedStatuses.includes(orgStatus);
   });
 
   return !isPaying;
