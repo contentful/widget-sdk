@@ -4,27 +4,29 @@ describe('CreateSpace', function () {
   beforeEach(function () {
     this.defaultOrg = {sys: {id: 'defaultorg'}, pricingVersion: 'pricing_version_1'};
 
-    this.TheStore = {
-      getStore: () => ({
-        get: () => this.defaultOrg.sys.id
-      })
-    };
-
     this.v1Org = {sys: {id: 'v1'}, pricingVersion: 'pricing_version_1'};
     this.v2Org = {sys: {id: 'v2'}, pricingVersion: 'pricing_version_2'};
 
     this.getOrganization = sinon.stub().rejects();
-    this.getOrganization.withArgs('defaultorg').resolves(this.defaultOrg);
+
     this.getOrganization.withArgs('v1').resolves(this.v1Org);
     this.getOrganization.withArgs('v2').resolves(this.v2Org);
+
+    this.getOrganizations = sinon.stub().resolves([
+      this.defaultOrg,
+      this.v1Org,
+      this.v2Org
+    ]);
 
     this.accessChecker = {
       canCreateSpaceInOrganization: sinon.stub().returns(true)
     };
 
     module('contentful/test', ($provide) => {
-      $provide.value('services/TokenStore', {getOrganization: this.getOrganization});
-      $provide.value('TheStore', this.TheStore);
+      $provide.value('services/TokenStore', {
+        getOrganization: this.getOrganization,
+        getOrganizations: this.getOrganizations
+      });
       $provide.value('utils/LaunchDarkly', {});
       $provide.value('access_control/AccessChecker', this.accessChecker);
     });
