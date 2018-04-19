@@ -1,4 +1,4 @@
-import React, {createElement as h, Fragment} from 'react';
+import React, {Fragment} from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import {runTask} from 'utils/Concurrent';
@@ -16,16 +16,16 @@ import moment from 'moment';
 import {get, isString} from 'lodash';
 import {supportUrl} from 'Config';
 import $location from '$location';
-import Workbench from 'app/WorkbenchReact';
+
+import Workbench from 'ui/Components/Workbench/JSX';
+import Icon from 'ui/Components/Icon';
 import Tooltip from 'ui/Components/Tooltip';
 import HelpIcon from 'ui/Components/HelpIcon';
 import pluralize from 'pluralize';
 import {joinAnd} from 'stringUtils';
 import {byName as colors} from 'Styles/Colors';
-import BubbleIcon from 'svg/bubble';
-import InvoiceIcon from 'svg/invoice';
-import {asReact} from 'ui/Framework/DOMRenderer';
 import { calculatePlansCost, calcUsersMeta, calculateTotalPrice, getEnabledFeatures } from 'utils/SubscriptionUtils';
+import { TextLink } from '@contentful/ui-component-library';
 
 const SubscriptionOverview = createReactClass({
   propTypes: {
@@ -33,6 +33,7 @@ const SubscriptionOverview = createReactClass({
     onForbidden: PropTypes.func.isRequired,
     orgId: PropTypes.string.isRequired
   },
+
   getInitialState: function () {
     return {
       organization: {},
@@ -42,9 +43,11 @@ const SubscriptionOverview = createReactClass({
       usersMeta: {}
     };
   },
+
   componentWillMount: function () {
     runTask(this.fetchData);
   },
+
   fetchData: function* () {
     const {orgId, onReady, onForbidden} = this.props;
 
@@ -81,28 +84,31 @@ const SubscriptionOverview = createReactClass({
 
     const membershipsResource = yield resources.get('organization_membership');
     const numMemberships = membershipsResource.usage;
-
+    const usersMeta = calcUsersMeta({ basePlan, numMemberships });
     const grandTotal = calculateTotalPrice({
       allPlans: plans.items,
       basePlan,
       numMemberships
     });
 
-    const usersMeta = calcUsersMeta({ basePlan, numMemberships });
-
     this.setState({basePlan, spacePlans, grandTotal, usersMeta, organization});
 
     onReady();
   },
+
   createSpace: function () {
     showCreateSpaceModal(this.props.orgId);
   },
+
   deleteSpace: function (space) {
-    openDeleteSpaceDialog({
-      space,
-      onSuccess: () => { runTask(this.fetchData); }
-    });
+    return () => {
+      openDeleteSpaceDialog({
+        space,
+        onSuccess: () => { runTask(this.fetchData); }
+      });
+    };
   },
+
   contactUs: function () {
     // Open intercom if it's possible, otherwise go to support page.
     if (Intercom.isEnabled()) {
@@ -115,34 +121,37 @@ const SubscriptionOverview = createReactClass({
     const {basePlan, spacePlans, grandTotal, usersMeta, organization} = this.state;
     const {orgId} = this.props;
 
-    return h(Workbench, {
-      title: 'Subscription',
-      icon: 'subscription',
-      testId: 'subscription-page',
-      content: h('div', {
-        style: {padding: '0 2rem'}
-      },
-        h('div', {
-          className: 'header'
-        },
-          h(BasePlan, { basePlan, orgId }),
-          h(UsersForPlan, { usersMeta, orgId })
-        ),
-          h(SpacePlans, {
-            spacePlans,
-            onCreateSpace: this.createSpace,
-            onDeleteSpace: this.deleteSpace,
-            isOrgOwner: isOwner(organization)
-          })
-        ),
-      sidebar: h(RightSidebar, {
-        orgId,
-        grandTotal,
-        isOrgOwner: isOwner(organization),
-        isOrgBillable: organization.isBillable,
-        onContactUs: this.contactUs
-      })
-    });
+    return (
+      <Workbench
+        title='Subscription'
+        icon='subscription'
+        testId='subscription-page'
+      >
+        <Workbench.Content>
+          <div style={{padding: '0px 2rem'}}>
+            <div className='header'>
+              <BasePlan basePlan={basePlan} orgId={orgId} />
+              <UsersForPlan usersMeta={usersMeta} orgId={orgId} />
+            </div>
+            <SpacePlans
+              spacePlans={spacePlans}
+              onCreateSpace={this.createSpace}
+              onDeleteSpace={this.deleteSpace}
+              isOrgOwner={isOwner(organization)}
+            />
+          </div>
+        </Workbench.Content>
+        <Workbench.Sidebar>
+          <RightSidebar
+            orgId={orgId}
+            grandTotal={grandTotal}
+            isOrgOwner={isOwner(organization)}
+            isOrgBillable={Boolean(organization.isBillable)}
+            onContactUs={this.contactUs}
+          />
+        </Workbench.Sidebar>
+      </Workbench>
+    );
   }
 });
 
@@ -307,129 +316,135 @@ function RightSidebar ({grandTotal, orgId, isOrgOwner, isOrgBillable, onContactU
   // TODO - add these styles to stylesheets
   const iconStyle = {fill: colors.blueDarkest, paddingRight: '6px', position: 'relative', bottom: '-0.125em'};
 
-  return h('div', {
-    className: 'entity-sidebar',
-    'data-test-id': 'subscription-page.sidebar'
-  },
-    isOrgBillable && h(Fragment, null,
-      h('h2', {className: 'entity-sidebar__heading'}, 'Grand total'),
-      h('p', {
-        'data-test-id': 'subscription-page.sidebar.grand-total'
-      },
-        'Your grand total is ',
-        h(Price, {value: grandTotal, style: {fontWeight: 'bold'}}),
-        ' per month.'
-      ),
-      isOrgOwner && h('p', {
-        style: {marginBottom: '28px'}
-      },
-        h('span', {style: iconStyle}, asReact(InvoiceIcon)),
-        h('a', {
-          className: 'text-link',
-          href: href(getInvoiceNavState(orgId)),
-          'data-test-id': 'subscription-page.sidebar.invoice-link'
-        }, 'View invoices')
-      ),
-      h('div', {className: 'note-box--info'},
-        h('p', null,
-          'Note that the monthly invoice amount might deviate from the total shown ' +
-          'above. This happens when you hit overages or make changes to your ' +
-          'subscription during a billing cycle.'
-        ),
-        h('p', null,
-        h('span', {style: iconStyle}, asReact(InvoiceIcon)),
-        h('a', {
-          className: 'text-link',
-          href: href(getInvoiceNavState(orgId)),
-          'data-test-id': 'subscription-page.sidebar.invoice-link'
-        }, 'View invoices')
-      )
-      )
-    ),
-    !isOrgBillable && isOrgOwner && h(Fragment, null,
-      h('h2', {className: 'entity-sidebar__heading'}, 'Your payment details'),
-      h('p', null,
-        'You need to provide us with your billing address and credit card details before ' +
-        'creating paid spaces or adding users beyond the free limit.'
-      ),
-      h('p', null,
-        h('span', {style: iconStyle}, asReact(InvoiceIcon)),
-        h('a', {
-          className: 'text-link',
-          href: href(getPaymentNavState(orgId)),
-          'data-test-id': 'subscription-page.sidebar.add-payment-link'
-        }, 'Enter payment details')
-      )
-    ),
-    h('h2', {className: 'entity-sidebar__heading'}, 'Need help?'),
-    h('p', null,
-      isOrgBillable && 'Do you need to upgrade or downgrade your spaces? ',
-      !isOrgBillable && 'Do you have any questions about our pricing? ',
-      'Don’t hesitate to talk to our customer success team.'
-    ),
-    h('p', {className: 'entity-sidebar__help-text'},
-      h('span', {style: iconStyle}, asReact(BubbleIcon)),
-      h('button', {
-        className: 'text-link',
-        onClick: onContactUs,
-        'data-test-id': 'subscription-page.sidebar.contact-link'
-      }, 'Get in touch with us')
-    )
-  );
+  return <div className='entity-sidebar' data-test-id='subscription-page.sidebar'>
+    { isOrgBillable &&
+      <Fragment>
+        <h2 className='entity-sidebar__heading'>Grand total</h2>
+        <p data-test-id='subscription-page.sidebar.grand-total'>
+          Your grand total is <Price value={grandTotal} style={{fontWeight: 'bold'}} /> per month.
+        </p>
+        {
+          isOrgOwner &&
+          <p style={{marginBottom: '28px'}}>
+            <Icon name='invoice' style={iconStyle} />
+            <a
+              className='text-link'
+              href={href(getInvoiceNavState(orgId))}
+              data-test-id='subscription-page.sidebar.invoice-link'
+            >
+              View invoices
+            </a>
+          </p>
+        }
+        <div className='note-box--info'>
+          <p>
+            Note that the monthly invoice amount might deviate from the total shown above. This happens when you hit overages or make changes to your subscription during a billing cycle.
+          </p>
+          <p>
+            <Icon name='invoice' style={iconStyle} />
+            <a
+              className='text-link'
+              href={href(getInvoiceNavState(orgId))}
+              data-test-id='subscription-page.sidebar.invoice-link'
+            >
+              View invoices
+            </a>
+          </p>
+        </div>
+      </Fragment>
+    }
+    {
+      !isOrgBillable && isOrgOwner &&
+      <Fragment>
+        <h2 className='entity-sidebar__heading'>Your payment details</h2>
+        <p>
+          You need to provide us with your billing address and credit card details before creating paid spaces or adding users beyond the free limit.
+        </p>
+        <Icon name='invoice' style={iconStyle} />
+        <a
+          className='text-link'
+          href={href(getPaymentNavState(orgId))}
+          data-test-id='subscription-page.sidebar.add-payment-link'
+        >
+          Enter payment details
+        </a>
+      </Fragment>
+    }
+    <h2 className='entity-sidebar__heading'>Need help?</h2>
+    <p>
+      { isOrgBillable && 'Do you need to upgrade or downgrade your spaces?' }
+      { !isOrgBillable && 'Do you have any questions about our pricing?' }
+      <Fragment>&#32;Don&apos;t hesitate to talk to our customer success team.</Fragment>
+    </p>
+    <p>
+      <Icon name='bubble' style={iconStyle} />
+      <button
+        className='text-link'
+        onClick={onContactUs}
+        data-test-id='subscription-page.sidebar.contact-link'
+      >
+        Get in touch with us
+      </button>
+    </p>
+  </div>;
 }
 
-function getSpaceActionLinks (space, isOrgOwner, onDeleteSpace) {
-  const actionLinkStyle = {padding: '0 10px 0 0', display: 'inline', whiteSpace: 'nowrap'};
+RightSidebar.propTypes = {
+  grandTotal: PropTypes.number.isRequired,
+  orgId: PropTypes.string.isRequired,
+  isOrgOwner: PropTypes.bool.isRequired,
+  isOrgBillable: PropTypes.bool.isRequired,
+  onContactUs: PropTypes.func.isRequired
+};
 
-  const tooltip = h('div', {style: {whiteSpace: 'normal'}},
-    'You don’t have access to this space. But since you’re an organization ',
-    `${isOrgOwner ? 'owner' : 'admin'} you can grant yourself access by going to `,
-    h('i', null, 'users'),
-    ' and adding yourself to the space.'
+function getSpaceActionLinks (space, isOrgOwner, onDeleteSpace) {
+  const actionLinkStyle = {
+    margin: '0 10px 0 0',
+    display: 'inline',
+    whiteSpace: 'nowrap'
+  };
+  const tooltip = (
+    <div style={{whiteSpace: 'normal'}}>
+      You don&apos;t have access to this space. But since you&apos;re an organization {isOrgOwner ? 'owner' : 'admin'} you can grant yourself access by going to <i>users</i> and adding yourself to the space.
+    </div>
   );
 
-  let spaceLink = '';
-  let usageLink = '';
+  let spaceLink = (
+    <TextLink
+      extraClassNames='text-link'
+      href={space.isAccessible && href(getSpaceNavState(space.sys.id))}
+      disabled={!space.isAccessible}
+      style={actionLinkStyle}
+    >
+      Go to space
+    </TextLink>
+  );
+  let usageLink = (
+    <TextLink
+      extraClassNames='text-link'
+      href={space.isAccessible && href(getSpaceUsageNavState(space.sys.id))}
+      disabled={!space.isAccessible}
+      style={actionLinkStyle}
+    >
+      Usage
+    </TextLink>
+  );
 
-  if (space.isAccessible) {
-    spaceLink = h('a', {
-      className: 'text-link',
-      href: href(getSpaceNavState(space.sys.id)),
-      style: actionLinkStyle,
-      'data-test-id': 'subscription-page.spaces-list.space-link'
-    }, 'Go to space');
-    usageLink = h('a', {
-      className: 'text-link',
-      href: href(getSpaceUsageNavState(space.sys.id)),
-      style: actionLinkStyle,
-      'data-test-id': 'subscription-page.spaces-list.space-usage-link'
-    }, 'Usage');
-  } else {
-    spaceLink = h(Tooltip, {
-      tooltip: tooltip,
-      options: {width: 400},
-      style: actionLinkStyle
-    }, h('button', {
-      className: 'text-link',
-      disabled: true,
-      'data-test-id': 'subscription-page.spaces-list.space-link'
-    }, 'Go to space'));
-    usageLink = h(Tooltip, {
-      tooltip: tooltip,
-      options: {width: 280},
-      style: actionLinkStyle
-    }, h('button', {
-      className: 'text-link',
-      disabled: true,
-      'data-test-id': 'subscription-page.spaces-list.usage-link'
-    }, 'Usage'));
+  if (!space.isAccessible) {
+    spaceLink = <Tooltip tooltip={tooltip} style={actionLinkStyle}>{spaceLink}</Tooltip>;
+    usageLink = <Tooltip tooltip={tooltip} style={actionLinkStyle}>{usageLink}</Tooltip>;
   }
-  const deleteLink = h('button', {
-    className: 'text-link text-link--destructive',
-    style: actionLinkStyle,
-    onClick: () => onDeleteSpace(space),
-    'data-test-id': 'subscription-page.spaces-list.delete-space-link'
-  }, 'Delete');
+
+  const deleteLink = (
+    <button
+      className='text-link text-link--destructive'
+      style={actionLinkStyle}
+      onClick={onDeleteSpace(space)}
+      data-test-id='subscription-page.spaces-list.delete-space-link'
+    >
+      Delete
+    </button>
+  );
 
   return [spaceLink, usageLink, deleteLink];
 }
@@ -437,8 +452,18 @@ function getSpaceActionLinks (space, isOrgOwner, onDeleteSpace) {
 function Price ({value = 0, currency = '$', unit = null, style = null}) {
   const valueStr = parseInt(value, 10).toLocaleString('en-US');
   const unitStr = unit && ` /${unit}`;
-  return h('span', {style}, [currency, valueStr, unitStr].join(''));
+
+  const priceStr = [currency, valueStr, unitStr].join('');
+
+  return <span style={style}>{priceStr}</span>;
 }
+
+Price.propTypes = {
+  value: PropTypes.number.isRequired,
+  currency: PropTypes.string.isRequired,
+  unit: PropTypes.string,
+  style: PropTypes.object
+};
 
 function getSpaceNavState (spaceId) {
   return {
