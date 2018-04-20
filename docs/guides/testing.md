@@ -22,7 +22,6 @@ Deprecated Patterns
 
 This is a list of patterns used in old code but deprecated.
 
-* `pit()` DSL to create promise based tests. Use generator functions instead.
 * `this.$inject()` for ES6 modules. Use native `import X from 'Y'` instead.
 * Using the `$compile` service to compile directives. Use `this.$comile()`
   instead.
@@ -102,6 +101,23 @@ To select only a subsect of specs to run, replace their respective
 In the context of a test we make varous helpers available. They are documented
 in the [Test module][module:test].
 
+### Async/await
+
+You can use async/await code in your tests, both in setup and in tests itself. They behave the same as generators, feel free to choose what you prefer more.
+
+~~~js
+beforeEach(async function () {
+  await asyncSetup();
+})
+
+it('a test with async/await', async function () {
+  const value = await this.resolve('X');
+  expect(value).toBe('X');
+})
+~~~
+
+It supports both native and $q-based promises – for Angular ones it does `$rootScope.$apply()` every 10ms, until it is resolved.
+
 ### Generators
 
 You can write asynchronous tests using generator functions.
@@ -111,8 +127,8 @@ beforeEach(function* () {
 })
 
 it('a generator test', function* () {
-  const value = yield this.resolve('X')
-  expect(value).toBe('X')
+  const value = yield this.resolve('X');
+  expect(value).toBe('X');
 })
 ~~~
 You must always yield a promise. Inside `it` the function `$rootScope.$apply()`
