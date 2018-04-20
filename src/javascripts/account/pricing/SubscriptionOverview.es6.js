@@ -415,6 +415,7 @@ function getSpaceActionLinks (space, isOrgOwner, onDeleteSpace) {
       href={space.isAccessible && href(getSpaceNavState(space.sys.id))}
       disabled={!space.isAccessible}
       style={actionLinkStyle}
+      data-test-id='subscription-page.spaces-list.space-link'
     >
       Go to space
     </TextLink>
@@ -425,6 +426,7 @@ function getSpaceActionLinks (space, isOrgOwner, onDeleteSpace) {
       href={space.isAccessible && href(getSpaceUsageNavState(space.sys.id))}
       disabled={!space.isAccessible}
       style={actionLinkStyle}
+      data-test-id='subscription-page.spaces-list.space-usage-link'
     >
       Usage
     </TextLink>
