@@ -1,4 +1,3 @@
-const co = require('co');
 const gulp = require('gulp');
 const path = require('path');
 const FS = require('../lib/utils').FS;
@@ -13,11 +12,11 @@ const h = require('../lib/hyperscript').h;
  * The SVG files are put into 'public/app/svg'. Once can reference them
  * from stylesheets using `url("/app/svg/my-file.svg")`.
  */
-gulp.task('svg', co.wrap(function* () {
+gulp.task('svg', async function () {
   const targetDir = path.resolve('public', 'app', 'svg');
-  yield FS.mkdirsAsync(targetDir);
+  await FS.mkdirsAsync(targetDir);
 
-  yield Promise.all([
+  return Promise.all([
     'chevron-blue',
     'dd-arrow-down',
     'dd-arrow-down-disabled',
@@ -34,4 +33,4 @@ gulp.task('svg', co.wrap(function* () {
     }).default;
     return FS.writeFile(target, output, 'utf8');
   }));
-}));
+});

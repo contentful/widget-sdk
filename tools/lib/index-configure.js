@@ -1,15 +1,14 @@
 #!/usr/bin/env node
-
 const P = require('path');
-const B = require('bluebird');
 const URL = require('url');
 const {mapValues} = require('lodash');
 const U = require('./utils');
 const {render: renderIndexPage} = require('./index-page');
 const {validate: validateConfig} = require('./config-validator');
+const {promisify} = require('util');
+const fs = require('fs');
 
-const FS = B.promisifyAll(require('fs'));
-
+const writeFileAsync = promisify(fs.writeFileAsync);
 
 const MANIFEST_PATHS = [
   'build/static-manifest.json',
@@ -44,8 +43,8 @@ module.exports.MANIFEST_PATHS = MANIFEST_PATHS;
  * @return {string}
  */
 
-module.exports = function* configure (revision, configPath, outPath) {
-  const [manifest, config] = yield B.all([
+module.exports = async function configure (revision, configPath, outPath) {
+  const [manifest, config] = await Promise.all([
     U.readMergeJSON(MANIFEST_PATHS),
     U.readJSON(configPath)
   ]);
@@ -56,7 +55,7 @@ module.exports = function* configure (revision, configPath, outPath) {
 
   const manifestResolved = mapValues(manifest, (path) => URL.resolve(config.assetUrl, path));
   const indexPage = renderIndexPage(revision, config, manifestResolved);
-  yield U.mkdirp(P.dirname(outPath));
-  yield FS.writeFileAsync(outPath, indexPage, 'utf8');
+  await U.mkdirp(P.dirname(outPath));
+  await writeFileAsync(outPath, indexPage, 'utf8');
   return config.environment;
 };
