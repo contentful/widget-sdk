@@ -281,16 +281,16 @@ function changeUserContext ([user, currOrg, spacesByOrg, currSpace, contentPrevi
   if (client) {
     LDContextChangeMVar.empty();
 
-    const logSlowResponse = startLogging('LD:client.identify');
+    const logResponse = startLogging('LD:client.identify');
     client.identify(ldUser, null, () => {
-      logSlowResponse();
+      logResponse();
       LDContextChangeMVar.put();
     });
   } else {
+    const logResponse = startLogging('LD.initialize');
     client = LD.initialize(config.envId, ldUser);
-    const logSlowResponse = startLogging('LD:client.identify');
     client.on('ready', _ => {
-      logSlowResponse();
+      logResponse();
       LDContextChangeMVar.put();
     });
   }
@@ -299,17 +299,18 @@ function changeUserContext ([user, currOrg, spacesByOrg, currSpace, contentPrevi
 /**
  * @description we depend on LD, and we want to keep logging it's slow responses to track
  * how healthy it is
- * @param {string} method – LD method to write in the bugsnag. Essentially, there is no
+ * @param {string} methodName – LD methodName to write in the bugsnag. Essentially, there is no
  * diference between `initialize` and `identify`, but just for separation we mark them
  * @returns {function} – function which stops logging and emits bugsnag error if
  * it takes more than 1 second
  */
-function startLogging (method) {
+function startLogging (methodName) {
   // the following code tracks how long does it take to identify client with new data
   // the problem is that if we call `getCurrentVariation`, we can be stuck for some time
   // this code allows us to track in the bugsnag, in case we wait for more than 1 second
   let clientIdentified = false;
   const startingTime = Date.now();
+  const groupingHash = 'LaunchDarkly user identification';
 
   // we track for 1, 5, 15, 30, 60 seconds and report if we were not able to identify.
   // the reason to do so – we _might_ not even reach callback, so reporting from only there
@@ -321,12 +322,12 @@ function startLogging (method) {
       if (!clientIdentified) {
         // send error to bugsnag, so we can actually evaluate
         // the impact of failures
-        logger.logException(new Error(`LaunchDarkly ${method} takes too long`), {
+        logger.logException(new Error(`LaunchDarkly ${methodName} is taking too long to complete`), {
           data: {
-            message: `${method} was not finished in ${ms} ms`,
+            message: `${methodName} was not completed in ${ms}ms`,
             time: ms
           },
-          groupingHash: 'LaunchDarkly client identification'
+          groupingHash
         });
       }
     });
@@ -335,12 +336,12 @@ function startLogging (method) {
   return () => {
     const passedTime = Date.now() - startingTime;
     if (passedTime > 1000) {
-      logger.logException(new Error(`LaunchDarkly ${method} takes too long`), {
+      logger.logException(new Error(`LaunchDarkly ${methodName} has taken too long to complete`), {
         data: {
-          message: `${method} was finished in ${passedTime} ms`,
+          message: `${methodName} was completed in ${passedTime}ms`,
           time: passedTime
         },
-        groupingHash: 'LaunchDarkly client identification'
+        groupingHash
       });
     }
 
