@@ -1,27 +1,24 @@
 import modalDialog from 'modalDialog';
-import spaceContext from 'spaceContext';
 import {getOrganization} from 'services/TokenStore';
 import {isLegacyOrganization} from 'utils/ResourceUtils';
 import {canCreateSpaceInOrganization} from 'access_control/AccessChecker';
 import notification from 'notification';
+import {getStore} from 'TheStore';
 /**
  * Displays the space creation dialog. The dialog type will depend on the
  * organization that the new space should belong to.
  *
- * Accepts one optional parameter - `organizationId`; organization from
- * `spaceContext` will be used by default.
+ * Accepts one optional parameter - `organizationId`;
+ * `lastUsegOrg` from LocalStorage will be used by default.
  *
  * @param {string} [organizationId]
  */
 export async function showDialog (organizationId) {
-  let organization;
-
   if (!organizationId) {
-    organization = spaceContext.organization;
-    organizationId = organization.sys.id;
-  } else {
-    organization = await getOrganization(organizationId);
+    organizationId = getStore().get('lastUsedOrg');
   }
+
+  const organization = await getOrganization(organizationId);
 
   // This should not happen as create space button must be hidden when user
   // has no rights to do it.

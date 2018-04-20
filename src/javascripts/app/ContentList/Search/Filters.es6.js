@@ -307,14 +307,18 @@ function filterByContentType (filters, contentTypeId) {
 }
 
 function setUserFieldsFilters (users, filters) {
-  const usersOptions = users.map(user => {
-    const label = user.firstName
-      ? `${user.firstName} ${user.lastName}`
-      : user.email;
-    const value = user.sys.id;
+  const getName = (user) => user.firstName ? user.firstName : user.email;
+  const byName = (curr, prev) => getName(curr).localeCompare(getName(prev));
+  const usersOptions = users
+    .sort(byName)
+    .map(user => {
+      const label = user.firstName
+        ? `${user.firstName} ${user.lastName}`
+        : user.email;
+      const value = user.sys.id;
 
-    return [value, label];
-  });
+      return [value, label];
+    });
 
   return filters.map(([filter, op, value]) => {
     const filterClone = cloneDeep(filter);

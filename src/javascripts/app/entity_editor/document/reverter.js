@@ -8,7 +8,7 @@ angular.module('contentful')
  * The object is created by the entity editor Document and attached to
  * it. In the entity editor it will be available as `otDoc.reverter`.
  *
- * This interface is only used by 'entityEditor/StateController'.
+ * This interface is only used by 'app/entity_editor/StateController'.
  *
  * Tests for this are included in the Document tests.
  */

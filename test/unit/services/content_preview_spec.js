@@ -164,15 +164,19 @@ describe('contentPreview', function () {
       });
     });
 
-    it('resolves to false when limit is reached', function () {
-      // Create 25 preview environments
-      _.times(25, function (idx) {
+    it('resolves to false when limit is reached', async function () {
+      // Create 100 preview environments
+      _.times(100, function (idx) {
         const internal = this.contentPreview.toInternal(makeEnv('foo' + idx), [makeCt('ct-1')]);
+        spaceContext.space.post.resolves(makeEnv('foo' + idx));
         this.contentPreview.create(internal);
       }.bind(this));
-      this.contentPreview.canCreate().then(function (allowed) {
-        expect(allowed).toBe(true);
-      });
+
+      this.$apply();
+
+      const canCreate = await this.contentPreview.canCreate();
+
+      expect(canCreate).toBe(false);
     });
   });
 

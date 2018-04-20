@@ -7,13 +7,14 @@
   max-width: 40em
   cursor: pointer
   color: $colors.white
+  z-index: 7
 
 .app-notification
   display: flex
   align-items: baseline
   line-height: 1.5
   padding: 1em 2em
-  transition: transform 0.3s ease-out, opacity 0.3s ease-out
+  transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out
   transform: translateY(0)
   background: $colors.green
   border: 1px solid $colors.green-darkest
@@ -24,9 +25,6 @@
     margin-left: 1.5em
     font-weight: bold
 
-  &:hover
-    opacity: 0.6
-
   &.x--error
     background: $colors.red
     border: 1px solid $colors.red-darkest
@@ -36,7 +34,8 @@
 
   &.ng-hide
     display: flex !important
-    transform: translateY(-100%)
+    transform: translateY(-10%)
+    opacity: 0
 
   > p
     flex: 1 1 auto

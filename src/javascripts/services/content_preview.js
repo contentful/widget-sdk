@@ -32,8 +32,12 @@ angular.module('contentful')
   // `/learning/{references.course.path}/courses/{references.current.course}/lessons/{entry_id}`
   //
   // This functionality is primarily needed for rich preview expirience for TEA (the example app):
-  // https://contentful.atlassian.net/wiki/spaces/PROD/pages/204079331/The+example+app+-+Documentation+of+functionality
-  var MAX_PREVIEW_ENVIRONMENTS = 25;
+  // https://contentful.atlassian.net/wiki/spaces/PROD/pages/204079331/The+example+app+-+Documentation+of+functionalityx
+
+  // this number is hard coded on the UI and the limit does not exist in our backend.
+  // the decision to have a limit comes from Product, and consists of having a better
+  // control of overusage of our platform
+  var MAX_PREVIEW_ENVIRONMENTS = 100;
 
   // build a bus that emits content previews object keyed by content preview id
   // every 2.5 seconds. This is ok for now since we cache content previews and hence
@@ -165,7 +169,7 @@ angular.module('contentful')
    * @returns {Promise<boolean>}
    *
    * @description
-   * Resolves to true if the user has less than 25 preview environments
+   * Resolves to true if the user has less than the max number of preview environments
    * and can thus still create more.
   */
   function canCreate () {
