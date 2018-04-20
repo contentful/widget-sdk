@@ -3,7 +3,7 @@ Dependencies
 
 This document explains how to manage dependencies.
 
-We use NPM v3 with the shrinkwrap file to manage our dependencies.
+We use NPM v5 with the package-lock file to manage our dependencies.
 
 Production dependencies in NPM are all those packages used on Travis to build
 and test. Dev dependencies on the other hand are used to run tests locally,
@@ -16,7 +16,7 @@ Adding a dependency
 To ensure your installation is in a pristine state run
 ~~~js
 nvm use
-git checkout package.json npm-shrinkwrap.json
+git checkout package.json package-lock.json
 rm -rf node_modules
 npm install
 ~~~
@@ -24,11 +24,9 @@ npm install
 Now you can add your dependency
 ~~~js
 npm install --save{-dev} my-dep@^1.2.3
-npm shrinkwrap
-./bin/clean-shrinkwrap
 ~~~
 
-Make sure that `git diff npm-shrinkwrap.json` yields an appropriate, small
+Make sure that `git diff package-lock.json` yields an appropriate, small
 result.
 
 
@@ -43,11 +41,3 @@ Outdated dependencies are updated regularly as part of the [frontend support
 duty][fe-support]. You can check for outdated packages using `npm outdated`.
 
 [fe-support]: https://contentful.atlassian.net/wiki/display/ENG/Support+Duty
-
-
-Blocked Updates
----------------
-
-This is a list of dependencies that can not be updated along with the reason.
-
-(Nothing here yet)
