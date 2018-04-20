@@ -22,8 +22,8 @@ echo ""
 
 # abort if tests failed
 if [[ "$TRAVIS_TEST_RESULT" != "0" ]]; then
-	echo "Skipping due to tests failure."
-	exit 0;
+  echo "Skipping due to tests failure."
+  exit $TRAVIS_TEST_RESULT;
 fi
 
 # abort if testing a merge commit
