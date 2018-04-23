@@ -47,7 +47,6 @@ angular.module('contentful')
   var MODES = {AVAILABLE: 1, SELECTED: 2};
 
   var config = $scope.config;
-  var itemsById = {};
 
   LD.onFeatureFlag($scope, NEW_SEARCH_FLAG_NAME, function (isEnabled) {
     $scope.isNewSearchEnabled = isEnabled;
@@ -247,22 +246,33 @@ angular.module('contentful')
   }
 
   function getItemsToAdd (res) {
-    // The api could theoretically return some of the entities returned already if
-    // new entities were created in the meantime.
-    return _.transform(res.items, function (acc, item) {
+    // The api could theoretically return some of the entities returned already
+    // if new entities were created in the meantime.
+    var acc = {
+      items: [],
+      itemsById: _.groupBy($scope.items, 'sys.id')
+    };
+
+    return res.items.reduce(function (acc, item) {
       var id = _.get(item, 'sys.id');
-      if (id && !itemsById[id]) {
-        itemsById[id] = item;
-        acc.push(item);
+      if (id && !acc.itemsById[id] && !isAssetWithoutFile(item)) {
+        return {
+          items: acc.items.concat(item),
+          itemsById: Object.assign(acc.itemsById, _.set({}, id, item))
+        };
       }
-    }, []);
+      return acc;
+    }, acc).items;
+  }
+
+  function isAssetWithoutFile (item) {
+    return _.get(item, 'sys.type') === 'Asset' && !_.get(item, 'fields.file');
   }
 
   function resetAndLoad () {
     $scope.isLoading = true;
     load().then(function (response) {
       $scope.items = [];
-      itemsById = {};
       $scope.paginator.setTotal(0);
       $scope.paginator.setPage(0);
       handleResponse(response);
