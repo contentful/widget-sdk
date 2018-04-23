@@ -33,16 +33,15 @@ export default function () {
 
     h('a.entity-link__content', {
       dataTestId: 'entity-link-content',
-      ngIf: 'stateRef || actions.slideinEdit',
+      ngIf: '(stateRef || actions.slideinEdit) && !actions.edit',
       cfSref: 'stateRef',
       ngClick: 'onClick($event)'
     }, [content()]),
-    h('.entity-link__content', {
+    h('a.entity-link__content', {
       dataTestId: 'entity-link-content',
       ngIf: 'actions.edit',
-      ngClick: 'actions.edit()',
-      role: 'button',
-      style: {cursor: 'pointer'}
+      ngClick: 'actions.edit($event)',
+      cfSref: 'stateRef'
     }, [content()]),
     h('.entity-link__content', {
       dataTestId: 'entity-link-content',
