@@ -4,15 +4,46 @@ import $stateParams from '$stateParams';
 import spaceContext from 'spaceContext';
 
 import { contentPreviewsBus$ } from 'contentPreview';
-import {isEqual, find, get, includes} from 'lodash';
+import {isEqual, find, get} from 'lodash';
 import {organizations$, user$, spacesByOrganization$} from 'services/TokenStore';
 
 import {
   combine,
   onValue,
   getValue,
-  createPropertyBus
+  createPropertyBus,
+  fromPromise as KefirFromPromise
 } from 'utils/kefir';
+
+import {createOrganizationEndpoint} from 'data/EndpointFactory';
+import {getSubscriptionPlans} from 'account/pricing/PricingDataProvider';
+
+// currently all pricing info depends solely on the user$ stream
+// we pack all info relevant to pricing to this stream
+// so that you can read from it and decide qualification criteria
+const pricing$ = user$
+  .filter(user => user && user.organizationMemberships)
+  .flatMap(user => {
+    const pricingPromise = user.organizationMemberships
+      .map(({ organization }) => {
+        // we better use `utils/ResourceUtils`, but we'd have to break circular references
+        // for simplicity, it is currently inlined
+        const isNewPricing = organization.pricingVersion === 'pricing_version_2';
+
+        if (isNewPricing) {
+          const endpoint = createOrganizationEndpoint(organization.sys.id);
+          // this endpoint will return all paid spaces
+          return getSubscriptionPlans(endpoint, {
+            plan_type: 'space'
+          }).then(plans => ({ version: 'v2', plans, organization }));
+        } else {
+          // in legacy pricing, info within organization is enough to decide
+          return Promise.resolve({ version: 'v1', organization });
+        }
+      });
+
+    return KefirFromPromise(Promise.all(pricingPromise));
+  });
 
 /**
  * @description
@@ -24,11 +55,15 @@ export const userDataBus$ =
       user$,
       getCurrentOrgSpaceAndPublishedCTsBus(),
       spacesByOrganization$,
-      contentPreviewsBus$
+      contentPreviewsBus$,
+      pricing$
     ],
-    (user, [org, space, publishedCTs], spacesByOrg, contentPreviews) => [user, org, spacesByOrg, space, contentPreviews, publishedCTs]
+    (user, [org, space, publishedCTs], spacesByOrg, contentPreviews, pricing) => [user, org, spacesByOrg, space, contentPreviews, publishedCTs, pricing]
   )
-  .filter(([user, org, spacesByOrg]) => user && user.email && org && spacesByOrg) // space is a Maybe and so is contentPreviews
+  // space is a Maybe and so is contentPreviews
+  .filter(([user, org, spacesByOrg, _space, _contentPreviews, _publishedCTs, pricing]) =>
+    user && user.email && org && spacesByOrg && pricing && pricing.length > 0
+  )
   .skipDuplicates(isEqual)
   .toProperty();
 
@@ -76,47 +111,28 @@ export function getUserCreationDateUnixTimestamp (user) {
 
 /**
  * @description
- * Given a user, this returns true if none of the orgs that the user
+ * Given a pricing array, this returns true if none of the orgs that the user
  * belongs to is a paying org.
  * Return true if the user belongs to NO paying orgs
- * A qualified user doesn't belong to a paying/converted org
+ * Supports both v1/v2 pricing
  *
- * @param {Object} user
+ * @param {Object} pricing
  * @returns {boolean}
  */
-export function isNonPayingUser (user) {
-  const {organizationMemberships} = user;
+export function isNonPayingUser (pricing) {
   const convertedStatuses = ['paid', 'free_paid'];
-
-  // disqualify all users that don't belong to any org
-  if (!organizationMemberships) {
-    return false;
-  }
-
-  // TODO: Modify this to look at the organization payment status
-  // instead of `subscription.status` directly. See below.
-  return !organizationMemberships.reduce((acc, {organization}) => {
-    // For now, we treat all V2 orgs as "paid"
-    //
-    // This logic is not truly accurate for V2 orgs, because in
-    // the public release there will be organizations that are
-    // not paid. However, until the public release, the only orgs
-    // that will exist are V1->V2 org upgrades, which will always
-    // be paid.
-    //
-    // This logic will change in the future once the payment status
-    // of an organization can be determined on an organization level
-    // without looking directly at the subscription, which will happen
-    // before the initial public V2 release.
-    if (organization.pricingVersion === 'pricing_version_2') {
-      return true;
+  const isPaying = pricing.some(({ version, plans, organization }) => {
+    // this is not yet spec-ed, but it was communicated that if we get any items in the
+    // response, we can safely assume they have paid spaces – ping @jolyon if any questions
+    if (version === 'v2') {
+      return plans && plans.items && plans.items.length > 0;
     }
 
     const orgStatus = get(organization, 'subscription.status');
-    const isOrgConverted = includes(convertedStatuses, orgStatus);
+    return convertedStatuses.includes(orgStatus);
+  });
 
-    return acc || isOrgConverted;
-  }, false);
+  return !isPaying;
 }
 
 /**
