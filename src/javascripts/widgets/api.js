@@ -24,6 +24,7 @@ angular.module('contentful')
    *
    * @param {Client.Space} apiClient
    * @param {object} spaceMembership
+   * @param {object} parameters
    * @param {Array<API.ContentType.Field>} fields
    * @param {API.Entry} entryData
    * @param {API.ContentType} contentTypeData
@@ -33,7 +34,7 @@ angular.module('contentful')
    *   The locale the widget is attached to.
    * @param {IFrame} iframe
    */
-  function API (apiClient, spaceMembership, fields, entryData, contentTypeData, current, iframe) {
+  function API (apiClient, spaceMembership, parameters, fields, entryData, contentTypeData, current, iframe) {
     this.channel = new Channel(iframe);
     this.idMap = createIDMap(fields);
     this.current = current;
@@ -41,6 +42,7 @@ angular.module('contentful')
     this.entryData = entryData;
     this.contentTypeData = contentTypeData;
     this.spaceMembership = spaceMembership;
+    this.parameters = parameters;
     this.channel.handlers = createHandlers(apiClient, iframe);
   }
 
@@ -56,7 +58,7 @@ angular.module('contentful')
   API.prototype.connect = function () {
     this.channel.connect(buildContext(
       this.idMap, this.current.field, this.current.locale, this.current.isDisabled,
-      this.fields, this.entryData, this.contentTypeData, this.spaceMembership
+      this.fields, this.entryData, this.contentTypeData, this.spaceMembership, this.parameters
     ));
   };
 
@@ -166,13 +168,15 @@ angular.module('contentful')
    * and displayField property added.
    *
    * @param {object} spaceMembership
+   * @param {object} parameters
    */
-  function buildContext (idMap, field, locale, isDisabled, fields, entryData, contentTypeData, spaceMembership) {
+  function buildContext (idMap, field, locale, isDisabled, fields, entryData, contentTypeData, spaceMembership, parameters) {
     var apiName = field.apiName;
     var fieldValue = _.get(entryData, ['fields', field.id, locale.internal_code]);
     var fieldInfo = buildFieldInfo(idMap, entryData, fields);
     return {
       user: buildUser(spaceMembership),
+      parameters: parameters,
       field: {
         id: apiName,
         locale: locale.code,
