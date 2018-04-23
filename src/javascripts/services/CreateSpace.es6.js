@@ -13,14 +13,11 @@ import notification from 'notification';
  * @param {string} [organizationId]
  */
 export async function showDialog (organizationId) {
-  let organization;
-
-  if (organizationId) {
-    organization = await getOrganization(organizationId);
-  } else {
-    const allOrgs = await getOrganizations();
-    organization = allOrgs[0];
+  if (!organizationId) {
+    throw new Error('organizationId not supplied for space creation');
   }
+
+  const organization = await getOrganization(organizationId);
 
   // This should not happen as create space button must be hidden when user
   // has no rights to do it.
