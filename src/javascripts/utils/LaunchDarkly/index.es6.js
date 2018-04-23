@@ -6,7 +6,7 @@ import {onValueScope, createPropertyBus} from 'utils/kefir';
 import getChangesObject from 'utils/ShallowObjectDiff';
 import {isOrgPlanEnterprise} from 'data/Org';
 import {getEnabledFlags} from 'debug/EnforceFlags';
-import {createMVar} from 'utils/Concurrent';
+import {createMVar, sleep} from 'utils/Concurrent';
 import logger from 'logger';
 
 import {isExampleSpace} from 'data/ContentPreview';
@@ -280,11 +280,71 @@ function changeUserContext ([user, currOrg, spacesByOrg, currSpace, contentPrevi
   // callbacks. They are always called, no matter what.
   if (client) {
     LDContextChangeMVar.empty();
-    client.identify(ldUser, null, LDContextChangeMVar.put);
+
+    const logResponse = startLogging('LD:client.identify');
+    client.identify(ldUser, null, () => {
+      logResponse();
+      LDContextChangeMVar.put();
+    });
   } else {
+    const logResponse = startLogging('LD.initialize');
     client = LD.initialize(config.envId, ldUser);
     client.on('ready', _ => {
+      logResponse();
       LDContextChangeMVar.put();
     });
   }
+}
+
+/**
+ * @description we depend on LD, and we want to keep logging it's slow responses to track
+ * how healthy it is
+ * @param {string} methodName – LD methodName to write in the bugsnag. Essentially, there is no
+ * diference between `initialize` and `identify`, but just for separation we mark them
+ * @returns {function} – function which stops logging and emits bugsnag error if
+ * it takes more than 1 second
+ */
+function startLogging (methodName) {
+  // the following code tracks how long does it take to identify client with new data
+  // the problem is that if we call `getCurrentVariation`, we can be stuck for some time
+  // this code allows us to track in the bugsnag, in case we wait for more than 1 second
+  let clientIdentified = false;
+  const startingTime = Date.now();
+  const groupingHash = 'LaunchDarkly user identification';
+
+  // we track for 1, 5, 15, 30, 60 seconds and report if we were not able to identify.
+  // the reason to do so – we _might_ not even reach callback, so reporting from only there
+  // won't give us numbers
+  // we track on so many intervals because otherwise user can close/refresh the page and we
+  // won't know that they were waiting for quite a time
+  [1000, 5000, 15000, 30000, 60000].forEach(ms => {
+    sleep(ms).then(() => {
+      if (!clientIdentified) {
+        // send error to bugsnag, so we can actually evaluate
+        // the impact of failures
+        logger.logException(new Error(`LaunchDarkly ${methodName} is taking too long to complete`), {
+          data: {
+            message: `${methodName} was not completed in ${ms}ms`,
+            time: ms
+          },
+          groupingHash
+        });
+      }
+    });
+  });
+
+  return () => {
+    const passedTime = Date.now() - startingTime;
+    if (passedTime > 1000) {
+      logger.logException(new Error(`LaunchDarkly ${methodName} has taken too long to complete`), {
+        data: {
+          message: `${methodName} was completed in ${passedTime}ms`,
+          time: passedTime
+        },
+        groupingHash
+      });
+    }
+
+    clientIdentified = true;
+  };
 }
