@@ -16,6 +16,8 @@ angular.module('contentful')
   var K = require('utils/kefir');
   var contentPreviewsBus$ = require('contentPreview').contentPreviewsBus$;
   var isExampleSpaceFlagName = 'test-ps-02-2018-tea-onboarding-steps';
+  var TokenStore = require('services/TokenStore');
+
   // End test code: test-ps-02-2018-tea-onboarding-steps
 
   return {
@@ -83,7 +85,7 @@ angular.module('contentful')
           description: 'A space is a place where you keep all the content related to a single project.',
           cta: 'Create space',
           icon: 'space',
-          action: makeAction(CreateSpace.showDialog, 'Create space')
+          action: makeAction(createNewSpace, 'Create space')
         },
         {
           id: 'create_content_type',
@@ -279,6 +281,18 @@ angular.module('contentful')
         return function () {
           $state.go('spaces.detail.settings.' + page + '.list');
         };
+      }
+
+      // This function is called when the user has no spaces in the current org.
+      // For this reason we get the id of the first org the user has access to.
+      function createNewSpace () {
+        TokenStore.getOrganizations()
+          .then(function (orgs) {
+            return orgs[0].sys.id;
+          })
+          .then(function (id) {
+            CreateSpace.showDialog(id);
+          });
       }
     }],
     controllerAs: 'onboarding'
