@@ -64,3 +64,11 @@ export function getSpaceActionLinks (space, isOrgOwner, onDeleteSpace) {
     deleteLink
   };
 }
+
+export function hasAnySpacesInaccessible (plans) {
+  return Boolean(plans.find(plan => {
+    const space = plan.space;
+
+    return !space.isAccessible;
+  }));
+}

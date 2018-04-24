@@ -15,7 +15,7 @@ import HelpIcon from 'ui/Components/HelpIcon';
 import Price from 'ui/Components/Price';
 import ContextMenu from 'ui/Components/ContextMenu';
 
-function SpacePlanRow ({plan, onDeleteSpace, isOrgOwner}) {
+function SpacePlanRow ({ plan, onDeleteSpace }) {
   const space = plan.space;
   const enabledFeatures = getEnabledFeatures(plan);
   const hasAnyFeatures = enabledFeatures.length > 0;
