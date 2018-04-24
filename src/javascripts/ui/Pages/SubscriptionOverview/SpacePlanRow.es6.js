@@ -67,7 +67,12 @@ function SpacePlanRow ({ plan, onDeleteSpace }) {
     </td>
     <td>{createdBy}</td>
     <td>{createdAt}</td>
-    <td style={{textAlign: 'right'}}><ContextMenu items={contextMenuItems} /></td>
+    <td style={{textAlign: 'right'}}>
+      <ContextMenu
+        data-test-id='subscription-page.spaces-list.space-context-menu'
+        items={contextMenuItems}
+      />
+    </td>
   </tr>;
 }
 
