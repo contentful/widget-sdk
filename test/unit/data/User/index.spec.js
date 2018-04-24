@@ -13,14 +13,6 @@ describe('data/User', () => {
       contentPreviewsBus$: K.createMockProperty({})
     };
 
-    this.endpointFactory = {
-      createOrganizationEndpoint: () => {}
-    };
-
-    this.pricingDataProvider = {
-      getSubscriptionPlans: () => Promise.resolve(this.plans)
-    };
-
     this.spaceContext = {
       publishedCTs: {
         items$: K.createMockProperty([])
@@ -50,8 +42,6 @@ describe('data/User', () => {
       $provide.value('spaceContext', this.spaceContext);
       $provide.value('$stateParams', this.$stateParams);
       $provide.value('contentPreview', this.contentPreview);
-      $provide.value('account/pricing/PricingDataProvider', this.pricingDataProvider);
-      $provide.value('data/EndpointFactory', this.endpointFactory);
     });
 
     this.moment = this.$inject('moment');
@@ -64,7 +54,7 @@ describe('data/User', () => {
       this.spy = sinon.spy();
       this.utils.userDataBus$.onValue(this.spy);
 
-      this.set = async function (params) {
+      this.set = function (params) {
         const {
           user = K.getValue(this.tokenStore.user$),
           orgs = K.getValue(this.tokenStore.organizations$),
@@ -83,106 +73,69 @@ describe('data/User', () => {
         this.spaceContext.publishedCTs.items$.set(publishedCTs);
         this.$rootScope.$broadcast('$stateChangeSuccess', null, {orgId});
         this.tokenStore.user$.set(user);
-        // we need to wait next tick, so all promises will be resolved
-        // we resolve mocked functions immediately, so they are executed as microtasks
-        // and results will be available at the next tick
-        await new Promise(resolve => setTimeout(resolve, 0));
+        this.$apply();
       };
     });
-    it('should emit [user, org, spacesByOrg, space, contentPreviews, publishedCTs, pricing] where space, contentPreviews and publishedCTs are optional', async function () {
+    it('should emit [user, org, spacesByOrg, space, contentPreviews, publishedCTs] where space, contentPreviews and publishedCTs are optional', function () {
+      const user = {email: 'a@b.c'};
       const orgs = [{name: '1', sys: {id: 1}}, {name: '2', sys: {id: 2}}];
-      const user = {email: 'a@b.c', organizationMemberships: [{ organization: orgs[0] }]};
       const org = {name: 'some org', sys: {id: 'some-org-1'}};
 
       sinon.assert.notCalled(this.spy);
 
-      const pricing = [{ version: 'v1', organization: orgs[0] }];
-      await this.set({user, orgs, spacesByOrg: {}, org: null, orgId: 1, publishedCTs: []});
+      this.set({user, orgs, spacesByOrg: {}, org: null, orgId: 1, publishedCTs: []});
       sinon.assert.calledOnce(this.spy);
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data, {}, [], pricing]);
+
+      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data, {}, []]);
 
       this.spy.reset();
-      await this.set({org});
+      this.set({org});
       sinon.assert.calledOnce(this.spy);
       sinon.assert.calledWithExactly(
         this.spy,
-        [user, org, {}, this.spaceContext.space.data, {}, [], pricing]
+        [user, org, {}, this.spaceContext.space.data, {}, []]
       );
 
       this.spy.reset();
-      await this.set({org: null, space: {fields: [], sys: {id: 'space-1'}}});
+      this.set({org: null, space: {fields: [], sys: {id: 'space-1'}}});
       sinon.assert.calledOnce(this.spy);
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data, {}, [], pricing]);
+      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data, {}, []]);
     });
-    it('should emit a value only when the user is valid and the org and spacesByOrg are not falsy', async function () {
+    it('should emit a value only when the user is valid and the org and spacesByOrg are not falsy', function () {
       const orgs = [{name: '1', sys: {id: 1}}, {name: '2', sys: {id: 2}}];
-      const user = {email: 'a@b', organizationMemberships: [{ organization: orgs[1] }]};
-      const pricing = [{ version: 'v1', organization: orgs[1] }];
+      const user = {email: 'a@b'};
 
       // invalid user
-      await this.set({user: null});
+      this.set({user: null});
       sinon.assert.notCalled(this.spy);
 
       // valid user but org is falsy since org prop init val is null
-      await this.set({user});
-
+      this.set({user});
       sinon.assert.notCalled(this.spy);
 
       // spaces by org map is null
-      await this.set({user, orgs, spacesByOrg: null, orgId: 1});
-
+      this.set({user, orgs, spacesByOrg: null, orgId: 1});
       sinon.assert.notCalled(this.spy);
 
       // all valid valus, hence spy must be called
-      await this.set({user, orgs, spacesByOrg: {}, orgId: 1});
-
+      this.set({user, orgs, spacesByOrg: {}, orgId: 1});
       sinon.assert.calledOnce(this.spy);
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, {}, {}, [], pricing]);
+      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, {}, {}, []]);
     });
-    it('should skip duplicates', async function () {
+    it('should skip duplicates', function () {
       const setter = this.set.bind(this, {
-        user: {email: 'a@b.c', organizationMemberships: [{ organization: { sys: { id: 'some' } } }]},
+        user: {email: 'a@b.c'},
         org: {name: 'org-1', sys: {id: 1}},
         spacesByOrg: {},
         space: {name: 'space-1', sys: {id: 'space-1'}},
         publishedCTs: []
       });
-      await setter();
-
+      setter();
       sinon.assert.calledOnce(this.spy);
-      await setter();
-
+      setter();
       sinon.assert.calledOnce(this.spy);
-      await this.set({space: null});
-
+      this.set({space: null});
       sinon.assert.calledTwice(this.spy);
-    });
-    it('should emit correct pricing object', async function () {
-      const v1org = {name: '1', sys: {id: 1}};
-      const v2org = {name: '2', pricingVersion: 'pricing_version_2', sys: {id: 2}};
-      this.plans = [{ sys: {id: 'space_plan_id'} }];
-      const orgs = [v1org, v2org];
-      const organizationMemberships = orgs.map(organization => ({ organization }));
-      const user = {email: 'a@b', organizationMemberships};
-      await this.set({user, orgs, spacesByOrg: {}, orgId: 1});
-
-      const pricing = [{
-        version: 'v1',
-        organization: v1org
-      }, {
-        version: 'v2',
-        organization: v2org,
-        plans: this.plans
-      }];
-
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, {}, {}, [], pricing]);
-    });
-    it('should not emit actions if no pricing data', async function () {
-      const orgs = [{name: '1', sys: {id: 1}}, {name: '2', sys: {id: 2}}];
-      const user = {email: 'a@b', organizationMemberships: []};
-      await this.set({user, orgs, spacesByOrg: {}, orgId: 1});
-
-      sinon.assert.notCalled(this.spy);
     });
   });
 
@@ -231,63 +184,33 @@ describe('data/User', () => {
   describe('#isNonPayingUser', function () {
     beforeEach(function () {
       this.checkIfUserIsNonpaying = function (subscriptionStatus, valToAssert) {
-        const isNonPayingUser = this.utils.isNonPayingUser([{
-          version: 'v1',
-          organization: {subscription: {status: subscriptionStatus}}
-        }]);
+        const isNonPayingUser = this.utils.isNonPayingUser({
+          organizationMemberships: [{
+            organization: {subscription: {status: subscriptionStatus}}
+          }]
+        });
 
         expect(isNonPayingUser).toBe(valToAssert);
       };
     });
 
-    it('should return true if any org a user belongs to is paying us and false otherwise in v1', function () {
+    it('should return true if any org a user belongs to is paying us and false otherwise', function () {
       this.checkIfUserIsNonpaying('free', true);
       this.checkIfUserIsNonpaying('trial', true);
       this.checkIfUserIsNonpaying('paid', false);
       this.checkIfUserIsNonpaying('free_paid', false);
     });
 
-    it('should return true if user has v2 org without any plans', function () {
-      const isNonPayingUser = this.utils.isNonPayingUser([
-        { version: 'v2', plans: {items: []} }
-      ]);
-
-      expect(isNonPayingUser).toBe(true);
-    });
-
-    it('should return false if user has v2 org with plans', function () {
-      const isNonPayingUser = this.utils.isNonPayingUser([
-        { version: 'v2', plans: {items: [{ sys: { id: 'a' } }]} }
-      ]);
+    it('should return false if the user has a V2 org', function () {
+      const isNonPayingUser = this.utils.isNonPayingUser({
+        organizationMemberships: [{
+          organization: {
+            pricingVersion: 'pricing_version_2'
+          }
+        }]
+      });
 
       expect(isNonPayingUser).toBe(false);
-    });
-
-    it('should return false if v1 org is paying and v2 is not', function () {
-      const isNonPayingUser = this.utils.isNonPayingUser([
-        { version: 'v1', organization: {subscription: {status: 'paid'}} },
-        { version: 'v2', plans: {items: []} }
-      ]);
-
-      expect(isNonPayingUser).toBe(false);
-    });
-
-    it('should return false if v1 org is not paying and v2 is paying', function () {
-      const isNonPayingUser = this.utils.isNonPayingUser([
-        { version: 'v1', organization: {subscription: {status: 'free'}} },
-        { version: 'v2', plans: {items: [{ sys: { id: 'some' } }]} }
-      ]);
-
-      expect(isNonPayingUser).toBe(false);
-    });
-
-    it('should return true if v1 and v2 orgs are not paying', function () {
-      const isNonPayingUser = this.utils.isNonPayingUser([
-        { version: 'v1', organization: {subscription: {status: 'free'}} },
-        { version: 'v2', plans: {items: []} }
-      ]);
-
-      expect(isNonPayingUser).toBe(true);
     });
   });
 
