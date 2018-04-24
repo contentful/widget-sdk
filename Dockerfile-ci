@@ -12,7 +12,7 @@
 
 # The base image is hosted on Docker hub and built using
 # `tools/docker/base/Dockerfile`.
-FROM contentful/user-interface-base:6
+FROM contentful/user-interface-base:dev
 WORKDIR /app
 
 ENV PATH=/app/node_modules/.bin:$PATH \
