@@ -5,7 +5,6 @@ const buffer = require('vinyl-buffer');
 const gulp = require('gulp');
 const concat = require('gulp-concat');
 const sourceMaps = require('gulp-sourcemaps');
-const uglify = require('gulp-uglify');
 const babel = require('gulp-babel');
 
 const makeBabelOptions = require('../app-babel-options').makeOptions;
@@ -56,28 +55,13 @@ const SHAREJS_VENDOR_SRC = assertFilesExist([
   'vendor/sharejs/lib/types/json-api.js'
 ]);
 
-const KALTURA_VENDOR_SRC = assertFilesExist([
-  'vendor/kaltura-16-01-2014/webtoolkit.md5.js',
-  'vendor/kaltura-16-01-2014/ox.ajast.js',
-  'vendor/kaltura-16-01-2014/KalturaClientBase.js',
-  'vendor/kaltura-16-01-2014/KalturaTypes.js',
-  'vendor/kaltura-16-01-2014/KalturaVO.js',
-  'vendor/kaltura-16-01-2014/KalturaServices.js',
-  'vendor/kaltura-16-01-2014/KalturaClient.js'
-]);
-
 gulp.task('js', [
   'js/external-bundle',
   'js/app',
   'js/vendor'
 ]);
 
-gulp.task('js/vendor', [
-  'js/vendor/main',
-  'js/vendor/kaltura'
-]);
-
-gulp.task('js/vendor/main', ['js/vendor/sharejs'], function () {
+gulp.task('js/vendor', ['js/vendor/sharejs'], function () {
   // Use `base: '.'` for correct source map paths
   return gulp.src(MAIN_VENDOR_SRC, {base: '.'})
     .pipe(sourceMaps.init())
@@ -111,13 +95,6 @@ gulp.task('js/vendor/sharejs', function () {
     }),
     gulp.dest('./public/app/')
   ]);
-});
-
-gulp.task('js/vendor/kaltura', function () {
-  return gulp.src(KALTURA_VENDOR_SRC)
-    .pipe(uglify())
-    .pipe(concat('kaltura.js'))
-    .pipe(gulp.dest('./public/app'));
 });
 
 gulp.task('js/external-bundle', function () {

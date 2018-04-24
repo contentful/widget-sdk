@@ -123,10 +123,6 @@ angular.module('contentful')
       url: 'https://static.filestackapi.com/v3/filestack-0.11.1.js',
       globalObject: 'filestack'
     },
-    kaltura: {
-      url: ['development', 'unittest'].includes(environment.env) ? '/app/kaltura.js' : ('//static.' + Config.domain + '/app/kaltura.js'),
-      globalObject: 'KalturaClient'
-    },
     googleMaps: {
       url: 'https://maps.googleapis.com/maps/api/js?v=3&key=' +
         environment.settings.google.maps_api_key,

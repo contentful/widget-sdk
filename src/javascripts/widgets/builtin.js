@@ -259,13 +259,5 @@ angular.module('contentful')
     template: '<cf-slug-editor />'
   });
 
-  registerWidget('kalturaEditor', {
-    fieldTypes: ['Symbol'],
-    name: 'Kaltura',
-    icon: 'video-preview',
-    rendersHelpText: true,
-    template: '<cf-kaltura-editor></cf-kaltura-editor>'
-  });
-
   return widgets;
 }]);
