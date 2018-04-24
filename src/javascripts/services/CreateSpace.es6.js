@@ -3,19 +3,17 @@ import {getOrganization} from 'services/TokenStore';
 import {isLegacyOrganization} from 'utils/ResourceUtils';
 import {canCreateSpaceInOrganization} from 'access_control/AccessChecker';
 import notification from 'notification';
-import {getStore} from 'TheStore';
 /**
  * Displays the space creation dialog. The dialog type will depend on the
  * organization that the new space should belong to.
  *
- * Accepts one optional parameter - `organizationId`;
- * `lastUsegOrg` from LocalStorage will be used by default.
+ * Accepts one required parameter - `organizationId`;
  *
- * @param {string} [organizationId]
+ * @param {string} organizationId
  */
 export async function showDialog (organizationId) {
   if (!organizationId) {
-    organizationId = getStore().get('lastUsedOrg');
+    throw new Error('organizationId not supplied for space creation');
   }
 
   const organization = await getOrganization(organizationId);

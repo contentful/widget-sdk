@@ -1,10 +1,17 @@
 'use strict';
 
 import * as K from 'test/helpers/mocks/kefir';
+import $q from '$q';
 
 describe('cfOnboardingSteps Directive', function () {
   beforeEach(function () {
     this.previews$ = K.createMockProperty([]);
+    this.organizations = [{
+      sys: { id: 'firstorg' }
+    }];
+
+    this.createSpaceDialog = sinon.stub();
+
     module('contentful/test', $provide => {
       $provide.value('utils/LaunchDarkly', {
         // Begin test code: test-ps-02-2018-tea-onboarding-steps
@@ -14,6 +21,12 @@ describe('cfOnboardingSteps Directive', function () {
       });
       $provide.value('contentPreview', {
         contentPreviewsBus$: this.previews$
+      });
+      $provide.value('services/TokenStore', {
+        getOrganizations: () => $q.resolve(this.organizations)
+      });
+      $provide.value('services/CreateSpace', {
+        showDialog: this.createSpaceDialog
       });
     });
     this.$state = this.$inject('$state');
@@ -52,6 +65,14 @@ describe('cfOnboardingSteps Directive', function () {
     it('only create space button is active', function () {
       this.assertCompletedSteps(0);
       this.assertActiveButton('Create space');
+    });
+
+    it('opens the space creation dialog', function () {
+      const button = this.element.find('button:contains("Create space")');
+      button.click();
+      this.$apply();
+
+      sinon.assert.called(this.createSpaceDialog);
     });
   });
 
