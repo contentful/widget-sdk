@@ -5,10 +5,6 @@ const {mapValues} = require('lodash');
 const U = require('./utils');
 const {render: renderIndexPage} = require('./index-page');
 const {validate: validateConfig} = require('./config-validator');
-const {promisify} = require('util');
-const fs = require('fs');
-
-const writeFileAsync = promisify(fs.writeFileAsync);
 
 const MANIFEST_PATHS = [
   'build/static-manifest.json',
@@ -56,6 +52,6 @@ module.exports = async function configure (revision, configPath, outPath) {
   const manifestResolved = mapValues(manifest, (path) => URL.resolve(config.assetUrl, path));
   const indexPage = renderIndexPage(revision, config, manifestResolved);
   await U.mkdirp(P.dirname(outPath));
-  await writeFileAsync(outPath, indexPage, 'utf8');
+  await U.FS.writeFileAsync(outPath, indexPage, 'utf8');
   return config.environment;
 };
