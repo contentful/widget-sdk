@@ -62,9 +62,6 @@ src/javascripts/components/field_dialog/validation_asset_types_controller.js
 src/javascripts/components/forms/field_alert/cf_field_alert_directive.js
 src/javascripts/app/widgets/kaltura/cf_kaltura_editor_directive.js
 src/javascripts/app/widgets/kaltura/cf_kaltura_player_directive.js
-src/javascripts/app/widgets/ooyala/cf_ooyala_player_directive.js
-src/javascripts/app/widgets/ooyala/cf_ooyala_editor_controller.js
-src/javascripts/app/widgets/ooyala/cf_ooyala_editor_directive.js
 src/javascripts/app/widgets/video/cf_video_editor_controller.js
 src/javascripts/app/widgets/video/cf_video_input_directive.js
 src/javascripts/app/widgets/video/cf_video_input_controller.js
@@ -78,9 +75,6 @@ src/javascripts/components/notifications/cf_notifications_directive.js
 src/javascripts/components/notifications/index.js
 src/javascripts/classes/kaltura_error_messages.js
 src/javascripts/classes/kaltura_search.js
-src/javascripts/classes/ooyala_error_messages.js
-src/javascripts/classes/ooyala_query.js
-src/javascripts/classes/ooyala_search.js
 src/javascripts/classes/url_utils.js
 src/javascripts/classes/kaltura_client_wrapper.js
 src/javascripts/classes/entity_list_cache.js
@@ -95,8 +89,6 @@ src/javascripts/directives/cf_when_disabled.js
 src/javascripts/services/field_factory.js
 src/javascripts/services/kaltura_widget_loader.js
 src/javascripts/services/lodash_timing.js
-src/javascripts/services/ooyala_client.js
-src/javascripts/services/ooyala_player_loader.js
 src/javascripts/services/q_decorator.js
 src/javascripts/services/validation_dialog_error_messages.js
 src/javascripts/services/validation_views.js

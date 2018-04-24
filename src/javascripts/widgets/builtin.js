@@ -259,14 +259,6 @@ angular.module('contentful')
     template: '<cf-slug-editor />'
   });
 
-  registerWidget('ooyalaEditor', {
-    fieldTypes: ['Symbol'],
-    name: 'Ooyala',
-    icon: 'video-preview',
-    rendersHelpText: true,
-    template: '<cf-ooyala-editor></cf-ooyala-editor>'
-  });
-
   registerWidget('kalturaEditor', {
     fieldTypes: ['Symbol'],
     name: 'Kaltura',

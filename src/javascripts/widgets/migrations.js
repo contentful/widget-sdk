@@ -41,6 +41,10 @@ angular.module('contentful')
     to: 'listInput'
   },
   {
+    from: 'ooyalaEditor',
+    to: 'singleLine'
+  },
+  {
     from: 'ooyalaMultiAssetEditor',
     to: 'listInput'
   }
