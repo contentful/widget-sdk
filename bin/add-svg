@@ -10,7 +10,6 @@ const SVGO = require('svgo');
 const P = require('path');
 const {htmlToHs} = require('./jade-to-h');
 const {FS} = require('../tools/lib/utils');
-const co = require('co');
 
 const svgo = new SVGO({
   plugins: ['removeTitle']
@@ -20,18 +19,18 @@ const outDir = P.join('src', 'javascripts', 'svg');
 
 if (!module.parent) {
   const srcs = process.argv.slice(2);
-  Promise.all(srcs.map(co.wrap(function* (src) {
+  Promise.all(srcs.map(async function (src) {
     const baseName = P.basename(src, '.svg');
     const outPath = P.join(outDir, baseName + '.es6.js');
     console.log(`Writing ${outPath}`);
 
-    const svg = yield FS.readFileAsync(src, 'utf8');
-    const optimized = yield svgOptimize(svg);
+    const svg = await FS.readFileAsync(src, 'utf8');
+    const optimized = await svgOptimize(svg);
 
     const hs = htmlToHs(optimized);
     const hsModule = `import {h} from 'ui/Framework';\n\nexport default ${hs}`;
-    yield FS.writeFileAsync(outPath, hsModule);
-  })));
+    return FS.writeFileAsync(outPath, hsModule);
+  }));
 }
 
 function svgOptimize (data) {
