@@ -9,7 +9,7 @@ const rev = require('gulp-rev');
  */
 gulp.task('build/static', [
   'js/external-bundle', 'js/vendor',
-  'copy-static', 'copy-images', 'copy-kaltura'
+  'copy-static', 'copy-images'
 ], function () {
   const files = glob.sync('public/app/**/*.!(js|css)');
 
@@ -18,12 +18,5 @@ gulp.task('build/static', [
     .pipe(rev())
     .pipe(writeFile())
     .pipe(rev.manifest('build/static-manifest.json'))
-    .pipe(writeFile());
-});
-
-// Copy Kaltura library to `build`. No fingerprinting.
-gulp.task('copy-kaltura', ['js/vendor'], function () {
-  return gulp.src(['public/app/kaltura.js'], {base: 'public'})
-    .pipe(changeBase('build'))
     .pipe(writeFile());
 });

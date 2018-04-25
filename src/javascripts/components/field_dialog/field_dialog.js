@@ -75,27 +75,10 @@ angular.module('contentful')
    * @name FieldDialogController#availableWidgets
    * @type {Widgets.Descriptor[]}
    */
-  var cachedAvailable = Widgets.getAvailable($scope.field, spaceContext.widgets.getAll());
-  $scope.availableWidgets = filterAvailable(cachedAvailable);
   spaceContext.widgets.refresh()
   .then(function (widgets) {
-    var refreshedAvailable = Widgets.getAvailable($scope.field, widgets);
-    $scope.availableWidgets = filterAvailable(refreshedAvailable);
+    $scope.availableWidgets = Widgets.getAvailable($scope.field, widgets);
   });
-
-  function filterAvailable (available) {
-    if (Array.isArray(available)) {
-      return available.filter(function (widget) {
-        // TODO: Eliminate Kaltura! For the time being we hide Kaltura editor unless it's selected
-        // Wiki: https://contentful.atlassian.net/wiki/spaces/PROD/pages/373981381/Phasing+out+Kaltura+and+Ooyala+Q2+2018
-        // For more context ask Jakub or Frederik
-        return widget.id !== 'kalturaEditor' || $scope.widget.widgetId === 'kalturaEditor';
-      });
-    } else {
-      // TODO: this function should be identity when TODO above is tackled
-      return available;
-    }
-  }
 
   $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);
   $scope.iconId = fieldFactory.getIconId($scope.field) + '-small';

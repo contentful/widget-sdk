@@ -37,6 +37,10 @@ angular.module('contentful')
     to: 'markdown'
   },
   {
+    from: 'kalturaEditor',
+    to: 'singleLine'
+  },
+  {
     from: 'kalturaMultiVideoEditor',
     to: 'listInput'
   },
