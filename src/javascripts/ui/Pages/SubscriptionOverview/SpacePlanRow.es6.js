@@ -32,7 +32,7 @@ function SpacePlanRow ({ plan, onDeleteSpace }) {
   const contextMenuItems = [
     {
       label: 'Go to space',
-      disabled: !space.isAccessible,
+      disabled: Boolean(space && !space.isAccessible),
       action: () => go(home(space.sys.id)),
       otherProps: {
         'data-test-id': 'subscription-page.spaces-list.space-link'
@@ -40,7 +40,7 @@ function SpacePlanRow ({ plan, onDeleteSpace }) {
     },
     {
       label: 'Usage',
-      disabled: !space.isAccessible,
+      disabled: Boolean(space && !space.isAccessible),
       action: () => go(spaceUsage(space.sys.id)),
       otherProps: {
         'data-test-id': 'subscription-page.spaces-list.space-usage-link'
@@ -68,10 +68,12 @@ function SpacePlanRow ({ plan, onDeleteSpace }) {
     <td>{createdBy}</td>
     <td>{createdAt}</td>
     <td style={{textAlign: 'right'}}>
-      <ContextMenu
-        data-test-id='subscription-page.spaces-list.space-context-menu'
-        items={contextMenuItems}
-      />
+      { space &&
+        <ContextMenu
+          data-test-id='subscription-page.spaces-list.space-context-menu'
+          items={contextMenuItems}
+        />
+      }
     </td>
   </tr>;
 }

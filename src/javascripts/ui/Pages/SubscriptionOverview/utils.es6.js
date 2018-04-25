@@ -69,6 +69,6 @@ export function hasAnySpacesInaccessible (plans) {
   return Boolean(plans.find(plan => {
     const space = plan.space;
 
-    return !space.isAccessible;
+    return space && !space.isAccessible;
   }));
 }
