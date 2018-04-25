@@ -17,7 +17,7 @@ const configureAndWriteIndex = require('../../lib/index-configure');
  *
  * output/files/staging/index.html (served for request to app.flinkly.com)
  */
-module.exports = function* runTravis ({branch, pr, version}) {
+module.exports = async function runTravis ({branch, pr, version}) {
   console.log(`TRAVIS_BRANCH: ${branch}, TRAVIS_COMMIT: ${version}, TRAVIS_PULL_REQUEST: ${pr}`);
 
   // If `pr` is not 'false' this is the `travis-ci/pr` job. Since we don’t
@@ -49,21 +49,21 @@ module.exports = function* runTravis ({branch, pr, version}) {
     master: ENV.staging
   };
 
-  yield* createFileDist(ENV.development, version, branch);
-  yield* createFileDist(ENV.preview, version, branch, { includeStyleguide: true });
-  yield* createFileDist(ENV.staging, version, branch);
-  yield* createFileDist(ENV.production, version, branch);
+  await createFileDist(ENV.development, version, branch);
+  await createFileDist(ENV.preview, version, branch, { includeStyleguide: true });
+  await createFileDist(ENV.staging, version, branch);
+  await createFileDist(ENV.production, version, branch);
 
   // Do the next bit only for production, master and preview branches
   if (branch in BRANCH_ENV_MAP) {
     const env = BRANCH_ENV_MAP[branch];
 
-    yield* createIndex(env, version);
+    await createIndex(env, version);
 
     // Deploy to preview environment whenever we deploy to staging
     // to keep both envs in sync
     if (env === ENV.staging) {
-      yield* createIndex(ENV.preview, version);
+      await createIndex(ENV.preview, version);
     }
   }
 };
@@ -76,14 +76,14 @@ module.exports = function* runTravis ({branch, pr, version}) {
  * @param env {string} env - Target environment. One of production, staging, preview
  * @param version {string} version - Git commit hash of the commit that's being built
  */
-function* createIndex (env, version) {
+async function createIndex (env, version) {
   const rootIndexPathForEnv = targetPath(env, 'index.html');
   const logMsg = `Creating root index file for "${env}"`;
 
   console.log('-'.repeat(logMsg.length), `\n${logMsg}`);
 
   // This generates output/files/${env}/index.html
-  yield* configureAndWriteIndex(version, `config/${env}.json`, rootIndexPathForEnv);
+  return configureAndWriteIndex(version, `config/${env}.json`, rootIndexPathForEnv);
 }
 
 
@@ -105,23 +105,23 @@ function* createIndex (env, version) {
  * @param {string} branch
  * @param {boolean} options.includeStyleguide
  */
-function* createFileDist (env, version, branch, { includeStyleguide } = {}) {
+async function createFileDist (env, version, branch, { includeStyleguide } = {}) {
   console.log(`Creating file distribution for "${env}"`);
 
   // This directory contains all the files needed to run the app.
   // It is populated by `gulp build`.
   const BUILD_SRC = P.resolve('./build');
 
-  yield copy(P.join(BUILD_SRC, 'app'), targetPath(env, 'app'));
+  await copy(P.join(BUILD_SRC, 'app'), targetPath(env, 'app'));
 
   const commitHashIndexPath = targetPath(env, 'archive', version, 'index-compiled.html');
-  yield* configureAndWriteIndex(version, `config/${env}.json`, commitHashIndexPath);
+  await configureAndWriteIndex(version, `config/${env}.json`, commitHashIndexPath);
 
   const branchIndexPath = targetPath(env, 'archive', branch, 'index-compiled.html');
-  yield* configureAndWriteIndex(version, `config/${env}.json`, branchIndexPath);
+  await configureAndWriteIndex(version, `config/${env}.json`, branchIndexPath);
 
   if (includeStyleguide) {
-    yield copy(P.join(BUILD_SRC, 'styleguide'), targetPath(env, 'styleguide', branch));
+    await copy(P.join(BUILD_SRC, 'styleguide'), targetPath(env, 'styleguide', branch));
   }
 }
 

@@ -1,4 +1,3 @@
-const B = require('bluebird');
 const kexec = require('kexec');
 const yargs = require('yargs');
 
@@ -11,21 +10,19 @@ const runTravis = require('./travis');
  */
 
 
-module.exports = B.coroutine(main);
-
-function* main (argv) {
+module.exports = async function main (argv) {
   const {command, options} = parseArgs(argv);
   if (command === 'travis') {
-    yield* runTravis(options);
+    await runTravis(options);
   } else if (command === 'test') {
     kexec('./bin/test');
   } else if (command === 'serve') {
-    const close = yield* serve();
+    const close = await serve();
     process.on('SIGINT', close);
   } else {
     throw new Error(`Unknown command "${command}"`);
   }
-}
+};
 
 
 const TRAVIS_DESC =

@@ -1,4 +1,3 @@
-const B = require('bluebird');
 const P = require('path');
 const {createServer} = require('http');
 const express = require('express');
@@ -17,10 +16,10 @@ const MANIFEST_PATHS = [
  *
  * The application is configured with config/development.json.
  */
-module.exports = function* serve () {
+module.exports = async function serve () {
   const assetsDir = P.resolve('build', 'app');
   const configPath = P.resolve('config', 'development.json');
-  const [manifest, config] = yield B.all([
+  const [manifest, config] = await Promise.all([
     readMergeJSON(MANIFEST_PATHS),
     readJSON(configPath)
   ]);
@@ -39,7 +38,7 @@ module.exports = function* serve () {
   app.use((_, res) => res.sendStatus(404));
 
   const server = createServer(app);
-  yield new B.Promise(function (resolve, reject) {
+  await new Promise(function (resolve, reject) {
     server.listen(3001, resolve);
     server.once('error', reject);
   });
