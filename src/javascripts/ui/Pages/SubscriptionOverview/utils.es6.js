@@ -1,6 +1,6 @@
 import React from 'react';
 
-import TextLink from '@contentful/ui-component-library';
+import { TextLink } from '@contentful/ui-component-library';
 
 import { href } from 'states/Navigator';
 import { home, usage as spaceUsage } from 'ui/NavStates/Space';
@@ -22,7 +22,7 @@ export function getSpaceActionLinks (space, isOrgOwner, onDeleteSpace) {
   let spaceLink = (
     <TextLink
       extraClassNames='text-link'
-      href={space.isAccessible && href(home(space.sys.id))}
+      href={space.isAccessible && href(home(space.sys.id)) || undefined}
       disabled={!space.isAccessible}
       style={actionLinkStyle}
       data-test-id='subscription-page.spaces-list.space-link'
@@ -33,7 +33,7 @@ export function getSpaceActionLinks (space, isOrgOwner, onDeleteSpace) {
   let usageLink = (
     <TextLink
       extraClassNames='text-link'
-      href={space.isAccessible && href(spaceUsage(space.sys.id))}
+      href={space.isAccessible && href(spaceUsage(space.sys.id)) || undefined}
       disabled={!space.isAccessible}
       style={actionLinkStyle}
       data-test-id='subscription-page.spaces-list.space-usage-link'
