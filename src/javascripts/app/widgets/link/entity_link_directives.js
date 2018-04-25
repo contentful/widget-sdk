@@ -92,6 +92,9 @@ angular.module('cf.app')
       // with right click + open in a new tab.
       $event.preventDefault();
       $scope.actions.slideinEdit();
+    } else if ($scope.actions.edit) {
+      $event.preventDefault();
+      $scope.actions.edit();
     } else {
       $scope.actions.trackEdit();
     }
@@ -148,9 +151,10 @@ angular.module('cf.app')
   }
 
   function getEntityState () {
-    if ($scope.config.link && !$scope.actions.edit) {
+    if ($scope.config.link) {
       $scope.stateRef = makeEntityRef(data);
     }
+
     var state = EntityState.getState(data.sys);
 
     // We do not show the state indicator for published assets
