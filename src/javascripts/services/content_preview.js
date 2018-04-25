@@ -406,6 +406,9 @@ angular.module('contentful')
         ), 'id'
       );
       var fieldValue = _.get(entry, ['fields', internalId, defaultLocale]);
+      if (fieldValue === '') {
+        return fieldValue;
+      }
       return _.toString(fieldValue) || match;
     });
 

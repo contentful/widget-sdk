@@ -93,7 +93,8 @@ describe('contentPreview', function () {
         sys: { id },
         fields: {
           'internal-title-id': {en: 'Title'},
-          'internal-slug-id': {en: 'my-slug'}
+          'internal-slug-id': {en: 'my-slug'},
+          'internal-im-an-empty-string': {en: ''}
         }
       }
     };
@@ -107,7 +108,8 @@ describe('contentPreview', function () {
       name: id,
       fields: [
         { id: 'internal-title-id', apiName: 'title' },
-        { id: 'internal-slug-id', apiName: 'slug' }
+        { id: 'internal-slug-id', apiName: 'slug' },
+        { id: 'internal-im-an-empty-string', apiName: 'empty' }
       ]
     };
   }
@@ -293,6 +295,28 @@ describe('contentPreview', function () {
         makeCt('ct-1')
       );
       expect(this.compiledUrl).toBe('https://www.test.com/entry-1/Title/my-slug');
+    });
+
+    it('does not replace invalid field tokens', function* () {
+      this.compiledUrl = yield this.contentPreview.replaceVariablesInUrl(
+        makeEnv('foo').configurations[1].url,
+        makeEntry('entry-1').data,
+        makeCt('ct-1')
+      );
+      expect(this.compiledUrl).toBe('https://www.test.com/{entry_field.invalid}');
+    });
+
+    /**
+     * we do it to avoid pasting {entry_field.something}
+     * in case value is just an empty string, but exists.
+     */
+    it('does replace with empty value', function* () {
+      this.compiledUrl = yield this.contentPreview.replaceVariablesInUrl(
+        'http://test-domain.com/{entry_id}/{entry_field.empty}',
+        makeEntry('entry-1').data,
+        makeCt('ct-1')
+      );
+      expect(this.compiledUrl).toBe('http://test-domain.com/entry-1/');
     });
 
     it('does not replace invalid field tokens', function* () {
