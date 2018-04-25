@@ -358,7 +358,11 @@ export default function create ($scope, widgetApi) {
 
   function prepareEditAction (entity, index, isDisabled) {
     if (entity && !isDisabled && !isCurrentEntry(entity) && useBulkEditor) {
-      return function () {
+      return function ($event) {
+        if ($event && $event.preventDefault) {
+          $event.preventDefault();
+        }
+
         widgetApi._internal.editReferences(index, state.refreshEntities);
       };
     } else {

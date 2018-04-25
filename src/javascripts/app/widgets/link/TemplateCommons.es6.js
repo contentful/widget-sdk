@@ -69,14 +69,15 @@ export function titleText () {
  */
 export function actions (actionClass) {
   return [
-    h(`button.${actionClass}`, {
+    h(`a.${actionClass}`, {
       dataTestId: 'entity-edit',
       ngIf: 'actions.edit',
-      ngClick: 'actions.edit()'
+      cfSref: 'stateRef',
+      ngClick: 'actions.edit($event)'
     }, [h('cf-icon', {name: 'edit'})]),
     h(`a.${actionClass}`, {
       dataTestId: 'entity-edit',
-      ngIf: 'stateRef || actions.slideinEdit',
+      ngIf: '(stateRef || actions.slideinEdit) && !actions.edit',
       cfSref: 'stateRef',
       ngClick: 'onClick($event)'
     }, [h('cf-icon', {name: 'edit'})]),
