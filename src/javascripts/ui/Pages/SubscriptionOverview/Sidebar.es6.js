@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import {href} from 'states/Navigator';
 import {byName as colors} from 'Styles/Colors';
-import { billing } from 'ui/NavStates/Org';
+import { billing, invoices } from 'ui/NavStates/Org';
 
 import Icon from 'ui/Components/Icon';
 import Price from 'ui/Components/Price';
@@ -25,7 +25,7 @@ function Sidebar ({grandTotal, orgId, isOrgOwner, isOrgBillable, onContactUs}) {
             <Icon name='invoice' style={iconStyle} />
             <a
               className='text-link'
-              href={href(billing(orgId))}
+              href={href(invoices(orgId))}
               data-test-id='subscription-page.sidebar.invoice-link'
             >
               View invoices
@@ -40,7 +40,7 @@ function Sidebar ({grandTotal, orgId, isOrgOwner, isOrgBillable, onContactUs}) {
             <Icon name='invoice' style={iconStyle} />
             <a
               className='text-link'
-              href={href(billing(orgId))}
+              href={href(invoices(orgId))}
               data-test-id='subscription-page.sidebar.invoice-link'
             >
               View invoices

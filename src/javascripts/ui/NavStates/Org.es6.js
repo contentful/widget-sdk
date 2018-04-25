@@ -16,6 +16,17 @@ export function memberships (orgId) {
 
 export function billing (orgId) {
   return {
+    path: ['account', 'organizations', 'subscription_billing'],
+    params: {
+      orgId,
+      pathSuffix: '/billing_address'
+    },
+    options: {reload: true}
+  };
+}
+
+export function invoices (orgId) {
+  return {
     path: ['account', 'organizations', 'billing'],
     params: {orgId},
     options: { reload: true }
