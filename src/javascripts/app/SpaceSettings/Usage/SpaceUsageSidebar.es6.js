@@ -2,12 +2,8 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
-import * as Intercom from 'intercom';
-import {byName as colors} from 'Styles/Colors';
-
-import Icon from 'ui/Components/Icon';
+import ContactUsButton from 'ui/Components/ContactUsButton';
 import {resourceMaximumLimitReached, resourceHumanNameMap} from 'utils/ResourceUtils';
-import {supportUrl} from 'Config';
 
 // Return a list with the names of the resources that reached the limit
 const getLimitsReachedResources = (resources) => {
@@ -19,15 +15,6 @@ const getLimitsReachedResources = (resources) => {
 const SpaceUsageSidebar = createReactClass({
   propTypes: {
     resources: PropTypes.arrayOf(PropTypes.object)
-  },
-
-  handleCtaClick () {
-    // Open intercom if it's possible, otherwise go to support page.
-    if (Intercom.isEnabled()) {
-      Intercom.open();
-    } else {
-      window.open(supportUrl);
-    }
   },
 
   render () {
@@ -59,21 +46,7 @@ const SpaceUsageSidebar = createReactClass({
           {`Do you need help to upgrade or downgrade?
           Don't hesitate to talk to our customer success team.`}
         </p>
-        <p>
-          <Icon
-            name="bubble"
-            style={{
-              fill: colors.blueDarkest,
-              paddingRight: '6px',
-              position: 'relative',
-              bottom: '-0.125em'
-            }}
-          />
-          <button
-            onClick={this.handleCtaClick}
-            className="text-link"
-          >Get in touch with us</button>
-        </p>
+        <ContactUsButton />
       </div>
     );
   }

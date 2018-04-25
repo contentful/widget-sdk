@@ -22,8 +22,8 @@ const ContactUsButton = createReactClass({
         <TextLink
           label="Get in touch with us"
           onClick={this.contactUs}
-          data-test-id='subscription-page.sidebar.contact-link'
           icon="MdChatBubble"
+          {...this.props}
         />
       </p>
     );

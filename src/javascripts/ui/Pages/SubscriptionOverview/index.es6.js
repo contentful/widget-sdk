@@ -1,12 +1,9 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
-import $location from '$location';
-import * as Intercom from 'intercom';
 
 import { get } from 'lodash';
 
-import { supportUrl } from 'Config';
 import * as ReloadNotification from 'ReloadNotification';
 import { getPlansWithSpaces } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
@@ -107,14 +104,6 @@ const SubscriptionOverview = createReactClass({
     };
   },
 
-  contactUs: function () {
-    // Open intercom if it's possible, otherwise go to support page.
-    if (Intercom.isEnabled()) {
-      Intercom.open();
-    } else {
-      $location.url(supportUrl);
-    }
-  },
   render: function () {
     const {basePlan, spacePlans, grandTotal, usersMeta, organization} = this.state;
     const {orgId} = this.props;
@@ -146,7 +135,6 @@ const SubscriptionOverview = createReactClass({
             spacePlans={spacePlans}
             isOrgOwner={isOwner(organization)}
             isOrgBillable={Boolean(organization.isBillable)}
-            onContactUs={this.contactUs}
           />
         </Workbench.Sidebar>
       </Workbench>

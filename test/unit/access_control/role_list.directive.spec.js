@@ -114,6 +114,8 @@ describe('Role List Directive', function () {
       this.$apply();
     };
 
+    this.getButton = () => this.container.find('button:contains("Create new role")');
+
     this.setUsageLimits = (usage, limit) => {
       this.rolesResource.usage = usage;
       this.rolesResource.limits.maximum = limit;
@@ -142,12 +144,12 @@ describe('Role List Directive', function () {
         this.toggleLegacy(true);
         this.compileElement();
 
-        expect(this.container.find('.entity-sidebar button').length).toBe(0);
+        expect(this.getButton().length).toBe(0);
 
         this.toggleLegacy(false);
         this.compileElement();
 
-        expect(this.container.find('.entity-sidebar button').length).toBe(0);
+        expect(this.getButton().length).toBe(0);
       });
     });
 
@@ -158,12 +160,12 @@ describe('Role List Directive', function () {
         this.toggleLegacy(true);
         this.compileElement();
 
-        expect(this.container.find('.entity-sidebar button').length).toBe(1);
+        expect(this.getButton().length).toBe(1);
 
         this.toggleLegacy(false);
         this.compileElement();
 
-        expect(this.container.find('.entity-sidebar button').length).toBe(1);
+        expect(this.getButton().length).toBe(1);
       });
 
       it('should show the usage and limits', function () {
