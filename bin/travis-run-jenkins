@@ -38,8 +38,11 @@ if [[ "$TRAVIS_BRANCH" =~ ^(preview|production)$ ]]; then
   exit 0;
 fi
 
-
-JOB="staging-custom-ui-version"
+if [[ "$TRAVIS_BRANCH" = "master" ]]; then
+	JOB="staging-custom-ui-version"
+else
+	JOB="user-interface-pr"
+fi
 
 echo "Running ${JOB} for ${TRAVIS_BRANCH}."
 
