@@ -20,11 +20,10 @@ const ContactUsButton = createReactClass({
     return (
       <p>
         <TextLink
-          label="Get in touch with us"
           onClick={this.contactUs}
           icon="MdChatBubble"
           {...this.props}
-        />
+        >Get in touch with us</TextLink>
       </p>
     );
   }
