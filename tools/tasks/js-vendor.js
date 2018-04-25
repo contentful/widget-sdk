@@ -23,19 +23,7 @@ const SHAREJS_VENDOR_SRC = assertFilesExist([
   'vendor/sharejs/lib/types/json-api.js'
 ]);
 
-// all these files will be processed and concatenated into 1
-// /public/app/kaltura.js
-const KALTURA_VENDOR_SRC = assertFilesExist([
-  'vendor/kaltura-16-01-2014/webtoolkit.md5.js',
-  'vendor/kaltura-16-01-2014/ox.ajast.js',
-  'vendor/kaltura-16-01-2014/KalturaClientBase.js',
-  'vendor/kaltura-16-01-2014/KalturaTypes.js',
-  'vendor/kaltura-16-01-2014/KalturaVO.js',
-  'vendor/kaltura-16-01-2014/KalturaServices.js',
-  'vendor/kaltura-16-01-2014/KalturaClient.js'
-]);
-
-gulp.task('js/vendor', ['js/vendor/sharejs', 'js/vendor/kaltura']);
+gulp.task('js/vendor', ['js/vendor/sharejs']);
 
 gulp.task('js/vendor/sharejs', function () {
   return S.pipe([
@@ -62,10 +50,4 @@ gulp.task('js/vendor/sharejs', function () {
     }),
     gulp.dest('./public/app/')
   ]);
-});
-
-gulp.task('js/vendor/kaltura', function () {
-  return gulp.src(KALTURA_VENDOR_SRC)
-    .pipe(concat('kaltura.js'))
-    .pipe(gulp.dest('./public/app'));
 });
