@@ -560,6 +560,10 @@
     "name": "English (Canada)"
   },
   {
+    "code": "en-EG",
+    "name": "English (Egypt)"
+  },
+  {
     "code": "en-EU",
     "name": "English (Europe)"
   },
@@ -620,6 +624,10 @@
     "name": "English (Philippines)"
   },
   {
+    "code": "en-SA",
+    "name": "English (Saudi Arabia)"
+  },
+  {
     "code": "en-SG",
     "name": "English (Singapore)"
   },
@@ -642,6 +650,10 @@
   {
     "code": "en-VI",
     "name": "English (U.S. Virgin Islands)"
+  },
+  {
+    "code": "en-AE",
+    "name": "English (U.A.E.)"
   },
   {
     "code": "en-GB",

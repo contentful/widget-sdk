@@ -30,6 +30,7 @@ angular.module('contentful/mocks')
     const fieldProperties = {
       isDisabled$: K.createMockProperty(false),
       schemaErrors$: K.createMockProperty(null),
+      access$: K.createMockProperty({ editable: true }),
       value$: K.createMockProperty()
     };
 
@@ -60,6 +61,9 @@ angular.module('contentful/mocks')
         }),
         onIsDisabledChanged: function (cb) {
           return K.onValue(fieldProperties.isDisabled$, cb);
+        },
+        onPermissionChanged: function (cb) {
+          return K.onValue(fieldProperties.access$, cb);
         },
         onSchemaErrorsChanged: function (cb) {
           return K.onValue(fieldProperties.schemaErrors$, cb);

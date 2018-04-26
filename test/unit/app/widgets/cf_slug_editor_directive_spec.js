@@ -98,7 +98,7 @@ describe('SlugEditor directive', function () {
   });
 
   it('does not set the slug if user cannot edit the field', function () {
-    this.cfWidgetApi.fieldProperties.isDisabled$.set(true);
+    this.cfWidgetApi.fieldProperties.access$.set({denied: true, disabled: true});
     this.cfWidgetApi.field.setValue('INITIAL');
     this.cfWidgetApi.field.setValue.reset();
     this.title.onValueChanged.yields('A title');

@@ -114,6 +114,9 @@ angular.module('contentful')
     onIsDisabledChanged: function (cb) {
       return K.onValueScope($scope, isEditingDisabled, cb);
     },
+    onPermissionChanged: function (cb) {
+      return K.onValueScope($scope, fieldLocale.access$, cb);
+    },
     onSchemaErrorsChanged: function (cb) {
       return K.onValueScope($scope, fieldLocale.errors$, cb);
     },
