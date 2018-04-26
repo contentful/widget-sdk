@@ -8,17 +8,7 @@ angular.module('contentful')
 .factory('widgets', ['require', function (require) {
   var fieldFactory = require('fieldFactory');
   var deepFreeze = require('utils/Freeze').deepFreeze;
-
-  /**
-   * @ngdoc type
-   * @name Widget.Option
-   * @property {string} param
-   * @property {string} name
-   * @property {string} type
-   * @property {string} description
-   * @property {any[]}  values
-   * @property {any}    default
-   */
+  var applyDefaultValues = require('widgets/WidgetParametersUtils').applyDefaultValues;
 
   /**
    * @ngdoc type
@@ -57,95 +47,7 @@ angular.module('contentful')
    * @property {API.Field} field
    */
 
-  return {
-    getAvailable: getAvailable,
-    buildRenderable: buildRenderable,
-    filterOptions: filterOptions,
-    applyDefaults: applyDefaults,
-    filterParams: filterParams
-  };
-
-  /**
-   * @ngdoc method
-   * @name widgets#descriptorsForField
-   * @description
-   * Return a list of widgets that can be selected for the given field.
-   *
-   * @param {API.ContentType.Field} field
-   * @param {Widget.Descriptor[]} widgets
-   * @return {Widget.Descriptor[]}
-   */
-  function getAvailable (field, widgets) {
-    var fieldType = fieldFactory.getTypeName(field);
-
-    return widgets.filter(function (widget) {
-      return widget.fieldTypes.includes(fieldType);
-    });
-  }
-
-  /**
-   * @ngdoc method
-   * @name widgets#filterParams
-   * @description
-   * Returns a copy of the `params` object that includes only keys that
-   * are applicable to the widget (as defined in `descriptor`).
-   *
-   * @param {Widget} descriptor
-   * @param {object} params
-   * @returns {object}
-   */
-  function filterParams (descriptor, params) {
-    return (descriptor.options || []).reduce(function (filtered, option) {
-      var param = params[option.param];
-      if (typeof param !== 'undefined') {
-        filtered[option.param] = param;
-      }
-      return filtered;
-    }, {});
-  }
-
-
-  /**
-   * @ngdoc method
-   * @name widgets#filterOptions
-   * @description
-   * Exclude options that are not applicable.
-   * @param {Widget} descriptor
-   * @param {object} params
-   */
-  function filterOptions (descriptor, params) {
-    var options = descriptor.options || [];
-    // Filter out AM/PM selector if date picker mode does not include time
-    if (descriptor.id === 'datePicker') {
-      return options.filter(function (option) {
-        return option.param !== 'ampm' || ['time', 'timeZ'].includes(params.format);
-      });
-    } else {
-      return [].concat(options);
-    }
-  }
-
-  /**
-   * @ngdoc method
-   * @name widgets#applyDefaults
-   * @description
-   * Creates a copy of params provided and sets each widget paramter
-   * to its default value if it is not set yet.
-   *
-   * @param {Widget} descriptor
-   * @param {object} params
-   * @return {object}
-   */
-  function applyDefaults (descriptor, params) {
-    var cloned = _.isObject(params) ? _.cloneDeep(params) : {};
-
-    return (descriptor.options || []).reduce(function (params, option) {
-      if ('default' in option && !(option.param in params)) {
-        params[option.param] = option.default;
-      }
-      return params;
-    }, cloned);
-  }
+  return {buildRenderable: buildRenderable};
 
   /**
    * @ngdoc method
@@ -191,7 +93,11 @@ angular.module('contentful')
     }
 
     _.extend(renderable, {
-      settings: applyDefaults(descriptor, control.settings),
+      settings: applyDefaultValues(descriptor.parameters, control.settings),
+      installationParameterValues: applyDefaultValues(
+        _.get(descriptor, ['installationParameters', 'definitions']) || [],
+        _.get(descriptor, ['installationParameters', 'values']) || {}
+      ),
       template: descriptor.template,
       rendersHelpText: descriptor.rendersHelpText,
       defaultHelpText: descriptor.defaultHelpText,

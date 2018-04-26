@@ -3,18 +3,18 @@ angular.module('contentful')
 .factory('widgets/builtin', [function () {
   var widgets = [];
 
-  var COMMON_OPTIONS = [
+  var COMMON_PARAMETERS = [
     {
-      param: 'helpText',
+      id: 'helpText',
       name: 'Help text',
-      type: 'Text',
+      type: 'Symbol',
       description: 'This help text will show up below the field'
     }
   ];
 
   function registerWidget (id, widgetDescriptor) {
     widgetDescriptor.id = id;
-    widgetDescriptor.options = COMMON_OPTIONS.concat(widgetDescriptor.options || []);
+    widgetDescriptor.parameters = COMMON_PARAMETERS.concat(widgetDescriptor.parameters || []);
     widgets.push(widgetDescriptor);
   }
 
@@ -24,7 +24,7 @@ angular.module('contentful')
    *
    * @property {string} id
    * @property {string} name
-   * @property {Widget.Option[]} options
+   * @property {Widget.Parameter[]} parameters
    * @property {string} icon
    * @property {string} template
    * @property {string} defaulHelpText
@@ -90,32 +90,36 @@ angular.module('contentful')
     icon: 'radio',
     notFocusable: true,
     template: '<cf-boolean-editor />',
-    options: [{
-      name: 'True condition custom label',
-      param: 'trueLabel',
-      type: 'Text',
-      description: 'Yes',
-      default: 'Yes'
-    }, {
-      name: 'False condition custom label',
-      param: 'falseLabel',
-      type: 'Text',
-      description: 'No',
-      default: 'No'
-    }]
+    parameters: [
+      {
+        id: 'trueLabel',
+        name: 'True condition custom label',
+        type: 'Symbol',
+        default: 'Yes'
+      },
+      {
+        id: 'falseLabel',
+        name: 'False condition custom label',
+        type: 'Symbol',
+        default: 'No'
+      }
+    ]
   });
+
+  var MAX_NUMBER_OF_STARS = 20;
 
   registerWidget('rating', {
     fieldTypes: ['Integer', 'Number'],
     name: 'Rating',
     icon: 'rating',
-    options: [
+    parameters: [
       {
-        param: 'stars',
-        type: 'Predefined',
-        values: _.range(1, 20),
+        id: 'stars',
         name: 'Number of stars',
-        default: 5
+        type: 'Enum',
+        options: _.range(1, MAX_NUMBER_OF_STARS + 1).map(String),
+        default: '5',
+        required: true
       }
     ],
     notFocusable: true,
@@ -127,27 +131,29 @@ angular.module('contentful')
     name: 'Date picker',
     template: '<cf-entry-datetime-editor />',
     notFocusable: true,
-    options: [
+    parameters: [
       {
-        param: 'format',
+        id: 'format',
         name: 'Format',
-        type: 'Predefined',
-        values: {
-          dateonly: 'Date only',
-          time: 'Date and time without timezone',
-          timeZ: 'Date and time with timezone'
-        },
-        default: 'timeZ'
+        type: 'Enum',
+        options: [
+          {dateonly: 'Date only'},
+          {time: 'Date and time without timezone'},
+          {timeZ: 'Date and time with timezone'}
+        ],
+        default: 'timeZ',
+        required: true
       },
       {
-        param: 'ampm',
+        id: 'ampm',
         name: 'Time mode',
-        type: 'Predefined',
-        values: {
-          '12': 'AM/PM',
-          '24': '24 Hour'
-        },
-        default: '24'
+        type: 'Enum',
+        options: [
+          {'12': 'AM/PM'},
+          {'24': '24 Hour'}
+        ],
+        default: '24',
+        required: true
       }
     ]
   });
@@ -207,12 +213,12 @@ angular.module('contentful')
   });
 
 
-  var bulkEditorOption = {
-    param: 'bulkEditing',
+  var bulkEditorParameter = {
+    id: 'bulkEditing',
+    name: 'Use bulk editing',
+    description: 'Ideal for entries with only a few fields',
     type: 'Boolean',
-    default: false,
-    label: 'Use bulk editing',
-    description: 'Ideal for entries with only a few fields'
+    default: false
   };
 
   registerWidget('entryLinksEditor', {
@@ -220,7 +226,7 @@ angular.module('contentful')
     name: 'Entry links list',
     icon: 'references',
     template: '<cf-reference-editor type="Entry" variant="link" />',
-    options: [bulkEditorOption]
+    parameters: [bulkEditorParameter]
   });
 
   registerWidget('entryCardEditor', {
@@ -235,7 +241,7 @@ angular.module('contentful')
     name: 'Entry cards',
     icon: 'references-card',
     template: '<cf-reference-editor type="Entry" variant="card" />',
-    options: [bulkEditorOption]
+    parameters: [bulkEditorParameter]
   });
 
   registerWidget('assetLinksEditor', {

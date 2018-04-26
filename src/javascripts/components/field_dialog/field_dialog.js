@@ -49,8 +49,10 @@ angular.module('contentful')
   var fieldDecorator = require('fieldDecorator');
   var trackCustomWidgets = require('analyticsEvents/customWidgets');
   var fieldFactory = require('fieldFactory');
-  var Widgets = require('widgets');
+  var WidgetParametersUtils = require('widgets/WidgetParametersUtils');
   var spaceContext = require('spaceContext');
+  var $timeout = require('$timeout');
+  var notification = require('notification');
 
   var contentTypeData = $scope.contentType.data;
 
@@ -60,24 +62,36 @@ angular.module('contentful')
 
   $scope.currentTitleField = getTitleField();
 
-  var widget = $scope.widget;
-  var initialWidgetId = widget.widgetId;
+  var initialWidgetId = $scope.widget.widgetId;
 
   $scope.widgetSettings = {
-    id: widget.widgetId,
+    id: $scope.widget.widgetId,
     // Need to clone so we do not mutate data if we cancel the dialog
-    params: _.cloneDeep(widget.settings || {})
+    params: _.cloneDeep($scope.widget.settings || {})
   };
 
+  $scope.$watch('widgetSettings.id', reposition);
+  $scope.$watch(function () {
+    return $scope.tabController.getActiveTabName();
+  }, reposition);
+
+  function reposition () {
+    $timeout(function () {
+      $scope.$emit('centerOn:reposition');
+    });
+  }
 
   /**
    * @ngdoc property
    * @name FieldDialogController#availableWidgets
    * @type {Widgets.Descriptor[]}
    */
-  spaceContext.widgets.refresh()
-  .then(function (widgets) {
-    $scope.availableWidgets = Widgets.getAvailable($scope.field, widgets);
+  spaceContext.widgets.refresh().then(function (widgets) {
+    var fieldType = fieldFactory.getTypeName($scope.field);
+
+    $scope.availableWidgets = widgets.filter(function (widget) {
+      return widget.fieldTypes.includes(fieldType);
+    });
   });
 
   $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);
@@ -86,23 +100,40 @@ angular.module('contentful')
   dialog.save = function () {
     $scope.$broadcast('validate');
     if (!isValid()) {
+      notification.error('Please check the form for validation errors.');
       return;
     }
 
     fieldDecorator.update($scope.decoratedField, $scope.field, contentTypeData);
     validations.updateField($scope.field, $scope.validations);
 
-    var params = $scope.widgetSettings.params;
     var widgetId = $scope.widgetSettings.id;
-    var descriptor = _.find($scope.availableWidgets, {id: widgetId});
-    _.extend(widget, {
+    var values = $scope.widgetSettings.params;
+    var selectedWidget = _.find($scope.availableWidgets, {id: widgetId});
+    var definitions = _.get(selectedWidget, ['parameters']) || [];
+
+    definitions = WidgetParametersUtils.filterDefinitions(definitions, values, selectedWidget);
+    values = WidgetParametersUtils.filterValues(definitions, values);
+    $scope.widgetSettings.params = values;
+
+    var missing = WidgetParametersUtils.markMissingValues(definitions, values);
+    var hasMissingParameters = Object.keys(missing).some(function (key) {
+      return missing[key] === true;
+    });
+
+    if (hasMissingParameters) {
+      notification.error('Please provide all required parameters.');
+      return;
+    }
+
+    _.extend($scope.widget, {
       widgetId: widgetId,
       fieldId: $scope.field.apiName,
-      settings: Widgets.filterParams(descriptor, params)
+      settings: values
     });
 
     if (widgetId !== initialWidgetId) {
-      trackCustomWidgets.selected(widget, $scope.field, $scope.contentType);
+      trackCustomWidgets.selected($scope.widget, $scope.field, $scope.contentType);
     }
 
     dialog.confirm();
@@ -203,38 +234,70 @@ angular.module('contentful')
  * @property {Widgets.Options[]}     widgetOptions
  */
 .controller('FieldDialogAppearanceController', ['$scope', 'require', function ($scope, require) {
-  var Widgets = require('widgets');
   var getDefaultWidgetId = require('widgets/default');
 
   $scope.defaultWidgetId = getDefaultWidgetId($scope.field, $scope.contentType.data.displayField);
-  $scope.widgetParams = $scope.widgetSettings.params;
-  $scope.$watch('widgetParams', updateOptionsAndParams, true);
-  $scope.$watch('widget.id', updateOptionsAndParams);
+  $scope.selectWidget = selectWidget;
 
   $scope.$watch('availableWidgets', function (available) {
-    if (!available) { return; }
-    var selected = _.findIndex(available, {id: $scope.widgetSettings.id});
-    if (selected < 0) {
-      selected = 0;
+    if (Array.isArray(available)) {
+      var selected = _.findIndex(available, {id: $scope.widgetSettings.id});
+      selectWidget(selected > -1 ? selected : 0);
     }
-    $scope.selectWidget(selected);
   });
 
-  $scope.selectWidget = function (i) {
+  function selectWidget (i) {
     var widget = $scope.availableWidgets[i];
     $scope.selectedWidgetIndex = i;
-    $scope.widget = widget;
     $scope.widgetSettings.id = widget.id;
-  };
-
-  function updateOptionsAndParams () {
-    var widget = $scope.widget;
-    // Initially `$scope.widget` contains a control from the parent scope.
-    // `$scope.selectWidget` alters it with actual widget descriptor.
-    // Widget descriptors don't have `field` property.
-    if (widget && !widget.field) {
-      var params = Widgets.applyDefaults(widget, $scope.widgetParams);
-      $scope.widgetOptions = Widgets.filterOptions(widget, params);
-    }
   }
+}])
+
+.directive('cfFieldAppearanceParameters', ['require', function (require) {
+  var ReactDOM = require('react-dom');
+  var React = require('react');
+  var WidgetParametersUtils = require('widgets/WidgetParametersUtils');
+  var WidgetParametersForm = require('widgets/WidgetParametersForm').default;
+
+  return {
+    restrict: 'E',
+    template: '<div class="mount-point"></div>',
+    link: function (scope, el) {
+      render();
+      scope.$watch('widgetSettings.id', render);
+      scope.$watch('availableWidgets', render);
+
+      function render () {
+        var widget = _.find(scope.availableWidgets, {id: scope.widgetSettings.id});
+        if (widget) {
+          ReactDOM.render(
+            React.createElement(WidgetParametersForm, prepareProps(widget)),
+            el[0].querySelector('.mount-point')
+          );
+        }
+      }
+
+      function prepareProps (widget) {
+        var definitions = widget.parameters;
+        var settings = scope.widgetSettings;
+
+        settings.params = WidgetParametersUtils.applyDefaultValues(definitions, settings.params);
+        definitions = WidgetParametersUtils.filterDefinitions(definitions, settings.params, widget);
+        definitions = WidgetParametersUtils.unifyEnumOptions(definitions);
+
+        return {
+          definitions: definitions,
+          values: settings.params,
+          missing: WidgetParametersUtils.markMissingValues(definitions, settings.params),
+          updateValue: updateValue
+        };
+      }
+
+      function updateValue (id, value) {
+        scope.widgetSettings.params[id] = value;
+        scope.$applyAsync();
+        render();
+      }
+    }
+  };
 }]);

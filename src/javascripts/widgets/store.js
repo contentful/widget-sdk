@@ -6,8 +6,6 @@ angular.module('contentful')
   var builtin = require('widgets/builtin');
   var fieldFactory = require('fieldFactory');
 
-  var EXTENSION_PROPS = ['name', 'src', 'srcdoc', 'sidebar'];
-
   return function create (spaceEndpoint) {
     var cache = [];
 
@@ -50,12 +48,20 @@ angular.module('contentful')
   }
 
   function buildExtensionWidget (data) {
-    var fieldTypes = _.map(data.extension.fieldTypes, fieldFactory.getTypeName);
-    return _.extend(_.pick(data.extension, EXTENSION_PROPS), {
+    var src = data.extension.src;
+    var base = src ? {src: src} : {srcdoc: data.extension.srcdoc};
+
+    return Object.assign(base, {
       id: data.sys.id,
-      fieldTypes: fieldTypes,
-      template: '<cf-iframe-widget>',
-      options: [],
+      name: data.extension.name,
+      fieldTypes: data.extension.fieldTypes.map(fieldFactory.getTypeName),
+      sidebar: data.extension.sidebar,
+      template: '<cf-iframe-widget />',
+      parameters: _.get(data.extension, ['parameters', 'instance']) || [],
+      installationParameters: {
+        definitions: _.get(data.extension, ['parameters', 'installation']) || [],
+        values: data.parameters || {}
+      },
       custom: true
     });
   }

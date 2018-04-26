@@ -35,7 +35,6 @@ angular.module('cf.ui')
 }])
 
 .controller('UiTabController', [function () {
-
   function Tab (controller, name) {
     this.name = name;
     this.activate = function () {
@@ -63,19 +62,26 @@ angular.module('cf.ui')
   };
 
   this.get = function (name) {
-    if (!_.isString(name))
+    if (!_.isString(name)) {
       throw new TypeError('Tab name must be a string');
+    }
 
     var tab = tabs[name];
-    if (!tab)
+    if (!tab) {
       tab = tabs[name] = new Tab(this, name);
+    }
 
     return tab;
   };
 
+  this.getActiveTabName = function () {
+    return activeTab && activeTab.name;
+  };
+
   this.activate = function (name) {
-    if (activeTab)
+    if (activeTab) {
       activeTab.active = false;
+    }
 
     if (name) {
       activeTab = this.get(name);
@@ -84,8 +90,6 @@ angular.module('cf.ui')
       activeTab = null;
     }
   };
-
-
 }])
 
 .directive('uiTab', [function () {

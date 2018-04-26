@@ -15,7 +15,8 @@ describe('widgets/API', function () {
     const spaceMembership = {
       sys: {},
       user: {
-        sys: {}
+        sys: {},
+        firstName: 'Jakub'
       },
       roles: []
     };
@@ -33,9 +34,14 @@ describe('widgets/API', function () {
       contentWindow: {postMessage: this.postMessage}
     };
 
+    const parameters = {
+      instance: {test: true},
+      installation: {hello: 'world'}
+    };
+
     this.createAPI = function () {
       return new API(
-        {}, spaceMembership, this.fields, this.entryData, this.contentTypeData,
+        {}, spaceMembership, parameters, this.fields, this.entryData, this.contentTypeData,
         this.context, this.iframe
       );
     };
@@ -108,6 +114,19 @@ describe('widgets/API', function () {
       this.createAPI().connect();
       expect(this.postMessage.args[0][0].params[0].locales.default).toEqual('A');
       expect(this.postMessage.args[0][0].params[0].locales.available).toEqual(['A', 'B']);
+    });
+
+    it('sends user info', function () {
+      this.createAPI().connect();
+      expect(this.postMessage.args[0][0].params[0].user.firstName).toEqual('Jakub');
+    });
+
+    it('sends parameters', function () {
+      this.createAPI().connect();
+      expect(this.postMessage.args[0][0].params[0].parameters).toEqual({
+        instance: {test: true},
+        installation: {hello: 'world'}
+      });
     });
   });
 
