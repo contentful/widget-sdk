@@ -53,8 +53,8 @@ angular.module('contentful')
       }, {});
 
       var parameters = {
-        instance: scope.widget.settings,
-        installation: scope.widget.installationParameterValues
+        instance: scope.widget.settings || {},
+        installation: scope.widget.installationParameterValues || {}
       };
 
       var widgetAPI = new WidgetAPI(
