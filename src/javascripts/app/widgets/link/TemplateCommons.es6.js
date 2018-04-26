@@ -46,7 +46,8 @@ export function status (style) {
 export function titleText () {
   return [
     h('span', {
-      ngIf: '!missing && title'
+      ngIf: '!missing && title',
+      title: '{{title}}'
     }, ['{{title}}']),
     h('span', {
       ngIf: '!missing && !title',
