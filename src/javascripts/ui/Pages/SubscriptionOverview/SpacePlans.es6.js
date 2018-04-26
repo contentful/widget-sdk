@@ -30,27 +30,29 @@ function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
     </p>
 
     { hasSpacePlans &&
-      <table className='simple-table'>
-        <thead>
-          <tr>
-            <th style={{width: '25%'}}>Name</th>
-            <th style={{width: '30%'}}>Space type / price</th>
-            <th style={{width: '10%'}}>Created by</th>
-            <th style={{width: '10%'}}>Created on</th>
-            <th style={{width: '25%'}}>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          { spacePlans.map(plan => {
-            return <SpacePlanRow
-              key={plan.sys.id || plan.space && plan.space.sys.id}
-              plan={plan}
-              onDeleteSpace={onDeleteSpace}
-              isOrgOwner={isOrgOwner}
-            />;
-          })}
-        </tbody>
-      </table>
+      <div className='table'>
+        <table>
+          <thead className='table__head'>
+            <tr>
+              <th style={{width: '30%'}}>Name</th>
+              <th style={{width: '20%'}}>Space type / price</th>
+              <th style={{width: '15%'}}>Created by</th>
+              <th style={{width: '15%'}}>Created on</th>
+              <th>&#32;</th>
+            </tr>
+          </thead>
+          <tbody className='table__body'>
+            { spacePlans.map(plan => {
+              return <SpacePlanRow
+                key={plan.sys.id || plan.space && plan.space.sys.id}
+                plan={plan}
+                onDeleteSpace={onDeleteSpace}
+                isOrgOwner={isOrgOwner}
+              />;
+            })}
+          </tbody>
+        </table>
+      </div>
     }
   </div>;
 }

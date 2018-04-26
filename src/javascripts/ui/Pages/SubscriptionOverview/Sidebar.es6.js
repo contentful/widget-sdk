@@ -8,9 +8,12 @@ import { billing, invoices } from 'ui/NavStates/Org';
 import Icon from 'ui/Components/Icon';
 import Price from 'ui/Components/Price';
 
-function Sidebar ({grandTotal, orgId, isOrgOwner, isOrgBillable, onContactUs}) {
+import { hasAnySpacesInaccessible } from './utils';
+
+function Sidebar ({grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable, onContactUs}) {
   // TODO - add these styles to stylesheets
   const iconStyle = {fill: colors.blueDarkest, paddingRight: '6px', position: 'relative', bottom: '-0.125em'};
+  const anyInaccessibleSpaces = hasAnySpacesInaccessible(spacePlans);
 
   return <div className='entity-sidebar' data-test-id='subscription-page.sidebar'>
     { isOrgBillable &&
@@ -66,6 +69,17 @@ function Sidebar ({grandTotal, orgId, isOrgOwner, isOrgBillable, onContactUs}) {
         </a>
       </Fragment>
     }
+    { anyInaccessibleSpaces &&
+      <Fragment>
+        <h2 className='entity-sidebar__heading'>Spaces without permission</h2>
+        <p>
+          Some of your spaces are not accessible, which means you cannot view the content or usage of those spaces.
+        </p>
+        <p>
+         However, since you&apos;re an organization {isOrgOwner ? 'owner' : 'admin'} you can grant yourself access by going to <i>users</i> and adding yourself to the space.
+        </p>
+      </Fragment>
+    }
     <h2 className='entity-sidebar__heading'>Need help?</h2>
     <p>
       { isOrgBillable && 'Do you need to upgrade or downgrade your spaces?' }
@@ -90,7 +104,8 @@ Sidebar.propTypes = {
   orgId: PropTypes.string.isRequired,
   isOrgOwner: PropTypes.bool.isRequired,
   isOrgBillable: PropTypes.bool.isRequired,
-  onContactUs: PropTypes.func.isRequired
+  onContactUs: PropTypes.func.isRequired,
+  spacePlans: PropTypes.array.isRequired
 };
 
 export default Sidebar;
