@@ -8,8 +8,7 @@ const rev = require('gulp-rev');
  * create a manifest for them.
  */
 gulp.task('build/static', [
-  'js/external-bundle', 'js/vendor',
-  'copy-static', 'copy-images'
+  'js', 'copy-static', 'copy-images'
 ], function () {
   const files = glob.sync('public/app/**/*.!(js|css)');
 

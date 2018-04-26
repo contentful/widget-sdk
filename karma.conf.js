@@ -1,12 +1,11 @@
 /* global require module */
 
-var makeBabelOptions = require('./tools/app-babel-options').makeOptions;
+var { createBabelOptions } = require('./tools/app-babel-options');
 var P = require('path');
 var root = P.resolve() + '/';
-var express = require('express')
+var express = require('express');
 
 module.exports = function (config) {
-
   config.plugins.push(
     // Serve static files from root directory under /base
     // Using the files array is too much overhead for files that are
@@ -61,11 +60,10 @@ module.exports = function (config) {
     customPreprocessors: {
       babelApp: {
         base: 'babel',
-        options: makeBabelOptions({
+        options: createBabelOptions({
           // Keep the transpilation and source map effort low by
           // targeting only chrome
-          browserTargets: ['last 2 Chrome versions']
-        }, {
+          browserTargets: ['last 2 Chrome versions'],
           sourceMap: 'inline',
           // Since we strip the '.es6.js' extension from the filename we
           // do not need to match /.es6.js/. This is done by the

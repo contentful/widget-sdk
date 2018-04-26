@@ -54,7 +54,7 @@
     "moment": "^2.19.3",
     "nib": "^1.0.3",
     "node-html-encoder": "0.0.2",
-    "pegjs": "^0.8.0",
+    "pegjs": "^0.10.0",
     "pikaday": "^1.4.0",
     "pluralize": "^7.0.0",
     "promise": "^6.0.1",
@@ -86,6 +86,7 @@
     "angular-mocks": "~1.5.7",
     "anymatch": "^1.3.0",
     "babel-cli": "^6.8.0",
+    "babel-loader": "^7.1.4",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-react": "^6.24.1",
     "babel-register": "^6.8.0",
@@ -126,11 +127,15 @@
     "kexec": "^2.0.2",
     "loose-envify": "^1.3.1",
     "marked": "^0.3.6",
+    "pegjs-loader": "^0.5.4",
     "react-click-outside": "^3.0.0",
     "rework": "^1.0.1",
     "rework-plugin-url": "^1.1.0",
     "systemjs": "^0.20.4",
     "watchify": "^3.7.0",
+    "webpack": "^3.11.0",
+    "webpack-bundle-analyzer": "^2.11.1",
+    "webpack-merge": "^4.1.2",
     "yargs": "^4.2.0"
   },
   "scripts": {
@@ -140,7 +145,8 @@
     "hint": "eslint src test bin tools",
     "cloc": "cloc --read-lang-def .cloc.def src",
     "clean": "rm -rf node_modules",
-    "prepush": "if test \"$ENABLE_HUSKY_HOOKS\" != \"\" ; then npm run hint ; fi "
+    "prepush": "if test \"$ENABLE_HUSKY_HOOKS\" != \"\" ; then npm run hint ; fi ",
+    "bundle-analyzer": "webpack --config ./tools/webpack.analyzer.config.js"
   },
   "repository": {
     "type": "git",

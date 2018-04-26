@@ -1,7 +1,12 @@
 const P = require('path');
+const { omit } = require('lodash');
 
 // Module IDs are relative to this path
 const basePath = P.resolve('src', 'javascripts');
+
+const SUPPORTED_BROWSERS = ['last 2 versions', 'ie >= 11'];
+
+module.exports.supportedBrowsers = SUPPORTED_BROWSERS;
 
 /**
  * Return an babel options object used to compile files
@@ -16,10 +21,11 @@ const basePath = P.resolve('src', 'javascripts');
  *   Additional options to be merged into the base options.
  * @returns {object}
  */
-module.exports.makeOptions = function makeOptions ({ browserTargets }, opts) {
+module.exports.createBabelOptions = function createBabelOptions (options = {}) {
+  const { browserTargets = SUPPORTED_BROWSERS } = options;
+  const opts = omit(options, ['browserTargets']);
   return Object.assign({
     moduleIds: true,
-    only: /\.es6\.js$/,
     babelrc: false,
 
     presets: [
@@ -30,8 +36,6 @@ module.exports.makeOptions = function makeOptions ({ browserTargets }, opts) {
         'loose': true,
         'debug': true,
         'modules': false,
-        // TODO we want to use 'useBuiltIns': 'entry' to reduce bundle size,
-        // but first we heed to pipe `libs/index` through babel.
         'useBuiltIns': false
       }], 'react'
     ],
