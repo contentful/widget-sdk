@@ -49,11 +49,11 @@ angular.module('contentful')
 
       // The most recent value of the title field.
       // It is used to check if the slug is currently tracking the
-      // title when the title field changes it’s value.
+      // title when the title field changes its value.
       var trackingTitle;
 
       // we don't want to show our custom error about uniqueness
-      // in case of the API error for it. We also can not just get
+      // in case of the API error for it. We also cannot just get
       // rid of it, because it will break existing functionality --
       // live update on the uniqueness of the slug editor
       //
@@ -69,10 +69,10 @@ angular.module('contentful')
       // we need to update slug values from title only after
       // field becomes not disabled (sharejs connected)
       var titleUpdate$ = K.combine([disabledBus.stream, titleBus.stream])
-        .filter(function filterDisabled (values) {
-          var disabled = values[0];
-          return disabled === false;
-        });
+          .filter(function filterDisabled (values) {
+            var disabled = values[0];
+            return disabled === false;
+          });
 
       K.onValueScope(scope, titleUpdate$, function (values) {
         var title = values[1];
@@ -81,9 +81,9 @@ angular.module('contentful')
         field.setValue(val);
       });
 
-      var detachOnFieldDisabledHandler = field.onIsDisabledChanged(function (disabledStatus) {
-        scope.isDisabled = disabledStatus;
-        disabledBus.emit(disabledStatus);
+      var detachOnFieldDisabledHandler = field.onPermissionChanged(function (disabledStatus) {
+        scope.isDisabled = !!disabledStatus.disabled;
+        disabledBus.emit(!!disabledStatus.denied);
       });
 
       var offSchemaErrorsChanged = field.onSchemaErrorsChanged(function (errors) {
