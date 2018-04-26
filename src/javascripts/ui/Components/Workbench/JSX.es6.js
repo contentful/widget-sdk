@@ -19,9 +19,9 @@ const Workbench = createReactClass({
         return new Error(`Workbench must have 1 or 2 children, has ${children.length}`);
       }
 
-      for (const child in children) {
+      for (const child of children) {
         if (child.type !== Workbench.Content && child.type !== Workbench.Sidebar) {
-          return new Error('Workbench should only have Content or Sidebar children.');
+          return new Error(`Workbench should only have Content or Sidebar children. Child was ${child.type.displayName}`);
         }
       }
 
