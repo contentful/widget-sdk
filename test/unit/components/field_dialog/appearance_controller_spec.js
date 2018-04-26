@@ -23,40 +23,11 @@ describe('FieldDialogAppearanceController', function () {
     this.$apply();
   });
 
-  describe('#selectWidget()', function () {
-    beforeEach(function () {
-      expect(this.scope.selectedWidgetIndex).toEqual(0);
-    });
-
-    it('sets the widgetId', function () {
-      expect(this.scope.widgetSettings.id).not.toEqual('selectThis');
-      this.scope.availableWidgets[1].id = 'selectThis';
-      this.scope.selectWidget(1);
-
-      expect(this.scope.widgetSettings.id).toEqual('selectThis');
-    });
-
-    it('it updates the widget options', function () {
-      const widgetOptions = [{param: 'myparam'}];
-      this.scope.availableWidgets[1].options = widgetOptions;
-
-      expect(this.scope.widgetOptions).not.toEqual(widgetOptions);
-      this.scope.selectWidget(1);
-      this.$apply();
-      expect(this.scope.widgetOptions).toEqual(widgetOptions);
-    });
-
-    it('applies the default parameters', function () {
-      const widgets = this.$inject('widgets');
-      widgets.applyDefaults = sinon.stub();
-      this.scope.selectWidget(1);
-      this.$apply();
-      sinon.assert.calledOnce(widgets.applyDefaults);
-      sinon.assert.calledWith(
-        widgets.applyDefaults,
-        this.scope.availableWidgets[1],
-        this.scope.widgetParams
-      );
-    });
+  it('#selectWidget() sets the widgetId', function () {
+    expect(this.scope.selectedWidgetIndex).toEqual(0);
+    expect(this.scope.widgetSettings.id).not.toEqual('selectThis');
+    this.scope.availableWidgets[1].id = 'selectThis';
+    this.scope.selectWidget(1);
+    expect(this.scope.widgetSettings.id).toEqual('selectThis');
   });
 });

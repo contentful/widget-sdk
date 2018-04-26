@@ -52,8 +52,13 @@ angular.module('contentful')
         fieldsById[field.id] = field;
       }, {});
 
+      var parameters = {
+        instance: scope.widget.settings || {},
+        installation: scope.widget.installationParameterValues || {}
+      };
+
       var widgetAPI = new WidgetAPI(
-        spaceContext.cma, spaceContext.space.data.spaceMembership,
+        spaceContext.cma, spaceContext.space.data.spaceMembership, parameters,
         fields, doc.getValueAt([]), scope.transformedContentTypeData,
         // TODO the isDisabled property is only required for <v2.1 of the
         // extension SDK. We should remove it

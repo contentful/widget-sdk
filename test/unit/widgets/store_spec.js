@@ -22,10 +22,14 @@ describe('widgets/store', function () {
         extension: {
           name: 'NAME',
           src: 'SRC',
-          srcdoc: 'SRCDOC',
           sidebar: true,
-          fieldTypes: [{type: 'Array', items: {type: 'Link', linkType: 'Asset'}}]
-        }
+          fieldTypes: [{type: 'Array', items: {type: 'Link', linkType: 'Asset'}}],
+          parameters: {
+            instance: [{id: 'x'}],
+            installation: [{id: 'test'}]
+          }
+        },
+        parameters: {test: true}
       };
       const store = this.createStore(endpoint.request);
 
@@ -34,11 +38,14 @@ describe('widgets/store', function () {
 
       expect(extension.name).toEqual('NAME');
       expect(extension.src).toEqual('SRC');
-      expect(extension.srcdoc).toEqual('SRCDOC');
       expect(extension.sidebar).toEqual(true);
-      expect(extension.template).toEqual('<cf-iframe-widget>');
+      expect(extension.template).toEqual('<cf-iframe-widget />');
       expect(extension.fieldTypes).toEqual(['Assets']);
-      expect(extension.options).toEqual([]);
+      expect(extension.parameters).toEqual([{id: 'x'}]);
+      expect(extension.installationParameters).toEqual({
+        definitions: [{id: 'test'}],
+        values: {test: true}
+      });
     });
 
     it('returns only builtins if API call fails', function* () {

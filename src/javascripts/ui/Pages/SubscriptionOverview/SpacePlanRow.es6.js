@@ -5,29 +5,55 @@ import {joinAnd} from 'stringUtils';
 
 import { get } from 'lodash';
 
+import { go } from 'states/Navigator';
+
 import { getEnabledFeatures } from 'utils/SubscriptionUtils';
 import { getUserName } from 'utils/UserUtils';
 
+import { home, usage as spaceUsage } from 'ui/NavStates/Space';
 import HelpIcon from 'ui/Components/HelpIcon';
 import Price from 'ui/Components/Price';
+import ContextMenu from 'ui/Components/ContextMenu';
 
-import { getSpaceActionLinks } from './utils';
-
-function SpacePlanRow ({plan, onDeleteSpace, isOrgOwner}) {
+function SpacePlanRow ({ plan, onDeleteSpace }) {
   const space = plan.space;
   const enabledFeatures = getEnabledFeatures(plan);
   const hasAnyFeatures = enabledFeatures.length > 0;
   const key = plan.sys.id || plan.space && plan.space.sys.id;
 
-  let actionLinks = [];
   let createdBy = '';
   let createdAt = '';
 
   if (space) {
     createdBy = getUserName(space.sys.createdBy || {});
     createdAt = moment.utc(space.sys.createdAt).format('DD/MM/YYYY');
-    actionLinks = getSpaceActionLinks(space, isOrgOwner, onDeleteSpace);
   }
+
+  const contextMenuItems = [
+    {
+      label: 'Go to space',
+      disabled: Boolean(space && !space.isAccessible),
+      action: () => go(home(space.sys.id)),
+      otherProps: {
+        'data-test-id': 'subscription-page.spaces-list.space-link'
+      }
+    },
+    {
+      label: 'Usage',
+      disabled: Boolean(space && !space.isAccessible),
+      action: () => go(spaceUsage(space.sys.id)),
+      otherProps: {
+        'data-test-id': 'subscription-page.spaces-list.space-usage-link'
+      }
+    },
+    {
+      label: 'Delete',
+      action: onDeleteSpace(space),
+      otherProps: {
+        'data-test-id': 'subscription-page.spaces-list.delete-space-link'
+      }
+    }
+  ];
 
   return <tr key={key}>
     <td><strong>{get(space, 'name', '-')}</strong></td>
@@ -41,7 +67,14 @@ function SpacePlanRow ({plan, onDeleteSpace, isOrgOwner}) {
     </td>
     <td>{createdBy}</td>
     <td>{createdAt}</td>
-    <td>{actionLinks.spaceLink} {actionLinks.usageLink} {actionLinks.deleteLink}</td>
+    <td style={{textAlign: 'right'}}>
+      { space &&
+        <ContextMenu
+          data-test-id='subscription-page.spaces-list.space-context-menu'
+          items={contextMenuItems}
+        />
+      }
+    </td>
   </tr>;
 }
 

@@ -568,6 +568,26 @@ describe('Extension SDK', function () {
     });
   });
 
+  describe('#parameters', function () {
+    it('both installation and instance parmeters default to empty object', function* (api) {
+      expect(api.parameters).toEqual({
+        installation: {},
+        instance: {}
+      });
+    });
+
+    when('parameter values are provided', function () {
+      this.scope.widget.settings = {test: true, x: 'y'};
+      this.scope.widget.installationParameterValues = {flag: true, num: 123};
+    })
+    .it('exposes them in the API', function* (api) {
+      expect(api.parameters).toEqual({
+        installation: {flag: true, num: 123},
+        instance: {test: true, x: 'y'}
+      });
+    });
+  });
+
   function when (desc1, setup) {
     return {it: whenIt, fit: whenFit};
 

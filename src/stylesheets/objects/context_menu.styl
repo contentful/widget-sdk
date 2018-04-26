@@ -38,17 +38,26 @@ $context-menu-item--layout()
   overflow: hidden
   text-overflow: ellipsis
   display: block
+  text-align: left
 
 $context-menu-item()
   $context-menu-item--layout()
   cursor: pointer
   color: $base-font-color
 
+  &[disabled]
+    cursor: default
+    color: $text-dimmed
+    background: transparent
+
+    > *
+      cursor: default
+
   &.selected
     background: $colors.blue-light
     color: white
 
-  &:hover
+  &:hover:not([disabled])
     background: $colors.blue-mid
     color: white
 

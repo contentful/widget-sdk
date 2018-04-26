@@ -143,6 +143,7 @@ const SubscriptionOverview = createReactClass({
           <Sidebar
             orgId={orgId}
             grandTotal={grandTotal}
+            spacePlans={spacePlans}
             isOrgOwner={isOwner(organization)}
             isOrgBillable={Boolean(organization.isBillable)}
             onContactUs={this.contactUs}

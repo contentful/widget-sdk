@@ -84,7 +84,6 @@ src/javascripts/services/zone_offsets.js
 src/javascripts/forms/errors.js
 src/javascripts/forms/validation.js
 src/javascripts/navigation/confirm_leave_editor.js
-src/javascripts/ui/cf_ui_tab.js
 src/javascripts/data/content_types.js
 src/javascripts/data/editing_interfaces/transformer.js
 src/javascripts/markdown_editor/cf_markdown_action_directive.js
