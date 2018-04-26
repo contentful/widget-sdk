@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfCreateSpaceWizard', ['require', function (require) {
+.directive('cfSpaceWizard', ['require', function (require) {
   var React = require('react');
   var ReactDOM = require('react-dom');
-  var Wizard = require('components/shared/create-space-wizard/Wizard').default;
+  var Wizard = require('components/shared/space-wizard/Wizard').default;
   var $state = require('$state');
   var $rootScope = require('$rootScope');
   var debounce = require('lodash').debounce;
