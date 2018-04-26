@@ -1,4 +1,8 @@
 {
+  function offset() {
+    return peg$savedPos;
+  }
+
   function annotate(content, type) {
     return {
       type:     type,

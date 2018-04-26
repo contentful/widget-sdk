@@ -1,20 +1,22 @@
 Writing ES6
 ===========
 
-Angular services can now be written using ES6 syntax and are transpiled with
-[Babel][babel].
+We have two types of files, with `.es6.js` postfix and regular `.js`. You can
+use modern ES in both of them, but they handle `imports/exports` differently.
+See the [ES6 Modules](#es6-modules) section for more info on how to integrate
+`.es6.js` files with Angular. Code is processed by [Babel][babel], using the
+[following configuration](../tools/app-babel-options.js).
 
-ES6 transpilation is enabled for files with the `.es6.js` extension. See the
-[ES6 Modules](#es6-modules) section for more info on how to integrate ES6 code
-with Angular.
+Regular files allow you to use `import` and `export` in expected manner – you can
+import libraries, files processed by webpack. However, because we declare angular
+module inside a file itself, it means that we don't really export anything, and
+therefore you probably want to just `require` angular modules using its own DI.
 
-We use the [`es2015` preset][es2015-preset] with the `loose` option and the
+We use the [preset env][preset-env] with the `loose` option and the
 SystemJS transform for ES6 modules.
 
-ES6 syntax is not yet supported for directives and controllers.
-
 [babel]: http://babeljs.io/
-[es2015-preset]: http://babeljs.io/docs/plugins/preset-es2015/
+[preset-env]: https://babeljs.io/docs/plugins/preset-env/
 
 
 Adding a Transform Plugin
@@ -40,7 +42,6 @@ plugin make sure to also update the ESLint configuration.
 We use `npm run hint` to lint the whole application manually. You can integrate eslint with your IDE. [Integration List](https://eslint.org/docs/user-guide/integrations#editors)
 
 [no-restricted-syntax-rule]: http://eslint.org/docs/rules/no-restricted-syntax
-
 
 ES6 Modules
 -----------

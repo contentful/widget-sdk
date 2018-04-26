@@ -4,3 +4,4 @@ env:
 rules:
   # eslint:recommended overrides
   no-console: off
+  indent-legacy: "off"

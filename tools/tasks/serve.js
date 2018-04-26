@@ -4,13 +4,11 @@ const { TEMPLATES_SRC } = require('./templates');
 
 const STYLESHEETS_SRC = 'src/stylesheets/**/*';
 
-gulp.task('serve', function () {
+gulp.task('serve', ['js:watch'], function () {
   const configName = process.env.UI_CONFIG || 'development';
   const watchFiles = !process.env.NO_WATCHING;
 
-  const appSrc = [ 'src/javascripts/**/*.js' ];
   const patternTaskMap = [
-    [appSrc, ['js/app']],
     [TEMPLATES_SRC, ['templates']],
     [STYLESHEETS_SRC, ['stylesheets/app']]
   ];

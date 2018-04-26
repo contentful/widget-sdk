@@ -4,7 +4,7 @@ angular.module('contentful')
 .directive('cfSubscriptionOverview', ['require', function (require) {
   var React = require('react');
   var ReactDOM = require('react-dom');
-  var SubscriptionOverview = require('account/pricing/SubscriptionOverview').default;
+  var SubscriptionOverview = require('ui/Pages/SubscriptionOverview').default;
 
   return {
     link: function ($scope, el) {

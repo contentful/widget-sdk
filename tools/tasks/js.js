@@ -1,138 +1,54 @@
-const browserify = require('browserify');
-const source = require('vinyl-source-stream');
-const buffer = require('vinyl-buffer');
-
 const gulp = require('gulp');
-const concat = require('gulp-concat');
-const sourceMaps = require('gulp-sourcemaps');
-const babel = require('gulp-babel');
+const webpack = require('webpack');
+const createWebpackConfig = require('../webpack.config');
 
-const makeBabelOptions = require('../app-babel-options').makeOptions;
-const { assertFilesExist, passError, mapFileContents } = require('./helpers');
-const S = require('../lib/stream-utils');
-const _ = require('lodash');
+gulp.task('js:watch', ['js/vendor'], watch);
 
-const BROWSER_TARGET = ['last 2 versions', 'ie >= 10'];
+gulp.task('js', ['js/vendor'], build);
 
-// All Angular modules except 'cf.lib'
-const COMPONENTS_SRC = [
-  'src/javascripts/**/*.js',
-  '!src/javascripts/libs/*.js',
-  '!src/javascripts/prelude.js'
-];
-
-const MAIN_VENDOR_SRC = assertFilesExist([
-  'node_modules/jquery/dist/jquery.js',
-  // Custom jQuery UI build: see the file for version and contents
-  'vendor/jquery-ui/jquery-ui.js',
-  'node_modules/jquery-textrange/jquery-textrange.js',
-  'node_modules/angular/angular.js',
-  'node_modules/angular-animate/angular-animate.js',
-  'node_modules/angular-load/angular-load.js',
-  'node_modules/angular-sanitize/angular-sanitize.js',
-  'node_modules/angular-ui-sortable/dist/sortable.js',
-  'node_modules/angular-ui-router/release/angular-ui-router.js',
-  'node_modules/bootstrap/js/tooltip.js',
-  'node_modules/browserchannel/dist/bcsocket-uncompressed.js'
-]).concat([
-  // Generated from the files below during the build
-  'public/app/sharejs.js'
-]);
-
-const SHAREJS_VENDOR_SRC = assertFilesExist([
-  'vendor/sharejs/lib/client/web-prelude.js',
-  'vendor/sharejs/lib/client/microevent.js',
-  'vendor/sharejs/lib/types/helpers.js',
-  'vendor/sharejs/lib/types/text.js',
-  'vendor/sharejs/lib/types/text-api.js',
-  'vendor/sharejs/lib/client/doc.js',
-  'vendor/sharejs/lib/client/connection.js',
-  'vendor/sharejs/lib/client/index.js',
-  'vendor/sharejs/lib/client/textarea.js',
-
-  'vendor/sharejs/lib/types/web-prelude.js',
-  'vendor/sharejs/lib/types/json.js',
-  'vendor/sharejs/lib/types/json-api.js'
-]);
-
-gulp.task('js', [
-  'js/external-bundle',
-  'js/app',
-  'js/vendor'
-]);
-
-gulp.task('js/vendor', ['js/vendor/sharejs'], function () {
-  // Use `base: '.'` for correct source map paths
-  return gulp.src(MAIN_VENDOR_SRC, {base: '.'})
-    .pipe(sourceMaps.init())
-    .pipe(concat('vendor.js'))
-    .pipe(sourceMaps.write({sourceRoot: '/'}))
-    .pipe(gulp.dest('./public/app'));
-});
-
-gulp.task('js/vendor/sharejs', function () {
-  return S.pipe([
-    gulp.src(SHAREJS_VENDOR_SRC),
-    babel({
-      babelrc: false,
-      presets: [
-        ['env', {
-          'targets': {
-            'browsers': BROWSER_TARGET
-          },
-          'loose': true,
-          'debug': true,
-          'modules': false
-        }]
-      ],
-      plugins: [
-        'transform-object-rest-spread'
-      ]
-    }),
-    concat('sharejs.js'),
-    mapFileContents(function (contents) {
-      return `(function() { var WEB=true; ${contents}; }).call(this);`;
-    }),
-    gulp.dest('./public/app/')
-  ]);
-});
-
-gulp.task('js/external-bundle', function () {
-  return bundleBrowserify(createBrowserify());
-});
-
-gulp.task('js/app', function () {
-  return S.pipe([
-    S.join([
-      // Use `base: '.'` for correct source map paths
-      gulp.src('src/javascripts/prelude.js', {base: '.'}),
-      gulp.src(COMPONENTS_SRC, {base: '.'})
-    ]),
-    sourceMaps.init(),
-    babel(makeBabelOptions({
-      browserTargets: BROWSER_TARGET
-    })),
-    concat('components.js'),
-    sourceMaps.write({sourceRoot: '/'}),
-    gulp.dest('./public/app/')
-  ]);
-});
-
-function createBrowserify (args) {
-  return browserify(_.extend({debug: true}, args))
-    .add('./src/javascripts/libs')
-    .transform({optimize: 'size'}, 'browserify-pegjs')
-    .transform('loose-envify', {global: true}); // Making React smaller and faster
+function watch (done) {
+  // we don't wait until JS is bundles to not to block
+  // other tasks which `serve` task might have
+  done();
+  const config = createWebpackConfig({ dev: true });
+  const compiler = webpack(config);
+  compiler.watch(
+    {
+      aggregateTimeout: 300,
+      poll: 1000
+    },
+    (err, stats) => {
+      handleCompileResults(err, stats, config);
+    }
+  );
 }
 
-function bundleBrowserify (browserify) {
-  const dest = gulp.dest('./public/app/');
-  return browserify.bundle()
-    .on('error', passError(dest))
-    .pipe(source('libs.js'))
-    .pipe(buffer())
-    // Add root to source map
-    .pipe(sourceMaps.init({loadMaps: true, largeFile: true}))
-    .pipe(sourceMaps.write({sourceRoot: '/'}))
-    .pipe(dest);
+function build (cb) {
+  const config = createWebpackConfig({ dev: false });
+  const compiler = webpack(config);
+  compiler.run((err, stats) => {
+    handleCompileResults(err, stats, config);
+    cb();
+  });
+}
+
+function handleCompileResults (err, stats, config) {
+  if (err) {
+    console.error(err.stack || err);
+    if (err.details) {
+      console.error(err.details);
+    }
+    return;
+  }
+
+  const info = stats.toJson({chunks: false});
+  if (stats.hasErrors()) {
+    console.error(info.errors);
+  }
+
+  if (stats.hasWarnings()) {
+    console.warn(info.warnings);
+  }
+
+  console.log(stats.toString(config.stats));
 }
