@@ -66,6 +66,7 @@ export default function create ($scope, widgetApi) {
   };
 
   K.onValueScope($scope, isDisabled$, function (isDisabled) {
+    $scope.isDisabled = isDisabled;
     $scope.config.draggable = !$scope.single && !isDisabled;
   });
 
