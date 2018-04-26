@@ -44,7 +44,6 @@ angular.module('contentful')
       var PathUtils = require('utils/Path');
 
       var doc = scope.docImpl || scope.otDoc;
-      var descriptor = _.find(spaceContext.widgets.getAll(), {id: scope.widget.widgetId});
       var entityInfo = scope.entityInfo;
 
       var fields = entityInfo.contentType.fields;
@@ -116,10 +115,10 @@ angular.module('contentful')
           });
         });
 
-        if (descriptor.src) {
-          $iframe.attr('src', descriptor.src);
+        if (scope.widget.src) {
+          $iframe.attr('src', scope.widget.src);
         } else {
-          $iframe.attr('srcdoc', descriptor.srcdoc);
+          $iframe.attr('srcdoc', scope.widget.srcdoc);
         }
       }
 

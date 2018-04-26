@@ -105,6 +105,14 @@ angular.module('contentful')
       sidebar: !!descriptor.sidebar
     });
 
+    if (descriptor.custom) {
+      if (descriptor.src) {
+        renderable.src = descriptor.src;
+      } else {
+        renderable.srcdoc = descriptor.srcdoc;
+      }
+    }
+
     return deepFreeze(renderable);
   }
 
