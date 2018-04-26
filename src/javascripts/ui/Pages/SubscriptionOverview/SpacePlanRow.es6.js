@@ -15,7 +15,7 @@ import HelpIcon from 'ui/Components/HelpIcon';
 import Price from 'ui/Components/Price';
 import ContextMenu from 'ui/Components/ContextMenu';
 
-function SpacePlanRow ({ plan, onDeleteSpace }) {
+function SpacePlanRow ({ plan, onChangeSpace, onDeleteSpace }) {
   const space = plan.space;
   const enabledFeatures = getEnabledFeatures(plan);
   const hasAnyFeatures = enabledFeatures.length > 0;
@@ -30,6 +30,13 @@ function SpacePlanRow ({ plan, onDeleteSpace }) {
   }
 
   const contextMenuItems = [
+    {
+      label: 'Upgrade space',
+      action: onChangeSpace(space, 'upgrade'),
+      otherProps: {
+        'data-test-id': 'subscription-page.spaces-list.upgrade-space-link'
+      }
+    },
     {
       label: 'Go to space',
       disabled: Boolean(space && !space.isAccessible),
@@ -80,6 +87,7 @@ function SpacePlanRow ({ plan, onDeleteSpace }) {
 
 SpacePlanRow.propTypes = {
   plan: PropTypes.object.isRequired,
+  onChangeSpace: PropTypes.func.isRequired,
   onDeleteSpace: PropTypes.func.isRequired,
   isOrgOwner: PropTypes.bool.isRequired
 };

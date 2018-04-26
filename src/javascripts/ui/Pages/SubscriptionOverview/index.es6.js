@@ -9,6 +9,7 @@ import { getPlansWithSpaces } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
 import { showDialog as showCreateSpaceModal } from 'services/CreateSpace';
+import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService';
 import { openDeleteSpaceDialog } from 'services/DeleteSpace';
 import { getSpaces, getOrganization } from 'services/TokenStore';
 import { isOwnerOrAdmin, isOwner } from 'services/OrganizationRoles';
@@ -101,6 +102,12 @@ const SubscriptionOverview = createReactClass({
     showCreateSpaceModal(this.props.orgId);
   },
 
+  changeSpace: function (space, action) {
+    return () => {
+      showChangeSpaceModal(space.sys.id, action);
+    };
+  },
+
   deleteSpace: function (space) {
     return () => {
       openDeleteSpaceDialog({
@@ -129,6 +136,7 @@ const SubscriptionOverview = createReactClass({
             <SpacePlans
               spacePlans={spacePlans}
               onCreateSpace={this.createSpace}
+              onChangeSpace={this.changeSpace}
               onDeleteSpace={this.deleteSpace}
               isOrgOwner={isOwner(organization)}
             />

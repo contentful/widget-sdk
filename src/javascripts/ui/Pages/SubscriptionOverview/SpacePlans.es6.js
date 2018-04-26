@@ -8,7 +8,7 @@ import Price from 'ui/Components/Price';
 
 import SpacePlanRow from './SpacePlanRow';
 
-function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
+function SpacePlans ({spacePlans, onCreateSpace, onChangeSpace, onDeleteSpace, isOrgOwner}) {
   const numSpaces = spacePlans.length;
   const hasSpacePlans = numSpaces > 0;
   const totalCost = calculatePlansCost({ plans: spacePlans });
@@ -46,6 +46,7 @@ function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
               return <SpacePlanRow
                 key={plan.sys.id || plan.space && plan.space.sys.id}
                 plan={plan}
+                onChangeSpace={onChangeSpace}
                 onDeleteSpace={onDeleteSpace}
                 isOrgOwner={isOrgOwner}
               />;
@@ -60,6 +61,7 @@ function SpacePlans ({spacePlans, onCreateSpace, onDeleteSpace, isOrgOwner}) {
 SpacePlans.propTypes = {
   spacePlans: PropTypes.array.isRequired,
   onCreateSpace: PropTypes.func.isRequired,
+  onChangeSpace: PropTypes.func.isRequired,
   onDeleteSpace: PropTypes.func.isRequired,
   isOrgOwner: PropTypes.bool.isRequired
 };
