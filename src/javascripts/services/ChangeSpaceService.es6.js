@@ -1,4 +1,5 @@
 import modalDialog from 'modalDialog';
+import { getOrganization } from 'services/TokenStore';
 
 /**
  * Displays the space creation dialog. The dialog type will depend on the
@@ -8,8 +9,14 @@ import modalDialog from 'modalDialog';
  *
  * @param {string} organizationId
  */
-export async function showDialog (spaceId, action) {
+export async function showDialog (organizationId, spaceId, action) {
   const validActions = [ 'change', 'upgrade', 'downgrade' ];
+
+  if (!organizationId) {
+    throw new Error('organizationId not supplied for space creation');
+  }
+
+  const organization = await getOrganization(organizationId);
 
   if (!spaceId) {
     throw new Error('spaceId not supplied for space creation');
@@ -30,7 +37,8 @@ export async function showDialog (spaceId, action) {
     persistOnNavigation: true,
     scopeData: {
       action: action,
-      spaceId: spaceId
+      spaceId: spaceId,
+      organization: organization
     }
   });
 }

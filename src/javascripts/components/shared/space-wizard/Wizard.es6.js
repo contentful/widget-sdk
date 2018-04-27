@@ -22,21 +22,36 @@ import createApiKeyRepo from 'data/CMA/ApiKeyRepo';
 
 const DEFAULT_LOCALE = 'en-US';
 
-const WizardSteps = [
+const SpaceCreateSteps = [
   {
-    id: Steps.SpaceType,
+    id: Steps.SpaceCreateSteps.SpaceType,
     label: '1. Space type',
     isEnabled: () => true,
     component: SpacePlanSelector
   },
   {
-    id: Steps.SpaceDetails,
+    id: Steps.SpaceCreateSteps.SpaceDetails,
     label: '2. Space details',
     isEnabled: (props) => !!props.spaceRatePlan,
     component: SpaceDetails
   },
   {
-    id: Steps.Confirmation,
+    id: Steps.SpaceCreateSteps.Confirmation,
+    label: '3. Confirmation',
+    isEnabled: (props) => !!(props.spaceRatePlan && props.spaceName),
+    component: ConfirmScreen
+  }
+];
+
+const SpaceChangeSteps = [
+  {
+    id: Steps.SpaceChangeSteps.SpaceType,
+    label: '1. Space type',
+    isEnabled: () => true,
+    component: SpacePlanSelector
+  },
+  {
+    id: Steps.SpaceChangeSteps.Confirmation,
     label: '3. Confirmation',
     isEnabled: (props) => !!(props.spaceRatePlan && props.spaceName),
     component: ConfirmScreen
@@ -52,6 +67,8 @@ const Wizard = createReactClass({
       name: PropTypes.string.isRequired,
       isBillable: PropTypes.bool
     }).isRequired,
+    spaceId: PropTypes.string,
+    action: PropTypes.string.isRequired,
     onCancel: PropTypes.func.isRequired,
     onConfirm: PropTypes.func.isRequired,
     onSpaceCreated: PropTypes.func.isRequired,
@@ -60,8 +77,11 @@ const Wizard = createReactClass({
     onDimensionsChange: PropTypes.func
   },
   getInitialState () {
+    const { action } = this.props;
+    const steps = getSteps(action);
+
     return {
-      currentStepId: Steps.SpaceType,
+      currentStepId: steps[0].id,
       isFormSubmitted: false,
       isSpaceCreated: false,
       isContentCreated: false,
@@ -74,7 +94,15 @@ const Wizard = createReactClass({
     };
   },
   render () {
-    const {organization, onCancel, onConfirm, onDimensionsChange} = this.props;
+    const {
+      spaceId,
+      action,
+      organization,
+      onCancel,
+      onConfirm,
+      onDimensionsChange
+    } = this.props;
+
     const {
       currentStepId,
       isFormSubmitted,
@@ -83,6 +111,8 @@ const Wizard = createReactClass({
       data,
       serverValidationErrors
     } = this.state;
+
+    const steps = getSteps(action);
 
     if (isSpaceCreated) {
       return (
@@ -99,7 +129,7 @@ const Wizard = createReactClass({
     } else {
       const navigation = (
         <ul className="create-space-wizard__navigation">
-          {WizardSteps.map(({id, label, isEnabled}) => (
+          {steps.map(({id, label, isEnabled}) => (
             <li
               key={id}
               data-test-id={`wizard-nav-${id}`}
@@ -119,6 +149,8 @@ const Wizard = createReactClass({
       const stepProps = {
         ...data,
         organization,
+        spaceId,
+        action,
         isFormSubmitted,
         serverValidationErrors,
         onDimensionsChange,
@@ -135,7 +167,7 @@ const Wizard = createReactClass({
             {closeButton}
           </div>
           <div className="modal-dialog__content">
-            {WizardSteps.map(({id, isEnabled, component}) => (
+            {steps.map(({id, isEnabled, component}) => (
               <div
                 key={id}
                 className={classnames(
@@ -164,11 +196,14 @@ const Wizard = createReactClass({
   },
   goToNextStep () {
     const {currentStepId} = this.state;
+    const { action } = this.props;
 
-    if (isLastStep(currentStepId)) {
+    const steps = getSteps(action);
+
+    if (isLastStep(steps, currentStepId)) {
       this.createSpace();
     } else {
-      this.setState({currentStepId: getNextStep(currentStepId)});
+      this.setState({currentStepId: getNextStep(steps, currentStepId)});
     }
   },
   async createSpace () {
@@ -223,16 +258,24 @@ const Wizard = createReactClass({
   }
 });
 
-function isLastStep (stepId) {
-  return WizardSteps[WizardSteps.length - 1].id === stepId;
+function getSteps (action) {
+  if (action === 'create') {
+    return SpaceCreateSteps;
+  } else if (action === 'change') {
+    return SpaceChangeSteps;
+  }
 }
 
-function getNextStep (stepId) {
-  if (isLastStep(stepId)) {
+function isLastStep (steps, stepId) {
+  return steps[steps.length - 1].id === stepId;
+}
+
+function getNextStep (steps, stepId) {
+  if (isLastStep(steps, stepId)) {
     return stepId;
   } else {
-    const index = WizardSteps.findIndex(({id}) => id === stepId);
-    return WizardSteps[index + 1].id;
+    const index = steps.findIndex(({id}) => id === stepId);
+    return steps[index + 1].id;
   }
 }
 

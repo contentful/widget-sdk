@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
@@ -18,6 +18,8 @@ import pluralize from 'pluralize';
 const SpacePlanSelector = createReactClass({
   propTypes: {
     organization: PropTypes.object.isRequired,
+    spaceId: PropTypes.string,
+    action: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
     onDimensionsChange: PropTypes.func.isRequired,
@@ -27,40 +29,66 @@ const SpacePlanSelector = createReactClass({
     return {selectedPlan: null};
   },
   render () {
-    const {organization, onDimensionsChange} = this.props;
+    const {organization, spaceId, action, onDimensionsChange} = this.props;
     const {selectedPlan} = this.state;
 
-    return <FetchSpacePlans organization={organization} onUpdate={onDimensionsChange}>
-      {({requestState, spaceRatePlans, freeSpacesResource}) => (
-        <div>
-          {requestState === RequestState.PENDING && <div className="loader__container">
-            {asReact(spinner({diameter: '40px'}))}
-          </div>}
-          {requestState === RequestState.SUCCESS && <div>
-            {!organization.isBillable && <BillingInfo
-              canSetupBilling={isOwner(organization)}
-              goToBilling={this.goToBilling} />}
-            <h2 className="create-space-wizard__heading">
-              Choose the space type
-            </h2>
-            <p className="create-space-wizard__subheading">
-              You are creating this space for the organization <em>{organization.name}</em>.<br/>
-            </p>
-            <div className="space-plans-list">
-              {spaceRatePlans.map((plan) => <SpacePlanItem
-                key={plan.sys.id}
-                plan={plan}
-                freeSpacesResource={freeSpacesResource}
-                isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
-                onSelect={this.selectPlan} />)}
-            </div>
-          </div>}
-          {requestState === RequestState.ERROR && <div className="note-box--warning">
-            <p>Could not fetch space plans.</p>
-          </div>}
-        </div>
-      )}
-    </FetchSpacePlans>;
+    return (
+      <FetchSpacePlans
+        organization={organization}
+        action={action}
+        spaceId={spaceId}
+        onUpdate={onDimensionsChange}
+      >
+        {({requestState, spaceRatePlans, freeSpacesResource}) => (
+          <div>
+            {requestState === RequestState.PENDING && <div className="loader__container">
+              {asReact(spinner({diameter: '40px'}))}
+            </div>}
+            {requestState === RequestState.SUCCESS && <div>
+              {!organization.isBillable && <BillingInfo
+                canSetupBilling={isOwner(organization)}
+                goToBilling={this.goToBilling} />}
+              <h2 className="create-space-wizard__heading">
+                Choose the space type
+              </h2>
+              { action === 'create' &&
+                <Fragment>
+                  <p className="create-space-wizard__subheading">
+                    You are creating this space for the organization <em>{organization.name}</em>.<br/>
+                  </p>
+                  <div className="space-plans-list">
+                    {spaceRatePlans.map((plan) => <SpacePlanItem
+                      key={plan.sys.id}
+                      plan={plan}
+                      freeSpacesResource={freeSpacesResource}
+                      isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
+                      onSelect={this.selectPlan} />)}
+                  </div>
+                </Fragment>
+              }
+              { action === 'change' &&
+                <Fragment>
+                  <p className="create-space-wizard__subheading">
+                    You are upgrading this space for the organization <em>{organization.name}</em>.<br/>
+                  </p>
+                  <div className="space-plans-list">
+                    {spaceRatePlans.map((plan) => <SpacePlanItem
+                      key={plan.sys.id}
+                      plan={plan}
+                      freeSpacesResource={freeSpacesResource}
+                      isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
+                      onSelect={this.selectPlan} />)}
+                  </div>
+                </Fragment>
+              }
+            </div>}
+            {requestState === RequestState.ERROR && <div className="note-box--warning">
+              <p>Could not fetch space plans.</p>
+            </div>}
+          </div>
+        )}
+      </FetchSpacePlans>
+    );
   },
   componentDidMount () {
     this.props.onDimensionsChange();
@@ -89,13 +117,13 @@ const SpacePlanItem = createReactClass({
   propTypes: {
     plan: PropTypes.object.isRequired,
     isSelected: PropTypes.bool.isRequired,
-    freeSpacesResource: PropTypes.object.isRequired,
+    freeSpacesResource: PropTypes.object,
     onSelect: PropTypes.func.isRequired
   },
   render: function () {
     const {plan, isSelected, freeSpacesResource, onSelect} = this.props;
-    const freeSpacesUsage = freeSpacesResource.usage;
-    const freeSpacesLimit = freeSpacesResource.limits.maximum;
+    const freeSpacesUsage = freeSpacesResource && freeSpacesResource.usage;
+    const freeSpacesLimit = freeSpacesResource && freeSpacesResource.limits.maximum;
 
     return (
       <div

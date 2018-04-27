@@ -129,6 +129,14 @@ export function getSpaceRatePlans (endpoint) {
   }, alphaHeader).then((data) => data.items);
 }
 
+export function getSpaceRatePlansForSpace (endpoint, spaceId) {
+  return endpoint({
+    method: 'GET',
+    path: [ 'product_rate_plans' ],
+    query: { 'space_id': spaceId }
+  }, alphaHeader).then(data => data.items);
+}
+
 /**
  * Receives an array of subscription plans and calculates the grand total
  * @param {object[]} subscriptionPlans

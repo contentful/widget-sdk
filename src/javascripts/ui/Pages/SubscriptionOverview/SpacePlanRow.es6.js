@@ -32,9 +32,9 @@ function SpacePlanRow ({ plan, onChangeSpace, onDeleteSpace }) {
   const contextMenuItems = [
     {
       label: 'Upgrade space',
-      action: onChangeSpace(space, 'upgrade'),
+      action: onChangeSpace(space, 'change'),
       otherProps: {
-        'data-test-id': 'subscription-page.spaces-list.upgrade-space-link'
+        'data-test-id': 'subscription-page.spaces-list.change-space-link'
       }
     },
     {

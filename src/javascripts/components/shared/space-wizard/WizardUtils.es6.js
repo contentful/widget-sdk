@@ -1,7 +1,13 @@
 export const Steps = {
-  SpaceType: 0,
-  SpaceDetails: 1,
-  Confirmation: 2
+  SpaceCreateSteps: {
+    SpaceType: 0,
+    SpaceDetails: 1,
+    Confirmation: 2
+  },
+  SpaceChangeSteps: {
+    SpaceType: 0,
+    Confirmation: 1
+  }
 };
 
 export const RequestState = {
