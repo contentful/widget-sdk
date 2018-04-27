@@ -94,7 +94,8 @@ describe('contentPreview', function () {
         fields: {
           'internal-title-id': {en: 'Title'},
           'internal-slug-id': {en: 'my-slug'},
-          'internal-im-an-empty-string': {en: ''}
+          'internal-im-an-empty-string': {en: ''},
+          'internal-undefined': {}
         }
       }
     };
@@ -109,7 +110,8 @@ describe('contentPreview', function () {
       fields: [
         { id: 'internal-title-id', apiName: 'title' },
         { id: 'internal-slug-id', apiName: 'slug' },
-        { id: 'internal-im-an-empty-string', apiName: 'empty' }
+        { id: 'internal-im-an-empty-string', apiName: 'empty' },
+        { id: 'internal-undefined', apiName: 'undefined' }
       ]
     };
   }
@@ -313,6 +315,15 @@ describe('contentPreview', function () {
     it('does replace with empty value', function* () {
       this.compiledUrl = yield this.contentPreview.replaceVariablesInUrl(
         'http://test-domain.com/{entry_id}/{entry_field.empty}',
+        makeEntry('entry-1').data,
+        makeCt('ct-1')
+      );
+      expect(this.compiledUrl).toBe('http://test-domain.com/entry-1/');
+    });
+
+    it('does replace with undefined value', function* () {
+      this.compiledUrl = yield this.contentPreview.replaceVariablesInUrl(
+        'http://test-domain.com/{entry_id}/{entry_field.undefined}',
         makeEntry('entry-1').data,
         makeCt('ct-1')
       );

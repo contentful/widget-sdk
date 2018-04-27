@@ -9,6 +9,7 @@
 angular.module('contentful')
 .factory('contentPreview', ['require', function (require) {
   var $q = require('$q');
+  var _ = require('lodash');
   var $rootScope = require('$rootScope');
   var TheLocaleStore = require('TheLocaleStore');
   var spaceContext = require('spaceContext');
@@ -405,11 +406,14 @@ angular.module('contentful')
           _.matches({'apiName': fieldId})
         ), 'id'
       );
-      var fieldValue = _.get(entry, ['fields', internalId, defaultLocale]);
-      if (fieldValue === '') {
-        return fieldValue;
+
+      if (!_.has(entry, ['fields', internalId])) {
+        return match;
       }
-      return _.toString(fieldValue) || match;
+
+      var fieldValue = _.get(entry, ['fields', internalId, defaultLocale]);
+
+      return _.toString(fieldValue);
     });
 
     return resolveReferences({ url: processedUrl, entry: entry, defaultLocale: defaultLocale });
