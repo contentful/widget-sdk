@@ -141,6 +141,7 @@
   "scripts": {
     "start": "gulp all serve",
     "test": "karma start --single-run --reporters dots",
+    "test:watch": "node run-tests.js",
     "postinstall": "cd packages/client && npm install --no-package-lock",
     "hint": "eslint src test bin tools",
     "cloc": "cloc --read-lang-def .cloc.def src",

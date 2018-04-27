@@ -1,9 +1,8 @@
 /* global require module */
 
-var { createBabelOptions } = require('./tools/app-babel-options');
-var P = require('path');
-var root = P.resolve() + '/';
-var express = require('express');
+const P = require('path');
+const root = P.resolve() + '/';
+const express = require('express');
 
 module.exports = function (config) {
   config.plugins.push(
@@ -38,9 +37,11 @@ module.exports = function (config) {
       'public/app/vendor.js',
       'public/app/templates.js',
       'public/app/libs.js',
-      'src/javascripts/prelude.js',
-      'public/app/main.css',
-      'src/javascripts/**/*.js'
+      // we load bundled file, it is processed by webpack and contains all
+      // modules. it allows us to use any custom loaders
+      // it also means that this file should already exist, so you can either
+      // build it in advance, or run with webpack in parallel
+      'public/app/components.js'
     ].concat(testFiles),
 
     // list of files to exclude
@@ -53,29 +54,10 @@ module.exports = function (config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'src/**/*.es6.js': ['babelApp', 'sourcemap'],
       'test/**/*.js': ['babelTest', 'sourcemap']
     },
 
     customPreprocessors: {
-      babelApp: {
-        base: 'babel',
-        options: createBabelOptions({
-          // Keep the transpilation and source map effort low by
-          // targeting only chrome
-          browserTargets: ['last 2 Chrome versions'],
-          sourceMap: 'inline',
-          // Since we strip the '.es6.js' extension from the filename we
-          // do not need to match /.es6.js/. This is done by the
-          // preprocessor glob.
-          only: null
-        }),
-        filename: function (file) {
-          return file.originalPath
-            .replace(/\.es6\.js$/, '.js');
-        },
-        sourceFileName: makeSourceFileName
-      },
       babelTest: {
         base: 'babel',
         options: {
