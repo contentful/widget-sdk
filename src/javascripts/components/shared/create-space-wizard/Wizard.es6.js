@@ -15,6 +15,10 @@ import logger from 'logger';
 import {getTemplate} from 'services/SpaceTemplateLoader';
 import {getCreator as getTemplateCreator} from 'services/SpaceTemplateCreator';
 import spaceContext from 'spaceContext';
+import * as auth from 'Authentication';
+import {apiUrl} from 'Config';
+import {createSpaceEndpoint} from 'data/Endpoint';
+import createApiKeyRepo from 'data/CMA/ApiKeyRepo';
 
 const DEFAULT_LOCALE = 'en-US';
 
@@ -180,10 +184,15 @@ const Wizard = createReactClass({
       this.handleError(error);
     }
     if (newSpace) {
+      const spaceEndpoint = createSpaceEndpoint(apiUrl(), newSpace.sys.id, auth);
+      const apiKeyRepo = createApiKeyRepo(spaceEndpoint);
+
       await TokenStore.refresh();
+
       onSpaceCreated(newSpace);
 
       const {template} = this.state.data;
+
       if (template) {
         this.setState({isSpaceCreated: true});
 
@@ -193,6 +202,10 @@ const Wizard = createReactClass({
         onTemplateCreated();
         this.setState({isContentCreated: true});
       } else {
+        await apiKeyRepo.create(
+          'Example Key',
+          'We’ve created an example API key for you to help you get started.'
+        );
         this.props.onConfirm();
       }
     }
