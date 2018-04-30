@@ -124,6 +124,7 @@ const SpacePlanItem = createReactClass({
     const {plan, isSelected, freeSpacesResource, onSelect} = this.props;
     const freeSpacesUsage = freeSpacesResource && freeSpacesResource.usage;
     const freeSpacesLimit = freeSpacesResource && freeSpacesResource.limits.maximum;
+    const isCurrentPlan = Boolean(plan.unavailabilityReasons && plan.unavailabilityReasons.find(reason => reason.type === 'currentPlan'));
 
     return (
       <div
@@ -133,8 +134,9 @@ const SpacePlanItem = createReactClass({
           `space-plans-list__item--${kebabCase(plan.name)}`,
           {
             'space-plans-list__item--selected': isSelected,
-            'space-plans-list__item--disabled': plan.disabled
-          }
+            'space-plans-list__item--disabled': plan.disabled,
+            'space-plans-list__item--current': isCurrentPlan
+          },
         )}
         onClick={() => !plan.disabled && onSelect(plan)}>
 
@@ -147,7 +149,7 @@ const SpacePlanItem = createReactClass({
           </React.Fragment>}
           {plan.isFree && ` - ${freeSpacesUsage}/${freeSpacesLimit} used`}
           {plan.isFree && <HelpIcon tooltipWidth={400}>
-            You can create up to {freeSpacesLimit} free spaces for your organization.
+            You can have up to {freeSpacesLimit} free spaces for your organization.
             If you delete a free space, another one can be created.
           </HelpIcon>}
         </div>
