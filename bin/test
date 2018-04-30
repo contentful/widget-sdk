@@ -9,5 +9,5 @@ pushd packages/client
 popd
 
 tools/bin/validate-config.js config/*.json
-karma start karma-docker.conf.js
+NODE_ENV=production npm run test:once
 npm run hint
