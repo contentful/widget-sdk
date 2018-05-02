@@ -11,7 +11,7 @@ const SLIDE_IN_QS = 'slideIn';
 const TYPES = { ASSET: 'Asset', ENTRY: 'Entry' };
 
 export function getSlideInEntities () {
-  const slideInEntities = unserializedQS();
+  const slideInEntities = deserializeQS();
   const { entryId, assetId } = $state.params;
   if (entryId) {
     slideInEntities.unshift({ id: entryId, type: TYPES.ENTRY });
@@ -29,7 +29,7 @@ export const goToSlideInEntity = entity => {
   $location.search(SLIDE_IN_QS, serializedEntities);
 };
 
-function unserializedQS () {
+function deserializeQS () {
   const searchObject = $location.search();
   const serializedEntities = castArray(get(searchObject, SLIDE_IN_QS, []));
   return serializedEntities.map((string) => {

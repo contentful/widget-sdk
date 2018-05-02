@@ -63,6 +63,10 @@ describe('entityEditor/StateController', function () {
     this.doc = createDocument(this.entity, this.spaceEndpoint);
     this.spaceEndpoint.resolves(this.doc.getData());
 
+    this.entityNavigationHelpers = this.$inject('states/EntityNavigationHelpers');
+    this.entityNavigationHelpers.getSlideInEntities = sinon.stub().returns([]);
+    this.entityNavigationHelpers.goToSlideInEntity = sinon.stub();
+
     this.validator = this.scope.editorContext.validator;
 
     const $controller = this.$inject('$controller');
@@ -105,17 +109,45 @@ describe('entityEditor/StateController', function () {
       this.assertSuccessNotification('delete');
     });
 
-    it('closes the current state', function () {
-      this.controller.delete.execute();
-      this.$apply();
-      sinon.assert.calledOnce(this.closeStateSpy);
-    });
-
     it('sends failure notification with API error', function () {
       this.spaceEndpoint.rejects('ERROR');
       this.controller.delete.execute();
       this.$apply();
       this.assertErrorNotification('delete', 'ERROR');
+    });
+
+    describe('when there are 2 or more slide in entities', function () {
+      beforeEach(function () {
+        this.entityNavigationHelpers.getSlideInEntities.returns([
+          { id: 1 },
+          { id: 2 }
+        ]);
+      });
+
+      it('navigates to the previous slide-in entity', function () {
+        this.controller.delete.execute();
+        this.$apply();
+        sinon.assert.calledOnceWith(
+          this.entityNavigationHelpers.goToSlideInEntity,
+          { id: 1 }
+        );
+        sinon.assert.notCalled(this.closeStateSpy);
+      });
+    });
+
+    describe('when there is 1 slide in entity', function () {
+      beforeEach(function () {
+        this.entityNavigationHelpers.getSlideInEntities.returns([
+          { id: 1 }
+        ]);
+      });
+
+      it('closes the current state', function () {
+        this.controller.delete.execute();
+        this.$apply();
+        sinon.assert.notCalled(this.entityNavigationHelpers.goToSlideInEntity);
+        sinon.assert.calledOnce(this.closeStateSpy);
+      });
     });
   });
 

@@ -6,6 +6,7 @@ angular.module('contentful')
   var $q = require('$q');
   var Command = require('command');
   var closeState = require('navigation/closeState');
+  var _ = require('lodash');
   var publicationWarnings = require('entityEditor/publicationWarnings').create();
   var trackVersioning = require('analyticsEvents/versioning');
   var K = require('utils/kefir');
@@ -20,6 +21,7 @@ angular.module('contentful')
   var Action = EntityState.Action;
   var Analytics = require('analytics/Analytics');
   var spaceContext = require('spaceContext');
+  var EntityNavigationHelpers = require('states/EntityNavigationHelpers');
 
   var permissions = otDoc.permissions;
   var reverter = otDoc.reverter;
@@ -171,7 +173,17 @@ angular.module('contentful')
   controller.delete = Command.create(
     function () {
       return applyActionWithConfirmation(Action.Delete()).then(function () {
-        return closeState();
+        if ($scope.isSlideinEntryEditorEnabled) {
+          var entities = EntityNavigationHelpers.getSlideInEntities();
+          if (entities.length === 1) {
+            return closeState();
+          } else {
+            var previousEntity = entities[entities.length - 2];
+            return EntityNavigationHelpers.goToSlideInEntity(previousEntity);
+          }
+        } else {
+          return closeState();
+        }
       });
     },
     {
