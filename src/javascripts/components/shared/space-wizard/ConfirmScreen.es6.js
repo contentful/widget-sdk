@@ -32,7 +32,8 @@ const ConfirmScreen = createReactClass({
       organization,
       isFormSubmitted,
       onSubmit,
-      onNavigate
+      onNavigate,
+      onDimensionsChange
     } = this.props;
 
     let confirmButtonText = '';
@@ -44,7 +45,7 @@ const ConfirmScreen = createReactClass({
     }
 
     return (
-      <FetchSubscriptionPrice organizationId={organization.sys.id}>
+      <FetchSubscriptionPrice organizationId={organization.sys.id} onUpdate={onDimensionsChange}>
         {({requestState, totalPrice}) => (
           <div>
             {requestState === RequestState.PENDING && <div className="loader__container">

@@ -19,7 +19,6 @@ import { changeSpace } from 'account/pricing/PricingDataProvider';
 import spaceContext from 'spaceContext';
 import * as auth from 'Authentication';
 import {apiUrl} from 'Config';
-import {createSpaceEndpoint} from 'data/Endpoint';
 import createApiKeyRepo from 'data/CMA/ApiKeyRepo';
 
 const DEFAULT_LOCALE = 'en-US';

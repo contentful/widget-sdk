@@ -123,10 +123,10 @@ const SubscriptionOverview = createReactClass({
         organizationId: this.props.orgId,
         space,
         action,
-        onSubmit: () => {
-          return runTask(this.fetchData).then(() => {
-            this.spaceChanged(space);
-          });
+        onSubmit: async () => {
+          await this.fetchData();
+
+          return this.spaceChanged();
         }
       });
     };
