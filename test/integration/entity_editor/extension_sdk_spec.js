@@ -21,15 +21,6 @@ describe('Extension SDK', function () {
     this.apiClient = {};
     spaceContext.cma = this.apiClient;
 
-    spaceContext.widgets.getAll = sinon.stub().returns([
-      {
-        id: 'testWidget',
-        srcdoc:
-          '<!doctype html>' +
-          '<script src="/base/vendor/ui-extensions-sdk/dist/cf-extension-api.js"></script>'
-      }
-    ]);
-
     this.container = $('<div>').appendTo('body');
 
     const field = {
@@ -51,8 +42,10 @@ describe('Extension SDK', function () {
 
     this.scope = {
       widget: {
-        widgetId: 'testWidget',
-        field: field
+        field,
+        srcdoc:
+          '<!doctype html>' +
+          '<script src="/base/vendor/ui-extensions-sdk/dist/cf-extension-api.js"></script>'
       },
       entityInfo: {
         contentType: {

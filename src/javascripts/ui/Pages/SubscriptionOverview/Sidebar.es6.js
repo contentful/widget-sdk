@@ -7,10 +7,11 @@ import { billing, invoices } from 'ui/NavStates/Org';
 
 import Icon from 'ui/Components/Icon';
 import Price from 'ui/Components/Price';
+import ContactUsButton from 'ui/Components/ContactUsButton';
 
 import { hasAnySpacesInaccessible } from './utils';
 
-function Sidebar ({grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable, onContactUs}) {
+function Sidebar ({grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable}) {
   // TODO - add these styles to stylesheets
   const iconStyle = {fill: colors.blueDarkest, paddingRight: '6px', position: 'relative', bottom: '-0.125em'};
   const anyInaccessibleSpaces = hasAnySpacesInaccessible(spacePlans);
@@ -86,16 +87,7 @@ function Sidebar ({grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable, onC
       { !isOrgBillable && 'Do you have any questions about our pricing?' }
       <Fragment>&#32;Don&apos;t hesitate to talk to our customer success team.</Fragment>
     </p>
-    <p>
-      <Icon name='bubble' style={iconStyle} />
-      <button
-        className='text-link'
-        onClick={onContactUs}
-        data-test-id='subscription-page.sidebar.contact-link'
-      >
-        Get in touch with us
-      </button>
-    </p>
+    <ContactUsButton data-test-id='subscription-page.sidebar.contact-link' />
   </div>;
 }
 
@@ -104,7 +96,6 @@ Sidebar.propTypes = {
   orgId: PropTypes.string.isRequired,
   isOrgOwner: PropTypes.bool.isRequired,
   isOrgBillable: PropTypes.bool.isRequired,
-  onContactUs: PropTypes.func.isRequired,
   spacePlans: PropTypes.array.isRequired
 };
 

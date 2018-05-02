@@ -107,14 +107,13 @@ angular.module('contentful')
     fieldDecorator.update($scope.decoratedField, $scope.field, contentTypeData);
     validations.updateField($scope.field, $scope.validations);
 
-    var widgetId = $scope.widgetSettings.id;
+    var selectedWidgetId = $scope.widgetSettings.id;
+    var selectedWidget = _.find($scope.availableWidgets, {id: selectedWidgetId}) || {};
     var values = $scope.widgetSettings.params;
-    var selectedWidget = _.find($scope.availableWidgets, {id: widgetId});
     var definitions = _.get(selectedWidget, ['parameters']) || [];
 
     definitions = WidgetParametersUtils.filterDefinitions(definitions, values, selectedWidget);
     values = WidgetParametersUtils.filterValues(definitions, values);
-    $scope.widgetSettings.params = values;
 
     var missing = WidgetParametersUtils.markMissingValues(definitions, values);
     var hasMissingParameters = Object.keys(missing).some(function (key) {
@@ -127,12 +126,12 @@ angular.module('contentful')
     }
 
     _.extend($scope.widget, {
-      widgetId: widgetId,
+      widgetId: selectedWidgetId,
       fieldId: $scope.field.apiName,
       settings: values
     });
 
-    if (widgetId !== initialWidgetId) {
+    if (selectedWidgetId !== initialWidgetId) {
       trackCustomWidgets.selected($scope.widget, $scope.field, $scope.contentType);
     }
 

@@ -29,7 +29,8 @@ angular.module('cf.ui')
   };
 
   var DEFAULTS = {
-    i18n: I18N
+    i18n: I18N,
+    yearRange: 100
   };
 
   return {
