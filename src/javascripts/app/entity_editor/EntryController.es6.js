@@ -1,5 +1,4 @@
 import $controller from '$controller';
-import closeState from 'navigation/closeState';
 
 import {deepFreeze} from 'utils/Freeze';
 import * as K from 'utils/kefir';
@@ -21,6 +20,9 @@ import initDocErrorHandler from './DocumentErrorHandler';
 import {makeNotify} from './Notifications';
 import installTracking from './Tracking';
 import renderStatusNotification from './StatusNotification';
+
+
+import { loadEntry } from 'app/entity_editor/DataLoader';
 
 /**
  * @ngdoc type
@@ -47,7 +49,8 @@ import renderStatusNotification from './StatusNotification';
  * @scope.requires {Data.FieldControl[]} formControls
  *   Passed to FormWidgetsController to render field controls
  */
-export default function create ($scope, editorData) {
+export default async function create ($scope, entryId) {
+  const editorData = await loadEntry(spaceContext, entryId);
   $scope.context.ready = true;
   $scope.editorData = editorData;
 
@@ -126,10 +129,6 @@ export default function create ($scope, editorData) {
   // is not enabled.
   editorContext.toggleSlideinEditor = function () {
     $scope.inlineEditor = !$scope.inlineEditor;
-  };
-
-  editorContext.closeSlideinEditor = function () {
-    closeState();
   };
 
   function createReferenceContext (field, locale, index, cb) {

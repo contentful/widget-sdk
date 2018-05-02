@@ -1,5 +1,6 @@
 'use strict';
 import $q from '$q';
+import {create as createDocument} from 'helpers/mocks/entity_editor_document';
 
 describe('entityEditor/StateController', function () {
   beforeEach(function () {
@@ -52,7 +53,6 @@ describe('entityEditor/StateController', function () {
     };
 
     this.spaceEndpoint = sinon.stub();
-    const Document = this.$inject('mocks/entityEditor/Document');
     this.entity = {
       sys: {
         id: 'EID',
@@ -60,7 +60,7 @@ describe('entityEditor/StateController', function () {
         version: 42
       }
     };
-    this.doc = Document.create(this.entity, this.spaceEndpoint);
+    this.doc = createDocument(this.entity, this.spaceEndpoint);
     this.spaceEndpoint.resolves(this.doc.getData());
 
     this.validator = this.scope.editorContext.validator;

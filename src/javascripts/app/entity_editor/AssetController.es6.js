@@ -1,5 +1,4 @@
 import $controller from '$controller';
-import closeState from 'navigation/closeState';
 
 import * as K from 'utils/kefir';
 import {truncate} from 'stringUtils';
@@ -17,7 +16,11 @@ import {makeNotify} from './Notifications';
 import installTracking from './Tracking';
 import renderStatusNotification from './StatusNotification';
 
-export default function create ($scope, editorData) {
+import { loadAsset } from 'app/entity_editor/DataLoader';
+
+export default async function create ($scope, assetId) {
+  const editorData = await loadAsset(spaceContext, assetId);
+  $scope.context.ready = true;
   $scope.editorData = editorData;
 
   // add list view as parent if it's a deep link to the media/asset
@@ -56,10 +59,6 @@ export default function create ($scope, editorData) {
   );
 
   editorContext.focus = Focus.create();
-
-  editorContext.closeSlideinEditor = function () {
-    closeState();
-  };
 
   $scope.state = $controller('entityEditor/StateController', {
     $scope: $scope,

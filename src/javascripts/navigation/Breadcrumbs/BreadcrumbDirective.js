@@ -8,12 +8,16 @@
  * breadcrumb. This breadcrumb is associated to the current page.
  */
 angular.module('contentful').directive('cfBreadcrumbs', ['require', function (require) {
+  var SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
+    'feature-at-03-2018-sliding-entry-editor';
+
   var $parse = require('$parse');
   var $state = require('$state');
   var Analytics = require('analytics/Analytics');
   var contextHistory = require('navigation/Breadcrumbs/History').default;
   var documentTitle = require('navigation/DocumentTitle');
   var K = require('utils/kefir');
+  var LD = require('utils/LaunchDarkly');
 
   var backBtnSelector = '[aria-label="breadcrumbs-back-btn"]';
   var ancestorBtnSelector = '[aria-label="breadcrumbs-ancestor-btn"]';
@@ -24,6 +28,10 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
 
   var renderString = require('ui/Framework').renderString;
   var template = require('navigation/Breadcrumbs/Template').template;
+
+  var entityNavigationHelpers = require('states/EntityNavigationHelpers');
+  var getSlideInEntities = entityNavigationHelpers.getSlideInEntities;
+  var goToSlideInEntity = entityNavigationHelpers.goToSlideInEntity;
 
   var analyticsData = {
     clickedOn: {
@@ -66,6 +74,16 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
         document.removeEventListener('click', closeAncestorListIfVisible, true);
       });
 
+      LD.onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, function (isEnabled) {
+        if (!isEnabled) {
+          return;
+        }
+        $scope.slideinEnabled = true;
+        if (getSlideInEntities().length > 0) {
+          $scope.shouldShowHierarchy = false;
+        }
+      });
+
       function track (clickedOn) {
         Analytics.track('global:navigated', {
           control: clickedOn,
@@ -78,6 +96,21 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
       }
 
       function goBackToPreviousPage () {
+        if ($scope.slideinEnabled) {
+          var slideInEntities = getSlideInEntities();
+          var numEntities = slideInEntities.length;
+          if (numEntities === 2) {
+            $scope.shouldShowHierarchy = shouldShowHierarchy(
+              contextHistory.crumbs$,
+              $state
+            );
+          }
+          if (numEntities > 1) {
+            var previousEntity = slideInEntities[numEntities - 2];
+            return goToSlideInEntity(previousEntity);
+          }
+        }
+
         // TODO This code is duplicated in `navigation/closeState`.
         // Maybe the context history is a better place for the shared
         // code.
@@ -138,17 +171,24 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
       }
     },
     controller: ['$scope', function ($scope) {
+      $scope.slideinEnabled = false;
+
       $scope.$watch(function () {
         var last = _.last($scope.crumbs);
         return last && last.getTitle();
       }, documentTitle.maybeOverride);
 
       K.onValueScope($scope, contextHistory.crumbs$, function (crumbs) {
+        var slideinEntitiesInView = $scope.slideinEnabled && getSlideInEntities().length;
         $scope.crumbs = crumbs;
         $scope.shouldHide = crumbs.length <= 1;
         $scope.shouldShowBack = crumbs.length >= 2;
-        $scope.shouldShowHierarchy = crumbs.length > 2 && !$state.params.inlineEntryId;
+        $scope.shouldShowHierarchy = shouldShowHierarchy(crumbs, $state) && !slideinEntitiesInView;
       });
     }]
   };
+
+  function shouldShowHierarchy (crumbs) {
+    return crumbs.length > 2 && !$state.params.inlineEntryId;
+  }
 }]);

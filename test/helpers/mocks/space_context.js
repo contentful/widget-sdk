@@ -1,5 +1,6 @@
 import * as sinon from 'helpers/sinon';
 import createMockEndpoint from 'helpers/mocks/SpaceEndpoint';
+import {create as createDocument} from 'helpers/mocks/entity_editor_document';
 
 /**
  * @ngdoc service
@@ -29,7 +30,6 @@ angular.module('contentful/mocks')
   const cfStub = require('cfStub');
   const createEIRepo = require('data/editingInterfaces');
   const createWidgetStore = require('widgets/store');
-  const MockDocument = require('mocks/entityEditor/Document');
   const createApiKeyRepo = require('data/CMA/ApiKeyRepo').default;
   const CMAClient = require('data/ApiClient');
 
@@ -53,7 +53,7 @@ angular.module('contentful/mocks')
 
     spaceContext.docPool = {
       get: function (entity, _contentType) {
-        return MockDocument.create(entity.data);
+        return createDocument(entity.data);
       }
     };
 

@@ -179,6 +179,8 @@ describe('The Locale list directive', function () {
     this.getSidebar = function () {
       return this.container.find('.workbench-main__sidebar > .entity-sidebar');
     };
+
+    this.$inject('utils/LaunchDarkly').onFeatureFlag = sinon.stub();
   });
 
   afterEach(function () {

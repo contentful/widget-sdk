@@ -1,16 +1,16 @@
 import * as K from 'helpers/mocks/kefir';
+import {create as createDocument} from 'helpers/mocks/entity_editor_document';
 
 describe('app/entity_editor/Validator', function () {
   beforeEach(function () {
     module('contentful/test');
-    const MockDocument = this.$inject('mocks/entityEditor/Document');
 
     const Validator = this.$inject('app/entity_editor/Validator');
     this.schemaErrors = sinon.stub();
     this.validator = Validator.createBase(
       (_error) => '',
       {errors: this.schemaErrors},
-      MockDocument.create()
+      createDocument()
     );
 
     this.getErrorIds = function () {

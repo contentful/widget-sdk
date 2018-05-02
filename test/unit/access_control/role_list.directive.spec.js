@@ -11,6 +11,7 @@ describe('Role List Directive', function () {
 
     this.canModifyRoles = sinon.stub().resolves(true);
     this.$inject('access_control/AccessChecker').canModifyRoles = this.canModifyRoles;
+    this.$inject('utils/LaunchDarkly').onFeatureFlag = sinon.stub();
 
     this.roles = [{
       name: 'Editor',

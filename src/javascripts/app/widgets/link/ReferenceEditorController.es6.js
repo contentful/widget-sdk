@@ -20,6 +20,10 @@ import {
 import { canLinkToContentType, getInlineEditingStoreKey } from './utils';
 import { getStore } from 'TheStore';
 
+import {
+  goToSlideInEntity as goToSlideInEntityBase
+} from 'states/EntityNavigationHelpers';
+
 const FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN =
   'feature-at-11-2017-lots-of-cts-add-entry-and-link-reference';
 const INLINE_REFERENCE_FEATURE_FLAG =
@@ -42,8 +46,9 @@ export default function create ($scope, widgetApi) {
     $scope.single
   );
 
-  const useBulkEditor =
-    widgetApi.settings.bulkEditing && !!widgetApi._internal.editReferences;
+  const canEditReferences = !!widgetApi._internal.editReferences;
+  const useBulkEditor = canEditReferences && widgetApi.settings.bulkEditing;
+  let useSlideInEditor = useBulkEditor;
   $scope.typePlural = { Entry: 'entries', Asset: 'assets' }[$scope.type];
   $scope.isAssetCard = is('Asset', 'card');
   $scope.referenceType = {};
@@ -89,6 +94,9 @@ export default function create ($scope, widgetApi) {
 
   onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, function (isEnabled) {
     $scope.isSlideinEntryEditorEnabled = isEnabled;
+    if (!useSlideInEditor && canEditReferences && isEnabled) {
+      useSlideInEditor = true;
+    }
   });
 
   function isInlineEditingEnabledForField () {
@@ -216,14 +224,13 @@ export default function create ($scope, widgetApi) {
     getData: getWarningData
   });
 
-  const unlistenStateChangeSuccess = $scope.$on(
-    '$stateChangeSuccess',
-    () => state.refreshEntities()
-  );
+  const unlistenStateChangeSuccess = $scope.$on('$stateChangeSuccess', state.refreshEntities);
+  const unlistenLocationChangeSuccess = $scope.$on('$locationChangeSuccess', state.refreshEntities);
 
   $scope.$on('$destroy', () => {
     unregisterPublicationWarning();
     unlistenStateChangeSuccess();
+    unlistenLocationChangeSuccess();
   });
 
   function is (type, style) {
@@ -322,13 +329,13 @@ export default function create ($scope, widgetApi) {
         remove: prepareRemoveAction(index, isDisabled),
         trackEdit: () => trackEdit(entity),
         inlineEdit: function () {
-          $state.go('.workbenchDetail', { inlineEntryId: entity.sys.id }, { reload: false, inherit: true, notify: true });
+          goToSlideInEntity(entity);
         }
       },
       // TODO: This is used to create multiple reference contexts
       // to be able to open multiple instances of the bulk editor
       // simultaneously. This will be null if it is a nested reference.
-      refCtxt: refCtxt
+      refCtxt
     };
 
     // Disable entry editor layer actions for refs
@@ -339,17 +346,7 @@ export default function create ($scope, widgetApi) {
       // This will render a placeholder stack div with a transition
       // and remove it when inline entry editor is rendered
       entityModel.actions.slideinEdit = function () {
-        widgetApi._internal.toggleSlideinEditor();
-        const nextStateName = entity.sys.type === 'Asset' ? '.slideinAssetDetail' : '.slideinEditorDetail';
-        $state
-          .go(
-            nextStateName,
-            { inlineEntryId: entity.sys.id },
-            { reload: false, inherit: true, notify: true }
-          )
-          .then(() => {
-            widgetApi._internal.toggleSlideinEditor();
-          });
+        goToSlideInEntity(entity);
       };
     }
 
@@ -383,11 +380,19 @@ export default function create ($scope, widgetApi) {
   }
 
   function editEntityAction (entity, index) {
-    if (useBulkEditor) {
+    if ($scope.referenceType.inline) {
+      return;
+    } else if (useBulkEditor) {
       return widgetApi._internal.editReferences(index, state.refreshEntities);
-    } else if (!$scope.referenceType.inline) {
+    } else if (useSlideInEditor) {
+      goToSlideInEntity(entity);
+    } else {
       return widgetApi.state.goToEditor(entity);
     }
+  }
+
+  function goToSlideInEntity ({ sys: { id, type } }) {
+    goToSlideInEntityBase({ id, type });
   }
 
   function prepareRemoveAction (index, isDisabled) {

@@ -1,53 +1,51 @@
 include ../entity_editor/entity_editor.mixins.jade
 
-
-div.entry-editor.workbench(data-test-id="slide-in-editor-container")
-  div.workbench-stack.animate(
-    ng-if="inlineEditor")
-    .workbench-stack__padding
-    .workbench-stack__content
-
-  div(ui-view="")
-
+div.entry-editor(ng-if="context.ready")
   div.workbench-stack.animate(
     ng-if="referenceContext")
-    .workbench-stack__padding(
+    .workbench-stack__overlay(
       ng-click="referenceContext.close()")
     .workbench-stack__content
       cf-bulk-editor(
         reference-context="referenceContext")
-  header.workbench-header
-    cf-breadcrumbs
-    cf-icon.workbench-header__icon(name="page-content", scale="0.75")
-    h1.workbench-header__title
-      | {{ title }}
-      cf-knowledge-base.workbench-header__kb-link(target="entry")
+  .workbench
+    header.workbench-header
+      cf-breadcrumbs
+      cf-icon.workbench-header__icon(name="page-content", scale="0.75")
+      h1.workbench-header__title
+        | {{ title }}
+        cf-knowledge-base.workbench-header__kb-link(target="entry")
 
-    .workbench-header__actions
-      +editor-actions-dropdown
-        div(role="menuitem" ui-command="actions.add")
-          | Create new <em>{{ command.name() | truncate:14 }}</em>
-        div(role="menuitem" ui-command="actions.duplicate")
-          | Duplicate
-        +entity-delete-confirm-menu
-        div(role="menuitem"
-          data-test-id="trigger-delete-modal"
-          ui-command="state.delete")
-          | Delete
-        hr
-        div(role="menuitem" ui-command="actions.toggleDisabledFields")
-          | {{command.label()}}
+      .workbench-header__actions
+        button.btn-secondary-action(
+          cf-context-menu-trigger
+          data-test-id="entity-actions-menu-trigger")
+          cf-icon.btn-dropdown-icon(name="dd-arrow-down")
+          | Actions
+        .context-menu(
+          cf-context-menu
+          data-test-id="entity-actions-menu")
+          div(role="menuitem" ui-command="actions.add")
+            | Create new <em>{{ command.name() | truncate:14 }}</em>
+          div(role="menuitem" ui-command="actions.duplicate")
+            | Duplicate
+          div(role="menuitem"
+            data-test-id="trigger-delete-modal"
+            ui-command="state.delete")
+            | Delete
+          hr
+          div(role="menuitem" ui-command="actions.toggleDisabledFields")
+            | {{command.label()}}
 
-      +editor-info-toggle
 
-  cf-loader(watch-state-change="true")
+        +editor-info-toggle
 
-  .workbench-main
-    .workbench-main__content(ui-on-scroll="scroll-editor" ui-set-scroll="initialEditorScroll")
-      cf-component-bridge(component="entityStatusComponent")
-      .entity-editor-form
-        cf-error-list.form-box-error(cf-error-path="['fields']")
-        cf-entity-field(ng-repeat="widget in widgets track by widget.fieldId")
+    .workbench-main
+      .workbench-main__content(ui-on-scroll="scroll-editor" ui-set-scroll="initialEditorScroll")
+        cf-component-bridge(component="entityStatusComponent")
+        .entity-editor-form
+          cf-error-list.form-box-error(cf-error-path="['fields']")
+          cf-entity-field(ng-repeat="widget in widgets track by widget.fieldId")
 
-    .workbench-main__sidebar
-      cf-entity-sidebar
+      .workbench-main__sidebar
+        cf-entity-sidebar

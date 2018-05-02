@@ -3,20 +3,4 @@ mixin editor-info-toggle
     ng-click="preferences.toggleAuxPanel()"
     ng-class="{active: preferences.showAuxPanel}")
     | Info
-
-mixin editor-actions-dropdown
-  button.btn-secondary-action(
-    cf-context-menu-trigger
-    data-test-id="entity-actions-menu-trigger")
-    cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-    | Actions
-  .context-menu(
-    cf-context-menu
-    data-test-id="entity-actions-menu")
-    block
-
-mixin entity-delete-confirm-menu
-  .delete-confirm.context-menu.x--arrow-right(cf-context-menu="bottom-right")
-    p Do you really want to delete the entry <em>{{ title }}</em>
-    button.btn-caution(ui-command="state.delete") Delete
-    button.btn-secondary-action(type="button") Cancel
+ 

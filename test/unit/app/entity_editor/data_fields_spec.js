@@ -1,4 +1,5 @@
 'use strict';
+import {create as createDocument} from 'helpers/mocks/entity_editor_document';
 
 describe('EntityEditor/DataFields', function () {
   beforeEach(function () {
@@ -27,7 +28,7 @@ describe('EntityEditor/DataFields', function () {
         {code: 'hi', internal_code: 'hi-internal'}
       ]);
 
-      this.otDoc = this.$inject('mocks/entityEditor/Document').create({
+      this.otDoc = createDocument({
         sys: {
           type: 'Entry'
         },
