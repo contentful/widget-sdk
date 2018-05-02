@@ -16,8 +16,6 @@ describe('cfIframeWidget directive', function () {
 
     this.otDoc = this.$inject('mocks/entityEditor/Document').create();
     this.$inject('mocks/spaceContext').init();
-    this.$inject('spaceContext').widgets.getAll = sinon.stub().returns([{id: 'testWidget'}]);
-
 
     widgetAPI = {
       registerHandler: sinon.stub(),
@@ -26,8 +24,8 @@ describe('cfIframeWidget directive', function () {
       connect: sinon.stub()
     };
 
-    this.element = this.$compile('<cf-iframe-widget>', {
-      widget: {widgetId: 'testWidget'},
+    this.element = this.$compile('<cf-iframe-widget />', {
+      widget: {},
       entityInfo: {
         contentType: {
           fields: [{id: 'FIELD'}]
