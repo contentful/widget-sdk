@@ -12,8 +12,10 @@ import client from 'client';
 import * as TokenStore from 'services/TokenStore';
 import notification from 'notification';
 import logger from 'logger';
+import {createSpaceEndpoint} from 'data/EndpointFactory';
 import {getTemplate} from 'services/SpaceTemplateLoader';
 import {getCreator as getTemplateCreator} from 'services/SpaceTemplateCreator';
+import { changeSpace } from 'account/pricing/PricingDataProvider';
 import spaceContext from 'spaceContext';
 import * as auth from 'Authentication';
 import {apiUrl} from 'Config';
@@ -32,13 +34,13 @@ const SpaceCreateSteps = [
   {
     id: Steps.SpaceCreateSteps.SpaceDetails,
     label: '2. Space details',
-    isEnabled: (props) => !!props.spaceRatePlan,
+    isEnabled: (props) => !!props.newSpaceRatePlan,
     component: SpaceDetails
   },
   {
     id: Steps.SpaceCreateSteps.Confirmation,
     label: '3. Confirmation',
-    isEnabled: (props) => !!(props.spaceRatePlan && props.spaceName),
+    isEnabled: (props) => !!(props.newSpaceRatePlan && props.spaceName),
     component: ConfirmScreen
   }
 ];
@@ -52,8 +54,8 @@ const SpaceChangeSteps = [
   },
   {
     id: Steps.SpaceChangeSteps.Confirmation,
-    label: '3. Confirmation',
-    isEnabled: (props) => !!(props.spaceRatePlan && props.spaceName),
+    label: '2. Confirmation',
+    isEnabled: (props) => Boolean(props.newSpaceRatePlan),
     component: ConfirmScreen
   }
 ];
@@ -67,7 +69,7 @@ const Wizard = createReactClass({
       name: PropTypes.string.isRequired,
       isBillable: PropTypes.bool
     }).isRequired,
-    spaceId: PropTypes.string,
+    space: PropTypes.object,
     action: PropTypes.string.isRequired,
     onCancel: PropTypes.func.isRequired,
     onConfirm: PropTypes.func.isRequired,
@@ -95,7 +97,7 @@ const Wizard = createReactClass({
   },
   render () {
     const {
-      spaceId,
+      space,
       action,
       organization,
       onCancel,
@@ -149,7 +151,7 @@ const Wizard = createReactClass({
       const stepProps = {
         ...data,
         organization,
-        spaceId,
+        space,
         action,
         isFormSubmitted,
         serverValidationErrors,
@@ -199,13 +201,17 @@ const Wizard = createReactClass({
     const { action } = this.props;
 
     const steps = getSteps(action);
+    const lastStep = isLastStep(steps, currentStepId);
 
-    if (isLastStep(steps, currentStepId)) {
+    if (lastStep && action === 'create') {
       this.createSpace();
+    } else if (lastStep && action === 'change') {
+      this.changeSpace();
     } else {
       this.setState({currentStepId: getNextStep(steps, currentStepId)});
     }
   },
+
   async createSpace () {
     const {organization, onSpaceCreated, onTemplateCreated} = this.props;
     const spaceData = makeSpaceData(this.state.data);
@@ -245,6 +251,26 @@ const Wizard = createReactClass({
       }
     }
   },
+
+  async changeSpace () {
+    const { space } = this.props;
+
+    this.setState({isFormSubmitted: true});
+
+    const spaceId = space.sys.id;
+    const endpoint = createSpaceEndpoint(spaceId);
+    const planId = get(this.state.data, 'newSpaceRatePlan.sys.id');
+
+    try {
+      await changeSpace(endpoint, planId);
+    } catch (e) {
+      this.handleError(e);
+      return;
+    }
+
+    this.props.onConfirm();
+  },
+
   handleError (error) {
     logger.logServerWarn('Could not create Space', {error});
 

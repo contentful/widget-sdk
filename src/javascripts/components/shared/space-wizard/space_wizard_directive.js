@@ -15,10 +15,18 @@ angular.module('contentful')
 
       ReactDOM.render(React.createElement(Wizard, {
         action: $scope.action,
-        spaceId: $scope.spaceId,
+        space: $scope.space,
         organization: $scope.organization,
         onCancel: function () { $scope.dialog.cancel(); },
-        onConfirm: function () { $scope.dialog.confirm(); },
+        onConfirm: function () {
+          if ($scope.onSubmit) {
+            $scope.onSubmit().then(function () {
+              $scope.dialog.confirm();
+            });
+          } else {
+            $scope.dialog.confirm();
+          }
+        },
         onSpaceCreated: function (newSpace) {
           $state.go('spaces.detail', {spaceId: newSpace.sys.id});
         },

@@ -93,6 +93,16 @@ export function getPlansWithSpaces (endpoint) {
     }));
 }
 
+export function changeSpace (endpoint, planId) {
+  return endpoint({
+    method: 'PUT',
+    path: [],
+    data: {
+      productRatePlanId: planId
+    }
+  }, alphaHeader);
+}
+
 /**
  * Gets the list of enabled features for the org such as offsite backup.
  * @param {object} endpoint an organization endpoint

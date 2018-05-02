@@ -15,7 +15,7 @@ import HelpIcon from 'ui/Components/HelpIcon';
 import Price from 'ui/Components/Price';
 import ContextMenu from 'ui/Components/ContextMenu';
 
-function SpacePlanRow ({ plan, onChangeSpace, onDeleteSpace }) {
+function SpacePlanRow ({ plan, upgraded, onChangeSpace, onDeleteSpace }) {
   const space = plan.space;
   const enabledFeatures = getEnabledFeatures(plan);
   const hasAnyFeatures = enabledFeatures.length > 0;
@@ -62,7 +62,9 @@ function SpacePlanRow ({ plan, onChangeSpace, onDeleteSpace }) {
     }
   ];
 
-  return <tr key={key}>
+  const className = upgraded ? 'x--success' : '';
+
+  return <tr className={className} key={key}>
     <td><strong>{get(space, 'name', '-')}</strong></td>
     <td>
       <strong>{plan.name}</strong>
@@ -89,7 +91,8 @@ SpacePlanRow.propTypes = {
   plan: PropTypes.object.isRequired,
   onChangeSpace: PropTypes.func.isRequired,
   onDeleteSpace: PropTypes.func.isRequired,
-  isOrgOwner: PropTypes.bool.isRequired
+  isOrgOwner: PropTypes.bool.isRequired,
+  upgraded: PropTypes.bool
 };
 
 export default SpacePlanRow;

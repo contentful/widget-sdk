@@ -18,7 +18,7 @@ import pluralize from 'pluralize';
 const SpacePlanSelector = createReactClass({
   propTypes: {
     organization: PropTypes.object.isRequired,
-    spaceId: PropTypes.string,
+    space: PropTypes.object,
     action: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
@@ -26,21 +26,25 @@ const SpacePlanSelector = createReactClass({
     onCancel: PropTypes.func.isRequired
   },
   getInitialState () {
-    return {selectedPlan: null};
+    return {newSpaceRatePlan: null};
   },
   render () {
-    const {organization, spaceId, action, onDimensionsChange} = this.props;
-    const {selectedPlan} = this.state;
+    const {organization, space, action, onDimensionsChange} = this.props;
+    const {newSpaceRatePlan} = this.state;
 
     return (
       <FetchSpacePlans
         organization={organization}
         action={action}
-        spaceId={spaceId}
+        spaceId={space && space.sys.id}
         onUpdate={onDimensionsChange}
       >
-        {({requestState, spaceRatePlans, freeSpacesResource}) => (
-          <div>
+        {({requestState, spaceRatePlans, freeSpacesResource}) => {
+          const currentPlan = spaceRatePlans.find(plan => {
+            return plan.unavailabilityReasons && plan.unavailabilityReasons.find(reason => reason.type === 'currentPlan');
+          });
+
+          return <div>
             {requestState === RequestState.PENDING && <div className="loader__container">
               {asReact(spinner({diameter: '40px'}))}
             </div>}
@@ -61,23 +65,24 @@ const SpacePlanSelector = createReactClass({
                       key={plan.sys.id}
                       plan={plan}
                       freeSpacesResource={freeSpacesResource}
-                      isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
-                      onSelect={this.selectPlan} />)}
+                      isSelected={get(newSpaceRatePlan, 'sys.id') === plan.sys.id}
+                      onSelect={this.selectPlan()} />)}
                   </div>
                 </Fragment>
               }
               { action === 'change' &&
                 <Fragment>
                   <p className="create-space-wizard__subheading">
-                    You are upgrading this space for the organization <em>{organization.name}</em>.<br/>
+                    You are upgrading the space <em>{space.name}</em> for organization <em>{organization.name}</em>.<br/>
                   </p>
                   <div className="space-plans-list">
                     {spaceRatePlans.map((plan) => <SpacePlanItem
                       key={plan.sys.id}
                       plan={plan}
                       freeSpacesResource={freeSpacesResource}
-                      isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
-                      onSelect={this.selectPlan} />)}
+                      isCurrentPlan={currentPlan === plan}
+                      isSelected={get(newSpaceRatePlan, 'sys.id') === plan.sys.id}
+                      onSelect={this.selectPlan(currentPlan)} />)}
                   </div>
                 </Fragment>
               }
@@ -85,21 +90,26 @@ const SpacePlanSelector = createReactClass({
             {requestState === RequestState.ERROR && <div className="note-box--warning">
               <p>Could not fetch space plans.</p>
             </div>}
-          </div>
-        )}
+          </div>;
+        }}
       </FetchSpacePlans>
     );
   },
-  componentDidMount () {
-    this.props.onDimensionsChange();
-  },
-  selectPlan (selectedPlan) {
-    this.setState({selectedPlan});
+  selectPlan (currentPlan) {
+    return (selectedPlan) => {
+      this.setState({
+        newSpaceRatePlan: selectedPlan,
+        currentSpaceRatePlan: currentPlan
+      });
 
-    if (selectedPlan) {
-      this.props.onChange({spaceRatePlan: selectedPlan});
-      this.props.onSubmit();
-    }
+      if (selectedPlan) {
+        this.props.onChange({
+          newSpaceRatePlan: selectedPlan,
+          currentSpaceRatePlan: currentPlan
+        });
+        this.props.onSubmit();
+      }
+    };
   },
   goToBilling () {
     const {organization, onCancel} = this.props;
@@ -118,13 +128,13 @@ const SpacePlanItem = createReactClass({
     plan: PropTypes.object.isRequired,
     isSelected: PropTypes.bool.isRequired,
     freeSpacesResource: PropTypes.object,
-    onSelect: PropTypes.func.isRequired
+    onSelect: PropTypes.func.isRequired,
+    isCurrentPlan: PropTypes.bool
   },
   render: function () {
-    const {plan, isSelected, freeSpacesResource, onSelect} = this.props;
+    const {plan, isCurrentPlan, isSelected, freeSpacesResource, onSelect} = this.props;
     const freeSpacesUsage = freeSpacesResource && freeSpacesResource.usage;
     const freeSpacesLimit = freeSpacesResource && freeSpacesResource.limits.maximum;
-    const isCurrentPlan = Boolean(plan.unavailabilityReasons && plan.unavailabilityReasons.find(reason => reason.type === 'currentPlan'));
 
     return (
       <div
@@ -136,7 +146,7 @@ const SpacePlanItem = createReactClass({
             'space-plans-list__item--selected': isSelected,
             'space-plans-list__item--disabled': plan.disabled,
             'space-plans-list__item--current': isCurrentPlan
-          },
+          }
         )}
         onClick={() => !plan.disabled && onSelect(plan)}>
 

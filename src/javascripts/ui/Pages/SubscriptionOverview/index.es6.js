@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 
 import { get } from 'lodash';
 
+import notification from 'notification';
 import * as ReloadNotification from 'ReloadNotification';
 import { getPlansWithSpaces } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
@@ -98,13 +99,36 @@ const SubscriptionOverview = createReactClass({
     onReady();
   },
 
+  spaceChanged (space) {
+    notification.info(`Space ${space.name} successfully upgraded.`);
+
+    this.setState({
+      upgradedSpace: space.sys.id
+    });
+
+    setTimeout(() => {
+      this.setState({
+        upgradedSpace: null
+      });
+    }, 6000);
+  },
+
   createSpace: function () {
     showCreateSpaceModal(this.props.orgId);
   },
 
   changeSpace: function (space, action) {
     return () => {
-      showChangeSpaceModal(this.props.orgId, space.sys.id, action);
+      showChangeSpaceModal({
+        organizationId: this.props.orgId,
+        space,
+        action,
+        onSubmit: () => {
+          return runTask(this.fetchData).then(() => {
+            this.spaceChanged(space);
+          });
+        }
+      });
     };
   },
 
@@ -118,7 +142,7 @@ const SubscriptionOverview = createReactClass({
   },
 
   render: function () {
-    const {basePlan, spacePlans, grandTotal, usersMeta, organization} = this.state;
+    const {basePlan, spacePlans, grandTotal, usersMeta, upgradedSpace, organization} = this.state;
     const {orgId} = this.props;
 
     return (
@@ -135,6 +159,7 @@ const SubscriptionOverview = createReactClass({
             </div>
             <SpacePlans
               spacePlans={spacePlans}
+              upgradedSpace={upgradedSpace}
               onCreateSpace={this.createSpace}
               onChangeSpace={this.changeSpace}
               onDeleteSpace={this.deleteSpace}

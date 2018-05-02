@@ -9,7 +9,7 @@ import { getOrganization } from 'services/TokenStore';
  *
  * @param {string} organizationId
  */
-export async function showDialog (organizationId, spaceId, action) {
+export async function showDialog ({ organizationId, space, action, onSubmit }) {
   const validActions = [ 'change', 'upgrade', 'downgrade' ];
 
   if (!organizationId) {
@@ -18,8 +18,8 @@ export async function showDialog (organizationId, spaceId, action) {
 
   const organization = await getOrganization(organizationId);
 
-  if (!spaceId) {
-    throw new Error('spaceId not supplied for space creation');
+  if (!space) {
+    throw new Error('space not supplied for space creation');
   }
 
   if (!action) {
@@ -36,9 +36,10 @@ export async function showDialog (organizationId, spaceId, action) {
     backgroundClose: false,
     persistOnNavigation: true,
     scopeData: {
-      action: action,
-      spaceId: spaceId,
-      organization: organization
+      action,
+      space,
+      organization,
+      onSubmit
     }
   });
 }

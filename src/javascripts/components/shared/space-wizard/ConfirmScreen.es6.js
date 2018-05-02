@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import FetchSubscriptionPrice from './FetchSubscriptionPrice';
 import spinner from 'ui/Components/Spinner';
 import {asReact} from 'ui/Framework/DOMRenderer';
 import {Steps, RequestState, formatPrice} from './WizardUtils';
+import Price from 'ui/Components/Price';
 
 const ConfirmScreen = createReactClass({
   propTypes: {
-    spaceRatePlan: PropTypes.object.isRequired,
+    currentSpaceRatePlan: PropTypes.object,
+    newSpaceRatePlan: PropTypes.object.isRequired,
+    space: PropTypes.object,
+    action: PropTypes.string.isRequired,
     spaceName: PropTypes.string.isRequired,
     template: PropTypes.object,
     organization: PropTypes.object.isRequired,
@@ -19,14 +23,25 @@ const ConfirmScreen = createReactClass({
   },
   render () {
     const {
-      spaceRatePlan,
+      currentSpaceRatePlan,
+      newSpaceRatePlan,
       spaceName,
+      space,
+      action,
       template,
       organization,
       isFormSubmitted,
       onSubmit,
       onNavigate
     } = this.props;
+
+    let confirmButtonText = '';
+
+    if (action === 'create') {
+      confirmButtonText = 'Confirm and create space';
+    } else if (action === 'change') {
+      confirmButtonText = 'Confirm and upgrade space';
+    }
 
     return (
       <FetchSubscriptionPrice organizationId={organization.sys.id}>
@@ -39,42 +54,57 @@ const ConfirmScreen = createReactClass({
               <h2 className="create-space-wizard__heading">
                 Confirm your selection
               </h2>
-              <p className="create-space-wizard__subheading">
-                Make sure everything is in order before creating the space.
-              </p>
-              <p className="create-space-wizard__info">
-                You are about to purchase a {spaceRatePlan.name.toLowerCase()} space
-                for <strong>{formatPrice(spaceRatePlan.price)} / month</strong> for the
-                organization <em>{organization.name}</em>.
-                {requestState === RequestState.SUCCESS && <span>
-                  {' '}
-                  This will increase your organization’s subscription
-                  to <strong>{formatPrice(totalPrice + spaceRatePlan.price)} / month</strong>
-                </span>}
-                {' '}
-                (<a
-                  className="text-link"
-                  href="#"
-                  onClick={() => onNavigate(Steps.SpaceType)}>
-                  change space type
-                </a>).
-                The space’s name will be <em>{spaceName}</em>
-                {template && ', and we will fill it with example content'}
-                {' '}
-                (<a
-                  className="text-link"
-                  href="#"
-                  onClick={() => onNavigate(Steps.SpaceDetails)}>
-                  change space details
-                </a>).
-              </p>
+              { action === 'create' &&
+                <Fragment>
+                  <p className="create-space-wizard__subheading">
+                    Make sure everything is in order before creating your space.
+                  </p>
+                  <p className="create-space-wizard__info">
+                    You are about to purchase a {newSpaceRatePlan.name.toLowerCase()} space
+                    for <strong>{formatPrice(newSpaceRatePlan.price)} / month</strong> for the
+                    organization <em>{organization.name}</em>.
+                    {requestState === RequestState.SUCCESS && <span>
+                      {' '}
+                      This will increase your organization’s subscription
+                      to <strong>{formatPrice(totalPrice + newSpaceRatePlan.price)} / month</strong>
+                    </span>}
+                    {' '}
+                    (<a
+                      className="text-link"
+                      href="#"
+                      onClick={() => onNavigate(Steps.SpaceType)}>
+                      change space type
+                    </a>).
+                    The space’s name will be <em>{spaceName}</em>
+                    {template && ', and we will fill it with example content'}
+                    {' '}
+                    (<a
+                      className="text-link"
+                      href="#"
+                      onClick={() => onNavigate(Steps.SpaceDetails)}>
+                      change space details
+                    </a>).
+                  </p>
+                </Fragment>
+              }
+              { action === 'change' &&
+                <Fragment>
+                  <p className="create-space-wizard__subheading">
+                    Make sure everything is in order before confirming the change.
+                  </p>
+                  <p className="create-space-wizard__info">
+                    You are about to upgrade the space <em>{space.name}</em> from a {currentSpaceRatePlan.name} to {newSpaceRatePlan.name} space type for <strong><Price unit='month' value={newSpaceRatePlan.price} /></strong>. This will increase your organization&apos;s subscription to <strong><Price unit='month' value={(totalPrice + newSpaceRatePlan.price)} /></strong>.
+                  </p>
+                </Fragment>
+              }
               <div style={{textAlign: 'center', margin: '1.2em 0'}}>
                 <button
                   className={`button btn-primary-action ${isFormSubmitted ? 'is-loading' : ''}`}
                   disabled={isFormSubmitted}
                   data-test-id="space-create-confirm"
-                  onClick={onSubmit}>
-                  Confirm and create space
+                  onClick={onSubmit}
+                >
+                  {confirmButtonText}
                 </button>
               </div>
             </div>}

@@ -8,7 +8,7 @@ import Price from 'ui/Components/Price';
 
 import SpacePlanRow from './SpacePlanRow';
 
-function SpacePlans ({spacePlans, onCreateSpace, onChangeSpace, onDeleteSpace, isOrgOwner}) {
+function SpacePlans ({spacePlans, upgradedSpace, onCreateSpace, onChangeSpace, onDeleteSpace, isOrgOwner}) {
   const numSpaces = spacePlans.length;
   const hasSpacePlans = numSpaces > 0;
   const totalCost = calculatePlansCost({ plans: spacePlans });
@@ -43,8 +43,11 @@ function SpacePlans ({spacePlans, onCreateSpace, onChangeSpace, onDeleteSpace, i
           </thead>
           <tbody className='table__body'>
             { spacePlans.map(plan => {
+              const isUpgraded = Boolean(plan.space && plan.space.sys.id === upgradedSpace);
+
               return <SpacePlanRow
                 key={plan.sys.id || plan.space && plan.space.sys.id}
+                upgraded={isUpgraded}
                 plan={plan}
                 onChangeSpace={onChangeSpace}
                 onDeleteSpace={onDeleteSpace}
@@ -63,7 +66,8 @@ SpacePlans.propTypes = {
   onCreateSpace: PropTypes.func.isRequired,
   onChangeSpace: PropTypes.func.isRequired,
   onDeleteSpace: PropTypes.func.isRequired,
-  isOrgOwner: PropTypes.bool.isRequired
+  isOrgOwner: PropTypes.bool.isRequired,
+  upgradedSpace: PropTypes.object
 };
 
 export default SpacePlans;
