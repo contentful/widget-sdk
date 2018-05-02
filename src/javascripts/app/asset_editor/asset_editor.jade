@@ -1,13 +1,13 @@
 include ../entity_editor/entity_editor.mixins.jade
 
 div.asset-editor(ng-if="context.ready")
-  .workbench
-    header.workbench-header
-      cf-breadcrumbs
-      cf-icon.workbench-header__icon(name="page-media", scale="0.75")
-      h1.workbench-header__title
-        | {{ title }}
-        cf-knowledge-base.workbench-header__kb-link(target="asset")
+  header.workbench-header
+    cf-breadcrumbs(ng-if="shouldShowBreadcrumbs")
+    cf-back-nav(ng-if="!shouldShowBreadcrumbs")
+    cf-icon.workbench-header__icon(name="page-media", scale="0.75")
+    h1.workbench-header__title
+      | {{ title }}
+      cf-knowledge-base.workbench-header__kb-link(target="asset")
 
       .workbench-header__actions
         button.btn-secondary-action(

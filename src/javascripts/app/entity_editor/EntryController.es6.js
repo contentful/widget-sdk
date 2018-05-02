@@ -23,6 +23,7 @@ import renderStatusNotification from './StatusNotification';
 
 
 import { loadEntry } from 'app/entity_editor/DataLoader';
+import { onFeatureFlag } from 'utils/LaunchDarkly';
 
 /**
  * @ngdoc type
@@ -50,6 +51,9 @@ import { loadEntry } from 'app/entity_editor/DataLoader';
  *   Passed to FormWidgetsController to render field controls
  */
 export default async function create ($scope, entryId) {
+  const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
+    'feature-at-03-2018-sliding-entry-editor';
+
   const editorData = await loadEntry(spaceContext, entryId);
   $scope.context.ready = true;
   $scope.editorData = editorData;
@@ -199,4 +203,8 @@ export default async function create ($scope, entryId) {
   const fields = contentTypeData.fields;
   $scope.fields = DataFields.create(fields, $scope.otDoc);
   $scope.transformedContentTypeData = ContentTypes.internalToPublic(contentTypeData);
+
+  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, (isEnabled) => {
+    $scope.shouldShowBreadcrumbs = !isEnabled;
+  });
 }

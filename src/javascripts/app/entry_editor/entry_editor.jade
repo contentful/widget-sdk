@@ -10,7 +10,8 @@ div.entry-editor(ng-if="context.ready")
         reference-context="referenceContext")
   .workbench
     header.workbench-header
-      cf-breadcrumbs
+      cf-breadcrumbs(ng-if="shouldShowBreadcrumbs")
+      cf-back-nav(ng-if="!shouldShowBreadcrumbs")
       cf-icon.workbench-header__icon(name="page-content", scale="0.75")
       h1.workbench-header__title
         | {{ title }}

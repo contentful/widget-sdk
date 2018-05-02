@@ -17,8 +17,12 @@ import installTracking from './Tracking';
 import renderStatusNotification from './StatusNotification';
 
 import { loadAsset } from 'app/entity_editor/DataLoader';
+import { onFeatureFlag } from 'utils/LaunchDarkly';
 
 export default async function create ($scope, assetId) {
+  const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
+    'feature-at-03-2018-sliding-entry-editor';
+
   const editorData = await loadAsset(spaceContext, assetId);
   $scope.context.ready = true;
   $scope.editorData = editorData;
@@ -86,5 +90,9 @@ export default async function create ($scope, assetId) {
   $controller('FormWidgetsController', {
     $scope: $scope,
     controls: editorData.fieldControls.form
+  });
+
+  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, (isEnabled) => {
+    $scope.shouldShowBreadcrumbs = !isEnabled;
   });
 }
