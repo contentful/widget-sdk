@@ -13,7 +13,8 @@ describe('contentPreview', function () {
 
     module('contentful/test', function ($provide) {
       $provide.value('TheLocaleStore', {
-        getDefaultLocale: _.constant({internal_code: 'en'})
+        getDefaultLocale: _.constant({internal_code: 'en'}),
+        toPublicCode: sinon.stub()
       });
       $provide.value('TheStore', {
         getStore: () => {
