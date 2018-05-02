@@ -49,3 +49,5 @@ div.entry-editor(ng-if="context.ready")
 
       .workbench-main__sidebar
         cf-entity-sidebar
+
+cf-loader(ng-if="!context.ready" is-shown="true" loader-msg="Loading entry…")

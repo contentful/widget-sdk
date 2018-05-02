@@ -19,7 +19,7 @@ angular.module('cf.ui')
  * cf-loader(watch-state-change="true") //- this adds only a state change loader
  * cf-loader(loader-msg="Please wait…")
  * cf-loader(is-shown="isLoading")
- * cf-loader(is-shown="somePropFromParentScope", loader-msg="Loading xyz…")
+ * cf-loader(is-shown="somePropFromParentScope" loader-msg="Loading xyz…")
  */
 .directive('cfLoader', ['require', function (require) {
   var h = require('utils/hyperscript').h;
