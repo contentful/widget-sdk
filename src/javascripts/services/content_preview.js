@@ -17,6 +17,8 @@ angular.module('contentful')
   var getStore = require('TheStore').getStore;
   var store = getStore();
   var resolveReferences = require('services/ContentPreviewHelper').resolveReferences;
+  var internalToExternalFieldIds = require('data/Entries').internalToExternal;
+
 
   var ENTRY_ID_PATTERN = /\{\s*entry_id\s*\}/g;
   var ENTRY_FIELD_PATTERN = /\{\s*entry_field\.(\w+)\s*\}/g;
@@ -416,7 +418,7 @@ angular.module('contentful')
       return _.toString(fieldValue);
     });
 
-    return resolveReferences({ url: processedUrl, entry: entry, defaultLocale: defaultLocale });
+    return resolveReferences({ url: processedUrl, entry: internalToExternalFieldIds(entry, contentType), defaultLocale: defaultLocale });
   }
 
   /**
