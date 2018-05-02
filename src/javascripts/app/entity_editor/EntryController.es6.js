@@ -25,6 +25,9 @@ import renderStatusNotification from './StatusNotification';
 import { loadEntry } from 'app/entity_editor/DataLoader';
 import { onFeatureFlag } from 'utils/LaunchDarkly';
 
+const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
+  'feature-at-03-2018-sliding-entry-editor';
+
 /**
  * @ngdoc type
  * @name EntryEditorController
@@ -51,10 +54,14 @@ import { onFeatureFlag } from 'utils/LaunchDarkly';
  *   Passed to FormWidgetsController to render field controls
  */
 export default async function create ($scope, entryId) {
-  const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
-    'feature-at-03-2018-sliding-entry-editor';
-
-  const editorData = await loadEntry(spaceContext, entryId);
+  $scope.context = {};
+  let editorData;
+  try {
+    editorData = await loadEntry(spaceContext, entryId);
+  } catch (error) {
+    $scope.context.loadingError = error;
+    return;
+  }
   $scope.context.ready = true;
   $scope.editorData = editorData;
 

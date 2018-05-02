@@ -19,11 +19,18 @@ import renderStatusNotification from './StatusNotification';
 import { loadAsset } from 'app/entity_editor/DataLoader';
 import { onFeatureFlag } from 'utils/LaunchDarkly';
 
-export default async function create ($scope, assetId) {
-  const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
-    'feature-at-03-2018-sliding-entry-editor';
+const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
+  'feature-at-03-2018-sliding-entry-editor';
 
-  const editorData = await loadAsset(spaceContext, assetId);
+export default async function create ($scope, assetId) {
+  $scope.context = {};
+  let editorData;
+  try {
+    editorData = await loadAsset(spaceContext, assetId);
+  } catch (error) {
+    $scope.context.loadingError = error;
+    return;
+  }
   $scope.context.ready = true;
   $scope.editorData = editorData;
 

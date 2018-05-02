@@ -4,3 +4,20 @@ mixin editor-info-toggle
     ng-class="{active: preferences.showAuxPanel}")
     | Info
  
+mixin entity-load-status(entityType)
+  cf-loader(
+    ng-if="!context.ready && !context.loadingError"
+    is-shown="true"
+    loader-msg="Loading #{entityType.toLowerCase()}…")
+
+  .empty-state(ng-if="context.loadingError")
+    .empty-state__title(
+      ng-if="context.loadingError.statusCode === 404")
+      | #{entityType} missing or inaccessible
+    .empty-state__title(
+      ng-if="context.loadingError.statusCode !== 404")
+      | Error loading #{entityType.toLowerCase()} with id&#32;
+      code {{ entryId }}{{ assetId }}
+    .empty-state__description(
+      ng-if="context.loadingError.statusCode !== 404")
+      | {{ context.loadingError.body.message }}

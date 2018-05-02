@@ -1,6 +1,6 @@
 include ../entity_editor/entity_editor.mixins.jade
 
-div.entry-editor(ng-if="context.ready")
+.entry-editor(ng-if="context.ready")
   div.workbench-stack.animate(
     ng-if="referenceContext")
     .workbench-stack__overlay(
@@ -51,4 +51,4 @@ div.entry-editor(ng-if="context.ready")
       .workbench-main__sidebar
         cf-entity-sidebar
 
-cf-loader(ng-if="!context.ready" is-shown="true" loader-msg="Loading entry…")
++entity-load-status("Entry")
