@@ -14,6 +14,7 @@ angular.module('contentful')
       var host = el[0];
 
       ReactDOM.render(React.createElement(Wizard, {
+        action: $scope.action,
         organization: $scope.organization,
         onCancel: function () { $scope.dialog.cancel(); },
         onConfirm: function () { $scope.dialog.confirm(); },
