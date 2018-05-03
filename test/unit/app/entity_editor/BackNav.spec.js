@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import sinon from 'npm:sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
-describe('BackNav', function () {
+xdescribe('BackNav', function () {
   beforeEach(async function () {
     module('contentful/test');
 

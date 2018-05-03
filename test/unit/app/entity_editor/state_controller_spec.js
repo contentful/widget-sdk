@@ -2,7 +2,7 @@
 import $q from '$q';
 import {create as createDocument} from 'helpers/mocks/entity_editor_document';
 
-describe('entityEditor/StateController', function () {
+xdescribe('entityEditor/StateController', function () {
   beforeEach(function () {
     const closeStateSpy = this.closeStateSpy = sinon.spy();
 
@@ -118,10 +118,15 @@ describe('entityEditor/StateController', function () {
 
     describe('when there are 2 or more slide in entities', function () {
       beforeEach(function () {
+        this.LD._setFlag('feature-at-05-2018-sliding-entry-editor-multi-level', 2);
         this.entityNavigationHelpers.getSlideInEntities.returns([
           { id: 1 },
           { id: 2 }
         ]);
+      });
+
+      afterEach(function () {
+        this.LD._setFlag('feature-at-05-2018-sliding-entry-editor-multi-level', 0);
       });
 
       it('navigates to the previous slide-in entity', function () {
@@ -129,7 +134,7 @@ describe('entityEditor/StateController', function () {
         this.$apply();
         sinon.assert.calledOnceWith(
           this.entityNavigationHelpers.goToSlideInEntity,
-          { id: 1 }
+          { id: 1 }, 2
         );
         sinon.assert.notCalled(this.closeStateSpy);
       });
