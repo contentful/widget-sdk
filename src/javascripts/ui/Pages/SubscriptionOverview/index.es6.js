@@ -43,11 +43,11 @@ const SubscriptionOverview = createReactClass({
     runTask(this.fetchData);
   },
 
-  fetchData: function* () {
+  fetchData: async function () {
     const {orgId, onReady, onForbidden} = this.props;
 
     const resources = createResourceService(orgId, 'organization');
-    const organization = yield getOrganization(orgId);
+    const organization = await getOrganization(orgId);
 
     if (!isOwnerOrAdmin(organization)) {
       onForbidden();
@@ -55,8 +55,15 @@ const SubscriptionOverview = createReactClass({
     }
 
     const endpoint = createOrganizationEndpoint(orgId);
-    const plans = yield getPlansWithSpaces(endpoint).catch(ReloadNotification.apiErrorHandler);
-    const accessibleSpaces = yield getSpaces(); // spaces that current user has access to
+    let plans;
+
+    try {
+      plans = await getPlansWithSpaces(endpoint);
+    } catch (e) {
+      return ReloadNotification.apiErrorHandler(e);
+    }
+
+    const accessibleSpaces = await getSpaces(); // spaces that current user has access to
 
     if (!plans) {
       return;
@@ -77,7 +84,7 @@ const SubscriptionOverview = createReactClass({
         return plan;
       });
 
-    const membershipsResource = yield resources.get('organization_membership');
+    const membershipsResource = await resources.get('organization_membership');
     const numMemberships = membershipsResource.usage;
     const usersMeta = calcUsersMeta({ basePlan, numMemberships });
     const grandTotal = calculateTotalPrice({
