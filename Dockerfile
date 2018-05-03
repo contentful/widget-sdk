@@ -27,7 +27,7 @@ ARG NPM_TOKEN
 RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
 
 # Install dependencies
-COPY package.json npm-shrinkwrap.json ./
+COPY package.json package-lock.json ./
 COPY packages/client/package.json ./packages/client/
 RUN npm install --no-optional --unsafe-perm
 
