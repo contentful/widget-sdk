@@ -1,12 +1,9 @@
 .workbench
   div(
     class="workbench-layer workbench-layer--{{ $index }} animate"
-    ng-style="($index + 1) === entities.length && {width: 'calc(100% - (170 / ' + entities.length + ') * ' + $index + 'px)'} || {transform: 'translate3d(' + 170 / entities.length * $index + 'px, 0, 0)'}"
+    ng-style="{width: 'calc(100% - (170 / ' + entities.length + ') * ' + $index + 'px)'}"
     ng-repeat="entity in entities track by $index"
     ng-class="{'workbench-layer--is-current': ($index + 1) === entities.length}"
-    ng-mouseover="peekIn($event, $index)"
-    ng-mouseleave="peekOut($event, $index)"
-    data-layer-calculation="{{170 / entities.length * $index}}"
   )
     cf-entry-editor(
       ng-if="entity.type === 'Entry'"
