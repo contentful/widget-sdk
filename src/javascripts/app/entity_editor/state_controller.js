@@ -21,7 +21,7 @@ angular.module('contentful')
   var Action = EntityState.Action;
   var Analytics = require('analytics/Analytics');
   var spaceContext = require('spaceContext');
-  var EntityNavigationHelpers = require('states/EntityNavigationHelpers');
+  var goToPreviousSlideOrExit = require('states/EntityNavigationHelpers').goToPreviousSlideOrExit;
   var onFeatureFlag = require('utils/LaunchDarkly').onFeatureFlag;
 
   var permissions = otDoc.permissions;
@@ -36,8 +36,8 @@ angular.module('contentful')
   });
 
   const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG = 'feature-at-05-2018-sliding-entry-editor-multi-level';
-  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, function (isEnabled) {
-    $scope.isSlideinEntryEditorEnabled = isEnabled;
+  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, function (value) {
+    $scope.slideInFeatureFlagValue = value;
   });
 
   var noop = Command.create(function () {});
@@ -179,14 +179,11 @@ angular.module('contentful')
   controller.delete = Command.create(
     function () {
       return applyActionWithConfirmation(Action.Delete()).then(function () {
-        if ($scope.isSlideinEntryEditorEnabled) {
-          var entities = EntityNavigationHelpers.getSlideInEntities();
-          if (entities.length === 1) {
-            return closeState();
-          } else {
-            var previousEntity = entities[entities.length - 2];
-            return EntityNavigationHelpers.goToSlideInEntity(previousEntity, $scope.isSlideinEntryEditorEnable);
-          }
+        if ($scope.slideInFeatureFlagValue) {
+          goToPreviousSlideOrExit(
+            $scope.slideInFeatureFlagValue,
+            closeState
+          );
         } else {
           return closeState();
         }

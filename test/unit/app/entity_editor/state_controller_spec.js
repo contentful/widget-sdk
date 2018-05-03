@@ -2,13 +2,20 @@
 import $q from '$q';
 import {create as createDocument} from 'helpers/mocks/entity_editor_document';
 
-xdescribe('entityEditor/StateController', function () {
+describe('entityEditor/StateController', function () {
+  const SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE = 'feature-flag-val';
+
   beforeEach(function () {
     const closeStateSpy = this.closeStateSpy = sinon.spy();
 
     module('contentful/test', function ($provide) {
       $provide.value('navigation/closeState', closeStateSpy);
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
+    });
+
+    const LD = this.$inject('utils/LaunchDarkly');
+    LD.onFeatureFlag = sinon.stub().callsFake((_1, _2, cb) => {
+      cb(SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE);
     });
 
     this.rootScope = this.$inject('$rootScope');
@@ -64,8 +71,7 @@ xdescribe('entityEditor/StateController', function () {
     this.spaceEndpoint.resolves(this.doc.getData());
 
     this.entityNavigationHelpers = this.$inject('states/EntityNavigationHelpers');
-    this.entityNavigationHelpers.getSlideInEntities = sinon.stub().returns([]);
-    this.entityNavigationHelpers.goToSlideInEntity = sinon.stub();
+    this.entityNavigationHelpers.goToPreviousSlideOrExit = sinon.stub();
 
     this.validator = this.scope.editorContext.validator;
 
@@ -116,43 +122,15 @@ xdescribe('entityEditor/StateController', function () {
       this.assertErrorNotification('delete', 'ERROR');
     });
 
-    describe('when there are 2 or more slide in entities', function () {
-      beforeEach(function () {
-        this.LD._setFlag('feature-at-05-2018-sliding-entry-editor-multi-level', 2);
-        this.entityNavigationHelpers.getSlideInEntities.returns([
-          { id: 1 },
-          { id: 2 }
-        ]);
-      });
-
-      afterEach(function () {
-        this.LD._setFlag('feature-at-05-2018-sliding-entry-editor-multi-level', 0);
-      });
-
-      it('navigates to the previous slide-in entity', function () {
-        this.controller.delete.execute();
-        this.$apply();
-        sinon.assert.calledOnceWith(
-          this.entityNavigationHelpers.goToSlideInEntity,
-          { id: 1 }, 2
-        );
-        sinon.assert.notCalled(this.closeStateSpy);
-      });
-    });
-
-    describe('when there is 1 slide in entity', function () {
-      beforeEach(function () {
-        this.entityNavigationHelpers.getSlideInEntities.returns([
-          { id: 1 }
-        ]);
-      });
-
-      it('closes the current state', function () {
-        this.controller.delete.execute();
-        this.$apply();
-        sinon.assert.notCalled(this.entityNavigationHelpers.goToSlideInEntity);
-        sinon.assert.calledOnce(this.closeStateSpy);
-      });
+    it(`navigates to the previous slide-in entity or
+        closes the current state as a fallback`, function () {
+      this.controller.delete.execute();
+      this.$apply();
+      sinon.assert.calledOnceWith(
+        this.entityNavigationHelpers.goToPreviousSlideOrExit,
+        SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE,
+        this.closeStateSpy
+      );
     });
   });
 

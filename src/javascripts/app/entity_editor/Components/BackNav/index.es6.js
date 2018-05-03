@@ -2,10 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
 import Icon from 'ui/Components/Icon';
-import {
-  getSlideInEntities,
-  goToSlideInEntity
-} from 'states/EntityNavigationHelpers';
+import { goToPreviousSlideOrExit } from 'states/EntityNavigationHelpers';
 import $state from '$state';
 
 const BackNav = createReactClass({
@@ -13,14 +10,10 @@ const BackNav = createReactClass({
     slideInFeatureFlagValue: PropTypes.number.isRequired
   },
   handleClick () {
-    const slideInEntities = getSlideInEntities();
-    const numEntities = slideInEntities.length;
-    if (numEntities > 1) {
-      const previousEntity = slideInEntities[numEntities - 2];
-      goToSlideInEntity(previousEntity, this.props.slideInFeatureFlagValue);
-    } else {
-      $state.go('^.^');
-    }
+    goToPreviousSlideOrExit(
+      this.props.slideInFeatureFlagValue,
+      () => $state.go('^.^')
+    );
   },
   render () {
     return (

@@ -21,23 +21,13 @@ export function getSlideInEntities () {
   return slideInEntities;
 }
 
-const getMaxLevelFromFeatureFlag = value => {
-  if (value === 0) {
-    return 0;
-  }
-  if (value === 1) {
-    return 1;
-  }
-  return Infinity;
-};
+const getMaxLevelFromFeatureFlag = value =>
+  [0, 1].includes(value) ? value : Infinity;
 
-const canSlideIn = maxSlideInLevel => {
-  return getSlideInEntities().length - 1 < maxSlideInLevel;
-};
+const canSlideIn = maxSlideInLevel =>
+  getSlideInEntities().length - 1 < maxSlideInLevel;
 
 export const goToSlideInEntity = (entity, featureFlagValue = false) => {
-  let entities = getSlideInEntities();
-
   if (!canSlideIn(getMaxLevelFromFeatureFlag(featureFlagValue))) {
     if (entity.type === TYPES.ENTRY) {
       $state.go('.', { entryId: entity.id });
@@ -46,13 +36,24 @@ export const goToSlideInEntity = (entity, featureFlagValue = false) => {
     }
     return;
   }
-  entities = [...entities, entity];
+  const entities = [...getSlideInEntities(), entity];
   const entityIndex = findIndex(entities, entity);
   const reducedEntities = entities.slice(1, entityIndex + 1);
   const serializedEntities = reducedEntities.map(
     ({ id, type }) => `${type}:${id}`
   );
   $location.search(SLIDE_IN_QS, serializedEntities);
+};
+
+export const goToPreviousSlideOrExit = (featureFlagValue, callback) => {
+  const slideInEntities = getSlideInEntities();
+  const numEntities = slideInEntities.length;
+  if (numEntities > 1) {
+    const previousEntity = slideInEntities[numEntities - 2];
+    goToSlideInEntity(previousEntity, featureFlagValue);
+  } else {
+    callback();
+  }
 };
 
 function deserializeQS () {
