@@ -30,10 +30,7 @@ RUN npm install --no-optional --unsafe-perm
 
 # Install vendored git repos
 COPY vendor ./vendor
-RUN cd /app/vendor/ui-extensions-sdk && \
-      npm install --no-optional --production --quiet && \
-      make && \
-    cd /app/vendor/extensions/core-field-editors && \
+RUN cd /app/vendor/extensions/core-field-editors && \
       npm install --unsafe-perm
 
 # Copy source files and build app

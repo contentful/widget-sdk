@@ -8,10 +8,3 @@ git submodule update --init
 pushd vendor/extensions/core-field-editors
   npm install --no-package-lock --no-optional
 popd
-
-pushd vendor/ui-extensions-sdk
-  npm install --no-package-lock --no-optional
-  # The path should be set in the Makefile. But we need to work around old
-  # versions of Make installed on OSX.
-  PATH="./node_modules/.bin/:${PATH}" make
-popd
