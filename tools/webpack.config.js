@@ -73,7 +73,7 @@ module.exports = ({ dev = false } = {}) => ({
     publicPath: '/app/'
   },
   module: {
-    // sharejs is build by `js/vendor/sharejs` gulp task, so we don't touch it here
+    // sharejs is build by `js/sharejs` gulp task, so we don't touch it here
     noParse: filename => /sharejs/.test(filename),
     rules: [
       // this rule is only for ES6 files, we need to use SystemJS plugin to register them

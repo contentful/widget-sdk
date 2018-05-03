@@ -1,8 +1,3 @@
-[submodule "vendor/sharejs"]
-	path = vendor/sharejs
-	url = git@github.com:contentful/sharejs.git
-  branch = master
-  update = rebase
 [submodule "vendor/extensions"]
 	path = vendor/extensions
 	url = git@github.com:contentful/extensions.git
