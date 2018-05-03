@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
 import Icon from 'ui/Components/Icon';
 import {
@@ -8,12 +9,15 @@ import {
 import $state from '$state';
 
 const BackNav = createReactClass({
+  propTypes: {
+    slideInFeatureFlagValue: PropTypes.number.isRequired
+  },
   handleClick () {
     const slideInEntities = getSlideInEntities();
     const numEntities = slideInEntities.length;
     if (numEntities > 1) {
       const previousEntity = slideInEntities[numEntities - 2];
-      goToSlideInEntity(previousEntity);
+      goToSlideInEntity(previousEntity, this.props.slideInFeatureFlagValue);
     } else {
       $state.go('^.^');
     }

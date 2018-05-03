@@ -22,6 +22,7 @@ angular.module('contentful')
   var Analytics = require('analytics/Analytics');
   var spaceContext = require('spaceContext');
   var EntityNavigationHelpers = require('states/EntityNavigationHelpers');
+  var onFeatureFlag = require('utils/LaunchDarkly').onFeatureFlag;
 
   var permissions = otDoc.permissions;
   var reverter = otDoc.reverter;
@@ -32,6 +33,11 @@ angular.module('contentful')
 
   K.onValueScope($scope, docStateManager.inProgress$, function (inProgress) {
     controller.inProgress = inProgress;
+  });
+
+  const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG = 'feature-at-05-2018-sliding-entry-editor-multi-level';
+  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, function (isEnabled) {
+    $scope.isSlideinEntryEditorEnabled = isEnabled;
   });
 
   var noop = Command.create(function () {});
@@ -179,7 +185,7 @@ angular.module('contentful')
             return closeState();
           } else {
             var previousEntity = entities[entities.length - 2];
-            return EntityNavigationHelpers.goToSlideInEntity(previousEntity);
+            return EntityNavigationHelpers.goToSlideInEntity(previousEntity, $scope.isSlideinEntryEditorEnable);
           }
         } else {
           return closeState();

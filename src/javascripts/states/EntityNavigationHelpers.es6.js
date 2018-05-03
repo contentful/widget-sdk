@@ -21,18 +21,44 @@ export function getSlideInEntities () {
   return slideInEntities;
 }
 
-export const goToSlideInEntity = entity => {
-  const entities = [...getSlideInEntities(), entity];
+const getMaxLevelFromFeatureFlag = value => {
+  if (value === 0) {
+    return 0;
+  }
+  if (value === 1) {
+    return 1;
+  }
+  return Infinity;
+};
+
+const canSlideIn = maxSlideInLevel => {
+  return getSlideInEntities().length - 1 < maxSlideInLevel;
+};
+
+export const goToSlideInEntity = (entity, featureFlagValue = false) => {
+  let entities = getSlideInEntities();
+
+  if (!canSlideIn(getMaxLevelFromFeatureFlag(featureFlagValue))) {
+    if (entity.type === TYPES.ENTRY) {
+      $state.go('.', { entryId: entity.id });
+    } else {
+      $state.go('^.^.assets.detail', { assetId: entity.id });
+    }
+    return;
+  }
+  entities = [...entities, entity];
   const entityIndex = findIndex(entities, entity);
   const reducedEntities = entities.slice(1, entityIndex + 1);
-  const serializedEntities = reducedEntities.map(({ id, type }) => `${type}:${id}`);
+  const serializedEntities = reducedEntities.map(
+    ({ id, type }) => `${type}:${id}`
+  );
   $location.search(SLIDE_IN_QS, serializedEntities);
 };
 
 function deserializeQS () {
   const searchObject = $location.search();
   const serializedEntities = castArray(get(searchObject, SLIDE_IN_QS, []));
-  return serializedEntities.map((string) => {
+  return serializedEntities.map(string => {
     const [type, id] = string.split(':');
     return { type, id };
   });

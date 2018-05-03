@@ -29,7 +29,7 @@ const FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN =
 const INLINE_REFERENCE_FEATURE_FLAG =
   'feature-at-02-2018-inline-reference-field';
 const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
-  'feature-at-03-2018-sliding-entry-editor';
+  'feature-at-05-2018-sliding-entry-editor-multi-level';
 
 export default function create ($scope, widgetApi) {
   const store = getStore();
@@ -392,7 +392,7 @@ export default function create ($scope, widgetApi) {
   }
 
   function goToSlideInEntity ({ sys: { id, type } }) {
-    goToSlideInEntityBase({ id, type });
+    goToSlideInEntityBase({ id, type }, $scope.isSlideinEntryEditorEnabled);
   }
 
   function prepareRemoveAction (index, isDisabled) {

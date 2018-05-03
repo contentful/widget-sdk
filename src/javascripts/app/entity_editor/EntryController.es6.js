@@ -136,7 +136,7 @@ export default async function create ($scope, entryId) {
 
   editorContext.createReferenceContext = createReferenceContext;
 
-  // This will only be available if feature-at-03-2018-sliding-entry-editor
+  // This will only be available if feature-at-05-2018-sliding-entry-editor-multi-level
   // is not enabled.
   editorContext.toggleSlideinEditor = function () {
     $scope.inlineEditor = !$scope.inlineEditor;

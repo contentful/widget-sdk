@@ -4,6 +4,11 @@ import {
   goToSlideInEntity
 } from 'states/EntityNavigationHelpers';
 
+import { onFeatureFlag } from 'utils/LaunchDarkly';
+
+const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
+  'feature-at-05-2018-sliding-entry-editor-multi-level';
+
 function setEntities ($scope) {
   $scope.entities = getSlideInEntities();
 }
@@ -11,12 +16,18 @@ function setEntities ($scope) {
 export default ($scope, _$state) => {
   $scope.context.ready = true;
 
-  $scope.close = (entity) => {
-    goToSlideInEntity(entity);
+  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, isEnabled => {
+    $scope.isSlideinEntryEditorEnabled = isEnabled;
+  });
+
+  $scope.close = entity => {
+    goToSlideInEntity(entity, $scope.isSlideinEntryEditorEnabled);
   };
 
-  $scope.peekIn = ($event) => {
-    const $elements = $($event.currentTarget).not($('.ng-enter')).nextAll();
+  $scope.peekIn = $event => {
+    const $elements = $($event.currentTarget)
+      .not($('.ng-enter'))
+      .nextAll();
 
     $elements.map((index, element) => {
       if (element.classList.contains('.ng-enter')) return;
@@ -30,8 +41,10 @@ export default ($scope, _$state) => {
     });
   };
 
-  $scope.peekOut = ($event) => {
-    const $elements = $($event.currentTarget).not($('.ng-enter')).nextAll();
+  $scope.peekOut = $event => {
+    const $elements = $($event.currentTarget)
+      .not($('.ng-enter'))
+      .nextAll();
 
     $elements.map((index, element) => {
       if (element.classList.contains('.ng-enter')) return;

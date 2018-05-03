@@ -70,7 +70,7 @@ angular.module('cf.ui')
         // Do not show a spinner when navigating from/to slide in
         // entry editor. This will refresh the parent/child entries
         // without showing the spinner.
-        // TODO: Remove this once "feature-at-03-2018-sliding-entry-editor"
+        // TODO: Remove this once "feature-at-05-2018-sliding-entry-editor-multi-level"
         // experiment is over.
         if (!toParams.inlineEntryId && !fromParams.inlineEntryId) {
           $scope.isShown = true;
