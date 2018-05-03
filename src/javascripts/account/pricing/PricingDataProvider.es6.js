@@ -106,13 +106,6 @@ export function getEnabledFeatures (endpoint) {
   }, alphaHeader).then(features => features.items);
 }
 
-export function getFeature (endpoint, featureName) {
-  return endpoint({
-    method: 'GET',
-    path: [ 'features', featureName ]
-  }, alphaHeader);
-}
-
 /* Gets the space plan for the space with corresponding space id
  * @param {object} endpoint an organization endpoint
  * @returns {Promise<object>} space plan object
