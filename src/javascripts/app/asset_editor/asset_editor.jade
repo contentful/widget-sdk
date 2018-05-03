@@ -1,6 +1,6 @@
 include ../entity_editor/entity_editor.mixins.jade
 
-div.asset-editor(ng-if="context.ready")
+div.asset-editor.workbench(ng-if="context.ready")
   header.workbench-header
     cf-breadcrumbs(ng-if="shouldShowBreadcrumbs")
     cf-back-nav(ng-if="!shouldShowBreadcrumbs")
@@ -9,22 +9,22 @@ div.asset-editor(ng-if="context.ready")
       | {{ title }}
       cf-knowledge-base.workbench-header__kb-link(target="asset")
 
-      .workbench-header__actions
-        button.btn-secondary-action(
-          data-test-id="trigger-delete-modal"
-          ui-command="state.delete")
-          | Delete
-        +editor-info-toggle
+    .workbench-header__actions
+      button.btn-secondary-action(
+        data-test-id="trigger-delete-modal"
+        ui-command="state.delete")
+        | Delete
+      +editor-info-toggle
 
-    .workbench-main
-      .workbench-main__content
-        cf-component-bridge(component="entityStatusComponent")
+  .workbench-main
+    .workbench-main__content
+      cf-component-bridge(component="entityStatusComponent")
 
-        .entity-editor-form
-          cf-error-list.form-box-error(cf-error-path="['fields']")
-          cf-entity-field(ng-repeat="widget in widgets track by widget.fieldId")
+      .entity-editor-form
+        cf-error-list.form-box-error(cf-error-path="['fields']")
+        cf-entity-field(ng-repeat="widget in widgets track by widget.fieldId")
 
-      .workbench-main__sidebar
-        cf-entity-sidebar
+    .workbench-main__sidebar
+      cf-entity-sidebar
 
 +entity-load-status("Asset")
