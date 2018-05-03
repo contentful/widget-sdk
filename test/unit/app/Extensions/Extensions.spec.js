@@ -36,10 +36,11 @@ describe('app/Extensions', function () {
 
   describe('custom extensions exist', function () {
     beforeEach(function () {
+      const params = {parameters: [], installationParameters: {definitions: [], values: {}}};
       this.spaceContext.widgets.getAll.returns([
         {id: 'builtin', name: 'Builtin', fieldTypes: ['Boolean']},
-        {custom: true, id: 'test', name: 'Widget 1', fieldTypes: ['Number']},
-        {custom: true, id: 'test2', name: 'Widget 2', fieldTypes: ['Symbol', 'Text']}
+        {custom: true, id: 'test', name: 'Widget 1', fieldTypes: ['Number'], ...params},
+        {custom: true, id: 'test2', name: 'Widget 2', fieldTypes: ['Symbol', 'Text'], ...params}
       ]);
     });
 

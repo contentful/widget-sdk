@@ -48,18 +48,29 @@ function render (extensions, deleteExtension) {
 
 function list (extensions, deleteExtension) {
   const head = [
-    th({class: 'x--xl-cell'}, ['Name']),
-    th(['ID']),
-    th(['Field types']),
+    th(['Name']),
+    th(['Hosting']),
+    th(['Field type(s)']),
+    th(['Instance parameters']),
+    th(['Installation parameters']),
     th({class: 'x--small-cell'}, ['Actions'])
   ];
 
   const body = extensions.map((extension) => {
     return tr([
-      td({class: 'x--xl-cell'}, [extension.name]),
-      td({style: {overflowWrap: 'break-word'}}, [h('code', [extension.id])]),
+      td([h('strong', {title: `ID: ${extension.id}`}, [extension.name])]),
+      extension.src && td(['Self-hosted (', h('code', ['src']), ')']),
+      extension.srcdoc && td(['Hosted by Contentful (', h('code', ['srcdoc']), ')']),
       td([extension.fieldTypes.join(', ')]),
-      td({class: 'x--small-cell'}, [deleteButton(extension, deleteExtension)])
+      td([`${extension.parameters.length} definition(s)`]),
+      td([
+        `${extension.installationParameters.definitions.length} definition(s)`,
+        h('br'),
+        `${Object.keys(extension.installationParameters.values).length} value(s)`
+      ]),
+      td({class: 'x--small-cell'}, [
+        deleteButton(extension, deleteExtension)
+      ])
     ]);
   });
 
