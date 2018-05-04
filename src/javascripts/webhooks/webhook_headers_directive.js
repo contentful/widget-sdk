@@ -3,8 +3,7 @@
 angular.module('contentful')
 
 .directive('cfWebhookHeaders', ['require', function (require) {
-
-  var Command  = require('command');
+  var Command = require('command');
   var $timeout = require('$timeout');
 
   return {
@@ -34,25 +33,25 @@ angular.module('contentful')
         $scope.isDirty = !!(m.key && m.value);
       });
 
-      function add() {
+      function add () {
         var m = $scope.model.fresh;
         $scope.headers.push({key: m.key, value: m.value});
         $scope.model.fresh = {};
         $scope.focusNewKey();
       }
 
-      function cannotAdd() {
+      function cannotAdd () {
         var m = $scope.model.fresh;
         return !m.key || !m.value || _.find($scope.headers, {key: m.key});
       }
 
-      function addWithEnter($event) {
+      function addWithEnter ($event) {
         if ($event.which === 13 && !cannotAdd()) {
           add();
         }
       }
 
-      function edit(header) {
+      function edit (header) {
         var m = $scope.model.existing;
         m.editing = header;
         if (header) {
@@ -61,11 +60,11 @@ angular.module('contentful')
         }
       }
 
-      function isEditing(header) {
+      function isEditing (header) {
         return $scope.model.existing.editing === header;
       }
 
-      function update() {
+      function update () {
         var m = $scope.model.existing;
         if (m.editing) {
           m.editing.value = m.value;
@@ -73,12 +72,12 @@ angular.module('contentful')
         }
       }
 
-      function canUpdate() {
+      function canUpdate () {
         var m = $scope.model.existing;
         return m.editing && m.value;
       }
 
-      function updateWithEnter($event) {
+      function updateWithEnter ($event) {
         if ($event.which === 13 && canUpdate()) {
           update();
         } else if ($event.which === 27) {
@@ -86,7 +85,7 @@ angular.module('contentful')
         }
       }
 
-      function remove(header) {
+      function remove (header) {
         var index = $scope.headers.indexOf(header);
         if (index > -1) {
           $scope.headers.splice(index, 1);

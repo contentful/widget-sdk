@@ -3,7 +3,6 @@
 angular.module('contentful')
 
 .directive('cfWebhookSegmentation', ['require', function (require) {
-
   var segmentation = require('webhookSegmentation');
 
   var LABELS = {
@@ -59,7 +58,6 @@ angular.module('contentful')
 }])
 
 .factory('webhookSegmentation', function () {
-
   var ENTITY_TYPES = ['ContentType', 'Entry', 'Asset'];
   var ACTIONS = ['create', 'save', 'auto_save', 'archive', 'unarchive', 'publish', 'unpublish', 'delete'];
 
@@ -107,7 +105,7 @@ angular.module('contentful')
 
     return _.uniq(topics).sort();
 
-    function isSelected(entityType, action) {
+    function isSelected (entityType, action) {
       return selection[[entityType, action].join('.')];
     }
   }

@@ -96,10 +96,3 @@ src/javascripts/access_control/cf_rule_list.js
 src/javascripts/access_control/policy_builder.js
 src/javascripts/access_control/remove_outdated_rules.js
 src/javascripts/access_control/role_repository.js
-src/javascripts/webhooks/webhook_call_status_directive.js
-src/javascripts/webhooks/webhook_editor_directive.js
-src/javascripts/webhooks/webhook_headers_directive.js
-src/javascripts/webhooks/webhook_health_directive.js
-src/javascripts/webhooks/webhook_list_directive.js
-src/javascripts/webhooks/webhook_repository.js
-src/javascripts/webhooks/webhook_segmentation.js

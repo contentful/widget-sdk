@@ -1,7 +1,6 @@
 'use strict';
 
 angular.module('contentful').directive('cfWebhookCallStatus', [function () {
-
   var ERROR_NAMES = {
     TimeoutError: 'Timeout',
     ConnectionResetError: 'Connection reset',
