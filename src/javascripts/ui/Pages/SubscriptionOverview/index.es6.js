@@ -124,9 +124,13 @@ const SubscriptionOverview = createReactClass({
         space,
         action,
         onSubmit: async () => {
-          await this.fetchData();
+          try {
+            await this.fetchData();
+          } catch (e) {
+            return ReloadNotification.apiErrorHandler(e);
+          }
 
-          return this.spaceChanged();
+          return this.spaceChanged(space);
         }
       });
     };

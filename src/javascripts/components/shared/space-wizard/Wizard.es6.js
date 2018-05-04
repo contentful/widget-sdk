@@ -69,7 +69,14 @@ const Wizard = createReactClass({
       isBillable: PropTypes.bool
     }).isRequired,
     space: PropTypes.object,
-    action: PropTypes.string.isRequired,
+    action: function (props, propName) {
+      const validActions = [ 'create', 'change' ];
+      const action = props[propName];
+
+      if (validActions.indexOf(action) === -1) {
+        return new Error(`Action ${action} not valid for Wizard, expected one of ${validActions.join(', ')}`);
+      }
+    },
     onCancel: PropTypes.func.isRequired,
     onConfirm: PropTypes.func.isRequired,
     onSpaceCreated: PropTypes.func.isRequired,
@@ -79,6 +86,7 @@ const Wizard = createReactClass({
   },
   getInitialState () {
     const { action } = this.props;
+
     const steps = getSteps(action);
 
     return {
@@ -224,7 +232,7 @@ const Wizard = createReactClass({
       this.handleError(error);
     }
     if (newSpace) {
-      const spaceEndpoint = createSpaceEndpoint(apiUrl(), newSpace.sys.id, auth);
+      const spaceEndpoint = createSpaceEndpoint(newSpace.sys.id);
       const apiKeyRepo = createApiKeyRepo(spaceEndpoint);
 
       await TokenStore.refresh();
