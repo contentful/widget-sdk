@@ -69,14 +69,19 @@ const FetchSpacePlans = createReactClass({
   }
 });
 
-async function getSpacePlansForCreate ({ organization }) {
-  const endpoint = createOrganizationEndpoint(organization.sys.id);
-  const plansGetter = getSpaceRatePlans.bind(this, endpoint);
-
-  const { spaceRatePlans: rawSpaceRatePlans, freeSpacesResource } = await plansMeta({ getter: plansGetter, organization });
+async function getSpacePlans ({ getter, organization }) {
+  const { spaceRatePlans: rawSpaceRatePlans, freeSpacesResource } = await plansMeta({ getter: getter, organization });
 
   const spaceRatePlans = rawSpaceRatePlans.map(plan => {
-    const disabled = plan.isFree ? !canCreate(freeSpacesResource) : !organization.isBillable;
+    let disabled = false;
+
+    if (plan.unavailabilityReasons && plan.unavailabilityReasons.length > 0) {
+      disabled = true;
+    } else if (plan.isFree) {
+      disabled = !canCreate(freeSpacesResource);
+    } else if (!organization.isBillable) {
+      disabled = true;
+    }
 
     return { ...plan, disabled };
   });
@@ -87,22 +92,18 @@ async function getSpacePlansForCreate ({ organization }) {
   };
 }
 
+async function getSpacePlansForCreate ({ organization }) {
+  const endpoint = createOrganizationEndpoint(organization.sys.id);
+  const getter = getSpaceRatePlans.bind(this, endpoint);
+
+  return getSpacePlans({ getter, organization });
+}
+
 async function getSpacePlansForChange ({ organization, spaceId }) {
   const endpoint = createOrganizationEndpoint(organization.sys.id);
   const getter = getSpaceRatePlansForSpace.bind(this, endpoint, spaceId);
 
-  const { spaceRatePlans: rawSpaceRatePlans, freeSpacesResource } = await plansMeta({ getter, organization });
-
-  const spaceRatePlans = rawSpaceRatePlans.map(plan => {
-    const disabled = plan.unavailabilityReasons && plan.unavailabilityReasons.length > 0;
-
-    return { ...plan, disabled };
-  });
-
-  return {
-    spaceRatePlans,
-    freeSpacesResource
-  };
+  return getSpacePlans({ getter, organization });
 }
 
 async function plansMeta ({ getter, organization }) {

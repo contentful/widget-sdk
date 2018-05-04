@@ -94,7 +94,7 @@ const ConfirmScreen = createReactClass({
                     Make sure everything is in order before confirming the change.
                   </p>
                   <p className="create-space-wizard__info">
-                    You are about to upgrade the space <em>{space.name}</em> from a {currentSpaceRatePlan.name} to {newSpaceRatePlan.name} space type for <strong><Price unit='month' value={newSpaceRatePlan.price} /></strong>. This will increase your organization&apos;s subscription to <strong><Price unit='month' value={(totalPrice + newSpaceRatePlan.price)} /></strong>.
+                    You&apos;re about to change the space <em>{space.name}</em> from a {currentSpaceRatePlan.name} to {newSpaceRatePlan.name} space type. This will increase your organization&apos;s monthly subscription for your spaces by <strong><Price unit='month' value={newSpaceRatePlan.price} /></strong> to a new total of <strong><Price unit='month' value={(totalPrice + newSpaceRatePlan.price - currentSpaceRatePlan.price)} /></strong>.
                   </p>
                 </Fragment>
               }

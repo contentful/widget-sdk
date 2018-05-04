@@ -17,8 +17,6 @@ import {getTemplate} from 'services/SpaceTemplateLoader';
 import {getCreator as getTemplateCreator} from 'services/SpaceTemplateCreator';
 import { changeSpace } from 'account/pricing/PricingDataProvider';
 import spaceContext from 'spaceContext';
-import * as auth from 'Authentication';
-import {apiUrl} from 'Config';
 import createApiKeyRepo from 'data/CMA/ApiKeyRepo';
 
 const DEFAULT_LOCALE = 'en-US';
