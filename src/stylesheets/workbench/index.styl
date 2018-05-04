@@ -31,6 +31,7 @@ Styleguide 9.0
   flex-direction: column
   $stretch(0, 0, 0, 0)
   $layer('bottom')
+  overflow-x hidden
 
 .workbench-actions
   margin-top: auto
@@ -411,20 +412,17 @@ Styleguide 9.7
   will-change: width;
 
   &:not(.workbench-layer--0) {
-    animation: 200ms ease-in-out slide-in-from-right, 200ms ease-in-out fade-in;
     transition: width 200ms ease-in-out, transform 200ms ease-in-out;
 
-    &.ng-leave {
+    &.ng-enter-active {
+      pointer-events: none;
+      animation: 200ms ease-in-out slide-in-from-right, 200ms ease-in-out fade-in;
+    }
+
+    &.ng-leave-active {
+      pointer-events: none;
       animation: 200ms ease-in-out slide-out-to-right, 200ms ease-in-out fade-out;
     }
-  }
-
-  &.ng-enter {
-    pointer-events: none;
-  }
-
-  &.ng-enter-active {
-    pointer-events: all;
   }
 }
 
@@ -439,22 +437,23 @@ Styleguide 9.7
   cursor: pointer;
 }
 
-.workbench-layer:hover {
-  & ~ .workbench-layer:not(.ng-enter) {
-    transition-delay: 500ms;
-    transform: translate3d(25vw, 0, 0);
+// Disabled to temporarily disable peeking
+// .workbench-layer:hover {
+//   & ~ .workbench-layer:not(.ng-enter-active) {
+//     transition-delay: 1000ms;
+//     transform: translate3d(200px, 0, 0);
 
-    &.ng-leave {
-      transform: translate3d(calc(25vw + 100px), 0, 0);
-      opacity: 0;
-    }
-  }
+//     &.ng-leave {
+//       transform: translate3d(300px, 0, 0);
+//       opacity: 0;
+//     }
+//   }
 
-  .workbench-layer__overlay {
-    transition: 200ms ease-in-out opacity;
-    opacity: 0.1!important;
-  }
-}
+//   .workbench-layer__overlay {
+//     transition: 200ms ease-in-out opacity;
+//     opacity: 0.1!important;
+//   }
+// }
 
 .workbench-layer:not(.workbench-layer--is-current) .workbench-header .breadcrumbs-widget,
 .workbench-layer:not(.workbench-layer--is-current) .workbench-header__icon {
