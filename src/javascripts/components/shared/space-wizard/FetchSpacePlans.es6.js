@@ -1,7 +1,7 @@
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import {createOrganizationEndpoint} from 'data/EndpointFactory';
-import { getSpaceRatePlans, getSpaceRatePlansForSpace } from 'account/pricing/PricingDataProvider';
+import { getSpaceRatePlans } from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import {canCreate} from 'utils/ResourceUtils';
 import {get} from 'lodash';
@@ -12,7 +12,6 @@ const FetchSpacePlans = createReactClass({
   propTypes: {
     organization: PropTypes.object.isRequired,
     spaceId: PropTypes.string,
-    action: PropTypes.string.isRequired,
     onUpdate: PropTypes.func,
     // children is a rendering function
     children: PropTypes.func.isRequired
@@ -36,17 +35,9 @@ const FetchSpacePlans = createReactClass({
   render () {
     return this.props.children(this.state);
   },
-  async fetch ({ organization, spaceId, action }) {
-    let getter;
-
-    if (action === 'create') {
-      getter = getSpacePlansForCreate;
-    } else if (action === 'change') {
-      getter = getSpacePlansForChange;
-    }
-
+  async fetch ({ organization, spaceId }) {
     try {
-      const result = await getter({ organization, spaceId });
+      const result = await getSpacePlans({ organization, spaceId });
 
       this.setState({
         ...result,
@@ -69,8 +60,8 @@ const FetchSpacePlans = createReactClass({
   }
 });
 
-async function getSpacePlans ({ getter, organization }) {
-  const { spaceRatePlans: rawSpaceRatePlans, freeSpacesResource } = await plansMeta({ getter: getter, organization });
+async function getSpacePlans ({ organization, spaceId }) {
+  const { spaceRatePlans: rawSpaceRatePlans, freeSpacesResource } = await plansMeta({ organization, spaceId });
 
   const spaceRatePlans = rawSpaceRatePlans.map(plan => {
     let disabled = false;
@@ -92,25 +83,12 @@ async function getSpacePlans ({ getter, organization }) {
   };
 }
 
-async function getSpacePlansForCreate ({ organization }) {
-  const endpoint = createOrganizationEndpoint(organization.sys.id);
-  const getter = getSpaceRatePlans.bind(this, endpoint);
-
-  return getSpacePlans({ getter, organization });
-}
-
-async function getSpacePlansForChange ({ organization, spaceId }) {
-  const endpoint = createOrganizationEndpoint(organization.sys.id);
-  const getter = getSpaceRatePlansForSpace.bind(this, endpoint, spaceId);
-
-  return getSpacePlans({ getter, organization });
-}
-
-async function plansMeta ({ getter, organization }) {
+async function plansMeta ({ organization, spaceId }) {
   const resources = createResourceService(organization.sys.id, 'organization');
+  const endpoint = createOrganizationEndpoint(organization.sys.id);
 
   const [rawSpaceRatePlans, freeSpacesResource] = await Promise.all([
-    getter(),
+    getSpaceRatePlans(endpoint, spaceId),
     resources.get('free_space')
   ]);
 

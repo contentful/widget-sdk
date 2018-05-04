@@ -131,20 +131,20 @@ export function getSingleSpacePlan (endpoint, spaceId) {
  * @param {object} endpoint an organization endpoint
  * @returns {Promise<object[]>} product rate plans
  */
-export function getSpaceRatePlans (endpoint) {
+export function getSpaceRatePlans (endpoint, spaceId) {
+  const query = {
+    plan_type: 'space'
+  };
+
+  if (spaceId) {
+    query.space_id = spaceId;
+  }
+
   return endpoint({
     method: 'GET',
     path: ['product_rate_plans'],
-    query: {'plan_type': 'space'}
+    query: query
   }, alphaHeader).then((data) => data.items);
-}
-
-export function getSpaceRatePlansForSpace (endpoint, spaceId) {
-  return endpoint({
-    method: 'GET',
-    path: [ 'product_rate_plans' ],
-    query: { 'space_id': spaceId }
-  }, alphaHeader).then(data => data.items);
 }
 
 /**
