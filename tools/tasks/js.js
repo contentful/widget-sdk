@@ -2,9 +2,9 @@ const gulp = require('gulp');
 const webpack = require('webpack');
 const createWebpackConfig = require('../webpack.config');
 
-gulp.task('js:watch', ['js/vendor'], done => watch(done));
+gulp.task('js:watch', ['js/sharejs'], done => watch(done));
 
-gulp.task('js', ['js/vendor'], done => build(done));
+gulp.task('js', ['js/sharejs'], done => build(done));
 
 function watch (done, callbacks) {
   // we don't wait until JS is bundles to not to block

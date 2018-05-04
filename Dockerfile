@@ -31,11 +31,4 @@ COPY package.json package-lock.json ./
 COPY packages/client/package.json ./packages/client/
 RUN npm install --no-optional --unsafe-perm
 
-COPY vendor ./vendor
-RUN cd /app/vendor/ui-extensions-sdk && \
-      npm install --no-optional --production && \
-      make && \
-    cd /app/vendor/extensions/core-field-editors && \
-      npm install --no-optional --unsafe-perm
-
 CMD ["./node_modules/.bin/gulp", "all", "serve"]
