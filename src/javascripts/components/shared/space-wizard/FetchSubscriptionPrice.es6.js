@@ -15,6 +15,7 @@ const FetchSubscriptionPrice = createReactClass({
   getInitialState () {
     return {
       totalPrice: 0,
+      error: null,
       requestState: RequestState.PENDING
     };
   },
