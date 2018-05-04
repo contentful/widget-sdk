@@ -4,6 +4,7 @@
     ng-style="{width: 'calc(100% - (170 / ' + entities.length + ') * ' + $index + 'px)'}"
     ng-repeat="entity in entities track by $index"
     ng-class="{'workbench-layer--is-current': ($index + 1) === entities.length}"
+    data-test-id="slide-in-{{ $index === 0 ? 'base' : 'layer' }}"
   )
     cf-entry-editor(
       ng-if="entity.type === 'Entry'"
