@@ -1,12 +1,11 @@
 'use strict';
 
 describe('Webhook Call Status directive', function () {
-
   beforeEach(function () {
     module('contentful/test');
 
     this.compile = function (code, error) {
-      var data = {call: {errors: (error ? [error] : undefined), statusCode: code}};
+      const data = {call: {errors: (error ? [error] : undefined), statusCode: code}};
       this.element = this.$compile('<cf-webhook-call-status call="call" />', data);
     }.bind(this);
 

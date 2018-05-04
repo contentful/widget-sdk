@@ -33,10 +33,6 @@ test/unit/access_control/policy_builder_external_spec.js
 test/unit/access_control/policy_builder_internal_spec.js
 test/unit/access_control/remove_outdated_rules_spec.js
 test/unit/access_control/response_cache_spec.js
-test/unit/webhooks/webhook_call_status_directive_spec.js
-test/unit/webhooks/webhook_editor_directive_spec.js
-test/unit/webhooks/webhook_health_directive_spec.js
-test/unit/webhooks/webhook_repository_spec.js
 test/helpers/deep_diff.js
 test/integration/field_validation_dialog_spec.js
 src/javascripts/components/shared/validation_error_display/cf_error_list_directive.js
