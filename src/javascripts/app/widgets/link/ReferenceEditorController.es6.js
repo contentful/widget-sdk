@@ -9,6 +9,7 @@ import spaceContext from 'spaceContext';
 import { onFeatureFlag } from 'utils/LaunchDarkly';
 import { track } from 'analytics/Analytics';
 import { onEntryCreate as trackEntryCreate, onEntryEdit as trackEntryEdit } from 'analytics/events/ReferenceEditor';
+import { getSlideInEntities } from 'states/EntityNavigationHelpers';
 
 import $state from '$state';
 
@@ -46,9 +47,9 @@ export default function create ($scope, widgetApi) {
     $scope.single
   );
 
+  let slideInEditorEnabled = false;
   const canEditReferences = !!widgetApi._internal.editReferences;
-  const useBulkEditor = canEditReferences && widgetApi.settings.bulkEditing;
-  let useSlideInEditor = useBulkEditor;
+  const bulkEditorEnabled = canEditReferences && widgetApi.settings.bulkEditing;
   $scope.typePlural = { Entry: 'entries', Asset: 'assets' }[$scope.type];
   $scope.isAssetCard = is('Asset', 'card');
   $scope.referenceType = {};
@@ -94,8 +95,8 @@ export default function create ($scope, widgetApi) {
 
   onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, function (isEnabled) {
     $scope.isSlideinEntryEditorEnabled = isEnabled;
-    if (!useSlideInEditor && canEditReferences && isEnabled) {
-      useSlideInEditor = true;
+    if (!slideInEditorEnabled && canEditReferences && isEnabled) {
+      slideInEditorEnabled = true;
     }
   });
 
@@ -342,7 +343,7 @@ export default function create ($scope, widgetApi) {
     // - use bulk editor
     // - when inside the bulk editor itself.
     // - rendered inside an entry editor layer.
-    if ($scope.isSlideinEntryEditorEnabled && !useBulkEditor && refCtxt !== null && !$state.params.inlineEntryId && entityIsAvailable) {
+    if ($scope.isSlideinEntryEditorEnabled && !bulkEditorEnabled && refCtxt !== null && !$state.params.inlineEntryId && entityIsAvailable) {
       // This will render a placeholder stack div with a transition
       // and remove it when inline entry editor is rendered
       entityModel.actions.slideinEdit = function () {
@@ -354,7 +355,7 @@ export default function create ($scope, widgetApi) {
   }
 
   function prepareEditAction (entity, index, isDisabled) {
-    if (entity && !isDisabled && !isCurrentEntry(entity) && useBulkEditor) {
+    if (entity && !isDisabled && !isCurrentEntry(entity) && bulkEditorEnabled) {
       return function ($event) {
         if ($event && $event.preventDefault) {
           $event.preventDefault();
@@ -382,12 +383,22 @@ export default function create ($scope, widgetApi) {
   function editEntityAction (entity, index) {
     if ($scope.referenceType.inline) {
       return;
-    } else if (useBulkEditor) {
-      return widgetApi._internal.editReferences(index, state.refreshEntities);
-    } else if (useSlideInEditor) {
+    } else if (bulkEditorEnabled) {
+      bulkEditorAction(entity, index);
+    } else if (slideInEditorEnabled) {
       goToSlideInEntity(entity);
     } else {
-      return widgetApi.state.goToEditor(entity);
+      widgetApi.state.goToEditor(entity);
+    }
+  }
+
+  function bulkEditorAction (entity, index) {
+    if (getSlideInEntities().length > 1) {
+      // TODO: some kind of notifcation explaining why the bulk editor is
+      // not displayed here
+      goToSlideInEntity(entity);
+    } else {
+      widgetApi._internal.editReferences(index, state.refreshEntities);
     }
   }
 
