@@ -28,11 +28,6 @@ COPY package.json package-lock.json ./
 COPY packages/client/package.json ./packages/client/
 RUN npm install --no-optional --unsafe-perm
 
-# Install vendored git repos
-COPY vendor ./vendor
-RUN cd /app/vendor/extensions/core-field-editors && \
-      npm install --unsafe-perm
-
 # Copy source files and build app
 COPY ./ ./
 RUN NODE_ENV=production gulp build/with-styleguide

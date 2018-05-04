@@ -53,7 +53,7 @@ window.libs = [
   ['element-resize-detector', require('element-resize-detector')],
   ['sum-types', require('sum-types')],
   ['sum-types/caseof-eq', require('sum-types/caseof-eq')],
-  ['editors', require('../../../vendor/extensions/core-field-editors')],
+  ['editors', require('@contentful/field-editors')],
   ['kefir', require('kefir')],
   ['legacy-client', require('../../../packages/client')],
   ['sharejs', window.sharejs],

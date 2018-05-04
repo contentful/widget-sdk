@@ -1,5 +1,0 @@
-[submodule "vendor/extensions"]
-	path = vendor/extensions
-	url = git@github.com:contentful/extensions.git
-  branch = master
-  update = rebase

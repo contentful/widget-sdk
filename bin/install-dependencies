@@ -3,8 +3,3 @@
 set -ev
 
 npm install --no-optional
-git submodule update --init
-
-pushd vendor/extensions/core-field-editors
-  npm install --no-package-lock --no-optional
-popd

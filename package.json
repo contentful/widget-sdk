@@ -6,6 +6,7 @@
   "bin": {},
   "directories": {},
   "dependencies": {
+    "@contentful/field-editors": "^1.0.0",
     "@contentful/hostname-transformer": "^1.2.7",
     "@contentful/mimetype": "^1.0.1",
     "@contentful/sharejs": "^1.29.1",
