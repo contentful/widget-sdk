@@ -12,6 +12,8 @@ require('codemirror/mode/markdown/markdown');
 require('codemirror/mode/xml/xml');
 require('codemirror/addon/edit/continuelist');
 require('codemirror/addon/mode/overlay');
+// CodeMirror: mixed HTML mode for UI Extension editor
+require('codemirror/mode/htmlmixed/htmlmixed');
 
 // This needs to be called after everything else so we override any
 // previously imported versions of lodash
@@ -47,6 +49,7 @@ window.libs = [
   ['create-react-class', require('create-react-class')],
   ['classnames', require('classnames')],
   ['codemirror', require('codemirror')],
+  ['react-codemirror', require('react-codemirror')],
   ['marked', require('marked-ast')._marked],
   ['MarkedAst', require('marked-ast')],
   ['launch-darkly-client', require('ldclient-js')],

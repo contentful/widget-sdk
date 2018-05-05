@@ -6,6 +6,7 @@ describe('app/Extensions', function () {
     module('contentful/test');
 
     const Extensions = this.$inject('app/Extensions/Extensions').default;
+    this.$inject('$state').href = () => 'href';
 
     this.spaceContext = this.$inject('mocks/spaceContext').init();
     this.spaceContext.cma = {deleteExtension: sinon.stub()};

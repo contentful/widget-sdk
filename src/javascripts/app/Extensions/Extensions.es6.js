@@ -6,7 +6,7 @@ import spaceContext from 'spaceContext';
 import Sidebar from 'app/Extensions/Sidebar';
 import PageSettingsIcon from 'svg/page-settings';
 import EmptyStateIcon from 'svg/empty-extension';
-import {docsLink} from 'ui/Content';
+import {docsLink, stateLink} from 'ui/Content';
 import scaleSvg from 'utils/ScaleSvg';
 
 export default function controller ($scope) {
@@ -69,6 +69,10 @@ function list (extensions, deleteExtension) {
         `${Object.keys(extension.installationParameters.values).length} value(s)`
       ]),
       td({class: 'x--small-cell'}, [
+        stateLink(['Edit'], {
+          path: '.detail',
+          params: {extensionId: extension.id}
+        }),
         deleteButton(extension, deleteExtension)
       ])
     ]);
