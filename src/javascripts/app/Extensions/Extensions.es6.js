@@ -40,6 +40,7 @@ function render (extensions, refresh) {
 function actions () {
   return h('div', [
     h('button.btn-action.add-entity', {
+      dataTestId: 'extensions.add',
       cfContextMenuTrigger: true
     }, [
       h('span.btn-icon.cf-icon.cf-icon--plus.inverted', [AddEntityIcon]),
@@ -48,9 +49,19 @@ function actions () {
     h('.context-menu.x--arrow-right', {
       cfContextMenu: 'bottom-right'
     }, [
-      h('div', {role: 'menuitem', onClick: createExtension}, ['Create a new Extension']),
-      h('div', {role: 'menuitem', onClick: openSamplePicker}, ['Install a sample']),
-      h('div', {role: 'menuitem', onClick: openGitHubInstaller}, ['Install from Github'])
+      h('div', {
+        role: 'menuitem',
+        onClick: createExtension,
+        dataTestId: 'extensions.add.new'
+      }, ['Create a new Extension']),
+      h('div', {
+        role: 'menuitem',
+        onClick: openSamplePicker
+      }, ['Install a sample']),
+      h('div', {
+        role: 'menuitem',
+        onClick: openGitHubInstaller
+      }, ['Install from Github'])
     ])
   ]);
 }
