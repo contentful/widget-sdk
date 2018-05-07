@@ -28,6 +28,7 @@ const Installer = createReactClass({
   render () {
     const {url, parsed, valid, err} = this.state;
     const {cancel} = this.props;
+    const hasInput = (url || '').length > 0;
 
     return <div className="modal-dialog">
       <header className="modal-dialog__header">
@@ -44,13 +45,15 @@ const Installer = createReactClass({
           value={url || ''}
           onChange={e => this.parse(e.target.value)}
         />
-        {!err && !valid && <p className="cfnext-form__field-error">Please provide a valid GitHub URL</p>}
+        {!err && hasInput && !valid && <p className="cfnext-form__field-error">
+          Please provide a valid GitHub URL
+        </p>}
         {err && <p className="cfnext-form__field-error">{err.message}</p>}
       </div>
       <div className="modal-dialog__controls">
         <button
           className="btn-primary-action"
-          disabled={!valid}
+          disabled={!hasInput || !valid}
           onClick={() => this.install(parsed)}
         >
           Install

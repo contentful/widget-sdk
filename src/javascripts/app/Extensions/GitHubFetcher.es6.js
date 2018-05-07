@@ -11,6 +11,7 @@ const ERRORS = {
 const nonEmptyString = s => typeof s === 'string' && s.length > 0;
 
 export function isValidSource (parsed) {
+  parsed = parsed || {};
   const onlyNonEmptyStrings = GITHUB_URL_PROPS.every(prop => nonEmptyString(parsed[prop]));
   if (onlyNonEmptyStrings) {
     return parsed.host.endsWith('github.com') && parsed.filepath.endsWith('extension.json');
