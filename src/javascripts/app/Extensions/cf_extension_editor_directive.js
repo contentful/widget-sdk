@@ -35,11 +35,11 @@ angular.module('contentful')
       function save () {
         return spaceContext.cma.updateExtension(entity)
         .then(function (response) {
-          notification.info('The Extension was updated successfully.');
+          notification.info('Your Extension was updated successfully.');
           entity = response;
           return entity;
         }, function (err) {
-          notification.error('There was an error while saving the Extension.');
+          notification.error('There was an error while saving your Extension.');
           return Promise.reject(err);
         });
       }

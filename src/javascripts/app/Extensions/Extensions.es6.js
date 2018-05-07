@@ -7,33 +7,24 @@ import EmptyStateIcon from 'svg/empty-extension';
 import AddEntityIcon from 'svg/plus';
 import {docsLink, stateLink} from 'ui/Content';
 import * as Workbench from 'app/Workbench';
+import $state from '$state';
+
+const SDK_URL = 'https://unpkg.com/contentful-ui-extensions-sdk@3';
 
 export default function controller ($scope) {
-  renderWithScope();
+  $scope.component = h('span');
+  refresh();
 
-  spaceContext.widgets.refresh().then(() => {
-    $scope.context.ready = true;
-    renderWithScope();
-  });
-
-  function renderWithScope () {
-    $scope.extensions = spaceContext.widgets.getAll().filter(e => e.custom);
-    $scope.component = render($scope.extensions, deleteExtension);
-  }
-
-  function deleteExtension ({id}) {
-    spaceContext.cma.deleteExtension(id)
-    .then(function () {
-      notification.info('Extension successfully deleted');
-      spaceContext.widgets.refresh().then(renderWithScope);
-    })
-    .catch(function () {
-      notification.error('Error deleting extension');
+  function refresh () {
+    spaceContext.widgets.refresh().then(widgets => {
+      $scope.context.ready = true;
+      $scope.component = render(widgets.filter(e => e.custom), refresh);
+      $scope.$applyAsync();
     });
   }
 }
 
-function render (extensions, deleteExtension) {
+function render (extensions, refresh) {
   return Workbench.withSidebar({
     header: Workbench.header({
       title: [`Extensions (${extensions.length})`],
@@ -41,7 +32,7 @@ function render (extensions, deleteExtension) {
       actions: [actions()]
     }),
     sidebar: [sidebar()],
-    content: extensions.length > 0 ? list(extensions, deleteExtension) : empty()
+    content: extensions.length > 0 ? list(extensions, refresh) : empty()
   });
 }
 
@@ -56,14 +47,30 @@ function actions () {
     h('.context-menu.x--arrow-right', {
       cfContextMenu: 'bottom-right'
     }, [
-      h('div', {role: 'menuitem'}, ['Create a new Extension']),
+      h('div', {role: 'menuitem', onClick: createExtension}, ['Create a new Extension']),
       h('div', {role: 'menuitem'}, ['Install a sample']),
       h('div', {role: 'menuitem'}, ['Install from Github'])
     ])
   ]);
 }
 
-function list (extensions, deleteExtension) {
+function createExtension () {
+  return spaceContext.cma.createExtension({
+    extension: {
+      name: 'New extension',
+      fieldTypes: [{type: 'Symbol'}],
+      srcdoc: `<!DOCTYPE html>\n<script src="${SDK_URL}"></script>\n`
+    }
+  }).then(
+    res => $state.go('.detail', {extensionId: res.sys.id}),
+    err => {
+      notification.error('There was an error while creating your Extension.');
+      return Promise.reject(err);
+    }
+  );
+}
+
+function list (extensions, refresh) {
   const head = [
     th(['Name']),
     th(['Hosting']),
@@ -73,7 +80,7 @@ function list (extensions, deleteExtension) {
     th({class: 'x--small-cell'}, ['Actions'])
   ];
 
-  const body = extensions.map((extension) => {
+  const body = extensions.map(extension => {
     return tr([
       td([h('strong', {title: `ID: ${extension.id}`}, [extension.name])]),
       extension.src && td(['Self-hosted (', h('code', ['src']), ')']),
@@ -90,7 +97,7 @@ function list (extensions, deleteExtension) {
           path: '.detail',
           params: {extensionId: extension.id}
         }),
-        deleteButton(extension, deleteExtension)
+        deleteButton(extension, refresh)
       ])
     ]);
   });
@@ -100,7 +107,7 @@ function list (extensions, deleteExtension) {
   ]);
 }
 
-function deleteButton (extension, deleteExtension) {
+function deleteButton (extension, refresh) {
   return h('div', [
     h('button.text-link--destructive', {
       dataTestId: `extensions.delete.${extension.id}`,
@@ -114,15 +121,27 @@ function deleteButton (extension, deleteExtension) {
       h('p', [
         'You are about to remove the extension ',
         h('strong', [extension.name]),
-        '. If it is in use in any content types the default will be used instead.'
+        '. You may break editing interface if it is in use in any content type.'
       ]),
       h('button.btn-caution', {
         dataTestId: `extensions.deleteConfirm.${extension.id}`,
-        onClick: () => deleteExtension(extension)
+        onClick: () => deleteExtension(extension, refresh)
       }, ['Delete']),
       h('button.btn-secondary-action', ['Cancel'])
     ])
   ]);
+}
+
+function deleteExtension ({id}, refresh) {
+  return spaceContext.cma.deleteExtension(id)
+  .then(refresh)
+  .then(
+    () => notification.info('Your Extension was successfully deleted.'),
+    err => {
+      notification.error('There was an error while deleting your Extension.');
+      return Promise.reject(err);
+    }
+  );
 }
 
 function empty () {

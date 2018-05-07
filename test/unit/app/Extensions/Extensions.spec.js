@@ -10,7 +10,7 @@ describe('app/Extensions', function () {
 
     this.spaceContext = this.$inject('mocks/spaceContext').init();
     this.spaceContext.cma = {deleteExtension: sinon.stub()};
-    this.spaceContext.widgets = {getAll: sinon.stub(), refresh: sinon.stub().resolves([])};
+    this.spaceContext.widgets = {refresh: sinon.stub().resolves([])};
 
     this.notification = this.$inject('notification');
     this.notification.info = sinon.stub();
@@ -38,7 +38,7 @@ describe('app/Extensions', function () {
   describe('custom extensions exist', function () {
     beforeEach(function () {
       const params = {parameters: [], installationParameters: {definitions: [], values: {}}};
-      this.spaceContext.widgets.getAll.returns([
+      this.spaceContext.widgets.refresh.resolves([
         {id: 'builtin', name: 'Builtin', fieldTypes: ['Boolean']},
         {custom: true, id: 'test', name: 'Widget 1', fieldTypes: ['Number'], ...params},
         {custom: true, id: 'test2', name: 'Widget 2', fieldTypes: ['Symbol', 'Text'], ...params}
@@ -63,7 +63,7 @@ describe('app/Extensions', function () {
         });
 
         it('shows notification', function () {
-          sinon.assert.calledWith(this.notification.info, 'Extension successfully deleted');
+          sinon.assert.calledWith(this.notification.info, 'Your Extension was successfully deleted.');
         });
 
         it('refreshes widget list', function () {
@@ -77,7 +77,7 @@ describe('app/Extensions', function () {
           this.spaceContext.cma.deleteExtension.rejects({});
           this.init();
           this.delete('test2');
-          sinon.assert.calledWith(this.notification.error, 'Error deleting extension');
+          sinon.assert.calledWith(this.notification.error, 'There was an error while deleting your Extension.');
         });
       });
     });
@@ -85,7 +85,7 @@ describe('app/Extensions', function () {
 
   describe('no custom widgets', function () {
     it('shows empty message', function () {
-      this.spaceContext.widgets.getAll.returns([]);
+      this.spaceContext.widgets.refresh.resolves([]);
       this.init();
       this.container.find('extensions.empty').assertIsVisible();
     });
