@@ -51,12 +51,14 @@ const ExtensionEditor = createReactClass({
     const {save} = this.props;
     const setState = updater => this.setState(updater, () => this.afterStateUpdate());
 
-    const content = <ExtensionForm
-      entity={entity}
-      selfHosted={selfHosted}
-      updateEntity={entity => setState(state => ({...state, entity}))}
-      setSelfHosted={selfHosted => setState(state => ({...state, selfHosted}))}
-    />;
+    const content = <div style={{padding: '0 2em'}}>
+      <ExtensionForm
+        entity={entity}
+        selfHosted={selfHosted}
+        updateEntity={entity => setState(state => ({...state, entity}))}
+        setSelfHosted={selfHosted => setState(state => ({...state, selfHosted}))}
+      />
+    </div>;
 
     const actions = <React.Fragment>
       <button className="btn-secondary-action" onClick={() => $state.go('.^')}>

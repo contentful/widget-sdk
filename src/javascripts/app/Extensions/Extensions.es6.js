@@ -1,13 +1,12 @@
 import {h} from 'ui/Framework';
 import {table, tr, td, th} from 'ui/Content/Table';
-import {container} from 'ui/Layout';
 import notification from 'notification';
 import spaceContext from 'spaceContext';
-import Sidebar from 'app/Extensions/Sidebar';
 import PageSettingsIcon from 'svg/page-settings';
 import EmptyStateIcon from 'svg/empty-extension';
+import AddEntityIcon from 'svg/plus';
 import {docsLink, stateLink} from 'ui/Content';
-import scaleSvg from 'utils/ScaleSvg';
+import * as Workbench from 'app/Workbench';
 
 export default function controller ($scope) {
   renderWithScope();
@@ -35,14 +34,32 @@ export default function controller ($scope) {
 }
 
 function render (extensions, deleteExtension) {
-  return h('.workbench', [
-    h('header.workbench-header', [
-      h('.workbench-header__icon.cf-icon', [
-        scaleSvg(PageSettingsIcon, 0.75)
-      ]),
-      h('h1.workbench-header__title', [`Extensions (${extensions.length})`])
+  return Workbench.withSidebar({
+    header: Workbench.header({
+      title: [`Extensions (${extensions.length})`],
+      icon: PageSettingsIcon,
+      actions: [actions()]
+    }),
+    sidebar: [sidebar()],
+    content: extensions.length > 0 ? list(extensions, deleteExtension) : empty()
+  });
+}
+
+function actions () {
+  return h('div', [
+    h('button.btn-action.add-entity', {
+      cfContextMenuTrigger: true
+    }, [
+      h('span.btn-icon.cf-icon.cf-icon--plus.inverted', [AddEntityIcon]),
+      'Create or install Extension'
     ]),
-    extensions.length ? list(extensions, deleteExtension) : empty()
+    h('.context-menu.x--arrow-right', {
+      cfContextMenu: 'bottom-right'
+    }, [
+      h('div', {role: 'menuitem'}, ['Create a new Extension']),
+      h('div', {role: 'menuitem'}, ['Install a sample']),
+      h('div', {role: 'menuitem'}, ['Install from Github'])
+    ])
   ]);
 }
 
@@ -78,13 +95,8 @@ function list (extensions, deleteExtension) {
     ]);
   });
 
-  return h('.workbench-main', {dataTestId: 'extensions.list'}, [
-    h('.workbench-main__content', [
-      container({padding: '0 1em'}, [
-        table(head, body)
-      ])
-    ]),
-    Sidebar()
+  return h('div', {dataTestId: 'extensions.list', style: {padding: '0 1em'}}, [
+    table(head, body)
   ]);
 }
 
@@ -97,7 +109,6 @@ function deleteButton (extension, deleteExtension) {
       'Delete'
     ]),
     h('.delete-confirm.context-menu.x--arrow-right', {
-      style: {display: 'none'},
       cfContextMenu: 'bottom-right'
     }, [
       h('p', [
@@ -115,21 +126,42 @@ function deleteButton (extension, deleteExtension) {
 }
 
 function empty () {
-  return h('.workbench-main', {dataTestId: 'extensions.empty'}, [
-    h('.empty-state', {}, [
-      h('div', {style: {transform: 'scale(0.75)'}}, [
-        EmptyStateIcon
-      ]),
-      h('.empty-state__title', [
-        'There are no extensions installed in this space'
-      ]),
-      h('.empty-state__description', [
+  return h('.empty-state', {dataTestId: 'extensions.empty'}, [
+    h('div', {style: {transform: 'scale(0.75)'}}, [
+      EmptyStateIcon
+    ]),
+    h('.empty-state__title', [
+      'There are no extensions installed in this space'
+    ]),
+    h('.empty-state__description', [
+      `The UI extensions SDK allows you to build customized editing
+      experiences for the Contentful web application. Learn how to `,
+      docsLink('Get started with extensions', 'uiExtensionsGuide'),
+      '  or head to the ',
+      docsLink('UI extensions API reference', 'uiExtensions'),
+      '.'
+    ])
+  ]);
+}
+
+function sidebar () {
+  return h('div', [
+    h('h2.entity-sidebar__heading', {style: {marginTop: 0}}, ['Documentation']),
+    h('.entity-sidebar__text-profile', [
+      h('p', [
         `The UI extensions SDK allows you to build customized editing
-        experiences for the Contentful web application. Learn how to `,
-        docsLink('Get started with extensions', 'uiExtensionsGuide'),
-        '  or head to the ',
-        docsLink('UI extensions API reference', 'uiExtensions'),
-        '.'
+        experiences for the Contentful web application.`
+      ]),
+      h('p', [
+        'Learn more about UI extensions: '
+      ]),
+      h('ul', [
+        h('li', [
+          docsLink('Get started with extensions', 'uiExtensionsGuide')
+        ]),
+        h('li', [
+          docsLink('UI extensions API reference', 'uiExtensions')
+        ])
       ])
     ])
   ]);

@@ -25,7 +25,9 @@ const Workbench = createReactClass({
         h('header', {
           className: 'workbench-header'
         },
-          icon && h('div', {className: 'workbench-header__icon'}, h(Icon, {name: icon, scale: '0.75'})),
+          icon && h('div', {
+            className: 'workbench-header__icon cf-icon'
+          }, h(Icon, {name: icon, scale: '0.75'})),
           h('h1', {
             className: 'workbench-header__title'
           }, title),
