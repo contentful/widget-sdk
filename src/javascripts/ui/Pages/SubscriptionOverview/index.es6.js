@@ -12,7 +12,6 @@ import { showDialog as showCreateSpaceModal } from 'services/CreateSpace';
 import { openDeleteSpaceDialog } from 'services/DeleteSpace';
 import { getSpaces, getOrganization } from 'services/TokenStore';
 import { isOwnerOrAdmin, isOwner } from 'services/OrganizationRoles';
-import { runTask } from 'utils/Concurrent';
 import { calcUsersMeta, calculateTotalPrice } from 'utils/SubscriptionUtils';
 
 import Workbench from 'ui/Components/Workbench/JSX';
@@ -40,7 +39,7 @@ const SubscriptionOverview = createReactClass({
   },
 
   componentWillMount: function () {
-    runTask(this.fetchData);
+    this.fetchData();
   },
 
   fetchData: async function () {
@@ -106,7 +105,7 @@ const SubscriptionOverview = createReactClass({
     return () => {
       openDeleteSpaceDialog({
         space,
-        onSuccess: () => { runTask(this.fetchData); }
+        onSuccess: this.fetchData
       });
     };
   },

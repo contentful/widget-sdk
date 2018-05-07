@@ -45,7 +45,7 @@ describe('Extension SDK', function () {
         field,
         srcdoc:
           '<!doctype html>' +
-          '<script src="/base/vendor/ui-extensions-sdk/dist/cf-extension-api.js"></script>'
+          '<script src="/base/node_modules/contentful-ui-extensions-sdk/dist/cf-extension-api.js"></script>'
       },
       entityInfo: {
         contentType: {

@@ -18,6 +18,8 @@ angular.module('contentful')
     $scope.context.ready = true;
   });
 
+  $scope.maxPreviewEnvironments = contentPreview.MAX_PREVIEW_ENVIRONMENTS;
+
   function mapList (environments) {
     return _.values(environments).map(function (env) {
       return {

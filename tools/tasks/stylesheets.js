@@ -7,7 +7,7 @@ const CSS_COMMENT_RE = /\/\*[^*]*\*+([^/*][^*]*\*+)*\//g;
 
 const VENDOR_STYLESHEETS_SRC = assertFilesExist([
   './node_modules/react-tippy/dist/tippy.css',
-  './vendor/ui-extensions-sdk/dist/cf-extension.css',
+  './node_modules/contentful-ui-extensions-sdk/dist/cf-extension.css',
   './vendor/font-awesome/font-awesome.css',
   // Not sure if we need this
   './vendor/html5reset-1.6.1.css',

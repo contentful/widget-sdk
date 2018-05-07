@@ -8,24 +8,22 @@ const { supportedBrowsers } = require('../app-babel-options');
 // all these files will be processed and concatenated into 1
 // /public/app/sharejs.js
 const SHAREJS_VENDOR_SRC = assertFilesExist([
-  'vendor/sharejs/lib/client/web-prelude.js',
-  'vendor/sharejs/lib/client/microevent.js',
-  'vendor/sharejs/lib/types/helpers.js',
-  'vendor/sharejs/lib/types/text.js',
-  'vendor/sharejs/lib/types/text-api.js',
-  'vendor/sharejs/lib/client/doc.js',
-  'vendor/sharejs/lib/client/connection.js',
-  'vendor/sharejs/lib/client/index.js',
-  'vendor/sharejs/lib/client/textarea.js',
+  'node_modules/@contentful/sharejs/lib/client/web-prelude.js',
+  'node_modules/@contentful/sharejs/lib/client/microevent.js',
+  'node_modules/@contentful/sharejs/lib/types/helpers.js',
+  'node_modules/@contentful/sharejs/lib/types/text.js',
+  'node_modules/@contentful/sharejs/lib/types/text-api.js',
+  'node_modules/@contentful/sharejs/lib/client/doc.js',
+  'node_modules/@contentful/sharejs/lib/client/connection.js',
+  'node_modules/@contentful/sharejs/lib/client/index.js',
+  'node_modules/@contentful/sharejs/lib/client/textarea.js',
 
-  'vendor/sharejs/lib/types/web-prelude.js',
-  'vendor/sharejs/lib/types/json.js',
-  'vendor/sharejs/lib/types/json-api.js'
+  'node_modules/@contentful/sharejs/lib/types/web-prelude.js',
+  'node_modules/@contentful/sharejs/lib/types/json.js',
+  'node_modules/@contentful/sharejs/lib/types/json-api.js'
 ]);
 
-gulp.task('js/vendor', ['js/vendor/sharejs']);
-
-gulp.task('js/vendor/sharejs', function () {
+gulp.task('js/sharejs', function () {
   return S.pipe([
     gulp.src(SHAREJS_VENDOR_SRC),
     babel({

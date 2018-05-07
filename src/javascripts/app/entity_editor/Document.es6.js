@@ -11,7 +11,6 @@
  */
 
 import { get, memoize, cloneDeep } from 'lodash';
-import $q from '$q';
 import * as K from 'utils/kefir';
 import { deepFreeze } from 'utils/Freeze';
 import * as PathUtils from 'utils/Path';
@@ -24,13 +23,13 @@ import * as TheLocaleStore from 'TheLocaleStore';
 import { Error as DocError } from 'data/document/Error';
 import * as Normalizer from 'data/document/Normalize';
 import * as ResourceStateManager from 'data/document/ResourceStateManager';
+import * as DocSetters from 'data/document/Setters';
 import * as Status from 'data/Document/Status';
 import { DocLoad } from 'data/sharejs/Connection';
 import * as ShareJS from 'data/ShareJS/Utils';
 
 import * as Reverter from 'entityEditor/Document/Reverter';
 import * as PresenceHub from 'entityEditor/Document/PresenceHub';
-import * as StringField from 'entityEditor/Document/StringField';
 
 
 // TODO Instead of passing an entity instance provided by the client
@@ -67,16 +66,20 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
   const errorBus = K.createBus();
   cleanupTasks.push(errorBus.end);
 
-  function makeDocErrorHandler (path) {
-    return function (error) {
-      if (error === 'forbidden') {
-        docConnection.refreshAuth()
-          .catch(() => {
-            errorBus.emit(DocError.SetValueForbidden(path));
-          });
-      }
-    };
-  }
+
+  const docSetters = DocSetters.create({
+    getDoc: () => currentDoc,
+    getValueAt,
+    contentType
+  });
+  docSetters.error$.onValue(({error, path}) => {
+    if (error === 'forbidden') {
+      docConnection.refreshAuth()
+        .catch(function () { errorBus.emit(DocError.SetValueForbidden(path)); });
+    }
+  });
+  cleanupTasks.push(docSetters.destroy);
+
 
   /**
    * @ngdoc property
@@ -129,7 +132,7 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
       const locales = TheLocaleStore.getPrivateLocales();
       Normalizer.normalize({
         getValueAt: getValueAt,
-        setValueAt: setValueAt
+        setValueAt: docSetters.setValueAt
       }, currentDoc.snapshot, contentType, locales);
     }
   });
@@ -427,14 +430,14 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
 
     status$,
 
-    getValueAt,
-    setValueAt,
-    removeValueAt,
-    insertValueAt,
-    pushValueAt,
+    getValueAt: getValueAt,
+    setValueAt: docSetters.setValueAt,
+    removeValueAt: docSetters.removeValueAt,
+    insertValueAt: docSetters.insertValueAt,
+    pushValueAt: docSetters.pushValueAt,
 
     changes,
-    localFieldChanges$: localFieldChangesBus.stream,
+    localFieldChanges$: docSetters.localFieldChange$,
 
     valuePropertyAt: memoizedValuePropertyAt,
     sysProperty,
@@ -519,50 +522,6 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
     }
   }
 
-  function setValueAt (path, value) {
-    return withRawDoc((doc) => {
-      maybeEmitLocalChange(path);
-      if (path.length === 3 && StringField.is(path[1], contentType)) {
-        return StringField.setAt(doc, path, value);
-      } else {
-        return ShareJS.setDeep(doc, path, value);
-      }
-    }, makeDocErrorHandler(path));
-  }
-
-  function removeValueAt (path) {
-    return withRawDoc((doc) => {
-      maybeEmitLocalChange(path);
-      return ShareJS.remove(doc, path);
-    }, makeDocErrorHandler(path));
-  }
-
-  function insertValueAt (path, i, x) {
-    return withRawDoc((doc) => {
-      if (getValueAt(path)) {
-        maybeEmitLocalChange(path);
-        return $q.denodeify((cb) => {
-          doc.insertAt(path, i, x, cb);
-        }).catch((err) => {
-          makeDocErrorHandler(path)(err);
-          return $q.reject(err);
-        });
-      } else if (i === 0) {
-        maybeEmitLocalChange(path);
-        return setValueAt(path, [x]);
-      } else {
-        return $q.reject(new Error(`Cannot insert index ${i} into empty container`));
-      }
-    });
-  }
-
-  function pushValueAt (path, value) {
-    const current = getValueAt(path);
-    const pos = current ? current.length : 0;
-    maybeEmitLocalChange(path);
-    return insertValueAt(path, pos, value);
-  }
-
   function setDoc (doc) {
     forgetCurrentDoc();
 
@@ -590,35 +549,13 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
     docEventsBus.emit({ doc, name: 'open' });
   }
 
-  function withRawDoc (cb, errorListener) {
-    let result;
-    if (currentDoc) {
-      result = cb(currentDoc);
-    } else {
-      result = $q.reject(new Error('ShareJS document is not connected'));
-    }
-    return result.catch((error) => {
-      if (errorListener) {
-        errorListener(error);
-      }
-      return $q.reject(error);
-    });
-  }
-
-
   // Passed to document reverter
   function setFields (fields) {
-    return setValueAt(['fields'], fields)
+    return docSetters.setValueAt(['fields'], fields)
     .then(getVersion);
   }
 
   function getVersion () {
     return K.getValue(sysProperty).version;
-  }
-
-  function maybeEmitLocalChange (path) {
-    if (path.length >= 3 && path[0] === 'fields') {
-      localFieldChangesBus.emit([path[1], path[2]]);
-    }
   }
 }
