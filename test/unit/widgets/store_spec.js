@@ -1,5 +1,3 @@
-import createMockEndpoint from 'helpers/mocks/SpaceEndpoint';
-
 describe('widgets/store', function () {
   beforeEach(function () {
     module('contentful/test');
@@ -9,15 +7,14 @@ describe('widgets/store', function () {
 
   describe('#refresh()', function () {
     it('returns an object including the builtin widgets', function* () {
-      const endpoint = createMockEndpoint();
-      const store = this.createStore(endpoint.request);
+      const cma = {getExtensions: sinon.stub().resolves({items: []})};
+      const store = this.createStore(cma);
       const widgets = yield store.refresh();
       expect(widgets.map(w => w.id)).toEqual(this.builtins.map(b => b.id));
     });
 
     it('includes processed extensions from API', function* () {
-      const endpoint = createMockEndpoint();
-      endpoint.stores.extensions.custom = {
+      const entity = {
         sys: {id: 'CUSTOM'},
         extension: {
           name: 'NAME',
@@ -31,7 +28,8 @@ describe('widgets/store', function () {
         },
         parameters: {test: true}
       };
-      const store = this.createStore(endpoint.request);
+      const cma = {getExtensions: sinon.stub().resolves({items: [entity]})};
+      const store = this.createStore(cma);
 
       const widgets = yield store.refresh();
       const extension = _.find(widgets, {id: 'CUSTOM'});
@@ -49,8 +47,8 @@ describe('widgets/store', function () {
     });
 
     it('returns only builtins if API call fails', function* () {
-      const endpoint = sinon.stub().rejects();
-      const store = this.createStore(endpoint);
+      const cma = {getExtensions: sinon.stub().rejects()};
+      const store = this.createStore(cma);
       const widgets = yield store.refresh();
       expect(widgets.map(w => w.id)).toEqual(this.builtins.map(b => b.id));
     });
@@ -58,8 +56,7 @@ describe('widgets/store', function () {
     // This test describes behaviour that may not be desirable.
     // It was implemented like this back in 2016 and some people may rely on it.
     it('overrides builtins with extensions if IDs clash', function* () {
-      const endpoint = createMockEndpoint();
-      endpoint.stores.extensions.customDatePicker = {
+      const customDatePicker = {
         sys: {id: 'datePicker'},
         extension: {
           name: 'my date picker',
@@ -67,7 +64,8 @@ describe('widgets/store', function () {
           fieldTypes: [{type: 'Date'}]
         }
       };
-      const store = this.createStore(endpoint.request);
+      const cma = {getExtensions: sinon.stub().resolves({items: [customDatePicker]})};
+      const store = this.createStore(cma);
 
       const widgets = yield store.refresh();
       const datePickerWidgets = widgets.filter(w => w.id === 'datePicker');
@@ -83,8 +81,8 @@ describe('widgets/store', function () {
     });
 
     it('returns cached version after refresh', function* () {
-      const endpoint = createMockEndpoint();
-      const store = this.createStore(endpoint.request);
+      const cma = {getExtensions: sinon.stub().resolves({items: []})};
+      const store = this.createStore(cma);
       const widgets = yield store.refresh();
       expect(store.getAll()).toBe(widgets);
 

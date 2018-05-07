@@ -6,21 +6,26 @@ angular.module('contentful')
   var builtin = require('widgets/builtin');
   var fieldFactory = require('fieldFactory');
 
-  return function create (spaceEndpoint) {
+  return function create (cma) {
     var cache = [];
 
     return {
-      refresh: function () {
-        return getExtensions(spaceEndpoint)
-        .then(function (extensions) {
-          cache = prepareList(extensions);
-          return cache;
-        });
-      },
-      getAll: function () {
-        return cache;
-      }
+      refresh: refresh,
+      getAll: function () { return cache; }
     };
+
+    function refresh () {
+      return cma.getExtensions()
+      .then(function (res) {
+        return res.items.map(buildExtensionWidget);
+      }, function () {
+        return [];
+      })
+      .then(function (extensions) {
+        cache = prepareList(extensions);
+        return cache;
+      });
+    }
   };
 
   function prepareList (extensions) {
@@ -34,17 +39,6 @@ angular.module('contentful')
     });
 
     return [].concat(filteredBuiltins).concat(extensions);
-  }
-
-  function getExtensions (spaceEndpoint) {
-    return spaceEndpoint({
-      method: 'GET',
-      path: ['extensions']
-    }).then(function (res) {
-      return res.items.map(buildExtensionWidget);
-    }, function () {
-      return [];
-    });
   }
 
   function buildExtensionWidget (data) {

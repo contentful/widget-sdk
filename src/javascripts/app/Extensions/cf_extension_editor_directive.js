@@ -16,7 +16,6 @@ angular.module('contentful')
     link: function (scope, el) {
       var entity = scope.extension;
       scope.context.requestLeaveConfirmation = leaveConfirmator(save);
-      scope.context.ready = true;
 
       ReactDOM.render(
         React.createElement(ExtensionEditor, {
@@ -34,12 +33,8 @@ angular.module('contentful')
       }
 
       function save () {
-        return spaceContext.endpoint({
-          method: 'PUT',
-          path: ['extensions', entity.sys.id],
-          data: entity,
-          version: entity.sys.version
-        }).then(function (response) {
+        return spaceContext.cma.updateExtension(entity)
+        .then(function (response) {
           notification.info('The Extension was updated successfully.');
           entity = response;
           return entity;

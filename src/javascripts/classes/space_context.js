@@ -105,7 +105,7 @@ angular.module('contentful')
       self.space = space;
       self.cma = new ApiClient(self.endpoint);
       self.users = createUserCache(self.endpoint);
-      self.widgets = createWidgetStore(self.endpoint);
+      self.widgets = createWidgetStore(self.cma);
       self.apiKeyRepo = createApiKeyRepo(self.endpoint);
       self.editingInterfaces = createEIRepo(self.endpoint);
       self.localeRepo = createLocaleRepo(self.endpoint);
