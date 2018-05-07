@@ -389,8 +389,6 @@ export default function create ($scope, widgetApi) {
 
   function bulkEditorAction (entity, index) {
     if (getSlideInEntities().length > 1) {
-      // TODO: some kind of notifcation explaining why the bulk editor is
-      // not displayed here
       trackOpenSlideIn();
       goToSlideInEntity(entity);
     } else {
