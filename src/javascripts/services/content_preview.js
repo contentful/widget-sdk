@@ -79,7 +79,8 @@ angular.module('contentful')
     urlFormatIsValid: urlFormatIsValid,
     getSelected: getSelected,
     setSelected: setSelected,
-    contentPreviewsBus$: contentPreviewsBus$
+    contentPreviewsBus$: contentPreviewsBus$,
+    MAX_PREVIEW_ENVIRONMENTS: MAX_PREVIEW_ENVIRONMENTS
   };
 
   /**
