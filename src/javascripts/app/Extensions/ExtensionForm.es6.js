@@ -8,6 +8,8 @@ import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils';
 
 import {FIELD_TYPES} from './FieldTypes';
 
+const EXTENSION_URL_RE = /(^https:\/\/)|(^http:\/\/localhost(:[0-9]+)?(\/|$))/;
+
 const Label = ({text, info}) => {
   return <label>
     <span style={{fontWeight: 'bold'}}>{text}</span>
@@ -65,8 +67,15 @@ const ExtensionForm = ({entity, selfHosted, updateEntity, setSelfHosted}) => {
         className="cfnext-form__input--full-size"
         type="text"
         value={entity.extension.name || ''}
-        onChange={e => updateExtensionProp('name', e.target.value)}
+        maxLength="255"
+        onChange={e => {
+          const value = e.target.value || '';
+          updateExtensionProp('name', value.length > 0 ? value : undefined);
+        }}
       />
+      {(entity.extension.name || '').length < 1 && <p className="cfnext-form__field-error">
+        This value is required.
+      </p>}
     </div>
 
     <div className="cfnext-form__field">
@@ -87,6 +96,9 @@ const ExtensionForm = ({entity, selfHosted, updateEntity, setSelfHosted}) => {
           </label>;
         })}
       </div>
+      {entity.extension.fieldTypes.length < 1 && <p className="cfnext-form__field-error">
+        At least one field type has to be selected.
+      </p>}
     </div>
 
     <div className="cfnext-form__field">
@@ -110,6 +122,9 @@ const ExtensionForm = ({entity, selfHosted, updateEntity, setSelfHosted}) => {
         value={entity.extension.src || ''}
         onChange={e => updateExtensionProp('src', e.target.value)}
       />
+      {!EXTENSION_URL_RE.test(entity.extension.src || '') && <p className="cfnext-form__field-error">
+        Please provide a valid URL. <code>http:{'//'}</code> can be used only with <code>localhost</code>.
+      </p>}
     </div>}
 
     {!selfHosted && <div className="cfnext-form__field">

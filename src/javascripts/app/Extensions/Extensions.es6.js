@@ -104,8 +104,12 @@ function list (extensions, refresh) {
   const body = extensions.map(extension => {
     return tr([
       td([h('strong', {title: `ID: ${extension.id}`}, [extension.name])]),
-      extension.src && td(['Self-hosted (', h('code', ['src']), ')']),
-      extension.srcdoc && td(['Hosted by Contentful (', h('code', ['srcdoc']), ')']),
+      typeof extension.src === 'string' && td([
+        'Self-hosted (', h('code', ['src']), ')'
+      ]),
+      typeof extension.srcdoc === 'string' && td([
+        'Hosted by Contentful (', h('code', ['srcdoc']), ')'
+      ]),
       td([extension.fieldTypes.join(', ')]),
       td([`${extension.parameters.length} definition(s)`]),
       td([

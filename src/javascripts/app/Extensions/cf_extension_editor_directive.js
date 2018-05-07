@@ -39,7 +39,10 @@ angular.module('contentful')
           entity = response;
           return entity;
         }, function (err) {
-          notification.error('There was an error while saving your Extension.');
+          notification.error([
+            'There was an error while saving your Extension.',
+            'See validation errors for more details.'
+          ].join(' '));
           return Promise.reject(err);
         });
       }
