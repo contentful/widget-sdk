@@ -13,6 +13,7 @@ import {
 } from './transformers/ApiKey';
 import AppOpen from './transformers/AppOpen';
 import BulkEditor from './transformers/BulkEditor';
+import SlideInEditor from './transformers/SlideInEditor';
 import Snapshot from './transformers/Snapshot';
 import InviteUserExperiment from './transformers/InviteUserExperiment';
 import SearchAndViews from './transformers/SearchAndViews';
@@ -54,6 +55,12 @@ registerBulkEditorEvent('bulk_editor:close');
 registerBulkEditorEvent('bulk_editor:open');
 registerBulkEditorEvent('bulk_editor:open_slide_in');
 registerBulkEditorEvent('bulk_editor:status');
+
+registerSlideInEditorEvent('slide_in_editor:peek_click');
+registerSlideInEditorEvent('slide_in_editor:arrow_back');
+registerSlideInEditorEvent('slide_in_editor:open');
+registerSlideInEditorEvent('slide_in_editor:open_create');
+registerSlideInEditorEvent('slide_in_editor:delete');
 
 registerSnapshotEvent('versioning:no_snapshots');
 registerSnapshotEvent('versioning:snapshot_opened');
@@ -130,6 +137,10 @@ function registerActionEvent (event, transformer) {
 
 function registerBulkEditorEvent (event) {
   registerEvent(event, 'feature_bulk_editor', BulkEditor);
+}
+
+function registerSlideInEditorEvent (event) {
+  registerEvent(event, 'slide_in_editor', SlideInEditor);
 }
 
 function registerSnapshotEvent (event) {
