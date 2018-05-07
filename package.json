@@ -57,6 +57,7 @@
     "moment": "^2.19.3",
     "nib": "^1.0.3",
     "node-html-encoder": "0.0.2",
+    "parse-github-url": "^1.0.2",
     "pegjs": "^0.10.0",
     "pikaday": "^1.7.0",
     "pluralize": "^7.0.0",

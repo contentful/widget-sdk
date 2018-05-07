@@ -8,6 +8,7 @@ import AddEntityIcon from 'svg/plus';
 import {docsLink, stateLink} from 'ui/Content';
 import * as Workbench from 'app/Workbench';
 import $state from '$state';
+import modalDialog from 'modalDialog';
 
 const SDK_URL = 'https://unpkg.com/contentful-ui-extensions-sdk@3';
 
@@ -48,24 +49,44 @@ function actions () {
       cfContextMenu: 'bottom-right'
     }, [
       h('div', {role: 'menuitem', onClick: createExtension}, ['Create a new Extension']),
-      h('div', {role: 'menuitem'}, ['Install a sample']),
-      h('div', {role: 'menuitem'}, ['Install from Github'])
+      h('div', {role: 'menuitem', onClick: openSamplePicker}, ['Install a sample']),
+      h('div', {role: 'menuitem', onClick: openGitHubInstaller}, ['Install from Github'])
     ])
   ]);
 }
 
 function createExtension () {
-  return spaceContext.cma.createExtension({
-    extension: {
-      name: 'New extension',
-      fieldTypes: [{type: 'Symbol'}],
-      srcdoc: `<!DOCTYPE html>\n<script src="${SDK_URL}"></script>\n`
-    }
-  }).then(
-    res => $state.go('.detail', {extensionId: res.sys.id}),
+  return install({
+    name: 'New extension',
+    fieldTypes: [{type: 'Symbol'}],
+    srcdoc: `<!DOCTYPE html>\n<script src="${SDK_URL}"></script>\n`
+  });
+}
+
+function openSamplePicker () {
+  return modalDialog.open({
+    template: '<cf-extension-sample-picker class="modal-background" />'
+  }).promise.then(install);
+}
+
+function openGitHubInstaller () {
+  return modalDialog.open({
+    template: '<cf-extension-github-installer class="modal-background" />'
+  }).promise.then(install);
+}
+
+function install (extension) {
+  return spaceContext.cma.createExtension({extension})
+  .then(
+    res => {
+      notification.info('Your new Extension was successfully created.');
+      return $state.go('.detail', {extensionId: res.sys.id});
+    },
     err => {
-      notification.error('There was an error while creating your Extension.');
-      return Promise.reject(err);
+      if (!err || !err.cancelled) {
+        notification.error('There was an error while creating your Extension.');
+        return Promise.reject(err);
+      }
     }
   );
 }

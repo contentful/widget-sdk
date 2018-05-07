@@ -78,5 +78,6 @@ window.libs = [
   ['validation', require('@contentful/validation')],
   ['widgetMap', require('@contentful/widget-map')],
   ['scroll-into-view', require('scroll-into-view')],
-  ['Sortable', require('sortablejs')]
+  ['Sortable', require('sortablejs')],
+  ['parse-github-url', require('parse-github-url')]
 ];

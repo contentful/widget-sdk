@@ -62,7 +62,7 @@ const ExtensionEditor = createReactClass({
 
     const actions = <React.Fragment>
       <button className="btn-secondary-action" onClick={() => $state.go('.^')}>
-        Cancel
+        Go back
       </button>
       <button
         className="btn-primary-action"
