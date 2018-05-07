@@ -124,15 +124,12 @@ describe('Feature Service', function () {
       this.flags['feature-bv-2018-01-features-api'] = false;
       this.mocks.legacyOrganization = true;
 
-      const feature = await this.FeatureService.get('customRoles');
+      let feature = await this.FeatureService.get('customRoles');
+      expect(feature).toEqual(false);
 
-      expect(feature).toEqual({
-        enabled: false,
-        sys: {
-          type: 'Feature',
-          id: 'custom_roles'
-        }
-      });
+      this.mocks.organization.subscriptionPlan.limits.features.customRoles = true;
+      feature = await this.FeatureService.get('customRoles');
+      expect(feature).toEqual(true);
     });
 
     it('should return a Feature from the endpoint if legacy and the feature flag is on', async function () {
@@ -141,14 +138,7 @@ describe('Feature Service', function () {
 
       const feature = await this.FeatureService.get('customRoles');
 
-      expect(feature).toEqual({
-        enabled: true,
-        name: 'Custom Roles',
-        sys: {
-          type: 'Feature',
-          id: 'custom_roles'
-        }
-      });
+      expect(feature).toEqual(true);
     });
 
     it('should return a Feature from the endpoint if not legacy', async function () {
@@ -157,45 +147,29 @@ describe('Feature Service', function () {
       this.mocks.legacyOrganization = false;
 
       feature = await this.FeatureService.get('customRoles');
-
-      expect(feature).toEqual({
-        enabled: true,
-        name: 'Custom Roles',
-        sys: {
-          id: 'custom_roles',
-          type: 'Feature'
-        }
-      });
+      expect(feature).toEqual(true);
 
       feature = await this.FeatureService.get('sso');
-
-      expect(feature).toEqual({
-        enabled: false,
-        name: 'Single Sign-On',
-        sys: {
-          id: 'sso',
-          type: 'Feature'
-        }
-      });
+      expect(feature).toEqual(false);
     });
 
-    it('should return undefined if the Feature is not found', async function () {
+    it('should return false if the Feature is not found', async function () {
       let feature;
 
       this.mocks.legacyOrganization = true;
       feature = await this.FeatureService.get('missing');
 
-      expect(feature).toBeUndefined();
+      expect(feature).toEqual(false);
 
       this.flags['feature-bv-2018-01-features-api'] = true;
       feature = await this.FeatureService.get('missing2');
 
-      expect(feature).toBeUndefined();
+      expect(feature).toEqual(false);
 
       this.mocks.legacyOrganization = false;
       feature = await this.FeatureService.get('missing3');
 
-      expect(feature).toBeUndefined();
+      expect(feature).toEqual(false);
     });
   });
 

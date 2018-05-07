@@ -161,9 +161,7 @@ angular.module('contentful')
   }
 
   function hasMultipleLocales () {
-    return FeatureService.get('multipleLocales').then(function (feature) {
-      return feature.enabled;
-    });
+    return FeatureService.get('multipleLocales');
   }
 
   function getSubscriptionPlanData (path) {

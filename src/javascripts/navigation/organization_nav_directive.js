@@ -38,8 +38,8 @@
 
           nav.pricingVersion = org.pricingVersion;
 
-          FeatureService.get('offsiteBackup').then(function (feature) {
-            nav.hasOffsiteBackup = feature && feature.enabled;
+          FeatureService.get('offsiteBackup').then(function (featureEnabled) {
+            nav.hasOffsiteBackup = featureEnabled;
           });
           nav.hasBillingTab = org.isBillable && OrganizationRoles.isOwner(org);
           nav.hasSettingsTab = OrganizationRoles.isOwner(org);

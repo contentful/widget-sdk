@@ -31,7 +31,7 @@ describe('Access Checker', function () {
         default: () => {
           return {
             get: () => {
-              return Promise.resolve(feature);
+              return Promise.resolve(_.get(feature, 'enabled', false));
             }
           };
         }

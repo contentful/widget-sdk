@@ -18,7 +18,7 @@ export default function createFeatureService (id, type = 'space') {
     const apiFeatureId = snakeCase(featureId);
     const allFeatures = await getAll(organization);
 
-    return allFeatures.filter(feature => feature.sys.id === apiFeatureId)[0];
+    return allFeatures.some((feature) => feature.sys.id === apiFeatureId && feature.enabled);
   }
 
   async function getAll () {

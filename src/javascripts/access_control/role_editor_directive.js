@@ -33,7 +33,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
   $scope.loading = true;
 
   $q.all({
-    feature: FeatureService.get('customRoles'),
+    featureEnabled: FeatureService.get('customRoles'),
     resource: createResourceService(spaceContext.getId()).get('role'),
     useLegacy: ResourceUtils.useLegacy(org)
   }).then(function (result) {
@@ -44,7 +44,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
 
     $scope.legacy = result.useLegacy;
 
-    if (!result.feature || !result.feature.enabled) {
+    if (!result.featureEnabled) {
       $scope.hasCustomRolesFeature = false;
       $scope.canModifyRoles = false;
     } else if (isNew && !ResourceUtils.canCreate(result.resource)) {
