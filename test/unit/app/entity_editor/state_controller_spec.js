@@ -129,6 +129,7 @@ describe('entityEditor/StateController', function () {
       sinon.assert.calledOnceWith(
         this.entityNavigationHelpers.goToPreviousSlideOrExit,
         SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE,
+        'delete',
         this.closeStateSpy
       );
     });

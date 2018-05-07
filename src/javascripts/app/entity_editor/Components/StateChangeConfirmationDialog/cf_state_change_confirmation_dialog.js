@@ -9,11 +9,10 @@ angular.module('contentful').directive('cfStateChangeConfirmationDialog', [
 
     return {
       link: function link ($scope, elem) {
-        var entityInfo = $scope.entityInfo;
         var dialogSessionId = random.id(); // uuid
         var defaultProps = {
           dialogSessionId: dialogSessionId,
-          entityInfo: entityInfo,
+          entityInfo: $scope.entityInfo,
           action: $scope.action,
           onConfirm: function () {
             $scope.dialog.confirm();
