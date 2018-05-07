@@ -61,9 +61,7 @@ export function create ({space, organization}) {
     if (!isSuperUser()) {
       return Promise.resolve(false);
     } else {
-      return FeatureService.get('customRoles').then(feature => {
-        return Boolean(feature && feature.enabled);
-      });
+      return FeatureService.get('customRoles');
     }
   }
 }

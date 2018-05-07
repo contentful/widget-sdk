@@ -2,7 +2,7 @@ import { getCurrentVariation } from 'utils/LaunchDarkly';
 import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/EndpointFactory';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { getSpace, getOrganization } from 'services/TokenStore';
-import { getEnabledFeatures, getFeature } from 'account/pricing/PricingDataProvider';
+import { getEnabledFeatures } from 'account/pricing/PricingDataProvider';
 
 import { get, snakeCase } from 'lodash';
 
@@ -11,37 +11,27 @@ const flagName = 'feature-bv-2018-01-features-api';
 export default function createFeatureService (id, type = 'space') {
   const endpoint = createEndpoint(id, type);
 
-  return {
-    async get (featureId) {
-      const organization = await getTokenOrganization(id, type);
-      const legacy = await useLegacy(organization);
-      const apiFeatureId = snakeCase(featureId);
+  return { get, getAll };
 
-      if (legacy) {
-        const legacyFeatures = legacyGetAllFeatures(organization);
+  async function get (featureId) {
+    const organization = await getTokenOrganization(id, type);
+    const apiFeatureId = snakeCase(featureId);
+    const allFeatures = await getAll(organization);
 
-        return legacyFeatures.filter(feature => feature.sys.id === apiFeatureId)[0];
-      } else {
-        return getFeature(endpoint, apiFeatureId)
-          .catch(() => {
-          // The featureId isn't an available or valid feature
-            return undefined;
-          });
-      }
-    },
+    return allFeatures.some((feature) => feature.sys.id === apiFeatureId && feature.enabled);
+  }
 
-    async getAll () {
-      const organization = await getTokenOrganization(id, type);
-      const legacy = await useLegacy(organization);
+  async function getAll () {
+    const organization = await getTokenOrganization(id, type);
+    const legacy = await useLegacy(organization);
 
-      if (legacy) {
-        // Look at the Token
-        return legacyGetAllFeatures(organization);
-      } else {
-        return getEnabledFeatures(endpoint);
-      }
+    if (legacy) {
+      // Look at the Token
+      return legacyGetAllFeatures(organization);
+    } else {
+      return getEnabledFeatures(endpoint);
     }
-  };
+  }
 }
 
 function legacyGetAllFeatures (organization) {
