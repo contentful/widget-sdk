@@ -9,6 +9,7 @@ export function create (parentEntryId, links$) {
 
   return {
     open,
+    openSlideIn,
     close,
     addExisting,
     addNew,
@@ -19,6 +20,12 @@ export function create (parentEntryId, links$) {
 
   function open () {
     track('open', {
+      refCount: K.getValue(links$).length
+    });
+  }
+
+  function openSlideIn () {
+    track('open_slide_in', {
       refCount: K.getValue(links$).length
     });
   }
@@ -88,6 +95,7 @@ export function create (parentEntryId, links$) {
 
 export const createNoop = () => ({
   open: noop,
+  openSlideIn: noop,
   close: noop,
   addExisting: noop,
   addNew: noop,

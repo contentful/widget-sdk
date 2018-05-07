@@ -9,7 +9,6 @@ import spaceContext from 'spaceContext';
 import { onFeatureFlag } from 'utils/LaunchDarkly';
 import { track } from 'analytics/Analytics';
 import { onEntryCreate as trackEntryCreate, onEntryEdit as trackEntryEdit } from 'analytics/events/ReferenceEditor';
-import { getSlideInEntities } from 'states/EntityNavigationHelpers';
 
 import $state from '$state';
 
@@ -22,6 +21,7 @@ import { canLinkToContentType, getInlineEditingStoreKey } from './utils';
 import { getStore } from 'TheStore';
 
 import {
+  getSlideInEntities,
   goToSlideInEntity as goToSlideInEntityBase
 } from 'states/EntityNavigationHelpers';
 
@@ -360,8 +360,7 @@ export default function create ($scope, widgetApi) {
         if ($event && $event.preventDefault) {
           $event.preventDefault();
         }
-
-        widgetApi._internal.editReferences(index, state.refreshEntities);
+        bulkEditorAction(entity, index);
       };
     } else {
       return null;
@@ -396,10 +395,18 @@ export default function create ($scope, widgetApi) {
     if (getSlideInEntities().length > 1) {
       // TODO: some kind of notifcation explaining why the bulk editor is
       // not displayed here
+      trackOpenSlideIn();
       goToSlideInEntity(entity);
     } else {
       widgetApi._internal.editReferences(index, state.refreshEntities);
     }
+  }
+
+  function trackOpenSlideIn () {
+    track('bulk_editor:open_slide_in', {
+      parentEntryId: widgetApi.entry.getSys().id,
+      refCount: $scope.entityModels.length
+    });
   }
 
   function goToSlideInEntity ({ sys: { id, type } }) {
