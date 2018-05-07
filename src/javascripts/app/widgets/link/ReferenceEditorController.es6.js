@@ -306,18 +306,18 @@ export default function create ($scope, widgetApi) {
     const hash = [id, version, isDisabled, contentTypeId].join('!');
     const contentType =
       contentTypeId && spaceContext.publishedCTs.fetch(contentTypeId);
-    let refCtxt = widgetApi._internal.createReferenceContext ? widgetApi._internal.createReferenceContext(index, state.refreshEntities) : null;
-    const entityIsAvailable = entity !== undefined;
-
 
     // This is passed down to the bulk entity editor actions
     // to be able to unlink an entry when the bulk editor is
     // rendered inline.
-    if (refCtxt) {
+    let refCtxt;
+    if (widgetApi._internal.createReferenceContext) {
       refCtxt = {
-        ...refCtxt,
+        ...widgetApi._internal.createReferenceContext(index, state.refreshEntities),
         remove: prepareRemoveAction(index, isDisabled)
       };
+    } else {
+      refCtxt = null;
     }
 
     const entityModel = {
@@ -329,9 +329,7 @@ export default function create ($scope, widgetApi) {
         edit: prepareEditAction(entity, index, isDisabled),
         remove: prepareRemoveAction(index, isDisabled),
         trackEdit: () => trackEdit(entity),
-        inlineEdit: function () {
-          goToSlideInEntity(entity);
-        }
+        inlineEdit: () => goToSlideInEntity(entity)
       },
       // TODO: This is used to create multiple reference contexts
       // to be able to open multiple instances of the bulk editor
@@ -339,16 +337,14 @@ export default function create ($scope, widgetApi) {
       refCtxt
     };
 
-    // Disable entry editor layer actions for refs
-    // - use bulk editor
-    // - when inside the bulk editor itself.
-    // - rendered inside an entry editor layer.
-    if ($scope.isSlideinEntryEditorEnabled && !bulkEditorEnabled && refCtxt !== null && !$state.params.inlineEntryId && entityIsAvailable) {
-      // This will render a placeholder stack div with a transition
-      // and remove it when inline entry editor is rendered
-      entityModel.actions.slideinEdit = function () {
-        goToSlideInEntity(entity);
-      };
+    const shouldSlideIn =
+      $scope.isSlideinEntryEditorEnabled &&
+      !bulkEditorEnabled &&
+      refCtxt !== null &&
+      !$state.params.inlineEntryId;
+
+    if (shouldSlideIn && entity) {
+      entityModel.actions.slideinEdit = () => goToSlideInEntity(entity);
     }
 
     return entityModel;
