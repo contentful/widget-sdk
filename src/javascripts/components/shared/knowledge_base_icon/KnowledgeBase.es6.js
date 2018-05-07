@@ -23,8 +23,6 @@ const items = {
   content_preview: 'r/knowledgebase/setup-content-preview/',
   contentModellingBasics: 'r/knowledgebase/content-modelling-basics/',
   createOAuthApp: 'developers/docs/references/authentication/#creating-an-oauth-20-application',
-  uiExtensions: 'developers/docs/concepts/uiextensions/',
-  uiExtensionsGuide: 'r/knowledgebase/ui-extensions-guide/',
   // TODO add it once it becomes available
   spaceEnvironments: 'developers/docs'
 };

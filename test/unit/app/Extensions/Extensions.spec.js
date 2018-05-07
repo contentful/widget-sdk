@@ -87,7 +87,7 @@ describe('app/Extensions', function () {
       [
         'Widget 1', 'Widget 2',
         'Number', 'Symbol, Text',
-        'Self-hosted', 'by Contentful',
+        'self-hosted', 'Contentful',
         '0 definition', '0 value'
       ].forEach(word => list.assertHasText(word));
     });
@@ -113,7 +113,7 @@ describe('app/Extensions', function () {
         this.spaceContext.cma.deleteExtension.resolves({});
         this.init();
         this.delete('test2');
-        sinon.assert.calledWith(this.notification.info, 'Your Extension was successfully deleted.');
+        sinon.assert.calledWith(this.notification.info, 'Your extension was successfully deleted.');
         // (1) initial refresh (2) refresh after deletion
         sinon.assert.calledTwice(this.spaceContext.widgets.refresh);
       });
@@ -122,7 +122,7 @@ describe('app/Extensions', function () {
         this.spaceContext.cma.deleteExtension.rejects({});
         this.init();
         this.delete('test2');
-        sinon.assert.calledWith(this.notification.error, 'There was an error while deleting your Extension.');
+        sinon.assert.calledWith(this.notification.error, 'There was an error while deleting your extension.');
       });
     });
   });
@@ -151,14 +151,14 @@ describe('app/Extensions', function () {
       });
 
       sinon.assert.calledWith(this.$inject('$state').go, '.detail', {extensionId: 'newly-created'});
-      sinon.assert.calledWith(this.notification.info, 'Your new Extension was successfully created.');
+      sinon.assert.calledWith(this.notification.info, 'Your new extension was successfully created.');
     });
 
     it('handles failure', function () {
       this.spaceContext.cma.createExtension.rejects({});
       this.init();
       this.create();
-      sinon.assert.calledWith(this.notification.error, 'There was an error while creating your Extension.');
+      sinon.assert.calledWith(this.notification.error, 'There was an error while creating your extension.');
     });
   });
 });

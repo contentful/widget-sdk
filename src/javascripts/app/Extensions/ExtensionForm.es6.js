@@ -115,7 +115,7 @@ const ExtensionForm = ({entity, selfHosted, updateEntity, setSelfHosted}) => {
     </div>
 
     {selfHosted && <div className="cfnext-form__field">
-      <Label text={'Self-hosted UI Extension URL'} info={'required'} />
+      <Label text={'Self-hosted URL'} info={'required'} />
       <input
         className="cfnext-form__input--full-size"
         type="text"
@@ -123,12 +123,13 @@ const ExtensionForm = ({entity, selfHosted, updateEntity, setSelfHosted}) => {
         onChange={e => updateExtensionProp('src', e.target.value)}
       />
       {!EXTENSION_URL_RE.test(entity.extension.src || '') && <p className="cfnext-form__field-error">
-        Please provide a valid URL. <code>http:{'//'}</code> can be used only with <code>localhost</code>.
+        Valid URLs use <code>https:{'//'}</code>. Only <code>localhost</code> can be used with <code>http:{'//'}</code>.
       </p>}
     </div>}
 
     {!selfHosted && <div className="cfnext-form__field">
-      <Label text={'Code of UI Extension'} info={'required'} />
+      <Label text={'Code'} info={'required'} />
+      <p>Maximum accepted code size is 200KB. For a larger size use the self-hosted option.</p>
       <Editor
         height={'700px'}
         value={entity.extension.srcdoc}

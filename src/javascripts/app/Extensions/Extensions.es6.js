@@ -4,8 +4,7 @@ import notification from 'notification';
 import spaceContext from 'spaceContext';
 import PageSettingsIcon from 'svg/page-settings';
 import EmptyStateIcon from 'svg/empty-extension';
-import AddEntityIcon from 'svg/plus';
-import {docsLink, stateLink} from 'ui/Content';
+import {stateLink} from 'ui/Content';
 import * as Workbench from 'app/Workbench';
 import $state from '$state';
 import modalDialog from 'modalDialog';
@@ -19,9 +18,20 @@ export default function controller ($scope) {
   function refresh () {
     spaceContext.widgets.refresh().then(widgets => {
       $scope.context.ready = true;
-      $scope.component = render(widgets.filter(e => e.custom), refresh);
+      const items = widgets.filter(e => e.custom).sort(alphabetically);
+      $scope.component = render(items, refresh);
       $scope.$applyAsync();
     });
+  }
+}
+
+function alphabetically (a, b) {
+  if (a.name.toLowerCase() < b.name.toLowerCase()) {
+    return -1;
+  } else if (a.name.toLowerCase() > b.name.toLowerCase()) {
+    return 1;
+  } else {
+    return 0;
   }
 }
 
@@ -43,8 +53,8 @@ function actions () {
       dataTestId: 'extensions.add',
       cfContextMenuTrigger: true
     }, [
-      h('span.btn-icon.cf-icon.cf-icon--plus.inverted', [AddEntityIcon]),
-      'Create or install Extension'
+      'Add extension ',
+      h('i.fa.fa-chevron-down', {style: {color: 'rgba(255, 255, 255, .4)'}})
     ]),
     h('.context-menu.x--arrow-right', {
       cfContextMenu: 'bottom-right'
@@ -53,7 +63,7 @@ function actions () {
         role: 'menuitem',
         onClick: createExtension,
         dataTestId: 'extensions.add.new'
-      }, ['Create a new Extension']),
+      }, ['Add a new extension']),
       h('div', {
         role: 'menuitem',
         onClick: openSamplePicker
@@ -61,7 +71,7 @@ function actions () {
       h('div', {
         role: 'menuitem',
         onClick: openGitHubInstaller
-      }, ['Install from Github'])
+      }, ['Install from GitHub'])
     ])
   ]);
 }
@@ -90,12 +100,12 @@ function install (extension) {
   return spaceContext.cma.createExtension({extension})
   .then(
     res => {
-      notification.info('Your new Extension was successfully created.');
+      notification.info('Your new extension was successfully created.');
       return $state.go('.detail', {extensionId: res.sys.id});
     },
     err => {
       if (!err || !err.cancelled) {
-        notification.error('There was an error while creating your Extension.');
+        notification.error('There was an error while creating your extension.');
         return Promise.reject(err);
       }
     }
@@ -115,12 +125,8 @@ function list (extensions, refresh) {
   const body = extensions.map(extension => {
     return tr([
       td([h('strong', {title: `ID: ${extension.id}`}, [extension.name])]),
-      typeof extension.src === 'string' && td([
-        'Self-hosted (', h('code', ['src']), ')'
-      ]),
-      typeof extension.srcdoc === 'string' && td([
-        'Hosted by Contentful (', h('code', ['srcdoc']), ')'
-      ]),
+      typeof extension.src === 'string' && td(['self-hosted']),
+      typeof extension.srcdoc === 'string' && td(['Contentful']),
       td([extension.fieldTypes.join(', ')]),
       td([`${extension.parameters.length} definition(s)`]),
       td([
@@ -129,7 +135,7 @@ function list (extensions, refresh) {
         `${Object.keys(extension.installationParameters.values).length} value(s)`
       ]),
       td({class: 'x--small-cell'}, [
-        stateLink(['Edit'], {
+        stateLink([h('span', {style: {textDecoration: 'underline'}}, ['Edit'])], {
           path: '.detail',
           params: {extensionId: extension.id}
         }),
@@ -172,13 +178,17 @@ function deleteExtension ({id}, refresh) {
   return spaceContext.cma.deleteExtension(id)
   .then(refresh)
   .then(
-    () => notification.info('Your Extension was successfully deleted.'),
+    () => notification.info('Your extension was successfully deleted.'),
     err => {
-      notification.error('There was an error while deleting your Extension.');
+      notification.error('There was an error while deleting your extension.');
       return Promise.reject(err);
     }
   );
 }
+
+const docsLink = ({href, text}) => h('a.knowledge-base-link.x--inline', {
+  href, target: '_blank', rel: 'noopener noreferrer'
+}, [text]);
 
 function empty () {
   return h('.empty-state', {dataTestId: 'extensions.empty'}, [
@@ -189,34 +199,50 @@ function empty () {
       'There are no extensions installed in this space'
     ]),
     h('.empty-state__description', [
-      `The UI extensions SDK allows you to build customized editing
-      experiences for the Contentful web application. Learn how to `,
-      docsLink('Get started with extensions', 'uiExtensionsGuide'),
+      `Contentful UI Extensions are small applications that run inside the Web Wpp.
+      Click on "Add extension" to explore your options. You can also read how to `,
+      docsLink({
+        href: 'https://www.contentful.com/developers/docs/concepts/uiextensions/',
+        text: 'get started with extensions'
+      }),
       '  or head to the ',
-      docsLink('UI extensions API reference', 'uiExtensions'),
+      docsLink({
+        href: 'https://github.com/contentful/ui-extensions-sdk/blob/master/docs/ui-extensions-sdk-frontend.md',
+        text: 'API Reference of the UI Extensions SDK'
+      }),
       '.'
     ])
   ]);
 }
 
 function sidebar () {
+  const liLink = link => h('li', [docsLink(link)]);
+
   return h('div', [
     h('h2.entity-sidebar__heading', {style: {marginTop: 0}}, ['Documentation']),
     h('.entity-sidebar__text-profile', [
       h('p', [
-        `The UI extensions SDK allows you to build customized editing
-        experiences for the Contentful web application.`
-      ]),
-      h('p', [
-        'Learn more about UI extensions: '
+        `Contentful UI Extensions are small applications that run inside the Web Wpp
+        and provide additional functionality for creating content and integration with
+        third party services.`
       ]),
       h('ul', [
-        h('li', [
-          docsLink('Get started with extensions', 'uiExtensionsGuide')
-        ]),
-        h('li', [
-          docsLink('UI extensions API reference', 'uiExtensions')
-        ])
+        liLink({
+          href: 'https://www.contentful.com/developers/docs/concepts/uiextensions/',
+          text: 'Get started with extensions'
+        }),
+        liLink({
+          href: 'https://github.com/contentful/extensions/tree/master/samples',
+          text: 'View samples on GitHub'
+        }),
+        liLink({
+          href: 'https://github.com/contentful/ui-extensions-sdk/blob/master/docs/ui-extensions-sdk-frontend.md',
+          text: 'UI Extensions SDK: API Reference'
+        }),
+        liLink({
+          href: 'https://www.contentful.com/developers/docs/references/content-management-api/#/reference/ui-extensions',
+          text: 'Content Management API: extensions endpoint'
+        })
       ])
     ])
   ]);

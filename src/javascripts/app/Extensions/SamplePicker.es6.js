@@ -48,7 +48,7 @@ const SamplePicker = ({confirm, cancel}) => {
         borderWidth: '1px 0',
         backgroundColor: Colors.elementLightest,
         width: '600px',
-        maxHeight: '300px',
+        maxHeight: '450px',
         overflow: 'auto'
       }}>
         {SAMPLES.map(sample => {
