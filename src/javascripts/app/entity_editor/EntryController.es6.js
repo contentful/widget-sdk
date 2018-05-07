@@ -26,7 +26,7 @@ import { loadEntry } from 'app/entity_editor/DataLoader';
 import { onFeatureFlag } from 'utils/LaunchDarkly';
 
 const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
-  'feature-at-03-2018-sliding-entry-editor';
+  'feature-at-05-2018-sliding-entry-editor-multi-level';
 
 /**
  * @ngdoc type
@@ -211,7 +211,7 @@ export default async function create ($scope, entryId) {
   $scope.fields = DataFields.create(fields, $scope.otDoc);
   $scope.transformedContentTypeData = ContentTypes.internalToPublic(contentTypeData);
 
-  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, (isEnabled) => {
-    $scope.shouldShowBreadcrumbs = !isEnabled;
+  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, (flagValue) => {
+    $scope.shouldShowBreadcrumbs = flagValue < 2;
   });
 }

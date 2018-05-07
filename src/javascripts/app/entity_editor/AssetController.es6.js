@@ -20,7 +20,7 @@ import { loadAsset } from 'app/entity_editor/DataLoader';
 import { onFeatureFlag } from 'utils/LaunchDarkly';
 
 const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
-  'feature-at-03-2018-sliding-entry-editor';
+  'feature-at-05-2018-sliding-entry-editor-multi-level';
 
 export default async function create ($scope, assetId) {
   $scope.context = {};
@@ -99,7 +99,7 @@ export default async function create ($scope, assetId) {
     controls: editorData.fieldControls.form
   });
 
-  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, (isEnabled) => {
-    $scope.shouldShowBreadcrumbs = !isEnabled;
+  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, (flagValue) => {
+    $scope.shouldShowBreadcrumbs = flagValue < 2;
   });
 }
