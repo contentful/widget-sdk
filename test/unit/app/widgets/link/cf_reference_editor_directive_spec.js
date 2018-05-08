@@ -115,7 +115,6 @@ describe('cfReferenceEditorDirective', function () {
       it('prefetches linked entities', function () {
         this.scope = this.init();
         this.field.setValue([link1]);
-        this.$apply();
         sinon.assert.calledOnce(this.widgetApi.space.getEntries);
         sinon.assert.calledWith(
           this.widgetApi.space.getEntries,

@@ -19,7 +19,7 @@ angular.module('cf.ui')
  * cf-loader(watch-state-change="true") //- this adds only a state change loader
  * cf-loader(loader-msg="Please wait…")
  * cf-loader(is-shown="isLoading")
- * cf-loader(is-shown="somePropFromParentScope", loader-msg="Loading xyz…")
+ * cf-loader(is-shown="somePropFromParentScope" loader-msg="Loading xyz…")
  */
 .directive('cfLoader', ['require', function (require) {
   var h = require('utils/hyperscript').h;
@@ -70,7 +70,7 @@ angular.module('cf.ui')
         // Do not show a spinner when navigating from/to slide in
         // entry editor. This will refresh the parent/child entries
         // without showing the spinner.
-        // TODO: Remove this once "feature-at-03-2018-sliding-entry-editor"
+        // TODO: Remove this once "feature-at-05-2018-sliding-entry-editor-multi-level"
         // experiment is over.
         if (!toParams.inlineEntryId && !fromParams.inlineEntryId) {
           $scope.isShown = true;

@@ -1,5 +1,4 @@
 import $controller from '$controller';
-import closeState from 'navigation/closeState';
 
 import * as K from 'utils/kefir';
 import {truncate} from 'stringUtils';
@@ -17,7 +16,22 @@ import {makeNotify} from './Notifications';
 import installTracking from './Tracking';
 import renderStatusNotification from './StatusNotification';
 
-export default function create ($scope, editorData) {
+import { loadAsset } from 'app/entity_editor/DataLoader';
+import { onFeatureFlag } from 'utils/LaunchDarkly';
+
+const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
+  'feature-at-05-2018-sliding-entry-editor-multi-level';
+
+export default async function create ($scope, assetId) {
+  $scope.context = {};
+  let editorData;
+  try {
+    editorData = await loadAsset(spaceContext, assetId);
+  } catch (error) {
+    $scope.context.loadingError = error;
+    return;
+  }
+  $scope.context.ready = true;
   $scope.editorData = editorData;
 
   // add list view as parent if it's a deep link to the media/asset
@@ -57,10 +71,6 @@ export default function create ($scope, editorData) {
 
   editorContext.focus = Focus.create();
 
-  editorContext.closeSlideinEditor = function () {
-    closeState();
-  };
-
   $scope.state = $controller('entityEditor/StateController', {
     $scope: $scope,
     entity: editorData.entity,
@@ -87,5 +97,9 @@ export default function create ($scope, editorData) {
   $controller('FormWidgetsController', {
     $scope: $scope,
     controls: editorData.fieldControls.form
+  });
+
+  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, (flagValue) => {
+    $scope.shouldShowBreadcrumbs = flagValue < 2;
   });
 }

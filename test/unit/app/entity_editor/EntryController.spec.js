@@ -1,32 +1,46 @@
+import {create as createDocument} from 'helpers/mocks/entity_editor_document';
+
 describe('Entry Editor Controller', function () {
   beforeEach(function () {
     module('contentful/test', ($provide) => {
+      $provide.value('app/entity_editor/Tracking', sinon.stub());
+      $provide.value('app/entity_editor/Validator', {
+        createForEntry: sinon.stub()
+      });
+      $provide.value('app/entity_editor/DataLoader', {
+        loadEntry: () => ({
+          entity: {
+            data: {},
+            getSys: () => ({})
+          },
+          entityInfo: {
+            id: 'testEntryId',
+            contentType: {
+              fields: {}
+            }
+          },
+          fieldControls: {},
+          openDoc: () => createDocument()
+        })
+      });
       $provide.removeControllers(
         'FormWidgetsController',
         'entityEditor/LocalesController',
-        'entityEditor/StatusNotificationsController'
+        'entityEditor/StateController',
+        'entityEditor/StatusNotificationsController',
+        'EntryActionsController'
       );
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
 
-    const {makeEditorData} = this.$inject('mocks/app/entity_editor/DataLoader');
     const createEntryController = this.$inject('app/entity_editor/EntryController').default;
 
     this.createController = () => {
-      const cfStub = this.$inject('cfStub');
-
       const $rootScope = this.$inject('$rootScope');
       const scope = $rootScope.$new();
       scope.context = {};
 
-      const ctData = cfStub.contentTypeData();
-      const space = cfStub.space('testSpace');
-      const entry = cfStub.entry(space, 'testEntry', 'testType', {}, {
-        sys: { publishedVersion: 1 }
-      });
-
-      const editorData = makeEditorData(entry.data, ctData);
-      createEntryController(scope, editorData);
+      createEntryController(scope, 'testEntryId');
 
       return scope;
     };

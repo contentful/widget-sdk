@@ -1,6 +1,6 @@
 import {caseof} from 'sum-types/caseof-eq';
 import {constant} from 'lodash';
-import * as $q from '$q';
+import $q from '$q';
 import {
   Action,
   makePerform

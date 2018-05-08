@@ -1,5 +1,6 @@
 import createFieldLocaleDoc from 'app/entity_editor/FieldLocaleDocument';
 import * as sinon from 'helpers/sinon';
+import {create as createDocument} from 'helpers/mocks/entity_editor_document';
 
 describe('entityEditor/FieldLocaleDocument', function () {
   const path = ['fields', 'FID', 'LC'];
@@ -7,7 +8,7 @@ describe('entityEditor/FieldLocaleDocument', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    this.rootDoc = this.$inject('mocks/entityEditor/Document').create();
+    this.rootDoc = createDocument();
     this.doc = createFieldLocaleDoc(this.rootDoc, 'FID', 'LC');
   });
 

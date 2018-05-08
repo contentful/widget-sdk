@@ -23,6 +23,7 @@ import PageUsage from 'svg/page-usage';
 import Bubble from 'svg/bubble';
 import ArrowDown from 'svg/dd-arrow-down';
 import InvoiceIcon from 'svg/invoice';
+import BackIcon from 'svg/breadcrumbs-icon-back';
 
 const SVGS = {
   'home-welcome': HomeWelcomeIcon,
@@ -43,6 +44,7 @@ const SVGS = {
   'page-usage': PageUsage,
   'bubble': Bubble,
   'dd-arrow-down': ArrowDown,
+  'back': BackIcon,
   'invoice': InvoiceIcon
 };
 

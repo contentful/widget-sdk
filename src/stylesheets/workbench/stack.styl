@@ -5,7 +5,7 @@ Markup:
 .styleguide-stretch-container--short
   .workbench(ng-click="hide = !hide")
     .workbench-stack.animate(ng-if="!hide")
-      .workbench-stack__padding
+      .workbench-stack__overlay
       .workbench-stack__content
         .workbench
           .workbench-header
@@ -22,7 +22,7 @@ Styleguide 9.8
   $stretch(0, 0, 0, 0)
   z-index: 100
   overflow: hidden
-  transition: opacity 0.2s linear
+  transition: opacity 0.2s ease-in-out
   &.ng-enter, &.ng-leave-active.ng-leave
     opacity: 0
   &.ng-leave, &.ng-enter-active.ng-enter
@@ -31,21 +31,22 @@ Styleguide 9.8
 .workbench-stack__content
   position: relative
   height: 100%
-  background: white
+  background: $colors.white
   margin-left: 6em
-  box-shadow: -3px 0px 3px hsla(0, 0%, 0%, 0.15)
+  box-shadow: $box-shadow-workbench-layer;
   .ng-enter > &, .ng-leave-active.ng-leave > &
     // Transition needs to be only on ngEnter / ngLeave otherwise it causes a
     // weird Chrome layout bug in the bulk editor
-    transition: transform 0.2s ease-out
-    transform: translateX(2em)
+    transition: transform 0.2s ease-in-out
+    transform: translate3d(100px, 0, 0)
   .ng-leave > &, .ng-enter-active.ng-enter > &
     // Transition needs to be only on ngEnter / ngLeave otherwise it causes a
     // weird Chrome layout bug in the bulk editor
-    transition: transform 0.2s ease-out
-    transform: translateX(0%)
+    transition: transform 0.2s ease-in-out
+    transform: translate3d(0, 0, 0)
 
-.workbench-stack__padding
+.workbench-stack__overlay
   $stretch(0, 0, 0, 0)
-  background-color: hsla(0, 0%, 0%, 0.3)
+  background: $colors.contrast-dark
+  opacity: 0.8
   cursor: pointer

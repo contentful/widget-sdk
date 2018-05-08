@@ -1,5 +1,6 @@
 import $q from '$q';
 import * as DOM from 'helpers/DOM';
+import {create as createDocument} from 'helpers/mocks/entity_editor_document';
 
 /**
  * Tests the integration of the 'cfEntityField' directive with
@@ -60,7 +61,7 @@ describe('entity editor field integration', function () {
     this.validator = editorContext.validator;
 
     this.compile = function () {
-      this.otDoc = this.otDoc || this.$inject('mocks/entityEditor/Document').create();
+      this.otDoc = this.otDoc || createDocument();
       const el = this.$compile('<cf-entity-field>', {
         widget: this.widget,
         editorContext: editorContext,
@@ -116,7 +117,7 @@ describe('entity editor field integration', function () {
 
   describe('editing permissions', function () {
     it('shows message if user does not have editing permissions', function () {
-      this.otDoc = this.$inject('mocks/entityEditor/Document').create();
+      this.otDoc = createDocument();
       this.otDoc.permissions.canEditFieldLocale = function (_field, locale) {
         return locale === 'EN';
       };

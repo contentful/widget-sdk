@@ -1,13 +1,21 @@
 'use strict';
 import $q from '$q';
+import {create as createDocument} from 'helpers/mocks/entity_editor_document';
 
 describe('entityEditor/StateController', function () {
+  const SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE = 'feature-flag-val';
+
   beforeEach(function () {
     const closeStateSpy = this.closeStateSpy = sinon.spy();
 
     module('contentful/test', function ($provide) {
       $provide.value('navigation/closeState', closeStateSpy);
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
+    });
+
+    const LD = this.$inject('utils/LaunchDarkly');
+    LD.onFeatureFlag = sinon.stub().callsFake((_1, _2, cb) => {
+      cb(SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE);
     });
 
     this.rootScope = this.$inject('$rootScope');
@@ -52,7 +60,6 @@ describe('entityEditor/StateController', function () {
     };
 
     this.spaceEndpoint = sinon.stub();
-    const Document = this.$inject('mocks/entityEditor/Document');
     this.entity = {
       sys: {
         id: 'EID',
@@ -60,8 +67,11 @@ describe('entityEditor/StateController', function () {
         version: 42
       }
     };
-    this.doc = Document.create(this.entity, this.spaceEndpoint);
+    this.doc = createDocument(this.entity, this.spaceEndpoint);
     this.spaceEndpoint.resolves(this.doc.getData());
+
+    this.entityNavigationHelpers = this.$inject('states/EntityNavigationHelpers');
+    this.entityNavigationHelpers.goToPreviousSlideOrExit = sinon.stub();
 
     this.validator = this.scope.editorContext.validator;
 
@@ -105,17 +115,22 @@ describe('entityEditor/StateController', function () {
       this.assertSuccessNotification('delete');
     });
 
-    it('closes the current state', function () {
-      this.controller.delete.execute();
-      this.$apply();
-      sinon.assert.calledOnce(this.closeStateSpy);
-    });
-
     it('sends failure notification with API error', function () {
       this.spaceEndpoint.rejects('ERROR');
       this.controller.delete.execute();
       this.$apply();
       this.assertErrorNotification('delete', 'ERROR');
+    });
+
+    it(`navigates to the previous slide-in entity or
+        closes the current state as a fallback`, function () {
+      this.controller.delete.execute();
+      this.$apply();
+      sinon.assert.calledOnceWith(
+        this.entityNavigationHelpers.goToPreviousSlideOrExit,
+        SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE,
+        this.closeStateSpy
+      );
     });
   });
 

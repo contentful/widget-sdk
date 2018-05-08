@@ -1,4 +1,5 @@
 import * as K from 'helpers/mocks/kefir';
+import {create as createDocument} from 'helpers/mocks/entity_editor_document';
 
 describe('cfIframeWidget directive', function () {
   let widgetAPI;
@@ -14,7 +15,7 @@ describe('cfIframeWidget directive', function () {
       });
     });
 
-    this.otDoc = this.$inject('mocks/entityEditor/Document').create();
+    this.otDoc = createDocument();
     this.$inject('mocks/spaceContext').init();
 
     widgetAPI = {
