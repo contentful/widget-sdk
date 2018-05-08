@@ -5,7 +5,7 @@ import {byName as Colors} from 'Styles/Colors';
 
 import {fetchExtension} from './GitHubFetcher';
 
-const SAMPLES = [
+const EXAMPLES = [
   {
     name: 'Vanilla UI Extension template',
     description: 'Starter UI Extension. Allows modification of a textual value.',
@@ -33,15 +33,15 @@ const SAMPLES = [
   }
 ];
 
-const SamplePicker = ({confirm, cancel}) => {
+const ExamplePicker = ({confirm, cancel}) => {
   return <div className="modal-dialog">
     <header className="modal-dialog__header">
-      <h1>Install a sample</h1>
+      <h1>Install an example</h1>
       <button className="modal-dialog__close" onClick={cancel} />
     </header>
     <div className="modal-dialog__content">
       <p className="modal-dialog__richtext">
-        You can install one of our predefined sample UI Extensions.
+        You can install one of our predefined UI Extension examples.
       </p>
       <div style={{
         border: `1px solid ${Colors.iceDark}`,
@@ -51,8 +51,8 @@ const SamplePicker = ({confirm, cancel}) => {
         maxHeight: '450px',
         overflow: 'auto'
       }}>
-        {SAMPLES.map(sample => {
-          return <div key={sample.url} style={{
+        {EXAMPLES.map(example => {
+          return <div key={example.url} style={{
             color: Colors.textDark,
             padding: '10px 20px',
             border: `1px solid ${Colors.iceDark}`,
@@ -62,13 +62,13 @@ const SamplePicker = ({confirm, cancel}) => {
             alignItems: 'center'
           }}>
             <div>
-              <h3>{sample.name}</h3>
-              <p>{sample.description}</p>
+              <h3>{example.name}</h3>
+              <p>{example.description}</p>
             </div>
             <button
               className="btn-action"
               style={{marginLeft: '40px'}}
-              onClick={() => fetchExtension(parseGithubUrl(sample.url)).then(confirm)}
+              onClick={() => fetchExtension(parseGithubUrl(example.url)).then(confirm)}
             >
               Install
             </button>
@@ -82,9 +82,9 @@ const SamplePicker = ({confirm, cancel}) => {
   </div>;
 };
 
-SamplePicker.propTypes = {
+ExamplePicker.propTypes = {
   confirm: PropTypes.func.isRequired,
   cancel: PropTypes.func.isRequired
 };
 
-export default SamplePicker;
+export default ExamplePicker;

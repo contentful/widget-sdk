@@ -66,8 +66,8 @@ function actions () {
       }, ['Add a new extension']),
       h('div', {
         role: 'menuitem',
-        onClick: openSamplePicker
-      }, ['Install a sample']),
+        onClick: openExamplePicker
+      }, ['Install an example']),
       h('div', {
         role: 'menuitem',
         onClick: openGitHubInstaller
@@ -92,9 +92,9 @@ function createExtension () {
   });
 }
 
-function openSamplePicker () {
+function openExamplePicker () {
   return modalDialog.open({
-    template: '<cf-extension-sample-picker class="modal-background" />'
+    template: '<cf-extension-example-picker class="modal-background" />'
   }).promise.then(install);
 }
 
@@ -247,7 +247,7 @@ function sidebar () {
         }),
         liLink({
           href: 'https://github.com/contentful/extensions/tree/master/samples',
-          text: 'View samples on GitHub'
+          text: 'View examples on GitHub'
         }),
         liLink({
           href: 'https://github.com/contentful/ui-extensions-sdk/blob/master/docs/ui-extensions-sdk-frontend.md',
