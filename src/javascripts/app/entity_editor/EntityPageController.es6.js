@@ -7,7 +7,8 @@ import { onFeatureFlag } from 'utils/LaunchDarkly';
 
 const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
   'feature-at-05-2018-sliding-entry-editor-multi-level';
-const PEEKING_DELAY = 1000;
+const PEEK_IN_DELAY = 1000;
+const PEEK_OUT_DELAY = 200;
 
 function setEntities ($scope) {
   $scope.entities = getSlideInEntities();
@@ -15,7 +16,8 @@ function setEntities ($scope) {
 
 export default ($scope, _$state) => {
   $scope.context.ready = true;
-  let timeoutReference;
+  let peekInTimeoutReference;
+  let peekOutTimeoutReference;
 
   onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, isEnabled => {
     $scope.isSlideinEntryEditorEnabled = isEnabled;
@@ -42,25 +44,26 @@ export default ($scope, _$state) => {
     const arr = [].slice.apply(document.querySelectorAll('.workbench-layer'));
     const next = index + 1;
 
-    timeoutReference = window.setTimeout(() => {
+    window.clearTimeout(peekOutTimeoutReference);
+    peekInTimeoutReference = window.setTimeout(() => {
       if ($scope.topPeekingLayerIndex >= index) {
         arr.slice(next, length).map((item) => {
           item.classList.add('workbench-layer--peeked');
         });
       }
-    }, PEEKING_DELAY);
+    }, PEEK_IN_DELAY);
   };
 
   $scope.peekOut = (index) => {
     const length = $scope.entities.length;
     const arr = [].slice.apply(document.querySelectorAll('.workbench-layer'));
 
-    window.clearTimeout(timeoutReference);
-    window.setTimeout(() => {
+    window.clearTimeout(peekInTimeoutReference);
+    peekOutTimeoutReference = window.setTimeout(() => {
       arr.slice(index, length).map((item) => {
         item.classList.remove('workbench-layer--peeked');
       });
-    }, PEEKING_DELAY);
+    }, PEEK_OUT_DELAY);
   };
 
   setEntities($scope);
