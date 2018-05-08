@@ -3,7 +3,7 @@ import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 import { set } from 'lodash';
 
 describe('Feature Service', function () {
-  beforeEach(function* () {
+  beforeEach(async function () {
     this.flags = {
       'feature-bv-2018-01-features-api': false
     };
@@ -90,7 +90,7 @@ describe('Feature Service', function () {
       getOrganization: sinon.stub().resolves(this.mocks.organization)
     });
 
-    this.createFeatureService = (yield system.import('services/FeatureService')).default;
+    this.createFeatureService = (await system.import('services/FeatureService')).default;
   });
 
   it('should use the space endpoint by default during instantiation', function () {
@@ -120,82 +120,56 @@ describe('Feature Service', function () {
       this.FeatureService = this.createFeatureService('1234');
     });
 
-    it('should return a Feature from the token if legacy and the feature flag is off', function* () {
+    it('should return a Feature from the token if legacy and the feature flag is off', async function () {
       this.flags['feature-bv-2018-01-features-api'] = false;
       this.mocks.legacyOrganization = true;
 
-      const feature = yield this.FeatureService.get('customRoles');
+      let feature = await this.FeatureService.get('customRoles');
+      expect(feature).toEqual(false);
 
-      expect(feature).toEqual({
-        enabled: false,
-        sys: {
-          type: 'Feature',
-          id: 'custom_roles'
-        }
-      });
+      this.mocks.organization.subscriptionPlan.limits.features.customRoles = true;
+      feature = await this.FeatureService.get('customRoles');
+      expect(feature).toEqual(true);
     });
 
-    it('should return a Feature from the endpoint if legacy and the feature flag is on', function* () {
+    it('should return a Feature from the endpoint if legacy and the feature flag is on', async function () {
       this.flags['feature-bv-2018-01-features-api'] = true;
       this.mocks.legacyOrganization = true;
 
-      const feature = yield this.FeatureService.get('customRoles');
+      const feature = await this.FeatureService.get('customRoles');
 
-      expect(feature).toEqual({
-        enabled: true,
-        name: 'Custom Roles',
-        sys: {
-          type: 'Feature',
-          id: 'custom_roles'
-        }
-      });
+      expect(feature).toEqual(true);
     });
 
-    it('should return a Feature from the endpoint if not legacy', function* () {
+    it('should return a Feature from the endpoint if not legacy', async function () {
       let feature;
 
       this.mocks.legacyOrganization = false;
 
-      feature = yield this.FeatureService.get('customRoles');
+      feature = await this.FeatureService.get('customRoles');
+      expect(feature).toEqual(true);
 
-      expect(feature).toEqual({
-        enabled: true,
-        name: 'Custom Roles',
-        sys: {
-          id: 'custom_roles',
-          type: 'Feature'
-        }
-      });
-
-      feature = yield this.FeatureService.get('sso');
-
-      expect(feature).toEqual({
-        enabled: false,
-        name: 'Single Sign-On',
-        sys: {
-          id: 'sso',
-          type: 'Feature'
-        }
-      });
+      feature = await this.FeatureService.get('sso');
+      expect(feature).toEqual(false);
     });
 
-    it('should return undefined if the Feature is not found', function* () {
+    it('should return false if the Feature is not found', async function () {
       let feature;
 
       this.mocks.legacyOrganization = true;
-      feature = yield this.FeatureService.get('missing');
+      feature = await this.FeatureService.get('missing');
 
-      expect(feature).toBeUndefined();
+      expect(feature).toEqual(false);
 
       this.flags['feature-bv-2018-01-features-api'] = true;
-      feature = yield this.FeatureService.get('missing2');
+      feature = await this.FeatureService.get('missing2');
 
-      expect(feature).toBeUndefined();
+      expect(feature).toEqual(false);
 
       this.mocks.legacyOrganization = false;
-      feature = yield this.FeatureService.get('missing3');
+      feature = await this.FeatureService.get('missing3');
 
-      expect(feature).toBeUndefined();
+      expect(feature).toEqual(false);
     });
   });
 
@@ -204,10 +178,10 @@ describe('Feature Service', function () {
       this.FeatureService = this.createFeatureService('1234');
     });
 
-    it('should return all Features from the token if legacy and the feature flag is off', function* () {
+    it('should return all Features from the token if legacy and the feature flag is off', async function () {
       this.mocks.legacyOrganization = true;
 
-      const features = yield this.FeatureService.getAll();
+      const features = await this.FeatureService.getAll();
       expect(features.length).toBe(2);
       expect(features).toEqual([
         {
@@ -227,11 +201,11 @@ describe('Feature Service', function () {
       ]);
     });
 
-    it('should return all Features from the endpoint if legacy and the feature flag is on', function* () {
+    it('should return all Features from the endpoint if legacy and the feature flag is on', async function () {
       this.mocks.legacyOrganization = true;
       this.flags['feature-bv-2018-01-features-api'] = true;
 
-      const features = yield this.FeatureService.getAll();
+      const features = await this.FeatureService.getAll();
       expect(features.length).toBe(3);
       expect(features).toEqual([
         {
@@ -261,10 +235,10 @@ describe('Feature Service', function () {
       ]);
     });
 
-    it('should return all Features from the endpoint if not legacy', function* () {
+    it('should return all Features from the endpoint if not legacy', async function () {
       this.mocks.legacyOrganization = false;
 
-      const features = yield this.FeatureService.getAll();
+      const features = await this.FeatureService.getAll();
       expect(features.length).toBe(3);
       expect(features).toEqual([
         {
