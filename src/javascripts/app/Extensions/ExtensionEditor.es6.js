@@ -72,7 +72,7 @@ const ExtensionEditor = createReactClass({
   renderContent (setState) {
     const {entity, selfHosted} = this.state;
 
-    return <div style={{padding: '0 2em'}}>
+    return <div className="extension-form">
       <ExtensionForm
         entity={entity}
         selfHosted={selfHosted}

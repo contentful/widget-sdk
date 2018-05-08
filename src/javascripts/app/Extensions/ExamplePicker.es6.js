@@ -1,7 +1,6 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
-import {byName as Colors} from 'Styles/Colors';
 
 import * as Fetcher from './GitHubFetcher';
 
@@ -53,14 +52,7 @@ const ExamplePicker = createReactClass({
         <p className="modal-dialog__richtext">
           You can install one of our predefined UI Extension examples.
         </p>
-        <div style={{
-          border: `1px solid ${Colors.iceDark}`,
-          borderWidth: '1px 0',
-          backgroundColor: Colors.elementLightest,
-          width: '600px',
-          maxHeight: '450px',
-          overflow: 'auto'
-        }}>
+        <div className="extension-examples">
           {EXAMPLES.map(example => this.renderExample(example))}
         </div>
       </div>
@@ -73,22 +65,13 @@ const ExamplePicker = createReactClass({
     const {onConfirm, onCancel} = this.props;
     const {fetching} = this.state;
 
-    return <div key={example.url} style={{
-      color: Colors.textDark,
-      padding: '10px 20px',
-      border: `1px solid ${Colors.iceDark}`,
-      borderTopWidth: '0',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center'
-    }}>
+    return <div key={example.url} className="extension-examples__item">
       <div>
         <h3>{example.name}</h3>
         <p>{example.description}</p>
       </div>
       <button
         className="btn-action"
-        style={{marginLeft: '40px'}}
         disabled={fetching}
         onClick={() => {
           this.setState(() => ({fetching: true}));

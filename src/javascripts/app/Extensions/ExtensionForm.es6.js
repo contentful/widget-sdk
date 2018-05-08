@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import CodeMirror from 'react-codemirror';
 import {get} from 'lodash';
-import {byName as Colors} from 'Styles/Colors';
 import WidgetParametersForm from 'widgets/WidgetParametersForm';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils';
 
@@ -13,25 +12,15 @@ const DEFAULT_CM_HEIGHT = '400px';
 
 const Label = ({text, info}) => {
   return <label>
-    <span style={{fontWeight: 'bold'}}>{text}</span>
-    {info && <span style={{color: Colors.textLight}}> ({info})</span>}
+    <span className="extension-form__label">{text}</span>
+    {info && <span className="extension-form__label-info"> ({info})</span>}
   </label>;
 };
 
 const Editor = ({height, value, onChange, options}) => {
-  return <div style={{border: '1px solid #ddd', borderRadius: '4px'}}>
+  return <div className={`extension-form__cm${options.readOnly ? ' x--readonly' : ''}`}>
     <CodeMirror
-      ref={el => {
-        if (el) {
-          const cm = el.getCodeMirror();
-          cm.setSize(null, height || DEFAULT_CM_HEIGHT);
-          if (options.readOnly) {
-            // Defensive style - using undocumented API.
-            const style = get(cm, ['display', 'wrapper', 'style']) || {};
-            style.backgroundColor = '#f7f7f7';
-          }
-        }
-      }}
+      ref={el => el && el.getCodeMirror().setSize(null, height || DEFAULT_CM_HEIGHT)}
       value={value || ''}
       onChange={onChange}
       options={options}
@@ -80,7 +69,7 @@ const ExtensionForm = ({entity, selfHosted, updateEntity, setSelfHosted}) => {
     return updateEntity({...entity, extension: {...entity.extension, [prop]: value}});
   };
 
-  return <div style={{maxWidth: '80%'}}>
+  return <React.Fragment>
     <div className="cfnext-form__field">
       <Label text="Name" info="required" />
       <input
@@ -100,9 +89,9 @@ const ExtensionForm = ({entity, selfHosted, updateEntity, setSelfHosted}) => {
 
     <div className="cfnext-form__field">
       <Label text="Field types" info="required" />
-      <div style={{display: 'flex'}}>
+      <div className="extension-form__field-types">
         {FIELD_TYPES.map(type => {
-          return <label key={type} style={{marginRight: '10px'}}>
+          return <label key={type}>
             <input
               type="checkbox"
               checked={entity.extension.fieldTypes.includes(type)}
@@ -162,7 +151,7 @@ const ExtensionForm = ({entity, selfHosted, updateEntity, setSelfHosted}) => {
       entity={entity}
       onChange={values => updateEntity({...entity, parameters: values})}
     />
-  </div>;
+  </React.Fragment>;
 };
 
 
