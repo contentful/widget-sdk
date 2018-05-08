@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import parseGithubUrl from 'parse-github-url';
 import {byName as Colors} from 'Styles/Colors';
 
 import {fetchExtension} from './GitHubFetcher';
@@ -68,7 +67,7 @@ const ExamplePicker = ({confirm, cancel}) => {
             <button
               className="btn-action"
               style={{marginLeft: '40px'}}
-              onClick={() => fetchExtension(parseGithubUrl(example.url)).then(confirm)}
+              onClick={() => fetchExtension(example.url).then(confirm)}
             >
               Install
             </button>

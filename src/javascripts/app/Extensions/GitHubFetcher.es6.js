@@ -1,4 +1,5 @@
 import {toApiFieldType} from './FieldTypes';
+import parseGithubUrl from 'parse-github-url';
 
 const GITHUB_URL_PROPS = ['host', 'repo', 'branch', 'filepath'];
 
@@ -10,9 +11,29 @@ const ERRORS = {
 
 const nonEmptyString = s => typeof s === 'string' && s.length > 0;
 
-export function isValidSource (parsed) {
-  parsed = parsed || {};
+function isValidGHUserContentUrl (url) {
+  return url.startsWith('https://raw.githubusercontent.com/') && url.endsWith('extension.json');
+}
+
+function getDescriptorUrl (url) {
+  if (isValidGHUserContentUrl(url)) {
+    return url;
+  } else {
+    const {repo, branch, filepath} = parseGithubUrl(url) || {};
+    return `https://raw.githubusercontent.com/${repo}/${branch}/${filepath}`;
+  }
+}
+
+export function isValidSource (url) {
+  url = (url || '').trim();
+
+  if (isValidGHUserContentUrl(url)) {
+    return true;
+  }
+
+  const parsed = parseGithubUrl(url) || {};
   const onlyNonEmptyStrings = GITHUB_URL_PROPS.every(prop => nonEmptyString(parsed[prop]));
+
   if (onlyNonEmptyStrings) {
     return parsed.host.endsWith('github.com') && parsed.filepath.endsWith('extension.json');
   } else {
@@ -20,8 +41,8 @@ export function isValidSource (parsed) {
   }
 }
 
-export function fetchExtension ({repo, branch, filepath}) {
-  const descriptorUrl = `https://raw.githubusercontent.com/${repo}/${branch}/${filepath}`;
+export function fetchExtension (url) {
+  const descriptorUrl = getDescriptorUrl((url || '').trim());
 
   return fetch(descriptorUrl)
   .then(res => {

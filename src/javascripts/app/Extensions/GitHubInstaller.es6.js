@@ -1,7 +1,6 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
-import parseGithubUrl from 'parse-github-url';
 
 import {isValidSource, fetchExtension} from './GitHubFetcher';
 
@@ -11,22 +10,20 @@ const Installer = createReactClass({
     cancel: PropTypes.func.isRequired
   },
   getInitialState () {
-    return {url: null, parsed: null, valid: false, err: null};
+    return {url: null, valid: false, err: null};
   },
-  parse (url) {
-    const parsed = parseGithubUrl(url);
-    const valid = isValidSource(parsed);
-    this.setState(() => ({url, parsed, valid, err: null}));
+  checkUrl (url) {
+    this.setState(() => ({url, valid: isValidSource(url), err: null}));
   },
-  install (parsed) {
-    fetchExtension(parsed)
+  install (url) {
+    fetchExtension(url)
     .then(
       extension => this.props.confirm(extension),
       err => this.setState(state => ({...state, err}))
     );
   },
   render () {
-    const {url, parsed, valid, err} = this.state;
+    const {url, valid, err} = this.state;
     const {cancel} = this.props;
     const hasInput = (url || '').length > 0;
 
@@ -51,7 +48,7 @@ const Installer = createReactClass({
           className="cfnext-form__input--full-size"
           type="text"
           value={url || ''}
-          onChange={e => this.parse(e.target.value)}
+          onChange={e => this.checkUrl(e.target.value)}
         />
         {!err && hasInput && !valid && <p className="cfnext-form__field-error">
           Please provide a valid GitHub URL
@@ -62,7 +59,7 @@ const Installer = createReactClass({
         <button
           className="btn-primary-action"
           disabled={!hasInput || !valid}
-          onClick={() => this.install(parsed)}
+          onClick={() => this.install(url)}
         >
           Install
         </button>
