@@ -44,7 +44,7 @@ const ExtensionParameters = ({entity, onChange}) => {
   return <React.Fragment>
     {definitions.length > 0 && <WidgetParametersForm
       definitions={definitions}
-      values={entity.parameters}
+      values={entity.parameters || {}}
       missing={WidgetParametersUtils.markMissingValues(definitions, entity.parameters)}
       updateValue={(id, value) => {
         const updated = {...entity.parameters, [id]: value};
@@ -53,7 +53,7 @@ const ExtensionParameters = ({entity, onChange}) => {
     />}
 
     <div className="cfnext-form__field">
-      <Label text={'Paramter definitions'} info={'read only'} />
+      <Label text="Paramter definitions" info="read only" />
       <p>
         You can set parameter definitions using the <a
           href="https://www.contentful.com/developers/docs/references/content-management-api/#/reference/ui-extensions/configuration-parameters"
@@ -81,7 +81,7 @@ const ExtensionForm = ({entity, selfHosted, updateEntity, setSelfHosted}) => {
 
   return <div style={{maxWidth: '80%'}}>
     <div className="cfnext-form__field">
-      <Label text={'Name'} info={'required'} />
+      <Label text="Name" info="required" />
       <input
         className="cfnext-form__input--full-size"
         type="text"
@@ -98,7 +98,7 @@ const ExtensionForm = ({entity, selfHosted, updateEntity, setSelfHosted}) => {
     </div>
 
     <div className="cfnext-form__field">
-      <Label text={'Field types'} info={'required'} />
+      <Label text="Field types" info="required" />
       <div style={{display: 'flex'}}>
         {FIELD_TYPES.map(type => {
           return <label key={type} style={{marginRight: '10px'}}>
@@ -121,7 +121,7 @@ const ExtensionForm = ({entity, selfHosted, updateEntity, setSelfHosted}) => {
     </div>
 
     <div className="cfnext-form__field">
-      <Label text={'Hosting'} info={'required'} />
+      <Label text="Hosting" info="required" />
       <label>
         <input type="radio" checked={selfHosted} onChange={() => setSelfHosted(true)} />
         {' '}Self-hosted (<code>src</code>)
@@ -134,7 +134,7 @@ const ExtensionForm = ({entity, selfHosted, updateEntity, setSelfHosted}) => {
     </div>
 
     {selfHosted && <div className="cfnext-form__field">
-      <Label text={'Self-hosted URL'} info={'required'} />
+      <Label text="Self-hosted URL" info="required" />
       <input
         className="cfnext-form__input--full-size"
         type="text"
@@ -147,10 +147,10 @@ const ExtensionForm = ({entity, selfHosted, updateEntity, setSelfHosted}) => {
     </div>}
 
     {!selfHosted && <div className="cfnext-form__field">
-      <Label text={'Code'} info={'required'} />
+      <Label text="Code" info="required" />
       <p>Maximum accepted code size is 200KB. For a larger size use the self-hosted option.</p>
       <Editor
-        height={'700px'}
+        height="700px"
         value={entity.extension.srcdoc}
         onChange={value => updateExtensionProp('srcdoc', value)}
         options={{mode: 'htmlmixed', lineNumbers: true, tabSize: 2}}

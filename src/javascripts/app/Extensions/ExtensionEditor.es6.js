@@ -75,7 +75,7 @@ const ExtensionEditor = createReactClass({
 
     return <Workbench
       title={`Extension: ${initial.extension.name}${dirty ? '*' : ''}`}
-      icon={'page-settings'}
+      icon="page-settings"
       content={content}
       actions={actions}
     />;
