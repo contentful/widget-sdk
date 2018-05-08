@@ -33,12 +33,24 @@ const ExtensionEditor = createReactClass({
   getInitialState () {
     return this.entityToFreshState(this.props.entity);
   },
+  // Every time we update the state we have to do two things:
+  // 1. check if the current entity representation differs from
+  //    the initial entity value and mark as dirty if so
+  // 2. call `onChange` to notify outside world about changes
+  //    introduced to the entity; the reason is that saving
+  //    logic lives in Angular world (is used by `leaveConfirmator`)
   afterStateUpdate () {
     const {initial, selfHosted, entity} = this.state;
+    // We don't want to change entity right away so a user can
+    // feely switch between hosted and self-hosted options w/o
+    // loosing values provided. State of the radio buttons is
+    // stored in `selfHosted` and only entity to be saved will
+    // skip one of properties.
     const ignoredSrcProp = selfHosted ? 'srcdoc' : 'src';
 
     const extension = omit(entity.extension, ignoredSrcProp);
     const dirty = !isEqual(initial, {...entity, extension});
+    // We are aware it rerenders. Subtrees affected are small.
     this.setState(state => ({...state, dirty}));
 
     const cloned = cloneDeep(entity);
@@ -47,11 +59,20 @@ const ExtensionEditor = createReactClass({
     this.props.onChange({entity: cloned, dirty});
   },
   render () {
-    const {initial, selfHosted, entity, dirty} = this.state;
-    const {save} = this.props;
+    const {initial, dirty} = this.state;
     const setState = updater => this.setState(updater, () => this.afterStateUpdate());
 
-    const content = <div style={{padding: '0 2em'}}>
+    return <Workbench
+      title={`Extension: ${initial.extension.name}${dirty ? '*' : ''}`}
+      icon="page-settings"
+      content={this.renderContent(setState)}
+      actions={this.renderActions(setState)}
+    />;
+  },
+  renderContent (setState) {
+    const {entity, selfHosted} = this.state;
+
+    return <div style={{padding: '0 2em'}}>
       <ExtensionForm
         entity={entity}
         selfHosted={selfHosted}
@@ -59,8 +80,12 @@ const ExtensionEditor = createReactClass({
         setSelfHosted={selfHosted => setState(state => ({...state, selfHosted}))}
       />
     </div>;
+  },
+  renderActions (setState) {
+    const {dirty} = this.state;
+    const {save} = this.props;
 
-    const actions = <React.Fragment>
+    return <React.Fragment>
       <button className="btn-secondary-action" onClick={() => $state.go('.^')}>
         Cancel
       </button>
@@ -72,13 +97,6 @@ const ExtensionEditor = createReactClass({
         Save
       </button>
     </React.Fragment>;
-
-    return <Workbench
-      title={`Extension: ${initial.extension.name}${dirty ? '*' : ''}`}
-      icon="page-settings"
-      content={content}
-      actions={actions}
-    />;
   }
 });
 

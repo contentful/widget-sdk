@@ -9,6 +9,7 @@ import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils';
 import {FIELD_TYPES} from './FieldTypes';
 
 const EXTENSION_URL_RE = /(^https:\/\/)|(^http:\/\/localhost(:[0-9]+)?(\/|$))/;
+const DEFAULT_CM_HEIGHT = '400px';
 
 const Label = ({text, info}) => {
   return <label>
@@ -23,7 +24,7 @@ const Editor = ({height, value, onChange, options}) => {
       ref={el => {
         if (el) {
           const cm = el.getCodeMirror();
-          cm.setSize(null, height || '400px');
+          cm.setSize(null, height || DEFAULT_CM_HEIGHT);
           if (options.readOnly) {
             // Defensive style - using undocumented API.
             const style = get(cm, ['display', 'wrapper', 'style']) || {};

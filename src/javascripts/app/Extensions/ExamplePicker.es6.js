@@ -42,8 +42,7 @@ const ExamplePicker = createReactClass({
     return {fetching: false};
   },
   render () {
-    const {onConfirm, onCancel} = this.props;
-    const {fetching} = this.state;
+    const {onCancel} = this.props;
 
     return <div className="modal-dialog">
       <header className="modal-dialog__header">
@@ -62,38 +61,42 @@ const ExamplePicker = createReactClass({
           maxHeight: '450px',
           overflow: 'auto'
         }}>
-          {EXAMPLES.map(example => {
-            return <div key={example.url} style={{
-              color: Colors.textDark,
-              padding: '10px 20px',
-              border: `1px solid ${Colors.iceDark}`,
-              borderTopWidth: '0',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
-              <div>
-                <h3>{example.name}</h3>
-                <p>{example.description}</p>
-              </div>
-              <button
-                className="btn-action"
-                style={{marginLeft: '40px'}}
-                disabled={fetching}
-                onClick={() => {
-                  this.setState(() => ({fetching: true}));
-                  Fetcher.fetchExtension(example.url).then(onConfirm, onCancel);
-                }}
-              >
-                Install
-              </button>
-            </div>;
-          })}
+          {EXAMPLES.map(example => this.renderExample(example))}
         </div>
       </div>
       <div className="modal-dialog__controls">
         <button className="btn-secondary-action" onClick={onCancel}>Close</button>
       </div>
+    </div>;
+  },
+  renderExample (example) {
+    const {onConfirm, onCancel} = this.props;
+    const {fetching} = this.state;
+
+    return <div key={example.url} style={{
+      color: Colors.textDark,
+      padding: '10px 20px',
+      border: `1px solid ${Colors.iceDark}`,
+      borderTopWidth: '0',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    }}>
+      <div>
+        <h3>{example.name}</h3>
+        <p>{example.description}</p>
+      </div>
+      <button
+        className="btn-action"
+        style={{marginLeft: '40px'}}
+        disabled={fetching}
+        onClick={() => {
+          this.setState(() => ({fetching: true}));
+          Fetcher.fetchExtension(example.url).then(onConfirm, onCancel);
+        }}
+      >
+        Install
+      </button>
     </div>;
   }
 });
