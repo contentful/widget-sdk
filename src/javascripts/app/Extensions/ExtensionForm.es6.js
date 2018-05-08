@@ -139,6 +139,15 @@ const ExtensionForm = ({entity, selfHosted, updateEntity, setSelfHosted}) => {
     {!selfHosted && <div className="cfnext-form__field">
       <Label text="Code" info="required" />
       <p>Maximum accepted code size is 200KB. For a larger size use the self-hosted option.</p>
+      <p>
+        You can also develop your extensions locally. Learn about the <a
+          href="https://github.com/contentful/extensions#managing-extensions"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          CLI based development flow
+        </a>.
+      </p>
       <Editor
         height="700px"
         value={entity.extension.srcdoc}

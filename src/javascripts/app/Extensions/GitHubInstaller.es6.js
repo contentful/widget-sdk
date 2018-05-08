@@ -36,7 +36,7 @@ const Installer = createReactClass({
       </header>
       <div className="modal-dialog__content">
         <p className="modal-dialog__richtext">
-          Paste a public GitHub link to the <code>extension.json</code> descriptor file.
+          Paste a public GitHub link to an <code>extension.json</code> descriptor file.
           {' '}<strong>Important:</strong> use only sources that you trust.
           {' '}You can check the <a
             href="https://github.com/contentful/extensions/tree/master/samples"
