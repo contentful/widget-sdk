@@ -20,7 +20,17 @@ const Label = ({text, info}) => {
 const Editor = ({height, value, onChange, options}) => {
   return <div style={{border: '1px solid #ddd', borderRadius: '4px'}}>
     <CodeMirror
-      ref={el => el && el.getCodeMirror().setSize(null, height || '400px')}
+      ref={el => {
+        if (el) {
+          const cm = el.getCodeMirror();
+          cm.setSize(null, height || '400px');
+          if (options.readOnly) {
+            // Defensive style - using undocumented API.
+            const style = get(cm, ['display', 'wrapper', 'style']) || {};
+            style.backgroundColor = '#f7f7f7';
+          }
+        }
+      }}
       value={value || ''}
       onChange={onChange}
       options={options}
@@ -44,6 +54,15 @@ const ExtensionParameters = ({entity, onChange}) => {
 
     <div className="cfnext-form__field">
       <Label text={'Paramter definitions'} info={'read only'} />
+      <p>
+        You can set parameter definitions using the <a
+          href="https://www.contentful.com/developers/docs/references/content-management-api/#/reference/ui-extensions/configuration-parameters"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Content Management API
+        </a>.
+      </p>
       <Editor
         value={JSON.stringify({
           instance: get(entity, ['extension', 'parameters', 'instance']) || [],

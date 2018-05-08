@@ -142,13 +142,11 @@ describe('app/Extensions', function () {
       this.init();
       this.create();
 
-      sinon.assert.calledWith(this.spaceContext.cma.createExtension, {
-        extension: {
-          name: 'New extension',
-          fieldTypes: [{ type: 'Symbol' }],
-          srcdoc: '<!DOCTYPE html>\n<script src="https://unpkg.com/contentful-ui-extensions-sdk@3"></script>\n'
-        }
-      });
+      sinon.assert.calledOnce(this.spaceContext.cma.createExtension);
+      const {extension} = this.spaceContext.cma.createExtension.lastCall.args[0];
+      expect(extension.name).toBe('New extension');
+      expect(extension.fieldTypes).toEqual([{ type: 'Symbol' }]);
+      expect(extension.srcdoc.includes('https://unpkg.com/contentful-ui-extensions-sdk@3')).toBe(true);
 
       sinon.assert.calledWith(this.$inject('$state').go, '.detail', {extensionId: 'newly-created'});
       sinon.assert.calledWith(this.notification.info, 'Your new extension was successfully created.');

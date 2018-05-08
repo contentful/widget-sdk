@@ -80,7 +80,15 @@ function createExtension () {
   return install({
     name: 'New extension',
     fieldTypes: [{type: 'Symbol'}],
-    srcdoc: `<!DOCTYPE html>\n<script src="${SDK_URL}"></script>\n`
+    srcdoc: [
+      '<!DOCTYPE html>',
+      `<script src="${SDK_URL}"></script>`,
+      '<script>',
+      'window.contentfulExtension.init(function(api) {',
+      '  console.log(api.field.getValue());',
+      '});',
+      '</script>'
+    ].join('\n') + '\n'
   });
 }
 
@@ -122,9 +130,14 @@ function list (extensions, refresh) {
     th({class: 'x--small-cell'}, ['Actions'])
   ];
 
+  const extensionLink = ({content, id}) => stateLink(content, {
+    path: '.detail',
+    params: {extensionId: id}
+  });
+
   const body = extensions.map(extension => {
     return tr([
-      td([h('strong', {title: `ID: ${extension.id}`}, [extension.name])]),
+      td([extensionLink({content: [extension.name], id: extension.id})]),
       typeof extension.src === 'string' && td(['self-hosted']),
       typeof extension.srcdoc === 'string' && td(['Contentful']),
       td([extension.fieldTypes.join(', ')]),
@@ -135,9 +148,9 @@ function list (extensions, refresh) {
         `${Object.keys(extension.installationParameters.values).length} value(s)`
       ]),
       td({class: 'x--small-cell'}, [
-        stateLink([h('span', {style: {textDecoration: 'underline'}}, ['Edit'])], {
-          path: '.detail',
-          params: {extensionId: extension.id}
+        extensionLink({
+          content: [h('span', {style: {textDecoration: 'underline'}}, ['Edit'])],
+          id: extension.id
         }),
         deleteButton(extension, refresh)
       ])
@@ -163,7 +176,8 @@ function deleteButton (extension, refresh) {
       h('p', [
         'You are about to remove the extension ',
         h('strong', [extension.name]),
-        '. You may break editing interface if it is in use in any content type.'
+        '. If the extension is in use in any content type you\'ll have to ',
+        'pick a different appearance for the field using it.'
       ]),
       h('button.btn-caution', {
         dataTestId: `extensions.deleteConfirm.${extension.id}`,
@@ -199,7 +213,7 @@ function empty () {
       'There are no extensions installed in this space'
     ]),
     h('.empty-state__description', [
-      `Contentful UI Extensions are small applications that run inside the Web Wpp.
+      `Contentful UI Extensions are small applications that run inside the Web App.
       Click on "Add extension" to explore your options. You can also read how to `,
       docsLink({
         href: 'https://www.contentful.com/developers/docs/concepts/uiextensions/',
@@ -222,7 +236,7 @@ function sidebar () {
     h('h2.entity-sidebar__heading', {style: {marginTop: 0}}, ['Documentation']),
     h('.entity-sidebar__text-profile', [
       h('p', [
-        `Contentful UI Extensions are small applications that run inside the Web Wpp
+        `Contentful UI Extensions are small applications that run inside the Web App
         and provide additional functionality for creating content and integration with
         third party services.`
       ]),
