@@ -18,13 +18,11 @@ const ContactUsButton = createReactClass({
 
   render () {
     return (
-      <p>
-        <TextLink
-          onClick={this.contactUs}
-          icon="MdChatBubble"
-          {...this.props}
-        >Get in touch with us</TextLink>
-      </p>
+      <TextLink
+        onClick={this.contactUs}
+        icon="MdChatBubble"
+        {...this.props}
+      >Get in touch with us</TextLink>
     );
   }
 });

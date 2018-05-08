@@ -87,7 +87,9 @@ function Sidebar ({grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable}) {
       { !isOrgBillable && 'Do you have any questions about our pricing?' }
       <Fragment>&#32;Don&apos;t hesitate to talk to our customer success team.</Fragment>
     </p>
-    <ContactUsButton data-test-id='subscription-page.sidebar.contact-link' />
+    <p>
+      <ContactUsButton data-test-id='subscription-page.sidebar.contact-link' />
+    </p>
   </div>;
 }
 

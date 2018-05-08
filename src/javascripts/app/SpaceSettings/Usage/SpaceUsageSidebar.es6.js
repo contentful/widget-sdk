@@ -46,7 +46,9 @@ const SpaceUsageSidebar = createReactClass({
           {`Do you need help to upgrade or downgrade?
           Don't hesitate to talk to our customer success team.`}
         </p>
-        <ContactUsButton />
+        <p>
+          <ContactUsButton />
+        </p>
       </div>
     );
   }
