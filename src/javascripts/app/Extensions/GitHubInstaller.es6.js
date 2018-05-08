@@ -2,35 +2,37 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
-import {isValidSource, fetchExtension} from './GitHubFetcher';
+import * as Fetcher from './GitHubFetcher';
 
 const Installer = createReactClass({
   propTypes: {
-    confirm: PropTypes.func.isRequired,
-    cancel: PropTypes.func.isRequired
+    onConfirm: PropTypes.func.isRequired,
+    onCancel: PropTypes.func.isRequired
   },
   getInitialState () {
-    return {url: null, valid: false, err: null};
+    return {url: null, valid: false, fetching: false, err: null};
   },
   checkUrl (url) {
-    this.setState(() => ({url, valid: isValidSource(url), err: null}));
+    this.setState(() => ({url, valid: Fetcher.isValidSource(url), err: null}));
   },
   install (url) {
-    fetchExtension(url)
+    this.setState(state => ({...state, fetching: true}));
+    Fetcher.fetchExtension(url)
     .then(
-      extension => this.props.confirm(extension),
-      err => this.setState(state => ({...state, err}))
+      extension => this.props.onConfirm(extension),
+      err => this.setState(state => ({...state, fetching: false, err}))
     );
   },
   render () {
-    const {url, valid, err} = this.state;
-    const {cancel} = this.props;
+    const {url, valid, fetching, err} = this.state;
+    const {onCancel} = this.props;
     const hasInput = (url || '').length > 0;
+    const disabled = !hasInput || !valid || fetching;
 
     return <div className="modal-dialog">
       <header className="modal-dialog__header">
         <h1>Install from GitHub</h1>
-        <button className="modal-dialog__close" onClick={cancel} />
+        <button className="modal-dialog__close" onClick={onCancel} />
       </header>
       <div className="modal-dialog__content">
         <p className="modal-dialog__richtext">
@@ -58,12 +60,12 @@ const Installer = createReactClass({
       <div className="modal-dialog__controls">
         <button
           className="btn-primary-action"
-          disabled={!hasInput || !valid}
+          disabled={disabled}
           onClick={() => this.install(url)}
         >
           Install
         </button>
-        <button className="btn-secondary-action" onClick={cancel}>Cancel</button>
+        <button className="btn-secondary-action" onClick={onCancel}>Cancel</button>
       </div>
     </div>;
   }

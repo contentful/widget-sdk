@@ -15,8 +15,8 @@ angular.module('contentful')
         React.createElement(ExamplePicker, {
           // `scope.dialog` may not be available right away so we
           // pass wrapped invocations down.
-          confirm: function (value) { scope.dialog.confirm(value); },
-          cancel: function () { scope.dialog.cancel({cancelled: true}); }
+          onConfirm: function (value) { scope.dialog.confirm(value); },
+          onCancel: function () { scope.dialog.cancel({cancelled: true}); }
         }),
         el[0].querySelector('.mount-point')
       );
