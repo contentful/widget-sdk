@@ -9,13 +9,19 @@
     cf-entry-editor(
       ng-if="entity.type === 'Entry'"
       entry-id="entity.id"
-      preferences="preferences")
+      preferences="preferences"
+      ng-mouseenter="initPeeking($index)"
+    )
     cf-asset-editor(
       ng-if="entity.type === 'Asset'"
       asset-id="entity.id"
-      preferences="preferences")
+      preferences="preferences"
+      ng-mouseenter="initPeeking($index)"
+    )
     .workbench-layer__overlay(
       ng-style="{opacity: (-$index / entities.length) + 0.8}"
       ng-if="($index + 1) !== entities.length"
       ng-click="close(entity)"
+      ng-mouseenter="peekIn($index)"
+      ng-mouseleave="peekOut($index)"
     )

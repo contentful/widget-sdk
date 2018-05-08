@@ -438,23 +438,14 @@ Styleguide 9.7
   cursor: pointer;
 }
 
-// Disabled to temporarily disable peeking
-// .workbench-layer:hover {
-//   & ~ .workbench-layer:not(.ng-enter-active) {
-//     transition-delay: 1000ms;
-//     transform: translate3d(200px, 0, 0);
+.workbench-layer--peeked {
+  transform: translate3d(200px, 0, 0);
+}
 
-//     &.ng-leave {
-//       transform: translate3d(300px, 0, 0);
-//       opacity: 0;
-//     }
-//   }
-
-//   .workbench-layer__overlay {
-//     transition: 200ms ease-in-out opacity;
-//     opacity: 0.1!important;
-//   }
-// }
+.workbench-layer__overlay:hover {
+  transition: 200ms ease-in-out opacity;
+  opacity: 0.1!important;
+}
 
 .workbench-layer:not(.workbench-layer--is-current) .workbench-header .breadcrumbs-widget,
 .workbench-layer:not(.workbench-layer--is-current) .workbench-header__icon {
