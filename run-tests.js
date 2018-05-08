@@ -16,7 +16,7 @@
  */
 
 const { once } = require('lodash');
-const { watch } = require('./tools/tasks/js');
+const { watch } = require('./tools/webpack-tasks');
 const { Server, config: { parseConfig } } = require('karma');
 const { testFiles } = require('./karma.conf');
 const { resolve } = require('path');

@@ -31,7 +31,7 @@ module.exports = ({ dev = false } = {}) => ({
   entry: {
     // we have 3 entries mostly due to historical reasons and to avoid
     // rewriting how our gulp build process is made
-    'public/app/components.js': ['./src/javascripts/prelude.js'].concat(
+    'components.js': ['./src/javascripts/prelude.js'].concat(
       // we have to get all JS files, because we use Angular DI system
       // and don't import other files directly
       //
@@ -45,11 +45,11 @@ module.exports = ({ dev = false } = {}) => ({
         ignore: ['./src/javascripts/libs/*.js', './src/javascripts/prelude.js']
       })
     ),
-    'public/app/libs.js': './src/javascripts/libs',
+    'libs.js': './src/javascripts/libs',
     // some of the vendor files provide some sort of shims
     // the reason – in some files we rely on globals, which is not really
     // how webpack was designed :)
-    'public/app/vendor.js': [
+    'vendor.js': [
       './vendor/jquery-shim.js',
       // Custom jQuery UI build: see the file for version and contents
       './vendor/jquery-ui/jquery-ui.js',
@@ -69,8 +69,8 @@ module.exports = ({ dev = false } = {}) => ({
   },
   output: {
     filename: '[name]',
-    path: P.resolve(__dirname, '..'),
-    publicPath: '/app/'
+    path: P.resolve(__dirname, '..', 'public', 'app'),
+    publicPath: '/app'
   },
   module: {
     // sharejs is build by `js/sharejs` gulp task, so we don't touch it here

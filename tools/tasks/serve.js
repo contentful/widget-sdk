@@ -4,7 +4,7 @@ const { TEMPLATES_SRC } = require('./templates');
 
 const STYLESHEETS_SRC = 'src/stylesheets/**/*';
 
-gulp.task('serve', ['js:watch'], function () {
+gulp.task('serve', ['js/vendor'], function () {
   const configName = process.env.UI_CONFIG || 'development';
   const watchFiles = !process.env.NO_WATCHING;
 

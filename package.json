@@ -138,6 +138,7 @@
     "watchify": "^3.7.0",
     "webpack": "^3.11.0",
     "webpack-bundle-analyzer": "^2.11.1",
+    "webpack-dev-middleware": "^2.0.6",
     "webpack-merge": "^4.1.2",
     "yargs": "^4.2.0"
   },
