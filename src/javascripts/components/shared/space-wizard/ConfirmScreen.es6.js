@@ -73,7 +73,7 @@ const ConfirmScreen = createReactClass({
                     (<a
                       className="text-link"
                       href="#"
-                      onClick={() => onNavigate(Steps.SpaceType)}>
+                      onClick={() => onNavigate(Steps.SpaceCreateSteps.SpaceType)}>
                       change space type
                     </a>).
                     The space’s name will be <em>{spaceName}</em>
@@ -82,7 +82,7 @@ const ConfirmScreen = createReactClass({
                     (<a
                       className="text-link"
                       href="#"
-                      onClick={() => onNavigate(Steps.SpaceDetails)}>
+                      onClick={() => onNavigate(Steps.SpaceCreateSteps.SpaceDetails)}>
                       change space details
                     </a>).
                   </p>
