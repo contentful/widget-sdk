@@ -16,14 +16,13 @@ angular.module('contentful')
 })
 
 .controller('WebhookEditorController', ['$scope', 'require', function ($scope, require) {
-
-  var $q               = require('$q');
-  var $controller      = require('$controller');
-  var Command          = require('command');
-  var modalDialog      = require('modalDialog');
+  var $q = require('$q');
+  var $controller = require('$controller');
+  var Command = require('command');
+  var modalDialog = require('modalDialog');
   var leaveConfirmator = require('navigation/confirmLeaveEditor');
-  var spaceContext     = require('spaceContext');
-  var webhookRepo      = require('WebhookRepository').getInstance(spaceContext.space);
+  var spaceContext = require('spaceContext');
+  var webhookRepo = require('WebhookRepository').getInstance(spaceContext.space);
 
   var activityController = $controller('WebhookEditorController/activity', {
     $scope: $scope, repo: webhookRepo
@@ -61,13 +60,12 @@ angular.module('contentful')
 }])
 
 .controller('WebhookEditorController/settings', ['$scope', 'repo', 'require', function ($scope, repo, require) {
-
-  var $q                 = require('$q');
-  var $state             = require('$state');
-  var notification       = require('notification');
+  var $q = require('$q');
+  var $state = require('$state');
+  var notification = require('notification');
   var ReloadNotification = require('ReloadNotification');
-  var modalDialog        = require('modalDialog');
-  var validation         = require('WebhookEditor/validationHelper');
+  var modalDialog = require('modalDialog');
+  var validation = require('WebhookEditor/validationHelper');
 
   var touched = getInitialTouchCount();
 
@@ -152,7 +150,6 @@ angular.module('contentful')
 }])
 
 .controller('WebhookEditorController/activity', ['$scope', 'repo', function ($scope, repo) {
-
   var PER_PAGE = 30;
   var items = [];
 
@@ -162,7 +159,7 @@ angular.module('contentful')
 
   $scope.$watch('activity.page', function (page) {
     if (_.isNumber(page) && _.isArray(items)) {
-      $scope.activity.visible = items.slice(page*PER_PAGE, (page+1)*PER_PAGE);
+      $scope.activity.visible = items.slice(page * PER_PAGE, (page + 1) * PER_PAGE);
     } else {
       $scope.activity.visible = null;
     }
@@ -185,11 +182,10 @@ angular.module('contentful')
 }])
 
 .factory('WebhookEditor/validationHelper', ['require', function (require) {
-
-  var $q           = require('$q');
+  var $q = require('$q');
   var notification = require('notification');
-  var logger       = require('logger');
-  var urlUtils     = require('urlUtils');
+  var logger = require('logger');
+  var urlUtils = require('urlUtils');
 
   var MESSAGES = {
     INVALID_NAME: 'Please provide a valid webhook name.',

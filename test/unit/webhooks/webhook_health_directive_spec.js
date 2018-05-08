@@ -1,7 +1,6 @@
 'use strict';
 
 describe('Webhook Health directive', function () {
-
   beforeEach(function () {
     module('contentful/test');
 
@@ -9,7 +8,7 @@ describe('Webhook Health directive', function () {
     this.$inject('WebhookRepository').getInstance = _.constant({logs: {getHealth: this.getStub}});
 
     this.compile = function (webhookId) {
-      var data = {webhook: {id: 'whid' || webhookId}};
+      const data = {webhook: {id: 'whid' || webhookId}};
       this.element = this.$compile('<cf-webhook-health webhook-id="webhook.id" />', data);
     }.bind(this);
 

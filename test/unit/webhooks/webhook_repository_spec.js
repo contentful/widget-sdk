@@ -1,8 +1,7 @@
 'use strict';
 
 describe('Webhook Repository', function () {
-
-  var space, endpoint, repo;
+  let space, endpoint, repo;
 
   beforeEach(function () {
     module('contentful/test');
@@ -25,7 +24,7 @@ describe('Webhook Repository', function () {
 
   describe('#getAll()', function () {
     it('calls endpoint and extracts items', function () {
-      var items = [1, 2, 3];
+      const items = [1, 2, 3];
       endpoint.get.resolves({items: items});
 
       return repo.getAll().then(function (items2) {
@@ -37,7 +36,7 @@ describe('Webhook Repository', function () {
 
   describe('#get()', function () {
     it('calls endpoint with an ID', function () {
-      var webhook = {url: 'http://test.com'};
+      const webhook = {url: 'http://test.com'};
       endpoint.get.resolves(webhook);
 
       return repo.get('whid').then(function (webhook2) {
@@ -49,7 +48,7 @@ describe('Webhook Repository', function () {
 
   describe('#remove()', function () {
     it('calls endpoint with an ID extracted from a webook object', function () {
-      var webhook = {sys: {id: 'whid'}};
+      const webhook = {sys: {id: 'whid'}};
       endpoint.delete.resolves();
 
       return repo.remove(webhook).then(function () {
@@ -61,7 +60,7 @@ describe('Webhook Repository', function () {
 
   describe('#save()', function () {
     it('for a new entity, posts to the endpoint with a webhook as a payload', function () {
-      var webhook = {url: 'http://test.com'};
+      const webhook = {url: 'http://test.com'};
       endpoint.post.resolves(_.extend({sys: {id: 'whid'}}, webhook));
 
       return repo.save(webhook).then(function (webhook2) {
@@ -73,7 +72,7 @@ describe('Webhook Repository', function () {
     });
 
     it('for existing entity, puts to the endpoint with an ID, webhook as a payload and version header', function () {
-      var webhook = {sys: {id: 'whid', version: 7}, url: 'http://test.com'};
+      const webhook = {sys: {id: 'whid', version: 7}, url: 'http://test.com'};
       endpoint.put.resolves(_.extend({sys: {id: 'whid', version: 8}}, webhook));
 
       return repo.save(webhook).then(function (webhook2) {
