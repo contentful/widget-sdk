@@ -93,7 +93,7 @@ const Wizard = createReactClass({
       isSpaceCreated: false,
       isContentCreated: false,
       data: {
-        spaceRatePlan: null,
+        newSpaceRatePlan: null,
         spaceName: '',
         template: null,
         serverValidationErrors: null
@@ -277,13 +277,15 @@ const Wizard = createReactClass({
   },
 
   handleError (error) {
-    logger.logServerWarn('Could not create Space', {error});
+    const { action } = this.props;
+
+    logger.logServerWarn(`Could not ${action} space`, {error});
 
     const serverValidationErrors = getFieldErrors(error);
     if (Object.keys(serverValidationErrors).length) {
       this.setState({serverValidationErrors, currentStepId: 1});
     } else {
-      notification.error('Could not create Space. If the problem persists please get in contact with us.');
+      notification.error(`Could not ${action} your space. If the problem persists, get in touch with us.`);
       this.props.onCancel();
     }
   }
@@ -310,10 +312,10 @@ function getNextStep (steps, stepId) {
   }
 }
 
-function makeSpaceData ({spaceRatePlan, spaceName}) {
+function makeSpaceData ({newSpaceRatePlan, spaceName}) {
   return {
     defaultLocale: DEFAULT_LOCALE,
-    productRatePlanId: get(spaceRatePlan, 'sys.id'),
+    productRatePlanId: get(newSpaceRatePlan, 'sys.id'),
     name: spaceName
   };
 }

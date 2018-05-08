@@ -12,6 +12,7 @@ import spinner from 'ui/Components/Spinner';
 import {TextLink} from '@contentful/ui-component-library';
 import {asReact} from 'ui/Framework/DOMRenderer';
 import Icon from 'ui/Components/Icon';
+import ContactUsButton from 'ui/Components/ContactUsButton';
 import {RequestState, formatPrice} from './WizardUtils';
 import pluralize from 'pluralize';
 
@@ -43,15 +44,24 @@ const SpacePlanSelector = createReactClass({
           const currentPlan = spaceRatePlans.find(plan => {
             return plan.unavailabilityReasons && plan.unavailabilityReasons.find(reason => reason.type === 'currentPlan');
           });
+          const highestPlan = spaceRatePlans.slice().sort((planX, planY) => planY.price >= planX.price)[0];
+          const atHighestPlan = highestPlan && highestPlan.unavailabilityReasons && highestPlan.unavailabilityReasons.find(reason => reason.type === 'currentPlan');
 
           return <div>
             {requestState === RequestState.PENDING && <div className="loader__container">
               {asReact(spinner({diameter: '40px'}))}
             </div>}
             {requestState === RequestState.SUCCESS && <div>
-              {!organization.isBillable && <BillingInfo
-                canSetupBilling={isOwner(organization)}
-                goToBilling={this.goToBilling} />}
+              {!organization.isBillable &&
+                <BillingInfo
+                  canSetupBilling={isOwner(organization)}
+                  goToBilling={this.goToBilling}
+                  action={action}
+                />
+              }
+              { atHighestPlan &&
+                <NoMorePlans canSetupBilling={isOwner(organization)} />
+              }
               <h2 className="create-space-wizard__heading">
                 Choose the space type
               </h2>
@@ -204,23 +214,50 @@ function getTooltip (type, number) {
 const BillingInfo = createReactClass({
   propTypes: {
     canSetupBilling: PropTypes.bool.isRequired,
-    goToBilling: PropTypes.func.isRequired
+    goToBilling: PropTypes.func.isRequired,
+    action: PropTypes.string.isRequired
   },
   render: function () {
-    const {canSetupBilling, goToBilling} = this.props;
+    const { canSetupBilling, goToBilling, action } = this.props;
 
     return (
       <div className="note-box--info create-space-wizard__info">
         {canSetupBilling && <p>
-          <TextLink onClick={goToBilling}>Add payment details</TextLink>{' '}
-          for the organization before creating a paid space.
+          <span><TextLink onClick={goToBilling}>Add payment details</TextLink> for the organization&#32;</span>
+          { action === 'create' &&
+            'before creating a paid space.'
+          }
+          { action === 'change' &&
+            'before changing a space.'
+          }
         </p>}
         {!canSetupBilling && <p>
-          The owner of this organization needs to add payment details so you can create paid spaces.
+          <span>The owner of this organization needs to add payment details before you can&#32;</span>
+          { action === 'create' &&
+            'create a paid space.'
+          }
+          { action === 'change' &&
+            'change a space.'
+          }
         </p>}
       </div>
     );
   }
 });
+
+const NoMorePlans = ({ canSetupBilling }) => {
+  return <div className='note-box--info create-space-wizard__info'>
+    <p>
+      <span>You&apos;re using the largest space available.</span>
+      { canSetupBilling &&
+        <span>&#32;<ContactUsButton noIcon /> if you need higher limits.</span>
+      }
+    </p>
+  </div>;
+};
+
+NoMorePlans.propTypes = {
+  canSetupBilling: PropTypes.bool.isRequired
+};
 
 export default SpacePlanSelector;

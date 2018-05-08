@@ -94,7 +94,24 @@ const ConfirmScreen = createReactClass({
                     Make sure everything is in order before confirming the change.
                   </p>
                   <p className="create-space-wizard__info">
-                    You&apos;re about to change the space <em>{space.name}</em> from a {currentSpaceRatePlan.name} to a {newSpaceRatePlan.name} space type. This will increase the total price of the spaces in your organization by <strong><Price value={newSpaceRatePlan.price} /></strong> to <strong><Price unit='month' value={(totalPrice + newSpaceRatePlan.price - currentSpaceRatePlan.price)} /></strong>.
+                    <span>You&apos;re about to change the space <em>{space.name}</em> from a {currentSpaceRatePlan.name} to a {newSpaceRatePlan.name} space type.&#32;</span>
+
+                    { currentSpaceRatePlan.price === 0 &&
+                      <Fragment>
+                        The price of this space will now be <strong><Price value={newSpaceRatePlan.price} /></strong> and will increase
+                      </Fragment>
+                    }
+                    { currentSpaceRatePlan.price !== 0 && currentSpaceRatePlan.price >= newSpaceRatePlan.price &&
+                      <Fragment>
+                        The price of this space will change from <strong><Price value={currentSpaceRatePlan.price} /></strong> to <strong><Price value={newSpaceRatePlan.price} /></strong> and will reduce
+                      </Fragment>
+                    }
+                    { currentSpaceRatePlan.price !== 0 && currentSpaceRatePlan.price < newSpaceRatePlan.price &&
+                      <Fragment>
+                        The price of this space will change from <strong><Price value={currentSpaceRatePlan.price} /></strong> to <strong><Price value={newSpaceRatePlan.price} /></strong> and will increase
+                      </Fragment>
+                    }
+                    <span>&#32;the total price of the spaces in your organization to <strong><Price unit='month' value={(totalPrice + newSpaceRatePlan.price - currentSpaceRatePlan.price)} /></strong>.</span>
                   </p>
                 </Fragment>
               }
