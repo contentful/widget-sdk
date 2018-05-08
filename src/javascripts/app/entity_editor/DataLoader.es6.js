@@ -153,8 +153,9 @@ function makeEntryLoader (spaceContext) {
 
 function makeAssetLoader (spaceContext) {
   return {
-    getEntity (id) {
-      return fetchEntity(spaceContext, 'Asset', id);
+    getEntity: function (id) {
+      const entity = fetchEntity(spaceContext, 'Asset', id);
+      return entity;
     },
     getContentType: function* () {
       return null;

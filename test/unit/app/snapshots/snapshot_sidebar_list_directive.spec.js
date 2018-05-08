@@ -1,4 +1,5 @@
 'use strict';
+import {create as createDocument} from 'helpers/mocks/entity_editor_document';
 
 describe('cfSnapshotSidebarList', function () {
   const PER_PAGE = 7;
@@ -9,7 +10,7 @@ describe('cfSnapshotSidebarList', function () {
 
     const moment = this.$inject('moment');
     const spaceContext = this.$inject('mocks/spaceContext').init();
-    const doc = this.$inject('mocks/entityEditor/Document').create(createEntry());
+    const doc = createDocument(createEntry());
 
     spaceContext.cma = {
       getEntrySnapshots: sinon.stub().resolves(createSnapshots(PER_PAGE))

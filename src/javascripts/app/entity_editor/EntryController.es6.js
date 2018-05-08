@@ -1,5 +1,4 @@
 import $controller from '$controller';
-import closeState from 'navigation/closeState';
 
 import {deepFreeze} from 'utils/Freeze';
 import * as K from 'utils/kefir';
@@ -21,6 +20,13 @@ import initDocErrorHandler from './DocumentErrorHandler';
 import {makeNotify} from './Notifications';
 import installTracking from './Tracking';
 import renderStatusNotification from './StatusNotification';
+
+
+import { loadEntry } from 'app/entity_editor/DataLoader';
+import { onFeatureFlag } from 'utils/LaunchDarkly';
+
+const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
+  'feature-at-05-2018-sliding-entry-editor-multi-level';
 
 /**
  * @ngdoc type
@@ -47,7 +53,15 @@ import renderStatusNotification from './StatusNotification';
  * @scope.requires {Data.FieldControl[]} formControls
  *   Passed to FormWidgetsController to render field controls
  */
-export default function create ($scope, editorData) {
+export default async function create ($scope, entryId) {
+  $scope.context = {};
+  let editorData;
+  try {
+    editorData = await loadEntry(spaceContext, entryId);
+  } catch (error) {
+    $scope.context.loadingError = error;
+    return;
+  }
   $scope.context.ready = true;
   $scope.editorData = editorData;
 
@@ -122,14 +136,10 @@ export default function create ($scope, editorData) {
 
   editorContext.createReferenceContext = createReferenceContext;
 
-  // This will only be available if feature-at-03-2018-sliding-entry-editor
+  // This will only be available if feature-at-05-2018-sliding-entry-editor-multi-level
   // is not enabled.
   editorContext.toggleSlideinEditor = function () {
     $scope.inlineEditor = !$scope.inlineEditor;
-  };
-
-  editorContext.closeSlideinEditor = function () {
-    closeState();
   };
 
   function createReferenceContext (field, locale, index, cb) {
@@ -200,4 +210,8 @@ export default function create ($scope, editorData) {
   const fields = contentTypeData.fields;
   $scope.fields = DataFields.create(fields, $scope.otDoc);
   $scope.transformedContentTypeData = ContentTypes.internalToPublic(contentTypeData);
+
+  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, (flagValue) => {
+    $scope.shouldShowBreadcrumbs = flagValue < 2;
+  });
 }

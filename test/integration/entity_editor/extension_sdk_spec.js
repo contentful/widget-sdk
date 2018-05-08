@@ -1,4 +1,5 @@
 import * as K from 'helpers/mocks/kefir';
+import {create as createDocument} from 'helpers/mocks/entity_editor_document';
 
 describe('Extension SDK', function () {
   beforeEach(function () {
@@ -38,7 +39,7 @@ describe('Extension SDK', function () {
       }
     };
 
-    this.doc = this.$inject('mocks/entityEditor/Document').create(entry.data);
+    this.doc = createDocument(entry.data);
 
     this.scope = {
       widget: {

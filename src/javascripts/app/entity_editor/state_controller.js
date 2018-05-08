@@ -6,6 +6,7 @@ angular.module('contentful')
   var $q = require('$q');
   var Command = require('command');
   var closeState = require('navigation/closeState');
+  var _ = require('lodash');
   var publicationWarnings = require('entityEditor/publicationWarnings').create();
   var trackVersioning = require('analyticsEvents/versioning');
   var K = require('utils/kefir');
@@ -20,6 +21,8 @@ angular.module('contentful')
   var Action = EntityState.Action;
   var Analytics = require('analytics/Analytics');
   var spaceContext = require('spaceContext');
+  var goToPreviousSlideOrExit = require('states/EntityNavigationHelpers').goToPreviousSlideOrExit;
+  var onFeatureFlag = require('utils/LaunchDarkly').onFeatureFlag;
 
   var permissions = otDoc.permissions;
   var reverter = otDoc.reverter;
@@ -30,6 +33,11 @@ angular.module('contentful')
 
   K.onValueScope($scope, docStateManager.inProgress$, function (inProgress) {
     controller.inProgress = inProgress;
+  });
+
+  const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG = 'feature-at-05-2018-sliding-entry-editor-multi-level';
+  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, function (value) {
+    $scope.slideInFeatureFlagValue = value;
   });
 
   var noop = Command.create(function () {});
@@ -171,7 +179,14 @@ angular.module('contentful')
   controller.delete = Command.create(
     function () {
       return applyActionWithConfirmation(Action.Delete()).then(function () {
-        return closeState();
+        if ($scope.slideInFeatureFlagValue) {
+          goToPreviousSlideOrExit(
+            $scope.slideInFeatureFlagValue,
+            closeState
+          );
+        } else {
+          return closeState();
+        }
       });
     },
     {

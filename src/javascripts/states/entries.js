@@ -11,13 +11,10 @@ angular.module('contentful')
   var trackVersioning = require('analyticsEvents/versioning');
   var contextHistory = require('navigation/Breadcrumbs/History').default;
   var crumbFactory = require('navigation/Breadcrumbs/Factory');
-  var h = require('ui/Framework').h;
 
   var base = require('states/Base').default;
   var loadEditorData = require('app/entity_editor/DataLoader').loadEntry;
-  var loadAssetEditorData = require('app/entity_editor/DataLoader').loadAsset;
-  var createEditorController = require('app/entity_editor/EntryController').default;
-  var createAssetController = require('app/entity_editor/AssetController').default;
+  var createEntityPageController = require('app/entity_editor/EntityPageController').default;
 
   var list = base({
     name: 'list',
@@ -83,6 +80,11 @@ angular.module('contentful')
     url: '/compare',
     children: [compareWithCurrent],
     loadingText: 'Loading versions…',
+    resolve: {
+      editorData: ['$stateParams', 'spaceContext', function ($stateParams, spaceContext) {
+        return loadEditorData(spaceContext, $stateParams.entryId);
+      }]
+    },
     controller: ['require', 'editorData', function (require, editorData) {
       var spaceContext = require('spaceContext');
       var modalDialog = require('modalDialog');
@@ -119,61 +121,6 @@ angular.module('contentful')
     }]
   });
 
-  function wrap (template) {
-    return [
-      h('.workbench-stack.animate', [
-        h('.workbench-stack__padding', {ngClick: 'editorContext.closeSlideinEditor()'}),
-        h('.workbench-stack__content', [
-          h('.workbench', [
-            template
-          ])
-        ])
-      ])
-    ];
-  }
-
-  var slideinEditorDetail = {
-    name: 'slideinEditorDetail',
-    url: '/entry/:inlineEntryId',
-    // TODO: refactor
-    // using `resolve` couples implementation with ui-router
-    // consider moving editor data loader to the controller.
-    // to be able to use as a component e.g.:
-    // <cf-entry-editor entry-id="" />
-    resolve: {
-      inlineEditorData: ['$stateParams', 'spaceContext', function ($stateParams, spaceContext) {
-        return loadEditorData(spaceContext, $stateParams.inlineEntryId);
-      }]
-    },
-    views: {
-      '': {
-        template: wrap(JST.entry_editor()),
-        controller: ['$scope', 'inlineEditorData', createEditorController]
-      }
-    }
-  };
-
-  var slideinAssetDetail = {
-    name: 'slideinAssetDetail',
-    url: '/asset/:inlineEntryId',
-    // TODO: refactor
-    // using `resolve` couples implementation with ui-router
-    // consider moving editor data loader to the controller.
-    // to be able to use as a component e.g.:
-    // <cf-entry-editor entry-id="" />
-    resolve: {
-      editorData: ['$stateParams', 'spaceContext', function ($stateParams, spaceContext) {
-        return loadAssetEditorData(spaceContext, $stateParams.inlineEntryId);
-      }]
-    },
-    views: {
-      '': {
-        template: wrap(JST.asset_editor()),
-        controller: ['$scope', 'editorData', createAssetController]
-      }
-    }
-  };
-
   return {
     withSnapshots: entriesBaseState(true),
     withoutSnapshots: entriesBaseState(false)
@@ -192,15 +139,11 @@ angular.module('contentful')
     return base({
       name: 'detail',
       url: '/:entryId',
-      children: withSnapshots ? [compare, slideinEditorDetail, slideinAssetDetail] : [slideinEditorDetail, slideinAssetDetail],
+      children: withSnapshots ? [compare] : [],
       params: { addToContext: true },
-      resolve: {
-        editorData: ['$stateParams', 'spaceContext', function ($stateParams, spaceContext) {
-          return loadEditorData(spaceContext, $stateParams.entryId);
-        }]
-      },
-      controller: ['$scope', 'editorData', createEditorController],
-      template: JST.entry_editor()
+      reloadOnSearch: false,
+      template: JST.entity_page(),
+      controller: ['$scope', '$state', createEntityPageController]
     });
   }
 }]);

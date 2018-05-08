@@ -8,8 +8,7 @@ angular.module('contentful')
  */
 .factory('states/assets', ['require', function (require) {
   var base = require('states/Base').default;
-  var loadEditorData = require('app/entity_editor/DataLoader').loadAsset;
-  var createAssetController = require('app/entity_editor/AssetController').default;
+  var createEntityPageController = require('app/entity_editor/EntityPageController').default;
 
   var list = base({
     name: 'list',
@@ -22,13 +21,8 @@ angular.module('contentful')
     name: 'detail',
     url: '/:assetId',
     params: { addToContext: true },
-    resolve: {
-      editorData: ['$stateParams', 'spaceContext', function ($stateParams, spaceContext) {
-        return loadEditorData(spaceContext, $stateParams.assetId);
-      }]
-    },
-    controller: ['$scope', 'editorData', createAssetController],
-    template: JST.asset_editor()
+    template: JST.entity_page(),
+    controller: ['$scope', '$state', createEntityPageController]
   };
 
   return {
