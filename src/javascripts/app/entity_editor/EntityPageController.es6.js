@@ -24,19 +24,15 @@ export default ($scope, _$state) => {
     $scope.isSlideinEntryEditorEnabled = isEnabled;
   });
 
-  $scope.topPeekingLayerIndex = -1;
-
   $scope.close = entity => {
     goToSlideInEntity(entity, $scope.isSlideinEntryEditorEnabled);
   };
 
   $scope.initPeeking = (index) => {
     const length = $scope.entities.length;
-    const previous = index - 1;
 
     if (index === length - 1) {
       const entityLayers = [].slice.apply(document.querySelectorAll('.workbench-layer'));
-      $scope.topPeekingLayerIndex = previous;
 
       peekOutTimeoutReference = window.setTimeout(() => {
         entityLayers.forEach((item) => {
