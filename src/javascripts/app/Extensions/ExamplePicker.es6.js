@@ -8,27 +8,27 @@ const EXAMPLES = [
   {
     name: 'Vanilla UI Extension template',
     description: 'Starter UI Extension. Allows modification of a textual value.',
-    url: 'https://github.com/contentful/extensions/blob/master/samples/template-vanilla/extension.json'
+    url: 'https://github.com/contentful/extensions/blob/master/samples/template-vanilla'
   },
   {
     name: 'External API Dropdown',
     description: 'Populate a dropdown using data fetched from an external service.',
-    url: 'https://github.com/contentful/extensions/blob/master/samples/external-api/extension.json'
+    url: 'https://github.com/contentful/extensions/blob/master/samples/external-api'
   },
   {
     name: 'Diff',
     description: 'Allows diffing draft and published values of a field.',
-    url: 'https://github.com/contentful/extensions/blob/master/samples/diff/extension.json'
+    url: 'https://github.com/contentful/extensions/blob/master/samples/diff'
   },
   {
     name: 'Alloy Editor',
     description: 'Enables WYSIWYG editing using an open-source Alloy Editor library.',
-    url: 'https://github.com/contentful/extensions/blob/master/samples/alloy-editor/extension.json'
+    url: 'https://github.com/contentful/extensions/blob/master/samples/alloy-editor'
   },
   {
     name: 'Optimizely Audiences',
     description: 'Tag structured content in Contentful with audience IDs loaded from a project in Optimizely.',
-    url: 'https://github.com/contentful/extensions/blob/master/samples/optimizely-audiences/extension.json'
+    url: 'https://github.com/contentful/extensions/blob/master/samples/optimizely-audiences'
   }
 ];
 
@@ -67,7 +67,15 @@ const ExamplePicker = createReactClass({
 
     return <div key={example.url} className="extension-examples__item">
       <div>
-        <h3>{example.name}</h3>
+        <h3>
+          <a
+            href={`${example.url}/README.md`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {example.name}
+          </a>
+        </h3>
         <p>{example.description}</p>
       </div>
       <button
@@ -75,7 +83,7 @@ const ExamplePicker = createReactClass({
         disabled={fetching}
         onClick={() => {
           this.setState(() => ({fetching: true}));
-          Fetcher.fetchExtension(example.url).then(onConfirm, onCancel);
+          Fetcher.fetchExtension(`${example.url}/extension.json`).then(onConfirm, onCancel);
         }}
       >
         Install
