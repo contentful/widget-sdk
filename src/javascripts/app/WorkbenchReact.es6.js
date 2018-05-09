@@ -7,13 +7,13 @@ const Workbench = createReactClass({
   propTypes: {
     title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
     content: PropTypes.element.isRequired,
+    actions: PropTypes.element,
     sidebar: PropTypes.element,
     icon: PropTypes.string,
     testId: PropTypes.string
   },
   render () {
-    const {title, content, sidebar, icon, testId} = this.props;
-
+    const {title, content, actions, sidebar, icon, testId} = this.props;
 
     return h('div', {
       className: 'workbench',
@@ -25,17 +25,20 @@ const Workbench = createReactClass({
         h('header', {
           className: 'workbench-header'
         },
-          icon && h('div', {className: 'workbench-header__icon'}, h(Icon, {name: icon})),
+          icon && h('div', {
+            className: 'workbench-header__icon cf-icon'
+          }, h(Icon, {name: icon, scale: '0.75'})),
           h('h1', {
             className: 'workbench-header__title'
-          }, title)
+          }, title),
+          actions && h('div', {className: 'workbench-header__actions'}, actions)
         )
       ),
       h('div', {
         className: 'workbench-main'
       },
         h('div', {
-          className: 'workbench-main__content'
+          className: sidebar ? 'workbench-main__content' : 'workbench-main__middle-content'
         }, content),
         sidebar && h('div', {
           className: 'workbench-main__sidebar'

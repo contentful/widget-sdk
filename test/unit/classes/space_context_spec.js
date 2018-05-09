@@ -99,7 +99,7 @@ describe('spaceContext', function () {
     });
 
     it('creates and refreshes widget store', function () {
-      sinon.assert.calledWith(this.$inject('widgets/store'), this.spaceContext.endpoint);
+      sinon.assert.calledWith(this.$inject('widgets/store'), this.spaceContext.cma);
       sinon.assert.calledOnce(this.spaceContext.widgets.refresh);
     });
 

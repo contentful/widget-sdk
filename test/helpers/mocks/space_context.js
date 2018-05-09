@@ -73,7 +73,7 @@ angular.module('contentful/mocks')
         usage: {}
       }
     };
-    spaceContext.widgets = createWidgetStore(spaceContext.endpoint);
+    spaceContext.widgets = createWidgetStore(spaceContext.cma);
     spaceContext.uiConfig = createUiConfigMock();
 
     return spaceContext;

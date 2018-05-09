@@ -260,6 +260,22 @@ angular.module('cf.data')
     });
   };
 
+  Client.prototype.getExtensions = function () {
+    return this._getResources('extensions');
+  };
+
+  Client.prototype.getExtension = function (id) {
+    return this._getResource('extensions', id);
+  };
+
+  Client.prototype.createExtension = function (data) {
+    return this._createResource('extensions', data);
+  };
+
+  Client.prototype.updateExtension = function (data) {
+    return this._updateResource('extensions', data);
+  };
+
   Client.prototype.deleteExtension = function (id) {
     return this._deleteResource('extensions', id);
   };
