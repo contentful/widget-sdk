@@ -15,6 +15,7 @@ const ExtensionEditor = createReactClass({
     onChange: PropTypes.func.isRequired,
     save: PropTypes.func.isRequired
   },
+  // TODO: use `getDerivedStateFromProps`
   entityToFreshState (entity) {
     const initial = cloneDeep(entity);
     initial.extension.fieldTypes = initial.extension.fieldTypes.map(toInternalFieldType);
@@ -27,76 +28,71 @@ const ExtensionEditor = createReactClass({
       initial,
       selfHosted: typeof initial.extension.src === 'string',
       entity: cloneDeep(initial),
-      dirty: false
+      saving: false
     };
   },
   getInitialState () {
     return this.entityToFreshState(this.props.entity);
   },
-  // Every time we update the state we have to do two things:
-  // 1. check if the current entity representation differs from
-  //    the initial entity value and mark as dirty if so
-  // 2. call `onChange` to notify outside world about changes
-  //    introduced to the entity; the reason is that saving
-  //    logic lives in Angular world (is used by `leaveConfirmator`)
-  afterStateUpdate () {
-    const {initial, selfHosted, entity} = this.state;
-    // We don't want to change entity right away so a user can
-    // feely switch between hosted and self-hosted options w/o
-    // loosing values provided. State of the radio buttons is
-    // stored in `selfHosted` and only entity to be saved will
-    // skip one of properties.
-    const ignoredSrcProp = selfHosted ? 'srcdoc' : 'src';
-
-    const extension = omit(entity.extension, ignoredSrcProp);
-    const dirty = !isEqual(initial, {...entity, extension});
-    // We are aware it rerenders. Subtrees affected are small.
-    this.setState(state => ({...state, dirty}));
-
-    const cloned = cloneDeep(entity);
-    cloned.extension.fieldTypes = cloned.extension.fieldTypes.map(toApiFieldType);
-    delete cloned.extension[ignoredSrcProp];
-    this.props.onChange({entity: cloned, dirty});
+  ignoredSrcProp () {
+    return this.state.selfHosted ? 'srcdoc' : 'src';
+  },
+  componentDidUpdate () {
+    // Every time we update the component we want to call the `onChange`
+    // prop to notify outside world about changes introduced to the entity;
+    // the reason is that saving logic must live in Angular world because
+    // it is used by `leaveConfirmator`.
+    const entity = cloneDeep(this.state.entity);
+    entity.extension.fieldTypes = entity.extension.fieldTypes.map(toApiFieldType);
+    delete entity.extension[this.ignoredSrcProp()];
+    this.props.onChange({entity, dirty: this.isDirty()});
+  },
+  isDirty () {
+    const {entity, initial} = this.state;
+    const extension = omit(entity.extension, this.ignoredSrcProp());
+    return !isEqual(initial, {...entity, extension});
   },
   render () {
-    const {initial, dirty} = this.state;
-    const setState = updater => this.setState(updater, () => this.afterStateUpdate());
+    const dirty = this.isDirty();
 
     return <Workbench
-      title={`Extension: ${initial.extension.name}${dirty ? '*' : ''}`}
+      title={`Extension: ${this.state.initial.extension.name}${dirty ? '*' : ''}`}
       icon="page-settings"
-      content={this.renderContent(setState)}
-      actions={this.renderActions(setState)}
+      content={this.renderContent()}
+      actions={this.renderActions(dirty)}
     />;
   },
-  renderContent (setState) {
-    const {entity, selfHosted} = this.state;
-
+  renderContent () {
     return <div className="extension-form">
       <ExtensionForm
-        entity={entity}
-        selfHosted={selfHosted}
-        updateEntity={entity => setState(state => ({...state, entity}))}
-        setSelfHosted={selfHosted => setState(state => ({...state, selfHosted}))}
+        entity={this.state.entity}
+        selfHosted={this.state.selfHosted}
+        updateEntity={entity => this.setState({entity})}
+        setSelfHosted={selfHosted => this.setState({selfHosted})}
       />
     </div>;
   },
-  renderActions (setState) {
-    const {dirty} = this.state;
-    const {save} = this.props;
-
+  renderActions (dirty) {
     return <React.Fragment>
       <button className="btn-secondary-action" onClick={() => $state.go('.^')}>
         Cancel
       </button>
       <button
         className="btn-primary-action"
-        disabled={!dirty}
-        onClick={() => save().then(entity => setState(() => this.entityToFreshState(entity)))}
+        disabled={!dirty || this.state.saving}
+        onClick={() => this.save()}
       >
         Save
       </button>
     </React.Fragment>;
+  },
+  save () {
+    this.setState({saving: true});
+    this.props.save() // `this.props.save()` takes care of displaying success/error messages
+    .then(
+      entity => this.setState(() => this.entityToFreshState(entity)),
+      () => this.setState({saving: false})
+    );
   }
 });
 
