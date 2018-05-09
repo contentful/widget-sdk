@@ -19,7 +19,7 @@ describe('ExamplePicker', function () {
 
   it('renders list of predefined extensions', function () {
     const [wrapper] = mount();
-    expect(wrapper.find(BTN_SELECTOR).length).toBe(5);
+    expect(wrapper.find(BTN_SELECTOR).length).toBe(6);
   });
 
   it('blocks all installation buttons once clicked', function () {

@@ -113,7 +113,7 @@ function install (extension) {
 function handleInstallError (err) {
   const wasCancelled = err && Object.keys(err).length === 1 && err.cancelled === true;
 
-  if (!wasCancelled) {
+  if (err && !wasCancelled) {
     notification.error('There was an error while creating your extension.');
     return Promise.reject(err);
   }

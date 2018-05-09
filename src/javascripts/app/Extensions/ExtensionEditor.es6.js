@@ -75,7 +75,7 @@ const ExtensionEditor = createReactClass({
   renderActions (dirty) {
     return <React.Fragment>
       <button className="btn-secondary-action" onClick={() => $state.go('.^')}>
-        Cancel
+        Close
       </button>
       <button
         className="btn-primary-action"

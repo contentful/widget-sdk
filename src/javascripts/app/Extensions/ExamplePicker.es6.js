@@ -7,28 +7,33 @@ import * as Fetcher from './GitHubFetcher';
 const EXAMPLES = [
   {
     name: 'Vanilla UI Extension template',
-    description: 'Starter UI Extension. Allows modification of a textual value.',
+    description: 'A vanilla template showing the basic flow of data in a UI Extension.',
     url: 'https://github.com/contentful/extensions/blob/master/samples/template-vanilla'
   },
   {
     name: 'External API Dropdown',
-    description: 'Populate a dropdown using data fetched from an external service.',
+    description: 'Populates a dropdown using data fetched from an external service.',
     url: 'https://github.com/contentful/extensions/blob/master/samples/external-api'
-  },
-  {
-    name: 'Diff',
-    description: 'Allows diffing draft and published values of a field.',
-    url: 'https://github.com/contentful/extensions/blob/master/samples/diff'
-  },
-  {
-    name: 'Alloy Editor',
-    description: 'Enables WYSIWYG editing using an open-source Alloy Editor library.',
-    url: 'https://github.com/contentful/extensions/blob/master/samples/alloy-editor'
   },
   {
     name: 'Optimizely Audiences',
     description: 'Tag structured content in Contentful with audience IDs loaded from a project in Optimizely.',
     url: 'https://github.com/contentful/extensions/blob/master/samples/optimizely-audiences'
+  },
+  {
+    name: 'Shopify Products',
+    description: 'Connects to a Shopify store and loads products into the Contentful Web App via the Storefront API.',
+    url: 'https://github.com/contentful/extensions/blob/master/samples/shopify'
+  },
+  {
+    name: 'Diff',
+    description: 'Renders a diff of draft and published values below a field.',
+    url: 'https://github.com/contentful/extensions/blob/master/samples/diff'
+  },
+  {
+    name: 'Alloy Editor',
+    description: 'Enables WYSIWYG editing using the open-source Alloy Editor library.',
+    url: 'https://github.com/contentful/extensions/blob/master/samples/alloy-editor'
   }
 ];
 
@@ -50,7 +55,7 @@ const ExamplePicker = createReactClass({
       </header>
       <div className="modal-dialog__content">
         <p className="modal-dialog__richtext">
-          You can install one of our predefined UI Extension examples.
+          You can install example UI Extensions we provide:
         </p>
         <div className="extension-examples">
           {EXAMPLES.map(example => this.renderExample(example))}
@@ -67,16 +72,15 @@ const ExamplePicker = createReactClass({
 
     return <div key={example.url} className="extension-examples__item">
       <div>
-        <h3>
-          <a
-            href={`${example.url}/README.md`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {example.name}
-          </a>
-        </h3>
+        <h3>{example.name}</h3>
         <p>{example.description}</p>
+        <a
+          href={`${example.url}/README.md`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          View on GitHub
+        </a>
       </div>
       <button
         className="btn-action"
