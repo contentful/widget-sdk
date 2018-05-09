@@ -1,0 +1,44 @@
+.extension-examples
+  border: 1px solid $colors.ice-dark
+  border-width: 1px 0
+  background-color: $colors.element-lightest
+  width: 600px
+  max-height: 450px
+  overflow: auto
+
+.extension-examples__item
+  color: $colors.text-dark
+  padding: 25px 25px 20px
+  border: 1px solid $colors.ice-dark
+  border-top-width: 0
+  display: flex
+  justify-content: space-between
+  align-items: center
+
+  h3, p
+    margin: 0
+    margin-bottom: 4px
+  h3
+    margin-bottom: 6px
+  a
+    display: block
+  .btn-action
+    margin-left: 40px
+
+.extension-form
+  padding: 0 2em
+  max-width: 80%
+
+  &__label
+    font-weight: bold
+  &__label-info
+    color: $colors.text-light
+  &__field-types
+    display: flex
+    label
+      margin-right: 10px
+  &__cm
+    border: 1px solid #ddd
+    border-radius: 4px
+    &.x--readonly .CodeMirror
+      background-color: #f7f7f7

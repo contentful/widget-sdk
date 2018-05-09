@@ -158,6 +158,49 @@ describe('data/ApiClient', function () {
         params: 'QUERY'
       }));
     });
+  });
+
+  describe('Extensions', function () {
+    beforeEach(function () {
+      $http.resolves({data: 'DATA'});
+    });
+
+    it('getExtensions()', function () {
+      return this.client.getExtensions()
+      .then(assertRequestResponse('DATA', {
+        method: 'GET',
+        url: '//api.test.local/spaces/SPACE/extensions'
+      }));
+    });
+
+    it('getExtension(id)', function () {
+      return this.client.getExtension('ID')
+      .then(assertRequestResponse('DATA', {
+        method: 'GET',
+        url: '//api.test.local/spaces/SPACE/extensions/ID'
+      }));
+    });
+
+    it('createExtension(data)', function () {
+      return this.client.createExtension({})
+      .then(assertRequestResponse('DATA', {
+        method: 'POST',
+        url: '//api.test.local/spaces/SPACE/extensions'
+      }));
+    });
+
+    it('updateExtension(data)', function () {
+      return this.client.updateExtension({sys: {id: 'ID', version: 2}})
+      .then(assertRequestResponse('DATA', {
+        method: 'PUT',
+        url: '//api.test.local/spaces/SPACE/extensions/ID',
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+          'X-Contentful-Version': 2,
+          Authorization: 'Bearer TOKEN'
+        }
+      }));
+    });
 
     it('deleteExtension(id)', function () {
       return this.client.deleteExtension('ID')

@@ -122,7 +122,7 @@ angular.module('contentful').factory('modalDialog', ['require', function (requir
 
     reposition: function () {
       if (this.domElement) {
-        var elem = this.domElement.children('.modal-dialog');
+        var elem = this.domElement.find('.modal-dialog').first();
         var topOffset = Math.max(($window.innerHeight - elem.height()) / 2, 0);
         elem.css({ top: topOffset + 'px' });
       }

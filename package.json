@@ -57,6 +57,7 @@
     "moment": "^2.19.3",
     "nib": "^1.0.3",
     "node-html-encoder": "0.0.2",
+    "parse-github-url": "^1.0.2",
     "pegjs": "^0.10.0",
     "pikaday": "^1.7.0",
     "pluralize": "^7.0.0",
@@ -66,6 +67,7 @@
     "qs": "^6.3.0",
     "react": "^16.2.0",
     "react-animate-height": "^0.10.9",
+    "react-codemirror": "^1.0.0",
     "react-dom": "^16.2.0",
     "react-highlight-words": "^0.10.0",
     "react-tippy": "^1.2.2",
@@ -138,6 +140,7 @@
     "watchify": "^3.7.0",
     "webpack": "^3.11.0",
     "webpack-bundle-analyzer": "^2.11.1",
+    "webpack-dev-middleware": "^2.0.6",
     "webpack-merge": "^4.1.2",
     "yargs": "^4.2.0"
   },

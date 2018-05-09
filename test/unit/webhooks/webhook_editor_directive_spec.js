@@ -1,7 +1,6 @@
 'use strict';
 
 describe('Webhook Editor directive', function () {
-
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.removeDirectives('uiSref');
@@ -21,7 +20,7 @@ describe('Webhook Editor directive', function () {
     this.$inject('WebhookRepository').getInstance = sinon.stub().returns(this.repo);
 
     this.compile = function (context, webhook) {
-      var data = {context: context || {}, webhook: webhook || {headers: [], topics: ['*.*']}};
+      const data = {context: context || {}, webhook: webhook || {headers: [], topics: ['*.*']}};
       data.webhook.sys = data.webhook.sys || {};
       this.element = this.$compile('<div cf-ui-tab><cf-webhook-editor /></div>', data);
       this.scope = this.element.scope();
@@ -76,7 +75,7 @@ describe('Webhook Editor directive', function () {
   });
 
   describe('Checks if API has Basic Auth credentials', function () {
-    var PASSWORD_FIELD_ID = '#webhook-http-basic-password';
+    const PASSWORD_FIELD_ID = '#webhook-http-basic-password';
 
     it('looks for username on initialization', function () {
       this.compile(undefined, {httpBasicUsername: 'jakub'});
@@ -94,13 +93,13 @@ describe('Webhook Editor directive', function () {
 
     it('sets placeholder if has credentials and username', function () {
       this.compile({isNew: false}, {httpBasicUsername: 'jakub'});
-      var el = this.element.find(PASSWORD_FIELD_ID);
+      const el = this.element.find(PASSWORD_FIELD_ID);
       expect(el.attr('placeholder')).toBe('use previously provided password');
     });
 
     it('keeps placeholder empty if there is no username', function () {
       this.compile({isNew: false}, undefined);
-      var el = this.element.find(PASSWORD_FIELD_ID);
+      const el = this.element.find(PASSWORD_FIELD_ID);
       expect(el.attr('placeholder')).toBe('');
     });
 
@@ -108,13 +107,13 @@ describe('Webhook Editor directive', function () {
       this.compile({isNew: false}, {httpBasicUsername: 'jakub'});
       this.scope.webhook.httpBasicUsername = '';
       this.$apply();
-      var el = this.element.find(PASSWORD_FIELD_ID);
+      const el = this.element.find(PASSWORD_FIELD_ID);
       expect(el.attr('placeholder')).toBe('');
     });
   });
 
   describe('Saving webhook', function () {
-    var SUCCESS_MSG = 'Webhook "test" saved successfully.';
+    const SUCCESS_MSG = 'Webhook "test" saved successfully.';
 
     describe('Model handling', function () {
       beforeEach(function () {
@@ -125,7 +124,7 @@ describe('Webhook Editor directive', function () {
         this.scope.webhook.httpBasicUsername = '';
         this.scope.webhook.httpBasicPassword = '';
         this.scope.$apply();
-        var webhookPreSave = this.scope.webhook;
+        const webhookPreSave = this.scope.webhook;
         this.repo.save.rejects();
         this.button('Save').click();
         sinon.assert.calledOnce(this.repo.save);
@@ -136,7 +135,7 @@ describe('Webhook Editor directive', function () {
       it('leaves password as undefined when username is defined', function () {
         this.scope.webhook.httpBasicUsername = 'test';
         this.scope.$apply();
-        var webhookPreSave = this.scope.webhook;
+        const webhookPreSave = this.scope.webhook;
         this.repo.save.rejects();
         this.button('Save').click();
         sinon.assert.calledOnce(this.repo.save);
@@ -148,7 +147,7 @@ describe('Webhook Editor directive', function () {
     describe('New webhook', function () {
       beforeEach(function () {
         this.compile({isNew: true}, {name: 'test', url: 'http://test.com', topics: ['*.*']});
-        var saved = _.cloneDeep(this.scope.webhook);
+        const saved = _.cloneDeep(this.scope.webhook);
         saved.sys.id = 'whid';
         this.repo.save.resolves(saved);
         this.scope.$apply();
@@ -174,7 +173,7 @@ describe('Webhook Editor directive', function () {
       beforeEach(function () {
         this.compile({isNew: false}, {sys: {id: 'whid'}, name: 'old', url: 'http://test.com', topics: ['*.*']});
         this.scope.webhook.name = 'test';
-        var response = _.cloneDeep(this.scope.webhook);
+        const response = _.cloneDeep(this.scope.webhook);
         response.sys.version = 2;
         this.repo.save.resolves(response);
         this.scope.$apply();
@@ -248,7 +247,7 @@ describe('Webhook Editor directive', function () {
       });
 
       it('handles and logs server errors', function () {
-        var logSpy = sinon.spy();
+        const logSpy = sinon.spy();
         this.$inject('logger').logServerWarn = logSpy;
         this.rejectWithError(undefined);
 
@@ -260,7 +259,7 @@ describe('Webhook Editor directive', function () {
   });
 
   describe('Deleting webhook', function () {
-    var modal;
+    let modal;
     beforeEach(function () {
       modal = this.$inject('modalDialog');
       modal.open = sinon.spy();
@@ -287,7 +286,7 @@ describe('Webhook Editor directive', function () {
     });
 
     it('shows notification when repository call fails', function () {
-      var ReloadNotification = this.$inject('ReloadNotification');
+      const ReloadNotification = this.$inject('ReloadNotification');
       ReloadNotification.basicErrorHandler = sinon.spy();
       this.repo.remove.rejects();
 
