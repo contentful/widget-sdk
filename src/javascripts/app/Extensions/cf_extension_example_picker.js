@@ -16,7 +16,9 @@ angular.module('contentful')
           // `scope.dialog` may not be available right away so we
           // pass wrapped invocations down.
           onConfirm: function (value) { scope.dialog.confirm(value); },
-          onCancel: function () { scope.dialog.cancel({cancelled: true}); }
+          onCancel: function (err) {
+            scope.dialog.cancel(err instanceof Error ? err : {cancelled: true});
+          }
         }),
         el[0].querySelector('.mount-point')
       );

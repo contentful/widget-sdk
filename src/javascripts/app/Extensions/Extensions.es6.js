@@ -89,35 +89,34 @@ function createExtension () {
       '});',
       '</script>'
     ].join('\n') + '\n'
-  });
+  }).catch(handleInstallError);
 }
 
 function openExamplePicker () {
   return modalDialog.open({
     template: '<cf-extension-example-picker class="modal-background" />'
-  }).promise.then(install);
+  }).promise.then(install).catch(handleInstallError);
 }
 
 function openGitHubInstaller () {
   return modalDialog.open({
     template: '<cf-extension-github-installer class="modal-background" />'
-  }).promise.then(install);
+  }).promise.then(install).catch(handleInstallError);
 }
 
 function install (extension) {
   return spaceContext.cma.createExtension({extension})
-  .then(
-    res => {
-      notification.info('Your new extension was successfully created.');
-      return $state.go('.detail', {extensionId: res.sys.id});
-    },
-    err => {
-      if (!err || !err.cancelled) {
-        notification.error('There was an error while creating your extension.');
-        return Promise.reject(err);
-      }
-    }
-  );
+  .then(res => $state.go('.detail', {extensionId: res.sys.id}))
+  .then(() => notification.info('Your new extension was successfully created.'));
+}
+
+function handleInstallError (err) {
+  const wasCancelled = err && Object.keys(err).length === 1 && err.cancelled === true;
+
+  if (!wasCancelled) {
+    notification.error('There was an error while creating your extension.');
+    return Promise.reject(err);
+  }
 }
 
 function list (extensions, refresh) {
