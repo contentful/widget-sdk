@@ -133,8 +133,6 @@ export function init () {
     updateToken(previousToken);
   }
 
-  // Reflect token updates that happened in a different window
-  tokenStore.externalChanges().onValue(updateToken);
   localStore.remove(LOGOUT_KEY);
   localStore.externalChanges(LOGOUT_KEY).onValue(logout);
 }
