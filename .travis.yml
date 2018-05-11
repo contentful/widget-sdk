@@ -71,10 +71,10 @@ deploy:
       all_branches: true
   ## Deploy all branches to staging preview
   - provider: s3
-    access_key_id: AKIAJHQB2MH23CVUXK6Q
+    access_key_id: AKIAIOIXANGBVKXKAPTQ
     secret_access_key:
-      secure: "DPVDc2YHfDuquRY2JxGkaNYq4j3xuhr0e+MFUIvo61zxLpXeueBLKgmG6n/bnRFGiN2vFOUi3K404/adVOH4OuQedsjOx9Ew/ubUSM582DEhmFzqSicDOJm9kTA3+9u4OA2UiKw4pdYZ+/jTqjwMzr1GLaV5RAnlH2jue/XLhcc="
-    bucket: static.cdnorigin.flinkly.com
+      secure: "OEnmShTe/CUEYe3j9djHL8zvuxQImb/jf4rZcZaKUkLCw7Dl9xX3WUb/CTW7/jVh2LHuCsaOJc7tFxA5VHQ0rRuOqmgFdCsitvFrLp60yMTD9XU6/I6+wc3kJIdC0tcPtOelrIg15fw5o6xfoqZJTdiL9wNHFOZrvQjA87NZLpY="
+    bucket: cf-staging-static-cdnorigin
     region: us-east-1
     local-dir: output/files/staging
     acl: public_read
