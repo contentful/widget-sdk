@@ -136,7 +136,7 @@ angular.module('contentful')
     if (previewEnvironmentsCache.getAll()) {
       return $q.resolve(previewEnvironmentsCache.getAll());
     } else {
-      return spaceContext.space.endpoint('preview_environments').get()
+      return spaceContext.space.endpoint('preview_environments').payload({limit: MAX_PREVIEW_ENVIRONMENTS}).get()
       .then(function (environments) {
         return cachePreviewEnvironments(environments.items);
       });
