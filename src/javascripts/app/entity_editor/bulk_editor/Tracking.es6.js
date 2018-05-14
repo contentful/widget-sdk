@@ -1,4 +1,4 @@
-import {partial, size, assign, noop} from 'lodash';
+import {partial, size, noop} from 'lodash';
 import * as Analytics from 'analytics/Analytics';
 import * as K from 'utils/kefir';
 import {stateName, State} from 'data/CMA/EntityState';
@@ -56,7 +56,6 @@ export function create (parentEntryId, links$) {
     };
   }
 
-
   function trackAction (name, entryId) {
     track('action', {
       refCount: K.getValue(links$).length + 1,
@@ -80,9 +79,10 @@ export function create (parentEntryId, links$) {
   }
 
   function track (name, options) {
-    Analytics.track(`bulk_editor:${name}`, assign({
-      parentEntryId: parentEntryId
-    }, options));
+    Analytics.track(
+      `bulk_editor:${name}`,
+      { parentEntryId, ...options }
+    );
   }
 }
 
