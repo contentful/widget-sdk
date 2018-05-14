@@ -21,8 +21,8 @@ describe('Authentication', function () {
 
     const getStore = this.$inject('TheStore').getStore;
     this.store = getStore('session').forKey('token');
+    this.localStore = getStore('local');
   });
-
 
   describe('#refreshToken()', function () {
     beforeEach(function () {
@@ -99,13 +99,14 @@ describe('Authentication', function () {
       expect(K.getValue(this.Auth.token$)).toBe('NEW TOKEN');
     });
 
-    it('updates token if changed in another tab', function* () {
+    it('triggers logout if user logged out from another tab', function () {
       this.store.set('STORED_TOKEN');
       this.Auth.init();
+      this.window.addEventListener.withArgs('storage').yield({key: 'loggedOut', newValue: true});
 
-      this.window.addEventListener.withArgs('storage').yield({key: 'token', newValue: 'NEW TOKEN'});
-      expect(yield this.Auth.getToken()).toBe('NEW TOKEN');
-      expect(K.getValue(this.Auth.token$)).toBe('NEW TOKEN');
+      this.$apply();
+
+      expect(this.window.location).toEqual('//be.test.com/logout');
     });
 
     describe('on login from gatekeeper', function () {
