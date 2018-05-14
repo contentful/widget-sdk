@@ -24,6 +24,10 @@ export default ($scope, _$state) => {
     $scope.isSlideinEntryEditorEnabled = isEnabled;
   });
 
+  const getCurrentLayers = () => {
+    return Array.from(document.querySelectorAll('.workbench-layer'));
+  };
+
   $scope.topPeekingLayerIndex = -1;
 
   $scope.close = entity => {
@@ -35,11 +39,10 @@ export default ($scope, _$state) => {
     const previous = index - 1;
 
     if (index === length - 1) {
-      const entityLayers = [].slice.apply(document.querySelectorAll('.workbench-layer'));
       $scope.topPeekingLayerIndex = previous;
 
       peekOutTimeoutReference = window.setTimeout(() => {
-        entityLayers.forEach((item) => {
+        getCurrentLayers().forEach((item) => {
           item.classList.remove(OFFSET_CLASSNAME);
         });
       }, PEEK_OUT_DELAY);
@@ -48,17 +51,16 @@ export default ($scope, _$state) => {
 
   $scope.peekIn = (index) => {
     const length = $scope.entities.length;
-    const entityLayers = [].slice.apply(document.querySelectorAll('.workbench-layer'));
     const next = index + 1;
 
     window.clearTimeout(peekOutTimeoutReference);
     peekInTimeoutReference = window.setTimeout(() => {
-      entityLayers.forEach((item) => {
+      getCurrentLayers().forEach((item) => {
         item.classList.remove(OFFSET_CLASSNAME);
       });
 
       if ($scope.topPeekingLayerIndex >= index) {
-        entityLayers.slice(next, length).forEach((item) => {
+        getCurrentLayers().slice(next, length).forEach((item) => {
           item.classList.add(OFFSET_CLASSNAME);
         });
       }
