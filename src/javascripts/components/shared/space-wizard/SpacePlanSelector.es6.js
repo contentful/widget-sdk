@@ -83,7 +83,7 @@ const SpacePlanSelector = createReactClass({
               { action === 'change' &&
                 <Fragment>
                   <p className="create-space-wizard__subheading">
-                    You are upgrading the space <em>{space.name}</em> for organization <em>{organization.name}</em>.<br/>
+                    You are changing the space <em>{space.name}</em> for organization <em>{organization.name}</em>.<br/>
                   </p>
                   <div className="space-plans-list">
                     {spaceRatePlans.map((plan) => <SpacePlanItem
