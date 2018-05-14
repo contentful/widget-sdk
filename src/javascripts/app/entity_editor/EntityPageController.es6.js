@@ -63,7 +63,10 @@ export default ($scope, _$state) => {
     const length = $scope.entities.length;
     const next = index + 1;
 
-    peekLayer = index;
+    if ($scope.topPeekingLayerIndex >= index) {
+      peekLayer = index;
+    }
+
     window.clearTimeout(peekOutTimeoutReference);
     peekInTimeoutReference = window.setTimeout(() => {
       getCurrentLayers().forEach((item) => {
