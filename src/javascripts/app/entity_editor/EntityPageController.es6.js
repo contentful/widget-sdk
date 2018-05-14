@@ -17,6 +17,7 @@ function setEntities ($scope) {
 
 export default ($scope, _$state) => {
   $scope.context.ready = true;
+  let peekLayer;
   let peekInTimeoutReference;
   let peekOutTimeoutReference;
 
@@ -24,9 +25,22 @@ export default ($scope, _$state) => {
     $scope.isSlideinEntryEditorEnabled = isEnabled;
   });
 
+  setEntities($scope);
+
+  const loaderTemoutReference = window.setTimeout(() => {
+    // TODO: We have to unset this when navigating back via browser history.
+    // E.g. watch $scope.entities and do another timeout.
+    $scope.loaded = true;
+    $scope.$digest();
+  }, $scope.entities.length * 3000);
+
   $scope.topPeekingLayerIndex = -1;
 
-  $scope.close = entity => {
+  $scope.isTopLayer = (index) => (index + 1) === $scope.entities.length;
+  $scope.isLayerPeekedUpon = (index) => index === peekLayer;
+
+  $scope.close = (entity) => {
+    peekLayer = null;
     goToSlideInEntity(entity, $scope.isSlideinEntryEditorEnabled);
   };
 
@@ -49,6 +63,7 @@ export default ($scope, _$state) => {
     const length = $scope.entities.length;
     const next = index + 1;
 
+    peekLayer = index;
     window.clearTimeout(peekOutTimeoutReference);
     peekInTimeoutReference = window.setTimeout(() => {
       getCurrentLayers().forEach((item) => {
@@ -64,10 +79,9 @@ export default ($scope, _$state) => {
   };
 
   $scope.peekOut = () => {
+    peekLayer = null;
     window.clearTimeout(peekInTimeoutReference);
   };
-
-  setEntities($scope);
 
   const unlistenStateChangeSuccess = $scope.$on(
     '$locationChangeSuccess', () => setEntities($scope)
@@ -75,6 +89,7 @@ export default ($scope, _$state) => {
 
   $scope.$on('$destroy', () => {
     unlistenStateChangeSuccess();
+    window.clearTimeout(loaderTemoutReference);
     window.clearTimeout(peekOutTimeoutReference);
     window.clearTimeout(peekInTimeoutReference);
   });

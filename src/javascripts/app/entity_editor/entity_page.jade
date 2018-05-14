@@ -3,24 +3,24 @@
     class="workbench-layer workbench-layer--{{ $index }} animate"
     ng-style="{ left: 170 / entities.length * $index + 'px' }"
     ng-repeat="entity in entities track by $index"
-    ng-class="{'workbench-layer--is-current': ($index + 1) === entities.length}"
+    ng-class="{'workbench-layer--is-current': isTopLayer($index), 'workbench-layer--is-peeked-upon': isLayerPeekedUpon($index), 'workbench-layer--optimized': entities.length > 4}"
     data-test-id="slide-in-{{ $index === 0 ? 'base' : 'layer' }}"
   )
-    cf-entry-editor(
-      ng-if="entity.type === 'Entry'"
-      entry-id="entity.id"
-      preferences="preferences"
+    div(
+      watchers-toggler="!isTopLayer($index) && loaded"
       ng-mouseenter="initPeeking($index)"
     )
-    cf-asset-editor(
-      ng-if="entity.type === 'Asset'"
-      asset-id="entity.id"
-      preferences="preferences"
-      ng-mouseenter="initPeeking($index)"
-    )
+      cf-entry-editor(
+        ng-if="entity.type === 'Entry'"
+        entry-id="entity.id"
+        preferences="preferences")
+      cf-asset-editor(
+        ng-if="entity.type === 'Asset'"
+        asset-id="entity.id"
+        preferences="preferences")
     .workbench-layer__overlay(
       ng-style="{opacity: (-$index / entities.length) + 0.8}"
-      ng-if="($index + 1) !== entities.length"
+      ng-if="!isTopLayer($index)"
       ng-click="close(entity)"
       ng-mouseenter="peekIn($index)"
       ng-mouseleave="peekOut()"

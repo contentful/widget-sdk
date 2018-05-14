@@ -467,7 +467,18 @@ Styleguide 9.7
   opacity: 0.1 !important;
 }
 
-.workbench-layer:not(.workbench-layer--is-current) .workbench-header .breadcrumbs-widget,
-.workbench-layer:not(.workbench-layer--is-current) .workbench-header__icon {
-  display: none;
+.workbench-layer:not(.workbench-layer--is-current) {
+  &.workbench-layer--optimized:not(.workbench-layer--is-peeked-upon) .workbench-main {
+    // TODO: Show while weeking out.
+    display: none;
+  }
+
+  .loader, .workbench-main__sidebar {
+    display: none
+  }
+
+  .workbench-header .breadcrumbs-widget,
+  .workbench-header__icon {
+    display: none;
+  }
 }
