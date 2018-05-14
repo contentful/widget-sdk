@@ -418,7 +418,7 @@ Styleguide 9.7
   will-change: width;
 
   &:not(.workbench-layer--0) {
-    transition: width 200ms ease-in-out, transform 200ms ease-in-out;
+    transition: left 200ms ease-in-out, transform 200ms ease-in-out;
 
     &.ng-enter-active {
       pointer-events: none;
@@ -434,6 +434,11 @@ Styleguide 9.7
       }
     }
   }
+
+  .loader {
+    // TODO: Remove z-index from .loader instead.
+    z-index: 0
+  }
 }
 
 .workbench-layer__overlay {
@@ -446,6 +451,12 @@ Styleguide 9.7
   height: 100%;
   cursor: pointer;
   transition: 200ms ease-in-out opacity;
+}
+
+.workbench-layer--is-current {
+  // For performance, any layer below the top one keeps 100% width all the time
+  // So the width won't change when adding new layers.
+  width: auto;
 }
 
 .workbench-layer--offset {
