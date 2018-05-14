@@ -1,5 +1,6 @@
 import {extend} from 'lodash';
 import {getSchema} from 'analytics/snowplow/Schemas';
+import {getSpaceWizardData} from './SpaceWizardTransform';
 
 /**
  * @ngdoc service
@@ -29,6 +30,15 @@ export default function (_eventName, data) {
     contexts.push({
       schema: getSchema('entity_automation_scope').path,
       data: extend({scope: data.entityAutomationScope.scope}, baseData)
+    });
+  }
+
+  // if called from space wizard
+  if (data.wizardData) {
+    contexts.push({
+      schema: getSchema('feature_space_wizard').path,
+      // todo - action should be something else than 'navigate'
+      data: extend(getSpaceWizardData(data.wizardData, 'navigate'), baseData)
     });
   }
 

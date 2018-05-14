@@ -5,6 +5,7 @@ import EntityAction from './transformers/EntityAction';
 import EntryActionV2 from './transformers/EntryActionV2';
 import Generic from './transformers/Generic';
 import SpaceCreate from './transformers/SpaceCreate';
+import SpaceWizardTransform from './transformers/SpaceWizardTransform';
 import createExperimentTransformer from './transformers/Experiment';
 import PageViewTransform from './transformers/PageView';
 import {
@@ -75,6 +76,12 @@ registerActionEvent('asset:create', EntityAction);
 
 registerActionEvent('space:create', SpaceCreate);
 
+registerSpaceWizardEvent('space_wizard:open');
+registerSpaceWizardEvent('space_wizard:cancel');
+registerSpaceWizardEvent('space_wizard:confirm');
+registerSpaceWizardEvent('space_wizard:navigate');
+registerSpaceWizardEvent('space_wizard:link_click');
+
 registerEvent('global:app_loaded', 'app_open', AppOpen);
 
 registerEvent('invite_user:learn', 'generic', InviteUserExperiment);
@@ -134,6 +141,10 @@ function registerBulkEditorEvent (event) {
 
 function registerSnapshotEvent (event) {
   registerEvent(event, 'feature_snapshot', Snapshot);
+}
+
+function registerSpaceWizardEvent (event) {
+  registerEvent(event, 'feature_space_wizard', SpaceWizardTransform);
 }
 
 

@@ -18,6 +18,7 @@ import {getCreator as getTemplateCreator} from 'services/SpaceTemplateCreator';
 import { changeSpace } from 'account/pricing/PricingDataProvider';
 import spaceContext from 'spaceContext';
 import createApiKeyRepo from 'data/CMA/ApiKeyRepo';
+import * as Analytics from 'analytics/Analytics';
 
 const DEFAULT_LOCALE = 'en-US';
 
@@ -100,13 +101,14 @@ const Wizard = createReactClass({
       }
     };
   },
+  componentDidMount () {
+    this.track('open');
+  },
   render () {
     const {
       space,
       action,
       organization,
-      onCancel,
-      onConfirm,
       onDimensionsChange
     } = this.props;
 
@@ -127,7 +129,7 @@ const Wizard = createReactClass({
           <div className="modal-dialog__content">
             <ProgressScreen
               done={isContentCreated}
-              onConfirm={onConfirm}
+              onConfirm={this.confirm}
               onDimensionsChange={onDimensionsChange}
             />
           </div>
@@ -151,7 +153,7 @@ const Wizard = createReactClass({
       );
       const closeButton = <button
         className="create-space-wizard__close modal-dialog__close"
-        onClick={onCancel} />;
+        onClick={this.cancel} />;
 
       const stepProps = {
         ...data,
@@ -161,7 +163,8 @@ const Wizard = createReactClass({
         isFormSubmitted,
         serverValidationErrors,
         onDimensionsChange,
-        onCancel,
+        track: this.track,
+        onCancel: this.cancel,
         onNavigate: this.navigate,
         onChange: this.setStateData,
         onSubmit: this.goToNextStep
@@ -191,15 +194,27 @@ const Wizard = createReactClass({
       );
     }
   },
+  cancel () {
+    this.props.onCancel();
+    this.track('cancel');
+  },
+  confirm () {
+    this.props.onConfirm();
+    this.track('confirm');
+  },
+  track (action, data = {}) {
+    track(action, {...data, ...getTrackingData(this.state, this.props)});
+  },
   navigate (stepId) {
     this.setState({currentStepId: stepId});
+    this.track('navigate', {targetStep: stepId});
   },
   setStateData (stepData) {
-    this.setState({
-      data: {...this.state.data, ...stepData},
+    this.setState(({data}) => ({
+      data: {...data, ...stepData},
       isFormSubmitted: false,
       serverValidationErrors: null
-    });
+    }));
   },
   goToNextStep () {
     const {currentStepId} = this.state;
@@ -213,12 +228,19 @@ const Wizard = createReactClass({
     } else if (lastStep && action === 'change') {
       this.changeSpace();
     } else {
-      this.setState({currentStepId: getNextStep(steps, currentStepId)});
+      const stepId = getNextStep(steps, currentStepId);
+
+      this.setState((state, props) => {
+        track('navigate', {targetStep: stepId, ...getTrackingData(state, props)});
+
+        return {currentStepId: stepId};
+      });
     }
   },
 
   async createSpace () {
     const {organization, onSpaceCreated, onTemplateCreated} = this.props;
+    const {template} = this.state.data;
     const spaceData = makeSpaceData(this.state.data);
     let newSpace;
 
@@ -237,7 +259,14 @@ const Wizard = createReactClass({
 
       onSpaceCreated(newSpace);
 
-      const {template} = this.state.data;
+      const wizardData = getTrackingData(this.state, this.props);
+      const spaceCreateEventData =
+          template
+          ? {templateName: template.name, entityAutomationScope: {scope: 'space_template'}, wizardData}
+          : {templateName: 'Blank', wizardData};
+
+      Analytics.track('space:create', spaceCreateEventData);
+
 
       if (template) {
         this.setState({isSpaceCreated: true});
@@ -252,7 +281,7 @@ const Wizard = createReactClass({
           'Example Key',
           'We’ve created an example API key for you to help you get started.'
         );
-        this.props.onConfirm();
+        this.confirm();
       }
     }
   },
@@ -273,7 +302,7 @@ const Wizard = createReactClass({
       return;
     }
 
-    this.props.onConfirm();
+    this.confirm();
   },
 
   handleError (error) {
@@ -286,7 +315,7 @@ const Wizard = createReactClass({
       this.setState({serverValidationErrors, currentStepId: 1});
     } else {
       notification.error(`Could not ${action} your space. If the problem persists, get in touch with us.`);
-      this.props.onCancel();
+      this.cancel();
     }
   }
 });
@@ -362,6 +391,31 @@ function getFieldErrors (error) {
     acc[err.path] = message;
     return acc;
   }, {});
+}
+
+function track (eventName, data) {
+  Analytics.track(`space_wizard:${eventName}`, data);
+}
+
+function getTrackingData (state, props) {
+  const {action, organization} = props;
+  const {currentStepId, data: {newSpaceRatePlan, spaceName, template}} = state;
+
+  const eventData = {
+    currentStep: currentStepId,
+    action: action,
+    paymentDetailsExist: organization.isBillable,
+    spaceType: get(newSpaceRatePlan, 'internalName'),
+    spaceName: spaceName,
+    template: get(template, 'name')
+  };
+
+  if (action === 'change') {
+    // TODO get space type
+    eventData.currentSpaceType = '';
+  }
+
+  return eventData;
 }
 
 export default Wizard;

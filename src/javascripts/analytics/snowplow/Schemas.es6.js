@@ -120,6 +120,11 @@ registerSchema({
 });
 
 registerSchema({
+  name: 'feature_space_wizard',
+  version: '1-0-0'
+});
+
+registerSchema({
   name: 'personal_access_token',
   version: '1-0-0'
 });
