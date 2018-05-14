@@ -54,12 +54,17 @@ const ContextMenu = createReactClass({
               {items.map(item => {
                 const disabled = Boolean(item.disabled);
 
-                return <li disabled={disabled} key={item.label}>
-                  <button
+                return (
+                  <li
                     onClick={() => { !disabled && item.action(); }}
-                    {...item.otherProps}
-                  >{item.label}</button>
-                </li>;
+                    disabled={disabled}
+                    key={item.label}
+                  >
+                    <button {...item.otherProps} >
+                      {item.label}
+                    </button>
+                  </li>
+                );
               })}
             </ul>
           </div>
