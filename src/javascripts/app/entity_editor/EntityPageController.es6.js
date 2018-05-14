@@ -70,15 +70,14 @@ export default ($scope, _$state) => {
   setEntities($scope);
 
   const unlistenStateChangeSuccess = $scope.$on(
-    '$locationChangeSuccess',
-    () => {
-      setEntities($scope);
-      window.clearTimeout(peekOutTimeoutReference);
-      window.clearTimeout(peekInTimeoutReference);
-    }
+    '$locationChangeSuccess', () => setEntities($scope)
   );
 
-  $scope.$on('$destroy', unlistenStateChangeSuccess);
+  $scope.$on('$destroy', () => {
+    unlistenStateChangeSuccess();
+    window.clearTimeout(peekOutTimeoutReference);
+    window.clearTimeout(peekInTimeoutReference);
+  });
 };
 
 function getCurrentLayers () {
