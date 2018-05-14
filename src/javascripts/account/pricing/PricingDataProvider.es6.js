@@ -93,6 +93,16 @@ export function getPlansWithSpaces (endpoint) {
     }));
 }
 
+export function changeSpace (endpoint, planId) {
+  return endpoint({
+    method: 'PUT',
+    path: [],
+    data: {
+      productRatePlanId: planId
+    }
+  }, alphaHeader);
+}
+
 /**
  * Gets the list of enabled features for the org such as offsite backup.
  * @param {object} endpoint an organization endpoint
@@ -121,11 +131,19 @@ export function getSingleSpacePlan (endpoint, spaceId) {
  * @param {object} endpoint an organization endpoint
  * @returns {Promise<object[]>} product rate plans
  */
-export function getSpaceRatePlans (endpoint) {
+export function getSpaceRatePlans (endpoint, spaceId) {
+  const query = {
+    plan_type: 'space'
+  };
+
+  if (spaceId) {
+    query.space_id = spaceId;
+  }
+
   return endpoint({
     method: 'GET',
     path: ['product_rate_plans'],
-    query: {'plan_type': 'space'}
+    query: query
   }, alphaHeader).then((data) => data.items);
 }
 

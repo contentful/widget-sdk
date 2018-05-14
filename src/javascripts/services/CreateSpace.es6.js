@@ -36,10 +36,11 @@ export async function showDialog (organizationId) {
   } else {
     modalDialog.open({
       title: 'Create new space',
-      template: '<cf-create-space-wizard class="modal-background"></cf-create-space-wizard>',
+      template: '<cf-space-wizard class="modal-background"></cf-space-wizard>',
       backgroundClose: false,
       persistOnNavigation: true,
       scopeData: {
+        action: 'create',
         organization: {
           sys: organization.sys,
           name: organization.name,
