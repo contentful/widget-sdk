@@ -9,7 +9,7 @@ const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
   'feature-at-05-2018-sliding-entry-editor-multi-level';
 const PEEK_IN_DELAY = 1000;
 const PEEK_OUT_DELAY = 500;
-const PEEKED_CLASS_NAME = 'workbench-layer--peeked';
+const OFFSET_CLASSNAME = 'workbench-layer--offset';
 
 function setEntities ($scope) {
   $scope.entities = getSlideInEntities();
@@ -40,7 +40,7 @@ export default ($scope, _$state) => {
 
       peekOutTimeoutReference = window.setTimeout(() => {
         entityLayers.forEach((item) => {
-          item.classList.remove(PEEKED_CLASS_NAME);
+          item.classList.remove(OFFSET_CLASSNAME);
         });
       }, PEEK_OUT_DELAY);
     }
@@ -54,12 +54,12 @@ export default ($scope, _$state) => {
     window.clearTimeout(peekOutTimeoutReference);
     peekInTimeoutReference = window.setTimeout(() => {
       entityLayers.forEach((item) => {
-        item.classList.remove(PEEKED_CLASS_NAME);
+        item.classList.remove(OFFSET_CLASSNAME);
       });
 
       if ($scope.topPeekingLayerIndex >= index) {
         entityLayers.slice(next, length).forEach((item) => {
-          item.classList.add(PEEKED_CLASS_NAME);
+          item.classList.add(OFFSET_CLASSNAME);
         });
       }
     }, PEEK_IN_DELAY);
