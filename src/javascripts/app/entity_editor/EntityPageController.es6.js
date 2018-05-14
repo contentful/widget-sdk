@@ -24,15 +24,19 @@ export default ($scope, _$state) => {
     $scope.isSlideinEntryEditorEnabled = isEnabled;
   });
 
+  $scope.topPeekingLayerIndex = -1;
+
   $scope.close = entity => {
     goToSlideInEntity(entity, $scope.isSlideinEntryEditorEnabled);
   };
 
   $scope.initPeeking = (index) => {
     const length = $scope.entities.length;
+    const previous = index - 1;
 
     if (index === length - 1) {
       const entityLayers = [].slice.apply(document.querySelectorAll('.workbench-layer'));
+      $scope.topPeekingLayerIndex = previous;
 
       peekOutTimeoutReference = window.setTimeout(() => {
         entityLayers.forEach((item) => {
@@ -43,14 +47,21 @@ export default ($scope, _$state) => {
   };
 
   $scope.peekIn = (index) => {
+    const length = $scope.entities.length;
     const entityLayers = [].slice.apply(document.querySelectorAll('.workbench-layer'));
+    const next = index + 1;
 
     window.clearTimeout(peekOutTimeoutReference);
     peekInTimeoutReference = window.setTimeout(() => {
-      entityLayers.forEach((item, i) => {
-        const method = i > index ? 'add' : 'remove';
-        item.classList[method](PEEKED_CLASS_NAME);
+      entityLayers.forEach((item) => {
+        item.classList.remove(PEEKED_CLASS_NAME);
       });
+
+      if ($scope.topPeekingLayerIndex >= index) {
+        entityLayers.slice(next, length).forEach((item) => {
+          item.classList.add(PEEKED_CLASS_NAME);
+        });
+      }
     }, PEEK_IN_DELAY);
   };
 
