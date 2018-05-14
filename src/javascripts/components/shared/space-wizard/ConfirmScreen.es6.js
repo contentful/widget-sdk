@@ -61,14 +61,23 @@ const ConfirmScreen = createReactClass({
                     Make sure everything is in order before creating your space.
                   </p>
                   <p className="create-space-wizard__info">
-                    You are about to purchase a {newSpaceRatePlan.name.toLowerCase()} space
-                    for <strong>{formatPrice(newSpaceRatePlan.price)} / month</strong> for the
-                    organization <em>{organization.name}</em>.
-                    {requestState === RequestState.SUCCESS && <span>
-                      {' '}
-                      This will increase your organization’s subscription
-                      to <strong>{formatPrice(totalPrice + newSpaceRatePlan.price)} / month</strong>
-                    </span>}
+                    { newSpaceRatePlan.price > 0 &&
+                      <Fragment>
+                        You are about to purchase a {newSpaceRatePlan.name.toLowerCase()} space
+                        for <strong>{formatPrice(newSpaceRatePlan.price)} / month</strong> for the
+                        organization <em>{organization.name}</em>.
+                        {requestState === RequestState.SUCCESS && <span>
+                          {' '}
+                          This will increase your organization’s subscription
+                          to <strong>{formatPrice(totalPrice + newSpaceRatePlan.price)} / month</strong>
+                        </span>}
+                      </Fragment>
+                    }
+                    { newSpaceRatePlan.price === 0 &&
+                      <Fragment>
+                        You are about to create a free space for the organization <em>{organization.name}</em> and it won&apos;t change your organization&apos;s subscription.
+                      </Fragment>
+                    }
                     {' '}
                     (<a
                       className="text-link"
