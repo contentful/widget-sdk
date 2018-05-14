@@ -75,6 +75,8 @@ export default ($scope, _$state) => {
     '$locationChangeSuccess',
     () => {
       setEntities($scope);
+      window.clearTimeout(peekOutTimeoutReference);
+      window.clearTimeout(peekInTimeoutReference);
     }
   );
 
