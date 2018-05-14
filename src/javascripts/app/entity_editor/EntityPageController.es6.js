@@ -24,10 +24,6 @@ export default ($scope, _$state) => {
     $scope.isSlideinEntryEditorEnabled = isEnabled;
   });
 
-  const getCurrentLayers = () => {
-    return Array.from(document.querySelectorAll('.workbench-layer'));
-  };
-
   $scope.topPeekingLayerIndex = -1;
 
   $scope.close = entity => {
@@ -84,3 +80,7 @@ export default ($scope, _$state) => {
 
   $scope.$on('$destroy', unlistenStateChangeSuccess);
 };
+
+function getCurrentLayers () {
+  return Array.from(document.querySelectorAll('.workbench-layer'));
+}
