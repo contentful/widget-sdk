@@ -30,7 +30,7 @@ function SpacePlans ({spacePlans, upgradedSpace, onCreateSpace, onChangeSpace, o
     </p>
 
     { hasSpacePlans &&
-      <div className='table'>
+      <div className='table spaces-table'>
         <table>
           <thead className='table__head'>
             <tr>

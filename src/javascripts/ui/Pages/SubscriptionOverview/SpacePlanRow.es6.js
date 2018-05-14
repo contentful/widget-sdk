@@ -31,7 +31,7 @@ function SpacePlanRow ({ plan, upgraded, onChangeSpace, onDeleteSpace }) {
 
   const contextMenuItems = [
     {
-      label: 'Change space',
+      label: 'Change space type',
       action: onChangeSpace(space, 'change'),
       otherProps: {
         'data-test-id': 'subscription-page.spaces-list.change-space-link'
@@ -79,6 +79,7 @@ function SpacePlanRow ({ plan, upgraded, onChangeSpace, onDeleteSpace }) {
     <td style={{textAlign: 'right'}}>
       { space &&
         <ContextMenu
+          style={{top: '8px'}}
           data-test-id='subscription-page.spaces-list.space-context-menu'
           items={contextMenuItems}
         />
