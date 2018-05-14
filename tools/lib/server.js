@@ -86,6 +86,7 @@ function createServer (configName, getBuild) {
   const app = express();
   const config = createWebpackConfig({ dev: true });
   const compiler = webpack(config);
+  const PORT = Number.parseInt(process.env.PORT, 10) || 3001;
 
   app.use(middleware(compiler, {
     publicPath: '/app/',
@@ -128,12 +129,12 @@ function createServer (configName, getBuild) {
   app.use(function (_req, res) {
     res.sendStatus(404).end();
   });
-  app.listen(3001, (err) => {
+  app.listen(PORT, (err) => {
     if (err) {
       throw err;
     }
 
-    console.log('Serving application at http://localhost:3001');
+    console.log(`Serving application at http://localhost:${PORT}`);
   });
 }
 

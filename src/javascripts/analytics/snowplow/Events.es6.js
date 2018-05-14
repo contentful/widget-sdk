@@ -52,6 +52,7 @@ registerBulkEditorEvent('bulk_editor:action');
 registerBulkEditorEvent('bulk_editor:add');
 registerBulkEditorEvent('bulk_editor:close');
 registerBulkEditorEvent('bulk_editor:open');
+registerBulkEditorEvent('bulk_editor:open_slide_in');
 registerBulkEditorEvent('bulk_editor:status');
 
 registerSnapshotEvent('versioning:no_snapshots');

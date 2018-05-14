@@ -8,7 +8,7 @@ const SpaceDetails = createReactClass({
   propTypes: {
     onChange: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
-    spaceRatePlan: PropTypes.object.isRequired,
+    newSpaceRatePlan: PropTypes.object.isRequired,
     serverValidationErrors: PropTypes.object,
     isFormSubmitted: PropTypes.bool,
     onNavigate: PropTypes.func.isRequired,
@@ -29,7 +29,7 @@ const SpaceDetails = createReactClass({
     }
   },
   render: function () {
-    const {spaceRatePlan, onDimensionsChange, onNavigate} = this.props;
+    const {newSpaceRatePlan, onDimensionsChange, onNavigate} = this.props;
     const {name, validation, touched} = this.state;
     const showValidationError = touched && !!validation.name;
 
@@ -39,8 +39,8 @@ const SpaceDetails = createReactClass({
           Choose a name
         </h2>
         <p className="create-space-wizard__subheading">
-          You are about to create a {spaceRatePlan.name.toLowerCase()} space
-          for {formatPrice(spaceRatePlan.price)}/month.<br/>
+          You are about to create a {newSpaceRatePlan.name.toLowerCase()} space
+          for {formatPrice(newSpaceRatePlan.price)}/month.<br/>
           <a
             className="text-link"
             href="#"

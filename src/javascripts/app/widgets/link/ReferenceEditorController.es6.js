@@ -21,6 +21,7 @@ import { canLinkToContentType, getInlineEditingStoreKey } from './utils';
 import { getStore } from 'TheStore';
 
 import {
+  getSlideInEntities,
   goToSlideInEntity as goToSlideInEntityBase
 } from 'states/EntityNavigationHelpers';
 
@@ -46,9 +47,9 @@ export default function create ($scope, widgetApi) {
     $scope.single
   );
 
+  let slideInEditorEnabled = false;
   const canEditReferences = !!widgetApi._internal.editReferences;
-  const useBulkEditor = canEditReferences && widgetApi.settings.bulkEditing;
-  let useSlideInEditor = useBulkEditor;
+  const bulkEditorEnabled = canEditReferences && widgetApi.settings.bulkEditing;
   $scope.typePlural = { Entry: 'entries', Asset: 'assets' }[$scope.type];
   $scope.isAssetCard = is('Asset', 'card');
   $scope.referenceType = {};
@@ -65,6 +66,7 @@ export default function create ($scope, widgetApi) {
   };
 
   K.onValueScope($scope, isDisabled$, function (isDisabled) {
+    $scope.isDisabled = isDisabled;
     $scope.config.draggable = !$scope.single && !isDisabled;
   });
 
@@ -94,8 +96,8 @@ export default function create ($scope, widgetApi) {
 
   onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, function (isEnabled) {
     $scope.isSlideinEntryEditorEnabled = isEnabled;
-    if (!useSlideInEditor && canEditReferences && isEnabled) {
-      useSlideInEditor = true;
+    if (!slideInEditorEnabled && canEditReferences && isEnabled) {
+      slideInEditorEnabled = true;
     }
   });
 
@@ -305,18 +307,18 @@ export default function create ($scope, widgetApi) {
     const hash = [id, version, isDisabled, contentTypeId].join('!');
     const contentType =
       contentTypeId && spaceContext.publishedCTs.fetch(contentTypeId);
-    let refCtxt = widgetApi._internal.createReferenceContext ? widgetApi._internal.createReferenceContext(index, state.refreshEntities) : null;
-    const entityIsAvailable = entity !== undefined;
-
 
     // This is passed down to the bulk entity editor actions
     // to be able to unlink an entry when the bulk editor is
     // rendered inline.
-    if (refCtxt) {
+    let refCtxt;
+    if (widgetApi._internal.createReferenceContext) {
       refCtxt = {
-        ...refCtxt,
+        ...widgetApi._internal.createReferenceContext(index, state.refreshEntities),
         remove: prepareRemoveAction(index, isDisabled)
       };
+    } else {
+      refCtxt = null;
     }
 
     const entityModel = {
@@ -328,9 +330,7 @@ export default function create ($scope, widgetApi) {
         edit: prepareEditAction(entity, index, isDisabled),
         remove: prepareRemoveAction(index, isDisabled),
         trackEdit: () => trackEdit(entity),
-        inlineEdit: function () {
-          goToSlideInEntity(entity);
-        }
+        inlineEdit: () => goToSlideInEntity(entity)
       },
       // TODO: This is used to create multiple reference contexts
       // to be able to open multiple instances of the bulk editor
@@ -338,29 +338,26 @@ export default function create ($scope, widgetApi) {
       refCtxt
     };
 
-    // Disable entry editor layer actions for refs
-    // - use bulk editor
-    // - when inside the bulk editor itself.
-    // - rendered inside an entry editor layer.
-    if ($scope.isSlideinEntryEditorEnabled && !useBulkEditor && refCtxt !== null && !$state.params.inlineEntryId && entityIsAvailable) {
-      // This will render a placeholder stack div with a transition
-      // and remove it when inline entry editor is rendered
-      entityModel.actions.slideinEdit = function () {
-        goToSlideInEntity(entity);
-      };
+    const shouldSlideIn =
+      $scope.isSlideinEntryEditorEnabled &&
+      !bulkEditorEnabled &&
+      refCtxt !== null &&
+      !$state.params.inlineEntryId;
+
+    if (shouldSlideIn && entity) {
+      entityModel.actions.slideinEdit = () => goToSlideInEntity(entity);
     }
 
     return entityModel;
   }
 
   function prepareEditAction (entity, index, isDisabled) {
-    if (entity && !isDisabled && !isCurrentEntry(entity) && useBulkEditor) {
+    if (entity && !isDisabled && !isCurrentEntry(entity) && bulkEditorEnabled) {
       return function ($event) {
         if ($event && $event.preventDefault) {
           $event.preventDefault();
         }
-
-        widgetApi._internal.editReferences(index, state.refreshEntities);
+        bulkEditorAction(entity, index);
       };
     } else {
       return null;
@@ -382,13 +379,29 @@ export default function create ($scope, widgetApi) {
   function editEntityAction (entity, index) {
     if ($scope.referenceType.inline) {
       return;
-    } else if (useBulkEditor) {
-      return widgetApi._internal.editReferences(index, state.refreshEntities);
-    } else if (useSlideInEditor) {
+    } else if (bulkEditorEnabled) {
+      bulkEditorAction(entity, index);
+    } else if (slideInEditorEnabled) {
       goToSlideInEntity(entity);
     } else {
-      return widgetApi.state.goToEditor(entity);
+      widgetApi.state.goToEditor(entity);
     }
+  }
+
+  function bulkEditorAction (entity, index) {
+    if (getSlideInEntities().length > 1) {
+      trackOpenSlideIn();
+      goToSlideInEntity(entity);
+    } else {
+      widgetApi._internal.editReferences(index, state.refreshEntities);
+    }
+  }
+
+  function trackOpenSlideIn () {
+    track('bulk_editor:open_slide_in', {
+      parentEntryId: widgetApi.entry.getSys().id,
+      refCount: $scope.entityModels.length
+    });
   }
 
   function goToSlideInEntity ({ sys: { id, type } }) {

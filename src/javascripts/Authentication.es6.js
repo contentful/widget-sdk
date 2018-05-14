@@ -25,6 +25,13 @@ const OAUTH_CLIENT_ID = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 const TOKEN_SCOPE = 'content_management_manage';
 
 /**
+ * We set this field in LocalStorage to indicate that the user has logged out.
+ * Other instances of the webapp on the same browser will be listening to changes
+ * on this key and will trigger logout.
+ */
+const LOGOUT_KEY = 'loggedOut';
+
+/**
  * @description
  * MVar that holds that active token.
  *
@@ -34,6 +41,7 @@ const tokenMVar = createMVar$q();
 
 const store = getStore();
 const sessionStore = getStore('session');
+const localStore = getStore('local');
 
 const afterLoginPathStore = store.forKey('redirect_after_login');
 
@@ -125,8 +133,8 @@ export function init () {
     updateToken(previousToken);
   }
 
-  // Reflect token updates that happened in a different window
-  tokenStore.externalChanges().onValue(updateToken);
+  localStore.remove(LOGOUT_KEY);
+  localStore.externalChanges(LOGOUT_KEY).onValue(logout);
 }
 
 
@@ -156,6 +164,7 @@ export function logout () {
   return runTask(function* () {
     const token = yield tokenMVar.take();
     tokenStore.remove();
+    localStore.set(LOGOUT_KEY, true);
     try {
       yield revokeToken(token);
     } finally {

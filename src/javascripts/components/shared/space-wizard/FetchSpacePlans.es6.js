@@ -1,7 +1,7 @@
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import {createOrganizationEndpoint} from 'data/EndpointFactory';
-import {getSpaceRatePlans} from 'account/pricing/PricingDataProvider';
+import { getSpaceRatePlans } from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import {canCreate} from 'utils/ResourceUtils';
 import {get} from 'lodash';
@@ -11,6 +11,7 @@ import logger from 'logger';
 const FetchSpacePlans = createReactClass({
   propTypes: {
     organization: PropTypes.object.isRequired,
+    spaceId: PropTypes.string,
     onUpdate: PropTypes.func,
     // children is a rendering function
     children: PropTypes.func.isRequired
@@ -34,38 +35,23 @@ const FetchSpacePlans = createReactClass({
   render () {
     return this.props.children(this.state);
   },
-  async fetch ({organization}) {
+  async fetch ({ organization, spaceId }) {
     try {
-      const endpoint = createOrganizationEndpoint(organization.sys.id);
-      const resourceService = createResourceService(organization.sys.id, 'organization');
-
-      const [freeSpacesResource, rawSpacePlans] = await Promise.all([
-        resourceService.get('free_space'),
-        getSpaceRatePlans(endpoint)
-      ]);
-
-      const spaceRatePlans = rawSpacePlans.map((plan) => {
-        const isFree = (plan.productPlanType === 'free_space');
-        const includedResources = getIncludedResources(plan.productRatePlanCharges);
-        const disabled = isFree ? !canCreate(freeSpacesResource) : !organization.isBillable;
-
-        return {...plan, isFree, includedResources, disabled};
-      });
+      const result = await getSpacePlans({ organization, spaceId });
 
       this.setState({
-        spaceRatePlans,
-        freeSpacesResource,
+        ...result,
         requestState: RequestState.SUCCESS,
         error: null
       });
-    } catch (error) {
-      logger.logError(error);
+    } catch (e) {
+      logger.logError(e);
 
       this.setState({
         spaceRatePlans: [],
         freeSpacesResource: {limits: {}},
         requestState: RequestState.ERROR,
-        error
+        error: e
       });
     }
   },
@@ -73,6 +59,52 @@ const FetchSpacePlans = createReactClass({
     if (this.props.onUpdate) { this.props.onUpdate(...args); }
   }
 });
+
+async function getSpacePlans ({ organization, spaceId }) {
+  const { spaceRatePlans: rawSpaceRatePlans, freeSpacesResource } = await plansMeta({ organization, spaceId });
+
+  const spaceRatePlans = rawSpaceRatePlans.map(plan => {
+    let disabled = false;
+
+    if (plan.unavailabilityReasons && plan.unavailabilityReasons.length > 0) {
+      disabled = true;
+    } else if (plan.isFree) {
+      disabled = !canCreate(freeSpacesResource);
+    } else if (!organization.isBillable) {
+      disabled = true;
+    }
+
+    return { ...plan, disabled };
+  });
+
+  return {
+    spaceRatePlans,
+    freeSpacesResource
+  };
+}
+
+async function plansMeta ({ organization, spaceId }) {
+  const resources = createResourceService(organization.sys.id, 'organization');
+  const endpoint = createOrganizationEndpoint(organization.sys.id);
+
+  const [rawSpaceRatePlans, freeSpacesResource] = await Promise.all([
+    getSpaceRatePlans(endpoint, spaceId),
+    resources.get('free_space')
+  ]);
+
+
+  const spaceRatePlans = rawSpaceRatePlans.map((plan) => {
+    const isFree = (plan.productPlanType === 'free_space');
+    const includedResources = getIncludedResources(plan.productRatePlanCharges);
+
+    return {...plan, isFree, includedResources};
+  });
+
+  return {
+    spaceRatePlans,
+    freeSpacesResource
+  };
+}
 
 export const ResourceTypes = {
   Environments: 'Environments',

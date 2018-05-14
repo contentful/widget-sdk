@@ -12,33 +12,47 @@ import client from 'client';
 import * as TokenStore from 'services/TokenStore';
 import notification from 'notification';
 import logger from 'logger';
+import {createSpaceEndpoint} from 'data/EndpointFactory';
 import {getTemplate} from 'services/SpaceTemplateLoader';
 import {getCreator as getTemplateCreator} from 'services/SpaceTemplateCreator';
+import { changeSpace } from 'account/pricing/PricingDataProvider';
 import spaceContext from 'spaceContext';
-import * as auth from 'Authentication';
-import {apiUrl} from 'Config';
-import {createSpaceEndpoint} from 'data/Endpoint';
 import createApiKeyRepo from 'data/CMA/ApiKeyRepo';
 
 const DEFAULT_LOCALE = 'en-US';
 
-const WizardSteps = [
+const SpaceCreateSteps = [
   {
-    id: Steps.SpaceType,
+    id: Steps.SpaceCreateSteps.SpaceType,
     label: '1. Space type',
     isEnabled: () => true,
     component: SpacePlanSelector
   },
   {
-    id: Steps.SpaceDetails,
+    id: Steps.SpaceCreateSteps.SpaceDetails,
     label: '2. Space details',
-    isEnabled: (props) => !!props.spaceRatePlan,
+    isEnabled: (props) => !!props.newSpaceRatePlan,
     component: SpaceDetails
   },
   {
-    id: Steps.Confirmation,
+    id: Steps.SpaceCreateSteps.Confirmation,
     label: '3. Confirmation',
-    isEnabled: (props) => !!(props.spaceRatePlan && props.spaceName),
+    isEnabled: (props) => !!(props.newSpaceRatePlan && props.spaceName),
+    component: ConfirmScreen
+  }
+];
+
+const SpaceChangeSteps = [
+  {
+    id: Steps.SpaceChangeSteps.SpaceType,
+    label: '1. Space type',
+    isEnabled: () => true,
+    component: SpacePlanSelector
+  },
+  {
+    id: Steps.SpaceChangeSteps.Confirmation,
+    label: '2. Confirmation',
+    isEnabled: (props) => Boolean(props.newSpaceRatePlan),
     component: ConfirmScreen
   }
 ];
@@ -52,6 +66,15 @@ const Wizard = createReactClass({
       name: PropTypes.string.isRequired,
       isBillable: PropTypes.bool
     }).isRequired,
+    space: PropTypes.object,
+    action: function (props, propName) {
+      const validActions = [ 'create', 'change' ];
+      const action = props[propName];
+
+      if (validActions.indexOf(action) === -1) {
+        return new Error(`Action ${action} not valid for Wizard, expected one of ${validActions.join(', ')}`);
+      }
+    },
     onCancel: PropTypes.func.isRequired,
     onConfirm: PropTypes.func.isRequired,
     onSpaceCreated: PropTypes.func.isRequired,
@@ -60,13 +83,17 @@ const Wizard = createReactClass({
     onDimensionsChange: PropTypes.func
   },
   getInitialState () {
+    const { action } = this.props;
+
+    const steps = getSteps(action);
+
     return {
-      currentStepId: Steps.SpaceType,
+      currentStepId: steps[0].id,
       isFormSubmitted: false,
       isSpaceCreated: false,
       isContentCreated: false,
       data: {
-        spaceRatePlan: null,
+        newSpaceRatePlan: null,
         spaceName: '',
         template: null,
         serverValidationErrors: null
@@ -74,7 +101,15 @@ const Wizard = createReactClass({
     };
   },
   render () {
-    const {organization, onCancel, onConfirm, onDimensionsChange} = this.props;
+    const {
+      space,
+      action,
+      organization,
+      onCancel,
+      onConfirm,
+      onDimensionsChange
+    } = this.props;
+
     const {
       currentStepId,
       isFormSubmitted,
@@ -83,6 +118,8 @@ const Wizard = createReactClass({
       data,
       serverValidationErrors
     } = this.state;
+
+    const steps = getSteps(action);
 
     if (isSpaceCreated) {
       return (
@@ -99,7 +136,7 @@ const Wizard = createReactClass({
     } else {
       const navigation = (
         <ul className="create-space-wizard__navigation">
-          {WizardSteps.map(({id, label, isEnabled}) => (
+          {steps.map(({id, label, isEnabled}) => (
             <li
               key={id}
               data-test-id={`wizard-nav-${id}`}
@@ -119,6 +156,8 @@ const Wizard = createReactClass({
       const stepProps = {
         ...data,
         organization,
+        space,
+        action,
         isFormSubmitted,
         serverValidationErrors,
         onDimensionsChange,
@@ -135,7 +174,7 @@ const Wizard = createReactClass({
             {closeButton}
           </div>
           <div className="modal-dialog__content">
-            {WizardSteps.map(({id, isEnabled, component}) => (
+            {steps.map(({id, isEnabled, component}) => (
               <div
                 key={id}
                 className={classnames(
@@ -164,13 +203,20 @@ const Wizard = createReactClass({
   },
   goToNextStep () {
     const {currentStepId} = this.state;
+    const { action } = this.props;
 
-    if (isLastStep(currentStepId)) {
+    const steps = getSteps(action);
+    const lastStep = isLastStep(steps, currentStepId);
+
+    if (lastStep && action === 'create') {
       this.createSpace();
+    } else if (lastStep && action === 'change') {
+      this.changeSpace();
     } else {
-      this.setState({currentStepId: getNextStep(currentStepId)});
+      this.setState({currentStepId: getNextStep(steps, currentStepId)});
     }
   },
+
   async createSpace () {
     const {organization, onSpaceCreated, onTemplateCreated} = this.props;
     const spaceData = makeSpaceData(this.state.data);
@@ -184,7 +230,7 @@ const Wizard = createReactClass({
       this.handleError(error);
     }
     if (newSpace) {
-      const spaceEndpoint = createSpaceEndpoint(apiUrl(), newSpace.sys.id, auth);
+      const spaceEndpoint = createSpaceEndpoint(newSpace.sys.id);
       const apiKeyRepo = createApiKeyRepo(spaceEndpoint);
 
       await TokenStore.refresh();
@@ -210,36 +256,66 @@ const Wizard = createReactClass({
       }
     }
   },
+
+  async changeSpace () {
+    const { space } = this.props;
+
+    this.setState({isFormSubmitted: true});
+
+    const spaceId = space.sys.id;
+    const endpoint = createSpaceEndpoint(spaceId);
+    const planId = get(this.state.data, 'newSpaceRatePlan.sys.id');
+
+    try {
+      await changeSpace(endpoint, planId);
+    } catch (e) {
+      this.handleError(e);
+      return;
+    }
+
+    this.props.onConfirm();
+  },
+
   handleError (error) {
-    logger.logServerWarn('Could not create Space', {error});
+    const { action } = this.props;
+
+    logger.logServerWarn(`Could not ${action} space`, {error});
 
     const serverValidationErrors = getFieldErrors(error);
     if (Object.keys(serverValidationErrors).length) {
       this.setState({serverValidationErrors, currentStepId: 1});
     } else {
-      notification.error('Could not create Space. If the problem persists please get in contact with us.');
+      notification.error(`Could not ${action} your space. If the problem persists, get in touch with us.`);
       this.props.onCancel();
     }
   }
 });
 
-function isLastStep (stepId) {
-  return WizardSteps[WizardSteps.length - 1].id === stepId;
-}
-
-function getNextStep (stepId) {
-  if (isLastStep(stepId)) {
-    return stepId;
-  } else {
-    const index = WizardSteps.findIndex(({id}) => id === stepId);
-    return WizardSteps[index + 1].id;
+function getSteps (action) {
+  if (action === 'create') {
+    return SpaceCreateSteps;
+  } else if (action === 'change') {
+    return SpaceChangeSteps;
   }
 }
 
-function makeSpaceData ({spaceRatePlan, spaceName}) {
+function isLastStep (steps, stepId) {
+  return steps[steps.length - 1].id === stepId;
+}
+
+function getNextStep (steps, stepId) {
+  if (isLastStep(steps, stepId)) {
+    return stepId;
+  } else {
+    const index = steps.findIndex(({id}) => id === stepId);
+    return steps[index + 1].id;
+  }
+}
+
+function makeSpaceData ({newSpaceRatePlan, spaceName}) {
   return {
     defaultLocale: DEFAULT_LOCALE,
-    productRatePlanId: get(spaceRatePlan, 'sys.id'),
+    productRatePlanId: get(newSpaceRatePlan, 'sys.id'),
     name: spaceName
   };
 }

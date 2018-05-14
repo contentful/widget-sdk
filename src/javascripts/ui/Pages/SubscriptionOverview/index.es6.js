@@ -4,11 +4,13 @@ import PropTypes from 'prop-types';
 
 import { get } from 'lodash';
 
+import notification from 'notification';
 import * as ReloadNotification from 'ReloadNotification';
 import { getPlansWithSpaces } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
 import { showDialog as showCreateSpaceModal } from 'services/CreateSpace';
+import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService';
 import { openDeleteSpaceDialog } from 'services/DeleteSpace';
 import { getSpaces, getOrganization } from 'services/TokenStore';
 import { isOwnerOrAdmin, isOwner } from 'services/OrganizationRoles';
@@ -97,8 +99,41 @@ const SubscriptionOverview = createReactClass({
     onReady();
   },
 
+  spaceChanged (space) {
+    notification.info(`Space ${space.name} successfully upgraded.`);
+
+    this.setState({
+      upgradedSpace: space.sys.id
+    });
+
+    setTimeout(() => {
+      this.setState({
+        upgradedSpace: null
+      });
+    }, 6000);
+  },
+
   createSpace: function () {
     showCreateSpaceModal(this.props.orgId);
+  },
+
+  changeSpace: function (space, action) {
+    return () => {
+      showChangeSpaceModal({
+        organizationId: this.props.orgId,
+        space,
+        action,
+        onSubmit: async () => {
+          try {
+            await this.fetchData();
+          } catch (e) {
+            return ReloadNotification.apiErrorHandler(e);
+          }
+
+          return this.spaceChanged(space);
+        }
+      });
+    };
   },
 
   deleteSpace: function (space) {
@@ -111,7 +146,7 @@ const SubscriptionOverview = createReactClass({
   },
 
   render: function () {
-    const {basePlan, spacePlans, grandTotal, usersMeta, organization} = this.state;
+    const {basePlan, spacePlans, grandTotal, usersMeta, upgradedSpace, organization} = this.state;
     const {orgId} = this.props;
 
     return (
@@ -128,7 +163,9 @@ const SubscriptionOverview = createReactClass({
             </div>
             <SpacePlans
               spacePlans={spacePlans}
+              upgradedSpace={upgradedSpace}
               onCreateSpace={this.createSpace}
+              onChangeSpace={this.changeSpace}
               onDeleteSpace={this.deleteSpace}
               isOrgOwner={isOwner(organization)}
             />

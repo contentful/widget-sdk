@@ -130,6 +130,13 @@ describe('contentPreview', function () {
       fetchEnvironmentsAndAssertResponse.call(this);
     });
 
+    it('fetches all content preview environments', function () {
+      this.contentPreview.getAll();
+      this.$apply();
+      const payload = spaceContext.space.payload.args[0][0];
+      expect(payload.limit).toBe(100);
+    });
+
     it('only calls GET endpoint once', function () {
       this.contentPreview.getAll();
       this.$apply();

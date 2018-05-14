@@ -249,6 +249,23 @@ $close-button-small()
         color: rgba($colors.text-dark, $opacity)
       &:before
         opacity: $opacity
+    &--current
+      &:after
+        content: "Current"
+        color: #fff
+        background-color: #a9b9c0
+        border-radius: 2px
+        position: absolute
+        right: -12px
+        top: 35%
+        padding: 6px 10px
+        font-family: "Avenir Next"
+        text-transform: uppercase
+        font-weight: 600
+        font-size: 12px
+        line-height: 12px
+        letter-spacing: 0.4px
+        opacity: 0.9
 
     &__heading
       font-size: 17px

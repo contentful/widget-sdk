@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfCreateSpaceWizard', ['require', function (require) {
+.directive('cfSpaceWizard', ['require', function (require) {
   var React = require('react');
   var ReactDOM = require('react-dom');
-  var Wizard = require('components/shared/create-space-wizard/Wizard').default;
+  var Wizard = require('components/shared/space-wizard/Wizard').default;
   var $state = require('$state');
   var $rootScope = require('$rootScope');
   var debounce = require('lodash').debounce;
@@ -14,9 +14,19 @@ angular.module('contentful')
       var host = el[0];
 
       ReactDOM.render(React.createElement(Wizard, {
+        action: $scope.action,
+        space: $scope.space,
         organization: $scope.organization,
         onCancel: function () { $scope.dialog.cancel(); },
-        onConfirm: function () { $scope.dialog.confirm(); },
+        onConfirm: function () {
+          if ($scope.onSubmit) {
+            $scope.onSubmit().then(function () {
+              $scope.dialog.confirm();
+            });
+          } else {
+            $scope.dialog.confirm();
+          }
+        },
         onSpaceCreated: function (newSpace) {
           $state.go('spaces.detail', {spaceId: newSpace.sys.id});
         },
