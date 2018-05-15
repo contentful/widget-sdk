@@ -13,17 +13,15 @@ const PEEK_IN_DELAY = 500;
 const PEEK_OUT_DELAY = 500;
 const PEEK_ANIMATION_DURATION = 200;
 
-function setEntities ($scope) {
-  $scope.entities = getSlideInEntities();
-}
-
 export default ($scope, _$state) => {
   let topPeekingLayerIndex = -1;
   let peekedLayerIndexes = [];
   let hoveredLayerIndex;
   let peekInTimeoutID, peekOutTimeoutID;
   let clearPreviousPeekTimeoutID, clearPeekTimeoutID;
+  let loaderTimeoutID;
 
+  $scope.entities = [];
   $scope.context.ready = true;
 
   onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, isEnabled => {
@@ -31,12 +29,6 @@ export default ($scope, _$state) => {
   });
 
   setEntities($scope);
-
-  const loaderTemoutID = scopeTimeout($scope.entities.length * 3000,
-    // TODO: We have to unset this when navigating back via browser history.
-    // E.g. watch $scope.entities and do another timeout.
-    () => { $scope.loaded = true; }
-  );
 
   const isTopLayer = $scope.isTopLayer =
     (index) => (index + 1) === $scope.entities.length;
@@ -107,6 +99,28 @@ export default ($scope, _$state) => {
     clearTimeouts();
   });
 
+  function setEntities ($scope) {
+    const previousEntities = $scope.entities;
+    const moreThanOneNewEntityAdded =
+      previousEntities.length + 1 < $scope.entities.length;
+
+    $scope.entities = getSlideInEntities();
+
+    // If there was more than one new entity added to the stack, we will have to
+    // trigger loading for all those new entries, not just the one on top.
+    // This happens initially and on browser history back.
+    // TODO: Optimize this: Only load (and therefore re-enable Angular watchers)
+    // on the newly added slides.
+    if (moreThanOneNewEntityAdded) {
+      $scope.loaded = false;
+      // TODO: Find a better way to get notified when all entity editors have been
+      // fully loaded instead of giving each one 3s.
+      loaderTimeoutID = scopeTimeout($scope.entities.length * 3000,
+        () => { $scope.loaded = true; }
+      );
+    }
+  }
+
   function scopeTimeout (ms, fn) {
     return setTimeout(() => {
       fn();
@@ -116,7 +130,7 @@ export default ($scope, _$state) => {
 
   function clearTimeouts () {
     [
-      loaderTemoutID,
+      loaderTimeoutID,
       peekOutTimeoutID,
       peekInTimeoutID,
       clearPeekTimeoutID,
