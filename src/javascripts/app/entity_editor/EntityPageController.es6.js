@@ -11,6 +11,8 @@ const { setTimeout, clearTimeout } = window;
 
 const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
   'feature-at-05-2018-sliding-entry-editor-multi-level';
+const STATES_REGEXP =
+  /^spaces\.detail(\.environment|)\.(entries|assets)\.detail$/;
 const PEEK_IN_DELAY = 500;
 const PEEK_OUT_DELAY = 500;
 const PEEK_ANIMATION_DURATION = 200;
@@ -146,14 +148,6 @@ export default ($scope, $state) => {
     }
   }
 
-  function isRelevantState ({ name }) {
-    // TODO: Add environment states.
-    return [
-      'spaces.detail.entries.detail',
-      'spaces.detail.assets.detail'
-    ].indexOf(name) > -1;
-  }
-
   function scopeTimeout (ms, fn) {
     return setTimeout(() => {
       fn();
@@ -171,3 +165,7 @@ export default ($scope, $state) => {
     ].forEach(clearTimeout);
   }
 };
+
+function isRelevantState ({ name }) {
+  return STATES_REGEXP.test(name);
+}
