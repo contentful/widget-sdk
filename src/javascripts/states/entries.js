@@ -138,10 +138,9 @@ angular.module('contentful')
   function detail (withSnapshots) {
     return base({
       name: 'detail',
-      url: '/:entryId',
+      url: '/:entryId?slideIn',
       children: withSnapshots ? [compare] : [],
       params: { addToContext: true },
-      reloadOnSearch: false,
       template: JST.entity_page(),
       controller: ['$scope', '$state', createEntityPageController]
     });

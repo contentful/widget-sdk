@@ -17,7 +17,7 @@ const PEEK_ANIMATION_DURATION = 200;
 
 export const getTimestamp = () => (new Date()).getTime();
 
-export default ($scope, _$state) => {
+export default ($scope, $state) => {
   let topPeekingLayerIndex = -1;
   let peekedLayerIndexes = [];
   let hoveredLayerIndex;
@@ -28,8 +28,8 @@ export default ($scope, _$state) => {
   $scope.entities = [];
   $scope.context.ready = true;
 
-  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, isEnabled => {
-    $scope.isSlideinEntryEditorEnabled = isEnabled;
+  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, flagState => {
+    $scope.isSlideinEntryEditorEnabled = flagState === 2;
   });
 
   setEntities($scope);
@@ -106,8 +106,21 @@ export default ($scope, _$state) => {
     '$locationChangeSuccess', () => setEntities($scope)
   );
 
+  const unlistenStateChangeStart = $scope.$on(
+    '$stateChangeStart',
+    (_event, toState, toParams, fromState, _fromParams, options) => {
+      const preventControllerReload =
+        $scope.isSlideinEntryEditorEnabled &&
+        isRelevantState(toState) && isRelevantState(fromState);
+      if (preventControllerReload) {
+        options.notify = false;
+        $state.params = { ...toParams };
+      }
+    });
+
   $scope.$on('$destroy', () => {
     unlistenStateChangeSuccess();
+    unlistenStateChangeStart();
     clearTimeouts();
   });
 
@@ -131,6 +144,14 @@ export default ($scope, _$state) => {
         () => { $scope.loaded = true; }
       );
     }
+  }
+
+  function isRelevantState ({ name }) {
+    // TODO: Add environment states.
+    return [
+      'spaces.detail.entries.detail',
+      'spaces.detail.assets.detail'
+    ].indexOf(name) > -1;
   }
 
   function scopeTimeout (ms, fn) {

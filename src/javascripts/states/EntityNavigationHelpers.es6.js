@@ -1,59 +1,67 @@
 import $location from '$location';
 import $state from '$state';
-import { get, castArray, findIndex } from 'lodash';
+import { get, findIndex } from 'lodash';
 import { track } from 'analytics/Analytics';
 
-// TODO: Ideally we'd have the entity which is top of the stack represented in the
-// current url path, all entities stacked below in the `slideIn` parameter. That
-// way we wouldn't have to differentiate between entry and asset in `slideIn` since
-// they would always be entries only (assets do not have references).
-
 const SLIDE_IN_QS = 'slideIn';
-const TYPES = {
-  ASSET: 'Asset',
-  ENTRY: 'Entry'
-};
+const TYPES = { ASSET: 'Asset', ENTRY: 'Entry' };
+const TYPE_PLURALS = { Asset: 'assets', Entry: 'entries' };
 
+/**
+ * Returns all currently displayed entities including the top slide. Contains no
+ * duplicates as the same entity can not be displayed twice. An asset will always
+ * be the top entry (last array value).
+ *
+ * @returns {Object} Entity with "id" and "type" properties.
+ */
 export function getSlideInEntities () {
   const slideInEntities = deserializeQS();
   const { entryId, assetId } = $state.params;
   if (entryId) {
-    slideInEntities.unshift({ id: entryId, type: TYPES.ENTRY });
+    const entry = { id: entryId, type: TYPES.ENTRY };
+    return slideInEntities.filter((v) => v.id !== entry.id).concat([entry]);
   } else if (assetId) {
-    slideInEntities.unshift({ id: assetId, type: TYPES.ASSET });
+    return slideInEntities.concat([{ id: assetId, type: TYPES.ASSET }]);
+  } else {
+    return slideInEntities;
   }
-  return slideInEntities;
 }
 
-export const goToSlideInEntity = (entity, featureFlagValue) => {
-  if (!canSlideIn(getMaxLevelFromFeatureFlag(featureFlagValue))) {
-    if (entity.type === TYPES.ENTRY) {
-      $state.go('.', { entryId: entity.id });
-    } else {
-      $state.go('^.^.assets.detail', { assetId: entity.id });
-    }
+/**
+ * Helper for calling `$state.go()` with the correct parameters that will result
+ * in the given entity being shown in the stack of slided-in entities.
+ *
+ * @param {Entity} entity Entity with "id" and "type" properties.
+ * @param {Number|Boolean} featureFlagValue
+ */
+export function goToSlideInEntity (entity, featureFlagValue) {
+  const currentEntities = getSlideInEntities();
+  const entities = [...currentEntities, entity];
+  const entityIndex = findIndex(entities, entity);
+  const reducedEntities = entities.slice(0, entityIndex);
+  if (
+    currentEntities.length - 1 < reducedEntities.length &&
+    !canSlideIn(featureFlagValue)
+  ) {
+    goToEntity(entity);
     return;
   }
-  const entitiesFromQueryString = getSlideInEntities();
-  const entities = [...entitiesFromQueryString, entity];
-  const entityIndex = findIndex(entities, entity);
-  const reducedEntities = entities.slice(1, entityIndex + 1);
-  const serializedEntities = reducedEntities.map(
-    ({ id, type }) => `${type}:${id}`
-  );
-  $location.search(SLIDE_IN_QS, serializedEntities);
+  const serializedEntities = reducedEntities.map(({ id }) => id).join(',');
+  const idKey = `${entity.type.toLowerCase()}Id`;
+  const params = {
+    [idKey]: entity.id,
+    [SLIDE_IN_QS]: serializedEntities
+  };
+  const typePlural = TYPE_PLURALS[entity.type];
+  $state.go(`^.^.${typePlural}.detail`, params);
 
   return {
-    currentSlideLevel: entitiesFromQueryString.length - 1,
+    currentSlideLevel: currentEntities.length - 1,
     targetSlideLevel: entityIndex
   };
-};
+}
 
-export const goToPreviousSlideOrExit = (
-  featureFlagValue,
-  eventLabel,
-  onExit
-) => {
+export function goToPreviousSlideOrExit (featureFlagValue, eventLabel, onExit) {
   const slideInEntities = getSlideInEntities();
   const numEntities = slideInEntities.length;
   if (numEntities > 1) {
@@ -65,33 +73,25 @@ export const goToPreviousSlideOrExit = (
   } else {
     onExit();
   }
-};
+}
+
+function goToEntity (entity) {
+  if (entity.type === TYPES.ENTRY) {
+    $state.go('.', { entryId: entity.id, slideIn: '' });
+  } else {
+    $state.go('^.^.assets.detail', { assetId: entity.id, slideIn: '' });
+  }
+}
 
 function deserializeQS () {
   const searchObject = $location.search();
-  const serializedEntities = castArray(get(searchObject, SLIDE_IN_QS, []));
-  return serializedEntities.map(string => {
-    const [type, id] = string.split(':');
-    return {
-      type: convertToEntityType(type),
-      id
-    };
-  });
+  const serializedEntities = get(searchObject, SLIDE_IN_QS, '')
+    .split(',').filter((v, i, self) => v !== '' && self.indexOf(v) === i);
+  return serializedEntities.map((id) => ({ id, type: TYPES.ENTRY }));
 }
 
-function convertToEntityType (value) {
-  if (value.toLowerCase() === TYPES.ENTRY.toLowerCase()) {
-    return TYPES.ENTRY;
-  } else if (value.toLowerCase() === TYPES.ASSET.toLowerCase()) {
-    return TYPES.ASSET;
-  }
-  throw new Error(`Entity type ${value} is not supported`);
-}
-
-function getMaxLevelFromFeatureFlag (value) {
-  return [0, 1].includes(value) ? value : Infinity;
-}
-
-function canSlideIn (maxSlideInLevel) {
-  return getSlideInEntities().length - 1 < maxSlideInLevel;
+function canSlideIn (featureFlag) {
+  // We ignore state `1` (only one level of slide-in) since we no longer want to
+  // maintain this. 0, 1: feature off, 2: feature on (inifinite levels)
+  return featureFlag === 2 || featureFlag === true;
 }

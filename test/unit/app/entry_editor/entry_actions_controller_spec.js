@@ -100,6 +100,7 @@ describe('Entry Actions Controller', function () {
               'spaces.detail.entries.detail',
               {
                 entryId: 'NEW ID',
+                slideIn: '',
                 addToContext: false
               }
             );

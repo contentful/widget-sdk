@@ -99,6 +99,7 @@ angular.module('contentful')
     // from nested routes (slidein entry editor).
     $state.go('spaces.detail.entries.detail', {
       entryId: entry.getId(),
+      slideIn: '',
       addToContext: false
     });
   }

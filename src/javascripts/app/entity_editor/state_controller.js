@@ -37,8 +37,8 @@ angular.module('contentful')
   });
 
   const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG = 'feature-at-05-2018-sliding-entry-editor-multi-level';
-  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, function (value) {
-    $scope.slideInFeatureFlagValue = value;
+  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, function (flagState) {
+    $scope.slideInFeatureFlagValue = flagState === 2 ? 2 : 0;
   });
 
   var noop = Command.create(function () {});

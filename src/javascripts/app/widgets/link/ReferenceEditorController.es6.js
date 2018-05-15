@@ -95,7 +95,8 @@ export default function create ($scope, widgetApi) {
     }
   });
 
-  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, function (isEnabled) {
+  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, function (flagState) {
+    const isEnabled = flagState === 2;
     $scope.isSlideinEntryEditorEnabled = isEnabled;
     if (!slideInEditorEnabled && canEditReferences && isEnabled) {
       slideInEditorEnabled = true;

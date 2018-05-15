@@ -2,7 +2,7 @@
   .workbench-layer.animate(
     ng-class="getLayerClasses($index)"
     ng-style="{ left: 170 / entities.length * $index + 'px' }"
-    ng-repeat="entity in entities track by $index"
+    ng-repeat="entity in entities track by entity.id"
     data-test-id="slide-in-{{ $index === 0 ? 'base' : 'layer' }}"
   )
     div(
