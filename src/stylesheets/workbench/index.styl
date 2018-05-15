@@ -418,6 +418,7 @@ Styleguide 9.7
   will-change: width;
 
   &:not(.workbench-layer--0) {
+    // NOTE: Update EntityPageController PEEK_ANIMATION_LENGTH when updating animations here.
     transition: left 200ms ease-in-out, transform 200ms ease-in-out;
 
     &.ng-enter-active {
@@ -468,8 +469,7 @@ Styleguide 9.7
 }
 
 .workbench-layer:not(.workbench-layer--is-current) {
-  &.workbench-layer--optimized:not(.workbench-layer--is-peeked-upon) .workbench-main {
-    // TODO: Show while weeking out.
+  &.workbench-layer--optimized:not(.workbench-layer--peeked) .workbench-main {
     display: none;
   }
 

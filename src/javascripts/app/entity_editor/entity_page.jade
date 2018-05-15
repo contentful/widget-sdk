@@ -1,9 +1,8 @@
 .workbench
-  div(
-    class="workbench-layer workbench-layer--{{ $index }} animate"
+  .workbench-layer.animate(
+    ng-class="getLayerClasses($index)"
     ng-style="{ left: 170 / entities.length * $index + 'px' }"
     ng-repeat="entity in entities track by $index"
-    ng-class="{'workbench-layer--is-current': isTopLayer($index), 'workbench-layer--is-peeked-upon': isLayerPeekedUpon($index), 'workbench-layer--optimized': entities.length > 4}"
     data-test-id="slide-in-{{ $index === 0 ? 'base' : 'layer' }}"
   )
     div(

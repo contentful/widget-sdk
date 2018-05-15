@@ -5,21 +5,26 @@ import {
 
 import { onFeatureFlag } from 'utils/LaunchDarkly';
 
+const { setTimeout, clearTimeout } = window;
+
 const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
   'feature-at-05-2018-sliding-entry-editor-multi-level';
 const PEEK_IN_DELAY = 500;
 const PEEK_OUT_DELAY = 500;
-const OFFSET_CLASSNAME = 'workbench-layer--offset';
+const PEEK_ANIMATION_DURATION = 200;
 
 function setEntities ($scope) {
   $scope.entities = getSlideInEntities();
 }
 
 export default ($scope, _$state) => {
+  let topPeekingLayerIndex = -1;
+  let peekedLayerIndexes = [];
+  let hoveredLayerIndex;
+  let peekInTimeoutID, peekOutTimeoutID;
+  let clearPreviousPeekTimeoutID, clearPeekTimeoutID;
+
   $scope.context.ready = true;
-  let peekLayer;
-  let peekInTimeoutReference;
-  let peekOutTimeoutReference;
 
   onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, isEnabled => {
     $scope.isSlideinEntryEditorEnabled = isEnabled;
@@ -27,63 +32,70 @@ export default ($scope, _$state) => {
 
   setEntities($scope);
 
-  const loaderTemoutReference = window.setTimeout(() => {
+  const loaderTemoutID = scopeTimeout($scope.entities.length * 3000,
     // TODO: We have to unset this when navigating back via browser history.
     // E.g. watch $scope.entities and do another timeout.
-    $scope.loaded = true;
-    $scope.$digest();
-  }, $scope.entities.length * 3000);
+    () => { $scope.loaded = true; }
+  );
 
-  $scope.topPeekingLayerIndex = -1;
+  const isTopLayer = $scope.isTopLayer =
+    (index) => (index + 1) === $scope.entities.length;
 
-  $scope.isTopLayer = (index) => (index + 1) === $scope.entities.length;
-  $scope.isLayerPeekedUpon = (index) => index === peekLayer;
+  $scope.getLayerClasses = (index) => {
+    const currentlyPeekedLayerIndex = peekedLayerIndexes.slice(-1)[0];
+    const optimize = $scope.entities.length > 4;
+    return {
+      [`workbench-layer--${index}:`]: true,
+      'workbench-layer--is-current': isTopLayer(index),
+      'workbench-layer--hovered': index === hoveredLayerIndex,
+      'workbench-layer--peeked': peekedLayerIndexes.includes(index),
+      'workbench-layer--offset': index > currentlyPeekedLayerIndex,
+      'workbench-layer--optimized': optimize
+    };
+  };
 
   $scope.close = (entity) => {
-    peekLayer = null;
+    clearTimeouts();
+    hoveredLayerIndex = null;
+    topPeekingLayerIndex = -1;
+    peekedLayerIndexes = [];
     goToSlideInEntity(entity, $scope.isSlideinEntryEditorEnabled);
   };
 
   $scope.initPeeking = (index) => {
-    const length = $scope.entities.length;
-    const previous = index - 1;
+    if (isTopLayer(index)) {
+      topPeekingLayerIndex = index - 1;
 
-    if (index === length - 1) {
-      $scope.topPeekingLayerIndex = previous;
-
-      peekOutTimeoutReference = window.setTimeout(() => {
-        getCurrentLayers().forEach((item) => {
-          item.classList.remove(OFFSET_CLASSNAME);
-        });
-      }, PEEK_OUT_DELAY);
+      peekOutTimeoutID = scopeTimeout(PEEK_OUT_DELAY, () => {
+        clearPeekTimeoutID = scopeTimeout(PEEK_ANIMATION_DURATION,
+          () => { peekedLayerIndexes = []; }
+        );
+        peekedLayerIndexes.push(undefined);
+      });
     }
   };
 
   $scope.peekIn = (index) => {
-    const length = $scope.entities.length;
-    const next = index + 1;
+    const isPeekable = index <= topPeekingLayerIndex;
 
-    if ($scope.topPeekingLayerIndex >= index) {
-      peekLayer = index;
+    if (isPeekable) {
+      hoveredLayerIndex = index;
     }
-
-    window.clearTimeout(peekOutTimeoutReference);
-    peekInTimeoutReference = window.setTimeout(() => {
-      getCurrentLayers().forEach((item) => {
-        item.classList.remove(OFFSET_CLASSNAME);
-      });
-
-      if ($scope.topPeekingLayerIndex >= index) {
-        getCurrentLayers().slice(next, length).forEach((item) => {
-          item.classList.add(OFFSET_CLASSNAME);
-        });
+    clearTimeout(peekOutTimeoutID);
+    peekInTimeoutID = scopeTimeout(PEEK_IN_DELAY, () => {
+      clearPreviousPeekTimeoutID = scopeTimeout(PEEK_ANIMATION_DURATION,
+        () => { peekedLayerIndexes = isPeekable ? [index] : []; }
+      );
+      if (isPeekable) {
+        peekedLayerIndexes.push(index);
       }
-    }, PEEK_IN_DELAY);
+    });
   };
 
   $scope.peekOut = () => {
-    peekLayer = null;
-    window.clearTimeout(peekInTimeoutReference);
+    hoveredLayerIndex = null;
+    clearTimeout(peekInTimeoutID);
+    clearTimeout(clearPreviousPeekTimeoutID);
   };
 
   const unlistenStateChangeSuccess = $scope.$on(
@@ -92,12 +104,23 @@ export default ($scope, _$state) => {
 
   $scope.$on('$destroy', () => {
     unlistenStateChangeSuccess();
-    window.clearTimeout(loaderTemoutReference);
-    window.clearTimeout(peekOutTimeoutReference);
-    window.clearTimeout(peekInTimeoutReference);
+    clearTimeouts();
   });
-};
 
-function getCurrentLayers () {
-  return Array.from(document.querySelectorAll('.workbench-layer'));
-}
+  function scopeTimeout (ms, fn) {
+    return setTimeout(() => {
+      fn();
+      $scope.$digest();
+    }, ms);
+  }
+
+  function clearTimeouts () {
+    [
+      loaderTemoutID,
+      peekOutTimeoutID,
+      peekInTimeoutID,
+      clearPeekTimeoutID,
+      clearPreviousPeekTimeoutID
+    ].forEach(clearTimeout);
+  }
+};
