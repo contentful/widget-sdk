@@ -43,12 +43,29 @@ export default class WebhookSegmentationTable extends React.Component {
           {ACTIONS.map(action => this.renderActionLabel(action))}
         </thead>
         <tbody>
-          {ENTITY_TYPES.map(entityType => <EntityTypeRow type={entityType}
-                                                         onChange={change => this.onChange(change)}
-                                                         isChecked={(type, action) => this.isChecked(type, action)} />)}
+          {this.renderRows()}
+          {this.renderFooter()}
         </tbody>
       </table>
     )
+  }
+
+  renderFooter() {
+    return (
+      <tr className="footer">
+        <td></td>
+        {ACTIONS.map(action => <ActionCheckbox type="*"
+                                               action={action}
+                                               isChecked={this.isChecked('*', action)}
+                                               onChange={change => this.onChange(change)} />)}
+      </tr>
+    )
+  }
+
+  renderRows() {
+    return ENTITY_TYPES.map(entityType => <EntityTypeRow type={entityType}
+                            onChange={change => this.onChange(change)}
+                            isChecked={(type, action) => this.isChecked(type, action)} />)
   }
 
   renderActionLabel(action) {
@@ -66,14 +83,6 @@ WebhookSegmentationTable.propTypes = {
 }
 
 class EntityTypeRow extends React.Component {
-  onChange(event) {
-    this.props.onChange({
-      type: this.props.type,
-      action: '*',
-      checked: event.target.checked
-    })
-  }
-
   render() {
     return (
       <tr>
@@ -93,14 +102,6 @@ EntityTypeRow.propTypes = {
 }
 
 class ActionCheckbox extends React.Component {
-  constructor(props) {
-    super(props)
-
-    this.setState({
-      checked: !!this.props.checked
-    })
-  }
-
   shouldComponentUpdate(nextProps) {
     return this.props.isChecked !== nextProps.isChecked
       || this.props.action !== nextProps.action
@@ -115,9 +116,17 @@ class ActionCheckbox extends React.Component {
     })
   }
 
+  toggle() {
+    this.props.onChange({
+      checked: !this.props.isChecked,
+      type: this.props.type,
+      action: this.props.action
+    })
+  }
+
   render() {
     return (
-      <td className={this.props.action === '*' ? 'entity-label' : 'action-cell'}>
+      <td onClick={() => this.toggle()} className={this.props.action === '*' ? 'entity-label' : 'action-cell'}>
         <input id={this.props.type} type="checkbox" checked={this.props.isChecked} onChange={e => this.onChange(e)} />
         {this.renderLabel()}
       </td>
