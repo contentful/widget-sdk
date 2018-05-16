@@ -6,6 +6,7 @@ import {name as SkipModule} from './Skip';
 import {name as NavigationModule} from './Navigation';
 import {name as DeploymentStrategiesModule} from './DeploymentStrategies';
 import {name as ButtonModule} from './Button';
+import {name as WithLinkModule} from './WithLink';
 
 const moduleName = 'deploy-screen-onboarding';
 
@@ -16,6 +17,7 @@ angular.module('contentful')
   const Navigation = require(NavigationModule);
   const DeploymentStrategies = require(DeploymentStrategiesModule);
   const Button = require(ButtonModule);
+  const WithLink = require(WithLinkModule);
 
   const DeployScreen = createReactClass({
     renderHeader () {
@@ -46,9 +48,13 @@ angular.module('contentful')
           <Navigation active={3} />
           {this.renderHeader()}
           <DeploymentStrategies />
-          <Button>
-            {'Deployment Complete'}
-          </Button>
+          <WithLink link={'spaceHome'}>
+            {move => (
+              <Button onClick={move}>
+                {'Deployment Complete'}
+              </Button>
+            )}
+          </WithLink>
         </FullScreen>
       );
     }

@@ -3,6 +3,7 @@ import createReactClass from 'create-react-class';
 import {name as FullScreenModule} from './FullScreen';
 import {name as ButtonModule} from './Button';
 import {name as SkipModule} from './Skip';
+import {name as WithLinkModule} from './WithLink';
 
 const moduleName = 'get-started-component';
 
@@ -11,6 +12,7 @@ angular.module('contentful')
   const FullScreen = require(FullScreenModule);
   const Button = require(ButtonModule);
   const Skip = require(SkipModule);
+  const WithLink = require(WithLinkModule);
 
   const GetStarted = createReactClass({
     render () {
@@ -22,9 +24,13 @@ angular.module('contentful')
           <h3 className={'modern-stack-onboarding--subtitle'}>
             {'You\'ll see how Contentful delivers content through APIs and integrates with a modern stack to build the fastest possible website.'}
           </h3>
-          <Button>
-            {'Get started'}
-          </Button>
+          <WithLink link={'copy'}>
+            {move => (
+              <Button onClick={move}>
+                {'Get started'}
+              </Button>
+            )}
+          </WithLink>
         </FullScreen>
       );
     }

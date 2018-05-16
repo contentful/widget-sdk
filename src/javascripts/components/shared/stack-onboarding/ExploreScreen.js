@@ -6,6 +6,7 @@ import {name as SkipModule} from './Skip';
 import {name as NavigationModule} from './Navigation';
 import {name as ButtonModule} from './Button';
 import {name as ContentFlowExplorerModule} from './ContentFlowExplorer';
+import {name as WithLinkModule} from './WithLink';
 
 const moduleName = 'explore-screen-component';
 
@@ -16,6 +17,7 @@ angular.module('contentful')
   const Navigation = require(NavigationModule);
   const Button = require(ButtonModule);
   const ContentFlowExplorer = require(ContentFlowExplorerModule);
+  const WithLink = require(WithLinkModule);
 
   const ExploreScreen = createReactClass({
     renderHeader () {
@@ -39,9 +41,13 @@ angular.module('contentful')
         <FullScreen close={<Skip />}>
           <Navigation active={2} />
           {this.renderHeader()}
-          <Button>
-            {'Select deployment service'}
-          </Button>
+          <WithLink link={'deploy'}>
+            {move => (
+              <Button onClick={move}>
+                {'Select deployment service'}
+              </Button>
+            )}
+          </WithLink>
           <ContentFlowExplorer />
         </FullScreen>
       );

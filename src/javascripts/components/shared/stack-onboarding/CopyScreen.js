@@ -6,6 +6,7 @@ import {name as SkipModule} from './Skip';
 import {name as ButtonModule} from './Button';
 import {name as CodeModule} from './Code';
 import {name as NavigationModule} from './Navigation';
+import {name as WithLinkModule} from './WithLink';
 
 const moduleName = 'copy-screen-component';
 
@@ -16,6 +17,7 @@ angular.module('contentful')
   const Button = require(ButtonModule);
   const Code = require(CodeModule);
   const Navigation = require(NavigationModule);
+  const WithLink = require(WithLinkModule);
 
   const CopyScreen = createReactClass({
     renderGitSteps () {
@@ -80,9 +82,13 @@ angular.module('contentful')
             {`Once you've copied the repository and entered the access tokens, сontinue
               to see how this website is built.`}
           </div>
-          <Button>
-            {'See how website is built'}
-          </Button>
+          <WithLink link={'explore'}>
+            {move => (
+              <Button onClick={move}>
+                {'See how website is built'}
+              </Button>
+            )}
+          </WithLink>
         </FullScreen>
       );
     }
@@ -90,3 +96,5 @@ angular.module('contentful')
 
   return CopyScreen;
 }]);
+
+export const name = moduleName;
