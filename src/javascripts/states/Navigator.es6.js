@@ -65,20 +65,26 @@ export function href (state) {
  * Creates a state reference for an entity or link object.
  *
  * @param {API.Entity|API.Link} entity}
+ * @param {Boolean} useSpaceEnv} If space environments are enabled
+ * @param {Boolean} isMasterEnv} If current env is the master/default env
  * @returns {Navigator.Ref}
  */
-export function makeEntityRef (entity) {
+export function makeEntityRef (entity, useSpaceEnv, isMasterEnv) {
   return {
-    path: makeEntityPath(entity),
+    path: makeEntityPath(entity, useSpaceEnv, isMasterEnv),
     params: makeEntityParams(entity)
   };
 }
 
-function makeEntityPath (entity) {
+function makeEntityPath (entity, useSpaceEnv, isMasterEnv) {
   const type = getType(entity);
   const typePlural = ENTITY_PLURALS[type];
 
-  return ['spaces', 'detail', typePlural, 'detail'];
+  if (useSpaceEnv && !isMasterEnv) {
+    return ['spaces', 'detail', 'environment', typePlural, 'detail'];
+  } else {
+    return ['spaces', 'detail', typePlural, 'detail'];
+  }
 }
 
 function makeEntityParams (entity) {
