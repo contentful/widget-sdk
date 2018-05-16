@@ -1,3 +1,5 @@
+import { cloneDeep } from 'lodash'
+
 export const ENTITY_TYPES = ['ContentType', 'Entry', 'Asset']
 export const ACTIONS = ['create', 'save', 'auto_save', 'archive', 'unarchive', 'publish', 'unpublish', 'delete']
 export const LABELS = {
@@ -43,7 +45,7 @@ export function changeAction (map, entityType, action, checked) {
     return changeAllTypesByAction(map, action, checked)
   }
 
-  const result = cloneMap(map)
+  const result = cloneDeep(map)
   result[entityType][action] = checked
   return result
 }
@@ -51,7 +53,7 @@ export function changeAction (map, entityType, action, checked) {
 // Change value of all actions matching given entity type.
 // (!) All change* functions are pure (they return a new object)
 export function changeAllActionsByEntityType (map, entityType, value) {
-  const result = cloneMap(map)
+  const result = cloneDeep(map)
   for (let actionKey in result[entityType]) {
     result[entityType][actionKey] = value
   }
@@ -62,18 +64,13 @@ export function changeAllActionsByEntityType (map, entityType, value) {
 // Change specific action under all types.
 // (!) All change* functions are pure (they return a new object)
 export function changeAllTypesByAction (map, action, value) {
-  const result = cloneMap(map)
+  const result = cloneDeep(map)
 
   for (let entityType in result) {
     result[entityType][action] = value
   }
 
   return result
-}
-
-// Clone map object for change* functions
-export function cloneMap (map) {
-  return JSON.parse(JSON.stringify(map))
 }
 
 // Return value of a specific action and entity type.

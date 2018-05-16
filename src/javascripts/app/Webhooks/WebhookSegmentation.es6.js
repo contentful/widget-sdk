@@ -1,4 +1,5 @@
-import React from "react"
+import React from 'react'
+import PropTypes from 'prop-types';
 import WebhookSegmentationTable from './WebhookSegmentationTable'
 
 export default class WebhookSegmentation extends React.Component {
@@ -14,7 +15,7 @@ export default class WebhookSegmentation extends React.Component {
 
   renderOption(caption) {
     return (
-      <div className=".webhook-segmentation__option">
+      <div className="webhook-segmentation__option">
         <label>
           <input type="radio" onChange={() => this.props.onChange()} />
           {caption}
@@ -22,4 +23,9 @@ export default class WebhookSegmentation extends React.Component {
       </div>
     )
   }
+}
+
+WebhookSegmentation.propTypes = {
+  onChange: PropTypes.func,
+  values: PropTypes.object,
 }
