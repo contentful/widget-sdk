@@ -38,7 +38,7 @@ mixin sdk-section-dotnet
     | Get the .NET SDK and use it in your project by using the following command in your NuGet package manager console:
   .code-block
     .code-block__language bash
-    .code-block__line Install-Package contentful.csharp -prerelease
+    .code-block__line Install-Package contentful.csharp
 
 mixin sdk-section-ruby
   .separated-links
@@ -64,11 +64,11 @@ mixin sdk-section-ios
     .code-block__language ruby
     .code-block__line platform <span class="s2">:ios</span>, <span class="s1">'9.0'</span>
     .code-block__line use_frameworks!
-    .code-block__line pod <span class="s1">'Contentful', '~> 1.0.0-beta5'</span>
+    .code-block__line pod <span class="s1">'Contentful'</span>
   p.home-section__description
     | Or your <em>Cartfile</em>:
   .code-block
-    .code-block__line github "contentful/contentful.swift" ~&gt; "1.0.0-beta5"
+    .code-block__line github "contentful/contentful.swift"
 
 mixin sdk-section-android
   .separated-links
@@ -80,7 +80,7 @@ mixin sdk-section-android
     | Get the Java SDK and use it in your Android project by adding the following to your <em>build.gradle</em> file:
   .code-block
     .code-block__language groovy
-    .code-block__line compile <span class="s1">'com.contentful.java:java-sdk:7.4.0'</span>
+    .code-block__line compile <span class="s1">'com.contentful.java:java-sdk:+'</span>
 
 mixin sdk-section-java
   .separated-links
@@ -95,7 +95,7 @@ mixin sdk-section-java
     .code-block__line &lt;<span class="s2">dependency</span>&gt;
     .code-block__line &nbsp;&nbsp;&lt;<span class="s2">groupId</span>&gt;com.contentful.java&lt;/<span class="s2">groupId</span>&gt;
     .code-block__line &nbsp;&nbsp;&lt;<span class="s2">artifactId</span>&gt;java-sdk&lt;/<span class="s2">artifactId</span>&gt;
-    .code-block__line &nbsp;&nbsp;&lt;<span class="s2">version</span>&gt;7.4.0&lt;/<span class="s2">version</span>&gt;
+    .code-block__line &nbsp;&nbsp;&lt;<span class="s2">version</span>&gt;10.0.0&lt;/<span class="s2">version</span>&gt;
     .code-block__line &lt;/<span class="s2">dependency</span>&gt;
 
 mixin sdk-section-python
