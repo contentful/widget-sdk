@@ -179,6 +179,7 @@ export function transformTopicsToMap (topics) {
       for (key in map) {
         map[key][action] = true
       }
+      continue
     }
 
     // Entity type is absolute, all actions.
