@@ -66,7 +66,7 @@ angular.module('contentful')
     },
     render () {
       return (
-        <FullScreen close={<Skip />}>
+        <FullScreen close={<Skip link={'copy'} />}>
           <Navigation active={1} />
           {this.renderHeader()}
           <div>

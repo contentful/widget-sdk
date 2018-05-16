@@ -17,7 +17,7 @@ angular.module('contentful')
   const GetStarted = createReactClass({
     render () {
       return (
-        <FullScreen close={<Skip />}>
+        <FullScreen close={<Skip link={'getStarted'} />}>
           <h1 className={'modern-stack-onboarding--title'}>
             {'Ready to deploy a website using the latest web techonologies?'}
           </h1>

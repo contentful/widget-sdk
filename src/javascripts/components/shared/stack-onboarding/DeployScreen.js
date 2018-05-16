@@ -44,7 +44,7 @@ angular.module('contentful')
     },
     render () {
       return (
-        <FullScreen close={<Skip />}>
+        <FullScreen close={<Skip link={'deploy'} />}>
           <Navigation active={3} />
           {this.renderHeader()}
           <DeploymentStrategies />
