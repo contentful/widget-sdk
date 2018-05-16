@@ -54,7 +54,7 @@ export default class WebhookSegmentationTable extends React.Component {
   renderActionLabel(action) {
     return (
       <th onClick={() => this.onChange({ type: '*',  action, checked: !this.isChecked('*', action) })}>
-        {LABELS[action]}
+        <label>{LABELS[action]}</label>
       </th>
     )
   }
@@ -118,7 +118,7 @@ class ActionCheckbox extends React.Component {
   render() {
     return (
       <td>
-        <input type="checkbox" checked={this.props.isChecked} onChange={e => this.onChange(e)} />
+        <input id={this.props.type} type="checkbox" checked={this.props.isChecked} onChange={e => this.onChange(e)} />
         {this.renderLabel()}
       </td>
     )
@@ -128,7 +128,7 @@ class ActionCheckbox extends React.Component {
     if (this.props.action !== '*') return null
 
     return (
-      <label>{LABELS[this.props.type]}</label>
+      <label for={this.props.type}>{LABELS[this.props.type]}</label>
     )
   }
 }
