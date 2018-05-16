@@ -117,7 +117,7 @@ class ActionCheckbox extends React.Component {
 
   render() {
     return (
-      <td>
+      <td className={this.props.action === '*' ? 'entity-label' : 'action-cell'}>
         <input id={this.props.type} type="checkbox" checked={this.props.isChecked} onChange={e => this.onChange(e)} />
         {this.renderLabel()}
       </td>
