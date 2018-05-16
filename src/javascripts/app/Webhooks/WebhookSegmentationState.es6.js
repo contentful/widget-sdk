@@ -118,35 +118,39 @@ export function isAllEntityTypesChecked (map, action) {
 export function transformMapToTopics (map) {
   const result = []
   const wildcardedActions = {}
+  let allEventsSelected = true
 
   // Find wildcarded actions first and push them into the result array.
-  let len = ACTIONS.length
-  let i = -1
-  while (++i < len) {
-    if (isAllEntityTypesChecked(map, ACTIONS[i])) {
-      wildcardedActions[ACTIONS[i]] = true
-      result.push(`*.${ACTIONS[i]}`)
+  ACTIONS.forEach(action => {
+    if (!isAllEntityTypesChecked(map, action)) {
+      allEventsSelected = false
+      return
     }
+
+    wildcardedActions[action] = true
+    result.push(`*.${action}`)
+  })
+
+  if (allEventsSelected) {
+    return [
+      "*.*"
+    ]
   }
 
-  len = ENTITY_TYPES.length
-  i = -1
-  while (++i < len) {
-    const typeName = ENTITY_TYPES[i]
-
+  ENTITY_TYPES.forEach(typeName => {
     if (isAllActionsChecked(map, typeName)) {
       result.push(`${typeName}.*`)
-      continue
+      return
     }
 
-    // Having wildcarded stuff on the top of the list,
+    // Having wildcarded stuff on top of the list,
     // now add rest of the checked topics
     const actions = map[typeName]
     for (let action in actions) {
       if (wildcardedActions[action] || !actions[action]) continue
       result.push(`${typeName}.${action}`)
     }
-  }
+  })
 
   return result
 }
