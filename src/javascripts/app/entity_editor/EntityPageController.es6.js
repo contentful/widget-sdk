@@ -11,8 +11,6 @@ const { setTimeout, clearTimeout } = window;
 
 const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
   'feature-at-05-2018-sliding-entry-editor-multi-level';
-const STATES_REGEXP =
-  /^spaces\.detail(\.environment|)\.(entries|assets)\.detail$/;
 const PEEK_IN_DELAY = 500;
 const PEEK_OUT_DELAY = 500;
 const PEEK_ANIMATION_DURATION = 200;
@@ -37,9 +35,9 @@ export default ($scope, $state) => {
   setEntities($scope);
 
   const isTopLayer = $scope.isTopLayer =
-    (index) => (index + 1) === $scope.entities.length;
+    (index) => index + 1 === $scope.entities.length;
 
-  $scope.getLayerClasses = (index) => {
+  $scope.getLayerClasses = index => {
     const currentlyPeekedLayerIndex = peekedLayerIndexes.slice(-1)[0];
     const optimize = $scope.entities.length > 4;
     return {
@@ -52,7 +50,7 @@ export default ($scope, $state) => {
     };
   };
 
-  $scope.close = (entity) => {
+  $scope.close = entity => {
     clearTimeouts();
     hoveredLayerIndex = null;
     topPeekingLayerIndex = -1;
@@ -66,7 +64,7 @@ export default ($scope, $state) => {
     });
   };
 
-  $scope.initPeeking = (index) => {
+  $scope.initPeeking = index => {
     if (isTopLayer(index)) {
       topPeekingLayerIndex = index - 1;
 
@@ -79,7 +77,7 @@ export default ($scope, $state) => {
     }
   };
 
-  $scope.peekIn = (index) => {
+  $scope.peekIn = index => {
     const isPeekable = index <= topPeekingLayerIndex;
 
     if (isPeekable) {
@@ -104,8 +102,8 @@ export default ($scope, $state) => {
     clearTimeout(clearPreviousPeekTimeoutID);
   };
 
-  const unlistenStateChangeSuccess = $scope.$on(
-    '$locationChangeSuccess', () => setEntities($scope)
+  const unlistenStateChangeSuccess = $scope.$on('$locationChangeSuccess', () =>
+    setEntities($scope)
   );
 
   const unlistenStateChangeStart = $scope.$on(
@@ -118,7 +116,8 @@ export default ($scope, $state) => {
         options.notify = false;
         $state.params = { ...toParams };
       }
-    });
+    }
+  );
 
   $scope.$on('$destroy', () => {
     unlistenStateChangeSuccess();
@@ -167,5 +166,6 @@ export default ($scope, $state) => {
 };
 
 function isRelevantState ({ name }) {
-  return STATES_REGEXP.test(name);
+  return /^spaces\.detail(\.environment|)\.(entries|assets)\.detail$/
+    .test(name);
 }
