@@ -54,10 +54,7 @@ export function changeAction (map, entityType, action, checked) {
 // (!) All change* functions are pure (they return a new object)
 export function changeAllActionsByEntityType (map, entityType, value) {
   const result = cloneDeep(map)
-  for (let actionKey in result[entityType]) {
-    result[entityType][actionKey] = value
-  }
-
+  ACTIONS.forEach(a => map[entityType][a] = value)
   return result
 }
 
@@ -65,11 +62,7 @@ export function changeAllActionsByEntityType (map, entityType, value) {
 // (!) All change* functions are pure (they return a new object)
 export function changeAllTypesByAction (map, action, value) {
   const result = cloneDeep(map)
-
-  for (let entityType in result) {
-    result[entityType][action] = value
-  }
-
+  ENTITY_TYPES.forEach(t => map[t][action] = value)
   return result
 }
 
@@ -88,25 +81,12 @@ export function isActionChecked (map, type, action) {
 
 // Is all actions *under given entity type* checked ?
 export function isAllActionsChecked (map, type) {
-  const actions = map[type]
-  for (let key in actions) {
-    if (!actions[key]) {
-      return false
-    }
-  }
-
-  return true
+  return ACTIONS.every(a => map[type][a])
 }
 
 // Is all types *matching given action* checked ?
 export function isAllEntityTypesChecked (map, action) {
-  for (let key in map) {
-    if (!map[key][action]) {
-      return false
-    }
-  }
-
-  return true
+  return ENTITY_TYPES.every(t => map[t][action])
 }
 
 // It takes a map, and returns list of topics from given map. Output looks like this;
@@ -145,11 +125,13 @@ export function transformMapToTopics (map) {
 
     // Having wildcarded stuff on top of the list,
     // now add rest of the checked topics
-    const actions = map[typeName]
-    for (let action in actions) {
-      if (wildcardedActions[action] || !actions[action]) continue
-      result.push(`${typeName}.${action}`)
-    }
+    ACTIONS.forEach(a => {
+      if (wildcardedActions[a] || map[typeName][a] !== true) {
+        return
+      }
+
+      result.push(`${typeName}.${a}`)
+    })
   })
 
   return result
@@ -162,32 +144,18 @@ export function transformTopicsToMap (topics) {
 
   const map = createMap(false)
 
-  const len = topics.length
-  let i = -1
-  while (++i < len) {
-    const [ entityType, action ]  = topics[i].split('.')
+  topics.forEach(function (topic) {
+    const [ entityType, action ]  = topic.split('.')
 
-    // Path is absolute. No wildcards.
     if (entityType !== '*' && action !== '*') {
       map[entityType][action] = true
-      continue
+    } else if (entityType === '*') {
+      ENTITY_TYPES.forEach(t => map[t][action] = true)
+    } else {
+      ACTIONS.forEach(a => map[entityType][a] = true)
     }
-
-    // All entity types, action is absolute.
-    if (action !== '*') {
-      let key
-      for (key in map) {
-        map[key][action] = true
-      }
-      continue
-    }
-
-    // Entity type is absolute, all actions.
-    let key
-    for (key in map[entityType]) {
-      map[entityType][key] = true
-    }
-  }
+  })
 
   return map
 }
+2016
