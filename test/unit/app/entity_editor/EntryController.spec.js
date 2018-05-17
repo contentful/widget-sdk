@@ -1,6 +1,10 @@
 import {create as createDocument} from 'helpers/mocks/entity_editor_document';
+import * as K from 'utils/kefir';
 
 describe('Entry Editor Controller', function () {
+  this.user = {firstName: 'John', lastName: 'Doe', sys: {id: '123'}};
+  const userBus = K.createPropertyBus(null);
+
   beforeEach(function () {
     module('contentful/test', ($provide) => {
       $provide.value('app/entity_editor/Tracking', sinon.stub());
@@ -33,6 +37,10 @@ describe('Entry Editor Controller', function () {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
 
+    this.mockService('services/TokenStore', {
+      user$: userBus.property
+    });
+
     const createEntryController = this.$inject('app/entity_editor/EntryController').default;
 
     this.createController = () => {
@@ -54,8 +62,13 @@ describe('Entry Editor Controller', function () {
       }
     });
 
+    userBus.set(this.user);
     this.scope = this.createController();
     this.$apply();
+  });
+
+  it('should expose the current user', function () {
+    expect(this.scope.user).toBe(this.user);
   });
 
   describe('when the entry title changes', function () {
