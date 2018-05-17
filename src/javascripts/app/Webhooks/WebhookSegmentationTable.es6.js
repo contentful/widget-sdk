@@ -25,6 +25,8 @@ export default class WebhookSegmentationTable extends React.Component {
   //   checked: true
   // }
   onChange(change) {
+    console.log('change ->', change)
+
     // Get a copy of the values object
     const map = changeAction(this.state.values, change.type, change.action, change.checked)
 
@@ -50,6 +52,29 @@ export default class WebhookSegmentationTable extends React.Component {
     )
   }
 
+  renderRows() {
+    return ENTITY_TYPES.map(t => this.renderRow(t))
+  }
+
+  renderRow(entityType) {
+    return (
+      <tr>
+        {['*'].concat(ACTIONS).map(action => <ActionCheckbox action={action}
+                                                             type={entityType}
+                                                             isChecked={this.isChecked(entityType, action)}
+                                                             onChange={change => this.onChange(change)} />)}
+      </tr>
+    )
+  }
+
+  renderActionLabel(action) {
+    return (
+      <th onClick={() => this.onChange({ type: '*',  action, checked: !this.isChecked('*', action) })}>
+        <label>{LABELS[action]}</label>
+      </th>
+    )
+  }
+
   renderFooter() {
     return (
       <tr className="footer">
@@ -61,44 +86,6 @@ export default class WebhookSegmentationTable extends React.Component {
       </tr>
     )
   }
-
-  renderRows() {
-    return ENTITY_TYPES.map(entityType => <EntityTypeRow type={entityType}
-                            onChange={change => this.onChange(change)}
-                            isChecked={(type, action) => this.isChecked(type, action)} />)
-  }
-
-  renderActionLabel(action) {
-    return (
-      <th onClick={() => this.onChange({ type: '*',  action, checked: !this.isChecked('*', action) })}>
-        <label>{LABELS[action]}</label>
-      </th>
-    )
-  }
-}
-
-WebhookSegmentationTable.propTypes = {
-  onChange: PropTypes.func,
-  values: PropTypes.object
-}
-
-class EntityTypeRow extends React.Component {
-  render() {
-    return (
-      <tr>
-        {['*'].concat(ACTIONS).map(action => <ActionCheckbox action={action}
-                                                             type={this.props.type}
-                                                             isChecked={this.props.isChecked(this.props.type, action)}
-                                                             onChange={this.props.onChange} />)}
-      </tr>
-    )
-  }
-}
-
-EntityTypeRow.propTypes = {
-  isChecked: PropTypes.bool,
-  onChange: PropTypes.func,
-  type: PropTypes.string,
 }
 
 class ActionCheckbox extends React.Component {

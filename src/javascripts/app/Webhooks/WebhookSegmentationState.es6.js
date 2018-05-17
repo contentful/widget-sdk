@@ -54,7 +54,7 @@ export function changeAction (map, entityType, action, checked) {
 // (!) All change* functions are pure (they return a new object)
 export function changeAllActionsByEntityType (map, entityType, value) {
   const result = cloneDeep(map)
-  ACTIONS.forEach(a => map[entityType][a] = value)
+  ACTIONS.forEach(a => result[entityType][a] = value)
   return result
 }
 
@@ -62,7 +62,7 @@ export function changeAllActionsByEntityType (map, entityType, value) {
 // (!) All change* functions are pure (they return a new object)
 export function changeAllTypesByAction (map, action, value) {
   const result = cloneDeep(map)
-  ENTITY_TYPES.forEach(t => map[t][action] = value)
+  ENTITY_TYPES.forEach(t => result[t][action] = value)
   return result
 }
 
@@ -97,42 +97,32 @@ export function isAllEntityTypesChecked (map, action) {
 // ]
 export function transformMapToTopics (map) {
   const result = []
-  const wildcardedActions = {}
-  let allEventsSelected = true
 
-  // Find wildcarded actions first and push them into the result array.
-  ACTIONS.forEach(action => {
-    if (!isAllEntityTypesChecked(map, action)) {
-      allEventsSelected = false
+  // Find wildcarded entity types and add them into the result array first
+  ENTITY_TYPES.forEach(t => {
+    // Is all actions in the same entity row checked ? Then early return, adding a wilcard record.
+    if (isAllActionsChecked(map, t)) {
+      result.push(`${t}.*`)
       return
     }
 
-    wildcardedActions[action] = true
-    result.push(`*.${action}`)
-  })
-
-  if (allEventsSelected) {
-    return [
-      "*.*"
-    ]
-  }
-
-  ENTITY_TYPES.forEach(typeName => {
-    if (isAllActionsChecked(map, typeName)) {
-      result.push(`${typeName}.*`)
-      return
-    }
-
-    // Having wildcarded stuff on top of the list,
-    // now add rest of the checked topics
     ACTIONS.forEach(a => {
-      if (wildcardedActions[a] || map[typeName][a] !== true) {
-        return
-      }
+      // Is this action checked for all entity types? Then push a wild card for it.
+      const isAllChecked = isAllEntityTypesChecked(map, a)
 
-      result.push(`${typeName}.${a}`)
+      if (isAllChecked && result.indexOf(`*.${a}`) === -1) {
+        result.push(`*.${a}`)
+      } else if (!isAllChecked && map[t][a]) {
+        // Otherwise, just push it without wildcard.
+        result.push(`${t}.${a}`)
+      }
     })
   })
+
+  // If all entity types are wildcarded, then return ['*.*']
+  if (result.length === ENTITY_TYPES.length && result.every(t => /^\w+\.\*$/.test(t))) {
+    return ['*.*']
+  }
 
   return result
 }
@@ -158,4 +148,3 @@ export function transformTopicsToMap (topics) {
 
   return map
 }
-2016
