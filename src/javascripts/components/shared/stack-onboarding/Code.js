@@ -15,7 +15,13 @@ angular.module('contentful')
         PropTypes.node,
         PropTypes.arrayOf(PropTypes.node)
       ]),
-      copy: PropTypes.bool
+      copy: PropTypes.bool,
+      lineNumbers: PropTypes.bool
+    },
+    getDefaultProps () {
+      return {
+        lineNumbers: true
+      };
     },
     renderCode () {
       const { code } = this.props;
@@ -36,12 +42,14 @@ angular.module('contentful')
       );
     },
     render () {
-      const { language, copy, code } = this.props;
+      const { language, copy, code, lineNumbers } = this.props;
       return (
-        <div className={'code-block'}>
+        <div className={`code-block ${lineNumbers ? '' : 'code-block__no-line-numbers'}`}>
           {language && <span className={'code-block__language'}>{language}</span>}
           {this.renderCode()}
-          {copy && <CopyButton value={code} />}
+          {copy && <div className={'code-block__copy-wrapper'}>
+            <CopyButton value={code} />
+          </div>}
         </div>
       );
     }

@@ -31,7 +31,9 @@ angular.module('contentful')
             {' blog content structure.'}
           </h1>
           <h3 className={'modern-stack-onboarding--subtitle'}>
-            {'Hover and compare tab views to see .'}
+            {'Hover and compare tab views to see the data flow of the website.'}
+            <br />
+            {'When you\'re ready, move on to the next deploy step.'}
           </h3>
           </React.Fragment>
       );
@@ -43,7 +45,7 @@ angular.module('contentful')
           {this.renderHeader()}
           <WithLink link={'deploy'}>
             {move => (
-              <Button onClick={move}>
+              <Button onClick={move} className={'modern-stack-onboarding--next-button'}>
                 {'Select deployment service'}
               </Button>
             )}

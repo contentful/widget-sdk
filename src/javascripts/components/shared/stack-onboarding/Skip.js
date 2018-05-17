@@ -37,7 +37,7 @@ angular.module('contentful')
     },
     render () {
       return (
-        <div onClick={this.onClick}>
+        <div onClick={this.onClick} className={'modern-stack-onboarding--skip'}>
           {'Skip >'}
         </div>
       );

@@ -29,20 +29,18 @@ angular.module('contentful')
       const { active, tabs } = this.props;
 
       const tabsMarkup = tabs.map(tab => {
-        const classNames = `${tab.id === active ? 'active' : ''}`;
         const onClick = this.selectTab.bind(this, tab.id);
-
         return (
-          <div key={tab.id} className={classNames} onClick={onClick}>
+          <li key={tab.id} role={'tab'} aria-selected={tab.id === active} onClick={onClick}>
             {tab.title}
-          </div>
+          </li>
         );
       });
 
       return (
-        <div>
+        <ul className={'tab-list'}>
           {tabsMarkup}
-        </div>
+        </ul>
       );
     },
     renderContent () {

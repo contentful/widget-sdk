@@ -26,7 +26,7 @@ angular.module('contentful')
           </h3>
           <WithLink link={'copy'}>
             {move => (
-              <Button onClick={move}>
+              <Button onClick={move} className={'modern-stack-onboarding--next-button'}>
                 {'Get started'}
               </Button>
             )}

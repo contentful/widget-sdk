@@ -32,12 +32,6 @@ angular.module('contentful')
           </h1>
           <h3 className={'modern-stack-onboarding--subtitle'}>
             {'Select your preferred deployment service to see the CLI deploy commands.'}
-            <br />
-            {'Select '}
-            <strong>
-              {'Deployment Complete'}
-            </strong>
-            {' once site is live.'}
           </h3>
           </React.Fragment>
       );
@@ -47,10 +41,12 @@ angular.module('contentful')
         <FullScreen close={<Skip link={'deploy'} />}>
           <Navigation active={3} />
           {this.renderHeader()}
-          <DeploymentStrategies />
+          <div className={'modern-stack-onboarding--deploy-content'}>
+            <DeploymentStrategies />
+          </div>
           <WithLink link={'spaceHome'}>
             {move => (
-              <Button onClick={move}>
+              <Button onClick={move} className={'modern-stack-onboarding--next-button'}>
                 {'Deployment Complete'}
               </Button>
             )}

@@ -32,7 +32,9 @@ angular.module('contentful')
     renderToken ({ name, value }) {
       return (
         <div>
-          <h4>{name}</h4>
+          <h4 className={'modern-stack-onboarding--copy-title'}>
+            {name}
+          </h4>
           <Code copy code={value} />
         </div>
       );
@@ -69,26 +71,28 @@ angular.module('contentful')
         <FullScreen close={<Skip link={'copy'} />}>
           <Navigation active={1} />
           {this.renderHeader()}
-          <div>
-            {'Copy the following commands into your terminal'}
+          <div className={'modern-stack-onboarding--copyscreen-content'}>
+            <div className={'modern-stack-onboarding--copyscreen-text'}>
+              {'Copy the following commands into your terminal'}
+            </div>
+            {this.renderGitSteps()}
+            <div className={'modern-stack-onboarding--copyscreen-text'}>
+              {`After running the code, you'll be asked to input a Space ID and access
+                tokens that Contentful will use to create a space for the Contentful Intro Blog`}
+            </div>
+            {this.renderCredentials()}
+            <div className={'modern-stack-onboarding--copyscreen-text'}>
+              {`Once you've copied the repository and entered the access tokens, сontinue
+                to see how this website is built.`}
+            </div>
+            <WithLink link={'explore'}>
+              {move => (
+                <Button onClick={move} className={'modern-stack-onboarding--next-button'}>
+                  {'See how website is built'}
+                </Button>
+              )}
+            </WithLink>
           </div>
-          {this.renderGitSteps()}
-          <div>
-            {`After running the code, you'll be asked to input a Space ID and access
-              tokens that Contentful will use to create a space for the Contentful Intro Blog`}
-          </div>
-          {this.renderCredentials()}
-          <div>
-            {`Once you've copied the repository and entered the access tokens, сontinue
-              to see how this website is built.`}
-          </div>
-          <WithLink link={'explore'}>
-            {move => (
-              <Button onClick={move}>
-                {'See how website is built'}
-              </Button>
-            )}
-          </WithLink>
         </FullScreen>
       );
     }

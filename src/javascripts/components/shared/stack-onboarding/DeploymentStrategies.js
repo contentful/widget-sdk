@@ -17,51 +17,63 @@ angular.module('contentful')
         active: 'netlify'
       };
     },
-    renderNetlifySteps () {
+    selectTab (tabId) {
+      this.setState({ active: tabId });
+    },
+    renderCode (code) {
+      return <Code lineNumbers={false} copy code={code} />;
+    },
+    renderList (steps) {
+      const stepsMarkup = steps.map((step, i) => (
+        <li key={`step_${i}`} className={'modern-stack-onboarding--deployment-list-elem'}>
+          {step}
+        </li>
+      ));
       return (
-        <div>
+        <ul className={'modern-stack-onboarding--deployment-list'}>
+          {stepsMarkup}
+        </ul>
+      );
+    },
+    renderNetlifySteps () {
+      /* eslint-disable react/jsx-key */
+      const steps = [
+        <a href={'https://github.com/netlify/netlifyctl#installation'} target={'_blank'}>
+          {'Install the Netlify CLI commands'}
+        </a>,
+        this.renderCode('netlifyctl login'),
+        this.renderCode('netlifyctl login'),
+        this.renderCode('npm run build'),
+        this.renderCode('netlifyctl deploy -b public')
+      ];
+      /* eslint-enable react/jsx-key */
+      return (
+        <div className={'modern-stack-onboarding--deployment-strategy'}>
           {'Netlify CLI commands'}
-          <ul>
-            <li>
-              <a href={''} target={'_blank'}>
-                {'Install the Netlify CLI commands'}
-              </a>
-            </li>
-            <li>
-              <Code copy code={'netlifyctl login'} />
-            </li>
-            <li>
-              <Code copy code={'npm run build'} />
-            </li>
-            <li>
-              <Code copy code={'netlifyctl deploy -b public'} />
-            </li>
-          </ul>
+          {this.renderList(steps)}
         </div>
       );
     },
     renderZeitSteps () {
+      /* eslint-disable react/jsx-key */
+      const steps = [
+        this.renderCode('npm install -g now'),
+        this.renderCode('now login'),
+        this.renderCode('npm run build'),
+        <React.Fragment>
+          {'If you have a free plan on Zeit, you need to remove all source maps to keep the size under 1 MB limit:'}
+          {this.renderCode('rm public/**/*.js.map')}
+        </React.Fragment>,
+        <a href={'https://github.com/netlify/netlifyctl#installation'} target={'_blank'}>
+          {'Install the Netlify CLI commands'}
+        </a>,
+        this.renderCode('now --public public')
+      ];
+      /* eslint-enable react/jsx-key */
       return (
-        <div>
+        <div className={'modern-stack-onboarding--deployment-strategy'}>
           {'Zeit CLI commands'}
-          <ul>
-            <li>
-              <Code copy code={'npm install -g now'} />
-            </li>
-            <li>
-              <Code copy code={'now login'} />
-            </li>
-            <li>
-              <Code copy code={'npm run build'} />
-            </li>
-            <li>
-              {'If you have a free plan on Zeit, you need to remove all source maps to keep the size under 1 MB limit:'}
-              <Code copy code={'rm public/**/*.js.map'} />
-            </li>
-            <li>
-              <Code copy code={'now --public public'} />
-            </li>
-          </ul>
+          {this.renderList(steps)}
         </div>
       );
     },
@@ -79,7 +91,7 @@ angular.module('contentful')
           content: this.renderZeitSteps()
         }
       ];
-      return <Tabs tabs={tabs} active={active} />;
+      return <Tabs tabs={tabs} active={active} onSelect={this.selectTab} />;
     }
   });
 

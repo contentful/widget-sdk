@@ -62,9 +62,11 @@ angular.module('contentful')
     },
     renderButton ({ text, ...props }) {
       return (
-        <Button {...props}>
-          {text}
-        </Button>
+        <div className={'modern-stack-onboarding--block-button-wrapper'}>
+          <Button className={'modern-stack-onboarding--block-button'} {...props}>
+            {text}
+          </Button>
+        </div>
       );
     },
     render () {

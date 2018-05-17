@@ -8,7 +8,7 @@ import {name as DataFlowModule} from './DataFlow';
 const moduleName = 'content-flow-explorer';
 
 // TODO: move to the config
-const GATSBY_APP_URL = 'http://localhost:8000';
+const GATSBY_APP_URL = 'https://contentful-userland.github.io/gatsby-contentful-starter/';
 
 angular.module('contentful')
 .factory(moduleName, ['require', function (require) {
@@ -27,35 +27,42 @@ angular.module('contentful')
         active: tabId
       });
     },
+    renderContent (content) {
+      return (
+        <div className={'modern-stack-onboarding--content-explorer-wrapper'}>
+          {content}
+        </div>
+      );
+    },
     renderTabs () {
       const { active } = this.state;
       const tabs = [
         {
           id: 'code',
           title: 'Code snippets',
-          content: <CodeSnippets />
+          content: this.renderContent(<CodeSnippets />)
         },
         {
           id: 'data-flow',
           title: 'Data model and data flow',
-          content: <DataFlow />
+          content: this.renderContent(<DataFlow />)
         }
       ];
 
       return <Tabs tabs={tabs} active={active} onSelect={this.selectTab} />;
     },
     renderIframe () {
-      return (
-        <div>
-          <iframe src={GATSBY_APP_URL} />
-        </div>
-      );
+      return <iframe src={GATSBY_APP_URL} className={'modern-stack-onboarding--iframe'} />;
     },
     render () {
       return (
-        <div>
-          {this.renderTabs()}
-          {this.renderIframe()}
+        <div className={'modern-stack-onboarding--content-explorer'}>
+          <div className={'modern-stack-onboarding--content-explorer-data'}>
+            {this.renderTabs()}
+          </div>
+          <div className={'modern-stack-onboarding--content-explorer-iframe'}>
+            {this.renderIframe()}
+          </div>
         </div>
       );
     }

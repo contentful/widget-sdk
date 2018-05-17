@@ -15,7 +15,7 @@ angular.module('contentful')
         <div>
           <h4>{title}</h4>
           {subtitle && <div>{subtitle}</div>}
-          <Code code={code} />
+          <Code lineNumbers={false} code={code} />
         </div>
       );
     },
