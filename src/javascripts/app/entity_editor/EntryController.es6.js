@@ -9,6 +9,7 @@ import spaceContext from 'spaceContext';
 import notifications from 'notification';
 import localeStore from 'TheLocaleStore';
 import contextHistory from 'navigation/Breadcrumbs/History';
+import {user$} from 'services/TokenStore';
 
 import DataFields from 'EntityEditor/DataFields';
 import ContentTypes from 'data/ContentTypes';
@@ -177,6 +178,8 @@ export default async function create ($scope, entryId) {
   $scope.$on('scroll-editor', function (_ev, scrollTop) {
     contextHistory.extendCurrent({scroll: scrollTop});
   });
+
+  $scope.user = K.getValue(user$);
 
   const startScroll = contextHistory.getLast().scroll;
   if (startScroll) {
