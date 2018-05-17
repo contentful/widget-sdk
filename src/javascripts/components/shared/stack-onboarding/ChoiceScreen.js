@@ -4,16 +4,48 @@ import PropTypes from 'prop-types';
 import {name as FullScreenModule} from './FullScreen';
 import {name as ButtonModule} from './Button';
 
+const DEFAULT_LOCALE = 'en-US';
+
 const moduleName = 'choice-screen-component';
 
 angular.module('contentful')
 .factory(moduleName, ['require', function (require) {
+  const client = require('client');
+  const spaceContext = require('spaceContext');
+  const $state = require('$state');
+  const { refresh } = require('services/TokenStore');
+
   const FullScreen = require(FullScreenModule);
   const Button = require(ButtonModule);
 
   const ChoiceScreen = createReactClass({
     propTypes: {
-      onDefaultChoice: PropTypes.func.isRequired
+      onDefaultChoice: PropTypes.func.isRequired,
+      orgId: PropTypes.string.isRequired
+    },
+    getInitialState () {
+      return {
+        isDevPathPending: false,
+        isDefaultPathPending: false
+      };
+    },
+    async createSpace () {
+      const { orgId } = this.props;
+      this.setState({
+        isDevPathPending: true
+      });
+      const newSpace = await client.createSpace({
+        name: 'Modern Stack Website',
+        defaultLocale: DEFAULT_LOCALE
+      }, orgId);
+
+      await refresh();
+      await $state.go('spaces.detail.onboarding.getStarted', {spaceId: newSpace.sys.id});
+
+      spaceContext.apiKeyRepo.create(
+        'Example Key',
+        'We’ve created an example API key for you to help you get started.'
+      );
     },
     renderBlock ({ title, text, button }) {
       return (
@@ -28,21 +60,30 @@ angular.module('contentful')
         </div>
       );
     },
-    renderButton ({ onClick, text }) {
+    renderButton ({ text, ...props }) {
       return (
-        <Button onClick={onClick} className={'button btn-action'}>
+        <Button {...props}>
           {text}
         </Button>
       );
     },
     render () {
+      const { isDefaultPathPending, isDevPathPending } = this.state;
       const { onDefaultChoice } = this.props;
+
+      const isButtonDisabled = isDefaultPathPending || isDevPathPending;
+
       const contentChoice = this.renderBlock({
         title: 'Create content',
         text: 'The Contentful web-app enables you to easily create, manage and publish content in a customizable workflow.',
         button: this.renderButton({
-          onClick: onDefaultChoice,
-          text: 'Explore Content Modelling'
+          onClick: () => {
+            this.setState({ isDefaultPathPending: true });
+            onDefaultChoice();
+          },
+          text: 'Explore Content Modelling',
+          disabled: isButtonDisabled,
+          isLoading: isDefaultPathPending
         })
       });
 
@@ -50,8 +91,10 @@ angular.module('contentful')
         title: 'Develop content-rich products',
         text: 'Contentful enables you to manage, integrate and deliver content via APIs. Your preferred programming language is supported.',
         button: this.renderButton({
-          onClick: () => {},
-          text: 'Deploy a website in 3 steps'
+          onClick: this.createSpace,
+          text: 'Deploy a website in 3 steps',
+          disabled: isButtonDisabled,
+          isLoading: isDevPathPending
         })
       });
 

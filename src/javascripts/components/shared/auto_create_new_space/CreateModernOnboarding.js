@@ -6,13 +6,16 @@ angular.module('contentful')
   const $rootScope = require('$rootScope');
 
   return {
-    create: ({ onDefaultChoice }) => {
+    create: ({ onDefaultChoice, org }) => {
       const scope = $rootScope.$new();
       let dialog;
-      scope.props = { onDefaultChoice: () => {
-        dialog && dialog.destroy();
-        onDefaultChoice();
-      } };
+      scope.props = {
+        onDefaultChoice: () => {
+          dialog && dialog.destroy();
+          onDefaultChoice();
+        },
+        orgId: org.sys.id
+      };
 
       dialog = modalDialog.open({
         title: 'Space auto creation',

@@ -9,14 +9,23 @@ angular.module('contentful')
   const Button = createReactClass({
     propTypes: {
       children: PropTypes.node,
-      className: PropTypes.string
+      className: PropTypes.string,
+      isLoading: PropTypes.bool,
+      disabled: PropTypes.bool
     },
     render () {
-      const { children, className, ...props } = this.props;
+      const { children, className, isLoading, disabled, ...props } = this.props;
+
+      const classNames = `
+        button btn-action
+        ${isLoading ? 'is-loading' : ''}
+        ${className || ''}
+      `;
+
       return (
-        <div className={`button btn-action ${className || ''}`} {...props}>
+        <button className={classNames} disabled={Boolean(disabled)} {...props}>
           {children}
-        </div>
+        </button>
       );
     }
   });
