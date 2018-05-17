@@ -27,7 +27,6 @@ angular.module('contentful')
   function onChange (scope) {
     return function (values) {
       scope.webhook.topics = internalState.transformMapToTopics(values)
-      console.log('>', scope.webhook.topics)
       scope.$applyAsync();
     }
   }

@@ -2,6 +2,7 @@ import { cloneDeep } from 'lodash'
 
 export const ENTITY_TYPES = ['ContentType', 'Entry', 'Asset']
 export const ACTIONS = ['create', 'save', 'auto_save', 'archive', 'unarchive', 'publish', 'unpublish', 'delete']
+export const DISABLED = { ContentType: ['auto_save', 'archive', 'unarchive'] }
 export const LABELS = {
   ContentType: 'Content type',
   Entry: 'Entry',
@@ -54,7 +55,7 @@ export function changeAction (map, entityType, action, checked) {
 // (!) All change* functions are pure (they return a new object)
 export function changeAllActionsByEntityType (map, entityType, value) {
   const result = cloneDeep(map)
-  ACTIONS.forEach(a => result[entityType][a] = value)
+  ACTIONS.filter(a => !isActionDisabled(entityType, a)).forEach(a => result[entityType][a] = value)
   return result
 }
 
@@ -62,7 +63,7 @@ export function changeAllActionsByEntityType (map, entityType, value) {
 // (!) All change* functions are pure (they return a new object)
 export function changeAllTypesByAction (map, action, value) {
   const result = cloneDeep(map)
-  ENTITY_TYPES.forEach(t => result[t][action] = value)
+  ENTITY_TYPES.filter(t => !isActionDisabled(t, action)).forEach(t => result[t][action] = value)
   return result
 }
 
@@ -79,14 +80,18 @@ export function isActionChecked (map, type, action) {
   return map[type][action]
 }
 
+export function isActionDisabled (type, action) {
+  return DISABLED[type] && DISABLED[type].indexOf(action) > -1
+}
+
 // Is all actions *under given entity type* checked ?
-export function isAllActionsChecked (map, type) {
-  return ACTIONS.every(a => map[type][a])
+export function isAllActionsChecked (map, entityType) {
+  return ACTIONS.filter(a => !isActionDisabled(entityType, a)).every(a => map[entityType][a])
 }
 
 // Is all types *matching given action* checked ?
 export function isAllEntityTypesChecked (map, action) {
-  return ENTITY_TYPES.every(t => map[t][action])
+  return ENTITY_TYPES.filter(t => !isActionDisabled(t, action)).every(t => map[t][action])
 }
 
 // It takes a map, and returns list of topics from given map. Output looks like this;
@@ -106,7 +111,7 @@ export function transformMapToTopics (map) {
       return
     }
 
-    ACTIONS.forEach(a => {
+    ACTIONS.filter(a => !isActionDisabled(t, a)).forEach(a => {
       // Is this action checked for all entity types? Then push a wild card for it.
       const isAllChecked = isAllEntityTypesChecked(map, a)
 

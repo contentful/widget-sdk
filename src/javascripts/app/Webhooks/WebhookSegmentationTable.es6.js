@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types';
 import {
-  ACTIONS, ENTITY_TYPES, LABELS, changeAction, isActionChecked
+  ACTIONS, ENTITY_TYPES, LABELS, changeAction, isActionChecked, isActionDisabled
 } from './WebhookSegmentationState'
 
 export default class WebhookSegmentationTable extends React.Component {
@@ -25,8 +25,6 @@ export default class WebhookSegmentationTable extends React.Component {
   //   checked: true
   // }
   onChange(change) {
-    console.log('change ->', change)
-
     // Get a copy of the values object
     const map = changeAction(this.state.values, change.type, change.action, change.checked)
 
@@ -62,6 +60,7 @@ export default class WebhookSegmentationTable extends React.Component {
         {['*'].concat(ACTIONS).map(action => <ActionCheckbox action={action}
                                                              type={entityType}
                                                              isChecked={this.isChecked(entityType, action)}
+                                                             isDisabled={isActionDisabled(entityType, action)}
                                                              onChange={change => this.onChange(change)} />)}
       </tr>
     )
@@ -112,6 +111,10 @@ class ActionCheckbox extends React.Component {
   }
 
   render() {
+    if (this.props.isDisabled) {
+      return <td></td>
+    }
+
     return (
       <td onClick={() => this.toggle()} className={this.props.action === '*' ? 'entity-label' : 'action-cell'}>
         <input id={this.props.type} type="checkbox" checked={this.props.isChecked} onChange={e => this.onChange(e)} />
@@ -124,7 +127,7 @@ class ActionCheckbox extends React.Component {
     if (this.props.action !== '*') return null
 
     return (
-      <label for={this.props.type}>{LABELS[this.props.type]}</label>
+      <label>{LABELS[this.props.type]}</label>
     )
   }
 }
