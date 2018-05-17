@@ -72,11 +72,22 @@ angular.module('cf.app')
   var EntityState = require('data/CMA/EntityState');
   var entityStateColor = require('Styles/Colors').entityStateColor;
   var LD = require('utils/LaunchDarkly');
+  var spaceContext = require('spaceContext');
 
   var INLINE_REFERENCE_FEATURE_FLAG = 'feature-at-02-2018-inline-reference-field';
+  var ENVIRONMENTS_FEATURE_FLAG = 'feature-dv-11-2017-environments';
 
   LD.onFeatureFlag($scope, INLINE_REFERENCE_FEATURE_FLAG, function (isEnabled) {
     $scope.isInlineEditingEnabled = isEnabled;
+  });
+
+  // we need this to avoid navigating to the entry on the 'master' env
+  // when user is editing an entry in a sandbox env
+  LD.onFeatureFlag($scope, ENVIRONMENTS_FEATURE_FLAG, function (environmentsEnabled) {
+    var envId = spaceContext.getEnvironmentId();
+    $scope.environmentsEnabled = environmentsEnabled;
+    $scope.isMaster = envId === 'master';
+    getEntityState();
   });
 
   var data = $scope.entity;
@@ -152,7 +163,7 @@ angular.module('cf.app')
 
   function getEntityState () {
     if ($scope.config.link) {
-      $scope.stateRef = makeEntityRef(data);
+      $scope.stateRef = makeEntityRef(data, $scope.environmentsEnabled, $scope.isMaster);
     }
 
     var state = EntityState.getState(data.sys);
