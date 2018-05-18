@@ -48,7 +48,15 @@ describe('fetchLinks', function () {
       const id = 'entity-id';
       const items = [
         { sys: { id: 'entity-id-0' } },
-        { sys: { id: 'entity-id-1' } }
+        { sys: { id: 'entity-id-1' } },
+        { sys: {
+          id: 'entity-id-2',
+          environment: { sys: { id: 'dev' } }
+        }},
+        { sys: {
+          id: 'entity-id-3',
+          environment: { sys: { id: 'master' } }
+        }}
       ];
 
       this.spaceContext.cma.getEntries
@@ -62,8 +70,12 @@ describe('fetchLinks', function () {
           .withArgs(item)
           .returns(Promise.resolve(`title-${idx}`));
         const ref = `ref-${idx}`;
+        const envRef = `env-${idx}`;
         this.navigator.makeEntityRef.withArgs(item).returns(ref);
+        this.navigator.makeEntityRef.withArgs(item, true, false).returns(envRef);
+        this.navigator.makeEntityRef.withArgs(item, true, true).returns(ref);
         this.navigator.href.withArgs(ref).returns(`href-${idx}`);
+        this.navigator.href.withArgs(envRef).returns(`href-dev-${idx}`);
       });
 
       const result = yield this.fetchLinks(id, type);
@@ -78,6 +90,16 @@ describe('fetchLinks', function () {
           id: 'entity-id-1',
           title: 'title-1',
           url: 'href-1'
+        },
+        {
+          id: 'entity-id-2',
+          title: 'title-2',
+          url: 'href-dev-2'
+        },
+        {
+          id: 'entity-id-3',
+          title: 'title-3',
+          url: 'href-3'
         }
       ]);
     };
