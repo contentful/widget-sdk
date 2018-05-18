@@ -27,6 +27,12 @@
     font-weight: 500
     max-width: 800px
 
+    &__small
+      font-size: 36px
+      font-weight: 500
+      line-height: 46px
+      margin: 50px auto
+
   &--subtitle
     margin: -80px auto 50px
     max-width: 800px
@@ -189,3 +195,21 @@
 
     &-button
       padding: 14px 45px
+
+  &--modal
+    position: fixed
+    z-index: 2
+    top: 0
+    bottom: 0
+    left: 0
+    right: 0
+    background-color: rgba(17,17,17,0.6)
+    display: flex
+    justify-content: center
+    align-items: center
+
+    &-content
+      background: #fff
+      max-width: 1100px
+      padding: 0 120px 50px
+      text-align: center

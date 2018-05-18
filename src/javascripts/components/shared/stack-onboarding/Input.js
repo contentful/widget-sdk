@@ -8,7 +8,10 @@ angular.module('contentful')
 .factory(moduleName, [function () {
   const Input = createReactClass({
     propTypes: {
-      error: PropTypes.string,
+      error: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.bool
+      ]),
       name: PropTypes.string,
       label: PropTypes.node,
       hint: PropTypes.node,
