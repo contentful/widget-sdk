@@ -9,12 +9,41 @@ angular.module('contentful')
   return (Component) => {
     const IframeHightlightHOC = createReactClass({
       propTypes: {
-        iframe: PropTypes.object
+        iframe: PropTypes.object,
+        order: PropTypes.arrayOf(PropTypes.oneOf([
+          'person',
+          'articles',
+          'automate-with-webhooks',
+          'hello-world',
+          'static-sites-are-great'
+        ]))
       },
       getInitialState () {
         return { active: null };
       },
-      onHover (type) {
+      componentDidMount () {
+        const { order } = this.props;
+
+        if (order) {
+          this.interval = setInterval(() => {
+            const { active } = this.state;
+
+            const currentIndex = order.findIndex(value => value === active);
+            const nextIndex = (currentIndex + 1) % order.length;
+
+            this.highlight(order[nextIndex]);
+          }, 2000);
+        }
+      },
+      componentWillUnmount () {
+        this.removeHighlight();
+        this.clearAnimation();
+      },
+      clearAnimation () {
+        clearInterval(this.interval);
+      },
+      highlight (type) {
+        this.removeHighlight();
         const { iframe } = this.props;
         this.setState({ active: type });
         if (type === 'articles') {
@@ -24,6 +53,10 @@ angular.module('contentful')
         } else {
           iframe.contentWindow.postMessage({ id: type, message: 'highlight' }, '*');
         }
+      },
+      onHover (type) {
+        this.clearAnimation();
+        this.highlight(type);
       },
       onLeave () {
         this.setState({ active: null });
