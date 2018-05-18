@@ -7,7 +7,7 @@
     bottom: 0
     left: 0
     right: 0
-    background: #eee
+    background: $colors.element-lightest
     overflow-y: scroll
 
   &--wrapper
@@ -20,20 +20,21 @@
     margin: 50px 0 30px
 
   &--title
-    font-size: 44px
     text-align: center
-    line-height: 1.2
     margin: 150px auto 100px
-    font-weight: 700
+    font-size: 48px
+    line-height: 56px
+    font-weight: 500
     max-width: 800px
 
   &--subtitle
     margin: -80px auto 50px
     max-width: 800px
-    font-size: 20px
+    font-size: 21px
     font-weight: 300
-    line-height: 1.2
+    line-height: 30px
     text-align: center
+    color: $colors.text-mid
 
   &--choice-title
 
@@ -59,11 +60,15 @@
   &--next-button
     display: block
     margin: 30px auto
-    padding: 10px 45px
+    padding: 10px 55px
+
+    &__left
+      margin-left: 0
+      margin-right: 0
 
   &--skip
     font-weight: 700
-    font-size: 22px
+    font-size: 18px
     cursor: pointer
 
   &--navigation
@@ -78,28 +83,28 @@
       z-index: 2
 
     &-circle
-      color: blue
-      border: 3px solid blue
+      color: $colors.blue-dark
+      border: 3px solid $colors.blue-dark
       background: #fff
       font-weight: 700
       border-radius: 100%
       display: flex
       align-items: center
       justify-content: center
-      width: 40px
-      height: 40px
+      width: 35px
+      height: 35px
 
       &__active
         color: #fff
-        background: blue
+        background: $colors.blue-dark
         cursor: pointer
 
     &-line
       width: 100%
       height: 3px
-      background: blue
+      background: $colors.blue-dark
       position: absolute
-      top: 18px
+      top: 16px
 
     &-block
       position: relative
@@ -110,22 +115,23 @@
 
     &-title
       margin-top: 10px
-      font-size: 14px
-      font-weight: 700
-      color: blue
+      font-size: 12px
+      font-weight: 600
+      line-height: 16px
+      color: $colors.blue-dark
       position: relative
-      left: -30%
+      left: -35%
 
   &--copyscreen-content
     margin: 0 auto
     max-width: 1000px
-    border-top: 2px solid gray
-    padding-top: 50px
+    border-top: 3px solid $colors.gray
     padding-right: 100px
 
   &--copyscreen-text
-    font-size: 22px
-    line-height: 1.4
+    font-size: 18px
+    font-weight: 600
+    line-height: 30px
     margin-top: 50px
 
   &--copy-title
@@ -145,7 +151,7 @@
 
     &-wrapper
       background: #fff
-      padding: 25px 20px
+      padding: 30px 20px
 
   &--iframe
     width: 100%
@@ -157,7 +163,7 @@
     max-width: 800px
 
   &--deployment-strategy
-    border-top: 1px solid black
+    border-top: 2px solid $colors.gray
     padding-top: 20px
 
   &--deployment-list
@@ -172,17 +178,14 @@
     max-width: 800px
     margin: 50px auto 30px
 
+    &__centered
+      text-align: center
+
     &-title
       font-size: 20px
       line-height: 1.3
       font-weight: 300
       margin-bottom: 30px
 
-    &-input
-      display: inline-block
-      margin-right: 10px
-      vertical-align: top
-
     &-button
-      padding: 7px 45px
-      vertical-align: top
+      padding: 14px 45px

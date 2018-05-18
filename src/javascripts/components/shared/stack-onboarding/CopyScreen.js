@@ -20,32 +20,16 @@ angular.module('contentful')
   const WithLink = require(WithLinkModule);
 
   const CopyScreen = createReactClass({
+    renderCodeLine (code) {
+      return <Code lineNumbers={false} copy code={code} />;
+    },
     renderGitSteps () {
-      const code = [
-        'git clone https://github.com/contentful-userland/gatsby-contentful-starter.git',
-        'cd gatsby-contentful-starter',
-        'npm install',
-        'npm run setup'
-      ];
-      return <Code language={'bash'} code={code} />;
-    },
-    renderToken ({ name, value }) {
-      return (
-        <div>
-          <h4 className={'modern-stack-onboarding--copy-title'}>
-            {name}
-          </h4>
-          <Code copy code={value} />
-        </div>
-      );
-    },
-    renderCredentials () {
       return (
         <React.Fragment>
-          {this.renderToken({ name: 'Space ID', value: 'XXXXXXXXX' })}
-          {this.renderToken({ name: 'Content Management API – access token', value: 'XXXXXXXXXXX' })}
-          {this.renderToken({ name: 'Content Delivery API – access token', value: 'XXXXXXXXXX' })}
-          {this.renderToken({ name: 'Content Preview API – access token', value: 'XXXXXXXXXXX' })}
+          {this.renderCodeLine('git clone https://github.com/contentful-userland/gatsby-contentful-starter.git')}
+          {this.renderCodeLine('cd gatsby-contentful-starter')}
+          {this.renderCodeLine('npm install')}
+          {this.renderCodeLine('npm run setup')}
         </React.Fragment>
       );
     },
@@ -77,18 +61,16 @@ angular.module('contentful')
             </div>
             {this.renderGitSteps()}
             <div className={'modern-stack-onboarding--copyscreen-text'}>
-              {`After running the code, you'll be asked to input a Space ID and access
-                tokens that Contentful will use to create a space for the Contentful Intro Blog`}
+              {'See the website in action on a localhost.'}
             </div>
-            {this.renderCredentials()}
+            {this.renderCodeLine('npm run dev')}
             <div className={'modern-stack-onboarding--copyscreen-text'}>
-              {`Once you've copied the repository and entered the access tokens, сontinue
-                to see how this website is built.`}
+              {'View the website in your browser, then explore how it’s built.'}
             </div>
             <WithLink link={'explore'}>
               {move => (
-                <Button onClick={move} className={'modern-stack-onboarding--next-button'}>
-                  {'See how website is built'}
+                <Button onClick={move} className={'modern-stack-onboarding--next-button modern-stack-onboarding--next-button__left'}>
+                  {'Explore how the website is built'}
                 </Button>
               )}
             </WithLink>
