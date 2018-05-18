@@ -56,18 +56,13 @@ overrides:
     no-restricted-syntax:
     - error
     - BreakStatement
-    - ClassBody
-    - ClassDeclaration
-    - ClassExpression
     - ContinueStatement
     - DebuggerStatement
     - EmptyStatement
     - ForStatement
     - LabeledStatement
     - MetaProperty
-    - MethodDefinition
     - SequenceExpression
-    - Super
     - SwitchCase
     - SwitchStatement
     - TaggedTemplateExpression

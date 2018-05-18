@@ -36,6 +36,7 @@ function resolveParams (link) {
   const mappings = {
     'home': resolveHome,
     'api': resolveApi,
+    'extensions': resolveExtensions,
     'invite': resolveInviteUser,
     'users': resolveUsers,
     'subscription': resolveSubscriptions,
@@ -99,6 +100,23 @@ function resolveApi () {
         apiKeyId: apiKeys[0].sys.id
       }
     };
+  });
+}
+
+function resolveExtensions () {
+  return runTask(function* () {
+    const { space, spaceId } = yield* getSpaceInfo();
+    yield spaceContext.resetWithSpace(space);
+    const isAdmin = !!spaceContext.getData('spaceMembership.admin', false);
+
+    if (isAdmin) {
+      return {
+        path: ['spaces', 'detail', 'settings', 'extensions'],
+        params: { spaceId }
+      };
+    } else {
+      throw new Error('user is not authorized');
+    }
   });
 }
 
