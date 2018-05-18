@@ -7,7 +7,7 @@ import { onFeatureFlag } from 'utils/LaunchDarkly';
 
 const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
   'feature-at-05-2018-sliding-entry-editor-multi-level';
-const PEEK_IN_DELAY = 1000;
+const PEEK_IN_DELAY = 500;
 const PEEK_OUT_DELAY = 500;
 const OFFSET_CLASSNAME = 'workbench-layer--offset';
 
