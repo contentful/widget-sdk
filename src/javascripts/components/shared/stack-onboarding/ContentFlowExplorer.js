@@ -7,8 +7,8 @@ import {name as DataFlowModule} from './DataFlow';
 
 const moduleName = 'content-flow-explorer';
 
-// TODO: move to the config
-const GATSBY_APP_URL = 'https://contentful-userland.github.io/gatsby-contentful-starter/';
+// TODO: deploy to contentful infrastructure
+const GATSBY_APP_URL = 'https://inspiring-goldstine-59b8e7.netlify.com/';
 
 angular.module('contentful')
 .factory(moduleName, ['require', function (require) {
@@ -19,7 +19,7 @@ angular.module('contentful')
   const ContentFlowExplorer = createReactClass({
     getInitialState () {
       return {
-        active: 'code'
+        active: 'data-flow'
       };
     },
     selectTab (tabId) {
