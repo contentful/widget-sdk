@@ -41,7 +41,7 @@ const ConfirmScreen = createReactClass({
     if (action === 'create') {
       confirmButtonText = 'Confirm and create space';
     } else if (action === 'change') {
-      confirmButtonText = 'Confirm and upgrade space';
+      confirmButtonText = 'Confirm and change space';
     }
 
     return (
