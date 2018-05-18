@@ -25,7 +25,7 @@ angular.module('contentful')
   const store = getStore();
 
   const createModernOnboarding = {
-    create: ({ onDefaultChoice, org, markOnboarding }) => {
+    create: ({ onDefaultChoice, org, user, markOnboarding }) => {
       const scope = $rootScope.$new();
       let dialog;
       const closeModal = () => {
@@ -44,7 +44,8 @@ angular.module('contentful')
             closeModal,
             org,
             markOnboarding,
-            markSpace: createModernOnboarding.markSpace
+            markSpace: createModernOnboarding.markSpace,
+            userId: user.sys.id
           });
 
           createModernOnboarding.createDeliveryToken();
@@ -54,7 +55,7 @@ angular.module('contentful')
 
       dialog = modalDialog.open({
         title: 'Space auto creation',
-        template: `<react-component name="${choiceScreenName}" props="props"></react-component`,
+        template: `<react-component name="${choiceScreenName}" props="props"></react-component>`,
         backgroundClose: false,
         ignoreEsc: true,
         // we don't want to close this modal after we create new space
@@ -133,9 +134,10 @@ angular.module('contentful')
     return `ctfl:${spaceId}:modernStackOnboarding:space`;
   }
 
-  async function createSpace ({ closeModal, org, markOnboarding, markSpace }) {
+  async function createSpace ({ closeModal, org, markOnboarding, markSpace, userId }) {
+    const key = `ctfl:${userId}:modernStackOnboarding:developerChoiceSpace`;
     const newSpace = await client.createSpace({
-      name: 'Modern Stack Website',
+      name: 'Gatsby Starter for Contentful',
       defaultLocale: DEFAULT_LOCALE
     }, org.sys.id);
 
@@ -145,6 +147,9 @@ angular.module('contentful')
     // all onboarding steps are guarded by space id
     markSpace(newSpaceId);
     markOnboarding();
+
+    // TODO: Choose between this or the markSpace approach above
+    store.set(key, newSpaceId);
 
     await refresh();
     await $state.go('spaces.detail.onboarding.getStarted', {spaceId: newSpaceId});

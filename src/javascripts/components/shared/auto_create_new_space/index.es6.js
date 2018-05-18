@@ -41,9 +41,14 @@ export function init () {
 
       if (modernStackVariation) {
         create({
-          onDefaultChoice: defaultChoice,
+          markOnboarding,
+          onDefaultChoice: async () => {
+            const newSpace = await defaultChoice();
+
+            store.set(`ctfl:${user.sys.id}:modernStackOnboarding:contentChoiceSpace`, newSpace.sys.id);
+          },
           org,
-          markOnboarding
+          user
         });
         return;
       } else {

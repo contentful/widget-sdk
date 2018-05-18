@@ -24,20 +24,20 @@ angular.module('contentful')
     onClick () {
       const { link } = this.props;
       const user = getValue(user$);
-      const key = `ctfl:${user.sys.id}:onboading_step`;
+      const key = `ctfl:${user.sys.id}:modernStackOnboarding:skippedStep`;
 
       const params = {
         spaceId: $stateParams.spaceId
       };
 
-      const path = {
+      const skippedStep = {
         path: `spaces.detail.onboarding.${link}`,
         params
       };
 
       track(`skip_from_${link}`);
 
-      store.set(key, path);
+      store.set(key, skippedStep);
       $state.go('spaces.detail.home', params);
     },
     render () {

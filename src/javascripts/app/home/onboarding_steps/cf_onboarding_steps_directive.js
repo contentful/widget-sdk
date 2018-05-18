@@ -1,35 +1,53 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfOnboardingSteps', ['require', require => {
-  var $state = require('$state');
-  var Analytics = require('analytics/Analytics');
-  var template = require('app/home/onboarding_steps/OnboardingStepsTemplate').default;
-  var spaceContext = require('spaceContext');
-  var WebhookRepository = require('WebhookRepository');
-  var CreateSpace = require('services/CreateSpace');
-  var caseofEq = require('sum-types').caseofEq;
-  var TheLocaleStore = require('TheLocaleStore');
-  var entityCreator = require('entityCreator');
+.directive('cfOnboardingSteps', ['require', function (require) {
+  const $state = require('$state');
+  const Analytics = require('analytics/Analytics');
+  const template = require('app/home/onboarding_steps/OnboardingStepsTemplate').default;
+  const spaceContext = require('spaceContext');
+  const WebhookRepository = require('WebhookRepository');
+  const CreateSpace = require('services/CreateSpace');
+  const caseofEq = require('sum-types').caseofEq;
+  const TheLocaleStore = require('TheLocaleStore');
+  const entityCreator = require('entityCreator');
   // Begin test code: test-ps-02-2018-tea-onboarding-steps
-  var LD = require('utils/LaunchDarkly');
-  var K = require('utils/kefir');
-  var contentPreviewsBus$ = require('contentPreview').contentPreviewsBus$;
-  var isExampleSpaceFlagName = 'test-ps-02-2018-tea-onboarding-steps';
-  var TokenStore = require('services/TokenStore');
-
+  const LD = require('utils/LaunchDarkly');
+  const K = require('utils/kefir');
+  const contentPreviewsBus$ = require('contentPreview').contentPreviewsBus$;
+  const teaOnboardingFlag = 'test-ps-02-2018-tea-onboarding-steps';
+  const TokenStore = require('services/TokenStore');
   // End test code: test-ps-02-2018-tea-onboarding-steps
+  const modernStackOnboardingFlag = 'feature-dl-05-2018-modern-stack-onboarding';
+  const store = require('TheStore').getStore();
+  const { user$ } = require('services/TokenStore');
 
   return {
     template: template(),
     restrict: 'E',
     scope: {},
     controller: ['$scope', function ($scope) {
-      var controller = this;
+      const controller = this;
+
+      LD.onFeatureFlag($scope, modernStackOnboardingFlag, flag => {
+        const user = K.getValue(user$);
+        const prefix = `ctfl:${user.sys.id}:modernStackOnboarding`;
+        const msDevChoiceSpace = store.get(`${prefix}:developerChoiceSpace`);
+        const msContentChoiceSpace = store.get(`${prefix}:contentChoiceSpace`);
+        const currentSpaceId = spaceContext.space && spaceContext.space.getSys().id;
+
+        controller.showModernStackDevChoiceNextSteps =
+          flag &&
+          currentSpaceId === msDevChoiceSpace;
+
+        controller.showModerStackContentChoiceNextSteps =
+          flag &&
+          currentSpaceId === msContentChoiceSpace;
+      });
 
       // Begin test code: test-ps-02-2018-tea-onboarding-steps
       if (spaceContext.space) {
-        controller.isExampleSpace = 'loading';
+        controller.enableTeaOnboarding = 'loading';
         controller.isContentPreviewsLoading = true;
 
         // we convert property to a stream in order to get the next, not current value
@@ -60,20 +78,20 @@ angular.module('contentful')
           }, 200);
         });
 
-        LD.onABTest($scope, isExampleSpaceFlagName, flag => {
-          controller.isExampleSpace = flag;
+        LD.onABTest($scope, teaOnboardingFlag, function (flag) {
+          controller.enableTeaOnboarding = flag;
           // if user is not qualified, we don't send this value
           if (flag !== null) {
             Analytics.track('experiment:start', {
               experiment: {
-                id: isExampleSpaceFlagName,
+                id: teaOnboardingFlag,
                 variation: flag
               }
             });
           }
         });
       } else {
-        controller.isExampleSpace = false;
+        controller.enableTeaOnboarding = false;
         controller.isContentPreviewsLoading = false;
       }
       // End test code: test-ps-02-2018-tea-onboarding-steps
