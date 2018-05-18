@@ -26,12 +26,13 @@ export default (id, type) => {
     return Promise.all(
       items.map(entry => {
         const { id } = entry.sys;
-        const env = get(entry, 'sys.environment.sys.id');
-        const isMasterEnv = env === 'master';
+        // make sure the url points to the corrent space env.
+        // falls back to master if no env id is found
+        const env = get(entry, 'sys.environment.sys.id', 'master');
         return entityHelpers.entityTitle(entry).then(title => ({
           id,
           title,
-          url: href(makeEntityRef(entry, Boolean(env), isMasterEnv))
+          url: href(makeEntityRef(entry, env))
         }));
       })
     );

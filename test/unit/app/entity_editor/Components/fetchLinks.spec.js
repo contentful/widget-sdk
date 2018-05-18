@@ -72,8 +72,8 @@ describe('fetchLinks', function () {
         const ref = `ref-${idx}`;
         const envRef = `env-${idx}`;
         this.navigator.makeEntityRef.withArgs(item).returns(ref);
-        this.navigator.makeEntityRef.withArgs(item, true, false).returns(envRef);
-        this.navigator.makeEntityRef.withArgs(item, true, true).returns(ref);
+        this.navigator.makeEntityRef.withArgs(item, 'dev').returns(envRef);
+        this.navigator.makeEntityRef.withArgs(item, 'master').returns(ref);
         this.navigator.href.withArgs(ref).returns(`href-${idx}`);
         this.navigator.href.withArgs(envRef).returns(`href-dev-${idx}`);
       });
