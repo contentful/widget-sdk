@@ -24,7 +24,8 @@ angular.module('contentful')
     },
     selectTab (tabId) {
       this.setState({
-        active: tabId
+        active: tabId,
+        iframe: null
       });
     },
     renderContent (content) {
@@ -35,24 +36,35 @@ angular.module('contentful')
       );
     },
     renderTabs () {
-      const { active } = this.state;
+      const { active, iframe } = this.state;
       const tabs = [
         {
           id: 'code',
           title: 'Code snippets',
-          content: this.renderContent(<CodeSnippets />)
+          content: this.renderContent(<CodeSnippets iframe={iframe} />)
         },
         {
           id: 'data-flow',
           title: 'Data model and data flow',
-          content: this.renderContent(<DataFlow />)
+          content: this.renderContent(<DataFlow iframe={iframe} />)
         }
       ];
 
       return <Tabs tabs={tabs} active={active} onSelect={this.selectTab} />;
     },
     renderIframe () {
-      return <iframe src={GATSBY_APP_URL} className={'modern-stack-onboarding--iframe'} />;
+      const { iframe: stateIframe } = this.state;
+      return (
+        <iframe
+          ref={iframe => {
+            if (stateIframe !== iframe) {
+              this.setState({ iframe });
+            }
+          }}
+          src={GATSBY_APP_URL}
+          className={'modern-stack-onboarding--iframe'}
+        />
+      );
     },
     render () {
       return (

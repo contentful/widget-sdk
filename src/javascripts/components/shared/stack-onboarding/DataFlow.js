@@ -1,11 +1,20 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
+
+import {name as IframeHighlightHOCModule} from './IframeHighlightHOC';
 
 const moduleName = 'data-flow-onboarding';
 
 angular.module('contentful')
-.factory(moduleName, [function () {
+.factory(moduleName, ['require', function (require) {
+  const IframeHighlightHOC = require(IframeHighlightHOCModule);
   const DataFlow = createReactClass({
+    propTypes: {
+      onHover: PropTypes.func,
+      onLeave: PropTypes.func,
+      active: PropTypes.string
+    },
     parseStyle (style) {
       return {
         top: parseFloat(style.top),
@@ -58,7 +67,7 @@ angular.module('contentful')
       }
     },
     renderElem (elem, { level = 0, position = 0 } = {}, parentStyle) {
-      const className = 'modern-stack-onboarding--data-flow-elem-title';
+      const titleClassName = 'modern-stack-onboarding--data-flow-elem-title';
       const modifier = level === 0 ? 1 : 1 / level;
 
       // These numbers are purely empirical, feel free to play around
@@ -73,8 +82,14 @@ angular.module('contentful')
       return (
         <React.Fragment>
           {this.renderLine(style, parentStyle)}
-          <div key={elem.title} style={style} className={'modern-stack-onboarding--data-flow-elem'}>
-            <div className={`${className} ${className}__${elem.color}`}>
+          <div
+            key={elem.title}
+            style={style}
+            className={`modern-stack-onboarding--data-flow-elem ${elem.active ? 'modern-stack-onboarding--active-data' : ''}`}
+            onMouseEnter={elem.onHover}
+            onMouseLeave={elem.onLeave}
+          >
+            <div className={`${titleClassName} ${titleClassName}__${elem.color}`}>
               {elem.title}
             </div>
             <div className={'modern-stack-onboarding--data-flow-elem-subtitle'}>
@@ -93,6 +108,7 @@ angular.module('contentful')
       );
     },
     render () {
+      const { onHover, onLeave, active } = this.props;
       const structure = {
         title: 'App',
         subtitle: '????',
@@ -101,27 +117,45 @@ angular.module('contentful')
           title: 'Person',
           subtitle: 'Collection of authors',
           color: 'green',
+          onHover: () => onHover('person'),
+          onLeave,
+          active: active === 'person',
           children: [{
             title: 'John Doe',
             subtitle: 'content type: Person',
-            color: 'blue'
+            color: 'blue',
+            onHover: () => onHover('person'),
+            onLeave,
+            active: active === 'person'
           }]
         }, {
           title: 'Blog Posts',
           subtitle: 'collection of articles',
           color: 'green',
+          onHover: () => onHover('articles'),
+          onLeave,
+          active: active === 'articles',
           children: [{
             title: 'Static sites are great',
             subtitle: 'content type: blogPost',
-            color: 'blue'
+            color: 'blue',
+            onHover: () => onHover('static-sites-are-great'),
+            onLeave,
+            active: active === 'static-sites-are-great'
           }, {
             title: 'Hello World',
             subtitle: 'content type: blogPost',
-            color: 'blue'
+            color: 'blue',
+            onHover: () => onHover('hello-world'),
+            onLeave,
+            active: active === 'hello-world'
           }, {
             title: 'Automate with webhooks',
             subtitle: 'content type: blogPost',
-            color: 'blue'
+            color: 'blue',
+            onHover: () => onHover('automate-with-webhooks'),
+            onLeave,
+            active: active === 'automate-with-webhooks'
           }]
         }]
       };
@@ -134,7 +168,7 @@ angular.module('contentful')
     }
   });
 
-  return DataFlow;
+  return IframeHighlightHOC(DataFlow);
 }]);
 
 export const name = moduleName;

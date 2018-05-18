@@ -1,21 +1,35 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
 
 import {name as CodeModule} from './Code';
+import {name as IframeHighlightHOCModule} from './IframeHighlightHOC';
 
 const moduleName = 'code-snippets-component';
 
 angular.module('contentful')
 .factory(moduleName, ['require', function (require) {
   const Code = require(CodeModule);
+  const IframeHighlightHOC = require(IframeHighlightHOCModule);
 
   const CodeSnippets = createReactClass({
-    renderSnippet ({ title, subtitle, code }) {
+    propTypes: {
+      active: PropTypes.string,
+      onHover: PropTypes.func,
+      onLeave: PropTypes.func
+    },
+    renderSnippet ({ title, subtitle, code, onHover, onLeave, active }) {
       return (
         <div>
           <h4>{title}</h4>
           {subtitle && <div>{subtitle}</div>}
-          <Code lineNumbers={false} code={code} />
+          <div onMouseEnter={onHover} onMouseLeave={onLeave}>
+            <Code
+              lineNumbers={false}
+              code={code}
+              className={active ? 'modern-stack-onboarding--active-code' : ''}
+            />
+          </div>
         </div>
       );
     },
@@ -33,6 +47,7 @@ angular.module('contentful')
       });
     },
     renderPeopleSnippet () {
+      const { onHover, onLeave, active } = this.props;
       return this.renderSnippet({
         title: 'Fetch the persons',
         subtitle: 'We filter the data (entries) by the “person” type',
@@ -40,10 +55,14 @@ angular.module('contentful')
           'function getPersons() {',
           '  return client.getEntries({ content_type: \'person\' });',
           '}'
-        ]
+        ],
+        onHover: () => onHover('person'),
+        onLeave,
+        active: active === 'person'
       });
     },
     renderPostsSnippet () {
+      const { onHover, onLeave, active } = this.props;
       return this.renderSnippet({
         title: 'Fetch the blog posts that are shown',
         subtitle: 'We filter the data (entries) by the “blogPost” type',
@@ -51,10 +70,14 @@ angular.module('contentful')
           'function getBlogPosts() {',
           '  return client.getEntries({ content_type: \'blogPost\' });',
           '}'
-        ]
+        ],
+        onHover: () => onHover('articles'),
+        onLeave,
+        active: active === 'articles'
       });
     },
     renderSinglePostSnippet () {
+      const { onHover, onLeave, active } = this.props;
       return this.renderSnippet({
         title: 'Fetch the blog post “Static sites are great”',
         subtitle: 'We fetch single entry by id',
@@ -62,7 +85,10 @@ angular.module('contentful')
           'function getStaticSitesArticle() {',
           '  return client.getEntry(\'3K9b0esdy0q0yGqgW2g6Ke\');',
           '}'
-        ]
+        ],
+        onHover: () => onHover('static-sites-are-great'),
+        onLeave,
+        active: active === 'static-sites-are-great'
       });
     },
     render () {
@@ -77,7 +103,7 @@ angular.module('contentful')
     }
   });
 
-  return CodeSnippets;
+  return IframeHighlightHOC(CodeSnippets);
 }]);
 
 
