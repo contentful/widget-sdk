@@ -76,23 +76,6 @@ describe('EntityNavigationHelpers', function () {
         { id: 'asset-id', type: 'Asset' }
       ]
     );
-
-    getSlideInEntitiesTestFactory(
-      'supports query string in lovercase',
-      {
-        params: {
-          entryId: 'entry-id'
-        },
-        search: {
-          slidein: ['entry:entry-id-2', 'asset:Asset-id']
-        }
-      },
-      [
-        { id: 'entry-id', type: 'Entry' },
-        { id: 'entry-id-2', type: 'Entry' },
-        { id: 'Asset-id', type: 'Asset' }
-      ]
-    );
   });
 
   describe('goToSlideInEntity', function () {
