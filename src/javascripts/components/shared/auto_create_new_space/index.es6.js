@@ -65,7 +65,11 @@ export function init () {
           const template = variation ? seeThinkDoFeatureModalTemplate : undefined;
 
           // we swallow all errors, so auto creation modal will always have green mark
-          await createSampleSpace(org, 'the example app', template).catch(() => {});
+          await createSampleSpace(org, 'the example app', template).catch(() => {
+            // serialize the fact that auto space creation failed to localStorage
+            // to power any behaviour to work around the failure
+            store.set(`ctfl:${user.sys.id}:autoSpaceCreationFailed`, true);
+          });
           markOnboarding();
           creatingSampleSpace = false;
         }
