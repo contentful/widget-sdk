@@ -1,6 +1,6 @@
 import {extend} from 'lodash';
 import {getSchema} from 'analytics/snowplow/Schemas';
-import {getSpaceWizardData} from './SpaceWizardTransform';
+import {getSpaceWizardData} from './SpaceWizard';
 
 /**
  * @ngdoc service

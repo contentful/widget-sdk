@@ -109,6 +109,7 @@ const Wizard = createReactClass({
       space,
       action,
       organization,
+      onCancel,
       onDimensionsChange
     } = this.props;
 
@@ -163,8 +164,8 @@ const Wizard = createReactClass({
         isFormSubmitted,
         serverValidationErrors,
         onDimensionsChange,
+        onCancel: onCancel,
         track: this.track,
-        onCancel: this.cancel,
         onNavigate: this.navigate,
         onChange: this.setStateData,
         onSubmit: this.goToNextStep
@@ -315,7 +316,7 @@ const Wizard = createReactClass({
       this.setState({serverValidationErrors, currentStepId: 1});
     } else {
       notification.error(`Could not ${action} your space. If the problem persists, get in touch with us.`);
-      this.cancel();
+      this.props.onCancel(); // close modal without tracking 'cancel' event
     }
   }
 });

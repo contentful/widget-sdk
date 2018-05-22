@@ -1,14 +1,15 @@
 import { addUserOrgSpace } from './Decorators';
 
-export default addUserOrgSpace((eventName, data) => {
+const SpaceWizardTransformer = addUserOrgSpace((eventName, data) => {
   const action = eventName.split(':')[1];
   const wizardData = getSpaceWizardData(data, action);
 
   return {
-    data: wizardData,
-    contexts: []
+    data: wizardData
   };
 });
+
+export default SpaceWizardTransformer;
 
 export function getSpaceWizardData (data, action) {
   const wizardData = {

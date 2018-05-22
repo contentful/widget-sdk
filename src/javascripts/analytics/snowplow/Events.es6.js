@@ -5,7 +5,7 @@ import EntityAction from './transformers/EntityAction';
 import EntryActionV2 from './transformers/EntryActionV2';
 import Generic from './transformers/Generic';
 import SpaceCreate from './transformers/SpaceCreate';
-import SpaceWizardTransform from './transformers/SpaceWizardTransform';
+import SpaceWizardTransformer from './transformers/SpaceWizard';
 import createExperimentTransformer from './transformers/Experiment';
 import PageViewTransform from './transformers/PageView';
 import {
@@ -144,7 +144,7 @@ function registerSnapshotEvent (event) {
 }
 
 function registerSpaceWizardEvent (event) {
-  registerEvent(event, 'feature_space_wizard', SpaceWizardTransform);
+  registerEvent(event, 'feature_space_wizard', SpaceWizardTransformer);
 }
 
 
