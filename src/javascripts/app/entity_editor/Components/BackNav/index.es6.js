@@ -12,7 +12,7 @@ const BackNav = createReactClass({
   handleClick () {
     goToPreviousSlideOrExit(
       this.props.slideInFeatureFlagValue,
-      () => $state.go('^.^')
+      () => $state.go('^.list')
     );
   },
   render () {

@@ -6,7 +6,8 @@ import enhanceWithClickOutside from 'react-click-outside';
 const ContextMenu = createReactClass({
   propTypes: {
     items: PropTypes.array.isRequired,
-    otherProps: PropTypes.object
+    otherProps: PropTypes.object,
+    style: PropTypes.object
   },
 
   getInitialState () {
@@ -28,11 +29,13 @@ const ContextMenu = createReactClass({
 
   render () {
     const {isOpen, isDisabled} = this.state;
-    const { items, ...otherProps } = this.props;
+    const { items, style: userStyles, ...otherProps } = this.props;
+
+    const styles = { ...(userStyles || {}), marginLeft: '10px', position: 'relative' };
 
     return (
       <div
-        style={{marginLeft: '10px', position: 'relative'}}
+        style={styles}
         ref={menu => { this.menuElement = menu; }}
         {...otherProps}
       >

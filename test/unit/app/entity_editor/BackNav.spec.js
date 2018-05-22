@@ -49,7 +49,7 @@ describe('BackNav', function () {
     expect(icon.prop('name')).toEqual('back');
   });
 
-  it('navigates to the previous slide-in entity or sref', function () {
+  it('navigates to the previous slide-in entity or list sref', function () {
     const backNavButton = this.wrapper.find('div.btn.btn__back');
     sinon.assert.notCalled(this.goToPreviousSlideOrExitStub);
     backNavButton.simulate('click');
@@ -64,7 +64,7 @@ describe('BackNav', function () {
     callback();
     sinon.assert.calledOnceWith(
       this.$stateGoStub,
-      '^.^'
+      '^.list'
     );
   });
 });

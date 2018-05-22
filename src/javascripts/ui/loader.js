@@ -57,11 +57,13 @@ angular.module('cf.ui')
       $scope.loaderMsg = $scope.loaderMsg || 'Please hold on…';
 
       if ($scope.watchStateChange) {
-        $rootScope.$on('$stateChangeStart', showLoader);
-        $rootScope.$on('$stateChangeSuccess', hideLoader);
-        $rootScope.$on('$stateChangeCancel', hideLoader);
-        $rootScope.$on('$stateNotFound', hideLoader);
-        $rootScope.$on('$stateChangeError', hideLoader);
+        $scope.$on('$destroy', _.flow(
+          $rootScope.$on('$stateChangeStart', showLoader),
+          $rootScope.$on('$stateChangeSuccess', hideLoader),
+          $rootScope.$on('$stateChangeCancel', hideLoader),
+          $rootScope.$on('$stateNotFound', hideLoader),
+          $rootScope.$on('$stateChangeError', hideLoader)
+        ));
       }
 
       function showLoader (_event, _toState, toParams, _fromState, fromParams) {
