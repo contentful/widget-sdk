@@ -57,10 +57,11 @@ export default class WebhookSegmentationTable extends React.Component {
   renderRow(entityType) {
     return (
       <tr>
-        {['*'].concat(ACTIONS).map(action => (<ActionCheckbox action={action}
-                                                             type={entityType}
-                                                             isChecked={this.isChecked(entityType, action)}
-                                                             isDisabled={isActionDisabled(entityType, action)}
+        {['*'].concat(ACTIONS).map(action => (<ActionCheckbox key={`checkbox-${entityType}.${action}`}
+                                                              action={action}
+                                                              type={entityType}
+                                                              isChecked={this.isChecked(entityType, action)}
+                                                              isDisabled={isActionDisabled(entityType, action)}
                                                               onChange={change => this.onChange(change)} />))}
       </tr>
     )
@@ -78,13 +79,19 @@ export default class WebhookSegmentationTable extends React.Component {
     return (
       <tr className="footer">
         <td></td>
-        {ACTIONS.map(action => <ActionCheckbox type="*"
+        {ACTIONS.map(action => <ActionCheckbox key={`footer.*.${action}`}
+                                               type="*"
                                                action={action}
                                                isChecked={this.isChecked('*', action)}
                                                onChange={change => this.onChange(change)} />)}
       </tr>
     )
   }
+}
+
+WebhookSegmentationTable.propTypes = {
+  onChange: PropTypes.func,
+  values: PropTypes.object,
 }
 
 class ActionCheckbox extends React.Component {
@@ -129,6 +136,7 @@ class ActionCheckbox extends React.Component {
 ActionCheckbox.propTypes = {
   action: PropTypes.string,
   isChecked: PropTypes.bool,
+  isDisabled: PropTypes.bool,
   onChange: PropTypes.func,
   type: PropTypes.string,
 }
