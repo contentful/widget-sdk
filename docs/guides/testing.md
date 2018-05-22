@@ -1,20 +1,19 @@
 Testing
 =======
 
-This guide describes the testing setup and helpers for the UI. See also
-the API documentation of the [`test` module][module:test]
+This guide describes the testing setup and helpers for the UI.
 
-Tests are written in [Jasmine][jasmine] (version `2.3.x`) and run with
+Tests are written in [Jasmine][jasmine] (version `2.5.x`) and run with
 [Karma][karma].  The tests use [Sinon][sinon] to create function stubs.
 The tests files are contained in `test/unit` and `test/integration`,
-helpers are contained in `test/helpers`. To see a list of available
-test helpers go to the [`test/helpers` service][service:helpers] documentation.
+helpers are contained in `test/helpers`.
 
 You can run the tests with
 ~~~bash
-$ npm install -g karma-cli gulp-cli
 $ gulp prepare-tests
-$ karma start
+$ npm test # run with watching
+$ or:
+$ npm run test:once # run only once
 ~~~
 
 Deprecated Patterns
@@ -500,7 +499,5 @@ the test run. You can choose a reporter by passing the
 [sinon]: http://sinonjs.org/
 [jasmine]: http://jasmine.github.io/2.0/introduction.html
 [karma]: http://karma-runner.github.io/0.12/index.html
-[module:test]: api/contentful/test
 [tape]: https://github.com/substack/tape
-[service:helpers]: api/contentful/test/service/helpers
 [require]: https://docs.angularjs.org/api/ng/service/$compile#-require-
