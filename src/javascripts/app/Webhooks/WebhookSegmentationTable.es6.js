@@ -1,21 +1,21 @@
-import React from 'react'
+import React from 'react';
 import PropTypes from 'prop-types';
 import {
   ACTIONS, ENTITY_TYPES, LABELS, changeAction, isActionChecked, isActionDisabled
-} from './WebhookSegmentationState'
+} from './WebhookSegmentationState';
 
 export default class WebhookSegmentationTable extends React.Component {
-  constructor(props) {
-    super(props)
+  constructor (props) {
+    super(props);
 
     this.state = {
       values: this.props.values
-    }
+    };
   }
 
 
-  isChecked(type, action) {
-    return isActionChecked(this.state.values, type, action)
+  isChecked (type, action) {
+    return isActionChecked(this.state.values, type, action);
   }
 
   // This method is passed to child elements. They provide a change object, e.g
@@ -24,18 +24,18 @@ export default class WebhookSegmentationTable extends React.Component {
   //   type: "contentType",
   //   checked: true
   // }
-  onChange(change) {
+  onChange (change) {
     // Get a copy of the values object
-    const map = changeAction(this.state.values, change.type, change.action, change.checked)
+    const map = changeAction(this.state.values, change.type, change.action, change.checked);
 
     this.setState({
       values: map
-    })
+    });
 
-    this.props.onChange(map)
+    this.props.onChange(map);
   }
 
-  render() {
+  render () {
     return (
       <table className="webhook-segmentation__matrix">
         <thead>
@@ -47,14 +47,14 @@ export default class WebhookSegmentationTable extends React.Component {
           {this.renderFooter()}
         </tbody>
       </table>
-    )
+    );
   }
 
-  renderRows() {
-    return ENTITY_TYPES.map(t => this.renderRow(t))
+  renderRows () {
+    return ENTITY_TYPES.map(t => this.renderRow(t));
   }
 
-  renderRow(entityType) {
+  renderRow (entityType) {
     return (
       <tr>
         {['*'].concat(ACTIONS).map(action => (<ActionCheckbox key={`checkbox-${entityType}.${action}`}
@@ -64,18 +64,18 @@ export default class WebhookSegmentationTable extends React.Component {
                                                               isDisabled={isActionDisabled(entityType, action)}
                                                               onChange={change => this.onChange(change)} />))}
       </tr>
-    )
+    );
   }
 
-  renderActionLabel(action) {
+  renderActionLabel (action) {
     return (
-      <th onClick={() => this.onChange({ type: '*',  action, checked: !this.isChecked('*', action) })}>
+      <th onClick={() => this.onChange({ type: '*', action, checked: !this.isChecked('*', action) })}>
         <label>{LABELS[action]}</label>
       </th>
-    )
+    );
   }
 
-  renderFooter() {
+  renderFooter () {
     return (
       <tr className="footer">
         <td></td>
@@ -85,35 +85,35 @@ export default class WebhookSegmentationTable extends React.Component {
                                                isChecked={this.isChecked('*', action)}
                                                onChange={change => this.onChange(change)} />)}
       </tr>
-    )
+    );
   }
 }
 
 WebhookSegmentationTable.propTypes = {
   onChange: PropTypes.func,
-  values: PropTypes.object,
-}
+  values: PropTypes.object
+};
 
 class ActionCheckbox extends React.Component {
-  onChange(event) {
+  onChange (event) {
     this.props.onChange({
       type: this.props.type,
       action: this.props.action,
       checked: event.target.checked
-    })
+    });
   }
 
-  toggle() {
+  toggle () {
     this.props.onChange({
       checked: !this.props.isChecked,
       type: this.props.type,
       action: this.props.action
-    })
+    });
   }
 
-  render() {
+  render () {
     if (this.props.isDisabled) {
-      return (<td className="action-cell"><input type="checkbox" disabled /></td>)
+      return (<td className="action-cell"><input type="checkbox" disabled /></td>);
     }
 
     return (
@@ -121,14 +121,14 @@ class ActionCheckbox extends React.Component {
         <input id={this.props.type} type="checkbox" checked={this.props.isChecked} onChange={e => this.onChange(e)} />
         {this.renderLabel()}
       </td>
-    )
+    );
   }
 
-  renderLabel() {
+  renderLabel () {
     if (this.props.action === '*') {
       return (
           <label>{LABELS[this.props.type]}</label>
-      )
+      );
     }
   }
 }
@@ -138,5 +138,5 @@ ActionCheckbox.propTypes = {
   isChecked: PropTypes.bool,
   isDisabled: PropTypes.bool,
   onChange: PropTypes.func,
-  type: PropTypes.string,
-}
+  type: PropTypes.string
+};

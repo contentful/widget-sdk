@@ -1,38 +1,38 @@
-import React from 'react'
+import React from 'react';
 import PropTypes from 'prop-types';
-import WebhookSegmentationTable from './WebhookSegmentationTable'
-import { createMap, isEverythingChecked } from './WebhookSegmentationState'
+import WebhookSegmentationTable from './WebhookSegmentationTable';
+import { createMap, isEverythingChecked } from './WebhookSegmentationState';
 
 export default class WebhookSegmentation extends React.Component {
-  constructor(props) {
-    super(props)
+  constructor (props) {
+    super(props);
 
     this.state = {
       allEventsSelected: isEverythingChecked(this.props.values)
-    }
+    };
   }
 
-  onSelectionTypeChange(value) {
+  onSelectionTypeChange (value) {
     this.setState({
       allEventsSelected: value
-    })
+    });
 
     if (value) {
-      this.props.onChange(createMap(true))
+      this.props.onChange(createMap(true));
     }
   }
 
-  render() {
+  render () {
     return (
       <div className="webhook-segmentation">
-        {this.renderOption("All Events", true)}
-        {this.renderOption("Only Selected Events", false)}
+        {this.renderOption('All Events', true)}
+        {this.renderOption('Only Selected Events', false)}
         { this.state.allEventsSelected ? null : <WebhookSegmentationTable values={this.props.values} onChange={this.props.onChange} /> }
       </div>
-    )
+    );
   }
 
-  renderOption(caption, value) {
+  renderOption (caption, value) {
     return (
       <div className="webhook-segmentation__option">
         <label>
@@ -40,11 +40,11 @@ export default class WebhookSegmentation extends React.Component {
           {caption}
         </label>
       </div>
-    )
+    );
   }
 }
 
 WebhookSegmentation.propTypes = {
   onChange: PropTypes.func,
-  values: PropTypes.object,
-}
+  values: PropTypes.object
+};
