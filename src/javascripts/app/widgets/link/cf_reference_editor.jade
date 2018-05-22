@@ -9,7 +9,6 @@ div(ng-show="!isReady")
   ng-class="{'x--contains-asset-cards': isAssetCard}")
   ol.link-editor__links(cf-ui-sortable ng-model="entityModels")
     li.link-editor__link(ng-repeat="model in entityModels track by model.key")
-      
       cf-entity-link(
         ng-if="referenceType.link"
         entity="model.value.entity"
@@ -66,8 +65,13 @@ div(ng-show="!isReady")
       data-test-id="create-asset"
       ng-if="type === 'Asset'"
       ng-click="isNewAddAndLinkRefButtonEnabled ? addNewAsset() : addNew($event)"
-      type="button")
-      cf-icon.btn-link__icon(name="add")
+      type="button"
+      ng-disabled="!canAddNewAsset")
+      cf-icon.btn-link__icon(
+        name="add"
+        ng-if="canAddNewAsset")
+      .link-editor__create-asset-loading-spinner(
+        ng-if="!canAddNewAsset")
       | Create new asset and link
 
     button.btn-link(

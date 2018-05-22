@@ -50,6 +50,7 @@ export default function create ($scope, widgetApi) {
   let slideInEditorEnabled = false;
   const canEditReferences = !!widgetApi._internal.editReferences;
   const bulkEditorEnabled = canEditReferences && widgetApi.settings.bulkEditing;
+  $scope.canAddNewAsset = true;
   $scope.typePlural = { Entry: 'entries', Asset: 'assets' }[$scope.type];
   $scope.isAssetCard = is('Asset', 'card');
   $scope.referenceType = {};
@@ -146,8 +147,13 @@ export default function create ($scope, widgetApi) {
   };
 
   $scope.addNewAsset = function () {
+    if (!$scope.canAddNewAsset) {
+      return;
+    }
+    $scope.canAddNewAsset = false;
     return widgetApi.space.createAsset({})
-      .then(makeNewEntityHandler());
+      .then(makeNewEntityHandler())
+      .then(() => { $scope.canAddNewAsset = true; });
   };
 
   $scope.addNewEntry = function (contentTypeId) {

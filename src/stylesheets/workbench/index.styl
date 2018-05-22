@@ -418,6 +418,7 @@ Styleguide 9.7
   will-change: width;
 
   &:not(.workbench-layer--0) {
+    // NOTE: Update EntityPageController PEEK_ANIMATION_LENGTH when updating animations here.
     transition: left 200ms ease-in-out, transform 200ms ease-in-out;
 
     &.ng-enter-active {
@@ -467,7 +468,21 @@ Styleguide 9.7
   opacity: 0.1 !important;
 }
 
-.workbench-layer:not(.workbench-layer--is-current) .workbench-header .breadcrumbs-widget,
-.workbench-layer:not(.workbench-layer--is-current) .workbench-header__icon {
-  display: none;
+.workbench-layer:not(.workbench-layer--is-current) {
+  &.workbench-layer--optimized:not(.workbench-layer--peeked) .workbench-main {
+    display: none;
+  }
+
+  .loader, .workbench-main__sidebar {
+    display: none
+  }
+
+  .workbench-header .breadcrumbs-widget,
+  .workbench-header__icon {
+    display: none;
+  }
+
+  .entity-editor__notification {
+    display: none;
+  }
 }
