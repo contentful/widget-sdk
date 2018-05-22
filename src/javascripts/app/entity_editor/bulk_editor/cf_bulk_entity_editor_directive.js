@@ -35,6 +35,7 @@ angular.module('contentful')
   var K = require('utils/kefir');
   var Navigator = require('states/Navigator');
   var caseof = require('sum-types').caseof;
+  var spaceContext = require('spaceContext');
 
   return {
     restrict: 'E',
@@ -60,12 +61,13 @@ angular.module('contentful')
 
       var data = $scope.data = {
         expanded: true,
-        stateRef: Navigator.makeEntityRef({
-          sys: {
+        stateRef: Navigator.makeEntityRef(
+          {sys: {
             id: entityContext.id,
             type: 'Entry'
-          }
-        })
+          }},
+          spaceContext.getEnvironmentId()
+        )
       };
 
 

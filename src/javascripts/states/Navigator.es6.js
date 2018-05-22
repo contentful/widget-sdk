@@ -69,18 +69,19 @@ export function href (state) {
  * @param {Boolean} isMasterEnv} If current env is the master/default env
  * @returns {Navigator.Ref}
  */
-export function makeEntityRef (entity, useSpaceEnv, isMasterEnv) {
+export function makeEntityRef (entity, spaceEnvId) {
   return {
-    path: makeEntityPath(entity, useSpaceEnv, isMasterEnv),
+    path: makeEntityPath(entity, spaceEnvId),
     params: makeEntityParams(entity)
   };
 }
 
-function makeEntityPath (entity, useSpaceEnv, isMasterEnv) {
+function makeEntityPath (entity, spaceEnvId) {
   const type = getType(entity);
   const typePlural = ENTITY_PLURALS[type];
+  const isMasterEnv = spaceEnvId === 'master';
 
-  if (useSpaceEnv && !isMasterEnv) {
+  if (spaceEnvId && !isMasterEnv) {
     return ['spaces', 'detail', 'environment', typePlural, 'detail'];
   } else {
     return ['spaces', 'detail', typePlural, 'detail'];
