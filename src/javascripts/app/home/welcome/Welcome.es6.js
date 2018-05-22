@@ -4,13 +4,9 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import Icon from 'ui/Components/Icon';
 import $ from 'jquery';
-// Begin test code: feature-ps-10-2017-contact-us-space-home
-import ContactUs from '../contactUs';
-// End test code: feature-ps-10-2017-contact-us-space-home
 
 const Welcome = createReactClass({
   propTypes: {
-    hasContactUs: PropTypes.bool,
     user: PropTypes.shape({
       firstName: PropTypes.string.isRequired,
       signInCount: PropTypes.number.isRequired
@@ -22,11 +18,11 @@ const Welcome = createReactClass({
     );
   },
   render () {
-    const { user, hasContactUs } = this.props;
+    const { user } = this.props;
 
     const greeting = getGreeting(user);
-    const isNew = user && user.signInCount === 1 && !hasContactUs;
-    const isOld = user && user.signInCount > 1 && !hasContactUs;
+    const isNew = user && user.signInCount === 1;
+    const isOld = user && user.signInCount > 1;
     const scrollToDeveloperResources = h('span', null,
       'Get started with content creation in your space or get ',
       h('a', {onClick: this.scrollToDeveloperResources}, 'SDKs, tools & tutorials below'),
@@ -38,8 +34,7 @@ const Welcome = createReactClass({
         isNew && h('p', null, 'Looks like you\'re new here. Learn more about Contentful from the resources below.'),
         isOld && h('p', null, 'What will you build today?'),
         scrollToDeveloperResources,
-        !hasContactUs && h(Icon, { name: 'home-welcome', className: 'home__welcome-image' }),
-        hasContactUs && h(ContactUs)
+        h(Icon, { name: 'home-welcome', className: 'home__welcome-image' })
       )
     );
   }

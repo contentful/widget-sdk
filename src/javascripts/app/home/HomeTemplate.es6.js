@@ -6,7 +6,8 @@ export default function template () {
       h('.home__content', [
         h('cf-welcome'),
         h('cf-onboarding-steps'),
-        h('cf-developer-resources')
+        h('cf-developer-resources'),
+        h('cf-contact-us-space-home')
       ])
     ])
   ]);
