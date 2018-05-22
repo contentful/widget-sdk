@@ -5,7 +5,7 @@
     ng-repeat="entity in entities track by entity.id"
     data-test-id="slide-in-{{ $index === 0 ? 'base' : 'layer' }}"
   )
-    div(
+    .workbench-layer__editor-container(
       watchers-toggler="!isTopLayer($index) && loaded"
       ng-mouseenter="initPeeking($index)"
     )
