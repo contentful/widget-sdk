@@ -57,11 +57,11 @@ export default class WebhookSegmentationTable extends React.Component {
   renderRow(entityType) {
     return (
       <tr>
-        {['*'].concat(ACTIONS).map(action => <ActionCheckbox action={action}
+        {['*'].concat(ACTIONS).map(action => (<ActionCheckbox action={action}
                                                              type={entityType}
                                                              isChecked={this.isChecked(entityType, action)}
                                                              isDisabled={isActionDisabled(entityType, action)}
-                                                             onChange={change => this.onChange(change)} />)}
+                                                              onChange={change => this.onChange(change)} />))}
       </tr>
     )
   }
@@ -88,12 +88,6 @@ export default class WebhookSegmentationTable extends React.Component {
 }
 
 class ActionCheckbox extends React.Component {
-  shouldComponentUpdate(nextProps) {
-    return this.props.isChecked !== nextProps.isChecked
-      || this.props.action !== nextProps.action
-      || this.props.type !== nextProps.type
-  }
-
   onChange(event) {
     this.props.onChange({
       type: this.props.type,
@@ -112,7 +106,7 @@ class ActionCheckbox extends React.Component {
 
   render() {
     if (this.props.isDisabled) {
-      return <td></td>
+      return (<td className="action-cell"><input type="checkbox" disabled /></td>)
     }
 
     return (
@@ -124,11 +118,11 @@ class ActionCheckbox extends React.Component {
   }
 
   renderLabel() {
-    if (this.props.action !== '*') return null
-
-    return (
-      <label>{LABELS[this.props.type]}</label>
-    )
+    if (this.props.action === '*') {
+      return (
+          <label>{LABELS[this.props.type]}</label>
+      )
+    }
   }
 }
 

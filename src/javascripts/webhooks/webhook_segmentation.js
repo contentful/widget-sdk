@@ -30,5 +30,5 @@ angular.module('contentful')
       scope.$applyAsync();
     }
   }
-
+1
 }]);

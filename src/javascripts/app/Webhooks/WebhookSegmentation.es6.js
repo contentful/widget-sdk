@@ -1,20 +1,20 @@
 import React from 'react'
 import PropTypes from 'prop-types';
 import WebhookSegmentationTable from './WebhookSegmentationTable'
-import { createMap } from './WebhookSegmentationState'
+import { createMap, isEverythingChecked } from './WebhookSegmentationState'
 
 export default class WebhookSegmentation extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      selectAllEvents: true
+      allEventsSelected: isEverythingChecked(this.props.values)
     }
   }
 
-  onChange(value) {
+  onSelectionTypeChange(value) {
     this.setState({
-      selectAllEvents: value
+      allEventsSelected: value
     })
 
     if (value) {
@@ -27,7 +27,7 @@ export default class WebhookSegmentation extends React.Component {
       <div className="webhook-segmentation">
         {this.renderOption("All Events", true)}
         {this.renderOption("Only Selected Events", false)}
-        { this.state.selectAllEvents ? null : <WebhookSegmentationTable values={this.props.values} onChange={this.props.onChange} /> }
+        { this.state.allEventsSelected ? null : <WebhookSegmentationTable values={this.props.values} onChange={this.props.onChange} /> }
       </div>
     )
   }
@@ -36,7 +36,7 @@ export default class WebhookSegmentation extends React.Component {
     return (
       <div className="webhook-segmentation__option">
         <label>
-          <input type="radio" checked={value === this.state.selectAllEvents ? "checked" : ""} onClick={() => this.onChange(value)} />
+          <input type="radio" checked={value === this.state.allEventsSelected} onClick={() => this.onSelectionTypeChange(value)} />
           {caption}
         </label>
       </div>

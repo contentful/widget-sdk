@@ -94,6 +94,11 @@ export function isAllEntityTypesChecked (map, action) {
   return ENTITY_TYPES.filter(t => !isActionDisabled(t, action)).every(t => map[t][action])
 }
 
+// Is everything checked ?
+export function isEverythingChecked (map) {
+  return ENTITY_TYPES.every(t => isAllActionsChecked(map, t))
+}
+
 // It takes a map, and returns list of topics from given map. Output looks like this;
 // [
 //   "*.create",
@@ -115,7 +120,7 @@ export function transformMapToTopics (map) {
       // Is this action checked for all entity types? Then push a wild card for it.
       const isAllChecked = isAllEntityTypesChecked(map, a)
 
-      if (isAllChecked && result.indexOf(`*.${a}`) === -1) {
+      if (isAllChecked && !result.includes(`*.${a}`)) {
         result.push(`*.${a}`)
       } else if (!isAllChecked && map[t][a]) {
         // Otherwise, just push it without wildcard.
@@ -125,7 +130,7 @@ export function transformMapToTopics (map) {
   })
 
   // If all entity types are wildcarded, then return ['*.*']
-  if (result.length === ENTITY_TYPES.length && result.every(t => /^\w+\.\*$/.test(t))) {
+  if (result.length === ENTITY_TYPES.length && result.every(t => t.endsWith('.*'))) {
     return ['*.*']
   }
 
