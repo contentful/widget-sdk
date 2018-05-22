@@ -1,6 +1,4 @@
 import {h} from 'utils/hyperscript';
-import {name as msDevChoiceNextSteps} from '../../components/shared/stack-onboarding/DevNextSteps';
-import {name as msContentChoiceNextSteps} from '../../components/shared/stack-onboarding/ContentNextSteps';
 
 export default function template () {
   const nonTeaOnboardingSteps = h('section.home-section.x--onboarding-steps', [
@@ -33,12 +31,12 @@ export default function template () {
       }),
       h('div', {
         ngIf: 'onboarding.showModernStackDevChoiceNextSteps'
-      }, [h('react-component', {name: msDevChoiceNextSteps})]),
+      }, [h('react-component', {name: 'ms-dev-next-steps'})]),
       h('div', {
-        ngIf: 'onboarding.showModerStackContentChoiceNextSteps'
-      }, [h('react-component', {name: msContentChoiceNextSteps})]),
+        ngIf: 'onboarding.showModernStackContentChoiceNextSteps'
+      }, [h('react-component', {name: 'ms-content-creator-next-steps'})]),
       h('div', {
-        ngIf: '!onboarding.showModernStackDevChoiceNextSteps && !onboarding.showModerStackContentChoiceNextSteps && !onboarding.enableTeaOnboarding'
+        ngIf: '!onboarding.showModernStackDevChoiceNextSteps && !onboarding.showModernStackContentChoiceNextSteps && !onboarding.enableTeaOnboarding'
       }, [nonTeaOnboardingSteps])
     ])
   ]);

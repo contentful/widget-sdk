@@ -29,24 +29,33 @@ angular.module('contentful')
     controller: ['$scope', function ($scope) {
       const controller = this;
 
-      LD.onFeatureFlag($scope, modernStackOnboardingFlag, flag => {
+      const updateModernStackOnboardingFlags = flag => {
         const user = K.getValue(user$);
         const prefix = `ctfl:${user.sys.id}:modernStackOnboarding`;
         const msDevChoiceSpace = store.get(`${prefix}:developerChoiceSpace`);
         const msContentChoiceSpace = store.get(`${prefix}:contentChoiceSpace`);
         const autoSpaceCreationFailed = store.get(`ctfl:${user.sys.id}:autoSpaceCreationFailed`);
+
         const currentSpaceId = spaceContext.space && spaceContext.space.getSys().id;
 
         controller.showModernStackDevChoiceNextSteps =
           flag &&
           !autoSpaceCreationFailed &&
+          currentSpaceId &&
           currentSpaceId === msDevChoiceSpace;
 
-        controller.showModerStackContentChoiceNextSteps =
+        controller.showModernStackContentChoiceNextSteps =
           flag &&
           !autoSpaceCreationFailed &&
+          currentSpaceId &&
           currentSpaceId === msContentChoiceSpace;
+      };
+
+      $scope.$on('msOnboardingSpaceCreated', async () => {
+        updateModernStackOnboardingFlags(await LD.getCurrentVariation(modernStackOnboardingFlag));
       });
+
+      LD.onFeatureFlag($scope, modernStackOnboardingFlag, updateModernStackOnboardingFlags);
 
       // Begin test code: test-ps-02-2018-tea-onboarding-steps
       if (spaceContext.space) {

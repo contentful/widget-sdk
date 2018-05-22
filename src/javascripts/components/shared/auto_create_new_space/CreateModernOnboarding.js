@@ -54,7 +54,7 @@ angular.module('contentful')
       };
 
       dialog = modalDialog.open({
-        title: 'Space auto creation',
+        title: 'Select your path',
         template: `<react-component name="${choiceScreenName}" props="props"></react-component>`,
         backgroundClose: false,
         ignoreEsc: true,

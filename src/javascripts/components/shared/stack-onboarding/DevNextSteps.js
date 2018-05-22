@@ -14,6 +14,4 @@ angular.module('contentful')
     });
   }]);
 
-export {
-  moduleName as name
-};
+export const name = moduleName;

@@ -1,3 +1,4 @@
+import $rootScope from '$rootScope';
 import { getStore } from 'TheStore';
 import {combine} from 'utils/kefir';
 import {getCurrentVariation} from 'utils/LaunchDarkly';
@@ -46,6 +47,12 @@ export function init () {
             const newSpace = await defaultChoice();
 
             store.set(`ctfl:${user.sys.id}:modernStackOnboarding:contentChoiceSpace`, newSpace.sys.id);
+            // notify the onboarding steps directive that it should update it's modern stack onboarding
+            // related flags. This is done since the choice screen is a modal which means the onboarding
+            // steps directive has already initialized underneath it. For it to pick up the right values
+            // from localStorage after we create the space for the "content choice flow", we want the
+            // onboarding steps directive to update itself based on new context
+            $rootScope.$broadcast('msOnboardingSpaceCreated');
           },
           org,
           user
@@ -57,6 +64,7 @@ export function init () {
 
       async function defaultChoice () {
         let variation = false;
+        let newSpace;
 
         try {
           variation = await getCurrentVariation('feature-ps-11-2017-project-status');
@@ -65,7 +73,7 @@ export function init () {
           const template = variation ? seeThinkDoFeatureModalTemplate : undefined;
 
           // we swallow all errors, so auto creation modal will always have green mark
-          await createSampleSpace(org, 'the example app', template).catch(() => {
+          newSpace = await createSampleSpace(org, 'the example app', template).then(s => s, () => {
             // serialize the fact that auto space creation failed to localStorage
             // to power any behaviour to work around the failure
             store.set(`ctfl:${user.sys.id}:autoSpaceCreationFailed`, true);
@@ -73,6 +81,7 @@ export function init () {
           markOnboarding();
           creatingSampleSpace = false;
         }
+        return newSpace;
       }
 
       function markOnboarding () {
