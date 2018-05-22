@@ -16,16 +16,22 @@ angular.module('contentful')
   };
 
   function render (scope, el) {
+    const initialState = internalState.transformTopicsToMap(scope.webhook.topics)
+    scope.initialState = initialState
+
     const ui = React.createElement(WebhookSegmentation, {
       onChange: onChange(scope),
-      values: internalState.transformTopicsToMap(scope.webhook.topics)
+      values: initialState
     });
+
+    // This is used only by the tests to verify topics got translated to internal state properly
 
     ReactDOM.render(ui, el[0].querySelector('.mount-point'));
   }
 
   function onChange (scope) {
     return function (values) {
+      scope.webhook.selection = values
       scope.webhook.topics = internalState.transformMapToTopics(values);
       scope.$applyAsync();
     };

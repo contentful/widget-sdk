@@ -1,11 +1,18 @@
 import {setCheckbox} from 'helpers/DOM';
+import {
+  createMap as createInternalState,
+  changeAction,
+  isActionChecked,
+  transformMapToTopics,
+  transformTopicsToMap
+} from 'app/Webhooks/WebhookSegmentationState'
 
 describe('Webhook Segmentation directive', function () {
   beforeEach(function () {
     module('contentful/test');
 
     this.compile = function (topics) {
-      const data = {topics: topics || []};
+      const data = { webhook: { topics: topics || [] } };
       this.element = this.$compile('<cf-webhook-segmentation topics="topics" />', data);
       this.scope = this.element.isolateScope();
     }.bind(this);
@@ -35,72 +42,48 @@ describe('Webhook Segmentation directive', function () {
       expect(this.hasTable()).toBe(true);
     });
 
-    it('switching from specific to "all" hides table and uses *.*, but stores selection', function () {
-      this.compile(['ContentType.delete']);
-      $(this.radio(0)).prop('checked', true).click();
-      this.$apply();
-
-      expect(this.hasTable()).toBe(false);
-      expect(this.scope.topics).toEqual(['*.*']);
-      expect(this.scope.selection['ContentType.delete']).toBe(true);
-    });
-
-    it('switching from "all" mode to specific events shows table and restores selection', function () {
-      this.compile(['*.*', 'Entry.autosave']);
-      $(this.radio(1)).prop('checked', true).click();
-      this.$apply();
-
-      expect(this.hasTable()).toBe(true);
-      expect(this.scope.topics).toEqual(['Entry.autosave']);
-      expect(this.scope.selection['*.*']).toBeUndefined();
-    });
   });
 
   describe('translating topics to selection', function () {
     it('selects specific topics', function () {
-      this.compile(['Entry.autosave', 'Entry.delete']);
-      expect(this.scope.selection['Entry.autosave']).toBe(true);
-      expect(this.scope.selection['Entry.delete']).toBe(true);
+      const transformed = transformTopicsToMap(['Entry.autosave', 'Entry.delete'])
+
+      expect(isActionChecked(transformed, 'Entry', 'autosave')).toBe(true);
+      expect(isActionChecked(transformed, 'Entry', 'delete')).toBe(true);
     });
 
     it('selects entity type wildcards', function () {
-      this.compile(['ContentType.*']);
-      expect(this.scope.selection['ContentType.*']).toBe(true);
+      const transformed = transformTopicsToMap(['ContentType.*'])
+      expect(isActionChecked(transformed, 'ContentType', '*')).toBe(true);
     });
 
     it('selects action wildcards', function () {
-      this.compile(['*.save']);
-      expect(this.scope.selection['*.save']).toBe(true);
+      const transformed = transformTopicsToMap(['*.save'])
+      expect(isActionChecked(transformed, '*', 'save')).toBe(true);
     });
   });
 
   describe('translating selection to topics', function () {
-    beforeEach(function () {
-      this.init = function (selection) {
-        this.compile();
-        _.extend(this.scope.selection, selection);
-        this.$apply();
-      };
-    });
-
     it('translates specific topics', function () {
-      this.init({'Entry.save': true});
-      expect(this.scope.topics).toEqual(['Entry.save']);
+      const map = changeAction(createInternalState(false), 'Entry', 'save', true)
+      expect(transformMapToTopics(map)).toEqual(['Entry.save']);
     });
 
     it('translates entity type wildcards, removes redundant topics', function () {
-      this.init({'Entry.save': true, 'Entry.*': true});
-      expect(this.scope.topics).toEqual(['Entry.*']);
+      const map = changeAction(createInternalState(false), 'Entry', '*', true)
+      expect(transformMapToTopics(map)).toEqual(['Entry.*']);
     });
 
     it('translates action wildcards, removes redundant topics', function () {
-      this.init({'Entry.save': true, '*.save': true});
-      expect(this.scope.topics).toEqual(['*.save']);
+      const map = changeAction(createInternalState(false), '*', 'save', true)
+      expect(transformMapToTopics(map)).toEqual(['*.save']);
     });
 
     it('utilizes all types of translation creating minimal set of topics', function () {
-      this.init({'Entry.*': true, 'Entry.save': true, '*.save': true, 'Asset.delete': true, 'Asset.save': true});
-      expect(this.scope.topics).toEqual(['*.save', 'Asset.delete', 'Entry.*']);
+      let map = changeAction(createInternalState(false), 'Entry', 'save', true)
+      map = changeAction(map, 'Asset', 'save', true)
+      map = changeAction(map, 'ContentType', 'save', true)
+      expect(transformMapToTopics(map)).toEqual(['*.save']);
     });
   });
 
@@ -111,12 +94,12 @@ describe('Webhook Segmentation directive', function () {
       }.bind(this);
 
       this.compile(['Entry.save']);
-      setCheckbox(inputs().first(), true);
+      inputs().first()[0].click()
       this.$apply();
 
       inputs().each(function () { expect(this.checked).toBe(true); });
-      expect(this.scope.selection['Entry.*']).toBe(true);
-      expect(this.scope.selection['Entry.save']).toBe(true);
+      expect(isActionChecked(this.scope.webhook.selection, 'Entry', '*')).toBe(true);
+      expect(isActionChecked(this.scope.webhook.selection, 'Entry', 'save')).toBe(true);
     });
 
     it('selects all vertical checkboxes for action wildcard, stores selection', function () {
@@ -125,12 +108,13 @@ describe('Webhook Segmentation directive', function () {
       }.bind(this);
 
       this.compile(['Asset.create']);
-      setCheckbox(inputs().last(), true);
+      inputs().last()[0].click()
       this.$apply();
 
+      debugger;
       inputs().each(function () { expect(this.checked).toBe(true); });
-      expect(this.scope.selection['*.create']).toBe(true);
-      expect(this.scope.selection['Asset.create']).toBe(true);
+      expect(isActionChecked(this.scope.webhook.selection, '*', 'create')).toBe(true);
+      expect(isActionChecked(this.scope.webhook.selection, 'Asset', 'create')).toBe(true);
     });
   });
 });
