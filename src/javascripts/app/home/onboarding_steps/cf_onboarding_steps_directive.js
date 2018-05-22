@@ -34,14 +34,17 @@ angular.module('contentful')
         const prefix = `ctfl:${user.sys.id}:modernStackOnboarding`;
         const msDevChoiceSpace = store.get(`${prefix}:developerChoiceSpace`);
         const msContentChoiceSpace = store.get(`${prefix}:contentChoiceSpace`);
+        const autoSpaceCreationFailed = store.get(`ctfl:${user.sys.id}:autoSpaceCreationFailed`);
         const currentSpaceId = spaceContext.space && spaceContext.space.getSys().id;
 
         controller.showModernStackDevChoiceNextSteps =
           flag &&
+          !autoSpaceCreationFailed &&
           currentSpaceId === msDevChoiceSpace;
 
         controller.showModerStackContentChoiceNextSteps =
           flag &&
+          !autoSpaceCreationFailed &&
           currentSpaceId === msContentChoiceSpace;
       });
 

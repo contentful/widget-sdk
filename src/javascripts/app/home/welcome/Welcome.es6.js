@@ -20,14 +20,17 @@ const Welcome = createReactClass({
   render () {
     const { user } = this.props;
 
-    const greeting = getGreeting(user);
     const isNew = user && user.signInCount === 1;
     const isOld = user && user.signInCount > 1;
+
+    const greeting = getGreeting(user);
+
     const scrollToDeveloperResources = h('span', null,
       'Get started with content creation in your space or get ',
       h('a', {onClick: this.scrollToDeveloperResources}, 'SDKs, tools & tutorials below'),
       '.'
     );
+
     return h('div', null,
       h('section', {className: 'home-section'},
         h('h2', {className: 'home-section__heading', 'data-test-id': 'greeting'}, greeting),
