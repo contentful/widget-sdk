@@ -81,6 +81,7 @@ registerSpaceWizardEvent('space_wizard:cancel');
 registerSpaceWizardEvent('space_wizard:confirm');
 registerSpaceWizardEvent('space_wizard:navigate');
 registerSpaceWizardEvent('space_wizard:link_click');
+registerSpaceWizardEvent('space_wizard:space_create');
 
 registerEvent('global:app_loaded', 'app_open', AppOpen);
 

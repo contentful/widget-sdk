@@ -37,8 +37,7 @@ export default function (_eventName, data) {
   if (data.wizardData) {
     contexts.push({
       schema: getSchema('feature_space_wizard').path,
-      // todo - action should be something else than 'navigate'
-      data: extend(getSpaceWizardData(data.wizardData, 'navigate'), baseData)
+      data: extend(getSpaceWizardData(data.wizardData, 'space_create'), baseData)
     });
   }
 
