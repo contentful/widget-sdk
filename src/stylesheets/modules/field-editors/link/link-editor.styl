@@ -66,6 +66,16 @@ $cf-links-editor-shadow()
         margin-left: $links-gap-x
         margin-top: $links-gap-y
 
+.link-editor__create-asset-loading-spinner
+  display: inline-block;
+  position: relative
+  top: 2px // For optical alignment
+  height: 12px
+  margin-right: 10px
+  $spinner-base()
+  +$spinner-active(black, 14px, 2px)
+    display: block
+
 .link-editor__warning
   ul
     margin-bottom: $rhythm(0.75)
