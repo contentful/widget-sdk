@@ -130,7 +130,8 @@ export default ($scope, $state) => {
     const moreThanOneNewEntityAdded =
       previousEntities.length + 1 < $scope.entities.length;
 
-    $scope.entities = getSlideInEntities();
+    $scope.entities = getSlideInEntities()
+      .slice($scope.isSlideinEntryEditorEnabled ? 0 : -1);
 
     // If there was more than one new entity added to the stack, we will have to
     // trigger loading for all those new entries, not just the one on top.
