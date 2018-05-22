@@ -8,7 +8,10 @@ import { get, castArray, findIndex } from 'lodash';
 // they would always be entries only (assets do not have references).
 
 const SLIDE_IN_QS = 'slideIn';
-const TYPES = { ASSET: 'Asset', ENTRY: 'Entry' };
+const TYPES = {
+  ASSET: 'Asset',
+  ENTRY: 'Entry'
+};
 
 export function getSlideInEntities () {
   const slideInEntities = deserializeQS();
@@ -21,13 +24,7 @@ export function getSlideInEntities () {
   return slideInEntities;
 }
 
-const getMaxLevelFromFeatureFlag = value =>
-  [0, 1].includes(value) ? value : Infinity;
-
-const canSlideIn = maxSlideInLevel =>
-  getSlideInEntities().length - 1 < maxSlideInLevel;
-
-export const goToSlideInEntity = (entity, featureFlagValue = false) => {
+export const goToSlideInEntity = (entity, featureFlagValue) => {
   if (!canSlideIn(getMaxLevelFromFeatureFlag(featureFlagValue))) {
     if (entity.type === TYPES.ENTRY) {
       $state.go('.', { entryId: entity.id });
@@ -45,14 +42,14 @@ export const goToSlideInEntity = (entity, featureFlagValue = false) => {
   $location.search(SLIDE_IN_QS, serializedEntities);
 };
 
-export const goToPreviousSlideOrExit = (featureFlagValue, callback) => {
+export const goToPreviousSlideOrExit = (featureFlagValue, onExit) => {
   const slideInEntities = getSlideInEntities();
   const numEntities = slideInEntities.length;
   if (numEntities > 1) {
     const previousEntity = slideInEntities[numEntities - 2];
     goToSlideInEntity(previousEntity, featureFlagValue);
   } else {
-    callback();
+    onExit();
   }
 };
 
@@ -61,6 +58,26 @@ function deserializeQS () {
   const serializedEntities = castArray(get(searchObject, SLIDE_IN_QS, []));
   return serializedEntities.map(string => {
     const [type, id] = string.split(':');
-    return { type, id };
+    return {
+      type: convertToEntityType(type),
+      id
+    };
   });
+}
+
+function convertToEntityType (value) {
+  if (value.toLowerCase() === TYPES.ENTRY.toLowerCase()) {
+    return TYPES.ENTRY;
+  } else if (value.toLowerCase() === TYPES.ASSET.toLowerCase()) {
+    return TYPES.ASSET;
+  }
+  throw new Error(`Entity type ${value} is not supported`);
+}
+
+function getMaxLevelFromFeatureFlag (value) {
+  return [0, 1].includes(value) ? value : Infinity;
+}
+
+function canSlideIn (maxSlideInLevel) {
+  return getSlideInEntities().length - 1 < maxSlideInLevel;
 }
