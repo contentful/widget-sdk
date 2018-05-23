@@ -13,7 +13,12 @@ import * as BulkAssetsCreator from 'services/BulkAssetsCreator';
 export function create (editor, locale, defaultLocaleCode) {
   const {
     fallbackCode,
-    internal_code: localeCode
+    internal_code: localeCode,
+    // we need regular code in order to get correct
+    // translations. Internal code might be different,
+    // and in localized content property key is code,
+    // not internal_code
+    code: translationLocaleCode
   } = locale;
 
   const advancedActions = {
@@ -87,7 +92,7 @@ export function create (editor, locale, defaultLocaleCode) {
     // check whether do we have some assets, which don't have
     // a version in this field's locale
     const otherLocales = assets.filter(asset => {
-      return !get(asset, ['fields', 'file', localeCode]);
+      return !get(asset, ['fields', 'file', translationLocaleCode]);
     });
 
     const linksWithMeta = assets
@@ -122,7 +127,7 @@ export function create (editor, locale, defaultLocaleCode) {
           number: otherLocales.length,
           text,
           // which locale we are trying to use
-          locale: localeCode
+          locale: translationLocaleCode
         }
       }).promise.then(() => {
         editor.insert(links);
