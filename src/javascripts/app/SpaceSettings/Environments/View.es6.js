@@ -1,6 +1,5 @@
 import * as Config from 'Config';
 import { assign } from 'utils/Collections';
-import pageSettingsIcon from 'svg/page-settings';
 import { caseofEq } from 'sum-types';
 
 import { h } from 'ui/Framework';
@@ -9,8 +8,9 @@ import { table, tr, td, th } from 'ui/Content/Table';
 import { container, hbox, vspace, ihspace } from 'ui/Layout';
 import * as Workbench from 'app/Workbench';
 import { byName as Colors } from 'Styles/Colors';
-import questionMarkIcon from 'svg/QuestionMarkIcon';
 
+import pageSettingsIcon from 'svg/page-settings';
+import questionMarkIcon from 'svg/QuestionMarkIcon';
 import CopyIconButton from 'ui/Components/CopyIconButton';
 
 export default function render (state, actions) {
@@ -19,7 +19,7 @@ export default function render (state, actions) {
       title: [ 'Environments' ],
       icon: pageSettingsIcon
     }),
-    sidebar: sidebar(actions),
+    sidebar: sidebar(state, actions),
     content: container({
       padding: '0em 1em'
     }, [ environmentList(state, actions) ])
@@ -153,14 +153,15 @@ function deleteButton (environment) {
 }
 
 
-function sidebar ({ OpenCreateDialog }) {
+function sidebar ({ canCreate }, { OpenCreateDialog }) {
   return [
     h('h2.entity-sidebar__heading', [
       'Add environment'
     ]),
     h('button.btn-action.x--block', {
       dataTestId: 'openCreateDialog',
-      onClick: () => OpenCreateDialog()
+      onClick: () => OpenCreateDialog(),
+      disabled: !canCreate
     }, [ 'Add environment' ]),
     vspace(5),
     h('h2.entity-sidebar__heading', [

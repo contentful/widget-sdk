@@ -6,6 +6,7 @@ import { bindActions, createStore, makeReducer } from 'ui/Framework/Store';
 import * as LD from 'utils/LaunchDarkly';
 
 import * as accessChecker from 'access_control/AccessChecker';
+import createResourceService from 'services/ResourceService';
 import $state from '$state';
 
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo';
@@ -44,9 +45,12 @@ const ReceiveResponse = makeCtor('ReceiveResponse');
 
 
 const reduce = makeReducer({
-  [Reload]: (state, _, { resourceEndpoint, dispatch }) => {
+  [Reload]: (state, _, { resourceEndpoint, resourceService, dispatch }) => {
     C.runTask(function* () {
-      const result = yield C.tryP(resourceEndpoint.getAll());
+      const result = yield C.tryP(Promise.all([
+        resourceEndpoint.getAll(),
+        resourceService.canCreate('environment')
+      ]));
       dispatch(ReceiveResponse, result);
     });
     return assign(state, { isLoading: true });
@@ -80,9 +84,10 @@ const reduce = makeReducer({
   },
   [ReceiveResponse]: (state, result) => {
     return match(result, {
-      [C.Success]: (items) => {
+      [C.Success]: ([items, canCreate]) => {
         return assign(state, {
           items: items.map(makeEnvironmentModel),
+          canCreate: canCreate,
           isLoading: false
         });
       },
@@ -95,12 +100,15 @@ const reduce = makeReducer({
 // This is exported for testing purposes.
 export function createComponent (spaceContext) {
   const resourceEndpoint = SpaceEnvironmentRepo.create(spaceContext.endpoint, spaceContext.getId());
+  const resourceService = createResourceService(spaceContext.getId(), 'space');
   const context = {
-    resourceEndpoint
+    resourceEndpoint,
+    resourceService
   };
 
   const initialState = {
-    items: []
+    items: [],
+    canCreate: true
   };
 
   const store = createStore(
