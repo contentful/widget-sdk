@@ -16,7 +16,7 @@ angular.module('contentful')
   };
 
   function render (scope, el) {
-    const initialState = internalState.transformTopicsToMap(scope.webhook.topics)
+    const initialState = internalState.transformTopicsToMap(scope.webhook.topics);
 
     const ui = React.createElement(WebhookSegmentation, {
       onChange: onChange(scope),

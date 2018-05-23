@@ -1,11 +1,10 @@
-import {setCheckbox} from 'helpers/DOM';
 import {
   createMap as createInternalState,
   changeAction,
   isActionChecked,
   transformMapToTopics,
   transformTopicsToMap
-} from 'app/Webhooks/WebhookSegmentationState'
+} from 'app/Webhooks/WebhookSegmentationState';
 
 describe('Webhook Segmentation directive', function () {
   beforeEach(function () {
@@ -14,7 +13,7 @@ describe('Webhook Segmentation directive', function () {
     this.compile = function (topics) {
       const data = { webhook: { topics: topics || [] } };
       this.element = this.$compile('<cf-webhook-segmentation topics="topics" />', data);
-      this.scope = this.element.isolateScope() || this.element.scope()
+      this.scope = this.element.isolateScope() || this.element.scope();
     }.bind(this);
   });
 
@@ -41,48 +40,47 @@ describe('Webhook Segmentation directive', function () {
       expect(this.radio(1).checked).toBe(true);
       expect(this.hasTable()).toBe(true);
     });
-
   });
 
   describe('translating topics to selection', function () {
     it('selects specific topics', function () {
-      const transformed = transformTopicsToMap(['Entry.autosave', 'Entry.delete'])
+      const transformed = transformTopicsToMap(['Entry.autosave', 'Entry.delete']);
 
       expect(isActionChecked(transformed, 'Entry', 'autosave')).toBe(true);
       expect(isActionChecked(transformed, 'Entry', 'delete')).toBe(true);
     });
 
     it('selects entity type wildcards', function () {
-      const transformed = transformTopicsToMap(['ContentType.*'])
+      const transformed = transformTopicsToMap(['ContentType.*']);
       expect(isActionChecked(transformed, 'ContentType', '*')).toBe(true);
     });
 
     it('selects action wildcards', function () {
-      const transformed = transformTopicsToMap(['*.save'])
+      const transformed = transformTopicsToMap(['*.save']);
       expect(isActionChecked(transformed, '*', 'save')).toBe(true);
     });
   });
 
   describe('translating selection to topics', function () {
     it('translates specific topics', function () {
-      const map = changeAction(createInternalState(false), 'Entry', 'save', true)
+      const map = changeAction(createInternalState(false), 'Entry', 'save', true);
       expect(transformMapToTopics(map)).toEqual(['Entry.save']);
     });
 
     it('translates entity type wildcards, removes redundant topics', function () {
-      const map = changeAction(createInternalState(false), 'Entry', '*', true)
+      const map = changeAction(createInternalState(false), 'Entry', '*', true);
       expect(transformMapToTopics(map)).toEqual(['Entry.*']);
     });
 
     it('translates action wildcards, removes redundant topics', function () {
-      const map = changeAction(createInternalState(false), '*', 'save', true)
+      const map = changeAction(createInternalState(false), '*', 'save', true);
       expect(transformMapToTopics(map)).toEqual(['*.save']);
     });
 
     it('utilizes all types of translation creating minimal set of topics', function () {
-      let map = changeAction(createInternalState(false), 'Entry', 'save', true)
-      map = changeAction(map, 'Asset', 'save', true)
-      map = changeAction(map, 'ContentType', 'save', true)
+      let map = changeAction(createInternalState(false), 'Entry', 'save', true);
+      map = changeAction(map, 'Asset', 'save', true);
+      map = changeAction(map, 'ContentType', 'save', true);
       expect(transformMapToTopics(map)).toEqual(['*.save']);
     });
   });
@@ -94,7 +92,7 @@ describe('Webhook Segmentation directive', function () {
       }.bind(this);
 
       this.compile(['Entry.save']);
-      inputs().first()[0].click()
+      inputs().first()[0].click();
       this.$apply();
 
       inputs().each(function () { expect(this.checked).toBe(true); });
@@ -107,7 +105,7 @@ describe('Webhook Segmentation directive', function () {
       }.bind(this);
 
       this.compile(['Asset.create']);
-      inputs().last()[0].click()
+      inputs().last()[0].click();
       this.$apply();
 
       inputs().each(function () { expect(this.checked).toBe(true); });

@@ -35,12 +35,12 @@ export default class WebhookSegmentation extends React.Component {
     );
   }
 
-  renderTable() {
+  renderTable () {
     if (!this.state.allEventsSelected) {
       return (
         <WebhookSegmentationTable values={this.props.values}
                                   onChange={this.props.onChange} />
-      )
+      );
     }
   }
 

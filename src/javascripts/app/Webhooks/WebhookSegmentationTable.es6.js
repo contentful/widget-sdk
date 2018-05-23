@@ -36,7 +36,7 @@ export default class WebhookSegmentationTable extends React.Component {
     this.props.onChange(map);
   }
 
-  renderActionCheckbox(entityType, action) {
+  renderActionCheckbox (entityType, action) {
     return (
       <ActionCheckbox key={`${entityType}.${action}`}
                       action={action}
@@ -44,7 +44,7 @@ export default class WebhookSegmentationTable extends React.Component {
                       isChecked={this.isChecked(entityType, action)}
                       isDisabled={isActionDisabled(entityType, action)}
                       onChange={change => this.onChange(change)} />
-    )
+    );
   }
 
   renderRows () {
