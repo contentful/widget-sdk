@@ -14,7 +14,7 @@ describe('Webhook Segmentation directive', function () {
     this.compile = function (topics) {
       const data = { webhook: { topics: topics || [] } };
       this.element = this.$compile('<cf-webhook-segmentation topics="topics" />', data);
-      this.scope = this.element.isolateScope();
+      this.scope = this.element.isolateScope() || this.element.scope()
     }.bind(this);
   });
 
@@ -98,8 +98,7 @@ describe('Webhook Segmentation directive', function () {
       this.$apply();
 
       inputs().each(function () { expect(this.checked).toBe(true); });
-      expect(isActionChecked(this.scope.webhook.selection, 'Entry', '*')).toBe(true);
-      expect(isActionChecked(this.scope.webhook.selection, 'Entry', 'save')).toBe(true);
+      expect(this.scope.webhook.topics).toEqual(['Entry.*']);
     });
 
     it('selects all vertical checkboxes for action wildcard, stores selection', function () {
@@ -111,10 +110,8 @@ describe('Webhook Segmentation directive', function () {
       inputs().last()[0].click()
       this.$apply();
 
-      debugger;
       inputs().each(function () { expect(this.checked).toBe(true); });
-      expect(isActionChecked(this.scope.webhook.selection, '*', 'create')).toBe(true);
-      expect(isActionChecked(this.scope.webhook.selection, 'Asset', 'create')).toBe(true);
+      expect(this.scope.webhook.topics).toEqual(['*.create']);
     });
   });
 });
