@@ -1,4 +1,3 @@
-import {extend} from 'lodash';
 import {getSchema} from 'analytics/snowplow/Schemas';
 import {getSpaceWizardData} from './SpaceWizard';
 
@@ -13,13 +12,13 @@ export default function (_eventName, data) {
   const baseData = getBaseData(data);
   const contexts = [{
     schema: getSchema('space').path,
-    data: extend({action: 'create'}, baseData)
+    data: {action: 'create', ...baseData}
   }];
 
   if (data.templateName) {
     contexts.push({
       schema: getSchema('space_template').path,
-      data: extend({name: data.templateName}, baseData)
+      data: {name: data.templateName, ...baseData}
     });
   }
 
@@ -29,7 +28,7 @@ export default function (_eventName, data) {
   if (data.entityAutomationScope) {
     contexts.push({
       schema: getSchema('entity_automation_scope').path,
-      data: extend({scope: data.entityAutomationScope.scope}, baseData)
+      data: {scope: data.entityAutomationScope.scope, ...baseData}
     });
   }
 
@@ -37,7 +36,7 @@ export default function (_eventName, data) {
   if (data.wizardData) {
     contexts.push({
       schema: getSchema('feature_space_wizard').path,
-      data: extend(getSpaceWizardData(data.wizardData, 'space_create'), baseData)
+      data: {...getSpaceWizardData(data.wizardData, 'space_create'), ...baseData}
     });
   }
 

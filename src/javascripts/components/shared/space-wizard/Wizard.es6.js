@@ -204,7 +204,7 @@ const Wizard = createReactClass({
     this.track('confirm');
   },
   track (action, data = {}) {
-    track(action, {...data, ...getTrackingData(this.state, this.props)});
+    track(action, {...data, ...createTrackingData(this.state, this.props)});
   },
   navigate (stepId) {
     this.setState({currentStepId: stepId});
@@ -232,7 +232,7 @@ const Wizard = createReactClass({
       const stepId = getNextStep(steps, currentStepId);
 
       this.setState((state, props) => {
-        track('navigate', {targetStep: stepId, ...getTrackingData(state, props)});
+        track('navigate', {targetStep: stepId, ...createTrackingData(state, props)});
 
         return {currentStepId: stepId};
       });
@@ -260,7 +260,7 @@ const Wizard = createReactClass({
 
       onSpaceCreated(newSpace);
 
-      const wizardData = getTrackingData(this.state, this.props);
+      const wizardData = createTrackingData(this.state, this.props);
       const spaceCreateEventData =
           template
           ? {templateName: template.name, entityAutomationScope: {scope: 'space_template'}, wizardData}
@@ -398,7 +398,7 @@ function track (eventName, data) {
   Analytics.track(`space_wizard:${eventName}`, data);
 }
 
-function getTrackingData (state, props) {
+function createTrackingData (state, props) {
   const {action, organization} = props;
   const {currentStepId, data: {newSpaceRatePlan, spaceName, template}} = state;
 

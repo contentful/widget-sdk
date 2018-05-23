@@ -2,7 +2,7 @@ import { addUserOrgSpace } from './Decorators';
 
 const SpaceWizardTransformer = addUserOrgSpace((eventName, data) => {
   const action = eventName.split(':')[1];
-  const wizardData = getSpaceWizardData(data, action);
+  const wizardData = getSpaceWizardData(action, data);
 
   return {
     data: wizardData
@@ -11,7 +11,7 @@ const SpaceWizardTransformer = addUserOrgSpace((eventName, data) => {
 
 export default SpaceWizardTransformer;
 
-export function getSpaceWizardData (data, action) {
+export function getSpaceWizardData (action, data) {
   const wizardData = {
     intended_action: data.action === 'change' ? 'change_space_type' : 'create',
     current_space_type: data.currentSpaceType || null,
