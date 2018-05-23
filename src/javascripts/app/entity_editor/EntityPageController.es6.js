@@ -30,9 +30,10 @@ export default ($scope, $state) => {
 
   onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, flagState => {
     $scope.isSlideinEntryEditorEnabled = flagState === 2;
+    setEntities();
   });
 
-  setEntities($scope);
+  setEntities();
 
   const isTopLayer = $scope.isTopLayer =
     (index) => index + 1 === $scope.entities.length;
@@ -103,7 +104,7 @@ export default ($scope, $state) => {
   };
 
   const unlistenStateChangeSuccess = $scope.$on('$locationChangeSuccess', () =>
-    setEntities($scope)
+    setEntities()
   );
 
   const unlistenStateChangeStart = $scope.$on(
@@ -125,7 +126,7 @@ export default ($scope, $state) => {
     clearTimeouts();
   });
 
-  function setEntities ($scope) {
+  function setEntities () {
     const previousEntities = $scope.entities;
     const moreThanOneNewEntityAdded =
       previousEntities.length + 1 < $scope.entities.length;
