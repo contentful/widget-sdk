@@ -41,7 +41,7 @@ export default ($scope, _$state) => {
     const currentlyPeekedLayerIndex = peekedLayerIndexes.slice(-1)[0];
     const optimize = $scope.entities.length > 4;
     return {
-      [`workbench-layer--${index}:`]: true,
+      [`workbench-layer--${index}`]: true,
       'workbench-layer--is-current': isTopLayer(index),
       'workbench-layer--hovered': index === hoveredLayerIndex,
       'workbench-layer--peeked': peekedLayerIndexes.includes(index),
