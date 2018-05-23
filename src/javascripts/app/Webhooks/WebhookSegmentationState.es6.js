@@ -70,11 +70,11 @@ export function changeAllTypesByAction (map, action, value) {
 // Return value of a specific action and entity type.
 export function isActionChecked (map, type, action) {
   if (type === '*') {
-    return isAllEntityTypesChecked(map, action);
+    return areAllEntityTypesChecked(map, action);
   }
 
   if (action === '*') {
-    return isAllActionsChecked(map, type);
+    return areAllActionsChecked(map, type);
   }
 
   return map[type][action];
@@ -85,18 +85,18 @@ export function isActionDisabled (type, action) {
 }
 
 // Is all actions *under given entity type* checked ?
-export function isAllActionsChecked (map, entityType) {
+export function areAllActionsChecked (map, entityType) {
   return ACTIONS.filter(a => !isActionDisabled(entityType, a)).every(a => map[entityType][a]);
 }
 
 // Is all types *matching given action* checked ?
-export function isAllEntityTypesChecked (map, action) {
+export function areAllEntityTypesChecked (map, action) {
   return ENTITY_TYPES.filter(t => !isActionDisabled(t, action)).every(t => map[t][action]);
 }
 
-// Is everything checked ?
-export function isEverythingChecked (map) {
-  return ENTITY_TYPES.every(t => isAllActionsChecked(map, t));
+// Are all actions checked ?
+export function areAllEventsChecked (map) {
+  return ENTITY_TYPES.every(t => areAllActionsChecked(map, t));
 }
 
 // It takes a map, and returns list of topics from given map. Output looks like this;
@@ -111,18 +111,18 @@ export function transformMapToTopics (map) {
   // Find wildcarded entity types and add them into the result array first
   ENTITY_TYPES.forEach(t => {
     // Is all actions in the same entity row checked ? Then early return, adding a wilcard record.
-    if (isAllActionsChecked(map, t)) {
+    if (areAllActionsChecked(map, t)) {
       result.push(`${t}.*`);
       return;
     }
 
     ACTIONS.filter(a => !isActionDisabled(t, a)).forEach(a => {
       // Is this action checked for all entity types? Then push a wild card for it.
-      const isAllChecked = isAllEntityTypesChecked(map, a);
+      const allChecked = areAllEntityTypesChecked(map, a);
 
-      if (isAllChecked && !result.includes(`*.${a}`)) {
+      if (allChecked && !result.includes(`*.${a}`)) {
         result.push(`*.${a}`);
-      } else if (!isAllChecked && map[t][a]) {
+      } else if (!allChecked && map[t][a]) {
         // Otherwise, just push it without wildcard.
         result.push(`${t}.${a}`);
       }

@@ -1,23 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import WebhookSegmentationTable from './WebhookSegmentationTable';
-import { createMap, isEverythingChecked } from './WebhookSegmentationState';
+import { createMap, areAllEventsChecked } from './WebhookSegmentationState';
 
 export default class WebhookSegmentation extends React.Component {
   constructor (props) {
     super(props);
 
     this.state = {
-      allEventsSelected: isEverythingChecked(this.props.values)
+      allEventsSelected: areAllEventsChecked(this.props.values)
     };
   }
 
-  onSelectionTypeChange (value) {
+  onSelectionTypeChange (allEventsSelected) {
     this.setState({
-      allEventsSelected: value
+      allEventsSelected: allEventsSelected
     });
 
-    if (value) {
+    if (allEventsSelected) {
       this.props.onChange(createMap(true));
     }
   }
