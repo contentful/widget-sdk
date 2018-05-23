@@ -14,6 +14,7 @@ import {asReact} from 'ui/Framework/DOMRenderer';
 import Icon from 'ui/Components/Icon';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 import {RequestState, formatPrice} from './WizardUtils';
+import {byName as colors} from 'Styles/Colors';
 import pluralize from 'pluralize';
 
 const SpacePlanSelector = createReactClass({
@@ -185,7 +186,23 @@ const SpacePlanItem = createReactClass({
             </li>;
           })}
         </ul>
-        <Icon className="space-plans-list__item__chevron" name="dd-arrow-down"/>
+
+        { plan.disabled && !isCurrentPlan &&
+          <Tooltip
+            style={{
+              position: 'absolute',
+              right: '19px',
+              bottom: '25px',
+              color: colors.elementDarkest
+            }}
+            tooltip='You cannot change to this plan.'
+          >
+              <Icon name='question-mark' />
+          </Tooltip>
+        }
+        { !plan.disabled &&
+          <Icon className="space-plans-list__item__chevron" name="dd-arrow-down"/>
+        }
       </div>
     );
   }
