@@ -19,6 +19,14 @@ export default class ActionCheckbox extends React.Component {
     });
   }
 
+  renderLabel () {
+    if (this.props.action === '*') {
+      return (
+          <label>{LABELS[this.props.type]}</label>
+      );
+    }
+  }
+
   render () {
     if (this.props.isDisabled) {
       return (<td className="action-cell"><input type="checkbox" disabled /></td>);
@@ -30,14 +38,6 @@ export default class ActionCheckbox extends React.Component {
         {this.renderLabel()}
       </td>
     );
-  }
-
-  renderLabel () {
-    if (this.props.action === '*') {
-      return (
-          <label>{LABELS[this.props.type]}</label>
-      );
-    }
   }
 }
 
