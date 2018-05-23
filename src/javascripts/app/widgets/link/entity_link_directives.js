@@ -73,6 +73,7 @@ angular.module('cf.app')
   var entityStateColor = require('Styles/Colors').entityStateColor;
   var LD = require('utils/LaunchDarkly');
   var spaceContext = require('spaceContext');
+  var Analytics = require('analytics/Analytics');
 
   var INLINE_REFERENCE_FEATURE_FLAG = 'feature-at-02-2018-inline-reference-field';
 
@@ -84,15 +85,14 @@ angular.module('cf.app')
   $scope.config = _.assign({}, $scope.config || {});
   $scope.actions = $scope.actions || {};
   $scope.onClick = function ($event) {
-    var slidingEntryEditor = $scope.actions.slideinEdit;
-
-    if (slidingEntryEditor) {
+    if ($scope.actions.slideinEdit) {
       // This will prevent navigating to the entry page
       // when clicking the ref link and open it inline instead.
       // This will still allow users to navigate to entry page
       // with right click + open in a new tab.
       $event.preventDefault();
-      $scope.actions.slideinEdit();
+      const eventData = $scope.actions.slideinEdit();
+      Analytics.track('slide_in_editor:open', eventData);
     } else if ($scope.actions.edit) {
       $event.preventDefault();
       $scope.actions.edit();

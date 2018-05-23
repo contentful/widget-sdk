@@ -57,10 +57,11 @@ describe('BackNav', function () {
     sinon.assert.alwaysCalledWithMatch(
       this.goToPreviousSlideOrExitStub,
       SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE,
+      'arrow_back',
       sinon.match.func
     );
     sinon.assert.notCalled(this.$stateGoStub);
-    const [[, callback]] = this.goToPreviousSlideOrExitStub.args;
+    const [[, , callback]] = this.goToPreviousSlideOrExitStub.args;
     callback();
     sinon.assert.calledOnceWith(
       this.$stateGoStub,

@@ -12,6 +12,7 @@ const BackNav = createReactClass({
   handleClick () {
     goToPreviousSlideOrExit(
       this.props.slideInFeatureFlagValue,
+      'arrow_back',
       () => $state.go('^.list')
     );
   },
@@ -23,7 +24,7 @@ const BackNav = createReactClass({
             className="btn btn__back"
             data-test-id="breadcrumbs-back-btn"
             onClick={this.handleClick}
-            >
+          >
             <Icon name="back" />
           </div>
         </div>

@@ -81,7 +81,7 @@ describe('EntityNavigationHelpers', function () {
   describe('goToSlideInEntity', function () {
     const FeatureFlagValue = {
       Off: 0,
-      OnlyOneSildeInLevel: 1,
+      OnlyOneSlideInLevel: 1,
       InfiniteNumberOfLevelsAndEternalGlory: 2
     };
 
@@ -136,7 +136,10 @@ describe('EntityNavigationHelpers', function () {
         );
 
         expect(this.search.calledWith('slideIn', searchArgs)).toBe(true);
-        expect(result).toEqual(undefined);
+        expect(result).toEqual({
+          currentSlideLevel: search.slideIn ? search.slideIn.length : 0,
+          targetSlideLevel: searchArgs.length
+        });
       });
     }
 
@@ -166,7 +169,7 @@ describe('EntityNavigationHelpers', function () {
         search: {
           slideIn: ['entry:entry-id-1']
         },
-        featureFlagValue: FeatureFlagValue.OnlyOneSildeInLevel
+        featureFlagValue: FeatureFlagValue.OnlyOneSlideInLevel
       },
       ['.', { entryId: 'entry-id' }]
     );
@@ -174,7 +177,7 @@ describe('EntityNavigationHelpers', function () {
     willReplaceState(
       'adds slidein entry to stack',
       {
-        featureFlagValue: FeatureFlagValue.OnlyOneSildeInLevel
+        featureFlagValue: FeatureFlagValue.OnlyOneSlideInLevel
       },
       ['Entry:entry-id']
     );
@@ -182,7 +185,7 @@ describe('EntityNavigationHelpers', function () {
     willReplaceState(
       'adds slidein asset to stack',
       {
-        featureFlagValue: FeatureFlagValue.OnlyOneSildeInLevel,
+        featureFlagValue: FeatureFlagValue.OnlyOneSlideInLevel,
         entity: { id: 'asset-id', type: 'Asset' }
       },
       ['Asset:asset-id']
