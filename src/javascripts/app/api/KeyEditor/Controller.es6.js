@@ -116,7 +116,10 @@ function mountKeyEditor ($scope, apiKey, spaceEnvironments) {
   });
 
   reinitKeyEditor();
-  LD.onFeatureFlag($scope, ENVIRONMENTS_FLAG_NAME, reinitKeyEditor);
+  LD.onFeatureFlag($scope, ENVIRONMENTS_FLAG_NAME, environmentsEnabled => {
+    $scope.environmentsEnabled = environmentsEnabled;
+    return reinitKeyEditor(environmentsEnabled);
+  });
 
   $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
   $scope.apiKeyEditor = {
@@ -129,9 +132,13 @@ function mountKeyEditor ($scope, apiKey, spaceEnvironments) {
   };
 
   function remove () {
+    const envId = spaceContext.getEnvironmentId();
+    const link = $scope.environmentsEnabled && envId !== 'master'
+      ? 'spaces.detail.environment.api.keys.list'
+      : 'spaces.detail.api.keys.list';
     return spaceContext.apiKeyRepo.remove(apiKey.sys.id)
     .then(
-      () => $state.go('spaces.detail.api.keys.list').then(notify.deleteSuccess),
+      () => $state.go(link).then(notify.deleteSuccess),
       notify.deleteFail
     );
   }

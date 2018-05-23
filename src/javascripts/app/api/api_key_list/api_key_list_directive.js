@@ -21,6 +21,7 @@ angular.module('contentful')
   var ResourceUtils = require('utils/ResourceUtils');
   var createResourceService = require('services/ResourceService').default;
   var $q = require('$q');
+  var LD = require('utils/LaunchDarkly');
 
   var organization = spaceContext.organizationContext.organization;
   var resources = createResourceService(spaceContext.getId());
@@ -56,11 +57,30 @@ angular.module('contentful')
     }
   );
 
+  LD.onFeatureFlag($scope, 'feature-dv-11-2017-environments', function (environmentsEnabled) {
+    $scope.environmentsEnabled = environmentsEnabled;
+  });
+
+  $scope.keyLinkPrefix = 'spaces.detail.api.keys.detail';
+  $scope.$watchGroup([function () {
+    return spaceContext.getEnvironmentId();
+  }, 'environmentsEnabled'], function (envId, environmentsEnabled) {
+    $scope.envId = envId;
+    if (environmentsEnabled && envId !== 'master') {
+      $scope.keyLinkPrefix = 'spaces.detail.environment.api.keys.detail';
+    } else {
+      $scope.keyLinkPrefix = 'spaces.detail.api.keys.detail';
+    }
+  });
+
   function create () {
     var spaceName = spaceContext.getData(['name']);
     return spaceContext.apiKeyRepo.create(spaceName)
     .then(function (apiKey) {
-      return $state.go('spaces.detail.api.keys.detail', {apiKeyId: apiKey.sys.id});
+      const link = $scope.environmentsEnabled && $scope.envId !== 'master'
+        ? 'spaces.detail.environment.api.keys.detail'
+        : 'spaces.detail.api.keys.detail';
+      return $state.go(link, {apiKeyId: apiKey.sys.id});
     }, function (err) {
       notification.error(err.data.message);
     });
