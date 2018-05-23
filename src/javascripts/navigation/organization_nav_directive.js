@@ -93,7 +93,7 @@
         sref: 'account.organizations.usage({orgId: nav.orgId})',
         rootSref: 'account.organizations.usage',
         inheritUrlParams: false,
-        icon: 'nav-organization-billing',
+        icon: 'nav-usage',
         dataViewType: 'platform-usage'
       },
       {
