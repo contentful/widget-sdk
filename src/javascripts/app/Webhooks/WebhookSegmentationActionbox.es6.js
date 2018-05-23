@@ -36,8 +36,19 @@ export default class ActionCheckbox extends React.Component {
       );
     }
 
+    const classes = [];
+    if (this.props.action === '*') {
+      classes.push('entity-label', 'x--clickable-cell');
+    } else {
+      classes.push('action-cell');
+    }
+
+    if (this.props.type === '*') {
+      classes.push('x--highlighted-cell');
+    }
+
     return (
-      <td onClick={() => this.toggle()} className={this.props.action === '*' ? 'entity-label' : 'action-cell'}>
+      <td onClick={() => this.toggle()} className={classes.join(' ')}>
         <input id={this.props.type}
                type="checkbox"
                checked={this.props.isChecked}
