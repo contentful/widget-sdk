@@ -3,10 +3,13 @@ import { cloneDeep } from 'lodash';
 export const ENTITY_TYPES = ['ContentType', 'Entry', 'Asset'];
 export const ACTIONS = ['create', 'save', 'auto_save', 'archive', 'unarchive', 'publish', 'unpublish', 'delete'];
 export const DISABLED = { ContentType: ['auto_save', 'archive', 'unarchive'] };
-export const LABELS = {
+export const TYPE_LABELS = {
   ContentType: 'Content type',
   Entry: 'Entry',
-  Asset: 'Asset',
+  Asset: 'Asset'
+};
+
+export const ACTION_LABELS = {
   create: 'Create',
   save: 'Save',
   auto_save: 'Autosave',
@@ -36,7 +39,7 @@ export function createMap (defaultValue) {
 }
 
 // Change value of specific action under given entity type.
-// (!) All change* functions are pure (they return a new object)
+// This function is pure and returns a new object
 export function changeAction (map, entityType, action, checked) {
   if (action === '*') {
     return changeAllActionsByEntityType(map, entityType, checked);
@@ -52,18 +55,22 @@ export function changeAction (map, entityType, action, checked) {
 }
 
 // Change value of all actions matching given entity type.
-// (!) All change* functions are pure (they return a new object)
+// This function is pure and returns a new object
 export function changeAllActionsByEntityType (map, entityType, value) {
   const result = cloneDeep(map);
-  ACTIONS.filter(a => !isActionDisabled(entityType, a)).forEach(a => { result[entityType][a] = value; });
+  ACTIONS
+    .filter(a => !isActionDisabled(entityType, a))
+    .forEach(a => { result[entityType][a] = value; });
   return result;
 }
 
 // Change specific action under all types.
-// (!) All change* functions are pure (they return a new object)
+// This function is pure and returns a new object
 export function changeAllTypesByAction (map, action, value) {
   const result = cloneDeep(map);
-  ENTITY_TYPES.filter(t => !isActionDisabled(t, action)).forEach(t => { result[t][action] = value; });
+  ENTITY_TYPES
+    .filter(t => !isActionDisabled(t, action))
+    .forEach(t => { result[t][action] = value; });
   return result;
 }
 
@@ -81,7 +88,7 @@ export function isActionChecked (map, type, action) {
 }
 
 export function isActionDisabled (type, action) {
-  return DISABLED[type] && DISABLED[type].indexOf(action) > -1;
+  return DISABLED[type] && DISABLED[type].includes(action);
 }
 
 // Is all actions *under given entity type* checked ?
@@ -141,7 +148,7 @@ export function transformMapToTopics (map) {
 // Take a list of topics, convert them into a simple map of entity types and actions:
 export function transformTopicsToMap (topics) {
   if (!topics || topics.length === 0) return createMap(false);
-  if (topics.indexOf('*.*') > -1) return createMap(true);
+  if (topics.includes('*.*')) return createMap(true);
 
   const map = createMap(false);
 

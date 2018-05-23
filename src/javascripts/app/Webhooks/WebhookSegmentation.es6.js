@@ -26,11 +26,22 @@ export default class WebhookSegmentation extends React.Component {
     return (
       <div className="webhook-segmentation__option">
         <label>
-          <input type="radio" checked={value === this.state.allEventsSelected} onClick={() => this.onSelectionTypeChange(value)} />
+          <input type="radio"
+                 checked={value === this.state.allEventsSelected}
+                 onClick={() => this.onSelectionTypeChange(value)} />
           {caption}
         </label>
       </div>
     );
+  }
+
+  renderTable() {
+    if (this.state.allEventsSelected) return
+
+    return (
+      <WebhookSegmentationTable values={this.props.values}
+                                onChange={this.props.onChange} />
+    )
   }
 
   render () {
@@ -38,7 +49,7 @@ export default class WebhookSegmentation extends React.Component {
       <div className="webhook-segmentation">
         {this.renderOption('All Events', true)}
         {this.renderOption('Only Selected Events', false)}
-        { this.state.allEventsSelected ? null : <WebhookSegmentationTable values={this.props.values} onChange={this.props.onChange} /> }
+        {this.renderTable()}
       </div>
     );
   }

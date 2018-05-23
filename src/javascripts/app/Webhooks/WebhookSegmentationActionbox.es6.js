@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { LABELS } from './WebhookSegmentationState';
+import { TYPE_LABELS } from './WebhookSegmentationState';
 
 export default class ActionCheckbox extends React.Component {
-  onChange (event) {
+  onChange (checked) {
     this.props.onChange({
       type: this.props.type,
       action: this.props.action,
-      checked: event.target.checked
+      checked: checked
     });
   }
 
@@ -22,19 +22,26 @@ export default class ActionCheckbox extends React.Component {
   renderLabel () {
     if (this.props.action === '*') {
       return (
-          <label>{LABELS[this.props.type]}</label>
+        <label>{TYPE_LABELS[this.props.type]}</label>
       );
     }
   }
 
   render () {
     if (this.props.isDisabled) {
-      return (<td className="action-cell"><input type="checkbox" disabled /></td>);
+      return (
+        <td className="action-cell">
+          <input type="checkbox" disabled />
+        </td>
+      );
     }
 
     return (
       <td onClick={() => this.toggle()} className={this.props.action === '*' ? 'entity-label' : 'action-cell'}>
-        <input id={this.props.type} type="checkbox" checked={this.props.isChecked} onChange={e => this.onChange(e)} />
+        <input id={this.props.type}
+               type="checkbox"
+               checked={this.props.isChecked}
+               onChange={e => this.onChange(e.target.checked)} />
         {this.renderLabel()}
       </td>
     );

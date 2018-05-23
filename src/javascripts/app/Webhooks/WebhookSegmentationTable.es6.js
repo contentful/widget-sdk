@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ActionCheckbox from './WebhookSegmentationActionbox';
 import {
-  ACTIONS, ENTITY_TYPES, LABELS, changeAction, isActionChecked, isActionDisabled
+  ACTIONS, ENTITY_TYPES, ACTION_LABELS, changeAction, isActionChecked, isActionDisabled
 } from './WebhookSegmentationState';
 
 export default class WebhookSegmentationTable extends React.Component {
@@ -36,6 +36,17 @@ export default class WebhookSegmentationTable extends React.Component {
     this.props.onChange(map);
   }
 
+  renderActionCheckbox(entityType, action) {
+    return (
+      <ActionCheckbox key={`${entityType}.${action}`}
+                      action={action}
+                      type={entityType}
+                      isChecked={this.isChecked(entityType, action)}
+                      isDisabled={isActionDisabled(entityType, action)}
+                      onChange={change => this.onChange(change)} />
+    )
+  }
+
   renderRows () {
     return ENTITY_TYPES.map(t => this.renderRow(t));
   }
@@ -43,12 +54,7 @@ export default class WebhookSegmentationTable extends React.Component {
   renderRow (entityType) {
     return (
       <tr>
-        {['*'].concat(ACTIONS).map(action => (<ActionCheckbox key={`checkbox-${entityType}.${action}`}
-                                                              action={action}
-                                                              type={entityType}
-                                                              isChecked={this.isChecked(entityType, action)}
-                                                              isDisabled={isActionDisabled(entityType, action)}
-                                                              onChange={change => this.onChange(change)} />))}
+        {['*'].concat(ACTIONS).map(action => this.renderActionCheckbox(entityType, action))}
       </tr>
     );
   }
@@ -56,7 +62,7 @@ export default class WebhookSegmentationTable extends React.Component {
   renderActionLabel (action) {
     return (
       <th onClick={() => this.onChange({ type: '*', action, checked: !this.isChecked('*', action) })}>
-        <label>{LABELS[action]}</label>
+        <label>{ACTION_LABELS[action]}</label>
       </th>
     );
   }
@@ -65,11 +71,7 @@ export default class WebhookSegmentationTable extends React.Component {
     return (
       <tr className="footer">
         <td></td>
-        {ACTIONS.map(action => <ActionCheckbox key={`footer.*.${action}`}
-                                               type="*"
-                                               action={action}
-                                               isChecked={this.isChecked('*', action)}
-                                               onChange={change => this.onChange(change)} />)}
+        {ACTIONS.map(action => this.renderActionCheckbox('*', action))}
       </tr>
     );
   }
