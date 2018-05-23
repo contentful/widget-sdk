@@ -53,7 +53,7 @@ describe('EntityNavigationHelpers', function () {
           entryId: 'entry-id-2'
         },
         search: {
-          slideIn: 'entry-id'
+          previousEntries: 'entry-id'
         }
       },
       [{ id: 'entry-id', type: 'Entry' }, { id: 'entry-id-2', type: 'Entry' }]
@@ -66,7 +66,7 @@ describe('EntityNavigationHelpers', function () {
           entryId: 'entry-id-2'
         },
         search: {
-          slideIn: 'entry-id-1,entry-id-2,entry-id-1'
+          previousEntries: 'entry-id-1,entry-id-2,entry-id-1'
         }
       },
       [{ id: 'entry-id-1', type: 'Entry' }, { id: 'entry-id-2', type: 'Entry' }]
@@ -79,7 +79,7 @@ describe('EntityNavigationHelpers', function () {
           assetId: 'asset-id'
         },
         search: {
-          slideIn: 'entry-id,entry-id-2'
+          previousEntries: 'entry-id,entry-id-2'
         }
       },
       [
@@ -104,7 +104,7 @@ describe('EntityNavigationHelpers', function () {
           entryId: 'entry-id-2'
         },
         search = {
-          slideIn: 'entry-id-0,entry-id-1'
+          previousEntries: 'entry-id-0,entry-id-1'
         },
         goToEntity = { id: 'entry-id', type: 'Entry' },
         featureFlagValue
@@ -124,8 +124,8 @@ describe('EntityNavigationHelpers', function () {
 
         if (featureFlagValue === FeatureFlagValue.InfiniteNumberOfLevels) {
           const count = (ids) => [...ids].filter(char => char === ',').length;
-          const currentSlideLevel = search.slideIn ? count(search.slideIn) + 1 : 0;
-          const targetSlideLevel = count(stateGoArgs[1].slideIn) + 1;
+          const currentSlideLevel = search.previousEntries ? count(search.previousEntries) + 1 : 0;
+          const targetSlideLevel = count(stateGoArgs[1].previousEntries) + 1;
           expect(result).toEqual({ currentSlideLevel, targetSlideLevel });
         } else {
           expect(result).toEqual(undefined);
@@ -140,7 +140,7 @@ describe('EntityNavigationHelpers', function () {
       },
       ['.', {
         entryId: 'entry-id',
-        slideIn: ''
+        previousEntries: ''
       }]
     );
 
@@ -152,7 +152,7 @@ describe('EntityNavigationHelpers', function () {
       },
       ['^.^.assets.detail', {
         assetId: 'asset-id',
-        slideIn: ''
+        previousEntries: ''
       }]
     );
 
@@ -168,7 +168,7 @@ describe('EntityNavigationHelpers', function () {
       },
       ['^.^.assets.detail', {
         assetId: 'asset-id',
-        slideIn: ''
+        previousEntries: ''
       }]
     );
 
@@ -180,13 +180,13 @@ describe('EntityNavigationHelpers', function () {
           entryId: 'entry-id-5'
         },
         search: {
-          slideIn: 'entry-id-1,entry-id-2,entry-id-3,entry-id-4'
+          previousEntries: 'entry-id-1,entry-id-2,entry-id-3,entry-id-4'
         },
         goToEntity: { id: 'asset-id', type: 'Asset' }
       },
       ['^.^.assets.detail', {
         assetId: 'asset-id',
-        slideIn: 'entry-id-1,entry-id-2,entry-id-3,entry-id-4,entry-id-5'
+        previousEntries: 'entry-id-1,entry-id-2,entry-id-3,entry-id-4,entry-id-5'
       }]
     );
 
@@ -198,13 +198,13 @@ describe('EntityNavigationHelpers', function () {
           entryId: 'entry-id-4'
         },
         search: {
-          slideIn: 'entry-id-1,entry-id-2,entry-id-3'
+          previousEntries: 'entry-id-1,entry-id-2,entry-id-3'
         },
         goToEntity: { id: 'entry-id-2', type: 'Entry' }
       },
       ['^.^.entries.detail', {
         entryId: 'entry-id-2',
-        slideIn: 'entry-id-1'
+        previousEntries: 'entry-id-1'
       }]
     );
   });

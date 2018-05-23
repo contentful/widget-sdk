@@ -3,7 +3,7 @@ import $state from '$state';
 import { get, findIndex } from 'lodash';
 import { track } from 'analytics/Analytics';
 
-const SLIDE_IN_QS = 'slideIn';
+const SLIDE_IN_QS = 'previousEntries';
 const TYPES = { ASSET: 'Asset', ENTRY: 'Entry' };
 const TYPE_PLURALS = { Asset: 'assets', Entry: 'entries' };
 
@@ -77,9 +77,9 @@ export function goToPreviousSlideOrExit (featureFlagValue, eventLabel, onExit) {
 
 function goToEntity (entity) {
   if (entity.type === TYPES.ENTRY) {
-    $state.go('.', { entryId: entity.id, slideIn: '' });
+    $state.go('.', { entryId: entity.id, previousEntries: '' });
   } else {
-    $state.go('^.^.assets.detail', { assetId: entity.id, slideIn: '' });
+    $state.go('^.^.assets.detail', { assetId: entity.id, previousEntries: '' });
   }
 }
 

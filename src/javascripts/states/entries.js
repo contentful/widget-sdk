@@ -138,7 +138,7 @@ angular.module('contentful')
   function detail (withSnapshots) {
     return base({
       name: 'detail',
-      url: '/:entryId?slideIn',
+      url: '/:entryId?previousEntries',
       children: withSnapshots ? [compare] : [],
       params: { addToContext: true },
       template: JST.entity_page(),

@@ -19,7 +19,7 @@ angular.module('contentful')
 
   var detail = {
     name: 'detail',
-    url: '/:assetId?slideIn',
+    url: '/:assetId?previousEntries',
     params: { addToContext: true },
     template: JST.entity_page(),
     controller: ['$scope', '$state', createEntityPageController]

@@ -100,7 +100,7 @@ describe('Entry Actions Controller', function () {
               '^.detail',
               {
                 entryId: 'NEW ID',
-                slideIn: '',
+                previousEntries: '',
                 addToContext: false
               }
             );

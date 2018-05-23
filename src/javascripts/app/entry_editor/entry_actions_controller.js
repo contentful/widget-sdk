@@ -94,7 +94,7 @@ angular.module('contentful')
   function goToEntryDetail (entry) {
     $state.go('^.detail', {
       entryId: entry.getId(),
-      slideIn: '',
+      previousEntries: '',
       addToContext: false
     });
   }
