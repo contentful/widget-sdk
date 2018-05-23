@@ -33,6 +33,10 @@ describe('app/SpaceSettings/Environments', function () {
         }
       };
     };
+
+    this.setCanCreate = (value) => {
+      resourceService.canCreate.withArgs('environment').resolves(value);
+    };
   });
 
   afterEach(function () {
@@ -74,5 +78,12 @@ describe('app/SpaceSettings/Environments', function () {
     this.container.find('spaceEnvironmentsDeleteDialog', 'delete').click();
     this.$flush();
     this.container.find('environment.e1').assertNonExistent();
+  });
+
+  it('disables create button if limit is reached', function () {
+    this.setCanCreate(false);
+    this.init();
+
+    this.container.find('openCreateDialog').assertIsDisabled();
   });
 });
