@@ -8,6 +8,7 @@ import * as LD from 'utils/LaunchDarkly';
 import * as accessChecker from 'access_control/AccessChecker';
 import createResourceService from 'services/ResourceService';
 import $state from '$state';
+import $q from '$q';
 
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo';
 import { openCreateDialog, openEditDialog } from './EditDialog';
@@ -47,7 +48,7 @@ const ReceiveResponse = makeCtor('ReceiveResponse');
 const reduce = makeReducer({
   [Reload]: (state, _, { resourceEndpoint, resourceService, dispatch }) => {
     C.runTask(function* () {
-      const result = yield C.tryP(Promise.all([
+      const result = yield C.tryP($q.all([
         resourceEndpoint.getAll(),
         resourceService.canCreate('environment')
       ]));
