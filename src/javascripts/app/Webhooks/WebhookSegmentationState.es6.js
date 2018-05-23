@@ -140,7 +140,7 @@ export function transformMapToTopics (map) {
 
 // Take a list of topics, convert them into a simple map of entity types and actions:
 export function transformTopicsToMap (topics) {
-  if (!topics || topics.length === 0) return createMap(false)
+  if (!topics || topics.length === 0) return createMap(false);
   if (topics.indexOf('*.*') > -1) return createMap(true);
 
   const map = createMap(false);
