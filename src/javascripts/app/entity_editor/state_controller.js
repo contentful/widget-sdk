@@ -21,8 +21,9 @@ angular.module('contentful')
   var Action = EntityState.Action;
   var Analytics = require('analytics/Analytics');
   var spaceContext = require('spaceContext');
-  var goToPreviousSlideOrExit = require('states/EntityNavigationHelpers').goToPreviousSlideOrExit;
   var onFeatureFlag = require('utils/LaunchDarkly').onFeatureFlag;
+  var goToPreviousSlideOrExit =
+    require('states/EntityNavigationHelpers').goToPreviousSlideOrExit;
 
   var permissions = otDoc.permissions;
   var reverter = otDoc.reverter;
@@ -182,6 +183,7 @@ angular.module('contentful')
         if ($scope.slideInFeatureFlagValue) {
           goToPreviousSlideOrExit(
             $scope.slideInFeatureFlagValue,
+            'delete',
             closeState
           );
         } else {

@@ -183,6 +183,21 @@ export default function create ($scope, widgetApi) {
       if ($scope.referenceType.inline) {
         $scope.isReady = true;
       }
+      const numEntities = getSlideInEntities().length;
+      const shouldTrackSlideInOpen =
+        slideInEditorEnabled &&
+        (!bulkEditorEnabled || numEntities > 1);
+
+      state.addEntities([entity]);
+      editEntityAction(entity, -1);
+
+      if (shouldTrackSlideInOpen) {
+        track('slide_in_editor:open_create', {
+          targetSlideLevel: numEntities,
+          currentSlideLevel: numEntities - 1
+        });
+      }
+
       if (entity.sys.type === 'Entry') {
         track('entry:create', {
           eventOrigin: 'reference-editor',
@@ -190,8 +205,7 @@ export default function create ($scope, widgetApi) {
           response: { data: entity }
         });
       }
-      state.addEntities([entity]);
-      editEntityAction(entity, -1);
+
       return entity;
     };
   }
@@ -411,7 +425,10 @@ export default function create ($scope, widgetApi) {
   }
 
   function goToSlideInEntity ({ sys: { id, type } }) {
-    goToSlideInEntityBase({ id, type }, $scope.isSlideinEntryEditorEnabled);
+    return goToSlideInEntityBase(
+      { id, type },
+      $scope.isSlideinEntryEditorEnabled
+    );
   }
 
   function prepareRemoveAction (index, isDisabled) {

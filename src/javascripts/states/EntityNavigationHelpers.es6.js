@@ -1,6 +1,7 @@
 import $location from '$location';
 import $state from '$state';
 import { get, castArray, findIndex } from 'lodash';
+import { track } from 'analytics/Analytics';
 
 // TODO: Ideally we'd have the entity which is top of the stack represented in the
 // current url path, all entities stacked below in the `slideIn` parameter. That
@@ -33,21 +34,34 @@ export const goToSlideInEntity = (entity, featureFlagValue) => {
     }
     return;
   }
-  const entities = [...getSlideInEntities(), entity];
+  const entitiesFromQueryString = getSlideInEntities();
+  const entities = [...entitiesFromQueryString, entity];
   const entityIndex = findIndex(entities, entity);
   const reducedEntities = entities.slice(1, entityIndex + 1);
   const serializedEntities = reducedEntities.map(
     ({ id, type }) => `${type}:${id}`
   );
   $location.search(SLIDE_IN_QS, serializedEntities);
+
+  return {
+    currentSlideLevel: entitiesFromQueryString.length - 1,
+    targetSlideLevel: entityIndex
+  };
 };
 
-export const goToPreviousSlideOrExit = (featureFlagValue, onExit) => {
+export const goToPreviousSlideOrExit = (
+  featureFlagValue,
+  eventLabel,
+  onExit
+) => {
   const slideInEntities = getSlideInEntities();
   const numEntities = slideInEntities.length;
   if (numEntities > 1) {
     const previousEntity = slideInEntities[numEntities - 2];
-    goToSlideInEntity(previousEntity, featureFlagValue);
+    const eventData = goToSlideInEntity(previousEntity, featureFlagValue);
+    if (eventData.currentSlideLevel > 0) {
+      track(`slide_in_editor:${eventLabel}`, eventData);
+    }
   } else {
     onExit();
   }

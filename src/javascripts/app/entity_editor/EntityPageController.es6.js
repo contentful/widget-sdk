@@ -2,6 +2,8 @@ import {
   getSlideInEntities,
   goToSlideInEntity
 } from 'states/EntityNavigationHelpers';
+import { track } from 'analytics/Analytics';
+import { findIndex } from 'lodash';
 
 import { onFeatureFlag } from 'utils/LaunchDarkly';
 
@@ -12,6 +14,8 @@ const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
 const PEEK_IN_DELAY = 500;
 const PEEK_OUT_DELAY = 500;
 const PEEK_ANIMATION_DURATION = 200;
+
+export const getTimestamp = () => (new Date()).getTime();
 
 export default ($scope, _$state) => {
   let topPeekingLayerIndex = -1;
@@ -52,6 +56,12 @@ export default ($scope, _$state) => {
     topPeekingLayerIndex = -1;
     peekedLayerIndexes = [];
     goToSlideInEntity(entity, $scope.isSlideinEntryEditorEnabled);
+    const peekHoverTimeMs = getTimestamp() - $scope.peekStart - PEEK_IN_DELAY;
+    track('slide_in_editor:peek_click', {
+      peekHoverTimeMs: Math.max(0, peekHoverTimeMs),
+      currentSlideLevel: $scope.entities.length - 1,
+      targetSlideLevel: findIndex($scope.entities, ({ id }) => entity.id === id)
+    });
   };
 
   $scope.initPeeking = (index) => {
@@ -82,9 +92,11 @@ export default ($scope, _$state) => {
         peekedLayerIndexes.push(index);
       }
     });
+    $scope.peekStart = getTimestamp();
   };
 
   $scope.peekOut = () => {
+    $scope.peekStart = 0;
     hoveredLayerIndex = null;
     clearTimeout(peekInTimeoutID);
     clearTimeout(clearPreviousPeekTimeoutID);
