@@ -1,3 +1,4 @@
+import sinon from 'npm:sinon';
 import $q from '$q';
 import * as K from 'helpers/mocks/kefir';
 
@@ -161,10 +162,10 @@ describe('cfReferenceEditorDirective', function () {
       this.space = this.widgetApi.space;
     });
 
-    it('creates an asset', function* () {
+    it('creates an asset', async function () {
       this.space.createAsset.resolves(createdEntity);
 
-      const asset = yield this.create('Asset', {}, this.space);
+      const asset = await this.create('Asset', {}, this.space);
 
       expect(asset).toBe(createdEntity);
       sinon.assert.calledOnce(this.space.createAsset.withArgs({}));
@@ -174,35 +175,35 @@ describe('cfReferenceEditorDirective', function () {
       const ct1 = {sys: {id: 'ctid', publishedVersion: 123}};
       const ct2 = {sys: {id: 'ctid2', publishedVersion: 666}};
 
-      it('creates an entry if there is only one CT', function* () {
+      it('creates an entry if there is only one CT', async function () {
         this.space.createEntry.resolves(createdEntity);
         this.space.getContentTypes.resolves({items: [ct1]});
 
-        const entry = yield this.create('Entry', {}, this.space);
+        const entry = await this.create('Entry', {}, this.space);
 
         expect(entry).toBe(createdEntity);
         sinon.assert.calledOnce(this.space.createEntry.withArgs('ctid', {}));
       });
 
-      it('filters out content types to adhere to single link field validation', function* () {
+      it('filters out content types to adhere to single link field validation', async function () {
         this.space.getContentTypes.resolves({items: [ct1, ct2]});
         const field = {validations: [{linkContentType: ['ctid']}]};
 
-        yield this.create('Entry', field, this.space);
+        await this.create('Entry', field, this.space);
 
         sinon.assert.calledOnce(this.space.createEntry.withArgs('ctid', {}));
       });
 
-      it('filters out content types to adhere to multiple link field validation', function* () {
+      it('filters out content types to adhere to multiple link field validation', async function () {
         this.space.getContentTypes.resolves({items: [ct1, ct2]});
         const field = {itemValidations: [{linkContentType: ['ctid2']}]};
 
-        yield this.create('Entry', field, this.space);
+        await this.create('Entry', field, this.space);
 
         sinon.assert.calledOnce(this.space.createEntry.withArgs('ctid2', {}));
       });
 
-      it('allows user to choose which CT should be used', function* () {
+      it('allows user to choose which CT should be used', async function () {
         this.space.createEntry.resolves(createdEntity);
         this.space.getContentTypes.resolves({items: [ct1, ct2]});
 
@@ -211,7 +212,7 @@ describe('cfReferenceEditorDirective', function () {
           return {promise: $q.resolve(ct1)};
         };
 
-        const entry = yield this.create('Entry', {}, this.space);
+        const entry = await this.create('Entry', {}, this.space);
 
         expect(entry).toBe(createdEntity);
         sinon.assert.calledOnce(this.space.createEntry.withArgs('ctid', {}));
@@ -222,14 +223,14 @@ describe('cfReferenceEditorDirective', function () {
   describe('adding a new asset', function () {
     const ASSET = { sys: { id: 'assetid', type: 'Asset' } };
 
-    beforeEach(function* () {
+    beforeEach(async function () {
       this.field.setValue([]);
       this.widgetApi.space.createAsset.withArgs({}).resolves(ASSET);
       this.scope = this.init({type: 'Asset'});
-      yield this.scope.addNewAsset();
+      await this.scope.addNewAsset();
     });
 
-    it('adds link', function* () {
+    it('adds link', function () {
       expect(this.scope.entityModels.length).toBe(1);
       expect(this.scope.entityModels[0].value.id).toBe(ASSET.sys.id);
     });
@@ -248,12 +249,12 @@ describe('cfReferenceEditorDirective', function () {
     const CT_ID = 'CONTENT_TYPE_ID';
     const CLIENT_CT = { data: { sys: { id: CT_ID }, fields: [{}, {localized: true}] } };
 
-    beforeEach(function* () {
+    beforeEach(async function () {
       this.field.setValue([]);
       this.spaceContext.publishedCTs.get.withArgs(CT_ID).returns(CLIENT_CT);
       this.widgetApi.space.createEntry.withArgs(CT_ID, {}).resolves(ENTRY);
       this.scope = this.init({type: 'Entry'});
-      yield this.scope.addNewEntry(CT_ID);
+      await this.scope.addNewEntry(CT_ID);
       this.scope.$digest();
     });
 

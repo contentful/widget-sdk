@@ -25,8 +25,8 @@ angular.module('contentful').directive('cfBackNav', [
           );
         }
 
-        LD.onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, function (flag) {
-          state.slideInFeatureFlagValue = flag;
+        LD.onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, function (flagValue) {
+          state.slideInFeatureFlagValue = flagValue === 2 ? 2 : 0;
           render(state);
         });
 

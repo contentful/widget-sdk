@@ -3,7 +3,7 @@ import $q from '$q';
 import {create as createDocument} from 'helpers/mocks/entity_editor_document';
 
 describe('entityEditor/StateController', function () {
-  const SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE = 'feature-flag-val';
+  const SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE = 2; // Enabled with multiple levels.
 
   beforeEach(function () {
     const closeStateSpy = this.closeStateSpy = sinon.spy();
