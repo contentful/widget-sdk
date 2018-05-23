@@ -13,7 +13,7 @@ import {TextLink} from '@contentful/ui-component-library';
 import {asReact} from 'ui/Framework/DOMRenderer';
 import Icon from 'ui/Components/Icon';
 import ContactUsButton from 'ui/Components/ContactUsButton';
-import {RequestState, formatPrice} from './WizardUtils';
+import {RequestState, formatPrice, unavailabilityTooltipText} from './WizardUtils';
 import {byName as colors} from 'Styles/Colors';
 import pluralize from 'pluralize';
 
@@ -147,6 +147,8 @@ const SpacePlanItem = createReactClass({
     const freeSpacesUsage = freeSpacesResource && freeSpacesResource.usage;
     const freeSpacesLimit = freeSpacesResource && freeSpacesResource.limits.maximum;
 
+    const unavailabilityTooltip = unavailabilityTooltipText(plan);
+
     return (
       <div
         key={plan.sys.id}
@@ -195,7 +197,7 @@ const SpacePlanItem = createReactClass({
               bottom: '25px',
               color: colors.elementDarkest
             }}
-            tooltip='You cannot change to this plan.'
+            tooltip={unavailabilityTooltip}
           >
               <Icon name='question-mark' />
           </Tooltip>
