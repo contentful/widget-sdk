@@ -1,6 +1,8 @@
 import * as Config from 'Config';
 import { assign } from 'utils/Collections';
 import { caseofEq } from 'sum-types';
+import { href } from 'states/Navigator';
+import { subscription as subscriptionState } from 'ui/NavStates/Org';
 
 import { h } from 'ui/Framework';
 import { linkOpen, badge, codeFragment } from 'ui/Content';
@@ -153,15 +155,19 @@ function deleteButton (environment) {
 }
 
 
-function sidebar ({ canCreate }, { OpenCreateDialog }) {
+function sidebar ({ canCreateEnv, organizationId, isLegacyOrganization, canUpgradeSpace }, { OpenCreateDialog }) {
   return [
     h('h2.entity-sidebar__heading', [
       'Add environment'
     ]),
+    !canCreateEnv && h('p', [
+      'You have exceeded your environments usage. ',
+      ...upgradeInfo({ organizationId, isLegacyOrganization, canUpgradeSpace })
+    ]),
     h('button.btn-action.x--block', {
       dataTestId: 'openCreateDialog',
       onClick: () => OpenCreateDialog(),
-      disabled: !canCreate
+      disabled: !canCreateEnv
     }, [ 'Add environment' ]),
     vspace(5),
     h('h2.entity-sidebar__heading', [
@@ -185,4 +191,20 @@ function sidebar ({ canCreate }, { OpenCreateDialog }) {
       ])
     ])
   ];
+}
+
+function upgradeInfo ({ organizationId, isLegacyOrganization, canUpgradeSpace }) {
+  if (isLegacyOrganization) return [];
+
+  if (canUpgradeSpace) {
+    return [
+      'You can upgrade your space from the ',
+      h('a', {
+        href: href(subscriptionState(organizationId, false))
+      }, ['subscription page']),
+      '.'
+    ];
+  } else {
+    return ['The administrator of your organization can upgrade this space to get more environments.'];
+  }
 }

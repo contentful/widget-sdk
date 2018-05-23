@@ -7,6 +7,8 @@ import * as LD from 'utils/LaunchDarkly';
 
 import * as accessChecker from 'access_control/AccessChecker';
 import createResourceService from 'services/ResourceService';
+import { isLegacyOrganization } from 'utils/ResourceUtils';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import $state from '$state';
 import $q from '$q';
 
@@ -85,10 +87,10 @@ const reduce = makeReducer({
   },
   [ReceiveResponse]: (state, result) => {
     return match(result, {
-      [C.Success]: ([items, canCreate]) => {
+      [C.Success]: ([items, canCreateEnv]) => {
         return assign(state, {
           items: items.map(makeEnvironmentModel),
-          canCreate: canCreate,
+          canCreateEnv: canCreateEnv,
           isLoading: false
         });
       },
@@ -107,9 +109,13 @@ export function createComponent (spaceContext) {
     resourceService
   };
 
+  const organization = spaceContext.organizationContext.organization;
   const initialState = {
     items: [],
-    canCreate: true
+    canCreateEnv: true,
+    canUpgradeSpace: isOwnerOrAdmin(organization),
+    isLegacyOrganization: isLegacyOrganization(organization),
+    organizationId: organization.sys.id
   };
 
   const store = createStore(
