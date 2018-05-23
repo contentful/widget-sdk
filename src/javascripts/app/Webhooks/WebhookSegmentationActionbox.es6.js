@@ -7,7 +7,7 @@ export default class ActionCheckbox extends React.Component {
     this.props.onChange({
       type: this.props.type,
       action: this.props.action,
-      checked: checked
+      checked
     });
   }
 

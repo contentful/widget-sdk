@@ -14,7 +14,7 @@ export default class WebhookSegmentation extends React.Component {
 
   onSelectionTypeChange (allEventsSelected) {
     this.setState({
-      allEventsSelected: allEventsSelected
+      allEventsSelected
     });
 
     if (allEventsSelected) {
@@ -36,12 +36,12 @@ export default class WebhookSegmentation extends React.Component {
   }
 
   renderTable() {
-    if (this.state.allEventsSelected) return
-
-    return (
-      <WebhookSegmentationTable values={this.props.values}
-                                onChange={this.props.onChange} />
-    )
+    if (!this.state.allEventsSelected) {
+      return (
+        <WebhookSegmentationTable values={this.props.values}
+                                  onChange={this.props.onChange} />
+      )
+    }
   }
 
   render () {

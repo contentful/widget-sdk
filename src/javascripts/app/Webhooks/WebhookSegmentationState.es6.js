@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash';
 export const ENTITY_TYPES = ['ContentType', 'Entry', 'Asset'];
 export const ACTIONS = ['create', 'save', 'auto_save', 'archive', 'unarchive', 'publish', 'unpublish', 'delete'];
 export const DISABLED = { ContentType: ['auto_save', 'archive', 'unarchive'] };
+
 export const TYPE_LABELS = {
   ContentType: 'Content type',
   Entry: 'Entry',
