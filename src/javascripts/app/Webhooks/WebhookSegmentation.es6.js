@@ -13,6 +13,12 @@ export default class WebhookSegmentation extends React.Component {
   }
 
   onSelectionTypeChange (allEventsSelected) {
+    // When all events are currently selected and user unselects "All events selected" radio button,
+    // Unselect everything.
+    if (!allEventsSelected && this.state.allEventsSelected && areAllEventsChecked(this.props.values)) {
+      this.setState({ values: createMap(false) });
+    }
+
     this.setState({
       allEventsSelected
     });
@@ -38,7 +44,7 @@ export default class WebhookSegmentation extends React.Component {
   renderTable () {
     if (!this.state.allEventsSelected) {
       return (
-        <WebhookSegmentationTable values={this.props.values}
+        <WebhookSegmentationTable values={this.state.values || this.props.values}
                                   onChange={this.props.onChange} />
       );
     }
