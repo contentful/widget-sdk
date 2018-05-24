@@ -89,11 +89,10 @@ describe('Space Wizard', function () {
       expect(data.action).toBe('create');
     });
 
-    it('should track change space intended action', function () {
+    it('should not track change space intended action', function () {
       this.mount('change');
-      const data = this.stubs.track.firstCall.args[1];
 
-      expect(data.action).toBe('change');
+      sinon.assert.notCalled(this.stubs.track);
     });
   });
 });

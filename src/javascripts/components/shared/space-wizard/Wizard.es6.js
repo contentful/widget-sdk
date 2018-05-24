@@ -395,7 +395,10 @@ function getFieldErrors (error) {
 }
 
 function track (eventName, data) {
-  Analytics.track(`space_wizard:${eventName}`, data);
+  // TODO: only tracking create space events until we can get currentSpaceType
+  if (data.action === 'create') {
+    Analytics.track(`space_wizard:${eventName}`, data);
+  }
 }
 
 function createTrackingData (state, props) {
@@ -410,11 +413,6 @@ function createTrackingData (state, props) {
     spaceName: spaceName,
     template: get(template, 'name')
   };
-
-  if (action === 'change') {
-    // TODO get space type
-    eventData.currentSpaceType = '';
-  }
 
   return eventData;
 }
