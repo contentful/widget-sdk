@@ -66,17 +66,21 @@ angular.module('cf.ui')
         ));
       }
 
-      function showLoader (_event, _toState, toParams, _fromState, fromParams) {
-        toParams = toParams || {};
-        fromParams = fromParams || {};
-        // Do not show a spinner when navigating from/to slide in
-        // entry editor. This will refresh the parent/child entries
-        // without showing the spinner.
-        // TODO: Remove this once "feature-at-05-2018-sliding-entry-editor-multi-level"
-        // experiment is over.
-        if (!toParams.inlineEntryId && !fromParams.inlineEntryId) {
-          $scope.isShown = true;
-        }
+      function showLoader (_event, _toState, _toParams, _fromState, _fromParams, options) {
+        // If `options.notify` gets set to `false` in another `$state...` event
+        // handler then above handlers triggering `hideLoader` would never fire.
+        // TODO: Use Proxy instead once we drop IE 11 support.
+        var notify = options.notify;
+        Object.defineProperty(options, 'notify', {
+          configurable: true,
+          enumerable: true,
+          set: function (value) {
+            (value ? showLoader : hideLoader)();
+            notify = value;
+          },
+          get: function () { return notify; }
+        });
+        $scope.isShown = notify;
       }
 
       function hideLoader () {

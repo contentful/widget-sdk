@@ -6,7 +6,7 @@ describe('cfLoaders', function () {
 
     this.$rootScope = this.$inject('$rootScope');
 
-    this.compile = function (directive) {
+    this.compile = (directive) => {
       return function (isShownProp, isShown, loaderMsg, watchStateChange = true) {
         let template = `<${directive} `;
 
@@ -21,13 +21,12 @@ describe('cfLoaders', function () {
         scope.$apply();
 
         return { $el, scope };
-      }.bind(this);
+      };
     };
 
     this.assertStateChangeVal = function (event, isShown, watchStateChange) {
       const { scope } = this.compileLoader(undefined, isShown, '', watchStateChange);
-
-      this.$rootScope.$emit(event);
+      this.emitStateEvent(event);
       this.$apply();
       expect(scope.isShown).toBe(isShown);
     };
@@ -58,6 +57,11 @@ describe('cfLoaders', function () {
       this.assertAttrs('isLoading', true);
       this.assertAttrs('isLoading', false, 'Test');
     };
+
+    this.emitStateEvent = function (event) {
+      const options = { notify: true };
+      this.$rootScope.$emit(event, {}, {}, {}, {}, options);
+    };
   });
 
   describe('cfLoader', function () {
@@ -65,7 +69,7 @@ describe('cfLoaders', function () {
       this.compileLoader = this.compile('cf-loader');
     });
 
-    it('should use the attrs to populate scope properties', function () {
+    it('uses the attrs to populate scope properties', function () {
       this.testScopeAttrs();
     });
 
@@ -78,7 +82,7 @@ describe('cfLoaders', function () {
       expect(scope.isShown).toBe(true);
     });
 
-    it('should add handlers for state change events when watchStateChange is true', function () {
+    it('adds handlers for state change events when watchStateChange is true', function () {
       // watchStateChange is true by default when the directive is compiled in these tests
       this.assertStateChangeVal('$stateChangeStart', true);
       this.assertStateChangeVal('$stateChangeSuccess', false);
@@ -87,12 +91,27 @@ describe('cfLoaders', function () {
       this.assertStateChangeVal('$stateChangeError', false);
     });
 
-    it('should not attach handlers for state events when watchStateChange is false', function () {
+    it('attaches handlers for state events when watchStateChange is false', function () {
       this.assertStateChangeVal('$stateChangeStart', undefined, false);
       this.assertStateChangeVal('$stateChangeSuccess', undefined, false);
       this.assertStateChangeVal('$stateChangeCancel', undefined, false);
       this.assertStateChangeVal('$stateNotFound', undefined, false);
       this.assertStateChangeVal('$stateChangeError', undefined, false);
+    });
+
+    it('hides the loader when `$stateChangeStart` event listener sets `notify: false`', function () {
+      const isShown = true;
+      const watchStateChange = true;
+      const { scope } = this.compileLoader(undefined, isShown, '', watchStateChange);
+      this.$rootScope.$on(
+        '$stateChangeStart',
+        (_event, _toState, _toParams, _fromState, _fromParams, options) => {
+          options.notify = false;
+        }
+      );
+      this.emitStateEvent('$stateChangeStart');
+      this.$apply();
+      expect(scope.isShown).toBe(false);
     });
   });
 
@@ -101,7 +120,7 @@ describe('cfLoaders', function () {
       this.compileLoader = this.compile('cf-inline-loader');
     });
 
-    it('should bind isShown to scope', function () {
+    it('binds `isShown` to scope', function () {
       this.assertIsShownBinding('isSearching', 'INITVAL');
     });
   });

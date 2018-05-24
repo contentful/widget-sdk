@@ -100,6 +100,6 @@ export default async function create ($scope, assetId) {
   });
 
   onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, (flagValue) => {
-    $scope.shouldShowBreadcrumbs = flagValue < 2;
+    $scope.shouldShowBreadcrumbs = flagValue !== 2;
   });
 }

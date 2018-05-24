@@ -17,7 +17,7 @@ const PEEK_ANIMATION_DURATION = 200;
 
 export const getTimestamp = () => (new Date()).getTime();
 
-export default ($scope, _$state) => {
+export default ($scope, $state) => {
   let topPeekingLayerIndex = -1;
   let peekedLayerIndexes = [];
   let hoveredLayerIndex;
@@ -28,20 +28,21 @@ export default ($scope, _$state) => {
   $scope.entities = [];
   $scope.context.ready = true;
 
-  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, isEnabled => {
-    $scope.isSlideinEntryEditorEnabled = isEnabled;
+  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, flagState => {
+    $scope.isSlideinEntryEditorEnabled = flagState === 2;
+    setEntities();
   });
 
-  setEntities($scope);
+  setEntities();
 
   const isTopLayer = $scope.isTopLayer =
-    (index) => (index + 1) === $scope.entities.length;
+    (index) => index + 1 === $scope.entities.length;
 
-  $scope.getLayerClasses = (index) => {
+  $scope.getLayerClasses = index => {
     const currentlyPeekedLayerIndex = peekedLayerIndexes.slice(-1)[0];
     const optimize = $scope.entities.length > 4;
     return {
-      [`workbench-layer--${index}:`]: true,
+      [`workbench-layer--${index}`]: true,
       'workbench-layer--is-current': isTopLayer(index),
       'workbench-layer--hovered': index === hoveredLayerIndex,
       'workbench-layer--peeked': peekedLayerIndexes.includes(index),
@@ -50,7 +51,7 @@ export default ($scope, _$state) => {
     };
   };
 
-  $scope.close = (entity) => {
+  $scope.close = entity => {
     clearTimeouts();
     hoveredLayerIndex = null;
     topPeekingLayerIndex = -1;
@@ -64,7 +65,7 @@ export default ($scope, _$state) => {
     });
   };
 
-  $scope.initPeeking = (index) => {
+  $scope.initPeeking = index => {
     if (isTopLayer(index)) {
       topPeekingLayerIndex = index - 1;
 
@@ -77,7 +78,7 @@ export default ($scope, _$state) => {
     }
   };
 
-  $scope.peekIn = (index) => {
+  $scope.peekIn = index => {
     const isPeekable = index <= topPeekingLayerIndex;
 
     if (isPeekable) {
@@ -102,21 +103,36 @@ export default ($scope, _$state) => {
     clearTimeout(clearPreviousPeekTimeoutID);
   };
 
-  const unlistenStateChangeSuccess = $scope.$on(
-    '$locationChangeSuccess', () => setEntities($scope)
+  const unlistenStateChangeSuccess = $scope.$on('$locationChangeSuccess', () =>
+    setEntities()
+  );
+
+  const unlistenStateChangeStart = $scope.$on(
+    '$stateChangeStart',
+    (_event, toState, toParams, fromState, _fromParams, options) => {
+      const preventControllerReload =
+        $scope.isSlideinEntryEditorEnabled &&
+        isRelevantState(toState) && isRelevantState(fromState);
+      if (preventControllerReload) {
+        options.notify = false;
+        $state.params = { ...toParams };
+      }
+    }
   );
 
   $scope.$on('$destroy', () => {
     unlistenStateChangeSuccess();
+    unlistenStateChangeStart();
     clearTimeouts();
   });
 
-  function setEntities ($scope) {
+  function setEntities () {
     const previousEntities = $scope.entities;
     const moreThanOneNewEntityAdded =
       previousEntities.length + 1 < $scope.entities.length;
 
-    $scope.entities = getSlideInEntities();
+    $scope.entities = getSlideInEntities()
+      .slice($scope.isSlideinEntryEditorEnabled ? 0 : -1);
 
     // If there was more than one new entity added to the stack, we will have to
     // trigger loading for all those new entries, not just the one on top.
@@ -150,3 +166,8 @@ export default ($scope, _$state) => {
     ].forEach(clearTimeout);
   }
 };
+
+function isRelevantState ({ name }) {
+  return /^spaces\.detail(\.environment|)\.(entries|assets)\.detail$/
+    .test(name);
+}

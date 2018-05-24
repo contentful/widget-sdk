@@ -36,7 +36,6 @@ describe('EntityNavigationHelpers', function () {
 
         const entities = this.entityNavigationHelper.getSlideInEntities();
 
-        expect(this.search.calledOnce).toBe(true);
         expect(entities).toEqual(expectedOutput);
       });
     }
@@ -51,23 +50,36 @@ describe('EntityNavigationHelpers', function () {
       'returns ids from query string',
       {
         params: {
-          entryId: 'entry-id'
+          entryId: 'entry-id-2'
         },
         search: {
-          slideIn: ['Entry:entry-id-2']
+          previousEntries: 'entry-id'
         }
       },
       [{ id: 'entry-id', type: 'Entry' }, { id: 'entry-id-2', type: 'Entry' }]
     );
 
     getSlideInEntitiesTestFactory(
+      'contains no duplicate ids',
+      {
+        params: {
+          entryId: 'entry-id-2'
+        },
+        search: {
+          previousEntries: 'entry-id-1,entry-id-2,entry-id-1'
+        }
+      },
+      [{ id: 'entry-id-1', type: 'Entry' }, { id: 'entry-id-2', type: 'Entry' }]
+    );
+
+    getSlideInEntitiesTestFactory(
       'returns asset id from query string',
       {
         params: {
-          entryId: 'entry-id'
+          assetId: 'asset-id'
         },
         search: {
-          slideIn: ['Entry:entry-id-2', 'Asset:asset-id']
+          previousEntries: 'entry-id,entry-id-2'
         }
       },
       [
@@ -82,19 +94,19 @@ describe('EntityNavigationHelpers', function () {
     const FeatureFlagValue = {
       Off: 0,
       OnlyOneSlideInLevel: 1,
-      InfiniteNumberOfLevelsAndEternalGlory: 2
+      InfiniteNumberOfLevels: 2
     };
 
     function willRedirect (
       message,
       {
         params = {
-          entryId: 'entry-id-0'
+          entryId: 'entry-id-2'
         },
         search = {
-          slideIn: ['entry:entry-id-2', 'entry:entry-id-1']
+          previousEntries: 'entry-id-0,entry-id-1'
         },
-        entity = { id: 'entry-id', type: 'Entry' },
+        goToEntity = { id: 'entry-id', type: 'Entry' },
         featureFlagValue
       },
       stateGoArgs
@@ -104,42 +116,20 @@ describe('EntityNavigationHelpers', function () {
         this.search.returns(search);
 
         const result = this.entityNavigationHelper.goToSlideInEntity(
-          entity,
+          goToEntity,
           featureFlagValue
         );
 
-        expect(this.search.calledOnce).toBe(true);
-        expect(this.stateGo.calledWith(...stateGoArgs)).toBe(true);
-        expect(result).toEqual(undefined);
-      });
-    }
+        sinon.assert.calledWith(this.stateGo, ...stateGoArgs);
 
-    function willReplaceState (
-      message,
-      {
-        params = {
-          entryId: 'entry-id-0'
-        },
-        search = {},
-        entity = { id: 'entry-id', type: 'Entry' },
-        featureFlagValue
-      },
-      searchArgs
-    ) {
-      it(message, function () {
-        this.stateParams.returns(params);
-        this.search.returns(search);
-
-        const result = this.entityNavigationHelper.goToSlideInEntity(
-          entity,
-          featureFlagValue
-        );
-
-        expect(this.search.calledWith('slideIn', searchArgs)).toBe(true);
-        expect(result).toEqual({
-          currentSlideLevel: search.slideIn ? search.slideIn.length : 0,
-          targetSlideLevel: searchArgs.length
-        });
+        if (featureFlagValue === FeatureFlagValue.InfiniteNumberOfLevels) {
+          const count = (ids) => [...ids].filter(char => char === ',').length;
+          const currentSlideLevel = search.previousEntries ? count(search.previousEntries) + 1 : 0;
+          const targetSlideLevel = count(stateGoArgs[1].previousEntries) + 1;
+          expect(result).toEqual({ currentSlideLevel, targetSlideLevel });
+        } else {
+          expect(result).toEqual(undefined);
+        }
       });
     }
 
@@ -148,73 +138,74 @@ describe('EntityNavigationHelpers', function () {
       {
         featureFlagValue: FeatureFlagValue.Off
       },
-      ['.', { entryId: 'entry-id' }]
+      ['.', {
+        entryId: 'entry-id',
+        previousEntries: ''
+      }]
     );
 
     willRedirect(
       'redirects to asset page if the feature flag is off',
       {
         featureFlagValue: FeatureFlagValue.Off,
-        entity: { id: 'asset-id', type: 'Asset' }
+        goToEntity: { id: 'asset-id', type: 'Asset' }
       },
-      ['^.^.assets.detail', { assetId: 'asset-id' }]
+      ['^.^.assets.detail', {
+        assetId: 'asset-id',
+        previousEntries: ''
+      }]
     );
 
     willRedirect(
-      'redirects to entry page if the slide in limit is reached',
+      'one level of slide-in behaves like 0 levels (dropped support for this)',
       {
+        featureFlagValue: FeatureFlagValue.OnlyOneSlideInLevel,
         params: {
           entryId: 'entry-id-0'
         },
-        search: {
-          slideIn: ['entry:entry-id-1']
-        },
-        featureFlagValue: FeatureFlagValue.OnlyOneSlideInLevel
+        search: {},
+        goToEntity: { id: 'asset-id', type: 'Asset' }
       },
-      ['.', { entryId: 'entry-id' }]
+      ['^.^.assets.detail', {
+        assetId: 'asset-id',
+        previousEntries: ''
+      }]
     );
 
-    willReplaceState(
-      'adds slidein entry to stack',
-      {
-        featureFlagValue: FeatureFlagValue.OnlyOneSlideInLevel
-      },
-      ['Entry:entry-id']
-    );
-
-    willReplaceState(
-      'adds slidein asset to stack',
-      {
-        featureFlagValue: FeatureFlagValue.OnlyOneSlideInLevel,
-        entity: { id: 'asset-id', type: 'Asset' }
-      },
-      ['Asset:asset-id']
-    );
-
-    willReplaceState(
+    willRedirect(
       'adds up to 5+ entries in stack',
       {
-        featureFlagValue:
-          FeatureFlagValue.InfiniteNumberOfLevelsAndEternalGlory,
-        search: {
-          slideIn: [
-            'Entry:entry-id-1',
-            'Entry:entry-id-2',
-            'Entry:entry-id-3',
-            'Entry:entry-id-4',
-            'Entry:entry-id-5'
-          ]
+        featureFlagValue: FeatureFlagValue.InfiniteNumberOfLevels,
+        params: {
+          entryId: 'entry-id-5'
         },
-        entity: { id: 'entry-id', type: 'Entry' }
+        search: {
+          previousEntries: 'entry-id-1,entry-id-2,entry-id-3,entry-id-4'
+        },
+        goToEntity: { id: 'asset-id', type: 'Asset' }
       },
-      [
-        'Entry:entry-id-1',
-        'Entry:entry-id-2',
-        'Entry:entry-id-3',
-        'Entry:entry-id-4',
-        'Entry:entry-id-5',
-        'Entry:entry-id'
-      ]
+      ['^.^.assets.detail', {
+        assetId: 'asset-id',
+        previousEntries: 'entry-id-1,entry-id-2,entry-id-3,entry-id-4,entry-id-5'
+      }]
+    );
+
+    willRedirect(
+      'removes all entries above given one if it is already in the stack',
+      {
+        featureFlagValue: FeatureFlagValue.InfiniteNumberOfLevels,
+        params: {
+          entryId: 'entry-id-4'
+        },
+        search: {
+          previousEntries: 'entry-id-1,entry-id-2,entry-id-3'
+        },
+        goToEntity: { id: 'entry-id-2', type: 'Entry' }
+      },
+      ['^.^.entries.detail', {
+        entryId: 'entry-id-2',
+        previousEntries: 'entry-id-1'
+      }]
     );
   });
 });
