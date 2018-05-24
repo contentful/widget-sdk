@@ -21,10 +21,15 @@ export const RequestState = {
 };
 
 export function formatPrice (value) {
-  return parseInt(value, 10).toLocaleString('en-US', {
+  if (!Number.isFinite(value)) {
+    return null;
+  }
+
+  return parseFloat(value, 10).toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
-    minimumFractionDigits: 0
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2
   });
 }
 
