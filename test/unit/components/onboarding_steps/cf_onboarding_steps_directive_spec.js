@@ -16,7 +16,8 @@ describe('cfOnboardingSteps Directive', () => {
       $provide.value('utils/LaunchDarkly', {
         // Begin test code: test-ps-02-2018-tea-onboarding-steps
         // eslint-disable-next-line no-unused-vars
-        onABTest: (scope, flagName, handler) => handler(false)
+        onABTest: (scope, flagName, handler) => handler(false),
+        onFeatureFlag: sinon.stub()
         // End test code: test-ps-02-2018-tea-onboarding-steps
       });
       $provide.value('contentPreview', {
