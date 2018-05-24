@@ -2,6 +2,8 @@ import { pick } from 'lodash';
 import { get } from 'utils/Collections';
 import { makeCtor } from 'utils/TaggedValues';
 
+// Hardcoded limit for v1 orgs is 100; it's less for all v2 space plans.
+const ENVIRONMENTS_LIMIT = 100;
 
 // These are the response constructors for the values returned by
 // `create` and `update`.
@@ -30,7 +32,8 @@ export function create (spaceEndpoint) {
   function getAll () {
     return spaceEndpoint({
       method: 'GET',
-      path: ['environments']
+      path: ['environments'],
+      query: { limit: ENVIRONMENTS_LIMIT }
     }).then((response) => response.items);
   }
 
