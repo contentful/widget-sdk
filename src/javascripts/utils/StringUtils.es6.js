@@ -1,4 +1,8 @@
-export function joinWithAnd (items) {
+export function joinWithAnd (items, oxford = true) {
+  if (!Array.isArray(items)) {
+    return null;
+  }
+
   let sentence = '';
 
   if (items.length <= 1) {
@@ -6,7 +10,7 @@ export function joinWithAnd (items) {
   } else {
     sentence = items.reduce((memo, item, i) => {
       if (i === items.length - 1) {
-        return `${memo} and ${item}`;
+        return `${memo}${oxford ? ',' : ''} and ${item}`;
       } else if (i !== 0) {
         return `${memo}, ${item}`;
       } else {
