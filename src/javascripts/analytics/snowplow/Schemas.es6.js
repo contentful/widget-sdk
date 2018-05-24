@@ -159,6 +159,11 @@ registerSchema({
   version: '2-0-0'
 });
 
+registerSchema({
+  name: 'slide_in_editor',
+  version: '1-0-0'
+});
+
 // Objects following this schema are meant to be passed as context
 // to other events like element:click hence it has no counterpart
 // in snowplow/Events.es6.js and no transformer

@@ -48,7 +48,6 @@ export const validEvents = {
   ],
   content_preview: ['created', 'updated', 'deleted'],
   paywall: ['viewed', 'closed', 'upgrade_clicked'],
-  // https://contentful.atlassian.net/wiki/display/PROD/Bulk+references+editor+-+Tracking+specs
   slide_in_editor: [
     'peek_click',
     'arrow_back',
@@ -56,6 +55,7 @@ export const validEvents = {
     'open_create',
     'delete'
   ],
+  // https://contentful.atlassian.net/wiki/display/PRODBulk+references+editor+-+Tracking+specs
   bulk_editor: ['add', 'open', 'open_slide_in', 'close', 'status', 'action'],
   content_type: ['create'],
   entry: ['create', 'publish'],

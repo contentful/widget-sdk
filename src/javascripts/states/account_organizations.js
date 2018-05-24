@@ -12,6 +12,15 @@ angular.module('contentful')
   var getStore = require('TheStore').getStore;
   var store = getStore();
 
+  // A list of states that have been changed
+  // to be adapted to the new pricing model (V2).
+  // Orgs that are still in the old pricing model
+  // still access the V1 state
+  var migratedStates = [{
+    v1: 'account.organizations.subscription',
+    v2: 'account.organizations.subscription_new'
+  }];
+
   var newOrg = base({
     name: 'new',
     url: '/new',
@@ -144,13 +153,30 @@ angular.module('contentful')
   function organizationsBase (definition) {
     var defaults = {
       label: 'Organizations & Billing',
-      onEnter: ['$stateParams', 'require', function ($stateParams, require) {
+      onEnter: ['$state', '$stateParams', 'require', function ($state, $stateParams, require) {
         var accessChecker = require('access_control/AccessChecker');
+        var useLegacy = require('utils/ResourceUtils').useLegacy;
         var TokenStore = require('services/TokenStore');
+        var go = require('states/Navigator').go;
+
         TokenStore.getOrganization($stateParams.orgId).then(function (org) {
+          var migration = migratedStates.find(state => $state.is(state.v1));
           accessChecker.setOrganization(org);
+          store.set('lastUsedOrg', $stateParams.orgId);
+
+          useLegacy(org).then(function (isLegacy) {
+            var shouldRedirectToV2 = !isLegacy && Boolean(migration);
+            // redirect old v1 state to the new v2 state
+            // in case a user from a previously v1 org has
+            // the URL bookmarked
+            if (shouldRedirectToV2) {
+              go({
+                path: migration.v2.split('.'),
+                params: { orgId: $stateParams.orgId }
+              });
+            }
+          });
         });
-        store.set('lastUsedOrg', $stateParams.orgId);
       }]
     };
     return base(_.extend(defaults, definition));
