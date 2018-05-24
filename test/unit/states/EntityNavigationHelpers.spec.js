@@ -128,7 +128,7 @@ describe('EntityNavigationHelpers', function () {
           const targetSlideLevel = count(stateGoArgs[1].previousEntries) + 1;
           expect(result).toEqual({ currentSlideLevel, targetSlideLevel });
         } else {
-          expect(result).toEqual(undefined);
+          expect(result).toEqual({ currentSlideLevel: 0, targetSlideLevel: 0 });
         }
       });
     }

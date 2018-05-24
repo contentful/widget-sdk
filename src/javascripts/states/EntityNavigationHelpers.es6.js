@@ -44,7 +44,7 @@ export function goToSlideInEntity (entity, featureFlagValue) {
     !canSlideIn(featureFlagValue)
   ) {
     goToEntity(entity);
-    return;
+    return { currentSlideLevel: 0, targetSlideLevel: 0 };
   }
   const serializedEntities = reducedEntities.map(({ id }) => id).join(',');
   const idKey = `${entity.type.toLowerCase()}Id`;
