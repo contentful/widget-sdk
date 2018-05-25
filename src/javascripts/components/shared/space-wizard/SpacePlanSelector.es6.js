@@ -197,7 +197,7 @@ const SpacePlanItem = createReactClass({
               bottom: '25px',
               color: colors.elementDarkest
             }}
-            width={400}
+            width={800}
             tooltip={unavailabilityTooltip}
           >
               <Icon name='question-mark' />
