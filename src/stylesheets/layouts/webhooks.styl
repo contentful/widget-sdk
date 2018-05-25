@@ -112,6 +112,10 @@
     font-weight: normal
     padding: $rhythm(.4)
     border: 1px solid $colors.element-light
+
+    label
+      cursor: pointer
+
   td:first-child
     border-left-width: 0
     white-space: nowrap
@@ -120,6 +124,9 @@
   tr:last-child
     td, th
       border-width: 0
+  .action-cell
+    text-align: center
+    cursor: pointer
   .x--clickable-cell
     cursor: pointer
     *
@@ -128,7 +135,7 @@
     text-align: center
     span
       color: $colors.text-lightest
-  .x--highlighted-cell
+  .x--highlighted-cell, .footer .action-cell
     background: $colors.element-lightest
   .x--unavailable-checkbox
     opacity: .5
