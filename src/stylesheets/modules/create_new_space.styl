@@ -8,8 +8,6 @@
     background-color: white
     border: 0
     padding: 0
-  &__content.modal-dialog__content
-    padding: 20px 60px 40px
   &__heading
     line-height: 1.2em
     margin: 0 0 8px
@@ -187,6 +185,10 @@ $close-button-small()
   &__centered-block
     width: 420px
     margin: 0 auto
+
+  & > .modal-dialog__content
+    padding: 20px 60px 40px
+
 
 .space-plans-list
   &__item__heading
