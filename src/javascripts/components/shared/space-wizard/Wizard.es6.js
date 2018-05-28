@@ -131,7 +131,6 @@ const Wizard = createReactClass({
             <ProgressScreen
               done={isContentCreated}
               onConfirm={this.confirm}
-              onDimensionsChange={onDimensionsChange}
             />
           </div>
         </div>
@@ -163,8 +162,8 @@ const Wizard = createReactClass({
         action,
         isFormSubmitted,
         serverValidationErrors,
-        onDimensionsChange,
-        onCancel: onCancel,
+        reposition: onDimensionsChange,
+        onCancel,
         track: this.track,
         onNavigate: this.navigate,
         onChange: this.setStateData,

@@ -10,8 +10,7 @@ import {asReact} from 'ui/Framework/DOMRenderer';
 
 const TemplateSelector = createReactClass({
   propTypes: {
-    onSelect: PropTypes.func.isRequired,
-    onDimensionsChange: PropTypes.func
+    onSelect: PropTypes.func.isRequired
   },
   getInitialState () {
     return {
@@ -67,15 +66,6 @@ const TemplateSelector = createReactClass({
         )}
       </FetchTemplates>
     );
-  },
-  componentDidMount () {
-    this.props.onDimensionsChange();
-  },
-  componentDidUpdate (_prevProps, prevState) {
-    if (this.state.isShowingTemplates !== prevState.isShowingTemplates) {
-      // animation timeout
-      setTimeout(this.props.onDimensionsChange, 250);
-    }
   },
   selectTemplate (selectedTemplate) {
     this.props.onSelect(selectedTemplate);

@@ -25,14 +25,14 @@ const SpacePlanSelector = createReactClass({
     track: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
-    onDimensionsChange: PropTypes.func.isRequired,
-    onCancel: PropTypes.func.isRequired
+    onCancel: PropTypes.func.isRequired,
+    reposition: PropTypes.func.isRequired
   },
   getInitialState () {
     return {newSpaceRatePlan: null};
   },
   render () {
-    const {organization, space, action, onDimensionsChange} = this.props;
+    const {organization, space, action, reposition} = this.props;
     const {newSpaceRatePlan} = this.state;
 
     return (
@@ -40,7 +40,7 @@ const SpacePlanSelector = createReactClass({
         organization={organization}
         action={action}
         spaceId={space && space.sys.id}
-        onUpdate={onDimensionsChange}
+        onFetch={reposition}
       >
         {({requestState, spaceRatePlans, freeSpacesResource}) => {
           const currentPlan = spaceRatePlans.find(plan => {
