@@ -48,13 +48,14 @@ const SpacePlanSelector = createReactClass({
           });
           const highestPlan = spaceRatePlans.slice().sort((planX, planY) => planY.price >= planX.price)[0];
           const atHighestPlan = highestPlan && highestPlan.unavailabilityReasons && highestPlan.unavailabilityReasons.find(reason => reason.type === 'currentPlan');
+          const payingOrg = organization.isBillable;
 
           return <div>
             {requestState === RequestState.PENDING && <div className="loader__container">
               {asReact(spinner({diameter: '40px'}))}
             </div>}
             {requestState === RequestState.SUCCESS && <div>
-              {!organization.isBillable &&
+              {!payingOrg &&
                 <BillingInfo
                   canSetupBilling={isOwner(organization)}
                   goToBilling={this.goToBilling}
@@ -94,6 +95,7 @@ const SpacePlanSelector = createReactClass({
                       freeSpacesResource={freeSpacesResource}
                       isCurrentPlan={currentPlan === plan}
                       isSelected={get(newSpaceRatePlan, 'sys.id') === plan.sys.id}
+                      isPayingOrg={payingOrg}
                       onSelect={this.selectPlan(currentPlan)} />)}
                   </div>
                 </Fragment>
@@ -142,10 +144,11 @@ const SpacePlanItem = createReactClass({
     isSelected: PropTypes.bool.isRequired,
     freeSpacesResource: PropTypes.object,
     onSelect: PropTypes.func.isRequired,
+    isPayingOrg: PropTypes.bool.isRequired,
     isCurrentPlan: PropTypes.bool
   },
   render: function () {
-    const {plan, isCurrentPlan, isSelected, freeSpacesResource, onSelect} = this.props;
+    const {plan, isCurrentPlan, isSelected, freeSpacesResource, isPayingOrg, onSelect} = this.props;
     const freeSpacesUsage = freeSpacesResource && freeSpacesResource.usage;
     const freeSpacesLimit = freeSpacesResource && freeSpacesResource.limits.maximum;
 
@@ -191,7 +194,7 @@ const SpacePlanItem = createReactClass({
           })}
         </ul>
 
-        { plan.disabled && !isCurrentPlan &&
+        { isPayingOrg && plan.disabled && !isCurrentPlan &&
           <Tooltip
             style={{
               position: 'absolute',
@@ -205,7 +208,7 @@ const SpacePlanItem = createReactClass({
               <Icon name='question-mark' />
           </Tooltip>
         }
-        { !plan.disabled &&
+        { (!isPayingOrg || !plan.disabled) &&
           <Icon className="space-plans-list__item__chevron" name="dd-arrow-down"/>
         }
       </div>
