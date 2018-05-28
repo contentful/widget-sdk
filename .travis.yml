@@ -120,3 +120,9 @@ notifications:
     on_failure: always
     rooms:
       - secure: lc+kwmitAcp5htZI5ETV5x5ZwP0TGzJKwenaMMyqGCCUlDgK76hBirkg9LgBhG5500Kks+udT6flZLJ0p/gNvbgqEaCR1GZBmCdneqxpkow8kAy2HUGR1MmkA3+zs1YMJ4Rp3nC78ygVKPzreqgEpmfCovYls0PmpO37khqzBnY=
+  webhooks:
+    urls:
+      - https://samson.contentful.org/integrations/travis/24884e787b5439c88cedef3d8bf1ca90
+    on_failure: never
+    on_cancel: never
+    on_error: never
