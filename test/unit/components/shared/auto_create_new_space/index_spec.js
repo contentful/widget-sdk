@@ -22,7 +22,7 @@ describe('AutoCreateNewSpace/index', () => {
         getStore: sinon.stub().returns(this.store)
       });
       $provide.value('utils/LaunchDarkly', {
-        getCurrentVariation: sinon.stub().resolves(false)
+        getCurrentVariation: sinon.stub().returns(false)
       });
     });
 
@@ -97,11 +97,12 @@ describe('AutoCreateNewSpace/index', () => {
       }
     });
 
-    it('should create a sample space when the user is qualified', function () {
+    it('should create a sample space when the user is qualified', async function () {
       this.tokenStore.spacesByOrganization$.set(this.spacesByOrg);
       this.tokenStore.user$.set(this.user);
       this.store.get.returns(false);
       this.init();
+      await new Promise(resolve => setTimeout(resolve, 0));
       sinon.assert.calledOnce(this.createSampleSpace);
       sinon.assert.calledWithExactly(
         this.createSampleSpace,
@@ -111,13 +112,14 @@ describe('AutoCreateNewSpace/index', () => {
       );
     });
 
-    it('should only call create sample space function once even if invoked multiple times', function () {
+    it('should only call create sample space function once even if invoked multiple times', async function () {
       // to prevent this.createSampleSpace from resolving before
       // the next user$ and spacesByOrganization$ values are emitted
       const delayedPromise = new Promise(resolve => setTimeout(resolve, 5000));
 
       this.createSampleSpace.resolves(delayedPromise);
       this.init();
+      await new Promise(resolve => setTimeout(resolve, 0));
       this.user.sys = { id: '123', createdAt: (new Date(2017, 8, 24)).toISOString() };
       this.tokenStore.user$.set(this.user);
       this.$apply();
