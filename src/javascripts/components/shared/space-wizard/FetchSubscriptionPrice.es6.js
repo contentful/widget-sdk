@@ -8,7 +8,6 @@ import logger from 'logger';
 const FetchSubscriptionPrice = createReactClass({
   propTypes: {
     organizationId: PropTypes.string.isRequired,
-    onUpdate: PropTypes.func,
     // children is a rendering function
     children: PropTypes.func.isRequired
   },
@@ -43,11 +42,6 @@ const FetchSubscriptionPrice = createReactClass({
         requestState: RequestState.ERROR,
         error
       });
-    }
-  },
-  componentDidUpdate (...args) {
-    if (this.props.onUpdate) {
-      this.props.onUpdate(...args);
     }
   }
 });

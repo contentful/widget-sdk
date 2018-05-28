@@ -40,7 +40,7 @@ const SpacePlanSelector = createReactClass({
         organization={organization}
         action={action}
         spaceId={space && space.sys.id}
-        onUpdate={reposition}
+        onFetch={reposition}
       >
         {({requestState, spaceRatePlans, freeSpacesResource}) => {
           const currentPlan = spaceRatePlans.find(plan => {

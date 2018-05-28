@@ -12,10 +12,11 @@ const FetchSpacePlans = createReactClass({
   propTypes: {
     organization: PropTypes.object.isRequired,
     spaceId: PropTypes.string,
-    onUpdate: PropTypes.func,
+    onFetch: PropTypes.func,
     // children is a rendering function
     children: PropTypes.func.isRequired
   },
+
   getInitialState () {
     return {
       error: null,
@@ -24,17 +25,15 @@ const FetchSpacePlans = createReactClass({
       requestState: RequestState.PENDING
     };
   },
+
   componentDidMount () {
-    this.fetch(this.props);
+    const { onFetch } = this.props;
+
+    this.fetch(this.props).then(() => {
+      onFetch && onFetch();
+    });
   },
-  componentWillReceiveProps (nextProps) {
-    if (this.props.organization !== nextProps.organization) {
-      this.fetch(nextProps);
-    }
-  },
-  render () {
-    return this.props.children(this.state);
-  },
+
   async fetch ({ organization, spaceId }) {
     try {
       const result = await getSpacePlans({ organization, spaceId });
@@ -55,10 +54,9 @@ const FetchSpacePlans = createReactClass({
       });
     }
   },
-  componentDidUpdate (...args) {
-    if (this.props.onUpdate) {
-      this.props.onUpdate(...args);
-    }
+
+  render () {
+    return this.props.children(this.state);
   }
 });
 

@@ -124,21 +124,6 @@ const Wizard = createReactClass({
 
     const steps = getSteps(action);
 
-    // Due to the way that this component works, we need to pass a repositioning
-    // function that only repositions on the first step.
-    //
-    // This component always renders all children (with their side effects) when
-    // a step changes its visibility, such as going from Step 1 to Step 2. This means
-    // that repositioning only within the first step component will not work as
-    // expected and so we need to also base repositioning logic on the stepId.
-    const reposition = function () {
-      const shouldReposition = isFirstStep(steps, currentStepId);
-
-      if (shouldReposition) {
-        return onDimensionsChange();
-      }
-    };
-
     if (isSpaceCreated) {
       return (
         <div className="modal-dialog" style={{width: '750px'}}>
@@ -177,7 +162,7 @@ const Wizard = createReactClass({
         action,
         isFormSubmitted,
         serverValidationErrors,
-        reposition,
+        reposition: onDimensionsChange,
         onCancel,
         track: this.track,
         onNavigate: this.navigate,
@@ -341,10 +326,6 @@ function getSteps (action) {
   } else if (action === 'change') {
     return SpaceChangeSteps;
   }
-}
-
-function isFirstStep (steps, stepId) {
-  return steps[0].id === stepId;
 }
 
 function isLastStep (steps, stepId) {
