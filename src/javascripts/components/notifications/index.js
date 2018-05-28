@@ -55,7 +55,9 @@ angular.module('contentful')
 
       markAsSeen: function () {
         var self = this;
-        this.message.hidden = true;
+        if (this.message) {
+          this.message.hidden = true;
+        }
         window.clearTimeout(this._seenTimeout);
         $timeout(function () {
           window.setTimeout(
