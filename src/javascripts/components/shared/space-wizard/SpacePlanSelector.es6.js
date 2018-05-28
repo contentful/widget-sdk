@@ -13,7 +13,8 @@ import {TextLink} from '@contentful/ui-component-library';
 import {asReact} from 'ui/Framework/DOMRenderer';
 import Icon from 'ui/Components/Icon';
 import ContactUsButton from 'ui/Components/ContactUsButton';
-import {RequestState, formatPrice} from './WizardUtils';
+import {RequestState, formatPrice, unavailabilityTooltipNode} from './WizardUtils';
+import {byName as colors} from 'Styles/Colors';
 import pluralize from 'pluralize';
 
 const SpacePlanSelector = createReactClass({
@@ -146,6 +147,8 @@ const SpacePlanItem = createReactClass({
     const freeSpacesUsage = freeSpacesResource && freeSpacesResource.usage;
     const freeSpacesLimit = freeSpacesResource && freeSpacesResource.limits.maximum;
 
+    const unavailabilityTooltip = unavailabilityTooltipNode(plan);
+
     return (
       <div
         key={plan.sys.id}
@@ -185,7 +188,24 @@ const SpacePlanItem = createReactClass({
             </li>;
           })}
         </ul>
-        <Icon className="space-plans-list__item__chevron" name="dd-arrow-down"/>
+
+        { plan.disabled && !isCurrentPlan &&
+          <Tooltip
+            style={{
+              position: 'absolute',
+              right: '19px',
+              bottom: '25px',
+              color: colors.elementDarkest
+            }}
+            width={800}
+            tooltip={unavailabilityTooltip}
+          >
+              <Icon name='question-mark' />
+          </Tooltip>
+        }
+        { !plan.disabled &&
+          <Icon className="space-plans-list__item__chevron" name="dd-arrow-down"/>
+        }
       </div>
     );
   }
