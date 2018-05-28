@@ -11,8 +11,7 @@ const SpaceDetails = createReactClass({
     newSpaceRatePlan: PropTypes.object.isRequired,
     serverValidationErrors: PropTypes.object,
     isFormSubmitted: PropTypes.bool,
-    onNavigate: PropTypes.func.isRequired,
-    onDimensionsChange: PropTypes.func
+    onNavigate: PropTypes.func.isRequired
   },
   getInitialState: function () {
     const state = {
@@ -29,7 +28,7 @@ const SpaceDetails = createReactClass({
     }
   },
   render: function () {
-    const {newSpaceRatePlan, onDimensionsChange, onNavigate} = this.props;
+    const {newSpaceRatePlan, onNavigate} = this.props;
     const {name, validation, touched} = this.state;
     const showValidationError = touched && !!validation.name;
 
@@ -72,7 +71,6 @@ const SpaceDetails = createReactClass({
         </div>
         <TemplateSelector
           onSelect={this.setTemplate}
-          onDimensionsChange={onDimensionsChange}
         />
         <div style={{textAlign: 'center', margin: '1.2em 0'}}>
           <button

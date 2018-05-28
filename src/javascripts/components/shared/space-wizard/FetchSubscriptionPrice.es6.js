@@ -46,7 +46,9 @@ const FetchSubscriptionPrice = createReactClass({
     }
   },
   componentDidUpdate (...args) {
-    if (this.props.onUpdate) { this.props.onUpdate(...args); }
+    if (this.props.onUpdate) {
+      this.props.onUpdate(...args);
+    }
   }
 });
 
