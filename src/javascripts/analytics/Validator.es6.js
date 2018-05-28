@@ -21,6 +21,7 @@ export const validEvents = {
   learn: ['step_clicked', 'language_selected', 'resource_selected'],
   space_switcher: ['opened', 'create_clicked', 'space_switched'],
   space: ['template_selected', 'create'],
+  space_wizard: ['open', 'cancel', 'confirm', 'navigate', 'link_click', 'space_create'],
   search: [
     'bulk_action_performed',
     'search_performed',

@@ -22,6 +22,7 @@ const SpacePlanSelector = createReactClass({
     organization: PropTypes.object.isRequired,
     space: PropTypes.object,
     action: PropTypes.string.isRequired,
+    track: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
     onDimensionsChange: PropTypes.func.isRequired,
@@ -123,13 +124,14 @@ const SpacePlanSelector = createReactClass({
     };
   },
   goToBilling () {
-    const {organization, onCancel} = this.props;
+    const {organization, track, onCancel} = this.props;
     const orgId = organization.sys.id;
     go({
       path: ['account', 'organizations', 'subscription_billing'],
       params: {orgId, pathSuffix: '/billing_address'},
       options: {reload: true}
     });
+    track('link_click');
     onCancel();
   }
 });

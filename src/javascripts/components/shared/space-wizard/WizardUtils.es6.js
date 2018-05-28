@@ -4,13 +4,13 @@ import { joinWithAnd } from 'utils/StringUtils';
 
 export const Steps = {
   SpaceCreateSteps: {
-    SpaceType: 0,
-    SpaceDetails: 1,
-    Confirmation: 2
+    SpaceType: 'space_type',
+    SpaceDetails: 'space_details',
+    Confirmation: 'confirmation'
   },
   SpaceChangeSteps: {
-    SpaceType: 0,
-    Confirmation: 1
+    SpaceType: 'space_type',
+    Confirmation: 'confirmation'
   }
 };
 
