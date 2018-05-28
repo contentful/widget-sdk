@@ -30,13 +30,13 @@ angular.module('contentful')
   var mimetype = require('mimetype');
   var assetContentType = require('assetContentType');
   var moment = require('moment');
+  var _ = require('lodash');
   var caseofEq = require('sum-types').caseofEq;
   var otherwise = require('sum-types').otherwise;
 
   // Require on demand to avoid circular dependency error in `spaceContext`.
   var requireSpaceContext = _.once(function () { return require('spaceContext'); });
 
-  var NOT_SEARCHABLE_FIELD_TYPES = ['Location', 'Object', 'File'];
   var RELATIVE_DATE_REGEX = /(\d+) +days +ago/i;
 
   var operatorDescriptions = {
@@ -285,105 +285,6 @@ angular.module('contentful')
   }
 
   /**
-   * @description
-   * Return completions for static fields (i.e. `sys`) properties and
-   * dynamic fields on the Content Type.
-   *
-   * @param {Client.ContentType?} ct
-   * @return {CompletionData}
-   */
-  function keyCompletion (ct) {
-    var staticCompletions = _.map(staticAutocompletions(ct), function (completion, key) {
-      return {value: key, description: completion.description};
-    });
-
-    var fieldCompletions = _.get(ct, ['data', 'fields'], [])
-      .filter(function (field) {
-        var isSearchable = !field.disabled && NOT_SEARCHABLE_FIELD_TYPES.indexOf(field.type) < 0;
-        var isNotStaticDuplicate = !_.find(staticCompletions, {value: apiNameOrId(field)});
-        return isSearchable && isNotStaticDuplicate;
-      })
-      .map(function (field) {
-        return {
-          value: apiNameOrId(field),
-          description: field.name
-        };
-      });
-
-    return makeListCompletion(fieldCompletions.concat(staticCompletions));
-  }
-
-  function operatorCompletion (key, contentType) {
-    var completions = staticAutocompletions(contentType);
-    if (completions[key]) {
-      return makeListCompletion(completions[key].operators || makeOperatorList([':']));
-    } else {
-      return fieldOperatorCompletion(key, contentType);
-    }
-
-    /**
-     * @description
-     * Offer available operators for a certain field of a content type
-     * Based on field type and validations
-     *
-     * @param {string} fieldId
-     * @param {Client.ContentType} contentType
-     * @returns {CompletionData}
-     */
-    function fieldOperatorCompletion (fieldId, contentType) {
-      var field = findField(fieldId, contentType) || {};
-      var type = field ? field.type : null;
-      if (type === 'Integer' || type === 'Number' || type === 'Date') {
-        return makeOperatorListCompletion(['<', '<=', '==', '>=', '>']);
-      } else {
-        return makeOperatorListCompletion([':']);
-      }
-    }
-  }
-
-  function valueCompletion (key, contentType) {
-    var completions = staticAutocompletions(contentType);
-    if (!completions[key]) {
-      return predefinedFieldCompletion(key, contentType);
-    }
-
-    var complete = completions[key].complete;
-    if (_.isFunction(complete)) {
-      return complete(contentType);
-    } else {
-      return complete;
-    }
-
-    // Offer set of valid values as autocompletions for fields
-    // with predefined values/numeric ranges
-    function predefinedFieldCompletion (key, contentType) {
-      var field = findField(key, contentType);
-      if (field) {
-        var val;
-        // Predefined values
-        val = _.find(field.validations, 'in');
-        if (val) return makeListCompletion(val['in']);
-        // Integer ranges
-        val = field.type === 'Integer' && _.find(field.validations, 'range');
-        if (val) return makeListCompletion(buildRange(val.range.min, val.range.max));
-        // Booleans
-        if (field.type === 'Boolean') return makeListCompletion(['yes', 'no']);
-        // Dates
-        if (field.type === 'Date') return makeDateCompletion();
-      }
-      return null;
-    }
-
-    // Turn a min and a max into an array of intermediate values
-    function buildRange (min, max) {
-      if (!_.isNumber(max) || !_.isNumber(min) || max - min > 25) return null;
-      var res = [];
-      for (var i = min; i <= max; i++) res.push(i);
-      return res;
-    }
-  }
-
-  /**
    * Given a [key, operator, value] triple, a content type and a space
    * we build CDA query object for this filter triple.
    */
@@ -518,14 +419,6 @@ angular.module('contentful')
     };
   }
 
-  /**
-   * @param {string[]} operators
-   * @returns {CompletionData}
-   */
-  function makeOperatorListCompletion (operators) {
-    return makeListCompletion(makeOperatorList(operators));
-  }
-
   // Helper for creating a list completion with operators
   // with descriptions based on the type of the key
   function makeOperatorList (operators) {
@@ -555,15 +448,9 @@ angular.module('contentful')
 
   // The public facing API for this service
   return {
-    complete: {
-      key: keyCompletion,
-      operator: operatorCompletion,
-      value: valueCompletion
-    },
     filterToQueryObject: filterToQueryObject,
     cmaQueryBuilderForField: cmaQueryBuilderForField,
-    isRelativeDate: isRelativeDate,
-    queryOperator: queryOperator
+    isRelativeDate: isRelativeDate
   };
 
   // }}}

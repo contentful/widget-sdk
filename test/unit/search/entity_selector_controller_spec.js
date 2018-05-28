@@ -8,13 +8,26 @@ describe('EntitySelectorController', function () {
     const $controller = this.$inject('$controller');
     const $timeout = this.$inject('$timeout');
 
+    const spaceContext = this.$inject('mocks/spaceContext').init();
+    const scope = $rootScope.$new();
+    scope.spaceContext = spaceContext;
+
+    const ct = {
+      getId: _.constant(1),
+      data: {fields: [{id: 'fieldId'}], sys: {id: 1}}
+    };
+    spaceContext.publishedCTs.fetch.resolves(ct);
+    spaceContext.publishedCTs.getAllBare.returns([]);
+
+    spaceContext.space.getEntries.defers();
+
     this.entitySelector = this.$inject('entitySelector');
 
     this.fetch = sinon.stub().resolves({items: []});
 
     this.createController = function (config = {}, labels = {}, singleContentType) {
       config = _.extend({ entityType: 'Entry', fetch: this.fetch }, config);
-      this.scope = _.extend($rootScope.$new(), {
+      this.scope = _.extend(scope, {
         config,
         labels,
         singleContentType
