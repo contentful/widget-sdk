@@ -240,7 +240,7 @@ const Wizard = createReactClass({
   },
 
   async createSpace () {
-    const {organization, onSpaceCreated, onTemplateCreated} = this.props;
+    const {organization, onSpaceCreated, onTemplateCreated, onConfirm} = this.props;
     const {template} = this.state.data;
     const spaceData = makeSpaceData(this.state.data);
     let newSpace;
@@ -282,13 +282,13 @@ const Wizard = createReactClass({
           'Example Key',
           'We’ve created an example API key for you to help you get started.'
         );
-        this.confirm();
+        onConfirm();
       }
     }
   },
 
   async changeSpace () {
-    const { space } = this.props;
+    const { space, onConfirm } = this.props;
 
     this.setState({isFormSubmitted: true});
 
@@ -303,11 +303,11 @@ const Wizard = createReactClass({
       return;
     }
 
-    this.confirm();
+    onConfirm();
   },
 
   handleError (error) {
-    const { action } = this.props;
+    const { action, onCancel } = this.props;
 
     logger.logServerWarn(`Could not ${action} space`, {error});
 
@@ -316,7 +316,7 @@ const Wizard = createReactClass({
       this.setState({serverValidationErrors, currentStepId: 1});
     } else {
       notification.error(`Could not ${action} your space. If the problem persists, get in touch with us.`);
-      this.props.onCancel(); // close modal without tracking 'cancel' event
+      onCancel(); // close modal without tracking 'cancel' event
     }
   }
 });
