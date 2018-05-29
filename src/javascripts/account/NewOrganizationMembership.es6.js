@@ -23,13 +23,13 @@ import {
 } from 'account/NewOrganizationMembershipTemplate';
 import createResourceService from 'services/ResourceService';
 
-// Begin test code: test-ps-02-2018-tea-onboarding-steps
+// Start: For Next Steps for a TEA space (a space created using the example space template)
 import {track, updateUserInSegment} from 'analytics/Analytics';
 import $state from '$state';
 import { getStore } from 'TheStore';
 const GROUP_ID = 'tea_onboarding_steps';
 const store = getStore('local');
-// End test code: test-ps-02-2018-tea-onboarding-steps
+// End: For Next Steps for a TEA space (a space created using the example space template)
 
 const adminRole = {
   name: 'Admin',
@@ -213,7 +213,7 @@ export default function ($scope) {
         });
         const organization = yield* getOrgInfo(orgId);
 
-        // Begin test code: test-ps-02-2018-tea-onboarding-steps
+        // Start: For Next Steps for a TEA space (a space created using the example space template)
         const inviteTrackingKey = `ctfl:${orgId}:progressTEA:inviteDevTracking`;
 
         const pendingInvitesForTEA = store.get(inviteTrackingKey);
@@ -234,7 +234,7 @@ export default function ($scope) {
 
           store.remove(inviteTrackingKey);
         }
-        // End test code: test-ps-02-2018-tea-onboarding-steps
+        // End: For Next Steps for a TEA space (a space created using the example space template)
 
         state = assign(state, {
           status: failedOrgInvitations.length ? Failure() : Success(),

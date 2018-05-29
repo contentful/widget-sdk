@@ -7,8 +7,6 @@ export default function template () {
     steps()
   ]);
 
-  // this block now also contains code from modern stack onboarding as well
-  // Begin test code: test-ps-02-2018-tea-onboarding-steps
   return h('div', [
     h('.loader__container', {
       style: {
@@ -26,21 +24,17 @@ export default function template () {
     h('div', {
       ngIf: '!onboarding.isContentPreviewsLoading'
     }, [
-      h('cf-onboarding-with-tea', {
-        ngIf: 'onboarding.enableTeaOnboarding === true' // since this can be the string 'loading' as well
-      }),
       h('div', {
         ngIf: 'onboarding.showModernStackDevChoiceNextSteps'
       }, [h('react-component', {name: 'ms-dev-next-steps'})]),
       h('div', {
-        ngIf: 'onboarding.showModernStackContentChoiceNextSteps'
+        ngIf: 'onboarding.showModernStackContentChoiceNextSteps || onboarding.isTEASpace'
       }, [h('react-component', {name: 'ms-content-creator-next-steps'})]),
       h('div', {
-        ngIf: '!onboarding.showModernStackDevChoiceNextSteps && !onboarding.showModernStackContentChoiceNextSteps && !onboarding.enableTeaOnboarding'
+        ngIf: '!onboarding.showModernStackDevChoiceNextSteps && !onboarding.showModernStackContentChoiceNextSteps && !onboarding.isTEASpace'
       }, [nonTeaOnboardingSteps])
     ])
   ]);
-  // End test code: test-ps-02-2018-tea-onboarding-steps
 }
 
 function heading () {

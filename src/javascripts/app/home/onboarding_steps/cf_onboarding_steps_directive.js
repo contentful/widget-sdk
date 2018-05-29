@@ -4,23 +4,20 @@ angular.module('contentful')
 .directive('cfOnboardingSteps', ['require', function (require) {
   const $state = require('$state');
   const Analytics = require('analytics/Analytics');
-  const template = require('app/home/onboarding_steps/OnboardingStepsTemplate').default;
   const spaceContext = require('spaceContext');
   const WebhookRepository = require('WebhookRepository');
   const CreateSpace = require('services/CreateSpace');
   const caseofEq = require('sum-types').caseofEq;
   const TheLocaleStore = require('TheLocaleStore');
   const entityCreator = require('entityCreator');
-  // Begin test code: test-ps-02-2018-tea-onboarding-steps
   const LD = require('utils/LaunchDarkly');
   const K = require('utils/kefir');
-  const contentPreviewsBus$ = require('contentPreview').contentPreviewsBus$;
-  const teaOnboardingFlag = 'test-ps-02-2018-tea-onboarding-steps';
-  const TokenStore = require('services/TokenStore');
-  // End test code: test-ps-02-2018-tea-onboarding-steps
   const modernStackOnboardingFlag = 'feature-dl-05-2018-modern-stack-onboarding';
   const store = require('TheStore').getStore();
-  const { user$ } = require('services/TokenStore');
+  const { isExampleSpace } = require('data/ContentPreview');
+  const {getAll: getAllContentPreviews} = require('contentPreview');
+  const { user$, getOrganizations } = require('services/TokenStore');
+  const {default: template} = require('app/home/onboarding_steps/OnboardingStepsTemplate');
 
   return {
     template: template(),
@@ -34,19 +31,19 @@ angular.module('contentful')
         const prefix = `ctfl:${user.sys.id}:modernStackOnboarding`;
         const msDevChoiceSpace = store.get(`${prefix}:developerChoiceSpace`);
         const msContentChoiceSpace = store.get(`${prefix}:contentChoiceSpace`);
-        const autoSpaceCreationFailed = store.get(`ctfl:${user.sys.id}:autoSpaceCreationFailed`);
+        const spaceAutoCreationFailed = store.get(`ctfl:${user.sys.id}:spaceAutoCreationFailed`);
 
         const currentSpaceId = spaceContext.space && spaceContext.space.getSys().id;
 
         controller.showModernStackDevChoiceNextSteps =
           flag &&
-          !autoSpaceCreationFailed &&
+          !spaceAutoCreationFailed &&
           currentSpaceId &&
           currentSpaceId === msDevChoiceSpace;
 
         controller.showModernStackContentChoiceNextSteps =
           flag &&
-          !autoSpaceCreationFailed &&
+          !spaceAutoCreationFailed &&
           currentSpaceId &&
           currentSpaceId === msContentChoiceSpace;
       };
@@ -57,56 +54,16 @@ angular.module('contentful')
 
       LD.onFeatureFlag($scope, modernStackOnboardingFlag, updateModernStackOnboardingFlags);
 
-      // Begin test code: test-ps-02-2018-tea-onboarding-steps
       if (spaceContext.space) {
-        controller.enableTeaOnboarding = 'loading';
+        controller.isTEASpace = false;
         controller.isContentPreviewsLoading = true;
-
-        // we convert property to a stream in order to get the next, not current value
-        var previewBusPromise = new Promise(resolve => {
-          K.onValueScope($scope, contentPreviewsBus$.changes(), resolve);
+        getAllContentPreviews(true).then(previews => {
+          const publishedCTs = K.getValue(spaceContext.publishedCTs.items$);
+          controller.isTEASpace = isExampleSpace(previews, publishedCTs);
+        }).finally(() => {
+          controller.isContentPreviewsLoading = false;
         });
-        var sleepPromise = new Promise(resolve => {
-          // we wait for 3000ms since content previews are being polled every 2500ms,
-          // and request should take 500ms at most
-          setTimeout(resolve, 3000);
-        });
-
-        Promise.race([
-          // this value might be resolved before we run this code, and later we skip duplicates
-          // so it means it will never resolve this promise in our controller
-          // next promise handles exactly that situation
-          previewBusPromise,
-          // content previews are updated every 2.5 seconds, so this promise is needed
-          // to indicate that we've loaded before this controller
-          sleepPromise
-        ]).then(() => {
-          // after this value is updated, LD sends new info to its servers
-          // and then LD flag value is updated. So we need to wait some time
-          // empirically, 200ms is enough for 3G - this is a dirty hack
-          setTimeout(() => {
-            controller.isContentPreviewsLoading = false;
-            $scope.$apply();
-          }, 200);
-        });
-
-        LD.onABTest($scope, teaOnboardingFlag, function (flag) {
-          controller.enableTeaOnboarding = flag;
-          // if user is not qualified, we don't send this value
-          if (flag !== null) {
-            Analytics.track('experiment:start', {
-              experiment: {
-                id: teaOnboardingFlag,
-                variation: flag
-              }
-            });
-          }
-        });
-      } else {
-        controller.enableTeaOnboarding = false;
-        controller.isContentPreviewsLoading = false;
       }
-      // End test code: test-ps-02-2018-tea-onboarding-steps
 
       var firstSteps = [
         {
@@ -279,14 +236,14 @@ angular.module('contentful')
           var contentTypeId = contentTypes[0].sys.id;
           var contentType = spaceContext.publishedCTs.get(contentTypeId);
           entityCreator.newEntry(contentTypeId)
-          .then(entry => {
-            Analytics.track('entry:create', {
-              eventOrigin: 'onboarding',
-              contentType: contentType,
-              response: entry
+            .then(entry => {
+              Analytics.track('entry:create', {
+                eventOrigin: 'onboarding',
+                contentType: contentType,
+                response: entry
+              });
+              $state.go('spaces.detail.entries.detail', {entryId: entry.getId()});
             });
-            $state.go('spaces.detail.entries.detail', {entryId: entry.getId()});
-          });
         } else {
           $state.go('spaces.detail.entries.list');
         }
@@ -316,7 +273,7 @@ angular.module('contentful')
       // This function is called when the user has no spaces in the current org.
       // For this reason we get the id of the first org the user has access to.
       function createNewSpace () {
-        TokenStore.getOrganizations()
+        getOrganizations()
           .then(orgs => orgs[0].sys.id)
           .then(id => {
             CreateSpace.showDialog(id);

@@ -132,8 +132,8 @@ angular.module('contentful')
    * Loads the list of preview environments.
    * Uses cached version if available, otherwise fetches from server and caches response.
   */
-  function getAll () {
-    if (previewEnvironmentsCache.getAll()) {
+  function getAll (force = false) {
+    if (previewEnvironmentsCache.getAll() && !force) {
       return $q.resolve(previewEnvironmentsCache.getAll());
     } else {
       return spaceContext.space.endpoint('preview_environments').payload({limit: MAX_PREVIEW_ENVIRONMENTS}).get()
