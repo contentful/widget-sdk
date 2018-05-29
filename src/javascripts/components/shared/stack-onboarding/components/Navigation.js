@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import {name as WithLinkModule} from './WithLink';
 
-export const name = 'navigation-screen';
+export const name = 'stack-onboarding-navigation';
 
 angular.module('contentful')
 .factory(name, ['require', function (require) {
