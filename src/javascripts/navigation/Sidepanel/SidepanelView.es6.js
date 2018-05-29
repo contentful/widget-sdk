@@ -4,16 +4,17 @@ import settingsIcon from 'svg/settings';
 import scaleSvg from 'utils/ScaleSvg';
 import SidepanelOrgs from './SidepanelOrgs';
 import SidepanelSpaces from './SidepanelSpaces';
+import SidepanelNoOrgs from './SidepanelNoOrgs';
 
 export default function (props) {
-  const {sidePanelIsShown, orgDropdownIsShown, closeOrgsDropdown, closeSidePanel, currOrg} = props;
+  const {sidePanelIsShown, orgDropdownIsShown, closeOrgsDropdown, closeSidePanel} = props;
 
   return h('.nav-sidepanel-container', [
     h('div', {
       className: `nav-sidepanel__bg ${sidePanelIsShown ? 'nav-sidepanel__bg--is-visible' : ''}`,
       onClick: orgDropdownIsShown ? closeOrgsDropdown : closeSidePanel
     }),
-    currOrg && renderSidepanel(props)
+    renderSidepanel(props)
   ]);
 }
 
@@ -24,7 +25,8 @@ function renderSidepanel (props) {
     closeSidePanel,
     canGotoOrgSettings,
     gotoOrgSettings,
-    viewingOrgSettings
+    viewingOrgSettings,
+    currOrg
   } = props;
 
   return h('div', {
@@ -33,8 +35,9 @@ function renderSidepanel (props) {
     onClick: closeOrgsDropdown,
     dataTestId: 'sidepanel'
   }, [
-    SidepanelOrgs(props),
-    SidepanelSpaces(props),
+    currOrg && SidepanelOrgs(props),
+    currOrg && SidepanelSpaces(props),
+    !currOrg && SidepanelNoOrgs(props),
     canGotoOrgSettings && renderOrgActions(gotoOrgSettings, viewingOrgSettings),
     renderCloseBtn(closeSidePanel)
   ]);
