@@ -50,9 +50,7 @@ const TEASteps = createReactClass({
           {...state[CREATE_ENTRY]}
           onToggle={toggleExpanding}
           markAsDone={_ => this.markAsDone(CREATE_ENTRY)} />
-        <GetRepoOrInviteDevStep
-          getRepo={{...state[GET_REPO], markAsDone: _ => this.markAsDone(GET_REPO)}}
-          inviteDev={{...state[INVITE_DEV], markAsDone: _ => this.markAsDone(INVITE_DEV)}} />
+        <InviteADevStep {...{...state[INVITE_DEV], markAsDone: _ => this.markAsDone(INVITE_DEV)}} />
       </div>
     );
   }
@@ -320,57 +318,6 @@ const CreateEntryStep = createReactClass({
   }
 });
 
-const GetRepoOrInviteDevStep = createReactClass({
-  propTypes: {
-    getRepo: PropTypes.shape({
-      isDone: PropTypes.bool.isRequired,
-      markAsDone: PropTypes.func.isRequired
-    }),
-    inviteDev: PropTypes.shape({
-      isDone: PropTypes.bool.isRequired,
-      markAsDone: PropTypes.func.isRequired
-    })
-  },
-  render () {
-    return (
-      <div className='tea-onboarding__split-steps'>
-        <GetRepoForExampleAppStep {...this.props.getRepo} />
-        <InviteADevStep {...this.props.inviteDev} />
-      </div>
-    );
-  }
-});
-
-const GetRepoForExampleAppStep = createReactClass({
-  propTypes: {
-    isDone: PropTypes.bool.isRequired,
-    markAsDone: PropTypes.func.isRequired
-  },
-  handleClick () {
-    this.props.markAsDone();
-  },
-  render () {
-    const props = {
-      headerCopy: 'Clone the example app',
-      headerIcon: 'icon-github',
-      isDone: this.props.isDone
-    };
-
-    return (
-      <SplitStep {...props}>
-        <p>Run the app locally with custom content for your preferred platform.</p>
-        <a className='tea-onboarding__split-step-cta'
-           href='https://github.com/contentful?utf8=%E2%9C%93&q=%22the-example-app%22&type=&language='
-           target='_blank'
-           rel='noopener noreferrer'
-           onClick={this.handleClick}>
-          View on GitHub
-        </a>
-      </SplitStep>
-    );
-  }
-});
-
 const InviteADevStep = createReactClass({
   propTypes: {
     isDone: PropTypes.bool.isRequired,
@@ -406,7 +353,6 @@ const InviteADevStep = createReactClass({
 
     return (
       <SplitStep {...props}>
-        <p>Need some help setting up your project? Invite a developer to get started.</p>
         {orgId &&
           <a
             href={inviteLink}
@@ -418,6 +364,7 @@ const InviteADevStep = createReactClass({
             Invite user
           </a>
         }
+        <span className='arrow'></span>
       </SplitStep>
     );
   }

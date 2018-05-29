@@ -9,8 +9,7 @@ import seeThinkDoFeatureModalTemplate from './SeeThinkDoTemplate';
 import {
   getFirstOwnedOrgWithoutSpaces,
   hasAnOrgWithSpaces,
-  ownsAtleastOneOrg,
-  getUserAgeInDays
+  ownsAtleastOneOrg
 } from 'data/User';
 
 import {create} from 'createModernOnboarding';
@@ -73,39 +72,44 @@ export function init () {
           const template = variation ? seeThinkDoFeatureModalTemplate : undefined;
 
           // we swallow all errors, so auto creation modal will always have green mark
-          newSpace = await createSampleSpace(org, 'the example app', template).then(s => s, () => {
-            // serialize the fact that auto space creation failed to localStorage
-            // to power any behaviour to work around the failure
-            store.set(`ctfl:${user.sys.id}:autoSpaceCreationFailed`, true);
-          });
-          markOnboarding();
+          newSpace = await createSampleSpace(org, 'the example app', template)
+            .then(newSpace => {
+              store.set(getKey(user, 'success'), true);
+
+              return newSpace;
+            }, () => {
+              // serialize the fact that auto space creation failed to localStorage
+              // to power any behaviour to work around the failure
+              store.set(getKey(user, 'failure'), true);
+            });
+
           creatingSampleSpace = false;
         }
         return newSpace;
       }
 
-      function markOnboarding () {
-        store.set(getKey(user), true);
+      function markOnboarding (action = 'success') {
+        store.set(getKey(user, action), true);
       }
     });
 }
 
 function qualifyUser (user, spacesByOrg) {
-  return !hadSpaceAutoCreated(user) &&
-    isRecentUser(user) &&
+  return !attemptedSpaceAutoCreation(user) &&
     !hasAnOrgWithSpaces(spacesByOrg) &&
     ownsAtleastOneOrg(user);
 }
 
-function hadSpaceAutoCreated (user) {
-  return store.get(getKey(user));
+function attemptedSpaceAutoCreation (user) {
+  return store.get(getKey(user, 'success')) ||
+    store.get(getKey(user, 'failure'));
 }
 
-// qualify a user if it was created in the last week
-function isRecentUser (user) {
-  return getUserAgeInDays(user) <= 7;
-}
+function getKey (user, action) {
+  const prefix = `ctfl:${user.sys.id}`;
 
-function getKey (user) {
-  return `ctfl:${user.sys.id}:spaceAutoCreated`;
+  if (action === 'success') {
+    return `${prefix}:spaceAutoCreated`;
+  }
+  return `${prefix}:spaceAutoCreationFailed`;
 }

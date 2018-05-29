@@ -57,7 +57,8 @@ remove-top-and-bottom-margin()
   flex-grow: 2
   remove-top-and-bottom-margin()
 
-.tea-onboarding__step-toggle
+.tea-onboarding__step-toggle,
+.tea-onboarding__split-step-body
   color: $colors.blue-dark
   font-weight: bold
   .arrow
@@ -114,18 +115,19 @@ remove-top-and-bottom-margin()
 .tea-onboarding__step-graphic
   margin-left: 10px
 
-.tea-onboarding__split-steps
-  display: flex
-
 .tea-onboarding__split-step
-  flex-basis: 50%
+  display: flex
+  add-padding()
+  padding-bottom: 25px
 
 .tea-onboarding__split-step-header
   display: flex
   flex-direction: row
   align-items: baseline
-  add-padding()
-  padding-bottom: 0
+  flex-grow: 2
+  cursor: pointer
+  h4
+    margin: 0
 
 .tea-onboarding__split-step:first-child
   border-right: 1px solid $colors.element-mid
@@ -133,10 +135,10 @@ remove-top-and-bottom-margin()
 .tea-onboarding__split-step-body
   display: block
   color: $colors.text-mid
-  padding: 12px 60px 24px
-  line-height: 19px
+  line-height: 25px
+  display: flex
+  align-items: center
 
 .tea-onboarding__split-step-cta
   display: block
-  margin-top: 24px
   font-weight: bold

@@ -51,7 +51,6 @@ const OnboardingWithTea = createReactClass({
       [STEPS_KEYS.VIEW_SAMPLE_CONTENT]: { isDone: store.get(constants.viewContent) || false },
       [STEPS_KEYS.PREVIEW_USING_EXAMPLE_APP]: { isDone: store.get(constants.viewPreview) || false },
       [STEPS_KEYS.CREATE_ENTRY]: { isDone: store.get(constants.createEntry) || false },
-      [STEPS_KEYS.GET_REPO]: { isDone: store.get(constants.viewGithub) || false },
       [STEPS_KEYS.INVITE_DEV]: { isDone: false }
     };
     const stepToExpand = this.getOpenQuestion(state);
@@ -90,7 +89,7 @@ const OnboardingWithTea = createReactClass({
       this.state[STEPS_KEYS.VIEW_SAMPLE_CONTENT].isDone,
       this.state[STEPS_KEYS.PREVIEW_USING_EXAMPLE_APP].isDone,
       this.state[STEPS_KEYS.CREATE_ENTRY].isDone,
-      this.state[STEPS_KEYS.GET_REPO].isDone || this.state[STEPS_KEYS.INVITE_DEV].isDone
+      this.state[STEPS_KEYS.INVITE_DEV].isDone
     ].reduce((acc, value) => {
       return acc + boolToNumber(value);
     }, 0);
@@ -147,22 +146,6 @@ const OnboardingWithTea = createReactClass({
       [STEPS_KEYS.CREATE_ENTRY]: { isDone: true }
     });
   },
-  getRepo () {
-    const constants = getProgressConstants();
-    track('element:click', {
-      elementId: 'get_repo',
-      groupId: GROUP_ID,
-      fromState: $state.current.name
-    });
-    // track in intercom
-    updateUserInSegment({
-      teaOnboardingGotRepo: true
-    });
-    store.set(constants.viewGithub, true);
-    this.setState({
-      [STEPS_KEYS.GET_REPO]: { isDone: true }
-    });
-  },
   inviteDev () {
     const orgId = spaceContext.space.getOrganizationId();
     const spaceId = spaceContext.space.getId();
@@ -184,7 +167,6 @@ const OnboardingWithTea = createReactClass({
         [STEPS_KEYS.VIEW_SAMPLE_CONTENT]: this.viewContent,
         [STEPS_KEYS.PREVIEW_USING_EXAMPLE_APP]: this.viewPreview,
         [STEPS_KEYS.CREATE_ENTRY]: this.createEntry,
-        [STEPS_KEYS.GET_REPO]: this.getRepo,
         [STEPS_KEYS.INVITE_DEV]: this.inviteDev
       },
       toggleExpanding: this.toggleExpanding
