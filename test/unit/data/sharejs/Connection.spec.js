@@ -278,6 +278,22 @@ describe('data/sharejs/Connection', function () {
       this.resolveOpen();
       expect(K.getValue(otherDocLoader.doc)).toBeInstanceOf(DocLoad.Doc);
     });
+
+    it('reapply pending ops if the connection was closed', function () {
+      const { doc } = this.openDoc();
+
+      const op1 = [{p: []}];
+      doc.pendingOp = op1;
+      const op2 = [{p: []}];
+      doc.inflightOp = op2;
+
+      doc.close.yields();
+      this.setState('disconnected');
+      this.setState('ok');
+      const doc2 = this.resolveOpen();
+      sinon.assert.calledWith(doc2.submitOp, op1);
+      sinon.assert.calledWith(doc2.submitOp, op2);
+    });
   });
 
   describe('#open()', function () {
