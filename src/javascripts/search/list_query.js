@@ -11,7 +11,6 @@ angular.module('contentful').factory('ListQuery', ['require', function (require)
   var systemFields = require('systemFields');
   var spaceContext = require('spaceContext');
   var buildQueryFromUISearch = require('app/ContentList/Search/QueryBuilder').buildQuery;
-  var buildQueryFromLegacySearchTerm = require('search/queryBuilder').buildQuery;
   var assetContentType = require('assetContentType');
 
   var DEFAULT_ORDER = systemFields.getDefaultOrder();
@@ -24,7 +23,7 @@ angular.module('contentful').factory('ListQuery', ['require', function (require)
      * Prepares an API query for the entry list.
      *
      * @param {string} opts.contentTypeId
-     * @param {string} opts.searchTerm
+     * @param {string} opts.searchText
      * @param {object} opts.order
      * @param {Paginator} opts.paginator
      * @returns {object}
@@ -45,7 +44,7 @@ angular.module('contentful').factory('ListQuery', ['require', function (require)
      * @description
      * Prepares an API query for the asset list.
      *
-     * @param {string} opts.searchTerm
+     * @param {string} opts.searchText
      * @param {object} opts.order
      * @param {Paginator} opts.paginator
      * @returns {object}
@@ -78,19 +77,11 @@ angular.module('contentful').factory('ListQuery', ['require', function (require)
       skip: opts.paginator.getSkipParam(),
       'sys.archivedAt[exists]': 'false' // By default, don't get archived entries.
     };
-
-    // TODO: Remove legacy once entity selector dialog uses new search.
-    var buildQuery = opts.searchFilters || opts.searchText !== undefined
-      ? $q.resolve(buildQueryFromUISearch({
-        contentType: _.get(contentType, 'data'), search: opts
-      }))
-      : buildQueryFromLegacySearchTerm(
-        spaceContext.space, contentType, opts.searchTerm);
-
-    return buildQuery
-    .then(function (searchQuery) {
-      return _.extend(queryObject, searchQuery);
+    var searchQuery = buildQueryFromUISearch({
+      contentType: _.get(contentType, 'data'), search: opts
     });
+    // TODO: Lets not return a promise here.
+    return $q.resolve(_.assign(queryObject, searchQuery));
   }
 
   function getOrderQuery (order, contentType) {

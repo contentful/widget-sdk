@@ -75,7 +75,7 @@ angular.module('contentful')
     getContentType: getContentType
   });
 
-  $scope.$watch('view.searchTerm', handleTermChange);
+  $scope.$watch('view.searchText', handleTermChange);
   $scope.$on('forceSearch', resetAndLoad);
 
   resetAndLoad();
@@ -292,6 +292,11 @@ angular.module('contentful')
   }
 
   function showCustomEmptyMessage () {
-    return $scope.labels.noEntitiesCustomHtml && !$scope.isLoading && $scope.items.length < 1;
+    var currentSearch = getSearch();
+    return $scope.labels.noEntitiesCustomHtml &&
+      !$scope.isLoading &&
+      $scope.items.length < 1 &&
+      !currentSearch.searchText &&
+      !currentSearch.searchFilters.length;
   }
 }]);
