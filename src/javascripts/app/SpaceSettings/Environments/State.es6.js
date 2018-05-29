@@ -90,6 +90,10 @@ const reduce = makeReducer({
       [C.Success]: ([items, canCreateEnv]) => {
         return assign(state, {
           items: items.map(makeEnvironmentModel),
+          // Note: canCreateEnv will always be true for v1 orgs.
+          // There is a hardcoded limit of 100 environments for v1 orgs on the
+          // backend, but we don't enforce it on frontend as it should not be hit
+          // under normal circumstances.
           canCreateEnv: canCreateEnv,
           isLoading: false
         });
