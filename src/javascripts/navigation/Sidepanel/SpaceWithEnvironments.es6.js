@@ -5,7 +5,8 @@ import {asReact} from 'ui/Framework/DOMRenderer';
 import AnimateHeight from 'react-animate-height';
 import folderIcon from 'svg/folder';
 import environmentIcon from 'svg/environment';
-import client from 'client';
+import {createSpaceEndpoint} from 'data/EndpointFactory';
+import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo';
 
 function EnvironmentList ({environments, isCurrSpace, currentEnvId, goToSpace, space}) {
   return e('ul', null, (environments || []).map(env => {
@@ -60,7 +61,7 @@ export default createReactClass({
     const {openedSpaceId, space} = this.props;
     return openedSpaceId === space.sys.id;
   },
-  toggleEnvironmentList () {
+  async toggleEnvironmentList () {
     if (this.isOpened()) {
       this.props.setOpenedSpaceId(null);
       return;
@@ -68,28 +69,35 @@ export default createReactClass({
 
     this.setState({loading: true});
 
-    client.request({
-      method: 'GET',
-      path: `/spaces/${this.props.space.sys.id}/environments`
-    }).then(res => {
-      const envs = res.items.filter(env => env.sys.status.sys.id === 'ready');
-      const goToSpace = envId => {
-        this.props.setOpenedSpaceId(null);
-        this.props.goToSpace(this.props.space.sys.id, envId);
-      };
+    const endpoint = createSpaceEndpoint(this.props.space.sys.id);
+    const repo = SpaceEnvironmentRepo.create(endpoint);
+    let allEnvs;
 
+    try {
+      allEnvs = await repo.getAll();
+    } catch (_e) {
       this.setState({loading: false});
+      return;
+    }
 
-      if (envs.length === 0 || (envs.length === 1 && envs[0].sys.id === 'master')) {
-        goToSpace();
-      } else if (envs.length === 1) {
-        goToSpace(envs[0].sys.id);
-      } else {
-        this.setState({environments: envs}, () => {
-          this.props.setOpenedSpaceId(this.props.space.sys.id);
-        });
-      }
-    }, () => this.setState({loading: false}));
+    const envs = allEnvs.filter(env => env.sys.status.sys.id === 'ready');
+
+    const goToSpace = envId => {
+      this.props.setOpenedSpaceId(null);
+      this.props.goToSpace(this.props.space.sys.id, envId);
+    };
+
+    this.setState({loading: false});
+
+    if (envs.length === 0 || (envs.length === 1 && envs[0].sys.id === 'master')) {
+      goToSpace();
+    } else if (envs.length === 1) {
+      goToSpace(envs[0].sys.id);
+    } else {
+      this.setState({environments: envs}, () => {
+        this.props.setOpenedSpaceId(this.props.space.sys.id);
+      });
+    }
   },
   render () {
     const {
