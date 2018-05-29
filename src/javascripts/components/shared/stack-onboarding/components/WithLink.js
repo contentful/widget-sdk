@@ -1,10 +1,10 @@
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
-const moduleName = 'with-link-onboarding';
+export const name = 'with-link-onboarding';
 
 angular.module('contentful')
-.factory(moduleName, ['require', function (require) {
+.factory(name, ['require', function (require) {
   const $state = require('$state');
   const $stateParams = require('$stateParams');
 
@@ -41,5 +41,3 @@ angular.module('contentful')
 
   return WithLink;
 }]);
-
-export const name = moduleName;

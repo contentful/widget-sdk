@@ -1,7 +1,9 @@
-import {name as choiceScreenName} from '../stack-onboarding/ChoiceScreen';
+import {name as choiceScreenName} from '../stack-onboarding/screens/ChoiceScreen';
+
+export const name = 'createModernOnboarding';
 
 angular.module('contentful')
-.factory('createModernOnboarding', ['require', function (require) {
+.factory(name, ['require', function (require) {
   const modalDialog = require('modalDialog');
   const $rootScope = require('$rootScope');
 

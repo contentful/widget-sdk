@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 
 import {name as IframeHighlightHOCModule} from './IframeHighlightHOC';
 
-const moduleName = 'data-flow-onboarding';
+export const name = 'data-flow-onboarding';
 
 angular.module('contentful')
-.factory(moduleName, ['require', function (require) {
+.factory(name, ['require', function (require) {
   const IframeHighlightHOC = require(IframeHighlightHOCModule);
   const DataFlow = createReactClass({
     propTypes: {
@@ -170,5 +170,3 @@ angular.module('contentful')
 
   return IframeHighlightHOC(DataFlow);
 }]);
-
-export const name = moduleName;

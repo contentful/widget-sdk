@@ -1,17 +1,17 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 
-import {name as FullScreenModule} from './FullScreen';
-import {name as SkipModule} from './Skip';
-import {name as NavigationModule} from './Navigation';
-import {name as DeploymentStrategiesModule} from './DeploymentStrategies';
-import {name as DeploymentFormModule} from './DeploymentForm';
-import {name as WithLinkModule} from './WithLink';
+import {name as FullScreenModule} from '../../../react/molecules/FullScreen';
+import {name as SkipModule} from '../components/Skip';
+import {name as NavigationModule} from '../components/Navigation';
+import {name as DeploymentStrategiesModule} from '../deployment/DeploymentStrategies';
+import {name as DeploymentFormModule} from '../deployment/DeploymentForm';
+import {name as WithLinkModule} from '../components/WithLink';
 
-const moduleName = 'deploy-screen-onboarding';
+export const name = 'deploy-screen-onboarding';
 
 angular.module('contentful')
-.factory(moduleName, ['require', function (require) {
+.factory(name, ['require', function (require) {
   const FullScreen = require(FullScreenModule);
   const Skip = require(SkipModule);
   const Navigation = require(NavigationModule);
@@ -54,5 +54,3 @@ angular.module('contentful')
 
   return DeployScreen;
 }]);
-
-export const name = moduleName;

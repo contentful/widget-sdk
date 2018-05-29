@@ -1,13 +1,13 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 
-import {name as TabsModule} from './Tabs';
-import {name as CodeModule} from './Code';
+import {name as TabsModule} from '../../../react/molecules/Tabs';
+import {name as CodeModule} from '../../../react/atoms/Code';
 
-const moduleName = 'deployment-strategies-onboarding';
+export const name = 'deployment-strategies-onboarding';
 
 angular.module('contentful')
-.factory(moduleName, ['require', function (require) {
+.factory(name, ['require', function (require) {
   const Tabs = require(TabsModule);
   const Code = require(CodeModule);
 
@@ -97,6 +97,3 @@ angular.module('contentful')
 
   return DeploymentStrategies;
 }]);
-
-
-export const name = moduleName;

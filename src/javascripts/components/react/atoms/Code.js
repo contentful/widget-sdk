@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
 
-const moduleName = 'react/code-component';
+export const name = 'react/code-component';
 
 angular.module('contentful')
-.factory(moduleName, ['require', function (require) {
+.factory(name, ['require', function (require) {
   const CopyButton = require('ui/Components/CopyIconButton').default;
 
   const Code = createReactClass({
@@ -59,5 +59,3 @@ angular.module('contentful')
 
   return Code;
 }]);
-
-export const name = moduleName;

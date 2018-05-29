@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
 
-const moduleName = 'react/tabs-component';
+export const name = 'react/tabs-component';
 
 angular.module('contentful')
-.factory(moduleName, ['require', function () {
+.factory(name, ['require', function () {
   const Tabs = createReactClass({
     propTypes: {
       active: PropTypes.oneOfType([
@@ -62,5 +62,3 @@ angular.module('contentful')
 
   return Tabs;
 }]);
-
-export const name = moduleName;

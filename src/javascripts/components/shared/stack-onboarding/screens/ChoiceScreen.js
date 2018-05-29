@@ -1,15 +1,16 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
-import {name as FullScreenModule} from './FullScreen';
-import {name as ButtonModule} from './Button';
+
+import {name as FullScreenModule} from '../../../react/molecules/FullScreen';
+import {name as ButtonModule} from '../../../react/atoms/Button';
 
 const DEFAULT_LOCALE = 'en-US';
 
-const moduleName = 'choice-screen-component';
+export const name = 'choice-screen-component';
 
 angular.module('contentful')
-.factory(moduleName, ['require', function (require) {
+.factory(name, ['require', function (require) {
   const client = require('client');
   const spaceContext = require('spaceContext');
   const $state = require('$state');
@@ -116,5 +117,3 @@ angular.module('contentful')
 
   return ChoiceScreen;
 }]);
-
-export const name = moduleName;

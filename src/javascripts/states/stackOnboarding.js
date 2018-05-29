@@ -1,12 +1,12 @@
-import {name as getStartedModule} from '../components/shared/stack-onboarding/GetStartedScreen';
-import {name as copyRepoModule} from '../components/shared/stack-onboarding/CopyScreen';
-import {name as exploreModule} from '../components/shared/stack-onboarding/ExploreScreen';
-import {name as deployModule} from '../components/shared/stack-onboarding/DeployScreen';
+import {name as getStartedModule} from '../components/shared/stack-onboarding/screens/GetStartedScreen';
+import {name as copyRepoModule} from '../components/shared/stack-onboarding/screens/CopyScreen';
+import {name as exploreModule} from '../components/shared/stack-onboarding/screens/ExploreScreen';
+import {name as deployModule} from '../components/shared/stack-onboarding/screens/DeployScreen';
 
-const moduleName = 'states/stackOnboarding';
+export const name = 'states/stackOnboarding';
 
 angular.module('contentful')
-.factory(moduleName, [function () {
+.factory(name, [function () {
   const getStarted = {
     name: 'getStarted',
     url: '/get-started',
@@ -38,5 +38,3 @@ angular.module('contentful')
     children: [getStarted, copyRepo, explore, deploy]
   };
 }]);
-
-export const name = moduleName;

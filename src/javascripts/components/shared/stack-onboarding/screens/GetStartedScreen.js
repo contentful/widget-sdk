@@ -1,14 +1,14 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
-import {name as FullScreenModule} from './FullScreen';
-import {name as ButtonModule} from './Button';
-import {name as SkipModule} from './Skip';
-import {name as WithLinkModule} from './WithLink';
+import {name as FullScreenModule} from '../../../react/molecules/FullScreen';
+import {name as ButtonModule} from '../../../react/atoms/Button';
+import {name as SkipModule} from '../components/Skip';
+import {name as WithLinkModule} from '../components/WithLink';
 
-const moduleName = 'get-started-component';
+export const name = 'get-started-component';
 
 angular.module('contentful')
-.factory(moduleName, ['require', function (require) {
+.factory(name, ['require', function (require) {
   const FullScreen = require(FullScreenModule);
   const Button = require(ButtonModule);
   const Skip = require(SkipModule);
@@ -38,5 +38,3 @@ angular.module('contentful')
 
   return GetStarted;
 }]);
-
-export const name = moduleName;

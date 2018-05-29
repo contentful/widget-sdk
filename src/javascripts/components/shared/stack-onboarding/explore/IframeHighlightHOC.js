@@ -2,10 +2,10 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
-const moduleName = 'onboarding-iframe-highlight-hoc';
+export const name = 'onboarding-iframe-highlight-hoc';
 
 angular.module('contentful')
-.factory(moduleName, [function () {
+.factory(name, [function () {
   return (Component) => {
     const IframeHightlightHOC = createReactClass({
       propTypes: {
@@ -84,5 +84,3 @@ angular.module('contentful')
     return IframeHightlightHOC;
   };
 }]);
-
-export const name = moduleName;

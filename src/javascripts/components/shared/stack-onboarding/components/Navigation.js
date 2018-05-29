@@ -1,12 +1,13 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
+
 import {name as WithLinkModule} from './WithLink';
 
-const moduleName = 'navigation-screen';
+export const name = 'navigation-screen';
 
 angular.module('contentful')
-.factory(moduleName, ['require', function (require) {
+.factory(name, ['require', function (require) {
   const WithLink = require(WithLinkModule);
 
   const Navigation = createReactClass({
@@ -60,5 +61,3 @@ angular.module('contentful')
 
   return Navigation;
 }]);
-
-export const name = moduleName;

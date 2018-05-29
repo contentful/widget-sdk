@@ -1,17 +1,17 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 
-import {name as FullScreenModule} from './FullScreen';
-import {name as SkipModule} from './Skip';
-import {name as ButtonModule} from './Button';
-import {name as CodeModule} from './Code';
-import {name as NavigationModule} from './Navigation';
-import {name as WithLinkModule} from './WithLink';
+import {name as FullScreenModule} from '../../../react/molecules/FullScreen';
+import {name as SkipModule} from '../components/Skip';
+import {name as ButtonModule} from '../../../react/atoms/Button';
+import {name as CodeModule} from '../../../react/atoms/Code';
+import {name as NavigationModule} from '../components/Navigation';
+import {name as WithLinkModule} from '../components/WithLink';
 
-const moduleName = 'copy-screen-component';
+export const name = 'copy-screen-component';
 
 angular.module('contentful')
-.factory(moduleName, ['require', function (require) {
+.factory(name, ['require', function (require) {
   const FullScreen = require(FullScreenModule);
   const Skip = require(SkipModule);
   const Button = require(ButtonModule);
@@ -82,5 +82,3 @@ angular.module('contentful')
 
   return CopyScreen;
 }]);
-
-export const name = moduleName;

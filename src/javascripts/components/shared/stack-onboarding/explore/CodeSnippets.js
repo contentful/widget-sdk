@@ -2,13 +2,13 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
-import {name as CodeModule} from './Code';
+import {name as CodeModule} from '../../../react/atoms/Code';
 import {name as IframeHighlightHOCModule} from './IframeHighlightHOC';
 
-const moduleName = 'code-snippets-component';
+export const name = 'code-snippets-component';
 
 angular.module('contentful')
-.factory(moduleName, ['require', function (require) {
+.factory(name, ['require', function (require) {
   const Code = require(CodeModule);
   const IframeHighlightHOC = require(IframeHighlightHOCModule);
 
@@ -105,6 +105,3 @@ angular.module('contentful')
 
   return IframeHighlightHOC(CodeSnippets);
 }]);
-
-
-export const name = moduleName;

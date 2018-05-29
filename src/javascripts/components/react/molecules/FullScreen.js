@@ -2,7 +2,7 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
-const moduleName = 'full-screen-component';
+export const name = 'full-screen-component';
 
 const FullScreen = createReactClass({
   propTypes: {
@@ -26,8 +26,6 @@ const FullScreen = createReactClass({
 });
 
 angular.module('contentful')
-.factory(moduleName, [function () {
+.factory(name, [function () {
   return FullScreen;
 }]);
-
-export const name = moduleName;

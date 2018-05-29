@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
 
-const moduleName = 'react/button-component';
+export const name = 'react/button-component';
 
 angular.module('contentful')
-.factory(moduleName, ['require', function () {
+.factory(name, ['require', function () {
   const Button = createReactClass({
     propTypes: {
       children: PropTypes.node,
@@ -32,5 +32,3 @@ angular.module('contentful')
 
   return Button;
 }]);
-
-export const name = moduleName;

@@ -2,10 +2,10 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
-const moduleName = 'react/input-component';
+export const name = 'react/input-component';
 
 angular.module('contentful')
-.factory(moduleName, [function () {
+.factory(name, [function () {
   const Input = createReactClass({
     propTypes: {
       error: PropTypes.oneOfType([
@@ -62,5 +62,3 @@ angular.module('contentful')
 
   return Input;
 }]);
-
-export const name = moduleName;

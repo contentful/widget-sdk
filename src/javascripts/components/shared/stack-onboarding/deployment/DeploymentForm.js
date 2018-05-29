@@ -2,15 +2,15 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
-import {name as InputModule} from './Input';
-import {name as ButtonModule} from './Button';
-import {name as WithReminderModule} from './WithReminder';
-import {name as FormModule} from './Form';
+import {name as InputModule} from '../../../react/atoms/Input';
+import {name as ButtonModule} from '../../../react/atoms/Button';
+import {name as FormModule} from '../../../react/atoms/Form';
+import {name as WithReminderModule} from '../components/WithReminder';
 
-const moduleName = 'DeploymentFormModule';
+export const name = 'DeploymentFormModule';
 
 angular.module('contentful')
-.factory(moduleName, ['require', function (require) {
+.factory(name, ['require', function (require) {
   const Button = require(ButtonModule);
   const Input = require(InputModule);
   const WithReminder = require(WithReminderModule);
@@ -35,43 +35,45 @@ angular.module('contentful')
     onComplete () {
       this.props.onComplete(this.state.url);
     },
+    renderDeploymentForm ({ invalidate }) {
+      const { url, error } = this.state;
+      return (
+        <div className={'modern-stack-onboarding--deployment-form'}>
+          <h4 className={'modern-stack-onboarding--deployment-form-title'}>
+            <strong>
+              {'Enter the website URL after deployment is complete.'}
+            </strong>
+            <br />
+            {'Your suggested next steps will be determined by the deployment service you selected.'}
+          </h4>
+          <Form>
+            <Input
+              wrapperClassName={'modern-stack-onboarding--deployment-form-input'}
+              value={url}
+              onChange={(value) => {
+                invalidate();
+                return this.onChange(value);
+              }}
+              placeholder={'Enter the website url of the deployed site'}
+              error={url && error}
+            />
+            <Button
+              type={'submit'}
+              className={'modern-stack-onboarding--deployment-form-button'}
+              onClick={this.onComplete}
+              disabled={Boolean(!url || error)}
+            >
+              {'Deployment Complete'}
+            </Button>
+          </Form>
+        </div>
+      );
+    },
     render () {
-      const { error, url } = this.state;
       return (
         <WithReminder timeout={1000 * 60 * 3}>
           {({ showReminder, invalidate }) => {
-            const deploymentForm = (
-              <div className={'modern-stack-onboarding--deployment-form'}>
-                <h4 className={'modern-stack-onboarding--deployment-form-title'}>
-                  <strong>
-                    {'Enter the website URL after deployment is complete.'}
-                  </strong>
-                  <br />
-                  {'Your suggested next steps will be determined by the deployment service you selected.'}
-                </h4>
-                <Form>
-                  <Input
-                    wrapperClassName={'modern-stack-onboarding--deployment-form-input'}
-                    value={url}
-                    onChange={(value) => {
-                      invalidate();
-                      return this.onChange(value);
-                    }}
-                    placeholder={'Enter the website url of the deployed site'}
-                    error={url && error}
-                  />
-                  <Button
-                    type={'submit'}
-                    className={'modern-stack-onboarding--deployment-form-button'}
-                    onClick={this.onComplete}
-                    disabled={Boolean(!url || error)}
-                  >
-                    {'Deployment Complete'}
-                  </Button>
-                </Form>
-              </div>
-            );
-
+            const deploymentForm = this.renderDeploymentForm({ invalidate });
             const reminder = (
               <div className={'modern-stack-onboarding--modal'}>
                 <div className={'modern-stack-onboarding--modal-content'}>
@@ -101,5 +103,3 @@ angular.module('contentful')
 
   return DeploymentForm;
 }]);
-
-export const name = moduleName;

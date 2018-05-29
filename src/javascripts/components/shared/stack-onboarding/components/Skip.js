@@ -2,10 +2,10 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
-const moduleName = 'stack-onboarding-skip';
+export const name = 'stack-onboarding-skip';
 
 angular.module('contentful')
-.factory(moduleName, ['require', function (require) {
+.factory(name, ['require', function (require) {
   const { getStore } = require('TheStore');
   const { getValue } = require('utils/kefir');
   const { user$ } = require('services/TokenStore');
@@ -46,5 +46,3 @@ angular.module('contentful')
 
   return StackOnboardingSkip;
 }]);
-
-export const name = moduleName;

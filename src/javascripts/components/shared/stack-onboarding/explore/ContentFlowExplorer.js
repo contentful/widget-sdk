@@ -1,17 +1,17 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 
-import {name as TabsModule} from './Tabs';
+import {name as TabsModule} from '../../../react/molecules/Tabs';
 import {name as CodeSnippetsModule} from './CodeSnippets';
 import {name as DataFlowModule} from './DataFlow';
 
-const moduleName = 'content-flow-explorer';
+export const name = 'content-flow-explorer';
 
 // TODO: deploy to contentful infrastructure
 const GATSBY_APP_URL = 'https://inspiring-goldstine-59b8e7.netlify.com/';
 
 angular.module('contentful')
-.factory(moduleName, ['require', function (require) {
+.factory(name, ['require', function (require) {
   const Tabs = require(TabsModule);
   const CodeSnippets = require(CodeSnippetsModule);
   const DataFlow = require(DataFlowModule);
@@ -97,5 +97,3 @@ angular.module('contentful')
 
   return ContentFlowExplorer;
 }]);
-
-export const name = moduleName;

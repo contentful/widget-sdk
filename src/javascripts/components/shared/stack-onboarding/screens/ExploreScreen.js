@@ -1,17 +1,17 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 
-import {name as FullScreenModule} from './FullScreen';
-import {name as SkipModule} from './Skip';
-import {name as NavigationModule} from './Navigation';
-import {name as ButtonModule} from './Button';
-import {name as ContentFlowExplorerModule} from './ContentFlowExplorer';
-import {name as WithLinkModule} from './WithLink';
+import {name as FullScreenModule} from '../../../react/molecules/FullScreen';
+import {name as SkipModule} from '../components/Skip';
+import {name as NavigationModule} from '../components/Navigation';
+import {name as ButtonModule} from '../../../react/atoms/Button';
+import {name as ContentFlowExplorerModule} from '../explore/ContentFlowExplorer';
+import {name as WithLinkModule} from '../components/WithLink';
 
-const moduleName = 'explore-screen-component';
+export const name = 'explore-screen-component';
 
 angular.module('contentful')
-.factory(moduleName, ['require', function (require) {
+.factory(name, ['require', function (require) {
   const FullScreen = require(FullScreenModule);
   const Skip = require(SkipModule);
   const Navigation = require(NavigationModule);
@@ -58,5 +58,3 @@ angular.module('contentful')
 
   return ExploreScreen;
 }]);
-
-export const name = moduleName;

@@ -1,10 +1,10 @@
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
-const moduleName = 'react/with-reminder';
+export const name = 'react/with-reminder';
 
 angular.module('contentful')
-.factory(moduleName, [function () {
+.factory(name, [function () {
   const WithReminder = createReactClass({
     propTypes: {
       // in ms
@@ -50,5 +50,3 @@ angular.module('contentful')
 
   return WithReminder;
 }]);
-
-export const name = moduleName;

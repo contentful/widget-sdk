@@ -2,10 +2,10 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
-const moduleName = 'react/form-component';
+export const name = 'react/form-component';
 
 angular.module('contentful')
-.factory(moduleName, [function () {
+.factory(name, [function () {
   const Form = createReactClass({
     propTypes: {
       className: PropTypes.string,
@@ -29,5 +29,3 @@ angular.module('contentful')
 
   return Form;
 }]);
-
-export const name = moduleName;
