@@ -3,6 +3,8 @@ import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import * as ReloadNotification from 'ReloadNotification';
 import createResourceService from 'services/ResourceService';
+import { getOrganization } from 'services/TokenStore';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import moment from 'moment';
 
 import {keyBy, property} from 'lodash';
@@ -57,7 +59,18 @@ const OrganizationUsage = createReactClass({
     };
   },
   componentDidMount () {
-    this.fetchPlan();
+    const { onForbidden } = this.props;
+
+    this.checkPermissions().then(this.fetchPlan).catch(onForbidden);
+  },
+
+  async checkPermissions () {
+    const { orgId } = this.props;
+    const organization = await getOrganization(orgId);
+
+    if (isOwnerOrAdmin(organization)) {
+      throw new Error('No permission');
+    }
   },
 
   async fetchPlan () {
