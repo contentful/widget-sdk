@@ -7,8 +7,9 @@ import {name as DataFlowModule} from './DataFlow';
 
 export const name = 'content-flow-explorer';
 
-// TODO: deploy to contentful infrastructure
-const GATSBY_APP_URL = 'https://inspiring-goldstine-59b8e7.netlify.com/';
+// code is located at https://github.com/contentful-userland/gatsby-contentful-starter/tree/ctfl/highlight-entries
+// we own the branch, but we don't want to merge it to master (since these changes don't make sense to everyone)
+const GATSBY_APP_URL = 'https://ctf-gatsby-contentful-starter.netlify.com/';
 
 angular.module('contentful')
 .factory(name, ['require', function (require) {
