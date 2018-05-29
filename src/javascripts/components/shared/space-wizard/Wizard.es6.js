@@ -165,7 +165,6 @@ const Wizard = createReactClass({
         reposition: onDimensionsChange,
         onCancel,
         track: this.track,
-        onNavigate: this.navigate,
         onChange: this.setStateData,
         onSubmit: this.goToNextStep
       };

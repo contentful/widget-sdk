@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import FetchSubscriptionPrice from './FetchSubscriptionPrice';
 import spinner from 'ui/Components/Spinner';
 import {asReact} from 'ui/Framework/DOMRenderer';
-import {Steps, RequestState, formatPrice} from './WizardUtils';
+import {RequestState, formatPrice} from './WizardUtils';
 import Price from 'ui/Components/Price';
 
 const ConfirmScreen = createReactClass({
@@ -17,8 +17,7 @@ const ConfirmScreen = createReactClass({
     template: PropTypes.object,
     organization: PropTypes.object.isRequired,
     isFormSubmitted: PropTypes.bool,
-    onSubmit: PropTypes.func.isRequired,
-    onNavigate: PropTypes.func.isRequired
+    onSubmit: PropTypes.func.isRequired
   },
   render () {
     const {
@@ -30,8 +29,7 @@ const ConfirmScreen = createReactClass({
       template,
       organization,
       isFormSubmitted,
-      onSubmit,
-      onNavigate
+      onSubmit
     } = this.props;
 
     let confirmButtonText = '';
@@ -77,21 +75,9 @@ const ConfirmScreen = createReactClass({
                       </Fragment>
                     }
                     {' '}
-                    (<a
-                      className="text-link"
-                      href="#"
-                      onClick={() => onNavigate(Steps.SpaceCreateSteps.SpaceType)}>
-                      change space type
-                    </a>).
                     The space’s name will be <em>{spaceName}</em>
                     {template && ', and we will fill it with example content'}
-                    {' '}
-                    (<a
-                      className="text-link"
-                      href="#"
-                      onClick={() => onNavigate(Steps.SpaceCreateSteps.SpaceDetails)}>
-                      change space details
-                    </a>).
+                    {'.'}
                   </p>
                 </Fragment>
               }
