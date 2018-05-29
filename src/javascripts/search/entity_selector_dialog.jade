@@ -36,15 +36,7 @@ mixin single-list-item
           a(href ng-click="view.mode = AVAILABLE" ng-if="view.mode === SELECTED")
             | Hide {{ labels.selected }} ({{ selected.length }})
 
-      .entity-selector__search(
-        ng-if="supportsAdvancedSearch && !isNewSearchEnabled"
-        cf-tokenized-search="view.searchTerm"
-        search-content-type="singleContentType"
-        placeholder="{{ getSearchPlaceholder() }}"
-        cf-on-blur-component="leftSearch($event)"
-        cf-on-blur-component-when="showAutocompletions")
-
-      .entity-selector__search(ng-if="supportsAdvancedSearch && isNewSearchEnabled")
+      .entity-selector__search(ng-if="supportsAdvancedSearch")
         cf-component-bridge(component="search")
 
       .entity-selector__search(ng-if="!supportsAdvancedSearch")
@@ -69,8 +61,7 @@ mixin single-list-item
           ng-class="{'x--selected': selectedIds[entity.sys.id],'entity-selector__last-item': $last && paginator.atLast()}")
           +single-list-item
 
-        .loading(ng-if="!isNewSearchEnabled && isLoading")
-        .loading(ng-if="isNewSearchEnabled && isLoadingMore")
+        .loading(ng-if="isLoadingMore")
 
       .entity-selector__item-list(
         ng-if="view.mode === SELECTED"

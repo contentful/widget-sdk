@@ -38,22 +38,16 @@ angular.module('contentful')
   var EntityHelpers = require('EntityHelpers');
   var K = require('utils/kefir');
   var Kefir = require('kefir');
-  var LD = require('utils/LaunchDarkly');
+  var _ = require('lodash');
   var createSearchInput = require('app/ContentList/Search').default;
   var getAccessibleCTs = require('data/ContentTypeRepo/accessibleCTs').default;
 
-  var NEW_SEARCH_FLAG_NAME = 'feature-at-01-2018-entity-selector-new-search';
   var MIN_SEARCH_TRIGGERING_LEN = 1;
   var MODES = {AVAILABLE: 1, SELECTED: 2};
 
   var config = $scope.config;
 
-  LD.onFeatureFlag($scope, NEW_SEARCH_FLAG_NAME, function (isEnabled) {
-    $scope.isNewSearchEnabled = isEnabled;
-    if (isEnabled) {
-      initializeSearchUI();
-    }
-  });
+  initializeSearchUI();
 
   var load = createQueue(fetch);
 
@@ -144,11 +138,7 @@ angular.module('contentful')
       order: getOrder(),
       paginator: $scope.paginator
     };
-    if ($scope.isNewSearchEnabled) {
-      _.assign(params, getSearch());
-    } else {
-      params.searchTerm = $scope.view.searchTerm;
-    }
+    _.assign(params, getSearch());
 
     if (config.entityType === 'Entry' && $scope.singleContentType) {
       params.contentTypeId = $scope.singleContentType.getId();
@@ -160,10 +150,7 @@ angular.module('contentful')
   function getSearch () {
     var view = $scope.view || {};
     return {
-      // if we have old interface and searchText is stored inside
-      // `view.searchTerm`, we won't perform any search at all
-      // unless we provide this value as `searchText`
-      searchText: view.searchText || view.searchTerm || '',
+      searchText: view.searchText || '',
       searchFilters: view.searchFilters || [],
       contentTypeId: view.contentTypeId
     };
@@ -305,6 +292,6 @@ angular.module('contentful')
   }
 
   function showCustomEmptyMessage () {
-    return $scope.labels.noEntitiesCustomHtml && !$scope.isLoading && $scope.items.length < 1 && !$scope.view.searchTerm;
+    return $scope.labels.noEntitiesCustomHtml && !$scope.isLoading && $scope.items.length < 1;
   }
 }]);

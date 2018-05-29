@@ -13,7 +13,8 @@ import {TextLink} from '@contentful/ui-component-library';
 import {asReact} from 'ui/Framework/DOMRenderer';
 import Icon from 'ui/Components/Icon';
 import ContactUsButton from 'ui/Components/ContactUsButton';
-import {RequestState, formatPrice} from './WizardUtils';
+import {RequestState, formatPrice, unavailabilityTooltipNode} from './WizardUtils';
+import {byName as colors} from 'Styles/Colors';
 import pluralize from 'pluralize';
 
 const SpacePlanSelector = createReactClass({
@@ -21,16 +22,17 @@ const SpacePlanSelector = createReactClass({
     organization: PropTypes.object.isRequired,
     space: PropTypes.object,
     action: PropTypes.string.isRequired,
+    track: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
-    onDimensionsChange: PropTypes.func.isRequired,
-    onCancel: PropTypes.func.isRequired
+    onCancel: PropTypes.func.isRequired,
+    reposition: PropTypes.func.isRequired
   },
   getInitialState () {
     return {newSpaceRatePlan: null};
   },
   render () {
-    const {organization, space, action, onDimensionsChange} = this.props;
+    const {organization, space, action, reposition} = this.props;
     const {newSpaceRatePlan} = this.state;
 
     return (
@@ -38,7 +40,7 @@ const SpacePlanSelector = createReactClass({
         organization={organization}
         action={action}
         spaceId={space && space.sys.id}
-        onUpdate={onDimensionsChange}
+        onFetch={reposition}
       >
         {({requestState, spaceRatePlans, freeSpacesResource}) => {
           const currentPlan = spaceRatePlans.find(plan => {
@@ -46,13 +48,14 @@ const SpacePlanSelector = createReactClass({
           });
           const highestPlan = spaceRatePlans.slice().sort((planX, planY) => planY.price >= planX.price)[0];
           const atHighestPlan = highestPlan && highestPlan.unavailabilityReasons && highestPlan.unavailabilityReasons.find(reason => reason.type === 'currentPlan');
+          const payingOrg = organization.isBillable;
 
           return <div>
             {requestState === RequestState.PENDING && <div className="loader__container">
               {asReact(spinner({diameter: '40px'}))}
             </div>}
             {requestState === RequestState.SUCCESS && <div>
-              {!organization.isBillable &&
+              {!payingOrg &&
                 <BillingInfo
                   canSetupBilling={isOwner(organization)}
                   goToBilling={this.goToBilling}
@@ -92,6 +95,7 @@ const SpacePlanSelector = createReactClass({
                       freeSpacesResource={freeSpacesResource}
                       isCurrentPlan={currentPlan === plan}
                       isSelected={get(newSpaceRatePlan, 'sys.id') === plan.sys.id}
+                      isPayingOrg={payingOrg}
                       onSelect={this.selectPlan(currentPlan)} />)}
                   </div>
                 </Fragment>
@@ -122,13 +126,14 @@ const SpacePlanSelector = createReactClass({
     };
   },
   goToBilling () {
-    const {organization, onCancel} = this.props;
+    const {organization, track, onCancel} = this.props;
     const orgId = organization.sys.id;
     go({
       path: ['account', 'organizations', 'subscription_billing'],
       params: {orgId, pathSuffix: '/billing_address'},
       options: {reload: true}
     });
+    track('link_click');
     onCancel();
   }
 });
@@ -139,12 +144,15 @@ const SpacePlanItem = createReactClass({
     isSelected: PropTypes.bool.isRequired,
     freeSpacesResource: PropTypes.object,
     onSelect: PropTypes.func.isRequired,
+    isPayingOrg: PropTypes.bool.isRequired,
     isCurrentPlan: PropTypes.bool
   },
   render: function () {
-    const {plan, isCurrentPlan, isSelected, freeSpacesResource, onSelect} = this.props;
+    const {plan, isCurrentPlan, isSelected, freeSpacesResource, isPayingOrg, onSelect} = this.props;
     const freeSpacesUsage = freeSpacesResource && freeSpacesResource.usage;
     const freeSpacesLimit = freeSpacesResource && freeSpacesResource.limits.maximum;
+
+    const unavailabilityTooltip = unavailabilityTooltipNode(plan);
 
     return (
       <div
@@ -185,7 +193,24 @@ const SpacePlanItem = createReactClass({
             </li>;
           })}
         </ul>
-        <Icon className="space-plans-list__item__chevron" name="dd-arrow-down"/>
+
+        { isPayingOrg && plan.disabled && !isCurrentPlan &&
+          <Tooltip
+            style={{
+              position: 'absolute',
+              right: '19px',
+              bottom: '25px',
+              color: colors.elementDarkest
+            }}
+            width={800}
+            tooltip={unavailabilityTooltip}
+          >
+              <Icon name='question-mark' />
+          </Tooltip>
+        }
+        { (!isPayingOrg || !plan.disabled) &&
+          <Icon className="space-plans-list__item__chevron" name="dd-arrow-down"/>
+        }
       </div>
     );
   }

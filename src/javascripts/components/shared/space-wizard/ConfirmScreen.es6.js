@@ -18,8 +18,7 @@ const ConfirmScreen = createReactClass({
     organization: PropTypes.object.isRequired,
     isFormSubmitted: PropTypes.bool,
     onSubmit: PropTypes.func.isRequired,
-    onNavigate: PropTypes.func.isRequired,
-    onDimensionsChange: PropTypes.func.isRequired
+    onNavigate: PropTypes.func.isRequired
   },
   render () {
     const {
@@ -32,8 +31,7 @@ const ConfirmScreen = createReactClass({
       organization,
       isFormSubmitted,
       onSubmit,
-      onNavigate,
-      onDimensionsChange
+      onNavigate
     } = this.props;
 
     let confirmButtonText = '';
@@ -45,7 +43,7 @@ const ConfirmScreen = createReactClass({
     }
 
     return (
-      <FetchSubscriptionPrice organizationId={organization.sys.id} onUpdate={onDimensionsChange}>
+      <FetchSubscriptionPrice organizationId={organization.sys.id}>
         {({requestState, totalPrice}) => (
           <div>
             {requestState === RequestState.PENDING && <div className="loader__container">
@@ -139,9 +137,6 @@ const ConfirmScreen = createReactClass({
         )}
       </FetchSubscriptionPrice>
     );
-  },
-  componentDidMount () {
-    this.props.onDimensionsChange();
   }
 });
 
