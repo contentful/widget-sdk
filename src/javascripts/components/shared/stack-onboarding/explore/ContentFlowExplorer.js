@@ -72,6 +72,7 @@ angular.module('contentful')
       const { iframe: stateIframe } = this.state;
       return (
         <iframe
+          sandbox={'allow-scripts allow-same-origin'}
           ref={iframe => {
             if (stateIframe !== iframe) {
               this.setState({ iframe });
