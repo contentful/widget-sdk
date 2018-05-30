@@ -15,9 +15,9 @@ angular.module('contentful')
   const modernStackOnboardingFlag = 'feature-dl-05-2018-modern-stack-onboarding';
   const store = require('TheStore').getStore();
   const { isExampleSpace } = require('data/ContentPreview');
-  const {getAll: getAllContentPreviews} = require('contentPreview');
+  const { getAll: getAllContentPreviews } = require('contentPreview');
   const { user$, getOrganizations } = require('services/TokenStore');
-  const {default: template} = require('app/home/onboarding_steps/OnboardingStepsTemplate');
+  const { default: template } = require('app/home/onboarding_steps/OnboardingStepsTemplate');
 
   return {
     template: template(),
