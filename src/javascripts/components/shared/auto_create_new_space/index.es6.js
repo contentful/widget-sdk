@@ -1,4 +1,3 @@
-import $rootScope from '$rootScope';
 import { getStore } from 'TheStore';
 import {combine} from 'utils/kefir';
 import {getCurrentVariation} from 'utils/LaunchDarkly';
@@ -46,12 +45,6 @@ export function init () {
             const newSpace = await defaultChoice();
 
             store.set(`ctfl:${user.sys.id}:modernStackOnboarding:contentChoiceSpace`, newSpace.sys.id);
-            // notify the onboarding steps directive that it should update it's modern stack onboarding
-            // related flags. This is done since the choice screen is a modal which means the onboarding
-            // steps directive has already initialized underneath it. For it to pick up the right values
-            // from localStorage after we create the space for the "content choice flow", we want the
-            // onboarding steps directive to update itself based on new context
-            $rootScope.$broadcast('msOnboardingSpaceCreated');
           },
           org,
           user
