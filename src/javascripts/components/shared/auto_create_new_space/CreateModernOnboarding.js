@@ -6,6 +6,9 @@ angular.module('contentful')
 .factory(name, ['require', function (require) {
   const modalDialog = require('modalDialog');
   const $rootScope = require('$rootScope');
+  const { getStore } = require('TheStore');
+
+  const store = getStore();
 
   return {
     create: ({ onDefaultChoice, org }) => {
@@ -33,6 +36,16 @@ angular.module('contentful')
         persistOnNavigation: true,
         scope
       });
+    },
+    markSpace: (spaceId) => {
+      store.set(getKey(spaceId), true);
+    },
+    checkSpace: (spaceId) => {
+      return Boolean(store.get(getKey(spaceId)));
     }
   };
+
+  function getKey (spaceId) {
+    return `ctfl:${spaceId}:modernStackOnboarding:space`;
+  }
 }]);

@@ -2,6 +2,7 @@ import {name as getStartedModule} from '../components/shared/stack-onboarding/sc
 import {name as copyRepoModule} from '../components/shared/stack-onboarding/screens/CopyScreen';
 import {name as exploreModule} from '../components/shared/stack-onboarding/screens/ExploreScreen';
 import {name as deployModule} from '../components/shared/stack-onboarding/screens/DeployScreen';
+import {name as createModernOnboardingModule} from '../components/shared/auto_create_new_space/CreateModernOnboarding'
 
 export const name = 'states/stackOnboarding';
 
@@ -35,6 +36,12 @@ angular.module('contentful')
     name: 'onboarding',
     url: '/onboarding',
     abstract: true,
+    onEnter: [createModernOnboardingModule, '$stateParams', '$state', function ({ checkSpace }, { spaceId }, { go }) {
+      // we allow to see this screen only registered spaces
+      if (!checkSpace(spaceId)) {
+        go('spaces.detail.home', { spaceId });
+      }
+    }],
     children: [getStarted, copyRepo, explore, deploy]
   };
 }]);

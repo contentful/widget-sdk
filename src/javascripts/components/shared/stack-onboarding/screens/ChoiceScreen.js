@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 
 import {name as FullScreenModule} from '../../../react/molecules/FullScreen';
 import {name as ButtonModule} from '../../../react/atoms/Button';
+import {name as createModernOnboardingModule} from '../../auto_create_new_space/CreateModernOnboarding';
 
 const DEFAULT_LOCALE = 'en-US';
 
@@ -15,6 +16,7 @@ angular.module('contentful')
   const spaceContext = require('spaceContext');
   const $state = require('$state');
   const { refresh } = require('services/TokenStore');
+  const { markSpace } = require(createModernOnboardingModule);
 
   const FullScreen = require(FullScreenModule);
   const Button = require(ButtonModule);
@@ -41,8 +43,14 @@ angular.module('contentful')
         defaultLocale: DEFAULT_LOCALE
       }, orgId);
 
+      const newSpaceId = newSpace.sys.id;
+      // we need to mark space as onboarding before transitioning
+      // because otherwise it won't let us do that
+      // all onboarding steps are guarded by space id
+      markSpace(newSpaceId);
+
       await refresh();
-      await $state.go('spaces.detail.onboarding.getStarted', {spaceId: newSpace.sys.id});
+      await $state.go('spaces.detail.onboarding.getStarted', {spaceId: newSpaceId});
       // if we need to close modal, we need to do it after redirect
       closeModal && closeModal();
 
