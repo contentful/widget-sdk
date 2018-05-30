@@ -162,6 +162,7 @@ function createElement (container, selector) {
     assertNotVisible () {
       assertNotVisible(container, selector);
     },
+    assertIsDisabled: bindEl(assertIsDisabled),
     assertHasText: bindEl(assertHasText),
     assertNonExistent () {
       assertNotHasSelector(container, selector);
@@ -381,7 +382,7 @@ function assertIsSelected (element) {
  *     assertIsChecked(el, true)
  *
  *     // Converse
- *     assertIsChecked(false)
+ *     assertIsChecked(el, false)
  */
 function assertIsChecked (element, shouldBeChecked = true) {
   if (element.tagName === 'INPUT' && element.type === 'checkbox') {
@@ -403,6 +404,20 @@ function assertIsChecked (element, shouldBeChecked = true) {
  */
 function assertHasText (element, text) {
   expect(element.textContent).toMatch(text);
+}
+
+/**
+ * Asserts if an element is disabled by inspecting the `disabled` property
+ *
+ *     // Equivalent
+ *     assertIsDisabled(el)
+ *     assertIsDisabled(el, true)
+ *
+ *     // Converse
+ *     assertIsDisabled(el, false)
+ */
+function assertIsDisabled (element, shouldBeDisabled = true) {
+  expect(element.disabled).toBe(shouldBeDisabled);
 }
 
 

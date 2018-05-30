@@ -6,7 +6,11 @@ import { bindActions, createStore, makeReducer } from 'ui/Framework/Store';
 import * as LD from 'utils/LaunchDarkly';
 
 import * as accessChecker from 'access_control/AccessChecker';
+import createResourceService from 'services/ResourceService';
+import { isLegacyOrganization } from 'utils/ResourceUtils';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import $state from '$state';
+import $q from '$q';
 
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo';
 import { openCreateDialog, openEditDialog } from './EditDialog';
@@ -44,9 +48,12 @@ const ReceiveResponse = makeCtor('ReceiveResponse');
 
 
 const reduce = makeReducer({
-  [Reload]: (state, _, { resourceEndpoint, dispatch }) => {
+  [Reload]: (state, _, { resourceEndpoint, resourceService, dispatch }) => {
     C.runTask(function* () {
-      const result = yield C.tryP(resourceEndpoint.getAll());
+      const result = yield C.tryP($q.all([
+        resourceEndpoint.getAll(),
+        resourceService.canCreate('environment')
+      ]));
       dispatch(ReceiveResponse, result);
     });
     return assign(state, { isLoading: true });
@@ -80,9 +87,14 @@ const reduce = makeReducer({
   },
   [ReceiveResponse]: (state, result) => {
     return match(result, {
-      [C.Success]: (items) => {
+      [C.Success]: ([items, canCreateEnv]) => {
         return assign(state, {
           items: items.map(makeEnvironmentModel),
+          // Note: canCreateEnv will always be true for v1 orgs.
+          // There is a hardcoded limit of 100 environments for v1 orgs on the
+          // backend, but we don't enforce it on frontend as it should not be hit
+          // under normal circumstances.
+          canCreateEnv: canCreateEnv,
           isLoading: false
         });
       },
@@ -95,12 +107,19 @@ const reduce = makeReducer({
 // This is exported for testing purposes.
 export function createComponent (spaceContext) {
   const resourceEndpoint = SpaceEnvironmentRepo.create(spaceContext.endpoint, spaceContext.getId());
+  const resourceService = createResourceService(spaceContext.getId(), 'space');
   const context = {
-    resourceEndpoint
+    resourceEndpoint,
+    resourceService
   };
 
+  const organization = spaceContext.organizationContext.organization;
   const initialState = {
-    items: []
+    items: [],
+    canCreateEnv: true,
+    canUpgradeSpace: isOwnerOrAdmin(organization),
+    isLegacyOrganization: isLegacyOrganization(organization),
+    organizationId: organization.sys.id
   };
 
   const store = createStore(
