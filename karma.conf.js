@@ -71,7 +71,8 @@ module.exports = function (config) {
             ['transform-es2015-modules-systemjs', {
               systemGlobal: 'SystemTest'
             }],
-            'transform-object-rest-spread'
+            'transform-object-rest-spread',
+            'transform-class-properties'
           ]
         },
         sourceFileName: makeSourceFileName

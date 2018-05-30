@@ -9,6 +9,7 @@ extends:
 
 env:
   browser: true
+parser: 'babel-eslint'
 rules:
   react/display-name: "off"
   indent: "off"

@@ -43,7 +43,8 @@ module.exports.createBabelOptions = function createBabelOptions (options = {}) {
       ['transform-es2015-modules-systemjs', {
         systemGlobal: 'AngularSystem'
       }],
-      'transform-object-rest-spread'
+      'transform-object-rest-spread',
+      'transform-class-properties'
     ],
 
     // Get the SystemJS module ID from the source path

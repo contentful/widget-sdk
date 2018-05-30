@@ -39,7 +39,8 @@ gulp.task('js/sharejs', function () {
         }]
       ],
       plugins: [
-        'transform-object-rest-spread'
+        'transform-object-rest-spread',
+        'transform-class-properties'
       ]
     }),
     concat('sharejs.js'),
