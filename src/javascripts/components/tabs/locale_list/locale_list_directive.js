@@ -113,8 +113,6 @@ angular.module('contentful')
       $scope.usage = result.usage;
       $scope.limit = result.limits.maximum;
 
-      // You shouldn't reach a limit inside of any non-master environment
-      // This is to protect us in case of Resource API inconsistencies
       var reachedLimit = $scope.usage >= $scope.limit;
 
       if (!reachedLimit && len <= 1) {
