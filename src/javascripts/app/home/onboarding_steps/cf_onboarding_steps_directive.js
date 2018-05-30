@@ -79,7 +79,7 @@ angular.module('contentful')
         updateModernStackOnboardingFlags(await LD.getCurrentVariation(modernStackOnboardingFlag));
         // wait for two seconds before requesting the content previews to account for eventual
         // consistency on the CMA
-        await updateIsTEASpaceFlag(2000);
+        await updateIsTEASpaceFlag(3000);
       });
 
       LD.onFeatureFlag($scope, modernStackOnboardingFlag, updateModernStackOnboardingFlags);
