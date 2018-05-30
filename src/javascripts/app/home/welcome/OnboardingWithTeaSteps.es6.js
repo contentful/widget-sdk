@@ -352,37 +352,37 @@ const InviteADevStep = createReactClass({
     const inviteLink = href(urlParams);
 
     return (
-      <SplitStep {...props}>
+      <AltStep {...props}>
         {orgId &&
           <a
             href={inviteLink}
             target={'_blank'}
             rel={'noopener noreferrer'}
-            className='tea-onboarding__split-step-cta'
+            className='tea-onboarding__alt-step-cta'
             onClick={e => this.handleClick(e, urlParams)}
           >
             Invite user
+            <span className='arrow'></span>
           </a>
         }
-        <span className='arrow'></span>
-      </SplitStep>
+      </AltStep>
     );
   }
 });
 
-const SplitStep = createReactClass({
+const AltStep = createReactClass({
   propTypes: {
     headerCopy: PropTypes.string.isRequired,
     headerIcon: PropTypes.string.isRequired,
     isDone: PropTypes.bool.isRequired,
-    children: PropTypes.array.isRequired
+    children: PropTypes.object.isRequired
   },
   render () {
     const {headerCopy, headerIcon, isDone, children} = this.props;
 
     return (
-      <div className='tea-onboarding__split-step'>
-        <div className='tea-onboarding__split-step-header'>
+      <div className='tea-onboarding__alt-step'>
+        <div className='tea-onboarding__alt-step-header'>
           {
             isDone
             ? <Icon name='icon-checkmark-done' className='tea-onboarding__step-header-icon' key='complete-step' />
@@ -390,7 +390,7 @@ const SplitStep = createReactClass({
           }
           <h4>{headerCopy}</h4>
         </div>
-        <div className='tea-onboarding__split-step-body'>
+        <div className='tea-onboarding__alt-step-body'>
           {children}
         </div>
       </div>

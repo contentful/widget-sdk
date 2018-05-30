@@ -58,7 +58,7 @@ remove-top-and-bottom-margin()
   remove-top-and-bottom-margin()
 
 .tea-onboarding__step-toggle,
-.tea-onboarding__split-step-body
+.tea-onboarding__alt-step-body
   color: $colors.blue-dark
   font-weight: bold
   .arrow
@@ -115,30 +115,31 @@ remove-top-and-bottom-margin()
 .tea-onboarding__step-graphic
   margin-left: 10px
 
-.tea-onboarding__split-step
+.tea-onboarding__alt-step
   display: flex
   add-padding()
   padding-bottom: 25px
 
-.tea-onboarding__split-step-header
+.tea-onboarding__alt-step-header
   display: flex
   flex-direction: row
   align-items: baseline
   flex-grow: 2
-  cursor: pointer
   h4
     margin: 0
 
-.tea-onboarding__split-step:first-child
+.tea-onboarding__alt-step:first-child
   border-right: 1px solid $colors.element-mid
 
-.tea-onboarding__split-step-body
+.tea-onboarding__alt-step-body
   display: block
   color: $colors.text-mid
   line-height: 25px
   display: flex
   align-items: center
 
-.tea-onboarding__split-step-cta
+.tea-onboarding__alt-step-cta
   display: block
   font-weight: bold
+  &:hover
+    color: $colors.blue-darkest
