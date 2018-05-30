@@ -68,7 +68,7 @@ const OrganizationUsage = createReactClass({
     const { orgId } = this.props;
     const organization = await getOrganization(orgId);
 
-    if (isOwnerOrAdmin(organization)) {
+    if (!isOwnerOrAdmin(organization)) {
       throw new Error('No permission');
     }
   },
