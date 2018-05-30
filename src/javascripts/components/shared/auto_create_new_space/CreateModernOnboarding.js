@@ -11,11 +11,15 @@ angular.module('contentful')
     create: ({ onDefaultChoice, org }) => {
       const scope = $rootScope.$new();
       let dialog;
+      const closeModal = () => {
+        dialog && dialog.destroy();
+      };
       scope.props = {
         onDefaultChoice: () => {
-          dialog && dialog.destroy();
+          closeModal();
           onDefaultChoice();
         },
+        closeModal,
         orgId: org.sys.id
       };
 
@@ -24,6 +28,9 @@ angular.module('contentful')
         template: `<react-component name="${choiceScreenName}" props="props"></react-component`,
         backgroundClose: false,
         ignoreEsc: true,
+        // we don't want to close this modal after we create new space
+        // so url will be different
+        persistOnNavigation: true,
         scope
       });
     }

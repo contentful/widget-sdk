@@ -22,6 +22,7 @@ angular.module('contentful')
   const ChoiceScreen = createReactClass({
     propTypes: {
       onDefaultChoice: PropTypes.func.isRequired,
+      closeModal: PropTypes.func,
       orgId: PropTypes.string.isRequired
     },
     getInitialState () {
@@ -31,7 +32,7 @@ angular.module('contentful')
       };
     },
     async createSpace () {
-      const { orgId } = this.props;
+      const { orgId, closeModal } = this.props;
       this.setState({
         isDevPathPending: true
       });
@@ -42,6 +43,8 @@ angular.module('contentful')
 
       await refresh();
       await $state.go('spaces.detail.onboarding.getStarted', {spaceId: newSpace.sys.id});
+      // if we need to close modal, we need to do it after redirect
+      closeModal && closeModal();
 
       spaceContext.apiKeyRepo.create(
         'Example Key',
