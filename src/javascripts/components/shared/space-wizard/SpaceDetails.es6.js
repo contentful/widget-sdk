@@ -2,7 +2,7 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import TemplateSelector from './TemplateSelector';
-import {Steps, formatPrice} from './WizardUtils';
+import {formatPrice} from './WizardUtils';
 
 const SpaceDetails = createReactClass({
   propTypes: {
@@ -10,8 +10,7 @@ const SpaceDetails = createReactClass({
     onSubmit: PropTypes.func.isRequired,
     newSpaceRatePlan: PropTypes.object.isRequired,
     serverValidationErrors: PropTypes.object,
-    isFormSubmitted: PropTypes.bool,
-    onNavigate: PropTypes.func.isRequired
+    isFormSubmitted: PropTypes.bool
   },
   getInitialState: function () {
     const state = {
@@ -28,7 +27,7 @@ const SpaceDetails = createReactClass({
     }
   },
   render: function () {
-    const {newSpaceRatePlan, onNavigate} = this.props;
+    const {newSpaceRatePlan} = this.props;
     const {name, validation, touched} = this.state;
     const showValidationError = touched && !!validation.name;
 
@@ -39,14 +38,7 @@ const SpaceDetails = createReactClass({
         </h2>
         <p className="create-space-wizard__subheading">
           You are about to create a {newSpaceRatePlan.name.toLowerCase()} space
-          for {formatPrice(newSpaceRatePlan.price)}/month.<br/>
-          <a
-            className="text-link"
-            href="#"
-            onClick={() => onNavigate(Steps.SpaceType)}>
-            Go back
-          </a>{' '}
-          to change your selection.
+          for {formatPrice(newSpaceRatePlan.price)}/month.
         </p>
         <div className="cfnext-form__field create-space-wizard__centered-block">
           <label htmlor="space-name">
