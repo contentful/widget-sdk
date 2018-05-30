@@ -78,6 +78,7 @@ const SpacePlanSelector = createReactClass({
                       key={plan.sys.id}
                       plan={plan}
                       freeSpacesResource={freeSpacesResource}
+                      isPayingOrg={payingOrg}
                       isSelected={get(newSpaceRatePlan, 'sys.id') === plan.sys.id}
                       onSelect={this.selectPlan()} />)}
                   </div>
