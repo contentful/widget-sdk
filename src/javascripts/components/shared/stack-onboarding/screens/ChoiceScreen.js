@@ -4,60 +4,24 @@ import PropTypes from 'prop-types';
 
 import {name as FullScreenModule} from '../../../react/molecules/FullScreen';
 import {name as ButtonModule} from '../../../react/atoms/Button';
-import {name as createModernOnboardingModule} from '../../auto_create_new_space/CreateModernOnboarding';
-
-const DEFAULT_LOCALE = 'en-US';
 
 export const name = 'choice-screen-component';
 
 angular.module('contentful')
 .factory(name, ['require', function (require) {
-  const client = require('client');
-  const spaceContext = require('spaceContext');
-  const $state = require('$state');
-  const { refresh } = require('services/TokenStore');
-  const { markSpace } = require(createModernOnboardingModule);
-
   const FullScreen = require(FullScreenModule);
   const Button = require(ButtonModule);
 
   const ChoiceScreen = createReactClass({
     propTypes: {
       onDefaultChoice: PropTypes.func.isRequired,
-      closeModal: PropTypes.func,
-      orgId: PropTypes.string.isRequired
+      createSpace: PropTypes.func
     },
     getInitialState () {
       return {
         isDevPathPending: false,
         isDefaultPathPending: false
       };
-    },
-    async createSpace () {
-      const { orgId, closeModal } = this.props;
-      this.setState({
-        isDevPathPending: true
-      });
-      const newSpace = await client.createSpace({
-        name: 'Modern Stack Website',
-        defaultLocale: DEFAULT_LOCALE
-      }, orgId);
-
-      const newSpaceId = newSpace.sys.id;
-      // we need to mark space as onboarding before transitioning
-      // because otherwise it won't let us do that
-      // all onboarding steps are guarded by space id
-      markSpace(newSpaceId);
-
-      await refresh();
-      await $state.go('spaces.detail.onboarding.getStarted', {spaceId: newSpaceId});
-      // if we need to close modal, we need to do it after redirect
-      closeModal && closeModal();
-
-      spaceContext.apiKeyRepo.create(
-        'Example Key',
-        'We’ve created an example API key for you to help you get started.'
-      );
     },
     renderBlock ({ title, text, button }) {
       return (
@@ -80,6 +44,12 @@ angular.module('contentful')
           </Button>
         </div>
       );
+    },
+    createSpace () {
+      this.setState({
+        isDevPathPending: true
+      });
+      this.props.createSpace();
     },
     render () {
       const { isDefaultPathPending, isDevPathPending } = this.state;

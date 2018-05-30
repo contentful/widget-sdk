@@ -42,7 +42,8 @@ export function init () {
       if (modernStackVariation) {
         create({
           onDefaultChoice: defaultChoice,
-          org
+          org,
+          markOnboarding
         });
         return;
       } else {
@@ -60,9 +61,13 @@ export function init () {
 
           // we swallow all errors, so auto creation modal will always have green mark
           await createSampleSpace(org, 'the example app', template).catch(() => {});
-          store.set(getKey(user), true);
+          markOnboarding();
           creatingSampleSpace = false;
         }
+      }
+
+      function markOnboarding () {
+        store.set(getKey(user), true);
       }
     });
 }
