@@ -13,6 +13,9 @@ angular.module('contentful')
   const Button = require(ButtonModule);
   const Input = require(InputModule);
   const Form = require(FormModule);
+  const store = require('TheStore').getStore();
+  const {user$} = require('services/TokenStore');
+  const {getValue} = require('utils/kefir');
 
   const DeploymentForm = createReactClass({
     propTypes: {
@@ -25,20 +28,32 @@ angular.module('contentful')
         error: false
       };
     },
-    onChange (value) {
-      const { onProviderChange } = this.props;
-      const usesNetlify = value && value.includes('netlify.com');
-      const usesHeroku = value && value.includes('heroku.com');
-      const isValid = usesNetlify || usesHeroku;
-
-      if (isValid && onProviderChange) {
-        onProviderChange(usesNetlify ? 'netlify' : 'heroku');
+    isValidDeployedUrl (url) {
+      return Boolean(url && (
+        url.includes('netlify.com') || url.includes('herokuapp.com')
+      ));
+    },
+    markAsInvalidUrl (url) {
+      this.setState({ url: url, error: 'Please provide the Netlify or Heroku URL of your deployed application.' });
+    },
+    onChange (url) {
+      if (!this.isValidDeployedUrl(url)) {
+        this.markAsInvalidUrl(url);
+      } else {
+        this.setState({ url, error: false });
       }
-
-      this.setState({ url: value, error: isValid ? false : 'Please provide a URL on netlify or heroku.' });
     },
     onComplete () {
-      this.props.onComplete(this.state.url);
+      const {url} = this.state;
+
+      if (this.isValidDeployedUrl(url)) {
+        const user = getValue(user$);
+
+        store.set(`ctfl:${user.sys.id}:modernStackOnboarding:completed`, true);
+        this.props.onComplete(url);
+      } else {
+        this.markAsInvalidUrl(url);
+      }
     },
     render () {
       const { url, error } = this.state;
