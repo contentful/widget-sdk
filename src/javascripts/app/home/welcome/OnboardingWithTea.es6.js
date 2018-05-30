@@ -44,7 +44,7 @@ function boolToNumber (value) {
 }
 
 
-const OnboardingWithTea = createReactClass({
+export const OnboardingWithTea = createReactClass({
   getInitialState () {
     const constants = getProgressConstants();
     const state = {
@@ -180,7 +180,7 @@ const OnboardingWithTea = createReactClass({
   }
 });
 
-const Header = createReactClass({
+export const Header = createReactClass({
   propTypes: {
     progress: PropTypes.number.isRequired
   },
@@ -194,7 +194,7 @@ const Header = createReactClass({
   }
 });
 
-const Progress = createReactClass({
+export const Progress = createReactClass({
   propTypes: {
     count: PropTypes.number.isRequired,
     total: PropTypes.number.isRequired
@@ -217,5 +217,3 @@ const Progress = createReactClass({
     );
   }
 });
-
-export default OnboardingWithTea;

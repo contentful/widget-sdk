@@ -11,11 +11,14 @@ angular.module('contentful')
     const {getValue} = require('utils/kefir');
     const user = getValue(user$);
 
+    const skippedStepKey = `ctfl:${user.sys.id}:modernStackOnboarding:skippedStep`;
+    const onboardingStepsCompleteKey = `ctfl:${user.sys.id}:modernStackOnboarding:completed`;
+
     class DevNextStepsContainer extends React.Component {
       constructor () {
         super();
         this.state = {
-          onboardingStepsComplete: store.get(`ctfl:${user.sys.id}:modernStackOnboarding:completed`)
+          onboardingStepsComplete: store.get(onboardingStepsCompleteKey)
         };
       }
 
@@ -24,7 +27,7 @@ angular.module('contentful')
 
         return onboardingStepsComplete
           ? <DevNextSteps />
-          : <ResumeFlow stepToResume={store.get(`ctfl:${user.sys.id}:modernStackOnboarding:skippedStep`)} />;
+          : <ResumeFlow stepToResume={store.get(skippedStepKey)} />;
       }
     }
 
@@ -43,13 +46,17 @@ angular.module('contentful')
 
     const ResumeFlow = ({stepToResume: {path, params}}) => {
       const currOrgId = spaceContext.organizationContext.organization.sys.id;
+      const handleResume = () => {
+        store.remove(skippedStepKey);
+        $state.go(path, params);
+      };
 
       return (
         <section className='home-section'>
           <h2 className='home-section__heading'>Would you like to continue to deploy a modern stack website?</h2>
           <p>You’ll copy the repository for a blog, explore the blog content structure and deploy</p>
           <div className='home-section__body u-separator--small'>
-            <button className='btn-action' onClick={_ => $state.go(path, params)} type='button'>Yes, deploy a blog in 3 steps</button>
+            <button className='btn-action' onClick={handleResume} type='button'>Yes, deploy a blog in 3 steps</button>
             <button className='btn-action' onClick={_ => CreateSpace.showDialog(currOrgId)} type='button'>No, create a new space</button>
           </div>
         </section>

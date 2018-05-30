@@ -48,21 +48,44 @@ angular.module('contentful')
           currentSpaceId === msContentChoiceSpace;
       };
 
-      $scope.$on('msOnboardingSpaceCreated', async () => {
+      // delay execution of a fn that returns a promise by `ms` milliseconds
+      const delay = (fn, ms) => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            fn().then(resolve, reject);
+          }, ms);
+        });
+      };
+
+      const updateIsTEASpaceFlag = async (delayMs = 0) => {
+        controller.isTEASpace = false;
+        controller.isContentPreviewsLoading = true;
+
+        try {
+          // delaying function call by a few ms to let the api response
+          // be consistent. Without the delay, this returns previews at times
+          // and not at other times. This should even that behaviour out.
+          const previews = await delay(getAllContentPreviews, delayMs);
+          const publishedCTs = K.getValue(spaceContext.publishedCTs.items$);
+
+          controller.isTEASpace = isExampleSpace(previews, publishedCTs);
+        } finally {
+          controller.isContentPreviewsLoading = false;
+        }
+      };
+
+      // update all flags once the emtpy space is loaded with the selected template
+      $scope.$on('spaceTemplateCreated', async () => {
         updateModernStackOnboardingFlags(await LD.getCurrentVariation(modernStackOnboardingFlag));
+        // wait for two seconds before requesting the content previews to account for eventual
+        // consistency on the CMA
+        await updateIsTEASpaceFlag(2000);
       });
 
       LD.onFeatureFlag($scope, modernStackOnboardingFlag, updateModernStackOnboardingFlags);
 
       if (spaceContext.space) {
-        controller.isTEASpace = false;
-        controller.isContentPreviewsLoading = true;
-        getAllContentPreviews(true).then(previews => {
-          const publishedCTs = K.getValue(spaceContext.publishedCTs.items$);
-          controller.isTEASpace = isExampleSpace(previews, publishedCTs);
-        }).finally(() => {
-          controller.isContentPreviewsLoading = false;
-        });
+        updateIsTEASpaceFlag();
       }
 
       var firstSteps = [
