@@ -93,7 +93,7 @@ const sysFieldFilters = [
       queryKey: '__status',
       operators: [equalityOperator],
       valueInput: ValueInput.Select([
-        ['', 'Any'],
+        ['', 'Any (except “Archived”)'],
         ['published', 'Published'],
         ['changed', 'Changed'],
         ['draft', 'Draft'],
