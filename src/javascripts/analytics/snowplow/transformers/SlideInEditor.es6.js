@@ -8,9 +8,13 @@ import { addUserOrgSpace } from './Decorators';
  */
 export default addUserOrgSpace((eventName, data) => ({
   data: {
-    action: eventName,
+    action: extractAction(eventName),
     current_slide_level: data.currentSlideLevel,
     target_slide_level: data.targetSlideLevel,
     peek_hover_time_ms: data.peekHoverTimeMs || 0
   }
 }));
+
+function extractAction (eventName) {
+  return eventName.split(':')[1];
+}
