@@ -1,7 +1,8 @@
 import * as Config from 'Config';
 import { assign } from 'utils/Collections';
-import pageSettingsIcon from 'svg/page-settings';
 import { caseofEq } from 'sum-types';
+import { href } from 'states/Navigator';
+import { subscription as subscriptionState } from 'ui/NavStates/Org';
 
 import { h } from 'ui/Framework';
 import { linkOpen, badge, codeFragment } from 'ui/Content';
@@ -9,8 +10,9 @@ import { table, tr, td, th } from 'ui/Content/Table';
 import { container, hbox, vspace, ihspace } from 'ui/Layout';
 import * as Workbench from 'app/Workbench';
 import { byName as Colors } from 'Styles/Colors';
-import questionMarkIcon from 'svg/QuestionMarkIcon';
 
+import pageSettingsIcon from 'svg/page-settings';
+import questionMarkIcon from 'svg/QuestionMarkIcon';
 import CopyIconButton from 'ui/Components/CopyIconButton';
 
 export default function render (state, actions) {
@@ -19,7 +21,7 @@ export default function render (state, actions) {
       title: [ 'Environments' ],
       icon: pageSettingsIcon
     }),
-    sidebar: sidebar(actions),
+    sidebar: sidebar(state, actions),
     content: container({
       padding: '0em 1em'
     }, [ environmentList(state, actions) ])
@@ -153,14 +155,19 @@ function deleteButton (environment) {
 }
 
 
-function sidebar ({ OpenCreateDialog }) {
+function sidebar ({ canCreateEnv, organizationId, isLegacyOrganization, canUpgradeSpace }, { OpenCreateDialog }) {
   return [
     h('h2.entity-sidebar__heading', [
       'Add environment'
     ]),
+    !canCreateEnv && h('p', [
+      'You have exceeded your environments usage. ',
+      ...upgradeInfo({ organizationId, isLegacyOrganization, canUpgradeSpace })
+    ]),
     h('button.btn-action.x--block', {
       dataTestId: 'openCreateDialog',
-      onClick: () => OpenCreateDialog()
+      onClick: () => OpenCreateDialog(),
+      disabled: !canCreateEnv
     }, [ 'Add environment' ]),
     vspace(5),
     h('h2.entity-sidebar__heading', [
@@ -184,4 +191,20 @@ function sidebar ({ OpenCreateDialog }) {
       ])
     ])
   ];
+}
+
+function upgradeInfo ({ organizationId, isLegacyOrganization, canUpgradeSpace }) {
+  if (isLegacyOrganization) return [];
+
+  if (canUpgradeSpace) {
+    return [
+      'You can upgrade your space from the ',
+      h('a', {
+        href: href(subscriptionState(organizationId, false))
+      }, ['subscription page']),
+      '.'
+    ];
+  } else {
+    return ['The administrator of your organization can upgrade this space to get more environments.'];
+  }
 }

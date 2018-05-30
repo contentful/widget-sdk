@@ -2,7 +2,12 @@ import * as DOM from 'helpers/DOM';
 
 describe('app/SpaceSettings/Environments', function () {
   beforeEach(function () {
-    module('contentful/test');
+    const resourceService = {
+      canCreate: sinon.stub().withArgs('environment').resolves(true)
+    };
+    module('contentful/test', function ($provide) {
+      $provide.value('services/ResourceService', () => resourceService);
+    });
 
     const { createComponent } = this.$inject('app/SpaceSettings/Environments/State');
     const spaceContext = this.$inject('mocks/spaceContext').init();
@@ -28,13 +33,17 @@ describe('app/SpaceSettings/Environments', function () {
         }
       };
     };
+
+    this.setCanCreate = (value) => {
+      resourceService.canCreate.withArgs('environment').resolves(value);
+    };
   });
 
   afterEach(function () {
     $(this.container.element).remove();
   });
 
-  it('lists all environments with status', function* () {
+  it('lists all environments with status', function () {
     this.putEnvironment({ id: 'e1', status: 'ready' });
     this.putEnvironment({ id: 'e2', status: 'queued' });
     this.putEnvironment({ id: 'e3', status: 'failed' });
@@ -48,7 +57,7 @@ describe('app/SpaceSettings/Environments', function () {
     this.container.find('environmentList', 'environment.e3').assertHasText('Failed');
   });
 
-  it('creates an environment', function* () {
+  it('creates an environment', function () {
     this.init();
 
     this.container.find('openCreateDialog').click();
@@ -59,7 +68,7 @@ describe('app/SpaceSettings/Environments', function () {
     this.container.find('environmentList', 'environment.env_id').assertHasText('env_id');
   });
 
-  it('deletes an environment', function* () {
+  it('deletes an environment', function () {
     this.putEnvironment({ id: 'e1', status: 'ready' });
     this.init();
 
@@ -69,5 +78,12 @@ describe('app/SpaceSettings/Environments', function () {
     this.container.find('spaceEnvironmentsDeleteDialog', 'delete').click();
     this.$flush();
     this.container.find('environment.e1').assertNonExistent();
+  });
+
+  it('disables create button if limit is reached', function () {
+    this.setCanCreate(false);
+    this.init();
+
+    this.container.find('openCreateDialog').assertIsDisabled();
   });
 });

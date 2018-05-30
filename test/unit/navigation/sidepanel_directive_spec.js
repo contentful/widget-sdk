@@ -24,14 +24,19 @@ describe('cfNavSidepanel directive', function () {
     go: sinon.stub().resolves()
   };
 
+  const environmentsRepo = {
+    getAll: sinon.stub().resolves([])
+  };
+
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.value('services/CreateSpace', CreateSpace);
       $provide.value('states/Navigator', Navigator);
       $provide.value('access_control/AccessChecker', accessChecker);
       $provide.value('services/OrganizationRoles', OrganizationRoles);
-      $provide.value('client', {request: sinon.stub().resolves({items: []})});
       $provide.value('utils/LaunchDarkly', {onFeatureFlag: sinon.stub()});
+      $provide.value('data/EndpointFactory', {createSpaceEndpoint: sinon.stub()});
+      $provide.value('data/CMA/SpaceEnvironmentsRepo', {create: () => environmentsRepo});
     });
 
     const NavState = this.$inject('navigation/NavState');
@@ -204,14 +209,15 @@ describe('cfNavSidepanel directive', function () {
   it('fetches environments for admins', function () {
     const [container] = this.init(true);
     const spaceLink = container.find('sidepanel-space-link-0');
+    const createSpaceEndpoint = this.$inject('data/EndpointFactory').createSpaceEndpoint;
+    const repo = this.$inject('data/CMA/SpaceEnvironmentsRepo').create();
 
     spaceLink.click();
     this.$apply();
 
-    sinon.assert.calledWith(this.$inject('client').request, {
-      method: 'GET',
-      path: '/spaces/test-space-id-1-1/environments'
-    });
+     // path: '/spaces/test-space-id-1-1/environments',
+    sinon.assert.calledWith(createSpaceEndpoint, 'test-space-id-1-1');
+    sinon.assert.calledOnce(repo.getAll);
 
     container.destroy();
   });

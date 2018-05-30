@@ -107,7 +107,10 @@ module.exports = ({ dev = false } = {}) => ({
             moduleIds: false,
             getModuleId: undefined,
             // we don't need SystemJS plugin for regular es5 files
-            plugins: ['transform-object-rest-spread']
+            plugins: [
+              'transform-object-rest-spread',
+              'transform-class-properties'
+            ]
           })
         }
       },

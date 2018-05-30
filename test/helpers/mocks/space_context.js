@@ -70,7 +70,8 @@ angular.module('contentful/mocks')
           limits: {
           }
         },
-        usage: {}
+        usage: {},
+        sys: {}
       }
     };
     spaceContext.widgets = createWidgetStore(spaceContext.cma);

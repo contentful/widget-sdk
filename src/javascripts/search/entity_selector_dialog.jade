@@ -41,7 +41,7 @@ mixin single-list-item
 
       .entity-selector__search(ng-if="!supportsAdvancedSearch")
         input.cfnext-form__input--full-size(
-          ng-model="view.searchTerm"
+          ng-model="view.searchText"
           placeholder="{{ getSearchPlaceholder() }}")
 
       .entity-selector__item-list.endless-container(
@@ -53,8 +53,8 @@ mixin single-list-item
         num-elements="paginator.getPage()")
         .entity-selector__item-list-placeholder(ng-if="!isLoading && items.length < 1")
           | {{ labels.empty }} found
-          span(ng-if="view.searchTerm.length > 0")
-            |  for <strong>{{ view.searchTerm }}</strong>
+          span(ng-if="!supportsAdvancedSearch && view.searchText.length > 0")
+            |  for <strong>{{ view.searchText }}</strong>
 
         .entity-selector__item(
           ng-repeat="entity in items track by entity.sys.id"

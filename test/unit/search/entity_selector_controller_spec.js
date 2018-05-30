@@ -72,27 +72,27 @@ describe('EntitySelectorController', function () {
 
     it('triggers when term >= 1', function () {
       this.createController();
-      this.scope.view.searchTerm = '';
+      this.scope.view.searchText = '';
       this.$apply();
-      this.scope.view.searchTerm = '1';
+      this.scope.view.searchText = '1';
       this.$apply();
       sinon.assert.calledTwice(this.fetch);
     });
 
     it('triggers when clearing', function () {
       this.createController();
-      this.scope.view.searchTerm = '4444';
+      this.scope.view.searchText = '4444';
       this.$apply();
-      this.scope.view.searchTerm = '333';
+      this.scope.view.searchText = '333';
       this.$apply();
       sinon.assert.calledThrice(this.fetch);
     });
 
     it('triggers when deleting the value', function () {
       this.createController();
-      this.scope.view.searchTerm = '4444';
+      this.scope.view.searchText = '4444';
       this.$apply();
-      delete this.scope.view.searchTerm;
+      delete this.scope.view.searchText;
       this.$apply();
       sinon.assert.calledThrice(this.fetch);
     });

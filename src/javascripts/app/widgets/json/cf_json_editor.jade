@@ -10,4 +10,5 @@ div.json-editor__code-editor-container(ng-show="!isDisabled")
     p
       | The widget failed to initialize
 
-  cf-json-editor-code-editor(ng-if="editor" editor="editor")
+  cf-json-editor-code-editor(ng-if="editor && !renderSlateEditor" editor="editor")
+  <react-component ng-if="renderSlateEditor" name="app/widgets/structured_text/StructuredTextEditor" props="slateEditorProps"></react-component>

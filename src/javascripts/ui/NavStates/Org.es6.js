@@ -32,3 +32,11 @@ export function invoices (orgId) {
     options: { reload: true }
   };
 }
+
+export function subscription (orgId, isLegacy = true) {
+  return {
+    path: ['account', 'organizations', isLegacy ? 'subscription' : 'subscription_new'],
+    params: {orgId},
+    options: { reload: true }
+  };
+}
