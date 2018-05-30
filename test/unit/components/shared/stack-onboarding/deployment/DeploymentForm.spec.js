@@ -62,7 +62,7 @@ describe('in DeploymentForm', () => {
     const wrapper = mount(<DeploymentForm onComplete={onComplete} />);
 
     wrapper.setState({
-      url: 'correct-url.heroku.com'
+      url: 'correct-url.herokuapp.com'
     });
 
     wrapper.find('button[type="submit"]').simulate('click');
