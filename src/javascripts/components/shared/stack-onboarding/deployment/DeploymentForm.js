@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import {name as InputModule} from '../../../react/atoms/Input';
 import {name as ButtonModule} from '../../../react/atoms/Button';
 import {name as FormModule} from '../../../react/atoms/Form';
-import {name as WithReminderModule} from '../components/WithReminder';
 
 export const name = 'DeploymentFormModule';
 
@@ -13,7 +12,6 @@ angular.module('contentful')
 .factory(name, ['require', function (require) {
   const Button = require(ButtonModule);
   const Input = require(InputModule);
-  const WithReminder = require(WithReminderModule);
   const Form = require(FormModule);
 
   const DeploymentForm = createReactClass({
@@ -35,7 +33,7 @@ angular.module('contentful')
     onComplete () {
       this.props.onComplete(this.state.url);
     },
-    renderDeploymentForm ({ invalidate }) {
+    render () {
       const { url, error } = this.state;
       return (
         <div className={'modern-stack-onboarding--deployment-form'}>
@@ -50,10 +48,7 @@ angular.module('contentful')
             <Input
               wrapperClassName={'modern-stack-onboarding--deployment-form-input'}
               value={url}
-              onChange={(value) => {
-                invalidate();
-                return this.onChange(value);
-              }}
+              onChange={this.onChange}
               placeholder={'Enter the website url of the deployed site'}
               error={url && error}
             />
@@ -67,36 +62,6 @@ angular.module('contentful')
             </Button>
           </Form>
         </div>
-      );
-    },
-    render () {
-      return (
-        <WithReminder timeout={1000 * 60 * 3}>
-          {({ showReminder, invalidate }) => {
-            const deploymentForm = this.renderDeploymentForm({ invalidate });
-            const reminder = (
-              <div className={'modern-stack-onboarding--modal'}>
-                <div className={'modern-stack-onboarding--modal-content'}>
-                  <h2 className={'modern-stack-onboarding--title modern-stack-onboarding--title__small'}>
-                    {'Is the '}
-                    <strong>
-                      {'Gatsby Starter for Contentful'}
-                    </strong>
-                    {' blog repository deployed?'}
-                  </h2>
-                  {deploymentForm}
-                </div>
-              </div>
-            );
-
-            return (
-              <React.Fragment>
-                {showReminder && reminder}
-                {deploymentForm}
-              </React.Fragment>
-            );
-          }}
-        </WithReminder>
       );
     }
   });
