@@ -23,6 +23,22 @@ angular.module('contentful')
       },
       componentDidMount () {
         const { order } = this.props;
+        // give time to iframe to initialize
+        // also, user will see some action
+        // not just highlighted part from the beginning
+        setTimeout(() => {
+          if (order && order[0]) {
+            this.highlight(order[0]);
+          }
+        }, 500);
+        this.startAnimation();
+      },
+      componentWillUnmount () {
+        this.removeHighlight();
+        this.clearAnimation();
+      },
+      startAnimation () {
+        const { order } = this.props;
 
         if (order) {
           this.interval = setInterval(() => {
@@ -34,10 +50,6 @@ angular.module('contentful')
             this.highlight(order[nextIndex]);
           }, 2000);
         }
-      },
-      componentWillUnmount () {
-        this.removeHighlight();
-        this.clearAnimation();
       },
       clearAnimation () {
         clearInterval(this.interval);
@@ -59,8 +71,8 @@ angular.module('contentful')
         this.highlight(type);
       },
       onLeave () {
-        this.setState({ active: null });
-        this.removeHighlight();
+        // continue iterate over all types
+        this.startAnimation();
       },
       removeHighlight () {
         const { iframe } = this.props;
