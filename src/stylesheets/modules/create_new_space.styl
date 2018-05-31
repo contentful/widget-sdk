@@ -136,25 +136,20 @@
 // Close button
 
 $close-button-small()
-  border: 1px solid $colors.element-mid
   transform: none;
-  border-top-right-radius: 2px
-  background-color: $colors.element-lightest
+  color: $colors.text-light
   &:hover
-    background-color: $colors.element-light
+    color: $colors.text-mid
   &:after
     font-size: 2em
     line-height: 1em
 
-.create-new-space-dialog__close.modal-dialog__close
-  $close-button-small()
-  margin-left: auto
-
-.create-space-wizard__close.modal-dialog__close
-  $close-button-small()
-  position: absolute
-  top: 0
-  right: 0
+.create-new-space-dialog__close, .create-space-wizard__close
+  &.modal-dialog__close
+    $close-button-small()
+    position: absolute
+    top: 14px
+    right: 18px
 
 // V2 pricing wizard
 .create-space-wizard
