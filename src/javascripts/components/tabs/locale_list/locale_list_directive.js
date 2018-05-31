@@ -31,9 +31,21 @@ angular.module('contentful')
 
   var FeatureService = createFeatureService(spaceContext.getId());
 
+  var showSpaceModal = require('services/ChangeSpaceService').showDialog;
+
   ResourceUtils.useLegacy(organization).then(legacy => {
     $scope.showSidebar = !legacy;
-    $scope.upgradeSpacePlan = () => alert('woot');
+    $scope.upgradeSpacePlan = () => {
+      showSpaceModal({
+        organizationId: organization.sys.id,
+        space: spaceContext.space.data,
+        action: 'change',
+        onSubmit: function () {
+          return updateLocalesUsageState()
+            .catch(ReloadNotification.apiErrorHandler);
+        }
+      });
+    };
     $scope.spaceType = undefined; // TODO get it from API
   });
 
@@ -67,17 +79,10 @@ angular.module('contentful')
     $scope.locales = locales;
     $scope.localeNamesByCode = groupLocaleNamesByCode(locales);
 
-    // The locales usage is only important inside of the master environment.
-    // In non-master envs, we skip the call and set the readystate to true.
-    if ($scope.insideMasterEnv) {
-      getLocalesUsageState().then(state => {
-        $scope.localesUsageState = state;
-
-        $scope.context.ready = true;
-      });
-    } else {
-      $scope.context.ready = true;
-    }
+    return updateLocalesUsageState();
+  })
+  .then(() => {
+    $scope.context.ready = true;
   })
   .catch(ReloadNotification.apiErrorHandler);
 
@@ -87,7 +92,13 @@ angular.module('contentful')
     }, {});
   }
 
-  function getLocalesUsageState () {
+  function updateLocalesUsageState () {
+    // The locales usage is only important inside of the master environment.
+    // In non-master envs, we skip the call and set the readystate to true.
+    if (!$scope.insideMasterEnv) {
+      return $q.resolve();
+    }
+
     var len = $scope.locales.length;
 
     return $q.resolve().then(() => {
@@ -122,6 +133,8 @@ angular.module('contentful')
       } else {
         return STATES.UNKNOWN;
       }
+    }).then(function (state) {
+      $scope.localesUsageState = state;
     });
   }
 
