@@ -8,42 +8,28 @@ export const name = 'stack-onboarding-skip';
 
 angular.module('contentful')
 .factory(name, ['require', function (require) {
-  const { getStore } = require('TheStore');
-  const { getValue } = require('utils/kefir');
-  const { user$ } = require('services/TokenStore');
   const $state = require('$state');
   const $stateParams = require('$stateParams');
   const { track } = require(CreateModernOnboardingModule);
+  const store = require('TheStore').getStore();
+  const {user$} = require('services/TokenStore');
+  const {getValue} = require('utils/kefir');
 
-  const store = getStore();
+  const user = getValue(user$);
+  const onboardingStepsCompleteKey = `ctfl:${user.sys.id}:modernStackOnboarding:completed`;
 
   const StackOnboardingSkip = createReactClass({
-    propTypes: {
-      link: PropTypes.oneOf(['getStarted', 'copy', 'explore', 'deploy'])
-    },
     onClick () {
-      const { link } = this.props;
-      const user = getValue(user$);
-      const key = `ctfl:${user.sys.id}:modernStackOnboarding:skippedStep`;
-
-      const params = {
+      $state.go('spaces.detail.home', {
         spaceId: $stateParams.spaceId
-      };
-
-      const skippedStep = {
-        path: `spaces.detail.onboarding.${link}`,
-        params
-      };
-
-      track(`skip_from_${link}`);
-
-      store.set(key, skippedStep);
-      $state.go('spaces.detail.home', params);
+      });
     },
     render () {
+      const onboardingStepsComplete = store.get(onboardingStepsCompleteKey);
+
       return (
         <div onClick={this.onClick} className='modern-stack-onboarding--skip'>
-          Skip &gt;
+          {onboardingStepsComplete ? 'Close' : 'Skip >'}
         </div>
       );
     }

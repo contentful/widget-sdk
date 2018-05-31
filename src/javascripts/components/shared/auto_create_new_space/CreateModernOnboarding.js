@@ -155,5 +155,11 @@ angular.module('contentful')
     await $state.go('spaces.detail.onboarding.getStarted', {spaceId: newSpaceId});
     // if we need to close modal, we need to do it after redirect
     closeModal && closeModal();
+
+    spaceContext.apiKeyRepo.create(
+      'Example Key',
+      'We’ve created an example API key for you to help you get started.'
+    );
+    return newSpace;
   }
 }]);

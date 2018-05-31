@@ -11,6 +11,10 @@ angular.module('contentful')
 .factory(name, ['require', function (require) {
   const FullScreen = require(FullScreenModule);
   const Button = require(ButtonModule);
+  const store = require('TheStore').getStore();
+  const {user$} = require('services/TokenStore');
+  const {getValue} = require('utils/kefir');
+  const user = getValue(user$);
 
   const ChoiceScreen = createReactClass({
     propTypes: {
@@ -45,11 +49,17 @@ angular.module('contentful')
         </div>
       );
     },
-    createSpace () {
+    async createSpace () {
       this.setState({
         isDevPathPending: true
       });
-      this.props.createSpace();
+      const newSpace = await this.props.createSpace();
+      store.set(`ctfl:${user.sys.id}:modernStackOnboarding:currentStep`, {
+        path: 'spaces.detail.onboarding.getStarted',
+        params: {
+          spaceId: newSpace.sys.id
+        }
+      });
     },
     render () {
       const { isDefaultPathPending, isDevPathPending } = this.state;
