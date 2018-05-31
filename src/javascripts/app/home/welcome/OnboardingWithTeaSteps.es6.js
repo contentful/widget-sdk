@@ -19,7 +19,7 @@ export const STEPS_KEYS = {
   VIEW_SAMPLE_CONTENT, PREVIEW_USING_EXAMPLE_APP, CREATE_ENTRY, GET_REPO, INVITE_DEV
 };
 
-const TEASteps = createReactClass({
+export const TEASteps = createReactClass({
   propTypes: {
     state: PropTypes.object.isRequired,
     actions: PropTypes.object.isRequired,
@@ -370,7 +370,7 @@ const InviteADevStep = createReactClass({
   }
 });
 
-const AltStep = createReactClass({
+export const AltStep = createReactClass({
   propTypes: {
     headerCopy: PropTypes.string.isRequired,
     headerIcon: PropTypes.string.isRequired,
@@ -398,7 +398,7 @@ const AltStep = createReactClass({
   }
 });
 
-const Step = createReactClass({
+export const Step = createReactClass({
   propTypes: {
     headerCopy: PropTypes.string.isRequired,
     headerIcon: PropTypes.string.isRequired,
@@ -436,5 +436,3 @@ const Step = createReactClass({
     );
   }
 });
-
-export default TEASteps;

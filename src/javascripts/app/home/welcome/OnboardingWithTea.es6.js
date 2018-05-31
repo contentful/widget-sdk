@@ -1,7 +1,7 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
-import TEASteps, { STEPS_KEYS } from './OnboardingWithTeaSteps';
+import { TEASteps, STEPS_KEYS } from './OnboardingWithTeaSteps';
 import { getStore } from 'TheStore';
 import spaceContext from 'spaceContext';
 import {track, updateUserInSegment} from 'analytics/Analytics';
@@ -173,7 +173,10 @@ export const OnboardingWithTea = createReactClass({
     };
     return (
       <section className='home-section tea-onboarding'>
-        <Header progress={progress} />
+        <Header>
+          <h3 className='tea-onboarding__heading'>Explore the content of an Education App</h3>
+          <Progress count={progress} total={4} />
+        </Header>
         <TEASteps {...stepsProps} />
       </section>
     );
@@ -182,13 +185,12 @@ export const OnboardingWithTea = createReactClass({
 
 export const Header = createReactClass({
   propTypes: {
-    progress: PropTypes.number.isRequired
+    children: PropTypes.array.isRequired
   },
   render () {
     return (
       <div className='tea-onboarding__header'>
-        <h3 className='tea-onboarding__heading'>Welcome to your space home</h3>
-        <Progress count={this.props.progress} total={4} />
+        {this.props.children}
       </div>
     );
   }
