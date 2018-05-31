@@ -26,15 +26,19 @@ Testing and creating a deployable distribution happens in a docker container
 based on the `contentful/user-interface-ci` image.
 
 The image is built from `Dockerfile-ci` by running `bin/docker-build-ci`. It
-installs all source code dependencies (NPM and git submodules) and builds the
-app using `gulp build`. The image contains all fingerprinted assets in the
-`/app/build` directory. This serves as a base to configure the `index.html` file
-and create the distributions.
+installs all source code dependencies and builds the app using `gulp build`. The
+image contains all fingerprinted assets in the `/app/build` directory. This
+serves as a base to configure the `index.html` file and create the
+distributions.
 
 To build the image an NPM token is required as a build argument so that the
 image can install prviate NPM packages. The `bin/docker-build-ci` command will
 either use the `NPM_TOKEN` environment variable or extract the token from
 `~/.npmrc`.
+
+If you have dependencies that are fetched with Git and SSH you need to provide a
+valid SSH key as the `SSH_KEY` environment variable to `bin/docker-build-ci`. On
+Travis we always use the SSH key provided by Travis.
 
 The entry point of the image (`tools/docker/entry-script`) exposes various
 commands to test, serve, and distribute the application. Run `bin/docker-run-ci
