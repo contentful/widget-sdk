@@ -6,6 +6,7 @@ import Icon from 'ui/Components/Icon';
 const Workbench = createReactClass({
   propTypes: {
     title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
+    children: PropTypes.element,
     content: PropTypes.element.isRequired,
     actions: PropTypes.element,
     sidebar: PropTypes.element,
@@ -13,7 +14,7 @@ const Workbench = createReactClass({
     testId: PropTypes.string
   },
   render () {
-    const {title, content, actions, sidebar, icon, testId} = this.props;
+    const {title, children, content, actions, sidebar, icon, testId} = this.props;
 
     return h('div', {
       className: 'workbench',
@@ -39,7 +40,7 @@ const Workbench = createReactClass({
       },
         h('div', {
           className: sidebar ? 'workbench-main__content' : 'workbench-main__middle-content'
-        }, content),
+        }, children || content),
         sidebar && h('div', {
           className: 'workbench-main__sidebar'
         }, sidebar)
