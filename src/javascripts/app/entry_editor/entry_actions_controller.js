@@ -34,7 +34,7 @@ angular.module('contentful')
   // Command options for the #add and #duplicate actions
   var options = {
     disabled: function () {
-      return !canCreateEntry;
+      return !canCreateEntry();
     }
   };
 
