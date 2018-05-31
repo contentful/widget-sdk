@@ -6,6 +6,7 @@ import Icon from 'ui/Components/Icon';
 const Workbench = createReactClass({
   propTypes: {
     title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
+    children: PropTypes.element,
     content: PropTypes.element.isRequired,
     actions: PropTypes.element,
     sidebar: PropTypes.element,
