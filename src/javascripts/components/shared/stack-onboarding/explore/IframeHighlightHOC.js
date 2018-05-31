@@ -38,6 +38,7 @@ angular.module('contentful')
         this.clearAnimation();
       },
       startAnimation () {
+        this.clearAnimation();
         const { order } = this.props;
 
         if (order) {
@@ -72,6 +73,8 @@ angular.module('contentful')
       },
       onLeave () {
         // continue iterate over all types
+        this.removeHighlight();
+        this.setState({ active: null });
         this.startAnimation();
       },
       removeHighlight () {
