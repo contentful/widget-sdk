@@ -33,6 +33,8 @@ angular.module('contentful')
 
   ResourceUtils.useLegacy(organization).then(legacy => {
     $scope.showSidebar = !legacy;
+    $scope.upgradeSpacePlan = () => alert('woot');
+    $scope.spaceType = undefined; // TODO get it from API
   });
 
   var STATES = {
