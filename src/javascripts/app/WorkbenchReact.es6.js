@@ -13,7 +13,7 @@ const Workbench = createReactClass({
     testId: PropTypes.string
   },
   render () {
-    const {title, content, actions, sidebar, icon, testId} = this.props;
+    const {title, children, content, actions, sidebar, icon, testId} = this.props;
 
     return h('div', {
       className: 'workbench',
@@ -39,7 +39,7 @@ const Workbench = createReactClass({
       },
         h('div', {
           className: sidebar ? 'workbench-main__content' : 'workbench-main__middle-content'
-        }, content),
+        }, children || content),
         sidebar && h('div', {
           className: 'workbench-main__sidebar'
         }, sidebar)
