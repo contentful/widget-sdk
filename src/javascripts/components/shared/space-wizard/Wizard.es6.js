@@ -165,7 +165,6 @@ const Wizard = createReactClass({
         reposition: onDimensionsChange,
         onCancel,
         track: this.track,
-        onNavigate: this.navigate,
         onChange: this.setStateData,
         onSubmit: this.goToNextStep
       };
@@ -251,6 +250,7 @@ const Wizard = createReactClass({
     } catch (error) {
       this.handleError(error);
     }
+
     if (newSpace) {
       const spaceEndpoint = createSpaceEndpoint(newSpace.sys.id);
       const apiKeyRepo = createApiKeyRepo(spaceEndpoint);
@@ -307,12 +307,17 @@ const Wizard = createReactClass({
 
   handleError (error) {
     const { action, onCancel } = this.props;
+    const steps = getSteps(action);
 
     logger.logServerWarn(`Could not ${action} space`, {error});
 
     const serverValidationErrors = getFieldErrors(error);
-    if (Object.keys(serverValidationErrors).length) {
-      this.setState({serverValidationErrors, currentStepId: 1});
+
+    if (action === 'create' && Object.keys(serverValidationErrors).length) {
+      this.setState({
+        serverValidationErrors,
+        currentStepId: steps[1].id
+      });
     } else {
       notification.error(`Could not ${action} your space. If the problem persists, get in touch with us.`);
       onCancel(); // close modal without tracking 'cancel' event
