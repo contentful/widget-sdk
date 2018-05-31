@@ -2,6 +2,8 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
+import {name as CreateModernOnboardingModule} from '../../auto_create_new_space/CreateModernOnboarding';
+
 export const name = 'stack-onboarding-skip';
 
 angular.module('contentful')
@@ -11,6 +13,7 @@ angular.module('contentful')
   const { user$ } = require('services/TokenStore');
   const $state = require('$state');
   const $stateParams = require('$stateParams');
+  const { track } = require(CreateModernOnboardingModule);
 
   const store = getStore();
 
@@ -31,6 +34,8 @@ angular.module('contentful')
         path: `spaces.detail.onboarding.${link}`,
         params
       };
+
+      track(`skip_from_${link}`);
 
       store.set(key, path);
       $state.go('spaces.detail.home', params);

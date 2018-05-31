@@ -20,6 +20,14 @@ angular.module('contentful')
   const DeploymentForm = require(DeploymentFormModule);
 
   const DeployScreen = createReactClass({
+    getInitialState () {
+      return {
+        provider: 'no_provider'
+      };
+    },
+    selectProvider (provider) {
+      this.setState({ provider });
+    },
     renderHeader () {
       return (
         <React.Fragment>
@@ -37,6 +45,7 @@ angular.module('contentful')
       );
     },
     render () {
+      const { provider } = this.state;
       return (
         <FullScreen close={<Skip link={'deploy'} />}>
           <Navigation active={3} />
@@ -44,8 +53,8 @@ angular.module('contentful')
           <div className={'modern-stack-onboarding--deploy-content'}>
             <DeploymentStrategies />
           </div>
-          <WithLink link={'spaceHome'}>
-            {move => <DeploymentForm onComplete={move} />}
+          <WithLink trackingElementId={`deploy_screen_completed:${provider}`} link={'spaceHome'}>
+            {move => <DeploymentForm onProviderChange={this.selectProvider} onComplete={move} />}
           </WithLink>
         </FullScreen>
       );

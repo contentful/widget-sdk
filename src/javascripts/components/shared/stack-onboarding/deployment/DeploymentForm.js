@@ -16,7 +16,8 @@ angular.module('contentful')
 
   const DeploymentForm = createReactClass({
     propTypes: {
-      onComplete: PropTypes.func.isRequired
+      onComplete: PropTypes.func.isRequired,
+      onProviderChange: PropTypes.func
     },
     getInitialState () {
       return {
@@ -25,9 +26,15 @@ angular.module('contentful')
       };
     },
     onChange (value) {
-      const isValid = Boolean(value && (
-        value.includes('netlify.com') || value.includes('heroku.com')
-      ));
+      const { onProviderChange } = this.props;
+      const usesNetlify = value && value.includes('netlify.com');
+      const usesHeroku = value && value.includes('heroku.com');
+      const isValid = usesNetlify || usesHeroku;
+
+      if (isValid && onProviderChange) {
+        onProviderChange(usesNetlify ? 'netlify' : 'heroku');
+      }
+
       this.setState({ url: value, error: isValid ? false : 'Please provide a URL on netlify or heroku.' });
     },
     onComplete () {

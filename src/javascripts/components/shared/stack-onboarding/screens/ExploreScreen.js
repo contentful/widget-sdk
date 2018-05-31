@@ -43,7 +43,7 @@ angular.module('contentful')
         <FullScreen close={<Skip link={'explore'} />}>
           <Navigation active={2} />
           {this.renderHeader()}
-          <WithLink link={'deploy'}>
+          <WithLink trackingElementId={'explore_screen_completed'} link={'deploy'}>
             {move => (
               <Button onClick={move} className={'modern-stack-onboarding--next-button'}>
                 {'Select deployment service'}

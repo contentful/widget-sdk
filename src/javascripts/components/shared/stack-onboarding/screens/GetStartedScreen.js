@@ -24,7 +24,7 @@ angular.module('contentful')
           <h3 className={'modern-stack-onboarding--subtitle'}>
             {'You\'ll see how Contentful delivers content through APIs and integrates with a modern stack to build the fastest possible website.'}
           </h3>
-          <WithLink link={'copy'}>
+          <WithLink trackingElementId={'get_started_screen_completed'} link={'copy'}>
             {move => (
               <Button onClick={move} className={'modern-stack-onboarding--next-button'}>
                 {'Get started'}

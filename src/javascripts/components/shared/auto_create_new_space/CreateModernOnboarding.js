@@ -9,6 +9,7 @@ angular.module('contentful')
   const modalDialog = require('modalDialog');
   const $rootScope = require('$rootScope');
   const { getStore } = require('TheStore');
+  const { track } = require('analytics/Analytics');
 
   const client = require('client');
   const spaceContext = require('spaceContext');
@@ -27,9 +28,11 @@ angular.module('contentful')
       scope.props = {
         onDefaultChoice: () => {
           closeModal();
+          createModernOnboarding.track('content_path_selected');
           onDefaultChoice();
         },
         createSpace: () => {
+          createModernOnboarding.track('dev_path_selected');
           return createSpace({
             closeModal,
             org,
@@ -55,7 +58,14 @@ angular.module('contentful')
     },
     checkSpace: (spaceId) => {
       return Boolean(store.get(getKey(spaceId)));
-    }
+    },
+    // used for grouping all related analytics events
+    getGroupId: () => 'modernStackOnboarding',
+    track: (elementId) => track('element:click', {
+      elementId,
+      groupId: createModernOnboarding.getGroupId(),
+      fromState: $state.current.name
+    })
   };
 
   return createModernOnboarding;

@@ -67,7 +67,7 @@ angular.module('contentful')
             <div className={'modern-stack-onboarding--copyscreen-text'}>
               {'View the website in your browser, then explore how it’s built.'}
             </div>
-            <WithLink link={'explore'}>
+            <WithLink trackingElementId={'copy_screen_completed'} link={'explore'}>
               {move => (
                 <Button onClick={move} className={'modern-stack-onboarding--next-button modern-stack-onboarding--next-button__left'}>
                   {'Explore how the website is built'}

@@ -13,6 +13,9 @@ describe('Navigation', () => {
       $provide.value('$state', {
         go: goStub
       });
+      $provide.value('createModernOnboarding', {
+        track: () => {}
+      });
     });
 
     Navigation = this.$inject('stack-onboarding-navigation');
@@ -33,6 +36,7 @@ describe('Navigation', () => {
   it('should call $state.go after clicking on the link', () => {
     const wrapper = mount(<Navigation active={2} />);
     wrapper.find('.modern-stack-onboarding--navigation-circle__active').first().simulate('click');
+
     expect(goStub.calledOnce).toBe(true);
   });
 

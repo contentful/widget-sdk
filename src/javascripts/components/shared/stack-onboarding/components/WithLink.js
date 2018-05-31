@@ -1,16 +1,20 @@
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
+import {name as CreateModernOnboardingModule} from '../../auto_create_new_space/CreateModernOnboarding';
+
 export const name = 'with-link-onboarding';
 
 angular.module('contentful')
 .factory(name, ['require', function (require) {
   const $state = require('$state');
   const $stateParams = require('$stateParams');
+  const { track } = require(CreateModernOnboardingModule);
 
   const WithLink = createReactClass({
     propTypes: {
       link: PropTypes.oneOf(['getStarted', 'copy', 'explore', 'deploy', 'spaceHome']),
+      trackingElementId: PropTypes.string.isRequired,
       children: PropTypes.func.isRequired
     },
     getStateParams () {
@@ -29,9 +33,12 @@ angular.module('contentful')
       };
     },
     render () {
-      const { children } = this.props;
+      const { children, trackingElementId } = this.props;
       // we need to bind `this` context, so no arrow functions
       const move = function move () {
+        if (trackingElementId) {
+          track(trackingElementId);
+        }
         const { path, params } = this.getStateParams();
         $state.go(path, params);
       };
