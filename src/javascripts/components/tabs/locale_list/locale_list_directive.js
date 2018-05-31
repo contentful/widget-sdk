@@ -67,9 +67,17 @@ angular.module('contentful')
     $scope.locales = locales;
     $scope.localeNamesByCode = groupLocaleNamesByCode(locales);
 
-    return getLocalesUsageState().then(function (state) {
-      $scope.localesUsageState = state;
-    });
+    // The locales usage is only important inside of the master environment.
+    // In non-master envs, we skip the call and set the readystate to true.
+    if ($scope.insideMasterEnv) {
+      getLocalesUsageState().then(function (state) {
+        $scope.localesUsageState = state;
+
+        $scope.context.ready = true;
+      });
+    } else {
+      $scope.context.ready = true;
+    }
   })
   .catch(ReloadNotification.apiErrorHandler);
 
@@ -105,9 +113,7 @@ angular.module('contentful')
       $scope.usage = result.usage;
       $scope.limit = result.limits.maximum;
 
-      // You shouldn't reach a limit inside of any non-master environment
-      // This is to protect us in case of Resource API inconsistencies
-      var reachedLimit = $scope.usage >= $scope.limit && !$scope.insideNonMasterEnv;
+      var reachedLimit = $scope.usage >= $scope.limit;
 
       if (!reachedLimit && len <= 1) {
         return STATES.ONE_LOCALE_USED;
@@ -118,10 +124,6 @@ angular.module('contentful')
       } else {
         return STATES.UNKNOWN;
       }
-    }).then(function (state) {
-      $scope.context.ready = true;
-
-      return state;
     });
   }
 

@@ -70,7 +70,7 @@ header.workbench-header
           p.advice__description To begin translating your content, add a second locale – for example, <strong>French (<code>fr-FR</code>)</strong>
           p.advice__description Note that locale settings apply space-wide: the locales that you create will affect only the current space
 
-        div(ng-if="localesUsageState === MORE_THAN_ONE_LOCALE_USED")
+        div(ng-if="localesUsageState === MORE_THAN_ONE_LOCALE_USED || !insideMasterEnv")
           h1.advice__title Contentful enables publishing content in multiple languages
           p.advice__description To enable localization, go to the relevant content type, open field settings, and enable translation for each necessary field
           p.advice__description After that the content editor will display multiple input fields for each locale
