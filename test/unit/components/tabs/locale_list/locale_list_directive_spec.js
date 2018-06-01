@@ -50,6 +50,12 @@ describe('The Locale list directive', function () {
       }
     };
 
+    this.stubs = {
+      ResourceService: {
+        get: sinon.stub().resolves(this.resource)
+      }
+    };
+
     this.featureEnabled = true;
 
     module('contentful/test', ($provide) => {
@@ -60,10 +66,11 @@ describe('The Locale list directive', function () {
           return Promise.resolve(this.flags[flagName]);
         })
       });
+
       $provide.value('services/ResourceService', {
         default: () => {
           return {
-            get: sinon.stub().resolves(this.resource)
+            get: this.stubs.ResourceService.get
           };
         }
       });
@@ -79,6 +86,12 @@ describe('The Locale list directive', function () {
               }
             })
           };
+        }
+      });
+
+      $provide.value('utils/EnvironmentUtils', {
+        isInsideMasterEnv: () => {
+          return this.environment.sys.id === 'master';
         }
       });
     });
@@ -235,10 +248,49 @@ describe('The Locale list directive', function () {
     expect(this.container.find('.workbench-main__sidebar button.add-entity').attr('disabled')).toBe('disabled');
   });
 
+  describe('inside non-master environment', function () {
+    beforeEach(function () {
+      this.environment.sys.id = 'dev';
+    });
+
+    it('should not call the API', function* () {
+      this.compileElement();
+
+      yield this.$q.resolve();
+
+      expect(this.stubs.ResourceService.get.called).toBe(false);
+    });
+
+    it('should not set the usage state', function* () {
+      this.compileElement();
+
+      yield this.$q.resolve();
+
+      expect(this.$scope.localesUsageState).toBeUndefined();
+    });
+  });
+
   describe('the UX', function () {
     beforeEach(function () {
       this.organization.pricingVersion = 'pricing_version_2';
       this.flags['feature-bv-2018-01-resources-api'] = true;
+    });
+
+    describe('inside of a non-master environment', function () {
+      beforeEach(function () {
+        this.environment.sys.id = 'dev';
+      });
+
+      it('should always allow creation of locales', function* () {
+        // Force reaching the limit
+        this.setUsageLimits(3, 3);
+        this.compileElement();
+
+        yield this.$q.resolve();
+
+        const sidebar = this.container.find('.workbench-main__sidebar > .entity-sidebar');
+        expect(sidebar.find('button.add-entity').attr('disabled')).toBeUndefined();
+      });
     });
 
     describe('with limit of 1', function () {
