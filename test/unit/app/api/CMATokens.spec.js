@@ -15,6 +15,10 @@ describe('app/api/CMATokens', function () {
       $provide.factory('defer', ($timeout) => {
         return $timeout;
       });
+      $provide.value('$state', {
+        href: sinon.stub(),
+        current: { name: 'test.api.foo' }
+      });
     });
 
     // TODO build helper for HTTP mocking

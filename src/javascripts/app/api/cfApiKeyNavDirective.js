@@ -29,21 +29,19 @@ angular.module('contentful')
     restrict: 'E',
     controller: [function () {
       var controller = this;
-
-      var tabs = [
-        {
-          name: 'Content delivery / preview tokens',
-          state: 'spaces.detail.api.keys.list'
-        },
-        {
-          name: 'Content management tokens',
-          state: 'spaces.detail.api.cma_tokens'
-        }
-      ];
+      var state = $state.current.name;
+      var spacePrefix = state.match(/^(.+)\.api\./)[1];
 
       controller.state = $state.current.name;
-
-      controller.tabs = _.map(tabs, function (tab) {
+      controller.tabs = [
+        {
+          name: 'Content delivery / preview tokens',
+          state: `${spacePrefix}.api.keys.list`
+        }, {
+          name: 'Content management tokens',
+          state: `${spacePrefix}.api.cma_tokens`
+        }
+      ].map(function (tab) {
         tab.selected = tab.state === controller.state;
         return tab;
       });
