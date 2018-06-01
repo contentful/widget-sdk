@@ -66,9 +66,15 @@ export function getSpaceActionLinks (space, isOrgOwner, onDeleteSpace) {
 }
 
 export function hasAnySpacesInaccessible (plans) {
-  return Boolean(plans.find(plan => {
+  return plans.some(plan => {
     const space = plan.space;
-
     return space && !space.isAccessible;
-  }));
+  });
+}
+
+export function hasAnyCommittedSpaces (plans) {
+  return plans.some(plan => {
+    const space = plan.space;
+    return space && plan.committed;
+  });
 }
