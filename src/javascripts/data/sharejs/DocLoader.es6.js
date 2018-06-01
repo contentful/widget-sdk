@@ -61,6 +61,16 @@ export function create (docWrapper, connectionState$, shouldOpen$) {
   // case it does not exist yet.
   let currentDocRequest = null;
 
+  // The raw ShareJS document if it has been openeed. Set when the the
+  // document is opened, reset when it is closed.
+  let currentDoc = null;
+
+  // A list of ops that where pending when the connection disconnected.
+  // This is set when the connection disconnects.
+  // We re-apply these ops when the connection is reestablished and the
+  // document reappears.
+  let pendingOps = [];
+
   // Property<{state, shouldOpen}>
   const requestOpenDoc = K.combine(
     [connectionState$, shouldOpen$],
@@ -77,6 +87,13 @@ export function create (docWrapper, connectionState$, shouldOpen$) {
     // another one, based on the former, that handles the 'shouldOpen'
     // state.
     if (connectionState === 'disconnected') {
+      pendingOps = [];
+      if (currentDoc && currentDoc.inflightOp) {
+        pendingOps.push(currentDoc.inflightOp);
+      }
+      if (currentDoc && currentDoc.pendingOp) {
+        pendingOps.push(currentDoc.pendingOp);
+      }
       close();
       return K.constant(DocLoad.Error('disconnected'));
     }
@@ -108,9 +125,11 @@ export function create (docWrapper, connectionState$, shouldOpen$) {
   function close () {
     docWrapper.close();
     currentDocRequest = null;
+    currentDoc = null;
   }
 
   function destroy () {
+    pendingOps = null;
     close();
     dead.emit();
     dead.end();
@@ -124,7 +143,18 @@ export function create (docWrapper, connectionState$, shouldOpen$) {
           return DocLoad.Pending();
         }],
         [K.PromiseStatus.Resolved, function (x) {
-          return DocLoad.Doc(x.value);
+          currentDoc = x.value;
+          // There might be multiple doc loaders for a given doc. To
+          // avoid applying pending operations twice we check if the
+          // doc already has pending operations. These pending
+          // operations can only come from the code below because any
+          // code that would create an operation executes after the
+          // code below.
+          if (!currentDoc.pendingOp) {
+            pendingOps.forEach((op) => currentDoc.submitOp(op));
+          }
+          pendingOps = [];
+          return DocLoad.Doc(currentDoc);
         }],
         [K.PromiseStatus.Rejected, function (x) {
           return DocLoad.Error(x.error);
