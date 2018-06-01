@@ -2,6 +2,7 @@ describe('The ApiKey list directive', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.removeDirectives('relative', 'cfKnowledgeBase');
+      $provide.value('$state', { href: sinon.stub(), current: {} });
     });
 
     this.accessChecker = this.$inject('access_control/AccessChecker');
