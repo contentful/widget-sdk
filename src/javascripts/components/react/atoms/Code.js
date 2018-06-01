@@ -34,8 +34,8 @@ angular.module('contentful')
         );
       }
 
-      const codeMarkup = code.map(codeLine => (
-        <span key={codeLine} className={'code-block__line'}>{codeLine}</span>
+      const codeMarkup = code.map((codeLine, i) => (
+        <span key={`${codeLine}_${i}`} className={'code-block__line'}>{codeLine}</span>
       ));
       return (
         <React.Fragment>

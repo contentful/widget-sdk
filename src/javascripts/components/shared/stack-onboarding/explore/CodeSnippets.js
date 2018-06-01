@@ -76,19 +76,43 @@ angular.module('contentful')
         active: active === 'articles'
       });
     },
-    renderSinglePostSnippet () {
+    renderAllSnippet () {
       const { onHover, onLeave, active } = this.props;
       return this.renderSnippet({
         title: 'Fetch the blog post “Static sites are great”',
         subtitle: 'We fetch single entry by id',
         code: [
+          'const App = ({ author, blogPosts }) => (',
+          '  <div>',
+          '    <Hero person={author} />',
+          '    <div>',
+          '      <h2>Recent articles</h2>',
+          '      <ul className="article-list">',
+          '        {blogPosts.map(post => <ArticlePreview article={post} />)}',
+          '      </ul>',
+          '    </div>',
+          '  </div>',
+          ')',
+          '',
+          'async function renderApp() {',
+          '  const [author] = await getAll(\'person\')',
+          '  const blogPosts = await getAll(\'blogPost\')',
+          '',
+          '  ReactDOM.render(',
+          '    <App author={author} blogPosts={blogPosts} />,',
+          '    document.getElementById(\'root\')',
+          '  )',
+          '}',
+          '',
+          'renderApp()',
+          '',
           'function getStaticSitesArticle() {',
           '  return client.getEntry(\'3K9b0esdy0q0yGqgW2g6Ke\');',
           '}'
         ],
-        onHover: () => onHover('static-sites-are-great'),
+        onHover: () => onHover('all'),
         onLeave,
-        active: active === 'static-sites-are-great'
+        active: active === 'all'
       });
     },
     render () {
@@ -97,7 +121,7 @@ angular.module('contentful')
           {this.renderBootstrapSnippet()}
           {this.renderPeopleSnippet()}
           {this.renderPostsSnippet()}
-          {this.renderSinglePostSnippet()}
+          {this.renderAllSnippet()}
         </div>
       );
     }

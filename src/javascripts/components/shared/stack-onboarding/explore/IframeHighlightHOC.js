@@ -9,14 +9,7 @@ angular.module('contentful')
   return (Component) => {
     const IframeHightlightHOC = createReactClass({
       propTypes: {
-        iframe: PropTypes.object,
-        order: PropTypes.arrayOf(PropTypes.oneOf([
-          'person',
-          'articles',
-          'automate-with-webhooks',
-          'hello-world',
-          'static-sites-are-great'
-        ]))
+        iframe: PropTypes.object
       },
       getInitialState () {
         return { active: null };
@@ -49,6 +42,7 @@ angular.module('contentful')
         iframe.contentWindow.postMessage({ id: 'hello-world', message: 'remove' }, '*');
         iframe.contentWindow.postMessage({ id: 'static-sites-are-great', message: 'remove' }, '*');
         iframe.contentWindow.postMessage({ id: 'person', message: 'remove' }, '*');
+        iframe.contentWindow.postMessage({ id: 'all', message: 'remove' }, '*');
       },
       render () {
         const { active } = this.state;

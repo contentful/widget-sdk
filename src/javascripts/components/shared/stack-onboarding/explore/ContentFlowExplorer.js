@@ -39,30 +39,16 @@ angular.module('contentful')
     renderTabs () {
       const { active, iframe } = this.state;
 
-      const snippetsOrder = [
-        'person',
-        'articles',
-        'static-sites-are-great'
-      ];
-
-      const dataFlowOrder = [
-        'person',
-        'articles',
-        'static-sites-are-great',
-        'hello-world',
-        'automate-with-webhooks'
-      ];
-
       const tabs = [
         {
           id: 'code',
           title: 'Code snippets',
-          content: this.renderContent(<CodeSnippets iframe={iframe} order={snippetsOrder} />)
+          content: this.renderContent(<CodeSnippets iframe={iframe} />)
         },
         {
           id: 'data-flow',
           title: 'Data model and data flow',
-          content: this.renderContent(<DataFlow iframe={iframe} order={dataFlowOrder} />)
+          content: this.renderContent(<DataFlow iframe={iframe} />)
         }
       ];
 
