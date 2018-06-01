@@ -404,7 +404,10 @@ export const Step = createReactClass({
     headerIcon: PropTypes.string.isRequired,
     isExpanded: PropTypes.bool.isRequired,
     isDone: PropTypes.bool.isRequired,
-    children: PropTypes.array.isRequired,
+    children: PropTypes.oneOfType([
+      PropTypes.array,
+      PropTypes.object
+    ]).isRequired,
     onToggle: PropTypes.func.isRequired,
     stepKey: PropTypes.string.isRequired
   },

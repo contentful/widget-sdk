@@ -26,7 +26,7 @@ export default function template () {
     }, [
       h('div', {
         ngIf: 'onboarding.showModernStackDevChoiceNextSteps'
-      }, [h('react-component', {name: 'ms-dev-next-steps'})]),
+      }, [h('react-component', {name: 'ms-dev-next-steps', props: 'onboarding.msDevChoiceNextSteps'})]),
       h('div', {
         ngIf: 'onboarding.showModernStackContentChoiceNextSteps || onboarding.isTEASpace'
       }, [h('react-component', {name: 'ms-content-creator-next-steps'})]),

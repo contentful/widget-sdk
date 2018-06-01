@@ -53,7 +53,7 @@ angular.module('contentful')
           {language && <span className='code-block__language'>{language}</span>}
           {this.renderCode()}
           {copy && <div className='code-block__copy-wrapper'>
-            <CopyButton value={code} />
+            <CopyButton value={Array.isArray(code) ? code.join('\n') : code} />
           </div>}
         </div>
       );

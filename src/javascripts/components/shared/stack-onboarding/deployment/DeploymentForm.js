@@ -16,6 +16,10 @@ angular.module('contentful')
   const store = require('TheStore').getStore();
   const {user$} = require('services/TokenStore');
   const {getValue} = require('utils/kefir');
+  const DEPLOYMENT_PROVIDERS = {
+    NETLIFY: 'netlify',
+    HEROKU: 'heroku'
+  };
 
   const DeploymentForm = createReactClass({
     propTypes: {
@@ -29,9 +33,15 @@ angular.module('contentful')
       };
     },
     isValidDeployedUrl (url) {
-      return Boolean(url && (
-        url.includes('netlify.com') || url.includes('herokuapp.com')
-      ));
+      return Object.values(DEPLOYMENT_PROVIDERS)
+        .includes(this.getChosenDeploymentProvider(url));
+    },
+    getChosenDeploymentProvider (url) {
+      if (url.includes('netlify.com')) {
+        return DEPLOYMENT_PROVIDERS.NETLIFY;
+      } else if (url.includes('herokuapp.com')) {
+        return DEPLOYMENT_PROVIDERS.HEROKU;
+      }
     },
     markAsInvalidUrl (url) {
       this.setState({ url: url, error: 'Please provide the Netlify or Heroku URL of your deployed application.' });
@@ -48,8 +58,11 @@ angular.module('contentful')
 
       if (this.isValidDeployedUrl(url)) {
         const user = getValue(user$);
+        const prefix = `ctfl:${user.sys.id}:modernStackOnboarding`;
 
-        store.set(`ctfl:${user.sys.id}:modernStackOnboarding:completed`, true);
+        store.set(`${prefix}:completed`, true);
+        store.set(`${prefix}:deployedTo`, this.getChosenDeploymentProvider(url));
+
         this.props.onComplete(url);
       } else {
         this.markAsInvalidUrl(url);

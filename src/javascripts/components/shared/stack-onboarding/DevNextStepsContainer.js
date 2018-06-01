@@ -16,11 +16,11 @@ angular.module('contentful')
     const DevNextSteps = require(DevNextStepsModule);
     const ResumeOnboarding = require(ResumeOnboardingModule);
 
-    const DevNextStepsContainer = () => {
+    const DevNextStepsContainer = (props) => {
       const onboardingStepsComplete = store.get(onboardingStepsCompleteKey);
 
       return onboardingStepsComplete
-        ? <DevNextSteps />
+        ? <DevNextSteps {...props} />
         : <ResumeOnboarding />;
     };
 

@@ -1,5 +1,4 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import {name as FullScreenModule} from '../../../react/molecules/FullScreen';
 import {name as ButtonModule} from '../../../react/atoms/Button';
 import {name as SkipModule} from '../components/Skip';
