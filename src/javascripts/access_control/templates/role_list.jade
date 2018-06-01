@@ -19,7 +19,7 @@ header.workbench-header
       button.role-list__actions.role-list__actions--disabled.btn-inline(ng-if="hasFeatureEnabled || hasAnyTranslatorRole")
 
     .role-list__item(ng-repeat="role in roles track by role.sys.id")
-      .role-list__link(href="" ui-sref="spaces.detail.settings.roles.detail({roleId: role.sys.id })")
+      .role-list__link(href="" ui-sref="^.detail({roleId: role.sys.id })")
         h3 {{ role.name }}
         p(ng-if="role.description") {{ role.description }}
       .role-list__member-count
@@ -37,7 +37,7 @@ header.workbench-header
         | &bullet;&bullet;&bullet;
       .context-menu(role="menu" cf-context-menu="bottom-right" aria-label="Role Actions")
         ul.context-menu__items
-          li(role="menuitem" ui-sref="spaces.detail.settings.roles.detail({roleId: role.sys.id })") Edit role
+          li(role="menuitem" ui-sref="^.detail({roleId: role.sys.id })") Edit role
           li(ng-if="hasFeatureEnabled" role="menuitem" ng-click="duplicateRole(role)") Duplicate
           li(ng-if="hasFeatureEnabled" role="menuitem" ng-click="removeRole(role)") Delete permanently
           li.role-list__action--disabled(ng-if="!hasFeatureEnabled") Duplicate
@@ -79,5 +79,5 @@ header.workbench-header
             | , or delete an existing role.
       p(ng-if="!reachedLimit")
         | Edit one of your existing roles or create one from the scratch.
-      button.btn-primary-action.x--block(ng-disabled="reachedLimit" ui-sref="spaces.detail.settings.roles.new")
+      button.btn-primary-action.x--block(ng-disabled="reachedLimit" ui-sref="^.new")
         | Create new role
