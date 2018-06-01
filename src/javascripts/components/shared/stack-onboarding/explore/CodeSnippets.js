@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 
 import {name as CodeModule} from '../../../react/atoms/Code';
 import {name as IframeHighlightHOCModule} from './IframeHighlightHOC';
+import {name as CreateModernOnboardingModule} from '../../auto_create_new_space/CreateModernOnboarding';
 
 export const name = 'code-snippets-component';
 
@@ -11,12 +12,21 @@ angular.module('contentful')
 .factory(name, ['require', function (require) {
   const Code = require(CodeModule);
   const IframeHighlightHOC = require(IframeHighlightHOCModule);
+  const { getDeliveryToken } = require(CreateModernOnboardingModule);
+  const $stateParams = require('$stateParams');
 
   const CodeSnippets = createReactClass({
     propTypes: {
       active: PropTypes.string,
       onHover: PropTypes.func,
       onLeave: PropTypes.func
+    },
+    getInitialState () {
+      return {};
+    },
+    async componentDidMount () {
+      const deliveryToken = await getDeliveryToken();
+      this.setState({ deliveryToken });
     },
     renderSnippet ({ title, subtitle, code, onHover, onLeave, active }) {
       return (
@@ -34,14 +44,15 @@ angular.module('contentful')
       );
     },
     renderBootstrapSnippet () {
+      const { deliveryToken } = this.state;
       return this.renderSnippet({
         title: 'Bootstrap the Contentful JS SDK',
         code: [
           'import { createClient } from \'contentful\';',
           '',
           'const client = createClient({',
-          '  space: \'knkpgpuap43s\',',
-          '  accessToken: \'3f8bd90ee4211c1eb9c632357130889938814e75dc3454b2809ee0b3b64fa2e9\'',
+          `  space: '${$stateParams.spaceId}',`,
+          `  accessToken: '${deliveryToken || 'loading...'}'`,
           '});'
         ]
       });
