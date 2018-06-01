@@ -16,6 +16,12 @@ angular.module('contentful')
   const $state = require('$state');
   const { refresh } = require('services/TokenStore');
 
+  const Resource = require('app/api/CMATokens/Resource');
+  const auth = require('Authentication');
+
+  const { user$ } = require('services/TokenStore');
+  const { getValue } = require('utils/kefir');
+
   const store = getStore();
 
   const createModernOnboarding = {
@@ -31,14 +37,17 @@ angular.module('contentful')
           createModernOnboarding.track('content_path_selected');
           onDefaultChoice();
         },
-        createSpace: () => {
+        createSpace: async () => {
           createModernOnboarding.track('dev_path_selected');
-          return createSpace({
+          await createSpace({
             closeModal,
             org,
             markOnboarding,
             markSpace: createModernOnboarding.markSpace
           });
+
+          createModernOnboarding.createDeliveryToken();
+          createModernOnboarding.createManagementToken();
         }
       };
 
@@ -65,11 +74,60 @@ angular.module('contentful')
       elementId,
       groupId: createModernOnboarding.getGroupId(),
       fromState: $state.current.name
-    })
+    }),
+    getDeliveryToken: async () => {
+      const keys = await spaceContext.apiKeyRepo.getAll();
+      const key = keys[0];
+
+      if (key) {
+        return key.accessToken;
+      } else {
+        const createdKey = await createModernOnboarding.createDeliveryToken();
+
+        return createdKey.accessToken;
+      }
+    },
+    createDeliveryToken: () => {
+      return spaceContext.apiKeyRepo.create(
+        'Example Key',
+        'We’ve created an example API key for you to help you get started.'
+      );
+    },
+    createManagementToken: async () => {
+      const data = await Resource.create(auth).create('modern stack onboarding importing key');
+      const token = data.token;
+
+      store.set(getCPATokenKey(), token);
+
+      return token;
+    },
+    getManagementToken: () => {
+      const token = store.get(getCPATokenKey());
+
+      if (token) {
+        return token;
+      }
+
+      return createModernOnboarding.createManagementToken();
+    },
+    getCredentials: () => Promise.all([
+      createModernOnboarding.getDeliveryToken(),
+      createModernOnboarding.getManagementToken()
+    ]).then(([deliveryToken, managementToken]) => ({ managementToken, deliveryToken }))
+
   };
+
+  // CPA token is global for all spaces, so we separate by user id
+  function getCPATokenKey () {
+    const user = getValue(user$);
+    return `ctfl:${user.sys.id}:modernStackOnboarding:cpaToken`;
+  }
 
   return createModernOnboarding;
 
+  // we can guarantee that there will be no same space ids, so even
+  // several users go through this experience in the same session,
+  // it won't give incorrect result
   function getKey (spaceId) {
     return `ctfl:${spaceId}:modernStackOnboarding:space`;
   }
@@ -91,10 +149,5 @@ angular.module('contentful')
     await $state.go('spaces.detail.onboarding.getStarted', {spaceId: newSpaceId});
     // if we need to close modal, we need to do it after redirect
     closeModal && closeModal();
-
-    spaceContext.apiKeyRepo.create(
-      'Example Key',
-      'We’ve created an example API key for you to help you get started.'
-    );
   }
 }]);
