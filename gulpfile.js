@@ -11,7 +11,10 @@ require('babel-register')({
     'targets': {
       'node': 'current'
     }
-  }]]
+  }]],
+  plugins: [
+    'transform-object-rest-spread'
+  ]
 });
 
 require('babel-polyfill');

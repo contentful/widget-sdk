@@ -63,7 +63,7 @@ window.libs = [
   ['editors', require('@contentful/field-editors')],
   ['kefir', require('kefir')],
   ['legacy-client', require('../../../packages/client')],
-  ['sharejs', window.sharejs],
+  ['sharejs', require('@contentful/sharejs/lib/client')],
   ['flat', require('flat')],
   ['rtl-detect', require('rtl-detect')],
   ['hostnameTransformer', require('@contentful/hostname-transformer')],
