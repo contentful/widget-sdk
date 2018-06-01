@@ -12,6 +12,7 @@ import { getUserName } from 'utils/UserUtils';
 
 import { home, usage as spaceUsage } from 'ui/NavStates/Space';
 import HelpIcon from 'ui/Components/HelpIcon';
+import Tooltip from 'ui/Components/Tooltip';
 import Price from 'ui/Components/Price';
 import ContextMenu from 'ui/Components/ContextMenu';
 
@@ -32,6 +33,7 @@ function SpacePlanRow ({ plan, upgraded, onChangeSpace, onDeleteSpace }) {
   const contextMenuItems = [
     {
       label: 'Change space type',
+      disabled: plan.committed,
       action: onChangeSpace(space, 'change'),
       otherProps: {
         'data-test-id': 'subscription-page.spaces-list.change-space-link'
@@ -55,6 +57,7 @@ function SpacePlanRow ({ plan, upgraded, onChangeSpace, onDeleteSpace }) {
     },
     {
       label: 'Delete',
+      disabled: plan.committed,
       action: onDeleteSpace(space),
       otherProps: {
         'data-test-id': 'subscription-page.spaces-list.delete-space-link'
@@ -65,7 +68,16 @@ function SpacePlanRow ({ plan, upgraded, onChangeSpace, onDeleteSpace }) {
   const className = upgraded ? 'x--success' : '';
 
   return <tr className={className} key={key}>
-    <td><strong>{get(space, 'name', '-')}</strong></td>
+    <td>
+      <strong>{get(space, 'name', '-')}</strong>
+      { plan.committed &&
+        <Tooltip
+          style={{fontSize: '12px'}}
+          tooltip="This space is part of your Enterprise deal with Contentful"
+          className="help-icon"
+        >★</Tooltip>
+      }
+    </td>
     <td>
       <strong>{plan.name}</strong>
       { hasAnyFeatures &&
