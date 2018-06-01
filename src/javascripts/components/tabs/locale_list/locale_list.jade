@@ -117,7 +117,7 @@ header.workbench-header
               | Ask the administrator of your organization to&#32;
             | {{canUpgrade ? 'Upgrade' : 'upgrade'}} the space to add more.
           p(ng-if="canUpgrade")
-            button.btn-primary-action.add-entity.x--block(ng-click="upgradeSpacePlan()")
+            button.btn-primary-action.upgrade-space.x--block(ng-click="upgradeSpacePlan()")
               | Upgrade space
 
       h2.entity-sidebar__heading

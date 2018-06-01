@@ -236,7 +236,7 @@ describe('The Locale list directive', () => {
     expect(this.container.find('div.workbench-main__sidebar').length).toBe(0);
   });
 
-  it('should disable the button in the sidebar if the limit is reached', function* () {
+  it('should not display the add button in the sidebar if the limit is reached', function* () {
     this.organization.pricingVersion = 'pricing_version_2';
     this.flags['feature-bv-2018-01-resources-api'] = true;
 
@@ -245,7 +245,7 @@ describe('The Locale list directive', () => {
 
     yield this.$q.resolve();
 
-    expect(this.container.find('.workbench-main__sidebar button.add-entity').attr('disabled')).toBe('disabled');
+    expect(this.container.find('.workbench-main__sidebar button.add-entity').length).toBe(0);
   });
 
   describe('inside non-master environment', () => {
@@ -289,6 +289,7 @@ describe('The Locale list directive', () => {
         yield this.$q.resolve();
 
         const sidebar = this.container.find('.workbench-main__sidebar > .entity-sidebar');
+        expect(sidebar.find('button.add-entity').length).toBe(1);
         expect(sidebar.find('button.add-entity').attr('disabled')).toBeUndefined();
       });
     });
@@ -306,9 +307,9 @@ describe('The Locale list directive', () => {
       });
 
       it('should show singular "locale"', function () {
-        const text = this.sidebar.find('> p.entity-sidebar__text-profile').eq(0).text();
+        const text = this.sidebar.find('p.entity-sidebar__text-profile').eq(0).text();
 
-        expect(text).toBe('You are using 1 out of 1 locale in your space.');
+        expect(text).toBe('You are using 1 out of 1 locale available in your space.');
       });
     });
 
@@ -323,9 +324,9 @@ describe('The Locale list directive', () => {
       });
 
       it('should show plural "locales"', function () {
-        const text = this.sidebar.find('> p.entity-sidebar__text-profile').eq(0).text();
+        const text = this.sidebar.find('p.entity-sidebar__text-profile').eq(0).text();
 
-        expect(text).toBe('You are using 1 out of 3 locales in your space.');
+        expect(text).toBe('You are using 1 out of 3 locales available in your space.');
       });
     });
 
@@ -342,9 +343,11 @@ describe('The Locale list directive', () => {
         yield this.$q.resolve();
 
         const sidebar = this.container.find('.workbench-main__sidebar > .entity-sidebar');
-        const text = sidebar.find('> p.entity-sidebar__text-profile').eq(1).text();
+        const text = sidebar.find('p.entity-sidebar__text-profile').eq(1).text();
+        const upgradeBtn = sidebar.find('button.upgrade-space');
 
-        expect(text).toBe("You've reached the space locales limit. Upgrade to add more locales.");
+        expect(text).toBe('Upgrade the space to add more.');
+        expect(upgradeBtn.length).toBe(1);
       });
 
       it('should tell you to upgrade if you are an org admin', function* () {
@@ -353,9 +356,11 @@ describe('The Locale list directive', () => {
         yield this.$q.resolve();
 
         const sidebar = this.container.find('.workbench-main__sidebar > .entity-sidebar');
-        const text = sidebar.find('> p.entity-sidebar__text-profile').eq(1).text();
+        const text = sidebar.find('p.entity-sidebar__text-profile').eq(1).text();
+        const upgradeBtn = sidebar.find('button.upgrade-space');
 
-        expect(text).toBe("You've reached the space locales limit. Upgrade to add more locales, or delete an existing locale.");
+        expect(text).toBe('Delete existing locales or upgrade the space to add more.');
+        expect(upgradeBtn.length).toBe(1);
       });
 
       it('should tell you to upgrade if you are an org owner', function* () {
@@ -364,9 +369,11 @@ describe('The Locale list directive', () => {
         yield this.$q.resolve();
 
         const sidebar = this.container.find('.workbench-main__sidebar > .entity-sidebar');
-        const text = sidebar.find('> p.entity-sidebar__text-profile').eq(1).text();
+        const text = sidebar.find('p.entity-sidebar__text-profile').eq(1).text();
+        const upgradeBtn = sidebar.find('button.upgrade-space');
 
-        expect(text).toBe("You've reached the space locales limit. Upgrade to add more locales, or delete an existing locale.");
+        expect(text).toBe('Delete existing locales or upgrade the space to add more.');
+        expect(upgradeBtn.length).toBe(1);
       });
 
       it('should tell you to contact the admin if you are not org admin/owner', function* () {
@@ -375,9 +382,11 @@ describe('The Locale list directive', () => {
         yield this.$q.resolve();
 
         const sidebar = this.container.find('.workbench-main__sidebar > .entity-sidebar');
-        const text = sidebar.find('> p.entity-sidebar__text-profile').eq(1).text();
+        const text = sidebar.find('p.entity-sidebar__text-profile').eq(1).text();
+        const upgradeBtn = sidebar.find('button.upgrade-space');
 
-        expect(text).toBe("You've reached the space locales limit. Contact the admin or owner of this space to upgrade the space, or delete an existing locale.");
+        expect(text).toBe('Delete existing locales or ask the administrator of your organization to upgrade the space to add more.');
+        expect(upgradeBtn.length).toBe(0);
       });
     });
   });
