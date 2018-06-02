@@ -25,10 +25,8 @@ describe('cfOnboardingSteps Directive', () => {
     };
     module('contentful/test', $provide => {
       $provide.value('utils/LaunchDarkly', {
-        // Begin test code: test-ps-02-2018-tea-onboarding-steps
-        // eslint-disable-next-line no-unused-vars
-        onFeatureFlag: sinon.stub()
-        // End test code: test-ps-02-2018-tea-onboarding-steps
+        onFeatureFlag: sinon.stub(),
+        getCurrentVariation: sinon.stub().resolves(false)
       });
       $provide.value('contentPreview', {
         contentPreviewsBus$: this.previews$
