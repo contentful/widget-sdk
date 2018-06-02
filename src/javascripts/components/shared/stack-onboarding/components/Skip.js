@@ -1,6 +1,5 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
-import PropTypes from 'prop-types';
 
 import {name as CreateModernOnboardingModule} from '../../auto_create_new_space/CreateModernOnboarding';
 
