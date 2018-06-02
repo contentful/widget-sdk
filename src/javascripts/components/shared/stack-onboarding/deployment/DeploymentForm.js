@@ -16,6 +16,10 @@ angular.module('contentful')
   const store = require('TheStore').getStore();
   const {user$} = require('services/TokenStore');
   const {getValue} = require('utils/kefir');
+
+  const user = getValue(user$);
+  const prefix = `ctfl:${user.sys.id}:modernStackOnboarding`;
+
   const DEPLOYMENT_PROVIDERS = {
     NETLIFY: 'netlify',
     HEROKU: 'heroku'
@@ -28,7 +32,7 @@ angular.module('contentful')
     },
     getInitialState () {
       return {
-        url: '',
+        url: store.get(`${prefix}:deployedTo`) || '',
         error: false
       };
     },
@@ -57,11 +61,9 @@ angular.module('contentful')
       const {url} = this.state;
 
       if (this.isValidDeployedUrl(url)) {
-        const user = getValue(user$);
-        const prefix = `ctfl:${user.sys.id}:modernStackOnboarding`;
-
         store.set(`${prefix}:completed`, true);
-        store.set(`${prefix}:deployedTo`, this.getChosenDeploymentProvider(url));
+        store.set(`${prefix}:deploymentProvider`, this.getChosenDeploymentProvider(url));
+        store.set(`${prefix}:deployedTo`, url);
 
         this.props.onComplete(url);
       } else {
