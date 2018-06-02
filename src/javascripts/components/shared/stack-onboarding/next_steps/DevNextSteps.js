@@ -22,8 +22,6 @@ angular.module('contentful')
     const ModifyContentStep = require(ModifyContentStepModule);
     const SetupWebhooksStep = require(SetupWebhooksStepModule);
     const NotAJSDeveloperStep = require(NotAJSDeveloperStepModule);
-
-
     class DevNextSteps extends React.Component {
       constructor (props) {
         super(props);

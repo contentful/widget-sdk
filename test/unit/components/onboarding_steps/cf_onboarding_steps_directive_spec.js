@@ -34,7 +34,8 @@ describe('cfOnboardingSteps Directive', () => {
         contentPreviewsBus$: this.previews$
       });
       $provide.value('services/TokenStore', {
-        getOrganizations: () => $q.resolve(this.organizations)
+        getOrganizations: () => $q.resolve(this.organizations),
+        user$: K.createMockProperty({sys: {id: 1}})
       });
       $provide.value('services/CreateSpace', {
         showDialog: this.createSpaceDialog
