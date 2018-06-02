@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { snakeCase } from 'lodash';
 import {name as CodeModule} from '../../../react/atoms/Code';
 import {MODIFY_CONTENT} from './DevNextSteps';
 
@@ -24,7 +25,8 @@ angular.module('contentful')
           onToggle,
           managementToken,
           entry,
-          spaceId
+          spaceId,
+          track
         } = this.props;
 
         const {firstName, lastName} = user;
@@ -95,6 +97,7 @@ angular.module('contentful')
                 copy
                 code={[modifyContentCurlSnippet, publishContentCurlSnippet]}
                 tooltipPosition={'right'}
+                onCopy={_ => track('copy_curl_snippets')}
               />
               <br />
               <p>
@@ -115,7 +118,8 @@ angular.module('contentful')
       onToggle: PropTypes.func.isRequired,
       managementToken: PropTypes.string.isRequired,
       entry: PropTypes.object.isRequired,
-      spaceId: PropTypes.string.isRequired
+      spaceId: PropTypes.string.isRequired,
+      track: PropTypes.func.isRequired
     };
 
     return ModifyContentStep;

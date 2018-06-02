@@ -72,11 +72,19 @@ angular.module('contentful')
     },
     // used for grouping all related analytics events
     getGroupId: () => 'modernStackOnboarding',
-    track: (elementId) => track('element:click', {
-      elementId,
-      groupId: createModernOnboarding.getGroupId(),
-      fromState: $state.current.name
-    }),
+    track: (elementId, toState) => {
+      const payload = {
+        elementId,
+        groupId: createModernOnboarding.getGroupId(),
+        fromState: $state.current.name
+      };
+
+      if (toState) {
+        payload.toState = toState;
+      }
+
+      track('element:click', payload);
+    },
     getDeliveryToken: async () => {
       const keys = await spaceContext.apiKeyRepo.getAll();
       const key = keys[0];

@@ -1,11 +1,13 @@
 import React from 'react';
 import {name as DevNextStepsModule} from './DevNextSteps';
 import {name as ResumeOnboardingModule} from './ResumeOnboarding';
+import {name as CreateModernOnboarding} from '../../auto_create_new_space/CreateModernOnboarding';
 
 const moduleName = 'ms-dev-next-steps';
 
 angular.module('contentful')
   .factory(moduleName, ['require', require => {
+    const {track} = require(CreateModernOnboarding);
     const store = require('TheStore').getStore();
     const {user$} = require('services/TokenStore');
     const {getValue} = require('utils/kefir');
@@ -20,11 +22,11 @@ angular.module('contentful')
       const onboardingStepsComplete = store.get(onboardingStepsCompleteKey);
 
       return onboardingStepsComplete
-        ? <DevNextSteps {...props} />
-        : <ResumeOnboarding />;
+        ? <DevNextSteps {...props} track={track} />
+        : <ResumeOnboarding track={track} />;
     };
 
     return DevNextStepsContainer;
   }]);
 
-export const name = moduleName;
+export { moduleName as name };

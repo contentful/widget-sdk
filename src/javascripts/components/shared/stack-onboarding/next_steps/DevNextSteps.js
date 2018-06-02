@@ -3,12 +3,13 @@ import PropTypes from 'prop-types';
 import {name as ModifyContentStepModule} from './ModifyContentStep';
 import {name as SetupWebhooksStepModule} from './SetupWebhooksStep';
 import {name as NotAJSDeveloperStepModule} from './NotAJSDeveloperStep';
-import {findKey, isObject} from 'lodash';
+import {findKey, isObject, snakeCase} from 'lodash';
 
 export const MODIFY_CONTENT = 'modifyContent';
 export const SETUP_WEBHOOK = 'setupWebhook';
-export const NOT_A_JS_DEV = 'notAJSDev';
-export const moduleName = 'ms-isolated-dev-next-steps';
+export const NOT_A_JS_DEV = 'notJSDev';
+
+const moduleName = 'ms-isolated-dev-next-steps';
 
 angular.module('contentful')
   .factory(moduleName, ['require', require => {
@@ -36,9 +37,11 @@ angular.module('contentful')
           });
         };
 
+        const {track: _track, ...rest} = props;
+
         const state = {
           [MODIFY_CONTENT]: {
-            ...props,
+            ...rest,
             isDone: store.get(`${prefix}:devNextSteps:${MODIFY_CONTENT}`) || false,
             onToggle
           },
@@ -87,17 +90,23 @@ angular.module('contentful')
       }
 
       markAsDone (step) {
-        store.set(`ctfl:${user.sys.id}:modernStackOnboarding:devNextSteps:${step}`, true);
-        this.setState(state => {
-          const stateForStep = state[step];
-          stateForStep.isDone = true;
-          return {
-            [step]: {
-              ...stateForStep
-            }
-          };
-        });
-        this.setExpandedStep();
+        const key = `ctfl:${user.sys.id}:modernStackOnboarding:devNextSteps:${step}`;
+        const isStepDone = store.get(key);
+
+        if (!isStepDone) {
+          store.set(key, true);
+          this.setState(state => {
+            const stateForStep = state[step];
+            stateForStep.isDone = true;
+            return {
+              [step]: {
+                ...stateForStep
+              }
+            };
+          });
+          this.setExpandedStep();
+          this.props.track(snakeCase(`${step}Step`) + ':done');
+        }
       }
 
       render () {
@@ -112,6 +121,7 @@ angular.module('contentful')
             <div className='tea-onboarding__steps'>
               <ModifyContentStep
                 isExpanded={expanded === MODIFY_CONTENT}
+                track={key => this.props.track(`${snakeCase(MODIFY_CONTENT + 'Step')}:${key}`)}
                 {...this.state[MODIFY_CONTENT]} />
               <SetupWebhooksStep
                 isExpanded={expanded === SETUP_WEBHOOK}
@@ -129,7 +139,8 @@ angular.module('contentful')
     DevNextSteps.propTypes = {
       managementToken: PropTypes.string.isRequired,
       entry: PropTypes.object.isRequired,
-      spaceId: PropTypes.string.isRequired
+      spaceId: PropTypes.string.isRequired,
+      track: PropTypes.func.isRequired
     };
 
     return DevNextSteps;

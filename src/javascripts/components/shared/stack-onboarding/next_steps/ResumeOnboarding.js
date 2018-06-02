@@ -15,14 +15,20 @@ angular.module('contentful')
 
     const currentStepKey = `ctfl:${user.sys.id}:modernStackOnboarding:currentStep`;
 
-    const ResumeOnboarding = () => {
+    const ResumeOnboarding = ({track}) => {
       const currOrgId = spaceContext.organizationContext.organization.sys.id;
       // this is in render as we want this component to resume using what the latest value
       // in the localStorage is and not what the value was when it was mounted
       const handleResume = () => {
         const {path, params} = store.get(currentStepKey);
 
+        track('space_home:resume_onboarding', path);
         $state.go(path, params);
+      };
+
+      const handleCreateNewSpace = () => {
+        track('space_home:create_new_space');
+        return CreateSpace.showDialog(currOrgId);
       };
 
       return (
@@ -31,17 +37,14 @@ angular.module('contentful')
           <p>You’ll copy the repository for a blog, explore the blog content structure and deploy.</p>
           <div className='home-section__body u-separator--small'>
             <button className='btn-action' onClick={handleResume} type='button'>Yes, deploy a blog in 3 steps</button>
-            <button className='btn-action' onClick={_ => CreateSpace.showDialog(currOrgId)} type='button'>No, create a new space</button>
+            <button className='btn-action' onClick={handleCreateNewSpace} type='button'>No, create a new space</button>
           </div>
         </section>
       );
     };
 
     ResumeOnboarding.propTypes = {
-      stepToResume: PropTypes.shape({
-        path: PropTypes.string.isRequired,
-        params: PropTypes.object.isRequired
-      })
+      track: PropTypes.func.isRequired
     };
 
     return ResumeOnboarding;
