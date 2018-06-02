@@ -16,8 +16,10 @@ angular.module('contentful')
         PropTypes.arrayOf(PropTypes.node)
       ]),
       copy: PropTypes.bool,
+      onCopy: PropTypes.func,
       lineNumbers: PropTypes.bool,
-      className: PropTypes.string
+      className: PropTypes.string,
+      tooltipPosition: PropTypes.oneOf(['top', 'bottom', 'left', 'right'])
     },
     getDefaultProps () {
       return {
@@ -44,7 +46,15 @@ angular.module('contentful')
       );
     },
     render () {
-      const { language, copy, code, lineNumbers, className } = this.props;
+      const {
+        language,
+        copy,
+        onCopy,
+        code,
+        lineNumbers,
+        className,
+        tooltipPosition
+      } = this.props;
       const lineNumbersClass = lineNumbers ? '' : 'code-block__no-line-numbers';
       const classList = `code-block ${lineNumbersClass} ${className}`.trim();
 
@@ -53,7 +63,10 @@ angular.module('contentful')
           {language && <span className='code-block__language'>{language}</span>}
           {this.renderCode()}
           {copy && <div className='code-block__copy-wrapper'>
-            <CopyButton value={Array.isArray(code) ? code.join('\n') : code} />
+            <CopyButton
+              value={Array.isArray(code) ? code.join('\n') : code}
+              tooltipPosition={tooltipPosition}
+              onCopy={onCopy} />
           </div>}
         </div>
       );

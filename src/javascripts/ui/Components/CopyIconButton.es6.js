@@ -24,18 +24,32 @@ import { byName as Colors } from 'Styles/Colors';
 const CopyIconButton = createReactClass({
   displayName: 'CopyIconButton',
 
+  propTypes: {
+    tooltipPosition: PropTypes.oneOf(['top', 'bottom', 'left', 'right']),
+    value: PropTypes.string.isRequired,
+    onCopy: PropTypes.func
+  },
+
+  getDefaultProps () {
+    return {
+      onCopy: () => undefined,
+      tooltipPosition: 'bottom'
+    };
+  },
+
   getInitialState: () => ({
     showCopiedTooltip: false
   }),
 
   // TODO This is an ugly workaround to prevent React warnings when the
-  // component is unmounted.
+  // component is unmount§ed.
   componentWillUnmount () {
     this.isUnmounted = true;
   },
 
   copyToClipboard: wrapTask(function* () {
     copyToClipboard(this.props.value);
+    this.props.onCopy(this.props.value);
     this.setState({ showCopiedTooltip: true });
     yield sleep(1500);
     if (!this.isUnmounted) {
@@ -44,6 +58,7 @@ const CopyIconButton = createReactClass({
   }),
 
   render () {
+    const {tooltipPosition} = this.props;
     const self = this;
     return h('span', {
       role: 'button',
@@ -58,7 +73,7 @@ const CopyIconButton = createReactClass({
       h(Tippy.Tooltip, {
         title: 'Copied!',
         open: this.state.showCopiedTooltip,
-        position: 'bottom',
+        position: `${tooltipPosition}`,
         arrow: true,
         // We don’t want the target element for the tooltip to control
         // the visibility.
@@ -80,9 +95,5 @@ const CopyIconButton = createReactClass({
     );
   }
 });
-
-CopyIconButton.propTypes = {
-  value: PropTypes.string.isRequired
-};
 
 export default CopyIconButton;
