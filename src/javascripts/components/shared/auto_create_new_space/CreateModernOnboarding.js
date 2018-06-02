@@ -96,15 +96,15 @@ angular.module('contentful')
       );
     },
     createManagementToken: async () => {
-      const data = await Resource.create(auth).create('modern stack onboarding importing key');
+      const data = await Resource.create(auth).create('Gatsby Starter for Contentful import token');
       const token = data.token;
 
-      store.set(getCPATokenKey(), token);
+      store.set(getPersonAccessToken(), token);
 
       return token;
     },
     getManagementToken: () => {
-      const token = store.get(getCPATokenKey());
+      const token = store.get(getPersonAccessToken());
 
       if (token) {
         return token;
@@ -120,9 +120,9 @@ angular.module('contentful')
   };
 
   // CPA token is global for all spaces, so we separate by user id
-  function getCPATokenKey () {
+  function getPersonAccessToken () {
     const user = getValue(user$);
-    return `ctfl:${user.sys.id}:modernStackOnboarding:cpaToken`;
+    return `ctfl:${user.sys.id}:modernStackOnboarding:personalAccessToken`;
   }
 
   return createModernOnboarding;
