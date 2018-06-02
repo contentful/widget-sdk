@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { snakeCase } from 'lodash';
 import {name as CodeModule} from '../../../react/atoms/Code';
 import {MODIFY_CONTENT} from './DevNextSteps';
 
