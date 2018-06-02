@@ -22,3 +22,4 @@ node_modules
 public/*
 .vscode/settings.json
 *.ignore
+output/
