@@ -79,5 +79,9 @@ header.workbench-header
             | , or delete an existing role.
       p(ng-if="!reachedLimit")
         | Edit one of your existing roles or create one from the scratch.
-      button.btn-primary-action.x--block(ng-disabled="reachedLimit" ui-sref="^.new")
+      button.btn-primary-action.x--block(
+        ng-disabled="reachedLimit"
+        ui-sref="^.new"
+        data-test-id="add-role-button"
+      )
         | Create new role

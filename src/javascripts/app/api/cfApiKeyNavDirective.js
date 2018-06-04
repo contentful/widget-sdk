@@ -19,7 +19,8 @@ angular.module('contentful')
         role: 'tab',
         uiSref: '{{tab.state}}',
         ngRepeat: 'tab in navController.tabs track by $index',
-        ariaSelected: '{{tab.selected}}'
+        ariaSelected: '{{tab.selected}}',
+        dataTestId: '{{tab.dataTestId}}'
       }, ['{{tab.name}}'])
     ])
   ]);
@@ -36,10 +37,12 @@ angular.module('contentful')
       controller.tabs = [
         {
           name: 'Content delivery / preview tokens',
-          state: `${spacePrefix}.api.keys.list`
+          state: `${spacePrefix}.api.keys.list`,
+          dataTestId: 'api-keys-cda-tokens-tab'
         }, {
           name: 'Content management tokens',
-          state: `${spacePrefix}.api.cma_tokens`
+          state: `${spacePrefix}.api.cma_tokens`,
+          dataTestId: 'api-keys-cma-tokens-tab'
         }
       ].map(function (tab) {
         tab.selected = tab.state === controller.state;

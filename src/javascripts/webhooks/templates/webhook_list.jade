@@ -8,7 +8,9 @@ header.workbench-header
   .workbench-header__actions(ng-if="!showSidebar")
     button.btn-action.add-entity(
       ng-if="webhooks.length < limit"
-      ui-sref="^.new")
+      ui-sref="^.new"
+      data-test-id="add-webhook-button"
+    )
       cf-icon.btn-icon.inverted(name="plus")
       | Add webhook
     .workbench-header__actions-text(ng-if="webhooks.length >= limit")
@@ -69,6 +71,7 @@ header.workbench-header
         p
           button.btn-action.add-entity.x--block(
             ui-sref="^.new"
+            data-test-id="add-webhook-button"
           )
             cf-icon.btn-icon.inverted(name="plus")
             | Add Webhook
