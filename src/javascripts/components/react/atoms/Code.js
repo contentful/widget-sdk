@@ -55,18 +55,18 @@ angular.module('contentful')
         className,
         tooltipPosition
       } = this.props;
-      const lineNumbersClass = lineNumbers ? '' : 'code-block__no-line-numbers';
-      const classList = `code-block ${lineNumbersClass} ${className}`.trim();
 
       return (
-        <div className={classList}>
-          {language && <span className='code-block__language'>{language}</span>}
-          {this.renderCode()}
+        <div className='code-block__wrapper'>
+          <div className={`code-block ${lineNumbers ? '' : 'code-block__no-line-numbers'} ${className}`.trim()}>
+            {language && <span className='code-block__language'>{language}</span>}
+            {this.renderCode()}
+          </div>
           {copy && <div className='code-block__copy-wrapper'>
-            <CopyButton
-              value={Array.isArray(code) ? code.join('\n') : code}
-              tooltipPosition={tooltipPosition}
-              onCopy={onCopy} />
+              <CopyButton
+                  value={Array.isArray(code) ? code.join('\n') : code}
+                  tooltipPosition={tooltipPosition}
+                  onCopy={onCopy} />
           </div>}
         </div>
       );
