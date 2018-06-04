@@ -40,7 +40,8 @@ angular.module('contentful')
 
       let modifyContentCurlSnippet = `${commonSnippetChunk}`;
       modifyContentCurlSnippet += ` -H 'X-Contentful-Version: ${entry.sys.version}'`;
-      modifyContentCurlSnippet += ' -H \'Content-Type: application/vnd.contentful.management.v1+json\' -H \'X-Contentful-Content-Type: person\'';
+      modifyContentCurlSnippet += ' -H \'Content-Type: application/vnd.contentful.management.v1+json\'';
+      modifyContentCurlSnippet += ' -H \'X-Contentful-Content-Type: person\'';
       modifyContentCurlSnippet += ` --data-binary '{"fields":${JSON.stringify(updatedFields)}}'`;
       modifyContentCurlSnippet += ` https://api.${domain}.com/spaces/${spaceId}/entries/${entry.sys.id}`;
 
@@ -62,47 +63,43 @@ angular.module('contentful')
         params: { spaceId, entryId: entry.sys.id }
       };
 
-      const deployStep = {
-        path: ['spaces', 'detail', 'onboarding', 'deploy'],
-        params: { spaceId }
-      };
-
       return (
         <Step {...propsForStep}>
           <div className='tea-onboarding__step-description'>
-            <p>Interested in making updates to the Gatsby Starter for Contentful blog?</p>
+            <p>Ready to make updates to the Gatsby Starter for Contentful blog?</p>
             <p>
-              You can create or update content items using the&nbsp;
-              <a
-                rel={'noopener noreferrer'}
-                href='https://www.contentful.com/developers/docs/references/content-management-api/'
-              >
-                Content Management API
-              </a>.
+              You can create or update content using the Content Management API.
             </p>
+            <h5>Modify and publish content</h5>
             <p>
-              The snippets below modify and publish&nbsp;
+              Enter these snippets in your terminal to modify the author name
+              and publish&nbsp;
               <a
                 target={'_blank'}
                 rel={'noopener noreferrer'}
                 href={href(personEntry)}
               >
-                the author name
+                the Person entry
               </a>.
             </p>
-            <h5>Modify and publish content</h5>
+            <p>Re-deploy to view this update to the blog.</p>
             <Code
               copy
               code={[modifyContentCurlSnippet, publishContentCurlSnippet]}
               tooltipPosition={'right'}
               onCopy={_ => track('copy_curl_snippets')}
+              style={'margin-top: 0'}
             />
             <br />
             <p>
-              To view this change on your deployed site run the snippets above and&nbsp;
-              <a href={href(deployStep)}>
-                re-deploy
-              </a>!
+              Learn more about the&nbsp;
+              <a
+                target={'_blank'}
+                rel={'noopener noreferrer'}
+                href='https://www.contentful.com/developers/docs/references/content-management-api/'
+              >
+                Content Management API
+              </a>.
             </p>
           </div>
         </Step>

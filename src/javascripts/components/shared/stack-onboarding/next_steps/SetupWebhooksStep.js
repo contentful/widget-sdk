@@ -18,7 +18,7 @@ angular.module('contentful')
         markAsDone
       } = props;
       const propsForStep = {
-        headerCopy: 'Set-up webhooks for the Gatsby Starter for Contentful blog ',
+        headerCopy: 'Automate rebuilds of the Gatsby Starter for Contentful blog with webhooks',
         headerIcon: 'page-apis',
         isExpanded,
         isDone,
@@ -35,18 +35,51 @@ angular.module('contentful')
       return (
         <Step {...propsForStep}>
           <div className='tea-onboarding__step-description'>
-            <p>Some text to do with setting up a webhook</p>
-            <p>Some more copy if need be</p>
+            <p>
+              You can automate the rebuilds of the blog by setting up
+              webhooks that trigger when you publish or unpublish content in this space.
+            </p>
+            {
+              deploymentProvider === 'netlify'
+                ? <NetlifyPrerequisite />
+                : <HerokuPrerequisite />
+            }
+            <a
+              href={url}
+              target={'_blank'}
+              rel={'noopener'}
+              className='btn-action tea-onboarding__step-cta u-separator--small'
+              onClick={_ => markAsDone()}>
+              Create webhook
+            </a>
           </div>
-          <a
-            href={url}
-            target={'_blank'}
-            rel={'noopener'}
-            className='btn-action tea-onboarding__step-cta'
-            onClick={_ => markAsDone()}>
-            Create webhook
-          </a>
         </Step>
+      );
+    };
+
+    const NetlifyPrerequisite = () => {
+      return (
+        <React.Fragment>
+          <h5>Prerequisites for Netlify</h5>
+          <p>
+            Your site must already be deployed to Netlify, and you must have configured it
+            for continuous deployment by connecting it to a remote Git repo.
+            If you haven’t done so already, follow the guide on the Netlify documentation.
+          </p>
+        </React.Fragment>
+      );
+    };
+
+    const HerokuPrerequisite = () => {
+      return (
+        <React.Fragment>
+          <h5>Prerequisites for Heroku</h5>
+          <p>
+            You must have an account with CircleCI and your site must already be deployed to Heroku.
+            You should also have a remote Git repo configured for your project hosted on either Github,
+            GitLab, or Bitbucket. For our purposes, we’ll assume the project is hosted on Github.
+          </p>
+        </React.Fragment>
       );
     };
 
