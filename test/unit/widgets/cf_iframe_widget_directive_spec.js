@@ -2,14 +2,17 @@ import * as K from 'helpers/mocks/kefir';
 import {create as createDocument} from 'helpers/mocks/entity_editor_document';
 
 describe('cfIframeWidget directive', function () {
-  let widgetAPI;
-
-  afterEach(function () {
-    widgetAPI = null;
-  });
-
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    this.widgetAPI = {
+      registerHandler: sinon.stub(),
+      send: sinon.stub(),
+      destroy: sinon.stub(),
+      connect: sinon.stub()
+    };
+
+    module('contentful/test', $provide => {
+      // `widgets/API` is used with `new` so we need to provide a function
+      const {widgetAPI} = this;
       $provide.value('widgets/API', function () {
         return widgetAPI;
       });
@@ -18,55 +21,44 @@ describe('cfIframeWidget directive', function () {
     this.otDoc = createDocument();
     this.$inject('mocks/spaceContext').init();
 
-    widgetAPI = {
-      registerHandler: sinon.stub(),
-      send: sinon.stub(),
-      destroy: sinon.stub(),
-      connect: sinon.stub()
-    };
-
-    this.element = this.$compile('<cf-iframe-widget />', {
-      widget: {},
-      entityInfo: {
-        contentType: {
-          fields: [{id: 'FIELD'}]
-        }
-      },
-      otDoc: this.otDoc,
-      fieldLocale: {
-        access: {
-          disabled: true
+    this.compile = (widget = {}) => {
+      const element = this.$compile('<cf-iframe-widget />', {
+        widget,
+        entityInfo: {
+          contentType: {
+            fields: [{id: 'FIELD'}]
+          }
         },
-        errors$: K.createMockProperty(),
-        setActive: sinon.spy()
-      },
-      fieldController: {
-        setInvalid: sinon.spy()
-      }
-    });
+        otDoc: this.otDoc,
+        fieldLocale: {
+          access: {
+            disabled: true
+          },
+          errors$: K.createMockProperty(),
+          setActive: sinon.spy()
+        },
+        fieldController: {
+          setInvalid: sinon.spy()
+        }
+      });
 
-    this.scope = this.element.scope();
+      return {scope: element.scope(), element};
+    };
   });
 
   describe('"setInvalid" handler', function () {
-    beforeEach(function () {
-      this.setInvalidHandler = widgetAPI.registerHandler.args[2][1];
-    });
-
     it('dispatches call to setInvalid on field controller', function () {
-      const locale = 'en-public';
-
-      this.setInvalidHandler(true, locale);
-      sinon.assert.calledWithExactly(this.scope.fieldController.setInvalid, locale, true);
+      this.scope = this.compile().scope;
+      this.setInvalidHandler = this.widgetAPI.registerHandler.args[2][1];
+      this.setInvalidHandler(true, 'en-public');
+      sinon.assert.calledWithExactly(this.scope.fieldController.setInvalid, 'en-public', true);
     });
   });
 
   describe('"setActive" handler', function () {
-    beforeEach(function () {
-      this.setActiveHandler = widgetAPI.registerHandler.args[3][1];
-    });
-
     it('dispatches call to setActive on field locale', function () {
+      this.scope = this.compile().scope;
+      this.setActiveHandler = this.widgetAPI.registerHandler.args[3][1];
       this.setActiveHandler(true);
       sinon.assert.calledWithExactly(this.scope.fieldLocale.setActive, true);
     });
@@ -74,25 +66,27 @@ describe('cfIframeWidget directive', function () {
 
   describe('"isDisabledChanged" handler', function () {
     it('sends new isDisabled value using the widget api', function () {
+      this.scope = this.compile().scope;
       this.$apply();
-      widgetAPI.send.reset();
+      this.widgetAPI.send.reset();
       this.scope.fieldLocale.access.disabled = 'NEWVALUE';
       this.$apply();
-      sinon.assert.calledOnce(widgetAPI.send);
-      sinon.assert.calledWithExactly(widgetAPI.send, 'isDisabledChanged', ['NEWVALUE']);
+      sinon.assert.calledOnce(this.widgetAPI.send);
+      sinon.assert.calledWithExactly(this.widgetAPI.send, 'isDisabledChanged', ['NEWVALUE']);
     });
   });
 
   describe('field value changes', function () {
     beforeEach(function () {
-      widgetAPI.sendFieldValueChange = sinon.stub();
+      this.scope = this.compile().scope;
+      this.widgetAPI.sendFieldValueChange = sinon.stub();
     });
 
     it('sends localized field value change', function () {
       this.otDoc.setValueAt(['fields', 'FIELD', 'LOCALE'], 'VALUE');
       this.otDoc.changes.emit(['fields', 'FIELD', 'LOCALE']);
       this.$apply();
-      sinon.assert.calledWithExactly(widgetAPI.sendFieldValueChange, 'FIELD', 'LOCALE', 'VALUE');
+      sinon.assert.calledWithExactly(this.widgetAPI.sendFieldValueChange, 'FIELD', 'LOCALE', 'VALUE');
     });
 
     it('sends field value change for each locale', function () {
@@ -105,27 +99,28 @@ describe('cfIframeWidget directive', function () {
       });
       this.otDoc.changes.emit(['fields', 'FIELD']);
       this.$apply();
-      sinon.assert.calledWithExactly(widgetAPI.sendFieldValueChange, 'FIELD', 'LOC A', 'VAL A');
-      sinon.assert.calledWithExactly(widgetAPI.sendFieldValueChange, 'FIELD', 'LOC B', 'VAL B');
-      sinon.assert.calledWithExactly(widgetAPI.sendFieldValueChange, 'FIELD', 'LOC C', undefined);
+      sinon.assert.calledWithExactly(this.widgetAPI.sendFieldValueChange, 'FIELD', 'LOC A', 'VAL A');
+      sinon.assert.calledWithExactly(this.widgetAPI.sendFieldValueChange, 'FIELD', 'LOC B', 'VAL B');
+      sinon.assert.calledWithExactly(this.widgetAPI.sendFieldValueChange, 'FIELD', 'LOC C', undefined);
     });
 
     it('does not send field value changes if path does not start with "fields"', function () {
       this.otDoc.changes.emit(['NOT fields', 'FIELD']);
       this.$apply();
-      sinon.assert.notCalled(widgetAPI.sendFieldValueChange);
+      sinon.assert.notCalled(this.widgetAPI.sendFieldValueChange);
     });
 
     it('ignores unknown fields', function () {
       this.otDoc.changes.emit(['fields', 'UNKNOWN']);
       this.$apply();
-      sinon.assert.notCalled(widgetAPI.sendFieldValueChange);
+      sinon.assert.notCalled(this.widgetAPI.sendFieldValueChange);
     });
   });
 
   describe('"setValue" handler', function () {
     beforeEach(function () {
-      widgetAPI.buildDocPath = sinon.stub()
+      this.scope = this.compile().scope;
+      this.widgetAPI.buildDocPath = sinon.stub()
         .withArgs('PUBLIC FIELD', 'PUBLIC LOCALE')
         .returns(['internal', 'path']);
 
@@ -133,14 +128,14 @@ describe('cfIframeWidget directive', function () {
     });
 
     it('delegates with path translated path to "otDoc"', function () {
-      const handler = widgetAPI.registerHandler.withArgs('setValue').args[0][1];
+      const handler = this.widgetAPI.registerHandler.withArgs('setValue').args[0][1];
       handler('PUBLIC FIELD', 'PUBLIC LOCALE', 'VAL');
       sinon.assert.calledWithExactly(this.otDoc.setValueAt, ['internal', 'path'], 'VAL');
     });
 
     it('rejects with API error code when update fails', function () {
       this.otDoc.setValueAt.rejects();
-      const handler = widgetAPI.registerHandler.withArgs('setValue').args[0][1];
+      const handler = this.widgetAPI.registerHandler.withArgs('setValue').args[0][1];
       const errored = sinon.stub();
       handler('PUBLIC FIELD', 'PUBLIC LOCALE', 'VAL').catch(errored);
       this.$apply();
@@ -148,13 +143,51 @@ describe('cfIframeWidget directive', function () {
     });
   });
 
-  describe('on iframe load', function () {
-    it('connects the widget API', function () {
-      widgetAPI.connect = sinon.stub();
+  describe('iframe', function () {
+    it('sets src if widget has src property', function () {
+      const widget = {src: 'http://test.com'};
+      const {element} = this.compile(widget);
+      const $iframe = element.find('iframe');
+      expect($iframe.attr('src')).toBe(widget.src);
+      expect($iframe.attr('srcdoc')).toBeUndefined();
+
+      // src iframes should have `sanbox="allow-same-origin"`
+      expect($iframe.attr('sandbox').includes('allow-same-origin')).toBe(true);
+    });
+
+    it('sets srcdoc if widget has srcdoc property', function () {
+      const widget = {srcdoc: '<!DOCTYPE html>test'};
+      const {element} = this.compile(widget);
+      const $iframe = element.find('iframe');
+      expect($iframe.attr('src')).toBeUndefined();
+      expect($iframe.attr('srcdoc')).toBe(widget.srcdoc);
+
+      // srcdoc iframes must not have `sanbox="allow-same-origin"`
+      expect($iframe.attr('sandbox').includes('allow-same-origin')).toBe(false);
+    });
+
+    it('disallows extensions hosted on the app domain', function () {
+      // `app.test.com` is the domain of the Web App while in test
+      [
+        'http://app.test.com',
+        'https://app.test.com/i-injected-this',
+        '//app.test.com/foo',
+        'https://foo.app.test.com/bar'
+      ].forEach(src => {
+        const {element} = this.compile({src});
+        const $iframe = element.find('iframe');
+        expect($iframe.attr('src')).toBeUndefined();
+        expect($iframe.attr('srcdoc')).toBeUndefined();
+      });
+    });
+
+    it('connects the widget API when iframe loads', function () {
+      this.element = this.compile().element;
+      this.widgetAPI.connect = sinon.stub();
       const iframe = this.element.find('iframe').get(0);
       iframe.dispatchEvent(new window.Event('load'));
       this.$apply();
-      sinon.assert.calledOnce(widgetAPI.connect);
+      sinon.assert.calledOnce(this.widgetAPI.connect);
     });
   });
 });
