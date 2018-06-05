@@ -24,7 +24,7 @@ angular.module('contentful')
 
       const propsForAltStep = {
         headerCopy: 'Not a JS developer? See guides for other supported platforms',
-        headerIcon: 'page-media',
+        headerIcon: 'icon-pages',
         isDone
       };
 
