@@ -50,7 +50,7 @@ angular.module('contentful')
               rel={'noopener'}
               className='btn-action tea-onboarding__step-cta u-separator--small'
               onClick={_ => markAsDone()}>
-              Create webhook
+              View webhook guide
             </a>
           </div>
         </Step>
