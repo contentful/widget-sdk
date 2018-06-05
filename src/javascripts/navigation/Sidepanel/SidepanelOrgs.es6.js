@@ -1,6 +1,12 @@
 import {h} from 'ui/Framework';
 
 export default function (props) {
+  const { currOrg } = props;
+
+  if (!currOrg) {
+    return;
+  }
+
   return h('div', [
     renderOrganizationSelector(props),
     renderOrgListDropdown(props)

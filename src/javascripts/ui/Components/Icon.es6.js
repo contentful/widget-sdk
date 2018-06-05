@@ -24,6 +24,7 @@ import Bubble from 'svg/bubble';
 import ArrowDown from 'svg/dd-arrow-down';
 import InvoiceIcon from 'svg/invoice';
 import BackIcon from 'svg/breadcrumbs-icon-back';
+import SpaceIcon from 'svg/space';
 
 const SVGS = {
   'home-welcome': HomeWelcomeIcon,
@@ -45,7 +46,8 @@ const SVGS = {
   'bubble': Bubble,
   'dd-arrow-down': ArrowDown,
   'back': BackIcon,
-  'invoice': InvoiceIcon
+  'invoice': InvoiceIcon,
+  'space': SpaceIcon
 };
 
 const Icon = createReactClass({
