@@ -141,7 +141,7 @@ angular.module('contentful')
   }
 
   function redirectToList () {
-    $state.go('spaces.detail.settings.content_preview.list');
+    $state.go('^.list');
   }
 
   function save () {
@@ -159,7 +159,7 @@ angular.module('contentful')
       // redirect if it's new
       if ($scope.context.isNew) {
         $state.go(
-          'spaces.detail.settings.content_preview.detail',
+          '^.detail',
           {contentPreviewId: env.sys.id}, {reload: true}
         );
       }
@@ -184,7 +184,7 @@ angular.module('contentful')
       notification.info('Content preview was deleted successfully');
       $scope.context.dirty = false;
       track('deleted', {name: env.name, sys: {id: env.id}});
-      return $state.go('spaces.detail.settings.content_preview.list');
+      return $state.go('^.list');
     }, function () {
       notification.warn('An error occurred');
     });

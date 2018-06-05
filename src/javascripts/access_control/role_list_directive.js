@@ -59,7 +59,7 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
   }
 
   function duplicateRole (role) {
-    $state.go('spaces.detail.settings.roles.new', {baseRoleId: role.sys.id});
+    $state.go('^.new', { baseRoleId: role.sys.id });
   }
 
   function reload () {

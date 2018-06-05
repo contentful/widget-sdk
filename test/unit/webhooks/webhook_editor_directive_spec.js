@@ -2,12 +2,14 @@
 
 describe('Webhook Editor directive', function () {
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
-      $provide.removeDirectives('uiSref');
-    });
-
     this.go = sinon.stub();
-    this.$inject('$state').go = this.go;
+
+    module('contentful/test', ($provide) => {
+      $provide.removeDirectives('uiSref');
+      $provide.value('$state', {
+        go: this.go
+      });
+    });
 
     this.notification = this.mockService('notification');
 
@@ -19,18 +21,16 @@ describe('Webhook Editor directive', function () {
 
     this.$inject('WebhookRepository').getInstance = sinon.stub().returns(this.repo);
 
-    this.compile = function (context, webhook) {
+    this.compile = (context, webhook) => {
       const data = {context: context || {}, webhook: webhook || {headers: [], topics: ['*.*']}};
       data.webhook.sys = data.webhook.sys || {};
       this.element = this.$compile('<div cf-ui-tab><cf-webhook-editor /></div>', data);
       this.scope = this.element.scope();
       this.scope.tabController.activate('settings');
       this.$apply();
-    }.bind(this);
+    };
 
-    this.button = function (label) {
-      return this.element.find('button:contains("' + label + '")').first();
-    }.bind(this);
+    this.button = (label) => this.element.find(`button:contains("${label}")`).first();
   });
 
   describe('Editor new and dirty state', function () {
@@ -159,8 +159,7 @@ describe('Webhook Editor directive', function () {
       });
 
       it('redirects from /new to /:id page', function () {
-        expect(this.go.firstCall.args[0]).toBe('spaces.detail.settings.webhooks.detail');
-        expect(this.go.firstCall.args[1].webhookId).toBe('whid');
+        sinon.assert.calledWith(this.go, '^.detail', { webhookId: 'whid' });
       });
 
       it('shows success notification', function () {
@@ -197,10 +196,10 @@ describe('Webhook Editor directive', function () {
 
     describe('Frontend validation', function () {
       beforeEach(function () {
-        this.clickSave = function (wh) {
+        this.clickSave = (wh) => {
           this.compile({isNew: true}, wh);
           this.button('Save').click();
-        }.bind(this);
+        };
       });
 
       it('handles invalid name', function () {
@@ -222,12 +221,12 @@ describe('Webhook Editor directive', function () {
 
     describe('Server errors', function () {
       beforeEach(function () {
-        this.rejectWithError = function (err) {
+        this.rejectWithError = (err) => {
           this.compile({isNew: true}, {name: 'test', url: 'http://test.com', topics: ['*.*']});
           this.repo.save.rejects({body: {details: {errors: [err]}}});
           this.scope.$apply();
           this.button('Save').click();
-        }.bind(this);
+        };
       });
 
       it('handles invalid URL', function () {
@@ -274,25 +273,25 @@ describe('Webhook Editor directive', function () {
       expect(this.args.scopeData.webhook.sys.id).toBe('whid');
     });
 
-    it('calls repository with a webhook object, shows message and redirects to list', function () {
+    it('calls repository with a webhook object, shows message and redirects to list', async function () {
       this.repo.remove.resolves();
 
-      return this.args.scopeData.remove.execute().then(function () {
-        sinon.assert.calledOnce(this.repo.remove);
-        expect(this.repo.remove.firstCall.args[0].sys.id).toBe('whid');
-        sinon.assert.calledWith(this.notification.info, 'Webhook "test" deleted successfully.');
-        sinon.assert.calledWith(this.go, 'spaces.detail.settings.webhooks.list');
-      }.bind(this));
+      await this.args.scopeData.remove.execute();
+
+      sinon.assert.calledOnce(this.repo.remove);
+      expect(this.repo.remove.firstCall.args[0].sys.id).toBe('whid');
+      sinon.assert.calledWith(this.notification.info, 'Webhook "test" deleted successfully.');
+      sinon.assert.calledWith(this.go, '^.list');
     });
 
-    it('shows notification when repository call fails', function () {
+    it('shows notification when repository call fails', async function () {
       const ReloadNotification = this.$inject('ReloadNotification');
       ReloadNotification.basicErrorHandler = sinon.spy();
       this.repo.remove.rejects();
 
-      return this.args.scopeData.remove.execute().then(_.noop, function () {
-        sinon.assert.calledOnce(ReloadNotification.basicErrorHandler);
-      });
+      await this.args.scopeData.remove.execute();
+
+      sinon.assert.calledOnce(ReloadNotification.basicErrorHandler);
     });
   });
 });

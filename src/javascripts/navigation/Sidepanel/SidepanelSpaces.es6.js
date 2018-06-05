@@ -5,7 +5,7 @@ import SpaceWithEnvironments from './SpaceWithEnvironments';
 
 export default function (props) {
   const {currOrg, spacesByOrg, canCreateSpaceInCurrOrg, showCreateSpaceModal} = props;
-  const spaces = spacesByOrg[currOrg.sys.id];
+  const spaces = currOrg && spacesByOrg[currOrg.sys.id];
 
   return h('.nav-sidepanel__spaces-container', [
     spaces && renderOrgSpacesHeader(canCreateSpaceInCurrOrg, showCreateSpaceModal),

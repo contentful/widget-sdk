@@ -6,7 +6,7 @@ cf-api-key-nav
     .api-key-list.entity-list
       a.entity-list__item.x--with-icon(
         ng-repeat="apiKey in apiKeys track by apiKey.sys.id"
-        ui-sref="{{ keyLinkPrefix }}({ apiKeyId: apiKey.sys.id })")
+        ui-sref="^.detail({ apiKeyId: apiKey.sys.id })")
         span
           h3.entity-list__heading {{apiKey.name}}
           span.entity-list__description {{apiKey.description}}

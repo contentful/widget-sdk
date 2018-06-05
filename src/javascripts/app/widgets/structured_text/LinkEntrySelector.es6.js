@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import entitySelector from 'entitySelector';
+import { TextLink } from '@contentful/ui-component-library';
 
 export default class LinkEntrySelector extends Component {
   static propTypes = {
@@ -9,10 +10,7 @@ export default class LinkEntrySelector extends Component {
   };
   async onClick (event) {
     event.preventDefault();
-    const [entity] = await entitySelector.openFromField(
-      this.props.field,
-      0
-    );
+    const [entity] = await entitySelector.openFromField(this.props.field, 0);
     const linkedEntryBlock = {
       type: 'entry',
       data: {
@@ -30,6 +28,10 @@ export default class LinkEntrySelector extends Component {
   }
 
   render () {
-    return <button onClick={(event) => this.onClick(event)}>Link entry</button>;
+    return (
+      <TextLink onClick={event => this.onClick(event)} icon="MdAdd">
+        Link entry
+      </TextLink>
+    );
   }
 }

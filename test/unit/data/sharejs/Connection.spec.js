@@ -9,6 +9,7 @@ describe('data/sharejs/Connection', function () {
       send: sinon.stub(),
       disconnect: sinon.stub(),
       setState: sinon.stub(),
+      state: 'disconnected',
       refreshAuth: sinon.stub()
     };
 
@@ -103,12 +104,30 @@ describe('data/sharejs/Connection', function () {
 
       const shouldOpen$ = K.createMockProperty(true);
 
-      this.docLoader = this.connection.getDocLoader(this.entity, shouldOpen$);
-      this.docValues = K.extractValues(this.docLoader.doc);
-      this.$apply();
+      this.getDocLoader = () => {
+        const docLoader = this.connection.getDocLoader(this.entity, shouldOpen$);
+        // We only request to open a document if we subscribe to the
+        // `doc` property.
+        K.onValue(docLoader.doc, () => {});
+        this.$apply();
+        return docLoader;
+      };
 
       this.setReadOnly = (val) => {
         shouldOpen$.set(!val);
+      };
+
+      // Returns a `{ docLoader, doc }` pair where the doc loader is in
+      // the opened state and provides the `doc`.
+      this.openDoc = () => {
+        this.setState('ok');
+        const docLoader = this.getDocLoader();
+        const doc = this.resolveOpen();
+
+        expect(K.getValue(docLoader.doc)).toBeInstanceOf(DocLoad.Doc);
+        expect(K.getValue(docLoader.doc).doc).toBe(doc);
+
+        return { docLoader, doc };
       };
     });
 
@@ -116,183 +135,165 @@ describe('data/sharejs/Connection', function () {
       DocLoad = null;
     });
 
-    it('emits pending when connecting', function () {
+    it('emits "DocLoad.Pending" when connecting', function () {
+      this.setState('disconnected');
+      const doc$ = this.getDocLoader().doc;
       this.setState('connecting');
-      K.assertMatchCurrentValue(
-        this.docLoader.doc,
-        sinon.match.instanceOf(DocLoad.Pending)
-      );
+      expect(K.getValue(doc$)).toBeInstanceOf(DocLoad.Pending);
     });
 
-    it('opens a documented when is handshaking', function () {
+    it('emits "DocLoad.Pending" when connection is pending is handshaking', function () {
+      this.setState('disconnected');
+      const doc$ = this.getDocLoader().doc;
       this.setState('handshaking');
-      K.assertMatchCurrentValue(
-        this.docLoader.doc,
-        sinon.match.instanceOf(DocLoad.Pending)
-      );
+      expect(K.getValue(doc$)).toBeInstanceOf(DocLoad.Pending);
+    });
+
+    it('opens a "DocLoad.Doc" when is connection state becomes "ok"', function () {
+      this.setState('disconnected');
+      const doc$ = this.getDocLoader().doc;
+      this.setState('handshaking');
+      this.setState('ok');
+      expect(K.getValue(doc$)).toBeInstanceOf(DocLoad.Pending);
       sinon.assert.calledOnce(this.baseConnection.open);
       sinon.assert.calledWith(this.baseConnection.open, 'SPACE!ENV!entry!ENTITY');
-    });
 
-    it('opens a documented when is ok', function () {
-      this.setState('ok');
-      K.assertMatchCurrentValue(
-        this.docLoader.doc,
-        sinon.match.instanceOf(DocLoad.Pending)
-      );
-      sinon.assert.calledOnce(this.baseConnection.open);
-      sinon.assert.calledWith(this.baseConnection.open, 'SPACE!ENV!entry!ENTITY');
-    });
-
-    it('does not reopen when moving from hanshaking to ok', function () {
-      this.setState('ok');
-      K.assertMatchCurrentValue(
-        this.docLoader.doc,
-        sinon.match.instanceOf(DocLoad.Pending)
-      );
-      this.setState('handshaking');
-      sinon.assert.calledOnce(this.baseConnection.open);
-    });
-
-    it('emits document when opening succeeds', function () {
-      this.setState('ok');
-      K.assertMatchCurrentValue(
-        this.docLoader.doc,
-        sinon.match.instanceOf(DocLoad.Pending)
-      );
       const doc = this.resolveOpen();
-      K.assertMatchCurrentValue(
-        this.docLoader.doc,
-        matchDocLoadDoc(doc)
-      );
+      expect(K.getValue(doc$)).toBeInstanceOf(DocLoad.Doc);
+      expect(K.getValue(doc$).doc).toBe(doc);
     });
 
-    it('emits error when opening fails', function () {
+    it('emits "DocLoad.Doc" when opening succeeds', function () {
       this.setState('ok');
-      K.assertMatchCurrentValue(
-        this.docLoader.doc,
-        sinon.match.instanceOf(DocLoad.Pending)
-      );
+      const doc$ = this.getDocLoader().doc;
+      expect(K.getValue(doc$)).toBeInstanceOf(DocLoad.Pending);
+
+      const doc = this.resolveOpen();
+      expect(K.getValue(doc$)).toBeInstanceOf(DocLoad.Doc);
+      expect(K.getValue(doc$).doc).toBe(doc);
+    });
+
+    it('emits "DocLoad.Error" when opening fails', function () {
+      this.setState('ok');
+      const doc$ = this.getDocLoader().doc;
+      expect(K.getValue(doc$)).toBeInstanceOf(DocLoad.Pending);
+
       this.rejectOpen('ERROR');
-      K.assertMatchCurrentValue(
-        this.docLoader.doc,
-        matchDocLoadError('ERROR')
-      );
+      expect(K.getValue(doc$)).toBeInstanceOf(DocLoad.Error);
+      expect(K.getValue(doc$).error).toBe('ERROR');
     });
 
-    it('emits error when disconnected', function () {
-      this.setState('ok');
-      this.resolveOpen();
-      K.assertMatchCurrentValue(
-        this.docLoader.doc,
-        matchDocLoadDoc()
-      );
+    it('emits "DocLoad.Error" when disconnected', function () {
+      const { docLoader } = this.openDoc();
+
+      expect(K.getValue(docLoader.doc)).toBeInstanceOf(DocLoad.Doc);
 
       this.setState('disconnected');
-      K.assertMatchCurrentValue(
-        this.docLoader.doc,
-        matchDocLoadError('disconnected')
-      );
+      expect(K.getValue(docLoader.doc)).toBeInstanceOf(DocLoad.Error);
+      expect(K.getValue(docLoader.doc).error).toBe('disconnected');
     });
 
-    it('opens a document again after being disconnected', function () {
-      this.setState('ok');
-      this.resolveOpen();
+    it('re-opens a document again after being disconnected', function () {
+      const { docLoader } = this.openDoc();
+
       this.setState('disconnected');
-      K.assertMatchCurrentValue(
-        this.docLoader.doc,
-        sinon.match.instanceOf(DocLoad.Error)
-      );
+      expect(K.getValue(docLoader.doc)).toBeInstanceOf(DocLoad.Error);
 
       this.setState('ok');
       const doc = this.resolveOpen();
-      K.assertMatchCurrentValue(
-        this.docLoader.doc,
-        matchDocLoadDoc(doc)
-      );
+      expect(K.getValue(docLoader.doc)).toBeInstanceOf(DocLoad.Doc);
+      expect(K.getValue(docLoader.doc).doc).toBe(doc);
     });
 
-    it('emits none if set to read-only mode', function () {
-      this.setState('ok');
-      this.resolveOpen();
-      K.assertMatchCurrentValue(
-        this.docLoader.doc,
-        sinon.match.instanceOf(DocLoad.Doc)
-      );
+    it('emits "DocLoad.None" if set to read-only mode', function () {
+      const { docLoader } = this.openDoc();
+
       this.setReadOnly(true);
-      K.assertMatchCurrentValue(
-        this.docLoader.doc,
-        sinon.match.instanceOf(DocLoad.None)
-      );
+      expect(K.getValue(docLoader.doc)).toBeInstanceOf(DocLoad.None);
     });
 
     it('closes document when set to read-only mode', function () {
-      this.setState('ok');
-      const doc = this.resolveOpen();
+      const { docLoader, doc } = this.openDoc();
+
+      expect(K.getValue(docLoader.doc)).toBeInstanceOf(DocLoad.Doc);
       this.setReadOnly(true);
       sinon.assert.calledOnce(doc.close);
+      expect(K.getValue(docLoader.doc)).toBeInstanceOf(DocLoad.None);
     });
 
     it('ends stream when loader is destroyed', function () {
-      this.setState('ok');
+      const { docLoader } = this.openDoc();
+
       const ended = sinon.spy();
-      this.docLoader.doc.onEnd(ended);
-      this.docLoader.destroy();
+      docLoader.doc.onEnd(ended);
+      docLoader.destroy();
+      this.$apply();
       sinon.assert.calledOnce(ended);
     });
 
     it('closes document when loader is destroyed', function () {
-      this.setState('ok');
-      const doc = this.resolveOpen();
-      K.assertMatchCurrentValue(
-        this.docLoader.doc,
-        matchDocLoadDoc(doc)
-      );
-      this.docLoader.destroy();
+      const { docLoader, doc } = this.openDoc();
+      docLoader.destroy();
       this.$apply();
       sinon.assert.calledOnce(doc.close);
     });
 
-    it('waits for closing to be acked before opening again', function () {
-      this.setState('ok');
-      const doc = this.resolveOpen();
+    it('waits for closing to be acked before opening again from same loader', function () {
+      const { docLoader, doc } = this.openDoc();
       doc.close = sinon.stub();
 
       this.setReadOnly(true);
       sinon.assert.calledOnce(doc.close);
+      expect(K.getValue(docLoader.doc)).toBeInstanceOf(DocLoad.None);
 
       this.setReadOnly(false);
       // waiting for `close()` call to finish:
       sinon.assert.notCalled(this.baseConnection.open);
+      expect(K.getValue(docLoader.doc)).toBeInstanceOf(DocLoad.Pending);
 
       // open again when it's done:
       doc.close.yield();
       this.$apply();
+      expect(K.getValue(docLoader.doc)).toBeInstanceOf(DocLoad.Pending);
       sinon.assert.calledOnce(this.baseConnection.open);
     });
 
-    it('closes the doc once, even if called many times', function () {
-      this.setState('ok');
-      const doc = this.resolveOpen();
+    it('waits for closing to be acked before opening again from different loader', function () {
+      // Open doc from first loader and initiate close
+      const { docLoader, doc } = this.openDoc();
+      doc.close = sinon.stub();
+      this.baseConnection.open.reset();
+      docLoader.destroy();
 
-      // let's close the doc in various ways
-      this.docLoader.close();
-      this.setState(null);
-      this.setReadOnly(true);
+      const otherDocLoader = this.getDocLoader();
+      // waiting for `close()` call to finish:
+      sinon.assert.notCalled(this.baseConnection.open);
+      expect(K.getValue(otherDocLoader.doc)).toBeInstanceOf(DocLoad.Pending);
 
-      sinon.assert.calledOnce(doc.close);
+      // Close has finished. Ready to open same doc again.
+      doc.close.yield();
+      this.$apply();
+      sinon.assert.calledOnce(this.baseConnection.open);
+
+      this.resolveOpen();
+      expect(K.getValue(otherDocLoader.doc)).toBeInstanceOf(DocLoad.Doc);
     });
 
-    function matchDocLoadDoc (doc) {
-      const matchDoc = doc ? sinon.match({doc}) : sinon.match.any;
-      return sinon.match.instanceOf(DocLoad.Doc)
-        .and(matchDoc);
-    }
+    it('reapply pending ops if the connection was closed', function () {
+      const { doc } = this.openDoc();
 
-    function matchDocLoadError (error) {
-      return sinon.match.instanceOf(DocLoad.Error)
-        .and(sinon.match({error: error}));
-    }
+      const op1 = [{p: []}];
+      doc.pendingOp = op1;
+      const op2 = [{p: []}];
+      doc.inflightOp = op2;
+
+      doc.close.yields();
+      this.setState('disconnected');
+      this.setState('ok');
+      const doc2 = this.resolveOpen();
+      sinon.assert.calledWith(doc2.submitOp, op1);
+      sinon.assert.calledWith(doc2.submitOp, op2);
+    });
   });
 
   describe('#open()', function () {
@@ -306,17 +307,18 @@ describe('data/sharejs/Connection', function () {
       };
 
       this.open = function () {
+        this.setState('connecting');
         return this.connection.open(entity);
       };
     });
 
-    it('resolves to opened document', function* () {
+    it('resolves to opened document', async function () {
       const open = this.open();
 
       this.setState('ok');
       const doc = this.resolveOpen();
 
-      const opened = yield open;
+      const opened = await open;
       expect(opened.doc).toBe(doc);
     });
 

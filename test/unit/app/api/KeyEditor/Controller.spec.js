@@ -77,7 +77,7 @@ describe('app/api/KeyEditor/Controller', function () {
       editor.actions.deleteConfirm().click();
 
       sinon.assert.calledWith(this.apiKeyRepo.remove, 'KEY_ID');
-      sinon.assert.calledWith($state.go, 'spaces.detail.api.keys.list');
+      sinon.assert.calledWith($state.go, '^.list');
     });
   });
 

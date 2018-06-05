@@ -116,10 +116,7 @@ function mountKeyEditor ($scope, apiKey, spaceEnvironments) {
   });
 
   reinitKeyEditor();
-  LD.onFeatureFlag($scope, ENVIRONMENTS_FLAG_NAME, environmentsEnabled => {
-    $scope.environmentsEnabled = environmentsEnabled;
-    return reinitKeyEditor(environmentsEnabled);
-  });
+  LD.onFeatureFlag($scope, ENVIRONMENTS_FLAG_NAME, reinitKeyEditor);
 
   $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
   $scope.apiKeyEditor = {
@@ -132,13 +129,9 @@ function mountKeyEditor ($scope, apiKey, spaceEnvironments) {
   };
 
   function remove () {
-    const envId = spaceContext.getEnvironmentId();
-    const link = $scope.environmentsEnabled && envId !== 'master'
-      ? 'spaces.detail.environment.api.keys.list'
-      : 'spaces.detail.api.keys.list';
     return spaceContext.apiKeyRepo.remove(apiKey.sys.id)
     .then(
-      () => $state.go(link).then(notify.deleteSuccess),
+      () => $state.go('^.list').then(notify.deleteSuccess),
       notify.deleteFail
     );
   }

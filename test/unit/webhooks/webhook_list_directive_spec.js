@@ -1,3 +1,5 @@
+import sinon from 'npm:sinon';
+
 describe('The Webhook Definition list directive', function () {
   beforeEach(function () {
     this.webhooks = [
@@ -44,6 +46,7 @@ describe('The Webhook Definition list directive', function () {
           };
         }
       });
+      $provide.value('$state', { href: sinon.stub(), current: {} });
     });
 
     this.LD = this.$inject('utils/LaunchDarkly');

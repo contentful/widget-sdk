@@ -112,7 +112,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
       createRoleRemover(listHandler, function () {
         $scope.context.touched = 0;
         $scope.context.dirty = false;
-        $state.go('spaces.detail.settings.roles.list');
+        $state.go('^.list');
       })($scope.role);
     };
   });
@@ -124,7 +124,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
 
   function duplicateRole () {
     if (_.get($scope, 'role.sys.id')) {
-      $state.go('spaces.detail.settings.roles.new', {baseRoleId: $scope.role.sys.id});
+      $state.go('^.new', {baseRoleId: $scope.role.sys.id});
     }
   }
 
@@ -151,7 +151,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
 
     if ($scope.context.isNew) {
       $scope.context.dirty = false;
-      return $state.go('spaces.detail.settings.roles.detail', { roleId: role.sys.id });
+      return $state.go('^.detail', { roleId: role.sys.id });
     } else {
       $scope.role = role;
       $scope.context.touched = -1;

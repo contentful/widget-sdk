@@ -66,11 +66,13 @@ export default class StructuredTextEditor extends React.Component {
   };
   render () {
     return (
-      <div>
-        <LinkEntrySelector
-          field={this.props.field}
-          onSelect={this.insertLinkedEntry}
-        />
+      <div className="structured-text">
+        <div className="structured-text__toolbar">
+          <LinkEntrySelector
+            field={this.props.field}
+            onSelect={this.insertLinkedEntry}
+          />
+        </div>
         <Editor
           value={this.state.value}
           onChange={this.onChange}
