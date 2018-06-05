@@ -18,7 +18,7 @@ angular.module('contentful')
     const { getAll: getAllContentPreviews } = require('contentPreview');
     const { user$, getOrganizations } = require('services/TokenStore');
     const { default: template } = require('app/home/onboarding_steps/OnboardingStepsTemplate');
-    const { getCredentials } = require(CreateModernOnboardingModule);
+    const { getCredentials, MS_ONBOARDING_SPACE_NAME } = require(CreateModernOnboardingModule);
     const Entries = require('data/Entries');
 
     return {
@@ -32,15 +32,19 @@ angular.module('contentful')
 
         const updateModernStackOnboardingData = async flag => {
           const prefix = `ctfl:${user.sys.id}:modernStackOnboarding`;
-          const msDevChoiceSpace = store.get(`${prefix}:developerChoiceSpace`);
+          const msDevChoiceKey = `${prefix}:developerChoiceSpace`;
+          const msDevChoiceSpace = store.get(msDevChoiceKey);
           const msContentChoiceSpace = store.get(`${prefix}:contentChoiceSpace`);
           const spaceAutoCreationFailed = store.get(spaceAutoCreationFailedKey);
 
           const currentSpaceId = spaceContext.space && spaceContext.space.getSys().id;
+          const currentSpaceName = spaceContext.space && spaceContext.space.data.name;
 
           const showModernStackDevChoiceNextSteps =
-                flag && !spaceAutoCreationFailed &&
-                currentSpaceId && currentSpaceId === msDevChoiceSpace;
+                flag &&
+                !spaceAutoCreationFailed &&
+                currentSpaceId &&
+                (currentSpaceId === msDevChoiceSpace || currentSpaceName === MS_ONBOARDING_SPACE_NAME);
 
           controller.showModernStackContentChoiceNextSteps =
             flag &&
@@ -49,6 +53,28 @@ angular.module('contentful')
             currentSpaceId === msContentChoiceSpace;
 
           if (showModernStackDevChoiceNextSteps) {
+            // If we are to show modern stack onboarding but none of the
+            // required data was found in localStorage, like when the user
+            // uses a new browser, set some sane defaults
+            if (!msDevChoiceSpace) {
+              store.set(msDevChoiceKey, currentSpaceId);
+
+              const currentStepKey = `${prefix}:currentStep`;
+              const currentStep = store.get(currentStepKey);
+
+              if (!currentStep) {
+                store.set(currentStepKey, {
+                  path: 'spaces.detail.onboarding.getStarted',
+                  params: {
+                    spaceId: currentSpaceId
+                  }
+                });
+              }
+              // mark auto space creation as succeeded since space with
+              // modern stack onboarding name exists
+              store.set(`ctfl:${user.sys.id}:spaceAutoCreated`, true);
+            }
+
             const person = 'person';
             const credentialsPromise = getCredentials();
             const personEntryPromise = spaceContext.space.getEntries({content_type: person});

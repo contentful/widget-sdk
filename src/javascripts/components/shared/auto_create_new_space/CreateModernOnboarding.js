@@ -25,6 +25,7 @@ angular.module('contentful')
   const store = getStore();
 
   const createModernOnboarding = {
+    MS_ONBOARDING_SPACE_NAME: 'Gatsby Starter for Contentful',
     create: ({ onDefaultChoice, org, user, markOnboarding }) => {
       const scope = $rootScope.$new();
       let dialog;
@@ -143,9 +144,8 @@ angular.module('contentful')
   }
 
   async function createSpace ({ closeModal, org, markOnboarding, markSpace, userId }) {
-    const key = `ctfl:${userId}:modernStackOnboarding:developerChoiceSpace`;
     const newSpace = await client.createSpace({
-      name: 'Gatsby Starter for Contentful',
+      name: createModernOnboarding.MS_ONBOARDING_SPACE_NAME,
       defaultLocale: DEFAULT_LOCALE
     }, org.sys.id);
 
