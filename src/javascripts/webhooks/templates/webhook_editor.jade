@@ -92,7 +92,7 @@ cf-loader(watch-state-change="true")
             tr(
               ng-show="activity.visible && !activity.loading"
               ng-repeat="log in activity.visible track by log.sys.id"
-              ng-init="entityNavState = 'spaces.detail.settings.webhooks.detail.call({ callId: log.sys.id })'"
+              ng-init="entityNavState = '^.detail.call({ callId: log.sys.id })'"
               ui-sref="{{entityNavState}}")
               +td(aria-label="cell-time"
                 ui-sref="{{entityNavState}}")

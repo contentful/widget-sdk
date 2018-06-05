@@ -117,7 +117,7 @@ describe('cfContentPreviewEditor directive', function () {
       sinon.assert.calledWith(contentPreview.create, this.scope.previewEnvironment);
       sinon.assert.calledWith(
         $state.go,
-        'spaces.detail.settings.content_preview.detail',
+        '^.detail',
         {contentPreviewId: 'foo'}
       );
     });

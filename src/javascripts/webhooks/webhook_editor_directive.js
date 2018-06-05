@@ -109,7 +109,7 @@ angular.module('contentful')
 
     if ($scope.context.isNew) {
       $scope.context.dirty = false;
-      return $state.go('spaces.detail.settings.webhooks.detail', {webhookId: webhook.sys.id});
+      return $state.go('^.detail', {webhookId: webhook.sys.id});
     } else {
       $scope.webhook = webhook;
       checkCredentials();
@@ -122,7 +122,7 @@ angular.module('contentful')
     return repo.remove($scope.webhook).then(function () {
       $scope.context.dirty = false;
       notification.info('Webhook "' + $scope.webhook.name + '" deleted successfully.');
-      return $state.go('spaces.detail.settings.webhooks.list');
+      return $state.go('^.list');
     }, ReloadNotification.basicErrorHandler);
   }
 

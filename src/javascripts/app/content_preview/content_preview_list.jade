@@ -10,7 +10,7 @@ header.workbench-header
   .workbench-main__content(ng-if="previewEnvironments.length")
     .content-preview-list.entity-list
       a.entity-list__item.x--with-icon(
-        ui-sref="spaces.detail.settings.content_preview.detail({ contentPreviewId: env.id })"
+        ui-sref="^.detail({ contentPreviewId: env.id })"
         ng-repeat="env in previewEnvironments track by env.id")
         +content-preview-item
 
@@ -24,7 +24,10 @@ header.workbench-header
       .cfnext-advice-box__frame
         h1.cfnext-advice-box__title Whoops, looks like you haven't set up a content preview
         .cfnext-advice-box__sub-title
-        button.btn-action(ui-sref="spaces.detail.settings.content_preview.new")
+        button.btn-action(
+          ui-sref="^.new"
+          data-test-id="add-content-preview-button"
+        )
           div
             cf-icon(name="plus").btn-icon.inverted
             | Add content preview

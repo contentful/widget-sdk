@@ -4,7 +4,9 @@ mixin content-preview-sidebar
       .cfnext-form__field(ng-if="previewEnvironments.length")
         button.btn-action.x--block(
           ng-if="previewEnvironments.length < maxPreviewEnvironments"
-          ui-sref="spaces.detail.settings.content_preview.new")
+          ui-sref="^.new"
+          data-test-id="add-content-preview-button"
+        )
           div
             cf-icon(name="plus").btn-icon.inverted
             | Add content preview
@@ -87,8 +89,10 @@ mixin content-preview-sidebar
           span
             |  : Entry fields - the value of any given field can be used by passing the ID of the respective field.
             |  For example, to use the field with the ID slug, the token would be <em>{entry_field.slug}</em>.
+        //- TODO: If user is in an environment this will bring the user back to the `master` environment.
+        //-       Since Content Preview is a space level setting this makes sense but ideally we'd tell the user.
         p
-          | Use the <a ui-sref="spaces.detail.api.content_model">content model explorer</a> to retreive the ID of the field(s) you want to use.
+          | Use the <a ui-sref="spaces.detail.content_types.list">content model explorer</a> to retreive the ID of the field(s) you want to use.
 
 mixin content-preview-item
   span

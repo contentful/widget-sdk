@@ -6,6 +6,7 @@ describe('Role List Directive', function () {
       $provide.value('utils/LaunchDarkly', {
         getCurrentVariation: this.getCurrentVariation
       });
+      $provide.value('$state', { href: sinon.stub(), current: {} });
     });
     this.basicErrorHandler = this.$inject('ReloadNotification').basicErrorHandler;
 

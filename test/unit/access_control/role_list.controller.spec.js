@@ -161,7 +161,7 @@ describe('Role List Controller', function () {
       $state.go = sinon.spy();
       const role = {sys: {id: 'foobar'}};
       this.scope.duplicateRole(role);
-      sinon.assert.calledWith($state.go, 'spaces.detail.settings.roles.new', {baseRoleId: 'foobar'});
+      sinon.assert.calledWith($state.go, '^.new', {baseRoleId: 'foobar'});
     });
   });
 

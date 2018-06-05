@@ -8,7 +8,9 @@ header.workbench-header
   .workbench-header__actions(ng-if="!showSidebar")
     button.btn-action.add-entity(
       ng-if="webhooks.length < limit"
-      ui-sref="spaces.detail.settings.webhooks.new")
+      ui-sref="^.new"
+      data-test-id="add-webhook-button"
+    )
       cf-icon.btn-icon.inverted(name="plus")
       | Add webhook
     .workbench-header__actions-text(ng-if="webhooks.length >= limit")
@@ -31,7 +33,7 @@ header.workbench-header
           tbody
             tr(ng-if="webhooks.length"
               ng-repeat="webhook in webhooks track by webhook.sys.id"
-              ng-init="entityNavState = 'spaces.detail.settings.webhooks.detail({ webhookId: webhook.sys.id })'"
+              ng-init="entityNavState = '^.detail({ webhookId: webhook.sys.id })'"
               ui-sref="{{ entityNavState }}")
               +td.x--large-cell(aria-label="cell-wh-name"
                 ui-sref="{{ entityNavState }}")
@@ -68,7 +70,8 @@ header.workbench-header
             | is using {{usage}} webhooks.
         p
           button.btn-action.add-entity.x--block(
-            ui-sref="spaces.detail.settings.webhooks.new"
+            ui-sref="^.new"
+            data-test-id="add-webhook-button"
           )
             cf-icon.btn-icon.inverted(name="plus")
             | Add Webhook
