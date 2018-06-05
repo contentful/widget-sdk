@@ -100,7 +100,17 @@ const SubscriptionOverview = createReactClass({
   },
 
   spaceChanged (space) {
-    notification.info(`Space ${space.name} successfully upgraded.`);
+    const { spacePlans } = this.state;
+    const spacePlan = spacePlans.find(plan => plan.gatekeeperKey === space.sys.id);
+    let notificationMsg = `Space ${space.name} successfully changed`;
+
+    if (spacePlan) {
+      notificationMsg = `${notificationMsg} to a ${spacePlan.name.toLowerCase()} space.`;
+    } else {
+      notificationMsg = `${notificationMsg}.`;
+    }
+
+    notification.info(notificationMsg);
 
     this.setState({
       upgradedSpace: space.sys.id
