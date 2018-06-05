@@ -67,10 +67,10 @@ export function fetchExtension (url) {
       return [descriptor, null];
     }
   })
-  .then(([{name, fieldTypes, src, parameters}, srcdoc]) => {
+  .then(([{name, fieldTypes, src, parameters, sidebar}, srcdoc]) => {
     fieldTypes = Array.isArray(fieldTypes) ? fieldTypes.map(toApiFieldType) : [];
     const hosting = srcdoc ? {srcdoc} : {src};
-    const extension = {name, fieldTypes, parameters, ...hosting};
+    const extension = {name, fieldTypes, parameters, sidebar: !!sidebar, ...hosting};
 
     const hasCode = nonEmptyString(extension.src) || nonEmptyString(extension.srcdoc);
     const hasAtLeastOneFieldType = Array.isArray(fieldTypes) && fieldTypes.length > 0;
