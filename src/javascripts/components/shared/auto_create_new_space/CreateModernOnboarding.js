@@ -66,11 +66,9 @@ angular.module('contentful')
       });
     },
     markSpace: (spaceId) => {
-      store.set(getKey(spaceId), true);
+      store.set(getMSOnboardingSpaceKey(), spaceId);
     },
-    checkSpace: (spaceId) => {
-      return Boolean(store.get(getKey(spaceId)));
-    },
+    checkSpace: (spaceId) => store.get(getMSOnboardingSpaceKey()) === spaceId,
     // used for grouping all related analytics events
     getGroupId: () => 'modernStackOnboarding',
     track: (elementId, toState) => {
@@ -131,6 +129,7 @@ angular.module('contentful')
   // CPA token is global for all spaces, so we separate by user id
   function getPersonAccessToken () {
     const user = getValue(user$);
+
     return `ctfl:${user.sys.id}:modernStackOnboarding:personalAccessToken`;
   }
 
@@ -139,8 +138,10 @@ angular.module('contentful')
   // we can guarantee that there will be no same space ids, so even
   // several users go through this experience in the same session,
   // it won't give incorrect result
-  function getKey (spaceId) {
-    return `ctfl:${spaceId}:modernStackOnboarding:space`;
+  function getMSOnboardingSpaceKey () {
+    const user = getValue(user$);
+
+    return `ctfl:${user.sys.id}:modernStackOnboarding:developerChoiceSpace`;
   }
 
   async function createSpace ({ closeModal, org, markOnboarding, markSpace, userId }) {
@@ -153,11 +154,8 @@ angular.module('contentful')
     // we need to mark space as onboarding before transitioning
     // because otherwise it won't let us do that
     // all onboarding steps are guarded by space id
-    markSpace(newSpaceId);
+    markSpace(newSpaceId, userId);
     markOnboarding();
-
-    // TODO: Choose between this or the markSpace approach above
-    store.set(key, newSpaceId);
 
     await refresh();
     await $state.go('spaces.detail.onboarding.getStarted', {spaceId: newSpaceId});
