@@ -12,6 +12,10 @@ module.exports.supportedBrowsers = SUPPORTED_BROWSERS;
  * Return an babel options object used to compile files
  * matching 'src/javascript/**.es6.js.
  *
+ * NOTE We use absolute paths to reference the babel plugins and
+ * presets. This is required so that we can transpile code in packages
+ * that are sym-linked locally (e.g. the ShareJS client).
+ *
  * @param {string[]} params.browserTargets
  *   A list of browser targets to transpile to. Used by
  *   `@babel/presets-env`. We use different targets for tests an the
@@ -29,7 +33,7 @@ module.exports.createBabelOptions = function createBabelOptions (options = {}) {
     babelrc: false,
 
     presets: [
-      ['env', {
+      [require.resolve('babel-preset-env'), {
         'targets': {
           'browsers': browserTargets
         },
@@ -37,14 +41,14 @@ module.exports.createBabelOptions = function createBabelOptions (options = {}) {
         'debug': true,
         'modules': false,
         'useBuiltIns': false
-      }], 'react'
+      }], require.resolve('babel-preset-react')
     ],
     plugins: [
-      ['transform-es2015-modules-systemjs', {
+      [require.resolve('babel-plugin-transform-es2015-modules-systemjs'), {
         systemGlobal: 'AngularSystem'
       }],
-      'transform-object-rest-spread',
-      'transform-class-properties'
+      require.resolve('babel-plugin-transform-object-rest-spread'),
+      require.resolve('babel-plugin-transform-class-properties')
     ],
 
     // Get the SystemJS module ID from the source path

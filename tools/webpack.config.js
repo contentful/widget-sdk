@@ -108,8 +108,8 @@ module.exports = ({ dev = false } = {}) => ({
             getModuleId: undefined,
             // we don't need SystemJS plugin for regular es5 files
             plugins: [
-              'transform-object-rest-spread',
-              'transform-class-properties'
+              require.resolve('babel-plugin-transform-object-rest-spread'),
+              require.resolve('babel-plugin-transform-class-properties')
             ]
           })
         }
