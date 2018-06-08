@@ -185,7 +185,7 @@ export const OnboardingWithTea = createReactClass({
 
 export const Header = createReactClass({
   propTypes: {
-    children: PropTypes.array.isRequired
+    children: PropTypes.node.isRequired
   },
   render () {
     return (

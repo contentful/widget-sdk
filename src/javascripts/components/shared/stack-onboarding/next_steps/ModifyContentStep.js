@@ -1,20 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {name as CodeModule} from '../../../react/atoms/Code';
 import {MODIFY_CONTENT} from './DevNextSteps';
+import {name as CreateModernOnboardingModule} from '../../auto_create_new_space/CreateModernOnboarding';
+import {name as CodeModule} from '../../../react/atoms/Code';
+import {name as AnchorModule} from '../../../react/atoms/Anchor';
 
-const moduleName = 'ms-dev-next-steps-modify-content';
+export const name = 'ms-dev-next-steps-modify-content';
 
 angular.module('contentful')
-  .factory(moduleName, ['require', require => {
+  .factory(name, ['require', require => {
     const {href} = require('states/Navigator');
-    const {user$} = require('services/TokenStore');
-    const {getValue} = require('utils/kefir');
-    const user = getValue(user$);
     const {env} = require('environment');
+    const {getUser} = require(CreateModernOnboardingModule);
 
     const {Step} = require('app/home/welcome/OnboardingWithTeaSteps');
     const Code = require(CodeModule);
+    const A = require(AnchorModule);
 
     const ModifyContentStep = (props) => {
       const {
@@ -27,7 +28,7 @@ angular.module('contentful')
         track
       } = props;
 
-      const {firstName, lastName} = user;
+      const {firstName, lastName} = getUser();
       const updatedFields = {
         ...entry.fields,
         name: {
@@ -74,13 +75,7 @@ angular.module('contentful')
             <p>
               Enter these snippets in your terminal to modify the author name
               and publish&nbsp;
-              <a
-                target={'_blank'}
-                rel={'noopener noreferrer'}
-                href={href(personEntry)}
-              >
-                the Person entry
-              </a>.
+              <A href={href(personEntry)}>the Person entry</A>.
             </p>
             <p>Re-deploy to view this update to the blog.</p>
             <Code
@@ -93,13 +88,9 @@ angular.module('contentful')
             <br />
             <p>
               Learn more about the&nbsp;
-              <a
-                target={'_blank'}
-                rel={'noopener noreferrer'}
-                href='https://www.contentful.com/developers/docs/references/content-management-api/'
-              >
+              <A href='https://www.contentful.com/developers/docs/references/content-management-api/'>
                 Content Management API
-              </a>.
+              </A>.
             </p>
           </div>
         </Step>
@@ -118,5 +109,3 @@ angular.module('contentful')
 
     return ModifyContentStep;
   }]);
-
-export {moduleName as name};

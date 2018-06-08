@@ -1,38 +1,38 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {findKey, isObject, snakeCase} from 'lodash';
 import {name as ModifyContentStepModule} from './ModifyContentStep';
 import {name as SetupWebhooksStepModule} from './SetupWebhooksStep';
 import {name as NotAJSDeveloperStepModule} from './NotAJSDeveloperStep';
-import {findKey, isObject, snakeCase} from 'lodash';
+import {name as CreateModernOnboardingModule} from '../../auto_create_new_space/CreateModernOnboarding';
 
 export const MODIFY_CONTENT = 'modifyContent';
 export const SETUP_WEBHOOK = 'setupWebhook';
 export const NOT_A_JS_DEV = 'notJSDev';
 
-const moduleName = 'ms-isolated-dev-next-steps';
+export const name = 'ms-isolated-dev-next-steps';
 
 angular.module('contentful')
-  .factory(moduleName, ['require', require => {
+  .factory(name, ['require', require => {
     const store = require('TheStore').getStore();
-    const {user$} = require('services/TokenStore');
-    const {getValue} = require('utils/kefir');
-    const user = getValue(user$);
+    const {getStoragePrefix, getUser} = require(CreateModernOnboardingModule);
 
     const {Progress, Header} = require('app/home/welcome/OnboardingWithTea');
 
     const ModifyContentStep = require(ModifyContentStepModule);
     const SetupWebhooksStep = require(SetupWebhooksStepModule);
     const NotAJSDeveloperStep = require(NotAJSDeveloperStepModule);
+
     class DevNextSteps extends React.Component {
       constructor (props) {
         super(props);
 
-        const prefix = `ctfl:${user.sys.id}:modernStackOnboarding`;
+        const prefix = getStoragePrefix();
 
         const onToggle = (key) => {
           const { expanded } = this.state;
           this.setState({
-            // if we toggle currently open one, just close it
+            // if we toggle currently open one, close it
             expanded: key === expanded ? null : key
           });
         };
@@ -63,6 +63,7 @@ angular.module('contentful')
 
       componentDidMount () {
         if (!this.state[MODIFY_CONTENT].isDone) {
+          const user = getUser();
           const isModifyStepDone =
             this.props.entry.fields.name['en-US'] === `${user.firstName} ${user.lastName}`;
 
@@ -90,7 +91,7 @@ angular.module('contentful')
       }
 
       markAsDone (step) {
-        const key = `ctfl:${user.sys.id}:modernStackOnboarding:devNextSteps:${step}`;
+        const key = `${getStoragePrefix()}:devNextSteps:${step}`;
         const isStepDone = store.get(key);
 
         if (!isStepDone) {
@@ -145,5 +146,3 @@ angular.module('contentful')
 
     return DevNextSteps;
   }]);
-
-export { moduleName as name };

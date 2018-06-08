@@ -28,10 +28,10 @@ export default function template () {
         ngIf: 'onboarding.showModernStackDevChoiceNextSteps'
       }, [h('react-component', {name: 'ms-dev-next-steps', props: 'onboarding.msDevChoiceNextSteps'})]),
       h('div', {
-        ngIf: 'onboarding.showModernStackContentChoiceNextSteps || onboarding.isTEASpace'
+        ngIf: 'onboarding.shouldShowTEANextSteps()'
       }, [h('react-component', {name: 'ms-content-creator-next-steps'})]),
       h('div', {
-        ngIf: '!onboarding.showModernStackDevChoiceNextSteps && !onboarding.showModernStackContentChoiceNextSteps && !onboarding.isTEASpace'
+        ngIf: 'onboarding.shouldShowGenericNextSteps()'
       }, [nonTeaOnboardingSteps])
     ])
   ]);

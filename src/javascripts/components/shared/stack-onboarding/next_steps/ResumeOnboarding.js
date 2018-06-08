@@ -1,26 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {name as CreateModernOnboardingModule} from '../../auto_create_new_space/CreateModernOnboarding';
 
-const moduleName = 'ms-resume-onboarding';
+export const name = 'ms-resume-onboarding';
 
 angular.module('contentful')
-  .factory(moduleName, ['require', require => {
+  .factory(name, ['require', require => {
     const spaceContext = require('spaceContext');
     const $state = require('$state');
     const CreateSpace = require('services/CreateSpace');
     const store = require('TheStore').getStore();
-    const {user$} = require('services/TokenStore');
-    const {getValue} = require('utils/kefir');
-    const user = getValue(user$);
-
-    const currentStepKey = `ctfl:${user.sys.id}:modernStackOnboarding:currentStep`;
+    const {getStoragePrefix} = require(CreateModernOnboardingModule);
 
     const ResumeOnboarding = ({track}) => {
       const currOrgId = spaceContext.organizationContext.organization.sys.id;
       // this is in render as we want this component to resume using what the latest value
       // in the localStorage is and not what the value was when it was mounted
       const handleResume = () => {
-        const {path, params} = store.get(currentStepKey);
+        const {path, params} = store.get(`${getStoragePrefix()}:currentStep`);
 
         track('space_home:resume_onboarding', path);
         $state.go(path, params);
@@ -49,5 +46,3 @@ angular.module('contentful')
 
     return ResumeOnboarding;
   }]);
-
-export { moduleName as name };

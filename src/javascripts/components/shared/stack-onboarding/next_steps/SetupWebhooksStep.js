@@ -1,13 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {SETUP_WEBHOOK} from './DevNextSteps';
+import {name as AnchorModule} from '../../../react/atoms/Anchor';
 
-const moduleName = 'ms-dev-next-steps-setup-webhook';
+
+export const name = 'ms-dev-next-steps-setup-webhook';
 
 angular.module('contentful')
-  .factory(moduleName, ['require', require => {
+  .factory(name, ['require', require => {
     const {env} = require('environment');
     const {Step} = require('app/home/welcome/OnboardingWithTeaSteps');
+    const A = require(AnchorModule);
 
     const SetupWebhooksStep = (props) => {
       const {
@@ -44,14 +47,12 @@ angular.module('contentful')
                 ? <NetlifyPrerequisite />
                 : <HerokuPrerequisite />
             }
-            <a
+            <A
               href={url}
-              target={'_blank'}
-              rel={'noopener'}
               className='btn-action tea-onboarding__step-cta u-separator--small'
               onClick={_ => markAsDone()}>
               View webhook guide
-            </a>
+            </A>
           </div>
         </Step>
       );
@@ -94,5 +95,3 @@ angular.module('contentful')
 
     return SetupWebhooksStep;
   }]);
-
-export {moduleName as name};

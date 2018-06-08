@@ -25,7 +25,9 @@ angular.module('contentful')
   const store = getStore();
 
   const createModernOnboarding = {
-    MS_ONBOARDING_SPACE_NAME: 'Gatsby Starter for Contentful',
+    MODERN_STACK_ONBOARDING_SPACE_NAME: 'Gatsby Starter for Contentful',
+    getUser: () => getValue(user$),
+    getStoragePrefix: () => `ctfl:${createModernOnboarding.getUser().sys.id}:modernStackOnboarding`,
     create: ({ onDefaultChoice, org, user, markOnboarding }) => {
       const scope = $rootScope.$new();
       let dialog;
@@ -106,12 +108,12 @@ angular.module('contentful')
       const data = await Resource.create(auth).create('Gatsby Starter for Contentful import token');
       const token = data.token;
 
-      store.set(getPersonAccessToken(), token);
+      store.set(getPersonalAccessTokenKey(), token);
 
       return token;
     },
     getManagementToken: () => {
-      const token = store.get(getPersonAccessToken());
+      const token = store.get(getPersonalAccessTokenKey());
 
       if (token) {
         return token;
@@ -126,27 +128,19 @@ angular.module('contentful')
 
   };
 
-  // CPA token is global for all spaces, so we separate by user id
-  function getPersonAccessToken () {
-    const user = getValue(user$);
-
-    return `ctfl:${user.sys.id}:modernStackOnboarding:personalAccessToken`;
-  }
-
   return createModernOnboarding;
 
-  // we can guarantee that there will be no same space ids, so even
-  // several users go through this experience in the same session,
-  // it won't give incorrect result
-  function getMSOnboardingSpaceKey () {
-    const user = getValue(user$);
+  function getPersonalAccessTokenKey () {
+    return `${createModernOnboarding.getStoragePrefix()}:personalAccessToken`;
+  }
 
-    return `ctfl:${user.sys.id}:modernStackOnboarding:developerChoiceSpace`;
+  function getMSOnboardingSpaceKey () {
+    return `${createModernOnboarding.getStoragePrefix()}:developerChoiceSpace`;
   }
 
   async function createSpace ({ closeModal, org, markOnboarding, markSpace, userId }) {
     const newSpace = await client.createSpace({
-      name: createModernOnboarding.MS_ONBOARDING_SPACE_NAME,
+      name: createModernOnboarding.MODERN_STACK_ONBOARDING_SPACE_NAME,
       defaultLocale: DEFAULT_LOCALE
     }, org.sys.id);
 
@@ -162,10 +156,6 @@ angular.module('contentful')
     // if we need to close modal, we need to do it after redirect
     closeModal && closeModal();
 
-    spaceContext.apiKeyRepo.create(
-      'Example Key',
-      'We’ve created an example API key for you to help you get started.'
-    );
     return newSpace;
   }
 }]);

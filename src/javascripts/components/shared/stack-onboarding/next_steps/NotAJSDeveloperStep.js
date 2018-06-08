@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const moduleName = 'ms-dev-next-steps-not-a-js-dev';
+export const name = 'ms-dev-next-steps-not-a-js-dev';
 
 angular.module('contentful')
-  .factory(moduleName, ['require', require => {
+  .factory(name, ['require', require => {
     const {AltStep} = require('app/home/welcome/OnboardingWithTeaSteps');
 
     const NotAJSDeveloperStep = ({markAsDone, isDone}) => {
@@ -48,5 +48,3 @@ angular.module('contentful')
 
     return NotAJSDeveloperStep;
   }]);
-
-export {moduleName as name};

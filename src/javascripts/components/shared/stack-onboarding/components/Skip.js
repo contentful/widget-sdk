@@ -1,5 +1,6 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
+import {name as CreateModernOnboardingModule} from '../../auto_create_new_space/CreateModernOnboarding';
 
 import {name as CreateModernOnboardingModule} from '../../auto_create_new_space/CreateModernOnboarding';
 
@@ -11,11 +12,7 @@ angular.module('contentful')
   const $stateParams = require('$stateParams');
   const { track } = require(CreateModernOnboardingModule);
   const store = require('TheStore').getStore();
-  const {user$} = require('services/TokenStore');
-  const {getValue} = require('utils/kefir');
-
-  const user = getValue(user$);
-  const onboardingStepsCompleteKey = `ctfl:${user.sys.id}:modernStackOnboarding:completed`;
+  const {getStoragePrefix} = require(CreateModernOnboardingModule);
 
   const StackOnboardingSkip = createReactClass({
     onClick () {
@@ -24,7 +21,7 @@ angular.module('contentful')
       });
     },
     render () {
-      const onboardingStepsComplete = store.get(onboardingStepsCompleteKey);
+      const onboardingStepsComplete = store.get(`${getStoragePrefix()}:completed`);
 
       return (
         <div onClick={this.onClick} className='modern-stack-onboarding--skip'>

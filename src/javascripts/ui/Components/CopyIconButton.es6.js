@@ -42,7 +42,7 @@ const CopyIconButton = createReactClass({
   }),
 
   // TODO This is an ugly workaround to prevent React warnings when the
-  // component is unmount§ed.
+  // component is unmounted.
   componentWillUnmount () {
     this.isUnmounted = true;
   },
@@ -73,7 +73,7 @@ const CopyIconButton = createReactClass({
       h(Tippy.Tooltip, {
         title: 'Copied!',
         open: this.state.showCopiedTooltip,
-        position: `${tooltipPosition}`,
+        position: tooltipPosition,
         arrow: true,
         // We don’t want the target element for the tooltip to control
         // the visibility.

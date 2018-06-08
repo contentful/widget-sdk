@@ -50,7 +50,9 @@ export const TEASteps = createReactClass({
           {...state[CREATE_ENTRY]}
           onToggle={toggleExpanding}
           markAsDone={_ => this.markAsDone(CREATE_ENTRY)} />
-        <InviteADevStep {...{...state[INVITE_DEV], markAsDone: _ => this.markAsDone(INVITE_DEV)}} />
+        <InviteADevStep
+          {...state[INVITE_DEV]}
+          markAsDone={_ => this.markAsDone(INVITE_DEV)} />
       </div>
     );
   }
@@ -375,7 +377,7 @@ export const AltStep = createReactClass({
     headerCopy: PropTypes.string.isRequired,
     headerIcon: PropTypes.string.isRequired,
     isDone: PropTypes.bool.isRequired,
-    children: PropTypes.object.isRequired
+    children: PropTypes.node.isRequired
   },
   render () {
     const {headerCopy, headerIcon, isDone, children} = this.props;
@@ -404,10 +406,7 @@ export const Step = createReactClass({
     headerIcon: PropTypes.string.isRequired,
     isExpanded: PropTypes.bool.isRequired,
     isDone: PropTypes.bool.isRequired,
-    children: PropTypes.oneOfType([
-      PropTypes.array,
-      PropTypes.object
-    ]).isRequired,
+    children: PropTypes.node.isRequired,
     onToggle: PropTypes.func.isRequired,
     stepKey: PropTypes.string.isRequired
   },

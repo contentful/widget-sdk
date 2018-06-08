@@ -18,7 +18,7 @@ angular.module('contentful')
     const { getAll: getAllContentPreviews } = require('contentPreview');
     const { user$, getOrganizations } = require('services/TokenStore');
     const { default: template } = require('app/home/onboarding_steps/OnboardingStepsTemplate');
-    const { getCredentials, MS_ONBOARDING_SPACE_NAME } = require(CreateModernOnboardingModule);
+    const { getCredentials, MODERN_STACK_ONBOARDING_SPACE_NAME } = require(CreateModernOnboardingModule);
     const Entries = require('data/Entries');
 
     return {
@@ -29,6 +29,12 @@ angular.module('contentful')
         const controller = this;
         const user = K.getValue(user$);
         const spaceAutoCreationFailedKey = `ctfl:${user.sys.id}:spaceAutoCreationFailed`;
+
+        controller.shouldShowTEANextSteps =
+          () => controller.showModernStackContentChoiceNextSteps || controller.isTEASpace;
+
+        controller.shouldShowGenericNextSteps =
+          () => !controller.showModernStackDevChoiceNextSteps && !controller.shouldShowTEANextSteps();
 
         const updateModernStackOnboardingData = async flag => {
           const prefix = `ctfl:${user.sys.id}:modernStackOnboarding`;
@@ -43,8 +49,8 @@ angular.module('contentful')
           const showModernStackDevChoiceNextSteps =
                 flag &&
                 !spaceAutoCreationFailed &&
-                currentSpaceId &&
-                (currentSpaceId === msDevChoiceSpace || currentSpaceName === MS_ONBOARDING_SPACE_NAME);
+            currentSpaceId &&
+            (currentSpaceId === msDevChoiceSpace || currentSpaceName === MODERN_STACK_ONBOARDING_SPACE_NAME);
 
           controller.showModernStackContentChoiceNextSteps =
             flag &&

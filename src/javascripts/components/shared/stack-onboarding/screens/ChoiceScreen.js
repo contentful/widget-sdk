@@ -2,6 +2,7 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
+import {name as CreateModernOnboardingModule} from '../../auto_create_new_space/CreateModernOnboarding';
 import {name as FullScreenModule} from '../../../react/molecules/FullScreen';
 import {name as ButtonModule} from '../../../react/atoms/Button';
 
@@ -12,9 +13,7 @@ angular.module('contentful')
   const FullScreen = require(FullScreenModule);
   const Button = require(ButtonModule);
   const store = require('TheStore').getStore();
-  const {user$} = require('services/TokenStore');
-  const {getValue} = require('utils/kefir');
-  const user = getValue(user$);
+  const {getStoragePrefix} = require(CreateModernOnboardingModule);
 
   const ChoiceScreen = createReactClass({
     propTypes: {
@@ -54,7 +53,7 @@ angular.module('contentful')
         isDevPathPending: true
       });
       const newSpace = await this.props.createSpace();
-      store.set(`ctfl:${user.sys.id}:modernStackOnboarding:currentStep`, {
+      store.set(`${getStoragePrefix()}:currentStep`, {
         path: 'spaces.detail.onboarding.getStarted',
         params: {
           spaceId: newSpace.sys.id
