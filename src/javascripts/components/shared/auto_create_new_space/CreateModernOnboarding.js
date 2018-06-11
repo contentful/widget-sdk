@@ -39,6 +39,7 @@ angular.module('contentful')
         },
         createSpace: async () => {
           createModernOnboarding.track('dev_path_selected');
+
           await createSpace({
             closeModal,
             org,
