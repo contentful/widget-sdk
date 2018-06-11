@@ -5,6 +5,7 @@ angular.module('contentful')
   var React = require('react');
   var ReactDOM = require('react-dom');
   var Wizard = require('components/shared/space-wizard/Wizard').default;
+  var store = require('components/shared/space-wizard/store').store;
   var $state = require('$state');
   var $rootScope = require('$rootScope');
 
@@ -17,6 +18,7 @@ angular.module('contentful')
         space: $scope.space,
         limitReached: $scope.limitReached,
         organization: $scope.organization,
+        store,
         onCancel: function () { $scope.dialog.cancel(); },
         onConfirm: function () {
           if ($scope.onSubmit) {
@@ -41,6 +43,9 @@ angular.module('contentful')
 
       $scope.$on('$destroy', () => {
         ReactDOM.unmountComponentAtNode(host);
+
+        // Reset the store so that it has fresh state next opening
+        store.dispatch({ type: 'SPACE_WIZARD_RESET' });
       });
     }
   };

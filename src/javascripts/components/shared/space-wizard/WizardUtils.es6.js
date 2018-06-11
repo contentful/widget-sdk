@@ -1,6 +1,30 @@
 import React, { Fragment } from 'react';
-import { upperFirst, lowerCase } from 'lodash';
+import { upperFirst, lowerCase, template } from 'lodash';
 import { joinWithAnd } from 'utils/StringUtils';
+import pluralize from 'pluralize';
+
+export const SpaceResourceTypes = {
+  Environments: 'Environments',
+  Roles: 'Roles',
+  Locales: 'Locales',
+  ContentTypes: 'Content types',
+  Records: 'Records'
+};
+
+const ResourceTooltips = {
+  [SpaceResourceTypes.Environments]: `This space type includes <%= number %>
+      <%= units %> additional to the master environment, which allow you to create and
+      maintain multiple versions of the space-specific data, and make changes to them
+      in isolation.`,
+  [SpaceResourceTypes.Roles]: `This space type includes <%= number %> <%= units %>
+      additional to the admin role`,
+  [SpaceResourceTypes.Records]: 'Records are entries and assets combined.'
+};
+
+const ResourceUnitNames = {
+  [SpaceResourceTypes.Environments]: 'sandbox environment',
+  [SpaceResourceTypes.Roles]: 'user role'
+};
 
 export const Steps = {
   SpaceCreateSteps: {
@@ -18,14 +42,6 @@ export const RequestState = {
   PENDING: 'pending',
   SUCCESS: 'success',
   ERROR: 'error'
-};
-
-export const SpaceResourceTypes = {
-  Environments: 'Environments',
-  Roles: 'Roles',
-  Locales: 'Locales',
-  ContentTypes: 'Content types',
-  Records: 'Records'
 };
 
 export function formatPrice (value) {
@@ -101,4 +117,10 @@ export function unavailabilityTooltipNode (plan) {
       </p>
     </Fragment>
   );
+}
+
+export function getTooltip (type, number) {
+  const unitName = ResourceUnitNames[type];
+  const units = unitName && pluralize(unitName, number);
+  return ResourceTooltips[type] && template(ResourceTooltips[type])({number, units});
 }
