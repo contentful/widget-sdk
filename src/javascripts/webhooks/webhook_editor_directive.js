@@ -191,6 +191,7 @@ angular.module('contentful')
     INVALID_TOPICS: 'Please select at least one triggering event type.',
     INVALID_URL: 'Please provide a valid webhook URL.',
     TAKEN_URL: 'This webhook URL is already used.',
+    FILTER_ERROR: 'Could not save changes due to incorrect filters. Please verify the values you provided.',
     INVALID_CREDENTIALS: [
       'Please provide a valid user/password combination.',
       'If you don\'t want to use HTTP Basic Authentication, please clear both fields.'
@@ -225,6 +226,9 @@ angular.module('contentful')
       case 'url':
         var key = error.name === 'taken' ? 'TAKEN_URL' : 'INVALID_URL';
         notification.error(MESSAGES[key]);
+        break;
+      case 'filters':
+        notification.error(MESSAGES.FILTER_ERROR);
         break;
       case 'http_basic_password':
       case 'http_basic_username':
