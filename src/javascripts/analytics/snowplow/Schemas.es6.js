@@ -156,7 +156,7 @@ registerSchema({
 
 registerSchema({
   name: 'ui_config_migrate',
-  version: '1-0-0'
+  version: '1-0-1'
 });
 
 registerSchema({

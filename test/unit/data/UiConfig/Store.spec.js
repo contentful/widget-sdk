@@ -195,4 +195,21 @@ describe('data/UiConfig/Store', () => {
       });
     });
   });
+
+  describe('empty data (ui_config/me does not 404)', function () {
+    const EMPTY_DATA = {
+      sys: { version: 1 }
+    };
+
+    beforeEach(function () {
+      this.store.default = cloneDeep(EMPTY_DATA);
+      this.migrateStub.resolves(EMPTY_DATA);
+    });
+
+    it('updating store does not track a migration', async function () {
+      const api = await this.create();
+      await api.entries.shared.set('UPDATED ENTRY LIST VIEWS');
+      sinon.assert.notCalled(this.trackMigrationSpy);
+    });
+  });
 });
