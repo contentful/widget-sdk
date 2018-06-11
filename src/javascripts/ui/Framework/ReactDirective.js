@@ -65,7 +65,7 @@ function renderComponent (Component, props, scope, elem) {
   scope.$evalAsync(() => {
     // this is the single place we mount all our components, so all
     // providers should be added here
-    ReactDOM.render(<Component {...props} />,
+    ReactDOM.render(<Component {...props} scope={scope} />,
       elem
     );
   });
