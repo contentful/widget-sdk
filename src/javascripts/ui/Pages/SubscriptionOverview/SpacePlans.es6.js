@@ -67,7 +67,7 @@ SpacePlans.propTypes = {
   onChangeSpace: PropTypes.func.isRequired,
   onDeleteSpace: PropTypes.func.isRequired,
   isOrgOwner: PropTypes.bool.isRequired,
-  upgradedSpace: PropTypes.object
+  upgradedSpace: PropTypes.string
 };
 
 export default SpacePlans;

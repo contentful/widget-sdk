@@ -99,15 +99,14 @@ const SubscriptionOverview = createReactClass({
     onReady();
   },
 
-  spaceChanged (space) {
-    const { spacePlans } = this.state;
-    const spacePlan = spacePlans.find(plan => plan.gatekeeperKey === space.sys.id);
-    let notificationMsg = `Space ${space.name} successfully changed`;
+  spaceChanged (space, currentSpacePlan, newSpacePlan) {
+    let notificationMsg = `Space ${space.name} successfully`;
 
-    if (spacePlan) {
-      notificationMsg = `${notificationMsg} to a ${spacePlan.name.toLowerCase()} space.`;
+    if (currentSpacePlan) {
+      const changeType = newSpacePlan.price >= currentSpacePlan.price ? 'upgraded' : 'downgraded';
+      notificationMsg = `${notificationMsg} ${changeType} to a ${newSpacePlan.name} space.`;
     } else {
-      notificationMsg = `${notificationMsg}.`;
+      notificationMsg = `${notificationMsg} changed.`;
     }
 
     notification.info(notificationMsg);
@@ -134,13 +133,21 @@ const SubscriptionOverview = createReactClass({
         space,
         action,
         onSubmit: async () => {
+          let spacePlans;
+
+          spacePlans = this.state.spacePlans;
+          const currentSpacePlan = spacePlans.find(plan => plan.gatekeeperKey === space.sys.id);
+
           try {
             await this.fetchData();
           } catch (e) {
             return ReloadNotification.apiErrorHandler(e);
           }
 
-          return this.spaceChanged(space);
+          spacePlans = this.state.spacePlans;
+          const newSpacePlan = spacePlans.find(plan => plan.gatekeeperKey === space.sys.id);
+
+          return this.spaceChanged(space, currentSpacePlan, newSpacePlan);
         }
       });
     };
