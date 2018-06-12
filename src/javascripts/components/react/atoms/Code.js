@@ -45,8 +45,11 @@ angular.module('contentful')
     },
     render () {
       const { language, copy, code, lineNumbers, className } = this.props;
+      const lineNumbersClass = lineNumbers ? '' : 'code-block__no-line-numbers';
+      const classList = `code-block ${lineNumbersClass} ${className}`.trim();
+
       return (
-        <div className={`code-block ${lineNumbers ? '' : 'code-block__no-line-numbers'} ${className}`}>
+        <div className={classList}>
           {language && <span className={'code-block__language'}>{language}</span>}
           {this.renderCode()}
           {copy && <div className={'code-block__copy-wrapper'}>
