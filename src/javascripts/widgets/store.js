@@ -2,8 +2,8 @@
 
 angular.module('contentful')
 
-.factory('widgets/store', ['require', require => {
-  var builtin = require('widgets/builtin');
+.factory('widgets/store', ['require', (require) => {
+  var createBuiltinWidgetsList = require('widgets/builtin').create;
   var fieldFactory = require('fieldFactory');
 
   return function create (cma) {
@@ -30,7 +30,10 @@ angular.module('contentful')
     // It's far from ideal but we retain this behavior for now.
     // TODO figure out what to do?
     var extensionIds = extensions.map(e => e.id);
-    var filteredBuiltins = builtin.filter(b => !extensionIds.includes(b.id));
+    var builtin = createBuiltinWidgetsList();
+    var filteredBuiltins = builtin.filter(b => {
+      return !extensionIds.includes(b.id);
+    });
 
     return [].concat(filteredBuiltins).concat(extensions);
   }

@@ -1,9 +1,14 @@
-'use strict';
-angular.module('contentful')
-.factory('widgets/builtin', [() => {
-  var widgets = [];
+import { range } from 'lodash';
 
-  var COMMON_PARAMETERS = [
+/**
+ * Returns a list of all builtin widgets.
+ *
+ * @returns {Widget.Descriptor[]}
+ */
+export function create () {
+  const widgets = [];
+
+  const COMMON_PARAMETERS = [
     {
       id: 'helpText',
       name: 'Help text',
@@ -14,22 +19,33 @@ angular.module('contentful')
 
   function registerWidget (id, widgetDescriptor) {
     widgetDescriptor.id = id;
-    widgetDescriptor.parameters = COMMON_PARAMETERS.concat(widgetDescriptor.parameters || []);
+    widgetDescriptor.parameters = [
+      ...COMMON_PARAMETERS,
+      ...widgetDescriptor.parameters || []
+    ];
     widgets.push(widgetDescriptor);
   }
 
   /**
-   * @ngdoc type
-   * @name Widget.Descriptor
-   *
+   * @typedef {Object} Widget.Descriptor
    * @property {string} id
    * @property {string} name
+   * @property {string[]} fieldTypes
    * @property {Widget.Parameter[]} parameters
    * @property {string} icon
    * @property {string} template
    * @property {string} defaulHelpText
    * @property {boolean} notFocusable
    * @property {boolean} rendersHelpText
+   */
+  /**
+   * @typedef {Object} Widget.Parameter
+   * @property {string} id
+   * @property {string} name
+   * @property {string} type
+   * @property {string} description
+   * @property {Object[]} options
+   * @property {*} default
    */
 
   registerWidget('singleLine', {
@@ -106,7 +122,7 @@ angular.module('contentful')
     ]
   });
 
-  var MAX_NUMBER_OF_STARS = 20;
+  const MAX_NUMBER_OF_STARS = 20;
 
   registerWidget('rating', {
     fieldTypes: ['Integer', 'Number'],
@@ -117,7 +133,7 @@ angular.module('contentful')
         id: 'stars',
         name: 'Number of stars',
         type: 'Enum',
-        options: _.range(1, MAX_NUMBER_OF_STARS + 1).map(String),
+        options: range(1, MAX_NUMBER_OF_STARS + 1).map(String),
         default: '5',
         required: true
       }
@@ -137,9 +153,9 @@ angular.module('contentful')
         name: 'Format',
         type: 'Enum',
         options: [
-          {dateonly: 'Date only'},
-          {time: 'Date and time without timezone'},
-          {timeZ: 'Date and time with timezone'}
+          { dateonly: 'Date only' },
+          { time: 'Date and time without timezone' },
+          { timeZ: 'Date and time with timezone' }
         ],
         default: 'timeZ',
         required: true
@@ -149,8 +165,8 @@ angular.module('contentful')
         name: 'Time mode',
         type: 'Enum',
         options: [
-          {'12': 'AM/PM'},
-          {'24': '24 Hour'}
+          { '12': 'AM/PM' },
+          { '24': '24 Hour' }
         ],
         default: '24',
         required: true
@@ -212,8 +228,7 @@ angular.module('contentful')
     template: '<cf-reference-editor type="Asset" variant="card" single="true" />'
   });
 
-
-  var bulkEditorParameter = {
+  const BULK_EDITOR_PARAMETER = {
     id: 'bulkEditing',
     name: 'Use bulk editing',
     description: 'Ideal for entries with only a few fields',
@@ -226,7 +241,7 @@ angular.module('contentful')
     name: 'Entry links list',
     icon: 'references',
     template: '<cf-reference-editor type="Entry" variant="link" />',
-    parameters: [bulkEditorParameter]
+    parameters: [BULK_EDITOR_PARAMETER]
   });
 
   registerWidget('entryCardEditor', {
@@ -241,7 +256,7 @@ angular.module('contentful')
     name: 'Entry cards',
     icon: 'references-card',
     template: '<cf-reference-editor type="Entry" variant="card" />',
-    parameters: [bulkEditorParameter]
+    parameters: [BULK_EDITOR_PARAMETER]
   });
 
   registerWidget('assetLinksEditor', {
@@ -266,4 +281,4 @@ angular.module('contentful')
   });
 
   return widgets;
-}]);
+}
