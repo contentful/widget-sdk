@@ -24,6 +24,10 @@ const ExtensionEditor = createReactClass({
       initial.parameters
     );
 
+    // `sidebar` property is not required and can be either `false` or `undefined`
+    // when falsy. We cast it to boolean so the entity doesn't get dirty.
+    initial.extension.sidebar = !!initial.extension.sidebar;
+
     return {
       initial,
       selfHosted: typeof initial.extension.src === 'string',

@@ -40,7 +40,7 @@ const ExtensionParameters = ({entity, onChange}) => {
     />}
 
     <div className="cfnext-form__field">
-      <Label text="Paramter definitions" info="read only" />
+      <Label text="Parameter definitions" info="read only" />
       <p>
         You can set parameter definitions using the <a
           href="https://www.contentful.com/developers/docs/references/content-management-api/#/reference/ui-extensions/configuration-parameters"

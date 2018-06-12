@@ -100,6 +100,19 @@ const ExtensionForm = ({entity, selfHosted, updateEntity, setSelfHosted}) => {
       />
     </div>}
 
+    <div className="cfnext-form__field">
+      <Label text="Render in sidebar" />
+      <p>Hides the extension from the entry editor and instead renders it the sidebar.</p>
+      <label>
+        <input
+          type="checkbox"
+          checked={entity.extension.sidebar}
+          onChange={() => updateExtensionProp('sidebar', !entity.extension.sidebar)}
+        />
+        {' '}Yes, render in the sidebar.
+      </label>
+    </div>
+
     <ExtensionParameters
       entity={entity}
       onChange={values => updateEntity({...entity, parameters: values})}

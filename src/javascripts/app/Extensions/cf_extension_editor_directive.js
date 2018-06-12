@@ -37,7 +37,12 @@ angular.module('contentful')
         .then(response => {
           notification.info('Your extension was updated successfully.');
           entity = response;
-          return entity;
+
+          // We refresh the widget store used by the entry editor so
+          // the newest version of an extension is available right away.
+          return spaceContext.widgets.refresh().then(function () {
+            return entity;
+          });
         }, err => {
           notification.error([
             'There was an error while saving your extension.',
