@@ -33,8 +33,7 @@ function SpacePlanRow ({ plan, upgraded, onChangeSpace, onDeleteSpace }) {
   const contextMenuItems = [
     {
       label: 'Change space type',
-      disabled: plan.committed,
-      action: onChangeSpace(space, 'change'),
+      action: onChangeSpace(plan, space, 'change'),
       otherProps: {
         'data-test-id': 'subscription-page.spaces-list.change-space-link'
       }
@@ -57,8 +56,7 @@ function SpacePlanRow ({ plan, upgraded, onChangeSpace, onDeleteSpace }) {
     },
     {
       label: 'Delete',
-      disabled: plan.committed,
-      action: onDeleteSpace(space),
+      action: onDeleteSpace(plan, space),
       otherProps: {
         'data-test-id': 'subscription-page.spaces-list.delete-space-link'
       }

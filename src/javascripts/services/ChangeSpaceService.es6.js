@@ -1,5 +1,6 @@
 import modalDialog from 'modalDialog';
 import { getOrganization } from 'services/TokenStore';
+import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/space-wizard/CommittedSpaceWarningModal';
 
 /**
  * Displays the space creation dialog. The dialog type will depend on the
@@ -16,7 +17,7 @@ import { getOrganization } from 'services/TokenStore';
  * @param {string} action - one of 'change', 'upgrade', 'downgrade'.
  * @param {function} onSubmit
  */
-export async function showDialog ({ organizationId, space, limitReached, action, onSubmit }) {
+export async function showDialog ({ organizationId, space, spacePlan, limitReached, action, onSubmit }) {
   const validActions = [ 'change', 'upgrade', 'downgrade' ];
 
   if (!organizationId) {
@@ -37,17 +38,21 @@ export async function showDialog ({ organizationId, space, limitReached, action,
     throw new Error(`ChangeSpaceService.showDialog: action ${action} invalid, valid actions: ${validActions.join(', ')}`);
   }
 
-  modalDialog.open({
-    title: 'Create new space',
-    template: '<cf-space-wizard class="modal-background"></cf-space-wizard>',
-    backgroundClose: false,
-    persistOnNavigation: true,
-    scopeData: {
-      action,
-      space,
-      limitReached,
-      organization,
-      onSubmit
-    }
-  });
+  if (spacePlan.committed) {
+    openCommittedSpaceWarningDialog();
+  } else {
+    modalDialog.open({
+      title: 'Create new space',
+      template: '<cf-space-wizard class="modal-background"></cf-space-wizard>',
+      backgroundClose: false,
+      persistOnNavigation: true,
+      scopeData: {
+        action,
+        space,
+        limitReached,
+        organization,
+        onSubmit
+      }
+    });
+  }
 }
